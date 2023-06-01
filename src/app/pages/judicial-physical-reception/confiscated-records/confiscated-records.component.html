@@ -12,7 +12,7 @@
               <button
                 id="expedient-number"
                 class="btn btn-primary btn-sm disabled active"
-                (click)="goodsByExpediente()">
+                (click)="searchButton()">
                 Buscar
               </button>
               <span class="ml-3">{{ statusProceeding }}</span>
@@ -44,11 +44,21 @@
                 (click)="prevProceeding()">
                 <i class="fa fa-angle-left"></i>
               </button>
-              <span class="mr-3 ml-3">{{
-                numberProceeding + 1 > proceedingData.length
-                  ? 'Nuevo'
-                  : numberProceeding + 1
-              }}</span>
+              <span class="mr-3 ml-3"
+                >{{
+                  numberProceeding + 1 > proceedingData.length
+                    ? 'Nuevo'
+                    : numberProceeding + 1
+                }}
+                {{
+                  numberProceeding + 1 > proceedingData.length ? null : ' - '
+                }}
+                {{
+                  numberProceeding + 1 > proceedingData.length
+                    ? null
+                    : proceedingData.length
+                }}</span
+              >
               <button
                 id="expedient-number"
                 class="btn btn-secondary btn-sm active"
@@ -59,7 +69,8 @@
               <button
                 *ngIf="newAct"
                 id="expedient-number"
-                class="btn btn-primary btn-sm active ml-4">
+                class="btn btn-primary btn-sm active ml-4"
+                (click)="newProceeding()">
                 Nueva acta
               </button>
             </div>
@@ -79,7 +90,7 @@
                   [min]="0"
                   type="number"
                   [max-length]="10"
-                  [class]="blockExpedient ? 'disabled' : ''"
+                  [readOnly]="blockExpedient"
                   class="form-control"
                   formControlName="expediente" />
               </form-field>
@@ -151,7 +162,7 @@
               <form-field [control]="form.get('ident')" label="Ident">
                 <input
                   type="text"
-                  class="form-control disabled"
+                  class="form-control disabled pt-0"
                   formControlName="ident" />
               </form-field>
             </div>
@@ -192,7 +203,7 @@
               <form-field [control]="form.get('folio')" label="Folio">
                 <input
                   type="number"
-                  class="form-control"
+                  class="form-control pt-0"
                   [class]="initialdisabled ? 'disabled' : ''"
                   min="0"
                   [max-length]="5"
@@ -203,7 +214,7 @@
               <form-field [control]="form.get('year')" label="A&ntilde;o">
                 <input
                   type="number"
-                  class="form-control disabled"
+                  class="form-control disabled pt-0"
                   formControlName="year" />
               </form-field>
             </div>
@@ -211,7 +222,7 @@
               <form-field [control]="form.get('mes')" label="Mes">
                 <input
                   type="number"
-                  class="form-control disabled"
+                  class="form-control disabled pt-0"
                   formControlName="mes" />
               </form-field>
             </div>

@@ -10,7 +10,7 @@
             <div class="col-md-9">
               <button
                 id="expedient-number"
-                class="btn btn-primary btn-sm active"
+                class="btn btn-primary btn-sm active mr-4 disabled"
                 (click)="goodsByExpediente()">
                 Buscar
               </button>
@@ -43,11 +43,21 @@
                 (click)="prevProceeding()">
                 <i class="fa fa-angle-left"></i>
               </button>
-              <span class="mr-3 ml-3">{{
-                numberProceeding + 1 > proceedingData.length
-                  ? 'Nuevo'
-                  : numberProceeding + 1
-              }}</span>
+              <span class="mr-3 ml-3"
+                >{{
+                  numberProceeding + 1 > proceedingData.length
+                    ? 'Nuevo'
+                    : numberProceeding + 1
+                }}
+                {{
+                  numberProceeding + 1 > proceedingData.length ? null : ' - '
+                }}
+                {{
+                  numberProceeding + 1 > proceedingData.length
+                    ? null
+                    : proceedingData.length
+                }}</span
+              >
               <button
                 id="expedient-number"
                 class="btn btn-secondary btn-sm active"
@@ -58,28 +68,32 @@
               <button
                 *ngIf="newAct"
                 id="expedient-number"
-                class="btn btn-primary btn-sm active ml-4">
+                class="btn btn-primary btn-sm active ml-4"
+                (click)="newProceeding()">
                 Nueva acta
               </button>
             </div>
           </div>
         </div>
       </div>
+      <hr class="row" />
       <div class="row mb-3 mt-3">
         <div class="col-md-4">
-          <div class="col-md-9">
-            <form-field [control]="form.get('expediente')" label="Expediente">
-              <input
-                (ngModelChange)="
-                  toggleByLength('expedient-number', 'expediente')
-                "
-                [max-length]="10"
-                [class]="blockExpedient ? 'disabled' : ''"
-                [min]="0"
-                type="number"
-                class="form-control"
-                formControlName="expediente" />
-            </form-field>
+          <div class="row">
+            <div class="col-md-9">
+              <form-field [control]="form.get('expediente')" label="Expediente">
+                <input
+                  (ngModelChange)="
+                    toggleByLength('expedient-number', 'expediente')
+                  "
+                  [max-length]="10"
+                  [class]="blockExpedient ? 'disabled' : ''"
+                  [min]="0"
+                  type="number"
+                  class="form-control"
+                  formControlName="expediente" />
+              </form-field>
+            </div>
           </div>
         </div>
         <div class="col-md-4">
@@ -115,7 +129,7 @@
       <div class="row">
         <div class="col-md-12">
           <div class="row">
-            <div class="col-md-1">
+            <div class="col-md">
               <form-field [control]="form.get('acta')">
                 <ngx-select
                   id="acta"
@@ -177,7 +191,7 @@
                   [form]="form"></ngx-select>
               </form-field>
             </div>
-            <div class="col-md-2">
+            <div class="col-md">
               <form-field [control]="form.get('folio')" label="Folio">
                 <input
                   type="number"
@@ -248,6 +262,7 @@
                   bsDatepicker
                   (ngModelChange)="fecElab()"
                   class="form-control"
+                  [max-length]="10"
                   [class]="!isEnableFecElab ? 'disabled' : ''"
                   [maxDate]="maxDate"
                   formControlName="fecElab" />
@@ -285,6 +300,7 @@
             <textarea
               rows="3"
               class="form-control"
+              [maxlength]="1000"
               [class]="!isEnableDireccion ? 'disabled' : ''"
               formControlName="direccion"></textarea>
           </form-field>
@@ -296,6 +312,7 @@
             label="Observaciones">
             <textarea
               rows="3"
+              [maxlength]="1000"
               class="form-control"
               [class]="!isEnableObservaciones ? 'disabled' : ''"
               formControlName="observaciones"></textarea>
@@ -312,6 +329,7 @@
               <input
                 type="text"
                 class="form-control"
+                [maxlength]="100"
                 [class]="!isEnableAutoridadCancela ? 'disabled' : ''"
                 formControlName="autoridadCancela" />
             </form-field>
@@ -320,6 +338,7 @@
             <form-field [control]="form.get('elabora')" label="Elabora C&#47;S">
               <input
                 type="text"
+                [maxlength]="100"
                 class="form-control"
                 [class]="!isEnableElabora ? 'disabled' : ''"
                 formControlName="elabora" />
@@ -331,10 +350,41 @@
               label="Testigo de la Contratalor&iacute;a">
               <input
                 type="text"
+                [maxlength]="100"
                 class="form-control"
                 [class]="!isEnableTestigo ? 'disabled' : ''"
                 formControlName="testigo" />
             </form-field>
+          </div>
+        </div>
+      </div>
+      <hr class="row" />
+
+      <div class="row">
+        <div class="col-md-12">
+          <div class="row">
+            <div class="col">
+              <form-field
+                [control]="form.get('folioEscaneo')"
+                label="Folio de Escaneo">
+                <input
+                  type="number"
+                  min="0"
+                  class="form-control"
+                  formControlName="folioEscaneo" />
+              </form-field>
+            </div>
+
+            <div class="col">
+              <button
+                type="button"
+                class="btn btn-primary btn-sm active mr-2 ml-2"
+                [disabled]="form.get('folioEscaneo').value == null"
+                (click)="replicateFolio()"
+                size="small">
+                Replicar Folio
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -384,35 +434,6 @@
               (click)="goCargaMasiva()">
               Carga Masiva
             </button>
-          </div>
-        </div>
-      </div>
-      <hr class="row" />
-
-      <div class="row">
-        <div class="col-md-12">
-          <div class="row">
-            <div class="col">
-              <form-field
-                [control]="form.get('folioEscaneo')"
-                label="Folio de Escaneo">
-                <input
-                  type="number"
-                  class="form-control"
-                  formControlName="folioEscaneo" />
-              </form-field>
-            </div>
-
-            <div class="col">
-              <button
-                type="button"
-                class="btn btn-primary btn-sm active mr-2 ml-2"
-                [disabled]="form.get('folioEscaneo').value == null"
-                (click)="replicateFolio()"
-                size="small">
-                Replicar Folio
-              </button>
-            </div>
           </div>
         </div>
       </div>

@@ -9,6 +9,7 @@ import { LocalityService } from 'src/app/core/services/catalogs/locality.service
 import { MunicipalityService } from 'src/app/core/services/catalogs/municipality.service';
 import { StateOfRepublicService } from 'src/app/core/services/catalogs/state-of-republic.service';
 import { TvalTable1Service } from 'src/app/core/services/catalogs/tval-table1.service';
+import { SecurityService } from 'src/app/core/services/ms-security/security.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -29,7 +30,9 @@ export class WarehousesDetailComponent extends BasePage implements OnInit {
   public cities = new DefaultSelect();
   public municipalities = new DefaultSelect();
   public localities = new DefaultSelect();
+  public responsibleDelegation = new DefaultSelect();
   public type = new DefaultSelect();
+  public user = new DefaultSelect();
   public get idWarehouse() {
     return this.warehouseForm.get('idWarehouse');
   }
@@ -44,7 +47,8 @@ export class WarehousesDetailComponent extends BasePage implements OnInit {
     private cityService: CityService,
     private municipalityService: MunicipalityService,
     private localityService: LocalityService,
-    private tvalTable1Service: TvalTable1Service
+    private tvalTable1Service: TvalTable1Service,
+    private securityService: SecurityService
   ) {
     super();
   }
@@ -60,48 +64,30 @@ export class WarehousesDetailComponent extends BasePage implements OnInit {
       idWarehouse: [null],
       description: [
         '',
-        Validators.compose([
-          Validators.pattern(STRING_PATTERN),
-          Validators.required,
-        ]),
+        [Validators.pattern(STRING_PATTERN), Validators.required],
       ],
-      ubication: [
+      ubication: [null, [Validators.required]],
+      manager: [
         null,
-        Validators.compose([
-          Validators.pattern(STRING_PATTERN),
-          Validators.required,
-        ]),
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      manager: [null, Validators.compose([Validators.pattern(STRING_PATTERN)])],
-      registerNumber: [null, Validators.compose([Validators.pattern('')])],
-      stateCodeID: [
+      registerNumber: [null],
+      stateCodeID: [null],
+      stateCode: [
         null,
-        Validators.compose([Validators.pattern(''), Validators.required]),
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      stateCode: [null],
-      cityCodeID: [
-        null,
-        Validators.compose([Validators.pattern(''), Validators.required]),
-      ],
-      cityCode: [null],
-      municipalityCodeID: [
-        null,
-        Validators.compose([Validators.pattern(''), Validators.required]),
-      ],
-      municipalityCode: [null],
-      localityCodeID: [null, Validators.compose([Validators.pattern('')])],
-      localityCode: [null],
+      cityCodeID: [null],
+      cityCode: [null, [Validators.required]],
+      municipalityCodeID: [null],
+      municipalityCode: [null, [Validators.required]],
+      localityCodeID: [null],
+      localityCode: [null, [Validators.required]],
       indActive: [null],
-      type: [
-        null,
-        Validators.compose([
-          Validators.pattern(STRING_PATTERN),
-          Validators.required,
-        ]),
-      ],
+      type: [null, [Validators.pattern(STRING_PATTERN), Validators.required]],
       responsibleDelegation: [
         null,
-        Validators.compose([Validators.pattern(STRING_PATTERN)]),
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
     });
     if (this.warehouse != null) {
@@ -146,11 +132,16 @@ export class WarehousesDetailComponent extends BasePage implements OnInit {
           this.warehouseForm.controls['type'].value
         );
       }
+      this.getUser(
+        new ListParams(),
+        this.warehouseForm.controls['manager'].value
+      );
     } else {
       this.warehouseForm.controls['indActive'].setValue(1);
       this.getType(new ListParams());
     }
     this.getType(new ListParams());
+    this.getUser(new ListParams());
   }
 
   confirm() {
@@ -245,7 +236,7 @@ export class WarehousesDetailComponent extends BasePage implements OnInit {
   }
   getMunicipalitie(data: any) {
     this.localities = new DefaultSelect([], 0, true);
-    this.warehouseForm.controls['municipalityCode'].setValue(null);
+    // this.warehouseForm.controls['municipalityCode'].setValue(null);
     this.warehouseForm.controls['localityCode'].setValue(null);
     this.getMunicipalities(new ListParams(), data.state);
   }
@@ -270,6 +261,11 @@ export class WarehousesDetailComponent extends BasePage implements OnInit {
       this.localities = new DefaultSelect(data.data, data.count);
     });
   }
+  getResponsibleDelegation(params: ListParams) {
+    this.warehouseService.getAllDelegation(params).subscribe(data => {
+      this.responsibleDelegation = new DefaultSelect(data.data, data.count);
+    });
+  }
   getType(params: ListParams, id?: string) {
     params['filter.nmtable'] = `$eq:432`;
     if (id) {
@@ -277,6 +273,14 @@ export class WarehousesDetailComponent extends BasePage implements OnInit {
     }
     this.tvalTable1Service.getAlls(params).subscribe(data => {
       this.type = new DefaultSelect(data.data, data.count);
+    });
+  }
+  getUser(params: ListParams, user?: string) {
+    if (user) {
+      params['filter.user'] = `$eq:${user}`;
+    }
+    this.securityService.getAllUsersTracker(params).subscribe(data => {
+      this.user = new DefaultSelect(data.data, data.count);
     });
   }
 }

@@ -119,7 +119,7 @@ export const ESTATE_COLUMNS_VIEW = {
     sort: false,
   },
 
-  saePhysicalState: {
+  physicalStatus: {
     title: 'Estado físico transferente',
     type: 'string',
     sort: false,

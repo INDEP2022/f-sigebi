@@ -11,7 +11,6 @@ import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { StatusGoodService } from 'src/app/core/services/ms-good/status-good.service';
 import { StatusXScreenService } from 'src/app/core/services/ms-screen-status/statusxscreen.service';
 import { AlertButton } from '../../../scheduled-maintenance-1/models/alert-button';
-import { PartializeGeneralGoodV2Service } from '../../services/partialize-general-good-v2.service';
 import { PartializeGeneralGoodService } from '../../services/partialize-general-good.service';
 
 @Component({
@@ -26,12 +25,12 @@ export class GoodFormComponent extends AlertButton implements OnInit {
   // moreParams: string[] = [];
   goodFilter = SearchFilter.EQ;
   toggleInformation = true;
-  firstCase = true;
+  // firstCase = true;
   // operator = SearchFilter.LIKE;
   constructor(
-    private service1: PartializeGeneralGoodService,
+    private service: PartializeGeneralGoodService,
     // private serviceTab2: PartializeGeneralGoodTab2Service,
-    private service2: PartializeGeneralGoodV2Service,
+    // private service2: PartializeGeneralGoodV2Service,
     // private service2Tab2: PartializeGeneralGoodV2Tab2Service,
     private goodService: GoodService,
     private goodSssubtypeService: GoodSssubtypeService,
@@ -39,21 +38,24 @@ export class GoodFormComponent extends AlertButton implements OnInit {
     private statusScreenService: StatusXScreenService
   ) {
     super();
+    // this.form.get('noBien').valueChanges.subscribe({next:response => {
+    //   this.resetForm();
+    // }})
   }
 
   searchGood() {
-    this.goodService.getByGoodNumber(this.noBien.value).subscribe({
+    this.formLoading = true;
+    this.goodService.getByGoodNumber(this.noBien).subscribe({
       next: response => {
+        this.resetForm();
         console.log(response);
         this.selectGood(response.data[0]);
         // this.selectGood(response)
       },
       error: err => {
-        this.onLoadToast(
-          'error',
-          'N° Bien ' + this.noBien.value,
-          'No encontrado'
-        );
+        this.resetForm();
+        this.onLoadToast('error', 'N° Bien ' + this.noBien, 'No encontrado');
+        this.formLoading = false;
       },
     });
   }
@@ -92,16 +94,16 @@ export class GoodFormComponent extends AlertButton implements OnInit {
     // }
   }
 
-  get service() {
-    return this.version === 1 ? this.service1 : this.service2;
-    // return this.version === 1
-    //   ? this.firstCase === true
-    //     ? this.serviceTab1
-    //     : this.serviceTab2
-    //   : this.firstCase === true
-    //     ? this.service2Tab1
-    //     : this.service2Tab2;
-  }
+  // get service() {
+  //   return this.version === 1 ? this.service1 : this.service2;
+  //   // return this.version === 1
+  //   //   ? this.firstCase === true
+  //   //     ? this.serviceTab1
+  //   //     : this.serviceTab2
+  //   //   : this.firstCase === true
+  //   //     ? this.service2Tab1
+  //   //     : this.service2Tab2;
+  // }
 
   get formLoading() {
     return this.service.formLoading;
@@ -125,6 +127,14 @@ export class GoodFormComponent extends AlertButton implements OnInit {
 
   get formControl() {
     return this.service.formControl;
+  }
+
+  get firstCase() {
+    return this.service.firstCase;
+  }
+
+  set firstCase(value) {
+    this.service.firstCase = value;
   }
 
   // get goodsList() {
@@ -177,46 +187,62 @@ export class GoodFormComponent extends AlertButton implements OnInit {
   //   return this.goodService.getAll(this.paramsGoods.getParams());
   // }
 
-  get cantidadRows() {
-    return this.form.get('cantidad2');
-  }
+  // get cantidadRows() {
+  //   return this.form.get('cantidad2');
+  // }
 
   get noBien() {
-    return this.form.get('noBien');
+    return this.form
+      ? this.form.get('noBien')
+        ? this.form.get('noBien').value
+        : null
+      : null;
   }
 
-  get cantPadre() {
-    return this.form.get('cantPadre');
-  }
+  // get cantPadre() {
+  //   return this.form.get('cantPadre');
+  // }
 
-  get descripcion() {
-    return this.form.get('descripcion');
-  }
+  // get descripcion() {
+  //   return this.form.get('descripcion');
+  // }
 
-  get avaluo() {
-    return this.form.get('avaluo');
-  }
-  get estatus() {
-    return this.form.get('estatus');
-  }
-  get extDom() {
-    return this.form.get('extDom');
-  }
-  get moneda() {
-    return this.form.get('moneda');
-  }
-  get expediente() {
-    return this.form.get('expediente');
-  }
-  get clasificador() {
-    return this.form.get('clasificador');
-  }
-  get importe() {
-    return this.form.get('importe');
-  }
+  // get avaluo() {
+  //   return this.form.get('avaluo');
+  // }
+  // get estatus() {
+  //   return this.form.get('estatus');
+  // }
+  // get extDom() {
+  //   return this.form.get('extDom');
+  // }
+  // get moneda() {
+  //   return this.form.get('moneda');
+  // }
+  // get expediente() {
+  //   return this.form.get('expediente');
+  // }
+  // get clasificador() {
+  //   return this.form.get('clasificador');
+  // }
+  // get importe() {
+  //   return this.form.get('importe');
+  // }
 
   get good() {
     return this.service.good;
+  }
+
+  get goodId() {
+    return this.good ? this.good.goodId : null;
+  }
+
+  get goodClassNumberDesc() {
+    return this.service.goodClassNumberDesc;
+  }
+
+  get goodStatusDesc() {
+    return this.service.goodStatusDesc;
   }
 
   private async validateGood(good: IGood) {
@@ -238,14 +264,24 @@ export class GoodFormComponent extends AlertButton implements OnInit {
     return { bandera: 1, mensaje: '' };
   }
 
+  // private async getVerificaDesCargaMasiva() {
+  //   return firstValueFrom(
+  //     this.goodService.getValidMassiveDownload(this.good.goodId)
+  //   );
+  // }
+
   resetForm() {
     // this.service.formControl.
     this.service.good = null;
-    this.form.reset();
+    // this.form.reset();
     this.formControl.reset();
     this.service.bienesPar = [];
+    this.service.pagedBienesPar = [];
     this.service.sumCant = 0;
     this.service.sumVal14 = 0;
+    this.service.sumAvaluo = 0;
+    this.service.goodStatusDesc = '';
+    this.service.goodClassNumberDesc = '';
   }
 
   private validateStatusXPantalla(good: IGood) {
@@ -268,49 +304,22 @@ export class GoodFormComponent extends AlertButton implements OnInit {
         process: good.extDomProcess,
       })
     );
-    /**
-     * BEGIN
-         SELECT NVL(MAX(NO_ACTA),0)
-           INTO vno_acta
-           FROM DETALLE_ACTA_ENT_RECEP
-          WHERE NO_ACTA IN (SELECT NO_ACTA
-                              FROM ACTAS_ENTREGA_RECEPCION
-                             WHERE TIPO_ACTA = 'EVENTREC')
-            AND NO_BIEN = :BIENES.NO_BIEN;
-
-         IF vno_acta > 0 THEN
-            SELECT COUNT(0)
-              INTO v_cuantos
-              FROM ESTATUS_X_PANTALLA
-             WHERE CVE_PANTALLA = 'FINDICA_0035_1'
-               AND ACCION = 'RF'
-               AND ESTATUS_FINAL = :BIENES.ESTATUS
-               AND PROCESO_EXT_DOM = :BIENES.PROCESO_EXT_DOM;
-
-            IF v_cuantos = 0 THEN
-               vno_acta := 0;
-            END IF;
-         END IF;
-
-      EXCEPTION
-         WHEN OTHERS THEN
-            vno_acta := 0;
-      END;
-     */
   }
 
   async selectGoodContent(good: IGood) {
     let bandera;
     let clasif: number;
+    this.service.verif_des = 0;
     // debugger;
     if (!good) {
       this.service.good = null;
-      const lastGood = this.form.get('noBien').value;
+      // const lastGood = this.form.get('noBien').value;
       this.resetForm();
-      this.noBien.setValue(lastGood);
+      // this.noBien.setValue(lastGood);
       return;
     }
     if (this.version === 1) {
+      debugger;
       let vb_estatus_valido;
       // vb_estatus_valido = await this.validateStatusXPantalla(good);
       try {
@@ -324,6 +333,21 @@ export class GoodFormComponent extends AlertButton implements OnInit {
           'El Bien no cuenta con un estatus correcto'
         );
         return;
+      }
+      try {
+        this.service.verif_des = await firstValueFrom(
+          this.goodService.getValidMassiveDownload(good.goodId)
+        );
+      } catch (x: any) {
+        console.log(x);
+        this.service.verif_des = 0;
+        // this.onLoadToast(
+        //   'error',
+        //   'Verificación Descarga Masiva',
+        //   x.error.message
+        // );
+        // this.loading = false;
+        // return;
       }
 
       console.log(good.goodClassNumber);
@@ -356,6 +380,7 @@ export class GoodFormComponent extends AlertButton implements OnInit {
       } catch (x) {
         this.service.noActa = 0;
       }
+
       this.service.good = good;
       if ([1424, 1426, 1427, 1575, 1590].includes(+good.goodClassNumber)) {
         this.firstCase = true;
@@ -377,17 +402,18 @@ export class GoodFormComponent extends AlertButton implements OnInit {
         this.service.formControl.get('saldo').setValue(good.quantity);
       }
     } else {
-      this.service.good = good;
-      if ([62, 1426, 1424].includes(+good.goodClassNumber)) {
-        this.saldo.setValue(good.val2);
-      } else {
-        this.saldo.setValue(good.quantity);
-      }
+      // this.service.good = good;
+      // if ([62, 1426, 1424].includes(+good.goodClassNumber)) {
+      //   this.saldo.setValue(good.val2);
+      // } else {
+      //   this.saldo.setValue(good.quantity);
+      // }
     }
     this.service.saveSelectedGood();
     const statusGood = good.status
       ? await firstValueFrom(this.statusService.getById(good.status))
       : null;
+    this.service.goodStatusDesc = statusGood ? statusGood.description : '';
     // debugger;
     const sssubtype = good.goodClassNumber
       ? await firstValueFrom(
@@ -396,34 +422,40 @@ export class GoodFormComponent extends AlertButton implements OnInit {
           )
         )
       : null;
-    // console.log(estatusGood);
-    this.form.setValue({
-      noBien: good.goodId,
-      cantPadre: good.goodsPartializationFatherNumber,
-      descripcion: good.description,
-      cantidad: good.quantity,
-      avaluo: good.appraisedValue,
-      estatus: good.goodStatus,
-      estatusDescripcion: statusGood ? statusGood.description : '',
-      extDom: good.extDomProcess,
-      moneda: good.val1,
-      expediente: good.fileNumber,
-      clasificador: good.goodClassNumber ? +good.goodClassNumber : null,
-      clasificadorDescripcion: sssubtype
-        ? sssubtype.data
-          ? sssubtype.data.length > 0
-            ? sssubtype.data[0].description
-            : ''
+    this.service.goodClassNumberDesc = sssubtype
+      ? sssubtype.data
+        ? sssubtype.data.length > 0
+          ? sssubtype.data[0].description
           : ''
-        : '',
-      importe: +good.val14,
-    });
+        : ''
+      : '';
+    // console.log(estatusGood);
+    // this.form.setValue({
+    //   noBien: good.goodId,
+    //   cantPadre: good.goodsPartializationFatherNumber,
+    //   descripcion: good.description,
+    //   cantidad: good.quantity,
+    //   avaluo: good.appraisedValue,
+    //   estatus: good.goodStatus,
+    //   estatusDescripcion: statusGood ? statusGood.description : '',
+    //   extDom: good.extDomProcess,
+    //   moneda: good.val1,
+    //   expediente: good.fileNumber,
+    //   clasificador: good.goodClassNumber ? +good.goodClassNumber : null,
+    //   clasificadorDescripcion: sssubtype
+    //     ? sssubtype.data
+    //       ? sssubtype.data.length > 0
+    //         ? sssubtype.data[0].description
+    //         : ''
+    //       : ''
+    //     : '',
+    //   importe: +good.val14,
+    // });
     // this.service.saveSelectedGood();
     console.log(good);
   }
 
   async selectGood(good: IGood) {
-    this.formLoading = true;
     await this.selectGoodContent(good);
     this.formLoading = false;
   }

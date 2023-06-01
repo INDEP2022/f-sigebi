@@ -1,9 +1,8 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { IBienesPar } from '../../models/bienesPar.model';
-import { PartializeGeneralGoodV2Service } from '../../services/partialize-general-good-v2.service';
 import { PartializeGeneralGoodService } from '../../services/partialize-general-good.service';
 
 @Component({
@@ -13,7 +12,7 @@ import { PartializeGeneralGoodService } from '../../services/partialize-general-
 })
 export class PartializeViewComponent extends BasePage implements OnInit {
   // @Input() firstCase: boolean = null;
-  @Input() version: number;
+  version = 1;
   params = new BehaviorSubject<ListParams>(new ListParams());
   v_numerario: any;
   vfactor: any;
@@ -23,24 +22,22 @@ export class PartializeViewComponent extends BasePage implements OnInit {
   page = 1;
 
   constructor(
-    private service1: PartializeGeneralGoodService,
-    // private serviceTab2: PartializeGeneralGoodTab2Service,
-    private service2: PartializeGeneralGoodV2Service // private service2Tab2: PartializeGeneralGoodV2Tab2Service
+    private service: PartializeGeneralGoodService // private serviceTab2: PartializeGeneralGoodTab2Service, // private service2: PartializeGeneralGoodV2Service
   ) {
     super();
     // this.params.value.limit = 11;
   }
 
-  get service() {
-    return this.version === 1 ? this.service1 : this.service2;
-    // return this.version === 1
-    //   ? this.firstCase === true
-    //     ? this.serviceTab1
-    //     : this.serviceTab2
-    //   : this.firstCase === true
-    //   ? this.service2Tab1
-    //   : this.service2Tab2;
-  }
+  // get service() {
+  //   return this.version === 1 ? this.service1 : this.service2;
+  //   // return this.version === 1
+  //   //   ? this.firstCase === true
+  //   //     ? this.serviceTab1
+  //   //     : this.serviceTab2
+  //   //   : this.firstCase === true
+  //   //   ? this.service2Tab1
+  //   //   : this.service2Tab2;
+  // }
 
   get formGood() {
     return this.service.formGood;
@@ -55,6 +52,33 @@ export class PartializeViewComponent extends BasePage implements OnInit {
   }
   set bienesPar(value) {
     this.service.bienesPar = value;
+  }
+
+  get form() {
+    return this.service.formControl;
+  }
+
+  get firtsCase() {
+    return this.service.firstCase;
+  }
+
+  get settingsGoddFirstCase() {
+    return this.service.settingsGoodsFirstCase;
+  }
+
+  get settingsGoodsSecondCase() {
+    return this.service.settingsGoodsSecondCase;
+  }
+
+  get vimporte() {
+    return this.service.vimporte;
+  }
+  get vsum() {
+    return this.service.vsum;
+  }
+
+  get firstCase() {
+    return this.service.firstCase;
   }
 
   filledRow() {
@@ -72,34 +96,6 @@ export class PartializeViewComponent extends BasePage implements OnInit {
       this.service.pagedBienesPar = [...this.service.bienesPar];
     }
     this.loading = false;
-  }
-  // get pagedBienesPar() {
-
-  //   const final = (this.page * 10) - 1;
-  //   if (this.bienesPar && this.bienesPar.length > 0) {
-  //     // debugger;
-  //     const bienesNotTotal = this.bienesPar.slice(0, this.bienesPar.length - 1);
-  //     return bienesNotTotal
-  //       .slice(
-  //         (this.page - 1) * 10,
-  //         final
-  //       )
-  //       .concat(this.bienesPar[this.bienesPar.length - 1]);
-  //   } else {
-  //     return this.service.bienesPar;
-  //   }
-
-  // }
-
-  get settingsGoods() {
-    return this.service.settingsGoods;
-  }
-
-  get vimporte() {
-    return this.service.vimporte;
-  }
-  get vsum() {
-    return this.service.vsum;
   }
 
   get statePartialize() {
@@ -140,9 +136,11 @@ export class PartializeViewComponent extends BasePage implements OnInit {
   // }
 
   ngOnInit(): void {
-    if (this.version === null) {
-      return;
-    }
+    // if (this.version === null) {
+    //   return;
+    // }
+    // console.log(this.firtsCase === true ? { ...this.service.settingsGoods, columns: columnsFirstCase } : { ...this.service.settingsGoods, columns: columnsSecondCase });
+
     this.service.initFormControl();
     // this.bienesPar = [...this.service.getSavedPartializedGoods()];
     this.params.pipe().subscribe({
@@ -152,10 +150,6 @@ export class PartializeViewComponent extends BasePage implements OnInit {
         this.filledRow();
       },
     });
-  }
-
-  get form() {
-    return this.service.formControl;
   }
 
   deleteRow(row: { data: IBienesPar; index: number }) {
@@ -180,10 +174,22 @@ export class PartializeViewComponent extends BasePage implements OnInit {
             .concat(this.bienesPar[this.bienesPar.length - 1]);
         }
         this.bienesPar[this.bienesPar.length - 1].cantidad -= row.data.cantidad;
+        this.bienesPar[this.bienesPar.length - 1].avaluo -= row.data.avaluo;
+        this.bienesPar[this.bienesPar.length - 1].importe -= row.data.importe;
         this.service.sumCant -= row.data.cantidad;
         this.service.sumVal14 -= row.data.importe;
+        this.service.sumAvaluo -= row.data.avaluo;
+        let saldo = +this.form.get('saldo').value;
+        if (!this.firstCase) {
+          saldo += +(row.data.cantidad + '');
+          this.form.get('saldo').setValue(saldo);
+        } else {
+          saldo += +(row.data.importe + '');
+          this.form.get('saldo').setValue(saldo);
+        }
+
         // this.bienesPar[this.bienesPar.length - 1].avaluo -= row.data.avaluo;
-        this.bienesPar[this.bienesPar.length - 1].importe -= row.data.importe;
+
         if (this.bienesPar[this.bienesPar.length - 1].cantidad === 0) {
           this.bienesPar.pop();
         }

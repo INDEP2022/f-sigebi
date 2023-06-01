@@ -296,3 +296,8 @@ export interface INotificationTransferentIndiciadoCity {
 export interface INotificationDictum {
   dictumKey: string;
 }
+
+export interface DictumData {
+  id: any;
+  description: string;
+}

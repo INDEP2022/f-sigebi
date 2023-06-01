@@ -42,7 +42,8 @@
               [searchMode]="searchMode"
               [confirmSearch]="confirmSearch"
               [selectedNotification]="selectedRow"
-              (onSearch)="search($event)">
+              (onSearch)="search($event)"
+              (datosEnviados)="recibirDatos($event)">
             </app-juridical-record-update>
           </div>
           <!-- Forms VOLANTE EXPEDIENTE -->
@@ -51,7 +52,7 @@
 
         <!-- DECLARATORIA PANTALLA -->
 
-        <tab heading="DECLARATORIA" *ngIf="showTabs">
+        <tab heading="DECLARATORIA" [disabled]="!disabledTabs" *ngIf="showTabs">
           <!-- Forms DECLARATORIA -->
           <!-- <ngx-form-declaratoria
             [form]="formDeclaratoria"
@@ -64,7 +65,7 @@
             <div class="row" *ngIf="dictDate != null">
               <div class="d-flex justify-content-end">
                 <div>
-                  <h6>{{ dictDate }}</h6>
+                  <h6>{{ dictDate3 }}</h6>
                 </div>
               </div>
             </div>
@@ -108,21 +109,28 @@
                     [control]="declarationForm.get('officeType')"
                     label="Tipo Oficio">
                     <ng-select
-                      [readonly]="tipoBien == null"
+                      [readonly]="!disabledTIPO_OFICIO"
                       (change)="addText($event)"
                       formControlName="officeType"
                       [searchable]="false"
                       class="form-control"
                       [clearable]="false">
                       <ng-option value="null">Seleccione una opción</ng-option>
-                      <ng-option *ngIf="tipoBien == 7" value="DAN"
+                      <!-- <ng-option *ngIf="tipoBien == 7" value="DAN">DAN - DECLARATORIA ABANDONO NUMERARIO</ng-option>
+                      <ng-option *ngIf="tipoBien != 7" value="DAB">DAB - DECLARATORIA ABANDONO BIENES</ng-option> -->
+                      <ng-option value="DAN"
                         >DAN - DECLARATORIA ABANDONO NUMERARIO</ng-option
                       >
-                      <ng-option *ngIf="tipoBien != 7" value="DAB"
+                      <ng-option value="DAB"
                         >DAB - DECLARATORIA ABANDONO BIENES</ng-option
                       >
-                      <!-- <ng-option value="FGR">FGR - DECLARATORIA ABANDONO FGR</ng-option>
-                      <ng-option value="PJF">PJF - DECLARATORIA ABANDONO PJF</ng-option> -->
+                      <ng-option value="FGR"
+                        >FGR - DECLARATORIA ABANDONO FGR</ng-option
+                      >
+                      <ng-option value="PJF"
+                        >PJF - DECLARATORIA ABANDONO PJF</ng-option
+                      >
+                      <!-- <ng-option value="DAE">DAE - DECLARATORIA ABANDONO EMPRESAS</ng-option> -->
                     </ng-select>
                   </form-field>
                 </div>
@@ -164,6 +172,7 @@
                 </div>
                 <div class="row mt-5">
                   <form-field
+                    class=""
                     [control]="declarationForm.get('passOfficeArmy')"
                     label="Cve. Oficio">
                     <input
@@ -225,8 +234,10 @@
                     <ng-option *ngIf="valTiposAll" value="all"
                       >Todos - 0 - TODOS - 0</ng-option
                     >
-                    <ng-option *ngFor="let item of tiposData; index as i">
-                      {{ item }}
+                    <ng-option
+                      *ngFor="let item of tiposData; index as i"
+                      value="{{ item.no_clasif_bien }}">
+                      {{ item.tipoSupbtipoDescription }}
                     </ng-option>
                   </ng-select>
 
@@ -292,6 +303,7 @@
                   label="Inicio">
                   <!-- <label class="label w-100">page</label> -->
                   <textarea
+                    (dblclick)="editText($event, 'declaratoriaInicio')"
                     rows="5"
                     class="form-control w-100"
                     formControlName="page"></textarea>
@@ -303,6 +315,7 @@
                   label="Fin">
                   <!-- <label class="label w-100">Fin</label> -->
                   <textarea
+                    (dblclick)="editText($event, 'declaratoriaFin')"
                     rows="7"
                     class="form-control w-100"
                     formControlName="fin"></textarea>
@@ -357,6 +370,7 @@
               <div class="row">
                 <div class="col-sm-12 col-12 col-md-6 text-center">
                   <button
+                    [disabled]="!disbaledAPROBAR"
                     (click)="aprobar()"
                     type="button"
                     class="btn btn-primary btn-sm active ml-2 mr-2">
@@ -382,6 +396,7 @@
                   <label for="env">Envia</label>
                   <button
                     name="env"
+                    (click)="enviarD()"
                     [disabled]="!disabledENVIAR"
                     class="btn btn-danger btn-sm active ml-2 mr-2">
                     <i class="bx bx-send"></i>
@@ -398,7 +413,7 @@
         <!-- DECLARATORIA PANTALLA page FIN -->
 
         <!-- FORM OFICIO -->
-        <tab heading="OFICIO" *ngIf="showTabs">
+        <tab heading="OFICIO" [disabled]="!disabledTabs" *ngIf="showTabs">
           <!-- Forms OFICIO -->
           <form [formGroup]="formOficio" class="container-fluid form-material">
             <div class="row w-100 justify-content-center">
@@ -413,7 +428,7 @@
                               [control]="formOficio.get('tipoOficio')"
                               label="Tipo Oficio">
                               <input
-                                [readonly]="!disabledBTNs"
+                                readonly
                                 type="text"
                                 class="form-control"
                                 formControlName="tipoOficio" />
@@ -424,7 +439,7 @@
                               [control]="formOficio.get('oficioPor')"
                               label="Oficio Por">
                               <input
-                                [readonly]="!disabledBTNs"
+                                readonly
                                 type="text"
                                 class="form-control"
                                 formControlName="oficioPor" />
@@ -435,7 +450,8 @@
                               [control]="formOficio.get('oficio')"
                               label="No. Gesti&oacute;n">
                               <input
-                                [readonly]="!disabledBTNs"
+                                readonly
+                                [(ngModel)]="no_OficioGestion"
                                 type="number"
                                 class="form-control"
                                 formControlName="oficio" />
@@ -446,7 +462,6 @@
                       <div class="col-sm-12 col-12 mt-5">
                         <form-field [control]="formOficio.get('remitente')">
                           <ngx-select
-                            [readonly]="!disabledBTNs"
                             [form]="formOficio"
                             [data]="senders"
                             (fetchItems)="getSenders($event)"
@@ -461,9 +476,10 @@
                         </form-field>
                       </div>
                       <div class="col-sm-12 col-12 mt-5">
-                        <form-field [control]="formOficio.get('destinatario')">
+                        <form-field
+                          *ngIf="!externoVal"
+                          [control]="formOficio.get('destinatario')">
                           <ngx-select
-                            [readonly]="!disabledBTNs"
                             [form]="formOficio"
                             [data]="recipients"
                             (fetchItems)="getRecipients($event)"
@@ -476,11 +492,19 @@
                           </ngx-select>
                           <!-- <input [readonly]="!disabledBTNs" class="form-control" formControlName="destinatario" /> -->
                         </form-field>
+
+                        <form-field
+                          *ngIf="externoVal"
+                          [control]="formOficio.get('destinatario')"
+                          label="Destinatario">
+                          <input
+                            class="form-control"
+                            formControlName="destinatario" />
+                        </form-field>
                       </div>
                       <div class="col-sm-12 col-12 mt-5">
                         <form-field [control]="formOficio.get('ciudad')">
                           <ngx-select
-                            [readonly]="!disabledBTNs"
                             [form]="formOficio"
                             [data]="cities2"
                             (fetchItems)="getCities2($event)"
@@ -537,7 +561,7 @@
                             >FECHA DE CAPTURA</label
                           >
                           <label class="form-control-label w-100">{{
-                            dateCapture
+                            dateCapture2
                           }}</label>
                         </div>
                       </div>
@@ -571,9 +595,8 @@
                   <textarea
                     rows="7"
                     [disabled]="!disabledBTNs"
-                    [readonly]="!valEditTextIni"
                     (change)="disabledText()"
-                    (dblclick)="editTextInicio()"
+                    (dblclick)="editText($event, 'OficioInicio')"
                     class="form-control"
                     formControlName="page"></textarea>
                 </form-field>
@@ -585,9 +608,8 @@
                   <textarea
                     rows="7"
                     [disabled]="!disabledBTNs"
-                    [readonly]="!valEditTextFin"
                     (change)="disabledText()"
-                    (dblclick)="editTextfin()"
+                    (dblclick)="editText($event, 'OficioFin')"
                     class="form-control"
                     formControlName="fin"></textarea>
                 </form-field>
@@ -611,6 +633,7 @@
             </div>
             <div class="col-1">
               <button
+                [disabled]="!disabledDocs"
                 (click)="docAct()"
                 class="btn btn-secondary btn-sm active">
                 Doc.
@@ -659,6 +682,7 @@
                     </form-field>
 
                     <ngx-select
+                      id="selectAbandono"
                       *ngIf="valInterno"
                       [data]="items"
                       bindLabel="userAndName"
@@ -698,6 +722,7 @@
                         id="cpp2" />
                     </form-field>
                     <ngx-select
+                      id="selectAbandono"
                       *ngIf="valInterno2"
                       [data]="items"
                       bindLabel="userAndName"
@@ -735,7 +760,6 @@
                   </button>
                   <button
                     (click)="envofi()"
-                    [disabled]="!disabledBTNs"
                     class="btn btn-secondary btn-sm active ml-2 mr-2">
                     <i *ngIf="iconLock" class="bx bx-lock-open-alt"></i>
                     <i *ngIf="!iconLock" class="bx bx-lock-alt"></i>
@@ -748,7 +772,6 @@
                   </button> -->
                   <button
                     (click)="borrar()"
-                    [disabled]="!disabledBTNs"
                     type="button"
                     class="btn btn-danger btn-sm active ml-2 mr-2">
                     Borra

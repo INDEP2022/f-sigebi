@@ -26,7 +26,7 @@
           <!-- <app-proceeding-types-shared
             [form]="form"></app-proceeding-types-shared> -->
         </div>
-        <div class="col-md-4" style="display: flex">
+        <div class="col-md-4">
           <form-field [control]="form.get('rangeDate')" label="Rango de Fechas">
             <input
               bsDaterangepicker
@@ -34,13 +34,14 @@
               formControlName="rangeDate"
               readonly
               [maxDate]="hoy" />
+            <div
+              *ngIf="rangeDateValue !== null"
+              class="deleteDate"
+              (click)="deleteRange()">
+              x
+            </div>
           </form-field>
-          <div
-            *ngIf="rangeDateValue !== null"
-            class="deleteDate"
-            (click)="deleteRange()">
-            x
-          </div>
+
           <!-- <button class="btn btn-primary btn-xs active" type="submit" size="small" (click)="deleteRange()">
             x
           </button> -->
@@ -83,7 +84,7 @@
         </div>
       </div>
       <div class="row mt-3" style="margin-top: 20px">
-        <div class="col-md-12 mt-2">
+        <div class="col-lg-6 mt-2">
           <ng-custom-select-loading
             [form]="form"
             formControlName="coordRegional"
@@ -92,7 +93,7 @@
             value="description"
             bindLabel="description"
             paramSearch="search"
-            path="catalog/api/v1/delegation">
+            path="catalog/api/v1/delegation/get-all">
           </ng-custom-select-loading>
           <!-- <ng-template #coordinationLabel let-item="item">
             {{ item.id }} - {{ item.description }}
@@ -113,7 +114,7 @@
             [(params)]="paramsCoords"></app-select-form> -->
           <!-- <app-regional-coord-shared [form]="form"></app-regional-coord-shared> -->
         </div>
-        <div class="col-md-12 mt-4">
+        <div class="col-lg-6 mt-2">
           <ng-custom-select-loading
             [form]="form"
             formControlName="usuario"
@@ -149,17 +150,17 @@
           <!-- <app-elaborate-users-shared
             [form]="form"></app-elaborate-users-shared> -->
         </div>
-        <div class="col-md-12 mt-4">
+        <!-- <div class="col-md-12 mt-4">
           <form-field [control]="form.get('claveActa')" label="Programación">
             <input
               class="form-control"
               formControlName="claveActa"
               maxlength="75" />
           </form-field>
-        </div>
+        </div> -->
       </div>
 
-      <div class="action-buttons">
+      <div class="action-buttons row" style="margin: auto">
         <div
           class="col-md-6"
           [class]="loading || form.invalid ? 'disabled' : ''">

@@ -29,6 +29,7 @@ import {
 import { StatusXScreenService } from 'src/app/core/services/ms-screen-status/statusxscreen.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { getTrackedGoods } from 'src/app/pages/general-processes/goods-tracker/store/goods-tracker.selector';
+import { firstFormatDateToSecondFormatDate } from 'src/app/shared/utils/date';
 import { IParametersIndicators } from './../../../../core/models/catalogs/parameters-indicators.model';
 import { IProceedingDeliveryReception } from './../../../../core/models/ms-proceedings/proceeding-delivery-reception';
 import { GOOD_TRACKER_ORIGINS } from './../../../general-processes/goods-tracker/utils/constants/origins';
@@ -97,6 +98,38 @@ export class ScheduledMaintenanceDetailComponent
       console.log(x);
       if (x === 'CERRADA') {
         this.closeActa();
+      } else {
+        const detail = JSON.parse(
+          window.localStorage.getItem('detailActa')
+        ) as IProceedingDeliveryReception;
+        detail.keysProceedings = this.form.get('claveActa').value;
+        detail.statusProceedings = this.statusActaValue;
+        detail.closeDate = new Date().toISOString();
+        detail.captureDate = firstFormatDateToSecondFormatDate(
+          detail.captureDate
+        );
+        let message = '';
+        this.proceedingService
+          .update2(detail)
+          .pipe(takeUntil(this.$unSubscribe))
+          .subscribe({
+            next: response => {
+              this.onLoadToast(
+                'success',
+                'Se actualizo el acta N° ' + detail.id
+              );
+              this.pageLoading = false;
+              // this.massiveUpdate(`Se actualizo el acta N° ${detail.id} `);
+            },
+            error: err => {
+              this.onLoadToast(
+                'error',
+                'No se pudo actualizar el acta N° ' + detail.id
+              );
+              // this.massiveUpdate('');
+              this.pageLoading = false;
+            },
+          });
       }
     });
   }
@@ -225,18 +258,31 @@ export class ScheduledMaintenanceDetailComponent
         detail.keysProceedings = this.form.get('claveActa').value;
         detail.statusProceedings = this.statusActaValue;
         detail.closeDate = new Date().toISOString();
+        detail.captureDate = firstFormatDateToSecondFormatDate(
+          detail.captureDate
+        );
         let message = '';
-        // this.proceedingService
-        //   .update2(detail)
-        //   .pipe(takeUntil(this.$unSubscribe))
-        //   .subscribe({
-        //     next: response => {
-        //       this.massiveUpdate(`Se actualizo el acta N° ${detail.id} `);
-        //     },
-        //     error: err => {
-        //       this.massiveUpdate('');
-        //     },
-        //   });
+        this.proceedingService
+          .update2(detail)
+          .pipe(takeUntil(this.$unSubscribe))
+          .subscribe({
+            next: response => {
+              this.onLoadToast(
+                'success',
+                'Se actualizo el acta N° ' + detail.id
+              );
+              this.pageLoading = false;
+              // this.massiveUpdate(`Se actualizo el acta N° ${detail.id} `);
+            },
+            error: err => {
+              this.onLoadToast(
+                'error',
+                'No se pudo actualizar el acta N° ' + detail.id
+              );
+              // this.massiveUpdate('');
+              this.pageLoading = false;
+            },
+          });
       } else {
         this.form.get('statusActa').setValue('ABIERTA');
       }
@@ -326,48 +372,65 @@ export class ScheduledMaintenanceDetailComponent
   }
 
   updateDatesTable(newData: any[]) {
-    console.log(this.data);
-    this.detailService
-      .updateMasive(
-        newData
-          .filter(x => x.agregado === 'AE')
-          .map(x => {
+    console.log(newData);
+    const arrayToUpdate = newData.filter(x => x.agregado === 'AE');
+    const goodsByRastrer = newData.filter(x => x.agregado === 'RA');
+    if (arrayToUpdate.length > 0) {
+      this.detailService
+        .updateMasive(
+          arrayToUpdate.map(x => {
             return {
               fec_aprobacion_x_admon: x.fec_aprobacion_x_admon,
               fec_indica_usuario_aprobacion: x.fec_indica_usuario_aprobacion,
               no_bien: x.no_bien,
             };
           }),
-        this.actaId
-      )
-      .subscribe({
-        next: response => {
-          let goods = '';
-          newData.forEach((selected, index) => {
-            goods += selected.no_bien + (index < newData.length - 1 ? ',' : '');
-          });
-          // const message = `Se actualizo el bien N° ${newData.no_bien} `;
-          const message = `Se actualizaron los bienes N° ${goods} `;
-          this.onLoadToast('success', 'Exito', message);
-          this.data = newData;
-          // this.updateTable.emit();
-        },
-        error: err => {
-          this.onLoadToast('error', 'Error', 'Bienes no actualizados');
-        },
-      });
-    this.onLoadToast('info', 'Bienes', 'Fechas actualizadas');
+          this.actaId
+        )
+        .subscribe({
+          next: response => {
+            let goods = '';
+            newData.forEach((selected, index) => {
+              goods +=
+                selected.no_bien + (index < newData.length - 1 ? ',' : '');
+            });
+            // const message = `Se actualizo el bien N° ${newData.no_bien} `;
+            const message = `Se actualizaron los bienes N° ${goods} `;
+            this.onLoadToast('success', 'Exito', message);
+            this.data = [...newData];
+            // this.data = [...this.data]
+            // this.updateTable.emit();
+          },
+          error: err => {
+            this.onLoadToast('error', 'Error', 'Bienes no actualizados');
+            this.data = [
+              ...this.data
+                .filter(x => x.agregado === 'AE')
+                .concat(goodsByRastrer),
+            ];
+          },
+        });
+    } else {
+      if (goodsByRastrer.length > 0) {
+        this.data = [...newData];
+        this.onLoadToast('success', 'Bienes', 'Fechas actualizadas');
+      }
+    }
   }
 
   updateGoodsRow(event: any) {
     console.log(event);
     let { newData, confirm, data } = event;
     // confirm.resolve(data);
+
     if (
       !newData.fec_aprobacion_x_admon ||
       !newData.fec_indica_usuario_aprobacion
     ) {
       this.alertTableIncompleteFields();
+      return;
+    }
+    if (newData.agregado === 'RA') {
       return;
     }
     if (
@@ -561,7 +624,7 @@ export class ScheduledMaintenanceDetailComponent
     console.log(new Date().toISOString());
     this.loading = true;
     this.params['id'] = idActa;
-    this.params.limit = 0;
+    this.params.limit = 10000;
     // const detail = JSON.parse(
     //   window.localStorage.getItem('detailActa')
     // ) as IProceedingDeliveryReception;
@@ -579,25 +642,28 @@ export class ScheduledMaintenanceDetailComponent
             this.totalItems = response.count;
             // this.loading = false;
             this.fillGoodsByRastrer(deleteds);
-            // this.fillGoodsByRastrerContent([
-            //   { goodNumber: '537814' },
-            //   { goodNumber: '537813' },
-            //   { goodNumber: '537812' },
-            //   { goodNumber: '537811' },
-            //   { goodNumber: '537810' },
-            //   { goodNumber: '537545' },
-            //   { goodNumber: '537544' },
-            //   { goodNumber: '537543' },
-            //   { goodNumber: '537542' },
-            //   { goodNumber: '537539' },
-            //   { goodNumber: '537538' },
-            //   { goodNumber: '537536' },
-            //   { goodNumber: '537535' },
-            //   { goodNumber: '537411' },
-            //   { goodNumber: '537534' },
-            //   { goodNumber: '537410' },
-            //   { goodNumber: '536720' },
-            // ], deleteds);
+            // this.fillGoodsByRastrerContent(
+            //   [
+            //     { goodNumber: '537814' },
+            //     { goodNumber: '537813' },
+            //     { goodNumber: '537812' },
+            //     { goodNumber: '537811' },
+            //     { goodNumber: '537810' },
+            //     { goodNumber: '537545' },
+            //     { goodNumber: '537544' },
+            //     { goodNumber: '537543' },
+            //     { goodNumber: '537542' },
+            //     { goodNumber: '537539' },
+            //     { goodNumber: '537538' },
+            //     { goodNumber: '537536' },
+            //     { goodNumber: '537535' },
+            //     { goodNumber: '537411' },
+            //     { goodNumber: '537534' },
+            //     { goodNumber: '537410' },
+            //     { goodNumber: '536720' },
+            //   ],
+            //   deleteds
+            // );
           },
           error: err => {
             this.data = [];
@@ -656,6 +722,7 @@ export class ScheduledMaintenanceDetailComponent
               },
               error: err => {
                 console.log(err);
+                this.loading = false;
                 this.onLoadToast(
                   'error',
                   'ERROR',

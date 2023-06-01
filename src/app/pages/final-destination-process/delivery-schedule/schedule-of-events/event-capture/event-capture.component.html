@@ -188,17 +188,21 @@
                 {{ ctrlButtons.printOffice.label }}
               </button>
             </div>
-            <div *ngIf="ctrlButtons.notificationDest.visible">
+            <div>
+              <!--*ngIf="ctrlButtons.notificationDest.visible"-->
               <button
                 class="btn btn-sm btn-secondary active"
-                [disabled]="!ctrlButtons.notificationDest.enabled">
+                [disabled]="!ctrlButtons.notificationDest.enabled"
+                (click)="notificationBtn()">
                 {{ ctrlButtons.notificationDest.label }}
               </button>
             </div>
-            <div *ngIf="ctrlButtons.closeProg.visible">
+            <div>
+              <!--*ngIf="ctrlButtons.closeProg.visible"-->
               <button
                 class="btn btn-sm btn-danger active"
-                [disabled]="!ctrlButtons.closeProg.enabled">
+                [disabled]="!ctrlButtons.closeProg.enabled"
+                (click)="closeProg()">
                 {{ ctrlButtons.closeProg.label }}
               </button>
             </div>

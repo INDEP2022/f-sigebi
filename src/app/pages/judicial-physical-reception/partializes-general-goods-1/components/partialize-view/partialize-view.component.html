@@ -4,21 +4,13 @@
   <div class="row">
     <div class="col-md-4">
       <form-field [control]="form.get('cantPar')" label="Veces a Parcializar">
-        <input
-          type="number"
-          class="form-control"
-          formControlName="cantPar"
-          min="1" />
+        <input class="form-control" formControlName="cantPar" maxlength="3" />
       </form-field>
     </div>
 
     <div class="col-md-4">
       <form-field [control]="form.get('cantidad')" label="Cantidad">
-        <input
-          type="number"
-          class="form-control"
-          formControlName="cantidad"
-          min="1" />
+        <input class="form-control" formControlName="cantidad" maxlength="20" />
       </form-field>
     </div>
 
@@ -52,26 +44,37 @@
       <div [class]="statePartialize">
         <div (click)="pressed(1)">1</div>
         <app-partialize-button
-          [version]="version"
           [press]="pressPartialize"
+          (notFilledRow)="loading = false"
           (filledRow)="filledRow()"></app-partialize-button>
       </div>
       <div [class]="stateApply">
         <div (click)="pressed(2)">2</div>
         <app-apply-button
-          [version]="version"
-          [press]="pressApply"></app-apply-button>
+          [press]="pressApply"
+          (fillPagedRow)="filledRow()"></app-apply-button>
       </div>
       <!-- Second Step -->
     </div>
   </div>
 </form>
 <div
+  *ngIf="firstCase"
   class="pt-2 scroll-table table-responsive"
   [class]="loading ? 'table-loading' : ''">
   <ng2-smart-table
     class="col-md-12"
-    [settings]="settingsGoods"
+    [settings]="settingsGoddFirstCase"
+    [source]="pagedBienesPar"
+    (delete)="deleteRow($event)"></ng2-smart-table>
+</div>
+<div
+  *ngIf="!firstCase"
+  class="pt-2 scroll-table table-responsive"
+  [class]="loading ? 'table-loading' : ''">
+  <ng2-smart-table
+    class="col-md-12"
+    [settings]="settingsGoodsSecondCase"
     [source]="pagedBienesPar"
     (delete)="deleteRow($event)"></ng2-smart-table>
 </div>

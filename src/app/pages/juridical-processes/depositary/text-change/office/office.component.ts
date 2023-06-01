@@ -1,9 +1,10 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
-import { BsModalService } from 'ngx-bootstrap/modal';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, catchError, Observable, tap, throwError } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import {
   FilterParams,
   ListParams,
@@ -11,8 +12,11 @@ import {
 } from 'src/app/common/repository/interfaces/list-params';
 import { _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
+import { ILegend } from 'src/app/core/models/catalogs/legend.model';
+import { IDictationCopies } from 'src/app/core/models/ms-dictation/dictation-model';
 import { IAttachedDocument } from 'src/app/core/models/ms-documents/attached-document.model';
 import {
+  ICopiesJobManagementDto,
   IdatosLocales,
   IGoodJobManagement,
   ImanagementOffice,
@@ -20,6 +24,7 @@ import {
 import { ISegUsers } from 'src/app/core/models/ms-users/seg-users-model';
 import { DynamicCatalogsService } from 'src/app/core/services/dynamic-catalogs/dynamiccatalog.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
+import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
 import { AtachedDocumentsService } from 'src/app/core/services/ms-documents/attached-documents.service';
 import { GoodsJobManagementService } from 'src/app/core/services/ms-office-management/goods-job-management.service';
 import { JobsService } from 'src/app/core/services/ms-office-management/jobs.service';
@@ -27,6 +32,9 @@ import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import Swal from 'sweetalert2';
+import { EXTERNOS_COLUMS } from '../tabla-modal/tableUserExt';
+import { ModalPersonaOficinaComponent } from './modal-persona-oficina/modal-persona-oficina.component';
 
 @Component({
   selector: 'app-office',
@@ -52,6 +60,10 @@ export class OfficeComponent extends BasePage implements OnInit {
   form: FormGroup = new FormGroup({});
   nameUserDestinatario: ISegUsers;
   verBoton: boolean = false;
+  filtroPersonaExt: ICopiesJobManagementDto[] = [];
+
+  tipoImpresion: string;
+
   //===================
   users$ = new DefaultSelect<ISegUsers>();
   @Input() oficnum: number | string;
@@ -59,6 +71,11 @@ export class OfficeComponent extends BasePage implements OnInit {
   valLocal: IdatosLocales;
   year: number;
   users$$ = new DefaultSelect<ISegUsers>();
+  users_1 = new DefaultSelect<ISegUsers>();
+  //==========================================
+  totalItems: number;
+
+  params = new BehaviorSubject<ListParams>(new ListParams());
 
   constructor(
     private fb: FormBuilder,
@@ -69,32 +86,37 @@ export class OfficeComponent extends BasePage implements OnInit {
     private siabServiceReport: SiabService,
     private usersService: UsersService,
     private AtachedDocumenServ: AtachedDocumentsService,
-    private dynamicCatalogsService: DynamicCatalogsService
+    private dynamicCatalogsService: DynamicCatalogsService,
+    private dictationService: DictationService,
+    private modalRef: BsModalRef
   ) {
     super();
+
+    this.settings.columns = EXTERNOS_COLUMS;
+    this.settings = {
+      ...this.settings,
+      hideSubHeader: false,
+      actions: {
+        columnTitle: 'Acciones',
+        edit: true,
+        delete: false,
+        add: false,
+        position: 'left',
+      },
+    };
   }
 
   ngOnInit(): void {
     this.year = new Date().getFullYear();
+
     this.options = [
       { value: null, label: 'Seleccione un valor' },
       { value: 'E', label: 'PERSONA EXTERNA' },
       { value: 'I', label: 'PERSONA INTERNA' },
     ];
+
     this.loadUserDestinatario();
     this.buildForm();
-    this.form.get('typePerson').valueChanges.subscribe(value => {
-      if (value === 'E') {
-        this.form.get('senderUser').setValue(null);
-      } else {
-        this.form.get('senderUser').setValue('');
-      }
-    });
-    this.form.get('typePerson_I').valueChanges.subscribe(value => {
-      if (value === 'E') {
-        this.form.get('senderUser_I').setValue(null);
-      }
-    });
   }
 
   /**
@@ -142,12 +164,13 @@ export class OfficeComponent extends BasePage implements OnInit {
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
       ],
-      typePerson: [null, [Validators.required]],
+      typePerson: [null, null],
       senderUser: [null, null],
-      personaExt: [null, [Validators.required]],
-      typePerson_I: [null, [Validators.required]],
+      personaExt: [null, null],
+      typePerson_I: [null, null],
       senderUser_I: [null, null],
-      personaExt_I: [null, [Validators.required]],
+      personaExt_I: [null, null],
+      extPersonArray: this.fb.array([]),
     });
   }
 
@@ -156,7 +179,10 @@ export class OfficeComponent extends BasePage implements OnInit {
       .getAllOfficialDocument(filterParams.getValue().getParams())
       .subscribe({
         next: resp => {
-          console.warn('1: >===>> ', JSON.stringify(resp));
+          console.warn('OFICIO 1: >===>> ', JSON.stringify(resp));
+
+          this.tipoImpresion = resp.data[0].jobType;
+
           this.form
             .get('proceedingsNumber')
             .setValue(resp.data[0].proceedingsNumber);
@@ -186,17 +212,6 @@ export class OfficeComponent extends BasePage implements OnInit {
           this.onLoadToast('error', 'error', err.error.message);
         },
       });
-  }
-
-  /*   Evento que se ejecuta para llenar los campos con el nombre de los destinatarios
-========================================================================================*/
-  getDescUser(control: string, event: Event) {
-    this.nameUserDestinatario = JSON.parse(JSON.stringify(event));
-    if (control === 'control') {
-      this.form.get('personaExt').setValue(this.nameUserDestinatario.name);
-    } else {
-      this.form.get('personaExt_I').setValue(this.nameUserDestinatario.name);
-    }
   }
 
   /*   Evento que se ejecuta para llenar el combo con los destinatarios
@@ -254,25 +269,6 @@ export class OfficeComponent extends BasePage implements OnInit {
     }
   }
 
-  /*   Evento que se ejecuta para llenar los parametros de las personas involucradas si son externos o internos
-===============================================================================================================*/
-  getPersonaExt_Int(params: _Params) {
-    this.serviceOficces.getPersonaExt_Int(params).subscribe({
-      next: resp => {
-        this.nrSelecttypePerson = resp.data[0].personExtInt;
-        this.nrSelecttypePerson_I = resp.data[1].personExtInt;
-        this.form.get('typePerson').setValue(this.nrSelecttypePerson);
-        this.form.get('typePerson_I').setValue(this.nrSelecttypePerson_I);
-
-        this.form.get('personaExt').setValue(resp.data[0].nomPersonExt);
-        this.form.get('personaExt_I').setValue(resp.data[0].nomPersonExt);
-      },
-      error: errror => {
-        this.onLoadToast('error', 'Error', errror.error.message);
-      },
-    });
-  }
-
   /*   Evento que se ejecuta para llenar los parametros con los que se va a realizar la busqueda
 ================================================================================================*/
   buscarOficio() {
@@ -325,12 +321,13 @@ export class OfficeComponent extends BasePage implements OnInit {
           );
       }
     }
-
+    /*
+  Se oculto hast que definamos el endopint para la consulta */
     this.filterParamsLocal
       .getValue()
       .addFilter(
-        'fecha_inserto',
-        this.year + '-01-01' + ':' + this.year + '-12-31',
+        'insertDate',
+        this.year + '-01-01' + ',' + this.year + '-12-31',
         SearchFilter.BTW
       );
 
@@ -356,10 +353,19 @@ export class OfficeComponent extends BasePage implements OnInit {
   /*       Crea el archivo que se va desplegar la información 
 =======================================================================*/
   public confirm() {
+    if (this.tipoImpresion === 'EXTERNO') {
+      this.reporteInterno();
+    } else {
+      this.reporteExterno();
+    }
+  }
+
+  reporteInterno() {
     const params = {
       no_of_ges: this.form.value.managementNumber,
     };
-    this.siabServiceReport.fetchReport('RGEROFGESTION_EXT', params).subscribe({
+
+    this.siabServiceReport.fetchReport('RGEROFGESTION', params).subscribe({
       next: response => {
         const blob = new Blob([response], { type: 'application/pdf' });
         const url = URL.createObjectURL(blob);
@@ -379,6 +385,30 @@ export class OfficeComponent extends BasePage implements OnInit {
     this.cleanfields();
   }
 
+  reporteExterno() {
+    const params = {
+      PNOOFICIO: this.form.value.expedientNumber,
+      PTIPODIC: this.form.value.typeDict,
+    };
+    this.siabServiceReport.fetchReport('RGENABANDEC', params).subscribe({
+      next: response => {
+        const blob = new Blob([response], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+        let config = {
+          initialState: {
+            documento: {
+              urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+              type: 'pdf',
+            },
+          },
+          class: 'modal-lg modal-dialog-centered',
+          ignoreBackdropClick: true,
+        };
+        this.modalService.show(PreviewDocumentsComponent, config);
+      },
+    });
+  }
+
   /*Se esta revisando si se va a utilizar*/
   validaCampos(event: Event) {
     alert(this.form.value.typePerson);
@@ -395,14 +425,6 @@ export class OfficeComponent extends BasePage implements OnInit {
         this.onLoadToast('error', 'Error', err.error.message);
       },
     });
-  }
-
-  getUsers($params: ListParams) {
-    let params = new FilterParams();
-    params.page = $params.page;
-    params.limit = $params.limit;
-    params.search = $params.text;
-    this.getAllUsers(params).subscribe();
   }
 
   getUsers$($params: ListParams) {
@@ -425,14 +447,22 @@ export class OfficeComponent extends BasePage implements OnInit {
     );
   }
 
-  getAllUsers(params: FilterParams) {
+  getUsers_1($params: ListParams) {
+    let params = new FilterParams();
+    params.page = $params.page;
+    params.limit = $params.limit;
+    params.search = $params.text;
+    this.getAllUsers_1(params).subscribe();
+  }
+
+  getAllUsers_1(params: FilterParams) {
     return this.usersService.getAllSegUsers(params.getParams()).pipe(
       catchError(error => {
-        this.users$ = new DefaultSelect([], 0, true);
+        this.users_1 = new DefaultSelect([], 0, true);
         return throwError(() => error);
       }),
       tap(response => {
-        this.users$ = new DefaultSelect(response.data, response.count);
+        this.users_1 = new DefaultSelect(response.data, response.count);
       })
     );
   }
@@ -449,6 +479,26 @@ export class OfficeComponent extends BasePage implements OnInit {
       error: responseError => {
         console.log('Entra =>  ', responseError.error.message);
         this.onLoadToast('error', 'Error', responseError.error.message);
+      },
+    });
+
+    let obj = {
+      copyDestinationNumber: '',
+      typeDictamination: this.form.get('typeDict').value,
+      recipientCopy: this.form.get('typeDict').value,
+      no_Of_Dicta: this.form.get('registerNumber').value,
+      //copyDestinationNumber:this.form.get("senderUser_I").value,
+      personExtInt: this.form.get('typePerson_I').value,
+      namePersonExt: this.form.get('personaExt_I').value,
+      registerNumber: this.form.get('registerNumber').value,
+    };
+
+    this.dictationService.updateUserByOficNum(obj).subscribe({
+      next: resp => {
+        this.onLoadToast('warning', 'Info', resp[0].message);
+      },
+      error: errror => {
+        this.onLoadToast('error', 'Error', errror.error.message);
       },
     });
   }
@@ -475,6 +525,7 @@ export class OfficeComponent extends BasePage implements OnInit {
       .getPuestovalue(userDatos.positionKey)
       .subscribe({
         next: resp => {
+          // alert('  getDescUserPuesto ' + resp.data.value);
           this.form.get('charge').setValue(resp.data.value);
         },
         error: err => {
@@ -482,5 +533,148 @@ export class OfficeComponent extends BasePage implements OnInit {
           this.onLoadToast('error', 'Error', err.error.message);
         },
       });
+  }
+
+  /*   Evento que se ejecuta para llenar los parametros de las personas involucradas si son externos o internos
+===============================================================================================================*/
+  getPersonaExt_Int(params: _Params) {
+    this.serviceOficces.getPersonaExt_Int(params).subscribe({
+      next: resp => {
+        this.filtroPersonaExt = resp.data;
+
+        console.log('(((      params => ' + JSON.stringify(params) + +')))');
+        console.log('getPersonaExt_Int => ' + JSON.stringify(resp.data));
+      },
+      error: errror => {
+        this.onLoadToast('error', 'Error', errror.error.message);
+      },
+    });
+  }
+
+  /*===========================================================
+          FORMULARIO
+==============================================================*/
+
+  getDescUser(control: string, event: Event) {
+    this.nameUserDestinatario = JSON.parse(JSON.stringify(event));
+    //  alert(control);
+    if (control === 'control_I') {
+      this.form.get('personaExt_I').setValue(this.nameUserDestinatario.name);
+    } else {
+      this.form.get('personaExt').setValue(this.nameUserDestinatario.name);
+    }
+  }
+
+  getUsers($params: ListParams) {
+    let params = new FilterParams();
+    params.page = $params.page;
+    params.limit = $params.limit;
+    params.search = $params.text;
+    this.getAllUsers(params).subscribe();
+  }
+
+  getAllUsers(params: FilterParams) {
+    return this.usersService.getAllSegUsers(params.getParams()).pipe(
+      catchError(error => {
+        this.users$ = new DefaultSelect([], 0, true);
+        return throwError(() => error);
+      }),
+      tap(response => {
+        this.users$ = new DefaultSelect(response.data, response.count);
+      })
+    );
+  }
+  ///===========================================
+  insertRegistroExtCCP(data: IDictationCopies) {
+    this.dictationService.createPersonExt(data).subscribe({
+      next: resp => {
+        this.onLoadToast('warning', 'Info', resp);
+      },
+      error: errror => {
+        this.onLoadToast('error', 'Error', errror.error.message);
+      },
+    });
+  }
+
+  showDeleteAlert(legend: ILegend) {
+    this.alertQuestion(
+      'warning',
+      'Eliminar',
+      'Desea eliminar este registro?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.delete(legend.id);
+        Swal.fire('Borrado', '', 'success');
+      }
+    });
+  }
+
+  delete(id: number) {
+    this.serviceOficces.deleteCopiesJobManagement(id).subscribe({
+      next: resp => {
+        console.log('resp  =>  ' + resp);
+        this.refreshTabla();
+      },
+      error: errror => {
+        this.onLoadToast('error', 'Error', errror.error.message);
+      },
+    });
+  }
+
+  openForm(legend?: ILegend) {
+    const modalConfig = { ...MODAL_CONFIG, class: 'modal-dialog-centered' };
+    modalConfig.initialState = {
+      legend,
+      callback: (next: boolean, datos: any) => {
+        if (next) {
+          this.seteaTabla(datos);
+        }
+      },
+    };
+    this.modalService.show(ModalPersonaOficinaComponent, modalConfig);
+  }
+  close() {
+    this.modalRef.hide();
+  }
+  seteaTabla(datos: any) {
+    let dato = JSON.parse(JSON.stringify(datos));
+    console.log('JSON.stringify(datos)  =>  ' + JSON.stringify(datos));
+    let obj = {
+      managementNumber: this.form.get('managementNumber').value,
+      addresseeCopy: dato.senderUser_I,
+      delDestinationCopyNumber: 0,
+      personExtInt: dato.typePerson_I,
+      nomPersonExt: dato.personaExt_I,
+      recordNumber: this.form.get('managementNumber').value,
+    };
+    console.log('resp  =>  ' + JSON.stringify(obj));
+    this.serviceOficces.createCopiesJobManagement(obj).subscribe({
+      next: resp => {
+        console.warn(
+          ' this.serviceOficces. seteaTabla =>   ' + JSON.stringify(obj)
+        );
+
+        this.refreshTabla();
+      },
+      error: errror => {
+        this.onLoadToast('error', 'Error', errror.error.message);
+      },
+    });
+    this.refreshTabla();
+    console.log(
+      'this.filtroPersonaExt => ' + JSON.stringify(this.filtroPersonaExt)
+    );
+  }
+
+  refreshTabla() {
+    this.filterParams2
+      .getValue()
+      .addFilter(
+        'proceedingsNumber',
+        this.form.value.proceedingsNumber,
+        SearchFilter.EQ
+      );
+
+    this.getPersonaExt_Int(this.filterParams2.getValue().getParams());
   }
 }

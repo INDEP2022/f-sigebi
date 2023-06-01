@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ThirdPartyAdmonEndpoints } from 'src/app/common/constants/endpoints/ms-third-party-admon-endpoints';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { HttpService } from 'src/app/common/services/http.service';
+import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IGoodPossessionThirdParty } from '../../models/ms-thirdparty-admon/third-party-admon.model';
 
@@ -16,11 +15,34 @@ export class GoodPosessionThirdpartyService extends HttpService {
   }
 
   getAll(
-    params?: ListParams | string
+    params?: _Params
   ): Observable<IListResponse<IGoodPossessionThirdParty>> {
     return this.get<IListResponse<any>>(
       ThirdPartyAdmonEndpoints.GoodPossessionThirdParty,
       params
     );
+  }
+
+  getAllDetailGoodPossessionThirdParty(params?: _Params) {
+    return this.get<
+      IListResponse<{
+        possessionNumber: number;
+        goodNumber: number;
+        steeringwheelNumber: number;
+        nbOrigin: string;
+      }>
+    >(ThirdPartyAdmonEndpoints.DetailGoodPossessionThirdParty, params);
+  }
+
+  postThirdPartyAdmonOffice(params?: _Params) {
+    return this.post<any>('aplication/thirdpartyadmonOfice', params);
+  }
+
+  postThirdPartyAdmonKey(_params?: _Params) {
+    return this.post<any>('aplication/thirdpartyadmonKey', _params);
+  }
+
+  updateThirdPartyAdmonOffice(id: any, params?: _Params) {
+    return this.put<any>(`good-possession-thirdparty/${id}`, params);
   }
 }

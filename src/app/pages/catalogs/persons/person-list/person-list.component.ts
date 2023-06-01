@@ -96,17 +96,22 @@ export class PersonListComponent extends BasePage implements OnInit {
       next: response => {
         console.log(response);
         if (response.data != null) {
-          this.getEntFed(response)
-            .then(() => {
-              this.getTurn();
-            })
-            .catch(error => {
-              console.error('Ocurrió un error al ejecutar el bucle:', error);
-              this.data.load([]);
-              this.data.refresh();
-              this.loading = false;
-              this.totalItems = response.count;
-            });
+          // this.getEntFed(response)
+          //   .then(() => {
+          //     this.getTurn();
+          //   })
+          //   .catch(error => {
+          //     console.error('Ocurrió un error al ejecutar el bucle:', error);
+          //     this.data.load([]);
+          //     this.data.refresh();
+          //     this.loading = false;
+          //     this.totalItems = response.count;
+          //   });
+          this.person = response.data;
+          this.data.load(this.person);
+          this.data.refresh();
+          this.totalItems = response.count;
+          this.loading = false;
         } else {
           this.data.load([]);
           this.data.refresh();
