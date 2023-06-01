@@ -3,7 +3,9 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { addDays, endOfMonth, format, subDays } from 'date-fns';
 import { LocalDataSource } from 'ng2-smart-table';
+import { BsModalService } from 'ngx-bootstrap/modal';
 import { takeUntil } from 'rxjs';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import {
   FilterParams,
@@ -48,6 +50,7 @@ import {
 } from 'src/app/core/shared/patterns';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { EdoFisicoComponent } from '../confiscated-records/edo-fisico/edo-fisico.component.component';
 
 @Component({
   selector: 'app-sale-cancellation',
@@ -193,9 +196,13 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
   isEnableObservaciones = true;
   isEnableRecibe = true;
   isEnableTestigo = true;
+  warehouseSelect = new DefaultSelect();
+  vaultSelect = new DefaultSelect();
   reopening = false;
   newAct = true;
-  isSelectGood = false
+  isSelectGood = false;
+  isBoveda = false;
+  isAlmacen = false;
   dataEdoFisico = new DefaultSelect(['MALO', 'REGULAR', 'BUENO']);
 
   constructor(
@@ -216,7 +223,8 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
     private serviceGoodQuery: GoodsQueryService,
     private serviceProgrammingGood: ProgrammingGoodService,
     private serviceWarehouse: WarehouseFilterService,
-    private serviceVault: SafeService
+    private serviceVault: SafeService,
+    private modalService: BsModalService,
   ) {
     super();
   }
@@ -708,7 +716,34 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
                 return e;
               }
             })
-          );
+          ).then(res => {
+            for (let item of this.goodData) {
+              const goodClass = item.goodClassNumber;
+
+              const newParams = `filter.numClasifGoods=$eq:${goodClass}`;
+              this.serviceSssubtypeGood
+                .getFilter(newParams)
+                .subscribe(res => {
+                  const type = JSON.parse(
+                    JSON.stringify(res.data[0]['numType'])
+                  );
+                  const subtype = JSON.parse(
+                    JSON.stringify(res.data[0]['numSubType'])
+                  );
+
+                  const no_type = parseInt(type.id);
+                  const no_subtype = parseInt(subtype.id);
+                  //Validar Admin y tipo
+
+                  if (no_type === 7 || (no_type === 5 && no_subtype === 16)) {
+                    this.isBoveda = true;
+                  }
+                  if (no_type === 5) {
+                    this.isAlmacen = true;
+                  }
+                });
+            }
+          });
         }
         this.dataGoodAct.load(this.goodData);
 
@@ -2067,6 +2102,66 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
         'Error en acta 2',
         'Necesita registrar un acta 2 correcto y que su estatus sea abierto o cerrado'
       );
+    }
+  }
+
+  getWarehouses(params: ListParams) {
+    const paramsF = new FilterParams();
+    paramsF.addFilter('description', params.text, SearchFilter.ILIKE);
+    this.serviceWarehouse.getWarehouseFilter(paramsF.getParams()).subscribe(
+      res => {
+        this.warehouseSelect = new DefaultSelect(res.data, res.count);
+        console.log(res);
+      },
+      err => {
+        console.log(err);
+      }
+    );
+  }
+
+  getSafeVault(params: ListParams) {
+    this.serviceVault
+      .getAllFilter(`filter.description=$ilike:${params.text}`)
+      .subscribe(res => {
+        this.vaultSelect = new DefaultSelect(res.data, res.count);
+        console.log(this.vaultSelect);
+      });
+  }
+
+  openEdoFisico() {
+    console.log(this.dataGoodAct['data']);
+    if (this.goodData.length === 0) {
+      this.alert(
+        'warning',
+        'No hay bienes en el acta',
+        'No tiene bienes para poder modificar el estado físico'
+      );
+    } else {
+      let modalConfig = MODAL_CONFIG;
+      modalConfig = {
+        initialState: {
+          goodData: this.dataGoodAct['data'].filter(item => item.indEdoFisico),
+          callback: (next: any) => {
+            console.log(next);
+            for (let item of next) {
+              console.log(item);
+              this.dataGoodAct.load(
+                this.dataGoodAct['data'].map((e: any) => {
+                  if (e.id === item.id) {
+                    console;
+                    console.log('cambio');
+                    return { ...e, [`val${item.columna}`]: item.estadoFisico };
+                  } else {
+                    return e;
+                  }
+                })
+              );
+            }
+          },
+        },
+        class: 'modal-lg modal-dialog-centered',
+      };
+      this.modalService.show(EdoFisicoComponent, modalConfig);
     }
   }
 }

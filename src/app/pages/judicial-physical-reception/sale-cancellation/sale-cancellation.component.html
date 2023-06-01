@@ -585,29 +585,38 @@
       <hr class="row" />
       <div class="row">
         <div class="col-md-12">
-          <div class="col-md-3">
-            <form-field
-              [control]="form.get('noAlmacen')"
-              label="No&#46; Almac&eacute;n">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="noAlmacen" />
-            </form-field>
-          </div>
-          <div class="col-md-3">
-            <form-field
-              [control]="form.get('noBoveda')"
-              label="No&#46; B&oacute;veda">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="noBoveda" />
-            </form-field>
+          <div class="col-md-6">
+            <div class="row">
+              <div class="col-md-9">
+                <form-field [control]="form.get('noAlmacen')">
+                  <ngx-select
+                    (fetchItems)="getWarehouses($event)"
+                    label="Almac&eacute;n"
+                    bindLabel="description"
+                    control="noAlmacen"
+                    [form]="form"
+                    [data]="warehouseSelect"></ngx-select>
+                </form-field>
+              </div>
+            </div>
+  
+            <div class="row">
+              <div class="col-md-9">
+                <form-field [control]="form.get('noBoveda')">
+                  <ngx-select
+                    (fetchItems)="getSafeVault($event)"
+                    control="noBoveda"
+                    bindLabel="description"
+                    label="B&oacute;veda"
+                    [form]="form"
+                    [data]="vaultSelect"></ngx-select>
+                </form-field>
+              </div>
+            </div>
           </div>
           <div class="row">
             <div class="col-md-12">
-              <button type="button" class="my-1 mx-2" size="small">
+              <button type="button" class="my-1 mx-2" size="small" (click)="openEdoFisico()">
                 Espec&iacute;fica Edo&#46; F&iacute;sico
               </button>
               <button type="button" class="my-1 mx-2" size="small">
