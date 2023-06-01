@@ -9,7 +9,7 @@ export interface IGoodsByProceeding {
   descripcion: string;
   tipo_bien: string;
   no_expediente: string;
-  cantidad: string;
+  cantidad: string | number;
   fec_aprobacion_x_admon: string;
   fec_indica_usuario_aprobacion: string;
   cve_evento: string;
