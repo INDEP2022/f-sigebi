@@ -257,7 +257,7 @@ Obtiene los filtros y en base a ellos se hace la búsqueda
         this.filterParamsLocal
           .getValue()
           .addFilter(
-            'registerNumber',
+            'numberOfDicta',
             this.form.get('registerNumber').value,
             SearchFilter.EQ
           );
@@ -281,7 +281,7 @@ Obtiene los filtros y en base a ellos se hace la búsqueda
         this.filterParamsLocal
           .getValue()
           .addFilter(
-            'typeDict',
+            'typeDictamination',
             this.form.get('typeDict').value,
             SearchFilter.EQ
           );
@@ -315,8 +315,20 @@ Obtiene los filtros y en base a ellos se hace la búsqueda
           '-31',
         SearchFilter.BTW
       );
-    this.onEnterSearch(this.filterParamsLocal);
-    this.verBoton = true;
+    //Valida los campos de búsqueda
+
+    if (
+      this.form.get('expedientNumber').value ||
+      this.form.get('registerNumber').value ||
+      this.form.get('wheelNumber').value ||
+      this.form.get('typeDict').value ||
+      this.form.get('key').value
+    ) {
+      this.onEnterSearch(this.filterParamsLocal);
+      this.verBoton = true;
+    } else {
+      this.onLoadToast('info', 'Registro', 'Se requiere un filtro de búsqueda');
+    }
   }
 
   onEnterSearch(filterParams: BehaviorSubject<FilterParams>) {
