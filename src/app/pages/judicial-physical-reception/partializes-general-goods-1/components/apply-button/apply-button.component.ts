@@ -702,7 +702,7 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
                 vobservaciones = 'Parcializado del bien: ' + this.good.goodId;
                 // const delayedMessage = (message: string, delayedTime: number) =>
                 //   EMPTY.pipe(startWith(message), delay(delayedTime));
-                return this.goodService.getById(this.good.goodId);
+                // return this.goodService.getById(this.good.goodId);
                 return this.insertaBien(
                   descriptions.item,
                   this.good,
