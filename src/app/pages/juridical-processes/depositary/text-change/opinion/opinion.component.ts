@@ -192,7 +192,8 @@ export class OpinionComponent extends BasePage implements OnInit, OnChanges {
     private usersService: UsersService,
     private service: BankAccountService,
     private dynamicCatalogsService: DynamicCatalogsService,
-    private jobDictumTextsServices: JobDictumTextsService
+    private jobDictumTextsServices: JobDictumTextsService,
+    private dictationService_1: DictationService
   ) {
     super();
 
@@ -353,7 +354,9 @@ Obtiene los filtros y en base a ellos se hace la búsqueda
           }
         },
         error: err => {
-          this.onLoadToast('error', 'error', err.error.message);
+          this.onLoadToast('info', 'Registro', 'No se obtuvo información');
+          console.log('error', 'Error', err.error.message);
+          // this.onLoadToast('error', 'error', err.error.message);
         },
       });
   }
@@ -419,7 +422,9 @@ carga la  información de la parte media de la página
         this.getPartBodyInputs();
       },
       error: error => {
-        this.onLoadToast('info', 'info', error.error.message);
+        this.onLoadToast('info', 'Registro', 'No se obtuvo información');
+        console.log('error', 'Error', error.error.message);
+        // this.onLoadToast('info', 'info', error.error.message);
       },
     });
   }
@@ -442,7 +447,9 @@ carga la  información de la parte media de la página
           let datos: IDictationCopies[] = resp.data;
         },
         error: error => {
-          this.onLoadToast('error', 'error', error.error.message);
+          this.onLoadToast('info', 'Registro', 'No se obtuvo información');
+          console.log('error', 'Error', error.error.message);
+          //this.onLoadToast('error', 'error', error.error.message);
         },
       });
   }
@@ -450,7 +457,7 @@ carga la  información de la parte media de la página
   getPersonaExt_Int(d: string, datos: any) {
     this.filterParams.getValue().removeAllFilters();
     let variable: IDictation = JSON.parse(JSON.stringify(datos));
-
+    this.refreshTabla();
     this.filterParams
       .getValue()
       .addFilter('id', this.form.get('expedientNumber').value, SearchFilter.EQ);
@@ -462,7 +469,9 @@ carga la  información de la parte media de la página
           this.dataExt = resp.data;
         },
         error: errror => {
-          this.onLoadToast('error', 'Error', errror.error.message);
+          this.onLoadToast('info', 'Registro', 'No se obtuvo información');
+          console.log('error', 'Error', errror.error.message);
+          // this.onLoadToast('error', 'Error', errror.error.message);
         },
       });
   }
@@ -590,7 +599,9 @@ carga la  información de la parte media de la página
         this.onLoadToast('info', 'info', resp.message[0]);
       },
       error: err => {
-        this.onLoadToast('error', 'Error', err.error.message);
+        this.onLoadToast('info', 'Registro', 'No se obtuvo información');
+        console.log('error', 'Error', err.error.message);
+        // this.onLoadToast('error', 'Error', err.error.message);
       },
     });
 
@@ -614,7 +625,7 @@ carga la  información de la parte media de la página
         this.insertTextos(data);
       },
     });
-
+    /*
     let obj = {
       id: this.idCopias,
       copyDestinationNumber: this.copyDestinationNumber,
@@ -626,23 +637,50 @@ carga la  información de la parte media de la página
       registerNumber: this.form.get('registerNumber').value,
     };
 
-    this.dictationService.updateUserByOficNum(obj).subscribe({
+ this.dictationService_1.create(obj).subscribe({
       next: resp => {
         this.onLoadToast('warning', 'Info', resp[0].message);
       },
       error: errror => {
         this.onLoadToast('error', 'Error', errror.error.message);
       },
+    });*/
+    /*
+    this.dictationService_1.updateUserByOficNum(obj).subscribe({
+      next: resp => {
+        console.log(JSON.stringify(resp));
+        //this.onLoadToast('warning', 'Info', resp[0].message);
+      },
+      error: errror => {
+        this.insertCopies(obj); 
+      },
+    });*/
+  }
+
+  insertCopies(obj: any) {
+    this.dictationService_1.create(obj).subscribe({
+      next: resp => {
+        this.onLoadToast('warning', 'Info', resp[0].message);
+      },
+      error: errror => {
+        this.onLoadToast('info', 'Registro', 'No se obtuvo información');
+        console.log('error', 'Error', errror.error.message);
+        // this.onLoadToast('error', 'Error', errror.error.message);
+      },
     });
   }
+
   insertTextos(data: IJobDictumTexts) {
     this.jobDictumTextsServices.create(data).subscribe({
       next: resp => {
-        this.onLoadToast('success', 'success', resp.message[0]);
-        alert(resp.message[0]);
+        this.onLoadToast('success', 'Registro', resp.message[0]);
       },
       error: erro => {
-        this.onLoadToast('error', 'Error', erro.error.message);
+        if (erro.error.message == 'No se encontrarón registros.') {
+          this.onLoadToast('info', 'Registro', erro.error.message);
+        } else {
+          this.onLoadToast('info', 'Registro', erro.error.message);
+        }
       },
     });
   }
@@ -700,7 +738,9 @@ carga la  información de la parte media de la página
         },
         error: err => {
           this.form.get('charge').setValue('');
-          this.onLoadToast('error', 'Error', err.error.message);
+          this.onLoadToast('info', 'Registro', 'No se obtuvo información');
+          console.log('error', 'Error', err.error.message);
+          // this.onLoadToast('error', 'Error', err.error.message);
         },
       });
   }
@@ -794,13 +834,15 @@ carga la  información de la parte media de la página
         this.UserDestinatario = [...resp.data];
       },
       error: err => {
-        let error = '';
+        this.onLoadToast('info', 'Registro', 'No se obtuvo información');
+        console.log('error', 'Error', err.error.message);
+        /*  let error = '';
         if (err.status === 0) {
           error = 'Revise su conexión de Internet.';
           this.onLoadToast('error', 'Error', error);
         } else {
           this.onLoadToast('error', 'Error', err.error.message);
-        }
+        }*/
       },
     });
   }
@@ -828,21 +870,29 @@ carga la  información de la parte media de la página
           this.form.get('masInfo_3').setValue(resp.data[0].textoz);
         },
         error: erro => {
-          this.onLoadToast('error', 'Error', erro.error.message);
+          this.onLoadToast('info', 'info', 'No existen registros');
+          //this.onLoadToast('error', 'Error', erro.error.message);
+          console.log('error', 'Error', erro.error.message);
         },
       });
   }
 
   insertRegistroExtCCP(data: IDictationCopies) {
-    //console.log("  insertRegistroExtCCP  ");
-    //console.log(JSON.stringify(data));
-
-    this.dictationService.createPersonExt(data).subscribe({
+    // alert('insertRegistroExtCCP ' + JSON.stringify(data));
+    this.dictationService_1.createPersonExt(data).subscribe({
       next: resp => {
-        this.onLoadToast('warning', 'Info', JSON.stringify(resp));
+        this.onLoadToast('info', 'Info', 'Se inserto');
+        this.refreshTabla();
       },
       error: errror => {
-        this.onLoadToast('error', 'Error', errror.error.message);
+        this.onLoadToast('info', 'Registro', 'No se obtuvo información');
+
+        console.log('error', 'Error', errror.error.message);
+        /* if(errror.error.message=="No se encontrarón registros."){
+            this.onLoadToast('info', 'Registro', errror.error.message);}else{
+            this.onLoadToast('info', 'Registro', errror.error.message);
+            }
+        this.onLoadToast('error', 'Error', errror.error.message);*/
       },
     });
   }
@@ -866,7 +916,9 @@ carga la  información de la parte media de la página
         this.refreshTabla();
       },
       error: errror => {
-        this.onLoadToast('error', 'Error', errror.error.message);
+        this.onLoadToast('info', 'Registro', 'No se obtuvo información');
+        console.log('error', 'Error', errror.error.message);
+        // this.onLoadToast('error', 'Error', errror.error.message);
       },
     });
   }
@@ -907,16 +959,27 @@ carga la  información de la parte media de la página
     this.filterParams.getValue().removeAllFilters();
     this.filterParams
       .getValue()
-      .addFilter('id', this.form.get('expedientNumber').value, SearchFilter.EQ);
+      .addFilter(
+        'numberOfDicta',
+        this.form.get('registerNumber').value,
+        SearchFilter.EQ
+      );
+
+    console.log(
+      'refreshTabla() => ' + this.filterParams.getValue().getParams()
+    );
 
     this.dictationService
       .findUserByOficNum(this.filterParams.getValue().getParams())
       .subscribe({
         next: resp => {
           this.dataExt = resp.data;
+          console.log('refreshTabla() => ' + JSON.stringify(this.dataExt));
         },
         error: errror => {
-          this.onLoadToast('error', 'Error', errror.error.message);
+          this.onLoadToast('info', 'Registro', 'No se obtuvo información');
+          console.log('error', 'Error', errror.error.message);
+          // this.onLoadToast('error', 'Error', errror.error.message);
         },
       });
   }

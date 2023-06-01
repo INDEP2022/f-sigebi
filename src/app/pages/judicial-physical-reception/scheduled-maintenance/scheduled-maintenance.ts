@@ -99,6 +99,9 @@ export abstract class ScheduledMaintenance extends BasePageWidhtDinamicFiltersEx
         sort: false,
       },
     },
+    rowClassFunction: (row: any) => {
+      return row?.data?.statusProceedings;
+    },
     noDataMessage: 'No se encontrarón registros',
   };
   statusList = [
@@ -352,7 +355,7 @@ export abstract class ScheduledMaintenance extends BasePageWidhtDinamicFiltersEx
         },
         error: error => {
           console.log(error);
-          this.onLoadToast('error', 'No se encontraron datos');
+          // this.onLoadToast('error', 'No se encontraron datos');
           this.loading = false;
           this.data.load([]);
         },

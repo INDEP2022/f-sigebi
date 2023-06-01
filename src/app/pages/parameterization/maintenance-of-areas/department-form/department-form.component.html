@@ -7,29 +7,16 @@
       <div class="row">
         <div class="col-md-6">
           <form-field [control]="departmentForm.get('numDelegation')">
-            <ngx-select
-              [searchOnInit]="true"
-              [form]="departmentForm"
-              (fetchItems)="getDelegations($event)"
-              [data]="delegations"
-              value="id"
-              bindLabel="description"
-              label="Delegaci&oacute;n"
-              [control]="'numDelegation'"
-              (change)="onDelegationsChange($event)">
+            <ngx-select [searchOnInit]="true" [form]="departmentForm" (fetchItems)="getDelegations($event)"
+              [data]="delegations" value="id" bindLabel="description" label="Delegaci&oacute;n"
+              [control]="'numDelegation'" (change)="onDelegationsChange($event)">
             </ngx-select>
           </form-field>
         </div>
         <div class="col-md-6">
           <form-field [control]="departmentForm.get('numSubDelegation')">
-            <ngx-select
-              [form]="departmentForm"
-              (fetchItems)="getSubDelegations($event)"
-              [data]="subdelegations"
-              value="id"
-              bindLabel="description"
-              label="Sub Delegaci&oacute;n"
-              [control]="'numSubDelegation'"
+            <ngx-select [form]="departmentForm" (fetchItems)="getSubDelegations($event)" [data]="subdelegations"
+              value="id" bindLabel="description" label="Sub Delegaci&oacute;n" [control]="'numSubDelegation'"
               (change)="onSubDelegationsChange($event)">
             </ngx-select>
           </form-field>
@@ -37,29 +24,20 @@
       </div>
       <div class="row pt-5">
         <div class="col-md-6">
-          <form-field
-            [control]="departmentForm.get('id')"
-            label="Clave administrativa">
+          <form-field [control]="departmentForm.get('id')" label="Clave administrativa">
             <input type="text" class="form-control" formControlName="id" />
           </form-field>
         </div>
         <div class="col-md-6">
-          <form-field
-            [control]="departmentForm.get('dsarea')"
-            label="&Aacute;rea">
+          <form-field [control]="departmentForm.get('dsarea')" label="&Aacute;rea">
             <input type="text" class="form-control" formControlName="dsarea" />
           </form-field>
         </div>
       </div>
       <div class="row pt-5">
         <div class="col-md-12">
-          <form-field
-            [control]="departmentForm.get('description')"
-            label="Descripci&oacute;n">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="description" />
+          <form-field [control]="departmentForm.get('description')" label="Descripci&oacute;n">
+            <input type="text" class="form-control" formControlName="description" />
           </form-field>
         </div>
       </div>
@@ -121,10 +99,7 @@
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <confirm-button
-          [disabled]="departmentForm.invalid"
-          [type]="'button'"
-          (confirm)="confirm()">
+        <confirm-button [disabled]="departmentForm.invalid" [type]="'button'" (confirm)="confirm()">
         </confirm-button>
       </div>
       <div class="m-3">
