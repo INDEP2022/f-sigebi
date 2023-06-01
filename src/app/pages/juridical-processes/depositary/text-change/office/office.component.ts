@@ -61,6 +61,9 @@ export class OfficeComponent extends BasePage implements OnInit {
   nameUserDestinatario: ISegUsers;
   verBoton: boolean = false;
   filtroPersonaExt: ICopiesJobManagementDto[] = [];
+
+  tipoImpresion: string;
+
   //===================
   users$ = new DefaultSelect<ISegUsers>();
   @Input() oficnum: number | string;
@@ -176,7 +179,10 @@ export class OfficeComponent extends BasePage implements OnInit {
       .getAllOfficialDocument(filterParams.getValue().getParams())
       .subscribe({
         next: resp => {
-          console.warn('1: >===>> ', JSON.stringify(resp));
+          console.warn('OFICIO 1: >===>> ', JSON.stringify(resp));
+
+          this.tipoImpresion = resp.data[0].jobType;
+
           this.form
             .get('proceedingsNumber')
             .setValue(resp.data[0].proceedingsNumber);
@@ -347,6 +353,14 @@ export class OfficeComponent extends BasePage implements OnInit {
   /*       Crea el archivo que se va desplegar la información 
 =======================================================================*/
   public confirm() {
+    if (this.tipoImpresion === 'EXTERNO') {
+      this.reporteInterno();
+    } else {
+      this.reporteExterno();
+    }
+  }
+
+  reporteInterno() {
     const params = {
       no_of_ges: this.form.value.managementNumber,
     };
@@ -369,6 +383,30 @@ export class OfficeComponent extends BasePage implements OnInit {
       },
     });
     this.cleanfields();
+  }
+
+  reporteExterno() {
+    const params = {
+      PNOOFICIO: this.form.value.expedientNumber,
+      PTIPODIC: this.form.value.typeDict,
+    };
+    this.siabServiceReport.fetchReport('RGENABANDEC', params).subscribe({
+      next: response => {
+        const blob = new Blob([response], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+        let config = {
+          initialState: {
+            documento: {
+              urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+              type: 'pdf',
+            },
+          },
+          class: 'modal-lg modal-dialog-centered',
+          ignoreBackdropClick: true,
+        };
+        this.modalService.show(PreviewDocumentsComponent, config);
+      },
+    });
   }
 
   /*Se esta revisando si se va a utilizar*/
