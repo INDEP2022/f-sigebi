@@ -23,7 +23,8 @@
             <input
               type="number"
               class="form-control"
-              formControlName="version" />
+              formControlName="version"
+              min="0" />
           </form-field>
         </div>
 
@@ -36,53 +37,6 @@
           </form-radio>
         </div>
       </div>
-
-      <!--  <div class="row pt-5">
-        <div class="col-md-6">
-          <form-field
-            [control]="legendForm.get('userCreation')"
-            label="Creador">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="userCreation" />
-          </form-field>
-        </div>
-        <div class="col-md-6">
-          <form-field
-            [control]="legendForm.get('creationDate')"
-            label="Fecha de creación">
-            <input
-              bsDatePicker
-              type="text"
-              class="form-control"
-              formControlName="creationDate" />
-          </form-field>
-        </div>
-      </div>
-      <div class="row pt-5">
-        <div class="col-md-6">
-          <form-field
-            [control]="legendForm.get('userModification')"
-            label="Usuario que modificó">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="userModification" />
-          </form-field>
-        </div>
-        <div class="col-md-6">
-          <form-field
-            [control]="legendForm.get('modificationDate')"
-            label="Fecha de modificación">
-            <input
-              bsDatePicker
-              type="text"
-              class="form-control"
-              formControlName="modificationDate" />
-          </form-field>
-        </div> 
-      </div>-->
     </form>
   </div>
   <div footer>
