@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import {
   ChangeDetectorRef,
   Component,
@@ -83,7 +84,8 @@ export class FormSearchHandlerComponent
     // private modalRef: BsModalRef<SelectListFilteredModalComponent>,
     private changeDetectorRef: ChangeDetectorRef,
     private activatedRoute: ActivatedRoute,
-    private docDataService: DocumentsReceptionDataService
+    private docDataService: DocumentsReceptionDataService,
+    private datePipe: DatePipe
   ) {
     super();
 
@@ -107,17 +109,18 @@ export class FormSearchHandlerComponent
 
   ngOnInit(): void {
     this.autoLoad();
-    if (!this.dataObservableFn) {
-      this.filterParams.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
-        if (this.modal?.isShown) {
-          this._settings = {
-            ...this._settings,
-            hideSubHeader: false,
-          };
-          this.getData();
-        }
-      });
-    }
+    // if (!this.dataObservableFn) {
+    this.filterParams.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+      console.log(this.modal?.isShown);
+      if (this.modal?.isShown) {
+        this._settings = {
+          ...this._settings,
+          hideSubHeader: false,
+        };
+        this.getData();
+      }
+    });
+    // }
     this.settingColumns();
   }
 
@@ -126,15 +129,6 @@ export class FormSearchHandlerComponent
   }
 
   autoLoad(): void {
-    // const wheelNumber = this.activatedRoute.snapshot.queryParams['wheelNumber'];
-    // if (wheelNumber) {
-    //   this.searchOnInput = true;
-    //   this.loading = true;
-    //   this.formData = {};
-    //   this.formData['wheelNumber'] = wheelNumber;
-
-    //   this.buildFilters();
-    // }
     const wheelNumber =
       this.activatedRoute.snapshot.queryParams['wheelNumber'] || null;
     if (wheelNumber) {
@@ -195,7 +189,15 @@ export class FormSearchHandlerComponent
       ).subscribe({
         next: data => {
           if (data.count > 0) {
-            this.columns = data.data;
+            this.columns = data.data.map(item => {
+              return {
+                ...item,
+                externalOfficeDate: this.datePipe.transform(
+                  item.externalOfficeDate,
+                  'dd/MM/yyyy'
+                ),
+              };
+            });
             this.totalItems = data.count;
             this.loading = false;
             this.modalLoaded = true;
