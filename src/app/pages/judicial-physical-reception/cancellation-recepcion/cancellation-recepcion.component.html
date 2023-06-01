@@ -347,7 +347,7 @@
           <div class="col">
             <form-field
               [control]="form.get('testigo')"
-              label="Testigo de la Contratalor&iacute;a">
+              label="Testigo de la Contralor&iacute;a">
               <input
                 type="text"
                 [maxlength]="100"
@@ -430,6 +430,7 @@
             <button
               type="button"
               class="btn btn-secondary btn-sm active mr-2 ml-2"
+              [class] ="['CERRADO','CERRADA'].includes(form.get('statusProceeding').value) ? '' : 'disabled'"
               size="small"
               (click)="goCargaMasiva()">
               Carga Masiva
