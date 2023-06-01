@@ -702,7 +702,7 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
                 vobservaciones = 'Parcializado del bien: ' + this.good.goodId;
                 // const delayedMessage = (message: string, delayedTime: number) =>
                 //   EMPTY.pipe(startWith(message), delay(delayedTime));
-                return this.goodService.getById(this.good.goodId);
+                // return this.goodService.getById(this.good.goodId);
                 return this.insertaBien(
                   descriptions.item,
                   this.good,
@@ -738,11 +738,11 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
                 v_estatus,
                 v_verif_des
               );
-              // if (result !== null) {
-              //   vobserv_padre = result.vobserv_padre;
-              //   vdesc_padre = result.vdesc_padre;
-              // }
-              // await this.finishApply(vobserv_padre, vdesc_padre);
+              if (result !== null) {
+                vobserv_padre = result.vobserv_padre;
+                vdesc_padre = result.vdesc_padre;
+              }
+              await this.finishApply(vobserv_padre, vdesc_padre);
               console.log(this.good);
             }
           },
