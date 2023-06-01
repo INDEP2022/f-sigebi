@@ -35,7 +35,7 @@ export class GoodSubtypeFormComponent extends BasePage implements OnInit {
 
   private prepareForm(): void {
     this.goodSubtypeForm = this.fb.group({
-      id: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
+      id: [null],
       idTypeGood: [
         null,
         [Validators.required, Validators.pattern(NUMBERS_PATTERN)],

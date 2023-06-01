@@ -14,8 +14,8 @@
   <div body>
     <div class="row pt-4">
       <div class="col-md-12">
-        <div [class]="loading ? 'table-loading' : ''">
-          <ng-scrollbar [track]="'all'" style="min-height: 300px">
+        <div class="table-responsive">
+          <div [class]="loading ? 'table-loading' : ''">
             <ng2-smart-table
               [attr.class]="'table-bordered table-responsive'"
               class="table-responsive"
@@ -24,7 +24,7 @@
               (edit)="formDataCourt($event.data)"
               (delete)="deleteCourt($event.data.accountNumber)">
             </ng2-smart-table>
-          </ng-scrollbar>
+          </div>
         </div>
       </div>
     </div>

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { LocalDataSource } from 'ng2-smart-table';
-import { BsModalService } from 'ngx-bootstrap/modal';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import {
   ListParams,
@@ -52,13 +52,24 @@ export class BanksListComponent extends BasePage implements OnInit {
         if (change.action === 'filter') {
           let filters = change.filter.filters;
           filters.map((filter: any) => {
+            console.log(filter);
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
             /*SPECIFIC CASES*/
-            filter.field == 'id'
-              ? (searchFilter = SearchFilter.EQ)
-              : (searchFilter = SearchFilter.ILIKE);
+            switch (filter.field) {
+              case 'id':
+                searchFilter = SearchFilter.EQ;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
+
             if (filter.search !== '') {
+              console.log(
+                (this.columnFilters[field] = `${searchFilter}:${filter.search}`)
+              );
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
               delete this.columnFilters[field];
@@ -93,24 +104,26 @@ export class BanksListComponent extends BasePage implements OnInit {
   add() {
     this.openModal();
   }
-
-  openModal(context?: Partial<BanksDetailComponent>) {
-    const modalRef = this.modalService.show(BanksDetailComponent, {
-      initialState: context,
+  openModal(bank?: IBank) {
+    let config: ModalOptions = {
+      initialState: {
+        bank,
+        callback: (next: boolean) => {
+          if (next) {
+            this.params
+              .pipe(takeUntil(this.$unSubscribe))
+              .subscribe(() => this.getBanks());
+          }
+        },
+      },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
-    });
-    modalRef.content.refresh.subscribe(next => {
-      if (next) {
-        this.params
-          .pipe(takeUntil(this.$unSubscribe))
-          .subscribe(() => this.getBanks());
-      }
-    });
+    };
+    this.modalService.show(BanksDetailComponent, config);
   }
 
   edit(bank: IBank) {
-    this.openModal({ edit: true, bank });
+    this.openModal(bank);
   }
 
   showDeleteAlert(bank: IBank) {

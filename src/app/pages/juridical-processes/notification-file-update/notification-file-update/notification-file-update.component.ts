@@ -1,6 +1,12 @@
 // FIXME: Poner tabla
 /** BASE IMPORT */
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  OnDestroy,
+  OnInit,
+  Output,
+} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 import { ActivatedRoute } from '@angular/router';
@@ -34,11 +40,14 @@ export class NotificationFileUpdateComponent
   extends BasePage
   implements OnInit, OnDestroy
 {
+  @Output() formSubmitted = new EventEmitter<any>();
+  formData: any;
   override loading: boolean = true;
-
   totalItems: number = 0;
   dataFactGen: INotification[] = [];
+  verBoton: boolean = false;
   params = new BehaviorSubject<ListParams>(new ListParams());
+  filterParamsLocal = new BehaviorSubject<FilterParams>(new FilterParams());
 
   public form: FormGroup;
 
@@ -101,22 +110,39 @@ export class NotificationFileUpdateComponent
   onKeyPress(event: KeyboardEvent) {
     if (event.key === 'Enter') {
       this.onLoadListNotifications();
+      this.verBoton = true;
     }
   }
 
   onLoadListNotifications() {
+    if (this.form.get('noExpediente').value != null) {
+      this.params
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe(() => this.getFilterExpedientNumber());
+      this.verBoton = false;
+    } else {
+      this.verBoton = true;
+      this.loading = false;
+    }
+  }
+
+  getFilterExpedientNumber() {
     const param = new FilterParams();
     const params = new ListParams();
+
     param.addFilter('expedientNumber', this.form.get('noExpediente').value);
     this.notificationService.getAllFilter(param.getParams()).subscribe({
       next: data => {
         this.dataFactGen = data.data;
+        //console.log(data.count);
+        this.totalItems = data.count;
         // this.dataFactGen[0].description = data.data[0].departament.description;
         this.loading = false;
       },
-      error: () => {
+      error: err => {
         this.dataFactGen = [];
         this.loading = false;
+        this.onLoadToast('error', 'Error', err.error.message);
       },
     });
   }
@@ -147,6 +173,7 @@ export class NotificationFileUpdateComponent
         if (next) this.getDicts();
       },
     };
+    //this.formSubmitted.emit(this.formData);
     this.modalService.show(EditFormComponent, modalConfig);
   }
 
@@ -164,6 +191,7 @@ export class NotificationFileUpdateComponent
   }
 
   cleanExpediente() {
+    this.verBoton = true;
     this.form.get('noExpediente').setValue('');
   }
 }

@@ -4,13 +4,13 @@
   </div>
   <div body>
     <form class="form-material" [formGroup]="form">
-      <div class="row">
+      <div class="row mb-4">
         <div class="col-md-4">
           <div class="row">
             <div class="col-md-9">
               <button
                 id="expedient-number"
-                class="btn btn-primary btn-sm active"
+                class="btn btn-primary btn-sm active disabled"
                 (click)="goodsByExpediente()">
                 Buscar
               </button>
@@ -41,18 +41,34 @@
                 [disabled]="!prevProce"
                 class="btn btn-secondary btn-sm active mr-2"
                 (click)="prevProceeding()">
-                Anterior
+                <i class="fa fa-angle-left"></i>
               </button>
+              <span class="mr-3 ml-3"
+                >{{
+                  numberProceeding + 1 > proceedingData.length
+                    ? 'Nuevo'
+                    : numberProceeding + 1
+                }}
+                {{
+                  numberProceeding + 1 > proceedingData.length ? null : ' - '
+                }}
+                {{
+                  numberProceeding + 1 > proceedingData.length
+                    ? null
+                    : proceedingData.length
+                }}</span
+              >
               <button
                 class="btn btn-secondary btn-sm active"
                 [disabled]="!nextProce"
                 (click)="nextProceeding()">
-                Siguiente
+                <i class="fa fa-angle-right"></i>
               </button>
             </div>
           </div>
         </div>
       </div>
+      <hr class="row" />
       <div class="row mb-3 mt-3">
         <div class="col-md-4">
           <div class="col-md-9">

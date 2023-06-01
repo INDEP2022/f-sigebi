@@ -2,11 +2,7 @@
   <div class="row">
     <div class="col-md-4" style="display: flex; column-gap: 15px">
       <form-field [control]="form.get('noBien')" label="N° de bien">
-        <input
-          type="number"
-          class="form-control"
-          formControlName="noBien"
-          min="1" />
+        <input class="form-control" formControlName="noBien" maxlength="10" />
       </form-field>
       <button
         [disabled]="formLoading"

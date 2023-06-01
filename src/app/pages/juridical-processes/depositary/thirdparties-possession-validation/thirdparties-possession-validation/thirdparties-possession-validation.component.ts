@@ -1,22 +1,28 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, firstValueFrom } from 'rxjs';
+import { BehaviorSubject, firstValueFrom, map } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
-import {
-  ListParams,
-  SearchFilter,
-} from 'src/app/common/repository/interfaces/list-params';
-import { ISentSirsae } from 'src/app/core/models/administrative-processes/history-good.model';
+import { showToast } from 'src/app/common/helpers/helpers';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { _Params } from 'src/app/common/services/http.service';
+import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
+import { IDepartment } from 'src/app/core/models/catalogs/department.model';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { INotification } from 'src/app/core/models/ms-notification/notification.model';
+import {
+  IAccesTrackingXArea,
+  IUsersTracking,
+} from 'src/app/core/models/ms-security/pup-user.model';
 import { IGoodPossessionThirdParty } from 'src/app/core/models/ms-thirdparty-admon/third-party-admon.model';
 import { ISegUsers } from 'src/app/core/models/ms-users/seg-users-model';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { DepartamentService } from 'src/app/core/services/catalogs/departament.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
-import { HistoryGoodService } from 'src/app/core/services/ms-history-good/history-good.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
+import { SecurityService } from 'src/app/core/services/ms-security/security.service';
 import { GoodPosessionThirdpartyService } from 'src/app/core/services/ms-thirdparty-admon/good-possession-thirdparty.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -102,13 +108,20 @@ export class ThirdpartiesPossessionValidationComponent
 
     columns: GOODS_COLUMNS,
   };
-  dataTableBienesOficio: IGood[] = [];
+  dataTableBienesOficio: {
+    possessionNumber: number;
+    goodNumber: number;
+    steeringwheelNumber: number;
+    nbOrigin: string;
+    status?: any;
+    description?: string;
+  }[] = [];
 
   expedientNumber: number = 0;
-  public form: FormGroup;
+  // public form: FormGroup;
   // public formCcpOficio: FormGroup;
   public noExpediente = new FormControl(null);
-  public formGood: FormGroup;
+  // public formGood: FormGroup;
   totalItemsNotificaciones: number = 0;
 
   isLoadingGood: boolean = false;
@@ -116,15 +129,18 @@ export class ThirdpartiesPossessionValidationComponent
   totalItemsGood: number = 0;
 
   constructor(
-    private fb: FormBuilder,
+    // private fb: FormBuilder,
     private notificationService: NotificationService,
     private goodService: GoodService,
     private siabService: SiabService,
     private modalService: BsModalService,
     private sanitizer: DomSanitizer,
-    private historyGoodService: HistoryGoodService,
+    // private historyGoodService: HistoryGoodService,
     private goodPosessionThirdpartyService: GoodPosessionThirdpartyService,
-    private userService: UsersService
+    private userService: UsersService,
+    private authService: AuthService,
+    private securityService: SecurityService,
+    private departmentService: DepartamentService
   ) {
     super();
   }
@@ -162,12 +178,12 @@ export class ThirdpartiesPossessionValidationComponent
   }
 
   private prepareForm() {
-    this.form = this.fb.group({
-      wheelNumber: '',
-      officeExternalKey: [''],
-      addressee: [''],
-      texto: '',
-    });
+    // this.form = this.fb.group({
+    //   wheelNumber: '',
+    //   officeExternalKey: [''],
+    //   addressee: [''],
+    //   texto: '',
+    // });
     // this.noExpediente = this.fb.group({
     //   noExpediente: '',
     // });
@@ -176,24 +192,24 @@ export class ThirdpartiesPossessionValidationComponent
     //   ccp2: ['', [Validators.pattern(STRING_PATTERN)]],
     //   firma: ['', [Validators.pattern(STRING_PATTERN)]],
     // });
-    this.formGood = this.fb.group({
-      delegationCloseNumber: [''],
-      numClueNavy: [''],
-      closingDate: [''],
-    });
+    // this.formGood = this.fb.group({
+    //   delegationCloseNumber: [''],
+    //   numClueNavy: [''],
+    //   closingDate: [''],
+    // });
   }
 
-  detailGoodPosessionThirdParty: {
-    possessionNumber: number;
-    goodNumber: number;
-    steeringwheelNumber: number;
-    nbOrigin: string;
-    status?: any;
-    description?: string;
-  };
+  // detailGoodPosessionThirdParty: {
+  //   possessionNumber: number;
+  //   goodNumber: number;
+  //   steeringwheelNumber: number;
+  //   nbOrigin: string;
+  //   status?: any;
+  //   description?: string;
+  // };
 
   formPositionThirdParty = new FormGroup({
-    closingDate: new FormControl(''),
+    closingDate: new FormControl(null),
     delegationCloseNumber: new FormControl(null),
     jobKey: new FormControl(''),
     nbOrigin: new FormControl(''),
@@ -201,12 +217,13 @@ export class ThirdpartiesPossessionValidationComponent
     possessionNumber: new FormControl(null),
     steeringwheelNumber: new FormControl(null),
     text: new FormControl(''),
-    usrAddressee: new FormControl(''),
-    usrCcp1: new FormControl(''),
-    usrCcp2: new FormControl(''),
-    usrResponsible: new FormControl(''),
+    usrAddressee: new FormControl(null, Validators.required),
+    usrCcp1: new FormControl(null, Validators.required),
+    usrCcp2: new FormControl(null, Validators.required),
+    usrResponsible: new FormControl(null, Validators.required),
+    addressee: new FormControl(null),
   });
-  // goodPosessionThirdParty: IGoodPossessionThirdParty;
+
   getGoodsPosessionThird() {
     const wheelNumber = this.notificationSelected.wheelNumber;
     if (!wheelNumber) {
@@ -215,40 +232,30 @@ export class ThirdpartiesPossessionValidationComponent
     const queryParams = `page=${1}&limit=${10}&filter.steeringwheelNumber=${wheelNumber}`;
 
     this.goodPosessionThirdpartyService.getAll(queryParams).subscribe({
-      next: data => {
-        // this.goodPosessionThirdParty = data.data[0];
-        // console.log('data', data);
-        // console.log('data');
-        this.formPositionThirdParty.patchValue({
-          ...data.data[0],
-          steeringwheelNumber: wheelNumber,
-        });
-        this.form.get('texto').setValue(data.data[0].text);
-        this.form.get('officeExternalKey').setValue(data.data[0].jobKey);
-        this.formGood
-          .get('delegationCloseNumber')
-          .setValue(data.data[0].delegationCloseNumber);
-        this.formGood.get('numClueNavy').setValue(data.data[0].numClueNavy);
-        this.formGood.get('closingDate').setValue(data.data[0].closingDate);
-        if (data.data[0].possessionNumber) {
+      next: dataGoodPosessionThirdParty => {
+        const goodPosessionThirdParty = dataGoodPosessionThirdParty.data[0];
+        this.formPositionThirdParty.patchValue(goodPosessionThirdParty);
+        if (goodPosessionThirdParty?.possessionNumber) {
           this.goodPosessionThirdpartyService
             .getAllDetailGoodPossessionThirdParty(
-              'filter.possessionNumber=' + data.data[0].possessionNumber
+              'filter.possessionNumber=' +
+                goodPosessionThirdParty.possessionNumber
             )
             .subscribe({
               next: data => {
-                this.detailGoodPosessionThirdParty = data.data[0];
-                this.goodService
-                  .getById(this.detailGoodPosessionThirdParty.goodNumber)
-                  .subscribe({
-                    next: (data: any) => {
-                      console.log('data good', data);
-                      this.detailGoodPosessionThirdParty['description'] =
-                        data.data[0].description;
-                      this.detailGoodPosessionThirdParty['status'] =
-                        data.data[0].status;
-                    },
-                  });
+                console.log('data', data);
+                this.dataTableBienesOficio = data.data;
+                // this.goodService
+                //   .getById(this.detailGoodPosessionThirdParty.goodNumber)
+                //   .subscribe({
+                //     next: (data: any) => {
+                //       console.log('data good', data);
+                //       this.detailGoodPosessionThirdParty['description'] =
+                //         data.data[0].description;
+                //       this.detailGoodPosessionThirdParty['status'] =
+                //         data.data[0].status;
+                //     },
+                //   });
               },
               error: () => {},
             });
@@ -267,8 +274,27 @@ export class ThirdpartiesPossessionValidationComponent
     });
   }
 
+  updateGoodPosessionThirdParty() {
+    const id = this.formPositionThirdParty.value.usrCcp1;
+    const values = this.formPositionThirdParty.value;
+    const body = {
+      ...values,
+      usrCcp1: values.usrCcp1.usuario,
+      usrCcp2: values.usrCcp2.usuario,
+      usrResponsible: values.usrResponsible.usuario,
+      usrAddressee: values.usrAddressee.usuario,
+    };
+    delete body.addressee;
+    delete body.nbOrigin;
+    this.goodPosessionThirdpartyService
+      .updateThirdPartyAdmonOffice(id, this.formPositionThirdParty.value)
+      .subscribe({});
+  }
+
   getNotificationByWheel(params: ListParams) {
-    const wheelNumber = this.form.get('wheelNumber').value;
+    const wheelNumber = this.formPositionThirdParty.get(
+      'steeringwheelNumber'
+    ).value;
     if (!wheelNumber) {
       return;
     }
@@ -289,10 +315,10 @@ export class ThirdpartiesPossessionValidationComponent
   }
 
   clearForm() {
-    this.form.reset();
+    this.formPositionThirdParty.reset();
     this.formPositionThirdParty.reset();
     this.noExpediente.reset();
-    this.formGood.reset();
+    // this.formGood.reset();
     this.dataTableBienes = [];
     this.dataTableBienesOficio = [];
     this.dataTableNotifications = [];
@@ -303,9 +329,9 @@ export class ThirdpartiesPossessionValidationComponent
     this.dataTableNotifications = [];
     this.dataTableBienesOficio = [];
     this.dataTableBienes = [];
-    this.form.reset();
+    // this.form.reset();
     this.formPositionThirdParty.reset();
-    this.formGood.reset();
+    // this.formGood.reset();
     this.wheelNotifications = null;
     this.getNotifications();
   }
@@ -317,9 +343,9 @@ export class ThirdpartiesPossessionValidationComponent
       this.dataTableNotifications = [];
       this.dataTableBienesOficio = [];
       this.dataTableBienes = [];
-      this.form.reset();
+      // this.form.reset();
       this.formPositionThirdParty.reset();
-      this.formGood.reset();
+      // this.formGood.reset();
       this.wheelNotifications = null;
 
       return;
@@ -361,10 +387,7 @@ export class ThirdpartiesPossessionValidationComponent
   selectRowNotification(event: any) {
     this.notificationSelected = event.data;
     this.formPositionThirdParty.reset();
-    this.detailGoodPosessionThirdParty = null;
-    this.form
-      .get('wheelNumber')
-      .setValue(this.notificationSelected.wheelNumber);
+    // this.detailGoodPosessionThirdParty = null;
     this.formPositionThirdParty
       .get('steeringwheelNumber')
       .setValue(this.notificationSelected.wheelNumber);
@@ -373,18 +396,11 @@ export class ThirdpartiesPossessionValidationComponent
   }
 
   getGoods(params: ListParams) {
-    // this.params = new BehaviorSubject<ListParams>(new ListParams());
-    // let data = this.params.value;
-    // data.page = params.page;
-    // data.limit = params.limit;
-    // const numberExpedient = this.notificationSelected.expedientNumber;
     const numberExpedient = this.noExpediente.value;
     this.dataTableBienes = [];
     const queryString = `page=${params.page}&limit=${params.limit}&filter.fileNumber=${numberExpedient}`;
-    this.getGoodsByOffice(new ListParams(), numberExpedient);
-    // if (numberExpedient) {
-    // data['filter.fileNumber'] = numberExpedient;
-    // }
+    // this.getGoodsByOffice(new ListParams(), numberExpedient);
+
     this.isLoadingGood = true;
     this.goodService.getAllFilter(queryString).subscribe({
       next: data => {
@@ -398,29 +414,18 @@ export class ThirdpartiesPossessionValidationComponent
     });
   }
 
-  getGoodsByOffice(params: ListParams, numberExpedient: number) {
-    // this.params = new BehaviorSubject<FilterParams>(new FilterParams());
-    // let data = this.params.value;
-    // data.page = params.page;
-    // data.limit = params.limit;
-    // this.params = new BehaviorSubject<FilterParams>(new FilterParams());
-    // let data = this.params.value;
-    // data.page = params.page;
-    // data.limit = params.limit;
-
-    // data.addFilter('status', 'STI');
-    // data.addFilter('fileNumber', numberExpedient);
-    const queryString = `page=${params.page}&limit=${params.limit}&filter.fileNumber=${numberExpedient}&filter.status=STI`;
-    this.dataTableBienesOficio = [];
-    this.goodService.getAllFilter(queryString).subscribe({
-      next: data => {
-        this.dataTableBienesOficio = data.data;
-      },
-      error: err => {
-        this.loading = false;
-      },
-    });
-  }
+  // getGoodsByOffice(params: ListParams, numberExpedient: number) {
+  //   const queryString = `page=${params.page}&limit=${params.limit}&filter.fileNumber=${numberExpedient}&filter.status=STI`;
+  //   this.dataTableBienesOficio = [];
+  //   this.goodService.getAllFilter(queryString).subscribe({
+  //     next: data => {
+  //       this.dataTableBienesOficio = data.data;
+  //     },
+  //     error: err => {
+  //       this.loading = false;
+  //     },
+  //   });
+  // }
 
   rowSelected(rows: any) {
     this.selectedRows = rows.isSelected ? rows.data : {};
@@ -496,9 +501,10 @@ export class ThirdpartiesPossessionValidationComponent
   }
 
   async sendForm() {
+    console.log('sendForm');
     if (
-      !this.detailGoodPosessionThirdParty.goodNumber ||
-      !this.formPositionThirdParty.value.jobKey
+      this.dataTableBienesOficio.length < 1 ||
+      !this.formPositionThirdParty.value?.jobKey
     ) {
       this.alert(
         'error',
@@ -508,39 +514,137 @@ export class ThirdpartiesPossessionValidationComponent
       return;
     }
 
-    const params = new ListParams();
-    params['filter.fileNumber'] =
-      this.formPositionThirdParty.value.possessionNumber;
-    try {
-      const result = await firstValueFrom(
-        this.goodPosessionThirdpartyService.getAll(params)
+    if (this.formPositionThirdParty.invalid) {
+      this.formPositionThirdParty.markAllAsTouched();
+      showToast({
+        icon: 'error',
+        text: 'Faltan campos por llenar',
+        title: 'Error',
+      });
+      return;
+    }
+
+    if (this.formPositionThirdParty.value.jobKey.includes('?')) {
+      const year = this.formPositionThirdParty.value.jobKey.substring(
+        this.formPositionThirdParty.value.jobKey.lastIndexOf('/') + 1,
+        this.formPositionThirdParty.value.jobKey.length
       );
-      this.formPositionThirdParty.patchValue(result.data[0]);
-      const goodPosessionThirdParty = this.formPositionThirdParty.value;
-      if (goodPosessionThirdParty.jobKey.includes('?')) {
-        const anio = goodPosessionThirdParty.jobKey.substring(
-          goodPosessionThirdParty.jobKey.lastIndexOf('/') + 1,
-          goodPosessionThirdParty.jobKey.length
+
+      const toolbar_no_delegacion = this.authService.decodeToken().department;
+      const office = await firstValueFrom(
+        this.goodPosessionThirdpartyService
+          .postThirdPartyAdmonOffice({
+            toolbarDelegationNumber: toolbar_no_delegacion,
+            year: year,
+          })
+          .pipe(map((res: any) => res.data[0].job))
+      );
+      console.log('office', office);
+      this.formPositionThirdParty.value.jobKey;
+      this.formPositionThirdParty.get('closingDate').setValue(new Date());
+      this.formPositionThirdParty.get('numClueNavy').setValue(office);
+
+      this.formPositionThirdParty
+        .get('delegationCloseNumber')
+        .setValue(toolbar_no_delegacion);
+
+      this.formPositionThirdParty
+        .get('jobKey')
+        .setValue(
+          this.formPositionThirdParty
+            .get('jobKey')
+            .value?.replace('?', office.toString().padStart(5, '0'))
+            .replace(' ', '')
         );
 
-        const params = new ListParams();
-        params['filter.delegationCloseNumber'] = anio;
-        params['filter.jobKey'] = SearchFilter.LIKE;
-
-        goodPosessionThirdParty.jobKey;
-        // const result: any = await firstValueFrom(
-        //   this.getGoodPosessionThirdPartyKeyOfficeNotLike(params as any)
-        // );
-
-        this.formPositionThirdParty
-          .get('closingDate')
-          .setValue(new Date('2021-01-01') as any);
-        this.formPositionThirdParty.get('numClueNavy').setValue(result.data);
-        // this.formPositionThirdParty.get('jobKey').setValue(result.data);
+      let key = 0;
+      try {
+        // 	BEGIN
+        //    SELECT COUNT(0)
+        //      INTO CLAVE
+        //      FROM BIEN_POSESION_TERCERO
+        //     WHERE NO_DELEGACION_CIERRA = :blk_toolbar.toolbar_no_delegacion
+        //       AND CVE_OFICIO = :BIEN_POSESION_TERCERO.CVE_OFICIO
+        //       AND CVE_OFICIO NOT LIKE '%?%';
+        // EXCEPTION
+        // 	 WHEN OTHERS THEN
+        // 	 CLAVE := 0;
+        // END;
+        key = await firstValueFrom(
+          this.goodPosessionThirdpartyService
+            .postThirdPartyAdmonKey({
+              toolbarDelegationNumber: toolbar_no_delegacion,
+              jobKey: this.formPositionThirdParty.value.jobKey,
+            })
+            .pipe(map((res: any) => res.data[0].key))
+        );
+      } catch (error) {
+        key = 0;
       }
-    } catch (ex) {}
 
-    let cveOficio = this.form.get('officeExternalKey').value;
+      if (key > 1) {
+        this.alert(
+          'error',
+          'Error',
+          'Fatal ERROR ir al área de sistemas hay más de una clave armada con el mismo número.'
+        );
+        return;
+      }
+      this.updateGoodPosessionThirdParty();
+      this.alert('success', 'Información', 'Enviando');
+      // const params = new ListParams();
+      // params['filter.delegationCloseNumber'] = year;
+      // params['filter.jobKey'] = SearchFilter.LIKE;
+
+      // const result: any = await firstValueFrom(
+      //   this.goodPosessionThirdpartyService.getAll(params)
+      // );
+
+      // if (result.data.length > 0) {
+      //   this.alert(
+      //     'error',
+      //     'Error',
+      //     'No puede cerrar el Acta si ya se ha generado el Acta de Cierre.'
+      //   );
+      //   return;
+      // }
+    } else {
+      this.alert('info', 'Información', 'La clave ya a sido enviada.');
+    }
+
+    // const params = new ListParams();
+    // params['filter.fileNumber'] =
+    //   this.formPositionThirdParty.value.possessionNumber;
+    // try {
+    //   const result = await firstValueFrom(
+    //     this.goodPosessionThirdpartyService.getAll(params)
+    //   );
+    //   this.formPositionThirdParty.patchValue(result.data[0]);
+    //   const goodPosessionThirdParty = this.formPositionThirdParty.value;
+    //   if (goodPosessionThirdParty.jobKey.includes('?')) {
+    //     const anio = goodPosessionThirdParty.jobKey.substring(
+    //       goodPosessionThirdParty.jobKey.lastIndexOf('/') + 1,
+    //       goodPosessionThirdParty.jobKey.length
+    //     );
+
+    //     const params = new ListParams();
+    //     params['filter.delegationCloseNumber'] = anio;
+    //     params['filter.jobKey'] = SearchFilter.LIKE;
+
+    //     goodPosessionThirdParty.jobKey;
+    //     // const result: any = await firstValueFrom(
+    //     //   this.getGoodPosessionThirdPartyKeyOfficeNotLike(params as any)
+    //     // );
+
+    //     this.formPositionThirdParty
+    //       .get('closingDate')
+    //       .setValue(new Date('2021-01-01') as any);
+    //     this.formPositionThirdParty.get('numClueNavy').setValue(result.data);
+    //     // this.formPositionThirdParty.get('jobKey').setValue(result.data);
+    //   }
+    // } catch (ex) {}
+
+    // let cveOficio = this.formPositionThirdParty.get('jobKey').value;
 
     // if (
     //   this.form.invalid ||
@@ -555,129 +659,119 @@ export class ThirdpartiesPossessionValidationComponent
     //   return;
     // }
 
-    if (!cveOficio) {
-      this.alert(
-        'info',
-        '',
-        'No puede cerrar el Acta si no se han incorporado bienes y generado la clave armada.'
-      );
-      return;
-    }
-    const maxNumClaveArmada = this.goodsPosessionThirdParty.reduce(
-      (max, obj) => {
-        return Math.max(max, obj.numClueNavy || 0);
-      },
-      0
-    );
+    // if (!cveOficio) {
+    //   this.alert(
+    //     'info',
+    //     '',
+    //     'No puede cerrar el Acta si no se han incorporado bienes y generado la clave armada.'
+    //   );
+    //   return;
+    // }
+    // const maxNumClaveArmada = this.goodsPosessionThirdParty.reduce(
+    //   (max, obj) => {
+    //     return Math.max(max, obj.numClueNavy || 0);
+    //   },
+    //   0
+    // );
 
-    if (cveOficio.includes('?')) {
-      let anio = cveOficio.substring(
-        cveOficio.lastIndexOf('/') + 1,
-        cveOficio.length
-      );
-      if (!cveOficio.includes('?') && cveOficio.endsWith(anio)) {
-        let oficio = maxNumClaveArmada + 1;
+    // if (cveOficio.includes('?')) {
+    //   let anio = cveOficio.substring(
+    //     cveOficio.lastIndexOf('/') + 1,
+    //     cveOficio.length
+    //   );
+    //   if (!cveOficio.includes('?') && cveOficio.endsWith(anio)) {
+    //     let oficio = maxNumClaveArmada + 1;
 
-        cveOficio = cveOficio
-          .replace('?', ('00000' + oficio).slice(-5))
-          .replace(' ', '');
+    //     cveOficio = cveOficio
+    //       .replace('?', ('00000' + oficio).slice(-5))
+    //       .replace(' ', '');
 
-        console.log(maxNumClaveArmada);
+    //     console.log(maxNumClaveArmada);
 
-        console.log(oficio);
-        this.formGood.get('closingDate').patchValue(new Date());
-        this.form
-          .get('officeExternalKey')
-          .patchValue(
-            cveOficio
-              .replace('?', ('00000' + oficio).slice(-5))
-              .replace(' ', '')
-          );
+    //     console.log(oficio);
+    //     this.formPositionThirdParty.get('closingDate').patchValue(new Date());
+    //     this.formPositionThirdParty
+    //       .get('jobKey')
+    //       .patchValue(
+    //         cveOficio
+    //           .replace('?', ('00000' + oficio).slice(-5))
+    //           .replace(' ', '')
+    //       );
 
-        this.formGood.get('numClueNavy').patchValue(oficio);
+    //     this.formPositionThirdParty.get('numClueNavy').patchValue(oficio);
 
-        let clave = 0;
-        for (let i = 0; i < this.goodsPosessionThirdParty.length; i++) {
-          if (
-            this.goodsPosessionThirdParty[i].jobKey === cveOficio &&
-            this.goodsPosessionThirdParty[i].jobKey.indexOf('?') === -1
-          ) {
-            clave++;
-          }
-        }
+    //     let clave = 0;
+    //     for (let i = 0; i < this.goodsPosessionThirdParty.length; i++) {
+    //       if (
+    //         this.goodsPosessionThirdParty[i].jobKey === cveOficio &&
+    //         this.goodsPosessionThirdParty[i].jobKey.indexOf('?') === -1
+    //       ) {
+    //         clave++;
+    //       }
+    //     }
 
-        if (clave > 1) {
-          this.alert(
-            'info',
-            'Fatal ERROR ir al área de sistemas hay más de una clave armada con el mismo número',
-            ''
-          );
-        }
-      }
-    }
+    //     if (clave > 1) {
+    //       this.alert(
+    //         'info',
+    //         'Fatal ERROR ir al área de sistemas hay más de una clave armada con el mismo número',
+    //         ''
+    //       );
+    //     }
+    //   }
+    // }
 
-    const request: ISentSirsae = {
-      armyJobKey: this.formGood.get('numClueNavy').value,
-      delegationNumOpinion: this.formGood.get('delegationCloseNumber').value,
-      date: new Date().toString(),
-      expedientNumber: this.noExpediente.value,
-    };
+    // const request: ISentSirsae = {
+    //   armyJobKey: this.formPositionThirdParty.get('numClueNavy').value,
+    //   delegationNumOpinion: this.formPositionThirdParty.get(
+    //     'delegationCloseNumber'
+    //   ).value,
+    //   date: new Date().toString(),
+    //   expedientNumber: this.noExpediente.value,
+    // };
 
-    console.log(request);
+    // console.log(request);
 
-    this.historyGoodService.sentSirsae(request).subscribe({
-      next: data => {
-        console.log(data);
-      },
-      error: err => {
-        this.alert(
-          'error',
-          'Ha ocurrido un error',
-          'Inténtalo de nuevo más tarde.'
-        );
-      },
-    });
-  }
-
-  getGoodPosessionThirdPartyKeyOfficeNotLike(...a: any) {
-    return new Promise(res => {});
-  }
-
-  getGoodPosessionThirdPartyKeyOfficeNotLike2(...a: any) {
-    return new Promise(res => {});
+    // this.historyGoodService.sentSirsae(request).subscribe({
+    //   next: data => {
+    //     console.log(data);
+    //   },
+    //   error: err => {
+    //     this.alert(
+    //       'error',
+    //       'Ha ocurrido un error',
+    //       'Inténtalo de nuevo más tarde.'
+    //     );
+    //   },
+    // });
   }
 
   btnInsertarTextoPredefinido() {
-    this.form.get('texto').setValue(predifinedText);
+    this.formPositionThirdParty.get('text').setValue(predifinedText);
   }
 
   btnReemplazarMarcadores() {
-    console.log(this.formPositionThirdParty.value);
+    if (!this.formPositionThirdParty.get('text').value) {
+      this.alert('warning', 'Atención', 'No hay texto para reemplazar.');
+    }
     const queryParams = `filter.wheelNumber=${this.formPositionThirdParty.value.steeringwheelNumber}`;
     this.notificationService.getAllFilter(queryParams).subscribe({
       next: data => {
-        const tGood =
-          (this.detailGoodPosessionThirdParty?.goodNumber || '') +
-          ' ' +
-          (this.detailGoodPosessionThirdParty?.description || '');
+        let tGoods = '';
+        this.dataTableBienesOficio.forEach((element, index) => {
+          tGoods += `${element?.goodNumber} ${element?.description}.\n`;
+        });
         let replaceText = predifinedText.replaceAll(
           '<A>',
           this.wheelNotifications
             ? this.wheelNotifications.protectionKey
             : '<A>'
         );
-        const text = this.form.get('texto').value;
+        const text = this.formPositionThirdParty.get('text').value;
         if (text) {
           text.replace('<A>', data.data[0].protectionKey);
           replaceText = replaceText.replaceAll('<B>', 'BIEN  DESCRIPCIÓN');
-          replaceText = replaceText.replaceAll(
-            '<C>',
-            tGood
-            // this.dataTableBienes
-            //   ? `${this.dataTableBienes[0].goodId}  ${this.dataTableBienes[0].description}`
-            //   : '<C>'
-          );
-          this.form.get('texto').setValue(replaceText);
+          replaceText = replaceText.replaceAll('<C>', tGoods);
+          this.formPositionThirdParty.get('text').setValue(replaceText);
         }
       },
       error: err => {},
@@ -695,11 +789,11 @@ export class ThirdpartiesPossessionValidationComponent
     // downloadLink.click();
 
     // console.log(this.flyersForm.value);
-    if (!this.detailGoodPosessionThirdParty?.goodNumber) {
+    if (this.dataTableBienesOficio.length < 1) {
       this.alert('info', '', 'Seleccione un bien');
       return;
     }
-    if (!this.form.get('officeExternalKey')) {
+    if (!this.formPositionThirdParty.get('jobKey').value) {
       this.pupGeneratorKey();
       this.pupPrint();
     } else {
@@ -707,7 +801,185 @@ export class ThirdpartiesPossessionValidationComponent
     }
   }
 
-  pupGeneratorKey() {}
+  async pupGeneratorKey() {
+    const values = this.formPositionThirdParty.value;
+    if (!values.usrResponsible) {
+      this.alert('info', '', 'Debe especificar el Responsable.');
+      return;
+    }
+    if (!values.usrAddressee) {
+      this.alert('info', '', 'Debe especificar el Destinatario.');
+      return;
+    }
+    if (!values.jobKey) {
+      let segAccessXAreas, _segAccessXAreas;
+      let segUser;
+      let faEtapaCreada;
+      try {
+        faEtapaCreada = await this.getFaEtapaCreda();
+      } catch (ex) {
+        this.alert(
+          'error',
+          'Error',
+          'Error no se pudo obtener la función FA_ETAPACREDA.'
+        );
+        return;
+      }
+
+      try {
+        const params = {
+          user: values.usrResponsible,
+          assigned: 'S',
+        };
+        segAccessXAreas = (await this.getSegAccessXAreas(
+          params
+        )) as IAccesTrackingXArea;
+
+        segUser = (await this.getSegUsers({
+          user: values.usrResponsible,
+        })) as IUsersTracking;
+      } catch (ex) {
+        this.alert(
+          'error',
+          'Error',
+          'No se localizaron datos de la persona que autoriza.'
+        );
+        return;
+      }
+
+      let level4, level5, level3, level2, department;
+      try {
+        const params = new ListParams();
+        params['filter.id'] = segAccessXAreas.departmentNumber;
+        params['filter.numDelegation'] = segAccessXAreas.delegationNumber;
+        params['filter.numSubDelegation'] = segAccessXAreas.subdelegationNumber;
+        params['filter.phaseEdo'] = faEtapaCreada;
+        department = (await this.getDepartment(params)) as IDepartment;
+        if (department.level || department.depend || department.depDelegation) {
+          if (department.level == 4) {
+            level4 = department.dsarea;
+            level5 = segUser.postKey;
+          } else {
+            level4 = segUser.postKey;
+            level3 = department.dsarea;
+          }
+
+          for (let VI = department.level - 1; VI >= 2; VI--) {
+            let _department;
+            try {
+              const params = new ListParams();
+              params['filter.id'] = department.depend;
+              params['filter.numDelegation'] = department.depDelegation;
+              params['filter.phaseEdo'] = faEtapaCreada;
+              _department = (await this.getDepartment(params)) as IDepartment;
+            } catch (ex) {
+              this.alert(
+                'error',
+                'Error',
+                'No se localizó el predecesor de la persona que autoriza.'
+              );
+              return;
+            }
+            if (_department.level == 3) {
+              level3 = _department.dsarea;
+            } else if (_department.level == 2) {
+              level2 = _department.dsarea;
+            }
+            department.depend = _department.depend;
+            department.depDelegation = _department.depDelegation;
+          }
+          try {
+            const params = {
+              user: values.usrAddressee,
+              assigned: 'S',
+            };
+            _segAccessXAreas = (await this.getSegAccessXAreas(
+              params
+            )) as IAccesTrackingXArea;
+          } catch (ex) {
+            this.alert(
+              'error',
+              'Error',
+              'No se localizaron datos del destinatario.'
+            );
+          }
+        }
+      } catch (ex) {
+        this.alert(
+          'error',
+          'Error',
+          'No se localizó la dependencia de la persona que autoriza.'
+        );
+        return;
+      }
+
+      const paramsDepartment = new ListParams();
+      paramsDepartment['filter.numDelegation'] =
+        _segAccessXAreas.delegationNumber;
+      paramsDepartment['filter.id'] = _segAccessXAreas.departmentNumber;
+      paramsDepartment['filter.phaseEdo'] = faEtapaCreada;
+      const __department = await this.getDepartment(paramsDepartment, false);
+      const year = new Date().getFullYear().toString();
+      const month = (new Date().getMonth() + 1).toString();
+
+      let joyKey = `${level2}${level3}${level4}`;
+      if (department.level + 1 == 5) {
+        joyKey += `${level5}`;
+      }
+      joyKey += `/?/${year}/`.trim();
+      this.formPositionThirdParty.get('jobKey').setValue(joyKey);
+    }
+    this.pupPrint();
+  }
+
+  getFaEtapaCreda() {
+    return Promise.resolve('FA_ETAPACREDA(SYSDATE)');
+  }
+
+  getSegAccessXAreas(params: _Params, first: boolean = true) {
+    return firstValueFrom(
+      this.securityService.getAllUsersAccessTracking(params).pipe(
+        map(res => {
+          if (first) {
+            return res.data[0];
+          } else {
+            return res;
+          }
+        })
+      )
+    );
+  }
+
+  getDepartment(
+    params: ListParams,
+    first: boolean = true
+  ): Promise<IListResponse<IDepartment> | IDepartment> {
+    return firstValueFrom(
+      this.departmentService.getAll(params).pipe(
+        map(res => {
+          if (first) {
+            return res.data[0];
+          } else {
+            return res;
+          }
+        })
+      )
+    );
+  }
+
+  getSegUsers(params: _Params, first: boolean = true) {
+    return firstValueFrom(
+      this.securityService.getAllUsersTracker(params).pipe(
+        map(res => {
+          if (first) {
+            return res.data[0];
+          } else {
+            return res;
+          }
+        })
+      )
+    );
+  }
 
   pupPrint() {
     // let params = { ...this.form.value };
@@ -761,20 +1033,34 @@ export class ThirdpartiesPossessionValidationComponent
   }
 
   addressee = new DefaultSelect();
-  getDestiny(params: ListParams) {
+  userCcp1 = new DefaultSelect();
+  userCcp2 = new DefaultSelect();
+  userResponsible = new DefaultSelect();
+  getUserName(
+    params: ListParams,
+    type: 'addressee' | 'ccp1' | 'ccp2' | 'responsible' = 'addressee'
+  ) {
     params['asigUser'] = 'S';
     this.userService.getAllUsersAsigne(params).subscribe({
-      next: data => {
+      next: (data: { data: any[]; count: number }) => {
         const res = data.data.map(item => {
           return { ...item, nameUser: `${item.usuario} - ${item.nombre}` };
         });
-        console.log(res);
-        this.addressee = new DefaultSelect(res, data.count);
+        switch (type) {
+          case 'addressee':
+            this.addressee = new DefaultSelect(res, data.count);
+            break;
+          case 'ccp1':
+            this.userCcp1 = new DefaultSelect(res, data.count);
+            break;
+          case 'ccp2':
+            this.userCcp2 = new DefaultSelect(res, data.count);
+            break;
+          case 'responsible':
+            this.userResponsible = new DefaultSelect(res, data.count);
+        }
+        // this.addressee = new DefaultSelect(res, data.count);
       },
     });
-  }
-
-  changeAddressee($event: any) {
-    // this.form.get('addressee').setValue($event);
   }
 }

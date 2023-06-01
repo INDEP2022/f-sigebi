@@ -176,6 +176,7 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
     this.addresseeDataSelect = null;
     const token = this.authService.decodeToken();
     console.log(token);
+    // this.anotherSearchAppointment();
     if (token.preferred_username) {
       this.getUserDataLogged(
         token.preferred_username
@@ -494,7 +495,7 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
   }
 
   anotherSearchAppointment() {
-    this.showSearchAppointment = true;
+    // this.showSearchAppointment = true;
   }
 
   btnSearchAppointment() {
@@ -2218,6 +2219,7 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
                 // COUNT SSF3_FIRMA_ELEC_DOCS
                 // SI COUNT ES 0 LLAMA PUP_REGRESA_ESTATUS
                 // DELETE TMP_DICTAMINACIONES
+                console.log('VERIFICANDOOOOOOOOOOO ');
                 this.sendElectronicFirmData();
               });
             }
