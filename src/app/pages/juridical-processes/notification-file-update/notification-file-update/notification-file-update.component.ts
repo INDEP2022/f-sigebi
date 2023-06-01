@@ -16,7 +16,7 @@ import {
   FilterParams,
   ListParams,
 } from 'src/app/common/repository/interfaces/list-params';
-import { INotification } from 'src/app/core/models/ms-notification/notification.model';
+import { INotificationUpdate } from 'src/app/core/models/ms-notification/notification.model';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { POSITVE_NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
@@ -44,7 +44,8 @@ export class NotificationFileUpdateComponent
   formData: any;
   override loading: boolean = true;
   totalItems: number = 0;
-  dataFactGen: INotification[] = [];
+  dataFactGen: INotificationUpdate[] = [];
+  //dataFactGen: LocalDataSource = new LocalDataSource();
   verBoton: boolean = false;
   params = new BehaviorSubject<ListParams>(new ListParams());
   filterParamsLocal = new BehaviorSubject<FilterParams>(new FilterParams());
@@ -133,14 +134,17 @@ export class NotificationFileUpdateComponent
     param.addFilter('expedientNumber', this.form.get('noExpediente').value);
     this.notificationService.getAllFilter(param.getParams()).subscribe({
       next: data => {
+        //this.dataFactGen = data.data;
+        this.totalItems = data.count || 0;
         this.dataFactGen = data.data;
-        //console.log(data.count);
-        this.totalItems = data.count;
+        console.log(data.data);
+        //this.totalItems = data.count;
+        //this.dataFactGen = refresh();
         // this.dataFactGen[0].description = data.data[0].departament.description;
         this.loading = false;
       },
       error: err => {
-        this.dataFactGen = [];
+        //this.dataFactGen = [];
         this.loading = false;
         this.onLoadToast('error', 'Error', err.error.message);
       },
@@ -148,7 +152,8 @@ export class NotificationFileUpdateComponent
   }
 
   getDicts() {
-    this.loading = true;
+    this.loading = false;
+    this.onLoadListNotifications();
     // let params = {
     //   ...this.params.getValue(),
     //   ...this.columnFilters,
