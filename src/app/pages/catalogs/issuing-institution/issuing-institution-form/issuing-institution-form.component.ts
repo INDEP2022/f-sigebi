@@ -10,7 +10,10 @@ import {
   ICitys,
   IIssuingInstitution,
 } from '../../../../core/models/catalogs/issuing-institution.model';
-import { NUMBERS_PATTERN, STRING_PATTERN } from '../../../../core/shared/patterns';
+import {
+  NUMBERS_PATTERN,
+  STRING_PATTERN,
+} from '../../../../core/shared/patterns';
 import { IssuingInstitutionService } from './../../../../core/services/catalogs/issuing-institution.service';
 
 @Component({
@@ -56,9 +59,15 @@ export class IssuingInstitutionFormComponent
       street: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       calle: [null, [Validators.pattern(STRING_PATTERN)]],
       numInside: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      numExterior: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
+      numExterior: [
+        null,
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+      ],
       cologne: [null, [Validators.required]],
-      zipCode: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
+      zipCode: [
+        null,
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+      ],
       delegMunic: [null, []],
       phone: [null, [Validators.required]],
       numClasif: [null, [Validators.required]],
