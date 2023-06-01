@@ -108,6 +108,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
   }
 
   ngOnInit(): void {
+    console.log('Activando tab: assets');
     this.settings = {
       ...TABLE_SETTINGS,
       actions: false,

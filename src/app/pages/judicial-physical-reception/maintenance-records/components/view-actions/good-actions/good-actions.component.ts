@@ -24,7 +24,10 @@ import {
   ProceedingsDeliveryReceptionService,
   ProceedingsDetailDeliveryReceptionService,
 } from 'src/app/core/services/ms-proceedings';
-import { POSITVE_NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
+import {
+  NUM_POSITIVE,
+  POSITVE_NUMBERS_PATTERN,
+} from 'src/app/core/shared/patterns';
 import { AlertButton } from 'src/app/pages/judicial-physical-reception/scheduled-maintenance-1/models/alert-button';
 import {
   firstFormatDateToSecondFormatDate,
@@ -80,7 +83,7 @@ export class GoodActionsComponent extends AlertButton implements OnInit {
   ) {
     super();
     this.form = this.fb.group({
-      goodId: [null],
+      goodId: [null, Validators.pattern(NUM_POSITIVE)],
       action: [null],
     });
   }
