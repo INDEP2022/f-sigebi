@@ -192,7 +192,8 @@ export class OpinionComponent extends BasePage implements OnInit, OnChanges {
     private usersService: UsersService,
     private service: BankAccountService,
     private dynamicCatalogsService: DynamicCatalogsService,
-    private jobDictumTextsServices: JobDictumTextsService
+    private jobDictumTextsServices: JobDictumTextsService,
+    private dictationService_1: DictationService
   ) {
     super();
 
@@ -450,7 +451,7 @@ carga la  información de la parte media de la página
   getPersonaExt_Int(d: string, datos: any) {
     this.filterParams.getValue().removeAllFilters();
     let variable: IDictation = JSON.parse(JSON.stringify(datos));
-
+    this.refreshTabla();
     this.filterParams
       .getValue()
       .addFilter('id', this.form.get('expedientNumber').value, SearchFilter.EQ);
@@ -614,7 +615,7 @@ carga la  información de la parte media de la página
         this.insertTextos(data);
       },
     });
-
+    /*
     let obj = {
       id: this.idCopias,
       copyDestinationNumber: this.copyDestinationNumber,
@@ -626,7 +627,28 @@ carga la  información de la parte media de la página
       registerNumber: this.form.get('registerNumber').value,
     };
 
-    this.dictationService.updateUserByOficNum(obj).subscribe({
+ this.dictationService_1.create(obj).subscribe({
+      next: resp => {
+        this.onLoadToast('warning', 'Info', resp[0].message);
+      },
+      error: errror => {
+        this.onLoadToast('error', 'Error', errror.error.message);
+      },
+    });*/
+    /*
+    this.dictationService_1.updateUserByOficNum(obj).subscribe({
+      next: resp => {
+        console.log(JSON.stringify(resp));
+        //this.onLoadToast('warning', 'Info', resp[0].message);
+      },
+      error: errror => {
+        this.insertCopies(obj); 
+      },
+    });*/
+  }
+
+  insertCopies(obj: any) {
+    this.dictationService_1.create(obj).subscribe({
       next: resp => {
         this.onLoadToast('warning', 'Info', resp[0].message);
       },
@@ -635,6 +657,7 @@ carga la  información de la parte media de la página
       },
     });
   }
+
   insertTextos(data: IJobDictumTexts) {
     this.jobDictumTextsServices.create(data).subscribe({
       next: resp => {
@@ -834,14 +857,14 @@ carga la  información de la parte media de la página
   }
 
   insertRegistroExtCCP(data: IDictationCopies) {
-    //console.log("  insertRegistroExtCCP  ");
-    //console.log(JSON.stringify(data));
-
-    this.dictationService.createPersonExt(data).subscribe({
+    alert('insertRegistroExtCCP ' + JSON.stringify(data));
+    this.dictationService_1.createPersonExt(data).subscribe({
       next: resp => {
-        this.onLoadToast('warning', 'Info', JSON.stringify(resp));
+        this.onLoadToast('warning', 'Info', 'Se inserto');
+        this.refreshTabla();
       },
       error: errror => {
+        alert('errror ' + errror);
         this.onLoadToast('error', 'Error', errror.error.message);
       },
     });
@@ -907,13 +930,22 @@ carga la  información de la parte media de la página
     this.filterParams.getValue().removeAllFilters();
     this.filterParams
       .getValue()
-      .addFilter('id', this.form.get('expedientNumber').value, SearchFilter.EQ);
+      .addFilter(
+        'numberOfDicta',
+        this.form.get('registerNumber').value,
+        SearchFilter.EQ
+      );
+
+    console.log(
+      'refreshTabla() => ' + this.filterParams.getValue().getParams()
+    );
 
     this.dictationService
       .findUserByOficNum(this.filterParams.getValue().getParams())
       .subscribe({
         next: resp => {
           this.dataExt = resp.data;
+          console.log('refreshTabla() => ' + JSON.stringify(this.dataExt));
         },
         error: errror => {
           this.onLoadToast('error', 'Error', errror.error.message);
