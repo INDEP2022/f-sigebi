@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { Repository } from 'src/app/common/repository/repository';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
+import { IListResponse } from '../../interfaces/list-response.interface';
 import { IExpedient } from '../../models/expedient/expedient.model';
 
 @Injectable({
@@ -31,5 +32,29 @@ export class DynamicCatalogService extends HttpService {
 
   getTable1Table5(body: any, params: _Params) {
     return this.post('dinamic-tables/get-otkey-otvalue', body, params);
+  }
+
+  getIncapAndClave(no_expediente: string | number) {
+    return this.get<
+      IListResponse<{
+        coaelesce: string;
+        clave: string;
+      }>
+    >(`dinamic-tables/getIncapAndClave`, { no_expediente });
+  }
+
+  getDescEmisora(no_expediente: string | number) {
+    return this.get<
+      IListResponse<{
+        desc_emisora: string;
+      }>
+    >(`dinamic-tables/getDescEmisora`, { no_expediente });
+  }
+  getClaveCTransparente(no_expediente: string | number) {
+    return this.get<
+      IListResponse<{
+        clave: string;
+      }>
+    >(`dinamic-tables/getClaveCTransparente`, { no_expediente });
   }
 }

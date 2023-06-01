@@ -7,6 +7,7 @@ import {
   FilterParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { maxDate, minDate } from 'src/app/common/validations/date.validators';
 import { IDelegation } from 'src/app/core/models/catalogs/delegation.model';
 import { AuthorityService } from 'src/app/core/services/catalogs/authority.service';
 import { StationService } from 'src/app/core/services/catalogs/station.service';
@@ -62,7 +63,9 @@ export class ParametersComponent extends BasePage implements OnInit {
     super();
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    console.log('xd');
+  }
 
   openCoordination() {
     const { delegation } = this.siabControls;
@@ -146,5 +149,25 @@ export class ParametersComponent extends BasePage implements OnInit {
 
   onSubmit() {
     this.submit.emit();
+  }
+
+  initialDateChange(date: Date) {
+    const { finalDate } = this.siabControls;
+    if (!date) {
+      finalDate.clearValidators();
+      return;
+    }
+    finalDate.addValidators(minDate(new Date(date)));
+    finalDate.updateValueAndValidity();
+  }
+
+  finalDateChange(date: Date) {
+    const { initialDate } = this.siabControls;
+    if (!date) {
+      initialDate.clearValidators();
+      return;
+    }
+    initialDate.addValidators(maxDate(new Date(date)));
+    initialDate.updateValueAndValidity();
   }
 }

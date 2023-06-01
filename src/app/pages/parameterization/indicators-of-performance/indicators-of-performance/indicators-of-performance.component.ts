@@ -83,7 +83,6 @@ export class IndicatorsOfPerformanceComponent
                 searchFilter = SearchFilter.EQ;
                 break;
               case 'procedureArea':
-
                 searchFilter = SearchFilter.EQ;
                 break;
               default:
