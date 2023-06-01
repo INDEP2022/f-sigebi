@@ -452,9 +452,6 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   getDataExpedient() {
     this.serviceExpedient.getById(this.form.get('expediente').value).subscribe(
       resp => {
-
-        
-
         console.log(resp.criminalCase);
         this.form.get('causaPenal').setValue(resp.criminalCase);
         console.log(resp.preliminaryInquiry);
