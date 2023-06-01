@@ -82,6 +82,10 @@ export class IndicatorsOfPerformanceComponent
               case 'id':
                 searchFilter = SearchFilter.EQ;
                 break;
+              case 'procedureArea':
+
+                searchFilter = SearchFilter.EQ;
+                break;
               default:
                 searchFilter = SearchFilter.ILIKE;
                 break;
