@@ -16,8 +16,7 @@ import {
 })
 export class MaintenanceIndividualsAndCompaniesComponent
   extends BasePage
-  implements OnInit
-{
+  implements OnInit {
   form!: FormGroup;
   isCreate: boolean = true;
   edit: boolean = false;
@@ -115,6 +114,7 @@ export class MaintenanceIndividualsAndCompaniesComponent
   }
 
   confirm() {
+    console.log(this.form.value);
     if (this.form.valid) {
       this.loading = true;
       this.form.get('typeResponsible').patchValue('D');
