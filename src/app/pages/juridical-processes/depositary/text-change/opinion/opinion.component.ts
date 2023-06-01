@@ -577,6 +577,8 @@ carga la  información de la parte media de la página
     método para actualizar el dictamen en la parte del body
 =======================================================================*/
   updateDictamen() {
+    console.log(this.form.value);
+
     let ofis: Partial<IOfficialDictation> = this.getDatosToUpdateDictamenBody(
       this.form
     );
@@ -810,6 +812,9 @@ carga la  información de la parte media de la página
   }
 
   insertRegistroExtCCP(data: IDictationCopies) {
+    //console.log("  insertRegistroExtCCP  ");
+    //console.log(JSON.stringify(data));
+
     this.dictationService.createPersonExt(data).subscribe({
       next: resp => {
         this.onLoadToast('warning', 'Info', JSON.stringify(resp));
