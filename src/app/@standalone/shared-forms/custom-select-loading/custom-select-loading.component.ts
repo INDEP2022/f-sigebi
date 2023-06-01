@@ -74,7 +74,7 @@ export class CustomSelectWidthLoading
   @Input() readonly: boolean = false;
   @Input() updateValues: boolean = false;
   @Output() valueChange = new EventEmitter<any>();
-  // @Output() getObject = new EventEmitter<any>();
+  @Output() getObject = new EventEmitter<any>();
   input$ = new Subject<string>();
   items: any[] = [];
   totalItems: number = 0;
@@ -256,6 +256,9 @@ export class CustomSelectWidthLoading
           this.isLoading = false;
           if (resp) {
             this.items = resp;
+            if (resp.length === 1) {
+              this.getObject.emit(resp[0]);
+            }
           }
         },
         error: err => {
