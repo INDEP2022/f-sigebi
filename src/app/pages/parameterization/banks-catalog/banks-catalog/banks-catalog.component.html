@@ -8,8 +8,12 @@
     <form [formGroup]="form" class="form-material">
       <div class="row">
         <div class="col-md-8 col-sm-12 col-xs-12">
-          <app-banks-shared [labelName]="'Nombre'" [form]="form" [bankField]="'cveBank'"
-            (nameBank)="form.get('nameBank').patchValue($event)" (stringBank)="
+          <app-banks-shared
+            [labelName]="'Nombre'"
+            [form]="form"
+            [bankField]="'cveBank'"
+            (nameBank)="form.get('nameBank').patchValue($event)"
+            (stringBank)="
               form.get('cveBank').patchValue($event)
             "></app-banks-shared>
         </div>
@@ -22,7 +26,10 @@
       <div class="row mt-5">
         <div class="col-md-6 col-sm-12 col-xs-12">
           <form-field [control]="form.get('cveAccount')" label="Cuenta">
-            <input type="text" class="form-control" formControlName="cveAccount" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="cveAccount" />
           </form-field>
         </div>
         <div class="col-md-6 col-sm-12 col-xs-12">
@@ -43,8 +50,14 @@
       </div>
       <div class="row mt-2">
         <div class="col-md-6 col-sm-12 col-xs-12 mt-3">
-          <form-field [control]="form.get('accountType')" label="Tipo de cuenta">
-            <ng-select formControlName="accountType" [searchable]="false" class="form-control" [clearable]="false"
+          <form-field
+            [control]="form.get('accountType')"
+            label="Tipo de cuenta">
+            <ng-select
+              formControlName="accountType"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false"
               (change)="getRowSelec($event)">
               <ng-option value="CONCENTRADORA">CONCENTRADORA </ng-option>
               <ng-option value="ASEGURADA">ASEGURADA </ng-option>
@@ -53,45 +66,69 @@
           </form-field>
         </div>
         <div class="col-md-6 col-sm-12 col-xs-12">
-          <app-delegation-shared [form]="form" [delegationField]="'delegationNumber'"
+          <app-delegation-shared
+            [form]="form"
+            [delegationField]="'delegationNumber'"
             [showSubdelegation]="false"></app-delegation-shared>
         </div>
       </div>
       <hr />
       <div *ngIf="rowSelecc">
         <div class="row mb-3">
-          <strong>Si hay traspasos entre cuentas ind&iacute;quelo
-            aqu&iacute;&#58;</strong>
+          <strong
+            >Si hay traspasos entre cuentas ind&iacute;quelo
+            aqu&iacute;&#58;</strong
+          >
         </div>
         <div class="row mt-2">
           <div class="col-md-4 col-sm-12 col-xs-12">
-            <app-account-banks-shared [form]="form" (properties)="setProperties($event)"></app-account-banks-shared>
+            <app-account-banks-shared
+              [form]="form"
+              (properties)="setProperties($event)"></app-account-banks-shared>
           </div>
           <div class="col-md-4 col-sm-12 col-xs-12 mt-3">
             <form-field [control]="form.get('bank_I')" label="Banco">
-              <input type="text" class="form-control" formControlName="bank_I" />
+              <input
+                type="text"
+                class="form-control"
+                formControlName="bank_I" />
             </form-field>
           </div>
           <div class="col-md-4 col-sm-12 col-xs-12 mt-3">
             <form-field [control]="form.get('square_I')" label="Plaza">
-              <input type="text" class="form-control" formControlName="square_I" />
+              <input
+                type="text"
+                class="form-control"
+                formControlName="square_I" />
             </form-field>
           </div>
         </div>
         <div class="row mt-2">
           <div class="col-md-4 col-sm-12 col-xs-12">
             <form-field [control]="form.get('branch_I')" label="Sucursal">
-              <input type="text" class="form-control" formControlName="branch_I" />
+              <input
+                type="text"
+                class="form-control"
+                formControlName="branch_I" />
             </form-field>
           </div>
           <div class="col-md-4 col-sm-12 col-xs-12">
             <form-field [control]="form.get('currency_I')" label="Moneda">
-              <input type="text" class="form-control" formControlName="currency_I" />
+              <input
+                type="text"
+                class="form-control"
+                formControlName="currency_I" />
             </form-field>
           </div>
           <div class="col-md-4 col-sm-12 col-xs-12">
-            <form-field [control]="form.get('accountType_I')" label="Tipo de cuenta">
-              <ng-select formControlName="accountType_I" [searchable]="false" class="form-control" [clearable]="false">
+            <form-field
+              [control]="form.get('accountType_I')"
+              label="Tipo de cuenta">
+              <ng-select
+                formControlName="accountType_I"
+                [searchable]="false"
+                class="form-control"
+                [clearable]="false">
                 <ng-option value="CONCENTRADORA">CONCENTRADORA</ng-option>
                 <ng-option value="ASEGURADA">ASEGURADA</ng-option>
                 <ng-option value="DEVOLUCIONES">DEVOLUCIONES</ng-option>
@@ -105,7 +142,9 @@
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <confirm-button [type]="'button'" (confirm)="confirm()"></confirm-button>
+        <confirm-button
+          [type]="'button'"
+          (confirm)="confirm()"></confirm-button>
       </div>
       <div class="m-3">
         <button type="button" class="btn btn-danger active" (click)="close()">
