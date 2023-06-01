@@ -6,16 +6,6 @@
     <form class="form-material" [formGroup]="form">
       <div class="row">
         <div class="col-md-12">
-          <form-field
-            [control]="form.get('idWarehouse')"
-            label="Id Dep&oacute;sito">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="idWarehouse" />
-          </form-field>
-        </div>
-        <div class="col-md-12">
           <form-field [control]="form.get('idBatch')" label="Id Lote">
             <input
               type="number"
@@ -43,7 +33,7 @@
             [control]="form.get('registerNumber')"
             label="N&uacute;mero Registro">
             <input
-              type="text"
+              type="number"
               class="form-control"
               formControlName="registerNumber" />
           </form-field>
