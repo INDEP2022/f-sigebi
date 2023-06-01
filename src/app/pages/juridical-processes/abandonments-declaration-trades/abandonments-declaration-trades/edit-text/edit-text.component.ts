@@ -1,5 +1,5 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 // import { GoodService } from 'src/app/core/services/good/good.service';
 
@@ -17,17 +17,30 @@ export class EditTextComponent extends BasePage implements OnInit {
   dataEdit: any;
   filterText: string;
   form: FormGroup = new FormGroup({});
+  disabledDictum: boolean;
+  disabledDictum2: boolean;
+
+  filterButton: number;
   constructor(private fb: FormBuilder, private modalRef: BsModalRef) {
     super();
   }
 
   ngOnInit(): void {
+    this.disabledDictum2 = !this.disabledDictum;
+    if (
+      this.filterText == 'declaratoriaInicio' ||
+      this.filterText == 'declaratoriaFin'
+    ) {
+      this.filterButton = 1;
+    } else {
+      this.filterButton = 2;
+    }
     this.prepareForm();
   }
 
   prepareForm(): void {
     this.form = this.fb.group({
-      editText: [this.dataEdit],
+      editText: [this.dataEdit, Validators.pattern(this.string_PTRN)],
     });
   }
   close() {
