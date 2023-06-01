@@ -324,7 +324,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
   /**
    * Validar si se requiere agregar el mensaje en el campos
    * @param valueField Respuesta del validador de campo
-   * @param filterField Nombre de la clase a buscar
+   * @param filterField se de la clase a buscar
    * @param nodeName Nombre del nodo a buscar dentro del nodo de la clase que se pasa como parametro
    */
   validChildNode(valueField: any, filterField: string, nodeName: string) {
