@@ -619,6 +619,8 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
         this.form.get('recibe2').setValue(dataRes.witness2);
         this.form.get('testigo').setValue(dataRes.comptrollerWitness);
         this.form.get('statusProceeding').setValue(dataRes.statusProceedings);
+         console.log(this.form.get('statusProceeding').value)
+         console.log(dataRes.statusProceedings)
         if (this.form.get('statusProceeding').value === 'ABIERTA') {
           this.labelActa = 'Cerrar acta';
           this.btnCSSAct = 'btn-primary';
@@ -843,6 +845,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
             elaborate: localStorage.getItem('username').toLocaleUpperCase(),
             numFile: parseInt(this.numberExpedient),
             typeProceedings: 'DXCVENT',
+            statusProceedings: 'ABIERTA',
             responsible: null,
             destructionMethod: null,
             approvalDateXAdmon: null,
@@ -1180,7 +1183,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
         if (['CERRADO', 'CERRADA'].includes(this.form.get('statusProceeding').value)) {
           this.alertQuestion(
             'question',
-            `¿Está seguro de abrir el acta ${this.form.get('acta2')}?`,
+            `¿Está seguro de abrir el acta ${this.form.get('acta2').value}?`,
             ''
           ).then(q => {
             if (q.isConfirmed) {
@@ -1522,6 +1525,11 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
             this.serviceProcVal.getByFilter(paramsF.getParams()).subscribe(
               res => {
                 console.log(res);
+                this.alert(
+                  'success',
+                  'El acta ha sido cerrada',
+                  ''
+                );
               },
               err => {}
             );

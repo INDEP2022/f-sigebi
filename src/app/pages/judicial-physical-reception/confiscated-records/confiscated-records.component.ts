@@ -1786,7 +1786,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
             res => {
               this.alert(
                 'success',
-                'Se modificaron los datos del acta de manera éxitosa',
+                'Se modificaron los datos del acta',
                 ''
               );
             },
@@ -1863,7 +1863,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
               this.initialdisabled = true;
               console.log(res);
               this.form.get('statusProceeding').setValue('ABIERTA')
-              this.alert('success', 'Se guardo el acta de manera éxitosa', '');
+              this.alert('success', 'Se guardó el acta', '');
             },
             err => {
               console.log(err);
@@ -2066,7 +2066,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                               'Acta abierta',
                               `El acta ${
                                 this.form.get('acta2').value
-                              } fue abierta con éxito`
+                              } fue abierta`
                             );
                           });
                       }
@@ -2207,7 +2207,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                             'Acta abierta',
                             `El acta ${
                               this.form.get('acta2').value
-                            } fue abierta con éxito`
+                            } fue abierta`
                           );
                           const btn =
                             document.getElementById('expedient-number');
@@ -2404,7 +2404,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                   'Acta abierta',
                   `El acta ${
                     this.form.get('acta2').value
-                  } fue abierta con éxito`
+                  } fue abierta`
                 );
                 const btn = document.getElementById('expedient-number');
                 this.render.removeClass(btn, 'disabled');
@@ -2540,7 +2540,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                       this.alert(
                         'success',
                         'Acta cerrada',
-                        'El acta fue cerrada con éxito'
+                        'El acta fue cerrada'
                       );
                       this.inputsInProceedingClose();
                     },
@@ -2739,7 +2739,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
             console.log(4);
             this.alertQuestion(
               'question',
-              '¿Desea eliminar completamente el acta?',
+              '¿Desea eliminar el acta?',
               `Se eliminará el acta ${this.form.get('acta2').value}`,
               'Eliminar'
             ).then(q => {
@@ -2773,7 +2773,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                             });
                             this.nextProceeding();
                           }
-                          this.alert('success', 'Acta eliminada con éxito', '');
+                          this.alert('success', 'Acta eliminada', '');
                         },
                         err => {
                           console.log(err);
