@@ -34,8 +34,11 @@ export class DocCompensationSatFormComponent
 
   private prepareForm() {
     this.docCompesationSatForm = this.fb.group({
-      id: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      idcat: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
+      id: [null],
+      officeSatId: [
+        null,
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+      ],
       typeDocSat: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
@@ -65,7 +68,7 @@ export class DocCompensationSatFormComponent
   create() {
     this.loading = true;
     this.docCompesationSatService
-      .create(this.docCompesationSatForm.getRawValue())
+      .create(this.docCompesationSatForm.value)
       .subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),
@@ -75,10 +78,7 @@ export class DocCompensationSatFormComponent
   update() {
     this.loading = true;
     this.docCompesationSatService
-      .update(
-        this.docCompesationSat.id,
-        this.docCompesationSatForm.getRawValue()
-      )
+      .update(this.docCompesationSat.id, this.docCompesationSatForm.value)
       .subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),

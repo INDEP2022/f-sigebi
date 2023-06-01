@@ -34,11 +34,21 @@ export class StateRepuvesFormComponent extends BasePage implements OnInit {
       key: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
       description: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.minLength(1),
+          Validators.maxLength(200),
+        ],
       ],
       procedure: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.minLength(1),
+          Validators.maxLength(200),
+        ],
       ],
     });
     if (this.stateRepuve != null) {
@@ -64,8 +74,14 @@ export class StateRepuvesFormComponent extends BasePage implements OnInit {
 
   update() {
     this.loading = true;
+
+    this.stateRepuveService.update(this.stateRepuveForm.value).subscribe({
+      next: data => this.handleSuccess(),
+      error: error => (this.loading = false),
+    });
+
     this.stateRepuveService
-      .update(this.stateRepuve.key, this.stateRepuveForm.value)
+      .update(this.stateRepuve.key) //correguir.
       .subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),

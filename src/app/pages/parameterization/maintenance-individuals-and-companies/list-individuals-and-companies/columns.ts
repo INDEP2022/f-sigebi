@@ -62,5 +62,5 @@ export const COLUMNS = {
   numberDeep: {
     title: 'No.Escritura',
     sort: false,
-  }
+  },
 };
