@@ -88,10 +88,8 @@ export class ListBanksComponent extends BasePage implements OnInit {
     this.loading = true;
     let params = {
       ...this.filterParams.getValue(),
-
       ...this.columnFilters,
     };
-    console.log(params);
     this.bankService.getAllWithFilters(params).subscribe({
       next: response => {
         this.data.load(response.data);

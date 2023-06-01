@@ -153,6 +153,10 @@ export class OpinionComponent extends BasePage implements OnInit, OnChanges {
   verBoton: boolean = false;
   filterParamsLocal = new BehaviorSubject<FilterParams>(new FilterParams());
 
+  tipoReporteImpresion: string;
+
+  tipoImpresion: string;
+
   //=======================================================================
   users$ = new DefaultSelect<ISegUsers>();
   users$$ = new DefaultSelect<ISegUsers>();
@@ -188,7 +192,8 @@ export class OpinionComponent extends BasePage implements OnInit, OnChanges {
     private usersService: UsersService,
     private service: BankAccountService,
     private dynamicCatalogsService: DynamicCatalogsService,
-    private jobDictumTextsServices: JobDictumTextsService
+    private jobDictumTextsServices: JobDictumTextsService,
+    private dictationService_1: DictationService
   ) {
     super();
 
@@ -298,12 +303,16 @@ Obtiene los filtros y en base a ellos se hace la búsqueda
     this.filterParamsLocal
       .getValue()
       .addFilter(
-        'entryDate',
+        'dictDate',
         new Date().getFullYear() +
-          '-01-01' +
+          '-' +
+          (new Date().getMonth() + 1) +
+          '-01' +
           ',' +
           new Date().getFullYear() +
-          '-12-31',
+          '-' +
+          (new Date().getMonth() + 1) +
+          '-31',
         SearchFilter.BTW
       );
     this.onEnterSearch(this.filterParamsLocal);
@@ -316,11 +325,16 @@ Obtiene los filtros y en base a ellos se hace la búsqueda
       .findByIdsOficNum(filterParams.getValue().getParams())
       .subscribe({
         next: resp => {
+          console.log('onEnterSearch => ' + JSON.stringify(resp));
+
           if (resp.data.length > 1) {
             this.loadModal(true, filterParams);
           } else {
             this.intIDictation = resp.data[0];
-            //this.form.get('expedientNumber').setValue(this.intIDictation.expedientNumber);
+
+            this.form
+              .get('expedientNumber')
+              .setValue(this.intIDictation.expedientNumber);
             console.log(' this.intIDictation.id => ' + this.intIDictation.id);
             this.form.get('registerNumber').setValue(this.intIDictation.id);
             this.form
@@ -383,6 +397,11 @@ carga la  información de la parte media de la página
   complementoFormulario(obj: any) {
     this.oficialDictationService.getById(obj).subscribe({
       next: resp => {
+        console.warn(
+          'complementoFormulario DICTAMENT : >===>> ',
+          JSON.stringify(resp)
+        );
+
         this.form.get('addressee').setValue(resp.recipient);
         this.form.get('senderUserRemitente').setValue(resp.sender);
         const param = new ListParams();
@@ -422,12 +441,6 @@ carga la  información de la parte media de la página
       .subscribe({
         next: resp => {
           let datos: IDictationCopies[] = resp.data;
-
-          this.form.get('senderUser').setValue(datos[0].namePersonExt);
-          this.nrSelecttypePerson = datos[0].personExtInt === 'S' ? 'S' : 'I';
-
-          this.form.get('senderUser').setValue(datos[1].namePersonExt);
-          this.nrSelecttypePerson_I = datos[1].personExtInt === 'S' ? 'S' : 'I';
         },
         error: error => {
           this.onLoadToast('error', 'error', error.error.message);
@@ -438,7 +451,7 @@ carga la  información de la parte media de la página
   getPersonaExt_Int(d: string, datos: any) {
     this.filterParams.getValue().removeAllFilters();
     let variable: IDictation = JSON.parse(JSON.stringify(datos));
-
+    this.refreshTabla();
     this.filterParams
       .getValue()
       .addFilter('id', this.form.get('expedientNumber').value, SearchFilter.EQ);
@@ -566,7 +579,10 @@ carga la  información de la parte media de la página
   /*====================================================================
     método para actualizar el dictamen en la parte del body
 =======================================================================*/
+
   updateDictamen() {
+    console.log(this.form.value);
+
     let ofis: Partial<IOfficialDictation> = this.getDatosToUpdateDictamenBody(
       this.form
     );
@@ -579,19 +595,27 @@ carga la  información de la parte media de la página
       },
     });
 
-    let data: Partial<IJobDictumTexts> = this.getDatosToUpdateDictamenBodyText(
+    let data: IJobDictumTexts = this.getDatosToUpdateDictamenBodyText(
       this.form
     );
 
+    let insert = {
+      dictatesNumber: this.form.get('registerNumber').value,
+      rulingType: this.form.get('typeDict').value,
+      textx: this.form.get('masInfo_1').value,
+      textoy: this.form.get('masInfo_2').value,
+      textoz: this.form.get('masInfo_3').value,
+      recordNumber: this.form.get('registerNumber').value,
+    };
     this.jobDictumTextsServices.update(data).subscribe({
       next: resp => {
         this.onLoadToast('success', 'success', resp.message[0]);
       },
       error: erro => {
-        this.onLoadToast('error', 'Error', erro.error.message);
+        this.insertTextos(data);
       },
     });
-
+    /*
     let obj = {
       id: this.idCopias,
       copyDestinationNumber: this.copyDestinationNumber,
@@ -603,12 +627,45 @@ carga la  información de la parte media de la página
       registerNumber: this.form.get('registerNumber').value,
     };
 
-    this.dictationService.updateUserByOficNum(obj).subscribe({
+ this.dictationService_1.create(obj).subscribe({
       next: resp => {
         this.onLoadToast('warning', 'Info', resp[0].message);
       },
       error: errror => {
         this.onLoadToast('error', 'Error', errror.error.message);
+      },
+    });*/
+    /*
+    this.dictationService_1.updateUserByOficNum(obj).subscribe({
+      next: resp => {
+        console.log(JSON.stringify(resp));
+        //this.onLoadToast('warning', 'Info', resp[0].message);
+      },
+      error: errror => {
+        this.insertCopies(obj); 
+      },
+    });*/
+  }
+
+  insertCopies(obj: any) {
+    this.dictationService_1.create(obj).subscribe({
+      next: resp => {
+        this.onLoadToast('warning', 'Info', resp[0].message);
+      },
+      error: errror => {
+        this.onLoadToast('error', 'Error', errror.error.message);
+      },
+    });
+  }
+
+  insertTextos(data: IJobDictumTexts) {
+    this.jobDictumTextsServices.create(data).subscribe({
+      next: resp => {
+        this.onLoadToast('success', 'success', resp.message[0]);
+        alert(resp.message[0]);
+      },
+      error: erro => {
+        this.onLoadToast('error', 'Error', erro.error.message);
       },
     });
   }
@@ -633,12 +690,12 @@ carga la  información de la parte media de la página
 
   getDatosToUpdateDictamenBodyText(f: FormGroup) {
     return {
-      dictatesNumber: this.dictatesNumber,
-      rulingType: this.rulingType,
-      textx: f.value.masInfo_1,
-      textoy: f.value.masInfo_2,
-      textoz: f.value.masInfo_3,
-      recordNumber: this.recordNumber,
+      dictatesNumber: this.form.get('registerNumber').value,
+      rulingType: this.form.get('typeDict').value,
+      textx: this.form.get('masInfo_1').value,
+      textoy: this.form.get('masInfo_2').value,
+      textoz: this.form.get('masInfo_3').value,
+      recordNumber: this.form.get('registerNumber').value,
     };
   }
 
@@ -675,6 +732,16 @@ carga la  información de la parte media de la página
              método para mandar a llamar el reporte
 =======================================================================*/
   public confirm() {
+    this.reporteExterno();
+    /*
+    if(this.tipoReporteImpresion==="EXTERNO"){
+      
+    }else{
+      this.reporteInterno();
+    }*/
+  }
+
+  reporteExterno() {
     const params = {
       PNOOFICIO: this.form.value.expedientNumber,
       PTIPODIC: this.form.value.typeDict,
@@ -697,6 +764,31 @@ carga la  información de la parte media de la página
       },
     });
   }
+
+  reporteInterno() {
+    const params = {
+      no_of_ges: this.form.value.managementNumber,
+    };
+
+    this.siabServiceReport.fetchReport('RGEROFGESTION', params).subscribe({
+      next: response => {
+        const blob = new Blob([response], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+        let config = {
+          initialState: {
+            documento: {
+              urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+              type: 'pdf',
+            },
+          },
+          class: 'modal-lg modal-dialog-centered',
+          ignoreBackdropClick: true,
+        };
+        this.modalService.show(PreviewDocumentsComponent, config);
+      },
+    });
+  }
+
   //======================================================================
 
   get extPerson(): FormArray {
@@ -765,11 +857,14 @@ carga la  información de la parte media de la página
   }
 
   insertRegistroExtCCP(data: IDictationCopies) {
-    this.dictationService.createPersonExt(data).subscribe({
+    alert('insertRegistroExtCCP ' + JSON.stringify(data));
+    this.dictationService_1.createPersonExt(data).subscribe({
       next: resp => {
-        this.onLoadToast('warning', 'Info', JSON.stringify(resp));
+        this.onLoadToast('warning', 'Info', 'Se inserto');
+        this.refreshTabla();
       },
       error: errror => {
+        alert('errror ' + errror);
         this.onLoadToast('error', 'Error', errror.error.message);
       },
     });
@@ -789,18 +884,14 @@ carga la  información de la parte media de la página
   }
 
   delete(id: number) {
-    alert('   delete  ');
-    /*
- this.dictationService
-      .deleteCopiesOfficialOpinion()
-      .subscribe({
-        next: resp => {
-        this.refreshTabla();    
-        },
-        error: errror => {
-          this.onLoadToast('error', 'Error', errror.error.message);
-        },
-      });*/
+    this.dictationService.deleteCopiesdictamenetOfficialOpinion(id).subscribe({
+      next: resp => {
+        this.refreshTabla();
+      },
+      error: errror => {
+        this.onLoadToast('error', 'Error', errror.error.message);
+      },
+    });
   }
 
   openForm(legend?: ILegend) {
@@ -821,27 +912,17 @@ carga la  información de la parte media de la página
 
   seteaTabla(datos: any) {
     let dato = JSON.parse(JSON.stringify(datos));
-    /*let obj:IDictationCopies = {
-        id: 3,
-        numberOfDicta: "165564",
-        typeDictamination: this.form.get('typeDict').value,
-        recipientCopy: this.form.get('addressee').value,
-        copyDestinationNumber: 0,
-        personExtInt: dato.typePerson_I,
-        namePersonExt: dato.personaExt_I,
-        registerNumber: this.form.get('registerNumber').value}*/
-
-    let data: IDictationCopies = {
-      numberOfDicta: '165564',
-      typeDictamination: 'PROCEDENCIA',
-      recipientCopy: 'VAZNAR',
+    let obj: IDictationCopies = {
+      numberOfDicta: this.form.get('registerNumber').value,
+      typeDictamination: this.form.get('typeDict').value,
+      recipientCopy: dato.typePerson_I,
       copyDestinationNumber: 0,
-      personExtInt: 'I',
-      namePersonExt: '',
-      registerNumber: 14969526,
+      personExtInt: dato.typePerson_I,
+      namePersonExt: dato.personaExt_I,
+      registerNumber: this.form.get('registerNumber').value,
     };
 
-    this.insertRegistroExtCCP(data);
+    this.insertRegistroExtCCP(obj);
     this.refreshTabla();
   }
 
@@ -849,13 +930,22 @@ carga la  información de la parte media de la página
     this.filterParams.getValue().removeAllFilters();
     this.filterParams
       .getValue()
-      .addFilter('id', this.form.get('expedientNumber').value, SearchFilter.EQ);
+      .addFilter(
+        'numberOfDicta',
+        this.form.get('registerNumber').value,
+        SearchFilter.EQ
+      );
+
+    console.log(
+      'refreshTabla() => ' + this.filterParams.getValue().getParams()
+    );
 
     this.dictationService
       .findUserByOficNum(this.filterParams.getValue().getParams())
       .subscribe({
         next: resp => {
           this.dataExt = resp.data;
+          console.log('refreshTabla() => ' + JSON.stringify(this.dataExt));
         },
         error: errror => {
           this.onLoadToast('error', 'Error', errror.error.message);
