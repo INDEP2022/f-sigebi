@@ -46,11 +46,9 @@
 
           <form-field [control]="form.get('id')" label="No&#46; Acta">
             <input
-              type="number"
               class="form-control"
               formControlName="id"
-              min="1"
-              maxlength="20"
+              maxlength="10"
               [readonly]="loading" />
           </form-field>
         </div>
@@ -174,7 +172,7 @@
           bindLabel="id"
           paramSearch="filter.id"
           prefixSearch="$eq"
-          path="catalog/api/v1/delegation"
+          path="catalog/api/v1/delegation/get-all"
           [updateValues]="true"
           [labelTemplate]="delegationLabel"
           [optionTemplate]="delegationOption">
@@ -220,7 +218,7 @@
           bindLabel="id"
           paramSearch="filter.id"
           prefixSearch="$eq"
-          path="catalog/api/v1/delegation"
+          path="catalog/api/v1/delegation/get-all"
           [updateValues]="true"
           [labelTemplate]="delegationLabel"
           [optionTemplate]="delegationOption">

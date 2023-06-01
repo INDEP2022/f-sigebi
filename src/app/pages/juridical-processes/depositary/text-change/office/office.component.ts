@@ -1,9 +1,10 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
-import { BsModalService } from 'ngx-bootstrap/modal';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, catchError, Observable, tap, throwError } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import {
   FilterParams,
   ListParams,
@@ -11,6 +12,8 @@ import {
 } from 'src/app/common/repository/interfaces/list-params';
 import { _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
+import { ILegend } from 'src/app/core/models/catalogs/legend.model';
+import { IDictationCopies } from 'src/app/core/models/ms-dictation/dictation-model';
 import { IAttachedDocument } from 'src/app/core/models/ms-documents/attached-document.model';
 import {
   ICopiesJobManagementDto,
@@ -29,6 +32,9 @@ import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import Swal from 'sweetalert2';
+import { EXTERNOS_COLUMS } from '../tabla-modal/tableUserExt';
+import { ModalPersonaOficinaComponent } from './modal-persona-oficina/modal-persona-oficina.component';
 
 @Component({
   selector: 'app-office',
@@ -63,6 +69,10 @@ export class OfficeComponent extends BasePage implements OnInit {
   year: number;
   users$$ = new DefaultSelect<ISegUsers>();
   users_1 = new DefaultSelect<ISegUsers>();
+  //==========================================
+  totalItems: number;
+
+  params = new BehaviorSubject<ListParams>(new ListParams());
 
   constructor(
     private fb: FormBuilder,
@@ -74,9 +84,23 @@ export class OfficeComponent extends BasePage implements OnInit {
     private usersService: UsersService,
     private AtachedDocumenServ: AtachedDocumentsService,
     private dynamicCatalogsService: DynamicCatalogsService,
-    private dictationService: DictationService
+    private dictationService: DictationService,
+    private modalRef: BsModalRef
   ) {
     super();
+
+    this.settings.columns = EXTERNOS_COLUMS;
+    this.settings = {
+      ...this.settings,
+      hideSubHeader: false,
+      actions: {
+        columnTitle: 'Acciones',
+        edit: true,
+        delete: false,
+        add: false,
+        position: 'left',
+      },
+    };
   }
 
   ngOnInit(): void {
@@ -291,12 +315,13 @@ export class OfficeComponent extends BasePage implements OnInit {
           );
       }
     }
-
+    /*
+  Se oculto hast que definamos el endopint para la consulta */
     this.filterParamsLocal
       .getValue()
       .addFilter(
-        'fecha_inserto',
-        this.year + '-01-01' + ':' + this.year + '-12-31',
+        'insertDate',
+        this.year + '-01-01' + ',' + this.year + '-12-31',
         SearchFilter.BTW
       );
 
@@ -325,7 +350,8 @@ export class OfficeComponent extends BasePage implements OnInit {
     const params = {
       no_of_ges: this.form.value.managementNumber,
     };
-    this.siabServiceReport.fetchReport('RGEROFGESTION_EXT', params).subscribe({
+
+    this.siabServiceReport.fetchReport('RGEROFGESTION', params).subscribe({
       next: response => {
         const blob = new Blob([response], { type: 'application/pdf' });
         const url = URL.createObjectURL(blob);
@@ -418,30 +444,25 @@ export class OfficeComponent extends BasePage implements OnInit {
       },
     });
 
-    /*let obj = {
-    
-      id :this.idCopias,
-      copyDestinationNumber:this.copyDestinationNumber,
-      typeDictamination: this.form.get("typeDict").value,
-      recipientCopy: this.form.get("typeDict").value,
-      no_Of_Dicta:this.form.get("registerNumber").value, 
+    let obj = {
+      copyDestinationNumber: '',
+      typeDictamination: this.form.get('typeDict').value,
+      recipientCopy: this.form.get('typeDict').value,
+      no_Of_Dicta: this.form.get('registerNumber').value,
       //copyDestinationNumber:this.form.get("senderUser_I").value,
-      personExtInt:this.form.get("typePerson_I").value, 
-      namePersonExt:this.form.get("personaExt_I").value, 
-      registerNumber:this.form.get("registerNumber").value, 
-}
+      personExtInt: this.form.get('typePerson_I').value,
+      namePersonExt: this.form.get('personaExt_I').value,
+      registerNumber: this.form.get('registerNumber').value,
+    };
 
-           
- this.dictationService
-      .updateUserByOficNum(obj)
-      .subscribe({
-        next: resp => {
-          this.onLoadToast('warning', 'Info', resp[0].message);
-        },
-        error: errror => {
-          this.onLoadToast('error', 'Error', errror.error.message);
-        },
-      });*/
+    this.dictationService.updateUserByOficNum(obj).subscribe({
+      next: resp => {
+        this.onLoadToast('warning', 'Info', resp[0].message);
+      },
+      error: errror => {
+        this.onLoadToast('error', 'Error', errror.error.message);
+      },
+    });
   }
 
   creaObjUpdate(f: FormGroup) {
@@ -466,7 +487,7 @@ export class OfficeComponent extends BasePage implements OnInit {
       .getPuestovalue(userDatos.positionKey)
       .subscribe({
         next: resp => {
-          alert('  getDescUserPuesto ' + resp.data.value);
+          // alert('  getDescUserPuesto ' + resp.data.value);
           this.form.get('charge').setValue(resp.data.value);
         },
         error: err => {
@@ -482,14 +503,9 @@ export class OfficeComponent extends BasePage implements OnInit {
     this.serviceOficces.getPersonaExt_Int(params).subscribe({
       next: resp => {
         this.filtroPersonaExt = resp.data;
-        this.nrSelecttypePerson = resp.data[0].personExtInt;
-        this.nrSelecttypePerson_I = resp.data[1].personExtInt;
 
-        this.form.get('typePerson').setValue(this.nrSelecttypePerson);
-        this.form.get('typePerson_I').setValue(this.nrSelecttypePerson_I);
-
-        this.form.get('personaExt').setValue(resp.data[0].nomPersonExt);
-        this.form.get('personaExt_I').setValue(resp.data[1].nomPersonExt);
+        console.log('(((      params => ' + JSON.stringify(params) + +')))');
+        console.log('getPersonaExt_Int => ' + JSON.stringify(resp.data));
       },
       error: errror => {
         this.onLoadToast('error', 'Error', errror.error.message);
@@ -503,7 +519,7 @@ export class OfficeComponent extends BasePage implements OnInit {
 
   getDescUser(control: string, event: Event) {
     this.nameUserDestinatario = JSON.parse(JSON.stringify(event));
-    alert(control);
+    //  alert(control);
     if (control === 'control_I') {
       this.form.get('personaExt_I').setValue(this.nameUserDestinatario.name);
     } else {
@@ -529,5 +545,98 @@ export class OfficeComponent extends BasePage implements OnInit {
         this.users$ = new DefaultSelect(response.data, response.count);
       })
     );
+  }
+  ///===========================================
+  insertRegistroExtCCP(data: IDictationCopies) {
+    this.dictationService.createPersonExt(data).subscribe({
+      next: resp => {
+        this.onLoadToast('warning', 'Info', resp);
+      },
+      error: errror => {
+        this.onLoadToast('error', 'Error', errror.error.message);
+      },
+    });
+  }
+
+  showDeleteAlert(legend: ILegend) {
+    this.alertQuestion(
+      'warning',
+      'Eliminar',
+      'Desea eliminar este registro?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.delete(legend.id);
+        Swal.fire('Borrado', '', 'success');
+      }
+    });
+  }
+
+  delete(id: number) {
+    this.serviceOficces.deleteCopiesJobManagement(id).subscribe({
+      next: resp => {
+        console.log('resp  =>  ' + resp);
+        this.refreshTabla();
+      },
+      error: errror => {
+        this.onLoadToast('error', 'Error', errror.error.message);
+      },
+    });
+  }
+
+  openForm(legend?: ILegend) {
+    const modalConfig = { ...MODAL_CONFIG, class: 'modal-dialog-centered' };
+    modalConfig.initialState = {
+      legend,
+      callback: (next: boolean, datos: any) => {
+        if (next) {
+          this.seteaTabla(datos);
+        }
+      },
+    };
+    this.modalService.show(ModalPersonaOficinaComponent, modalConfig);
+  }
+  close() {
+    this.modalRef.hide();
+  }
+  seteaTabla(datos: any) {
+    let dato = JSON.parse(JSON.stringify(datos));
+    console.log('JSON.stringify(datos)  =>  ' + JSON.stringify(datos));
+    let obj = {
+      managementNumber: this.form.get('managementNumber').value,
+      addresseeCopy: dato.senderUser_I,
+      delDestinationCopyNumber: 0,
+      personExtInt: dato.typePerson_I,
+      nomPersonExt: dato.personaExt_I,
+      recordNumber: this.form.get('managementNumber').value,
+    };
+    console.log('resp  =>  ' + JSON.stringify(obj));
+    this.serviceOficces.createCopiesJobManagement(obj).subscribe({
+      next: resp => {
+        console.warn(
+          ' this.serviceOficces. seteaTabla =>   ' + JSON.stringify(obj)
+        );
+
+        this.refreshTabla();
+      },
+      error: errror => {
+        this.onLoadToast('error', 'Error', errror.error.message);
+      },
+    });
+    this.refreshTabla();
+    console.log(
+      'this.filtroPersonaExt => ' + JSON.stringify(this.filtroPersonaExt)
+    );
+  }
+
+  refreshTabla() {
+    this.filterParams2
+      .getValue()
+      .addFilter(
+        'proceedingsNumber',
+        this.form.value.proceedingsNumber,
+        SearchFilter.EQ
+      );
+
+    this.getPersonaExt_Int(this.filterParams2.getValue().getParams());
   }
 }

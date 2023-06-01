@@ -28,16 +28,20 @@
               </form-field>
             </div>
             <div class="col-lg-8">
-              <button
-                (click)="onLoadListNotifications()"
-                class="btn btn-primary active btn-sm ml-3">
-                Buscar
-              </button>
-              <button
-                (click)="cleanExpediente()"
-                class="btn btn-warning active btn-sm ml-3">
-                Limpiar
-              </button>
+              <div class="col-md-3 col-sm-12 col-xs-12" *ngIf="verBoton">
+                <button
+                  class="btn btn-primary btn-sm active"
+                  (click)="onLoadListNotifications()">
+                  Buscar <i class="fa fa-search ml-2"></i>
+                </button>
+              </div>
+              <div class="col-md-3 col-sm-12 col-xs-12" *ngIf="!verBoton">
+                <button
+                  class="btn btn-primary btn-sm active"
+                  (click)="cleanExpediente()">
+                  Nueva B&uacute;squeda <i class="fa fa-search ml-2"></i>
+                </button>
+              </div>
             </div>
           </div>
         </div>

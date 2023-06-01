@@ -19,6 +19,8 @@ import { IGood } from 'src/app/core/models/ms-good/good';
 import { IPostGoodResDev } from 'src/app/core/models/ms-rejectedgood/get-good-goodresdev';
 import { FractionService } from 'src/app/core/services/catalogs/fraction.service';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
+import { GoodDataAsetService } from 'src/app/core/services/ms-good/good-data-aset.service';
+import { GoodFinderService } from 'src/app/core/services/ms-good/good-finder.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
@@ -81,7 +83,9 @@ export class ClassifyAssetsTabComponent
     private goodService: GoodService,
     private route: ActivatedRoute,
     private requestHelperService: RequestHelperService,
-    private showHideErrorInterceptorService: showHideErrorInterceptorService
+    private showHideErrorInterceptorService: showHideErrorInterceptorService,
+    private goodFinderService: GoodFinderService,
+    private goodDataAsetService: GoodDataAsetService
   ) {
     super();
   }
@@ -896,12 +900,14 @@ export class ClassifyAssetsTabComponent
       goods.requestId = Number(goods.requestId);
       goods.addressId = Number(goods.addressId);
       goodResult = await this.createGood(goods);
+      this.updateGoodFindRecord(goodResult.result);
       //manda a guardar los campos de los bienes, domicilio, inmueble
       //if (this.process != 'classify-assets') {
       this.childSaveAction = true;
       //}
     } else {
       goodResult = await this.updateGood(goods);
+      this.updateGoodFindRecord(goodResult.result);
       //manda a actualizar los campos de los bienes, domicilio, inmueble
       // if (this.process != 'classify-assets') {
       this.childSaveAction = true;
@@ -977,6 +983,24 @@ export class ClassifyAssetsTabComponent
           },
         });
     });
+  }
+
+  updateGoodFindRecord(good: any) {
+    this.goodDataAsetService
+      .updateGoodFinderRecord(good.goodId, good.id)
+      .subscribe({
+        next: resp => {
+          console.log('registro actualizado');
+        },
+        error: error => {
+          console.log('Error actualizar el registro de good', error);
+          this.onLoadToast(
+            'error',
+            'Error al actualizar',
+            'No se pudo actualizar el registro de good finder'
+          );
+        },
+      });
   }
 
   getReactiveFormActions() {

@@ -1,5 +1,6 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { BsModalRef } from 'ngx-bootstrap/modal';
 import { catchError, tap, throwError } from 'rxjs';
 import {
   FilterParams,
@@ -14,9 +15,11 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
   templateUrl: './modal-component.html',
 })
 export class ModalComponent implements OnInit {
-  @Input() datosOpinion!: any;
-  @Input() form: FormGroup;
-  @Input() index!: number;
+  form: FormGroup = this.fb.group({
+    typePerson_I: [null, null],
+    senderUser_I: [null, null],
+    personaExt_I: [null, null],
+  });
 
   users$ = new DefaultSelect<ISegUsers>();
   nameUserDestinatario: ISegUsers;
@@ -24,8 +27,13 @@ export class ModalComponent implements OnInit {
   personExtInt: string;
   personExtInt_I: string;
   nrSelecttypePerson: string;
+  select: any[];
 
-  constructor(private usersService: UsersService, private fb: FormBuilder) {}
+  constructor(
+    private usersService: UsersService,
+    private fb: FormBuilder,
+    private modalRef: BsModalRef
+  ) {}
 
   ngOnInit(): void {
     this.options = [
@@ -35,14 +43,13 @@ export class ModalComponent implements OnInit {
     ];
 
     this.form.get('typePerson_I').valueChanges.subscribe(value => {
-      if (value === 'S') {
-        this.form.get('senderUser').setValue(null);
+      if (value === 'E') {
+        this.form.get('senderUser_I').setValue(null);
+        this.form.get('personaExt_I').setValue('');
       } else {
-        this.form.get('senderUser').setValue('');
+        this.form.get('senderUser_I').setValue('');
       }
     });
-    console.log('INDEX => ' + this.index);
-    this.setValues();
   }
   getUsers($params: ListParams) {
     let params = new FilterParams();
@@ -73,10 +80,12 @@ export class ModalComponent implements OnInit {
     }
   }
 
-  setValues() {
-    this.nrSelecttypePerson! = this.datosOpinion.personExtInt;
-    this.form.get('typePerson_I').setValue(this.nrSelecttypePerson);
-    this.form.get('senderUser_I').setValue(this.datosOpinion.recipientCopy);
-    this.form.get('personaExt_I').setValue(this.datosOpinion.namePersonExt);
+  close() {
+    this.modalRef.hide();
+  }
+
+  agregarExterno() {
+    this.modalRef.content.callback(true, this.form.value);
+    this.close();
   }
 }

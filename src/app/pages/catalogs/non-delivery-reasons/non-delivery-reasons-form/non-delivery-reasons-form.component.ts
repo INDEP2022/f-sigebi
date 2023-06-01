@@ -59,7 +59,15 @@ export class NonDeliveryReasonsFormComponent
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      reason: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      reason: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.minLength(1),
+          Validators.maxLength(100),
+        ],
+      ],
       userCreation: [null],
       userModification: [null],
       version: [null],

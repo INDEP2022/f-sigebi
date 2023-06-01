@@ -207,6 +207,8 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
     this.activatedRoute.queryParams
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe((params: any) => {
+        console.log(params);
+        console.log(this.paramsScreen);
         for (const key in this.paramsScreen) {
           if (Object.prototype.hasOwnProperty.call(params, key)) {
             this.paramsScreen[key as keyof typeof this.paramsScreen] =
@@ -232,15 +234,15 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
           // this.showSearchAppointment = true; // Habilitar pantalla de búsqueda de dictaminaciones
           // this.showSearchAppointment = true; // Habilitar pantalla de búsqueda de dictaminaciones
         } else {
-          this.alertInfo(
-            'info',
-            'Error en los paramétros',
-            'Los paramétros No. Oficio: ' +
-              this.paramsScreen.P_VALOR +
-              ' y el Tipo Oficio: ' +
-              this.paramsScreen.TIPO +
-              ' al iniciar la pantalla son requeridos'
-          );
+          // this.alertInfo(
+          //   'info',
+          //   'Error en los paramétros',
+          //   'Los paramétros No. Oficio: ' +
+          //     this.paramsScreen.P_VALOR +
+          //     ' y el Tipo Oficio: ' +
+          //     this.paramsScreen.TIPO +
+          //     ' al iniciar la pantalla son requeridos'
+          // );
         }
       }
     }
@@ -465,6 +467,7 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
   }
 
   continueSearchAppoinment(event: any) {
+    console.log(event);
     this.showSearchAppointment = false;
     if (event) {
       if (event.id) {
@@ -532,7 +535,7 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
   }
 
   setDataAppointment() {
-    this.blockSender = false;
+    // this.blockSender = false;
     this._saveDictation = false; // Se actualiza el registro actual solamente
     this.form
       .get('cveOfficeGenerate')
@@ -554,6 +557,29 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
 
   // SSF3_FIRMA_ELEC_DOCS
   getElectronicFirmData() {
+    console.log(this.dictationData);
+    const params = new FilterParams();
+    params.removeAllFilters();
+    params.addFilter('natureDocument', this.dictationData.typeDict);
+    params.addFilter('documentNumber', this.dictationData.id);
+    params.addFilter('documentType', this.dictationData.statusDict);
+    let subscription = this.svLegalOpinionsOfficeService
+      .getElectronicFirmData(params.getParams())
+      .subscribe({
+        next: data => {
+          console.log('FIRMA ELECTRONICA', data);
+          subscription.unsubscribe();
+        },
+        error: error => {
+          console.log(error);
+          subscription.unsubscribe();
+        },
+      });
+  }
+
+  // SSF3_FIRMA_ELEC_DOCS
+  sendElectronicFirmData() {
+    console.log(this.dictationData);
     const params = new FilterParams();
     params.removeAllFilters();
     params.addFilter('natureDocument', this.dictationData.typeDict);
@@ -986,7 +1012,7 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
         next: data => {
           this.issuingUser = new DefaultSelect(
             data.data.map(i => {
-              i.name = '#' + i.id + ' -- ' + i.name;
+              i.name = i.id + ' -- ' + i.name;
               return i;
             }),
             data.count
@@ -1191,7 +1217,7 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
     }
     this.loadingSend = true;
     console.log('SEND OFFICE');
-
+    // this.getElectronicFirmData()
     let body: ICopiesOfficeSendDictation = {
       vc_pantalla: this.screenKey,
       clave_oficio_armada: this.dictationData.passOfficeArmy, //this.dictationData.keyArmyNumber.toString(),
@@ -2192,6 +2218,8 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
                 // COUNT SSF3_FIRMA_ELEC_DOCS
                 // SI COUNT ES 0 LLAMA PUP_REGRESA_ESTATUS
                 // DELETE TMP_DICTAMINACIONES
+                console.log('VERIFICANDOOOOOOOOOOO ');
+                this.sendElectronicFirmData();
               });
             }
           });
@@ -2390,6 +2418,8 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
       // });
     } else if (this.origin == 'FACTJURDICTAMASG') {
       this.router.navigate(['/pages/juridical/juridical-ruling-g']);
+    } else if (this.origin == 'juridical-ruling-g') {
+      window.history.back();
     } else {
       this.alert(
         'warning',
@@ -2541,6 +2571,9 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
       this.officeTextDictationData,
       this.officeCopiesDictationData
     );
+    if (this.blockSender) {
+      return;
+    }
     this.saveDictation();
   }
 

@@ -65,7 +65,7 @@
             <div class="row" *ngIf="dictDate != null">
               <div class="d-flex justify-content-end">
                 <div>
-                  <h6>{{ dictDate2 }}</h6>
+                  <h6>{{ dictDate3 }}</h6>
                 </div>
               </div>
             </div>
@@ -138,7 +138,7 @@
               <div class="col-md-6">
                 <div class="row">
                   <form-field
-                    class="mt-2"
+                    class=""
                     [control]="declarationForm.get('sender')">
                     <ngx-select
                       [form]="declarationForm"
@@ -155,7 +155,7 @@
                 </div>
                 <div class="row mt-5">
                   <form-field
-                    class="mt-2"
+                    class=""
                     [control]="declarationForm.get('recipient')">
                     <ngx-select
                       [form]="declarationForm"
@@ -172,7 +172,7 @@
                 </div>
                 <div class="row mt-5">
                   <form-field
-                    class="mt-2"
+                    class=""
                     [control]="declarationForm.get('passOfficeArmy')"
                     label="Cve. Oficio">
                     <input
@@ -183,9 +183,7 @@
                   </form-field>
                 </div>
                 <div class="row mt-5">
-                  <form-field
-                    class="mt-2"
-                    [control]="declarationForm.get('city')">
+                  <form-field class="" [control]="declarationForm.get('city')">
                     <ngx-select
                       [form]="declarationForm"
                       [data]="cities"
@@ -430,6 +428,7 @@
                               [control]="formOficio.get('tipoOficio')"
                               label="Tipo Oficio">
                               <input
+                                readonly
                                 type="text"
                                 class="form-control"
                                 formControlName="tipoOficio" />
@@ -440,6 +439,7 @@
                               [control]="formOficio.get('oficioPor')"
                               label="Oficio Por">
                               <input
+                                readonly
                                 type="text"
                                 class="form-control"
                                 formControlName="oficioPor" />
@@ -451,6 +451,7 @@
                               label="No. Gesti&oacute;n">
                               <input
                                 readonly
+                                [(ngModel)]="no_OficioGestion"
                                 type="number"
                                 class="form-control"
                                 formControlName="oficio" />
@@ -504,7 +505,6 @@
                       <div class="col-sm-12 col-12 mt-5">
                         <form-field [control]="formOficio.get('ciudad')">
                           <ngx-select
-                            [readonly]="!disabledBTNs"
                             [form]="formOficio"
                             [data]="cities2"
                             (fetchItems)="getCities2($event)"
@@ -760,7 +760,6 @@
                   </button>
                   <button
                     (click)="envofi()"
-                    [disabled]="!disabledBTNs"
                     class="btn btn-secondary btn-sm active ml-2 mr-2">
                     <i *ngIf="iconLock" class="bx bx-lock-open-alt"></i>
                     <i *ngIf="!iconLock" class="bx bx-lock-alt"></i>
@@ -773,7 +772,6 @@
                   </button> -->
                   <button
                     (click)="borrar()"
-                    [disabled]="!disabledBTNs"
                     type="button"
                     class="btn btn-danger btn-sm active ml-2 mr-2">
                     Borra
