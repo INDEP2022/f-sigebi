@@ -37,7 +37,12 @@ export class SiseProcessFormComponent extends BasePage implements OnInit {
       id: [null],
       description: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.minLength(1),
+          Validators.maxLength(50),
+          Validators.pattern(STRING_PATTERN),
+        ],
       ],
     });
     if (this.sisi != null) {
@@ -69,12 +74,10 @@ export class SiseProcessFormComponent extends BasePage implements OnInit {
 
   update() {
     this.loading = true;
-    this.siseProcessService
-      .update(this.sisi.id, this.form.getRawValue())
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
+    this.siseProcessService.newUpdate(this.form.getRawValue()).subscribe({
+      next: data => this.handleSuccess(),
+      error: error => (this.loading = false),
+    });
   }
 
   handleSuccess() {
