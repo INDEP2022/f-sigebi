@@ -188,7 +188,7 @@ export abstract class ScheduledMaintenance extends BasePageWidhtDinamicFiltersEx
       next: response => {
         console.log(response);
 
-        this.getData();
+        this.getData(true);
       },
     });
   }
@@ -245,7 +245,7 @@ export abstract class ScheduledMaintenance extends BasePageWidhtDinamicFiltersEx
     console.log(this.form.value);
   }
 
-  private fillParams() {
+  private fillParams(byPage = false) {
     const tipoEvento = this.form.get('tipoEvento').value;
     // const fechaInicio: Date | string = this.form.get('fechaInicio').value;
     // const fechaFin: Date = this.form.get('fechaFin').value;
@@ -321,18 +321,21 @@ export abstract class ScheduledMaintenance extends BasePageWidhtDinamicFiltersEx
       }
     }
     // this.filterParams.addFilter2(this.columnFilters);
-    this.filterParams.page = this.params.getValue().page;
-    this.filterParams.limit = this.params.getValue().limit;
+    if (byPage) {
+      this.filterParams.page = this.params.getValue().page;
+      this.filterParams.limit = this.params.getValue().limit;
+    }
+
     return true;
   }
 
-  override getData() {
+  override getData(byPage = false) {
     if (!this.form) {
       return;
     }
     this.saveForm();
     // this.fillParams()
-    if (this.fillParams()) {
+    if (this.fillParams(byPage)) {
       this.loading = true;
       this.service.getAll(this.filterParams.getParams()).subscribe({
         next: response => {
