@@ -10,7 +10,6 @@ import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
-import { _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
 import { ILegend } from 'src/app/core/models/catalogs/legend.model';
 import { IDictationCopies } from 'src/app/core/models/ms-dictation/dictation-model';
@@ -33,7 +32,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import Swal from 'sweetalert2';
-import { EXTERNOS_COLUMS } from '../tabla-modal/tableUserExt';
+import { EXTERNOS_COLUMS_OFICIO } from '../tabla-modal/tableUserExt';
 import { ModalPersonaOficinaComponent } from './modal-persona-oficina/modal-persona-oficina.component';
 
 @Component({
@@ -92,13 +91,13 @@ export class OfficeComponent extends BasePage implements OnInit {
   ) {
     super();
 
-    this.settings.columns = EXTERNOS_COLUMS;
+    this.settings.columns = EXTERNOS_COLUMS_OFICIO;
     this.settings = {
       ...this.settings,
       hideSubHeader: false,
       actions: {
         columnTitle: 'Acciones',
-        edit: true,
+        edit: false,
         delete: true,
         add: false,
         position: 'left',
@@ -114,8 +113,6 @@ export class OfficeComponent extends BasePage implements OnInit {
       { value: 'E', label: 'PERSONA EXTERNA' },
       { value: 'I', label: 'PERSONA INTERNA' },
     ];
-
-    this.loadUserDestinatario();
     this.buildForm();
   }
 
@@ -174,101 +171,6 @@ export class OfficeComponent extends BasePage implements OnInit {
     });
   }
 
-  onmanagementNumberEnter(filterParams: BehaviorSubject<FilterParams>) {
-    this.serviceOficces
-      .getAllOfficialDocument(filterParams.getValue().getParams())
-      .subscribe({
-        next: resp => {
-          console.warn('OFICIO 1: >===>> ', JSON.stringify(resp));
-
-          this.tipoImpresion = resp.data[0].jobType;
-
-          this.form
-            .get('proceedingsNumber')
-            .setValue(resp.data[0].proceedingsNumber);
-          this.form
-            .get('managementNumber')
-            .setValue(resp.data[0].managementNumber);
-          this.form.get('flyerNumber').setValue(resp.data[0].flyerNumber);
-          this.form.get('officio').setValue(resp.data[0].jobBy);
-          //====================================================================================//
-          this.form.get('addressee').setValue(resp.data[0].addressee);
-          this.form.get('RemitenteSenderUser').setValue(resp.data[0].sender);
-          const param = new ListParams();
-          param.text = resp.data[0].sender;
-          console.log(
-            'resp.data[0].sender => ' + JSON.stringify(resp.data[0].sender)
-          );
-          this.getUsers$(param);
-          this.getPuestoUser(resp.data[0].cveChargeRem);
-          this.form.get('paragraphInitial').setValue(resp.data[0].text1);
-          this.form.get('paragraphFinish').setValue(resp.data[0].text2);
-          this.form.get('paragraphOptional').setValue(resp.data[0].text3);
-          this.form.get('descriptionSender').setValue(resp.data[0].desSenderpa);
-          this.loadbyAttachedDocuments();
-          this.oficnumChange.emit(this.form.get('proceedingsNumber').value);
-        },
-        error: err => {
-          this.onLoadToast('error', 'error', err.error.message);
-        },
-      });
-  }
-
-  /*   Evento que se ejecuta para llenar el combo con los destinatarios
-========================================================================================*/
-  loadUserDestinatario() {
-    this.usersService.getUsersJob().subscribe({
-      next: resp => {
-        this.UserDestinatario = [...resp.data];
-      },
-      error: err => {
-        let error = '';
-        if (err.status === 0) {
-          error = 'Revise su conexión de Internet.';
-          this.onLoadToast('error', 'Error', error);
-        } else {
-          this.onLoadToast('error', 'Error', err.error.message);
-        }
-      },
-    });
-  }
-
-  /*   Evento que se ejecuta para llenar los documentos asociados a el expediente
-========================================================================================*/
-  loadbyAttachedDocuments() {
-    this.filterParams1.getValue().removeAllFilters();
-    this.filterParams1
-      .getValue()
-      .addFilter(
-        'proceedingsNumber',
-        this.form.value.proceedingsNumber,
-        SearchFilter.EQ
-      );
-    this.AtachedDocumenServ.getAllFilter(
-      this.filterParams1.getValue().getParams()
-    ).subscribe({
-      next: resp => {
-        console.log('2 >=====>  ', JSON.stringify(resp.data));
-        this.IAttDocument = resp.data;
-      },
-      error: error => {
-        this.onLoadToast('error', 'Error', error.error.message);
-      },
-    });
-
-    this.filterParams2.getValue().removeAllFilters();
-    if (this.form.value.proceedingsNumber) {
-      this.filterParams2
-        .getValue()
-        .addFilter(
-          'proceedingsNumber',
-          this.form.value.proceedingsNumber,
-          SearchFilter.EQ
-        );
-      this.getPersonaExt_Int(this.filterParams2.getValue().getParams());
-    }
-  }
-
   /*   Evento que se ejecuta para llenar los parametros con los que se va a realizar la busqueda
 ================================================================================================*/
   buscarOficio() {
@@ -321,8 +223,7 @@ export class OfficeComponent extends BasePage implements OnInit {
           );
       }
     }
-    /*
-  Se oculto hast que definamos el endopint para la consulta */
+
     this.filterParamsLocal
       .getValue()
       .addFilter(
@@ -331,8 +232,171 @@ export class OfficeComponent extends BasePage implements OnInit {
         SearchFilter.BTW
       );
 
-    this.onmanagementNumberEnter(this.filterParamsLocal);
-    this.verBoton = true;
+    if (
+      this.form.get('proceedingsNumber').value ||
+      this.form.get('managementNumber').value ||
+      this.form.get('flyerNumber').value ||
+      this.form.get('officio').value
+    ) {
+      this.onmanagementNumberEnter(this.filterParamsLocal);
+      this.verBoton = true;
+    } else {
+      Swal.fire('Se requiere un filtro de búsqueda', '', 'info');
+    }
+  }
+
+  onmanagementNumberEnter(filterParams: BehaviorSubject<FilterParams>) {
+    this.serviceOficces
+      .getAllOfficialDocument(filterParams.getValue().getParams())
+      .subscribe({
+        next: respuesta => {
+          console.log(respuesta.count);
+
+          if (respuesta.count > 1) {
+            console.log('IF');
+            this.loadOficioModal('getAllOfficialDocument', true, filterParams);
+          } else {
+            console.log('Else');
+            this.tipoImpresion = respuesta.data[0].jobType;
+            this.form
+              .get('proceedingsNumber')
+              .setValue(respuesta.data[0].proceedingsNumber);
+            this.form
+              .get('managementNumber')
+              .setValue(respuesta.data[0].managementNumber);
+            this.form
+              .get('flyerNumber')
+              .setValue(respuesta.data[0].flyerNumber);
+            this.form.get('officio').setValue(respuesta.data[0].jobBy);
+            this.form.get('addressee').setValue(respuesta.data[0].addressee);
+            this.form
+              .get('RemitenteSenderUser')
+              .setValue(respuesta.data[0].sender);
+            const param = new ListParams();
+            param.text = respuesta.data[0].sender;
+            this.getUsers$(param);
+            if (respuesta.data[0].cveChargeRem !== null) {
+              this.getPuestoUser(respuesta.data[0].cveChargeRem);
+            }
+            if (respuesta.data[0].proceedingsNumber !== null) {
+              this.loadbyAttachedDocuments(respuesta.data[0].managementNumber);
+            }
+
+            this.form.get('paragraphInitial').setValue(respuesta.data[0].text1);
+            this.form.get('paragraphFinish').setValue(respuesta.data[0].text2);
+            this.form
+              .get('paragraphOptional')
+              .setValue(respuesta.data[0].text3);
+            this.form
+              .get('descriptionSender')
+              .setValue(respuesta.data[0].desSenderpa);
+            //  this.oficnumChange.emit(this.form.get('proceedingsNumber').value);
+          }
+        },
+        error: err => {
+          let error = '';
+          if (err.status === 0) {
+            error = 'Revise su conexión de Internet.';
+          } else {
+            error = err.message;
+          }
+          if (err.message.indexOf('registros') !== -1) {
+            this.onLoadToast('error', 'Error 1 ', err.message);
+          }
+          //this.onLoadToast('error', 'Error', error);
+          console.log(error);
+        },
+      });
+  }
+  //=================================================================================
+  //===================================================================================//
+
+  loadOficioModal(
+    pantalla: string,
+    resp: boolean,
+    filterParams: BehaviorSubject<FilterParams>
+  ) {
+    this.openOficioModal(pantalla, true, filterParams);
+  }
+
+  openOficioModal(
+    pantalla: string,
+    newOrEdit: boolean,
+    filterParams: BehaviorSubject<FilterParams>
+  ) {
+    const modalConfig = {
+      ...MODAL_CONFIG,
+      class: 'modal-lg modal-dialog-centered',
+    };
+    modalConfig.initialState = {
+      newOrEdit,
+      filterParams,
+      pantalla,
+      callback: (next: any) => {
+        const respuesta = JSON.parse(JSON.stringify(next));
+
+        this.tipoImpresion = respuesta.data[0].jobType;
+        this.form
+          .get('proceedingsNumber')
+          .setValue(respuesta.data[0].proceedingsNumber);
+        this.form
+          .get('managementNumber')
+          .setValue(respuesta.data[0].managementNumber);
+        this.form.get('flyerNumber').setValue(respuesta.data[0].flyerNumber);
+        this.form.get('officio').setValue(respuesta.data[0].jobBy);
+        this.form.get('addressee').setValue(respuesta.data[0].addressee);
+        this.form.get('RemitenteSenderUser').setValue(respuesta.data[0].sender);
+        const param = new ListParams();
+        param.text = respuesta.data[0].sender;
+        this.getUsers$(param);
+        if (respuesta.data[0].cveChargeRem !== null) {
+          this.getPuestoUser(respuesta.data[0].cveChargeRem);
+        }
+        if (respuesta.data[0].proceedingsNumber !== null) {
+          this.loadbyAttachedDocuments(respuesta.data[0].managementNumber);
+        }
+
+        this.form.get('paragraphInitial').setValue(respuesta.data[0].text1);
+        this.form.get('paragraphFinish').setValue(respuesta.data[0].text2);
+        this.form.get('paragraphOptional').setValue(respuesta.data[0].text3);
+        this.form
+          .get('descriptionSender')
+          .setValue(respuesta.data[0].desSenderpa);
+      },
+    };
+    //this.modalService.show(TablaOficioModalComponent, modalConfig);
+  }
+
+  ////////////////////////////////////////////////////////////////////////////////////
+  /*   Evento que se ejecuta para llenar los documentos asociados a el expediente
+========================================================================================*/
+  loadbyAttachedDocuments(doc: number | string) {
+    this.filterParams1.getValue().removeAllFilters();
+    this.filterParams1
+      .getValue()
+      .addFilter('managementNumber', doc, SearchFilter.EQ);
+    this.AtachedDocumenServ.getAllFilter(
+      this.filterParams1.getValue().getParams()
+    ).subscribe({
+      next: resp => {
+        console.log('2 >=====>  ', JSON.stringify(resp.data));
+        this.IAttDocument = resp.data;
+      },
+      error: error => {
+        if (error.error.message.indexOf('registros') == -1) {
+          this.onLoadToast('error', 'Error 1 ', error.error.message);
+        }
+        console.log(error.error.message);
+      },
+    });
+
+    this.getPersonaExt_Int();
+    /*  this.filterParams2.getValue().removeAllFilters();
+    if (this.form.value.proceedingsNumber) {
+      this.filterParams2.getValue().addFilter('managementNumber',this.form.value.proceedingsNumber,SearchFilter.EQ);
+      this.getPersonaExt_Int(this.filterParams2.getValue().getParams());
+      console.log("this.filterParams2.getValue().getParams() =>> " +  this.filterParams2.getValue().getParams());
+    }*/
   }
 
   /*   Evento que se ejecuta para reiniciar la busqueda dependiendo del filtro
@@ -348,6 +412,7 @@ export class OfficeComponent extends BasePage implements OnInit {
     this.verBoton = false;
     this.filterParamsLocal.getValue().removeAllFilters();
     this.IAttDocument = [];
+    this.filtroPersonaExt = [];
   }
 
   /*       Crea el archivo que se va desplegar la información 
@@ -416,55 +481,26 @@ export class OfficeComponent extends BasePage implements OnInit {
   }
 
   getPuestoUser(idCode: string) {
+    let mensage = '';
     this.dynamicCatalogsService.getPuestovalue(idCode).subscribe({
       next: resp => {
+        mensage = '';
         this.form.get('charge').setValue(resp.data.value);
       },
       error: err => {
-        this.form.get('charge').setValue('');
-        this.onLoadToast('error', 'Error', err.error.message);
+        let error = '';
+        if (err.status === 0) {
+          error = 'Revise su conexión de Internet.';
+        } else {
+          error = err.message;
+        }
+        if (err.message.indexOf('registros') !== -1) {
+          this.onLoadToast('error', 'Error 1 ', err.message);
+        }
+        //Swal.fire('No se encontró el puesto del usuario', '', 'warning');
+        console.log('error Error  =>  ' + error);
       },
     });
-  }
-
-  getUsers$($params: ListParams) {
-    let params = new FilterParams();
-    params.page = $params.page;
-    params.limit = $params.limit;
-    params.search = $params.text;
-    this.getAllUsers$(params).subscribe();
-  }
-
-  getAllUsers$(params: FilterParams) {
-    return this.usersService.getAllSegUsers(params.getParams()).pipe(
-      catchError(error => {
-        this.users$$ = new DefaultSelect([], 0, true);
-        return throwError(() => error);
-      }),
-      tap(response => {
-        this.users$$ = new DefaultSelect(response.data, response.count);
-      })
-    );
-  }
-
-  getUsers_1($params: ListParams) {
-    let params = new FilterParams();
-    params.page = $params.page;
-    params.limit = $params.limit;
-    params.search = $params.text;
-    this.getAllUsers_1(params).subscribe();
-  }
-
-  getAllUsers_1(params: FilterParams) {
-    return this.usersService.getAllSegUsers(params.getParams()).pipe(
-      catchError(error => {
-        this.users_1 = new DefaultSelect([], 0, true);
-        return throwError(() => error);
-      }),
-      tap(response => {
-        this.users_1 = new DefaultSelect(response.data, response.count);
-      })
-    );
   }
 
   updateOficio() {
@@ -477,14 +513,16 @@ export class OfficeComponent extends BasePage implements OnInit {
         );
       },
       error: responseError => {
+        if (responseError.message.indexOf('registros') == -1) {
+          this.onLoadToast('error', 'Error 1 ', responseError.message);
+        }
         console.log('Entra =>  ', responseError.error.message);
-        this.onLoadToast('error', 'Error', responseError.error.message);
       },
     });
 
     let obj = {
       copyDestinationNumber: '',
-      typeDictamination: this.form.get('typeDict').value,
+      typeDictamination: this.form.get('officio').value,
       recipientCopy: this.form.get('typeDict').value,
       no_Of_Dicta: this.form.get('registerNumber').value,
       //copyDestinationNumber:this.form.get("senderUser_I").value,
@@ -529,26 +567,62 @@ export class OfficeComponent extends BasePage implements OnInit {
           this.form.get('charge').setValue(resp.data.value);
         },
         error: err => {
-          this.form.get('charge').setValue('');
-          this.onLoadToast('error', 'Error', err.error.message);
+          let error = '';
+          if (err.status === 0) {
+            error = 'Revise su conexión de Internet.';
+          } else {
+            error = err.message;
+          }
+          if (err.message.indexOf('registros') !== -1) {
+            Swal.fire(
+              'No se encontró el puesto del usuario',
+              err.message,
+              'warning'
+            );
+          }
+          console.log(error);
+          console.log('error Error  =>  ' + error);
         },
       });
   }
 
   /*   Evento que se ejecuta para llenar los parametros de las personas involucradas si son externos o internos
 ===============================================================================================================*/
-  getPersonaExt_Int(params: _Params) {
-    this.serviceOficces.getPersonaExt_Int(params).subscribe({
-      next: resp => {
-        this.filtroPersonaExt = resp.data;
+  getPersonaExt_Int() {
+    this.filterParams2.getValue().removeAllFilters();
+    this.filterParams2
+      .getValue()
+      .addFilter(
+        'managementNumber',
+        this.form.value.managementNumber,
+        SearchFilter.EQ
+      );
+    this.serviceOficces
+      .getPersonaExt_Int(this.filterParams2.getValue().getParams())
+      .subscribe({
+        next: resp => {
+          console.log('resp.data  => ');
+          console.log(resp.data);
+          //this.filtroPersonaExt = resp.data;
+          this.filtroPersonaExt = resp.data.map((data: any) =>
+            this.usuariosCCP(data)
+          );
+        },
+        error: err => {
+          let error = '';
+          if (err.status === 0) {
+            error = 'Revise su conexión de Internet.';
+          } else {
+            error = err.message;
+          }
+          if (err.message.indexOf('registros') !== -1) {
+            this.onLoadToast('error', 'Error 1 ', err.message);
+          }
 
-        console.log('(((      params => ' + JSON.stringify(params) + +')))');
-        console.log('getPersonaExt_Int => ' + JSON.stringify(resp.data));
-      },
-      error: errror => {
-        this.onLoadToast('error', 'Error', errror.error.message);
-      },
-    });
+          console.log(error);
+          // this.onLoadToast('error', 'Error', error);
+        },
+      });
   }
 
   /*===========================================================
@@ -565,33 +639,24 @@ export class OfficeComponent extends BasePage implements OnInit {
     }
   }
 
-  getUsers($params: ListParams) {
-    let params = new FilterParams();
-    params.page = $params.page;
-    params.limit = $params.limit;
-    params.search = $params.text;
-    this.getAllUsers(params).subscribe();
-  }
-
-  getAllUsers(params: FilterParams) {
-    return this.usersService.getAllSegUsers(params.getParams()).pipe(
-      catchError(error => {
-        this.users$ = new DefaultSelect([], 0, true);
-        return throwError(() => error);
-      }),
-      tap(response => {
-        this.users$ = new DefaultSelect(response.data, response.count);
-      })
-    );
-  }
   ///===========================================
   insertRegistroExtCCP(data: IDictationCopies) {
     this.dictationService.createPersonExt(data).subscribe({
       next: resp => {
         this.onLoadToast('warning', 'Info', resp);
       },
-      error: errror => {
-        this.onLoadToast('error', 'Error', errror.error.message);
+      error: err => {
+        let error = '';
+        if (err.status === 0) {
+          error = 'Revise su conexión de Internet.';
+        } else {
+          error = err.message;
+        }
+        if (err.message.indexOf('registros') !== -1) {
+          this.onLoadToast('error', 'Error 1 ', err.message);
+        }
+        console.log(error);
+        //this.onLoadToast('error', 'Error', error);
       },
     });
   }
@@ -615,8 +680,18 @@ export class OfficeComponent extends BasePage implements OnInit {
         console.log('resp  =>  ' + resp);
         this.refreshTabla();
       },
-      error: errror => {
-        this.onLoadToast('error', 'Error', errror.error.message);
+      error: err => {
+        let error = '';
+        if (err.status === 0) {
+          error = 'Revise su conexión de Internet.';
+        } else {
+          error = err.message;
+        }
+        if (err.message.indexOf('registros') !== -1) {
+          this.onLoadToast('error', 'Error 1 ', err.message);
+        }
+        console.log(error);
+        //this.onLoadToast('error', 'Error', error);
       },
     });
   }
@@ -656,8 +731,17 @@ export class OfficeComponent extends BasePage implements OnInit {
 
         this.refreshTabla();
       },
-      error: errror => {
-        this.onLoadToast('error', 'Error', errror.error.message);
+      error: err => {
+        let error = '';
+        if (err.status === 0) {
+          error = 'Revise su conexión de Internet.';
+        } else {
+          error = err.message;
+        }
+        if (err.message.indexOf('registros') !== -1) {
+          this.onLoadToast('error', 'Error 1 ', err.message);
+        }
+        console.log('Error ' + error);
       },
     });
     this.refreshTabla();
@@ -667,14 +751,97 @@ export class OfficeComponent extends BasePage implements OnInit {
   }
 
   refreshTabla() {
-    this.filterParams2
-      .getValue()
-      .addFilter(
-        'proceedingsNumber',
-        this.form.value.proceedingsNumber,
-        SearchFilter.EQ
-      );
+    this.getPersonaExt_Int();
+  }
 
-    this.getPersonaExt_Int(this.filterParams2.getValue().getParams());
+  // Combo para utilizar los usuarios
+  getUsers$($params: ListParams) {
+    let params = new FilterParams();
+    params.page = $params.page;
+    params.limit = $params.limit;
+    params.search = $params.text;
+    this.getAllUsers$(params).subscribe();
+  }
+
+  getAllUsers$(params: FilterParams) {
+    return this.usersService.getAllSegUsers(params.getParams()).pipe(
+      catchError(error => {
+        this.users$$ = new DefaultSelect([], 0, true);
+        return throwError(() => error);
+      }),
+      tap(response => {
+        this.users$$ = new DefaultSelect(response.data, response.count);
+      })
+    );
+  }
+
+  getUsers_1($params: ListParams) {
+    let params = new FilterParams();
+    params.page = $params.page;
+    params.limit = $params.limit;
+    params.search = $params.text;
+    this.getAllUsers_1(params).subscribe();
+  }
+
+  getAllUsers_1(params: FilterParams) {
+    return this.usersService.getAllSegUsers(params.getParams()).pipe(
+      catchError(error => {
+        this.users_1 = new DefaultSelect([], 0, true);
+        return throwError(() => error);
+      }),
+      tap(response => {
+        this.users_1 = new DefaultSelect(response.data, response.count);
+      })
+    );
+  }
+
+  getUsers($params: ListParams) {
+    let params = new FilterParams();
+    params.page = $params.page;
+    params.limit = $params.limit;
+    params.search = $params.text;
+    this.getAllUsers(params).subscribe();
+  }
+
+  getAllUsers(params: FilterParams) {
+    return this.usersService.getAllSegUsers(params.getParams()).pipe(
+      catchError(error => {
+        this.users$ = new DefaultSelect([], 0, true);
+        return throwError(() => error);
+      }),
+      tap(response => {
+        this.users$ = new DefaultSelect(response.data, response.count);
+      })
+    );
+  }
+  usuariosCCP(obj: ICopiesJobManagementDto) {
+    return {
+      id: obj.id,
+      managementNumber: obj.managementNumber,
+      addresseeCopy: obj.addresseeCopy,
+      delDestinationCopyNumber: obj.delDestinationCopyNumber,
+      nomPersonExt: obj.nomPersonExt,
+      personExtInt: obj.personExtInt == 'I' ? 'INTERNO' : 'EXTERNO',
+      recordNumber: obj.recordNumber,
+    };
+  }
+
+  /*   Evento que se ejecuta para llenar el combo con los destinatarios
+========================================================================================*/
+  loadUserDestinatario() {
+    this.usersService.getUsersJob().subscribe({
+      next: resp => {
+        this.UserDestinatario = [...resp.data];
+      },
+      error: err => {
+        let error = '';
+        if (err.status === 0) {
+          error = 'Revise su conexión de Internet.';
+          this.onLoadToast('error', 'Error', error);
+        } else {
+          this.onLoadToast('error', 'Error', err.error.message);
+        }
+      },
+    });
   }
 }

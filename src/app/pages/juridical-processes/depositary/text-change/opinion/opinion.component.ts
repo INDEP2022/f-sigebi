@@ -203,7 +203,7 @@ export class OpinionComponent extends BasePage implements OnInit, OnChanges {
       hideSubHeader: false,
       actions: {
         columnTitle: 'Acciones',
-        edit: true,
+        edit: false,
         delete: true,
         add: false,
         position: 'left',
@@ -339,7 +339,7 @@ Obtiene los filtros y en base a ellos se hace la búsqueda
         next: resp => {
           console.log('onEnterSearch => ' + JSON.stringify(resp));
 
-          if (resp.data.length > 1) {
+          if (resp.count > 1) {
             this.loadModal(true, filterParams);
           } else {
             this.intIDictation = resp.data[0];
@@ -484,7 +484,9 @@ carga la  información de la parte media de la página
       .findUserByOficNum(this.filterParams.getValue().getParams())
       .subscribe({
         next: resp => {
-          this.dataExt = resp.data;
+          let algo = {};
+          this.dataExt = resp.data.map((data: any) => this.usuariosCCP(data));
+          //this.dataExt = resp.data;
         },
         error: errror => {
           this.onLoadToast('info', 'Registro', 'No se obtuvo información');
@@ -927,7 +929,7 @@ carga la  información de la parte media de la página
     this.dataExt = [];
     this.dictationService_1.createPersonExt(data).subscribe({
       next: resp => {
-        Swal.fire('Usuario turnado exitosamente', '', 'success');
+        Swal.fire('Se guardo de manera correcta', '', 'success');
         this.refreshTabla();
       },
       error: errror => {
@@ -1023,7 +1025,8 @@ carga la  información de la parte media de la página
       .findUserByOficNum(this.filterParams.getValue().getParams())
       .subscribe({
         next: resp => {
-          this.dataExt = resp.data;
+          this.dataExt = resp.data.map((data: any) => this.usuariosCCP(data));
+
           console.log('refreshTabla() => ' + JSON.stringify(this.dataExt));
         },
         error: errror => {
@@ -1032,5 +1035,18 @@ carga la  información de la parte media de la página
           // this.onLoadToast('error', 'Error', errror.error.message);
         },
       });
+  }
+
+  usuariosCCP(obj: IDictationCopies) {
+    return {
+      id: obj.id,
+      numberOfDicta: obj.numberOfDicta,
+      typeDictamination: obj.typeDictamination,
+      recipientCopy: obj.recipientCopy,
+      copyDestinationNumber: obj.copyDestinationNumber,
+      personExtInt: obj.personExtInt == 'I' ? 'INTERNO' : 'EXTERNO',
+      namePersonExt: obj.namePersonExt,
+      registerNumber: obj.registerNumber,
+    };
   }
 }

@@ -52,7 +52,8 @@
         (rowsSelected)="rowsSelectedNotLocal = $event"
         (showDeleteAlert)="deleteRow($event)">
       </app-table-good-maintenance>
-      <app-warehouse-proceedings> </app-warehouse-proceedings>
+      <app-warehouse-proceedings [disabled]="data.length === 0">
+      </app-warehouse-proceedings>
     </div>
   </div>
 </app-card>
