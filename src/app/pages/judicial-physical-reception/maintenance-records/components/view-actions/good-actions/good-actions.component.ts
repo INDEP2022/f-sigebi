@@ -84,10 +84,10 @@ export class GoodActionsComponent extends AlertButton implements OnInit {
   ) {
     super();
     this.formGood = this.fb.group({
-      goodId: [null, [Validators.required, Validators.pattern(NUM_POSITIVE)]],
+      goodId: [null, Validators.pattern(NUM_POSITIVE)],
     });
     this.formAction = this.fb.group({
-      action: [null, Validators.required],
+      action: [null],
     });
   }
 
@@ -211,12 +211,12 @@ export class GoodActionsComponent extends AlertButton implements OnInit {
           titleColumnToReplace: 'bienes',
           columnsType: {
             numberGood: {
-              title: 'N° Bien',
+              title: 'No. Bien',
               type: 'string',
               sort: false,
             },
             numberProceedings: {
-              title: 'N° Acta',
+              title: 'No. Acta',
               type: 'string',
               sort: false,
             },
@@ -228,7 +228,7 @@ export class GoodActionsComponent extends AlertButton implements OnInit {
           // dataObservableFn: this.proceedingService.getAll2,
           idSelect: 'id',
           labelSelect: 'id',
-          label: 'N° Acta',
+          label: 'No. Acta',
           paramSearch: 'filter.id',
           path: 'proceeding/api/v1/proceedings-delivery-reception',
           form: this.fb.group({
@@ -250,7 +250,7 @@ export class GoodActionsComponent extends AlertButton implements OnInit {
           titleColumnToReplace: 'estados',
           columnsType: {
             numberGood: {
-              title: 'N° Bien',
+              title: 'No. Bien',
               type: 'string',
               sort: false,
             },
@@ -368,6 +368,7 @@ export class GoodActionsComponent extends AlertButton implements OnInit {
     this.goodService.updateGoodStatusMassive(goods, status).subscribe({
       next: response => {
         this.onLoadToast('success', 'Estados Actualizados', message);
+
         this.updateTable.emit();
       },
     });
@@ -413,7 +414,7 @@ export class GoodActionsComponent extends AlertButton implements OnInit {
               selected.numberGood +
               (index < this.selectedsForUpdate.length - 1 ? ',' : '');
           });
-          const message = `Se actualizaron los bienes N° ${goods} `;
+          const message = `Se actualizaron los bienes No. ${goods} `;
           this.onLoadToast('success', 'Exito', message);
           this.updateTable.emit();
         },

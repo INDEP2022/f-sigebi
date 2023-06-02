@@ -38,7 +38,7 @@ export class TableGoodMaintenanceComponent extends BasePage implements OnInit {
 
       columns: {
         numberGood: {
-          title: 'N° Bien',
+          title: 'No. Bien',
           sort: false,
           editable: false,
         },

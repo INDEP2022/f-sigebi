@@ -13,7 +13,10 @@ import {
   IUpdateWarehouse,
 } from '../../models/ms-proceedings/warehouse-vault.model';
 import { ProceedingsEndpoints } from './../../../common/constants/endpoints/ms-proceedings-endpoints';
-import { IUpdateProceedings } from './../../models/ms-proceedings/update-proceedings.model';
+import {
+  ICveAct,
+  IUpdateProceedings,
+} from './../../models/ms-proceedings/update-proceedings.model';
 
 @Injectable({
   providedIn: 'root',
@@ -93,6 +96,17 @@ export class ProceedingsService extends HttpService {
 
   createProceedings(formData: Object) {
     return this.post(this.route, formData);
+  }
+
+  getCurTrans(expedientId: string | number) {
+    return this.get<{
+      no_transferente: string;
+      clave: string;
+    }>(`application/get-cur-transf/${expedientId}`);
+  }
+
+  getCveAct(model: ICveAct) {
+    return this.post<IResponse>('aplication/get-detail-acta-types', model);
   }
 
   remove(proceedingsNumb: number) {
