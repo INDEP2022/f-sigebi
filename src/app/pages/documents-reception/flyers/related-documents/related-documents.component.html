@@ -167,6 +167,8 @@
           <div class="col-md-1 text-right">
             <button
               type="button"
+              tooltip="Cambio"
+              containerClass="tooltip-style"
               class="btn btn-success active btn-sm m-2"
               (click)="changeOffice()">
               <i class="bx bx-undo"></i>
@@ -351,17 +353,25 @@
           <div class="col-md-12 mt-3 text-right">
             <button
               type="button"
+              tooltip="Documentos"
+              containerClass="tooltip-style"
               class="btn btn-info active btn-sm m-1"
               (click)="openModal()">
               <i class="bx bxs-file"></i>
             </button>
             <button
               type="button"
+              tooltip="Imprimir"
+              containerClass="tooltip-style"
               class="btn btn-secondary active btn-sm m-1"
               (click)="send()">
               <i class="bx bxs-printer"></i>
             </button>
-            <button type="button" class="btn btn-danger active btn-sm m-1">
+            <button
+              type="button"
+              tooltip="Borrar"
+              containerClass="tooltip-style"
+              class="btn btn-danger active btn-sm m-1">
               <i class="bx bxs-trash"></i>
             </button>
             <button
@@ -370,7 +380,9 @@
                 paramsGestionDictamen.sale == 'D'
               "
               type="submit"
-              class="btn btn-primary btn-sm active">
+              class="btn btn-primary btn-sm active"
+              tooltip="Enviar"
+              containerClass="tooltip-style">
               <i class="bx bx-send"></i>
             </button>
           </div>
