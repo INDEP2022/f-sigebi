@@ -38,6 +38,10 @@
   display: block;
 }
 
+.not-press {
+  pointer-events: none;
+}
+
 * {
   font-size: 14px;
 }

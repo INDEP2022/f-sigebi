@@ -60,7 +60,7 @@ export const COLUMNS_DICTUMS = {
     type: 'string',
     sort: false,
   },
-  dictDate: {
+  dateDicta: {
     title: 'Fecha Dictamen',
     type: 'string',
     sort: false,
