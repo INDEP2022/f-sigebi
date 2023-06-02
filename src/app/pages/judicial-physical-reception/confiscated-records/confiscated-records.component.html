@@ -17,9 +17,7 @@
               </button>
             </div>
             <div class="col">
-              <button
-                class="btn btn-info btn-sm active"
-                (click)="clearAll()">
+              <button class="btn btn-info btn-sm active" (click)="clearAll()">
                 Limpiar
               </button>
             </div>
@@ -102,12 +100,14 @@
               </form-field>
             </div>
             <div *ngIf="form.get('statusProceeding').value != null" class="col">
-              <form-field [control]="form.get('statusProceeding')" label="Estatus del acta">
+              <form-field
+                [control]="form.get('statusProceeding')"
+                label="Estatus del acta">
                 <input
                   type="text"
                   readOnly="true"
                   class="form-control"
-                  formControlName = 'statusProceeding' />
+                  formControlName="statusProceeding" />
               </form-field>
             </div>
           </div>
