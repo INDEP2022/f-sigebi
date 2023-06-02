@@ -1,13 +1,14 @@
 import { DatePipe } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, takeUntil } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
+import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import {
   FilterParams,
   ListParams,
@@ -19,8 +20,10 @@ import { IGood } from 'src/app/core/models/ms-good/good';
 import { INotification } from 'src/app/core/models/ms-notification/notification.model';
 import { ICopiesJobManagementDto } from 'src/app/core/models/ms-officemanagement/good-job-management.model';
 import { IMJobManagement } from 'src/app/core/models/ms-officemanagement/m-job-management.model';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
+import { ApplicationGoodsQueryService } from 'src/app/core/services/ms-goodsquery/application.service';
 import { GoodsJobManagementService } from 'src/app/core/services/ms-office-management/goods-job-management.service';
 import { SecurityService } from 'src/app/core/services/ms-security/security.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -28,6 +31,7 @@ import {
   POSITVE_NUMBERS_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
+import { EXTERNOS_COLUMS } from 'src/app/pages/juridical-processes/depositary/text-change/tabla-modal/tableUserExt';
 import { IJuridicalDocumentManagementParams } from 'src/app/pages/juridical-processes/file-data-update/interfaces/file-data-update-parameters';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import Swal from 'sweetalert2';
@@ -65,6 +69,7 @@ import { RelatedDocumentsService } from './services/related-documents.service';
   ],
 })
 export class RelatedDocumentsComponent extends BasePage implements OnInit {
+  disabled: boolean = true;
   filtroPersonaExt: ICopiesJobManagementDto[] = [];
   filterParams2 = new BehaviorSubject<FilterParams>(new FilterParams());
   nrSelecttypePerson: string | number;
@@ -110,7 +115,7 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
   se_refiere_a_Disabled = {
     A: false,
     B: false,
-    C: false,
+    C: true,
     D: false,
   };
   variables = {
@@ -137,6 +142,7 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
   loadingGoods: boolean = false;
   ReadOnly: boolean;
   today = new DatePipe('en-EN').transform(new Date(), 'dd/MM/yyyy');
+  @ViewChild('cveOficio', { static: true }) cveOficio: ElementRef;
 
   constructor(
     private fb: FormBuilder,
@@ -149,7 +155,9 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
     private dictationService: DictationService,
     private serviceRelatedDocumentsService: RelatedDocumentsService,
     private securityService: SecurityService,
-    private serviceOficces: GoodsJobManagementService
+    private serviceOficces: GoodsJobManagementService,
+    private readonly authService: AuthService,
+    private applicationGoodsQueryService: ApplicationGoodsQueryService
   ) {
     super();
     RELATED_DOCUMENTS_COLUMNS_GOODS.seleccion = {
@@ -163,8 +171,38 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
     this.settings = {
       ...this.settings,
       actions: false,
+      selectMode: 'multi',
       columns: { ...RELATED_DOCUMENTS_COLUMNS_GOODS },
     };
+  }
+
+  settings1 = {
+    ...TABLE_SETTINGS,
+    actions: false,
+    columns: {
+      ...EXTERNOS_COLUMS,
+    },
+    noDataMessage: 'No se encontraron registros',
+  };
+
+  disabledChecks() {
+    const tabla = document.getElementById('goods');
+    const tbody = tabla.children[0].children[1].children;
+    for (let index = 0; index < tbody.length; index++) {
+      const element = tbody[index];
+      element.children[6].classList.add('not-press');
+      element.children[7].classList.add('not-press');
+    }
+  }
+
+  enableChecks() {
+    const tabla = document.getElementById('goods');
+    const tbody = tabla.children[0].children[1].children;
+    for (let index = 0; index < tbody.length; index++) {
+      const element = tbody[index];
+      element.children[6].classList.remove('not-press');
+      element.children[7].classList.remove('not-press');
+    }
   }
 
   onClickSelect(event: any) {
@@ -183,22 +221,21 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.validOficioGestion();
     // console.log("status OF: ", this.oficioGestion.statusOf);
     this.setInitVariables();
     this.prepareForm();
-    this.route.queryParams
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe((params: any) => {
-        this.origin = params['origin'] ?? null;
-        this.paramsGestionDictamen.volante = params['volante'] ?? null;
-        this.paramsGestionDictamen.expediente = params['expediente'] ?? null;
-        this.paramsGestionDictamen.tipoOf = params['tipoOf'] ?? null;
-        this.paramsGestionDictamen.doc = params['doc'] ?? null;
-        this.paramsGestionDictamen.pDictamen = params['pDictamen'] ?? null;
-        this.paramsGestionDictamen.sale = params['sale'] ?? null;
-        this.paramsGestionDictamen.pGestOk = params['pGestOk'] ?? null;
-      });
+    // this.route.queryParams
+    //   .pipe(takeUntil(this.$unSubscribe))
+    //   .subscribe((params: any) => {
+    //     this.origin = params['origin'] ?? null;
+    //     this.paramsGestionDictamen.volante = params['volante'] ?? null;
+    //     this.paramsGestionDictamen.expediente = params['expediente'] ?? null;
+    //     this.paramsGestionDictamen.tipoOf = params['tipoOf'] ?? null;
+    //     this.paramsGestionDictamen.doc = params['doc'] ?? null;
+    //     this.paramsGestionDictamen.pDictamen = params['pDictamen'] ?? null;
+    //     this.paramsGestionDictamen.sale = params['sale'] ?? null;
+    //     this.paramsGestionDictamen.pGestOk = params['pGestOk'] ?? null;
+    //   });
     this.pantallaActual = this.route.snapshot.paramMap.get('id');
     if (!this.pantallaActual) {
       this.router.navigateByUrl('/pages/');
@@ -242,17 +279,17 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
   }
 
   setInitVariables() {
-    // this.paramsGestionDictamen = {
-    //   expediente: 32440,
-    //   volante: 1558043,
-    //   pDictamen: '10',
-    //   pNoTramite: 1044254,
-    //   tipoOf: 'INTERNO',
-    //   bien: 'N',
-    //   sale: 'D',
-    //   doc: 'N',
-    //   pGestOk: null,
-    // };
+    this.paramsGestionDictamen = {
+      expediente: 32440,
+      volante: 1558043,
+      pDictamen: '10',
+      pNoTramite: 1044254,
+      tipoOf: 'INTERNO',
+      bien: 'N',
+      sale: 'D',
+      doc: 'N',
+      pGestOk: null,
+    };
     // {
     //   volante: 1557802,
     //   expediente: 619252,
@@ -533,6 +570,7 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
   }
 
   changeOffice() {
+    this.se_refiere_a_Disabled.C = false;
     if (this.paramsGestionDictamen.sale == 'C') {
       this.alertInfo('warning', PARAMETERSALEC, '');
       return;
@@ -613,7 +651,7 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
     //   this.alertInfo(
     //     'warning',
     //     'No existe el Número de Gestión: ' +
-    //       this.oficioGestion.managementNumber,
+    //     this.oficioGestion.managementNumber,
     //     ''
     //   );
     // }
@@ -990,6 +1028,24 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
   }
 
   send(): any {
+    let token = this.authService.decodeToken();
+    const pNumber = Number(token.department);
+    this.applicationGoodsQueryService.getDictamenSeq(pNumber).subscribe({
+      next: (response: any) => {
+        this.generateCveOficio(response.dictamenDelregSeq);
+        // document.getElementById('cveOficio').focus();
+        this.cveOficio.nativeElement.focus();
+        setTimeout(
+          () =>
+            this.alert(
+              'success',
+              '',
+              'Clave de oficio generada correctamente.'
+            ),
+          1000
+        );
+      },
+    });
     let params = {
       PARAMFORM: 'NO',
       DESTYPE: this.screenKey,
@@ -1001,7 +1057,8 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
     };
     if (this.managementForm.get('tipoOficio').value == 'INTERNO') {
       this.siabService
-        .fetchReport('RGERJURDECLARABAND', params)
+        // .fetchReport('RGERJURDECLARABAND', params)
+        .fetchReportBlank('blank')
         .subscribe(response => {
           if (response !== null) {
             const blob = new Blob([response], { type: 'application/pdf' });
@@ -1024,7 +1081,8 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
         });
     } else if (this.managementForm.get('tipoOficio').value == 'EXTERNO') {
       this.siabService
-        .fetchReport('RGEROFGESTION_EXT', params)
+        // .fetchReport('RGEROFGESTION_EXT', params)
+        .fetchReportBlank('blank')
         .subscribe(response => {
           if (response !== null) {
             const blob = new Blob([response], { type: 'application/pdf' });
@@ -1054,6 +1112,19 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     });
+  }
+
+  generateCveOficio(noDictamen: string) {
+    let token = this.authService.decodeToken();
+    const year = new Date().getFullYear();
+    let cveOficio = '';
+    cveOficio =
+      token.siglasnivel1 + '/' + token.siglasnivel2 + '/' + token.siglasnivel3;
+    // if (token.siglasnivel4 !== null) {
+    //   cveOficio = cveOficio + '/' + token.siglasnivel4;
+    // }
+    cveOficio = cveOficio + '/' + noDictamen + '/' + year;
+    this.managementForm.get('cveGestion').setValue(cveOficio);
   }
 
   getFromSelect(params: ListParams) {

@@ -120,25 +120,31 @@
       <div class="row pt-4">
         <div class="col-md-12">
           <h6>Se Refiere A:</h6>
-          <div class="col-md-3">
+          <div
+            class="col-md-3"
+            [ngClass]="{ 'not-press': se_refiere_a_Disabled.A }">
             <form-radio label="{{ se_refiere_a.A }}">
               <input
                 type="radio"
                 formControlName="checkText"
                 value="{{ se_refiere_a.A }}"
-                (change)="changeImprocedenteDisabled($event.target)" />
+                (change)="disabledChecks()" />
             </form-radio>
           </div>
-          <div class="col-md-4">
+          <div
+            class="col-md-4"
+            [ngClass]="{ 'not-press': se_refiere_a_Disabled.B }">
             <form-radio label="{{ se_refiere_a.B }}" class="mt-0 pt-0 bt-0">
               <input
-                [attr.disabled]="se_refiere_a_Disabled.B"
                 type="radio"
                 formControlName="checkText"
-                value="{{ se_refiere_a.B }}" />
+                value="{{ se_refiere_a.B }}"
+                (change)="enableChecks()" />
             </form-radio>
           </div>
-          <div class="col-md-4">
+          <div
+            class="col-md-4"
+            [ngClass]="{ 'not-press': se_refiere_a_Disabled.C }">
             <form-radio label="{{ se_refiere_a.C }}">
               <input
                 type="radio"
@@ -285,13 +291,14 @@
               (change)="changeImprocedente($event.target)"
               formControlName="improcedente" />
           </form-check>
-          <div class="col-md-2 text-end">
+          <!-- <div class="col-md-2 text-end">
             <app-columns-select [(settings)]="settings"></app-columns-select>
-          </div>
+          </div> -->
           <div class="col-md-12" style="max-height: 600px; overflow-y: scroll">
             <div [class]="loadingGoods ? 'table-loading' : ''">
               <ng2-smart-table
                 class="col-md-12"
+                id="goods"
                 [attr.class]="'table-bordered'"
                 [settings]="settings"
                 [source]="dataGoodTable"></ng2-smart-table>
@@ -452,7 +459,7 @@
         <div class="ch-content" header>
           <h5 class="title">C&#46;C&#46;P&#46;</h5>
           <div class="col-md-5 buttons">
-            <app-columns-select [(settings)]="settings"></app-columns-select>
+            <app-columns-select [(settings)]="settings1"></app-columns-select>
             <div>
               <button
                 (click)="openForm()"
@@ -469,7 +476,7 @@
                 <div [class]="loading ? 'table-loading' : ''">
                   <ng2-smart-table
                     [attr.class]="'table-bordered'"
-                    [settings]="settings"
+                    [settings]="settings1"
                     [source]="filtroPersonaExt"
                     (edit)="openForm($event.data)"
                     (delete)="showDeleteAlert($event.data)">

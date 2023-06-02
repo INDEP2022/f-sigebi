@@ -84,7 +84,7 @@ export class MassiveDeleteButtonComponent
                 // this.onLoadToast(
                 //   'error',
                 //   'ERROR',
-                //   `No se pudieron eliminar los bienes N° ${bienes}`
+                //   `No se pudieron eliminar los bienes No ${bienes}`
                 // );
               },
             });
@@ -101,7 +101,7 @@ export class MassiveDeleteButtonComponent
       notRemoveds.forEach((selected, index) => {
         goods += selected + (index < this.selecteds.length - 1 ? ',' : '');
       });
-      return `pero no se pudieron los bienes N° ${goods}`;
+      return `pero no se pudieron los bienes No. ${goods}`;
     } else {
       return '';
     }
@@ -116,7 +116,7 @@ export class MassiveDeleteButtonComponent
       this.onLoadToast(
         'success',
         'Exito',
-        `Se eliminaron los bienes N° ${goods} ` +
+        `Se eliminaron los bienes No. ${goods} ` +
           this.showMessageGoodsNotRemoved(notRemoveds)
       );
     }

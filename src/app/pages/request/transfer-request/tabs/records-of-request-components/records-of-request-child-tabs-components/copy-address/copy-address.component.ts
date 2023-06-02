@@ -60,7 +60,7 @@ export class CopyAddressComponent extends BasePage implements OnInit {
       requestId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       warehouseAlias: [null, [Validators.pattern(STRING_PATTERN)]],
       correspondence: ['TODO', [Validators.pattern(STRING_PATTERN)]],
-      typeAddress: [null, [Validators.pattern(STRING_PATTERN)]],
+      wayOrigin: [null, [Validators.pattern(STRING_PATTERN)]],
     });
   }
 
@@ -167,7 +167,7 @@ export class CopyAddressComponent extends BasePage implements OnInit {
     const request = this.form.get('requestId').value;
     const akaWarehouse = this.form.get('warehouseAlias').value;
     const correspondence = this.form.get('correspondence').value;
-    const typeAddress = this.form.get('typeAddress').value;
+    const wayOrigin = this.form.get('wayOrigin').value;
 
     if (request) {
       console.log('solicitud', request);
@@ -176,20 +176,20 @@ export class CopyAddressComponent extends BasePage implements OnInit {
 
     if (akaWarehouse) {
       console.log('alias', akaWarehouse);
-      //this.paramsSearch.getValue()['filter.aliasWarehouse'] = akaWarehouse;
+      this.paramsSearch.getValue()['filter.aliasWarehouse'] = akaWarehouse;
     }
 
     if (correspondence) {
       console.log('correspondence', correspondence);
-      //this.paramsSearch.getValue()['filter.correspondence'] = correspondence;
+      this.paramsSearch.getValue()['filter.correspondence'] = correspondence;
     }
 
-    if (typeAddress) {
-      console.log('typeAddress', typeAddress);
-      //this.paramsSearch.getValue()['filter.typeAddress'] = typeAddress;
+    if (wayOrigin) {
+      console.log('wayOrigin', wayOrigin);
+      this.paramsSearch.getValue()['filter.wayOrigin'] = wayOrigin;
     }
 
-    if (request || akaWarehouse || correspondence || typeAddress) {
+    if (request || akaWarehouse || correspondence || wayOrigin) {
       this.getSearchAddress();
     } else {
       this.onLoadToast(

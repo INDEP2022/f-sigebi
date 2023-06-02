@@ -11,6 +11,7 @@
             <div class="col">
               <button
                 id="expedient-number"
+                [class]="loading ? 'disabled' : ''"
                 class="btn btn-primary btn-sm disabled mr-2 active"
                 (click)="searchButton()">
                 <i class="fa fa-search"></i> Buscar
@@ -18,6 +19,7 @@
             </div>
             <div class="col">
               <button
+                [class]="loading ? 'disabled' : ''"
                 class="btn btn-info btn-sm active"
                 (click)="clearAll()">
                 Limpiar
@@ -32,6 +34,7 @@
                 control="listExpedients"
                 label="Expedientes"
                 bindLabel="id"
+                [class]="loading ? 'disabled' : ''"
                 (change)="selectExpedient($event)"
                 [data]="dataExpedients"
                 [searchable]="false"
@@ -46,6 +49,7 @@
               <button
                 id="expedient-number"
                 [disabled]="!prevProce"
+                [class]="loading ? 'disabled' : ''"
                 class="btn btn-secondary btn-sm active"
                 (click)="prevProceeding()">
                 <i class="fa fa-angle-left"></i>
@@ -69,12 +73,14 @@
                 id="expedient-number"
                 class="btn btn-secondary btn-sm active"
                 [disabled]="!nextProce"
+                [class]="loading ? 'disabled' : ''"
                 (click)="nextProceeding()">
                 <i class="fa fa-angle-right"></i>
               </button>
               <button
                 *ngIf="newAct"
                 id="expedient-number"
+                [class]="loading ? 'disabled' : ''"
                 class="btn btn-primary btn-sm active ml-4"
                 (click)="newProceeding()">
                 Nueva acta
@@ -102,12 +108,14 @@
               </form-field>
             </div>
             <div *ngIf="form.get('statusProceeding').value != null" class="col">
-              <form-field [control]="form.get('statusProceeding')" label="Estatus del acta">
+              <form-field
+                [control]="form.get('statusProceeding')"
+                label="Estatus del acta">
                 <input
                   type="text"
                   readOnly="true"
                   class="form-control"
-                  formControlName = 'statusProceeding' />
+                  formControlName="statusProceeding" />
               </form-field>
             </div>
           </div>
@@ -165,7 +173,7 @@
                   id="transfer"
                   control="transfer"
                   [class]="initialdisabled ? 'disabled' : ''"
-                  label="Transfer"
+                  label="Transferente"
                   bindLabel="transferentkey"
                   [searchable]="false"
                   [data]="transferSelect"
@@ -245,7 +253,7 @@
         </div>
       </div>
       <hr class="row" />
-      <div class="row">
+      <div [class]="loading ? 'disabled' : ''" class="row">
         <div class="col-md-6">
           <div class="row">
             <form-field [control]="form.get('acta2')" label="Acta 2">
@@ -428,7 +436,7 @@
         </div>
       </div>
       <hr class="row" />
-      <div class="row mb-5">
+      <div [class]="loading ? 'disabled' : ''" class="row mb-5">
         <div class="d-flex justify-content-center">
           <div>
             <button
@@ -470,7 +478,7 @@
         </div>
       </div>
       <hr class="row" />
-      <div class="row pt-2 scroll-table">
+      <div [class]="loading ? 'table-loading' : 'row pt-2 scroll-table'">
         <ng2-smart-table
           class="col-md-12"
           [settings]="settings1"
@@ -485,6 +493,7 @@
             <input
               type="text"
               class="form-control"
+              style="overflow-y: scroll"
               [readOnly]="true"
               formControlName="estatusPrueba" />
           </form-field>
@@ -527,7 +536,7 @@
         </div>
       </div>
       <hr class="row" />
-      <div class="row pt-2 scroll-table">
+      <div [class]="loading ? 'table-loading' : 'row pt-2 scroll-table'">
         <ng2-smart-table
           class="col-md-12"
           [settings]="settings2"
@@ -560,12 +569,6 @@
                 formControlName="indEdoFisico"
                 id="flexCheckDefault" />
             </div>
-            <!-- <form-check label="Requerido" for="label">
-              <input
-                id="label"
-                type="checkbox"
-                formControlName="indEdoFisico" />
-            </form-check> -->
           </form-field>
           <form-field
             class="col-md-3"

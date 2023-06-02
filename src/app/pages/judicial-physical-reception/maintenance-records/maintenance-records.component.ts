@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
-import { takeUntil } from 'rxjs/operators';
+import { map, takeUntil } from 'rxjs/operators';
 import {
   FilterParams,
   ListParams,
@@ -10,10 +10,14 @@ import {
 } from 'src/app/common/repository/interfaces/list-params';
 
 import { format } from 'date-fns';
+import { firstValueFrom } from 'rxjs';
+import { SafeService } from 'src/app/core/services/catalogs/safe.service';
+import { WarehouseService } from 'src/app/core/services/catalogs/warehouse.service';
 import { ProceedingsDetailDeliveryReceptionService } from 'src/app/core/services/ms-proceedings';
 import { ProceedingsDeliveryReceptionService } from 'src/app/core/services/ms-proceedings/proceedings-delivery-reception.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { formatForIsoDate } from 'src/app/shared/utils/date';
 import { getTrackedGoods } from '../../general-processes/goods-tracker/store/goods-tracker.selector';
 import { GOOD_TRACKER_ORIGINS } from '../../general-processes/goods-tracker/utils/constants/origins';
 import {
@@ -22,7 +26,6 @@ import {
   trackerGoodToDetailProceeding,
 } from './components/proceeding-info/models/proceeding-info';
 import { MaintenanceRecordsService } from './services/maintenance-records.service';
-
 @Component({
   selector: 'app-maintenance-records',
   templateUrl: './maintenance-records.component.html',
@@ -47,7 +50,9 @@ export class MaintenanceRecordsComponent extends BasePage implements OnInit {
     private store: Store,
     private service: MaintenanceRecordsService,
     private proceedingService: ProceedingsDeliveryReceptionService,
-    private detailService: ProceedingsDetailDeliveryReceptionService
+    private detailService: ProceedingsDetailDeliveryReceptionService,
+    private safeService: SafeService,
+    private warehouseService: WarehouseService
   ) {
     super();
     this.params.value.limit = 1;
@@ -229,30 +234,89 @@ export class MaintenanceRecordsComponent extends BasePage implements OnInit {
     }
   }
 
-  getGoods() {
+  async getGoods() {
     // debugger;
     this.loadingGoods = true;
+    this.rowsSelectedNotLocal = [];
     if (this.infoForm && this.infoForm.id) {
       const filterParams = new FilterParams();
       filterParams.limit = this.goodParams.limit;
       filterParams.page = this.goodParams.page;
       filterParams.addFilter('numberProceedings', this.infoForm.id);
-      this.detailService.getAll3(filterParams.getParams()).subscribe({
-        next: response => {
-          // console.log(response);
 
-          // console.log(this.service.data, response.data);
+      try {
+        // debugger;
+        const response = await firstValueFrom(
+          this.detailService.getAll(filterParams.getParams())
+        );
+        // const newData: IDetailProceedingsDeliveryReception[] = [];
+        const newData = response.data.map(async item => {
+          const warehouse = item.good?.storeNumber
+            ? await firstValueFrom(
+                this.warehouseService
+                  .getById(item.good?.storeNumber)
+                  .pipe(map(item => item.idWarehouse + '-' + item.description))
+              )
+            : null;
+          const vault = item.good?.vaultNumber
+            ? await firstValueFrom(
+                this.safeService
+                  .getById(item.good?.vaultNumber)
+                  .pipe(map(item => item.idSafe + '-' + item.description))
+              )
+            : null;
+          return {
+            ...item,
+            description: item.good?.description ?? '',
+            approvedDateXAdmon: item.approvedDateXAdmon
+              ? formatForIsoDate(item.approvedDateXAdmon + '', 'string')
+              : null,
+            approvedUserXAdmon: item.approvedUserXAdmon ?? null,
+            dateIndicatesUserApproval: item.dateIndicatesUserApproval
+              ? formatForIsoDate(item.dateIndicatesUserApproval + '', 'string')
+              : null,
+            // amount: item.good.quantity,
+            status: item.good?.status ?? null,
+            warehouse,
+            vault,
+          };
+        });
+        Promise.all(newData)
+          .then(x => {
+            console.log(x);
+            this.service.data = [...x];
+            this.service.totalGoods = response.count;
+            this.loadingGoods = false;
+          })
+          .catch(error => {
+            this.service.data = [];
+            this.loadingGoods = false;
+          });
+      } catch (x) {
+        this.service.data = [];
+        this.loadingGoods = false;
+      }
+      // this.detailService.getAll(filterParams.getParams()).subscribe({
+      //   next: response => {
 
-          this.service.data = [...response.data];
-          this.service.totalGoods = response.count;
-          this.loadingGoods = false;
-        },
-        error: error => {
-          // console.log(error);
-          this.service.data = [];
-          this.loadingGoods = false;
-        },
-      });
+      //   }
+      // })
+      // this.detailService.getAll3(filterParams.getParams()).subscribe({
+      //   next: response => {
+      //     // console.log(response);
+
+      //     // console.log(this.service.data, response.data);
+
+      //     this.service.data = [...response.data];
+      //     this.service.totalGoods = response.count;
+      //     this.loadingGoods = false;
+      //   },
+      //   error: error => {
+      //     // console.log(error);
+      //     this.service.data = [];
+      //     this.loadingGoods = false;
+      //   },
+      // });
     } else {
       this.loadingGoods = false;
     }

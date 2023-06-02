@@ -25,8 +25,8 @@ export class SiseProcessService implements ICrudMethods<ISiseProcess> {
     return this.siseProcessRepository.create(this.route, model);
   }
 
-  update(id: string | number, model: ISiseProcess): Observable<Object> {
-    return this.siseProcessRepository.update(this.route, id, model);
+  newUpdate(model: ISiseProcess): Observable<Object> {
+    return this.siseProcessRepository.newUpdate(this.route, model);
   }
 
   remove(id: string | number): Observable<Object> {

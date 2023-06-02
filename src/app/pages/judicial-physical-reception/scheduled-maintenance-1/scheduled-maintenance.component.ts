@@ -86,7 +86,7 @@ export class ScheduledMaintenanceComponent
       this.onLoadToast(
         'success',
         'Exito',
-        `Se eliminaron las actas N° ${proceedings} ` +
+        `Se eliminaron las actas No. ${proceedings} ` +
           this.showMessageProceedingsNotRemoved(notRemoveds)
       );
     } else {
@@ -94,7 +94,7 @@ export class ScheduledMaintenanceComponent
         this.onLoadToast(
           'success',
           'Exito',
-          `Elimine primero el detalle de las actas N° ${proceedings}`
+          `Elimine primero el detalle de las actas No. ${proceedings}`
         );
       }
     }
@@ -107,7 +107,7 @@ export class ScheduledMaintenanceComponent
         proceedingsNotRemoveds +=
           selected + (index < this.selecteds.length - 1 ? ',' : '');
       });
-      return `pero no se pudieron eliminar las actas N° ${proceedingsNotRemoveds} porque tienen detalles de acta`;
+      return `pero no se pudieron eliminar las actas No. ${proceedingsNotRemoveds} porque tienen detalles de acta`;
     } else {
       return '';
     }
@@ -181,12 +181,12 @@ export class ScheduledMaintenanceComponent
             this.onLoadToast(
               'success',
               'Exito',
-              `Se elimino la acta N° ${item.id}`
+              `Se elimino la acta No. ${item.id}`
             );
           },
           error: err => {
             console.log(err);
-            let message = `No se pudo eliminar el Acta N° ${item.id}`;
+            let message = `No se pudo eliminar el Acta No. ${item.id}`;
             if (err.error.message.includes('detalle_acta_ent_recep')) {
               message = message + ` porque tiene detalles de acta`;
             }

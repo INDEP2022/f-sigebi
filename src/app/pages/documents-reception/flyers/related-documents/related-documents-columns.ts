@@ -35,17 +35,30 @@ export const RELATED_DOCUMENTS_COLUMNS_GOODS = {
     title: 'Selección',
     type: 'custom',
     renderComponent: CheckboxElementComponent,
-    onComponentInitFunction: (event: any) => {},
+    onComponentInitFunction(instance: any) {
+      instance.toggle.subscribe((data: any) => {
+        data.row.to = data.toggle;
+      });
+    },
     sort: false,
   },
   improcedente: {
     title: 'Improcedente',
     type: 'custom',
     renderComponent: CheckboxElementComponent,
-    onComponentInitFunction: (event: any) => {},
+    onComponentInitFunction(instance: any) {
+      instance.toggle.subscribe((data: any) => {
+        data.row.to = data.toggle;
+      });
+    },
     sort: false,
   },
 };
+
+function validationCheck(checked: boolean) {
+  if (checked) {
+  }
+}
 
 export interface IOficioDictamenParams {
   parametros: string; //PARAMETROS;
