@@ -91,6 +91,7 @@ export class tablaModalComponent extends BasePage implements OnInit {
         add: false,
         position: 'left',
       },
+      //add:{editButtonContent:'<i class="fa fa-trash" aria-hidden="true"></i>' },
       columns: { ...TEXT_CHANGE_COLUMNS },
     };
   }
@@ -155,6 +156,11 @@ export class tablaModalComponent extends BasePage implements OnInit {
   }
 
   close() {
+    this.modalRef.hide();
+  }
+
+  getDataColumnValue(event: any) {
+    this.handleSuccess(event);
     this.modalRef.hide();
   }
 

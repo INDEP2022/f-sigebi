@@ -53,7 +53,7 @@ export class TableGoodMaintenanceComponent extends BasePage implements OnInit {
           editable: false,
         },
         approvedDateXAdmon: {
-          title: 'Fec. Aprobación',
+          title: 'Fecha de Aprobación',
           sort: false,
           editor: {
             type: 'custom',
@@ -61,7 +61,7 @@ export class TableGoodMaintenanceComponent extends BasePage implements OnInit {
           },
         },
         dateIndicatesUserApproval: {
-          title: 'Fec. Indica Usuario Aprobación',
+          title: 'Fecha Indica Usuario Aprobación',
           sort: false,
           editor: {
             type: 'custom',
@@ -79,7 +79,7 @@ export class TableGoodMaintenanceComponent extends BasePage implements OnInit {
           editable: false,
         },
         vault: {
-          title: 'Boveda',
+          title: 'Bóveda',
           sort: false,
           editable: false,
         },

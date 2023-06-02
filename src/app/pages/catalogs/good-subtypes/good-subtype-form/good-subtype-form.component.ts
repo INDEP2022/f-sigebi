@@ -106,11 +106,12 @@ export class GoodSubtypeFormComponent extends BasePage implements OnInit {
 
   update() {
     this.loading = true;
-    console.log(this.goodSubtypeForm.value);
-    this.goodSubtypeService.newUpdate(this.goodSubtypeForm.value).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
-    });
+    this.goodSubtypeService
+      .update(this.goodSubtype.id, this.goodSubtypeForm.value)
+      .subscribe({
+        next: data => this.handleSuccess(),
+        error: error => (this.loading = false),
+      });
   }
 
   handleSuccess() {

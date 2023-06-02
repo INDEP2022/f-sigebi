@@ -10,7 +10,7 @@ export class EventCaptureButtons {
   convPack = new EventCaptureButton('Paq. Conv');
   apply = new EventCaptureButton('Aplica');
   deletePack = new EventCaptureButton('Borrar Paq.', false);
-  xml = new EventCaptureButton('XML');
+  xml = new EventCaptureButton('XML', false);
   generateStrategy = new EventCaptureButton('Generar Estrategia');
 }
 
