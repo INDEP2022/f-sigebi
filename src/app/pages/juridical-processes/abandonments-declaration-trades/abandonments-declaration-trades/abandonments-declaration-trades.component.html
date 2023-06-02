@@ -451,6 +451,30 @@
         <tab heading="OFICIO" [disabled]="!disabledTabs" *ngIf="showTabs">
           <!-- Forms OFICIO -->
           <form [formGroup]="formOficio" class="container-fluid form-material">
+            <div class="row">
+              <div class="d-flex justify-content-end">
+                <div class="d-inline mx-2">
+                  <div class="btn-group">
+                    <button
+                      type="button"
+                      (click)="newMOficioG()"
+                      tooltip="Agregar Oficio"
+                      containerClass="tooltip-style"
+                      class="btn btn-info btn-sm active ml-2 mr-2">
+                      <i class="bx bx-plus bx-sm float-icon"></i>
+                    </button>
+                    <button
+                      type="button"
+                      (click)="listMOficiosG()"
+                      tooltip="Oficios Disponibles"
+                      containerClass="tooltip-style"
+                      class="btn btn-primary btn-sm active">
+                      <i class="bx bx-list-plus bx-sm float-icon"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
             <div class="row w-100 justify-content-center">
               <div class="col-12">
                 <div class="row mt-5">
@@ -711,15 +735,15 @@
                     <form-field
                       [control]="formCcpOficio.get('ccp')"
                       label="C&#46;P&#46;P">
-                      <select
-                        [disabled]="!disabledMOficGest"
+                      <ng-select
+                        [readonly]="!disabledMOficGest"
                         (change)="ccpChange($event)"
                         class="form-control"
                         formControlName="ccp">
                         <!-- <option [value]="null">Seleccione un valor</option> -->
-                        <option [value]="'INTERNO'">INTERNO</option>
-                        <option [value]="'EXTERNO'">EXTERNO</option>
-                      </select>
+                        <ng-option [value]="'INTERNO'">INTERNO</ng-option>
+                        <ng-option [value]="'EXTERNO'">EXTERNO</ng-option>
+                      </ng-select>
                     </form-field>
                   </div>
                   <div class="col-sm-12 col-12 col-md-10 p-1 pt-0 pb-0">
@@ -754,15 +778,15 @@
                     <form-field
                       [control]="formCcpOficio.get('ccp2')"
                       label="C&#46;P&#46;P">
-                      <select
-                        [disabled]="!disabledMOficGest"
+                      <ng-select
+                        [readonly]="!disabledMOficGest"
                         (change)="ccpChange2($event)"
                         class="form-control"
                         formControlName="ccp2">
                         <!-- <option [value]="null">Seleccione un valor</option> -->
-                        <option [value]="'INTERNO'">INTERNO</option>
-                        <option [value]="'EXTERNO'">EXTERNO</option>
-                      </select>
+                        <ng-option [value]="'INTERNO'">INTERNO</ng-option>
+                        <ng-option [value]="'EXTERNO'">EXTERNO</ng-option>
+                      </ng-select>
                     </form-field>
                   </div>
                   <div class="col-sm-12 col-12 col-md-10 p-1 pt-0 pb-0">
