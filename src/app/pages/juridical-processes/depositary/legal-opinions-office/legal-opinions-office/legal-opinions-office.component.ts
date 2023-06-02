@@ -72,6 +72,7 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
   dictationData: IDictation;
   officeDictationData: IOfficialDictation;
   officeCopiesDictationData: ICopiesOfficialOpinion[] = [];
+  tmpOfficeCopiesDictationData: ICopiesOfficialOpinion[] = [];
   officeTextDictationData: IJobDictumTexts;
   addresseeDataSelect: any;
   paramsScreen: IParamsLegalOpinionsOffice = {
@@ -362,6 +363,7 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
     this.dictationData = null;
     this.officeDictationData = null;
     this.officeCopiesDictationData = null;
+    this.tmpOfficeCopiesDictationData = null;
     this.officeTextDictationData = null;
     this.addresseeDataSelect = null;
     this.goodData = [];
@@ -1051,6 +1053,7 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
         next: data => {
           console.log('OFICIO COPIAS DICTAMEN', data);
           this.officeCopiesDictationData = data.data;
+          this.tmpOfficeCopiesDictationData = data.data;
           // Set copies data
           this.totalCopiesTo = data.count;
           this._totalCopiesTo = data.count;
@@ -1061,13 +1064,16 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
         error: error => {
           console.log(error);
           this.officeCopiesDictationData = null;
+          this.tmpOfficeCopiesDictationData = null;
           subscription.unsubscribe();
         },
       });
   }
 
   setDataOfficeCopiesDictation() {
-    this._saveCopiesDictation = false; // Se actualiza el registro actual solamente
+    if (this.officeCopiesDictationData.length == 2) {
+      this._saveCopiesDictation = false; // Se actualiza el registro actual solamente
+    }
     this.officeCopiesDictationData.forEach((copiesData, index) => {
       console.log(copiesData);
       this.form
@@ -2763,6 +2769,7 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
         return;
       }
       this.officeCopiesDictationData.push({
+        ...this.tmpOfficeCopiesDictationData[0],
         numberOfDicta: this.dictationData.id,
         typeDictamination: this.dictationData.typeDict,
         recipientCopy: this.form.get('ccp_addressee').value,
@@ -2788,6 +2795,7 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
         return;
       }
       this.officeCopiesDictationData.push({
+        ...this.tmpOfficeCopiesDictationData[1],
         numberOfDicta: this.dictationData.id,
         typeDictamination: this.dictationData.typeDict,
         recipientCopy: this.form.get('ccp_addressee_1').value,
