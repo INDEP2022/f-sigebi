@@ -7,6 +7,7 @@ import { IUserRowSelectEvent } from 'src/app/core/interfaces/ng2-smart-table.int
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { COLUMNS_DOCUMENTS } from '../columns';
+import { Documents } from '../models';
 
 @Component({
   selector: 'app-docs',
@@ -33,7 +34,8 @@ export class DocsComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.getDocsParaDictum();
+    this.data2 = Documents;
+    // this.getDocsParaDictum();
   }
 
   selectProceedings(event: IUserRowSelectEvent<any>) {
