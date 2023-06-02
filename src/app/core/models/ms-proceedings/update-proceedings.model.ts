@@ -7,9 +7,9 @@ export interface IUpdateProceedings
   transferNumber: number;
 }
 
-export interface ICveAct{
-  pExpedientNumber: string | number,
-  pGoodNumber: string | number,
-  pVarTypeActa1: string,
-  pVarTypeActa2: string
+export interface ICveAct {
+  pExpedientNumber: string | number;
+  pGoodNumber: string | number;
+  pVarTypeActa1: string;
+  pVarTypeActa2: string;
 }
