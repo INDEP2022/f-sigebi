@@ -53,7 +53,9 @@ export class StatusClaimsFormComponent extends BasePage implements OnInit {
 
   create() {
     this.loading = true;
-    this.StatusClaimsService.create(this.statusClaimsForm.value).subscribe({
+    this.StatusClaimsService.create(
+      this.statusClaimsForm.getRawValue()
+    ).subscribe({
       next: data => this.handleSuccess(),
       error: error => (this.loading = false),
     });
