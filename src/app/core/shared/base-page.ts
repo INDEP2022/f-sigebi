@@ -7,7 +7,7 @@ import {
   BsDatepickerViewMode,
 } from 'ngx-bootstrap/datepicker';
 import { ToastrService } from 'ngx-toastr';
-import { filter, Subject, takeUntil, tap } from 'rxjs';
+import { BehaviorSubject, filter, Subject, takeUntil, tap } from 'rxjs';
 import { LoadingService } from 'src/app/common/services/loading.service';
 import { ScreenCodeService } from 'src/app/common/services/screen-code.service';
 import { showHideErrorInterceptorService } from 'src/app/common/services/show-hide-error-interceptor.service';
@@ -18,6 +18,7 @@ import Swal, {
   SweetAlertResult,
 } from 'sweetalert2';
 import { AlertsQueueService } from '../services/alerts/alerts-queue.service';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 
 export class SweetalertModel implements SweetAlertOptions {
   title: string;
@@ -104,7 +105,7 @@ const TABLE_SETTINGS: TableSettings = {
   },
   columns: {},
   noDataMessage: 'No se encontraron registros',
-  rowClassFunction: (row: any) => {},
+  rowClassFunction: (row: any) => { },
 };
 @Component({
   template: '',
@@ -214,6 +215,14 @@ export abstract class BasePage implements OnDestroy {
   protected decodeData<T>(data: string): T {
     const value = AES.decrypt(data.trim(), this.key.trim()).toString(enc.Utf8);
     return JSON.parse(value);
+  }
+  protected pageFilter(params: BehaviorSubject<ListParams>) {
+    if (params.getValue().page > 1) {
+      const paramsP = params.getValue();
+      paramsP.page = 1;
+      params.next(paramsP);
+    }
+    return params;
   }
 
   hideError(show: boolean = false) {
