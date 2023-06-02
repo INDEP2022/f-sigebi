@@ -18,10 +18,20 @@ jobs:
       run: |
         echo "::set-output name=repo_name::$(echo sigebi-appqa)"
     - uses: actions/checkout@v3
+    - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+    - name: Install dependencies
+        run: npm install --legacy-peer-deps
+    - name: Build application
+        run: npm run build
+    - name: Set up Docker
+        uses: docker/setup-docker@v1
     - name: Build the Docker image
       run: |
         docker login acrindep.azurecr.io --username ${{ secrets.USER }} -p ${{ secrets.PASSWORD }}
-        docker build -t acrindep.azurecr.io/ns-sb-0001-sigebi/${{ steps.obtener-nombre-repo.outputs.repo_name }}:${{ github.sha }} .
+        docker build -t acrindep.azurecr.io/ns-sb-0001-sigebi/${{ steps.obtener-nombre-repo.outputs.repo_name }}:${{ github.sha }} ./nginx.dockerfile .
         docker push acrindep.azurecr.io/ns-sb-0001-sigebi/${{ steps.obtener-nombre-repo.outputs.repo_name }}:${{ github.sha }}
 
     - name: Install cURL
