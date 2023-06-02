@@ -7,14 +7,21 @@
       <div class="row mb-4">
         <div class="col-md-4">
           <div class="row">
-            <div class="col-md-9">
+            <div class="col">
               <button
                 id="expedient-number"
-                class="btn btn-primary btn-sm active mr-4 disabled"
+                [class]="loading ? 'disabled' : ''"
+                class="btn btn-primary btn-sm disabled mr-2 active"
                 (click)="goodsByExpediente()">
-                Buscar
+                <i class="fa fa-search"></i> Buscar
               </button>
-              <!-- <span>{{ statusProceeding }}</span> -->
+              <button
+                [class]="loading ? 'disabled' : ''"
+                class="btn btn-danger btn-sm active"
+                (click)="clearAll()"
+                >
+                Limpiar
+              </button>
             </div>
           </div>
         </div>
@@ -25,6 +32,7 @@
                 control="listExpedients"
                 label="Expedientes"
                 bindLabel="id"
+                [class]="loading ? 'disabled' : ''"
                 (change)="selectExpedient($event)"
                 [data]="dataExpedients"
                 [searchable]="false"
@@ -40,6 +48,7 @@
                 id="expedient-number"
                 [disabled]="!prevProce"
                 class="btn btn-secondary btn-sm active"
+                [class]="loading ? 'disabled' : ''"
                 (click)="prevProceeding()">
                 <i class="fa fa-angle-left"></i>
               </button>
@@ -60,6 +69,7 @@
               >
               <button
                 id="expedient-number"
+                [class]="loading ? 'disabled' : ''"
                 class="btn btn-secondary btn-sm active"
                 [disabled]="!nextProce"
                 (click)="nextProceeding()">
@@ -69,6 +79,7 @@
                 *ngIf="newAct"
                 id="expedient-number"
                 class="btn btn-primary btn-sm active ml-4"
+                [class]="loading ? 'disabled' : ''"
                 (click)="newProceeding()">
                 Nueva acta
               </button>
@@ -136,7 +147,7 @@
                   (change)="changeAct()"
                   [class]="initialBool ? 'disabled' : ''"
                   control="acta"
-                  label="Acta"
+                  label="Tipo Acta"
                   bindLabel=""
                   [data]="records"
                   [searchable]="false"
@@ -220,33 +231,17 @@
                   formControlName="mes" />
               </form-field>
             </div>
-            <!--  <div class="col">
-              <form-field [control]="form.get('status')" label="Status">
-                <input
-                  type="number"
-                  class="form-control"
-                  formControlName="status" />
-              </form-field>
-            </div>
-            <div class="col">
-              <form-field [control]="form.get('nombre')" label="Nombre">
-                <input
-                  type="number"
-                  class="form-control"
-                  formControlName="nombre" />
-              </form-field>
-            </div> -->
           </div>
         </div>
       </div>
 
       <hr class="row" />
 
-      <div class="row">
+      <div  [class]="loading ? 'disabled' : ''" class="row">
         <div class="col-md-12">
           <div class="row">
             <div class="col">
-              <form-field [control]="form.get('acta2')" label="Acta 2">
+              <form-field [control]="form.get('acta2')" label="Acta">
                 <input
                   type="text"
                   class="form-control"
@@ -389,7 +384,7 @@
         </div>
       </div>
       <hr class="row" />
-      <div class="row mb-5">
+      <div  [class]="loading ? 'disabled' : ''" class="row mb-5">
         <div class="d-flex justify-content-center">
           <div>
             <button
@@ -447,7 +442,7 @@
 
       <hr class="row" />
 
-      <div class="row pt-2 scroll-table">
+      <div [class]="loading ? 'table-loading' : 'row pt-2 scroll-table'">
         <ng2-smart-table
           class="col-md-12"
           [settings]="settings1"
@@ -509,7 +504,7 @@
         </div>
       </div>
 
-      <div class="row pt-2 scroll-table">
+      <div [class]="loading ? 'table-loading' : 'row pt-2 scroll-table'">
         <ng2-smart-table
           class="col-md-12"
           [settings]="settings2"

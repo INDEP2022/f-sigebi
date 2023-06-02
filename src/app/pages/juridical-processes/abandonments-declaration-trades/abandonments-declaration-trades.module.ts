@@ -22,6 +22,7 @@ import { AbandonmentsDeclarationTradesComponent } from './abandonments-declarati
 import { DocsComponent } from './abandonments-declaration-trades/docs/docs.component';
 import { EditTextComponent } from './abandonments-declaration-trades/edit-text/edit-text.component';
 import { ListdictumsComponent } from './abandonments-declaration-trades/listdictums/listdictums.component';
+import { ListoficiosComponent } from './abandonments-declaration-trades/listoficios/listoficios.component';
 
 @NgModule({
   declarations: [
@@ -29,6 +30,7 @@ import { ListdictumsComponent } from './abandonments-declaration-trades/listdict
     EditTextComponent,
     DocsComponent,
     ListdictumsComponent,
+    ListoficiosComponent,
   ],
   imports: [
     CommonModule,

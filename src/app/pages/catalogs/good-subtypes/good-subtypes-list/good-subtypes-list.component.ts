@@ -1,8 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { LocalDataSource } from 'ng2-smart-table';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
+import {
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { IGoodSubType } from 'src/app/core/models/catalogs/good-subtype.model';
 import { GoodSubtypeService } from 'src/app/core/services/catalogs/good-subtype.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -18,7 +23,8 @@ export class GoodSubtypesListComponent extends BasePage implements OnInit {
   paragraphs: IGoodSubType[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
-
+  data: LocalDataSource = new LocalDataSource();
+  columnFilters: any = [];
   constructor(
     private goodTypesService: GoodSubtypeService,
     private modalService: BsModalService
@@ -26,9 +32,40 @@ export class GoodSubtypesListComponent extends BasePage implements OnInit {
     super();
     this.settings.columns = GOOD_SUBTYPES_COLUMNS;
     this.settings.actions.delete = true;
+    this.settings.actions.add = false;
+    this.settings.hideSubHeader = false;
   }
 
   ngOnInit(): void {
+    this.data
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = ``;
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+            filter.field == 'id' ||
+            filter.field == 'nameSubtypeGood' ||
+            filter.field == 'idTypeGood' ||
+            filter.field == 'noPhotography' ||
+            filter.field == 'descriptionPhotography' ||
+            filter.field == 'noRegister' ||
+            filter.field == 'version'
+              ? (searchFilter = SearchFilter.EQ)
+              : (searchFilter = SearchFilter.ILIKE);
+            if (filter.search !== '') {
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.params = this.pageFilter(this.params);
+          this.getExample();
+        }
+      });
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getExample());
@@ -36,11 +73,16 @@ export class GoodSubtypesListComponent extends BasePage implements OnInit {
 
   getExample() {
     this.loading = true;
-    this.goodTypesService.getAll(this.params.getValue()).subscribe({
+    let params = {
+      ...this.params.getValue(),
+      ...this.columnFilters,
+    };
+    this.goodTypesService.getAll(params).subscribe({
       next: response => {
         this.paragraphs = response.data;
         this.totalItems = response.count;
-        console.log(this.paragraphs);
+        this.data.load(response.data);
+        this.data.refresh();
         this.loading = false;
       },
       error: error => (this.loading = false),
@@ -48,19 +90,15 @@ export class GoodSubtypesListComponent extends BasePage implements OnInit {
   }
 
   openForm(goodSubtype?: IGoodSubType) {
-    let config: ModalOptions = {
-      initialState: {
-        goodSubtype,
-        callback: (next: boolean) => {
-          if (next) this.getExample();
-        },
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      goodSubtype,
+      callback: (next: boolean) => {
+        if (next) this.getExample();
       },
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
     };
-    this.modalService.show(GoodSubtypeFormComponent, config);
+    this.modalService.show(GoodSubtypeFormComponent, modalConfig);
   }
-
   showDeleteAlert(goodSubtype: IGoodSubType) {
     this.alertQuestion(
       'warning',
