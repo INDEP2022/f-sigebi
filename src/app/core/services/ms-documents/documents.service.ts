@@ -139,9 +139,9 @@ export class DocumentsService extends HttpService {
     return this.get(route, params);
   }
 
-  getDocumentsByGood(id: string | number) {
-    const route = `${DocumentsEndpoints.Documents}/?filter.goodNumber=$not:$null&filter.goodNumber=${id}`;
-    return this.get<IListResponse<IDocuments>>(route);
+  getDocumentsByGood(id: string | number, params?: ListParams | string) {
+    const route = `${DocumentsEndpoints.DocumentsDictuXStateM}?filter.stateNumber=${id}`;
+    return this.get(route, params);
   }
   // updateClarDocImp(id: string | number, data: Object) {
   //   const route = `clarification-documents-impro/${id}`;
