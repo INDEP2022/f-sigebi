@@ -693,6 +693,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
     ];
     this.listGoodsFractions = [];
     let existAddres = 0;
+    //debugger;
     for (let j = 0; j < this.listgoodObjects.length; j++) {
       const item = this.listgoodObjects[j];
       let good: any = {};

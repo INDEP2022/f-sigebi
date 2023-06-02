@@ -21,6 +21,12 @@
 //   }
 // }
 
+.title {
+  font-size: 15px !important;
+  font-weight: 500 !important;
+  position: relative !important;
+}
+
 .btn-return {
   color: #9d2449;
   padding-left: 0px;
@@ -29,6 +35,7 @@
   display: flex;
   align-items: center;
   top: -20px;
+  margin-top: 5px;
 
   > i {
     font-size: 35px;

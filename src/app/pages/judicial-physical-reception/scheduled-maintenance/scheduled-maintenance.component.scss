@@ -13,6 +13,20 @@
   }
 }
 
+.rangeDate {
+  display: flex;
+
+  @media screen and (max-width: 796px) {
+    display: block;
+  }
+}
+
+.action-buttons {
+  @media screen and (max-width: 796px) {
+    padding: 0 14px;
+  }
+}
+
 // .form-date {
 //   background: white;
 // }
