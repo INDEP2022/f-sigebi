@@ -28,6 +28,7 @@ import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.s
 import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { ParametersService } from 'src/app/core/services/ms-parametergood/parameters.service';
+
 import { ProceedingsService } from 'src/app/core/services/ms-proceedings';
 import { DetailProceeDelRecService } from 'src/app/core/services/ms-proceedings/detail-proceedings-delivery-reception.service';
 import { ProceedingsDeliveryReceptionService } from 'src/app/core/services/ms-proceedings/proceedings-delivery-reception';
@@ -38,8 +39,6 @@ import {
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from '../../../shared/components/select/default-select';
-import { ProceedingsService } from 'src/app/core/services/ms-proceedings';
-import { ICveAct } from 'src/app/core/models/ms-proceedings/update-proceedings.model';
 
 @Component({
   selector: 'app-cancellation-recepcion',
@@ -193,7 +192,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
     private serviceDocuments: DocumentsService,
     private serviceGoodProcess: GoodProcessService,
     private serviceProgrammingGood: ProgrammingGoodService,
-    private serviceProceeding: ProceedingsService,
+    private serviceProceeding: ProceedingsService
   ) {
     super();
   }
@@ -251,7 +250,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
   }
 
   selectExpedient(e: any) {
-    this.loading = true
+    this.loading = true;
     console.log(e);
     this.form.get('expediente').setValue(e.id);
     this.goodsByExpediente();
@@ -360,7 +359,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
     this.form.get('mes').updateValueAndValidity();
   }
 
-  getCveAct(element:any){
+  getCveAct(element: any) {
     return new Promise((resolve, reject) => {
       const model: ICveAct = {
         pExpedientNumber: this.numberExpedient,
@@ -368,21 +367,22 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
         pVarTypeActa1: 'SUSPENSION',
         pVarTypeActa2: 'RECEPCAN',
       };
-      console.log(model)
+      console.log(model);
       this.serviceProceeding.getCveAct(model).subscribe(
         res => {
-          if(res.data.length > 0){
-          resolve({
-            acta: res.data[0]['cve_acta'],
-          });
-          }else{
+          if (res.data.length > 0) {
+            resolve({
+              acta: res.data[0]['cve_acta'],
+            });
+          } else {
             resolve({ acta: null });
           }
         },
         err => {
           resolve({ acta: null });
-        })
-    })
+        }
+      );
+    });
   }
 
   validateGood(element: any) {
@@ -543,7 +543,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
 
   goodsByExpediente() {
     //Validar si hay un acta abierta
-    this.loading = true
+    this.loading = true;
     this.getDataExpedient();
     this.noRequireAct1();
     this.initialBool = true;
@@ -584,10 +584,10 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                 res.data.map(async (e: any) => {
                   let disponible: boolean;
                   const resp = await this.validateGood(e);
-                  const act = await this.getCveAct(e)
+                  const act = await this.getCveAct(e);
                   disponible = JSON.parse(JSON.stringify(resp)).avalaible;
-                  const acta = JSON.parse(JSON.stringify(act)).acta
-                  return { ...e, avalaible: disponible, acta:acta };
+                  const acta = JSON.parse(JSON.stringify(act)).acta;
+                  return { ...e, avalaible: disponible, acta: acta };
                 })
               );
               this.dataGoods.load(newData);
@@ -616,7 +616,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
           },
           error: (err: any) => {
             console.error(err);
-            this.loading = false
+            this.loading = false;
             if (err.status === 404) {
               this.initialBool = false;
               this.requireAct1();
@@ -632,7 +632,6 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
               );
             }
             if (err.status === 400) {
-              
               this.initialBool = false;
               this.requireAct1();
               this.maxDate = new Date();
@@ -663,12 +662,12 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
         res => {
           console.log(res);
           this.searchByOtherData = true;
-          this.loading = false
+          this.loading = false;
           this.dataExpedients = new DefaultSelect(res.data);
         },
         err => {
           console.log(err);
-          this.loading = false
+          this.loading = false;
           this.form.get('averPrev').setValue(null);
           this.dataExpedients = new DefaultSelect();
           this.alert(
@@ -795,8 +794,8 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
           this.btnCSSAct = 'btn-success';
           this.inputsNewProceeding();
         }
-              this.loading = false
-              this.act2Valid = true;
+        this.loading = false;
+        this.act2Valid = true;
         this.navigateProceedings = true;
         this.idProceeding = dataRes.id;
       },
@@ -830,16 +829,16 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
           this.btnCSSAct = 'btn-success';
           this.inputsNewProceeding();
         }
-              this.loading = false
-              this.act2Valid = true;
+        this.loading = false;
+        this.act2Valid = true;
         this.navigateProceedings = true;
         this.idProceeding = dataRes.id;
       }
     );
   }
 
-  clearAll(){
-    this.clearInputs()
+  clearAll() {
+    this.clearInputs();
     this.form.get('expediente').reset();
     this.form.get('averPrev').reset();
     this.form.get('causaPenal').reset();
@@ -854,9 +853,9 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
     this.dataExpedients = new DefaultSelect([]);
     this.numberProceeding = 0;
 
-    this.transferSelect = new DefaultSelect([])
-    this.recibeSelect = new DefaultSelect([])
-    this.adminSelect = new DefaultSelect([])
+    this.transferSelect = new DefaultSelect([]);
+    this.recibeSelect = new DefaultSelect([]);
+    this.adminSelect = new DefaultSelect([]);
   }
 
   clearInputs() {
@@ -901,7 +900,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
           console.log(typeof dataRes);
         } else {
           this.initialBool = false;
-          this.loading = false
+          this.loading = false;
           this.requireAct1();
           this.maxDate = new Date();
           this.checkChange();
@@ -912,7 +911,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
       err => {
         console.log(err);
         this.initialBool = false;
-        this.loading = false
+        this.loading = false;
         this.requireAct1();
         this.maxDate = new Date();
         this.getTransfer();
@@ -2497,13 +2496,9 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
   nextProceeding() {
     this.prevProce = false;
     this.nextProce = false;
-<<<<<<< HEAD
-              this.loading = true
-              this.act2Valid = false;
-=======
+
     this.loading = true;
     this.act2Valid = false;
->>>>>>> 7602f119a38f243da3b2729f24bc92919ba27527
 
     if (this.numberProceeding <= this.proceedingData.length - 1) {
       this.numberProceeding += 1;
@@ -2535,11 +2530,9 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
     this.prevProce = false;
     this.nextProce = false;
     this.act2Valid = false;
-<<<<<<< HEAD
-    this.loading = true
-=======
+
     this.loading = true;
->>>>>>> 7602f119a38f243da3b2729f24bc92919ba27527
+
     this.noRequireAct1();
     this.clearInputs();
     if (
@@ -2553,13 +2546,10 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
           JSON.stringify(this.proceedingData[this.numberProceeding])
         );
         this.fillIncomeProceeding(dataRes, 'prevProceeding');
-<<<<<<< HEAD
-              
-              this.act2Valid = false;
-=======
 
         this.act2Valid = false;
->>>>>>> 7602f119a38f243da3b2729f24bc92919ba27527
+        this.act2Valid = false;
+
         /* if (this.numberProceeding == 0) {
           this.prevProce = false;
         } */
@@ -2570,13 +2560,6 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
         JSON.stringify(this.proceedingData[this.numberProceeding])
       );
       this.fillIncomeProceeding(dataRes, 'prevProceeding');
-<<<<<<< HEAD
-              
-              this.act2Valid = false;
-=======
-
-      this.act2Valid = false;
->>>>>>> 7602f119a38f243da3b2729f24bc92919ba27527
     }
   }
 }

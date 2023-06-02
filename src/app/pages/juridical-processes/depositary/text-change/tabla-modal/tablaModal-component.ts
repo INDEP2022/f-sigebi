@@ -11,8 +11,12 @@ import {
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
 import { IAccountMovement } from 'src/app/core/models/ms-account-movements/account-movement.model';
 import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
+import { GoodsJobManagementService } from 'src/app/core/services/ms-office-management/goods-job-management.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { TEXT_CHANGE_COLUMNS } from './tablaModalColumns';
+import {
+  TEXT_CHANGE_COLUMNS,
+  TEXT_CHANGE_COLUMNS_OFICIO,
+} from './tablaModalColumns';
 
 @Component({
   selector: 'app-textModal-table',
@@ -73,35 +77,101 @@ export class tablaModalComponent extends BasePage implements OnInit {
     },
   ];
 
-  OficioOrdictamen: boolean;
-  filterParamsOficio: BehaviorSubject<FilterParams>;
+  status: number;
+  OficioOrdictamen: BehaviorSubject<FilterParams>;
 
   constructor(
     private fb: FormBuilder,
     private modalRef: BsModalRef,
-    private dictationService: DictationService
+    private dictationService: DictationService,
+    private serviceOficces: GoodsJobManagementService
   ) {
     super();
-    this.settings = {
-      ...this.settings,
-      hideSubHeader: false,
-      actions: {
-        columnTitle: 'Sel.',
-        edit: true,
-        delete: false,
-        add: false,
-        position: 'left',
-      },
-      //add:{editButtonContent:'<i class="fa fa-trash" aria-hidden="true"></i>' },
-      columns: { ...TEXT_CHANGE_COLUMNS },
-    };
   }
 
   ngOnInit(): void {
-    //this.filterParamsOficioLocal = filterParamsOficio;
-    if (this.OficioOrdictamen) {
+    console.log('status => ' + this.status);
+    if (this.status == 1) {
+      this.settings = {
+        ...this.settings,
+        hideSubHeader: false,
+        actions: {
+          columnTitle: 'Sel.',
+          edit: true,
+          delete: false,
+          add: false,
+          position: 'left',
+        },
+        edit: {
+          editButtonContent: '<i class="fa fa-trash" aria-hidden="true"></i>',
+        },
+        columns: { ...TEXT_CHANGE_COLUMNS_OFICIO },
+      };
+    } else {
+      this.settings = {
+        ...this.settings,
+        hideSubHeader: false,
+        actions: {
+          columnTitle: 'Sel.',
+          edit: true,
+          delete: false,
+          add: false,
+          position: 'left',
+        },
+        //add:{editButtonContent:'<i class="fa fa-trash" aria-hidden="true"></i>' },
+        columns: { ...TEXT_CHANGE_COLUMNS },
+      };
+    }
+
+    if (this.status == 1) {
       this.title = '  Seleccione el número de oficio';
-      this.onEnterSearch();
+      this.OficioOrdictamen.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+        this.onEnterSearch();
+      });
+
+      this.dataLocal
+        .onChanged()
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe(change => {
+          if (change.action === 'filter') {
+            let filters = change.filter.filters;
+            filters.map((filter: any) => {
+              let field = ``;
+              let searchFilter = SearchFilter.ILIKE;
+              /*SPECIFIC CASES*/
+              field = `filter.${filter.field}`;
+              switch (filter.field) {
+                case 'proceedingsNumber':
+                  searchFilter = SearchFilter.ILIKE;
+                  break;
+                case 'managementNumber':
+                  searchFilter = SearchFilter.ILIKE;
+                  break;
+                case 'flyerNumber':
+                  searchFilter = SearchFilter.ILIKE;
+                  break;
+                case 'cveManagement':
+                  searchFilter = SearchFilter.ILIKE;
+                  break;
+                case 'recordNumber':
+                  searchFilter = SearchFilter.ILIKE;
+                  break;
+                default:
+                  searchFilter = SearchFilter.ILIKE;
+                  break;
+              }
+              if (filter.search !== '') {
+                this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+              } else {
+                delete this.columnFilters[field];
+              }
+            });
+            this.getAttributesFinancialInfo();
+          }
+        });
+      this.params
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe(() => this.getAttributesFinancialInfo());
     } else {
       this.title = '  Seleccione el número de expediente ';
       this.filterParams.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
@@ -204,46 +274,28 @@ export class tablaModalComponent extends BasePage implements OnInit {
   }
 
   onEnterSearch() {
-    this.dictationService
-      .findByIdsOficNum(this.filterParamsOficio.getValue().getParams())
+    console.log(
+      'onEnterSearch => ' + this.OficioOrdictamen.getValue().getParams()
+    );
+
+    console.log('onEnterSearch => ');
+    this.serviceOficces
+      .getAllOfficialDocument(this.OficioOrdictamen.getValue().getParams())
       .subscribe({
         next: resp => {
-          console.log('onEnterSearch => ' + JSON.stringify(resp));
-          /*
-          if (resp.count > 1) {
-            this.loadModal(true, filterParams);
-          } else {
-            this.intIDictation = resp.data[0];
+          console.log('lookDictamenesByDictamens this.data => ' + resp);
+          //  this.data = resp.data;
+          this.columns = resp.data;
+          this.totalItems = resp.count || 0;
 
-            this.form
-              .get('expedientNumber')
-              .setValue(this.intIDictation.expedientNumber);
-            console.log(' this.intIDictation.id => ' + this.intIDictation.id);
-            this.form.get('registerNumber').setValue(this.intIDictation.id);
-            this.form
-              .get('wheelNumber')
-              .setValue(this.intIDictation.wheelNumber);
-            this.form.get('typeDict').setValue(this.intIDictation.statusDict);
-            this.form.get('key').setValue(this.intIDictation.passOfficeArmy);
-            let obj = {
-              officialNumber: this.intIDictation.id,
-              typeDict: this.intIDictation.typeDict,
-            };
-            this.complementoFormulario(obj);
-            this.getPersonaExt_Int(
-              'this.intIDictation => ',
-              this.intIDictation
-            );
-          }*/
+          this.dataLocal.load(this.columns);
+          this.dataLocal.refresh();
+          this.loading = false;
         },
         error: err => {
-          if (err.message.indexOf('registros') !== -1) {
-            this.onLoadToast('error', 'Error 1 ', err.message);
-          }
-          //   console.log('Error ' + error);
-          //  this.onLoadToast('info', 'Registro', 'No se obtuvo información');
-          // console.log('error', 'Error', err.error.message);
-          // this.onLoadToast('error', 'error', err.error.message);
+          this.loading = false;
+          console.log('lookDictamenesByDictamens this.data => ' + err);
+          this.onLoadToast('error', 'error', 'No existen registros ');
         },
       });
   }

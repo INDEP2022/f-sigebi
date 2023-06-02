@@ -441,9 +441,11 @@ carga la  información de la parte media de la página
 
         this.getPartBodyInputs();
       },
-      error: error => {
-        //  this.onLoadToast('info', 'Registro', 'No se obtuvo información');
-        console.log('error', 'Error', error.error.message);
+      error: err => {
+        if (err.message.indexOf('registros') !== -1) {
+          this.onLoadToast('error', 'Error 1 ', err.message);
+        }
+        console.log('error', 'Error', err.error.message);
         // this.onLoadToast('info', 'info', error.error.message);
       },
     });
@@ -466,14 +468,18 @@ carga la  información de la parte media de la página
         next: resp => {
           let datos: IDictationCopies[] = resp.data;
         },
-        error: error => {
+        error: err => {
+          if (err.message.indexOf('registros') !== -1) {
+            this.onLoadToast('error', 'Error 1 ', err.message);
+          }
+          /*
           this.onLoadToast(
             'info',
             'Registro',
             'No tiene información asociada con el bloque'
-          );
+          );*/
 
-          console.log('error', 'Error', error.error.message);
+          console.log('error', 'Error', err.error.message);
           //this.onLoadToast('error', 'error', error.error.message);
         },
       });
