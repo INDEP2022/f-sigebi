@@ -103,7 +103,7 @@ export const JURIDICAL_FILE_DATA_UPDATE_FORM = {
   cityNumber: new FormControl<ICity>(null),
   entFedKey: new FormControl<TvalTable1Data | ITablesEntryData>(null),
   endTransferNumber: new FormControl<ITransferente>(null),
-  transference: new FormControl<number>(null),
+  transference: new FormControl<ITransferente>(null),
   courtNumber: new FormControl<ICourt>(null),
   stationNumber: new FormControl<IStation>(null),
   autorityNumber: new FormControl<IAuthority>(null),
@@ -167,7 +167,7 @@ export interface IJuridicalFileDataUpdateForm {
   cityNumber: ICity;
   entFedKey: TvalTable1Data | ITablesEntryData;
   endTransferNumber: ITransferente;
-  transference: number;
+  transference: ITransferente;
   courtNumber: ICourt;
   stationNumber: IStation;
   autorityNumber: IAuthority;
