@@ -4,8 +4,8 @@ export const DOCCOMPENSATIONSAT_COLUMS = {
     type: 'number',
     sort: false,
   },
-  idcat: {
-    title: 'Id cat',
+  officeSatId: {
+    title: 'Identificador del oficio sat',
     type: 'number',
     sort: false,
   },

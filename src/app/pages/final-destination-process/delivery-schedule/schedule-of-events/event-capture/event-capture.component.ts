@@ -15,7 +15,6 @@ import {
   lastValueFrom,
   map,
   of,
-  skip,
   switchMap,
   takeUntil,
   tap,
@@ -44,6 +43,8 @@ import {
   ProceedingsDeliveryReceptionService,
   ProceedingsDetailDeliveryReceptionService,
 } from 'src/app/core/services/ms-proceedings';
+import { ProgrammingGoodsService } from 'src/app/core/services/ms-programming-good/programming-good.service';
+import { TmpContProgrammingService } from 'src/app/core/services/ms-programming-good/tmp-cont-programming.service';
 import { ProgrammingGoodService } from 'src/app/core/services/ms-programming-request/programming-good.service';
 import { SecurityService } from 'src/app/core/services/ms-security/security.service';
 import { IndUserService } from 'src/app/core/services/ms-users/ind-user.service';
@@ -112,6 +113,7 @@ export class EventCaptureComponent
 {
   @ViewChildren(SmartDateInputHeaderDirective, { read: ElementRef })
   private itemsElements: QueryList<ElementRef>;
+  saveLoading = false;
   eventTypes = new DefaultSelect([
     { area_tramite: 'OP', descripcion: 'Oficialía de partes' },
   ]);
@@ -133,6 +135,7 @@ export class EventCaptureComponent
   areas = new DefaultSelect();
   transfers = new DefaultSelect();
   users = new DefaultSelect();
+  originalType: string = null;
   form = this.fb.group(new CaptureEventRegisterForm());
   formSiab = this.fb.group(new CaptureEventSiabForm());
   totalItems: number = 0;
@@ -172,6 +175,14 @@ export class EventCaptureComponent
     cons: null, //CONS
   };
 
+  // BLK_CANT
+  blkQuantities = {
+    goods: 0, // CANT_BIEN
+    registers: 0, // CANT_REGI
+    expedients: 0, // CANT_EXPE
+    dictums: 0, // CANT_DICT
+  };
+
   authUser: string = null;
   authUserName: string = null;
 
@@ -208,7 +219,9 @@ export class EventCaptureComponent
     private procedureManagementService: ProcedureManagementService,
     private procudeServ: ProcedureManagementService,
     private security: SecurityService,
-    private progammingServ: ProgrammingGoodService
+    private progammingServ: ProgrammingGoodService,
+    private programmingGoodService: ProgrammingGoodsService,
+    private tmpContProgrammingService: TmpContProgrammingService
   ) {
     super();
     this.authUser = this.authService.decodeToken().preferred_username;
@@ -283,6 +296,59 @@ export class EventCaptureComponent
       console.log(val);
     });
   }
+
+  async saveProceeding() {
+    await this.generateCve();
+    const formValue = this.form.value;
+    const { numFile, keysProceedings, captureDate, responsible } = formValue;
+    if (!responsible) {
+      this.alert('error', 'Error', 'Eliga un responsable');
+      return;
+    }
+    if (!numFile) {
+      formValue.numFile = 2;
+    }
+    const elaborationDate = new Date();
+    const statusProceedings = 'ABIERTA';
+    const typeProceedings = this.originalType;
+    const elaborate = this.authUser;
+    const numDelegation1 = await this.getUserDelegation();
+    const dataToSave = {
+      keysProceedings,
+      elaborationDate,
+      captureDate,
+      responsible,
+      numFile: formValue.numFile,
+      statusProceedings,
+      typeProceedings,
+      elaborate,
+      numDelegation1,
+    } as any;
+    this.saveLoading = true;
+    this.proceedingDeliveryReceptionService.create(dataToSave).subscribe({
+      next: async res => {
+        this.saveLoading = false;
+        this.onLoadToast('success', 'Acta Generada Correctamente');
+        this.global.proceedingNum = res.id;
+        this.global.paperworkArea = this.originalType;
+        await this.initForm();
+        console.log(this.proceeding.keysProceedings);
+        this.registerControls.keysProceedings.setValue(
+          this.proceeding.keysProceedings
+        );
+        // await this.generateCve();
+      },
+      error: error => {
+        this.saveLoading = false;
+        this.onLoadToast(
+          'error',
+          'Error',
+          'Ocurrió un error al guardar el acta'
+        );
+      },
+    });
+  }
+
   ngAfterContentInit(): void {
     console.log(this.itemsElements);
   }
@@ -409,7 +475,7 @@ export class EventCaptureComponent
       return;
     }
     let continueProcess = false;
-    if (this.blkCtrl.goodQuantity > 0) {
+    if (this.detail.length > 0) {
       const response = await this.alertQuestion(
         'warning',
         'Advertencia',
@@ -431,7 +497,7 @@ export class EventCaptureComponent
 
     this.createFilters();
 
-    if (typeEvent.value == 'RT') {
+    if (typeEvent.value == 'RF') {
       if (this.blkProceeding.txtCrtSus1) {
         this.pupUpdate();
       } else {
@@ -473,6 +539,7 @@ export class EventCaptureComponent
       takeUntil(this.$unSubscribe),
       tap(value => {
         this.proceeding.responsible = value;
+        this.generateCve();
       })
     );
   }
@@ -498,9 +565,7 @@ export class EventCaptureComponent
 
   async ngOnInit() {
     const { responsible } = this.registerControls;
-    responsible.valueChanges.pipe(skip(1)).subscribe(() => {
-      this.generateCve();
-    });
+    this.responsibleChange().subscribe();
     await this.initForm();
   }
 
@@ -546,8 +611,14 @@ export class EventCaptureComponent
     } else {
       this.global.regi = area.value;
       const indicator = await this.getProceedingType();
-      const _folio = await this.getFolio(indicator.certificateType);
+      let _folio = '';
+      if (this.proceeding.keysProceedings) {
+        _folio = this.proceeding.keysProceedings.split('/')[5];
+      } else {
+        _folio = await this.getFolio(indicator.certificateType);
+      }
       this.global.cons = `${_folio}`.padStart(5, '0');
+      folio.setValue(this.global.cons);
     }
 
     if (!this.global.type) {
@@ -556,8 +627,9 @@ export class EventCaptureComponent
     const cve = `${this.global.type ?? ''}/${prog.value ?? ''}/${
       this.global.tran ?? ''
     }/${this.global.regi ?? ''}/${user.value ?? ''}/${this.global.cons ?? ''}/${
-      year.value ?? ''
+      year?.value ? `${year.value}`.slice(-2) : ''
     }/${month.value ?? ''}`;
+    // .slice(-2)
     keysProceedings.setValue(cve);
   }
 
@@ -747,12 +819,13 @@ export class EventCaptureComponent
     return lastValueFrom(
       this.indicatorParametersService.getAll(params.getParams()).pipe(
         catchError(() => of(null)),
-        map(res => res.data[0].procedureArea.id)
+        map(res => (res ? res.data[0].procedureArea.id : null))
       )
     );
   }
 
   async initForm() {
+    this.originalType = this.global.paperworkArea;
     this.getInitialParameter();
     if (this.global.paperworkArea) {
       this.global.paperworkArea = await this.getType();
@@ -774,6 +847,7 @@ export class EventCaptureComponent
       }
       await this.getAreasR();
     } else {
+      console.log('muestra 790');
       this.ctrlButtons.closeProg.show();
       // TODO: LLenar los datos con la consulta de "CU_AREA_E"
     }
@@ -817,6 +891,7 @@ export class EventCaptureComponent
       this.proceeding.statusProceedings == 'CERRADA'
     ) {
       if (typeEvent.value == 'RF') {
+        console.log('muestra 834');
         this.ctrlButtons.closeProg.show();
       }
       this.ctrlButtons.closeProg.setText('Abrir Prog.');
@@ -889,6 +964,7 @@ export class EventCaptureComponent
       console.log(count);
       const options = ['CERRADA', 'CERRADO'];
       if (options.find(opt => opt == this.proceeding.statusProceedings)) {
+        console.log('muestra 907');
         this.ctrlButtons.closeProg.show();
         this.ctrlButtons.closeProg.label = 'Abrir Prog.';
         if (count > 0) {
@@ -906,6 +982,7 @@ export class EventCaptureComponent
           this.ctrlButtons.closeProg.hide();
         } else {
           if (this.proceeding.statusProceedings) {
+            console.log('muestra 925');
             this.ctrlButtons.closeProg.show();
           }
         }
@@ -956,6 +1033,40 @@ export class EventCaptureComponent
       );
   }
 
+  // PA_CALCULA_CANTIDADES
+  calculateQuantities() {
+    // TODO: DESCOMENTAR CUANDO ARREGLEN LA INCIDENCIA
+    // this.programmingGoodService.computeEntities(
+    //   this.proceeding.id,
+    //   typeEvent.value
+    // )
+    const { typeEvent } = this.registerControls;
+    of(null).subscribe(() => {
+      const params = new FilterParams();
+      params.addFilter('minutesNumber', this.proceeding.id);
+      return this.tmpContProgrammingService
+        .computeEntities(params.getParams())
+        .pipe(
+          tap(response => {
+            const count = response.data[0];
+            if (count) {
+              const {
+                amountEstate,
+                recordsAmount,
+                amountfiles,
+                amountOpinions,
+              } = count;
+              this.blkQuantities.goods = Number(amountEstate);
+              this.blkQuantities.registers = Number(recordsAmount);
+              this.blkQuantities.expedients = Number(amountfiles);
+              this.blkQuantities.dictums = Number(amountOpinions);
+            }
+          })
+        )
+        .subscribe();
+    });
+  }
+
   // DETALLE_ACTA_ENT_RECEP.POST_QUERY
   afterGetDetail(detail: IGoodIndicator) {
     const { typeEvent } = this.registerControls;
@@ -996,7 +1107,7 @@ export class EventCaptureComponent
         this.blkCtrl.txtDirSat = detail.txt_dirsat;
       }
     }
-
+    this.calculateQuantities();
     // TODO: PEDIR TODOS LOS CAMPOS DEL DETALLE
     // this.blkCtrl.cQuantity = (this.blkCtrl.cQuantity?? 0) + this.
   }
