@@ -239,7 +239,7 @@ export class JuridicalRulingGComponent
         type: 'string',
       },
       status: {
-        title: 'Estado',
+        title: 'Estatus',
         type: 'string',
       },
       processStatus: {

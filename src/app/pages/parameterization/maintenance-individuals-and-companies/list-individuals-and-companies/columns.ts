@@ -1,6 +1,6 @@
 export const COLUMNS = {
   id: {
-    title: 'No Persona',
+    title: 'No.Persona',
     sort: false,
   },
   name: {
@@ -8,7 +8,7 @@ export const COLUMNS = {
     sort: false,
   },
   manager: {
-    title: 'Responsable',
+    title: 'Representante',
     sort: false,
   },
   rfc: {
@@ -20,11 +20,11 @@ export const COLUMNS = {
     sort: false,
   },
   insideNumber: {
-    title: 'No interior',
+    title: 'No.Interior',
     sort: false,
   },
   outNumber: {
-    title: 'No exterior',
+    title: 'No.Exterior',
     sort: false,
   },
   phone: {
@@ -32,7 +32,7 @@ export const COLUMNS = {
     sort: false,
   },
   zipC: {
-    title: 'Codigo Postal',
+    title: 'Código Postal',
     sort: false,
   },
   suburb: {
@@ -40,7 +40,7 @@ export const COLUMNS = {
     sort: false,
   },
   delegation: {
-    title: 'Delegacion',
+    title: 'Delegación',
     sort: false,
   },
   keyEntFed: {
@@ -52,7 +52,7 @@ export const COLUMNS = {
     sort: false,
   },
   curriculum: {
-    title: 'Curriculum',
+    title: 'Currículum',
     sort: false,
   },
   keyOperation: {
