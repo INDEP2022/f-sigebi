@@ -18,7 +18,8 @@ import {
 })
 export class MaintenanceIndividualsAndCompaniesComponent
   extends BasePage
-  implements OnInit {
+  implements OnInit
+{
   form!: FormGroup;
   isCreate: boolean = true;
   edit: boolean = false;

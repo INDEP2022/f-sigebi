@@ -20,6 +20,7 @@ import {
   IDetailProceedingsDeliveryReception,
 } from 'src/app/core/models/ms-proceedings/detail-proceedings-delivery-reception.model';
 import { IProccedingsDeliveryReception } from 'src/app/core/models/ms-proceedings/proceedings-delivery-reception-model';
+import { ICveAct } from 'src/app/core/models/ms-proceedings/update-proceedings.model';
 import { TransferProceeding } from 'src/app/core/models/ms-proceedings/validations.model';
 import { GoodSssubtypeService } from 'src/app/core/services/catalogs/good-sssubtype.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
@@ -27,6 +28,7 @@ import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.s
 import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { ParametersService } from 'src/app/core/services/ms-parametergood/parameters.service';
+import { ProceedingsService } from 'src/app/core/services/ms-proceedings';
 import { DetailProceeDelRecService } from 'src/app/core/services/ms-proceedings/detail-proceedings-delivery-reception.service';
 import { ProceedingsDeliveryReceptionService } from 'src/app/core/services/ms-proceedings/proceedings-delivery-reception';
 import { ProgrammingGoodService } from 'src/app/core/services/ms-programming-request/programming-good.service';
@@ -623,7 +625,6 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
               this.checkChange();
               this.render.removeClass(btn, 'disabled');
               this.render.addClass(btn, 'enabled');
-             
               this.alert(
                 'warning',
                 'No hay bienes para este expediente',
@@ -2496,8 +2497,13 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
   nextProceeding() {
     this.prevProce = false;
     this.nextProce = false;
+<<<<<<< HEAD
               this.loading = true
               this.act2Valid = false;
+=======
+    this.loading = true;
+    this.act2Valid = false;
+>>>>>>> 7602f119a38f243da3b2729f24bc92919ba27527
 
     if (this.numberProceeding <= this.proceedingData.length - 1) {
       this.numberProceeding += 1;
@@ -2529,7 +2535,11 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
     this.prevProce = false;
     this.nextProce = false;
     this.act2Valid = false;
+<<<<<<< HEAD
     this.loading = true
+=======
+    this.loading = true;
+>>>>>>> 7602f119a38f243da3b2729f24bc92919ba27527
     this.noRequireAct1();
     this.clearInputs();
     if (
@@ -2543,8 +2553,13 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
           JSON.stringify(this.proceedingData[this.numberProceeding])
         );
         this.fillIncomeProceeding(dataRes, 'prevProceeding');
+<<<<<<< HEAD
               
               this.act2Valid = false;
+=======
+
+        this.act2Valid = false;
+>>>>>>> 7602f119a38f243da3b2729f24bc92919ba27527
         /* if (this.numberProceeding == 0) {
           this.prevProce = false;
         } */
@@ -2555,8 +2570,13 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
         JSON.stringify(this.proceedingData[this.numberProceeding])
       );
       this.fillIncomeProceeding(dataRes, 'prevProceeding');
+<<<<<<< HEAD
               
               this.act2Valid = false;
+=======
+
+      this.act2Valid = false;
+>>>>>>> 7602f119a38f243da3b2729f24bc92919ba27527
     }
   }
 }

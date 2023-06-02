@@ -4,13 +4,14 @@
     [greater]="true"
     text="Cerrando Acta... por favor espere"></form-loader>
 
-  <button class="btn btn-sm btn-return" (click)="back()">
-    <i class="bx bx-chevron-left float-icon"></i> Regresar
-  </button>
-
   <app-card [header]="true">
-    <div class="ch-content" header>
-      <h5 class="title">Mantenimiento de Programaciones</h5>
+    <div class="ch-content returnMaintenance" header>
+      <h5 class="title">
+        <button class="btn btn-sm btn-return" (click)="back()">
+          <i class="bx bx-chevron-left float-icon"></i>
+          <span class="title">Mantenimiento de Programaciones</span>
+        </button>
+      </h5>
     </div>
     <div body>
       <form class="form-material" [formGroup]="form">
