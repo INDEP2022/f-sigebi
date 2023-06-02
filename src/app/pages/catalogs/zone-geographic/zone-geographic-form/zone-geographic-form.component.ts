@@ -5,7 +5,7 @@ import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IZoneGeographic } from 'src/app/core/models/catalogs/zone-geographic.model';
 import { ZoneGeographicService } from 'src/app/core/services/catalogs/zone-geographic.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { IVA_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-zone-geographic-form',
@@ -50,7 +50,7 @@ export class ZoneGeographicFormComponent extends BasePage implements OnInit {
           Validators.pattern(STRING_PATTERN),
         ]),
       ],
-      vat: [null, Validators.compose([Validators.required])],
+      vat: [null, Validators.compose([Validators.required, Validators.pattern(IVA_PATTERN)])],
       status: [null, Validators.compose([Validators.required])],
     });
     if (this.zoneGeographic != null) {

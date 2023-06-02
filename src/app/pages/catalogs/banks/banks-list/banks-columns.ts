@@ -1,6 +1,6 @@
 export const BANKS_COLUMNS = {
   bankCode: {
-    title: 'Código de Banco',
+    title: 'Clave de Banco',
     type: 'string',
     sort: false,
   },
@@ -25,7 +25,7 @@ export const BANKS_COLUMNS = {
   //   sort: false,
   // },
   code: {
-    title: 'Código',
+    title: 'Código de Banco',
     type: 'number',
     sort: false,
   },
