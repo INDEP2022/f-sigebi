@@ -14,11 +14,16 @@
         </div> -->
         <div class="col-md-5">
           <form-field [control]="form.get('personName')" label="Nombre Persona">
-            <input type="text" class="form-control" formControlName="personName" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="personName" />
           </form-field>
         </div>
         <div class="col-md-6">
-          <form-field [control]="form.get('name')" label="Apellido Paterno y Materno">
+          <form-field
+            [control]="form.get('name')"
+            label="Apellido Paterno y Materno">
             <input type="text" class="form-control" formControlName="name" />
           </form-field>
         </div>
@@ -31,12 +36,20 @@
         </div>
         <div class="col-md-2">
           <form-field [control]="form.get('streetNumber')" label="No.Exterior">
-            <input type="text" class="form-control" formControlName="streetNumber" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="streetNumber" />
           </form-field>
         </div>
         <div class="col-md-2">
-          <form-field [control]="form.get('apartmentNumber')" label="No.Interior">
-            <input type="text" class="form-control" formControlName="apartmentNumber" />
+          <form-field
+            [control]="form.get('apartmentNumber')"
+            label="No.Interior">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="apartmentNumber" />
           </form-field>
         </div>
         <div class="col-md-4">
@@ -47,17 +60,26 @@
       </div>
       <div class="row mt-2">
         <div class="col-md-3 mt-3">
-          <form-field [control]="form.get('zipCode')" label="C&oacute;digo Postal">
+          <form-field
+            [control]="form.get('zipCode')"
+            label="C&oacute;digo Postal">
             <input type="text" class="form-control" formControlName="zipCode" />
           </form-field>
         </div>
         <div class="col-md-4 mt-3">
-          <form-field [control]="form.get('delegation')" label="Delegaci&oacute;n">
-            <input type="text" class="form-control" formControlName="delegation" />
+          <form-field
+            [control]="form.get('delegation')"
+            label="Delegaci&oacute;n">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="delegation" />
           </form-field>
         </div>
         <div class="col-md-5">
-          <app-federative-shared [form]="form" [federativeField]="'keyEntFed'"></app-federative-shared>
+          <app-federative-shared
+            [form]="form"
+            [federativeField]="'keyEntFed'"></app-federative-shared>
         </div>
       </div>
       <div class="row mt-2">
@@ -67,8 +89,13 @@
           </form-field>
         </div>
         <div class="col-md-6">
-          <form-field [control]="form.get('observations')" label="Observaciones">
-            <input type="text" class="form-control" formControlName="observations" />
+          <form-field
+            [control]="form.get('observations')"
+            label="Observaciones">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="observations" />
           </form-field>
         </div>
         <div class="col-md-3">
@@ -85,29 +112,45 @@
         </div>
         <div class="col-md-3">
           <form-check label="Curr&iacute;culum" for="curriculum">
-            <input id="curriculum" type="checkbox" formControlName="curriculumV" />
+            <input
+              id="curriculum"
+              type="checkbox"
+              formControlName="curriculumV" />
           </form-check>
         </div>
         <div class="col-md-3 col-sm-6 col-xs-6">
           <form-radio label="* Persona Moral">
-            <input type="radio" formControlName="typePerson" value="M" (change)="typeChange('M')" />
+            <input
+              type="radio"
+              formControlName="typePerson"
+              value="M"
+              (change)="typeChange('M')" />
           </form-radio>
         </div>
         <div class="col-md-3 col-sm-6 col-xs-6">
           <form-radio label="* Persona F&iacute;sica">
-            <input type="radio" formControlName="typePerson" value="F" (change)="typeChange('F')" />
+            <input
+              type="radio"
+              formControlName="typePerson"
+              value="F"
+              (change)="typeChange('F')" />
           </form-radio>
         </div>
       </div>
       <div class="row mt-4">
         <div class="col-md-12">
-          <app-turn-company [form]="form" [turnField]="'keyOperation'"></app-turn-company>
+          <app-turn-company
+            [form]="form"
+            [turnField]="'keyOperation'"></app-turn-company>
         </div>
       </div>
       <div class="row mt-4">
         <div class="col-md-12 mt-2">
           <form-field [control]="form.get('profile')" label="Perfil">
-            <textarea type="text" class="form-control" formControlName="profile"></textarea>
+            <textarea
+              type="text"
+              class="form-control"
+              formControlName="profile"></textarea>
           </form-field>
         </div>
       </div>
@@ -121,7 +164,10 @@
       <div class="row mt-4" *ngIf="form.get('typePerson').value === 'M'">
         <div class="col-md-8">
           <form-field [control]="form.get('numberDeep')" label="No.Escritura">
-            <input type="text" class="form-control" formControlName="numberDeep" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="numberDeep" />
           </form-field>
         </div>
       </div>
@@ -130,7 +176,10 @@
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <confirm-button [disabled]="!form.valid" [loading]="loading" (confirm)="confirm()">
+        <confirm-button
+          [disabled]="!form.valid"
+          [loading]="loading"
+          (confirm)="confirm()">
         </confirm-button>
       </div>
       <div class="m-3">

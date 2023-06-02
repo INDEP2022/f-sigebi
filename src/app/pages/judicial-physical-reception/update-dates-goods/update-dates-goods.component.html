@@ -9,7 +9,7 @@
 </button> -->
 
 <form class="form-material updateDatesGoods" [formGroup]="form">
-  <form-field [control]="form.get('inicio')" label="Inicio">
+  <form-field [control]="form.get('inicio')" label="Fecha de Inicio">
     <input
       class="form-control"
       [class]="disabled ? 'disabled' : ''"
@@ -17,7 +17,7 @@
       bsDatepicker
       formControlName="inicio" />
   </form-field>
-  <form-field [control]="form.get('fin')" label="Fin">
+  <form-field [control]="form.get('fin')" label="Fecha de Fin">
     <input
       class="form-control"
       [class]="disabled ? 'disabled' : ''"

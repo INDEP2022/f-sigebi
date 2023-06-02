@@ -1,17 +1,12 @@
 <form class="form-material" [formGroup]="form" id="proceeding-info">
   <div class="row border border-dark">
-    <div class="row header-proceeding-info">
-      <h5 class="title col-md-6">Informaci&oacute;n del Acta</h5>
-      <div class="col-md-6 buttons">
-        <button
-          [class]="disabled || form.invalid || registro ? 'disabled' : ''"
-          class="btn btn-primary btn-sm active"
-          (click)="filter()">
-          <i class="fa fa-search"></i> Filtrar
-        </button>
-        <app-clean-filters-shared
-          [form]="form"
-          (cleanFiltersEvent)="deleteProceedings()"></app-clean-filters-shared>
+    <div class="header-proceeding-info">
+      <div class="title">
+        <h5>Informaci&oacute;n del Acta</h5>
+      </div>
+      <div class="paginator">
+        <ng-content></ng-content>
+
         <!-- <div class="col-md-6">
           <button
             [class]="disabled || form.invalid || !registro ? 'disabled' : ''"
@@ -21,6 +16,17 @@
           </button>
         </div> -->
       </div>
+    </div>
+    <div class="buttons">
+      <button
+        [class]="disabled || form.invalid || registro ? 'disabled' : ''"
+        class="btn btn-primary btn-sm active"
+        (click)="filter()">
+        <i class="fa fa-search"></i> Filtrar
+      </button>
+      <app-clean-filters-shared
+        [form]="form"
+        (cleanFiltersEvent)="deleteProceedings()"></app-clean-filters-shared>
     </div>
     <div class="col-md-6 mt-5">
       <div class="row mb-4">
@@ -49,10 +55,9 @@
         <div class="col-md-4">
           <form-field [control]="form.get('numFile')" label="No. Expediente">
             <input
-              type="number"
               class="form-control"
               formControlName="numFile"
-              min="1"
+              maxlength="10"
               [readonly]="disabled" />
           </form-field>
         </div>
