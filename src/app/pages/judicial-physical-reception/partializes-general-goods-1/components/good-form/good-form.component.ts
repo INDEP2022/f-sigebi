@@ -54,7 +54,7 @@ export class GoodFormComponent extends AlertButton implements OnInit {
       },
       error: err => {
         this.resetForm();
-        this.onLoadToast('error', 'N° Bien ' + this.noBien, 'No encontrado');
+        this.onLoadToast('error', 'No. Bien ' + this.noBien, 'No encontrado');
         this.formLoading = false;
       },
     });
@@ -273,6 +273,7 @@ export class GoodFormComponent extends AlertButton implements OnInit {
   resetForm() {
     // this.service.formControl.
     this.service.good = null;
+    this.service.formGood.reset();
     // this.form.reset();
     this.formControl.reset();
     this.service.bienesPar = [];

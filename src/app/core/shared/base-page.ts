@@ -7,7 +7,8 @@ import {
   BsDatepickerViewMode,
 } from 'ngx-bootstrap/datepicker';
 import { ToastrService } from 'ngx-toastr';
-import { filter, Subject, takeUntil, tap } from 'rxjs';
+import { BehaviorSubject, filter, Subject, takeUntil, tap } from 'rxjs';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { LoadingService } from 'src/app/common/services/loading.service';
 import { ScreenCodeService } from 'src/app/common/services/screen-code.service';
 import { showHideErrorInterceptorService } from 'src/app/common/services/show-hide-error-interceptor.service';
@@ -214,6 +215,14 @@ export abstract class BasePage implements OnDestroy {
   protected decodeData<T>(data: string): T {
     const value = AES.decrypt(data.trim(), this.key.trim()).toString(enc.Utf8);
     return JSON.parse(value);
+  }
+  protected pageFilter(params: BehaviorSubject<ListParams>) {
+    if (params.getValue().page > 1) {
+      const paramsP = params.getValue();
+      paramsP.page = 1;
+      params.next(paramsP);
+    }
+    return params;
   }
 
   hideError(show: boolean = false) {

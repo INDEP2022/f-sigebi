@@ -5,6 +5,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import {
   PHONE_PATTERN,
+  POSITVE_NUMBERS_PATTERN,
   STRING_PATTERN,
 } from '../../../../core/shared/patterns';
 import { INotary } from './../../../../core/models/catalogs/notary.model';
@@ -40,7 +41,10 @@ export class NotaryFormComponent extends BasePage implements OnInit {
       id: [null],
       name: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       valid: [null, [Validators.required]],
-      notaryNumber: [null, [Validators.required]],
+      notaryNumber: [
+        null,
+        [Validators.required, Validators.pattern(POSITVE_NUMBERS_PATTERN)],
+      ],
       ubication: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],

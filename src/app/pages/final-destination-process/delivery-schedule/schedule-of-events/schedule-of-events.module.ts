@@ -7,6 +7,7 @@ import { TimepickerModule } from 'ngx-bootstrap/timepicker';
 import { CoordinationModalComponent } from 'src/app/@standalone/shared-forms/coordination/coordination-modal.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { ParametersComponent } from './event-capture/components/parameters/parameters.component';
+import { SmartDateInputHeaderDirective } from './event-capture/directives/smart-date-input.directive';
 import { EventCaptureComponent } from './event-capture/event-capture.component';
 import { EventTrackingComponent } from './event-tracking/event-tracking.component';
 import { GenerateEstrategyComponent } from './generate-estrategy/generate-estrategy.component';
@@ -20,6 +21,7 @@ import { ScheduleOfEventsComponent } from './schedule-of-events/schedule-of-even
     EventCaptureComponent,
     GenerateEstrategyComponent,
     ParametersComponent,
+    SmartDateInputHeaderDirective,
   ],
   imports: [
     CommonModule,

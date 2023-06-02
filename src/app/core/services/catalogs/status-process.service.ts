@@ -25,8 +25,8 @@ export class StatusProcessService implements ICrudMethods<IStatusProcess> {
     return this.statusProcessRepository.create(this.route, model);
   }
 
-  update(id: string | number, model: IStatusProcess): Observable<Object> {
-    return this.statusProcessRepository.update(this.route, id, model);
+  newUpdate(model: IStatusProcess): Observable<Object> {
+    return this.statusProcessRepository.newUpdate(this.route, model);
   }
 
   remove(id: string | number): Observable<Object> {

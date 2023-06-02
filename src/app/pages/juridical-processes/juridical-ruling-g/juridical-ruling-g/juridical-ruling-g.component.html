@@ -28,7 +28,9 @@
             </div> -->
 
             <div class="col-12 p-2">
-              <form-field [control]="expedientesForm.get('tipoDictaminacion')">
+              <form-field
+                [control]="expedientesForm.get('tipoDictaminacion')"
+                label="Tipo de dictaminacion">
                 <input
                   class="form-control"
                   #cveOficio
@@ -50,8 +52,7 @@
                   class="form-control"
                   (blur)="changeNumExpediente()"
                   (keypress)="onKeyPress($event)"
-                  formControlName="noExpediente"
-                  readonly />
+                  formControlName="noExpediente" />
               </form-field>
             </div>
 

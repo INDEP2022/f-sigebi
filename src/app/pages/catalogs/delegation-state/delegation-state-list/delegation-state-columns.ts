@@ -27,7 +27,12 @@ export const DELEGATION_STATE_COLUMNS = {
   },
   status: {
     title: 'Estatus',
-    type: 'string',
+    type: 'html',
+    valuePrepareFunction: (value: number) => {
+      return value == 0
+        ? '<strong><span class="badge badge-pill badge-success">Activo</span></strong>'
+        : '<strong><span class="badge badge-pill badge-warning">Inactivo</span></strong>';
+    },
     sort: false,
   },
   editionUser: {

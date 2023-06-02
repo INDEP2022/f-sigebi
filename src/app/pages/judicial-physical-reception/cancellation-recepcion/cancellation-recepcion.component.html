@@ -7,14 +7,20 @@
       <div class="row mb-4">
         <div class="col-md-4">
           <div class="row">
-            <div class="col-md-9">
+            <div class="col">
               <button
                 id="expedient-number"
-                class="btn btn-primary btn-sm active mr-4 disabled"
+                [class]="loading ? 'disabled' : ''"
+                class="btn btn-primary btn-sm disabled mr-2 active"
                 (click)="goodsByExpediente()">
-                Buscar
+                <i class="fa fa-search"></i> Buscar
               </button>
-              <span>{{ statusProceeding }}</span>
+              <button
+                [class]="loading ? 'disabled' : ''"
+                class="btn btn-danger btn-sm active"
+                (click)="clearAll()">
+                Limpiar
+              </button>
             </div>
           </div>
         </div>
@@ -25,6 +31,7 @@
                 control="listExpedients"
                 label="Expedientes"
                 bindLabel="id"
+                [class]="loading ? 'disabled' : ''"
                 (change)="selectExpedient($event)"
                 [data]="dataExpedients"
                 [searchable]="false"
@@ -40,6 +47,7 @@
                 id="expedient-number"
                 [disabled]="!prevProce"
                 class="btn btn-secondary btn-sm active"
+                [class]="loading ? 'disabled' : ''"
                 (click)="prevProceeding()">
                 <i class="fa fa-angle-left"></i>
               </button>
@@ -60,6 +68,7 @@
               >
               <button
                 id="expedient-number"
+                [class]="loading ? 'disabled' : ''"
                 class="btn btn-secondary btn-sm active"
                 [disabled]="!nextProce"
                 (click)="nextProceeding()">
@@ -69,6 +78,7 @@
                 *ngIf="newAct"
                 id="expedient-number"
                 class="btn btn-primary btn-sm active ml-4"
+                [class]="loading ? 'disabled' : ''"
                 (click)="newProceeding()">
                 Nueva acta
               </button>
@@ -80,18 +90,29 @@
       <div class="row mb-3 mt-3">
         <div class="col-md-4">
           <div class="row">
-            <div class="col-md-9">
+            <div class="col">
               <form-field [control]="form.get('expediente')" label="Expediente">
                 <input
                   (ngModelChange)="
                     toggleByLength('expedient-number', 'expediente')
                   "
-                  [max-length]="10"
-                  [class]="blockExpedient ? 'disabled' : ''"
                   [min]="0"
                   type="number"
+                  [max-length]="10"
+                  [readOnly]="blockExpedient"
                   class="form-control"
                   formControlName="expediente" />
+              </form-field>
+            </div>
+            <div *ngIf="form.get('statusProceeding').value != null" class="col">
+              <form-field
+                [control]="form.get('statusProceeding')"
+                label="Estatus del acta">
+                <input
+                  type="text"
+                  readOnly="true"
+                  class="form-control"
+                  formControlName="statusProceeding" />
               </form-field>
             </div>
           </div>
@@ -136,7 +157,7 @@
                   (change)="changeAct()"
                   [class]="initialBool ? 'disabled' : ''"
                   control="acta"
-                  label="Acta"
+                  label="Tipo Acta"
                   bindLabel=""
                   [data]="records"
                   [searchable]="false"
@@ -220,33 +241,17 @@
                   formControlName="mes" />
               </form-field>
             </div>
-            <!--  <div class="col">
-              <form-field [control]="form.get('status')" label="Status">
-                <input
-                  type="number"
-                  class="form-control"
-                  formControlName="status" />
-              </form-field>
-            </div>
-            <div class="col">
-              <form-field [control]="form.get('nombre')" label="Nombre">
-                <input
-                  type="number"
-                  class="form-control"
-                  formControlName="nombre" />
-              </form-field>
-            </div> -->
           </div>
         </div>
       </div>
 
       <hr class="row" />
 
-      <div class="row">
+      <div [class]="loading ? 'disabled' : ''" class="row">
         <div class="col-md-12">
           <div class="row">
             <div class="col">
-              <form-field [control]="form.get('acta2')" label="Acta 2">
+              <form-field [control]="form.get('acta2')" label="Acta">
                 <input
                   type="text"
                   class="form-control"
@@ -322,7 +327,7 @@
       <hr class="row" />
       <div class="col-md-12">
         <div class="row">
-          <div class="col-6">
+          <div class="col">
             <form-field
               [control]="form.get('autoridadCancela')"
               label="Autoridad Cancela&#47;Suspende">
@@ -347,7 +352,7 @@
           <div class="col">
             <form-field
               [control]="form.get('testigo')"
-              label="Testigo de la Contratalor&iacute;a">
+              label="Testigo de la Contralor&iacute;a">
               <input
                 type="text"
                 [maxlength]="100"
@@ -389,7 +394,7 @@
         </div>
       </div>
       <hr class="row" />
-      <div class="row mb-5">
+      <div [class]="loading ? 'disabled' : ''" class="row mb-5">
         <div class="d-flex justify-content-center">
           <div>
             <button
@@ -416,12 +421,18 @@
             </button> -->
             <a
               class="my-1 mx-2 btn btn-warning active btn-sm"
+              [class]="
+                form.get('statusProceeding').value != null ? '' : 'disabled'
+              "
               size="small"
               (click)="goParcializacion()"
               >Parcializaci&oacute;n
             </a>
             <button
               type="button"
+              [class]="
+                form.get('statusProceeding').value != null ? '' : 'disabled'
+              "
               class="my-1 mx-2 btn btn-danger active btn-sm"
               size="small"
               (click)="deleteProceeding()">
@@ -430,6 +441,13 @@
             <button
               type="button"
               class="btn btn-secondary btn-sm active mr-2 ml-2"
+              [class]="
+                ['CERRADO', 'CERRADA'].includes(
+                  form.get('statusProceeding').value
+                )
+                  ? ''
+                  : 'disabled'
+              "
               size="small"
               (click)="goCargaMasiva()">
               Carga Masiva
@@ -440,7 +458,7 @@
 
       <hr class="row" />
 
-      <div class="row pt-2 scroll-table">
+      <div [class]="loading ? 'table-loading' : 'row pt-2 scroll-table'">
         <ng2-smart-table
           class="col-md-12"
           [settings]="settings1"
@@ -502,7 +520,7 @@
         </div>
       </div>
 
-      <div class="row pt-2 scroll-table">
+      <div [class]="loading ? 'table-loading' : 'row pt-2 scroll-table'">
         <ng2-smart-table
           class="col-md-12"
           [settings]="settings2"
