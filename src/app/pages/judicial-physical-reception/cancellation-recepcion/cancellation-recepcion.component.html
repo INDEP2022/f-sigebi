@@ -456,6 +456,10 @@
           [source]="dataGoods"
           (rowSelect)="rowSelect($event)"
           (rowDeselect)="deselectRow()"></ng2-smart-table>
+          <app-pagination
+        *ngIf="!loading"
+        [params]="paramsDataGoods"
+        [totalItems]="totalItemsDataGoods"></app-pagination>
       </div>
 
       <hr class="row" />
