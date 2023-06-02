@@ -2,7 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { LocalDataSource } from 'ng2-smart-table';
+import {
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { IStatusProcess } from 'src/app/core/models/catalogs/status-process.model';
 import { StatusProcessService } from 'src/app/core/services/catalogs/status-process.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -18,6 +22,8 @@ export class StatusProcessListComponent extends BasePage implements OnInit {
   paragraphs: IStatusProcess[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
+  columnFilters: any = [];
+  data: LocalDataSource = new LocalDataSource();
 
   constructor(
     private statusProcessService: StatusProcessService,
@@ -26,9 +32,11 @@ export class StatusProcessListComponent extends BasePage implements OnInit {
     super();
     this.settings.columns = STATUSPROCESS_COLUMS;
     this.settings.actions.delete = true;
+    this.settings.actions.add = false;
+    this.settings.hideSubHeader = false;
   }
 
-  ngOnInit(): void {
+  /**ngOnInit(): void {
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getExample());
@@ -40,6 +48,60 @@ export class StatusProcessListComponent extends BasePage implements OnInit {
       next: response => {
         this.paragraphs = response.data;
         this.totalItems = response.count;
+        this.loading = false;
+      },
+      error: error => (this.loading = false),
+    });
+  }*/
+
+  ngOnInit(): void {
+    this.totalItems = 0;
+    this.data
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            console.log(filter);
+            let field = ``;
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+            switch (filter.field) {
+              case 'id':
+                searchFilter = SearchFilter.EQ;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
+            if (filter.search !== '') {
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.params = this.pageFilter(this.params);
+          this.getExample();
+        }
+      });
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getExample());
+  }
+
+  getExample() {
+    this.loading = true;
+    let params = {
+      ...this.params.getValue(),
+      ...this.columnFilters,
+    };
+    this.statusProcessService.getAll(params).subscribe({
+      next: response => {
+        this.paragraphs = response.data;
+        this.totalItems = response.count;
+        this.data.load(response.data);
+        this.data.refresh();
         this.loading = false;
       },
       error: error => (this.loading = false),
@@ -68,7 +130,19 @@ export class StatusProcessListComponent extends BasePage implements OnInit {
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
+        this.ShowDeleteAlert(statusProcess.id);
       }
+    });
+  }
+
+  ShowDeleteAlert(id: number) {
+    this.statusProcessService.remove(id).subscribe({
+      next: () => {
+        this.getExample(), this.alert('success', 'Estatus Proceso', 'Borrado');
+      },
+      error: error => {
+        this.alert('warning', 'Estatus Proceso', error.error.message);
+      },
     });
   }
 }
