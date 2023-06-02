@@ -2,7 +2,7 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { NUMBERS_PATTERN, POSITVE_NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { BankService } from '../../../../core/services/catalogs/bank.service';
 
 @Component({
@@ -48,13 +48,14 @@ export class BanksDetailComponent extends BasePage implements OnInit {
       registerNumber: [null],
       ifdsc: [null, [Validators.required, Validators.maxLength(60)]],
       dateType: [null],
-      code: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
+      code: [null, [Validators.required, Validators.pattern(POSITVE_NUMBERS_PATTERN)]],
       idProvider: [null],
     });
     if (this.bank) {
       this.edit = true;
       this.status = 'Actualizar';
       this.form.patchValue(this.bank);
+      this.form.controls['bankCode'].disable();
     }
   }
 
@@ -68,7 +69,7 @@ export class BanksDetailComponent extends BasePage implements OnInit {
 
   create() {
     this.loading = true;
-    this.bankService.create(this.form.value).subscribe(
+    this.bankService.create(this.form.getRawValue()).subscribe(
       data => this.handleSuccess(),
       error => (this.loading = false)
     );
@@ -84,7 +85,7 @@ export class BanksDetailComponent extends BasePage implements OnInit {
 
   update() {
     this.loading = true;
-    this.bankService.update(this.bank.bankCode, this.form.value).subscribe(
+    this.bankService.update(this.bank.bankCode, this.form.getRawValue()).subscribe(
       data => this.handleSuccess(),
       error => (this.loading = false)
     );
