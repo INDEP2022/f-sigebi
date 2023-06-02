@@ -16,7 +16,7 @@
               </button>
             </div>
             <div class="col">
-              <button class="btn btn-info btn-sm active" (click)="clearAll()">
+              <button class="btn btn-danger btn-sm active" (click)="clearAll()">
                 Limpiar
               </button>
             </div>
@@ -150,21 +150,11 @@
                   (change)="changeAct()"
                   [class]="initialBool ? 'disabled' : ''"
                   control="acta"
-                  label="Acta"
+                  label="Tipo Acta"
                   bindLabel=""
                   [data]="records"
                   [searchable]="false"
                   [form]="form"></ngx-select>
-                <!-- <select
-                  id="acta"
-                  [class]="initialBool ? 'disabled' : ''"
-                  class="form-control"
-                  formControlName="acta"
-                  (ngModelChange)="changeAct()">
-                  <option *ngFor="let record of records" [value]="record">
-                    {{ record }}
-                  </option>
-                </select> -->
               </form-field>
             </div>
             <div class="col-md-2">
@@ -178,11 +168,6 @@
                   (change)="verifyTransferenteAndAct()"
                   [data]="transferSelect"
                   [form]="form"></ngx-select>
-                <!--  <input
-                  type="text"
-                  class="form-control"
-                  formControlName="transfer"
-                  (ngModelChange)="changeAct()" /> -->
               </form-field>
             </div>
             <div class="col">
@@ -246,22 +231,6 @@
                   (change)="fillActTwo()" />
               </form-field>
             </div>
-            <!-- <div class="col">
-              <form-field [control]="form.get('status')" label="Status">
-                <input
-                  type="number"
-                  class="form-control"
-                  formControlName="status" />
-              </form-field>
-            </div>
-            <div class="col">
-              <form-field [control]="form.get('nombre')" label="Nombre">
-                <input
-                  type="number"
-                  class="form-control"
-                  formControlName="nombre" />
-              </form-field>
-            </div> -->
           </div>
         </div>
       </div>
@@ -271,7 +240,7 @@
       <div class="row">
         <div class="col-md-6">
           <div class="row">
-            <form-field [control]="form.get('acta2')" label="Acta 2">
+            <form-field [control]="form.get('acta2')" label="Acta">
               <input
                 type="text"
                 class="form-control disabled"
