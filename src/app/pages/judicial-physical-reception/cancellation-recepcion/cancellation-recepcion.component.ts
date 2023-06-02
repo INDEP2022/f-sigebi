@@ -60,7 +60,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
     selectedRowIndex: -1,
     mode: 'external',
     columns: {
-      id: {
+      goodId: {
         title: 'No. Bien',
         type: 'string',
         sort: false,
@@ -74,6 +74,11 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
         title: 'Proceso',
         type: 'string',
         sort: false,
+      },
+      status: {
+        title: 'Estatus',
+        type: 'string',
+        sort: false
       },
       quantity: {
         title: 'Cantidad',
@@ -2623,7 +2628,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                         this.dataGoods['data'].map((e: any) => {
                           for (let element of this.dataGoodAct['data']) {
                             if (e.id === element.id) {
-                              return { ...e, avalaible: true };
+                              return { ...e, avalaible: true, acta: null };
                             } else {
                               return e;
                             }
