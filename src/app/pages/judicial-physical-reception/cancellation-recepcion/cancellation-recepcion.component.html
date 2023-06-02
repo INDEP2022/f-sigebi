@@ -17,7 +17,7 @@
               </button>
               <button
                 [class]="loading ? 'disabled' : ''"
-                class="btn btn-warning btn-sm active"
+                class="btn btn-danger btn-sm active"
                 (click)="clearAll()"
                 >
                 Limpiar
@@ -147,7 +147,7 @@
                   (change)="changeAct()"
                   [class]="initialBool ? 'disabled' : ''"
                   control="acta"
-                  label="Acta"
+                  label="Tipo Acta"
                   bindLabel=""
                   [data]="records"
                   [searchable]="false"
@@ -241,7 +241,7 @@
         <div class="col-md-12">
           <div class="row">
             <div class="col">
-              <form-field [control]="form.get('acta2')" label="Acta 2">
+              <form-field [control]="form.get('acta2')" label="Acta">
                 <input
                   type="text"
                   class="form-control"
