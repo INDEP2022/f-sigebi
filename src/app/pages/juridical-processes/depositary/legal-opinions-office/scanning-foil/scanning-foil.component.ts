@@ -28,9 +28,11 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
   //Reactive Forms
   @Input() form: FormGroup;
   @Input() screenKey: string = '';
+  @Input() screenKey2: string = '';
   @Input() officeDictationData: IOfficialDictation;
   @Input() dictationData: IDictation;
   @Input() dataUserLogged: any;
+  @Input() paramsScreen: any;
   @Input() disabled: boolean = false;
 
   @Output() viewPicturesEmitter = new EventEmitter<boolean>();
@@ -111,7 +113,7 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
   }
 
   openScannerPage() {
-    if (!this.officeDictationData && !this.dictationData) {
+    if (!this.officeDictationData || !this.dictationData) {
       return;
     }
     if (
@@ -131,7 +133,9 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
             this.router.navigate(['/pages/general-processes/scan-documents'], {
               queryParams: {
                 origin: this.screenKey,
+                origin2: this.screenKey2,
                 folio: this.form.get('scanningFoli').value,
+                ...this.paramsScreen,
               },
             });
           }
@@ -170,7 +174,7 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
     const response = await this.alertQuestion(
       'question',
       'Aviso',
-      'Se generará un nuevo folio de Escaneo para la Solicitud abierta, ¿Desea continuar?'
+      'Se generará un nuevo folio de Escaneo para el Dictamen, ¿Desea continuar?'
     );
 
     if (!response.isConfirmed) {
@@ -195,7 +199,7 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
       keySeparator: '60',
       keyTypeDocument: 'ENTRE',
       natureDocument: 'ORIGINAL',
-      descriptionDocument: `DICTAMEN ${this.dictationData.keyArmyNumber}`,
+      descriptionDocument: `DICTAMEN ${this.dictationData.passOfficeArmy}`, // Clave de Oficio Armada
       significantDate: format(new Date(), 'MM-yyyy'),
       scanStatus: 'SOLICITADO',
       userRequestsScan:
@@ -357,7 +361,8 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
   getDocumentsCount() {
     const params = new FilterParams();
     params.addFilter('scanStatus', 'ESCANEADO');
-    params.addFilter('flyerNumber', this.dictationData.wheelNumber);
+    params.addFilter('flyerNumber', SearchFilter.NULL, SearchFilter.NOT);
+    params.addFilter('numberProceedings', this.dictationData.expedientNumber);
     this.hideError();
     return this.documentsService.getAllFilter(params.getParams()).pipe(
       catchError(error => {

@@ -257,7 +257,7 @@ export class PartializeButtonComponent
     // debugger;
     if (this.v_numerario === 0) {
       let result =
-        ', (Producto de la Parcialización de Bien No.' +
+        ', (Producto de la Parcialización de Bien No. ' +
         this.good.goodId +
         ' (' +
         v_cantidad +
@@ -451,6 +451,7 @@ export class PartializeButtonComponent
         const validationDec = await this.validationDecimales();
         if (!validationDec) return false;
         const result = await this.setMeasureData();
+        console.log(result);
         v_cantidad = result.v_cantidad;
         v_unidad = result.v_unidad;
         v_avaluo = result.v_avaluo;

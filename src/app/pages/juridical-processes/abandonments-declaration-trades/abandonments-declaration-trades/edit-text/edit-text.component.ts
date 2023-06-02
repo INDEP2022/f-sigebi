@@ -18,15 +18,12 @@ export class EditTextComponent extends BasePage implements OnInit {
   filterText: string;
   form: FormGroup = new FormGroup({});
   disabledDictum: boolean;
-  disabledDictum2: boolean;
-
   filterButton: number;
   constructor(private fb: FormBuilder, private modalRef: BsModalRef) {
     super();
   }
 
   ngOnInit(): void {
-    this.disabledDictum2 = !this.disabledDictum;
     if (
       this.filterText == 'declaratoriaInicio' ||
       this.filterText == 'declaratoriaFin'
