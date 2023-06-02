@@ -5,9 +5,9 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 
 import { BehaviorSubject } from 'rxjs';
 import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
+import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DOCUMENTS_COLUMNS } from './documents-form-columns';
-
 @Component({
   selector: 'app-documents-form',
   templateUrl: './documents-form.component.html',
@@ -26,7 +26,8 @@ export class DocumentsFormComponent extends BasePage implements OnInit {
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
-    private dictationService: DictationService
+    private dictationService: DictationService,
+    private readonly documentService: DocumentsService
   ) {
     super();
     this.settings.columns = DOCUMENTS_COLUMNS;
@@ -98,9 +99,8 @@ export class DocumentsFormComponent extends BasePage implements OnInit {
 
   getDocumentsbyDictation() {
     this.loading = true;
-    let num = this.dictationService.clasifGoodNumber;
-    console.log(num);
-    this.dictationService.getDocumentsForDictation(num).subscribe({
+    let num = this.dictationService.goodNumber;
+    this.documentService.getDocumentsByGood(num).subscribe({
       next: data => {
         this.documents = data.data;
         this.totalItems = data.count;

@@ -1,10 +1,10 @@
 export const DOCUMENTS_COLUMNS = {
-  cveDocument: {
-    title: 'Document',
+  officialNumber: {
+    title: 'Documento',
     type: 'string',
     sort: false,
   },
-  documentDetails: {
+  key: {
     title: 'Observaciones',
     type: 'string',
     sort: false,

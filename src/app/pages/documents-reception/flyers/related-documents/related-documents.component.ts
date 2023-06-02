@@ -118,7 +118,7 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
   se_refiere_a = {
     A: 'Se refiere a todos los bienes',
     B: 'Se refiere a algun(os) bien(es) del expediente',
-    C: 'No se refiere a nigun bien asegurado, decomisado o abandonado',
+    C: 'No se refiere a ningún bien asegurado, decomisado o abandonado',
     D: 'd',
   };
   se_refiere_a_Disabled = {
@@ -156,6 +156,8 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
   today = new DatePipe('en-EN').transform(new Date(), 'dd/MM/yyyy');
   @ViewChild('cveOficio', { static: true }) cveOficio: ElementRef;
   disabledTypes: boolean = false;
+  showDestinatario: boolean = false;
+  showDestinatarioInput: boolean = false;
   constructor(
     private fb: FormBuilder,
     private flyerService: FlyersService,
@@ -295,6 +297,11 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
         tap(() => this.onLoadGoodList('all'))
       )
       .subscribe();
+    if (this.paramsGestionDictamen.tipoOf == 'INTERNO') {
+      this.showDestinatario = true;
+    } else {
+      this.showDestinatarioInput = true;
+    }
   }
 
   setInitVariables() {
@@ -406,6 +413,7 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
       remitente: [null],
       noDestinatario: [null],
       destinatario: [null],
+      destinatarioInput: [null],
       noCiudad: [null],
       ciudad: [null],
       claveOficio: [null],
@@ -1005,9 +1013,6 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
       });
   }
 
-  getIdClasify(event: any) {
-    this.dictationService.clasifGoodNumber = event.clasifGoodNumber;
-  }
   /**
    * Obtener el listado de Ciudad de acuerdo a los criterios de búsqueda
    * @param paramsData Parametos de busqueda de tipo @ListParams
@@ -1551,9 +1556,8 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
     });
   }
   selectProceedings(event: IUserRowSelectEvent<IGood>) {
-    console.log('EVENT', event);
-
     this.getStatusGood(event.data.status);
     this.selectedGood = event.selected;
+    this.dictationService.goodNumber = event.data.id;
   }
 }
