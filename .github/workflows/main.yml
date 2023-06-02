@@ -35,7 +35,7 @@ jobs:
     - name: Build the Docker image
       run: |
         docker login acrindep.azurecr.io --username ${{ secrets.USER }} -p ${{ secrets.PASSWORD }}
-        docker build -t acrindep.azurecr.io/ns-sb-0001-sigebi/${{ steps.obtener-nombre-repo.outputs.repo_name }}:${{ github.sha }} ./nginx.dockerfile .
+        docker build -t acrindep.azurecr.io/ns-sb-0001-sigebi/${{ steps.obtener-nombre-repo.outputs.repo_name }}:${{ github.sha }} -f nginx.dockerfile .
         docker push acrindep.azurecr.io/ns-sb-0001-sigebi/${{ steps.obtener-nombre-repo.outputs.repo_name }}:${{ github.sha }}
 
     - name: Install cURL
