@@ -113,10 +113,16 @@ export class RegionalDelegationFormComponent
   //Data
 
   getGeoZone(param: ListParams) {
-    this.serviceGeoZone.getAll(param).subscribe(res => {
-      this.selectGeoZone = new DefaultSelect(res.data, res.count);
-    });
+    this.serviceGeoZone.getAll(param).subscribe(
+      res => {
+        this.selectGeoZone = new DefaultSelect(res.data, res.count);
+      },
+      error => {
+        this.selectGeoZone = new DefaultSelect();
+      }
+    );
   }
+
   fillSelectZone() {
     const zone = this.regionalDelegationForm.get('zone').value;
     if (zone != null) {
@@ -127,9 +133,14 @@ export class RegionalDelegationFormComponent
   }
 
   getCity(param: ListParams) {
-    this.serviceCity.getAll(param).subscribe(res => {
-      this.selectCity = new DefaultSelect(res.data, res.count);
-    });
+    this.serviceCity.getAll(param).subscribe(
+      res => {
+        this.selectCity = new DefaultSelect(res.data, res.count);
+      },
+      error => {
+        this.selectCity = new DefaultSelect();
+      }
+    );
   }
 
   //Action
