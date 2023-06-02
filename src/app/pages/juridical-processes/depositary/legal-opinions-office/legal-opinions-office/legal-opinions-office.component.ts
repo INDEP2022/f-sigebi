@@ -120,6 +120,7 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
   objDetail: any = {};
   loadDetail: boolean = false;
   showSearchAppointment: boolean = false;
+  numberNotaryVisible: boolean = false;
   V_ARCHOSAL: string = '';
   pup_genera_xml: boolean = false;
   V_URL_OPEN_FIRM: string = '';
@@ -180,6 +181,7 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    this.setInitValuesToSave(); // INIT SAVE VARIABLES
     this.buildForm();
     this.cleanDataForm();
     this.showEnableTypeOffice = false;
@@ -227,7 +229,9 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
               params[key] ?? null;
           }
         }
-        this.origin = params['origin'] ?? null;
+        this.origin = params['origin2']
+          ? params['origin2']
+          : params['origin'] ?? null;
         if (
           this.origin &&
           this.paramsScreen.TIPO != null &&
@@ -964,11 +968,13 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
           console.log('PROCEDURE MANAGEMENT', data);
           // Visible true
           this.form.get('numberNotary').enable();
+          this.numberNotaryVisible = true;
           subscription.unsubscribe();
         },
         error: error => {
           console.log(error);
           this.form.get('numberNotary').disable();
+          this.numberNotaryVisible = false;
           subscription.unsubscribe();
         },
       });
@@ -1446,7 +1452,9 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
     let body: ICopiesOfficeSendDictation = {
       vc_pantalla: this.screenKey,
       clave_oficio_armada: this.dictationData.passOfficeArmy, //this.dictationData.keyArmyNumber.toString(),
-      estatus_of: this.officeDictationData.statusOf,
+      estatus_of: this.officeDictationData.statusOf
+        ? this.officeDictationData.statusOf
+        : 'ENVIADO',
       fec_dictaminacion: this.dictationData.dictDate,
       tipo_dictaminacion: this.dictationData.typeDict,
       identi: this.variables.identi,
@@ -1469,7 +1477,7 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
           : this.dataUserLogged.user, // Data del usuario
       ciudad: this.officeDictationData.city.toString(),
       iden: null, // Bienes
-      num_clave_armada: this.dictationData.keyArmyNumber, // CHECAR CUAL ES
+      num_clave_armada: this.dictationData.keyArmyNumber, // :DICTAMINACIONES.NUM_CLAVE_ARMADA
       toolbar_no_departamento: this.dataUserLogged.departamentNumber, // Data del usuario
       toolbar_no_subdelegacion: this.dataUserLogged.subdelegationNumber, // Data del usuario
       estatus_dictaminacion: this.dictationData.statusDict,
@@ -2102,6 +2110,7 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
   }
 
   btnDetail() {
+    this.setDataDictationSave(true);
     this.loadDetail = true;
     this.objDetail = {
       c_ESTATUS_OF: 'ENVIADO',
@@ -2733,6 +2742,7 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
     // TEXTOS OFICIO DICTAMINACIÓN
     this.officeTextDictationData = {
       ...this.officeTextDictationData,
+      dictatesNumber: this.dictationData.id,
       textx: this.form.get('moreInformation2').value,
     };
     // COPIAS OFICIO DICTAMEN
@@ -2796,28 +2806,39 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
       this.officeTextDictationData,
       this.officeCopiesDictationData
     );
-    if (this.blockSender) {
-      return;
+    if (saveData) {
+      this.saveDictation();
     }
-    this.saveDictation();
   }
 
   saveDictation() {
     this._saveDictation_loading = true;
+    // console.log(this._saveDictation);
+    // this.saveOfficeDictation();
     if (this._saveDictation) {
       this.svLegalOpinionsOfficeService
         .saveDictations(this.dictationData)
         .subscribe({
           next: data => {
             console.log('SAVE DICTAMEN', data);
+            this.onLoadToast(
+              'success',
+              'El Dictamen se guardó correctamente',
+              ''
+            );
             this._saveDictation_loading = false;
             this.saveOfficeDictation();
           },
           error: error => {
             console.log(error);
             this._saveDictation_loading = false;
-
-            this.continueSearchAppoinment(this.dictationData);
+            this.onLoadToast(
+              'error',
+              'Ocurrió un error al guardar el Dictamen',
+              error.error.message
+            );
+            // this.continueSearchAppoinment(this.dictationData);
+            this.saveOfficeDictation();
           },
         });
     } else {
@@ -2830,14 +2851,24 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
         .subscribe({
           next: data => {
             console.log('UPDATE DICTAMEN', data);
+            this.onLoadToast(
+              'success',
+              'El Dictamen se guardó correctamente',
+              ''
+            );
             this._saveDictation_loading = false;
             this.saveOfficeDictation();
           },
           error: error => {
             console.log(error);
             this._saveDictation_loading = false;
-
-            this.continueSearchAppoinment(this.dictationData);
+            this.onLoadToast(
+              'error',
+              'Ocurrió un error al guardar el Dictamen',
+              error.error.message
+            );
+            // this.continueSearchAppoinment(this.dictationData);
+            this.saveOfficeDictation();
           },
         });
     }
@@ -2845,20 +2876,32 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
 
   saveOfficeDictation() {
     this._saveOfficeDictation_loading = true;
+    // console.log(this._saveOfficeDictation);
+    // this.saveOfficeText();
     if (this._saveOfficeDictation) {
       this.svLegalOpinionsOfficeService
         .saveOfficeDictation(this.officeDictationData)
         .subscribe({
           next: data => {
             console.log('SAVE OFFICE DICTAMEN', data);
+            this.onLoadToast(
+              'success',
+              'El Oficio del Dictamen se guardó correctamente',
+              ''
+            );
             this._saveOfficeDictation_loading = false;
             this.saveOfficeText();
           },
           error: error => {
             console.log(error);
             this._saveOfficeDictation_loading = false;
-
-            this.continueSearchAppoinment(this.dictationData);
+            this.onLoadToast(
+              'error',
+              'Ocurrió un error al guardar el Oficio del Dictamen',
+              error.error.message
+            );
+            // this.continueSearchAppoinment(this.dictationData);
+            this.saveOfficeText();
           },
         });
     } else {
@@ -2877,14 +2920,24 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
         .subscribe({
           next: data => {
             console.log('UPDATE OFFICE DICTAMEN', data);
+            this.onLoadToast(
+              'success',
+              'El Oficio del Dictamen se guardó correctamente',
+              ''
+            );
             this._saveOfficeDictation_loading = false;
             this.saveOfficeText();
           },
           error: error => {
             console.log(error);
             this._saveOfficeDictation_loading = false;
-
-            this.continueSearchAppoinment(this.dictationData);
+            this.onLoadToast(
+              'error',
+              'Ocurrió un error al guardar el Oficio del Dictamen',
+              error.error.message
+            );
+            // this.continueSearchAppoinment(this.dictationData);
+            this.saveOfficeText();
           },
         });
     }
@@ -2892,6 +2945,8 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
 
   saveOfficeText() {
     this._saveTextDictation_loading = true;
+    // console.log(this._saveTextDictation);
+    // this.saveCopiesOfficeDictation();
     if (this._saveTextDictation) {
       if (this.officeTextDictationData.textx) {
         this.svLegalOpinionsOfficeService
@@ -2899,18 +2954,29 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
           .subscribe({
             next: data => {
               console.log('SAVE TEXT DICTAMEN', data);
+              this.onLoadToast(
+                'success',
+                'Los Textos del Dictamen se guardaron correctamente',
+                ''
+              );
               this._saveTextDictation_loading = false;
               this.saveCopiesOfficeDictation();
             },
             error: error => {
               console.log(error);
+              this.onLoadToast(
+                'error',
+                'Ocurrió un error al guardar los Textos del Oficio del Dictamen',
+                error.error.message
+              );
               this._saveTextDictation_loading = false;
-
-              this.continueSearchAppoinment(this.dictationData);
+              // this.continueSearchAppoinment(this.dictationData);
+              this.saveCopiesOfficeDictation();
             },
           });
       } else {
-        this.continueSearchAppoinment(this.dictationData);
+        // this.continueSearchAppoinment(this.dictationData);
+        this.saveCopiesOfficeDictation();
       }
     } else {
       // let objDictation = {
@@ -2921,14 +2987,24 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
         .subscribe({
           next: data => {
             console.log('UPDATE TEXT DICTAMEN', data);
+            this.onLoadToast(
+              'success',
+              'Los Textos del Dictamen se guardaron correctamente',
+              ''
+            );
             this._saveTextDictation_loading = false;
             this.saveCopiesOfficeDictation();
           },
           error: error => {
             console.log(error);
+            this.onLoadToast(
+              'error',
+              'Ocurrió un error al guardar los Textos del Oficio del Dictamen',
+              error.error.message
+            );
             this._saveTextDictation_loading = false;
-
-            this.continueSearchAppoinment(this.dictationData);
+            // this.continueSearchAppoinment(this.dictationData);
+            this.saveCopiesOfficeDictation();
           },
         });
     }
@@ -2938,8 +3014,17 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
     // this.continueSearchAppoinment(this.dictationData);
     this._saveCopiesDictation_loading = true;
     this.officeCopiesDictationData.forEach((elementCopies, count) => {
-      console.log(count, this._totalCopiesTo);
-      if (this._saveCopiesDictation && count + 1 > this._totalCopiesTo) {
+      // console.log(count, this._totalCopiesTo);
+      // console.log(
+      //   this._saveCopiesDictation,
+      //   count + 1,
+      //   this._totalCopiesTo,
+      //   count + 1 > this._totalCopiesTo
+      // );
+      if (
+        (this._saveCopiesDictation && count + 1 > this._totalCopiesTo) ||
+        this._totalCopiesTo == 0
+      ) {
         this.svLegalOpinionsOfficeService
           .saveCopiesOfficeDictation(elementCopies)
           .subscribe({
