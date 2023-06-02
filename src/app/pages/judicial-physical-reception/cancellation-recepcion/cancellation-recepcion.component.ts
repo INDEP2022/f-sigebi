@@ -208,7 +208,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
   prepareForm() {
     this.form = this.fb.group({
       listExpedients: [null],
-      statusProceeding : [null, []],
+      statusProceeding: [null, []],
       expediente: [null, [Validators.required]],
       averPrev: [null],
       causaPenal: [null],
