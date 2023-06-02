@@ -39,6 +39,10 @@ export class PartializeViewComponent extends BasePage implements OnInit {
   //   //   : this.service2Tab2;
   // }
 
+  get saldo() {
+    return this.form.get('saldo') ? this.form.get('saldo').value : 0;
+  }
+
   get formGood() {
     return this.service.formGood;
   }
@@ -102,7 +106,8 @@ export class PartializeViewComponent extends BasePage implements OnInit {
     if (
       this.form.invalid ||
       this.formGood.invalid ||
-      this.vsum > this.vimporte
+      this.vsum > this.vimporte ||
+      this.saldo === 0
     ) {
       return 'disabled';
     }
@@ -114,7 +119,7 @@ export class PartializeViewComponent extends BasePage implements OnInit {
   }
 
   get stateApply() {
-    if (this.formGood?.valid && this.bienesPar.length > 0) {
+    if (this.formGood?.valid && this.bienesPar.length > 0 && this.saldo > 0) {
       return 'active';
     }
     return 'disabled';
