@@ -247,7 +247,7 @@ export class GoodActionsComponent extends AlertButton implements OnInit {
     } else {
       this.openModalSelect(
         {
-          titleColumnToReplace: 'estados',
+          titleColumnToReplace: 'estatus',
           columnsType: {
             numberGood: {
               title: 'No. Bien',
