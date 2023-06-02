@@ -1974,7 +1974,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
               'yyyy-MM,dd HH:mm'
             ),
             address: this.form.get('direccion').value,
-            elaborate: localStorage.getItem('username').toLocaleUpperCase(),
+            elaborate: localStorage.getItem('username') == 'sigebiadmon' ? localStorage.getItem('username') : localStorage.getItem('username').toLocaleUpperCase(),
             numFile: this.form.get('expediente').value,
             witness1: this.form.get('autoridadCancela').value,
             witness2: this.form.get('elabora').value,
@@ -1984,6 +1984,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                 : 'SUSPENSION',
             responsible: null,
             destructionMethod: null,
+            statusProceedings: 'ABIERTA',
             observations: this.form.get('observaciones').value,
             approvalDateXAdmon: null,
             approvalUserXAdmon: null,
