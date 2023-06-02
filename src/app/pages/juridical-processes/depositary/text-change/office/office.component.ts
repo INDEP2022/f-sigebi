@@ -32,8 +32,8 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import Swal from 'sweetalert2';
+import { tablaModalComponent } from '../tabla-modal/tablaModal-component';
 import { EXTERNOS_COLUMS_OFICIO } from '../tabla-modal/tableUserExt';
-import { TablaOficioModalComponent } from '../tabla-oficio-modal/tabla-oficio-modal.component';
 import { ModalPersonaOficinaComponent } from './modal-persona-oficina/modal-persona-oficina.component';
 
 @Component({
@@ -253,9 +253,9 @@ export class OfficeComponent extends BasePage implements OnInit {
         next: respuesta => {
           console.log(respuesta.count);
 
-          if (respuesta.count > 1) {
+          if (respuesta.count == 1) {
             console.log('IF');
-            this.loadOficioModal('getAllOfficialDocument', true, filterParams);
+            this.loadModal(true, filterParams);
           } else {
             console.log('Else');
             this.tipoImpresion = respuesta.data[0].jobType;
@@ -312,16 +312,29 @@ export class OfficeComponent extends BasePage implements OnInit {
   //=================================================================================
   //===================================================================================//
 
-  loadOficioModal(
-    pantalla: string,
-    resp: boolean,
-    filterParams: BehaviorSubject<FilterParams>
-  ) {
-    this.openOficioModal(pantalla, true, filterParams);
+  loadModal(resp: boolean, filterParams: BehaviorSubject<FilterParams>) {
+    this.openModal(resp, filterParams);
   }
 
-  openOficioModal(
-    pantalla: string,
+  //false dictamen true oficio
+  openModal(
+    OficioOrdictamen: boolean,
+    filterParams: BehaviorSubject<FilterParams>
+  ) {
+    const modalConfig = {
+      ...MODAL_CONFIG,
+      class: 'modal-lg modal-dialog-centered',
+    };
+    modalConfig.initialState = {
+      OficioOrdictamen,
+      filterParams,
+      callback: (next: any) => {},
+    };
+    this.modalService.show(tablaModalComponent, modalConfig);
+  }
+
+  /*
+  this.openModal(
     newOrEdit: boolean,
     filterParams: BehaviorSubject<FilterParams>
   ) {
@@ -367,7 +380,7 @@ export class OfficeComponent extends BasePage implements OnInit {
     };
     this.modalService.show(TablaOficioModalComponent, modalConfig);
   }
-
+*/
   ////////////////////////////////////////////////////////////////////////////////////
   /*   Evento que se ejecuta para llenar los documentos asociados a el expediente
 ========================================================================================*/

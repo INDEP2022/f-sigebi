@@ -1,6 +1,6 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { LocalDataSource, Ng2SmartTableComponent } from 'ng2-smart-table';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import {
@@ -73,7 +73,8 @@ export class tablaModalComponent extends BasePage implements OnInit {
     },
   ];
 
-  @ViewChild('table') table: Ng2SmartTableComponent;
+  OficioOrdictamen: boolean;
+  filterParamsOficio: BehaviorSubject<FilterParams>;
 
   constructor(
     private fb: FormBuilder,
@@ -97,55 +98,60 @@ export class tablaModalComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.title = '  Seleccione el número de expediente ';
-
-    this.filterParams.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
-      this.lookDictamenesByDictamens();
-    });
-
-    this.dataLocal
-      .onChanged()
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(change => {
-        if (change.action === 'filter') {
-          let filters = change.filter.filters;
-          filters.map((filter: any) => {
-            let field = ``;
-            let searchFilter = SearchFilter.ILIKE;
-            /*SPECIFIC CASES*/
-            field = `filter.${filter.field}`;
-            switch (filter.field) {
-              case 'id':
-                searchFilter = SearchFilter.ILIKE;
-                break;
-              case 'expedientNumber':
-                searchFilter = SearchFilter.ILIKE;
-                break;
-              case 'statusDict':
-                searchFilter = SearchFilter.ILIKE;
-                break;
-              case 'wheelNumber':
-                searchFilter = SearchFilter.ILIKE;
-                break;
-              case 'passOfficeArmy':
-                searchFilter = SearchFilter.ILIKE;
-                break;
-              default:
-                searchFilter = SearchFilter.ILIKE;
-                break;
-            }
-            if (filter.search !== '') {
-              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
-            } else {
-              delete this.columnFilters[field];
-            }
-          });
-          this.getAttributesFinancialInfo();
-        }
+    //this.filterParamsOficioLocal = filterParamsOficio;
+    if (this.OficioOrdictamen) {
+      this.title = '  Seleccione el número de oficio';
+      this.onEnterSearch();
+    } else {
+      this.title = '  Seleccione el número de expediente ';
+      this.filterParams.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+        this.lookDictamenesByDictamens();
       });
-    this.params
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getAttributesFinancialInfo());
+
+      this.dataLocal
+        .onChanged()
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe(change => {
+          if (change.action === 'filter') {
+            let filters = change.filter.filters;
+            filters.map((filter: any) => {
+              let field = ``;
+              let searchFilter = SearchFilter.ILIKE;
+              /*SPECIFIC CASES*/
+              field = `filter.${filter.field}`;
+              switch (filter.field) {
+                case 'id':
+                  searchFilter = SearchFilter.ILIKE;
+                  break;
+                case 'expedientNumber':
+                  searchFilter = SearchFilter.ILIKE;
+                  break;
+                case 'statusDict':
+                  searchFilter = SearchFilter.ILIKE;
+                  break;
+                case 'wheelNumber':
+                  searchFilter = SearchFilter.ILIKE;
+                  break;
+                case 'passOfficeArmy':
+                  searchFilter = SearchFilter.ILIKE;
+                  break;
+                default:
+                  searchFilter = SearchFilter.ILIKE;
+                  break;
+              }
+              if (filter.search !== '') {
+                this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+              } else {
+                delete this.columnFilters[field];
+              }
+            });
+            this.getAttributesFinancialInfo();
+          }
+        });
+      this.params
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe(() => this.getAttributesFinancialInfo());
+    }
   }
 
   getAttributesFinancialInfo() {
@@ -195,5 +201,50 @@ export class tablaModalComponent extends BasePage implements OnInit {
   handleSuccess(datos: []) {
     this.modalRef.content.callback(datos);
     this.modalRef.hide();
+  }
+
+  onEnterSearch() {
+    this.dictationService
+      .findByIdsOficNum(this.filterParamsOficio.getValue().getParams())
+      .subscribe({
+        next: resp => {
+          console.log('onEnterSearch => ' + JSON.stringify(resp));
+          /*
+          if (resp.count > 1) {
+            this.loadModal(true, filterParams);
+          } else {
+            this.intIDictation = resp.data[0];
+
+            this.form
+              .get('expedientNumber')
+              .setValue(this.intIDictation.expedientNumber);
+            console.log(' this.intIDictation.id => ' + this.intIDictation.id);
+            this.form.get('registerNumber').setValue(this.intIDictation.id);
+            this.form
+              .get('wheelNumber')
+              .setValue(this.intIDictation.wheelNumber);
+            this.form.get('typeDict').setValue(this.intIDictation.statusDict);
+            this.form.get('key').setValue(this.intIDictation.passOfficeArmy);
+            let obj = {
+              officialNumber: this.intIDictation.id,
+              typeDict: this.intIDictation.typeDict,
+            };
+            this.complementoFormulario(obj);
+            this.getPersonaExt_Int(
+              'this.intIDictation => ',
+              this.intIDictation
+            );
+          }*/
+        },
+        error: err => {
+          if (err.message.indexOf('registros') !== -1) {
+            this.onLoadToast('error', 'Error 1 ', err.message);
+          }
+          //   console.log('Error ' + error);
+          //  this.onLoadToast('info', 'Registro', 'No se obtuvo información');
+          // console.log('error', 'Error', err.error.message);
+          // this.onLoadToast('error', 'error', err.error.message);
+        },
+      });
   }
 }
