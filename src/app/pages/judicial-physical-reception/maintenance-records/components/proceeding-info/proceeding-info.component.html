@@ -1,8 +1,10 @@
 <form class="form-material" [formGroup]="form" id="proceeding-info">
   <div class="row border border-dark">
-    <div class="row header-proceeding-info">
-      <h5 class="title col-md-6">Informaci&oacute;n del Acta</h5>
-      <div class="col-md-6 buttons">
+    <div class="header-proceeding-info">
+      <div class="title">
+        <h5>Informaci&oacute;n del Acta</h5>
+      </div>
+      <div class="buttons">
         <button
           [class]="disabled || form.invalid || registro ? 'disabled' : ''"
           class="btn btn-primary btn-sm active"
@@ -12,6 +14,10 @@
         <app-clean-filters-shared
           [form]="form"
           (cleanFiltersEvent)="deleteProceedings()"></app-clean-filters-shared>
+      </div>
+      <div class="paginator">
+        <ng-content></ng-content>
+
         <!-- <div class="col-md-6">
           <button
             [class]="disabled || form.invalid || !registro ? 'disabled' : ''"
