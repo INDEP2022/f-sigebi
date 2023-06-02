@@ -13,6 +13,7 @@ export const PERCENTAGE_NUMBERS_PATTERN =
   /^(\d{1,2}(\.\d{1,2})?|100(\.0{1,2})?)$/;
 
 export const DOUBLE_PATTERN = '[+-]?([0-9]*[.])?[0-9]+';
+export const DOUBLE_POSITIVE_PATTERN = '[+]?([0-9]*[.])?[0-9]+';
 export const STRING_PATTERN =
   '[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\\/\\s\\.,_\\-\\\\()$°\\Üü“”;:]*';
 // '[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ@\\s\\.,_\\-¿?\\\\/()%$#¡!|]*'; [a-zA-Z0-9áéíóúÁÉÍÓÚñÑ@\\s\\.,_\\-¿?\\\\/()%$#¡!|]
