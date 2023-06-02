@@ -91,7 +91,7 @@ export class VaultDetailComponent extends BasePage implements OnInit {
       this.valueMunicipality = this.vault.municipalityDetail as IMunicipality;
       this.valueLocality = this.vault.localityDetail as ILocality;
       this.vaultForm.patchValue(this.vault);
-      console.log(this.vaultForm.value);
+      console.log(this.vault);
       if (this.vaultForm.controls['municipalityDetail'].value) {
         this.vaultForm.controls['cityDetail'].setValue(this.valueCity.nameCity);
         this.vaultForm.controls['stateDetail'].setValue(
@@ -99,7 +99,7 @@ export class VaultDetailComponent extends BasePage implements OnInit {
         );
       }
 
-      if (this.vaultForm.controls['municipalityDetail'].value) {
+      if (this.vaultForm.controls['localityDetail'].value) {
         this.vaultForm.controls['localityDetail'].setValue(
           this.valueLocality.nameLocation
         );
@@ -137,6 +137,7 @@ export class VaultDetailComponent extends BasePage implements OnInit {
     setTimeout(() => {
       this.getStates(new ListParams());
       this.getUserTracking(new ListParams());
+      this.getMunicipalities(new ListParams());
     }, 1000);
   }
 
@@ -202,7 +203,7 @@ export class VaultDetailComponent extends BasePage implements OnInit {
 
         this.onLoadToast('error', 'Error', error);
       },
-      () => {}
+      () => { }
     );
   }
 

@@ -9,7 +9,7 @@ export const NUMBERS_PATTERN = '^-?[0-9]+$';
 export const NUMBERS_POINT_PATTERN = '^[0-9.]+';
 export const POSITVE_NUMBERS_PATTERN = '^[0-9]+';
 // export const PERCENTAGE_NUMBERS_PATTERN = /^[0-9]+(\.[0-9]+)?$/;
-export const PERCENTAGE_NUMBERS_REGEX =
+export const PERCENTAGE_NUMBERS_PATTERN =
   /^(\d{1,2}(\.\d{1,2})?|100(\.0{1,2})?)$/;
 
 export const DOUBLE_PATTERN = '[+-]?([0-9]*[.])?[0-9]+';
@@ -21,6 +21,7 @@ export const STRING_PATTERN =
 export const RFC_PATTERN = '^[A-Za-z]{3,4}[0-9]{6}[a-zA-Z0-9]{3}$';
 export const CURP_PATTERN =
   '[a-zA-Z]{4}[0-9]{6}[h-mH-M]{1}[a-zA-Z]{5}[a-zA-Z0-9]{1}[0-9]{1}';
+export const IVA_PATTERN = '^[0-9]+(\.[0-9]{1,2})?$';
 export const PHONE_PATTERN = '^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\\s\\./0-9]*$';
 export const KEYGENERATION_PATTERN = '[a-zA-Z0-9\\s\\-\\/]*';
 export const NAME_PATTERN = '^[A-Za-z\\áéíóúÁÉÍÓÚñÑ\\ \\.]+$';
@@ -65,10 +66,8 @@ export const VALID_VALUE_REGEXP = (
   };
 };
 const ERROR_REG_EXP = (nameField: string = '') =>
-  `El campo${
-    nameField ? ': ' + nameField + ',' : ''
+  `El campo${nameField ? ': ' + nameField + ',' : ''
   } tiene caracteres incorrectos los cuales se eliminaron.`;
 const ERROR_MAX_LENGTH = (nameField: string = '') =>
-  `El campo${
-    nameField ? ': ' + nameField + ',' : ''
+  `El campo${nameField ? ': ' + nameField + ',' : ''
   } tiene MÁS caracteres de los permitidos, se eliminaron los caracteres después de la longitud permitida.`;
