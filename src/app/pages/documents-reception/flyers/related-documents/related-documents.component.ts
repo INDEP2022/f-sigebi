@@ -31,6 +31,7 @@ import {
   POSITVE_NUMBERS_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
+import { LegalOpinionsOfficeService } from 'src/app/pages/juridical-processes/depositary/legal-opinions-office/legal-opinions-office/services/legal-opinions-office.service';
 import { EXTERNOS_COLUMS } from 'src/app/pages/juridical-processes/depositary/text-change/tabla-modal/tableUserExt';
 import { IJuridicalDocumentManagementParams } from 'src/app/pages/juridical-processes/file-data-update/interfaces/file-data-update-parameters';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -85,6 +86,8 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
   dataGoodFilter: IGood[] = [];
   dataGood: IDataGoodsTable[] = [];
   origin: string = '';
+  userCopies1 = new DefaultSelect();
+  userCopies2 = new DefaultSelect();
   dataGoodTable: LocalDataSource = new LocalDataSource();
   pantalla = (option: boolean) =>
     `${
@@ -157,7 +160,8 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
     private securityService: SecurityService,
     private serviceOficces: GoodsJobManagementService,
     private readonly authService: AuthService,
-    private applicationGoodsQueryService: ApplicationGoodsQueryService
+    private applicationGoodsQueryService: ApplicationGoodsQueryService,
+    private svLegalOpinionsOfficeService: LegalOpinionsOfficeService
   ) {
     super();
     RELATED_DOCUMENTS_COLUMNS_GOODS.seleccion = {
@@ -342,6 +346,24 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
 
   prepareForm() {
     this.managementForm = this.fb.group({
+      ccp_person_1: [{ value: '', disabled: false }],
+      ccp_TiPerson_1: [
+        { value: '', disabled: false },
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
+      ],
+      ccp_addressee_1: [
+        { value: null, disabled: false },
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
+      ], // SELECT
+      ccp_person: [{ value: '', disabled: false }],
+      ccp_addressee: [
+        { value: null, disabled: false },
+        [Validators.pattern(STRING_PATTERN)],
+      ], // SELECT
+      ccp_TiPerson: [
+        { value: '', disabled: false },
+        [Validators.pattern(STRING_PATTERN)],
+      ],
       noVolante: [
         null,
         [
@@ -1228,5 +1250,82 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
         this.onLoadToast('error', 'Error', errror.error.message);
       },
     });
+  }
+
+  changeCopiesType(event: any, ccp: number) {
+    console.log(event.target.value, ccp);
+    if (ccp == 1) {
+      console.log('CCP1');
+      this.managementForm.get('ccp_addressee').reset();
+      this.managementForm.get('ccp_TiPerson').reset();
+      if (event.target.value == 'I') {
+        this.managementForm.get('ccp_addressee').enable();
+        this.managementForm.get('ccp_TiPerson').disable();
+      } else if (event.target.value == 'E') {
+        this.managementForm.get('ccp_addressee').disable();
+        this.managementForm.get('ccp_TiPerson').enable();
+      }
+    } else {
+      console.log('CCP2');
+      this.managementForm.get('ccp_addressee_1').reset();
+      this.managementForm.get('ccp_TiPerson_1').reset();
+      if (event.target.value == 'I') {
+        this.managementForm.get('ccp_addressee_1').enable();
+        this.managementForm.get('ccp_TiPerson_1').disable();
+      } else if (event.target.value == 'E') {
+        this.managementForm.get('ccp_addressee_1').disable();
+        this.managementForm.get('ccp_TiPerson_1').enable();
+      }
+    }
+  }
+
+  getUsersCopies(
+    paramsData: ListParams,
+    ccp: number,
+    getByValue: boolean = false
+  ) {
+    const params: any = new FilterParams();
+    if (paramsData['search'] == undefined) {
+      paramsData['search'] = '';
+    }
+    params.removeAllFilters();
+    if (getByValue) {
+      params.addFilter(
+        'id',
+        this.managementForm.get('ccp_addressee' + (ccp == 1 ? '' : '_1')).value
+      );
+    } else {
+      params.search = paramsData['search'];
+      // params.addFilter('name', paramsData['search'], SearchFilter.LIKE);
+    }
+    params['sortBy'] = 'name:ASC';
+    let subscription = this.svLegalOpinionsOfficeService
+      .getIssuingUserByDetail(params.getParams())
+      .subscribe({
+        next: data => {
+          let tempDataUser = new DefaultSelect(
+            data.data.map(i => {
+              i.name = i.id + ' -- ' + i.name;
+              return i;
+            }),
+            data.count
+          );
+          if (ccp == 1) {
+            this.userCopies1 = tempDataUser;
+          } else {
+            this.userCopies2 = tempDataUser;
+          }
+          console.log(data, this.userCopies1);
+          subscription.unsubscribe();
+        },
+        error: error => {
+          if (ccp == 1) {
+            this.userCopies1 = new DefaultSelect();
+          } else {
+            this.userCopies2 = new DefaultSelect();
+          }
+          subscription.unsubscribe();
+        },
+      });
   }
 }
