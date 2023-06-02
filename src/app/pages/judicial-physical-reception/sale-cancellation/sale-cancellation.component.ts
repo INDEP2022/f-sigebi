@@ -20,6 +20,7 @@ import {
 import {
   IAcceptGoodStatus,
   IAcceptGoodStatusScreen,
+  IGood,
 } from 'src/app/core/models/ms-good/good';
 import {
   IDeleteDetailProceeding,
@@ -573,7 +574,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
     this.serviceWarehouse.getWarehouseFilter(paramsF.getParams()).subscribe(
       res => {
         console.log(res);
-        this.form.get('almacen').setValue(res.data[0]);
+        this.form.get('noAlmacen').setValue(res.data[0]);
       },
       err => {
         console.log(err);
@@ -583,7 +584,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
       .getAllFilter(`filter.idSafe=$eq:${data.vaultNumber}`)
       .subscribe(
         res => {
-          this.form.get('boveda').setValue(res.data[0]);
+          this.form.get('noBoveda').setValue(res.data[0]);
         },
         err => {
           console.log(err);
@@ -2163,6 +2164,111 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
         class: 'modal-lg modal-dialog-centered',
       };
       this.modalService.show(EdoFisicoComponent, modalConfig);
+    }
+  }
+
+  applyWarehouseSafe() {
+    console.log('Prueba');
+    if (this.form.get('statusProceeding').value === 'ABIERTA') {
+      if (this.form.get('noAlmacen').value != null) {
+        for (let i = 0; i < this.dataGoodAct['data'].length; i++) {
+          const element = this.dataGoodAct['data'][i];
+          const newParams = `filter.numClasifGoods=$eq:${element.goodClassNumber}`;
+          this.serviceSssubtypeGood.getFilter(newParams).subscribe(res => {
+            const type = JSON.parse(JSON.stringify(res.data[0]['numType']));
+            const subtype = JSON.parse(
+              JSON.stringify(res.data[0]['numSubType'])
+            );
+            const ssubtype = JSON.parse(
+              JSON.stringify(res.data[0]['numSsubType'])
+            );
+            const no_type = type.id;
+            console.log(no_type);
+            if (no_type === '5') {
+              //Data new good
+              const putGood: IGood = {
+                id: element.id,
+                goodId: element.id,
+                storeNumber: this.form.get('noAlmacen').value.idWarehouse,
+              };
+              console.log(putGood);
+              console.log('Sí?');
+              this.serviceGood.update(putGood).subscribe(res => {
+                this.dataGoodAct.load(
+                  this.dataGoodAct['data'].map((e: any) => {
+                    return {
+                      ...e,
+                      storeNumber: this.form.get('noAlmacen').value.idWarehouse,
+                    };
+                  })
+                );
+              });
+            }
+            console.log('No :(');
+          });
+        }
+        this.alert('success', 'Se registró el almacén en los bienes', '');
+      } else {
+        this.alert(
+          'warning',
+          'No se seleccionó almacén',
+          'Debe seleccionar un almacén válido'
+        );
+      }
+      console.log(this.form.get('noBoveda').value);
+      if (this.form.get('noBoveda').value != null) {
+        for (let i = 0; i < this.dataGoodAct['data'].length; i++) {
+          const element = this.dataGoodAct['data'][i];
+          let v_pasa: boolean = false;
+          const newParams = `filter.numType=$eq:7&filter.numSubType=$eq:34&filter.numClasifGoods=$eq:${element.goodClassNumber}`;
+          this.serviceSssubtypeGood.getFilter(newParams).subscribe(res => {
+            const type = JSON.parse(JSON.stringify(res.data[0]['numType']));
+            const subtype = JSON.parse(
+              JSON.stringify(res.data[0]['numSubType'])
+            );
+            const ssubtype = JSON.parse(
+              JSON.stringify(res.data[0]['numSsubType'])
+            );
+            const no_type = type.id;
+            const no_subtype = subtype.id;
+            let putGood: IGood = {
+              id: element.id,
+              goodId: element.id,
+              vaultNumber: this.form.get('noBoveda').value.idSafe,
+            };
+
+            console.log(res.data.length);
+            if (res.data.length != 0) {
+              v_pasa = true;
+            }
+            if (no_type === 7 || (no_type === 5 && no_subtype === 16)) {
+              if (no_type === 7 && v_pasa) {
+                if (element.vaultNumber === null) {
+                  putGood.vaultNumber = 9999;
+                }
+              } else {
+                putGood.vaultNumber = this.form.get('noBoveda').value.idSafe;
+              }
+              this.serviceGood.update(putGood).subscribe(res => {
+                this.dataGoodAct.load(
+                  this.dataGoodAct['data'].map((e: any) => {
+                    return {
+                      ...e,
+                      vaultNumber: this.form.get('noBoveda').value.idSafe,
+                    };
+                  })
+                );
+              });
+            }
+          });
+        }
+      }
+    } else if (['CERRADA', 'CERRADO'].includes(this.form.get('statusProceeding').value)) {
+      this.alert(
+        'warning',
+        'El acta está cerrada',
+        'El acta está cerrada por lo que no se puede hacer más modificaciones'
+      );
     }
   }
 }
