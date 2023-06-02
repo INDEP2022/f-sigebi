@@ -1574,7 +1574,7 @@ export class JuridicalRecordUpdateComponent
       this.alert(
         'error',
         '',
-        'No se pudo obtener la información de la transferencia'
+        'Este volante no puede acceder a este tipo de dictamen'
       );
       this.isLoadingBtnDictationJudgment = false;
     }
