@@ -206,7 +206,13 @@ export class PartializeButtonComponent
         .getAll2('filter.numType=$in:7&filter.numClasifGoods=' + clasificador)
         .pipe(catchError(error => of({ count: 0 })))
     );
-    this.v_numerario = numerarioValidation.count;
+    // debugger;
+    this.v_numerario = numerarioValidation
+      ? numerarioValidation.count
+        ? numerarioValidation.count
+        : 0
+      : 0;
+
     if (this.v_numerario === 0) {
       if (this.cantidad.value === this.good.quantity) {
         this.onLoadToast(
@@ -248,6 +254,7 @@ export class PartializeButtonComponent
     v_unidad: string,
     v_avaluo: string
   ) {
+    // debugger;
     if (this.v_numerario === 0) {
       let result =
         ', (Producto de la Parcialización de Bien No.' +
@@ -310,12 +317,12 @@ export class PartializeButtonComponent
     const avaluo = this.fillAvaluo();
     console.log(avaluo);
     const { importe, cantidad } = this.fillImporteCant();
-    const noBien = this.good.goodId;
+    // const noBien = this.good.goodId;
     this.service.sumCant += +(cantidad + '');
     this.service.sumVal14 += +(importe + '');
     this.bienesPar.push({
       id: this.vident,
-      noBien,
+      noBien: null,
       descripcion,
       proceso,
       cantidad,
@@ -345,14 +352,14 @@ export class PartializeButtonComponent
     const avaluo = this.fillAvaluo();
     console.log(avaluo);
     const { importe, cantidad } = this.fillImporteCant();
-    const noBien = this.good.goodId;
+    // const noBien = this.good.goodId;
     this.service.sumCant += +(cantidad + '');
     this.service.sumVal14 += +(importe + '');
     this.service.sumAvaluo += +(avaluo + '');
     // this.vident++;
     this.bienesPar.push({
       id: this.vident,
-      noBien,
+      noBien: null,
       descripcion,
       proceso,
       cantidad,
@@ -378,7 +385,7 @@ export class PartializeButtonComponent
     // debugger;
     this.service.clasificators.includes(this.good.goodClassNumber + '');
     const newImporte: number =
-      this.cantPar.value * this.cantidad.value + this.vsum;
+      +this.cantPar.value * +this.cantidad.value + this.vsum;
     if (newImporte > this.vimporte) {
       this.onLoadToast(
         'error',
@@ -417,7 +424,7 @@ export class PartializeButtonComponent
     });
     this.bienesPar = [...this.bienesPar];
     this.filledRow.emit();
-    this.form.get('saldo').setValue(this.vres);
+    this.form.get('saldo').setValue(this.vres.toFixed(2));
     return true;
   }
 

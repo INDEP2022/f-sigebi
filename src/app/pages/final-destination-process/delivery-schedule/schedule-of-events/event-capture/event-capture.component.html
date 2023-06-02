@@ -33,7 +33,7 @@
                     formControlName="responsible"
                     value="TLP" />
                 </form-radio>
-                <form-radio label="SAE">
+                <form-radio label="INDEP">
                   <input
                     type="radio"
                     formControlName="responsible"
@@ -104,6 +104,7 @@
 
           <form-field class="col-md-4" [control]="form.get('transference')">
             <ngx-select
+              (click)="transferClick()"
               [data]="transfers"
               [form]="form"
               value="value"
@@ -166,6 +167,12 @@
         </div>
 
         <div class="row">
+          <div class="col-md-12">
+            {{ this.blkCtrl.txtDirSatLabel }} : {{ this.blkCtrl.txtDirSat }}
+          </div>
+        </div>
+
+        <div class="row pt-2">
           <div class="col-md-12 d-flex justify-content-between">
             <div *ngIf="ctrlButtons.signOffice.visible">
               <button
@@ -181,17 +188,21 @@
                 {{ ctrlButtons.printOffice.label }}
               </button>
             </div>
-            <div *ngIf="ctrlButtons.notificationDest.visible">
+            <div>
+              <!--*ngIf="ctrlButtons.notificationDest.visible"-->
               <button
                 class="btn btn-sm btn-secondary active"
-                [disabled]="!ctrlButtons.notificationDest.enabled">
+                [disabled]="!ctrlButtons.notificationDest.enabled"
+                (click)="notificationBtn()">
                 {{ ctrlButtons.notificationDest.label }}
               </button>
             </div>
-            <div *ngIf="ctrlButtons.closeProg.visible">
+            <div>
+              <!--*ngIf="ctrlButtons.closeProg.visible"-->
               <button
                 class="btn btn-sm btn-danger active"
-                [disabled]="!ctrlButtons.closeProg.enabled">
+                [disabled]="!ctrlButtons.closeProg.enabled"
+                (click)="closeProg()">
                 {{ ctrlButtons.closeProg.label }}
               </button>
             </div>
@@ -213,6 +224,7 @@
         </div>
       </form>
     </div>
+
     <br />
     <hr class="row" />
 

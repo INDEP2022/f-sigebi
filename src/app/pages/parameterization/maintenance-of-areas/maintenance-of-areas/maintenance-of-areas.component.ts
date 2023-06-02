@@ -138,7 +138,7 @@ export class MaintenanceOfAreasComponent extends BasePage implements OnInit {
         }
         this.onLoadToast('error', 'Error', error);
       },
-      () => { }
+      () => {}
     );
   }
 

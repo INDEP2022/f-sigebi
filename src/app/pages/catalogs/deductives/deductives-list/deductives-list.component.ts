@@ -103,7 +103,7 @@ export class DeductivesListComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(deductive.id);
@@ -114,7 +114,7 @@ export class DeductivesListComponent extends BasePage implements OnInit {
   delete(id: number) {
     this.deductiveService.remove(id).subscribe({
       next: () => {
-        this.getDeductives(), this.alert('success', 'Deduct', 'Borrado');
+        this.getDeductives(), this.alert('success', 'Deductiva', 'Borrado');
       },
     });
   }
