@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
@@ -24,6 +25,7 @@ export class ListdictumsComponent extends BasePage implements OnInit {
   data1: any = [];
   dictumSeleccionada: any;
   constructor(
+    private datePipe: DatePipe,
     private modalRef: BsModalRef,
     public fileUpdateService: JuridicalFileUpdateService
   ) {
@@ -45,7 +47,15 @@ export class ListdictumsComponent extends BasePage implements OnInit {
     params.addFilter('wheelNumber', data, SearchFilter.EQ);
     this.fileUpdateService.getDictation(params.getParams()).subscribe({
       next: data => {
+        let result = data.data.map((item: any) => {
+          item['dateDicta'] = this.datePipe.transform(
+            item.dictDate,
+            'dd/MM/yyyy'
+          );
+        });
+
         this.data1 = data.data;
+
         console.log('DATA DICTAMENES MODAL', data);
         this.loading = false;
       },

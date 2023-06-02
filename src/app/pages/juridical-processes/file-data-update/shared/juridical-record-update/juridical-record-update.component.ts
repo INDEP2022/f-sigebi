@@ -1590,6 +1590,53 @@ export class JuridicalRecordUpdateComponent
         pNoTramite: procedure,
       },
     });
+
+    // const dictamen = this.formControls.dictumKey.value?.id;
+    // let dictOfi = await this.getCatDictation(dictamen);
+    // try {
+    //   if (['9', '10', '14'].includes(dictamen)) {
+    //     try {
+    //       const params = new ListParams();
+    //       params['wheelNumber'] = this.formControls.wheelNumber.value;
+    //       const notification = (await this.getNotification(
+    //         params,
+    //         true
+    //       )) as INotification;
+    //     } catch (ex) {
+    //       this.globals.varDic = null;
+    //     }
+    //     let exist;
+    //     exist = await this.getSatTransference(
+    //       this.formControls.officeExternalKey.value
+    //     );
+    //     if (exist == 0) {
+    //       exist = await this.getPgrTransference(
+    //         this.formControls.officeExternalKey.value
+    //       );
+    //     }
+
+    //     if (exist > 0) {
+    //       const questionResponse = await showQuestion({
+    //         icon: 'question',
+    //         text: 'El Volante: '+this.formControls.wheelNumber+' , ya cuenta con una aclaración. Desea generar dictámen de recepción?',
+    //         title: 'Pregunta',
+    //         confirmButtonText: 'Si, continuar',
+    //         cancelButtonText: 'No, cancelar',
+    //       });
+    //       if (!questionResponse.isConfirmed) {
+    //         this.formControls.dictumKey.setValue(null);
+    //         if ()
+    //         return;
+    //       }
+    //     }
+    //   }
+    // } catch (ex) {
+    //   this.alert(
+    //     'error',
+    //     '',
+    //     'No se pudo obtener la información de la transferencia'
+    //   );
+    // }
   }
 
   openToShiftChange() {

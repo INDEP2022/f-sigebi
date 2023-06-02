@@ -8,7 +8,12 @@ export const EMAIL_PATTERN = '^[a-z0-9._%+-]+@[a-z0-9.-]+.[a-z]{2,4}$';
 export const NUMBERS_PATTERN = '^-?[0-9]+$';
 export const NUMBERS_POINT_PATTERN = '^[0-9.]+';
 export const POSITVE_NUMBERS_PATTERN = '^[0-9]+';
+// export const PERCENTAGE_NUMBERS_PATTERN = /^[0-9]+(\.[0-9]+)?$/;
+export const PERCENTAGE_NUMBERS_REGEX =
+  /^(\d{1,2}(\.\d{1,2})?|100(\.0{1,2})?)$/;
+
 export const DOUBLE_PATTERN = '[+-]?([0-9]*[.])?[0-9]+';
+export const DOUBLE_POSITIVE_PATTERN = '[+]?([0-9]*[.])?[0-9]+';
 export const STRING_PATTERN =
   '[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\\/\\s\\.,_\\-\\\\()$°\\Üü“”;:]*';
 // '[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ@\\s\\.,_\\-¿?\\\\/()%$#¡!|]*'; [a-zA-Z0-9áéíóúÁÉÍÓÚñÑ@\\s\\.,_\\-¿?\\\\/()%$#¡!|]

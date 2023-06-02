@@ -8,7 +8,22 @@
         <div class="col-12">
           <div class="row">
             <div class="col-12 mt-2 mb-2">
-              <form-field [control]="form.get('editText')" label="Editar texto">
+              <form-field
+                *ngIf="filterButton == 1"
+                [control]="form.get('editText')"
+                label="Editar texto">
+                <textarea
+                  rows="30"
+                  type="text"
+                  [readonly]="!disabledDictum"
+                  class="form-control"
+                  formControlName="editText"></textarea>
+              </form-field>
+
+              <form-field
+                *ngIf="filterButton != 1"
+                [control]="form.get('editText')"
+                label="Editar texto">
                 <textarea
                   rows="30"
                   type="text"
