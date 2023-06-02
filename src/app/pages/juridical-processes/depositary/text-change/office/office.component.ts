@@ -33,7 +33,6 @@ import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import Swal from 'sweetalert2';
 import { EXTERNOS_COLUMS_OFICIO } from '../tabla-modal/tableUserExt';
-import { TablaOficioModalComponent } from '../tabla-oficio-modal/tabla-oficio-modal.component';
 import { ModalPersonaOficinaComponent } from './modal-persona-oficina/modal-persona-oficina.component';
 
 @Component({
@@ -365,7 +364,7 @@ export class OfficeComponent extends BasePage implements OnInit {
           .setValue(respuesta.data[0].desSenderpa);
       },
     };
-    this.modalService.show(TablaOficioModalComponent, modalConfig);
+    //this.modalService.show(TablaOficioModalComponent, modalConfig);
   }
 
   ////////////////////////////////////////////////////////////////////////////////////
