@@ -16,7 +16,7 @@ jobs:
     - name: Obtener nombre del repositorio
       id: obtener-nombre-repo
       run: |
-        echo "::set-output name=repo_name::$(echo sigebi-appdev)
+        echo "::set-output name=repo_name::$(echo sigebi-appdev)"
     - uses: actions/checkout@v3
     - name: Build the Docker image
       run: |
