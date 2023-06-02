@@ -15,6 +15,9 @@ import esLocale from 'date-fns/locale/es';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, firstValueFrom, Observable, takeUntil } from 'rxjs';
 import { goFormControlAndFocus } from 'src/app/common/helpers/helpers';
+import { OpinionService } from 'src/app/core/services/catalogs/opinion.service';
+import { SatTransferService } from 'src/app/core/services/ms-interfacesat/sat-transfer.service';
+import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import { DocumentsViewerByFolioComponent } from '../../../../../@standalone/modals/documents-viewer-by-folio/documents-viewer-by-folio.component';
 import { SelectListFilteredModalComponent } from '../../../../../@standalone/modals/select-list-filtered-modal/select-list-filtered-modal.component';
 import {
@@ -54,7 +57,6 @@ import { IManagementArea } from '../../../../../core/models/ms-proceduremanageme
 import { AuthService } from '../../../../../core/services/authentication/auth.service';
 import { DocReceptionRegisterService } from '../../../../../core/services/document-reception/doc-reception-register.service';
 import { DocumentsService } from '../../../../../core/services/ms-documents/documents.service';
-import { BasePage } from '../../../../../core/shared/base-page';
 import { DefaultSelect } from '../../../../../shared/components/select/default-select';
 import { IGlobalVars } from '../../../../../shared/global-vars/models/IGlobalVars.model';
 import { GlobalVarsService } from '../../../../../shared/global-vars/services/global-vars.service';
@@ -71,6 +73,7 @@ import {
 import { IJuridicalFileDataUpdateParams } from '../../interfaces/file-data-update-parameters';
 import { FileUpdateCommunicationService } from '../../services/file-update-communication.service';
 import { JuridicalFileUpdateService } from '../../services/juridical-file-update.service';
+import { juridicalRecordUpdateRequest } from './juridical-record-update-request';
 
 @Component({
   selector: 'app-juridical-record-update',
@@ -104,7 +107,7 @@ import { JuridicalFileUpdateService } from '../../services/juridical-file-update
   ],
 })
 export class JuridicalRecordUpdateComponent
-  extends BasePage
+  extends juridicalRecordUpdateRequest
   implements OnInit, OnChanges
 {
   public readonly flyerId: number = null;
@@ -179,10 +182,13 @@ export class JuridicalRecordUpdateComponent
     private fileUpdateService: JuridicalFileUpdateService,
     private fileUpdComService: FileUpdateCommunicationService,
     private docRegisterService: DocReceptionRegisterService,
-    // private showHideService: showHideErrorInterceptorService,
     private authService: AuthService,
     private documentsService: DocumentsService,
-    private abandonmentsService: AbandonmentsDeclarationTradesService
+    private abandonmentsService: AbandonmentsDeclarationTradesService,
+    // private changeDetectorRef: ChangeDetectorRef,
+    protected opinionService: OpinionService,
+    protected notificationService: NotificationService,
+    protected satTransferenceService: SatTransferService
   ) {
     super();
     this.fetchForForm = new FetchForForm(fileUpdateService, this.formControls);
@@ -488,6 +494,12 @@ export class JuridicalRecordUpdateComponent
     };
 
     this.fileDataUpdateForm.patchValue({ ...values });
+    if (notif.wheelType) {
+      console.log(notif.wheelType);
+      this.changeWheelType(notif.wheelType);
+    } else {
+      this.initialCondition = '';
+    }
     if (notif.expedientNumber == null) {
       this.onLoadToast(
         'warning',
@@ -509,7 +521,8 @@ export class JuridicalRecordUpdateComponent
     if (notif.wheelType != null)
       this.formControls.wheelType.setValue(notif.wheelType);
     this.formControls.wheelType.disable();
-    this.initialCondition = notif.wheelType;
+    // this.changeWheelType(notif.wheelType);
+    // this.initialCondition = notif.wheelType;
 
     /** POST-QUERY */
     if (notif.endTransferNumber != null) {
@@ -522,6 +535,16 @@ export class JuridicalRecordUpdateComponent
             this.formControls.endTransferNumber.disable();
           },
         });
+    }
+
+    if (notif.transference) {
+      this.docRegisterService.getTransferent(notif.transference).subscribe({
+        next: (data: any) => {
+          this.formControls.transference.enable();
+          this.formControls.transference.setValue(data);
+          this.formControls.transference.disable();
+        },
+      });
     }
 
     if (notif.stationNumber != null) {
@@ -919,9 +942,9 @@ export class JuridicalRecordUpdateComponent
     if (this.prevInitialCondition !== '') {
       this.initialCondition = this.prevInitialCondition;
     } else {
-      if (['A', 'P'].includes(this.formControls.wheelType.value)) {
-        this.initialCondition = 'A';
-      } else if (['AT', 'T'].includes(this.formControls.wheelType.value)) {
+      if (['T', 'P'].includes(this.formControls.wheelType.value)) {
+        this.initialCondition = 'T';
+      } else if (['AT', 'A'].includes(this.formControls.wheelType.value)) {
         this.initialCondition = this.formControls.wheelType.value;
       }
     }
@@ -1329,7 +1352,7 @@ export class JuridicalRecordUpdateComponent
     );
   }
 
-  sendToJuridicalRuling() {
+  async sendToJuridicalRuling() {
     let dictumType: string;
     const dictumId = Number(this.formControls.dictumKey.value?.id);
     if (dictumId == 18 && !this.dictumPermission) {
@@ -1340,7 +1363,6 @@ export class JuridicalRecordUpdateComponent
       );
       return;
     }
-
     if ([1, 16, 23].includes(dictumId)) dictumType = 'PROCEDENCIA';
     if (dictumId == 15) dictumType = 'DESTRUCCION';
     if (dictumId == 2) dictumType = 'DECOMISO';
@@ -1382,7 +1404,6 @@ export class JuridicalRecordUpdateComponent
       pNoTramite: procedure,
     };
     let path = '/pages/juridical/juridical-ruling-g';
-
     this.router.navigate([path], {
       queryParams: {
         origin: '/pages/juridical/file-data-update',
@@ -1396,6 +1417,53 @@ export class JuridicalRecordUpdateComponent
         pNoTramite: procedure,
       },
     });
+
+    // const dictamen = this.formControls.dictumKey.value?.id;
+    // let dictOfi = await this.getCatDictation(dictamen);
+    // try {
+    //   if (['9', '10', '14'].includes(dictamen)) {
+    //     try {
+    //       const params = new ListParams();
+    //       params['wheelNumber'] = this.formControls.wheelNumber.value;
+    //       const notification = (await this.getNotification(
+    //         params,
+    //         true
+    //       )) as INotification;
+    //     } catch (ex) {
+    //       this.globals.varDic = null;
+    //     }
+    //     let exist;
+    //     exist = await this.getSatTransference(
+    //       this.formControls.officeExternalKey.value
+    //     );
+    //     if (exist == 0) {
+    //       exist = await this.getPgrTransference(
+    //         this.formControls.officeExternalKey.value
+    //       );
+    //     }
+
+    //     if (exist > 0) {
+    //       const questionResponse = await showQuestion({
+    //         icon: 'question',
+    //         text: 'El Volante: '+this.formControls.wheelNumber+' , ya cuenta con una aclaración. Desea generar dictámen de recepción?',
+    //         title: 'Pregunta',
+    //         confirmButtonText: 'Si, continuar',
+    //         cancelButtonText: 'No, cancelar',
+    //       });
+    //       if (!questionResponse.isConfirmed) {
+    //         this.formControls.dictumKey.setValue(null);
+    //         if ()
+    //         return;
+    //       }
+    //     }
+    //   }
+    // } catch (ex) {
+    //   this.alert(
+    //     'error',
+    //     '',
+    //     'No se pudo obtener la información de la transferencia'
+    //   );
+    // }
   }
 
   openToShiftChange() {
@@ -1536,10 +1604,38 @@ export class JuridicalRecordUpdateComponent
     this.formControls.affairKey.setValue(null);
     this.formControls.endTransferNumber.setValue(null);
     this.getTransferors({ page: 1, text: '' });
-    if (['A', 'P'].includes(type)) {
-      this.initialCondition = 'A';
-    } else if (['AT', 'T'].includes(type)) {
+    if (['T', 'P'].includes(type)) {
+      this.initialCondition = 'T';
+    } else if (['AT', 'A'].includes(type)) {
       this.initialCondition = type;
+    }
+    console.log('initialCondition', this.initialCondition);
+    if (this.initialCondition == 'A') {
+      const keys = [
+        'transference',
+        'expedientTransferenceNumber',
+        'judgementType',
+      ];
+    }
+
+    if (this.initialCondition == 'T') {
+      const keys = [
+        'circumstantialRecord',
+        'preliminaryInquiry',
+        'criminalCase',
+        'touchPenaltyKey',
+        'minpubNumber',
+        'crimeKey',
+        'protectionKey',
+      ];
+    }
+
+    if (this.initialCondition == 'AT') {
+      const keys = [
+        'transference',
+        'expedientTransferenceNumber',
+        'judgementType',
+      ];
     }
   }
 
@@ -1594,9 +1690,9 @@ export class JuridicalRecordUpdateComponent
   }
 
   changeTransferor(event: ITransferente) {
-    if (event?.id) {
-      this.formControls.transference.setValue(event.id);
-    }
+    // if (event?.id) {
+    //   this.formControls.transference.setValue(event);
+    // }
     this.formControls.stationNumber.setValue(null);
     this.formControls.autorityNumber.setValue(null);
     this.getStations({ page: 1, text: '' });
@@ -1708,7 +1804,9 @@ export class JuridicalRecordUpdateComponent
     });
   }
 
-  getTransferors(lparams: ListParams) {
+  _transferors = new DefaultSelect();
+
+  getTransferors(lparams: ListParams, isTransference = false) {
     const body = {
       active: ['1', '2'],
       nameTransferent: lparams.text,
@@ -1716,7 +1814,11 @@ export class JuridicalRecordUpdateComponent
     this.transferorLoading = true;
     this.docRegisterService.getActiveTransferents(body).subscribe({
       next: (data: { data: any[]; count: number }) => {
-        this.transferors = new DefaultSelect(data.data, data.count);
+        if (isTransference) {
+          this._transferors = new DefaultSelect(data.data, data.count);
+        } else {
+          this.transferors = new DefaultSelect(data.data, data.count);
+        }
         this.transferorLoading = false;
       },
       error: () => {

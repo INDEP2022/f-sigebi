@@ -14,7 +14,7 @@
                 (click)="goodsByExpediente()">
                 Buscar
               </button>
-              <span>{{ statusProceeding }}</span>
+              <!-- <span>{{ statusProceeding }}</span> -->
             </div>
           </div>
         </div>
@@ -430,7 +430,13 @@
             <button
               type="button"
               class="btn btn-secondary btn-sm active mr-2 ml-2"
-              [class] ="['CERRADO','CERRADA'].includes(form.get('statusProceeding').value) ? '' : 'disabled'"
+              [class]="
+                ['CERRADO', 'CERRADA'].includes(
+                  form.get('statusProceeding').value
+                )
+                  ? ''
+                  : 'disabled'
+              "
               size="small"
               (click)="goCargaMasiva()">
               Carga Masiva

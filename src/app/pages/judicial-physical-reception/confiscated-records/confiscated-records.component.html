@@ -17,9 +17,7 @@
               </button>
             </div>
             <div class="col">
-              <button
-                class="btn btn-info btn-sm active"
-                (click)="clearAll()">
+              <button class="btn btn-info btn-sm active" (click)="clearAll()">
                 Limpiar
               </button>
             </div>
@@ -102,12 +100,14 @@
               </form-field>
             </div>
             <div *ngIf="form.get('statusProceeding').value != null" class="col">
-              <form-field [control]="form.get('statusProceeding')" label="Estatus del acta">
+              <form-field
+                [control]="form.get('statusProceeding')"
+                label="Estatus del acta">
                 <input
                   type="text"
                   readOnly="true"
                   class="form-control"
-                  formControlName = 'statusProceeding' />
+                  formControlName="statusProceeding" />
               </form-field>
             </div>
           </div>
@@ -165,7 +165,7 @@
                   id="transfer"
                   control="transfer"
                   [class]="initialdisabled ? 'disabled' : ''"
-                  label="Transfer"
+                  label="Transferente"
                   bindLabel="transferentkey"
                   [searchable]="false"
                   [data]="transferSelect"
@@ -245,7 +245,7 @@
         </div>
       </div>
       <hr class="row" />
-      <div class="row">
+      <div [class]="loading ? 'table-loading' : 'row'">
         <div class="col-md-6">
           <div class="row">
             <form-field [control]="form.get('acta2')" label="Acta 2">
@@ -428,7 +428,7 @@
         </div>
       </div>
       <hr class="row" />
-      <div class="row mb-5">
+      <div [class]="loading ? 'table-loading' : ''" class="row mb-5">
         <div class="d-flex justify-content-center">
           <div>
             <button
@@ -470,7 +470,7 @@
         </div>
       </div>
       <hr class="row" />
-      <div class="row pt-2 scroll-table">
+      <div [class]="loading ? 'table-loading' : 'row pt-2 scroll-table'">
         <ng2-smart-table
           class="col-md-12"
           [settings]="settings1"
@@ -527,7 +527,7 @@
         </div>
       </div>
       <hr class="row" />
-      <div class="row pt-2 scroll-table">
+      <div [class]="loading ? 'table-loading' : 'row pt-2 scroll-table'">
         <ng2-smart-table
           class="col-md-12"
           [settings]="settings2"
@@ -560,12 +560,6 @@
                 formControlName="indEdoFisico"
                 id="flexCheckDefault" />
             </div>
-            <!-- <form-check label="Requerido" for="label">
-              <input
-                id="label"
-                type="checkbox"
-                formControlName="indEdoFisico" />
-            </form-check> -->
           </form-field>
           <form-field
             class="col-md-3"

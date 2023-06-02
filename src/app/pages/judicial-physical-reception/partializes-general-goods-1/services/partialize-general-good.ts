@@ -1,7 +1,10 @@
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { IGood } from 'src/app/core/models/ms-good/good';
-import { NUM_POSITIVE } from 'src/app/core/shared/patterns';
+import {
+  DOUBLE_POSITIVE_PATTERN,
+  NUM_POSITIVE,
+} from 'src/app/core/shared/patterns';
 import { IBienesPar } from '../models/bienesPar.model';
 import { columnsFirstCase, columnsSecondCase } from '../models/columns';
 
@@ -138,11 +141,7 @@ export abstract class PartializeGeneralGood {
       ],
       cantidad: [
         null,
-        [
-          Validators.required,
-          Validators.min(1),
-          Validators.pattern(NUM_POSITIVE),
-        ],
+        [Validators.required, Validators.pattern(DOUBLE_POSITIVE_PATTERN)],
       ],
       saldo: [null, [Validators.required]],
     });
