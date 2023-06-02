@@ -24,8 +24,7 @@ import {
 })
 export class IndicatorsOfPerformanceComponent
   extends BasePage
-  implements OnInit
-{
+  implements OnInit {
   indicatorsOfPerformanceForm: FormGroup;
   settings2 = { ...this.settings, actions: false };
 
@@ -80,6 +79,9 @@ export class IndicatorsOfPerformanceComponent
             /*SPECIFIC CASES*/
             switch (filter.field) {
               case 'id':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'procedureArea':
                 searchFilter = SearchFilter.EQ;
                 break;
               default:

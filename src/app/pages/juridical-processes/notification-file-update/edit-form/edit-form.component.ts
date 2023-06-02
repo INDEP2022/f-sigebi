@@ -3,6 +3,7 @@ import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IDictation } from 'src/app/core/models/ms-dictation/dictation-model';
+import { INotificationUpdate } from 'src/app/core/models/ms-notification/notification.model';
 import { DeductiveService } from 'src/app/core/services/catalogs/deductive.service';
 import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
@@ -18,6 +19,7 @@ import { MODAL_CONFIG } from '../../../../common/constants/modal-config';
 export class EditFormComponent extends BasePage implements OnInit {
   deductiveForm: ModelForm<any>;
   title: string = 'Dictaminación';
+  notification: INotificationUpdate[] = [];
   edit: boolean = false;
   dict: any;
   dictation: IDictation;
@@ -35,15 +37,6 @@ export class EditFormComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
-    /*for (const controlName in this.deductiveForm.controls) {
-      if (this.deductiveForm.controls.hasOwnProperty(controlName)) {
-        if (controlName != 'expedientNumber') {
-          this.deductiveForm.controls[controlName].disable();
-          //console.log(controlName);
-        }
-      }
-    }*/
-    //this.example();
   }
 
   example() {
@@ -51,14 +44,13 @@ export class EditFormComponent extends BasePage implements OnInit {
     const modalRef = this.modalService.show(EditFormComponent, modalConfig);
     modalRef.content.$unSubscribe.subscribe(formData => {
       // Manejar los valores del formulario rescatados
-      console.log(formData);
+      //console.log(formData);
     });
   }
 
   private prepareForm() {
     console.log(this.deductiveForm);
     this.deductiveForm = this.fb.group({
-      id: [null],
       expedientNumber: [
         null,
         [
@@ -68,14 +60,6 @@ export class EditFormComponent extends BasePage implements OnInit {
           this.positiveNumberValidator,
         ],
       ],
-      wheelNumber: [null, [Validators.required]],
-      observations: [null, [Validators.required]],
-      affairKey: [null, [Validators.required]],
-      captureDate: [null, [Validators.required]],
-      protectionKey: [null, [Validators.required]],
-      preliminaryInquiry: [null, [Validators.required]],
-      criminalCase: [null, [Validators.required]],
-      status: [null, [Validators.required]],
     });
     debugger;
     if (this.dict != null) {
@@ -110,16 +94,20 @@ export class EditFormComponent extends BasePage implements OnInit {
   }
 
   update() {
-    // this.loading = true;
-    // let parsedID = parseInt(this.dict.wheelNumber);
-    // this.dict.wheelNumber = parsedID;
-    // http://sigebimsdev.indep.gob.mx/dictation/api/v1/dictation
-    //console.log(this.dict);
+    const data: any = {};
+    for (const controlName in this.deductiveForm.controls) {
+      if (this.deductiveForm.controls.hasOwnProperty(controlName)) {
+        const control = this.deductiveForm.controls[controlName];
+        data[controlName] = control.value;
+      }
+    }
+    //console.log(data);
     this.dict['expedientNumber'] =
       this.deductiveForm.controls['expedientNumber'].value;
+    //this.dict['affair'] = null;
     const id = this.dict['wheelNumber'];
-    console.log(this.dict);
-    this.notificationService.updateWithBody(id, this.dict).subscribe({
+    //console.log(this.dict);
+    this.notificationService.updateWithBody(id, data).subscribe({
       next: data => {
         this.handleSuccess();
       },

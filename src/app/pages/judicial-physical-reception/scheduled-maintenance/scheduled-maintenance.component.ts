@@ -112,12 +112,12 @@ export class ScheduledMaintenanceComponent
             this.onLoadToast(
               'success',
               'Exito',
-              `Se elimino la acta N° ${item.id}`
+              `Se elimino la acta No. ${item.id}`
             );
           },
           error: err => {
             console.log(err);
-            let message = `No se pudo eliminar el Acta N° ${item.id}`;
+            let message = `No se pudo eliminar el Acta No. ${item.id}`;
             if (err.message.includes('detalle_acta_ent_recep')) {
               message = message + ` porque tiene detalles de acta`;
             }

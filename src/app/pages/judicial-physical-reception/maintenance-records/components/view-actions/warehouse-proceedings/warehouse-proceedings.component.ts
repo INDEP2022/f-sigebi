@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { firstValueFrom } from 'rxjs';
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { IWarehouse } from 'src/app/core/models/catalogs/warehouse.model';
@@ -23,7 +23,6 @@ export class WarehouseProceedingsComponent
   extends AlertButton
   implements OnInit
 {
-  form: FormGroup;
   selectedWarehouse: any;
   selectedVault: any;
   paramsWarehouse = new FilterParams();
@@ -50,6 +49,14 @@ export class WarehouseProceedingsComponent
   }
 
   ngOnInit(): void {}
+
+  get form() {
+    return this.dataService.formWarehouseVaul;
+  }
+
+  set form(value) {
+    this.dataService.formWarehouseVaul = value;
+  }
 
   get disabledForm() {
     return (

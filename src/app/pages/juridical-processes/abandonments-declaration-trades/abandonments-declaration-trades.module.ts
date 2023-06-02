@@ -14,18 +14,21 @@ import { SharedJuridicalProcessesModule } from '../shared-juridical-processes/sh
 import { AbandonmentsDeclarationTradesRoutingModule } from './abandonments-declaration-trades-routing.module';
 
 /** COMPONENTS IMPORTS */
+import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { FormLoaderComponent } from 'src/app/@standalone/form-loader/form-loader.component';
 import { FileDataUpdateModule } from '../file-data-update/file-data-update.module';
 import { FormSearchHandlerModule } from '../shared/form-search-handler/form-search-handler.module';
 import { AbandonmentsDeclarationTradesComponent } from './abandonments-declaration-trades/abandonments-declaration-trades.component';
 import { DocsComponent } from './abandonments-declaration-trades/docs/docs.component';
 import { EditTextComponent } from './abandonments-declaration-trades/edit-text/edit-text.component';
+import { ListdictumsComponent } from './abandonments-declaration-trades/listdictums/listdictums.component';
 
 @NgModule({
   declarations: [
     AbandonmentsDeclarationTradesComponent,
     EditTextComponent,
     DocsComponent,
+    ListdictumsComponent,
   ],
   imports: [
     CommonModule,
@@ -36,6 +39,7 @@ import { EditTextComponent } from './abandonments-declaration-trades/edit-text/e
     FileDataUpdateModule,
     FormSearchHandlerModule,
     FormLoaderComponent,
+    TooltipModule.forRoot(),
   ],
 })
 export class AbandonmentsDeclarationTradesModule {}
