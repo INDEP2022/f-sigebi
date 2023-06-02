@@ -55,6 +55,7 @@ export class BanksDetailComponent extends BasePage implements OnInit {
       this.edit = true;
       this.status = 'Actualizar';
       this.form.patchValue(this.bank);
+      this.form.controls['bankCode'].disable();
     }
   }
 
