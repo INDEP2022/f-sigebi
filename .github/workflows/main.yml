@@ -26,7 +26,7 @@ jobs:
     - name: Install dependencies
       run: npm install --legacy-peer-deps
     - name: Build application
-      run: npm run build --max-old-space-size=8192
+      run: npm run build --max-old-space-size=12288
     - name: Build the Docker image
       run: |
         docker login acrindep.azurecr.io --username ${{ secrets.USER }} -p ${{ secrets.PASSWORD }}
