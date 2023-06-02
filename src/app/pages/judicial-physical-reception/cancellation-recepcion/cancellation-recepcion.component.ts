@@ -38,8 +38,6 @@ import {
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from '../../../shared/components/select/default-select';
-import { ProceedingsService } from 'src/app/core/services/ms-proceedings';
-import { ICveAct } from 'src/app/core/models/ms-proceedings/update-proceedings.model';
 
 @Component({
   selector: 'app-cancellation-recepcion',
@@ -2497,13 +2495,8 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
   nextProceeding() {
     this.prevProce = false;
     this.nextProce = false;
-<<<<<<< HEAD
               this.loading = true
               this.act2Valid = false;
-=======
-    this.loading = true;
-    this.act2Valid = false;
->>>>>>> 7602f119a38f243da3b2729f24bc92919ba27527
 
     if (this.numberProceeding <= this.proceedingData.length - 1) {
       this.numberProceeding += 1;
@@ -2535,11 +2528,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
     this.prevProce = false;
     this.nextProce = false;
     this.act2Valid = false;
-<<<<<<< HEAD
     this.loading = true
-=======
-    this.loading = true;
->>>>>>> 7602f119a38f243da3b2729f24bc92919ba27527
     this.noRequireAct1();
     this.clearInputs();
     if (
@@ -2553,13 +2542,8 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
           JSON.stringify(this.proceedingData[this.numberProceeding])
         );
         this.fillIncomeProceeding(dataRes, 'prevProceeding');
-<<<<<<< HEAD
               
               this.act2Valid = false;
-=======
-
-        this.act2Valid = false;
->>>>>>> 7602f119a38f243da3b2729f24bc92919ba27527
         /* if (this.numberProceeding == 0) {
           this.prevProce = false;
         } */
@@ -2570,13 +2554,8 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
         JSON.stringify(this.proceedingData[this.numberProceeding])
       );
       this.fillIncomeProceeding(dataRes, 'prevProceeding');
-<<<<<<< HEAD
               
               this.act2Valid = false;
-=======
-
-      this.act2Valid = false;
->>>>>>> 7602f119a38f243da3b2729f24bc92919ba27527
     }
   }
 }
