@@ -28,7 +28,7 @@
         </div>
       </div>
       <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-4">
           <form-field [control]="form.get('requestId')" label="No. Solicitud">
             <input
               type="text"
@@ -36,7 +36,7 @@
               formControlName="requestId" />
           </form-field>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-4">
           <form-field
             [control]="form.get('warehouseAlias')"
             label="Alias Almac&eacute;n">
@@ -46,18 +46,14 @@
               formControlName="warehouseAlias" />
           </form-field>
         </div>
-      </div>
-
-      <div class="row pt-4">
-        <form-field [control]="form.get('typeAddress')">
-          <ngx-select
-            [form]="form"
-            control="typeAddress"
-            [data]="typesAddress"
-            value="id"
-            bindLabel="typeAddress"
-            label="Tipo Direcci&oacute;n"></ngx-select>
-        </form-field>
+        <div class="col-md-4">
+          <form-field [control]="form.get('wayOrigin')" label="Tipo Dirección">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="wayOrigin" />
+          </form-field>
+        </div>
       </div>
 
       <div class="justify-content-end btn-toolbar">
