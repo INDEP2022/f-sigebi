@@ -1,22 +1,18 @@
 <form class="form-material" [formGroup]="form" id="warehouseProceedings">
   <div class="row mb-4">
-    <div class="col-md-6 asignButton">
-      <div class="col-md-9">
-        <form-check
-          label="Asignar almacén o boveda(masivo)"
-          for="label"
-          [class]="statusActa !== 'CERRADA' ? 'disabled' : ''">
-          <input id="label" type="checkbox" formControlName="massive" />
-        </form-check>
-      </div>
-      <div class="col-md-3">
-        <button
-          [class]="disabledForm ? 'disabled' : ''"
-          class="btn btn-sm btn-primary"
-          (click)="update()">
-          Guardar
-        </button>
-      </div>
+    <div class="asignButton">
+      <form-check
+        label="Asignar almacén o bóveda(masivo)"
+        for="label"
+        [class]="statusActa !== 'CERRADA' ? 'disabled' : ''">
+        <input id="label" type="checkbox" formControlName="massive" />
+      </form-check>
+      <button
+        [class]="disabledForm ? 'disabled' : ''"
+        class="btn btn-sm btn-primary"
+        (click)="update()">
+        Guardar
+      </button>
     </div>
     <!-- <p class="col-md-6 advice">Solo actualiza actas cerradas</p> -->
   </div>

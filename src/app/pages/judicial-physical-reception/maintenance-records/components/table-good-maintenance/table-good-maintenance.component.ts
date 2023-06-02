@@ -79,7 +79,7 @@ export class TableGoodMaintenanceComponent extends BasePage implements OnInit {
           editable: false,
         },
         vault: {
-          title: 'Boveda',
+          title: 'Bóveda',
           sort: false,
           editable: false,
         },
