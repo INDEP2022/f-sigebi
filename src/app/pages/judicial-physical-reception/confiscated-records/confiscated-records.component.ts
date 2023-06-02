@@ -80,7 +80,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
       row.data.avalaible ? 'available' : 'not-available',
     actions: false,
     columns: {
-      id: {
+      goodId: {
         title: 'No. Bien',
         type: 'number',
         sort: false,
@@ -976,6 +976,8 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     const paramsF = new FilterParams()
     paramsF.page = this.paramsDataGoods.getValue().page
     paramsF.limit = this.paramsDataGoods.getValue().limit
+    console.log(this.paramsDataGoods)
+    console.log(paramsF.getParams())
     this.serviceGood
       .getAllFilterDetail(
         `filter.fileNumber=$eq:${
@@ -1700,8 +1702,6 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   }
 
   nextProceeding() {
-    this.nextProce = false;
-    this.prevProce = false;
     this.act2Valid = false;
     this.loading = true;
     if (this.numberProceeding <= this.proceedingData.length - 1) {

@@ -220,7 +220,7 @@
             formControlName="parrafoInicial"></textarea>
         </form-field>
       </div>
-      <hr class="row" />
+
       <div class="row pt-4">
         <form-field
           [control]="managementForm.get('justificacion')"
@@ -254,59 +254,88 @@
           <input type="text" class="form-control" formControlName="fechaAcuse" readonly [disabled]="true" />
         </form-field> -->
 
+        <br /><br />
+
         <div class="col-md-4">
           <button type="button" class="btn btn-primary active btn-sm mr-2">
             Respuestas FGR
           </button>
         </div>
-        <br />
-        <br />
       </div>
-      <hr class="row" />
+      <br />
+      <br />
+
       <div class="row pb-5">
         <div class="col-md-12">
-          <!-- <search-bar [params]="params"></search-bar> -->
-          <form-field
-            [control]="managementForm.get('goodTypes')"
-            class="col-md-8">
-            <ngx-select
-              value="id"
-              bindLabel="clasifGood"
-              [form]="managementForm"
-              control="goodTypes"
-              [data]="goodTypes"
-              [showTooltip]="true"
-              label="Clasif --- Sub Tipo --- Ssub tipo --- Sssubtipo"
-              (fetchItems)="getClasifSubTypeGoods($event)"
-              (change)="getIdClasify($event)">
-            </ngx-select>
-          </form-field>
-          <form-check
-            class="col-md-2 text-end"
-            label="Improcedente(s) todo(s)"
-            for="improcedente">
-            <input
-              id="improcedente"
-              type="checkbox"
-              (change)="changeImprocedente($event.target)"
+          <div class="col-sm-12 col-12 col-md-12">
+            <form-field
+              [control]="managementForm.get('averiPrevia')"
+              label="Tipo &#45; Subtipo &#45; Descripci&oacute;n">
+              <ng-select
+                (change)="onLoadGoodList($event)"
+                formControlName="averiPrevia"
+                class="form-control"
+                id="typesFilters">
+                <ng-option *ngIf="valTiposAll" value="all"
+                  >Todos - 0 - TODOS - 0</ng-option
+                >
+                <ng-option
+                  *ngFor="let item of tiposData; index as i"
+                  value="{{ item.no_clasif_bien }}">
+                  {{ item.tipoSupbtipoDescription }}
+                </ng-option>
+              </ng-select>
+            </form-field>
+          </div>
+
+          <!-- <form-check class="col-md-2 text-end" label="Improcedente(s) todo(s)" for="improcedente">
+            <input id="improcedente" type="checkbox" (change)="changeImprocedente($event.target)"
               formControlName="improcedente" />
-          </form-check>
+          </form-check> -->
+
+          <form-loader *ngIf="formLoading"></form-loader>
+
+          <div class="row pt-2 mb-2" *ngIf="!formLoading">
+            <div class="col-sm-12 col-12 col-md-12 pr-3">
+              <div [class]="loading ? 'table-loading' : ''">
+                <ng2-smart-table
+                  id="goods"
+                  (userRowSelect)="selectProceedings($event)"
+                  [attr.class]="'table-responsive table-bordered'"
+                  [settings]="settings"
+                  [source]="data1">
+                </ng2-smart-table>
+                <br />
+                <div>
+                  <app-pagination
+                    [params]="params"
+                    [totalItems]="totalItems"></app-pagination>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-sm-12 col-12 col-md-6 mt-5">
+              <form-field [control]="managementForm.get('di_desc_estatus')">
+                <input
+                  type="text"
+                  formControlName="di_desc_estatus"
+                  class="form-control"
+                  readonly />
+              </form-field>
+            </div>
+          </div>
           <!-- <div class="col-md-2 text-end">
             <app-columns-select [(settings)]="settings"></app-columns-select>
           </div> -->
-          <div class="col-md-12" style="max-height: 600px; overflow-y: scroll">
+          <!-- <div class="col-md-12" style="max-height: 600px; overflow-y: scroll">
             <div [class]="loadingGoods ? 'table-loading' : ''">
-              <ng2-smart-table
-                class="col-md-12"
-                id="goods"
-                [attr.class]="'table-bordered'"
-                [settings]="settings"
-                [source]="dataGoodTable"></ng2-smart-table>
-              <app-pagination
-                [params]="params"
-                [totalItems]="totalItems"></app-pagination>
+              <ng2-smart-table class="col-md-12" id="goods" [attr.class]="'table-bordered'" [settings]="settings"
+                [source]="data1"></ng2-smart-table>
+              <app-pagination [params]="params" [totalItems]="totalItems"></app-pagination>
             </div>
-          </div>
+          </div> -->
           <div class="col-md-12 mt-3 text-right">
             <button
               type="button"
