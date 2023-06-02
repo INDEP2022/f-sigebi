@@ -79,7 +79,7 @@ export abstract class ScheduledMaintenance extends BasePageWidhtDinamicFiltersEx
         sort: false,
       },
       numFile: {
-        title: 'N° Archivo',
+        title: 'No. Archivo',
         sort: false,
       },
       witness1: {

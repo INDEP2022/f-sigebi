@@ -94,6 +94,7 @@ export class ProceedingInfoComponent implements OnInit {
     this.service.data = [];
     this.service.totalGoods = 0;
     this.service.dataForAdd = [];
+    this.service.formWarehouseVaul.reset();
   }
 
   filter() {
@@ -111,6 +112,20 @@ export class ProceedingInfoComponent implements OnInit {
 
   get disabled() {
     return this.loading;
+  }
+
+  updateDelegationRecibe(delegation: { id: string; description: string }) {
+    console.log(delegation);
+    if (delegation) {
+      this.form.get('numDelegation1').setValue(delegation.id);
+    }
+  }
+
+  updateDelegationAdministra(delegation: { id: string; description: string }) {
+    console.log(delegation);
+    if (delegation) {
+      this.form.get('numDelegation2').setValue(delegation.id);
+    }
   }
 
   prepareForm() {
