@@ -5,7 +5,11 @@ import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IPenalty } from 'src/app/core/models/catalogs/penalty.model';
 import { PenaltyService } from 'src/app/core/services/catalogs/penalty.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { DOUBLE_PATTERN } from 'src/app/core/shared/patterns';
+import {
+  DOUBLE_PATTERN,
+  PERCENTAGE_NUMBERS_REGEX,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-penalty-form',
@@ -32,10 +36,17 @@ export class PenaltyFormComponent extends BasePage implements OnInit {
   private prepareForm() {
     this.penaltyForm = this.fb.group({
       id: [null],
-      serviceType: [null, Validators.required],
+      serviceType: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(200),
+          Validators.pattern(STRING_PATTERN),
+        ],
+      ],
       penaltyPercentage: [
         null,
-        [Validators.required, Validators.pattern(DOUBLE_PATTERN)],
+        [Validators.required, Validators.pattern(PERCENTAGE_NUMBERS_REGEX)],
       ],
       equivalentDays: [
         null,
@@ -45,8 +56,6 @@ export class PenaltyFormComponent extends BasePage implements OnInit {
       status: [1],
       contractNumber: [null, Validators.required],
     });
-    //this.penaltyForm.controls['version'].setValue(1);
-    //this.penaltyForm.controls['status'].setValue(1);
     if (this.penalty != null) {
       this.edit = true;
       this.penaltyForm.patchValue(this.penalty);

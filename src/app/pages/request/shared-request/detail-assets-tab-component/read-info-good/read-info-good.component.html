@@ -54,7 +54,7 @@
 
         <div class="row pt-4">
           <div class="col-md-5">
-            <label>Descripci&oacute;n Bien INDEP</label>
+            <label>Descripci&oacute;n Bien INDEP: </label>
             <span class="fs-4">{{ goodData?.descriptionGoodSae }}</span>
           </div>
           <div class="col-md-5">
@@ -136,7 +136,7 @@
             <span class="fs-4">{{ goodData?.quantity | number }}</span>
           </div>
           <div class="col-md-5" *ngIf="typeOfRequest == 'SAT_SAE'">
-            <label>Clave &Uacute;nica</label>
+            <label>Clave &Uacute;nica: </label>
             <span class="fs-4">{{ goodData?.uniqueKey }}</span>
           </div>
         </div>
@@ -300,8 +300,8 @@
         </div>
         <div class="row pt-4">
           <div class="col-md-6" *ngIf="typeOfRequest == 'SAT_SAE'">
-            <label>Clave &Uacute;nica</label>
-            <span class="fs-4">{{ goodData?.uniqueKey }}</span>
+            <label>Clave &Uacute;nica: </label>
+            <span class="fs-4">{{ uniqueKey }}</span>
           </div>
           <div class="col-md-6" *ngIf="typeOfRequest == 'SAT_SAE'">
             <label>Destino Ligie: </label>
@@ -389,7 +389,7 @@
             <span class="fs-4">{{ goodData?.type }}</span>
           </div> -->
           <div class="col-md-6">
-            <label>No. Norma</label>
+            <label>No. Norma: </label>
             <span class="fs-4"> {{ norm }}</span>
           </div>
           <div class="col-md-6">
@@ -422,7 +422,7 @@
 
         <div class="row pt-4">
           <div class="col-md-6" *ngIf="typeOfRequest == 'SAT_SAE'">
-            <label>Clave &Uacute;nica</label>
+            <label>Clave &Uacute;nica: </label>
             <span class="fs-4">{{ goodData?.uniqueKey }}</span>
           </div>
           <div class="col-md-6">
@@ -437,14 +437,14 @@
             <span class="fs-4">{{ goodData?.goodDescription }}</span>
           </div>
           <div class="col-md-6">
-            <label>Tipo de Uso </label>
+            <label>Tipo de Uso: </label>
             <span class="fs-4">{{ goodData?.useType }}</span>
           </div>
         </div>
 
         <div class="row pt-4">
           <div class="col-md-6">
-            <label>Descripci&oacute;n Bien INDEP</label>
+            <label>Descripci&oacute;n Bien INDEP: </label>
             <span class="fs-4">{{ goodData?.descriptionGoodSae }}</span>
           </div>
           <div class="col-md-6">
