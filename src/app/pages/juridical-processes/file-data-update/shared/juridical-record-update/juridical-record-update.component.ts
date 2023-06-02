@@ -16,6 +16,7 @@ import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, firstValueFrom, Observable, takeUntil } from 'rxjs';
 import { goFormControlAndFocus } from 'src/app/common/helpers/helpers';
 import { OpinionService } from 'src/app/core/services/catalogs/opinion.service';
+import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
 import { SatTransferService } from 'src/app/core/services/ms-interfacesat/sat-transfer.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import { DocumentsViewerByFolioComponent } from '../../../../../@standalone/modals/documents-viewer-by-folio/documents-viewer-by-folio.component';
@@ -188,7 +189,8 @@ export class JuridicalRecordUpdateComponent
     // private changeDetectorRef: ChangeDetectorRef,
     protected opinionService: OpinionService,
     protected notificationService: NotificationService,
-    protected satTransferenceService: SatTransferService
+    protected satTransferenceService: SatTransferService,
+    protected dictationService: DictationService
   ) {
     super();
     this.fetchForForm = new FetchForForm(fileUpdateService, this.formControls);
@@ -1418,9 +1420,11 @@ export class JuridicalRecordUpdateComponent
       },
     });
 
-    // const dictamen = this.formControls.dictumKey.value?.id;
-    // let dictOfi = await this.getCatDictation(dictamen);
     // try {
+    //   const dictamen = this.formControls.dictumKey.value?.id;
+    //   const { description: cveDictation, id: dictation} = this.formControls.dictumKey.value;
+
+    //   let dictOfi = await this.getCatDictation(dictamen);
     //   if (['9', '10', '14'].includes(dictamen)) {
     //     try {
     //       const params = new ListParams();
@@ -1445,15 +1449,77 @@ export class JuridicalRecordUpdateComponent
     //     if (exist > 0) {
     //       const questionResponse = await showQuestion({
     //         icon: 'question',
-    //         text: 'El Volante: '+this.formControls.wheelNumber+' , ya cuenta con una aclaración. Desea generar dictámen de recepción?',
+    //         text:
+    //           'El Volante: ' +
+    //           this.formControls.wheelNumber +
+    //           ' , ya cuenta con una aclaración. Desea generar dictámen de recepción?',
     //         title: 'Pregunta',
     //         confirmButtonText: 'Si, continuar',
     //         cancelButtonText: 'No, cancelar',
     //       });
     //       if (!questionResponse.isConfirmed) {
     //         this.formControls.dictumKey.setValue(null);
-    //         if ()
+    //         if (!this.formControls.dictumKey.value) {
+    //           this.alert(
+    //             'warning',
+    //             '',
+    //             'Es necesario especificar el tipo de Desahogo Asunto'
+    //           );
+    //           return;
+    //         }
+    //         this.pupShowDictation();
+    //       }
+    //     }
+    //   } else {
+    //     const affairKey = this.formControls.affairKey.value?.id; // CVE_ASUNTO
+    //     if (!cveDictation) {
+    //       this.alert(
+    //         'warning',
+    //         '',
+    //         'Es necesario especificar el tipo de Desahogo Asunto'
+    //       );
+    //       return;
+    //     }
+    //     if (!affairKey) {
+    //       this.alert(
+    //         'warning',
+    //         '',
+    //         'Es necesario especificar el tipo de desahogo'
+    //       );
+    //       return;
+    //     }
+    //     this.formControls.dictumKey.disable();
+    //     const params = new ListParams();
+    //     params['filter.user'] = this.authService.decodeToken().username;
+    //     params['filter.typeNumber'] = 'RESARCIMIENTO';
+    //     params['filter.writing'] = 'S';
+    //     params['filter.reading'] = 'S';
+    //     let vc_usu_resar = 0
+    //     try {
+    //       const rTDictaAarusr = await this.getRTdictaAarusr(params);
+    //       vc_usu_resar = rTDictaAarusr.count;
+
+    //     } catch (ex: any) {
+    //       console.log(ex);
+    //       vc_usu_resar = ex.count;
+    //     }
+
+    //     if (affairKey && dictOfi.dict_ofi == 'D') {
+    //       if (dictation == '18' && vc_usu_resar < 1) {
+    //         this.alert(
+    //           'warning',
+    //           '',
+    //           'No tienes privilegios para entrar a los Dictamenes de Resarcimiento '
+    //         );
     //         return;
+    //       }
+
+    //       if (this.formControls.delDestinyNumber.value == Number(this.authService.decodeToken().department)) {
+    //         this.dictConsultOnly = 'N';
+    //         this.pupShowDictation();
+    //       } else {
+    //         this.dictConsultOnly = 'S';
+    //         this.pupShowDictation();
     //       }
     //     }
     //   }
@@ -1464,6 +1530,66 @@ export class JuridicalRecordUpdateComponent
     //     'No se pudo obtener la información de la transferencia'
     //   );
     // }
+  }
+
+  pupShowDictation() {
+    const dictumKey = this.formControls.dictumKey.value?.id;
+    let dictumType;
+    if (['1', '16', '23'].includes(dictumKey)) dictumType = 'PROCEDENCIA';
+    if (dictumKey == '15') dictumType = 'DESTRUCCION';
+    if (dictumKey == '2') dictumType = 'DECOMISO';
+    if (dictumKey == '22') dictumType = 'EXT_DOM';
+    if (['3', '19'].includes(dictumKey)) dictumType = 'DEVOLUCION';
+    if (dictumKey == '17') dictumType = 'TRANSFERENTE';
+    if (dictumKey == '18') dictumType = 'RESARCIMIENTO';
+    if (dictumKey == '20') dictumType = 'ABANDONO';
+    if (dictumKey == '24') dictumType = 'ACLARA';
+
+    let procedure;
+    if (
+      this.pageParams.pNoTramite != null &&
+      this.pageParams.pNoTramite != undefined
+    ) {
+      procedure = this.pageParams.pNoTramite;
+    } else if (this.procedureId != undefined) {
+      procedure = this.procedureId;
+    }
+    this.fileUpdateService.juridicalFileDataUpdateForm =
+      this.fileDataUpdateForm.value;
+    this.globalVarsService.updateSingleGlobal(
+      'varDic',
+      this.dictum,
+      this.globals
+    );
+    if (this.formControls.delDestinyNumber.value == this.userDelegation) {
+      this.dictConsultOnly = 'S';
+    } else {
+      //TODO: habilitar cuando el usuario tenga los permisos
+      this.dictConsultOnly = 'N';
+    }
+    this.fileUpdComService.juridicalRulingParams = {
+      expediente: this.formControls.expedientNumber.value,
+      volante: this.formControls.wheelNumber.value,
+      tipoVo: this.formControls.wheelType.value,
+      tipoDic: dictumType,
+      consulta: this.dictConsultOnly,
+      pGestOk: this.pageParams.pGestOk,
+      pNoTramite: procedure,
+    };
+    let path = '/pages/juridical/juridical-ruling-g';
+    this.router.navigate([path], {
+      queryParams: {
+        origin: '/pages/juridical/file-data-update',
+        form: 'FACTGENACTDATEX',
+        expediente: this.formControls.expedientNumber.value,
+        volante: this.formControls.wheelNumber.value,
+        tipoVo: this.formControls.wheelType.value,
+        tipoDic: dictumType,
+        consulta: this.dictConsultOnly,
+        pGestOk: this.pageParams.pGestOk,
+        pNoTramite: procedure,
+      },
+    });
   }
 
   openToShiftChange() {

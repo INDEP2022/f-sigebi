@@ -1,6 +1,7 @@
 import { firstValueFrom, map } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { OpinionService } from 'src/app/core/services/catalogs/opinion.service';
+import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
 import { SatTransferService } from 'src/app/core/services/ms-interfacesat/sat-transfer.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -9,7 +10,7 @@ export abstract class juridicalRecordUpdateRequest extends BasePage {
   protected abstract opinionService: OpinionService;
   protected abstract notificationService: NotificationService;
   protected abstract satTransferenceService: SatTransferService;
-
+  protected abstract dictationService: DictationService;
   protected getCatDictation(id: number | string, firstRecord = false) {
     // if (firstRecord) {
     //   params.page = 1;
@@ -68,6 +69,19 @@ export abstract class juridicalRecordUpdateRequest extends BasePage {
     // 			 WHERE PGR_OFICIO  = :BLK_NOT.CVE_OFICIO_EXTERNO;
     return firstValueFrom(
       this.satTransferenceService.getPgrTransfer({ officeExternalKey })
+    );
+  }
+
+  getRTdictaAarusr(params: ListParams) {
+    // from R_TDICTA_AARUSR
+    return firstValueFrom(
+      this.dictationService
+        .getRTdictaAarusr(params)
+        .pipe
+        // map(response => {
+        //   return response.data[0];
+        // })
+        ()
     );
   }
 }
