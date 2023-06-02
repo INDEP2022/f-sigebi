@@ -103,16 +103,16 @@ export class DocumentsService extends HttpService {
   }
 
   /**
-   * 
-   * @param armyOfficeKey 
-   * @description: `SELECT count(*) 
+   *
+   * @param armyOfficeKey
+   * @description: `SELECT count(*)
      INTO  vTotal
-     FROM DOCUMENTOS_DICTAMEN_X_BIEN_M 
-    WHERE TIPO_DICTAMINACION = 'PROCEDENCIA' 
-      AND NO_OF_DICTA IN (SELECT NO_OF_DICTA 
+     FROM DOCUMENTOS_DICTAMEN_X_BIEN_M
+    WHERE TIPO_DICTAMINACION = 'PROCEDENCIA'
+      AND NO_OF_DICTA IN (SELECT NO_OF_DICTA
                             FROM DICTAMINACIONES
                            WHERE CLAVE_OFICIO_ARMADA = :DICTAMINACIONES.CLAVE_OFICIO_ARMADA
-                             AND TIPO_DICTAMINACION = 'PROCEDENCIA'` 
+                             AND TIPO_DICTAMINACION = 'PROCEDENCIA'`
    */
 
   postCountDictationGoodFile(
@@ -139,9 +139,14 @@ export class DocumentsService extends HttpService {
     return this.get(route, params);
   }
 
-  getDocumentsByGood(id: string | number) {
-    const route = `${DocumentsEndpoints.Documents}/?filter.goodNumber=$not:$null&filter.goodNumber=${id}`;
-    return this.get<IListResponse<IDocuments>>(route);
+  getDocumentsByGood(id: string | number, params?: ListParams | string) {
+    const route = `${DocumentsEndpoints.DocumentsDictuXStateM}?filter.stateNumber=${id}`;
+    return this.get(route, params);
+  }
+
+  getByGoodId(id: string | number, params?: any) {
+    const route = `${DocumentsEndpoints.DocumentsForDictum}/getDescriptionByGood/${id}`;
+    return this.get(route, params);
   }
   // updateClarDocImp(id: string | number, data: Object) {
   //   const route = `clarification-documents-impro/${id}`;

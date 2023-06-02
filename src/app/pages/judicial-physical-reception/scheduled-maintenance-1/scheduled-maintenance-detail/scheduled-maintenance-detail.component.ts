@@ -102,11 +102,13 @@ export class ScheduledMaintenanceDetailComponent
         const detail = JSON.parse(
           window.localStorage.getItem('detailActa')
         ) as IProceedingDeliveryReception;
+        console.log(this.form.get('fechaCaptura').value);
+
         detail.keysProceedings = this.form.get('claveActa').value;
         detail.statusProceedings = this.statusActaValue;
         detail.closeDate = new Date().toISOString();
         detail.captureDate = firstFormatDateToSecondFormatDate(
-          detail.captureDate
+          this.form.get('fechaCaptura').value
         );
         let message = '';
         this.proceedingService
@@ -259,7 +261,7 @@ export class ScheduledMaintenanceDetailComponent
         detail.statusProceedings = this.statusActaValue;
         detail.closeDate = new Date().toISOString();
         detail.captureDate = firstFormatDateToSecondFormatDate(
-          detail.captureDate
+          this.form.get('fechaCaptura').value
         );
         let message = '';
         this.proceedingService
