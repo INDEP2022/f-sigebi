@@ -1778,7 +1778,6 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
               this.form.get('fecEntBien').value,
               'yyyy-MM-dd HH:mm'
             ),
-            captureDate: format(new Date(), 'yyyy-MM-dd HH:mm'),
           };
           const resData = JSON.parse(JSON.stringify(res.data[0]));
           console.log(modelEdit);
@@ -1863,6 +1862,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
               this.initialdisabled = true;
               console.log(res);
               this.form.get('statusProceeding').setValue('ABIERTA')
+              this.form.get('fecCaptura').setValue(format(new Date(), 'yyyy-MM-dd'))
               this.alert('success', 'Se guardó el acta', '');
             },
             err => {
