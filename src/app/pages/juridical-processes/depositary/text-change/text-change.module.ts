@@ -9,7 +9,6 @@ import { ModalPersonaOficinaComponent } from './office/modal-persona-oficina/mod
 import { OfficeComponent } from './office/office.component';
 import { OpinionComponent } from './opinion/opinion.component';
 import { tablaModalComponent } from './tabla-modal/tablaModal-component';
-import { TablaOficioModalComponent } from './tabla-oficio-modal/tabla-oficio-modal.component';
 import { TextChangeRoutingModule } from './text-change-routing.module';
 import { TextChangeComponent } from './text-change/text-change.component';
 
@@ -21,7 +20,6 @@ import { TextChangeComponent } from './text-change/text-change.component';
     ModalComponent,
     tablaModalComponent,
     ModalPersonaOficinaComponent,
-    TablaOficioModalComponent,
   ],
   imports: [
     CommonModule,
