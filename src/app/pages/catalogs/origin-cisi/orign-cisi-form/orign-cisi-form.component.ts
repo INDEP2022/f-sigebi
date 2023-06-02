@@ -35,7 +35,14 @@ export class OrignCisiFormComponent extends BasePage implements OnInit {
   private prepareForm() {
     this.orignCisiForm = this.fb.group({
       id: [null],
-      detail: [null, [Validators.required]],
+      detail: [
+        null,
+        [
+          Validators.required,
+          Validators.minLength(1),
+          Validators.maxLength(40),
+        ],
+      ],
     });
 
     if (this.originCisi != null) {
