@@ -1598,6 +1598,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     this.nextProce = false;
     this.prevProce = false;
     this.act2Valid = false;
+    this.loading = true
     if (this.numberProceeding <= this.proceedingData.length - 1) {
       this.numberProceeding += 1;
       console.log(this.numberProceeding);
@@ -1627,6 +1628,8 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   prevProceeding() {
     console.log(this.numberProceeding);
     console.log(this.proceedingData.length);
+    this.loading = true
+
     /* this.prevProce = false;
     this.nextProce = false; */
     if (
@@ -1699,6 +1702,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   }
 
   selectExpedient(e: any) {
+    this.loading = true
     console.log(e);
     this.form.get('expediente').setValue(e.id);
     this.newSearchExp();
@@ -2982,13 +2986,13 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   //Select data
   statusGood(formName: string, data: any) {
     const paramsF = new FilterParams();
-    paramsF.addFilter('status', data.goodStatus);
+    paramsF.addFilter('status', data.status);
     this.serviceGood.getStatusGood(paramsF.getParams()).subscribe(
       res => {
-        this.form.get(formName).setValue(data.goodStatus);
+        this.form.get(formName).setValue(res.data[0]['description']);
       },
       err => {
-        this.form.get(formName).setValue(`${data.goodStatus} FUERA DEL MES`);
+        this.form.get(formName).setValue(`${data.status} FUERA DEL MES`);
       }
     );
   }
