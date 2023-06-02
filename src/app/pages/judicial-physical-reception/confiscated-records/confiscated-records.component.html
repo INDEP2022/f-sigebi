@@ -8,14 +8,20 @@
       <div class="row mb-4">
         <div class="col-md-4">
           <div class="row">
-            <div class="col-md-9">
+            <div class="col">
               <button
                 id="expedient-number"
-                class="btn btn-primary btn-sm disabled active"
+                class="btn btn-primary btn-sm disabled mr-2 active"
                 (click)="searchButton()">
-                Buscar
+                <i class="fa fa-search"></i> Buscar
               </button>
-              <span class="ml-3">{{ statusProceeding }}</span>
+            </div>
+            <div class="col">
+              <button
+                class="btn btn-info btn-sm active"
+                (click)="clearAll()">
+                Limpiar
+              </button>
             </div>
           </div>
         </div>
@@ -81,7 +87,7 @@
       <div class="row mb-3 mt-3">
         <div class="col-md-4">
           <div class="row">
-            <div class="col-md-9">
+            <div class="col">
               <form-field [control]="form.get('expediente')" label="Expediente">
                 <input
                   (ngModelChange)="
@@ -93,6 +99,15 @@
                   [readOnly]="blockExpedient"
                   class="form-control"
                   formControlName="expediente" />
+              </form-field>
+            </div>
+            <div *ngIf="form.get('statusProceeding').value != null" class="col">
+              <form-field [control]="form.get('statusProceeding')" label="Estatus del acta">
+                <input
+                  type="text"
+                  readOnly="true"
+                  class="form-control"
+                  formControlName = 'statusProceeding' />
               </form-field>
             </div>
           </div>
@@ -149,9 +164,8 @@
                 <ngx-select
                   id="transfer"
                   control="transfer"
-                  class="pt-5"
                   [class]="initialdisabled ? 'disabled' : ''"
-                  label="Transfer"
+                  label="Transferente"
                   bindLabel="transferentkey"
                   [searchable]="false"
                   [data]="transferSelect"
@@ -163,7 +177,7 @@
               <form-field [control]="form.get('ident')" label="Ident">
                 <input
                   type="text"
-                  class="form-control disabled"
+                  class="form-control disabled pt-0"
                   formControlName="ident" />
               </form-field>
             </div>
@@ -204,7 +218,7 @@
               <form-field [control]="form.get('folio')" label="Folio">
                 <input
                   type="number"
-                  class="form-control"
+                  class="form-control pt-0"
                   [class]="initialdisabled ? 'disabled' : ''"
                   min="0"
                   [max-length]="5"
@@ -215,7 +229,7 @@
               <form-field [control]="form.get('year')" label="A&ntilde;o">
                 <input
                   type="number"
-                  class="form-control disabled"
+                  class="form-control disabled pt-0"
                   formControlName="year" />
               </form-field>
             </div>
@@ -223,7 +237,7 @@
               <form-field [control]="form.get('mes')" label="Mes">
                 <input
                   type="number"
-                  class="form-control disabled"
+                  class="form-control disabled pt-0"
                   formControlName="mes" />
               </form-field>
             </div>
@@ -434,7 +448,6 @@
               {{ labelActa }}
             </button>
             <a
-              [routerLink]="['partialization']"
               class="my-1 mx-2 btn btn-warning active btn-sm"
               size="small"
               (click)="goParcializacion()"
@@ -547,12 +560,6 @@
                 formControlName="indEdoFisico"
                 id="flexCheckDefault" />
             </div>
-            <!-- <form-check label="Requerido" for="label">
-              <input
-                id="label"
-                type="checkbox"
-                formControlName="indEdoFisico" />
-            </form-check> -->
           </form-field>
           <form-field
             class="col-md-3"

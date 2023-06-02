@@ -111,7 +111,6 @@ export class PerformProgrammingFormComponent
   idProgramming: number = 0;
   idAuthority: string = '';
   idState: number = 0;
-  idTrans: string | number;
   idStation: string | number;
   idTypeRelevant: number = 0;
   showForm: boolean = false;
@@ -143,6 +142,7 @@ export class PerformProgrammingFormComponent
   paramsAuthority = new BehaviorSubject<ListParams>(new ListParams());
   totalItemsUsers: number = 0;
   loadGoods: boolean = false;
+  dataProg: boolean = false;
   newTransferent: boolean = true;
   delegationId: number = 0;
   delRegUserLog: string = '';
@@ -524,7 +524,7 @@ export class PerformProgrammingFormComponent
     if (municipality && !colony && !akaWarehouse && !postalCode && !state) {
       const filterColumns: Object = {
         regionalDelegation: Number(this.regionalDelegationUser.id),
-        transferent: Number(this.idTrans),
+        transferent: Number(this.transferentId),
         relevantType: Number(this.idTypeRelevant),
         statusGood: 'APROBADO',
         municipality: municipality,
@@ -535,7 +535,7 @@ export class PerformProgrammingFormComponent
     if (municipality && colony && !akaWarehouse && !postalCode && !state) {
       const filterColumns: Object = {
         regionalDelegation: Number(this.regionalDelegationUser.id),
-        transferent: Number(this.idTrans),
+        transferent: Number(this.transferentId),
         relevantType: Number(this.idTypeRelevant),
         statusGood: 'APROBADO',
         suburb: colony,
@@ -547,7 +547,7 @@ export class PerformProgrammingFormComponent
     if (municipality && colony && akaWarehouse && !postalCode && !state) {
       const filterColumns: Object = {
         regionalDelegation: Number(this.regionalDelegationUser.id),
-        transferent: Number(this.idTrans),
+        transferent: Number(this.transferentId),
         relevantType: Number(this.idTypeRelevant),
         statusGood: 'APROBADO',
         suburb: colony,
@@ -560,7 +560,7 @@ export class PerformProgrammingFormComponent
     if (municipality && colony && akaWarehouse && postalCode && !state) {
       const filterColumns: Object = {
         regionalDelegation: Number(this.regionalDelegationUser.id),
-        transferent: Number(this.idTrans),
+        transferent: Number(this.transferentId),
         relevantType: Number(this.idTypeRelevant),
         statusGood: 'APROBADO',
         suburb: colony,
@@ -574,7 +574,7 @@ export class PerformProgrammingFormComponent
     if (colony && !municipality && !akaWarehouse && !postalCode && !state) {
       const filterColumns: Object = {
         regionalDelegation: Number(this.regionalDelegationUser.id),
-        transferent: Number(this.idTrans),
+        transferent: Number(this.transferentId),
         relevantType: Number(this.idTypeRelevant),
         statusGood: 'APROBADO',
         suburb: colony,
@@ -586,7 +586,7 @@ export class PerformProgrammingFormComponent
     if (colony && municipality && !akaWarehouse && !postalCode && !state) {
       const filterColumns: Object = {
         regionalDelegation: Number(this.regionalDelegationUser.id),
-        transferent: Number(this.idTrans),
+        transferent: Number(this.transferentId),
         relevantType: Number(this.idTypeRelevant),
         statusGood: 'APROBADO',
         municipality: municipality,
@@ -599,7 +599,7 @@ export class PerformProgrammingFormComponent
     if (colony && municipality && akaWarehouse && !postalCode && !state) {
       const filterColumns: Object = {
         regionalDelegation: Number(this.regionalDelegationUser.id),
-        transferent: Number(this.idTrans),
+        transferent: Number(this.transferentId),
         relevantType: Number(this.idTypeRelevant),
         statusGood: 'APROBADO',
         municipality: municipality,
@@ -613,7 +613,7 @@ export class PerformProgrammingFormComponent
     if (colony && municipality && akaWarehouse && postalCode && !state) {
       const filterColumns: Object = {
         regionalDelegation: Number(this.regionalDelegationUser.id),
-        transferent: Number(this.idTrans),
+        transferent: Number(this.transferentId),
         relevantType: Number(this.idTypeRelevant),
         statusGood: 'APROBADO',
         municipality: municipality,
@@ -628,7 +628,7 @@ export class PerformProgrammingFormComponent
     if (akaWarehouse && !colony && !municipality && !postalCode && !state) {
       const filterColumns: Object = {
         regionalDelegation: Number(this.regionalDelegationUser.id),
-        transferent: Number(this.idTrans),
+        transferent: Number(this.transferentId),
         relevantType: Number(this.idTypeRelevant),
         statusGood: 'APROBADO',
         aliasStore: akaWarehouse,
@@ -640,7 +640,7 @@ export class PerformProgrammingFormComponent
     if (akaWarehouse && colony && !municipality && !postalCode && !state) {
       const filterColumns: Object = {
         regionalDelegation: Number(this.regionalDelegationUser.id),
-        transferent: Number(this.idTrans),
+        transferent: Number(this.transferentId),
         relevantType: Number(this.idTypeRelevant),
         statusGood: 'APROBADO',
         suburb: colony,
@@ -652,7 +652,7 @@ export class PerformProgrammingFormComponent
     if (akaWarehouse && colony && municipality && !postalCode && !state) {
       const filterColumns: Object = {
         regionalDelegation: Number(this.regionalDelegationUser.id),
-        transferent: Number(this.idTrans),
+        transferent: Number(this.transferentId),
         relevantType: Number(this.idTypeRelevant),
         statusGood: 'APROBADO',
         suburb: colony,
@@ -665,7 +665,7 @@ export class PerformProgrammingFormComponent
     if (akaWarehouse && colony && municipality && postalCode && !state) {
       const filterColumns: Object = {
         regionalDelegation: Number(this.regionalDelegationUser.id),
-        transferent: Number(this.idTrans),
+        transferent: Number(this.transferentId),
         relevantType: Number(this.idTypeRelevant),
         statusGood: 'APROBADO',
         suburb: colony,
@@ -680,7 +680,7 @@ export class PerformProgrammingFormComponent
     if (postalCode && !akaWarehouse && !colony && !municipality && !state) {
       const filterColumns: Object = {
         regionalDelegation: Number(this.regionalDelegationUser.id),
-        transferent: Number(this.idTrans),
+        transferent: Number(this.transferentId),
         relevantType: Number(this.idTypeRelevant),
         statusGood: 'APROBADO',
         postalCode: postalCode,
@@ -692,7 +692,7 @@ export class PerformProgrammingFormComponent
     if (postalCode && akaWarehouse && !colony && !municipality && !state) {
       const filterColumns: Object = {
         regionalDelegation: Number(this.regionalDelegationUser.id),
-        transferent: Number(this.idTrans),
+        transferent: Number(this.transferentId),
         relevantType: Number(this.idTypeRelevant),
         statusGood: 'APROBADO',
         aliasStore: akaWarehouse,
@@ -704,7 +704,7 @@ export class PerformProgrammingFormComponent
     if (postalCode && akaWarehouse && colony && !municipality && !state) {
       const filterColumns: Object = {
         regionalDelegation: Number(this.regionalDelegationUser.id),
-        transferent: Number(this.idTrans),
+        transferent: Number(this.transferentId),
         relevantType: Number(this.idTypeRelevant),
         statusGood: 'APROBADO',
         aliasStore: akaWarehouse,
@@ -717,7 +717,7 @@ export class PerformProgrammingFormComponent
     if (postalCode && akaWarehouse && colony && municipality && !state) {
       const filterColumns: Object = {
         regionalDelegation: Number(this.regionalDelegationUser.id),
-        transferent: Number(this.idTrans),
+        transferent: Number(this.transferentId),
         relevantType: Number(this.idTypeRelevant),
         statusGood: 'APROBADO',
         aliasStore: akaWarehouse,
@@ -731,7 +731,7 @@ export class PerformProgrammingFormComponent
     if (state && !postalCode && !akaWarehouse && !colony && !municipality) {
       const filterColumns: Object = {
         regionalDelegation: Number(this.regionalDelegationUser.id),
-        transferent: Number(this.idTrans),
+        transferent: Number(this.transferentId),
         relevantType: Number(this.idTypeRelevant),
         statusGood: 'APROBADO',
         stateKey: state,
@@ -741,7 +741,7 @@ export class PerformProgrammingFormComponent
     if (state && postalCode && !akaWarehouse && !colony && !municipality) {
       const filterColumns: Object = {
         regionalDelegation: Number(this.regionalDelegationUser.id),
-        transferent: Number(this.idTrans),
+        transferent: Number(this.transferentId),
         relevantType: Number(this.idTypeRelevant),
         statusGood: 'APROBADO',
         postalCode: postalCode,
@@ -753,7 +753,7 @@ export class PerformProgrammingFormComponent
     if (state && postalCode && akaWarehouse && !colony && !municipality) {
       const filterColumns: Object = {
         regionalDelegation: Number(this.regionalDelegationUser.id),
-        transferent: Number(this.idTrans),
+        transferent: Number(this.transferentId),
         relevantType: Number(this.idTypeRelevant),
         statusGood: 'APROBADO',
         aliasStore: akaWarehouse,
@@ -766,7 +766,7 @@ export class PerformProgrammingFormComponent
     if (state && postalCode && akaWarehouse && colony && !municipality) {
       const filterColumns: Object = {
         regionalDelegation: Number(this.regionalDelegationUser.id),
-        transferent: Number(this.idTrans),
+        transferent: Number(this.transferentId),
         relevantType: Number(this.idTypeRelevant),
         statusGood: 'APROBADO',
         aliasStore: akaWarehouse,
@@ -780,7 +780,7 @@ export class PerformProgrammingFormComponent
     if (state && postalCode && akaWarehouse && colony && municipality) {
       const filterColumns: Object = {
         regionalDelegation: Number(this.regionalDelegationUser.id),
-        transferent: Number(this.idTrans),
+        transferent: Number(this.transferentId),
         relevantType: Number(this.idTypeRelevant),
         statusGood: 'APROBADO',
         aliasStore: akaWarehouse,
@@ -871,7 +871,7 @@ export class PerformProgrammingFormComponent
   stateSelect(state: IStateOfRepublic) {
     this.idState = Number(state.id);
     this.getWarehouseSelect(new ListParams());
-    if (this.idTrans) this.getStations(new ListParams());
+    if (this.transferentId) this.getStations(new ListParams());
   }
 
   getTransferentSelect(params?: ListParams) {
@@ -890,7 +890,7 @@ export class PerformProgrammingFormComponent
   }
 
   transferentSelect(transferent: ITransferente) {
-    this.idTrans = transferent?.id;
+    this.transferentId = transferent?.id;
     this.performForm.get('stationId').setValue(null);
     this.performForm.get('autorityId').setValue(null);
     this.getStations(new ListParams());
@@ -898,7 +898,7 @@ export class PerformProgrammingFormComponent
 
   getStations(params?: ListParams) {
     this.showSelectStation = true;
-    params['filter.idTransferent'] = this.idTrans;
+    params['filter.idTransferent'] = this.transferentId;
     params['filter.stationName'] = `$ilike:${params.text}`;
     params['sortBy'] = 'stationName:ASC';
 
@@ -919,12 +919,13 @@ export class PerformProgrammingFormComponent
   stationSelect(item: IStation) {
     this.performForm.get('autorityId').setValue(null);
     this.idStation = item.id;
+    this.stationId = item.id;
     this.getAuthoritySelect(new ListParams());
   }
 
   getAuthoritySelect(params?: ListParams) {
     params['filter.authorityName'] = `$ilike:${params.text}`;
-    params['filter.idTransferer'] = `$eq:${this.idTrans}`;
+    params['filter.idTransferer'] = `$eq:${this.transferentId}`;
     params['sortBy'] = 'authorityName:ASC';
     delete params['search'];
     delete params.text;
@@ -987,6 +988,7 @@ export class PerformProgrammingFormComponent
 
   authoritySelect(item: IAuthority) {
     this.idAuthority = item.idAuthority;
+    this.autorityId = item.idAuthority;
   }
 
   getTypeRelevantSelect(params: ListParams) {
@@ -1011,7 +1013,7 @@ export class PerformProgrammingFormComponent
     this.loadingGoods = true;
     const filterColumns: Object = {
       regionalDelegation: Number(this.regionalDelegationUser.id),
-      transferent: Number(this.idTrans),
+      transferent: Number(this.transferentId),
       relevantType: Number(this.idTypeRelevant),
       statusGood: 'APROBADO',
     };
@@ -1231,7 +1233,7 @@ export class PerformProgrammingFormComponent
             ...MODAL_CONFIG,
             class: 'modal-lg modal-dialog-centered',
           };
-          const idTransferent = this.idTrans;
+          const idTransferent = this.transferentId;
           config.initialState = {
             idTransferent,
             typeTransportable: 'guard',
@@ -1336,7 +1338,7 @@ export class PerformProgrammingFormComponent
             ...MODAL_CONFIG,
             class: 'modal-lg modal-dialog-centered',
           };
-          const idTransferent = this.idTrans;
+          const idTransferent = this.transferentId;
           config.initialState = {
             idTransferent,
             typeTransportable: 'warehouse',
@@ -1537,6 +1539,8 @@ export class PerformProgrammingFormComponent
 
   //Actualizar programación con información de la programación
   confirm() {
+    console.log(this.dataProg);
+
     if (this.performForm.get('startDate').value) {
       this.performForm
         .get('startDate')
@@ -1556,6 +1560,7 @@ export class PerformProgrammingFormComponent
       this.performForm.get('autorityId').setValue(this.autorityId);
     }
 
+    console.log('this.performForm.value', this.performForm.value);
     this.performForm
       .get('regionalDelegationNumber')
       .setValue(this.delegationId);
@@ -1716,6 +1721,9 @@ export class PerformProgrammingFormComponent
       this.performForm.get('tranferId').setValue(this.transferentId);
       this.performForm.get('stationId').setValue(this.stationId);
       this.performForm.get('autorityId').setValue(this.autorityId);
+      this.performForm
+        .get('regionalDelegationNumber')
+        .setValue(this.delegationId);
       this.alertQuestion(
         'info',
         'Confirmación',
@@ -1806,20 +1814,21 @@ export class PerformProgrammingFormComponent
   async generateTaskAceptProgramming(folio: string) {
     const user: any = this.authService.decodeToken();
     let body: any = {};
-
+    const _task = JSON.parse(localStorage.getItem('Task'));
+    body['idTask'] = _task.id;
+    body['userProcess'] = user.username;
     body['type'] = 'SOLICITUD_PROGRAMACION';
-    body['subtype'] = 'Programar_Recepcion';
+    body['subtype'] = 'Realizar_Programacion';
     body['ssubtype'] = 'ENVIAR';
 
     let task: any = {};
     task['id'] = 0;
-    //task['assignees'] = this.nickName;
-    //task['assigneesDisplayname'] = this.userName;
+    task['assignees'] = _task.assignees;
+    task['assigneesDisplayname'] = _task.assigneesDisplayname;
     task['creator'] = user.username;
     task['taskNumber'] = Number(this.idProgramming);
     task['title'] = 'Aceptar Programación con folio: ' + folio;
     task['programmingId'] = this.idProgramming;
-    //task['requestId'] = this.programmingId;
     task['expedientId'] = 0;
     task['idDelegationRegional'] = this.delegationId;
     task['urlNb'] = 'pages/request/programming-request/acept-programming';
@@ -1827,12 +1836,13 @@ export class PerformProgrammingFormComponent
     body['task'] = task;
 
     const taskResult = await this.createTaskOrderService(body);
+    console.log('task', taskResult);
     this.loading = false;
     if (taskResult) {
       this.msgGuardado(
         'success',
         'Creación de tarea exitosa',
-        `Se creó la tarea Realizar Programación con el folio: ${folio}`
+        `Se creó la tarea Aceptar Programación con el folio: ${folio}`
       );
     }
   }
@@ -1966,9 +1976,15 @@ export class PerformProgrammingFormComponent
         );
 
       this.transferentId = this.dataProgramming.tranferId;
+      console.log(
+        'this.dataProgramming.tranferId;',
+        this.dataProgramming.tranferId
+      );
       this.stationId = this.dataProgramming.stationId;
       this.autorityId = this.dataProgramming.autorityId;
+      console.log('this.autorityId', this.autorityId);
       this.delegationId = this.dataProgramming.regionalDelegationNumber;
+      this.dataProg = true;
       this.paramsTransportableGoods.getValue()['filter.programmingId'] =
         this.idProgramming;
 
@@ -2016,17 +2032,15 @@ export class PerformProgrammingFormComponent
         error: error => {},
       });
 
-      this.paramsAuthority.getValue()['filter.idAuthority'] =
-        this.dataProgramming.autorityId;
-      this.params.getValue()['filter.idTransferer'] =
-        this.dataProgramming.tranferId;
+      this.paramsAuthority.getValue()['filter.idTransferer'] =
+        this.transferentId;
       this.authorityService.getAll(this.paramsAuthority.getValue()).subscribe({
         next: response => {
           console.log('autoridad', response);
           const nameAndId = `${response.data[0].idAuthority} - ${response.data[0].authorityName}`;
           this.performForm.get('autorityId').setValue(nameAndId);
           this.idStation = this.dataProgramming.stationId;
-          this.idTrans = this.dataProgramming.tranferId;
+          this.transferentId = this.dataProgramming.tranferId;
           this.getAuthoritySelect(new ListParams());
         },
         error: error => {},
@@ -2051,10 +2065,10 @@ export class PerformProgrammingFormComponent
               );
               item['aliasWarehouse'] = aliasWarehouse;
 
-              if (item.statePhysicalSae == 1)
-                item['statePhysicalSae'] = 'BUENO';
-              if (item.statePhysicalSae == 2) item['statePhysicalSae'] = 'MALO';
+              if (item.physicalStatus == 1) item['physicalStatus'] = 'BUENO';
+              if (item.physicalStatus == 2) item['physicalStatus'] = 'MALO';
               showTransportable.push(item);
+              console.log('showTransportable', showTransportable);
               this.goodsTranportables.load(showTransportable);
               this.totalItemsTransportableGoods =
                 this.goodsTranportables.count();

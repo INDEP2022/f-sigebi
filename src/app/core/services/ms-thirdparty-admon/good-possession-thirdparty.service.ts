@@ -33,4 +33,16 @@ export class GoodPosessionThirdpartyService extends HttpService {
       }>
     >(ThirdPartyAdmonEndpoints.DetailGoodPossessionThirdParty, params);
   }
+
+  postThirdPartyAdmonOffice(params?: _Params) {
+    return this.post<any>('aplication/thirdpartyadmonOfice', params);
+  }
+
+  postThirdPartyAdmonKey(_params?: _Params) {
+    return this.post<any>('aplication/thirdpartyadmonKey', _params);
+  }
+
+  updateThirdPartyAdmonOffice(id: any, params?: _Params) {
+    return this.put<any>(`good-possession-thirdparty/${id}`, params);
+  }
 }

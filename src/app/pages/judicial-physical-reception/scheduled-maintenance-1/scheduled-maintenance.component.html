@@ -3,12 +3,12 @@
     <h5 class="title">Mantenimiento de Programaciones</h5>
   </div>
   <div body>
-    <div class="row mb-5">
+    <!-- <div class="row mb-5">
       <app-clean-filters-shared
         [form]="form"
         formStorage="filtersActa"
         (cleanFiltersEvent)="resetView()"></app-clean-filters-shared>
-    </div>
+    </div> -->
 
     <form class="form-material" [formGroup]="form">
       <div class="row">
@@ -26,7 +26,7 @@
           <!-- <app-proceeding-types-shared
             [form]="form"></app-proceeding-types-shared> -->
         </div>
-        <div class="col-md-4" style="display: flex">
+        <div class="col-md-4">
           <form-field [control]="form.get('rangeDate')" label="Rango de Fechas">
             <input
               bsDaterangepicker
@@ -34,13 +34,14 @@
               formControlName="rangeDate"
               readonly
               [maxDate]="hoy" />
+            <div
+              *ngIf="rangeDateValue !== null"
+              class="deleteDate"
+              (click)="deleteRange()">
+              x
+            </div>
           </form-field>
-          <div
-            *ngIf="rangeDateValue !== null"
-            class="deleteDate"
-            (click)="deleteRange()">
-            x
-          </div>
+
           <!-- <button class="btn btn-primary btn-xs active" type="submit" size="small" (click)="deleteRange()">
             x
           </button> -->
@@ -83,7 +84,7 @@
         </div>
       </div>
       <div class="row mt-3" style="margin-top: 20px">
-        <div class="col-md-12 mt-2">
+        <div class="col-lg-6 mt-2">
           <ng-custom-select-loading
             [form]="form"
             formControlName="coordRegional"
@@ -113,7 +114,7 @@
             [(params)]="paramsCoords"></app-select-form> -->
           <!-- <app-regional-coord-shared [form]="form"></app-regional-coord-shared> -->
         </div>
-        <div class="col-md-12 mt-4">
+        <div class="col-lg-6 mt-2">
           <ng-custom-select-loading
             [form]="form"
             formControlName="usuario"
@@ -159,9 +160,9 @@
         </div> -->
       </div>
 
-      <div class="action-buttons">
+      <div class="action-buttons row" style="margin: auto">
         <div
-          class="col-md-6"
+          class="col-md-4"
           [class]="loading || form.invalid ? 'disabled' : ''">
           <button
             class="btn btn-primary btn-sm active"
@@ -172,7 +173,13 @@
             Buscar
           </button>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-4">
+          <app-clean-filters-shared
+            [form]="form"
+            formStorage="filtersActa"
+            (cleanFiltersEvent)="resetView()"></app-clean-filters-shared>
+        </div>
+        <div class="col-md-4">
           <button
             class="btn btn-primary btn-sm active"
             type="submit"

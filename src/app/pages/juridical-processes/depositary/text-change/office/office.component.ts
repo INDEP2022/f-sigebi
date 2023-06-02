@@ -61,6 +61,9 @@ export class OfficeComponent extends BasePage implements OnInit {
   nameUserDestinatario: ISegUsers;
   verBoton: boolean = false;
   filtroPersonaExt: ICopiesJobManagementDto[] = [];
+
+  tipoImpresion: string;
+
   //===================
   users$ = new DefaultSelect<ISegUsers>();
   @Input() oficnum: number | string;
@@ -98,7 +101,7 @@ export class OfficeComponent extends BasePage implements OnInit {
         edit: true,
         delete: true,
         add: false,
-        position: 'right',
+        position: 'left',
       },
     };
   }
@@ -176,7 +179,10 @@ export class OfficeComponent extends BasePage implements OnInit {
       .getAllOfficialDocument(filterParams.getValue().getParams())
       .subscribe({
         next: resp => {
-          console.warn('1: >===>> ', JSON.stringify(resp));
+          console.warn('OFICIO 1: >===>> ', JSON.stringify(resp));
+
+          this.tipoImpresion = resp.data[0].jobType;
+
           this.form
             .get('proceedingsNumber')
             .setValue(resp.data[0].proceedingsNumber);
@@ -315,12 +321,13 @@ export class OfficeComponent extends BasePage implements OnInit {
           );
       }
     }
-
+    /*
+  Se oculto hast que definamos el endopint para la consulta */
     this.filterParamsLocal
       .getValue()
       .addFilter(
-        'fecha_inserto',
-        this.year + '-01-01' + ':' + this.year + '-12-31',
+        'insertDate',
+        this.year + '-01-01' + ',' + this.year + '-12-31',
         SearchFilter.BTW
       );
 
@@ -346,6 +353,14 @@ export class OfficeComponent extends BasePage implements OnInit {
   /*       Crea el archivo que se va desplegar la información 
 =======================================================================*/
   public confirm() {
+    if (this.tipoImpresion === 'EXTERNO') {
+      this.reporteInterno();
+    } else {
+      this.reporteExterno();
+    }
+  }
+
+  reporteInterno() {
     const params = {
       no_of_ges: this.form.value.managementNumber,
     };
@@ -368,6 +383,30 @@ export class OfficeComponent extends BasePage implements OnInit {
       },
     });
     this.cleanfields();
+  }
+
+  reporteExterno() {
+    const params = {
+      PNOOFICIO: this.form.value.expedientNumber,
+      PTIPODIC: this.form.value.typeDict,
+    };
+    this.siabServiceReport.fetchReport('RGENABANDEC', params).subscribe({
+      next: response => {
+        const blob = new Blob([response], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+        let config = {
+          initialState: {
+            documento: {
+              urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+              type: 'pdf',
+            },
+          },
+          class: 'modal-lg modal-dialog-centered',
+          ignoreBackdropClick: true,
+        };
+        this.modalService.show(PreviewDocumentsComponent, config);
+      },
+    });
   }
 
   /*Se esta revisando si se va a utilizar*/
@@ -486,7 +525,7 @@ export class OfficeComponent extends BasePage implements OnInit {
       .getPuestovalue(userDatos.positionKey)
       .subscribe({
         next: resp => {
-          alert('  getDescUserPuesto ' + resp.data.value);
+          // alert('  getDescUserPuesto ' + resp.data.value);
           this.form.get('charge').setValue(resp.data.value);
         },
         error: err => {
@@ -502,14 +541,9 @@ export class OfficeComponent extends BasePage implements OnInit {
     this.serviceOficces.getPersonaExt_Int(params).subscribe({
       next: resp => {
         this.filtroPersonaExt = resp.data;
-        this.nrSelecttypePerson = resp.data[0].personExtInt;
-        this.nrSelecttypePerson_I = resp.data[1].personExtInt;
 
-        this.form.get('typePerson').setValue(this.nrSelecttypePerson);
-        this.form.get('typePerson_I').setValue(this.nrSelecttypePerson_I);
-
-        this.form.get('personaExt').setValue(resp.data[0].nomPersonExt);
-        this.form.get('personaExt_I').setValue(resp.data[1].nomPersonExt);
+        console.log('(((      params => ' + JSON.stringify(params) + +')))');
+        console.log('getPersonaExt_Int => ' + JSON.stringify(resp.data));
       },
       error: errror => {
         this.onLoadToast('error', 'Error', errror.error.message);
@@ -523,7 +557,7 @@ export class OfficeComponent extends BasePage implements OnInit {
 
   getDescUser(control: string, event: Event) {
     this.nameUserDestinatario = JSON.parse(JSON.stringify(event));
-    alert(control);
+    //  alert(control);
     if (control === 'control_I') {
       this.form.get('personaExt_I').setValue(this.nameUserDestinatario.name);
     } else {
@@ -603,20 +637,23 @@ export class OfficeComponent extends BasePage implements OnInit {
     this.modalRef.hide();
   }
   seteaTabla(datos: any) {
-    let dato: ICopiesJobManagementDto = JSON.parse(JSON.stringify(datos));
-
+    let dato = JSON.parse(JSON.stringify(datos));
+    console.log('JSON.stringify(datos)  =>  ' + JSON.stringify(datos));
     let obj = {
       managementNumber: this.form.get('managementNumber').value,
-      addresseeCopy: 0,
+      addresseeCopy: dato.senderUser_I,
       delDestinationCopyNumber: 0,
-      personExtInt: dato.personExtInt,
-      nomPersonExt: dato.nomPersonExt,
+      personExtInt: dato.typePerson_I,
+      nomPersonExt: dato.personaExt_I,
       recordNumber: this.form.get('managementNumber').value,
     };
-
+    console.log('resp  =>  ' + JSON.stringify(obj));
     this.serviceOficces.createCopiesJobManagement(obj).subscribe({
       next: resp => {
-        console.log('resp  =>  ' + resp);
+        console.warn(
+          ' this.serviceOficces. seteaTabla =>   ' + JSON.stringify(obj)
+        );
+
         this.refreshTabla();
       },
       error: errror => {

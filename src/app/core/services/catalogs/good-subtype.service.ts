@@ -56,6 +56,7 @@ export class GoodSubtypeService
   ): Observable<Object> {
     return this.goodSubtypeRepository.updateByIds(this.route, ids, model);
   }
+
   remove(id: string | number): Observable<Object> {
     return this.goodSubtypeRepository.remove(this.route, id);
   }

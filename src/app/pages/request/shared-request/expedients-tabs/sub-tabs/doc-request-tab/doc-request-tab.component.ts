@@ -100,6 +100,7 @@ export class DocRequestTabComponent
   }
 
   ngOnInit(): void {
+    //console.log('MODULO', this.typeModule);
     // DISABLED BUTTON - FINALIZED //
     this.task = JSON.parse(localStorage.getItem('Task'));
     this.statusTask = this.task.status;
@@ -245,31 +246,33 @@ export class DocRequestTabComponent
               }
             });
 
-            const info = filterDoc.map(async (items: any) => {
+            /*const info = filterDoc.map(async (items: any) => {
               const filter: any = await this.filterGoodDoc([
                 items.xtipoDocumento,
               ]);
-              if (items?.xdelegacionRegional) {
+              /*if (items?.xdelegacionRegional) {
+                console.log('Método getData llama a getRegionalDelegation');
                 const regionalDelegation = await this.getRegionalDelegation(
                   items?.xdelegacionRegional
                 );
                 items['delegationName'] = regionalDelegation;
               }
               if (items?.xidTransferente) {
+                console.log('Método getData llama a getTransferent');
                 const transferent = await this.getTransferent(
                   items?.xidTransferente
                 );
                 items['transferentName'] = transferent;
-              }
-              /*if (items?.xestado) {
+              }*/
+            /*if (items?.xestado) {
                 const state = await this.getStateDoc(items?.xestado);
                 items['stateName'] = state;
-              } */
+              } /
               items.xtipoDocumento = filter[0]?.ddescription;
               return items;
-            });
+            });*/
 
-            Promise.all(info).then(data => {
+            Promise.all(filterDoc).then(data => {
               this.paragraphs1 =
                 res.data.length > 10
                   ? this.setPaginate([...res.data])
@@ -297,7 +300,7 @@ export class DocRequestTabComponent
               const filter: any = await this.filterGoodDoc([
                 items.xtipoDocumento,
               ]);
-              if (items?.xdelegacionRegional) {
+              /*if (items?.xdelegacionRegional) {
                 const regionalDelegation = await this.getRegionalDelegation(
                   items?.xdelegacionRegional
                 );
@@ -308,7 +311,7 @@ export class DocRequestTabComponent
                   items?.xidTransferente
                 );
                 items['transferentName'] = transferent;
-              }
+              }*/
               /*if (items?.xestado) {
                 const state = await this.getStateDoc(items?.xestado);
                 items['stateName'] = state;
@@ -395,6 +398,7 @@ export class DocRequestTabComponent
         .pipe(takeUntil(this.$unSubscribe))
         .subscribe({
           next: data => {
+            console.log('Método getRegionalDelegation');
             resolve(data?.description);
           },
           error: error => {},
@@ -409,6 +413,7 @@ export class DocRequestTabComponent
         .pipe(takeUntil(this.$unSubscribe))
         .subscribe({
           next: data => {
+            console.log('Método getStateDoc');
             resolve(data?.descCondition);
           },
           error: error => {
@@ -418,20 +423,20 @@ export class DocRequestTabComponent
     });
   }
 
-  getTransferent(id: number) {
+  /*getTransferent(id: number) {
     return new Promise((resolve, reject) => {
       this.transferentService
         .getById(id)
         .pipe(takeUntil(this.$unSubscribe))
         .subscribe({
           next: data => {
-            console.log('transferente getTransferent');
+            console.log('Método getTransferent');
             resolve(data?.nameTransferent);
           },
           error: error => {},
         });
     });
-  }
+  }*/
 
   getDocType(params: ListParams) {
     this.wContentService
@@ -439,6 +444,7 @@ export class DocRequestTabComponent
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: (resp: any) => {
+          console.log('Método getDocType');
           console.log();
           this.typesDocuments = resp.data; //= new DefaultSelect(resp.data, resp.length);
         },
@@ -805,7 +811,7 @@ export class DocRequestTabComponent
       .getAll(params)
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(data => {
-        console.log('transferente getTransfe');
+        console.log('Método getTransfe');
         this.selectTransfe = new DefaultSelect(data.data, data.count);
       });
   }

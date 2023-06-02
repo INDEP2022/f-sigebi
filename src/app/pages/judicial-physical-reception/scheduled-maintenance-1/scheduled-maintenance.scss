@@ -3,9 +3,10 @@
 }
 
 .deleteDate {
-  position: relative;
+  position: absolute;
   margin: 10px auto auto;
-  left: -20px;
+  right: 5px;
+  top: 0px;
   cursor: pointer;
 }
 
@@ -88,20 +89,20 @@ ng2-smart-table {
   }
 }
 
-:host ::ng-deep app-clean-filters-shared {
-  text-align: right;
-  position: absolute;
-  top: 12px;
+// :host ::ng-deep app-clean-filters-shared {
+//   text-align: right;
+//   position: absolute;
+//   top: 12px;
 
-  @media (max-width: 576px) {
-    position: relative;
-    top: -10px;
+//   @media (max-width: 576px) {
+//     position: relative;
+//     top: -10px;
 
-    > div {
-      padding: 0px;
-    }
-  }
-}
+//     > div {
+//       padding: 0px;
+//     }
+//   }
+// }
 
 .action-buttons {
   > div {

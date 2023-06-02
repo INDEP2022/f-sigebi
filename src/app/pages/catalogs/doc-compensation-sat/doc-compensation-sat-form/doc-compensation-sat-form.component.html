@@ -5,17 +5,15 @@
   <div body>
     <form [formGroup]="docCompesationSatForm" class="form-material">
       <div class="row">
-        <div class="col-md-4">
-          <form-field [control]="docCompesationSatForm.get('id')" label="Id">
-            <input type="number" class="form-control" formControlName="id" />
-          </form-field>
-        </div>
         <div class="col-md-4"></div>
         <div class="col-md-4">
           <form-field
-            [control]="docCompesationSatForm.get('idcat')"
+            [control]="docCompesationSatForm.get('officeSatId')"
             label="Id CAT">
-            <input type="number" class="form-control" formControlName="idcat" />
+            <input
+              type="number"
+              class="form-control"
+              formControlName="officeSatId" />
           </form-field>
         </div>
       </div>

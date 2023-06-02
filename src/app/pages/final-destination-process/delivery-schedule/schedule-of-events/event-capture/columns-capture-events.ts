@@ -1,69 +1,46 @@
 export const COLUMNS_CAPTURE_EVENTS = {
-  ref: {
-    title: 'Ref',
-    type: 'number',
+  locTrans: {
+    title: 'Localidad Ent.',
     sort: false,
+    filter: false,
   },
-  destructionOpinion: {
-    title: 'Dictamen Destrucción',
-    type: 'string',
-    sort: false,
-  },
-  numberGood: {
+  goodnumber: {
     title: 'No. Bien',
-    type: 'number',
     sort: false,
+    filter: false,
   },
   status: {
     title: 'Estatus',
-    type: 'string',
     sort: false,
+    filter: false,
   },
-  process: {
+
+  description: {
+    title: 'Descripción',
+    sort: false,
+    filter: false,
+  },
+};
+
+export const COLUMNS_CAPTURE_EVENTS_2 = {
+  typegood: {
+    title: 'Tipo Bien',
+    sort: false,
+    filter: false,
+  },
+  proccessextdom: {
     title: 'Proceso',
-    type: 'string',
     sort: false,
+    filter: false,
   },
-  descriptionGood: {
-    title: 'Descripción del Bien',
-    valuePrepareFunction: (value: any, row: any) => row.good.description,
-    type: 'string',
-    sort: false,
-  },
-  typeGood: {
-    title: 'Tipo de Bien',
-    type: 'string',
-    sort: false,
-  },
-  proceedings: {
+  expedientnumber: {
     title: 'Expediente',
-    type: 'number',
-    valuePrepareFunction: (value: any, row: any) => row.good.fileNumber,
     sort: false,
+    filter: false,
   },
-  quantity: {
-    title: 'Cantidad',
-    type: 'number',
-    sort: false,
-  },
-  deliveryActDate: {
-    title: 'Fecha Acto Entrega',
-    type: 'string',
-    sort: false,
-  },
-  dateActCompletion: {
-    title: 'Fecha Acto Entrega',
-    type: 'string',
-    sort: false,
-  },
-  destinationIndicator: {
+  destination: {
     title: 'Indicador Destino',
-    type: 'string',
     sort: false,
-  },
-  select: {
-    title: 'Selec.',
-    type: 'boolean',
-    sort: false,
+    filter: false,
   },
 };

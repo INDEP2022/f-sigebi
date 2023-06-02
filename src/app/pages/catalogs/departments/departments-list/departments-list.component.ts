@@ -58,27 +58,34 @@ export class DepartmentsListComponent extends BasePage implements OnInit {
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
             /*SPECIFIC CASES*/
-            switch (filter.field) {
-              case 'id':
-                searchFilter = SearchFilter.EQ;
-                break;
-              case 'dsarea':
-                searchFilter = SearchFilter.EQ;
-                break;
-              case 'Delegación':
-                `filter.${filter.field}.description`;
-                break;
-              case 'numSubDelegation':
-                searchFilter = SearchFilter.ILIKE;
-                field = `filter.${filter.field}.description`;
-                break;
-              case 'description':
-                searchFilter = SearchFilter.EQ;
-                break;
-              default:
-                searchFilter = SearchFilter.ILIKE;
-                break;
-            }
+            // switch (filter.field) {
+            //   case 'id':
+            //     searchFilter = SearchFilter.EQ;
+            //     break;
+            //   case 'dsarea':
+            //     searchFilter = SearchFilter.EQ;
+            //     break;
+            //   case 'Delegación':
+            //     `filter.${filter.field}.description`;
+            //     break;
+            //   case 'numSubDelegation':
+            //     searchFilter = SearchFilter.ILIKE;
+            //     field = `filter.${filter.field}.description`;
+            //     break;
+            //   case 'description':
+            //     searchFilter = SearchFilter.EQ;
+            //     break;
+            //   default:
+            //     searchFilter = SearchFilter.ILIKE;
+            //     break;
+            // }
+            filter.field == 'id' ||
+              filter.field == 'dsarea' ||
+              filter.field == 'Delegación' ||
+              console.log('numero');
+            filter.field == 'numSubDelegation' || filter.field == 'description'
+              ? (searchFilter = SearchFilter.EQ)
+              : (searchFilter = SearchFilter.ILIKE);
 
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;

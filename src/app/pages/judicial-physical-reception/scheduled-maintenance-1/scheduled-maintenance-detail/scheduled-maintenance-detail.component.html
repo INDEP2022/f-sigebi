@@ -10,13 +10,12 @@
 
   <app-card [header]="true">
     <div class="ch-content" header>
-      <h5 class="title">Mantenimiento de Acta Entrega Recepci&oacute;n</h5>
+      <h5 class="title">Mantenimiento de Programaciones</h5>
     </div>
     <div body>
       <form class="form-material" [formGroup]="form">
         <div class="row mr-0">
           <div class="col-md-2 pr-0">
-            s
             <form-field [control]="form.get('statusActa')" label="Estatus Acta"
               ><ng-select
                 formControlName="statusActa"
@@ -52,7 +51,6 @@
               [control]="form.get('fechaCaptura')"
               label="Fecha Captura">
               <input
-                [class]="'disabled'"
                 bsDatepicker
                 class="form-control"
                 formControlName="fechaCaptura"

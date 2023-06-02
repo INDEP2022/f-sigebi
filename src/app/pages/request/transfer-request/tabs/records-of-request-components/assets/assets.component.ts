@@ -108,6 +108,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
   }
 
   ngOnInit(): void {
+    console.log('Activando tab: assets');
     this.settings = {
       ...TABLE_SETTINGS,
       actions: false,
@@ -132,123 +133,26 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
     this.paragraphs = [];
     const requestId = Number(this.route.snapshot.paramMap.get('id'));
     this.params.value.addFilter('requestId', requestId);
-    /*this.goodFinderService.goodFinder(this.params.getValue().getParams()).subscribe({
-      next: resp => {
-        resp.data.map((item:any)=>{
-          item['goodTypeName'] =
-        })
-      }
-    })*/
-    this.goodService.getAll(this.params.getValue().getParams()).subscribe({
-      next: async (data: any) => {
-        if (data !== null) {
-          const result = data.data.map(async (item: any) => {
-            //obtener tipo bien
-            const goodType = await this.getGoodType(item.goodTypeId);
-            item['goodTypeName'] = goodType;
-            //obtener el estado fisico
-            const physicalStatus = await this.getPhysicalStatus(
-              item.physicalStatus
-            );
-            item['physicalStatusName'] = physicalStatus;
-
-            //obtener el estado de concervacion
-            const stateConservation = await this.getStateConservation(
-              item.stateConservation
-            );
-            item['stateConservationName'] = stateConservation;
-
-            //obtener el destino de la transferencia
-            const transferentDestiny = await this.getTransferDestiny(
-              item.transferentDestiny
-            );
-            item['transferentDestinyName'] = transferentDestiny;
-            item['destinyLigieName'] = transferentDestiny;
-
+    this.goodFinderService
+      .goodFinder(this.params.getValue().getParams())
+      .subscribe({
+        next: async resp => {
+          const result = resp.data.map(async (item: any) => {
             const goodMenaje = await this.getMenaje(item.id);
             item['goodMenaje'] = goodMenaje;
           });
 
           Promise.all(result).then(x => {
-            this.totalItems = data.count;
-            this.paragraphs = data.data;
+            this.totalItems = resp.count;
+            this.paragraphs = resp.data;
             this.loading = false;
           });
-        } else {
-          this.paragraphs = defaultData;
+        },
+        error: error => {
           this.loading = false;
-        }
-      },
-      error: error => {
-        this.loading = false;
-        this.paragraphs = [];
-      },
-    });
-  }
-
-  getGoodType(goodTypeId: number) {
-    return new Promise((resolve, reject) => {
-      if (goodTypeId !== null) {
-        this.typeRelevantSevice.getById(goodTypeId).subscribe({
-          next: (data: any) => {
-            resolve(data.description);
-          },
-        });
-      } else {
-        resolve('');
-      }
-    });
-  }
-
-  getPhysicalStatus(physicalState: any) {
-    return new Promise((resolve, reject) => {
-      if (physicalState !== null) {
-        var params = new ListParams();
-        params['filter.keyId'] = `$eq:${physicalState}`;
-        params['filter.name'] = `$eq:Estado Fisico`;
-        this.genericService.getAll(params).subscribe({
-          next: data => {
-            resolve(data.data[0].description);
-          },
-        });
-      } else {
-        resolve('');
-      }
-    });
-  }
-
-  getStateConservation(stateConcervation: any) {
-    return new Promise((resolve, reject) => {
-      if (stateConcervation !== null) {
-        var params = new ListParams();
-        params['filter.keyId'] = `$eq:${stateConcervation}`;
-        params['filter.name'] = `$eq:Estado Conservacion`;
-        this.genericService.getAll(params).subscribe({
-          next: data => {
-            resolve(data.data[0].description);
-          },
-        });
-      } else {
-        resolve('');
-      }
-    });
-  }
-
-  getTransferDestiny(transferentDestiny: any) {
-    return new Promise((resolve, reject) => {
-      if (transferentDestiny !== null) {
-        var params = new ListParams();
-        params['filter.keyId'] = `$eq:${transferentDestiny}`;
-        params['filter.name'] = `$eq:Destino`;
-        this.genericService.getAll(params).subscribe({
-          next: data => {
-            resolve(data.data[0].description);
-          },
-        });
-      } else {
-        resolve('');
-      }
-    });
+          this.paragraphs = [];
+        },
+      });
   }
 
   getMenaje(id: number) {
@@ -696,7 +600,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
         if (data) {
           setTimeout(() => {
             this.closeCreateGoodWIndows();
-          }, 600);
+          }, 800);
         }
       },
     });
@@ -789,7 +693,6 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
     ];
     this.listGoodsFractions = [];
     let existAddres = 0;
-    debugger;
     for (let j = 0; j < this.listgoodObjects.length; j++) {
       const item = this.listgoodObjects[j];
       let good: any = {};
@@ -815,7 +718,9 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
 
       /* inf. del bien */
       good.goodDescription = item.goodDescription;
-      good.processStatus = item.processStatus;
+      good.goodStatus = 'VERIFICAR_CUMPLIMIENTO';
+      good.processStatus = 'VERIFICAR_CUMPLIMIENTO';
+      //good.processStatus = item.processStatus;
 
       good.quantity = item.quantity ? item.quantity : 0;
       good.duplicity = item.duplicity;
@@ -847,6 +752,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
       this.listGoodsFractions.push(good);
     }
     this.loading = false;
+    console.table(this.listGoodsFractions);
     if (existAddres > 0) {
       this.onLoadToast(
         'info',

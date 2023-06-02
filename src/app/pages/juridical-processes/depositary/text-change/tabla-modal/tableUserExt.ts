@@ -9,19 +9,16 @@ export const EXTERNOS_COLUMS = {
     type: 'string',
     sort: false,
   },
-  nomPersonExt: {
+  namePersonExt: {
     title: 'Nombre persona',
     type: 'string',
     sort: false,
   },
+  /*,
   numberOfDicta: {
     title: 'Númbero Dicta',
     type: 'string',
     sort: false,
   },
-  registerNumber: {
-    title: 'Numbero de registro',
-    type: 'string',
-    sort: false,
-  },
+  */
 };

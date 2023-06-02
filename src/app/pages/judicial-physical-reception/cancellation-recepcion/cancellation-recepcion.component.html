@@ -10,7 +10,7 @@
             <div class="col-md-9">
               <button
                 id="expedient-number"
-                class="btn btn-primary btn-sm active mr-4"
+                class="btn btn-primary btn-sm active mr-4 disabled"
                 (click)="goodsByExpediente()">
                 Buscar
               </button>
@@ -76,21 +76,24 @@
           </div>
         </div>
       </div>
+      <hr class="row" />
       <div class="row mb-3 mt-3">
         <div class="col-md-4">
-          <div class="col-md-9">
-            <form-field [control]="form.get('expediente')" label="Expediente">
-              <input
-                (ngModelChange)="
-                  toggleByLength('expedient-number', 'expediente')
-                "
-                [max-length]="10"
-                [class]="blockExpedient ? 'disabled' : ''"
-                [min]="0"
-                type="number"
-                class="form-control"
-                formControlName="expediente" />
-            </form-field>
+          <div class="row">
+            <div class="col-md-9">
+              <form-field [control]="form.get('expediente')" label="Expediente">
+                <input
+                  (ngModelChange)="
+                    toggleByLength('expedient-number', 'expediente')
+                  "
+                  [max-length]="10"
+                  [class]="blockExpedient ? 'disabled' : ''"
+                  [min]="0"
+                  type="number"
+                  class="form-control"
+                  formControlName="expediente" />
+              </form-field>
+            </div>
           </div>
         </div>
         <div class="col-md-4">
@@ -344,7 +347,7 @@
           <div class="col">
             <form-field
               [control]="form.get('testigo')"
-              label="Testigo de la Contratalor&iacute;a">
+              label="Testigo de la Contralor&iacute;a">
               <input
                 type="text"
                 [maxlength]="100"
@@ -352,6 +355,36 @@
                 [class]="!isEnableTestigo ? 'disabled' : ''"
                 formControlName="testigo" />
             </form-field>
+          </div>
+        </div>
+      </div>
+      <hr class="row" />
+
+      <div class="row">
+        <div class="col-md-12">
+          <div class="row">
+            <div class="col">
+              <form-field
+                [control]="form.get('folioEscaneo')"
+                label="Folio de Escaneo">
+                <input
+                  type="number"
+                  min="0"
+                  class="form-control"
+                  formControlName="folioEscaneo" />
+              </form-field>
+            </div>
+
+            <div class="col">
+              <button
+                type="button"
+                class="btn btn-primary btn-sm active mr-2 ml-2"
+                [disabled]="form.get('folioEscaneo').value == null"
+                (click)="replicateFolio()"
+                size="small">
+                Replicar Folio
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -397,39 +430,11 @@
             <button
               type="button"
               class="btn btn-secondary btn-sm active mr-2 ml-2"
+              [class] ="['CERRADO','CERRADA'].includes(form.get('statusProceeding').value) ? '' : 'disabled'"
               size="small"
               (click)="goCargaMasiva()">
               Carga Masiva
             </button>
-          </div>
-        </div>
-      </div>
-      <hr class="row" />
-
-      <div class="row">
-        <div class="col-md-12">
-          <div class="row">
-            <div class="col">
-              <form-field
-                [control]="form.get('folioEscaneo')"
-                label="Folio de Escaneo">
-                <input
-                  type="number"
-                  class="form-control"
-                  formControlName="folioEscaneo" />
-              </form-field>
-            </div>
-
-            <div class="col">
-              <button
-                type="button"
-                class="btn btn-primary btn-sm active mr-2 ml-2"
-                [disabled]="form.get('folioEscaneo').value == null"
-                (click)="replicateFolio()"
-                size="small">
-                Replicar Folio
-              </button>
-            </div>
           </div>
         </div>
       </div>

@@ -27,11 +27,12 @@ export class DelegationStateService implements ICrudMethods<IDelegationState> {
     return this.delegationStateRepository.create(this.route, model);
   }
 
-  update(id: string | number, model: IDelegationState): Observable<Object> {
-    return this.delegationStateRepository.update(this.route, id, model);
+  newUpdate(id: string | number): Observable<Object> {
+    console.log('cambia', this.route, id);
+    return this.delegationStateRepository.newUpdate(this.route, id);
   }
 
-  remove(id: string | number): Observable<Object> {
+  newRemove(id: string | number): Observable<Object> {
     return this.delegationStateRepository.remove(this.route, id);
   }
 }

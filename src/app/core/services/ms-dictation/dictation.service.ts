@@ -64,11 +64,15 @@ export class DictationService extends HttpService {
   }
 
   createPersonExt(body: IDictationCopies) {
-    return this.post(this.route.Dictation, body);
+    return this.post(this.route.CopiesOfficialOpinion, body);
   }
 
   update(body: Partial<IDictation>) {
     return this.put(this.route.Dictation, body);
+  }
+
+  updateExpedientNumber(id: number, body: Partial<IDictation>) {
+    return this.put(this.route.Dictation + '/' + id, body);
   }
 
   remove(body: { id: string | number; typeDict: string }) {
@@ -216,5 +220,22 @@ export class DictationService extends HttpService {
   getFaFlagDest(params: any) {
     const route = `${DictationEndpoints.FaFlagDest}`;
     return this.post(route, params);
+  }
+
+  updateOfficialDictation(params: any) {
+    const route = `${DictationEndpoints.OfficialDictation}`;
+    return this.put(route, params);
+  }
+
+  createOfficialDictation(params: any) {
+    const route = `${DictationEndpoints.OfficialDictation}`;
+    return this.post(route, params);
+  }
+
+  deleteCopiesdictamenetOfficialOpinion(obj: any) {
+    return this.delete<IListResponse<IDictationCopies>>(
+      this.route.CopiesOfficialOpinion,
+      obj
+    );
   }
 }

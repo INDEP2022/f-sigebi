@@ -147,7 +147,7 @@
                 [updateInfo]="updateInfo"
                 [typeModule]="typeModule"></app-doc-request-tab>
             </tab>
-            <!-- <tab
+            <tab
               heading="Documentos Generales"
               (selectTab)="requestSelected(2)">
               <tabset class="md-tabs">
@@ -156,16 +156,18 @@
                   id="tab1"
                   (selectTab)="requestSelected(2)">
                   <app-doc-request-tab
-                    [typeDoc]="typeDoc"></app-doc-request-tab>
+                    [typeDoc]="typeDoc"
+                    [typeModule]="typeModule"></app-doc-request-tab>
                 </tab>
                 <tab
                   heading="Solicitudes del Expediente"
                   (selectTab)="requestSelected(3)">
                   <app-expedients-request-tab
-                    [typeDoc]="typeDoc"></app-expedients-request-tab>
+                    [typeDoc]="typeDoc"
+                    [typeModule]="typeModule"></app-expedients-request-tab>
                 </tab>
               </tabset>
-            </tab> -->
+            </tab>
           </tabset>
         </tab>
       </tabset>
