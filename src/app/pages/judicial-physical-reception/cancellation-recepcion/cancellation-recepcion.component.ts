@@ -200,7 +200,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
     private serviceDocuments: DocumentsService,
     private serviceGoodProcess: GoodProcessService,
     private serviceProgrammingGood: ProgrammingGoodService,
-    private serviceProceeding: ProceedingsService,
+    private serviceProceeding: ProceedingsService
   ) {
     super();
   }
@@ -216,11 +216,13 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
       this.fillNoDelegacion(res.delegation, this.no_delegacion_1);
     });
 
-    if(localStorage.getItem('numberExpedient')){
-      this.loading = true
-      this.form.get('expediente').setValue(localStorage.getItem('numberExpedient'))
-      this.goodsByExpediente()
-      localStorage.removeItem('numberExpedient')
+    if (localStorage.getItem('numberExpedient')) {
+      this.loading = true;
+      this.form
+        .get('expediente')
+        .setValue(localStorage.getItem('numberExpedient'));
+      this.goodsByExpediente();
+      localStorage.removeItem('numberExpedient');
     }
 
     this.paramsDataGoods.pipe(takeUntil(this.$unSubscribe)).subscribe(
@@ -270,7 +272,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
   }
 
   selectExpedient(e: any) {
-    this.loading = true
+    this.loading = true;
     console.log(e);
     this.form.get('expediente').setValue(e.id);
     this.goodsByExpediente();
@@ -379,7 +381,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
     this.form.get('mes').updateValueAndValidity();
   }
 
-  getCveAct(element:any){
+  getCveAct(element: any) {
     return new Promise((resolve, reject) => {
       const model: ICveAct = {
         pExpedientNumber: this.numberExpedient,
@@ -387,21 +389,22 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
         pVarTypeActa1: 'SUSPENSION',
         pVarTypeActa2: 'RECEPCAN',
       };
-      console.log(model)
+      console.log(model);
       this.serviceProceeding.getCveAct(model).subscribe(
         res => {
-          if(res.data.length > 0){
-          resolve({
-            acta: res.data[0]['cve_acta'],
-          });
-          }else{
+          if (res.data.length > 0) {
+            resolve({
+              acta: res.data[0]['cve_acta'],
+            });
+          } else {
             resolve({ acta: null });
           }
         },
         err => {
           resolve({ acta: null });
-        })
-    })
+        }
+      );
+    });
   }
 
   validateGood(element: any) {
@@ -433,30 +436,55 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                   bamparo = true;
                   this.serviceProceeding.getCveAct(model).subscribe(
                     res => {
-                      if(res.data.length > 0){
-                        resolve({ avalaible: false, bamparo: bamparo, acta: res.data[0]['cve_acta'] });
-                      }else{
-                        resolve({ avalaible: di_disponible, bamparo: bamparo, acta: null });
+                      if (res.data.length > 0) {
+                        resolve({
+                          avalaible: false,
+                          bamparo: bamparo,
+                          acta: res.data[0]['cve_acta'],
+                        });
+                      } else {
+                        resolve({
+                          avalaible: di_disponible,
+                          bamparo: bamparo,
+                          acta: null,
+                        });
                       }
                     },
                     err => {
-                      resolve({ avalaible: di_disponible, bamparo: bamparo, acta: null });
-                    })
-                 
+                      resolve({
+                        avalaible: di_disponible,
+                        bamparo: bamparo,
+                        acta: null,
+                      });
+                    }
+                  );
                 },
                 err => {
                   bamparo = false;
                   this.serviceProceeding.getCveAct(model).subscribe(
                     res => {
-                      if(res.data.length > 0){
-                        resolve({ avalaible: false, bamparo: bamparo, acta: res.data[0]['cve_acta'] });
-                      }else{
-                        resolve({ avalaible: di_disponible, bamparo: bamparo, acta: null });
+                      if (res.data.length > 0) {
+                        resolve({
+                          avalaible: false,
+                          bamparo: bamparo,
+                          acta: res.data[0]['cve_acta'],
+                        });
+                      } else {
+                        resolve({
+                          avalaible: di_disponible,
+                          bamparo: bamparo,
+                          acta: null,
+                        });
                       }
                     },
                     err => {
-                      resolve({ avalaible: di_disponible, bamparo: bamparo, acta: null });
-                    })
+                      resolve({
+                        avalaible: di_disponible,
+                        bamparo: bamparo,
+                        acta: null,
+                      });
+                    }
+                  );
                 }
               );
           },
@@ -469,29 +497,55 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                   bamparo = true;
                   this.serviceProceeding.getCveAct(model).subscribe(
                     res => {
-                      if(res.data.length > 0){
-                        resolve({ avalaible: false, bamparo: bamparo, acta: res.data[0]['cve_acta'] });
-                      }else{
-                        resolve({ avalaible: di_disponible, bamparo: bamparo, acta: null });
+                      if (res.data.length > 0) {
+                        resolve({
+                          avalaible: false,
+                          bamparo: bamparo,
+                          acta: res.data[0]['cve_acta'],
+                        });
+                      } else {
+                        resolve({
+                          avalaible: di_disponible,
+                          bamparo: bamparo,
+                          acta: null,
+                        });
                       }
                     },
                     err => {
-                      resolve({ avalaible: di_disponible, bamparo: bamparo, acta: null });
-                    })
+                      resolve({
+                        avalaible: di_disponible,
+                        bamparo: bamparo,
+                        acta: null,
+                      });
+                    }
+                  );
                 },
                 err => {
                   bamparo = false;
                   this.serviceProceeding.getCveAct(model).subscribe(
                     res => {
-                      if(res.data.length > 0){
-                        resolve({ avalaible: false, bamparo: bamparo, acta: res.data[0]['cve_acta'] });
-                      }else{
-                        resolve({ avalaible: di_disponible, bamparo: bamparo, acta: null });
+                      if (res.data.length > 0) {
+                        resolve({
+                          avalaible: false,
+                          bamparo: bamparo,
+                          acta: res.data[0]['cve_acta'],
+                        });
+                      } else {
+                        resolve({
+                          avalaible: di_disponible,
+                          bamparo: bamparo,
+                          acta: null,
+                        });
                       }
                     },
                     err => {
-                      resolve({ avalaible: di_disponible, bamparo: bamparo, acta: null });
-                    })
+                      resolve({
+                        avalaible: di_disponible,
+                        bamparo: bamparo,
+                        acta: null,
+                      });
+                    }
+                  );
                 }
               );
           }
@@ -652,7 +706,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
 
   goodsByExpediente() {
     //Validar si hay un acta abierta
-    this.loading = true
+    this.loading = true;
     this.getDataExpedient();
     this.noRequireAct1();
     this.initialBool = true;
@@ -661,7 +715,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
     this.act2Valid = false;
     this.navigateProceedings = false;
     this.newAct = true;
-    this.form.get('statusProceeding').reset()
+    this.form.get('statusProceeding').reset();
     this.goodData = [];
     this.dataGoodAct.load(this.goodData);
     this.numberProceeding = 0;
@@ -696,10 +750,10 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                 res.data.map(async (e: any) => {
                   let disponible: boolean;
                   const resp = await this.validateGood(e);
-                  const act = await this.getCveAct(e)
+                  const act = await this.getCveAct(e);
                   disponible = JSON.parse(JSON.stringify(resp)).avalaible;
-                  const acta = JSON.parse(JSON.stringify(resp)).acta
-                  return { ...e, avalaible: disponible, acta:acta };
+                  const acta = JSON.parse(JSON.stringify(resp)).acta;
+                  return { ...e, avalaible: disponible, acta: acta };
                 })
               );
               this.dataGoods.load(newData);
@@ -728,7 +782,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
           },
           error: (err: any) => {
             console.error(err);
-            this.loading = false
+            this.loading = false;
             if (err.status === 404) {
               this.initialBool = false;
               this.requireAct1();
@@ -744,7 +798,6 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
               );
             }
             if (err.status === 400) {
-              
               this.initialBool = false;
               this.requireAct1();
               this.maxDate = new Date();
@@ -775,12 +828,12 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
         res => {
           console.log(res);
           this.searchByOtherData = true;
-          this.loading = false
+          this.loading = false;
           this.dataExpedients = new DefaultSelect(res.data);
         },
         err => {
           console.log(err);
-          this.loading = false
+          this.loading = false;
           this.form.get('averPrev').setValue(null);
           this.dataExpedients = new DefaultSelect();
           this.alert(
@@ -824,7 +877,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
     this.form.get('autoridadCancela').setValue(null);
     this.form.get('elabora').setValue(null);
     this.form.get('testigo').setValue(null);
-    this.form.get('statusProceeding').reset()
+    this.form.get('statusProceeding').reset();
     this.labelActa = 'Cerrar acta';
     this.btnCSSAct = 'btn-primary';
     this.act2Valid = false;
@@ -898,7 +951,11 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
           this.labelActa = 'Cerrar acta';
           this.btnCSSAct = 'btn-primary';
           this.inputsReopenProceeding();
-        } else if (['CERRADO', 'CERRADA'].includes(this.form.get('statusProceeding').value)) {
+        } else if (
+          ['CERRADO', 'CERRADA'].includes(
+            this.form.get('statusProceeding').value
+          )
+        ) {
           this.labelActa = 'Abrir acta';
           this.btnCSSAct = 'btn-success';
           this.inputsInProceedingClose();
@@ -907,8 +964,8 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
           this.btnCSSAct = 'btn-success';
           this.inputsNewProceeding();
         }
-              this.loading = false
-              this.act2Valid = true;
+        this.loading = false;
+        this.act2Valid = true;
         this.navigateProceedings = true;
         this.idProceeding = dataRes.id;
       },
@@ -933,7 +990,11 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
           this.labelActa = 'Cerrar acta';
           this.btnCSSAct = 'btn-primary';
           this.inputsReopenProceeding();
-        } else if (['CERRADO', 'CERRADA'].includes(this.form.get('statusProceeding').value)) {
+        } else if (
+          ['CERRADO', 'CERRADA'].includes(
+            this.form.get('statusProceeding').value
+          )
+        ) {
           this.labelActa = 'Abrir acta';
           this.btnCSSAct = 'btn-success';
           this.inputsInProceedingClose();
@@ -942,16 +1003,16 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
           this.btnCSSAct = 'btn-success';
           this.inputsNewProceeding();
         }
-              this.loading = false
-              this.act2Valid = true;
+        this.loading = false;
+        this.act2Valid = true;
         this.navigateProceedings = true;
         this.idProceeding = dataRes.id;
       }
     );
   }
 
-  clearAll(){
-    this.clearInputs()
+  clearAll() {
+    this.clearInputs();
     this.form.get('expediente').reset();
     this.form.get('averPrev').reset();
     this.form.get('causaPenal').reset();
@@ -966,9 +1027,9 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
     this.dataExpedients = new DefaultSelect([]);
     this.numberProceeding = 0;
 
-    this.transferSelect = new DefaultSelect([])
-    this.recibeSelect = new DefaultSelect([])
-    this.adminSelect = new DefaultSelect([])
+    this.transferSelect = new DefaultSelect([]);
+    this.recibeSelect = new DefaultSelect([]);
+    this.adminSelect = new DefaultSelect([]);
   }
 
   clearInputs() {
@@ -1013,7 +1074,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
           console.log(typeof dataRes);
         } else {
           this.initialBool = false;
-          this.loading = false
+          this.loading = false;
           this.requireAct1();
           this.maxDate = new Date();
           this.checkChange();
@@ -1024,7 +1085,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
       err => {
         console.log(err);
         this.initialBool = false;
-        this.loading = false
+        this.loading = false;
         this.requireAct1();
         this.maxDate = new Date();
         this.getTransfer();
@@ -1286,7 +1347,13 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                                 numberProceedings: data.id,
                                 numberGood: this.selectData.id,
                                 amount: this.selectData.quantity,
-                                approvedUserXAdmon: localStorage.getItem('username') == 'sigebiadmon' ? localStorage.getItem('username') : localStorage.getItem('username').toLocaleUpperCase(),
+                                approvedUserXAdmon:
+                                  localStorage.getItem('username') ==
+                                  'sigebiadmon'
+                                    ? localStorage.getItem('username')
+                                    : localStorage
+                                        .getItem('username')
+                                        .toLocaleUpperCase(),
                               };
                             this.serviceDetailProc
                               .addGoodToProceedings(newDetailProceeding)
@@ -1371,7 +1438,9 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
 
   deleteGoods() {
     let v_ban: boolean;
-    if (['CERRADO', 'CERRADA'].includes(this.form.get('statusProceeding').value)) {
+    if (
+      ['CERRADO', 'CERRADA'].includes(this.form.get('statusProceeding').value)
+    ) {
       this.alert(
         'error',
         'El acta está cerrada',
@@ -1472,7 +1541,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
 
   //Botones
   goParcializacion() {
-    localStorage.setItem('numberExpedient', this.numberExpedient)
+    localStorage.setItem('numberExpedient', this.numberExpedient);
 
     this.router.navigate([
       '/pages/judicial-physical-reception/partializes-general-goods',
@@ -1506,10 +1575,16 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
   searchKeyProceeding() {
     const acta2Input = this.form.get('folio');
     console.log(this.act2Valid);
-    console.log(!['CERRADA', 'ABIERTA', 'CERRADO'].includes(this.form.get('statusProceeding').value));
+    console.log(
+      !['CERRADA', 'ABIERTA', 'CERRADO'].includes(
+        this.form.get('statusProceeding').value
+      )
+    );
     if (
       this.act2Valid &&
-      !['CERRADA', 'ABIERTA', 'CERRADO'].includes(this.form.get('statusProceeding').value)
+      !['CERRADA', 'ABIERTA', 'CERRADO'].includes(
+        this.form.get('statusProceeding').value
+      )
     ) {
       const paramsF = new FilterParams();
       paramsF.addFilter('keysProceedings', this.form.get('acta2').value);
@@ -1541,7 +1616,9 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
 
         paramsF.addFilter(
           'valUser',
-          localStorage.getItem('username') == 'sigebiadmon' ? localStorage.getItem('username') : localStorage.getItem('username').toLocaleUpperCase(),
+          localStorage.getItem('username') == 'sigebiadmon'
+            ? localStorage.getItem('username')
+            : localStorage.getItem('username').toLocaleUpperCase()
         );
         paramsF.addFilter('valMinutesNumber', this.idProceeding);
         this.serviceProgrammingGood
@@ -1600,7 +1677,9 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                               res => {
                                 this.labelActa = 'Cerrar acta';
                                 this.btnCSSAct = 'btn-primary';
-                                this.form.get('statusProceeding').setValue('ABIERTA');
+                                this.form
+                                  .get('statusProceeding')
+                                  .setValue('ABIERTA');
                                 this.reopening = true;
                                 this.inputsReopenProceeding();
                                 this.alert(
@@ -1642,7 +1721,11 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
 
                         paramsF.addFilter(
                           'valUser',
-                          localStorage.getItem('username') == 'sigebiadmon' ? localStorage.getItem('username') : localStorage.getItem('username').toLocaleUpperCase(),
+                          localStorage.getItem('username') == 'sigebiadmon'
+                            ? localStorage.getItem('username')
+                            : localStorage
+                                .getItem('username')
+                                .toLocaleUpperCase()
                         );
                         paramsF.addFilter(
                           'valMinutesNumber',
@@ -1689,7 +1772,13 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                                     ),
                                     address: this.form.get('direccion').value,
                                     statusProceedings: 'ABIERTA',
-                                    elaborate: localStorage.getItem('username') == 'sigebiadmon' ? localStorage.getItem('username') : localStorage.getItem('username').toLocaleUpperCase(),
+                                    elaborate:
+                                      localStorage.getItem('username') ==
+                                      'sigebiadmon'
+                                        ? localStorage.getItem('username')
+                                        : localStorage
+                                            .getItem('username')
+                                            .toLocaleUpperCase(),
                                     numFile: this.form.get('expediente').value,
                                     witness1:
                                       this.form.get('autoridadCancela').value,
@@ -1758,7 +1847,9 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                                           this.form
                                             .get('fecCaptura')
                                             .setValue(new Date());
-                                            this.form.get('statusProceeding').setValue('ABIERTA');
+                                          this.form
+                                            .get('statusProceeding')
+                                            .setValue('ABIERTA');
                                           this.labelActa = 'Cerrar acta';
                                           this.btnCSSAct = 'btn-primary';
                                           this.inputsInProceedingClose();
@@ -1805,7 +1896,9 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
   }
 
   openProceeding() {
-    if (['CERRADO', 'CERRADA'].includes(this.form.get('statusProceeding').value)) {
+    if (
+      ['CERRADO', 'CERRADA'].includes(this.form.get('statusProceeding').value)
+    ) {
       this.alertQuestion(
         'warning',
         `¿Está seguro de abrir el Acta ${this.form.get('acta2').value}?`,
@@ -1817,7 +1910,9 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
 
           paramsF.addFilter(
             'valUser',
-            localStorage.getItem('username') == 'sigebiadmon' ? localStorage.getItem('username') : localStorage.getItem('username').toLocaleUpperCase(),
+            localStorage.getItem('username') == 'sigebiadmon'
+              ? localStorage.getItem('username')
+              : localStorage.getItem('username').toLocaleUpperCase()
           );
           paramsF.addFilter('valMinutesNumber', this.idProceeding);
           this.serviceProgrammingGood
@@ -1925,7 +2020,10 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
           ),
           address: this.form.get('direccion').value,
           statusProceedings: 'ABIERTA',
-          elaborate: localStorage.getItem('username') == 'sigebiadmon' ? localStorage.getItem('username') : localStorage.getItem('username').toLocaleUpperCase(),
+          elaborate:
+            localStorage.getItem('username') == 'sigebiadmon'
+              ? localStorage.getItem('username')
+              : localStorage.getItem('username').toLocaleUpperCase(),
           numFile: this.form.get('expediente').value,
           witness1: this.form.get('autoridadCancela').value,
           witness2: this.form.get('elabora').value,
@@ -1983,7 +2081,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                 .subscribe(res => {
                   const resData = JSON.parse(JSON.stringify(res.data))[0];
                   this.form.get('fecCaptura').setValue(new Date());
-                  this.form.get('statusProceeding').setValue('ABIERTA')
+                  this.form.get('statusProceeding').setValue('ABIERTA');
                   this.labelActa = 'Cerrar acta';
                   this.btnCSSAct = 'btn-primary';
                   this.inputsReopenProceeding();
@@ -2086,7 +2184,10 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
               'yyyy-MM,dd HH:mm'
             ),
             address: this.form.get('direccion').value,
-            elaborate: localStorage.getItem('username') == 'sigebiadmon' ? localStorage.getItem('username') : localStorage.getItem('username').toLocaleUpperCase(),
+            elaborate:
+              localStorage.getItem('username') == 'sigebiadmon'
+                ? localStorage.getItem('username')
+                : localStorage.getItem('username').toLocaleUpperCase(),
             numFile: this.form.get('expediente').value,
             witness1: this.form.get('autoridadCancela').value,
             witness2: this.form.get('elabora').value,
@@ -2128,8 +2229,8 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
           this.serviceProcVal.postProceeding(newProceeding).subscribe(
             res => {
               this.initialBool = true;
-              this.form.get('statusProceeding').setValue('ABIERTA')
-              this.form.get('fecCaptura').setValue(new Date())
+              this.form.get('statusProceeding').setValue('ABIERTA');
+              this.form.get('fecCaptura').setValue(new Date());
               console.log(res);
               this.alert('success', 'Se guardo el acta de manera éxitosa', '');
             },
@@ -2176,7 +2277,9 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
   }
 
   fnOpenProceeding() {
-    if (['CERRADO', 'CERRADA'].includes(this.form.get('statusProceeding').value)) {
+    if (
+      ['CERRADO', 'CERRADA'].includes(this.form.get('statusProceeding').value)
+    ) {
       this.alertQuestion(
         'warning',
         `¿Está seguro de abrir el Acta ${this.form.get('acta2').value}?`,
@@ -2188,7 +2291,9 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
 
           paramsF.addFilter(
             'valUser',
-            localStorage.getItem('username') == 'sigebiadmon' ? localStorage.getItem('username') : localStorage.getItem('username').toLocaleUpperCase()
+            localStorage.getItem('username') == 'sigebiadmon'
+              ? localStorage.getItem('username')
+              : localStorage.getItem('username').toLocaleUpperCase()
           );
           paramsF.addFilter('valMinutesNumber', this.idProceeding);
           this.serviceProgrammingGood
@@ -2346,7 +2451,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
               });
           },
           err => {
-            console.log(err)
+            console.log(err);
             this.alert(
               'error',
               'Ocurrió un error',
@@ -2364,7 +2469,9 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
           const paramsFProg = new FilterParams();
           paramsFProg.addFilter(
             'valUser',
-            localStorage.getItem('username') == 'sigebiadmon' ? localStorage.getItem('username') : localStorage.getItem('username').toLocaleUpperCase()
+            localStorage.getItem('username') == 'sigebiadmon'
+              ? localStorage.getItem('username')
+              : localStorage.getItem('username').toLocaleUpperCase()
           );
           paramsFProg.addFilter('valMinutesNumber', idProceed);
           this.serviceProgrammingGood
@@ -2480,7 +2587,9 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                                     .subscribe(
                                       res => {
                                         console.log(res);
-                                        this.form.get('statusProceeding').setValue('CERRADO');
+                                        this.form
+                                          .get('statusProceeding')
+                                          .setValue('CERRADO');
                                         this.labelActa = 'Abrir acta';
                                         this.btnCSSAct = 'btn-success';
                                         this.idProceeding = idProceed;
@@ -2524,7 +2633,11 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
     console.log(this.form.get('fecElab').value);
     if (this.form.get('statusProceeding').value != null) {
       if (this.v_atrib_del === 0) {
-        if (['CERRADO', 'CERRADA'].includes(this.form.get('statusProceeding').value)) {
+        if (
+          ['CERRADO', 'CERRADA'].includes(
+            this.form.get('statusProceeding').value
+          )
+        ) {
           this.alert(
             'error',
             'No puede elimar acta',
@@ -2583,7 +2696,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                         this.nextProce = true;
                         this.prevProce = true;
                         this.numberProceeding = 0;
-                        this.form.get('statusProceeding').reset()
+                        this.form.get('statusProceeding').reset();
                         this.labelActa = 'Cerrar acta';
                         this.btnCSSAct = 'btn-primary';
                       } else {
@@ -2595,13 +2708,13 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                           this.nextProce = true;
                           this.prevProce = true;
                           this.numberProceeding = 0;
-                          this.form.get('statusProceeding').reset()
+                          this.form.get('statusProceeding').reset();
                           this.labelActa = 'Cerrar acta';
                           this.btnCSSAct = 'btn-primary';
-                        }else{
+                        } else {
                           this.numberProceeding =
-                          this.proceedingData.length - 1;
-                  this.prevProceeding();
+                            this.proceedingData.length - 1;
+                          this.prevProceeding();
                         }
                       }
                       this.alert('success', 'Acta eliminada con éxito', '');
@@ -2627,8 +2740,8 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
   nextProceeding() {
     this.prevProce = false;
     this.nextProce = false;
-              this.loading = true
-              this.act2Valid = false;
+    this.loading = true;
+    this.act2Valid = false;
 
     if (this.numberProceeding <= this.proceedingData.length - 1) {
       this.numberProceeding += 1;
@@ -2660,7 +2773,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
     this.prevProce = false;
     this.nextProce = false;
     this.act2Valid = false;
-    this.loading = true
+    this.loading = true;
     this.noRequireAct1();
     this.clearInputs();
     if (
@@ -2674,8 +2787,8 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
           JSON.stringify(this.proceedingData[this.numberProceeding])
         );
         this.fillIncomeProceeding(dataRes, 'prevProceeding');
-              
-              this.act2Valid = false;
+
+        this.act2Valid = false;
         /* if (this.numberProceeding == 0) {
           this.prevProce = false;
         } */
@@ -2686,8 +2799,8 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
         JSON.stringify(this.proceedingData[this.numberProceeding])
       );
       this.fillIncomeProceeding(dataRes, 'prevProceeding');
-              
-              this.act2Valid = false;
+
+      this.act2Valid = false;
     }
   }
 }

@@ -1,10 +1,5 @@
 import { Component, OnInit, Renderer2 } from '@angular/core';
-import {
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  Validators,
-} from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { addDays, format } from 'date-fns';
 import * as moment from 'moment';
@@ -289,16 +284,19 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
       }
     );
 
-    this.paramsDataGoods.pipe(takeUntil(this.$unSubscribe)).subscribe(
-      params => {
-        this.getGoodsFn()
-      })
+    this.paramsDataGoods
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(params => {
+        this.getGoodsFn();
+      });
 
-    if(localStorage.getItem('numberExpedient')){
-      this.loading = true
-      this.form.get('expediente').setValue(localStorage.getItem('numberExpedient'))
-      this.newSearchExp()
-      localStorage.removeItem('numberExpedient')
+    if (localStorage.getItem('numberExpedient')) {
+      this.loading = true;
+      this.form
+        .get('expediente')
+        .setValue(localStorage.getItem('numberExpedient'));
+      this.newSearchExp();
+      localStorage.removeItem('numberExpedient');
     }
   }
 
@@ -970,8 +968,8 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     });
   }
 
-  getGoodsFn(){
-    this.loading = true
+  getGoodsFn() {
+    this.loading = true;
 
     const paramsF = new FilterParams()
     paramsF.page = this.paramsDataGoods.getValue().page
@@ -1007,13 +1005,13 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
               })
             );
             this.dataGoods.load(newData);
-            this.totalItemsDataGoods = res.count
-            this.loading = false
+            this.totalItemsDataGoods = res.count;
+            this.loading = false;
           }
         },
         error: (err: any) => {
           console.error(err);
-          this.loading = false
+          this.loading = false;
         },
       });
   }
@@ -1023,10 +1021,10 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
 
     this.render.removeClass(btn, 'enabled');
     this.render.addClass(btn, 'disabled');
-    
-    const paramsF = new FilterParams()
-    paramsF.page = this.paramsDataGoods.getValue().page
-    paramsF.limit = this.paramsDataGoods.getValue().limit
+
+    const paramsF = new FilterParams();
+    paramsF.page = this.paramsDataGoods.getValue().page;
+    paramsF.limit = this.paramsDataGoods.getValue().limit;
     this.serviceGood
       .getAllFilterDetail(
         `filter.fileNumber=$eq:${
@@ -1056,7 +1054,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
               })
             );
             this.dataGoods.load(newData);
-            this.totalItemsDataGoods = res.count
+            this.totalItemsDataGoods = res.count;
             this.getGoodsByExpedient();
             this.alert(
               'success',
@@ -1122,8 +1120,8 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     this.loading = true;
     this.newAct = true;
     this.act2Valid = false;
-    this.totalItemsDataGoods = 0
-    
+    this.totalItemsDataGoods = 0;
+
     if (this.form.get('expediente').value != null) {
       this.newSearchExp();
     } else {
@@ -1216,7 +1214,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
           'El número de expediente buscado presentó un error, puede que no exista, por favor verificar y volver a intentar.'
         );
         this.blockExpedient = false;
-        this.loading = false
+        this.loading = false;
         this.dataGoods.load([]);
         this.dataGoodAct.load([]);
         this.goodData = [];
@@ -1272,7 +1270,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
 
   //Botones
   goParcializacion() {
-    localStorage.setItem('numberExpedient', this.numberExpedient)
+    localStorage.setItem('numberExpedient', this.numberExpedient);
 
     this.router.navigate([
       '/pages/judicial-physical-reception/partializes-general-goods',
@@ -1661,7 +1659,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     this.form.get('averPrev').reset();
     this.form.get('causaPenal').reset();
     this.form.get('statusProceeding').reset();
-    this.totalItemsDataGoods = 0
+    this.totalItemsDataGoods = 0;
 
     this.dataGoods.load([]);
 
@@ -1975,7 +1973,10 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
             ),
             address: this.form.get('direccion').value,
             /* elaborate: 'SERA', */
-            elaborate: localStorage.getItem('username') == 'sigebiadmon' ? localStorage.getItem('username') : localStorage.getItem('username').toLocaleUpperCase(),
+            elaborate:
+              localStorage.getItem('username') == 'sigebiadmon'
+                ? localStorage.getItem('username')
+                : localStorage.getItem('username').toLocaleUpperCase(),
             numFile: this.form.get('expediente').value,
             witness1: this.form.get('entrega').value,
             witness2: this.form.get('recibe2').value,
