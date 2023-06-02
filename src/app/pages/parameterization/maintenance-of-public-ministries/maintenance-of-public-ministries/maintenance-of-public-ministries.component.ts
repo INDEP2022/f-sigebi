@@ -22,8 +22,7 @@ import { MaintenanceListComponent } from '../maintenance-list/maintenance-list.c
 })
 export class MaintenanceOfPublicMinistriesComponent
   extends BasePage
-  implements OnInit
-{
+  implements OnInit {
   form!: FormGroup;
   formData: Minpub = {} as Minpub;
   edit: boolean = false;
@@ -72,6 +71,7 @@ export class MaintenanceOfPublicMinistriesComponent
       manager: [
         null,
         [
+          Validators.required,
           Validators.minLength(1),
           Validators.maxLength(100),
           Validators.pattern(STRING_PATTERN),
@@ -80,6 +80,7 @@ export class MaintenanceOfPublicMinistriesComponent
       street: [
         null,
         [
+          Validators.required,
           Validators.minLength(1),
           Validators.maxLength(60),
           Validators.pattern(STRING_PATTERN),
@@ -87,15 +88,16 @@ export class MaintenanceOfPublicMinistriesComponent
       ],
       insideNumber: [
         null,
-        [Validators.maxLength(10), Validators.pattern(STRING_PATTERN)],
+        [Validators.required, Validators.maxLength(10), Validators.pattern(STRING_PATTERN)],
       ],
       outNumber: [
         null,
-        [Validators.maxLength(100), Validators.pattern(STRING_PATTERN)],
+        [Validators.required, Validators.maxLength(100), Validators.pattern(STRING_PATTERN)],
       ],
       colony: [
         null,
         [
+          Validators.required,
           Validators.minLength(1),
           Validators.maxLength(60),
           Validators.pattern(STRING_PATTERN),
@@ -104,17 +106,18 @@ export class MaintenanceOfPublicMinistriesComponent
       delegNunic: [
         null,
         [
+          Validators.required,
           Validators.minLength(1),
           Validators.maxLength(60),
           Validators.pattern(STRING_PATTERN),
         ],
       ],
-      zipCode: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      zipCode: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
       phone: [
         null,
-        [Validators.maxLength(20), Validators.pattern(STRING_PATTERN)],
+        [Validators.required, Validators.maxLength(20), Validators.pattern(STRING_PATTERN)],
       ],
-      idCity: [null],
+      idCity: [null, [Validators.required]],
       entity: [null],
       delegation: [null],
       subDelegation: [null],
