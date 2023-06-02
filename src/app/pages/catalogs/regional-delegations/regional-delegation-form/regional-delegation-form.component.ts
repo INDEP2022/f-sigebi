@@ -8,7 +8,7 @@ import { CityService } from 'src/app/core/services/catalogs/city.service';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
 import { ZoneGeographicService } from 'src/app/core/services/catalogs/zone-geographic.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -51,7 +51,11 @@ export class RegionalDelegationFormComponent
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
       registerNumber: [null],
-      idGeographicZona: [null, [Validators.required]],
+      idGeographicZona: [
+        null,
+        [Validators.required],
+        Validators.pattern(NUMBERS_PATTERN),
+      ],
       version: [1],
       regionalDelegate: [null, [Validators.required]],
       officeAddress: [null, [Validators.required]],
@@ -115,9 +119,11 @@ export class RegionalDelegationFormComponent
   }
   fillSelectZone() {
     const zone = this.regionalDelegationForm.get('zone').value;
-    this.regionalDelegationForm.controls['idGeographicZona'].setValue(
-      this.regionalDelegation.id
-    );
+    if (zone != null) {
+      this.regionalDelegationForm.controls['idGeographicZona'].setValue(
+        this.regionalDelegation.id
+      );
+    }
   }
 
   getCity(param: ListParams) {
