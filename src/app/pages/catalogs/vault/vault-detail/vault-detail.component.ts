@@ -203,7 +203,7 @@ export class VaultDetailComponent extends BasePage implements OnInit {
 
         this.onLoadToast('error', 'Error', error);
       },
-      () => { }
+      () => {}
     );
   }
 

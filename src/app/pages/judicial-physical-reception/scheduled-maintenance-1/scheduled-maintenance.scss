@@ -51,6 +51,10 @@
   color: #dc3545 !important;
 }
 
+:host ::ng-deep app-columns-select > div {
+  width: 100%;
+}
+
 :host {
   ::ng-deep ng2-smart-table-filter {
     .ng2-smart-filter input,
