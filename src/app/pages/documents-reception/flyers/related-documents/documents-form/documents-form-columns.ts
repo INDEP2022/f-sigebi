@@ -1,15 +1,12 @@
 export const DOCUMENTS_COLUMNS = {
-  officialNumber: {
+  cve_documento: {
     title: 'Documento',
     type: 'string',
     sort: false,
   },
-  key: {
+  descripcion: {
     title: 'Observaciones',
     type: 'string',
     sort: false,
-    valuePrepareFunction: (value: any) => {
-      return value.description;
-    },
   },
 };

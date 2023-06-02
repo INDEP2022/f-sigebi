@@ -100,7 +100,7 @@ export class DocumentsFormComponent extends BasePage implements OnInit {
   getDocumentsbyDictation() {
     this.loading = true;
     let num = this.dictationService.goodNumber;
-    this.documentService.getDocumentsByGood(num).subscribe({
+    this.documentService.getByGoodId(num).subscribe({
       next: data => {
         this.documents = data.data;
         this.totalItems = data.count;
