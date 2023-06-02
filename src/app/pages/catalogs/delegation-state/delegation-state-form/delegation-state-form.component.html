@@ -28,25 +28,6 @@
               (change)="stateChange($event)"></ngx-select>
           </form-field>
         </div>
-        <!-- <div class="col-md-4">
-          <form-field
-            [control]="delegationStateForm.get('stateCode')"
-            label="Código de Estado">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="stateCode" />
-                            <ngx-select
-              (fetchItems)="getStates($event)"
-              [form]="delegationStateForm"
-              [data]="states"
-              [searchable]="true"
-              bindLabel="nameCity"
-              label="Código de Estado"
-              control="Estado">
-              </ngx-select>
-          </form-field>
-        </div> -->
         <div class="col-md-4">
           <form-field
             [control]="delegationStateForm.get('keyState')"
@@ -70,15 +51,13 @@
           </form-field>
         </div>
 
-        <div class="col-md-3">
-          <form-field
-            [control]="delegationStateForm.get('status')"
-            label="Status">
-            <input
-              type="string"
-              class="form-control"
-              formControlName="status" />
-          </form-field>
+        <div class="col-md-3 d-flex">
+          <form-radio label="Activo">
+            <input type="radio" formControlName="status" value="1" />
+          </form-radio>
+          <form-radio label="Inactivo">
+            <input type="radio" formControlName="status" value="0" />
+          </form-radio>
         </div>
       </div>
     </form>

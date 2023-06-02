@@ -2,20 +2,19 @@ import { DatePipe } from '@angular/common';
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import {
-  FilterParams,
-  SearchFilter,
-} from 'src/app/common/repository/interfaces/list-params';
+import { BehaviorSubject } from 'rxjs';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { MJobManagementService } from 'src/app/core/services/ms-office-management/m-job-management.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { JuridicalFileUpdateService } from '../../../file-data-update/services/juridical-file-update.service';
-import { COLUMNS_DICTUMS } from '../columns';
+import { COLUMNS_OFICIO } from '../columns';
 
 @Component({
-  selector: 'app-listdictums',
-  templateUrl: './listdictums.component.html',
+  selector: 'app-listoficios',
+  templateUrl: './listoficios.component.html',
   styles: [],
 })
-export class ListdictumsComponent extends BasePage implements OnInit {
+export class ListoficiosComponent extends BasePage implements OnInit {
   string_PTRN: `[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ@\\s\\.,_\\-¿?\\\\/()%$#¡!|]*'; [a-zA-Z0-9áéíóúÁÉÍÓÚñÑ@\\s\\.,_\\-¿?\\\\/()%$#¡!|]`;
   @Output() dataText = new EventEmitter<any>();
   dataEdit: any;
@@ -24,28 +23,33 @@ export class ListdictumsComponent extends BasePage implements OnInit {
   settings1 = { ...this.settings };
   data1: any = [];
   dictumSeleccionada: any;
+  params: any = new BehaviorSubject<ListParams>(new ListParams());
   constructor(
     private datePipe: DatePipe,
     private modalRef: BsModalRef,
-    public fileUpdateService: JuridicalFileUpdateService
+    public fileUpdateService: JuridicalFileUpdateService,
+    private mJobManagementService: MJobManagementService
   ) {
     super();
     this.settings1 = {
       ...this.settings,
       actions: false,
-      columns: { ...COLUMNS_DICTUMS },
+      columns: { ...COLUMNS_OFICIO },
     };
   }
 
   ngOnInit(): void {
-    this.checkDictum(this.noVolante_);
+    this.checkOficio(this.noVolante_);
   }
 
-  async checkDictum(data: any) {
+  async checkOficio(data: any) {
     this.loading = true;
-    const params = new FilterParams();
-    params.addFilter('wheelNumber', data, SearchFilter.EQ);
-    this.fileUpdateService.getDictation(params.getParams()).subscribe({
+    let params = {
+      ...this.params,
+    };
+    params['filter.flyerNumber'] = `$eq:${data}`;
+
+    this.mJobManagementService.getAll(params).subscribe({
       next: data => {
         let result = data.data.map((item: any) => {
           item['dateDicta'] = this.datePipe.transform(

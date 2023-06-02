@@ -4,8 +4,10 @@ import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { PersonService } from 'src/app/core/services/catalogs/person.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
+  CURP_PATTERN,
   NUMBERS_PATTERN,
   PHONE_PATTERN,
+  RFC_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
 
@@ -16,8 +18,7 @@ import {
 })
 export class MaintenanceIndividualsAndCompaniesComponent
   extends BasePage
-  implements OnInit
-{
+  implements OnInit {
   form!: FormGroup;
   isCreate: boolean = true;
   edit: boolean = false;
@@ -66,9 +67,9 @@ export class MaintenanceIndividualsAndCompaniesComponent
         null,
         [Validators.pattern(PHONE_PATTERN), Validators.maxLength(13)],
       ],
-      observations: [null, [Validators.maxLength(100)]],
-      rfc: [null, [Validators.maxLength(20)]],
-      curp: [null, [Validators.maxLength(20)]],
+      observations: [null, [Validators.required, Validators.maxLength(100)]],
+      rfc: [null, [Validators.pattern(RFC_PATTERN)]],
+      curp: [null, [Validators.pattern(CURP_PATTERN)]],
       curriculumV: [null],
       curriculum: ['N'],
       typePerson: [null, Validators.required],
@@ -86,6 +87,10 @@ export class MaintenanceIndividualsAndCompaniesComponent
       this.form.controls['federative'].setValue(
         this.dataPerson.state.descCondition
       );
+      if (this.form.controls['typePerson'].value === 'M') {
+        this.form.get('manager').setValidators(Validators.required);
+        this.form.get('numberDeep').setValidators(Validators.required);
+      }
       console.log(this.form.value);
     }
     this.onChangeForm();
@@ -149,6 +154,19 @@ export class MaintenanceIndividualsAndCompaniesComponent
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();
+  }
+  typeChange(data: string) {
+    if (data === 'M') {
+      this.form.get('manager').setValidators(Validators.required);
+      this.form.get('numberDeep').setValidators(Validators.required);
+      this.form.get('manager').updateValueAndValidity();
+      this.form.get('numberDeep').updateValueAndValidity();
+    } else {
+      this.form.get('manager').clearValidators();
+      this.form.get('numberDeep').clearValidators();
+      this.form.get('manager').updateValueAndValidity();
+      this.form.get('numberDeep').updateValueAndValidity();
+    }
   }
   close() {
     this.modalRef.hide();

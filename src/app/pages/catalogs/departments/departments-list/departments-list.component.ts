@@ -11,7 +11,6 @@ import {
 import { IDepartment } from 'src/app/core/models/catalogs/department.model';
 import { DepartamentService } from 'src/app/core/services/catalogs/departament.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import Swal from 'sweetalert2';
 import { DepartmentFormComponent } from '../department-form/department-form.component';
 import { DEPARTMENT_COLUMNS } from './department-columns';
 
@@ -43,7 +42,6 @@ export class DepartmentsListComponent extends BasePage implements OnInit {
         position: 'right',
       },
     };
-    // this.settings.actions.delete = true;
   }
 
   ngOnInit(): void {
@@ -57,36 +55,13 @@ export class DepartmentsListComponent extends BasePage implements OnInit {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
-            /*SPECIFIC CASES*/
-            // switch (filter.field) {
-            //   case 'id':
-            //     searchFilter = SearchFilter.EQ;
-            //     break;
-            //   case 'dsarea':
-            //     searchFilter = SearchFilter.EQ;
-            //     break;
-            //   case 'Delegación':
-            //     `filter.${filter.field}.description`;
-            //     break;
-            //   case 'numSubDelegation':
-            //     searchFilter = SearchFilter.ILIKE;
-            //     field = `filter.${filter.field}.description`;
-            //     break;
-            //   case 'description':
-            //     searchFilter = SearchFilter.EQ;
-            //     break;
-            //   default:
-            //     searchFilter = SearchFilter.ILIKE;
-            //     break;
-            // }
             filter.field == 'id' ||
-              filter.field == 'dsarea' ||
-              filter.field == 'Delegación' ||
-              console.log('numero');
-            filter.field == 'numSubDelegation' || filter.field == 'description'
+            filter.field == 'dsarea' ||
+            filter.field == 'numDelegation' ||
+            filter.field == 'numSubDelegation' ||
+            filter.field == 'description'
               ? (searchFilter = SearchFilter.EQ)
               : (searchFilter = SearchFilter.ILIKE);
-
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
@@ -139,14 +114,15 @@ export class DepartmentsListComponent extends BasePage implements OnInit {
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(department.id);
-        Swal.fire('Borrado', '', 'success');
       }
     });
   }
 
   delete(id: number) {
     this.departmentService.remove(id).subscribe({
-      next: () => this.getDepartments(),
+      next: () => {
+        this.getDepartments(), this.alert('success', 'Departamento', 'Borrado');
+      },
     });
   }
 }

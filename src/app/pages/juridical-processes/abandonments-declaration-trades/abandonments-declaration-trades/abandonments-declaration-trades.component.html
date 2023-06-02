@@ -6,7 +6,7 @@
       </div>
       <div class="col-md-6 pt-2">
         <div class="d-flex justify-content-end">
-          <div class="">
+          <div>
             <app-form-search-handler
               [columnsType]="columnsType"
               [service]="fileUpdateService"
@@ -451,6 +451,30 @@
         <tab heading="OFICIO" [disabled]="!disabledTabs" *ngIf="showTabs">
           <!-- Forms OFICIO -->
           <form [formGroup]="formOficio" class="container-fluid form-material">
+            <div class="row">
+              <div class="d-flex justify-content-end">
+                <div class="d-inline mx-2">
+                  <div class="btn-group">
+                    <button
+                      type="button"
+                      (click)="newMOficioG()"
+                      tooltip="Agregar Oficio"
+                      containerClass="tooltip-style"
+                      class="btn btn-info btn-sm active ml-2 mr-2">
+                      <i class="bx bx-plus bx-sm float-icon"></i>
+                    </button>
+                    <button
+                      type="button"
+                      (click)="listMOficiosG()"
+                      tooltip="Oficios Disponibles"
+                      containerClass="tooltip-style"
+                      class="btn btn-primary btn-sm active">
+                      <i class="bx bx-list-plus bx-sm float-icon"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
             <div class="row w-100 justify-content-center">
               <div class="col-12">
                 <div class="row mt-5">
@@ -497,6 +521,7 @@
                       <div class="col-sm-12 col-12 mt-5">
                         <form-field [control]="formOficio.get('remitente')">
                           <ngx-select
+                            [readonly]="!disabledMOficGest"
                             [form]="formOficio"
                             [data]="senders"
                             (fetchItems)="getSenders($event)"
@@ -515,6 +540,7 @@
                           *ngIf="!externoVal"
                           [control]="formOficio.get('destinatario')">
                           <ngx-select
+                            [readonly]="!disabledMOficGest"
                             [form]="formOficio"
                             [data]="recipients"
                             (fetchItems)="getRecipients($event)"
@@ -533,6 +559,7 @@
                           [control]="formOficio.get('destinatario')"
                           label="Destinatario">
                           <textarea
+                            [readonly]="!disabledMOficGest"
                             class="form-control"
                             formControlName="destinatario"></textarea>
                         </form-field>
@@ -540,6 +567,7 @@
                       <div class="col-sm-12 col-12 mt-5">
                         <form-field [control]="formOficio.get('ciudad')">
                           <ngx-select
+                            [readonly]="!disabledMOficGest"
                             [form]="formOficio"
                             [data]="cities2"
                             (fetchItems)="getCities2($event)"
@@ -641,7 +669,7 @@
                   label="Inicio">
                   <textarea
                     rows="7"
-                    [disabled]="!disabledBTNs"
+                    [readonly]="!disabledMOficGest"
                     (change)="disabledText()"
                     (dblclick)="editText($event, 'OficioInicio')"
                     class="form-control"
@@ -654,7 +682,7 @@
                   label="Fin">
                   <textarea
                     rows="7"
-                    [disabled]="!disabledBTNs"
+                    [readonly]="!disabledMOficGest"
                     (change)="disabledText()"
                     (dblclick)="editText($event, 'OficioFin')"
                     class="form-control"
@@ -680,7 +708,7 @@
             </div>
             <div class="col-1">
               <button
-                [disabled]="!disabledDocs"
+                [disabled]="!disabledDocs || !disabledMOficGest"
                 (click)="docAct()"
                 class="btn btn-secondary btn-sm active">
                 Doc.
@@ -707,14 +735,15 @@
                     <form-field
                       [control]="formCcpOficio.get('ccp')"
                       label="C&#46;P&#46;P">
-                      <select
+                      <ng-select
+                        [readonly]="!disabledMOficGest"
                         (change)="ccpChange($event)"
                         class="form-control"
                         formControlName="ccp">
                         <!-- <option [value]="null">Seleccione un valor</option> -->
-                        <option [value]="'INTERNO'">INTERNO</option>
-                        <option [value]="'EXTERNO'">EXTERNO</option>
-                      </select>
+                        <ng-option [value]="'INTERNO'">INTERNO</ng-option>
+                        <ng-option [value]="'EXTERNO'">EXTERNO</ng-option>
+                      </ng-select>
                     </form-field>
                   </div>
                   <div class="col-sm-12 col-12 col-md-10 p-1 pt-0 pb-0">
@@ -723,12 +752,14 @@
                       [control]="formCcpOficio.get('nombreUsuario')"
                       label="Nombre Usuario">
                       <input
+                        [readonly]="!disabledMOficGest"
                         class="form-control"
                         formControlName="nombreUsuario"
                         type="text" />
                     </form-field>
 
                     <ngx-select
+                      [readonly]="!disabledMOficGest"
                       id="selectAbandono"
                       *ngIf="valInterno"
                       [data]="items"
@@ -747,14 +778,15 @@
                     <form-field
                       [control]="formCcpOficio.get('ccp2')"
                       label="C&#46;P&#46;P">
-                      <select
+                      <ng-select
+                        [readonly]="!disabledMOficGest"
                         (change)="ccpChange2($event)"
                         class="form-control"
                         formControlName="ccp2">
                         <!-- <option [value]="null">Seleccione un valor</option> -->
-                        <option [value]="'INTERNO'">INTERNO</option>
-                        <option [value]="'EXTERNO'">EXTERNO</option>
-                      </select>
+                        <ng-option [value]="'INTERNO'">INTERNO</ng-option>
+                        <ng-option [value]="'EXTERNO'">EXTERNO</ng-option>
+                      </ng-select>
                     </form-field>
                   </div>
                   <div class="col-sm-12 col-12 col-md-10 p-1 pt-0 pb-0">
@@ -762,6 +794,7 @@
                       *ngIf="!valInterno2"
                       [control]="formCcpOficio.get('nombreUsuario2')">
                       <input
+                        [readonly]="!disabledMOficGest"
                         class="form-control"
                         formControlName="nombreUsuario2"
                         type="text"
@@ -769,6 +802,7 @@
                         id="cpp2" />
                     </form-field>
                     <ngx-select
+                      [readonly]="!disabledMOficGest"
                       id="selectAbandono"
                       *ngIf="valInterno2"
                       [data]="items"
@@ -807,6 +841,7 @@
                   </button>
                   <button
                     (click)="envofi()"
+                    [disabled]="!disabledMOficGest"
                     class="btn btn-secondary btn-sm active ml-2 mr-2">
                     <i *ngIf="iconLock" class="bx bx-lock-open-alt"></i>
                     <i *ngIf="!iconLock" class="bx bx-lock-alt"></i>
@@ -819,6 +854,7 @@
                   </button> -->
                   <button
                     (click)="borrar()"
+                    [disabled]="!disabledMOficGest"
                     type="button"
                     class="btn btn-danger btn-sm active ml-2 mr-2">
                     Borra

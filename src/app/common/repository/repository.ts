@@ -79,6 +79,11 @@ export class Repository<T> implements IRepository<T> {
     const fullRoute = this.buildRoute(route);
     return this.httpClient.delete(`${fullRoute}/id/${id}`);
   }
+  removeDocSac(route: string, formData: any) {
+    console.log(formData);
+    const fullRoute = this.buildRoute(route);
+    return this.httpClient.delete(`${fullRoute}/id/${formData.id}`);
+  }
 
   updateByIds(route: string, ids: Partial<T>, formData: Object) {
     const fullRoute = this.buildRoute(route);

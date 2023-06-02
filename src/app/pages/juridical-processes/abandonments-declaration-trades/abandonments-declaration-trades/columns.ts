@@ -60,8 +60,31 @@ export const COLUMNS_DICTUMS = {
     type: 'string',
     sort: false,
   },
-  dictDate: {
+  dateDicta: {
     title: 'Fecha Dictamen',
+    type: 'string',
+    sort: false,
+  },
+};
+
+export const COLUMNS_OFICIO = {
+  managementNumber: {
+    title: 'No. Oficio',
+    type: 'string',
+    sort: false,
+  },
+  cveManagement: {
+    title: 'Clave Oficio',
+    type: 'string',
+    sort: false,
+  },
+  statusOf: {
+    title: 'Estatus',
+    type: 'string',
+    sort: false,
+  },
+  insertDate: {
+    title: 'Fecha Captura',
     type: 'string',
     sort: false,
   },

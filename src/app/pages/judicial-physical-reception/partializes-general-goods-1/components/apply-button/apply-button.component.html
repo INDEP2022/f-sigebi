@@ -1,6 +1,10 @@
 <div
   class="mx-1 my-1"
-  [class]="!good || loading || bienesPar.length === 0 ? 'disabled' : ''"
+  [class]="
+    !good || loading || bienesPar.length === 0 || saldoValue === 0
+      ? 'disabled'
+      : ''
+  "
   size="small"
   (click)="apply()">
   Aplica
