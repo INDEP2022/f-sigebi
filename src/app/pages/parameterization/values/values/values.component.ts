@@ -82,6 +82,7 @@ export class ValuesComponent extends BasePage implements OnInit {
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getValuesAll());
   }
+
   getValuesAll() {
     this.loading = true;
     let params = {
@@ -103,6 +104,7 @@ export class ValuesComponent extends BasePage implements OnInit {
       },
     });
   }
+
   rowsSelected(event: any) {
     this.totalItems2 = 0;
     this.tvalTableList = [];
@@ -133,6 +135,7 @@ export class ValuesComponent extends BasePage implements OnInit {
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.gettvalTable(this.values));
   }
+
   gettvalTable(values: ITablesType) {
     this.loading = true;
     let params = {
@@ -151,6 +154,7 @@ export class ValuesComponent extends BasePage implements OnInit {
       error: error => (this.loading = false),
     });
   }
+
   openForm(tvalTable?: ITvaltable1) {
     if (this.values) {
       console.log(tvalTable);
@@ -164,6 +168,7 @@ export class ValuesComponent extends BasePage implements OnInit {
               this.totalItems2 = 0;
               this.tvalTableList = [];
               this.getValuesAll();
+              this.gettvalTable(this.values);
             }
           },
         },
