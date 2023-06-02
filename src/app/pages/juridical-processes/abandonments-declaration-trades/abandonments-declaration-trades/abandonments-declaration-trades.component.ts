@@ -498,6 +498,10 @@ export class AbandonmentsDeclarationTradesComponent
       this.disabledTabs = false;
     }
     this.formOficiopageFin.get('fin').setValue('');
+    this.declarationForm
+      .get('preliminaryInquiry')
+      .setValue(data.preliminaryInquiry);
+    this.declarationForm.get('criminalCase').setValue(data.criminalCase);
     await this.onLoadGoodList('all');
     await this.validDesahogo(data);
     await this.checkDictum(data.wheelNumber, 'all');
@@ -530,6 +534,13 @@ export class AbandonmentsDeclarationTradesComponent
     this.formOficiopageFin.get('fin').setValue('');
     this.formOficio.get('destinatario').setValue('');
     this.formOficio.get('remitente').setValue('');
+
+    this.declarationForm.get('preliminaryInquiry').setValue('');
+    this.declarationForm.get('criminalCase').setValue('');
+    this.formCcpOficio.get('ccp2').setValue(null);
+    this.formCcpOficio.get('ccp').setValue(null);
+    this.formCcpOficio.get('nombreUsuario2').setValue(null);
+    this.formCcpOficio.get('nombreUsuario').setValue(null);
   }
 
   async getSenders(params: ListParams) {
@@ -820,10 +831,6 @@ export class AbandonmentsDeclarationTradesComponent
         next: data => {
           this.courtName = data.courtName;
           this.declarationForm.get('expedientNumber').setValue(expedientNumber);
-          this.declarationForm
-            .get('preliminaryInquiry')
-            .setValue(data.preliminaryInquiry);
-          this.declarationForm.get('criminalCase').setValue(data.criminalCase);
           this.expedientData = data;
           this.filtroTipos(data);
           console.log('EXPEDIENTE', data);
@@ -884,9 +891,10 @@ export class AbandonmentsDeclarationTradesComponent
         
       `;
       this.formDeclaratoriapageFin.get('page').setValue(text1);
+      let averig = this.selectedRow == null ? '' : this.selectedRow;
       this.formDeclaratoriapageFin
         .get('fin')
-        .setValue(TEXTOS.returnText2_PGR() + '');
+        .setValue(TEXTOS.returnText2_PGR(averig) + '');
     } else {
       let text1 = `  
         LIC. JORGE F. GIL RODRÍGUEZ'
@@ -898,9 +906,10 @@ export class AbandonmentsDeclarationTradesComponent
       `;
       this.formDeclaratoriapageFin.get('page').setValue(text1);
       // VERIFICAR SI EL TEXTO DEL DEL STATUS PGR SON LOS MISMOS QUE LOS DEMÁS //
+      let averig = this.selectedRow == null ? '' : this.selectedRow;
       this.formDeclaratoriapageFin
         .get('fin')
-        .setValue(TEXTOS.returnText2_PGR() + '');
+        .setValue(TEXTOS.returnText2_PGR(averig) + '');
     }
   }
 
@@ -2215,25 +2224,32 @@ export class AbandonmentsDeclarationTradesComponent
       this.mJobManagementService.getCopyOficeManag(data).subscribe({
         next: (resp: any) => {
           if (resp.data.length >= 2) {
-            // if (resp.data[0].personExtInt == 'E') {
-            //   this.formCcpOficio.get('ccp').setValue('EXTERNO')
-            //   // this.formCcpOficio.get('nombreUsuario').setValue()
-            // } else if (resp.data[0].personExtInt == 'I') {
-            //   this.formCcpOficio.get('ccp2').setValue('INTERNO')
-            // }
+            if (resp.data[0].personExtInt == 'E') {
+              this.formCcpOficio.get('ccp').setValue('EXTERNO');
+              this.formCcpOficio
+                .get('nombreUsuario')
+                .setValue(resp.data[1].nomPersonExt);
+            } else if (resp.data[0].personExtInt == 'I') {
+              this.formCcpOficio.get('ccp').setValue('INTERNO');
 
-            // if(){
+              const paramsSender: any = new ListParams();
+              paramsSender.text = resp.data[0].addresseeCopy;
+              this.getSenders2OfiM2(paramsSender);
+            }
 
-            // }
-
+            if (resp.data[1].personExtInt == 'E') {
+              this.formCcpOficio.get('ccp2').setValue('EXTERNO');
+              this.formCcpOficio
+                .get('nombreUsuario2')
+                .setValue(resp.data[1].nomPersonExt);
+            } else if (resp.data[1].personExtInt == 'I') {
+              this.formCcpOficio.get('ccp2').setValue('INTERNO');
+              const paramsSender: any = new ListParams();
+              paramsSender.text = resp.data[1].addresseeCopy;
+              this.getSenders2OfiM(paramsSender);
+            }
             resp.data[1];
           }
-          // let result = resp.data.map((item: any) =>{
-          // if (item.personExtInt == 'E'){
-
-          // }
-          // item['']
-          // })
           console.log('COPYYYY', resp);
           this.loading = false;
           resolve(resp);
@@ -2244,6 +2260,48 @@ export class AbandonmentsDeclarationTradesComponent
         },
       });
     });
+  }
+
+  async getSenders2OfiM(params: ListParams) {
+    params['filter.user'] = `$eq:${params.text}`;
+    this.securityService.getAllUsersTracker(params).subscribe(
+      (data: any) => {
+        let result = data.data.map(async (item: any) => {
+          item['userAndName'] = item.user + ' - ' + item.name;
+        });
+        Promise.all(result).then((resp: any) => {
+          this.formCcpOficio.get('nombreUsuario2').setValue(data.data[0]);
+          // this.senders = new DefaultSelect(data.data, data.count);
+          this.loading = false;
+        });
+      },
+      error => {
+        this.senders = new DefaultSelect();
+      }
+    );
+  }
+
+  async getSenders2OfiM2(params: ListParams) {
+    params['filter.user'] = `$eq:${params.text}`;
+    this.securityService.getAllUsersTracker(params).subscribe(
+      (data: any) => {
+        console.log('COPYY2', data);
+        let result = data.data.map(async (item: any) => {
+          item['userAndName'] = item.user + ' - ' + item.name;
+        });
+
+        Promise.all(result).then((resp: any) => {
+          this.formCcpOficio
+            .get('nombreUsuario')
+            .setValue(data.data[0].userAndName);
+          // this.senders = new DefaultSelect(data.data, data.count);
+          this.loading = false;
+        });
+      },
+      error => {
+        this.senders = new DefaultSelect();
+      }
+    );
   }
 
   no_OficioGestion: string = '';
@@ -3518,9 +3576,9 @@ export class AbandonmentsDeclarationTradesComponent
           // BORRA M_OFICIO_GESTION //
           this.deleteMOficioGestion(V_NO_OF_GESTION);
           // UPDATE NOTIFICACIONES
-          if (this.dictamenes.length == 1) {
-            await this.updateNotifications(V_NO_VOLANTE);
-          }
+          // if (this.dictamenes.length == 1) {
+          //   await this.updateNotifications(V_NO_VOLANTE);
+          // }
           // this.updateNotifications(V_NO_VOLANTE);
 
           this.m_oficio_gestion = {
@@ -3563,6 +3621,7 @@ export class AbandonmentsDeclarationTradesComponent
           this.formOficiopageFin.get('fin').setValue('');
           this.data2 = [];
           this.disabledMOficGest = true;
+          this.btnOficion = true;
 
           await this.getMOficioGestion(this.noVolante_, 1);
           // FALTARIA ESTO
