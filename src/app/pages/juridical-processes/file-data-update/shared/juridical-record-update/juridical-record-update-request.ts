@@ -1,5 +1,6 @@
 import { firstValueFrom, map } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { _Params } from 'src/app/common/services/http.service';
 import { OpinionService } from 'src/app/core/services/catalogs/opinion.service';
 import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
 import { SatTransferService } from 'src/app/core/services/ms-interfacesat/sat-transfer.service';
@@ -18,7 +19,7 @@ export abstract class juridicalRecordUpdateRequest extends BasePage {
     // }
     return firstValueFrom(
       this.opinionService
-        .getById(id)
+        .getOpinionById(id)
         .pipe
         /* map(response => {
           if (firstRecord) {
@@ -52,24 +53,24 @@ export abstract class juridicalRecordUpdateRequest extends BasePage {
     );
   }
 
-  getSatTransference(officeExternalKey: string, firstRecord = false) {
+  getSatTransference(jobNumber: string, firstRecord = false) {
     /* SELECT COUNT(0)
 					INTO EXISTE
 					FROM SAT_TRANSFERENCIA
 				 WHERE SAT_DETERMINANTE||'-'||SAT_NUMOFICTRANSF = :BLK_NOT.CVE_OFICIO_EXTERNO; */
     return firstValueFrom(
-      this.satTransferenceService.byOffice2({ officeExternalKey })
+      this.satTransferenceService
+        .JobAsunto3({ jobNumber, page: 1, limit: 1 })
+        .pipe(map(res => res.count))
     );
   }
 
-  getPgrTransference(officeExternalKey: string | number) {
+  getPgrTransference(params: _Params) {
     // SELECT COUNT(0)
     // 				INTO EXISTE
     // 				FROM PGR_TRANSFERENCIA
     // 			 WHERE PGR_OFICIO  = :BLK_NOT.CVE_OFICIO_EXTERNO;
-    return firstValueFrom(
-      this.satTransferenceService.getPgrTransfer({ officeExternalKey })
-    );
+    return firstValueFrom(this.satTransferenceService.getPgrTransfers(params));
   }
 
   getRTdictaAarusr(params: ListParams) {
