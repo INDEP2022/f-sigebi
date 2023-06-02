@@ -93,3 +93,34 @@ export const IMJobManagementTemp: IMJobManagement = {
   cveChargeRem: null,
   justification: null,
 };
+
+export const Documents: any = [
+  {
+    key: '28',
+    description: 'Fecha de Resolucion',
+    typeDictum: 'ABANDONO',
+    numRegister: '8871642',
+    nbOrigin: null,
+  },
+  {
+    key: '27',
+    description: 'Fecha Notificacion',
+    typeDictum: 'ABANDONO',
+    numRegister: '8871641',
+    nbOrigin: null,
+  },
+  {
+    key: '26',
+    description: 'Notificacion Acuerdo Aseguramiento',
+    typeDictum: 'ABANDONO',
+    numRegister: '8871640',
+    nbOrigin: null,
+  },
+  {
+    key: '25',
+    description: 'Fecha Acuerdo de Aseguramiento',
+    typeDictum: 'ABANDONO',
+    numRegister: '8871639',
+    nbOrigin: null,
+  },
+];

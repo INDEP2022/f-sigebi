@@ -592,7 +592,11 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                   if (res.data.length != 0) {
                     di_disponible = false;
                     getAmparo();
-                    resolve({ avalaible: di_disponible, bamparo: bamparo, acta: null });
+                    resolve({
+                      avalaible: di_disponible,
+                      bamparo: bamparo,
+                      acta: null,
+                    });
                   } else {
                     console.log('Entró a Val Otro');
                     const modelLvlPrograma: ILvlPrograma = {
@@ -612,14 +616,16 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                             getAmparo();
                             resolve({
                               avalaible: di_disponible,
-                              bamparo: bamparo, acta: null
+                              bamparo: bamparo,
+                              acta: null,
                             });
                           } else {
                             di_disponible = false;
                             getAmparo();
                             resolve({
                               avalaible: di_disponible,
-                              bamparo: bamparo, acta: null
+                              bamparo: bamparo,
+                              acta: null,
                             });
                           }
                         },
@@ -629,7 +635,8 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                           getAmparo();
                           resolve({
                             avalaible: di_disponible,
-                            bamparo: bamparo, acta: null
+                            bamparo: bamparo,
+                            acta: null,
                           });
                         }
                       );
@@ -655,14 +662,16 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                           getAmparo();
                           resolve({
                             avalaible: di_disponible,
-                            bamparo: bamparo,acta: null
+                            bamparo: bamparo,
+                            acta: null,
                           });
                         } else {
                           di_disponible = false;
                           getAmparo();
                           resolve({
                             avalaible: di_disponible,
-                            bamparo: bamparo,acta: null
+                            bamparo: bamparo,
+                            acta: null,
                           });
                         }
                       },
@@ -685,7 +694,11 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                             });
                           },
                           err => {
-                            resolve({ avalaible: true, bamparo: bamparo, acta: null });
+                            resolve({
+                              avalaible: true,
+                              bamparo: bamparo,
+                              acta: null,
+                            });
                           }
                         );
                       }
@@ -694,7 +707,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
               );
             },
             err => {
-              console.log(err)
+              console.log(err);
               di_disponible = false;
               getAmparo();
               const model: ICveAct = {
@@ -940,7 +953,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         next: async (res: any) => {
           if (res.data.length > 0) {
             this.form.get('ident').setValue('ADM');
-           /*  this.dataGoods.load(res.data); */
+            /*  this.dataGoods.load(res.data); */
             const newData = await Promise.all(
               res.data.map(async (e: any) => {
                 let disponible: boolean;
@@ -949,12 +962,12 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                 console.log(ind);
                 console.log(resp);
                 disponible = JSON.parse(JSON.stringify(resp)).avalaible;
-                const cveAct = JSON.parse(JSON.stringify(resp)).acta
+                const cveAct = JSON.parse(JSON.stringify(resp)).acta;
                 return {
                   ...e,
                   avalaible: disponible,
                   indEdoFisico: ind,
-                  acta: cveAct
+                  acta: cveAct,
                 };
               })
             );
@@ -1019,8 +1032,8 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   }
 
   searchButton() {
-    this.loading = true
-    this.newAct = true
+    this.loading = true;
+    this.newAct = true;
     if (this.form.get('expediente').value != null) {
       this.newSearchExp();
     } else {
@@ -1447,7 +1460,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
             });
         }
         this.dataGoodAct.load(this.goodData).then(res => {
-        this.loading = false
+          this.loading = false;
           if (action === 'nextProceeding') {
             if (this.numberProceeding <= this.proceedingData.length - 1) {
               this.prevProce = true;
@@ -1503,7 +1516,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         this.navigateProceedings = true;
       },
       err => {
-        this.loading = false
+        this.loading = false;
         this.form.get('acta2').setValue(dataRes.keysProceedings);
         this.form.get('direccion').setValue(dataRes.address);
         this.form.get('entrega').setValue(dataRes.witness1);
@@ -1727,7 +1740,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         } else {
           console.log('Entro en else de res');
           this.initialdisabled = false;
-        this.loading = false
+          this.loading = false;
           this.requireAct1();
           this.inputsNewProceeding();
           this.minDateFecElab = new Date();
@@ -1737,7 +1750,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
       },
       err => {
         console.log(err);
-        this.loading = false
+        this.loading = false;
         this.initialdisabled = false;
         this.requireAct1();
         this.inputsNewProceeding();
@@ -3016,7 +3029,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     console.log(data);
     this.selectData = data;
     this.statusGood('estatusPrueba', data);
-    this.validateGood(data)
+    this.validateGood(data);
   }
 
   deselectRow() {
