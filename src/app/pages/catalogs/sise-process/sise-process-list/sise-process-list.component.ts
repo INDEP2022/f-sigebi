@@ -66,7 +66,10 @@ export class SiseProcessListComponent extends BasePage implements OnInit {
       'Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        //this.siseProcessService.remove(sisi.id);
+        this.siseProcessService.remove(sisi.id).subscribe({
+          next: () => this.getExample(),
+        });
+        // this.siseProcessService.remove(sisi.id);
       }
     });
   }
