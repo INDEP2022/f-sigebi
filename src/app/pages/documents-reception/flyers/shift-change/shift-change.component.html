@@ -99,7 +99,7 @@
           <p
             [ngClass]="usErrorUserPrev ? 'text-danger' : 'text-muted'"
             class="font-weight-bold">
-            {{ turnForm.get('prevUser').value?.userAndName }}
+            {{ newUser }}
             <ng-container *ngIf="usErrorUserPrev"
               >El volante no tiene turnados</ng-container
             >
