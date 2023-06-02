@@ -23,6 +23,8 @@ jobs:
       with:
         node-version: '14'
         node-args: --max-old-space-size=12288
+    - name: Enable verbose logging
+      run: npm config set loglevel verbose
     - name: Install dependencies
       run: npm install --legacy-peer-deps
     - name: Build application
