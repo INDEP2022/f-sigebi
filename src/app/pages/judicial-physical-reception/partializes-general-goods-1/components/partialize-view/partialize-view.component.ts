@@ -105,9 +105,8 @@ export class PartializeViewComponent extends BasePage implements OnInit {
   get statePartialize() {
     if (
       this.form.invalid ||
-      this.formGood.invalid ||
       this.vsum > this.vimporte ||
-      this.saldo === 0
+      +(this.saldo + '') === 0
     ) {
       return 'disabled';
     }
@@ -119,7 +118,7 @@ export class PartializeViewComponent extends BasePage implements OnInit {
   }
 
   get stateApply() {
-    if (this.formGood?.valid && this.bienesPar.length > 0 && this.saldo > 0) {
+    if (this.bienesPar.length > 0 && +(this.saldo + '') > 0) {
       return 'active';
     }
     return 'disabled';

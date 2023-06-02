@@ -8,6 +8,16 @@
   }
 }
 
+.card .card-header .returnMaintenance h5::after {
+  top: -5px !important;
+}
+
+.title {
+  font-size: 15px !important;
+  font-weight: 500 !important;
+  position: relative !important;
+}
+
 :host ::ng-deep ng2-smart-table {
   .fec_indica_usuario_aprobacion,
   .fec_aprobacion_x_admon {
@@ -66,6 +76,7 @@ app-cants {
   display: flex;
   align-items: center;
   top: -20px;
+  margin-top: 5px;
 
   > i {
     font-size: 35px;

@@ -1,11 +1,6 @@
 <app-card [header]="true" id="maintenanceRecords">
   <div class="ch-content" header>
     <h5 class="title">Mantenimiento de Actas</h5>
-    <app-pagination
-      [params]="params"
-      [totalItems]="totalProceedings"
-      [limit]="newLimit"
-      [maxSize]="1"></app-pagination>
   </div>
 
   <div body>
@@ -13,7 +8,13 @@
       <app-proceeding-info
         [loading]="loading"
         [info]="infoForm"
-        (filterEvent)="getData($event)"></app-proceeding-info>
+        (filterEvent)="getData($event)">
+        <app-pagination
+          [params]="params"
+          [totalItems]="totalProceedings"
+          [limit]="newLimit"
+          [maxSize]="1"></app-pagination
+      ></app-proceeding-info>
     </div>
     <hr />
     <div class="row border border-dark">
