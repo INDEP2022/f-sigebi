@@ -127,9 +127,9 @@ export const TEXTOS = {
     return TEXT;
   },
 
-  returnText2_PGR() {
+  returnText2_PGR(data: any) {
     let TEXT = `
-        Al respecto, le informo que dentro de la Averiguación Previa PGR/SIEDO/UEIORPIFAM/143/2008, el C. Agente del Ministerio Público de la Federación emitió un ACUERDO, de fecha __ de _______ de 2009, mediante el cual declaró el abandono del numerario citado a favor del Gobierno Federal, en términos del artículo 182-A del Código Federal de Procedimientos Penales y ordenó a este Organismo Descentralizado el llevar a cabo su ejecución.
+        Al respecto, le informo que dentro de la Averiguación Previa ${data}, el C. Agente del Ministerio Público de la Federación emitió un ACUERDO, de fecha __ de _______ de 2009, mediante el cual declaró el abandono del numerario citado a favor del Gobierno Federal, en términos del artículo 182-A del Código Federal de Procedimientos Penales y ordenó a este Organismo Descentralizado el llevar a cabo su ejecución.
         
 
         En razón de la resolución ministerial, le informo que en el Sistema Integral de Administración de Bienes se hizo el cambio de estatus del numerario señalado, por lo que actualmente se encuentra como "ABANDONADO" (ABN), para que esté en posibilidades de proceder de conformidad a la normativa aplicable.
