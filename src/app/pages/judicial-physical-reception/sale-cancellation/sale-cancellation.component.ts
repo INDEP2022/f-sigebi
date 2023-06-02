@@ -225,7 +225,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
     private serviceProgrammingGood: ProgrammingGoodService,
     private serviceWarehouse: WarehouseFilterService,
     private serviceVault: SafeService,
-    private modalService: BsModalService,
+    private modalService: BsModalService
   ) {
     super();
   }
@@ -605,7 +605,9 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
       /* console.log(this.saveDataAct); */
       console.log(data);
       if (
-        !['CERRADO', 'CERRADA'].includes(this.form.get('statusProceeding').value) &&
+        !['CERRADO', 'CERRADA'].includes(
+          this.form.get('statusProceeding').value
+        ) &&
         data.indEdoFisico
       ) {
         this.isSelectGood = true;
@@ -623,7 +625,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
   }
 
   deselectRowGoodActa() {
-    this.isSelectGood = false
+    this.isSelectGood = false;
     this.selectActData = null;
     this.form.get('etiqueta').setValue('');
   }
@@ -703,48 +705,50 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
             exchangeValue: element.exchangeValue === '1' ? 1 : null,
             indEdoFisico: edoFis.V_IND_EDO_FISICO === 1 ? true : false,
           });
-          this.dataGoods.load(
-            this.dataGoods['data'].map((e: any) => {
-              if (e.id == element.good.id) {
-                return {
-                  ...e,
-                  avalaible: false,
-                  exchangeValue: element.exchangeValue === '1' ? 1 : null,
-                  received: element.exchangeValue ? 'S' : null,
-                  acta: dataRes.keysProceedings,
-                };
-              } else {
-                return e;
+          this.dataGoods
+            .load(
+              this.dataGoods['data'].map((e: any) => {
+                if (e.id == element.good.id) {
+                  return {
+                    ...e,
+                    avalaible: false,
+                    exchangeValue: element.exchangeValue === '1' ? 1 : null,
+                    received: element.exchangeValue ? 'S' : null,
+                    acta: dataRes.keysProceedings,
+                  };
+                } else {
+                  return e;
+                }
+              })
+            )
+            .then(res => {
+              for (let item of this.goodData) {
+                const goodClass = item.goodClassNumber;
+
+                const newParams = `filter.numClasifGoods=$eq:${goodClass}`;
+                this.serviceSssubtypeGood
+                  .getFilter(newParams)
+                  .subscribe(res => {
+                    const type = JSON.parse(
+                      JSON.stringify(res.data[0]['numType'])
+                    );
+                    const subtype = JSON.parse(
+                      JSON.stringify(res.data[0]['numSubType'])
+                    );
+
+                    const no_type = parseInt(type.id);
+                    const no_subtype = parseInt(subtype.id);
+                    //Validar Admin y tipo
+
+                    if (no_type === 7 || (no_type === 5 && no_subtype === 16)) {
+                      this.isBoveda = true;
+                    }
+                    if (no_type === 5) {
+                      this.isAlmacen = true;
+                    }
+                  });
               }
-            })
-          ).then(res => {
-            for (let item of this.goodData) {
-              const goodClass = item.goodClassNumber;
-
-              const newParams = `filter.numClasifGoods=$eq:${goodClass}`;
-              this.serviceSssubtypeGood
-                .getFilter(newParams)
-                .subscribe(res => {
-                  const type = JSON.parse(
-                    JSON.stringify(res.data[0]['numType'])
-                  );
-                  const subtype = JSON.parse(
-                    JSON.stringify(res.data[0]['numSubType'])
-                  );
-
-                  const no_type = parseInt(type.id);
-                  const no_subtype = parseInt(subtype.id);
-                  //Validar Admin y tipo
-
-                  if (no_type === 7 || (no_type === 5 && no_subtype === 16)) {
-                    this.isBoveda = true;
-                  }
-                  if (no_type === 5) {
-                    this.isAlmacen = true;
-                  }
-                });
-            }
-          });
+            });
         }
         this.dataGoodAct.load(this.goodData);
 
@@ -1149,7 +1153,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
                   const resp = await this.validateGood(e);
                   const ind = await this.validateRequired(e);
                   console.log(ind);
-                console.log(resp)
+                  console.log(resp);
                   disponible = JSON.parse(JSON.stringify(resp)).disponible;
                   return { ...e, avalaible: disponible, indEdoFisico: ind };
                 })
@@ -2263,7 +2267,9 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
           });
         }
       }
-    } else if (['CERRADA', 'CERRADO'].includes(this.form.get('statusProceeding').value)) {
+    } else if (
+      ['CERRADA', 'CERRADO'].includes(this.form.get('statusProceeding').value)
+    ) {
       this.alert(
         'warning',
         'El acta está cerrada',
