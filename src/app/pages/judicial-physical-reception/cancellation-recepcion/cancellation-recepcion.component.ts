@@ -38,6 +38,7 @@ import {
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from '../../../shared/components/select/default-select';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-cancellation-recepcion',
@@ -77,7 +78,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
       status: {
         title: 'Estatus',
         type: 'string',
-        sort: false,
+        sort: false
       },
       quantity: {
         title: 'Cantidad',
@@ -141,6 +142,10 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
     },
     noDataMessage: 'No se encontrarón registros',
   };
+
+  paramsDataGoods = new BehaviorSubject<ListParams>(new ListParams());
+  totalItemsDataGoods: number = 0;
+
   act2Valid: boolean = false;
   adminSelect = new DefaultSelect();
   blockExpedient = false;
@@ -219,6 +224,11 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
       this.goodsByExpediente();
       localStorage.removeItem('numberExpedient');
     }
+
+    this.paramsDataGoods.pipe(takeUntil(this.$unSubscribe)).subscribe(
+      params => {
+        this.getGoodsFn()
+      })
   }
 
   prepareForm() {
@@ -653,6 +663,47 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
     );
   }
 
+  getGoodsFn(){
+    this.loading = true
+
+    const paramsF = new FilterParams()
+    paramsF.page = this.paramsDataGoods.getValue().page
+    paramsF.limit = this.paramsDataGoods.getValue().limit
+    console.log(this.paramsDataGoods)
+    console.log(paramsF.getParams())
+    this.serviceGood
+      .getAllFilterDetail(
+        `filter.fileNumber=$eq:${
+          this.numberExpedient
+        }&filter.status=$not:ADM&filter.labelNumber=$not:6&filter.detail.actNumber=$not:$null&${paramsF.getParams()}`
+      )
+      .subscribe({
+        next: async (res: any) => {
+          if (res.data.length > 0) {
+            this.form.get('ident').setValue('ADM');
+            /*  this.dataGoods.load(res.data); */
+            const newData = await Promise.all(
+              res.data.map(async (e: any) => {
+                let disponible: boolean;
+                  const resp = await this.validateGood(e);
+                  const act = await this.getCveAct(e)
+                  disponible = JSON.parse(JSON.stringify(resp)).avalaible;
+                  const acta = JSON.parse(JSON.stringify(resp)).acta
+                  return { ...e, avalaible: disponible, acta:acta };
+              })
+            );
+            this.dataGoods.load(newData);
+            this.totalItemsDataGoods = res.count
+            this.loading = false
+          }
+        },
+        error: (err: any) => {
+          console.error(err);
+          this.loading = false
+        },
+      });
+  }
+
   goodsByExpediente() {
     //Validar si hay un acta abierta
     this.loading = true;
@@ -680,11 +731,14 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
 
     this.clearInputs();
     if (this.form.get('expediente').value != null) {
+      const paramsF = new FilterParams()
+    paramsF.page = this.paramsDataGoods.getValue().page
+    paramsF.limit = this.paramsDataGoods.getValue().limit
       this.serviceGood
         .getAllFilterDetail(
           `filter.fileNumber=$eq:${
             this.form.get('expediente').value
-          }&filter.status=$not:ADM&filter.labelNumber=$not:6&filter.detail.actNumber=$not:$null`
+          }&filter.status=$not:ADM&filter.labelNumber=$not:6&filter.detail.actNumber=$not:$null&${paramsF.getParams()}`
         )
         .subscribe({
           next: async (res: any) => {
