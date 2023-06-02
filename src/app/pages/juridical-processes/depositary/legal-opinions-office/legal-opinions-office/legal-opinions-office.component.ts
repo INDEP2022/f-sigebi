@@ -896,12 +896,12 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
     this.form.get('moreInformation3').setValue(this.officeDictationData.text3);
     this.form.get('moreInformation3').updateValueAndValidity();
     if (this.officeDictationData.statusOf == 'ENVIADO') {
-      // this.blockSender = true;
+      this.blockSender = true;
       this.disabledDataOffice();
       this.disabledDataCopies();
       // this.form.get('numberNotary').disable();
     } else {
-      // this.blockSender = false;
+      this.blockSender = false;
       this.enabledDataOffice();
       this.enabledDataCopies();
       // this.form.get('numberNotary').enable();
@@ -2474,7 +2474,7 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
         !this.officeDictationData.statusOf ||
         this.officeDictationData.statusOf == 'EN REVISION'
       ) {
-        this.blockSender = true;
+        // this.blockSender = true;
       }
     }
     if (!this.paramsScreen.CLAVE_OFICIO_ARMADA) {
