@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { addDays, format } from 'date-fns';
 import { LocalDataSource } from 'ng2-smart-table';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import {
   FilterParams,
@@ -28,7 +29,6 @@ import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.s
 import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { ParametersService } from 'src/app/core/services/ms-parametergood/parameters.service';
-
 import { ProceedingsService } from 'src/app/core/services/ms-proceedings';
 import { DetailProceeDelRecService } from 'src/app/core/services/ms-proceedings/detail-proceedings-delivery-reception.service';
 import { ProceedingsDeliveryReceptionService } from 'src/app/core/services/ms-proceedings/proceedings-delivery-reception';
@@ -78,7 +78,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
       status: {
         title: 'Estatus',
         type: 'string',
-        sort: false
+        sort: false,
       },
       quantity: {
         title: 'Cantidad',
@@ -142,6 +142,10 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
     },
     noDataMessage: 'No se encontrarón registros',
   };
+
+  paramsDataGoods = new BehaviorSubject<ListParams>(new ListParams());
+  totalItemsDataGoods: number = 0;
+
   act2Valid: boolean = false;
   adminSelect = new DefaultSelect();
   blockExpedient = false;
@@ -220,6 +224,12 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
       this.goodsByExpediente();
       localStorage.removeItem('numberExpedient');
     }
+
+    this.paramsDataGoods
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(params => {
+        this.getGoodsFn();
+      });
   }
 
   prepareForm() {
@@ -654,6 +664,47 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
     );
   }
 
+  getGoodsFn() {
+    this.loading = true;
+
+    const paramsF = new FilterParams();
+    paramsF.page = this.paramsDataGoods.getValue().page;
+    paramsF.limit = this.paramsDataGoods.getValue().limit;
+    console.log(this.paramsDataGoods);
+    console.log(paramsF.getParams());
+    this.serviceGood
+      .getAllFilterDetail(
+        `filter.fileNumber=$eq:${
+          this.numberExpedient
+        }&filter.status=$not:ADM&filter.labelNumber=$not:6&filter.detail.actNumber=$not:$null&${paramsF.getParams()}`
+      )
+      .subscribe({
+        next: async (res: any) => {
+          if (res.data.length > 0) {
+            this.form.get('ident').setValue('ADM');
+            /*  this.dataGoods.load(res.data); */
+            const newData = await Promise.all(
+              res.data.map(async (e: any) => {
+                let disponible: boolean;
+                const resp = await this.validateGood(e);
+                const act = await this.getCveAct(e);
+                disponible = JSON.parse(JSON.stringify(resp)).avalaible;
+                const acta = JSON.parse(JSON.stringify(resp)).acta;
+                return { ...e, avalaible: disponible, acta: acta };
+              })
+            );
+            this.dataGoods.load(newData);
+            this.totalItemsDataGoods = res.count;
+            this.loading = false;
+          }
+        },
+        error: (err: any) => {
+          console.error(err);
+          this.loading = false;
+        },
+      });
+  }
+
   goodsByExpediente() {
     //Validar si hay un acta abierta
     this.loading = true;
@@ -681,11 +732,14 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
 
     this.clearInputs();
     if (this.form.get('expediente').value != null) {
+      const paramsF = new FilterParams();
+      paramsF.page = this.paramsDataGoods.getValue().page;
+      paramsF.limit = this.paramsDataGoods.getValue().limit;
       this.serviceGood
         .getAllFilterDetail(
           `filter.fileNumber=$eq:${
             this.form.get('expediente').value
-          }&filter.status=$not:ADM&filter.labelNumber=$not:6&filter.detail.actNumber=$not:$null`
+          }&filter.status=$not:ADM&filter.labelNumber=$not:6&filter.detail.actNumber=$not:$null&${paramsF.getParams()}`
         )
         .subscribe({
           next: async (res: any) => {
@@ -699,7 +753,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                   const resp = await this.validateGood(e);
                   const act = await this.getCveAct(e);
                   disponible = JSON.parse(JSON.stringify(resp)).avalaible;
-                  const acta = JSON.parse(JSON.stringify(act)).acta;
+                  const acta = JSON.parse(JSON.stringify(resp)).acta;
                   return { ...e, avalaible: disponible, acta: acta };
                 })
               );
@@ -2687,7 +2741,6 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
   nextProceeding() {
     this.prevProce = false;
     this.nextProce = false;
-
     this.loading = true;
     this.act2Valid = false;
 
@@ -2721,9 +2774,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
     this.prevProce = false;
     this.nextProce = false;
     this.act2Valid = false;
-
     this.loading = true;
-
     this.noRequireAct1();
     this.clearInputs();
     if (
