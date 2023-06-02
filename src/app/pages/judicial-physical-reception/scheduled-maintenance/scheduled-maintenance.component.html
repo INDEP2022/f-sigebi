@@ -34,7 +34,7 @@
           <!-- <app-select-form [form]="form" formField="tipoEvento" label="Tipo de Evento" [list]="tiposEvento"
             [(params)]="paramsTypes" [haveTodos]="false"></app-select-form> -->
         </div>
-        <div class="col-md-4" style="display: flex">
+        <div class="col-md-4 rangeDate">
           <form-field [control]="form.get('rangeDate')" label="Rango de Fechas">
             <input
               bsDaterangepicker
@@ -170,7 +170,7 @@
         [form]="form"
         statusActaValue="ABIERTA"></app-key-proceedings-form> -->
 
-      <div class="action-buttons">
+      <div class="row action-buttons">
         <div
           class="col-md-4"
           [class]="loading || form.invalid ? 'disabled' : ''">

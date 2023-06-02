@@ -131,7 +131,7 @@ export class ProceedingInfoComponent implements OnInit {
   prepareForm() {
     this.form = this.fb.group({
       id: [null, Validators.pattern(NUM_POSITIVE)],
-      numFile: [null],
+      numFile: [null, Validators.pattern(NUM_POSITIVE)],
       cveActa: [null, [Validators.pattern(STRING_PATTERN)]],
       tipoActa: [null],
       labelActa: [null, [Validators.pattern(STRING_PATTERN)]],
