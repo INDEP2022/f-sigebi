@@ -41,7 +41,7 @@ export const ASSETS_COLUMNS = {
     sort: false,
   },
   uniqueKey: {
-    title: 'Clave Unica',
+    title: 'Clave Única',
     type: 'string',
     sort: false,
   },

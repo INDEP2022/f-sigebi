@@ -312,11 +312,11 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
         },
         error: error => {
           console.log(error);
-          this.alertInfo(
-            'info',
-            'Error al cargar la información inicial de la pantalla de acuerdo a los paramétros recibidos',
-            'No se encontró el identificador'
-          );
+          // this.alertInfo(
+          //   'info',
+          //   'Error al cargar la información inicial de la pantalla de acuerdo a los paramétros recibidos',
+          //   'No se encontró el identificador'
+          // );
           subscription.unsubscribe();
         },
       });
@@ -335,11 +335,11 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
         },
         error: error => {
           console.log(error);
-          this.alertInfo(
-            'info',
-            'Error al cargar la información inicial de la pantalla de acuerdo a los paramétros recibidos',
-            'No se encontrarón la Clave del Acta y la Fecha'
-          );
+          // this.alertInfo(
+          //   'info',
+          //   'Error al cargar la información inicial de la pantalla de acuerdo a los paramétros recibidos',
+          //   'No se encontrarón la Clave del Acta y la Fecha'
+          // );
           subscription.unsubscribe();
         },
       });
@@ -892,12 +892,12 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
     this.form.get('moreInformation3').setValue(this.officeDictationData.text3);
     this.form.get('moreInformation3').updateValueAndValidity();
     if (this.officeDictationData.statusOf == 'ENVIADO') {
-      this.blockSender = true;
+      // this.blockSender = true;
       this.disabledDataOffice();
       this.disabledDataCopies();
       // this.form.get('numberNotary').disable();
     } else {
-      this.blockSender = false;
+      // this.blockSender = false;
       this.enabledDataOffice();
       this.enabledDataCopies();
       // this.form.get('numberNotary').enable();
@@ -1382,6 +1382,12 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
   }
 
   sendOffice(count: number = 0) {
+    if (this.officeDictationData) {
+      if (this.officeDictationData.statusOf == 'ENVIADO' && !this.blockSender) {
+        this.btnDetail();
+        return;
+      }
+    }
     this.pup_genera_xml = false;
     this.V_URL_OPEN_FIRM = '';
     console.log(this.form.get('issuingUser').value, this.dataUserLogged);
