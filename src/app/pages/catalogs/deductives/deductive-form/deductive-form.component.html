@@ -21,7 +21,8 @@
             [control]="deductiveForm.get('weightedDeduction')"
             label="Deducci&oacute;n Ponderada">
             <input
-              type="number"
+              type="text"
+              step="any"
               class="form-control"
               formControlName="weightedDeduction" />
           </form-field>
@@ -33,7 +34,8 @@
             [control]="deductiveForm.get('startingRankPercentage')"
             label="Rango de Porcentaje Inicial">
             <input
-              type="number"
+              type="text"
+              step="any"
               class="form-control"
               formControlName="startingRankPercentage" />
           </form-field>

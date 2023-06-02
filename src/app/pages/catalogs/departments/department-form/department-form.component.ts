@@ -7,7 +7,11 @@ import { IDepartment } from 'src/app/core/models/catalogs/department.model';
 import { ISubdelegation } from 'src/app/core/models/catalogs/subdelegation.model';
 import { DepartamentService } from 'src/app/core/services/catalogs/departament.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
+import {
+  NUMBERS_PATTERN,
+  POSITVE_NUMBERS_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -37,9 +41,30 @@ export class DepartmentFormComponent extends BasePage implements OnInit {
   private prepareForm() {
     //maximo a 4 caracteres
     this.departmentForm = this.fb.group({
-      id: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
-      numDelegation: [null, [Validators.required]],
-      numSubDelegation: [null, [Validators.required]],
+      id: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(POSITVE_NUMBERS_PATTERN),
+          Validators.maxLength(4),
+        ],
+      ],
+      numDelegation: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(POSITVE_NUMBERS_PATTERN),
+          Validators.maxLength(2),
+        ],
+      ],
+      numSubDelegation: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(POSITVE_NUMBERS_PATTERN),
+          Validators.maxLength(2),
+        ],
+      ],
       dsarea: [
         null,
         [
@@ -58,26 +83,33 @@ export class DepartmentFormComponent extends BasePage implements OnInit {
       ],
       lastOffice: [
         null,
-        [Validators.maxLength(10), Validators.pattern(NUMBERS_PATTERN)],
+        [Validators.maxLength(10), Validators.pattern(POSITVE_NUMBERS_PATTERN)],
       ],
       numRegister: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       level: [
         null,
-        [Validators.maxLength(2), Validators.pattern(NUMBERS_PATTERN)],
+        [Validators.maxLength(2), Validators.pattern(POSITVE_NUMBERS_PATTERN)],
       ],
       depend: [
         null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+        [
+          Validators.required,
+          Validators.maxLength(4),
+          Validators.pattern(POSITVE_NUMBERS_PATTERN),
+        ],
       ],
       depDelegation: [
         null,
         [
           Validators.required,
           Validators.maxLength(4),
-          Validators.pattern(NUMBERS_PATTERN),
+          Validators.pattern(POSITVE_NUMBERS_PATTERN),
         ],
       ],
-      phaseEdo: [null, [Validators.required]],
+      phaseEdo: [
+        null,
+        [Validators.required, Validators.pattern(POSITVE_NUMBERS_PATTERN)],
+      ],
     });
     if (this.department != null) {
       this.edit = true;

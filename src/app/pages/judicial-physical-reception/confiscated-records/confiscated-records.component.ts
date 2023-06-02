@@ -1611,7 +1611,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     this.nextProce = false;
     this.prevProce = false;
     this.act2Valid = false;
-    this.loading = true
+    this.loading = true;
     if (this.numberProceeding <= this.proceedingData.length - 1) {
       this.numberProceeding += 1;
       console.log(this.numberProceeding);
@@ -1641,7 +1641,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   prevProceeding() {
     console.log(this.numberProceeding);
     console.log(this.proceedingData.length);
-    this.loading = true
+    this.loading = true;
 
     /* this.prevProce = false;
     this.nextProce = false; */
@@ -1715,7 +1715,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   }
 
   selectExpedient(e: any) {
-    this.loading = true
+    this.loading = true;
     console.log(e);
     this.form.get('expediente').setValue(e.id);
     this.newSearchExp();

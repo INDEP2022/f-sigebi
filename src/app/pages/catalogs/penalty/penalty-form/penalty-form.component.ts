@@ -7,7 +7,7 @@ import { PenaltyService } from 'src/app/core/services/catalogs/penalty.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
   DOUBLE_PATTERN,
-  PERCENTAGE_NUMBERS_REGEX,
+  PERCENTAGE_NUMBERS_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
 
@@ -46,7 +46,7 @@ export class PenaltyFormComponent extends BasePage implements OnInit {
       ],
       penaltyPercentage: [
         null,
-        [Validators.required, Validators.pattern(PERCENTAGE_NUMBERS_REGEX)],
+        [Validators.required, Validators.pattern(PERCENTAGE_NUMBERS_PATTERN)],
       ],
       equivalentDays: [
         null,
