@@ -1,6 +1,19 @@
 <app-card [header]="true">
   <div class="ch-content" header>
     <h5 class="title">Captura de Programaci&oacute;n de Eventos</h5>
+
+    <div class="col-md-5 buttons">
+      <div>
+        <confirm-button
+          [loading]="saveLoading"
+          (confirm)="saveProceeding()"></confirm-button>
+        <!-- <button
+          (click)="saveProceeding()"
+          class="btn btn-primary active btn-sm ml-3">
+          Guardar
+        </button> -->
+      </div>
+    </div>
   </div>
 
   <div body>
@@ -188,8 +201,7 @@
                 {{ ctrlButtons.printOffice.label }}
               </button>
             </div>
-            <div>
-              <!--*ngIf="ctrlButtons.notificationDest.visible"-->
+            <div *ngIf="ctrlButtons.notificationDest.visible">
               <button
                 class="btn btn-sm btn-secondary active"
                 [disabled]="!ctrlButtons.notificationDest.enabled"
@@ -197,8 +209,7 @@
                 {{ ctrlButtons.notificationDest.label }}
               </button>
             </div>
-            <div>
-              <!--*ngIf="ctrlButtons.closeProg.visible"-->
+            <div *ngIf="ctrlButtons.closeProg.visible">
               <button
                 class="btn btn-sm btn-danger active"
                 [disabled]="!ctrlButtons.closeProg.enabled"
@@ -268,110 +279,95 @@
 
     <br />
     <hr class="row" />
-
     <div class="row mt-5">
-      <div class="col-6">
-        <div class="d-flex align-items-center">
-          <div>
-            <h5 class="font-size-14">Cantidad de Bienes:</h5>
-          </div>
-          <div class="ml-2">
-            <span class="badge rounded-pill badge-soft-success">1</span>
-          </div>
-        </div>
+      <div class="col-md-3">
+        <h5 class="font-size-14">
+          Cantidad de Bienes:
+          <span class="badge rounded-pill badge-soft-info">{{
+            blkQuantities.goods
+          }}</span>
+        </h5>
       </div>
-      <div class="col-6">
-        <div class="d-flex align-items-center">
-          <div>
-            <h5 class="font-size-14">Cantidad de Registros:</h5>
-          </div>
-          <div class="ml-2">
-            <span class="badge rounded-pill badge-soft-success">1</span>
-          </div>
-        </div>
+      <div class="col-md-3">
+        <h5 class="font-size-14">
+          Cantidad de Registros:
+          <span class="badge rounded-pill badge-soft-info">{{
+            blkQuantities.registers
+          }}</span>
+        </h5>
       </div>
-      <div class="col-6">
-        <div class="d-flex align-items-center">
-          <div>
-            <h5 class="font-size-14">Cantidad de Expedientes:</h5>
-          </div>
-          <div class="ml-2">
-            <span class="badge rounded-pill badge-soft-success">1</span>
-          </div>
-        </div>
+      <div class="col-md-3">
+        <h5 class="font-size-14">
+          Cantidad de Expedientes:
+          <span class="badge rounded-pill badge-soft-info">{{
+            blkQuantities.expedients
+          }}</span>
+        </h5>
       </div>
-      <div class="col-6">
-        <div class="d-flex align-items-center">
-          <div>
-            <h5 class="font-size-14">Cantidad de Dict&aacute;menes:</h5>
-          </div>
-          <div class="ml-2">
-            <span class="badge rounded-pill badge-soft-success">1</span>
-          </div>
+      <div class="col-md-3">
+        <h5 class="font-size-14">
+          Cantidad de Dict&aacute;menes:
+          <span class="badge rounded-pill badge-soft-info">{{
+            blkQuantities.dictums
+          }}</span>
+        </h5>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12 d-flex justify-content-end">
+        <div
+          class="mr-4"
+          *ngIf="
+            showPackNumCtrl ||
+            ctrlButtons.apply.visible ||
+            registerControls.typeEvent.value == 'DN'
+          ">
+          <form-field
+            *ngIf="showPackNumCtrl"
+            [control]="packNumCtrl"
+            label="No. Paquete">
+            <input
+              type="text"
+              class="form-control"
+              bsDaterangepicker
+              [formControl]="packNumCtrl" />
+          </form-field>
+          <button
+            *ngIf="ctrlButtons.deletePack.visible"
+            class="btn btn-primary btn-sm active"
+            [disabled]="!ctrlButtons.deletePack.enabled">
+            {{ ctrlButtons.deletePack.label }}
+          </button>
         </div>
+
+        <div class="mr-4" *ngIf="ctrlButtons.apply.visible">
+          <button
+            class="btn btn-primary btn-sm active"
+            [disabled]="!ctrlButtons.apply.enabled">
+            {{ ctrlButtons.apply.label }}
+          </button>
+        </div>
+        <div class="mr-4" *ngIf="ctrlButtons.xml.visible">
+          <button
+            class="btn btn-success btn-sm active"
+            [disabled]="!ctrlButtons.xml.enabled">
+            {{ ctrlButtons.xml.label }}
+          </button>
+        </div>
+        <div class="mr-4" *ngIf="ctrlButtons.generateStrategy.visible">
+          <button
+            [disabled]="!ctrlButtons.generateStrategy.enabled"
+            class="btn btn-primary btn-sm active"
+            routerLink="generate-estrategy">
+            {{ ctrlButtons.generateStrategy.label }}
+          </button>
+        </div>
+        <app-columns-select [defaultColumns]="5" [(settings)]="settings">
+        </app-columns-select>
       </div>
     </div>
 
-    <div class="row justify-content-end mt-3">
-      <div class="col-md-5 buttons pt-3 text-right">
-        <app-columns-select [(settings)]="settings"> </app-columns-select>
-      </div>
-    </div>
-
-    <div class="row mt-5 justify-content-center justify-content-sm-end">
-      <div
-        *ngIf="
-          showPackNumCtrl ||
-          ctrlButtons.apply.visible ||
-          registerControls.typeEvent.value == 'DN'
-        "
-        class="col-12 col-sm-5 text-center text-sm-right">
-        <form-field
-          *ngIf="showPackNumCtrl"
-          [control]="packNumCtrl"
-          label="No. Paquete">
-          <input
-            type="text"
-            class="form-control"
-            bsDaterangepicker
-            [formControl]="packNumCtrl" />
-        </form-field>
-        <button
-          *ngIf="ctrlButtons.deletePack.visible"
-          class="btn btn-primary btn-sm active"
-          [disabled]="!ctrlButtons.deletePack.enabled">
-          {{ ctrlButtons.deletePack.label }}
-        </button>
-      </div>
-      <div
-        *ngIf="ctrlButtons.apply.visible"
-        class="col-12 col-sm-3 text-center text-sm-right">
-        <button
-          class="btn btn-primary btn-sm active"
-          [disabled]="!ctrlButtons.apply.enabled">
-          {{ ctrlButtons.apply.label }}
-        </button>
-      </div>
-      <div
-        *ngIf="ctrlButtons.xml.visible"
-        class="col-12 col-sm-3 text-center text-sm-right">
-        <button
-          class="btn btn-success btn-sm active"
-          [disabled]="!ctrlButtons.xml.enabled">
-          {{ ctrlButtons.xml.label }}
-        </button>
-      </div>
-      <div
-        *ngIf="ctrlButtons.generateStrategy.visible"
-        class="col-12 col-sm-3 mt-3 mt-sm-0 text-center text-sm-right">
-        <button
-          [disabled]="!ctrlButtons.generateStrategy.enabled"
-          class="btn btn-primary btn-sm active"
-          routerLink="generate-estrategy">
-          {{ ctrlButtons.generateStrategy.label }}
-        </button>
-      </div>
-    </div>
+    <div class="row mt-5 justify-content-center justify-content-sm-end"></div>
     <div class="row mt-1">
       <div class="col-md-12 table-responsive">
         <div [class]="loading ? 'table-loading' : ''">

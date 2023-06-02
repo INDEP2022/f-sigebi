@@ -3,18 +3,25 @@ import { IDelegation } from 'src/app/core/models/catalogs/delegation.model';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 export class CaptureEventRegisterForm {
-  typeEvent = new FormControl(null, []);
-  captureDate = new FormControl(null, []);
+  typeEvent = new FormControl(null, [Validators.required]);
+  captureDate = new FormControl(null, [Validators.required]);
+  elaborate = new FormControl(null);
   responsible = new FormControl(null, []);
-  prog = new FormControl({ value: null, disabled: true }, []);
+  prog = new FormControl({ value: null, disabled: true }, [
+    Validators.required,
+  ]);
   transference = new FormControl(null);
-  type = new FormControl('RT', []);
+  type = new FormControl('RT', [Validators.required]);
   area = new FormControl(null);
   user = new FormControl({ value: null, disabled: true });
   folio = new FormControl({ value: null, disabled: true });
   year = new FormControl({ value: null, disabled: true });
   month = new FormControl({ value: null, disabled: true });
-  keysProceedings = new FormControl(null, [Validators.maxLength(60)]);
+  keysProceedings = new FormControl(null, [
+    Validators.maxLength(60),
+    Validators.required,
+  ]);
+  numFile = new FormControl(null);
 }
 
 export class CaptureEventSiabForm {
