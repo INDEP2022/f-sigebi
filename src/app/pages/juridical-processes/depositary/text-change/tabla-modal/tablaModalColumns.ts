@@ -10,7 +10,12 @@ export const TEXT_CHANGE_COLUMNS = {
     sort: false,
   },
   statusDict: {
-    title: 'Dictaminación',
+    title: 'Estatus',
+    type: 'string',
+    sort: false,
+  },
+  typeDict: {
+    title: 'Tipo Dictaminación',
     type: 'string',
     sort: false,
   },

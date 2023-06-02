@@ -82,13 +82,17 @@ export class AppointmentsComponent
   ngOnInit(): void {
     this.prepareForm();
     this.loading = true;
-    this.validGoodNumberInDepositaryAppointment(); // Buscar Bien
+    // this.validGoodNumberInDepositaryAppointment(); // Buscar Bien
   }
   private prepareForm() {
     this.form = this.fb.group({
       noBien: [
-        { value: '', disabled: true },
-        [Validators.maxLength(11), Validators.pattern(NUM_POSITIVE)],
+        { value: '', disabled: false },
+        [
+          Validators.required,
+          Validators.maxLength(11),
+          Validators.pattern(NUM_POSITIVE),
+        ],
       ], //*
       descriptionGood: [
         { value: '', disabled: true },
