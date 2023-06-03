@@ -48,7 +48,7 @@
 //   }
 // }
 
-:host ::ng-deep app-pagination {
+:host ::ng-deep .paginator app-pagination {
   .paginator-page-size {
     display: none !important;
   }
@@ -58,7 +58,7 @@
   }
 }
 
-:host::ng-deep app-pagination {
+:host::ng-deep .paginator app-pagination {
   .pagination {
     display: flex;
     column-gap: 5px;
