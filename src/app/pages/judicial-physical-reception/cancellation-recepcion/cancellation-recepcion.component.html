@@ -43,7 +43,26 @@
           <span>Navegación de actas</span>
           <div class="row">
             <div class="col-md-9">
-              <button
+              <div class="d-flex justify-content-center align-items-center">
+                  <app-pagination
+                  [params]="paramsActNavigate"
+                  [totalItems]="proceedingData.length"
+                  [limit]="newLimitparamsActNavigate"
+                  [paginatorPageSize]="false"
+                  [paginatorRangeLabel]="false"
+                  [maxSize]="1"></app-pagination>
+                <div class="col">
+                  <button
+                    *ngIf="newAct"
+                    id="expedient-number"
+                    class="btn btn-primary btn-sm active ml-4"
+                    [class]="loading ? 'disabled' : ''"
+                    (click)="newProceeding()">
+                    Nueva acta
+                  </button>
+                </div>
+              </div>
+              <!-- <button
                 id="expedient-number"
                 [disabled]="!prevProce"
                 class="btn btn-secondary btn-sm active"
@@ -73,15 +92,7 @@
                 [disabled]="!nextProce"
                 (click)="nextProceeding()">
                 <i class="fa fa-angle-right"></i>
-              </button>
-              <button
-                *ngIf="newAct"
-                id="expedient-number"
-                class="btn btn-primary btn-sm active ml-4"
-                [class]="loading ? 'disabled' : ''"
-                (click)="newProceeding()">
-                Nueva acta
-              </button>
+              </button> -->
             </div>
           </div>
         </div>
