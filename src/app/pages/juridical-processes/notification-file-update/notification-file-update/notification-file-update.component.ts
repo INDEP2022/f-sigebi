@@ -130,6 +130,7 @@ export class NotificationFileUpdateComponent
   getFilterExpedientNumber() {
     const param = new FilterParams();
     const params = new ListParams();
+    this.loading = true;
     this.params.getValue()[
       'filter.expedientNumber'
     ] = `$eq:${this.form.controls['noExpediente'].value}`;

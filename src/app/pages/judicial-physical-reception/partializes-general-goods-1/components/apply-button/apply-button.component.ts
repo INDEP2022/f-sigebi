@@ -600,20 +600,21 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
 
   private async finishApply(vobserv_padre: string, vdesc_padre: string) {
     // debugger;
+    const oldObservations = this.good.observations
+      ? this.good.observations
+      : '';
     const observations =
       vobserv_padre +
       ' fecha: ' +
       format(new Date(), 'dd/MM/yyyy') +
       '. ' +
-      this.good.observations
-        ? this.good.observations
-        : '';
+      oldObservations;
     this.good.observations = observations.substring(
       0,
       observations.length > 600 ? 600 : observations.length
     );
-    const description =
-      vdesc_padre + this.good.description ? this.good.description : '';
+    const oldDescription = this.good.description ? this.good.description : '';
+    const description = vdesc_padre + oldDescription;
     this.good.description = description.substring(
       0,
       observations.length > 1250 ? 1250 : observations.length

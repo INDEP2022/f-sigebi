@@ -67,7 +67,7 @@ export class ScheduledMaintenanceComponent
         //   queryParams: { page: response.page },
         //   queryParamsHandling: 'merge'
         // })
-        this.getData();
+        this.getData(true);
       },
     });
     // console.log(this.settings1);
@@ -177,7 +177,7 @@ export class ScheduledMaintenanceComponent
         this.deliveryService.deleteById(item).subscribe({
           next: response => {
             console.log(response);
-            this.getData();
+            this.getData(true);
             this.onLoadToast(
               'success',
               'Exito',
@@ -213,7 +213,7 @@ export class ScheduledMaintenanceComponent
         showError: false,
         initialCharge: false,
         widthButton: true,
-        placeholder: '',
+        placeholder: 'No. Bien',
       },
       this.selectActa
     );

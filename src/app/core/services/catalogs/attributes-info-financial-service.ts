@@ -40,7 +40,11 @@ export class AttributesInfoFinancialService
     id: string | number,
     model: IAttributesFinancialInfo
   ): Observable<Object> {
-    return this.attributesFinancialInfoRepository.update(this.route, id, model);
+    return this.attributesFinancialInfoRepository.newUpdateId(
+      this.route,
+      id,
+      model
+    );
   }
 
   remove(id: string | number): Observable<Object> {

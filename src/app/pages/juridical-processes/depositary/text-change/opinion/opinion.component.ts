@@ -203,7 +203,7 @@ export class OpinionComponent extends BasePage implements OnInit, OnChanges {
       hideSubHeader: false,
       actions: {
         columnTitle: 'Acciones',
-        edit: true,
+        edit: false,
         delete: true,
         add: false,
         position: 'left',
@@ -339,7 +339,7 @@ Obtiene los filtros y en base a ellos se hace la búsqueda
         next: resp => {
           console.log('onEnterSearch => ' + JSON.stringify(resp));
 
-          if (resp.data.length > 1) {
+          if (resp.count > 1) {
             this.loadModal(true, filterParams);
           } else {
             this.intIDictation = resp.data[0];
@@ -366,7 +366,11 @@ Obtiene los filtros y en base a ellos se hace la búsqueda
           }
         },
         error: err => {
-          this.onLoadToast('info', 'Registro', 'No se obtuvo información');
+          if (err.message.indexOf('registros') !== -1) {
+            this.onLoadToast('error', 'Error 1 ', err.message);
+          }
+          //   console.log('Error ' + error);
+          //  this.onLoadToast('info', 'Registro', 'No se obtuvo información');
           console.log('error', 'Error', err.error.message);
           // this.onLoadToast('error', 'error', err.error.message);
         },
@@ -374,17 +378,21 @@ Obtiene los filtros y en base a ellos se hace la búsqueda
   }
 
   loadModal(resp: boolean, filterParams: BehaviorSubject<FilterParams>) {
-    this.openModal(false, filterParams);
+    this.openModal(resp, filterParams);
   }
 
-  openModal(newOrEdit: boolean, filterParams: BehaviorSubject<FilterParams>) {
+  //false dictamen true oficio
+  openModal(
+    OficioOrdictamen: boolean,
+    filterParamsOficio: BehaviorSubject<FilterParams>
+  ) {
     const modalConfig = {
       ...MODAL_CONFIG,
       class: 'modal-lg modal-dialog-centered',
     };
     modalConfig.initialState = {
-      newOrEdit,
-      filterParams,
+      OficioOrdictamen,
+      filterParamsOficio,
       callback: (next: any) => {
         const data = JSON.parse(JSON.stringify(next));
 
@@ -433,9 +441,11 @@ carga la  información de la parte media de la página
 
         this.getPartBodyInputs();
       },
-      error: error => {
-        //  this.onLoadToast('info', 'Registro', 'No se obtuvo información');
-        console.log('error', 'Error', error.error.message);
+      error: err => {
+        if (err.message.indexOf('registros') !== -1) {
+          this.onLoadToast('error', 'Error 1 ', err.message);
+        }
+        console.log('error', 'Error', err.error.message);
         // this.onLoadToast('info', 'info', error.error.message);
       },
     });
@@ -458,14 +468,18 @@ carga la  información de la parte media de la página
         next: resp => {
           let datos: IDictationCopies[] = resp.data;
         },
-        error: error => {
+        error: err => {
+          if (err.message.indexOf('registros') !== -1) {
+            this.onLoadToast('error', 'Error 1 ', err.message);
+          }
+          /*
           this.onLoadToast(
             'info',
             'Registro',
             'No tiene información asociada con el bloque'
-          );
+          );*/
 
-          console.log('error', 'Error', error.error.message);
+          console.log('error', 'Error', err.error.message);
           //this.onLoadToast('error', 'error', error.error.message);
         },
       });
@@ -484,7 +498,9 @@ carga la  información de la parte media de la página
       .findUserByOficNum(this.filterParams.getValue().getParams())
       .subscribe({
         next: resp => {
-          this.dataExt = resp.data;
+          let algo = {};
+          this.dataExt = resp.data.map((data: any) => this.usuariosCCP(data));
+          //this.dataExt = resp.data;
         },
         error: errror => {
           this.onLoadToast('info', 'Registro', 'No se obtuvo información');
@@ -621,7 +637,10 @@ carga la  información de la parte media de la página
         actulizacion = actulizacion + ' Se actualizo';
       },
       error: err => {
-        errorBusqueda = errorBusqueda + 'Error 1';
+        if (err.message.indexOf('registros') !== -1) {
+          this.onLoadToast('error', 'Error 1 ', err.message);
+        }
+
         //this.onLoadToast('info', 'Registro', 'No se obtuvo información');
         console.log('error', 'Error', err.error.message);
         // this.onLoadToast('error', 'Error', err.error.message);
@@ -638,9 +657,11 @@ carga la  información de la parte media de la página
 
         // this.onLoadToast('success', 'success', resp.message[0]);
       },
-      error: erro => {
+      error: err => {
         this.insertTextos(data);
-        errorBusqueda = errorBusqueda + 'Error 1';
+        if (err.message.indexOf('registros') !== -1) {
+          this.onLoadToast('error', 'Error 1 ', err.message);
+        }
       },
     });
     Swal.fire('Se actualizo de manera correcta', '', 'success');
@@ -684,9 +705,14 @@ carga la  información de la parte media de la página
       next: resp => {
         this.onLoadToast('warning', 'Info', resp[0].message);
       },
-      error: errror => {
-        this.onLoadToast('info', 'Registro', 'No se obtuvo información');
-        console.log('error', 'Error', errror.error.message);
+      error: err => {
+        //this.onLoadToast('info', 'Registro', 'No se obtuvo información');
+
+        if (err.message.indexOf('registros') !== -1) {
+          this.onLoadToast('error', 'Error 1 ', err.message);
+        }
+
+        console.log('error', 'Error', err.error.message);
         // this.onLoadToast('error', 'Error', errror.error.message);
       },
     });
@@ -698,13 +724,12 @@ carga la  información de la parte media de la página
         Swal.fire('Se actualizo de manera correcta', '', 'success');
         //this.onLoadToast('success', 'Registro', resp.message[0]);
       },
-      error: erro => {
-        this.onLoadToast(
-          'warning',
-          'Registro nuevo',
-          'No se concreto la acción'
-        );
-        console.log('info', 'Registro', erro.error.message);
+      error: err => {
+        if (err.message.indexOf('registros') !== -1) {
+          this.onLoadToast('error', 'Error 1 ', err.message);
+        }
+
+        console.log('info', 'Registro', err.error.message);
         /* if (erro.error.message == 'No se encontrarón registros.') {
           this.onLoadToast('info', 'Registro', erro.error.message);
         } else {
@@ -767,12 +792,16 @@ carga la  información de la parte media de la página
         },
         error: err => {
           this.form.get('charge').setValue('');
+          if (err.message.indexOf('registros') !== -1) {
+            this.onLoadToast('error', 'Error 1 ', err.message);
+          }
+
           //this.onLoadToast('info', 'Registro', 'No se obtuvo información');
-          this.onLoadToast(
+          /* this.onLoadToast(
             'info',
             'Registro',
             'No existe información asociada con el puesto'
-          );
+          );*/
           console.log('error', 'Error', err.error.message);
           // this.onLoadToast('error', 'Error', err.error.message);
         },
@@ -869,11 +898,10 @@ carga la  información de la parte media de la página
         this.UserDestinatario = [...resp.data];
       },
       error: err => {
-        this.onLoadToast(
-          'info',
-          'Registro',
-          'No existe información asociada con los destinatarios'
-        );
+        if (err.message.indexOf('registros') !== -1) {
+          this.onLoadToast('error', 'Error 1 ', err.message);
+        }
+
         //this.onLoadToast('info', 'Registro', 'No se obtuvo información');
         console.log('error', 'Error', err.error.message);
         /*  let error = '';
@@ -909,16 +937,20 @@ carga la  información de la parte media de la página
           this.form.get('masInfo_1_2').setValue(resp.data[0].textoy);
           this.form.get('masInfo_2').setValue(resp.data[0].textoz);
         },
-        error: erro => {
+        error: err => {
           //this.onLoadToast('info', 'info', 'No existen registros');
           //this.onLoadToast('error', 'Error', erro.error.message);
-          this.onLoadToast(
+          /* this.onLoadToast(
             'info',
             'Registro',
             'No existe información asociada con el bloque de texto'
-          );
+          );*/
 
-          console.log('error', 'Error', erro.error.message);
+          if (err.message.indexOf('registros') !== -1) {
+            this.onLoadToast('error', 'Error 1 ', err.message);
+          }
+
+          console.log('error', 'Error', err.error.message);
         },
       });
   }
@@ -927,13 +959,17 @@ carga la  información de la parte media de la página
     this.dataExt = [];
     this.dictationService_1.createPersonExt(data).subscribe({
       next: resp => {
-        Swal.fire('Usuario turnado exitosamente', '', 'success');
+        Swal.fire('Se guardo de manera correcta', '', 'success');
         this.refreshTabla();
       },
-      error: errror => {
-        this.onLoadToast('info', 'Registro', 'No se obtuvo información');
+      error: err => {
+        if (err.message.indexOf('registros') !== -1) {
+          this.onLoadToast('error', 'Error 1 ', err.message);
+        }
+        console.log('Error ' + err);
+        // this.onLoadToast('info', 'Registro', 'No se obtuvo información');
 
-        console.log('error', 'Error', errror.error.message);
+        console.log('error', 'Error', err.error.message);
         /* if(errror.error.message=="No se encontrarón registros."){
             this.onLoadToast('info', 'Registro', errror.error.message);}else{
             this.onLoadToast('info', 'Registro', errror.error.message);
@@ -965,9 +1001,13 @@ carga la  información de la parte media de la página
         this.extPerson.removeAt(id);
         this.refreshTabla();
       },
-      error: errror => {
-        this.onLoadToast('info', 'Registro', 'No se obtuvo información');
-        console.log('error', 'Error', errror.error.message);
+      error: err => {
+        if (err.message.indexOf('registros') !== -1) {
+          this.onLoadToast('error', 'Error 1 ', err.message);
+        }
+
+        //this.onLoadToast('info', 'Registro', 'No se obtuvo información');
+        console.log('error', 'Error', err.error.message);
         // this.onLoadToast('error', 'Error', errror.error.message);
       },
     });
@@ -1023,14 +1063,32 @@ carga la  información de la parte media de la página
       .findUserByOficNum(this.filterParams.getValue().getParams())
       .subscribe({
         next: resp => {
-          this.dataExt = resp.data;
+          this.dataExt = resp.data.map((data: any) => this.usuariosCCP(data));
+
           console.log('refreshTabla() => ' + JSON.stringify(this.dataExt));
         },
-        error: errror => {
-          this.onLoadToast('info', 'Registro', 'No se obtuvo información');
-          console.log('error', 'Error', errror.error.message);
+        error: err => {
+          if (err.message.indexOf('registros') !== -1) {
+            this.onLoadToast('error', 'Error 1 ', err.message);
+          }
+          console.log('Error ' + err);
+          //this.onLoadToast('info', 'Registro', 'No se obtuvo información');
+          console.log('error', 'Error', err.error.message);
           // this.onLoadToast('error', 'Error', errror.error.message);
         },
       });
+  }
+
+  usuariosCCP(obj: IDictationCopies) {
+    return {
+      id: obj.id,
+      numberOfDicta: obj.numberOfDicta,
+      typeDictamination: obj.typeDictamination,
+      recipientCopy: obj.recipientCopy,
+      copyDestinationNumber: obj.copyDestinationNumber,
+      personExtInt: obj.personExtInt == 'I' ? 'INTERNO' : 'EXTERNO',
+      namePersonExt: obj.namePersonExt,
+      registerNumber: obj.registerNumber,
+    };
   }
 }

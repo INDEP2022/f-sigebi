@@ -28,9 +28,11 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
   //Reactive Forms
   @Input() form: FormGroup;
   @Input() screenKey: string = '';
+  @Input() screenKey2: string = '';
   @Input() officeDictationData: IOfficialDictation;
   @Input() dictationData: IDictation;
   @Input() dataUserLogged: any;
+  @Input() paramsScreen: any;
   @Input() disabled: boolean = false;
 
   @Output() viewPicturesEmitter = new EventEmitter<boolean>();
@@ -111,7 +113,7 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
   }
 
   openScannerPage() {
-    if (!this.officeDictationData && !this.dictationData) {
+    if (!this.officeDictationData || !this.dictationData) {
       return;
     }
     if (
@@ -131,7 +133,9 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
             this.router.navigate(['/pages/general-processes/scan-documents'], {
               queryParams: {
                 origin: this.screenKey,
+                origin2: this.screenKey2,
                 folio: this.form.get('scanningFoli').value,
+                ...this.paramsScreen,
               },
             });
           }
@@ -170,7 +174,7 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
     const response = await this.alertQuestion(
       'question',
       'Aviso',
-      'Se generará un nuevo folio de Escaneo para la Solicitud abierta, ¿Desea continuar?'
+      'Se generará un nuevo folio de Escaneo para el Dictamen, ¿Desea continuar?'
     );
 
     if (!response.isConfirmed) {
@@ -195,7 +199,7 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
       keySeparator: '60',
       keyTypeDocument: 'ENTRE',
       natureDocument: 'ORIGINAL',
-      descriptionDocument: `DICTAMEN ${this.dictationData.keyArmyNumber}`,
+      descriptionDocument: `DICTAMEN ${this.dictationData.passOfficeArmy}`, // Clave de Oficio Armada
       significantDate: format(new Date(), 'MM-yyyy'),
       scanStatus: 'SOLICITADO',
       userRequestsScan:
@@ -281,83 +285,133 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
   }
 
   replicate() {
-    if (!this.dictationData.wheelNumber) {
-      this.onLoadToast(
-        'error',
-        'Error',
-        'El trámite no tiene un número de volante'
+    if (!this.officeDictationData && !this.dictationData) {
+      return;
+    }
+    if (
+      this.officeDictationData.statusOf == 'ENVIADO' &&
+      this.dictationData.passOfficeArmy
+    ) {
+      if (this.form.get('scanningFoli').value) {
+        // Replicate function
+      } else {
+        this.alertInfo(
+          'warning',
+          'Especifique el folio de escaneo a replicar',
+          ''
+        );
+        return;
+      }
+    } else {
+      this.alertInfo(
+        'warning',
+        'No se puede replicar el folio de escaneo en un dictamen abierto',
+        ''
       );
       return;
     }
 
+    // if (!this.dictationData.wheelNumber) {
+    //   this.onLoadToast(
+    //     'error',
+    //     'Error',
+    //     'El trámite no tiene un número de volante'
+    //   );
+    //   return;
+    // }
+
     this.getDocumentsCount().subscribe(count => {
       if (count == 0) {
-        // this.getNotificationByFlyer().subscribe(notification => {
-        //   if (!notification) {
-        //     this.alert(
-        //       'error',
-        //       'Error',
-        //       'No existe un folio universal escaneado para replicar'
-        //     );
-        //     return;
-        //   }
-        //   this.getNotificationsByCveAndDate(
-        //     notification.officeExternalKey,
-        //     notification.entryProcedureDate
-        //   ).subscribe(flyers => {
-        this.getDocumentsByFlyers(
-          this.dictationData.wheelNumber.toString()
-        ).subscribe(documents => {
-          if (!documents.data[0]) {
-            this.alert(
-              'error',
-              'Error',
-              'No existe un folio universal escaneado para replicar'
-            );
-            return;
-          }
-          if (documents.count > 1) {
-            this.alert(
-              'error',
-              'Error',
-              'Existe mas de un folio universal escaneado para replicar'
-            );
-            return;
-          }
-          const folio = documents[0].id;
-          this.updateDocumentsByFolio(
-            folio,
-            this.dictationData.passOfficeArmy
-          ).subscribe();
-        });
-        //   });
-        // });
+        this.alert('warning', 'Folio de escaneo inválido para replicar', '');
       } else {
-        this.alert(
-          'warning',
-          'Advertencia',
-          'Este registro no permite ser replicado'
-        );
+        // INSERTAR REGISTRO PARA EL DOCUMENTO
+        this.saveNewUniversalFolio_Replicate();
       }
     });
   }
 
-  updateDocumentsByFolio(folioLNU: string | number, folioLST: string) {
-    return this.documentsService.updateByFolio({ folioLNU, folioLST }).pipe(
-      catchError(error => {
-        this.alert('error', 'Error', 'Ocurrio un error al replicar el folio');
-        return throwError(() => error);
-      }),
-      tap(() => {
-        this.alert('success', 'Folio replicado correctamente', '');
-      })
-    );
+  saveNewUniversalFolio_Replicate() {
+    const document = {
+      numberProceedings: this.dictationData.expedientNumber,
+      keySeparator: '60',
+      keyTypeDocument: 'ENTRE',
+      natureDocument: 'ORIGINAL',
+      descriptionDocument: `DICTAMEN ${this.dictationData.passOfficeArmy}`, // Clave de Oficio Armada
+      significantDate: format(new Date(), 'MM-yyyy'),
+      scanStatus: 'ESCANEADO',
+      userRequestsScan:
+        this.dataUserLogged.user == 'SIGEBIADMON'
+          ? this.dataUserLogged.user.toLocaleLowerCase()
+          : this.dataUserLogged.user,
+      scanRequestDate: new Date(),
+      numberDelegationRequested: this.dataUserLogged.delegationNumber,
+      numberSubdelegationRequests: this.dataUserLogged.subdelegationNumber,
+      numberDepartmentRequest: this.dataUserLogged.departamentNumber,
+      associateUniversalFolio: this.form.get('scanningFoli').value,
+      flyerNumber: this.dictationData.wheelNumber,
+    };
+    console.log('Documento a crear para el folio asociado', document);
+    this.createDocument(document)
+      .pipe(
+        tap(_document => {
+          this.onLoadToast(
+            'success',
+            'Se creó correctamente el nuevo Folio Universal: ' + _document.id,
+            ''
+          );
+          const folio = _document.id;
+          this.form.get('scanningFoli').setValue(folio);
+          this.form.get('scanningFoli').updateValueAndValidity();
+          this.alert(
+            'success',
+            'Folio replicado correctamente, este es tu Folio Universal ' +
+              folio,
+            ''
+          );
+          // this.updateDocumentsByFolio(
+          //   folio,
+          //   document.associateUniversalFolio
+          // ).subscribe();
+        }),
+        switchMap(_document => {
+          this.dictationData.folioUniversal =
+            this.form.get('scanningFoli').value;
+          return this.updateDictation(this.dictationData).pipe(
+            map(() => _document)
+          );
+        })
+        // switchMap(_document => this.generateScanRequestReport())
+      )
+      .subscribe();
   }
+
+  // updateDocumentsByFolio(folioLNU: string | number, folioLST: string) {
+  //   return this.documentsService.updateByFolio({ folioLNU, folioLST }).pipe(
+  //     catchError(error => {
+  //       this.alert(
+  //         'error',
+  //         'Ocurrio un error al replicar el folio',
+  //         error.error.message
+  //       );
+  //       return throwError(() => error);
+  //     }),
+  //     tap(() => {
+  //       this.alert('success', 'Folio replicado correctamente ' + folioLNU, '');
+  //       this.form.get('scanningFoli').setValue(folioLNU);
+  //     })
+  //   );
+  // }
 
   getDocumentsCount() {
     const params = new FilterParams();
-    params.addFilter('scanStatus', 'ESCANEADO');
-    params.addFilter('flyerNumber', this.dictationData.wheelNumber);
+    params.addFilter('scanStatus', 'SOLICITADO');
+    params.addFilter(
+      'associateUniversalFolio',
+      SearchFilter.NULL,
+      SearchFilter.NULL
+    );
+    params.addFilter('id', this.form.get('scanningFoli').value);
+    console.log(params);
     this.hideError();
     return this.documentsService.getAllFilter(params.getParams()).pipe(
       catchError(error => {
@@ -378,7 +432,8 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
   getDocumentsByFlyers(flyers: string) {
     const params = new FilterParams();
     params.addFilter('scanStatus', 'ESCANEADO');
-    params.addFilter('flyerNumber', flyers, SearchFilter.IN);
+    params.addFilter('flyerNumber', SearchFilter.NULL, SearchFilter.NOT);
+    params.addFilter('numberProceedings', this.dictationData.expedientNumber);
     this.hideError();
     return this.documentsService.getAllFilter(params.getParams()).pipe(
       catchError(error => {

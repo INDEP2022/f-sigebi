@@ -89,9 +89,13 @@ class DynamicFilter {
 
   getParams() {
     if (this.value == SearchFilter.NULL) {
-      return `filter.${this.field}=${this.operator ? this.operator + ':' : ''}${
-        SearchFilter.NULL
-      }`;
+      if (this.operator == SearchFilter.NULL) {
+        return `filter.${this.field}=${SearchFilter.NULL}`;
+      } else {
+        return `filter.${this.field}=${
+          this.operator ? this.operator + ':' : ''
+        }${SearchFilter.NULL}`;
+      }
     }
     return `filter.${this.field}=${this.operator}:${this.value}`;
   }

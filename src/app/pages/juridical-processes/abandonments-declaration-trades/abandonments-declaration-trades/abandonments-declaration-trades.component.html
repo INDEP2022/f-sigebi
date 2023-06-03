@@ -328,7 +328,7 @@
                   label="Inicio">
                   <!-- <label class="label w-100">page</label> -->
                   <textarea
-                    [readonly]="!disabledDictum"
+                    [readonly]="!lockStatus"
                     (dblclick)="editText($event, 'declaratoriaInicio')"
                     rows="5"
                     class="form-control w-100"
@@ -341,7 +341,7 @@
                   label="Fin">
                   <!-- <label class="label w-100">Fin</label> -->
                   <textarea
-                    [readonly]="!disabledDictum"
+                    [readonly]="!lockStatus"
                     (dblclick)="editText($event, 'declaratoriaFin')"
                     rows="7"
                     class="form-control w-100"
@@ -405,7 +405,6 @@
               <div class="row">
                 <div class="col-sm-12 col-12 col-md-6 text-center">
                   <button
-                    [disabled]="!disbaledAPROBAR"
                     (click)="aprobar()"
                     type="button"
                     class="btn btn-primary btn-sm active ml-2 mr-2">
@@ -451,6 +450,30 @@
         <tab heading="OFICIO" [disabled]="!disabledTabs" *ngIf="showTabs">
           <!-- Forms OFICIO -->
           <form [formGroup]="formOficio" class="container-fluid form-material">
+            <div class="row">
+              <div class="d-flex justify-content-end">
+                <div class="d-inline mx-2">
+                  <div class="btn-group">
+                    <button
+                      type="button"
+                      (click)="newMOficioG()"
+                      tooltip="Agregar Oficio"
+                      containerClass="tooltip-style"
+                      class="btn btn-info btn-sm active ml-2 mr-2">
+                      <i class="bx bx-plus bx-sm float-icon"></i>
+                    </button>
+                    <button
+                      type="button"
+                      (click)="listMOficiosG()"
+                      tooltip="Oficios Disponibles"
+                      containerClass="tooltip-style"
+                      class="btn btn-primary btn-sm active">
+                      <i class="bx bx-list-plus bx-sm float-icon"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
             <div class="row w-100 justify-content-center">
               <div class="col-12">
                 <div class="row mt-5">
@@ -464,6 +487,7 @@
                               label="Tipo Oficio">
                               <input
                                 readonly
+                                [(ngModel)]="EXTERNO"
                                 type="text"
                                 class="form-control"
                                 formControlName="tipoOficio" />
@@ -474,6 +498,7 @@
                               [control]="formOficio.get('oficioPor')"
                               label="Oficio Por">
                               <input
+                                [(ngModel)]="ABANDONO"
                                 readonly
                                 type="text"
                                 class="form-control"
@@ -711,15 +736,15 @@
                     <form-field
                       [control]="formCcpOficio.get('ccp')"
                       label="C&#46;P&#46;P">
-                      <select
-                        [disabled]="!disabledMOficGest"
+                      <ng-select
+                        [readonly]="!disabledMOficGest"
                         (change)="ccpChange($event)"
                         class="form-control"
                         formControlName="ccp">
                         <!-- <option [value]="null">Seleccione un valor</option> -->
-                        <option [value]="'INTERNO'">INTERNO</option>
-                        <option [value]="'EXTERNO'">EXTERNO</option>
-                      </select>
+                        <ng-option [value]="'INTERNO'">INTERNO</ng-option>
+                        <ng-option [value]="'EXTERNO'">EXTERNO</ng-option>
+                      </ng-select>
                     </form-field>
                   </div>
                   <div class="col-sm-12 col-12 col-md-10 p-1 pt-0 pb-0">
@@ -754,15 +779,16 @@
                     <form-field
                       [control]="formCcpOficio.get('ccp2')"
                       label="C&#46;P&#46;P">
-                      <select
-                        [disabled]="!disabledMOficGest"
+                      <ng-select
+                        [readonly]="!disabledMOficGest"
                         (change)="ccpChange2($event)"
                         class="form-control"
                         formControlName="ccp2">
+                        <!-- <ng-option [value]="null">Seleccione un valor</ng-option> -->
                         <!-- <option [value]="null">Seleccione un valor</option> -->
-                        <option [value]="'INTERNO'">INTERNO</option>
-                        <option [value]="'EXTERNO'">EXTERNO</option>
-                      </select>
+                        <ng-option [value]="'INTERNO'">INTERNO</ng-option>
+                        <ng-option [value]="'EXTERNO'">EXTERNO</ng-option>
+                      </ng-select>
                     </form-field>
                   </div>
                   <div class="col-sm-12 col-12 col-md-10 p-1 pt-0 pb-0">
@@ -830,7 +856,6 @@
                   </button> -->
                   <button
                     (click)="borrar()"
-                    [disabled]="!disabledMOficGest"
                     type="button"
                     class="btn btn-danger btn-sm active ml-2 mr-2">
                     Borra

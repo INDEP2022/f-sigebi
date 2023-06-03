@@ -51,6 +51,10 @@
   color: #dc3545 !important;
 }
 
+:host ::ng-deep app-columns-select > div {
+  width: 100%;
+}
+
 :host {
   ::ng-deep ng2-smart-table-filter {
     .ng2-smart-filter input,
@@ -106,7 +110,6 @@ ng2-smart-table {
 
 .action-buttons {
   > div {
-    margin-top: 1rem;
     padding: 0px;
     text-align: center;
 
@@ -122,6 +125,7 @@ ng2-smart-table {
   @media (max-width: 767px) {
     > div {
       text-align: center !important;
+      margin-top: 1rem;
     }
 
     ::ng-deep button {

@@ -43,11 +43,7 @@ export class StatusTransferFormComponent extends BasePage implements OnInit {
       code: [null, [Validators.required, Validators.maxLength(20)]],
       description: [
         null,
-        [
-          Validators.required,
-          Validators.maxLength(300),
-          Validators.pattern(STRING_PATTERN),
-        ],
+        [Validators.maxLength(300), Validators.pattern(STRING_PATTERN)],
       ],
     });
     if (this.statusTransfer != null) {
