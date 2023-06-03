@@ -385,16 +385,17 @@ export class RegistrationHelper extends BasePage {
             }
           } else if (Number(good.goodTypeId) === 2) {
             /**## Tipo Vehiculos ##*/
-            if (good.fitCircular === null) {
-              //apto para circular
-              tipoRelVehiculo = true;
-              this.message(
-                'error',
-                `Error en el bien ${good.goodDescription}`,
-                'El campo Apto para cirular en Información del Vehículo esta vacio, favor de complementar'
-              );
-              break;
-            } else if (good.brand === null) {
+            // if (good.fitCircular === null) {
+            //   //apto para circular
+            //   tipoRelVehiculo = true;
+            //   this.message(
+            //     'error',
+            //     `Error en el bien ${good.goodDescription}`,
+            //     'El campo Apto para cirular en Información del Vehículo esta vacio, favor de complementar'
+            //   );
+            //   break;
+            // } else
+            if (good.brand === null) {
               //marca
               tipoRelVehiculo = true;
               this.message(
@@ -438,16 +439,18 @@ export class RegistrationHelper extends BasePage {
                 'El campo Procedencia en Información del Vehículo esta vacio, favor de complementar'
               );
               break;
-            } */ else if (good.theftReport === null) {
-              //reporte de robos
-              tipoRelVehiculo = true;
-              this.message(
-                'error',
-                `Error en el bien ${good.goodDescription}`,
-                'El campo Reporte de Robo en Información del Vehículo esta vacio, favor de complementar'
-              );
-              break;
-            } else if (good.serie === null) {
+            } */
+            // else if (good.theftReport === null) {
+            //   //reporte de robos
+            //   tipoRelVehiculo = true;
+            //   this.message(
+            //     'error',
+            //     `Error en el bien ${good.goodDescription}`,
+            //     'El campo Reporte de Robo en Información del Vehículo esta vacio, favor de complementar'
+            //   );
+            //   break;
+            // }
+            else if (good.serie === null) {
               // serie
               tipoRelVehiculo = true;
               this.message(
