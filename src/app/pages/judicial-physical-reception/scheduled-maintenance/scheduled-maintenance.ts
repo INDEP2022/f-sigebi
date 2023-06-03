@@ -2,7 +2,6 @@ import { Component, Inject, inject, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { format } from 'date-fns';
 import { LocalDataSource, Ng2SmartTableComponent } from 'ng2-smart-table';
-import { takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import {
   FilterParams,
@@ -185,13 +184,13 @@ export abstract class ScheduledMaintenance extends BasePageWidhtDinamicFiltersEx
         this.tiposEvento = response.data;
       },
     });
-    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe({
-      next: response => {
-        console.log(response);
+    // this.params.pipe(takeUntil(this.$unSubscribe)).subscribe({
+    //   next: response => {
+    //     console.log(response);
 
-        this.getData(true);
-      },
-    });
+    //     this.getData(true);
+    //   },
+    // });
   }
 
   setForm() {
