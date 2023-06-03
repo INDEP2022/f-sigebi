@@ -4,29 +4,13 @@
   </div>
   <div body>
     <form class="form-material" [formGroup]="storeHouseForm">
-      <div class="row">
+      <div class="row mt-4">
         <div class="col-md-6">
-          <form-field
-            [control]="storeHouseForm.get('idStorehouse')"
-            label="ID Bodega">
+          <form-field [control]="storeHouseForm.get('idStorehouse')" label="ID">
             <input
-              type="number"
+              type="text"
               class="form-control"
-              formControlName="idStorehouse"
-              min="1"
-              pattern="^[0-9]+" />
-          </form-field>
-        </div>
-        <div class="col-md-6">
-          <form-field [control]="storeHouseForm.get('idEntity')">
-            <ngx-select
-              [form]="storeHouseForm"
-              [data]="states"
-              bindLabel="descCondition"
-              label="Estado"
-              value="id"
-              (fetchItems)="getStates($event)"
-              control="idEntity"></ngx-select>
+              formControlName="idStorehouse" />
           </form-field>
         </div>
       </div>
@@ -47,8 +31,9 @@
               [data]="municipalities"
               bindLabel="description"
               label="Municipio"
-              value="codeMunicipalityId"
+              value="idMunicipality"
               (fetchItems)="getMunicipalities($event)"
+              (change)="getLocalitie($event)"
               control="municipality"></ngx-select>
           </form-field>
         </div>
@@ -58,8 +43,8 @@
               [form]="storeHouseForm"
               [data]="localities"
               label="Localidad"
-              bindLabel="localityName"
-              value="key"
+              bindLabel="nameLocation"
+              value="id"
               (fetchItems)="getLocalities($event)"
               control="locality"></ngx-select>
           </form-field>

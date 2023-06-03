@@ -103,6 +103,7 @@
       <div class="row">
         <div class="col-12">
           <app-update-dates-goods
+            [form]="formDate"
             [disabled]="
               statusActaValue !== 'ABIERTA' && data && data.length > 0
             "
