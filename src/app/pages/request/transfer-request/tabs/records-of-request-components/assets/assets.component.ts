@@ -282,12 +282,12 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
             'Archivos cargados',
             `Se importaron los archivos`
           );
-          this.loader.load = false;
+          this.loaderProgress.load = false;
           this.fileUploaded.nativeElement.value = '';
           this.closeCreateGoodWIndows();
         },
         error: error => {
-          this.loader.load = false;
+          this.loaderProgress.load = false;
           this.message(
             'error',
             'Error al subir el file',
