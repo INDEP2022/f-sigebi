@@ -258,7 +258,7 @@ export abstract class ScheduledMaintenance extends BasePageWidhtDinamicFiltersEx
     const statusEvento = this.form.get('statusEvento').value;
     const coordRegional = this.form.get('coordRegional').value;
     const usuario = this.form.get('usuario').value;
-    const cveActa = this.form.get('claveActa').value;
+    // const cveActa = this.form.get('claveActa').value;
     const rangeDate = this.form.get('rangeDate').value;
     console.log(rangeDate);
     if (this.form.invalid) {

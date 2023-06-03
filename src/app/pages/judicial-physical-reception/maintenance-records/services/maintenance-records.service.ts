@@ -11,7 +11,9 @@ export class MaintenanceRecordsService {
   formValue: IProceedingInfo = null;
   form: FormGroup;
   formGood: FormGroup;
+  formActionChange: FormGroup;
   formWarehouseVaul: FormGroup;
+  formDate: FormGroup;
   data: IDetailProceedingsDeliveryReception[] = [];
   selectedAct: IProceedingDeliveryReception;
   totalProceedings: number = 0;
