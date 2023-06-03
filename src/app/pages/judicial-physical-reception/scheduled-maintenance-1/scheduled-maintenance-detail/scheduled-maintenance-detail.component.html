@@ -52,6 +52,7 @@
               [control]="form.get('fechaCaptura')"
               label="Fecha Captura">
               <input
+                style="background: white"
                 bsDatepicker
                 class="form-control"
                 formControlName="fechaCaptura"
@@ -114,7 +115,7 @@
         </div>
         <div class="col-md-6 goodTracker mt-4">
           <app-goodtracker-button
-            [disabled]="statusActaValue === 'CERRADA'"
+            [disabled]="true"
             [data]="data"
             [origin]="origin"></app-goodtracker-button>
         </div>
