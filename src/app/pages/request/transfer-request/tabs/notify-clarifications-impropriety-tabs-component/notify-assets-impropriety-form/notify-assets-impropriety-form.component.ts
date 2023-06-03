@@ -211,7 +211,7 @@ export class NotifyAssetsImproprietyFormComponent
 
     //Crear objeto para generar el reporte
     const modelReport: IClarificationDocumentsImpro = {
-      clarification: this.dataClarifications2.clarificationType,
+      clarification: this.clarificationForm.controls['clarification'].value,
       sender: this.clarificationForm.controls['senderName'].value,
       //foundation: ",",
       //id: 1, //ID primaria
@@ -262,7 +262,7 @@ export class NotifyAssetsImproprietyFormComponent
 
     //Crear objeto para generar el reporte
     const modelReport: IClarificationDocumentsImpro = {
-      clarification: this.dataClarifications2.clarificationType,
+      clarification: this.clarificationForm.controls['clarification'].value,
       sender: this.clarificationForm.controls['senderName'].value,
       //foundation: ",",
       //id: 1, //ID primaria
@@ -313,7 +313,7 @@ export class NotifyAssetsImproprietyFormComponent
 
     //Crear objeto para generar el reporte
     const modelReport: IClarificationDocumentsImpro = {
-      clarification: this.dataClarifications2.clarificationType,
+      clarification: this.clarificationForm.controls['clarification'].value,
       sender: this.clarificationForm.controls['senderName'].value,
       //foundation: ",",
       //id: 1, //ID primaria
@@ -364,7 +364,7 @@ export class NotifyAssetsImproprietyFormComponent
 
     //Crear objeto para generar el reporte
     const modelReport: IClarificationDocumentsImpro = {
-      clarification: this.dataClarifications2.clarificationType,
+      clarification: this.clarificationForm.controls['clarification'].value,
       sender: this.clarificationForm.controls['senderName'].value,
       //foundation: ",",
       //id: 1, //ID primaria
@@ -416,7 +416,7 @@ export class NotifyAssetsImproprietyFormComponent
 
     //Crear objeto para generar el reporte
     const modelReport: IClarificationDocumentsImpro = {
-      clarification: this.dataClarifications2.clarificationType,
+      clarification: this.clarificationForm.controls['clarification'].value,
       sender: this.clarificationForm.controls['senderName'].value,
       //foundation: ",",
       //id: 1, //ID primaria
@@ -468,7 +468,7 @@ export class NotifyAssetsImproprietyFormComponent
 
     //Crear objeto para generar el reporte
     const modelReport: IClarificationDocumentsImpro = {
-      clarification: this.dataClarifications2.clarificationType,
+      clarification: this.clarificationForm.controls['clarification'].value,
       sender: this.clarificationForm.controls['senderName'].value,
       //foundation: ",",
       //id: 1, //ID primaria

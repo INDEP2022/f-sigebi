@@ -32,6 +32,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import Swal from 'sweetalert2';
+import { tablaModalComponent } from '../tabla-modal/tablaModal-component';
 import { EXTERNOS_COLUMS_OFICIO } from '../tabla-modal/tableUserExt';
 import { ModalPersonaOficinaComponent } from './modal-persona-oficina/modal-persona-oficina.component';
 
@@ -250,11 +251,8 @@ export class OfficeComponent extends BasePage implements OnInit {
       .getAllOfficialDocument(filterParams.getValue().getParams())
       .subscribe({
         next: respuesta => {
-          console.log(respuesta.count);
-
-          if (respuesta.count > 1) {
-            console.log('IF');
-            this.loadOficioModal('getAllOfficialDocument', true, filterParams);
+          if (respuesta.count == 1) {
+            this.loadModal(1, filterParams);
           } else {
             console.log('Else');
             this.tipoImpresion = respuesta.data[0].jobType;
@@ -311,60 +309,53 @@ export class OfficeComponent extends BasePage implements OnInit {
   //=================================================================================
   //===================================================================================//
 
-  loadOficioModal(
-    pantalla: string,
-    resp: boolean,
-    filterParams: BehaviorSubject<FilterParams>
-  ) {
-    this.openOficioModal(pantalla, true, filterParams);
+  loadModal(resp: number, filterParams: BehaviorSubject<FilterParams>) {
+    console.log('MODAL => ' + resp);
+    this.openModal(resp, filterParams);
   }
 
-  openOficioModal(
-    pantalla: string,
-    newOrEdit: boolean,
-    filterParams: BehaviorSubject<FilterParams>
-  ) {
+  //false dictamen true oficio
+  openModal(status: number, OficioOrdictamen: BehaviorSubject<FilterParams>) {
+    console.log('MODAL 2=> ' + status);
     const modalConfig = {
       ...MODAL_CONFIG,
       class: 'modal-lg modal-dialog-centered',
     };
     modalConfig.initialState = {
-      newOrEdit,
-      filterParams,
-      pantalla,
+      status,
+      OficioOrdictamen,
       callback: (next: any) => {
+        //------------------------------------------------------
         const respuesta = JSON.parse(JSON.stringify(next));
+        this.tipoImpresion = respuesta.jobType;
 
-        this.tipoImpresion = respuesta.data[0].jobType;
         this.form
           .get('proceedingsNumber')
-          .setValue(respuesta.data[0].proceedingsNumber);
-        this.form
-          .get('managementNumber')
-          .setValue(respuesta.data[0].managementNumber);
-        this.form.get('flyerNumber').setValue(respuesta.data[0].flyerNumber);
-        this.form.get('officio').setValue(respuesta.data[0].jobBy);
-        this.form.get('addressee').setValue(respuesta.data[0].addressee);
-        this.form.get('RemitenteSenderUser').setValue(respuesta.data[0].sender);
+          .setValue(respuesta.proceedingsNumber);
+        this.form.get('managementNumber').setValue(respuesta.managementNumber);
+        this.form.get('flyerNumber').setValue(respuesta.flyerNumber);
+        this.form.get('officio').setValue(respuesta.jobBy);
+        this.form.get('addressee').setValue(respuesta.addressee);
+        this.form.get('RemitenteSenderUser').setValue(respuesta.sender);
         const param = new ListParams();
-        param.text = respuesta.data[0].sender;
+        param.text = respuesta.sender;
         this.getUsers$(param);
-        if (respuesta.data[0].cveChargeRem !== null) {
-          this.getPuestoUser(respuesta.data[0].cveChargeRem);
+        if (respuesta.cveChargeRem !== null) {
+          this.getPuestoUser(respuesta.cveChargeRem);
         }
-        if (respuesta.data[0].proceedingsNumber !== null) {
-          this.loadbyAttachedDocuments(respuesta.data[0].managementNumber);
+        if (respuesta.proceedingsNumber !== null) {
+          this.loadbyAttachedDocuments(respuesta.managementNumber);
         }
 
-        this.form.get('paragraphInitial').setValue(respuesta.data[0].text1);
-        this.form.get('paragraphFinish').setValue(respuesta.data[0].text2);
-        this.form.get('paragraphOptional').setValue(respuesta.data[0].text3);
-        this.form
-          .get('descriptionSender')
-          .setValue(respuesta.data[0].desSenderpa);
+        this.form.get('paragraphInitial').setValue(respuesta.text1);
+        this.form.get('paragraphFinish').setValue(respuesta.text2);
+        this.form.get('paragraphOptional').setValue(respuesta.text3);
+        this.form.get('descriptionSender').setValue(respuesta.desSenderpa);
+
+        //----------------------------------------------------------
       },
     };
-    //this.modalService.show(TablaOficioModalComponent, modalConfig);
+    this.modalService.show(tablaModalComponent, modalConfig);
   }
 
   ////////////////////////////////////////////////////////////////////////////////////
