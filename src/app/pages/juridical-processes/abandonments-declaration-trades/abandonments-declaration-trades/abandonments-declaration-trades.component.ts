@@ -1680,7 +1680,6 @@ export class AbandonmentsDeclarationTradesComponent
     //   }
     // }
 
-    this.onLoadGoodList('all');
     this.disabledENVIAR = true;
     this.disabledIMPRIMIR = true;
     this.disbaledAPROBAR = false;
