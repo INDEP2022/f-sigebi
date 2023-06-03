@@ -66,3 +66,26 @@ export const COLUMNS_DICTUMS = {
     sort: false,
   },
 };
+
+export const COLUMNS_OFICIO = {
+  managementNumber: {
+    title: 'No. Oficio',
+    type: 'string',
+    sort: false,
+  },
+  cveManagement: {
+    title: 'Clave Oficio',
+    type: 'string',
+    sort: false,
+  },
+  statusOf: {
+    title: 'Estatus',
+    type: 'string',
+    sort: false,
+  },
+  dateOficio: {
+    title: 'Fecha Captura',
+    type: 'string',
+    sort: false,
+  },
+};

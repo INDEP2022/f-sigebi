@@ -79,6 +79,11 @@ export class Repository<T> implements IRepository<T> {
     const fullRoute = this.buildRoute(route);
     return this.httpClient.delete(`${fullRoute}/id/${id}`);
   }
+  removeDocSac(route: string, formData: any) {
+    console.log(formData);
+    const fullRoute = this.buildRoute(route);
+    return this.httpClient.delete(`${fullRoute}/id/${formData.id}`);
+  }
 
   updateByIds(route: string, ids: Partial<T>, formData: Object) {
     const fullRoute = this.buildRoute(route);
@@ -303,8 +308,8 @@ export class Repository<T> implements IRepository<T> {
 
   updateCatalogOpinions(route: string, id: number | string, formData: Object) {
     const fullRoute = this.buildRoute(route);
-    // console.log(`${fullRoute}/id/${id}`);
     // console.log(formData);
+
     return this.httpClient.put(`${fullRoute}/id/${id}`, formData);
   }
 
@@ -321,12 +326,29 @@ export class Repository<T> implements IRepository<T> {
     formData: Object
   ) {
     const fullRoute = this.buildRoute(route);
-    // console.log(`${fullRoute}/id/${id}`);
     // console.log(formData);
+
     return this.httpClient.put(`${fullRoute}/id/${id}`, formData);
   }
 
   removeCatalogDocCompensation(route: string, id: number | string) {
+    const fullRoute = this.buildRoute(route);
+    // console.log(`${fullRoute}/id/${id}`);
+
+    return this.httpClient.delete(`${fullRoute}/id/${id}`);
+  }
+
+  updateCatalogSiabClasification(
+    route: string,
+    id: number | string,
+    formData: Object
+  ) {
+    const fullRoute = this.buildRoute(route);
+    // console.log(formData);
+    return this.httpClient.put(`${fullRoute}/id/${id}`, formData);
+  }
+
+  removeCatalogSiabClasification(route: string, id: number | string) {
     const fullRoute = this.buildRoute(route);
     // console.log(`${fullRoute}/id/${id}`);
 

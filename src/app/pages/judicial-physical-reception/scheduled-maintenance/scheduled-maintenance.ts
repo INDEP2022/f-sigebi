@@ -170,9 +170,21 @@ export abstract class ScheduledMaintenance extends BasePageWidhtDinamicFiltersEx
     console.log('RESET VIEW');
     this.data = new LocalDataSource();
     this.totalItems = 0;
+    localStorage.removeItem(this.formStorage);
+    this.columnFilters = [];
   }
 
   extraOperations() {}
+
+  protected updateByPaginator() {
+    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe({
+      next: response => {
+        console.log(response);
+
+        this.getData(true);
+      },
+    });
+  }
 
   override ngOnInit(): void {
     this.dinamicFilterUpdate();
@@ -184,13 +196,7 @@ export abstract class ScheduledMaintenance extends BasePageWidhtDinamicFiltersEx
         this.tiposEvento = response.data;
       },
     });
-    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe({
-      next: response => {
-        console.log(response);
-
-        this.getData();
-      },
-    });
+    this.updateByPaginator();
   }
 
   setForm() {
@@ -245,14 +251,15 @@ export abstract class ScheduledMaintenance extends BasePageWidhtDinamicFiltersEx
     console.log(this.form.value);
   }
 
-  private fillParams() {
+  private fillParams(byPage = false) {
+    debugger;
     const tipoEvento = this.form.get('tipoEvento').value;
     // const fechaInicio: Date | string = this.form.get('fechaInicio').value;
     // const fechaFin: Date = this.form.get('fechaFin').value;
     const statusEvento = this.form.get('statusEvento').value;
     const coordRegional = this.form.get('coordRegional').value;
     const usuario = this.form.get('usuario').value;
-    const cveActa = this.form.get('claveActa').value;
+    // const cveActa = this.form.get('claveActa').value;
     const rangeDate = this.form.get('rangeDate').value;
     console.log(rangeDate);
     if (this.form.invalid) {
@@ -321,25 +328,35 @@ export abstract class ScheduledMaintenance extends BasePageWidhtDinamicFiltersEx
       }
     }
     // this.filterParams.addFilter2(this.columnFilters);
-    this.filterParams.page = this.params.getValue().page;
     this.filterParams.limit = this.params.getValue().limit;
+    if (byPage) {
+      this.filterParams.page = this.params.getValue().page;
+    } else {
+      this.params.value.page = 1;
+      localStorage.setItem(
+        'paramsActa',
+        JSON.stringify({ limit: this.params.getValue().limit, page: 1 })
+      );
+      // this.params.value.limit = 10;
+    }
+
     return true;
   }
 
-  override getData() {
+  override getData(byPage = false) {
     if (!this.form) {
       return;
     }
     this.saveForm();
     // this.fillParams()
-    if (this.fillParams()) {
+    if (this.fillParams(byPage)) {
       this.loading = true;
       this.service.getAll(this.filterParams.getParams()).subscribe({
         next: response => {
           console.log(response);
-          if (response.data.length === 0) {
-            this.onLoadToast('error', 'No se encontraron datos');
-          }
+          // if (response.data.length === 0) {
+          //   this.onLoadToast('error', 'No se encontraron datos');
+          // }
           (this.items = response.data.map(x => {
             return {
               ...x,
@@ -356,8 +373,9 @@ export abstract class ScheduledMaintenance extends BasePageWidhtDinamicFiltersEx
         error: error => {
           console.log(error);
           // this.onLoadToast('error', 'No se encontraron datos');
-          this.loading = false;
           this.data.load([]);
+          this.totalItems = 0;
+          this.loading = false;
         },
       });
     } else {

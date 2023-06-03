@@ -27,6 +27,7 @@ import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { ExcelService } from 'src/app/common/services/excel.service';
 import {
   IHistoryProcesdingAct,
   IPAAbrirActasPrograma,
@@ -50,6 +51,7 @@ import { DocumentsService } from 'src/app/core/services/ms-documents/documents.s
 import { EventProgrammingService } from 'src/app/core/services/ms-event-programming/event-programing.service';
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import { GoodParametersService } from 'src/app/core/services/ms-good-parameters/good-parameters.service';
+import { FIndicaService } from 'src/app/core/services/ms-good/findica.service';
 import { IndicatorsParametersService } from 'src/app/core/services/ms-parametergood/indicators-parameter.service';
 import { ParametersService } from 'src/app/core/services/ms-parametergood/parameters.service';
 import { RNomenclaService } from 'src/app/core/services/ms-parametergood/r-nomencla.service';
@@ -58,13 +60,14 @@ import {
   ProceedingsDetailDeliveryReceptionService,
   ProceedingsService,
 } from 'src/app/core/services/ms-proceedings';
+import { ProgrammingGoodsService } from 'src/app/core/services/ms-programming-good/programming-good.service';
+import { TmpContProgrammingService } from 'src/app/core/services/ms-programming-good/tmp-cont-programming.service';
 import { ProgrammingGoodService } from 'src/app/core/services/ms-programming-request/programming-good.service';
 import { SecurityService } from 'src/app/core/services/ms-security/security.service';
 import { IndUserService } from 'src/app/core/services/ms-users/ind-user.service';
 import { SegAcessXAreasService } from 'src/app/core/services/ms-users/seg-acess-x-areas.service';
 import { ProcedureManagementService } from 'src/app/core/services/proceduremanagement/proceduremanagement.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { GOODS_TACKER_ROUTE } from 'src/app/utils/constants/main-routes';
 import {
@@ -222,6 +225,10 @@ export class EventCaptureComponent
   get siabControls() {
     return this.formSiab.controls;
   }
+
+  gInitialDate: Date;
+  gFinalDate: Date;
+
   constructor(
     private fb: FormBuilder,
     private parameterGoodService: ParametersService,
@@ -243,7 +250,11 @@ export class EventCaptureComponent
     private security: SecurityService,
     private progammingServ: ProgrammingGoodService,
     private documentsService: DocumentsService,
-    private proceedingsService: ProceedingsService
+    private proceedingsService: ProceedingsService,
+    private programmingGoodService: ProgrammingGoodsService,
+    private tmpContProgrammingService: TmpContProgrammingService,
+    private fIndicaService: FIndicaService,
+    private excelService: ExcelService
   ) {
     super();
     this.authUser = this.authService.decodeToken().preferred_username;
@@ -292,14 +303,14 @@ export class EventCaptureComponent
           },
           renderComponent: DateCellComponent,
         },
-        select: {
-          title: 'Selec.',
-          sort: false,
-          type: 'custom',
-          filter: false,
-          showAlways: true,
-          renderComponent: CheckboxElementComponent,
-        },
+        // select: {
+        //   title: 'Selec.',
+        //   sort: false,
+        //   type: 'custom',
+        //   filter: false,
+        //   showAlways: true,
+        //   renderComponent: CheckboxElementComponent,
+        // },
         ...COLUMNS_CAPTURE_EVENTS_2,
       },
       hideSubHeader: false,
@@ -309,8 +320,6 @@ export class EventCaptureComponent
       this.global.proceedingNum = params['numeroActa'] ?? null;
       this.global.paperworkArea = params['tipoEvento'] ?? null;
     });
-
-    console.log(this.global);
   }
 
   test(instance: DateCellComponent) {
@@ -320,6 +329,61 @@ export class EventCaptureComponent
   }
 
   async saveProceeding() {
+    if (this.proceeding.id) {
+      this.updateProceeding().subscribe();
+      return;
+    }
+    await this.createProceeding();
+  }
+
+  updateProceeding() {
+    console.log(this.proceeding);
+    const formValue = this.form.value;
+    const { numFile, keysProceedings, captureDate, responsible } = formValue;
+    console.log({ numFile, keysProceedings, captureDate, responsible });
+    const data = {
+      ...this.proceeding,
+      numFile,
+      keysProceedings,
+      captureDate,
+      responsible,
+    };
+
+    return this.proceedingDeliveryReceptionService
+      .update(this.proceeding.id, data as any)
+      .pipe(tap(() => this.onLoadToast('success', 'Acta actualizada')));
+  }
+
+  excelExport() {
+    if (this.detail.length === 0) {
+      this.alert('warning', 'Advertencia', 'No hay datos para exportar');
+      return;
+    }
+    const cve = this.registerControls.keysProceedings.value;
+    const dataToExport = this.detail.map((det: any) => {
+      return {
+        'CVE Acta': cve,
+        'Localidad Ent': det.locTrans,
+        'No Bien': det.goodnumber,
+        Estatus: det.status,
+        Proceso: det.proccessextdom,
+        Descripción: det.description,
+        'Tipo Bien': det.typegood,
+        Expediente: det.expedientnumber,
+        Inicio: det.dateapprovalxadmon,
+        Finalizacion: det.dateindicatesuserapproval,
+      };
+    });
+    this.excelService.export(dataToExport, { filename: cve });
+  }
+
+  udpateProceedingExpedient() {
+    return this.proceedingDeliveryReceptionService
+      .update(this.proceeding.id, this.proceeding as any)
+      .pipe();
+  }
+
+  async createProceeding() {
     await this.generateCve();
     const formValue = this.form.value;
     const { numFile, keysProceedings, captureDate, responsible } = formValue;
@@ -380,7 +444,6 @@ export class EventCaptureComponent
 
   async transferClick() {
     const firstDetail = this.detail[0];
-    console.log('llego', firstDetail);
     const { transference } = this.registerControls;
     if (!firstDetail) {
       transference.reset();
@@ -411,6 +474,7 @@ export class EventCaptureComponent
     this.transfers = new DefaultSelect([
       { value: transferent, label: transferent },
     ]);
+    await this.generateCve();
   }
 
   async getTAseg(expedientId: string | number) {
@@ -479,6 +543,19 @@ export class EventCaptureComponent
 
   async loadGoods() {
     const { area, keysProceedings, typeEvent } = this.registerControls;
+    const totalFilters = Object.values(this.formSiab.value);
+    const filters = totalFilters.map(filter =>
+      Array.isArray(filter) ? filter.join(',') : filter
+    );
+    const nullFilters = filters.filter(filter => !filter);
+    if (nullFilters.length == totalFilters.length) {
+      this.onLoadToast(
+        'error',
+        'Error',
+        'Debe ingresar almenos 1 parametro de busqueda'
+      );
+      return;
+    }
     if (
       this.proceeding.statusProceedings == 'CERRADA' ||
       this.proceeding.statusProceedings == 'CERRADO'
@@ -521,14 +598,14 @@ export class EventCaptureComponent
 
     if (typeEvent.value == 'RT') {
       if (this.blkProceeding.txtCrtSus1) {
-        this.pupUpdate();
+        // this.pupUpdate();
       } else {
-        this.frConditions();
+        // this.frConditions();
       }
       this.blkCtrl.asigTm = 1;
       this.blkCtrl.asigCb = 1;
     } else {
-      this.pupUpdate();
+      // this.pupUpdate();
     }
 
     this.progTotal();
@@ -538,10 +615,78 @@ export class EventCaptureComponent
   progTotal() {}
 
   // PUP_GENERA_WHERE
-  createFilters() {}
+  createFilters() {
+    const { typeEvent } = this.form.value;
+    const {
+      initialDate,
+      finalDate,
+      flyer,
+      expedient,
+      dictumCve,
+      delegation,
+      programed,
+      cdonacCve,
+      lot,
+      donatNumber,
+      adonacCve,
+      event,
+      warehouse,
+      autoInitialDate,
+      autoFinalDate,
+      transfer,
+      transmitter,
+      authority,
+    } = this.formSiab.value;
+    const body = {
+      startDate: initialDate,
+      endDate: finalDate,
+      processingArea: typeEvent,
+      steeringWheel: flyer,
+      proceedings: expedient,
+      opinion: dictumCve,
+      coordination: delegation.join(','),
+      program: programed,
+      cdonacKey: cdonacCve,
+      idLot: lot,
+      doneeNumber: donatNumber,
+      adonacKey: adonacCve,
+      idEvent: event,
+      storeNumber: warehouse,
+      iniAutDate: autoInitialDate,
+      endAutDate: autoFinalDate,
+      transferee: transfer.join(','),
+      station: transmitter.join(','),
+      authority: authority.join(','),
+    };
+
+    this.fIndicaService.pupGenerateWhere(body).subscribe(res => {
+      console.log({ res });
+      this.pupUpdate();
+    });
+  }
 
   // PUP_ACTUALIZA
-  pupUpdate() {}
+  pupUpdate() {
+    const { typeEvent } = this.registerControls;
+    const { expedient } = this.formSiab.value;
+    this.loading = true;
+    this.fIndicaService
+      .pupUpdate(typeEvent.value, expedient, this.proceeding.id)
+      .subscribe({
+        next: res => {
+          if (res.data.length > 0) {
+            this.onLoadToast('success', 'Bienes cargados correctamente');
+          } else {
+            this.onLoadToast('info', 'No se encontraron bienes para agregar');
+          }
+          this.loading = false;
+          this.getDetail().subscribe();
+        },
+        error: error => {
+          this.loading = false;
+        },
+      });
+  }
 
   // PUP_CONDICIONES_FR
   frConditions() {
@@ -679,6 +824,7 @@ export class EventCaptureComponent
 
   // PUP_VAL_TRANF
   validateTransfer(_type: string, transfer: string) {
+    this.global.tran = transfer;
     const { keysProceedings } = this.registerControls;
     const splitedArea = keysProceedings?.value?.split('/');
     const cveType = splitedArea ? splitedArea[0] : null;
@@ -714,6 +860,7 @@ export class EventCaptureComponent
         }
       }
     } else {
+      console.log('llego al else de transferente', transfer);
       // if(tran == transfer)  {
       if (
         (transfer == 'PGR' || transfer == 'PJF') &&
@@ -721,6 +868,7 @@ export class EventCaptureComponent
       ) {
         this.global.tran = transfer;
         this.global.type = _type;
+        console.log('llego al primero');
       } else if (
         transfer != 'PGR' &&
         transfer != 'PJF' &&
@@ -730,6 +878,7 @@ export class EventCaptureComponent
       } else if ((transfer == 'PGR' || transfer == 'PJF') && _type == 'RT') {
         this.invalidTransfer();
       } else if (transfer != 'PGR' && transfer != 'PJF' && _type == 'Rt') {
+        console.log('llego al segundo');
         this.global.tran = transfer;
         this.global.type = _type;
       }
@@ -1009,14 +1158,24 @@ export class EventCaptureComponent
   getDetail() {
     const params = new FilterParams();
     params.addFilter('numberProceedings', this.proceeding.id);
+    this.loading = true;
     return this.eventProgrammingService
       .getGoodsIndicators(this.proceeding.id)
       .pipe(
+        catchError(error => {
+          this.loading = false;
+          return throwError(() => error);
+        }),
         tap(res => {
+          this.loading = false;
           const detail = res.data[0];
 
           this.afterGetDetail(detail);
           this.detail = res.data.map(detail => {
+            if (detail.expedientnumber) {
+              this.proceeding.numFile = Number(detail.expedientnumber);
+              this.udpateProceedingExpedient().subscribe();
+            }
             const { typeEvent } = this.registerControls;
             let locTrans = '';
             if (typeEvent.value == 'RF') {
@@ -1051,36 +1210,37 @@ export class EventCaptureComponent
 
   // PA_CALCULA_CANTIDADES
   /*   calculateQuantities() {
-    // TODO: DESCOMENTAR CUANDO ARREGLEN LA INCIDENCIA
-    // this.programmingGoodService.computeEntities(
-    //   this.proceeding.id,
-    //   typeEvent.value
-    // )
     const { typeEvent } = this.registerControls;
-    of(null).subscribe(() => {
-      const params = new FilterParams();
-      params.addFilter('minutesNumber', this.proceeding.id);
-      return this.tmpContProgrammingService
-        .computeEntities(params.getParams())
-        .pipe(
-          tap(response => {
-            const count = response.data[0];
-            if (count) {
-              const {
-                amountEstate,
-                recordsAmount,
-                amountfiles,
-                amountOpinions,
-              } = count;
-              this.blkQuantities.goods = Number(amountEstate);
-              this.blkQuantities.registers = Number(recordsAmount);
-              this.blkQuantities.expedients = Number(amountfiles);
-              this.blkQuantities.dictums = Number(amountOpinions);
-            }
-          })
-        )
-        .subscribe();
-    });
+    // TODO: DESCOMENTAR CUANDO ARREGLEN LA INCIDENCIA
+    this.programmingGoodService
+      .computeEntities(this.proceeding.id, typeEvent.value)
+      .pipe(
+        tap(() => {
+          const params = new FilterParams();
+          params.addFilter('minutesNumber', this.proceeding.id);
+          return this.tmpContProgrammingService
+            .computeEntities(params.getParams())
+            .pipe(
+              tap(response => {
+                const count = response.data[0];
+                if (count) {
+                  const {
+                    amountEstate,
+                    recordsAmount,
+                    amountfiles,
+                    amountOpinions,
+                  } = count;
+                  this.blkQuantities.goods = Number(amountEstate);
+                  this.blkQuantities.registers = Number(recordsAmount);
+                  this.blkQuantities.expedients = Number(amountfiles);
+                  this.blkQuantities.dictums = Number(amountOpinions);
+                }
+              })
+            )
+            .subscribe();
+        })
+      )
+      .subscribe();
   } */
 
   // DETALLE_ACTA_ENT_RECEP.POST_QUERY

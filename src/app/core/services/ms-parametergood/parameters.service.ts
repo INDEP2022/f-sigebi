@@ -35,8 +35,8 @@ export class ParametersService extends HttpService {
     return this.get<IListResponse<IParameters>>(this.route.FaseEdo, date);
   }
 
-  getFaStageCreda(params: ListParams) {
-    const route = `${ParameterGoodEndpoints.FaStageCreda}`;
-    return this.post(route, params);
+  getFaStageCreda(params: any) {
+    const route = `${ParameterGoodEndpoints.FaStageCreda + '?date=' + params}`;
+    return this.get(route);
   }
 }

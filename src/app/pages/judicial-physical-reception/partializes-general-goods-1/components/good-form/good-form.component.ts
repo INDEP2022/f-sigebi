@@ -273,6 +273,7 @@ export class GoodFormComponent extends AlertButton implements OnInit {
   resetForm() {
     // this.service.formControl.
     this.service.good = null;
+    this.service.formGood.reset();
     // this.form.reset();
     this.formControl.reset();
     this.service.bienesPar = [];
@@ -282,6 +283,10 @@ export class GoodFormComponent extends AlertButton implements OnInit {
     this.service.sumAvaluo = 0;
     this.service.goodStatusDesc = '';
     this.service.goodClassNumberDesc = '';
+  }
+
+  ngOnDestroy() {
+    this.resetForm();
   }
 
   private validateStatusXPantalla(good: IGood) {

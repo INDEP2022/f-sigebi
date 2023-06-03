@@ -46,6 +46,9 @@ export enum GoodFinderEndpoint {
   GoodFinderBase = 'goodfinder',
   GoodQuery = 'good-query',
   UpdateRecords = 'good-query/update-good',
+  MasiveClassification = 'good-query/classification-massive',
+  AssignDomicilie = 'good-query/update-domicile',
+  UpdateGoodStatus = 'good-query/update-status',
 
   /* Good Data Aset */
   GoodDataAsetBase = 'gooddataset',

@@ -118,7 +118,7 @@
           <ng-custom-select-loading
             [form]="form"
             formControlName="usuario"
-            label="Usuarios"
+            label="Usuario"
             value="id"
             bindLabel="name"
             loadingText="Cargando usuarios..."
@@ -231,7 +231,8 @@
 
     <app-pagination
       [params]="params"
-      [totalItems]="totalItems"></app-pagination>
+      [totalItems]="totalItems"
+      [limit]="limit"></app-pagination>
     <hr class="row" />
   </div>
 </app-card>

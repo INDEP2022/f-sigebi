@@ -21,10 +21,9 @@ export class ScheduledMaintenanceComponent
   extends ScheduledMaintenance
   implements OnInit
 {
-  showTable1 = true;
+  // showTable1 = true;
   loadingExcel = false;
   flagDownload = false;
-  totalItemsIndicators: number = 0;
   paramsIndicators = new BehaviorSubject<ListParams>(new ListParams());
   path: string;
   // data2: any[] = [];
@@ -60,6 +59,13 @@ export class ScheduledMaintenanceComponent
         description: 'RECEPCIÓN FÍSICA',
       },
     ];
+    // this.params.pipe(takeUntil(this.$unSubscribe)).subscribe({
+    //   next: response => {
+    //     console.log(response);
+
+    //     this.getData(true);
+    //   },
+    // });
   }
 
   updateCoord(event: any) {

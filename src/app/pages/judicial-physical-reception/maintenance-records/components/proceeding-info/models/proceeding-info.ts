@@ -1,7 +1,5 @@
-import { ITrackedGood } from 'src/app/core/models/ms-good-tracker/tracked-good.model';
-import { IDetailProceedingsDeliveryReception } from 'src/app/core/models/ms-proceedings/detail-proceeding-delivery-reception';
 import { IProceedingDeliveryReception } from 'src/app/core/models/ms-proceedings/proceeding-delivery-reception';
-import { firstFormatDate, formatForIsoDate } from 'src/app/shared/utils/date';
+import { formatForIsoDate } from 'src/app/shared/utils/date';
 
 export interface IProceedingInfo {
   id: number;
@@ -45,33 +43,6 @@ export interface IProceedingInfo {
   approvalDateXAdmon: any;
   approvalUserXAdmon: any;
   idTypeProceedings: string;
-}
-
-export function trackerGoodToDetailProceeding(
-  item: ITrackedGood,
-  idProceeding: string
-): IDetailProceedingsDeliveryReception {
-  return {
-    numberProceedings: +idProceeding,
-    numberGood: +item.goodNumber,
-    amount: 1,
-    received: 'S',
-    approvedXAdmon: 'S',
-    approvedDateXAdmon: firstFormatDate(new Date()),
-    approvedUserXAdmon: '',
-    dateIndicatesUserApproval: firstFormatDate(new Date()),
-    numberRegister: 0,
-    reviewIndft: 0,
-    correctIndft: 0,
-    idftUser: '',
-    idftDate: new Date(),
-    numDelegationIndft: 0,
-    yearIndft: 0,
-    monthIndft: 0,
-    idftDateHc: new Date(),
-    packageNumber: 0,
-    exchangeValue: 0,
-  };
 }
 
 export function deliveryReceptionToInfo(
