@@ -171,6 +171,7 @@ export abstract class ScheduledMaintenance extends BasePageWidhtDinamicFiltersEx
     this.data = new LocalDataSource();
     this.totalItems = 0;
     localStorage.removeItem(this.formStorage);
+    this.columnFilters = [];
   }
 
   extraOperations() {}
@@ -258,7 +259,7 @@ export abstract class ScheduledMaintenance extends BasePageWidhtDinamicFiltersEx
     const statusEvento = this.form.get('statusEvento').value;
     const coordRegional = this.form.get('coordRegional').value;
     const usuario = this.form.get('usuario').value;
-    const cveActa = this.form.get('claveActa').value;
+    // const cveActa = this.form.get('claveActa').value;
     const rangeDate = this.form.get('rangeDate').value;
     console.log(rangeDate);
     if (this.form.invalid) {

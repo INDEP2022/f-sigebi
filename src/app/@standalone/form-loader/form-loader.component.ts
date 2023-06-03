@@ -9,9 +9,13 @@ import { Component, Input, OnInit } from '@angular/core';
   styleUrls: ['./form-loader.component.scss'],
 })
 export class FormLoaderComponent implements OnInit {
+  //private database: Database = inject(Database);
+
   @Input() text: string = 'Cargando... por favor espere...';
   @Input() greater = false;
   constructor() {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    //firebase.child('massive-charge')
+  }
 }
