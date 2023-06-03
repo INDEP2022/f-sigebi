@@ -36,4 +36,9 @@ export class GoodFinderService extends HttpService {
     const route = GoodFinderEndpoint.AssignDomicilie;
     return this.get(`${route}/request/${requestId}/domicile/${addressId}`);
   }
+
+  updateStatusProcess(body: any) {
+    const route = GoodFinderEndpoint.UpdateGoodStatus;
+    return this.post(`${route}`, body);
+  }
 }
