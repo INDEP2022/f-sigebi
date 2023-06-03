@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { interval, Subscription } from 'rxjs';
+import { Component, inject, OnInit } from '@angular/core';
+import { catchError, interval, Subscription } from 'rxjs';
 import { LoadingPercentService } from 'src/app/common/services/loading-percent.service';
 import { ProgressPercentService } from 'src/app/core/services/loading-percent-massive/progress-percent.service';
 
@@ -111,37 +111,48 @@ import { ProgressPercentService } from 'src/app/core/services/loading-percent-ma
 export class LoadingPercentComponent implements OnInit {
   progreso: string = '';
   subscription: Subscription;
-
   loader: boolean;
   constructor(
     private readonly loadingPercentService: LoadingPercentService,
-    private progressPercentService: ProgressPercentService
+    private progressPercentService: ProgressPercentService,
   ) {
     loadingPercentService.loaderProgress.subscribe({
-      next: load => (this.loader = load),
+      next: load => {
+        this.loader = load
+        if(this.loader) this.loadingPercent()
+      },
     });
   }
 
   ngOnInit(): void {
-    this.startInterval();
+    //this.startInterval();
+    
+  }
+  
+  loadingPercent(){
+    
+    this.progressPercentService.getPercent().pipe(
+      catchError(error => {
+        let errorMessage = '';
+        if (error instanceof ErrorEvent) {
+          // client-side error
+          errorMessage = `Client-side error: ${error.error.message}`;
+        } else {
+          // backend error
+          errorMessage = `Server-side error: ${error.status} ${error.message}`;
+        }
+        
+    
+        return "0"
+      })
+    ).subscribe((resp:any)=>{
+      this.progreso = resp.percent
+    })
+    setTimeout(() => {
+      if(this.loader || this.progreso=="100.00") this.loadingPercent()
+    }, 3000);
+
   }
 
-  startInterval() {
-    this.subscription = interval(3000).subscribe(() => {
-      this.callEndpoint();
-    });
-  }
-
-  callEndpoint() {
-    this.progressPercentService.getPercent().subscribe((response: any) => {
-      this.progreso = response.percent;
-    });
-    //this.http.get('tu-endpoint')
-  }
-
-  ngOnDestroy() {
-    if (this.progreso === '100.00') {
-      this.subscription.unsubscribe();
-    }
-  }
+  
 }
