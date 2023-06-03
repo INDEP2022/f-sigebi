@@ -115,7 +115,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
         sort: false,
       },
       clasificacion: {
-        title: 'No Clasificación',
+        title: 'No. Clasificación',
         type: 'number',
         sort: false,
       },
@@ -126,6 +126,11 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
       },
       proceso: {
         title: 'Proceso',
+        type: 'string',
+        sort: false,
+      },
+      status:{
+        title: 'Estatus',
         type: 'string',
         sort: false,
       },
@@ -1950,6 +1955,13 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                 this.form.get('statusProceeding').setValue('ABIERTA');
                 this.reopening = true;
                 this.inputsReopenProceeding();
+                this.alert(
+                  'success',
+                  'Acta abierta',
+                  `El acta ${
+                    this.form.get('acta2').value
+                  } fue abierta`
+                );
                 if (VAL_MOVIMIENTO === 1) {
                   this.serviceProgrammingGood
                     .paRegresaEstAnterior(modelPaOpen)
@@ -1960,13 +1972,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                         this.form.get('statusProceeding').setValue('CERRADO');
                         this.inputsInProceedingClose();
                         this.saveDataAct = [];
-                        this.alert(
-                          'success',
-                          'Acta abierta',
-                          `El acta ${
-                            this.form.get('acta2').value
-                          } fue abierta con`
-                        );
+                
                         /* const btn = document.getElementById('expedient-number');
                         this.render.removeClass(btn, 'disabled');
                         this.render.addClass(btn, 'enabled'); */
@@ -2331,6 +2337,13 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                 this.form.get('statusProceeding').setValue('ABIERTA');
                 this.reopening = true;
                 this.inputsReopenProceeding();
+                this.alert(
+                  'success',
+                  'Acta abierta',
+                  `El acta ${
+                    this.form.get('acta2').value
+                  } fue abierta`
+                );
                 if (VAL_MOVIMIENTO === 1) {
                   this.serviceProgrammingGood
                     .paRegresaEstAnterior(modelPaOpen)
