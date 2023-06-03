@@ -1209,7 +1209,7 @@ export class RegistrationOfRequestsComponent
           this.returnarMethod();
         }
         if (typeCommit === 'captura-solicitud') {
-          console.log('captura-solicitud');
+          console.log('captura-solicitud'); //DE CAPTURA DE SOLICITUD A VERIFICAR CUMPLIMIENTO
           this.confirmMethod();
         }
         if (typeCommit === 'verificar-cumplimiento') {
@@ -1219,8 +1219,9 @@ export class RegistrationOfRequestsComponent
           setTimeout(async () => {
             console.log('estado verificar:', this.verifyResp);
             if (this.verifyResp === 'turnar') {
+              console.log('verificar-cumplimiento');
               await this.updateGoodStatus('CLASIFICAR_BIEN');
-              this.verifyComplianceMethod();
+              this.verifyComplianceMethod(); // DE VERIFICAR CUMPLIMIENTO A CLASIFICAR BIEN
             } else if (this.verifyResp === 'sin articulos') {
               this.verifyCumplianteMsg(
                 'Error',
@@ -1239,6 +1240,7 @@ export class RegistrationOfRequestsComponent
         }
         if (typeCommit === 'clasificar-bienes') {
           this.loader.load = true;
+          console.log('clasificar-bienes');
           await this.updateGoodStatus('DESTINO_DOCUMENTAL');
           //creat tarea para destino documental
           this.classifyGoodMethod();
@@ -1248,6 +1250,7 @@ export class RegistrationOfRequestsComponent
           this.deleteMsjRefuse();
           await this.updateGoodStatus('SOLICITAR_APROBACION');
           //tiene aclaraciones
+
           const clarification = await this.haveNotificacions();
           console.log(clarification);
           this.loader.load = false;
@@ -1282,15 +1285,15 @@ export class RegistrationOfRequestsComponent
             await this.destinyDocumental();
           }
         }
-        if (typeCommit === 'proceso-aprovacion') {
-          await this.updateGoodStatus('APROBADO');
-          this.approveRequestMethod();
-        }
+      }
+      if (typeCommit === 'proceso-aprovacion') {
+        await this.updateGoodStatus('APROBADO');
+        this.approveRequestMethod();
+      }
 
-        if (typeCommit === 'refuse') {
-          await this.updateGoodStatus('VERIFICAR_CUMPLIMIENTO');
-          this.motivoRechazo();
-        }
+      if (typeCommit === 'refuse') {
+        await this.updateGoodStatus('VERIFICAR_CUMPLIMIENTO');
+        this.motivoRechazo();
       }
     });
   }
@@ -1317,42 +1320,45 @@ export class RegistrationOfRequestsComponent
   //revisar las pruebas
   async haveNotificacions() {
     const goodResCount: any = await this.getAllGoodResDev();
-    return new Promise((resolve, reject) => {
-      let params = new FilterParams();
-      params.addFilter('applicationId', this.requestData.id);
+    console.log('goodResCount ', goodResCount);
+    if (goodResCount == false || goodResCount) {
+      return new Promise((resolve, reject) => {
+        let params = new FilterParams();
+        params.addFilter('applicationId', this.requestData.id);
 
-      if (goodResCount.count > 10) {
-        params.limit = goodResCount.count;
-      }
-      let filter = params.getParams();
-      this.goodResDevService.getAllGoodResDev(filter).subscribe({
-        next: (resp: any) => {
-          const goodsClarified = resp.data.filter(
-            (x: any) => x.good.goodStatus === 'ACLARADO'
-          );
+        if (goodResCount.count > 10) {
+          params.limit = goodResCount.count;
+        }
+        let filter = params.getParams();
+        this.goodResDevService.getAllGoodResDev(filter).subscribe({
+          next: (resp: any) => {
+            const goodsClarified = resp.data.filter(
+              (x: any) => x.good.goodStatus === 'ACLARADO'
+            );
 
-          const goodsImprocedente = resp.data.filter(
-            (x: any) => x.good.goodStatus === 'IMPROCEDENTE'
-          );
+            const goodsImprocedente = resp.data.filter(
+              (x: any) => x.good.goodStatus === 'IMPROCEDENTE'
+            );
 
-          if (goodsClarified.length > 0 || goodsImprocedente.length > 0) {
-            resolve('ACLARADO');
-          } else {
-            resolve('POR_ACLARAR');
-          }
-          console.log(goodsClarified);
-        },
-        error: (error: any) => {
-          resolve('SIN_ACLARACIONES');
-          this.loader.load = false;
-          /*this.onLoadToast(
+            if (goodsClarified.length > 0 || goodsImprocedente.length > 0) {
+              resolve('ACLARADO');
+            } else {
+              resolve('POR_ACLARAR');
+            }
+            console.log(goodsClarified);
+          },
+          error: (error: any) => {
+            resolve('SIN_ACLARACIONES');
+            this.loader.load = false;
+            /*this.onLoadToast(
             'error',
             'Error interno',
             'No se pudo obtener el bien-res-dev'
           );*/
-        },
+          },
+        });
       });
-    });
+    }
   }
 
   getAllGoodResDev() {
@@ -1365,9 +1371,10 @@ export class RegistrationOfRequestsComponent
           resolve(resp);
         },
         error: error => {
-          reject('error');
-          this.onLoadToast('error', 'No se llamaron los datos de good res dev');
-          console.log(error);
+          //reject('error');
+          //this.onLoadToast('error', '');
+          console.log('Error de getAllgoodResDev', error);
+          resolve(false);
         },
       });
     });
@@ -1392,10 +1399,6 @@ export class RegistrationOfRequestsComponent
       this.goodfinderService.updateStatusProcess(body).subscribe({
         next: resp => {
           resolve(true);
-        },
-        error: error => {
-          reject('error al actualizar los status');
-          console.log('Error al actualizar los estatus', error);
           this.onLoadToast(
             'error',
             'Error al actualizar los estados de los bienes',

@@ -88,6 +88,7 @@ export class ScheduledMaintenanceComponent
     localStorage.removeItem(this.formStorage);
     localStorage.removeItem('paramsActa');
     this.limit = new FormControl(10);
+    this.columnFilters = [];
   }
 
   private showMessageProceedingsRemoved(

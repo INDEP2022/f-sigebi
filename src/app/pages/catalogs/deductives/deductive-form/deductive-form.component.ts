@@ -6,7 +6,6 @@ import { IDeductive } from 'src/app/core/models/catalogs/deductive.model';
 import { DeductiveService } from 'src/app/core/services/catalogs/deductive.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
-  DOUBLE_PATTERN,
   PERCENTAGE_NUMBERS_PATTERN,
   POSITVE_NUMBERS_PATTERN,
   STRING_PATTERN,
@@ -39,7 +38,11 @@ export class DeductiveFormComponent extends BasePage implements OnInit {
       id: [null],
       serviceType: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(200),
+        ],
       ],
       weightedDeduction: [
         null,
@@ -55,17 +58,17 @@ export class DeductiveFormComponent extends BasePage implements OnInit {
       ],
       contractNumber: [
         null,
-        [Validators.required, Validators.pattern(DOUBLE_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(50),
+        ],
       ],
       version: [
         null,
         [Validators.required, Validators.pattern(POSITVE_NUMBERS_PATTERN)],
       ],
-      status: [
-        null,
-        [Validators.required],
-        Validators.pattern(POSITVE_NUMBERS_PATTERN),
-      ],
+      status: [null, [Validators.required]],
     });
     if (this.deductive != null) {
       this.edit = true;
