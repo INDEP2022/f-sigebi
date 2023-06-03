@@ -25,7 +25,7 @@ import { SelectFormComponent } from '../../shared-forms/select-form/select-form.
   standalone: true,
   imports: [CommonModule, SharedModule, NgScrollbarModule, SelectFormComponent],
   templateUrl: './table-replace-column-modal.component.html',
-  styles: [],
+  styleUrls: ['./table-replace-column-modal.component.scss'],
 })
 export class TableReplaceColumnModalComponent
   extends BasePage
@@ -53,6 +53,7 @@ export class TableReplaceColumnModalComponent
   labelTemplate: TemplateRef<any> = null;
   optionTemplate: TemplateRef<any> = null;
   disabled = false;
+  messageResult: { message: string; result: string } = null;
   // paramFilter = 'search';
   // operator = SearchFilter.EQ;
   private _data: any[];
@@ -97,24 +98,37 @@ export class TableReplaceColumnModalComponent
       .subscribe({
         next: response => {
           if (response) {
-            this.onLoadToast(
-              'success',
-              `${this.label} ${this.form.get(this.formField).value} válido`
-            );
+            this.messageResult = {
+              message: `${this.form.get(this.formField).value} válido`,
+              result: 'success',
+            };
+            // this.onLoadToast(
+            //   'success',
+            //   `${this.label} ${this.form.get(this.formField).value} válido`
+            // );
             this.disabled = false;
           } else {
-            this.onLoadToast(
-              'error',
-              `${this.label} ${this.form.get(this.formField).value} no válido`
-            );
+            this.messageResult = {
+              message: `${this.form.get(this.formField).value} no válido`,
+              result: '',
+            };
+            // this.onLoadToast(
+            //   'error',
+            //   `${this.label} ${this.form.get(this.formField).value} no válido`
+            // );
             this.disabled = true;
           }
         },
         error: err => {
-          this.onLoadToast(
-            'error',
-            `${this.label} ${this.form.get(this.formField).value} no válido`
-          );
+          this.messageResult = {
+            message: `${this.form.get(this.formField).value} no válido`,
+            result: '',
+          };
+
+          // this.onLoadToast(
+          //   'error',
+          //   `${this.label} ${this.form.get(this.formField).value} no válido`
+          // );
           this.disabled = true;
         },
       });

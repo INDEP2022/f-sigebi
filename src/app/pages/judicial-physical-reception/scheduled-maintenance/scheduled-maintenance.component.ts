@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { Router } from '@angular/router';
-import { BehaviorSubject, takeUntil } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IProceedingDeliveryReception } from 'src/app/core/models/ms-proceedings/proceeding-delivery-reception';
 import { MsIndicatorGoodsService } from 'src/app/core/services/ms-indicator-goods/ms-indicator-goods.service';
@@ -59,13 +59,13 @@ export class ScheduledMaintenanceComponent
         description: 'RECEPCIÓN FÍSICA',
       },
     ];
-    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe({
-      next: response => {
-        console.log(response);
+    // this.params.pipe(takeUntil(this.$unSubscribe)).subscribe({
+    //   next: response => {
+    //     console.log(response);
 
-        this.getData(true);
-      },
-    });
+    //     this.getData(true);
+    //   },
+    // });
   }
 
   updateCoord(event: any) {

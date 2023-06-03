@@ -10,6 +10,7 @@ import { IProceedingInfo } from '../components/proceeding-info/models/proceeding
 export class MaintenanceRecordsService {
   formValue: IProceedingInfo = null;
   form: FormGroup;
+  formGood: FormGroup;
   formWarehouseVaul: FormGroup;
   data: IDetailProceedingsDeliveryReception[] = [];
   selectedAct: IProceedingDeliveryReception;

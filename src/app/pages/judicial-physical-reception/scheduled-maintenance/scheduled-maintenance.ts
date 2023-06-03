@@ -2,6 +2,7 @@ import { Component, Inject, inject, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { format } from 'date-fns';
 import { LocalDataSource, Ng2SmartTableComponent } from 'ng2-smart-table';
+import { takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import {
   FilterParams,
@@ -174,6 +175,16 @@ export abstract class ScheduledMaintenance extends BasePageWidhtDinamicFiltersEx
 
   extraOperations() {}
 
+  protected updateByPaginator() {
+    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe({
+      next: response => {
+        console.log(response);
+
+        this.getData(true);
+      },
+    });
+  }
+
   override ngOnInit(): void {
     this.dinamicFilterUpdate();
     // this.searchParams();
@@ -184,13 +195,7 @@ export abstract class ScheduledMaintenance extends BasePageWidhtDinamicFiltersEx
         this.tiposEvento = response.data;
       },
     });
-    // this.params.pipe(takeUntil(this.$unSubscribe)).subscribe({
-    //   next: response => {
-    //     console.log(response);
-
-    //     this.getData(true);
-    //   },
-    // });
+    this.updateByPaginator();
   }
 
   setForm() {
@@ -246,6 +251,7 @@ export abstract class ScheduledMaintenance extends BasePageWidhtDinamicFiltersEx
   }
 
   private fillParams(byPage = false) {
+    debugger;
     const tipoEvento = this.form.get('tipoEvento').value;
     // const fechaInicio: Date | string = this.form.get('fechaInicio').value;
     // const fechaFin: Date = this.form.get('fechaFin').value;
@@ -321,11 +327,16 @@ export abstract class ScheduledMaintenance extends BasePageWidhtDinamicFiltersEx
       }
     }
     // this.filterParams.addFilter2(this.columnFilters);
+    this.filterParams.limit = this.params.getValue().limit;
     if (byPage) {
       this.filterParams.page = this.params.getValue().page;
-      // this.filterParams.limit = this.params.getValue().limit;
     } else {
       this.params.value.page = 1;
+      localStorage.setItem(
+        'paramsActa',
+        JSON.stringify({ limit: this.params.getValue().limit, page: 1 })
+      );
+      // this.params.value.limit = 10;
     }
 
     return true;
