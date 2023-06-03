@@ -9,7 +9,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { LocalDataSource, Ng2SmartTableComponent } from 'ng2-smart-table';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
@@ -61,7 +61,6 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
   @Input() requestObject: any; //solicitudes
   @Input() process: string = '';
   @ViewChild('uploadFile') fileUploaded: ElementRef<any>;
-  @ViewChild('table') table: Ng2SmartTableComponent;
   goodObject: any; //bienes
   goodDomiciliesMasive: any = []; // domicilios masivo
   listgoodObjects: any[] = [];
@@ -455,7 +454,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
             `Se guardo el domicilio del bien`
           );
           this.refreshTable();
-          this.isSaveFraction = false;
+          this.isSaveDomicilie = false;
         }
       }
     });
@@ -473,7 +472,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
             `Se guardaron los menajes exitosamente`
           );
           this.refreshTable();
-          this.isSaveFraction = false;
+          this.isSaveMenaje = false;
         }
       }
     });
@@ -1006,7 +1005,6 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
   getLevel4(params: ListParams, id?: number) {
     params['filter.id'] = '$eq:' + id.toString();
     params.limit = 50;
-    debugger;
     this.fractionService.getAll(params).subscribe({
       next: async (data: any) => {
         const fraction: any = data.data[0];

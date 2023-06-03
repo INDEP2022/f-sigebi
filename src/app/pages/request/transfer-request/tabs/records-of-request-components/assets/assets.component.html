@@ -26,7 +26,14 @@
           accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
           (change)="onFileChange($event, 'inmueble')" />
       </div>
-      <div class="p-2" style="margin-left: 1%">
+      <div
+        class="p-2"
+        style="margin-left: 1%"
+        *ngIf="
+          isSaveDomicilie == true ||
+          isSaveFraction == true ||
+          isSaveMenaje == true
+        ">
         <button class="btn btn-primary btn-sm active" (click)="save()">
           Guardar
         </button>
@@ -109,7 +116,6 @@
             [settings]="settings"
             [source]="paragraphs"
             (userRowSelect)="selectRows($event)"
-            #table
             ><!-- (rowSelect)="editRequest($event)" (edit)="openForm($event.data)" -->
           </ng2-smart-table>
         </div>
