@@ -13,7 +13,8 @@
               type="number"
               class="form-control"
               formControlName="satTypeJob"
-              min="0" />
+              min="0"
+              oninput="if(this.value.length > 4) this.value = this.value.slice(0, 4);" />
           </form-field>
         </div>
       </div>
@@ -35,7 +36,8 @@
               type="number"
               class="form-control"
               formControlName="type"
-              min="0" />
+              min="0"
+              oninput="if(this.value.length > 4) this.value = this.value.slice(0, 4);" />
           </form-field>
         </div>
       </div>
@@ -59,7 +61,8 @@
               type="number"
               class="form-control"
               formControlName="idTypeDocSatXml"
-              min="0" />
+              min="0"
+              oninput="if(this.value.length > 4) this.value = this.value.slice(0, 4);" />
           </form-field>
         </div>
       </div>
