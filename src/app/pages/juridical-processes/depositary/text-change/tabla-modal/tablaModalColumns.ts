@@ -10,7 +10,12 @@ export const TEXT_CHANGE_COLUMNS = {
     sort: false,
   },
   statusDict: {
-    title: 'Dictaminación',
+    title: 'Estatus',
+    type: 'string',
+    sort: false,
+  },
+  typeDict: {
+    title: 'Tipo Dictaminación',
     type: 'string',
     sort: false,
   },
@@ -21,6 +26,34 @@ export const TEXT_CHANGE_COLUMNS = {
   },
   passOfficeArmy: {
     title: 'Clave',
+    type: 'string',
+    sort: false,
+  },
+};
+
+export const TEXT_CHANGE_COLUMNS_OFICIO = {
+  proceedingsNumber: {
+    title: 'Expediente',
+    type: 'string',
+    sort: false,
+  },
+  managementNumber: {
+    title: 'Gestión',
+    type: 'string',
+    sort: false,
+  },
+  flyerNumber: {
+    title: 'volante',
+    type: 'string',
+    sort: false,
+  },
+  cveManagement: {
+    title: 'Tipo Dictaminación',
+    type: 'string',
+    sort: false,
+  },
+  recordNumber: {
+    title: 'Registro',
     type: 'string',
     sort: false,
   },

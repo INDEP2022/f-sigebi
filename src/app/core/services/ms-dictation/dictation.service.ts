@@ -20,6 +20,7 @@ import { IRTdictaAarusr } from '../../models/ms-dictation/r-tdicta-aarusr.model'
 })
 export class DictationService extends HttpService {
   public clasifGoodNumber: number | string;
+  public goodNumber: number | string;
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
   private readonly route = DictationEndpoints;
@@ -232,10 +233,10 @@ export class DictationService extends HttpService {
     return this.post(route, params);
   }
 
-  deleteCopiesdictamenetOfficialOpinion(id: number) {
+  deleteCopiesdictamenetOfficialOpinion(obj: any) {
     return this.delete<IListResponse<IDictationCopies>>(
       this.route.CopiesOfficialOpinion,
-      id
+      obj
     );
   }
 }

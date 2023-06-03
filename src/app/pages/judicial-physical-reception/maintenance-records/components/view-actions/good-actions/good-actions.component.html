@@ -1,4 +1,4 @@
-<div class="row">
+<div class="row good-actions">
   <form class="form-material col-md-3 p-0" [formGroup]="formGood">
     <div class="selectGood">
       <form-field [control]="formGood.get('goodId')" label="Agregar nuevo bien">
@@ -12,7 +12,11 @@
         type="button"
         class="btn btn-primary btn-sm active"
         [disabled]="
-          nroActa === undefined || nroActa === null || formGood.invalid
+          nroActa === undefined ||
+          nroActa === null ||
+          formGood.invalid ||
+          !formGood.get('goodId').value ||
+          formGood.get('goodId').value.trim() === ''
         "
         (click)="addGood()">
         <i class="bx bx-list-plus bx-sm float-icon"></i>

@@ -239,7 +239,7 @@ export class JuridicalRulingGComponent
         type: 'string',
       },
       status: {
-        title: 'Estado',
+        title: 'Estatus',
         type: 'string',
       },
       processStatus: {
@@ -288,13 +288,16 @@ export class JuridicalRulingGComponent
     selectedRowIndex: -1,
     mode: 'external',
     columns: {
-      id: {
+      numRegister: {
         title: '#',
         type: 'number',
       },
-      descriptionDocument: {
+      key: {
         title: 'Documentos',
         type: 'string',
+        valuePrepareFunction: (value: any) => {
+          return value.description;
+        },
       },
       fecha: {
         title: 'Fecha',
@@ -760,7 +763,6 @@ export class JuridicalRulingGComponent
     if (this.selectedGooods.length > 0) {
       this.selectedGooods.forEach(good => {
         if (!this.goodsValid.some(v => v === good)) {
-          this.goodsValid = this.goodsValid.concat(this.selectedGooods);
           if (good.status.toUpperCase() !== 'STI') {
             let indexGood = this.goods.findIndex(_good => _good == good);
             this.goods[indexGood].status = 'STI';

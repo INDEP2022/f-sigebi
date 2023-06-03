@@ -1,11 +1,11 @@
 import { DatePipe } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, takeUntil } from 'rxjs';
+import { BehaviorSubject, takeUntil, tap } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import {
@@ -14,20 +14,29 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { _Params } from 'src/app/common/services/http.service';
+import { IUserRowSelectEvent } from 'src/app/core/interfaces/ng2-smart-table.interface';
 import { ILegend } from 'src/app/core/models/catalogs/legend.model';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { INotification } from 'src/app/core/models/ms-notification/notification.model';
 import { ICopiesJobManagementDto } from 'src/app/core/models/ms-officemanagement/good-job-management.model';
 import { IMJobManagement } from 'src/app/core/models/ms-officemanagement/m-job-management.model';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
+import { DictationXGood1Service } from 'src/app/core/services/ms-dictation/dictation-x-good1.service';
 import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
+import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { StatusGoodService } from 'src/app/core/services/ms-good/status-good.service';
+import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
+import { ApplicationGoodsQueryService } from 'src/app/core/services/ms-goodsquery/application.service';
 import { GoodsJobManagementService } from 'src/app/core/services/ms-office-management/goods-job-management.service';
+import { ScreenStatusService } from 'src/app/core/services/ms-screen-status/screen-status.service';
 import { SecurityService } from 'src/app/core/services/ms-security/security.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
   POSITVE_NUMBERS_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
+import { LegalOpinionsOfficeService } from 'src/app/pages/juridical-processes/depositary/legal-opinions-office/legal-opinions-office/services/legal-opinions-office.service';
 import { IJuridicalDocumentManagementParams } from 'src/app/pages/juridical-processes/file-data-update/interfaces/file-data-update-parameters';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import Swal from 'sweetalert2';
@@ -47,7 +56,6 @@ import {
   TEXT2,
 } from './related-documents-message';
 import { RelatedDocumentsService } from './services/related-documents.service';
-
 @Component({
   selector: 'app-related-documents',
   templateUrl: './related-documents.component.html',
@@ -65,6 +73,7 @@ import { RelatedDocumentsService } from './services/related-documents.service';
   ],
 })
 export class RelatedDocumentsComponent extends BasePage implements OnInit {
+  disabled: boolean = true;
   filtroPersonaExt: ICopiesJobManagementDto[] = [];
   filterParams2 = new BehaviorSubject<FilterParams>(new FilterParams());
   nrSelecttypePerson: string | number;
@@ -80,6 +89,10 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
   dataGoodFilter: IGood[] = [];
   dataGood: IDataGoodsTable[] = [];
   origin: string = '';
+  valTiposAll: boolean;
+  tiposData: any = [];
+  userCopies1 = new DefaultSelect();
+  userCopies2 = new DefaultSelect();
   dataGoodTable: LocalDataSource = new LocalDataSource();
   pantalla = (option: boolean) =>
     `${
@@ -90,6 +103,7 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
   pantallaOption: boolean = false;
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
+  idExpediente: any = null;
   paramsGestionDictamen: IJuridicalDocumentManagementParams = {
     volante: null,
     expediente: null,
@@ -104,13 +118,13 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
   se_refiere_a = {
     A: 'Se refiere a todos los bienes',
     B: 'Se refiere a algun(os) bien(es) del expediente',
-    C: 'No se refiere a nigun bien asegurado, decomisado o abandonado',
+    C: 'No se refiere a ningún bien asegurado, decomisado o abandonado',
     D: 'd',
   };
   se_refiere_a_Disabled = {
     A: false,
     B: false,
-    C: false,
+    C: true,
     D: false,
   };
   variables = {
@@ -129,15 +143,21 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
   disabledRadio: boolean = false;
   oficioGestion: IMJobManagement;
   disabledAddresse: boolean = false;
+  data1: any = [];
   statusOf: string = undefined;
   screenKeyManagement: string = 'FACTADBOFICIOGEST';
   screenKeyRelated: string = '';
   screenKey: string = '';
+  selectedGood: IGood[] = [];
   notificationData: INotification;
   loadingGoods: boolean = false;
   ReadOnly: boolean;
+  public formLoading: boolean = false;
   today = new DatePipe('en-EN').transform(new Date(), 'dd/MM/yyyy');
-
+  @ViewChild('cveOficio', { static: true }) cveOficio: ElementRef;
+  disabledTypes: boolean = false;
+  showDestinatario: boolean = false;
+  showDestinatarioInput: boolean = false;
   constructor(
     private fb: FormBuilder,
     private flyerService: FlyersService,
@@ -149,7 +169,15 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
     private dictationService: DictationService,
     private serviceRelatedDocumentsService: RelatedDocumentsService,
     private securityService: SecurityService,
-    private serviceOficces: GoodsJobManagementService
+    private serviceOficces: GoodsJobManagementService,
+    private readonly authService: AuthService,
+    private applicationGoodsQueryService: ApplicationGoodsQueryService,
+    private svLegalOpinionsOfficeService: LegalOpinionsOfficeService,
+    private readonly goodServices: GoodService,
+    private statusGoodService: StatusGoodService,
+    private screenStatusService: ScreenStatusService,
+    private DictationXGood1Service: DictationXGood1Service,
+    private goodprocessService: GoodprocessService
   ) {
     super();
     RELATED_DOCUMENTS_COLUMNS_GOODS.seleccion = {
@@ -163,8 +191,33 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
     this.settings = {
       ...this.settings,
       actions: false,
+      selectMode: 'multi',
       columns: { ...RELATED_DOCUMENTS_COLUMNS_GOODS },
     };
+  }
+
+  disabledChecks() {
+    const tabla = document.getElementById('goods');
+    const types = document.getElementById('typesFilters');
+    const tbody = tabla.children[0].children[1].children;
+    for (let index = 0; index < tbody.length; index++) {
+      const element = tbody[index];
+      element.children[7].classList.add('not-press');
+      element.children[8].classList.add('not-press');
+    }
+    types.classList.add('not-press');
+  }
+
+  enableChecks() {
+    const tabla = document.getElementById('goods');
+    const types = document.getElementById('typesFilters');
+    const tbody = tabla.children[0].children[1].children;
+    for (let index = 0; index < tbody.length; index++) {
+      const element = tbody[index];
+      element.children[7].classList.remove('not-press');
+      element.children[8].classList.remove('not-press');
+    }
+    types.classList.remove('not-press');
   }
 
   onClickSelect(event: any) {
@@ -183,7 +236,6 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.validOficioGestion();
     // console.log("status OF: ", this.oficioGestion.statusOf);
     this.setInitVariables();
     this.prepareForm();
@@ -238,6 +290,17 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
           this.router.navigateByUrl('/pages/');
         });
       }
+    }
+    this.params
+      .pipe(
+        takeUntil(this.$unSubscribe),
+        tap(() => this.onLoadGoodList('all'))
+      )
+      .subscribe();
+    if (this.paramsGestionDictamen.tipoOf == 'INTERNO') {
+      this.showDestinatario = true;
+    } else {
+      this.showDestinatarioInput = true;
     }
   }
 
@@ -305,6 +368,24 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
 
   prepareForm() {
     this.managementForm = this.fb.group({
+      ccp_person_1: [{ value: '', disabled: false }],
+      ccp_TiPerson_1: [
+        { value: '', disabled: false },
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
+      ],
+      ccp_addressee_1: [
+        { value: null, disabled: false },
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
+      ], // SELECT
+      ccp_person: [{ value: '', disabled: false }],
+      ccp_addressee: [
+        { value: null, disabled: false },
+        [Validators.pattern(STRING_PATTERN)],
+      ], // SELECT
+      ccp_TiPerson: [
+        { value: '', disabled: false },
+        [Validators.pattern(STRING_PATTERN)],
+      ],
       noVolante: [
         null,
         [
@@ -332,6 +413,7 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
       remitente: [null],
       noDestinatario: [null],
       destinatario: [null],
+      destinatarioInput: [null],
       noCiudad: [null],
       ciudad: [null],
       claveOficio: [null],
@@ -344,6 +426,7 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
       subtipo: [null],
       goodTypes: [null],
       improcedente: [false],
+      di_desc_estatus: [''],
       // indPDoctos: [null],
       noBienes: [null],
       // bienes: [null],
@@ -362,6 +445,7 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
       ccp3: [null],
       ccp4: [null],
       ccp5: [null],
+      averiPrevia: ['', [Validators.required]], //*
       ccp6: [null],
     });
   }
@@ -533,6 +617,7 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
   }
 
   changeOffice() {
+    this.se_refiere_a_Disabled.C = false;
     if (this.paramsGestionDictamen.sale == 'C') {
       this.alertInfo('warning', PARAMETERSALEC, '');
       return;
@@ -613,7 +698,7 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
     //   this.alertInfo(
     //     'warning',
     //     'No existe el Número de Gestión: ' +
-    //       this.oficioGestion.managementNumber,
+    //     this.oficioGestion.managementNumber,
     //     ''
     //   );
     // }
@@ -673,34 +758,35 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
   }
 
   reviewGoodData(dataGoodRes: IDataGoodsTable, count: number, total: number) {
-    this.getGoodStatusDescription(dataGoodRes, count, total);
+    // this.getGoodStatusDescription(dataGoodRes, count, total);
   }
 
   // AGREGAR UN FOR PARA LOS BIENES
-  async getGoodStatusDescription(
-    dataGoodRes: IDataGoodsTable,
-    count: number,
-    total: number
-  ) {
-    const params = new ListParams();
-    params['filter.status'] = '$eq:' + dataGoodRes.status;
-    console.log(params, this.dataGood);
-    await this.flyerService.getGoodStatusDescription(params).subscribe({
-      next: res => {
-        // console.log("Respuesta: ", res.count);
-        // console.log('params, ', this.dataGood);
-        this.dataGood[count].desEstatus = res.data[0].description;
-        this.totalItems = res.count;
-        this.getAvailableGood(this.dataGood[count], count, total);
-      },
-      error: err => {
-        console.log(err);
-        console.log('params, ', this.dataGood);
-        this.dataGood[count].desEstatus = 'Error al cargar la descripción.';
-        this.getAvailableGood(this.dataGood[count], count, total);
-      },
-    });
-  }
+  // async getGoodStatusDescription(
+  //   dataGoodRes: IDataGoodsTable,
+  //   count: number,
+  //   total: number
+  // ) {
+  //   const params = new ListParams();
+  //   params['filter.status'] = '$eq:' + dataGoodRes.status;
+  //   console.log(params, this.dataGood);
+  //   await this.flyerService.getGoodStatusDescription(params).subscribe({
+  //     next: res => {
+  //       // console.log("Respuesta: ", res.count);
+  //       // console.log('params, ', this.dataGood);
+  //       this.dataGood[count].desEstatus = res.data[0].description;
+  //       this.totalItems = res.count;
+  //       this.getAvailableGood(this.dataGood[count], count, total);
+  //     },
+  //     error: err => {
+  //       console.log(err);
+  //       console.log('params, ', this.dataGood);
+  //       this.dataGood[count].desEstatus = 'Error al cargar la descripción.';
+  //       this.getAvailableGood(this.dataGood[count], count, total);
+  //     },
+  //   });
+  // }
+
   changeImprocedenteDisabled(event: any) {
     this.dataGood.forEach(element => {});
     this.dataGoodTable.load(this.dataGood);
@@ -927,9 +1013,6 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
       });
   }
 
-  getIdClasify(event: any) {
-    this.dictationService.clasifGoodNumber = event.clasifGoodNumber;
-  }
   /**
    * Obtener el listado de Ciudad de acuerdo a los criterios de búsqueda
    * @param paramsData Parametos de busqueda de tipo @ListParams
@@ -990,6 +1073,24 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
   }
 
   send(): any {
+    let token = this.authService.decodeToken();
+    const pNumber = Number(token.department);
+    this.applicationGoodsQueryService.getDictamenSeq(pNumber).subscribe({
+      next: (response: any) => {
+        this.generateCveOficio(response.dictamenDelregSeq);
+        // document.getElementById('cveOficio').focus();
+        this.cveOficio.nativeElement.focus();
+        setTimeout(
+          () =>
+            this.alert(
+              'success',
+              '',
+              'Clave de oficio generada correctamente.'
+            ),
+          1000
+        );
+      },
+    });
     let params = {
       PARAMFORM: 'NO',
       DESTYPE: this.screenKey,
@@ -1001,7 +1102,8 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
     };
     if (this.managementForm.get('tipoOficio').value == 'INTERNO') {
       this.siabService
-        .fetchReport('RGERJURDECLARABAND', params)
+        // .fetchReport('RGERJURDECLARABAND', params)
+        .fetchReportBlank('blank')
         .subscribe(response => {
           if (response !== null) {
             const blob = new Blob([response], { type: 'application/pdf' });
@@ -1024,7 +1126,8 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
         });
     } else if (this.managementForm.get('tipoOficio').value == 'EXTERNO') {
       this.siabService
-        .fetchReport('RGEROFGESTION_EXT', params)
+        // .fetchReport('RGEROFGESTION_EXT', params)
+        .fetchReportBlank('blank')
         .subscribe(response => {
           if (response !== null) {
             const blob = new Blob([response], { type: 'application/pdf' });
@@ -1054,6 +1157,19 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     });
+  }
+
+  generateCveOficio(noDictamen: string) {
+    let token = this.authService.decodeToken();
+    const year = new Date().getFullYear();
+    let cveOficio = '';
+    cveOficio =
+      token.siglasnivel1 + '/' + token.siglasnivel2 + '/' + token.siglasnivel3;
+    // if (token.siglasnivel4 !== null) {
+    //   cveOficio = cveOficio + '/' + token.siglasnivel4;
+    // }
+    cveOficio = cveOficio + '/' + noDictamen + '/' + year;
+    this.managementForm.get('cveGestion').setValue(cveOficio);
   }
 
   getFromSelect(params: ListParams) {
@@ -1157,5 +1273,291 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
         this.onLoadToast('error', 'Error', errror.error.message);
       },
     });
+  }
+
+  changeCopiesType(event: any, ccp: number) {
+    console.log(event.target.value, ccp);
+    if (ccp == 1) {
+      console.log('CCP1');
+      this.managementForm.get('ccp_addressee').reset();
+      this.managementForm.get('ccp_TiPerson').reset();
+      if (event.target.value == 'I') {
+        this.managementForm.get('ccp_addressee').enable();
+        this.managementForm.get('ccp_TiPerson').disable();
+      } else if (event.target.value == 'E') {
+        this.managementForm.get('ccp_addressee').disable();
+        this.managementForm.get('ccp_TiPerson').enable();
+      }
+    } else {
+      console.log('CCP2');
+      this.managementForm.get('ccp_addressee_1').reset();
+      this.managementForm.get('ccp_TiPerson_1').reset();
+      if (event.target.value == 'I') {
+        this.managementForm.get('ccp_addressee_1').enable();
+        this.managementForm.get('ccp_TiPerson_1').disable();
+      } else if (event.target.value == 'E') {
+        this.managementForm.get('ccp_addressee_1').disable();
+        this.managementForm.get('ccp_TiPerson_1').enable();
+      }
+    }
+  }
+
+  getUsersCopies(
+    paramsData: ListParams,
+    ccp: number,
+    getByValue: boolean = false
+  ) {
+    const params: any = new FilterParams();
+    if (paramsData['search'] == undefined) {
+      paramsData['search'] = '';
+    }
+    params.removeAllFilters();
+    if (getByValue) {
+      params.addFilter(
+        'id',
+        this.managementForm.get('ccp_addressee' + (ccp == 1 ? '' : '_1')).value
+      );
+    } else {
+      params.search = paramsData['search'];
+      // params.addFilter('name', paramsData['search'], SearchFilter.LIKE);
+    }
+    params['sortBy'] = 'name:ASC';
+    let subscription = this.svLegalOpinionsOfficeService
+      .getIssuingUserByDetail(params.getParams())
+      .subscribe({
+        next: data => {
+          let tempDataUser = new DefaultSelect(
+            data.data.map(i => {
+              i.name = i.id + ' -- ' + i.name;
+              return i;
+            }),
+            data.count
+          );
+          if (ccp == 1) {
+            this.userCopies1 = tempDataUser;
+          } else {
+            this.userCopies2 = tempDataUser;
+          }
+          console.log(data, this.userCopies1);
+          subscription.unsubscribe();
+        },
+        error: error => {
+          if (ccp == 1) {
+            this.userCopies1 = new DefaultSelect();
+          } else {
+            this.userCopies2 = new DefaultSelect();
+          }
+          subscription.unsubscribe();
+        },
+      });
+  }
+
+  // OBTENER BIENES //
+  async onLoadGoodList(filter: any) {
+    this.formLoading = true;
+    // this.loadingText = 'Cargando';
+    let params = {
+      ...this.params.getValue(),
+    };
+
+    console.log('FILTER GOODS', filter);
+
+    params['filter.fileNumber'] = this.paramsGestionDictamen.expediente;
+    params['filter.status'] = `$in:ADM,DXV,PRP,CPV,DEP`;
+
+    if (filter != 'all') {
+      params['filter.goodClassNumber'] = `$eq:${filter}`;
+    }
+    this.filtroTipos(this.paramsGestionDictamen.expediente);
+    this.goodServices.getByExpedientAndParams(params).subscribe({
+      next: response => {
+        let result = response.data.map(async (item: any) => {
+          // item['SELECCIONAR'] = 0;
+          // item['SEL_AUX'] = 0;
+          // const statusScreen: any = await this.getScreenStatus(item);
+          // item['est_disponible'] = statusScreen.di_disponible;
+          // item['no_of_dicta'] = null;
+          // if (item.est_disponible == 'S') {
+          //   // : BIENES.NO_OF_DICTA := NULL;
+          //   item['no_of_dicta'] = null;
+          //   const dictamenXGood1: any = await this.getDictaXGood(
+          //     item.id,
+          //     'ABANDONO'
+          //   );
+          //   item['no_of_dicta'] =
+          //     dictamenXGood1 != null ? dictamenXGood1.ofDictNumber : null;
+          //   if (dictamenXGood1 != null) {
+          //     item['est_disponible'] = 'N';
+          //   }
+          // }
+        });
+
+        console.log('GOODS OBTENIDOS', response);
+
+        this.getStatusGood(response.data[0].status);
+        Promise.all(result).then((resp: any) => {
+          this.data1 = response.data;
+          this.totalItems = response.count;
+          this.formLoading = false;
+          this.loading = false;
+        });
+
+        //     IF: BIENES.EST_DISPONIBLE = 'S' THEN
+        //     : BIENES.NO_OF_DICTA := NULL;
+        //      FOR REG IN(SELECT NO_OF_DICTA
+        //                    FROM DICTAMINACION_X_BIEN1
+        //                   WHERE NO_BIEN = : BIENES.NO_BIEN
+        //                     AND TIPO_DICTAMINACION = 'ABANDONO')
+        //     LOOP
+        //     : BIENES.NO_OF_DICTA := REG.NO_OF_DICTA;
+        //        : BIENES.EST_DISPONIBLE := 'N';
+        //     EXIT;
+        //      END LOOP;
+        //  END IF;
+      },
+      error: err => {
+        this.loading = false;
+        this.formLoading = false;
+        console.log('ERRROR BIEN X EXPEDIENTE', err.error.message);
+        this.data1 = [];
+      },
+    });
+    this.loading = false;
+  }
+  getStatusGood(data: any) {
+    const params = new ListParams();
+    params['filter.status'] = `$eq:${data}`;
+
+    this.statusGoodService.getAll(params).subscribe(
+      (response: any) => {
+        const { data } = response;
+        this.managementForm
+          .get('di_desc_estatus')
+          .setValue(data[0].description);
+        console.log('SCREEN', data);
+      },
+      error => {
+        console.log('SCREEN', error.error.message);
+      }
+    );
+  }
+
+  filtroTipos(params: any) {
+    this.valTiposAll === true;
+    let body = {
+      no_expediente: params,
+      vc_pantalla: 'FACTJURABANDONOS',
+    };
+    let clasif: number;
+
+    this.goodprocessService.getExpedientePostQuery(body).subscribe({
+      next: async (data: any) => {
+        clasif = data.count;
+        // console.log('DATAAAAAAAAAAAAAAAA', data);
+
+        let result = data.data.map(async (item: any) => {
+          item['tipoSupbtipoDescription'] =
+            item.no_clasif_bien +
+            ' - ' +
+            item.desc_subtipo +
+            ' - ' +
+            item.desc_ssubtipo +
+            ' - ' +
+            item.desc_sssubtipo;
+        });
+
+        Promise.all(result).then((resp: any) => {
+          this.tiposData = data.data;
+          this.loading = false;
+        });
+        if (params.id) {
+          // await this.countTipos(params.id);
+        }
+      },
+      error: error => {
+        if (params.id) {
+          // this.countTipos(params.id);
+        }
+        console.log('NIAS', error.error);
+      },
+    });
+  }
+
+  async countTipos(params: any) {
+    let body = {
+      no_expediente: params,
+      vc_pantalla: 'FACTADBOFICIOGEST',
+    };
+    this.goodprocessService.getCountBienStaScreen(body).subscribe({
+      next: data => {
+        if (data.clasif > 0) {
+          this.valTiposAll = true;
+        } else {
+          this.valTiposAll = false;
+        }
+      },
+      error: error => {
+        console.log(error.error);
+      },
+    });
+  }
+
+  getScreenStatus(good: any) {
+    let obj = {
+      identifier: good.identifier,
+      estatus: good.status,
+      vc_pantalla: 'FACTADBOFICIOGEST',
+      processExtSun: good.extDomProcess,
+    };
+
+    console.log('re', obj);
+    return new Promise((resolve, reject) => {
+      this.screenStatusService.getAllFiltro_(obj).subscribe({
+        next: (resp: any) => {
+          console.log('ESCR', resp);
+          const data = resp.data[0];
+
+          let objScSt = {
+            di_disponible: 'S',
+          };
+
+          resolve(objScSt);
+          this.loading = false;
+        },
+        error: (error: any) => {
+          console.log('SCREEN ERROR', error.error.message);
+          let objScSt: any = {
+            di_disponible: 'N',
+          };
+          resolve(objScSt);
+          this.loading = false;
+        },
+      });
+    });
+  }
+  getDictaXGood(id: any, type: string) {
+    const params = new ListParams();
+    params['filter.id'] = `$eq:${id}`;
+    params['filter.typeDict'] = `$eq:${type}`;
+    return new Promise((resolve, reject) => {
+      this.DictationXGood1Service.getAll(params).subscribe({
+        next: (resp: any) => {
+          console.log('DICTAMINACION X BIEN', resp.data);
+          const data = resp.data[0];
+          resolve(data);
+          this.loading = false;
+        },
+        error: error => {
+          console.log('ERROR DICTAMINACION X BIEN', error.error.message);
+          resolve(null);
+          this.loading = false;
+        },
+      });
+    });
+  }
+  selectProceedings(event: IUserRowSelectEvent<IGood>) {
+    this.getStatusGood(event.data.status);
+    this.selectedGood = event.selected;
+    this.dictationService.goodNumber = event.data.id;
   }
 }

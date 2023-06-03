@@ -1,18 +1,7 @@
 #maintenanceRecords {
-}
-
-:host::ng-deep app-pagination {
-  .pagination {
-    display: flex;
-    column-gap: 5px;
-
-    .page-item {
-      .page-link {
-        width: 36px !important;
-        height: 36px !important;
-        display: flex !important;
-        margin-top: 0px !important;
-      }
+  ::ng-deep {
+    .card-block {
+      padding-top: 0px !important;
     }
   }
 }
@@ -49,23 +38,38 @@
   color: #dc3545 !important;
 }
 
-:host ::ng-deep app-card {
-  .card .card-header {
-    height: auto !important;
+// :host ::ng-deep app-card {
+//   .card .card-header {
+//     height: auto !important;
 
-    h5 {
-      margin-top: 0px;
+//     h5 {
+//       margin-top: 0px;
+//     }
+//   }
+// }
 
-      &:after {
-        height: 50px !important;
-        top: -15px !important;
-      }
-    }
+:host ::ng-deep app-pagination {
+  .paginator-page-size {
+    display: none !important;
+  }
+
+  .paginator-range-label {
+    display: none !important;
   }
 }
 
-:host .ch-content ::ng-deep app-pagination {
-  .paginator-page-size {
-    display: none !important;
+:host::ng-deep app-pagination {
+  .pagination {
+    display: flex;
+    column-gap: 5px;
+
+    .page-item {
+      .page-link {
+        width: 36px !important;
+        height: 36px !important;
+        display: flex !important;
+        margin-top: 0px !important;
+      }
+    }
   }
 }

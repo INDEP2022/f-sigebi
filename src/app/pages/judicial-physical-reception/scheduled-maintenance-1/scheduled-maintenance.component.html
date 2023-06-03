@@ -3,12 +3,12 @@
     <h5 class="title">Mantenimiento de Programaciones</h5>
   </div>
   <div body>
-    <div class="row mb-5">
+    <!-- <div class="row mb-5">
       <app-clean-filters-shared
         [form]="form"
         formStorage="filtersActa"
         (cleanFiltersEvent)="resetView()"></app-clean-filters-shared>
-    </div>
+    </div> -->
 
     <form class="form-material" [formGroup]="form">
       <div class="row">
@@ -118,7 +118,7 @@
           <ng-custom-select-loading
             [form]="form"
             formControlName="usuario"
-            label="Usuarios"
+            label="Usuario"
             value="id"
             bindLabel="name"
             loadingText="Cargando usuarios..."
@@ -162,7 +162,7 @@
 
       <div class="action-buttons row" style="margin: auto">
         <div
-          class="col-md-6"
+          class="col-md-4"
           [class]="loading || form.invalid ? 'disabled' : ''">
           <button
             class="btn btn-primary btn-sm active"
@@ -173,7 +173,13 @@
             Buscar
           </button>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-4">
+          <app-clean-filters-shared
+            [form]="form"
+            formStorage="filtersActa"
+            (cleanFiltersEvent)="resetView()"></app-clean-filters-shared>
+        </div>
+        <div class="col-md-4">
           <button
             class="btn btn-primary btn-sm active"
             type="submit"

@@ -4,13 +4,13 @@
   <div class="row">
     <div class="col-md-4">
       <form-field [control]="form.get('cantPar')" label="Veces a Parcializar">
-        <input class="form-control" formControlName="cantPar" maxlength="3" />
+        <input class="form-control" formControlName="cantPar" maxlength="16" />
       </form-field>
     </div>
 
     <div class="col-md-4">
       <form-field [control]="form.get('cantidad')" label="Cantidad">
-        <input class="form-control" formControlName="cantidad" maxlength="20" />
+        <input class="form-control" formControlName="cantidad" maxlength="16" />
       </form-field>
     </div>
 
@@ -42,14 +42,14 @@
   <div class="row">
     <div class="d-flex justify-content-center stepper">
       <div [class]="statePartialize">
-        <div (click)="pressed(1)">1</div>
+        <div (click)="pressed($event, 1)">1</div>
         <app-partialize-button
           [press]="pressPartialize"
           (notFilledRow)="loading = false"
           (filledRow)="filledRow()"></app-partialize-button>
       </div>
       <div [class]="stateApply">
-        <div (click)="pressed(2)">2</div>
+        <div (click)="pressed($event, 2)">2</div>
         <app-apply-button
           [press]="pressApply"
           (fillPagedRow)="filledRow()"></app-apply-button>

@@ -34,6 +34,10 @@ export class OpinionService
     return this.opinionRepository.getById(this.route, id);
   }
 
+  getOpinionById(id: string | number): Observable<IOpinion> {
+    return this.opinionRepository.getById(`${this.route}/id`, id);
+  }
+
   create(model: IOpinion): Observable<IOpinion> {
     return this.opinionRepository.create(this.route, model);
   }

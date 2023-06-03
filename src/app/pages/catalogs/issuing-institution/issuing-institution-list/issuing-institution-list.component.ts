@@ -221,12 +221,7 @@ export class IssuingInstitutionListComponent
               delete this.columnFilters1[field];
             }
           });
-          if (this.params2.getValue().page > 1) {
-            console.log(this.params2.getValue().page);
-            const params = this.params2.getValue();
-            params.page = 1;
-            this.params2.next(params);
-          }
+          this.params2 = this.pageFilter(this.params2);
           this.getIssuingInstitution();
         }
       });
