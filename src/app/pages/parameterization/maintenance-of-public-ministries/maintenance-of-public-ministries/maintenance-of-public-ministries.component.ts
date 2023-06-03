@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import {
   FilterParams,
+  ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { IMinpub } from 'src/app/core/models/catalogs/minpub.model';
@@ -199,8 +200,12 @@ export class MaintenanceOfPublicMinistriesComponent
   }
 
   private getDelegation(delegation: number) {
-    this.serviceDeleg.getById(delegation).subscribe({
-      next: data => this.form.get('delegation').patchValue(data.description),
+    const params = new ListParams;
+    params['filter.id'] = delegation;
+    params['filter.etapaEdo'] = 1;
+
+    this.serviceDeleg.getAll(params).subscribe({
+      next: data => this.form.get('delegation').patchValue(data.data[0].description),
       error: error => this.onLoadToast('error', error.erro.message, ''),
     });
   }
