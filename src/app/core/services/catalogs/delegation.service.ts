@@ -35,6 +35,12 @@ export class DelegationService
     return this.delegationRepository.getAllPaginated(this.route, params);
   }
 
+  getAppsAll(): Observable<IListResponse<IDelegation>> {
+    return this.get<
+      IListResponse<{ delegationId: string; description: string }>
+    >('apps/getDelegations');
+  }
+
   getAllModal(self?: DelegationService, params?: ListParams) {
     return self.getAll(params);
   }

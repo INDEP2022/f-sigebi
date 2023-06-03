@@ -22,6 +22,7 @@ export abstract class PartializeGeneralGood {
   pagedBienesPar: any[] = [];
   firstCase = true;
   verif_des: number;
+  haveAply = true;
   private _bienesPar: IBienesPar[] = [];
   get bienesPar() {
     return this._bienesPar;

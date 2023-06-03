@@ -10,12 +10,10 @@
             <div class="col">
               <button
                 id="expedient-number"
-                class="btn btn-primary btn-sm active mr-4 disabled"
+                class="btn btn-primary btn-sm active mr-2 disabled"
                 (click)="goodsByExpediente()">
                 <i class="fa fa-search"></i> Buscar
               </button>
-            </div>
-            <div class="col">
               <button class="btn btn-danger btn-sm active" (click)="clearAll()">
                 Limpiar
               </button>
@@ -171,7 +169,7 @@
               </form-field>
             </div>
             <div class="col">
-              <form-field [control]="form.get('ident')" label="Ident">
+              <form-field [control]="form.get('ident')" label="Identificador">
                 <input
                   type="text"
                   class="form-control disabled"

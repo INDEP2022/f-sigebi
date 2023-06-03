@@ -11,6 +11,7 @@ import {
 import { IFormGroup } from 'src/app/core/interfaces/model-form';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { FractionService } from 'src/app/core/services/catalogs/fraction.service';
+import { GoodFinderService } from 'src/app/core/services/ms-good/good-finder.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { RealStateService } from 'src/app/core/services/ms-good/real-state.service';
 import { OrderServiceService } from 'src/app/core/services/ms-order-service/order-service.service';
@@ -129,7 +130,8 @@ export class RegistrationOfRequestsComponent
     private authService: AuthService,
     private orderService: OrderServiceService,
     private wcontentService: WContentService,
-    private goodResDevService: GetGoodResVeService
+    private goodResDevService: GetGoodResVeService,
+    private goodfinderService: GoodFinderService
   ) {
     super();
   }
@@ -1313,11 +1315,15 @@ export class RegistrationOfRequestsComponent
   }
 
   //revisar las pruebas
-  haveNotificacions() {
+  async haveNotificacions() {
+    const goodResCount: any = await this.getAllGoodResDev();
     return new Promise((resolve, reject) => {
       let params = new FilterParams();
       params.addFilter('applicationId', this.requestData.id);
-      //params.addFilter('processStatus', '$not:VERIFICAR_CUMPLIMIENTO'); //ACLARADO
+
+      if (goodResCount.count > 10) {
+        params.limit = goodResCount.count;
+      }
       let filter = params.getParams();
       this.goodResDevService.getAllGoodResDev(filter).subscribe({
         next: (resp: any) => {
@@ -1349,42 +1355,54 @@ export class RegistrationOfRequestsComponent
     });
   }
 
+  getAllGoodResDev() {
+    return new Promise((resolve, reject) => {
+      let params = new FilterParams();
+      params.addFilter('applicationId', this.requestData.id);
+      let filter = params.getParams();
+      this.goodResDevService.getAllGoodResDev(filter).subscribe({
+        next: (resp: any) => {
+          resolve(resp);
+        },
+        error: error => {
+          reject('error');
+          this.onLoadToast('error', 'No se llamaron los datos de good res dev');
+          console.log(error);
+        },
+      });
+    });
+  }
+
   async updateGoodStatus(newProcessStatus: string) {
-    let goodsCount: any = await this.getAllGood();
-    let goods: any = null;
-    if (goodsCount.count > 10) {
-      goods = await this.getAllGood(goodsCount.count);
-    } else {
-      goods = goodsCount;
+    let body: any = { request: 0, status: '', process: '' };
+    body.request = Number(this.requestData.id);
+    body.status = newProcessStatus;
+    body.process = this.process;
+    if (
+      this.process === 'process-approval' &&
+      newProcessStatus === 'APROBADO'
+    ) {
+      body.process = 'process-approval';
     }
+    const resultado = await this.updateProcessStatus(body);
+  }
 
-    goods.data.map(async (good: any, index: number) => {
-      //consultar si aclarado puede volver a modificarse
-      //index = index + 1;
-      //console.log(index);
-      if (
-        good.processStatus != 'SOLICITAR_ACLARACION' &&
-        good.processStatus != 'IMPROCEDENTE' &&
-        good.processStatus != 'SOLICITAR_APROBACION'
-      ) {
-        let body: any = {};
-        body.id = good.id;
-        body.goodId = good.goodId;
-        body.processStatus = newProcessStatus;
-        await this.updateGood(body);
-      }
-
-      if (
-        this.process === 'process-approval' &&
-        good.processStatus == 'SOLICITAR_APROBACION'
-      ) {
-        let body: any = {};
-        body.id = good.id;
-        body.goodId = good.goodId;
-        body.processStatus = newProcessStatus;
-        body.goodStatus = newProcessStatus;
-        await this.updateGood(body);
-      }
+  updateProcessStatus(body: any) {
+    return new Promise((resolve, reject) => {
+      this.goodfinderService.updateStatusProcess(body).subscribe({
+        next: resp => {
+          resolve(true);
+        },
+        error: error => {
+          reject('error al actualizar los status');
+          console.log('Error al actualizar los estatus', error);
+          this.onLoadToast(
+            'error',
+            'Error al actualizar los estados de los bienes',
+            ''
+          );
+        },
+      });
     });
   }
 
@@ -1496,7 +1514,13 @@ export class RegistrationOfRequestsComponent
   }
 
   async ableToSignDictamen() {
-    const goods: any = await this.getAllGood();
+    /*const goodsCount: any = await this.getAllGood();
+    let goods: any = null;
+    if (goodsCount.count > 10) {
+      goods = await this.getAllGood(goodsCount.count);
+    } else {
+      goods = goodsCount;
+    }
     let canSign: boolean = false;
     const filter = goods.data.filter(
       (x: any) =>
@@ -1504,7 +1528,8 @@ export class RegistrationOfRequestsComponent
         x.processStatus == 'IMPROCEDENTE'
     );
 
-    return filter.length == goods.count ? true : false;
+    return filter.length == goods.count ? true : false;*/
+    return true;
   }
 
   msgGuardado(icon: any, title: string, message: string) {
