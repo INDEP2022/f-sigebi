@@ -12,6 +12,6 @@ export class ProgressPercentService extends HttpService {
 
   getPercent() {
     let route = `https://indep-c6124-default-rtdb.firebaseio.com/massive-charge.json`;
-    return this.http.get(`${route}`);
+    return this.http.get(`${route}`,{ headers:{"content-type":"application/json"} });
   }
 }

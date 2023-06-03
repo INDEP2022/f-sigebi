@@ -282,12 +282,12 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
             'Archivos cargados',
             `Se importaron los archivos`
           );
-          this.loader.load = false;
+          this.loaderProgress.load = false;
           this.fileUploaded.nativeElement.value = '';
           this.closeCreateGoodWIndows();
         },
         error: error => {
-          this.loader.load = false;
+          this.loaderProgress.load = false;
           this.message(
             'error',
             'Error al subir el file',
@@ -891,7 +891,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
         }
         this.getSection(new ListParams(), data.data[0].parentId);
       },
-      error: error => {},
+      error: error => { },
     });
   }
 
@@ -929,7 +929,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
         }
         this.getChapter(new ListParams(), fraction.parentId);
       },
-      error: error => {},
+      error: error => { },
     });
   }
 
@@ -964,7 +964,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
         }
         this.getLevel1(new ListParams(), data.data[0].parentId);
       },
-      error: error => {},
+      error: error => { },
     });
   }
 
@@ -998,7 +998,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
         }
         this.getLevel2(new ListParams(), data.data[0].parentId);
       },
-      error: error => {},
+      error: error => { },
     });
   }
 
@@ -1032,7 +1032,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
         }
         this.getLevel3(new ListParams(), data.data[0].parentId);
       },
-      error: error => {},
+      error: error => { },
     });
   }
 

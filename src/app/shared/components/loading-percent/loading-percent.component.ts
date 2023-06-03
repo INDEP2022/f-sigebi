@@ -2,7 +2,8 @@ import { Component, inject, OnInit } from '@angular/core';
 import { catchError, interval, Subscription } from 'rxjs';
 import { LoadingPercentService } from 'src/app/common/services/loading-percent.service';
 import { ProgressPercentService } from 'src/app/core/services/loading-percent-massive/progress-percent.service';
-
+import { showHideErrorInterceptorService } from '../../../common/services/show-hide-error-interceptor.service';
+// ././../../../../ common / services / show - hide - error - interceptor.service
 @Component({
   selector: 'app-loading-percent',
   templateUrl: './loading-percent.component.html',
@@ -94,8 +95,9 @@ import { ProgressPercentService } from 'src/app/core/services/loading-percent-ma
         font-weight: bold;
         color: white;
         position: absolute;
-        margin-left: 4.2%;
-        margin-bottom: -1.5%;
+        position: absolute;
+        margin-left: 6.2%;
+        margin-top: 15%;
       }
       @keyframes lds-spinner {
         0% {
@@ -115,30 +117,37 @@ export class LoadingPercentComponent implements OnInit {
   constructor(
     private readonly loadingPercentService: LoadingPercentService,
     private progressPercentService: ProgressPercentService,
+    private showHideErrorInterceptorService: showHideErrorInterceptorService,
   ) {
     loadingPercentService.loaderProgress.subscribe({
       next: load => {
         this.loader = load
-        if(this.loader) this.loadingPercent()
+        if (this.loader) this.loadingPercent()
       },
     });
   }
 
   ngOnInit(): void {
     //this.startInterval();
-    
+
   }
-  
-  loadingPercent(){
-    
-    this.progressPercentService.getPercent().subscribe((resp:any)=>{
-      this.progreso = resp.percent
-    })
+
+  loadingPercent() {
+
+    this.progressPercentService.getPercent().subscribe(
+      (resp: any) => {
+        this.progreso = resp.percent
+      }, (erro) => {
+        console.log(erro.status);
+      })
     setTimeout(() => {
-      if(this.loader || this.progreso=="100.00") this.loadingPercent()
+      if (this.progreso === '100.00') this.loader = false;
+      if (this.loader) {
+        this.loadingPercent();
+      }
     }, 3000);
 
   }
 
-  
+
 }
