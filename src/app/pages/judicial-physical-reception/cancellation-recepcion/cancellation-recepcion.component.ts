@@ -299,6 +299,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
      console.log(this.proceedingData.length)
      if(this.proceedingData.length > 0){
       this.loading = true
+      this.dataGoodAct.load([])
       const dataRes = JSON.parse(
        JSON.stringify(this.proceedingData[params.page - 1])
      );
@@ -1638,13 +1639,13 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
         );
       } else {
         const paramsF = new FilterParams();
-        paramsF.addFilter('numberGood', this.selectActData.id);
+        paramsF.addFilter('numberGood', this.selectActData.good.goodId);
         paramsF.addFilter('numberProceedings', this.idProceeding);
         this.serviceDetailProc.getAllFiltered(paramsF.getParams()).subscribe(
           res => {
             console.log(res.data[0]);
             const deleteModel: IDeleteDetailProceeding = {
-              numberGood: this.selectActData.id,
+              numberGood: this.selectActData.good.goodId,
               numberProceedings: this.idProceeding,
             };
             console.log(deleteModel);
@@ -1658,12 +1659,12 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                 this.getGoodsActFn()
                 console.log(this.goodData);
                 this.saveDataAct = this.saveDataAct.filter(
-                  (e: any) => e.id != this.selectActData.id
+                  (e: any) => e.id != this.selectActData.good.id
                 );
 
                 this.dataGoods.load(
                   this.dataGoods['data'].map((e: any) => {
-                    if (e.id == this.selectActData.id) {
+                    if (e.id == this.selectActData.good.id) {
                       return { ...e, avalaible: true };
                     } else {
                       return e;
@@ -1684,18 +1685,18 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
             console.log(err);
             console.log(this.dataGoodAct);
             this.goodData = this.goodData.filter(
-              (e: any) => e.id != this.selectActData.id
+              (e: any) => e.id != this.selectActData.good.id
             );
             /* this.dataGoodAct.load(this.goodData); */
             this.getGoodsActFn()
             console.log(this.goodData);
             this.saveDataAct = this.saveDataAct.filter(
-              (e: any) => e.id != this.selectActData.id
+              (e: any) => e.id != this.selectActData.good.id
             );
 
             this.dataGoods.load(
               this.dataGoods['data'].map((e: any) => {
-                if (e.id == this.selectActData.id) {
+                if (e.id == this.selectActData.good.id) {
                   return { ...e, avalaible: true };
                 } else {
                   return e;
