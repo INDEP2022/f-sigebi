@@ -642,12 +642,14 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
     //   'La parcialización de bienes se realizo con éxito'
     // );
     try {
+      this.good.status = 'PEA';
       await firstValueFrom(this.goodService.updateCustom(this.good));
       this.onLoadToast(
         'success',
         'Parcialización',
         'La parcialización de bienes se realizo con éxito'
       );
+      this.service.haveAply = false;
     } catch (x) {
       this.onLoadToast(
         'error',
