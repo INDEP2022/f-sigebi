@@ -2,7 +2,6 @@ import { Component, Inject, inject, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { format } from 'date-fns';
 import { LocalDataSource, Ng2SmartTableComponent } from 'ng2-smart-table';
-import { takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import {
   FilterParams,
@@ -170,6 +169,7 @@ export abstract class ScheduledMaintenance extends BasePageWidhtDinamicFiltersEx
     console.log('RESET VIEW');
     this.data = new LocalDataSource();
     this.totalItems = 0;
+    localStorage.removeItem(this.formStorage);
   }
 
   extraOperations() {}
@@ -184,13 +184,13 @@ export abstract class ScheduledMaintenance extends BasePageWidhtDinamicFiltersEx
         this.tiposEvento = response.data;
       },
     });
-    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe({
-      next: response => {
-        console.log(response);
+    // this.params.pipe(takeUntil(this.$unSubscribe)).subscribe({
+    //   next: response => {
+    //     console.log(response);
 
-        this.getData(true);
-      },
-    });
+    //     this.getData(true);
+    //   },
+    // });
   }
 
   setForm() {
@@ -323,7 +323,9 @@ export abstract class ScheduledMaintenance extends BasePageWidhtDinamicFiltersEx
     // this.filterParams.addFilter2(this.columnFilters);
     if (byPage) {
       this.filterParams.page = this.params.getValue().page;
-      this.filterParams.limit = this.params.getValue().limit;
+      // this.filterParams.limit = this.params.getValue().limit;
+    } else {
+      this.params.value.page = 1;
     }
 
     return true;
@@ -340,9 +342,9 @@ export abstract class ScheduledMaintenance extends BasePageWidhtDinamicFiltersEx
       this.service.getAll(this.filterParams.getParams()).subscribe({
         next: response => {
           console.log(response);
-          if (response.data.length === 0) {
-            this.onLoadToast('error', 'No se encontraron datos');
-          }
+          // if (response.data.length === 0) {
+          //   this.onLoadToast('error', 'No se encontraron datos');
+          // }
           (this.items = response.data.map(x => {
             return {
               ...x,
@@ -359,8 +361,9 @@ export abstract class ScheduledMaintenance extends BasePageWidhtDinamicFiltersEx
         error: error => {
           console.log(error);
           // this.onLoadToast('error', 'No se encontraron datos');
-          this.loading = false;
           this.data.load([]);
+          this.totalItems = 0;
+          this.loading = false;
         },
       });
     } else {

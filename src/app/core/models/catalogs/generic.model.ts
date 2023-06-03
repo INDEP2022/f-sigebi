@@ -10,3 +10,19 @@ export interface IGeneric {
   active: string;
   editable: string;
 }
+
+export interface IStateConservation {
+  keyId: number;
+  description: string;
+}
+
+export interface IMeasureUnit {
+  indFraction: number;
+  measureTlUnit: string;
+  uomCode: string;
+}
+
+export interface IPhysicalStatus {
+  keyId: number;
+  description: string;
+}
