@@ -36,6 +36,7 @@ import { DynamicCatalogService } from 'src/app/core/services/dynamic-catalogs/dy
 import { EventProgrammingService } from 'src/app/core/services/ms-event-programming/event-programing.service';
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import { GoodParametersService } from 'src/app/core/services/ms-good-parameters/good-parameters.service';
+import { FIndicaService } from 'src/app/core/services/ms-good/findica.service';
 import { IndicatorsParametersService } from 'src/app/core/services/ms-parametergood/indicators-parameter.service';
 import { ParametersService } from 'src/app/core/services/ms-parametergood/parameters.service';
 import { RNomenclaService } from 'src/app/core/services/ms-parametergood/r-nomencla.service';
@@ -221,7 +222,8 @@ export class EventCaptureComponent
     private security: SecurityService,
     private progammingServ: ProgrammingGoodService,
     private programmingGoodService: ProgrammingGoodsService,
-    private tmpContProgrammingService: TmpContProgrammingService
+    private tmpContProgrammingService: TmpContProgrammingService,
+    private fIndicaService: FIndicaService
   ) {
     super();
     this.authUser = this.authService.decodeToken().preferred_username;
@@ -358,7 +360,6 @@ export class EventCaptureComponent
 
   async transferClick() {
     const firstDetail = this.detail[0];
-    console.log('llego', firstDetail);
     const { transference } = this.registerControls;
     if (!firstDetail) {
       transference.reset();
@@ -389,6 +390,7 @@ export class EventCaptureComponent
     this.transfers = new DefaultSelect([
       { value: transferent, label: transferent },
     ]);
+    await this.generateCve();
   }
 
   async getTAseg(expedientId: string | number) {
@@ -499,14 +501,14 @@ export class EventCaptureComponent
 
     if (typeEvent.value == 'RF') {
       if (this.blkProceeding.txtCrtSus1) {
-        this.pupUpdate();
+        // this.pupUpdate();
       } else {
-        this.frConditions();
+        // this.frConditions();
       }
       this.blkCtrl.asigTm = 1;
       this.blkCtrl.asigCb = 1;
     } else {
-      this.pupUpdate();
+      // this.pupUpdate();
     }
 
     this.progTotal();
@@ -516,10 +518,68 @@ export class EventCaptureComponent
   progTotal() {}
 
   // PUP_GENERA_WHERE
-  createFilters() {}
+  createFilters() {
+    const { typeEvent } = this.form.value;
+    const {
+      initialDate,
+      finalDate,
+      flyer,
+      expedient,
+      dictumCve,
+      delegation,
+      programed,
+      cdonacCve,
+      lot,
+      donatNumber,
+      adonacCve,
+      event,
+      warehouse,
+      autoInitialDate,
+      autoFinalDate,
+      transfer,
+      transmitter,
+      authority,
+    } = this.formSiab.value;
+    const body = {
+      startDate: initialDate,
+      endDate: finalDate,
+      processingArea: typeEvent,
+      steeringWheel: flyer,
+      proceedings: expedient,
+      opinion: dictumCve,
+      coordination: delegation.join(','),
+      program: programed,
+      cdonacKey: cdonacCve,
+      idLot: lot,
+      doneeNumber: donatNumber,
+      adonacKey: adonacCve,
+      idEvent: event,
+      storeNumber: warehouse,
+      iniAutDate: autoInitialDate,
+      endAutDate: autoFinalDate,
+      transferee: transfer.join(','),
+      station: transmitter.join(','),
+      authority: authority.join(','),
+    };
+    const totalFilters = Object.values(this.form.value);
+    console.log(totalFilters);
+    this.fIndicaService.pupGenerateWhere(body).subscribe(res => {
+      console.log({ res });
+      this.pupUpdate();
+    });
+  }
 
   // PUP_ACTUALIZA
-  pupUpdate() {}
+  pupUpdate() {
+    console.log('se manda a llamar');
+    const { typeEvent } = this.registerControls;
+    const { expedient } = this.formSiab.value;
+    this.fIndicaService
+      .pupUpdate(typeEvent.value, expedient, this.proceeding.id)
+      .subscribe(res => {
+        this.getDetail().subscribe();
+      });
+  }
 
   // PUP_CONDICIONES_FR
   frConditions() {
@@ -660,6 +720,7 @@ export class EventCaptureComponent
 
   // PUP_VAL_TRANF
   validateTransfer(_type: string, transfer: string) {
+    this.global.tran = transfer;
     const { keysProceedings } = this.registerControls;
     const splitedArea = keysProceedings?.value?.split('/');
     const cveType = splitedArea ? splitedArea[0] : null;
@@ -695,6 +756,7 @@ export class EventCaptureComponent
         }
       }
     } else {
+      console.log('llego al else de transferente', transfer);
       // if(tran == transfer)  {
       if (
         (transfer == 'PGR' || transfer == 'PJF') &&
@@ -702,6 +764,7 @@ export class EventCaptureComponent
       ) {
         this.global.tran = transfer;
         this.global.type = _type;
+        console.log('llego al primero');
       } else if (
         transfer != 'PGR' &&
         transfer != 'PJF' &&
@@ -711,6 +774,7 @@ export class EventCaptureComponent
       } else if ((transfer == 'PGR' || transfer == 'PJF') && _type == 'RT') {
         this.invalidTransfer();
       } else if (transfer != 'PGR' && transfer != 'PJF' && _type == 'Rt') {
+        console.log('llego al segundo');
         this.global.tran = transfer;
         this.global.type = _type;
       }
@@ -1035,12 +1099,13 @@ export class EventCaptureComponent
 
   // PA_CALCULA_CANTIDADES
   calculateQuantities() {
-    // TODO: DESCOMENTAR CUANDO ARREGLEN LA INCIDENCIA
-    // this.programmingGoodService.computeEntities(
-    //   this.proceeding.id,
-    //   typeEvent.value
-    // )
     const { typeEvent } = this.registerControls;
+    // TODO: DESCOMENTAR CUANDO ARREGLEN LA INCIDENCIA
+    this.programmingGoodService
+      .computeEntities(this.proceeding.id, typeEvent.value)
+      .subscribe(res => {
+        console.log('detalle', res);
+      });
     of(null).subscribe(() => {
       const params = new FilterParams();
       params.addFilter('minutesNumber', this.proceeding.id);
