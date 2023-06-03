@@ -99,7 +99,7 @@
                   [min]="0"
                   type="number"
                   [max-length]="10"
-                  [readOnly]="blockExpedient"
+                  [readOnly]="blockExpedient || loading"
                   class="form-control"
                   formControlName="expediente" />
               </form-field>
@@ -466,11 +466,13 @@
           (rowSelect)="rowSelect($event)"
           (rowDeselect)="deselectRow()"></ng2-smart-table>
       </div>
- <app-pagination
+      <app-pagination
         *ngIf="!loading"
         [params]="paramsDataGoods"
+        [pageSizeOptions]="[5, 10, 20]"
+        [limit]="limitDataGoods"
         [totalItems]="totalItemsDataGoods"></app-pagination>
-      <hr class="row" />
+      
       <div class="row">
         <div class="d-flex justify-content-center">
           <form-field
@@ -495,8 +497,8 @@
           </p>
         </div>
       </div>
-
-      <div class="row pt-2">
+      <hr class="row" />
+      <div class="row pt-2 pb-4">
         <div class="col-md-12 d-flex justify-content-center">
           <div class="d-flex justify-content-center align-items-sm-center">
             <div class="col-md-3">
@@ -522,7 +524,7 @@
           </div>
         </div>
       </div>
-
+      <hr class="row" />
       <div [class]="loading ? 'table-loading' : 'row pt-2 scroll-table'">
         <ng2-smart-table
           class="col-md-12"
@@ -531,7 +533,12 @@
           (rowSelect)="selectRowGoodActa($event)"
           (rowDeselect)="deselectRowGoodActa()"></ng2-smart-table>
       </div>
-      <hr class="row" />
+      <app-pagination
+        *ngIf="!loading"
+        [params]="paramsDataGoodsAct"
+        [pageSizeOptions]="[5, 10, 20]"
+        [limit]="limitDataGoodsAct"
+        [totalItems]="totalItemsDataGoodsAct"></app-pagination>
       <div class="d-flex justify-content-center">
         <form-field
           class="col-md-3"
