@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { firstValueFrom } from 'rxjs';
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
@@ -23,6 +23,7 @@ export class WarehouseProceedingsComponent
   extends AlertButton
   implements OnInit
 {
+  @Input() disabled = true;
   selectedWarehouse: any;
   selectedVault: any;
   paramsWarehouse = new FilterParams();

@@ -599,7 +599,7 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
   }
 
   private async finishApply(vobserv_padre: string, vdesc_padre: string) {
-    debugger;
+    // debugger;
     const oldObservations = this.good.observations
       ? this.good.observations
       : '';

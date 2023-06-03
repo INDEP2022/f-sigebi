@@ -1,5 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import {
+  FormArray,
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
@@ -7,12 +13,18 @@ import { BehaviorSubject, catchError, takeUntil, throwError } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { showHideErrorInterceptorService } from 'src/app/common/services/show-hide-error-interceptor.service';
+import {
+  IMeasureUnit,
+  IPhysicalStatus,
+  IStateConservation,
+} from 'src/app/core/models/catalogs/generic.model';
 import { IGoodProgramming } from 'src/app/core/models/good-programming/good-programming';
 import { Iprogramming } from 'src/app/core/models/good-programming/programming';
 import { IGood } from 'src/app/core/models/good/good.model';
 import { IReception } from 'src/app/core/models/ms-reception-good/reception-good.model';
 import { IReceipt } from 'src/app/core/models/receipt/receipt.model';
 import { AuthorityService } from 'src/app/core/services/catalogs/authority.service';
+import { GenericService } from 'src/app/core/services/catalogs/generic.service';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
 import { StationService } from 'src/app/core/services/catalogs/station.service';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
@@ -24,10 +36,11 @@ import { ProceedingsService } from 'src/app/core/services/ms-proceedings';
 import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-request/programming-request.service';
 import { ReceptionGoodService } from 'src/app/core/services/reception/reception-good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { AssignReceiptFormComponent } from '../../../shared-request/assign-receipt-form/assign-receipt-form.component';
 import { ShowDocumentsGoodComponent } from '../../../shared-request/expedients-tabs/sub-tabs/good-doc-tab/show-documents-good/show-documents-good.component';
-import { UploadFileComponent } from '../../../shared-request/expedients-tabs/sub-tabs/photos-assets/upload-file/upload-file.component';
 import { GenerateReceiptFormComponent } from '../../../shared-request/generate-receipt-form/generate-receipt-form.component';
+import { PhotographyFormComponent } from '../../../shared-request/photography-form/photography-form.component';
 import { ESTATE_COLUMNS_VIEW } from '../../acept-programming/columns/estate-columns';
 import { USER_COLUMNS_SHOW } from '../../acept-programming/columns/users-columns';
 import { GenerateReceiptGuardFormComponent } from '../../shared-components-programming/generate-receipt-guard-form/generate-receipt-guard-form.component';
@@ -52,7 +65,11 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   goodsGuard: IGood[] = [];
   goodsWareh: IGood[] = [];
   goodsSelect: IGood[] = [];
+  stateConservation: IStateConservation[] = [];
+  statusPhysical: IPhysicalStatus[] = [];
+  measureUnits: IMeasureUnit[] = [];
   executeForm: FormGroup = new FormGroup({});
+  buildForm: FormGroup = new FormGroup({});
   params = new BehaviorSubject<ListParams>(new ListParams());
   paramsProceeding = new BehaviorSubject<ListParams>(new ListParams());
   paramsAuthority = new BehaviorSubject<ListParams>(new ListParams());
@@ -80,6 +97,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   authorityName: string = '';
   typeRelevantName: string = '';
   formLoading: boolean = false;
+  goodData: IGood;
   settingsGuardGoods = {
     ...this.settings,
     actions: false,
@@ -151,7 +169,8 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     private goodService: GoodService,
     private proccedingService: ProceedingsService,
     private showHideErrorInterceptorService: showHideErrorInterceptorService,
-    private receptionService: ReceptionGoodService
+    private receptionService: ReceptionGoodService,
+    private genericService: GenericService
   ) {
     super();
     this.settings = {
@@ -166,25 +185,43 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.formLoading = true;
     this.prepareForm();
+    this.formLoading = true;
     this.showDataProgramming();
 
     this.paramsGuard
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getGoodsProgramming());
+
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getInfoGoodsProgramming());
+
+    this.getConcervationState();
+    this.getUnitMeasure();
+    this.getPhysicalStatus();
   }
 
   prepareForm() {
     this.executeForm = this.fb.group({
-      goodsProg: this.fb.array([]),
-      descriptionGoodSae: [null],
-      quantitySae: [null],
+      goodsTransportable: this.fb.array([]),
+      descriptionGoodSae: [
+        null,
+        [Validators.maxLength(100), Validators.pattern(STRING_PATTERN)],
+      ],
+      quantitySae: [
+        null,
+        [Validators.maxLength(50), Validators.pattern(NUMBERS_PATTERN)],
+      ],
       saeMeasureUnit: [null],
       saePhysicalState: [null],
       stateConservationSae: [null],
       selectColumn: [null],
     });
+  }
+
+  get goodsTransportable() {
+    return this.executeForm.get('goodsTransportable') as FormArray;
   }
 
   showDataProgramming() {
@@ -214,7 +251,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     this.regDelegationService
       .getById(data.regionalDelegationNumber)
       .subscribe(data => {
-        this.programming.regionalDelegationNumber = data.description;
+        this.programming.regionalDelegationName = data.description;
       });
   }
 
@@ -270,6 +307,8 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
 
   /*----------Show info goods programming --------- */
   getInfoGoodsProgramming() {
+    this.formLoading = true;
+    this.goodsTransportable.reset();
     this.params.getValue()['filter.programmingId'] = this.programmingId;
     this.programmingService
       .getGoodsProgramming(this.params.getValue())
@@ -289,16 +328,50 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     goodsTrans.map(items => {
       this.goodService.getGoodByIds(items.goodId).subscribe({
         next: response => {
-          if (response.saePhysicalState == 1)
+          console.log('repsonse', response);
+          if (response.physicalStatus == 1) {
+            response.physicalStatusName = 'BUENO';
+          } else if (response.physicalStatus == 2) {
+            response.physicalStatusName = 'MALO';
+          }
+          if (response.stateConservation == 1) {
+            response.stateConservationName = 'BUENO';
+          } else if (response.stateConservation == 2) {
+            response.stateConservationName = 'MALO';
+          }
+          this.goodsTransportable.clear();
+          this.goodData = response;
+
+          const form = this.fb.group({
+            id: [response?.id],
+            goodId: [response?.goodId],
+            uniqueKey: [response?.uniqueKey],
+            fileNumber: [response?.fileNumber],
+            goodDescription: [response?.goodDescription],
+            quantity: [response?.quantity],
+            unitMeasure: [response?.unitMeasure],
+            descriptionGoodSae: [response?.descriptionGoodSae],
+            quantitySae: [response?.quantitySae],
+            saeMeasureUnit: [response?.saeMeasureUnit],
+            physicalStatus: [response?.physicalStatus],
+            physicalStatusName: [response?.physicalStatusName],
+            saePhysicalState: [response?.saePhysicalState],
+            stateConservation: [response?.stateConservation],
+            stateConservationName: [response?.stateConservationName],
+            stateConservationSae: [response?.stateConservationSae],
+            regionalDelegationNumber: [response?.regionalDelegationNumber],
+          });
+          this.goodsTransportable.push(form);
+          this.goodsTransportable.updateValueAndValidity();
+          this.formLoading = false;
+
+          /*if (response.saePhysicalState == 1)
             response.saePhysicalState = 'BUENO';
           if (response.saePhysicalState == 2)
             response.saePhysicalState = 'MALO';
           if (response.decriptionGoodSae == null)
             response.decriptionGoodSae = 'Sin descripción';
-          // queda pendiente mostrar el alías del almacén //
-          console.log('repsonse', response);
-          this.executeForm.get('decriptionGoodSae').setValue(response);
-          this.goods.push(response);
+          // queda pendiente mostrar el alías del almacén // */
           //this.goodsTranportables.load(this.goodsInfoTrans);
           //this.totalItemsTransportable = this.goodsTranportables.count();
         },
@@ -306,18 +379,61 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     });
   }
 
+  getUnitMeasure() {
+    this.params.getValue()['filter.measureTlUnit'] = `$ilike:${
+      this.params.getValue().text
+    }`;
+    this.params.getValue().limit = 20;
+    this.goodsQueryService
+      .getCatMeasureUnitView(this.params.getValue())
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: resp => {
+          console.log('Unit measure', resp);
+          this.measureUnits = resp.data;
+        },
+        error: error => {},
+      });
+  }
+
+  getConcervationState() {
+    this.params.getValue()['filter.name'] = '$eq:Estado Conservacion';
+    this.genericService
+      .getAll(this.params.getValue())
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: (data: any) => {
+          console.log('data', data);
+          this.stateConservation = data.data;
+        },
+        error: error => {},
+      });
+  }
+
+  getPhysicalStatus() {
+    this.params.getValue()['filter.name'] = '$eq:Estado Fisico';
+    this.genericService
+      .getAll(this.params.getValue())
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: (data: any) => {
+          console.log('status', data);
+          this.statusPhysical = data.data;
+        },
+      });
+  }
   goodSelect(good: IGood) {
     this.goodIdSelect = good.id;
     this.selectGood = good;
   }
 
-  /*infoGoods() {
+  infoGoods() {
     this.goods.forEach(items => {
       console.log(items.quantitySae);
       this.executeForm.get('quantitySae').setValue(items.quantitySae);
-      console.log('mee', this.executeForm.get('quantitySae').value)
-    })
-  } */
+      console.log('mee', this.executeForm.get('quantitySae').value);
+    });
+  }
 
   // Actualizar la información del bien //
   updateInfoGood(goodNumber: number, goodId: number) {
@@ -348,32 +464,17 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     });
   }
 
-  //Actualizar información de la transferente//
-  updateInfoGoodTransferent(goodNumber: number) {
-    let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
-    config.initialState = {
-      goodNumber,
-      callback: (data: boolean) => {
-        if (data) {
-          console.log(data);
-        }
-      },
-    };
-
-    this.modalService.show(EditGoodFormComponent, config);
-  }
-
   /*----------Mostrar bienes transportable, resguardo y almacén-------------*/
 
   getGoodsProgramming() {
-    this.paramsGuard.getValue()['filter.programmingId'] = this.programmingId;
+    /*this.paramsGuard.getValue()['filter.programmingId'] = this.programmingId;
     this.programmingService
       .getGoodsProgramming(this.paramsGuard.getValue())
       .subscribe(data => {
         this.getGoodsGuards(data.data);
         this.getGoodsWarehouse(data.data);
         this.formLoading = false;
-      });
+      }); */
   }
 
   /*------------------ Goods in guard ---------------------------*/
@@ -404,6 +505,37 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     });
     this.guardGoods.load(infoGood);
     console.log('guards goods', this.guardGoods); */
+  }
+
+  editGood(good: IGood) {
+    let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+    config.initialState = {
+      good,
+      callback: (next: boolean) => {
+        if (next) this.getInfoGoodsProgramming();
+      },
+    };
+
+    this.modalService.show(EditGoodFormComponent, config);
+  }
+
+  updateInfo(data: IGood) {
+    this.alertQuestion(
+      'question',
+      'Confirmación',
+      '¿Desea editar el bien?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.goodService.updateByBody(data).subscribe({
+          next: () => {
+            this.getInfoGoodsProgramming();
+          },
+          error: error => {
+            console.log('error bien', error);
+          },
+        });
+      }
+    });
   }
 
   //Bienes seleccionados//
@@ -605,6 +737,8 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       let config: ModalOptions = {
         initialState: {
           idGood: this.goodIdSelect,
+          programming: this.programming,
+          process: 'programming',
           parameter: '',
           typeDoc: 'request-assets',
           callback: (next: boolean) => {
@@ -625,24 +759,27 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   }
 
   uploadPicture() {
-    let loadingPhotos = 0;
-    let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
-    config.initialState = {
-      data: this.selectGood,
-      callBack: (next: boolean) => {
-        if (next) {
-          this.formLoading = true;
-          loadingPhotos = loadingPhotos + 1;
-          setTimeout(() => {
-            this.formLoading = false;
-          }, 7000);
-          if (loadingPhotos == 1) {
-            this.onLoadToast('success', 'Imagen cargada correctamente', '');
+    if (this.goodIdSelect) {
+      let config = {
+        ...MODAL_CONFIG,
+        class: 'modalSizeXL modal-dialog-centered table-responsive',
+      };
+      config.initialState = {
+        good: this.goodIdSelect,
+        programming: this.programming,
+        callback: (next: boolean) => {
+          if (next) {
           }
-        }
-      },
-    };
-    this.modalService.show(UploadFileComponent, config);
+        },
+      };
+      this.modalService.show(PhotographyFormComponent, config);
+    } else {
+      this.onLoadToast(
+        'info',
+        'Acción invalida',
+        'Necesitas tener un bien seleccionado'
+      );
+    }
   }
 
   createReceipt() {
@@ -693,8 +830,12 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     );
   }
 
-  showEstate() {
-    alert('vista imprimir reporte');
+  showGood(data: IGood) {
+    console.log('good', data);
+    console.log('programming', this.programming);
+    let report = '/showReport?nombreReporte=Etiqueta_TDR.jasper&CID_BIEN=';
+    report += [data.goodId];
+    console.log('report', report);
   }
 
   delete() {}
