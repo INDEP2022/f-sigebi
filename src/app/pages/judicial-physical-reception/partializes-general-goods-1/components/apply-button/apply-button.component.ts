@@ -163,11 +163,14 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
       ...good,
       observations,
       amount: item.cantidad,
+      appraisedValue: item.avaluo,
+      quantity: item.cantidad,
       val2: pval2 + '',
       val11: item.val11 + '',
       val12: item.val12 + '',
       val13: item.val13 + '',
       val14: good.val14 + '',
+      description: item.descripcion,
       worthappraisal: item.avaluo ? +(item.avaluo + '') : null,
       goodReferenceNumber: item.noBien,
       extDomProcess: pproextdom,
@@ -515,9 +518,11 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
       // } else {
       //   item.avaluo = this.good.appraisedValue;
       // }
-      item.avaluo = +(
-        +(this.good.appraisedValue + '') - this.service.sumAvaluo
-      ).toFixed(2);
+      item.avaluo = this.good.appraisedValue
+        ? +(+(this.good.appraisedValue + '') - this.service.sumAvaluo).toFixed(
+            2
+          )
+        : null;
       if (this.validationClasif()) {
         item.importe = +(this.saldo.value + '');
 
@@ -637,12 +642,14 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
     //   'La parcialización de bienes se realizo con éxito'
     // );
     try {
+      this.good.status = 'PEA';
       await firstValueFrom(this.goodService.updateCustom(this.good));
       this.onLoadToast(
         'success',
         'Parcialización',
         'La parcialización de bienes se realizo con éxito'
       );
+      this.service.haveAply = false;
     } catch (x) {
       this.onLoadToast(
         'error',

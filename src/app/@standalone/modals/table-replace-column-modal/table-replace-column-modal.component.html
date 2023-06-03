@@ -29,7 +29,8 @@
           </ng-custom-select-loading>
           <ng-container *ngIf="!selectFirstInput">
             <form-field
-              class="col-xs-4"
+              class="col-md-6"
+              style="padding: 0 15px 0px 1px"
               [control]="form.get(formField)"
               [label]="label">
               <input
@@ -50,14 +51,22 @@
                 <ng-option value="2">Cambio de Estatus</ng-option>
               </ng-select> -->
             </form-field>
-            <div class="col-xs-2 pl-0">
-              <button
-                type="button"
-                class="btn btn-primary btn-sm active"
-                [disabled]="form.get(formField).value === null"
-                (click)="search()">
-                <i class="fa fa-search"></i> Buscar
-              </button>
+            <div class="replaceButtons">
+              <div class="col-xs-2 pl-0">
+                <button
+                  type="button"
+                  class="btn btn-primary btn-sm active"
+                  [disabled]="form.get(formField).value === null"
+                  (click)="search()">
+                  <i class="fa fa-search"></i> Buscar
+                </button>
+              </div>
+              <div
+                class="col-md-4 col-xs-6 messageResult"
+                *ngIf="messageResult"
+                [class]="messageResult.result">
+                {{ messageResult.message }}
+              </div>
             </div>
           </ng-container>
 
