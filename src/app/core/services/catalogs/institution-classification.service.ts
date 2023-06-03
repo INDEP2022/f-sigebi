@@ -53,10 +53,6 @@ export class InstitutionClasificationService
     );
   }
 
-  newUpdate(model: IInstitutionClassification): Observable<Object> {
-    return this.institutionClasificationRepository.newUpdate(this.route, model);
-  }
-
   remove(id: string | number): Observable<Object> {
     return this.institutionClasificationRepository.remove(this.route, id);
   }
