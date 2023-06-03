@@ -115,7 +115,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
         sort: false,
       },
       'good.goodClassNumber': {
-        title: 'No Clasificación',
+        title: 'No. Clasificación',
         type: 'number',
         sort: false,
         valuePrepareFunction: (cell: any, row: any) => {
@@ -189,6 +189,10 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
     },
     noDataMessage: 'No se encontrarón registros',
   };
+
+  //NAVEGACION DE ACTAS
+  paramsActNavigate = new BehaviorSubject<ListParams>(new ListParams());
+  newLimitparamsActNavigate = new FormControl(1);
 
   paramsDataGoods = new BehaviorSubject<ListParams>(new ListParams());
   totalItemsDataGoods: number = 0;
@@ -286,6 +290,21 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
     this.paramsDataGoodsAct.pipe(takeUntil(this.$unSubscribe))
     .subscribe(params => {
       this.getGoodsActFn()
+    });
+
+    this.paramsActNavigate.pipe(takeUntil(this.$unSubscribe))
+    .subscribe(params => {
+     console.log(params)
+     console.log(params.page)
+     console.log(this.proceedingData.length)
+     if(this.proceedingData.length > 0){
+      this.loading = true
+      const dataRes = JSON.parse(
+       JSON.stringify(this.proceedingData[params.page - 1])
+     );
+      this.fillIncomeProceeding(dataRes, 'nextProceeding');
+     }
+     
     });
   }
 
@@ -486,8 +505,8 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
 
         this.serviceGoodProcess.getAccepGoodActa(modelActa).subscribe(
           res => {
-            console.log(res.data)
-            if(typeof res.data == 'number'  && res.data > 0){
+            console.log(res)
+            if(typeof res == 'number'  && res > 0){
               di_disponible = true;
               this.serviceGood
                 .getById(`${element.goodId}&filter.labelNumber=$eq:6`)
@@ -787,7 +806,6 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
 
   getGoodsFn() {
     this.loading = true;
-
     const paramsF = new FilterParams();
     paramsF.page = this.paramsDataGoods.getValue().page;
     paramsF.limit = this.paramsDataGoods.getValue().limit;
@@ -972,11 +990,13 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
       paramsF.addFilter('criminalCase', this.form.get('causaPenal').value);
       this.serviceExpedient.getAllFilter(paramsF.getParams()).subscribe(
         res => {
+          this.loading = false;
           console.log(res);
           this.searchByOtherData = true;
           this.dataExpedients = new DefaultSelect(res.data);
         },
         err => {
+          this.loading = false;
           console.log(err);
           this.form.get('causaPenal').setValue(null);
           this.dataExpedients = new DefaultSelect();
@@ -1009,7 +1029,6 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
     this.nextProce = false;
     this.prevProce = true;
     this.initialBool = false;
-    this.newAct = false;
     this.goodData = [];
     this.dataGoodAct.load(this.goodData);
     this.requireAct1();
@@ -1157,6 +1176,13 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
     this.form.get('causaPenal').reset();
     this.form.get('statusProceeding').reset();
 
+    this.limitDataGoodsAct = new FormControl(10);
+    this.limitDataGoods = new FormControl(10);
+    this.totalItemsDataGoods = 0;
+    this.totalItemsDataGoodsAct = 0;
+    this.paramsDataGoods = new BehaviorSubject<ListParams>(new ListParams());
+    this.paramsDataGoodsAct = new BehaviorSubject<ListParams>(new ListParams());
+
     this.dataGoods.load([]);
 
     this.blockExpedient = false;
@@ -1192,6 +1218,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
   }
 
   getGoodsByExpedient() {
+    this.clearInputs()
     const paramsF = new FilterParams();
     paramsF.addFilter(
       'numFile',
@@ -2078,7 +2105,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
           const modelPaOpen: IPAAbrirActasPrograma = {
             P_NOACTA: this.idProceeding,
             P_AREATRA: lv_TIP_ACTA,
-            P_PANTALLA: 'FACTREFACTAENTREC',
+            P_PANTALLA: 'FACTREFCANCELAR',
             P_TIPOMOV: 2,
           };
           console.log(modelPaOpen);
@@ -2810,10 +2837,17 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                   this.serviceDetailProc
                     .PADelActaEntrega(realData.id)
                     .subscribe(async res => {
-                      this.form
+
+                      this.clearInputs();
+                      this.loading = true
+                      this.form.get('expediente').setValue(this.numberExpedient);
+    this.goodsByExpediente();
+
+                      /* this.form
                         .get('expediente')
                         .setValue(this.numberExpedient);
-                      await this.dataGoods.load(
+                        this.getGoodsFn() */
+                      /* await this.dataGoods.load(
                         this.dataGoods['data'].map((e: any) => {
                           for (let element of this.dataGoodAct['data']) {
                             if (e.id === element.id) {
@@ -2823,9 +2857,9 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                             }
                           }
                         })
-                      );
-                      this.clearInputs();
-                      this.getGoodsByExpedient();
+                      ); */
+                      
+                      /* this.getGoodsByExpedient();
                       this.form.get('statusProceeding').reset();
                       if (this.proceedingData.length === 1) {
                         this.navigateProceedings = false;
@@ -2853,7 +2887,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                           this.prevProceeding();
                         }
                       }
-                      this.alert('success', 'Acta eliminada', '');
+                      this.alert('success', 'Acta eliminada', ''); */
                     });
                 },
                 err => {
