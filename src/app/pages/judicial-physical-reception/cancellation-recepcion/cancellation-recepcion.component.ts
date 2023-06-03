@@ -757,6 +757,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                   return { ...e, avalaible: disponible, acta: acta };
                 })
               );
+              this.totalItemsDataGoods = res.count;
               this.dataGoods.load(newData);
               this.getGoodsByExpedient();
               this.alert(
@@ -1688,7 +1689,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                                   'Acta abierta',
                                   `El acta ${
                                     this.form.get('acta2').value
-                                  } fue abierta con éxito`
+                                  } fue abierta con`
                                 );
                               },
                               err => {
@@ -1859,7 +1860,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                                             'Acta abierta',
                                             `El acta ${
                                               this.form.get('acta2').value
-                                            } fue abierta con éxito`
+                                            } fue abierta con`
                                           );
                                           const btn =
                                             document.getElementById(
@@ -1965,7 +1966,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                           'Acta abierta',
                           `El acta ${
                             this.form.get('acta2').value
-                          } fue abierta con éxito`
+                          } fue abierta con`
                         );
                         /* const btn = document.getElementById('expedient-number');
                         this.render.removeClass(btn, 'disabled');
@@ -2088,10 +2089,8 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                   this.inputsReopenProceeding();
                   this.alert(
                     'success',
-                    'Acta creada con éxito',
-                    `El acta ${
-                      this.form.get('acta2').value
-                    } fue abierta exitosamente`
+                    'Acta creada con',
+                    `El acta ${this.form.get('acta2').value} fue abierta`
                   );
                 });
             },
@@ -2156,11 +2155,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
           console.log(modelEdit);
           this.serviceProcVal.editProceeding(resData.id, modelEdit).subscribe(
             res => {
-              this.alert(
-                'success',
-                'Se modificaron los datos del acta de manera éxitosa',
-                ''
-              );
+              this.alert('success', 'Se modificaron los datos del acta', '');
             },
             err => {
               this.alert(
@@ -2233,7 +2228,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
               this.form.get('statusProceeding').setValue('ABIERTA');
               this.form.get('fecCaptura').setValue(new Date());
               console.log(res);
-              this.alert('success', 'Se guardo el acta de manera éxitosa', '');
+              this.alert('success', 'Se guardo el acta', '');
             },
             err => {
               this.alert(
@@ -2341,11 +2336,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                         this.form.get('statusProceeding').setValue('CERRADO');
                         this.inputsInProceedingClose();
                         this.saveDataAct = [];
-                        this.alert(
-                          'success',
-                          'El acta fue abierta con éxito',
-                          ''
-                        );
+                        this.alert('success', 'El acta fue abierta', '');
                         /* const btn = document.getElementById('expedient-number');
                         this.render.removeClass(btn, 'disabled');
                         this.render.addClass(btn, 'enabled'); */
@@ -2436,7 +2427,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                       this.alert(
                         'success',
                         'Acta cerrada',
-                        'El acta fue cerrada con éxito'
+                        'El acta fue cerrada'
                       );
                       this.inputsInProceedingClose();
                     },
@@ -2597,7 +2588,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                                         this.alert(
                                           'success',
                                           'Acta cerrada',
-                                          'El acta fue cerrada con éxito'
+                                          'El acta fue cerrada'
                                         );
                                         this.inputsInProceedingClose();
                                       },
@@ -2657,7 +2648,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
         } else {
           this.alertQuestion(
             'question',
-            '¿Desea eliminar completamente el acta?',
+            '¿Desea eliminar el acta?',
             `Se eliminará el acta ${this.form.get('acta2').value}`,
             'Eliminar'
           ).then(q => {
@@ -2718,7 +2709,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                           this.prevProceeding();
                         }
                       }
-                      this.alert('success', 'Acta eliminada con éxito', '');
+                      this.alert('success', 'Acta eliminada', '');
                     });
                 },
                 err => {
