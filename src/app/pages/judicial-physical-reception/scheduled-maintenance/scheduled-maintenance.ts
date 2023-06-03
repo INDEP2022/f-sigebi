@@ -171,6 +171,7 @@ export abstract class ScheduledMaintenance extends BasePageWidhtDinamicFiltersEx
     this.data = new LocalDataSource();
     this.totalItems = 0;
     localStorage.removeItem(this.formStorage);
+    this.columnFilters = [];
   }
 
   extraOperations() {}
