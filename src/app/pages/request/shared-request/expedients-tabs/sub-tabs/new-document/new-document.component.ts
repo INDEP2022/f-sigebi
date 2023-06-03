@@ -6,6 +6,7 @@ import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IRequest } from 'src/app/core/models/catalogs/request.model';
+import { Iprogramming } from 'src/app/core/models/good-programming/programming';
 import { ITypeDocument } from 'src/app/core/models/ms-wcontent/type-document';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
 import { StateOfRepublicService } from 'src/app/core/services/catalogs/state-of-republic.service';
@@ -41,6 +42,8 @@ export class NewDocumentComponent extends BasePage implements OnInit {
   regionalDelId: number = 0;
   stateId: number = 0;
   userLogName: string = '';
+  programming: Iprogramming;
+  process: string = '';
   date: string = '';
   typesDocuments: any = [];
   typeDocument: number = 0;
@@ -63,9 +66,19 @@ export class NewDocumentComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.getInfoUserLog();
     this.initForm();
-    this.getInfoRequest();
+    if (this.idRequest) this.getInfoRequest();
+
+    if (this.programming) {
+      this.getRegionalDelegation(this.programming.regionalDelegationNumber);
+      this.getstate(this.programming.stateKey);
+      this.getTransferent(this.programming.tranferId);
+    }
     this.typedocuments(new ListParams());
     this.obtainDate();
+
+    console.log('programming', this.programming);
+    console.log('proceso', this.process);
+    console.log('typeDoc', this.typeDoc);
   }
 
   obtainDate() {
@@ -224,7 +237,89 @@ export class NewDocumentComponent extends BasePage implements OnInit {
   }
 
   confirm() {
-    if (this.typeDoc == 'good') {
+    if (this.typeDoc == 'good' && this.process == 'programming') {
+      this.loading = true;
+      this.loader.load = true;
+
+      const formData = {
+        dInDate: new Date(),
+        dDocAuthor: this.userLogName,
+        dSecurityGroup: 'Public',
+        ddocCreator: this.userLogName,
+        xidcProfile: 'NSBDB_Gral',
+        xidSolicitud: this.idRequest,
+        xidTransferente: this.idTransferent,
+        xdelegacionRegional: this.regionalDelId,
+        xnivelRegistroNSBDB: 'bien',
+        xidBien: this.idGood,
+        xestado: this.stateId,
+        xfolioProgramacion: this.programming.folio,
+        xnoProgramacion: this.programming.id,
+        xtipoDocumento: this.newDocForm.get('docType').value,
+        dDocTitle: this.newDocForm.get('docTit').value,
+        xremitente: this.newDocForm.get('sender').value,
+        xcargoRemitente: this.newDocForm.get('senderCharge').value,
+        xresponsable: this.newDocForm.get('responsible').value,
+        xComments: this.newDocForm.get('observations').value,
+        xNombreProceso: 'Ejecutar Recepcion',
+        xnoOficio: this.newDocForm.get('noOfi').value,
+        xfolioDictamenDevolucion:
+          this.newDocForm.get('returnOpinionFolio').value,
+        xcontribuyente: this.newDocForm.get('contributor').value,
+
+        //Información adicional
+        xbanco: this.newDocForm.get('bank').value,
+        xclaveValidacion: this.newDocForm.get('keyValidate').value,
+        xcuenta: this.newDocForm.get('count').value,
+        xdependenciaEmiteDoc: this.newDocForm.get('dependecyEmitDoc').value,
+        xfechaDeposito: this.newDocForm.get('depositDate').value,
+        xfolioActa: this.newDocForm.get('folioAct').value,
+        xfolioActaDestruccion: this.newDocForm.get('folioActDes').value,
+        xfolioActaDevolucion: this.newDocForm.get('folioActDev').value,
+        xfolioContrato: this.newDocForm.get('contractFolio').value,
+        xfolioDenuncia: this.newDocForm.get('folioDen').value,
+        xfolioDictamenDestruccion: this.newDocForm.get('folioDicDes').value,
+        xfolioFactura: this.newDocForm.get('folioFac').value,
+        xfolioNombramiento: this.newDocForm.get('folioNomb').value,
+        xfolioSISE: this.newDocForm.get('folioSISE').value,
+        xmonto: this.newDocForm.get('amount').value,
+        xnoAcuerdo: this.newDocForm.get('noAgreement').value,
+        xnoAutorizacionDestruccion: this.newDocForm.get('noAutDes').value,
+        xnoConvenioColaboracion: this.newDocForm.get('noConvColb').value,
+        xnoFolioRegistro: this.newDocForm.get('folioReg').value,
+        xnoOficioAutorizacion: this.newDocForm.get('oficioNoAuth').value,
+        xnoOficioAvaluo: this.newDocForm.get('oficioNoAvaluo').value,
+        xnoOficioCancelacion: this.newDocForm.get('oficioNoCan').value,
+        xnoOficioProgramacion: this.newDocForm.get('oficioNoProg').value,
+        xnoOficioSolAvaluo: this.newDocForm.get('oficioNoSolAvaluo').value,
+        xnoOficoNotificacion: this.newDocForm.get('noOfNotification').value,
+        xnoRegistro: this.newDocForm.get('noRegistro').value,
+      };
+
+      const extension = '.pdf';
+      const docName = this.newDocForm.get('docTit').value;
+
+      this.wContentService
+        .addDocumentToContent(
+          docName,
+          extension,
+          JSON.stringify(formData),
+          this.selectedFile,
+          extension
+        )
+        .subscribe({
+          next: resp => {
+            console.log('Doc good programming', resp);
+            this.modalRef.content.callback(true);
+            this.loading = false;
+            this.loader.load = false;
+            this.modalRef.hide();
+          },
+          error: error => {},
+        });
+    }
+
+    if (this.typeDoc == 'good' && this.process != 'programming') {
       this.loading = true;
       this.loader.load = true;
 

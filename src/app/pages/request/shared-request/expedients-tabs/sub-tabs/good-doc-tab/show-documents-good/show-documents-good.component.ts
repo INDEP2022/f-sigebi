@@ -8,6 +8,7 @@ import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
+import { Iprogramming } from 'src/app/core/models/good-programming/programming';
 import { DelegationStateService } from 'src/app/core/services/catalogs/delegation-state.service';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
 import { StateOfRepublicService } from 'src/app/core/services/catalogs/state-of-republic.service';
@@ -41,6 +42,8 @@ export class ShowDocumentsGoodComponent extends BasePage implements OnInit {
   params = new BehaviorSubject<ListParams>(new ListParams());
   paramsTypeDoc = new BehaviorSubject<ListParams>(new ListParams());
   paramsRegDel = new BehaviorSubject<ListParams>(new ListParams());
+  programming: Iprogramming;
+  process: string = '';
   paragraphs: any[] = [];
   idGood: number;
   idRequest: number = 0;
@@ -100,11 +103,6 @@ export class ShowDocumentsGoodComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    // DISABLED BUTTON - FINALIZED //
-    // this.task = JSON.parse(localStorage.getItem('Task'));
-    // this.statusTask = this.task.status;
-    console.log('id Bien', this.idGood);
-
     this.prepareForm();
     this.getDocType(new ListParams());
     this.getDocuemntByGood();
@@ -641,7 +639,8 @@ export class ShowDocumentsGoodComponent extends BasePage implements OnInit {
     let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
 
     config.initialState = {
-      idRequest,
+      programming: this.programming,
+      process: this.process,
       typeDoc: 'good',
       idGood,
       callback: (next: boolean) => {

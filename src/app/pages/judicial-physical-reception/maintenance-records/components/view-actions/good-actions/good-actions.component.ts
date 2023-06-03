@@ -38,18 +38,7 @@ import { MaintenanceRecordsService } from './../../../services/maintenance-recor
 @Component({
   selector: 'app-good-actions',
   templateUrl: './good-actions.component.html',
-  styles: [
-    `
-      .selectGood {
-        display: flex;
-        margin-left: 20px;
-        column-gap: 10px;
-        ng-custom-select-loading {
-          width: calc(100% - 70px);
-        }
-      }
-    `,
-  ],
+  styleUrls: ['./good-actions.component.scss'],
 })
 export class GoodActionsComponent extends AlertButton implements OnInit {
   @Input() statusActaValue: string;
@@ -247,7 +236,7 @@ export class GoodActionsComponent extends AlertButton implements OnInit {
     } else {
       this.openModalSelect(
         {
-          titleColumnToReplace: 'estados',
+          titleColumnToReplace: 'estatus',
           columnsType: {
             numberGood: {
               title: 'No. Bien',

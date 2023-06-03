@@ -88,7 +88,8 @@
 
             <form-field
               [control]="managementForm.get('destinatario')"
-              class="col-md-4">
+              class="col-md-4"
+              *ngIf="showDestinatario">
               <ngx-select
                 [data]="select"
                 [form]="managementForm"
@@ -98,6 +99,17 @@
                 (fetchItems)="getFromSelect($event)"
                 bindLabel="userAndName"
                 value="user"></ngx-select>
+            </form-field>
+
+            <form-field
+              [control]="managementForm.get('destinatarioInput')"
+              class="col-md-4"
+              label="Nombre Destinatario"
+              *ngIf="showDestinatarioInput">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="destinatarioInput" />
             </form-field>
 
             <form-field
@@ -155,9 +167,11 @@
           <div class="col-md-1 text-right">
             <button
               type="button"
-              class="btn btn-success active btn-sm m-2 p-2"
+              tooltip="Cambio"
+              containerClass="tooltip-style"
+              class="btn btn-success active btn-sm m-2"
               (click)="changeOffice()">
-              Cambio
+              <i class="bx bx-undo"></i>
             </button>
           </div>
         </div>
@@ -339,18 +353,26 @@
           <div class="col-md-12 mt-3 text-right">
             <button
               type="button"
-              class="btn btn-info btn-sm mr-2"
+              tooltip="Documentos"
+              containerClass="tooltip-style"
+              class="btn btn-info active btn-sm m-1"
               (click)="openModal()">
-              Documentos
+              <i class="bx bxs-file"></i>
             </button>
             <button
               type="button"
-              class="btn btn-secondary active btn-sm mr-2"
+              tooltip="Imprimir"
+              containerClass="tooltip-style"
+              class="btn btn-secondary active btn-sm m-1"
               (click)="send()">
-              Imprimir
+              <i class="bx bxs-printer"></i>
             </button>
-            <button type="button" class="btn btn-danger btn-sm mr-2 active">
-              Borrar
+            <button
+              type="button"
+              tooltip="Borrar"
+              containerClass="tooltip-style"
+              class="btn btn-danger active btn-sm m-1">
+              <i class="bx bxs-trash"></i>
             </button>
             <button
               [attr.disabled]="
@@ -358,8 +380,10 @@
                 paramsGestionDictamen.sale == 'D'
               "
               type="submit"
-              class="btn btn-primary btn-sm active">
-              Enviar
+              class="btn btn-primary btn-sm active"
+              tooltip="Enviar"
+              containerClass="tooltip-style">
+              <i class="bx bx-send"></i>
             </button>
           </div>
         </div>

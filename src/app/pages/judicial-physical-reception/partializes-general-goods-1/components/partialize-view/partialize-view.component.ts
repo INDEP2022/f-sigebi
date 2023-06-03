@@ -124,7 +124,8 @@ export class PartializeViewComponent extends BasePage implements OnInit {
     return 'disabled';
   }
 
-  pressed(state: number) {
+  pressed(e: Event, state: number) {
+    e.stopPropagation();
     this.statePresed = state;
     if (state === 1) {
       this.loading = true;
