@@ -19,12 +19,15 @@ export class RegistrationHelper extends BasePage {
     super();
   }
 
-  getGoodQuantity(requestId: number) {
+  getGoodQuantity(requestId: number, newLimit?: number) {
     return new Promise((resolve, reject) => {
       const params = new ListParams();
 
       if (requestId) {
         params['filter.requestId'] = `$eq:${requestId}`;
+        if (newLimit) {
+          params.limit = newLimit;
+        }
         this.goodService.getAll(params).subscribe({
           next: resp => {
             resolve(resp);
@@ -207,9 +210,15 @@ export class RegistrationHelper extends BasePage {
       }
     }
 
+    let goodCount: any = null;
     let goods: any = null;
     if (validoOk === true) {
-      goods = await this.getGoodQuantity(Number(request.id));
+      goodCount = await this.getGoodQuantity(Number(request.id));
+      if (goodCount.count > 10) {
+        goods = await this.getGoodQuantity(Number(request.id), goodCount.count);
+      } else {
+        goods = goodCount;
+      }
       if (goods.count < 1) {
         this.message(
           'error',
