@@ -323,7 +323,7 @@ export abstract class ScheduledMaintenance extends BasePageWidhtDinamicFiltersEx
     // this.filterParams.addFilter2(this.columnFilters);
     if (byPage) {
       this.filterParams.page = this.params.getValue().page;
-      // this.filterParams.limit = this.params.getValue().limit;
+      this.filterParams.limit = this.params.getValue().limit;
     } else {
       this.params.value.page = 1;
     }
