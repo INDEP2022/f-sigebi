@@ -16,13 +16,3 @@ export const environment = {
   api_external_typeUser: 'http://168.61.50.112:3003/api/v1/user/userType/',
   api_external_rolesUser: 'http://168.61.50.112:3003/api/v1/user/roles',
 };
-
-export const firebaseConfig = {
-  apiKey: 'AIzaSyBDI66gtarEyjgnpu9ZTljMyIkeA5iV49s',
-  authDomain: 'indep-c6124.firebaseapp.com',
-  databaseURL: 'https://indep-c6124-default-rtdb.firebaseio.com/',
-  projectId: 'indep-c6124',
-  storageBucket: 'indep-c6124.appspot.com',
-  messagingSenderId: '421853891397',
-  appId: '1:421853891397:web:5d00fb98bdfcedbf790c2c',
-};

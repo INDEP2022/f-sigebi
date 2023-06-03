@@ -74,14 +74,17 @@ export class AuthInterceptor extends BasePage implements HttpInterceptor {
       if (timeNow <= this.timeOut && timeNow > 0) {
         this.refreshToken(newReq, next).subscribe();
       }
-
+      if(request.url.indexOf("firebase")<0){
+        newReq = request.clone({
+          headers: request.headers.set(
+            'Authorization',
+            'Bearer ' + this.authService.accessToken()
+          ),
+        });
+      }
+      
       //Set Bearer Token
-      newReq = request.clone({
-        headers: request.headers.set(
-          'Authorization',
-          'Bearer ' + this.authService.accessToken()
-        ),
-      });
+      
     }
     // Response
     return next.handle(newReq).pipe(
