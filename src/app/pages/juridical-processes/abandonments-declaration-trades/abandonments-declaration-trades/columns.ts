@@ -83,7 +83,7 @@ export const COLUMNS_OFICIO = {
     type: 'string',
     sort: false,
   },
-  insertDate: {
+  dateOficio: {
     title: 'Fecha Captura',
     type: 'string',
     sort: false,
