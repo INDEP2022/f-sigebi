@@ -290,6 +290,10 @@ export class GoodFormComponent extends AlertButton implements OnInit {
     this.resetForm();
   }
 
+  ngOnDestroy() {
+    this.resetForm();
+  }
+
   private validateStatusXPantalla(good: IGood) {
     const filterParams = new FilterParams();
     filterParams.addFilter('screenKey', 'FACTGENPARCBIEN');
