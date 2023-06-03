@@ -1,11 +1,11 @@
 export const SIAB_COLUMNS = {
   id: {
     title: 'Registro',
-    type: 'string',
+    type: 'number',
   },
   typeId: {
     title: 'Tipo',
-    type: 'string',
+    type: 'number',
   },
   typeDescription: {
     title: 'Descripción',
@@ -13,7 +13,7 @@ export const SIAB_COLUMNS = {
   },
   subtypeId: {
     title: 'Subtipo',
-    type: 'string',
+    type: 'number',
   },
   subtypeDescription: {
     title: 'Descripción del subtipo',
@@ -21,7 +21,7 @@ export const SIAB_COLUMNS = {
   },
   ssubtypeId: {
     title: 'Sub subtipo',
-    type: 'string',
+    type: 'number',
   },
   ssubtypeDescription: {
     title: 'Descripción del Sub subtipo',
@@ -29,7 +29,7 @@ export const SIAB_COLUMNS = {
   },
   sssubtypeId: {
     title: 'Sssubtipo',
-    type: 'string',
+    type: 'number',
   },
   sssubtypeDescription: {
     title: 'Descripción del Sssubtipo',
@@ -45,6 +45,6 @@ export const SIAB_COLUMNS = {
   },
   version: {
     title: 'Version',
-    type: 'string',
+    type: 'number',
   },
 };

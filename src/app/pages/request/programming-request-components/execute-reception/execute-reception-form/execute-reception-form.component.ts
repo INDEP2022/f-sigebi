@@ -240,6 +240,10 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         this.getTypeRelevant();
         this.getwarehouse();
         this.getUsersProgramming();
+
+        this.params
+          .pipe(takeUntil(this.$unSubscribe))
+          .subscribe(() => this.getInfoGoodsProgramming());
       });
   }
 
@@ -418,7 +422,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         },
       });
   }
-
   goodSelect(good: IGood) {
     this.goodIdSelect = good.id;
     this.selectGood = good;

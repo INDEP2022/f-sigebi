@@ -102,11 +102,13 @@ export class ScheduledMaintenanceDetailComponent
         const detail = JSON.parse(
           window.localStorage.getItem('detailActa')
         ) as IProceedingDeliveryReception;
+        console.log(this.form.get('fechaCaptura').value);
+
         detail.keysProceedings = this.form.get('claveActa').value;
         detail.statusProceedings = this.statusActaValue;
         detail.closeDate = new Date().toISOString();
         detail.captureDate = firstFormatDateToSecondFormatDate(
-          detail.captureDate
+          this.form.get('fechaCaptura').value
         );
         let message = '';
         this.proceedingService
@@ -116,15 +118,15 @@ export class ScheduledMaintenanceDetailComponent
             next: response => {
               this.onLoadToast(
                 'success',
-                'Se actualizo el acta N° ' + detail.id
+                'Se actualizo el acta No. ' + detail.id
               );
               this.pageLoading = false;
-              // this.massiveUpdate(`Se actualizo el acta N° ${detail.id} `);
+              // this.massiveUpdate(`Se actualizo el acta No ${detail.id} `);
             },
             error: err => {
               this.onLoadToast(
                 'error',
-                'No se pudo actualizar el acta N° ' + detail.id
+                'No se pudo actualizar el acta No. ' + detail.id
               );
               // this.massiveUpdate('');
               this.pageLoading = false;
@@ -259,7 +261,7 @@ export class ScheduledMaintenanceDetailComponent
         detail.statusProceedings = this.statusActaValue;
         detail.closeDate = new Date().toISOString();
         detail.captureDate = firstFormatDateToSecondFormatDate(
-          detail.captureDate
+          this.form.get('fechaCaptura').value
         );
         let message = '';
         this.proceedingService
@@ -269,15 +271,15 @@ export class ScheduledMaintenanceDetailComponent
             next: response => {
               this.onLoadToast(
                 'success',
-                'Se actualizo el acta N° ' + detail.id
+                'Se actualizo el acta No. ' + detail.id
               );
               this.pageLoading = false;
-              // this.massiveUpdate(`Se actualizo el acta N° ${detail.id} `);
+              // this.massiveUpdate(`Se actualizo el acta No ${detail.id} `);
             },
             error: err => {
               this.onLoadToast(
                 'error',
-                'No se pudo actualizar el acta N° ' + detail.id
+                'No se pudo actualizar el acta No. ' + detail.id
               );
               // this.massiveUpdate('');
               this.pageLoading = false;
@@ -303,9 +305,9 @@ export class ScheduledMaintenanceDetailComponent
                 (index < this.selecteds.length - 1 ? ',' : '');
             });
             if (message === '') {
-              message = `Se actualizaron los bienes N° ${goods} `;
+              message = `Se actualizaron los bienes No. ${goods} `;
             } else {
-              message += ` y los bienes N° ${goods}`;
+              message += ` y los bienes No. ${goods}`;
             }
             this.onLoadToast('success', 'Exito', message);
           },
@@ -394,8 +396,8 @@ export class ScheduledMaintenanceDetailComponent
               goods +=
                 selected.no_bien + (index < newData.length - 1 ? ',' : '');
             });
-            // const message = `Se actualizo el bien N° ${newData.no_bien} `;
-            const message = `Se actualizaron los bienes N° ${goods} `;
+            // const message = `Se actualizo el bien No ${newData.no_bien} `;
+            const message = `Se actualizaron los bienes No. ${goods} `;
             this.onLoadToast('success', 'Exito', message);
             this.data = [...newData];
             // this.data = [...this.data]
@@ -462,8 +464,8 @@ export class ScheduledMaintenanceDetailComponent
           //     selected.numberGood +
           //     (index < this.selectedsForUpdate.length - 1 ? ',' : '');
           // });
-          const message = `Se actualizo el bien N° ${newData.no_bien} `;
-          // const message = `Se actualizaron los bienes N° ${goods} `;
+          const message = `Se actualizo el bien No. ${newData.no_bien} `;
+          // const message = `Se actualizaron los bienes No ${goods} `;
           this.onLoadToast('success', 'Exito', message);
           // this.updateTable.emit();
         },
@@ -717,7 +719,7 @@ export class ScheduledMaintenanceDetailComponent
                 this.onLoadToast(
                   'success',
                   'Exito',
-                  `Se elimino el bien N° ${item.no_bien}`
+                  `Se elimino el bien No. ${item.no_bien}`
                 );
               },
               error: err => {
@@ -726,7 +728,7 @@ export class ScheduledMaintenanceDetailComponent
                 this.onLoadToast(
                   'error',
                   'ERROR',
-                  `No se pudo eliminar el bien N° ${item.no_bien}`
+                  `No se pudo eliminar el bien No. ${item.no_bien}`
                 );
               },
             });

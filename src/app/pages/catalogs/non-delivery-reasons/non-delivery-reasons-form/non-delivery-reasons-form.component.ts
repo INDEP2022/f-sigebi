@@ -64,7 +64,6 @@ export class NonDeliveryReasonsFormComponent
         [
           Validators.required,
           Validators.pattern(STRING_PATTERN),
-          Validators.minLength(1),
           Validators.maxLength(100),
         ],
       ],

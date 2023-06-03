@@ -103,13 +103,6 @@ export class ShowDocumentsGoodComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    // DISABLED BUTTON - FINALIZED //
-    // this.task = JSON.parse(localStorage.getItem('Task'));
-    // this.statusTask = this.task.status;
-    console.log('id Bien', this.idGood);
-    console.log('programming', this.programming);
-    console.log('proceso', this.process);
-
     this.prepareForm();
     this.getDocType(new ListParams());
     this.getDocuemntByGood();

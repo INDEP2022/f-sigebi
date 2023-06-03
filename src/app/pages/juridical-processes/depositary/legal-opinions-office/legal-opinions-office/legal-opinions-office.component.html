@@ -304,6 +304,7 @@
                   </button>
                 </div>
                 <form-field
+                  *ngIf="numberNotaryVisible"
                   class="col-sm-12 col-12 col-md-3 p-2"
                   [control]="form.get('numberNotary')"
                   label="No. Notario">
@@ -369,7 +370,7 @@
                 <form-field
                   class="col-sm-12 col-12 col-md-4 p-2"
                   [control]="form.get('ccp_person')"
-                  label="Tipo Destinatario">
+                  label="">
                   <select
                     class="form-control"
                     formControlName="ccp_person"
@@ -386,8 +387,8 @@
                     form.get('ccp_person').value != 'E'
                   ">
                   <div class="alert alert-info">
-                    Selecciona el "Tipo Destinatario" para ingresar el Nombre o
-                    Seleccionar un Usuario desde el catálogo
+                    Selecciona el Tipo de Copia para ingresar el Nombre del
+                    Usuario o Seleccionar un Usuario desde el catálogo
                   </div>
                 </div>
                 <div
@@ -418,7 +419,7 @@
                 <form-field
                   class="col-sm-12 col-12 col-md-4 p-2"
                   [control]="form.get('ccp_person_1')"
-                  label="Tipo Destinatario">
+                  label="">
                   <select
                     class="form-control"
                     formControlName="ccp_person_1"
@@ -435,8 +436,8 @@
                     form.get('ccp_person_1').value != 'E'
                   ">
                   <div class="alert alert-info">
-                    Selecciona el "Tipo Destinatario" para ingresar el Nombre o
-                    Seleccionar un Usuario desde el catálogo
+                    Selecciona el Tipo de Copia para ingresar el Nombre del
+                    Usuario o Seleccionar un Usuario desde el catálogo
                   </div>
                 </div>
                 <div
@@ -477,8 +478,8 @@
           >, Espere un momento...
         </div>
         <div class="col-md-12 alert alert-warning" *ngIf="loadDetail">
-          Realizando el proceso "Detalle" para mostrar el Reporte
-          correspondiente, Espere un momento...
+          Realizando el proceso para mostrar el Reporte correspondiente, Espere
+          un momento...
         </div>
         <div class="col-sm-12 col-12 col-md-12 text-center">
           <!-- <button type="button" class="btn btn-primary btn-sm active m-3">
@@ -512,6 +513,8 @@
               <app-scanning-foil
                 [form]="formScan"
                 [screenKey]="screenKey"
+                [screenKey2]="origin"
+                [paramsScreen]="paramsScreen"
                 [officeDictationData]="officeDictationData"
                 [dictationData]="dictationData"
                 [dataUserLogged]="dataUserLogged"

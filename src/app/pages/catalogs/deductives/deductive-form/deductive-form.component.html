@@ -21,7 +21,8 @@
             [control]="deductiveForm.get('weightedDeduction')"
             label="Deducci&oacute;n Ponderada">
             <input
-              type="number"
+              type="text"
+              step="any"
               class="form-control"
               formControlName="weightedDeduction" />
           </form-field>
@@ -33,7 +34,8 @@
             [control]="deductiveForm.get('startingRankPercentage')"
             label="Rango de Porcentaje Inicial">
             <input
-              type="number"
+              type="text"
+              step="any"
               class="form-control"
               formControlName="startingRankPercentage" />
           </form-field>
@@ -80,13 +82,6 @@
           <form-radio label="Inactivo">
             <input type="radio" formControlName="status" value="0" />
           </form-radio>
-        </div>
-      </div>
-      <div class="row pt-5">
-        <div class="col-md-3">
-          <form-field [control]="deductiveForm.get('id')" label="ID">
-            <input type="number" class="form-control" formControlName="id" />
-          </form-field>
         </div>
       </div>
     </form>

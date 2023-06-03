@@ -693,7 +693,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
     ];
     this.listGoodsFractions = [];
     let existAddres = 0;
-    debugger;
+    //debugger;
     for (let j = 0; j < this.listgoodObjects.length; j++) {
       const item = this.listgoodObjects[j];
       let good: any = {};
@@ -719,7 +719,9 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
 
       /* inf. del bien */
       good.goodDescription = item.goodDescription;
-      good.processStatus = item.processStatus;
+      good.goodStatus = 'VERIFICAR_CUMPLIMIENTO';
+      good.processStatus = 'VERIFICAR_CUMPLIMIENTO';
+      //good.processStatus = item.processStatus;
 
       good.quantity = item.quantity ? item.quantity : 0;
       good.duplicity = item.duplicity;
@@ -751,6 +753,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
       this.listGoodsFractions.push(good);
     }
     this.loading = false;
+    console.table(this.listGoodsFractions);
     if (existAddres > 0) {
       this.onLoadToast(
         'info',

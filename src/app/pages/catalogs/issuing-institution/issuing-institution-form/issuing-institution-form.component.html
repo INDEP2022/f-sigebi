@@ -47,7 +47,7 @@
             [control]="issuingInstitutionForm.get('numInside')"
             label="N&uacute;mero interior">
             <input
-              type="text"
+              type="number"
               class="form-control"
               formControlName="numInside" />
           </form-field>
@@ -57,7 +57,7 @@
             [control]="issuingInstitutionForm.get('numExterior')"
             label="N&uacute;mero exterior">
             <input
-              type="text"
+              type="number"
               class="form-control"
               formControlName="numExterior" />
           </form-field>
@@ -75,10 +75,7 @@
           <form-field
             [control]="issuingInstitutionForm.get('zipCode')"
             label="C&oacute;digo postal">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="zipCode" />
+            <input type="text" class="form-control" formControlName="zipCode" />
           </form-field>
         </div>
       </div>

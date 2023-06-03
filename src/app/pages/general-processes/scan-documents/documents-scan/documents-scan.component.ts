@@ -23,9 +23,11 @@ import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { FileBrowserService } from 'src/app/core/services/ms-ldocuments/file-browser.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { IParamsLegalOpinionsOffice } from 'src/app/pages/juridical-processes/depositary/legal-opinions-office/legal-opinions-office/legal-opinions-office.component';
 import { DOCUMENTS_SCAN_COLUMNS } from '../utils/documents-scan-columns';
 import { DocumentsScanForm } from '../utils/documents-scan-form';
 import { DOCUMENTS_SCAN_MESSAGES } from '../utils/documents-scan-messages';
+
 const INVALID_USER = 'INVALIDO';
 const SERA_USER = 'SERA';
 const DEVELOP_USER = 'DESARROLLO';
@@ -53,6 +55,16 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
   get controls() {
     return this.form.controls;
   }
+  paramsScreen: IParamsLegalOpinionsOffice = {
+    PAQUETE: '',
+    P_GEST_OK: '',
+    CLAVE_OFICIO_ARMADA: '',
+    P_NO_TRAMITE: '',
+    TIPO: '',
+    P_VALOR: '',
+  };
+  origin2: string = ''; // Pantalla para regresar a la anterior de la que se llamo
+
   constructor(
     private fb: FormBuilder,
     private activatedRoute: ActivatedRoute,
@@ -72,6 +84,15 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
         this.origin = params['origin'] ?? null;
         this.requestOrigin = params['requestOrigin'] ?? null;
         console.log(params);
+        if (this.origin == 'FACTJURDICTAMOFICIO') {
+          for (const key in this.paramsScreen) {
+            if (Object.prototype.hasOwnProperty.call(params, key)) {
+              this.paramsScreen[key as keyof typeof this.paramsScreen] =
+                params[key] ?? null;
+            }
+          }
+          this.origin2 = params['origin2'] ?? null;
+        }
       });
     this.settings = {
       ...this.settings,
@@ -403,6 +424,18 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
           `/pages/general-processes/scan-request/${this.originFlyer}/${this.originFolio}`,
         ],
         { queryParams: { origin: this.requestOrigin } }
+      );
+    }
+    if (this.origin == 'FACTJURDICTAMOFICIO') {
+      this.router.navigate(
+        [`/pages/juridical/depositary/legal-opinions-office`],
+        {
+          queryParams: {
+            ...this.paramsScreen,
+            origin: this.requestOrigin,
+            origin2: this.origin2,
+          },
+        }
       );
     }
   }
