@@ -18,8 +18,7 @@
               <button
                 [class]="loading ? 'disabled' : ''"
                 class="btn btn-danger btn-sm active"
-                (click)="clearAll()"
-                >
+                (click)="clearAll()">
                 Limpiar
               </button>
             </div>
@@ -179,7 +178,7 @@
               </form-field>
             </div>
             <div class="col-md-1">
-              <form-field [control]="form.get('ident')" label="Ident">
+              <form-field [control]="form.get('ident')" label="Identificador">
                 <input
                   type="text"
                   [class]="initialBool ? 'disabled' : ''"
@@ -207,7 +206,7 @@
                   id="transfer"
                   [class]="initialBool ? 'disabled' : ''"
                   control="admin"
-                  label="Admin"
+                  label="Administra"
                   bindLabel="delegation"
                   [data]="adminSelect"
                   [form]="form"></ngx-select>
@@ -248,7 +247,7 @@
 
       <hr class="row" />
 
-      <div  [class]="loading ? 'disabled' : ''" class="row">
+      <div [class]="loading ? 'disabled' : ''" class="row">
         <div class="col-md-12">
           <div class="row">
             <div class="col">
@@ -395,7 +394,7 @@
         </div>
       </div>
       <hr class="row" />
-      <div  [class]="loading ? 'disabled' : ''" class="row mb-5">
+      <div [class]="loading ? 'disabled' : ''" class="row mb-5">
         <div class="d-flex justify-content-center">
           <div>
             <button
@@ -422,14 +421,18 @@
             </button> -->
             <a
               class="my-1 mx-2 btn btn-warning active btn-sm"
-              [class]="form.get('statusProceeding').value != null ? '':'disabled'"
+              [class]="
+                form.get('statusProceeding').value != null ? '' : 'disabled'
+              "
               size="small"
               (click)="goParcializacion()"
               >Parcializaci&oacute;n
             </a>
             <button
               type="button"
-              [class]="form.get('statusProceeding').value != null ? '':'disabled'"
+              [class]="
+                form.get('statusProceeding').value != null ? '' : 'disabled'
+              "
               class="my-1 mx-2 btn btn-danger active btn-sm"
               size="small"
               (click)="deleteProceeding()">
@@ -438,7 +441,13 @@
             <button
               type="button"
               class="btn btn-secondary btn-sm active mr-2 ml-2"
-              [class]="['CERRADO', 'CERRADA'].includes(form.get('statusProceeding').value) ? '':'disabled'"
+              [class]="
+                ['CERRADO', 'CERRADA'].includes(
+                  form.get('statusProceeding').value
+                )
+                  ? ''
+                  : 'disabled'
+              "
               size="small"
               (click)="goCargaMasiva()">
               Carga Masiva
@@ -457,7 +466,10 @@
           (rowSelect)="rowSelect($event)"
           (rowDeselect)="deselectRow()"></ng2-smart-table>
       </div>
-
+ <app-pagination
+        *ngIf="!loading"
+        [params]="paramsDataGoods"
+        [totalItems]="totalItemsDataGoods"></app-pagination>
       <hr class="row" />
       <div class="row">
         <div class="d-flex justify-content-center">

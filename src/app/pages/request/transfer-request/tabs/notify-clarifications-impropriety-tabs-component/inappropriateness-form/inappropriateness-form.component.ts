@@ -93,7 +93,7 @@ export class InappropriatenessFormComponent extends BasePage implements OnInit {
 
     //Crear objeto para generar el reporte
     const modelReport: IClarificationDocumentsImpro = {
-      clarification: this.notification.clarificationType,
+      clarification: this.form.controls['clarification'].value,
       sender: this.form.controls['senderName'].value,
       //foundation: this.form.controls['foundation'].value,
       //id: 1, //ID primaria

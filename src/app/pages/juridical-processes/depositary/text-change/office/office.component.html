@@ -212,12 +212,14 @@
     <div class="col-md-4 col-sm-12 col-xs-12">
       <div class="d-flex justify-content-center">
         <div class="m-3">
-          <confirm-button
+          <button
+            type="button"
             text="Imprimir"
             [disabled]="form.invalid"
-            [loading]="loading"
-            (confirm)="confirm()">
-          </confirm-button>
+            class="btn btn-primary active"
+            (click)="confirm()">
+            Imprimir
+          </button>
         </div>
         <div class="m-3">
           <button
