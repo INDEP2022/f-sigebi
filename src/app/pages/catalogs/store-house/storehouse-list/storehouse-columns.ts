@@ -1,5 +1,5 @@
 export const STOREHOUSE_COLUMNS = {
-  idStorehouse: {
+  id: {
     title: 'Registro',
     type: 'string',
     sort: false,
