@@ -52,9 +52,9 @@ export class ListoficiosComponent extends BasePage implements OnInit {
     this.mJobManagementService.getAll(params).subscribe({
       next: data => {
         let result = data.data.map((item: any) => {
-          item['dateDicta'] = this.datePipe.transform(
-            item.dictDate,
-            'dd/MM/yyyy'
+          item['dateOficio'] = this.datePipe.transform(
+            item.insertDate,
+            'MM/dd/yyyy'
           );
         });
 
