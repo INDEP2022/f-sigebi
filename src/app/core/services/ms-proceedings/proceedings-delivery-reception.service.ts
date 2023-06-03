@@ -22,11 +22,11 @@ export interface IProceedingByGood {
   programmingtype: string;
 }
 
-export interface IDeleted {
-  deleted: string;
+export interface ISucess {
+  sucess: string;
 }
 
-export interface INotDeleted {
+export interface INotSucess {
   error: string;
 }
 
@@ -81,10 +81,10 @@ export class ProceedingsDeliveryReceptionService extends HttpService {
       selecteds.map(selected =>
         this.deleteDetail(selected.numberGood, selected.numberProceedings).pipe(
           map(item => {
-            return { deleted: selected.numberGood + '' } as IDeleted;
+            return { sucess: selected.numberGood + '' } as ISucess;
           }),
           catchError(err =>
-            of({ error: selected.numberGood + '' } as INotDeleted)
+            of({ error: selected.numberGood + '' } as INotSucess)
           )
         )
       )
@@ -112,13 +112,13 @@ export class ProceedingsDeliveryReceptionService extends HttpService {
       selecteds.map(selected => {
         return this.delete(this.endpoint + '/' + selected.id).pipe(
           map(item => {
-            return { deleted: selected.id } as IDeleted;
+            return { sucess: selected.id } as ISucess;
           }),
           catchError(err => {
             if (err.error.message.includes('detalle_acta_ent_recep')) {
-              return of({ error: selected.id } as INotDeleted);
+              return of({ error: selected.id } as INotSucess);
             } else {
-              return of({ error: null } as INotDeleted);
+              return of({ error: null } as INotSucess);
             }
           })
         );

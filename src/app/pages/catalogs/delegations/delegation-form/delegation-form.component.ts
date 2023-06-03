@@ -8,11 +8,7 @@ import { IStateOfRepublic } from 'src/app/core/models/catalogs/state-of-republic
 import { IZoneGeographic } from 'src/app/core/models/catalogs/zone-geographic.model';
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import {
-  DOUBLE_PATTERN,
-  NUMBERS_PATTERN,
-  STRING_PATTERN,
-} from 'src/app/core/shared/patterns';
+import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -41,7 +37,10 @@ export class DelegationFormComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.delegationForm = this.fb.group({
-      id: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
+      id: [
+        null,
+        [Validators.required, Validators.min(0), Validators.maxLength(80)],
+      ],
       description: [null, [Validators.required, Validators.maxLength(80)]],
       zoneContractCVE: [null, [Validators.required, Validators.maxLength(80)]],
       diffHours: [null, [Validators.required, Validators.maxLength(80)]],
@@ -49,7 +48,7 @@ export class DelegationFormComponent extends BasePage implements OnInit {
       noRegister: [null, [Validators.required, Validators.maxLength(80)]],
       etapaEdo: [
         null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+        [Validators.required, Validators.min(0), Validators.maxLength(80)],
       ],
       cveState: [null, [Validators.required]],
       addressOffice: [
@@ -62,8 +61,14 @@ export class DelegationFormComponent extends BasePage implements OnInit {
       ],
       // cveZone: [null, Validators.required],
       city: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      status: [null, [Validators.required]],
-      iva: [null, [Validators.required, Validators.pattern(DOUBLE_PATTERN)]],
+      status: [
+        null,
+        [Validators.required, Validators.min(0), Validators.maxLength(80)],
+      ],
+      iva: [
+        null,
+        [Validators.required, Validators.min(0), Validators.maxLength(80)],
+      ],
       idZoneGeographic: [
         null,
         [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
