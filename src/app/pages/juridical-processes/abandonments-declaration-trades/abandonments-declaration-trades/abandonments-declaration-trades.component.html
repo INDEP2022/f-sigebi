@@ -328,6 +328,7 @@
                   label="Inicio">
                   <!-- <label class="label w-100">page</label> -->
                   <textarea
+                    maxlength="2000"
                     [readonly]="!lockStatus"
                     (dblclick)="editText($event, 'declaratoriaInicio')"
                     rows="5"
@@ -341,6 +342,7 @@
                   label="Fin">
                   <!-- <label class="label w-100">Fin</label> -->
                   <textarea
+                    maxlength="12000"
                     [readonly]="!lockStatus"
                     (dblclick)="editText($event, 'declaratoriaFin')"
                     rows="7"
@@ -669,6 +671,7 @@
                   [control]="formOficiopageFin.get('page')"
                   label="Inicio">
                   <textarea
+                    maxlength="4000"
                     rows="7"
                     [readonly]="!disabledMOficGest"
                     (change)="disabledText()"
@@ -682,6 +685,7 @@
                   [control]="formOficiopageFin.get('fin')"
                   label="Fin">
                   <textarea
+                    maxlength="8000"
                     rows="7"
                     [readonly]="!disabledMOficGest"
                     (change)="disabledText()"
@@ -807,10 +811,10 @@
                       [readonly]="!disabledMOficGest"
                       id="selectAbandono"
                       *ngIf="valInterno2"
-                      [data]="items"
+                      [data]="items2"
                       bindLabel="userAndName"
                       value="user"
-                      (fetchItems)="getFromSelect($event)"
+                      (fetchItems)="getFromSelect2($event)"
                       [form]="formCcpOficio"
                       control="nombreUsuario2"></ngx-select>
                   </div>
@@ -856,6 +860,7 @@
                   </button> -->
                   <button
                     (click)="borrar()"
+                    [disabled]="!disabledBtnDelete"
                     type="button"
                     class="btn btn-danger btn-sm active ml-2 mr-2">
                     Borra
