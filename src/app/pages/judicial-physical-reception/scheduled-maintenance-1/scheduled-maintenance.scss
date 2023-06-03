@@ -110,7 +110,6 @@ ng2-smart-table {
 
 .action-buttons {
   > div {
-    margin-top: 1rem;
     padding: 0px;
     text-align: center;
 
@@ -126,6 +125,7 @@ ng2-smart-table {
   @media (max-width: 767px) {
     > div {
       text-align: center !important;
+      margin-top: 1rem;
     }
 
     ::ng-deep button {
