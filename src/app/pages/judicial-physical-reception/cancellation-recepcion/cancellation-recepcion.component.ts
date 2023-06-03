@@ -2231,6 +2231,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
               this.form.get('statusProceeding').setValue('ABIERTA');
               this.form.get('fecCaptura').setValue(new Date());
               console.log(res);
+              this.idProceeding = JSON.parse(JSON.stringify(res)).id
               this.alert('success', 'Se guardo el acta', '');
             },
             err => {
