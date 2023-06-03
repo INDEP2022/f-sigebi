@@ -210,7 +210,7 @@
         </div>
       </div>
       <div class="row pt-4 scheduledTable">
-        <div class="col-md-12" [class]="showTable1 ? '' : 'hide'">
+        <div class="col-md-12">
           <div [class]="loading ? 'table-loading' : ''">
             <ng2-smart-table
               class="table-responsive"
@@ -230,13 +230,8 @@
         </div> -->
       </div>
       <app-pagination
-        *ngIf="showTable1"
         [params]="params"
         [totalItems]="totalItems"></app-pagination>
-      <app-pagination
-        *ngIf="!showTable1"
-        [params]="paramsIndicators"
-        [totalItems]="totalItemsIndicators"></app-pagination>
     </form>
   </div>
 </app-card>
