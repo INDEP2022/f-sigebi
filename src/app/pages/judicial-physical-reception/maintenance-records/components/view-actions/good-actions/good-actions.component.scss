@@ -1,0 +1,12 @@
+.selectGood {
+  display: flex;
+  margin-left: 20px;
+  column-gap: 10px;
+  ng-custom-select-loading {
+    width: calc(100% - 70px);
+  }
+}
+
+.good-actions {
+  row-gap: 15px;
+}
