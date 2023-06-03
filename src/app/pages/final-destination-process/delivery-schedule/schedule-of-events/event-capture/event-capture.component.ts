@@ -1209,7 +1209,7 @@ export class EventCaptureComponent
   }
 
   // PA_CALCULA_CANTIDADES
-  /*   calculateQuantities() {
+  calculateQuantities() {
     const { typeEvent } = this.registerControls;
     // TODO: DESCOMENTAR CUANDO ARREGLEN LA INCIDENCIA
     this.programmingGoodService
@@ -1241,7 +1241,7 @@ export class EventCaptureComponent
         })
       )
       .subscribe();
-  } */
+  }
 
   // DETALLE_ACTA_ENT_RECEP.POST_QUERY
   afterGetDetail(detail: IGoodIndicator) {
