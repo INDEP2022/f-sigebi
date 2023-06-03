@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, firstValueFrom, map } from 'rxjs';
+import { BehaviorSubject, firstValueFrom, map, skip } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { showToast } from 'src/app/common/helpers/helpers';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
@@ -25,13 +25,14 @@ import { NotificationService } from 'src/app/core/services/ms-notification/notif
 import { SecurityService } from 'src/app/core/services/ms-security/security.service';
 import { GoodPosessionThirdpartyService } from 'src/app/core/services/ms-thirdparty-admon/good-possession-thirdparty.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
-import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import {
   GOODS_COLUMNS,
   NOTIFICATIONS_COLUMNS,
 } from './thirdparties-possession-validation-columns';
+import { thirdpartiesPossessionValidationResponses } from './thirdparties-possession-validation-responses';
 
+type IGoodAndAvailable = IGood & { available?: boolean };
 const predifinedText =
   'En cumplimiento a la instrucción judicial derivada del juicio de amparo <A> por el cual se informa que se resolvió provisionalmente conceder al quejoso la restitución de la posesión  uso y disfrute  del(los) siguiente(s) mueble(s). Al respecto me permito señalar: \n\n<B> \n\n<C> \n\nCon fundamento en la fracción XIV del artículo 39 del Estatuto Orgánico del Servicio de Administración y Enajenación de Bienes y considerando la instrucción judicial deducida del juicio de garantías emitida por el Juez <DATOS DE JUZGADO>, por el cual se otorga la suspensión definitiva al quejoso <QUEJOSO> respecto del disfrute del inmueble de marras y, consecuentemente, la restitución de la posesión, en tal sentido y salvo que no exista aseguramiento anterior o posterior decretado por autoridad competente para ello, esa Delegación a su cargo deberá dar cabal cumplimiento a la suspensión definitiva, levantado para tal efecto el acta administrativa de entrega de posesión por virtud de suspensión provisional, afectando, consecuentemente, el SIAB bajo el estatus ¿PD3¿ ¿entrega en posesión a terceros por instrucción judicial¿. \n\nEl cumplimiento señalado, deberá realizarlo a la brevedad e informar al Juez de Amparo sobre los actos tendientes a su cumplimiento. \n\nNo omito señalar, que en el supuesto de que se resuelva el amparo en el cuaderno incidental y/o principal negando la protección de la justicia federal, se deberán llevar a cabo las acciones legales correspondientes para recuperar la posesión del inmueble asegurado. \n\nFinalmente, le informo que debe hacer del conocimiento de la autoridad que decretó el aseguramiento, así como, en su caso, del Juez que conozca del proceso penal federal. \n\nQuedo a sus órdenes para cualquier comentario.';
 
@@ -41,7 +42,7 @@ const predifinedText =
   styleUrls: ['./thirdparties-possession-validation.component.scss'],
 })
 export class ThirdpartiesPossessionValidationComponent
-  extends BasePage
+  extends thirdpartiesPossessionValidationResponses
   implements OnInit, OnDestroy
 {
   users: ISegUsers[] = [];
@@ -49,8 +50,8 @@ export class ThirdpartiesPossessionValidationComponent
   // Table settings
   params = new BehaviorSubject<ListParams>(new ListParams());
   paramsNotifications = new BehaviorSubject<ListParams>(new ListParams());
-  selectedRows: IGood = {};
-  selectedRows2: IGood = {};
+  selectedRows: IGoodAndAvailable = {};
+  selectedRows2: IGoodAndAvailable = {};
   wheelNotifications: INotification;
   goodsPosessionThirdParty: IGoodPossessionThirdParty[] = [];
 
@@ -71,10 +72,10 @@ export class ThirdpartiesPossessionValidationComponent
   tableSettingsBienes = {
     selectedRowIndex: -1,
     rowClassFunction: (row: any) => {
-      if (row.cells[1].value != 'ADM') {
+      if (!row.data.available) {
         return 'bg-dark text-white disabled-custom';
       } else {
-        return 'bg-primary';
+        return 'bg-success text-white';
       }
     },
     actions: {
@@ -90,7 +91,7 @@ export class ThirdpartiesPossessionValidationComponent
     columns: GOODS_COLUMNS,
   };
   // Data table
-  dataTableBienes: IGood[] = [];
+  dataTableBienes: IGoodAndAvailable[] = [];
 
   // Table settings
   tableSettingsBienesOficio = {
@@ -109,11 +110,12 @@ export class ThirdpartiesPossessionValidationComponent
     columns: GOODS_COLUMNS,
   };
   dataTableBienesOficio: {
-    possessionNumber: number;
+    possessionNumber?: number;
     goodNumber: number;
-    steeringwheelNumber: number;
-    nbOrigin: string;
+    steeringwheelNumber?: number;
+    nbOrigin?: string;
     status?: any;
+    id?: number;
     description?: string;
   }[] = [];
 
@@ -136,7 +138,7 @@ export class ThirdpartiesPossessionValidationComponent
     private modalService: BsModalService,
     private sanitizer: DomSanitizer,
     // private historyGoodService: HistoryGoodService,
-    private goodPosessionThirdpartyService: GoodPosessionThirdpartyService,
+    protected goodPosessionThirdpartyService: GoodPosessionThirdpartyService,
     private userService: UsersService,
     private authService: AuthService,
     private securityService: SecurityService,
@@ -146,13 +148,12 @@ export class ThirdpartiesPossessionValidationComponent
   }
 
   ngOnInit(): void {
-    this.prepareForm();
     // this.loading = true;
     this.paramsNotifications.subscribe(params => {
       this.getNotifications(params);
     });
 
-    this.paramsGood.subscribe(params => {
+    this.paramsGood.pipe(skip(1)).subscribe(params => {
       this.getGoods(params);
     });
     // this.noExpediente.valueChanges // .get('noExpediente')
@@ -175,28 +176,6 @@ export class ThirdpartiesPossessionValidationComponent
     //     this.getNotificationByWheel(new ListParams(), x);
     //     this.getGoodsPosessionThird(new ListParams(), x);
     //   });
-  }
-
-  private prepareForm() {
-    // this.form = this.fb.group({
-    //   wheelNumber: '',
-    //   officeExternalKey: [''],
-    //   addressee: [''],
-    //   texto: '',
-    // });
-    // this.noExpediente = this.fb.group({
-    //   noExpediente: '',
-    // });
-    // this.formCcpOficio = this.fb.group({
-    //   ccp1: ['', [Validators.pattern(STRING_PATTERN)]],
-    //   ccp2: ['', [Validators.pattern(STRING_PATTERN)]],
-    //   firma: ['', [Validators.pattern(STRING_PATTERN)]],
-    // });
-    // this.formGood = this.fb.group({
-    //   delegationCloseNumber: [''],
-    //   numClueNavy: [''],
-    //   closingDate: [''],
-    // });
   }
 
   // detailGoodPosessionThirdParty: {
@@ -333,7 +312,7 @@ export class ThirdpartiesPossessionValidationComponent
     this.formPositionThirdParty.reset();
     // this.formGood.reset();
     this.wheelNotifications = null;
-    this.getNotifications();
+    this.paramsNotifications.next(new ListParams());
   }
 
   getNotifications(params = new ListParams()) {
@@ -347,20 +326,13 @@ export class ThirdpartiesPossessionValidationComponent
       this.formPositionThirdParty.reset();
       // this.formGood.reset();
       this.wheelNotifications = null;
-
       return;
     }
-
-    // this.params = new BehaviorSubject<ListParams>(new ListParams());
-    // this.params = new BehaviorSubject<ListParams>(new ListParams());
     let data = this.params.value;
     data.page = params.page;
     data.limit = params.limit;
     let queryString = `page=${params.page}&limit=${params.limit}`;
     queryString += `&filter.expedientNumber=${numberExpedient}`;
-    // if (numberExpedient) {btnImprimir
-    //   // data['filter.expedientNumber'] = numberExpedient;
-    // }
 
     this.dataTableNotifications = [];
     this.loading = true;
@@ -368,10 +340,7 @@ export class ThirdpartiesPossessionValidationComponent
       next: data => {
         this.dataTableNotifications = data.data;
         this.totalItemsNotificaciones = data.count;
-        this.totalItemsNotificaciones = data.count;
         this.loading = false;
-        this.notificationSelected = this.dataTableNotifications[0];
-        this.getGoods(new ListParams());
         this.notificationSelected = this.dataTableNotifications[0];
         this.getGoods(new ListParams());
       },
@@ -387,7 +356,6 @@ export class ThirdpartiesPossessionValidationComponent
   selectRowNotification(event: any) {
     this.notificationSelected = event.data;
     this.formPositionThirdParty.reset();
-    // this.detailGoodPosessionThirdParty = null;
     this.formPositionThirdParty
       .get('steeringwheelNumber')
       .setValue(this.notificationSelected.wheelNumber);
@@ -399,12 +367,29 @@ export class ThirdpartiesPossessionValidationComponent
     const numberExpedient = this.noExpediente.value;
     this.dataTableBienes = [];
     const queryString = `page=${params.page}&limit=${params.limit}&filter.fileNumber=${numberExpedient}`;
-    // this.getGoodsByOffice(new ListParams(), numberExpedient);
 
     this.isLoadingGood = true;
     this.goodService.getAllFilter(queryString).subscribe({
-      next: data => {
-        this.dataTableBienes = data.data;
+      next: async data => {
+        const r = await data.data.map(async (item: any) => {
+          let isNotAvailable = Boolean(
+            this.dataTableBienesOficio.find(x => x.id == item.id)
+          );
+          console.log('isNotAvailable', isNotAvailable);
+          if (item.status == 'ADM' && !isNotAvailable) {
+            try {
+              const result = await this.getDetailGoodThirdParty(item.id, true);
+              isNotAvailable = true;
+            } catch (e) {
+              isNotAvailable = false;
+            }
+          }
+          return {
+            ...item,
+            available: item.status != 'ADM' || isNotAvailable ? false : true,
+          };
+        });
+        this.dataTableBienes = await Promise.all(r);
         this.totalItemsGood = data.count;
         this.isLoadingGood = false;
       },
@@ -445,24 +430,40 @@ export class ThirdpartiesPossessionValidationComponent
       return;
     }
 
-    if (this.selectedRows.status === 'STI') {
+    if (!this.selectedRows?.available) {
       this.alert(
         'info',
-        'Selecciona un bien',
-        'Selecciona un bien que esté disponible.'
+        'Bien no disponible',
+        'El bien seleccionado no está disponible.'
       );
       return;
     }
 
-    this.goodService
-      .updateGoodStatus(this.selectedRows.goodId, 'STI')
-      .subscribe({
-        next: data => {
-          this.handleSuccess();
-          this.selectedRows = {};
-        },
-        error: () => (this.loading = false),
-      });
+    this.dataTableBienesOficio = [
+      ...this.dataTableBienesOficio,
+      {
+        goodNumber: this.selectedRows.id,
+        id: this.selectedRows.id,
+        // possessionNumber: this.selectedRows.po,
+        // steeringwheelNumber: this.selectedRows,
+        description: this.selectedRows.description,
+        status: this.selectedRows.status,
+        // nbOriginal: this.selectedRows.nbOriginal,
+      },
+    ];
+    console.log(this.dataTableBienesOficio);
+    this.dataTableBienes.find(x => x.id === this.selectedRows.id).available =
+      false;
+
+    // this.goodService
+    //   .updateGoodStatus(this.selectedRows.goodId, 'STI')
+    //   .subscribe({
+    //     next: data => {
+    //       this.handleSuccess();
+    //       this.selectedRows = {};
+    //     },
+    //     error: () => (this.loading = false),
+    //   });
   }
 
   handleSuccess() {
@@ -481,15 +482,21 @@ export class ThirdpartiesPossessionValidationComponent
       return;
     }
 
-    this.goodService
-      .updateGoodStatus(this.selectedRows2.goodId, 'ADM')
-      .subscribe({
-        next: data => {
-          this.handleSuccess();
-          this.selectedRows2 = {};
-        },
-        error: () => (this.loading = false),
-      });
+    this.dataTableBienes.find(x => x.id === this.selectedRows2.id).available =
+      true;
+    this.dataTableBienesOficio = this.dataTableBienesOficio.filter(
+      x => x.id !== this.selectedRows2.id
+    );
+
+    // this.goodService
+    //   .updateGoodStatus(this.selectedRows2.goodId, 'ADM')
+    //   .subscribe({
+    //     next: data => {
+    //       this.handleSuccess();
+    //       this.selectedRows2 = {};
+    //     },
+    //     error: () => (this.loading = false),
+    //   });
   }
 
   mostrarInfo(form: any): any {
@@ -778,7 +785,7 @@ export class ThirdpartiesPossessionValidationComponent
     });
   }
 
-  btnImprimir() {
+  onClickPrint() {
     // this.loading = true;
     // const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/blank.pdf`; //window.URL.createObjectURL(blob);
 
@@ -787,14 +794,15 @@ export class ThirdpartiesPossessionValidationComponent
     // downloadLink.href = pdfurl;
     // downloadLink.target = '_blank';
     // downloadLink.click();
-
+    console.log(this.formPositionThirdParty.value);
     // console.log(this.flyersForm.value);
     if (this.dataTableBienesOficio.length < 1) {
       this.alert('info', '', 'Seleccione un bien');
       return;
     }
     if (!this.formPositionThirdParty.get('jobKey').value) {
-      this.pupGeneratorKey();
+      const isReturn = this.pupGeneratorKey();
+      if (isReturn) return;
       this.pupPrint();
     } else {
       this.pupPrint();
@@ -805,11 +813,11 @@ export class ThirdpartiesPossessionValidationComponent
     const values = this.formPositionThirdParty.value;
     if (!values.usrResponsible) {
       this.alert('info', '', 'Debe especificar el Responsable.');
-      return;
+      return true;
     }
     if (!values.usrAddressee) {
       this.alert('info', '', 'Debe especificar el Destinatario.');
-      return;
+      return true;
     }
     if (!values.jobKey) {
       let segAccessXAreas, _segAccessXAreas;
@@ -823,20 +831,20 @@ export class ThirdpartiesPossessionValidationComponent
           'Error',
           'Error no se pudo obtener la función FA_ETAPACREDA.'
         );
-        return;
+        return true;
       }
 
       try {
         const params = {
-          user: values.usrResponsible,
-          assigned: 'S',
+          'filter.user': values.usrResponsible.usuario,
+          'filter.assigned': 'S',
         };
         segAccessXAreas = (await this.getSegAccessXAreas(
           params
         )) as IAccesTrackingXArea;
 
         segUser = (await this.getSegUsers({
-          user: values.usrResponsible,
+          'filter.user': values.usrResponsible.usuario,
         })) as IUsersTracking;
       } catch (ex) {
         this.alert(
@@ -844,7 +852,7 @@ export class ThirdpartiesPossessionValidationComponent
           'Error',
           'No se localizaron datos de la persona que autoriza.'
         );
-        return;
+        return true;
       }
 
       let level4, level5, level3, level2, department;
@@ -878,7 +886,7 @@ export class ThirdpartiesPossessionValidationComponent
                 'Error',
                 'No se localizó el predecesor de la persona que autoriza.'
               );
-              return;
+              return true;
             }
             if (_department.level == 3) {
               level3 = _department.dsarea;
@@ -890,7 +898,7 @@ export class ThirdpartiesPossessionValidationComponent
           }
           try {
             const params = {
-              user: values.usrAddressee,
+              user: values.usrAddressee.usuario,
               assigned: 'S',
             };
             _segAccessXAreas = (await this.getSegAccessXAreas(
@@ -910,7 +918,7 @@ export class ThirdpartiesPossessionValidationComponent
           'Error',
           'No se localizó la dependencia de la persona que autoriza.'
         );
-        return;
+        return true;
       }
 
       const paramsDepartment = new ListParams();
@@ -930,6 +938,7 @@ export class ThirdpartiesPossessionValidationComponent
       this.formPositionThirdParty.get('jobKey').setValue(joyKey);
     }
     this.pupPrint();
+    return false;
   }
 
   getFaEtapaCreda() {

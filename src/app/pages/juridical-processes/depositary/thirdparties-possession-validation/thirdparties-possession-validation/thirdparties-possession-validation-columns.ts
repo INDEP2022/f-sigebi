@@ -22,7 +22,7 @@ export const NOTIFICATIONS_COLUMNS = {
 };
 
 export const GOODS_COLUMNS = {
-  goodNumber: { title: 'No. Bien' },
+  id: { title: 'No. Bien' },
   status: {
     title: 'Estatus',
   },

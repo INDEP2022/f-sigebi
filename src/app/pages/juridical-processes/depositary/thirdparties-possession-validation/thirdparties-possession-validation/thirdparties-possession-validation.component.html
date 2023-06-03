@@ -76,7 +76,7 @@
             [totalItems]="totalItemsGood"></app-pagination>
         </div>
         <br />
-        <span class="badge m-2 badge-pill bg-primary"
+        <span class="badge m-2 badge-pill bg-success"
           >&#42;&#42;Disponibles</span
         >
         <span class="badge m-2 badge-pill bg-dark"
@@ -142,13 +142,13 @@
           </form-field> -->
 
           <!-- [form]="formPositionThirdParty" -->
-          <form-field [control]="formPositionThirdParty.get('addressee')">
+          <form-field [control]="formPositionThirdParty.get('usrAddressee')">
             <ngx-select
               [form]="formPositionThirdParty"
               [data]="addressee"
               (fetchItems)="getUserName($event)"
               bindLabel="nameUser"
-              control="addressee"
+              control="usrAddressee"
               label="Destinatario"
               [searchOnInit]="true"
               [clearable]="false"
@@ -186,7 +186,7 @@
             <button
               type="button"
               class="btn btn-primary btn-sm active text-wrap"
-              (click)="btnImprimir()">
+              (click)="onClickPrint()">
               Imprimir
             </button>
           </div>
