@@ -1583,7 +1583,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
               }
             });
         }
-        this.dataGoodAct.load(this.goodData).then(res => {
+        this.dataGoodAct.load(incomeData).then(res => {
           this.loading = false;
           this.nextProce = true;
           this.prevProce = true;
