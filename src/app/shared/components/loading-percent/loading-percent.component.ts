@@ -1,5 +1,5 @@
-import { Component, inject, OnInit } from '@angular/core';
-import { catchError, interval, Subscription } from 'rxjs';
+import { Component, OnInit } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { LoadingPercentService } from 'src/app/common/services/loading-percent.service';
 import { ProgressPercentService } from 'src/app/core/services/loading-percent-massive/progress-percent.service';
 
@@ -114,45 +114,63 @@ export class LoadingPercentComponent implements OnInit {
   loader: boolean;
   constructor(
     private readonly loadingPercentService: LoadingPercentService,
-    private progressPercentService: ProgressPercentService,
+    private progressPercentService: ProgressPercentService
   ) {
     loadingPercentService.loaderProgress.subscribe({
       next: load => {
-        this.loader = load
-        if(this.loader) this.loadingPercent()
+        this.loader = load;
+        if (this.loader) this.loadingPercent();
       },
     });
   }
 
   ngOnInit(): void {
     //this.startInterval();
-    
   }
-  
-  loadingPercent(){
-    
-    this.progressPercentService.getPercent().pipe(
-      catchError(error => {
-        let errorMessage = '';
-        if (error instanceof ErrorEvent) {
-          // client-side error
-          errorMessage = `Client-side error: ${error.error.message}`;
-        } else {
-          // backend error
-          errorMessage = `Server-side error: ${error.status} ${error.message}`;
-        }
-        
-    
-        return "0"
-      })
-    ).subscribe((resp:any)=>{
-      this.progreso = resp.percent
-    })
+
+  loadingPercent() {
+    this.progressPercentService
+      .getPercent()
+      // .pipe(
+      //   catchError(error => {
+      //     let errorMessage = '';
+      //     if (error instanceof ErrorEvent) {
+      //       // client-side error
+      //       errorMessage = `Client-side error: ${error.error.message}`;
+      //       console.log('Error cliente-side', errorMessage);
+      //       this.progreso=="0"
+      //     } else {
+      //       // backend error
+      //       errorMessage = `Server-side error: ${error.status} ${error.message}`
+      //        console.log('Error Server-side', errorMessage);
+      //       this.progreso=="0";
+      //     }
+
+      //     return "0"
+      //   })
+      // )
+      .subscribe({
+        next: (resp: any) => {
+          this.progreso = resp.percent;
+          console.log('Porcentaje', this.progreso);
+        },
+        error: error => {
+          console.log('Error', error.status);
+          if (error.status === 401) {
+            this.progreso = '0';
+            this.loadingPercent();
+
+            //this.progreso = resp.percent;
+          }
+        },
+      });
+
+    // .subscribe((resp:any)=>{
+    //   this.progreso = resp.percent
+    // })
+
     setTimeout(() => {
-      if(this.loader || this.progreso=="100.00") this.loadingPercent()
+      if (this.loader || this.progreso == '100.00') this.loadingPercent();
     }, 3000);
-
   }
-
-  
 }

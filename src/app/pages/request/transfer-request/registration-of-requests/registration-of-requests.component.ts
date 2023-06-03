@@ -1209,7 +1209,7 @@ export class RegistrationOfRequestsComponent
           this.returnarMethod();
         }
         if (typeCommit === 'captura-solicitud') {
-          console.log('captura-solicitud');
+          console.log('captura-solicitud'); //DE CAPTURA DE SOLICITUD A VERIFICAR CUMPLIMIENTO
           this.confirmMethod();
         }
         if (typeCommit === 'verificar-cumplimiento') {
@@ -1219,8 +1219,9 @@ export class RegistrationOfRequestsComponent
           setTimeout(async () => {
             console.log('estado verificar:', this.verifyResp);
             if (this.verifyResp === 'turnar') {
+              console.log('verificar-cumplimiento');
               await this.updateGoodStatus('CLASIFICAR_BIEN');
-              this.verifyComplianceMethod();
+              this.verifyComplianceMethod(); // DE VERIFICAR CUMPLIMIENTO A CLASIFICAR BIEN
             } else if (this.verifyResp === 'sin articulos') {
               this.verifyCumplianteMsg(
                 'Error',
@@ -1239,6 +1240,7 @@ export class RegistrationOfRequestsComponent
         }
         if (typeCommit === 'clasificar-bienes') {
           this.loader.load = true;
+          console.log('clasificar-bienes');
           await this.updateGoodStatus('DESTINO_DOCUMENTAL');
           //creat tarea para destino documental
           this.classifyGoodMethod();
@@ -1388,10 +1390,12 @@ export class RegistrationOfRequestsComponent
   }
 
   updateProcessStatus(body: any) {
+    console.log('Objeto para cambiar estatus; ', body);
     return new Promise((resolve, reject) => {
       this.goodfinderService.updateStatusProcess(body).subscribe({
         next: resp => {
           resolve(true);
+          console.log('Respuesta endpoint para cambiar estatus', resp);
         },
         error: error => {
           reject('error al actualizar los status');
