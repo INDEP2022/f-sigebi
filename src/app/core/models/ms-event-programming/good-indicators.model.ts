@@ -16,3 +16,9 @@ export interface IGoodIndicator {
   dictationkey: string;
   destructionproceedingkey: string;
 }
+export interface ICertificateProgDst {
+  minutesNumber: number;
+  email: string;
+  destType: string;
+  indShipment: number;
+}
