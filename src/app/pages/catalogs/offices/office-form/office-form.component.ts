@@ -52,7 +52,7 @@ export class OfficeFormComponent extends BasePage implements OnInit {
       noInt: [null, [Validators.maxLength(10)]],
       colony: [null, [Validators.maxLength(100)]],
       municipalDelegate: [null, [Validators.maxLength(60)]],
-      postalCode: [null, [Validators.maxLength(50)]],
+      postalCode: [null, [Validators.maxLength(5)]],
       rfc: [null, [Validators.maxLength(20), Validators.pattern(RFC_PATTERN)]],
       phone: [
         null,

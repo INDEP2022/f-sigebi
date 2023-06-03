@@ -1,4 +1,5 @@
 import {
+  ChangeDetectorRef,
   Component,
   ElementRef,
   Input,
@@ -8,6 +9,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
@@ -66,7 +68,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
   principalSave: boolean = false;
   bsModalRef: BsModalRef;
   params = new BehaviorSubject<FilterParams>(new FilterParams());
-  paragraphs: any[] = [];
+  paragraphs = new LocalDataSource();
   createNewAsset: boolean = false;
   btnCreate: string = 'Nuevo Bien';
   domicilieObject: IDomicilies = null;
@@ -81,6 +83,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
   private fractionProperties: any = {};
   typeRecord: string = '';
   transferente: string = '';
+  selectedAll: boolean = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -95,7 +98,8 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
     private authService: AuthService,
     private fractionService: FractionService,
     private goodsQueryService: GoodsQueryService,
-    private goodFinderService: GoodFinderService
+    private goodFinderService: GoodFinderService,
+    private cdr: ChangeDetectorRef
   ) {
     super();
   }
@@ -130,7 +134,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
 
   getData() {
     this.loading = true;
-    this.paragraphs = [];
+    this.paragraphs = new LocalDataSource();
     const requestId = Number(this.route.snapshot.paramMap.get('id'));
     this.params.value.addFilter('requestId', requestId);
     this.goodFinderService
@@ -144,13 +148,13 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
 
           Promise.all(result).then(x => {
             this.totalItems = resp.count;
-            this.paragraphs = resp.data;
+            this.paragraphs.load(resp.data);
             this.loading = false;
           });
         },
         error: error => {
           this.loading = false;
-          this.paragraphs = [];
+          this.paragraphs = new LocalDataSource();
         },
       });
   }
@@ -450,7 +454,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
             `Se guardo el domicilio del bien`
           );
           this.refreshTable();
-          this.isSaveFraction = false;
+          this.isSaveDomicilie = false;
         }
       }
     });
@@ -468,7 +472,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
             `Se guardaron los menajes exitosamente`
           );
           this.refreshTable();
-          this.isSaveFraction = false;
+          this.isSaveMenaje = false;
         }
       }
     });
@@ -693,7 +697,6 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
     ];
     this.listGoodsFractions = [];
     let existAddres = 0;
-    //debugger;
     for (let j = 0; j < this.listgoodObjects.length; j++) {
       const item = this.listgoodObjects[j];
       let good: any = {};
@@ -1031,5 +1034,132 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
       },
       error: error => {},
     });
+  }
+
+  assignAllAddress() {
+    Swal.fire({
+      title: 'Asignacion Masiva de domicilio',
+      html: 'Se asignara a todos los bienes el domicio que se seleccionara',
+      icon: 'info',
+      showCancelButton: false,
+      confirmButtonColor: '#9D2449',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Aceptar',
+    }).then(result => {
+      if (result.isConfirmed) {
+        let config: ModalOptions = {
+          initialState: {
+            request: this.requestObject,
+            address: '',
+            onlyOrigin: true,
+            callback: (next: boolean) => {
+              //if (next) this.getExample();
+            },
+          },
+          class: 'modalSizeXL modal-dialog-centered',
+          ignoreBackdropClick: true,
+        };
+        this.bsModalRef = this.modalServise.show(
+          SelectAddressComponent,
+          config
+        );
+
+        this.bsModalRef.content.event.subscribe((res: any) => {
+          //cargarlos en el formulario
+          this.loading = true;
+          if (res) {
+            this.assignAddress(this.requestObject.id, res.id);
+          }
+        });
+      }
+    });
+  }
+
+  assignAddress(requestId: number | string, addresId: number | string) {
+    this.goodFinderService
+      .masiveAssignationDomicileGood(requestId, addresId)
+      .subscribe({
+        next: resp => {
+          this.onLoadToast(
+            'success',
+            'Asignación exitosa',
+            `Se asigno un domicilio a todos los bienes`
+          );
+          this.loading = true;
+          this.closeCreateGoodWIndows();
+        },
+        error: error => {
+          this.loading = false;
+          console.log('Error al asignar domicilio a los bienes ', error);
+          this.onLoadToast(
+            'error',
+            'Error',
+            `Error al asignar domicilio a los bienes`
+          );
+        },
+      });
+  }
+
+  classifyAllGoods() {
+    Swal.fire({
+      title: 'Clasificación Masiva',
+      html: 'Se asignara a todos los bienes la fraccion que se seleccionara',
+      icon: 'info',
+      showCancelButton: false,
+      confirmButtonColor: '#9D2449',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Aceptar',
+    }).then(result => {
+      if (result.isConfirmed) {
+        let config: ModalOptions = {
+          initialState: {
+            parameter: '',
+            callback: (next: boolean) => {
+              //if(next) this.getExample();
+            },
+          },
+          class: 'modalSizeXL modal-dialog-centered',
+          ignoreBackdropClick: true,
+        };
+        this.bsModalRef = this.modalServise.show(
+          AdvancedSearchComponent,
+          config
+        );
+
+        this.bsModalRef.content.event.subscribe((res: any) => {
+          this.idFractions = [];
+          this.loading = true;
+          //this.isSaveFraction = true;
+          //console.log(res.id,this.requestObject.id)
+          this.classifyGoods(this.requestObject.id, res.id);
+        });
+      }
+    });
+  }
+
+  classifyGoods(requestId: number | string, fractionId: number | string) {
+    let type = this.requestObject.typeOfTransfer == 'PGR_SAE' ? 4 : 1;
+    this.goodFinderService
+      .masiveClassificationGood(requestId, fractionId, type)
+      .subscribe({
+        next: resp => {
+          this.onLoadToast(
+            'success',
+            'Clasificación exitosa',
+            `Se clasificaron todos los bienes`
+          );
+          this.loading = true;
+          this.closeCreateGoodWIndows();
+        },
+        error: error => {
+          this.loading = false;
+          console.log('Error al clasificar los bienes masivamente ', error);
+          this.onLoadToast(
+            'error',
+            'Error',
+            `No se pudieron clasificar los bienes`
+          );
+        },
+      });
   }
 }

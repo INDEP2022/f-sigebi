@@ -20,6 +20,7 @@ import { IRTdictaAarusr } from '../../models/ms-dictation/r-tdicta-aarusr.model'
 })
 export class DictationService extends HttpService {
   public clasifGoodNumber: number | string;
+  public goodNumber: number | string;
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
   private readonly route = DictationEndpoints;

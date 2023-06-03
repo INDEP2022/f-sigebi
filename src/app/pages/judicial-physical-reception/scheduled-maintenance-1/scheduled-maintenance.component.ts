@@ -1,18 +1,19 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, FormControl } from '@angular/forms';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { takeUntil } from 'rxjs';
 import { IProceedingDeliveryReception } from 'src/app/core/models/ms-proceedings/proceeding-delivery-reception';
 import {
-  IDeleted,
-  INotDeleted,
+  INotSucess,
   IProceedingByGood,
+  ISucess,
   ProceedingsDeliveryReceptionService,
 } from 'src/app/core/services/ms-proceedings/proceedings-delivery-reception.service';
 import { ProceedingsDetailDeliveryReceptionService } from 'src/app/core/services/ms-proceedings/proceedings-detail-delivery-reception.service';
 import { ACTAS_BY_GOOD_COLUMNS } from './../scheduled-maintenance/interfaces/columns';
 
 import { Router } from '@angular/router';
+import { LocalDataSource } from 'ng2-smart-table';
 import { SelectListFilteredModalComponent } from 'src/app/@standalone/modals/select-list-filtered-modal/select-list-filtered-modal.component';
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { ScheduledMaintenance } from '../scheduled-maintenance/scheduled-maintenance';
@@ -30,6 +31,7 @@ export class ScheduledMaintenanceComponent
   implements OnInit
 {
   selecteds: IProceedingDeliveryReception[] = [];
+  limit: FormControl = new FormControl(10);
   constructor(
     private modalService: BsModalService,
     protected override fb: FormBuilder,
@@ -38,11 +40,13 @@ export class ScheduledMaintenanceComponent
     private router: Router
   ) {
     super(fb, deliveryService, detailService, 'filtersActa');
+    // debugger;
     const paramsActa = localStorage.getItem('paramsActa');
     if (paramsActa) {
       const params = JSON.parse(paramsActa);
       this.params.value.limit = params.limit;
       this.params.value.page = params.page;
+      this.limit = new FormControl(params.limit);
     }
     this.settings1 = {
       ...this.settings1,
@@ -55,6 +59,11 @@ export class ScheduledMaintenanceComponent
         delete: true,
       },
     };
+
+    // console.log(this.settings1);
+  }
+
+  override updateByPaginator() {
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe({
       next: response => {
         console.log(response);
@@ -70,7 +79,15 @@ export class ScheduledMaintenanceComponent
         this.getData(true);
       },
     });
-    // console.log(this.settings1);
+  }
+
+  override resetView() {
+    console.log('RESET VIEW');
+    this.data = new LocalDataSource();
+    this.totalItems = 0;
+    localStorage.removeItem(this.formStorage);
+    localStorage.removeItem('paramsActa');
+    this.limit = new FormControl(10);
   }
 
   private showMessageProceedingsRemoved(
@@ -116,7 +133,7 @@ export class ScheduledMaintenanceComponent
   deleteProgramations() {
     console.log(this.selecteds);
     this.alertQuestion(
-      'warning',
+      'question',
       'Eliminar',
       'Desea eliminar estos registros?'
     ).then(question => {
@@ -127,10 +144,10 @@ export class ScheduledMaintenanceComponent
             const removeds: string[] = [];
             const notRemoveds: string[] = [];
             response.forEach(item => {
-              const { deleted } = item as IDeleted;
-              const { error } = item as INotDeleted;
-              if (deleted) {
-                removeds.push(deleted);
+              const { sucess } = item as ISucess;
+              const { error } = item as INotSucess;
+              if (sucess) {
+                removeds.push(sucess);
               }
               if (error) {
                 notRemoveds.push(error);
@@ -169,7 +186,7 @@ export class ScheduledMaintenanceComponent
   showDeleteAlert(item: IProceedingDeliveryReception) {
     console.log(item);
     this.alertQuestion(
-      'warning',
+      'question',
       'Eliminar',
       '¿Desea eliminar este registro?'
     ).then(question => {
@@ -213,7 +230,7 @@ export class ScheduledMaintenanceComponent
         showError: false,
         initialCharge: false,
         widthButton: true,
-        placeholder: '',
+        placeholder: 'No. Bien',
       },
       this.selectActa
     );
