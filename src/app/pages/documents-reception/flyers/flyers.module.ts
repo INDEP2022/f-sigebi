@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { ModalModule } from 'ngx-bootstrap/modal';
+import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { NgScrollbarModule } from 'ngx-scrollbar';
 import { DocumentsListComponent } from 'src/app/@standalone/documents-list/documents-list.component';
 import { FormLoaderComponent } from 'src/app/@standalone/form-loader/form-loader.component';
@@ -44,6 +45,7 @@ import { RdFShiftChangeComponent } from './shift-change/shift-change.component';
     DocumentsListComponent,
     NgScrollbarModule,
     FormLoaderComponent,
+    TooltipModule.forRoot(),
   ],
 })
 export class FlyersModule {}

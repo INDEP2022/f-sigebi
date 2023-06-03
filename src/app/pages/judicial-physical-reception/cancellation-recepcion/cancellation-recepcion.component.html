@@ -466,7 +466,10 @@
           (rowSelect)="rowSelect($event)"
           (rowDeselect)="deselectRow()"></ng2-smart-table>
       </div>
-
+      <app-pagination
+        *ngIf="!loading"
+        [params]="paramsDataGoods"
+        [totalItems]="totalItemsDataGoods"></app-pagination>
       <hr class="row" />
       <div class="row">
         <div class="d-flex justify-content-center">

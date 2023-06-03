@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { addDays, format } from 'date-fns';
 import { LocalDataSource } from 'ng2-smart-table';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import {
   FilterParams,
@@ -141,6 +142,10 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
     },
     noDataMessage: 'No se encontrarón registros',
   };
+
+  paramsDataGoods = new BehaviorSubject<ListParams>(new ListParams());
+  totalItemsDataGoods: number = 0;
+
   act2Valid: boolean = false;
   adminSelect = new DefaultSelect();
   blockExpedient = false;
@@ -219,6 +224,12 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
       this.goodsByExpediente();
       localStorage.removeItem('numberExpedient');
     }
+
+    this.paramsDataGoods
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(params => {
+        this.getGoodsFn();
+      });
   }
 
   prepareForm() {
@@ -653,6 +664,47 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
     );
   }
 
+  getGoodsFn() {
+    this.loading = true;
+
+    const paramsF = new FilterParams();
+    paramsF.page = this.paramsDataGoods.getValue().page;
+    paramsF.limit = this.paramsDataGoods.getValue().limit;
+    console.log(this.paramsDataGoods);
+    console.log(paramsF.getParams());
+    this.serviceGood
+      .getAllFilterDetail(
+        `filter.fileNumber=$eq:${
+          this.numberExpedient
+        }&filter.status=$not:ADM&filter.labelNumber=$not:6&filter.detail.actNumber=$not:$null&${paramsF.getParams()}`
+      )
+      .subscribe({
+        next: async (res: any) => {
+          if (res.data.length > 0) {
+            this.form.get('ident').setValue('ADM');
+            /*  this.dataGoods.load(res.data); */
+            const newData = await Promise.all(
+              res.data.map(async (e: any) => {
+                let disponible: boolean;
+                const resp = await this.validateGood(e);
+                const act = await this.getCveAct(e);
+                disponible = JSON.parse(JSON.stringify(resp)).avalaible;
+                const acta = JSON.parse(JSON.stringify(resp)).acta;
+                return { ...e, avalaible: disponible, acta: acta };
+              })
+            );
+            this.dataGoods.load(newData);
+            this.totalItemsDataGoods = res.count;
+            this.loading = false;
+          }
+        },
+        error: (err: any) => {
+          console.error(err);
+          this.loading = false;
+        },
+      });
+  }
+
   goodsByExpediente() {
     //Validar si hay un acta abierta
     this.loading = true;
@@ -680,11 +732,14 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
 
     this.clearInputs();
     if (this.form.get('expediente').value != null) {
+      const paramsF = new FilterParams();
+      paramsF.page = this.paramsDataGoods.getValue().page;
+      paramsF.limit = this.paramsDataGoods.getValue().limit;
       this.serviceGood
         .getAllFilterDetail(
           `filter.fileNumber=$eq:${
             this.form.get('expediente').value
-          }&filter.status=$not:ADM&filter.labelNumber=$not:6&filter.detail.actNumber=$not:$null`
+          }&filter.status=$not:ADM&filter.labelNumber=$not:6&filter.detail.actNumber=$not:$null&${paramsF.getParams()}`
         )
         .subscribe({
           next: async (res: any) => {
@@ -702,6 +757,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                   return { ...e, avalaible: disponible, acta: acta };
                 })
               );
+              this.totalItemsDataGoods = res.count;
               this.dataGoods.load(newData);
               this.getGoodsByExpedient();
               this.alert(
@@ -1633,7 +1689,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                                   'Acta abierta',
                                   `El acta ${
                                     this.form.get('acta2').value
-                                  } fue abierta con éxito`
+                                  } fue abierta con`
                                 );
                               },
                               err => {
@@ -1804,7 +1860,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                                             'Acta abierta',
                                             `El acta ${
                                               this.form.get('acta2').value
-                                            } fue abierta con éxito`
+                                            } fue abierta con`
                                           );
                                           const btn =
                                             document.getElementById(
@@ -1910,7 +1966,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                           'Acta abierta',
                           `El acta ${
                             this.form.get('acta2').value
-                          } fue abierta con éxito`
+                          } fue abierta con`
                         );
                         /* const btn = document.getElementById('expedient-number');
                         this.render.removeClass(btn, 'disabled');
@@ -2033,10 +2089,8 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                   this.inputsReopenProceeding();
                   this.alert(
                     'success',
-                    'Acta creada con éxito',
-                    `El acta ${
-                      this.form.get('acta2').value
-                    } fue abierta exitosamente`
+                    'Acta creada con',
+                    `El acta ${this.form.get('acta2').value} fue abierta`
                   );
                 });
             },
@@ -2101,11 +2155,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
           console.log(modelEdit);
           this.serviceProcVal.editProceeding(resData.id, modelEdit).subscribe(
             res => {
-              this.alert(
-                'success',
-                'Se modificaron los datos del acta de manera éxitosa',
-                ''
-              );
+              this.alert('success', 'Se modificaron los datos del acta', '');
             },
             err => {
               this.alert(
@@ -2178,7 +2228,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
               this.form.get('statusProceeding').setValue('ABIERTA');
               this.form.get('fecCaptura').setValue(new Date());
               console.log(res);
-              this.alert('success', 'Se guardo el acta de manera éxitosa', '');
+              this.alert('success', 'Se guardo el acta', '');
             },
             err => {
               this.alert(
@@ -2286,11 +2336,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                         this.form.get('statusProceeding').setValue('CERRADO');
                         this.inputsInProceedingClose();
                         this.saveDataAct = [];
-                        this.alert(
-                          'success',
-                          'El acta fue abierta con éxito',
-                          ''
-                        );
+                        this.alert('success', 'El acta fue abierta', '');
                         /* const btn = document.getElementById('expedient-number');
                         this.render.removeClass(btn, 'disabled');
                         this.render.addClass(btn, 'enabled'); */
@@ -2381,7 +2427,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                       this.alert(
                         'success',
                         'Acta cerrada',
-                        'El acta fue cerrada con éxito'
+                        'El acta fue cerrada'
                       );
                       this.inputsInProceedingClose();
                     },
@@ -2542,7 +2588,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                                         this.alert(
                                           'success',
                                           'Acta cerrada',
-                                          'El acta fue cerrada con éxito'
+                                          'El acta fue cerrada'
                                         );
                                         this.inputsInProceedingClose();
                                       },
@@ -2602,7 +2648,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
         } else {
           this.alertQuestion(
             'question',
-            '¿Desea eliminar completamente el acta?',
+            '¿Desea eliminar el acta?',
             `Se eliminará el acta ${this.form.get('acta2').value}`,
             'Eliminar'
           ).then(q => {
@@ -2663,7 +2709,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                           this.prevProceeding();
                         }
                       }
-                      this.alert('success', 'Acta eliminada con éxito', '');
+                      this.alert('success', 'Acta eliminada', '');
                     });
                 },
                 err => {
