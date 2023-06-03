@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import {
   FilterParams,
+  ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { IMinpub } from 'src/app/core/models/catalogs/minpub.model';
@@ -22,8 +23,7 @@ import { MaintenanceListComponent } from '../maintenance-list/maintenance-list.c
 })
 export class MaintenanceOfPublicMinistriesComponent
   extends BasePage
-  implements OnInit
-{
+  implements OnInit {
   form!: FormGroup;
   formData: Minpub = {} as Minpub;
   edit: boolean = false;
@@ -183,6 +183,7 @@ export class MaintenanceOfPublicMinistriesComponent
       } else {
         this.form.get('entity').patchValue(data.state.descCondition);
       }
+      console.log(data);
       this.getDelegation(data.noDelegation);
       this.getSubDelegation(data.noSubDelegation);
     }
@@ -196,8 +197,15 @@ export class MaintenanceOfPublicMinistriesComponent
   }
 
   private getDelegation(delegation: number) {
-    this.serviceDeleg.getById(delegation).subscribe({
-      next: data => this.form.get('delegation').patchValue(data.description),
+    const params = new ListParams;
+    params['filter.id'] = delegation;
+    params['filter.etapaEdo'] = 1;
+
+    this.serviceDeleg.getAll(params).subscribe({
+      next: data => {
+        console.log(data)
+        this.form.get('delegation').patchValue(data.data[0].description)
+      },
       error: error => this.onLoadToast('error', error.erro.message, ''),
     });
   }

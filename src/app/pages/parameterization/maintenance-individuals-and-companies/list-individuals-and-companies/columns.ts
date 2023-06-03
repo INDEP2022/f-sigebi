@@ -11,8 +11,15 @@ export const COLUMNS = {
     title: 'Representante',
     sort: false,
   },
+  typePerson: {
+
+  },
   rfc: {
     title: 'R.F.C',
+    sort: false,
+  },
+  curp: {
+    title: 'C.U.R.P',
     sort: false,
   },
   street: {
@@ -61,6 +68,10 @@ export const COLUMNS = {
   },
   numberDeep: {
     title: 'No.Escritura',
+    sort: false,
+  },
+  profile: {
+    title: 'Perfil',
     sort: false,
   },
 };
