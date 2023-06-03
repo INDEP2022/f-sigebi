@@ -180,7 +180,7 @@
             </div>
 
             <div class="col">
-              <form-field [control]="form.get('ident')" label="Ident">
+              <form-field [control]="form.get('ident')" label="Identificador">
                 <input
                   type="text"
                   class="form-control disabled pt-0"
@@ -208,7 +208,7 @@
                   (fetchItems)="getAdmin($event)"
                   [class]="initialdisabled ? 'disabled' : ''"
                   control="admin"
-                  label="Admin"
+                  label="Administra"
                   bindLabel="delegation"
                   [data]="adminSelect"
                   [form]="form"></ngx-select>
