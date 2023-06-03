@@ -2448,9 +2448,7 @@ export class AbandonmentsDeclarationTradesComponent
         });
 
         Promise.all(result).then((resp: any) => {
-          this.formCcpOficio
-            .get('nombreUsuario')
-            .setValue(data.data[0].userAndName);
+          this.formCcpOficio.get('nombreUsuario').setValue(data.data[0]);
           // this.senders = new DefaultSelect(data.data, data.count);
           this.loading = false;
         });
@@ -3932,6 +3930,26 @@ export class AbandonmentsDeclarationTradesComponent
           this.formCcpOficio.get('nombreUsuario2').setValue(null);
           this.getCities__(266);
 
+          this.disabledDocs = true;
+          this.disabledMOficGest = true;
+          this.disabledMOficGest = true;
+          this.btnOficion = true;
+          this.data2 = [];
+          this.no_OficioGestion = '';
+          this.formOficio.get('oficio').setValue('');
+          this.formOficiopageFin.get('page').setValue('');
+          this.formOficiopageFin.get('fin').setValue('');
+          this.formOficio.get('remitente').setValue(null);
+          this.formOficio.get('destinatario').setValue('');
+          this.cveManagement = '';
+          this.dateCapture2 = '';
+          this.statusOfMOficioGestion = '';
+          this.formCcpOficio.get('ccp').setValue(null);
+          this.formCcpOficio.get('ccp2').setValue(null);
+          this.formCcpOficio.get('nombreUsuario').setValue(null);
+          this.formCcpOficio.get('nombreUsuario2').setValue(null);
+          this.getCities__(266);
+
           await this.getMOficioGestion(this.noVolante_, 1);
           // FALTARIA ESTO
           // GO_ITEM('BLK_NOT.NO_VOLANTE');
@@ -4345,36 +4363,6 @@ export class AbandonmentsDeclarationTradesComponent
             ''
           );
           return;
-        }
-        let OFICIO_ = null;
-        if (this.dictamenes.length > 0) {
-          let arr = [];
-
-          console.log('aa', this.dictamenes);
-
-          for (let i = 0; i < this.dictamenes.length; i++) {
-            if (this.dictamenes[i].passOfficeArmy) {
-              const cadena = this.dictamenes[i].passOfficeArmy;
-              const elemento = '?';
-              const contieneElemento = cadena.includes(elemento);
-              console.log('contieneElemento', contieneElemento);
-              if (contieneElemento != true) {
-                arr.push(this.dictamenes[i]);
-              }
-            }
-          }
-
-          console.log('ARRA', arr);
-          if (arr.length > 0) {
-            OFICIO_ = arr.reduce(
-              (max: any, obj: any) =>
-                obj.keyArmyNumber > max.keyArmyNumber ? obj : max,
-              this.dictamenes[0]
-            );
-            console.log('OFICIO_', OFICIO_);
-
-            OFICIO_ = parseInt(OFICIO_.keyArmyNumber) + 1;
-          }
         }
 
         this.declarationForm

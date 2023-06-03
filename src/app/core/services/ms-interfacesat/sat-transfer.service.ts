@@ -67,12 +67,16 @@ export class SatTransferService extends HttpService {
     return this.post(this.route.CountRegisters, body);
   }
 
-  byOffice2(body: { officeExternalKey: number | string }) {
-    return this.post('transfersat/ByOffice2', body);
+  JobAsunto3(body: {
+    jobNumber: number | string;
+    limit: number;
+    page: number;
+  }) {
+    return this.post('transfersat-v2/JobAsunto3', body);
   }
 
-  getPgrTransfer(params: _Params) {
+  getPgrTransfers(params: _Params) {
     // TODO:corregir endpoint
-    return this.get('', params);
+    return this.get('pgr-transfer', params);
   }
 }

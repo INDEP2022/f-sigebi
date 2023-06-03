@@ -273,6 +273,7 @@ export class GoodFormComponent extends AlertButton implements OnInit {
   resetForm() {
     // this.service.formControl.
     this.service.good = null;
+    this.service.formGood.reset();
     // this.form.reset();
     this.formControl.reset();
     this.service.bienesPar = [];

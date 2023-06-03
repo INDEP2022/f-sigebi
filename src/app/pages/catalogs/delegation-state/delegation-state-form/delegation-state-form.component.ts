@@ -74,7 +74,12 @@ export class DelegationStateFormComponent extends BasePage implements OnInit {
 
   getStates(params: ListParams) {
     this.stateOfRepublicService.getAll(params).subscribe({
-      next: data => (this.states = new DefaultSelect(data.data, data.count)),
+      next: data => {
+        this.states = new DefaultSelect(data.data, data.count);
+      },
+      error: () => {
+        this.states = new DefaultSelect();
+      },
     });
   }
 
