@@ -39,6 +39,7 @@ export abstract class BasePageWidhtDinamicFilters<T = any> extends BasePage {
   }
 
   ngOnInit(): void {
+    debugger;
     this.dinamicFilterUpdate();
     this.searchParams();
   }
@@ -83,6 +84,7 @@ export abstract class BasePageWidhtDinamicFilters<T = any> extends BasePage {
   }
 
   getData() {
+    debugger;
     this.loading = true;
     let params = {
       ...this.params.getValue(),

@@ -102,6 +102,7 @@ export class ProceedingInfoComponent implements OnInit {
     this.service.totalProceedings = 0;
     this.registro = false;
     this.service.formJustification.reset();
+    this.service.formGood.reset();
     this.service.data = [];
     this.service.totalGoods = 0;
     this.service.dataForAdd = [];
