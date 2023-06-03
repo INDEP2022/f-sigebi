@@ -31,8 +31,8 @@ import { showHideErrorInterceptorService } from '../../../common/services/show-h
         transform-origin: 40px 40px;
         animation: lds-spinner 1.2s linear infinite;
       }
-      .lds-spinner div:after {
-        content: ' ';
+      /* .lds-spinner div:after {
+        
         display: block;
         position: absolute;
         top: 3px;
@@ -41,8 +41,8 @@ import { showHideErrorInterceptorService } from '../../../common/services/show-h
         height: 18px;
         border-radius: 20%;
         background: #fff;
-      }
-      .lds-spinner div:nth-child(1) {
+      } */
+      /* .lds-spinner div:nth-child(1) {
         transform: rotate(0deg);
         animation-delay: -1.1s;
       }
@@ -89,15 +89,15 @@ import { showHideErrorInterceptorService } from '../../../common/services/show-h
       .lds-spinner div:nth-child(12) {
         transform: rotate(330deg);
         animation-delay: 0s;
-      }
+      } */
       .progress-number {
-        margin-top: 50px;
         font-weight: bold;
         color: white;
         position: absolute;
-        position: absolute;
-        margin-left: 6.2%;
-        margin-top: 15%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 50px;
       }
       @keyframes lds-spinner {
         0% {
@@ -141,7 +141,8 @@ export class LoadingPercentComponent implements OnInit {
       }
     );
     setTimeout(() => {
-      if (this.progreso === '100.00') this.loader = false;
+      if (Number(this.progreso) >= 99 && Number(this.progreso) < 100)
+        this.loader = false;
       if (this.loader) {
         this.loadingPercent();
       }
