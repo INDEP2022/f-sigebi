@@ -1750,7 +1750,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         this.clearInputs();
         this.fillIncomeProceeding(dataRes, 'prevProceeding');
         /*  if (this.numberProceeding == 0) {
-          
+
           /* this.prevProce = false;
         } */
       }
