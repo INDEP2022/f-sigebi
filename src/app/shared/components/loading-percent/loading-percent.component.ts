@@ -131,21 +131,7 @@ export class LoadingPercentComponent implements OnInit {
   
   loadingPercent(){
     
-    this.progressPercentService.getPercent().pipe(
-      catchError(error => {
-        let errorMessage = '';
-        if (error instanceof ErrorEvent) {
-          // client-side error
-          errorMessage = `Client-side error: ${error.error.message}`;
-        } else {
-          // backend error
-          errorMessage = `Server-side error: ${error.status} ${error.message}`;
-        }
-        
-    
-        return "0"
-      })
-    ).subscribe((resp:any)=>{
+    this.progressPercentService.getPercent().subscribe((resp:any)=>{
       this.progreso = resp.percent
     })
     setTimeout(() => {

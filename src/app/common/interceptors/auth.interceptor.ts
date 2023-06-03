@@ -105,7 +105,7 @@ export class AuthInterceptor extends BasePage implements HttpInterceptor {
       return;
     }
 
-    if (status === 401) {
+    if (status === 401 && error.url.indexOf("firebase")<0) {
       localStorage.clear();
       sessionStorage.clear();
       let message = 'La sesión expiró';
@@ -120,6 +120,10 @@ export class AuthInterceptor extends BasePage implements HttpInterceptor {
       }
       this.router.navigate(['/auth/login']);
       return;
+    }else if(status === 401 && error.url.indexOf("firebase")>=0){
+      console.log("ERROR FIREBASE");
+      
+      return
     }
     if (status === 403) {
       this.router.navigate(['/forbidden']);

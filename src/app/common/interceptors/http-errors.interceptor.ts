@@ -116,13 +116,17 @@ export class HttpErrorsInterceptor extends BasePage implements HttpInterceptor {
       //this.onLoadToast('warning', 'Advertencia', message);
       return;
     }
-    if (status === 401) {
+    if (status === 401 && error.url.indexOf("firebase")<0) {
       localStorage.clear();
       sessionStorage.clear();
       message = 'La sesión expiró';
       this.onLoadToast('error', 'No autorizado', message);
       this.router.navigate(['/auth/login']);
       return;
+    }else if(status === 401 && error.url.indexOf("firebase")>=0){
+      console.log("ERROR FIREBASE");
+      
+      return
     }
     if (status === 403) {
       this.router.navigate(['/forbidden']);
