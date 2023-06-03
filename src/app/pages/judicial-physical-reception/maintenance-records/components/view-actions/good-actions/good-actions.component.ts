@@ -47,7 +47,7 @@ export class GoodActionsComponent extends AlertButton implements OnInit {
   @Output() updateTable = new EventEmitter();
   @Output() addGoodEvent =
     new EventEmitter<IDetailProceedingsDeliveryReception>();
-  formGood: FormGroup;
+
   formAction: FormGroup;
   loading = false;
   selectedsForUpdate: IDetailProceedingsDeliveryReception[] = [];
@@ -78,6 +78,14 @@ export class GoodActionsComponent extends AlertButton implements OnInit {
     this.formAction = this.fb.group({
       action: [null],
     });
+  }
+
+  get formGood() {
+    return this.service.formGood;
+  }
+
+  set formGood(value) {
+    this.service.formGood = value;
   }
 
   ngOnInit(): void {
@@ -217,7 +225,7 @@ export class GoodActionsComponent extends AlertButton implements OnInit {
           // dataObservableFn: this.proceedingService.getAll2,
           idSelect: 'id',
           labelSelect: 'id',
-          label: 'No. Acta',
+          label: 'Especifique el nuevo número del acta del bien',
           paramSearch: 'filter.id',
           path: 'proceeding/api/v1/proceedings-delivery-reception',
           form: this.fb.group({
