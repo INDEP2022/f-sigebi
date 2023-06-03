@@ -25,7 +25,7 @@ export const SIAB_COLUMNS = {
   },
   ssubtypeDescription: {
     title: 'Descripción del Sub subtipo',
-    type: 'number',
+    type: 'string',
   },
   sssubtypeId: {
     title: 'Sssubtipo',
@@ -33,7 +33,7 @@ export const SIAB_COLUMNS = {
   },
   sssubtypeDescription: {
     title: 'Descripción del Sssubtipo',
-    type: 'number',
+    type: 'string',
   },
   creationUser: {
     title: 'Creado por',

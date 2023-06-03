@@ -213,7 +213,7 @@ export class ScheduledMaintenanceComponent
         showError: false,
         initialCharge: false,
         widthButton: true,
-        placeholder: '',
+        placeholder: 'No. Bien',
       },
       this.selectActa
     );
