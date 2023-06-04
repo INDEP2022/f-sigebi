@@ -2780,8 +2780,8 @@ export class AbandonmentsDeclarationTradesComponent
         this.formOficiopageFin
           .get('fin')
           .setValue(this.m_oficio_gestion.text2 + this.m_oficio_gestion.text3);
-        this.m_oficio_gestion.sender = this.m_oficio_gestion.text1 =
-          this.formOficiopageFin.get('page').value;
+        this.m_oficio_gestion.sender = this.formOficio.get('remitente').value;
+        this.m_oficio_gestion.text1 = this.formOficiopageFin.get('page').value;
         this.m_oficio_gestion.nomPersExt =
           this.formOficio.get('destinatario').value;
         await this.updateMOficioGestion__(this.m_oficio_gestion);

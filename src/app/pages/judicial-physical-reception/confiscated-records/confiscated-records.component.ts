@@ -132,7 +132,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         sort: false,
       },
       'good.goodClassNumber': {
-        title: 'No Clasificación',
+        title: 'No. Clasificación',
         type: 'number',
         sort: false,
         valuePrepareFunction: (cell: any, row: any) => {
@@ -2911,6 +2911,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                     };
                     this.serviceGood.PAValidaCambio(model).subscribe(res => {
                       const { P5 } = JSON.parse(JSON.stringify(res));
+                      console.log(P5);
                       //!Forzando debería ser mayor y esta menor
                       if (P5 > 0) {
                         this.alert(
@@ -3406,17 +3407,23 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   async applyEdoFisOne(e: any) {
     console.log(this.selectActData);
     console.log(e);
-    const edoFis: any = await this.getIndEdoFisAndVColumna(this.selectActData);
+    const edoFis: any = await this.getIndEdoFisAndVColumna(
+      this.selectActData.good
+    );
     console.log(edoFis);
     const generalModel: Map<string, any> = new Map();
-    generalModel.set('id', parseInt(this.selectActData.id.toString()));
-    generalModel.set('goodId', parseInt(this.selectActData.id.toString()));
+    generalModel.set('id', parseInt(this.selectActData.good.id.toString()));
+    generalModel.set(
+      'goodId',
+      parseInt(this.selectActData.good.goodId.toString())
+    );
     generalModel.set(`val${edoFis.V_NO_COLUMNA}`, e);
     const jsonModel = JSON.parse(
       JSON.stringify(Object.fromEntries(generalModel))
     );
     this.serviceGood.updateWithoutId(jsonModel).subscribe(
       res => {
+        this.getGoodsActFn();
         this.alert('success', 'El estado físico del Bien fue cambiado', '');
       },
       err => {
