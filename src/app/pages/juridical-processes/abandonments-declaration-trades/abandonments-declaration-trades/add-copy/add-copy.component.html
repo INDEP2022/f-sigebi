@@ -37,12 +37,12 @@
                   [optionTemplate]="userOption">
                 </ngx-select>
                 <ng-template #userLabel let-item="item">
-                  {{ item.id }}
+                  {{ item.id }} - {{ item.name }}
                   <!-- {{ item.name }}-->
                 </ng-template>
                 <ng-template #userOption let-item="item">
                   <div [title]="item.id + '-' + item.name">
-                    {{ item.id }}
+                    {{ item.id }} - {{ item.name }}
                     <!--  {{ item.name }}-->
                   </div>
                 </ng-template>
@@ -70,7 +70,7 @@
         <button
           type="button"
           class="btn btn-info active"
-          [disabled]="!form"
+          [disabled]="!form.valid"
           (click)="agregarExterno()">
           Agregar
         </button>

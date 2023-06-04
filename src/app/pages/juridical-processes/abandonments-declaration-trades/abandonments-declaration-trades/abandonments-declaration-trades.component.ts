@@ -560,7 +560,20 @@ export class AbandonmentsDeclarationTradesComponent
     this.declarationForm.get('criminalCase').setValue(data.criminalCase);
     await this.onLoadGoodList('all');
     await this.validDesahogo(data);
-    await this.checkDictum(data.wheelNumber, 'all');
+
+    if (localStorage.getItem('abandonosDictamen')) {
+      let aaa = localStorage.getItem('abandonosDictamen');
+      const user = aaa;
+      console.log('AAAAAAAAAA', user);
+      await this.checkDictum(user, 'id');
+      localStorage.removeItem('abandonosDictamen');
+      // this.selectData(user)
+      this.loading = true;
+    } else {
+      await this.checkDictum(data.wheelNumber, 'all');
+    }
+
+    // await this.checkDictum(data.wheelNumber, 'all');
     // await this.checkDictum_(data.wheelNumber, 'all');
     await this.getExpediente(data.expedientNumber);
     await this.getMOficioGestion(data.wheelNumber, 1);
@@ -961,9 +974,9 @@ export class AbandonmentsDeclarationTradesComponent
         .setValue(TEXTOS.returnText2_DAB() + TEXTOS.returnText2_A_DAB());
     } else if (event == 'PGR') {
       let text1 = `  
-        LIC. JORGE F. GIL RODRÍGUEZ'
+        LIC. JORGE F. GIL RODRÍGUEZ
 
-        COORDINADOR DE DESTINO DE BIENES MUEBLES'
+        COORDINADOR DE DESTINO DE BIENES MUEBLES
 
         Hago referencia al numerario que a continuación se menciona:
         
@@ -978,9 +991,9 @@ export class AbandonmentsDeclarationTradesComponent
         .setValue(TEXTOS.returnText2_PGR(averig) + '');
     } else {
       let text1 = `  
-        LIC. JORGE F. GIL RODRÍGUEZ'
+        LIC. JORGE F. GIL RODRÍGUEZ
 
-        COORDINADOR DE DESTINO DE BIENES MUEBLES'
+        COORDINADOR DE DESTINO DE BIENES MUEBLES
 
         Hago referencia al numerario que a continuación se menciona:
         
@@ -1397,6 +1410,7 @@ export class AbandonmentsDeclarationTradesComponent
 
   goNextForm() {
     localStorage.setItem('abandonosData', this.noVolante_);
+    localStorage.setItem('abandonosDictamen', this.dictamen.id + '');
     // alert('SI');
     // const route = `pages/general-processes/scan-request/scan`;
     this.router.navigate([`/pages/general-processes/scan-documents`], {
@@ -2740,37 +2754,37 @@ export class AbandonmentsDeclarationTradesComponent
             this.disabledDocs = false;
           }
         }
-        console.log('AA', this.formCcpOficio.get('nombreUsuario2').value);
-        let existeCopy = this.copyOficio;
-        if (this.copyOficio.length > 0) {
-          for (let i = 0; i < this.copyOficio.length; i++) {
-            if (this.copyOficio[i].managementNumber == null) {
-              let obj: any = {
-                managementNumber: this.no_OficioGestion,
-                addresseeCopy: this.copyOficio[i].addresseeCopy,
-                delDestinationCopyNumber: null,
-                recordNumber: null,
-                personExtInt: this.copyOficio[i].personExtInt,
-                nomPersonExt: this.copyOficio[i].nomPersonExt,
-              };
+        // console.log('AA', this.formCcpOficio.get('nombreUsuario2').value);
+        // let existeCopy = this.copyOficio;
+        // if (this.copyOficio.length > 0) {
+        //   for (let i = 0; i < this.copyOficio.length; i++) {
+        //     if (this.copyOficio[i].managementNumber == null) {
+        //       let obj: any = {
+        //         managementNumber: this.no_OficioGestion,
+        //         addresseeCopy: this.copyOficio[i].addresseeCopy,
+        //         delDestinationCopyNumber: null,
+        //         recordNumber: null,
+        //         personExtInt: this.copyOficio[i].personExtInt,
+        //         nomPersonExt: this.copyOficio[i].nomPersonExt,
+        //       };
 
-              this.createCopyOficiManagement(obj);
-            } else {
-            }
-          }
-        }
-        for (let i = 0; i < this.copyOficio.length; i++) {
-          if (this.copyOficio[i].managementNumber == null) {
-            let obj: any = {
-              managementNumber: this.no_OficioGestion,
-              addresseeCopy: '',
-              delDestinationCopyNumber: null,
-              personExtInt: 'I',
-              nomPersonExt: null,
-            };
-            this.updateCopyOficeManag(obj, this.copyOficio[0].id);
-          }
-        }
+        //       this.createCopyOficiManagement(obj);
+        //     } else {
+        //     }
+        //   }
+        // }
+        // for (let i = 0; i < this.copyOficio.length; i++) {
+        //   if (this.copyOficio[i].managementNumber == null) {
+        //     let obj: any = {
+        //       managementNumber: this.no_OficioGestion,
+        //       addresseeCopy: '',
+        //       delDestinationCopyNumber: null,
+        //       personExtInt: 'I',
+        //       nomPersonExt: null,
+        //     };
+        //     this.updateCopyOficeManag(obj, this.copyOficio[0].id);
+        //   }
+        // }
         // UPDATE COPIAS_OFICIO_GESTION //
 
         const textP = this.formOficiopageFin.get('fin').value;
@@ -2796,6 +2810,7 @@ export class AbandonmentsDeclarationTradesComponent
         this.formOficiopageFin
           .get('fin')
           .setValue(this.m_oficio_gestion.text2 + this.m_oficio_gestion.text3);
+        this.m_oficio_gestion.text1 = this.formOficiopageFin.get('fin').value;
 
         await this.updateMOficioGestion__(this.m_oficio_gestion);
         await this.getMOficioGestion(this.m_oficio_gestion.managementNumber, 2);
@@ -3729,10 +3744,10 @@ export class AbandonmentsDeclarationTradesComponent
       return;
     }
 
-    // if (this.m_oficio_gestion.statusOf == 'ENVIADO') {
-    //   this.alert('warning', 'El oficio ya esta enviado no puede borrar', '');
-    //   return;
-    // }
+    if (this.m_oficio_gestion.statusOf == 'ENVIADO') {
+      this.alert('warning', 'El oficio ya esta enviado no puede borrar', '');
+      return;
+    }
 
     const TOOLBAR_USUARIO = this.token.decodeToken().preferred_username;
     console.log(this.m_oficio_gestion.insertUser, 'USER', TOOLBAR_USUARIO);
@@ -4948,9 +4963,11 @@ export class AbandonmentsDeclarationTradesComponent
       }
     );
   }
+  // CREAR C.P.P. //
   openModalCopy(data: boolean) {
     this.openForm({
       dataEdit: data,
+      managementNumber: this.m_oficio_gestion.managementNumber,
     });
   }
   openForm(context?: Partial<AddCopyComponent>) {
@@ -5003,6 +5020,9 @@ export class AbandonmentsDeclarationTradesComponent
         }
         this.copyOficio = arr;
       }
+    });
+    modalRef.content.refresh.subscribe((next: any) => {
+      this.getCopyOficioGestion__(this.m_oficio_gestion.managementNumber);
     });
   }
 
