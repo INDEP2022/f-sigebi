@@ -131,7 +131,10 @@ export class ThirdpartiesPossessionValidationComponent
     goodNumber: number;
     steeringwheelNumber?: number;
     nbOrigin?: string;
+    steeringwheelNumber?: number;
+    nbOrigin?: string;
     status?: any;
+    id?: number;
     id?: number;
     description?: string;
   }[] = [];
