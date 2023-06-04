@@ -461,7 +461,11 @@
                   Aceptar Aclaraci&oacute;n&#47;Improcedencia
                 </button>
               </div>
-              <div *ngIf="notification?.answered != 'ACLARADA'">
+              <div
+                *ngIf="
+                  notification?.answered != 'ACLARADA' ||
+                  notification?.answered === 'RECHAZADA'
+                ">
                 <div
                   class="p-2"
                   *ngIf="
