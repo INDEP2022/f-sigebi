@@ -2,10 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
-import {
-  FilterParams,
-  SearchFilter,
-} from 'src/app/common/repository/interfaces/list-params';
+import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
 import { ClassifyGoodService } from 'src/app/core/services/ms-classifygood/ms-classifygood.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
@@ -62,7 +59,8 @@ export class EdoFisicoComponent extends BasePage implements OnInit {
           const values = ['MALO', 'BUENO', 'REGULAR', 'OTRO'];
           instance.values.emit(values);
           instance.toggle.subscribe((data: any) => {
-            data.row.good[`val${data.row.noColumna}`] = data.toggle == 'OTRO' ? null : data.toggle;
+            data.row.good[`val${data.row.noColumna}`] =
+              data.toggle == 'OTRO' ? null : data.toggle;
           });
         },
       },
@@ -82,7 +80,7 @@ export class EdoFisicoComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     /* this.verifyEstatus(); */
-    this.dataGoods = new LocalDataSource(this.goodData)
+    this.dataGoods = new LocalDataSource(this.goodData);
   }
 
   close() {
@@ -90,15 +88,17 @@ export class EdoFisicoComponent extends BasePage implements OnInit {
   }
 
   changeAll() {
-
     try {
       for (let item of this.dataGoods['data']) {
         console.log(item);
-  
+
         const generalModel: Map<string, any> = new Map();
         generalModel.set('id', parseInt(item.good.id.toString()));
         generalModel.set('goodId', parseInt(item.good.goodId.toString()));
-        generalModel.set(`val${item.noColumna}`, item.good[`val${item.noColumna}`]);
+        generalModel.set(
+          `val${item.noColumna}`,
+          item.good[`val${item.noColumna}`]
+        );
         const jsonModel = JSON.parse(
           JSON.stringify(Object.fromEntries(generalModel))
         );
@@ -113,14 +113,15 @@ export class EdoFisicoComponent extends BasePage implements OnInit {
         );
       }
     } catch (error) {
-      this.alert('error','Se presentó un error inesperado','Se presentó un error inesperado al actualizar el estado físico de los Bienes. Por favor intentelo nuevamente. \n \n Si el error persiste contacte con el administrador.')
-    }finally{
+      this.alert(
+        'error',
+        'Se presentó un error inesperado',
+        'Se presentó un error inesperado al actualizar el estado físico de los Bienes. Por favor intentelo nuevamente. \n \n Si el error persiste contacte con el administrador.'
+      );
+    } finally {
       this.alert('success', 'Se modificó el estatus de los Bienes', '');
       this.bsModel.content.callback(this.dataGoods['data']);
     }
-
-    
-    
   }
 
   selectRow(e: any) {
@@ -323,5 +324,4 @@ export class EdoFisicoComponent extends BasePage implements OnInit {
       }
     });
   }
-
 }
