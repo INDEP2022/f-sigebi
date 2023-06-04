@@ -42,3 +42,8 @@ export interface IUpdateActasEntregaRecepcion {
   universalFolio: string;
   userToolbar: string;
 }
+
+export interface IUpdateActasEntregaRecepcionDelegation {
+  minutesNumber: number;
+  delegation2Number: number;
+}
