@@ -1,3 +1,5 @@
+import { DatePipe } from '@angular/common';
+
 export const SHIFT_CHANGE_HISTORY_COLUMNS = {
   numberSteeringwheel: {
     title: 'No. Volante',
@@ -13,6 +15,11 @@ export const SHIFT_CHANGE_HISTORY_COLUMNS = {
     title: 'Fecha Reasignación',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (date: Date) => {
+      var raw = new Date(date);
+      var formatted = new DatePipe('en-EN').transform(raw, 'dd/MM/yyyy');
+      return formatted;
+    },
   },
   personbefore: {
     title: 'Persona Anterior',
