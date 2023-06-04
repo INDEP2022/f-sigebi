@@ -292,26 +292,30 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
         this.getGoodsFn();
       });
 
-    this.paramsDataGoodsAct.pipe(takeUntil(this.$unSubscribe))
-    .subscribe(params => {
-      this.getGoodsActFn()
-    });
+    this.paramsDataGoodsAct
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(params => {
+        this.getGoodsActFn();
+      });
 
-    this.paramsActNavigate.pipe(takeUntil(this.$unSubscribe))
-    .subscribe(params => {
-     console.log(params)
-     console.log(params.page)
-     console.log(this.proceedingData.length)
-     if(this.proceedingData.length > 0){
-      this.loading = true
-      this.dataGoodAct.load([])
-      const dataRes = JSON.parse(
-       JSON.stringify(this.proceedingData[params.page - 1])
-     );
-      this.fillIncomeProceeding(dataRes, 'nextProceeding');
-     }
-     
-    });
+    this.paramsActNavigate
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(params => {
+        console.log('Sís');
+        console.log(this.paramsActNavigate);
+        console.log(this.paramsActNavigate.getValue().page);
+        console.log(this.proceedingData.length);
+        this.dataGoodAct.load([]);
+        if (this.proceedingData.length > 0) {
+          this.loading = true;
+          const dataRes = JSON.parse(
+            JSON.stringify(
+              this.proceedingData[this.paramsActNavigate.getValue().page - 1]
+            )
+          );
+          this.fillIncomeProceeding(dataRes, 'nextProceeding');
+        }
+      });
   }
 
   prepareForm() {
@@ -511,8 +515,8 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
 
         this.serviceGoodProcess.getAccepGoodActa(modelActa).subscribe(
           res => {
-            console.log(res)
-            if(typeof res == 'number'  && res > 0){
+            console.log(res);
+            if (typeof res == 'number' && res > 0) {
               di_disponible = true;
               this.serviceGood
                 .getById(`${element.goodId}&filter.labelNumber=$eq:6`)
@@ -823,7 +827,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
       .getAllFilterDetail(
         `filter.fileNumber=$eq:${
           this.numberExpedient
-        }&filter.status=$not:ADM&filter.labelNumber=$not:6&filter.detail.actNumber=$not:$null&${paramsF.getParams()}`
+        }&filter.status=$not:ADM&filter.labelNumber=$not:6&${paramsF.getParams()}`
       )
       .subscribe({
         next: async (res: any) => {
@@ -848,6 +852,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
         error: (err: any) => {
           console.error(err);
           this.loading = false;
+          this.totalItemsDataGoods = 0;
         },
       });
   }
@@ -889,7 +894,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
         .getAllFilterDetail(
           `filter.fileNumber=$eq:${
             this.form.get('expediente').value
-          }&filter.status=$not:ADM&filter.labelNumber=$not:6&filter.detail.actNumber=$not:$null&${paramsF.getParams()}`
+          }&filter.status=$not:ADM&filter.labelNumber=$not:6&${paramsF.getParams()}`
         )
         .subscribe({
           next: async (res: any) => {
@@ -1058,10 +1063,13 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
     this.serviceDetailProc.getAllFiltered(paramsF.getParams()).subscribe(
       res => {
         this.dataGoodAct.load(res.data);
+        this.totalItemsDataGoodsAct = res.count;
         this.loading = false;
       },
       err => {
         console.log(err);
+        this.dataGoodAct.load([]);
+        this.totalItemsDataGoods = 0;
         this.loading = false;
       }
     );
@@ -1191,6 +1199,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
     this.totalItemsDataGoodsAct = 0;
     this.paramsDataGoods = new BehaviorSubject<ListParams>(new ListParams());
     this.paramsDataGoodsAct = new BehaviorSubject<ListParams>(new ListParams());
+    this.paramsActNavigate = new BehaviorSubject<ListParams>(new ListParams());
 
     this.dataGoods.load([]);
 
@@ -1227,7 +1236,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
   }
 
   getGoodsByExpedient() {
-    this.clearInputs()
+    this.clearInputs();
     const paramsF = new FilterParams();
     paramsF.addFilter(
       'numFile',
@@ -1460,7 +1469,11 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
               JSON.stringify(res.data[0]['numSubType'])
             );
             no_type = parseInt(type.id);
-            if (this.form.get('statusProceeding').value === 'CERRADA') {
+            if (
+              ['CERRADA', 'CERRADO'].includes(
+                this.form.get('statusProceeding').value
+              )
+            ) {
               this.alert(
                 'warning',
                 'Acta cerrada',
@@ -1618,7 +1631,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
       ['CERRADO', 'CERRADA'].includes(this.form.get('statusProceeding').value)
     ) {
       this.alert(
-        'error',
+        'warning',
         'El acta está cerrada',
         'El acta ya esta cerrada, no puede realizar modificaciones a esta'
       );
@@ -1628,7 +1641,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
         format(new Date(), 'MM-yyyy')
     ) {
       this.alert(
-        'error',
+        'warning',
         'Error en la fecha de elaboración',
         'No puede realizar modificaciones a esta acta, por estar fuera del mes'
       );
@@ -1661,7 +1674,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
               res => {
                 console.log(this.dataGoodAct);
                 this.goodData = this.goodData.filter(
-                  (e: any) => e.id != this.selectActData.id
+                  (e: any) => e.id != this.selectActData.good.id
                 );
                 /* this.dataGoodAct.load(this.goodData); */
                 this.getGoodsActFn();
@@ -1697,6 +1710,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
             );
             /* this.dataGoodAct.load(this.goodData); */
             this.getGoodsActFn();
+
             console.log(this.goodData);
             this.saveDataAct = this.saveDataAct.filter(
               (e: any) => e.id != this.selectActData.good.id
@@ -2402,6 +2416,8 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
               this.form.get('statusProceeding').setValue('ABIERTA');
               this.form.get('fecCaptura').setValue(new Date());
               console.log(res);
+              this.proceedingData.push(res);
+              this.navigateProceedings = true;
               this.idProceeding = JSON.parse(JSON.stringify(res)).id;
               this.alert('success', 'Se guardo el acta', '');
             },
@@ -2846,11 +2862,17 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                   this.serviceDetailProc
                     .PADelActaEntrega(realData.id)
                     .subscribe(async res => {
-
+                      this.alert(
+                        'success',
+                        'El acta fue eliminada',
+                        'Se recargará la página'
+                      );
                       this.clearInputs();
-                      this.loading = true
-                      this.form.get('expediente').setValue(this.numberExpedient);
-    this.goodsByExpediente();
+                      this.loading = true;
+                      this.form
+                        .get('expediente')
+                        .setValue(this.numberExpedient);
+                      this.goodsByExpediente();
 
                       /* this.form
                         .get('expediente')
@@ -2867,7 +2889,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                           }
                         })
                       ); */
-                      
+
                       /* this.getGoodsByExpedient();
                       this.form.get('statusProceeding').reset();
                       if (this.proceedingData.length === 1) {

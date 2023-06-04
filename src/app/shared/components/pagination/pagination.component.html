@@ -22,7 +22,9 @@
         </div>
       </div>
       <div class="paginator-range-actions">
-        <div *ngIf="paginatorRangeLabel" class="paginator-range-label">{{ getRangeLabel }}</div>
+        <div *ngIf="paginatorRangeLabel" class="paginator-range-label">
+          {{ getRangeLabel }}
+        </div>
         <paginate
           [totalItems]="totalItems"
           [itemsPerPage]="limit.value"

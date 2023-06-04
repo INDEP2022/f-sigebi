@@ -5,7 +5,7 @@ export const DELEGATION_COLUMS = {
     sort: false,
   },
   description: {
-    title: 'Desc',
+    title: 'Descripción',
     type: 'string',
     sort: false,
   },

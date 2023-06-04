@@ -33,6 +33,8 @@ export class DelegationFormComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
+    this.getStates(new ListParams());
+    this.getZones(new ListParams());
   }
 
   private prepareForm() {
@@ -91,22 +93,23 @@ export class DelegationFormComponent extends BasePage implements OnInit {
   }
 
   getStates(params: ListParams) {
-    this.delegationService.getStates(params).subscribe({
-      next: data => (this.states = new DefaultSelect(data.data, data.count)),
+    this.delegationService.getStates(params).subscribe(data => {
+      this.states = new DefaultSelect(data.data, data.count);
     });
   }
 
   getZones(params: ListParams) {
-    this.delegationService.getZones(params).subscribe({
-      next: data => (this.zones = new DefaultSelect(data.data, data.count)),
+    this.delegationService.getZones(params).subscribe(item => {
+      this.zones = new DefaultSelect(item.data, item.count);
     });
   }
+
   stateChange(state: IStateOfRepublic) {
-    console.log(state);
+    this.delegationForm.controls.description.setValue(state.id);
   }
 
   zoneChange(zone: IZoneGeographic) {
-    console.log(zone);
+    this.delegationForm.controls.description.setValue(zone.id);
   }
 
   close() {
