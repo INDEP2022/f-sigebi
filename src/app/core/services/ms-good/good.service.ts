@@ -72,13 +72,13 @@ export class GoodService extends HttpService {
   }
 
   getStatusAndProcess(model: IGoodScreenACtionStatusProcess) {
-    return this.post<IResponse<IGoodStatusFinalProcess>>(
+    return this.post<IGoodStatusFinalProcess>(
       GoodEndpoints.GoodGetStatusAndProcess,
       model
     ).pipe(
       map(x => {
         console.log(x);
-        return { status: x.data.statusFinal, process: x.data.process };
+        return { status: x.statusFinal, process: x.process };
       })
     );
   }
