@@ -113,6 +113,8 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
   subdelegationNew: number;
   idDelActa: number;
   idDelDicta: number;
+  idArea: number;
+  user: IUserAccessAreaRelational;
   flyerNumber: number;
   historyColumns: IHistoryOfficial[] = [];
   usersFilter: IUserAccessAreaRelational[] = [];
@@ -139,13 +141,13 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
     this.dictumSettings = {
       ...this.settings,
       actions: false,
-      selectMode: 'multi',
+      // selectMode: 'multi',
       columns: { ...SHIFT_CHANGE_DICTUM_COLUMNS },
     };
     this.proceedingSettings = {
       ...this.settings,
       actions: false,
-      selectMode: 'multi',
+      // selectMode: 'multi',
       columns: { ...SHIFT_CHANGE_PROCEEDINGS_COLUMNS },
     };
     this.pageParams = this.fileUpdComService.juridicalShiftChangeParams;
@@ -286,33 +288,23 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
       this.turnForm.updateValueAndValidity();
       return;
     }
-    // const body = {
-    //   flyerNumber: this.notifData.wheelNumber,
-    //   reassignmentDate: format(new Date(), 'dd/MM/yyyy'),
-    //   officialNumber: this.idDelDicta,
-    //   personPrevious: this.preUser,
-    //   areaDestinationPrevious: this.notifData.departamentDestinyNumber,
-    //   personNew: this.formControls.newUser.value?.user,
-    //   argument: this.formControls.argument.value,
-    // };
-    this.preUser;
+
+    // this.preUser;
     const body: IHistoryOfficial = {
       numberSteeringwheel: this.notifData.wheelNumber,
       datereassignment: format(new Date(), 'dd/MM/yyyy'),
       numberJob: this.idDelDicta,
-      personbefore: this.formControls.newUser.value?.user,
+      personbefore: this.formControls.prevUser.value?.user,
       areaDestinationbefore: this.notifData.departamentDestinyNumber,
       personnew: this.formControls.newUser.value?.user,
-      areaDestinationnew: this.formControls.newUser.value?.departamentNumber,
+      areaDestinationnew: this.idArea,
       argument: this.formControls.argument.value,
       numberRecord: this.notifData.registerNumber,
       cveJobExternal: this.notifData.officeExternalKey,
       numberOftheDestinationbefore: this.notifData.delDestinyNumber,
       numberSubdelDestinationbefore: this.notifData.subDelDestinyNumber,
-      numberOftheDestinationnew:
-        this.formControls.newUser.value?.delegationNumber,
-      numberSubdelDestinationnew:
-        this.formControls.newUser.value?.subdelegationNumber,
+      numberOftheDestinationnew: this.delegationNew,
+      numberSubdelDestinationnew: this.subdelegationNew,
       nbOrigin: this.origin,
     };
     console.log(
@@ -401,7 +393,9 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
       next: resp => {
         console.log(resp);
       },
-      error: () => {},
+      error: () => {
+        this.alert('info', 'La delegacion actual es igual a la anterior', '');
+      },
     });
   }
 
@@ -412,7 +406,7 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
         console.log(resp);
       },
       error: err => {
-        console.log(err);
+        this.alert('info', 'La delegacion actual es igual a la anterior', '');
       },
     });
     // });
@@ -467,7 +461,7 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
     let params: IUpdateDelDictation = {
       ofDictaNumber: event.data.id,
       delegationDictateNumber:
-        this.formControls.newUser.value?.departamentNumber,
+        this.formControls.newUser?.value.delegationNumber,
     };
     this.dictation = params;
     console.log(this.dictation);
@@ -478,7 +472,7 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
     this.idDelActa = event.data.id;
     let params: IUpdateActasEntregaRecepcionDelegation = {
       minutesNumber: event.data.id,
-      delegation2Number: this.formControls.newUser.value?.departamentNumber,
+      delegation2Number: this.formControls.newUser?.value.subdelegationNumber,
     };
     this.acta = params;
     console.log(this.acta);
@@ -494,7 +488,12 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
     this.docRegisterService.getUsersSegAreas(params.getParams()).subscribe({
       next: data => {
         this.users = new DefaultSelect(data.data, data.count);
-        console.log(data);
+        data.data.forEach(data => {
+          this.delegationNew = data.delegation1Number;
+          this.subdelegationNew = data.subdelegationNumber;
+          this.idArea = data.departament1Number;
+          console.log(data);
+        });
       },
       error: () => {
         this.users = new DefaultSelect();
