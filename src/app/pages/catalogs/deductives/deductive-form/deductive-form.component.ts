@@ -21,6 +21,7 @@ export class DeductiveFormComponent extends BasePage implements OnInit {
   title: string = 'Deductiva';
   edit: boolean = false;
   deductive: IDeductive;
+
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
