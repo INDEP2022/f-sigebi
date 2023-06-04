@@ -294,10 +294,11 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
         this.getGoodsFn();
       });
 
-    this.paramsDataGoodsAct.pipe(takeUntil(this.$unSubscribe))
-    .subscribe(params => {
-      this.getGoodsActFn()
-    });
+    this.paramsDataGoodsAct
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(params => {
+        this.getGoodsActFn();
+      });
 
     this.paramsActNavigate.pipe(takeUntil(this.$unSubscribe))
     .subscribe(params => {
@@ -513,8 +514,8 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
 
         this.serviceGoodProcess.getAccepGoodActa(modelActa).subscribe(
           res => {
-            console.log(res)
-            if(typeof res == 'number'  && res > 0){
+            console.log(res);
+            if (typeof res == 'number' && res > 0) {
               di_disponible = true;
               this.serviceGood
                 .getById(`${element.goodId}&filter.labelNumber=$eq:6`)
@@ -1234,7 +1235,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
   }
 
   getGoodsByExpedient() {
-    this.clearInputs()
+    this.clearInputs();
     const paramsF = new FilterParams();
     paramsF.addFilter(
       'numFile',
@@ -1704,7 +1705,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
             );
             /* this.dataGoodAct.load(this.goodData); */
             this.getGoodsActFn();
-           
+
             console.log(this.goodData);
             this.saveDataAct = this.saveDataAct.filter(
               (e: any) => e.id != this.selectActData.good.id
@@ -2412,6 +2413,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
               console.log(res);
               this.proceedingData.push(res)
               this.navigateProceedings = true
+
               this.idProceeding = JSON.parse(JSON.stringify(res)).id;
               this.alert('success', 'Se guardo el acta', '');
             },

@@ -2717,7 +2717,14 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   } */
 
   newCloseProceeding() {
-    const paramsF = new FilterParams();
+    if (this.dataGoodAct['data'].length == 0) {
+      this.alert(
+        'warning',
+        'No se registraron bienes',
+        'El Acta no contiene Bienes, no se podrá Cerrar.'
+      );
+    }else{
+      const paramsF = new FilterParams();
     paramsF.addFilter('keysProceedings', this.form.get('acta2').value);
     this.serviceProcVal.getByFilter(paramsF.getParams()).subscribe(
       res => {
@@ -2766,6 +2773,10 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         console.log(err);
       }
     );
+    }
+
+
+    
   }
 
   closeProceeding() {

@@ -438,5 +438,10 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
         }
       );
     }
+    if (this.origin == 'FACTJURABANDONOS') {
+      this.router.navigate([
+        `/pages/juridical/abandonments-declaration-trades`,
+      ]);
+    }
   }
 }
