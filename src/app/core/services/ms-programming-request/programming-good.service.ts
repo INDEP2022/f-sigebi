@@ -41,20 +41,20 @@ export class ProgrammingGoodService implements ICrudMethods<IGoodProgramming> {
 
   paOpenProceedingProgam(model: IPAAbrirActasPrograma) {
     return this.httpClient.post(
-      `${environment.API_URL}/programminggood/api/v1/programminggood/apps/open-minutes-program`,
+      `${environment.API_URL}programminggood/api/v1/programminggood/apps/open-minutes-program`,
       model
     );
   }
   paRegresaEstAnterior(model: IPAAbrirActasPrograma) {
     return this.httpClient.post(
-      `${environment.API_URL}/programminggood/api/v1/programminggood/apps/return-previous-status`,
+      `${environment.API_URL}programminggood/api/v1/programminggood/apps/return-previous-status`,
       model
     );
   }
 
   paChangeStatus(model: IPACambioStatus) {
     return this.httpClient.post(
-      `${environment.API_URL}/programminggood/api/v1/programminggood/apps/change-status-actas`,
+      `${environment.API_URL}programminggood/api/v1/programminggood/apps/change-status-actas`,
       model
     );
   }
