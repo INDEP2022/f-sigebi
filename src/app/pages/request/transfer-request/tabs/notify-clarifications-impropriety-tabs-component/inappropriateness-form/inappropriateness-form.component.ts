@@ -57,14 +57,11 @@ export class InappropriatenessFormComponent extends BasePage implements OnInit {
 
   prepareForm() {
     this.form = this.fb.group({
-      addresseeName: [null, [Validators.required, Validators.maxLength(50)]],
-      positionAddressee: [
-        null,
-        [Validators.required, Validators.maxLength(50)],
-      ],
-      senderName: [null, [Validators.required, Validators.maxLength(50)]],
-      senderCharge: [null, [Validators.required, Validators.maxLength(50)]],
-      clarification: [null, [Validators.required, Validators.maxLength(800)]],
+      addresseeName: [null, [Validators.maxLength(50)]],
+      positionAddressee: [null, [Validators.maxLength(50)]],
+      senderName: [null, [Validators.maxLength(50)]],
+      senderCharge: [null, [Validators.maxLength(50)]],
+      clarification: [null, [Validators.maxLength(800)]],
       paragraphInitial: [null, [Validators.maxLength(1000)]],
       paragraphFinal: [null, [Validators.maxLength(1000)]],
       observations: [null, [Validators.maxLength(1000)]],
@@ -77,11 +74,7 @@ export class InappropriatenessFormComponent extends BasePage implements OnInit {
       ], */
       consistentIn: [
         null,
-        [
-          Validators.pattern(STRING_PATTERN),
-          Validators.required,
-          Validators.maxLength(1000),
-        ],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(1000)],
       ],
     });
   }
