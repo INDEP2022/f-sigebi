@@ -1568,7 +1568,7 @@ export class AbandonmentsDeclarationTradesComponent
       this.dictamen.expedientNumber = this.idExpediente;
       this.dictamen.wheelNumber = this.noVolante_;
       this.dictamen.userDict = this.token.decodeToken().preferred_username;
-      this.dictamen.delegationDictNumber = 0;
+      this.dictamen.delegationDictNumber = this.delegation;
       this.dictamen.areaDict = 914;
       this.dictamen.dictDate = new Date(SYSDATE);
       this.dictamen.instructorDate = new Date(SYSDATE);
@@ -2754,38 +2754,6 @@ export class AbandonmentsDeclarationTradesComponent
             this.disabledDocs = false;
           }
         }
-        // console.log('AA', this.formCcpOficio.get('nombreUsuario2').value);
-        // let existeCopy = this.copyOficio;
-        // if (this.copyOficio.length > 0) {
-        //   for (let i = 0; i < this.copyOficio.length; i++) {
-        //     if (this.copyOficio[i].managementNumber == null) {
-        //       let obj: any = {
-        //         managementNumber: this.no_OficioGestion,
-        //         addresseeCopy: this.copyOficio[i].addresseeCopy,
-        //         delDestinationCopyNumber: null,
-        //         recordNumber: null,
-        //         personExtInt: this.copyOficio[i].personExtInt,
-        //         nomPersonExt: this.copyOficio[i].nomPersonExt,
-        //       };
-
-        //       this.createCopyOficiManagement(obj);
-        //     } else {
-        //     }
-        //   }
-        // }
-        // for (let i = 0; i < this.copyOficio.length; i++) {
-        //   if (this.copyOficio[i].managementNumber == null) {
-        //     let obj: any = {
-        //       managementNumber: this.no_OficioGestion,
-        //       addresseeCopy: '',
-        //       delDestinationCopyNumber: null,
-        //       personExtInt: 'I',
-        //       nomPersonExt: null,
-        //     };
-        //     this.updateCopyOficeManag(obj, this.copyOficio[0].id);
-        //   }
-        // }
-        // UPDATE COPIAS_OFICIO_GESTION //
 
         const textP = this.formOficiopageFin.get('fin').value;
         if (textP != '') {
@@ -2810,7 +2778,7 @@ export class AbandonmentsDeclarationTradesComponent
         this.formOficiopageFin
           .get('fin')
           .setValue(this.m_oficio_gestion.text2 + this.m_oficio_gestion.text3);
-        this.m_oficio_gestion.text1 = this.formOficiopageFin.get('fin').value;
+        this.m_oficio_gestion.text1 = this.formOficiopageFin.get('page').value;
 
         await this.updateMOficioGestion__(this.m_oficio_gestion);
         await this.getMOficioGestion(this.m_oficio_gestion.managementNumber, 2);
@@ -3869,6 +3837,7 @@ export class AbandonmentsDeclarationTradesComponent
         this.formCcpOficio.get('ccp2').setValue(null);
         this.formCcpOficio.get('nombreUsuario').setValue(null);
         this.formCcpOficio.get('nombreUsuario2').setValue(null);
+        this.copyOficio = [];
         this.getCities__(266);
 
         await this.getMOficioGestion(this.noVolante_, 1);
@@ -4066,7 +4035,7 @@ export class AbandonmentsDeclarationTradesComponent
       }
 
       let delegacionregUser = this.delegation;
-      if (this.dictamen.delegationDictNumber != 0) {
+      if (this.dictamen.delegationDictNumber != delegacionregUser) {
         this.alert(
           'warning',
           'No puede dar candado una Coordinación diferente a la que ingreso la declaratoria.',
@@ -4126,15 +4095,20 @@ export class AbandonmentsDeclarationTradesComponent
           expedientNumber: this.dictamen.expedientNumber,
           year: ANIONEW,
           dictationNumber: this.dictamen.id,
+          delegationDictamNumber: this.delegation,
         };
+
         console.log('obj', obj1);
+
         V_TRANS = await this.dictaminacionesConsulta1(obj1);
+
         console.log('V_TRANS1', V_TRANS);
       } else {
         let obj1 = {
           expedientNumber: this.dictamen.expedientNumber,
           year: ANIO,
           dictationNumber: this.dictamen.id,
+          delegationDictamNumber: this.delegation,
         };
         console.log('obj1', obj1);
         V_TRANS = await this.dictaminacionesConsulta1(obj1);
@@ -4151,6 +4125,7 @@ export class AbandonmentsDeclarationTradesComponent
           expedientNumber: this.dictamen.expedientNumber,
           year: ANIONEW,
           dictationNumber: this.dictamen.id,
+          delegationDictamNumber: this.delegation,
         };
         V_TRANS = await this.dictaminacionesConsulta2(obj1);
         console.log('V_TRANS111', V_TRANS);
@@ -4159,6 +4134,7 @@ export class AbandonmentsDeclarationTradesComponent
           expedientNumber: this.dictamen.expedientNumber,
           year: ANIO,
           dictationNumber: this.dictamen.id,
+          delegationDictamNumber: this.delegation,
         };
         V_TRANS = await this.dictaminacionesConsulta2(obj1);
         console.log();
@@ -4170,7 +4146,7 @@ export class AbandonmentsDeclarationTradesComponent
       // ********************************************************** //
       if (V_TRANS == 1) {
         console.log('SIIII1');
-        OFICIO = await this.dictaminacionesConsulta3(ANIONEW);
+        OFICIO = await this.dictaminacionesConsulta3(ANIONEW, this.delegation);
         console.log('SIIII1 OFICIO', OFICIO);
         // PUP_VALEXISTS_DICT
         let pupExisDict1: string = `DEBM/ABANDONO/PGR/${OFICIO.toString().padStart(
@@ -4202,7 +4178,7 @@ export class AbandonmentsDeclarationTradesComponent
           let obj_2 = {
             typeDict: 'ABANDONO',
             clave_oficio_armada: pupExisDict2,
-            noDelegation: 0,
+            noDelegation: this.delegation,
           };
 
           V_EXIST_DICTA = await this.getValexisDict(obj_2);
@@ -4229,7 +4205,7 @@ export class AbandonmentsDeclarationTradesComponent
       } else if (V_TRANS == 2) {
         console.log('SIIII2');
 
-        OFICIO = await this.dictaminacionesConsulta5(ANIONEW);
+        OFICIO = await this.dictaminacionesConsulta5(ANIONEW, this.delegation);
         console.log('SIIII2 OFICIO', OFICIO);
         let pupExisDict3: string = `DEBM/ABANDONO/PJF/${OFICIO.toString().padStart(
           5,
@@ -4263,7 +4239,7 @@ export class AbandonmentsDeclarationTradesComponent
         )}/${ANIONEW}`;
       } else {
         console.log('SIIII3');
-        OFICIO = await this.dictaminacionesConsulta4(ANIONEW);
+        OFICIO = await this.dictaminacionesConsulta4(ANIONEW, this.delegation);
         console.log('SIIII3 OFICIO', OFICIO);
         let pupExisDict3: string = `DEBM/ABANDONO/PJF/${OFICIO.toString().padStart(
           5,
@@ -4343,6 +4319,7 @@ export class AbandonmentsDeclarationTradesComponent
                 arrayGoodScreen.tipo_dictaminacion + '   ABANDONO'
               );
               if (arrayGoodScreen.tipo_dictaminacion == 'ABANDONO') {
+                console.log('AQUI ESTOY');
                 // VAL_BN_NSBDDB:= FN_VALBIEN_NSBDDB(: DICTAMINACION_X_BIEN1.NO_BIEN);
                 let VAL_BN_NSBDDB = 1;
                 if (VAL_BN_NSBDDB == 1) {
@@ -4426,7 +4403,7 @@ export class AbandonmentsDeclarationTradesComponent
         });
 
         Promise.all(result).then(async (resp: any) => {
-          this.onLoadGoodList('all');
+          await this.onLoadGoodList('all');
           await this.generar_ofic_dict(this.dictamen);
           this.formDeclaratoriapageFin
             .get('fin')
@@ -4530,9 +4507,9 @@ export class AbandonmentsDeclarationTradesComponent
   }
 
   // CONSULTA 3 - DICTAMINACIONES //
-  async dictaminacionesConsulta3(year: any) {
+  async dictaminacionesConsulta3(year: any, delegation: any) {
     return new Promise((resolve, reject) => {
-      this.dictationService.sendConsulta2(year).subscribe({
+      this.dictationService.sendConsulta2(year, delegation).subscribe({
         next: (data: any) => {
           resolve(data.office);
           this.loading = false;
@@ -4547,9 +4524,9 @@ export class AbandonmentsDeclarationTradesComponent
   }
 
   // CONSULTA 4 - DICTAMINACIONES //
-  async dictaminacionesConsulta4(year: any) {
+  async dictaminacionesConsulta4(year: any, delegation: any) {
     return new Promise((resolve, reject) => {
-      this.dictationService.sendConsulta1(year).subscribe({
+      this.dictationService.sendConsulta1(year, delegation).subscribe({
         next: (data: any) => {
           this.loading = false;
           resolve(data.office);
@@ -4564,9 +4541,9 @@ export class AbandonmentsDeclarationTradesComponent
   }
 
   // CONSULTA 5 - DICTAMINACIONES //
-  async dictaminacionesConsulta5(year: any) {
+  async dictaminacionesConsulta5(year: any, delegation: any) {
     return new Promise((resolve, reject) => {
-      this.dictationService.sendConsulta3(year).subscribe({
+      this.dictationService.sendConsulta3(year, delegation).subscribe({
         next: (data: any) => {
           resolve(data.office);
           this.loading = false;

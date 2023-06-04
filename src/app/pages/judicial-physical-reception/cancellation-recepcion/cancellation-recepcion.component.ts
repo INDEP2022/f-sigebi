@@ -300,21 +300,24 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
         this.getGoodsActFn();
       });
 
-    this.paramsActNavigate.pipe(takeUntil(this.$unSubscribe))
-    .subscribe(params => {
-      console.log('Sís')
-     console.log(this.paramsActNavigate)
-     console.log(this.paramsActNavigate.getValue().page)
-     console.log(this.proceedingData.length)
-     this.dataGoodAct.load([])
-     if(this.proceedingData.length > 0){
-      this.loading = true
-      const dataRes = JSON.parse(
-       JSON.stringify(this.proceedingData[this.paramsActNavigate.getValue().page - 1])
-     );
-      this.fillIncomeProceeding(dataRes, 'nextProceeding');
-     }
-    });
+    this.paramsActNavigate
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(params => {
+        console.log('Sís');
+        console.log(this.paramsActNavigate);
+        console.log(this.paramsActNavigate.getValue().page);
+        console.log(this.proceedingData.length);
+        this.dataGoodAct.load([]);
+        if (this.proceedingData.length > 0) {
+          this.loading = true;
+          const dataRes = JSON.parse(
+            JSON.stringify(
+              this.proceedingData[this.paramsActNavigate.getValue().page - 1]
+            )
+          );
+          this.fillIncomeProceeding(dataRes, 'nextProceeding');
+        }
+      });
   }
 
   prepareForm() {
@@ -851,7 +854,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
         error: (err: any) => {
           console.error(err);
           this.loading = false;
-          this.totalItemsDataGoods = 0
+          this.totalItemsDataGoods = 0;
         },
       });
   }
@@ -1062,13 +1065,13 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
     this.serviceDetailProc.getAllFiltered(paramsF.getParams()).subscribe(
       res => {
         this.dataGoodAct.load(res.data);
-        this.totalItemsDataGoodsAct = res.count
+        this.totalItemsDataGoodsAct = res.count;
         this.loading = false;
       },
       err => {
         console.log(err);
-        this.dataGoodAct.load([])
-        this.totalItemsDataGoods = 0
+        this.dataGoodAct.load([]);
+        this.totalItemsDataGoods = 0;
         this.loading = false;
       }
     );
@@ -1468,7 +1471,11 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
               JSON.stringify(res.data[0]['numSubType'])
             );
             no_type = parseInt(type.id);
-            if (['CERRADA','CERRADO'].includes(this.form.get('statusProceeding').value)) {
+            if (
+              ['CERRADA', 'CERRADO'].includes(
+                this.form.get('statusProceeding').value
+              )
+            ) {
               this.alert(
                 'warning',
                 'Acta cerrada',
@@ -1991,8 +1998,10 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                                       this.form.get('admin').value
                                         .numberDelegation2,
                                     numDelegation2:
-                                      parseInt(this.form.get('admin').value
-                                      .numberDelegation2) == 11
+                                      parseInt(
+                                        this.form.get('admin').value
+                                          .numberDelegation2
+                                      ) == 11
                                         ? '11'
                                         : null,
                                     identifier: null,
@@ -2225,7 +2234,9 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
           captureDate: format(new Date(), 'yyyy-MM,dd HH:mm'),
           numDelegation1: this.form.get('admin').value.numberDelegation2,
           numDelegation2:
-            parseInt(this.form.get('admin').value.numberDelegation2) == 11 ? '11' : null,
+            parseInt(this.form.get('admin').value.numberDelegation2) == 11
+              ? '11'
+              : null,
           identifier: null,
           label: null,
           universalFolio: null,
@@ -2384,7 +2395,9 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
             captureDate: format(new Date(), 'yyyy-MM,dd HH:mm'),
             numDelegation1: this.form.get('admin').value.numberDelegation2,
             numDelegation2:
-              parseInt(this.form.get('admin').value.numberDelegation2) == 11 ? "11" : null,
+              parseInt(this.form.get('admin').value.numberDelegation2) == 11
+                ? '11'
+                : null,
             identifier: null,
             label: null,
             universalFolio: null,
@@ -2411,8 +2424,8 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
               this.form.get('statusProceeding').setValue('ABIERTA');
               this.form.get('fecCaptura').setValue(new Date());
               console.log(res);
-              this.proceedingData.push(res)
-              this.navigateProceedings = true
+              this.proceedingData.push(res);
+              this.navigateProceedings = true;
 
               this.idProceeding = JSON.parse(JSON.stringify(res)).id;
               this.alert('success', 'Se guardo el acta', '');
@@ -2858,10 +2871,16 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                   this.serviceDetailProc
                     .PADelActaEntrega(realData.id)
                     .subscribe(async res => {
-                      this.alert('success','El acta fue eliminada','Se recargará la página')
+                      this.alert(
+                        'success',
+                        'El acta fue eliminada',
+                        'Se recargará la página'
+                      );
                       this.clearInputs();
-                      this.loading = true
-                      this.form.get('expediente').setValue(this.numberExpedient);
+                      this.loading = true;
+                      this.form
+                        .get('expediente')
+                        .setValue(this.numberExpedient);
                       this.goodsByExpediente();
                     });
                 },

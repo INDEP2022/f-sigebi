@@ -448,28 +448,28 @@
                 <i class="bx bxs-file"></i>
               </button>
             </div>
-              <div class="col-md-3">
-                <form-field
-                  [control]="form.get('folioEscaneo')"
-                  label="Folio de Escaneo">
-                  <input
-                    type="number"
-                    class="form-control"
-                    min="1"
-                    formControlName="folioEscaneo"
-                    maxlength="15" />
-                </form-field>
-              </div>
-              <div class="col">
-                <button
-                  class="btn btn-primary btn-sm active"
-                  type="button"
-                  size="small"
+            <div class="col-md-3">
+              <form-field
+                [control]="form.get('folioEscaneo')"
+                label="Folio de Escaneo">
+                <input
+                  type="number"
+                  class="form-control"
                   min="1"
-                  (click)="replicateFolio()">
-                  Replicar Folio
-                </button>
-              </div>
+                  formControlName="folioEscaneo"
+                  maxlength="15" />
+              </form-field>
+            </div>
+            <div class="col">
+              <button
+                class="btn btn-primary btn-sm active"
+                type="button"
+                size="small"
+                min="1"
+                (click)="replicateFolio()">
+                Replicar Folio
+              </button>
+            </div>
             <div class="col">
               <button
                 type="button"
