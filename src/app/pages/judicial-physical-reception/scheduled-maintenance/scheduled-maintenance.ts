@@ -15,6 +15,7 @@ import { ProceedingsDetailDeliveryReceptionService } from 'src/app/core/services
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePageWidhtDinamicFiltersExtra } from 'src/app/core/shared/base-page-dinamic-filters-extra';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { firstFormatDateToSecondFormatDate } from 'src/app/shared/utils/date';
 import { IProceedingDeliveryReception } from './../../../core/models/ms-proceedings/proceeding-delivery-reception';
 
 @Component({
@@ -129,7 +130,6 @@ export abstract class ScheduledMaintenance extends BasePageWidhtDinamicFiltersEx
     this.service = this.deliveryService;
     this.ilikeFilters = [
       'keysProceedings',
-      'captureDate',
       'elaborate',
       'statusProceedings',
       'address',
@@ -172,6 +172,7 @@ export abstract class ScheduledMaintenance extends BasePageWidhtDinamicFiltersEx
     this.totalItems = 0;
     localStorage.removeItem(this.formStorage);
     this.columnFilters = [];
+    this.dinamicFilterUpdate();
   }
 
   extraOperations() {}
@@ -197,6 +198,42 @@ export abstract class ScheduledMaintenance extends BasePageWidhtDinamicFiltersEx
       },
     });
     this.updateByPaginator();
+  }
+
+  override dinamicFilterUpdate() {
+    this.data
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        // debugger;
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = ``;
+            let searchFilter = SearchFilter.ILIKE;
+            if (this.ilikeFilters.includes(filter.field)) {
+              searchFilter = SearchFilter.ILIKE;
+            } else {
+              searchFilter = SearchFilter.EQ;
+            }
+            // if (this.ilikeFilters.includes(filter.field)) {
+            //   searchFilter = SearchFilter.ILIKE;
+            // }
+            field = `filter.${filter.field}`;
+            if (filter.search !== '') {
+              let search = filter.search;
+              if (filter.field === 'captureDate') {
+                search = firstFormatDateToSecondFormatDate(search);
+              }
+              this.columnFilters[field] = `${searchFilter}:${search}`;
+            } else {
+              delete this.columnFilters[field];
+            }
+            console.log(this.columnFilters);
+          });
+          this.getData();
+        }
+      });
   }
 
   setForm() {
@@ -252,7 +289,7 @@ export abstract class ScheduledMaintenance extends BasePageWidhtDinamicFiltersEx
   }
 
   private fillParams(byPage = false) {
-    debugger;
+    // debugger;
     const tipoEvento = this.form.get('tipoEvento').value;
     // const fechaInicio: Date | string = this.form.get('fechaInicio').value;
     // const fechaFin: Date = this.form.get('fechaFin').value;

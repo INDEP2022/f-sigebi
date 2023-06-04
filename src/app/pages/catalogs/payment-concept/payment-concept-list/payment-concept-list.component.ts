@@ -41,6 +41,7 @@ export class PaymentConceptListComponent extends BasePage implements OnInit {
         edit: true,
         delete: true,
         position: 'right',
+        add: false,
       },
       columns: { ...PAYMENT_CONCEPT_COLUMNS },
     };

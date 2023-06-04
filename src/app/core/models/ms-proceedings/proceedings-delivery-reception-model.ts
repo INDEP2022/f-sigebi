@@ -20,8 +20,8 @@ export interface IProccedingsDeliveryReception {
   approvalUserXAdmon?: string;
   numRegister?: number;
   captureDate?: string;
-  numDelegation1?: number;
-  numDelegation2?: number;
+  numDelegation1?: number | string;
+  numDelegation2?: number | string;
   identifier?: string;
   label?: string;
   universalFolio?: number;
