@@ -150,8 +150,18 @@
           <button
             type="button"
             class="btn btn-sm btn-primary active ml-3"
-            [disabled]="!dictum || !affair || dictOffice != 'D'"
+            [disabled]="
+              !wheelNumber ||
+              isLoadingBtnDictationJudgment ||
+              searchMode ||
+              fileDataUpdateForm.get('dictumKey').value?.description ===
+                'CONOCIMIENTO' ||
+              !fileDataUpdateForm.get('dictumKey').value
+            "
             (click)="sendToJuridicalRuling()">
+            <ng-container *ngIf="isLoadingBtnDictationJudgment"
+              ><span class="spinner-border"></span
+            ></ng-container>
             Dictaminaci&oacute;n Jur&iacute;dica
           </button>
           <!-- [disabled]="!dictum || !affair || dictOffice != 'D'" -->

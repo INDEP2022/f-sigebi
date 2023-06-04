@@ -1313,11 +1313,15 @@ export class RegistrationOfRequestsComponent
   }
 
   //revisar las pruebas
-  haveNotificacions() {
+  async haveNotificacions() {
+    const goodResCount: any = await this.getAllGoodResDev();
     return new Promise((resolve, reject) => {
       let params = new FilterParams();
       params.addFilter('applicationId', this.requestData.id);
-      //params.addFilter('processStatus', '$not:VERIFICAR_CUMPLIMIENTO'); //ACLARADO
+
+      if (goodResCount.count > 10) {
+        params.limit = goodResCount.count;
+      }
       let filter = params.getParams();
       this.goodResDevService.getAllGoodResDev(filter).subscribe({
         next: (resp: any) => {
@@ -1344,6 +1348,24 @@ export class RegistrationOfRequestsComponent
             'Error interno',
             'No se pudo obtener el bien-res-dev'
           );*/
+        },
+      });
+    });
+  }
+
+  getAllGoodResDev() {
+    return new Promise((resolve, reject) => {
+      let params = new FilterParams();
+      params.addFilter('applicationId', this.requestData.id);
+      let filter = params.getParams();
+      this.goodResDevService.getAllGoodResDev(filter).subscribe({
+        next: (resp: any) => {
+          resolve(resp);
+        },
+        error: error => {
+          reject('error');
+          this.onLoadToast('error', 'No se llamaron los datos de good res dev');
+          console.log(error);
         },
       });
     });
@@ -1496,7 +1518,13 @@ export class RegistrationOfRequestsComponent
   }
 
   async ableToSignDictamen() {
-    const goods: any = await this.getAllGood();
+    const goodsCount: any = await this.getAllGood();
+    let goods: any = null;
+    if (goodsCount.count > 10) {
+      goods = await this.getAllGood(goodsCount.count);
+    } else {
+      goods = goodsCount;
+    }
     let canSign: boolean = false;
     const filter = goods.data.filter(
       (x: any) =>

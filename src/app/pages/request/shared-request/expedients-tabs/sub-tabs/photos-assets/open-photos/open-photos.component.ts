@@ -61,13 +61,13 @@ export class OpenPhotosComponent extends BasePage implements OnInit {
   }
 
   getImagesGood() {
-    const idReq: Object = {
+    const idGood: Object = {
       xidBien: this.information.id,
     };
     this.data = [];
     if (this.data.length == 0) {
       this.loading = true;
-      this.wContentService.getDocumentos(idReq).subscribe(data => {
+      this.wContentService.getDocumentos(idGood).subscribe(data => {
         const _data = data.data.filter((img: any) => {
           if (img.dDocType == 'DigitalMedia') return img;
         });

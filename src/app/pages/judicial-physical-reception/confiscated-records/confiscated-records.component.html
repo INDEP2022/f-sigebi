@@ -180,7 +180,7 @@
             </div>
 
             <div class="col">
-              <form-field [control]="form.get('ident')" label="Ident">
+              <form-field [control]="form.get('ident')" label="Identificador">
                 <input
                   type="text"
                   class="form-control disabled pt-0"
@@ -208,7 +208,7 @@
                   (fetchItems)="getAdmin($event)"
                   [class]="initialdisabled ? 'disabled' : ''"
                   control="admin"
-                  label="Admin"
+                  label="Administra"
                   bindLabel="delegation"
                   [data]="adminSelect"
                   [form]="form"></ngx-select>
@@ -320,32 +320,6 @@
               </form-field>
             </div>
           </div>
-
-          <div class="row">
-            <div class="col-md-5">
-              <form-field
-                [control]="form.get('folioEscaneo')"
-                label="Folio de Escaneo">
-                <input
-                  type="number"
-                  class="form-control"
-                  min="1"
-                  formControlName="folioEscaneo"
-                  maxlength="15" />
-              </form-field>
-            </div>
-
-            <div class="col-md-4 pt-3">
-              <button
-                class="btn btn-primary btn-sm active"
-                type="button"
-                size="small"
-                min="1"
-                (click)="replicateFolio()">
-                Replicar Folio
-              </button>
-            </div>
-          </div>
         </div>
         <div class="col-md-6">
           <div class="form-group row">
@@ -433,6 +407,69 @@
           </div>
         </div>
       </div>
+
+      <hr class="row" />
+      <div class="row">
+        <div class="col-sm-12 col-12 col-md-8">
+          <div class="row">
+            <div class="col-sm-12 col-12 col-md-3 text-center">
+              <button
+                type="button"
+                tooltip="Generar Folio de Escaneo y Solicitud"
+                containerClass="tooltip-style"
+                class="btn btn-secondary btn-sm active m-1">
+                <i class="bx bxs-file-find"></i>
+              </button>
+              <button
+                type="button"
+                tooltip="Escanear"
+                containerClass="tooltip-style"
+                class="btn btn-secondary btn-sm active m-1">
+                <i class="bx bxs-file"></i>
+              </button>
+            </div>
+            <div class="row">
+              <div class="col-md-5">
+                <form-field
+                  [control]="form.get('folioEscaneo')"
+                  label="Folio de Escaneo">
+                  <input
+                    type="number"
+                    class="form-control"
+                    min="1"
+                    formControlName="folioEscaneo"
+                    maxlength="15" />
+                </form-field>
+              </div>
+              <div class="col-md-4 pt-3">
+                <button
+                  class="btn btn-primary btn-sm active"
+                  type="button"
+                  size="small"
+                  min="1"
+                  (click)="replicateFolio()">
+                  Replicar Folio
+                </button>
+              </div>
+            </div>
+            <div class="col-sm-12 col-12 col-md-3 text-center">
+              <button
+                tooltip="imprimir Solicitud de Escaneo"
+                containerClass="tooltip-style"
+                class="btn btn-secondary btn-sm active m-1">
+                <i class="bx bxs-file-find"></i>
+              </button>
+              <button
+                tooltip="Consulta de imágenes escaneadas"
+                containerClass="tooltip-style"
+                class="btn btn-secondary btn-sm active m-1">
+                <i class="bx bxs-file"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <hr class="row" />
       <div [class]="loading ? 'disabled' : ''" class="row mb-5">
         <div class="d-flex justify-content-center">
@@ -456,7 +493,9 @@
             <a
               class="my-1 mx-2 btn btn-warning active btn-sm"
               size="small"
-              [class]="form.get('statusProceeding').value != null ? '':'disabled'"
+              [class]="
+                form.get('statusProceeding').value != null ? '' : 'disabled'
+              "
               (click)="goParcializacion()"
               >Parcializaci&oacute;n
             </a>
@@ -464,14 +503,22 @@
             <button
               type="button"
               class="my-1 mx-2 btn btn-danger active btn-sm"
-              [class]="form.get('statusProceeding').value != null ? '':'disabled'"
+              [class]="
+                form.get('statusProceeding').value != null ? '' : 'disabled'
+              "
               (click)="deleteProceeding()">
               Eliminar Acta
             </button>
             <button
               type="button"
               class="my-1 mx-2 btn btn-secondary active btn-sm"
-              [class]="['CERRADO', 'CERRADA'].includes(form.get('statusProceeding').value) ? '':'disabled'"
+              [class]="
+                ['CERRADO', 'CERRADA'].includes(
+                  form.get('statusProceeding').value
+                )
+                  ? ''
+                  : 'disabled'
+              "
               (click)="goCargaMasiva()">
               Carga Masiva
             </button>
@@ -490,6 +537,8 @@
       <app-pagination
         *ngIf="!loading"
         [params]="paramsDataGoods"
+        [pageSizeOptions]="[5, 10, 20]"
+        [limit]="limitDataGoods"
         [totalItems]="totalItemsDataGoods"></app-pagination>
 
       <hr class="row" />
@@ -550,6 +599,12 @@
           (userRowSelect)="selectRowGoodActa($event)"
           (rowDeselect)="deselectRowGoodActa()"></ng2-smart-table>
       </div>
+      <app-pagination
+        *ngIf="!loading"
+        [params]="paramsDataGoodsAct"
+        [pageSizeOptions]="[5, 10, 20]"
+        [limit]="limitDataGoodsAct"
+        [totalItems]="totalItemsDataGoodsAct"></app-pagination>
       <hr class="row" />
       <div class="row">
         <div class="d-flex justify-content-center">
@@ -625,14 +680,14 @@
           <button
             type="button"
             size="small"
-            class="mx-2 my-1"
+            class="btn btn-primary btn-sm active mr-2"
             (click)="openEdoFisico()">
             Espec&iacute;fica Edo&#46; F&iacute;sico
           </button>
           <button
             type="button"
             size="small"
-            class="mx-2 my-1"
+            class="btn btn-primary btn-sm active"
             (click)="applyWarehouseSafe()">
             Aplica Alm&#46;&#47;Bov&#46;
           </button>
