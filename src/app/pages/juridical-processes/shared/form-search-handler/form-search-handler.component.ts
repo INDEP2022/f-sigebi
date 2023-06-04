@@ -13,7 +13,6 @@ import {
 import { ActivatedRoute } from '@angular/router';
 import { ModalDirective } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, Observable, takeUntil } from 'rxjs';
-import { DocumentsReceptionDataService } from 'src/app/core/services/document-reception/documents-reception-data.service';
 import {
   DynamicFilterLike,
   FilterParams,
@@ -22,6 +21,7 @@ import {
 import { IListResponse } from '../../../../core/interfaces/list-response.interface';
 import { IUserRowSelectEvent } from '../../../../core/interfaces/ng2-smart-table.interface';
 import { BasePage } from '../../../../core/shared/base-page';
+import { JuridicalFileUpdateService } from '../../file-data-update/services/juridical-file-update.service';
 import { COLUMNS, TABLE_SETTINGS_T } from './columns';
 
 export interface FieldToSearch {
@@ -84,7 +84,8 @@ export class FormSearchHandlerComponent
     // private modalRef: BsModalRef<SelectListFilteredModalComponent>,
     private changeDetectorRef: ChangeDetectorRef,
     private activatedRoute: ActivatedRoute,
-    private docDataService: DocumentsReceptionDataService,
+    // private docDataService: DocumentsReceptionDataService,
+    private juridicalFileUpdate: JuridicalFileUpdateService,
     private datePipe: DatePipe
   ) {
     super();
@@ -130,7 +131,9 @@ export class FormSearchHandlerComponent
 
   autoLoad(): void {
     const wheelNumber =
-      this.activatedRoute.snapshot.queryParams['wheelNumber'] || null;
+      this.activatedRoute.snapshot.queryParams['wheelNumber'] ||
+      this.juridicalFileUpdate?.juridicalFileDataUpdateForm?.wheelNumber;
+    // this.activatedRoute.snapshot.queryParams['wheelNumber'] || null;
 
     if (localStorage.getItem('abandonosData')) {
       let aaa = localStorage.getItem('abandonosData');
