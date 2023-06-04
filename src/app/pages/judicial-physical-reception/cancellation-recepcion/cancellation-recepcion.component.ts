@@ -2860,6 +2860,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                       this.form.get('expediente').setValue(this.numberExpedient);
                       this.goodsByExpediente();
 
+
                       /* this.form
                         .get('expediente')
                         .setValue(this.numberExpedient);

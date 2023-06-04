@@ -23,8 +23,8 @@
             <ngx-select
               [form]="delegationForm"
               control="cveState"
-              value="cveState"
-              bindLabel="descState"
+              value="descCondition"
+              bindLabel="descCondition"
               [data]="states"
               (fetchItems)="getStates($event)"
               (change)="stateChange($event)"
@@ -38,8 +38,8 @@
             <ngx-select
               [form]="delegationForm"
               control="idZoneGeographic"
-              value="id_zona_geografica"
-              bindLabel="descripcion"
+              value="id"
+              bindLabel="id"
               [data]="zones"
               (fetchItems)="getZones($event)"
               (change)="zoneChange($event)"
@@ -170,7 +170,7 @@
         <div class="col-md-3">
           <form-field
             [control]="delegationForm.get('noRegister')"
-            label="noRegistro">
+            label="No. Registro">
             <input
               type="number"
               class="form-control"
