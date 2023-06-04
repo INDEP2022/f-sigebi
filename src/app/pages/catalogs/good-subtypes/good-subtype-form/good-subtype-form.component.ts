@@ -7,7 +7,10 @@ import { IGoodSubType } from 'src/app/core/models/catalogs/good-subtype.model';
 import { IGoodType } from 'src/app/core/models/catalogs/good-type.model';
 import { GoodSubtypeService } from 'src/app/core/services/catalogs/good-subtype.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
+import {
+  POSITVE_NUMBERS_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -38,7 +41,7 @@ export class GoodSubtypeFormComponent extends BasePage implements OnInit {
       id: [null],
       idTypeGood: [
         null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+        [Validators.required, Validators.pattern(POSITVE_NUMBERS_PATTERN)],
       ],
       nameSubtypeGood: [
         null,
@@ -58,15 +61,15 @@ export class GoodSubtypeFormComponent extends BasePage implements OnInit {
       ],
       noPhotography: [
         null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+        [Validators.required, Validators.pattern(POSITVE_NUMBERS_PATTERN)],
       ],
       noRegister: [
         null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+        [Validators.required, Validators.pattern(POSITVE_NUMBERS_PATTERN)],
       ],
       version: [
         null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+        [Validators.required, Validators.pattern(POSITVE_NUMBERS_PATTERN)],
       ],
     });
     if (this.goodSubtype != null) {

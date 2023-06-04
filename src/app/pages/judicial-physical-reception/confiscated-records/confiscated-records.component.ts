@@ -131,10 +131,17 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         type: 'number',
         sort: false,
       },
-      goodClassNumber: {
+      'good.goodClassNumber': {
         title: 'No Clasificación',
         type: 'number',
         sort: false,
+        valuePrepareFunction: (cell: any, row: any) => {
+          if (row.good && row.good.goodClassNumber) {
+            return row.good.goodClassNumber;
+          } else {
+            return null;
+          }
+        },
       },
       'good.description': {
         title: 'Descripción',
@@ -1021,7 +1028,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
       .getAllFilterDetail(
         `filter.fileNumber=$eq:${
           this.numberExpedient
-        }&filter.status=$not:ADM&filter.labelNumber=$not:6&filter.detail.actNumber=$not:$null&${paramsF.getParams()}`
+        }&filter.status=$not:ADM&filter.labelNumber=$not:6&${paramsF.getParams()}`
       )
       .subscribe({
         next: async (res: any) => {
@@ -1057,6 +1064,29 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
       });
   }
 
+  getGoodsActFn() {
+    this.loading = true;
+    const paramsF = new FilterParams();
+    paramsF.addFilter('numberProceedings', this.idProceeding);
+    paramsF.addFilter('keysProceedings', this.form.get('acta2').value);
+    paramsF.page = this.paramsDataGoodsAct.getValue().page;
+    paramsF.limit = this.paramsDataGoodsAct.getValue().limit;
+    this.limitDataGoods = new FormControl(
+      this.paramsDataGoodsAct.getValue().limit
+    );
+
+    this.serviceDetailProc.getAllFiltered(paramsF.getParams()).subscribe(
+      res => {
+        this.dataGoodAct.load(res.data);
+        this.loading = false;
+      },
+      err => {
+        console.log(err);
+        this.loading = false;
+      }
+    );
+  }
+
   newGetGoods() {
     const btn = document.getElementById('expedient-number');
 
@@ -1073,7 +1103,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
       .getAllFilterDetail(
         `filter.fileNumber=$eq:${
           this.numberExpedient
-        }&filter.status=$not:ADM&filter.labelNumber=$not:6&filter.detail.actNumber=$not:$null&${paramsF.getParams()}`
+        }&filter.status=$not:ADM&filter.labelNumber=$not:6&${paramsF.getParams()}`
       )
       .subscribe({
         next: async (res: any) => {
@@ -1388,6 +1418,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     this.form.get('statusProceeding').reset();
     this.numberExpedient = this.form.get('expediente').value;
     this.noRequireAct1();
+    
 
     const btn = document.getElementById('expedient-number');
 
@@ -1590,7 +1621,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
               }
             });
         }
-        this.dataGoodAct.load(this.goodData).then(res => {
+        this.dataGoodAct.load(incomeData).then(res => {
           this.loading = false;
           this.nextProce = true;
           this.prevProce = true;
@@ -2976,17 +3007,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                       .PADelActaEntrega(realData.id)
                       .subscribe(
                         res => {
-                          this.dataGoods.load(
-                            this.dataGoods['data'].map((e: any) => {
-                              for (let element of this.dataGoodAct['data']) {
-                                if (e.id === element.id) {
-                                  return { ...e, avalaible: true, acta: null };
-                                } else {
-                                  return e;
-                                }
-                              }
-                            })
-                          );
+                          this.getGoodsFn();
 
                           this.form
                             .get('expediente')
@@ -3175,7 +3196,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   //Select data
   statusGood(formName: string, data: any) {
     const paramsF = new FilterParams();
-    paramsF.addFilter('status', data.status);
+    paramsF.addFilter('status', data.status || data.good.status);
     this.serviceGood.getStatusGood(paramsF.getParams()).subscribe(
       res => {
         this.form.get(formName).setValue(res.data[0]['description']);
@@ -3523,7 +3544,8 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                                   ...this.selectData,
                                   exchangeValue: 1,
                                 });
-                                this.dataGoodAct.load(this.goodData);
+                                this.getGoodsActFn();
+                                /* this.dataGoodAct.load(this.goodData); */
                                 this.saveDataAct.push({
                                   ...this.selectData,
                                   exchangeValue: 1,
@@ -3602,54 +3624,61 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         );
       } else {
         const paramsF = new FilterParams();
-        paramsF.addFilter('numberGood', this.selectActData.id);
+        paramsF.addFilter('numberGood', this.selectActData.good.goodId);
         paramsF.addFilter('numberProceedings', this.idProceeding);
         this.serviceDetailProc.getAllFiltered(paramsF.getParams()).subscribe(
           res => {
             console.log(res.data[0]);
             const deleteModel: IDeleteDetailProceeding = {
-              numberGood: this.selectActData.id,
+              numberGood: this.selectActData.good.goodId,
               numberProceedings: this.idProceeding,
             };
             console.log(deleteModel);
             this.serviceDetailProc.deleteDetailProcee(deleteModel).subscribe(
               res => {
                 const paramsF = new FilterParams();
-                paramsF.addFilter('propertyNum', this.selectActData.id);
+                paramsF.addFilter('propertyNum', this.selectActData.good.id);
                 paramsF.sortBy = 'changeDate';
+                console.log(paramsF.getParams());
                 this.serviceHistoryGood
                   .getAllFilter(paramsF.getParams())
                   .subscribe(
                     res => {
                       console.log(res.data[res.data.length - 1]);
                       const putGood: IGood = {
-                        id: this.selectActData.id,
-                        goodId: this.selectActData.goodId,
+                        id: this.selectActData.good.id,
+                        goodId: this.selectActData.good.goodId,
                         status: res.data[res.data.length - 1]['status'],
                       };
                       this.serviceGood.update(putGood).subscribe(
                         res => {
-                          console.log(this.dataGoodAct);
+                          /* console.log(this.dataGoodAct);
                           this.goodData = this.goodData.filter(
-                            (e: any) => e.id != this.selectActData.id
+                            (e: any) => e.id != this.selectActData.goog.id
+                          ); */
+                          this.getGoodsFn();
+                          this.goodData = this.goodData.filter(
+                            (e: any) => e.id != this.selectActData.good.id
                           );
                           this.dataGoodAct.load(this.goodData);
-                          console.log(this.goodData);
+                          /* this.dataGoodAct.load(this.goodData); */
+                          /* console.log(this.goodData);
                           this.saveDataAct = this.saveDataAct.filter(
-                            (e: any) => e.id != this.selectActData.id
+                            (e: any) => e.good.id != this.selectActData.good.id
                           );
 
                           this.dataGoods.load(
                             this.dataGoods['data'].map((e: any) => {
-                              if (e.id == this.selectActData.id) {
+                              if (e.good.id == this.selectActData.good.id) {
                                 return { ...e, avalaible: true };
                               } else {
                                 return e;
                               }
                             })
-                          );
+                          ); */
                         },
                         err => {
+                          console.log(err);
                           this.alert(
                             'error',
                             'Ocurrió un error inesperado',
@@ -3659,15 +3688,16 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                       );
                     },
                     err => {
-                      this.alert(
-                        'error',
-                        'Ocurrió un error inesperado',
-                        'Ocurrió un error inesperado. Por favor intentelo nuevamente'
+                      this.getGoodsFn();
+                      this.goodData = this.goodData.filter(
+                        (e: any) => e.id != this.selectActData.good.id
                       );
+                      this.dataGoodAct.load(this.goodData);
                     }
                   );
               },
               err => {
+                console.log(err);
                 this.alert(
                   'error',
                   'Ocurrió un error inesperado',
@@ -3682,8 +3712,13 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
             this.goodData = this.goodData.filter(
               (e: any) => e.id != this.selectActData.id
             );
+            this.goodData = this.goodData.filter(
+              (e: any) => e.id != this.selectActData.good.id
+            );
             this.dataGoodAct.load(this.goodData);
-            console.log(this.goodData);
+            this.getGoodsFn();
+            /* this.dataGoodAct.load(this.goodData); */
+            /* console.log(this.goodData);
             this.saveDataAct = this.saveDataAct.filter(
               (e: any) => e.id != this.selectActData.id
             );
@@ -3696,7 +3731,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                   return e;
                 }
               })
-            );
+            ); */
           }
         );
       }
@@ -3731,6 +3766,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
               console.log(putGood);
               console.log('Sí?');
               this.serviceGood.update(putGood).subscribe(res => {
+                /* this.getGoodsActFn() */
                 this.dataGoodAct.load(
                   this.dataGoodAct['data'].map((e: any) => {
                     return {
