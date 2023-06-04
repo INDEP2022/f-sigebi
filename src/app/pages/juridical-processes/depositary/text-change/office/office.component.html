@@ -1,4 +1,28 @@
 <form [formGroup]="form" class="form-material">
+  <div class="row justify-content-end mb-5">
+    <div
+      class="col-md-3 col-sm-12 col-xs-12 justify-content-end"
+      *ngIf="!verBoton">
+      <button
+        class="btn btn-primary btn-sm active"
+        style="float: right"
+        (click)="buscarOficio()">
+        Buscar <i class="fa fa-search ml-2"></i>
+      </button>
+    </div>
+    <div
+      class="col-md-3 col-sm-12 col-xs-12 justify-content-end"
+      *ngIf="verBoton">
+      <button
+        type="button"
+        class="btn btn-primary btn-sm active"
+        style="float: right"
+        (click)="nuevaBusquedaOficio()">
+        Nueva B&uacute;squeda <i class="fa fa-search ml-2"></i>
+      </button>
+    </div>
+  </div>
+
   <div class="row">
     <div class="col-md-3 col-sm-12 col-xs-12">
       <form-field [control]="form.get('proceedingsNumber')" label="Expediente">
@@ -39,26 +63,13 @@
       </form-field>
     </div>
   </div>
-  <div class="row">
-    <div class="col-md-3 col-sm-12 col-xs-12" *ngIf="!verBoton">
-      <button class="btn btn-primary btn-sm active" (click)="buscarOficio()">
-        Buscar <i class="fa fa-search ml-2"></i>
-      </button>
-    </div>
-    <div class="col-md-3 col-sm-12 col-xs-12" *ngIf="verBoton">
-      <button
-        type="button"
-        class="btn btn-primary btn-sm active"
-        (click)="nuevaBusquedaOficio()">
-        Nueva B&uacute;squeda <i class="fa fa-search ml-2"></i>
-      </button>
-    </div>
-  </div>
+
   <hr />
   <div class="row">
     <div class="col-md-4 col-sm-12 col-xs-12 mt-3">
       <form-field [control]="form.get('RemitenteSenderUser')">
         <ngx-select
+          [readonly]="!managementNumber_"
           [form]="form"
           [data]="users$$"
           (change)="getDescUserPuesto($event)"
@@ -85,13 +96,18 @@
     </div>
     <div class="col-md-4 col-sm-12 col-xs-12 mt-3">
       <form-field [control]="form.get('charge')" label="Cargo">
-        <input type="text" class="form-control" formControlName="charge" />
+        <input
+          [readonly]="!managementNumber_"
+          type="text"
+          class="form-control"
+          formControlName="charge" />
       </form-field>
     </div>
     <!--$%#$%#$%#$%345345345-->
     <div class="col-md-4 col-sm-12 col-xs-12 mt-3">
       <form-field [control]="form.get('addressee')">
         <ngx-select
+          [readonly]="!managementNumber_"
           [form]="form"
           [data]="users_1"
           (fetchItems)="getUsers_1($event)"
@@ -124,6 +140,7 @@
         <textarea
           type="text"
           rows="4"
+          [readonly]="!managementNumber_"
           class="form-control"
           formControlName="paragraphInitial">
         </textarea>
@@ -137,6 +154,7 @@
         label="P&aacute;rrafo Final">
         <textarea
           type="text"
+          [readonly]="!managementNumber_"
           class="form-control"
           formControlName="paragraphFinish"></textarea>
       </form-field>
@@ -147,6 +165,7 @@
       <form-field [control]="form.get('paragraphOptional')" label="">
         <textarea
           type="text"
+          [readonly]="!managementNumber_"
           class="form-control"
           formControlName="paragraphOptional"></textarea>
       </form-field>
@@ -157,6 +176,7 @@
       <form-field [control]="form.get('descriptionSender')" label="">
         <textarea
           type="text"
+          [readonly]="!managementNumber_"
           class="form-control"
           formControlName="descriptionSender"></textarea>
       </form-field>
@@ -169,7 +189,10 @@
     <div class="col-md-5 buttons">
       <!--app-columns-select [(settings)]="settings"></app-columns-select-->
       <div>
-        <button (click)="openForm()" class="btn btn-primary active btn-sm ml-3">
+        <button
+          [disabled]="!managementNumber_"
+          (click)="openForm()"
+          class="btn btn-primary active btn-sm ml-3">
           Nuevo
         </button>
       </div>
@@ -214,19 +237,20 @@
         <div class="m-3">
           <button
             type="button"
-            text="Imprimir"
-            [disabled]="form.invalid"
-            class="btn btn-primary active"
-            (click)="confirm()">
-            Imprimir
+            class="btn btn-info active"
+            [disabled]="!managementNumber_"
+            (click)="updateOficio()">
+            Actualizar
           </button>
         </div>
         <div class="m-3">
           <button
             type="button"
-            class="btn btn-info active"
-            (click)="updateOficio()">
-            Actualizar
+            text="Imprimir"
+            [disabled]="!managementNumber_"
+            class="btn btn-primary active"
+            (click)="confirm()">
+            Imprimir
           </button>
         </div>
       </div>
