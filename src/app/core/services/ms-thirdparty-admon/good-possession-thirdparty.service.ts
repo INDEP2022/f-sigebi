@@ -3,6 +3,7 @@ import { Observable } from 'rxjs';
 import { ThirdPartyAdmonEndpoints } from 'src/app/common/constants/endpoints/ms-third-party-admon-endpoints';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
+import { IGood } from '../../models/good/good.model';
 import {
   IDetailGoodPossessionThirdParty,
   IGoodPossessionThirdParty,
@@ -30,7 +31,7 @@ export class GoodPosessionThirdpartyService extends HttpService {
     return this.get<
       IListResponse<{
         possessionNumber: number;
-        goodNumber: number;
+        goodNumber: IGood;
         steeringwheelNumber: number;
         nbOrigin: string;
       }>
