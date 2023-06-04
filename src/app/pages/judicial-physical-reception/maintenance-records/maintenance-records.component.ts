@@ -215,6 +215,7 @@ export class MaintenanceRecordsComponent extends BasePage implements OnInit {
   getData(form: IProceedingInfo) {
     if (this.fillParams(form)) {
       this.loading = true;
+      this.loadingGoods = true;
       this.proceedingService.getAll(this.filterParams.getParams()).subscribe({
         next: response => {
           // debugger;
@@ -228,14 +229,18 @@ export class MaintenanceRecordsComponent extends BasePage implements OnInit {
             // console.log(this.params.getValue());
             this.loading = false;
             this.registro = true;
+            // this.goodParams.limit = 10;
+            this.goodParams.page = 1;
             this.getGoods();
           } else {
             this.loading = false;
+            this.loadingGoods = false;
             this.onLoadToast('error', 'Actas', 'No encontradas');
           }
         },
         error: error => {
           this.loading = false;
+          this.loadingGoods = false;
           this.onLoadToast('error', 'Actas', 'No encontradas');
         },
       });
