@@ -24,8 +24,14 @@
 
 :host ::ng-deep ng2-smart-table tr.available td {
   color: #28a745 !important;
+  /* background-color: #28a745;
+  color: white !important;
+  font-weight: bold !important; */
 }
 
 :host ::ng-deep ng2-smart-table tr.not-available td {
   color: #dc3545 !important;
+  /* background-color: black;
+  color: white !important;
+  font-weight: bold !important; */
 }
