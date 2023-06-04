@@ -54,7 +54,7 @@ export const DEDUCTIVE_COLUMNS = {
     sort: false,
   },
   contractNumber: {
-    title: 'No. de contrato',
+    title: 'Nº de contrato',
     type: 'number',
     sort: false,
   },
