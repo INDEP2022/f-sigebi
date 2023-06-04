@@ -738,6 +738,7 @@
               <div>
                 <button
                   (click)="openModalCopy(false)"
+                  [disabled]="!disabledMOficGest"
                   class="btn btn-primary active btn-sm ml-3">
                   Nuevo
                 </button>
@@ -753,8 +754,7 @@
                       [attr.class]="'table-bordered'"
                       [settings]="settings3"
                       [source]="copyOficio"
-                      (delete)="showDeleteAlert($event.data)"
-                      (edit)="openModalCopyUpdate($event.data)">
+                      (delete)="showDeleteAlert($event.data)">
                     </ng2-smart-table>
                   </div>
                 </div>
