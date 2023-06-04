@@ -85,21 +85,25 @@
       </div>
       <!-- TABLA----BIENES RELACIONADOS CON EL EXPEDIENTE -->
       <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2 text-center">
-        <button
-          (click)="addGoodOffice()"
-          class="btn btn-secondary btn-sm bg-success active m-3 p-3"
-          type="button">
-          <!-- Mover uno -->
-          <i class="bx bxs-right-arrow-circle bx-md"></i>
-        </button>
-        <br />
-        <button
-          (click)="deleteGoodOffice()"
-          class="btn btn-secondary btn-sm active bg-danger m-3 p-3"
-          type="button">
-          <!-- Mover uno -->
-          <i class="bx bxs-left-arrow-circle bx-md"></i>
-        </button>
+        <div class="d-flex justify-content-center align-items-center h-100">
+          <div>
+            <button
+              (click)="addGoodOffice()"
+              class="btn btn-secondary btn-sm bg-success active m-3 p-3"
+              type="button">
+              <!-- Mover uno -->
+              <i class="bx bxs-right-arrow-circle bx-md"></i>
+            </button>
+            <br />
+            <button
+              (click)="deleteGoodOffice()"
+              class="btn btn-secondary btn-sm active bg-danger m-3 p-3"
+              type="button">
+              <!-- Mover uno -->
+              <i class="bx bxs-left-arrow-circle bx-md"></i>
+            </button>
+          </div>
+        </div>
       </div>
       <!-- TABLA----BIENES RELACIONADOS CON EL OFICIO -->
       <div class="col-sm-12 col-12 col-md-5 col-lg-5 p-2 alert alert-success">
@@ -287,6 +291,7 @@
                 label="Delegación Cierre">
                 <input
                   type="text"
+                  readonly
                   maxlength="40"
                   class="form-control"
                   formControlName="delegationCloseNumber" />
@@ -297,7 +302,10 @@
                 maxlength="40"
                 [control]="formPositionThirdParty.get('numClueNavy')"
                 label="Clave Armada">
-                <input class="form-control" formControlName="numClueNavy" />
+                <input
+                  readonly
+                  class="form-control"
+                  formControlName="numClueNavy" />
               </form-field>
             </div>
             <div class="col-sm-12 col-12 col-md-6 p-2">

@@ -2426,7 +2426,6 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
               console.log(res);
               this.proceedingData.push(res);
               this.navigateProceedings = true;
-
               this.idProceeding = JSON.parse(JSON.stringify(res)).id;
               this.alert('success', 'Se guardo el acta', '');
             },
@@ -2882,6 +2881,52 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                         .get('expediente')
                         .setValue(this.numberExpedient);
                       this.goodsByExpediente();
+
+                      /* this.form
+                        .get('expediente')
+                        .setValue(this.numberExpedient);
+                        this.getGoodsFn() */
+                      /* await this.dataGoods.load(
+                        this.dataGoods['data'].map((e: any) => {
+                          for (let element of this.dataGoodAct['data']) {
+                            if (e.id === element.id) {
+                              return { ...e, avalaible: true, acta: null };
+                            } else {
+                              return e;
+                            }
+                          }
+                        })
+                      ); */
+
+                      /* this.getGoodsByExpedient();
+                      this.form.get('statusProceeding').reset();
+                      if (this.proceedingData.length === 1) {
+                        this.navigateProceedings = false;
+                        this.nextProce = true;
+                        this.prevProce = true;
+                        this.numberProceeding = 0;
+                        this.form.get('statusProceeding').reset();
+                        this.labelActa = 'Cerrar acta';
+                        this.btnCSSAct = 'btn-primary';
+                      } else {
+                        this.proceedingData.filter((e: any) => {
+                          return e.keysProceedings != keysProceedings;
+                        });
+                        if (this.proceedingData.length === 1) {
+                          this.navigateProceedings = false;
+                          this.nextProce = true;
+                          this.prevProce = true;
+                          this.numberProceeding = 0;
+                          this.form.get('statusProceeding').reset();
+                          this.labelActa = 'Cerrar acta';
+                          this.btnCSSAct = 'btn-primary';
+                        } else {
+                          this.numberProceeding =
+                            this.proceedingData.length - 1;
+                          this.prevProceeding();
+                        }
+                      }
+                      this.alert('success', 'Acta eliminada', ''); */
                     });
                 },
                 err => {
