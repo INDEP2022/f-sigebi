@@ -36,8 +36,8 @@ export class EdoFisicoComponent extends BasePage implements OnInit {
         type: 'string',
         sort: false,
         valuePrepareFunction: (cell: any, row: any) => {
-          if (row.good && row.good.goodId) {
-            return row.good.goodId;
+          if (row.good && row.good.description) {
+            return row.good.description;
           } else {
             return null;
           }
