@@ -14,6 +14,7 @@ import { firstFormatDateToSecondFormatDate } from 'src/app/shared/utils/date';
 export class TableGoodMaintenanceComponent extends BasePage implements OnInit {
   @Input() override loading = false;
   statusActa = 'ABIERTA';
+  @Input() page: number;
   @Input() totalItems: number;
   @Input() data: IDetailProceedingsDeliveryReception[];
   @Output() updateData = new EventEmitter();
