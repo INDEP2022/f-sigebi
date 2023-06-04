@@ -1127,6 +1127,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         console.log(err);
         this.loading = false;
         this.dataGoodAct.load([])
+
         this.totalItemsDataGoodsAct = 0
 
       }
