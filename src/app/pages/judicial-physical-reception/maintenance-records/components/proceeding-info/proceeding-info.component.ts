@@ -107,6 +107,8 @@ export class ProceedingInfoComponent implements OnInit {
     this.service.totalGoods = 0;
     this.service.dataForAdd = [];
     this.service.formWarehouseVaul.reset();
+    this.service.formActionChange.reset();
+    this.service.formDate.reset();
   }
 
   filter() {

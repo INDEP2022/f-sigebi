@@ -11,6 +11,7 @@ import {
 import { IFormGroup } from 'src/app/core/interfaces/model-form';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { FractionService } from 'src/app/core/services/catalogs/fraction.service';
+import { GoodFinderService } from 'src/app/core/services/ms-good/good-finder.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { RealStateService } from 'src/app/core/services/ms-good/real-state.service';
 import { OrderServiceService } from 'src/app/core/services/ms-order-service/order-service.service';
@@ -129,7 +130,8 @@ export class RegistrationOfRequestsComponent
     private authService: AuthService,
     private orderService: OrderServiceService,
     private wcontentService: WContentService,
-    private goodResDevService: GetGoodResVeService
+    private goodResDevService: GetGoodResVeService,
+    private goodfinderService: GoodFinderService
   ) {
     super();
   }
@@ -1207,7 +1209,7 @@ export class RegistrationOfRequestsComponent
           this.returnarMethod();
         }
         if (typeCommit === 'captura-solicitud') {
-          console.log('captura-solicitud');
+          console.log('captura-solicitud'); //DE CAPTURA DE SOLICITUD A VERIFICAR CUMPLIMIENTO
           this.confirmMethod();
         }
         if (typeCommit === 'verificar-cumplimiento') {
@@ -1217,8 +1219,9 @@ export class RegistrationOfRequestsComponent
           setTimeout(async () => {
             console.log('estado verificar:', this.verifyResp);
             if (this.verifyResp === 'turnar') {
+              console.log('verificar-cumplimiento');
               await this.updateGoodStatus('CLASIFICAR_BIEN');
-              this.verifyComplianceMethod();
+              this.verifyComplianceMethod(); // DE VERIFICAR CUMPLIMIENTO A CLASIFICAR BIEN
             } else if (this.verifyResp === 'sin articulos') {
               this.verifyCumplianteMsg(
                 'Error',
@@ -1237,6 +1240,7 @@ export class RegistrationOfRequestsComponent
         }
         if (typeCommit === 'clasificar-bienes') {
           this.loader.load = true;
+          console.log('clasificar-bienes');
           await this.updateGoodStatus('DESTINO_DOCUMENTAL');
           //creat tarea para destino documental
           this.classifyGoodMethod();
@@ -1246,6 +1250,7 @@ export class RegistrationOfRequestsComponent
           this.deleteMsjRefuse();
           await this.updateGoodStatus('SOLICITAR_APROBACION');
           //tiene aclaraciones
+
           const clarification = await this.haveNotificacions();
           console.log(clarification);
           this.loader.load = false;
@@ -1280,15 +1285,15 @@ export class RegistrationOfRequestsComponent
             await this.destinyDocumental();
           }
         }
-        if (typeCommit === 'proceso-aprovacion') {
-          await this.updateGoodStatus('APROBADO');
-          this.approveRequestMethod();
-        }
+      }
+      if (typeCommit === 'proceso-aprovacion') {
+        await this.updateGoodStatus('APROBADO');
+        this.approveRequestMethod();
+      }
 
-        if (typeCommit === 'refuse') {
-          await this.updateGoodStatus('VERIFICAR_CUMPLIMIENTO');
-          this.motivoRechazo();
-        }
+      if (typeCommit === 'refuse') {
+        await this.updateGoodStatus('VERIFICAR_CUMPLIMIENTO');
+        this.motivoRechazo();
       }
     });
   }
@@ -1315,42 +1320,45 @@ export class RegistrationOfRequestsComponent
   //revisar las pruebas
   async haveNotificacions() {
     const goodResCount: any = await this.getAllGoodResDev();
-    return new Promise((resolve, reject) => {
-      let params = new FilterParams();
-      params.addFilter('applicationId', this.requestData.id);
+    console.log('goodResCount ', goodResCount);
+    if (goodResCount == false || goodResCount) {
+      return new Promise((resolve, reject) => {
+        let params = new FilterParams();
+        params.addFilter('applicationId', this.requestData.id);
 
-      if (goodResCount.count > 10) {
-        params.limit = goodResCount.count;
-      }
-      let filter = params.getParams();
-      this.goodResDevService.getAllGoodResDev(filter).subscribe({
-        next: (resp: any) => {
-          const goodsClarified = resp.data.filter(
-            (x: any) => x.good.goodStatus === 'ACLARADO'
-          );
+        if (goodResCount.count > 10) {
+          params.limit = goodResCount.count;
+        }
+        let filter = params.getParams();
+        this.goodResDevService.getAllGoodResDev(filter).subscribe({
+          next: (resp: any) => {
+            const goodsClarified = resp.data.filter(
+              (x: any) => x.good.goodStatus === 'ACLARADO'
+            );
 
-          const goodsImprocedente = resp.data.filter(
-            (x: any) => x.good.goodStatus === 'IMPROCEDENTE'
-          );
+            const goodsImprocedente = resp.data.filter(
+              (x: any) => x.good.goodStatus === 'IMPROCEDENTE'
+            );
 
-          if (goodsClarified.length > 0 || goodsImprocedente.length > 0) {
-            resolve('ACLARADO');
-          } else {
-            resolve('POR_ACLARAR');
-          }
-          console.log(goodsClarified);
-        },
-        error: (error: any) => {
-          resolve('SIN_ACLARACIONES');
-          this.loader.load = false;
-          /*this.onLoadToast(
+            if (goodsClarified.length > 0 || goodsImprocedente.length > 0) {
+              resolve('ACLARADO');
+            } else {
+              resolve('POR_ACLARAR');
+            }
+            console.log(goodsClarified);
+          },
+          error: (error: any) => {
+            resolve('SIN_ACLARACIONES');
+            this.loader.load = false;
+            /*this.onLoadToast(
             'error',
             'Error interno',
             'No se pudo obtener el bien-res-dev'
           );*/
-        },
+          },
+        });
       });
-    });
+    }
   }
 
   getAllGoodResDev() {
@@ -1363,50 +1371,47 @@ export class RegistrationOfRequestsComponent
           resolve(resp);
         },
         error: error => {
-          reject('error');
-          this.onLoadToast('error', 'No se llamaron los datos de good res dev');
-          console.log(error);
+          //reject('error');
+          //this.onLoadToast('error', '');
+          console.log('Error de getAllgoodResDev', error);
+          resolve(false);
         },
       });
     });
   }
 
   async updateGoodStatus(newProcessStatus: string) {
-    let goodsCount: any = await this.getAllGood();
-    let goods: any = null;
-    if (goodsCount.count > 10) {
-      goods = await this.getAllGood(goodsCount.count);
-    } else {
-      goods = goodsCount;
+    let body: any = { request: 0, status: '', process: '' };
+    body.request = Number(this.requestData.id);
+    body.status = newProcessStatus;
+    body.process = this.process;
+    if (
+      this.process === 'process-approval' &&
+      newProcessStatus === 'APROBADO'
+    ) {
+      body.process = 'process-approval';
     }
+    const resultado = await this.updateProcessStatus(body);
+  }
 
-    goods.data.map(async (good: any, index: number) => {
-      //consultar si aclarado puede volver a modificarse
-      //index = index + 1;
-      //console.log(index);
-      if (
-        good.processStatus != 'SOLICITAR_ACLARACION' &&
-        good.processStatus != 'IMPROCEDENTE' &&
-        good.processStatus != 'SOLICITAR_APROBACION'
-      ) {
-        let body: any = {};
-        body.id = good.id;
-        body.goodId = good.goodId;
-        body.processStatus = newProcessStatus;
-        await this.updateGood(body);
-      }
-
-      if (
-        this.process === 'process-approval' &&
-        good.processStatus == 'SOLICITAR_APROBACION'
-      ) {
-        let body: any = {};
-        body.id = good.id;
-        body.goodId = good.goodId;
-        body.processStatus = newProcessStatus;
-        body.goodStatus = newProcessStatus;
-        await this.updateGood(body);
-      }
+  updateProcessStatus(body: any) {
+    console.log('Objeto para cambiar estatus; ', body);
+    return new Promise((resolve, reject) => {
+      this.goodfinderService.updateStatusProcess(body).subscribe({
+        next: resp => {
+          resolve(true);
+          console.log('Respuesta endpoint para cambiar estatus', resp);
+        },
+        error: error => {
+          reject('error al actualizar los status');
+          console.log('Error al actualizar los estatus', error);
+          this.onLoadToast(
+            'error',
+            'Error al actualizar los estados de los bienes',
+            ''
+          );
+        },
+      });
     });
   }
 
@@ -1518,7 +1523,7 @@ export class RegistrationOfRequestsComponent
   }
 
   async ableToSignDictamen() {
-    const goodsCount: any = await this.getAllGood();
+    /*const goodsCount: any = await this.getAllGood();
     let goods: any = null;
     if (goodsCount.count > 10) {
       goods = await this.getAllGood(goodsCount.count);
@@ -1532,7 +1537,8 @@ export class RegistrationOfRequestsComponent
         x.processStatus == 'IMPROCEDENTE'
     );
 
-    return filter.length == goods.count ? true : false;
+    return filter.length == goods.count ? true : false;*/
+    return true;
   }
 
   msgGuardado(icon: any, title: string, message: string) {

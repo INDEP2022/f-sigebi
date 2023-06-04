@@ -7,7 +7,7 @@ import {
   TemplateRef,
   ViewChild,
 } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { firstValueFrom } from 'rxjs';
 import { TableReplaceColumnModalComponent } from 'src/app/@standalone/modals/table-replace-column-modal/table-replace-column-modal.component';
@@ -48,7 +48,6 @@ export class GoodActionsComponent extends AlertButton implements OnInit {
   @Output() addGoodEvent =
     new EventEmitter<IDetailProceedingsDeliveryReception>();
 
-  formAction: FormGroup;
   loading = false;
   selectedsForUpdate: IDetailProceedingsDeliveryReception[] = [];
   // dataForAdd: IDetailProceedingsDeliveryReception[] = [];
@@ -78,6 +77,18 @@ export class GoodActionsComponent extends AlertButton implements OnInit {
     this.formAction = this.fb.group({
       action: [null],
     });
+    this.formDate = this.fb.group({
+      inicio: [null],
+      fin: [null],
+    });
+  }
+
+  get formDate() {
+    return this.service.formDate;
+  }
+
+  set formDate(value) {
+    this.service.formDate = value;
   }
 
   get formGood() {
@@ -86,6 +97,14 @@ export class GoodActionsComponent extends AlertButton implements OnInit {
 
   set formGood(value) {
     this.service.formGood = value;
+  }
+
+  get formAction() {
+    return this.service.formActionChange;
+  }
+
+  set formAction(value) {
+    this.service.formActionChange = value;
   }
 
   ngOnInit(): void {
@@ -340,7 +359,11 @@ export class GoodActionsComponent extends AlertButton implements OnInit {
                 },
               });
           } else {
-            this.onLoadToast('error', 'No se pudo actualizar bienes', message);
+            this.onLoadToast(
+              'error',
+              'No se pudo actualizar bienes',
+              message + ' porque ya están registrados'
+            );
           }
         },
         error: err => {

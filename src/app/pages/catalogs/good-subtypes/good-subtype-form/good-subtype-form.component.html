@@ -41,9 +41,9 @@
         <div class="col-md-3">
           <form-field
             [control]="goodSubtypeForm.get('noPhotography')"
-            label="No Fotograf&iacute;a">
+            label="Nº Fotograf&iacute;a">
             <input
-              type="number"
+              type="text"
               class="form-control"
               formControlName="noPhotography" />
           </form-field>
@@ -51,9 +51,9 @@
         <div class="col-md-3">
           <form-field
             [control]="goodSubtypeForm.get('noRegister')"
-            label="No. Registro">
+            label="Nº Registro">
             <input
-              type="number"
+              type="text"
               class="form-control"
               formControlName="noRegister" />
           </form-field>
@@ -76,10 +76,7 @@
           <form-field
             [control]="goodSubtypeForm.get('version')"
             label="Versi&oacute;n">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="version" />
+            <input type="text" class="form-control" formControlName="version" />
           </form-field>
         </div>
       </div>
