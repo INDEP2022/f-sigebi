@@ -1085,6 +1085,8 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         error: (err: any) => {
           console.error(err);
           this.loading = false;
+          this.dataGoods.load([]);
+          this.totalItemsDataGoods = 0;
         },
       });
   }
@@ -1116,6 +1118,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
           console.log('No se ejecuto el for')
         } finally {
           this.dataGoodAct.load(newData)
+          this.totalItemsDataGoodsAct = res.count
           this.loading = false;
         } 
 
@@ -1124,6 +1127,8 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         console.log(err);
         this.loading = false;
         this.dataGoodAct.load([])
+        this.totalItemsDataGoodsAct = 0
+
       }
     );
   }
@@ -1283,7 +1288,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                 this.clave_transferente = res.data[0]['keyTransferent'];
               },
               err => {
-                this.alert('error', 'Error al Leer transferentes', '');
+                this.alert('warning', 'Error al Leer transferentes', '');
               }
             );
         }
@@ -1399,7 +1404,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
       format(new Date(), 'MM-yyyy')
     ) {
       this.alert(
-        'error',
+        'warning',
         'Fuera de fecha',
         `'El Acta ${
           this.form.get('acta2').value
@@ -1604,6 +1609,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         console.log(res);
         const data = this.dataGoods;
         const incomeData = res.data;
+        this.totalItemsDataGoodsAct = res.count
         for (let i = 0; i < incomeData.length; i++) {
           const element = JSON.parse(JSON.stringify(incomeData[i]));
           console.log(element.exchangeValue);
@@ -1896,7 +1902,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
           this.form.get('averPrev').setValue(null);
           this.dataExpedients = new DefaultSelect();
           this.alert(
-            'error',
+            'warning',
             'La averiguación previa colocada no tiene datos',
             ''
           );
@@ -1917,7 +1923,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
           this.loading = false;
           this.form.get('causaPenal').setValue(null);
           this.dataExpedients = new DefaultSelect();
-          this.alert('error', 'La causa penal colocada no tiene datos', '');
+          this.alert('warning', 'La causa penal colocada no tiene datos', '');
         }
       );
     }
@@ -2723,6 +2729,12 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         'No se registraron bienes',
         'El Acta no contiene Bienes, no se podrá Cerrar.'
       );
+    }if(this.dataGoodAct['data'].find((e: any) => e.indEdoFisico && e.good[`val${e.noColumna}`] == null)){
+      this.alert('warning','Hay bienes con estado físico requerido sin establecer','')
+    }else if(this.dataGoodAct['data'].find((e: any) => e.received != 'S')){
+      this.alert('warning','Hay bienes no marcados como recibido','')
+    }else if(this.dataGoodAct['data'].find((e: any) => e.good.storeNumber == null)){
+      this.alert('warning','Hay bienes no guardados en almacén','')
     }else{
       const paramsF = new FilterParams();
     paramsF.addFilter('keysProceedings', this.form.get('acta2').value);
@@ -2758,6 +2770,12 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                   console.log(res);
                   VAL_MOVIMIENTO = res.data[0]['valmovement'];
                   if (VAL_MOVIMIENTO == 1) {
+                    const splitActa = this.form.get('acta2').value.split('/');
+                    const tipo_acta = ['D', 'ND'].includes(splitActa[0])
+                      ? 'DECOMISO'
+                      : 'ENTREGA'; 
+                      this.loading = true
+
                   } else {
                   }
                 },
@@ -2773,11 +2791,9 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         console.log(err);
       }
     );
-    }
-
-
-    
+    }    
   }
+
 
   closeProceeding() {
     console.log(this.saveDataAct);
@@ -2795,6 +2811,12 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
 
         if(this.dataGoodAct['data'].find((e: any) => e.indEdoFisico && e.good[`val${e.noColumna}`] == null)){
           this.alert('warning','Hay bienes con estado físico requerido sin establecer','')
+        }else if(this.dataGoodAct['data'].find((e: any) => e.received != 'S')){
+          this.alert('warning','Hay bienes no marcados como recibido','')
+        }else if(this.dataGoodAct['data'].find((e: any) => e.good.storeNumber == null) && this.isAlmacen){
+          this.alert('warning','Hay bienes no guardados en almacén','')
+        }else if(this.dataGoodAct['data'].find((e: any) => e.good.vaultNumber == null) && this.isBoveda){
+          this.alert('warning','Hay bienes no guardados en Bóveda','')
         }else{
           const paramsF = new FilterParams();
           paramsF.addFilter('numberProceedings', this.idProceeding);
@@ -2876,6 +2898,12 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
 
               if(this.dataGoodAct['data'].find((e: any) => e.indEdoFisico && e.good[`val${e.noColumna}`] == null)){
                 this.alert('warning','Hay bienes con estado físico requerido sin establecer','')
+              }else if(this.dataGoodAct['data'].find((e: any) => e.received != 'S')){
+                this.alert('warning','Hay bienes no marcados como recibido','')
+              }else if(this.dataGoodAct['data'].find((e: any) => e.good.storeNumber == null)){
+                this.alert('warning','Hay bienes no guardados en almacén','')
+              }else if(this.dataGoodAct['data'].find((e: any) => e.good.vaultNumber == null) && this.isBoveda){
+                this.alert('warning','Hay bienes no guardados en Bóveda','')
               }else{
                 paramsF.addFilter(
                   'keysProceedings',
@@ -2897,7 +2925,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                       const { P5 } = JSON.parse(JSON.stringify(res));
                       console.log(P5)
                       //!Forzando debería ser mayor y esta menor
-                      if (P5 > 0) {
+                      if (P5 < 0) {
                         this.alert(
                           'warning',
                           'Bienes sin informacion requerida',
@@ -3011,7 +3039,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
 
   deleteProceeding() {
     if (!this.act2Valid) {
-      this.alert('error', 'No se registro un número de acta válido', '');
+      this.alert('warning', 'No se registro un número de acta válido', '');
     } else {
       const user = localStorage.getItem('username');
       if (this.form.get('statusProceeding').value != '') {
@@ -3027,7 +3055,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
           ) {
             console.log(1);
             this.alert(
-              'error',
+              'warning',
               'No puede elimar acta',
               'No puede eliminar un Acta cerrada'
             );
@@ -3039,7 +3067,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
             console.log(2);
 
             this.alert(
-              'error',
+              'warning',
               'No puede eliminar acta',
               'No puede eliminar un Acta fuera del mes de elaboración'
             );
@@ -3131,13 +3159,13 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
           }
         } else {
           this.alert(
-            'error',
+            'warning',
             'El usuario no tiene permiso para eliminar acta',
             ''
           );
         }
       } else {
-        this.alert('error', 'No puede eliminar un acta no guardada', '');
+        this.alert('warning', 'No puede eliminar un acta no guardada', '');
       }
     }
   }
@@ -3432,14 +3460,14 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
       //Valida si es disponible
       if (!available) {
         this.alert(
-          'error',
+          'warning',
           'Estatus no disponible',
           'El bien tiene un estatus inválido para ser asignado a alguna acta'
         );
       } else if (!this.act2Valid) {
         //Valida si hay clave de acta y es válida
         this.alert(
-          'error',
+          'warning',
           'Error en el número de acta',
           'Debe registrar un Acta antes de poder mover el bien'
         );
@@ -3448,14 +3476,14 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
       else if (valAct != 'RT') {
         if ([1424, 1426, 1590].includes(goodClass) && valAct[0] != 'N') {
           this.alert(
-            'error',
+            'warning',
             'Problema con el tipo de acta',
             'Para este bien la Clave de Acta debe iniciar con " N "'
           );
         }
         if ([1424, 1426, 1590].includes(goodClass) && admin != 'CCB') {
           this.alert(
-            'error',
+            'warning',
             'Problema con quien administra en la clave',
             'En la parte de Quien Administra en la clave de acta debe ser para este bien " CCB "'
           );
@@ -3467,7 +3495,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
           valAct[0] === 'N'
         ) {
           this.alert(
-            'error',
+            'warning',
             'Problema con el tipo de acta',
             'Las actas con esta nomenclatura solo deben contener bienes de numerario efectivo'
           );
@@ -3486,7 +3514,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
           //Validar Admin y tipo
           if (admin === 'DEABI' && no_type != 6) {
             this.alert(
-              'error',
+              'warning',
               'Error en el tipo de bien',
               'Bien con tipo inválido para el acta (INMUEBLE)'
             );
@@ -3508,7 +3536,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
               format(new Date(), 'MM-yyyy')
           ) {
             this.alert(
-              'error',
+              'warning',
               'Error en la fecha de elaboración',
               'No puede realizar modificaciones a esta acta, por estar fuera del mes'
             );
@@ -3524,7 +3552,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
               format(new Date(), 'dd-MM-yyyy')
           ) {
             this.alert(
-              'error',
+              'warning',
               'Error en la fecha de elaboración',
               'La fecha de elaboración debe ser igual a hoy o una fecha después'
             );
@@ -3658,7 +3686,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
       ['CERRADO', 'CERRADA'].includes(this.form.get('statusProceeding').value)
     ) {
       this.alert(
-        'error',
+        'warning',
         'El acta está cerrada',
         'El acta ya esta cerrada, no puede realizar modificaciones a esta'
       );
@@ -3668,7 +3696,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         format(new Date(), 'MM-yyyy')
     ) {
       this.alert(
-        'error',
+        'warning',
         'Error en la fecha de elaboración',
         'No puede realizar modificaciones a esta acta, por estar fuera del mes'
       );
@@ -3715,15 +3743,11 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                       };
                       this.serviceGood.update(putGood).subscribe(
                         res => {
-                          /* console.log(this.dataGoodAct);
-                          this.goodData = this.goodData.filter(
-                            (e: any) => e.id != this.selectActData.goog.id
-                          ); */
+  
                           console.log(this.dataGoodAct);
                           this.goodData = this.goodData.filter(
                             (e: any) => e.id != this.selectActData.good.id
                           );
-                          /* this.dataGoodAct.load(this.goodData); */
                           this.getGoodsActFn();
 
                           this.dataGoods.load(
@@ -3737,27 +3761,14 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                               }
                             })
                           );
-                          /* this.dataGoodAct.load(this.goodData); */
-                          /* console.log(this.goodData);
-                          this.saveDataAct = this.saveDataAct.filter(
-                            (e: any) => e.good.id != this.selectActData.good.id
-                          );
-
-                          this.dataGoods.load(
-                            this.dataGoods['data'].map((e: any) => {
-                              if (e.good.id == this.selectActData.good.id) {
-                                return { ...e, avalaible: true };
-                              } else {
-                                return e;
-                              }
-                            })
-                          ); */
                         },
                         err => {
                           console.log(err);
                           this.getGoodsActFn();
                           this.dataGoods.load(
                             this.dataGoods['data'].map((e: any) => {
+                              console.log(e)
+                              console.log(this.selectActData.good.id)
                               if (e.id == this.selectActData.good.id) {
                                 return { ...e, avalaible: true };
                               } else {
@@ -3775,8 +3786,11 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                       /* this.dataGoodAct.load(this.goodData); */
                       this.getGoodsActFn();
                       this.dataGoods.load(
+                        
                         this.dataGoods['data'].map((e: any) => {
-                          if (e.good.id == this.selectActData.good.id) {
+                          console.log(e)
+                              console.log(this.selectActData.good.id)
+                          if (e.id == this.selectActData.good.id) {
                             return { ...e, avalaible: true };
                           } else {
                             return e;
@@ -3807,21 +3821,6 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
             );
             this.dataGoodAct.load(this.goodData);
             this.getGoodsFn();
-            /* this.dataGoodAct.load(this.goodData); */
-            /* console.log(this.goodData);
-            this.saveDataAct = this.saveDataAct.filter(
-              (e: any) => e.id != this.selectActData.id
-            );
-
-            this.dataGoods.load(
-              this.dataGoods['data'].map((e: any) => {
-                if (e.id == this.selectActData.id) {
-                  return { ...e, avalaible: true };
-                } else {
-                  return e;
-                }
-              })
-            ); */
           }
         );
       }
