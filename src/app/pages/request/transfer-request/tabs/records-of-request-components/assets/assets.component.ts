@@ -177,7 +177,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
   }
 
   onFileChange(event: any, type?: string) {
-    this.loader.load = true; //Loading cambiar por uno de porcentaje
+    this.loaderProgress.load = true; //Loading cambiar por uno de porcentaje
     const file = event.target.files[0];
     const name = file.name;
     const lastModified = file.lastModified;
@@ -282,12 +282,12 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
             'Archivos cargados',
             `Se importaron los archivos`
           );
-          this.loader.load = false;
+          this.loaderProgress.load = false;
           this.fileUploaded.nativeElement.value = '';
           this.closeCreateGoodWIndows();
         },
         error: error => {
-          this.loader.load = false;
+          this.loaderProgress.load = false;
           this.message(
             'error',
             'Error al subir el file',
