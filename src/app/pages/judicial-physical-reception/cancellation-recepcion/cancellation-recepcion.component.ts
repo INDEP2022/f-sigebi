@@ -199,10 +199,12 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
   paramsActNavigate = new BehaviorSubject<ListParams>(new ListParams());
   newLimitparamsActNavigate = new FormControl(1);
 
+  //NAVEGACION EN TABLA DE BIENES
   paramsDataGoods = new BehaviorSubject<ListParams>(new ListParams());
   totalItemsDataGoods: number = 0;
   limitDataGoods = new FormControl(10);
 
+  //NAVEGACION EN TABALA DE BIENES DE ACTA
   paramsDataGoodsAct = new BehaviorSubject<ListParams>(new ListParams());
   totalItemsDataGoodsAct: number = 0;
   limitDataGoodsAct = new FormControl(10);
@@ -1996,9 +1998,11 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                                       this.form.get('admin').value
                                         .numberDelegation2,
                                     numDelegation2:
-                                      this.form.get('admin').value
-                                        .numberDelegation2 === 11
-                                        ? 11
+                                      parseInt(
+                                        this.form.get('admin').value
+                                          .numberDelegation2
+                                      ) == 11
+                                        ? '11'
                                         : null,
                                     identifier: null,
                                     label: null,
@@ -2230,7 +2234,9 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
           captureDate: format(new Date(), 'yyyy-MM,dd HH:mm'),
           numDelegation1: this.form.get('admin').value.numberDelegation2,
           numDelegation2:
-            this.form.get('admin').value.numberDelegation2 === 11 ? 11 : null,
+            parseInt(this.form.get('admin').value.numberDelegation2) == 11
+              ? '11'
+              : null,
           identifier: null,
           label: null,
           universalFolio: null,
@@ -2389,7 +2395,9 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
             captureDate: format(new Date(), 'yyyy-MM,dd HH:mm'),
             numDelegation1: this.form.get('admin').value.numberDelegation2,
             numDelegation2:
-              this.form.get('admin').value.numberDelegation2 === 11 ? 11 : null,
+              parseInt(this.form.get('admin').value.numberDelegation2) == 11
+                ? '11'
+                : null,
             identifier: null,
             label: null,
             universalFolio: null,
@@ -2418,6 +2426,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
               console.log(res);
               this.proceedingData.push(res);
               this.navigateProceedings = true;
+
               this.idProceeding = JSON.parse(JSON.stringify(res)).id;
               this.alert('success', 'Se guardo el acta', '');
             },
@@ -2873,52 +2882,6 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                         .get('expediente')
                         .setValue(this.numberExpedient);
                       this.goodsByExpediente();
-
-                      /* this.form
-                        .get('expediente')
-                        .setValue(this.numberExpedient);
-                        this.getGoodsFn() */
-                      /* await this.dataGoods.load(
-                        this.dataGoods['data'].map((e: any) => {
-                          for (let element of this.dataGoodAct['data']) {
-                            if (e.id === element.id) {
-                              return { ...e, avalaible: true, acta: null };
-                            } else {
-                              return e;
-                            }
-                          }
-                        })
-                      ); */
-
-                      /* this.getGoodsByExpedient();
-                      this.form.get('statusProceeding').reset();
-                      if (this.proceedingData.length === 1) {
-                        this.navigateProceedings = false;
-                        this.nextProce = true;
-                        this.prevProce = true;
-                        this.numberProceeding = 0;
-                        this.form.get('statusProceeding').reset();
-                        this.labelActa = 'Cerrar acta';
-                        this.btnCSSAct = 'btn-primary';
-                      } else {
-                        this.proceedingData.filter((e: any) => {
-                          return e.keysProceedings != keysProceedings;
-                        });
-                        if (this.proceedingData.length === 1) {
-                          this.navigateProceedings = false;
-                          this.nextProce = true;
-                          this.prevProce = true;
-                          this.numberProceeding = 0;
-                          this.form.get('statusProceeding').reset();
-                          this.labelActa = 'Cerrar acta';
-                          this.btnCSSAct = 'btn-primary';
-                        } else {
-                          this.numberProceeding =
-                            this.proceedingData.length - 1;
-                          this.prevProceeding();
-                        }
-                      }
-                      this.alert('success', 'Acta eliminada', ''); */
                     });
                 },
                 err => {
