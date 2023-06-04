@@ -2326,8 +2326,8 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
               : this.dictationData.id,
             TIPO_DIC: this.dictationData.typeDict,
           };
-          // this.runReport('RGENREPDICTAMASDES', params, onlyDetail);
-          this.runReport('blank', params, onlyDetail);
+          this.runReport('RGENREPDICTAMASDES', params, onlyDetail);
+          // this.runReport('blank', params, onlyDetail);
         }
       } else if (
         this.variables.identi.includes('A') &&
@@ -2392,23 +2392,23 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
         ''
       );
     }
-    let params: any = {
-      PARAMFORM: 'NO',
-      P_OFICIO: this.dictationData.id,
-      TIPO_DIC: this.dictationData.typeDict,
-      CLAVE_ARMADA: this.dictationData.passOfficeArmy,
-      TIPO_VOL: this.objDetail['vTIPO_VOLANTE'],
-      ESTAT_DIC: onlyDetail
-        ? this.dictationData.statusDict
-        : this.officeDictationData.statusOf,
-    };
     if (
       this.variables.identi.includes('4') &&
       this.paramsScreen.TIPO == 'PROCEDENCIA'
     ) {
+      let params: any = {
+        // PARAMFORM: 'NO',
+        P_OFICIO: this.dictationData.id,
+        TIPO_DIC: this.dictationData.typeDict,
+        CLAVE_ARMADA: this.dictationData.passOfficeArmy, // EN ESPERA DE SI SE QUITA
+        P_TIPOVOL: this.objDetail['vTIPO_VOLANTE'],
+        // ESTAT_DIC: onlyDetail
+        //   ? this.dictationData.statusDict
+        //   : this.officeDictationData.statusOf,
+      };
       params['NOME_DICTPRO'] = this.objDetail['vCLAVE_ARMADA']; // NO SE LLENA ESTA VARIABLE EN EL FORMS
-      // this.runReport('RGENREPDICTAMASDES_EXT', params);
-      this.runReport('blank', params, onlyDetail);
+      this.runReport('RGENREPDICTAMASDES_EXT', params);
+      // this.runReport('blank', params, onlyDetail);
     } else {
       let params: any = {
         P_OFICIO: this.goodData[0]
@@ -2416,8 +2416,8 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
           : this.dictationData.id,
         TIPO_DIC: this.dictationData.typeDict,
       };
-      // this.runReport('RGENREPDICTAMASDES', params);
-      this.runReport('blank', params, onlyDetail);
+      this.runReport('RGENREPDICTAMASDES', params);
+      // this.runReport('blank', params, onlyDetail);
     }
   }
 
