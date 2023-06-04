@@ -22,26 +22,47 @@ export class EdoFisicoComponent extends BasePage implements OnInit {
     ...TABLE_SETTINGS,
     actions: false,
     columns: {
-      goodId: {
+      'good.goodId': {
         title: 'No. Bien',
         type: 'number',
         sort: false,
+        valuePrepareFunction: (cell: any, row: any) => {
+          if (row.good && row.good.goodId) {
+            return row.good.goodId;
+          } else {
+            return null;
+          }
+        },
       },
-      description: {
+      'good.description': {
         title: 'Descripción',
         type: 'string',
         sort: false,
+        valuePrepareFunction: (cell: any, row: any) => {
+          if (row.good && row.good.goodId) {
+            return row.good.goodId;
+          } else {
+            return null;
+          }
+        },
       },
       estadoFisico: {
         title: 'Edo.Fisico',
         type: 'custom',
         sort: false,
+        valuePrepareFunction: (cell: any, row: any) => {
+          if (row.good && row.good[`val${row.noColumna}`]) {
+            return row.good[`val${row.noColumna}`];
+          } else {
+            return null;
+          }
+        },
         renderComponent: SelectElementComponent,
         onComponentInitFunction(instance: any) {
           const values = ['MALO', 'BUENO', 'REGULAR', 'OTRO'];
           instance.values.emit(values);
           instance.toggle.subscribe((data: any) => {
-            data.row.estadoFisico = data.toggle;
+            data.row.good[`val${data.row.noColumna}`] = data.toggle == 'OTRO' ? null : data.toggle;
           });
         },
       },
@@ -60,7 +81,8 @@ export class EdoFisicoComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.verifyEstatus();
+    /* this.verifyEstatus(); */
+    this.dataGoods = new LocalDataSource(this.goodData)
   }
 
   close() {
@@ -68,28 +90,37 @@ export class EdoFisicoComponent extends BasePage implements OnInit {
   }
 
   changeAll() {
-    for (let item of this.dataGoods['data']) {
-      console.log(item);
 
-      const generalModel: Map<string, any> = new Map();
-      generalModel.set('id', parseInt(item.id.toString()));
-      generalModel.set('goodId', parseInt(item.id.toString()));
-      generalModel.set(`val${item.columna}`, item.estadoFisico);
-      const jsonModel = JSON.parse(
-        JSON.stringify(Object.fromEntries(generalModel))
-      );
-      this.serviceGood.updateWithoutId(jsonModel).subscribe(
-        async res => {
-          console.log(res);
-          await this.validatePreInsert(item);
-        },
-        err => {
-          console.log(err);
-        }
-      );
+    try {
+      for (let item of this.dataGoods['data']) {
+        console.log(item);
+  
+        const generalModel: Map<string, any> = new Map();
+        generalModel.set('id', parseInt(item.good.id.toString()));
+        generalModel.set('goodId', parseInt(item.good.goodId.toString()));
+        generalModel.set(`val${item.noColumna}`, item.good[`val${item.noColumna}`]);
+        const jsonModel = JSON.parse(
+          JSON.stringify(Object.fromEntries(generalModel))
+        );
+        this.serviceGood.updateWithoutId(jsonModel).subscribe(
+          async res => {
+            console.log(res);
+            await this.validatePreInsert(item);
+          },
+          err => {
+            console.log(err);
+          }
+        );
+      }
+    } catch (error) {
+      this.alert('error','Se presentó un error inesperado','Se presentó un error inesperado al actualizar el estado físico de los Bienes. Por favor intentelo nuevamente. \n \n Si el error persiste contacte con el administrador.')
+    }finally{
+      this.alert('success', 'Se modificó el estatus de los Bienes', '');
+      this.bsModel.content.callback(this.dataGoods['data']);
     }
-    this.alert('success', 'Se modificó el estatus de los Bienes', '');
-    this.bsModel.content.callback(this.dataGoods['data']);
+
+    
+    
   }
 
   selectRow(e: any) {
@@ -97,7 +128,7 @@ export class EdoFisicoComponent extends BasePage implements OnInit {
     console.log(e);
   }
 
-  async verifyEstatus() {
+  /* async verifyEstatus() {
     console.log('Sí verifico');
     const newDataPromise = this.goodData.map(async (e: any) => {
       const edoFis: any = await this.getIndEdoFisAndVColumna(e);
@@ -111,18 +142,17 @@ export class EdoFisicoComponent extends BasePage implements OnInit {
     const newDataJSON = JSON.stringify(newData);
     console.log(JSON.parse(newDataJSON));
     this.dataGoods = new LocalDataSource(JSON.parse(newDataJSON));
-  }
+  } */
 
   validatePreInsert(e: any) {
     let v_no_clasif_camb: number;
     let v_no_etiqueta: number;
-    const edoFis: any = this.getIndEdoFisAndVColumna(e);
     return new Promise((resolve, reject) => {
       if (e.indEdoFisico) {
-        if (e[`val${edoFis.V_NO_COLUMNA}`] == 'MALO') {
+        if (e.good[`val${e.noColumna}`] == 'MALO') {
           const paramsF = new FilterParams();
           paramsF.addFilter('type', 'EDO_FIS');
-          paramsF.addFilter('classifyGoodNumber', e.goodClassNumber);
+          paramsF.addFilter('classifyGoodNumber', e.good.goodClassNumber);
           this.serviceClassifyGood
             .getChangeClass(paramsF.getParams())
             .subscribe(
@@ -137,8 +167,8 @@ export class EdoFisicoComponent extends BasePage implements OnInit {
                       v_no_etiqueta = parseInt(res.data[0]['labelNumber']);
 
                       const generalModel: Map<string, any> = new Map();
-                      generalModel.set('id', e.id);
-                      generalModel.set('goodId', e.goodId);
+                      generalModel.set('id', e.good.id);
+                      generalModel.set('goodId', e.good.goodId);
                       v_no_clasif_camb > 0
                         ? generalModel.set(`goodClassNumber`, v_no_clasif_camb)
                         : '';
@@ -175,8 +205,8 @@ export class EdoFisicoComponent extends BasePage implements OnInit {
                     res => {
                       v_no_etiqueta = parseInt(res.data[0]['labelNumber']);
                       const generalModel: Map<string, any> = new Map();
-                      generalModel.set('id', e.id);
-                      generalModel.set('goodId', e.goodId);
+                      generalModel.set('id', e.good.id);
+                      generalModel.set('goodId', e.good.goodId);
                       v_no_clasif_camb > 0
                         ? generalModel.set(`goodClassNumber`, v_no_clasif_camb)
                         : '';
@@ -203,16 +233,16 @@ export class EdoFisicoComponent extends BasePage implements OnInit {
                   );
               }
             );
-        } else if (e[`val${edoFis.V_NO_COLUMNA}`] == 'REGULAR') {
+        } else if (e.good[`val${e.noColumna}`] == 'REGULAR') {
           const paramsF = new FilterParams();
           paramsF.addFilter('type', 'EDO_FIS');
-          paramsF.addFilter('classifyGoodNumber', e.goodClassNumber);
+          paramsF.addFilter('classifyGoodNumber', e.good.goodClassNumber);
           this.serviceClassifyGood
             .getChangeClass(paramsF.getParams())
             .subscribe(
               res => {
                 if (res.data.length > 1) {
-                  v_no_clasif_camb = e.goodClassNumber;
+                  v_no_clasif_camb = e.good.goodClassNumber;
                 } else {
                   v_no_clasif_camb = res.data[0]['classifyChangeNumber'];
                 }
@@ -224,8 +254,8 @@ export class EdoFisicoComponent extends BasePage implements OnInit {
                     res => {
                       v_no_etiqueta = parseInt(res.data[0]['labelNumber']);
                       const generalModel: Map<string, any> = new Map();
-                      generalModel.set('id', e.id);
-                      generalModel.set('goodId', e.goodId);
+                      generalModel.set('id', e.good.id);
+                      generalModel.set('goodId', e.good.goodId);
                       v_no_clasif_camb > 0
                         ? generalModel.set(`goodClassNumber`, v_no_clasif_camb)
                         : '';
@@ -261,8 +291,8 @@ export class EdoFisicoComponent extends BasePage implements OnInit {
                     res => {
                       v_no_etiqueta = parseInt(res.data[0]['labelNumber']);
                       const generalModel: Map<string, any> = new Map();
-                      generalModel.set('id', e.id);
-                      generalModel.set('goodId', e.goodId);
+                      generalModel.set('id', e.good.id);
+                      generalModel.set('goodId', e.good.goodId);
                       v_no_clasif_camb > 0
                         ? generalModel.set(`goodClassNumber`, v_no_clasif_camb)
                         : '';
@@ -294,63 +324,4 @@ export class EdoFisicoComponent extends BasePage implements OnInit {
     });
   }
 
-  getIndEdoFisAndVColumna(data: any) {
-    let V_IND_EDO_FISICO: number;
-    let V_NO_COLUMNA: number;
-    console.log(data.goodClassNumber);
-
-    return new Promise((resolve, reject) => {
-      const paramsF = new FilterParams();
-      paramsF.addFilter('type', 'EDO_FIS');
-      paramsF.addFilter('classifyGoodNumber', data.goodClassNumber);
-      this.serviceClassifyGood.getChangeClass(paramsF.getParams()).subscribe(
-        res => {
-          V_IND_EDO_FISICO = 1;
-          const paramsF2 = new FilterParams();
-          paramsF2.addFilter('classifGoodNumber', data.goodClassNumber);
-          paramsF2.addFilter('attribute', 'ESTADO FISICO', SearchFilter.ILIKE);
-          this.serviceGoodQuery
-            .getAtributeClassificationGoodFilter(paramsF2.getParams())
-            .subscribe(
-              res => {
-                console.log(res);
-                if (res.data[0]) {
-                  V_NO_COLUMNA = res.data[0].columnNumber;
-                  resolve({ V_NO_COLUMNA, V_IND_EDO_FISICO });
-                }
-              },
-              err => {
-                console.log(err);
-                V_NO_COLUMNA = 0;
-                resolve({ V_NO_COLUMNA, V_IND_EDO_FISICO });
-              }
-            );
-        },
-        err => {
-          console.log(err);
-          V_IND_EDO_FISICO = 0;
-          V_NO_COLUMNA = 0;
-          const paramsF2 = new FilterParams();
-          paramsF2.addFilter('classifGoodNumber', data.goodClassNumber);
-          paramsF2.addFilter('attribute', 'ESTADO FISICO', SearchFilter.ILIKE);
-          this.serviceGoodQuery
-            .getAtributeClassificationGoodFilter(paramsF2.getParams())
-            .subscribe(
-              res => {
-                console.log(res);
-                if (res.data[0]) {
-                  V_NO_COLUMNA = res.data[0].columnNumber;
-                  resolve({ V_NO_COLUMNA, V_IND_EDO_FISICO });
-                }
-              },
-              err => {
-                V_NO_COLUMNA = 0;
-                resolve({ V_NO_COLUMNA, V_IND_EDO_FISICO });
-              }
-            );
-          resolve({ V_NO_COLUMNA, V_IND_EDO_FISICO });
-        }
-      );
-    });
-  }
 }
