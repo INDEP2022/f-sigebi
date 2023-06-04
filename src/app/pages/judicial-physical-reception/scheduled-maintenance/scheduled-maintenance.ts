@@ -172,6 +172,7 @@ export abstract class ScheduledMaintenance extends BasePageWidhtDinamicFiltersEx
     this.totalItems = 0;
     localStorage.removeItem(this.formStorage);
     this.columnFilters = [];
+    this.dinamicFilterUpdate();
   }
 
   extraOperations() {}
@@ -204,6 +205,7 @@ export abstract class ScheduledMaintenance extends BasePageWidhtDinamicFiltersEx
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(change => {
+        // debugger;
         if (change.action === 'filter') {
           let filters = change.filter.filters;
           filters.map((filter: any) => {
@@ -287,7 +289,7 @@ export abstract class ScheduledMaintenance extends BasePageWidhtDinamicFiltersEx
   }
 
   private fillParams(byPage = false) {
-    debugger;
+    // debugger;
     const tipoEvento = this.form.get('tipoEvento').value;
     // const fechaInicio: Date | string = this.form.get('fechaInicio').value;
     // const fechaFin: Date = this.form.get('fechaFin').value;
