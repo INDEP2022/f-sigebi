@@ -1418,7 +1418,6 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     this.form.get('statusProceeding').reset();
     this.numberExpedient = this.form.get('expediente').value;
     this.noRequireAct1();
-    
 
     const btn = document.getElementById('expedient-number');
 
