@@ -46,6 +46,7 @@
       </div> -->
       <app-table-good-maintenance
         [loading]="loadingGoods"
+        [page]="pageGoods"
         [data]="data"
         [totalItems]="totalGoods"
         (updateData)="updateData($event)"
