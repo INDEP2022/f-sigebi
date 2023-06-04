@@ -9,6 +9,7 @@ import {
 import {
   IProceedings,
   IUpdateActasEntregaRecepcion,
+  IUpdateActasEntregaRecepcionDelegation,
 } from '../../models/ms-proceedings/proceedings.model';
 import {
   IBlkPost,
@@ -27,6 +28,7 @@ import {
 export class ProceedingsService extends HttpService {
   private readonly route = ProceedingsEndpoints.Proceedings;
   private readonly endpoint = ProceedingsEndpoints.ProeedingsDevolution;
+  private readonly endpointU = ProceedingsEndpoints.UpdateActasRDelegation;
   showErrorObs = new BehaviorSubject<boolean>(true);
   constructor() {
     super();
@@ -124,6 +126,13 @@ export class ProceedingsService extends HttpService {
     return this.put<IListResponse<any>>(
       `${this.route}/aplication/update-actasEntregaRecepcion/${no_Acta}`,
       model
+    );
+  }
+
+  updateActasEntregaRTurno(body: IUpdateActasEntregaRecepcionDelegation) {
+    return this.put<IListResponse<IUpdateActasEntregaRecepcionDelegation>>(
+      `${this.endpointU}`,
+      body
     );
   }
 }

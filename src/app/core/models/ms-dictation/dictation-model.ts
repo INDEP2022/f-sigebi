@@ -80,3 +80,8 @@ export interface ITmpExpDesahogoB {
   goodNumber: number;
   numberProceedings: number;
 }
+
+export interface IUpdateDelDictation {
+  id?: number;
+  delegationDictNumber?: number;
+}
