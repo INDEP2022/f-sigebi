@@ -22,7 +22,9 @@
             <input
               type="number"
               class="form-control"
-              formControlName="numberDelegation" />
+              formControlName="numberDelegation"
+              min="0"
+              oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10);" />
           </form-field>
         </div>
         <div class="col-md-6">
@@ -81,7 +83,11 @@
           <form-field
             [control]="detailDelegationForm.get('tel1')"
             label="Tel&eacute;fono 1">
-            <input type="tel" class="form-control" formControlName="tel1" />
+            <input
+              type="tel"
+              class="form-control"
+              formControlName="tel1"
+              maxlength="30" />
           </form-field>
         </div>
 
@@ -89,7 +95,11 @@
           <form-field
             [control]="detailDelegationForm.get('tel2')"
             label="Tel&eacute;fono 2">
-            <input type="tel" class="form-control" formControlName="tel2" />
+            <input
+              type="tel"
+              class="form-control"
+              formControlName="tel2"
+              maxlength="30" />
           </form-field>
         </div>
 
@@ -97,7 +107,11 @@
           <form-field
             [control]="detailDelegationForm.get('tel3')"
             label="Tel&eacute;fono 3">
-            <input type="tel" class="form-control" formControlName="tel3" />
+            <input
+              type="tel"
+              class="form-control"
+              formControlName="tel3"
+              maxlength="30" />
           </form-field>
         </div>
       </div>

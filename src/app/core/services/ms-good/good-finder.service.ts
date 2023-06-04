@@ -17,4 +17,28 @@ export class GoodFinderService extends HttpService {
     const route = GoodFinderEndpoint.GoodQuery;
     return this.get(route, params);
   }
+
+  masiveClassificationGood(
+    requestId: number | string,
+    fractionId: number | string,
+    type: number | string
+  ) {
+    const route = GoodFinderEndpoint.MasiveClassification;
+    return this.get(
+      `${route}/request/${requestId}/fraction/${fractionId}/type/${type}`
+    );
+  }
+
+  masiveAssignationDomicileGood(
+    requestId: number | string,
+    addressId: number | string
+  ) {
+    const route = GoodFinderEndpoint.AssignDomicilie;
+    return this.get(`${route}/request/${requestId}/domicile/${addressId}`);
+  }
+
+  updateStatusProcess(body: any) {
+    const route = GoodFinderEndpoint.UpdateGoodStatus;
+    return this.post(`${route}`, body);
+  }
 }

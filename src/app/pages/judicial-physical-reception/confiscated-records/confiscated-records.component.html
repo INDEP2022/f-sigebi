@@ -44,7 +44,25 @@
           <span>Navegación de actas</span>
           <div class="row mt-3">
             <div class="col-md-9">
-              <button
+              <div class="d-flex justify-content-center align-items-center">
+                <app-pagination
+                  [params]="paramsActNavigate"
+                  [totalItems]="proceedingData.length"
+                  [limit]="newLimitparamsActNavigate"
+                  [paginatorPageSize]="false"
+                  [paginatorRangeLabel]="false"
+                  [maxSize]="1"></app-pagination>
+                <div class="col">
+                  <button
+                    id="expedient-number"
+                    class="btn btn-primary btn-sm active ml-4"
+                    [class]="loading ? 'disabled' : ''"
+                    (click)="newProceeding()">
+                    Nueva acta
+                  </button>
+                </div>
+              </div>
+              <!-- <button
                 id="expedient-number"
                 [disabled]="!prevProce"
                 [class]="loading ? 'disabled' : ''"
@@ -82,7 +100,7 @@
                 class="btn btn-primary btn-sm active ml-4"
                 (click)="newProceeding()">
                 Nueva acta
-              </button>
+              </button> -->
             </div>
           </div>
         </div>
@@ -180,7 +198,7 @@
             </div>
 
             <div class="col">
-              <form-field [control]="form.get('ident')" label="Ident">
+              <form-field [control]="form.get('ident')" label="Identificador">
                 <input
                   type="text"
                   class="form-control disabled pt-0"
@@ -208,7 +226,7 @@
                   (fetchItems)="getAdmin($event)"
                   [class]="initialdisabled ? 'disabled' : ''"
                   control="admin"
-                  label="Admin"
+                  label="Administra"
                   bindLabel="delegation"
                   [data]="adminSelect"
                   [form]="form"></ngx-select>
@@ -320,32 +338,6 @@
               </form-field>
             </div>
           </div>
-
-          <div class="row">
-            <div class="col-md-5">
-              <form-field
-                [control]="form.get('folioEscaneo')"
-                label="Folio de Escaneo">
-                <input
-                  type="number"
-                  class="form-control"
-                  min="1"
-                  formControlName="folioEscaneo"
-                  maxlength="15" />
-              </form-field>
-            </div>
-
-            <div class="col-md-4 pt-3">
-              <button
-                class="btn btn-primary btn-sm active"
-                type="button"
-                size="small"
-                min="1"
-                (click)="replicateFolio()">
-                Replicar Folio
-              </button>
-            </div>
-          </div>
         </div>
         <div class="col-md-6">
           <div class="form-group row">
@@ -433,6 +425,72 @@
           </div>
         </div>
       </div>
+
+      <hr class="row" />
+
+      <div class="row mb-4">
+        <div class="col-md-12">
+          <div class="row">
+            <div class="col-md-2"></div>
+            <div class="col">
+              <button
+                type="button"
+                data-toggle="tooltip"
+                class="btn btn-secondary btn-sm active mr-1"
+                title="Generar Folio de Escaneo y Solicitud">
+                <i class="bx bxs-add-to-queue"></i>
+              </button>
+              <button
+                type="button"
+                data-toggle="tooltip"
+                class="btn btn-secondary btn-sm active"
+                title="Escanear">
+                <i class="bx bxs-file"></i>
+              </button>
+            </div>
+            <div class="col-md-3">
+              <form-field
+                [control]="form.get('folioEscaneo')"
+                label="Folio de Escaneo">
+                <input
+                  type="number"
+                  class="form-control"
+                  min="1"
+                  formControlName="folioEscaneo"
+                  maxlength="15" />
+              </form-field>
+            </div>
+            <div class="col">
+              <button
+                class="btn btn-primary btn-sm active"
+                type="button"
+                size="small"
+                min="1"
+                (click)="replicateFolio()">
+                Replicar Folio
+              </button>
+            </div>
+            <div class="col">
+              <button
+                type="button"
+                data-toggle="tooltip"
+                class="btn btn-secondary btn-sm active mr-1"
+                title="imprimir Solicitud de Escaneo">
+                <i class="bx bxs-printer"></i>
+              </button>
+              <button
+                type="button"
+                data-toggle="tooltip"
+                class="btn btn-secondary btn-sm active"
+                title="Consulta de imágenes escaneadas">
+                <i class="bx bxs-file-find"></i>
+              </button>
+            </div>
+            <div class="col-md-2"></div>
+          </div>
+        </div>
+      </div>
+
       <hr class="row" />
       <div [class]="loading ? 'disabled' : ''" class="row mb-5">
         <div class="d-flex justify-content-center">
@@ -489,9 +547,10 @@
         </div>
       </div>
       <hr class="row" />
-      <div [class]="loading ? 'table-loading' : 'row pt-2 scroll-table'">
+      <div [class]="loading ? 'table-loading' : 'row pt-2'">
         <ng2-smart-table
           class="col-md-12"
+          [attr.class]="'table-responsive table-bordered '"
           [settings]="settings1"
           [source]="dataGoods"
           (userRowSelect)="selectRow($event)"
@@ -500,6 +559,8 @@
       <app-pagination
         *ngIf="!loading"
         [params]="paramsDataGoods"
+        [pageSizeOptions]="[5, 10, 20]"
+        [limit]="limitDataGoods"
         [totalItems]="totalItemsDataGoods"></app-pagination>
 
       <hr class="row" />
@@ -543,7 +604,7 @@
               <button
                 type="button"
                 class="mx-2 btn btn-secondary btn-sm active"
-                [disabled]="!act2Valid"
+                [disabled]="!dataGoods"
                 (click)="addGood()">
                 <i class="fa fa-angle-down"></i>
               </button>
@@ -560,6 +621,12 @@
           (userRowSelect)="selectRowGoodActa($event)"
           (rowDeselect)="deselectRowGoodActa()"></ng2-smart-table>
       </div>
+      <app-pagination
+        *ngIf="!loading"
+        [params]="paramsDataGoodsAct"
+        [pageSizeOptions]="[5, 10, 20]"
+        [limit]="limitDataGoodsAct"
+        [totalItems]="totalItemsDataGoodsAct"></app-pagination>
       <hr class="row" />
       <div class="row">
         <div class="d-flex justify-content-center">
@@ -646,14 +713,6 @@
             (click)="applyWarehouseSafe()">
             Aplica Alm&#46;&#47;Bov&#46;
           </button>
-          <!--  <a
-            [routerLink]="['flat-file']"
-            type="button"
-            nbButton
-            size="small"
-            class="mx-2 my-1"
-            >Exportar Datos</a
-          > -->
         </div>
       </div>
     </form>

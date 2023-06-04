@@ -12,9 +12,9 @@ import {
   IInitFormLegalOpinionOfficeResponse,
   ITmpDictationCreate,
   ITmpExpDesahogoB,
+  IUpdateDelDictation,
 } from '../../models/ms-dictation/dictation-model';
 import { IRTdictaAarusr } from '../../models/ms-dictation/r-tdicta-aarusr.model';
-
 @Injectable({
   providedIn: 'root',
 })
@@ -24,6 +24,7 @@ export class DictationService extends HttpService {
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
   private readonly route = DictationEndpoints;
+
   constructor() {
     super();
     this.microservice = DictationEndpoints.BasePath;
@@ -164,6 +165,11 @@ export class DictationService extends HttpService {
       body
     );
   }
+  getUpdateDelgationDicta(body: _Params) {
+    return this.put<
+      IListResponse<{ dictamen: number; delegation_dicta: number }>
+    >(this.route.Dictation, body);
+  }
 
   getRTdictaAarusr(
     params?: ListParams
@@ -203,19 +209,19 @@ export class DictationService extends HttpService {
     return this.post(route, body);
   }
 
-  sendConsulta1(anio: string) {
+  sendConsulta1(anio: string, delegation: any) {
     const route = `${DictationEndpoints.GetOfficeByYear1}`;
-    return this.get(route + `/${anio}`);
+    return this.get(route + `/${anio}?delegationDictamNumber=${delegation}`);
   }
 
-  sendConsulta2(anio: string) {
+  sendConsulta2(anio: string, delegation: any) {
     const route = `${DictationEndpoints.GetOfficeByYear2}`;
-    return this.get(route + `/${anio}`);
+    return this.get(route + `/${anio}?delegationDictamNumber=${delegation}`);
   }
 
-  sendConsulta3(anio: string) {
+  sendConsulta3(anio: string, delegation: any) {
     const route = `${DictationEndpoints.GetOfficeByYear3}`;
-    return this.get(route + `/${anio}`);
+    return this.get(route + `/${anio}?delegationDictamNumber=${delegation}`);
   }
 
   getFaFlagDest(params: any) {
@@ -237,6 +243,12 @@ export class DictationService extends HttpService {
     return this.delete<IListResponse<IDictationCopies>>(
       this.route.CopiesOfficialOpinion,
       obj
+    );
+  }
+  updateDictaEntregaRTurno(body: IUpdateDelDictation) {
+    return this.put<IListResponse<IUpdateDelDictation>>(
+      `${this.route}/aplication/minutesNumberXdelegation2`,
+      body
     );
   }
 }

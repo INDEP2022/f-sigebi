@@ -14,6 +14,7 @@ import { firstFormatDateToSecondFormatDate } from 'src/app/shared/utils/date';
 export class TableGoodMaintenanceComponent extends BasePage implements OnInit {
   @Input() override loading = false;
   statusActa = 'ABIERTA';
+  @Input() page: number;
   @Input() totalItems: number;
   @Input() data: IDetailProceedingsDeliveryReception[];
   @Output() updateData = new EventEmitter();
@@ -84,7 +85,7 @@ export class TableGoodMaintenanceComponent extends BasePage implements OnInit {
           editable: false,
         },
         approvedXAdmon: {
-          title: 'Apr.',
+          title: 'Aprobado',
           sort: false,
           type: 'custom',
           renderComponent: CheckboxDisabledElementComponent,
@@ -107,7 +108,7 @@ export class TableGoodMaintenanceComponent extends BasePage implements OnInit {
           },
         },
         received: {
-          title: 'Rec.',
+          title: 'Recibido',
           sort: false,
           type: 'custom',
           editable: true,

@@ -60,7 +60,7 @@
 
     <!-- TABLA----BIENES RELACIONADOS CON EL EXPEDIENTE -->
     <div class="row w-100">
-      <div class="col-sm-12 col-12 col-md-5 col-lg-5 p-2 alert alert-info">
+      <div class="col-sm-12 col-12 col-md-5 col-lg-5 p-2 alert alert-success">
         <h6>BIENES RELACIONADOS CON EL EXPEDIENTE</h6>
         <div
           [class]="isLoadingGood ? 'table-loading' : ''"
@@ -76,7 +76,7 @@
             [totalItems]="totalItemsGood"></app-pagination>
         </div>
         <br />
-        <span class="badge m-2 badge-pill bg-primary"
+        <span class="badge m-2 badge-pill bg-success"
           >&#42;&#42;Disponibles</span
         >
         <span class="badge m-2 badge-pill bg-dark"
@@ -102,7 +102,7 @@
         </button>
       </div>
       <!-- TABLA----BIENES RELACIONADOS CON EL OFICIO -->
-      <div class="col-sm-12 col-12 col-md-5 col-lg-5 p-2 alert alert-info">
+      <div class="col-sm-12 col-12 col-md-5 col-lg-5 p-2 alert alert-success">
         <h6>BIENES RELACIONADOS CON EL OFICIO</h6>
         <ng2-smart-table
           [attr.class]="'table-bordered'"
@@ -142,13 +142,13 @@
           </form-field> -->
 
           <!-- [form]="formPositionThirdParty" -->
-          <form-field [control]="formPositionThirdParty.get('addressee')">
+          <form-field [control]="formPositionThirdParty.get('usrAddressee')">
             <ngx-select
               [form]="formPositionThirdParty"
               [data]="addressee"
               (fetchItems)="getUserName($event)"
               bindLabel="nameUser"
-              control="addressee"
+              control="usrAddressee"
               label="Destinatario"
               [searchOnInit]="true"
               [clearable]="false"
@@ -186,7 +186,7 @@
             <button
               type="button"
               class="btn btn-primary btn-sm active text-wrap"
-              (click)="btnImprimir()">
+              (click)="onClickPrint()">
               Imprimir
             </button>
           </div>
@@ -214,7 +214,7 @@
               <form-field [control]="formPositionThirdParty.get('usrCcp1')">
                 <ngx-select
                   [form]="formPositionThirdParty"
-                  [data]="userCcp2"
+                  [data]="userCcp1"
                   (fetchItems)="getUserName($event, 'ccp1')"
                   bindLabel="nameUser"
                   control="usrCcp1"
@@ -287,6 +287,7 @@
                 label="Delegación Cierre">
                 <input
                   type="text"
+                  readonly
                   maxlength="40"
                   class="form-control"
                   formControlName="delegationCloseNumber" />
@@ -297,7 +298,10 @@
                 maxlength="40"
                 [control]="formPositionThirdParty.get('numClueNavy')"
                 label="Clave Armada">
-                <input class="form-control" formControlName="numClueNavy" />
+                <input
+                  readonly
+                  class="form-control"
+                  formControlName="numClueNavy" />
               </form-field>
             </div>
             <div class="col-sm-12 col-12 col-md-6 p-2">

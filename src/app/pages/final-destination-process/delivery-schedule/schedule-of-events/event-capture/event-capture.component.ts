@@ -15,6 +15,7 @@ import {
   lastValueFrom,
   map,
   of,
+  skip,
   switchMap,
   takeUntil,
   tap,
@@ -26,22 +27,38 @@ import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
-import { ITmpProgValidation } from 'src/app/core/models/good-programming/good-programming';
-import { IGoodIndicator } from 'src/app/core/models/ms-event-programming/good-indicators.model';
+import { ExcelService } from 'src/app/common/services/excel.service';
+import {
+  IHistoryProcesdingAct,
+  IPAAbrirActasPrograma,
+  IPACambioStatusGood,
+  ITmpProgValidation,
+} from 'src/app/core/models/good-programming/good-programming';
+import { IDocuments } from 'src/app/core/models/ms-documents/documents';
+import {
+  ICertificateProgDst,
+  IGoodIndicator,
+} from 'src/app/core/models/ms-event-programming/good-indicators.model';
 import { IParameters } from 'src/app/core/models/ms-parametergood/parameters.model';
 import { IProceedingDeliveryReception } from 'src/app/core/models/ms-proceedings/proceeding-delivery-reception';
-import { IProceedings } from 'src/app/core/models/ms-proceedings/proceedings.model';
+import {
+  IProceedings,
+  IUpdateActasEntregaRecepcion,
+} from 'src/app/core/models/ms-proceedings/proceedings.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { DynamicCatalogService } from 'src/app/core/services/dynamic-catalogs/dynamic-catalogs.service';
+import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { EventProgrammingService } from 'src/app/core/services/ms-event-programming/event-programing.service';
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import { GoodParametersService } from 'src/app/core/services/ms-good-parameters/good-parameters.service';
+import { FIndicaService } from 'src/app/core/services/ms-good/findica.service';
 import { IndicatorsParametersService } from 'src/app/core/services/ms-parametergood/indicators-parameter.service';
 import { ParametersService } from 'src/app/core/services/ms-parametergood/parameters.service';
 import { RNomenclaService } from 'src/app/core/services/ms-parametergood/r-nomencla.service';
 import {
   ProceedingsDeliveryReceptionService,
   ProceedingsDetailDeliveryReceptionService,
+  ProceedingsService,
 } from 'src/app/core/services/ms-proceedings';
 import { ProgrammingGoodsService } from 'src/app/core/services/ms-programming-good/programming-good.service';
 import { TmpContProgrammingService } from 'src/app/core/services/ms-programming-good/tmp-cont-programming.service';
@@ -51,7 +68,6 @@ import { IndUserService } from 'src/app/core/services/ms-users/ind-user.service'
 import { SegAcessXAreasService } from 'src/app/core/services/ms-users/seg-acess-x-areas.service';
 import { ProcedureManagementService } from 'src/app/core/services/proceduremanagement/proceduremanagement.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { GOODS_TACKER_ROUTE } from 'src/app/utils/constants/main-routes';
 import {
@@ -80,6 +96,7 @@ interface IBlkCtrl {
   asigCb: string | number;
   txtDirSatLabel: string;
   txtDirSat: string;
+  processingArea: string | number;
 }
 
 interface IGlobalV {
@@ -156,6 +173,7 @@ export class EventCaptureComponent
     goodQuantity: 0, //CANT_BIEN
     asigTm: null,
     asigCb: null,
+    processingArea: null,
   };
 
   blkProceeding: IBlkProceeding = {
@@ -177,10 +195,17 @@ export class EventCaptureComponent
 
   // BLK_CANT
   blkQuantities = {
-    goods: 0, // CANT_BIEN
-    registers: 0, // CANT_REGI
-    expedients: 0, // CANT_EXPE
-    dictums: 0, // CANT_DICT
+    goods: 0,
+    registers: 0,
+    expedients: 0,
+    dictums: 0,
+  };
+
+  handoverReceptionMinutes = {
+    statusAct: 'CERRADO',
+    typeAct: '',
+    actaNumber: 1,
+    folio: 1,
   };
 
   authUser: string = null;
@@ -200,6 +225,10 @@ export class EventCaptureComponent
   get siabControls() {
     return this.formSiab.controls;
   }
+
+  gInitialDate: Date;
+  gFinalDate: Date;
+
   constructor(
     private fb: FormBuilder,
     private parameterGoodService: ParametersService,
@@ -220,8 +249,12 @@ export class EventCaptureComponent
     private procudeServ: ProcedureManagementService,
     private security: SecurityService,
     private progammingServ: ProgrammingGoodService,
+    private documentsService: DocumentsService,
+    private proceedingsService: ProceedingsService,
     private programmingGoodService: ProgrammingGoodsService,
-    private tmpContProgrammingService: TmpContProgrammingService
+    private tmpContProgrammingService: TmpContProgrammingService,
+    private fIndicaService: FIndicaService,
+    private excelService: ExcelService
   ) {
     super();
     this.authUser = this.authService.decodeToken().preferred_username;
@@ -270,14 +303,14 @@ export class EventCaptureComponent
           },
           renderComponent: DateCellComponent,
         },
-        select: {
-          title: 'Selec.',
-          sort: false,
-          type: 'custom',
-          filter: false,
-          showAlways: true,
-          renderComponent: CheckboxElementComponent,
-        },
+        // select: {
+        //   title: 'Selec.',
+        //   sort: false,
+        //   type: 'custom',
+        //   filter: false,
+        //   showAlways: true,
+        //   renderComponent: CheckboxElementComponent,
+        // },
         ...COLUMNS_CAPTURE_EVENTS_2,
       },
       hideSubHeader: false,
@@ -287,8 +320,6 @@ export class EventCaptureComponent
       this.global.proceedingNum = params['numeroActa'] ?? null;
       this.global.paperworkArea = params['tipoEvento'] ?? null;
     });
-
-    console.log(this.global);
   }
 
   test(instance: DateCellComponent) {
@@ -298,6 +329,61 @@ export class EventCaptureComponent
   }
 
   async saveProceeding() {
+    if (this.proceeding.id) {
+      this.updateProceeding().subscribe();
+      return;
+    }
+    await this.createProceeding();
+  }
+
+  updateProceeding() {
+    console.log(this.proceeding);
+    const formValue = this.form.value;
+    const { numFile, keysProceedings, captureDate, responsible } = formValue;
+    console.log({ numFile, keysProceedings, captureDate, responsible });
+    const data = {
+      ...this.proceeding,
+      numFile,
+      keysProceedings,
+      captureDate,
+      responsible,
+    };
+
+    return this.proceedingDeliveryReceptionService
+      .update(this.proceeding.id, data as any)
+      .pipe(tap(() => this.onLoadToast('success', 'Acta actualizada')));
+  }
+
+  excelExport() {
+    if (this.detail.length === 0) {
+      this.alert('warning', 'Advertencia', 'No hay datos para exportar');
+      return;
+    }
+    const cve = this.registerControls.keysProceedings.value;
+    const dataToExport = this.detail.map((det: any) => {
+      return {
+        'CVE Acta': cve,
+        'Localidad Ent': det.locTrans,
+        'No Bien': det.goodnumber,
+        Estatus: det.status,
+        Proceso: det.proccessextdom,
+        Descripción: det.description,
+        'Tipo Bien': det.typegood,
+        Expediente: det.expedientnumber,
+        Inicio: det.dateapprovalxadmon,
+        Finalizacion: det.dateindicatesuserapproval,
+      };
+    });
+    this.excelService.export(dataToExport, { filename: cve });
+  }
+
+  udpateProceedingExpedient() {
+    return this.proceedingDeliveryReceptionService
+      .update(this.proceeding.id, this.proceeding as any)
+      .pipe();
+  }
+
+  async createProceeding() {
     await this.generateCve();
     const formValue = this.form.value;
     const { numFile, keysProceedings, captureDate, responsible } = formValue;
@@ -358,7 +444,6 @@ export class EventCaptureComponent
 
   async transferClick() {
     const firstDetail = this.detail[0];
-    console.log('llego', firstDetail);
     const { transference } = this.registerControls;
     if (!firstDetail) {
       transference.reset();
@@ -389,6 +474,7 @@ export class EventCaptureComponent
     this.transfers = new DefaultSelect([
       { value: transferent, label: transferent },
     ]);
+    await this.generateCve();
   }
 
   async getTAseg(expedientId: string | number) {
@@ -457,6 +543,19 @@ export class EventCaptureComponent
 
   async loadGoods() {
     const { area, keysProceedings, typeEvent } = this.registerControls;
+    const totalFilters = Object.values(this.formSiab.value);
+    const filters = totalFilters.map(filter =>
+      Array.isArray(filter) ? filter.join(',') : filter
+    );
+    const nullFilters = filters.filter(filter => !filter);
+    if (nullFilters.length == totalFilters.length) {
+      this.onLoadToast(
+        'error',
+        'Error',
+        'Debe ingresar almenos 1 parametro de busqueda'
+      );
+      return;
+    }
     if (
       this.proceeding.statusProceedings == 'CERRADA' ||
       this.proceeding.statusProceedings == 'CERRADO'
@@ -475,7 +574,7 @@ export class EventCaptureComponent
       return;
     }
     let continueProcess = false;
-    if (this.detail.length > 0) {
+    if (this.blkCtrl.goodQuantity > 0) {
       const response = await this.alertQuestion(
         'warning',
         'Advertencia',
@@ -497,16 +596,16 @@ export class EventCaptureComponent
 
     this.createFilters();
 
-    if (typeEvent.value == 'RF') {
+    if (typeEvent.value == 'RT') {
       if (this.blkProceeding.txtCrtSus1) {
-        this.pupUpdate();
+        // this.pupUpdate();
       } else {
-        this.frConditions();
+        // this.frConditions();
       }
       this.blkCtrl.asigTm = 1;
       this.blkCtrl.asigCb = 1;
     } else {
-      this.pupUpdate();
+      // this.pupUpdate();
     }
 
     this.progTotal();
@@ -516,10 +615,78 @@ export class EventCaptureComponent
   progTotal() {}
 
   // PUP_GENERA_WHERE
-  createFilters() {}
+  createFilters() {
+    const { typeEvent } = this.form.value;
+    const {
+      initialDate,
+      finalDate,
+      flyer,
+      expedient,
+      dictumCve,
+      delegation,
+      programed,
+      cdonacCve,
+      lot,
+      donatNumber,
+      adonacCve,
+      event,
+      warehouse,
+      autoInitialDate,
+      autoFinalDate,
+      transfer,
+      transmitter,
+      authority,
+    } = this.formSiab.value;
+    const body = {
+      startDate: initialDate,
+      endDate: finalDate,
+      processingArea: typeEvent,
+      steeringWheel: flyer,
+      proceedings: expedient,
+      opinion: dictumCve,
+      coordination: delegation.join(','),
+      program: programed,
+      cdonacKey: cdonacCve,
+      idLot: lot,
+      doneeNumber: donatNumber,
+      adonacKey: adonacCve,
+      idEvent: event,
+      storeNumber: warehouse,
+      iniAutDate: autoInitialDate,
+      endAutDate: autoFinalDate,
+      transferee: transfer.join(','),
+      station: transmitter.join(','),
+      authority: authority.join(','),
+    };
+
+    this.fIndicaService.pupGenerateWhere(body).subscribe(res => {
+      console.log({ res });
+      this.pupUpdate();
+    });
+  }
 
   // PUP_ACTUALIZA
-  pupUpdate() {}
+  pupUpdate() {
+    const { typeEvent } = this.registerControls;
+    const { expedient } = this.formSiab.value;
+    this.loading = true;
+    this.fIndicaService
+      .pupUpdate(typeEvent.value, expedient, this.proceeding.id)
+      .subscribe({
+        next: res => {
+          if (res.data.length > 0) {
+            this.onLoadToast('success', 'Bienes cargados correctamente');
+          } else {
+            this.onLoadToast('info', 'No se encontraron bienes para agregar');
+          }
+          this.loading = false;
+          this.getDetail().subscribe();
+        },
+        error: error => {
+          this.loading = false;
+        },
+      });
+  }
 
   // PUP_CONDICIONES_FR
   frConditions() {
@@ -565,7 +732,9 @@ export class EventCaptureComponent
 
   async ngOnInit() {
     const { responsible } = this.registerControls;
-    this.responsibleChange().subscribe();
+    responsible.valueChanges.pipe(skip(1)).subscribe(() => {
+      this.generateCve();
+    });
     await this.initForm();
   }
 
@@ -611,12 +780,7 @@ export class EventCaptureComponent
     } else {
       this.global.regi = area.value;
       const indicator = await this.getProceedingType();
-      let _folio = '';
-      if (this.proceeding.keysProceedings) {
-        _folio = this.proceeding.keysProceedings.split('/')[5];
-      } else {
-        _folio = await this.getFolio(indicator.certificateType);
-      }
+      const _folio = await this.getFolio(indicator.certificateType);
       this.global.cons = `${_folio}`.padStart(5, '0');
       folio.setValue(this.global.cons);
     }
@@ -627,7 +791,7 @@ export class EventCaptureComponent
     const cve = `${this.global.type ?? ''}/${prog.value ?? ''}/${
       this.global.tran ?? ''
     }/${this.global.regi ?? ''}/${user.value ?? ''}/${this.global.cons ?? ''}/${
-      year?.value ? `${year.value}`.slice(-2) : ''
+      year.value ?? ''
     }/${month.value ?? ''}`;
     // .slice(-2)
     keysProceedings.setValue(cve);
@@ -660,6 +824,7 @@ export class EventCaptureComponent
 
   // PUP_VAL_TRANF
   validateTransfer(_type: string, transfer: string) {
+    this.global.tran = transfer;
     const { keysProceedings } = this.registerControls;
     const splitedArea = keysProceedings?.value?.split('/');
     const cveType = splitedArea ? splitedArea[0] : null;
@@ -695,6 +860,7 @@ export class EventCaptureComponent
         }
       }
     } else {
+      console.log('llego al else de transferente', transfer);
       // if(tran == transfer)  {
       if (
         (transfer == 'PGR' || transfer == 'PJF') &&
@@ -702,6 +868,7 @@ export class EventCaptureComponent
       ) {
         this.global.tran = transfer;
         this.global.type = _type;
+        console.log('llego al primero');
       } else if (
         transfer != 'PGR' &&
         transfer != 'PJF' &&
@@ -711,6 +878,7 @@ export class EventCaptureComponent
       } else if ((transfer == 'PGR' || transfer == 'PJF') && _type == 'RT') {
         this.invalidTransfer();
       } else if (transfer != 'PGR' && transfer != 'PJF' && _type == 'Rt') {
+        console.log('llego al segundo');
         this.global.tran = transfer;
         this.global.type = _type;
       }
@@ -819,7 +987,7 @@ export class EventCaptureComponent
     return lastValueFrom(
       this.indicatorParametersService.getAll(params.getParams()).pipe(
         catchError(() => of(null)),
-        map(res => (res ? res.data[0].procedureArea.id : null))
+        map(res => res.data[0].procedureArea.id)
       )
     );
   }
@@ -891,7 +1059,6 @@ export class EventCaptureComponent
       this.proceeding.statusProceedings == 'CERRADA'
     ) {
       if (typeEvent.value == 'RF') {
-        console.log('muestra 834');
         this.ctrlButtons.closeProg.show();
       }
       this.ctrlButtons.closeProg.setText('Abrir Prog.');
@@ -964,7 +1131,6 @@ export class EventCaptureComponent
       console.log(count);
       const options = ['CERRADA', 'CERRADO'];
       if (options.find(opt => opt == this.proceeding.statusProceedings)) {
-        console.log('muestra 907');
         this.ctrlButtons.closeProg.show();
         this.ctrlButtons.closeProg.label = 'Abrir Prog.';
         if (count > 0) {
@@ -982,7 +1148,6 @@ export class EventCaptureComponent
           this.ctrlButtons.closeProg.hide();
         } else {
           if (this.proceeding.statusProceedings) {
-            console.log('muestra 925');
             this.ctrlButtons.closeProg.show();
           }
         }
@@ -993,14 +1158,24 @@ export class EventCaptureComponent
   getDetail() {
     const params = new FilterParams();
     params.addFilter('numberProceedings', this.proceeding.id);
+    this.loading = true;
     return this.eventProgrammingService
       .getGoodsIndicators(this.proceeding.id)
       .pipe(
+        catchError(error => {
+          this.loading = false;
+          return throwError(() => error);
+        }),
         tap(res => {
+          this.loading = false;
           const detail = res.data[0];
 
           this.afterGetDetail(detail);
           this.detail = res.data.map(detail => {
+            if (detail.expedientnumber) {
+              this.proceeding.numFile = Number(detail.expedientnumber);
+              this.udpateProceedingExpedient().subscribe();
+            }
             const { typeEvent } = this.registerControls;
             let locTrans = '';
             if (typeEvent.value == 'RF') {
@@ -1035,36 +1210,37 @@ export class EventCaptureComponent
 
   // PA_CALCULA_CANTIDADES
   calculateQuantities() {
-    // TODO: DESCOMENTAR CUANDO ARREGLEN LA INCIDENCIA
-    // this.programmingGoodService.computeEntities(
-    //   this.proceeding.id,
-    //   typeEvent.value
-    // )
     const { typeEvent } = this.registerControls;
-    of(null).subscribe(() => {
-      const params = new FilterParams();
-      params.addFilter('minutesNumber', this.proceeding.id);
-      return this.tmpContProgrammingService
-        .computeEntities(params.getParams())
-        .pipe(
-          tap(response => {
-            const count = response.data[0];
-            if (count) {
-              const {
-                amountEstate,
-                recordsAmount,
-                amountfiles,
-                amountOpinions,
-              } = count;
-              this.blkQuantities.goods = Number(amountEstate);
-              this.blkQuantities.registers = Number(recordsAmount);
-              this.blkQuantities.expedients = Number(amountfiles);
-              this.blkQuantities.dictums = Number(amountOpinions);
-            }
-          })
-        )
-        .subscribe();
-    });
+    // TODO: DESCOMENTAR CUANDO ARREGLEN LA INCIDENCIA
+    this.programmingGoodService
+      .computeEntities(this.proceeding.id, typeEvent.value)
+      .pipe(
+        tap(() => {
+          const params = new FilterParams();
+          params.addFilter('minutesNumber', this.proceeding.id);
+          return this.tmpContProgrammingService
+            .computeEntities(params.getParams())
+            .pipe(
+              tap(response => {
+                const count = response.data[0];
+                if (count) {
+                  const {
+                    amountEstate,
+                    recordsAmount,
+                    amountfiles,
+                    amountOpinions,
+                  } = count;
+                  this.blkQuantities.goods = Number(amountEstate);
+                  this.blkQuantities.registers = Number(recordsAmount);
+                  this.blkQuantities.expedients = Number(amountfiles);
+                  this.blkQuantities.dictums = Number(amountOpinions);
+                }
+              })
+            )
+            .subscribe();
+        })
+      )
+      .subscribe();
   }
 
   // DETALLE_ACTA_ENT_RECEP.POST_QUERY
@@ -1107,7 +1283,7 @@ export class EventCaptureComponent
         this.blkCtrl.txtDirSat = detail.txt_dirsat;
       }
     }
-    this.calculateQuantities();
+
     // TODO: PEDIR TODOS LOS CAMPOS DEL DETALLE
     // this.blkCtrl.cQuantity = (this.blkCtrl.cQuantity?? 0) + this.
   }
@@ -1241,22 +1417,44 @@ export class EventCaptureComponent
   }
 
   async closeProg() {
-    let lv_valmotos: string;
-    let lv_valmensa: string;
-    let lv_pantalla: string = 'FINDICA_0035_1';
-    let v_count: number = 0;
-    let c_str: string;
-    let c_mensaje: string;
-    let n_folio_universal: string;
-    let n_cont: number = 0;
-    let e_execpproc: any;
+    this.PUP_MOVIMINETO_PRO();
+  }
 
+  dateNow2Day(): Date {
+    const currentDate = new Date();
+    currentDate.setDate(currentDate.getDate() + 2);
+    return currentDate;
+  }
+
+  openMinutesProyect(model: IPAAbrirActasPrograma) {
+    this.progammingServ.paOpenProceedingProgam(model).subscribe({
+      next: resp => resp,
+      error: error => error,
+    });
+  }
+
+  async PA_CAMBIO_ESTATUS_BIEN(model: IPACambioStatusGood) {
+    return new Promise((res, rej) => {
+      this.progammingServ.paChangeStatusGood(model).subscribe({
+        next: resp => res(resp),
+        error: error => rej(error),
+      });
+    });
+  }
+
+  returPreviosStatus(model: IPAAbrirActasPrograma) {
+    this.progammingServ.paRegresaEstAnterior(model).subscribe({
+      next: resp => resp,
+      error: error => error,
+    });
+  }
+
+  async tmpProgValidacion() {
     const filter = new FilterParams();
     const user = this.authService.decodeToken().username;
     filter.addFilter('valUser', user, SearchFilter.EQ);
     filter.addFilter('valMinutesNumber', this.proceeding.id, SearchFilter.EQ);
-
-    const c_datval = new Promise<ITmpProgValidation[]>((resolve, reject) => {
+    return new Promise<ITmpProgValidation[]>((resolve, reject) => {
       this.progammingServ.getTmpProgValidation(filter.getParams()).subscribe({
         next: resp => {
           resolve(resp.data);
@@ -1266,41 +1464,572 @@ export class EventCaptureComponent
         },
       });
     });
+  }
 
-    c_mensaje = null;
+  async PUP_MOVIMINETO_PRO() {
+    let LV_VALMOTOS: number;
+    let LV_VALMENSA: string;
+    const LV_PANTALLA: string =
+      this.GET_APPLICATION_PROPERTY('CURRENT_FORM_NAME');
+    let v_COUNT: number = 0;
+    let c_STR: string;
+    let c_MENSAJE: string = null;
+    let n_FOLIO_UNIVERSAL: number;
+    let n_CONT: number = 0;
 
-    //no se tiene modelo del bloque BLK_CANT
-    if (0 <= 0) {
-      this.onLoadToast('info', 'No se tienen bienes ingresados');
+    const C_DATVAL: ITmpProgValidation[] = await this.tmpProgValidacion();
+
+    if (this.blkQuantities.goods <= 0) {
+      this.onLoadToast('info', 'No se tienen bienes ingresados.', '');
+      throw new Error('FORM_TRIGGER_FAILURE');
     }
 
-    if (this.global.paperworkArea == 'RF') {
-      const count = await new Promise<number>((resolve, reject) => {
-        const filters = new FilterParams();
-        filters.addFilter(
-          'flierNumber',
-          this.proceeding.numFile,
-          SearchFilter.EQ
-        );
-        filters.addFilter('typeManagement', 2, SearchFilter.EQ);
-
-        this.procudeServ.getAllFiltered(filters.getParams()).subscribe({
-          next: resp => {
-            resolve(resp.count);
-          },
-          error: () => {
-            resolve(0);
-          },
-        });
-      });
-      n_cont = count;
+    if (this.global.paperworkArea === 'RF') {
+      n_CONT = (await this.getExpedientsCount()) ?? 0;
     }
 
-    const STATUS = ['CERRADA', 'CERRADO'];
-
-    if (!STATUS.includes(this.proceeding.statusProceedings)) {
-      if (this.proceeding.typeProceedings == 'EVENTREC') {
+    if (['CERRADO', 'CERRADA'].includes(this.proceeding.statusProceedings)) {
+      if (this.proceeding.typeProceedings === 'EVENTREC' && n_CONT > 0) {
+        /// TODO: Llamar a la tabla DETALLE_ACTA_ENT_RECEP
+        /* GO_BLOCK('DETALLE_ACTA_ENT_RECEP');
+        FIRST_RECORD(); */
+        const currentDate = new Date();
+        currentDate.setDate(currentDate.getDate() + 2);
+        const FEC_APROBACION_X_ADMON = new Date('2023-06-01');
+        if (currentDate >= FEC_APROBACION_X_ADMON) {
+          this.onLoadToast(
+            'info',
+            'La programación no puede abrirse hasta 2 días antes del evento.'
+          );
+          throw new Error('FORM_TRIGGER_FAILURE');
+        }
+      }
+      const ACTAS_ENTREGA_RECEPCION_CVE_ACTA = 98;
+      this.alertQuestion(
+        'warning',
+        'Abrir programación',
+        `¿Está seguro de abrir la Programación ${this.proceeding.keysProceedings} ?`
+      )
+        .then(question => {
+          if (question.isConfirmed) {
+            this.openProg(C_DATVAL, n_CONT);
+          }
+        })
+        .catch(error => console.error(error));
+    } else {
+      /// this.onLoadToast('info','El estado del acta es diferente a CERRADO o CERRADA, no se puede abrir.');
+      if (C_DATVAL[0].valmovement === null) {
+        C_DATVAL[0].valmovement = 0;
+      }
+      if (C_DATVAL[0].valmovement === 1) {
+        await this.valMotodIsOne(n_CONT).then().catch();
+      } else if (C_DATVAL[0].valmovement === 0) {
+        ///////// Llamar a la funcion PUP_CIERRE_PRI
       }
     }
   }
+
+  async valMotodIsOne(n_CONT: number) {
+    if (this.proceeding.typeProceedings === 'EVENTREC' && n_CONT > 0) {
+      const v_COUNT = (await this.getVCount()) ?? 0;
+      if (v_COUNT === 0) {
+        this.onLoadToast(
+          'info',
+          'No se ha firmado el oficio de programación de entrega.'
+        );
+        throw new Error('FORM_TRIGGER_FAILURE');
+      }
+    }
+    if (this.proceeding.typeProceedings === 'EVENCOMER') {
+      const no_Acta: number | string = this.proceeding.id; //// :ACTAS_ENTREGA_RECEPCION.NO_ACTA
+      const message: string = await this.PUF_VERIF_COMER(no_Acta); //// esta variable se llena con lo que devuelva la funcion PUF_VERIF_COMER
+      if (message !== 'ok') {
+        throw new Error('e_EXCEPPROC');
+      }
+    }
+    const model: IPACambioStatusGood = {
+      P_NOACTA: 1,
+      P_AREATRA: '',
+      P_PANTALLA: '',
+    };
+    await this.PA_CAMBIO_ESTATUS_BIEN(model).then().catch();
+    const no_Acta: number | string = this.proceeding.id; //// :ACTAS_ENTREGA_RECEPCION.NO_ACTA
+    await this.PA_ACTUALIZA_BIENES_SIN_M(no_Acta).then().catch();
+
+    if (this.proceeding.typeProceedings === 'EVENTREC' && n_CONT > 0) {
+      await this.PUP_ING_REG_FOLIO_UNIV_SSF3(1, '', null, '').then().catch();
+      ///// y hace este update c_STR := 'UPDATE ACTAS_ENTREGA_RECEPCION SET FOLIO_UNIVERSAL = '||TO_CHAR(n_FOLIO_UNIVERSAL)||', TESTIGO1 ='''||:BLK_TOOLBAR.TOOLBAR_USUARIO||''' WHERE NO_ACTA = '||TO_CHAR(:ACTAS_ENTREGA_RECEPCION.NO_ACTA);
+    }
+    /* 
+    SET_BLOCK_PROPERTY('ACTAS_ENTREGA_RECEPCION',DEFAULT_WHERE,'NO_ACTA ='||:ACTAS_ENTREGA_RECEPCION.NO_ACTA);
+         GO_BLOCK('ACTAS_ENTREGA_RECEPCION');
+         EXECUTE_QUERY;
+         SET_APPLICATION_PROPERTY(CURSOR_STYLE,'DEFAULT');
+         SYNCHRONIZE;
+    */
+    if (this.global.paperworkArea === 'RF' && n_CONT > 0) {
+      const no_Acta: number | string = this.proceeding.id; //// :ACTAS_ENTREGA_RECEPCION.NO_ACTA
+      await this.INSERT_ACTAS_CTL_NOTIF_SSF3(no_Acta, 'CERRADA');
+      /// AQUI HACER ESA ACTUALIZACION UPDATE_SSF3_ACTAS_PROG_DST Esperando enpoint
+      //c_STR UPDATE SSF3_ACTAS_PROG_DST SET IND_ENVIO = 0 WHERE NO_ACTA = ||TO_CHAR(:ACTAS_ENTREGA_RECEPCION.NO_ACTA);
+      await this.UPDATE_SSF3_ACTAS_PROG_DST(null);
+      const folio_universal = 0; /// :ACTAS_ENTREGA_RECEPCION.FOLIO_UNIVERSAL
+      this.onLoadToast(
+        'info',
+        `Se realizó la firma y cierre del oficio (Folio Universal: ${this.proceeding.universalFolio})`
+      );
+      this.PUP_GENERA_PDF();
+    } else {
+      this.onLoadToast('info', 'La programación ha sido cerrada');
+    }
+  }
+
+  async PUF_VERIF_COMER(numberAct: number | string): Promise<string> {
+    return new Promise<string>((res, rej) => {
+      res('mensaje');
+    });
+  }
+
+  async INSERT_ACTAS_CTL_NOTIF_SSF3(
+    ActaNumber: number | string,
+    statusAct: string
+  ) {
+    ////// hacer un insert a esta tabla
+    const postActsCtl: any = {
+      NO_ACTA: ActaNumber,
+      FEC_MOV: new Date(),
+      ESTATUS_ACTA: statusAct,
+      IND_NOTIF: '1',
+    };
+    return new Promise((res, rej) => {
+      this.progammingServ.createActasCtlNotifSSF3(postActsCtl).subscribe({
+        next: resp => res(resp),
+        error: err => rej(err),
+      });
+    });
+  }
+
+  async PUP_GENERA_PDF() {
+    let REPID: any;
+    let v_REP: string;
+    let v_URL: string;
+    let v_ARCHOSAL: string;
+    let v_NOMBRE: string;
+    let v_RUTA: string;
+    let v_COUNT: number;
+    let c_STR: string;
+
+    try {
+      // OBTIENE INFORMACIÓN DE RUTA Y URL
+      /* SELECT VALOR_FINAL, VALOR_INICIAL INTO v_RUTA, v_URL
+      FROM PARAMETROS
+      WHERE CVE_PARAMETRO ='SSF3_FIRMA_ELEC_DOCS'; */
+      const response: any = await this.GET_RUTA_URL_PARAMETER(
+        'SSF3_FIRMA_ELEC_DOCS'
+      );
+      v_RUTA = response.finalValue;
+      v_URL = response.initialValue;
+    } catch {
+      this.onLoadToast('info', 'No se encontró la ruta y URL para el PDF.');
+      throw new Error('FORM_TRIGGER_FAILURE');
+    }
+
+    v_NOMBRE = this.proceeding.keysProceedings.replace('/', '-');
+    v_ARCHOSAL = v_RUTA + v_NOMBRE + '.PDF';
+
+    // GENERA LISTA DE PARÁMETROS
+    /*    REPID = FIND_REPORT_OBJECT('RPROGENTREGA');
+   SET_REPORT_OBJECT_PROPERTY(REPID, REPORT_EXECUTION_MODE, BATCH);
+   SET_REPORT_OBJECT_PROPERTY(REPID, REPORT_COMM_MODE, SYNCHRONOUS);
+   SET_REPORT_OBJECT_PROPERTY(REPID, REPORT_DESTYPE, FILE);
+   SET_REPORT_OBJECT_PROPERTY(REPID, REPORT_DESNAME, "'" + v_ARCHOSAL + "'");
+   SET_REPORT_OBJECT_PROPERTY(REPID, REPORT_DESFORMAT, 'PDF');
+   SET_REPORT_OBJECT_PROPERTY(REPID, REPORT_OTHER, 'PARAMFORM=NO P_NO_ACTA=' + LTRIM(TO_CHAR(:ACTAS_ENTREGA_RECEPCION.NO_ACTA)));
+   v_REP = RUN_REPORT_OBJECT(REPID);
+ */
+    /* >> JACG 30/06/15 Ingresa PDF a BD */
+    this.PUP_ELIMINA_PDF_BD_SSF3(this.proceeding.universalFolio, 1);
+    this.PUP_CARGA_PDF_BD_SSF3(this.proceeding.universalFolio, 1, v_ARCHOSAL);
+    /* << JACG 30/06/15 Ingresa PDF a BD */
+  }
+
+  GET_RUTA_URL_PARAMETER(cveParameter: string) {
+    const response = {
+      finalValue: 0,
+      initialValue: 0,
+    };
+    return new Promise((res, rej) => {
+      this.parameterGoodService.getById(cveParameter).subscribe({
+        next: resp => {
+          response.finalValue = resp.data[0].finalValue;
+          response.initialValue = resp.data[0].initialValue;
+          res(response);
+        },
+        error: err => rej(response),
+      });
+    });
+  }
+
+  PUP_ELIMINA_PDF_BD_SSF3(p_LLAVE: string, p_NO_ARCHO: number) {}
+
+  PUP_CARGA_PDF_BD_SSF3(p_LLAVE: string, p_NO_ARCHO: number, p_RUTA: string) {}
+
+  async PUP_ING_REG_FOLIO_UNIV_SSF3(
+    p_NO_EXPEDIENTE: number,
+    p_DESCRIPCION_DOCUMENTO: string,
+    p_NO_VOLANTE: number,
+    p_CVE_TIPO_DOCUMENTO: string
+  ): Promise<string> {
+    return new Promise<string>((resolve, reject) => {
+      // Definición de variables
+      let c_NO_VOLANTE: string;
+      // Cuerpo del procedimiento
+      let n_NO_EXPEDIENTE = p_NO_EXPEDIENTE;
+      let c_DESCRIPCION_DOCUMENTO = p_DESCRIPCION_DOCUMENTO;
+      if (p_NO_VOLANTE === null) {
+        c_NO_VOLANTE = 'NULL';
+      } else {
+        c_NO_VOLANTE = p_NO_VOLANTE.toString();
+      }
+      let c_CVE_TIPO_DOCUMENTO = p_CVE_TIPO_DOCUMENTO;
+      const postDocument: IDocuments = {
+        numberProceedings: n_NO_EXPEDIENTE,
+        keySeparator: '60',
+        keyTypeDocument: c_CVE_TIPO_DOCUMENTO,
+        natureDocument: 'ORIGINAL',
+        descriptionDocument: c_DESCRIPCION_DOCUMENTO,
+        significantDate: this.getFormattedDate(),
+        scanStatus: 'ESCANEADO',
+        userRequestsScan: 'user',
+        scanRequestDate: new Date(),
+        numberDelegationRequested: 2,
+        numberDepartmentRequest: 2,
+        numberSubdelegationRequests: 2,
+        flyerNumber: c_NO_VOLANTE,
+        mediumId: '-1',
+        sheets: '1',
+        dateRegistrationScan: new Date(),
+        userRegistersScan: 'user',
+      };
+      this.documentsService.create(postDocument).subscribe({
+        next: resp => {
+          const postHistory: IHistoryProcesdingAct = {
+            dateMov: new Date(),
+            invoiceUniversal: resp.id,
+            minutesNumber: Number(this.proceeding.id), /// Aqui va el :ACTAS_ENTREGA_RECEPCION.NO_ACTA)
+          };
+          this.progammingServ.createHistoryProcedingAct(postHistory).subscribe({
+            next: resp => console.log(resp),
+            error: err => console.error(err),
+          });
+        },
+        error: err => console.error(err),
+      });
+      const p_FOLIO_UNIVERSAL: string = '0';
+      resolve(p_FOLIO_UNIVERSAL);
+    });
+  }
+
+  getFormattedDate(): string {
+    const currentDate = new Date();
+    const month = String(currentDate.getMonth() + 1).padStart(2, '0'); // Agrega un cero al mes si es necesario
+    const year = String(currentDate.getFullYear());
+    return `${month}-${year}`;
+  }
+  async UPDATE_SSF3_ACTAS_PROG_DST(model: ICertificateProgDst) {
+    return new Promise((res, rej) => {
+      this.eventProgrammingService.putCertificateProgDst(model).subscribe({
+        next: resp => res(resp),
+        error: error => rej(error),
+      });
+    });
+  }
+
+  async PA_ACTUALIZA_BIENES_SIN_M(actaNumber: number | string) {
+    return new Promise((res, rej) => {
+      this.progammingServ.updateGoodSim(Number(actaNumber)).subscribe({
+        next: resp => res(resp),
+        error: error => rej(error),
+      });
+    });
+  }
+
+  async getVCount() {
+    //// falta cambiar los filtros y la tabla
+    /* 
+    SELECT COUNT(0)
+                 INTO v_COUNT
+                 FROM SSF3_FIRMA_ELEC_DOCS
+                WHERE NATURALEZA_DOC = 'PROGRAMACION'
+                  AND NO_DOCUMENTO   = :ACTAS_ENTREGA_RECEPCION.NO_ACTA 
+                  AND TIPO_DOCUMENTO = 'EVENTREC';
+    */
+    const params = new FilterParams();
+    params.addFilter('expedient', this.proceeding.numFile);
+    params.addFilter('typeManagement', 2);
+    return await lastValueFrom(
+      this.procedureManagementService.getAllFiltered(params.getParams()).pipe(
+        catchError(() => of({ count: 0 })),
+        map(res => res.count)
+      )
+    );
+  }
+
+  async openProg(C_DATVAL: ITmpProgValidation[], n_CONT: number) {
+    const model: IPAAbrirActasPrograma = {
+      P_AREATRA: '1',
+      P_NOACTA: 1,
+      P_PANTALLA: '',
+      P_TIPOMOV: 1,
+    };
+    this.openMinutesProyect(model);
+    /////////////////////////////////////
+    if (C_DATVAL[0].valmovement === 1) {
+      const model: IPAAbrirActasPrograma = {
+        P_AREATRA: '1',
+        P_NOACTA: '',
+        P_PANTALLA: '',
+        P_TIPOMOV: 1,
+      };
+      this.returPreviosStatus(model);
+      //////////////////////////////// aqui va el endpoint esperado por EDWIN
+
+      ////////////////////////////////////////7
+      if (this.global.paperworkArea === 'RF' && n_CONT > 0) {
+        ///////////// Hacer inset a esta tabla ACTAS_CTL_NOTIF_SSF3
+        const no_Acta: number | string = this.proceeding.id; /// :ACTAS_ENTREGA_RECEPCION.NO_ACTA
+        await this.INSERT_ACTAS_CTL_NOTIF_SSF3(no_Acta, 'ABIERTA');
+      }
+
+      /* 
+      hacer esto
+      SET_BLOCK_PROPERTY('ACTAS_ENTREGA_RECEPCION',DEFAULT_WHERE,'NO_ACTA ='||:ACTAS_ENTREGA_RECEPCION.NO_ACTA);
+            GO_BLOCK('ACTAS_ENTREGA_RECEPCION');
+            EXECUTE_QUERY;
+      */
+      this.blkCtrl.reopenInd = 0;
+    } else {
+      this.onLoadToast('info', C_DATVAL[0].valMessage);
+    }
+  }
+
+  GET_APPLICATION_PROPERTY(currentDate: any): string {
+    return '';
+  }
+
+  getEstatusAct() {
+    return new Promise<string>((res, rej) => {
+      //// esperar el ms de proceding
+      /* this.proceedingDeliveryReceptionService.getByGoodId().subscribe({
+        next: resp => res(resp.data),
+        error: err => rej(err)
+      }) */
+    });
+  }
+  PUF_VERIFICA_CLAVE(): boolean {
+    //// esperando Endpoint del back
+    return null;
+  }
+
+  PUP_DEPURA_DETALLE() {
+    return new Promise((res, rej) => {});
+  }
+
+  async PUP_CIERRE_PRI() {
+    let lv_VALFECP: number;
+    let lv_PANTALLA: string = this.GET_APPLICATION_PROPERTY('');
+    let lv_VALESTAC: string;
+    let v_COUNT: number;
+    let c_RESP: string;
+    let n_FOLIO_UNIVERSAL: number;
+    let c_STR: string;
+    let n_CONT: number = 0;
+    let c_MENSAJE: string;
+    let e_EXCEPPROC: Error;
+    try {
+      // Valida que la llave de la programación no sea nula ni el tipo de acta (valida 3)
+      if (
+        this.proceeding.id === null &&
+        this.proceeding.typeProceedings === null
+      ) {
+        this.onLoadToast('info', 'No se tiene Programa a cerrar.');
+        throw new Error('FORM_TRIGGER_FAILURE');
+      }
+
+      // Area de Tramite no puede ser nula para cerrar una programación (valida 1)
+      if (this.blkCtrl.processingArea == null) {
+        ////:BLK_CONTROL.AREA_TRAMITE preguntar donde esta esta propiedad
+        this.onLoadToast('info', 'No se ha especificado el Tipo de Evento.');
+        throw new Error('FORM_TRIGGER_FAILURE');
+      }
+
+      // Valida que la clave de la programación este completa (valida 2)
+      if (this.PUF_VERIFICA_CLAVE()) {
+        this.onLoadToast(
+          'info',
+          'El Programa es inconsistente en su estructura.'
+        );
+        throw new Error('FORM_TRIGGER_FAILURE');
+      }
+
+      await this.PUP_DEPURA_DETALLE();
+
+      //// -----------> PREGUNTAR POR ESTO <-----------
+
+      /* SET_BLOCK_PROPERTY('ACTAS_ENTREGA_RECEPCION', DEFAULT_WHERE, 'NO_ACTA = ' + :ACTAS_ENTREGA_RECEPCION.NO_ACTA);
+        GO_BLOCK('ACTAS_ENTREGA_RECEPCION');
+        EXECUTE_QUERY();
+        GO_BLOCK('DETALLE_ACTA_ENT_RECEP');
+        FIRST_RECORD(); */
+
+      if (this.detail[0].goodnumber === null) {
+        this.onLoadToast(
+          'info',
+          'No se pudo realizar la actualización de bienes.'
+        );
+        return;
+      } else {
+        lv_VALFECP = 0;
+        //// recorrer el array que llene la tabla DETALLE_ACTA_ENT_RECEP
+        for (const element of this.detail) {
+          const deta: any = element;
+          if (
+            deta.dateindicatesuserapproval == null ||
+            deta.dateapprovalxadmon == null
+          ) {
+            lv_VALFECP = lv_VALFECP + 1;
+            break;
+          }
+        }
+
+        if (lv_VALFECP === 0) {
+          if (this.global.paperworkArea === 'RF') {
+            n_CONT = (await this.getExpedientsCount()) ?? 0;
+          }
+          if (this.proceeding.typeProceedings === 'EVENTREC' && n_CONT > 0) {
+            //// VALIDA SI EXISTE EL XML GENERADO
+            v_COUNT = (await this.getVCount()) ?? 0;
+            if (v_COUNT === 0) {
+              this.onLoadToast(
+                'info',
+                'No se ha firmado el oficio de programación de entrega.'
+              );
+              throw new Error('FORM_TRIGGER_FAILURE');
+            }
+          }
+          if (this.global.paperworkArea === 'RF' && n_CONT > 0) {
+            await this.closedProgramming(n_CONT);
+          } else {
+            await this.alertQuestion(
+              'warning',
+              'Cerrar programación',
+              '¿Seguro que desea realizar el cierre de esta Programación ?'
+            )
+              .then(async question => {
+                if (question.isConfirmed) {
+                  await this.closedProgramming(n_CONT);
+                }
+              })
+              .catch(error => console.error(error));
+          }
+        } else {
+          this.onLoadToast(
+            'info',
+            'Falta complementar Fechas de Recepción/Entrega y/o Finalización.'
+          );
+        }
+      }
+    } catch (e_EXCEPPROC) {
+      c_MENSAJE =
+        'Favor de Informar a Informática. < ' || 'e_EXCEPPROC.MESSAGE' || ' >';
+      this.onLoadToast('error', c_MENSAJE);
+    }
+  }
+
+  async closedProgramming(n_CONT: number) {
+    if (this.proceeding.typeProceedings === 'EVENCOMER') {
+      const message: string = await this.PUF_VERIF_COMER(this.proceeding.id);
+      if (message !== 'OK') {
+        throw new Error('e_EXCEPPROC');
+      }
+    }
+    ///// llama al pack PA_CIERRE_INICIAL_PROGR
+
+    /////////
+    const T_VALEACT: string = await this.getEstatusAct();
+    if (['ABIERTO', 'ABIERTA'].includes(T_VALEACT)) {
+      this.onLoadToast(
+        'info',
+        'La Programación no ha sido cerrada, verifique sus datos...'
+      );
+    } else {
+      if (this.global.paperworkArea === 'RF' && n_CONT > 0) {
+        this.PUP_ING_REG_FOLIO_UNIV_SSF3(1, '', null, '').then().catch();
+        //// aqui hace los DDL que pedi a Edwin
+        await this.firmaAndClosedOffi();
+        ///////////////////////////////////////
+        //// esperar que se resuelva el DDL y mostrar el mensaje
+        this.onLoadToast(
+          'success',
+          `Se realizó la firma y cierre del oficio (Folio Universal: ${this.proceeding.universalFolio})`
+        );
+      } else {
+        this.onLoadToast('info', 'La programación ha sido cerrada');
+      }
+
+      /// --------------> PREGUNTAR ESTO <-----------------
+      /* 
+      GO_BLOCK('ACTAS_ENTREGA_RECEPCION');
+   	  	 	  	 SET_BLOCK_PROPERTY('ACTAS_ENTREGA_RECEPCION',DEFAULT_WHERE,'NO_ACTA ='||:ACTAS_ENTREGA_RECEPCION.NO_ACTA);
+               EXECUTE_QUERY;
+               GO_BLOCK('DETALLE_ACTA_ENT_RECEP');
+               SET_BLOCK_PROPERTY('DETALLE_ACTA_ENT_RECEP',DEFAULT_WHERE,'NO_ACTA ='||:ACTAS_ENTREGA_RECEPCION.NO_ACTA);
+               EXECUTE_QUERY; 
+   	  	 	  	 SET_BLOCK_PROPERTY('ACTAS_ENTREGA_RECEPCION',UPDATE_ALLOWED,PROPERTY_FALSE);
+               SET_BLOCK_PROPERTY('DETALLE_ACTA_ENT_RECEP' ,UPDATE_ALLOWED,PROPERTY_FALSE);
+               SET_BLOCK_PROPERTY('DETALLE_ACTA_ENT_RECEP' ,INSERT_ALLOWED,PROPERTY_FALSE);
+               SET_BLOCK_PROPERTY('DETALLE_ACTA_ENT_RECEP' ,DELETE_ALLOWED,PROPERTY_FALSE); 
+               SYNCHRONIZE;
+      */
+      ///// aqui va esto :PARAMETER.NO_FORMATO
+      const parameterNoFormat: any = '';
+      if (parameterNoFormat !== null) {
+        this.UPDATE_ESTRATEGIA_BIENES(parameterNoFormat, this.proceeding.id);
+      }
+    }
+  }
+
+  async firmaAndClosedOffi() {
+    const respAct = await this.UPDATE_ACTAS_ENTREGA_RECEPCION(
+      this.proceeding.universalFolio,
+      this.authUserName,
+      this.proceeding.id
+    );
+    const respActCtr = await this.INSERT_ACTAS_CTL_NOTIF_SSF3(
+      this.proceeding.id,
+      'CERRADA'
+    );
+    const respActProg = await this.UPDATE_SSF3_ACTAS_PROG_DST(null);
+  }
+
+  UPDATE_ACTAS_ENTREGA_RECEPCION(
+    universalFolio: string,
+    userToolbar: string,
+    no_Acta: string | number
+  ) {
+    const model: IUpdateActasEntregaRecepcion = {
+      universalFolio,
+      userToolbar,
+    };
+    return new Promise<string>((res, rej) => {
+      this.proceedingsService
+        .updateActasEntregaRecepcion(model, no_Acta)
+        .subscribe({
+          next: (resp: any) => res(resp.message),
+          error: err => rej(err),
+        });
+    });
+  }
+
+  UPDATE_ESTRATEGIA_BIENES(noFormat: number, no_Acta: string | number) {}
 }
