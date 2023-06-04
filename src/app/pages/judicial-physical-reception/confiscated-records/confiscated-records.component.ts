@@ -223,6 +223,9 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   totalItemsDataGoodsAct: number = 0;
   limitDataGoodsAct = new FormControl(10);
 
+  //FOLIO DE ESCANEO
+  folioEscaneo = 'folioEscaneo'
+
   dataGoods = new LocalDataSource();
   dataGoodAct = new LocalDataSource();
 
@@ -368,6 +371,11 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
       this.newSearchExp();
       localStorage.removeItem('numberExpedient');
     }
+  }
+
+  prueba(){
+    console.log(this.form.get('folioEscaneo').value)
+    this.form.get('folioEscaneo').setValue('154')
   }
 
   prepareForm() {
