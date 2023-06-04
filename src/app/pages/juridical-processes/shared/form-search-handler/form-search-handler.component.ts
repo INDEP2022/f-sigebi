@@ -131,6 +131,20 @@ export class FormSearchHandlerComponent
   autoLoad(): void {
     const wheelNumber =
       this.activatedRoute.snapshot.queryParams['wheelNumber'] || null;
+
+    if (localStorage.getItem('abandonosData')) {
+      let aaa = localStorage.getItem('abandonosData');
+      const abandonosData = aaa;
+
+      console.log('AAA222', abandonosData);
+      this.searchOnInput = true;
+      this.loading = true;
+      this.formData = {};
+      this.formData['wheelNumber'] = abandonosData;
+      this.buildFilters();
+      localStorage.removeItem('abandonosData');
+      this.loading = true;
+    }
     if (wheelNumber) {
       this.searchOnInput = true;
       this.loading = true;

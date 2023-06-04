@@ -90,4 +90,8 @@ export class MJobManagementService extends HttpService {
       params
     );
   }
+
+  deleteCopyOficeManag(id?: any): Observable<IListResponse<any>> {
+    return this.delete<IListResponse<any>>(`copies-job-management/${id}`);
+  }
 }
