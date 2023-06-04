@@ -7,7 +7,9 @@ import {
   ListParams,
 } from 'src/app/common/repository/interfaces/list-params';
 import { ISegUsers } from 'src/app/core/models/ms-users/seg-users-model';
+import { MJobManagementService } from 'src/app/core/services/ms-office-management/m-job-management.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
+import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -15,11 +17,11 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
   templateUrl: './add-copy.component.html',
   styles: [],
 })
-export class AddCopyComponent implements OnInit {
+export class AddCopyComponent extends BasePage implements OnInit {
   form: FormGroup;
 
   @Output() dataCopy = new EventEmitter<any>();
-  @Output() refresh = new EventEmitter<boolean>();
+  @Output() refresh = new EventEmitter<true>();
   users$ = new DefaultSelect<ISegUsers>();
   nameUserDestinatario: ISegUsers;
   options: any[];
@@ -28,12 +30,16 @@ export class AddCopyComponent implements OnInit {
   nrSelecttypePerson: string;
   select: any[];
   dataEdit: boolean;
+  managementNumber: any;
 
   constructor(
     private usersService: UsersService,
     private fb: FormBuilder,
-    private modalRef: BsModalRef
-  ) {}
+    private modalRef: BsModalRef,
+    private mJobManagementService: MJobManagementService
+  ) {
+    super();
+  }
 
   ngOnInit(): void {
     this.options = [
@@ -44,7 +50,7 @@ export class AddCopyComponent implements OnInit {
 
     this.form = this.fb.group({
       typePerson_I: [null, Validators.required],
-      senderUser_I: ['', Validators.required],
+      senderUser_I: [''],
       personaExt_I: ['', Validators.required],
     });
 
@@ -72,7 +78,15 @@ export class AddCopyComponent implements OnInit {
         return throwError(() => error);
       }),
       tap(response => {
-        this.users$ = new DefaultSelect(response.data, response.count);
+        console.log('AQUI', response.data);
+        let result = response.data.map(async (item: any) => {
+          item['userAndName'] = item.id + ' - ' + item.name;
+        });
+        Promise.all(result).then((resp: any) => {
+          this.users$ = new DefaultSelect(response.data, response.count);
+          // this.recipients = new DefaultSelect(response.data, response.count);
+          this.loading = false;
+        });
       })
     );
   }
@@ -92,8 +106,30 @@ export class AddCopyComponent implements OnInit {
 
   agregarExterno() {
     console.log('AAA', this.form.value);
+    if (this.managementNumber == null) {
+      this.dataCopy.emit(this.form.value);
+    } else {
+      let obj: any = {
+        managementNumber: this.managementNumber,
+        addresseeCopy: this.form.value.senderUser_I,
+        delDestinationCopyNumber: null,
+        recordNumber: null,
+        personExtInt: this.form.value.typePerson_I,
+        nomPersonExt: this.form.value.personaExt_I,
+      };
 
-    this.dataCopy.emit(this.form.value);
+      this.mJobManagementService.createCopyOficeManag(obj).subscribe({
+        next: (resp: any) => {
+          this.refresh.emit(true);
+          this.loading = false;
+          this.onLoadToast('success', 'CPP creado exitosamente', '');
+        },
+        error: err => {
+          this.onLoadToast('error', 'error al crear CPP', '');
+          this.loading = false;
+        },
+      });
+    }
     // this.modalRef.content.callback(true, this.form.value);
     this.close();
   }
