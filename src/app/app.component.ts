@@ -4,6 +4,7 @@ import { setTheme } from 'ngx-bootstrap/utils';
   selector: 'app-root',
   template: `
     <app-loading></app-loading>
+    <app-loading-percent></app-loading-percent>
     <router-outlet></router-outlet>
   `,
 })

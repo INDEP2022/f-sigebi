@@ -583,7 +583,7 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
             val12: 0,
             val13: 0,
           });
-          this.fillPagedRow.emit();
+          // this.fillPagedRow.emit();
           return bien.no_bien;
         } else {
           this.onLoadToast('error', 'Inserta Bien', 'No se pudo parcializar');
@@ -642,12 +642,14 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
     //   'La parcialización de bienes se realizo con éxito'
     // );
     try {
+      this.good.status = 'PEA';
       await firstValueFrom(this.goodService.updateCustom(this.good));
       this.onLoadToast(
         'success',
         'Parcialización',
         'La parcialización de bienes se realizo con éxito'
       );
+      this.service.haveAply = false;
     } catch (x) {
       this.onLoadToast(
         'error',
@@ -802,6 +804,7 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
                   newDescription.length > 1250 ? 1250 : newDescription.length
                 );
               }
+              this.fillPagedRow.emit();
               await this.finishApply(vobserv_padre, vdesc_padre);
               console.log(this.good);
             }
