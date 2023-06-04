@@ -203,19 +203,19 @@ export class DictationService extends HttpService {
     return this.post(route, body);
   }
 
-  sendConsulta1(anio: string) {
+  sendConsulta1(anio: string, delegation: any) {
     const route = `${DictationEndpoints.GetOfficeByYear1}`;
-    return this.get(route + `/${anio}`);
+    return this.get(route + `/${anio}?delegationDictamNumber=${delegation}`);
   }
 
-  sendConsulta2(anio: string) {
+  sendConsulta2(anio: string, delegation: any) {
     const route = `${DictationEndpoints.GetOfficeByYear2}`;
-    return this.get(route + `/${anio}`);
+    return this.get(route + `/${anio}?delegationDictamNumber=${delegation}`);
   }
 
-  sendConsulta3(anio: string) {
+  sendConsulta3(anio: string, delegation: any) {
     const route = `${DictationEndpoints.GetOfficeByYear3}`;
-    return this.get(route + `/${anio}`);
+    return this.get(route + `/${anio}?delegationDictamNumber=${delegation}`);
   }
 
   getFaFlagDest(params: any) {
