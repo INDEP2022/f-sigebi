@@ -2740,7 +2740,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
             const { P5 } = JSON.parse(JSON.stringify(res));
             console.log(P5);
             //!Forzando debería ser mayor y esta menor
-            if (P5 < 0) {
+            if (P5 > 0) {
               this.alert(
                 'warning',
                 'Bienes sin informacion requerida',
