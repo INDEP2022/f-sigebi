@@ -44,6 +44,6 @@ export interface IUpdateActasEntregaRecepcion {
 }
 
 export interface IUpdateActasEntregaRecepcionDelegation {
-  noActa: number;
-  delegation3: number;
+  minutesNumber: number;
+  delegation2Number: number;
 }

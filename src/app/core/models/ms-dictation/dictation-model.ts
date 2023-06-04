@@ -82,6 +82,6 @@ export interface ITmpExpDesahogoB {
 }
 
 export interface IUpdateDelDictation {
-  id?: number;
-  delegationDictNumber?: number;
+  ofDictaNumber?: number;
+  delegationDictateNumber?: number;
 }

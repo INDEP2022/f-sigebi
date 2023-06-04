@@ -4,7 +4,7 @@ import { BsModalService } from 'ngx-bootstrap/modal';
 
 import { ActivatedRoute, Router } from '@angular/router';
 import { format } from 'date-fns';
-import { firstValueFrom } from 'rxjs';
+import { BehaviorSubject, firstValueFrom } from 'rxjs';
 import {
   IDictation,
   IUpdateDelDictation,
@@ -40,7 +40,6 @@ import {
   SHIFT_CHANGE_PROCEEDINGS_COLUMNS,
 } from './shift-change-columns';
 import { ShiftChangeHistoryComponent } from './shift-change-history/shift-change-history.component';
-
 @Component({
   selector: 'app-shift-change',
   templateUrl: './shift-change.component.html',
@@ -97,6 +96,7 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
   dictumSettings = { ...this.settings };
   proceedingColumns: IProceedingDeliveryReception[] = [];
   proceedingSettings = { ...this.settings };
+  totalItems: number = 0;
   // selectedDictums: IDictation[] = [];
   selectedDictums: IUpdateDelDictation[] = [];
   // selectedProceedings: IProceedingDeliveryReception[] = [];
@@ -106,9 +106,13 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
   origin: any;
   acta: IUpdateActasEntregaRecepcionDelegation;
   dictation: IUpdateDelDictation;
+  params = new BehaviorSubject(new ListParams());
   newUser: string;
   preUser: string;
-
+  delegationNew: number;
+  subdelegationNew: number;
+  idDelActa: number;
+  idDelDicta: number;
   flyerNumber: number;
   historyColumns: IHistoryOfficial[] = [];
   usersFilter: IUserAccessAreaRelational[] = [];
@@ -276,100 +280,41 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
     });
   }
 
-  // async save() {
-  //   if (!this.turnForm.valid) {
-  //     this.turnForm.markAllAsTouched();
-  //     this.turnForm.updateValueAndValidity();
-  //     return;
-  //   }
-  //   const body = {
-  //     flyerNumber: this.notifData.wheelNumber,
-  //     reassignmentDate: format(new Date(), 'dd-MM-yyyy'),
-  //     officialNumber: this.notifData.officeNumber,
-  //     personPrevious: this.formControls.prevUser.value?.user,
-  //     areaDestinationPrevious: this.notifData.departamentDestinyNumber,
-  //     personNew: this.formControls.newUser.value?.user,
-  //     argument: this.formControls.argument.value,
-  //   };
-  //   this.preUser
-  //   console.log(
-  //     this.turnForm.value,
-  //     body,
-  //     this.selectedDictums,
-  //     this.selectedProceedings
-  //   );
-  //   this.loading = true;
-  //   try {
-  //     await firstValueFrom(this.historyOfficeService.create(body));
-  //   } catch (ex) {
-  //     this.loading = false;
-  //     this.alert('error', 'Error ', 'Los ids ya fueron creados');
-  //     return;
-  //   }
-  //   try {
-  //     await firstValueFrom(
-  //       this.procedureManageService.updateForWheelNumber(
-  //         this.notifData.wheelNumber,
-  //         {
-  //           tiKeyNewPerson: this.formControls.newUser.value?.user,
-  //         }
-  //       )
-  //     );
-  //     this.updateNotification();
-  //   } catch (ex) {
-  //     //console.log(ex);
-  //     this.alert('error', 'Error ', 'Error al crear histórico');
-  //     this.loading = false;
-  //   }
-  //   this.historyOfficeService.create(body).subscribe({
-  //     next: () => {
-  //       this.updateFlyerCopy();
-  //     },
-  //     error: err => {
-  //       console.log(err);
-  //       this.loading = false;
-  //       this.alert('error', 'Turno no actualizado', err.error.message);
-  //     },
-  //   });
-  // }
-
-  // updateFlyerCopy() {
-  //   const body = {
-  //     copyNumber: 1,
-  //     flierNumber: this.notifData.wheelNumber,
-  //     copyuser: this.formControls.newUser.value?.user,
-  //   };
-  //   this.flyerCopiesService.update(body).subscribe({
-  //     next: () => {
-  //       this.updateNotification();
-  //     },
-  //     error: err => {
-  //       console.log(err);
-  //       this.loading = false;
-  //       this.alert(
-  //         'error',
-  //         'Turno no actualizado',
-  //         'Hubo un error al actualizar el turno'
-  //       );
-  //     },
-  //   });
-  // }
   async save() {
     if (!this.turnForm.valid) {
       this.turnForm.markAllAsTouched();
       this.turnForm.updateValueAndValidity();
       return;
     }
-    const body = {
-      flyerNumber: this.notifData.wheelNumber,
-      reassignmentDate: format(new Date(), 'dd-MM-yyyy'),
-      officialNumber: this.notifData.officeNumber,
-      personPrevious: this.formControls.prevUser.value?.user,
-      areaDestinationPrevious: this.notifData.departamentDestinyNumber,
-      personNew: this.formControls.newUser.value?.user,
+    // const body = {
+    //   flyerNumber: this.notifData.wheelNumber,
+    //   reassignmentDate: format(new Date(), 'dd/MM/yyyy'),
+    //   officialNumber: this.idDelDicta,
+    //   personPrevious: this.preUser,
+    //   areaDestinationPrevious: this.notifData.departamentDestinyNumber,
+    //   personNew: this.formControls.newUser.value?.user,
+    //   argument: this.formControls.argument.value,
+    // };
+    this.preUser;
+    const body: IHistoryOfficial = {
+      numberSteeringwheel: this.notifData.wheelNumber,
+      datereassignment: format(new Date(), 'dd/MM/yyyy'),
+      numberJob: this.idDelDicta,
+      personbefore: this.formControls.newUser.value?.user,
+      areaDestinationbefore: this.notifData.departamentDestinyNumber,
+      personnew: this.formControls.newUser.value?.user,
+      areaDestinationnew: this.formControls.newUser.value?.departamentNumber,
       argument: this.formControls.argument.value,
+      numberRecord: this.notifData.registerNumber,
+      cveJobExternal: this.notifData.officeExternalKey,
+      numberOftheDestinationbefore: this.notifData.delDestinyNumber,
+      numberSubdelDestinationbefore: this.notifData.subDelDestinyNumber,
+      numberOftheDestinationnew:
+        this.formControls.newUser.value?.delegationNumber,
+      numberSubdelDestinationnew:
+        this.formControls.newUser.value?.subdelegationNumber,
+      nbOrigin: this.origin,
     };
-    // this.preUser
     console.log(
       this.turnForm.value,
       body,
@@ -382,9 +327,9 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
       await firstValueFrom(this.historyOfficeService.create(body));
     } catch (ex) {
       this.loading = false;
-      await firstValueFrom(this.historyOfficeService.update(body));
-      this.alert('info', ' ', 'Actualizado correctamente');
-      // return;
+      // await firstValueFrom(this.historyOfficeService.update(body));
+      this.alert('error', ' ', 'Turno no actualizado');
+      return;
     }
     try {
       await firstValueFrom(
@@ -396,21 +341,12 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
         )
       );
       this.updateNotification();
+      this.users = new DefaultSelect();
     } catch (ex) {
       //console.log(ex);
       this.alert('error', 'Turno no actualizado', '');
       this.loading = false;
     }
-    // this.historyOfficeService.create(body).subscribe({
-    //   next: () => {
-    //     this.updateFlyerCopy();
-    //   },
-    //   error: err => {
-    //     console.log(err);
-    //     this.loading = false;
-    //     this.alert('error', 'Turno no actualizado', err.error.message);
-    //   },
-    // });
   }
 
   updateNotification() {
@@ -423,8 +359,8 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
     this.notifService.update(this.notifData.wheelNumber, body).subscribe({
       next: () => {
         this.updateProcedureUser();
-        this.updateDictums();
-        this.updateProceedings();
+        // this.updateDictums();
+        // this.updateProceedings();
         this.loading = true;
         this.preUser = this.newUser;
         this.filterHistoryUser();
@@ -461,30 +397,25 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
 
   // UPDATE DICTÁMENES //
   updateDictums() {
-    if (this.selectedDictums.length > 0) {
-      this.dictationService.updateDictaEntregaRTurno(this.dictation).subscribe({
-        next: resp => {
-          console.log(resp);
-        },
-        error: () => {},
-      });
-    }
+    this.dictationService.updateDictaEntregaRTurno(this.dictation).subscribe({
+      next: resp => {
+        console.log(resp);
+      },
+      error: () => {},
+    });
   }
 
   // UPDATE ACTAS //
   updateProceedings() {
-    if (this.selectedProceedings.length > 0) {
-      // this.selectedProceedings.forEach(p => {
-      this.proceedingsService.updateActasEntregaRTurno(this.acta).subscribe({
-        next: resp => {
-          console.log(resp);
-        },
-        error: err => {
-          console.log(err);
-        },
-      });
-      // });
-    }
+    this.proceedingsService.updateActasEntregaRTurno(this.acta).subscribe({
+      next: resp => {
+        console.log(resp);
+      },
+      error: err => {
+        console.log(err);
+      },
+    });
+    // });
   }
 
   goBack() {
@@ -532,29 +463,26 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
   // }
 
   selectDictums(event: any) {
-    console.log(event.data.id);
-    console.log(event.data.delegationDictNumber);
-    // this.selectedDictums = event.selected;
-    // console.log({ selectedDictums: this.selectedDictums });
+    this.idDelDicta = event.data.id;
     let params: IUpdateDelDictation = {
-      id: event.data.id,
-      delegationDictNumber: event.data.delegationDictNumber,
+      ofDictaNumber: event.data.id,
+      delegationDictateNumber:
+        this.formControls.newUser.value?.departamentNumber,
     };
     this.dictation = params;
+    console.log(this.dictation);
+    this.updateDictums();
   }
 
   selectProceedings(event: any) {
-    console.log(event);
-    // console.log(event.data.id);
-    // console.log(event.data.delegationDictNumber);
-    // this.selectedDictums = event.selected;
-    // console.log({ selectedDictums: this.selectedDictums });
-    // let params: IUpdateActasEntregaRecepcionDelegation = {
-    //   id: event.data.id,
-    //   delegationDictNumber: event.data.delegationDictNumber,
-    // };
-    // this.acta = params;
-    // this.selectedProceedings = event.selected;
+    this.idDelActa = event.data.id;
+    let params: IUpdateActasEntregaRecepcionDelegation = {
+      minutesNumber: event.data.id,
+      delegation2Number: this.formControls.newUser.value?.departamentNumber,
+    };
+    this.acta = params;
+    console.log(this.acta);
+    this.updateProceedings();
   }
 
   getUsersCopy(lparams: ListParams) {
@@ -566,6 +494,7 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
     this.docRegisterService.getUsersSegAreas(params.getParams()).subscribe({
       next: data => {
         this.users = new DefaultSelect(data.data, data.count);
+        console.log(data);
       },
       error: () => {
         this.users = new DefaultSelect();
@@ -585,13 +514,13 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
       next: data => {
         if (data.count > 0) {
           this.historyColumns = data.data;
-          this.historyColumns[0].personNew;
+          this.historyColumns[0].personnew;
           //param['filter.flyerNumber'] = `$eq:${this.newUser}`;
           //params.page = lparams.page;
           //params.limit = lparams.limit;
           param.addFilter(
             'user',
-            this.historyColumns[0].personNew,
+            this.historyColumns[0].personnew,
             SearchFilter.EQ
           );
           this.docRegisterService
@@ -600,6 +529,7 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
               next: resp => {
                 //this.users = new DefaultSelect(data.data, data.count);
                 this.usersFilter = resp.data;
+                console.log(this.usersFilter);
                 this.newUser = this.usersFilter[0].userAndName;
                 if (
                   this.usersFilter[0].userAndName != null ||
