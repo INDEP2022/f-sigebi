@@ -48,7 +48,7 @@ export class ChangeOfStatusStiComponent extends BasePage implements OnInit {
   ) {
     super();
     this.settings.columns = COLUMNS;
-    this.settings.actions = false;
+    this.settings.actions = true;
   }
 
   ngOnInit(): void {

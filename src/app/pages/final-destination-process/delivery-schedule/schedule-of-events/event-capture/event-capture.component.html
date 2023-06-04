@@ -18,6 +18,17 @@
 
   <div body>
     <div class="row">
+      <div class="col-md-12">
+        <a
+          class="btn btn-primary btn-sm active"
+          [routerLink]="[
+            '/pages/judicial-physical-reception/scheduled-maintenance'
+          ]"
+          >Regresar</a
+        >
+      </div>
+    </div>
+    <div class="row pt-3">
       <form class="form-material" [formGroup]="form" (ngSubmit)="onSubmit()">
         <div class="row">
           <h6>Registro</h6>
@@ -226,6 +237,7 @@
             </div>
             <div *ngIf="ctrlButtons.expExcel.visible">
               <button
+                (click)="excelExport()"
                 class="btn btn-sm btn-success active"
                 [disabled]="!ctrlButtons.expExcel.enabled">
                 {{ ctrlButtons.expExcel.label }}
@@ -376,7 +388,7 @@
         </div>
       </div>
     </div>
-    <app-pagination [params]="params" [totalItems]="totalItems">
-    </app-pagination>
+    <!-- <app-pagination [params]="params" [totalItems]="totalItems">
+    </app-pagination> -->
   </div>
 </app-card>

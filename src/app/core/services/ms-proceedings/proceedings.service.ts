@@ -6,7 +6,10 @@ import {
   IListResponse,
   IResponse,
 } from '../../interfaces/list-response.interface';
-import { IProceedings } from '../../models/ms-proceedings/proceedings.model';
+import {
+  IProceedings,
+  IUpdateActasEntregaRecepcion,
+} from '../../models/ms-proceedings/proceedings.model';
 import {
   IBlkPost,
   IUpdateVault,
@@ -112,6 +115,15 @@ export class ProceedingsService extends HttpService {
   remove(proceedingsNumb: number) {
     return this.delete<IListResponse<IProceedings>>(
       `${this.endpoint}/${proceedingsNumb}`
+    );
+  }
+  updateActasEntregaRecepcion(
+    model: IUpdateActasEntregaRecepcion,
+    no_Acta: string | number
+  ) {
+    return this.put<IListResponse<any>>(
+      `${this.route}/aplication/update-actasEntregaRecepcion/${no_Acta}`,
+      model
     );
   }
 }

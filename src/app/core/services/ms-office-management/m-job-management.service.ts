@@ -82,11 +82,16 @@ export class MJobManagementService extends HttpService {
   }
 
   updateCopyOficeManag(
-    params?: any
+    params?: any,
+    id?: any
   ): Observable<IListResponse<IMJobManagement>> {
     return this.put<IListResponse<IMJobManagement>>(
-      'copies-job-management',
+      `copies-job-management/${id}`,
       params
     );
+  }
+
+  deleteCopyOficeManag(id?: any): Observable<IListResponse<any>> {
+    return this.delete<IListResponse<any>>(`copies-job-management/${id}`);
   }
 }
