@@ -1,7 +1,10 @@
 import { Injectable } from '@angular/core';
 import { HttpService } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
-import { IGoodIndicator } from '../../models/ms-event-programming/good-indicators.model';
+import {
+  ICertificateProgDst,
+  IGoodIndicator,
+} from '../../models/ms-event-programming/good-indicators.model';
 @Injectable({
   providedIn: 'root',
 })
@@ -10,7 +13,7 @@ export class EventProgrammingService extends HttpService {
     super();
     this.microservice = 'eventprogramming';
   }
-
+  /// /api/v1/ssf3-certificate-prog-dst
   getFolio(body: any) {
     return this.post<{ folio: string }>('functions/get-folio', body);
   }
@@ -23,5 +26,8 @@ export class EventProgrammingService extends HttpService {
     return this.get<IListResponse<IGoodIndicator>>(
       'goods-indicators/get-goods-indicators/' + keyProceeding
     );
+  }
+  putCertificateProgDst(model: ICertificateProgDst) {
+    return this.put<ICertificateProgDst>('ssf3-certificate-prog-dst', model);
   }
 }

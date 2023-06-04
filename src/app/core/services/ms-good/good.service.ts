@@ -355,4 +355,16 @@ export class GoodService extends HttpService {
     const route = GoodEndpoints.GetAllGoodQuery;
     return this.get<IListResponse<IGood>>(route, params);
   }
+
+  getMassiveSearch(body: any) {
+    return this.post(GoodEndpoints.GetMassiveSearch, body);
+  }
+
+  getByExpedientAndParams__(
+    params?: ListParams
+  ): Observable<IListResponse<IGood>> {
+    console.log('GET GOODS EXPEDIENTE', params);
+    const route = GoodEndpoints.Good;
+    return this.get<IListResponse<IGood>>(route, params);
+  }
 }
