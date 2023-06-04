@@ -335,12 +335,7 @@ export class PartializeButtonComponent
     });
   }
 
-  private fillRow(
-    v_cantidad: number,
-    v_unidad: string,
-    v_avaluo: string,
-    newImporte: number
-  ) {
+  private fillRow(v_cantidad: number, v_unidad: string, v_avaluo: string) {
     // debugger;
 
     if (this.bienesPar[this.bienesPar.length - 2]) {
@@ -355,14 +350,17 @@ export class PartializeButtonComponent
     // const noBien = this.good.goodId;
     if (cantidad) {
       this.service.sumCant += +(cantidad + '');
+      this.service.sumCant = +this.service.sumCant.toFixed(2);
     }
 
     if (importe) {
       this.service.sumVal14 += +(importe + '');
+      this.service.sumVal14 = +this.service.sumVal14.toFixed(2);
     }
 
     if (avaluo) {
       this.service.sumAvaluo += +(avaluo + '');
+      this.service.sumAvaluo = +this.service.sumAvaluo.toFixed(2);
     }
 
     // this.vident++;
@@ -410,13 +408,12 @@ export class PartializeButtonComponent
   private fillBienesParV1(
     v_cantidad: number,
     v_unidad: string,
-    v_avaluo: string,
-    newImporte: number
+    v_avaluo: string
   ) {
     this.bienesPar.pop();
     // debugger;
     for (let index = 0; index < this.cantPar.value; index++) {
-      this.fillRow(v_cantidad, v_unidad, v_avaluo, newImporte);
+      this.fillRow(v_cantidad, v_unidad, v_avaluo);
     }
     this.bienesPar.push({
       id: null,
@@ -486,7 +483,7 @@ export class PartializeButtonComponent
         console.log(this.cantidad.value, this.vimporte);
         this.vres = this.vimporte - newImporte;
         this.vident = 0;
-        return this.fillBienesParV1(v_cantidad, v_unidad, v_avaluo, newImporte);
+        return this.fillBienesParV1(v_cantidad, v_unidad, v_avaluo);
       } else {
         return false;
         // this.vfactor = this.cantidad.value / this.vimporte;

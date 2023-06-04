@@ -7,8 +7,10 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
 import {
   IGoodProgramming,
+  IHistoryProcesdingAct,
   IPAAbrirActasPrograma,
   IPACambioStatus,
+  IPACambioStatusGood,
   ITmpProgValidation,
 } from 'src/app/core/models/good-programming/good-programming';
 import { environment } from 'src/environments/environment';
@@ -17,6 +19,9 @@ import { IUser } from '../../models/catalogs/user.model';
 @Injectable({ providedIn: 'root' })
 export class ProgrammingGoodService implements ICrudMethods<IGoodProgramming> {
   private readonly route: string = ProgrammingGoodEndpoints.ProgrammingGood;
+  private readonly routeHistory: string =
+    ProgrammingGoodEndpoints.HistoryProcceeding;
+
   constructor(private httpClient: HttpClient) {}
 
   getAll(params?: ListParams): Observable<IListResponse<IGoodProgramming>> {
@@ -91,6 +96,29 @@ export class ProgrammingGoodService implements ICrudMethods<IGoodProgramming> {
     return this.httpClient.post(`${environment.API_URL}/${route}`, dataObject);
   }
 
+  createHistoryProcedingAct(formData: IHistoryProcesdingAct) {
+    const route = `${this.routeHistory}/acts-his-foluniv-ssf3`;
+    return this.httpClient.post(`${environment.API_URL}/${route}`, formData);
+  }
+
+  paChangeStatusGood(model: IPACambioStatusGood) {
+    return this.httpClient.post(
+      `${environment.API_URL}/programminggood/api/v1/programminggood/apps/change-status-good`,
+      model
+    );
+  }
+
+  updateGoodSim(actaNumber: number) {
+    return this.httpClient.get(
+      `${environment.API_URL}/programminggood/api/v1/programminggood/apps/open-minutes-program/${actaNumber}`
+    );
+  }
+
+  createActasCtlNotifSSF3(formData: any) {
+    //// cambiar cuando este el Endpoint
+    const route = `${this.routeHistory}/acts-his-foluniv-ssf3`;
+    return this.httpClient.post(`${environment.API_URL}/${route}`, formData);
+  }
   private makeParams(params: ListParams): HttpParams {
     let httpParams: HttpParams = new HttpParams();
     Object.keys(params).forEach(key => {

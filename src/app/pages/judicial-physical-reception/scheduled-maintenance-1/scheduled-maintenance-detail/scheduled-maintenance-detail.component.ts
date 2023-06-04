@@ -48,6 +48,7 @@ export class ScheduledMaintenanceDetailComponent
   implements OnInit
 {
   form: FormGroup;
+  formDate: FormGroup;
   statusList = [
     { id: 'ABIERTA', description: 'Abierto' },
     { id: 'CERRADA', description: 'Cerrado' },
@@ -346,6 +347,10 @@ export class ScheduledMaintenanceDetailComponent
       statusActa: [acta.statusProceedings],
       claveActa: [acta.keysProceedings],
       tipoEvento: [acta.typeProceedings],
+    });
+    this.formDate = this.fb.group({
+      inicio: [null],
+      fin: [null],
     });
     this.initialValue = { ...this.form.value };
   }

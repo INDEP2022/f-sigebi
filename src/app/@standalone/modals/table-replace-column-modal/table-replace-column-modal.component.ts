@@ -99,7 +99,7 @@ export class TableReplaceColumnModalComponent
         next: response => {
           if (response) {
             this.messageResult = {
-              message: `${this.form.get(this.formField).value} válido`,
+              message: `${this.form.get(this.formField).value} existe`,
               result: 'success',
             };
             // this.onLoadToast(
@@ -109,7 +109,7 @@ export class TableReplaceColumnModalComponent
             this.disabled = false;
           } else {
             this.messageResult = {
-              message: `${this.form.get(this.formField).value} no válido`,
+              message: `${this.form.get(this.formField).value} no existe`,
               result: '',
             };
             // this.onLoadToast(
@@ -121,7 +121,7 @@ export class TableReplaceColumnModalComponent
         },
         error: err => {
           this.messageResult = {
-            message: `${this.form.get(this.formField).value} no válido`,
+            message: `${this.form.get(this.formField).value} no existe`,
             result: '',
           };
 

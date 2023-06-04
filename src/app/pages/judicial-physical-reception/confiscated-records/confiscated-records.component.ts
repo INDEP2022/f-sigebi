@@ -1,5 +1,10 @@
 import { Component, OnInit, Renderer2 } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { Router } from '@angular/router';
 import { addDays, format } from 'date-fns';
 import * as moment from 'moment';
@@ -60,8 +65,6 @@ import {
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { EdoFisicoComponent } from './edo-fisico/edo-fisico.component.component';
-import { IOfficialDictation } from 'src/app/core/models/ms-dictation/official-dictation.model';
-import { IDictation } from '../../juridical-processes/depositary/mass-ruling/types/dictation';
 
 @Component({
   selector: 'app-confiscated-records',
@@ -138,48 +141,48 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         type: 'string',
         sort: false,
         valuePrepareFunction: (cell: any, row: any) => {
-          if(row.good && row.good.description){
-            return row.good.description
-          }else{
-            return null
+          if (row.good && row.good.description) {
+            return row.good.description;
+          } else {
+            return null;
           }
-        }
+        },
       },
       'good.extDomProcess': {
         title: 'Proceso',
         type: 'string',
         sort: false,
         valuePrepareFunction: (cell: any, row: any) => {
-          if(row.good && row.good.extDomProcess){
-            return row.good.extDomProcess
-          }else{
-            return null
+          if (row.good && row.good.extDomProcess) {
+            return row.good.extDomProcess;
+          } else {
+            return null;
           }
-        }
+        },
       },
       'good.quantity': {
         title: 'Cantidad',
         type: 'number',
         sort: false,
         valuePrepareFunction: (cell: any, row: any) => {
-          if(row.good && row.good.quantity){
-            return row.good.quantity
-          }else{
-            return null
+          if (row.good && row.good.quantity) {
+            return row.good.quantity;
+          } else {
+            return null;
           }
-        }
+        },
       },
       'good.unit': {
         title: 'Unidad',
         type: 'string',
         sort: false,
         valuePrepareFunction: (cell: any, row: any) => {
-          if(row.good && row.good.unit){
-            return row.good.unit
-          }else{
-            return null
+          if (row.good && row.good.unit) {
+            return row.good.unit;
+          } else {
+            return null;
           }
-        }
+        },
       },
       exchangeValue: {
         title: 'Recibido',
@@ -202,7 +205,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   paramsDataGoods = new BehaviorSubject<ListParams>(new ListParams());
   totalItemsDataGoods: number = 0;
   limitDataGoods = new FormControl(10);
-  
+
   paramsDataGoodsAct = new BehaviorSubject<ListParams>(new ListParams());
   totalItemsDataGoodsAct: number = 0;
   limitDataGoodsAct = new FormControl(10);
@@ -1009,7 +1012,9 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     const paramsF = new FilterParams();
     paramsF.page = this.paramsDataGoods.getValue().page;
     paramsF.limit = this.paramsDataGoods.getValue().limit;
-    this.limitDataGoods = new FormControl(this.paramsDataGoods.getValue().limit);
+    this.limitDataGoods = new FormControl(
+      this.paramsDataGoods.getValue().limit
+    );
     console.log(this.paramsDataGoods);
     console.log(paramsF.getParams());
     this.serviceGood
@@ -1061,7 +1066,9 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     const paramsF = new FilterParams();
     paramsF.page = this.paramsDataGoods.getValue().page;
     paramsF.limit = this.paramsDataGoods.getValue().limit;
-    this.limitDataGoods = new FormControl(this.paramsDataGoods.getValue().limit);
+    this.limitDataGoods = new FormControl(
+      this.paramsDataGoods.getValue().limit
+    );
     this.serviceGood
       .getAllFilterDetail(
         `filter.fileNumber=$eq:${
@@ -2010,8 +2017,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
             ),
             address: this.form.get('direccion').value,
             /* elaborate: 'SERA', */
-            elaborate:
-              localStorage.getItem('username'),
+            elaborate: localStorage.getItem('username'),
             numFile: this.form.get('expediente').value,
             witness1: this.form.get('entrega').value,
             witness2: this.form.get('recibe2').value,
@@ -2090,10 +2096,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
           const paramsF = new FilterParams();
           let VAL_MOVIMIENTO = 0;
 
-          paramsF.addFilter(
-            'valUser',
-            localStorage.getItem('username')
-          );
+          paramsF.addFilter('valUser', localStorage.getItem('username'));
           paramsF.addFilter('valMinutesNumber', this.idProceeding);
           this.serviceProgrammingGood
             .getTmpProgValidation(paramsF.getParams())
@@ -2193,7 +2196,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         this.serviceGood.PAValidaCambio(model).subscribe(
           res => {
             const { P5 } = res;
-            console.log(P5)
+            console.log(P5);
             if (P5 < 0) {
             } else {
               if (this.goodData.length <= 0) {
@@ -2206,10 +2209,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                 const paramsF = new FilterParams();
                 let VAL_MOVIMIENTO = 0;
 
-                paramsF.addFilter(
-                  'valUser',
-                  localStorage.getItem('username')
-                );
+                paramsF.addFilter('valUser', localStorage.getItem('username'));
                 paramsF.addFilter('valMinutesNumber', this.idProceeding);
                 this.serviceProgrammingGood
                   .getTmpProgValidation(paramsF.getParams())
@@ -2302,10 +2302,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
           const paramsF = new FilterParams();
           let VAL_MOVIMIENTO = 0;
 
-          paramsF.addFilter(
-            'valUser',
-            localStorage.getItem('username')
-          );
+          paramsF.addFilter('valUser', localStorage.getItem('username'));
           paramsF.addFilter('valMinutesNumber', this.idProceeding);
           this.serviceProgrammingGood
             .getTmpProgValidation(paramsF.getParams())
@@ -2344,9 +2341,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                     address: this.form.get('direccion').value,
                     statusProceedings: 'ABIERTA',
                     /* elaborate: 'SERA', */
-                    elaborate: localStorage
-                      .getItem('username')
-                      ,
+                    elaborate: localStorage.getItem('username'),
                     numFile: parseInt(this.idProceeding.toString()),
                     witness1: this.form.get('entrega').value,
                     witness2: this.form.get('recibe2').value,
@@ -2665,7 +2660,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         };
         this.serviceGood.PAValidaCambio(model).subscribe(res => {
           const { P5 } = JSON.parse(JSON.stringify(res));
-          console.log(P5)
+          console.log(P5);
           //!Forzando debería ser mayor y esta menor
           if (P5 > 0) {
             this.alert(
@@ -2673,15 +2668,11 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
               'Bienes sin informacion requerida',
               'Se encontraron bienes sin información requerida para este proceso'
             );
-
           } else {
             const paramsF = new FilterParams();
             let VAL_MOVIMIENTO = 0;
 
-            paramsF.addFilter(
-              'valUser',
-              localStorage.getItem('username')
-            );
+            paramsF.addFilter('valUser', localStorage.getItem('username'));
             paramsF.addFilter('valMinutesNumber', this.idProceeding);
             this.serviceProgrammingGood
               .getTmpProgValidation(paramsF.getParams())
@@ -3512,9 +3503,8 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                               numberGood: this.selectData.id,
                               amount: this.selectData.quantity,
                               exchangeValue: 1,
-                              approvedUserXAdmon: localStorage
-                                .getItem('username')
-                                ,
+                              approvedUserXAdmon:
+                                localStorage.getItem('username'),
                             };
                           this.serviceDetailProc
                             .addGoodToProceedings(newDetailProceeding)
@@ -3917,5 +3907,4 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
       this.modalService.show(EdoFisicoComponent, modalConfig);
     }
   }
-
 }

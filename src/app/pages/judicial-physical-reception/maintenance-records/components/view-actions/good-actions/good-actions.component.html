@@ -25,6 +25,7 @@
   </form>
   <div class="col-md-5 mb-3">
     <app-update-dates-goods
+      [form]="formDate"
       [disabled]="!data || data.length === 0"
       [data]="data"
       (updateGoodEvent)="
