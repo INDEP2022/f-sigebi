@@ -1054,7 +1054,7 @@ export class ThirdpartiesPossessionValidationComponent
         !isNaN(department.level as any) &&
         Number(department.level) + 1 == 5
       ) {
-        joyKey += `${level5}`;
+        joyKey += `/${level5}`;
       }
       joyKey += `/?/${year}`.trim();
       this.formPositionThirdParty.get('jobKey').setValue(joyKey);
