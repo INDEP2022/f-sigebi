@@ -701,6 +701,32 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
       const observable = from(
         this.bienesPar.slice(0, this.bienesPar.length - 1)
       );
+      // this.bienesPar.forEach((item, index) => {
+      //   if (this.validationClasif()) {
+      //     vval2 = Number((+(item.importe + '')).toFixed(2).trim());
+      //     vimpbien = +(item.importe + '');
+      //   } else {
+      //     vval2 = +this.good.val14;
+      //     vimpbien = +(item.cantidad + '');
+      //   }
+      //   if (index < this.bienesPar.length - 1) {
+      //     const newObservation =
+      //       vobserv_padre + item.noBien + ' por:  ' + vimpbien + ', ';
+      //     vobserv_padre = newObservation.substring(
+      //       0,
+      //       newObservation.length > 600 ? 600 : newObservation.length
+      //     );
+      //   }
+
+      // })
+      // const newObservation =
+      //   vobserv_padre + 2 + ' por:  ' + +(this.saldo.value + '') + ', ';
+      // vobserv_padre = newObservation.substring(
+      //   0,
+      //   newObservation.length > 600 ? 600 : newObservation.length
+      // );
+      // console.log(vobserv_padre);
+
       let i = 0;
       observable
         .pipe(
@@ -796,7 +822,11 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
               );
               if (no_bien !== null) {
                 const newObservation =
-                  vobserv_padre + no_bien + ' por:  ' + vimpbien + ', ';
+                  vobserv_padre +
+                  no_bien +
+                  ' por:  ' +
+                  +(this.saldo.value + '') +
+                  ', ';
                 vobserv_padre = newObservation.substring(
                   0,
                   newObservation.length > 600 ? 600 : newObservation.length

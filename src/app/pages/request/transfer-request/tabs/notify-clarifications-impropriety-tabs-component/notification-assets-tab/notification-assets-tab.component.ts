@@ -549,13 +549,16 @@ export class NotificationAssetsTabComponent
                       notification.answered == 'ACLARADA' ||
                       notification.answered == 'RECHAZADA'
                     ) {
-                      this.updateStatusGood(
+                      const updateStatusGood = await this.updateStatusGood(
                         'ACLARADO',
                         'VERIFICAR_CUMPLIMIENTO',
                         bien.goodid,
                         bien.goodresdev,
                         bien.typeorigin
                       );
+                      if (updateStatusGood === true) {
+                        resolve(true);
+                      }
                     }
                   } else if (
                     notification.clarificationType == 'SOLICITAR_IMPROCEDENCIA'
