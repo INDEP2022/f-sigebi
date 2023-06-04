@@ -15,13 +15,17 @@ import {
   IAccesTrackingXArea,
   IUsersTracking,
 } from 'src/app/core/models/ms-security/pup-user.model';
-import { IGoodPossessionThirdParty } from 'src/app/core/models/ms-thirdparty-admon/third-party-admon.model';
+import {
+  IDetailGoodPossessionThirdParty,
+  IGoodPossessionThirdParty,
+} from 'src/app/core/models/ms-thirdparty-admon/third-party-admon.model';
 import { ISegUsers } from 'src/app/core/models/ms-users/seg-users-model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { DepartamentService } from 'src/app/core/services/catalogs/departament.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
+import { ParametersService } from 'src/app/core/services/ms-parametergood/parameters.service';
 import { SecurityService } from 'src/app/core/services/ms-security/security.service';
 import { GoodPosessionThirdpartyService } from 'src/app/core/services/ms-thirdparty-admon/good-possession-thirdparty.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
@@ -35,7 +39,11 @@ import { thirdpartiesPossessionValidationResponses } from './thirdparties-posses
 type IGoodAndAvailable = IGood & { available?: boolean };
 const predifinedText =
   'En cumplimiento a la instrucción judicial derivada del juicio de amparo <A> por el cual se informa que se resolvió provisionalmente conceder al quejoso la restitución de la posesión  uso y disfrute  del(los) siguiente(s) mueble(s). Al respecto me permito señalar: \n\n<B> \n\n<C> \n\nCon fundamento en la fracción XIV del artículo 39 del Estatuto Orgánico del Servicio de Administración y Enajenación de Bienes y considerando la instrucción judicial deducida del juicio de garantías emitida por el Juez <DATOS DE JUZGADO>, por el cual se otorga la suspensión definitiva al quejoso <QUEJOSO> respecto del disfrute del inmueble de marras y, consecuentemente, la restitución de la posesión, en tal sentido y salvo que no exista aseguramiento anterior o posterior decretado por autoridad competente para ello, esa Delegación a su cargo deberá dar cabal cumplimiento a la suspensión definitiva, levantado para tal efecto el acta administrativa de entrega de posesión por virtud de suspensión provisional, afectando, consecuentemente, el SIAB bajo el estatus ¿PD3¿ ¿entrega en posesión a terceros por instrucción judicial¿. \n\nEl cumplimiento señalado, deberá realizarlo a la brevedad e informar al Juez de Amparo sobre los actos tendientes a su cumplimiento. \n\nNo omito señalar, que en el supuesto de que se resuelva el amparo en el cuaderno incidental y/o principal negando la protección de la justicia federal, se deberán llevar a cabo las acciones legales correspondientes para recuperar la posesión del inmueble asegurado. \n\nFinalmente, le informo que debe hacer del conocimiento de la autoridad que decretó el aseguramiento, así como, en su caso, del Juez que conozca del proceso penal federal. \n\nQuedo a sus órdenes para cualquier comentario.';
-
+interface IUserCustom {
+  nombre: string;
+  usuario: string;
+  nameUser: string;
+}
 @Component({
   selector: 'app-thirdparties-possession-validation',
   templateUrl: './thirdparties-possession-validation.component.html',
@@ -129,7 +137,11 @@ export class ThirdpartiesPossessionValidationComponent
   isLoadingGood: boolean = false;
   paramsGood = new BehaviorSubject<ListParams>(new ListParams());
   totalItemsGood: number = 0;
-
+  notificationSelected: null | INotification = null;
+  addressee = new DefaultSelect();
+  userCcp1 = new DefaultSelect();
+  userCcp2 = new DefaultSelect();
+  userResponsible = new DefaultSelect();
   constructor(
     // private fb: FormBuilder,
     private notificationService: NotificationService,
@@ -139,10 +151,11 @@ export class ThirdpartiesPossessionValidationComponent
     private sanitizer: DomSanitizer,
     // private historyGoodService: HistoryGoodService,
     protected goodPosessionThirdpartyService: GoodPosessionThirdpartyService,
-    private userService: UsersService,
+    protected userService: UsersService,
     private authService: AuthService,
     private securityService: SecurityService,
-    private departmentService: DepartamentService
+    private departmentService: DepartamentService,
+    protected parametersService: ParametersService
   ) {
     super();
   }
@@ -178,30 +191,82 @@ export class ThirdpartiesPossessionValidationComponent
     //   });
   }
 
-  // detailGoodPosessionThirdParty: {
-  //   possessionNumber: number;
-  //   goodNumber: number;
-  //   steeringwheelNumber: number;
-  //   nbOrigin: string;
-  //   status?: any;
-  //   description?: string;
-  // };
-
   formPositionThirdParty = new FormGroup({
-    closingDate: new FormControl(null),
+    closingDate: new FormControl(null, Validators.required),
     delegationCloseNumber: new FormControl(null),
     jobKey: new FormControl(''),
     nbOrigin: new FormControl(''),
     numClueNavy: new FormControl(null),
     possessionNumber: new FormControl(null),
     steeringwheelNumber: new FormControl(null),
-    text: new FormControl(''),
-    usrAddressee: new FormControl(null, Validators.required),
-    usrCcp1: new FormControl(null, Validators.required),
-    usrCcp2: new FormControl(null, Validators.required),
-    usrResponsible: new FormControl(null, Validators.required),
+    text: new FormControl('', Validators.required),
+    usrAddressee: new FormControl<IUserCustom>(null, Validators.required),
+    usrCcp1: new FormControl<IUserCustom>(null, Validators.required),
+    usrCcp2: new FormControl<IUserCustom>(null, Validators.required),
+    usrResponsible: new FormControl<IUserCustom>(null, Validators.required),
     addressee: new FormControl(null),
   });
+
+  selectRowNotification(event: any) {
+    this.notificationSelected = event.data;
+    this.formPositionThirdParty.reset();
+    this.formPositionThirdParty
+      .get('steeringwheelNumber')
+      .setValue(this.notificationSelected.wheelNumber);
+    this.getGoodsPosessionThird();
+  }
+
+  getRelationsSelected() {
+    const { usrAddressee, usrCcp1, usrCcp2, usrResponsible } =
+      this.formPositionThirdParty.value;
+    const params = new ListParams();
+    console.log(this.formPositionThirdParty.value);
+    if (usrAddressee) {
+      // params['text'] = usrAddressee.usuario;
+      this.getUser(usrAddressee.usuario).subscribe({
+        next: data => {
+          this.formPositionThirdParty.get('usrAddressee').setValue({
+            nameUser: `${usrAddressee.usuario} - ${data.nombre || ''}`,
+            nombre: data.nombre,
+            usuario: usrAddressee.usuario,
+          });
+        },
+      });
+    }
+    if (usrCcp1) {
+      this.getUser(usrCcp1.usuario).subscribe({
+        next: data => {
+          this.formPositionThirdParty.get('usrCcp1').setValue({
+            nameUser: `${usrCcp1.usuario} - ${data.nombre || ''}`,
+            nombre: data.nombre,
+            usuario: usrCcp1.usuario,
+          });
+        },
+      });
+    }
+    if (usrCcp2) {
+      this.getUser(usrCcp2.usuario).subscribe({
+        next: data => {
+          this.formPositionThirdParty.get('usrCcp2').setValue({
+            nameUser: `${usrCcp2.usuario} - ${data.nombre || ''}`,
+            nombre: data.nombre,
+            usuario: usrCcp2.usuario,
+          });
+        },
+      });
+    }
+    if (usrResponsible) {
+      this.getUser(usrResponsible.usuario).subscribe({
+        next: data => {
+          this.formPositionThirdParty.get('usrResponsible').setValue({
+            nameUser: `${usrResponsible.usuario} - ${data.nombre || ''}`,
+            nombre: data.nombre,
+            usuario: usrResponsible.usuario,
+          });
+        },
+      });
+    }
+  }
 
   getGoodsPosessionThird() {
     const wheelNumber = this.notificationSelected.wheelNumber;
@@ -209,11 +274,37 @@ export class ThirdpartiesPossessionValidationComponent
       return;
     }
     const queryParams = `page=${1}&limit=${10}&filter.steeringwheelNumber=${wheelNumber}`;
-
+    this.dataTableBienesOficio = [];
     this.goodPosessionThirdpartyService.getAll(queryParams).subscribe({
       next: dataGoodPosessionThirdParty => {
         const goodPosessionThirdParty = dataGoodPosessionThirdParty.data[0];
-        this.formPositionThirdParty.patchValue(goodPosessionThirdParty);
+        this.formPositionThirdParty.patchValue({
+          ...goodPosessionThirdParty,
+          usrAddressee: {
+            nombre: '',
+            usuario: goodPosessionThirdParty.usrAddressee,
+            nameUser: goodPosessionThirdParty.usrAddressee,
+          },
+          usrCcp1: {
+            nombre: '',
+            usuario: goodPosessionThirdParty.usrCcp1,
+            nameUser: goodPosessionThirdParty.usrCcp1,
+          },
+          usrCcp2: {
+            nombre: '',
+            usuario: goodPosessionThirdParty.usrCcp2,
+            nameUser: goodPosessionThirdParty.usrCcp2,
+          },
+          usrResponsible: {
+            nombre: '',
+            usuario: goodPosessionThirdParty.usrResponsible,
+            nameUser: goodPosessionThirdParty.usrResponsible,
+          },
+          closingDate: goodPosessionThirdParty?.closingDate
+            ? new Date(goodPosessionThirdParty?.closingDate)
+            : null,
+        });
+        this.getRelationsSelected();
         if (goodPosessionThirdParty?.possessionNumber) {
           this.goodPosessionThirdpartyService
             .getAllDetailGoodPossessionThirdParty(
@@ -222,8 +313,13 @@ export class ThirdpartiesPossessionValidationComponent
             )
             .subscribe({
               next: data => {
-                console.log('data', data);
                 this.dataTableBienesOficio = data.data;
+                console.log('data table', this.dataTableBienesOficio);
+                // this.dataTableBienesOficio.forEach((element, index) => {
+                //   this.dataTableBienes.find(
+                //     x => x.id === element.goodNumber
+                //   ).available = false;
+                // });
                 // this.goodService
                 //   .getById(this.detailGoodPosessionThirdParty.goodNumber)
                 //   .subscribe({
@@ -241,15 +337,6 @@ export class ThirdpartiesPossessionValidationComponent
         }
         // this.isLoadingGood = false;
       },
-      error: () => {
-        // this.formCcpOficio.get('ccp1').patchValue('');
-        // this.formCcpOficio.get('ccp2').patchValue('');
-        // this.formCcpOficio.get('firma').patchValue('');
-        // this.formCcpOficio.reset();
-        // this.form.reset();
-        // this.formPositionThirdParty.reset();
-        // this.formGood.reset();
-      },
     });
   }
 
@@ -264,9 +351,9 @@ export class ThirdpartiesPossessionValidationComponent
       usrAddressee: values.usrAddressee.usuario,
     };
     delete body.addressee;
-    delete body.nbOrigin;
+    // delete body.nbOrigin;
     this.goodPosessionThirdpartyService
-      .updateThirdPartyAdmonOffice(id, this.formPositionThirdParty.value)
+      .updateThirdPartyAdmonOffice(id, body)
       .subscribe({});
   }
 
@@ -352,17 +439,6 @@ export class ThirdpartiesPossessionValidationComponent
     this.dataTableBienesOficio = [];
   }
 
-  notificationSelected: null | INotification = null;
-  selectRowNotification(event: any) {
-    this.notificationSelected = event.data;
-    this.formPositionThirdParty.reset();
-    this.formPositionThirdParty
-      .get('steeringwheelNumber')
-      .setValue(this.notificationSelected.wheelNumber);
-
-    this.getGoodsPosessionThird();
-  }
-
   getGoods(params: ListParams) {
     const numberExpedient = this.noExpediente.value;
     this.dataTableBienes = [];
@@ -399,19 +475,6 @@ export class ThirdpartiesPossessionValidationComponent
     });
   }
 
-  // getGoodsByOffice(params: ListParams, numberExpedient: number) {
-  //   const queryString = `page=${params.page}&limit=${params.limit}&filter.fileNumber=${numberExpedient}&filter.status=STI`;
-  //   this.dataTableBienesOficio = [];
-  //   this.goodService.getAllFilter(queryString).subscribe({
-  //     next: data => {
-  //       this.dataTableBienesOficio = data.data;
-  //     },
-  //     error: err => {
-  //       this.loading = false;
-  //     },
-  //   });
-  // }
-
   rowSelected(rows: any) {
     this.selectedRows = rows.isSelected ? rows.data : {};
   }
@@ -445,7 +508,7 @@ export class ThirdpartiesPossessionValidationComponent
         goodNumber: this.selectedRows.id,
         id: this.selectedRows.id,
         // possessionNumber: this.selectedRows.po,
-        // steeringwheelNumber: this.selectedRows,
+        steeringwheelNumber: this.selectedRows.flyerNumber,
         description: this.selectedRows.description,
         status: this.selectedRows.status,
         // nbOriginal: this.selectedRows.nbOriginal,
@@ -482,10 +545,12 @@ export class ThirdpartiesPossessionValidationComponent
       return;
     }
 
-    this.dataTableBienes.find(x => x.id === this.selectedRows2.id).available =
-      true;
+    const item = this.dataTableBienes.find(
+      x => x.id === (this.selectedRows2 as any)['goodNumber']
+    );
+    if (item) item.available = true;
     this.dataTableBienesOficio = this.dataTableBienesOficio.filter(
-      x => x.id !== this.selectedRows2.id
+      x => x.goodNumber !== (this.selectedRows2 as any)['goodNumber']
     );
 
     // this.goodService
@@ -769,9 +834,9 @@ export class ThirdpartiesPossessionValidationComponent
         });
         let replaceText = predifinedText.replaceAll(
           '<A>',
-          this.wheelNotifications
-            ? this.wheelNotifications.protectionKey
-            : '<A>'
+          // this.wheelNotifications
+          //   ? this.wheelNotifications.protectionKey
+          data.data[0].protectionKey || '<A>'
         );
         const text = this.formPositionThirdParty.get('text').value;
         if (text) {
@@ -786,16 +851,11 @@ export class ThirdpartiesPossessionValidationComponent
   }
 
   onClickPrint() {
-    // this.loading = true;
-    // const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/blank.pdf`; //window.URL.createObjectURL(blob);
-
-    // const downloadLink = document.createElement('a');
-    // //console.log(linkSource);
-    // downloadLink.href = pdfurl;
-    // downloadLink.target = '_blank';
-    // downloadLink.click();
-    console.log(this.formPositionThirdParty.value);
-    // console.log(this.flyersForm.value);
+    if (this.formPositionThirdParty.invalid) {
+      this.formPositionThirdParty.markAllAsTouched();
+      this.alert('info', '', 'Revisa los campos');
+      return;
+    }
     if (this.dataTableBienesOficio.length < 1) {
       this.alert('info', '', 'Seleccione un bien');
       return;
@@ -824,8 +884,9 @@ export class ThirdpartiesPossessionValidationComponent
       let segUser;
       let faEtapaCreada;
       try {
-        faEtapaCreada = await this.getFaEtapaCreda();
+        faEtapaCreada = await this.getFaStageCreda(new Date());
       } catch (ex) {
+        console.log(ex);
         this.alert(
           'error',
           'Error',
@@ -898,8 +959,8 @@ export class ThirdpartiesPossessionValidationComponent
           }
           try {
             const params = {
-              user: values.usrAddressee.usuario,
-              assigned: 'S',
+              'filter.user': values.usrAddressee.usuario,
+              'filter.assigned': 'S',
             };
             _segAccessXAreas = (await this.getSegAccessXAreas(
               params
@@ -910,6 +971,7 @@ export class ThirdpartiesPossessionValidationComponent
               'Error',
               'No se localizaron datos del destinatario.'
             );
+            throw ex;
           }
         }
       } catch (ex) {
@@ -931,7 +993,11 @@ export class ThirdpartiesPossessionValidationComponent
       const month = (new Date().getMonth() + 1).toString();
 
       let joyKey = `${level2}${level3}${level4}`;
-      if (department.level + 1 == 5) {
+      if (
+        department.level &&
+        !isNaN(department.level as any) &&
+        Number(department.level) + 1 == 5
+      ) {
         joyKey += `${level5}`;
       }
       joyKey += `/?/${year}/`.trim();
@@ -939,10 +1005,6 @@ export class ThirdpartiesPossessionValidationComponent
     }
     this.pupPrint();
     return false;
-  }
-
-  getFaEtapaCreda() {
-    return Promise.resolve('FA_ETAPACREDA(SYSDATE)');
   }
 
   getSegAccessXAreas(params: _Params, first: boolean = true) {
@@ -976,6 +1038,73 @@ export class ThirdpartiesPossessionValidationComponent
     );
   }
 
+  async commitSilent() {
+    const values = this.formPositionThirdParty.value;
+    const body = {
+      ...values,
+      usrCcp1: values.usrCcp1?.usuario || '',
+      usrCcp2: values.usrCcp2?.usuario || '',
+      usrResponsible: values.usrResponsible.usuario || '',
+      usrAddressee: values.usrAddressee.usuario || '',
+    };
+    delete body.addressee;
+    // delete body.nbOrigin;
+    if (this.formPositionThirdParty.value.possessionNumber) {
+      await this.updateGoodPossessionThirdParty(
+        this.formPositionThirdParty.value.possessionNumber,
+        body
+      );
+      // this.deleteDetailGoodPossessionThirdParty({
+      //   possessionNumber: this.formPositionThirdParty.value.possessionNumber,
+      // });
+      this.dataTableBienesOficio.forEach(async element => {
+        const __body: IDetailGoodPossessionThirdParty = {
+          // ...element,
+          possessionNumber: this.formPositionThirdParty.value.possessionNumber,
+          nbOrigin: '',
+          goodNumber: element.goodNumber as any,
+          steeringwheelNumber: element.steeringwheelNumber as any,
+        };
+        console.log({ __body });
+        await this.postDetailGoodPossessionThirdParty(__body);
+      });
+    } else {
+      const _body: IGoodPossessionThirdParty = {
+        closingDate: body.closingDate,
+        jobKey: body.jobKey,
+        nbOrigin: body.nbOrigin,
+        delegationCloseNumber: body.delegationCloseNumber,
+        numClueNavy: body.numClueNavy,
+        possessionNumber: body.possessionNumber,
+        usrCcp1: body.usrCcp1,
+        usrCcp2: body.usrCcp2,
+        usrResponsible: body.usrResponsible,
+        usrAddressee: body.usrAddressee,
+        steeringwheelNumber: body.steeringwheelNumber,
+        text: body.text,
+      };
+      try {
+        _body.possessionNumber = await this.getSequenceNoPositionNextVal();
+        Object.keys(_body).forEach((key: any) => {
+          if (!(_body as any)[key]) {
+            (_body as any)[key] = '';
+          }
+        });
+        if (!_body.possessionNumber) {
+          throw new Error('No se pudo generar el número de posesión.');
+        }
+        this.postGoodPossessionThirdParty(_body);
+      } catch (ex) {
+        this.alert(
+          'error',
+          'Error',
+          'No se pudo generar el número de posesión.'
+        );
+        throw ex;
+      }
+    }
+  }
+
   getSegUsers(params: _Params, first: boolean = true) {
     return firstValueFrom(
       this.securityService.getAllUsersTracker(params).pipe(
@@ -990,21 +1119,15 @@ export class ThirdpartiesPossessionValidationComponent
     );
   }
 
-  pupPrint() {
-    // let params = { ...this.form.value };
-    // for (const key in params) {
-    //   if (params[key] === null) delete params[key];
-    // }
+  async pupPrint() {
+    await this.commitSilent();
     const params = {
       // PARAMFORM: 'NO',
       // P_FIRMA: 'S',
-      P_NO_POSESION: this.formPositionThirdParty.value.possessionNumber,
+      P_NO_POSESION: this.formPositionThirdParty.value.possessionNumber || '',
     };
-    //let newWin = window.open(pdfurl, 'test.pdf');
-    // this.alert('success', '', 'Reporte generado');
-    // this.loading = false;
+
     this.siabService
-      // .fetchReport('RGEROFPRECEPDOCUM', params)
       .fetchReport('FBIEVALPOSTERCERO', params)
       .subscribe(response => {
         if (response !== null) {
@@ -1041,10 +1164,6 @@ export class ThirdpartiesPossessionValidationComponent
       });
   }
 
-  addressee = new DefaultSelect();
-  userCcp1 = new DefaultSelect();
-  userCcp2 = new DefaultSelect();
-  userResponsible = new DefaultSelect();
   getUserName(
     params: ListParams,
     type: 'addressee' | 'ccp1' | 'ccp2' | 'responsible' = 'addressee'

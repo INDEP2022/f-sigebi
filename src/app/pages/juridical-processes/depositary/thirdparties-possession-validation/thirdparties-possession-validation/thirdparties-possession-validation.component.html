@@ -60,7 +60,7 @@
 
     <!-- TABLA----BIENES RELACIONADOS CON EL EXPEDIENTE -->
     <div class="row w-100">
-      <div class="col-sm-12 col-12 col-md-5 col-lg-5 p-2 alert alert-info">
+      <div class="col-sm-12 col-12 col-md-5 col-lg-5 p-2 alert alert-success">
         <h6>BIENES RELACIONADOS CON EL EXPEDIENTE</h6>
         <div
           [class]="isLoadingGood ? 'table-loading' : ''"
@@ -102,7 +102,7 @@
         </button>
       </div>
       <!-- TABLA----BIENES RELACIONADOS CON EL OFICIO -->
-      <div class="col-sm-12 col-12 col-md-5 col-lg-5 p-2 alert alert-info">
+      <div class="col-sm-12 col-12 col-md-5 col-lg-5 p-2 alert alert-success">
         <h6>BIENES RELACIONADOS CON EL OFICIO</h6>
         <ng2-smart-table
           [attr.class]="'table-bordered'"
@@ -214,7 +214,7 @@
               <form-field [control]="formPositionThirdParty.get('usrCcp1')">
                 <ngx-select
                   [form]="formPositionThirdParty"
-                  [data]="userCcp2"
+                  [data]="userCcp1"
                   (fetchItems)="getUserName($event, 'ccp1')"
                   bindLabel="nameUser"
                   control="usrCcp1"
