@@ -20,22 +20,22 @@ export const GOOD_SUBTYPES_COLUMNS = {
     sort: false,
   },
   noPhotography: {
-    title: 'No. fotografías',
+    title: 'Nº fotografías',
     type: 'string',
     sort: false,
   },
   descriptionPhotography: {
-    title: 'Descripcion fotografía',
+    title: 'Descripción fotografía',
     type: 'string',
     sort: false,
   },
   noRegister: {
-    title: 'No. registro',
+    title: 'Nº registro',
     type: 'number',
     sort: false,
   },
   version: {
-    title: 'Version',
+    title: 'Versión',
     type: 'number',
     sort: false,
   },
