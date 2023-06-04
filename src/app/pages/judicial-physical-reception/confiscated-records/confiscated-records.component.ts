@@ -1028,7 +1028,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
       .getAllFilterDetail(
         `filter.fileNumber=$eq:${
           this.numberExpedient
-        }&filter.status=$not:ADM&filter.labelNumber=$not:6&filter.detail.actNumber=$not:$null&${paramsF.getParams()}`
+        }&filter.status=$not:ADM&filter.labelNumber=$not:6&${paramsF.getParams()}`
       )
       .subscribe({
         next: async (res: any) => {
@@ -1103,7 +1103,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
       .getAllFilterDetail(
         `filter.fileNumber=$eq:${
           this.numberExpedient
-        }&filter.status=$not:ADM&filter.labelNumber=$not:6&filter.detail.actNumber=$not:$null&${paramsF.getParams()}`
+        }&filter.status=$not:ADM&filter.labelNumber=$not:6&${paramsF.getParams()}`
       )
       .subscribe({
         next: async (res: any) => {
@@ -1418,6 +1418,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     this.form.get('statusProceeding').reset();
     this.numberExpedient = this.form.get('expediente').value;
     this.noRequireAct1();
+    
 
     const btn = document.getElementById('expedient-number');
 
