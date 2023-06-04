@@ -336,7 +336,7 @@ export class GoodFormComponent extends AlertButton implements OnInit {
         this.onLoadToast(
           'error',
           'Error',
-          'El Bien no cuenta con un estatus correcto'
+          'El Bien no cuenta con un estatus y/o proceso correcto'
         );
         return;
       }
