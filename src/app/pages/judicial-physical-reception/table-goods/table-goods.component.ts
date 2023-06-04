@@ -29,21 +29,16 @@ export class TableGoodsComponent extends BasePage implements OnInit {
     this.updateSettingsGoods();
   }
   @Input() set page(value: number) {
+    console.log('Nueva Página', value);
+
     this.params.value.page = value;
-    console.log(this.params.value);
+    // console.log(this.params.value);
   }
   @Input() override loading = false;
   @Input() haveServerPagination: boolean; // campo requerido
   @Input() haveDelete = true;
-  private _data: any[];
-  @Input()
-  get data(): any[] {
-    return this._data;
-  }
-  set data(value) {
-    this._data = value;
-    this.params.value.page = 1;
-  }
+  // _data: any[];
+  @Input() data: any[];
   @Input() totalItems: number = 0;
   @Input() settingsTable: any;
   @Output() updateData = new EventEmitter<ListParams>();
@@ -100,6 +95,7 @@ export class TableGoodsComponent extends BasePage implements OnInit {
   }
 
   private updateSettingsGoods(value = this.statusActaValue) {
+    debugger;
     this.settingsTable = {
       ...this.settingsTable,
       actions: {
