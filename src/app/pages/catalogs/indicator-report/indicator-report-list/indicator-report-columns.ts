@@ -25,27 +25,27 @@ export const INDICATOR_REPORT_COLUMNS = {
     sort: false,
   },
   contractNumber: {
-    title: 'No Contrato',
+    title: 'No. de Contrato',
     type: 'string',
     sort: false,
   },
   userCreation: {
-    title: 'Usuario Creacion',
+    title: 'Usuario Creación',
     type: 'string',
     sort: false,
   },
   creationDate: {
-    title: 'Fecha Creacion',
+    title: 'Fecha Creación',
     type: 'Date',
     sort: false,
   },
   userModification: {
-    title: 'Usuario Modificacon',
+    title: 'Usuario Modificación ',
     type: 'string',
     sort: false,
   },
   modificationDate: {
-    title: 'Fecha Modificacion',
+    title: 'Fecha Modificación',
     type: 'Date',
     sort: false,
   },
