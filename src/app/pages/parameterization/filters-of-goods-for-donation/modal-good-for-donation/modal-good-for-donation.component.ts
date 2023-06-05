@@ -12,7 +12,7 @@ import { STRING_PATTERN } from 'src/app/core/shared/patterns';
   styles: [],
 })
 export class ModalGoodForDonationComponent extends BasePage implements OnInit {
-  title: string = '';
+  title: string = 'Filtro de Bienes para Donación';
   edit: boolean = false;
   form: FormGroup = new FormGroup({});
   allotment: any;

@@ -80,35 +80,67 @@ export class CourtMaintenanceComponent extends BasePage implements OnInit {
       ],
       manager: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(100),
+        ],
       ],
       street: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(60)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(60),
+        ],
       ],
       numExterior: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(10)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(10),
+        ],
       ],
       numInside: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(10)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(10),
+        ],
       ],
       cologne: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(100),
+        ],
       ],
       zipCode: [
         null,
-        [Validators.pattern(NUMBERS_PATTERN), Validators.maxLength(5)],
+        [
+          Validators.required,
+          Validators.pattern(NUMBERS_PATTERN),
+          Validators.maxLength(5),
+        ],
       ],
       delegationMun: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(60)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(60),
+        ],
       ],
       numPhone: [
         null,
-        [Validators.pattern(PHONE_PATTERN), Validators.maxLength(20)],
+        [
+          Validators.required,
+          Validators.pattern(PHONE_PATTERN),
+          Validators.maxLength(20),
+        ],
       ],
       numRegister: [{ value: null, disabled: true }],
       id: [{ value: null, disabled: true }],
