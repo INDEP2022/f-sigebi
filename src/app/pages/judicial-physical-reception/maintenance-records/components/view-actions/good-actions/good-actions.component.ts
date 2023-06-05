@@ -7,7 +7,7 @@ import {
   TemplateRef,
   ViewChild,
 } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { firstValueFrom } from 'rxjs';
 import { TableReplaceColumnModalComponent } from 'src/app/@standalone/modals/table-replace-column-modal/table-replace-column-modal.component';
@@ -38,18 +38,7 @@ import { MaintenanceRecordsService } from './../../../services/maintenance-recor
 @Component({
   selector: 'app-good-actions',
   templateUrl: './good-actions.component.html',
-  styles: [
-    `
-      .selectGood {
-        display: flex;
-        margin-left: 20px;
-        column-gap: 10px;
-        ng-custom-select-loading {
-          width: calc(100% - 70px);
-        }
-      }
-    `,
-  ],
+  styleUrls: ['./good-actions.component.scss'],
 })
 export class GoodActionsComponent extends AlertButton implements OnInit {
   @Input() statusActaValue: string;
@@ -58,8 +47,7 @@ export class GoodActionsComponent extends AlertButton implements OnInit {
   @Output() updateTable = new EventEmitter();
   @Output() addGoodEvent =
     new EventEmitter<IDetailProceedingsDeliveryReception>();
-  formGood: FormGroup;
-  formAction: FormGroup;
+
   loading = false;
   selectedsForUpdate: IDetailProceedingsDeliveryReception[] = [];
   // dataForAdd: IDetailProceedingsDeliveryReception[] = [];
@@ -89,6 +77,34 @@ export class GoodActionsComponent extends AlertButton implements OnInit {
     this.formAction = this.fb.group({
       action: [null],
     });
+    this.formDate = this.fb.group({
+      inicio: [null],
+      fin: [null],
+    });
+  }
+
+  get formDate() {
+    return this.service.formDate;
+  }
+
+  set formDate(value) {
+    this.service.formDate = value;
+  }
+
+  get formGood() {
+    return this.service.formGood;
+  }
+
+  set formGood(value) {
+    this.service.formGood = value;
+  }
+
+  get formAction() {
+    return this.service.formActionChange;
+  }
+
+  set formAction(value) {
+    this.service.formActionChange = value;
   }
 
   ngOnInit(): void {
@@ -228,7 +244,7 @@ export class GoodActionsComponent extends AlertButton implements OnInit {
           // dataObservableFn: this.proceedingService.getAll2,
           idSelect: 'id',
           labelSelect: 'id',
-          label: 'No. Acta',
+          label: 'Especifique el nuevo número del acta del bien',
           paramSearch: 'filter.id',
           path: 'proceeding/api/v1/proceedings-delivery-reception',
           form: this.fb.group({
@@ -247,7 +263,7 @@ export class GoodActionsComponent extends AlertButton implements OnInit {
     } else {
       this.openModalSelect(
         {
-          titleColumnToReplace: 'estados',
+          titleColumnToReplace: 'estatus',
           columnsType: {
             numberGood: {
               title: 'No. Bien',
@@ -343,7 +359,11 @@ export class GoodActionsComponent extends AlertButton implements OnInit {
                 },
               });
           } else {
-            this.onLoadToast('error', 'No se pudo actualizar bienes', message);
+            this.onLoadToast(
+              'error',
+              'No se pudo actualizar bienes',
+              message + ' porque ya están registrados'
+            );
           }
         },
         error: err => {

@@ -20,19 +20,15 @@ export class UpdateDatesGoodsComponent implements OnInit {
   @Input() inicioColumn: string = 'approvedDateXAdmon';
   @Input() finColumn: string = 'dateIndicatesUserApproval';
   @Input() noActa: number;
+  @Input() form: FormGroup;
   selectedsForUpdate: any[] = [];
   @Output() updateGoodEvent = new EventEmitter();
-  form: FormGroup;
+
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
     private detailService: ProceedingsDetailDeliveryReceptionService
-  ) {
-    this.form = this.fb.group({
-      inicio: [null],
-      fin: [null],
-    });
-  }
+  ) {}
 
   get fechaInicio() {
     return this.form.get('inicio');

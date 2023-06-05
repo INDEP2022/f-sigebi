@@ -43,6 +43,7 @@ export interface ImanagementOffice {
   problematiclegal: string;
   cveChargeRem: string;
   justification: string;
+  count: number;
 }
 
 export interface ICopiesJobManagementDto {

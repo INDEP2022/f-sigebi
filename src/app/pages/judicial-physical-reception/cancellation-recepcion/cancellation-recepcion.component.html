@@ -17,9 +17,8 @@
               </button>
               <button
                 [class]="loading ? 'disabled' : ''"
-                class="btn btn-warning btn-sm active"
-                (click)="clearAll()"
-                >
+                class="btn btn-danger btn-sm active"
+                (click)="clearAll()">
                 Limpiar
               </button>
             </div>
@@ -44,45 +43,25 @@
           <span>Navegación de actas</span>
           <div class="row">
             <div class="col-md-9">
-              <button
-                id="expedient-number"
-                [disabled]="!prevProce"
-                class="btn btn-secondary btn-sm active"
-                [class]="loading ? 'disabled' : ''"
-                (click)="prevProceeding()">
-                <i class="fa fa-angle-left"></i>
-              </button>
-              <span class="mr-3 ml-3"
-                >{{
-                  numberProceeding + 1 > proceedingData.length
-                    ? 'Nuevo'
-                    : numberProceeding + 1
-                }}
-                {{
-                  numberProceeding + 1 > proceedingData.length ? null : ' - '
-                }}
-                {{
-                  numberProceeding + 1 > proceedingData.length
-                    ? null
-                    : proceedingData.length
-                }}</span
-              >
-              <button
-                id="expedient-number"
-                [class]="loading ? 'disabled' : ''"
-                class="btn btn-secondary btn-sm active"
-                [disabled]="!nextProce"
-                (click)="nextProceeding()">
-                <i class="fa fa-angle-right"></i>
-              </button>
-              <button
-                *ngIf="newAct"
-                id="expedient-number"
-                class="btn btn-primary btn-sm active ml-4"
-                [class]="loading ? 'disabled' : ''"
-                (click)="newProceeding()">
-                Nueva acta
-              </button>
+              <div class="d-flex justify-content-center align-items-center">
+                <app-pagination
+                  [params]="paramsActNavigate"
+                  [totalItems]="proceedingData.length"
+                  [limit]="newLimitparamsActNavigate"
+                  [paginatorPageSize]="false"
+                  [paginatorRangeLabel]="false"
+                  [maxSize]="1"></app-pagination>
+                <div class="col">
+                  <button
+                    *ngIf="newAct"
+                    id="expedient-number"
+                    class="btn btn-primary btn-sm active ml-4"
+                    [class]="loading ? 'disabled' : ''"
+                    (click)="newProceeding()">
+                    Nueva acta
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -91,18 +70,29 @@
       <div class="row mb-3 mt-3">
         <div class="col-md-4">
           <div class="row">
-            <div class="col-md-9">
+            <div class="col">
               <form-field [control]="form.get('expediente')" label="Expediente">
                 <input
                   (ngModelChange)="
                     toggleByLength('expedient-number', 'expediente')
                   "
-                  [max-length]="10"
-                  [class]="blockExpedient ? 'disabled' : ''"
                   [min]="0"
                   type="number"
+                  [max-length]="10"
+                  [readOnly]="blockExpedient || loading"
                   class="form-control"
                   formControlName="expediente" />
+              </form-field>
+            </div>
+            <div *ngIf="form.get('statusProceeding').value != null" class="col">
+              <form-field
+                [control]="form.get('statusProceeding')"
+                label="Estatus del acta">
+                <input
+                  type="text"
+                  readOnly="true"
+                  class="form-control"
+                  formControlName="statusProceeding" />
               </form-field>
             </div>
           </div>
@@ -147,7 +137,7 @@
                   (change)="changeAct()"
                   [class]="initialBool ? 'disabled' : ''"
                   control="acta"
-                  label="Acta"
+                  label="Tipo Acta"
                   bindLabel=""
                   [data]="records"
                   [searchable]="false"
@@ -168,7 +158,7 @@
               </form-field>
             </div>
             <div class="col-md-1">
-              <form-field [control]="form.get('ident')" label="Ident">
+              <form-field [control]="form.get('ident')" label="Identificador">
                 <input
                   type="text"
                   [class]="initialBool ? 'disabled' : ''"
@@ -196,7 +186,7 @@
                   id="transfer"
                   [class]="initialBool ? 'disabled' : ''"
                   control="admin"
-                  label="Admin"
+                  label="Administra"
                   bindLabel="delegation"
                   [data]="adminSelect"
                   [form]="form"></ngx-select>
@@ -237,11 +227,11 @@
 
       <hr class="row" />
 
-      <div  [class]="loading ? 'disabled' : ''" class="row">
+      <div [class]="loading ? 'disabled' : ''" class="row">
         <div class="col-md-12">
           <div class="row">
             <div class="col">
-              <form-field [control]="form.get('acta2')" label="Acta 2">
+              <form-field [control]="form.get('acta2')" label="Acta">
                 <input
                   type="text"
                   class="form-control"
@@ -317,7 +307,7 @@
       <hr class="row" />
       <div class="col-md-12">
         <div class="row">
-          <div class="col-6">
+          <div class="col">
             <form-field
               [control]="form.get('autoridadCancela')"
               label="Autoridad Cancela&#47;Suspende">
@@ -384,7 +374,7 @@
         </div>
       </div>
       <hr class="row" />
-      <div  [class]="loading ? 'disabled' : ''" class="row mb-5">
+      <div [class]="loading ? 'disabled' : ''" class="row mb-5">
         <div class="d-flex justify-content-center">
           <div>
             <button
@@ -411,12 +401,18 @@
             </button> -->
             <a
               class="my-1 mx-2 btn btn-warning active btn-sm"
+              [class]="
+                form.get('statusProceeding').value != null ? '' : 'disabled'
+              "
               size="small"
               (click)="goParcializacion()"
               >Parcializaci&oacute;n
             </a>
             <button
               type="button"
+              [class]="
+                form.get('statusProceeding').value != null ? '' : 'disabled'
+              "
               class="my-1 mx-2 btn btn-danger active btn-sm"
               size="small"
               (click)="deleteProceeding()">
@@ -450,8 +446,13 @@
           (rowSelect)="rowSelect($event)"
           (rowDeselect)="deselectRow()"></ng2-smart-table>
       </div>
+      <app-pagination
+        *ngIf="!loading"
+        [params]="paramsDataGoods"
+        [pageSizeOptions]="[5, 10, 20]"
+        [limit]="limitDataGoods"
+        [totalItems]="totalItemsDataGoods"></app-pagination>
 
-      <hr class="row" />
       <div class="row">
         <div class="d-flex justify-content-center">
           <form-field
@@ -476,8 +477,8 @@
           </p>
         </div>
       </div>
-
-      <div class="row pt-2">
+      <hr class="row" />
+      <div class="row pt-2 pb-4">
         <div class="col-md-12 d-flex justify-content-center">
           <div class="d-flex justify-content-center align-items-sm-center">
             <div class="col-md-3">
@@ -503,7 +504,7 @@
           </div>
         </div>
       </div>
-
+      <hr class="row" />
       <div [class]="loading ? 'table-loading' : 'row pt-2 scroll-table'">
         <ng2-smart-table
           class="col-md-12"
@@ -512,7 +513,12 @@
           (rowSelect)="selectRowGoodActa($event)"
           (rowDeselect)="deselectRowGoodActa()"></ng2-smart-table>
       </div>
-      <hr class="row" />
+      <app-pagination
+        *ngIf="!loading"
+        [params]="paramsDataGoodsAct"
+        [pageSizeOptions]="[5, 10, 20]"
+        [limit]="limitDataGoodsAct"
+        [totalItems]="totalItemsDataGoodsAct"></app-pagination>
       <div class="d-flex justify-content-center">
         <form-field
           class="col-md-3"

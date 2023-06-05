@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { catchError, tap, throwError } from 'rxjs';
 import {
@@ -7,7 +7,9 @@ import {
   ListParams,
 } from 'src/app/common/repository/interfaces/list-params';
 import { ISegUsers } from 'src/app/core/models/ms-users/seg-users-model';
+import { MJobManagementService } from 'src/app/core/services/ms-office-management/m-job-management.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
+import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -15,13 +17,8 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
   templateUrl: './modal-persona-oficina.component.html',
   styles: [],
 })
-export class ModalPersonaOficinaComponent implements OnInit {
-  form: FormGroup = this.fb.group({
-    typePerson_I: [null, null],
-    senderUser_I: [null, null],
-    personaExt_I: [null, null],
-  });
-
+export class ModalPersonaOficinaComponent extends BasePage implements OnInit {
+  form: FormGroup;
   users$ = new DefaultSelect<ISegUsers>();
   nameUserDestinatario: ISegUsers;
   options: any[];
@@ -29,14 +26,24 @@ export class ModalPersonaOficinaComponent implements OnInit {
   personExtInt_I: string;
   nrSelecttypePerson: string;
   select: any[];
-
+  @Output() dataCopy = new EventEmitter<any>();
+  @Output() refresh = new EventEmitter<true>();
+  managementNumber: any;
   constructor(
     private usersService: UsersService,
     private fb: FormBuilder,
-    private modalRef: BsModalRef
-  ) {}
+    private modalRef: BsModalRef,
+    private mJobManagementService: MJobManagementService
+  ) {
+    super();
+  }
 
   ngOnInit(): void {
+    this.form = this.fb.group({
+      typePerson_I: [null, Validators.required],
+      senderUser_I: [null, null],
+      personaExt_I: [null, Validators.required],
+    });
     this.options = [
       { value: null, label: 'Seleccione un valor' },
       { value: 'E', label: 'PERSONA EXTERNA' },
@@ -86,6 +93,31 @@ export class ModalPersonaOficinaComponent implements OnInit {
   }
 
   agregarExterno() {
+    if (this.managementNumber == null) {
+      this.dataCopy.emit(this.form.value);
+    } else {
+      let obj: any = {
+        managementNumber: this.managementNumber,
+        addresseeCopy: this.form.value.senderUser_I,
+        delDestinationCopyNumber: null,
+        recordNumber: null,
+        personExtInt: this.form.value.typePerson_I,
+        nomPersonExt: this.form.value.personaExt_I,
+      };
+
+      this.mJobManagementService.createCopyOficeManag(obj).subscribe({
+        next: (resp: any) => {
+          this.refresh.emit(true);
+          this.loading = false;
+          this.onLoadToast('success', 'CPP creado exitosamente', '');
+        },
+        error: err => {
+          this.onLoadToast('error', 'error al crear CPP', '');
+          this.loading = false;
+        },
+      });
+    }
+
     this.modalRef.content.callback(true, this.form.value);
     this.close();
   }

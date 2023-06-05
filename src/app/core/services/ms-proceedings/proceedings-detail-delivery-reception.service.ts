@@ -5,17 +5,43 @@ import { ProceedingsEndpoints } from 'src/app/common/constants/endpoints/ms-proc
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
 import {
+  firstFormatDate,
   firstFormatDateToSecondFormatDate,
   formatForIsoDate,
 } from 'src/app/shared/utils/date';
 import { IListResponse } from '../../interfaces/list-response.interface';
+import { ITrackedGood } from '../../models/ms-good-tracker/tracked-good.model';
 import { IGoodsByProceeding } from '../../models/ms-indicator-goods/ms-indicator-goods-interface';
 import { IDetailProceedingsDeliveryReception } from '../../models/ms-proceedings/detail-proceeding-delivery-reception';
 import { PBDelete } from '../../models/ms-proceedings/proceeding-aplication.model';
-import {
-  IDeleted,
-  INotDeleted,
-} from './proceedings-delivery-reception.service';
+import { INotSucess, ISucess } from './proceedings-delivery-reception.service';
+
+export function trackerGoodToDetailProceeding(
+  item: ITrackedGood,
+  idProceeding: string
+): IDetailProceedingsDeliveryReception {
+  return {
+    numberProceedings: +idProceeding,
+    numberGood: +item.goodNumber,
+    amount: 1,
+    received: 'S',
+    approvedXAdmon: 'S',
+    approvedDateXAdmon: firstFormatDate(new Date()),
+    approvedUserXAdmon: '',
+    dateIndicatesUserApproval: firstFormatDate(new Date()),
+    numberRegister: 0,
+    reviewIndft: 0,
+    correctIndft: 0,
+    idftUser: '',
+    idftDate: new Date(),
+    numDelegationIndft: 0,
+    yearIndft: 0,
+    monthIndft: 0,
+    idftDateHc: new Date(),
+    packageNumber: 0,
+    exchangeValue: 0,
+  };
+}
 
 @Injectable({
   providedIn: 'root',
@@ -114,9 +140,9 @@ export class ProceedingsDetailDeliveryReceptionService extends HttpService {
         delete selected.vault;
         return this.create(selected).pipe(
           map(item => {
-            return { deleted: selected.good.id } as IDeleted;
+            return { sucess: selected.good.id } as ISucess;
           }),
-          catchError(err => of({ error: selected.good.id } as INotDeleted))
+          catchError(err => of({ error: selected.good.id } as INotSucess))
         );
       })
     );
@@ -127,9 +153,9 @@ export class ProceedingsDetailDeliveryReceptionService extends HttpService {
       selecteds.map(selected =>
         this.deleteById(selected.good.goodId, selected.numberProceedings).pipe(
           map(item => {
-            return { deleted: selected.good.goodId } as IDeleted;
+            return { sucess: selected.good.goodId } as ISucess;
           }),
-          catchError(err => of({ error: selected.good.goodId } as INotDeleted))
+          catchError(err => of({ error: selected.good.goodId } as INotSucess))
         )
       )
     );
@@ -194,6 +220,24 @@ export class ProceedingsDetailDeliveryReceptionService extends HttpService {
         });
       })
     );
+  }
+
+  updateMassiveNew(
+    approvedDateXAdmon: string,
+    dateIndicatesUserApproval: string,
+    numberProceedings: number
+  ) {
+    return this.put(
+      'aplication/detaProceDeliRecepMinutesNumber/' + numberProceedings,
+      {
+        approvedDateXAdmon:
+          firstFormatDateToSecondFormatDate(approvedDateXAdmon),
+        dateIndicatesUserApproval: firstFormatDateToSecondFormatDate(
+          dateIndicatesUserApproval
+        ),
+      }
+    );
+    // http://sigebimsqa.indep.gob.mx/proceeding/api/v1/aplication/detaProceDeliRecepMinutesNumber/7327
   }
 
   updateMasive(

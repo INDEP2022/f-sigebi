@@ -30,6 +30,11 @@ export class Repository<T> implements IRepository<T> {
     return this.httpClient.get<T>(`${fullRoute}/${id}`);
   }
 
+  newGetById(route: string, id: number | string): Observable<T> {
+    const fullRoute = this.buildRoute(route);
+    return this.httpClient.get<T>(`${fullRoute}/id/${id}`);
+  }
+
   getGoodByIds(route: string): Observable<T> {
     const fullRoute = this.buildRoute(route);
     return this.httpClient.get<T>(`${fullRoute}`);
@@ -48,6 +53,15 @@ export class Repository<T> implements IRepository<T> {
     // console.log(formData);
 
     return this.httpClient.put(`${fullRoute}/${id}`, formData);
+  }
+
+  updateCatagaloDelegations(
+    route: string,
+    id: number | string,
+    formData: Object
+  ) {
+    const fullRoute = this.buildRoute(route);
+    return this.httpClient.put(`${fullRoute}`, formData);
   }
 
   newUpdate(route: string, formData: Object) {
@@ -308,8 +322,8 @@ export class Repository<T> implements IRepository<T> {
 
   updateCatalogOpinions(route: string, id: number | string, formData: Object) {
     const fullRoute = this.buildRoute(route);
-    // console.log(`${fullRoute}/id/${id}`);
     // console.log(formData);
+
     return this.httpClient.put(`${fullRoute}/id/${id}`, formData);
   }
 
@@ -326,12 +340,29 @@ export class Repository<T> implements IRepository<T> {
     formData: Object
   ) {
     const fullRoute = this.buildRoute(route);
-    // console.log(`${fullRoute}/id/${id}`);
     // console.log(formData);
+
     return this.httpClient.put(`${fullRoute}/id/${id}`, formData);
   }
 
   removeCatalogDocCompensation(route: string, id: number | string) {
+    const fullRoute = this.buildRoute(route);
+    // console.log(`${fullRoute}/id/${id}`);
+
+    return this.httpClient.delete(`${fullRoute}/id/${id}`);
+  }
+
+  updateCatalogSiabClasification(
+    route: string,
+    id: number | string,
+    formData: Object
+  ) {
+    const fullRoute = this.buildRoute(route);
+    // console.log(formData);
+    return this.httpClient.put(`${fullRoute}/id/${id}`, formData);
+  }
+
+  removeCatalogSiabClasification(route: string, id: number | string) {
     const fullRoute = this.buildRoute(route);
     // console.log(`${fullRoute}/id/${id}`);
 

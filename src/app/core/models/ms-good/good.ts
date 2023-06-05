@@ -835,7 +835,7 @@ export interface NoExpediente {
 }
 
 export interface IAttribGoodBad {
-  id?: number;
+  id?: any;
   motive: string;
   pair1: number;
   pair2: number;
