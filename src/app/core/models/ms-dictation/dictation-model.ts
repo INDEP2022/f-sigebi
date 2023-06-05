@@ -54,20 +54,20 @@ export interface ICopiesOfficeSendDictation {
   toolbar_no_delegacion: number;
   nom_dest: string;
   destinatario: string;
-  no_clasif_bien: number;
-  no_bien: number;
+  no_clasif_bien?: number;
+  no_bien?: number;
   no_departamento_destinatario: number;
   no_delegacion_destinatario: number;
   no_delegacion_dictam: number;
   tipo: string;
   usuario: string;
   ciudad: string;
-  iden: string;
+  iden?: string;
   num_clave_armada: number;
   toolbar_no_departamento: number;
   toolbar_no_subdelegacion: number;
   estatus_dictaminacion: string;
-  proceso_ext_dom: string;
+  proceso_ext_dom?: string;
   paquete: number;
 }
 export interface ITmpDictationCreate {
