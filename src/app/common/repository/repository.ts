@@ -50,6 +50,15 @@ export class Repository<T> implements IRepository<T> {
     return this.httpClient.put(`${fullRoute}/${id}`, formData);
   }
 
+  updateCatagaloDelegations(
+    route: string,
+    id: number | string,
+    formData: Object
+  ) {
+    const fullRoute = this.buildRoute(route);
+    return this.httpClient.put(`${fullRoute}`, formData);
+  }
+
   newUpdate(route: string, formData: Object) {
     const fullRoute = this.buildRoute(route);
     // console.log(`${fullRoute}/${id}`);
