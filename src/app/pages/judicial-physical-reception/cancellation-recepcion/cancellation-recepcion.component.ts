@@ -209,6 +209,12 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
   totalItemsDataGoodsAct: number = 0;
   limitDataGoodsAct = new FormControl(10);
 
+  //FOLIO DE ESCANEO
+  //FOLIO DE ESCANEO
+  folioEscaneo = 'folioEscaneo';
+  cveScreen = 'FACTREFCANCELAR';
+  nameReport = 'RGERGENSOLICDIGIT';
+
   act2Valid: boolean = false;
   adminSelect = new DefaultSelect();
   blockExpedient = false;

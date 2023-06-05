@@ -1128,6 +1128,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
       err => {
         console.log(err);
         this.loading = false;
+        this.dataGoodAct.load([]);
         this.form.get('almacen').reset();
         this.form.get('boveda').reset();
         this.isAlmacen = false;
@@ -1710,6 +1711,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         this.form.get('recibe2').setValue(dataRes.witness2);
         this.form.get('testigo').setValue(dataRes.comptrollerWitness);
         this.form.get('statusProceeding').setValue(dataRes.statusProceedings);
+        this.form.get('folioEscaneo').setValue(dataRes.universalFolio);
         if (this.form.get('statusProceeding').value === 'ABIERTA') {
           this.labelActa = 'Cerrar acta';
           this.btnCSSAct = 'btn-primary';
@@ -1753,6 +1755,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         this.form.get('recibe2').setValue(dataRes.witness2);
         this.form.get('testigo').setValue(dataRes.comptrollerWitness);
         this.form.get('statusProceeding').setValue(dataRes.statusProceedings);
+        this.form.get('folioEscaneo').setValue(dataRes.universalFolio);
         if (this.form.get('statusProceeding').value === 'ABIERTA') {
           this.labelActa = 'Cerrar acta';
           this.btnCSSAct = 'btn-primary';
@@ -2046,6 +2049,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
             witness1: this.form.get('entrega').value,
             witness2: this.form.get('recibe2').value,
             address: this.form.get('direccion').value,
+            universalFolio: parseInt(this.form.get('folioEscaneo').value),
             elaborationDate: format(
               this.form.get('fecElab').value,
               'yyyy-MM-dd HH:mm'
