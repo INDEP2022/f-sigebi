@@ -1,5 +1,6 @@
 export enum SiabReportEndpoints {
   EXTENSION = '.pdf',
+  EXTENSION_XML = '.xml',
   SIAB = `SIAB`,
   RINDICA = `RINDICA_0001`,
   RCONCOGVOLANTESRE = `RCONCOGVOLANTESRE`,
