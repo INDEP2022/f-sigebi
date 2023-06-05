@@ -63,7 +63,7 @@ export class OfficeComponent extends BasePage implements OnInit {
   filtroPersonaExt: ICopiesJobManagementDto[] = [];
 
   tipoImpresion: string;
-
+  managementNumber_: any;
   //===================
   users$ = new DefaultSelect<ISegUsers>();
   @Input() oficnum: number | string;
@@ -76,7 +76,7 @@ export class OfficeComponent extends BasePage implements OnInit {
   totalItems: number;
 
   params = new BehaviorSubject<ListParams>(new ListParams());
-
+  copyOficio: any[] = [];
   constructor(
     private fb: FormBuilder,
     private serviceOficces: GoodsJobManagementService,
@@ -242,7 +242,8 @@ export class OfficeComponent extends BasePage implements OnInit {
       this.onmanagementNumberEnter(this.filterParamsLocal);
       this.verBoton = true;
     } else {
-      Swal.fire('Se requiere un filtro de búsqueda', '', 'info');
+      this.alert('info', 'Se requiere un filtro de búsqueda', '');
+      // Swal.fire('Se requiere un filtro de búsqueda', '', 'info');
     }
   }
 
@@ -251,10 +252,12 @@ export class OfficeComponent extends BasePage implements OnInit {
       .getAllOfficialDocument(filterParams.getValue().getParams())
       .subscribe({
         next: respuesta => {
-          if (respuesta.count == 1) {
+          console.log('RESP', respuesta);
+          if (respuesta.count > 1) {
             this.loadModal(1, filterParams);
           } else {
             console.log('Else');
+            this.managementNumber_ = respuesta.data[0].managementNumber;
             this.tipoImpresion = respuesta.data[0].jobType;
             this.form
               .get('proceedingsNumber')
@@ -293,14 +296,14 @@ export class OfficeComponent extends BasePage implements OnInit {
         },
         error: err => {
           let error = '';
-          if (err.status === 0) {
-            error = 'Revise su conexión de Internet.';
-          } else {
-            error = err.message;
-          }
-          if (err.message.indexOf('registros') !== -1) {
-            this.onLoadToast('error', 'Error 1 ', err.message);
-          }
+          // if (err.status === 0) {
+          //   error = 'Revise su conexión de Internet.';
+          // } else {
+          //   error = err.message;
+          // }
+          // if (err.message.indexOf('registros') !== -1) {
+          this.alert('warning', err.error.message, '');
+          // }
           //this.onLoadToast('error', 'Error', error);
           console.log(error);
         },
@@ -497,39 +500,35 @@ export class OfficeComponent extends BasePage implements OnInit {
   updateOficio() {
     this.serviceOficces.updateOficio(this.creaObjUpdate(this.form)).subscribe({
       next: response => {
-        this.onLoadToast(
-          'success',
-          'se actualizo el registro de manera correcta',
-          JSON.stringify(response.data)
-        );
+        this.alert('success', 'Se actualizó el registro correctamene', '');
       },
       error: responseError => {
-        if (responseError.message.indexOf('registros') == -1) {
-          this.onLoadToast('error', 'Error 1 ', responseError.message);
-        }
-        console.log('Entra =>  ', responseError.error.message);
+        // if (responseError.message.indexOf('registros') == -1) {
+        this.onLoadToast('warning', responseError.message, '');
+        // }
+        // console.log('Entra =>  ', responseError.error.message);
       },
     });
 
-    let obj = {
-      copyDestinationNumber: '',
-      typeDictamination: this.form.get('officio').value,
-      recipientCopy: this.form.get('typeDict').value,
-      no_Of_Dicta: this.form.get('registerNumber').value,
-      //copyDestinationNumber:this.form.get("senderUser_I").value,
-      personExtInt: this.form.get('typePerson_I').value,
-      namePersonExt: this.form.get('personaExt_I').value,
-      registerNumber: this.form.get('registerNumber').value,
-    };
+    // let obj = {
+    //   copyDestinationNumber: '',
+    //   typeDictamination: this.form.get('officio').value,
+    //   recipientCopy: this.form.get('typeDict').value,
+    //   no_Of_Dicta: this.form.get('registerNumber').value,
+    //   //copyDestinationNumber:this.form.get("senderUser_I").value,
+    //   personExtInt: this.form.get('typePerson_I').value,
+    //   namePersonExt: this.form.get('personaExt_I').value,
+    //   registerNumber: this.form.get('registerNumber').value,
+    // };
 
-    this.dictationService.updateUserByOficNum(obj).subscribe({
-      next: resp => {
-        this.onLoadToast('warning', 'Info', resp[0].message);
-      },
-      error: errror => {
-        this.onLoadToast('error', 'Error', errror.error.message);
-      },
-    });
+    // this.dictationService.updateUserByOficNum(obj).subscribe({
+    //   next: resp => {
+    //     this.onLoadToast('warning', 'Info', resp[0].message);
+    //   },
+    //   error: errror => {
+    //     this.onLoadToast('error', 'Error', errror.error.message);
+    //   },
+    // });
   }
 
   creaObjUpdate(f: FormGroup) {
@@ -539,8 +538,8 @@ export class OfficeComponent extends BasePage implements OnInit {
       managementNumber: f.value.managementNumber,
       cveManagement: f.value.officio,
       sender: f.value.RemitenteSenderUser,
-      addressee: f.value.addressee,
-      charge: f.value.cveChargeRem,
+      nomPersExt: f.value.addressee,
+      cveChargeRem: f.value.cveChargeRem,
       text1: f.value.paragraphInitial,
       text2: f.value.paragraphFinish,
       text3: f.value.paragraphOptional,
@@ -601,14 +600,14 @@ export class OfficeComponent extends BasePage implements OnInit {
         },
         error: err => {
           let error = '';
-          if (err.status === 0) {
-            error = 'Revise su conexión de Internet.';
-          } else {
-            error = err.message;
-          }
-          if (err.message.indexOf('registros') !== -1) {
-            this.onLoadToast('error', 'Error 1 ', err.message);
-          }
+          // if (err.status === 0) {
+          //   error = 'Revise su conexión de Internet.';
+          // } else {
+          //   error = err.message;
+          // }
+          // if (err.message.indexOf('registros') !== -1) {
+          //   this.onLoadToast('error', 'Error 1 ', err.message);
+          // }
 
           console.log(error);
           // this.onLoadToast('error', 'Error', error);
@@ -668,19 +667,29 @@ export class OfficeComponent extends BasePage implements OnInit {
   delete(id: number) {
     this.serviceOficces.deleteCopiesJobManagement(id).subscribe({
       next: resp => {
+        // let arr = [];
+
+        // for (let i = 0; i < this.copyOficio.length; i++) {
+        //   if (this.copyOficio[i].id != id) {
+        //     arr.push(this.copyOficio[i]);
+        //   }
+        // }
+
+        // this.copyOficio = arr;
+        this.onLoadToast('success', 'Se eliminó correctamente', '');
         console.log('resp  =>  ' + resp);
         this.refreshTabla();
       },
       error: err => {
         let error = '';
-        if (err.status === 0) {
-          error = 'Revise su conexión de Internet.';
-        } else {
-          error = err.message;
-        }
-        if (err.message.indexOf('registros') !== -1) {
-          this.onLoadToast('error', 'Error 1 ', err.message);
-        }
+        // if (err.status === 0) {
+        //   error = 'Revise su conexión de Internet.';
+        // } else {
+        //   error = err.message;
+        // }
+        // if (err.message.indexOf('registros') !== -1) {
+        this.alert('error', err.error.message, '');
+        // }
         console.log(error);
         //this.onLoadToast('error', 'Error', error);
       },

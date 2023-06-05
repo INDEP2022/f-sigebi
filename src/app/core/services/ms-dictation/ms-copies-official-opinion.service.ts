@@ -28,4 +28,8 @@ export class CopiesOfficialOpinionService extends HttpService {
   update(body: Partial<ICopiesOfficialOpinion>) {
     return this.put(DictationEndpoints.CopiesOfficialOpinion, body);
   }
+
+  deleteCcp(body: Partial<ICopiesOfficialOpinion>) {
+    return this.delete(DictationEndpoints.CopiesOfficialOpinion, body);
+  }
 }

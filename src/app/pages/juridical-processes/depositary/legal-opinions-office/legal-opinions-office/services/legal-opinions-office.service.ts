@@ -114,13 +114,17 @@ export class LegalOpinionsOfficeService {
   getOfficeCopiesDictation(params: _Params) {
     return this.msCopiesOfficialOpinionService.getAll(params);
   }
-  // Save Text Oficio Dictaminaciones
+  // Save Copies Oficio Dictaminaciones
   saveCopiesOfficeDictation(body: ICopiesOfficialOpinion) {
     return this.msCopiesOfficialOpinionService.create(body);
   }
-  // Update Text Oficio Dictaminaciones
+  // Update Copies Oficio Dictaminaciones
   updateCopiesOfficeDictation(body: Partial<ICopiesOfficialOpinion>) {
     return this.msCopiesOfficialOpinionService.update(body);
+  }
+  // Delete Copies Oficio Dictaminaciones
+  deleteCopiesOfficeDictation(body: Partial<ICopiesOfficialOpinion>) {
+    return this.msCopiesOfficialOpinionService.deleteCcp(body);
   }
   // Get text office
   getOfficeTextDictation(params: _Params) {

@@ -28,10 +28,14 @@ export const DELEGATION_STATE_COLUMNS = {
   status: {
     title: 'Estatus',
     type: 'html',
-    valuePrepareFunction: (value: number) => {
-      return value == 0
-        ? '<strong><span class="badge badge-pill badge-success">Activo</span></strong>'
-        : '<strong><span class="badge badge-pill badge-warning">Inactivo</span></strong>';
+    valuePrepareFunction: (value: string) => {
+      if (value === '1') {
+        return '<strong><span class="badge badge-pill badge-success">Activo</span></strong>';
+      } else if (value === '0') {
+        return '<strong><span class="badge badge-pill badge-warning">Inactivo</span></strong>';
+      } else {
+        return '<strong><span class="badge badge-pill badge-secondary">Desconocido</span></strong>';
+      }
     },
     sort: false,
   },

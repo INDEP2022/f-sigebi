@@ -93,20 +93,12 @@ export class NotifyAssetsImproprietyFormComponent
     this.clarificationForm = this.fb.group({
       addresseeName: [
         null,
-        [
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(50),
-        ],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(50)],
       ],
 
       positionAddressee: [
         null,
-        [
-          Validators.pattern(STRING_PATTERN),
-          Validators.required,
-          Validators.maxLength(50),
-        ],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(50)],
       ],
 
       senderName: [

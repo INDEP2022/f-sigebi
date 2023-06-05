@@ -6,8 +6,8 @@ import { IPenalty } from 'src/app/core/models/catalogs/penalty.model';
 import { PenaltyService } from 'src/app/core/services/catalogs/penalty.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
-  DOUBLE_PATTERN,
   PERCENTAGE_NUMBERS_PATTERN,
+  POSITVE_NUMBERS_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
 
@@ -50,11 +50,18 @@ export class PenaltyFormComponent extends BasePage implements OnInit {
       ],
       equivalentDays: [
         null,
-        [Validators.required, Validators.pattern(DOUBLE_PATTERN)],
+        [Validators.required, Validators.pattern(POSITVE_NUMBERS_PATTERN)],
       ],
       version: [1],
       status: [1],
-      contractNumber: [null, Validators.required],
+      contractNumber: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(POSITVE_NUMBERS_PATTERN),
+          Validators.maxLength(50),
+        ],
+      ],
     });
     if (this.penalty != null) {
       this.edit = true;

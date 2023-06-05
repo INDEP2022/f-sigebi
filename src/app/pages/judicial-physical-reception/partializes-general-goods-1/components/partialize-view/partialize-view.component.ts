@@ -118,7 +118,11 @@ export class PartializeViewComponent extends BasePage implements OnInit {
   }
 
   get stateApply() {
-    if (this.bienesPar.length > 0 && +(this.saldo + '') > 0) {
+    if (
+      this.bienesPar.length > 0 &&
+      +(this.saldo + '') >= 0 &&
+      this.service.haveAply
+    ) {
       return 'active';
     }
     return 'disabled';
@@ -169,7 +173,7 @@ export class PartializeViewComponent extends BasePage implements OnInit {
         this.onLoadToast(
           'info',
           'Parcialización',
-          'Eliminada la parcialización ' + row.data.id
+          'Eliminada la parcialización'
         );
         if (row.index === 0) {
           this.bienesPar.shift();

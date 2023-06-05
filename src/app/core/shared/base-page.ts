@@ -8,6 +8,7 @@ import {
 } from 'ngx-bootstrap/datepicker';
 import { ToastrService } from 'ngx-toastr';
 import { BehaviorSubject, filter, Subject, takeUntil, tap } from 'rxjs';
+import { LoadingPercentService } from 'src/app/common/services/loading-percent.service';
 import { LoadingService } from 'src/app/common/services/loading.service';
 import { ScreenCodeService } from 'src/app/common/services/screen-code.service';
 import { showHideErrorInterceptorService } from 'src/app/common/services/show-hide-error-interceptor.service';
@@ -123,6 +124,7 @@ export abstract class BasePage implements OnDestroy {
   private _screenCode = inject(ScreenCodeService);
   private _alertsService = inject(AlertsQueueService);
   protected loader = inject(LoadingService);
+  protected loaderProgress = inject(LoadingPercentService);
   protected _toastrService = inject(ToastrService);
   constructor() {
     this.bsConfig = {
