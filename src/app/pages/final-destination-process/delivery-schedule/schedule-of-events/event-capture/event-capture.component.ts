@@ -121,6 +121,25 @@ interface IBlkProceeding {
       .r-label {
         margin-top: -14px !important;
       }
+
+      .cantidad {
+        border-radius: 10px;
+        border: 1px solid #eaeaeaea;
+        // width: 150px;
+        padding: 8px 10px;
+        position: relative;
+        top: -19px;
+        margin: auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0px 0px 20px 0px rgba(69, 90, 100, 0.08) !important;
+
+        @media screen and (max-width: 576px) {
+          margin-top: 10px;
+        }
+      }
     `,
   ],
 })
@@ -229,6 +248,9 @@ export class EventCaptureComponent
   gInitialDate: Date;
   gFinalDate: Date;
 
+  startDateCtrl = new FormControl(null);
+  endDateCtrl = new FormControl(null);
+
   constructor(
     private fb: FormBuilder,
     private parameterGoodService: ParametersService,
@@ -268,18 +290,18 @@ export class EventCaptureComponent
           sort: false,
           type: 'custom',
           showAlways: true,
-          filter: {
-            type: 'custom',
-            component: DateCellComponent,
-          },
-          filterFunction: (value: any, query: any) => {
-            if (query != 'skip') {
-              this.detail = this.detail.map(d => {
-                return { ...d, dateapprovalxadmon: new Date(query) };
-              });
-            }
-            return query;
-          },
+          // filter: {
+          //   type: 'custom',
+          //   component: DateCellComponent,
+          // },
+          // filterFunction: (value: any, query: any) => {
+          //   if (query != 'skip') {
+          //     this.detail = this.detail.map(d => {
+          //       return { ...d, dateapprovalxadmon: new Date(query) };
+          //     });
+          //   }
+          //   return query;
+          // },
           renderComponent: DateCellComponent,
           onComponentInitFunction: (instance: DateCellComponent) =>
             this.test(instance),
@@ -289,18 +311,18 @@ export class EventCaptureComponent
           sort: false,
           type: 'custom',
           showAlways: true,
-          filter: {
-            type: 'custom',
-            component: DateCellComponent,
-          },
-          filterFunction: (value: any, query: any) => {
-            if (query != 'skip') {
-              this.detail = this.detail.map(d => {
-                return { ...d, dateindicatesuserapproval: new Date(query) };
-              });
-            }
-            return query;
-          },
+          // filter: {
+          //   type: 'custom',
+          //   component: DateCellComponent,
+          // },
+          // filterFunction: (value: any, query: any) => {
+          //   if (query != 'skip') {
+          //     this.detail = this.detail.map(d => {
+          //       return { ...d, dateindicatesuserapproval: new Date(query) };
+          //     });
+          //   }
+          //   return query;
+          // },
           renderComponent: DateCellComponent,
         },
         // select: {
@@ -313,7 +335,7 @@ export class EventCaptureComponent
         // },
         ...COLUMNS_CAPTURE_EVENTS_2,
       },
-      hideSubHeader: false,
+      // hideSubHeader: false,
       actions: false,
     };
     this.activatedRoute.queryParams.subscribe(params => {

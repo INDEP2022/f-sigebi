@@ -342,30 +342,31 @@
       </div>
     </div>
     <div class="row">
-      <div class="col-md-4">
-        <div class="cantidad">
-          <label for="">Cantidad de Bienes</label>
-          <div>{{ blkQuantities.goods }}</div>
+      <form class="form-material">
+        <div class="col-md-6 d-flex">
+          <div class="col-md-5">
+            <form-field [control]="startDateCtrl" label="Fecha de Inicio">
+              <input
+                class="form-control"
+                ngModel
+                bsDatepicker
+                [formControl]="startDateCtrl" />
+            </form-field>
+          </div>
+          <div class="col-md-5">
+            <form-field [control]="endDateCtrl" label="Fecha de Fin">
+              <input
+                class="form-control"
+                ngModel
+                bsDatepicker
+                [formControl]="endDateCtrl" />
+            </form-field>
+          </div>
+          <div class="col-md-2">
+            <button class="btn btn-primary btn-sm active">Guardar</button>
+          </div>
         </div>
-      </div>
-      <div class="col-md-4">
-        <div class="cantidad">
-          <label for="">Cantidad de Registros</label>
-          <div>{{ blkQuantities.registers }}</div>
-        </div>
-      </div>
-      <div class="col-md-4">
-        <div class="cantidad">
-          <label for="">Cantidad de Expedientes</label>
-          <div>{{ blkQuantities.expedients }}</div>
-        </div>
-      </div>
-      <div class="col-md-4">
-        <div class="cantidad">
-          <label for="">Cantidad de Dict&aacute;menes</label>
-          <div>{{ blkQuantities.dictums }}</div>
-        </div>
-      </div>
+      </form>
     </div>
 
     <div class="row mt-5 justify-content-center justify-content-sm-end"></div>
@@ -374,6 +375,33 @@
         <div [class]="loading ? 'table-loading' : ''">
           <ng2-smart-table [settings]="settings" [source]="detail">
           </ng2-smart-table>
+        </div>
+      </div>
+    </div>
+
+    <div class="row pt-5">
+      <div class="col-md-3">
+        <div class="cantidad">
+          <label for="">Cantidad de Bienes</label>
+          <div>{{ blkQuantities.goods }}</div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="cantidad">
+          <label for="">Cantidad de Registros</label>
+          <div>{{ blkQuantities.registers }}</div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="cantidad">
+          <label for="">Cantidad de Expedientes</label>
+          <div>{{ blkQuantities.expedients }}</div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="cantidad">
+          <label for="">Cantidad de Dict&aacute;menes</label>
+          <div>{{ blkQuantities.dictums }}</div>
         </div>
       </div>
     </div>
