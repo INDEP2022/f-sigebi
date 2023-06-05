@@ -141,6 +141,8 @@
                   (userRowSelect)="selectDictums($event)"
                   readonly>
                 </ng2-smart-table>
+                <app-pagination [params]="params" [totalItems]="totalItems">
+                </app-pagination>
               </div>
             </ng-scrollbar>
           </div>
@@ -160,6 +162,8 @@
                   [attr.class]="'table-responsive table-bordered'"
                   (userRowSelect)="selectProceedings($event)">
                 </ng2-smart-table>
+                <app-pagination [params]="params" [totalItems]="totalItems">
+                </app-pagination>
               </div>
             </ng-scrollbar>
           </div>

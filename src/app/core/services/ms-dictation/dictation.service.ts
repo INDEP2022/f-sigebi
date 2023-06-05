@@ -44,7 +44,7 @@ export class DictationService extends HttpService {
     return this.get(route);
   }
 
-  getAllWithFilters(params?: string): Observable<IListResponse<IDictation>> {
+  getAllWithFilters(params?: any): Observable<IListResponse<IDictation>> {
     return this.get<IListResponse<IDictation>>(this.route.Dictation, params);
   }
 

@@ -93,6 +93,7 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
   users = new DefaultSelect<IUserAccessAreaRelational>();
   data = SHIFT_CHANGE_EXAMPLE_DATA;
   dictumColumns: IDictation[] = [];
+  //dictumColumns: LocalDataSource = new LocalDataSource();
   dictumSettings = { ...this.settings };
   proceedingColumns: IProceedingDeliveryReception[] = [];
   proceedingSettings = { ...this.settings };
@@ -251,13 +252,19 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
 
   getDictums() {
     // TODO: llenar dictamenes al tener filtros dinamicos
+    this.loading = true;
     const param = new FilterParams();
-    param.addFilter('wheelNumber', this.pageParams.iden);
-    this.dictationService.getAllWithFilters(param.getParams()).subscribe({
+    //param.addFilter('wheelNumber', this.pageParams.iden);
+    this.params.getValue()[
+      'filter.wheelNumber'
+    ] = `$eq:${this.pageParams.iden}`;
+
+    this.dictationService.getAllWithFilters(this.params.getValue()).subscribe({
       next: data => {
         if (data.count > 0) {
-          //console.log('DICTUMS', data.data);
+          this.totalItems = data.count || 0;
           this.dictumColumns = data.data;
+          this.loading = false;
         }
       },
       error: err => {
@@ -267,13 +274,18 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
   }
 
   getProceedings() {
+    this.loading = true;
     const param = new FilterParams();
-    param.addFilter('numFile', this.pageParams.exp);
-    this.proceedingsDelRecService.getAll(param.getParams()).subscribe({
+    this.params.getValue()['filter.numFile'] = `$eq:${this.pageParams.exp}`;
+
+    //param.addFilter('numFile', this.pageParams.exp);
+
+    this.proceedingsDelRecService.getAll(this.params.getValue()).subscribe({
       next: data => {
         if (data.count > 0) {
           //console.log(data.data);
           this.proceedingColumns = data.data;
+          this.loading = false;
         }
       },
       error: err => {
@@ -317,6 +329,7 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
 
     try {
       await firstValueFrom(this.historyOfficeService.create(body));
+      //this.loading = false;
     } catch (ex) {
       this.loading = false;
       // await firstValueFrom(this.historyOfficeService.update(body));
@@ -353,7 +366,7 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
         this.updateProcedureUser();
         // this.updateDictums();
         // this.updateProceedings();
-        this.loading = true;
+        //this.loading = true;
         this.preUser = this.newUser;
         this.filterHistoryUser();
         this.alert(
@@ -361,6 +374,7 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
           'Usuario Turnado Exitosamente',
           `Se actualizó el usuario turnado al volante ${this.pageParams.iden}`
         );
+        this.loading = false;
       },
       error: err => {
         // console.log(err);
@@ -382,6 +396,7 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
       .subscribe({
         next: res => {
           console.log(res);
+          this.loading = false;
         },
         error: () => {},
       });
@@ -392,6 +407,7 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
     this.dictationService.updateDictaEntregaRTurno(this.dictation).subscribe({
       next: resp => {
         console.log(resp);
+        this.loading = false;
       },
       error: () => {
         this.alert('info', 'La delegacion actual es igual a la anterior', '');
@@ -404,6 +420,7 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
     this.proceedingsService.updateActasEntregaRTurno(this.acta).subscribe({
       next: resp => {
         console.log(resp);
+        this.loading = false;
       },
       error: err => {
         this.alert('info', 'La delegacion actual es igual a la anterior', '');
