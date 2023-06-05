@@ -76,9 +76,8 @@ export class ScanFileSharedComponent extends BasePage implements OnInit {
             paramsF.addFilter('associateUniversalFolio', null);
             paramsF.addFilter('scanStatus', 'ESCANEADO');
             paramsF.addFilter('id', this.form.get(this.formControlName).value);
-            this.serviceDocuments
-              .getAllFilter(paramsF.getParams())
-              .subscribe(res => {
+            this.serviceDocuments.getAllFilter(paramsF.getParams()).subscribe(
+              res => {
                 console.log(res);
                 const route = `notification?filter.wheelNumber=$not:$null&filter.expedientNumber=$eq:${this.noExpedient}&sortBy=wheelNumber:DESC`;
                 this.serviceNotification.getAllFilter(route).subscribe(resp => {
@@ -167,19 +166,20 @@ export class ScanFileSharedComponent extends BasePage implements OnInit {
                   );
                 });
               },
-              err =>{
-                this.alert(
-                  'error',
-                  'Se presentó un error inesperado',
-                  ''
-                );
+              err => {
+                this.alert('error', 'Se presentó un error inesperado', '');
                 this.loading = false;
-              });
+              }
+            );
           }
         }
       });
-    }else{
-      this.alert('warning','No se puede replicar el folio de escaneo en un acta ya cerrada','')
+    } else {
+      this.alert(
+        'warning',
+        'No se puede replicar el folio de escaneo en un acta ya cerrada',
+        ''
+      );
     }
   }
 
