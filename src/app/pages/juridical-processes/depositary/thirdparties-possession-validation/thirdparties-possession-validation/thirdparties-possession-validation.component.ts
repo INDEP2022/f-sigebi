@@ -983,7 +983,7 @@ export class ThirdpartiesPossessionValidationComponent
       // }
     } else {
       const _body: IGoodPossessionThirdParty = {
-        closingDate: formatDate(body.closingDate, 'dd-MM-yyyy', 'en-US'),
+        closingDate: this.getCurrentDateFormat(),
         jobKey: body.jobKey,
         nbOrigin: body.nbOrigin,
         delegationCloseNumber: body.delegationCloseNumber as any,
