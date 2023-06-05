@@ -26,6 +26,7 @@ import {
 import { IOfficialDictation } from 'src/app/core/models/ms-dictation/official-dictation.model';
 import { IJobDictumTexts } from 'src/app/core/models/ms-officemanagement/job-dictum-texts.model';
 import { ISegUsers } from 'src/app/core/models/ms-users/seg-users-model';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { DynamicCatalogsService } from 'src/app/core/services/dynamic-catalogs/dynamiccatalog.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { BankAccountService } from 'src/app/core/services/ms-bank-account/bank-account.service';
@@ -43,7 +44,6 @@ import {
 } from 'src/app/core/shared/patterns';
 import { BankAccount } from 'src/app/pages/administrative-processes/numerary/tesofe-movements/list-banks/bank';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
-import Swal from 'sweetalert2';
 import { ModalComponent } from '../modal/modal-component';
 import { EXTERNOS_COLUMS } from '../tabla-modal/tableUserExt';
 import { TablaOficioModalComponent } from '../tabla-oficio-modal/tabla-oficio-modal.component';
@@ -182,6 +182,7 @@ export class OpinionComponent extends BasePage implements OnInit, OnChanges {
   recordNumber: number;
   copyDestinationNumber: number;
   idCopias: number;
+  year: number;
 
   constructor(
     private fb: FormBuilder,
@@ -197,7 +198,8 @@ export class OpinionComponent extends BasePage implements OnInit, OnChanges {
     private jobDictumTextsServices: JobDictumTextsService,
     private dictationService_1: DictationService,
     private securityService: SecurityService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private token: AuthService
   ) {
     super();
 
@@ -221,14 +223,42 @@ export class OpinionComponent extends BasePage implements OnInit, OnChanges {
       this.buscardictamen();
     }
   }
-
-  ngOnInit(): void {
+  validUserToolbar: any;
+  async ngOnInit() {
+    this.year = new Date().getFullYear();
+    console.log('this.token.decodeToken()', this.token.decodeToken());
     this.options = [
       { value: null, label: 'Seleccione un valor' },
       { value: 'S', label: 'PERSONA EXTERNA' },
       { value: 'I', label: 'PERSONA INTERNA' },
     ];
     this.loadUserDestinatario();
+    this.validUserToolbar = await this.getRTdictaAarusr(
+      this.token.decodeToken().preferred_username
+    );
+  }
+
+  async getRTdictaAarusr(toolbar_user: any) {
+    return new Promise((resolve, reject) => {
+      const params = new ListParams();
+      params['filter.user'] = `$eq:${toolbar_user}`;
+      params['filter.reading'] = `$eq:S`;
+      params['filter.writing'] = `$eq:S`;
+      params['filter.typeNumber'] = `$eq:MODTEXTO`;
+      this.dictationService.getRTdictaAarusr(params).subscribe({
+        next: async (resp: any) => {
+          console.log('USER', resp);
+          resolve(1);
+          this.loading = false;
+        },
+        error: err => {
+          console.log('err', err);
+          resolve(0);
+          this.loading = false;
+          return;
+        },
+      });
+    });
   }
 
   /**
@@ -303,22 +333,42 @@ Obtiene los filtros y en base a ellos se hace la búsqueda
           );
       }
     }
-    /*
-    this.filterParamsLocal
-      .getValue()
-      .addFilter(
-        'dictDate',
-        new Date().getFullYear() +
-          '-' +
-          (new Date().getMonth() + 1) +
-          '-01' +
-          ',' +
-          new Date().getFullYear() +
-          '-' +
-          (new Date().getMonth() + 1) +
-          '-31',
-        SearchFilter.BTW
-      );*/
+
+    if (this.validUserToolbar > 0) {
+      this.filterParamsLocal
+        .getValue()
+        .addFilter(
+          'delegationDictNumber',
+          this.token.decodeToken().department,
+          SearchFilter.EQ
+        );
+    } else {
+      this.filterParamsLocal
+        .getValue()
+        .addFilter(
+          'dictDate',
+          this.year + '-01-01' + ',' + this.year + '-12-31',
+          SearchFilter.BTW
+        );
+
+      this.filterParamsLocal
+        .getValue()
+        .addFilter(
+          'delegationDictNumber',
+          this.token.decodeToken().department,
+          SearchFilter.EQ
+        );
+    }
+
+    // this.filterParamsLocal
+    //   .getValue()
+    //   .addFilter(
+    //     'dictDate',
+    //     new Date().getFullYear() + '-' + (new Date().getMonth() + 1) + '-01' + ',' +
+    //     new Date().getFullYear() + '-' + (new Date().getMonth() + 1) + '-31',
+    //     SearchFilter.BTW
+    //   );
+
     //Valida los campos de búsqueda
 
     if (
@@ -370,9 +420,9 @@ Obtiene los filtros y en base a ellos se hace la búsqueda
           }
         },
         error: err => {
-          if (err.message.indexOf('registros') !== -1) {
-            this.onLoadToast('error', 'Error 1 ', err.message);
-          }
+          // if (err.message.indexOf('registros') !== -1) {
+          this.onLoadToast('warning', 'No se encontraron registros', '');
+          // }
           //   console.log('Error ' + error);
           //  this.onLoadToast('info', 'Registro', 'No se obtuvo información');
           console.log('error', 'Error', err.error.message);
@@ -422,10 +472,7 @@ carga la  información de la parte media de la página
   complementoFormulario(obj: any) {
     this.oficialDictationService.getById(obj).subscribe({
       next: resp => {
-        console.warn(
-          'complementoFormulario DICTAMENT : >===>> ',
-          JSON.stringify(resp)
-        );
+        console.warn('complementoFormulario DICTAMENT : >===>> ', resp);
         this.dictatesNumber = resp.officialNumber;
         this.oficioDict = resp;
         this.form.get('addressee').setValue(resp.recipient);
@@ -597,7 +644,7 @@ carga la  información de la parte media de la página
     params.search = $params.text;
     this.getAllUsers$(params).subscribe();
   }
-
+  nameOfUser: any;
   getAllUsers$(params: FilterParams) {
     return this.usersService.getAllSegUsers(params.getParams()).pipe(
       catchError(error => {
@@ -606,6 +653,8 @@ carga la  información de la parte media de la página
       }),
       tap(response => {
         this.users$$ = new DefaultSelect(response.data, response.count);
+        this.nameOfUser = response.data[0].name;
+        console.log('this.nameOfUser', this.nameOfUser);
         this.getDescUserPuesto2(response.data[0].positionKey);
       })
     );
@@ -844,7 +893,7 @@ carga la  información de la parte media de la página
   insertTextos(data: IJobDictumTexts) {
     this.jobDictumTextsServices.create(data).subscribe({
       next: resp => {
-        Swal.fire('Se actualizo de manera correcta', '', 'success');
+        // Swal.fire('Se actualizo de manera correcta', '', 'success');
         //this.onLoadToast('success', 'Registro', resp.message[0]);
       },
       error: err => {
@@ -905,7 +954,9 @@ carga la  información de la parte media de la página
   /*====================================================================
              método para obtener el puesto de la persona
 =======================================================================*/
-  getDescUserPuesto(event: Event) {
+  getDescUserPuesto(event: any) {
+    console.log('event', event);
+    this.nameOfUser = event.name;
     let userDatos = JSON.parse(JSON.stringify(event));
     this.dynamicCatalogsService
       .getPuestovalue(userDatos.positionKey)
@@ -1035,7 +1086,15 @@ carga la  información de la parte media de la página
   }
 
   async reporteExterno() {
+    let params = {
+      PDEPARTAMENTO: this.token.decodeToken().delegacionreg,
+      PELABORO_DICTA: this.nameOfUser,
+      POFICIO: this.oficioDict.officialNumber,
+      PESTADODICT: this.oficioDict.statusOf,
+      PDICTAMEN: this.oficioDict.typeDict,
+    };
     console.log('aasd', this.users$$);
+    console.log('params', params);
     let vEMISORA: any;
     let vTRANSF: any;
     let vNO_DELDEST: any;
@@ -1161,8 +1220,8 @@ carga la  información de la parte media de la página
   reporteProcedencia1(data: any) {
     // REPORTE NO EXISTE //
     let params = {
-      PDEPARTAMENTO: data.registerNumber,
-      PELABORO_DICTA: data.typeDict,
+      PDEPARTAMENTO: this.token.decodeToken().delegacionreg,
+      PELABORO_DICTA: this.nameOfUser,
       POFICIO: this.oficioDict.officialNumber,
       PESTADODICT: this.oficioDict.statusOf,
       PDICTAMEN: this.oficioDict.typeDict,
@@ -1192,8 +1251,8 @@ carga la  información de la parte media de la página
 
   reporteProcedencia2(data: any) {
     let params = {
-      PDEPARTAMENTO: data.registerNumber,
-      PELABORO_DICTA: data.typeDict,
+      PDEPARTAMENTO: this.token.decodeToken().delegacionreg,
+      PELABORO_DICTA: this.nameOfUser,
       POFICIO: this.oficioDict.officialNumber,
       PESTADODICT: this.oficioDict.statusOf,
       PDICTAMEN: this.oficioDict.typeDict,
@@ -1221,8 +1280,8 @@ carga la  información de la parte media de la página
 
   reporteProcedencia3(data: any) {
     let params = {
-      PDEPARTAMENTO: data.registerNumber,
-      PELABORO_DICTA: data.typeDict,
+      PDEPARTAMENTO: this.token.decodeToken().delegacionreg,
+      PELABORO_DICTA: this.nameOfUser,
       POFICIO: this.oficioDict.officialNumber,
       PESTADODICT: this.oficioDict.statusOf,
       PDICTAMEN: this.oficioDict.typeDict,
@@ -1250,8 +1309,8 @@ carga la  información de la parte media de la página
 
   reporteProcedencia4(data: any) {
     let params = {
-      PDEPARTAMENTO: data.registerNumber,
-      PELABORO_DICTA: data.typeDict,
+      PDEPARTAMENTO: this.token.decodeToken().delegacionreg,
+      PELABORO_DICTA: this.nameOfUser,
       POFICIO: this.oficioDict.officialNumber,
       PESTADODICT: this.oficioDict.statusOf,
       PDICTAMEN: this.oficioDict.typeDict,
