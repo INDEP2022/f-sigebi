@@ -96,7 +96,6 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
   dictumSettings = { ...this.settings };
   proceedingColumns: IProceedingDeliveryReception[] = [];
   proceedingSettings = { ...this.settings };
-  totalItems: number = 0;
   // selectedDictums: IDictation[] = [];
   selectedDictums: IUpdateDelDictation[] = [];
   // selectedProceedings: IProceedingDeliveryReception[] = [];
@@ -106,7 +105,10 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
   origin: any;
   acta: IUpdateActasEntregaRecepcionDelegation;
   dictation: IUpdateDelDictation;
-  params = new BehaviorSubject(new ListParams());
+  paramsDict = new BehaviorSubject(new ListParams());
+  paramsActas = new BehaviorSubject(new ListParams());
+  totalItemsDic: number;
+  totalItemsActas: number;
   newUser: string;
   preUser: string;
   delegationNew: number;
@@ -141,13 +143,13 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
     this.dictumSettings = {
       ...this.settings,
       actions: false,
-      // selectMode: 'multi',
+      selectMode: 'multi',
       columns: { ...SHIFT_CHANGE_DICTUM_COLUMNS },
     };
     this.proceedingSettings = {
       ...this.settings,
       actions: false,
-      // selectMode: 'multi',
+      selectMode: 'multi',
       columns: { ...SHIFT_CHANGE_PROCEEDINGS_COLUMNS },
     };
     this.pageParams = this.fileUpdComService.juridicalShiftChangeParams;
@@ -258,6 +260,7 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
         if (data.count > 0) {
           //console.log('DICTUMS', data.data);
           this.dictumColumns = data.data;
+          this.totalItemsDic = data.count;
         }
       },
       error: err => {
@@ -274,6 +277,7 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
         if (data.count > 0) {
           //console.log(data.data);
           this.proceedingColumns = data.data;
+          this.totalItemsActas = data.count;
         }
       },
       error: err => {
@@ -293,7 +297,7 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
     const body: IHistoryOfficial = {
       numberSteeringwheel: this.notifData.wheelNumber,
       datereassignment: format(new Date(), 'dd/MM/yyyy'),
-      numberJob: this.idDelDicta,
+      numberJob: this.notifData.officeNumber,
       personbefore: this.formControls.prevUser.value?.user,
       areaDestinationbefore: this.notifData.departamentDestinyNumber,
       personnew: this.formControls.newUser.value?.user,
@@ -303,8 +307,10 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
       cveJobExternal: this.notifData.officeExternalKey,
       numberOftheDestinationbefore: this.notifData.delDestinyNumber,
       numberSubdelDestinationbefore: this.notifData.subDelDestinyNumber,
-      numberOftheDestinationnew: this.delegationNew,
-      numberSubdelDestinationnew: this.subdelegationNew,
+      numberOftheDestinationnew:
+        this.formControls.prevUser.value?.delegationNumber,
+      numberSubdelDestinationnew:
+        this.formControls.newUser.value?.subdelegationNumber,
       nbOrigin: this.origin,
     };
     console.log(
@@ -472,7 +478,7 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
     this.idDelActa = event.data.id;
     let params: IUpdateActasEntregaRecepcionDelegation = {
       minutesNumber: event.data.id,
-      delegation2Number: this.formControls.newUser?.value.subdelegationNumber,
+      delegation2Number: this.formControls.newUser?.value.delegationNumber,
     };
     this.acta = params;
     console.log(this.acta);
@@ -488,12 +494,12 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
     this.docRegisterService.getUsersSegAreas(params.getParams()).subscribe({
       next: data => {
         this.users = new DefaultSelect(data.data, data.count);
-        data.data.forEach(data => {
-          this.delegationNew = data.delegation1Number;
-          this.subdelegationNew = data.subdelegationNumber;
-          this.idArea = data.departament1Number;
-          console.log(data);
-        });
+        // data.data.forEach(data => {
+        //   this.delegationNew = data.delegation1Number;
+        //   this.subdelegationNew = data.;
+        //   this.idArea = data.departament1Number;
+        //   console.log(data);
+        // });
       },
       error: () => {
         this.users = new DefaultSelect();
@@ -528,6 +534,7 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
               next: resp => {
                 //this.users = new DefaultSelect(data.data, data.count);
                 this.usersFilter = resp.data;
+
                 console.log(this.usersFilter);
                 this.newUser = this.usersFilter[0].userAndName;
                 if (
