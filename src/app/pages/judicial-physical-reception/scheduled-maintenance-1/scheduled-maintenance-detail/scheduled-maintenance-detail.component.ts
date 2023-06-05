@@ -386,41 +386,79 @@ export class ScheduledMaintenanceDetailComponent
   updateDatesTable(newData: any[]) {
     console.log(newData);
     if (newData.length > 0) {
-      this.detailService
-        .updateMasive(
-          newData.map(x => {
-            return {
-              fec_aprobacion_x_admon: x.fec_aprobacion_x_admon,
-              fec_indica_usuario_aprobacion: x.fec_indica_usuario_aprobacion,
-              no_bien: x.no_bien,
-            };
-          }),
-          this.actaId
-        )
-        .subscribe({
-          next: response => {
-            let goods = '';
-            newData.forEach((selected, index) => {
-              goods +=
-                selected.no_bien + (index < newData.length - 1 ? ',' : '');
+      this.alertQuestion(
+        'question',
+        'Actualizar Fechas',
+        '¿Desea actualizar las fechas?'
+      ).then(x => {
+        if (x.isConfirmed) {
+          this.detailService
+            .updateMassiveNew(
+              newData[0].fec_aprobacion_x_admon,
+              newData[0].fec_indica_usuario_aprobacion,
+              this.actaId
+            )
+            .subscribe({
+              next: response => {
+                // newData.forEach((selected, index) => {
+                //   goods +=
+                //     selected.no_bien + (index < newData.length - 1 ? ',' : '');
+                // });
+                this.data = [...newData];
+                this.onLoadToast(
+                  'success',
+                  'Fechas',
+                  'Se actualizaron las fechas correctamente'
+                );
+              },
+              error: err => {
+                this.onLoadToast(
+                  'error',
+                  'Fechas',
+                  'No se pudieron actualizar las fechas'
+                );
+              },
             });
-            // const message = `Se actualizo el bien No ${newData.no_bien} `;
-            const message = `Se actualizaron los bienes No. ${goods} `;
-            this.onLoadToast('success', 'Exito', message);
-            this.data = [...newData];
-            // this.data = [...this.data]
-            // this.updateTable.emit();
-          },
-          error: err => {
-            this.onLoadToast('error', 'Error', 'Bienes no actualizados');
-            // this.data = [
-            //   ...this.data
-            //     .filter(x => x.agregado === 'AE')
-            //     .concat(goodsByRastrer),
-            // ];
-          },
-        });
+        }
+      });
     }
+
+    // if (newData.length > 0) {
+    //   this.detailService
+    //     .updateMasive(
+    //       newData.map(x => {
+    //         return {
+    //           fec_aprobacion_x_admon: x.fec_aprobacion_x_admon,
+    //           fec_indica_usuario_aprobacion: x.fec_indica_usuario_aprobacion,
+    //           no_bien: x.no_bien,
+    //         };
+    //       }),
+    //       this.actaId
+    //     )
+    //     .subscribe({
+    //       next: response => {
+    //         let goods = '';
+    //         newData.forEach((selected, index) => {
+    //           goods +=
+    //             selected.no_bien + (index < newData.length - 1 ? ',' : '');
+    //         });
+    //         // const message = `Se actualizo el bien No ${newData.no_bien} `;
+    //         const message = `Se actualizaron los bienes No. ${goods} `;
+    //         this.onLoadToast('success', 'Exito', message);
+    //         this.data = [...newData];
+    //         // this.data = [...this.data]
+    //         // this.updateTable.emit();
+    //       },
+    //       error: err => {
+    //         this.onLoadToast('error', 'Error', 'Bienes no actualizados');
+    //         // this.data = [
+    //         //   ...this.data
+    //         //     .filter(x => x.agregado === 'AE')
+    //         //     .concat(goodsByRastrer),
+    //         // ];
+    //       },
+    //     });
+    // }
     // const arrayToUpdate = newData.filter(x => x.agregado === 'AE');
     // const goodsByRastrer = newData.filter(x => x.agregado === 'RA');
     // if (arrayToUpdate.length > 0) {
@@ -765,14 +803,18 @@ export class ScheduledMaintenanceDetailComponent
     console.log(new Date().toISOString());
     this.loading = true;
     this.params['id'] = idActa;
-    this.params.limit = 10000;
+    const newParams = this.params;
+    delete newParams.limit;
+    delete newParams.pageSize;
+    delete newParams.page;
+    // this.params.limit = 10000;
     // const detail = JSON.parse(
     //   window.localStorage.getItem('detailActa')
     // ) as IProceedingDeliveryReception;
 
     if (idActa) {
       this.service
-        .getGoodsByProceeding(this.params)
+        .getGoodsByProceeding(newParams)
         .pipe(takeUntil(this.$unSubscribe))
         .subscribe({
           next: response => {

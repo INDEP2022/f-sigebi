@@ -640,13 +640,95 @@ export class RegistrationOfRequestsComponent
   }
 
   confirm() {
-    this.msgSaveModal(
-      'Aceptar',
-      'Asegúrese de haber guardado la información antes de turnar la solicitud',
-      'Confirmación',
-      undefined,
-      this.typeDocument
-    );
+    if (this.typeDocument === 'validar-destino-bien') {
+      console.log('Soy destino documental');
+
+      let params = new ListParams();
+      params['filter.requestId'] = this.requestData.id;
+      params['filter.goodStatus'] = 'SOLICITUD DE ACLARACION';
+
+      this.goodService.getAll(params).subscribe({
+        next: resp => {
+          console.log('Hay bienes por aclarar');
+          this.alertQuestion(
+            'warning',
+            'Aún hay bienes sin aclarar',
+            '¿Hacerlo ahora?'
+          ).then(async question => {
+            if (question.isConfirmed) {
+              //this.notifyClarificationsMethod2();
+              this.router.navigate([
+                `pages/request/transfer-request/notify-clarification-inadmissibility/${this.requestData.id}`,
+              ]);
+              this.updateGoodStatus('SOLICITAR_APROBACION');
+              const existApprovalTask = await this.existApprobalTask();
+              if (existApprovalTask === true) {
+                //si existe crea solo la Notificacion de aclaracion
+                console.log(
+                  'si existe crea solo la Notificacion de aclaracion'
+                );
+                await this.notifyClarificationsMethod2();
+              } else {
+                //si no existe crear una tarea de aprovar solicitud y la notificacion de aclaracion
+                console.log(
+                  'si no existe crear una tarea de aprovar solicitud y la notificacion de aclaracion'
+                );
+                const result = await this.createApprovalProcessOnly();
+                if (result) {
+                  console.log('his.notifyClarificationsMethod();');
+                  await this.notifyClarificationsMethod2();
+                }
+              }
+            }
+          });
+        },
+        error: error => {
+          console.log('No hay bienes, terminar flujo', error);
+          const user: any = this.authService.decodeToken();
+          const body: any = {};
+          body.id = this.requestData.id;
+          body.rulingCreatorName = user.name;
+          this.updateRequest(body);
+          //se cierra la tarea de destino documental
+
+          this.alertQuestion(
+            'warning',
+            'Se turnará la solicitud',
+            '¿Continuar?'
+          ).then(async question => {
+            if (question.isConfirmed) {
+              this.updateGoodStatus('SOLICITAR_APROBACION');
+              const existApprovalTask = await this.existApprobalTask();
+              if (existApprovalTask === true) {
+                //si existe crea solo la Notificacion de aclaracion
+                //await this.notifyClarificationsMethod();
+              } else {
+                //si no existe crear una tarea de aprovar solicitud y la notificacion de aclaracion
+                console.log(
+                  'si no existe crear una tarea de aprovar solicitud y la notificacion de aclaracion'
+                );
+                const result = await this.createApprovalProcessOnly();
+                if (result) {
+                  console.log('his.notifyClarificationsMethod();');
+                  //await this.notifyClarificationsMethod2();
+                }
+              }
+              //this.createApprovalProcessOnly();
+              this.closeValidateDocumentation();
+            }
+          });
+        },
+      });
+    } else {
+      console.log('No Soy destino documental');
+      this.msgSaveModal(
+        'Aceptar',
+        'Asegúrese de haber guardado la información antes de turnar la solicitud',
+        'Confirmación',
+        undefined,
+        this.typeDocument
+      );
+    }
   }
 
   //metodo que guarda la captura de solivitud
@@ -805,6 +887,37 @@ export class RegistrationOfRequestsComponent
     if (taskRes) {
       this.loader.load = false;
       this.msgGuardado(
+        'success',
+        'Notificación Creada',
+        `Se generó una Notificación de Aclaración con el folio: ${this.requestData.id}`
+      );
+    }
+  }
+  /* Metodo para notificacion de aclaraciones */
+  async notifyClarificationsMethod2() {
+    this.loader.load = true;
+    const title = `Notificar Aclaración-Improcedencia, No. Solicitud: ${this.requestData.id}`;
+    const url =
+      'pages/request/transfer-request/notify-clarification-inadmissibility';
+    const from = 'VERIFICAR_CUMPLIMIENTO';
+    const to = 'NOTIFICAR_ACLARACIONES';
+    const user: any = this.authService.decodeToken();
+    const taskRes = await this.createTaskOrderService(
+      this.requestData,
+      title,
+      url,
+      from,
+      to,
+      true,
+      this.task.id,
+      user.username,
+      'SOLICITUD_TRANSFERENCIA',
+      'Destino_Documental',
+      'NOTIFICAR_ACLARACIONES'
+    );
+    if (taskRes) {
+      this.loader.load = false;
+      this.msgCrearNotificacion(
         'success',
         'Notificación Creada',
         `Se generó una Notificación de Aclaración con el folio: ${this.requestData.id}`
@@ -1239,6 +1352,7 @@ export class RegistrationOfRequestsComponent
           }, 400);
         }
         if (typeCommit === 'clasificar-bienes') {
+          //DE CLASIFICAR BIEN A DESTINO DOCUMENTAL
           this.loader.load = true;
           console.log('clasificar-bienes');
           await this.updateGoodStatus('DESTINO_DOCUMENTAL');
@@ -1246,6 +1360,7 @@ export class RegistrationOfRequestsComponent
           this.classifyGoodMethod();
         }
         if (typeCommit === 'validar-destino-bien') {
+          //DE DESTINO DOCUMENTAL A SOLICITAR APROBACIÓN O NOTIFICACIONES
           this.loader.load = true;
           this.deleteMsjRefuse();
           await this.updateGoodStatus('SOLICITAR_APROBACION');
@@ -1259,11 +1374,16 @@ export class RegistrationOfRequestsComponent
             const existApprovalTask = await this.existApprobalTask();
             if (existApprovalTask === true) {
               //si existe crea solo la Notificacion de aclaracion
+              console.log('si existe crea solo la Notificacion de aclaracion');
               await this.notifyClarificationsMethod();
             } else {
               //si no existe crear una tarea de aprovar solicitud y la notificacion de aclaracion
+              console.log(
+                'si no existe crear una tarea de aprovar solicitud y la notificacion de aclaracion'
+              );
               const result = await this.createApprovalProcessOnly();
               if (result) {
+                console.log('his.notifyClarificationsMethod();');
                 await this.notifyClarificationsMethod();
               }
             }
@@ -1523,7 +1643,7 @@ export class RegistrationOfRequestsComponent
   }
 
   async ableToSignDictamen() {
-    /*const goodsCount: any = await this.getAllGood();
+    const goodsCount: any = await this.getAllGood();
     let goods: any = null;
     if (goodsCount.count > 10) {
       goods = await this.getAllGood(goodsCount.count);
@@ -1537,8 +1657,8 @@ export class RegistrationOfRequestsComponent
         x.processStatus == 'IMPROCEDENTE'
     );
 
-    return filter.length == goods.count ? true : false;*/
-    return true;
+    return filter.length == goods.count ? true : false;
+    //return true;
   }
 
   msgGuardado(icon: any, title: string, message: string) {
@@ -1554,6 +1674,18 @@ export class RegistrationOfRequestsComponent
       if (result.isConfirmed) {
         this.close();
       }
+    });
+  }
+
+  msgCrearNotificacion(icon: any, title: string, message: string) {
+    Swal.fire({
+      title: title,
+      html: message,
+      icon: icon,
+      showCancelButton: false,
+      confirmButtonColor: '#9D2449',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Aceptar',
     });
   }
 
