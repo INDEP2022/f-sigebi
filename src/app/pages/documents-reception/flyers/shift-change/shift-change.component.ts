@@ -5,6 +5,7 @@ import { BsModalService } from 'ngx-bootstrap/modal';
 import { ActivatedRoute, Router } from '@angular/router';
 import { format } from 'date-fns';
 import { BehaviorSubject, firstValueFrom } from 'rxjs';
+import { IUserRowSelectEvent } from 'src/app/core/interfaces/ng2-smart-table.interface';
 import {
   IDictation,
   IUpdateDelDictation,
@@ -110,13 +111,14 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
   totalItemsDic: number;
   totalItemsActas: number;
   newUser: string;
+  idUser: number;
   preUser: string;
   delegationNew: number;
   subdelegationNew: number;
   idDelActa: number;
   idDelDicta: number;
   idArea: number;
-  user: IUserAccessAreaRelational;
+  user: any;
   flyerNumber: number;
   historyColumns: IHistoryOfficial[] = [];
   usersFilter: IUserAccessAreaRelational[] = [];
@@ -298,19 +300,21 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
       numberSteeringwheel: this.notifData.wheelNumber,
       datereassignment: format(new Date(), 'dd/MM/yyyy'),
       numberJob: this.notifData.officeNumber,
-      personbefore: this.formControls.prevUser.value?.user,
+      personbefore: this.preUser,
       areaDestinationbefore: this.notifData.departamentDestinyNumber,
       personnew: this.formControls.newUser.value?.user,
-      areaDestinationnew: this.idArea,
+      areaDestinationnew: Number(this.formControls.newUser.value?.delegation),
       argument: this.formControls.argument.value,
       numberRecord: this.notifData.registerNumber,
       cveJobExternal: this.notifData.officeExternalKey,
       numberOftheDestinationbefore: this.notifData.delDestinyNumber,
       numberSubdelDestinationbefore: this.notifData.subDelDestinyNumber,
-      numberOftheDestinationnew:
-        this.formControls.prevUser.value?.delegationNumber,
-      numberSubdelDestinationnew:
-        this.formControls.newUser.value?.subdelegationNumber,
+      numberOftheDestinationnew: Number(
+        this.formControls.newUser.value?.delegation
+      ),
+      numberSubdelDestinationnew: Number(
+        this.formControls.newUser.value?.subdelegationNumber
+      ),
       nbOrigin: this.origin,
     };
     console.log(
@@ -357,10 +361,11 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
     this.notifService.update(this.notifData.wheelNumber, body).subscribe({
       next: () => {
         this.updateProcedureUser();
-        // this.updateDictums();
-        // this.updateProceedings();
+        this.updateDictums();
+        this.updateProceedings();
         this.loading = true;
-        this.preUser = this.newUser;
+        this.user = Number(this.formControls.newUser.value?.user);
+        this.formControls.prevUser.setValue(this.user);
         this.filterHistoryUser();
         this.alert(
           'success',
@@ -452,38 +457,40 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
     });
   }
 
-  // selectDictums(event: IUserRowSelectEvent<IDictation>) {
-  //   this.selectedDictums = event.selected;
-  //   console.log({ selectedDictums: this.selectedDictums });
-  // }
-
-  // selectProceedings(event: IUserRowSelectEvent<IProceedingDeliveryReception>) {
-  //   console.log(event);
-  //   this.selectedProceedings = event.selected;
-  // }
-
-  selectDictums(event: any) {
-    this.idDelDicta = event.data.id;
-    let params: IUpdateDelDictation = {
-      ofDictaNumber: event.data.id,
-      delegationDictateNumber:
-        this.formControls.newUser?.value.delegationNumber,
-    };
-    this.dictation = params;
-    console.log(this.dictation);
-    this.updateDictums();
+  selectDictums(event: IUserRowSelectEvent<IUpdateDelDictation>) {
+    this.selectedDictums = event.selected;
+    console.log({ selectedDictums: this.selectedDictums });
   }
 
-  selectProceedings(event: any) {
-    this.idDelActa = event.data.id;
-    let params: IUpdateActasEntregaRecepcionDelegation = {
-      minutesNumber: event.data.id,
-      delegation2Number: this.formControls.newUser?.value.delegationNumber,
-    };
-    this.acta = params;
-    console.log(this.acta);
-    this.updateProceedings();
+  selectProceedings(
+    event: IUserRowSelectEvent<IUpdateActasEntregaRecepcionDelegation>
+  ) {
+    console.log(event);
+    this.selectedProceedings = event.selected;
   }
+
+  // selectDictums(event: any) {
+  //   this.idDelDicta = event.data.id;
+  //   let params: IUpdateDelDictation = {
+  //     ofDictaNumber: event.data.id,
+  //     delegationDictateNumber:
+  //       this.formControls.newUser?.value.delegationNumber,
+  //   };
+  //   this.dictation = params;
+  //   console.log(this.dictation);
+  //   this.updateDictums();
+  // }
+
+  // selectProceedings(event: any) {
+  //   this.idDelActa = event.data.id;
+  //   let params: IUpdateActasEntregaRecepcionDelegation = {
+  //     minutesNumber: event.data.id,
+  //     delegation2Number: this.formControls.newUser?.value.delegationNumber,
+  //   };
+  //   this.acta = params;
+  //   console.log(this.acta);
+  //   this.updateProceedings();
+  // }
 
   getUsersCopy(lparams: ListParams) {
     const params = new FilterParams();
@@ -494,12 +501,6 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
     this.docRegisterService.getUsersSegAreas(params.getParams()).subscribe({
       next: data => {
         this.users = new DefaultSelect(data.data, data.count);
-        // data.data.forEach(data => {
-        //   this.delegationNew = data.delegation1Number;
-        //   this.subdelegationNew = data.;
-        //   this.idArea = data.departament1Number;
-        //   console.log(data);
-        // });
       },
       error: () => {
         this.users = new DefaultSelect();
@@ -534,7 +535,6 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
               next: resp => {
                 //this.users = new DefaultSelect(data.data, data.count);
                 this.usersFilter = resp.data;
-
                 console.log(this.usersFilter);
                 this.newUser = this.usersFilter[0].userAndName;
                 if (
