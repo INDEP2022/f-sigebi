@@ -647,7 +647,7 @@ export class ThirdpartiesPossessionValidationComponent
       // );
       const cveOficio = this.formPositionThirdParty.value.jobKey;
       const slashIndex: number = cveOficio.length;
-      const year: string = cveOficio.substring(slashIndex - 5, slashIndex - 1);
+      const year: string = cveOficio.substring(slashIndex - 4, slashIndex);
 
       const toolbar_no_delegacion = this.authService.decodeToken().department;
       const office = await firstValueFrom(
@@ -1005,12 +1005,19 @@ export class ThirdpartiesPossessionValidationComponent
             department.depend = _department.depend;
             department.depDelegation = _department.depDelegation;
           }
+        } else {
+          this.alert(
+            'error',
+            'Error',
+            'No se localizó la dependencia de la persona que autoriza.'
+          );
+          return true;
         }
       } catch (ex) {
         this.alert(
           'error',
           'Error',
-          'No se localizó el nivel o la dependencia o la delegacion del departamento.'
+          'No se localizó la dependencia de la persona que autoriza.'
         );
         return true;
       }
@@ -1041,15 +1048,15 @@ export class ThirdpartiesPossessionValidationComponent
       const year = new Date().getFullYear().toString();
       // const month = (new Date().getMonth() + 1).toString();
 
-      let joyKey = `${level2}${level3}${level4}`;
+      let joyKey = `${level2}/${level3}/${level4}`;
       if (
         department.level &&
         !isNaN(department.level as any) &&
         Number(department.level) + 1 == 5
       ) {
-        joyKey += `${level5}`;
+        joyKey += `/${level5}`;
       }
-      joyKey += `/?/${year}/`.trim();
+      joyKey += `/?/${year}`.trim();
       this.formPositionThirdParty.get('jobKey').setValue(joyKey);
     }
     this.pupPrint();
