@@ -3638,7 +3638,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                           let newDetailProceeding: IDetailProceedingsDeliveryReception =
                             {
                               numberProceedings: data.id,
-                              numberGood: this.selectData.id,
+                              numberGood: this.selectData.goodId,
                               amount: this.selectData.quantity,
                               exchangeValue: 1,
                               approvedUserXAdmon:
