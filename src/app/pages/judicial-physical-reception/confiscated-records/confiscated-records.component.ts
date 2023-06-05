@@ -2906,6 +2906,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                           'El acta fue cerrada'
                         );
                         this.inputsInProceedingClose();
+                        this.getGoodsActFn()
                       },
                       err => {
                         console.log(err);
@@ -3067,6 +3068,8 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                                               'enabled'
                                             );
                                             this.research = true;
+                        this.getGoodsActFn()
+
                                             this.alert(
                                               'success',
                                               'El acta ha sido cerrada',
@@ -3953,17 +3956,6 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
               console.log('Sí?');
               this.serviceGood.update(putGood).subscribe(res => {
                 this.getGoodsActFn()
-                /* console.log(res)
-                this.dataGoodAct.load(
-                  this.dataGoodAct['data'].map((e: any) => {
-                    return {
-                      ...e,
-                      good:{
-                        storeNumber: this.form.get('almacen').value.idWarehouse,
-                      }
-                    };
-                  })
-                ); */
               });
             }
             console.log('No :(');
@@ -4013,16 +4005,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
               }
               this.serviceGood.update(putGood).subscribe(res => {
                 this.getGoodsActFn()
-                /* this.dataGoodAct.load(
-                  this.dataGoodAct['data'].map((e: any) => {
-                    return {
-                      ...e,
-                      good:{
-                        storeNumber: this.form.get('almacen').value.idWarehouse,
-                      }
-                    };
-                  })
-                ); */
+
               });
             }
           });

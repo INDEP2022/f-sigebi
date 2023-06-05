@@ -1543,6 +1543,8 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                                 numberProceedings: data.id,
                                 numberGood: this.selectData.id,
                                 amount: this.selectData.quantity,
+                                exchangeValue: 1,
+                  received: 'S',
                                 approvedUserXAdmon:
                                   localStorage.getItem('username') ==
                                   'sigebiadmon'
