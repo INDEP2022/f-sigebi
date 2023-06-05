@@ -1,5 +1,10 @@
 import { Component, OnInit, Renderer2 } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { Router } from '@angular/router';
 import { addDays, format } from 'date-fns';
 import * as moment from 'moment';
@@ -121,35 +126,63 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     mode: 'external', */
     actions: false,
     columns: {
-      id: {
+      numberGood: {
         title: 'No. Bien',
         type: 'number',
         sort: false,
       },
-      clasificacion: {
+      goodClassNumber: {
         title: 'No Clasificación',
         type: 'number',
         sort: false,
       },
-      description: {
+      'good.description': {
         title: 'Descripción',
         type: 'string',
         sort: false,
+        valuePrepareFunction: (cell: any, row: any) => {
+          if (row.good && row.good.description) {
+            return row.good.description;
+          } else {
+            return null;
+          }
+        },
       },
-      proceso: {
+      'good.extDomProcess': {
         title: 'Proceso',
         type: 'string',
         sort: false,
+        valuePrepareFunction: (cell: any, row: any) => {
+          if (row.good && row.good.extDomProcess) {
+            return row.good.extDomProcess;
+          } else {
+            return null;
+          }
+        },
       },
-      quantity: {
+      'good.quantity': {
         title: 'Cantidad',
         type: 'number',
         sort: false,
+        valuePrepareFunction: (cell: any, row: any) => {
+          if (row.good && row.good.quantity) {
+            return row.good.quantity;
+          } else {
+            return null;
+          }
+        },
       },
-      unit: {
+      'good.unit': {
         title: 'Unidad',
         type: 'string',
         sort: false,
+        valuePrepareFunction: (cell: any, row: any) => {
+          if (row.good && row.good.unit) {
+            return row.good.unit;
+          } else {
+            return null;
+          }
+        },
       },
       exchangeValue: {
         title: 'Recibido',
@@ -171,6 +204,11 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
 
   paramsDataGoods = new BehaviorSubject<ListParams>(new ListParams());
   totalItemsDataGoods: number = 0;
+  limitDataGoods = new FormControl(10);
+
+  paramsDataGoodsAct = new BehaviorSubject<ListParams>(new ListParams());
+  totalItemsDataGoodsAct: number = 0;
+  limitDataGoodsAct = new FormControl(10);
 
   dataGoods = new LocalDataSource();
   dataGoodAct = new LocalDataSource();
@@ -974,6 +1012,9 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     const paramsF = new FilterParams();
     paramsF.page = this.paramsDataGoods.getValue().page;
     paramsF.limit = this.paramsDataGoods.getValue().limit;
+    this.limitDataGoods = new FormControl(
+      this.paramsDataGoods.getValue().limit
+    );
     console.log(this.paramsDataGoods);
     console.log(paramsF.getParams());
     this.serviceGood
@@ -1025,6 +1066,9 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     const paramsF = new FilterParams();
     paramsF.page = this.paramsDataGoods.getValue().page;
     paramsF.limit = this.paramsDataGoods.getValue().limit;
+    this.limitDataGoods = new FormControl(
+      this.paramsDataGoods.getValue().limit
+    );
     this.serviceGood
       .getAllFilterDetail(
         `filter.fileNumber=$eq:${
@@ -1973,10 +2017,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
             ),
             address: this.form.get('direccion').value,
             /* elaborate: 'SERA', */
-            elaborate:
-              localStorage.getItem('username') == 'sigebiadmon'
-                ? localStorage.getItem('username')
-                : localStorage.getItem('username').toLocaleUpperCase(),
+            elaborate: localStorage.getItem('username'),
             numFile: this.form.get('expediente').value,
             witness1: this.form.get('entrega').value,
             witness2: this.form.get('recibe2').value,
@@ -2055,10 +2096,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
           const paramsF = new FilterParams();
           let VAL_MOVIMIENTO = 0;
 
-          paramsF.addFilter(
-            'valUser',
-            localStorage.getItem('username').toLocaleLowerCase()
-          );
+          paramsF.addFilter('valUser', localStorage.getItem('username'));
           paramsF.addFilter('valMinutesNumber', this.idProceeding);
           this.serviceProgrammingGood
             .getTmpProgValidation(paramsF.getParams())
@@ -2158,7 +2196,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         this.serviceGood.PAValidaCambio(model).subscribe(
           res => {
             const { P5 } = res;
-
+            console.log(P5);
             if (P5 < 0) {
             } else {
               if (this.goodData.length <= 0) {
@@ -2171,10 +2209,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                 const paramsF = new FilterParams();
                 let VAL_MOVIMIENTO = 0;
 
-                paramsF.addFilter(
-                  'valUser',
-                  localStorage.getItem('username').toLocaleLowerCase()
-                );
+                paramsF.addFilter('valUser', localStorage.getItem('username'));
                 paramsF.addFilter('valMinutesNumber', this.idProceeding);
                 this.serviceProgrammingGood
                   .getTmpProgValidation(paramsF.getParams())
@@ -2267,10 +2302,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
           const paramsF = new FilterParams();
           let VAL_MOVIMIENTO = 0;
 
-          paramsF.addFilter(
-            'valUser',
-            localStorage.getItem('username').toLocaleLowerCase()
-          );
+          paramsF.addFilter('valUser', localStorage.getItem('username'));
           paramsF.addFilter('valMinutesNumber', this.idProceeding);
           this.serviceProgrammingGood
             .getTmpProgValidation(paramsF.getParams())
@@ -2309,9 +2341,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                     address: this.form.get('direccion').value,
                     statusProceedings: 'ABIERTA',
                     /* elaborate: 'SERA', */
-                    elaborate: localStorage
-                      .getItem('username')
-                      .toLocaleUpperCase(),
+                    elaborate: localStorage.getItem('username'),
                     numFile: parseInt(this.idProceeding.toString()),
                     witness1: this.form.get('entrega').value,
                     witness2: this.form.get('recibe2').value,
@@ -2630,8 +2660,9 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         };
         this.serviceGood.PAValidaCambio(model).subscribe(res => {
           const { P5 } = JSON.parse(JSON.stringify(res));
+          console.log(P5);
           //!Forzando debería ser mayor y esta menor
-          if (P5 < 0) {
+          if (P5 > 0) {
             this.alert(
               'warning',
               'Bienes sin informacion requerida',
@@ -2641,10 +2672,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
             const paramsF = new FilterParams();
             let VAL_MOVIMIENTO = 0;
 
-            paramsF.addFilter(
-              'valUser',
-              localStorage.getItem('username').toLocaleLowerCase()
-            );
+            paramsF.addFilter('valUser', localStorage.getItem('username'));
             paramsF.addFilter('valMinutesNumber', this.idProceeding);
             this.serviceProgrammingGood
               .getTmpProgValidation(paramsF.getParams())
@@ -2891,7 +2919,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     if (!this.act2Valid) {
       this.alert('error', 'No se registro un número de acta válido', '');
     } else {
-      const user = localStorage.getItem('username').toLocaleUpperCase();
+      const user = localStorage.getItem('username');
       if (this.form.get('statusProceeding').value != '') {
         if (
           !['MARRIETA', 'SERA', 'DESARROLLO', 'ALEDESMA', 'JRAMIREZ'].includes(
@@ -3475,9 +3503,8 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                               numberGood: this.selectData.id,
                               amount: this.selectData.quantity,
                               exchangeValue: 1,
-                              approvedUserXAdmon: localStorage
-                                .getItem('username')
-                                .toLocaleUpperCase(),
+                              approvedUserXAdmon:
+                                localStorage.getItem('username'),
                             };
                           this.serviceDetailProc
                             .addGoodToProceedings(newDetailProceeding)
