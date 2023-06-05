@@ -43,7 +43,7 @@ export class GoodFinderService extends HttpService {
   }
 
   ableTosignDictamination(request: number) {
-    const route = '';
-    return;
+    const route = GoodFinderEndpoint.AbleToSignDistamen;
+    return this.get(`${route}/request/${request}`);
   }
 }
