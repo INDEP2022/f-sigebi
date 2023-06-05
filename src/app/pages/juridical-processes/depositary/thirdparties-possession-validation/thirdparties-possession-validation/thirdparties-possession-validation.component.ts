@@ -1,3 +1,4 @@
+import { formatDate } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -39,7 +40,7 @@ import { thirdpartiesPossessionValidationResponses } from './thirdparties-posses
 
 type IGoodAndAvailable = IGood & { available?: boolean };
 const predifinedText =
-  'En cumplimiento a la instrucción judicial derivada del juicio de amparo <A> por el cual se informa que se resolvió provisionalmente conceder al quejoso la restitución de la posesión  uso y disfrute  del(los) siguiente(s) mueble(s). Al respecto me permito señalar: \n\n<B> \n\n<C> \n\nCon fundamento en la fracción XIV del artículo 39 del Estatuto Orgánico del Servicio de Administración y Enajenación de Bienes y considerando la instrucción judicial deducida del juicio de garantías emitida por el Juez <DATOS DE JUZGADO>, por el cual se otorga la suspensión definitiva al quejoso <QUEJOSO> respecto del disfrute del inmueble de marras y, consecuentemente, la restitución de la posesión, en tal sentido y salvo que no exista aseguramiento anterior o posterior decretado por autoridad competente para ello, esa Delegación a su cargo deberá dar cabal cumplimiento a la suspensión definitiva, levantado para tal efecto el acta administrativa de entrega de posesión por virtud de suspensión provisional, afectando, consecuentemente, el SIAB bajo el estatus ¿PD3¿ ¿entrega en posesión a terceros por instrucción judicial¿. \n\nEl cumplimiento señalado, deberá realizarlo a la brevedad e informar al Juez de Amparo sobre los actos tendientes a su cumplimiento. \n\nNo omito señalar, que en el supuesto de que se resuelva el amparo en el cuaderno incidental y/o principal negando la protección de la justicia federal, se deberán llevar a cabo las acciones legales correspondientes para recuperar la posesión del inmueble asegurado. \n\nFinalmente, le informo que debe hacer del conocimiento de la autoridad que decretó el aseguramiento, así como, en su caso, del Juez que conozca del proceso penal federal. \n\nQuedo a sus órdenes para cualquier comentario.';
+  'En cumplimiento a la instrucción judicial derivada del juicio de amparo <A> por el cual se informa que se resolvió provisionalmente conceder al quejoso la restitución de la posesión  uso y disfrute  del(los) siguiente(s) mueble(s). Al respecto me permito señalar: \n\n<B> \n\n<C> \n\nCon fundamento en la fracción XIV del artículo 39 del Estatuto Orgánico del Servicio de Administración y Enajenación de Bienes y considerando la instrucción judicial deducida del juicio de garantías emitida por el Juez <DATOS DE JUZGADO>, por el cual se otorga la suspensión definitiva al quejoso <QUEJOSO> respecto del disfrute del inmueble de marras y, consecuentemente, la restitución de la posesión, en tal sentido y salvo que no exista aseguramiento anterior o posterior decretado por autoridad competente para ello, esa Delegación a su cargo deberá dar cabal cumplimiento a la suspensión definitiva, levantado para tal efecto el acta administrativa de entrega de posesión por virtud de suspensión provisional, afectando, consecuentemente, el SIAB bajo el estatus PD3 ¿entrega en posesión a terceros por instrucción judicial?. \n\nEl cumplimiento señalado, deberá realizarlo a la brevedad e informar al Juez de Amparo sobre los actos tendientes a su cumplimiento. \n\nNo omito señalar, que en el supuesto de que se resuelva el amparo en el cuaderno incidental y/o principal negando la protección de la justicia federal, se deberán llevar a cabo las acciones legales correspondientes para recuperar la posesión del inmueble asegurado. \n\nFinalmente, le informo que debe hacer del conocimiento de la autoridad que decretó el aseguramiento, así como, en su caso, del Juez que conozca del proceso penal federal. \n\nQuedo a sus órdenes para cualquier comentario.';
 interface IUserCustom {
   nombre: string;
   usuario: string;
@@ -151,6 +152,7 @@ export class ThirdpartiesPossessionValidationComponent
   userCcp1 = new DefaultSelect();
   userCcp2 = new DefaultSelect();
   userResponsible = new DefaultSelect();
+  isAllDisabled: boolean = false;
   constructor(
     // private fb: FormBuilder,
     private notificationService: NotificationService,
@@ -201,7 +203,7 @@ export class ThirdpartiesPossessionValidationComponent
   }
 
   formPositionThirdParty = new FormGroup({
-    closingDate: new FormControl(null, Validators.required),
+    closingDate: new FormControl(''),
     delegationCloseNumber: new FormControl<string | number>('0'),
     jobKey: new FormControl(''),
     nbOrigin: new FormControl(''),
@@ -216,9 +218,15 @@ export class ThirdpartiesPossessionValidationComponent
     addressee: new FormControl(null),
   });
 
+  getCurrentDateFormat() {
+    return formatDate(new Date(), 'yyyy-MM-dd', 'en-US');
+  }
+
   selectRowNotification(event: any) {
     this.notificationSelected = event.data;
     this.formPositionThirdParty.reset();
+    this.formPositionThirdParty.enable();
+    this.isAllDisabled = false;
     this.formPositionThirdParty
       .get('steeringwheelNumber')
       .setValue(this.notificationSelected.wheelNumber);
@@ -310,10 +318,16 @@ export class ThirdpartiesPossessionValidationComponent
             usuario: goodPosessionThirdParty.usrResponsible,
             nameUser: goodPosessionThirdParty.usrResponsible,
           },
-          closingDate: goodPosessionThirdParty?.closingDate
-            ? new Date(goodPosessionThirdParty?.closingDate)
-            : null,
+          closingDate: goodPosessionThirdParty?.closingDate,
+          // ? new Date(goodPosessionThirdParty?.closingDate)
+          // : null,
         });
+
+        const jobKey = this.formPositionThirdParty.value?.jobKey;
+        if (jobKey && !jobKey?.includes('?')) {
+          this.isAllDisabled = true;
+          this.formPositionThirdParty.disable();
+        }
         this.getRelationsSelected();
         if (goodPosessionThirdParty?.possessionNumber) {
           this.goodPosessionThirdpartyService
@@ -357,23 +371,6 @@ export class ThirdpartiesPossessionValidationComponent
       },
     });
   }
-
-  // updateGoodPosessionThirdParty() {
-  //   const id = this.formPositionThirdParty.value.usrCcp1;
-  //   const values = this.formPositionThirdParty.value;
-  //   const body = {
-  //     ...values,
-  //     usrCcp1: values.usrCcp1.usuario,
-  //     usrCcp2: values.usrCcp2.usuario,
-  //     usrResponsible: values.usrResponsible.usuario,
-  //     usrAddressee: values.usrAddressee.usuario,
-  //   };
-  //   delete body.addressee;
-  //   // delete body.nbOrigin;
-  //   this.goodPosessionThirdpartyService
-  //     .updateThirdPartyAdmonOffice(id, body)
-  //     .subscribe({});
-  // }
 
   getNotificationByWheel(params: ListParams) {
     const wheelNumber = this.formPositionThirdParty.get(
@@ -658,10 +655,11 @@ export class ThirdpartiesPossessionValidationComponent
           })
           .pipe(map((res: any) => res.data[0].job))
       );
-      this.formPositionThirdParty.value.jobKey;
-      this.formPositionThirdParty.get('closingDate').setValue(new Date());
-      this.formPositionThirdParty.get('numClueNavy').setValue(office);
 
+      this.formPositionThirdParty
+        .get('closingDate')
+        .setValue(this.getCurrentDateFormat());
+      this.formPositionThirdParty.get('numClueNavy').setValue(office);
       this.formPositionThirdParty
         .get('delegationCloseNumber')
         .setValue(toolbar_no_delegacion as any);
@@ -708,161 +706,14 @@ export class ThirdpartiesPossessionValidationComponent
         );
         return;
       }
-      // this.updateGoodPosessionThirdParty();
-      this.commitSilent();
+      await this.commitSilent();
+      this.isAllDisabled = true;
+      this.formPositionThirdParty.disable();
 
       this.alert('success', 'Información', 'Enviando');
-      // const params = new ListParams();
-      // params['filter.delegationCloseNumber'] = year;
-      // params['filter.jobKey'] = SearchFilter.LIKE;
-
-      // const result: any = await firstValueFrom(
-      //   this.goodPosessionThirdpartyService.getAll(params)
-      // );
-
-      // if (result.data.length > 0) {
-      //   this.alert(
-      //     'error',
-      //     'Error',
-      //     'No puede cerrar el Acta si ya se ha generado el Acta de Cierre.'
-      //   );
-      //   return;
-      // }
     } else {
       this.alert('info', 'Información', 'La clave ya a sido enviada.');
     }
-
-    // const params = new ListParams();
-    // params['filter.fileNumber'] =
-    //   this.formPositionThirdParty.value.possessionNumber;
-    // try {
-    //   const result = await firstValueFrom(
-    //     this.goodPosessionThirdpartyService.getAll(params)
-    //   );
-    //   this.formPositionThirdParty.patchValue(result.data[0]);
-    //   const goodPosessionThirdParty = this.formPositionThirdParty.value;
-    //   if (goodPosessionThirdParty.jobKey.includes('?')) {
-    //     const anio = goodPosessionThirdParty.jobKey.substring(
-    //       goodPosessionThirdParty.jobKey.lastIndexOf('/') + 1,
-    //       goodPosessionThirdParty.jobKey.length
-    //     );
-
-    //     const params = new ListParams();
-    //     params['filter.delegationCloseNumber'] = anio;
-    //     params['filter.jobKey'] = SearchFilter.LIKE;
-
-    //     goodPosessionThirdParty.jobKey;
-    //     // const result: any = await firstValueFrom(
-    //     //   this.getGoodPosessionThirdPartyKeyOfficeNotLike(params as any)
-    //     // );
-
-    //     this.formPositionThirdParty
-    //       .get('closingDate')
-    //       .setValue(new Date('2021-01-01') as any);
-    //     this.formPositionThirdParty.get('numClueNavy').setValue(result.data);
-    //     // this.formPositionThirdParty.get('jobKey').setValue(result.data);
-    //   }
-    // } catch (ex) {}
-
-    // let cveOficio = this.formPositionThirdParty.get('jobKey').value;
-
-    // if (
-    //   this.form.invalid ||
-    //   this.formCcpOficio.invalid ||
-    //   this.noExpediente.invalid
-    // ) {
-    //   this.alert(
-    //     'info',
-    //     'Revisa los campos',
-    //     'Existen errores en algunos de tus campos.'
-    //   );
-    //   return;
-    // }
-
-    // if (!cveOficio) {
-    //   this.alert(
-    //     'info',
-    //     '',
-    //     'No puede cerrar el Acta si no se han incorporado bienes y generado la clave armada.'
-    //   );
-    //   return;
-    // }
-    // const maxNumClaveArmada = this.goodsPosessionThirdParty.reduce(
-    //   (max, obj) => {
-    //     return Math.max(max, obj.numClueNavy || 0);
-    //   },
-    //   0
-    // );
-
-    // if (cveOficio.includes('?')) {
-    //   let anio = cveOficio.substring(
-    //     cveOficio.lastIndexOf('/') + 1,
-    //     cveOficio.length
-    //   );
-    //   if (!cveOficio.includes('?') && cveOficio.endsWith(anio)) {
-    //     let oficio = maxNumClaveArmada + 1;
-
-    //     cveOficio = cveOficio
-    //       .replace('?', ('00000' + oficio).slice(-5))
-    //       .replace(' ', '');
-
-    //     console.log(maxNumClaveArmada);
-
-    //     console.log(oficio);
-    //     this.formPositionThirdParty.get('closingDate').patchValue(new Date());
-    //     this.formPositionThirdParty
-    //       .get('jobKey')
-    //       .patchValue(
-    //         cveOficio
-    //           .replace('?', ('00000' + oficio).slice(-5))
-    //           .replace(' ', '')
-    //       );
-
-    //     this.formPositionThirdParty.get('numClueNavy').patchValue(oficio);
-
-    //     let clave = 0;
-    //     for (let i = 0; i < this.goodsPosessionThirdParty.length; i++) {
-    //       if (
-    //         this.goodsPosessionThirdParty[i].jobKey === cveOficio &&
-    //         this.goodsPosessionThirdParty[i].jobKey.indexOf('?') === -1
-    //       ) {
-    //         clave++;
-    //       }
-    //     }
-
-    //     if (clave > 1) {
-    //       this.alert(
-    //         'info',
-    //         'Fatal ERROR ir al área de sistemas hay más de una clave armada con el mismo número',
-    //         ''
-    //       );
-    //     }
-    //   }
-    // }
-
-    // const request: ISentSirsae = {
-    //   armyJobKey: this.formPositionThirdParty.get('numClueNavy').value,
-    //   delegationNumOpinion: this.formPositionThirdParty.get(
-    //     'delegationCloseNumber'
-    //   ).value,
-    //   date: new Date().toString(),
-    //   expedientNumber: this.noExpediente.value,
-    // };
-
-    // console.log(request);
-
-    // this.historyGoodService.sentSirsae(request).subscribe({
-    //   next: data => {
-    //     console.log(data);
-    //   },
-    //   error: err => {
-    //     this.alert(
-    //       'error',
-    //       'Ha ocurrido un error',
-    //       'Inténtalo de nuevo más tarde.'
-    //     );
-    //   },
-    // });
   }
 
   btnInsertarTextoPredefinido() {
@@ -1095,6 +946,9 @@ export class ThirdpartiesPossessionValidationComponent
   }
 
   async commitSilent() {
+    if (this.isAllDisabled) {
+      return;
+    }
     const values = this.formPositionThirdParty.value;
     const body = {
       ...values,
@@ -1105,6 +959,7 @@ export class ThirdpartiesPossessionValidationComponent
       usrResponsible: values.usrResponsible.usuario || '',
       usrAddressee: values.usrAddressee.usuario || '',
       nbOrigin: values.nbOrigin || '',
+      closingDate: this.getCurrentDateFormat(),
     };
     delete body.addressee;
     // delete body.nbOrigin;
@@ -1113,22 +968,22 @@ export class ThirdpartiesPossessionValidationComponent
         this.formPositionThirdParty.value.possessionNumber,
         body as any
       );
-      if (!this.formPositionThirdParty.value?.jobKey) {
-        this.dataTableBienesOficio.forEach(async element => {
-          const __body: IDetailGoodPossessionThirdParty = {
-            // ...element,
-            possessionNumber:
-              this.formPositionThirdParty.value.possessionNumber,
-            nbOrigin: '',
-            goodNumber: element.goodNumber as any,
-            steeringwheelNumber: element.steeringwheelNumber as any,
-          };
-          await this.postDetailGoodPossessionThirdParty(__body);
-        });
-      }
+      // if (!this.formPositionThirdParty.value?.jobKey) {
+      // this.dataTableBienesOficio.forEach(async element => {
+      //   const __body: IDetailGoodPossessionThirdParty = {
+      //     // ...element,
+      //     possessionNumber:
+      //       this.formPositionThirdParty.value.possessionNumber,
+      //     nbOrigin: '',
+      //     goodNumber: element.goodNumber as any,
+      //     steeringwheelNumber: element.steeringwheelNumber as any,
+      //   };
+      //   await this.postDetailGoodPossessionThirdParty(__body);
+      // });
+      // }
     } else {
       const _body: IGoodPossessionThirdParty = {
-        closingDate: body.closingDate,
+        closingDate: formatDate(body.closingDate, 'dd-MM-yyyy', 'en-US'),
         jobKey: body.jobKey,
         nbOrigin: body.nbOrigin,
         delegationCloseNumber: body.delegationCloseNumber as any,
@@ -1154,7 +1009,7 @@ export class ThirdpartiesPossessionValidationComponent
         this.formPositionThirdParty
           .get('possessionNumber')
           .setValue(_body.possessionNumber);
-        this.postGoodPossessionThirdParty(_body);
+        await this.postGoodPossessionThirdParty(_body);
       } catch (ex) {
         this.alert(
           'error',
@@ -1163,6 +1018,16 @@ export class ThirdpartiesPossessionValidationComponent
         );
         throw ex;
       }
+      this.dataTableBienesOficio.forEach(async element => {
+        const __body: IDetailGoodPossessionThirdParty = {
+          // ...element,
+          possessionNumber: this.formPositionThirdParty.value.possessionNumber,
+          nbOrigin: '',
+          goodNumber: element.goodNumber as any,
+          steeringwheelNumber: element.steeringwheelNumber as any,
+        };
+        await this.postDetailGoodPossessionThirdParty(__body);
+      });
     }
   }
 
