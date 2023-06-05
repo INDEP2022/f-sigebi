@@ -200,6 +200,7 @@
           <div class="col-md-12 d-flex justify-content-between">
             <div *ngIf="ctrlButtons.signOffice.visible">
               <button
+                (click)="signOffice()"
                 class="btn btn-sm btn-secondary active"
                 [disabled]="!ctrlButtons.signOffice.enabled">
                 {{ ctrlButtons.signOffice.label }}
@@ -280,6 +281,7 @@
           </div>
           <div *ngIf="ctrlButtons.convPack.visible">
             <button
+              (click)="paqConv()"
               class="btn btn-sm btn-danger active"
               [disabled]="!ctrlButtons.convPack.enabled">
               {{ ctrlButtons.convPack.label }}
