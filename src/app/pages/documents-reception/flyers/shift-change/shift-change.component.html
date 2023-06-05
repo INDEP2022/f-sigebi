@@ -121,7 +121,14 @@
           </form-field>
         </div>
       </div>
-
+      <br /><br /><br />
+      <div class="row w-100">
+        <div class="col-sm-12 col-12 col-md-12 p-2 alert alert-info">
+          <span>
+            SELECCIONA AL MENOS UN ACTA Y UN DICTAMEN PARA GUARDAR&#46;</span
+          >
+        </div>
+      </div>
       <div class="row mt-3">
         <div class="col-md-6">
           <h5 class="text-center">Dictaminaciones</h5>
@@ -208,7 +215,7 @@
           <div class="m-3">
             <confirm-button
               text="Guardar"
-              [disabled]="!turnForm"
+              [disabled]="!valid"
               loadingText="Cargando"
               [loading]="loading"
               (confirm)="save()"></confirm-button>

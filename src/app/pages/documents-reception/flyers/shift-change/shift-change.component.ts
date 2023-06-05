@@ -41,6 +41,12 @@ import {
   SHIFT_CHANGE_PROCEEDINGS_COLUMNS,
 } from './shift-change-columns';
 import { ShiftChangeHistoryComponent } from './shift-change-history/shift-change-history.component';
+
+export interface IUpdateObjectsActas {
+  selectedProceedings: IUpdateActasEntregaRecepcionDelegation[];
+  selectedDictums: IUpdateDelDictation[];
+}
+
 @Component({
   selector: 'app-shift-change',
   templateUrl: './shift-change.component.html',
@@ -115,6 +121,7 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
   preUser: string;
   delegationNew: number;
   subdelegationNew: number;
+  valid: boolean = false;
   idDelActa: number;
   idDelDicta: number;
   idArea: number;
@@ -300,7 +307,7 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
       numberSteeringwheel: this.notifData.wheelNumber,
       datereassignment: format(new Date(), 'dd/MM/yyyy'),
       numberJob: this.notifData.officeNumber,
-      personbefore: this.preUser,
+      personbefore: this.formControls.prevUser.value?.user,
       areaDestinationbefore: this.notifData.departamentDestinyNumber,
       personnew: this.formControls.newUser.value?.user,
       areaDestinationnew: Number(this.formControls.newUser.value?.delegation),
@@ -343,7 +350,6 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
         )
       );
       this.updateNotification();
-      this.users = new DefaultSelect();
     } catch (ex) {
       //console.log(ex);
       this.alert('error', 'Turno no actualizado', '');
@@ -361,11 +367,9 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
     this.notifService.update(this.notifData.wheelNumber, body).subscribe({
       next: () => {
         this.updateProcedureUser();
-        this.updateDictums();
-        this.updateProceedings();
+        // this.updateDictums();
+        // this.updateProceedings();
         this.loading = true;
-        this.user = Number(this.formControls.newUser.value?.user);
-        this.formControls.prevUser.setValue(this.user);
         this.filterHistoryUser();
         this.alert(
           'success',
@@ -459,7 +463,9 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
 
   selectDictums(event: IUserRowSelectEvent<IUpdateDelDictation>) {
     this.selectedDictums = event.selected;
+    this.valid = true;
     console.log({ selectedDictums: this.selectedDictums });
+    this.updateDictums();
   }
 
   selectProceedings(
@@ -467,6 +473,8 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
   ) {
     console.log(event);
     this.selectedProceedings = event.selected;
+    this.valid = true;
+    this.updateProceedings();
   }
 
   // selectDictums(event: any) {
@@ -542,6 +550,56 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
                   this.usersFilter[0].userAndName != undefined
                 ) {
                   this.newUser = this.usersFilter[0].userAndName;
+                }
+                //console.log(this.preUser);
+              },
+              error: () => {
+                this.users = new DefaultSelect();
+              },
+            });
+          //console.log(this.historyColumns[0].personNew);
+        }
+        this.loading = false;
+      },
+      error: () => {
+        this.loading = false;
+      },
+    });
+  }
+  filterHistoryUserBefore() {
+    this.loading = true;
+    const param = new FilterParams();
+    const params = new ListParams();
+    const data1: any = {};
+    //param.addFilter('flyerNumber', this.flyerNumber);
+    params['filter.flyerNumber'] = `$eq:${this.pageParams.iden}`;
+    // console.log(this.pageParams.iden);
+    this.historyOfficeService.getFilterUser(params).subscribe({
+      next: data => {
+        if (data.count > 0) {
+          this.historyColumns = data.data;
+          this.historyColumns[0].personbefore;
+          //param['filter.flyerNumber'] = `$eq:${this.newUser}`;
+          //params.page = lparams.page;
+          //params.limit = lparams.limit;
+          param.addFilter(
+            'user',
+            this.historyColumns[0].personbefore,
+            SearchFilter.EQ
+          );
+          this.docRegisterService
+            .getUsersSegAreas(param.getParams())
+            .subscribe({
+              next: resp => {
+                //this.users = new DefaultSelect(data.data, data.count);
+                this.usersFilter = resp.data;
+                console.log(this.usersFilter);
+                this.preUser = this.usersFilter[0].userAndName;
+                if (
+                  this.usersFilter[0].userAndName != null ||
+                  this.usersFilter[0].userAndName != undefined
+                ) {
+                  this.preUser = this.usersFilter[0].userAndName;
                 }
                 //console.log(this.preUser);
               },
