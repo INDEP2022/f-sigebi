@@ -31,28 +31,10 @@ export class StatusProcessListComponent extends BasePage implements OnInit {
   ) {
     super();
     this.settings.columns = STATUSPROCESS_COLUMS;
-    this.settings.actions.delete = true;
+    this.settings.actions.delete = false;
     this.settings.actions.add = false;
     this.settings.hideSubHeader = false;
   }
-
-  /**ngOnInit(): void {
-    this.params
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getExample());
-  }
-
-  getExample() {
-    this.loading = true;
-    this.statusProcessService.getAll(this.params.getValue()).subscribe({
-      next: response => {
-        this.paragraphs = response.data;
-        this.totalItems = response.count;
-        this.loading = false;
-      },
-      error: error => (this.loading = false),
-    });
-  }*/
 
   ngOnInit(): void {
     this.totalItems = 0;

@@ -21,6 +21,7 @@ import {
   ImanagementOffice,
 } from 'src/app/core/models/ms-officemanagement/good-job-management.model';
 import { ISegUsers } from 'src/app/core/models/ms-users/seg-users-model';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { DynamicCatalogsService } from 'src/app/core/services/dynamic-catalogs/dynamiccatalog.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
@@ -92,7 +93,8 @@ export class OfficeComponent extends BasePage implements OnInit {
     private dictationService: DictationService,
     private modalRef: BsModalRef,
     private mJobManagementService: MJobManagementService,
-    private documentsService: DocumentsService
+    private documentsService: DocumentsService,
+    private token: AuthService
   ) {
     super();
 
@@ -121,7 +123,7 @@ export class OfficeComponent extends BasePage implements OnInit {
       columns: { ...COLUMNS_DOCUMENTS2 },
     };
   }
-
+  validUserToolbar: any;
   ngOnInit(): void {
     this.year = new Date().getFullYear();
 
@@ -131,6 +133,32 @@ export class OfficeComponent extends BasePage implements OnInit {
       { value: 'I', label: 'PERSONA INTERNA' },
     ];
     this.buildForm();
+    this.validUserToolbar = this.getRTdictaAarusr(
+      this.token.decodeToken().preferred_username
+    );
+  }
+
+  async getRTdictaAarusr(toolbar_user: any) {
+    return new Promise((resolve, reject) => {
+      const params = new ListParams();
+      params['filter.user'] = `$eq:${toolbar_user}`;
+      params['filter.reading'] = `$eq:S`;
+      params['filter.writing'] = `$eq:S`;
+      params['filter.typeNumber'] = `$eq:MODTEXTO`;
+      this.dictationService.getRTdictaAarusr(params).subscribe({
+        next: async (resp: any) => {
+          console.log('USER', resp);
+          resolve(1);
+          this.loading = false;
+        },
+        error: err => {
+          console.log('err', err);
+          resolve(0);
+          this.loading = false;
+          return;
+        },
+      });
+    });
   }
 
   /**
@@ -241,13 +269,31 @@ export class OfficeComponent extends BasePage implements OnInit {
       }
     }
 
-    this.filterParamsLocal
-      .getValue()
-      .addFilter(
-        'insertDate',
-        this.year + '-01-01' + ',' + this.year + '-12-31',
-        SearchFilter.BTW
-      );
+    if (this.validUserToolbar > 0) {
+      this.filterParamsLocal
+        .getValue()
+        .addFilter(
+          'deleUser',
+          this.token.decodeToken().department,
+          SearchFilter.EQ
+        );
+    } else {
+      this.filterParamsLocal
+        .getValue()
+        .addFilter(
+          'insertDate',
+          this.year + '-01-01' + ',' + this.year + '-12-31',
+          SearchFilter.BTW
+        );
+
+      this.filterParamsLocal
+        .getValue()
+        .addFilter(
+          'deleUser',
+          this.token.decodeToken().department,
+          SearchFilter.EQ
+        );
+    }
 
     if (
       this.form.get('proceedingsNumber').value ||
@@ -320,7 +366,7 @@ export class OfficeComponent extends BasePage implements OnInit {
           //   error = err.message;
           // }
           // if (err.message.indexOf('registros') !== -1) {
-          this.alert('warning', err.error.message, '');
+          this.onLoadToast('warning', err.error.message, '');
           // }
           //this.onLoadToast('error', 'Error', error);
           console.log(error);
@@ -386,6 +432,8 @@ export class OfficeComponent extends BasePage implements OnInit {
     this.openModalDoc({
       typeOffice: this.typeOffice,
       arrayOfDocsCreados: this.IAttDocument,
+      managementNumber: this.managementNumber_,
+      rulingType: this.form.value.officio,
     });
   }
 
