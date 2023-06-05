@@ -90,7 +90,7 @@ export class JuridicalRulingGComponent
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
   totalDocuments: number = 0;
-
+  label: string = '';
   idGoodSelected = 0;
   @ViewChild('cveOficio', { static: true }) cveOficio: ElementRef;
 
@@ -179,7 +179,7 @@ export class JuridicalRulingGComponent
         type: 'string',
       },
       status: {
-        title: 'Estado',
+        title: 'Estatus',
         type: 'string',
       },
       processStatus: {
@@ -321,6 +321,9 @@ export class JuridicalRulingGComponent
   public listadoDocumentos: boolean = false;
   // public rutaAprobado: string = baseMenu + baseMenuDepositaria + DEPOSITARY_ROUTES_2[0].link;
 
+  isDelit: boolean = true;
+  btnIsParcial: boolean = true;
+
   constructor(
     private fb: FormBuilder,
     private activatedRoute: ActivatedRoute,
@@ -415,10 +418,47 @@ export class JuridicalRulingGComponent
         this.showCriminalCase = true;
       }
       this.expedientesForm.get('tipoDictaminacion').setValue(params?.tipoDic);
+      if (params?.tipoVo) {
+        this.validateTypeVol(params.tipoVo, params.tipoDic);
+      }
       this.expedientesForm.get('noVolante').setValue(params?.volante);
       this.dictaminacionesForm.get('wheelNumber').setValue(params?.volante);
     });
+
     this.changeNumExpediente();
+  }
+
+  validateTypeVol(typeVol: string, typeDic: string) {
+    if (typeVol == 'T') {
+      this.label = 'Fec. P.P.F.F.';
+      this.isDelit = typeDic == 'PROCEDENCIA' ? true : false;
+    } else if ((typeDic = 'PROCEDENCIA')) {
+      this.label = 'Fec. Aseg.';
+      this.isDelit = true;
+    } else if ((typeDic = 'DESTINO')) {
+      this.label = 'Fec. Dest.';
+      this.isDelit = false;
+    } else if ((typeDic = 'DESTRUCCION')) {
+      this.label = 'Fec. Dest.';
+      this.isDelit = false;
+    } else if (['DEVOLUCION', 'RESARCIMIENTO'].includes(typeDic)) {
+      this.label = 'Fec. Devo.';
+      this.isDelit = false;
+    } else if ((typeDic = 'DONACION')) {
+      this.label = 'Fec. Dona.';
+      this.isDelit = false;
+    } else if ((typeDic = 'DECOMISO')) {
+      this.label = 'Fec. Deco.';
+      this.isDelit = false;
+    } else if ((typeDic = 'EXT_DOM')) {
+      this.label = 'Fec. ExDom.';
+      this.isDelit = false;
+    } else if ((typeDic = 'TRANSFERENTE')) {
+      this.label = 'Fec. P.P.F.F.';
+      this.isDelit = false;
+    }
+
+    this.btnIsParcial = typeDic != 'PROCEDENCIA' ? true : false;
   }
 
   dateValidator(control: AbstractControl): { [key: string]: any } | null {
