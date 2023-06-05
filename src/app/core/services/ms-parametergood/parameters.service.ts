@@ -22,7 +22,7 @@ export class ParametersService extends HttpService {
     return this.parametergoodRepository.getAll(this.route.Parameters, params);
   }
 
-  getAllFilter(params?: _Params){
+  getAllFilter(params?: _Params) {
     return this.get<IListResponse<IParameters>>(this.route.Parameters, params);
   }
 
