@@ -1144,12 +1144,13 @@ export class EventCaptureComponent
       .pipe(
         catchError(error => {
           this.loading = false;
+          this.blkCtrl.goodQuantity = 0;
           return throwError(() => error);
         }),
         tap(res => {
           this.loading = false;
           const detail = res.data[0];
-
+          this.blkCtrl.goodQuantity = res.data.length;
           this.afterGetDetail(detail);
           this.detail = res.data.map(detail => {
             if (detail.expedientnumber) {
