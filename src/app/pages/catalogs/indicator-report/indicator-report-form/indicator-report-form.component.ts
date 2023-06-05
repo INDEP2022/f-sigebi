@@ -1,11 +1,19 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import {
+  AbstractControl,
+  FormBuilder,
+  ValidatorFn,
+  Validators,
+} from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { IndicatorReportService } from 'src/app/core/services/catalogs/indicator-report.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { ModelForm } from '../../../../core/interfaces/model-form';
 import { IIndicatorReport } from '../../../../core/models/catalogs/indicator-report.model';
-import { STRING_PATTERN } from '../../../../core/shared/patterns';
+import {
+  PERCENTAGE_NUMBERS_PATTERN,
+  STRING_PATTERN,
+} from '../../../../core/shared/patterns';
 
 @Component({
   selector: 'app-indicator-report-form',
@@ -37,8 +45,14 @@ export class IndicatorReportFormComponent extends BasePage implements OnInit {
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      startingPercentageRange: [null, [Validators.required]],
-      finalPercentageRange: [null, [Validators.required]],
+      startingPercentageRange: [
+        null,
+        [Validators.required, Validators.pattern(PERCENTAGE_NUMBERS_PATTERN)],
+      ],
+      finalPercentageRange: [
+        null,
+        [Validators.required, Validators.pattern(PERCENTAGE_NUMBERS_PATTERN)],
+      ],
       contractualPenalty: [null, [Validators.required]],
       contractNumber: [null, [Validators.required]],
       userCreation: [null],
@@ -54,6 +68,16 @@ export class IndicatorReportFormComponent extends BasePage implements OnInit {
     }
   }
 
+  decimalValidator(decimalPlaces: number): ValidatorFn {
+    return (control: AbstractControl): { [key: string]: any } | null => {
+      const value = control.value;
+      const isValid = new RegExp(`^\\d+(\\.\\d{1,${decimalPlaces}})?$`).test(
+        value
+      );
+
+      return isValid ? null : { decimalInvalid: { value: control.value } };
+    };
+  }
   // getData(params: ListParams) {
   //   this.proeficientService.getAll(params).subscribe(data => {
   //     this.proficients = new DefaultSelect(data.data, data.count);
