@@ -1282,6 +1282,25 @@ carga la  información de la parte media de la página
       PNOOFICIO: data.registerNumber,
       PTIPODIC: data.typeDict,
     };
+
+    this.siabServiceReport.fetchReport('RGENABANDEC', params).subscribe({
+      next: response => {
+        const blob = new Blob([response], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+        let config = {
+          initialState: {
+            documento: {
+              urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+              type: 'pdf',
+            },
+          },
+          class: 'modal-lg modal-dialog-centered',
+          ignoreBackdropClick: true,
+        };
+        this.modalService.show(PreviewDocumentsComponent, config);
+      },
+    });
+    this.onLoadToast('success', 'Reporte Generado', '');
   }
 
   reporteInterno() {
