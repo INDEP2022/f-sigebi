@@ -25,17 +25,19 @@ import { DynamicCatalogsService } from 'src/app/core/services/dynamic-catalogs/d
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
 import { AtachedDocumentsService } from 'src/app/core/services/ms-documents/attached-documents.service';
+import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { GoodsJobManagementService } from 'src/app/core/services/ms-office-management/goods-job-management.service';
 import { JobsService } from 'src/app/core/services/ms-office-management/jobs.service';
+import { MJobManagementService } from 'src/app/core/services/ms-office-management/m-job-management.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
-import Swal from 'sweetalert2';
+import { COLUMNS_DOCUMENTS2 } from '../../../abandonments-declaration-trades/abandonments-declaration-trades/columns';
 import { tablaModalComponent } from '../tabla-modal/tablaModal-component';
 import { EXTERNOS_COLUMS_OFICIO } from '../tabla-modal/tableUserExt';
+import { ListdocsComponent } from './listdocs/listdocs.component';
 import { ModalPersonaOficinaComponent } from './modal-persona-oficina/modal-persona-oficina.component';
-
 @Component({
   selector: 'app-office',
   templateUrl: './office.component.html',
@@ -56,7 +58,7 @@ export class OfficeComponent extends BasePage implements OnInit {
   nrSelecttypePerson_I: string | number;
   UserDestinatario: ISegUsers[] = [];
   UserDestinatarioDummy = { name: '', id: '' };
-  IAttDocument: IAttachedDocument[] = [];
+  IAttDocument: any[] = [];
   form: FormGroup = new FormGroup({});
   nameUserDestinatario: ISegUsers;
   verBoton: boolean = false;
@@ -74,7 +76,7 @@ export class OfficeComponent extends BasePage implements OnInit {
   users_1 = new DefaultSelect<ISegUsers>();
   //==========================================
   totalItems: number;
-
+  settings2 = { ...this.settings };
   params = new BehaviorSubject<ListParams>(new ListParams());
   copyOficio: any[] = [];
   constructor(
@@ -88,7 +90,9 @@ export class OfficeComponent extends BasePage implements OnInit {
     private AtachedDocumenServ: AtachedDocumentsService,
     private dynamicCatalogsService: DynamicCatalogsService,
     private dictationService: DictationService,
-    private modalRef: BsModalRef
+    private modalRef: BsModalRef,
+    private mJobManagementService: MJobManagementService,
+    private documentsService: DocumentsService
   ) {
     super();
 
@@ -103,6 +107,18 @@ export class OfficeComponent extends BasePage implements OnInit {
         add: false,
         position: 'left',
       },
+    };
+    this.settings2 = {
+      ...this.settings,
+      actions: {
+        columnTitle: 'Acciones',
+        edit: false,
+        delete: true,
+        add: false,
+        position: 'left',
+      },
+      // selectMode: 'multi',
+      columns: { ...COLUMNS_DOCUMENTS2 },
     };
   }
 
@@ -246,7 +262,7 @@ export class OfficeComponent extends BasePage implements OnInit {
       // Swal.fire('Se requiere un filtro de búsqueda', '', 'info');
     }
   }
-
+  typeOffice: any = '';
   onmanagementNumberEnter(filterParams: BehaviorSubject<FilterParams>) {
     this.serviceOficces
       .getAllOfficialDocument(filterParams.getValue().getParams())
@@ -269,6 +285,7 @@ export class OfficeComponent extends BasePage implements OnInit {
               .get('flyerNumber')
               .setValue(respuesta.data[0].flyerNumber);
             this.form.get('officio').setValue(respuesta.data[0].jobBy);
+            this.typeOffice = respuesta.data[0].jobBy;
             this.form.get('addressee').setValue(respuesta.data[0].addressee);
             this.form
               .get('RemitenteSenderUser')
@@ -291,6 +308,7 @@ export class OfficeComponent extends BasePage implements OnInit {
             this.form
               .get('descriptionSender')
               .setValue(respuesta.data[0].desSenderpa);
+            this.getDocOficioGestion(respuesta.data[0].managementNumber);
             //  this.oficnumChange.emit(this.form.get('proceedingsNumber').value);
           }
         },
@@ -311,6 +329,109 @@ export class OfficeComponent extends BasePage implements OnInit {
   }
   //=================================================================================
   //===================================================================================//
+  docOficioGesti: any;
+  async getDocOficioGestion(managementNumber: any) {
+    const params = new ListParams();
+    params['filter.managementNumber'] = `$eq:${managementNumber}`;
+    this.mJobManagementService.getDocOficioGestion(params).subscribe({
+      next: async (resp: any) => {
+        console.log('CORRRECTO', resp);
+        let arr: any = [];
+
+        let result = resp.data.map(async (item: any) => {
+          const docsss = await this.getDocsParaDictum(item.cveDocument);
+          item['description'] = docsss;
+          // arr.push(docsss);
+        });
+        Promise.all(result).then((data: any) => {
+          this.IAttDocument = resp.data;
+          this.loading = false;
+        });
+      },
+      error: error => {
+        console.log('MAL', error);
+        this.loading = false;
+      },
+    });
+  }
+
+  // async docsssDicOficM(cveDocument: any) {
+  //   for (let i = 0; i < Documents.length; i++) {
+  //     if (cveDocument == Documents[i].key) {
+  //       return Documents[i];
+  //     }
+  //   }
+  // }
+
+  getDocsParaDictum(data: any) {
+    const params = new ListParams();
+    params['filter.key'] = `$eq:${data}`;
+    return new Promise((resolve, reject) => {
+      this.documentsService.getDocParaDictum(params).subscribe({
+        next: (resp: any) => {
+          console.log('DOCS', resp);
+          this.loading = false;
+          resolve(resp.data[0].description);
+        },
+        error: error => {
+          console.log('error DOCS PARA DICTUM', error.error.message);
+          this.loading = false;
+          resolve(null);
+        },
+      });
+    });
+  }
+
+  docAct() {
+    this.openModalDoc({
+      typeOffice: this.typeOffice,
+      arrayOfDocsCreados: this.IAttDocument,
+    });
+  }
+
+  openModalDoc(context?: Partial<ListdocsComponent>) {
+    const modalRef = this.modalService.show(ListdocsComponent, {
+      initialState: context,
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    });
+    modalRef.content.refresh.subscribe((next: any) => {
+      this.getDocOficioGestion(this.managementNumber_);
+      // console.log('asda', next);
+      // this.data2 = next;
+    });
+  }
+
+  preDeleteDocOficioGest(event: any) {
+    this.alertQuestion(
+      'warning',
+      'Eliminar',
+      'Desea eliminar este registro?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.deleteDocOficioGestion(event.managementNumber, event.cveDocument);
+      }
+    });
+    console.log('event', event);
+  }
+  async deleteDocOficioGestion(managementNumber: any, cveD: any) {
+    let obj = {
+      managementNumber: managementNumber,
+      cveDocument: cveD,
+    };
+    this.mJobManagementService.deleteDocOficioGestion(obj).subscribe({
+      next: (resp: any) => {
+        this.getDocOficioGestion(managementNumber);
+        this.alert('success', 'Datos eliminados correctamente', '');
+        // this.alert('success', "Datos eliminados correctamente", "tabla: DOCUM_OFICIO_GESTION")
+        this.loading = false;
+      },
+      error: error => {
+        // this.alert('error', error.error.message, 'tabla: DOCUM_OFICIO_GESTION');
+        this.loading = false;
+      },
+    });
+  }
 
   loadModal(resp: number, filterParams: BehaviorSubject<FilterParams>) {
     console.log('MODAL => ' + resp);
@@ -327,11 +448,14 @@ export class OfficeComponent extends BasePage implements OnInit {
     modalConfig.initialState = {
       status,
       OficioOrdictamen,
-      callback: (next: any) => {
+      callback: async (next: any) => {
+        console.log('next', next);
+
         //------------------------------------------------------
         const respuesta = JSON.parse(JSON.stringify(next));
-        this.tipoImpresion = respuesta.jobType;
+        this.managementNumber_ = respuesta.managementNumber;
 
+        this.tipoImpresion = respuesta.jobType;
         this.form
           .get('proceedingsNumber')
           .setValue(respuesta.proceedingsNumber);
@@ -343,6 +467,7 @@ export class OfficeComponent extends BasePage implements OnInit {
         const param = new ListParams();
         param.text = respuesta.sender;
         this.getUsers$(param);
+
         if (respuesta.cveChargeRem !== null) {
           this.getPuestoUser(respuesta.cveChargeRem);
         }
@@ -354,7 +479,7 @@ export class OfficeComponent extends BasePage implements OnInit {
         this.form.get('paragraphFinish').setValue(respuesta.text2);
         this.form.get('paragraphOptional').setValue(respuesta.text3);
         this.form.get('descriptionSender').setValue(respuesta.desSenderpa);
-
+        await this.getDocOficioGestion(respuesta.managementNumber);
         //----------------------------------------------------------
       },
     };
@@ -412,6 +537,17 @@ export class OfficeComponent extends BasePage implements OnInit {
   /*       Crea el archivo que se va desplegar la información 
 =======================================================================*/
   public confirm() {
+    this.updateOficioSinAlert();
+    // CREAMOS DOCUMENTOS PARA M OFICIO GESTION //
+    for (let i = 0; i < this.IAttDocument.length; i++) {
+      let obj = {
+        managementNumber: this.managementNumber_,
+        cveDocument: this.IAttDocument[i].key,
+        rulingType: this.IAttDocument[i].typeDictum,
+      };
+      this.createDocumentOficiManagement(obj);
+    }
+    console.log('params', this.form.value);
     if (this.tipoImpresion === 'EXTERNO') {
       this.reporteInterno();
     } else {
@@ -419,9 +555,44 @@ export class OfficeComponent extends BasePage implements OnInit {
     }
   }
 
+  updateOficioSinAlert() {
+    this.serviceOficces.updateOficio(this.creaObjUpdate(this.form)).subscribe({
+      next: response => {},
+      error: responseError => {
+        // if (responseError.message.indexOf('registros') == -1) {
+        // this.onLoadToast('warning', responseError.message, '');
+        // }
+        // console.log('Entra =>  ', responseError.error.message);
+      },
+    });
+  }
+
+  createDocumentOficiManagement(data: any) {
+    return new Promise((resolve, reject) => {
+      this.mJobManagementService.createDocumentOficeManag(data).subscribe({
+        next: (resp: any) => {
+          this.loading = false;
+          resolve(resp);
+        },
+        error: err => {
+          this.loading = false;
+          resolve(null);
+        },
+      });
+    });
+  }
+
   reporteInterno() {
     const params = {
-      no_of_ges: this.form.value.managementNumber,
+      NO_OF_GES: this.form.value.managementNumber,
+      DEP: 0,
+      EXP: this.form.value.proceedingsNumber,
+      NOMBRE_REM: this.form.value.RemitenteSenderUser,
+      PUESTO_REM: this.form.value.charge,
+      P_1: this.form.value.paragraphInitial,
+      P_2: this.form.value.paragraphFinish,
+      TIPE_OF: this.form.value.officio,
+      VOLANTE: this.form.value.flyerNumber,
     };
 
     this.siabServiceReport.fetchReport('RGEROFGESTION', params).subscribe({
@@ -441,15 +612,15 @@ export class OfficeComponent extends BasePage implements OnInit {
         this.modalService.show(PreviewDocumentsComponent, config);
       },
     });
-    this.cleanfields();
+    // this.cleanfields();
   }
 
   reporteExterno() {
     const params = {
-      PNOOFICIO: this.form.value.expedientNumber,
-      PTIPODIC: this.form.value.typeDict,
+      no_of_ges: this.form.value.managementNumber,
     };
-    this.siabServiceReport.fetchReport('RGENABANDEC', params).subscribe({
+    console.log('params', this.form.value);
+    this.siabServiceReport.fetchReport('RGEROFGESTION_EXT', params).subscribe({
       next: response => {
         const blob = new Blob([response], { type: 'application/pdf' });
         const url = URL.createObjectURL(blob);
@@ -536,7 +707,6 @@ export class OfficeComponent extends BasePage implements OnInit {
       flyerNumber: f.value.flyerNumber,
       proceedingsNumber: f.value.proceedingsNumber,
       managementNumber: f.value.managementNumber,
-      cveManagement: f.value.officio,
       sender: f.value.RemitenteSenderUser,
       nomPersExt: f.value.addressee,
       cveChargeRem: f.value.cveChargeRem,
@@ -546,34 +716,58 @@ export class OfficeComponent extends BasePage implements OnInit {
       desSenderpa: f.value.descriptionSender,
     };
   }
-  getDescUserPuesto(event: Event) {
+  getDescUserPuesto(event: any) {
     let userDatos = JSON.parse(JSON.stringify(event));
-
+    console.log('event', event);
     this.dynamicCatalogsService
       .getPuestovalue(userDatos.positionKey)
       .subscribe({
         next: resp => {
+          console.log('AQUI', resp);
           // alert('  getDescUserPuesto ' + resp.data.value);
           this.form.get('charge').setValue(resp.data.value);
         },
         error: err => {
           let error = '';
-          if (err.status === 0) {
-            error = 'Revise su conexión de Internet.';
-          } else {
-            error = err.message;
-          }
-          if (err.message.indexOf('registros') !== -1) {
-            Swal.fire(
-              'No se encontró el puesto del usuario',
-              err.message,
-              'warning'
-            );
-          }
+          // if (err.status === 0) {
+          //   error = 'Revise su conexión de Internet.';
+          // } else {
+          //   error = err.message;
+          // }
+          // if (err.message.indexOf('registros') !== -1) {
+          //   this.alert('warning',
+          //     'No se encontró el puesto del usuario', err.message,
+          //   );
+          // }
           console.log(error);
           console.log('error Error  =>  ' + error);
         },
       });
+  }
+
+  getDescUserPuesto2(event: any) {
+    this.dynamicCatalogsService.getPuestovalue(event).subscribe({
+      next: resp => {
+        console.log('AQUI', resp);
+        // alert('  getDescUserPuesto ' + resp.data.value);
+        this.form.get('charge').setValue(resp.data.value);
+      },
+      error: err => {
+        let error = '';
+        // if (err.status === 0) {
+        //   error = 'Revise su conexión de Internet.';
+        // } else {
+        //   error = err.message;
+        // }
+        // if (err.message.indexOf('registros') !== -1) {
+        //   this.alert('warning',
+        //     'No se encontró el puesto del usuario', err.message,
+        //   );
+        // }
+        console.log(error);
+        console.log('error Error  =>  ' + error);
+      },
+    });
   }
 
   /*   Evento que se ejecuta para llenar los parametros de las personas involucradas si son externos o internos
@@ -659,7 +853,7 @@ export class OfficeComponent extends BasePage implements OnInit {
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(legend.id);
-        Swal.fire('Borrado', '', 'success');
+        this.alert('success', 'Borrado', '');
       }
     });
   }
@@ -770,7 +964,9 @@ export class OfficeComponent extends BasePage implements OnInit {
         return throwError(() => error);
       }),
       tap(response => {
+        console.log('response', response);
         this.users$$ = new DefaultSelect(response.data, response.count);
+        this.getDescUserPuesto2(response.data[0].positionKey);
       })
     );
   }
