@@ -35,7 +35,7 @@ export class StateFormComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.stateForm = this.fb.group({
-      id: [null, [Validators.required]],
+      id: [null],
       cveState: [
         null,
         [Validators.required, Validators.pattern(POSITVE_NUMBERS_PATTERN)],
