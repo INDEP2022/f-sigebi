@@ -414,16 +414,22 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
       this.router.navigate(['/pages/general-processes/work-mailbox']);
     }
 
-    if(this.origin == 'FACTREFACTAENTREC'){
-      this.router.navigate(['/pages/judicial-physical-reception/confiscated-records'])
+    if (this.origin == 'FACTREFACTAENTREC') {
+      this.router.navigate([
+        '/pages/judicial-physical-reception/confiscated-records',
+      ]);
     }
 
-    if(this.origin == 'FACTREFCANCELAR'){
-      this.router.navigate(['/pages/judicial-physical-reception/cancellation-recepcion'])
+    if (this.origin == 'FACTREFCANCELAR') {
+      this.router.navigate([
+        '/pages/judicial-physical-reception/cancellation-recepcion',
+      ]);
     }
-    
-    if(this.origin == 'FACTREFACTAVENT'){
-      this.router.navigate(['/pages/judicial-physical-reception/cancellation-sale'])
+
+    if (this.origin == 'FACTREFACTAVENT') {
+      this.router.navigate([
+        '/pages/judicial-physical-reception/cancellation-sale',
+      ]);
     }
 
     if (this.origin == 'FESTATUSRGA') {
