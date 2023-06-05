@@ -233,7 +233,8 @@
                 [searchable]="false"
                 bindLabel="description"
                 value="keyId"
-                [readonly]="isGoodInfReadOnly"></ngx-select>
+                [readonly]="isGoodInfReadOnly"
+                (change)="destinySae($event)"></ngx-select>
             </div>
           </div>
           <div class="row pt-4">
