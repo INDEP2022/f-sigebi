@@ -5,6 +5,7 @@ import { BsModalService } from 'ngx-bootstrap/modal';
 import { ActivatedRoute, Router } from '@angular/router';
 import { format } from 'date-fns';
 import { BehaviorSubject, firstValueFrom } from 'rxjs';
+import { IUserRowSelectEvent } from 'src/app/core/interfaces/ng2-smart-table.interface';
 import {
   IDictation,
   IUpdateDelDictation,
@@ -40,6 +41,12 @@ import {
   SHIFT_CHANGE_PROCEEDINGS_COLUMNS,
 } from './shift-change-columns';
 import { ShiftChangeHistoryComponent } from './shift-change-history/shift-change-history.component';
+
+export interface IUpdateObjectsActas {
+  selectedProceedings: IUpdateActasEntregaRecepcionDelegation[];
+  selectedDictums: IUpdateDelDictation[];
+}
+
 @Component({
   selector: 'app-shift-change',
   templateUrl: './shift-change.component.html',
@@ -96,7 +103,6 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
   dictumSettings = { ...this.settings };
   proceedingColumns: IProceedingDeliveryReception[] = [];
   proceedingSettings = { ...this.settings };
-  totalItems: number = 0;
   // selectedDictums: IDictation[] = [];
   selectedDictums: IUpdateDelDictation[] = [];
   // selectedProceedings: IProceedingDeliveryReception[] = [];
@@ -106,15 +112,20 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
   origin: any;
   acta: IUpdateActasEntregaRecepcionDelegation;
   dictation: IUpdateDelDictation;
-  params = new BehaviorSubject(new ListParams());
+  paramsDict = new BehaviorSubject(new ListParams());
+  paramsActas = new BehaviorSubject(new ListParams());
+  totalItemsDic: number;
+  totalItemsActas: number;
   newUser: string;
+  idUser: number;
   preUser: string;
   delegationNew: number;
   subdelegationNew: number;
+  valid: boolean = false;
   idDelActa: number;
   idDelDicta: number;
   idArea: number;
-  user: IUserAccessAreaRelational;
+  user: any;
   flyerNumber: number;
   historyColumns: IHistoryOfficial[] = [];
   usersFilter: IUserAccessAreaRelational[] = [];
@@ -141,13 +152,13 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
     this.dictumSettings = {
       ...this.settings,
       actions: false,
-      // selectMode: 'multi',
+      selectMode: 'multi',
       columns: { ...SHIFT_CHANGE_DICTUM_COLUMNS },
     };
     this.proceedingSettings = {
       ...this.settings,
       actions: false,
-      // selectMode: 'multi',
+      selectMode: 'multi',
       columns: { ...SHIFT_CHANGE_PROCEEDINGS_COLUMNS },
     };
     this.pageParams = this.fileUpdComService.juridicalShiftChangeParams;
@@ -258,6 +269,7 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
         if (data.count > 0) {
           //console.log('DICTUMS', data.data);
           this.dictumColumns = data.data;
+          this.totalItemsDic = data.count;
         }
       },
       error: err => {
@@ -274,6 +286,7 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
         if (data.count > 0) {
           //console.log(data.data);
           this.proceedingColumns = data.data;
+          this.totalItemsActas = data.count;
         }
       },
       error: err => {
@@ -293,18 +306,22 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
     const body: IHistoryOfficial = {
       numberSteeringwheel: this.notifData.wheelNumber,
       datereassignment: format(new Date(), 'dd/MM/yyyy'),
-      numberJob: this.idDelDicta,
+      numberJob: this.notifData.officeNumber,
       personbefore: this.formControls.prevUser.value?.user,
       areaDestinationbefore: this.notifData.departamentDestinyNumber,
       personnew: this.formControls.newUser.value?.user,
-      areaDestinationnew: this.idArea,
+      areaDestinationnew: Number(this.formControls.newUser.value?.delegation),
       argument: this.formControls.argument.value,
       numberRecord: this.notifData.registerNumber,
       cveJobExternal: this.notifData.officeExternalKey,
       numberOftheDestinationbefore: this.notifData.delDestinyNumber,
       numberSubdelDestinationbefore: this.notifData.subDelDestinyNumber,
-      numberOftheDestinationnew: this.delegationNew,
-      numberSubdelDestinationnew: this.subdelegationNew,
+      numberOftheDestinationnew: Number(
+        this.formControls.newUser.value?.delegation
+      ),
+      numberSubdelDestinationnew: Number(
+        this.formControls.newUser.value?.subdelegationNumber
+      ),
       nbOrigin: this.origin,
     };
     console.log(
@@ -333,7 +350,6 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
         )
       );
       this.updateNotification();
-      this.users = new DefaultSelect();
     } catch (ex) {
       //console.log(ex);
       this.alert('error', 'Turno no actualizado', '');
@@ -354,7 +370,6 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
         // this.updateDictums();
         // this.updateProceedings();
         this.loading = true;
-        this.preUser = this.newUser;
         this.filterHistoryUser();
         this.alert(
           'success',
@@ -446,38 +461,44 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
     });
   }
 
-  // selectDictums(event: IUserRowSelectEvent<IDictation>) {
-  //   this.selectedDictums = event.selected;
-  //   console.log({ selectedDictums: this.selectedDictums });
-  // }
-
-  // selectProceedings(event: IUserRowSelectEvent<IProceedingDeliveryReception>) {
-  //   console.log(event);
-  //   this.selectedProceedings = event.selected;
-  // }
-
-  selectDictums(event: any) {
-    this.idDelDicta = event.data.id;
-    let params: IUpdateDelDictation = {
-      ofDictaNumber: event.data.id,
-      delegationDictateNumber:
-        this.formControls.newUser?.value.delegationNumber,
-    };
-    this.dictation = params;
-    console.log(this.dictation);
+  selectDictums(event: IUserRowSelectEvent<IUpdateDelDictation>) {
+    this.selectedDictums = event.selected;
+    this.valid = true;
+    console.log({ selectedDictums: this.selectedDictums });
     this.updateDictums();
   }
 
-  selectProceedings(event: any) {
-    this.idDelActa = event.data.id;
-    let params: IUpdateActasEntregaRecepcionDelegation = {
-      minutesNumber: event.data.id,
-      delegation2Number: this.formControls.newUser?.value.subdelegationNumber,
-    };
-    this.acta = params;
-    console.log(this.acta);
+  selectProceedings(
+    event: IUserRowSelectEvent<IUpdateActasEntregaRecepcionDelegation>
+  ) {
+    console.log(event);
+    this.selectedProceedings = event.selected;
+    this.valid = true;
     this.updateProceedings();
   }
+
+  // selectDictums(event: any) {
+  //   this.idDelDicta = event.data.id;
+  //   let params: IUpdateDelDictation = {
+  //     ofDictaNumber: event.data.id,
+  //     delegationDictateNumber:
+  //       this.formControls.newUser?.value.delegationNumber,
+  //   };
+  //   this.dictation = params;
+  //   console.log(this.dictation);
+  //   this.updateDictums();
+  // }
+
+  // selectProceedings(event: any) {
+  //   this.idDelActa = event.data.id;
+  //   let params: IUpdateActasEntregaRecepcionDelegation = {
+  //     minutesNumber: event.data.id,
+  //     delegation2Number: this.formControls.newUser?.value.delegationNumber,
+  //   };
+  //   this.acta = params;
+  //   console.log(this.acta);
+  //   this.updateProceedings();
+  // }
 
   getUsersCopy(lparams: ListParams) {
     const params = new FilterParams();
@@ -488,12 +509,6 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
     this.docRegisterService.getUsersSegAreas(params.getParams()).subscribe({
       next: data => {
         this.users = new DefaultSelect(data.data, data.count);
-        data.data.forEach(data => {
-          this.delegationNew = data.delegation1Number;
-          this.subdelegationNew = data.subdelegationNumber;
-          this.idArea = data.departament1Number;
-          console.log(data);
-        });
       },
       error: () => {
         this.users = new DefaultSelect();
@@ -535,6 +550,56 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
                   this.usersFilter[0].userAndName != undefined
                 ) {
                   this.newUser = this.usersFilter[0].userAndName;
+                }
+                //console.log(this.preUser);
+              },
+              error: () => {
+                this.users = new DefaultSelect();
+              },
+            });
+          //console.log(this.historyColumns[0].personNew);
+        }
+        this.loading = false;
+      },
+      error: () => {
+        this.loading = false;
+      },
+    });
+  }
+  filterHistoryUserBefore() {
+    this.loading = true;
+    const param = new FilterParams();
+    const params = new ListParams();
+    const data1: any = {};
+    //param.addFilter('flyerNumber', this.flyerNumber);
+    params['filter.flyerNumber'] = `$eq:${this.pageParams.iden}`;
+    // console.log(this.pageParams.iden);
+    this.historyOfficeService.getFilterUser(params).subscribe({
+      next: data => {
+        if (data.count > 0) {
+          this.historyColumns = data.data;
+          this.historyColumns[0].personbefore;
+          //param['filter.flyerNumber'] = `$eq:${this.newUser}`;
+          //params.page = lparams.page;
+          //params.limit = lparams.limit;
+          param.addFilter(
+            'user',
+            this.historyColumns[0].personbefore,
+            SearchFilter.EQ
+          );
+          this.docRegisterService
+            .getUsersSegAreas(param.getParams())
+            .subscribe({
+              next: resp => {
+                //this.users = new DefaultSelect(data.data, data.count);
+                this.usersFilter = resp.data;
+                console.log(this.usersFilter);
+                this.preUser = this.usersFilter[0].userAndName;
+                if (
+                  this.usersFilter[0].userAndName != null ||
+                  this.usersFilter[0].userAndName != undefined
+                ) {
+                  this.preUser = this.usersFilter[0].userAndName;
                 }
                 //console.log(this.preUser);
               },
