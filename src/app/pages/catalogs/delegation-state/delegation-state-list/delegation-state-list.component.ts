@@ -58,14 +58,11 @@ export class DelegationStateListComponent extends BasePage implements OnInit {
             if (filter.search !== '') {
               if (filter.field == 'regionalDelegation') {
                 filter.field = 'regionalDelegation.id';
-                console.log();
               }
               if (filter.field == 'stateCode') {
                 filter.field = 'stateCode.codeCondition';
               }
-
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
-              console.log('TESTTTTTT', this.columnFilters);
             } else {
               delete this.columnFilters[field];
             }
@@ -87,7 +84,6 @@ export class DelegationStateListComponent extends BasePage implements OnInit {
     };
     this.delegationStateService.getAll(params).subscribe({
       next: (response: any) => {
-        console.log('TESTSETTINGS', this.settings);
         this.delegationsState = response.data;
         this.totalItems = response.count || 0;
         this.data.load(response.data);
