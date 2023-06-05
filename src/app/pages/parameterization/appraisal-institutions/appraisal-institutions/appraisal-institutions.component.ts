@@ -58,6 +58,7 @@ export class AppraisalInstitutionsComponent extends BasePage implements OnInit {
               delete this.columnFilters[field];
             }
           });
+          this.params = this.pageFilter(this.params);
           this.getValuesAll();
         }
       });
@@ -73,7 +74,7 @@ export class AppraisalInstitutionsComponent extends BasePage implements OnInit {
     };
     this.appraisersService.getAll(params).subscribe({
       next: response => {
-        console.log(response);
+        console.log('RESPONSE', response);
         this.appraisersList = response.data;
         this.data.load(this.appraisersList);
         this.data.refresh();

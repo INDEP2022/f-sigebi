@@ -30,6 +30,7 @@ export interface IGood {
   appraisal?: string;
   appraiserOpinion?: any;
   goodTypeId: number;
+  subTypeId: number;
   originSignals?: any;
   goodDescription?: string;
   saeDestiny?: string;

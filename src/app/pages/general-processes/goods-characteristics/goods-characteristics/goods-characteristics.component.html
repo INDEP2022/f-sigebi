@@ -116,7 +116,7 @@
                   <div class="form-group row">
                     <form-field
                       [control]="form.get('subdelegation')"
-                      label="Delegación"
+                      label="Subdelegación"
                       class="col-md-12">
                       <input
                         type="text"
@@ -191,6 +191,9 @@
                     </form-radio>
                   </div>
                 </div>
+              </div>
+              <div class="row">
+                <app-good-table-vals [good]="good"></app-good-table-vals>
               </div>
             </tab>
           </tabset>
