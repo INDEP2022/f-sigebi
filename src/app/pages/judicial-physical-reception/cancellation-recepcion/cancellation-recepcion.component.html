@@ -343,18 +343,17 @@
           </div>
         </div>
       </div>
-  
+
       <hr class="row" />
 
       <app-scan-file-shared
-      [form]="form"
-      [formControlName]="folioEscaneo"
-      [cveDocument]="form.get('acta2').value"
-      [noExpedient]="form.get('expediente').value"
-      [statusProceeding]="form.get('statusProceeding').value"
-      [cveScreen]="cveScreen"
-      [reportPrint]="nameReport"
-      ></app-scan-file-shared>
+        [form]="form"
+        [formControlName]="folioEscaneo"
+        [cveDocument]="form.get('acta2').value"
+        [noExpedient]="form.get('expediente').value"
+        [statusProceeding]="form.get('statusProceeding').value"
+        [cveScreen]="cveScreen"
+        [reportPrint]="nameReport"></app-scan-file-shared>
 
       <hr class="row" />
       <div [class]="loading ? 'disabled' : ''" class="row mb-5">
