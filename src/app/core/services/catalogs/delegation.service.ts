@@ -58,7 +58,11 @@ export class DelegationService
   }
 
   update(id: string | number, model: IDelegation): Observable<Object> {
-    return this.delegationRepository.update(this.route, id, model);
+    return this.delegationRepository.updateCatagaloDelegations(
+      this.route,
+      id,
+      model
+    );
   }
 
   remove(id: string | number): Observable<Object> {

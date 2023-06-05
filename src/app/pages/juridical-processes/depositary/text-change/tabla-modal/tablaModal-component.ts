@@ -79,6 +79,7 @@ export class tablaModalComponent extends BasePage implements OnInit {
 
   status: number;
   OficioOrdictamen: BehaviorSubject<FilterParams>;
+  dataOficio: any;
 
   constructor(
     private fb: FormBuilder,
@@ -95,16 +96,10 @@ export class tablaModalComponent extends BasePage implements OnInit {
       this.settings = {
         ...this.settings,
         hideSubHeader: false,
-        actions: {
-          columnTitle: 'Sel.',
-          edit: true,
-          delete: false,
-          add: false,
-          position: 'left',
-        },
-        edit: {
-          editButtonContent: '<i class="fa fa-trash" aria-hidden="true"></i>',
-        },
+        actions: false,
+        // edit: {
+        //   editButtonContent: '<i class="fa fa-trash" aria-hidden="true"></i>',
+        // },
         columns: { ...TEXT_CHANGE_COLUMNS_OFICIO },
       };
     } else {
@@ -236,13 +231,14 @@ export class tablaModalComponent extends BasePage implements OnInit {
   }
 
   getDataColumnValue(event: any) {
-    this.handleSuccess(event);
+    // this.handleSuccess(event);
     this.modalRef.hide();
   }
 
   getDataColumn(event: any) {
-    this.handleSuccess(event);
-    this.modalRef.hide();
+    this.dataOficio = event;
+    // this.handleSuccess(event);
+    // this.modalRef.hide();
   }
 
   lookDictamenesByDictamens() {
@@ -268,8 +264,8 @@ export class tablaModalComponent extends BasePage implements OnInit {
       });
   }
 
-  handleSuccess(datos: []) {
-    this.modalRef.content.callback(datos);
+  handleSuccess() {
+    this.modalRef.content.callback(this.dataOficio);
     this.modalRef.hide();
   }
 

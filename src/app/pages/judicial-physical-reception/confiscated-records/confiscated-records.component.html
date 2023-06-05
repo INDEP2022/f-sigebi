@@ -2,7 +2,7 @@
   <div class="ch-content" header>
     <h5 class="title">Actas de Entrega Recepci&oacute;n</h5>
   </div>
-
+  
   <div body>
     <form class="form-material" [formGroup]="form">
       <div class="row mb-4">
@@ -428,68 +428,15 @@
 
       <hr class="row" />
 
-      <div class="row mb-4">
-        <div class="col-md-12">
-          <div class="row">
-            <div class="col-md-2"></div>
-            <div class="col">
-              <button
-                type="button"
-                data-toggle="tooltip"
-                class="btn btn-secondary btn-sm active mr-1"
-                title="Generar Folio de Escaneo y Solicitud">
-                <i class="bx bxs-add-to-queue"></i>
-              </button>
-              <button
-                type="button"
-                data-toggle="tooltip"
-                class="btn btn-secondary btn-sm active"
-                title="Escanear">
-                <i class="bx bxs-file"></i>
-              </button>
-            </div>
-            <div class="col-md-3">
-              <form-field
-                [control]="form.get('folioEscaneo')"
-                label="Folio de Escaneo">
-                <input
-                  type="number"
-                  class="form-control"
-                  min="1"
-                  formControlName="folioEscaneo"
-                  maxlength="15" />
-              </form-field>
-            </div>
-            <div class="col">
-              <button
-                class="btn btn-primary btn-sm active"
-                type="button"
-                size="small"
-                min="1"
-                (click)="replicateFolio()">
-                Replicar Folio
-              </button>
-            </div>
-            <div class="col">
-              <button
-                type="button"
-                data-toggle="tooltip"
-                class="btn btn-secondary btn-sm active mr-1"
-                title="imprimir Solicitud de Escaneo">
-                <i class="bx bxs-printer"></i>
-              </button>
-              <button
-                type="button"
-                data-toggle="tooltip"
-                class="btn btn-secondary btn-sm active"
-                title="Consulta de imágenes escaneadas">
-                <i class="bx bxs-file-find"></i>
-              </button>
-            </div>
-            <div class="col-md-2"></div>
-          </div>
-        </div>
-      </div>
+      <app-scan-file-shared
+      [form]="form"
+      [formControlName]="folioEscaneo"
+      [cveDocument]="form.get('acta2').value"
+      [noExpedient]="form.get('expediente').value"
+      [statusProceeding]="form.get('statusProceeding').value"
+      [cveScreen]="cveScreen"
+      >
+      </app-scan-file-shared>
 
       <hr class="row" />
       <div [class]="loading ? 'disabled' : ''" class="row mb-5">
