@@ -4,19 +4,19 @@
     [greater]="true"
     text="Cerrando Acta... por favor espere"></form-loader>
 
-  <button class="btn btn-sm btn-return" (click)="back()">
-    <i class="bx bx-chevron-left float-icon"></i> Regresar
-  </button>
-
   <app-card [header]="true">
-    <div class="ch-content" header>
-      <h5 class="title">Mantenimiento de Acta Entrega Recepci&oacute;n</h5>
+    <div class="ch-content returnMaintenance" header>
+      <h5 class="title">
+        <button class="btn btn-sm btn-return" (click)="back()">
+          <i class="bx bx-chevron-left float-icon"></i>
+          <span class="title">Mantenimiento de Programaciones</span>
+        </button>
+      </h5>
     </div>
     <div body>
       <form class="form-material" [formGroup]="form">
         <div class="row mr-0">
           <div class="col-md-2 pr-0">
-            s
             <form-field [control]="form.get('statusActa')" label="Estatus Acta"
               ><ng-select
                 formControlName="statusActa"
@@ -52,7 +52,7 @@
               [control]="form.get('fechaCaptura')"
               label="Fecha Captura">
               <input
-                [class]="'disabled'"
+                style="background: white"
                 bsDatepicker
                 class="form-control"
                 formControlName="fechaCaptura"
@@ -103,6 +103,7 @@
       <div class="row">
         <div class="col-12">
           <app-update-dates-goods
+            [form]="formDate"
             [disabled]="
               statusActaValue !== 'ABIERTA' && data && data.length > 0
             "
@@ -115,7 +116,7 @@
         </div>
         <div class="col-md-6 goodTracker mt-4">
           <app-goodtracker-button
-            [disabled]="statusActaValue === 'CERRADA'"
+            [disabled]="true"
             [data]="data"
             [origin]="origin"></app-goodtracker-button>
         </div>

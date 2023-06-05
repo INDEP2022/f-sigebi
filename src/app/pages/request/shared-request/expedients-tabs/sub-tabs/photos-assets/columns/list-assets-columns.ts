@@ -52,3 +52,57 @@ export const LIST_ASSETS_COLUMNS = {
     sort: false,
   },
 };
+
+export const LIST_ASSETS_COLUMNS_GOODFINDER = {
+  goodId: {
+    title: 'No. Gestión',
+    type: 'string',
+    sort: false,
+  },
+  requestId: {
+    title: 'No. Solicitud',
+    type: 'string',
+    sort: false,
+  },
+  descriptionRelevantType: {
+    title: 'Tipo de Bien',
+    type: 'string',
+    sort: false,
+  },
+  uniqueKey: {
+    title: 'Clave Única',
+    type: 'string',
+    sort: false,
+  },
+  quantity: {
+    title: 'Cantidad',
+    type: 'string',
+    sort: false,
+  },
+  goodDescription: {
+    title: 'Descripción del Bien Transferente',
+    type: 'string',
+    sort: false,
+  },
+  descriptionDestiny: {
+    title: 'Destino Ligie',
+    type: 'string',
+    sort: false,
+  },
+
+  descriptionPhysicalStatus: {
+    title: 'Estado Físico',
+    type: 'string',
+    sort: false,
+  },
+  descriptionConservationStatus: {
+    title: 'Estado de Conservación',
+    type: 'string',
+    sort: false,
+  },
+  fractionId: {
+    title: 'Fracción',
+    type: 'string',
+    sort: false,
+  },
+};

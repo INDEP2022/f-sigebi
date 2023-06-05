@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { _Params } from 'src/app/common/services/http.service';
+import { IReturnStatusProcess } from 'src/app/core/models/administrative-processes/history-good.model';
 import { ICopiesOfficialOpinion } from 'src/app/core/models/ms-dictation/copies-official-opinion.model';
 import {
   ICopiesOfficeSendDictation,
@@ -12,7 +13,7 @@ import {
 import { IOfficialDictation } from 'src/app/core/models/ms-dictation/official-dictation.model';
 import { IDocumentServiceGetFiles } from 'src/app/core/models/ms-documents/idocument.interface';
 import { IExpedient } from 'src/app/core/models/ms-expedient/expedient';
-import { IValidaCambioEstatus } from 'src/app/core/models/ms-good/good';
+import { IGood, IValidaCambioEstatus } from 'src/app/core/models/ms-good/good';
 import { IJobDictumTexts } from 'src/app/core/models/ms-officemanagement/job-dictum-texts.model';
 import { CityService } from 'src/app/core/services/catalogs/city.service';
 import { DictationXGood1Service } from 'src/app/core/services/ms-dictation/dictation-x-good1.service';
@@ -24,9 +25,11 @@ import { Ssf3SignatureElecDocsService } from 'src/app/core/services/ms-electroni
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
+import { HistoryGoodService } from 'src/app/core/services/ms-history-good/history-good.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import { JobDictumTextsService } from 'src/app/core/services/ms-office-management/job-dictum-texts.service';
 import { ParametersService } from 'src/app/core/services/ms-parametergood/parameters.service';
+import { ScreenStatusService } from 'src/app/core/services/ms-screen-status/screen-status.service';
 import { SecurityService } from 'src/app/core/services/ms-security/security.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { ProcedureManagementService } from 'src/app/core/services/proceduremanagement/proceduremanagement.service';
@@ -51,7 +54,9 @@ export class LegalOpinionsOfficeService {
     private msNotificationService: NotificationService,
     private msSecurityService: SecurityService,
     private msGoodService: GoodService,
-    private msIDocumentService: IDocumentService
+    private msIDocumentService: IDocumentService,
+    private msHistoryGoodService: HistoryGoodService,
+    private msScreenStatusService: ScreenStatusService
   ) {}
 
   getIssuingUserByDetail(params: _Params) {
@@ -109,13 +114,17 @@ export class LegalOpinionsOfficeService {
   getOfficeCopiesDictation(params: _Params) {
     return this.msCopiesOfficialOpinionService.getAll(params);
   }
-  // Save Text Oficio Dictaminaciones
+  // Save Copies Oficio Dictaminaciones
   saveCopiesOfficeDictation(body: ICopiesOfficialOpinion) {
     return this.msCopiesOfficialOpinionService.create(body);
   }
-  // Update Text Oficio Dictaminaciones
+  // Update Copies Oficio Dictaminaciones
   updateCopiesOfficeDictation(body: Partial<ICopiesOfficialOpinion>) {
     return this.msCopiesOfficialOpinionService.update(body);
+  }
+  // Delete Copies Oficio Dictaminaciones
+  deleteCopiesOfficeDictation(body: Partial<ICopiesOfficialOpinion>) {
+    return this.msCopiesOfficialOpinionService.deleteCcp(body);
   }
   // Get text office
   getOfficeTextDictation(params: _Params) {
@@ -185,6 +194,15 @@ export class LegalOpinionsOfficeService {
   }
   getDocumentsFirm(body: IDocumentServiceGetFiles) {
     return this.msIDocumentService.getFiles(body);
+  }
+  returnStatusProcess(body: IReturnStatusProcess) {
+    return this.msHistoryGoodService.returnStatusProcess(body);
+  }
+  updateGood(body: Partial<IGood>) {
+    return this.msGoodService.update(body);
+  }
+  getScreenStatusService(params: _Params) {
+    return this.msScreenStatusService.getAllFiltered(params);
   }
 
   getTexto3FromOfficeDictation(

@@ -10,7 +10,10 @@ import {
   ICitys,
   IIssuingInstitution,
 } from '../../../../core/models/catalogs/issuing-institution.model';
-import { STRING_PATTERN } from '../../../../core/shared/patterns';
+import {
+  POSITVE_NUMBERS_PATTERN,
+  STRING_PATTERN,
+} from '../../../../core/shared/patterns';
 import { IssuingInstitutionService } from './../../../../core/services/catalogs/issuing-institution.service';
 
 @Component({
@@ -53,16 +56,22 @@ export class IssuingInstitutionFormComponent
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
       manager: [null, [Validators.required]],
-      street: [null, [Validators.pattern(STRING_PATTERN)]],
+      street: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       calle: [null, [Validators.pattern(STRING_PATTERN)]],
-      numInside: [null, []],
-      numExterior: [null, []],
-      cologne: [null, []],
-      zipCode: [null, []],
+      numInside: [null, [Validators.pattern(POSITVE_NUMBERS_PATTERN)]],
+      numExterior: [
+        null,
+        [Validators.required, Validators.pattern(POSITVE_NUMBERS_PATTERN)],
+      ],
+      cologne: [null, [Validators.required]],
+      zipCode: [
+        null,
+        [Validators.required, Validators.pattern(POSITVE_NUMBERS_PATTERN)],
+      ],
       delegMunic: [null, []],
-      phone: [null, []],
+      phone: [null, [Validators.required]],
       numClasif: [null, [Validators.required]],
-      numCity: [null, []],
+      numCity: [null, [Validators.required]],
       numRegister: [null, []],
       numTransference: [null, []],
     });

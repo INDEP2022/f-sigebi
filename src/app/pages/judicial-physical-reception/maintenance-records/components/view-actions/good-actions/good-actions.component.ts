@@ -7,8 +7,9 @@ import {
   TemplateRef,
   ViewChild,
 } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalService } from 'ngx-bootstrap/modal';
+import { firstValueFrom } from 'rxjs';
 import { TableReplaceColumnModalComponent } from 'src/app/@standalone/modals/table-replace-column-modal/table-replace-column-modal.component';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import {
@@ -23,7 +24,10 @@ import {
   ProceedingsDeliveryReceptionService,
   ProceedingsDetailDeliveryReceptionService,
 } from 'src/app/core/services/ms-proceedings';
-import { POSITVE_NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
+import {
+  NUM_POSITIVE,
+  POSITVE_NUMBERS_PATTERN,
+} from 'src/app/core/shared/patterns';
 import { AlertButton } from 'src/app/pages/judicial-physical-reception/scheduled-maintenance-1/models/alert-button';
 import {
   firstFormatDateToSecondFormatDate,
@@ -34,19 +38,7 @@ import { MaintenanceRecordsService } from './../../../services/maintenance-recor
 @Component({
   selector: 'app-good-actions',
   templateUrl: './good-actions.component.html',
-  styles: [
-    `
-      .selectGood {
-        display: flex;
-        width: 100%;
-        margin-left: 20px;
-        column-gap: 10px;
-        ng-custom-select-loading {
-          width: calc(100% - 70px);
-        }
-      }
-    `,
-  ],
+  styleUrls: ['./good-actions.component.scss'],
 })
 export class GoodActionsComponent extends AlertButton implements OnInit {
   @Input() statusActaValue: string;
@@ -55,7 +47,7 @@ export class GoodActionsComponent extends AlertButton implements OnInit {
   @Output() updateTable = new EventEmitter();
   @Output() addGoodEvent =
     new EventEmitter<IDetailProceedingsDeliveryReception>();
-  form: FormGroup;
+
   loading = false;
   selectedsForUpdate: IDetailProceedingsDeliveryReception[] = [];
   // dataForAdd: IDetailProceedingsDeliveryReception[] = [];
@@ -79,10 +71,40 @@ export class GoodActionsComponent extends AlertButton implements OnInit {
     private proceedingService: ProceedingsDeliveryReceptionService
   ) {
     super();
-    this.form = this.fb.group({
-      goodId: [null],
+    this.formGood = this.fb.group({
+      goodId: [null, Validators.pattern(NUM_POSITIVE)],
+    });
+    this.formAction = this.fb.group({
       action: [null],
     });
+    this.formDate = this.fb.group({
+      inicio: [null],
+      fin: [null],
+    });
+  }
+
+  get formDate() {
+    return this.service.formDate;
+  }
+
+  set formDate(value) {
+    this.service.formDate = value;
+  }
+
+  get formGood() {
+    return this.service.formGood;
+  }
+
+  set formGood(value) {
+    this.service.formGood = value;
+  }
+
+  get formAction() {
+    return this.service.formActionChange;
+  }
+
+  set formAction(value) {
+    this.service.formActionChange = value;
   }
 
   ngOnInit(): void {
@@ -110,12 +132,21 @@ export class GoodActionsComponent extends AlertButton implements OnInit {
     this.selectedGood = good;
   }
 
-  addGood() {
+  async addGood() {
     // console.log(row);
     // debugger;
+    const good = await firstValueFrom(
+      this.goodService.getById(this.formGood.get('goodId').value)
+    );
+    if (!good) {
+      this.onLoadToast('error', 'Bien', 'No encontrado');
+      return;
+    }
+    console.log('Encontrado');
+    this.selectedGood = good;
     const newGood: IDetailProceedingsDeliveryReception = {
       numberProceedings: +this.nroActa,
-      numberGood: this.form.get('goodId').value,
+      numberGood: this.formGood.get('goodId').value,
       amount: this.selectedGood.quantity,
       received: 'S',
       approvedDateXAdmon: secondFormatDate(new Date()),
@@ -189,34 +220,32 @@ export class GoodActionsComponent extends AlertButton implements OnInit {
   }
 
   openModals() {
-    console.log(this.rowsSelected, this.form.value);
-    if (this.form.get('action').value == '1') {
+    console.log(this.rowsSelected, this.formAction.value);
+    if (this.formAction.get('action').value == '1') {
       this.openModalSelect(
         {
           titleColumnToReplace: 'bienes',
           columnsType: {
             numberGood: {
-              title: 'N° Bien',
+              title: 'No. Bien',
               type: 'string',
               sort: false,
             },
             numberProceedings: {
-              title: 'N° Acta',
+              title: 'No. Acta',
               type: 'string',
               sort: false,
             },
           },
           settings: { ...TABLE_SETTINGS },
           tableData: this.rowsSelected,
+          selectFirstInput: false,
           // service: this.proceedingService,
           // dataObservableFn: this.proceedingService.getAll2,
-          labelTemplate: this.actaLabel,
-          optionTemplate: this.actaOption,
           idSelect: 'id',
-          labelSelect: 'keysProceedings',
-          label: 'Acta',
-          paramSearch: 'search',
-          prefixSearch: null,
+          labelSelect: 'id',
+          label: 'Especifique el nuevo número del acta del bien',
+          paramSearch: 'filter.id',
           path: 'proceeding/api/v1/proceedings-delivery-reception',
           form: this.fb.group({
             numberProceedings: [
@@ -234,10 +263,10 @@ export class GoodActionsComponent extends AlertButton implements OnInit {
     } else {
       this.openModalSelect(
         {
-          titleColumnToReplace: 'estados',
+          titleColumnToReplace: 'estatus',
           columnsType: {
             numberGood: {
-              title: 'N° Bien',
+              title: 'No. Bien',
               type: 'string',
               sort: false,
             },
@@ -330,7 +359,11 @@ export class GoodActionsComponent extends AlertButton implements OnInit {
                 },
               });
           } else {
-            this.onLoadToast('error', 'No se pudo actualizar bienes', message);
+            this.onLoadToast(
+              'error',
+              'No se pudo actualizar bienes',
+              message + ' porque ya están registrados'
+            );
           }
         },
         error: err => {
@@ -355,6 +388,7 @@ export class GoodActionsComponent extends AlertButton implements OnInit {
     this.goodService.updateGoodStatusMassive(goods, status).subscribe({
       next: response => {
         this.onLoadToast('success', 'Estados Actualizados', message);
+
         this.updateTable.emit();
       },
     });
@@ -400,7 +434,7 @@ export class GoodActionsComponent extends AlertButton implements OnInit {
               selected.numberGood +
               (index < this.selectedsForUpdate.length - 1 ? ',' : '');
           });
-          const message = `Se actualizaron los bienes N° ${goods} `;
+          const message = `Se actualizaron los bienes No. ${goods} `;
           this.onLoadToast('success', 'Exito', message);
           this.updateTable.emit();
         },

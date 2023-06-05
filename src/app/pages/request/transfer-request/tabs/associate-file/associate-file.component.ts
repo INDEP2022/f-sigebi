@@ -3,7 +3,6 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IRequest } from 'src/app/core/models/requests/request.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
@@ -25,7 +24,8 @@ import { OpenDescriptionComponent } from './open-description/open-description.co
 })
 export class AssociateFileComponent extends BasePage implements OnInit {
   associateFileForm: FormGroup = new FormGroup({});
-  parameter: ModelForm<IRequest>;
+  parameter: any;
+  request: any;
   users: any;
   units: any;
   files: any;
@@ -60,6 +60,11 @@ export class AssociateFileComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
+    if (this.parameter.value != null || this.parameter.value != undefined) {
+      this.request = this.parameter.getRawValue() as IRequest;
+    } else {
+      this.request = this.parameter as IRequest;
+    }
     this.getUserSelect(new ListParams());
     this.formsChanges();
     this.getTransferent();
@@ -136,7 +141,7 @@ export class AssociateFileComponent extends BasePage implements OnInit {
   }
 
   confirm() {
-    let request = this.parameter.getRawValue() as IRequest;
+    let request = this.request;
     if (!request.regionalDelegationId) {
       this.onLoadToast('error', '', 'No cuenta con una Delegación Regional');
     } else if (!request.transferenceId) {
@@ -154,9 +159,8 @@ export class AssociateFileComponent extends BasePage implements OnInit {
   }
 
   async generateCaratula() {
-    let request = this.parameter.getRawValue();
+    let request = this.request;
     this.loader.load = true;
-
     const expedient: any = await this.saveExpedientSami();
     if (expedient.id) {
       let resevateDate = '';
@@ -253,6 +257,9 @@ export class AssociateFileComponent extends BasePage implements OnInit {
             this.onLoadToast('success', 'Carátula generada correctamente', '');
           }
         }
+      } else {
+        this.loader.load = false;
+        this.onLoadToast('error', 'Error', 'No se pudo carga la caratula');
       }
     }
   }
@@ -500,7 +507,7 @@ export class AssociateFileComponent extends BasePage implements OnInit {
   }
 
   getTransferent() {
-    var id = this.parameter.value.transferenceId;
+    var id = this.request.transferenceId;
     this.transferentService.getById(id).subscribe({
       next: resp => {
         this.transferentName = resp.nameTransferent;
@@ -509,7 +516,7 @@ export class AssociateFileComponent extends BasePage implements OnInit {
   }
 
   getRegionalDelegation() {
-    var id = this.parameter.value.regionalDelegationId;
+    var id = this.request.regionalDelegationId;
     this.regioinalDelegation.getById(id).subscribe({
       next: resp => {
         this.regionalDelegacionName = resp.description;

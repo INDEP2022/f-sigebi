@@ -11,6 +11,7 @@ import {
 import { IDelegationState } from 'src/app/core/models/catalogs/delegation-state.model';
 import { DelegationStateService } from 'src/app/core/services/catalogs/delegation-state.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import Swal from 'sweetalert2';
 import { DelegationStateFormComponent } from '../delegation-state-form/delegation-state-form.component';
 import { DELEGATION_STATE_COLUMNS } from './delegation-state-columns';
 
@@ -46,15 +47,14 @@ export class DelegationStateListComponent extends BasePage implements OnInit {
           filters.map((filter: any) => {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
-
-            filter.field == 'id' ||
+            field = `filter.${filter.field}`;
             filter.field == 'regionalDelegation' ||
+            filter.field == 'stateCode' ||
             filter.field == 'keyState' ||
             filter.field == 'status' ||
             filter.field == 'version'
               ? (searchFilter = SearchFilter.EQ)
               : (searchFilter = SearchFilter.ILIKE);
-            field = `filter.${filter.field}`;
             if (filter.search !== '') {
               if (filter.field == 'regionalDelegation') {
                 filter.field = 'regionalDelegation.id';
@@ -62,12 +62,12 @@ export class DelegationStateListComponent extends BasePage implements OnInit {
               if (filter.field == 'stateCode') {
                 filter.field = 'stateCode.codeCondition';
               }
-
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
               delete this.columnFilters[field];
             }
           });
+          this.params = this.pageFilter(this.params);
           this.getData();
         }
       });
@@ -83,7 +83,7 @@ export class DelegationStateListComponent extends BasePage implements OnInit {
       ...this.columnFilters,
     };
     this.delegationStateService.getAll(params).subscribe({
-      next: response => {
+      next: (response: any) => {
         this.delegationsState = response.data;
         this.totalItems = response.count || 0;
         this.data.load(response.data);
@@ -112,8 +112,16 @@ export class DelegationStateListComponent extends BasePage implements OnInit {
       'Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        //Ejecutar el servicio
+        this.delete(delegationSate.id);
+        Swal.fire('Borrado', 'Deductivas', 'success');
       }
+    });
+  }
+  delete(id: number) {
+    this.delegationStateService.newRemove(id).subscribe({
+      next: () => {
+        this.getData(), this.alert('success', 'Deductivas', 'Borrado');
+      },
     });
   }
 }

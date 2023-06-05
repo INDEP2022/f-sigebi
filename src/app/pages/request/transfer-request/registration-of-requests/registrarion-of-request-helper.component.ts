@@ -19,12 +19,15 @@ export class RegistrationHelper extends BasePage {
     super();
   }
 
-  getGoodQuantity(requestId: number) {
+  getGoodQuantity(requestId: number, newLimit?: number) {
     return new Promise((resolve, reject) => {
       const params = new ListParams();
 
       if (requestId) {
         params['filter.requestId'] = `$eq:${requestId}`;
+        if (newLimit) {
+          params.limit = newLimit;
+        }
         this.goodService.getAll(params).subscribe({
           next: resp => {
             resolve(resp);
@@ -207,9 +210,15 @@ export class RegistrationHelper extends BasePage {
       }
     }
 
+    let goodCount: any = null;
     let goods: any = null;
     if (validoOk === true) {
-      goods = await this.getGoodQuantity(Number(request.id));
+      goodCount = await this.getGoodQuantity(Number(request.id));
+      if (goodCount.count > 10) {
+        goods = await this.getGoodQuantity(Number(request.id), goodCount.count);
+      } else {
+        goods = goodCount;
+      }
       if (goods.count < 1) {
         this.message(
           'error',
@@ -264,7 +273,8 @@ export class RegistrationHelper extends BasePage {
               'Todos los bienes deben tener una cantidad'
             );
             break;
-          } else if (good.transferentDestiny == null) {
+          } else if (good.ligieUnit == null) {
+            /*else if (good.transferentDestiny == null) {
             sinDestinoT = true;
             this.message(
               'error',
@@ -272,7 +282,8 @@ export class RegistrationHelper extends BasePage {
               'Todos los bienes deben tener un Destino Transferente'
             );
             break;
-          } else if (good.ligieUnit == null) {
+          } 
+          */
             sinUnidadM = true;
             this.message(
               'error',
@@ -374,16 +385,17 @@ export class RegistrationHelper extends BasePage {
             }
           } else if (Number(good.goodTypeId) === 2) {
             /**## Tipo Vehiculos ##*/
-            if (good.fitCircular === null) {
-              //apto para circular
-              tipoRelVehiculo = true;
-              this.message(
-                'error',
-                `Error en el bien ${good.goodDescription}`,
-                'El campo Apto para cirular en Información del Vehículo esta vacio, favor de complementar'
-              );
-              break;
-            } else if (good.brand === null) {
+            // if (good.fitCircular === null) {
+            //   //apto para circular
+            //   tipoRelVehiculo = true;
+            //   this.message(
+            //     'error',
+            //     `Error en el bien ${good.goodDescription}`,
+            //     'El campo Apto para cirular en Información del Vehículo esta vacio, favor de complementar'
+            //   );
+            //   break;
+            // } else
+            if (good.brand === null) {
               //marca
               tipoRelVehiculo = true;
               this.message(
@@ -427,16 +439,18 @@ export class RegistrationHelper extends BasePage {
                 'El campo Procedencia en Información del Vehículo esta vacio, favor de complementar'
               );
               break;
-            } */ else if (good.theftReport === null) {
-              //reporte de robos
-              tipoRelVehiculo = true;
-              this.message(
-                'error',
-                `Error en el bien ${good.goodDescription}`,
-                'El campo Reporte de Robo en Información del Vehículo esta vacio, favor de complementar'
-              );
-              break;
-            } else if (good.serie === null) {
+            } */
+            // else if (good.theftReport === null) {
+            //   //reporte de robos
+            //   tipoRelVehiculo = true;
+            //   this.message(
+            //     'error',
+            //     `Error en el bien ${good.goodDescription}`,
+            //     'El campo Reporte de Robo en Información del Vehículo esta vacio, favor de complementar'
+            //   );
+            //   break;
+            // }
+            else if (good.serie === null) {
               // serie
               tipoRelVehiculo = true;
               this.message(

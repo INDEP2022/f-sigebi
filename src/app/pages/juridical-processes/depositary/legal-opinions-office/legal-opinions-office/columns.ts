@@ -106,3 +106,32 @@ export const RELATED_FOLIO_COLUMNS = {
     sort: false,
   },
 };
+
+export const CCP_COLUMS_OFICIO = {
+  personExtInt_: {
+    title: 'Tipo persona',
+    type: 'string',
+    sort: false,
+    // valuePrepareFunction: (value: any) => {
+    //   console.log(value);
+    //   if (value !== null) {
+    //     switch (value) {
+    //       case 'I':
+    //         value = `INTERNA`;
+    //         return value;
+    //       case 'E':
+    //         value = `EXTERNA`;
+    //         return value;
+    //       default:
+    //         value = '';
+    //         return value;
+    //     }
+    //   }
+    // },
+  },
+  userOrPerson: {
+    title: 'Nombre persona',
+    type: 'string',
+    sort: false,
+  },
+};

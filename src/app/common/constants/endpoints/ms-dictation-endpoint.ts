@@ -1,6 +1,7 @@
 export enum DictationEndpoints {
   BasePath = 'dictation',
   Dictation = 'dictation',
+  DelegationDictation = 'application/delegationDictamXofDicta',
   DictationXGood1 = 'dictation-x-good1',
   ValidationGoodAvailable = 'validation-good-available',
   getParamsOfTypeGood = 'additional-queries/get-params-of-v-type-good',
@@ -20,9 +21,11 @@ export enum DictationEndpoints {
   RTdictaAarusr = 'r-tdicta-aarusr',
   TmpDictation = 'tmp-dictation',
   TmpExpDesahogoB = 'tmp-exp-desahogob',
-  GetOfficeByYear = 'application/get-office-by-year',
-  GetOfficeByYear_ = 'application/get-office-by-year2',
+  GetOfficeByYear = 'application/get-exist-register',
+  GetOfficeByYear_ = 'application/get-exist-register2',
   GetOfficeByYear1 = 'application/get-office-by-year-1',
   GetOfficeByYear2 = 'application/get-office-by-year-2',
   GetOfficeByYear3 = 'application/get-office-by-year-3',
+  FaFlagDest = '/application/fa-flag-dest',
+  DictamenDelegation = 'aplication/delegationDictamXofDicta',
 }

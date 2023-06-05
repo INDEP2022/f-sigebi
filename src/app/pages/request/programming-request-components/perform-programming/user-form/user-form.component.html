@@ -15,6 +15,19 @@
       </form-field>
       <div class="row pt-3">
         <form-field
+          *ngIf="this.userData?.email"
+          [control]="userForm.get('email')"
+          label="Correo electr&oacute;nico">
+          <input
+            type="text"
+            class="form-control"
+            maxlength="40"
+            [readOnly]="true"
+            formControlName="email" />
+        </form-field>
+
+        <form-field
+          *ngIf="!this.userData?.email"
           [control]="userForm.get('email')"
           label="Correo electr&oacute;nico">
           <input

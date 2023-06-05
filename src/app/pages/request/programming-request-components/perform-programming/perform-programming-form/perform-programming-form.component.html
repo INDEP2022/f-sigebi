@@ -161,6 +161,7 @@
                 type="datetime"
                 class="form-control"
                 formControlName="startDate"
+                (ngModelChange)="checkInfoDate($event)"
                 [daysDisabled]="[6, 0]"
                 [bsConfig]="{
                   withTimepicker: true,
@@ -395,7 +396,7 @@
         [settings]="settingUser"
         [source]="usersToProgramming"
         (edit)="openForm($event.data)"
-        (delete)="delete($event.data)">
+        (delete)="deleteUser($event.data)">
       </ng2-smart-table>
       <app-pagination
         [params]="paramsUsers"
@@ -537,7 +538,7 @@
                   [(settings)]="settingGuardGoods"></app-columns-select>
               </div>
               <ng2-smart-table
-                [attr.class]="'table-bordered'"
+                [attr.class]="'table-bordered table-responsive'"
                 [settings]="settingGuardGoods"
                 [source]="goodsGuards"
                 (edit)="showGood($event.data)"
@@ -553,7 +554,7 @@
                   [(settings)]="settingWarehouseGoods"></app-columns-select>
               </div>
               <ng2-smart-table
-                [attr.class]="'table-bordered'"
+                [attr.class]="'table-bordered table-responsive'"
                 [settings]="settingWarehouseGoods"
                 [source]="goodsWarehouse"
                 (edit)="showGood($event.data)"

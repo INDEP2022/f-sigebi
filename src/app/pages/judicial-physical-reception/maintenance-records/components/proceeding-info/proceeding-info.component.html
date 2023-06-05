@@ -1,23 +1,12 @@
 <form class="form-material" [formGroup]="form" id="proceeding-info">
-  <div class="row border border-dark">
-    <div class="row header-proceeding-info">
-      <h5 class="title col-md-6">Informaci&oacute;n del Acta</h5>
-      <div class="col-md-6 buttons">
-        <div class="col-md-6">
-          <button
-            [class]="disabled || form.invalid || registro ? 'disabled' : ''"
-            class="btn btn-primary btn-sm active"
-            (click)="filter()">
-            <i class="fa fa-search"></i> Filtrar
-          </button>
-        </div>
-        <div class="col-md-6">
-          <app-clean-filters-shared
-            [form]="form"
-            (cleanFiltersEvent)="
-              deleteProceedings()
-            "></app-clean-filters-shared>
-        </div>
+  <div class="row">
+    <div class="header-proceeding-info">
+      <div class="title">
+        <h5>Informaci&oacute;n del Acta</h5>
+      </div>
+      <div class="paginator">
+        <ng-content></ng-content>
+
         <!-- <div class="col-md-6">
           <button
             [class]="disabled || form.invalid || !registro ? 'disabled' : ''"
@@ -27,6 +16,17 @@
           </button>
         </div> -->
       </div>
+    </div>
+    <div class="buttons">
+      <button
+        [class]="disabled || form.invalid || registro ? 'disabled' : ''"
+        class="btn btn-primary btn-sm active"
+        (click)="filter()">
+        <i class="fa fa-search"></i> Filtrar
+      </button>
+      <app-clean-filters-shared
+        [form]="form"
+        (cleanFiltersEvent)="deleteProceedings()"></app-clean-filters-shared>
     </div>
     <div class="col-md-6 mt-5">
       <div class="row mb-4">
@@ -44,23 +44,20 @@
             (valueChange)="update($event)">
           </ng-custom-select-loading> -->
 
-          <form-field [control]="form.get('id')" label="No&#46; Acta">
+          <form-field [control]="form.get('id')" label="No. Acta">
             <input
-              type="number"
               class="form-control"
               formControlName="id"
-              min="1"
-              maxlength="20"
+              maxlength="10"
               [readonly]="loading" />
           </form-field>
         </div>
         <div class="col-md-4">
-          <form-field [control]="form.get('numFile')" label="No Expediente">
+          <form-field [control]="form.get('numFile')" label="No. Expediente">
             <input
-              type="number"
               class="form-control"
               formControlName="numFile"
-              min="1"
+              maxlength="10"
               [readonly]="disabled" />
           </form-field>
         </div>
@@ -81,7 +78,7 @@
       </div>
       <div class="row mb-4">
         <div class="col-md-9">
-          <form-field [control]="form.get('cveActa')" label="Cve Acta">
+          <form-field [control]="form.get('cveActa')" label="Clave de Acta">
             <input
               type="text"
               class="form-control"
@@ -93,7 +90,7 @@
         <div class="col-md-3">
           <form-field
             [control]="form.get('receiptKey')"
-            label="Clave Del Recibe">
+            label="Clave del Recibe">
             <input
               type="text"
               class="form-control"
@@ -165,74 +162,69 @@
         </form-field>
       </div>
       <div class="row mb-4">
-        <ng-custom-select-loading
+        <form-field
+          [control]="form.get('numDelegation1')"
+          label="Delegación Recibe">
+          <ng-select formControlName="numDelegation1" class="form-control">
+            <ng-option
+              [value]="delegation.delegationId"
+              *ngFor="let delegation of delegations">
+              {{ delegation.delegationId }} - {{ delegation.description }}
+            </ng-option>
+          </ng-select>
+        </form-field>
+
+        <!-- <ng-custom-select-loading
           [form]="form"
           [readonly]="loading"
-          formControlName="numDelegation1"
+          formControlName="numDelegation1Description"
           label="Delegación Recibe"
-          value="id"
-          bindLabel="id"
-          paramSearch="filter.id"
-          prefixSearch="$eq"
-          path="catalog/api/v1/delegation"
+          value="description"
+          bindLabel="description"
+          paramSearch="filter.description"
+          prefixSearch="$ilike"
+          path="catalog/api/v1/apps/getDelegations"
           [updateValues]="true"
           [labelTemplate]="delegationLabel"
-          [optionTemplate]="delegationOption">
-        </ng-custom-select-loading>
-        <!-- <app-recibe-form
-          [form]="form"
-          [disabled]="disabled"
-          label="Recibe"
-          formField="numDelegation1"
-          formFieldName="numDelegation1Description"></app-recibe-form>
-        <app-recibe-form
-          [form]="form"
-          [disabled]="disabled"
-          label="Administra"
-          formField="numDelegation2"
-          formFieldName="numDelegation2Description"></app-recibe-form> -->
-        <!-- <div class="col-md-6">
-          <form-field [control]="form.get('numDelegation1')" label="Recibe">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="numDelegation1"
-              [readonly]="loading" />
-          </form-field>
-        </div>
-        <div class="col-md-6">
-          <form-field [control]="form.get('numDelegation2')" label="Administra">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="numDelegation2"
-              [readonly]="loading" />
-          </form-field>
-        </div> -->
+          [optionTemplate]="delegationOption"
+          (getObject)="updateDelegationRecibe($event)">
+        </ng-custom-select-loading> -->
       </div>
       <div class="mb-3">
-        <ng-custom-select-loading
+        <form-field
+          [control]="form.get('numDelegation2')"
+          label="Delegación Administra">
+          <ng-select formControlName="numDelegation2" class="form-control">
+            <ng-option
+              [value]="delegation.delegationId"
+              *ngFor="let delegation of delegations">
+              {{ delegation.delegationId }} - {{ delegation.description }}
+            </ng-option>
+          </ng-select>
+        </form-field>
+        <!-- <ng-custom-select-loading
           [form]="form"
           [readonly]="loading"
-          formControlName="numDelegation2"
+          formControlName="numDelegation2Description"
           label="Delegación Administra "
-          value="id"
-          bindLabel="id"
-          paramSearch="filter.id"
-          prefixSearch="$eq"
-          path="catalog/api/v1/delegation"
+          value="description"
+          bindLabel="description"
+          paramSearch="filter.description"
+          prefixSearch="$ilike"
+          path="catalog/api/v1/apps/getDelegations"
           [updateValues]="true"
           [labelTemplate]="delegationLabel"
-          [optionTemplate]="delegationOption">
-        </ng-custom-select-loading>
+          [optionTemplate]="delegationOption"
+          (getObject)="updateDelegationAdministra($event)">
+        </ng-custom-select-loading> -->
       </div>
 
       <ng-template #delegationLabel let-item="item">
-        <div>{{ item.id }} - {{ item.description }}</div>
+        <div>{{ item.delegationId }} - {{ item.description }}</div>
       </ng-template>
       <ng-template #delegationOption let-item="item">
         <div [title]="item.id + '-' + item.description">
-          {{ item.id }} - {{ item.description }}
+          {{ item.delegationId }} - {{ item.description }}
         </div>
       </ng-template>
     </div>

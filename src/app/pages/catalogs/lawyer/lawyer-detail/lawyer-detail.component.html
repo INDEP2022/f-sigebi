@@ -11,7 +11,7 @@
           </form-field>
         </div>
         <div class="col-md-6">
-          <form-field [control]="form.get('street')" label="Calle N">
+          <form-field [control]="form.get('street')" label="Calle">
             <input type="text" class="form-control" formControlName="street" />
           </form-field>
         </div>
@@ -23,7 +23,7 @@
             [control]="form.get('streetNumber')"
             label="No&#46; Exterior">
             <input
-              type="number"
+              type="text"
               class="form-control"
               min="1"
               pattern="^[0-9]+"
@@ -35,7 +35,7 @@
             [control]="form.get('apartmentNumber')"
             label="No&#46; Interior">
             <input
-              type="number"
+              type="text"
               min="1"
               pattern="^[0-9]+"
               class="form-control"

@@ -5,6 +5,7 @@
       [control]="formSiab.get('initialDate')"
       label="Fecha Inicial">
       <input
+        (bsValueChange)="initialDateChange($event)"
         type="text"
         class="form-control"
         bsDatepicker
@@ -81,7 +82,7 @@
       [control]="formSiab.get('expedient')"
       label="Expediente">
       <input
-        type="text"
+        type="number"
         [max-length]="2000"
         class="form-control"
         formControlName="expedient" />
@@ -92,7 +93,11 @@
       class="col-md-4 mt-4"
       [control]="formSiab.get('dictumCve')"
       label="CVE Dictamen">
-      <input type="text" class="form-control" formControlName="dictumCve" />
+      <input
+        type="text"
+        [max-length]="2000"
+        class="form-control"
+        formControlName="dictumCve" />
     </form-field>
     <form-field
       *ngIf="registerControls.typeEvent.value == 'CM'"

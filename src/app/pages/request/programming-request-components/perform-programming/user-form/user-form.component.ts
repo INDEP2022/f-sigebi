@@ -58,6 +58,7 @@ export class UserFormComponent extends BasePage implements OnInit {
       this.edit = true;
       if (this.userData.userCharge)
         this.userData.userCharge = this.userData.charge.keyId;
+      console.log('this.userData', this.userData);
       this.userForm.patchValue(this.userData);
     }
   }
@@ -97,6 +98,14 @@ export class UserFormComponent extends BasePage implements OnInit {
             const create: boolean = true;
             this.modalService.content.callback(true, create);
             this.close();
+          },
+          error: error => {
+            this.onLoadToast(
+              'info',
+              'Advertencia',
+              'Correo electrónico ya registrado verifica'
+            );
+            this.loading = false;
           },
         });
       }

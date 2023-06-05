@@ -35,6 +35,12 @@ export class DelegationService
     return this.delegationRepository.getAllPaginated(this.route, params);
   }
 
+  getAppsAll(): Observable<IListResponse<IDelegation>> {
+    return this.get<
+      IListResponse<{ delegationId: string; description: string }>
+    >('apps/getDelegations');
+  }
+
   getAllModal(self?: DelegationService, params?: ListParams) {
     return self.getAll(params);
   }
@@ -52,7 +58,11 @@ export class DelegationService
   }
 
   update(id: string | number, model: IDelegation): Observable<Object> {
-    return this.delegationRepository.update(this.route, id, model);
+    return this.delegationRepository.updateCatagaloDelegations(
+      this.route,
+      id,
+      model
+    );
   }
 
   remove(id: string | number): Observable<Object> {

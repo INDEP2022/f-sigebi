@@ -2,20 +2,26 @@
   <div class="ch-content" header>
     <h5 class="title">Actas de Entrega Recepci&oacute;n</h5>
   </div>
-
+  
   <div body>
     <form class="form-material" [formGroup]="form">
       <div class="row mb-4">
         <div class="col-md-4">
           <div class="row">
-            <div class="col-md-9">
+            <div class="col">
               <button
                 id="expedient-number"
-                class="btn btn-primary btn-sm disabled active"
+                [class]="loading ? 'disabled' : ''"
+                class="btn btn-primary btn-sm disabled mr-2 active"
                 (click)="searchButton()">
-                Buscar
+                <i class="fa fa-search"></i> Buscar
               </button>
-              <span class="ml-3">{{ statusProceeding }}</span>
+              <button
+                [class]="loading ? 'disabled' : ''"
+                class="btn btn-danger btn-sm active"
+                (click)="clearAll()">
+                Limpiar
+              </button>
             </div>
           </div>
         </div>
@@ -26,6 +32,7 @@
                 control="listExpedients"
                 label="Expedientes"
                 bindLabel="id"
+                [class]="loading ? 'disabled' : ''"
                 (change)="selectExpedient($event)"
                 [data]="dataExpedients"
                 [searchable]="false"
@@ -37,9 +44,28 @@
           <span>Navegación de actas</span>
           <div class="row mt-3">
             <div class="col-md-9">
-              <button
+              <div class="d-flex justify-content-center align-items-center">
+                <app-pagination
+                  [params]="paramsActNavigate"
+                  [totalItems]="proceedingData.length"
+                  [limit]="newLimitparamsActNavigate"
+                  [paginatorPageSize]="false"
+                  [paginatorRangeLabel]="false"
+                  [maxSize]="1"></app-pagination>
+                <div class="col">
+                  <button
+                    id="expedient-number"
+                    class="btn btn-primary btn-sm active ml-4"
+                    [class]="loading ? 'disabled' : ''"
+                    (click)="newProceeding()">
+                    Nueva acta
+                  </button>
+                </div>
+              </div>
+              <!-- <button
                 id="expedient-number"
                 [disabled]="!prevProce"
+                [class]="loading ? 'disabled' : ''"
                 class="btn btn-secondary btn-sm active"
                 (click)="prevProceeding()">
                 <i class="fa fa-angle-left"></i>
@@ -63,16 +89,18 @@
                 id="expedient-number"
                 class="btn btn-secondary btn-sm active"
                 [disabled]="!nextProce"
+                [class]="loading ? 'disabled' : ''"
                 (click)="nextProceeding()">
                 <i class="fa fa-angle-right"></i>
               </button>
               <button
                 *ngIf="newAct"
                 id="expedient-number"
+                [class]="loading ? 'disabled' : ''"
                 class="btn btn-primary btn-sm active ml-4"
                 (click)="newProceeding()">
                 Nueva acta
-              </button>
+              </button> -->
             </div>
           </div>
         </div>
@@ -81,7 +109,7 @@
       <div class="row mb-3 mt-3">
         <div class="col-md-4">
           <div class="row">
-            <div class="col-md-9">
+            <div class="col">
               <form-field [control]="form.get('expediente')" label="Expediente">
                 <input
                   (ngModelChange)="
@@ -93,6 +121,17 @@
                   [readOnly]="blockExpedient"
                   class="form-control"
                   formControlName="expediente" />
+              </form-field>
+            </div>
+            <div *ngIf="form.get('statusProceeding').value != null" class="col">
+              <form-field
+                [control]="form.get('statusProceeding')"
+                label="Estatus del acta">
+                <input
+                  type="text"
+                  readOnly="true"
+                  class="form-control"
+                  formControlName="statusProceeding" />
               </form-field>
             </div>
           </div>
@@ -136,7 +175,7 @@
                   id="acta"
                   control="acta"
                   [class]="initialdisabled ? 'disabled' : ''"
-                  label="Acta 1"
+                  label="Tipo Acta"
                   bindLabel="records"
                   [data]="records"
                   [searchable]="false"
@@ -149,9 +188,8 @@
                 <ngx-select
                   id="transfer"
                   control="transfer"
-                  class="pt-5"
                   [class]="initialdisabled ? 'disabled' : ''"
-                  label="Transfer"
+                  label="Transferente"
                   bindLabel="transferentkey"
                   [searchable]="false"
                   [data]="transferSelect"
@@ -160,10 +198,10 @@
             </div>
 
             <div class="col">
-              <form-field [control]="form.get('ident')" label="Ident">
+              <form-field [control]="form.get('ident')" label="Identificador">
                 <input
                   type="text"
-                  class="form-control disabled"
+                  class="form-control disabled pt-0"
                   formControlName="ident" />
               </form-field>
             </div>
@@ -188,7 +226,7 @@
                   (fetchItems)="getAdmin($event)"
                   [class]="initialdisabled ? 'disabled' : ''"
                   control="admin"
-                  label="Admin"
+                  label="Administra"
                   bindLabel="delegation"
                   [data]="adminSelect"
                   [form]="form"></ngx-select>
@@ -204,7 +242,7 @@
               <form-field [control]="form.get('folio')" label="Folio">
                 <input
                   type="number"
-                  class="form-control"
+                  class="form-control pt-0"
                   [class]="initialdisabled ? 'disabled' : ''"
                   min="0"
                   [max-length]="5"
@@ -215,7 +253,7 @@
               <form-field [control]="form.get('year')" label="A&ntilde;o">
                 <input
                   type="number"
-                  class="form-control disabled"
+                  class="form-control disabled pt-0"
                   formControlName="year" />
               </form-field>
             </div>
@@ -223,7 +261,7 @@
               <form-field [control]="form.get('mes')" label="Mes">
                 <input
                   type="number"
-                  class="form-control disabled"
+                  class="form-control disabled pt-0"
                   formControlName="mes" />
               </form-field>
             </div>
@@ -231,10 +269,10 @@
         </div>
       </div>
       <hr class="row" />
-      <div class="row">
+      <div [class]="loading ? 'disabled' : ''" class="row">
         <div class="col-md-6">
           <div class="row">
-            <form-field [control]="form.get('acta2')" label="Acta 2">
+            <form-field [control]="form.get('acta2')" label="Acta">
               <input
                 type="text"
                 class="form-control disabled"
@@ -298,32 +336,6 @@
                   [class]="!isEnablefecElabRec ? 'disabled' : ''"
                   formControlName="fecEntBien" />
               </form-field>
-            </div>
-          </div>
-
-          <div class="row">
-            <div class="col-md-5">
-              <form-field
-                [control]="form.get('folioEscaneo')"
-                label="Folio de Escaneo">
-                <input
-                  type="number"
-                  class="form-control"
-                  min="1"
-                  formControlName="folioEscaneo"
-                  maxlength="15" />
-              </form-field>
-            </div>
-
-            <div class="col-md-4 pt-3">
-              <button
-                class="btn btn-primary btn-sm active"
-                type="button"
-                size="small"
-                min="1"
-                (click)="replicateFolio()">
-                Replicar Folio
-              </button>
             </div>
           </div>
         </div>
@@ -413,8 +425,21 @@
           </div>
         </div>
       </div>
+
       <hr class="row" />
-      <div class="row mb-5">
+
+      <app-scan-file-shared
+      [form]="form"
+      [formControlName]="folioEscaneo"
+      [cveDocument]="form.get('acta2').value"
+      [noExpedient]="form.get('expediente').value"
+      [statusProceeding]="form.get('statusProceeding').value"
+      [cveScreen]="cveScreen"
+      >
+      </app-scan-file-shared>
+
+      <hr class="row" />
+      <div [class]="loading ? 'disabled' : ''" class="row mb-5">
         <div class="d-flex justify-content-center">
           <div>
             <button
@@ -434,9 +459,11 @@
               {{ labelActa }}
             </button>
             <a
-              [routerLink]="['partialization']"
               class="my-1 mx-2 btn btn-warning active btn-sm"
               size="small"
+              [class]="
+                form.get('statusProceeding').value != null ? '' : 'disabled'
+              "
               (click)="goParcializacion()"
               >Parcializaci&oacute;n
             </a>
@@ -444,12 +471,22 @@
             <button
               type="button"
               class="my-1 mx-2 btn btn-danger active btn-sm"
+              [class]="
+                form.get('statusProceeding').value != null ? '' : 'disabled'
+              "
               (click)="deleteProceeding()">
               Eliminar Acta
             </button>
             <button
               type="button"
               class="my-1 mx-2 btn btn-secondary active btn-sm"
+              [class]="
+                ['CERRADO', 'CERRADA'].includes(
+                  form.get('statusProceeding').value
+                )
+                  ? ''
+                  : 'disabled'
+              "
               (click)="goCargaMasiva()">
               Carga Masiva
             </button>
@@ -457,14 +494,22 @@
         </div>
       </div>
       <hr class="row" />
-      <div class="row pt-2 scroll-table">
+      <div [class]="loading ? 'table-loading' : 'row pt-2'">
         <ng2-smart-table
           class="col-md-12"
+          [attr.class]="'table-responsive table-bordered '"
           [settings]="settings1"
           [source]="dataGoods"
           (userRowSelect)="selectRow($event)"
           (rowDeselect)="deselectRow()"></ng2-smart-table>
       </div>
+      <app-pagination
+        *ngIf="!loading"
+        [params]="paramsDataGoods"
+        [pageSizeOptions]="[5, 10, 20]"
+        [limit]="limitDataGoods"
+        [totalItems]="totalItemsDataGoods"></app-pagination>
+
       <hr class="row" />
       <div class="row">
         <div class="d-flex justify-content-center">
@@ -472,6 +517,7 @@
             <input
               type="text"
               class="form-control"
+              style="overflow-y: scroll"
               [readOnly]="true"
               formControlName="estatusPrueba" />
           </form-field>
@@ -505,7 +551,7 @@
               <button
                 type="button"
                 class="mx-2 btn btn-secondary btn-sm active"
-                [disabled]="!act2Valid"
+                [disabled]="!dataGoods"
                 (click)="addGood()">
                 <i class="fa fa-angle-down"></i>
               </button>
@@ -514,7 +560,7 @@
         </div>
       </div>
       <hr class="row" />
-      <div class="row pt-2 scroll-table">
+      <div [class]="loading ? 'table-loading' : 'row pt-2 scroll-table'">
         <ng2-smart-table
           class="col-md-12"
           [settings]="settings2"
@@ -522,6 +568,12 @@
           (userRowSelect)="selectRowGoodActa($event)"
           (rowDeselect)="deselectRowGoodActa()"></ng2-smart-table>
       </div>
+      <app-pagination
+        *ngIf="!loading"
+        [params]="paramsDataGoodsAct"
+        [pageSizeOptions]="[5, 10, 20]"
+        [limit]="limitDataGoodsAct"
+        [totalItems]="totalItemsDataGoodsAct"></app-pagination>
       <hr class="row" />
       <div class="row">
         <div class="d-flex justify-content-center">
@@ -547,12 +599,6 @@
                 formControlName="indEdoFisico"
                 id="flexCheckDefault" />
             </div>
-            <!-- <form-check label="Requerido" for="label">
-              <input
-                id="label"
-                type="checkbox"
-                formControlName="indEdoFisico" />
-            </form-check> -->
           </form-field>
           <form-field
             class="col-md-3"
@@ -603,25 +649,17 @@
           <button
             type="button"
             size="small"
-            class="mx-2 my-1"
+            class="btn btn-primary btn-sm active mr-2"
             (click)="openEdoFisico()">
             Espec&iacute;fica Edo&#46; F&iacute;sico
           </button>
           <button
             type="button"
             size="small"
-            class="mx-2 my-1"
+            class="btn btn-primary btn-sm active"
             (click)="applyWarehouseSafe()">
             Aplica Alm&#46;&#47;Bov&#46;
           </button>
-          <!--  <a
-            [routerLink]="['flat-file']"
-            type="button"
-            nbButton
-            size="small"
-            class="mx-2 my-1"
-            >Exportar Datos</a
-          > -->
         </div>
       </div>
     </form>

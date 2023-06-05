@@ -53,7 +53,6 @@ export class OfficesListComponent extends BasePage implements OnInit {
         if (change.action === 'filter') {
           let filters = change.filter.filters;
           filters.map((filter: any) => {
-            console.log(filter);
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
@@ -104,7 +103,6 @@ export class OfficesListComponent extends BasePage implements OnInit {
         this.offices = response.data;
         this.data.load(this.offices);
         this.data.refresh();
-        console.log(this.offices);
         this.totalItems = response.count;
         this.loading = false;
       },

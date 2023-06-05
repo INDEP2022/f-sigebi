@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { ModalModule } from 'ngx-bootstrap/modal';
+import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { NgScrollbarModule } from 'ngx-scrollbar';
 import { DocumentsListComponent } from 'src/app/@standalone/documents-list/documents-list.component';
 import { FormLoaderComponent } from 'src/app/@standalone/form-loader/form-loader.component';
@@ -15,6 +16,7 @@ import { FlyersRoutingModule } from './flyers-routing.module';
 import { PublicMinistriesComponent } from './public-ministries/public-ministries.component';
 import { RecordUpdateComponent } from './record-update/record-update.component';
 import { DocumentsFormComponent } from './related-documents/documents-form/documents-form.component';
+import { ModalPersonaOficinaComponent } from './related-documents/modal-persona-oficina/modal-persona-oficina.component';
 import { RelatedDocumentsComponent } from './related-documents/related-documents.component';
 import { ShiftChangeHistoryComponent } from './shift-change/shift-change-history/shift-change-history.component';
 import { RdFShiftChangeComponent } from './shift-change/shift-change.component';
@@ -32,6 +34,7 @@ import { RdFShiftChangeComponent } from './shift-change/shift-change.component';
     DocReceptionTrackRecordsModalComponent,
     IDocReceptionndicatedFormComponent,
     DocumentsFormComponent,
+    ModalPersonaOficinaComponent,
   ],
   imports: [
     CommonModule,
@@ -42,6 +45,7 @@ import { RdFShiftChangeComponent } from './shift-change/shift-change.component';
     DocumentsListComponent,
     NgScrollbarModule,
     FormLoaderComponent,
+    TooltipModule.forRoot(),
   ],
 })
 export class FlyersModule {}

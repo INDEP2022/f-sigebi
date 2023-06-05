@@ -1,9 +1,31 @@
 <form [formGroup]="form" class="form-material">
+  <div class="row justify-content-end mb-5">
+    <div
+      class="col-md-3 col-sm-12 col-xs-12 justify-content-end"
+      *ngIf="!verBoton">
+      <button
+        class="btn btn-primary btn-sm active"
+        style="float: right"
+        (click)="buscarOficio()">
+        Buscar <i class="fa fa-search ml-2"></i>
+      </button>
+    </div>
+    <div
+      class="col-md-3 col-sm-12 col-xs-12 justify-content-end"
+      *ngIf="verBoton">
+      <button
+        type="button"
+        class="btn btn-primary btn-sm active"
+        style="float: right"
+        (click)="nuevaBusquedaOficio()">
+        Nueva B&uacute;squeda <i class="fa fa-search ml-2"></i>
+      </button>
+    </div>
+  </div>
+
   <div class="row">
     <div class="col-md-3 col-sm-12 col-xs-12">
-      <form-field
-        [control]="form.get('proceedingsNumber')"
-        label="No. Expediente">
+      <form-field [control]="form.get('proceedingsNumber')" label="Expediente">
         <input
           type="text"
           class="form-control"
@@ -12,7 +34,9 @@
       </form-field>
     </div>
     <div class="col-md-3 col-sm-12 col-xs-12">
-      <form-field [control]="form.get('managementNumber')" label="Dicta.">
+      <form-field
+        [control]="form.get('managementNumber')"
+        label="No_Of_Gestión">
         <input
           type="text"
           class="form-control"
@@ -21,7 +45,7 @@
       </form-field>
     </div>
     <div class="col-md-3 col-sm-12 col-xs-12">
-      <form-field [control]="form.get('flyerNumber')" label="No. Volante">
+      <form-field [control]="form.get('flyerNumber')" label="Volante">
         <input
           type="text"
           class="form-control"
@@ -39,26 +63,13 @@
       </form-field>
     </div>
   </div>
-  <div class="row">
-    <div class="col-md-3 col-sm-12 col-xs-12" *ngIf="!verBoton">
-      <button class="btn btn-primary btn-sm active" (click)="buscarOficio()">
-        Buscar <i class="fa fa-search ml-2"></i>
-      </button>
-    </div>
-    <div class="col-md-3 col-sm-12 col-xs-12" *ngIf="verBoton">
-      <button
-        class="btn btn-primary btn-sm active"
-        (click)="nuevaBusquedaOficio()">
-        Nueva B&uacute;squeda <i class="fa fa-search ml-2"></i>
-      </button>
-    </div>
-  </div>
 
   <hr />
   <div class="row">
     <div class="col-md-4 col-sm-12 col-xs-12 mt-3">
       <form-field [control]="form.get('RemitenteSenderUser')">
         <ngx-select
+          [readonly]="!managementNumber_"
           [form]="form"
           [data]="users$$"
           (change)="getDescUserPuesto($event)"
@@ -67,7 +78,7 @@
           value="id"
           control="RemitenteSenderUser"
           label="Remitente"
-          [searchOnInit]="true"
+          [searchOnInit]="false"
           [showTooltip]="true"
           termMaxLength="30"
           [labelTemplate]="userLabel"
@@ -81,31 +92,29 @@
             {{ item.id }} - {{ item.name }}
           </div>
         </ng-template>
-
-        <!--input type="text" class="form-control" formControlName="RemitenteSenderUser" /-->
       </form-field>
     </div>
     <div class="col-md-4 col-sm-12 col-xs-12 mt-3">
       <form-field [control]="form.get('charge')" label="Cargo">
-        <input type="text" class="form-control" formControlName="charge" />
+        <input
+          [readonly]="!managementNumber_"
+          type="text"
+          class="form-control"
+          formControlName="charge" />
       </form-field>
     </div>
     <!--$%#$%#$%#$%345345345-->
     <div class="col-md-4 col-sm-12 col-xs-12 mt-3">
-      <form-field [control]="form.get('addressee')">
-        <ngx-select
-          [form]="form"
-          [data]="users_1"
-          (fetchItems)="getUsers_1($event)"
-          bindLabel="userAndName"
-          value="id"
-          control="addressee"
-          label="Remitente"
-          [searchOnInit]="true"
-          [showTooltip]="true"
-          termMaxLength="30"
-          [labelTemplate]="userLabel"
-          [optionTemplate]="userOption">
+      <form-field [control]="form.get('addressee')" label="Destinatario">
+        <textarea
+          [readonly]="!managementNumber_"
+          type="text"
+          class="form-control"
+          formControlName="addressee">
+        </textarea>
+        <!-- <ngx-select [readonly]="!managementNumber_" [form]="form" [data]="users_1" (fetchItems)="getUsers_1($event)"
+          bindLabel="userAndName" value="id" control="addressee" label="Destinatario" [searchOnInit]="true"
+          [showTooltip]="true" termMaxLength="30" [labelTemplate]="userLabel" [optionTemplate]="userOption">
         </ngx-select>
         <ng-template #userLabel let-item="item">
           {{ item.id }} - {{ item.name }}
@@ -114,14 +123,9 @@
           <div [title]="item.id + '-' + item.name">
             {{ item.id }} - {{ item.name }}
           </div>
-        </ng-template>
+        </ng-template> -->
       </form-field>
     </div>
-
-    <!--form-field [control]="form.get('addressee')" label="Destinatario">
-        <input type="text" class="form-control" formControlName="addressee" />
-      </form-field-->
-    <!--%&%&%&%&%&%&%&%&%&%&%&-->
   </div>
   <div class="row mt-5">
     <div class="col-md-12 col-sm-12 col-xs-12">
@@ -131,6 +135,7 @@
         <textarea
           type="text"
           rows="4"
+          [readonly]="!managementNumber_"
           class="form-control"
           formControlName="paragraphInitial">
         </textarea>
@@ -144,6 +149,7 @@
         label="P&aacute;rrafo Final">
         <textarea
           type="text"
+          [readonly]="!managementNumber_"
           class="form-control"
           formControlName="paragraphFinish"></textarea>
       </form-field>
@@ -151,11 +157,10 @@
   </div>
   <div class="row mt-5">
     <div class="col-md-12 col-sm-12 col-xs-12">
-      <form-field
-        [control]="form.get('paragraphOptional')"
-        label="P&aacute;rrafo Opcional">
+      <form-field [control]="form.get('paragraphOptional')" label="">
         <textarea
           type="text"
+          [readonly]="!managementNumber_"
           class="form-control"
           formControlName="paragraphOptional"></textarea>
       </form-field>
@@ -163,77 +168,72 @@
   </div>
   <div class="row mt-5">
     <div class="col-md-12 col-sm-12 col-xs-12">
-      <form-field
-        [control]="form.get('descriptionSender')"
-        label="Descripci&oacute;n Remitente">
+      <form-field [control]="form.get('descriptionSender')" label="">
         <textarea
           type="text"
+          [readonly]="!managementNumber_"
           class="form-control"
           formControlName="descriptionSender"></textarea>
       </form-field>
     </div>
   </div>
-  <!--                      modulo                           -->
-  <!-- <ng-container
-    class="row"
-    *ngFor="let valor of filtroPersonaExt; let i = index">
-    <app-form-array-oficio
-      [formulario]="form"
-      [filtroPersonaExt]="valor"
-      formArrayName="i"></app-form-array-oficio>
-  </ng-container> -->
-
-  <!--div class="row mt-3">
-    <div class="col-md-4 col-sm-12 col-xs-12 mt-3">
-      <form-field [control]="form.get('typePerson_I')" label="Tipo Persona">
-        <select class="form-control" formControlName="typePerson_I">
-          <option *ngFor="let option of options" [value]="option.value">
-            {{ option.label }}
-          </option>
-        </select>
-      </form-field>
-    </div>
-    <div class="col-md-4 col-sm-12 col-xs-12 mt-3">
-      <form-field [control]="form.get('senderUser_I')">
-        <ngx-select
-          [form]="form"
-          [data]="users$"
-          (change)="getDescUser('control_I', $event)"
-          [readonly]="form.get('typePerson_I').value === 'E'"
-          (fetchItems)="getUsers($event)"
-          bindLabel="userAndName"
-          value="id"
-          control="senderUser_I"
-          label="Usuario"
-          [searchOnInit]="true"
-          [showTooltip]="true"
-          termMaxLength="30"
-          [labelTemplate]="userLabel"
-          [optionTemplate]="userOption">
-        </ngx-select>
-        <ng-template #userLabel let-item="item">
-          {{ item.id }} - {{ item.name }}
-        </ng-template>
-        <ng-template #userOption let-item="item">
-          <div [title]="item.id + '-' + item.name">
-            {{ item.id }} - {{ item.name }}
-          </div>
-        </ng-template>
-      </form-field>
-    </div>
-    <div class="col-md-4 col-sm-12 col-xs-12 mt-4">
-      <form-field [control]="form.get('personaExt_I')" label="Nombre Persona">
-        <input
-          type="text"
-          class="form-control"
-          formControlName="personaExt_I"
-          [readonly]="!(form.get('typePerson_I').value === 'E')" />
-      </form-field>
-    </div>
-  </div-->
+  <!--div class="row pl-3"></div-->
   <hr />
-  <div class="row mb-5">
-    <div class="col-md-8 col-sm-12 col-xs-12">
+  <div class="ch-content" header>
+    <h5 class="title">C&#46;C&#46;P&#46;</h5>
+    <div class="col-md-5 buttons">
+      <!--app-columns-select [(settings)]="settings"></app-columns-select-->
+      <div>
+        <button
+          [disabled]="!managementNumber_"
+          (click)="openForm()"
+          class="btn btn-primary active btn-sm ml-3">
+          Nuevo
+        </button>
+      </div>
+    </div>
+  </div>
+  <div body>
+    <div class="row pt-4">
+      <div class="col-md-12">
+        <div class="table-responsive">
+          <div [class]="loading ? 'table-loading' : ''">
+            <ng2-smart-table
+              [attr.class]="'table-bordered'"
+              [settings]="settings"
+              [source]="filtroPersonaExt"
+              (delete)="showDeleteAlert($event.data)">
+            </ng2-smart-table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <hr />
+  <div class="row">
+    <div class="col-sm-12 col-12 col-md-6">
+      <h6>Documentos</h6>
+    </div>
+  </div>
+  <div class="row pt-2 mb-2">
+    <div class="col-sm-11 col-11 col-md-11">
+      <ng2-smart-table
+        (delete)="preDeleteDocOficioGest($event.data)"
+        [attr.class]="'table-bordered'"
+        [settings]="settings2"
+        [source]="IAttDocument"></ng2-smart-table>
+    </div>
+    <div class="col-1">
+      <button
+        [disabled]="!managementNumber_"
+        (click)="docAct()"
+        class="btn btn-secondary btn-sm active">
+        Doc.
+      </button>
+    </div>
+  </div>
+  <div class="row mt-5 mb-5 justify-content-center">
+    <!-- <div class="col-md-8 col-sm-12 col-xs-12">
       <table class="table table-bordered" style="width: 100%">
         <thead>
           <tr>
@@ -248,23 +248,26 @@
           </tr>
         </tbody>
       </table>
-    </div>
+    </div> -->
     <div class="col-md-4 col-sm-12 col-xs-12">
       <div class="d-flex justify-content-center">
-        <div class="m-3">
-          <confirm-button
-            text="Imprimir"
-            [disabled]="form.invalid"
-            [loading]="loading"
-            (confirm)="confirm()">
-          </confirm-button>
-        </div>
         <div class="m-3">
           <button
             type="button"
             class="btn btn-info active"
+            [disabled]="!managementNumber_"
             (click)="updateOficio()">
             Actualizar
+          </button>
+        </div>
+        <div class="m-3">
+          <button
+            type="button"
+            text="Imprimir"
+            [disabled]="!managementNumber_"
+            class="btn btn-primary active"
+            (click)="confirm()">
+            Imprimir
           </button>
         </div>
       </div>

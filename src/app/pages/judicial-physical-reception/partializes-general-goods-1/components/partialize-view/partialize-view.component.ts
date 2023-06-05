@@ -22,9 +22,8 @@ export class PartializeViewComponent extends BasePage implements OnInit {
   page = 1;
 
   constructor(
-    private service: PartializeGeneralGoodService // private serviceTab2: PartializeGeneralGoodTab2Service,
-  ) // private service2: PartializeGeneralGoodV2Service
-  {
+    private service: PartializeGeneralGoodService // private serviceTab2: PartializeGeneralGoodTab2Service, // private service2: PartializeGeneralGoodV2Service
+  ) {
     super();
     // this.params.value.limit = 11;
   }
@@ -39,6 +38,10 @@ export class PartializeViewComponent extends BasePage implements OnInit {
   //   //   ? this.service2Tab1
   //   //   : this.service2Tab2;
   // }
+
+  get saldo() {
+    return this.form.get('saldo') ? this.form.get('saldo').value : 0;
+  }
 
   get formGood() {
     return this.service.formGood;
@@ -55,39 +58,9 @@ export class PartializeViewComponent extends BasePage implements OnInit {
     this.service.bienesPar = value;
   }
 
-  filledRow() {
-    // debugger;
-    const final = this.page * this.params.value.limit;
-    if (this.bienesPar && this.bienesPar.length > 0) {
-      // debugger;
-      const bienesNotTotal = this.bienesPar.slice(0, this.bienesPar.length - 1);
-      this.service.pagedBienesPar = [
-        ...bienesNotTotal
-          .slice((this.page - 1) * this.params.value.limit, final)
-          .concat(this.bienesPar[this.bienesPar.length - 1]),
-      ];
-    } else {
-      this.service.pagedBienesPar = [...this.service.bienesPar];
-    }
-    this.loading = false;
+  get form() {
+    return this.service.formControl;
   }
-  // get pagedBienesPar() {
-
-  //   const final = (this.page * 10) - 1;
-  //   if (this.bienesPar && this.bienesPar.length > 0) {
-  //     // debugger;
-  //     const bienesNotTotal = this.bienesPar.slice(0, this.bienesPar.length - 1);
-  //     return bienesNotTotal
-  //       .slice(
-  //         (this.page - 1) * 10,
-  //         final
-  //       )
-  //       .concat(this.bienesPar[this.bienesPar.length - 1]);
-  //   } else {
-  //     return this.service.bienesPar;
-  //   }
-
-  // }
 
   get firtsCase() {
     return this.service.firstCase;
@@ -112,11 +85,28 @@ export class PartializeViewComponent extends BasePage implements OnInit {
     return this.service.firstCase;
   }
 
+  filledRow() {
+    // debugger;
+    const final = this.page * this.params.value.limit;
+    if (this.bienesPar && this.bienesPar.length > 0) {
+      // debugger;
+      const bienesNotTotal = this.bienesPar.slice(0, this.bienesPar.length - 1);
+      this.service.pagedBienesPar = [
+        ...bienesNotTotal
+          .slice((this.page - 1) * this.params.value.limit, final)
+          .concat(this.bienesPar[this.bienesPar.length - 1]),
+      ];
+    } else {
+      this.service.pagedBienesPar = [...this.service.bienesPar];
+    }
+    this.loading = false;
+  }
+
   get statePartialize() {
     if (
       this.form.invalid ||
-      this.formGood.invalid ||
-      this.vsum > this.vimporte
+      this.vsum > this.vimporte ||
+      +(this.saldo + '') === 0
     ) {
       return 'disabled';
     }
@@ -128,13 +118,18 @@ export class PartializeViewComponent extends BasePage implements OnInit {
   }
 
   get stateApply() {
-    if (this.formGood?.valid && this.bienesPar.length > 0) {
+    if (
+      this.bienesPar.length > 0 &&
+      +(this.saldo + '') >= 0 &&
+      this.service.haveAply
+    ) {
       return 'active';
     }
     return 'disabled';
   }
 
-  pressed(state: number) {
+  pressed(e: Event, state: number) {
+    e.stopPropagation();
     this.statePresed = state;
     if (state === 1) {
       this.loading = true;
@@ -166,14 +161,10 @@ export class PartializeViewComponent extends BasePage implements OnInit {
     });
   }
 
-  get form() {
-    return this.service.formControl;
-  }
-
   deleteRow(row: { data: IBienesPar; index: number }) {
     console.log(row);
     this.alertQuestion(
-      'warning',
+      'question',
       'Eliminar',
       '¿Desea eliminar este registro?'
     ).then(question => {
@@ -182,7 +173,7 @@ export class PartializeViewComponent extends BasePage implements OnInit {
         this.onLoadToast(
           'info',
           'Parcialización',
-          'Eliminada la parcialización ' + row.data.id
+          'Eliminada la parcialización'
         );
         if (row.index === 0) {
           this.bienesPar.shift();
@@ -191,12 +182,35 @@ export class PartializeViewComponent extends BasePage implements OnInit {
             .slice(0, row.index)
             .concat(this.bienesPar[this.bienesPar.length - 1]);
         }
-        this.bienesPar[this.bienesPar.length - 1].cantidad -= row.data.cantidad;
-        this.bienesPar[this.bienesPar.length - 1].avaluo -= row.data.avaluo;
-        this.bienesPar[this.bienesPar.length - 1].importe -= row.data.importe;
-        this.service.sumCant -= row.data.cantidad;
-        this.service.sumVal14 -= row.data.importe;
-        this.service.sumAvaluo -= row.data.avaluo;
+        debugger;
+        if (row.data.cantidad) {
+          this.bienesPar[this.bienesPar.length - 1].cantidad -= +(
+            row.data.cantidad + ''
+          );
+          this.bienesPar[this.bienesPar.length - 1].cantidad =
+            +this.bienesPar[this.bienesPar.length - 1].cantidad.toFixed(2);
+          this.service.sumCant -= +(row.data.cantidad + '');
+          this.service.sumCant = +this.service.sumCant.toFixed(2);
+        }
+        if (row.data.importe) {
+          this.bienesPar[this.bienesPar.length - 1].importe -= +(
+            row.data.importe + ''
+          );
+          this.bienesPar[this.bienesPar.length - 1].importe =
+            +this.bienesPar[this.bienesPar.length - 1].importe.toFixed(2);
+          this.service.sumVal14 -= +(row.data.importe + '');
+          this.service.sumVal14 = +this.service.sumVal14.toFixed(2);
+        }
+        if (row.data.avaluo) {
+          this.bienesPar[this.bienesPar.length - 1].avaluo -= +(
+            row.data.avaluo + ''
+          );
+          this.bienesPar[this.bienesPar.length - 1].avaluo =
+            +this.bienesPar[this.bienesPar.length - 1].avaluo.toFixed(2);
+          this.service.sumAvaluo -= +(row.data.avaluo + '');
+          this.service.sumAvaluo = +this.service.sumAvaluo.toFixed(2);
+        }
+
         let saldo = +this.form.get('saldo').value;
         if (!this.firstCase) {
           saldo += +(row.data.cantidad + '');

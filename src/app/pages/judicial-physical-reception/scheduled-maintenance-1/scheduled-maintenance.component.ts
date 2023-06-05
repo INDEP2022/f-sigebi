@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, FormControl } from '@angular/forms';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { takeUntil } from 'rxjs';
 import { IProceedingDeliveryReception } from 'src/app/core/models/ms-proceedings/proceeding-delivery-reception';
 import {
-  IDeleted,
-  INotDeleted,
+  INotSucess,
   IProceedingByGood,
+  ISucess,
   ProceedingsDeliveryReceptionService,
 } from 'src/app/core/services/ms-proceedings/proceedings-delivery-reception.service';
 import { ProceedingsDetailDeliveryReceptionService } from 'src/app/core/services/ms-proceedings/proceedings-detail-delivery-reception.service';
@@ -15,6 +15,7 @@ import { ACTAS_BY_GOOD_COLUMNS } from './../scheduled-maintenance/interfaces/col
 import { Router } from '@angular/router';
 import { SelectListFilteredModalComponent } from 'src/app/@standalone/modals/select-list-filtered-modal/select-list-filtered-modal.component';
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
+import { AttribGoodBadService } from 'src/app/core/services/ms-good/attrib-good-bad.service';
 import { ScheduledMaintenance } from '../scheduled-maintenance/scheduled-maintenance';
 
 @Component({
@@ -30,14 +31,24 @@ export class ScheduledMaintenanceComponent
   implements OnInit
 {
   selecteds: IProceedingDeliveryReception[] = [];
+  limit: FormControl = new FormControl(10);
   constructor(
     private modalService: BsModalService,
     protected override fb: FormBuilder,
     protected override deliveryService: ProceedingsDeliveryReceptionService,
     protected override detailService: ProceedingsDetailDeliveryReceptionService,
+    private attribGoodBadService: AttribGoodBadService,
     private router: Router
   ) {
     super(fb, deliveryService, detailService, 'filtersActa');
+    // debugger;
+    const paramsActa = localStorage.getItem('paramsActa');
+    if (paramsActa) {
+      const params = JSON.parse(paramsActa);
+      this.params.value.limit = params.limit;
+      this.params.value.page = params.page;
+      this.limit = new FormControl(params.limit);
+    }
     this.settings1 = {
       ...this.settings1,
       selectMode: 'multi',
@@ -49,14 +60,36 @@ export class ScheduledMaintenanceComponent
         delete: true,
       },
     };
+
+    // console.log(this.settings1);
+  }
+
+  override updateByPaginator() {
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe({
       next: response => {
         console.log(response);
-
-        this.getData();
+        localStorage.setItem(
+          'paramsActa',
+          JSON.stringify({ limit: response.limit, page: response.page })
+        );
+        // this.router.navigate([], {
+        //   relativeTo: this._route,
+        //   queryParams: { page: response.page },
+        //   queryParamsHandling: 'merge'
+        // })
+        this.getData(true);
       },
     });
-    // console.log(this.settings1);
+  }
+
+  override resetView() {
+    console.log('RESET VIEW');
+    this.data.load([]);
+    this.totalItems = 0;
+    localStorage.removeItem(this.formStorage);
+    localStorage.removeItem('paramsActa');
+    this.limit = new FormControl(10);
+    this.columnFilters = [];
   }
 
   private showMessageProceedingsRemoved(
@@ -72,7 +105,7 @@ export class ScheduledMaintenanceComponent
       this.onLoadToast(
         'success',
         'Exito',
-        `Se eliminaron las actas N° ${proceedings} ` +
+        `Se eliminaron las actas No. ${proceedings} ` +
           this.showMessageProceedingsNotRemoved(notRemoveds)
       );
     } else {
@@ -80,7 +113,7 @@ export class ScheduledMaintenanceComponent
         this.onLoadToast(
           'success',
           'Exito',
-          `Elimine primero el detalle de las actas N° ${proceedings}`
+          `Elimine primero el detalle de las actas No. ${proceedings}`
         );
       }
     }
@@ -93,7 +126,7 @@ export class ScheduledMaintenanceComponent
         proceedingsNotRemoveds +=
           selected + (index < this.selecteds.length - 1 ? ',' : '');
       });
-      return `pero no se pudieron eliminar las actas N° ${proceedingsNotRemoveds} porque tienen detalles de acta`;
+      return `pero no se pudieron eliminar las actas No. ${proceedingsNotRemoveds} porque tienen detalles de acta`;
     } else {
       return '';
     }
@@ -102,7 +135,7 @@ export class ScheduledMaintenanceComponent
   deleteProgramations() {
     console.log(this.selecteds);
     this.alertQuestion(
-      'warning',
+      'question',
       'Eliminar',
       'Desea eliminar estos registros?'
     ).then(question => {
@@ -113,10 +146,10 @@ export class ScheduledMaintenanceComponent
             const removeds: string[] = [];
             const notRemoveds: string[] = [];
             response.forEach(item => {
-              const { deleted } = item as IDeleted;
-              const { error } = item as INotDeleted;
-              if (deleted) {
-                removeds.push(deleted);
+              const { sucess } = item as ISucess;
+              const { error } = item as INotSucess;
+              if (sucess) {
+                removeds.push(sucess);
               }
               if (error) {
                 notRemoveds.push(error);
@@ -155,7 +188,7 @@ export class ScheduledMaintenanceComponent
   showDeleteAlert(item: IProceedingDeliveryReception) {
     console.log(item);
     this.alertQuestion(
-      'warning',
+      'question',
       'Eliminar',
       '¿Desea eliminar este registro?'
     ).then(question => {
@@ -163,16 +196,16 @@ export class ScheduledMaintenanceComponent
         this.deliveryService.deleteById(item).subscribe({
           next: response => {
             console.log(response);
-            this.getData();
+            this.getData(true);
             this.onLoadToast(
               'success',
               'Exito',
-              `Se elimino la acta N° ${item.id}`
+              `Se elimino la acta No. ${item.id}`
             );
           },
           error: err => {
             console.log(err);
-            let message = `No se pudo eliminar el Acta N° ${item.id}`;
+            let message = `No se pudo eliminar el Acta No. ${item.id}`;
             if (err.error.message.includes('detalle_acta_ent_recep')) {
               message = message + ` porque tiene detalles de acta`;
             }
@@ -188,6 +221,41 @@ export class ScheduledMaintenanceComponent
     this.selecteds = event.selected;
   }
 
+  getNulls() {
+    this.openModalSelect(
+      {
+        title: 'Listado de bienes con información requerida nula',
+        columnsType: {
+          id: {
+            title: 'No. Bien',
+            type: 'string',
+            sort: false,
+          },
+          motive: {
+            title: 'Motivo',
+            type: 'string',
+            sort: false,
+          },
+        },
+        service: this.attribGoodBadService,
+        dataObservableFn: this.attribGoodBadService.getAllModal,
+        searchFilter: null,
+        type: 'text',
+        showError: false,
+        widthButton: false,
+        placeholder: 'Buscar',
+      },
+      this.selectGoodNull
+    );
+  }
+
+  selectGoodNull(good: any, self: ScheduledMaintenanceComponent) {
+    console.log(good);
+    self.router.navigate(['pages/general-processes/goods-characteristics'], {
+      queryParams: { noBien: good.id },
+    });
+  }
+
   openModalActas() {
     this.openModalSelect(
       {
@@ -199,7 +267,7 @@ export class ScheduledMaintenanceComponent
         showError: false,
         initialCharge: false,
         widthButton: true,
-        placeholder: '',
+        placeholder: 'No. Bien',
       },
       this.selectActa
     );
