@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IGoodSssubtype } from 'src/app/core/models/catalogs/good-sssubtype.model';
@@ -94,22 +95,34 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     private fb: FormBuilder,
     private goodService: GoodService,
     private serviceDeleg: DelegationService,
-    private subdelegationService: SubdelegationService
+    private subdelegationService: SubdelegationService,
+    private activatedRoute: ActivatedRoute
   ) {
     super();
   }
 
   ngOnInit(): void {
     this.prepareForm();
-    this.form.get('noBien').valueChanges.subscribe({
-      next: val => {
-        this.goodService.getById(val).subscribe({
-          next: data => {
-            this.searchGood(data);
-          },
-        });
+    this.activatedRoute.queryParams.subscribe({
+      next: param => {
+        console.log(param);
+        this.searchGood(param['noBien']);
+        // this.goodService.getById2(param['noBien']).subscribe({
+        //   next: data => {
+        //     this.searchGood(data);
+        //   },
+        // });
       },
     });
+    // this.form.get('noBien').valueChanges.subscribe({
+    //   next: val => {
+    //     this.goodService.getById2(val).subscribe({
+    //       next: data => {
+    //         this.searchGood(data);
+    //       },
+    //     });
+    //   },
+    // });
   }
 
   prepareForm() {
@@ -156,14 +169,17 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
   }
 
   searchGood(good: any) {
-    const numberGood = Number(this.numberGood.value);
+    // const numberGood = Number(this.numberGood.value);
 
-    this.goodService.getById(numberGood).subscribe({
+    this.goodService.getById2(good).subscribe({
       next: response => {
-        this.good = response;
-        this.getDelegation(response.delegationNumber);
-        this.getSubdelegation(response.subDelegationNumber);
+        console.log(response);
 
+        // this.good = response;
+        // this.getDelegation(response.delegationNumber);
+        // this.getSubdelegation(response.subDelegationNumber);
+        this.delegation.setValue(response.delegationNumber.description);
+        this.subdelegation.setValue(response.subDelegationNumber.description);
         // this.getDelegation(response.)
         this.numberClassification.setValue(response.goodClassNumber);
         this.goodStatus.setValue(response.goodStatus);
@@ -173,8 +189,8 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
         this.goodReference.setValue(response.referenceValue);
         this.goodAppraisal.setValue(response.appraisedValue);
         this.goodDateVigency.setValue(response.appraisalVigDate);
-        this.goodLatitude.setValue(response.latitude);
-        this.goodLongitude.setValue(response.longitud);
+        // this.goodLatitude.setValue(response.latitude);
+        // this.goodLongitude.setValue(response.longitud);
         this.goodObservations.setValue(response.observationss);
         if (response.appraisal === null) {
           this.goodAppraisal2.setValue('0');

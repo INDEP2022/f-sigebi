@@ -1,7 +1,7 @@
 import { Component, Inject, inject, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { format } from 'date-fns';
-import { LocalDataSource, Ng2SmartTableComponent } from 'ng2-smart-table';
+import { Ng2SmartTableComponent } from 'ng2-smart-table';
 import { takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import {
@@ -168,11 +168,11 @@ export abstract class ScheduledMaintenance extends BasePageWidhtDinamicFiltersEx
 
   resetView() {
     console.log('RESET VIEW');
-    this.data = new LocalDataSource();
+    this.data.load([]);
     this.totalItems = 0;
     localStorage.removeItem(this.formStorage);
     this.columnFilters = [];
-    this.dinamicFilterUpdate();
+    // this.dinamicFilterUpdate();
   }
 
   extraOperations() {}
