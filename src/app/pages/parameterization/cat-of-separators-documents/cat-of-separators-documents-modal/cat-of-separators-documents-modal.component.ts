@@ -41,6 +41,7 @@ export class CatOfSeparatorsDocumentsModalComponent
     if (this.separatorsDocuments != null) {
       this.edit = true;
       this.separatorsDocumentsModalForm.patchValue(this.separatorsDocuments);
+      this.separatorsDocumentsModalForm.get('key').disable();
     }
   }
   close() {

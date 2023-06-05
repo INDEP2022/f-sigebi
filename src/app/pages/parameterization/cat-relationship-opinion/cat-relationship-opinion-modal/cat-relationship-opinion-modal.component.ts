@@ -110,6 +110,23 @@ export class CatRelationshipOpinionModalComponent
 
   update() {
     this.loading = true;
+    let form = {
+      code: this.rAsuntDicForm.controls['code'].value,
+      dictum: this.rAsuntDicForm.controls['dictumData'].value,
+      flyerType: this.rAsuntDicForm.controls['flyerType'].value,
+      doc: this.rAsuntDicForm.controls['doc'].value,
+      property: this.rAsuntDicForm.controls['property'].value,
+      g_of: this.rAsuntDicForm.controls['g_of'].value,
+      i: this.rAsuntDicForm.controls['i'].value,
+      e: this.rAsuntDicForm.controls['e'].value,
+    };
+
+    this.rAsuntDicService
+      .update(this.rAsuntDic.registryNumber, form)
+      .subscribe({
+        next: data => this.handleSuccess(),
+        error: error => (this.loading = false),
+      });
   }
 
   handleSuccess() {
