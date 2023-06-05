@@ -209,6 +209,12 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
   totalItemsDataGoodsAct: number = 0;
   limitDataGoodsAct = new FormControl(10);
 
+  //FOLIO DE ESCANEO
+  //FOLIO DE ESCANEO
+  folioEscaneo = 'folioEscaneo';
+  cveScreen = 'FACTREFCANCELAR';
+  nameReport = 'RGERGENSOLICDIGIT';
+
   act2Valid: boolean = false;
   adminSelect = new DefaultSelect();
   blockExpedient = false;
@@ -2877,15 +2883,12 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                       );
                       this.clearInputs();
                       this.loading = true;
-                      this.form
-                        .get('expediente')
-                        .setValue(this.numberExpedient);
+                      this.form;
                       this.goodsByExpediente();
 
                       /* this.form
                         .get('expediente')
                         .setValue(this.numberExpedient);
-                        this.getGoodsFn() */
                       /* await this.dataGoods.load(
                         this.dataGoods['data'].map((e: any) => {
                           for (let element of this.dataGoodAct['data']) {
