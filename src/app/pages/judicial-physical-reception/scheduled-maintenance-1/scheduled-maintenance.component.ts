@@ -13,9 +13,9 @@ import { ProceedingsDetailDeliveryReceptionService } from 'src/app/core/services
 import { ACTAS_BY_GOOD_COLUMNS } from './../scheduled-maintenance/interfaces/columns';
 
 import { Router } from '@angular/router';
-import { LocalDataSource } from 'ng2-smart-table';
 import { SelectListFilteredModalComponent } from 'src/app/@standalone/modals/select-list-filtered-modal/select-list-filtered-modal.component';
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
+import { AttribGoodBadService } from 'src/app/core/services/ms-good/attrib-good-bad.service';
 import { ScheduledMaintenance } from '../scheduled-maintenance/scheduled-maintenance';
 
 @Component({
@@ -37,6 +37,7 @@ export class ScheduledMaintenanceComponent
     protected override fb: FormBuilder,
     protected override deliveryService: ProceedingsDeliveryReceptionService,
     protected override detailService: ProceedingsDetailDeliveryReceptionService,
+    private attribGoodBadService: AttribGoodBadService,
     private router: Router
   ) {
     super(fb, deliveryService, detailService, 'filtersActa');
@@ -83,7 +84,7 @@ export class ScheduledMaintenanceComponent
 
   override resetView() {
     console.log('RESET VIEW');
-    this.data = new LocalDataSource();
+    this.data.load([]);
     this.totalItems = 0;
     localStorage.removeItem(this.formStorage);
     localStorage.removeItem('paramsActa');
@@ -218,6 +219,41 @@ export class ScheduledMaintenanceComponent
   rowsSelected(event: { selected: IProceedingDeliveryReception[] }) {
     console.log(event);
     this.selecteds = event.selected;
+  }
+
+  getNulls() {
+    this.openModalSelect(
+      {
+        title: 'Listado de bienes con información requerida nula',
+        columnsType: {
+          id: {
+            title: 'No. Bien',
+            type: 'string',
+            sort: false,
+          },
+          motive: {
+            title: 'Motivo',
+            type: 'string',
+            sort: false,
+          },
+        },
+        service: this.attribGoodBadService,
+        dataObservableFn: this.attribGoodBadService.getAllModal,
+        searchFilter: null,
+        type: 'text',
+        showError: false,
+        widthButton: false,
+        placeholder: 'Buscar',
+      },
+      this.selectGoodNull
+    );
+  }
+
+  selectGoodNull(good: any, self: ScheduledMaintenanceComponent) {
+    console.log(good);
+    self.router.navigate(['pages/general-processes/goods-characteristics'], {
+      queryParams: { noBien: good.id },
+    });
   }
 
   openModalActas() {

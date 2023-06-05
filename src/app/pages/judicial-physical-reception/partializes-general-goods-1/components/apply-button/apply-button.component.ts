@@ -541,7 +541,7 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
         vimpbien = item.cantidad;
       }
       item.cantidad = +(this.saldo.value + '');
-      this.saldo.setValue(0);
+
       this.service.sumCant += item.cantidad;
       this.service.sumVal14 += item.importe;
       this.service.sumAvaluo += item.avaluo;
@@ -836,6 +836,7 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
                   0,
                   newDescription.length > 1250 ? 1250 : newDescription.length
                 );
+                this.saldo.setValue(0);
               }
               this.fillPagedRow.emit();
               await this.finishApply(vobserv_padre, vdesc_padre);
