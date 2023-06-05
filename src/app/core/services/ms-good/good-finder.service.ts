@@ -41,4 +41,9 @@ export class GoodFinderService extends HttpService {
     const route = GoodFinderEndpoint.UpdateGoodStatus;
     return this.post(`${route}`, body);
   }
+
+  ableTosignDictamination(request: number) {
+    const route = '';
+    return;
+  }
 }

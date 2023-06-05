@@ -1519,6 +1519,10 @@ export class RegistrationOfRequestsComponent
       this.goodfinderService.updateStatusProcess(body).subscribe({
         next: resp => {
           resolve(true);
+        },
+        error: error => {
+          reject('Error al actualizar los estados');
+          console.log('Error al actualizar los estados ', error);
           this.onLoadToast(
             'error',
             'Error al actualizar los estados de los bienes',
