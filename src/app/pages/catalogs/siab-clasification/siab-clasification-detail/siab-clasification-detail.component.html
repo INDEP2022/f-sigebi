@@ -11,9 +11,10 @@
               [control]="siabClasificationform.get('typeId')"
               label="Tipo">
               <input
-                type="text"
+                type="number"
                 class="form-control"
-                formControlName="typeId" />
+                formControlName="typeId"
+                min="0" />
             </form-field>
           </div>
         </div>
@@ -38,9 +39,10 @@
               [control]="siabClasificationform.get('subtypeId')"
               label="Subtipo">
               <input
-                type="text"
+                type="number"
                 class="form-control"
-                formControlName="subtypeId" />
+                formControlName="subtypeId"
+                min="0" />
             </form-field>
           </div>
         </div>
@@ -66,9 +68,10 @@
               [control]="siabClasificationform.get('ssubtypeId')"
               label="Sub subtipo">
               <input
-                type="text"
+                type="number"
                 class="form-control"
-                formControlName="ssubtypeId" />
+                formControlName="ssubtypeId"
+                min="0" />
             </form-field>
           </div>
         </div>
@@ -93,9 +96,10 @@
               [control]="siabClasificationform.get('sssubtypeId')"
               label="Sssubtipo">
               <input
-                type="text"
+                type="number"
                 class="form-control"
-                formControlName="sssubtypeId" />
+                formControlName="sssubtypeId"
+                min="0" />
             </form-field>
           </div>
         </div>
@@ -145,7 +149,11 @@
           <form-field
             [control]="siabClasificationform.get('version')"
             label="Versión">
-            <input type="text" class="form-control" formControlName="version" />
+            <input
+              type="number"
+              class="form-control"
+              formControlName="version"
+              min="0" />
           </form-field>
         </div>
       </div>

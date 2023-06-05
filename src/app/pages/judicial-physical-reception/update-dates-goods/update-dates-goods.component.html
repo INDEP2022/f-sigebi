@@ -27,7 +27,11 @@
       formControlName="fin" />
   </form-field>
   <button
-    [class]="disabled ? 'disabled' : ''"
+    [class]="
+      disabled || (!form.get('inicio').value && !form.get('fin').value)
+        ? 'disabled'
+        : ''
+    "
     class="btn btn-primary btn-sm active"
     (click)="update()">
     Guardar

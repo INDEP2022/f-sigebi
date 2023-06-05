@@ -284,7 +284,7 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
     );
   }
 
-  replicate() {
+  async replicate() {
     if (!this.officeDictationData && !this.dictationData) {
       return;
     }
@@ -294,6 +294,37 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
     ) {
       if (this.form.get('scanningFoli').value) {
         // Replicate function
+        const response = await this.alertQuestion(
+          'question',
+          'Aviso',
+          'Se generará un nuevo folio de escaneo y se le copiarán las imágenes del folio de escaneo actual. ¿Deseas continuar?'
+        );
+
+        if (!response.isConfirmed) {
+          return;
+        }
+
+        // if (!this.dictationData.wheelNumber) {
+        //   this.onLoadToast(
+        //     'error',
+        //     'Error',
+        //     'El trámite no tiene un número de volante'
+        //   );
+        //   return;
+        // }
+
+        this.getDocumentsCount().subscribe(count => {
+          if (count == 0) {
+            this.alert(
+              'warning',
+              'Folio de escaneo inválido para replicar',
+              ''
+            );
+          } else {
+            // INSERTAR REGISTRO PARA EL DOCUMENTO
+            this.saveNewUniversalFolio_Replicate();
+          }
+        });
       } else {
         this.alertInfo(
           'warning',
@@ -310,40 +341,6 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
       );
       return;
     }
-
-    // if (!this.dictationData.wheelNumber) {
-    //   this.onLoadToast(
-    //     'error',
-    //     'Error',
-    //     'El trámite no tiene un número de volante'
-    //   );
-    //   return;
-    // }
-
-    this.getDocumentsCount().subscribe(count => {
-      if (count == 0) {
-        this.alert('warning', 'Folio de escaneo inválido para replicar', '');
-      } else {
-        if (count) {
-          this.alert(
-            'error',
-            'Error',
-            'No existe un folio universal escaneado para replicar'
-          );
-          return;
-        }
-        if (count > 1) {
-          this.alert(
-            'error',
-            'Error',
-            'Existe mas de un folio universal escaneado para replicar'
-          );
-          return;
-        }
-        // INSERTAR REGISTRO PARA EL DOCUMENTO
-        this.saveNewUniversalFolio_Replicate();
-      }
-    });
   }
 
   saveNewUniversalFolio_Replicate() {
@@ -366,46 +363,63 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
       associateUniversalFolio: this.form.get('scanningFoli').value,
       flyerNumber: this.dictationData.wheelNumber,
     };
-
+    console.log('Documento a crear para el folio asociado', document);
     this.createDocument(document)
       .pipe(
         tap(_document => {
+          this.onLoadToast(
+            'success',
+            'Se creó correctamente el nuevo Folio Universal: ' + _document.id,
+            ''
+          );
           const folio = _document.id;
-          this.updateDocumentsByFolio(
-            folio,
-            this.form.get('scanningFoli').value
-          ).subscribe();
+          this.form.get('scanningFoli').setValue(folio);
+          this.form.get('scanningFoli').updateValueAndValidity();
+          this.alert('success', 'El folio universal generado es: ' + folio, '');
+          // this.updateDocumentsByFolio(
+          //   folio,
+          //   document.associateUniversalFolio
+          // ).subscribe();
         }),
         switchMap(_document => {
-          this.dictationData.folioUniversal =
-            this.form.get('scanningFoli').value;
+          this.dictationData.folioUniversal = Number(_document.id);
+          // this.form.get('scanningFoli').value;
           return this.updateDictation(this.dictationData).pipe(
             map(() => _document)
           );
-        }),
-        switchMap(_document => this.generateScanRequestReport())
+        })
+        // switchMap(_document => this.generateScanRequestReport())
       )
       .subscribe();
   }
 
-  updateDocumentsByFolio(folioLNU: string | number, folioLST: string) {
-    return this.documentsService.updateByFolio({ folioLNU, folioLST }).pipe(
-      catchError(error => {
-        this.alert('error', 'Error', 'Ocurrio un error al replicar el folio');
-        return throwError(() => error);
-      }),
-      tap(() => {
-        this.alert('success', 'Folio replicado correctamente ' + folioLNU, '');
-        this.form.get('scanningFoli').setValue(folioLNU);
-      })
-    );
-  }
+  // updateDocumentsByFolio(folioLNU: string | number, folioLST: string) {
+  //   return this.documentsService.updateByFolio({ folioLNU, folioLST }).pipe(
+  //     catchError(error => {
+  //       this.alert(
+  //         'error',
+  //         'Ocurrio un error al replicar el folio',
+  //         error.error.message
+  //       );
+  //       return throwError(() => error);
+  //     }),
+  //     tap(() => {
+  //       this.alert('success', 'Folio replicado correctamente ' + folioLNU, '');
+  //       this.form.get('scanningFoli').setValue(folioLNU);
+  //     })
+  //   );
+  // }
 
   getDocumentsCount() {
     const params = new FilterParams();
-    params.addFilter('scanStatus', 'SOLICITADO');
-    params.addFilter('associateUniversalFolio', SearchFilter.NULL);
+    params.addFilter('scanStatus', 'ESCANEADO');
+    params.addFilter(
+      'associateUniversalFolio',
+      SearchFilter.NULL,
+      SearchFilter.NULL
+    );
     params.addFilter('id', this.form.get('scanningFoli').value);
+    console.log(params);
     this.hideError();
     return this.documentsService.getAllFilter(params.getParams()).pipe(
       catchError(error => {
@@ -414,8 +428,8 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
         }
         this.onLoadToast(
           'error',
-          'Error',
-          'Ocurrio un error al replicar el folio'
+          'Ocurrió un error al validar el Folio ingresado',
+          error.error.message
         );
         return throwError(() => error);
       }),

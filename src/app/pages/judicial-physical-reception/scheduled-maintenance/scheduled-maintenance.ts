@@ -1,7 +1,7 @@
 import { Component, Inject, inject, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { format } from 'date-fns';
-import { LocalDataSource, Ng2SmartTableComponent } from 'ng2-smart-table';
+import { Ng2SmartTableComponent } from 'ng2-smart-table';
 import { takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import {
@@ -15,6 +15,7 @@ import { ProceedingsDetailDeliveryReceptionService } from 'src/app/core/services
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePageWidhtDinamicFiltersExtra } from 'src/app/core/shared/base-page-dinamic-filters-extra';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { firstFormatDateToSecondFormatDate } from 'src/app/shared/utils/date';
 import { IProceedingDeliveryReception } from './../../../core/models/ms-proceedings/proceeding-delivery-reception';
 
 @Component({
@@ -129,7 +130,6 @@ export abstract class ScheduledMaintenance extends BasePageWidhtDinamicFiltersEx
     this.service = this.deliveryService;
     this.ilikeFilters = [
       'keysProceedings',
-      'captureDate',
       'elaborate',
       'statusProceedings',
       'address',
@@ -168,11 +168,24 @@ export abstract class ScheduledMaintenance extends BasePageWidhtDinamicFiltersEx
 
   resetView() {
     console.log('RESET VIEW');
-    this.data = new LocalDataSource();
+    this.data.load([]);
     this.totalItems = 0;
+    localStorage.removeItem(this.formStorage);
+    this.columnFilters = [];
+    // this.dinamicFilterUpdate();
   }
 
   extraOperations() {}
+
+  protected updateByPaginator() {
+    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe({
+      next: response => {
+        console.log(response);
+
+        this.getData(true);
+      },
+    });
+  }
 
   override ngOnInit(): void {
     this.dinamicFilterUpdate();
@@ -184,13 +197,43 @@ export abstract class ScheduledMaintenance extends BasePageWidhtDinamicFiltersEx
         this.tiposEvento = response.data;
       },
     });
-    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe({
-      next: response => {
-        console.log(response);
+    this.updateByPaginator();
+  }
 
-        this.getData(true);
-      },
-    });
+  override dinamicFilterUpdate() {
+    this.data
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        // debugger;
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = ``;
+            let searchFilter = SearchFilter.ILIKE;
+            if (this.ilikeFilters.includes(filter.field)) {
+              searchFilter = SearchFilter.ILIKE;
+            } else {
+              searchFilter = SearchFilter.EQ;
+            }
+            // if (this.ilikeFilters.includes(filter.field)) {
+            //   searchFilter = SearchFilter.ILIKE;
+            // }
+            field = `filter.${filter.field}`;
+            if (filter.search !== '') {
+              let search = filter.search;
+              if (filter.field === 'captureDate') {
+                search = firstFormatDateToSecondFormatDate(search);
+              }
+              this.columnFilters[field] = `${searchFilter}:${search}`;
+            } else {
+              delete this.columnFilters[field];
+            }
+            console.log(this.columnFilters);
+          });
+          this.getData();
+        }
+      });
   }
 
   setForm() {
@@ -246,13 +289,14 @@ export abstract class ScheduledMaintenance extends BasePageWidhtDinamicFiltersEx
   }
 
   private fillParams(byPage = false) {
+    // debugger;
     const tipoEvento = this.form.get('tipoEvento').value;
     // const fechaInicio: Date | string = this.form.get('fechaInicio').value;
     // const fechaFin: Date = this.form.get('fechaFin').value;
     const statusEvento = this.form.get('statusEvento').value;
     const coordRegional = this.form.get('coordRegional').value;
     const usuario = this.form.get('usuario').value;
-    const cveActa = this.form.get('claveActa').value;
+    // const cveActa = this.form.get('claveActa').value;
     const rangeDate = this.form.get('rangeDate').value;
     console.log(rangeDate);
     if (this.form.invalid) {
@@ -265,7 +309,11 @@ export abstract class ScheduledMaintenance extends BasePageWidhtDinamicFiltersEx
     }
 
     if (statusEvento && statusEvento !== 'TODOS') {
-      this.filterParams.addFilter('statusProceedings', statusEvento);
+      this.filterParams.addFilter(
+        'statusProceedings',
+        statusEvento,
+        SearchFilter.ILIKE
+      );
     }
 
     if (rangeDate) {
@@ -321,9 +369,16 @@ export abstract class ScheduledMaintenance extends BasePageWidhtDinamicFiltersEx
       }
     }
     // this.filterParams.addFilter2(this.columnFilters);
+    this.filterParams.limit = this.params.getValue().limit;
     if (byPage) {
       this.filterParams.page = this.params.getValue().page;
-      this.filterParams.limit = this.params.getValue().limit;
+    } else {
+      this.params.value.page = 1;
+      localStorage.setItem(
+        'paramsActa',
+        JSON.stringify({ limit: this.params.getValue().limit, page: 1 })
+      );
+      // this.params.value.limit = 10;
     }
 
     return true;
@@ -340,9 +395,9 @@ export abstract class ScheduledMaintenance extends BasePageWidhtDinamicFiltersEx
       this.service.getAll(this.filterParams.getParams()).subscribe({
         next: response => {
           console.log(response);
-          if (response.data.length === 0) {
-            this.onLoadToast('error', 'No se encontraron datos');
-          }
+          // if (response.data.length === 0) {
+          //   this.onLoadToast('error', 'No se encontraron datos');
+          // }
           (this.items = response.data.map(x => {
             return {
               ...x,
@@ -359,8 +414,9 @@ export abstract class ScheduledMaintenance extends BasePageWidhtDinamicFiltersEx
         error: error => {
           console.log(error);
           // this.onLoadToast('error', 'No se encontraron datos');
-          this.loading = false;
           this.data.load([]);
+          this.totalItems = 0;
+          this.loading = false;
         },
       });
     } else {

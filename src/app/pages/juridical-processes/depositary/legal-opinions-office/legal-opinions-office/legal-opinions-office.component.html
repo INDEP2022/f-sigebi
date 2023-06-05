@@ -357,16 +357,11 @@
                 </div>
               </div>
             </div>
-            <div class="card">
+            <!-- <div class="card">
               <div class="card-footer row">
                 <div class="col-12 col-sm-12 col-md-12">
                   <h6>C.C.P.</h6>
                 </div>
-                <!-- <ng-container formArrayName="formCopiesTo">
-                  <ng-container *ngFor="let copiesTo of formCopiesTo.controls; let n=index">
-    
-                  </ng-container>
-                </ng-container> -->
                 <form-field
                   class="col-sm-12 col-12 col-md-4 p-2"
                   [control]="form.get('ccp_person')"
@@ -466,8 +461,40 @@
                     formControlName="ccp_TiPerson_1" />
                 </form-field>
               </div>
-            </div>
+            </div> -->
           </form>
+        </div>
+        <div class="col-12 col-sm-12 col-md-12 p-2 mb-5">
+          <div class="ch-content" header>
+            <h5 class="title">C&#46;C&#46;P&#46;</h5>
+            <div class="col-md-5 buttons">
+              <!--app-columns-select [(settings)]="settings"></app-columns-select-->
+              <div *ngIf="officeDictationData">
+                <button
+                  [disabled]="officeDictationData.statusOf == 'ENVIADO'"
+                  (click)="openModalCopy(false)"
+                  class="btn btn-primary active btn-sm ml-3">
+                  Agregar C&#46;C&#46;P&#46;
+                </button>
+              </div>
+            </div>
+          </div>
+          <div body>
+            <div class="row pt-4">
+              <div class="col-md-12">
+                <div class="table-responsive">
+                  <div [class]="loadingCopiesDictation ? 'table-loading' : ''">
+                    <ng2-smart-table
+                      [attr.class]="'table-bordered'"
+                      [settings]="settings3"
+                      [source]="officeCopiesDictationData"
+                      (delete)="showDeleteAlert($event.data)">
+                    </ng2-smart-table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
         <div class="col-md-12 alert alert-warning" *ngIf="loadingSend">
           Realizando el proceso de "Enviar" los "Bienes Asociados",
@@ -481,7 +508,7 @@
           Realizando el proceso para mostrar el Reporte correspondiente, Espere
           un momento...
         </div>
-        <div class="col-sm-12 col-12 col-md-12 text-center">
+        <div class="col-sm-12 col-12 col-md-12 text-center mt-3">
           <!-- <button type="button" class="btn btn-primary btn-sm active m-3">
             Reporte
             <i class="fa fa-file" aria-hidden="true"></i>
@@ -491,7 +518,7 @@
             (click)="btnDetail()"
             type="button"
             class="btn btn-info btn-sm active m-3">
-            Detalle
+            Imprimir
             <i class="fa fa-file" aria-hidden="true"></i>
             <!-- <i class="fa fa-info-circle" aria-hidden="true"></i> -->
           </button>

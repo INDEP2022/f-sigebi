@@ -32,6 +32,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import Swal from 'sweetalert2';
+import { tablaModalComponent } from '../tabla-modal/tablaModal-component';
 import { EXTERNOS_COLUMS_OFICIO } from '../tabla-modal/tableUserExt';
 import { ModalPersonaOficinaComponent } from './modal-persona-oficina/modal-persona-oficina.component';
 
@@ -62,7 +63,7 @@ export class OfficeComponent extends BasePage implements OnInit {
   filtroPersonaExt: ICopiesJobManagementDto[] = [];
 
   tipoImpresion: string;
-
+  managementNumber_: any;
   //===================
   users$ = new DefaultSelect<ISegUsers>();
   @Input() oficnum: number | string;
@@ -75,7 +76,7 @@ export class OfficeComponent extends BasePage implements OnInit {
   totalItems: number;
 
   params = new BehaviorSubject<ListParams>(new ListParams());
-
+  copyOficio: any[] = [];
   constructor(
     private fb: FormBuilder,
     private serviceOficces: GoodsJobManagementService,
@@ -241,7 +242,8 @@ export class OfficeComponent extends BasePage implements OnInit {
       this.onmanagementNumberEnter(this.filterParamsLocal);
       this.verBoton = true;
     } else {
-      Swal.fire('Se requiere un filtro de búsqueda', '', 'info');
+      this.alert('info', 'Se requiere un filtro de búsqueda', '');
+      // Swal.fire('Se requiere un filtro de búsqueda', '', 'info');
     }
   }
 
@@ -250,13 +252,12 @@ export class OfficeComponent extends BasePage implements OnInit {
       .getAllOfficialDocument(filterParams.getValue().getParams())
       .subscribe({
         next: respuesta => {
-          console.log(respuesta.count);
-
+          console.log('RESP', respuesta);
           if (respuesta.count > 1) {
-            console.log('IF');
-            this.loadOficioModal('getAllOfficialDocument', true, filterParams);
+            this.loadModal(1, filterParams);
           } else {
             console.log('Else');
+            this.managementNumber_ = respuesta.data[0].managementNumber;
             this.tipoImpresion = respuesta.data[0].jobType;
             this.form
               .get('proceedingsNumber')
@@ -295,14 +296,14 @@ export class OfficeComponent extends BasePage implements OnInit {
         },
         error: err => {
           let error = '';
-          if (err.status === 0) {
-            error = 'Revise su conexión de Internet.';
-          } else {
-            error = err.message;
-          }
-          if (err.message.indexOf('registros') !== -1) {
-            this.onLoadToast('error', 'Error 1 ', err.message);
-          }
+          // if (err.status === 0) {
+          //   error = 'Revise su conexión de Internet.';
+          // } else {
+          //   error = err.message;
+          // }
+          // if (err.message.indexOf('registros') !== -1) {
+          this.alert('warning', err.error.message, '');
+          // }
           //this.onLoadToast('error', 'Error', error);
           console.log(error);
         },
@@ -311,60 +312,53 @@ export class OfficeComponent extends BasePage implements OnInit {
   //=================================================================================
   //===================================================================================//
 
-  loadOficioModal(
-    pantalla: string,
-    resp: boolean,
-    filterParams: BehaviorSubject<FilterParams>
-  ) {
-    this.openOficioModal(pantalla, true, filterParams);
+  loadModal(resp: number, filterParams: BehaviorSubject<FilterParams>) {
+    console.log('MODAL => ' + resp);
+    this.openModal(resp, filterParams);
   }
 
-  openOficioModal(
-    pantalla: string,
-    newOrEdit: boolean,
-    filterParams: BehaviorSubject<FilterParams>
-  ) {
+  //false dictamen true oficio
+  openModal(status: number, OficioOrdictamen: BehaviorSubject<FilterParams>) {
+    console.log('MODAL 2=> ' + status);
     const modalConfig = {
       ...MODAL_CONFIG,
       class: 'modal-lg modal-dialog-centered',
     };
     modalConfig.initialState = {
-      newOrEdit,
-      filterParams,
-      pantalla,
+      status,
+      OficioOrdictamen,
       callback: (next: any) => {
+        //------------------------------------------------------
         const respuesta = JSON.parse(JSON.stringify(next));
+        this.tipoImpresion = respuesta.jobType;
 
-        this.tipoImpresion = respuesta.data[0].jobType;
         this.form
           .get('proceedingsNumber')
-          .setValue(respuesta.data[0].proceedingsNumber);
-        this.form
-          .get('managementNumber')
-          .setValue(respuesta.data[0].managementNumber);
-        this.form.get('flyerNumber').setValue(respuesta.data[0].flyerNumber);
-        this.form.get('officio').setValue(respuesta.data[0].jobBy);
-        this.form.get('addressee').setValue(respuesta.data[0].addressee);
-        this.form.get('RemitenteSenderUser').setValue(respuesta.data[0].sender);
+          .setValue(respuesta.proceedingsNumber);
+        this.form.get('managementNumber').setValue(respuesta.managementNumber);
+        this.form.get('flyerNumber').setValue(respuesta.flyerNumber);
+        this.form.get('officio').setValue(respuesta.jobBy);
+        this.form.get('addressee').setValue(respuesta.addressee);
+        this.form.get('RemitenteSenderUser').setValue(respuesta.sender);
         const param = new ListParams();
-        param.text = respuesta.data[0].sender;
+        param.text = respuesta.sender;
         this.getUsers$(param);
-        if (respuesta.data[0].cveChargeRem !== null) {
-          this.getPuestoUser(respuesta.data[0].cveChargeRem);
+        if (respuesta.cveChargeRem !== null) {
+          this.getPuestoUser(respuesta.cveChargeRem);
         }
-        if (respuesta.data[0].proceedingsNumber !== null) {
-          this.loadbyAttachedDocuments(respuesta.data[0].managementNumber);
+        if (respuesta.proceedingsNumber !== null) {
+          this.loadbyAttachedDocuments(respuesta.managementNumber);
         }
 
-        this.form.get('paragraphInitial').setValue(respuesta.data[0].text1);
-        this.form.get('paragraphFinish').setValue(respuesta.data[0].text2);
-        this.form.get('paragraphOptional').setValue(respuesta.data[0].text3);
-        this.form
-          .get('descriptionSender')
-          .setValue(respuesta.data[0].desSenderpa);
+        this.form.get('paragraphInitial').setValue(respuesta.text1);
+        this.form.get('paragraphFinish').setValue(respuesta.text2);
+        this.form.get('paragraphOptional').setValue(respuesta.text3);
+        this.form.get('descriptionSender').setValue(respuesta.desSenderpa);
+
+        //----------------------------------------------------------
       },
     };
-    //this.modalService.show(TablaOficioModalComponent, modalConfig);
+    this.modalService.show(tablaModalComponent, modalConfig);
   }
 
   ////////////////////////////////////////////////////////////////////////////////////
@@ -506,39 +500,35 @@ export class OfficeComponent extends BasePage implements OnInit {
   updateOficio() {
     this.serviceOficces.updateOficio(this.creaObjUpdate(this.form)).subscribe({
       next: response => {
-        this.onLoadToast(
-          'success',
-          'se actualizo el registro de manera correcta',
-          JSON.stringify(response.data)
-        );
+        this.alert('success', 'Se actualizó el registro correctamene', '');
       },
       error: responseError => {
-        if (responseError.message.indexOf('registros') == -1) {
-          this.onLoadToast('error', 'Error 1 ', responseError.message);
-        }
-        console.log('Entra =>  ', responseError.error.message);
+        // if (responseError.message.indexOf('registros') == -1) {
+        this.onLoadToast('warning', responseError.message, '');
+        // }
+        // console.log('Entra =>  ', responseError.error.message);
       },
     });
 
-    let obj = {
-      copyDestinationNumber: '',
-      typeDictamination: this.form.get('officio').value,
-      recipientCopy: this.form.get('typeDict').value,
-      no_Of_Dicta: this.form.get('registerNumber').value,
-      //copyDestinationNumber:this.form.get("senderUser_I").value,
-      personExtInt: this.form.get('typePerson_I').value,
-      namePersonExt: this.form.get('personaExt_I').value,
-      registerNumber: this.form.get('registerNumber').value,
-    };
+    // let obj = {
+    //   copyDestinationNumber: '',
+    //   typeDictamination: this.form.get('officio').value,
+    //   recipientCopy: this.form.get('typeDict').value,
+    //   no_Of_Dicta: this.form.get('registerNumber').value,
+    //   //copyDestinationNumber:this.form.get("senderUser_I").value,
+    //   personExtInt: this.form.get('typePerson_I').value,
+    //   namePersonExt: this.form.get('personaExt_I').value,
+    //   registerNumber: this.form.get('registerNumber').value,
+    // };
 
-    this.dictationService.updateUserByOficNum(obj).subscribe({
-      next: resp => {
-        this.onLoadToast('warning', 'Info', resp[0].message);
-      },
-      error: errror => {
-        this.onLoadToast('error', 'Error', errror.error.message);
-      },
-    });
+    // this.dictationService.updateUserByOficNum(obj).subscribe({
+    //   next: resp => {
+    //     this.onLoadToast('warning', 'Info', resp[0].message);
+    //   },
+    //   error: errror => {
+    //     this.onLoadToast('error', 'Error', errror.error.message);
+    //   },
+    // });
   }
 
   creaObjUpdate(f: FormGroup) {
@@ -548,8 +538,8 @@ export class OfficeComponent extends BasePage implements OnInit {
       managementNumber: f.value.managementNumber,
       cveManagement: f.value.officio,
       sender: f.value.RemitenteSenderUser,
-      addressee: f.value.addressee,
-      charge: f.value.cveChargeRem,
+      nomPersExt: f.value.addressee,
+      cveChargeRem: f.value.cveChargeRem,
       text1: f.value.paragraphInitial,
       text2: f.value.paragraphFinish,
       text3: f.value.paragraphOptional,
@@ -610,14 +600,14 @@ export class OfficeComponent extends BasePage implements OnInit {
         },
         error: err => {
           let error = '';
-          if (err.status === 0) {
-            error = 'Revise su conexión de Internet.';
-          } else {
-            error = err.message;
-          }
-          if (err.message.indexOf('registros') !== -1) {
-            this.onLoadToast('error', 'Error 1 ', err.message);
-          }
+          // if (err.status === 0) {
+          //   error = 'Revise su conexión de Internet.';
+          // } else {
+          //   error = err.message;
+          // }
+          // if (err.message.indexOf('registros') !== -1) {
+          //   this.onLoadToast('error', 'Error 1 ', err.message);
+          // }
 
           console.log(error);
           // this.onLoadToast('error', 'Error', error);
@@ -677,19 +667,29 @@ export class OfficeComponent extends BasePage implements OnInit {
   delete(id: number) {
     this.serviceOficces.deleteCopiesJobManagement(id).subscribe({
       next: resp => {
+        // let arr = [];
+
+        // for (let i = 0; i < this.copyOficio.length; i++) {
+        //   if (this.copyOficio[i].id != id) {
+        //     arr.push(this.copyOficio[i]);
+        //   }
+        // }
+
+        // this.copyOficio = arr;
+        this.onLoadToast('success', 'Se eliminó correctamente', '');
         console.log('resp  =>  ' + resp);
         this.refreshTabla();
       },
       error: err => {
         let error = '';
-        if (err.status === 0) {
-          error = 'Revise su conexión de Internet.';
-        } else {
-          error = err.message;
-        }
-        if (err.message.indexOf('registros') !== -1) {
-          this.onLoadToast('error', 'Error 1 ', err.message);
-        }
+        // if (err.status === 0) {
+        //   error = 'Revise su conexión de Internet.';
+        // } else {
+        //   error = err.message;
+        // }
+        // if (err.message.indexOf('registros') !== -1) {
+        this.alert('error', err.error.message, '');
+        // }
         console.log(error);
         //this.onLoadToast('error', 'Error', error);
       },

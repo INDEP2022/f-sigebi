@@ -92,30 +92,22 @@ export class NotifyAssetsImproprietyFormComponent
 
     this.clarificationForm = this.fb.group({
       addresseeName: [
-        this.infoRequest?.nameOfOwner || null,
-        [
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(50),
-        ],
-      ],
-
-      positionAddressee: [
-        this.infoRequest?.holderCharge || null,
-        [
-          Validators.pattern(STRING_PATTERN),
-          Validators.required,
-          Validators.maxLength(50),
-        ],
-      ],
-
-      senderName: [
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(50)],
       ],
 
-      senderCharge: [
+      positionAddressee: [
         null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(50)],
+      ],
+
+      senderName: [
+        this.infoRequest?.nameOfOwner || null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(50)],
+      ],
+
+      senderCharge: [
+        this.infoRequest?.holderCharge || null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(50)],
       ],
 
@@ -166,13 +158,13 @@ export class NotifyAssetsImproprietyFormComponent
     }
 
     if (typeTransference != 'SAT_SAE' || generaXML) {
-      if (
-        this.typeClarifications == 2 &&
-        typeTransference != 'SAT_SAE' &&
-        typeTransference != 'PGR_SAE'
-      ) {
-        this.improcedenciaTransferentesVoluntarias(); //Aclaración Manual tipo 2
-      }
+      // if (
+      //   this.typeClarifications == 2 &&
+      //   typeTransference != 'SAT_SAE' &&
+      //   typeTransference != 'PGR_SAE'
+      // ) {
+      //   this.improcedenciaTransferentesVoluntarias(); //Aclaración Manual tipo 2
+      // }
       const obtainTypeDocument = await this.obtainTypeDocument(
         false,
         this.infoRequest
@@ -185,9 +177,7 @@ export class NotifyAssetsImproprietyFormComponent
             break;
           }
           case 'AclaracionTransferentesVoluntarias': {
-            if (this.typeClarifications == 1) {
-              this.aclaracionTransferentesVoluntarias(); //Aclaración  MANUAL tipo 1
-            }
+            this.aclaracionTransferentesVoluntarias(); //Aclaración  MANUAL tipo 1
 
             break;
           }
@@ -211,7 +201,7 @@ export class NotifyAssetsImproprietyFormComponent
 
     //Crear objeto para generar el reporte
     const modelReport: IClarificationDocumentsImpro = {
-      clarification: this.dataClarifications2.clarificationType,
+      clarification: this.clarificationForm.controls['clarification'].value,
       sender: this.clarificationForm.controls['senderName'].value,
       //foundation: ",",
       //id: 1, //ID primaria
@@ -262,7 +252,7 @@ export class NotifyAssetsImproprietyFormComponent
 
     //Crear objeto para generar el reporte
     const modelReport: IClarificationDocumentsImpro = {
-      clarification: this.dataClarifications2.clarificationType,
+      clarification: this.clarificationForm.controls['clarification'].value,
       sender: this.clarificationForm.controls['senderName'].value,
       //foundation: ",",
       //id: 1, //ID primaria
@@ -313,7 +303,7 @@ export class NotifyAssetsImproprietyFormComponent
 
     //Crear objeto para generar el reporte
     const modelReport: IClarificationDocumentsImpro = {
-      clarification: this.dataClarifications2.clarificationType,
+      clarification: this.clarificationForm.controls['clarification'].value,
       sender: this.clarificationForm.controls['senderName'].value,
       //foundation: ",",
       //id: 1, //ID primaria
@@ -364,7 +354,7 @@ export class NotifyAssetsImproprietyFormComponent
 
     //Crear objeto para generar el reporte
     const modelReport: IClarificationDocumentsImpro = {
-      clarification: this.dataClarifications2.clarificationType,
+      clarification: this.clarificationForm.controls['clarification'].value,
       sender: this.clarificationForm.controls['senderName'].value,
       //foundation: ",",
       //id: 1, //ID primaria
@@ -416,7 +406,7 @@ export class NotifyAssetsImproprietyFormComponent
 
     //Crear objeto para generar el reporte
     const modelReport: IClarificationDocumentsImpro = {
-      clarification: this.dataClarifications2.clarificationType,
+      clarification: this.clarificationForm.controls['clarification'].value,
       sender: this.clarificationForm.controls['senderName'].value,
       //foundation: ",",
       //id: 1, //ID primaria
@@ -468,7 +458,7 @@ export class NotifyAssetsImproprietyFormComponent
 
     //Crear objeto para generar el reporte
     const modelReport: IClarificationDocumentsImpro = {
-      clarification: this.dataClarifications2.clarificationType,
+      clarification: this.clarificationForm.controls['clarification'].value,
       sender: this.clarificationForm.controls['senderName'].value,
       //foundation: ",",
       //id: 1, //ID primaria

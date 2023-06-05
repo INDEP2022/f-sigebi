@@ -163,11 +163,14 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
       ...good,
       observations,
       amount: item.cantidad,
+      appraisedValue: item.avaluo,
+      quantity: item.cantidad,
       val2: pval2 + '',
       val11: item.val11 + '',
       val12: item.val12 + '',
       val13: item.val13 + '',
       val14: good.val14 + '',
+      description: item.descripcion,
       worthappraisal: item.avaluo ? +(item.avaluo + '') : null,
       goodReferenceNumber: item.noBien,
       extDomProcess: pproextdom,
@@ -233,6 +236,8 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
     // debugger;
     try {
       const { status, process } = await this.getStatusProcessxPantalla();
+      console.log(status, process);
+
       this.good.status = status;
       this.good.extDomProcess = process;
       // this.formGood.get('estatus').setValue(status);
@@ -485,7 +490,7 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
         );
         item.descripcion =
           'Bien por ' +
-          this.form.get('saldo').value +
+          +(this.form.get('saldo').value + '') +
           ' ' +
           v_unidad +
           ', ' +
@@ -503,7 +508,7 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
         );
         item.descripcion =
           'Numerario por $ ' +
-          this.form.get('saldo').value +
+          +(this.form.get('saldo').value + '') +
           ' ' +
           v_avaluo +
           ' ' +
@@ -515,9 +520,11 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
       // } else {
       //   item.avaluo = this.good.appraisedValue;
       // }
-      item.avaluo = +(
-        +(this.good.appraisedValue + '') - this.service.sumAvaluo
-      ).toFixed(2);
+      item.avaluo = this.good.appraisedValue
+        ? +(+(this.good.appraisedValue + '') - this.service.sumAvaluo).toFixed(
+            2
+          )
+        : null;
       if (this.validationClasif()) {
         item.importe = +(this.saldo.value + '');
 
@@ -534,7 +541,7 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
         vimpbien = item.cantidad;
       }
       item.cantidad = +(this.saldo.value + '');
-      this.saldo.setValue(0);
+
       this.service.sumCant += item.cantidad;
       this.service.sumVal14 += item.importe;
       this.service.sumAvaluo += item.avaluo;
@@ -578,7 +585,7 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
             val12: 0,
             val13: 0,
           });
-          this.fillPagedRow.emit();
+          // this.fillPagedRow.emit();
           return bien.no_bien;
         } else {
           this.onLoadToast('error', 'Inserta Bien', 'No se pudo parcializar');
@@ -599,7 +606,7 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
   }
 
   private async finishApply(vobserv_padre: string, vdesc_padre: string) {
-    debugger;
+    // debugger;
     const oldObservations = this.good.observations
       ? this.good.observations
       : '';
@@ -637,12 +644,14 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
     //   'La parcialización de bienes se realizo con éxito'
     // );
     try {
+      // this.good.status = 'PEA';
       await firstValueFrom(this.goodService.updateCustom(this.good));
       this.onLoadToast(
         'success',
         'Parcialización',
-        'La parcialización de bienes se realizo con éxito'
+        'La parcialización de bienes se realizo correctamente'
       );
+      this.service.haveAply = false;
     } catch (x) {
       this.onLoadToast(
         'error',
@@ -675,6 +684,7 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
       }
       // debugger;
       const result = await this.validationsV1(v_importe, v_estatus);
+      console.log(result, this.good);
       v_verif_des = this.service.verif_des;
       v_importe = result.v_importe;
       v_estatus = result.v_estatus;
@@ -691,6 +701,32 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
       const observable = from(
         this.bienesPar.slice(0, this.bienesPar.length - 1)
       );
+      // this.bienesPar.forEach((item, index) => {
+      //   if (this.validationClasif()) {
+      //     vval2 = Number((+(item.importe + '')).toFixed(2).trim());
+      //     vimpbien = +(item.importe + '');
+      //   } else {
+      //     vval2 = +this.good.val14;
+      //     vimpbien = +(item.cantidad + '');
+      //   }
+      //   if (index < this.bienesPar.length - 1) {
+      //     const newObservation =
+      //       vobserv_padre + item.noBien + ' por:  ' + vimpbien + ', ';
+      //     vobserv_padre = newObservation.substring(
+      //       0,
+      //       newObservation.length > 600 ? 600 : newObservation.length
+      //     );
+      //   }
+
+      // })
+      // const newObservation =
+      //   vobserv_padre + 2 + ' por:  ' + +(this.saldo.value + '') + ', ';
+      // vobserv_padre = newObservation.substring(
+      //   0,
+      //   newObservation.length > 600 ? 600 : newObservation.length
+      // );
+      // console.log(vobserv_padre);
+
       let i = 0;
       observable
         .pipe(
@@ -786,7 +822,11 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
               );
               if (no_bien !== null) {
                 const newObservation =
-                  vobserv_padre + no_bien + ' por:  ' + vimpbien + ', ';
+                  vobserv_padre +
+                  no_bien +
+                  ' por:  ' +
+                  +(this.saldo.value + '') +
+                  ', ';
                 vobserv_padre = newObservation.substring(
                   0,
                   newObservation.length > 600 ? 600 : newObservation.length
@@ -796,7 +836,9 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
                   0,
                   newDescription.length > 1250 ? 1250 : newDescription.length
                 );
+                this.saldo.setValue(0);
               }
+              this.fillPagedRow.emit();
               await this.finishApply(vobserv_padre, vdesc_padre);
               console.log(this.good);
             }

@@ -45,6 +45,7 @@ export class GoodSsubtypeService
     return this.goodSsubtypeRepository.updateByIds(this.route, ids, model);
   }
   remove(id: string | number): Observable<Object> {
+    console.log('que elimina', this.route, id);
     return this.goodSsubtypeRepository.remove(this.route, id);
   }
 

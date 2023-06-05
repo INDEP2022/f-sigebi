@@ -77,8 +77,8 @@
               class="form-control"
               [clearable]="false">
               <ng-option value="TODOS">Todos</ng-option>
-              <ng-option value="ABIERTA">Abierto</ng-option>
-              <ng-option value="CERRADA">Cerrado</ng-option>
+              <ng-option value="ABIERT">Abierto</ng-option>
+              <ng-option value="CERRAD">Cerrado</ng-option>
             </ng-select>
           </form-field>
         </div>
@@ -118,7 +118,7 @@
           <ng-custom-select-loading
             [form]="form"
             formControlName="usuario"
-            label="Usuarios"
+            label="Usuario"
             value="id"
             bindLabel="name"
             loadingText="Cargando usuarios..."
@@ -172,6 +172,14 @@
             <i class="fa fa-search"></i>
             Buscar
           </button>
+          <!-- <button
+            class="btn btn-primary btn-sm active"
+            type="submit"
+            size="small"
+            (click)="getNulls()">
+            <i class="fa fa-search"></i>
+            Bienes nulos
+          </button> -->
         </div>
         <div class="col-md-4">
           <app-clean-filters-shared
@@ -231,7 +239,8 @@
 
     <app-pagination
       [params]="params"
-      [totalItems]="totalItems"></app-pagination>
+      [totalItems]="totalItems"
+      [limit]="limit"></app-pagination>
     <hr class="row" />
   </div>
 </app-card>

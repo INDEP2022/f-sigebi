@@ -29,7 +29,7 @@ export class StorehouseDetailComponent extends BasePage implements OnInit {
 
   @Output() refresh = new EventEmitter<true>();
 
-  public get id() {
+  public get idStorehouse() {
     return this.storeHouseForm.get('idStorehouse');
   }
   constructor(
@@ -45,63 +45,67 @@ export class StorehouseDetailComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
+    this.getMunicipalities(new ListParams());
+    this.getLocalities(new ListParams());
   }
 
   prepareForm() {
     this.storeHouseForm = this.fb.group({
-      idStorehouse: [
-        null,
-        Validators.compose([Validators.required, Validators.maxLength(255)]),
-      ],
+      idStorehouse: [null],
       manager: [
         null,
-        Validators.compose([
-          Validators.pattern(''),
-          Validators.maxLength(255),
-          Validators.pattern(STRING_PATTERN),
-        ]),
+        [Validators.pattern(STRING_PATTERN), Validators.required],
       ],
       description: [
         null,
-        Validators.compose([
-          Validators.pattern(''),
-          Validators.maxLength(255),
-          Validators.pattern(STRING_PATTERN),
-        ]),
+        [Validators.pattern(STRING_PATTERN), Validators.required],
       ],
+      municipalityCodeID: [null],
       municipality: [
         null,
-        Validators.compose([Validators.pattern(''), Validators.maxLength(255)]),
+        [Validators.pattern(STRING_PATTERN), Validators.required],
       ],
+      localityCodeID: [null],
       locality: [
         null,
-        Validators.compose([Validators.pattern(''), Validators.maxLength(255)]),
+        [Validators.pattern(STRING_PATTERN), Validators.required],
       ],
       ubication: [
         null,
-        Validators.compose([
-          Validators.pattern(''),
-          Validators.maxLength(255),
-          Validators.pattern(STRING_PATTERN),
-        ]),
+        [Validators.pattern(STRING_PATTERN), Validators.required],
       ],
-      idEntity: [null, Validators.compose([Validators.maxLength(255)])],
+      idEntity: [null],
     });
     if (this.storeHouse != null) {
       this.edit = true;
-      console.log(this.storeHouse);
+      console.log('entrada de localidad', this.storeHouse);
+      let municipalit = this.storeHouse.municipality;
+      let localit = this.storeHouse.locality;
+      console.log('entro 1', this.storeHouse.municipality);
       this.storeHouseForm.patchValue(this.storeHouse);
-      // console.log(this.warehouse);
-      // const { descCondition, nameCity, description, localityName } =
-      //   this.warehouse;
-      // this.warehouseForm.patchValue(this.warehouse);
-      // this.idWarehouse.disable();
-      // //TODO: Revisar con backend que regrese el objeto de bodega completo para poder pintar la informacion en los select
-      // this.states = new DefaultSelect([descCondition], 1);
-      // this.cities = new DefaultSelect([nameCity], 1);
-      // this.municipalities = new DefaultSelect([description], 1);
-      // this.localities = new DefaultSelect([localityName], 1);
+      const { municipality, locality } = this.storeHouse;
+      if (municipalit) {
+        this.storeHouseForm.controls['municipality'].setValue(
+          municipalit.nameMunicipality
+        );
+        this.storeHouseForm.controls['municipalityCodeID'].setValue(
+          municipalit.idMunicipality
+        );
+        console.log('entrada de localidad', this.storeHouse.locality);
+        this.storeHouseForm.controls['locality'].setValue(localit.nameLocation);
+        this.storeHouseForm.controls['localityCodeID'].setValue(localit.id);
+        this.municipalities = new DefaultSelect(
+          [municipality.nameMunicipality],
+          1
+        );
+        this.localities = new DefaultSelect([locality.nameLocation], 1);
+      } else {
+        this.getMunicipalitie(localit);
+      }
     }
+
+    this.getMunicipalities(new ListParams());
+    this.getLocalities(new ListParams());
   }
 
   confirm() {
@@ -114,6 +118,11 @@ export class StorehouseDetailComponent extends BasePage implements OnInit {
 
   create() {
     this.loading = true;
+    console.log('agrego', this.storeHouseForm.value.idStorehouse);
+    this.storeHouseForm.value.idStorehouse = Number(
+      this.idStorehouse.value.idStorehouse
+    );
+    console.log('agrego 2', this.storeHouseForm.value);
     this.storehouseService.create(this.storeHouseForm.value).subscribe(
       data => this.handleSuccess(),
       error => (this.loading = false)
@@ -122,6 +131,23 @@ export class StorehouseDetailComponent extends BasePage implements OnInit {
 
   update() {
     this.loading = true;
+    let data = {
+      idStorehouse: this.storeHouseForm.controls['idStorehouse'].value,
+      manager: this.storeHouseForm.controls['manager'].value,
+      description: this.storeHouseForm.controls['description'].value,
+      municipalityCode:
+        this.storeHouse.municipality.nameMunicipality !=
+        this.storeHouseForm.get('municipality').value
+          ? this.storeHouseForm.controls['municipality'].value
+          : this.storeHouseForm.controls['municipalityCodeID'].value,
+      localityCode:
+        this.storeHouse.locality.nameLocation !=
+        this.storeHouseForm.get('locality').value
+          ? this.storeHouseForm.controls['locality'].value
+          : this.storeHouseForm.controls['localityCodeID'].value,
+      ubication: this.storeHouseForm.controls['ubication'].value,
+      idEntity: this.storeHouseForm.controls['idEntity'].value,
+    };
     this.storehouseService
       .update(this.storeHouse.idStorehouse, this.storeHouseForm.value)
       .subscribe({
@@ -138,19 +164,29 @@ export class StorehouseDetailComponent extends BasePage implements OnInit {
     this.modalRef.hide();
   }
 
-  getStates(params: ListParams) {
-    this.stateService.getAll(params).subscribe(data => {
-      this.states = new DefaultSelect(data.data, data.count);
-    });
+  getMunicipalitie(data: any) {
+    this.localities = new DefaultSelect([], 0, true);
+    this.storeHouseForm.controls['locality'].setValue(null);
+    this.getMunicipalities(new ListParams(), data.state);
   }
 
-  getMunicipalities(params: ListParams) {
-    this.municipalityService.getAll(params).subscribe(data => {
-      this.municipalities = new DefaultSelect(data.data, data.count);
-    });
+  getMunicipalities(params: ListParams, id?: string) {
+    this.municipalityService.getAll(params).subscribe(
+      data => {
+        this.municipalities = new DefaultSelect(data.data, data.count);
+      },
+      error => (this.states = new DefaultSelect())
+    );
   }
-
-  getLocalities(params: ListParams) {
+  getLocalitie(data: any) {
+    console.log('localitieee', data.stateKey);
+    this.storeHouseForm.controls['locality'].setValue(null);
+    this.getLocalities(new ListParams(), data.stateKey);
+  }
+  getLocalities(params: ListParams, id?: string) {
+    if (id) {
+      params['filter.municipalityId'] = `$eq:${id}`;
+    }
     this.localityService.getAll(params).subscribe(data => {
       this.localities = new DefaultSelect(data.data, data.count);
     });

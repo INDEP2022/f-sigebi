@@ -83,8 +83,21 @@ export const COLUMNS_OFICIO = {
     type: 'string',
     sort: false,
   },
-  insertDate: {
+  dateOficio: {
     title: 'Fecha Captura',
+    type: 'string',
+    sort: false,
+  },
+};
+
+export const EXTERNOS_COLUMS_OFICIO = {
+  personExtInt_: {
+    title: 'Tipo persona',
+    type: 'string',
+    sort: false,
+  },
+  userOrPerson: {
+    title: 'Nombre persona',
     type: 'string',
     sort: false,
   },

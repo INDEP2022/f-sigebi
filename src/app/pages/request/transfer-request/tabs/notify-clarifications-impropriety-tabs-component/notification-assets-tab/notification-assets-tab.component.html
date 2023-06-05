@@ -259,7 +259,7 @@
         <div class="row pt-4">
           <div class="col-md-6">
             <label for="">Fecha recepci&oacute;n&#58; </label>
-            <span> {{ requestData?.receptionDate | date: 'dd/MM/yyyy' }}</span>
+            <span> {{ requestData?.receptionDate | date : 'dd/MM/yyyy' }}</span>
           </div>
           <div class="col-md-6">
             <label for="">No. Amparo&#58; </label>
@@ -287,7 +287,7 @@
           </div>
           <div class="col-md-6">
             <label for="">Fecha de oficio&#58; </label>
-            <span> {{ requestData?.paperDate | date: 'dd/MM/yyyy' }}</span>
+            <span> {{ requestData?.paperDate | date : 'dd/MM/yyyy' }}</span>
           </div>
         </div>
         <div class="row pt-4">
@@ -461,7 +461,12 @@
                   Aceptar Aclaraci&oacute;n&#47;Improcedencia
                 </button>
               </div>
-              <div *ngIf="notification?.answered != 'ACLARADA'">
+              <div
+                *ngIf="
+                  notification?.answered != 'ACLARADA' &&
+                  notification?.answered != 'RECHAZADA' &&
+                  notification?.answered != 'IMPROCEDENTE'
+                ">
                 <div
                   class="p-2"
                   *ngIf="

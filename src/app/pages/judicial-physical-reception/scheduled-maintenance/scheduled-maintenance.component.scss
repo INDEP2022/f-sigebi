@@ -13,17 +13,19 @@
   }
 }
 
+.search {
+  margin-left: 10px;
+  @media screen and (max-width: 796px) {
+    margin-left: 0px;
+    margin-top: 10px;
+  }
+}
+
 .rangeDate {
   display: flex;
 
   @media screen and (max-width: 796px) {
     display: block;
-  }
-}
-
-.action-buttons {
-  @media screen and (max-width: 796px) {
-    padding: 0 14px;
   }
 }
 

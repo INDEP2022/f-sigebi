@@ -283,6 +283,11 @@ export class GoodFormComponent extends AlertButton implements OnInit {
     this.service.sumAvaluo = 0;
     this.service.goodStatusDesc = '';
     this.service.goodClassNumberDesc = '';
+    this.service.haveAply = true;
+  }
+
+  ngOnDestroy() {
+    this.resetForm();
   }
 
   private validateStatusXPantalla(good: IGood) {
@@ -331,7 +336,7 @@ export class GoodFormComponent extends AlertButton implements OnInit {
         this.onLoadToast(
           'error',
           'Error',
-          'El Bien no cuenta con un estatus correcto'
+          'El Bien no cuenta con un estatus y/o proceso correcto'
         );
         return;
       }
