@@ -31,7 +31,9 @@ import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { BankAccountService } from 'src/app/core/services/ms-bank-account/bank-account.service';
 import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
 import { OficialDictationService } from 'src/app/core/services/ms-dictation/oficial-dictation.service';
+import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import { JobDictumTextsService } from 'src/app/core/services/ms-office-management/job-dictum-texts.service';
+import { SecurityService } from 'src/app/core/services/ms-security/security.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
@@ -86,7 +88,7 @@ export class OpinionComponent extends BasePage implements OnInit, OnChanges {
       null,
       [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
     ],
-    addressee_I: [
+    typeDict_: [
       null,
       [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
     ],
@@ -193,7 +195,9 @@ export class OpinionComponent extends BasePage implements OnInit, OnChanges {
     private service: BankAccountService,
     private dynamicCatalogsService: DynamicCatalogsService,
     private jobDictumTextsServices: JobDictumTextsService,
-    private dictationService_1: DictationService
+    private dictationService_1: DictationService,
+    private securityService: SecurityService,
+    private notificationService: NotificationService
   ) {
     super();
 
@@ -327,7 +331,7 @@ Obtiene los filtros y en base a ellos se hace la búsqueda
       this.onEnterSearch(this.filterParamsLocal);
       this.verBoton = true;
     } else {
-      this.onLoadToast('info', 'Registro', 'Se requiere un filtro de búsqueda');
+      this.alert('info', 'Dictamen', 'Se requiere un filtro de búsqueda');
     }
   }
 
@@ -414,6 +418,7 @@ Obtiene los filtros y en base a ellos se hace la búsqueda
   /*================================================================================
 carga la  información de la parte media de la página
 ==================================================================================*/
+  oficioDict: any;
   complementoFormulario(obj: any) {
     this.oficialDictationService.getById(obj).subscribe({
       next: resp => {
@@ -422,13 +427,21 @@ carga la  información de la parte media de la página
           JSON.stringify(resp)
         );
 
+        this.oficioDict = resp;
         this.form.get('addressee').setValue(resp.recipient);
         this.form.get('senderUserRemitente').setValue(resp.sender);
         const param = new ListParams();
         param.text = resp.sender;
         this.getUsers$(param);
-        this.getPuestoUser(resp.cveChargeRem);
-        this.form.get('addressee_I').setValue(resp.typeDict);
+
+        if (resp.cveChargeRem == null) {
+          this.getPuestoUser(resp.cveChargeRem);
+        }
+
+        const param_ = new ListParams();
+        param_.text = resp.recipient;
+        this.getUsers$$(param_);
+        this.form.get('typeDict_').setValue(resp.typeDict);
         this.form.get('numberDictamination').setValue(resp.officialNumber);
 
         this.form.get('paragraphInitial').setValue(resp.text1);
@@ -441,7 +454,7 @@ carga la  información de la parte media de la página
       },
       error: err => {
         if (err.message.indexOf('registros') !== -1) {
-          this.onLoadToast('error', 'Error 1 ', err.message);
+          // this.onLoadToast('error', 'Error 1 ', err.message);
         }
         console.log('error', 'Error', err.error.message);
         // this.onLoadToast('info', 'info', error.error.message);
@@ -468,7 +481,7 @@ carga la  información de la parte media de la página
         },
         error: err => {
           if (err.message.indexOf('registros') !== -1) {
-            this.onLoadToast('error', 'Error 1 ', err.message);
+            // this.onLoadToast('error', 'Error 1 ', err.message);
           }
           /*
           this.onLoadToast(
@@ -545,7 +558,7 @@ carga la  información de la parte media de la página
       },
       error: err => {
         this.form.get('charge').setValue('');
-        this.onLoadToast('error', 'Error', err.error.message);
+        // this.onLoadToast('error', 'Error', err.error.message);
       },
     });
   }
@@ -594,6 +607,28 @@ carga la  información de la parte media de la página
       tap(response => {
         this.users$$ = new DefaultSelect(response.data, response.count);
         this.getDescUserPuesto2(response.data[0].positionKey);
+      })
+    );
+  }
+
+  getUsers$$($params: ListParams) {
+    let params = new FilterParams();
+    params.page = $params.page;
+    params.limit = $params.limit;
+    params.search = $params.text;
+    this.getAllUsers$$(params).subscribe();
+  }
+
+  getAllUsers$$(params: FilterParams) {
+    return this.usersService.getAllSegUsers(params.getParams()).pipe(
+      catchError(error => {
+        this.users$ = new DefaultSelect([], 0, true);
+        return throwError(() => error);
+      }),
+      tap(response => {
+        console.log();
+        this.users$ = new DefaultSelect(response.data, response.count);
+        // this.getDescUserPuesto2(response.data[0].positionKey);
       })
     );
   }
@@ -651,35 +686,6 @@ carga la  información de la parte media de la página
     let actulizacion = '';
     let errorBusqueda = '';
     console.log('this.form', this.form);
-    let ofis: any = await this.getDatosToUpdateDictamenBody(this.form);
-    let f = this.form;
-    let obj = {
-      officialNumber: f.value.numberDictamination,
-      typeDict: f.value.addressee_I,
-      text1: f.value.paragraphInitial,
-      text2: f.value.paragraphFinish,
-      sender: f.value.senderUserRemitente,
-      desSenderPa: f.value.addressee,
-      text3: f.value.paragraphOptional,
-      text2To: f.value.masInfo_1,
-      cveChargeRem: f.value.valueCharge,
-      addressee: f.value.addressee,
-    };
-    console.log(' insert =>  ' + ofis);
-    this.oficialDictationService.update(obj).subscribe({
-      next: resp => {
-        actulizacion = actulizacion + ' Se actualizo';
-      },
-      error: err => {
-        if (err.message.indexOf('registros') !== -1) {
-          // this.onLoadToast('error', 'Error 1 ', err.message);
-        }
-
-        //this.onLoadToast('info', 'Registro', 'No se obtuvo información');
-        console.log('error', 'Error', err.error.message);
-        // this.onLoadToast('error', 'Error', err.error.message);
-      },
-    });
 
     let data: IJobDictumTexts = await this.getDatosToUpdateDictamenBodyText(
       this.form
@@ -692,12 +698,43 @@ carga la  información de la parte media de la página
       },
       error: err => {
         this.insertTextos(data);
+        console.log(err);
         if (err.message.indexOf('registros') !== -1) {
           // this.onLoadToast('error', 'Error 1 ', err.message);
         }
       },
     });
-    this.alert('success', 'Se actualizaron los datos correctamente', '');
+
+    let ofis: any = await this.getDatosToUpdateDictamenBody(this.form);
+    let f = this.form;
+    let obj = {
+      officialNumber: f.value.numberDictamination,
+      typeDict: f.value.typeDict_,
+      text1: f.value.paragraphInitial,
+      text2: f.value.paragraphFinish,
+      sender: f.value.senderUserRemitente,
+      desSenderPa: f.value.addressee,
+      text3: f.value.paragraphOptional,
+      text2To: f.value.masInfo_1,
+      cveChargeRem: f.value.valueCharge,
+      recipient: f.value.addressee,
+    };
+    console.log(' insert =>  ' + ofis);
+    this.oficialDictationService.update(obj).subscribe({
+      next: resp => {
+        this.alert('success', 'Se actualizaron los datos correctamente', '');
+        actulizacion = actulizacion + ' Se actualizo';
+      },
+      error: err => {
+        if (err.message.indexOf('registros') !== -1) {
+          // this.onLoadToast('error', 'Error 1 ', err.message);
+        }
+        this.alert('error', 'Ocurrió un error al actualizar', '');
+        //this.onLoadToast('info', 'Registro', 'No se obtuvo información');
+        console.log('error', 'Error', err.error.message);
+        // this.onLoadToast('error', 'Error', err.error.message);
+      },
+    });
 
     // this.onLoadToast('info', 'Actualización', actulizacion);
 
@@ -733,6 +770,7 @@ carga la  información de la parte media de la página
     });*/
   }
 
+  // UPDATE SILENCIOSO
   async updateDictamen2() {
     let actulizacion = '';
     let errorBusqueda = '';
@@ -741,7 +779,7 @@ carga la  información de la parte media de la página
     let f = this.form;
     let obj = {
       officialNumber: f.value.numberDictamination,
-      typeDict: f.value.addressee_I,
+      typeDict: f.value.typeDict_,
       text1: f.value.paragraphInitial,
       text2: f.value.paragraphFinish,
       sender: f.value.senderUserRemitente,
@@ -749,9 +787,9 @@ carga la  información de la parte media de la página
       text3: f.value.paragraphOptional,
       text2To: f.value.masInfo_1,
       cveChargeRem: f.value.valueCharge,
-      addressee: f.value.addressee,
+      recipient: f.value.addressee,
     };
-    console.log(' insert =>  ' + ofis);
+    console.log(' insert =>  ', ofis);
     this.oficialDictationService.update(obj).subscribe({
       next: resp => {
         actulizacion = actulizacion + ' Se actualizo';
@@ -788,13 +826,13 @@ carga la  información de la parte media de la página
   insertCopies(obj: any) {
     this.dictationService_1.create(obj).subscribe({
       next: resp => {
-        this.onLoadToast('warning', 'Info', resp[0].message);
+        // this.onLoadToast('warning', 'Info', resp[0].message);
       },
       error: err => {
         //this.onLoadToast('info', 'Registro', 'No se obtuvo información');
 
         if (err.message.indexOf('registros') !== -1) {
-          this.onLoadToast('error', 'Error 1 ', err.message);
+          // this.onLoadToast('error', 'Error 1 ', err.message);
         }
 
         console.log('error', 'Error', err.error.message);
@@ -811,7 +849,7 @@ carga la  información de la parte media de la página
       },
       error: err => {
         if (err.message.indexOf('registros') !== -1) {
-          this.onLoadToast('error', 'Error 1 ', err.message);
+          // this.onLoadToast('error', 'Error 1 ', err.message);
         }
 
         console.log('info', 'Registro', err.error.message);
@@ -831,7 +869,7 @@ carga la  información de la parte media de la página
   async getDatosToUpdateDictamenBody(f: FormGroup) {
     return {
       officialNumber: f.value.numberDictamination,
-      typeDict: f.value.addressee_I,
+      typeDict: f.value.typeDict_,
       text1: f.value.paragraphInitial,
       text2: f.value.paragraphFinish,
       recipient: f.value.senderUserRemitente,
@@ -879,7 +917,7 @@ carga la  información de la parte media de la página
         error: err => {
           this.form.get('charge').setValue('');
           if (err.message.indexOf('registros') !== -1) {
-            this.onLoadToast('error', 'Error 1 ', err.message);
+            // this.onLoadToast('error', 'Error 1 ', err.message);
           }
 
           //this.onLoadToast('info', 'Registro', 'No se obtuvo información');
@@ -907,35 +945,196 @@ carga la  información de la parte media de la página
       this.reporteInterno();
     }*/
   }
+  // ENDPOINT 1 //
+  async getStationClue(expedientNumber: any) {
+    return new Promise((resolve, reject) => {
+      this.securityService.getStationClue(expedientNumber).subscribe({
+        next: (resp: any) => {
+          this.loading = false;
+          resolve(resp);
+        },
+        error: err => {
+          this.loading = false;
+          resolve([]);
+        },
+      });
+    });
+  }
+
+  // ENDPOINT 2 //
+  async getIdDelegationDelegationForwards(senderUserRemitente: any) {
+    return new Promise((resolve, reject) => {
+      this.securityService
+        .getIdDelegationDelegationForwards(senderUserRemitente)
+        .subscribe({
+          next: (resp: any) => {
+            this.loading = false;
+            resolve(resp);
+          },
+          error: err => {
+            this.loading = false;
+            resolve([]);
+          },
+        });
+    });
+  }
+
+  // ENDPOINT 3 //
+  async getIdDelegationDelegationAddressee(addressee: any) {
+    return new Promise((resolve, reject) => {
+      this.securityService
+        .getIdDelegationDelegationAddressee(addressee)
+        .subscribe({
+          next: (resp: any) => {
+            this.loading = false;
+            resolve(resp);
+          },
+          error: err => {
+            this.loading = false;
+            resolve([]);
+          },
+        });
+    });
+  }
+
+  // ENPOINT 4 //
+  async getNotification() {
+    const query = `filter.expedientNumber=$eq:${this.form.value.expedientNumber}&filter.wheelNumber=$eq:${this.form.value.wheelNumber}`;
+    return new Promise((resolve, reject) => {
+      this.notificationService.getAllFilter(query).subscribe({
+        next: (resp: any) => {
+          this.loading = false;
+          resolve(resp);
+        },
+        error: err => {
+          this.loading = false;
+          resolve(null);
+        },
+      });
+    });
+  }
+
+  // ENDPOINT 5 //
+  async getQueryIdenti(params: any) {
+    return new Promise((resolve, reject) => {
+      this.securityService.getQueryIdenti(params).subscribe({
+        next: (resp: any) => {
+          this.loading = false;
+          if (resp.data.length > 0) {
+            resolve(resp.data[0].identi);
+          } else {
+            resolve('');
+          }
+        },
+        error: err => {
+          this.loading = false;
+          resolve('');
+        },
+      });
+    });
+  }
 
   async reporteExterno() {
-    console.log('AASD', this.form.value);
-    // IF: VARIABLES.IDENTI LIKE '%A%' AND: DICTAMINACIONES.TIPO_DICTAMINACION<> 'ABANDONO' THEN
-    // IF: DICTAMINACIONES.TIPO_DICTAMINACION = 'PROCEDENCIA'THEN
-    // Add_Parameter(pl_id, 'NOME_DICTPRO', TEXT_PARAMETER, vCLAVE_ARMADA);
-    //  	  END IF;
-    // Run_Product(REPORTS, '..\reportes\RGENADBDICTAMASIV', ASYNCHRONOUS, RUNTIME, FILESYSTEM, pl_id, NULL);
-    //  END IF;
+    console.log('aasd', this.users$$);
+    let vEMISORA: any;
+    let vTRANSF: any;
+    let vNO_DELDEST: any;
+    let vDELEGADEST: any;
+    let vNO_DELREM: any;
+    let vDELEGAREM: any;
+    let vNOTR_FINAL: any;
+    let vT_ACTA: string;
+    let vDELAGACION: string;
+    let vCLAVE_ARMADA: string;
+    console.log('FORM', this.form.value);
 
-    // IF: VARIABLES.IDENTI LIKE '%T%' AND: DICTAMINACIONES.TIPO_DICTAMINACION<> 'ABANDONO' THEN
-    // IF: DICTAMINACIONES.TIPO_DICTAMINACION = 'PROCEDENCIA'THEN
-    // Add_Parameter(pl_id, 'NOME_DICTPRO', TEXT_PARAMETER, vCLAVE_ARMADA);
-    //  	  END IF;
-    // Run_Product(REPORTS, '..\reportes\RGENADBDICTAMASIV', ASYNCHRONOUS, RUNTIME, FILESYSTEM, pl_id, NULL);
-    //  END IF;
-    let VARIABLES = '';
+    if (this.form.value.typeDict == 'PROCEDENCIA') {
+      const getStationClue: any = await this.getStationClue(
+        this.form.value.expedientNumber
+      );
+      console.log('AASD', getStationClue);
+      if (getStationClue.length > 0) {
+        vEMISORA = getStationClue[0].nombre_emisora;
+        vTRANSF = getStationClue[0].clave_transferente;
+      }
+
+      // REMITENTE
+      const getIdDelegationDelegationForwards: any =
+        await this.getIdDelegationDelegationForwards(
+          this.form.value.senderUserRemitente
+        );
+      console.log('AASD2', getIdDelegationDelegationForwards);
+      if (getIdDelegationDelegationForwards.length > 0) {
+        vNO_DELREM = getIdDelegationDelegationForwards[0].id_delegacion;
+        vDELEGAREM = getIdDelegationDelegationForwards[0].delegacion;
+      }
+
+      // DESTINATARIO
+      const getIdDelegationDelegationAddressee: any =
+        await this.getIdDelegationDelegationAddressee(
+          this.form.value.addressee
+        );
+      console.log('AASD3', getIdDelegationDelegationAddressee);
+      if (getIdDelegationDelegationAddressee.length > 0) {
+        vNO_DELDEST = getIdDelegationDelegationAddressee[0].id_delegacion;
+        vDELEGADEST = getIdDelegationDelegationAddressee[0].delegacion;
+      }
+
+      // NOTIFICATION
+      const getNotification_: any = await this.getNotification();
+      console.log('AASD4', getNotification_);
+      if (getNotification_.length > 0) {
+        vNOTR_FINAL = getNotification_[0].transference;
+      }
+
+      if (vNOTR_FINAL == 1 || vNOTR_FINAL == 3) {
+        vT_ACTA = 'A';
+      } else {
+        vT_ACTA = 'RT';
+      }
+
+      if (vNO_DELDEST == 0) {
+        vDELAGACION = 'CRB';
+        if (vTRANSF == 'SAT') {
+          vCLAVE_ARMADA = `${vT_ACTA}/${vEMISORA}/ADM/${vDELAGACION}/${vDELAGACION}/CONSECUTIVO/AÑO/MES`;
+        } else {
+          vCLAVE_ARMADA = `${vT_ACTA}/${vEMISORA}/ADM/${vDELAGACION}/${vDELAGACION}/CONSECUTIVO/AÑO/MES`;
+        }
+      } else {
+        vDELAGACION = vDELEGADEST;
+        if (vNO_DELREM == 3) {
+          if (vNO_DELDEST == 2) {
+            vDELAGACION = vDELEGAREM;
+          }
+        }
+
+        if (vTRANSF == 'SAT') {
+          vCLAVE_ARMADA = `${vT_ACTA}/${vEMISORA}/ADM/${vDELAGACION}/${vDELAGACION}/CONSECUTIVO/AÑO/MES`;
+        } else {
+          vCLAVE_ARMADA = `${vT_ACTA}/${vEMISORA}/ADM/${vDELAGACION}/${vDELAGACION}/CONSECUTIVO/AÑO/MES`;
+        }
+      }
+    }
+
+    let body = {
+      ofDictaNumber: this.form.value.registerNumber,
+      typeRuling: this.form.value.typeDict,
+    };
+    const VARIABLES: any = await this.getQueryIdenti(body);
+    console.log('AASD5', VARIABLES);
+
     let valor1 = VARIABLES.includes('4');
     // REPORTE PROCEDENCIA 1 //
     if (valor1 == true && this.form.value.typeDict == 'PROCEDENCIA') {
       this.reporteProcedencia1(this.form.value);
-      this.alert('success', 'bien', '');
+      // this.alert('success', 'bien1', '');
     }
 
     let valor2 = VARIABLES.includes('4');
     // REPORTE PROCEDENCIA 2 //
     if (valor2 == true && this.form.value.typeDict != 'PROCEDENCIA') {
       this.reporteProcedencia2(this.form.value);
-      this.alert('success', 'bien', '');
+      // this.alert('success', 'bien1', '');
     }
 
     let valor3 = VARIABLES.includes('A');
@@ -957,10 +1156,6 @@ carga la  información de la parte media de la página
     if (this.form.value.typeDict == 'ABANDONO') {
       this.reporteAbandono(this.form.value);
     }
-    const params = {
-      PNOOFICIO: this.form.get('registerNumber').value,
-      PTIPODIC: this.form.get('addressee_I').value,
-    };
   }
 
   reporteProcedencia1(data: any) {
@@ -968,9 +1163,9 @@ carga la  información de la parte media de la página
     let params = {
       PDEPARTAMENTO: data.registerNumber,
       PELABORO_DICTA: data.typeDict,
-      POFICIO: data,
-      PESTADODICT: data,
-      PDICTAMEN: data,
+      POFICIO: this.oficioDict.officialNumber,
+      PESTADODICT: this.oficioDict.statusOf,
+      PDICTAMEN: this.oficioDict.typeDict,
     };
 
     this.siabServiceReport
@@ -999,9 +1194,9 @@ carga la  información de la parte media de la página
     let params = {
       PDEPARTAMENTO: data.registerNumber,
       PELABORO_DICTA: data.typeDict,
-      POFICIO: data,
-      PESTADODICT: data,
-      PDICTAMEN: data,
+      POFICIO: this.oficioDict.officialNumber,
+      PESTADODICT: this.oficioDict.statusOf,
+      PDICTAMEN: this.oficioDict.typeDict,
     };
 
     this.siabServiceReport.fetchReport('RGENADBDICTAMASIV', params).subscribe({
@@ -1028,9 +1223,9 @@ carga la  información de la parte media de la página
     let params = {
       PDEPARTAMENTO: data.registerNumber,
       PELABORO_DICTA: data.typeDict,
-      POFICIO: data,
-      PESTADODICT: data,
-      PDICTAMEN: data,
+      POFICIO: this.oficioDict.officialNumber,
+      PESTADODICT: this.oficioDict.statusOf,
+      PDICTAMEN: this.oficioDict.typeDict,
     };
 
     this.siabServiceReport.fetchReport('RGENADBDICTAMASIV', params).subscribe({
@@ -1057,9 +1252,9 @@ carga la  información de la parte media de la página
     let params = {
       PDEPARTAMENTO: data.registerNumber,
       PELABORO_DICTA: data.typeDict,
-      POFICIO: data,
-      PESTADODICT: data,
-      PDICTAMEN: data,
+      POFICIO: this.oficioDict.officialNumber,
+      PESTADODICT: this.oficioDict.statusOf,
+      PDICTAMEN: this.oficioDict.typeDict,
     };
 
     this.siabServiceReport.fetchReport('RGENADBDICTAMASIV', params).subscribe({
@@ -1161,7 +1356,7 @@ carga la  información de la parte media de la página
       },
       error: err => {
         if (err.message.indexOf('registros') !== -1) {
-          this.onLoadToast('error', 'Error 1 ', err.message);
+          // this.onLoadToast('error', 'Error 1 ', err.message);
         }
 
         //this.onLoadToast('info', 'Registro', 'No se obtuvo información');
@@ -1226,7 +1421,7 @@ carga la  información de la parte media de la página
       },
       error: err => {
         // if (err.message.indexOf('registros') !== -1) {
-        this.onLoadToast('error', 'Error al guardar', err.message);
+        this.onLoadToast('error', 'Error al guardar', err.error.message);
         //
         // console.log('Error ' + err);
         // this.onLoadToast('info', 'Registro', 'No se obtuvo información');
@@ -1264,9 +1459,9 @@ carga la  información de la parte media de la página
         this.refreshTabla();
       },
       error: err => {
-        if (err.message.indexOf('registros') !== -1) {
-          this.onLoadToast('error', 'Error 1 ', err.message);
-        }
+        // if (err.message.indexOf('registros') !== -1) {
+        this.onLoadToast('error', 'Error al eliminar', err.error.message);
+        // }
 
         //this.onLoadToast('info', 'Registro', 'No se obtuvo información');
         console.log('error', 'Error', err.error.message);
@@ -1332,7 +1527,7 @@ carga la  información de la parte media de la página
         },
         error: err => {
           if (err.message.indexOf('registros') !== -1) {
-            this.onLoadToast('error', 'Error 1 ', err.message);
+            // this.onLoadToast('error', 'Error 1 ', err.message);
           }
           console.log('Error ' + err);
           //this.onLoadToast('info', 'Registro', 'No se obtuvo información');

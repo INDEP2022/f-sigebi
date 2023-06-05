@@ -286,7 +286,7 @@ export class OfficeComponent extends BasePage implements OnInit {
               .setValue(respuesta.data[0].flyerNumber);
             this.form.get('officio').setValue(respuesta.data[0].jobBy);
             this.typeOffice = respuesta.data[0].jobBy;
-            this.form.get('addressee').setValue(respuesta.data[0].addressee);
+            this.form.get('addressee').setValue(respuesta.data[0].nomPersExt);
             this.form
               .get('RemitenteSenderUser')
               .setValue(respuesta.data[0].sender);
@@ -462,7 +462,7 @@ export class OfficeComponent extends BasePage implements OnInit {
         this.form.get('managementNumber').setValue(respuesta.managementNumber);
         this.form.get('flyerNumber').setValue(respuesta.flyerNumber);
         this.form.get('officio').setValue(respuesta.jobBy);
-        this.form.get('addressee').setValue(respuesta.addressee);
+        this.form.get('addressee').setValue(respuesta.nomPersExt);
         this.form.get('RemitenteSenderUser').setValue(respuesta.sender);
         const param = new ListParams();
         param.text = respuesta.sender;
