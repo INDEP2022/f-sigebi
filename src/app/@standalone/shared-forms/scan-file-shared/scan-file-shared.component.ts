@@ -27,6 +27,7 @@ export class ScanFileSharedComponent extends BasePage implements OnInit {
   @Input() noExpedient: string | number;
   @Input() statusProceeding: string;
   @Input() cveScreen: string;
+  @Input() reportPrint: string
 
   @Output() emitfileNumber = new EventEmitter();
 
@@ -195,7 +196,7 @@ export class ScanFileSharedComponent extends BasePage implements OnInit {
             DESTYPE: 'PREVIEW',
             PRINTJOB: 'YES',
           };
-          this.downloadReport('RGERGENSOLICDIGIT', params);
+          this.downloadReport(this.reportPrint, params);
     }else{
         this.alert('warning', 'No tiene folio de escaneo para imprimir.', '');
     }
