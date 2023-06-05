@@ -19,10 +19,12 @@ import { FormLoaderComponent } from 'src/app/@standalone/form-loader/form-loader
 import { FileDataUpdateModule } from '../file-data-update/file-data-update.module';
 import { FormSearchHandlerModule } from '../shared/form-search-handler/form-search-handler.module';
 import { AbandonmentsDeclarationTradesComponent } from './abandonments-declaration-trades/abandonments-declaration-trades.component';
+import { AddCopyComponent } from './abandonments-declaration-trades/add-copy/add-copy.component';
 import { DocsComponent } from './abandonments-declaration-trades/docs/docs.component';
 import { EditTextComponent } from './abandonments-declaration-trades/edit-text/edit-text.component';
 import { ListdictumsComponent } from './abandonments-declaration-trades/listdictums/listdictums.component';
 import { ListoficiosComponent } from './abandonments-declaration-trades/listoficios/listoficios.component';
+import { UpdateCopyComponent } from './abandonments-declaration-trades/update-copy/update-copy.component';
 
 @NgModule({
   declarations: [
@@ -31,6 +33,8 @@ import { ListoficiosComponent } from './abandonments-declaration-trades/listofic
     DocsComponent,
     ListdictumsComponent,
     ListoficiosComponent,
+    AddCopyComponent,
+    UpdateCopyComponent,
   ],
   imports: [
     CommonModule,

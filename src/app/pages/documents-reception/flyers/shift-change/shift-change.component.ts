@@ -4,10 +4,16 @@ import { BsModalService } from 'ngx-bootstrap/modal';
 
 import { ActivatedRoute, Router } from '@angular/router';
 import { format } from 'date-fns';
-import { firstValueFrom } from 'rxjs';
-import { IDictation } from 'src/app/core/models/ms-dictation/dictation-model';
+import { BehaviorSubject, firstValueFrom } from 'rxjs';
+import {
+  IDictation,
+  IUpdateDelDictation,
+} from 'src/app/core/models/ms-dictation/dictation-model';
 import { IHistoryOfficial } from 'src/app/core/models/ms-historyofficial/historyofficial.model';
+import { IUpdateActasEntregaRecepcionDelegation } from 'src/app/core/models/ms-proceedings/proceedings.model';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
+import { ProceedingsService } from 'src/app/core/services/ms-proceedings';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -16,7 +22,6 @@ import {
   ListParams,
   SearchFilter,
 } from '../../../../common/repository/interfaces/list-params';
-import { IUserRowSelectEvent } from '../../../../core/interfaces/ng2-smart-table.interface';
 import { INotification } from '../../../../core/models/ms-notification/notification.model';
 import { IProceedingDeliveryReception } from '../../../../core/models/ms-proceedings/proceeding-delivery-reception';
 import { IUserAccessAreaRelational } from '../../../../core/models/ms-users/seg-access-area-relational.model';
@@ -35,7 +40,6 @@ import {
   SHIFT_CHANGE_PROCEEDINGS_COLUMNS,
 } from './shift-change-columns';
 import { ShiftChangeHistoryComponent } from './shift-change-history/shift-change-history.component';
-
 @Component({
   selector: 'app-shift-change',
   templateUrl: './shift-change.component.html',
@@ -92,15 +96,25 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
   dictumSettings = { ...this.settings };
   proceedingColumns: IProceedingDeliveryReception[] = [];
   proceedingSettings = { ...this.settings };
-  selectedDictums: IDictation[] = [];
-  selectedProceedings: IProceedingDeliveryReception[] = [];
+  totalItems: number = 0;
+  // selectedDictums: IDictation[] = [];
+  selectedDictums: IUpdateDelDictation[] = [];
+  // selectedProceedings: IProceedingDeliveryReception[] = [];
+  selectedProceedings: IUpdateActasEntregaRecepcionDelegation[] = [];
   notifData: INotification = null;
   pageParams: IJuridicalShiftChangeParams = null;
   origin: any;
-
+  acta: IUpdateActasEntregaRecepcionDelegation;
+  dictation: IUpdateDelDictation;
+  params = new BehaviorSubject(new ListParams());
   newUser: string;
   preUser: string;
-
+  delegationNew: number;
+  subdelegationNew: number;
+  idDelActa: number;
+  idDelDicta: number;
+  idArea: number;
+  user: IUserAccessAreaRelational;
   flyerNumber: number;
   historyColumns: IHistoryOfficial[] = [];
   usersFilter: IUserAccessAreaRelational[] = [];
@@ -109,6 +123,7 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
     // private fb: FormBuilder,
     private modalService: BsModalService,
     private router: Router,
+    private readonly authService: AuthService,
     private route: ActivatedRoute,
     private fileUpdComService: FileUpdateCommunicationService,
     private docRegisterService: DocReceptionRegisterService,
@@ -119,25 +134,26 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
     private dictationService: DictationService,
     private historyOfficeService: HistoryOfficialService,
     private flyerCopiesService: CopiesXFlierService,
-    private procedureManageService: ProcedureManagementService
+    private procedureManageService: ProcedureManagementService,
+    private proceedingsService: ProceedingsService
   ) {
     super();
     this.dictumSettings = {
       ...this.settings,
       actions: false,
-      selectMode: 'multi',
+      // selectMode: 'multi',
       columns: { ...SHIFT_CHANGE_DICTUM_COLUMNS },
     };
     this.proceedingSettings = {
       ...this.settings,
       actions: false,
-      selectMode: 'multi',
+      // selectMode: 'multi',
       columns: { ...SHIFT_CHANGE_PROCEEDINGS_COLUMNS },
     };
     this.pageParams = this.fileUpdComService.juridicalShiftChangeParams;
     this.pageParams.iden ||= this.route.snapshot.params?.['iden'];
     this.pageParams.exp ||= this.route.snapshot.params?.['exp'];
-    console.log('PARAMS', this.pageParams);
+    // console.log('PARAMS', this.pageParams);
     this.route.queryParamMap.subscribe(params => {
       this.origin = params.get('origin');
     });
@@ -210,7 +226,7 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
                       if (data.count > 0) {
                         this.formControls.prevUser.setValue(data.data[0]);
                         this.preUser = data.data[0].userAndName;
-                        console.log(this.preUser);
+                        // console.log(this.preUser);
                       }
                     },
                     error: error => {
@@ -245,7 +261,7 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
         }
       },
       error: err => {
-        console.log('DICTUMS', err.error.message);
+        // console.log('DICTUMS', err.error.message);
       },
     });
   }
@@ -261,7 +277,7 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
         }
       },
       error: err => {
-        console.log(err);
+        // console.log(err);
       },
     });
   }
@@ -272,27 +288,39 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
       this.turnForm.updateValueAndValidity();
       return;
     }
-    const body = {
-      flyerNumber: this.notifData.wheelNumber,
-      reassignmentDate: format(new Date(), 'yyyy-MM-dd'),
-      officialNumber: this.notifData.officeNumber,
-      personPrevious: this.formControls.prevUser.value?.user,
-      areaDestinationPrevious: this.notifData.departamentDestinyNumber,
-      personNew: this.formControls.newUser.value?.user,
+
+    // this.preUser;
+    const body: IHistoryOfficial = {
+      numberSteeringwheel: this.notifData.wheelNumber,
+      datereassignment: format(new Date(), 'dd/MM/yyyy'),
+      numberJob: this.idDelDicta,
+      personbefore: this.formControls.prevUser.value?.user,
+      areaDestinationbefore: this.notifData.departamentDestinyNumber,
+      personnew: this.formControls.newUser.value?.user,
+      areaDestinationnew: this.idArea,
       argument: this.formControls.argument.value,
+      numberRecord: this.notifData.registerNumber,
+      cveJobExternal: this.notifData.officeExternalKey,
+      numberOftheDestinationbefore: this.notifData.delDestinyNumber,
+      numberSubdelDestinationbefore: this.notifData.subDelDestinyNumber,
+      numberOftheDestinationnew: this.delegationNew,
+      numberSubdelDestinationnew: this.subdelegationNew,
+      nbOrigin: this.origin,
     };
-    // console.log(
-    //   this.turnForm.value,
-    //   body,
-    //   this.selectedDictums,
-    //   this.selectedProceedings
-    // );
+    console.log(
+      this.turnForm.value,
+      body,
+      this.selectedDictums,
+      this.selectedProceedings
+    );
     this.loading = true;
+
     try {
       await firstValueFrom(this.historyOfficeService.create(body));
     } catch (ex) {
       this.loading = false;
-      this.alert('error', 'Error ', 'Los ids ya fueron creados');
+      // await firstValueFrom(this.historyOfficeService.update(body));
+      this.alert('error', ' ', 'Turno no actualizado');
       return;
     }
     try {
@@ -305,44 +333,13 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
         )
       );
       this.updateNotification();
+      this.users = new DefaultSelect();
     } catch (ex) {
       //console.log(ex);
-      this.alert('error', 'Error ', 'Error al crear histórico');
+      this.alert('error', 'Turno no actualizado', '');
       this.loading = false;
     }
-    // this.historyOfficeService.create(body).subscribe({
-    //   next: () => {
-    //     this.updateFlyerCopy();
-    //   },
-    //   error: err => {
-    //     console.log(err);
-    //     this.loading = false;
-    //     this.alert('error', 'Turno no actualizado', err.error.message);
-    //   },
-    // });
   }
-
-  // updateFlyerCopy() {
-  //   const body = {
-  //     copyNumber: 1,
-  //     flierNumber: this.notifData.wheelNumber,
-  //     copyuser: this.formControls.newUser.value?.user,
-  //   };
-  //   this.flyerCopiesService.update(body).subscribe({
-  //     next: () => {
-  //       this.updateNotification();
-  //     },
-  //     error: err => {
-  //       console.log(err);
-  //       this.loading = false;
-  //       this.alert(
-  //         'error',
-  //         'Turno no actualizado',
-  //         'Hubo un error al actualizar el turno'
-  //       );
-  //     },
-  //   });
-  // }
 
   updateNotification() {
     const body = {
@@ -353,10 +350,12 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
     };
     this.notifService.update(this.notifData.wheelNumber, body).subscribe({
       next: () => {
-        // this.updateProcedureUser();
+        this.updateProcedureUser();
         // this.updateDictums();
         // this.updateProceedings();
-        this.loading = false;
+        this.loading = true;
+        this.preUser = this.newUser;
+        this.filterHistoryUser();
         this.alert(
           'success',
           'Usuario Turnado Exitosamente',
@@ -364,7 +363,7 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
         );
       },
       error: err => {
-        console.log(err);
+        // console.log(err);
         this.loading = false;
         this.alert(
           'error',
@@ -381,49 +380,36 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
         userTurned: this.formControls.newUser.value?.user,
       })
       .subscribe({
-        next: () => {},
+        next: res => {
+          console.log(res);
+        },
         error: () => {},
       });
   }
 
   // UPDATE DICTÁMENES //
   updateDictums() {
-    if (this.selectedDictums.length > 0) {
-      this.selectedDictums.forEach(d => {
-        const body = {
-          id: d.id,
-          typeDict: d.typeDict,
-          delegationDictNumber: d.delegationDictNumber,
-        };
-        this.dictationService.update(body).subscribe({
-          next: () => {},
-          error: () => {},
-        });
-      });
-    }
+    this.dictationService.updateDictaEntregaRTurno(this.dictation).subscribe({
+      next: resp => {
+        console.log(resp);
+      },
+      error: () => {
+        this.alert('info', 'La delegacion actual es igual a la anterior', '');
+      },
+    });
   }
 
   // UPDATE ACTAS //
   updateProceedings() {
-    if (this.selectedProceedings.length > 0) {
-      this.selectedProceedings.forEach(p => {
-        const body = {
-          id: Number(p.id),
-          numDelegation2: this.notifData.delDestinyNumber,
-          elaborationDate: p.elaborationDate,
-          elaborate: p.elaborate,
-          numFile: p.numFile,
-          typeProceedings: p.typeProceedings,
-          captureDate: p.captureDate,
-        };
-        this.proceedingsDelRecService.update(p.id, body).subscribe({
-          next: () => {},
-          error: err => {
-            console.log(err);
-          },
-        });
-      });
-    }
+    this.proceedingsService.updateActasEntregaRTurno(this.acta).subscribe({
+      next: resp => {
+        console.log(resp);
+      },
+      error: err => {
+        this.alert('info', 'La delegacion actual es igual a la anterior', '');
+      },
+    });
+    // });
   }
 
   goBack() {
@@ -460,14 +446,37 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
     });
   }
 
-  selectDictums(event: IUserRowSelectEvent<IDictation>) {
-    this.selectedDictums = event.selected;
-    console.log({ selectedDictums: this.selectedDictums });
+  // selectDictums(event: IUserRowSelectEvent<IDictation>) {
+  //   this.selectedDictums = event.selected;
+  //   console.log({ selectedDictums: this.selectedDictums });
+  // }
+
+  // selectProceedings(event: IUserRowSelectEvent<IProceedingDeliveryReception>) {
+  //   console.log(event);
+  //   this.selectedProceedings = event.selected;
+  // }
+
+  selectDictums(event: any) {
+    this.idDelDicta = event.data.id;
+    let params: IUpdateDelDictation = {
+      ofDictaNumber: event.data.id,
+      delegationDictateNumber:
+        this.formControls.newUser?.value.delegationNumber,
+    };
+    this.dictation = params;
+    console.log(this.dictation);
+    this.updateDictums();
   }
 
-  selectProceedings(event: IUserRowSelectEvent<IProceedingDeliveryReception>) {
-    console.log(event);
-    this.selectedProceedings = event.selected;
+  selectProceedings(event: any) {
+    this.idDelActa = event.data.id;
+    let params: IUpdateActasEntregaRecepcionDelegation = {
+      minutesNumber: event.data.id,
+      delegation2Number: this.formControls.newUser?.value.subdelegationNumber,
+    };
+    this.acta = params;
+    console.log(this.acta);
+    this.updateProceedings();
   }
 
   getUsersCopy(lparams: ListParams) {
@@ -479,6 +488,12 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
     this.docRegisterService.getUsersSegAreas(params.getParams()).subscribe({
       next: data => {
         this.users = new DefaultSelect(data.data, data.count);
+        data.data.forEach(data => {
+          this.delegationNew = data.delegation1Number;
+          this.subdelegationNew = data.subdelegationNumber;
+          this.idArea = data.departament1Number;
+          console.log(data);
+        });
       },
       error: () => {
         this.users = new DefaultSelect();
@@ -493,18 +508,18 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
     const data1: any = {};
     //param.addFilter('flyerNumber', this.flyerNumber);
     params['filter.flyerNumber'] = `$eq:${this.pageParams.iden}`;
-    console.log(this.pageParams.iden);
+    // console.log(this.pageParams.iden);
     this.historyOfficeService.getFilterUser(params).subscribe({
       next: data => {
         if (data.count > 0) {
           this.historyColumns = data.data;
-          this.historyColumns[0].personNew;
+          this.historyColumns[0].personnew;
           //param['filter.flyerNumber'] = `$eq:${this.newUser}`;
           //params.page = lparams.page;
           //params.limit = lparams.limit;
           param.addFilter(
             'user',
-            this.historyColumns[0].personNew,
+            this.historyColumns[0].personnew,
             SearchFilter.EQ
           );
           this.docRegisterService
@@ -513,6 +528,7 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
               next: resp => {
                 //this.users = new DefaultSelect(data.data, data.count);
                 this.usersFilter = resp.data;
+                console.log(this.usersFilter);
                 this.newUser = this.usersFilter[0].userAndName;
                 if (
                   this.usersFilter[0].userAndName != null ||

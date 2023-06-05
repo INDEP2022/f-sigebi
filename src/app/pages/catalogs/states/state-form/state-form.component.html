@@ -7,7 +7,7 @@
       <div class="row">
         <div class="col-md-3">
           <form-field [control]="stateForm.get('id')" label="CVE Estado">
-            <input type="number" class="form-control" formControlName="id" />
+            <input type="text" class="form-control" formControlName="id" />
           </form-field>
         </div>
 
@@ -59,10 +59,7 @@
           <form-field
             [control]="stateForm.get('version')"
             label="Versi&oacute;n">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="version" />
+            <input type="text" class="form-control" formControlName="version" />
           </form-field>
         </div>
       </div>

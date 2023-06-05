@@ -43,6 +43,7 @@ export class MaintenanceRecordsComponent extends BasePage implements OnInit {
   loadingGoods = false;
   loadingNewGoods = true;
   newLimit = new FormControl(1);
+  pageGoods = 1;
   // rowsSelected: any[] = [];
   rowsSelectedLocal: any[] = [];
   rowsSelectedNotLocal: any[] = [];
@@ -206,6 +207,7 @@ export class MaintenanceRecordsComponent extends BasePage implements OnInit {
 
   updateData(event: any) {
     console.log(event);
+    this.pageGoods = event.page;
     this.goodParams.limit = event.limit;
     this.goodParams.page = event.page;
     // this.infoForm && this.infoForm.id
@@ -215,6 +217,7 @@ export class MaintenanceRecordsComponent extends BasePage implements OnInit {
   getData(form: IProceedingInfo) {
     if (this.fillParams(form)) {
       this.loading = true;
+      this.loadingGoods = true;
       this.proceedingService.getAll(this.filterParams.getParams()).subscribe({
         next: response => {
           // debugger;
@@ -228,14 +231,19 @@ export class MaintenanceRecordsComponent extends BasePage implements OnInit {
             // console.log(this.params.getValue());
             this.loading = false;
             this.registro = true;
+            // this.goodParams.limit = 10;
+            this.goodParams.page = 1;
+            this.pageGoods = 1;
             this.getGoods();
           } else {
             this.loading = false;
+            this.loadingGoods = false;
             this.onLoadToast('error', 'Actas', 'No encontradas');
           }
         },
         error: error => {
           this.loading = false;
+          this.loadingGoods = false;
           this.onLoadToast('error', 'Actas', 'No encontradas');
         },
       });
@@ -298,11 +306,13 @@ export class MaintenanceRecordsComponent extends BasePage implements OnInit {
           })
           .catch(error => {
             this.service.data = [];
+            this.service.totalGoods = 0;
             this.loadingGoods = false;
             // this.onLoadToast('error', 'Actas', 'No encontradas');
           });
       } catch (x) {
         this.service.data = [];
+        this.service.totalGoods = 0;
         this.loadingGoods = false;
       }
       // this.detailService.getAll(filterParams.getParams()).subscribe({
