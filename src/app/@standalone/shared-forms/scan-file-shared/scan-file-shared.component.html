@@ -1,4 +1,5 @@
-<div class="row mb-4">
+<form [formGroup]="form">
+  <div class="row mb-4">
     <div class="col-md-12">
       <div class="row">
         <div class="col-md-2"></div>
@@ -15,20 +16,20 @@
             type="button"
             data-toggle="tooltip"
             class="btn btn-secondary btn-sm active"
+            (click)="scan()"
             title="Escanear">
             <i class="bx bxs-file"></i>
           </button>
         </div>
         <div class="col-md-3">
           <form-field
-            [control]="form.get(folioEscaneo)"
+            [control]="form.get(formControlName)"
             label="Folio de Escaneo">
             <input
               type="number"
               class="form-control"
               min="1"
-              [formControlName]="folioEscaneo"
-              (change)="onChangeFolio()"
+              [formControlName]="formControlName"
               maxlength="15" />
           </form-field>
         </div>
@@ -47,6 +48,7 @@
             type="button"
             data-toggle="tooltip"
             class="btn btn-secondary btn-sm active mr-1"
+            (click)="printScanFile()"
             title="imprimir Solicitud de Escaneo">
             <i class="bx bxs-printer"></i>
           </button>
@@ -54,6 +56,7 @@
             type="button"
             data-toggle="tooltip"
             class="btn btn-secondary btn-sm active"
+            (click)="seeImages()"
             title="Consulta de imágenes escaneadas">
             <i class="bx bxs-file-find"></i>
           </button>
@@ -62,3 +65,4 @@
       </div>
     </div>
   </div>
+</form>

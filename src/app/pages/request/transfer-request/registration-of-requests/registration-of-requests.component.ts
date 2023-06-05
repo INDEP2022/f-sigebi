@@ -652,19 +652,33 @@ export class RegistrationOfRequestsComponent
           console.log('Hay bienes por aclarar');
           this.alertQuestion(
             'warning',
-            'Existen bienes sin clarar',
-            '¿Aclararlos ahora?'
-          ).then(question => {
+            'Aún hay bienes sin aclarar',
+            '¿Hacerlo ahora?'
+          ).then(async question => {
             if (question.isConfirmed) {
-              this.notifyClarificationsMethod2();
+              //this.notifyClarificationsMethod2();
               this.router.navigate([
                 `pages/request/transfer-request/notify-clarification-inadmissibility/${this.requestData.id}`,
               ]);
-              //   this.msgCrearNotificacion(
-              //   'success',
-              //   'Turnado Exitoso',
-              //   `Se guardó la solicitud con el folio: ${this.requestData.id}`
-              // );
+              this.updateGoodStatus('SOLICITAR_APROBACION');
+              const existApprovalTask = await this.existApprobalTask();
+              if (existApprovalTask === true) {
+                //si existe crea solo la Notificacion de aclaracion
+                console.log(
+                  'si existe crea solo la Notificacion de aclaracion'
+                );
+                await this.notifyClarificationsMethod2();
+              } else {
+                //si no existe crear una tarea de aprovar solicitud y la notificacion de aclaracion
+                console.log(
+                  'si no existe crear una tarea de aprovar solicitud y la notificacion de aclaracion'
+                );
+                const result = await this.createApprovalProcessOnly();
+                if (result) {
+                  console.log('his.notifyClarificationsMethod();');
+                  await this.notifyClarificationsMethod2();
+                }
+              }
             }
           });
         },
@@ -681,10 +695,25 @@ export class RegistrationOfRequestsComponent
             'warning',
             'Se turnará la solicitud',
             '¿Continuar?'
-          ).then(question => {
+          ).then(async question => {
             if (question.isConfirmed) {
               this.updateGoodStatus('SOLICITAR_APROBACION');
-              this.createApprovalProcessOnly();
+              const existApprovalTask = await this.existApprobalTask();
+              if (existApprovalTask === true) {
+                //si existe crea solo la Notificacion de aclaracion
+                //await this.notifyClarificationsMethod();
+              } else {
+                //si no existe crear una tarea de aprovar solicitud y la notificacion de aclaracion
+                console.log(
+                  'si no existe crear una tarea de aprovar solicitud y la notificacion de aclaracion'
+                );
+                const result = await this.createApprovalProcessOnly();
+                if (result) {
+                  console.log('his.notifyClarificationsMethod();');
+                  //await this.notifyClarificationsMethod2();
+                }
+              }
+              //this.createApprovalProcessOnly();
               this.closeValidateDocumentation();
             }
           });
@@ -1629,7 +1658,7 @@ export class RegistrationOfRequestsComponent
     );
 
     return filter.length == goods.count ? true : false;
-    return true;
+    //return true;
   }
 
   msgGuardado(icon: any, title: string, message: string) {
