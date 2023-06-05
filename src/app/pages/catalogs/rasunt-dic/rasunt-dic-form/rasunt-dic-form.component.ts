@@ -38,14 +38,24 @@ export class RAsuntDicFormComponent extends BasePage implements OnInit {
       dictum: [null, [Validators.required]],
       flyerType: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.maxLength(1),
+          Validators.pattern(STRING_PATTERN),
+        ],
       ],
-      doc: [null, [Validators.pattern(STRING_PATTERN)]],
+      doc: [
+        null,
+        [Validators.maxLength(1), Validators.pattern(STRING_PATTERN)],
+      ],
       property: [null, [Validators.pattern(STRING_PATTERN)]],
-      g_of: [null, [Validators.pattern(STRING_PATTERN)]],
-      i: [null, [Validators.pattern(STRING_PATTERN)]],
-      e: [null, [Validators.pattern(STRING_PATTERN)]],
-      registryNumber: [null],
+      g_of: [
+        null,
+        [Validators.maxLength(1), Validators.pattern(STRING_PATTERN)],
+      ],
+      i: [null, [Validators.maxLength(1), Validators.pattern(STRING_PATTERN)]],
+      e: [null, [Validators.maxLength(1), Validators.pattern(STRING_PATTERN)]],
+      // registryNumber: [null],
     });
     if (this.rAsuntDic != null) {
       this.edit = true;

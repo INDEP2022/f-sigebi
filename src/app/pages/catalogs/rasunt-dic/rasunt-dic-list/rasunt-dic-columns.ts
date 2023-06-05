@@ -39,9 +39,4 @@ export const R_ASUNT_DIC_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  registryNumber: {
-    title: 'Numero Registro',
-    type: 'number',
-    sort: false,
-  },
 };
