@@ -2,7 +2,7 @@
   <div class="ch-content" header>
     <h5 class="title">Actas de Entrega Recepci&oacute;n</h5>
   </div>
-  
+
   <div body>
     <form class="form-material" [formGroup]="form">
       <div class="row mb-4">
@@ -429,13 +429,13 @@
       <hr class="row" />
 
       <app-scan-file-shared
-      [form]="form"
-      [formControlName]="folioEscaneo"
-      [cveDocument]="form.get('acta2').value"
-      [noExpedient]="form.get('expediente').value"
-      [statusProceeding]="form.get('statusProceeding').value"
-      [cveScreen]="cveScreen"
-      >
+        [form]="form"
+        [formControlName]="folioEscaneo"
+        [cveDocument]="form.get('acta2').value"
+        [noExpedient]="form.get('expediente').value"
+        [statusProceeding]="form.get('statusProceeding').value"
+        [cveScreen]="cveScreen"
+        [reportPrint]="nameReport">
       </app-scan-file-shared>
 
       <hr class="row" />

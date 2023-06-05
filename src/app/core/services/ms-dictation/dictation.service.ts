@@ -173,7 +173,7 @@ export class DictationService extends HttpService {
   }
 
   getRTdictaAarusr(
-    params?: ListParams
+    params?: _Params
   ): Observable<IListResponse<IRTdictaAarusr>> {
     return this.get<IListResponse<any>>(
       DictationEndpoints.RTdictaAarusr,

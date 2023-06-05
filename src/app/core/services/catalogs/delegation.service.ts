@@ -50,7 +50,7 @@ export class DelegationService
   }
 
   getById(id: string | number): Observable<IDelegation> {
-    return this.delegationRepository.getById(this.route, id);
+    return this.delegationRepository.newGetById(this.route, id);
   }
 
   create(model: IDelegation): Observable<IDelegation> {
