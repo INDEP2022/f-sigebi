@@ -378,11 +378,6 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
 
   }
 
-  prueba(){
-    console.log(this.form.get('folioEscaneo').value)
-    this.form.get('folioEscaneo').setValue('154')
-  }
-
   prepareForm() {
     this.form = this.fb.group({
       listExpedients: [null],

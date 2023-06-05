@@ -238,3 +238,4 @@ export class ScanFileSharedComponent extends BasePage implements OnInit {
     
   }
 }
+
