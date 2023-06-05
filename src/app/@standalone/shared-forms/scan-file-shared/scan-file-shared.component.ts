@@ -5,10 +5,12 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { format } from 'date-fns';
 import { BsModalService } from 'ngx-bootstrap/modal';
+import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { IDocuments } from 'src/app/core/models/ms-documents/documents';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
+import { ParametersService } from 'src/app/core/services/ms-parametergood/parameters.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { SharedModule } from 'src/app/shared/shared.module';
@@ -41,7 +43,8 @@ export class ScanFileSharedComponent extends BasePage implements OnInit {
     private siabService: SiabService,
     private modalService: BsModalService,
     private sanitizer: DomSanitizer,
-    private router: Router
+    private router: Router,
+    private serviceParameterG: ParametersService
   ) {
     super();
   }
@@ -50,90 +53,243 @@ export class ScanFileSharedComponent extends BasePage implements OnInit {
 
   prepareForm() {}
 
-  replicateFolio() {}
-
-  //GENERAR FOLIO DE ESCANEO
-  generateFolio() {
-    let wheelNumber: string | number;
-
-    const route = `notification?filter.wheelNumber=$not:$null&filter.expedientNumber=$eq:${this.noExpedient}&sortBy=wheelNumber:DESC`;
-    this.serviceNotification.getAllFilter(route).subscribe(
-      res => {
-        wheelNumber = res.data[0]['wheelNumber'];
-        const user =
-          localStorage.getItem('username') == 'sigebiadmon'
-            ? localStorage.getItem('username')
-            : localStorage.getItem('username').toLocaleUpperCase();
-        const routeUser = `?filter.name=$eq:${user}`;
-        this.serviceUser.getAllSegUsers(routeUser).subscribe(
-          res => {
-            console.log(res);
-            const resJson = JSON.parse(JSON.stringify(res.data[0]));
-            console.log(resJson);
-            const modelDocument: IDocuments = {
-              id: 0,
-              natureDocument: 'ORIGINAL',
-              descriptionDocument: `ACTA ${this.cveDocument}`,
-              significantDate: format(new Date(), 'MM/yyyy'),
-              scanStatus: 'SOLICITADO',
-              fileStatus: '',
-              userRequestsScan: user,
-              scanRequestDate: new Date(),
-              userRegistersScan: '',
-              dateRegistrationScan: undefined,
-              userReceivesFile: '',
-              dateReceivesFile: undefined,
-              keyTypeDocument: 'ENTRE',
-              keySeparator: '60',
-              numberProceedings: this.noExpedient,
-              sheets: '',
-              numberDelegationRequested: resJson.usuario.delegationNumber,
-              numberSubdelegationRequests: resJson.usuario.subdelegationNumber,
-              numberDepartmentRequest: resJson.usuario.departamentNumber,
-              registrationNumber: 0,
-              flyerNumber: wheelNumber,
-              userSend: '',
-              areaSends: '',
-              sendDate: undefined,
-              sendFilekey: '',
-              userResponsibleFile: '',
-              mediumId: '',
-              associateUniversalFolio: 0,
-              dateRegistrationScanningHc: undefined,
-              dateRequestScanningHc: undefined,
-              goodNumber: 0,
-            };
-
-            console.log(modelDocument);
-            this.serviceDocuments.create(modelDocument).subscribe(
+  replicateFolio() {
+    if (
+      !['CERRADO', 'CERRADA', null].includes(this.statusProceeding) ||
+      this.cveDocument == null
+    ) {
+      this.alertQuestion(
+        'question',
+        'Se generará un nuevo folio de escaneo y se le copiarán las imágenes del folio de escaneo actual',
+        '¿Deseas continuar?',
+        'Continuar'
+      ).then(q => {
+        if (q.isConfirmed) {
+          if (this.form.get(this.formControlName).value == null) {
+            this.alert(
+              'warning',
+              'Especificque el folio de escaneo a replicar',
+              ''
+            );
+          } else {
+            const paramsF = new FilterParams();
+            paramsF.addFilter('associateUniversalFolio', null);
+            paramsF.addFilter('scanStatus', 'ESCANEADO');
+            paramsF.addFilter('id', this.form.get(this.formControlName).value);
+            this.serviceDocuments.getAllFilter(paramsF.getParams()).subscribe(
               res => {
-                console.log(res.id);
-                this.form.get(this.formControlName).setValue(res.id);
-                const params = {
-                  PARAMSFORM: 'NO',
-                  PN_FOLIO: res.id,
-                  DESTYPE: 'PREVIEW',
-                  PRINTJOB: 'YES',
-                };
+                console.log(res);
+                const route = `notification?filter.wheelNumber=$not:$null&filter.expedientNumber=$eq:${this.noExpedient}&sortBy=wheelNumber:DESC`;
+                this.serviceNotification.getAllFilter(route).subscribe(resp => {
+                  const wheelNumber = resp.data[0]['wheelNumber'];
+                  const user =
+                    localStorage.getItem('username') == 'sigebiadmon'
+                      ? localStorage.getItem('username')
+                      : localStorage.getItem('username').toLocaleUpperCase();
+                  const routeUser = `?filter.name=$eq:${user}`;
+                  this.serviceUser.getAllSegUsers(routeUser).subscribe(
+                    res => {
+                      console.log(res);
+                      const resJson = JSON.parse(JSON.stringify(res.data[0]));
+                      console.log(resJson);
+                      const modelDocument: IDocuments = {
+                        id: res.data[0]['id'],
+                        natureDocument: 'ORIGINAL',
+                        descriptionDocument: `ACTA ${this.cveDocument}`,
+                        significantDate: format(new Date(), 'MM/yyyy'),
+                        scanStatus: 'ESCANEADO',
+                        fileStatus: '',
+                        userRequestsScan: user,
+                        scanRequestDate: new Date(),
+                        userRegistersScan: user,
+                        dateRegistrationScan: undefined,
+                        userReceivesFile: '',
+                        dateReceivesFile: undefined,
+                        keyTypeDocument: 'ENTRE',
+                        keySeparator: '60',
+                        numberProceedings: this.noExpedient,
+                        sheets: '',
+                        numberDelegationRequested:
+                          resJson.usuario.delegationNumber,
+                        numberSubdelegationRequests:
+                          resJson.usuario.subdelegationNumber,
+                        numberDepartmentRequest:
+                          resJson.usuario.departamentNumber,
+                        registrationNumber: 0,
+                        flyerNumber: wheelNumber,
+                        userSend: '',
+                        areaSends: '',
+                        sendDate: undefined,
+                        sendFilekey: '',
+                        userResponsibleFile: '',
+                        mediumId: '',
+                        associateUniversalFolio: 0,
+                        dateRegistrationScanningHc: undefined,
+                        dateRequestScanningHc: undefined,
+                        goodNumber: 0,
+                      };
 
-                this.downloadReport('RGERGENSOLICDIGIT', params);
+                      console.log(modelDocument);
+                      this.serviceDocuments.create(modelDocument).subscribe(
+                        res => {
+                          this.loading = false;
+                          console.log(res.id);
+                          this.form.get(this.formControlName).setValue(res.id);
+                          const params = {
+                            PARAMSFORM: 'NO',
+                            PN_FOLIO: res.id,
+                            DESTYPE: 'PREVIEW',
+                            PRINTJOB: 'YES',
+                          };
+
+                          this.downloadReport('RGERGENSOLICDIGIT', params);
+                        },
+                        err => {
+                          this.alert(
+                            'error',
+                            'Se presentó un error inesperado',
+                            ''
+                          );
+                          this.loading = false;
+                        }
+                      );
+                    },
+                    err => {
+                      console.log(err);
+                      this.alert(
+                        'error',
+                        'Se presentó un error inesperado',
+                        ''
+                      );
+                      this.loading = false;
+                    }
+                  );
+                });
               },
               err => {
                 this.alert('error', 'Se presentó un error inesperado', '');
+                this.loading = false;
               }
             );
-          },
-          err => {
-            console.log(err);
-            this.alert('error', 'Se presentó un error inesperado', '');
           }
-        );
-      },
-      err => {
-        console.log(err);
-        this.alert('error', 'Se presentó un error inesperado', '');
-      }
-    );
+        }
+      });
+    } else {
+      this.alert(
+        'warning',
+        'No se puede replicar el folio de escaneo en un acta ya cerrada',
+        ''
+      );
+    }
+  }
+
+  //GENERAR FOLIO DE ESCANEO
+  generateFolio() {
+    if (['CERRADO', 'CERRADA', null].includes(this.statusProceeding)) {
+      this.alert(
+        'warning',
+        'El acta no tiene un estatus correcto para generar folio',
+        ''
+      );
+    } else {
+      let wheelNumber: string | number;
+      this.alertQuestion(
+        'question',
+        'Va a generar un nuevo número de folio',
+        '¿Está de acuerdo?'
+      ).then(q => {
+        if (q.isConfirmed) {
+          this.loading = true;
+          const route = `notification?filter.wheelNumber=$not:$null&filter.expedientNumber=$eq:${this.noExpedient}&sortBy=wheelNumber:DESC`;
+          this.serviceNotification.getAllFilter(route).subscribe(
+            res => {
+              wheelNumber = res.data[0]['wheelNumber'];
+              const user =
+                localStorage.getItem('username') == 'sigebiadmon'
+                  ? localStorage.getItem('username')
+                  : localStorage.getItem('username').toLocaleUpperCase();
+              const routeUser = `?filter.name=$eq:${user}`;
+              this.serviceUser.getAllSegUsers(routeUser).subscribe(
+                res => {
+                  console.log(res);
+                  const resJson = JSON.parse(JSON.stringify(res.data[0]));
+                  console.log(resJson);
+                  const modelDocument: IDocuments = {
+                    id: 0,
+                    natureDocument: 'ORIGINAL',
+                    descriptionDocument: `ACTA ${this.cveDocument}`,
+                    significantDate: format(new Date(), 'MM/yyyy'),
+                    scanStatus: 'SOLICITADO',
+                    fileStatus: '',
+                    userRequestsScan: user,
+                    scanRequestDate: new Date(),
+                    userRegistersScan: '',
+                    dateRegistrationScan: undefined,
+                    userReceivesFile: '',
+                    dateReceivesFile: undefined,
+                    keyTypeDocument: 'ENTRE',
+                    keySeparator: '60',
+                    numberProceedings: this.noExpedient,
+                    sheets: '',
+                    numberDelegationRequested: resJson.usuario.delegationNumber,
+                    numberSubdelegationRequests:
+                      resJson.usuario.subdelegationNumber,
+                    numberDepartmentRequest: resJson.usuario.departamentNumber,
+                    registrationNumber: 0,
+                    flyerNumber: wheelNumber,
+                    userSend: '',
+                    areaSends: '',
+                    sendDate: undefined,
+                    sendFilekey: '',
+                    userResponsibleFile: '',
+                    mediumId: '',
+                    associateUniversalFolio: 0,
+                    dateRegistrationScanningHc: undefined,
+                    dateRequestScanningHc: undefined,
+                    goodNumber: 0,
+                  };
+
+                  console.log(modelDocument);
+                  this.serviceDocuments.create(modelDocument).subscribe(
+                    res => {
+                      this.loading = false;
+                      console.log(res.id);
+                      this.form.get(this.formControlName).setValue(res.id);
+                      const params = {
+                        PARAMSFORM: 'NO',
+                        PN_FOLIO: res.id,
+                        DESTYPE: 'PREVIEW',
+                        PRINTJOB: 'YES',
+                      };
+
+                      this.downloadReport('RGERGENSOLICDIGIT', params);
+                    },
+                    err => {
+                      this.alert(
+                        'error',
+                        'Se presentó un error inesperado',
+                        ''
+                      );
+                      this.loading = false;
+                    }
+                  );
+                },
+                err => {
+                  console.log(err);
+                  this.alert('error', 'Se presentó un error inesperado', '');
+                  this.loading = false;
+                }
+              );
+            },
+            err => {
+              console.log(err);
+              this.alert('error', 'Se presentó un error inesperado', '');
+              this.loading = false;
+            }
+          );
+        }
+      });
+    }
   }
 
   downloadReport(reportName: string, params: any) {
@@ -190,7 +346,7 @@ export class ScanFileSharedComponent extends BasePage implements OnInit {
     this.router.navigate([`/pages/general-processes/scan-documents`], {
       queryParams: {
         origin: this.cveScreen,
-        folio: this.form.get(this.formControlName),
+        folio: this.form.get(this.formControlName).value,
       },
     });
   }
@@ -221,9 +377,7 @@ export class ScanFileSharedComponent extends BasePage implements OnInit {
           const idMedium = data.data[0]['mediumId'];
 
           if (scanStatus === 'ESCANEADO') {
-            if ([-1, -2].includes(idMedium)) {
-            } else {
-            }
+            this.goToScan();
           } else {
             this.alert(
               'warning',
@@ -236,6 +390,4 @@ export class ScanFileSharedComponent extends BasePage implements OnInit {
       this.alert('warning', 'No tiene folio de escaneo para visualizar.', '');
     }
   }
-
-  visualizeImages(idMedium: any) {}
 }

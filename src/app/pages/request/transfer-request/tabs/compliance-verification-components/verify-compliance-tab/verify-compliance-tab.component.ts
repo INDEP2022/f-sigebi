@@ -99,6 +99,8 @@ export class VerifyComplianceTabComponent
   statusTask: any = '';
   showClarificationButtons: boolean = true;
 
+  goodsModified: any = [];
+
   constructor(
     private fb: FormBuilder,
     private goodServices: GoodService,
@@ -557,6 +559,8 @@ export class VerifyComplianceTabComponent
     this.goodData['data'].map((item: any) => {
       if (item.id === descriptionInput.data.id) {
         item.descriptionGoodSae = descriptionInput.text;
+
+        this.addGoodModified(item);
       }
     });
     /*this.goodData.getElements().then(data => {
@@ -569,6 +573,14 @@ export class VerifyComplianceTabComponent
     });*/
   }
 
+  addGoodModified(good: any) {
+    const index = this.goodsModified.indexOf(good);
+    if (index != -1) {
+      this.goodsModified[index] = good;
+    } else {
+      this.goodsModified.push(good);
+    }
+  }
   getData() {
     this.loading = true;
     this.params.value.addFilter('requestId', this.requestObject.id);
@@ -602,8 +614,10 @@ export class VerifyComplianceTabComponent
     this.goodData.getElements().then(data => {
       data.map((item: any) => {
         if (item.id === unitData.id) {
-          item['unitMeasureName'] = unitData.unitDesc;
+          item['measureUnitTransferent'] = unitData.unitDesc;
           item['unitMeasure'] = unitData.unitId;
+
+          this.addGoodModified(item);
         }
       });
       this.goodData.load(data);
@@ -882,33 +896,45 @@ export class VerifyComplianceTabComponent
       await this.updateDocRequest(id, item);
     });
 
-    const good = this.goodData['data'];
-    setTimeout(() => {
-      good.map(async (item: any, i: number) => {
-        let index = i + 1;
+    const good = this.goodsModified; //this.goodData['data'];
+    if (good.length > 0) {
+      setTimeout(() => {
+        good.map(async (item: any, i: number) => {
+          let index = i + 1;
 
-        let body: any = {};
-        body['id'] = item.id;
-        body['goodId'] = item.goodId;
-        body['descriptionGoodSae'] = item.descriptionGoodSae;
-        body['unitMeasure'] = item.unitMeasure ? item.unitMeasure : null;
-        const result = await this.updateGoods(body);
+          let body: any = {};
+          body['id'] = item.id;
+          body['goodId'] = item.goodId;
+          body['descriptionGoodSae'] = item.descriptionGoodSae;
+          body['unitMeasure'] = item.unitMeasure ? item.unitMeasure : null;
+          const result = await this.updateGoods(body);
 
-        if (result === true) {
-          if (good.length === index) {
-            this.onLoadToast(
-              'success',
-              'Verificación Guardada',
-              'Los datos se guardaron correctamente'
-            );
-            this.confirmation = true;
-            this.goodData.refresh();
-            this.isGoodSelected = false;
-            this.clarificationData = [];
+          if (result === true) {
+            if (good.length === index) {
+              this.onLoadToast(
+                'success',
+                'Verificación Guardada',
+                'Los datos se guardaron correctamente'
+              );
+              this.confirmation = true;
+              this.goodData.refresh();
+              this.isGoodSelected = false;
+              this.clarificationData = [];
+            }
           }
-        }
-      });
-    }, 400);
+        });
+      }, 400);
+    } else {
+      this.onLoadToast(
+        'success',
+        'Verificación Guardada',
+        'Los datos se guardaron correctamente'
+      );
+      this.confirmation = true;
+      this.goodData.refresh();
+      this.isGoodSelected = false;
+      this.clarificationData = [];
+    }
   }
 
   updateGoods(body: any) {
