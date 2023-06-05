@@ -28,6 +28,7 @@
       <div class="m-3">
         <button
           type="button"
+          [disabled]="!dataOficio"
           class="btn btn-primary active"
           (click)="handleSuccess()">
           Seleccionar
