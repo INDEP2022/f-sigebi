@@ -60,6 +60,7 @@ export class PenaltyListComponent extends BasePage implements OnInit {
               delete this.columnFilters[field];
             }
           });
+          this.params = this.pageFilter(this.params);
           this.getExample();
         }
       });
@@ -114,7 +115,7 @@ export class PenaltyListComponent extends BasePage implements OnInit {
   delete(id: number) {
     this.penaltyService.remove(id).subscribe({
       next: () => {
-        this.getExample(), this.alert('success', 'Penalizacion2', 'Borrado');
+        this.getExample(), this.alert('success', 'Penalizacion', 'Borrado');
       },
     });
   }

@@ -37,3 +37,13 @@ export interface IProceedings {
   hcClosingDate: Date;
   delegationNumber: IDelegationNumber;
 }
+
+export interface IUpdateActasEntregaRecepcion {
+  universalFolio: string;
+  userToolbar: string;
+}
+
+export interface IUpdateActasEntregaRecepcionDelegation {
+  minutesNumber: [];
+  delegation2Number: [];
+}

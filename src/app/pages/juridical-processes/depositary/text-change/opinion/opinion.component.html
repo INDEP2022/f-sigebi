@@ -1,4 +1,26 @@
 <form [formGroup]="form" class="form-material">
+  <div class="row justify-content-end mb-5">
+    <div
+      class="col-md-4 col-sm-12 col-xs-12 justify-content-end"
+      *ngIf="!verBoton">
+      <button
+        class="btn btn-primary btn-sm active"
+        style="float: right"
+        (click)="buscardictamen()">
+        Buscar <i class="fa fa-search ml-2"></i>
+      </button>
+    </div>
+    <div
+      class="col-md-4 col-sm-12 col-xs-12 justify-content-end"
+      *ngIf="verBoton">
+      <button
+        class="btn btn-primary btn-sm active"
+        style="float: right"
+        (click)="nuevaBusquedaOficio()">
+        Nueva B&uacute;squeda <i class="fa fa-search ml-2"></i>
+      </button>
+    </div>
+  </div>
   <div class="row">
     <div class="col-md-3 col-sm-12 col-xs-12">
       <form-field [control]="form.get('expedientNumber')" label="Expediente">
@@ -41,7 +63,7 @@
   </div>
 
   <div class="row mt-5">
-    <div class="col-md-8 col-sm-12 col-xs-12">
+    <div class="col-md-6 col-sm-12 col-xs-12">
       <form-field [control]="form.get('key')" label="Clave">
         <input
           type="text"
@@ -51,21 +73,19 @@
       </form-field>
     </div>
 
-    <div class="col-md-4 col-sm-12 col-xs-12" *ngIf="!verBoton">
+    <!-- <div class="col-md-4 col-sm-12 col-xs-12" *ngIf="!verBoton">
       <button class="btn btn-primary btn-sm active" (click)="buscardictamen()">
         Buscar <i class="fa fa-search ml-2"></i>
       </button>
     </div>
     <div class="col-md-4 col-sm-12 col-xs-12" *ngIf="verBoton">
-      <button
-        class="btn btn-primary btn-sm active"
-        (click)="nuevaBusquedaOficio()">
+      <button class="btn btn-primary btn-sm active" (click)="nuevaBusquedaOficio()">
         Nueva B&uacute;squeda <i class="fa fa-search ml-2"></i>
       </button>
-    </div>
+    </div> -->
   </div>
 
-  <p><b>Dictamen</b></p>
+  <p class="mt-3"><b>Dictamen</b></p>
   <hr />
   <div class="row mt-5">
     <div class="col-md-4 col-sm-12 col-xs-12 mt-3">
@@ -73,6 +93,7 @@
         [control]="form.get('numberDictamination')"
         label="No. Of Dicta">
         <input
+          readonly
           type="text"
           class="form-control"
           formControlName="numberDictamination" />
@@ -80,15 +101,43 @@
     </div>
     <div class="col-md-4 col-sm-12 col-xs-12 mt-3">
       <form-field
-        [control]="form.get('addressee_I')"
+        [control]="form.get('typeDict_')"
         label="Dictaminaci&oacute;n">
-        <input type="text" class="form-control" formControlName="addressee_I" />
+        <input
+          readonly
+          type="text"
+          class="form-control"
+          formControlName="typeDict_" />
       </form-field>
     </div>
 
     <div class="col-md-4 col-sm-12 col-xs-12 mt-3">
-      <form-field [control]="form.get('addressee')" label="Destinatario">
-        <input type="text" class="form-control" formControlName="addressee" />
+      <form-field [control]="form.get('addressee')">
+        <ngx-select
+          [readonly]="!dictatesNumber"
+          [form]="form"
+          [data]="users$"
+          (fetchItems)="getUsers$$($event)"
+          bindLabel="userAndName"
+          value="id"
+          control="addressee"
+          label="Destinatario"
+          [searchOnInit]="false"
+          [showTooltip]="true"
+          termMaxLength="30"
+          [labelTemplate]="userLabel2"
+          [optionTemplate]="userOption2">
+        </ngx-select>
+        <ng-template #userLabel2 let-item="item">
+          {{ item.id }} - {{ item.name }}
+        </ng-template>
+        <ng-template #userOption2 let-item="item">
+          <div [title]="item.id + '-' + item.name">
+            {{ item.id }} - {{ item.name }}
+          </div>
+        </ng-template>
+
+        <!-- <input [readonly]="!dictatesNumber" type="text" class="form-control" formControlName="addressee" /> -->
       </form-field>
       <!--form-field [control]="form.get('addressee_I')" label="Destinatario">
       <input type="text" class="form-control" formControlName="addressee_I" />
@@ -101,6 +150,7 @@
     <div class="col-md-4 col-sm-12 col-xs-12 mt-3">
       <form-field [control]="form.get('senderUserRemitente')">
         <ngx-select
+          [readonly]="!dictatesNumber"
           [form]="form"
           [data]="users$$"
           (change)="getDescUserPuesto($event)"
@@ -109,18 +159,18 @@
           value="id"
           control="senderUserRemitente"
           label="Remitente"
-          [searchOnInit]="true"
+          [searchOnInit]="false"
           [showTooltip]="true"
           termMaxLength="30"
           [labelTemplate]="userLabel"
           [optionTemplate]="userOption">
         </ngx-select>
         <ng-template #userLabel let-item="item">
-          {{ item.id }}
+          {{ item.id }} - {{ item.name }}
         </ng-template>
         <ng-template #userOption let-item="item">
           <div [title]="item.id + '-' + item.name">
-            {{ item.id }}
+            {{ item.id }} - {{ item.name }}
           </div>
         </ng-template>
 
@@ -129,7 +179,11 @@
     </div>
     <div class="col-md-4 col-sm-12 col-xs-12 mt-3">
       <form-field [control]="form.get('charge')" label="Cargo">
-        <input type="text" class="form-control" formControlName="charge" />
+        <input
+          [readonly]="!dictatesNumber"
+          type="text"
+          class="form-control"
+          formControlName="charge" />
       </form-field>
     </div>
     <div class="col-md-4 col-sm-12 col-xs-12 mt-3">
@@ -145,6 +199,8 @@
         [control]="form.get('paragraphInitial')"
         label="P&aacute;rrafo Inicial">
         <textarea
+          maxlength="2000"
+          [readonly]="!dictatesNumber"
           type="text"
           class="form-control"
           formControlName="paragraphInitial"
@@ -158,6 +214,8 @@
         [control]="form.get('paragraphFinish')"
         label="P&aacute;rrafo Final">
         <textarea
+          maxlength="4000"
+          [readonly]="!dictatesNumber"
           type="text"
           class="form-control"
           formControlName="paragraphFinish"
@@ -171,6 +229,8 @@
         [control]="form.get('paragraphOptional')"
         label="Adicional al p&aacute;rrafo Final">
         <textarea
+          maxlength="4000"
+          [readonly]="!dictatesNumber"
           type="text"
           class="form-control"
           formControlName="paragraphOptional"
@@ -185,6 +245,8 @@
         [control]="form.get('masInfo_1')"
         label="M&aacute;s Informaci&oacute;n">
         <textarea
+          maxlength="4000"
+          [readonly]="!dictatesNumber"
           type="text"
           class="form-control"
           formControlName="masInfo_1"
@@ -199,6 +261,7 @@
         [control]="form.get('masInfo_1_1')"
         label="M&aacute;s Informaci&oacute;n 1">
         <textarea
+          [readonly]="!dictatesNumber"
           type="text"
           class="form-control"
           formControlName="masInfo_1_1"
@@ -211,8 +274,9 @@
     <div class="col-md-12 col-sm-12 col-xs-12">
       <form-field
         [control]="form.get('masInfo_1_2')"
-        label="M&aacute;s Informaci&oacute;n 1">
+        label="M&aacute;s Informaci&oacute;n 2">
         <textarea
+          [readonly]="!dictatesNumber"
           type="text"
           class="form-control"
           formControlName="masInfo_1_2"
@@ -225,8 +289,9 @@
     <div class="col-md-12 col-sm-12 col-xs-12">
       <form-field
         [control]="form.get('masInfo_2')"
-        label="M&aacute;s Informaci&oacute;n 2">
+        label="M&aacute;s Informaci&oacute;n 3">
         <textarea
+          [readonly]="!dictatesNumber"
           type="text"
           class="form-control"
           formControlName="masInfo_2"
@@ -234,157 +299,16 @@
       </form-field>
     </div>
   </div>
-
-  <!--div class="row mt-5">
-    <div class="col-md-12 col-sm-12 col-xs-12">
-      <form-field
-        [control]="form.get('masInfo_3')"
-        label="M&aacute;s Informaci&oacute;n 3">
-        <textarea
-          type="text"
-          class="form-control"
-          formControlName="masInfo_3"
-          rows="5"></textarea>
-      </form-field>
-    </div>
-  </div-->
-
-  <!---
-      <ng-container formArrayName="extPerson">
-        <ng-container *ngFor="let personForm of extPerson.controls; let i = index">
-          <div class="lesson-form-row" formGroupName ="i">
-                <div class="row mt-3">
-                  <div class="col-md-4 col-sm-12 col-xs-12 mt-4">
-                    <form-field [control]="form.get('typePerson')" label="Tipo Persona">
-                      <select class="form-control" formControlName="typePerson">
-                        <option *ngFor="let option of options" [value]="option.value">
-                          {{ option.label }}
-                        </option>
-                      </select>
-                    </form-field>
-                  </div>
-                </div>
-          </div>
-        </ng-container>
-      </ng-container>
-
-
-
-
-
- 
-
-<div>
-    <div class="col-md-4 col-sm-12 col-xs-12 mt-4">
-      <form-field [control]="form.get('senderUser')">
-        <ngx-select
-          [form]="form"
-          [data]="usersExtCombo"
-          (change)="getDescUser('control', $event)"
-          [readonly]="form.get('typePerson').value === 'S'"
-          (fetchItems)="usersExt($event)"
-          bindLabel="userAndName"
-          value="id"
-          control="senderUser"
-          label="Usuario"
-          [searchOnInit]="true"
-          [showTooltip]="true"
-          termMaxLength="30"
-          [labelTemplate]="userLabel"
-          [optionTemplate]="userOption">
-        </ngx-select>
-        <ng-template #userLabel let-item="item">
-          {{ item.id }}
-        </ng-template>
-        <ng-template #userOption let-item="item">
-          <div [title]="item.id + '-' + item.name">
-            {{ item.id }}
-          </div>
-        </ng-template>
-      </form-field>
-    </div>
-    <div class="col-md-4 col-sm-12 col-xs-12 mt-4">
-      <form-field [control]="form.get('personaExt')" label="Nombre Persona">
-        <input
-          type="text"
-          class="form-control"
-          formControlName="personaExt"
-          [readonly]="!(form.get('typePerson').value === 'S')" />
-      </form-field>
-    </div>
-  </div>
-
-
------->
-
-  <!--div class="row mt-3">
-    <div class="col-md-4 col-sm-12 col-xs-12 mt-4">
-      <form-field [control]="form.get('typePerson_I')" label="Tipo Persona">
-        <select class="form-control" formControlName="typePerson_I">
-          <option *ngFor="let option of options" [value]="option.value">
-            {{ option.label }}
-          </option>
-        </select>
-      </form-field>
-    </div>
-    <div class="col-md-4 col-sm-12 col-xs-12 mt-5">
-      <form-field [control]="form.get('senderUser_I')">
-        <ngx-select
-          [form]="form"
-          [data]="users$"
-          (change)="getDescUser('control_I', $event)"
-          [readonly]="form.get('typePerson_I').value === 'S'"
-          (fetchItems)="getUsers($event)"
-          bindLabel="userAndName"
-          value="id"
-          control="senderUser_I"
-          label="Usuario"
-          [searchOnInit]="true"
-          [showTooltip]="true"
-          termMaxLength="30"
-          [labelTemplate]="userLabel"
-          [optionTemplate]="userOption">
-        </ngx-select>
-        <ng-template #userLabel let-item="item">
-          {{ item.id }} - {{ item.name }}
-        </ng-template>
-        <ng-template #userOption let-item="item">
-          <div [title]="item.id + '-' + item.name">
-            {{ item.id }} - {{ item.name }}
-          </div>
-        </ng-template>
-      </form-field>
-    </div>
-    <div class="col-md-4 col-sm-12 col-xs-12 mt-4">
-      <form-field [control]="form.get('personaExt_I')" label="Nombre Persona">
-        <input
-          type="text"
-          class="form-control"
-          formControlName="personaExt_I"
-          [readonly]="!(form.get('typePerson_I').value === 'S')" />
-      </form-field>
-    </div>
-  </div>
-  <div formArrayName="extPerson">
-    <ng-container *ngFor="let item of extPerson.controls; let i = index">
-      <button type="button" class="btn  btn-sm btn-info active " (click)="deleteExtPerson(i)"> [ - ] </button>
-      <app-textChange-modal
-           [datosOpinion]="item"
-           [form]="form"
-           [index]="i">
-      </app-textChange-modal>
-    </ng-container>
-  </div>
- <button type="button" class="btn  btn-sm btn-info active " (click)="addExtPersonArray()"> [[+]] </button-->
   <div class="ch-content" header>
     <h5 class="title">C&#46;C&#46;P&#46;</h5>
-
     <hr />
-
     <div class="col-md-5 buttons">
-      <app-columns-select [(settings)]="settings"></app-columns-select>
+      <!--app-columns-select [(settings)]="settings"></app-columns-select-->
       <div>
-        <button (click)="openForm()" class="btn btn-primary active btn-sm ml-3">
+        <button
+          [disabled]="!dictatesNumber"
+          (click)="openForm()"
+          class="btn btn-primary active btn-sm ml-3">
           Nuevo
         </button>
       </div>
@@ -413,19 +337,21 @@
     <div class="col-md-12 col-sm-12 col-xs-12">
       <div class="d-flex justify-content-center">
         <div class="m-3">
-          <confirm-button
-            text="Imprimir"
-            [loading]="loading"
-            (confirm)="confirm()">
-          </confirm-button>
-        </div>
-        <div class="m-3">
           <button
+            [disabled]="!dictatesNumber"
             type="button"
             class="btn btn-info active"
             (click)="updateDictamen()">
             Actualizar
           </button>
+        </div>
+        <div class="m-3">
+          <confirm-button
+            [disabled]="!dictatesNumber"
+            text="Imprimir"
+            [loading]="loading"
+            (confirm)="confirm()">
+          </confirm-button>
         </div>
       </div>
     </div>

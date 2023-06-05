@@ -43,6 +43,7 @@ export const LAWYER_COLUMNS = {
   delegation: {
     title: 'Delegación',
     type: 'string',
+    sort: false,
   },
   zipCode: {
     title: 'Código postal',

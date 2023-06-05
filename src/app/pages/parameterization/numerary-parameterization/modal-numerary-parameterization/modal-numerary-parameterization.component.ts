@@ -14,9 +14,8 @@ import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 })
 export class ModalNumeraryParameterizationComponent
   extends BasePage
-  implements OnInit
-{
-  title: string = 'TASA';
+  implements OnInit {
+  title: string = 'Parametro Numerico';
   edit: boolean = false;
   form: ModelForm<ICategorizationAutomNumerary>;
 
@@ -49,7 +48,8 @@ export class ModalNumeraryParameterizationComponent
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      registerNumber: [null],
+      registerNumber: [
+        null,],
     });
     if (this.allotment != null) {
       this.edit = true;

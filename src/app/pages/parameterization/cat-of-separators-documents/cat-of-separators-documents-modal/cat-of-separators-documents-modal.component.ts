@@ -13,8 +13,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 })
 export class CatOfSeparatorsDocumentsModalComponent
   extends BasePage
-  implements OnInit
-{
+  implements OnInit {
   title: string = 'SEPARADORES A DOCUMENTOS';
   edit: boolean = false;
   separatorsDocuments: SeparatorsDocuments;
@@ -41,6 +40,7 @@ export class CatOfSeparatorsDocumentsModalComponent
     if (this.separatorsDocuments != null) {
       this.edit = true;
       this.separatorsDocumentsModalForm.patchValue(this.separatorsDocuments);
+      this.separatorsDocumentsModalForm.get('key').disable();
     }
   }
   close() {

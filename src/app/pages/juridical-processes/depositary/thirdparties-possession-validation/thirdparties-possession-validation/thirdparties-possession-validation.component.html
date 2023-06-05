@@ -28,6 +28,7 @@
                     <i class="fas fa-search"></i>
                   </button>
                   <button
+                    tooltip="Limpiar formulario"
                     (click)="clearForm()"
                     [disabled]="loading"
                     class="ml-2 btn btn-sm btn-secondary active">
@@ -60,7 +61,7 @@
 
     <!-- TABLA----BIENES RELACIONADOS CON EL EXPEDIENTE -->
     <div class="row w-100">
-      <div class="col-sm-12 col-12 col-md-5 col-lg-5 p-2 alert alert-info">
+      <div class="col-sm-12 col-12 col-md-5 col-lg-5 p-2 alert alert-success">
         <h6>BIENES RELACIONADOS CON EL EXPEDIENTE</h6>
         <div
           [class]="isLoadingGood ? 'table-loading' : ''"
@@ -76,7 +77,7 @@
             [totalItems]="totalItemsGood"></app-pagination>
         </div>
         <br />
-        <span class="badge m-2 badge-pill bg-primary"
+        <span class="badge m-2 badge-pill bg-success"
           >&#42;&#42;Disponibles</span
         >
         <span class="badge m-2 badge-pill bg-dark"
@@ -85,24 +86,30 @@
       </div>
       <!-- TABLA----BIENES RELACIONADOS CON EL EXPEDIENTE -->
       <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2 text-center">
-        <button
-          (click)="addGoodOffice()"
-          class="btn btn-secondary btn-sm bg-success active m-3 p-3"
-          type="button">
-          <!-- Mover uno -->
-          <i class="bx bxs-right-arrow-circle bx-md"></i>
-        </button>
-        <br />
-        <button
-          (click)="deleteGoodOffice()"
-          class="btn btn-secondary btn-sm active bg-danger m-3 p-3"
-          type="button">
-          <!-- Mover uno -->
-          <i class="bx bxs-left-arrow-circle bx-md"></i>
-        </button>
+        <div class="d-flex justify-content-center align-items-center h-100">
+          <div>
+            <button
+              (click)="addGoodOffice()"
+              [disabled]="isAllDisabled"
+              class="btn btn-secondary btn-sm bg-success active m-3 p-3"
+              type="button">
+              <!-- Mover uno -->
+              <i class="bx bxs-right-arrow-circle bx-md"></i>
+            </button>
+            <br />
+            <button
+              (click)="deleteGoodOffice()"
+              [disabled]="isAllDisabled"
+              class="btn btn-secondary btn-sm active bg-danger m-3 p-3"
+              type="button">
+              <!-- Mover uno -->
+              <i class="bx bxs-left-arrow-circle bx-md"></i>
+            </button>
+          </div>
+        </div>
       </div>
       <!-- TABLA----BIENES RELACIONADOS CON EL OFICIO -->
-      <div class="col-sm-12 col-12 col-md-5 col-lg-5 p-2 alert alert-info">
+      <div class="col-sm-12 col-12 col-md-5 col-lg-5 p-2 alert alert-success">
         <h6>BIENES RELACIONADOS CON EL OFICIO</h6>
         <ng2-smart-table
           [attr.class]="'table-bordered'"
@@ -142,13 +149,13 @@
           </form-field> -->
 
           <!-- [form]="formPositionThirdParty" -->
-          <form-field [control]="formPositionThirdParty.get('addressee')">
+          <form-field [control]="formPositionThirdParty.get('usrAddressee')">
             <ngx-select
               [form]="formPositionThirdParty"
               [data]="addressee"
               (fetchItems)="getUserName($event)"
               bindLabel="nameUser"
-              control="addressee"
+              control="usrAddressee"
               label="Destinatario"
               [searchOnInit]="true"
               [clearable]="false"
@@ -173,7 +180,8 @@
             <button
               type="button"
               [disabled]="
-                !formPositionThirdParty.get('steeringwheelNumber').value
+                !formPositionThirdParty.get('steeringwheelNumber').value ||
+                isAllDisabled
               "
               class="btn btn-primary btn-sm active text-wrap"
               (click)="btnReemplazarMarcadores()">
@@ -186,7 +194,7 @@
             <button
               type="button"
               class="btn btn-primary btn-sm active text-wrap"
-              (click)="btnImprimir()">
+              (click)="onClickPrint()">
               Imprimir
             </button>
           </div>
@@ -214,7 +222,7 @@
               <form-field [control]="formPositionThirdParty.get('usrCcp1')">
                 <ngx-select
                   [form]="formPositionThirdParty"
-                  [data]="userCcp2"
+                  [data]="userCcp1"
                   (fetchItems)="getUserName($event, 'ccp1')"
                   bindLabel="nameUser"
                   control="usrCcp1"
@@ -280,13 +288,14 @@
         </form>
         <!-- Form CON COPIA PARA -->
         <form [formGroup]="formPositionThirdParty" class="form-material">
-          <div class="row tp-2 mb-2">
+          <!-- <div class="row tp-2 mb-2">
             <div class="col-sm-12 col-12 col-md-6 p-2">
               <form-field
                 [control]="formPositionThirdParty.get('delegationCloseNumber')"
                 label="Delegación Cierre">
                 <input
                   type="text"
+                  readonly
                   maxlength="40"
                   class="form-control"
                   formControlName="delegationCloseNumber" />
@@ -297,11 +306,15 @@
                 maxlength="40"
                 [control]="formPositionThirdParty.get('numClueNavy')"
                 label="Clave Armada">
-                <input class="form-control" formControlName="numClueNavy" />
+                <input
+                  readonly
+                  class="form-control"
+                  formControlName="numClueNavy" />
               </form-field>
             </div>
             <div class="col-sm-12 col-12 col-md-6 p-2">
               <form-field
+                []
                 maxlength="40"
                 [control]="formPositionThirdParty.get('closingDate')"
                 label="Fecha de Cierre">
@@ -309,9 +322,9 @@
                   class="form-control"
                   bsDatepicker
                   formControlName="closingDate" />
-              </form-field>
+              </form-field> 
             </div>
-          </div>
+          </div>-->
         </form>
       </div>
     </form>

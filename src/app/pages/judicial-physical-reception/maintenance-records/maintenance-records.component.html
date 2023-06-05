@@ -17,7 +17,7 @@
       ></app-proceeding-info>
     </div>
     <hr />
-    <div class="row border border-dark">
+    <div class="row">
       <div class="row header mt-3 mb-5 pr-0">
         <h5 class="title col-md-6">Bienes</h5>
         <!-- <div class="col-md-6 pr-0" style="text-align: right">
@@ -46,13 +46,15 @@
       </div> -->
       <app-table-good-maintenance
         [loading]="loadingGoods"
+        [page]="pageGoods"
         [data]="data"
         [totalItems]="totalGoods"
         (updateData)="updateData($event)"
         (rowsSelected)="rowsSelectedNotLocal = $event"
         (showDeleteAlert)="deleteRow($event)">
       </app-table-good-maintenance>
-      <app-warehouse-proceedings> </app-warehouse-proceedings>
+      <app-warehouse-proceedings [disabled]="data.length === 0">
+      </app-warehouse-proceedings>
     </div>
   </div>
 </app-card>

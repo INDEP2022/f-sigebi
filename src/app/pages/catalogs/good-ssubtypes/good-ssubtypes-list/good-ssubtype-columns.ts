@@ -28,9 +28,4 @@ export const GOOD_SSUBTYPES_COLUMNS = {
     },
     sort: false,
   },
-  noRegister: {
-    title: 'N registro',
-    type: 'number',
-    sort: false,
-  },
 };

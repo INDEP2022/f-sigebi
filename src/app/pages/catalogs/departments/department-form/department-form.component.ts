@@ -115,7 +115,7 @@ export class DepartmentFormComponent extends BasePage implements OnInit {
       this.edit = true;
       this.departmentForm.patchValue(this.department);
       let numSubDelegation = this.department.numSubDelegation as ISubdelegation;
-      console.log(this.departmentForm.value);
+      console.log('consola 1', this.departmentForm.value);
       this.departmentForm.controls['numSubDelegation'].setValue(
         numSubDelegation.id
       );
@@ -136,7 +136,7 @@ export class DepartmentFormComponent extends BasePage implements OnInit {
     this.departmentService.getDelegationsCatalog(params).subscribe({
       next: data => {
         this.delegations = new DefaultSelect(data.data, data.count);
-        console.log(data.data);
+        console.log('consola 2', data.data);
       },
     });
   }
@@ -145,7 +145,7 @@ export class DepartmentFormComponent extends BasePage implements OnInit {
     this.departmentService.getDelegationsCatalog(params).subscribe({
       next: data => {
         this.delegations = new DefaultSelect(data.data, data.count);
-        console.log(data.data);
+        console.log('consola 3', data.data);
       },
     });
   }
@@ -156,12 +156,12 @@ export class DepartmentFormComponent extends BasePage implements OnInit {
     this.departmentService.getSubdelegations(params).subscribe({
       next: data => {
         this.subdelegations = new DefaultSelect(data.data, data.count);
-        console.log(data.data);
+        console.log('consola 5', data.data);
       },
     });
   }
   onSubDelegation(data: any) {
-    console.log(data);
+    console.log('consola 4', data);
     this.getSubdelegations(new ListParams(), data.id);
   }
   close() {
