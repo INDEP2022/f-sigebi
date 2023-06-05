@@ -5,10 +5,12 @@ import { UsersSharedComponent } from 'src/app/@standalone/shared-forms/user-shar
 
 import { SharedModule } from 'src/app/shared/shared.module';
 import { ModalComponent } from './modal/modal-component';
+import { ListdocsComponent } from './office/listdocs/listdocs.component';
 import { ModalPersonaOficinaComponent } from './office/modal-persona-oficina/modal-persona-oficina.component';
 import { OfficeComponent } from './office/office.component';
 import { OpinionComponent } from './opinion/opinion.component';
 import { tablaModalComponent } from './tabla-modal/tablaModal-component';
+import { TablaOficioModalComponent } from './tabla-oficio-modal/tabla-oficio-modal.component';
 import { TextChangeRoutingModule } from './text-change-routing.module';
 import { TextChangeComponent } from './text-change/text-change.component';
 
@@ -20,6 +22,8 @@ import { TextChangeComponent } from './text-change/text-change.component';
     ModalComponent,
     tablaModalComponent,
     ModalPersonaOficinaComponent,
+    ListdocsComponent,
+    TablaOficioModalComponent,
   ],
   imports: [
     CommonModule,
