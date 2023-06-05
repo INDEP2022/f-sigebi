@@ -72,6 +72,7 @@ export class MaintenanceOfPublicMinistriesComponent
       manager: [
         null,
         [
+          Validators.required,
           Validators.minLength(1),
           Validators.maxLength(100),
           Validators.pattern(STRING_PATTERN),
@@ -80,6 +81,7 @@ export class MaintenanceOfPublicMinistriesComponent
       street: [
         null,
         [
+          Validators.required,
           Validators.minLength(1),
           Validators.maxLength(60),
           Validators.pattern(STRING_PATTERN),
@@ -87,15 +89,16 @@ export class MaintenanceOfPublicMinistriesComponent
       ],
       insideNumber: [
         null,
-        [Validators.maxLength(10), Validators.pattern(STRING_PATTERN)],
+        [Validators.required, Validators.maxLength(10), Validators.pattern(STRING_PATTERN)],
       ],
       outNumber: [
         null,
-        [Validators.maxLength(100), Validators.pattern(STRING_PATTERN)],
+        [Validators.required, Validators.maxLength(100), Validators.pattern(STRING_PATTERN)],
       ],
       colony: [
         null,
         [
+          Validators.required,
           Validators.minLength(1),
           Validators.maxLength(60),
           Validators.pattern(STRING_PATTERN),
@@ -104,17 +107,18 @@ export class MaintenanceOfPublicMinistriesComponent
       delegNunic: [
         null,
         [
+          Validators.required,
           Validators.minLength(1),
           Validators.maxLength(60),
           Validators.pattern(STRING_PATTERN),
         ],
       ],
-      zipCode: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      zipCode: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
       phone: [
         null,
-        [Validators.maxLength(20), Validators.pattern(STRING_PATTERN)],
+        [Validators.required, Validators.maxLength(20), Validators.pattern(STRING_PATTERN)],
       ],
-      idCity: [null],
+      idCity: [null, [Validators.required]],
       entity: [null],
       delegation: [null],
       subDelegation: [null],
@@ -202,10 +206,7 @@ export class MaintenanceOfPublicMinistriesComponent
     params['filter.etapaEdo'] = 1;
 
     this.serviceDeleg.getAll(params).subscribe({
-      next: data => {
-        console.log(data)
-        this.form.get('delegation').patchValue(data.data[0].description)
-      },
+      next: data => this.form.get('delegation').patchValue(data.data[0].description),
       error: error => this.onLoadToast('error', error.erro.message, ''),
     });
   }

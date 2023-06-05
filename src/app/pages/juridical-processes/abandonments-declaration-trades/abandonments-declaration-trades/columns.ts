@@ -44,6 +44,19 @@ export const COLUMNS_DOCUMENTS = {
   },
 };
 
+export const COLUMNS_DOCUMENTS2 = {
+  cveDocument: {
+    title: 'CVE. Documento',
+    type: 'string',
+    sort: false,
+  },
+  description: {
+    title: 'Descripción',
+    type: 'string',
+    sort: false,
+  },
+};
+
 export const COLUMNS_DICTUMS = {
   id: {
     title: 'ID',

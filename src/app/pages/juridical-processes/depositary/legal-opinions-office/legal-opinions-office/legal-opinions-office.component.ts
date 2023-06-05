@@ -38,6 +38,7 @@ import { NUM_POSITIVE, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { MailboxModalTableComponent } from 'src/app/pages/general-processes/work-mailbox/components/mailbox-modal-table/mailbox-modal-table.component';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { AddCopyComponent } from '../../../abandonments-declaration-trades/abandonments-declaration-trades/add-copy/add-copy.component';
+import { LegalOpinionsOfficeFirmModalComponent } from '../legal-opinions-office-firm-modal/legal-opinions-office-firm-modal.component';
 import {
   CCP_COLUMS_OFICIO,
   COLUMNS,
@@ -1801,7 +1802,7 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
         this.bodyCurrent['valida_estatus'] = data['P5'];
         console.log(this.totalCurrent - 2, this.bodyCurrent);
         if (this.totalData > this.totalCurrent - 2) {
-          this.sendOfficeAndGoodData(this.totalCurrent - 2, this.bodyCurrent);
+          // this.sendOfficeAndGoodData(this.totalCurrent - 2, this.bodyCurrent);
         }
       },
       error: error => {
@@ -2360,6 +2361,8 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
           if (data.count > 0) {
             if (onlyDetail) {
               // PUP_CONSULTA_PDF_BD_SSF3(:DICTAMINACIONES.FOLIO_UNIVERSAL,2);
+              // Llamar reportes de acuerdo a validaciones
+              this.runConditionReports();
             } else {
               // DELETE SSF3_FIRMA_ELEC_DOCS
               this.getParameters_PUP_XML_DICTAMINADO(data.count);
@@ -3428,5 +3431,70 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
     modalRef.content.refresh.subscribe((next: any) => {
       this.getOfficeCopiesDictation();
     });
+  }
+
+  openFirmModal() {
+    return;
+    let nameFile = this.dictationData.passOfficeArmy
+      .replaceAll('/', '-')
+      .replaceAll('?', '0')
+      .replaceAll(' ', '');
+    let params: any = {
+      P_OFICIO: this.dictationData.id,
+      TIPO_DIC: this.dictationData.typeDict,
+    };
+    this.siabService
+      .fetchReport('RGENADBDICTAMASIV', params)
+      .subscribe(response => {
+        console.log(response);
+
+        // const blob = new Blob([response], { type: 'application/pdf' });
+        // const url = URL.createObjectURL(blob);
+        // let config = {
+        //   initialState: {
+        //     documento: {
+        //       urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+        //       type: 'pdf',
+        //     },
+        //     callback: (data: any) => {},
+        //   }, //pasar datos por aca
+        //   class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+        //   ignoreBackdropClick: true, //ignora el click fuera del modal
+        // };
+        // this.modalService.show(PreviewDocumentsComponent, config);
+
+        const formData = new FormData();
+        const blob = new Blob([response], {
+          type: 'application/xml;charset=UTF-8',
+        });
+        formData.append('file', blob, nameFile + '.xml'); // NOMBRE CON EXTENSION
+        this.startFirmComponent({
+          nameFileDictation: nameFile,
+          natureDocumentDictation: this.dictationData.typeDict,
+          numberDictation: this.dictationData.id,
+          typeDocumentDictation: this.officeDictationData.statusOf
+            ? this.officeDictationData.statusOf
+            : 'ENVIADO',
+          fileDocumentDictation: formData.get('file'), // DOCUMENTO XML GENERADO
+        });
+      });
+  }
+
+  startFirmComponent(context?: Partial<LegalOpinionsOfficeFirmModalComponent>) {
+    const modalRef = this.modalService.show(
+      LegalOpinionsOfficeFirmModalComponent,
+      {
+        initialState: context,
+        class: 'modal-lg modal-dialog-centered',
+        ignoreBackdropClick: true,
+      }
+    );
+    // modalRef.content.dataCopy.subscribe((next: any) => {
+    //   console.log('next', next);
+    //   this.getOfficeCopiesDictation();
+    // });
+    // modalRef.content.refresh.subscribe((next: any) => {
+    //   this.getOfficeCopiesDictation();
+    // });
   }
 }

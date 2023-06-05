@@ -15,7 +15,7 @@ import { STRING_PATTERN } from 'src/app/core/shared/patterns';
   styles: [],
 })
 export class SaveValuesModalComponent extends BasePage implements OnInit {
-  title: string = 'Guardavaloress';
+  title: string = 'Guardavalores';
   edit: boolean = false;
 
   saveValuesForm: ModelForm<ISaveValue>;
