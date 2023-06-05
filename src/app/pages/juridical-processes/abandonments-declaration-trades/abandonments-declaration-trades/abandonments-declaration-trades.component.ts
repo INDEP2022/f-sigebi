@@ -2616,8 +2616,9 @@ export class AbandonmentsDeclarationTradesComponent
         this.m_oficio_gestion.insertDate;
         let typeO = this.formOficio.get('tipoOficio').value;
         this.m_oficio_gestion.text1 = this.formOficiopageFin.get('page').value;
-        console.log('aaa', sender.user);
-        let useerrrr = JSON.stringify(sender.user);
+
+        let sender2 = this.formOficio.get('remitente').value;
+        let useerrrr = sender2.user;
         let obj: any = {
           flyerNumber: this.noVolante_,
           proceedingsNumber: this.idExpediente,
