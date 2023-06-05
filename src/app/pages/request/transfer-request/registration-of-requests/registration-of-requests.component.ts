@@ -653,13 +653,10 @@ export class RegistrationOfRequestsComponent
           this.alertQuestion(
             'warning',
             'Aún hay bienes sin aclarar',
-            '¿Hacerlo ahora?'
+            'Recuerde tener todos los bienes aclarados'
           ).then(async question => {
             if (question.isConfirmed) {
               //this.notifyClarificationsMethod2();
-              this.router.navigate([
-                `pages/request/transfer-request/notify-clarification-inadmissibility/${this.requestData.id}`,
-              ]);
               this.updateGoodStatus('SOLICITAR_APROBACION');
               const existApprovalTask = await this.existApprobalTask();
               if (existApprovalTask === true) {
@@ -667,7 +664,7 @@ export class RegistrationOfRequestsComponent
                 console.log(
                   'si existe crea solo la Notificacion de aclaracion'
                 );
-                await this.notifyClarificationsMethod2();
+                await this.notifyClarificationsMethod();
               } else {
                 //si no existe crear una tarea de aprovar solicitud y la notificacion de aclaracion
                 console.log(
@@ -676,7 +673,7 @@ export class RegistrationOfRequestsComponent
                 const result = await this.createApprovalProcessOnly();
                 if (result) {
                   console.log('his.notifyClarificationsMethod();');
-                  await this.notifyClarificationsMethod2();
+                  await this.notifyClarificationsMethod();
                 }
               }
             }

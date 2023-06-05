@@ -18,7 +18,7 @@ export class ResponseRepuveListComponent extends BasePage implements OnInit {
   responseRepuves: IResponseRepuve[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
-
+  columnFilters: any = [];
   constructor(
     private responseRepuveService: ResponseRepuveService,
     private BsModalService: BsModalService
@@ -26,6 +26,8 @@ export class ResponseRepuveListComponent extends BasePage implements OnInit {
     super();
     this.settings.columns = RESPONSE_REPUVE_COLUMNS;
     this.settings.actions.delete = true;
+    this.settings.actions.add = false;
+    this.settings.hideSubHeader = false;
   }
 
   ngOnInit(): void {

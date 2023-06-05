@@ -2616,11 +2616,14 @@ export class AbandonmentsDeclarationTradesComponent
         this.m_oficio_gestion.insertDate;
         let typeO = this.formOficio.get('tipoOficio').value;
         this.m_oficio_gestion.text1 = this.formOficiopageFin.get('page').value;
+
+        let sender2 = this.formOficio.get('remitente').value;
+        let useerrrr = sender2.user;
         let obj: any = {
           flyerNumber: this.noVolante_,
           proceedingsNumber: this.idExpediente,
           cveManagement: this.m_oficio_gestion.cveManagement,
-          sender: sender.user,
+          sender: useerrrr,
           nomPersExt: typeO == 'EXTERNO' ? dest : dest.user,
           city: city.idCity,
           statusOf: 'EN REVISION',

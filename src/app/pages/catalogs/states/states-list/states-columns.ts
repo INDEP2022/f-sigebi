@@ -20,7 +20,7 @@ export const STATES_COLUMNS = {
     sort: false,
   },
   zoneHourlyVer: {
-    title: 'Version de zona horaria',
+    title: 'Versión de zona horaria',
     type: 'string',
     sort: false,
   },
@@ -35,7 +35,7 @@ export const STATES_COLUMNS = {
     sort: false,
   },
   version: {
-    title: 'Version',
+    title: 'Versión',
     type: 'number',
     sort: false,
   },
