@@ -24,6 +24,8 @@ export class ListdocsComponent extends BasePage implements OnInit {
   selectedDocs: any[] = [];
   typeOffice: any;
   arrayOfDocsCreados: any;
+  managementNumber: any;
+  rulingType: any;
   constructor(
     private modalRef: BsModalRef,
     private documentsService: DocumentsService,
@@ -56,8 +58,23 @@ export class ListdocsComponent extends BasePage implements OnInit {
     let data = this.selectedDocs;
     console.log('aaa', this.selectedDocs);
     console.log('bb', this.arrayOfDocsCreados);
-    for (let i = 0; i < this.arrayOfDocsCreados.length; i++) {
-      await this.docsSeleccionados(this.arrayOfDocsCreados[i]);
+
+    if (this.arrayOfDocsCreados.length > 0) {
+      for (let i = 0; i < this.arrayOfDocsCreados.length; i++) {
+        await this.docsSeleccionados(this.arrayOfDocsCreados[i]);
+      }
+    } else {
+      for (let i = 0; i < this.selectedDocs.length; i++) {
+        // if (arrayOfDocsCreados.cveDocument != this.selectedDocs[i].key) {
+        let obj = {
+          managementNumber: this.managementNumber,
+          cveDocument: this.selectedDocs[i].key,
+          rulingType: this.rulingType,
+        };
+        console.log(obj);
+        await this.createDocumentOficiManagement(obj);
+        // }
+      }
     }
 
     this.loading = false;
