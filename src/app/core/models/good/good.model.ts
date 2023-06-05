@@ -46,6 +46,12 @@ export interface IGood {
   fecNotificationAbandonment?: any;
   observationAbandoment?: any;
   fecConfAbandoment?: any;
+  delegationNumber?: { id: string; description: string };
+  subDelegationNumber?: { id: string; description: string };
+  observationss?: string;
+  referenceValue?: string;
+  appraisedValue?: string;
+  appraisalVigDate?: string;
   fecNotification?: any;
   notificationA?: any;
   placeNotification?: any;

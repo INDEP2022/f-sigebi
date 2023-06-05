@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { GoodEndpoints } from 'src/app/common/constants/endpoints/ms-good-endpoints';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponseMessage } from '../../interfaces/list-response.interface';
@@ -19,5 +19,23 @@ export class AttribGoodBadService extends HttpService {
       GoodEndpoints.AttribGoodBad,
       params
     );
+  }
+
+  getAllModal(
+    self?: AttribGoodBadService,
+    params?: _Params
+  ): Observable<IListResponseMessage<IAttribGoodBad>> {
+    return self
+      .get<IListResponseMessage<IAttribGoodBad>>('attrib-good-bad', params)
+      .pipe(
+        map(response => {
+          return {
+            ...response,
+            data: response.data.map(item => {
+              return { ...item, id: item.id.goodId };
+            }),
+          };
+        })
+      );
   }
 }
