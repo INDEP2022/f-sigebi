@@ -1,6 +1,5 @@
 import { Component, Inject, inject, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { format } from 'date-fns';
 import { Ng2SmartTableComponent } from 'ng2-smart-table';
 import { takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
@@ -15,7 +14,11 @@ import { ProceedingsDetailDeliveryReceptionService } from 'src/app/core/services
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePageWidhtDinamicFiltersExtra } from 'src/app/core/shared/base-page-dinamic-filters-extra';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
-import { firstFormatDateToSecondFormatDate } from 'src/app/shared/utils/date';
+import {
+  firstFormatDateToSecondFormatDate,
+  formatForIsoDate,
+  secondFormatDate,
+} from 'src/app/shared/utils/date';
 import { IProceedingDeliveryReception } from './../../../core/models/ms-proceedings/proceeding-delivery-reception';
 
 @Component({
@@ -223,9 +226,12 @@ export abstract class ScheduledMaintenance extends BasePageWidhtDinamicFiltersEx
             if (filter.search !== '') {
               let search = filter.search;
               if (filter.field === 'captureDate') {
-                search = firstFormatDateToSecondFormatDate(search);
+                const initDate = firstFormatDateToSecondFormatDate(search);
+                this.columnFilters[field] = `$btw:${initDate},${initDate}`;
+              } else {
+                this.columnFilters[field] = `${searchFilter}:${search}`;
               }
-              this.columnFilters[field] = `${searchFilter}:${search}`;
+              // this.columnFilters[field] = `${searchFilter}:${search}`;
             } else {
               delete this.columnFilters[field];
             }
@@ -317,8 +323,8 @@ export abstract class ScheduledMaintenance extends BasePageWidhtDinamicFiltersEx
     }
 
     if (rangeDate) {
-      const inicio = rangeDate[0].toISOString().split('T')[0];
-      const final = rangeDate[1].toISOString().split('T')[0];
+      const inicio = secondFormatDate(rangeDate[0]);
+      const final = secondFormatDate(rangeDate[1]);
       this.filterParams.addFilter(
         'captureDate',
         inicio + ',' + final,
@@ -401,10 +407,12 @@ export abstract class ScheduledMaintenance extends BasePageWidhtDinamicFiltersEx
           (this.items = response.data.map(x => {
             return {
               ...x,
-              captureDate: format(new Date(x.captureDate), 'dd/MM/yyyy'),
+              captureDate: formatForIsoDate(x.captureDate, 'string') + '',
             };
           })),
-            this.data.load(this.items);
+            console.log(this.items);
+
+          this.data.load(this.items);
           this.totalItems = response.count;
           this.loading = false;
           // setTimeout(() => {

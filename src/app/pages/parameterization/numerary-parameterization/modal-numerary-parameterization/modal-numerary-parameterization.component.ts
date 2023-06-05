@@ -16,7 +16,7 @@ export class ModalNumeraryParameterizationComponent
   extends BasePage
   implements OnInit
 {
-  title: string = 'TASA';
+  title: string = 'Parametro Numerico';
   edit: boolean = false;
   form: ModelForm<ICategorizationAutomNumerary>;
 
