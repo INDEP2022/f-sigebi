@@ -14,7 +14,7 @@ export const DELEGATION_COLUMS = {
     type: 'number',
     sort: false,
   },
-  zoneContractCVE: {
+  zoneContractKey: {
     title: 'Z. Contrato',
     type: 'number',
     sort: false,
@@ -24,12 +24,12 @@ export const DELEGATION_COLUMS = {
     type: 'number',
     sort: false,
   },
-  phaseEdo: {
+  etapaEdo: {
     title: 'Etapa EDO',
     type: 'number',
     sort: false,
   },
-  zoneVigilanceCVE: {
+  zoneVigilanceKey: {
     title: 'Zona Vigilancia',
     type: 'number',
     sort: false,
