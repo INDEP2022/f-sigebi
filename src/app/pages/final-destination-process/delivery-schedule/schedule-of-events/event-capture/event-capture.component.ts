@@ -378,8 +378,9 @@ export class EventCaptureComponent
   }
 
   udpateProceedingExpedient() {
+    const { numFile } = this.proceeding;
     return this.proceedingDeliveryReceptionService
-      .update(this.proceeding.id, this.proceeding as any)
+      .update(this.proceeding.id, { numFile } as any)
       .pipe();
   }
 
@@ -542,6 +543,10 @@ export class EventCaptureComponent
   }
 
   async loadGoods() {
+    if (!this.proceeding.id) {
+      this.onLoadToast('error', 'Error', 'Primero debes guardar el acta');
+      return;
+    }
     const { area, keysProceedings, typeEvent } = this.registerControls;
     const totalFilters = Object.values(this.formSiab.value);
     const filters = totalFilters.map(filter =>
@@ -1173,7 +1178,11 @@ export class EventCaptureComponent
           this.blkCtrl.goodQuantity = res.data.length;
           this.afterGetDetail(detail);
           this.detail = res.data.map(detail => {
-            if (detail.expedientnumber) {
+            console.log(detail);
+            if (
+              detail.expedientnumber &&
+              (this.proceeding.numFile == 2 || !this.proceeding.numFile)
+            ) {
               this.proceeding.numFile = Number(detail.expedientnumber);
               this.udpateProceedingExpedient().subscribe();
             }
@@ -1480,7 +1489,7 @@ export class EventCaptureComponent
 
     const C_DATVAL: ITmpProgValidation[] = await this.tmpProgValidacion();
 
-    if (this.blkQuantities.goods <= 0) {
+    if (this.detail.length <= 0) {
       this.onLoadToast('info', 'No se tienen bienes ingresados.', '');
       throw new Error('FORM_TRIGGER_FAILURE');
     }
