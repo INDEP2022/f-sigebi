@@ -604,7 +604,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   //Validations
 
   validateFolio() {
-    this.serviceDocuments.getByFolio(-73378).subscribe(
+    this.serviceDocuments.getByFolio(this.form.get('folioEscaneo').value).subscribe(
       res => {
         const data = JSON.parse(JSON.stringify(res));
         const scanStatus = data.data[0]['scanStatus'];
@@ -2817,7 +2817,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   closeProceeding() {
     console.log(this.saveDataAct);
     console.log(this.goodData);
-    this.validateFolio();
+    
     if (this.dataGoodAct['data'].length == 0) {
       this.alert(
         'warning',
@@ -2928,7 +2928,8 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
           );
         }
       } else {
-        this.serviceDocuments
+        if(this.form.get('folioEscaneo').value != null){
+          this.serviceDocuments
           .getByFolio(this.form.get('folioEscaneo').value)
           .subscribe(
             res => {
@@ -3125,6 +3126,10 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
               this.render.addClass(btn, 'enabled');
             }
           );
+        }else{
+          this.alert('warning','Debe registrar un número de folio','')
+        }
+        
       }
     }
   }

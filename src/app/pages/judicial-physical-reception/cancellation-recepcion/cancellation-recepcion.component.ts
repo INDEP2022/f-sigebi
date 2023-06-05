@@ -2350,6 +2350,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
             witness2: this.form.get('elabora').value,
             address: this.form.get('direccion').value,
             captureDate: format(new Date(), 'yyyy-MM,dd HH:mm'),
+            universalFolio: this.form.get('folioEscaneo').value,
           };
           const resData = JSON.parse(JSON.stringify(res.data[0]));
           console.log(modelEdit);
@@ -2783,6 +2784,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                                         this.form.get('autoridadCancela').value,
                                       witness2: this.form.get('elabora').value,
                                       address: this.form.get('direccion').value,
+                                      universalFolio: this.form.get('folioEscaneo').value
                                     };
                                   this.serviceProcVal
                                     .editProceeding(idProceed, modelEdit)
