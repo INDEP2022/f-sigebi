@@ -386,6 +386,8 @@ export class OfficeComponent extends BasePage implements OnInit {
     this.openModalDoc({
       typeOffice: this.typeOffice,
       arrayOfDocsCreados: this.IAttDocument,
+      managementNumber: this.managementNumber_,
+      rulingType: this.form.value.officio,
     });
   }
 

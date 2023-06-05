@@ -426,7 +426,7 @@ carga la  información de la parte media de la página
           'complementoFormulario DICTAMENT : >===>> ',
           JSON.stringify(resp)
         );
-
+        this.dictatesNumber = resp.officialNumber;
         this.oficioDict = resp;
         this.form.get('addressee').setValue(resp.recipient);
         this.form.get('senderUserRemitente').setValue(resp.sender);
