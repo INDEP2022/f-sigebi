@@ -90,6 +90,7 @@
           <div>
             <button
               (click)="addGoodOffice()"
+              [disabled]="isAllDisabled"
               class="btn btn-secondary btn-sm bg-success active m-3 p-3"
               type="button">
               <!-- Mover uno -->
@@ -98,6 +99,7 @@
             <br />
             <button
               (click)="deleteGoodOffice()"
+              [disabled]="isAllDisabled"
               class="btn btn-secondary btn-sm active bg-danger m-3 p-3"
               type="button">
               <!-- Mover uno -->
@@ -168,6 +170,7 @@
             <button
               type="button"
               class="btn btn-primary btn-sm active text-wrap"
+              [disabled]="isAllDisabled"
               (click)="btnInsertarTextoPredefinido()">
               Insertar Texto Predefinido
             </button>
@@ -178,7 +181,8 @@
             <button
               type="button"
               [disabled]="
-                !formPositionThirdParty.get('steeringwheelNumber').value
+                !formPositionThirdParty.get('steeringwheelNumber').value ||
+                isAllDisabled
               "
               class="btn btn-primary btn-sm active text-wrap"
               (click)="btnReemplazarMarcadores()">
@@ -285,7 +289,7 @@
         </form>
         <!-- Form CON COPIA PARA -->
         <form [formGroup]="formPositionThirdParty" class="form-material">
-          <div class="row tp-2 mb-2">
+          <!-- <div class="row tp-2 mb-2">
             <div class="col-sm-12 col-12 col-md-6 p-2">
               <form-field
                 [control]="formPositionThirdParty.get('delegationCloseNumber')"
@@ -311,6 +315,7 @@
             </div>
             <div class="col-sm-12 col-12 col-md-6 p-2">
               <form-field
+                []
                 maxlength="40"
                 [control]="formPositionThirdParty.get('closingDate')"
                 label="Fecha de Cierre">
@@ -318,9 +323,9 @@
                   class="form-control"
                   bsDatepicker
                   formControlName="closingDate" />
-              </form-field>
+              </form-field> 
             </div>
-          </div>
+          </div>-->
         </form>
       </div>
     </form>

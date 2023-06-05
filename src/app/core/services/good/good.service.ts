@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { GoodEndpoints } from 'src/app/common/constants/endpoints/ms-good-endpoints';
 import { ICrudMethods } from 'src/app/common/repository/interfaces/crud-methods';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
@@ -33,6 +33,19 @@ export class GoodService extends HttpService implements ICrudMethods<IGood> {
 
   getById(id: string | number): Observable<any> {
     return this.goodRepository.getById('good/good', id);
+  }
+
+  getById2(id: string | number) {
+    const route = `${GoodEndpoints.Good}`;
+    return this.get<IListResponse<IGood>>(`${route}?filter.id=$eq:${id}`).pipe(
+      map(items => {
+        return items.data
+          ? items.data.length > 0
+            ? items.data[0]
+            : null
+          : null;
+      })
+    );
   }
 
   getGoodByIds(id: string | number): Observable<any> {

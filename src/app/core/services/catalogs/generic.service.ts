@@ -29,8 +29,8 @@ export class GenericService implements ICrudMethods<IGeneric> {
     return this.genericRepository.create(this.route, model);
   }
 
-  update(id: string | number, model: IGeneric): Observable<Object> {
-    return this.genericRepository.update(this.route, id, model);
+  newUpdate(model: IGeneric): Observable<Object> {
+    return this.genericRepository.newUpdate(this.route, model);
   }
 
   remove(id: string | number): Observable<Object> {

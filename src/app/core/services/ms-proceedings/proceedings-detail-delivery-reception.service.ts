@@ -222,6 +222,24 @@ export class ProceedingsDetailDeliveryReceptionService extends HttpService {
     );
   }
 
+  updateMassiveNew(
+    approvedDateXAdmon: string,
+    dateIndicatesUserApproval: string,
+    numberProceedings: number
+  ) {
+    return this.put(
+      'aplication/detaProceDeliRecepMinutesNumber/' + numberProceedings,
+      {
+        approvedDateXAdmon:
+          firstFormatDateToSecondFormatDate(approvedDateXAdmon),
+        dateIndicatesUserApproval: firstFormatDateToSecondFormatDate(
+          dateIndicatesUserApproval
+        ),
+      }
+    );
+    // http://sigebimsqa.indep.gob.mx/proceeding/api/v1/aplication/detaProceDeliRecepMinutesNumber/7327
+  }
+
   updateMasive(
     selecteds: {
       fec_aprobacion_x_admon: string;
