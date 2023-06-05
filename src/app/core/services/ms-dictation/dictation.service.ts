@@ -24,6 +24,7 @@ export class DictationService extends HttpService {
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
   private readonly route = DictationEndpoints;
+  private readonly routeN = DictationEndpoints.DictamenDelegation;
 
   constructor() {
     super();
@@ -246,9 +247,6 @@ export class DictationService extends HttpService {
     );
   }
   updateDictaEntregaRTurno(body: IUpdateDelDictation) {
-    return this.put<IListResponse<IUpdateDelDictation>>(
-      `${this.route}/aplication/minutesNumberXdelegation2`,
-      body
-    );
+    return this.put<IListResponse<IUpdateDelDictation>>(`${this.routeN}`, body);
   }
 }
