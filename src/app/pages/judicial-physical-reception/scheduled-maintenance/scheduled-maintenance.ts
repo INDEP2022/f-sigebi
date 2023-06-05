@@ -223,9 +223,12 @@ export abstract class ScheduledMaintenance extends BasePageWidhtDinamicFiltersEx
             if (filter.search !== '') {
               let search = filter.search;
               if (filter.field === 'captureDate') {
-                search = firstFormatDateToSecondFormatDate(search);
+                const initDate = firstFormatDateToSecondFormatDate(search);
+                const finishDate = format(new Date(), 'YYYY-mm-dd');
+                this.columnFilters[field] = `$btw:${initDate},${finishDate}`;
+              } else {
+                this.columnFilters[field] = `${searchFilter}:${search}`;
               }
-              this.columnFilters[field] = `${searchFilter}:${search}`;
             } else {
               delete this.columnFilters[field];
             }
