@@ -29,7 +29,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
   disabledBienes = true;
   form: FormGroup;
   permisions = false;
-  good: IGood;
+  good: any;
 
   handleEvent(data: any) {
     console.log('Evento recibido:', data);
