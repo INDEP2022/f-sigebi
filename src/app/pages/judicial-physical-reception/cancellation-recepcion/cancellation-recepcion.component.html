@@ -43,45 +43,25 @@
           <span>Navegación de actas</span>
           <div class="row">
             <div class="col-md-9">
-              <button
-                id="expedient-number"
-                [disabled]="!prevProce"
-                class="btn btn-secondary btn-sm active"
-                [class]="loading ? 'disabled' : ''"
-                (click)="prevProceeding()">
-                <i class="fa fa-angle-left"></i>
-              </button>
-              <span class="mr-3 ml-3"
-                >{{
-                  numberProceeding + 1 > proceedingData.length
-                    ? 'Nuevo'
-                    : numberProceeding + 1
-                }}
-                {{
-                  numberProceeding + 1 > proceedingData.length ? null : ' - '
-                }}
-                {{
-                  numberProceeding + 1 > proceedingData.length
-                    ? null
-                    : proceedingData.length
-                }}</span
-              >
-              <button
-                id="expedient-number"
-                [class]="loading ? 'disabled' : ''"
-                class="btn btn-secondary btn-sm active"
-                [disabled]="!nextProce"
-                (click)="nextProceeding()">
-                <i class="fa fa-angle-right"></i>
-              </button>
-              <button
-                *ngIf="newAct"
-                id="expedient-number"
-                class="btn btn-primary btn-sm active ml-4"
-                [class]="loading ? 'disabled' : ''"
-                (click)="newProceeding()">
-                Nueva acta
-              </button>
+              <div class="d-flex justify-content-center align-items-center">
+                <app-pagination
+                  [params]="paramsActNavigate"
+                  [totalItems]="proceedingData.length"
+                  [limit]="newLimitparamsActNavigate"
+                  [paginatorPageSize]="false"
+                  [paginatorRangeLabel]="false"
+                  [maxSize]="1"></app-pagination>
+                <div class="col">
+                  <button
+                    *ngIf="newAct"
+                    id="expedient-number"
+                    class="btn btn-primary btn-sm active ml-4"
+                    [class]="loading ? 'disabled' : ''"
+                    (click)="newProceeding()">
+                    Nueva acta
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -363,36 +343,18 @@
           </div>
         </div>
       </div>
+
       <hr class="row" />
 
-      <div class="row">
-        <div class="col-md-12">
-          <div class="row">
-            <div class="col">
-              <form-field
-                [control]="form.get('folioEscaneo')"
-                label="Folio de Escaneo">
-                <input
-                  type="number"
-                  min="0"
-                  class="form-control"
-                  formControlName="folioEscaneo" />
-              </form-field>
-            </div>
+      <app-scan-file-shared
+        [form]="form"
+        [formControlName]="folioEscaneo"
+        [cveDocument]="form.get('acta2').value"
+        [noExpedient]="form.get('expediente').value"
+        [statusProceeding]="form.get('statusProceeding').value"
+        [cveScreen]="cveScreen"
+        [reportPrint]="nameReport"></app-scan-file-shared>
 
-            <div class="col">
-              <button
-                type="button"
-                class="btn btn-primary btn-sm active mr-2 ml-2"
-                [disabled]="form.get('folioEscaneo').value == null"
-                (click)="replicateFolio()"
-                size="small">
-                Replicar Folio
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
       <hr class="row" />
       <div [class]="loading ? 'disabled' : ''" class="row mb-5">
         <div class="d-flex justify-content-center">

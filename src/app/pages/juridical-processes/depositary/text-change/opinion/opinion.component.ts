@@ -26,12 +26,15 @@ import {
 import { IOfficialDictation } from 'src/app/core/models/ms-dictation/official-dictation.model';
 import { IJobDictumTexts } from 'src/app/core/models/ms-officemanagement/job-dictum-texts.model';
 import { ISegUsers } from 'src/app/core/models/ms-users/seg-users-model';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { DynamicCatalogsService } from 'src/app/core/services/dynamic-catalogs/dynamiccatalog.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { BankAccountService } from 'src/app/core/services/ms-bank-account/bank-account.service';
 import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
 import { OficialDictationService } from 'src/app/core/services/ms-dictation/oficial-dictation.service';
+import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import { JobDictumTextsService } from 'src/app/core/services/ms-office-management/job-dictum-texts.service';
+import { SecurityService } from 'src/app/core/services/ms-security/security.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
@@ -41,10 +44,9 @@ import {
 } from 'src/app/core/shared/patterns';
 import { BankAccount } from 'src/app/pages/administrative-processes/numerary/tesofe-movements/list-banks/bank';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
-import Swal from 'sweetalert2';
 import { ModalComponent } from '../modal/modal-component';
-import { tablaModalComponent } from '../tabla-modal/tablaModal-component';
 import { EXTERNOS_COLUMS } from '../tabla-modal/tableUserExt';
+import { TablaOficioModalComponent } from '../tabla-oficio-modal/tabla-oficio-modal.component';
 
 @Component({
   selector: 'app-opinion',
@@ -86,7 +88,7 @@ export class OpinionComponent extends BasePage implements OnInit, OnChanges {
       null,
       [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
     ],
-    addressee_I: [
+    typeDict_: [
       null,
       [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
     ],
@@ -180,6 +182,7 @@ export class OpinionComponent extends BasePage implements OnInit, OnChanges {
   recordNumber: number;
   copyDestinationNumber: number;
   idCopias: number;
+  year: number;
 
   constructor(
     private fb: FormBuilder,
@@ -193,7 +196,10 @@ export class OpinionComponent extends BasePage implements OnInit, OnChanges {
     private service: BankAccountService,
     private dynamicCatalogsService: DynamicCatalogsService,
     private jobDictumTextsServices: JobDictumTextsService,
-    private dictationService_1: DictationService
+    private dictationService_1: DictationService,
+    private securityService: SecurityService,
+    private notificationService: NotificationService,
+    private token: AuthService
   ) {
     super();
 
@@ -217,14 +223,42 @@ export class OpinionComponent extends BasePage implements OnInit, OnChanges {
       this.buscardictamen();
     }
   }
-
-  ngOnInit(): void {
+  validUserToolbar: any;
+  async ngOnInit() {
+    this.year = new Date().getFullYear();
+    console.log('this.token.decodeToken()', this.token.decodeToken());
     this.options = [
       { value: null, label: 'Seleccione un valor' },
       { value: 'S', label: 'PERSONA EXTERNA' },
       { value: 'I', label: 'PERSONA INTERNA' },
     ];
     this.loadUserDestinatario();
+    this.validUserToolbar = await this.getRTdictaAarusr(
+      this.token.decodeToken().preferred_username
+    );
+  }
+
+  async getRTdictaAarusr(toolbar_user: any) {
+    return new Promise((resolve, reject) => {
+      const params = new ListParams();
+      params['filter.user'] = `$eq:${toolbar_user}`;
+      params['filter.reading'] = `$eq:S`;
+      params['filter.writing'] = `$eq:S`;
+      params['filter.typeNumber'] = `$eq:MODTEXTO`;
+      this.dictationService.getRTdictaAarusr(params).subscribe({
+        next: async (resp: any) => {
+          console.log('USER', resp);
+          resolve(1);
+          this.loading = false;
+        },
+        error: err => {
+          console.log('err', err);
+          resolve(0);
+          this.loading = false;
+          return;
+        },
+      });
+    });
   }
 
   /**
@@ -257,7 +291,7 @@ Obtiene los filtros y en base a ellos se hace la búsqueda
         this.filterParamsLocal
           .getValue()
           .addFilter(
-            'numberOfDicta',
+            'id',
             this.form.get('registerNumber').value,
             SearchFilter.EQ
           );
@@ -295,26 +329,46 @@ Obtiene los filtros y en base a ellos se hace la búsqueda
           .addFilter(
             'passOfficeArmy',
             this.form.get('key').value,
-            SearchFilter.EQ
+            SearchFilter.ILIKE
           );
       }
     }
-    /*
-    this.filterParamsLocal
-      .getValue()
-      .addFilter(
-        'dictDate',
-        new Date().getFullYear() +
-          '-' +
-          (new Date().getMonth() + 1) +
-          '-01' +
-          ',' +
-          new Date().getFullYear() +
-          '-' +
-          (new Date().getMonth() + 1) +
-          '-31',
-        SearchFilter.BTW
-      );*/
+
+    if (this.validUserToolbar > 0) {
+      this.filterParamsLocal
+        .getValue()
+        .addFilter(
+          'delegationDictNumber',
+          this.token.decodeToken().department,
+          SearchFilter.EQ
+        );
+    } else {
+      this.filterParamsLocal
+        .getValue()
+        .addFilter(
+          'dictDate',
+          this.year + '-01-01' + ',' + this.year + '-12-31',
+          SearchFilter.BTW
+        );
+
+      this.filterParamsLocal
+        .getValue()
+        .addFilter(
+          'delegationDictNumber',
+          this.token.decodeToken().department,
+          SearchFilter.EQ
+        );
+    }
+
+    // this.filterParamsLocal
+    //   .getValue()
+    //   .addFilter(
+    //     'dictDate',
+    //     new Date().getFullYear() + '-' + (new Date().getMonth() + 1) + '-01' + ',' +
+    //     new Date().getFullYear() + '-' + (new Date().getMonth() + 1) + '-31',
+    //     SearchFilter.BTW
+    //   );
+
     //Valida los campos de búsqueda
 
     if (
@@ -327,7 +381,7 @@ Obtiene los filtros y en base a ellos se hace la búsqueda
       this.onEnterSearch(this.filterParamsLocal);
       this.verBoton = true;
     } else {
-      this.onLoadToast('info', 'Registro', 'Se requiere un filtro de búsqueda');
+      this.alert('info', 'Dictamen', 'Se requiere un filtro de búsqueda');
     }
   }
 
@@ -337,10 +391,10 @@ Obtiene los filtros y en base a ellos se hace la búsqueda
       .findByIdsOficNum(filterParams.getValue().getParams())
       .subscribe({
         next: resp => {
-          console.log('onEnterSearch => ' + JSON.stringify(resp));
+          console.log('onEnterSearch => ', resp);
 
           if (resp.count > 1) {
-            this.loadModal(true, filterParams);
+            this.loadModal(2, filterParams);
           } else {
             this.intIDictation = resp.data[0];
 
@@ -366,9 +420,9 @@ Obtiene los filtros y en base a ellos se hace la búsqueda
           }
         },
         error: err => {
-          if (err.message.indexOf('registros') !== -1) {
-            this.onLoadToast('error', 'Error 1 ', err.message);
-          }
+          // if (err.message.indexOf('registros') !== -1) {
+          this.onLoadToast('warning', 'No se encontraron registros', '');
+          // }
           //   console.log('Error ' + error);
           //  this.onLoadToast('info', 'Registro', 'No se obtuvo información');
           console.log('error', 'Error', err.error.message);
@@ -377,22 +431,20 @@ Obtiene los filtros y en base a ellos se hace la búsqueda
       });
   }
 
-  loadModal(resp: boolean, filterParams: BehaviorSubject<FilterParams>) {
+  loadModal(resp: number, filterParams: BehaviorSubject<FilterParams>) {
     this.openModal(resp, filterParams);
   }
 
   //false dictamen true oficio
-  openModal(
-    OficioOrdictamen: boolean,
-    filterParamsOficio: BehaviorSubject<FilterParams>
-  ) {
+  openModal(status: number, OficioOrdictamen: BehaviorSubject<FilterParams>) {
+    console.log('MODAL 2=> ' + status);
     const modalConfig = {
       ...MODAL_CONFIG,
       class: 'modal-lg modal-dialog-centered',
     };
     modalConfig.initialState = {
+      status,
       OficioOrdictamen,
-      filterParamsOficio,
       callback: (next: any) => {
         const data = JSON.parse(JSON.stringify(next));
 
@@ -409,28 +461,34 @@ Obtiene los filtros y en base a ellos se hace la búsqueda
         this.getPersonaExt_Int('data => ', data);
       },
     };
-    this.modalService.show(tablaModalComponent, modalConfig);
+    this.modalService.show(TablaOficioModalComponent, modalConfig);
   }
 
   //#################################################################################
   /*================================================================================
 carga la  información de la parte media de la página
 ==================================================================================*/
+  oficioDict: any;
   complementoFormulario(obj: any) {
     this.oficialDictationService.getById(obj).subscribe({
       next: resp => {
-        console.warn(
-          'complementoFormulario DICTAMENT : >===>> ',
-          JSON.stringify(resp)
-        );
-
+        console.warn('complementoFormulario DICTAMENT : >===>> ', resp);
+        this.dictatesNumber = resp.officialNumber;
+        this.oficioDict = resp;
         this.form.get('addressee').setValue(resp.recipient);
         this.form.get('senderUserRemitente').setValue(resp.sender);
         const param = new ListParams();
         param.text = resp.sender;
         this.getUsers$(param);
-        this.getPuestoUser(resp.cveChargeRem);
-        this.form.get('addressee_I').setValue(resp.typeDict);
+
+        if (resp.cveChargeRem == null) {
+          this.getPuestoUser(resp.cveChargeRem);
+        }
+
+        const param_ = new ListParams();
+        param_.text = resp.recipient;
+        this.getUsers$$(param_);
+        this.form.get('typeDict_').setValue(resp.typeDict);
         this.form.get('numberDictamination').setValue(resp.officialNumber);
 
         this.form.get('paragraphInitial').setValue(resp.text1);
@@ -443,7 +501,7 @@ carga la  información de la parte media de la página
       },
       error: err => {
         if (err.message.indexOf('registros') !== -1) {
-          this.onLoadToast('error', 'Error 1 ', err.message);
+          // this.onLoadToast('error', 'Error 1 ', err.message);
         }
         console.log('error', 'Error', err.error.message);
         // this.onLoadToast('info', 'info', error.error.message);
@@ -470,7 +528,7 @@ carga la  información de la parte media de la página
         },
         error: err => {
           if (err.message.indexOf('registros') !== -1) {
-            this.onLoadToast('error', 'Error 1 ', err.message);
+            // this.onLoadToast('error', 'Error 1 ', err.message);
           }
           /*
           this.onLoadToast(
@@ -503,7 +561,7 @@ carga la  información de la parte media de la página
           //this.dataExt = resp.data;
         },
         error: errror => {
-          this.onLoadToast('info', 'Registro', 'No se obtuvo información');
+          // this.onLoadToast('info', 'Registro', 'No se obtuvo información');
           console.log('error', 'Error', errror.error.message);
           // this.onLoadToast('error', 'Error', errror.error.message);
         },
@@ -547,7 +605,7 @@ carga la  información de la parte media de la página
       },
       error: err => {
         this.form.get('charge').setValue('');
-        this.onLoadToast('error', 'Error', err.error.message);
+        // this.onLoadToast('error', 'Error', err.error.message);
       },
     });
   }
@@ -586,7 +644,7 @@ carga la  información de la parte media de la página
     params.search = $params.text;
     this.getAllUsers$(params).subscribe();
   }
-
+  nameOfUser: any;
   getAllUsers$(params: FilterParams) {
     return this.usersService.getAllSegUsers(params.getParams()).pipe(
       catchError(error => {
@@ -595,8 +653,58 @@ carga la  información de la parte media de la página
       }),
       tap(response => {
         this.users$$ = new DefaultSelect(response.data, response.count);
+        this.nameOfUser = response.data[0].name;
+        console.log('this.nameOfUser', this.nameOfUser);
+        this.getDescUserPuesto2(response.data[0].positionKey);
       })
     );
+  }
+
+  getUsers$$($params: ListParams) {
+    let params = new FilterParams();
+    params.page = $params.page;
+    params.limit = $params.limit;
+    params.search = $params.text;
+    this.getAllUsers$$(params).subscribe();
+  }
+
+  getAllUsers$$(params: FilterParams) {
+    return this.usersService.getAllSegUsers(params.getParams()).pipe(
+      catchError(error => {
+        this.users$ = new DefaultSelect([], 0, true);
+        return throwError(() => error);
+      }),
+      tap(response => {
+        console.log();
+        this.users$ = new DefaultSelect(response.data, response.count);
+        // this.getDescUserPuesto2(response.data[0].positionKey);
+      })
+    );
+  }
+
+  getDescUserPuesto2(event: any) {
+    this.dynamicCatalogsService.getPuestovalue(event).subscribe({
+      next: resp => {
+        console.log('AQUI', resp);
+        // alert('  getDescUserPuesto ' + resp.data.value);
+        this.form.get('charge').setValue(resp.data.value);
+      },
+      error: err => {
+        let error = '';
+        // if (err.status === 0) {
+        //   error = 'Revise su conexión de Internet.';
+        // } else {
+        //   error = err.message;
+        // }
+        // if (err.message.indexOf('registros') !== -1) {
+        //   this.alert('warning',
+        //     'No se encontró el puesto del usuario', err.message,
+        //   );
+        // }
+        console.log(error);
+        console.log('error Error  =>  ' + error);
+      },
+    });
   }
 
   usersExt($params: ListParams) {
@@ -623,48 +731,59 @@ carga la  información de la parte media de la página
     método para actualizar el dictamen en la parte del body
 =======================================================================*/
 
-  updateDictamen() {
+  async updateDictamen() {
     let actulizacion = '';
     let errorBusqueda = '';
+    console.log('this.form', this.form);
 
-    let ofis: Partial<IOfficialDictation> = this.getDatosToUpdateDictamenBody(
-      this.form
-    );
-
-    console.log(' insert =>  ' + JSON.stringify(ofis));
-    this.oficialDictationService.update(ofis).subscribe({
-      next: resp => {
-        actulizacion = actulizacion + ' Se actualizo';
-      },
-      error: err => {
-        if (err.message.indexOf('registros') !== -1) {
-          this.onLoadToast('error', 'Error 1 ', err.message);
-        }
-
-        //this.onLoadToast('info', 'Registro', 'No se obtuvo información');
-        console.log('error', 'Error', err.error.message);
-        // this.onLoadToast('error', 'Error', err.error.message);
-      },
-    });
-
-    let data: IJobDictumTexts = this.getDatosToUpdateDictamenBodyText(
+    let data: IJobDictumTexts = await this.getDatosToUpdateDictamenBodyText(
       this.form
     );
 
     this.jobDictumTextsServices.update(data).subscribe({
       next: resp => {
         actulizacion = actulizacion + ' Se actualizo';
-
         // this.onLoadToast('success', 'success', resp.message[0]);
       },
       error: err => {
         this.insertTextos(data);
+        console.log(err);
         if (err.message.indexOf('registros') !== -1) {
-          this.onLoadToast('error', 'Error 1 ', err.message);
+          // this.onLoadToast('error', 'Error 1 ', err.message);
         }
       },
     });
-    Swal.fire('Se actualizo de manera correcta', '', 'success');
+
+    let ofis: any = await this.getDatosToUpdateDictamenBody(this.form);
+    let f = this.form;
+    let obj = {
+      officialNumber: f.value.numberDictamination,
+      typeDict: f.value.typeDict_,
+      text1: f.value.paragraphInitial,
+      text2: f.value.paragraphFinish,
+      sender: f.value.senderUserRemitente,
+      desSenderPa: f.value.addressee,
+      text3: f.value.paragraphOptional,
+      text2To: f.value.masInfo_1,
+      cveChargeRem: f.value.valueCharge,
+      recipient: f.value.addressee,
+    };
+    console.log(' insert =>  ' + ofis);
+    this.oficialDictationService.update(obj).subscribe({
+      next: resp => {
+        this.alert('success', 'Se actualizaron los datos correctamente', '');
+        actulizacion = actulizacion + ' Se actualizo';
+      },
+      error: err => {
+        if (err.message.indexOf('registros') !== -1) {
+          // this.onLoadToast('error', 'Error 1 ', err.message);
+        }
+        this.alert('error', 'Ocurrió un error al actualizar', '');
+        //this.onLoadToast('info', 'Registro', 'No se obtuvo información');
+        console.log('error', 'Error', err.error.message);
+        // this.onLoadToast('error', 'Error', err.error.message);
+      },
+    });
 
     // this.onLoadToast('info', 'Actualización', actulizacion);
 
@@ -700,16 +819,69 @@ carga la  información de la parte media de la página
     });*/
   }
 
+  // UPDATE SILENCIOSO
+  async updateDictamen2() {
+    let actulizacion = '';
+    let errorBusqueda = '';
+    console.log('this.form', this.form);
+    let ofis: any = await this.getDatosToUpdateDictamenBody(this.form);
+    let f = this.form;
+    let obj = {
+      officialNumber: f.value.numberDictamination,
+      typeDict: f.value.typeDict_,
+      text1: f.value.paragraphInitial,
+      text2: f.value.paragraphFinish,
+      sender: f.value.senderUserRemitente,
+      desSenderPa: f.value.addressee,
+      text3: f.value.paragraphOptional,
+      text2To: f.value.masInfo_1,
+      cveChargeRem: f.value.valueCharge,
+      recipient: f.value.addressee,
+    };
+    console.log(' insert =>  ', ofis);
+    this.oficialDictationService.update(obj).subscribe({
+      next: resp => {
+        actulizacion = actulizacion + ' Se actualizo';
+      },
+      error: err => {
+        if (err.message.indexOf('registros') !== -1) {
+          // this.onLoadToast('error', 'Error 1 ', err.message);
+        }
+
+        //this.onLoadToast('info', 'Registro', 'No se obtuvo información');
+        console.log('error', 'Error', err.error.message);
+        // this.onLoadToast('error', 'Error', err.error.message);
+      },
+    });
+
+    let data: IJobDictumTexts = await this.getDatosToUpdateDictamenBodyText(
+      this.form
+    );
+
+    this.jobDictumTextsServices.update(data).subscribe({
+      next: resp => {
+        actulizacion = actulizacion + ' Se actualizo';
+        // this.onLoadToast('success', 'success', resp.message[0]);
+      },
+      error: err => {
+        this.insertTextos(data);
+        if (err.message.indexOf('registros') !== -1) {
+          // this.onLoadToast('error', 'Error 1 ', err.message);
+        }
+      },
+    });
+  }
+
   insertCopies(obj: any) {
     this.dictationService_1.create(obj).subscribe({
       next: resp => {
-        this.onLoadToast('warning', 'Info', resp[0].message);
+        // this.onLoadToast('warning', 'Info', resp[0].message);
       },
       error: err => {
         //this.onLoadToast('info', 'Registro', 'No se obtuvo información');
 
         if (err.message.indexOf('registros') !== -1) {
-          this.onLoadToast('error', 'Error 1 ', err.message);
+          // this.onLoadToast('error', 'Error 1 ', err.message);
         }
 
         console.log('error', 'Error', err.error.message);
@@ -721,12 +893,12 @@ carga la  información de la parte media de la página
   insertTextos(data: IJobDictumTexts) {
     this.jobDictumTextsServices.create(data).subscribe({
       next: resp => {
-        Swal.fire('Se actualizo de manera correcta', '', 'success');
+        // Swal.fire('Se actualizo de manera correcta', '', 'success');
         //this.onLoadToast('success', 'Registro', resp.message[0]);
       },
       error: err => {
         if (err.message.indexOf('registros') !== -1) {
-          this.onLoadToast('error', 'Error 1 ', err.message);
+          // this.onLoadToast('error', 'Error 1 ', err.message);
         }
 
         console.log('info', 'Registro', err.error.message);
@@ -743,16 +915,17 @@ carga la  información de la parte media de la página
     método para actualizar el dictamen y  la parte de inicio 
 =======================================================================*/
 
-  getDatosToUpdateDictamenBody(f: FormGroup) {
+  async getDatosToUpdateDictamenBody(f: FormGroup) {
     return {
       officialNumber: f.value.numberDictamination,
-      typeDict: f.value.addressee_I,
+      typeDict: f.value.typeDict_,
       text1: f.value.paragraphInitial,
       text2: f.value.paragraphFinish,
       recipient: f.value.senderUserRemitente,
       desSenderPa: f.value.addressee,
       text3: f.value.paragraphOptional,
       text2To: f.value.masInfo_1,
+      addressee: f.value.addressee,
       cveChargeRem: f.value.valueCharge,
     };
   }
@@ -781,7 +954,9 @@ carga la  información de la parte media de la página
   /*====================================================================
              método para obtener el puesto de la persona
 =======================================================================*/
-  getDescUserPuesto(event: Event) {
+  getDescUserPuesto(event: any) {
+    console.log('event', event);
+    this.nameOfUser = event.name;
     let userDatos = JSON.parse(JSON.stringify(event));
     this.dynamicCatalogsService
       .getPuestovalue(userDatos.positionKey)
@@ -793,7 +968,7 @@ carga la  información de la parte media de la página
         error: err => {
           this.form.get('charge').setValue('');
           if (err.message.indexOf('registros') !== -1) {
-            this.onLoadToast('error', 'Error 1 ', err.message);
+            // this.onLoadToast('error', 'Error 1 ', err.message);
           }
 
           //this.onLoadToast('info', 'Registro', 'No se obtuvo información');
@@ -811,8 +986,9 @@ carga la  información de la parte media de la página
   /*====================================================================
              método para mandar a llamar el reporte
 =======================================================================*/
-  public confirm() {
-    this.reporteExterno();
+  async confirm() {
+    await this.updateDictamen2();
+    await this.reporteExterno();
     /*
     if(this.tipoReporteImpresion==="EXTERNO"){
       
@@ -820,11 +996,350 @@ carga la  información de la parte media de la página
       this.reporteInterno();
     }*/
   }
+  // ENDPOINT 1 //
+  async getStationClue(expedientNumber: any) {
+    return new Promise((resolve, reject) => {
+      this.securityService.getStationClue(expedientNumber).subscribe({
+        next: (resp: any) => {
+          this.loading = false;
+          resolve(resp);
+        },
+        error: err => {
+          this.loading = false;
+          resolve([]);
+        },
+      });
+    });
+  }
 
-  reporteExterno() {
-    const params = {
-      PNOOFICIO: this.form.get('registerNumber').value,
-      PTIPODIC: this.form.get('addressee_I').value,
+  // ENDPOINT 2 //
+  async getIdDelegationDelegationForwards(senderUserRemitente: any) {
+    return new Promise((resolve, reject) => {
+      this.securityService
+        .getIdDelegationDelegationForwards(senderUserRemitente)
+        .subscribe({
+          next: (resp: any) => {
+            this.loading = false;
+            resolve(resp);
+          },
+          error: err => {
+            this.loading = false;
+            resolve([]);
+          },
+        });
+    });
+  }
+
+  // ENDPOINT 3 //
+  async getIdDelegationDelegationAddressee(addressee: any) {
+    return new Promise((resolve, reject) => {
+      this.securityService
+        .getIdDelegationDelegationAddressee(addressee)
+        .subscribe({
+          next: (resp: any) => {
+            this.loading = false;
+            resolve(resp);
+          },
+          error: err => {
+            this.loading = false;
+            resolve([]);
+          },
+        });
+    });
+  }
+
+  // ENPOINT 4 //
+  async getNotification() {
+    const query = `filter.expedientNumber=$eq:${this.form.value.expedientNumber}&filter.wheelNumber=$eq:${this.form.value.wheelNumber}`;
+    return new Promise((resolve, reject) => {
+      this.notificationService.getAllFilter(query).subscribe({
+        next: (resp: any) => {
+          this.loading = false;
+          resolve(resp);
+        },
+        error: err => {
+          this.loading = false;
+          resolve(null);
+        },
+      });
+    });
+  }
+
+  // ENDPOINT 5 //
+  async getQueryIdenti(params: any) {
+    return new Promise((resolve, reject) => {
+      this.securityService.getQueryIdenti(params).subscribe({
+        next: (resp: any) => {
+          this.loading = false;
+          if (resp.data.length > 0) {
+            resolve(resp.data[0].identi);
+          } else {
+            resolve('');
+          }
+        },
+        error: err => {
+          this.loading = false;
+          resolve('');
+        },
+      });
+    });
+  }
+
+  async reporteExterno() {
+    let params = {
+      PDEPARTAMENTO: this.token.decodeToken().delegacionreg,
+      PELABORO_DICTA: this.nameOfUser,
+      POFICIO: this.oficioDict.officialNumber,
+      PESTADODICT: this.oficioDict.statusOf,
+      PDICTAMEN: this.oficioDict.typeDict,
+    };
+    console.log('aasd', this.users$$);
+    console.log('params', params);
+    let vEMISORA: any;
+    let vTRANSF: any;
+    let vNO_DELDEST: any;
+    let vDELEGADEST: any;
+    let vNO_DELREM: any;
+    let vDELEGAREM: any;
+    let vNOTR_FINAL: any;
+    let vT_ACTA: string;
+    let vDELAGACION: string;
+    let vCLAVE_ARMADA: string;
+    console.log('FORM', this.form.value);
+
+    if (this.form.value.typeDict == 'PROCEDENCIA') {
+      const getStationClue: any = await this.getStationClue(
+        this.form.value.expedientNumber
+      );
+      console.log('AASD', getStationClue);
+      if (getStationClue.length > 0) {
+        vEMISORA = getStationClue[0].nombre_emisora;
+        vTRANSF = getStationClue[0].clave_transferente;
+      }
+
+      // REMITENTE
+      const getIdDelegationDelegationForwards: any =
+        await this.getIdDelegationDelegationForwards(
+          this.form.value.senderUserRemitente
+        );
+      console.log('AASD2', getIdDelegationDelegationForwards);
+      if (getIdDelegationDelegationForwards.length > 0) {
+        vNO_DELREM = getIdDelegationDelegationForwards[0].id_delegacion;
+        vDELEGAREM = getIdDelegationDelegationForwards[0].delegacion;
+      }
+
+      // DESTINATARIO
+      const getIdDelegationDelegationAddressee: any =
+        await this.getIdDelegationDelegationAddressee(
+          this.form.value.addressee
+        );
+      console.log('AASD3', getIdDelegationDelegationAddressee);
+      if (getIdDelegationDelegationAddressee.length > 0) {
+        vNO_DELDEST = getIdDelegationDelegationAddressee[0].id_delegacion;
+        vDELEGADEST = getIdDelegationDelegationAddressee[0].delegacion;
+      }
+
+      // NOTIFICATION
+      const getNotification_: any = await this.getNotification();
+      console.log('AASD4', getNotification_);
+      if (getNotification_.length > 0) {
+        vNOTR_FINAL = getNotification_[0].transference;
+      }
+
+      if (vNOTR_FINAL == 1 || vNOTR_FINAL == 3) {
+        vT_ACTA = 'A';
+      } else {
+        vT_ACTA = 'RT';
+      }
+
+      if (vNO_DELDEST == 0) {
+        vDELAGACION = 'CRB';
+        if (vTRANSF == 'SAT') {
+          vCLAVE_ARMADA = `${vT_ACTA}/${vEMISORA}/ADM/${vDELAGACION}/${vDELAGACION}/CONSECUTIVO/AÑO/MES`;
+        } else {
+          vCLAVE_ARMADA = `${vT_ACTA}/${vEMISORA}/ADM/${vDELAGACION}/${vDELAGACION}/CONSECUTIVO/AÑO/MES`;
+        }
+      } else {
+        vDELAGACION = vDELEGADEST;
+        if (vNO_DELREM == 3) {
+          if (vNO_DELDEST == 2) {
+            vDELAGACION = vDELEGAREM;
+          }
+        }
+
+        if (vTRANSF == 'SAT') {
+          vCLAVE_ARMADA = `${vT_ACTA}/${vEMISORA}/ADM/${vDELAGACION}/${vDELAGACION}/CONSECUTIVO/AÑO/MES`;
+        } else {
+          vCLAVE_ARMADA = `${vT_ACTA}/${vEMISORA}/ADM/${vDELAGACION}/${vDELAGACION}/CONSECUTIVO/AÑO/MES`;
+        }
+      }
+    }
+
+    let body = {
+      ofDictaNumber: this.form.value.registerNumber,
+      typeRuling: this.form.value.typeDict,
+    };
+    const VARIABLES: any = await this.getQueryIdenti(body);
+    console.log('AASD5', VARIABLES);
+
+    let valor1 = VARIABLES.includes('4');
+    // REPORTE PROCEDENCIA 1 //
+    if (valor1 == true && this.form.value.typeDict == 'PROCEDENCIA') {
+      this.reporteProcedencia1(this.form.value);
+      // this.alert('success', 'bien1', '');
+    }
+
+    let valor2 = VARIABLES.includes('4');
+    // REPORTE PROCEDENCIA 2 //
+    if (valor2 == true && this.form.value.typeDict != 'PROCEDENCIA') {
+      this.reporteProcedencia2(this.form.value);
+      // this.alert('success', 'bien1', '');
+    }
+
+    let valor3 = VARIABLES.includes('A');
+    // REPORTE PROCEDENCIA 3 //
+    if (valor3 == true && this.form.value.typeDict != 'ABANDONO') {
+      if (this.form.value.typeDict != 'PROCEDENCIA') {
+        this.reporteProcedencia3(this.form.value);
+      }
+    }
+
+    let valor4 = VARIABLES.includes('T');
+    // REPORTE PROCEDENCIA 4 //
+    if (valor4 == true && this.form.value.typeDict != 'ABANDONO') {
+      if (this.form.value.typeDict != 'PROCEDENCIA') {
+        this.reporteProcedencia3(this.form.value);
+      }
+    }
+    // REPORTE ABANDONO //
+    if (this.form.value.typeDict == 'ABANDONO') {
+      this.reporteAbandono(this.form.value);
+    }
+  }
+
+  reporteProcedencia1(data: any) {
+    // REPORTE NO EXISTE //
+    let params = {
+      PDEPARTAMENTO: this.token.decodeToken().delegacionreg,
+      PELABORO_DICTA: this.nameOfUser,
+      POFICIO: this.oficioDict.officialNumber,
+      PESTADODICT: this.oficioDict.statusOf,
+      PDICTAMEN: this.oficioDict.typeDict,
+    };
+
+    this.siabServiceReport
+      .fetchReport('RGENADBDICTAMASIV_EXT', params)
+      .subscribe({
+        next: response => {
+          const blob = new Blob([response], { type: 'application/pdf' });
+          const url = URL.createObjectURL(blob);
+          let config = {
+            initialState: {
+              documento: {
+                urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                type: 'pdf',
+              },
+            },
+            class: 'modal-lg modal-dialog-centered',
+            ignoreBackdropClick: true,
+          };
+          this.modalService.show(PreviewDocumentsComponent, config);
+        },
+      });
+    this.onLoadToast('success', 'Reporte Generado', '');
+  }
+
+  reporteProcedencia2(data: any) {
+    let params = {
+      PDEPARTAMENTO: this.token.decodeToken().delegacionreg,
+      PELABORO_DICTA: this.nameOfUser,
+      POFICIO: this.oficioDict.officialNumber,
+      PESTADODICT: this.oficioDict.statusOf,
+      PDICTAMEN: this.oficioDict.typeDict,
+    };
+
+    this.siabServiceReport.fetchReport('RGENADBDICTAMASIV', params).subscribe({
+      next: response => {
+        const blob = new Blob([response], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+        let config = {
+          initialState: {
+            documento: {
+              urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+              type: 'pdf',
+            },
+          },
+          class: 'modal-lg modal-dialog-centered',
+          ignoreBackdropClick: true,
+        };
+        this.modalService.show(PreviewDocumentsComponent, config);
+      },
+    });
+    this.onLoadToast('success', 'Reporte Generado', '');
+  }
+
+  reporteProcedencia3(data: any) {
+    let params = {
+      PDEPARTAMENTO: this.token.decodeToken().delegacionreg,
+      PELABORO_DICTA: this.nameOfUser,
+      POFICIO: this.oficioDict.officialNumber,
+      PESTADODICT: this.oficioDict.statusOf,
+      PDICTAMEN: this.oficioDict.typeDict,
+    };
+
+    this.siabServiceReport.fetchReport('RGENADBDICTAMASIV', params).subscribe({
+      next: response => {
+        const blob = new Blob([response], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+        let config = {
+          initialState: {
+            documento: {
+              urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+              type: 'pdf',
+            },
+          },
+          class: 'modal-lg modal-dialog-centered',
+          ignoreBackdropClick: true,
+        };
+        this.modalService.show(PreviewDocumentsComponent, config);
+      },
+    });
+    this.onLoadToast('success', 'Reporte Generado', '');
+  }
+
+  reporteProcedencia4(data: any) {
+    let params = {
+      PDEPARTAMENTO: this.token.decodeToken().delegacionreg,
+      PELABORO_DICTA: this.nameOfUser,
+      POFICIO: this.oficioDict.officialNumber,
+      PESTADODICT: this.oficioDict.statusOf,
+      PDICTAMEN: this.oficioDict.typeDict,
+    };
+
+    this.siabServiceReport.fetchReport('RGENADBDICTAMASIV', params).subscribe({
+      next: response => {
+        const blob = new Blob([response], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+        let config = {
+          initialState: {
+            documento: {
+              urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+              type: 'pdf',
+            },
+          },
+          class: 'modal-lg modal-dialog-centered',
+          ignoreBackdropClick: true,
+        };
+        this.modalService.show(PreviewDocumentsComponent, config);
+      },
+    });
+    this.onLoadToast('success', 'Reporte Generado', '');
+  }
+
+  reporteAbandono(data: any) {
+    let params = {
+      PNOOFICIO: data.registerNumber,
+      PTIPODIC: data.typeDict,
     };
 
     this.siabServiceReport.fetchReport('RGENABANDEC', params).subscribe({
@@ -844,6 +1359,7 @@ carga la  información de la parte media de la página
         this.modalService.show(PreviewDocumentsComponent, config);
       },
     });
+    this.onLoadToast('success', 'Reporte Generado', '');
   }
 
   reporteInterno() {
@@ -899,7 +1415,7 @@ carga la  información de la parte media de la página
       },
       error: err => {
         if (err.message.indexOf('registros') !== -1) {
-          this.onLoadToast('error', 'Error 1 ', err.message);
+          // this.onLoadToast('error', 'Error 1 ', err.message);
         }
 
         //this.onLoadToast('info', 'Registro', 'No se obtuvo información');
@@ -959,14 +1475,14 @@ carga la  información de la parte media de la página
     this.dataExt = [];
     this.dictationService_1.createPersonExt(data).subscribe({
       next: resp => {
-        Swal.fire('Se guardo de manera correcta', '', 'success');
+        this.alert('success', 'Se guardó de manera correcta', '');
         this.refreshTabla();
       },
       error: err => {
-        if (err.message.indexOf('registros') !== -1) {
-          this.onLoadToast('error', 'Error 1 ', err.message);
-        }
-        console.log('Error ' + err);
+        // if (err.message.indexOf('registros') !== -1) {
+        this.onLoadToast('error', 'Error al guardar', err.error.message);
+        //
+        // console.log('Error ' + err);
         // this.onLoadToast('info', 'Registro', 'No se obtuvo información');
 
         console.log('error', 'Error', err.error.message);
@@ -987,7 +1503,6 @@ carga la  información de la parte media de la página
     ).then(question => {
       if (question.isConfirmed) {
         this.deleteExterno(legend.id);
-        Swal.fire('Borrado', '', 'success');
       }
     });
   }
@@ -998,13 +1513,14 @@ carga la  información de la parte media de la página
     };
     this.dictationService.deleteCopiesdictamenetOfficialOpinion(idd).subscribe({
       next: resp => {
+        this.alert('success', 'Dato eliminado correctamente', '');
         this.extPerson.removeAt(id);
         this.refreshTabla();
       },
       error: err => {
-        if (err.message.indexOf('registros') !== -1) {
-          this.onLoadToast('error', 'Error 1 ', err.message);
-        }
+        // if (err.message.indexOf('registros') !== -1) {
+        this.onLoadToast('error', 'Error al eliminar', err.error.message);
+        // }
 
         //this.onLoadToast('info', 'Registro', 'No se obtuvo información');
         console.log('error', 'Error', err.error.message);
@@ -1063,13 +1579,14 @@ carga la  información de la parte media de la página
       .findUserByOficNum(this.filterParams.getValue().getParams())
       .subscribe({
         next: resp => {
+          console.log('RESP', resp);
           this.dataExt = resp.data.map((data: any) => this.usuariosCCP(data));
 
           console.log('refreshTabla() => ' + JSON.stringify(this.dataExt));
         },
         error: err => {
           if (err.message.indexOf('registros') !== -1) {
-            this.onLoadToast('error', 'Error 1 ', err.message);
+            // this.onLoadToast('error', 'Error 1 ', err.message);
           }
           console.log('Error ' + err);
           //this.onLoadToast('info', 'Registro', 'No se obtuvo información');

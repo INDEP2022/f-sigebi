@@ -5,7 +5,11 @@ import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IStateOfRepublic } from 'src/app/core/models/catalogs/state-of-republic.model';
 import { StateOfRepublicService } from 'src/app/core/services/catalogs/state-of-republic.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import {
+  POSITVE_NUMBERS_PATTERN,
+  STRING_PATTERN,
+  ZONE_NUMBER_PATTERM,
+} from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-state-form',
@@ -31,8 +35,11 @@ export class StateFormComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.stateForm = this.fb.group({
-      id: [null, [Validators.required]],
-      cveState: [null, [Validators.required]],
+      id: [null],
+      cveState: [
+        null,
+        [Validators.required, Validators.pattern(POSITVE_NUMBERS_PATTERN)],
+      ],
       descCondition: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
@@ -42,14 +49,17 @@ export class StateFormComponent extends BasePage implements OnInit {
       nmtable: [null],
       abbreviation: [null],
       risk: [null],
-      version: [null, [Validators.required]],
+      version: [
+        null,
+        [Validators.required, Validators.pattern(POSITVE_NUMBERS_PATTERN)],
+      ],
       zoneHourlyStd: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [Validators.required, Validators.pattern(ZONE_NUMBER_PATTERM)],
       ],
       zoneHourlyVer: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [Validators.required, Validators.pattern(ZONE_NUMBER_PATTERM)],
       ],
       userCreation: [null],
       creationDate: [null],

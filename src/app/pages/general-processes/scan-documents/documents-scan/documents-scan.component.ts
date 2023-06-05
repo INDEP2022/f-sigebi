@@ -413,6 +413,25 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
     if (this.origin == 'FGESTBUZONTRAMITE') {
       this.router.navigate(['/pages/general-processes/work-mailbox']);
     }
+
+    if (this.origin == 'FACTREFACTAENTREC') {
+      this.router.navigate([
+        '/pages/judicial-physical-reception/confiscated-records',
+      ]);
+    }
+
+    if (this.origin == 'FACTREFCANCELAR') {
+      this.router.navigate([
+        '/pages/judicial-physical-reception/cancellation-recepcion',
+      ]);
+    }
+
+    if (this.origin == 'FACTREFACTAVENT') {
+      this.router.navigate([
+        '/pages/judicial-physical-reception/cancellation-sale',
+      ]);
+    }
+
     if (this.origin == 'FESTATUSRGA') {
       this.router.navigate([
         '/pages/executive-processes/destruction-authorization-management',
@@ -437,6 +456,11 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
           },
         }
       );
+    }
+    if (this.origin == 'FACTJURABANDONOS') {
+      this.router.navigate([
+        `/pages/juridical/abandonments-declaration-trades`,
+      ]);
     }
   }
 }

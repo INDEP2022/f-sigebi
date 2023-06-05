@@ -50,7 +50,7 @@ export class DelegationService
   }
 
   getById(id: string | number): Observable<IDelegation> {
-    return this.delegationRepository.getById(this.route, id);
+    return this.delegationRepository.newGetById(this.route, id);
   }
 
   create(model: IDelegation): Observable<IDelegation> {
@@ -58,7 +58,11 @@ export class DelegationService
   }
 
   update(id: string | number, model: IDelegation): Observable<Object> {
-    return this.delegationRepository.update(this.route, id, model);
+    return this.delegationRepository.updateCatagaloDelegations(
+      this.route,
+      id,
+      model
+    );
   }
 
   remove(id: string | number): Observable<Object> {

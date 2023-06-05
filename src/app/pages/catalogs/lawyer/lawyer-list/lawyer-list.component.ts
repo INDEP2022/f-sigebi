@@ -3,6 +3,7 @@ import { BehaviorSubject, takeUntil } from 'rxjs';
 
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import {
   ListParams,
   SearchFilter,
@@ -49,8 +50,17 @@ export class LawyerListComponent extends BasePage implements OnInit {
           filters.map((filter: any) => {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
-            /*SPECIFIC CASES*/
-            filter.field == 'id'
+            filter.field == 'id';
+            filter.field == 'office' ||
+            filter.field == 'name' ||
+            filter.field == 'street' ||
+            filter.field == 'streetNumber' ||
+            filter.field == 'apartmentNumber' ||
+            filter.field == 'suburb' ||
+            filter.field == 'delegation' ||
+            filter.field == 'zipCode' ||
+            filter.field == 'rfc' ||
+            filter.field == 'phone'
               ? (searchFilter = SearchFilter.EQ)
               : (searchFilter = SearchFilter.ILIKE);
             if (filter.search !== '') {
@@ -86,23 +96,15 @@ export class LawyerListComponent extends BasePage implements OnInit {
     );
   }
 
-  add() {
-    this.openModal();
-  }
-
-  openModal(context?: Partial<LawyerDetailComponent>) {
-    const modalRef = this.modalService.show(LawyerDetailComponent, {
-      initialState: context,
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
-    });
-    modalRef.content.refresh.subscribe(next => {
-      if (next) this.getLawyers();
-    });
-  }
-
-  edit(lawyer: ILawyer) {
-    this.openModal({ edit: true, lawyer });
+  openForm(lawyer?: ILawyer) {
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      lawyer,
+      callback: (next: boolean) => {
+        if (next) this.getLawyers();
+      },
+    };
+    this.modalService.show(LawyerDetailComponent, modalConfig);
   }
 
   showDeleteAlert(lawyer: ILawyer) {
@@ -120,7 +122,7 @@ export class LawyerListComponent extends BasePage implements OnInit {
   delete(id: number) {
     this.lawyerService.remove(id).subscribe({
       next: () => {
-        this.getLawyers(), this.alert('success', 'ABOGADO', 'Borrado');
+        this.getLawyers(), this.alert('success', 'Abogado', 'Borrado');
       },
     });
   }
