@@ -8,7 +8,7 @@ import { IStateOfRepublic } from 'src/app/core/models/catalogs/state-of-republic
 import { IZoneGeographic } from 'src/app/core/models/catalogs/zone-geographic.model';
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -20,7 +20,7 @@ export class DelegationFormComponent extends BasePage implements OnInit {
   delegationForm: ModelForm<IDelegation>;
   title: string = 'Delegacion';
   edit: boolean = false;
-  delegation: IDelegation;
+  delegation: any;
   states = new DefaultSelect<IStateOfRepublic>();
   zones = new DefaultSelect<IZoneGeographic>();
   constructor(
@@ -38,15 +38,20 @@ export class DelegationFormComponent extends BasePage implements OnInit {
   }
 
   private prepareForm() {
+    if (this.delegation && this.delegation.idZoneGeographic !== undefined) {
+      const { id }: any = this.delegation.idZoneGeographic;
+      this.delegation.idZoneGeographic = id;
+    }
+
     this.delegationForm = this.fb.group({
       id: [
         null,
         [Validators.required, Validators.min(0), Validators.maxLength(80)],
       ],
       description: [null, [Validators.required, Validators.maxLength(80)]],
-      zoneContractCVE: [null, [Validators.required, Validators.maxLength(80)]],
       diffHours: [null, [Validators.required, Validators.maxLength(80)]],
-      zoneVigilanceCVE: [null, [Validators.required, Validators.maxLength(80)]],
+      zoneVigilanceKey: [null, [Validators.required, Validators.maxLength(80)]],
+      zoneContractKey: [null, [Validators.required, Validators.maxLength(80)]],
       noRegister: [null, [Validators.required, Validators.maxLength(80)]],
       etapaEdo: [
         null,
@@ -73,7 +78,7 @@ export class DelegationFormComponent extends BasePage implements OnInit {
       ],
       idZoneGeographic: [
         null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
     });
     if (this.delegation != null) {
@@ -83,13 +88,9 @@ export class DelegationFormComponent extends BasePage implements OnInit {
 
   fillForm() {
     this.edit = true;
+
+    this.delegationForm.get('etapaEdo').disable();
     this.delegationForm.patchValue(this.delegation);
-    const idZoneGeographic = this.delegation
-      .idZoneGeographic as IZoneGeographic;
-    if (idZoneGeographic) {
-      this.zones = new DefaultSelect([idZoneGeographic], 1);
-      this.delegationForm.controls.id.setValue(idZoneGeographic.id);
-    }
   }
 
   getStates(params: ListParams) {
@@ -99,18 +100,26 @@ export class DelegationFormComponent extends BasePage implements OnInit {
   }
 
   getZones(params: ListParams) {
+    /*if (this.delegation && this.delegation.idZoneGeographic) {
+      const { id }: any = this.delegation.idZoneGeographic;
+      this.delegation.idZoneGeographic = id;
+    }*/
     this.delegationService.getZones(params).subscribe(item => {
       this.zones = new DefaultSelect(item.data, item.count);
+      if (Array.isArray(this.zones.data)) {
+        this.zones.data = this.zones.data.map(dataItem => {
+          return {
+            ...dataItem,
+            idZoneGeographic: dataItem.id,
+          };
+        });
+      }
     });
   }
 
-  stateChange(state: IStateOfRepublic) {
-    this.delegationForm.controls.description.setValue(state.id);
-  }
+  stateChange(state: IStateOfRepublic) {}
 
-  zoneChange(zone: IZoneGeographic) {
-    this.delegationForm.controls.description.setValue(zone.id);
-  }
+  zoneChange(zone: IZoneGeographic) {}
 
   close() {
     this.modalRef.hide();
