@@ -1,9 +1,6 @@
 <app-card [header]="true">
   <div class="ch-content" header>
     <h5 class="title">Actas de Entrega Recepci&oacute;n</h5>
-    <button (click)="prueba() "class="btn btn-primary btn-sm active">
-      PRUEBA
-    </button>
   </div>
   
   <div body>
@@ -433,7 +430,11 @@
 
       <app-scan-file-shared
       [form]="form"
-      [folioEscaneo]="folioEscaneo">
+      [cveScreen]="cveScreen"
+      [formControlName]="folioEscaneo"
+      [cveDocument]="form.get('acta2').value"
+      [noExpedient]="form.get('expediente').value"
+      >
       </app-scan-file-shared>
 
       <hr class="row" />

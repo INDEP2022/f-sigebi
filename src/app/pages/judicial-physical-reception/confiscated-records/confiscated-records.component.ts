@@ -65,6 +65,7 @@ import {
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { EdoFisicoComponent } from './edo-fisico/edo-fisico.component.component';
+import { IDocumentsGood } from 'src/app/core/models/ms-documents/documents';
 
 @Component({
   selector: 'app-confiscated-records',
@@ -225,6 +226,8 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
 
   //FOLIO DE ESCANEO
   folioEscaneo = 'folioEscaneo'
+  dataGenerateDocument: IDocumentsGood
+  cveScreen = 'FACTREFACTAENTREC'
 
   dataGoods = new LocalDataSource();
   dataGoodAct = new LocalDataSource();
@@ -371,6 +374,8 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
       this.newSearchExp();
       localStorage.removeItem('numberExpedient');
     }
+
+
   }
 
   prueba(){
@@ -2900,7 +2905,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
           );
         }
       } else {
-        this.serviceDocuments.getByFolio(-73378).subscribe(
+        this.serviceDocuments.getByFolio(this.form.get('folioEscaneo').value).subscribe(
           res => {
             const data = JSON.parse(JSON.stringify(res));
             const scanStatus = data.data[0]['scanStatus'];
@@ -2945,6 +2950,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                       } else {
                         const modelEdit: IProccedingsDeliveryReception = {
                           statusProceedings: 'CERRADA',
+                          universalFolio: this.form.get('folioEscaneo').value
                         };
                         const splitActa = this.form
                           .get('acta2')
