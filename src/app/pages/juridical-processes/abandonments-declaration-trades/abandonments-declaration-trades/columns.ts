@@ -44,6 +44,19 @@ export const COLUMNS_DOCUMENTS = {
   },
 };
 
+export const COLUMNS_DOCUMENTS2 = {
+  cveDocument: {
+    title: 'CVE. Documento',
+    type: 'string',
+    sort: false,
+  },
+  description: {
+    title: 'Descripción',
+    type: 'string',
+    sort: false,
+  },
+};
+
 export const COLUMNS_DICTUMS = {
   id: {
     title: 'ID',
@@ -85,6 +98,19 @@ export const COLUMNS_OFICIO = {
   },
   dateOficio: {
     title: 'Fecha Captura',
+    type: 'string',
+    sort: false,
+  },
+};
+
+export const EXTERNOS_COLUMS_OFICIO = {
+  personExtInt_: {
+    title: 'Tipo persona',
+    type: 'string',
+    sort: false,
+  },
+  userOrPerson: {
+    title: 'Nombre persona',
     type: 'string',
     sort: false,
   },

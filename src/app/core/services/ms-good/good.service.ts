@@ -72,13 +72,13 @@ export class GoodService extends HttpService {
   }
 
   getStatusAndProcess(model: IGoodScreenACtionStatusProcess) {
-    return this.post<IResponse<IGoodStatusFinalProcess>>(
+    return this.post<IGoodStatusFinalProcess>(
       GoodEndpoints.GoodGetStatusAndProcess,
       model
     ).pipe(
       map(x => {
         console.log(x);
-        return { status: x.data.statusFinal, process: x.data.process };
+        return { status: x.statusFinal, process: x.process };
       })
     );
   }
@@ -353,6 +353,18 @@ export class GoodService extends HttpService {
   ): Observable<IListResponse<IGood>> {
     console.log('GET GOODS EXPEDIENTE', params);
     const route = GoodEndpoints.GetAllGoodQuery;
+    return this.get<IListResponse<IGood>>(route, params);
+  }
+
+  getMassiveSearch(body: any) {
+    return this.post(GoodEndpoints.GetMassiveSearch, body);
+  }
+
+  getByExpedientAndParams__(
+    params?: ListParams
+  ): Observable<IListResponse<IGood>> {
+    console.log('GET GOODS EXPEDIENTE', params);
+    const route = GoodEndpoints.Good;
     return this.get<IListResponse<IGood>>(route, params);
   }
 }

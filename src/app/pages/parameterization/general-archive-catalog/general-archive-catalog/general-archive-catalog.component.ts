@@ -403,14 +403,15 @@ export class GeneralArchiveCatalogComponent extends BasePage implements OnInit {
       )
       .subscribe({
         next: response => {
-          console.log(response);
+          console.log('GETLOCKER', response);
           this.lockerList = response.data;
           this.totalItems4 = response.count;
           this.loading4 = false;
         },
-        error: error => (
-          this.showNullRegisterLocker(), (this.loading4 = false)
-        ),
+        error: error => {
+          this.showNullRegisterLocker(), (this.loading4 = false);
+          console.log('ERROR', error);
+        },
       });
   }
 
@@ -462,11 +463,12 @@ export class GeneralArchiveCatalogComponent extends BasePage implements OnInit {
   //método para borrar registro de casillero
   delete4(locker?: ILocker) {
     this.lockersService.remove(locker.id).subscribe({
-      next: () => (
+      next: () => {
         (this.loading4 = false),
-        Swal.fire('Borrado', '', 'success'),
-        this.getShelves(this.storeCode, this.idBattery)
-      ),
+          Swal.fire('Borrado', '', 'success'),
+          this.getShelves(this.storeCode, this.idBattery);
+        this.getLocker(this.saveValueKey, this.numBattery, this.numShelf);
+      },
     });
   }
 }

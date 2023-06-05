@@ -236,6 +236,8 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
     // debugger;
     try {
       const { status, process } = await this.getStatusProcessxPantalla();
+      console.log(status, process);
+
       this.good.status = status;
       this.good.extDomProcess = process;
       // this.formGood.get('estatus').setValue(status);
@@ -488,7 +490,7 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
         );
         item.descripcion =
           'Bien por ' +
-          this.form.get('saldo').value +
+          +(this.form.get('saldo').value + '') +
           ' ' +
           v_unidad +
           ', ' +
@@ -506,7 +508,7 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
         );
         item.descripcion =
           'Numerario por $ ' +
-          this.form.get('saldo').value +
+          +(this.form.get('saldo').value + '') +
           ' ' +
           v_avaluo +
           ' ' +
@@ -539,7 +541,7 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
         vimpbien = item.cantidad;
       }
       item.cantidad = +(this.saldo.value + '');
-      this.saldo.setValue(0);
+
       this.service.sumCant += item.cantidad;
       this.service.sumVal14 += item.importe;
       this.service.sumAvaluo += item.avaluo;
@@ -583,7 +585,7 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
             val12: 0,
             val13: 0,
           });
-          this.fillPagedRow.emit();
+          // this.fillPagedRow.emit();
           return bien.no_bien;
         } else {
           this.onLoadToast('error', 'Inserta Bien', 'No se pudo parcializar');
@@ -642,12 +644,12 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
     //   'La parcialización de bienes se realizo con éxito'
     // );
     try {
-      this.good.status = 'PEA';
+      // this.good.status = 'PEA';
       await firstValueFrom(this.goodService.updateCustom(this.good));
       this.onLoadToast(
         'success',
         'Parcialización',
-        'La parcialización de bienes se realizo con éxito'
+        'La parcialización de bienes se realizo correctamente'
       );
       this.service.haveAply = false;
     } catch (x) {
@@ -682,6 +684,7 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
       }
       // debugger;
       const result = await this.validationsV1(v_importe, v_estatus);
+      console.log(result, this.good);
       v_verif_des = this.service.verif_des;
       v_importe = result.v_importe;
       v_estatus = result.v_estatus;
@@ -698,6 +701,32 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
       const observable = from(
         this.bienesPar.slice(0, this.bienesPar.length - 1)
       );
+      // this.bienesPar.forEach((item, index) => {
+      //   if (this.validationClasif()) {
+      //     vval2 = Number((+(item.importe + '')).toFixed(2).trim());
+      //     vimpbien = +(item.importe + '');
+      //   } else {
+      //     vval2 = +this.good.val14;
+      //     vimpbien = +(item.cantidad + '');
+      //   }
+      //   if (index < this.bienesPar.length - 1) {
+      //     const newObservation =
+      //       vobserv_padre + item.noBien + ' por:  ' + vimpbien + ', ';
+      //     vobserv_padre = newObservation.substring(
+      //       0,
+      //       newObservation.length > 600 ? 600 : newObservation.length
+      //     );
+      //   }
+
+      // })
+      // const newObservation =
+      //   vobserv_padre + 2 + ' por:  ' + +(this.saldo.value + '') + ', ';
+      // vobserv_padre = newObservation.substring(
+      //   0,
+      //   newObservation.length > 600 ? 600 : newObservation.length
+      // );
+      // console.log(vobserv_padre);
+
       let i = 0;
       observable
         .pipe(
@@ -793,7 +822,11 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
               );
               if (no_bien !== null) {
                 const newObservation =
-                  vobserv_padre + no_bien + ' por:  ' + vimpbien + ', ';
+                  vobserv_padre +
+                  no_bien +
+                  ' por:  ' +
+                  +(this.saldo.value + '') +
+                  ', ';
                 vobserv_padre = newObservation.substring(
                   0,
                   newObservation.length > 600 ? 600 : newObservation.length
@@ -803,7 +836,9 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
                   0,
                   newDescription.length > 1250 ? 1250 : newDescription.length
                 );
+                this.saldo.setValue(0);
               }
+              this.fillPagedRow.emit();
               await this.finishApply(vobserv_padre, vdesc_padre);
               console.log(this.good);
             }
