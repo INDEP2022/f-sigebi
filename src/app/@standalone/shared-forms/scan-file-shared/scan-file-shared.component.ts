@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
+import { Router } from '@angular/router';
 import { format } from 'date-fns';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { IDocuments } from 'src/app/core/models/ms-documents/documents';
@@ -12,7 +13,6 @@ import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { PreviewDocumentsComponent } from '../../preview-documents/preview-documents.component';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-scan-file-shared',
@@ -27,13 +27,12 @@ export class ScanFileSharedComponent extends BasePage implements OnInit {
   @Input() noExpedient: string | number;
   @Input() statusProceeding: string;
   @Input() cveScreen: string;
-  @Input() reportPrint: string
+  @Input() reportPrint: string;
 
   @Output() emitfileNumber = new EventEmitter();
 
   //REPORTES
   loadingText = 'Cargando ...';
-  
 
   constructor(
     private serviceDocuments: DocumentsService,
@@ -42,14 +41,12 @@ export class ScanFileSharedComponent extends BasePage implements OnInit {
     private siabService: SiabService,
     private modalService: BsModalService,
     private sanitizer: DomSanitizer,
-    private router: Router,
+    private router: Router
   ) {
     super();
   }
 
-  ngOnInit(): void {
-   
-  }
+  ngOnInit(): void {}
 
   prepareForm() {}
 
@@ -163,72 +160,82 @@ export class ScanFileSharedComponent extends BasePage implements OnInit {
   }
 
   //ESCANEAR
-  scan(){
-    if(!['CERRADO','CERRADA'].includes(this.statusProceeding) && this.statusProceeding != null){
-        if(this.form.get(this.formControlName).value != null){
-            this.alertQuestion('question','Se abrirá la pantalla de escaneo para el folio de escaneo del acta abierta','¿Deseas continuar?','Continuar').then(q => {
-                if(q.isConfirmed){
-                    this.goToScan()
-                }
-            })
-        }else{
-            this.alert('warning','No existe folio de escaneo a escanear','')
-        }
-    }else{
-        this.alert('warning','No se puede escanear un acta cerrada','')
+  scan() {
+    if (
+      !['CERRADO', 'CERRADA'].includes(this.statusProceeding) &&
+      this.statusProceeding != null
+    ) {
+      if (this.form.get(this.formControlName).value != null) {
+        this.alertQuestion(
+          'question',
+          'Se abrirá la pantalla de escaneo para el folio de escaneo del acta abierta',
+          '¿Deseas continuar?',
+          'Continuar'
+        ).then(q => {
+          if (q.isConfirmed) {
+            this.goToScan();
+          }
+        });
+      } else {
+        this.alert('warning', 'No existe folio de escaneo a escanear', '');
+      }
+    } else {
+      this.alert('warning', 'No se puede escanear un acta cerrada', '');
     }
   }
 
-  goToScan(){
+  goToScan() {
     localStorage.setItem('numberExpedient', this.noExpedient.toString());
 
     this.router.navigate([`/pages/general-processes/scan-documents`], {
-        queryParams: { origin: this.cveScreen, folio: this.form.get(this.formControlName) },
-      });
+      queryParams: {
+        origin: this.cveScreen,
+        folio: this.form.get(this.formControlName),
+      },
+    });
   }
 
   //IMPRIMIR
-  printScanFile(){
-    if(this.form.get(this.formControlName).value != null){
-        const params = {
-            PARAMSFORM: 'NO',
-            PN_FOLIO: this.form.get(this.formControlName).value,
-            DESTYPE: 'PREVIEW',
-            PRINTJOB: 'YES',
-          };
-          this.downloadReport(this.reportPrint, params);
-    }else{
-        this.alert('warning', 'No tiene folio de escaneo para imprimir.', '');
+  printScanFile() {
+    if (this.form.get(this.formControlName).value != null) {
+      const params = {
+        PARAMSFORM: 'NO',
+        PN_FOLIO: this.form.get(this.formControlName).value,
+        DESTYPE: 'PREVIEW',
+        PRINTJOB: 'YES',
+      };
+      this.downloadReport(this.reportPrint, params);
+    } else {
+      this.alert('warning', 'No tiene folio de escaneo para imprimir.', '');
     }
   }
 
   //CONSULTA DE IMAGENES
-  seeImages(){
-    if(this.form.get(this.formControlName).value != null){
-        this.serviceDocuments.getByFolio(this.form.get(this.formControlName).value).subscribe(
-            res => {
-                const data = JSON.parse(JSON.stringify(res));
-                const scanStatus = data.data[0]['scanStatus']
-                const idMedium = data.data[0]['mediumId']
+  seeImages() {
+    if (this.form.get(this.formControlName).value != null) {
+      this.serviceDocuments
+        .getByFolio(this.form.get(this.formControlName).value)
+        .subscribe(res => {
+          const data = JSON.parse(JSON.stringify(res));
+          const scanStatus = data.data[0]['scanStatus'];
+          const idMedium = data.data[0]['mediumId'];
 
-                if(scanStatus === 'ESCANEADO'){
-                    if([-1,-2].includes(idMedium)){
-
-                    }else{
-
-                    }
-                }else{
-                    this.alert('warning','No existe documentación para este folio','')
-                }
+          if (scanStatus === 'ESCANEADO') {
+            if ([-1, -2].includes(idMedium)) {
+            } else {
             }
-        )
-    }else{
+          } else {
+            this.alert(
+              'warning',
+              'No existe documentación para este folio',
+              ''
+            );
+          }
+        });
+    } else {
       this.alert('warning', 'No tiene folio de escaneo para visualizar.', '');
     }
   }
 
-  visualizeImages(idMedium:any){
-    
-  }
+  visualizeImages(idMedium: any) {}
 }
-
