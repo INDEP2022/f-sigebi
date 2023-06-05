@@ -1,75 +1,75 @@
 export const COLUMNS = {
-  requestNumber: {
+  id: {
     title: 'No. Solicitud',
     type: 'number',
     sort: false,
   },
-  fileNumber: {
+  recordId: {
     title: 'No. Expediente',
     type: 'number',
     sort: false,
   },
-  regionalDelegation: {
+  regionalDelegationName: {
     title: 'Delegación Regional',
     type: 'string',
     sort: false,
   },
-  state: {
+  stateName: {
     title: 'Estado',
     type: 'string',
     sort: false,
   },
-  transferent: {
+  transferentName: {
     title: 'Transferente',
     type: 'string',
     sort: false,
   },
-  emitter: {
+  stationName: {
     title: 'Emisora',
     type: 'string',
     sort: false,
   },
-  authority: {
+  authorityName: {
     title: 'Autoridad',
     type: 'string',
     sort: false,
   },
-  taxpayer: {
+  indicatedTaxpayer: {
     title: 'Contribuyente y/o Asociado',
     type: 'string',
     sort: false,
   },
-  fileTransferentPAMA: {
+  transferenceFile: {
     title: 'Expediente Transferente / PAMA',
     type: 'string',
     sort: false,
   },
-  certificateCircumstantial: {
+  circumstantialRecord: {
     title: 'Acta Circunstanciada',
     type: 'string',
     sort: false,
   },
-  inquiryPreliminary: {
+  previousInquiry: {
     title: 'Averiguación Previa',
     type: 'string',
     sort: false,
   },
-  criminalCase: {
+  lawsuit: {
     title: 'Causa Penal',
     type: 'string',
     sort: false,
   },
-  numberProtection: {
+  protectNumber: {
     title: 'No. Amparo',
     type: 'string',
     sort: false,
   },
-  performPenal: {
+  tocaPenal: {
     title: 'Toca Penal',
     type: 'string',
     sort: false,
   },
-  officeNumber: {
+  paperNumber: {
     title: 'No. Oficio',
     type: 'string',
     sort: false,
@@ -84,7 +84,7 @@ export const COLUMNS = {
     type: 'string',
     sort: false,
   },
-  judged: {
+  court: {
     title: 'Juzgado',
     type: 'string',
     sort: false,
@@ -94,7 +94,7 @@ export const COLUMNS = {
     type: 'string',
     sort: false,
   },
-  receivingPath: {
+  receiptRoute: {
     title: 'Vía de Recepción',
     type: 'string',
     sort: false,
@@ -104,7 +104,7 @@ export const COLUMNS = {
     type: 'string',
     sort: false,
   },
-  typeExpedient: {
+  typeRecord: {
     title: 'Tipo Expediente',
     type: 'string',
     sort: false,

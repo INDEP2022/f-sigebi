@@ -1,6 +1,10 @@
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { IGood } from 'src/app/core/models/ms-good/good';
+import {
+  DOUBLE_POSITIVE_PATTERN,
+  NUM_POSITIVE,
+} from 'src/app/core/shared/patterns';
 import { IBienesPar } from '../models/bienesPar.model';
 import { columnsFirstCase, columnsSecondCase } from '../models/columns';
 
@@ -8,12 +12,17 @@ export abstract class PartializeGeneralGood {
   formGood: FormGroup;
   good: IGood;
   formControl: FormGroup;
+  // numberGood: number;
+  goodStatusDesc: string;
+  goodClassNumberDesc: string;
   // isFirstCase: boolean = false;
   formLoading = false;
   buttonsLoading = false;
   pageLoading = false;
   pagedBienesPar: any[] = [];
   firstCase = true;
+  verif_des: number;
+  haveAply = true;
   private _bienesPar: IBienesPar[] = [];
   get bienesPar() {
     return this._bienesPar;
@@ -33,16 +42,29 @@ export abstract class PartializeGeneralGood {
   // };
   settingsGoodsFirstCase = {
     ...TABLE_SETTINGS,
-    actions: false,
+    actions: {
+      columnTitle: 'Acciones',
+      position: 'left',
+      add: false,
+      edit: false,
+      delete: true,
+    },
     columns: columnsFirstCase,
   };
   settingsGoodsSecondCase = {
     ...TABLE_SETTINGS,
-    actions: false,
+    actions: {
+      columnTitle: 'Acciones',
+      position: 'left',
+      add: false,
+      edit: false,
+      delete: true,
+    },
     columns: columnsSecondCase,
   };
   sumCant = 0;
   sumVal14 = 0;
+  sumAvaluo = 0;
   noActa: number = 0;
   clasificators: string = '1424, 1426, 1427, 1575, 1590';
   protected dbPartialize: string;
@@ -62,18 +84,14 @@ export abstract class PartializeGeneralGood {
   }
 
   get val14() {
-    return this.formGood
-      ? this.formGood.get('importe')
-        ? this.formGood.get('importe').value
-        : 0
-      : 0;
+    return this.good ? this.good.val14 : 0;
   }
 
   get vimporte() {
     return !this.validationClasif()
-      ? +(this.cantidad + '')
-      : this.val14
-      ? +Number((this.val14 + '').replace(',', '.')).toFixed(4)
+      ? +(this.good.quantity + '')
+      : this.good.val14
+      ? +Number((this.good.val14 + '').replace(',', '.')).toFixed(4)
       : -1;
   }
 
@@ -107,28 +125,26 @@ export abstract class PartializeGeneralGood {
 
   initFormGood() {
     this.formGood = this.fb.group({
-      noBien: [null, [Validators.required]],
-      cantPadre: [null],
-      descripcion: [null],
-      cantidad: [null],
-      avaluo: [null],
-      estatus: [null],
-      estatusDescripcion: [null],
-      extDom: [null],
-      moneda: [null],
-      expediente: [null],
-      clasificador: [null],
-      clasificadorDescripcion: [null],
-      importe: [null],
+      noBien: [null, [Validators.required, Validators.pattern(NUM_POSITIVE)]],
     });
   }
 
   initFormControl() {
     this.formControl = this.fb.group({
       ind: [null],
-      cantPar: [null, [Validators.required, Validators.min(1)]],
-      cantidad: [null, [Validators.required, Validators.min(1)]],
-      saldo: [null, [Validators.required, Validators.min(1)]],
+      cantPar: [
+        null,
+        [
+          Validators.required,
+          Validators.min(1),
+          Validators.pattern(NUM_POSITIVE),
+        ],
+      ],
+      cantidad: [
+        null,
+        [Validators.required, Validators.pattern(DOUBLE_POSITIVE_PATTERN)],
+      ],
+      saldo: [null, [Validators.required]],
     });
   }
 }

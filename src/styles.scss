@@ -38,6 +38,10 @@
   display: block;
 }
 
+.not-press {
+  pointer-events: none;
+}
+
 * {
   font-size: 14px;
 }
@@ -522,4 +526,14 @@ ng-scrollbar.table-scrollbar {
 .disabled-custom {
   pointer-events: none !important;
   // opacity: 0.7 !important;
+}
+
+#selectAbandono div ng-select {
+  height: 38px !important;
+}
+
+.card-header-span-fix .page-item .page-link {
+  display: flex !important;
+  font-size: auto !important;
+  margin-top: auto !important;
 }

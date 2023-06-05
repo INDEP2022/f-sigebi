@@ -20,7 +20,7 @@ export class DelegationStateFormComponent extends BasePage implements OnInit {
   delegationStateForm: ModelForm<IDelegationState>;
   title: string = 'Delegación Estado';
   edit: boolean = false;
-  delegationSate: IDelegationState;
+  delegationSate: any;
   states = new DefaultSelect<IStateOfRepublic>();
   constructor(
     private modalRef: BsModalRef,
@@ -33,6 +33,7 @@ export class DelegationStateFormComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
+    this.getStates(new ListParams());
   }
 
   private prepareForm() {
@@ -43,7 +44,7 @@ export class DelegationStateFormComponent extends BasePage implements OnInit {
       ],
       stateCode: [
         null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
       keyState: [
         null,
@@ -63,16 +64,22 @@ export class DelegationStateFormComponent extends BasePage implements OnInit {
   fillForm() {
     this.edit = true;
     this.delegationStateForm.patchValue(this.delegationSate);
-    /**
-     * !Agregar funcionalidad para llenar el select
-     * !cuando lo traiga del backend
-     */
-    // const state = this.delegationSate.keyState
+    this.delegationStateForm.controls['regionalDelegation'].setValue(
+      this.delegationSate.regionalDelegation.id
+    );
+    this.delegationStateForm.controls['stateCode'].setValue(
+      this.delegationSate.stateCode.descCondition
+    );
   }
 
   getStates(params: ListParams) {
     this.stateOfRepublicService.getAll(params).subscribe({
-      next: data => (this.states = new DefaultSelect(data.data, data.count)),
+      next: data => {
+        this.states = new DefaultSelect(data.data, data.count);
+      },
+      error: () => {
+        this.states = new DefaultSelect();
+      },
     });
   }
 
@@ -101,8 +108,8 @@ export class DelegationStateFormComponent extends BasePage implements OnInit {
   update() {
     this.loading = true;
     this.delegationStateService
-      .update(
-        this.delegationSate.regionalDelegation,
+      .newUpdate(
+        // this.delegationSate.regionalDelegation,
         this.delegationStateForm.value
       )
       .subscribe({

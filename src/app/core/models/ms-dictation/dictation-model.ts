@@ -24,13 +24,13 @@ export interface IDictation {
 }
 export interface IDictationCopies {
   id?: number;
-  numberOfDicta: string;
-  typeDictamination: string;
-  recipientCopy: string;
-  copyDestinationNumber: number;
-  personExtInt: string;
-  namePersonExt: string;
-  registerNumber: number;
+  numberOfDicta?: string;
+  typeDictamination?: string;
+  recipientCopy?: string;
+  copyDestinationNumber?: number;
+  personExtInt?: string;
+  namePersonExt?: string;
+  registerNumber?: number;
 }
 
 export interface IInitFormLegalOpinionOfficeBody {
@@ -79,4 +79,9 @@ export interface ITmpDictationCreate {
 export interface ITmpExpDesahogoB {
   goodNumber: number;
   numberProceedings: number;
+}
+
+export interface IUpdateDelDictation {
+  ofDictaNumber?: number;
+  delegationDictateNumber?: number;
 }

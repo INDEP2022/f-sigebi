@@ -50,6 +50,15 @@ export class Repository<T> implements IRepository<T> {
     return this.httpClient.put(`${fullRoute}/${id}`, formData);
   }
 
+  updateCatagaloDelegations(
+    route: string,
+    id: number | string,
+    formData: Object
+  ) {
+    const fullRoute = this.buildRoute(route);
+    return this.httpClient.put(`${fullRoute}`, formData);
+  }
+
   newUpdate(route: string, formData: Object) {
     const fullRoute = this.buildRoute(route);
     // console.log(`${fullRoute}/${id}`);
@@ -68,12 +77,21 @@ export class Repository<T> implements IRepository<T> {
 
   remove(route: string, id: number | string) {
     const fullRoute = this.buildRoute(route);
+
     return this.httpClient.delete(`${fullRoute}/${id}`);
   }
-
+  removeRepuves(route: string, formData: Object) {
+    const fullRoute = this.buildRoute(route);
+    return this.httpClient.delete(`${fullRoute}`, { body: { key: formData } });
+  }
   newRemove(route: string, id: number | string) {
     const fullRoute = this.buildRoute(route);
     return this.httpClient.delete(`${fullRoute}/id/${id}`);
+  }
+  removeDocSac(route: string, formData: any) {
+    console.log(formData);
+    const fullRoute = this.buildRoute(route);
+    return this.httpClient.delete(`${fullRoute}/id/${formData.id}`);
   }
 
   updateByIds(route: string, ids: Partial<T>, formData: Object) {
@@ -295,5 +313,54 @@ export class Repository<T> implements IRepository<T> {
     }
     const ms = route.split('/')[0];
     return `${environment.API_URL}${ms}/api/v1/${paths.join('/')}`;
+  }
+
+  updateCatalogOpinions(route: string, id: number | string, formData: Object) {
+    const fullRoute = this.buildRoute(route);
+    // console.log(formData);
+
+    return this.httpClient.put(`${fullRoute}/id/${id}`, formData);
+  }
+
+  removeCatalogOpinions(route: string, id: number | string) {
+    const fullRoute = this.buildRoute(route);
+    // console.log(`${fullRoute}/id/${id}`);
+
+    return this.httpClient.delete(`${fullRoute}/id/${id}`);
+  }
+
+  updateCatalogDocCompensation(
+    route: string,
+    id: number | string,
+    formData: Object
+  ) {
+    const fullRoute = this.buildRoute(route);
+    // console.log(formData);
+
+    return this.httpClient.put(`${fullRoute}/id/${id}`, formData);
+  }
+
+  removeCatalogDocCompensation(route: string, id: number | string) {
+    const fullRoute = this.buildRoute(route);
+    // console.log(`${fullRoute}/id/${id}`);
+
+    return this.httpClient.delete(`${fullRoute}/id/${id}`);
+  }
+
+  updateCatalogSiabClasification(
+    route: string,
+    id: number | string,
+    formData: Object
+  ) {
+    const fullRoute = this.buildRoute(route);
+    // console.log(formData);
+    return this.httpClient.put(`${fullRoute}/id/${id}`, formData);
+  }
+
+  removeCatalogSiabClasification(route: string, id: number | string) {
+    const fullRoute = this.buildRoute(route);
+    // console.log(`${fullRoute}/id/${id}`);
+
+    return this.httpClient.delete(`${fullRoute}/id/${id}`);
   }
 }

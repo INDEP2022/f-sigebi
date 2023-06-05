@@ -6,7 +6,7 @@ export class ListParams {
   limit?: number = 10;
   pageSize?: number = 10;
   take?: number = 10;
-  //filter?: string = '';
+  // filter?: string = '';
 }
 
 export class FilterBulkTechnical {
@@ -89,9 +89,13 @@ class DynamicFilter {
 
   getParams() {
     if (this.value == SearchFilter.NULL) {
-      return `filter.${this.field}=${this.operator ? this.operator + ':' : ''}${
-        SearchFilter.NULL
-      }`;
+      if (this.operator == SearchFilter.NULL) {
+        return `filter.${this.field}=${SearchFilter.NULL}`;
+      } else {
+        return `filter.${this.field}=${
+          this.operator ? this.operator + ':' : ''
+        }${SearchFilter.NULL}`;
+      }
     }
     return `filter.${this.field}=${this.operator}:${this.value}`;
   }

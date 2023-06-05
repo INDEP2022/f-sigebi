@@ -5,7 +5,11 @@ import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IDeductive } from 'src/app/core/models/catalogs/deductive.model';
 import { DeductiveService } from 'src/app/core/services/catalogs/deductive.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { DOUBLE_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
+import {
+  PERCENTAGE_NUMBERS_PATTERN,
+  POSITVE_NUMBERS_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-deductive-form',
@@ -34,27 +38,35 @@ export class DeductiveFormComponent extends BasePage implements OnInit {
       id: [null],
       serviceType: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(200),
+        ],
       ],
       weightedDeduction: [
         null,
-        [Validators.required, Validators.pattern(DOUBLE_PATTERN)],
+        [Validators.required, Validators.pattern(PERCENTAGE_NUMBERS_PATTERN)],
       ],
       startingRankPercentage: [
         null,
-        [Validators.required, Validators.pattern(DOUBLE_PATTERN)],
+        [Validators.required, Validators.pattern(PERCENTAGE_NUMBERS_PATTERN)],
       ],
       finalRankPercentage: [
         null,
-        [Validators.required, Validators.pattern(DOUBLE_PATTERN)],
+        [Validators.required, Validators.pattern(PERCENTAGE_NUMBERS_PATTERN)],
       ],
       contractNumber: [
         null,
-        [Validators.required, Validators.pattern(DOUBLE_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(50),
+        ],
       ],
       version: [
         null,
-        [Validators.required, Validators.pattern(DOUBLE_PATTERN)],
+        [Validators.required, Validators.pattern(POSITVE_NUMBERS_PATTERN)],
       ],
       status: [null, [Validators.required]],
     });

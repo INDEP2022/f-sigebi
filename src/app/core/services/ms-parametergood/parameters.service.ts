@@ -34,4 +34,9 @@ export class ParametersService extends HttpService {
   getPhaseEdo(date: string): Observable<IListResponse<IParameters>> {
     return this.get<IListResponse<IParameters>>(this.route.FaseEdo, date);
   }
+
+  getFaStageCreda(params: any) {
+    const route = `${ParameterGoodEndpoints.FaStageCreda + '?date=' + params}`;
+    return this.get(route);
+  }
 }

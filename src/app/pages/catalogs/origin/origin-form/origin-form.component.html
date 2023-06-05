@@ -3,67 +3,96 @@
     <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nueva' }} {{ title }}</h5>
   </div>
   <div body>
-    <form class="form-material" [formGroup]="form">
+    <form [formGroup]="form" class="form-material">
       <div class="row">
         <div class="col-md-12">
-          <form-field
-            [control]="form.get('idTransferer')"
-            label="Id Transferencia">
+          <div class="form-group">
+            <label for="idTransferer">Id Transferencia</label>
             <input
               type="number"
               class="form-control"
-              formControlName="idTransferer" />
-          </form-field>
+              id="idTransferer"
+              formControlName="idTransferer"
+              min="0"
+              oninput="if(this.value.length > 15) this.value = this.value.slice(0, 15);" />
+          </div>
         </div>
         <div class="col-md-12">
-          <form-field
-            [control]="form.get('keyTransferer')"
-            label="Clave Transferencia">
+          <div class="form-group">
+            <label for="keyTransferer">Clave Transferencia</label>
+            <input
+              type="text"
+              class="form-control"
+              id="keyTransferer"
+              formControlName="keyTransferer"
+              maxlength="255" />
+          </div>
+        </div>
+        <div class="col-md-12">
+          <div class="form-group">
+            <label for="description">Descripci&oacute;n</label>
+            <input
+              type="text"
+              class="form-control"
+              id="description"
+              formControlName="description"
+              maxlength="255" />
+          </div>
+        </div>
+        <div class="col-md-12">
+          <div class="form-group">
+            <label for="type">Tipo</label>
+            <input
+              type="text"
+              class="form-control"
+              id="type"
+              formControlName="type"
+              maxlength="255" />
+          </div>
+        </div>
+        <div class="col-md-12">
+          <div class="form-group">
+            <label for="address">Direcci&oacute;n</label>
+            <input
+              type="text"
+              class="form-control"
+              id="address"
+              formControlName="address"
+              maxlength="255" />
+          </div>
+        </div>
+        <div class="col-md-12">
+          <div class="form-group">
+            <label for="idCity">Id Ciudad</label>
             <input
               type="number"
               class="form-control"
-              formControlName="keyTransferer" />
-          </form-field>
+              id="idCity"
+              formControlName="idCity"
+              min="0"
+              oninput="if(this.value.length > 15) this.value = this.value.slice(0, 15);" />
+          </div>
         </div>
         <div class="col-md-12">
-          <form-field
-            [control]="form.get('description')"
-            label="Descripci&oacute;n">
+          <div class="form-group">
+            <label for="city">Ciudad</label>
             <input
               type="text"
               class="form-control"
-              formControlName="description" />
-          </form-field>
+              id="city"
+              formControlName="city" />
+          </div>
         </div>
         <div class="col-md-12">
-          <form-field [control]="form.get('type')" label="Tipo">
-            <input type="text" class="form-control" formControlName="type" />
-          </form-field>
-        </div>
-        <div class="col-md-12">
-          <form-field [control]="form.get('address')" label="Direcci&oacute;n">
-            <input type="text" class="form-control" formControlName="address" />
-          </form-field>
-        </div>
-        <div class="col-md-12">
-          <form-field [control]="form.get('idCity')" label="Id City">
-            <input type="text" class="form-control" formControlName="idCity" />
-          </form-field>
-        </div>
-        <div class="col-md-12">
-          <form-field [control]="form.get('city')" label="Ciudad">
-            <input type="text" class="form-control" formControlName="city" />
-          </form-field>
-        </div>
-        <div class="col-md-12">
-          <form-field
-            [control]="form.get('keyEntityFederative')"
-            label="Clave Federativa">
+          <div class="form-group">
+            <label for="keyEntityFederative">Clave Federativa</label>
             <input
               type="text"
               class="form-control"
-              formControlName="keyEntityFederative" />
-          </form-field>
+              id="keyEntityFederative"
+              formControlName="keyEntityFederative"
+              maxlength="15" />
+          </div>
         </div>
       </div>
     </form>

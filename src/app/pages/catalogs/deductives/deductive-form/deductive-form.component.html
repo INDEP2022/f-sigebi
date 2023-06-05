@@ -21,7 +21,7 @@
             [control]="deductiveForm.get('weightedDeduction')"
             label="Deducci&oacute;n Ponderada">
             <input
-              type="number"
+              type="text"
               class="form-control"
               formControlName="weightedDeduction" />
           </form-field>
@@ -33,7 +33,7 @@
             [control]="deductiveForm.get('startingRankPercentage')"
             label="Rango de Porcentaje Inicial">
             <input
-              type="number"
+              type="text"
               class="form-control"
               formControlName="startingRankPercentage" />
           </form-field>
@@ -43,7 +43,7 @@
             [control]="deductiveForm.get('finalRankPercentage')"
             label="Rango de Porcentaje Final">
             <input
-              type="number"
+              type="text"
               class="form-control"
               formControlName="finalRankPercentage" />
           </form-field>
@@ -54,7 +54,7 @@
             [control]="deductiveForm.get('contractNumber')"
             label="No. Contrato">
             <input
-              type="number"
+              type="text"
               class="form-control"
               formControlName="contractNumber" />
           </form-field>
@@ -64,10 +64,7 @@
           <form-field
             [control]="deductiveForm.get('version')"
             label="Versi&oacute;n">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="version" />
+            <input type="text" class="form-control" formControlName="version" />
           </form-field>
         </div>
       </div>
@@ -80,13 +77,6 @@
           <form-radio label="Inactivo">
             <input type="radio" formControlName="status" value="0" />
           </form-radio>
-        </div>
-      </div>
-      <div class="row pt-5">
-        <div class="col-md-3">
-          <form-field [control]="deductiveForm.get('id')" label="ID">
-            <input type="number" class="form-control" formControlName="id" />
-          </form-field>
         </div>
       </div>
     </form>

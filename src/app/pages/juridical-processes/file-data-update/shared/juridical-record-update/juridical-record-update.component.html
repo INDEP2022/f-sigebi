@@ -118,8 +118,7 @@
             [searchOnInit]="true"
             termMaxLength="80"
             [clearable]="false"
-            [showTooltip]="true"
-            [readonly]="layout == 'ABANDONMENT'">
+            [showTooltip]="true">
           </ngx-select>
         </form-field>
       </div>
@@ -136,7 +135,12 @@
           <button
             type="button"
             class="btn btn-sm btn-primary active ml-3"
-            [disabled]="!affair || !dictOffice || isLoadingOfficeOfRelief"
+            [disabled]="
+              !wheelNumber ||
+              isLoadingOfficeOfRelief ||
+              !affair ||
+              dictum == 'CONOCIMIENTO'
+            "
             (click)="onClickOfficeOfRelief()">
             Oficio de Desahogo
             <ng-container *ngIf="isLoadingOfficeOfRelief"
@@ -146,10 +150,21 @@
           <button
             type="button"
             class="btn btn-sm btn-primary active ml-3"
-            [disabled]="!dictum || !affair || dictOffice != 'D'"
+            [disabled]="
+              !wheelNumber ||
+              isLoadingBtnDictationJudgment ||
+              searchMode ||
+              fileDataUpdateForm.get('dictumKey').value?.description ===
+                'CONOCIMIENTO' ||
+              !fileDataUpdateForm.get('dictumKey').value
+            "
             (click)="sendToJuridicalRuling()">
+            <ng-container *ngIf="isLoadingBtnDictationJudgment"
+              ><span class="spinner-border"></span
+            ></ng-container>
             Dictaminaci&oacute;n Jur&iacute;dica
           </button>
+          <!-- [disabled]="!dictum || !affair || dictOffice != 'D'" -->
         </div>
       </div>
     </div>
@@ -157,7 +172,7 @@
   <hr />
   <div class="row">
     <div class="col-md-5">
-      <div class="row" *ngIf="initialCondition != 'T'">
+      <div class="row fer" [hidden]="initialCondition == 'T'">
         <form-field
           [control]="fileDataUpdateForm.get('circumstantialRecord')"
           label="Acta Circusnt.">
@@ -168,7 +183,7 @@
         </form-field>
       </div>
 
-      <div class="row pt-4" *ngIf="initialCondition != 'T'">
+      <div class="row pt-4" [hidden]="initialCondition == 'T'">
         <form-field
           [control]="fileDataUpdateForm.get('preliminaryInquiry')"
           label="Averig. Previa">
@@ -179,7 +194,7 @@
         </form-field>
       </div>
 
-      <div class="row pt-4" *ngIf="initialCondition != 'T'">
+      <div class="row pt-4" [hidden]="initialCondition == 'T'">
         <form-field
           [control]="fileDataUpdateForm.get('criminalCase')"
           label="Causa Penal">
@@ -190,7 +205,9 @@
         </form-field>
       </div>
 
-      <div class="row pt-4" *ngIf="initialCondition == 'T'">
+      <div
+        class="row pt-4"
+        [hidden]="initialCondition == 'AT' || initialCondition == 'A'">
         <form-field
           [control]="fileDataUpdateForm.get('expedientTransferenceNumber')"
           label="Exp. Transfer">
@@ -200,10 +217,28 @@
             class="form-control" />
         </form-field>
       </div>
+      <div
+        [hidden]="initialCondition == 'A' || initialCondition == 'AT'"
+        class="row mt-2">
+        <form-field [control]="fileDataUpdateForm.get('transference')">
+          <ngx-select
+            [form]="fileDataUpdateForm"
+            (fetchItems)="getTransferors($event, true)"
+            [data]="_transferors"
+            bindLabel="nameAndId"
+            control="transference"
+            label="Transferente"
+            [searchOnInit]="true"
+            termMaxLength="200"
+            [showTooltip]="true">
+          </ngx-select>
+        </form-field>
+      </div>
 
-      <div class="row pt-4">
+      <div
+        [hidden]="initialCondition == 'A' || initialCondition == 'AT'"
+        class="row pt-4">
         <form-field
-          *ngIf="initialCondition == 'T'"
           class="col-md-12"
           [control]="fileDataUpdateForm.get('judgementType')"
           label="Tipo Juicio">
@@ -220,7 +255,7 @@
         </form-field>
       </div>
 
-      <div class="row pt-4">
+      <div class="row pt-4" [hidden]="initialCondition == 'T'">
         <form-field
           [control]="fileDataUpdateForm.get('protectionKey')"
           label="No. Amparo">
@@ -231,7 +266,7 @@
         </form-field>
       </div>
 
-      <div class="row pt-4" *ngIf="initialCondition != 'T'">
+      <div class="row pt-4" [hidden]="initialCondition == 'T'">
         <form-field
           [control]="fileDataUpdateForm.get('touchPenaltyKey')"
           label="Toca Penal">
@@ -399,7 +434,9 @@
             bindLabel="nameAndId"
             control="institutionNumber"
             label="{{
-              initialCondition == 'T' ? 'Solicitante' : 'Autoridad Emisora'
+              initialCondition == 'T' || formControls?.wheelType?.value == 'P'
+                ? 'Solicitante'
+                : 'Autoridad Emisora'
             }}"
             [searchOnInit]="true"
             termMaxLength="200"
@@ -424,7 +461,7 @@
         </form-field>
       </div>
 
-      <div class="row pt-4" *ngIf="initialCondition != 'T'">
+      <div class="row pt-4" [hidden]="initialCondition == 'T'">
         <form-field
           [control]="fileDataUpdateForm.get('minpubNumber')"
           class="col-md-6">
@@ -442,6 +479,7 @@
         </form-field>
 
         <form-field
+          [hidden]="initialCondition == 'T'"
           [control]="fileDataUpdateForm.get('crimeKey')"
           class="col-md-6">
           <ngx-select

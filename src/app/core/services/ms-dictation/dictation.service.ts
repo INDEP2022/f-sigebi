@@ -12,17 +12,20 @@ import {
   IInitFormLegalOpinionOfficeResponse,
   ITmpDictationCreate,
   ITmpExpDesahogoB,
+  IUpdateDelDictation,
 } from '../../models/ms-dictation/dictation-model';
 import { IRTdictaAarusr } from '../../models/ms-dictation/r-tdicta-aarusr.model';
-
 @Injectable({
   providedIn: 'root',
 })
 export class DictationService extends HttpService {
   public clasifGoodNumber: number | string;
+  public goodNumber: number | string;
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
   private readonly route = DictationEndpoints;
+  private readonly routeN = DictationEndpoints.DictamenDelegation;
+
   constructor() {
     super();
     this.microservice = DictationEndpoints.BasePath;
@@ -63,8 +66,16 @@ export class DictationService extends HttpService {
     return this.post(this.route.Dictation, body);
   }
 
+  createPersonExt(body: IDictationCopies) {
+    return this.post(this.route.CopiesOfficialOpinion, body);
+  }
+
   update(body: Partial<IDictation>) {
     return this.put(this.route.Dictation, body);
+  }
+
+  updateExpedientNumber(id: number, body: Partial<IDictation>) {
+    return this.put(this.route.Dictation + '/' + id, body);
   }
 
   remove(body: { id: string | number; typeDict: string }) {
@@ -88,6 +99,13 @@ export class DictationService extends HttpService {
     return this.get<IListResponse<IDictationCopies>>(
       this.route.CopiesOfficialOpinion,
       param
+    );
+  }
+
+  updateUserByOficNum(body: any) {
+    return this.put<IListResponse<IDictationCopies>>(
+      this.route.CopiesOfficialOpinion,
+      body
     );
   }
 
@@ -148,6 +166,11 @@ export class DictationService extends HttpService {
       body
     );
   }
+  getUpdateDelgationDicta(body: _Params) {
+    return this.put<
+      IListResponse<{ dictamen: number; delegation_dicta: number }>
+    >(this.route.Dictation, body);
+  }
 
   getRTdictaAarusr(
     params?: ListParams
@@ -175,5 +198,55 @@ export class DictationService extends HttpService {
 
   createTmpExpDesahogoB(body: ITmpExpDesahogoB) {
     return this.post(DictationEndpoints.TmpExpDesahogoB, body);
+  }
+
+  sendGetOfficeByYear(body: Object) {
+    const route = `${DictationEndpoints.GetOfficeByYear}`;
+    return this.post(route, body);
+  }
+
+  sendGetOfficeByYear2(body: Object) {
+    const route = `${DictationEndpoints.GetOfficeByYear_}`;
+    return this.post(route, body);
+  }
+
+  sendConsulta1(anio: string, delegation: any) {
+    const route = `${DictationEndpoints.GetOfficeByYear1}`;
+    return this.get(route + `/${anio}?delegationDictamNumber=${delegation}`);
+  }
+
+  sendConsulta2(anio: string, delegation: any) {
+    const route = `${DictationEndpoints.GetOfficeByYear2}`;
+    return this.get(route + `/${anio}?delegationDictamNumber=${delegation}`);
+  }
+
+  sendConsulta3(anio: string, delegation: any) {
+    const route = `${DictationEndpoints.GetOfficeByYear3}`;
+    return this.get(route + `/${anio}?delegationDictamNumber=${delegation}`);
+  }
+
+  getFaFlagDest(params: any) {
+    const route = `${DictationEndpoints.FaFlagDest}`;
+    return this.post(route, params);
+  }
+
+  updateOfficialDictation(params: any) {
+    const route = `${DictationEndpoints.OfficialDictation}`;
+    return this.put(route, params);
+  }
+
+  createOfficialDictation(params: any) {
+    const route = `${DictationEndpoints.OfficialDictation}`;
+    return this.post(route, params);
+  }
+
+  deleteCopiesdictamenetOfficialOpinion(obj: any) {
+    return this.delete<IListResponse<IDictationCopies>>(
+      this.route.CopiesOfficialOpinion,
+      obj
+    );
+  }
+  updateDictaEntregaRTurno(body: IUpdateDelDictation) {
+    return this.put<IListResponse<IUpdateDelDictation>>(`${this.routeN}`, body);
   }
 }

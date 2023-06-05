@@ -10,7 +10,6 @@ import { GoodSsubtypeService } from 'src/app/core/services/catalogs/good-ssubtyp
 import { GoodSubtypeService } from 'src/app/core/services/catalogs/good-subtype.service';
 import { GoodTypeService } from 'src/app/core/services/catalogs/good-type.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -42,16 +41,10 @@ export class GoodSsubtypesFormComponent extends BasePage implements OnInit {
   private prepareForm(): void {
     this.goodSsubtypeForm = this.fb.group({
       id: [null],
-      description: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
+      description: [null, [Validators.required]],
       noType: [null, [Validators.required]],
       noSubType: [null, [Validators.required]],
-      noRegister: [
-        null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
-      ],
+      noRegister: [null],
     });
     if (this.goodSsubtype != null) {
       this.edit = true;

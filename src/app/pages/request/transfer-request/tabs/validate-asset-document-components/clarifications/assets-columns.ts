@@ -1,5 +1,3 @@
-import { IFraccion } from 'src/app/core/models/ms-good/fraccion';
-
 export const ASSETS_COLUMNS = {
   goodId: {
     title: 'No. Gestión',
@@ -16,53 +14,53 @@ export const ASSETS_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  goodTypeName: {
+  descriptionRelevantType: {
     title: 'Tipo Bien',
     type: 'string',
     sort: false,
   },
-  fraccion: {
+  codeFracction: {
     title: 'Fracción',
     type: 'string',
     sort: false,
-    valuePrepareFunction: (value: IFraccion) => (value ? value.code : ''),
+    //valuePrepareFunction: (value: IFraccion) => (value ? value.code : ''),
   },
   quantity: {
     title: 'Cantidad de la Transferente',
     type: 'string',
     sort: false,
   },
-  ligieUnit: {
+  measureUnitLigie: {
     title: 'Unidad de Medida Ligia',
     type: 'string',
     sort: false,
   },
-  unitMeasure: {
+  measureUnitTransferent: {
     title: 'Unidad de Medida Transferente',
     type: 'string',
     sort: false,
   },
   uniqueKey: {
-    title: 'Clave Unica',
+    title: 'Clave Única',
     type: 'string',
     sort: false,
   },
-  physicstateName: {
+  descriptionPhysicalStatus: {
     title: 'Estado fisico',
     type: 'string',
     sort: false,
   },
-  stateConservationName: {
+  descriptionConservationStatus: {
     title: 'Estado de Conservación',
     type: 'string',
     sort: false,
   },
-  destinyName: {
+  descriptionDestiny: {
     title: 'Destino Ligie',
     type: 'string',
     sort: false,
   },
-  transferentDestinyName: {
+  descriptionDestinyTransferent: {
     title: 'Destino Transferente',
     type: 'string',
     sort: false,

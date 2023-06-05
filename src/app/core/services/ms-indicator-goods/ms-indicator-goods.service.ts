@@ -107,6 +107,7 @@ export class MsIndicatorGoodsService extends HttpService {
           data: data.map(item => {
             return {
               ...item,
+              cantidad: +(item.cantidad + ''),
               fec_aprobacion_x_admon: formatForIsoDate(
                 item.fec_aprobacion_x_admon,
                 'string'

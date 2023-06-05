@@ -27,6 +27,7 @@ export enum GoodEndpoints {
   AttribGoodBad = 'attrib-good-bad',
   GetAllGoodQuery = 'good/getAllGoodQuery',
   PAValidaCambioEstatus = 'good/testValid',
+  GetMassiveSearch = 'good/getMassiveSearch',
 }
 
 export enum GoodProcessPoints {
@@ -39,9 +40,17 @@ export enum GoodProcessPoints {
   acceptGoodActa = `application/acceptGoodActa`,
   acceptGoodStatus = `application/acceptGoodStatus`,
   acceptGoodStatusScreen = `application/acceptGoodStatusScreen`,
+  dateRange = `util-pkg/getDate`,
 }
 
 export enum GoodFinderEndpoint {
   GoodFinderBase = 'goodfinder',
   GoodQuery = 'good-query',
+  UpdateRecords = 'good-query/update-good',
+  MasiveClassification = 'good-query/classification-massive',
+  AssignDomicilie = 'good-query/update-domicile',
+  UpdateGoodStatus = 'good-query/update-status',
+
+  /* Good Data Aset */
+  GoodDataAsetBase = 'gooddataset',
 }

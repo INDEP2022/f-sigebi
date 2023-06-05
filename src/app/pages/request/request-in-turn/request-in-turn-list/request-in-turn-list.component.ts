@@ -49,6 +49,7 @@ export class RequestInTurnListComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.settings = {
       ...TABLE_SETTINGS,
+      //hideSubHeader: false,
       actions: false,
       selectMode: 'multi',
       columns: REQUEST_IN_TURN_COLUMNS,
@@ -97,8 +98,6 @@ export class RequestInTurnListComponent extends BasePage implements OnInit {
     this.loading = true;
     this.requestService.getAll(this.params.getValue().getParams()).subscribe({
       next: (data: IListResponse<IRequest>) => {
-        console.log(data);
-
         this.totalItems = Number(data.count);
         this.getresponse(data.data);
       },

@@ -3,12 +3,6 @@
     <h5 class="title">Programación de Recepciones</h5>
   </div>
   <div body>
-    <div class="row mb-5">
-      <app-clean-filters-shared
-        [form]="form"
-        formStorage="filtersIndica"
-        (cleanFiltersEvent)="resetView()"></app-clean-filters-shared>
-    </div>
     <form class="form-material" [formGroup]="form">
       <div class="row">
         <div class="col-md-6">
@@ -34,7 +28,7 @@
           <!-- <app-select-form [form]="form" formField="tipoEvento" label="Tipo de Evento" [list]="tiposEvento"
             [(params)]="paramsTypes" [haveTodos]="false"></app-select-form> -->
         </div>
-        <div class="col-md-4" style="display: flex">
+        <div class="col-md-4 rangeDate">
           <form-field [control]="form.get('rangeDate')" label="Rango de Fechas">
             <input
               bsDaterangepicker
@@ -42,13 +36,13 @@
               formControlName="rangeDate"
               readonly
               [maxDate]="hoy" />
+            <div
+              *ngIf="rangeDateValue !== null"
+              class="deleteDate"
+              (click)="deleteRange()">
+              x
+            </div>
           </form-field>
-          <div
-            *ngIf="rangeDateValue !== null"
-            class="deleteDate"
-            (click)="deleteRange()">
-            x
-          </div>
         </div>
         <!-- <div class="col-md-2">
           <form-field [control]="form.get('fechaInicio')" label="Fecha Inicio">
@@ -91,7 +85,7 @@
         </div>
       </div>
       <div class="row mb-3">
-        <div class="col-md-12 mt-2">
+        <div class="col-lg-6 mt-2">
           <ng-custom-select-loading
             [form]="form"
             formControlName="coordRegional"
@@ -100,7 +94,7 @@
             bindLabel="description"
             paramSearch="search"
             [multiple]="true"
-            path="catalog/api/v1/delegation">
+            path="catalog/api/v1/delegation/get-all">
           </ng-custom-select-loading>
           <!-- <ng-template #coordinationLabel let-item="item">
             {{ item.id }} - {{ item.description }}
@@ -121,7 +115,7 @@
             [(params)]="paramsCoords"></app-select-form> -->
           <!-- <app-regional-coord-shared [form]="form"></app-regional-coord-shared> -->
         </div>
-        <div class="col-md-12 mt-2">
+        <div class="col-lg-6 mt-2">
           <ng-custom-select-loading
             [form]="form"
             formControlName="usuario"
@@ -170,12 +164,14 @@
         [form]="form"
         statusActaValue="ABIERTA"></app-key-proceedings-form> -->
 
-      <div class="action-buttons">
-        <div
-          class="col-md-4"
-          [class]="loading || form.invalid ? 'disabled' : ''">
+      <div class="row action-buttons" style="margin: auto">
+        <div class="col-md-4" [class]="loading ? 'disabled' : ''">
+          <app-clean-filters-shared
+            [form]="form"
+            formStorage="filtersIndica"
+            (cleanFiltersEvent)="resetView()"></app-clean-filters-shared>
           <button
-            class="btn btn-primary btn-sm active"
+            class="btn btn-primary btn-sm active search"
             type="submit"
             size="small"
             (click)="getData()">
@@ -186,6 +182,7 @@
         <div class="col-md-4" [class]="loading ? 'disabled' : ''">
           <button
             class="btn btn-primary btn-sm active"
+            [class]="loading || form.invalid ? 'disabled' : ''"
             type="submit"
             size="small"
             (click)="captureEvent()">
@@ -194,9 +191,11 @@
           </button>
         </div>
         <div class="col-md-4 righButtons">
-          <app-columns-select
-            [(settings)]="settings1"
-            [defaultColumns]="5"></app-columns-select>
+          <div [class]="loading || items.length === 0 ? 'disabled' : ''">
+            <app-columns-select
+              [(settings)]="settings1"
+              [defaultColumns]="5"></app-columns-select>
+          </div>
           <div
             [class]="
               loading || loadingExcel || items.length === 0 ? 'disabled' : ''
@@ -211,7 +210,7 @@
         </div>
       </div>
       <div class="row pt-4 scheduledTable">
-        <div class="col-md-12" [class]="showTable1 ? '' : 'hide'">
+        <div class="col-md-12">
           <div [class]="loading ? 'table-loading' : ''">
             <ng2-smart-table
               class="table-responsive"
@@ -231,13 +230,8 @@
         </div> -->
       </div>
       <app-pagination
-        *ngIf="showTable1"
         [params]="params"
         [totalItems]="totalItems"></app-pagination>
-      <app-pagination
-        *ngIf="!showTable1"
-        [params]="paramsIndicators"
-        [totalItems]="totalItemsIndicators"></app-pagination>
     </form>
   </div>
 </app-card>

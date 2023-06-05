@@ -28,6 +28,7 @@ import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevan
 import { GoodDomiciliesService } from 'src/app/core/services/good/good-domicilies.service';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
 import { ChatClarificationsService } from 'src/app/core/services/ms-chat-clarifications/chat-clarifications.service';
+import { GoodFinderService } from 'src/app/core/services/ms-good/good-finder.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { GetGoodResVeService } from 'src/app/core/services/ms-rejected-good/goods-res-dev.service';
 import { RejectedGoodService } from 'src/app/core/services/ms-rejected-good/rejected-good.service';
@@ -113,12 +114,14 @@ export class VerifyComplianceTabComponent
     private requestHelperService: RequestHelperService,
     private goodResDevService: GetGoodResVeService,
     private goodsQueryService: GoodsQueryService,
-    private chatClarificationService: ChatClarificationsService
+    private chatClarificationService: ChatClarificationsService,
+    private goodFinderService: GoodFinderService
   ) {
     super();
   }
 
   ngOnInit(): void {
+    console.log('Activando tab: verify-compliance-tab');
     // DISABLED BUTTON - FINALIZED //
     this.task = JSON.parse(localStorage.getItem('Task'));
     this.statusTask = this.task.status;
@@ -139,8 +142,8 @@ export class VerifyComplianceTabComponent
       },
     };
 
-    this.columns.unitMeasureName = {
-      ...this.columns.unitMeasureName,
+    this.columns.measureUnitTransferent = {
+      ...this.columns.measureUnitTransferent,
       onComponentInitFunction: (instance?: any) => {
         instance.input.subscribe((data: any) => {
           this.setUnitTransferent(data);
@@ -575,101 +578,15 @@ export class VerifyComplianceTabComponent
       SearchFilter.IN
     );
     const filter = this.params.getValue().getParams();
-    this.goodServices.getAll(filter).subscribe({
+    this.goodFinderService.goodFinder(filter).subscribe({
       next: resp => {
-        /*let goods = resp.data.filter(x =>  
-          x.processStatus == 'VERIFICAR_CUMPLIMIENTO' || x.processStatus == 'SOLICITAR_ACLARACION'
-        );*/
-
-        var result = resp.data.map(async (item: any) => {
-          const goodTypeName = await this.getTypeGood(item.goodTypeId);
-          item['goodTypeName'] = goodTypeName;
-
-          const physicalStatus = await this.getByTheirStatus(
-            item.physicalStatus,
-            'Estado Fisico'
-          );
-          item['physicstateName'] = physicalStatus;
-
-          const stateConservation = await this.getByTheirStatus(
-            item.stateConservation,
-            'Estado Conservacion'
-          );
-          item['stateConservationName'] = stateConservation;
-
-          const transferentDestiny = await this.getByTheirStatus(
-            item.transferentDestiny,
-            'Destino'
-          );
-          item['transferentDestinyName'] = transferentDestiny;
-
-          const destiny = await this.getByTheirStatus(item.destiny, 'Destino');
-          item['destinyName'] = destiny;
-
-          const unitMeasureName = await this.getTransferentUnit(
-            item.unitMeasure
-          );
-          item['unitMeasureName'] = unitMeasureName;
-        });
-
-        Promise.all(result).then(data => {
-          this.goodData.load(resp.data); //load  new LocalDataSource()
-          this.totalItems = resp.count;
-          this.loading = false;
-        });
+        this.goodData.load(resp.data); //load  new LocalDataSource()
+        this.totalItems = resp.count;
+        this.loading = false;
       },
       error: error => {
         this.loading = false;
       },
-    });
-  }
-
-  getTypeGood(id: number) {
-    return new Promise((resolve, reject) => {
-      if (id) {
-        this.typeRelevantService.getById(id).subscribe({
-          next: resp => {
-            resolve(resp.description);
-          },
-        });
-      } else {
-        resolve(null);
-      }
-    });
-  }
-
-  getByTheirStatus(id: number | string, typeName: string) {
-    return new Promise((resolve, reject) => {
-      if (id) {
-        var params = new ListParams();
-        params['filter.name'] = `$eq:${typeName}`;
-        params['filter.keyId'] = `$eq:${id}`;
-        this.genericService.getAll(params).subscribe({
-          next: resp => {
-            resolve(resp.data.length > 0 ? resp.data[0].description : '');
-          },
-        });
-      } else {
-        resolve(null);
-      }
-    });
-  }
-
-  getTransferentUnit(id: string) {
-    return new Promise((resolve, reject) => {
-      const params = new ListParams();
-      params['filter.uomCode'] = `$eq:${id}`;
-      this.goodsQueryService
-        .getCatMeasureUnitView(params)
-        .pipe(takeUntil(this.$unSubscribe))
-        .subscribe({
-          next: resp => {
-            resolve(resp.data[0].measureTlUnit);
-          },
-          error: erro => {
-            resolve('');
-          },
-        });
     });
   }
 
@@ -876,7 +793,7 @@ export class VerifyComplianceTabComponent
       confirmButtonText: 'Eliminar',
     }).then(async result => {
       if (result.isConfirmed) {
-        debugger;
+        //debugger;
         this.loader.load = true;
         //eliminar el chat clarification
         const idChatClarification =

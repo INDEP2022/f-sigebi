@@ -14,6 +14,7 @@ import { firstFormatDateToSecondFormatDate } from 'src/app/shared/utils/date';
 export class TableGoodMaintenanceComponent extends BasePage implements OnInit {
   @Input() override loading = false;
   statusActa = 'ABIERTA';
+  @Input() page: number;
   @Input() totalItems: number;
   @Input() data: IDetailProceedingsDeliveryReception[];
   @Output() updateData = new EventEmitter();
@@ -38,7 +39,7 @@ export class TableGoodMaintenanceComponent extends BasePage implements OnInit {
 
       columns: {
         numberGood: {
-          title: 'N° Bien',
+          title: 'No. Bien',
           sort: false,
           editable: false,
         },
@@ -53,7 +54,7 @@ export class TableGoodMaintenanceComponent extends BasePage implements OnInit {
           editable: false,
         },
         approvedDateXAdmon: {
-          title: 'Fec. Aprobación',
+          title: 'Fecha de Aprobación',
           sort: false,
           editor: {
             type: 'custom',
@@ -61,7 +62,7 @@ export class TableGoodMaintenanceComponent extends BasePage implements OnInit {
           },
         },
         dateIndicatesUserApproval: {
-          title: 'Fec. Indica Usuario Aprobación',
+          title: 'Fecha Indica Usuario Aprobación',
           sort: false,
           editor: {
             type: 'custom',
@@ -79,12 +80,12 @@ export class TableGoodMaintenanceComponent extends BasePage implements OnInit {
           editable: false,
         },
         vault: {
-          title: 'Boveda',
+          title: 'Bóveda',
           sort: false,
           editable: false,
         },
         approvedXAdmon: {
-          title: 'Apr.',
+          title: 'Aprobado',
           sort: false,
           type: 'custom',
           renderComponent: CheckboxDisabledElementComponent,
@@ -107,7 +108,7 @@ export class TableGoodMaintenanceComponent extends BasePage implements OnInit {
           },
         },
         received: {
-          title: 'Rec.',
+          title: 'Recibido',
           sort: false,
           type: 'custom',
           editable: true,

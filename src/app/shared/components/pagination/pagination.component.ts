@@ -24,6 +24,7 @@ export class PaginationComponent implements OnInit {
   @Input() pageSizeOptions: number[] = [10, 25, 50, 100];
   @Input() limit: FormControl = new FormControl(10);
   @Input() paginatorPageSize: boolean = true;
+  @Input() paginatorRangeLabel: boolean = true;
   constructor() {}
 
   ngOnInit(): void {}
@@ -43,7 +44,9 @@ export class PaginationComponent implements OnInit {
       startIndex < this.totalItems
         ? Math.min(startIndex + this.params.getValue().limit, this.totalItems)
         : startIndex + this.params.getValue().limit;
-    return `${startIndex + 1} - ${endIndex} de ${this.totalItems}`;
+    return this.params.getValue().limit > 1
+      ? `${startIndex + 1} - ${endIndex} de ${this.totalItems}`
+      : `${startIndex + 1} de ${this.totalItems}`;
   }
 
   emitEvent(params: ListParams) {

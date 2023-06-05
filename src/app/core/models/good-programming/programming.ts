@@ -1,7 +1,7 @@
 export interface Iprogramming {
   acuseEvent: number;
   address: string;
-  autorityId: number | string;
+  autorityId: number;
   chargeSignatore: string;
   city: string;
   concurrentMsg: string;
@@ -32,15 +32,15 @@ export interface Iprogramming {
   regionalDelegationName: string;
   startDate: string;
   stateKey: number;
-  stationId: string | number;
+  stationId: number;
   status?: string;
   statusEbs: string;
-  storeId: number | string;
+  storeId: number;
   subTypeGoodId: number;
   termEjecutionDate: string;
-  tranferId: number | string;
+  tranferId: number;
   typeGoodId: number;
-  typeRelevantId: number | string;
+  typeRelevantId: number;
   typeSignature: string;
   typeUser: string;
   validateGood: string;

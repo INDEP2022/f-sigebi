@@ -48,6 +48,7 @@ export class ScheduledMaintenanceDetailComponent
   implements OnInit
 {
   form: FormGroup;
+  formDate: FormGroup;
   statusList = [
     { id: 'ABIERTA', description: 'Abierto' },
     { id: 'CERRADA', description: 'Cerrado' },
@@ -98,6 +99,43 @@ export class ScheduledMaintenanceDetailComponent
       console.log(x);
       if (x === 'CERRADA') {
         this.closeActa();
+      } else {
+        const detail = JSON.parse(
+          window.localStorage.getItem('detailActa')
+        ) as IProceedingDeliveryReception;
+        console.log(this.form.get('fechaCaptura').value);
+
+        detail.keysProceedings = this.form.get('claveActa').value;
+        detail.statusProceedings = this.statusActaValue;
+        detail.closeDate = new Date().toISOString();
+        detail.closeDate = new Date().toISOString();
+        console.log(this.form.get('fechaCaptura').value);
+        const newDate = this.form.get('fechaCaptura').value;
+        detail.captureDate = (newDate + '').includes('/')
+          ? firstFormatDateToSecondFormatDate(newDate)
+          : newDate;
+        let message = '';
+        this.proceedingService
+          .update2(detail)
+          .pipe(takeUntil(this.$unSubscribe))
+          .subscribe({
+            next: response => {
+              this.onLoadToast(
+                'success',
+                'Se actualizo el acta No. ' + detail.id
+              );
+              this.pageLoading = false;
+              // this.massiveUpdate(`Se actualizo el acta No ${detail.id} `);
+            },
+            error: err => {
+              this.onLoadToast(
+                'error',
+                'No se pudo actualizar el acta No. ' + detail.id
+              );
+              // this.massiveUpdate('');
+              this.pageLoading = false;
+            },
+          });
       }
     });
   }
@@ -154,7 +192,7 @@ export class ScheduledMaintenanceDetailComponent
       window.localStorage.getItem('detailActa')
     ) as IProceedingDeliveryReception;
     this.alertQuestion(
-      'warning',
+      'question',
       'Acta ' + detail.id,
       '¿Seguro que desea realizar el cierre de esta Acta?'
     ).then(question => {
@@ -164,7 +202,7 @@ export class ScheduledMaintenanceDetailComponent
         // listParams.limit = 100000;
         // listParams['id'] = this.actaId;
         const data = this.data.filter(item => item.agregado === 'RA');
-        if (data.length > 0) {
+        if (data && data.length > 0) {
           const array = data.map(item => {
             return this.getStatusPantallaByGoodIndicator(item).pipe(
               filter(
@@ -226,9 +264,11 @@ export class ScheduledMaintenanceDetailComponent
         detail.keysProceedings = this.form.get('claveActa').value;
         detail.statusProceedings = this.statusActaValue;
         detail.closeDate = new Date().toISOString();
-        detail.captureDate = firstFormatDateToSecondFormatDate(
-          detail.captureDate
-        );
+        console.log(this.form.get('fechaCaptura').value);
+        const newDate = this.form.get('fechaCaptura').value;
+        detail.captureDate = (newDate + '').includes('/')
+          ? firstFormatDateToSecondFormatDate(newDate)
+          : newDate;
         let message = '';
         this.proceedingService
           .update2(detail)
@@ -237,15 +277,15 @@ export class ScheduledMaintenanceDetailComponent
             next: response => {
               this.onLoadToast(
                 'success',
-                'Se actualizo el acta N° ' + detail.id
+                'Se actualizo el acta No. ' + detail.id
               );
               this.pageLoading = false;
-              // this.massiveUpdate(`Se actualizo el acta N° ${detail.id} `);
+              // this.massiveUpdate(`Se actualizo el acta No ${detail.id} `);
             },
             error: err => {
               this.onLoadToast(
                 'error',
-                'No se pudo actualizar el acta N° ' + detail.id
+                'No se pudo actualizar el acta No. ' + detail.id
               );
               // this.massiveUpdate('');
               this.pageLoading = false;
@@ -271,9 +311,9 @@ export class ScheduledMaintenanceDetailComponent
                 (index < this.selecteds.length - 1 ? ',' : '');
             });
             if (message === '') {
-              message = `Se actualizaron los bienes N° ${goods} `;
+              message = `Se actualizaron los bienes No. ${goods} `;
             } else {
-              message += ` y los bienes N° ${goods}`;
+              message += ` y los bienes No. ${goods}`;
             }
             this.onLoadToast('success', 'Exito', message);
           },
@@ -308,6 +348,10 @@ export class ScheduledMaintenanceDetailComponent
       claveActa: [acta.keysProceedings],
       tipoEvento: [acta.typeProceedings],
     });
+    this.formDate = this.fb.group({
+      inicio: [null],
+      fin: [null],
+    });
     this.initialValue = { ...this.form.value };
   }
 
@@ -341,49 +385,123 @@ export class ScheduledMaintenanceDetailComponent
 
   updateDatesTable(newData: any[]) {
     console.log(newData);
-    const arrayToUpdate = newData.filter(x => x.agregado === 'AE');
-    const goodsByRastrer = newData.filter(x => x.agregado === 'RA');
-    if (arrayToUpdate.length > 0) {
-      this.detailService
-        .updateMasive(
-          arrayToUpdate.map(x => {
-            return {
-              fec_aprobacion_x_admon: x.fec_aprobacion_x_admon,
-              fec_indica_usuario_aprobacion: x.fec_indica_usuario_aprobacion,
-              no_bien: x.no_bien,
-            };
-          }),
-          this.actaId
-        )
-        .subscribe({
-          next: response => {
-            let goods = '';
-            newData.forEach((selected, index) => {
-              goods +=
-                selected.no_bien + (index < newData.length - 1 ? ',' : '');
+    if (newData.length > 0) {
+      this.alertQuestion(
+        'question',
+        'Actualizar Fechas',
+        '¿Desea actualizar las fechas?'
+      ).then(x => {
+        if (x.isConfirmed) {
+          this.detailService
+            .updateMassiveNew(
+              newData[0].fec_aprobacion_x_admon,
+              newData[0].fec_indica_usuario_aprobacion,
+              this.actaId
+            )
+            .subscribe({
+              next: response => {
+                // newData.forEach((selected, index) => {
+                //   goods +=
+                //     selected.no_bien + (index < newData.length - 1 ? ',' : '');
+                // });
+                this.data = [...newData];
+                this.onLoadToast(
+                  'success',
+                  'Fechas',
+                  'Se actualizaron las fechas correctamente'
+                );
+              },
+              error: err => {
+                this.onLoadToast(
+                  'error',
+                  'Fechas',
+                  'No se pudieron actualizar las fechas'
+                );
+              },
             });
-            // const message = `Se actualizo el bien N° ${newData.no_bien} `;
-            const message = `Se actualizaron los bienes N° ${goods} `;
-            this.onLoadToast('success', 'Exito', message);
-            this.data = [...newData];
-            // this.data = [...this.data]
-            // this.updateTable.emit();
-          },
-          error: err => {
-            this.onLoadToast('error', 'Error', 'Bienes no actualizados');
-            this.data = [
-              ...this.data
-                .filter(x => x.agregado === 'AE')
-                .concat(goodsByRastrer),
-            ];
-          },
-        });
-    } else {
-      if (goodsByRastrer.length > 0) {
-        this.data = [...newData];
-        this.onLoadToast('success', 'Bienes', 'Fechas actualizadas');
-      }
+        }
+      });
     }
+
+    // if (newData.length > 0) {
+    //   this.detailService
+    //     .updateMasive(
+    //       newData.map(x => {
+    //         return {
+    //           fec_aprobacion_x_admon: x.fec_aprobacion_x_admon,
+    //           fec_indica_usuario_aprobacion: x.fec_indica_usuario_aprobacion,
+    //           no_bien: x.no_bien,
+    //         };
+    //       }),
+    //       this.actaId
+    //     )
+    //     .subscribe({
+    //       next: response => {
+    //         let goods = '';
+    //         newData.forEach((selected, index) => {
+    //           goods +=
+    //             selected.no_bien + (index < newData.length - 1 ? ',' : '');
+    //         });
+    //         // const message = `Se actualizo el bien No ${newData.no_bien} `;
+    //         const message = `Se actualizaron los bienes No. ${goods} `;
+    //         this.onLoadToast('success', 'Exito', message);
+    //         this.data = [...newData];
+    //         // this.data = [...this.data]
+    //         // this.updateTable.emit();
+    //       },
+    //       error: err => {
+    //         this.onLoadToast('error', 'Error', 'Bienes no actualizados');
+    //         // this.data = [
+    //         //   ...this.data
+    //         //     .filter(x => x.agregado === 'AE')
+    //         //     .concat(goodsByRastrer),
+    //         // ];
+    //       },
+    //     });
+    // }
+    // const arrayToUpdate = newData.filter(x => x.agregado === 'AE');
+    // const goodsByRastrer = newData.filter(x => x.agregado === 'RA');
+    // if (arrayToUpdate.length > 0) {
+    //   this.detailService
+    //     .updateMasive(
+    //       arrayToUpdate.map(x => {
+    //         return {
+    //           fec_aprobacion_x_admon: x.fec_aprobacion_x_admon,
+    //           fec_indica_usuario_aprobacion: x.fec_indica_usuario_aprobacion,
+    //           no_bien: x.no_bien,
+    //         };
+    //       }),
+    //       this.actaId
+    //     )
+    //     .subscribe({
+    //       next: response => {
+    //         let goods = '';
+    //         newData.forEach((selected, index) => {
+    //           goods +=
+    //             selected.no_bien + (index < newData.length - 1 ? ',' : '');
+    //         });
+    //         // const message = `Se actualizo el bien No ${newData.no_bien} `;
+    //         const message = `Se actualizaron los bienes No. ${goods} `;
+    //         this.onLoadToast('success', 'Exito', message);
+    //         this.data = [...newData];
+    //         // this.data = [...this.data]
+    //         // this.updateTable.emit();
+    //       },
+    //       error: err => {
+    //         this.onLoadToast('error', 'Error', 'Bienes no actualizados');
+    //         this.data = [
+    //           ...this.data
+    //             .filter(x => x.agregado === 'AE')
+    //             .concat(goodsByRastrer),
+    //         ];
+    //       },
+    //     });
+    // } else {
+    //   if (goodsByRastrer.length > 0) {
+    //     this.data = [...newData];
+    //     this.onLoadToast('success', 'Bienes', 'Fechas actualizadas');
+    //   }
+    // }
   }
 
   updateGoodsRow(event: any) {
@@ -398,9 +516,9 @@ export class ScheduledMaintenanceDetailComponent
       this.alertTableIncompleteFields();
       return;
     }
-    if (newData.agregado === 'RA') {
-      return;
-    }
+    // if (newData.agregado === 'RA') {
+    //   return;
+    // }
     if (
       newData.fec_aprobacion_x_admon &&
       newData.fec_indica_usuario_aprobacion &&
@@ -430,8 +548,8 @@ export class ScheduledMaintenanceDetailComponent
           //     selected.numberGood +
           //     (index < this.selectedsForUpdate.length - 1 ? ',' : '');
           // });
-          const message = `Se actualizo el bien N° ${newData.no_bien} `;
-          // const message = `Se actualizaron los bienes N° ${goods} `;
+          const message = `Se actualizo el bien No. ${newData.no_bien} `;
+          // const message = `Se actualizaron los bienes No ${goods} `;
           this.onLoadToast('success', 'Exito', message);
           // this.updateTable.emit();
         },
@@ -459,12 +577,105 @@ export class ScheduledMaintenanceDetailComponent
     );
   }
 
+  private showMessageRemoved(
+    removeds: string[],
+    notRemoveds: string[],
+    text: string = 'eliminaron'
+  ) {
+    let message = '';
+    if (removeds.length > 0) {
+      removeds.forEach((selected, index) => {
+        message += selected + (index < this.selecteds.length - 1 ? ',' : '');
+      });
+      this.onLoadToast(
+        'success',
+        'Bienes',
+        `Se ${text} los bienes No. ${message} ` +
+          this.showMessageNotRemoved(notRemoveds, 'pero no')
+      );
+    } else {
+      this.onLoadToast(
+        'error',
+        'Bienes',
+        this.showMessageNotRemoved(notRemoveds)
+      );
+    }
+  }
+
+  private showMessageNotRemoved(
+    notRemoveds: string[],
+    initText: string = 'No'
+  ) {
+    let proceedingsNotRemoveds = '';
+    if (notRemoveds.length > 0) {
+      notRemoveds.forEach((selected, index) => {
+        proceedingsNotRemoveds +=
+          selected + (index < this.selecteds.length - 1 ? ',' : '');
+      });
+
+      return `${initText} se pudieron eliminar los bienes No. ${proceedingsNotRemoveds} porque tienen detalles de acta`;
+    } else {
+      return '';
+    }
+  }
+
   ngOnInit(): void {
     // this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(params => {
     //   // console.log(x);
     //   this.getData();
     // });
     this.fillColumnsGoods();
+    // this.$trackedGoods.pipe(first(), takeUntil(this.$unSubscribe)).subscribe({
+    //   next: response => {
+    //     if (response && response.length > 0) {
+    //       console.log(response);
+    //       this.detailService
+    //         .createMassive(
+    //           response.map(item =>
+    //             trackerGoodToDetailProceeding(item, this.form.get('acta').value)
+    //           )
+    //         )
+    //         .subscribe({
+    //           next: response2 => {
+    //             // const goods = response.map(good => good.goodNumber);
+    //             // let message = '';
+    //             // goods.forEach((good, index) => {
+    //             //   message += good + (index < goods.length - 1 ? ',' : '');
+    //             // });
+    //             // this.onLoadToast('success', 'Bienes Agregados', message);
+    //             const addeds: string[] = [];
+    //             const notAddeds: string[] = [];
+    //             response2.forEach(item => {
+    //               const { sucess } = item as ISucess;
+    //               const { error } = item as INotSucess;
+    //               if (sucess) {
+    //                 addeds.push(sucess);
+    //               }
+    //               if (error) {
+    //                 notAddeds.push(error);
+    //               }
+    //             });
+    //             this.showMessageRemoved(addeds, notAddeds, 'agregaron');
+    //             this.fillColumnsGoods();
+    //             // this.getGoods();
+    //           },
+    //           error: err => {
+    //             this.onLoadToast('error', 'Bienes', 'No Agregados');
+    //             this.fillColumnsGoods();
+    //           },
+    //         });
+    //       // this.fillGoodsByRastrerContent(response, deleteds);
+    //     } else {
+    //       this.loading = false;
+    //       this.fillColumnsGoods();
+    //     }
+    //   },
+    //   error: err => {
+    //     console.log(err);
+    //     this.loading = false;
+    //     this.fillColumnsGoods();
+    //   },
+    // });
   }
 
   private fillColumnsGoods() {
@@ -592,14 +803,18 @@ export class ScheduledMaintenanceDetailComponent
     console.log(new Date().toISOString());
     this.loading = true;
     this.params['id'] = idActa;
-    this.params.limit = 10000;
+    const newParams = this.params;
+    delete newParams.limit;
+    delete newParams.pageSize;
+    delete newParams.page;
+    // this.params.limit = 10000;
     // const detail = JSON.parse(
     //   window.localStorage.getItem('detailActa')
     // ) as IProceedingDeliveryReception;
 
     if (idActa) {
       this.service
-        .getGoodsByProceeding(this.params)
+        .getGoodsByProceeding(newParams)
         .pipe(takeUntil(this.$unSubscribe))
         .subscribe({
           next: response => {
@@ -608,8 +823,8 @@ export class ScheduledMaintenanceDetailComponent
             this.goodsCant = response.total;
             // console.log(this.goodsCant);
             this.totalItems = response.count;
-            // this.loading = false;
-            this.fillGoodsByRastrer(deleteds);
+            this.loading = false;
+            // this.fillGoodsByRastrer(deleteds);
             // this.fillGoodsByRastrerContent(
             //   [
             //     { goodNumber: '537814' },
@@ -635,7 +850,7 @@ export class ScheduledMaintenanceDetailComponent
           },
           error: err => {
             this.data = [];
-            // this.loading = false;
+            this.loading = false;
             this.totalItems = 0;
             // this.fillGoodsByRastrerContent([
             //   { goodNumber: '537814' },
@@ -656,7 +871,7 @@ export class ScheduledMaintenanceDetailComponent
             //   { goodNumber: '537410' },
             //   { goodNumber: '536720' },
             // ]);
-            this.fillGoodsByRastrer();
+            // this.fillGoodsByRastrer();
           },
         });
     }
@@ -668,7 +883,7 @@ export class ScheduledMaintenanceDetailComponent
 
   showDeleteAlert(item: IGoodsByProceeding) {
     this.alertQuestion(
-      'warning',
+      'question',
       'Eliminar',
       'Desea eliminar este registro?'
     ).then(question => {
@@ -685,15 +900,16 @@ export class ScheduledMaintenanceDetailComponent
                 this.onLoadToast(
                   'success',
                   'Exito',
-                  `Se elimino el bien N° ${item.no_bien}`
+                  `Se elimino el bien No. ${item.no_bien}`
                 );
               },
               error: err => {
                 console.log(err);
+                this.loading = false;
                 this.onLoadToast(
                   'error',
                   'ERROR',
-                  `No se pudo eliminar el bien N° ${item.no_bien}`
+                  `No se pudo eliminar el bien No. ${item.no_bien}`
                 );
               },
             });

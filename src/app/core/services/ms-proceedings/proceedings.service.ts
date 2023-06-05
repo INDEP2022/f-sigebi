@@ -6,14 +6,21 @@ import {
   IListResponse,
   IResponse,
 } from '../../interfaces/list-response.interface';
-import { IProceedings } from '../../models/ms-proceedings/proceedings.model';
+import {
+  IProceedings,
+  IUpdateActasEntregaRecepcion,
+  IUpdateActasEntregaRecepcionDelegation,
+} from '../../models/ms-proceedings/proceedings.model';
 import {
   IBlkPost,
   IUpdateVault,
   IUpdateWarehouse,
 } from '../../models/ms-proceedings/warehouse-vault.model';
 import { ProceedingsEndpoints } from './../../../common/constants/endpoints/ms-proceedings-endpoints';
-import { IUpdateProceedings } from './../../models/ms-proceedings/update-proceedings.model';
+import {
+  ICveAct,
+  IUpdateProceedings,
+} from './../../models/ms-proceedings/update-proceedings.model';
 
 @Injectable({
   providedIn: 'root',
@@ -21,6 +28,7 @@ import { IUpdateProceedings } from './../../models/ms-proceedings/update-proceed
 export class ProceedingsService extends HttpService {
   private readonly route = ProceedingsEndpoints.Proceedings;
   private readonly endpoint = ProceedingsEndpoints.ProeedingsDevolution;
+  private readonly endpointU = ProceedingsEndpoints.UpdateActasRDelegation;
   showErrorObs = new BehaviorSubject<boolean>(true);
   constructor() {
     super();
@@ -95,9 +103,36 @@ export class ProceedingsService extends HttpService {
     return this.post(this.route, formData);
   }
 
+  getCurTrans(expedientId: string | number) {
+    return this.get<{
+      no_transferente: string;
+      clave: string;
+    }>(`application/get-cur-transf/${expedientId}`);
+  }
+
+  getCveAct(model: ICveAct) {
+    return this.post<IResponse>('aplication/get-detail-acta-types', model);
+  }
+
   remove(proceedingsNumb: number) {
     return this.delete<IListResponse<IProceedings>>(
       `${this.endpoint}/${proceedingsNumb}`
+    );
+  }
+  updateActasEntregaRecepcion(
+    model: IUpdateActasEntregaRecepcion,
+    no_Acta: string | number
+  ) {
+    return this.put<IListResponse<any>>(
+      `${this.route}/aplication/update-actasEntregaRecepcion/${no_Acta}`,
+      model
+    );
+  }
+
+  updateActasEntregaRTurno(body: IUpdateActasEntregaRecepcionDelegation) {
+    return this.put<IListResponse<IUpdateActasEntregaRecepcionDelegation>>(
+      `${this.endpointU}`,
+      body
     );
   }
 }

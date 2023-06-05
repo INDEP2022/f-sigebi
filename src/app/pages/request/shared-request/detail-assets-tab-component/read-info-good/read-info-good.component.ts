@@ -22,6 +22,7 @@ import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevan
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
 import { GoodFinderService } from 'src/app/core/services/ms-good/good-finder.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import Swal from 'sweetalert2';
@@ -42,7 +43,7 @@ export class ReadInfoGoodComponent
   goodData: any;
   relevantTypeName: string = '';
   goodForm: ModelForm<any>;
-  destiniSaeSelected = new DefaultSelect();
+  destiniSaeSelected = new DefaultSelect<any>();
   selectPhysicalState = new DefaultSelect();
   selectConcervationState = new DefaultSelect();
   selectMeasureUnitSae = new DefaultSelect();
@@ -65,6 +66,9 @@ export class ReadInfoGoodComponent
   showButton = true;
   subType: string;
   norm: string;
+  uniqueKey: string;
+  idSolicitud: Number = 0;
+  descriptionGoodSae: string = '';
 
   private readonly fractionsService = inject(FractionService);
   private readonly genericService = inject(GenericService);
@@ -73,6 +77,7 @@ export class ReadInfoGoodComponent
   private readonly goodsQueryService = inject(GoodsQueryService);
   private readonly typeRelevantSevice = inject(TypeRelevantService);
   private readonly goodFinderService = inject(GoodFinderService);
+  private readonly requestService = inject(RequestService);
 
   constructor(private fb: FormBuilder) {
     super();
@@ -89,7 +94,11 @@ export class ReadInfoGoodComponent
 
       if (this.process == 'classify-assets') {
         this.getUnitMeasureSae(new ListParams(), this.goodData.saeMeasureUnit);
-        this.getDestinoSAE(new ListParams(), this.goodData.saeDestiny);
+        this.getDestinoSAE(
+          new ListParams(),
+          this.goodData.saeDestiny,
+          this.goodData.requestId
+        );
         this.getConcervationState(
           new ListParams(),
           this.goodData.stateConservation
@@ -108,7 +117,6 @@ export class ReadInfoGoodComponent
     }, 4000);
   }
 
-  descriptionGoodSae: string = '';
   getDescriptionGoodIndep(id: number | string) {
     this.goodService.getByIdAndGoodId(id, id).subscribe({
       next: response => {
@@ -140,6 +148,9 @@ export class ReadInfoGoodComponent
     const filter = params.getParams();
     this.goodFinderService.goodFinder(filter).subscribe({
       next: async resp => {
+        this.idSolicitud = resp.data[0].requestId;
+        console.log('id de solicitd', this.idSolicitud);
+
         console.log('getGood', resp.data[0]);
         const good = resp.data[0];
         this.goodType = good.descriptionRelevantType
@@ -170,29 +181,100 @@ export class ReadInfoGoodComponent
         this.saeMeasureUnit = good.measureUnitSae ? good.measureUnitSae : '';
 
         this.fraction = good.fractionCodeFracction;
+        this.uniqueKey = good.uniqueKey ? good.uniqueKey : '';
       },
       error: error => {
         console.log(error);
       },
     });
   }
-
+  //destiniSaeSelected = new DefaultSelect<any>();
   //ver
-  getDestinoSAE(params: ListParams, id?: string | number) {
+  typeTransferent: string = '';
+  getDestinoSAE(
+    params: ListParams,
+    id?: string | number,
+    idSolicitud?: string | number
+  ) {
+    console.log('id de solicitd en select', idSolicitud);
+
     params['filter.name'] = '$eq:Destino';
     if (id && this.process != 'classify-assets') {
       params['filter.keyId'] = `$eq:${id}`;
     }
     this.genericService.getAll(params).subscribe({
       next: resp => {
-        if (this.process == 'classify-assets') {
-          if (id) {
-            this.destiniSaeSelected = new DefaultSelect(resp.data, resp.count);
-            this.goodForm.controls['saeDestiny'].setValue(id);
-          } else {
-            this.destiniSaeSelected = new DefaultSelect(resp.data, resp.count);
-          }
-        }
+        this.destiniSaeSelected = new DefaultSelect(resp.data, resp.count);
+
+        //OBTENER TIPO DE SOLICITUD
+        this.requestService.getById(idSolicitud).subscribe({
+          next: res => {
+            const transferente = res.typeOfTransfer;
+            console.log(
+              'info de la solicitud',
+              res,
+              'Transferente, ',
+              res.typeOfTransfer
+            );
+
+            switch (transferente) {
+              case 'SAT_SAE':
+                console.log('SAT_SAE');
+
+                if (this.goodForm.controls['saeDestiny'].value === null) {
+                  this.goodForm.controls['saeDestiny'].setValue('1');
+                } else {
+                  const destinyTransf =
+                    this.goodForm.controls['saeDestiny'].value;
+                  this.goodForm.controls['saeDestiny'].setValue(destinyTransf);
+                }
+
+                break;
+              case 'PGR_SAE':
+                console.log('PGR_SAE');
+
+                if (this.goodForm.controls['saeDestiny'].value === null) {
+                  this.goodForm.controls['saeDestiny'].setValue('4');
+                } else {
+                  const destinyTransf =
+                    this.goodForm.controls['saeDestiny'].value;
+                  this.goodForm.controls['saeDestiny'].setValue(destinyTransf);
+                }
+
+                break;
+              case 'MANUAL':
+                console.log('MANUAL');
+
+                if (this.goodForm.controls['saeDestiny'].value === null) {
+                  this.goodForm.controls['saeDestiny'].setValue('4');
+                } else {
+                  const destinyTransf =
+                    this.goodForm.controls['saeDestiny'].value;
+                  this.goodForm.controls['saeDestiny'].setValue(destinyTransf);
+                }
+
+                break;
+            }
+          },
+          error: error => {
+            this.typeTransferent = '';
+            console.log(
+              'Error al consultar solicitud',
+              error,
+              'Transferente, ',
+              this.typeTransferent
+            );
+          },
+        });
+
+        // if (this.process == 'classify-assets') {
+        //   if (id) {
+        //     this.destiniSaeSelected = new DefaultSelect(resp.data, resp.count);
+        //     this.goodForm.controls['saeDestiny'].setValue(id);
+        //   } else {
+        //     this.destiniSaeSelected = new DefaultSelect(resp.data, resp.count);
+        //   }
+        // }
         //this.destinySAE = resp.data[0].description;
       },
       error: error => {

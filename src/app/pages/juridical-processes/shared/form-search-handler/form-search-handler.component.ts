@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import {
   ChangeDetectorRef,
   Component,
@@ -9,9 +10,9 @@ import {
   SimpleChanges,
   ViewChild,
 } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { ModalDirective } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, Observable, takeUntil } from 'rxjs';
-import { DocumentsReceptionDataService } from 'src/app/core/services/document-reception/documents-reception-data.service';
 import {
   DynamicFilterLike,
   FilterParams,
@@ -20,6 +21,7 @@ import {
 import { IListResponse } from '../../../../core/interfaces/list-response.interface';
 import { IUserRowSelectEvent } from '../../../../core/interfaces/ng2-smart-table.interface';
 import { BasePage } from '../../../../core/shared/base-page';
+import { JuridicalFileUpdateService } from '../../file-data-update/services/juridical-file-update.service';
 import { COLUMNS, TABLE_SETTINGS_T } from './columns';
 
 export interface FieldToSearch {
@@ -81,8 +83,10 @@ export class FormSearchHandlerComponent
     // private modalService: BsModalService,
     // private modalRef: BsModalRef<SelectListFilteredModalComponent>,
     private changeDetectorRef: ChangeDetectorRef,
-    // private activatedRoute: ActivatedRoute,
-    private docDataService: DocumentsReceptionDataService
+    private activatedRoute: ActivatedRoute,
+    // private docDataService: DocumentsReceptionDataService,
+    private juridicalFileUpdate: JuridicalFileUpdateService,
+    private datePipe: DatePipe
   ) {
     super();
 
@@ -106,17 +110,18 @@ export class FormSearchHandlerComponent
 
   ngOnInit(): void {
     this.autoLoad();
-    if (!this.dataObservableFn) {
-      this.filterParams.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
-        if (this.modal?.isShown) {
-          this._settings = {
-            ...this._settings,
-            hideSubHeader: false,
-          };
-          this.getData();
-        }
-      });
-    }
+    // if (!this.dataObservableFn) {
+    this.filterParams.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+      console.log(this.modal?.isShown);
+      if (this.modal?.isShown) {
+        this._settings = {
+          ...this._settings,
+          hideSubHeader: false,
+        };
+        this.getData();
+      }
+    });
+    // }
     this.settingColumns();
   }
 
@@ -125,26 +130,30 @@ export class FormSearchHandlerComponent
   }
 
   autoLoad(): void {
-    // const wheelNumber = this.activatedRoute.snapshot.queryParams['wheelNumber'];
-    // if (wheelNumber) {
-    //   this.searchOnInput = true;
-    //   this.loading = true;
-    //   this.formData = {};
-    //   this.formData['wheelNumber'] = wheelNumber;
+    const wheelNumber =
+      this.activatedRoute.snapshot.queryParams['wheelNumber'] ||
+      this.juridicalFileUpdate?.juridicalFileDataUpdateForm?.wheelNumber;
+    // this.activatedRoute.snapshot.queryParams['wheelNumber'] || null;
 
-    //   this.buildFilters();
-    // }
-    if (this.docDataService.previousRoute) {
-      const wheelNumber =
-        this.docDataService.previousRoute?.params?.wheelNumber || null;
-      if (wheelNumber) {
-        this.searchOnInput = true;
-        this.loading = true;
-        this.formData = {};
-        this.formData['wheelNumber'] = wheelNumber;
-        this.buildFilters();
-      }
-      this.docDataService.previousRoute = null;
+    if (localStorage.getItem('abandonosData')) {
+      let aaa = localStorage.getItem('abandonosData');
+      const abandonosData = aaa;
+
+      console.log('AAA222', abandonosData);
+      this.searchOnInput = true;
+      this.loading = true;
+      this.formData = {};
+      this.formData['wheelNumber'] = abandonosData;
+      this.buildFilters();
+      localStorage.removeItem('abandonosData');
+      this.loading = true;
+    }
+    if (wheelNumber) {
+      this.searchOnInput = true;
+      this.loading = true;
+      this.formData = {};
+      this.formData['wheelNumber'] = wheelNumber;
+      this.buildFilters();
     }
   }
 
@@ -197,7 +206,15 @@ export class FormSearchHandlerComponent
       ).subscribe({
         next: data => {
           if (data.count > 0) {
-            this.columns = data.data;
+            this.columns = data.data.map(item => {
+              return {
+                ...item,
+                externalOfficeDate: this.datePipe.transform(
+                  item.externalOfficeDate,
+                  'dd/MM/yyyy'
+                ),
+              };
+            });
             this.totalItems = data.count;
             this.loading = false;
             this.modalLoaded = true;

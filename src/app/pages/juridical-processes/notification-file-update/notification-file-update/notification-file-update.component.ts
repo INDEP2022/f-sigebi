@@ -1,8 +1,16 @@
 // FIXME: Poner tabla
 /** BASE IMPORT */
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  OnDestroy,
+  OnInit,
+  Output,
+} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+
 import { ActivatedRoute } from '@angular/router';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import {
@@ -11,8 +19,10 @@ import {
 } from 'src/app/common/repository/interfaces/list-params';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { POSITVE_NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
 import { MODAL_CONFIG } from '../../../../common/constants/modal-config';
 import { EditFormComponent } from '../edit-form/edit-form.component';
+import { NOTIFICATION_COLUMNS } from './notification-file-update-columns';
 /** LIBRERÍAS EXTERNAS IMPORTS */
 
 /** SERVICE IMPORTS */
@@ -30,36 +40,15 @@ export class NotificationFileUpdateComponent
   extends BasePage
   implements OnInit, OnDestroy
 {
+  @Output() formSubmitted = new EventEmitter<any>();
+  formData: any;
   override loading: boolean = true;
-  COLUMNS = {
-    wheelNumber: {
-      title: 'No Volante',
-    },
-    affairKey: {
-      title: 'Asunto',
-    },
-    observations: {
-      title: 'Descripción',
-    },
-    captureDate: {
-      title: 'Fecha Captura',
-    },
-    protectionKey: {
-      title: 'Clave Amparo',
-    },
-    preliminaryInquiry: {
-      title: 'Averiguación Previa',
-    },
-    criminalCase: {
-      title: 'Causa Penal',
-    },
-    expedientNumber: {
-      title: 'No Expediente',
-    },
-  };
-
-  dataFactGen: any[] = [];
+  totalItems: number = 0;
+  //dataFactGen: INotificationUpdate[] = [];
+  dataFactGen: LocalDataSource = new LocalDataSource();
+  verBoton: boolean = false;
   params = new BehaviorSubject<ListParams>(new ListParams());
+  filterParamsLocal = new BehaviorSubject<FilterParams>(new FilterParams());
 
   public form: FormGroup;
 
@@ -70,8 +59,11 @@ export class NotificationFileUpdateComponent
     private modalService: BsModalService
   ) {
     super();
-    this.settings.columns = this.COLUMNS;
-    this.settings.actions.delete = true;
+    this.settings = {
+      ...this.settings,
+      columns: { ...NOTIFICATION_COLUMNS },
+    };
+    this.settings.actions.delete = false;
     this.settings.actions.add = false;
     this.settings.hideSubHeader = false;
   }
@@ -97,7 +89,14 @@ export class NotificationFileUpdateComponent
 
   private prepareForm() {
     this.form = this.fb.group({
-      noExpediente: ['', [Validators.required]],
+      noExpediente: [
+        { value: '', disabled: false },
+        [
+          Validators.required,
+          Validators.pattern(POSITVE_NUMBERS_PATTERN),
+          Validators.maxLength(11),
+        ],
+      ],
     });
   }
 
@@ -112,41 +111,49 @@ export class NotificationFileUpdateComponent
   onKeyPress(event: KeyboardEvent) {
     if (event.key === 'Enter') {
       this.onLoadListNotifications();
+      this.verBoton = true;
     }
   }
 
   onLoadListNotifications() {
+    if (this.form.get('noExpediente').value != null) {
+      this.params
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe(() => this.getFilterExpedientNumber());
+      this.verBoton = false;
+    } else {
+      this.verBoton = true;
+      this.loading = false;
+    }
+  }
+
+  getFilterExpedientNumber() {
     const param = new FilterParams();
-    param.addFilter('expedientNumber', this.form.get('noExpediente').value);
-    this.notificationService.getAllFilter(param.getParams()).subscribe({
-      next: data => {
-        this.dataFactGen = data.data;
-        // this.dataFactGen[0].description = data.data[0].departament.description;
-        this.loading = false;
-      },
-      error: () => {
-        this.dataFactGen = [];
-        this.loading = false;
-      },
-    });
+    const params = new ListParams();
+    this.loading = true;
+    this.params.getValue()[
+      'filter.expedientNumber'
+    ] = `$eq:${this.form.controls['noExpediente'].value}`;
+    this.notificationService
+      .getAllFilterExpedient(this.params.getValue())
+      .subscribe({
+        next: data => {
+          this.totalItems = data.count || 0;
+          this.dataFactGen.load(data.data);
+          this.dataFactGen.refresh();
+          console.log(data.data);
+          this.loading = false;
+        },
+        error: err => {
+          this.loading = false;
+          this.onLoadToast('error', 'Error', err.error.message);
+        },
+      });
   }
 
   getDicts() {
-    this.loading = true;
-    // let params = {
-    //   ...this.params.getValue(),
-    //   ...this.columnFilters,
-    // };
-    // this.deductiveService.getAll(params).subscribe({
-    //   next: response => {
-    //     this.deductives = response.data;
-    //     this.totalItems = response.count || 0;
-    //     this.data.load(response.data);
-    //     this.data.refresh();
-    //     this.loading = false;
-    //   },
-    //   error: error => (this.loading = false),
-    // });
+    this.loading = false;
+    this.onLoadListNotifications();
   }
 
   openForm(dict?: any) {
@@ -174,6 +181,7 @@ export class NotificationFileUpdateComponent
   }
 
   cleanExpediente() {
+    this.verBoton = true;
     this.form.get('noExpediente').setValue('');
   }
 }

@@ -44,6 +44,7 @@ export class ProeficientService
   }
 
   remove(id: string | number): Observable<Object> {
+    console.log(this.route);
     return this.proeficientRepository.remove(this.route, id);
   }
 

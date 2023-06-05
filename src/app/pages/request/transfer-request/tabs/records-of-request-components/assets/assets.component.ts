@@ -1,4 +1,5 @@
 import {
+  ChangeDetectorRef,
   Component,
   ElementRef,
   Input,
@@ -8,6 +9,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
@@ -22,6 +24,7 @@ import { FractionService } from 'src/app/core/services/catalogs/fraction.service
 import { GenericService } from 'src/app/core/services/catalogs/generic.service';
 import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
+import { GoodFinderService } from 'src/app/core/services/ms-good/good-finder.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { MenageService } from 'src/app/core/services/ms-menage/menage.service';
 import { ProcedureManagementService } from 'src/app/core/services/proceduremanagement/proceduremanagement.service';
@@ -65,7 +68,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
   principalSave: boolean = false;
   bsModalRef: BsModalRef;
   params = new BehaviorSubject<FilterParams>(new FilterParams());
-  paragraphs: any[] = [];
+  paragraphs = new LocalDataSource();
   createNewAsset: boolean = false;
   btnCreate: string = 'Nuevo Bien';
   domicilieObject: IDomicilies = null;
@@ -80,6 +83,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
   private fractionProperties: any = {};
   typeRecord: string = '';
   transferente: string = '';
+  selectedAll: boolean = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -93,7 +97,9 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
     private procedureManagementService: ProcedureManagementService,
     private authService: AuthService,
     private fractionService: FractionService,
-    private goodsQueryService: GoodsQueryService
+    private goodsQueryService: GoodsQueryService,
+    private goodFinderService: GoodFinderService,
+    private cdr: ChangeDetectorRef
   ) {
     super();
   }
@@ -106,6 +112,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
   }
 
   ngOnInit(): void {
+    console.log('Activando tab: assets');
     this.settings = {
       ...TABLE_SETTINGS,
       actions: false,
@@ -127,119 +134,29 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
 
   getData() {
     this.loading = true;
-    this.paragraphs = [];
+    this.paragraphs = new LocalDataSource();
     const requestId = Number(this.route.snapshot.paramMap.get('id'));
     this.params.value.addFilter('requestId', requestId);
-    this.goodService.getAll(this.params.getValue().getParams()).subscribe({
-      next: async (data: any) => {
-        if (data !== null) {
-          const result = data.data.map(async (item: any) => {
-            //obtener tipo bien
-            const goodType = await this.getGoodType(item.goodTypeId);
-            item['goodTypeName'] = goodType;
-            //obtener el estado fisico
-            const physicalStatus = await this.getPhysicalStatus(
-              item.physicalStatus
-            );
-            item['physicalStatusName'] = physicalStatus;
-
-            //obtener el estado de concervacion
-            const stateConservation = await this.getStateConservation(
-              item.stateConservation
-            );
-            item['stateConservationName'] = stateConservation;
-
-            //obtener el destino de la transferencia
-            const transferentDestiny = await this.getTransferDestiny(
-              item.transferentDestiny
-            );
-            item['transferentDestinyName'] = transferentDestiny;
-            item['destinyLigieName'] = transferentDestiny;
-
+    this.goodFinderService
+      .goodFinder(this.params.getValue().getParams())
+      .subscribe({
+        next: async resp => {
+          const result = resp.data.map(async (item: any) => {
             const goodMenaje = await this.getMenaje(item.id);
             item['goodMenaje'] = goodMenaje;
           });
 
           Promise.all(result).then(x => {
-            this.totalItems = data.count;
-            this.paragraphs = data.data;
+            this.totalItems = resp.count;
+            this.paragraphs.load(resp.data);
             this.loading = false;
           });
-        } else {
-          this.paragraphs = defaultData;
+        },
+        error: error => {
           this.loading = false;
-        }
-      },
-      error: error => {
-        this.loading = false;
-        this.paragraphs = [];
-      },
-    });
-  }
-
-  getGoodType(goodTypeId: number) {
-    return new Promise((resolve, reject) => {
-      if (goodTypeId !== null) {
-        this.typeRelevantSevice.getById(goodTypeId).subscribe({
-          next: (data: any) => {
-            resolve(data.description);
-          },
-        });
-      } else {
-        resolve('');
-      }
-    });
-  }
-
-  getPhysicalStatus(physicalState: any) {
-    return new Promise((resolve, reject) => {
-      if (physicalState !== null) {
-        var params = new ListParams();
-        params['filter.keyId'] = `$eq:${physicalState}`;
-        params['filter.name'] = `$eq:Estado Fisico`;
-        this.genericService.getAll(params).subscribe({
-          next: data => {
-            resolve(data.data[0].description);
-          },
-        });
-      } else {
-        resolve('');
-      }
-    });
-  }
-
-  getStateConservation(stateConcervation: any) {
-    return new Promise((resolve, reject) => {
-      if (stateConcervation !== null) {
-        var params = new ListParams();
-        params['filter.keyId'] = `$eq:${stateConcervation}`;
-        params['filter.name'] = `$eq:Estado Conservacion`;
-        this.genericService.getAll(params).subscribe({
-          next: data => {
-            resolve(data.data[0].description);
-          },
-        });
-      } else {
-        resolve('');
-      }
-    });
-  }
-
-  getTransferDestiny(transferentDestiny: any) {
-    return new Promise((resolve, reject) => {
-      if (transferentDestiny !== null) {
-        var params = new ListParams();
-        params['filter.keyId'] = `$eq:${transferentDestiny}`;
-        params['filter.name'] = `$eq:Destino`;
-        this.genericService.getAll(params).subscribe({
-          next: data => {
-            resolve(data.data[0].description);
-          },
-        });
-      } else {
-        resolve('');
-      }
-    });
+          this.paragraphs = new LocalDataSource();
+        },
+      });
   }
 
   getMenaje(id: number) {
@@ -260,7 +177,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
   }
 
   onFileChange(event: any, type?: string) {
-    this.loader.load = true; //Loading cambiar por uno de porcentaje
+    this.loaderProgress.load = true; //Loading cambiar por uno de porcentaje
     const file = event.target.files[0];
     const name = file.name;
     const lastModified = file.lastModified;
@@ -365,12 +282,12 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
             'Archivos cargados',
             `Se importaron los archivos`
           );
-          this.loader.load = false;
+          this.loaderProgress.load = false;
           this.fileUploaded.nativeElement.value = '';
           this.closeCreateGoodWIndows();
         },
         error: error => {
-          this.loader.load = false;
+          this.loaderProgress.load = false;
           this.message(
             'error',
             'Error al subir el file',
@@ -537,7 +454,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
             `Se guardo el domicilio del bien`
           );
           this.refreshTable();
-          this.isSaveFraction = false;
+          this.isSaveDomicilie = false;
         }
       }
     });
@@ -555,7 +472,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
             `Se guardaron los menajes exitosamente`
           );
           this.refreshTable();
-          this.isSaveFraction = false;
+          this.isSaveMenaje = false;
         }
       }
     });
@@ -687,7 +604,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
         if (data) {
           setTimeout(() => {
             this.closeCreateGoodWIndows();
-          }, 600);
+          }, 800);
         }
       },
     });
@@ -803,8 +720,34 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
       good.fractionId = Number(this.fractionProperties['fractionId']);
       good.goodTypeId = Number(this.fractionProperties['goodTypeId']);
 
+      /* inf. del bien */
       good.goodDescription = item.goodDescription;
-      good.processStatus = item.processStatus;
+      good.goodStatus = 'VERIFICAR_CUMPLIMIENTO';
+      good.processStatus = 'VERIFICAR_CUMPLIMIENTO';
+      //good.processStatus = item.processStatus;
+
+      good.quantity = item.quantity ? item.quantity : 0;
+      good.duplicity = item.duplicity;
+      good.capacity = item.capacity;
+      good.fileeNumber = item.fileeNumber;
+      good.volume = item.volume;
+      good.physicalStatus = item.physicalStatus;
+      good.useType = item.useType;
+      good.stateConservation = item.stateConservation;
+      good.origin = item.origin;
+      good.destiny = item.destiny;
+      if (item.transferentDestiny) {
+        good.transferentDestiny = item.transferentDestiny;
+      } else if (!item.transferentDestiny && good.destiny) {
+        good.transferentDestiny = item.destiny;
+      } else {
+        good.transferentDestiny = 1;
+      }
+      good.notesTransferringEntity = item.notesTransferringEntity;
+      good.appraisal = item.appraisal ? 'Y' : 'N';
+      good.compliesNorm = item.compliesNorm ? 'Y' : 'N';
+      good.saeDestiny = item.saeDestiny;
+      /*  */
 
       for (let i = 0; i < listReverse.length; i++) {
         const fractionsId = listReverse[i];
@@ -813,6 +756,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
       this.listGoodsFractions.push(good);
     }
     this.loading = false;
+    console.table(this.listGoodsFractions);
     if (existAddres > 0) {
       this.onLoadToast(
         'info',
@@ -1090,5 +1034,132 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
       },
       error: error => {},
     });
+  }
+
+  assignAllAddress() {
+    Swal.fire({
+      title: 'Asignacion Masiva de domicilio',
+      html: 'Se asignara a todos los bienes el domicio que se seleccionara',
+      icon: 'info',
+      showCancelButton: false,
+      confirmButtonColor: '#9D2449',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Aceptar',
+    }).then(result => {
+      if (result.isConfirmed) {
+        let config: ModalOptions = {
+          initialState: {
+            request: this.requestObject,
+            address: '',
+            onlyOrigin: true,
+            callback: (next: boolean) => {
+              //if (next) this.getExample();
+            },
+          },
+          class: 'modalSizeXL modal-dialog-centered',
+          ignoreBackdropClick: true,
+        };
+        this.bsModalRef = this.modalServise.show(
+          SelectAddressComponent,
+          config
+        );
+
+        this.bsModalRef.content.event.subscribe((res: any) => {
+          //cargarlos en el formulario
+          this.loading = true;
+          if (res) {
+            this.assignAddress(this.requestObject.id, res.id);
+          }
+        });
+      }
+    });
+  }
+
+  assignAddress(requestId: number | string, addresId: number | string) {
+    this.goodFinderService
+      .masiveAssignationDomicileGood(requestId, addresId)
+      .subscribe({
+        next: resp => {
+          this.onLoadToast(
+            'success',
+            'Asignación exitosa',
+            `Se asigno un domicilio a todos los bienes`
+          );
+          this.loading = true;
+          this.closeCreateGoodWIndows();
+        },
+        error: error => {
+          this.loading = false;
+          console.log('Error al asignar domicilio a los bienes ', error);
+          this.onLoadToast(
+            'error',
+            'Error',
+            `Error al asignar domicilio a los bienes`
+          );
+        },
+      });
+  }
+
+  classifyAllGoods() {
+    Swal.fire({
+      title: 'Clasificación Masiva',
+      html: 'Se asignara a todos los bienes la fraccion que se seleccionara',
+      icon: 'info',
+      showCancelButton: false,
+      confirmButtonColor: '#9D2449',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Aceptar',
+    }).then(result => {
+      if (result.isConfirmed) {
+        let config: ModalOptions = {
+          initialState: {
+            parameter: '',
+            callback: (next: boolean) => {
+              //if(next) this.getExample();
+            },
+          },
+          class: 'modalSizeXL modal-dialog-centered',
+          ignoreBackdropClick: true,
+        };
+        this.bsModalRef = this.modalServise.show(
+          AdvancedSearchComponent,
+          config
+        );
+
+        this.bsModalRef.content.event.subscribe((res: any) => {
+          this.idFractions = [];
+          this.loading = true;
+          //this.isSaveFraction = true;
+          //console.log(res.id,this.requestObject.id)
+          this.classifyGoods(this.requestObject.id, res.id);
+        });
+      }
+    });
+  }
+
+  classifyGoods(requestId: number | string, fractionId: number | string) {
+    let type = this.requestObject.typeOfTransfer == 'PGR_SAE' ? 4 : 1;
+    this.goodFinderService
+      .masiveClassificationGood(requestId, fractionId, type)
+      .subscribe({
+        next: resp => {
+          this.onLoadToast(
+            'success',
+            'Clasificación exitosa',
+            `Se clasificaron todos los bienes`
+          );
+          this.loading = true;
+          this.closeCreateGoodWIndows();
+        },
+        error: error => {
+          this.loading = false;
+          console.log('Error al clasificar los bienes masivamente ', error);
+          this.onLoadToast(
+            'error',
+            'Error',
+            `No se pudieron clasificar los bienes`
+          );
+        },
+      });
   }
 }

@@ -47,7 +47,7 @@
             [control]="issuingInstitutionForm.get('numInside')"
             label="N&uacute;mero interior">
             <input
-              type="text"
+              type="number"
               class="form-control"
               formControlName="numInside" />
           </form-field>
@@ -57,7 +57,7 @@
             [control]="issuingInstitutionForm.get('numExterior')"
             label="N&uacute;mero exterior">
             <input
-              type="text"
+              type="number"
               class="form-control"
               formControlName="numExterior" />
           </form-field>
@@ -75,10 +75,7 @@
           <form-field
             [control]="issuingInstitutionForm.get('zipCode')"
             label="C&oacute;digo postal">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="zipCode" />
+            <input type="text" class="form-control" formControlName="zipCode" />
           </form-field>
         </div>
       </div>
@@ -88,7 +85,7 @@
             [control]="issuingInstitutionForm.get('delegMunic')"
             label="Delegaci&oacute;n municipal">
             <input
-              type="number"
+              type="text"
               class="form-control"
               formControlName="delegMunic" />
           </form-field>
@@ -128,7 +125,7 @@
         </div>
       </div>
       <div class="row pt-md-5">
-        <div class="col-md-6 pt-sm-5 pt-md-2">
+        <div class="col-md-12 pt-sm-5 pt-md-2">
           <form-field [control]="issuingInstitutionForm.get('numTransference')">
             <ngx-select
               [form]="issuingInstitutionForm"

@@ -78,10 +78,10 @@ export class VaultDetailComponent extends BasePage implements OnInit {
       localityCode: [null, []],
       stateCode: [null, []],
       cityCode: [null, []],
-      cityDetail: [null, []],
-      localityDetail: [null, []],
-      stateDetail: [null, []],
-      municipalityDetail: [null, []],
+      cityDetail: [null, [Validators.required]],
+      localityDetail: [null, [Validators.required]],
+      stateDetail: [null, [Validators.required]],
+      municipalityDetail: [null, [Validators.required]],
       registerNumber: [null, []],
     });
     if (this.vault != null) {
@@ -91,17 +91,26 @@ export class VaultDetailComponent extends BasePage implements OnInit {
       this.valueMunicipality = this.vault.municipalityDetail as IMunicipality;
       this.valueLocality = this.vault.localityDetail as ILocality;
       this.vaultForm.patchValue(this.vault);
-      console.log(this.vaultForm.value);
-      this.vaultForm.controls['cityDetail'].setValue(this.valueCity.nameCity);
-      this.vaultForm.controls['stateDetail'].setValue(
-        this.valueState.descCondition
-      );
-      this.vaultForm.controls['localityDetail'].setValue(
-        this.valueLocality.nameLocation
-      );
-      this.vaultForm.controls['municipalityDetail'].setValue(
-        this.valueMunicipality.nameMunicipality
-      );
+      console.log(this.vault);
+      if (this.vaultForm.controls['municipalityDetail'].value) {
+        this.vaultForm.controls['cityDetail'].setValue(this.valueCity.nameCity);
+        this.vaultForm.controls['stateDetail'].setValue(
+          this.valueState.descCondition
+        );
+      }
+
+      if (this.vaultForm.controls['localityDetail'].value) {
+        this.vaultForm.controls['localityDetail'].setValue(
+          this.valueLocality.nameLocation
+        );
+      }
+
+      if (this.vaultForm.controls['municipalityDetail'].value) {
+        this.vaultForm.controls['municipalityDetail'].setValue(
+          this.valueMunicipality.nameMunicipality
+        );
+      }
+
       if (this.vaultForm.controls['stateCode'].value) {
         this.getCities(
           new ListParams(),
@@ -128,6 +137,7 @@ export class VaultDetailComponent extends BasePage implements OnInit {
     setTimeout(() => {
       this.getStates(new ListParams());
       this.getUserTracking(new ListParams());
+      this.getMunicipalities(new ListParams());
     }, 1000);
   }
 

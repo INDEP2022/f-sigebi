@@ -59,9 +59,9 @@ export class FunctionButtons {
     return this.service?.formControl;
   }
 
-  get formGood() {
-    return this.service?.formGood;
-  }
+  // get formGood() {
+  //   return this.service?.formGood;
+  // }
 
   get bienesPar() {
     return this.service?.bienesPar;
@@ -130,6 +130,7 @@ export class FunctionButtons {
       const data = await firstValueFrom(
         this.goodService.getGoodWidthMeasure(this.good.goodId)
       );
+      console.log(data);
       cantidad = data.data[0].cantidad;
       descripcion = data.data[0].descripcion;
       cve_moneda_avaluo = data.data[0].cve_moneda_avaluo;

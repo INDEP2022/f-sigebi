@@ -41,6 +41,7 @@ export class GoodsJobManagementService extends HttpService {
   }
 
   getPersonaExt_Int(params: _Params) {
+    console.log('getPersonaExt_Int(params: _Params) SERVICES ' + params);
     return this.get<IListResponse<ICopiesJobManagementDto>>(
       GoodsJobManagementEndpoints.OfficeManagementCopies,
       params
@@ -61,9 +62,16 @@ export class GoodsJobManagementService extends HttpService {
     );
   }
 
-  deleteCopiesJobManagement(params: _Params) {
+  deleteCopiesJobManagement(params: any) {
     return this.delete<IListResponse<any>>(
       GoodsJobManagementEndpoints.OfficeManagementCopies + `/${params}`
+    );
+  }
+
+  createCopiesJobManagement(obj: any) {
+    return this.post<IListResponse<any>>(
+      GoodsJobManagementEndpoints.OfficeManagementCopies,
+      obj
     );
   }
 }

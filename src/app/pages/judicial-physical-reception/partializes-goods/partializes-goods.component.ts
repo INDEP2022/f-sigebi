@@ -161,7 +161,7 @@ export class PartializesGoodsComponent extends BasePage implements OnInit {
     // if (this.form.get('noBien').value) {
     //   this.getData()
     // } else {
-    //   this.onLoadToast('error','N° Bien','Debe escribir')
+    //   this.onLoadToast('error','No Bien','Debe escribir')
     // }
   }
 
