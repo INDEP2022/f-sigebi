@@ -226,7 +226,6 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
 
   //FOLIO DE ESCANEO
   folioEscaneo = 'folioEscaneo'
-  dataGenerateDocument: IDocumentsGood
   cveScreen = 'FACTREFACTAENTREC'
 
   dataGoods = new LocalDataSource();

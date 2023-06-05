@@ -16,6 +16,7 @@
             type="button"
             data-toggle="tooltip"
             class="btn btn-secondary btn-sm active"
+            (click)="scan()"
             title="Escanear">
             <i class="bx bxs-file"></i>
           </button>
@@ -28,7 +29,7 @@
               type="number"
               class="form-control"
               min="1"
-              [formControlName]="formControlName"2
+              [formControlName]="formControlName"
               maxlength="15" />
           </form-field>
         </div>

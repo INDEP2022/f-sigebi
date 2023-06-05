@@ -25,16 +25,10 @@ export class ScanFileSharedComponent extends BasePage implements OnInit {
   @Input() formControlName: string = 'folioEscaneo';
   @Input() cveDocument: string;
   @Input() noExpedient: string | number;
-  @Input() statusProceeding: string
-  @Input() cveScreen: string
+  @Input() statusProceeding: string;
+  @Input() cveScreen: string;
 
   @Output() emitfileNumber = new EventEmitter();
-
-  get numberFile() {
-    return this.form.get(this.formControlName);
-  }
-
-  fileNumber: number;
 
   //REPORTES
   loadingText = 'Cargando ...';
@@ -53,9 +47,7 @@ export class ScanFileSharedComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.form.get(this.formControlName).valueChanges.subscribe(value => {
-      console.log(value);
-    });
+   
   }
 
   prepareForm() {}
@@ -182,7 +174,7 @@ export class ScanFileSharedComponent extends BasePage implements OnInit {
             this.alert('warning','No existe folio de escaneo a escanear','')
         }
     }else{
-        this.alert('warning','No se puede escanear para un acta cerrada','')
+        this.alert('warning','No se puede escanear un acta cerrada','')
     }
   }
 
