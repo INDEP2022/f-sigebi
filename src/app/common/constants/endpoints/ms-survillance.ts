@@ -10,4 +10,5 @@ export enum SurvillanceEndpoints {
   Periods = 'surveillance/periods',
   ChangePeriod = 'surveillance/change-period',
   ChangeGoodAle = 'surveillance/change-good-ale',
+  Georeferencie = 'georeference-object',
 }

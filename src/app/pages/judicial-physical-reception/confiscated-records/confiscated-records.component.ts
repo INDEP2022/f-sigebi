@@ -226,6 +226,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   //FOLIO DE ESCANEO
   folioEscaneo = 'folioEscaneo';
   cveScreen = 'FACTREFACTAENTREC';
+  nameReport = 'RGERGENSOLICDIGIT';
 
   dataGoods = new LocalDataSource();
   dataGoodAct = new LocalDataSource();
@@ -1108,8 +1109,8 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
 
     this.serviceDetailProc.getAllFiltered(paramsF.getParams()).subscribe(
       async res => {
-        let newData: any[] = [];
-        try {
+        this.dataGoodAct.load(res.data).then(async res => {
+          let newData: any[] = [];
           for (let item of res.data) {
             const edoFis: any = await this.getIndEdoFisAndVColumna(item.good);
             newData.push({
@@ -1118,19 +1119,20 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
               indEdoFisico: edoFis.V_IND_EDO_FISICO === 1 ? true : false,
             });
           }
-        } catch (error) {
-          console.log('No se ejecuto el for');
-        } finally {
+
           this.dataGoodAct.load(newData);
-          this.totalItemsDataGoodsAct = res.count;
-          this.loading = false;
-        }
+        });
+        this.totalItemsDataGoodsAct = res.count;
+        this.loading = false;
       },
       err => {
         console.log(err);
         this.loading = false;
         this.dataGoodAct.load([]);
-
+        this.form.get('almacen').reset();
+        this.form.get('boveda').reset();
+        this.isAlmacen = false;
+        this.isBoveda = false;
         this.totalItemsDataGoodsAct = 0;
       }
     );
@@ -3418,7 +3420,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
 
   selectRowBovedaAlmacen(data: any) {
     const paramsF = new FilterParams();
-    paramsF.addFilter('idWarehouse', data.storeNumber);
+    paramsF.addFilter('idWarehouse', data.good.storeNumber);
     this.serviceWarehouse.getWarehouseFilter(paramsF.getParams()).subscribe(
       res => {
         console.log(res);
@@ -3429,7 +3431,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
       }
     );
     this.serviceVault
-      .getAllFilter(`filter.idSafe=$eq:${data.vaultNumber}`)
+      .getAllFilter(`filter.idSafe=$eq:${data.good.vaultNumber}`)
       .subscribe(
         res => {
           this.form.get('boveda').setValue(res.data[0]);
@@ -3729,10 +3731,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                                 });
                                 this.getGoodsActFn();
                                 /* this.dataGoodAct.load(this.goodData); */
-                                this.saveDataAct.push({
-                                  ...this.selectData,
-                                  exchangeValue: 1,
-                                });
+
                                 this.selectData = null;
                               },
                               err => {
