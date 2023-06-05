@@ -15,7 +15,7 @@ import { ProceedingsDetailDeliveryReceptionService } from 'src/app/core/services
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePageWidhtDinamicFiltersExtra } from 'src/app/core/shared/base-page-dinamic-filters-extra';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
-import { firstFormatDateToSecondFormatDate } from 'src/app/shared/utils/date';
+import { secondFormatDate } from 'src/app/shared/utils/date';
 import { IProceedingDeliveryReception } from './../../../core/models/ms-proceedings/proceeding-delivery-reception';
 
 @Component({
@@ -223,9 +223,9 @@ export abstract class ScheduledMaintenance extends BasePageWidhtDinamicFiltersEx
             if (filter.search !== '') {
               let search = filter.search;
               if (filter.field === 'captureDate') {
-                const initDate = firstFormatDateToSecondFormatDate(search);
-                const finishDate = format(new Date(), 'YYYY-mm-dd');
-                this.columnFilters[field] = `$btw:${initDate},${finishDate}`;
+                // const initDate = firstFormatDateToSecondFormatDate(search);
+                // const finishDate = format(new Date(), 'yyyy-MM-dd');
+                // this.columnFilters[field] = `$btw:${initDate},${finishDate}`;
               } else {
                 this.columnFilters[field] = `${searchFilter}:${search}`;
               }
@@ -320,8 +320,8 @@ export abstract class ScheduledMaintenance extends BasePageWidhtDinamicFiltersEx
     }
 
     if (rangeDate) {
-      const inicio = rangeDate[0].toISOString().split('T')[0];
-      const final = rangeDate[1].toISOString().split('T')[0];
+      const inicio = secondFormatDate(rangeDate[0]);
+      const final = secondFormatDate(rangeDate[1]);
       this.filterParams.addFilter(
         'captureDate',
         inicio + ',' + final,
