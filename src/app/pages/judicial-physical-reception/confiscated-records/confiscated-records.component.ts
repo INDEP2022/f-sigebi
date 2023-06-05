@@ -1711,7 +1711,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         this.form.get('recibe2').setValue(dataRes.witness2);
         this.form.get('testigo').setValue(dataRes.comptrollerWitness);
         this.form.get('statusProceeding').setValue(dataRes.statusProceedings);
-        this.form.get('folioEscaneo').setValue(dataRes.universalFolio)
+        this.form.get('folioEscaneo').setValue(dataRes.universalFolio);
         if (this.form.get('statusProceeding').value === 'ABIERTA') {
           this.labelActa = 'Cerrar acta';
           this.btnCSSAct = 'btn-primary';
@@ -1755,7 +1755,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         this.form.get('recibe2').setValue(dataRes.witness2);
         this.form.get('testigo').setValue(dataRes.comptrollerWitness);
         this.form.get('statusProceeding').setValue(dataRes.statusProceedings);
-        this.form.get('folioEscaneo').setValue(dataRes.universalFolio)
+        this.form.get('folioEscaneo').setValue(dataRes.universalFolio);
         if (this.form.get('statusProceeding').value === 'ABIERTA') {
           this.labelActa = 'Cerrar acta';
           this.btnCSSAct = 'btn-primary';

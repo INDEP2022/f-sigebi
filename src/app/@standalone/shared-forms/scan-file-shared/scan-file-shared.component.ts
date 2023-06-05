@@ -170,19 +170,20 @@ export class ScanFileSharedComponent extends BasePage implements OnInit {
                   );
                 });
               },
-              err =>{
-                this.alert(
-                  'error',
-                  'Se presentó un error inesperado',
-                  ''
-                );
+              err => {
+                this.alert('error', 'Se presentó un error inesperado', '');
                 this.loading = false;
-              });
+              }
+            );
           }
         }
       });
-    }else{
-      this.alert('warning','No se puede replicar el folio de escaneo en un acta ya cerrada','')
+    } else {
+      this.alert(
+        'warning',
+        'No se puede replicar el folio de escaneo en un acta ya cerrada',
+        ''
+      );
     }
   }
 
