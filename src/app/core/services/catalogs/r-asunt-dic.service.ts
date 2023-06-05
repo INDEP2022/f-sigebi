@@ -35,7 +35,7 @@ export class RAsuntDicService
   }
 
   update(id: string | number, model: IRAsuntDic): Observable<Object> {
-    return this.rAsuntDicRepository.update(this.route, id, model);
+    return this.rAsuntDicRepository.newUpdate(this.route, model);
   }
 
   remove(id: string | number): Observable<Object> {

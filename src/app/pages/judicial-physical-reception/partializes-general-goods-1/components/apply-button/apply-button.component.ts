@@ -51,6 +51,10 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
     return this.form.get('saldo');
   }
 
+  get saldoValue() {
+    return this.saldo ? this.saldo.value : 0;
+  }
+
   get vimporte() {
     return this.service.vimporte;
   }
@@ -143,6 +147,7 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
   private insertaBien(
     item: IBienesPar,
     good: IGood,
+    observations: string,
     statusNew: string,
     pproextdom: string,
     pval2: number,
@@ -156,12 +161,16 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
     console.log('Entro a insertaBien', good, pno_acta);
     const newGood: IGoodP = {
       ...good,
+      observations,
       amount: item.cantidad,
+      appraisedValue: item.avaluo,
+      quantity: item.cantidad,
       val2: pval2 + '',
       val11: item.val11 + '',
       val12: item.val12 + '',
       val13: item.val13 + '',
       val14: good.val14 + '',
+      description: item.descripcion,
       worthappraisal: item.avaluo ? +(item.avaluo + '') : null,
       goodReferenceNumber: item.noBien,
       extDomProcess: pproextdom,
@@ -227,6 +236,8 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
     // debugger;
     try {
       const { status, process } = await this.getStatusProcessxPantalla();
+      console.log(status, process);
+
       this.good.status = status;
       this.good.extDomProcess = process;
       // this.formGood.get('estatus').setValue(status);
@@ -360,54 +371,54 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
     return { vval2, vimpbien };
   }
 
-  private async fillRow(vobserv_padre: string, estatus_nuevo_bien: string) {
-    let item: IBienesPar;
-    let vfactor = (this.vimporte - this.vsumimp) / this.vimporte;
+  // private async fillRow(vobserv_padre: string, estatus_nuevo_bien: string) {
+  //   let item: IBienesPar;
+  //   let vfactor = (this.vimporte - this.vsumimp) / this.vimporte;
 
-    let vfactornum =
-      (this.vimporte - this.vsumimp) / (this.vimporte - this.vsumimp);
-    // this.vident++;
-    let descripcion =
-      'Parcialización de Bien No.' +
-      this.good.id +
-      ', ' +
-      this.good.description;
-    descripcion =
-      descripcion.length > 1250 ? descripcion.substring(0, 1250) : descripcion;
-    let avaluo = this.good.appraisedValue
-      ? +(this.good.appraisedValue * this.vfactor).toFixed(2)
-      : this.good.appraisedValue;
-    let { cantidad, importe } = this.fillImporteCant();
-    // let noBien = await this.getBienDual();
-    const { vval2, vimpbien } = this.getVal2AndImpbien(importe, cantidad);
-    // const mensaje = vobserv_padre + noBien + ' por: ' + vimpbien + ', ';
-    // vobserv_padre = mensaje.length > 600 ? mensaje.substring(0, 600) : mensaje;
-    // const vobservaciones = 'Saldo parcializado del bien ' + this.good.goodId;
-    // item = {
-    //   id: this.bienesPar[this.bienesPar.length - 1].id + 1,
-    //   noBien:null,
-    //   descripcion,
-    //   proceso: this.good.extDomProcess,
-    //   cantidad,
-    //   avaluo,
-    //   importe,
-    //   val10: 0,
-    //   val11: 0,
-    //   val12: 0,
-    //   val13: 0,
-    // };
-    // this.bienesPar.push(item);
-    this.insertaBien(
-      item,
-      this.good,
-      estatus_nuevo_bien,
-      this.good.extDomProcess,
-      +vval2,
-      vimpbien,
-      0,
-      this.service.noActa
-    );
-  }
+  //   let vfactornum =
+  //     (this.vimporte - this.vsumimp) / (this.vimporte - this.vsumimp);
+  //   // this.vident++;
+  //   let descripcion =
+  //     'Parcialización de Bien No.' +
+  //     this.good.id +
+  //     ', ' +
+  //     this.good.description;
+  //   descripcion =
+  //     descripcion.length > 1250 ? descripcion.substring(0, 1250) : descripcion;
+  //   let avaluo = this.good.appraisedValue
+  //     ? +(this.good.appraisedValue * this.vfactor).toFixed(2)
+  //     : this.good.appraisedValue;
+  //   let { cantidad, importe } = this.fillImporteCant();
+  //   // let noBien = await this.getBienDual();
+  //   const { vval2, vimpbien } = this.getVal2AndImpbien(importe, cantidad);
+  //   // const mensaje = vobserv_padre + noBien + ' por: ' + vimpbien + ', ';
+  //   // vobserv_padre = mensaje.length > 600 ? mensaje.substring(0, 600) : mensaje;
+  //   // const vobservaciones = 'Saldo parcializado del bien ' + this.good.goodId;
+  //   // item = {
+  //   //   id: this.bienesPar[this.bienesPar.length - 1].id + 1,
+  //   //   noBien:null,
+  //   //   descripcion,
+  //   //   proceso: this.good.extDomProcess,
+  //   //   cantidad,
+  //   //   avaluo,
+  //   //   importe,
+  //   //   val10: 0,
+  //   //   val11: 0,
+  //   //   val12: 0,
+  //   //   val13: 0,
+  //   // };
+  //   // this.bienesPar.push(item);
+  //   this.insertaBien(
+  //     item,
+  //     this.good,
+  //     estatus_nuevo_bien,
+  //     this.good.extDomProcess,
+  //     +vval2,
+  //     vimpbien,
+  //     0,
+  //     this.service.noActa
+  //   );
+  // }
 
   private async fillRestRow(
     vsumimp: number,
@@ -479,7 +490,7 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
         );
         item.descripcion =
           'Bien por ' +
-          this.form.get('saldo').value +
+          +(this.form.get('saldo').value + '') +
           ' ' +
           v_unidad +
           ', ' +
@@ -497,7 +508,7 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
         );
         item.descripcion =
           'Numerario por $ ' +
-          this.form.get('saldo').value +
+          +(this.form.get('saldo').value + '') +
           ' ' +
           v_avaluo +
           ' ' +
@@ -509,9 +520,11 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
       // } else {
       //   item.avaluo = this.good.appraisedValue;
       // }
-      item.avaluo = +(
-        +(this.good.appraisedValue + '') - this.service.sumAvaluo
-      ).toFixed(2);
+      item.avaluo = this.good.appraisedValue
+        ? +(+(this.good.appraisedValue + '') - this.service.sumAvaluo).toFixed(
+            2
+          )
+        : null;
       if (this.validationClasif()) {
         item.importe = +(this.saldo.value + '');
 
@@ -528,7 +541,7 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
         vimpbien = item.cantidad;
       }
       item.cantidad = +(this.saldo.value + '');
-      this.saldo.setValue(0);
+
       this.service.sumCant += item.cantidad;
       this.service.sumVal14 += item.importe;
       this.service.sumAvaluo += item.avaluo;
@@ -543,6 +556,7 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
           this.insertaBien(
             item,
             this.good,
+            'Saldo parcializado del bien: ' + this.good.goodId,
             v_estatus,
             this.good.extDomProcess,
             vval2,
@@ -571,7 +585,7 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
             val12: 0,
             val13: 0,
           });
-          this.fillPagedRow.emit();
+          // this.fillPagedRow.emit();
           return bien.no_bien;
         } else {
           this.onLoadToast('error', 'Inserta Bien', 'No se pudo parcializar');
@@ -593,17 +607,21 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
 
   private async finishApply(vobserv_padre: string, vdesc_padre: string) {
     // debugger;
+    const oldObservations = this.good.observations
+      ? this.good.observations
+      : '';
     const observations =
       vobserv_padre +
       ' fecha: ' +
       format(new Date(), 'dd/MM/yyyy') +
       '. ' +
-      this.good.observations;
+      oldObservations;
     this.good.observations = observations.substring(
       0,
       observations.length > 600 ? 600 : observations.length
     );
-    const description = vdesc_padre + this.good.description;
+    const oldDescription = this.good.description ? this.good.description : '';
+    const description = vdesc_padre + oldDescription;
     this.good.description = description.substring(
       0,
       observations.length > 1250 ? 1250 : observations.length
@@ -626,12 +644,14 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
     //   'La parcialización de bienes se realizo con éxito'
     // );
     try {
+      // this.good.status = 'PEA';
       await firstValueFrom(this.goodService.updateCustom(this.good));
       this.onLoadToast(
         'success',
         'Parcialización',
-        'La parcialización de bienes se realizo con éxito'
+        'La parcialización de bienes se realizo correctamente'
       );
+      this.service.haveAply = false;
     } catch (x) {
       this.onLoadToast(
         'error',
@@ -664,6 +684,7 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
       }
       // debugger;
       const result = await this.validationsV1(v_importe, v_estatus);
+      console.log(result, this.good);
       v_verif_des = this.service.verif_des;
       v_importe = result.v_importe;
       v_estatus = result.v_estatus;
@@ -680,6 +701,32 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
       const observable = from(
         this.bienesPar.slice(0, this.bienesPar.length - 1)
       );
+      // this.bienesPar.forEach((item, index) => {
+      //   if (this.validationClasif()) {
+      //     vval2 = Number((+(item.importe + '')).toFixed(2).trim());
+      //     vimpbien = +(item.importe + '');
+      //   } else {
+      //     vval2 = +this.good.val14;
+      //     vimpbien = +(item.cantidad + '');
+      //   }
+      //   if (index < this.bienesPar.length - 1) {
+      //     const newObservation =
+      //       vobserv_padre + item.noBien + ' por:  ' + vimpbien + ', ';
+      //     vobserv_padre = newObservation.substring(
+      //       0,
+      //       newObservation.length > 600 ? 600 : newObservation.length
+      //     );
+      //   }
+
+      // })
+      // const newObservation =
+      //   vobserv_padre + 2 + ' por:  ' + +(this.saldo.value + '') + ', ';
+      // vobserv_padre = newObservation.substring(
+      //   0,
+      //   newObservation.length > 600 ? 600 : newObservation.length
+      // );
+      // console.log(vobserv_padre);
+
       let i = 0;
       observable
         .pipe(
@@ -700,6 +747,7 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
             return this.insertaBien(
               item,
               this.good,
+              'Parcializado del bien: ' + this.good.goodId,
               v_estatus,
               this.good.extDomProcess,
               vval2,
@@ -774,7 +822,11 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
               );
               if (no_bien !== null) {
                 const newObservation =
-                  vobserv_padre + no_bien + ' por:  ' + vimpbien + ', ';
+                  vobserv_padre +
+                  no_bien +
+                  ' por:  ' +
+                  +(this.saldo.value + '') +
+                  ', ';
                 vobserv_padre = newObservation.substring(
                   0,
                   newObservation.length > 600 ? 600 : newObservation.length
@@ -784,7 +836,9 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
                   0,
                   newDescription.length > 1250 ? 1250 : newDescription.length
                 );
+                this.saldo.setValue(0);
               }
+              this.fillPagedRow.emit();
               await this.finishApply(vobserv_padre, vdesc_padre);
               console.log(this.good);
             }

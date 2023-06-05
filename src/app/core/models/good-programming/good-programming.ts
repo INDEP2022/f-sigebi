@@ -126,3 +126,16 @@ export interface IGoodInfo {
   physicalStatus?: number | string;
   reprogrammationNumber?: number;
 }
+
+export interface IPACambioStatusGood {
+  P_NOACTA: number;
+  P_AREATRA: string;
+  P_PANTALLA: string;
+}
+
+export interface IHistoryProcesdingAct {
+  minutesNumber: number;
+  invoiceUniversal: number | string;
+  dateMov: Date;
+  nbOrigin?: string;
+}

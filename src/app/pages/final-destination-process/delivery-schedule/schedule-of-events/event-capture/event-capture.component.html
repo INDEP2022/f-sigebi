@@ -5,6 +5,25 @@
 
   <div body>
     <div class="row">
+      <div class="col-md-12 d-flex justify-content-between">
+        <div>
+          <a
+            class="btn btn-primary btn-sm active"
+            [routerLink]="[
+              '/pages/judicial-physical-reception/scheduled-maintenance'
+            ]"
+            >Regresar</a
+          >
+        </div>
+        <div>
+          <confirm-button
+            [btnSmall]="true"
+            [loading]="saveLoading"
+            (confirm)="saveProceeding()"></confirm-button>
+        </div>
+      </div>
+    </div>
+    <div class="row pt-3">
       <form class="form-material" [formGroup]="form" (ngSubmit)="onSubmit()">
         <div class="row">
           <h6>Registro</h6>
@@ -176,6 +195,7 @@
           <div class="col-md-12 d-flex justify-content-between">
             <div *ngIf="ctrlButtons.signOffice.visible">
               <button
+                (click)="signOffice()"
                 class="btn btn-sm btn-secondary active"
                 [disabled]="!ctrlButtons.signOffice.enabled">
                 {{ ctrlButtons.signOffice.label }}
@@ -188,8 +208,7 @@
                 {{ ctrlButtons.printOffice.label }}
               </button>
             </div>
-            <div>
-              <!--*ngIf="ctrlButtons.notificationDest.visible"-->
+            <div *ngIf="ctrlButtons.notificationDest.visible">
               <button
                 class="btn btn-sm btn-secondary active"
                 [disabled]="!ctrlButtons.notificationDest.enabled"
@@ -197,8 +216,7 @@
                 {{ ctrlButtons.notificationDest.label }}
               </button>
             </div>
-            <div>
-              <!--*ngIf="ctrlButtons.closeProg.visible"-->
+            <div *ngIf="ctrlButtons.closeProg.visible">
               <button
                 class="btn btn-sm btn-danger active"
                 [disabled]="!ctrlButtons.closeProg.enabled"
@@ -213,25 +231,18 @@
                 {{ ctrlButtons.sendSise.label }}
               </button>
             </div>
-            <div *ngIf="ctrlButtons.expExcel.visible">
-              <button
-                class="btn btn-sm btn-success active"
-                [disabled]="!ctrlButtons.expExcel.enabled">
-                {{ ctrlButtons.expExcel.label }}
-              </button>
-            </div>
           </div>
         </div>
       </form>
     </div>
+  </div>
+</app-card>
 
-    <br />
-    <hr class="row" />
-
-    <div class="row mt-5">
-      <h6 class="">Parámetros para traer información de SIAB</h6>
-    </div>
-
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Parámetros para traer información del SIAB</h5>
+  </div>
+  <div body>
     <form class="form-material" [formGroup]="formSiab" (ngSubmit)="onSubmit2()">
       <app-capture-event-parameters
         [form]="form"
@@ -257,6 +268,7 @@
           </div>
           <div *ngIf="ctrlButtons.convPack.visible">
             <button
+              (click)="paqConv()"
               class="btn btn-sm btn-danger active"
               [disabled]="!ctrlButtons.convPack.enabled">
               {{ ctrlButtons.convPack.label }}
@@ -269,109 +281,97 @@
     <br />
     <hr class="row" />
 
-    <div class="row mt-5">
-      <div class="col-6">
-        <div class="d-flex align-items-center">
-          <div>
-            <h5 class="font-size-14">Cantidad de Bienes:</h5>
+    <div class="row">
+      <div class="col-md-12 d-flex justify-content-end">
+        <div
+          class="mr-4"
+          *ngIf="
+            showPackNumCtrl ||
+            ctrlButtons.apply.visible ||
+            registerControls.typeEvent.value == 'DN'
+          ">
+          <form-field
+            *ngIf="showPackNumCtrl"
+            [control]="packNumCtrl"
+            label="No. Paquete">
+            <input
+              type="text"
+              class="form-control"
+              bsDaterangepicker
+              [formControl]="packNumCtrl" />
+          </form-field>
+          <button
+            *ngIf="ctrlButtons.deletePack.visible"
+            class="btn btn-primary btn-sm active"
+            [disabled]="!ctrlButtons.deletePack.enabled">
+            {{ ctrlButtons.deletePack.label }}
+          </button>
+        </div>
+
+        <div class="mr-4" *ngIf="ctrlButtons.apply.visible">
+          <button
+            class="btn btn-primary btn-sm active"
+            [disabled]="!ctrlButtons.apply.enabled">
+            {{ ctrlButtons.apply.label }}
+          </button>
+        </div>
+
+        <div class="mr-4" *ngIf="ctrlButtons.expExcel.visible">
+          <button
+            (click)="excelExport()"
+            class="btn btn-sm btn-success active"
+            [disabled]="!ctrlButtons.expExcel.enabled">
+            {{ ctrlButtons.expExcel.label }}
+          </button>
+        </div>
+        <div class="mr-4" *ngIf="ctrlButtons.xml.visible">
+          <button
+            class="btn btn-success btn-sm active"
+            [disabled]="!ctrlButtons.xml.enabled">
+            {{ ctrlButtons.xml.label }}
+          </button>
+        </div>
+        <div class="mr-4" *ngIf="ctrlButtons.generateStrategy.visible">
+          <button
+            [disabled]="!ctrlButtons.generateStrategy.enabled"
+            class="btn btn-primary btn-sm active"
+            routerLink="generate-estrategy">
+            {{ ctrlButtons.generateStrategy.label }}
+          </button>
+        </div>
+        <app-columns-select [defaultColumns]="5" [(settings)]="settings">
+        </app-columns-select>
+      </div>
+    </div>
+    <div class="row">
+      <form class="form-material">
+        <div class="col-md-6 d-flex">
+          <div class="col-md-5">
+            <form-field [control]="startDateCtrl" label="Fecha de Inicio">
+              <input
+                class="form-control"
+                ngModel
+                bsDatepicker
+                [formControl]="startDateCtrl" />
+            </form-field>
           </div>
-          <div class="ml-2">
-            <span class="badge rounded-pill badge-soft-success">1</span>
+          <div class="col-md-5">
+            <form-field [control]="endDateCtrl" label="Fecha de Fin">
+              <input
+                class="form-control"
+                ngModel
+                bsDatepicker
+                [formControl]="endDateCtrl" />
+            </form-field>
+          </div>
+          <div class="col-md-2">
+            <button class="btn btn-primary btn-sm active">Guardar</button>
           </div>
         </div>
-      </div>
-      <div class="col-6">
-        <div class="d-flex align-items-center">
-          <div>
-            <h5 class="font-size-14">Cantidad de Registros:</h5>
-          </div>
-          <div class="ml-2">
-            <span class="badge rounded-pill badge-soft-success">1</span>
-          </div>
-        </div>
-      </div>
-      <div class="col-6">
-        <div class="d-flex align-items-center">
-          <div>
-            <h5 class="font-size-14">Cantidad de Expedientes:</h5>
-          </div>
-          <div class="ml-2">
-            <span class="badge rounded-pill badge-soft-success">1</span>
-          </div>
-        </div>
-      </div>
-      <div class="col-6">
-        <div class="d-flex align-items-center">
-          <div>
-            <h5 class="font-size-14">Cantidad de Dict&aacute;menes:</h5>
-          </div>
-          <div class="ml-2">
-            <span class="badge rounded-pill badge-soft-success">1</span>
-          </div>
-        </div>
-      </div>
+      </form>
     </div>
 
-    <div class="row justify-content-end mt-3">
-      <div class="col-md-5 buttons pt-3 text-right">
-        <app-columns-select [(settings)]="settings"> </app-columns-select>
-      </div>
-    </div>
-
-    <div class="row mt-5 justify-content-center justify-content-sm-end">
-      <div
-        *ngIf="
-          showPackNumCtrl ||
-          ctrlButtons.apply.visible ||
-          registerControls.typeEvent.value == 'DN'
-        "
-        class="col-12 col-sm-5 text-center text-sm-right">
-        <form-field
-          *ngIf="showPackNumCtrl"
-          [control]="packNumCtrl"
-          label="No. Paquete">
-          <input
-            type="text"
-            class="form-control"
-            bsDaterangepicker
-            [formControl]="packNumCtrl" />
-        </form-field>
-        <button
-          *ngIf="ctrlButtons.deletePack.visible"
-          class="btn btn-primary btn-sm active"
-          [disabled]="!ctrlButtons.deletePack.enabled">
-          {{ ctrlButtons.deletePack.label }}
-        </button>
-      </div>
-      <div
-        *ngIf="ctrlButtons.apply.visible"
-        class="col-12 col-sm-3 text-center text-sm-right">
-        <button
-          class="btn btn-primary btn-sm active"
-          [disabled]="!ctrlButtons.apply.enabled">
-          {{ ctrlButtons.apply.label }}
-        </button>
-      </div>
-      <div
-        *ngIf="ctrlButtons.xml.visible"
-        class="col-12 col-sm-3 text-center text-sm-right">
-        <button
-          class="btn btn-success btn-sm active"
-          [disabled]="!ctrlButtons.xml.enabled">
-          {{ ctrlButtons.xml.label }}
-        </button>
-      </div>
-      <div
-        *ngIf="ctrlButtons.generateStrategy.visible"
-        class="col-12 col-sm-3 mt-3 mt-sm-0 text-center text-sm-right">
-        <button
-          [disabled]="!ctrlButtons.generateStrategy.enabled"
-          class="btn btn-primary btn-sm active"
-          routerLink="generate-estrategy">
-          {{ ctrlButtons.generateStrategy.label }}
-        </button>
-      </div>
-    </div>
+    <div class="row mt-5 justify-content-center justify-content-sm-end"></div>
     <div class="row mt-1">
       <div class="col-md-12 table-responsive">
         <div [class]="loading ? 'table-loading' : ''">
@@ -380,7 +380,32 @@
         </div>
       </div>
     </div>
-    <app-pagination [params]="params" [totalItems]="totalItems">
-    </app-pagination>
+
+    <div class="row pt-5">
+      <div class="col-md-3">
+        <div class="cantidad">
+          <label for="">Cantidad de Bienes</label>
+          <div>{{ blkQuantities.goods }}</div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="cantidad">
+          <label for="">Cantidad de Registros</label>
+          <div>{{ blkQuantities.registers }}</div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="cantidad">
+          <label for="">Cantidad de Expedientes</label>
+          <div>{{ blkQuantities.expedients }}</div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="cantidad">
+          <label for="">Cantidad de Dict&aacute;menes</label>
+          <div>{{ blkQuantities.dictums }}</div>
+        </div>
+      </div>
+    </div>
   </div>
 </app-card>

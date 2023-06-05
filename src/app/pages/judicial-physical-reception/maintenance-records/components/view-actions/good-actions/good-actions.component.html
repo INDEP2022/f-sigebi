@@ -1,4 +1,4 @@
-<div class="row">
+<div class="row good-actions">
   <form class="form-material col-md-3 p-0" [formGroup]="formGood">
     <div class="selectGood">
       <form-field [control]="formGood.get('goodId')" label="Agregar nuevo bien">
@@ -25,6 +25,7 @@
   </form>
   <div class="col-md-5 mb-3">
     <app-update-dates-goods
+      [form]="formDate"
       [disabled]="!data || data.length === 0"
       [data]="data"
       (updateGoodEvent)="

@@ -11,4 +11,8 @@ export enum SecurityEndpoints {
   TrackingTdictaXProfileMim = 'tracking-tdicta-x-profile-mim',
   UsersTracking = 'users-tracking',
   AplicationLovCitiesRegCity = 'application/lov-cities-reg-cities-city',
+  StationClue = 'application/stationClue',
+  IdDelegationDelegationForwards = 'application/idDelegationDelegationForwards',
+  IdDelegationDelegationAddressee = 'application/idDelegationDelegationAddressee',
+  QueryIdenti = 'application/queryIdenti',
 }

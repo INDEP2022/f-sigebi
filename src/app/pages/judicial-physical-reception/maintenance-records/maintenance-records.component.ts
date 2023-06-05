@@ -13,7 +13,10 @@ import { format } from 'date-fns';
 import { firstValueFrom } from 'rxjs';
 import { SafeService } from 'src/app/core/services/catalogs/safe.service';
 import { WarehouseService } from 'src/app/core/services/catalogs/warehouse.service';
-import { ProceedingsDetailDeliveryReceptionService } from 'src/app/core/services/ms-proceedings';
+import {
+  ProceedingsDetailDeliveryReceptionService,
+  trackerGoodToDetailProceeding,
+} from 'src/app/core/services/ms-proceedings';
 import { ProceedingsDeliveryReceptionService } from 'src/app/core/services/ms-proceedings/proceedings-delivery-reception.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -23,7 +26,6 @@ import { GOOD_TRACKER_ORIGINS } from '../../general-processes/goods-tracker/util
 import {
   deliveryReceptionToInfo,
   IProceedingInfo,
-  trackerGoodToDetailProceeding,
 } from './components/proceeding-info/models/proceeding-info';
 import { MaintenanceRecordsService } from './services/maintenance-records.service';
 @Component({
@@ -41,6 +43,7 @@ export class MaintenanceRecordsComponent extends BasePage implements OnInit {
   loadingGoods = false;
   loadingNewGoods = true;
   newLimit = new FormControl(1);
+  pageGoods = 1;
   // rowsSelected: any[] = [];
   rowsSelectedLocal: any[] = [];
   rowsSelectedNotLocal: any[] = [];
@@ -171,7 +174,7 @@ export class MaintenanceRecordsComponent extends BasePage implements OnInit {
                 this.getGoods();
               },
               error: err => {
-                this.onLoadToast('error', 'Bienes', 'No ');
+                this.onLoadToast('error', 'Bienes', 'No Agregados');
               },
             });
           // this.service.dataForAdd = [
@@ -204,6 +207,7 @@ export class MaintenanceRecordsComponent extends BasePage implements OnInit {
 
   updateData(event: any) {
     console.log(event);
+    this.pageGoods = event.page;
     this.goodParams.limit = event.limit;
     this.goodParams.page = event.page;
     // this.infoForm && this.infoForm.id
@@ -213,22 +217,34 @@ export class MaintenanceRecordsComponent extends BasePage implements OnInit {
   getData(form: IProceedingInfo) {
     if (this.fillParams(form)) {
       this.loading = true;
+      this.loadingGoods = true;
       this.proceedingService.getAll(this.filterParams.getParams()).subscribe({
         next: response => {
           // debugger;
-          this.infoForm = response.data[0];
-          this.service.formValue = deliveryReceptionToInfo(this.infoForm);
-          // console.log(this.infoForm, this.service.formValue);
-          if (!this.registro) {
-            this.service.totalProceedings = response.count;
+          if (response.data && response.data.length > 0) {
+            this.infoForm = response.data[0];
+            this.service.formValue = deliveryReceptionToInfo(this.infoForm);
+            // console.log(this.infoForm, this.service.formValue);
+            if (!this.registro) {
+              this.service.totalProceedings = response.count;
+            }
+            // console.log(this.params.getValue());
+            this.loading = false;
+            this.registro = true;
+            // this.goodParams.limit = 10;
+            this.goodParams.page = 1;
+            this.pageGoods = 1;
+            this.getGoods();
+          } else {
+            this.loading = false;
+            this.loadingGoods = false;
+            this.onLoadToast('error', 'Actas', 'No encontradas');
           }
-          // console.log(this.params.getValue());
-          this.loading = false;
-          this.registro = true;
-          this.getGoods();
         },
         error: error => {
           this.loading = false;
+          this.loadingGoods = false;
+          this.onLoadToast('error', 'Actas', 'No encontradas');
         },
       });
     }
@@ -290,10 +306,13 @@ export class MaintenanceRecordsComponent extends BasePage implements OnInit {
           })
           .catch(error => {
             this.service.data = [];
+            this.service.totalGoods = 0;
             this.loadingGoods = false;
+            // this.onLoadToast('error', 'Actas', 'No encontradas');
           });
       } catch (x) {
         this.service.data = [];
+        this.service.totalGoods = 0;
         this.loadingGoods = false;
       }
       // this.detailService.getAll(filterParams.getParams()).subscribe({

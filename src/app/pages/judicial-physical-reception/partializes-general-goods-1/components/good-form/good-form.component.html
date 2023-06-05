@@ -1,6 +1,6 @@
 <form class="form-material" [formGroup]="form" id="good-form-partialized">
   <div class="row">
-    <div class="col-md-4" style="display: flex; column-gap: 15px">
+    <div class="col-md-6" style="display: flex; column-gap: 15px">
       <form-field [control]="form.get('noBien')" label="No. de bien">
         <input class="form-control" formControlName="noBien" maxlength="10" />
       </form-field>
@@ -10,6 +10,13 @@
         type="button"
         (click)="searchGood()">
         Buscar
+      </button>
+      <button
+        [disabled]="formLoading"
+        class="btn btn-danger btn-sm active"
+        type="button"
+        (click)="resetForm()">
+        Limpiar
       </button>
       <!-- <ng-custom-select-loading
         [form]="form"
@@ -39,8 +46,7 @@
         [(paramsFilter)]="paramsGoods"
         (selectEvent)="selectGood($event)"></app-select-form> -->
     </div>
-    <div class="col-md-4" style="text-align: left"></div>
-    <div class="col-md-4" style="text-align: right">
+    <!-- <div class="col-md-4" style="text-align: right">
       <button
         [disabled]="formLoading"
         class="btn btn-danger btn-sm active"
@@ -48,7 +54,7 @@
         (click)="resetForm()">
         Limpiar
       </button>
-    </div>
+    </div> -->
   </div>
   <accordion [isAnimated]="true">
     <accordion-group
@@ -121,7 +127,7 @@
               <div class="col-md-12">
                 <div>
                   <label for="">Estatus:</label>
-                  <span> {{ good?.goodStatus }}</span>
+                  <span> {{ good?.status }}</span>
                   <span class="ml-2">{{ goodStatusDesc }}</span>
                 </div>
               </div>

@@ -15,4 +15,12 @@ export interface IGoodIndicator {
   devolutionproceedingkey: string;
   dictationkey: string;
   destructionproceedingkey: string;
+  dateapprovalxadmon: string;
+  dateindicatesuserapproval: string;
+}
+export interface ICertificateProgDst {
+  minutesNumber: number;
+  email: string;
+  destType: string;
+  indShipment: number;
 }

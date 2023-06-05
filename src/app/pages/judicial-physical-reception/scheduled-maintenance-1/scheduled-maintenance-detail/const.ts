@@ -92,7 +92,7 @@ export const columnsGoods = {
     },
   },
   agregado: {
-    title: 'Agregado',
+    title: 'Origen',
     type: 'string',
     sort: false,
     editable: false,

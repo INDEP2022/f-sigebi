@@ -5,12 +5,6 @@
   <div body>
     <form [formGroup]="departmentForm" class="form-material">
       <div class="row">
-        <!-- <div class="col-md-3">
-          <form-field [control]="departmentForm.get('id')" label="ID">
-            <input type="number" class="form-control" formControlName="id" />
-          </form-field>
-        </div> -->
-
         <div class="col-md-6">
           <form-field [control]="departmentForm.get('numDelegation')">
             <ngx-select
@@ -60,7 +54,7 @@
             [control]="departmentForm.get('lastOffice')"
             label="&Uacute;ltimo oficio">
             <input
-              type="number"
+              type="text"
               class="form-control"
               formControlName="lastOffice" />
           </form-field>
@@ -74,7 +68,7 @@
 
         <div class="col-md-2">
           <form-field [control]="departmentForm.get('level')" label="Nivel">
-            <input type="number" class="form-control" formControlName="level" />
+            <input type="text" class="form-control" formControlName="level" />
           </form-field>
         </div>
 
@@ -83,7 +77,7 @@
             [control]="departmentForm.get('depDelegation')"
             label="Dependencia entre Delegaciones">
             <input
-              type="number"
+              type="text"
               class="form-control"
               formControlName="depDelegation" />
           </form-field>
@@ -95,10 +89,7 @@
           <form-field
             [control]="departmentForm.get('depend')"
             label="Departamento delegaci&oacute;n">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="depend" />
+            <input type="text" class="form-control" formControlName="depend" />
           </form-field>
         </div>
         <div class="col-md-6">
@@ -106,7 +97,7 @@
             [control]="departmentForm.get('phaseEdo')"
             label="Fase EDO">
             <input
-              type="number"
+              type="text"
               class="form-control"
               formControlName="phaseEdo" />
           </form-field>

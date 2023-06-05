@@ -489,13 +489,44 @@ export class NotificationAssetsTabComponent
             if (question.isConfirmed) {
               const updateData = await this.verifyGoodCompliance();
               if (updateData == true) {
-                this.createTaskVerifyCompliance();
+                let params = new ListParams();
+                params['filter.requestId'] = this.idRequest;
+                params['filter.goodStatus'] = 'ACLARADO';
+
+                this.goodService.getAll(params).subscribe({
+                  next: resp => {
+                    console.log('Si hay bienes, continuar flujo', resp);
+                    this.createTaskVerifyCompliance();
+                  },
+                  error: error => {
+                    console.log('No hay bienes, terminar flujo', error);
+                    this.msgGuardado2(
+                      'warning',
+                      'Atención',
+                      `La solicitud ya no cuenta con bienes para continuar`
+                    );
+                  },
+                });
               }
             }
           });
         }
       });
     }
+  }
+
+  callGoodFilterRequest() {
+    let params = new ListParams();
+    params['filter.requestId'] = this.idRequest;
+
+    this.goodService.getAll(params).subscribe({
+      next: resp => {
+        console.log('callGoodFilterRequest', resp);
+      },
+      error: error => {
+        console.log('callGoodFilterRequest Error', error);
+      },
+    });
   }
 
   verifyGoodCompliance() {
@@ -510,7 +541,7 @@ export class NotificationAssetsTabComponent
             .getAllFilter(this.paramsCheckInfo.getValue())
             .subscribe({
               next: response => {
-                response.data.map(notification => {
+                response.data.map(async notification => {
                   if (
                     notification.clarificationType == 'SOLICITAR_ACLARACION'
                   ) {
@@ -518,29 +549,44 @@ export class NotificationAssetsTabComponent
                       notification.answered == 'ACLARADA' ||
                       notification.answered == 'RECHAZADA'
                     ) {
-                      this.updateStatusGood(
+                      const updateStatusGood = await this.updateStatusGood(
                         'ACLARADO',
                         'VERIFICAR_CUMPLIMIENTO',
                         bien.goodid,
                         bien.goodresdev,
                         bien.typeorigin
                       );
+                      if (updateStatusGood === true) {
+                        resolve(true);
+                      }
                     }
                   } else if (
                     notification.clarificationType == 'SOLICITAR_IMPROCEDENCIA'
                   ) {
-                    if (
-                      notification.answered == 'IMPROCEDENTE' ||
-                      notification.answered == 'RECHAZADA'
-                    ) {
+                    if (notification.answered == 'IMPROCEDENTE') {
                       console.log('IMPROCEDENTE', notification);
-                      this.updateStatusGood(
+
+                      const updateStatusGood = await this.updateStatusGood(
                         'IMPROCEDENTE',
                         'IMPROCEDENTE',
                         bien.goodid,
                         bien.goodresdev,
                         bien.typeorigin
                       );
+                      if (updateStatusGood === true) {
+                        resolve(true);
+                      }
+                    } else if (notification.answered == 'RECHAZADA') {
+                      const updateStatusGood = await this.updateStatusGood(
+                        'ACLARADO',
+                        'VERIFICAR_CUMPLIMIENTO',
+                        bien.goodid,
+                        bien.goodresdev,
+                        bien.typeorigin
+                      );
+                      if (updateStatusGood === true) {
+                        resolve(true);
+                      }
                     }
                   }
                 });
@@ -548,7 +594,6 @@ export class NotificationAssetsTabComponent
               error: error => {},
             });
         });
-        resolve(true);
       });
     });
   }
@@ -1517,63 +1562,67 @@ export class NotificationAssetsTabComponent
     idGoodResDev?: number,
     typeOrigin?: string
   ) {
-    if (typeOrigin == 'SOL_TRANSFERENCIA') {
-      if (statusGood) {
-        const good: IGood = {
-          id: idGood,
-          goodId: idGood,
-          goodStatus: statusGood,
-          processStatus: statusProcess,
-        };
-        this.goodService.update(good).subscribe({
-          next: data => {
-            console.log('actualizado', data);
-          },
-          error: error => {
-            console.log(error);
-          },
-        });
-      }
+    return new Promise((resolve, reject) => {
+      if (typeOrigin == 'SOL_TRANSFERENCIA') {
+        if (statusGood) {
+          const good: IGood = {
+            id: idGood,
+            goodId: idGood,
+            goodStatus: statusGood,
+            processStatus: statusProcess,
+          };
+          this.goodService.update(good).subscribe({
+            next: data => {
+              console.log('actualizado', data);
+              resolve(true);
+            },
+            error: error => {
+              console.log(error);
+              resolve(false);
+            },
+          });
+        }
 
-      if (statusProcess) {
-        const good: IGood = {
-          id: idGood,
-          goodId: idGood,
-          goodStatus: statusGood,
-          processStatus: statusProcess,
-        };
-        this.goodService.update(good).subscribe({
-          next: data => {},
-          error: error => {
-            console.log(error);
-          },
-        });
-      }
-    } else if (typeOrigin == 'DOC_COMPLEMENTARIA') {
-      if (statusGood) {
-        const goodReject: ClarificationGoodRejectNotification = {
-          statusGood: statusGood,
-          statusProcess: statusProcess, // Verificar porque se tiene id
-        };
+        if (statusProcess) {
+          const good: IGood = {
+            id: idGood,
+            goodId: idGood,
+            goodStatus: statusGood,
+            processStatus: statusProcess,
+          };
+          this.goodService.update(good).subscribe({
+            next: data => {},
+            error: error => {
+              console.log(error);
+            },
+          });
+        }
+      } else if (typeOrigin == 'DOC_COMPLEMENTARIA') {
+        if (statusGood) {
+          const goodReject: ClarificationGoodRejectNotification = {
+            statusGood: statusGood,
+            statusProcess: statusProcess, // Verificar porque se tiene id
+          };
 
-        this.rejectedGoodService.update(idGoodResDev, goodReject).subscribe({
-          next: response => {},
-          error: error => {},
-        });
-      }
+          this.rejectedGoodService.update(idGoodResDev, goodReject).subscribe({
+            next: response => {},
+            error: error => {},
+          });
+        }
 
-      if (statusProcess) {
-        const goodReject: ClarificationGoodRejectNotification = {
-          statusGood: statusGood,
-          statusProcess: statusProcess, // Verificar porque se tiene id
-        };
+        if (statusProcess) {
+          const goodReject: ClarificationGoodRejectNotification = {
+            statusGood: statusGood,
+            statusProcess: statusProcess, // Verificar porque se tiene id
+          };
 
-        this.rejectedGoodService.update(idGoodResDev, goodReject).subscribe({
-          next: response => {},
-          error: error => {},
-        });
+          this.rejectedGoodService.update(idGoodResDev, goodReject).subscribe({
+            next: response => {},
+            error: error => {},
+          });
+        }
       }
-    }
+    });
   }
 
   changeStatuesTmp() {
@@ -1815,6 +1864,22 @@ export class NotificationAssetsTabComponent
     }).then(result => {
       if (result.isConfirmed) {
         this.endClarification();
+      }
+    });
+  }
+
+  msgGuardado2(icon: any, title: string, message: string) {
+    Swal.fire({
+      title: title,
+      html: message,
+      icon: icon,
+      showCancelButton: false,
+      confirmButtonColor: '#9D2449',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Aceptar',
+    }).then(result => {
+      if (result.isConfirmed) {
+        this.router.navigate(['/pages/siab-web/sami/consult-tasks']);
       }
     });
   }

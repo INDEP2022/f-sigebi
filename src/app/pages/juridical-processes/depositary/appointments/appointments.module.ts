@@ -13,9 +13,10 @@ import { AppointmentsRoutingModule } from './appointments-routing.module';
 
 /** COMPONENTS IMPORTS */
 import { AppointmentsComponent } from './appointments/appointments.component';
+import { ScanningFoilAppointmentComponent } from './scanning-foil/scanning-foil.component';
 
 @NgModule({
-  declarations: [AppointmentsComponent],
+  declarations: [AppointmentsComponent, ScanningFoilAppointmentComponent],
   imports: [CommonModule, AppointmentsRoutingModule, SharedModule],
 })
 export class AppointmentsModule {}

@@ -6,7 +6,11 @@ import {
   IListResponse,
   IResponse,
 } from '../../interfaces/list-response.interface';
-import { IProceedings } from '../../models/ms-proceedings/proceedings.model';
+import {
+  IProceedings,
+  IUpdateActasEntregaRecepcion,
+  IUpdateActasEntregaRecepcionDelegation,
+} from '../../models/ms-proceedings/proceedings.model';
 import {
   IBlkPost,
   IUpdateVault,
@@ -24,6 +28,7 @@ import {
 export class ProceedingsService extends HttpService {
   private readonly route = ProceedingsEndpoints.Proceedings;
   private readonly endpoint = ProceedingsEndpoints.ProeedingsDevolution;
+  private readonly endpointU = ProceedingsEndpoints.UpdateActasRDelegation;
   showErrorObs = new BehaviorSubject<boolean>(true);
   constructor() {
     super();
@@ -112,6 +117,22 @@ export class ProceedingsService extends HttpService {
   remove(proceedingsNumb: number) {
     return this.delete<IListResponse<IProceedings>>(
       `${this.endpoint}/${proceedingsNumb}`
+    );
+  }
+  updateActasEntregaRecepcion(
+    model: IUpdateActasEntregaRecepcion,
+    no_Acta: string | number
+  ) {
+    return this.put<IListResponse<any>>(
+      `${this.route}/aplication/update-actasEntregaRecepcion/${no_Acta}`,
+      model
+    );
+  }
+
+  updateActasEntregaRTurno(body: IUpdateActasEntregaRecepcionDelegation) {
+    return this.put<IListResponse<IUpdateActasEntregaRecepcionDelegation>>(
+      `${this.endpointU}`,
+      body
     );
   }
 }

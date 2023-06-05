@@ -86,17 +86,18 @@
               bsDatepicker />
           </form-field>
         </div>
-        <div class="col-sm-12 col-12 col-md-4 p-2">
+        <div class="col-sm-12 col-12 col-md-12 p-2">
           <form-field
             [control]="form.get('estatusBien')"
             label="Estatus del Bien">
             <textarea
               [readonly]="true"
               class="form-control"
+              rows="2"
               formControlName="estatusBien"></textarea>
           </form-field>
         </div>
-        <div class="col-sm-12 col-12 col-md-4 p-2">
+        <div class="col-sm-12 col-12 col-md-6 p-2">
           <form-field [control]="form.get('causaPenal')" label="Causa Penal">
             <input
               [readonly]="true"
@@ -104,7 +105,7 @@
               formControlName="causaPenal" />
           </form-field>
         </div>
-        <div class="col-sm-12 col-12 col-md-4 p-2">
+        <div class="col-sm-12 col-12 col-md-6 p-2">
           <form-field
             [control]="form.get('averiguacionPrevia')"
             label="Averiguaci&oacute;n Previa">
@@ -407,7 +408,10 @@
                   <form-field
                     [control]="form.get('noOficio')"
                     label="No&#46; Oficio">
-                    <input class="form-control" [readonly]="true" />
+                    <input
+                      class="form-control"
+                      formControlName="noOficio"
+                      [readonly]="true" />
                   </form-field>
                 </div>
               </div>
@@ -453,6 +457,7 @@
                     <input
                       class="form-control"
                       formControlName="fechaInicio"
+                      bsDatapicker
                       [readonly]="true" />
                   </form-field>
                 </div>
@@ -500,7 +505,7 @@
         <div class="col-sm-12 col-12 col-md-12 p-2 mt-3 mb-3">
           <hr class="row" />
         </div>
-        <div class="col-sm-12 col-12 col-md-3 p-2">
+        <div class="col-sm-12 col-12 col-md-12 p-2">
           <form-field [control]="form.get('anexo')" label="Anexo">
             <textarea
               class="form-control"
@@ -509,7 +514,7 @@
               [readonly]="true"></textarea>
           </form-field>
         </div>
-        <div class="col-sm-12 col-12 col-md-9 p-2">
+        <div class="col-sm-12 col-12 col-md-12 p-2">
           <form-field
             [control]="form.get('observaciones')"
             label="Observaciones">
@@ -552,6 +557,9 @@
             </div>
           </div>
         </div>
+        <!-- <div class="col-md-12 col-12 col-sm-12">
+          <app-scanning-foil-appointment></app-scanning-foil-appointment>
+        </div> -->
         <div class="col-sm-12 col-12 col-md-8 P-2">
           <div class="row">
             <div class="col-sm-12 col-12 col-md-12 p-2 text-center">

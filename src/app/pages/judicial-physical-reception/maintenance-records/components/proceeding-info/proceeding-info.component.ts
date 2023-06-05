@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { IProceedingDeliveryReception } from 'src/app/core/models/ms-proceedings/proceeding-delivery-reception';
+import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
 import {
   NUM_POSITIVE,
   POSITVE_NUMBERS_PATTERN,
@@ -30,11 +31,21 @@ export class ProceedingInfoComponent implements OnInit {
   @Input() loading = false;
   hoy = new Date();
   @Output() filterEvent = new EventEmitter<IProceedingInfo>();
+  delegations: any[] = [];
   constructor(
     private fb: FormBuilder,
-    private service: MaintenanceRecordsService
+    private service: MaintenanceRecordsService,
+    private delegationService: DelegationService
   ) {
     this.prepareForm();
+    this.delegationService.getAppsAll().subscribe({
+      next: response => {
+        console.log(response);
+        if (response.data) {
+          this.delegations = response.data;
+        }
+      },
+    });
     this.service.form.get('statusActa').valueChanges.subscribe(x => {
       console.log(x);
       if (this.service.formValue) {
@@ -91,10 +102,13 @@ export class ProceedingInfoComponent implements OnInit {
     this.service.totalProceedings = 0;
     this.registro = false;
     this.service.formJustification.reset();
+    this.service.formGood.reset();
     this.service.data = [];
     this.service.totalGoods = 0;
     this.service.dataForAdd = [];
     this.service.formWarehouseVaul.reset();
+    this.service.formActionChange.reset();
+    this.service.formDate.reset();
   }
 
   filter() {
@@ -131,7 +145,7 @@ export class ProceedingInfoComponent implements OnInit {
   prepareForm() {
     this.form = this.fb.group({
       id: [null, Validators.pattern(NUM_POSITIVE)],
-      numFile: [null],
+      numFile: [null, Validators.pattern(NUM_POSITIVE)],
       cveActa: [null, [Validators.pattern(STRING_PATTERN)]],
       tipoActa: [null],
       labelActa: [null, [Validators.pattern(STRING_PATTERN)]],
