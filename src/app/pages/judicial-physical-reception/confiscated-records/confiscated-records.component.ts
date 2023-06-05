@@ -65,6 +65,7 @@ import {
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { EdoFisicoComponent } from './edo-fisico/edo-fisico.component.component';
+import { IDocumentsGood } from 'src/app/core/models/ms-documents/documents';
 
 @Component({
   selector: 'app-confiscated-records',
@@ -225,6 +226,8 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
 
   //FOLIO DE ESCANEO
   folioEscaneo = 'folioEscaneo'
+  cveScreen = 'FACTREFACTAENTREC'
+  nameReport = 'RGERGENSOLICDIGIT'
 
   dataGoods = new LocalDataSource();
   dataGoodAct = new LocalDataSource();
@@ -371,11 +374,8 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
       this.newSearchExp();
       localStorage.removeItem('numberExpedient');
     }
-  }
 
-  prueba(){
-    console.log(this.form.get('folioEscaneo').value)
-    this.form.get('folioEscaneo').setValue('154')
+
   }
 
   prepareForm() {
@@ -1112,29 +1112,34 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
 
     this.serviceDetailProc.getAllFiltered(paramsF.getParams()).subscribe(
       async res => {
-        let newData: any[] = [];
-        try {
-          for (let item of res.data) {
-            const edoFis: any = await this.getIndEdoFisAndVColumna(item.good);
-            newData.push({
-              ...item,
-              noColumna: edoFis.V_NO_COLUMNA,
-              indEdoFisico: edoFis.V_IND_EDO_FISICO === 1 ? true : false,
-            });
+        
+        this.dataGoodAct.load(res.data).then(
+          async res => {
+            let newData: any[] = [];
+            for (let item of res.data) {
+              const edoFis: any = await this.getIndEdoFisAndVColumna(item.good);
+              newData.push({
+                ...item,
+                noColumna: edoFis.V_NO_COLUMNA,
+                indEdoFisico: edoFis.V_IND_EDO_FISICO === 1 ? true : false,
+              });
+            }
+
+            this.dataGoodAct.load(newData)
+          
           }
-        } catch (error) {
-          console.log('No se ejecuto el for');
-        } finally {
-          this.dataGoodAct.load(newData)
+        )
           this.totalItemsDataGoodsAct = res.count
           this.loading = false;
-        }
       },
       err => {
         console.log(err);
         this.loading = false;
         this.dataGoodAct.load([])
-
+        this.form.get('almacen').reset()
+        this.form.get('boveda').reset()
+        this.isAlmacen = false
+        this.isBoveda = false
         this.totalItemsDataGoodsAct = 0
 
       }
@@ -2900,7 +2905,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
           );
         }
       } else {
-        this.serviceDocuments.getByFolio(-73378).subscribe(
+        this.serviceDocuments.getByFolio(this.form.get('folioEscaneo').value).subscribe(
           res => {
             const data = JSON.parse(JSON.stringify(res));
             const scanStatus = data.data[0]['scanStatus'];
@@ -2945,6 +2950,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                       } else {
                         const modelEdit: IProccedingsDeliveryReception = {
                           statusProceedings: 'CERRADA',
+                          universalFolio: this.form.get('folioEscaneo').value
                         };
                         const splitActa = this.form
                           .get('acta2')
@@ -3346,7 +3352,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
 
   selectRowBovedaAlmacen(data: any) {
     const paramsF = new FilterParams();
-    paramsF.addFilter('idWarehouse', data.storeNumber);
+    paramsF.addFilter('idWarehouse', data.good.storeNumber);
     this.serviceWarehouse.getWarehouseFilter(paramsF.getParams()).subscribe(
       res => {
         console.log(res);
@@ -3357,7 +3363,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
       }
     );
     this.serviceVault
-      .getAllFilter(`filter.idSafe=$eq:${data.vaultNumber}`)
+      .getAllFilter(`filter.idSafe=$eq:${data.good.vaultNumber}`)
       .subscribe(
         res => {
           this.form.get('boveda').setValue(res.data[0]);
@@ -3632,7 +3638,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                           let newDetailProceeding: IDetailProceedingsDeliveryReception =
                             {
                               numberProceedings: data.id,
-                              numberGood: this.selectData.id,
+                              numberGood: this.selectData.goodId,
                               amount: this.selectData.quantity,
                               exchangeValue: 1,
                               approvedUserXAdmon:
@@ -3657,10 +3663,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                                 });
                                 this.getGoodsActFn();
                                 /* this.dataGoodAct.load(this.goodData); */
-                                this.saveDataAct.push({
-                                  ...this.selectData,
-                                  exchangeValue: 1,
-                                });
+                      
                                 this.selectData = null;
                               },
                               err => {
