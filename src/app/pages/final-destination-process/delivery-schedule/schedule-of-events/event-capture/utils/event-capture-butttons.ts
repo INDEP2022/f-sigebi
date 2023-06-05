@@ -8,7 +8,7 @@ export class EventCaptureButtons {
   loadGoods = new EventCaptureButton('Carga Bienes');
   goodsTracker = new EventCaptureButton('Rastreador');
   convPack = new EventCaptureButton('Paq. Conv');
-  apply = new EventCaptureButton('Aplica');
+  apply = new EventCaptureButton('Guardar');
   deletePack = new EventCaptureButton('Borrar Paq.', false);
   xml = new EventCaptureButton('XML', false);
   generateStrategy = new EventCaptureButton('Generar Estrategia');

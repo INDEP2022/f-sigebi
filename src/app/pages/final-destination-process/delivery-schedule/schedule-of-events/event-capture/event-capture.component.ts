@@ -28,6 +28,7 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
+import { minDate } from 'src/app/common/validations/date.validators';
 import {
   IHistoryProcesdingAct,
   IPAAbrirActasPrograma,
@@ -248,8 +249,8 @@ export class EventCaptureComponent
   gInitialDate: Date;
   gFinalDate: Date;
 
-  startDateCtrl = new FormControl(null);
-  endDateCtrl = new FormControl(null);
+  startDateCtrl = new FormControl<Date>(null, minDate(new Date()));
+  endDateCtrl = new FormControl<Date>(null);
 
   constructor(
     private fb: FormBuilder,
@@ -457,6 +458,20 @@ export class EventCaptureComponent
       },
     });
   }
+
+  changeStartDate(start: Date) {
+    if (start) {
+      this.endDateCtrl.addValidators(minDate(start));
+    } else {
+      this.endDateCtrl.clearValidators();
+    }
+  }
+
+  changeEndDate(end: Date) {
+    console.log(end);
+  }
+
+  validateDates(start: Date, end: Date) {}
 
   ngAfterContentInit(): void {
     console.log(this.itemsElements);
