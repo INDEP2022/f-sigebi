@@ -309,7 +309,11 @@ export abstract class ScheduledMaintenance extends BasePageWidhtDinamicFiltersEx
     }
 
     if (statusEvento && statusEvento !== 'TODOS') {
-      this.filterParams.addFilter('statusProceedings', statusEvento);
+      this.filterParams.addFilter(
+        'statusProceedings',
+        statusEvento,
+        SearchFilter.ILIKE
+      );
     }
 
     if (rangeDate) {

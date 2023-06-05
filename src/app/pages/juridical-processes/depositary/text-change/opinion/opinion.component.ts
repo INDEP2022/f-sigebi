@@ -43,8 +43,8 @@ import { BankAccount } from 'src/app/pages/administrative-processes/numerary/tes
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import Swal from 'sweetalert2';
 import { ModalComponent } from '../modal/modal-component';
-import { tablaModalComponent } from '../tabla-modal/tablaModal-component';
 import { EXTERNOS_COLUMS } from '../tabla-modal/tableUserExt';
+import { TablaOficioModalComponent } from '../tabla-oficio-modal/tabla-oficio-modal.component';
 
 @Component({
   selector: 'app-opinion',
@@ -257,7 +257,7 @@ Obtiene los filtros y en base a ellos se hace la búsqueda
         this.filterParamsLocal
           .getValue()
           .addFilter(
-            'numberOfDicta',
+            'id',
             this.form.get('registerNumber').value,
             SearchFilter.EQ
           );
@@ -295,7 +295,7 @@ Obtiene los filtros y en base a ellos se hace la búsqueda
           .addFilter(
             'passOfficeArmy',
             this.form.get('key').value,
-            SearchFilter.EQ
+            SearchFilter.ILIKE
           );
       }
     }
@@ -337,10 +337,10 @@ Obtiene los filtros y en base a ellos se hace la búsqueda
       .findByIdsOficNum(filterParams.getValue().getParams())
       .subscribe({
         next: resp => {
-          console.log('onEnterSearch => ' + JSON.stringify(resp));
+          console.log('onEnterSearch => ', resp);
 
           if (resp.count > 1) {
-            this.loadModal(true, filterParams);
+            this.loadModal(2, filterParams);
           } else {
             this.intIDictation = resp.data[0];
 
@@ -377,22 +377,20 @@ Obtiene los filtros y en base a ellos se hace la búsqueda
       });
   }
 
-  loadModal(resp: boolean, filterParams: BehaviorSubject<FilterParams>) {
+  loadModal(resp: number, filterParams: BehaviorSubject<FilterParams>) {
     this.openModal(resp, filterParams);
   }
 
   //false dictamen true oficio
-  openModal(
-    OficioOrdictamen: boolean,
-    filterParamsOficio: BehaviorSubject<FilterParams>
-  ) {
+  openModal(status: number, OficioOrdictamen: BehaviorSubject<FilterParams>) {
+    console.log('MODAL 2=> ' + status);
     const modalConfig = {
       ...MODAL_CONFIG,
       class: 'modal-lg modal-dialog-centered',
     };
     modalConfig.initialState = {
+      status,
       OficioOrdictamen,
-      filterParamsOficio,
       callback: (next: any) => {
         const data = JSON.parse(JSON.stringify(next));
 
@@ -409,7 +407,7 @@ Obtiene los filtros y en base a ellos se hace la búsqueda
         this.getPersonaExt_Int('data => ', data);
       },
     };
-    this.modalService.show(tablaModalComponent, modalConfig);
+    this.modalService.show(TablaOficioModalComponent, modalConfig);
   }
 
   //#################################################################################
@@ -503,7 +501,7 @@ carga la  información de la parte media de la página
           //this.dataExt = resp.data;
         },
         error: errror => {
-          this.onLoadToast('info', 'Registro', 'No se obtuvo información');
+          // this.onLoadToast('info', 'Registro', 'No se obtuvo información');
           console.log('error', 'Error', errror.error.message);
           // this.onLoadToast('error', 'Error', errror.error.message);
         },
@@ -595,8 +593,34 @@ carga la  información de la parte media de la página
       }),
       tap(response => {
         this.users$$ = new DefaultSelect(response.data, response.count);
+        this.getDescUserPuesto2(response.data[0].positionKey);
       })
     );
+  }
+
+  getDescUserPuesto2(event: any) {
+    this.dynamicCatalogsService.getPuestovalue(event).subscribe({
+      next: resp => {
+        console.log('AQUI', resp);
+        // alert('  getDescUserPuesto ' + resp.data.value);
+        this.form.get('charge').setValue(resp.data.value);
+      },
+      error: err => {
+        let error = '';
+        // if (err.status === 0) {
+        //   error = 'Revise su conexión de Internet.';
+        // } else {
+        //   error = err.message;
+        // }
+        // if (err.message.indexOf('registros') !== -1) {
+        //   this.alert('warning',
+        //     'No se encontró el puesto del usuario', err.message,
+        //   );
+        // }
+        console.log(error);
+        console.log('error Error  =>  ' + error);
+      },
+    });
   }
 
   usersExt($params: ListParams) {
@@ -623,22 +647,32 @@ carga la  información de la parte media de la página
     método para actualizar el dictamen en la parte del body
 =======================================================================*/
 
-  updateDictamen() {
+  async updateDictamen() {
     let actulizacion = '';
     let errorBusqueda = '';
-
-    let ofis: Partial<IOfficialDictation> = this.getDatosToUpdateDictamenBody(
-      this.form
-    );
-
-    console.log(' insert =>  ' + JSON.stringify(ofis));
-    this.oficialDictationService.update(ofis).subscribe({
+    console.log('this.form', this.form);
+    let ofis: any = await this.getDatosToUpdateDictamenBody(this.form);
+    let f = this.form;
+    let obj = {
+      officialNumber: f.value.numberDictamination,
+      typeDict: f.value.addressee_I,
+      text1: f.value.paragraphInitial,
+      text2: f.value.paragraphFinish,
+      sender: f.value.senderUserRemitente,
+      desSenderPa: f.value.addressee,
+      text3: f.value.paragraphOptional,
+      text2To: f.value.masInfo_1,
+      cveChargeRem: f.value.valueCharge,
+      addressee: f.value.addressee,
+    };
+    console.log(' insert =>  ' + ofis);
+    this.oficialDictationService.update(obj).subscribe({
       next: resp => {
         actulizacion = actulizacion + ' Se actualizo';
       },
       error: err => {
         if (err.message.indexOf('registros') !== -1) {
-          this.onLoadToast('error', 'Error 1 ', err.message);
+          // this.onLoadToast('error', 'Error 1 ', err.message);
         }
 
         //this.onLoadToast('info', 'Registro', 'No se obtuvo información');
@@ -647,24 +681,23 @@ carga la  información de la parte media de la página
       },
     });
 
-    let data: IJobDictumTexts = this.getDatosToUpdateDictamenBodyText(
+    let data: IJobDictumTexts = await this.getDatosToUpdateDictamenBodyText(
       this.form
     );
 
     this.jobDictumTextsServices.update(data).subscribe({
       next: resp => {
         actulizacion = actulizacion + ' Se actualizo';
-
         // this.onLoadToast('success', 'success', resp.message[0]);
       },
       error: err => {
         this.insertTextos(data);
         if (err.message.indexOf('registros') !== -1) {
-          this.onLoadToast('error', 'Error 1 ', err.message);
+          // this.onLoadToast('error', 'Error 1 ', err.message);
         }
       },
     });
-    Swal.fire('Se actualizo de manera correcta', '', 'success');
+    this.alert('success', 'Se actualizaron los datos correctamente', '');
 
     // this.onLoadToast('info', 'Actualización', actulizacion);
 
@@ -698,6 +731,58 @@ carga la  información de la parte media de la página
         this.insertCopies(obj); 
       },
     });*/
+  }
+
+  async updateDictamen2() {
+    let actulizacion = '';
+    let errorBusqueda = '';
+    console.log('this.form', this.form);
+    let ofis: any = await this.getDatosToUpdateDictamenBody(this.form);
+    let f = this.form;
+    let obj = {
+      officialNumber: f.value.numberDictamination,
+      typeDict: f.value.addressee_I,
+      text1: f.value.paragraphInitial,
+      text2: f.value.paragraphFinish,
+      sender: f.value.senderUserRemitente,
+      desSenderPa: f.value.addressee,
+      text3: f.value.paragraphOptional,
+      text2To: f.value.masInfo_1,
+      cveChargeRem: f.value.valueCharge,
+      addressee: f.value.addressee,
+    };
+    console.log(' insert =>  ' + ofis);
+    this.oficialDictationService.update(obj).subscribe({
+      next: resp => {
+        actulizacion = actulizacion + ' Se actualizo';
+      },
+      error: err => {
+        if (err.message.indexOf('registros') !== -1) {
+          // this.onLoadToast('error', 'Error 1 ', err.message);
+        }
+
+        //this.onLoadToast('info', 'Registro', 'No se obtuvo información');
+        console.log('error', 'Error', err.error.message);
+        // this.onLoadToast('error', 'Error', err.error.message);
+      },
+    });
+
+    let data: IJobDictumTexts = await this.getDatosToUpdateDictamenBodyText(
+      this.form
+    );
+
+    this.jobDictumTextsServices.update(data).subscribe({
+      next: resp => {
+        actulizacion = actulizacion + ' Se actualizo';
+        // this.onLoadToast('success', 'success', resp.message[0]);
+      },
+      error: err => {
+        this.insertTextos(data);
+        if (err.message.indexOf('registros') !== -1) {
+          // this.onLoadToast('error', 'Error 1 ', err.message);
+        }
+      },
+    });
   }
 
   insertCopies(obj: any) {
@@ -743,7 +828,7 @@ carga la  información de la parte media de la página
     método para actualizar el dictamen y  la parte de inicio 
 =======================================================================*/
 
-  getDatosToUpdateDictamenBody(f: FormGroup) {
+  async getDatosToUpdateDictamenBody(f: FormGroup) {
     return {
       officialNumber: f.value.numberDictamination,
       typeDict: f.value.addressee_I,
@@ -753,6 +838,7 @@ carga la  información de la parte media de la página
       desSenderPa: f.value.addressee,
       text3: f.value.paragraphOptional,
       text2To: f.value.masInfo_1,
+      addressee: f.value.addressee,
       cveChargeRem: f.value.valueCharge,
     };
   }
@@ -811,8 +897,9 @@ carga la  información de la parte media de la página
   /*====================================================================
              método para mandar a llamar el reporte
 =======================================================================*/
-  public confirm() {
-    this.reporteExterno();
+  async confirm() {
+    await this.updateDictamen2();
+    await this.reporteExterno();
     /*
     if(this.tipoReporteImpresion==="EXTERNO"){
       
@@ -821,10 +908,184 @@ carga la  información de la parte media de la página
     }*/
   }
 
-  reporteExterno() {
+  async reporteExterno() {
+    console.log('AASD', this.form.value);
+    // IF: VARIABLES.IDENTI LIKE '%A%' AND: DICTAMINACIONES.TIPO_DICTAMINACION<> 'ABANDONO' THEN
+    // IF: DICTAMINACIONES.TIPO_DICTAMINACION = 'PROCEDENCIA'THEN
+    // Add_Parameter(pl_id, 'NOME_DICTPRO', TEXT_PARAMETER, vCLAVE_ARMADA);
+    //  	  END IF;
+    // Run_Product(REPORTS, '..\reportes\RGENADBDICTAMASIV', ASYNCHRONOUS, RUNTIME, FILESYSTEM, pl_id, NULL);
+    //  END IF;
+
+    // IF: VARIABLES.IDENTI LIKE '%T%' AND: DICTAMINACIONES.TIPO_DICTAMINACION<> 'ABANDONO' THEN
+    // IF: DICTAMINACIONES.TIPO_DICTAMINACION = 'PROCEDENCIA'THEN
+    // Add_Parameter(pl_id, 'NOME_DICTPRO', TEXT_PARAMETER, vCLAVE_ARMADA);
+    //  	  END IF;
+    // Run_Product(REPORTS, '..\reportes\RGENADBDICTAMASIV', ASYNCHRONOUS, RUNTIME, FILESYSTEM, pl_id, NULL);
+    //  END IF;
+    let VARIABLES = '';
+    let valor1 = VARIABLES.includes('4');
+    // REPORTE PROCEDENCIA 1 //
+    if (valor1 == true && this.form.value.typeDict == 'PROCEDENCIA') {
+      this.reporteProcedencia1(this.form.value);
+      this.alert('success', 'bien', '');
+    }
+
+    let valor2 = VARIABLES.includes('4');
+    // REPORTE PROCEDENCIA 2 //
+    if (valor2 == true && this.form.value.typeDict != 'PROCEDENCIA') {
+      this.reporteProcedencia2(this.form.value);
+      this.alert('success', 'bien', '');
+    }
+
+    let valor3 = VARIABLES.includes('A');
+    // REPORTE PROCEDENCIA 3 //
+    if (valor3 == true && this.form.value.typeDict != 'ABANDONO') {
+      if (this.form.value.typeDict != 'PROCEDENCIA') {
+        this.reporteProcedencia3(this.form.value);
+      }
+    }
+
+    let valor4 = VARIABLES.includes('T');
+    // REPORTE PROCEDENCIA 4 //
+    if (valor4 == true && this.form.value.typeDict != 'ABANDONO') {
+      if (this.form.value.typeDict != 'PROCEDENCIA') {
+        this.reporteProcedencia3(this.form.value);
+      }
+    }
+    // REPORTE ABANDONO //
+    if (this.form.value.typeDict == 'ABANDONO') {
+      this.reporteAbandono(this.form.value);
+    }
     const params = {
       PNOOFICIO: this.form.get('registerNumber').value,
       PTIPODIC: this.form.get('addressee_I').value,
+    };
+  }
+
+  reporteProcedencia1(data: any) {
+    // REPORTE NO EXISTE //
+    let params = {
+      PDEPARTAMENTO: data.registerNumber,
+      PELABORO_DICTA: data.typeDict,
+      POFICIO: data,
+      PESTADODICT: data,
+      PDICTAMEN: data,
+    };
+
+    this.siabServiceReport
+      .fetchReport('RGENADBDICTAMASIV_EXT', params)
+      .subscribe({
+        next: response => {
+          const blob = new Blob([response], { type: 'application/pdf' });
+          const url = URL.createObjectURL(blob);
+          let config = {
+            initialState: {
+              documento: {
+                urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                type: 'pdf',
+              },
+            },
+            class: 'modal-lg modal-dialog-centered',
+            ignoreBackdropClick: true,
+          };
+          this.modalService.show(PreviewDocumentsComponent, config);
+        },
+      });
+    this.onLoadToast('success', 'Reporte Generado', '');
+  }
+
+  reporteProcedencia2(data: any) {
+    let params = {
+      PDEPARTAMENTO: data.registerNumber,
+      PELABORO_DICTA: data.typeDict,
+      POFICIO: data,
+      PESTADODICT: data,
+      PDICTAMEN: data,
+    };
+
+    this.siabServiceReport.fetchReport('RGENADBDICTAMASIV', params).subscribe({
+      next: response => {
+        const blob = new Blob([response], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+        let config = {
+          initialState: {
+            documento: {
+              urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+              type: 'pdf',
+            },
+          },
+          class: 'modal-lg modal-dialog-centered',
+          ignoreBackdropClick: true,
+        };
+        this.modalService.show(PreviewDocumentsComponent, config);
+      },
+    });
+    this.onLoadToast('success', 'Reporte Generado', '');
+  }
+
+  reporteProcedencia3(data: any) {
+    let params = {
+      PDEPARTAMENTO: data.registerNumber,
+      PELABORO_DICTA: data.typeDict,
+      POFICIO: data,
+      PESTADODICT: data,
+      PDICTAMEN: data,
+    };
+
+    this.siabServiceReport.fetchReport('RGENADBDICTAMASIV', params).subscribe({
+      next: response => {
+        const blob = new Blob([response], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+        let config = {
+          initialState: {
+            documento: {
+              urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+              type: 'pdf',
+            },
+          },
+          class: 'modal-lg modal-dialog-centered',
+          ignoreBackdropClick: true,
+        };
+        this.modalService.show(PreviewDocumentsComponent, config);
+      },
+    });
+    this.onLoadToast('success', 'Reporte Generado', '');
+  }
+
+  reporteProcedencia4(data: any) {
+    let params = {
+      PDEPARTAMENTO: data.registerNumber,
+      PELABORO_DICTA: data.typeDict,
+      POFICIO: data,
+      PESTADODICT: data,
+      PDICTAMEN: data,
+    };
+
+    this.siabServiceReport.fetchReport('RGENADBDICTAMASIV', params).subscribe({
+      next: response => {
+        const blob = new Blob([response], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+        let config = {
+          initialState: {
+            documento: {
+              urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+              type: 'pdf',
+            },
+          },
+          class: 'modal-lg modal-dialog-centered',
+          ignoreBackdropClick: true,
+        };
+        this.modalService.show(PreviewDocumentsComponent, config);
+      },
+    });
+    this.onLoadToast('success', 'Reporte Generado', '');
+  }
+
+  reporteAbandono(data: any) {
+    let params = {
+      PNOOFICIO: data.registerNumber,
+      PTIPODIC: data.typeDict,
     };
 
     this.siabServiceReport.fetchReport('RGENABANDEC', params).subscribe({
@@ -844,6 +1105,7 @@ carga la  información de la parte media de la página
         this.modalService.show(PreviewDocumentsComponent, config);
       },
     });
+    this.onLoadToast('success', 'Reporte Generado', '');
   }
 
   reporteInterno() {
@@ -959,14 +1221,14 @@ carga la  información de la parte media de la página
     this.dataExt = [];
     this.dictationService_1.createPersonExt(data).subscribe({
       next: resp => {
-        Swal.fire('Se guardo de manera correcta', '', 'success');
+        this.alert('success', 'Se guardó de manera correcta', '');
         this.refreshTabla();
       },
       error: err => {
-        if (err.message.indexOf('registros') !== -1) {
-          this.onLoadToast('error', 'Error 1 ', err.message);
-        }
-        console.log('Error ' + err);
+        // if (err.message.indexOf('registros') !== -1) {
+        this.onLoadToast('error', 'Error al guardar', err.message);
+        //
+        // console.log('Error ' + err);
         // this.onLoadToast('info', 'Registro', 'No se obtuvo información');
 
         console.log('error', 'Error', err.error.message);
@@ -987,7 +1249,6 @@ carga la  información de la parte media de la página
     ).then(question => {
       if (question.isConfirmed) {
         this.deleteExterno(legend.id);
-        Swal.fire('Borrado', '', 'success');
       }
     });
   }
@@ -998,6 +1259,7 @@ carga la  información de la parte media de la página
     };
     this.dictationService.deleteCopiesdictamenetOfficialOpinion(idd).subscribe({
       next: resp => {
+        this.alert('success', 'Dato eliminado correctamente', '');
         this.extPerson.removeAt(id);
         this.refreshTabla();
       },
@@ -1063,6 +1325,7 @@ carga la  información de la parte media de la página
       .findUserByOficNum(this.filterParams.getValue().getParams())
       .subscribe({
         next: resp => {
+          console.log('RESP', resp);
           this.dataExt = resp.data.map((data: any) => this.usuariosCCP(data));
 
           console.log('refreshTabla() => ' + JSON.stringify(this.dataExt));
