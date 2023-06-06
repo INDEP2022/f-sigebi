@@ -41,7 +41,6 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import {
   KEYGENERATION_PATTERN,
   NUMBERS_PATTERN,
-  STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
 import { BankAccount } from 'src/app/pages/administrative-processes/numerary/tesofe-movements/list-banks/bank';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -100,7 +99,7 @@ export class OpinionComponent extends BasePage implements OnInit, OnChanges {
   copyDestinationNumber: number;
   idCopias: number;
   year: number;
-
+  SPECIAL_STRINGPATTERN: '[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ/s.,-()Üü“”;:]*';
   constructor(
     private fb: FormBuilder,
     private oficialDictationService: OficialDictationService,
@@ -166,7 +165,7 @@ export class OpinionComponent extends BasePage implements OnInit, OnChanges {
       ],
       registerNumber: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(11)],
+        [Validators.pattern(NUMBERS_PATTERN), Validators.maxLength(11)],
       ],
       wheelNumber: [
         null,
@@ -174,43 +173,73 @@ export class OpinionComponent extends BasePage implements OnInit, OnChanges {
       ],
       typeDict: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
+        [
+          Validators.pattern(this.SPECIAL_STRINGPATTERN),
+          Validators.maxLength(4000),
+        ],
       ],
       cve_banco: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
+        [
+          Validators.pattern(this.SPECIAL_STRINGPATTERN),
+          Validators.maxLength(4000),
+        ],
       ],
       charge: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
+        [
+          Validators.pattern(this.SPECIAL_STRINGPATTERN),
+          Validators.maxLength(4000),
+        ],
       ],
       senderUserRemitente: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
+        [
+          Validators.pattern(this.SPECIAL_STRINGPATTERN),
+          Validators.maxLength(4000),
+        ],
       ],
       addressee: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
+        [
+          Validators.pattern(this.SPECIAL_STRINGPATTERN),
+          Validators.maxLength(4000),
+        ],
       ],
       typeDict_: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
+        [
+          Validators.pattern(this.SPECIAL_STRINGPATTERN),
+          Validators.maxLength(4000),
+        ],
       ],
       paragraphInitial: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
+        [
+          Validators.pattern(this.SPECIAL_STRINGPATTERN),
+          Validators.maxLength(4000),
+        ],
       ],
       paragraphFinish: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
+        [
+          Validators.pattern(this.SPECIAL_STRINGPATTERN),
+          Validators.maxLength(4000),
+        ],
       ],
       paragraphOptional: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
+        [
+          Validators.pattern(this.SPECIAL_STRINGPATTERN),
+          Validators.maxLength(4000),
+        ],
       ],
       descriptionSender: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
+        [
+          Validators.pattern(this.SPECIAL_STRINGPATTERN),
+          Validators.maxLength(4000),
+        ],
       ] /*
     typePerson: [null, null],
     senderUser: [null, null],
@@ -225,23 +254,38 @@ export class OpinionComponent extends BasePage implements OnInit, OnChanges {
       ],
       masInfo_1: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
+        [
+          Validators.pattern(this.SPECIAL_STRINGPATTERN),
+          Validators.maxLength(4000),
+        ],
       ],
       masInfo_2: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
+        [
+          Validators.pattern(this.SPECIAL_STRINGPATTERN),
+          Validators.maxLength(4000),
+        ],
       ],
       masInfo_3: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
+        [
+          Validators.pattern(this.SPECIAL_STRINGPATTERN),
+          Validators.maxLength(4000),
+        ],
       ],
       masInfo_1_1: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
+        [
+          Validators.pattern(this.SPECIAL_STRINGPATTERN),
+          Validators.maxLength(4000),
+        ],
       ],
       masInfo_1_2: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
+        [
+          Validators.pattern(this.SPECIAL_STRINGPATTERN),
+          Validators.maxLength(4000),
+        ],
       ],
       extPerson: this.fb.array([]),
     });
