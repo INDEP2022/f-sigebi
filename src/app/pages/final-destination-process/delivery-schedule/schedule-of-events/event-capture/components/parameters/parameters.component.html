@@ -30,6 +30,7 @@
       label="Volante">
       <input
         type="number"
+        min="1"
         [max-length]="2000"
         class="form-control"
         formControlName="flyer" />
@@ -83,6 +84,7 @@
       label="Expediente">
       <input
         type="number"
+        min="1"
         [max-length]="2000"
         class="form-control"
         formControlName="expedient" />
@@ -127,7 +129,7 @@
         [searchable]="false"
         [form]="formSiab"
         bindLabel="description"
-        label="Delegación"
+        label="Delegación(es)"
         control="delegation">
       </ngx-select>
     </form-field>
@@ -147,7 +149,7 @@
         [searchOnInit]="true"
         value="id"
         bindLabel="nameTransferent"
-        label="Transferente"
+        label="Transferente(s)"
         control="transfer">
       </ngx-select>
     </form-field>
@@ -165,7 +167,7 @@
         [form]="formSiab"
         value="id"
         bindLabel="stationName"
-        label="Emisora"
+        label="Emisora(s)"
         control="transmitter">
       </ngx-select>
     </form-field>
@@ -182,7 +184,7 @@
         [fetchByList]="false"
         value="idAuthority"
         bindLabel="authorityName"
-        label="Autoridad"
+        label="Autoridad(es)"
         control="authority">
       </ngx-select>
     </form-field>
