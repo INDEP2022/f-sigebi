@@ -14,7 +14,7 @@ export const TYPERELEVANT_COLUMS = {
     type: 'number',
     sort: false,
   },
-  noPhotography: {
+  numberPhotography: {
     title: 'Numero de fotografía',
     type: 'number',
     sort: false,
