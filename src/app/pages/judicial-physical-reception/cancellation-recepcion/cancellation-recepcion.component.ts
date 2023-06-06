@@ -1126,6 +1126,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
         this.form.get('elabora').setValue(dataRes.witness2);
         this.form.get('testigo').setValue(dataRes.comptrollerWitness);
         this.form.get('statusProceeding').setValue(dataRes.statusProceedings);
+        this.form.get('folioEscaneo').setValue(dataRes.universalFolio)
         if (this.form.get('statusProceeding').value === 'ABIERTA') {
           this.labelActa = 'Cerrar acta';
           this.btnCSSAct = 'btn-primary';
@@ -1167,6 +1168,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
         this.form.get('elabora').setValue(dataRes.witness2);
         this.form.get('testigo').setValue(dataRes.comptrollerWitness);
         this.form.get('statusProceeding').setValue(dataRes.statusProceedings);
+        this.form.get('folioEscaneo').setValue(dataRes.universalFolio)
         if (this.form.get('statusProceeding').value === 'ABIERTA') {
           this.labelActa = 'Cerrar acta';
           this.btnCSSAct = 'btn-primary';
@@ -1543,6 +1545,8 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                                 numberProceedings: data.id,
                                 numberGood: this.selectData.id,
                                 amount: this.selectData.quantity,
+                                exchangeValue: 1,
+                  received: 'S',
                                 approvedUserXAdmon:
                                   localStorage.getItem('username') ==
                                   'sigebiadmon'
@@ -2641,6 +2645,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                         'El acta fue cerrada'
                       );
                       this.inputsInProceedingClose();
+                      this.getGoodsActFn()
                     },
                     err => {
                       console.log(err);
@@ -2664,7 +2669,9 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
         );
       } else {
         const paramsF = new FilterParams();
-        const tipoAct = 'DXCV';
+        const splitActa = this.form.get('acta2').value.split('/');
+              const tipoAct =
+                splitActa[0] === 'C' ? 'RECEPCAN' : 'SUSPENSION';
 
         paramsF.addFilter('keysProceedings', this.form.get('acta2').value);
         this.serviceProcVal.getByFilter(paramsF.getParams()).subscribe(res => {
@@ -2768,6 +2775,12 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                                 P_FECHA_RE_FIS:
                                   this.form.get('fecCierreActa').value,
                                 P_TIPO_ACTA: tipoAct,
+                                usuario: localStorage.getItem('username') ==
+                                'sigebiadmon'
+                                  ? localStorage.getItem('username')
+                                  : localStorage
+                                      .getItem('username')
+                                      .toLocaleUpperCase()
                               };
                               this.serviceProgrammingGood
                                 .paChangeStatus(model)
@@ -2775,7 +2788,6 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                                   console.log(res);
                                   const modelEdit: IProccedingsDeliveryReception =
                                     {
-                                      statusProceedings: 'CERRADA',
                                       comptrollerWitness:
                                         this.form.get('testigo').value,
                                       observations:
@@ -2797,6 +2809,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                                         this.labelActa = 'Abrir acta';
                                         this.btnCSSAct = 'btn-success';
                                         this.idProceeding = idProceed;
+                                        this.getGoodsActFn()
                                         this.alert(
                                           'success',
                                           'Acta cerrada',
