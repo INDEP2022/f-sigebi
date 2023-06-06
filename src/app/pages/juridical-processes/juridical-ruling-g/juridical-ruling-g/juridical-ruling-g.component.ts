@@ -33,10 +33,12 @@ import { IGoodSubType } from 'src/app/core/models/catalogs/good-subtype.model';
 import { IGoodType } from 'src/app/core/models/catalogs/good-type.model';
 import { IGoodsSubtype } from 'src/app/core/models/catalogs/goods-subtype.model';
 import { IDocuments } from 'src/app/core/models/ms-documents/documents';
+import { IDocumentsDictumXStateM } from 'src/app/core/models/ms-documents/documents-dictum-x-state-m';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { IManagementArea } from 'src/app/core/models/ms-proceduremanagement/ms-proceduremanagement.interface';
 import { ISegUsers } from 'src/app/core/models/ms-users/seg-users-model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { DocumentsDictumStatetMService } from 'src/app/core/services/catalogs/documents-dictum-state-m.service';
 import { GoodSssubtypeService } from 'src/app/core/services/catalogs/good-sssubtype.service';
 import { GoodSsubtypeService } from 'src/app/core/services/catalogs/good-ssubtype.service';
 import { GoodSubtypeService } from 'src/app/core/services/catalogs/good-subtype.service';
@@ -55,6 +57,7 @@ import {
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { DatePickerElementComponent } from 'src/app/shared/components/datepicker-element-smarttable/datepicker.component';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { environment } from 'src/environments/environment';
 import Swal from 'sweetalert2';
 import { TempGood } from './dataTemp';
 
@@ -93,6 +96,7 @@ export class JuridicalRulingGComponent
   label: string = '';
   idGoodSelected = 0;
   @ViewChild('cveOficio', { static: true }) cveOficio: ElementRef;
+  goodData: IGood;
 
   //tipos
   types = new DefaultSelect<Partial<IGoodType>>();
@@ -338,7 +342,8 @@ export class JuridicalRulingGComponent
     private applicationGoodsQueryService: ApplicationGoodsQueryService,
     private datePipe: DatePipe,
     private router: Router,
-    private usersService: UsersService
+    private usersService: UsersService,
+    private documentsDictumStatetMService: DocumentsDictumStatetMService
   ) {
     super();
   }
@@ -999,11 +1004,31 @@ export class JuridicalRulingGComponent
       });
   }
 
-  rowSelected(e: any) {
+  selectRow(e: any) {
     if (e) {
       this.idGoodSelected = e.data?.id;
       this.onLoadDocumentsByGood();
     }
+    console.log('Información del bien seleccionado', e.data);
+  }
+
+  documentsDictumXStateMList: IDocumentsDictumXStateM[] = [];
+  totalItems2: number = 0;
+  params2 = new BehaviorSubject<ListParams>(new ListParams());
+  loading2 = this.loading;
+  rowsSelected(event: any) {
+    const idGood = { ...this.goodData };
+    this.totalItems2 = 0;
+    this.documentsDictumXStateMList = [];
+    this.goodData = event.data;
+    console.log('Información del bien seleccionado rowsSelected', event.data);
+    this.params2
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getDocumentDicXStateM(idGood.id));
+  }
+
+  getDocumentDicXStateM(id?: number) {
+    this.loading2 = true;
   }
 
   onLoadDocumentsByGood() {
@@ -1117,7 +1142,7 @@ export class JuridicalRulingGComponent
 
   async checkout1(object: object) {
     let response = await fetch(
-      'http://sigebimsdev.indep.gob.mx/dictation/api/v1/application/factjurdictamasDeleteDisctp1',
+      `${environment.API_URL}dictation/api/v1/application/factjurdictamasDeleteDisctp1`,
       {
         headers: { 'content-type': 'application/json' },
         method: 'POST',
@@ -1129,7 +1154,7 @@ export class JuridicalRulingGComponent
 
   async checkout2(object: object) {
     let response = await fetch(
-      'http://sigebimsdev.indep.gob.mx/dictation/api/v1/application/factjurdictamasDeleteDisctp2',
+      `${environment.API_URL}dictation/api/v1/application/factjurdictamasDeleteDisctp2`,
       {
         headers: { 'content-type': 'application/json' },
         method: 'POST',
@@ -1141,7 +1166,7 @@ export class JuridicalRulingGComponent
 
   async checkout3(object: object) {
     let response = await fetch(
-      'http://sigebimsdev.indep.gob.mx/dictation/api/v1/application/factjurdictamasDeleteDisctp3',
+      `${environment.API_URL}dictation/api/v1/application/factjurdictamasDeleteDisctp3`,
       {
         headers: { 'content-type': 'application/json' },
         method: 'POST',
@@ -1153,7 +1178,7 @@ export class JuridicalRulingGComponent
 
   async loadExpedientInfo(id: number | string) {
     const response = await fetch(
-      'http://sigebimsdev.indep.gob.mx/dictation/api/v1/dictation?filter.expedientNumber=' +
+      `${environment.API_URL}dictation/api/v1/dictation?filter.expedientNumber=` +
         id,
       {
         method: 'GET',

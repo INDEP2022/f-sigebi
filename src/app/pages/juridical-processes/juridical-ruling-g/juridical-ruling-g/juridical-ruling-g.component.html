@@ -380,7 +380,8 @@
         <ng2-smart-table
           [attr.class]="'table-bordered'"
           [settings]="settings2"
-          (rowSelect)="rowSelected($event)"
+          (rowSelect)="selectRow($event)"
+          (userRowSelect)="rowsSelected($event)"
           [source]="goodsValid"></ng2-smart-table>
       </div>
     </div>
@@ -407,7 +408,7 @@
       </form> -->
       <!--  -->
 
-      <!--  -->
+      <!-- Henry  -->
       <div class="col-8 pt-2">
         <div class="col-md-12">
           <hr class="row" />
