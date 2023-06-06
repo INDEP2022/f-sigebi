@@ -280,13 +280,46 @@ export class OfficeComponent extends BasePage implements OnInit {
           SearchFilter.EQ
         );
     } else {
+      // Obtener la fecha actual
+      const fechaActual = new Date();
+
+      // Obtener el primer día del mes actual
+      const primerDiaDelMes = new Date(
+        fechaActual.getFullYear(),
+        fechaActual.getMonth(),
+        1
+      );
+
+      // Obtener el último día del mes actual
+      const ultimoDiaDelMes = new Date(
+        fechaActual.getFullYear(),
+        fechaActual.getMonth() + 1,
+        0
+      );
+
+      // Formatear las fechas como cadenas de texto en formato ISO
+      const primerDiaDelMesString = primerDiaDelMes.toISOString().slice(0, 10);
+      const ultimoDiaDelMesString = ultimoDiaDelMes.toISOString().slice(0, 10);
+
+      // Mostrar los resultados
+      console.log('El primer día del mes es:', primerDiaDelMesString);
+      console.log('El último día del mes es:', ultimoDiaDelMesString);
+
       this.filterParamsLocal
         .getValue()
         .addFilter(
           'insertDate',
-          this.year + '-01-01' + ',' + this.year + '-12-31',
+          `${primerDiaDelMesString}','${ultimoDiaDelMesString}`,
           SearchFilter.BTW
         );
+
+      // this.filterParamsLocal
+      //   .getValue()
+      //   .addFilter(
+      //     'insertDate',
+      //     this.year + '-01-01' + ',' + this.year + '-12-31',
+      //     SearchFilter.BTW
+      //   );
 
       this.filterParamsLocal
         .getValue()
