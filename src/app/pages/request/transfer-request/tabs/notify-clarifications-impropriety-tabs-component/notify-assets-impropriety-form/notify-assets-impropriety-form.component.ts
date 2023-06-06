@@ -57,6 +57,7 @@ export class NotifyAssetsImproprietyFormComponent
   //Parámetro para detectar que tipo de aclaración es
   typeClarifications: any;
   idSolicitud: any;
+  delegationUser: any;
   constructor(
     private fb: FormBuilder,
     private modalRef: BsModalRef,
@@ -74,6 +75,7 @@ export class NotifyAssetsImproprietyFormComponent
 
   //dataDocumentsImpro: IClarificationDocumentsImpro;
   ngOnInit(): void {
+    console.log('Delegación de la solicitud', this.delegationUser);
     this.dictamenSeq();
     this.withDocumentation = this.idAclara === '1' ? true : false;
     this.initForm1();
@@ -92,22 +94,26 @@ export class NotifyAssetsImproprietyFormComponent
 
     this.clarificationForm = this.fb.group({
       addresseeName: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(50)],
-      ],
-
-      positionAddressee: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(50)],
-      ],
-
-      senderName: [
+        //Nombre Destinatario - Titular de la solicitud
         this.infoRequest?.nameOfOwner || null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(50)],
       ],
 
-      senderCharge: [
+      positionAddressee: [
+        //Cargo Destinatario - Titular de la solicitud
         this.infoRequest?.holderCharge || null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(50)],
+      ],
+
+      senderName: [
+        //Nombre Remitente - DELEGADO
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(50)],
+      ],
+
+      senderCharge: [
+        //Cargo Remitente - DELEGADO
+        null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(50)],
       ],
 
@@ -202,7 +208,7 @@ export class NotifyAssetsImproprietyFormComponent
     //Crear objeto para generar el reporte
     const modelReport: IClarificationDocumentsImpro = {
       clarification: this.clarificationForm.controls['clarification'].value,
-      sender: this.clarificationForm.controls['senderName'].value,
+      sender: this.clarificationForm.controls['senderName'].value, //Nombre Remitente - DELEGADO
       //foundation: ",",
       //id: 1, //ID primaria
       version: 1,
@@ -210,13 +216,14 @@ export class NotifyAssetsImproprietyFormComponent
       paragraphInitial:
         this.clarificationForm.controls['paragraphInitial'].value,
       applicationId: this.idRequest,
-      positionSender: this.clarificationForm.controls['senderCharge'].value,
+      positionSender: this.clarificationForm.controls['senderCharge'].value, //Cargo Remitente - DELEGADO
       paragraphFinal: this.clarificationForm.controls['paragraphFinal'].value,
       consistentIn: this.clarificationForm.controls['consistentIn'].value,
-      //managedTo: this.clarificationForm.controls['addresseeName'].value,
+      managedTo: this.infoRequest?.nameOfOwner, //Nombre Destinatario - Titular de la solicitud
       invoiceLearned: this.folioReporte,
       //invoiceNumber: 1,
-      //positionAddressee: this.clarificationForm.controls['positionAddressee'].value,
+      positionAddressee:
+        this.clarificationForm.controls['positionAddressee'].value, //Cargo Destinatario - Titular de la solicitud
       modificationDate: new Date(),
       creationUser: token.name,
       documentTypeId: '216',
@@ -253,7 +260,7 @@ export class NotifyAssetsImproprietyFormComponent
     //Crear objeto para generar el reporte
     const modelReport: IClarificationDocumentsImpro = {
       clarification: this.clarificationForm.controls['clarification'].value,
-      sender: this.clarificationForm.controls['senderName'].value,
+      sender: this.clarificationForm.controls['senderName'].value, //Nombre Remitente - DELEGADO
       //foundation: ",",
       //id: 1, //ID primaria
       version: 1,
@@ -261,13 +268,14 @@ export class NotifyAssetsImproprietyFormComponent
       paragraphInitial:
         this.clarificationForm.controls['paragraphInitial'].value,
       applicationId: this.idRequest,
-      positionSender: this.clarificationForm.controls['senderCharge'].value,
+      positionSender: this.clarificationForm.controls['senderCharge'].value, //Cargo Remitente - DELEGADO
       paragraphFinal: this.clarificationForm.controls['paragraphFinal'].value,
       consistentIn: this.clarificationForm.controls['consistentIn'].value,
-      //managedTo: this.clarificationForm.controls['addresseeName'].value,
+      managedTo: this.clarificationForm.controls['addresseeName'].value, //Nombre Destinatario - Titular de la solicitud
       invoiceLearned: this.folioReporte,
       //invoiceNumber: 1,
-      //positionAddressee: this.clarificationForm.controls['positionAddressee'].value,
+      positionAddressee:
+        this.clarificationForm.controls['positionAddressee'].value, //cargo Destinatario - Titular de la solicitud
       modificationDate: new Date(),
       creationUser: token.name,
       documentTypeId: '111',
@@ -304,7 +312,7 @@ export class NotifyAssetsImproprietyFormComponent
     //Crear objeto para generar el reporte
     const modelReport: IClarificationDocumentsImpro = {
       clarification: this.clarificationForm.controls['clarification'].value,
-      sender: this.clarificationForm.controls['senderName'].value,
+      sender: this.clarificationForm.controls['senderName'].value, //Nombre Remitente - DELEGADO
       //foundation: ",",
       //id: 1, //ID primaria
       version: 1,
@@ -312,13 +320,13 @@ export class NotifyAssetsImproprietyFormComponent
       paragraphInitial:
         this.clarificationForm.controls['paragraphInitial'].value,
       applicationId: this.idRequest,
-      positionSender: this.clarificationForm.controls['senderCharge'].value,
+      positionSender: this.clarificationForm.controls['senderCharge'].value, //Cargo Remitente - DELEGADO
       paragraphFinal: this.clarificationForm.controls['paragraphFinal'].value,
       consistentIn: this.clarificationForm.controls['observations'].value,
-      managedTo: this.infoRequest.nameOfOwner,
+      managedTo: this.infoRequest?.nameOfOwner, //Nombre destinatario - Titular de la solicitud
       invoiceLearned: this.folioReporte,
       //invoiceNumber: 1,
-      positionAddressee: this.infoRequest.holderCharge,
+      positionAddressee: this.infoRequest?.holderCharge, //Cargo destinatario - Titular de la solicitud
       modificationDate: new Date(),
       creationUser: token.name,
       documentTypeId: '212',
@@ -355,7 +363,7 @@ export class NotifyAssetsImproprietyFormComponent
     //Crear objeto para generar el reporte
     const modelReport: IClarificationDocumentsImpro = {
       clarification: this.clarificationForm.controls['clarification'].value,
-      sender: this.clarificationForm.controls['senderName'].value,
+      sender: this.clarificationForm.controls['senderName'].value, //Nombre Remitente - DELEGADO
       //foundation: ",",
       //id: 1, //ID primaria
       version: 1,
@@ -363,14 +371,14 @@ export class NotifyAssetsImproprietyFormComponent
       paragraphInitial:
         this.clarificationForm.controls['paragraphInitial'].value,
       applicationId: this.idRequest,
-      positionSender: this.clarificationForm.controls['senderCharge'].value,
+      positionSender: this.clarificationForm.controls['senderCharge'].value, //Cargo Remitente - DELEGADO
       paragraphFinal: this.clarificationForm.controls['paragraphFinal'].value,
       consistentIn: this.clarificationForm.controls['consistentIn'].value,
-      managedTo: this.clarificationForm.controls['addresseeName'].value,
+      managedTo: this.clarificationForm.controls['addresseeName'].value, //Nombre destinatario - Titular de la solicitud
       invoiceLearned: this.folioReporte,
       //invoiceNumber: 1,
       positionAddressee:
-        this.clarificationForm.controls['positionAddressee'].value,
+        this.clarificationForm.controls['positionAddressee'].value, //Cargo destinatario - Titular de la solicitud
       modificationDate: new Date(),
       creationUser: token.name,
       documentTypeId: '104',
@@ -407,7 +415,7 @@ export class NotifyAssetsImproprietyFormComponent
     //Crear objeto para generar el reporte
     const modelReport: IClarificationDocumentsImpro = {
       clarification: this.clarificationForm.controls['clarification'].value,
-      sender: this.clarificationForm.controls['senderName'].value,
+      sender: this.clarificationForm.controls['senderName'].value, //Nombre Remitente - DELEGADO
       //foundation: ",",
       //id: 1, //ID primaria
       version: 1,
@@ -415,14 +423,14 @@ export class NotifyAssetsImproprietyFormComponent
       paragraphInitial:
         this.clarificationForm.controls['paragraphInitial'].value,
       applicationId: this.idRequest,
-      positionSender: this.clarificationForm.controls['senderCharge'].value,
+      positionSender: this.clarificationForm.controls['senderCharge'].value, //Cargo Remitente - DELEGADO
       paragraphFinal: this.clarificationForm.controls['paragraphFinal'].value,
       consistentIn: this.clarificationForm.controls['consistentIn'].value,
-      managedTo: this.clarificationForm.controls['addresseeName'].value,
+      managedTo: this.clarificationForm.controls['addresseeName'].value, //Nombre destinatario - Titular de la solicitud
       invoiceLearned: this.folioReporte,
       //invoiceNumber: 1,
       positionAddressee:
-        this.clarificationForm.controls['positionAddressee'].value,
+        this.clarificationForm.controls['positionAddressee'].value, //Cargo destinatario - Titular de la solicitud
       modificationDate: new Date(),
       creationUser: token.name,
       documentTypeId: '211',
@@ -459,7 +467,7 @@ export class NotifyAssetsImproprietyFormComponent
     //Crear objeto para generar el reporte
     const modelReport: IClarificationDocumentsImpro = {
       clarification: this.clarificationForm.controls['clarification'].value,
-      sender: this.clarificationForm.controls['senderName'].value,
+      sender: this.clarificationForm.controls['senderName'].value, //Nombre Remitente - DELEGADO
       //foundation: ",",
       //id: 1, //ID primaria
       version: 1,
@@ -467,14 +475,14 @@ export class NotifyAssetsImproprietyFormComponent
       paragraphInitial:
         this.clarificationForm.controls['paragraphInitial'].value,
       applicationId: this.idRequest,
-      positionSender: this.clarificationForm.controls['senderCharge'].value,
+      positionSender: this.clarificationForm.controls['senderCharge'].value, //Cargo Remitente - DELEGADO
       paragraphFinal: this.clarificationForm.controls['paragraphFinal'].value,
       consistentIn: this.clarificationForm.controls['consistentIn'].value,
-      managedTo: this.clarificationForm.controls['addresseeName'].value,
+      managedTo: this.clarificationForm.controls['addresseeName'].value, //Nombre destinatario - Titular de la solicitud
       invoiceLearned: this.folioReporte,
       //invoiceNumber: 1,
       positionAddressee:
-        this.clarificationForm.controls['positionAddressee'].value,
+        this.clarificationForm.controls['positionAddressee'].value, //Cargo destinatario - Titular de la solicitud
       modificationDate: new Date(),
       creationUser: token.name,
       documentTypeId: '213',

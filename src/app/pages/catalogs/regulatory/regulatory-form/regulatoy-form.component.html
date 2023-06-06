@@ -7,12 +7,12 @@
       <div class="row">
         <div class="col-md-6">
           <form-field
-            [control]="form.get('id_fraccion')"
+            [control]="form.get('fractionId')"
             label="Id Fracci&oacute;n">
             <input
-              type="number"
+              type="text"
               class="form-control"
-              formControlName="id_fraccion" />
+              formControlName="fractionId" />
           </form-field>
         </div>
         <div class="col-md-6">
@@ -56,13 +56,14 @@
               formControlName="usuario_creacion" />
           </form-field>
         </div>
-        <div class="col-md-12">
+        <div *ngIf="!edit" class="col-md-12">
           <form-field
             [control]="form.get('fecha_creacion')"
             label="Fecha Creaci&oacute;n">
             <input
               type="date"
               class="form-control"
+              [(ngModel)]="fechaActual"
               formControlName="fecha_creacion" />
           </form-field>
         </div>
@@ -76,7 +77,7 @@
               formControlName="usuario_modificacion" />
           </form-field>
         </div>
-        <div class="col-md-12">
+        <div *ngIf="edit" class="col-md-12">
           <form-field
             [control]="form.get('fecha_modificacion')"
             label="Fecha Modificaci&oacute;n">

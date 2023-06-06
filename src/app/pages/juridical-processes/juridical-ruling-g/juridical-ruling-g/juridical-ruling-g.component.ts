@@ -33,10 +33,12 @@ import { IGoodSubType } from 'src/app/core/models/catalogs/good-subtype.model';
 import { IGoodType } from 'src/app/core/models/catalogs/good-type.model';
 import { IGoodsSubtype } from 'src/app/core/models/catalogs/goods-subtype.model';
 import { IDocuments } from 'src/app/core/models/ms-documents/documents';
+import { IDocumentsDictumXStateM } from 'src/app/core/models/ms-documents/documents-dictum-x-state-m';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { IManagementArea } from 'src/app/core/models/ms-proceduremanagement/ms-proceduremanagement.interface';
 import { ISegUsers } from 'src/app/core/models/ms-users/seg-users-model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { DocumentsDictumStatetMService } from 'src/app/core/services/catalogs/documents-dictum-state-m.service';
 import { GoodSssubtypeService } from 'src/app/core/services/catalogs/good-sssubtype.service';
 import { GoodSsubtypeService } from 'src/app/core/services/catalogs/good-ssubtype.service';
 import { GoodSubtypeService } from 'src/app/core/services/catalogs/good-subtype.service';
@@ -55,8 +57,10 @@ import {
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { DatePickerElementComponent } from 'src/app/shared/components/datepicker-element-smarttable/datepicker.component';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { environment } from 'src/environments/environment';
 import Swal from 'sweetalert2';
 import { TempGood } from './dataTemp';
+import { DOCUMENTS_COLUMNS } from './documents-columns';
 
 /** LIBRERÍAS EXTERNAS IMPORTS */
 
@@ -90,9 +94,10 @@ export class JuridicalRulingGComponent
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
   totalDocuments: number = 0;
-
+  label: string = '';
   idGoodSelected = 0;
   @ViewChild('cveOficio', { static: true }) cveOficio: ElementRef;
+  goodData: IGood;
 
   //tipos
   types = new DefaultSelect<Partial<IGoodType>>();
@@ -117,7 +122,7 @@ export class JuridicalRulingGComponent
   ident = new DefaultSelect(
     [
       { id: 'ASEGURADO', value: 'ASEGURADO' },
-      { id: 'TRANSFERENTE', value: 'TRANSFERENTE' },
+      { id: 'TRANS', value: 'TRANSFERENTE' },
     ],
     2
   );
@@ -146,6 +151,7 @@ export class JuridicalRulingGComponent
     pager: {
       display: false,
     },
+
     hideSubHeader: true,
     actions: false,
     selectedRowIndex: -1,
@@ -163,26 +169,32 @@ export class JuridicalRulingGComponent
           this.onGoodSelect(instance),
       },
       id: {
+        sort: false,
         title: 'No. Bien',
         type: 'number',
       },
       description: {
+        sort: false,
         title: 'Descripción',
         type: 'string',
       },
       quantity: {
+        sort: false,
         title: 'Cantidad',
         type: 'string',
       },
       identifier: {
+        sort: false,
         title: 'Ident.',
         type: 'string',
       },
       status: {
-        title: 'Estado',
+        sort: false,
+        title: 'Estatus',
         type: 'string',
       },
       processStatus: {
+        sort: false,
         title: 'Proceso',
         type: 'string',
       },
@@ -212,8 +224,9 @@ export class JuridicalRulingGComponent
     mode: 'external',
     columns: {
       name: {
-        title: '',
         sort: false,
+        title: '',
+
         type: 'custom',
         showAlways: true,
         valuePrepareFunction: (isSelected: boolean, row: IGood) =>
@@ -223,30 +236,37 @@ export class JuridicalRulingGComponent
           this.onGoodSelectValid(instance),
       },
       id: {
+        sort: false,
         title: 'No. Bien',
         type: 'number',
       },
       description: {
+        sort: false,
         title: 'Descripción Dictaminación',
         type: 'string',
       },
       menaje: {
+        sort: false,
         title: 'Menaje',
         type: 'string',
       },
       quantity: {
+        sort: false,
         title: 'Cant. Dictaminación',
         type: 'string',
       },
       status: {
+        sort: false,
         title: 'Estatus',
         type: 'string',
       },
       processStatus: {
+        sort: false,
         title: 'Proceso',
         type: 'string',
       },
       idDestino: {
+        sort: false,
         title: 'ID Destino',
         type: 'string',
       },
@@ -262,20 +282,8 @@ export class JuridicalRulingGComponent
     actions: false,
     selectedRowIndex: -1,
     mode: 'external',
-    columns: {
-      id: {
-        title: '#',
-        type: 'number',
-      },
-      descriptionDocument: {
-        title: 'Documentos',
-        type: 'string',
-      },
-      selectedDate: {
-        title: 'Fec. Recibido',
-        type: 'string',
-      },
-    },
+    columns: { ...DOCUMENTS_COLUMNS },
+
     noDataMessage: 'No se encontrarón registros',
   };
 
@@ -289,10 +297,12 @@ export class JuridicalRulingGComponent
     mode: 'external',
     columns: {
       numRegister: {
+        sort: false,
         title: '#',
         type: 'number',
       },
       key: {
+        sort: false,
         title: 'Documentos',
         type: 'string',
         valuePrepareFunction: (value: any) => {
@@ -300,6 +310,7 @@ export class JuridicalRulingGComponent
         },
       },
       fecha: {
+        sort: false,
         title: 'Fecha',
         type: 'custom',
         class: 'custom-title',
@@ -321,6 +332,10 @@ export class JuridicalRulingGComponent
   public listadoDocumentos: boolean = false;
   // public rutaAprobado: string = baseMenu + baseMenuDepositaria + DEPOSITARY_ROUTES_2[0].link;
 
+  isDelit: boolean = false;
+  btnIsParcial: boolean = false;
+  isIdent: boolean = true;
+
   constructor(
     private fb: FormBuilder,
     private activatedRoute: ActivatedRoute,
@@ -335,7 +350,8 @@ export class JuridicalRulingGComponent
     private applicationGoodsQueryService: ApplicationGoodsQueryService,
     private datePipe: DatePipe,
     private router: Router,
-    private usersService: UsersService
+    private usersService: UsersService,
+    private documentsDictumStatetMService: DocumentsDictumStatetMService
   ) {
     super();
   }
@@ -373,6 +389,8 @@ export class JuridicalRulingGComponent
       causaPenal: [null, [Validators.pattern(STRING_PATTERN)]],
       observaciones: [null, [Validators.pattern(STRING_PATTERN)]],
       noVolante: [null],
+      identifier: [null],
+      type: [null],
     });
 
     this.dictaminacionesForm = this.fb.group({
@@ -381,7 +399,7 @@ export class JuridicalRulingGComponent
       fechaPPFF: [null, [Validators.required]],
       fechaInstructora: [null],
       fechaResolucion: [null],
-      fechaDictaminacion: [null],
+      fechaDictaminacion: [this.datePipe.transform(new Date(), 'dd/MM/yyyy')],
       fechaNotificacion: [null],
       fechaNotificacionAseg: [null],
       autoriza_remitente: [null],
@@ -415,10 +433,47 @@ export class JuridicalRulingGComponent
         this.showCriminalCase = true;
       }
       this.expedientesForm.get('tipoDictaminacion').setValue(params?.tipoDic);
+      if (params?.tipoVo) {
+        this.validateTypeVol(params.tipoVo, params.tipoDic);
+      }
       this.expedientesForm.get('noVolante').setValue(params?.volante);
       this.dictaminacionesForm.get('wheelNumber').setValue(params?.volante);
     });
+
     this.changeNumExpediente();
+  }
+
+  validateTypeVol(typeVol: string, typeDic: string) {
+    if (typeVol == 'T') {
+      this.label = 'Fec. P.P.F.F.';
+      this.isDelit = typeDic == 'PROCEDENCIA' ? true : false;
+    } else if ((typeDic = 'PROCEDENCIA')) {
+      this.label = 'Fec. Aseg.';
+      this.isDelit = true;
+    } else if ((typeDic = 'DESTINO')) {
+      this.label = 'Fec. Dest.';
+      this.isDelit = false;
+    } else if ((typeDic = 'DESTRUCCION')) {
+      this.label = 'Fec. Dest.';
+      this.isDelit = false;
+    } else if (['DEVOLUCION', 'RESARCIMIENTO'].includes(typeDic)) {
+      this.label = 'Fec. Devo.';
+      this.isDelit = false;
+    } else if ((typeDic = 'DONACION')) {
+      this.label = 'Fec. Dona.';
+      this.isDelit = false;
+    } else if ((typeDic = 'DECOMISO')) {
+      this.label = 'Fec. Deco.';
+      this.isDelit = false;
+    } else if ((typeDic = 'EXT_DOM')) {
+      this.label = 'Fec. ExDom.';
+      this.isDelit = false;
+    } else if ((typeDic = 'TRANSFERENTE')) {
+      this.label = 'Fec. P.P.F.F.';
+      this.isDelit = false;
+    }
+
+    this.btnIsParcial = typeDic != 'PROCEDENCIA' ? true : false;
   }
 
   dateValidator(control: AbstractControl): { [key: string]: any } | null {
@@ -502,6 +557,7 @@ export class JuridicalRulingGComponent
           this.expedientesForm
             .get('averiguacionPrevia')
             .setValue(response.preliminaryInquiry);
+          this.expedientesForm.get('identifier').setValue(response.identifier);
         },
         error: () => {
           // this.cleanForm();
@@ -544,8 +600,7 @@ export class JuridicalRulingGComponent
           this.dictaminacionesForm
             .get('fechaDictaminacion')
             .setValue(
-              this.datePipe.transform(res.data[0].dictDate, 'dd-MM-yyyy') ||
-                undefined
+              this.datePipe.transform(new Date(), 'dd-MM-yyyy') || undefined
             );
           this.dictaminacionesForm
             .get('fechaResolucion')
@@ -607,7 +662,7 @@ export class JuridicalRulingGComponent
           // this.expedientesForm.get('tipoDictaminacion').setValue(null);
           // this.dictaminacionesForm.get('wheelNumber').setValue(null);
           this.dictaminacionesForm.get('cveOficio').setValue(null);
-          this.dictaminacionesForm.get('fechaDictaminacion').setValue(null);
+          //this.dictaminacionesForm.get('fechaDictaminacion').setValue(null);
           this.expedientesForm.get('observaciones').setValue(null);
           this.dictaminacionesForm.get('fechaNotificacion').setValue(null);
           this.dictaminacionesForm.get('etiqueta').setValue(null);
@@ -746,10 +801,41 @@ export class JuridicalRulingGComponent
   }
 
   addAll() {
+    if (!this.expedientesForm.get('identifier').value) {
+      this.onLoadToast('error', 'Debe seleccionar un identificador');
+      return;
+    }
+
+    if (this.statusDict == 'DICTAMINADO' || this.statusDict == 'IMPROCEDENTE') {
+      this.onLoadToast(
+        'error',
+        'Este dictamen ya tiene un estatus DICTAMINADO'
+      );
+      return;
+    }
+
+    if (this.expedientesForm.get('identifier').value) {
+      this.isIdent = false;
+    }
+
+    if (!this.dictaminacionesForm.get('autoriza_remitente').value) {
+      this.onLoadToast('error', 'Debe especificar quien autoriza dictamen');
+      return;
+    }
+
+    if (!this.expedientesForm.get('type').value) {
+      this.onLoadToast('error', 'Debe seleccionar un tipo de bien');
+      return;
+    }
+
+    if (!this.dictaminacionesForm.get('fechaPPFF').value) {
+      this.onLoadToast('error', `Debe capturar la ${this.label}`);
+    }
+
     if (this.goods.length > 0) {
       this.goods.forEach(_g => {
         if (_g.status !== 'STI') {
-          _g.status = 'STI';
+          // _g.status = 'STI';
           _g.name = false;
           let valid = this.goodsValid.some(goodV => goodV == _g);
           if (!valid) {
@@ -759,13 +845,63 @@ export class JuridicalRulingGComponent
       });
     }
   }
+
   addSelect() {
+    if (this.statusDict == 'DICTAMINADO' || this.statusDict == 'IMPROCEDENTE') {
+      this.onLoadToast(
+        'error',
+        'Este dictamen ya tiene un estatus DICTAMINADO'
+      );
+      return;
+    }
+
+    if (this.expedientesForm.get('identifier').value) {
+      this.isIdent = false;
+    }
+
+    if (!this.dictaminacionesForm.get('autoriza_remitente').value) {
+      this.onLoadToast('error', 'Debe especificar quien autoriza dictamen');
+      return;
+    }
+
+    // Cambiar la forma en agregar bien ya que es un push y no dato directo para el estatus
+    // if(this.bien.est_disponible = 'N'){
+    //   this.onLoadToast('error','El bien tiene un estatus invalido para ser dictaminado o ya esta dictaminado')
+    //   return
+    // }
+
+    if (!this.expedientesForm.get('type').value) {
+      this.onLoadToast('error', 'Debe seleccionar un tipo de bien');
+      return;
+    }
+
+    if (!this.expedientesForm.get('identifier').value) {
+      this.onLoadToast('error', 'Debe seleccionar un identificador');
+      return;
+    }
+
+    // Cambiar la forma en agregar bien ya que es un push y no dato directo para el estatus
+    // if(this.bien.di_disponible = 'N'){
+    //   this.onLoadToast('error','El Bien ya existe')
+    //   return
+    // }
+
+    if (!this.dictaminacionesForm.get('fechaPPFF').value) {
+      this.onLoadToast('error', `Debe capturar la ${this.label}`);
+    }
+
+    // Cambiar la forma en agregar bien ya que es un push y no dato directo para el estatus
+    //if (this.bienes.DI_ES_NUMERARIO == 'S' this.bienes.DI_ESTA_CONCILIADO == 'N' AND: this.expedientesForm.get('tipoDictaminacion').value == 'PROCEDENCIA')
+    //   this.onLoadToast('error', 'El numerario no esta conciliado')
+    //   return
+
     if (this.selectedGooods.length > 0) {
       this.selectedGooods.forEach(good => {
         if (!this.goodsValid.some(v => v === good)) {
           if (good.status.toUpperCase() !== 'STI') {
             let indexGood = this.goods.findIndex(_good => _good == good);
-            this.goods[indexGood].status = 'STI';
+            // this.goods[indexGood].status = 'STI';
+
             this.goodsValid = this.goodsValid.concat(this.selectedGooods);
             // this.goods = this.goods.filter(_good => _good.id != good.id);
           }
@@ -959,11 +1095,49 @@ export class JuridicalRulingGComponent
       });
   }
 
-  rowSelected(e: any) {
-    if (e) {
-      this.idGoodSelected = e.data?.id;
+  selectRow(row?: any) {
+    if (row) {
+      this.idGoodSelected = row.data?.id;
       this.onLoadDocumentsByGood();
     }
+    console.log('Información del bien seleccionado', row.data);
+  }
+
+  documentsDictumXStateMList: IDocumentsDictumXStateM[] = [];
+  totalItems2: number = 0;
+  params2 = new BehaviorSubject<ListParams>(new ListParams());
+  loading2 = this.loading;
+  listParams = new BehaviorSubject<ListParams>(new ListParams());
+
+  rowsSelected(event: any) {
+    const idGood = { ...this.goodData };
+    this.totalItems2 = 0;
+    this.documentsDictumXStateMList = [];
+    this.goodData = event.data;
+    console.log('Información del bien seleccionado rowsSelected', event.data);
+    this.params2
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getDocumentDicXStateM(idGood.id));
+  }
+
+  getDocumentDicXStateM(id?: number) {
+    this.loading2 = true;
+    let params = {
+      ...this.listParams.getValue(),
+      stateNumber: id,
+    };
+    this.documentService.getDocumentsByGood(id, params).subscribe({
+      next: resp => {
+        this.documentsDictumXStateMList = resp.data;
+        this.totalItems2 = resp.count;
+        this.loading2 = false;
+
+        console.log('Documentos, ', resp);
+      },
+      error: error => {
+        console.log('No hay respuesta ', error);
+      },
+    });
   }
 
   onLoadDocumentsByGood() {
@@ -1071,13 +1245,19 @@ export class JuridicalRulingGComponent
   }
 
   onTypeDictChange($event: any) {
+    const querys = this.activatedRoute.snapshot.queryParams;
+
+    const type = this.expedientesForm.get('tipoDictaminacion').value;
+
+    this.validateTypeVol(querys['tipoVo'], type);
+
     // ..activar para ver cambio
     // console.log($event);
   }
 
   async checkout1(object: object) {
     let response = await fetch(
-      'http://sigebimsdev.indep.gob.mx/dictation/api/v1/application/factjurdictamasDeleteDisctp1',
+      `${environment.API_URL}dictation/api/v1/application/factjurdictamasDeleteDisctp1`,
       {
         headers: { 'content-type': 'application/json' },
         method: 'POST',
@@ -1089,7 +1269,7 @@ export class JuridicalRulingGComponent
 
   async checkout2(object: object) {
     let response = await fetch(
-      'http://sigebimsdev.indep.gob.mx/dictation/api/v1/application/factjurdictamasDeleteDisctp2',
+      `${environment.API_URL}dictation/api/v1/application/factjurdictamasDeleteDisctp2`,
       {
         headers: { 'content-type': 'application/json' },
         method: 'POST',
@@ -1101,7 +1281,7 @@ export class JuridicalRulingGComponent
 
   async checkout3(object: object) {
     let response = await fetch(
-      'http://sigebimsdev.indep.gob.mx/dictation/api/v1/application/factjurdictamasDeleteDisctp3',
+      `${environment.API_URL}dictation/api/v1/application/factjurdictamasDeleteDisctp3`,
       {
         headers: { 'content-type': 'application/json' },
         method: 'POST',
@@ -1113,7 +1293,7 @@ export class JuridicalRulingGComponent
 
   async loadExpedientInfo(id: number | string) {
     const response = await fetch(
-      'http://sigebimsdev.indep.gob.mx/dictation/api/v1/dictation?filter.expedientNumber=' +
+      `${environment.API_URL}dictation/api/v1/dictation?filter.expedientNumber=` +
         id,
       {
         method: 'GET',
