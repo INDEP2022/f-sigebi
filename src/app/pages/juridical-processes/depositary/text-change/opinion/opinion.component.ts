@@ -54,93 +54,9 @@ import { TablaOficioModalComponent } from '../tabla-oficio-modal/tabla-oficio-mo
   styles: [],
 })
 export class OpinionComponent extends BasePage implements OnInit, OnChanges {
+  string_PTRN: `[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ@\\s\\.,_\\-¿?\\\\/()%$#¡!|]*'; [a-zA-Z0-9áéíóúÁÉÍÓÚñÑ@\\s\\.,_\\-¿?\\\\/()%$#¡!|]`;
   /*==================================================*/
-  form: FormGroup = this.fb.group({
-    expedientNumber: [
-      null,
-      [Validators.pattern(NUMBERS_PATTERN), Validators.maxLength(11)],
-    ],
-    registerNumber: [
-      null,
-      [Validators.pattern(STRING_PATTERN), Validators.maxLength(11)],
-    ],
-    wheelNumber: [
-      null,
-      [Validators.pattern(NUMBERS_PATTERN), Validators.maxLength(11)],
-    ],
-    typeDict: [
-      null,
-      [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
-    ],
-    cve_banco: [
-      null,
-      [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
-    ],
-    charge: [
-      null,
-      [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
-    ],
-    senderUserRemitente: [
-      null,
-      [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
-    ],
-    addressee: [
-      null,
-      [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
-    ],
-    typeDict_: [
-      null,
-      [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
-    ],
-    paragraphInitial: [
-      null,
-      [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
-    ],
-    paragraphFinish: [
-      null,
-      [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
-    ],
-    paragraphOptional: [
-      null,
-      [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
-    ],
-    descriptionSender: [
-      null,
-      [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
-    ] /*
-    typePerson: [null, null],
-    senderUser: [null, null],
-    personaExt: [null, null],*/,
-    typePerson_I: [null, null],
-    senderUser_I: [null, null],
-    personaExt_I: [null, null],
-    key: [null, [Validators.pattern(KEYGENERATION_PATTERN)]],
-    numberDictamination: [
-      null,
-      [Validators.pattern(NUMBERS_PATTERN), Validators.maxLength(11)],
-    ],
-    masInfo_1: [
-      null,
-      [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
-    ],
-    masInfo_2: [
-      null,
-      [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
-    ],
-    masInfo_3: [
-      null,
-      [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
-    ],
-    masInfo_1_1: [
-      null,
-      [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
-    ],
-    masInfo_1_2: [
-      null,
-      [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
-    ],
-    extPerson: this.fb.array([]),
-  });
+  form: FormGroup;
   totalItems: number;
   dataExt: IDictationCopies[];
   intIDictation: IDictation;
@@ -225,6 +141,7 @@ export class OpinionComponent extends BasePage implements OnInit, OnChanges {
   }
   validUserToolbar: any;
   async ngOnInit() {
+    this.prepareForm();
     this.year = new Date().getFullYear();
     console.log('this.token.decodeToken()', this.token.decodeToken());
     this.options = [
@@ -234,26 +151,130 @@ export class OpinionComponent extends BasePage implements OnInit, OnChanges {
     ];
     this.loadUserDestinatario();
     this.validUserToolbar = await this.getRTdictaAarusr(
-      this.token.decodeToken().preferred_username
+      this.token.decodeToken().preferred_username,
+      1
     );
   }
 
-  async getRTdictaAarusr(toolbar_user: any) {
+  prepareForm() {
+    this.form = this.fb.group({
+      expedientNumber: [
+        null,
+        [Validators.pattern(NUMBERS_PATTERN), Validators.maxLength(11)],
+      ],
+      registerNumber: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(11)],
+      ],
+      wheelNumber: [
+        null,
+        [Validators.pattern(NUMBERS_PATTERN), Validators.maxLength(11)],
+      ],
+      typeDict: [
+        null,
+        [Validators.pattern(this.string_PTRN), Validators.maxLength(4000)],
+      ],
+      cve_banco: [
+        null,
+        [Validators.pattern(this.string_PTRN), Validators.maxLength(4000)],
+      ],
+      charge: [
+        null,
+        [Validators.pattern(this.string_PTRN), Validators.maxLength(4000)],
+      ],
+      senderUserRemitente: [
+        null,
+        [Validators.pattern(this.string_PTRN), Validators.maxLength(4000)],
+      ],
+      addressee: [
+        null,
+        [Validators.pattern(this.string_PTRN), Validators.maxLength(4000)],
+      ],
+      typeDict_: [
+        null,
+        [Validators.pattern(this.string_PTRN), Validators.maxLength(4000)],
+      ],
+      paragraphInitial: [
+        null,
+        [Validators.pattern(this.string_PTRN), Validators.maxLength(4000)],
+      ],
+      paragraphFinish: [
+        null,
+        [Validators.pattern(this.string_PTRN), Validators.maxLength(4000)],
+      ],
+      paragraphOptional: [
+        null,
+        [Validators.pattern(this.string_PTRN), Validators.maxLength(4000)],
+      ],
+      descriptionSender: [
+        null,
+        [Validators.pattern(this.string_PTRN), Validators.maxLength(4000)],
+      ] /*
+    typePerson: [null, null],
+    senderUser: [null, null],
+    personaExt: [null, null],*/,
+      typePerson_I: [null, null],
+      senderUser_I: [null, null],
+      personaExt_I: [null, null],
+      key: [null, [Validators.pattern(KEYGENERATION_PATTERN)]],
+      numberDictamination: [
+        null,
+        [Validators.pattern(NUMBERS_PATTERN), Validators.maxLength(11)],
+      ],
+      masInfo_1: [
+        null,
+        [Validators.pattern(this.string_PTRN), Validators.maxLength(4000)],
+      ],
+      masInfo_2: [
+        null,
+        [Validators.pattern(this.string_PTRN), Validators.maxLength(4000)],
+      ],
+      masInfo_3: [
+        null,
+        [Validators.pattern(this.string_PTRN), Validators.maxLength(4000)],
+      ],
+      masInfo_1_1: [
+        null,
+        [Validators.pattern(this.string_PTRN), Validators.maxLength(4000)],
+      ],
+      masInfo_1_2: [
+        null,
+        [Validators.pattern(this.string_PTRN), Validators.maxLength(4000)],
+      ],
+      extPerson: this.fb.array([]),
+    });
+  }
+
+  async getRTdictaAarusr(toolbar_user: any, filter: any) {
     return new Promise((resolve, reject) => {
       const params = new ListParams();
-      params['filter.user'] = `$eq:${toolbar_user}`;
-      params['filter.reading'] = `$eq:S`;
-      params['filter.writing'] = `$eq:S`;
-      params['filter.typeNumber'] = `$eq:MODTEXTO`;
+      if (filter == 1) {
+        params['filter.user'] = `$eq:${toolbar_user}`;
+        params['filter.reading'] = `$eq:S`;
+        params['filter.writing'] = `$eq:S`;
+        params['filter.typeNumber'] = `$eq:MODTEXTO`;
+      } else {
+        params['filter.user'] = `$eq:${toolbar_user}`;
+      }
+
       this.dictationService.getRTdictaAarusr(params).subscribe({
         next: async (resp: any) => {
           console.log('USER', resp);
-          resolve(1);
+          if (filter == 1) {
+            resolve(1);
+          } else {
+            resolve(resp.data[0]);
+          }
+
           this.loading = false;
         },
         error: err => {
           console.log('err', err);
-          resolve(0);
+          if (filter == 1) {
+            resolve(0);
+          } else {
+            resolve(null);
+          }
           this.loading = false;
           return;
         },
@@ -381,7 +402,7 @@ Obtiene los filtros y en base a ellos se hace la búsqueda
       this.onEnterSearch(this.filterParamsLocal);
       this.verBoton = true;
     } else {
-      this.alert('info', 'Dictamen', 'Se requiere un filtro de búsqueda');
+      this.alert('info', 'Se requiere un filtro de búsqueda', '');
     }
   }
 
@@ -645,16 +666,18 @@ carga la  información de la parte media de la página
     this.getAllUsers$(params).subscribe();
   }
   nameOfUser: any;
+  department: any;
   getAllUsers$(params: FilterParams) {
     return this.usersService.getAllSegUsers(params.getParams()).pipe(
       catchError(error => {
         this.users$$ = new DefaultSelect([], 0, true);
         return throwError(() => error);
       }),
-      tap(response => {
+      tap(async response => {
         this.users$$ = new DefaultSelect(response.data, response.count);
         this.nameOfUser = response.data[0].name;
         console.log('this.nameOfUser', this.nameOfUser);
+        this.department = await this.getRTdictaAarusr(response.data[0].user, 1);
         this.getDescUserPuesto2(response.data[0].positionKey);
       })
     );
@@ -1087,7 +1110,7 @@ carga la  información de la parte media de la página
 
   async reporteExterno() {
     let params = {
-      PDEPARTAMENTO: this.token.decodeToken().delegacionreg,
+      PDEPARTAMENTO: this.department,
       PELABORO_DICTA: this.nameOfUser,
       POFICIO: this.oficioDict.officialNumber,
       PESTADODICT: this.oficioDict.statusOf,
@@ -1218,9 +1241,8 @@ carga la  información de la parte media de la página
   }
 
   reporteProcedencia1(data: any) {
-    // REPORTE NO EXISTE //
     let params = {
-      PDEPARTAMENTO: this.token.decodeToken().delegacionreg,
+      PDEPARTAMENTO: this.department,
       PELABORO_DICTA: this.nameOfUser,
       POFICIO: this.oficioDict.officialNumber,
       PESTADODICT: this.oficioDict.statusOf,
@@ -1251,7 +1273,7 @@ carga la  información de la parte media de la página
 
   reporteProcedencia2(data: any) {
     let params = {
-      PDEPARTAMENTO: this.token.decodeToken().delegacionreg,
+      PDEPARTAMENTO: this.department,
       PELABORO_DICTA: this.nameOfUser,
       POFICIO: this.oficioDict.officialNumber,
       PESTADODICT: this.oficioDict.statusOf,
@@ -1280,7 +1302,7 @@ carga la  información de la parte media de la página
 
   reporteProcedencia3(data: any) {
     let params = {
-      PDEPARTAMENTO: this.token.decodeToken().delegacionreg,
+      PDEPARTAMENTO: this.department,
       PELABORO_DICTA: this.nameOfUser,
       POFICIO: this.oficioDict.officialNumber,
       PESTADODICT: this.oficioDict.statusOf,
@@ -1309,7 +1331,7 @@ carga la  información de la parte media de la página
 
   reporteProcedencia4(data: any) {
     let params = {
-      PDEPARTAMENTO: this.token.decodeToken().delegacionreg,
+      PDEPARTAMENTO: this.department,
       PELABORO_DICTA: this.nameOfUser,
       POFICIO: this.oficioDict.officialNumber,
       PESTADODICT: this.oficioDict.statusOf,
@@ -1475,7 +1497,7 @@ carga la  información de la parte media de la página
     this.dataExt = [];
     this.dictationService_1.createPersonExt(data).subscribe({
       next: resp => {
-        this.alert('success', 'Se guardó de manera correcta', '');
+        this.alert('success', 'Se creó correctamente el usuario', '');
         this.refreshTabla();
       },
       error: err => {
@@ -1547,16 +1569,40 @@ carga la  información de la parte media de la página
 
   seteaTabla(datos: any) {
     let dato = JSON.parse(JSON.stringify(datos));
-    let obj: IDictationCopies = {
-      numberOfDicta: this.form.get('registerNumber').value,
-      typeDictamination: this.form.get('typeDict').value,
-      recipientCopy: dato.typePerson_I,
-      copyDestinationNumber: 0,
-      personExtInt: dato.typePerson_I,
-      namePersonExt: dato.personaExt_I,
-      registerNumber: this.form.get('registerNumber').value,
-    };
+    let obj: any;
 
+    if (datos.typePerson_I == 'I') {
+      obj = {
+        numberOfDicta: this.form.get('registerNumber').value,
+        typeDictamination: this.form.get('typeDict').value,
+        recipientCopy: datos.senderUser_I,
+        copyDestinationNumber: null,
+        recordNumber: null,
+        personExtInt: datos.typePerson_I,
+        namePersonExt: null,
+      };
+    } else if (datos.typePerson_I == 'E') {
+      obj = {
+        numberOfDicta: this.form.get('registerNumber').value,
+        typeDictamination: this.form.get('typeDict').value,
+        recipientCopy: null,
+        copyDestinationNumber: null,
+        recordNumber: null,
+        personExtInt: datos.typePerson_I,
+        namePersonExt: datos.personaExt_I,
+      };
+    }
+
+    // let obj: IDictationCopies = {
+    //   numberOfDicta: this.form.get('registerNumber').value,
+    //   typeDictamination: this.form.get('typeDict').value,
+    //   recipientCopy: dato.typePerson_I,
+    //   copyDestinationNumber: 0,
+    //   personExtInt: dato.typePerson_I,
+    //   namePersonExt: dato.personaExt_I,
+    //   registerNumber: this.form.get('registerNumber').value,
+    // };
+    console.log('obj', obj);
     this.insertRegistroExtCCP(obj);
     this.refreshTabla();
   }
@@ -1579,10 +1625,26 @@ carga la  información de la parte media de la página
       .findUserByOficNum(this.filterParams.getValue().getParams())
       .subscribe({
         next: resp => {
-          console.log('RESP', resp);
-          this.dataExt = resp.data.map((data: any) => this.usuariosCCP(data));
+          let result = resp.data.map(async (data: any) => {
+            if (data.personExtInt == 'I') {
+              data['personExtInt_'] = 'INTERNO';
+              data['userOrPerson'] = await this.getSenders2OfiM2___(
+                data.recipientCopy
+              );
+            } else if (data.personExtInt == 'E') {
+              data['personExtInt_'] = 'EXTERNO';
+              data['userOrPerson'] = data.nomPersonExt;
+            }
+          });
 
-          console.log('refreshTabla() => ' + JSON.stringify(this.dataExt));
+          Promise.all(result).then(async (data: any) => {
+            this.dataExt = resp.data;
+          });
+
+          // console.log('RESP', resp);
+          // this.dataExt = resp.data.map((data: any) => this.usuariosCCP(data));
+
+          // console.log('refreshTabla() => ' + JSON.stringify(this.dataExt));
         },
         error: err => {
           if (err.message.indexOf('registros') !== -1) {
@@ -1594,6 +1656,30 @@ carga la  información de la parte media de la página
           // this.onLoadToast('error', 'Error', errror.error.message);
         },
       });
+  }
+
+  async getSenders2OfiM2___(user: any) {
+    const params = new ListParams();
+    params['filter.user'] = `$eq:${user}`;
+    return new Promise((resolve, reject) => {
+      this.securityService.getAllUsersTracker(params).subscribe(
+        (data: any) => {
+          // this.formCcpOficio.get('nombreUsuario2').setValue(data.data[0]);
+          console.log('COPYY2', data);
+          let result = data.data.map(async (item: any) => {
+            item['userAndName'] = item.user + ' - ' + item.name;
+          });
+
+          resolve(data.data[0].userAndName);
+
+          this.loading = false;
+        },
+        error => {
+          resolve(null);
+          // this.senders = new DefaultSelect();
+        }
+      );
+    });
   }
 
   usuariosCCP(obj: IDictationCopies) {
