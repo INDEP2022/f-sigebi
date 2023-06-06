@@ -32,14 +32,16 @@
         </div>
         <div class="col-md-12">
           <form-field
-            [control]="thirdPartyCompanyForm.get('cveZoneContract')"
+            [control]="thirdPartyCompanyForm.get('keyZoneContract')"
             label="Clave zona de contrato">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="cveZoneContract"
-              min="0"
-              oninput="if(this.value.length > 15) this.value = this.value.slice(0, 15);" />
+            <select
+              class="form-control text-center"
+              formControlName="keyZoneContract">
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+            </select>
           </form-field>
         </div>
       </div>

@@ -101,7 +101,6 @@
           <small class="font-weight-semibold">Atención</small>
 
           <p>
-            {{ newUser }}
             <!-- <ng-container *ngIf="usErrorUserPrev">El volante no tiene turnados</ng-container> -->
           </p>
         </div>
@@ -130,7 +129,7 @@
         </div>
       </div>
       <div class="row mt-3">
-        <div class="col-md-6">
+        <div class="col-md-12">
           <h5 class="text-center">Dictaminaciones</h5>
           <div
             [ngClass]="{
@@ -153,10 +152,13 @@
                   [params]="paramsDict"
                   [totalItems]="totalItemsDic"></app-pagination>
               </div>
+              <div class="table-padding"></div>
             </div>
           </div>
         </div>
-        <div class="col-md-6">
+      </div>
+      <div class="row mt-3">
+        <div class="col-md-12">
           <h5 class="text-center">Actas</h5>
           <div
             class="{{
@@ -178,6 +180,7 @@
                   [totalItems]="totalItemsActas"></app-pagination>
               </div>
             </div>
+            <div class="table-padding"></div>
           </div>
         </div>
       </div>

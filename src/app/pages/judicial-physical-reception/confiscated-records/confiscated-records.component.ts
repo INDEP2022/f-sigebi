@@ -1063,8 +1063,6 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
       .subscribe({
         next: async (res: any) => {
           if (res.data.length > 0) {
-            this.form.get('ident').setValue('ADM');
-            /*  this.dataGoods.load(res.data); */
             const newData = await Promise.all(
               res.data.map(async (e: any) => {
                 let disponible: boolean;
@@ -2906,6 +2904,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                           'El acta fue cerrada'
                         );
                         this.inputsInProceedingClose();
+                        this.getGoodsActFn()
                       },
                       err => {
                         console.log(err);
@@ -3029,6 +3028,12 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                                 P_FECHA_RE_FIS:
                                   this.form.get('fecReception').value,
                                 P_TIPO_ACTA: tipo_acta,
+                                usuario: localStorage.getItem('username') ==
+                                'sigebiadmon'
+                                  ? localStorage.getItem('username')
+                                  : localStorage
+                                      .getItem('username')
+                                      .toLocaleUpperCase()
                               };
                               console.log(model);
                               const found = this.dataGoodAct['data'].find(
@@ -3067,6 +3072,8 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                                               'enabled'
                                             );
                                             this.research = true;
+                        this.getGoodsActFn()
+
                                             this.alert(
                                               'success',
                                               'El acta ha sido cerrada',
@@ -3953,17 +3960,6 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
               console.log('Sí?');
               this.serviceGood.update(putGood).subscribe(res => {
                 this.getGoodsActFn()
-                /* console.log(res)
-                this.dataGoodAct.load(
-                  this.dataGoodAct['data'].map((e: any) => {
-                    return {
-                      ...e,
-                      good:{
-                        storeNumber: this.form.get('almacen').value.idWarehouse,
-                      }
-                    };
-                  })
-                ); */
               });
             }
             console.log('No :(');
@@ -4013,16 +4009,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
               }
               this.serviceGood.update(putGood).subscribe(res => {
                 this.getGoodsActFn()
-                /* this.dataGoodAct.load(
-                  this.dataGoodAct['data'].map((e: any) => {
-                    return {
-                      ...e,
-                      good:{
-                        storeNumber: this.form.get('almacen').value.idWarehouse,
-                      }
-                    };
-                  })
-                ); */
+
               });
             }
           });
