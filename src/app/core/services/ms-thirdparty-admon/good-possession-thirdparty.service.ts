@@ -53,6 +53,9 @@ export class GoodPosessionThirdpartyService extends HttpService {
     return this.put<any>(`good-possession-thirdparty/${id}`, params);
   }
 
+  updateThirdPartyAdmonXFormatNumber(id: any, model: Object) {
+    return this.put<any>(`aplication/goodXformatNumber/${id}`, model);
+  }
   postGoodPossessionThirdParty(params?: IGoodPossessionThirdParty) {
     return this.post<any>(`good-possession-thirdparty`, params);
   }

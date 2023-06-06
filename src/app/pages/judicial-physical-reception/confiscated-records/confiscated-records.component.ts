@@ -254,7 +254,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   alldisabled = false;
   blockExpedient = false;
   clave_transferente: string | number;
-  idProceeding: number | string;
+  idProceeding: string;
   initialdisabled = true;
   isAlmacen = false;
   isBoveda = false;
@@ -604,7 +604,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   //Validations
 
   validateFolio() {
-    this.serviceDocuments.getByFolio(-73378).subscribe(
+    this.serviceDocuments.getByFolio(this.form.get('folioEscaneo').value).subscribe(
       res => {
         const data = JSON.parse(JSON.stringify(res));
         const scanStatus = data.data[0]['scanStatus'];
@@ -2817,7 +2817,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   closeProceeding() {
     console.log(this.saveDataAct);
     console.log(this.goodData);
-    this.validateFolio();
+    
     if (this.dataGoodAct['data'].length == 0) {
       this.alert(
         'warning',
@@ -2895,7 +2895,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                     .subscribe(
                       res => {
                         this.form.get('statusProceeding').setValue('CERRADO');
-                        this.idProceeding = idProcee;
+                        this.idProceeding = idProcee.toString();
                         this.labelActa = 'Abrir acta';
                         this.btnCSSAct = 'btn-success';
                         this.inputsInProceedingClose();
@@ -2928,7 +2928,8 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
           );
         }
       } else {
-        this.serviceDocuments
+        if(this.form.get('folioEscaneo').value != null){
+          this.serviceDocuments
           .getByFolio(this.form.get('folioEscaneo').value)
           .subscribe(
             res => {
@@ -3125,6 +3126,10 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
               this.render.addClass(btn, 'enabled');
             }
           );
+        }else{
+          this.alert('warning','Debe registrar un número de folio','')
+        }
+        
       }
     }
   }
@@ -3926,7 +3931,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
       if (this.form.get('almacen').value != null) {
         for (let i = 0; i < this.dataGoodAct['data'].length; i++) {
           const element = this.dataGoodAct['data'][i];
-          const newParams = `filter.numClasifGoods=$eq:${element.goodClassNumber}`;
+          const newParams = `filter.numClasifGoods=$eq:${element.good.goodClassNumber}`;
           this.serviceSssubtypeGood.getFilter(newParams).subscribe(res => {
             const type = JSON.parse(JSON.stringify(res.data[0]['numType']));
             const subtype = JSON.parse(
@@ -3940,22 +3945,25 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
             if (no_type === '5') {
               //Data new good
               const putGood: IGood = {
-                id: element.id,
-                goodId: element.id,
+                id: element.good.id,
+                goodId: element.good.id,
                 storeNumber: this.form.get('almacen').value.idWarehouse,
               };
               console.log(putGood);
               console.log('Sí?');
               this.serviceGood.update(putGood).subscribe(res => {
-                /* this.getGoodsActFn() */
+                this.getGoodsActFn()
+                /* console.log(res)
                 this.dataGoodAct.load(
                   this.dataGoodAct['data'].map((e: any) => {
                     return {
                       ...e,
-                      storeNumber: this.form.get('almacen').value.idWarehouse,
+                      good:{
+                        storeNumber: this.form.get('almacen').value.idWarehouse,
+                      }
                     };
                   })
-                );
+                ); */
               });
             }
             console.log('No :(');
@@ -3974,7 +3982,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         for (let i = 0; i < this.dataGoodAct['data'].length; i++) {
           const element = this.dataGoodAct['data'][i];
           let v_pasa: boolean = false;
-          const newParams = `filter.numType=$eq:7&filter.numSubType=$eq:34&filter.numClasifGoods=$eq:${element.goodClassNumber}`;
+          const newParams = `filter.numType=$eq:7&filter.numSubType=$eq:34&filter.numClasifGoods=$eq:${element.good.goodClassNumber}`;
           this.serviceSssubtypeGood.getFilter(newParams).subscribe(res => {
             const type = JSON.parse(JSON.stringify(res.data[0]['numType']));
             const subtype = JSON.parse(
@@ -3986,8 +3994,8 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
             const no_type = type.id;
             const no_subtype = subtype.id;
             let putGood: IGood = {
-              id: element.id,
-              goodId: element.id,
+              id: element.good.id,
+              goodId: element.good.id,
               vaultNumber: this.form.get('boveda').value.idSafe,
             };
 
@@ -3997,21 +4005,24 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
             }
             if (no_type === 7 || (no_type === 5 && no_subtype === 16)) {
               if (no_type === 7 && v_pasa) {
-                if (element.vaultNumber === null) {
+                if (element.good.vaultNumber === null) {
                   putGood.vaultNumber = 9999;
                 }
               } else {
                 putGood.vaultNumber = this.form.get('boveda').value.idSafe;
               }
               this.serviceGood.update(putGood).subscribe(res => {
-                this.dataGoodAct.load(
+                this.getGoodsActFn()
+                /* this.dataGoodAct.load(
                   this.dataGoodAct['data'].map((e: any) => {
                     return {
                       ...e,
-                      vaultNumber: this.form.get('boveda').value.idSafe,
+                      good:{
+                        storeNumber: this.form.get('almacen').value.idWarehouse,
+                      }
                     };
                   })
-                );
+                ); */
               });
             }
           });

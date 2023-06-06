@@ -4,7 +4,10 @@ import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IRegulatory } from 'src/app/core/models/catalogs/regulatory.model';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import {
+  POSITVE_NUMBERS_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 import { ModelForm } from '../../../../core/interfaces/model-form';
 import { RegulatoryService } from '../../../../core/services/catalogs/regulatory.service';
 import { DefaultSelect } from '../../../../shared/components/select/default-select';
@@ -35,8 +38,14 @@ export class RegulatoyFormComponent extends BasePage implements OnInit {
   private prepareForm() {
     this.form = this.fb.group({
       id: [null],
-      id_fraccion: [null, [Validators.required]],
-      numero: [null, [Validators.required]],
+      id_fraccion: [
+        null,
+        [Validators.required, Validators.pattern(POSITVE_NUMBERS_PATTERN)],
+      ],
+      numero: [
+        null,
+        [Validators.required, Validators.pattern(POSITVE_NUMBERS_PATTERN)],
+      ],
       descripcion: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
