@@ -4,7 +4,10 @@ import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IRegulatory } from 'src/app/core/models/catalogs/regulatory.model';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import {
+  POSITVE_NUMBERS_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 import { ModelForm } from '../../../../core/interfaces/model-form';
 import { RegulatoryService } from '../../../../core/services/catalogs/regulatory.service';
 import { DefaultSelect } from '../../../../shared/components/select/default-select';
@@ -20,12 +23,15 @@ export class RegulatoyFormComponent extends BasePage implements OnInit {
   edit: boolean = false;
   regulatory: IRegulatory;
   racks = new DefaultSelect<IRegulatory>();
+  fechaActual: string;
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
     private regulatoryService: RegulatoryService
   ) {
     super();
+    const fecha = new Date();
+    this.fechaActual = fecha.toISOString().split('T')[0];
   }
 
   ngOnInit(): void {
@@ -35,8 +41,14 @@ export class RegulatoyFormComponent extends BasePage implements OnInit {
   private prepareForm() {
     this.form = this.fb.group({
       id: [null],
-      id_fraccion: [null, [Validators.required]],
-      numero: [null, [Validators.required]],
+      fractionId: [
+        null,
+        [Validators.required, Validators.pattern(POSITVE_NUMBERS_PATTERN)],
+      ],
+      numero: [
+        null,
+        [Validators.required, Validators.pattern(POSITVE_NUMBERS_PATTERN)],
+      ],
       descripcion: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
@@ -53,12 +65,12 @@ export class RegulatoyFormComponent extends BasePage implements OnInit {
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      fecha_creacion: [null, [Validators.required]],
+      fecha_creacion: [null],
       usuario_modificacion: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      fecha_modificacion: [null, [Validators.required]],
+      fecha_modificacion: [null],
       version: [null, [Validators.required]],
     });
     if (this.regulatory != null) {
@@ -82,6 +94,8 @@ export class RegulatoyFormComponent extends BasePage implements OnInit {
 
   create() {
     this.loading = true;
+    console.log('id', this.form.value.id_fraccion);
+
     this.regulatoryService.create(this.form.getRawValue()).subscribe({
       next: data => this.handleSuccess(),
       error: error => (this.loading = false),

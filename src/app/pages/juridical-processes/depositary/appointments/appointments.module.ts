@@ -12,10 +12,16 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { AppointmentsRoutingModule } from './appointments-routing.module';
 
 /** COMPONENTS IMPORTS */
+import { AppointmentsRelationsPaysComponent } from './appointments-relations-pays/appointments-relations-pays.component';
 import { AppointmentsComponent } from './appointments/appointments.component';
+import { ScanningFoilAppointmentComponent } from './scanning-foil/scanning-foil.component';
 
 @NgModule({
-  declarations: [AppointmentsComponent],
+  declarations: [
+    AppointmentsComponent,
+    ScanningFoilAppointmentComponent,
+    AppointmentsRelationsPaysComponent,
+  ],
   imports: [CommonModule, AppointmentsRoutingModule, SharedModule],
 })
 export class AppointmentsModule {}

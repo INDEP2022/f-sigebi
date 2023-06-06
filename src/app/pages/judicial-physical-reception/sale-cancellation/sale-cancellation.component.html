@@ -37,42 +37,27 @@
           </div>
         </div>
         <div *ngIf="navigateProceedings" class="col-md-4">
-          <div class="row">
+          <span>Navegación de actas</span>
+          <div class="row mt-3">
             <div class="col-md-9">
-              <button
-                [disabled]="!prevProce"
-                class="btn btn-secondary btn-sm active mr-2"
-                (click)="prevProceeding()">
-                <i class="fa fa-angle-left"></i>
-              </button>
-              <span class="mr-3 ml-3"
-                >{{
-                  numberProceeding + 1 > proceedingData.length
-                    ? 'Nuevo'
-                    : numberProceeding + 1
-                }}
-                {{
-                  numberProceeding + 1 > proceedingData.length ? null : ' - '
-                }}
-                {{
-                  numberProceeding + 1 > proceedingData.length
-                    ? null
-                    : proceedingData.length
-                }}</span
-              >
-              <button
-                class="btn btn-secondary btn-sm active"
-                [disabled]="!nextProce"
-                (click)="nextProceeding()">
-                <i class="fa fa-angle-right"></i>
-              </button>
-              <button
-                *ngIf="newAct"
-                id="expedient-number"
-                class="btn btn-primary btn-sm active ml-4"
-                (click)="newProceeding()">
-                Nueva acta
-              </button>
+              <div class="d-flex justify-content-center align-items-center">
+                <app-pagination
+                  [params]="paramsActNavigate"
+                  [totalItems]="proceedingData.length"
+                  [limit]="newLimitparamsActNavigate"
+                  [paginatorPageSize]="false"
+                  [paginatorRangeLabel]="false"
+                  [maxSize]="1"></app-pagination>
+                <div class="col">
+                  <button
+                    id="expedient-number"
+                    class="btn btn-primary btn-sm active ml-4"
+                    [class]="loading ? 'disabled' : ''"
+                    (click)="newProceeding()">
+                    Nueva acta
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -206,8 +191,8 @@
                   class="form-control"
                   [class]="initialBool ? 'disabled' : ''"
                   formControlName="folio"
-                  [min]="0"
-                  maxlength="5"
+                  min="0"
+                  [max-length]="5"
                   (change)="fillActTwo()" />
               </form-field>
             </div>
@@ -302,25 +287,6 @@
               </form-field>
             </div>
           </div>
-
-          <div class="row">
-            <div class="col-md-5">
-              <form-field
-                [control]="form.get('folioEscaneo')"
-                label="Folio de Escaneo">
-                <input
-                  type="number"
-                  min="0"
-                  class="form-control"
-                  formControlName="folioEscaneo"
-                  maxlength="15" />
-              </form-field>
-            </div>
-
-            <div class="col-md-4 pt-3">
-              <button type="button" size="small">Replicar Folio</button>
-            </div>
-          </div>
         </div>
         <div class="col-md-6">
           <div class="form-group row">
@@ -406,6 +372,18 @@
           </div>
         </div>
       </div>
+
+      <hr class="row" />
+
+      <app-scan-file-shared
+        [form]="form"
+        [formControlName]="folioEscaneo"
+        [cveDocument]="form.get('acta2').value"
+        [noExpedient]="form.get('expediente').value"
+        [statusProceeding]="form.get('statusProceeding').value"
+        [cveScreen]="cveScreen"
+        [reportPrint]="nameReport">
+      </app-scan-file-shared>
 
       <hr class="row" />
       <div class="row mb-5">

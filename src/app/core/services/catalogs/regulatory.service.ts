@@ -22,6 +22,9 @@ export class RegulatoryService implements ICrudMethods<IRegulatory> {
   }
 
   create(model: IRegulatory): Observable<IRegulatory> {
+    console.log('cambiozz', model);
+    model.fractionId = Number(model.fractionId);
+    // this.form.value.id_fraccion = Number(this.form.value.id_fraccion);
     return this.regulatoryRepository.create(this.route, model);
   }
 

@@ -117,6 +117,7 @@ export class NotificationAssetsTabComponent
   showButton = true;
   notification: ClarificationGoodRejectNotification;
   affairName: string = '';
+  delegationUser: string = '';
   constructor(
     private modalService: BsModalService,
     private activatedRoute: ActivatedRoute,
@@ -811,6 +812,9 @@ export class NotificationAssetsTabComponent
             this.requestData.transferent.type == 'A' ||
             this.requestData.transferent.type == 'CE'
           ) {
+            const token = this.authService.decodeToken();
+            this.delegationUser = token.department;
+            const delegationUser = this.delegationUser;
             const type = this.requestData.transferent.type;
             const request = this.requestData;
             const idSolicitud = this.idRequest;
@@ -826,6 +830,7 @@ export class NotificationAssetsTabComponent
               request,
               type,
               idSolicitud,
+              delegationUser,
               callback: (next: boolean, idGood: number) => {
                 if (next) {
                   this.checkInfoNotification(idGood);
@@ -837,6 +842,10 @@ export class NotificationAssetsTabComponent
               config
             );
           } else {
+            const token = this.authService.decodeToken();
+            this.delegationUser = token.department;
+            const delegationUser = this.delegationUser;
+
             const request = this.requestData;
             const idSolicitud = this.idRequest;
             //Abre formulario para improcedencia MANUAL(NO)
@@ -848,6 +857,7 @@ export class NotificationAssetsTabComponent
               notification,
               request,
               idSolicitud,
+              delegationUser,
               callback: (next: boolean, idGood: number) => {
                 if (next) {
                   this.checkInfoNotification(idGood);
@@ -1049,6 +1059,8 @@ export class NotificationAssetsTabComponent
     idClarification?: number,
     typeClarification?: number
   ): void {
+    const token = this.authService.decodeToken();
+    this.delegationUser = token.department;
     const typeClarifications = this.typeClarification;
     const dataClarifications2 = this.dataNotificationSelected;
     const rejectedID = this.valueRejectNotificationId;
@@ -1057,6 +1069,7 @@ export class NotificationAssetsTabComponent
     const idNotify = { ...this.notificationsGoods };
     const idAclara = this.selectedRow.clarification.type; //Id del tipo de aclaración
     const idSolicitud = this.idRequest;
+    const delegationUser = this.delegationUser;
 
     let config: ModalOptions = {
       initialState: {
@@ -1073,6 +1086,7 @@ export class NotificationAssetsTabComponent
         infoRequest,
         typeClarifications,
         idSolicitud,
+        delegationUser,
         callback: (next: boolean, idGood: number) => {
           if (next) {
             this.checkInfoNotification(idGood);
