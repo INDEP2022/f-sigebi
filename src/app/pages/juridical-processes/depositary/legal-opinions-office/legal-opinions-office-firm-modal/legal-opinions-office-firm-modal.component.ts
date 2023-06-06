@@ -1,4 +1,12 @@
-import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  ViewChild,
+} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { SignatoriesService } from 'src/app/core/services/ms-electronicfirm/signatories.service';
@@ -34,6 +42,9 @@ export class LegalOpinionsOfficeFirmModalComponent
   // @ViewChild('FileInputTEST', { static: true })
   // test: ElementRef<HTMLInputElement>;
   // testFile: File | null = null;
+
+  @Output() responseFirm = new EventEmitter<any>();
+  @Output() errorFirm = new EventEmitter<boolean>();
 
   constructor(
     private modalRef: BsModalRef,
@@ -126,7 +137,10 @@ export class LegalOpinionsOfficeFirmModalComponent
     }
   }
 
-  close() {
+  close(closeEmit: boolean = false, data: any = null) {
+    if (closeEmit) {
+      this.responseFirm.emit(data); // Emmit response
+    }
     this.modalRef.hide();
   }
 
@@ -177,10 +191,11 @@ export class LegalOpinionsOfficeFirmModalComponent
             this.fileForm.controls['signature'] = data.signature;
             this.fileForm.controls['fileData'] = data.fileData;
             this.downloadFile(data.fileData, this.nameFileDictation);
+            this.close(true, data);
           },
           error: error => {
             console.log(error);
-
+            this.errorFirm.emit(true);
             this.alert(
               'error',
               'Ocurrió un erro al Firmar el Dictamen ',

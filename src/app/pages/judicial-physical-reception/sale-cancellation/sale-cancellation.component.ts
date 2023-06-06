@@ -1,10 +1,15 @@
 import { Component, OnInit, Renderer2 } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { Router } from '@angular/router';
 import { addDays, endOfMonth, format, subDays } from 'date-fns';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { takeUntil } from 'rxjs';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import {
@@ -161,6 +166,16 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
     },
     noDataMessage: 'No se encontrarón registros',
   };
+
+  //NAVEGACION DE ACTAS
+  paramsActNavigate = new BehaviorSubject<ListParams>(new ListParams());
+  newLimitparamsActNavigate = new FormControl(1);
+
+  //FOLIO DE ESCANEO
+  folioEscaneo = 'folioEscaneo';
+  cveScreen = 'FACTREFACTAVENT';
+  nameReport = 'RGERGENSOLICDIGIT';
+
   searchByOtherData = false;
   dataExpedients = new DefaultSelect();
   act2Valid: boolean = false;
@@ -775,6 +790,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
         this.form.get('recibe2').setValue(dataRes.witness2);
         this.form.get('testigo').setValue(dataRes.comptrollerWitness);
         this.form.get('statusProceeding').setValue(dataRes.statusProceedings);
+        this.form.get('folioEscaneo').setValue(dataRes.universalFolio);
         console.log(this.form.get('statusProceeding').value);
         console.log(dataRes.statusProceedings);
         if (this.form.get('statusProceeding').value === 'ABIERTA') {
@@ -951,6 +967,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
               'yyyy-MM-dd HH:mm'
             ),
             captureDate: format(new Date(), 'yyyy-MM-dd HH:mm'),
+            universalFolio: this.form.get('folioEscaneo').value,
           };
           const resData = JSON.parse(JSON.stringify(res.data[0]));
           console.log(modelEdit);
@@ -1286,7 +1303,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
     if (this.labelActa == 'Abrir acta') {
       this.newOpenProceeding();
     } else {
-      this.closeProceeding();
+      this.newCloseProceeding();
     }
   }
 
@@ -1605,6 +1622,12 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
                       P_PANTALLA: 'FACTREFACTAVENT',
                       P_FECHA_RE_FIS: this.form.get('fecReception').value,
                       P_TIPO_ACTA: 'DXCV',
+                      usuario:
+                        localStorage.getItem('username') == 'sigebiadmon'
+                          ? localStorage.getItem('username')
+                          : localStorage
+                              .getItem('username')
+                              .toLocaleUpperCase(),
                     };
                     console.log(model);
                     this.serviceProgrammingGood.paChangeStatus(model).subscribe(

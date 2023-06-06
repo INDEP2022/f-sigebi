@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { catchError, tap, throwError } from 'rxjs';
 import {
@@ -15,11 +15,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
   templateUrl: './modal-component.html',
 })
 export class ModalComponent implements OnInit {
-  form: FormGroup = this.fb.group({
-    typePerson_I: [null, null],
-    senderUser_I: [null, null],
-    personaExt_I: [null, null],
-  });
+  form: FormGroup;
 
   users$ = new DefaultSelect<ISegUsers>();
   nameUserDestinatario: ISegUsers;
@@ -36,6 +32,11 @@ export class ModalComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.form = this.fb.group({
+      typePerson_I: [null, Validators.required],
+      senderUser_I: [null],
+      personaExt_I: [null, Validators.required],
+    });
     this.options = [
       { value: null, label: 'Seleccione un valor' },
       { value: 'E', label: 'PERSONA EXTERNA' },

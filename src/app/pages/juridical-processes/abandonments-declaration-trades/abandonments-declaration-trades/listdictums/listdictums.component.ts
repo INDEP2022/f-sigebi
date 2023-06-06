@@ -50,7 +50,7 @@ export class ListdictumsComponent extends BasePage implements OnInit {
         let result = data.data.map((item: any) => {
           item['dateDicta'] = this.datePipe.transform(
             item.dictDate,
-            'MM/dd/yyyy'
+            'dd/MM/yyyy'
           );
         });
 
