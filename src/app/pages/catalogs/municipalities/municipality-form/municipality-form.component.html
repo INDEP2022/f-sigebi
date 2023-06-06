@@ -12,7 +12,8 @@
             <input
               type="number"
               class="form-control"
-              formControlName="stateKey" />
+              formControlName="stateKey"
+              min="0" />
           </form-field>
         </div>
         <div class="col-12 pt-4">
@@ -39,7 +40,11 @@
           <form-field
             [control]="municipalityForm.get('version')"
             label="Versi&oacute;n">
-            <input type="text" class="form-control" formControlName="version" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="version"
+              min="0" />
           </form-field>
         </div>
         <div class="col-12 pt-4">

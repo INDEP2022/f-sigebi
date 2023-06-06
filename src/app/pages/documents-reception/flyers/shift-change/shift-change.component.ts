@@ -120,9 +120,11 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
   dictation: IUpdateDelDictation;
   paramsDict = new BehaviorSubject(new ListParams());
   paramsActas = new BehaviorSubject(new ListParams());
+  params = new BehaviorSubject(new ListParams());
+  totalItems: number = 0;
   totalItemsDic: number = 0;
   totalItemsActas: number = 0;
-  //newUser: string;
+  newUser1: string;
   idUser: number;
   preUser: string;
   delegationNew: number;
@@ -134,7 +136,9 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
   user: any;
   flyerNumber: number;
   historyColumns: IHistoryOfficial[] = [];
+  historyUser: IHistoryOfficial = null;
   usersFilter: IUserAccessAreaRelational[] = [];
+  userHistory: string;
 
   form: ModelForm<any>;
 
@@ -188,7 +192,8 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     //TODO: Deshablitar controles de fecha
     this.checkParams();
-    this.filterHistoryUser();
+    this.getFilterUserHistory();
+    //this.filterHistoryUser();
     // console.log('AQUÍ', this.pageParams.affair);
   }
 
@@ -247,7 +252,8 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
                     next: data => {
                       if (data.count > 0) {
                         this.formControls.prevUser.setValue(data.data[0]);
-                        this.preUser = data.data[0].userAndName;
+                        //this.preUser = data.data[0].userAndName;
+                        //this.userHistory = data.data[0].user;
                         // console.log(this.preUser);
                       }
                     },
@@ -302,9 +308,7 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
     this.paramsActas.getValue()[
       'filter.numFile'
     ] = `$eq:${this.pageParams.exp}`;
-
     //param.addFilter('numFile', this.pageParams.exp);
-
     this.proceedingsDelRecService
       .getAll(this.paramsActas.getValue())
       .subscribe({
@@ -322,23 +326,78 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
       });
   }
 
+  getFilterUserHistory() {
+    let historyUser1: any = null;
+    const param = new FilterParams();
+    const params = new FilterParams();
+    this.params.getValue()[
+      'filter.numberSteeringwheel'
+    ] = `$eq:${this.pageParams.iden}`;
+
+    this.historyOfficeService.getAll(this.params.getValue()).subscribe({
+      next: data => {
+        if (data.count > 0) {
+          this.totalItems = data.count || 0;
+          this.historyColumns = data.data;
+          //data.data[data.data.length - 1];
+          this.historyUser = data.data[data.data.length - this.totalItems];
+          //this.historyUser = notif;
+          param.addFilter('user', this.historyUser.personnew, SearchFilter.EQ);
+          this.docRegisterService
+            .getUsersSegAreas(param.getParams())
+            .subscribe({
+              next: resp => {
+                if (resp.count > 0) {
+                  this.usersFilter = resp.data;
+                  console.log(this.usersFilter);
+                  this.preUser = this.usersFilter[0].userAndName;
+                  this.userHistory = this.usersFilter[0].user;
+                }
+                //this.users = new DefaultSelect(data.data, data.count);
+
+                //console.log(this.preUser);
+              },
+              error: () => {
+                this.users = new DefaultSelect();
+                this.preUser = 'El volante no tiene turnados';
+              },
+            });
+        } else {
+          this.userHistory = this.turnForm.controls['newUser'].value.user;
+        }
+        this.loading = false;
+      },
+      error: () => {
+        this.loading = false;
+        /*
+        this.alert(
+          'warning',
+          'El volante no tiene turnados',
+          ``
+        );*/
+      },
+    });
+  }
+
   async save() {
     if (!this.turnForm.valid) {
       this.turnForm.markAllAsTouched();
       this.turnForm.updateValueAndValidity();
-      this.updateProceedings();
-      this.updateDictums();
+      this.validation();
       return;
     }
 
+    //console.log(this.turnForm.controls['newUser'].value.user);
+    //this.getFilterUserHistory();
+    //console.log(this.userHistory);
     // this.preUser;
     const body: IHistoryOfficial = {
       numberSteeringwheel: this.notifData.wheelNumber,
       datereassignment: format(new Date(), 'dd/MM/yyyy'),
       numberJob: this.notifData.officeNumber,
-      personbefore: this.formControls.prevUser.value?.user,
+      personbefore: this.userHistory,
       areaDestinationbefore: this.notifData.departamentDestinyNumber,
-      personnew: this.formControls.newUser.value?.user,
+      personnew: this.turnForm.controls['newUser'].value.user,
       areaDestinationnew: Number(this.formControls.newUser.value?.delegation),
       argument: this.formControls.argument.value,
       numberRecord: this.notifData.registerNumber,
@@ -360,9 +419,15 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
       this.selectedProceedings
     );
     this.loading = true;
+    //this.newUser1 = this.formControls.newUser.value?.user;
 
     try {
       await firstValueFrom(this.historyOfficeService.create(body));
+      this.updateProceedings();
+      this.updateDictums();
+      //console.log(this.formControls.newUser.value?.user);
+      //this.newUser1 = this.formControls.newUser.value?.user;
+      //this.filterHistoryUser(this.formControls.newUser.value?.user);
       //this.loading = false;
     } catch (ex) {
       this.loading = false;
@@ -370,6 +435,7 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
       this.alert('error', ' ', 'Turno no actualizado');
       return;
     }
+
     try {
       await firstValueFrom(
         this.procedureManageService.updateForWheelNumber(
@@ -394,13 +460,17 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
       departamentDestinyNumber:
         this.formControls.newUser.value?.departamentNumber,
     };
+
+    console.log(body);
+
+    /*
     this.notifService.update(this.notifData.wheelNumber, body).subscribe({
       next: () => {
         this.updateProcedureUser();
         // this.updateDictums();
         // this.updateProceedings();
         this.loading = true;
-        this.filterHistoryUser();
+        //this.filterHistoryUser();
         this.alert(
           'success',
           'Usuario Turnado Exitosamente',
@@ -417,7 +487,7 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
           'Hubo un error al actualizar el turno'
         );
       },
-    });
+    });*/
   }
 
   updateProcedureUser() {
@@ -428,6 +498,7 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
       .subscribe({
         next: res => {
           console.log(res);
+          this.getFilterUserHistory();
           this.loading = false;
         },
         error: () => {},
@@ -450,7 +521,8 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
         this.loading = false;
       },
       error: () => {
-        this.alert('info', 'La delegacion actual es igual a la anterior', '');
+        //this.alert('info', 'La delegacion actual es igual a la anterior', '');
+        console.log(Error);
       },
     });
   }
@@ -481,7 +553,8 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
         this.loading = false;
       },
       error: err => {
-        this.alert('info', 'La delegacion actual es igual a la anterior', '');
+        console.log(err.message);
+        //this.alert('info', err.message , '');
       },
     });
 
@@ -523,6 +596,8 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
   }
 
   selectDictums(event: any) {
+    console.log(event.selectedIndex);
+    //if(event.selectedIndex === undefined || )
     const existe = this.selectedDictums.some(
       (objeto: any) => objeto.id === event.data.id
     );
@@ -550,6 +625,8 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
   selectProceedings(event: any) {
     //console.log(event);
     // this.selectedProceedings = event.selected;
+    console.log(event.selectedIndex);
+    console.log(this.selectedProceedings);
     const existe = this.selectedProceedings.some(
       (objeto: any) => objeto.id === event.data.id
     );
@@ -619,22 +696,46 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
     this.docRegisterService.getUsersSegAreas(params.getParams()).subscribe({
       next: data => {
         this.users = new DefaultSelect(data.data, data.count);
+        /*this.newUser1 = this.turnForm.controls['newUser'].value.userAndName;
+        console.log(this.newUser1);*/
+      },
+      error: () => {
+        this.users = new DefaultSelect();
+        this.newUser1 = 'El volante no tiene turnados';
+      },
+    });
+  }
+
+  filterHistoryUser(user: string) {
+    this.loading = true;
+    const param = new FilterParams();
+    const params = new ListParams();
+    const data1: any = {};
+
+    param.addFilter('user', user, SearchFilter.EQ);
+    this.docRegisterService.getUsersSegAreas(param.getParams()).subscribe({
+      next: resp => {
+        //this.users = new DefaultSelect(data.data, data.count);
+        this.usersFilter = resp.data;
+        console.log(this.usersFilter[0].userAndName);
+        //this.usersFilter[0].userAndName;
+        if (
+          this.usersFilter[0].userAndName != null ||
+          this.usersFilter[0].userAndName != undefined
+        ) {
+          this.newUser1 = this.usersFilter[0].userAndName;
+        }
+        //console.log(this.preUser);
       },
       error: () => {
         this.users = new DefaultSelect();
       },
     });
-  }
 
-  filterHistoryUser() {
-    this.loading = true;
-    const param = new FilterParams();
-    const params = new ListParams();
-    const data1: any = {};
     //param.addFilter('flyerNumber', this.flyerNumber);
-    params['filter.flyerNumber'] = `$eq:${this.pageParams.iden}`;
+    /*params['filter.flyerNumber'] = `$eq:${this.pageParams.iden}`;
     // console.log(this.pageParams.iden);
-    /*this.historyOfficeService.getFilterUser(params).subscribe({
+    this.historyOfficeService.getFilterUser(params).subscribe({
       next: data => {
         if (data.count > 0) {
           this.historyColumns = data.data;
@@ -725,5 +826,14 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
         this.loading = false;
       },
     });
+  }
+
+  validation() {
+    if (
+      this.turnForm.controls['newUser'].value === null ||
+      this.turnForm.controls['argument'].value === null
+    ) {
+      this.alert('warning', 'Debe llenar los campo requeridos', ``);
+    }
   }
 }
