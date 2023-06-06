@@ -48,7 +48,8 @@ export class AssignReceiptFormComponent extends BasePage implements OnInit {
   }
 
   confirm() {
-    let open = false;
+    this.modalRef.content.callback(true);
+    this.close();
   }
 
   close() {
@@ -63,7 +64,7 @@ export class AssignReceiptFormComponent extends BasePage implements OnInit {
     this.proceedingService.createProceedings(form).subscribe({
       next: response => {
         console.log('acta creada', response);
-        /*const receiptForm: Object = {
+        const receiptForm: Object = {
           actId: response.id,
           programmingId: this.programming.id,
           statusReceipt: 'ABIERTO',
@@ -71,11 +72,12 @@ export class AssignReceiptFormComponent extends BasePage implements OnInit {
         this.receptionGood.createReception(receiptForm).subscribe({
           next: response => {
             console.log('recibo creado', response);
+            this.getReceipts();
           },
           error: error => {
             console.log(error);
           },
-        }); */
+        });
       },
       error: error => {
         console.log(error);
