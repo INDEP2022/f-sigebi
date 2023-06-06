@@ -10,7 +10,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, firstValueFrom, skip, takeUntil } from 'rxjs';
+import { BehaviorSubject, firstValueFrom, skip, takeUntil, tap } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import {
@@ -33,6 +33,7 @@ import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { StatusGoodService } from 'src/app/core/services/ms-good/status-good.service';
 import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
 import { ApplicationGoodsQueryService } from 'src/app/core/services/ms-goodsquery/application.service';
+import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive-good.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import { GoodsJobManagementService } from 'src/app/core/services/ms-office-management/goods-job-management.service';
 import { MJobManagementService } from 'src/app/core/services/ms-office-management/m-job-management.service';
@@ -102,6 +103,7 @@ export class RelatedDocumentsComponent
   origin: string = '';
   valTiposAll: boolean;
   tiposData: any = [];
+  tiposDatosSelect = new DefaultSelect();
   userCopies1 = new DefaultSelect();
   userCopies2 = new DefaultSelect();
   dataGoodTable: LocalDataSource = new LocalDataSource();
@@ -190,6 +192,7 @@ export class RelatedDocumentsComponent
     private screenStatusService: ScreenStatusService,
     private DictationXGood1Service: DictationXGood1Service,
     private goodprocessService: GoodprocessService,
+    private massiveGoodService: MassiveGoodService,
     protected notificationService: NotificationService,
     protected mJobManagementService: MJobManagementService
   ) {
@@ -263,6 +266,7 @@ export class RelatedDocumentsComponent
     this.route.queryParams
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe((params: any) => {
+        console.log(params);
         this.origin = params['origin'] ?? null;
         this.paramsGestionDictamen.volante = params['volante'] ?? null;
         this.paramsGestionDictamen.expediente = params['expediente'] ?? null;
@@ -316,8 +320,11 @@ export class RelatedDocumentsComponent
     this.params
       .pipe(
         skip(1),
-        takeUntil(this.$unSubscribe)
-        // tap(() => this.onLoadGoodList('all'))
+        takeUntil(this.$unSubscribe),
+        tap(() => {
+          this.getTypesSelectors();
+          this.onLoadGoodList('all');
+        })
       )
       .subscribe(res => {
         this.getGoods1(res);
@@ -1445,6 +1452,44 @@ export class RelatedDocumentsComponent
       });
   }
 
+  //OBTENER TIPOS, SUBTIPOS DESCRIPCION
+  getTypesSelectors(event?: any) {
+    const expedient = this.paramsGestionDictamen.expediente;
+    this.massiveGoodService.chargeGoodsByExpedient(expedient).subscribe({
+      next: resp => {
+        const all = {
+          no_clasif_bien: 'Todos',
+          desc_subtipo: '0',
+          desc_ssubtipo: 'TODOS',
+          desc_sssubtipo: '0',
+        };
+
+        resp.data.unshift(all);
+        resp.data.map(async (item: any) => {
+          item['tipoSupbtipoDescription'] =
+            item.no_clasif_bien +
+            ' - ' +
+            item.desc_subtipo +
+            ' - ' +
+            item.desc_ssubtipo +
+            ' - ' +
+            item.desc_sssubtipo;
+        });
+        resp.data.unshift();
+        resp.data[0].tipoSupbtipoDescription =
+          resp.data[0].tipoSupbtipoDescription.substring(0, 24);
+        this.tiposDatosSelect = new DefaultSelect(resp.data, resp.count);
+      },
+      error: error => {
+        console.log(error);
+      },
+    });
+  }
+
+  typeSelected(type: any) {
+    console.log(type);
+  }
+
   // OBTENER BIENES //
   async onLoadGoodList(filter: any) {
     this.formLoading = true;
@@ -1543,7 +1588,6 @@ export class RelatedDocumentsComponent
       vc_pantalla: 'FACTJURABANDONOS',
     };
     let clasif: number;
-
     this.goodprocessService.getExpedientePostQuery(body).subscribe({
       next: async (data: any) => {
         clasif = data.count;
