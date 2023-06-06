@@ -44,6 +44,7 @@ import {
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from '../../../shared/components/select/default-select';
+import { UsersService } from 'src/app/core/services/ms-users/users.service';
 
 @Component({
   selector: 'app-cancellation-recepcion',
@@ -256,6 +257,11 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
   transferSelect = new DefaultSelect();
   v_atrib_del = 0;
 
+  //DATOS DE USUARIO
+  delUser: string
+  subDelUser: string
+  departmentUser: string
+
   constructor(
     private fb: FormBuilder,
     private render: Renderer2,
@@ -269,7 +275,8 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
     private serviceDocuments: DocumentsService,
     private serviceGoodProcess: GoodProcessService,
     private serviceProgrammingGood: ProgrammingGoodService,
-    private serviceProceeding: ProceedingsService
+    private serviceProceeding: ProceedingsService,
+    private serviceUser: UsersService,
   ) {
     super();
   }
@@ -324,6 +331,24 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
           this.fillIncomeProceeding(dataRes, 'nextProceeding');
         }
       });
+
+      this.getDataUser()
+  }
+
+  getDataUser() {
+    const user =
+      localStorage.getItem('username') == 'sigebiadmon'
+        ? localStorage.getItem('username')
+        : localStorage.getItem('username').toLocaleUpperCase();
+    const routeUser = `?filter.name=$eq:${user}`;
+    this.serviceUser.getAllSegUsers(routeUser).subscribe(
+      res => {
+        const resJson = JSON.parse(JSON.stringify(res.data[0]));
+        this.delUser = resJson.usuario.delegationNumber
+        this.subDelUser = resJson.usuario.subdelegationNumber
+        this.departmentUser = resJson.usuario.departamentNumber
+      }
+    );
   }
 
   prepareForm() {
