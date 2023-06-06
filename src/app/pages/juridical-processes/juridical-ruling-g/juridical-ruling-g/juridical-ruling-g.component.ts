@@ -905,7 +905,7 @@ export class JuridicalRulingGComponent
       return;
     }
 
-    if (!this.expedientesForm.get('type').value) {
+    if (this.expedientesForm.get('type').value == null) {
       this.onLoadToast('error', 'Debe seleccionar un tipo de bien');
       return;
     }
@@ -952,7 +952,7 @@ export class JuridicalRulingGComponent
     //   return
     // }
 
-    if (!this.expedientesForm.get('type').value) {
+    if (this.expedientesForm.get('type').value == null) {
       this.onLoadToast('error', 'Debe seleccionar un tipo de bien');
       return;
     }

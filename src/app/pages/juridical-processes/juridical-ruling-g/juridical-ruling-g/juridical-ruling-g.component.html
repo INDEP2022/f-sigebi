@@ -283,15 +283,9 @@
       [formGroup]="expedientesForm"
       class="container-fluid form-material col-12 px-2 pt-4">
       <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-2">
           <form-field [control]="expedientesForm.get('identifier')">
-            <!-- <select class="form-control" formControlName="tipoDictaminacion">
-              <option [value]="null"></option>
-              <option [value]="'Alta'">Alta</option>
-              <option [value]="'Normal'">Normal</option>
-            </select> -->
             <ngx-select
-              [searchOnInit]="true"
               [readonly]="!isIdent"
               [data]="typesIdent"
               [form]="expedientesForm"
@@ -302,12 +296,9 @@
           </form-field>
         </div>
 
-        <div class="col-md-8">
+        <div class="col-md-10">
           <form-field [control]="expedientesForm.get('type')">
             <ngx-select
-              class="form-control"
-              [searchOnInit]="true"
-              (fetchItems)="getTypes($event)"
               [data]="typesClass"
               [form]="expedientesForm"
               value="no_clasif_bien"
@@ -392,28 +383,28 @@
     <div class="row pt-2">
       <div class="col-md-12 text-center mt-4 mb-4">
         <button
-          class="btn btn-secondary btn-sm active m-3 p-3 pointer"
+          class="btn btn-secondary btn-sm active m-3 p-1 pointer"
           type="button"
           (click)="addSelect()">
           <!-- Mover uno -->
           <i class="bx bx-chevron-down bx-md"></i>
         </button>
         <button
-          class="btn btn-secondary btn-sm active m-3 p-3 pointer"
+          class="btn btn-secondary btn-sm active m-3 p-1 pointer"
           type="button"
           (click)="addAll()">
           <!-- Mover todos -->
           <i class="bx bx-chevrons-down bx-md"></i>
         </button>
         <button
-          class="btn btn-secondary btn-sm active m-3 p-3 pointer"
+          class="btn btn-secondary btn-sm active m-3 p-1 pointer"
           type="button"
           (click)="removeAll()">
           <!-- Quitar todos -->
           <i class="bx bx-chevrons-up bx-md"></i>
         </button>
         <button
-          class="btn btn-secondary btn-sm active m-3 p-3 pointer"
+          class="btn btn-secondary btn-sm active m-3 p-1 pointer"
           type="button"
           (click)="removeSelect()">
           <!-- Quitar uno -->
