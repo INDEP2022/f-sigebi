@@ -336,7 +336,7 @@ export class ScanFileSharedComponent extends BasePage implements OnInit {
   downloadReport(reportName: string, params: any) {
     this.loading = true;
     this.loadingText = 'Generando reporte ...';
-    return this.siabService.fetchReport(reportName, params).subscribe({
+    this.siabService.fetchReport(reportName, params).subscribe({
       next: response => {
         const blob = new Blob([response], { type: 'application/pdf' });
         const url = URL.createObjectURL(blob);
