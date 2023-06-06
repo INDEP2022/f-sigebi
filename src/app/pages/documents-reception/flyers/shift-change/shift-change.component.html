@@ -90,6 +90,7 @@
               [readonly]="true">
             </ngx-select>
           </form-field> -->
+
           <p
             [ngClass]="usErrorUserPrev ? 'text-danger' : 'text-muted'"
             class="font-weight-bold">
@@ -101,6 +102,8 @@
           <small class="font-weight-semibold">Atención</small>
 
           <p>
+            {{ newUser1 }}
+
             <!-- <ng-container *ngIf="usErrorUserPrev">El volante no tiene turnados</ng-container> -->
           </p>
         </div>
@@ -124,12 +127,12 @@
       <div class="row w-100">
         <div class="col-sm-12 col-12 col-md-12 p-2 alert alert-info">
           <span>
-            SELECCIONA AL MENOS UN ACTA Y UN DICTAMEN PARA GUARDAR&#46;</span
+            SELECCIONA AL MENOS UN ACTA O UN DICTAMEN PARA GUARDAR&#46;</span
           >
         </div>
       </div>
       <div class="row mt-3">
-        <div class="col-md-12">
+        <div class="col-md-6">
           <h5 class="text-center">Dictaminaciones</h5>
           <div
             [ngClass]="{
@@ -137,53 +140,54 @@
               'height-min': dictumColumns.length == 0
             }">
             <div>
-              <div
-                [class]="loading ? 'table-loading' : ''"
-                class="overflow-auto">
-                <ng2-smart-table
-                  class="col-md-12"
-                  [settings]="dictumSettings"
-                  [source]="dictumColumns"
-                  [attr.class]="'table-bordered'"
-                  (userRowSelect)="selectDictums($event)"
-                  readonly>
-                </ng2-smart-table>
-                <app-pagination
-                  [params]="paramsDict"
-                  [totalItems]="totalItemsDic"></app-pagination>
-              </div>
-              <div class="table-padding"></div>
+              <ng-scrollbar track="horizontal" [autoHeightDisabled]="false">
+                <div
+                  [class]="loading ? 'table-loading' : ''"
+                  class="overflow-auto">
+                  <ng2-smart-table
+                    class="col-md-12"
+                    [settings]="dictumSettings"
+                    [source]="dictumColumns"
+                    [attr.class]="'table-responsive table-bordered'"
+                    (userRowSelect)="selectDictums($event)">
+                  </ng2-smart-table>
+                  <app-pagination
+                    [params]="paramsDict"
+                    [totalItems]="totalItemsDic"></app-pagination>
+                </div>
+              </ng-scrollbar>
             </div>
           </div>
         </div>
-      </div>
-      <div class="row mt-3">
-        <div class="col-md-12">
+        <div class="col-md-6">
           <h5 class="text-center">Actas</h5>
           <div
-            class="{{
-              proceedingColumns.length > 0 ? 'height-limit' : 'height-min'
-            }}">
+            [ngClass]="{
+              'height-limit': proceedingColumns.length > 0,
+              'height-min': proceedingColumns.length == 0
+            }">
             <div>
-              <div
-                [class]="loading ? 'table-loading' : ''"
-                class="overflow-auto">
-                <ng2-smart-table
-                  class="col-md-12"
-                  [settings]="proceedingSettings"
-                  [source]="proceedingColumns"
-                  [attr.class]="'table-bordered'"
-                  (userRowSelect)="selectProceedings($event)">
-                </ng2-smart-table>
-                <app-pagination
-                  [params]="paramsActas"
-                  [totalItems]="totalItemsActas"></app-pagination>
-              </div>
+              <ng-scrollbar track="horizontal" [autoHeightDisabled]="false">
+                <div
+                  [class]="loading ? 'table-loading' : ''"
+                  class="overflow-auto">
+                  <ng2-smart-table
+                    class="col-md-12"
+                    [settings]="proceedingSettings"
+                    [source]="proceedingColumns"
+                    [attr.class]="'table-responsive table-bordered'"
+                    (userRowSelect)="selectProceedings($event)">
+                  </ng2-smart-table>
+                  <app-pagination
+                    [params]="paramsActas"
+                    [totalItems]="totalItemsActas"></app-pagination>
+                </div>
+              </ng-scrollbar>
             </div>
-            <div class="table-padding"></div>
           </div>
         </div>
       </div>
+      <br /><br />
 
       <div class="row pt-5">
         <form-field

@@ -53,6 +53,11 @@ export class Repository<T> implements IRepository<T> {
     return this.httpClient.put(`${fullRoute}/${id}`, formData);
   }
 
+  updateResponseRepuve(route: string, id: number | string, formData: Object) {
+    const fullRoute = this.buildRoute(route);
+    return this.httpClient.put(`${fullRoute}/id/${id}`, formData);
+  }
+
   updateCatagaloDelegations(
     route: string,
     id: number | string,
@@ -405,5 +410,32 @@ export class Repository<T> implements IRepository<T> {
     // console.log(`${fullRoute}/id/${id}`);
 
     return this.httpClient.delete(`${fullRoute}/id/${id}`);
+  }
+
+  // updateCatalogGoodSituation(route: string, formData: Object) {
+  //   const fullRoute = this.buildRoute(route);
+  //   console.log('fullRoute ', fullRoute)
+  //   console.log('formData ', formData)
+  //   return this.httpClient.put(`${fullRoute}`, formData);
+  // }
+
+  updateCatalogGoodSituation(
+    route: string,
+    id: number | string,
+    formData: Object
+  ) {
+    const fullRoute = this.buildRoute(route);
+    return this.httpClient.put(`${fullRoute}`, formData);
+  }
+
+  removeCatalogGoodSituation(
+    route: string,
+    situation: number | string,
+    status: number | string
+  ) {
+    const fullRoute = this.buildRoute(route);
+    // console.log(`${fullRoute}/delete/${situation}/${status}`);
+
+    return this.httpClient.delete(`${fullRoute}/delete/${situation}/${status}`);
   }
 }
