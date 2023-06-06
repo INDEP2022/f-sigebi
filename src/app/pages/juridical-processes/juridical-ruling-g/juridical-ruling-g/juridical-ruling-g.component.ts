@@ -60,6 +60,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { environment } from 'src/environments/environment';
 import Swal from 'sweetalert2';
 import { TempGood } from './dataTemp';
+import { DOCUMENTS_COLUMNS } from './documents-columns';
 
 /** LIBRERÍAS EXTERNAS IMPORTS */
 
@@ -121,7 +122,7 @@ export class JuridicalRulingGComponent
   ident = new DefaultSelect(
     [
       { id: 'ASEGURADO', value: 'ASEGURADO' },
-      { id: 'TRANSFERENTE', value: 'TRANSFERENTE' },
+      { id: 'TRANS', value: 'TRANSFERENTE' },
     ],
     2
   );
@@ -150,6 +151,7 @@ export class JuridicalRulingGComponent
     pager: {
       display: false,
     },
+
     hideSubHeader: true,
     actions: false,
     selectedRowIndex: -1,
@@ -167,26 +169,32 @@ export class JuridicalRulingGComponent
           this.onGoodSelect(instance),
       },
       id: {
+        sort: false,
         title: 'No. Bien',
         type: 'number',
       },
       description: {
+        sort: false,
         title: 'Descripción',
         type: 'string',
       },
       quantity: {
+        sort: false,
         title: 'Cantidad',
         type: 'string',
       },
       identifier: {
+        sort: false,
         title: 'Ident.',
         type: 'string',
       },
       status: {
+        sort: false,
         title: 'Estatus',
         type: 'string',
       },
       processStatus: {
+        sort: false,
         title: 'Proceso',
         type: 'string',
       },
@@ -216,8 +224,9 @@ export class JuridicalRulingGComponent
     mode: 'external',
     columns: {
       name: {
-        title: '',
         sort: false,
+        title: '',
+
         type: 'custom',
         showAlways: true,
         valuePrepareFunction: (isSelected: boolean, row: IGood) =>
@@ -227,30 +236,37 @@ export class JuridicalRulingGComponent
           this.onGoodSelectValid(instance),
       },
       id: {
+        sort: false,
         title: 'No. Bien',
         type: 'number',
       },
       description: {
+        sort: false,
         title: 'Descripción Dictaminación',
         type: 'string',
       },
       menaje: {
+        sort: false,
         title: 'Menaje',
         type: 'string',
       },
       quantity: {
+        sort: false,
         title: 'Cant. Dictaminación',
         type: 'string',
       },
       status: {
+        sort: false,
         title: 'Estatus',
         type: 'string',
       },
       processStatus: {
+        sort: false,
         title: 'Proceso',
         type: 'string',
       },
       idDestino: {
+        sort: false,
         title: 'ID Destino',
         type: 'string',
       },
@@ -266,20 +282,8 @@ export class JuridicalRulingGComponent
     actions: false,
     selectedRowIndex: -1,
     mode: 'external',
-    columns: {
-      id: {
-        title: '#',
-        type: 'number',
-      },
-      descriptionDocument: {
-        title: 'Documentos',
-        type: 'string',
-      },
-      selectedDate: {
-        title: 'Fec. Recibido',
-        type: 'string',
-      },
-    },
+    columns: { ...DOCUMENTS_COLUMNS },
+
     noDataMessage: 'No se encontrarón registros',
   };
 
@@ -293,10 +297,12 @@ export class JuridicalRulingGComponent
     mode: 'external',
     columns: {
       numRegister: {
+        sort: false,
         title: '#',
         type: 'number',
       },
       key: {
+        sort: false,
         title: 'Documentos',
         type: 'string',
         valuePrepareFunction: (value: any) => {
@@ -304,6 +310,7 @@ export class JuridicalRulingGComponent
         },
       },
       fecha: {
+        sort: false,
         title: 'Fecha',
         type: 'custom',
         class: 'custom-title',
@@ -325,8 +332,9 @@ export class JuridicalRulingGComponent
   public listadoDocumentos: boolean = false;
   // public rutaAprobado: string = baseMenu + baseMenuDepositaria + DEPOSITARY_ROUTES_2[0].link;
 
-  isDelit: boolean = true;
-  btnIsParcial: boolean = true;
+  isDelit: boolean = false;
+  btnIsParcial: boolean = false;
+  isIdent: boolean = true;
 
   constructor(
     private fb: FormBuilder,
@@ -381,6 +389,8 @@ export class JuridicalRulingGComponent
       causaPenal: [null, [Validators.pattern(STRING_PATTERN)]],
       observaciones: [null, [Validators.pattern(STRING_PATTERN)]],
       noVolante: [null],
+      identifier: [null],
+      type: [null],
     });
 
     this.dictaminacionesForm = this.fb.group({
@@ -547,6 +557,7 @@ export class JuridicalRulingGComponent
           this.expedientesForm
             .get('averiguacionPrevia')
             .setValue(response.preliminaryInquiry);
+          this.expedientesForm.get('identifier').setValue(response.identifier);
         },
         error: () => {
           // this.cleanForm();
@@ -652,7 +663,7 @@ export class JuridicalRulingGComponent
           // this.expedientesForm.get('tipoDictaminacion').setValue(null);
           // this.dictaminacionesForm.get('wheelNumber').setValue(null);
           this.dictaminacionesForm.get('cveOficio').setValue(null);
-          this.dictaminacionesForm.get('fechaDictaminacion').setValue(null);
+          //this.dictaminacionesForm.get('fechaDictaminacion').setValue(null);
           this.expedientesForm.get('observaciones').setValue(null);
           this.dictaminacionesForm.get('fechaNotificacion').setValue(null);
           this.dictaminacionesForm.get('etiqueta').setValue(null);
@@ -794,7 +805,7 @@ export class JuridicalRulingGComponent
     if (this.goods.length > 0) {
       this.goods.forEach(_g => {
         if (_g.status !== 'STI') {
-          _g.status = 'STI';
+          // _g.status = 'STI';
           _g.name = false;
           let valid = this.goodsValid.some(goodV => goodV == _g);
           if (!valid) {
@@ -804,13 +815,63 @@ export class JuridicalRulingGComponent
       });
     }
   }
+
   addSelect() {
+    if (this.statusDict == 'DICTAMINADO' || this.statusDict == 'IMPROCEDENTE') {
+      this.onLoadToast(
+        'error',
+        'Este dictamen ya tiene un estatus DICTAMINADO'
+      );
+      return;
+    }
+
+    if (this.expedientesForm.get('identifier').value) {
+      this.isIdent = false;
+    }
+
+    if (!this.dictaminacionesForm.get('autoriza_remitente').value) {
+      this.onLoadToast('error', 'Debe especificar quien autoriza dictamen');
+      return;
+    }
+
+    // Cambiar la forma en agregar bien ya que es un push y no dato directo para el estatus
+    // if(this.bien.est_disponible = 'N'){
+    //   this.onLoadToast('error','El bien tiene un estatus invalido para ser dictaminado o ya esta dictaminado')
+    //   return
+    // }
+
+    if (!this.expedientesForm.get('type').value) {
+      this.onLoadToast('error', 'Debe seleccionar un tipo de bien');
+      return;
+    }
+
+    if (!this.expedientesForm.get('identifier').value) {
+      this.onLoadToast('error', 'Debe seleccionar un identificador');
+      return;
+    }
+
+    // Cambiar la forma en agregar bien ya que es un push y no dato directo para el estatus
+    // if(this.bien.di_disponible = 'N'){
+    //   this.onLoadToast('error','El Bien ya existe')
+    //   return
+    // }
+
+    if (!this.dictaminacionesForm.get('fechaPPFF').value) {
+      this.onLoadToast('error', `Debe capturar la ${this.label}`);
+    }
+
+    // Cambiar la forma en agregar bien ya que es un push y no dato directo para el estatus
+    //if (this.bienes.DI_ES_NUMERARIO == 'S' this.bienes.DI_ESTA_CONCILIADO == 'N' AND: this.expedientesForm.get('tipoDictaminacion').value == 'PROCEDENCIA')
+    //   this.onLoadToast('error', 'El numerario no esta conciliado')
+    //   return
+
     if (this.selectedGooods.length > 0) {
       this.selectedGooods.forEach(good => {
         if (!this.goodsValid.some(v => v === good)) {
           if (good.status.toUpperCase() !== 'STI') {
             let indexGood = this.goods.findIndex(_good => _good == good);
-            this.goods[indexGood].status = 'STI';
+            // this.goods[indexGood].status = 'STI';
+
             this.goodsValid = this.goodsValid.concat(this.selectedGooods);
             // this.goods = this.goods.filter(_good => _good.id != good.id);
           }
@@ -1004,18 +1065,20 @@ export class JuridicalRulingGComponent
       });
   }
 
-  selectRow(e: any) {
-    if (e) {
-      this.idGoodSelected = e.data?.id;
+  selectRow(row?: any) {
+    if (row) {
+      this.idGoodSelected = row.data?.id;
       this.onLoadDocumentsByGood();
     }
-    console.log('Información del bien seleccionado', e.data);
+    console.log('Información del bien seleccionado', row.data);
   }
 
   documentsDictumXStateMList: IDocumentsDictumXStateM[] = [];
   totalItems2: number = 0;
   params2 = new BehaviorSubject<ListParams>(new ListParams());
   loading2 = this.loading;
+  listParams = new BehaviorSubject<ListParams>(new ListParams());
+
   rowsSelected(event: any) {
     const idGood = { ...this.goodData };
     this.totalItems2 = 0;
@@ -1029,6 +1092,22 @@ export class JuridicalRulingGComponent
 
   getDocumentDicXStateM(id?: number) {
     this.loading2 = true;
+    let params = {
+      ...this.listParams.getValue(),
+      stateNumber: id,
+    };
+    this.documentService.getDocumentsByGood(id, params).subscribe({
+      next: resp => {
+        this.documentsDictumXStateMList = resp.data;
+        this.totalItems2 = resp.count;
+        this.loading2 = false;
+
+        console.log('Documentos, ', resp);
+      },
+      error: error => {
+        console.log('No hay respuesta ', error);
+      },
+    });
   }
 
   onLoadDocumentsByGood() {
