@@ -384,4 +384,27 @@ export class Repository<T> implements IRepository<T> {
 
     return this.httpClient.delete(`${fullRoute}/id/${id}`);
   }
+
+  updateTypeRelevant(route: string, id: number | string, formData: Object) {
+    const fullRoute = this.buildRoute(route);
+
+    return this.httpClient.put(`${fullRoute}/id/${id}`, formData);
+  }
+
+  updateCatalogPhotographMedia(
+    route: string,
+    id: number | string,
+    formData: Object
+  ) {
+    const fullRoute = this.buildRoute(route);
+
+    return this.httpClient.put(`${fullRoute}/id/${id}`, formData);
+  }
+
+  removeCatalogPhotographMedia(route: string, id: number | string) {
+    const fullRoute = this.buildRoute(route);
+    // console.log(`${fullRoute}/id/${id}`);
+
+    return this.httpClient.delete(`${fullRoute}/id/${id}`);
+  }
 }
