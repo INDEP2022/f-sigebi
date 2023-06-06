@@ -304,7 +304,7 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
 
   getProceedings() {
     this.loading = true;
-    const param = new FilterParams();
+
     this.paramsActas.getValue()[
       'filter.numFile'
     ] = `$eq:${this.pageParams.exp}`;
@@ -339,29 +339,43 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
         if (data.count > 0) {
           this.totalItems = data.count || 0;
           this.historyColumns = data.data;
-          //data.data[data.data.length - 1];
-          this.historyUser = data.data[data.data.length - this.totalItems];
-          //this.historyUser = notif;
-          param.addFilter('user', this.historyUser.personnew, SearchFilter.EQ);
-          this.docRegisterService
-            .getUsersSegAreas(param.getParams())
-            .subscribe({
-              next: resp => {
-                if (resp.count > 0) {
-                  this.usersFilter = resp.data;
-                  console.log(this.usersFilter);
-                  this.preUser = this.usersFilter[0].userAndName;
-                  this.userHistory = this.usersFilter[0].user;
-                }
-                //this.users = new DefaultSelect(data.data, data.count);
+          const param1 = new FilterParams();
+          const param = new ListParams();
+          param['filter.numberSteeringwheel'] = `$eq:${this.pageParams.iden}`;
+          param.page = 0;
+          param.limit = this.totalItems;
+          this.historyOfficeService.getAll(param).subscribe({
+            next: data1 => {
+              console.log(data1.data);
+              console.log(data1.data.length + this.totalItems);
+              this.historyUser =
+                data1.data[data1.data.length - this.totalItems];
+              param1.addFilter(
+                'user',
+                this.historyUser.personnew,
+                SearchFilter.EQ
+              );
+              this.docRegisterService
+                .getUsersSegAreas(param1.getParams())
+                .subscribe({
+                  next: resp => {
+                    if (resp.count > 0) {
+                      this.usersFilter = resp.data;
+                      console.log(this.usersFilter);
+                      this.preUser = this.usersFilter[0].userAndName;
+                      this.userHistory = this.usersFilter[0].user;
+                    }
+                    //this.users = new DefaultSelect(data.data, data.count);
 
-                //console.log(this.preUser);
-              },
-              error: () => {
-                this.users = new DefaultSelect();
-                this.preUser = 'El volante no tiene turnados';
-              },
-            });
+                    //console.log(this.preUser);
+                  },
+                  error: () => {
+                    this.users = new DefaultSelect();
+                    this.preUser = 'El volante no tiene turnados';
+                  },
+                });
+            },
+          });
         } else {
           this.userHistory = this.turnForm.controls['newUser'].value.user;
         }
@@ -428,7 +442,7 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
       //console.log(this.formControls.newUser.value?.user);
       //this.newUser1 = this.formControls.newUser.value?.user;
       //this.filterHistoryUser(this.formControls.newUser.value?.user);
-      //this.loading = false;
+      this.loading = false;
     } catch (ex) {
       this.loading = false;
       // await firstValueFrom(this.historyOfficeService.update(body));
@@ -460,10 +474,8 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
       departamentDestinyNumber:
         this.formControls.newUser.value?.departamentNumber,
     };
-
     console.log(body);
 
-    /*
     this.notifService.update(this.notifData.wheelNumber, body).subscribe({
       next: () => {
         this.updateProcedureUser();
@@ -487,7 +499,7 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
           'Hubo un error al actualizar el turno'
         );
       },
-    });*/
+    });
   }
 
   updateProcedureUser() {
@@ -508,12 +520,28 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
   // UPDATE DICTÁMENES //
   updateDictums() {
     const data: any[] = [];
-    this.selectedDictums.forEach(val => {
+    console.log(data);
+    if (this.dictumColumns.length === 0 || this.selectedDictums.length === 0) {
       data.push({
-        minutesNumber: Number(val.id),
-        delegation2Number: Number(val.numDelegation2),
+        minutesNumber: null,
+        delegation2Number: null,
       });
-    });
+    } else if (
+      this.dictumColumns.length > 0 &&
+      this.selectedDictums.length === 0
+    ) {
+      this.alert('warning', 'Debe llenar los campo requeridos', ``);
+    } else if (
+      this.dictumColumns.length > 0 &&
+      this.selectedDictums.length > 0
+    ) {
+      this.selectedProceedings.forEach(val => {
+        data.push({
+          minutesNumber: Number(val.id),
+          delegation2Number: Number(val.numDelegation2),
+        });
+      });
+    }
 
     this.dictationService.updateDictaEntregaRTurno(data).subscribe({
       next: resp => {
@@ -530,23 +558,31 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
   // UPDATE ACTAS //
   updateProceedings() {
     const data: any[] = [];
-    this.selectedProceedings.forEach(val => {
-      data.push({
-        minutesNumber: Number(val.id),
-        delegation2Number: Number(val.numDelegation2),
-      });
-    });
     console.log(data);
-
-    /* data.forEach(dato => { this.proceedingsService.updateActasEntregaRTurno(dato).subscribe({
-       next: resp =>{
-         console.log(resp);
-       },
-       error: err =>{
-         this.alert('info', 'La delegacion actual es igual a la anterior', '');
-       }
-     })});*/
-
+    if (
+      this.proceedingColumns.length === 0 ||
+      this.selectedProceedings.length === 0
+    ) {
+      data.push({
+        minutesNumber: null,
+        delegation2Number: null,
+      });
+    } else if (
+      this.proceedingColumns.length > 0 &&
+      this.selectedProceedings.length === 0
+    ) {
+      this.alert('warning', 'Debe llenar los campo requeridos', ``);
+    } else if (
+      this.proceedingColumns.length > 0 &&
+      this.selectedProceedings.length > 0
+    ) {
+      this.selectedProceedings.forEach(val => {
+        data.push({
+          minutesNumber: Number(val.id),
+          delegation2Number: Number(val.numDelegation2),
+        });
+      });
+    }
     this.proceedingsService.updateActasEntregaRTurno(data).subscribe({
       next: resp => {
         console.log(resp);
@@ -557,8 +593,6 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
         //this.alert('info', err.message , '');
       },
     });
-
-    // });
   }
 
   goBack() {
@@ -644,8 +678,6 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
       this.valid = true;
     }
     console.log(this.selectedProceedings);
-
-    // this.updateProceedings();
   }
 
   /*selectDictums(event: any) {
