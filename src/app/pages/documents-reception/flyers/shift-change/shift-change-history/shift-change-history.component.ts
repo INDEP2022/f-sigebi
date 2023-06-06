@@ -64,6 +64,7 @@ export class ShiftChangeHistoryComponent extends BasePage implements OnInit {
           if (data.count > 0) {
             this.totalItems = data.count || 0;
             this.historyColumns = data.data;
+            console.log(this.historyColumns);
           }
           this.loading = false;
         },

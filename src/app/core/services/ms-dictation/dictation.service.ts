@@ -12,7 +12,6 @@ import {
   IInitFormLegalOpinionOfficeResponse,
   ITmpDictationCreate,
   ITmpExpDesahogoB,
-  IUpdateDelDictation,
 } from '../../models/ms-dictation/dictation-model';
 import { IRTdictaAarusr } from '../../models/ms-dictation/r-tdicta-aarusr.model';
 @Injectable({
@@ -246,7 +245,7 @@ export class DictationService extends HttpService {
       obj
     );
   }
-  updateDictaEntregaRTurno(body: IUpdateDelDictation) {
-    return this.put<IListResponse<IUpdateDelDictation>>(`${this.routeN}`, body);
+  updateDictaEntregaRTurno(body: any) {
+    return this.put<IListResponse<any>>(`${this.routeN}`, body);
   }
 }

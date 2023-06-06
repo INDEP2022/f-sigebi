@@ -1,11 +1,16 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { BsModalService } from 'ngx-bootstrap/modal';
 
 import { ActivatedRoute, Router } from '@angular/router';
 import { format } from 'date-fns';
 import { BehaviorSubject, firstValueFrom } from 'rxjs';
-import { IUserRowSelectEvent } from 'src/app/core/interfaces/ng2-smart-table.interface';
+import { ModelForm } from 'src/app/core/interfaces/model-form';
 import {
   IDictation,
   IUpdateDelDictation,
@@ -105,9 +110,9 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
   proceedingColumns: IProceedingDeliveryReception[] = [];
   proceedingSettings = { ...this.settings };
   // selectedDictums: IDictation[] = [];
-  selectedDictums: IUpdateDelDictation[] = [];
+  selectedDictums: any[] = [];
   // selectedProceedings: IProceedingDeliveryReception[] = [];
-  selectedProceedings: IUpdateActasEntregaRecepcionDelegation[] = [];
+  selectedProceedings: any[] = [];
   notifData: INotification = null;
   pageParams: IJuridicalShiftChangeParams = null;
   origin: any;
@@ -115,9 +120,9 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
   dictation: IUpdateDelDictation;
   paramsDict = new BehaviorSubject(new ListParams());
   paramsActas = new BehaviorSubject(new ListParams());
-  totalItemsDic: number;
-  totalItemsActas: number;
-  newUser: string;
+  totalItemsDic: number = 0;
+  totalItemsActas: number = 0;
+  //newUser: string;
   idUser: number;
   preUser: string;
   delegationNew: number;
@@ -130,6 +135,8 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
   flyerNumber: number;
   historyColumns: IHistoryOfficial[] = [];
   usersFilter: IUserAccessAreaRelational[] = [];
+
+  form: ModelForm<any>;
 
   constructor(
     // private fb: FormBuilder,
@@ -147,7 +154,8 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
     private historyOfficeService: HistoryOfficialService,
     private flyerCopiesService: CopiesXFlierService,
     private procedureManageService: ProcedureManagementService,
-    private proceedingsService: ProceedingsService
+    private proceedingsService: ProceedingsService,
+    private fb: FormBuilder
   ) {
     super();
     this.dictumSettings = {
@@ -169,6 +177,8 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
     this.route.queryParamMap.subscribe(params => {
       this.origin = params.get('origin');
     });
+    this.selectedProceedings = [];
+    this.selectedDictums = [];
   }
 
   private get formControls() {
@@ -277,7 +287,7 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
           if (data.count > 0) {
             this.totalItemsDic = data.count || 0;
             this.dictumColumns = data.data;
-            this.totalItemsDic = data.count;
+            this.loading = false;
           }
         },
         error: err => {
@@ -303,6 +313,7 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
             //console.log(data.data);
             this.proceedingColumns = data.data;
             this.totalItemsActas = data.count;
+            this.loading = false;
           }
         },
         error: err => {
@@ -315,6 +326,8 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
     if (!this.turnForm.valid) {
       this.turnForm.markAllAsTouched();
       this.turnForm.updateValueAndValidity();
+      this.updateProceedings();
+      this.updateDictums();
       return;
     }
 
@@ -423,7 +436,15 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
 
   // UPDATE DICTÁMENES //
   updateDictums() {
-    this.dictationService.updateDictaEntregaRTurno(this.dictation).subscribe({
+    const data: any[] = [];
+    this.selectedDictums.forEach(val => {
+      data.push({
+        minutesNumber: Number(val.id),
+        delegation2Number: Number(val.numDelegation2),
+      });
+    });
+
+    this.dictationService.updateDictaEntregaRTurno(data).subscribe({
       next: resp => {
         console.log(resp);
         this.loading = false;
@@ -436,7 +457,25 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
 
   // UPDATE ACTAS //
   updateProceedings() {
-    this.proceedingsService.updateActasEntregaRTurno(this.acta).subscribe({
+    const data: any[] = [];
+    this.selectedProceedings.forEach(val => {
+      data.push({
+        minutesNumber: Number(val.id),
+        delegation2Number: Number(val.numDelegation2),
+      });
+    });
+    console.log(data);
+
+    /* data.forEach(dato => { this.proceedingsService.updateActasEntregaRTurno(dato).subscribe({
+       next: resp =>{
+         console.log(resp);
+       },
+       error: err =>{
+         this.alert('info', 'La delegacion actual es igual a la anterior', '');
+       }
+     })});*/
+
+    this.proceedingsService.updateActasEntregaRTurno(data).subscribe({
       next: resp => {
         console.log(resp);
         this.loading = false;
@@ -445,6 +484,7 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
         this.alert('info', 'La delegacion actual es igual a la anterior', '');
       },
     });
+
     // });
   }
 
@@ -482,44 +522,93 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
     });
   }
 
-  selectDictums(event: IUserRowSelectEvent<IUpdateDelDictation>) {
-    this.selectedDictums = event.selected;
+  selectDictums(event: any) {
+    const existe = this.selectedDictums.some(
+      (objeto: any) => objeto.id === event.data.id
+    );
+    console.log(existe);
+    if (existe) {
+      // Eliminar el objeto si ya existe en el arreglo
+      const index = this.selectedDictums.findIndex(
+        objeto => objeto.id === event.data.id
+      );
+      this.selectedDictums.splice(index, 1);
+      this.valid = false;
+    } else {
+      // Agregar el objeto al arreglo
+      this.selectedDictums.push(event.data);
+      this.valid = true;
+    }
+    console.log(this.selectedDictums);
+
     this.valid = true;
-    console.log({ selectedDictums: this.selectedDictums });
+    /*console.log({ selectedDictums: this.selectedDictums });
+    this.updateDictums();
+    */
+  }
+
+  selectProceedings(event: any) {
+    //console.log(event);
+    // this.selectedProceedings = event.selected;
+    const existe = this.selectedProceedings.some(
+      (objeto: any) => objeto.id === event.data.id
+    );
+    console.log(existe);
+    if (existe) {
+      // Eliminar el objeto si ya existe en el arreglo
+      const index = this.selectedProceedings.findIndex(
+        objeto => objeto.id === event.data.id
+      );
+      this.selectedProceedings.splice(index, 1);
+      this.valid = false;
+    } else {
+      // Agregar el objeto al arreglo
+      this.selectedProceedings.push(event.data);
+      this.valid = true;
+    }
+    console.log(this.selectedProceedings);
+
+    // this.updateProceedings();
+  }
+
+  /*selectDictums(event: any) {
+    this.idDelDicta = event.data.id;
+    let params: IUpdateDelDictation = {
+      ofDictaNumber: event.data.id,
+      delegationDictateNumber:
+        this.formControls.newUser?.value.delegationNumber,
+    };
+    this.dictation = params;
+    console.log(this.dictation);
     this.updateDictums();
   }
 
-  selectProceedings(
-    event: IUserRowSelectEvent<IUpdateActasEntregaRecepcionDelegation>
-  ) {
-    console.log(event);
-    this.selectedProceedings = event.selected;
-    this.valid = true;
+  selectProceedings(event: any) {
+
+    
+
+    this.form = this.fb.group({
+      minutesNumber: [null],
+      delegation2Number: [null],
+    });
+
+
+    this.idDelActa = event.data.id;
+    const data: any = {};
+
+    data['minutesNumber'] = event.data.id;
+    data['delegation2Number'] = event.data.numDelegation_2.id;
+    //data['delegation2Number'] = this.formControls.newUser?.value.delegationNumber;
+
+    let params: IUpdateActasEntregaRecepcionDelegation = {
+      minutesNumber: event.data.id,
+      delegation2Number: this.formControls.newUser?.value.delegationNumber,
+    };
+    //this.acta = params;
+    //console.log(event.data.numDelegation_2.id);
+    console.log(data);
     this.updateProceedings();
-  }
-
-  // selectDictums(event: any) {
-  //   this.idDelDicta = event.data.id;
-  //   let params: IUpdateDelDictation = {
-  //     ofDictaNumber: event.data.id,
-  //     delegationDictateNumber:
-  //       this.formControls.newUser?.value.delegationNumber,
-  //   };
-  //   this.dictation = params;
-  //   console.log(this.dictation);
-  //   this.updateDictums();
-  // }
-
-  // selectProceedings(event: any) {
-  //   this.idDelActa = event.data.id;
-  //   let params: IUpdateActasEntregaRecepcionDelegation = {
-  //     minutesNumber: event.data.id,
-  //     delegation2Number: this.formControls.newUser?.value.delegationNumber,
-  //   };
-  //   this.acta = params;
-  //   console.log(this.acta);
-  //   this.updateProceedings();
-  // }
+  }*/
 
   getUsersCopy(lparams: ListParams) {
     const params = new FilterParams();
@@ -587,7 +676,7 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
       },
     });*/
   }
-  filterHistoryUserBefore() {
+  filterHistoryUserBefore(idUpdate: string) {
     this.loading = true;
     const param = new FilterParams();
     const params = new ListParams();
