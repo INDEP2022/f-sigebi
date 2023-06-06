@@ -556,6 +556,16 @@ export class EventCaptureComponent
       });
   }
 
+  generateStrategy() {
+    const proceeding = this.proceeding.id;
+    const type = this.proceeding.typeProceedings;
+    const strategyRoute =
+      'pages/final-destination-process/delivery-schedule/schedule-of-events/capture-event/generate-estrategy';
+    this.router.navigate([strategyRoute], {
+      queryParams: { proceeding, type },
+    });
+  }
+
   throwDateErrors(message: string) {
     this.onLoadToast('error', 'Error', message);
   }

@@ -1,25 +1,55 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { ProgrammingGoodsService } from 'src/app/core/services/ms-programming-good/programming-good.service';
-import { BasePage } from 'src/app/core/shared/base-page';
+import { map, tap } from 'rxjs';
 import {
-  KEYGENERATION_PATTERN,
-  STRING_PATTERN,
-} from 'src/app/core/shared/patterns';
+  FilterParams,
+  ListParams,
+} from 'src/app/common/repository/interfaces/list-params';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { ProgrammingGoodsService } from 'src/app/core/services/ms-programming-good/programming-good.service';
+import { UsersService } from 'src/app/core/services/ms-users/users.service';
+import { BasePage } from 'src/app/core/shared/base-page';
 import { DetailDelegationsComponent } from '../../../shared-final-destination/detail-delegations/detail-delegations.component';
-import { COLUMNS_GOODS } from './columns-goods';
 import { COLUMNS_ORDERS } from './columns-orders';
+import {
+  GenerateStrategyGoodsForm,
+  GenerateStrategyServiceForm,
+} from './utils/generate-strategy-forms';
 
+interface IGenerateStrategyGlobal {
+  goods: number;
+  indicator: number;
+  valuesIndicator: number;
+  where: string;
+}
+
+interface IGenerateStrategyParams {
+  proceedingNum: string | number;
+  proceedingType: string;
+}
 @Component({
   selector: 'app-generate-estrategy',
   templateUrl: './generate-estrategy.component.html',
   styles: [],
 })
 export class GenerateEstrategyComponent extends BasePage implements OnInit {
-  formService: FormGroup;
-  formGoods: FormGroup;
+  // PARAMETERS
+  params: IGenerateStrategyParams = {
+    proceedingNum: null, // NO_ACTA
+    proceedingType: null, // TIPO_ACTAparams.
+  };
+
+  // GLOBAL
+  global: IGenerateStrategyGlobal = {
+    goods: null, // BIENES
+    indicator: null, // INDICADOR
+    valuesIndicator: null, // INDICA_VALORES
+    where: null, // LV_WHERE
+  };
+  formService = this.fb.group(new GenerateStrategyServiceForm());
+  formGoods = this.fb.group(new GenerateStrategyGoodsForm());
   bsModalRef?: BsModalRef;
   myTime: Date = new Date();
   settingsGoods = { ...this.settings, actions: false };
@@ -46,45 +76,79 @@ export class GenerateEstrategyComponent extends BasePage implements OnInit {
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
-    private programmingGoodService: ProgrammingGoodsService
+    private programmingGoodService: ProgrammingGoodsService,
+    private activatedRoute: ActivatedRoute,
+    private authService: AuthService,
+    private usersService: UsersService
   ) {
     super();
-    this.settingsGoods.columns = COLUMNS_GOODS;
     this.settingsOrders.columns = COLUMNS_ORDERS;
+    this.activatedRoute.queryParams.subscribe(params => {
+      this.params.proceedingNum = params['proceeding'] ?? null;
+      this.params.proceedingType = params['type'] ?? null;
+    });
+    // proceeding
+    // type;
   }
 
   ngOnInit(): void {
-    this.initForm();
+    const { proceedingNum } = this.params;
+    if (proceedingNum) {
+      this.global.goods = 0;
+      this.global.indicator = 0;
+      this.global.valuesIndicator = 1;
+      this.global.where = null;
+      this.initForm();
+      this.fillData();
+      this.fillGoods();
+    } else if (this.global.where) {
+      this.initForm();
+    } else {
+      this.global.where = null;
+      this.initForm();
+    }
   }
 
+  //  PUP_INICIALIZA_FORMA
   initForm() {
-    this.formService = this.fb.group({
-      type: [null, []],
-      process: [null, []],
-      processDescrip: [null, [Validators.pattern(STRING_PATTERN)]],
-      captureDate: [null, []],
-      regionalCoord: [null, [Validators.pattern(STRING_PATTERN)]],
-      coordinationDescrip: [null, [Validators.pattern(STRING_PATTERN)]],
-      serviceKey: [null, [Validators.pattern(KEYGENERATION_PATTERN)]],
-      cancellAuthDate: [null, []],
-      uniqueKey: [null, [Validators.pattern(KEYGENERATION_PATTERN)]],
-      transferenceId: [null, []],
-      transferenceDescrip: [null, [Validators.pattern(STRING_PATTERN)]],
-      transmitterId: [null, []],
-      transmitterDescrip: [null, [Validators.pattern(STRING_PATTERN)]],
-      authorityId: [null, []],
-      authorityDescrip: [null, [Validators.pattern(STRING_PATTERN)]],
-      keyStore: [null, [Validators.pattern(KEYGENERATION_PATTERN)]],
-      storeDescrip: [null, [Validators.pattern(STRING_PATTERN)]],
-      ubication: [null, [Validators.pattern(STRING_PATTERN)]],
-    });
+    this.validateUser().subscribe();
+    this.global.goods = 0;
+    this.global.indicator = 0;
 
-    this.formGoods = this.fb.group({
-      eventStartDate: [null, []],
-      eventEndDate: [null, []],
-      eventTime: [new Date(), []],
-      statusChange: [null, []],
-    });
+    if (this.global.where) {
+      // SET_BLOCK_PROPERTY('ESTRATEGIA_FORMATO',DEFAULT_WHERE,:global.lv_where);
+      // GO_BLOCK('ESTRATEGIA_FORMATO');
+      // EXECUTE_QUERY;
+    }
+  }
+
+  // PU_LLENA_DATOS
+  fillData() {}
+
+  // PU_LLENA_BIENES
+  fillGoods() {}
+
+  // PUP_VAL_USUARIO
+  validateUser() {
+    const authUser = this.getAuthUser();
+    const params = new FilterParams();
+    params.addFilter('id', authUser);
+    return this.usersService.getAllSegUsers(params.getParams()).pipe(
+      map(res => res.data[0]),
+      tap(user => {
+        if (!user) {
+          return;
+        }
+        const tipUser = user.id.slice(0, 3);
+        if (tipUser == 'TLP') {
+          // TODO: DESABILITAR CAMPO DE ESTRATEGIA_FORMATO.ESTATUS
+        }
+      })
+    );
+  }
+
+  getAuthUser() {
+    return this.authService.decodeToken().preferred_username;
   }
 
   openModal() {
