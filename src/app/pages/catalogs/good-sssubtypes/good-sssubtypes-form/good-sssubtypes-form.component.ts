@@ -22,7 +22,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 })
 export class GoodSssubtypesFormComponent extends BasePage implements OnInit {
   goodSssubtypeForm: ModelForm<IGoodSssubtype>;
-  title: string = 'Subtipo Bien';
+  title: string = 'SubSubSubTipo Bien';
   edit: boolean = false;
   goodSssubtype: IGoodSssubtype;
   types = new DefaultSelect<IGoodType>();
@@ -41,6 +41,9 @@ export class GoodSssubtypesFormComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    this.getSubtypes(new ListParams());
+    this.getSsubtypes(new ListParams());
+
     this.prepareForm();
   }
 

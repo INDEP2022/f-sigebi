@@ -15,7 +15,7 @@ import { GOOD_SSSUBTYPE_COLUMNS } from './good-sssubtype-columns';
   styles: [],
 })
 export class GoodSssubtypesListComponent extends BasePage implements OnInit {
-  paragraphs: IGoodSssubtype[] = [];
+  paragraphs: any[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
 
@@ -26,6 +26,8 @@ export class GoodSssubtypesListComponent extends BasePage implements OnInit {
     super();
     this.settings.columns = GOOD_SSSUBTYPE_COLUMNS;
     this.settings.actions.delete = true;
+    this.settings.actions.add = false;
+    this.settings.hideSubHeader = false;
   }
 
   ngOnInit(): void {
@@ -38,11 +40,15 @@ export class GoodSssubtypesListComponent extends BasePage implements OnInit {
     this.loading = true;
     this.goodSssubtypeService.getAll(this.params.getValue()).subscribe({
       next: response => {
-        this.paragraphs = response.data;
+        this.paragraphs = response.data.map((item: any) => ({
+          ...item,
+          numSsubTypeName: item.numSsubType.description,
+          numTypeName: item.numType.nameGoodType,
+          numSubTypeName: item.numSubType.nameSubtypeGood,
+        }));
         this.totalItems = response.count;
         this.loading = false;
       },
-      error: error => (this.loading = false),
     });
   }
 

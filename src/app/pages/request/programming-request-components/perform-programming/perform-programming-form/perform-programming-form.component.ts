@@ -1921,6 +1921,7 @@ export class PerformProgrammingFormComponent
           this.loadingReport = false;
         },
         error: error => {
+          this.loadingReport = false;
           this.onLoadToast(
             'info',
             'Error',
