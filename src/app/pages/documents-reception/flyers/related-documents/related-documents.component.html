@@ -45,7 +45,7 @@
             <div class="col-md-4">
               <div>
                 <label for="">Tipo oficio&#58;</label>
-                {{ managementForm?.get('tipoOficio').value }}
+                {{ formJobManagement?.get('jobType').value }}
               </div>
             </div>
           </div>
@@ -53,35 +53,35 @@
             <div class="col-lg-4">
               <div>
                 <label for="">Oficio Por&#58;</label>
-                {{ managementForm?.get('relacionado').value }}
+                {{ formJobManagement?.get('jobBy').value }}
               </div>
             </div>
             <div class="col-md-4">
               <div>
                 <label for="">Número de Gestión&#58;</label>
-                {{ managementForm?.get('numero').value }}
+                {{ formJobManagement?.get('managementNumber').value }}
               </div>
             </div>
             <div class="col-md-4">
               <div>
                 <label for="">Clave Oficio&#58;</label>
-                {{ managementForm?.get('cveGestion').value }}
+                {{ formJobManagement?.get('cveManagement').value }}
               </div>
             </div>
           </div>
           <div class="row pt-4"></div>
           <div class="row pt-4">
+            <!-- value="id" -->
+            <!-- (change)="changeSender()" -->
             <form-field
-              [control]="managementForm.get('remitente')"
+              [control]="formJobManagement.get('sender')"
               class="col-md-4">
               <ngx-select
                 (fetchItems)="getSenderByDetail($event)"
-                (change)="changeSender()"
-                value="id"
-                bindLabel="name"
+                bindLabel="idName"
                 [data]="senders"
-                [form]="managementForm"
-                control="remitente"
+                [form]="formJobManagement"
+                control="sender"
                 [showTooltip]="true"
                 label="Remitente"></ngx-select>
             </form-field>
@@ -427,7 +427,7 @@
             <div class="col-12 col-sm-12 col-md-12">
               <h6>C.C.P.</h6>
             </div>
-            <form-field
+            <!-- <form-field
               class="col-sm-12 col-12 col-md-4 p-2"
               [control]="managementForm.get('ccp_person')"
               label="">
@@ -524,7 +524,16 @@
                 type="text"
                 class="form-control"
                 formControlName="ccp_TiPerson_1" />
-            </form-field>
+            </form-field> -->
+
+            <ng2-smart-table
+              class="col-md-12"
+              id="goods"
+              [attr.class]="'table-bordered'"
+              [settings]="configTableCCp.settings"
+              [source]="[]">
+            </ng2-smart-table>
+            <div></div>
           </div>
         </div>
       </div>

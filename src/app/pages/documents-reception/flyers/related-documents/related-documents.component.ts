@@ -1,11 +1,16 @@
 import { DatePipe } from '@angular/common';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, takeUntil, tap } from 'rxjs';
+import { BehaviorSubject, firstValueFrom, skip, takeUntil, tap } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import {
@@ -29,10 +34,11 @@ import { StatusGoodService } from 'src/app/core/services/ms-good/status-good.ser
 import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
 import { ApplicationGoodsQueryService } from 'src/app/core/services/ms-goodsquery/application.service';
 import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive-good.service';
+import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import { GoodsJobManagementService } from 'src/app/core/services/ms-office-management/goods-job-management.service';
+import { MJobManagementService } from 'src/app/core/services/ms-office-management/m-job-management.service';
 import { ScreenStatusService } from 'src/app/core/services/ms-screen-status/screen-status.service';
 import { SecurityService } from 'src/app/core/services/ms-security/security.service';
-import { BasePage } from 'src/app/core/shared/base-page';
 import {
   POSITVE_NUMBERS_PATTERN,
   STRING_PATTERN,
@@ -46,6 +52,7 @@ import { FlyersService } from '../services/flyers.service';
 import { DocumentsFormComponent } from './documents-form/documents-form.component';
 import { ModalPersonaOficinaComponent } from './modal-persona-oficina/modal-persona-oficina.component';
 import {
+  ConfigTableCcp,
   IDataGoodsTable,
   RELATED_DOCUMENTS_COLUMNS_GOODS,
 } from './related-documents-columns';
@@ -56,6 +63,7 @@ import {
   TEXT1Abandono,
   TEXT2,
 } from './related-documents-message';
+import { RelateDocumentsResponse } from './related-documents-response';
 import { RelatedDocumentsService } from './services/related-documents.service';
 @Component({
   selector: 'app-related-documents',
@@ -73,7 +81,10 @@ import { RelatedDocumentsService } from './services/related-documents.service';
     `,
   ],
 })
-export class RelatedDocumentsComponent extends BasePage implements OnInit {
+export class RelatedDocumentsComponent
+  extends RelateDocumentsResponse
+  implements OnInit
+{
   disabled: boolean = true;
   filtroPersonaExt: ICopiesJobManagementDto[] = [];
   filterParams2 = new BehaviorSubject<FilterParams>(new FilterParams());
@@ -160,6 +171,7 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
   disabledTypes: boolean = false;
   showDestinatario: boolean = false;
   showDestinatarioInput: boolean = false;
+  configTableCCp = ConfigTableCcp;
   constructor(
     private fb: FormBuilder,
     private flyerService: FlyersService,
@@ -171,16 +183,18 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
     private dictationService: DictationService,
     private serviceRelatedDocumentsService: RelatedDocumentsService,
     private securityService: SecurityService,
-    private serviceOficces: GoodsJobManagementService,
+    protected serviceOficces: GoodsJobManagementService,
     private readonly authService: AuthService,
     private applicationGoodsQueryService: ApplicationGoodsQueryService,
     private svLegalOpinionsOfficeService: LegalOpinionsOfficeService,
-    private readonly goodServices: GoodService,
+    protected readonly goodServices: GoodService,
     private statusGoodService: StatusGoodService,
     private screenStatusService: ScreenStatusService,
     private DictationXGood1Service: DictationXGood1Service,
     private goodprocessService: GoodprocessService,
-    private massiveGoodService: MassiveGoodService
+    private massiveGoodService: MassiveGoodService,
+    protected notificationService: NotificationService,
+    protected mJobManagementService: MJobManagementService
   ) {
     super();
     RELATED_DOCUMENTS_COLUMNS_GOODS.seleccion = {
@@ -196,6 +210,13 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
       actions: false,
       selectMode: 'multi',
       columns: { ...RELATED_DOCUMENTS_COLUMNS_GOODS },
+      rowClassFunction: (row: any) => {
+        if (!row.data.available) {
+          return 'bg-dark text-white disabled-custom';
+        } else {
+          return 'bg-success text-white';
+        }
+      },
     };
   }
 
@@ -261,11 +282,12 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
       return;
     } else {
       if (this.pantallaActual == '2' || this.pantallaActual == '1') {
+        this.initForm();
         this.setDataParams();
         this.pantallaOption = this.flyerService.getPantallaOption(
           this.pantallaActual
         );
-        let params = this.flyerService.getParams(true);
+        // let params = this.flyerService.getParams(true);
         // console.log(params, this.pantallaOption, this.pantallaActual);
         this.paramsGestionDictamen.sale = 'C';
         // if (params['parametros']) {
@@ -297,13 +319,16 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
     }
     this.params
       .pipe(
+        skip(1),
         takeUntil(this.$unSubscribe),
         tap(() => {
           this.getTypesSelectors();
           this.onLoadGoodList('all');
         })
       )
-      .subscribe();
+      .subscribe(res => {
+        this.getGoods1(res);
+      });
     if (this.paramsGestionDictamen.tipoOf == 'INTERNO') {
       this.showDestinatario = true;
     } else {
@@ -473,6 +498,74 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
     //     'Sin valor'
     //   );
     // }
+  }
+
+  formJobManagement = new FormGroup({
+    flyerNumber: new FormControl(''), // no_volante
+    jobType: new FormControl(''), // tipo_oficio
+    managementNumber: new FormControl(''), // no_of_gestion
+    addressee: new FormControl<{
+      id: number | string;
+      name: string;
+      idName: string;
+    }>(null), // destinatario,
+    sender: new FormControl<{
+      id: number | string;
+      name: string;
+      idName: string;
+    }>(null), // remitente
+    cveChargeRem: new FormControl(''), // cve_cargo_rem,
+    desSenderpa: new FormControl(''), //DES_REMITENTE_PA
+    delRemNumber: new FormControl(''), // NO_DEL_REM
+    depRemNumber: new FormControl(''), // NO_DEP_REM
+    jobBy: new FormControl(''), // oficio_por
+    cveManagement: new FormControl(''), // cve_of_gestion,
+    city: new FormControl<{
+      id: number | string;
+      name: string;
+      idName: string;
+    }>(null), // ciudad,
+  });
+
+  getCity() {}
+
+  initForm() {
+    const wheelNumber = this.getQueryParams('volante');
+    const expedient = this.getQueryParams('expediente');
+    this.getNotification(wheelNumber, expedient).subscribe({
+      next: async res => {
+        this.managementForm.get('noVolante').setValue(res.wheelNumber);
+        this.managementForm.get('noExpediente').setValue(res.expedientNumber);
+        const mJobManagement = await firstValueFrom(
+          this.getMJobManagement(res.wheelNumber)
+        );
+        this.formJobManagement.patchValue({
+          ...mJobManagement,
+          city: {
+            id: mJobManagement.city,
+            name: null,
+            idName: mJobManagement.city,
+          },
+          sender: {
+            id: mJobManagement.sender,
+            name: null,
+            idName: mJobManagement.sender,
+          },
+          addressee: {
+            id: mJobManagement.addressee,
+            name: null,
+            idName: mJobManagement.addressee,
+          },
+        });
+        const params = new ListParams();
+        params['filter.fileeNumber'] = res.expedientNumber;
+        this.getGoods1(params);
+      },
+    });
+  }
+
+  getQueryParams(name: string) {
+    return this.route.snapshot.queryParamMap.get(name);
   }
 
   async validOficioGestion() {
@@ -1469,6 +1562,7 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
     });
     this.loading = false;
   }
+
   getStatusGood(data: any) {
     const params = new ListParams();
     params['filter.status'] = `$eq:${data}`;
@@ -1579,6 +1673,7 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
       });
     });
   }
+
   getDictaXGood(id: any, type: string) {
     const params = new ListParams();
     params['filter.id'] = `$eq:${id}`;
