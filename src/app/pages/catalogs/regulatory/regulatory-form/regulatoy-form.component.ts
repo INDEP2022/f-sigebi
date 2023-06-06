@@ -23,12 +23,15 @@ export class RegulatoyFormComponent extends BasePage implements OnInit {
   edit: boolean = false;
   regulatory: IRegulatory;
   racks = new DefaultSelect<IRegulatory>();
+  fechaActual: string;
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
     private regulatoryService: RegulatoryService
   ) {
     super();
+    const fecha = new Date();
+    this.fechaActual = fecha.toISOString().split('T')[0];
   }
 
   ngOnInit(): void {
@@ -38,7 +41,7 @@ export class RegulatoyFormComponent extends BasePage implements OnInit {
   private prepareForm() {
     this.form = this.fb.group({
       id: [null],
-      id_fraccion: [
+      fractionId: [
         null,
         [Validators.required, Validators.pattern(POSITVE_NUMBERS_PATTERN)],
       ],
@@ -62,12 +65,12 @@ export class RegulatoyFormComponent extends BasePage implements OnInit {
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      fecha_creacion: [null, [Validators.required]],
+      fecha_creacion: [null],
       usuario_modificacion: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      fecha_modificacion: [null, [Validators.required]],
+      fecha_modificacion: [null],
       version: [null, [Validators.required]],
     });
     if (this.regulatory != null) {
@@ -91,6 +94,8 @@ export class RegulatoyFormComponent extends BasePage implements OnInit {
 
   create() {
     this.loading = true;
+    console.log('id', this.form.value.id_fraccion);
+
     this.regulatoryService.create(this.form.getRawValue()).subscribe({
       next: data => this.handleSuccess(),
       error: error => (this.loading = false),

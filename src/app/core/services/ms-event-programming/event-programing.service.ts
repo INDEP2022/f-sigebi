@@ -30,4 +30,8 @@ export class EventProgrammingService extends HttpService {
   putCertificateProgDst(model: ICertificateProgDst) {
     return this.put<ICertificateProgDst>('ssf3-certificate-prog-dst', model);
   }
+  putSsf3(model: any) {
+    return this.post<ICertificateProgDst>('/functions/update-ssf3', model);
+  }
+  //http://sigebimsdev.indep.gob.mx/eventprogramming/api/v1/functions/update-ssf3
 }

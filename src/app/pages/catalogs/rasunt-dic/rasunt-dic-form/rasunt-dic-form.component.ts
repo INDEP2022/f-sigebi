@@ -6,7 +6,10 @@ import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IRAsuntDic } from 'src/app/core/models/catalogs/r-asunt-dic.model';
 import { RAsuntDicService } from 'src/app/core/services/catalogs/r-asunt-dic.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import {
+  POSITVE_NUMBERS_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -35,17 +38,30 @@ export class RAsuntDicFormComponent extends BasePage implements OnInit {
   private prepareForm() {
     this.form = this.fb.group({
       code: [null],
-      dictum: [null, [Validators.required]],
+      dictum: [
+        null,
+        [Validators.required, Validators.pattern(POSITVE_NUMBERS_PATTERN)],
+      ],
       flyerType: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.maxLength(1),
+          Validators.pattern(STRING_PATTERN),
+        ],
       ],
-      doc: [null, [Validators.pattern(STRING_PATTERN)]],
+      doc: [
+        null,
+        [Validators.maxLength(1), Validators.pattern(STRING_PATTERN)],
+      ],
       property: [null, [Validators.pattern(STRING_PATTERN)]],
-      g_of: [null, [Validators.pattern(STRING_PATTERN)]],
-      i: [null, [Validators.pattern(STRING_PATTERN)]],
-      e: [null, [Validators.pattern(STRING_PATTERN)]],
-      registryNumber: [null],
+      g_of: [
+        null,
+        [Validators.maxLength(1), Validators.pattern(STRING_PATTERN)],
+      ],
+      i: [null, [Validators.maxLength(1), Validators.pattern(STRING_PATTERN)]],
+      e: [null, [Validators.maxLength(1), Validators.pattern(STRING_PATTERN)]],
+      // registryNumber: [null],
     });
     if (this.rAsuntDic != null) {
       this.edit = true;

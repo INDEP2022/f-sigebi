@@ -32,7 +32,7 @@ import { MJobManagementService } from 'src/app/core/services/ms-office-managemen
 import { SecurityService } from 'src/app/core/services/ms-security/security.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
+import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { COLUMNS_DOCUMENTS2 } from '../../../abandonments-declaration-trades/abandonments-declaration-trades/columns';
 import { tablaModalComponent } from '../tabla-modal/tablaModal-component';
@@ -183,30 +183,30 @@ export class OfficeComponent extends BasePage implements OnInit {
         [Validators.pattern(NUMBERS_PATTERN), Validators.maxLength(11)],
       ],
       officio: [null, null],
-      charge: [null, [Validators.pattern(this.string_PTRN)]],
+      charge: [null, [Validators.pattern(STRING_PATTERN)]],
       addressee: [
         null,
-        [Validators.pattern(this.string_PTRN), Validators.maxLength(2000)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(2000)],
       ],
       RemitenteSenderUser: [
         null,
-        [Validators.pattern(this.string_PTRN), Validators.maxLength(4000)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
       ],
       paragraphInitial: [
         null,
-        [Validators.pattern(this.string_PTRN), Validators.maxLength(4000)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
       ],
       paragraphFinish: [
         null,
-        [Validators.pattern(this.string_PTRN), Validators.maxLength(4000)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
       ],
       paragraphOptional: [
         null,
-        [Validators.pattern(this.string_PTRN), Validators.maxLength(4000)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
       ],
       descriptionSender: [
         null,
-        [Validators.pattern(this.string_PTRN), Validators.maxLength(4000)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
       ],
       typePerson: [null, null],
       senderUser: [null, null],
@@ -280,13 +280,46 @@ export class OfficeComponent extends BasePage implements OnInit {
           SearchFilter.EQ
         );
     } else {
+      // Obtener la fecha actual
+      const fechaActual = new Date();
+
+      // Obtener el primer día del mes actual
+      const primerDiaDelMes = new Date(
+        fechaActual.getFullYear(),
+        fechaActual.getMonth(),
+        1
+      );
+
+      // Obtener el último día del mes actual
+      const ultimoDiaDelMes = new Date(
+        fechaActual.getFullYear(),
+        fechaActual.getMonth() + 1,
+        0
+      );
+
+      // Formatear las fechas como cadenas de texto en formato ISO
+      const primerDiaDelMesString = primerDiaDelMes.toISOString().slice(0, 10);
+      const ultimoDiaDelMesString = ultimoDiaDelMes.toISOString().slice(0, 10);
+
+      // Mostrar los resultados
+      console.log('El primer día del mes es:', primerDiaDelMesString);
+      console.log('El último día del mes es:', ultimoDiaDelMesString);
+
       this.filterParamsLocal
         .getValue()
         .addFilter(
           'insertDate',
-          this.year + '-01-01' + ',' + this.year + '-12-31',
+          `${primerDiaDelMesString}','${ultimoDiaDelMesString}`,
           SearchFilter.BTW
         );
+
+      // this.filterParamsLocal
+      //   .getValue()
+      //   .addFilter(
+      //     'insertDate',
+      //     this.year + '-01-01' + ',' + this.year + '-12-31',
+      //     SearchFilter.BTW
+      //   );
 
       this.filterParamsLocal
         .getValue()
