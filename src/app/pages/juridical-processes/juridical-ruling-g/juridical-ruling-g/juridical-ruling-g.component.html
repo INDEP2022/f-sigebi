@@ -28,18 +28,23 @@
             </div> -->
 
             <div class="col-12 p-2">
-              <form-field
-                [control]="expedientesForm.get('tipoDictaminacion')"
-                label="Tipo de dictaminacion">
-                <input
+              <form-field [control]="expedientesForm.get('tipoDictaminacion')">
+                <!-- <input
                   class="form-control"
                   #cveOficio
                   formControlName="tipoDictaminacion"
                   readonly
-                  [disabled]="true" />
-                <!-- <ngx-select [searchOnInit]="true" [data]="typesDict" [searchable]="false" [form]="expedientesForm"
-                  label="Tipo Dictaminación" bindLabel="typeDict" control="tipoDictaminacion"
-                  (change)="onTypeDictChange($event)"></ngx-select> -->
+                  [disabled]="true" /> -->
+                <ngx-select
+                  [searchOnInit]="true"
+                  [data]="typesDict"
+                  [searchable]="false"
+                  [form]="expedientesForm"
+                  label="Tipo Dictaminación"
+                  bindLabel="typeDict"
+                  value="id"
+                  control="tipoDictaminacion"
+                  (change)="onTypeDictChange($event)"></ngx-select>
               </form-field>
             </div>
 
@@ -338,9 +343,10 @@
       <div class="col-md-12 mt-4 mb-4">
         <h5 class="title">BIENES</h5>
         <br />
+
         <ng2-smart-table
           (rowSelect)="onSelectedRow($event)"
-          [attr.class]="'table-bordered'"
+          [attr.class]="'table-bordered table-responsive'"
           [settings]="settings1"
           [source]="goods"></ng2-smart-table>
         <app-pagination
@@ -383,7 +389,7 @@
     <div class="row pt-2">
       <div class="col-md-12 mt-4 mb-4">
         <ng2-smart-table
-          [attr.class]="'table-bordered'"
+          [attr.class]="'table-bordered table-responsive'"
           [settings]="settings2"
           (rowSelect)="selectRow($event)"
           (userRowSelect)="rowsSelected($event)"
