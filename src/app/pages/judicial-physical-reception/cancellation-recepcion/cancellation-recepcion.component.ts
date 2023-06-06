@@ -20,7 +20,7 @@ import {
   IPAAbrirActasPrograma,
   IPACambioStatus,
 } from 'src/app/core/models/good-programming/good-programming';
-import { IAcceptGoodActa, IVban } from 'src/app/core/models/ms-good/good';
+import { IAcceptGoodActa, IValidaCambioEstatus, IVban } from 'src/app/core/models/ms-good/good';
 import {
   IDeleteDetailProceeding,
   IDetailProceedingsDeliveryReception,
@@ -1405,8 +1405,8 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
       this.fnOpenProceeding();
     } else if (this.labelActa == 'Cerrar acta') {
       console.log('Funciono');
-      /* this.newCloseProceeding() */
-      this.closeProceeding();
+      this.newCloseProceeding()
+      /* this.closeProceeding(); */
     }
   }
 
@@ -1758,7 +1758,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
   //Validations
 
   validateFolio() {
-    this.serviceDocuments.getByFolio(-73378).subscribe(
+    this.serviceDocuments.getByFolio(this.form.get('folioEscaneo').value).subscribe(
       res => {
         const data = JSON.parse(JSON.stringify(res));
         const scanStatus = data.data[0]['scanStatus'];
@@ -1845,7 +1845,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                     ''
                   );
                 } else
-                  this.serviceDocuments.getByFolio(-73378).subscribe(
+                  this.serviceDocuments.getByFolio(this.form.get('folioEscaneo').value).subscribe(
                     res => {
                       const data = JSON.parse(JSON.stringify(res));
                       const scanStatus = data.data[0]['scanStatus'];
@@ -2589,6 +2589,242 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
     }
   }
 
+  newCloseProceeding() {
+    if (this.dataGoodAct['data'].length == 0) {
+      this.alert(
+        'warning',
+        'No se registraron bienes',
+        'El Acta no contiene Bienes, no se podrá Cerrar.'
+      );
+    } else if (
+      ['CERRADO', 'CERRADA'].includes(this.form.get('statusProceeding').value)
+    ) {
+      this.alert('warning', 'El acta ya se encuentra cerrada', '');
+    } else {
+      const paramsF = new FilterParams();
+      paramsF.addFilter('keysProceedings', this.form.get('acta2').value);
+      this.serviceProcVal.getByFilter(paramsF.getParams()).subscribe(
+        res => {
+          const resData = JSON.parse(JSON.stringify(res.data))[0];
+          const idProcee = resData.id;
+          const model: IValidaCambioEstatus = {
+            p1: 3,
+            p2: resData.id.toString(),
+            p3: null,
+            p4: null,
+          };
+          this.serviceGood.PAValidaCambio(model).subscribe(res => {
+            const { P5 } = JSON.parse(JSON.stringify(res));
+            console.log(P5);
+            //!Forzando debería ser mayor y esta menor
+            if (P5 < 0) {
+              this.alert(
+                'warning',
+                'Bienes sin informacion requerida',
+                'Se encontraron bienes sin información requerida para este proceso'
+              );
+            } else {
+              const paramsF = new FilterParams();
+              let VAL_MOVIMIENTO = 0;
+
+              paramsF.addFilter('valUser', localStorage.getItem('username'));
+              paramsF.addFilter('valMinutesNumber', this.idProceeding);
+              this.serviceProgrammingGood
+                .getTmpProgValidation(paramsF.getParams())
+                .subscribe(
+                  res => {
+                    console.log(res);
+                    VAL_MOVIMIENTO = res.data[0]['valmovement'];
+                    if (VAL_MOVIMIENTO == 1) {
+                      const splitActa = this.form.get('acta2').value.split('/');
+                      const tipo_acta = ['C'].includes(splitActa[0])
+                        ? 'RECEPCAN'
+                        : 'SUSPENSION';
+                      this.loading = true;
+                      const fec_elab = this.form.get('fecElab').value;
+                      if (
+                        fec_elab != null &&
+                        format(fec_elab, 'MM-yyyy') !=
+                          format(new Date(), 'MM-yyyy')
+                      ) {
+                        this.alert(
+                          'warning',
+                          'Está fuera de tiempo para cerrar el acta',
+                          ''
+                        );
+                      } else if (this.form.get('folioEscaneo').value === null) {
+                        this.alert(
+                          'warning',
+                          'Debe introducir el valor del folio',
+                          ''
+                        );
+                        this.validateFolio();
+                        if (this.scanStatus) {
+                          const splitActa = this.form
+                            .get('acta2')
+                            .value.split('/');
+                          const tipo_acta = ['C'].includes(splitActa[0])
+                            ? 'RECEPCAN'
+                            : 'SUSPENSION';
+                          const model: IPACambioStatus = {
+                            P_NOACTA: idProcee,
+                            P_PANTALLA: 'FACTREFCANCELAR',
+                            P_FECHA_RE_FIS: this.form.get('fecCierreActa').value,
+                            P_TIPO_ACTA: tipo_acta,
+                            usuario:
+                              localStorage.getItem('username') == 'sigebiadmon'
+                                ? localStorage.getItem('username')
+                                : localStorage
+                                    .getItem('username')
+                                    .toLocaleUpperCase(),
+                          };
+                          console.log(model)
+                          this.serviceProgrammingGood
+                            .paChangeStatus(model)
+                            .subscribe(
+                              res => {
+                                console.log(res);
+                                const modelEdit: IProccedingsDeliveryReception =
+                                  {
+                                    comptrollerWitness:
+                                      this.form.get('testigo').value,
+                                    observations:
+                                      this.form.get('observaciones').value,
+                                    witness1:
+                                      this.form.get('autoridadCancela').value,
+                                    witness2: this.form.get('elabora').value,
+                                    address: this.form.get('direccion').value,
+                                    universalFolio:
+                                      this.form.get('folioEscaneo').value,
+                                  };
+                                this.serviceProcVal
+                                  .editProceeding(idProcee, modelEdit)
+                                  .subscribe(
+                                    res => {
+                                      console.log(res);
+                                      this.form
+                                        .get('statusProceeding')
+                                        .setValue('CERRADO');
+                                      this.labelActa = 'Abrir acta';
+                                      this.btnCSSAct = 'btn-success';
+                                      this.idProceeding = idProcee;
+                                      this.getGoodsActFn();
+                                      this.alert(
+                                        'success',
+                                        'Acta cerrada',
+                                        'El acta fue cerrada'
+                                      );
+                                      this.inputsInProceedingClose();
+                                    },
+                                    err => {
+                                      console.log(err);
+                                      this.alert(
+                                        'error',
+                                        'Ocurrió un error',
+                                        'Ocurrió un error inesperado que no permitió cerrar el acta'
+                                      );
+                                    }
+                                  );
+                              },
+                              err => {
+                                this.loading = false;
+                                this.alert(
+                                  'warning',
+                                  'Se presentó un error al cerrar el acta',
+                                  'Por favor verifique que el cambio se dio'
+                                );
+                              }
+                            );
+                        }
+                      }
+                    } else {
+                    }
+                  },
+                  err => {
+                    console.log(err);
+                    VAL_MOVIMIENTO = 0;
+                    this.closeProceedingFn(this.idProceeding);
+                  }
+                );
+            }
+          });
+        },
+        err => {
+          console.log(err);
+          this.closeProceedingFn(this.idProceeding);
+        }
+      );
+    }
+  }
+
+  closeProceedingFn(idProcee: any) {
+    this.alertQuestion(
+      'question',
+      '¿Seguro que desea realizar el cierre de este acta?',
+      ''
+    ).then(q => {
+      if (q.isConfirmed) {
+        const splitActa = this.form.get('acta2').value.split('/');
+        const tipo_acta = ['C'].includes(splitActa[0])
+          ? 'RECEPCAN'
+          : 'SUSPENSION';
+        this.loading = true;
+        const model: IPACambioStatus = {
+          P_NOACTA: idProcee,
+          P_PANTALLA: 'FACTREFCANCELAR',
+          P_FECHA_RE_FIS: this.form.get('fecCierreActa').value,
+          P_TIPO_ACTA: tipo_acta,
+          usuario:
+            localStorage.getItem('username') == 'sigebiadmon'
+              ? localStorage.getItem('username')
+              : localStorage.getItem('username').toLocaleUpperCase(),
+        };
+        console.log(model)
+        this.serviceProgrammingGood.paChangeStatus(model).subscribe(
+          res => {
+            console.log(res);
+            const modelEdit: IProccedingsDeliveryReception = {
+              comptrollerWitness: this.form.get('testigo').value,
+              observations: this.form.get('observaciones').value,
+              witness1: this.form.get('autoridadCancela').value,
+              witness2: this.form.get('elabora').value,
+              address: this.form.get('direccion').value,
+              universalFolio: this.form.get('folioEscaneo').value,
+            };
+            this.serviceProcVal.editProceeding(idProcee, modelEdit).subscribe(
+              res => {
+                console.log(res);
+                this.form.get('statusProceeding').setValue('CERRADO');
+                this.labelActa = 'Abrir acta';
+                this.btnCSSAct = 'btn-success';
+                this.idProceeding = idProcee;
+                this.getGoodsActFn();
+                this.alert('success', 'Acta cerrada', 'El acta fue cerrada');
+                this.inputsInProceedingClose();
+              },
+              err => {
+                console.log(err);
+                this.alert(
+                  'error',
+                  'Ocurrió un error',
+                  'Ocurrió un error inesperado que no permitió cerrar el acta'
+                );
+              }
+            );
+          },
+          err => {
+            this.loading = false;
+            this.alert(
+              'warning',
+              'Se presentó un error al cerrar el acta',
+              'Por favor verifique que el cambio se dio'
+            );
+          }
+        );
+      }
+    });
+  }
+
   closeProceeding() {
     if (this.dataGoodAct['data'].length === 0) {
       this.alert(
@@ -2620,6 +2856,8 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
             this.serviceProcVal
               .getByFilter(paramsF.getParams())
               .subscribe(res => {
+
+
                 const modelEdit: IProccedingsDeliveryReception = {
                   statusProceedings: 'CERRADA',
                   comptrollerWitness: this.form.get('testigo').value,
@@ -2714,7 +2952,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                       );
                     } else {
                       this.serviceDocuments
-                        .getByFolio(-73378)
+                        .getByFolio(this.form.get('folioEscaneo').value)
                         .subscribe(res => {
                           const data = JSON.parse(JSON.stringify(res));
                           const scanStatus = data.data[0]['scanStatus'];
@@ -2782,6 +3020,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                                       .getItem('username')
                                       .toLocaleUpperCase()
                               };
+                              console.log(model)
                               this.serviceProgrammingGood
                                 .paChangeStatus(model)
                                 .subscribe(res => {
@@ -2810,6 +3049,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                                         this.btnCSSAct = 'btn-success';
                                         this.idProceeding = idProceed;
                                         this.getGoodsActFn()
+                                        this.getGoodsFn()
                                         this.alert(
                                           'success',
                                           'Acta cerrada',
