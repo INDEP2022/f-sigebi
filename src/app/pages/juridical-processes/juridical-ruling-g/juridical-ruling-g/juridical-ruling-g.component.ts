@@ -122,7 +122,7 @@ export class JuridicalRulingGComponent
   ident = new DefaultSelect(
     [
       { id: 'ASEGURADO', value: 'ASEGURADO' },
-      { id: 'TRANSFERENTE', value: 'TRANSFERENTE' },
+      { id: 'TRANS', value: 'TRANSFERENTE' },
     ],
     2
   );
@@ -334,6 +334,7 @@ export class JuridicalRulingGComponent
 
   isDelit: boolean = false;
   btnIsParcial: boolean = false;
+  isIdent: boolean = true;
 
   constructor(
     private fb: FormBuilder,
@@ -388,6 +389,8 @@ export class JuridicalRulingGComponent
       causaPenal: [null, [Validators.pattern(STRING_PATTERN)]],
       observaciones: [null, [Validators.pattern(STRING_PATTERN)]],
       noVolante: [null],
+      identifier: [null],
+      type: [null],
     });
 
     this.dictaminacionesForm = this.fb.group({
@@ -554,6 +557,7 @@ export class JuridicalRulingGComponent
           this.expedientesForm
             .get('averiguacionPrevia')
             .setValue(response.preliminaryInquiry);
+          this.expedientesForm.get('identifier').setValue(response.identifier);
         },
         error: () => {
           // this.cleanForm();
@@ -659,7 +663,7 @@ export class JuridicalRulingGComponent
           // this.expedientesForm.get('tipoDictaminacion').setValue(null);
           // this.dictaminacionesForm.get('wheelNumber').setValue(null);
           this.dictaminacionesForm.get('cveOficio').setValue(null);
-          this.dictaminacionesForm.get('fechaDictaminacion').setValue(null);
+          //this.dictaminacionesForm.get('fechaDictaminacion').setValue(null);
           this.expedientesForm.get('observaciones').setValue(null);
           this.dictaminacionesForm.get('fechaNotificacion').setValue(null);
           this.dictaminacionesForm.get('etiqueta').setValue(null);
@@ -811,13 +815,63 @@ export class JuridicalRulingGComponent
       });
     }
   }
+
   addSelect() {
+    if (this.statusDict == 'DICTAMINADO' || this.statusDict == 'IMPROCEDENTE') {
+      this.onLoadToast(
+        'error',
+        'Este dictamen ya tiene un estatus DICTAMINADO'
+      );
+      return;
+    }
+
+    if (this.expedientesForm.get('identifier').value) {
+      this.isIdent = false;
+    }
+
+    if (!this.dictaminacionesForm.get('autoriza_remitente').value) {
+      this.onLoadToast('error', 'Debe especificar quien autoriza dictamen');
+      return;
+    }
+
+    // Cambiar la forma en agregar bien ya que es un push y no dato directo para el estatus
+    // if(this.bien.est_disponible = 'N'){
+    //   this.onLoadToast('error','El bien tiene un estatus invalido para ser dictaminado o ya esta dictaminado')
+    //   return
+    // }
+
+    if (!this.expedientesForm.get('type').value) {
+      this.onLoadToast('error', 'Debe seleccionar un tipo de bien');
+      return;
+    }
+
+    if (!this.expedientesForm.get('identifier').value) {
+      this.onLoadToast('error', 'Debe seleccionar un identificador');
+      return;
+    }
+
+    // Cambiar la forma en agregar bien ya que es un push y no dato directo para el estatus
+    // if(this.bien.di_disponible = 'N'){
+    //   this.onLoadToast('error','El Bien ya existe')
+    //   return
+    // }
+
+    if (!this.dictaminacionesForm.get('fechaPPFF').value) {
+      this.onLoadToast('error', `Debe capturar la ${this.label}`);
+    }
+
+    // Cambiar la forma en agregar bien ya que es un push y no dato directo para el estatus
+    //if (this.bienes.DI_ES_NUMERARIO == 'S' this.bienes.DI_ESTA_CONCILIADO == 'N' AND: this.expedientesForm.get('tipoDictaminacion').value == 'PROCEDENCIA')
+    //   this.onLoadToast('error', 'El numerario no esta conciliado')
+    //   return
+
     if (this.selectedGooods.length > 0) {
       this.selectedGooods.forEach(good => {
         if (!this.goodsValid.some(v => v === good)) {
           if (good.status.toUpperCase() !== 'STI') {
             let indexGood = this.goods.findIndex(_good => _good == good);
             // this.goods[indexGood].status = 'STI';
+
             this.goodsValid = this.goodsValid.concat(this.selectedGooods);
             // this.goods = this.goods.filter(_good => _good.id != good.id);
           }
