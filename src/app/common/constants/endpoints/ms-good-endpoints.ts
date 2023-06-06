@@ -50,6 +50,7 @@ export enum GoodFinderEndpoint {
   MasiveClassification = 'good-query/classification-massive',
   AssignDomicilie = 'good-query/update-domicile',
   UpdateGoodStatus = 'good-query/update-status',
+  AbleToSignDistamen = 'good-query/count-request',
 
   /* Good Data Aset */
   GoodDataAsetBase = 'gooddataset',

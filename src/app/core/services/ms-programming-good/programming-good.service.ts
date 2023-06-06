@@ -15,4 +15,15 @@ export class ProgrammingGoodsService extends HttpService {
       P_AREATRA,
     });
   }
+  PaCierreInicialProgr(
+    P_NOACTA: number | string,
+    P_PANTALLA: string,
+    P_ACCION: string | number
+  ) {
+    return this.post('/programminggood/apps/initial-closing-program', {
+      P_NOACTA,
+      P_PANTALLA,
+      P_ACCION,
+    });
+  }
 }

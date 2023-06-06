@@ -211,9 +211,9 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
 
   //FOLIO DE ESCANEO
   //FOLIO DE ESCANEO
-  folioEscaneo = 'folioEscaneo'
-  cveScreen = 'FACTREFCANCELAR'
-  nameReport = 'RGERGENSOLICDIGIT'
+  folioEscaneo = 'folioEscaneo';
+  cveScreen = 'FACTREFCANCELAR';
+  nameReport = 'RGERGENSOLICDIGIT';
 
   act2Valid: boolean = false;
   adminSelect = new DefaultSelect();
@@ -2350,6 +2350,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
             witness2: this.form.get('elabora').value,
             address: this.form.get('direccion').value,
             captureDate: format(new Date(), 'yyyy-MM,dd HH:mm'),
+            universalFolio: this.form.get('folioEscaneo').value,
           };
           const resData = JSON.parse(JSON.stringify(res.data[0]));
           console.log(modelEdit);
@@ -2783,6 +2784,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                                         this.form.get('autoridadCancela').value,
                                       witness2: this.form.get('elabora').value,
                                       address: this.form.get('direccion').value,
+                                      universalFolio: this.form.get('folioEscaneo').value
                                     };
                                   this.serviceProcVal
                                     .editProceeding(idProceed, modelEdit)
@@ -2883,15 +2885,12 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                       );
                       this.clearInputs();
                       this.loading = true;
-                      this.form
-                        .get('expediente')
-                        .setValue(this.numberExpedient);
+                      this.form;
                       this.goodsByExpediente();
 
                       /* this.form
                         .get('expediente')
                         .setValue(this.numberExpedient);
-                        this.getGoodsFn() */
                       /* await this.dataGoods.load(
                         this.dataGoods['data'].map((e: any) => {
                           for (let element of this.dataGoodAct['data']) {
