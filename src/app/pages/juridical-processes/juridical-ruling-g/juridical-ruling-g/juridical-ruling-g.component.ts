@@ -768,7 +768,7 @@ export class JuridicalRulingGComponent
       baseMenu +
         baseMenuDepositaria +
         DEPOSITARY_ROUTES_2[0].link +
-        `?origin=juridical-ruling-g
+        `?origin=FACTJURDICTAMASG
       &P_VALOR=${this.expedientesForm.get('noVolante').value}
       &P_NO_TRAMITE=${this.expedientesForm.get('noExpediente').value}
       &CLAVE_OFICIO_ARMADA=${this.dictaminacionesForm.get('cveOficio').value}
