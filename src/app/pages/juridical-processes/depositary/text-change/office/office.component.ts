@@ -652,9 +652,9 @@ export class OfficeComponent extends BasePage implements OnInit {
     }
     console.log('params', this.form.value);
     if (this.tipoImpresion === 'EXTERNO') {
-      this.reporteInterno();
-    } else {
       this.reporteExterno();
+    } else {
+      this.reporteInterno();
     }
   }
 
@@ -698,6 +698,7 @@ export class OfficeComponent extends BasePage implements OnInit {
       VOLANTE: this.form.value.flyerNumber,
     };
 
+    console.log(params);
     this.siabServiceReport.fetchReport('RGEROFGESTION', params).subscribe({
       next: response => {
         const blob = new Blob([response], { type: 'application/pdf' });
