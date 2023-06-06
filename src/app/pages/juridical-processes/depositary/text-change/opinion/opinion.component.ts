@@ -172,43 +172,43 @@ export class OpinionComponent extends BasePage implements OnInit, OnChanges {
       ],
       typeDict: [
         null,
-        [Validators.pattern(this.string_PTRN), Validators.maxLength(4000)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
       ],
       cve_banco: [
         null,
-        [Validators.pattern(this.string_PTRN), Validators.maxLength(4000)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
       ],
       charge: [
         null,
-        [Validators.pattern(this.string_PTRN), Validators.maxLength(4000)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
       ],
       senderUserRemitente: [
         null,
-        [Validators.pattern(this.string_PTRN), Validators.maxLength(4000)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
       ],
       addressee: [
         null,
-        [Validators.pattern(this.string_PTRN), Validators.maxLength(4000)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
       ],
       typeDict_: [
         null,
-        [Validators.pattern(this.string_PTRN), Validators.maxLength(4000)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
       ],
       paragraphInitial: [
         null,
-        [Validators.pattern(this.string_PTRN), Validators.maxLength(4000)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
       ],
       paragraphFinish: [
         null,
-        [Validators.pattern(this.string_PTRN), Validators.maxLength(4000)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
       ],
       paragraphOptional: [
         null,
-        [Validators.pattern(this.string_PTRN), Validators.maxLength(4000)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
       ],
       descriptionSender: [
         null,
-        [Validators.pattern(this.string_PTRN), Validators.maxLength(4000)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
       ] /*
     typePerson: [null, null],
     senderUser: [null, null],
@@ -223,23 +223,23 @@ export class OpinionComponent extends BasePage implements OnInit, OnChanges {
       ],
       masInfo_1: [
         null,
-        [Validators.pattern(this.string_PTRN), Validators.maxLength(4000)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
       ],
       masInfo_2: [
         null,
-        [Validators.pattern(this.string_PTRN), Validators.maxLength(4000)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
       ],
       masInfo_3: [
         null,
-        [Validators.pattern(this.string_PTRN), Validators.maxLength(4000)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
       ],
       masInfo_1_1: [
         null,
-        [Validators.pattern(this.string_PTRN), Validators.maxLength(4000)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
       ],
       masInfo_1_2: [
         null,
-        [Validators.pattern(this.string_PTRN), Validators.maxLength(4000)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
       ],
       extPerson: this.fb.array([]),
     });

@@ -32,7 +32,7 @@ import { MJobManagementService } from 'src/app/core/services/ms-office-managemen
 import { SecurityService } from 'src/app/core/services/ms-security/security.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
+import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { COLUMNS_DOCUMENTS2 } from '../../../abandonments-declaration-trades/abandonments-declaration-trades/columns';
 import { tablaModalComponent } from '../tabla-modal/tablaModal-component';
@@ -183,30 +183,30 @@ export class OfficeComponent extends BasePage implements OnInit {
         [Validators.pattern(NUMBERS_PATTERN), Validators.maxLength(11)],
       ],
       officio: [null, null],
-      charge: [null, [Validators.pattern(this.string_PTRN)]],
+      charge: [null, [Validators.pattern(STRING_PATTERN)]],
       addressee: [
         null,
-        [Validators.pattern(this.string_PTRN), Validators.maxLength(2000)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(2000)],
       ],
       RemitenteSenderUser: [
         null,
-        [Validators.pattern(this.string_PTRN), Validators.maxLength(4000)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
       ],
       paragraphInitial: [
         null,
-        [Validators.pattern(this.string_PTRN), Validators.maxLength(4000)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
       ],
       paragraphFinish: [
         null,
-        [Validators.pattern(this.string_PTRN), Validators.maxLength(4000)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
       ],
       paragraphOptional: [
         null,
-        [Validators.pattern(this.string_PTRN), Validators.maxLength(4000)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
       ],
       descriptionSender: [
         null,
-        [Validators.pattern(this.string_PTRN), Validators.maxLength(4000)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
       ],
       typePerson: [null, null],
       senderUser: [null, null],
