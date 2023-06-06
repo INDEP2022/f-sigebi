@@ -38,11 +38,14 @@ export class DateCellComponent
 
   ngOnInit(): void {
     if (this.value) {
-      this.control.setValue(new Date(this.value));
+      const date = new Date(this.value).toISOString();
+      const d = date.slice(0, -1);
+      this.control.setValue(new Date(d));
     }
     this.control.valueChanges
       .pipe(distinctUntilChanged(), debounceTime(this.delay))
       .subscribe((value: Date) => {
+        this.onInputChange();
         this.query =
           value !== null ? this.control.value?.toString() ?? 'skip' : '';
         console.log(this.query);

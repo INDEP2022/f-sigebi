@@ -282,7 +282,19 @@
       <div class="row pb-5">
         <div class="col-md-12">
           <div class="col-sm-12 col-12 col-md-12">
-            <form-field
+            <ngx-select
+              [form]="managementForm"
+              control="averiPrevia"
+              (fetchItems)="getTypesSelectors($event)"
+              [showTooltip]="true"
+              [data]="tiposDatosSelect"
+              bindLabel="tipoSupbtipoDescription"
+              label="Tipo &#45; Subtipo &#45; Descripci&oacute;n"
+              value="no_clasif_bien"
+              id="typesFilters"
+              (change)="typeSelected($event)">
+            </ngx-select>
+            <!-- <form-field
               [control]="managementForm.get('averiPrevia')"
               label="Tipo &#45; Subtipo &#45; Descripci&oacute;n">
               <ng-select
@@ -299,7 +311,7 @@
                   {{ item.tipoSupbtipoDescription }}
                 </ng-option>
               </ng-select>
-            </form-field>
+            </form-field> -->
           </div>
 
           <!-- <form-check class="col-md-2 text-end" label="Improcedente(s) todo(s)" for="improcedente">
@@ -400,7 +412,9 @@
                 class="form-control"
                 formControlName="parrafoFinal"></textarea>
             </form-field>
-            <form-field [control]="managementForm.get('text3')" label="">
+            <form-field
+              [control]="managementForm.get('text3')"
+              label="Parrafo por ausencia">
               <textarea
                 rows="3"
                 class="form-control"

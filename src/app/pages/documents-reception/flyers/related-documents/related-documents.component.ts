@@ -28,6 +28,7 @@ import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { StatusGoodService } from 'src/app/core/services/ms-good/status-good.service';
 import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
 import { ApplicationGoodsQueryService } from 'src/app/core/services/ms-goodsquery/application.service';
+import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive-good.service';
 import { GoodsJobManagementService } from 'src/app/core/services/ms-office-management/goods-job-management.service';
 import { ScreenStatusService } from 'src/app/core/services/ms-screen-status/screen-status.service';
 import { SecurityService } from 'src/app/core/services/ms-security/security.service';
@@ -91,6 +92,7 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
   origin: string = '';
   valTiposAll: boolean;
   tiposData: any = [];
+  tiposDatosSelect = new DefaultSelect();
   userCopies1 = new DefaultSelect();
   userCopies2 = new DefaultSelect();
   dataGoodTable: LocalDataSource = new LocalDataSource();
@@ -177,7 +179,8 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
     private statusGoodService: StatusGoodService,
     private screenStatusService: ScreenStatusService,
     private DictationXGood1Service: DictationXGood1Service,
-    private goodprocessService: GoodprocessService
+    private goodprocessService: GoodprocessService,
+    private massiveGoodService: MassiveGoodService
   ) {
     super();
     RELATED_DOCUMENTS_COLUMNS_GOODS.seleccion = {
@@ -242,6 +245,7 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
     this.route.queryParams
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe((params: any) => {
+        console.log(params);
         this.origin = params['origin'] ?? null;
         this.paramsGestionDictamen.volante = params['volante'] ?? null;
         this.paramsGestionDictamen.expediente = params['expediente'] ?? null;
@@ -294,7 +298,10 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
     this.params
       .pipe(
         takeUntil(this.$unSubscribe),
-        tap(() => this.onLoadGoodList('all'))
+        tap(() => {
+          this.getTypesSelectors();
+          this.onLoadGoodList('all');
+        })
       )
       .subscribe();
     if (this.paramsGestionDictamen.tipoOf == 'INTERNO') {
@@ -1352,6 +1359,44 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
       });
   }
 
+  //OBTENER TIPOS, SUBTIPOS DESCRIPCION
+  getTypesSelectors(event?: any) {
+    const expedient = this.paramsGestionDictamen.expediente;
+    this.massiveGoodService.chargeGoodsByExpedient(expedient).subscribe({
+      next: resp => {
+        const all = {
+          no_clasif_bien: 'Todos',
+          desc_subtipo: '0',
+          desc_ssubtipo: 'TODOS',
+          desc_sssubtipo: '0',
+        };
+
+        resp.data.unshift(all);
+        resp.data.map(async (item: any) => {
+          item['tipoSupbtipoDescription'] =
+            item.no_clasif_bien +
+            ' - ' +
+            item.desc_subtipo +
+            ' - ' +
+            item.desc_ssubtipo +
+            ' - ' +
+            item.desc_sssubtipo;
+        });
+        resp.data.unshift();
+        resp.data[0].tipoSupbtipoDescription =
+          resp.data[0].tipoSupbtipoDescription.substring(0, 24);
+        this.tiposDatosSelect = new DefaultSelect(resp.data, resp.count);
+      },
+      error: error => {
+        console.log(error);
+      },
+    });
+  }
+
+  typeSelected(type: any) {
+    console.log(type);
+  }
+
   // OBTENER BIENES //
   async onLoadGoodList(filter: any) {
     this.formLoading = true;
@@ -1449,7 +1494,6 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
       vc_pantalla: 'FACTJURABANDONOS',
     };
     let clasif: number;
-
     this.goodprocessService.getExpedientePostQuery(body).subscribe({
       next: async (data: any) => {
         clasif = data.count;

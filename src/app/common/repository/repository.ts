@@ -42,7 +42,6 @@ export class Repository<T> implements IRepository<T> {
 
   create(route: string, formData: Object) {
     const fullRoute = this.buildRoute(route);
-
     return this.httpClient.post<T>(`${fullRoute}`, formData);
   }
 
@@ -52,6 +51,11 @@ export class Repository<T> implements IRepository<T> {
     // console.log(formData);
 
     return this.httpClient.put(`${fullRoute}/${id}`, formData);
+  }
+
+  updateResponseRepuve(route: string, id: number | string, formData: Object) {
+    const fullRoute = this.buildRoute(route);
+    return this.httpClient.put(`${fullRoute}/id/${id}`, formData);
   }
 
   updateCatagaloDelegations(
@@ -389,5 +393,49 @@ export class Repository<T> implements IRepository<T> {
     const fullRoute = this.buildRoute(route);
 
     return this.httpClient.put(`${fullRoute}/id/${id}`, formData);
+  }
+
+  updateCatalogPhotographMedia(
+    route: string,
+    id: number | string,
+    formData: Object
+  ) {
+    const fullRoute = this.buildRoute(route);
+
+    return this.httpClient.put(`${fullRoute}/id/${id}`, formData);
+  }
+
+  removeCatalogPhotographMedia(route: string, id: number | string) {
+    const fullRoute = this.buildRoute(route);
+    // console.log(`${fullRoute}/id/${id}`);
+
+    return this.httpClient.delete(`${fullRoute}/id/${id}`);
+  }
+
+  // updateCatalogGoodSituation(route: string, formData: Object) {
+  //   const fullRoute = this.buildRoute(route);
+  //   console.log('fullRoute ', fullRoute)
+  //   console.log('formData ', formData)
+  //   return this.httpClient.put(`${fullRoute}`, formData);
+  // }
+
+  updateCatalogGoodSituation(
+    route: string,
+    id: number | string,
+    formData: Object
+  ) {
+    const fullRoute = this.buildRoute(route);
+    return this.httpClient.put(`${fullRoute}`, formData);
+  }
+
+  removeCatalogGoodSituation(
+    route: string,
+    situation: number | string,
+    status: number | string
+  ) {
+    const fullRoute = this.buildRoute(route);
+    // console.log(`${fullRoute}/delete/${situation}/${status}`);
+
+    return this.httpClient.delete(`${fullRoute}/delete/${situation}/${status}`);
   }
 }
