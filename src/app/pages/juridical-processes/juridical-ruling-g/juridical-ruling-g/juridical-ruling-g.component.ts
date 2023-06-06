@@ -325,8 +325,8 @@ export class JuridicalRulingGComponent
   public listadoDocumentos: boolean = false;
   // public rutaAprobado: string = baseMenu + baseMenuDepositaria + DEPOSITARY_ROUTES_2[0].link;
 
-  isDelit: boolean = true;
-  btnIsParcial: boolean = true;
+  isDelit: boolean = false;
+  btnIsParcial: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -794,7 +794,7 @@ export class JuridicalRulingGComponent
     if (this.goods.length > 0) {
       this.goods.forEach(_g => {
         if (_g.status !== 'STI') {
-          _g.status = 'STI';
+          // _g.status = 'STI';
           _g.name = false;
           let valid = this.goodsValid.some(goodV => goodV == _g);
           if (!valid) {
@@ -810,7 +810,7 @@ export class JuridicalRulingGComponent
         if (!this.goodsValid.some(v => v === good)) {
           if (good.status.toUpperCase() !== 'STI') {
             let indexGood = this.goods.findIndex(_good => _good == good);
-            this.goods[indexGood].status = 'STI';
+            // this.goods[indexGood].status = 'STI';
             this.goodsValid = this.goodsValid.concat(this.selectedGooods);
             // this.goods = this.goods.filter(_good => _good.id != good.id);
           }
