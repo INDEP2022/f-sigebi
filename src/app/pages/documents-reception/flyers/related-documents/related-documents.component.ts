@@ -1365,11 +1365,12 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
     this.massiveGoodService.chargeGoodsByExpedient(expedient).subscribe({
       next: resp => {
         const all = {
-          no_clasif_bien: 0,
-          desc_subtipo: 'TODOS LOS BIENES',
-          desc_ssubtipo: '',
-          desc_sssubtipo: '',
+          no_clasif_bien: 'Todos',
+          desc_subtipo: '0',
+          desc_ssubtipo: 'TODOS',
+          desc_sssubtipo: '0',
         };
+
         resp.data.unshift(all);
         resp.data.map(async (item: any) => {
           item['tipoSupbtipoDescription'] =
@@ -1381,8 +1382,9 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
             ' - ' +
             item.desc_sssubtipo;
         });
+        resp.data.unshift();
         resp.data[0].tipoSupbtipoDescription =
-          resp.data[0].tipoSupbtipoDescription.substring(0, 20);
+          resp.data[0].tipoSupbtipoDescription.substring(0, 24);
         this.tiposDatosSelect = new DefaultSelect(resp.data, resp.count);
       },
       error: error => {
