@@ -42,7 +42,6 @@ export class Repository<T> implements IRepository<T> {
 
   create(route: string, formData: Object) {
     const fullRoute = this.buildRoute(route);
-
     return this.httpClient.post<T>(`${fullRoute}`, formData);
   }
 
