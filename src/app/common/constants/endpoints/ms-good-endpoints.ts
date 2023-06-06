@@ -41,6 +41,8 @@ export enum GoodProcessPoints {
   acceptGoodStatus = `application/acceptGoodStatus`,
   acceptGoodStatusScreen = `application/acceptGoodStatusScreen`,
   dateRange = `util-pkg/getDate`,
+  getFact = 'application/get-fact-juridict-amasg',
+  getIdent = 'application/get-fact-juridict-amasg-2',
 }
 
 export enum GoodFinderEndpoint {

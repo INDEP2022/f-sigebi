@@ -27,6 +27,7 @@ import {
 import {
   FilterParams,
   ListParams,
+  SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { IGoodSssubtype } from 'src/app/core/models/catalogs/good-sssubtype.model';
 import { IGoodSubType } from 'src/app/core/models/catalogs/good-subtype.model';
@@ -45,6 +46,7 @@ import { GoodSubtypeService } from 'src/app/core/services/catalogs/good-subtype.
 import { GoodTypeService } from 'src/app/core/services/catalogs/good-type.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
+import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { ApplicationGoodsQueryService } from 'src/app/core/services/ms-goodsquery/application.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
@@ -61,6 +63,7 @@ import { environment } from 'src/environments/environment';
 import Swal from 'sweetalert2';
 import { TempGood } from './dataTemp';
 import { DOCUMENTS_COLUMNS } from './documents-columns';
+import { GoodSubtype } from './model/good.model';
 
 /** LIBRERÍAS EXTERNAS IMPORTS */
 
@@ -100,6 +103,8 @@ export class JuridicalRulingGComponent
   goodData: IGood;
 
   //tipos
+  typesClass = new DefaultSelect<Partial<GoodSubtype>>();
+  typesIdent = new DefaultSelect<Partial<{ identificador: string }>>();
   types = new DefaultSelect<Partial<IGoodType>>();
   subtypes = new DefaultSelect();
   ssubtypes = new DefaultSelect();
@@ -107,21 +112,24 @@ export class JuridicalRulingGComponent
 
   typesDict = new DefaultSelect(
     [
+      { id: 'PROCEDENCIA', typeDict: 'PROCEDENCIA' },
+      { id: 'DESTINO', typeDict: 'DESTINO' },
       { id: 'DESTRUCCION', typeDict: 'DESTRUCCIÓN' },
+      { id: 'DEVOLUCIÓN', typeDict: 'DEVOLUCIÓN' },
       { id: 'DONACION', typeDict: 'DONACION' },
+      { id: 'DECOMISO', typeDict: 'DECOMISO' },
+      { id: 'EXT_DOM', typeDict: 'EXT_DOM' },
+      { id: 'RESARCIMIENTO', typeDict: 'RESARCIMIENTO' },
       { id: 'ENAJENACION', typeDict: 'ENAJENACIÓN' },
       { id: 'TRANSFERENTE', typeDict: 'TRANSFERENTE' },
-      { id: 'PROCEDENCIA', typeDict: 'PROCEDENCIA' },
-      { id: 'DEVOLUCIÓN', typeDict: 'DEVOLUCIÓN' },
       { id: 'ABANDONO', typeDict: 'ABANDONO' },
-      { id: 'RESARCIMIENTO', typeDict: 'RESARCIMIENTO' },
     ],
     2
   );
 
   ident = new DefaultSelect(
     [
-      { id: 'ASEGURADO', value: 'ASEGURADO' },
+      { id: 'ASEG', value: 'ASEGURADO' },
       { id: 'TRANS', value: 'TRANSFERENTE' },
     ],
     2
@@ -200,6 +208,10 @@ export class JuridicalRulingGComponent
       },
     },
     rowClassFunction: (row: any) => {
+      if (row.data.estatus) {
+        console.log(row.data.estatus.descriptionStatus);
+      }
+
       if (
         row.data.status === 'STA' ||
         row.data.status === 'ROP' ||
@@ -340,6 +352,7 @@ export class JuridicalRulingGComponent
     private fb: FormBuilder,
     private activatedRoute: ActivatedRoute,
     private service: GoodTypeService,
+    private serviceGood: GoodProcessService,
     private goodSubtypesService: GoodSubtypeService,
     private goodSsubtypeService: GoodSsubtypeService,
     private goodSssubtypeService: GoodSssubtypeService,
@@ -447,28 +460,28 @@ export class JuridicalRulingGComponent
     if (typeVol == 'T') {
       this.label = 'Fec. P.P.F.F.';
       this.isDelit = typeDic == 'PROCEDENCIA' ? true : false;
-    } else if ((typeDic = 'PROCEDENCIA')) {
+    } else if (typeDic == 'PROCEDENCIA') {
       this.label = 'Fec. Aseg.';
       this.isDelit = true;
-    } else if ((typeDic = 'DESTINO')) {
+    } else if (typeDic == 'DESTINO') {
       this.label = 'Fec. Dest.';
       this.isDelit = false;
-    } else if ((typeDic = 'DESTRUCCION')) {
+    } else if (typeDic == 'DESTRUCCION') {
       this.label = 'Fec. Dest.';
       this.isDelit = false;
     } else if (['DEVOLUCION', 'RESARCIMIENTO'].includes(typeDic)) {
       this.label = 'Fec. Devo.';
       this.isDelit = false;
-    } else if ((typeDic = 'DONACION')) {
+    } else if (typeDic == 'DONACION') {
       this.label = 'Fec. Dona.';
       this.isDelit = false;
-    } else if ((typeDic = 'DECOMISO')) {
+    } else if (typeDic == 'DECOMISO') {
       this.label = 'Fec. Deco.';
       this.isDelit = false;
-    } else if ((typeDic = 'EXT_DOM')) {
+    } else if (typeDic == 'EXT_DOM') {
       this.label = 'Fec. ExDom.';
       this.isDelit = false;
-    } else if ((typeDic = 'TRANSFERENTE')) {
+    } else if (typeDic == 'TRANSFERENTE') {
       this.label = 'Fec. P.P.F.F.';
       this.isDelit = false;
     }
@@ -542,6 +555,53 @@ export class JuridicalRulingGComponent
   onLoadExpedientData() {
     let noExpediente = this.expedientesForm.get('noExpediente').value || '';
     if (noExpediente !== '') {
+      const body = {
+        cve_forma: 'FACTJURDICTAMASG',
+        tipo_dicta: this.expedientesForm.get('tipoDictaminacion').value,
+        no_expediente: this.expedientesForm.get('noExpediente').value,
+      };
+      this.serviceGood.getFact(body).subscribe({
+        next: resp => {
+          resp.data.unshift({
+            no_clasif_bien: 0,
+            desc_subtipo: '0',
+            desc_ssubtipo: '-',
+            desc_sssubtipo: 'Todos',
+          });
+          this.typesClass = new DefaultSelect(resp.data, resp.count);
+        },
+        error: () => {
+          const data = [
+            {
+              no_clasif_bien: 0,
+              desc_subtipo: '0',
+              desc_ssubtipo: '-',
+              desc_sssubtipo: 'Todos',
+            },
+          ];
+          this.typesClass = new DefaultSelect(data, 1);
+        },
+      });
+
+      const body2 = {
+        cve_forma: 'FACTJURDICTAMASG',
+        tipo_dicta: this.expedientesForm.get('tipoDictaminacion').value,
+        no_expediente: this.expedientesForm.get('noExpediente').value,
+      };
+      this.serviceGood.getIdent(body2).subscribe({
+        next: resp => {
+          this.typesIdent = new DefaultSelect(resp.data, resp.count);
+        },
+        error: () => {
+          const data = [
+            {
+              identificador: '',
+            },
+          ];
+          this.typesIdent = new DefaultSelect(data, 1);
+        },
+      });
+
       this.expedientServices.getById(noExpediente).subscribe({
         next: response => {
           // this.dictaminacionesForm
@@ -557,7 +617,7 @@ export class JuridicalRulingGComponent
           this.expedientesForm
             .get('averiguacionPrevia')
             .setValue(response.preliminaryInquiry);
-          this.expedientesForm.get('identifier').setValue(response.identifier);
+          //this.expedientesForm.get('identifier').setValue(response.identifier);
         },
         error: () => {
           // this.cleanForm();
@@ -976,12 +1036,24 @@ export class JuridicalRulingGComponent
   }
 
   onTypesChange(type: any) {
-    this.resetFields([this.subtype, this.ssubtype, this.sssubtype]);
-    this.subtypes = new DefaultSelect();
-    this.ssubtypes = new DefaultSelect();
-    this.sssubtypes = new DefaultSelect();
-    this.subtipoForm.updateValueAndValidity();
-    this.goodTypeChange.emit(type);
+    console.log(type);
+
+    const filter = new FilterParams();
+
+    filter.addFilter('goodClassNumber', type.no_clasif_bien, SearchFilter.EQ);
+
+    this.goodServices.getAllFilter(filter.getParams()).subscribe({
+      next: data => {
+        console.log(data);
+      },
+    });
+
+    // this.resetFields([this.subtype, this.ssubtype, this.sssubtype]);
+    // this.subtypes = new DefaultSelect();
+    // this.ssubtypes = new DefaultSelect();
+    // this.sssubtypes = new DefaultSelect();
+    // this.subtipoForm.updateValueAndValidity();
+    // this.goodTypeChange.emit(type);
   }
 
   goBack() {
