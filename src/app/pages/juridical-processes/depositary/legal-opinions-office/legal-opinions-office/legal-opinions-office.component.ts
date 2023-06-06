@@ -1575,7 +1575,9 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
     let body: ICopiesOfficeSendDictation = {
       vc_pantalla: this.screenKey,
       clave_oficio_armada: this.dictationData.passOfficeArmy, //this.dictationData.keyArmyNumber.toString(),
-      estatus_of: this.officeDictationData.statusOf,
+      estatus_of: this.officeDictationData.statusOf
+        ? this.officeDictationData.statusOf
+        : '',
       fec_dictaminacion: this.dictationData.dictDate,
       tipo_dictaminacion: this.dictationData.typeDict,
       identi: this.variables.identi,
@@ -1694,6 +1696,8 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
         error: error => {
           console.log(error);
           this.loadingSend = false;
+          this.blockSender = true;
+          this.onLoadToast('success', error.error.message, '');
           // count++;
           // this.totalCurrent++;
           // this.totalIncorrect++;
