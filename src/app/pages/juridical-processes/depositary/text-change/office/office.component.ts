@@ -32,7 +32,7 @@ import { MJobManagementService } from 'src/app/core/services/ms-office-managemen
 import { SecurityService } from 'src/app/core/services/ms-security/security.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
+import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { COLUMNS_DOCUMENTS2 } from '../../../abandonments-declaration-trades/abandonments-declaration-trades/columns';
 import { tablaModalComponent } from '../tabla-modal/tablaModal-component';
@@ -184,48 +184,34 @@ export class OfficeComponent extends BasePage implements OnInit {
         [Validators.pattern(NUMBERS_PATTERN), Validators.maxLength(11)],
       ],
       officio: [null, null],
-      charge: [null, [Validators.pattern(this.SPECIAL_STRINGPATTERN)]],
+      charge: [null, [Validators.pattern(STRING_PATTERN)]],
       addressee: [
         null,
-        [
-          Validators.pattern(this.SPECIAL_STRINGPATTERN),
-          Validators.maxLength(2000),
-        ],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(2000)],
       ],
       RemitenteSenderUser: [
         null,
         [
-          Validators.pattern(this.SPECIAL_STRINGPATTERN),
+          Validators.pattern(STRING_PATTERN),
           Validators.maxLength(4000),
+          Validators.required,
         ],
       ],
       paragraphInitial: [
         null,
-        [
-          Validators.pattern(this.SPECIAL_STRINGPATTERN),
-          Validators.maxLength(4000),
-        ],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
       ],
       paragraphFinish: [
         null,
-        [
-          Validators.pattern(this.SPECIAL_STRINGPATTERN),
-          Validators.maxLength(4000),
-        ],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
       ],
       paragraphOptional: [
         null,
-        [
-          Validators.pattern(this.SPECIAL_STRINGPATTERN),
-          Validators.maxLength(4000),
-        ],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
       ],
       descriptionSender: [
         null,
-        [
-          Validators.pattern(this.SPECIAL_STRINGPATTERN),
-          Validators.maxLength(4000),
-        ],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
       ],
       typePerson: [null, null],
       senderUser: [null, null],
@@ -639,8 +625,8 @@ export class OfficeComponent extends BasePage implements OnInit {
 
   /*       Crea el archivo que se va desplegar la información 
 =======================================================================*/
-  public confirm() {
-    this.updateOficioSinAlert();
+  async confirm() {
+    await this.updateOficioSinAlert();
     // CREAMOS DOCUMENTOS PARA M OFICIO GESTION //
     for (let i = 0; i < this.IAttDocument.length; i++) {
       let obj = {
@@ -652,14 +638,27 @@ export class OfficeComponent extends BasePage implements OnInit {
     }
     console.log('params', this.form.value);
     if (this.tipoImpresion === 'EXTERNO') {
-      this.reporteExterno();
+      await this.reporteExterno();
     } else {
-      this.reporteInterno();
+      await this.reporteInterno();
     }
   }
 
-  updateOficioSinAlert() {
-    this.serviceOficces.updateOficio(this.creaObjUpdate(this.form)).subscribe({
+  async updateOficioSinAlert() {
+    let f = this.form;
+    let obj = {
+      flyerNumber: f.value.flyerNumber,
+      proceedingsNumber: f.value.proceedingsNumber,
+      managementNumber: f.value.managementNumber,
+      sender: f.value.RemitenteSenderUser,
+      nomPersExt: f.value.addressee,
+      cveChargeRem: f.value.cveChargeRem,
+      text1: f.value.paragraphInitial,
+      text2: f.value.paragraphFinish,
+      text3: f.value.paragraphOptional,
+      desSenderpa: f.value.descriptionSender,
+    };
+    this.serviceOficces.updateOficio(obj).subscribe({
       next: response => {},
       error: responseError => {
         // if (responseError.message.indexOf('registros') == -1) {
@@ -685,7 +684,7 @@ export class OfficeComponent extends BasePage implements OnInit {
     });
   }
 
-  reporteInterno() {
+  async reporteInterno() {
     const params = {
       NO_OF_GES: this.form.value.managementNumber,
       DEP: 0,
@@ -719,7 +718,7 @@ export class OfficeComponent extends BasePage implements OnInit {
     // this.cleanfields();
   }
 
-  reporteExterno() {
+  async reporteExterno() {
     const params = {
       no_of_ges: this.form.value.managementNumber,
     };
@@ -772,8 +771,21 @@ export class OfficeComponent extends BasePage implements OnInit {
     });
   }
 
-  updateOficio() {
-    this.serviceOficces.updateOficio(this.creaObjUpdate(this.form)).subscribe({
+  async updateOficio() {
+    let f = this.form;
+    let obj = {
+      flyerNumber: f.value.flyerNumber,
+      proceedingsNumber: f.value.proceedingsNumber,
+      managementNumber: f.value.managementNumber,
+      sender: f.value.RemitenteSenderUser,
+      nomPersExt: f.value.addressee,
+      cveChargeRem: f.value.cveChargeRem,
+      text1: f.value.paragraphInitial,
+      text2: f.value.paragraphFinish,
+      text3: f.value.paragraphOptional,
+      desSenderpa: f.value.descriptionSender,
+    };
+    this.serviceOficces.updateOficio(obj).subscribe({
       next: response => {
         this.alert('success', 'Se actualizó el registro correctamene', '');
       },
@@ -806,7 +818,7 @@ export class OfficeComponent extends BasePage implements OnInit {
     // });
   }
 
-  creaObjUpdate(f: FormGroup) {
+  async creaObjUpdate(f: FormGroup) {
     return {
       flyerNumber: f.value.flyerNumber,
       proceedingsNumber: f.value.proceedingsNumber,
