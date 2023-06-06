@@ -25,17 +25,17 @@ export abstract class RelateDocumentsResponse extends BasePage {
     this.isLoadingGood = true;
     this.goodServices.getAll(params).subscribe({
       next: async data => {
-        const goods = await data.data.map(async (item: any) => {
+        const goods = await data.data.map(async item => {
           const isAvailable = await this.getFactaDbOficioGestrel(
-            item.id,
-            this.formJobManagement.get('managementNumber').value
+            this.formJobManagement.get('managementNumber').value,
+            item.goodId
           );
           return {
             ...item,
             available: isAvailable,
           };
         });
-        this.data1 = await Promise.all(goods);
+        this.data1 = await Promise.all(goods as any);
         this.totalItems = data.count;
         this.isLoadingGood = false;
       },
@@ -49,12 +49,6 @@ export abstract class RelateDocumentsResponse extends BasePage {
     no_of_gestion: string | number,
     no_bien: string | number
   ): Promise<boolean> {
-    // const params = new ListParams();
-    // params.page = 1;
-    // params.limit = 1;
-    // params['expGoodNumber'] = expGoodNumber;
-    // params['managementNumber'] = managementNumber;
-    // params['goodId'] = goodId;
     return firstValueFrom(
       this.goodServices
         .getFactaDbOficioGestrel({

@@ -536,27 +536,31 @@ export class RelatedDocumentsComponent
       next: async res => {
         this.managementForm.get('noVolante').setValue(res.wheelNumber);
         this.managementForm.get('noExpediente').setValue(res.expedientNumber);
-        const mJobManagement = await firstValueFrom(
-          this.getMJobManagement(res.wheelNumber)
-        );
-        this.formJobManagement.patchValue({
-          ...mJobManagement,
-          city: {
-            id: mJobManagement.city,
-            name: null,
-            idName: mJobManagement.city,
-          },
-          sender: {
-            id: mJobManagement.sender,
-            name: null,
-            idName: mJobManagement.sender,
-          },
-          addressee: {
-            id: mJobManagement.addressee,
-            name: null,
-            idName: mJobManagement.addressee,
-          },
-        });
+        try {
+          const mJobManagement = await firstValueFrom(
+            this.getMJobManagement(res.wheelNumber)
+          );
+          this.formJobManagement.patchValue({
+            ...mJobManagement,
+            city: {
+              id: mJobManagement.city,
+              name: null,
+              idName: mJobManagement.city,
+            },
+            sender: {
+              id: mJobManagement.sender,
+              name: null,
+              idName: mJobManagement.sender,
+            },
+            addressee: {
+              id: mJobManagement.addressee,
+              name: null,
+              idName: mJobManagement.addressee,
+            },
+          });
+        } catch (e) {
+          console.log(e);
+        }
         const params = new ListParams();
         params['filter.fileeNumber'] = res.expedientNumber;
         this.getGoods1(params);
