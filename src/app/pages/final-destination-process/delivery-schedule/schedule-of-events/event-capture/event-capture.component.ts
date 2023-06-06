@@ -64,6 +64,7 @@ import { ProgrammingGoodsService } from 'src/app/core/services/ms-programming-go
 import { TmpContProgrammingService } from 'src/app/core/services/ms-programming-good/tmp-cont-programming.service';
 import { ProgrammingGoodService } from 'src/app/core/services/ms-programming-request/programming-good.service';
 import { SecurityService } from 'src/app/core/services/ms-security/security.service';
+import { GoodPosessionThirdpartyService } from 'src/app/core/services/ms-thirdparty-admon/good-possession-thirdparty.service';
 import { IndUserService } from 'src/app/core/services/ms-users/ind-user.service';
 import { SegAcessXAreasService } from 'src/app/core/services/ms-users/seg-acess-x-areas.service';
 import { ProcedureManagementService } from 'src/app/core/services/proceduremanagement/proceduremanagement.service';
@@ -74,6 +75,7 @@ import {
   COLUMNS_CAPTURE_EVENTS,
   COLUMNS_CAPTURE_EVENTS_2,
 } from './columns-capture-events';
+import { DATA } from './data';
 import { SmartDateInputHeaderDirective } from './directives/smart-date-input.directive';
 import { CaptureEventProceeding } from './utils/capture-event-proceeding';
 import {
@@ -121,6 +123,25 @@ interface IBlkProceeding {
       .r-label {
         margin-top: -14px !important;
       }
+
+      .cantidad {
+        border-radius: 10px;
+        border: 1px solid #eaeaeaea;
+        // width: 150px;
+        padding: 8px 10px;
+        position: relative;
+        top: -19px;
+        margin: auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0px 0px 20px 0px rgba(69, 90, 100, 0.08) !important;
+
+        @media screen and (max-width: 576px) {
+          margin-top: 10px;
+        }
+      }
     `,
   ],
 })
@@ -157,7 +178,7 @@ export class EventCaptureComponent
   formSiab = this.fb.group(new CaptureEventSiabForm());
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
-  detail: IGoodIndicator[] = [];
+  detail: IGoodIndicator[] = DATA;
   ctrlButtons = new EventCaptureButtons();
   blkCtrl: IBlkCtrl = {
     component: null, // COMPONENTE
@@ -229,6 +250,9 @@ export class EventCaptureComponent
   gInitialDate: Date;
   gFinalDate: Date;
 
+  startDateCtrl = new FormControl(null);
+  endDateCtrl = new FormControl(null);
+
   constructor(
     private fb: FormBuilder,
     private parameterGoodService: ParametersService,
@@ -254,7 +278,8 @@ export class EventCaptureComponent
     private programmingGoodService: ProgrammingGoodsService,
     private tmpContProgrammingService: TmpContProgrammingService,
     private fIndicaService: FIndicaService,
-    private excelService: ExcelService
+    private excelService: ExcelService,
+    private goodPosessionThirdpartyService: GoodPosessionThirdpartyService
   ) {
     super();
     this.authUser = this.authService.decodeToken().preferred_username;
@@ -268,18 +293,18 @@ export class EventCaptureComponent
           sort: false,
           type: 'custom',
           showAlways: true,
-          filter: {
-            type: 'custom',
-            component: DateCellComponent,
-          },
-          filterFunction: (value: any, query: any) => {
-            if (query != 'skip') {
-              this.detail = this.detail.map(d => {
-                return { ...d, dateapprovalxadmon: new Date(query) };
-              });
-            }
-            return query;
-          },
+          // filter: {
+          //   type: 'custom',
+          //   component: DateCellComponent,
+          // },
+          // filterFunction: (value: any, query: any) => {
+          //   if (query != 'skip') {
+          //     this.detail = this.detail.map(d => {
+          //       return { ...d, dateapprovalxadmon: new Date(query) };
+          //     });
+          //   }
+          //   return query;
+          // },
           renderComponent: DateCellComponent,
           onComponentInitFunction: (instance: DateCellComponent) =>
             this.test(instance),
@@ -289,18 +314,18 @@ export class EventCaptureComponent
           sort: false,
           type: 'custom',
           showAlways: true,
-          filter: {
-            type: 'custom',
-            component: DateCellComponent,
-          },
-          filterFunction: (value: any, query: any) => {
-            if (query != 'skip') {
-              this.detail = this.detail.map(d => {
-                return { ...d, dateindicatesuserapproval: new Date(query) };
-              });
-            }
-            return query;
-          },
+          // filter: {
+          //   type: 'custom',
+          //   component: DateCellComponent,
+          // },
+          // filterFunction: (value: any, query: any) => {
+          //   if (query != 'skip') {
+          //     this.detail = this.detail.map(d => {
+          //       return { ...d, dateindicatesuserapproval: new Date(query) };
+          //     });
+          //   }
+          //   return query;
+          // },
           renderComponent: DateCellComponent,
         },
         // select: {
@@ -313,7 +338,7 @@ export class EventCaptureComponent
         // },
         ...COLUMNS_CAPTURE_EVENTS_2,
       },
-      hideSubHeader: false,
+      // hideSubHeader: false,
       actions: false,
     };
     this.activatedRoute.queryParams.subscribe(params => {
@@ -378,8 +403,9 @@ export class EventCaptureComponent
   }
 
   udpateProceedingExpedient() {
+    const { numFile } = this.proceeding;
     return this.proceedingDeliveryReceptionService
-      .update(this.proceeding.id, this.proceeding as any)
+      .update(this.proceeding.id, { numFile } as any)
       .pipe();
   }
 
@@ -542,6 +568,10 @@ export class EventCaptureComponent
   }
 
   async loadGoods() {
+    if (!this.proceeding.id) {
+      this.onLoadToast('error', 'Error', 'Primero debes guardar el acta');
+      return;
+    }
     const { area, keysProceedings, typeEvent } = this.registerControls;
     const totalFilters = Object.values(this.formSiab.value);
     const filters = totalFilters.map(filter =>
@@ -1164,15 +1194,20 @@ export class EventCaptureComponent
       .pipe(
         catchError(error => {
           this.loading = false;
+          this.blkCtrl.goodQuantity = 0;
           return throwError(() => error);
         }),
         tap(res => {
           this.loading = false;
           const detail = res.data[0];
-
+          this.blkCtrl.goodQuantity = res.data.length;
           this.afterGetDetail(detail);
           this.detail = res.data.map(detail => {
-            if (detail.expedientnumber) {
+            console.log(detail);
+            if (
+              detail.expedientnumber &&
+              (this.proceeding.numFile == 2 || !this.proceeding.numFile)
+            ) {
               this.proceeding.numFile = Number(detail.expedientnumber);
               this.udpateProceedingExpedient().subscribe();
             }
@@ -1479,7 +1514,7 @@ export class EventCaptureComponent
 
     const C_DATVAL: ITmpProgValidation[] = await this.tmpProgValidacion();
 
-    if (this.blkQuantities.goods <= 0) {
+    if (this.detail.length <= 0) {
       this.onLoadToast('info', 'No se tienen bienes ingresados.', '');
       throw new Error('FORM_TRIGGER_FAILURE');
     }
@@ -1525,6 +1560,7 @@ export class EventCaptureComponent
         await this.valMotodIsOne(n_CONT).then().catch();
       } else if (C_DATVAL[0].valmovement === 0) {
         ///////// Llamar a la funcion PUP_CIERRE_PRI
+        this.PUP_CIERRE_PRI();
       }
     }
   }
@@ -1548,32 +1584,33 @@ export class EventCaptureComponent
       }
     }
     const model: IPACambioStatusGood = {
-      P_NOACTA: 1,
-      P_AREATRA: '',
-      P_PANTALLA: '',
+      P_NOACTA: Number(this.proceeding.id),
+      P_AREATRA: this.blkCtrl.processingArea.toString(),
+      P_PANTALLA: 'FINDICA_0035_1',
     };
     await this.PA_CAMBIO_ESTATUS_BIEN(model).then().catch();
     const no_Acta: number | string = this.proceeding.id; //// :ACTAS_ENTREGA_RECEPCION.NO_ACTA
     await this.PA_ACTUALIZA_BIENES_SIN_M(no_Acta).then().catch();
 
     if (this.proceeding.typeProceedings === 'EVENTREC' && n_CONT > 0) {
-      await this.PUP_ING_REG_FOLIO_UNIV_SSF3(1, '', null, '').then().catch();
+      await this.PUP_ING_REG_FOLIO_UNIV_SSF3(
+        this.proceeding.numFile,
+        `'OFICIO DE PROGRAMACION: ${this.proceeding.keysProceedings}`,
+        null,
+        'ENTRE'
+      )
+        .then()
+        .catch();
       ///// y hace este update c_STR := 'UPDATE ACTAS_ENTREGA_RECEPCION SET FOLIO_UNIVERSAL = '||TO_CHAR(n_FOLIO_UNIVERSAL)||', TESTIGO1 ='''||:BLK_TOOLBAR.TOOLBAR_USUARIO||''' WHERE NO_ACTA = '||TO_CHAR(:ACTAS_ENTREGA_RECEPCION.NO_ACTA);
     }
-    /* 
-    SET_BLOCK_PROPERTY('ACTAS_ENTREGA_RECEPCION',DEFAULT_WHERE,'NO_ACTA ='||:ACTAS_ENTREGA_RECEPCION.NO_ACTA);
-         GO_BLOCK('ACTAS_ENTREGA_RECEPCION');
-         EXECUTE_QUERY;
-         SET_APPLICATION_PROPERTY(CURSOR_STYLE,'DEFAULT');
-         SYNCHRONIZE;
-    */
+
     if (this.global.paperworkArea === 'RF' && n_CONT > 0) {
       const no_Acta: number | string = this.proceeding.id; //// :ACTAS_ENTREGA_RECEPCION.NO_ACTA
       await this.INSERT_ACTAS_CTL_NOTIF_SSF3(no_Acta, 'CERRADA');
       /// AQUI HACER ESA ACTUALIZACION UPDATE_SSF3_ACTAS_PROG_DST Esperando enpoint
       //c_STR UPDATE SSF3_ACTAS_PROG_DST SET IND_ENVIO = 0 WHERE NO_ACTA = ||TO_CHAR(:ACTAS_ENTREGA_RECEPCION.NO_ACTA);
       await this.UPDATE_SSF3_ACTAS_PROG_DST(null);
-      const folio_universal = 0; /// :ACTAS_ENTREGA_RECEPCION.FOLIO_UNIVERSAL
+
       this.onLoadToast(
         'info',
         `Se realizó la firma y cierre del oficio (Folio Universal: ${this.proceeding.universalFolio})`
@@ -1777,18 +1814,18 @@ export class EventCaptureComponent
 
   async openProg(C_DATVAL: ITmpProgValidation[], n_CONT: number) {
     const model: IPAAbrirActasPrograma = {
-      P_AREATRA: '1',
-      P_NOACTA: 1,
-      P_PANTALLA: '',
-      P_TIPOMOV: 1,
+      P_AREATRA: this.blkCtrl.processingArea.toString(),
+      P_NOACTA: this.proceeding.id,
+      P_PANTALLA: 'FINDICA_0035_1',
+      P_TIPOMOV: null,
     };
     this.openMinutesProyect(model);
     /////////////////////////////////////
     if (C_DATVAL[0].valmovement === 1) {
       const model: IPAAbrirActasPrograma = {
-        P_AREATRA: '1',
-        P_NOACTA: '',
-        P_PANTALLA: '',
+        P_AREATRA: this.blkCtrl.processingArea.toString(),
+        P_NOACTA: this.proceeding.id,
+        P_PANTALLA: 'FINDICA_0035_1',
         P_TIPOMOV: 1,
       };
       this.returPreviosStatus(model);
@@ -1801,12 +1838,6 @@ export class EventCaptureComponent
         await this.INSERT_ACTAS_CTL_NOTIF_SSF3(no_Acta, 'ABIERTA');
       }
 
-      /* 
-      hacer esto
-      SET_BLOCK_PROPERTY('ACTAS_ENTREGA_RECEPCION',DEFAULT_WHERE,'NO_ACTA ='||:ACTAS_ENTREGA_RECEPCION.NO_ACTA);
-            GO_BLOCK('ACTAS_ENTREGA_RECEPCION');
-            EXECUTE_QUERY;
-      */
       this.blkCtrl.reopenInd = 0;
     } else {
       this.onLoadToast('info', C_DATVAL[0].valMessage);
@@ -1827,12 +1858,17 @@ export class EventCaptureComponent
     });
   }
   PUF_VERIFICA_CLAVE(): boolean {
-    //// esperando Endpoint del back
-    return null;
+    const regex = /^([^/]+\/)+[^/]+$/;
+    return regex.test(this.proceeding.keysProceedings);
   }
 
   PUP_DEPURA_DETALLE() {
-    return new Promise((res, rej) => {});
+    return new Promise((res, rej) => {
+      this.detail.forEach(deta => {
+        if (deta) {
+        }
+      });
+    });
   }
 
   async PUP_CIERRE_PRI() {
@@ -1853,14 +1889,14 @@ export class EventCaptureComponent
         this.proceeding.typeProceedings === null
       ) {
         this.onLoadToast('info', 'No se tiene Programa a cerrar.');
-        throw new Error('FORM_TRIGGER_FAILURE');
+        return;
       }
 
       // Area de Tramite no puede ser nula para cerrar una programación (valida 1)
-      if (this.blkCtrl.processingArea == null) {
+      if (this.blkCtrl.processingArea === null) {
         ////:BLK_CONTROL.AREA_TRAMITE preguntar donde esta esta propiedad
         this.onLoadToast('info', 'No se ha especificado el Tipo de Evento.');
-        throw new Error('FORM_TRIGGER_FAILURE');
+        return;
       }
 
       // Valida que la clave de la programación este completa (valida 2)
@@ -1946,6 +1982,19 @@ export class EventCaptureComponent
     }
   }
 
+  PA_CIERRE_INICIAL_PROGR(
+    no_Acta: string | number,
+    lv_PANTALLA: string,
+    blkCtrlArea: string | number
+  ) {
+    this.programmingGoodService
+      .PaCierreInicialProgr(no_Acta, lv_PANTALLA, blkCtrlArea)
+      .subscribe({
+        next: resp => console.log(resp),
+        error: err => console.log(err),
+      });
+  }
+
   async closedProgramming(n_CONT: number) {
     if (this.proceeding.typeProceedings === 'EVENCOMER') {
       const message: string = await this.PUF_VERIF_COMER(this.proceeding.id);
@@ -1954,7 +2003,11 @@ export class EventCaptureComponent
       }
     }
     ///// llama al pack PA_CIERRE_INICIAL_PROGR
-
+    this.PA_CIERRE_INICIAL_PROGR(
+      this.proceeding.id,
+      'FINDICA_0035_1',
+      this.blkCtrl.processingArea
+    );
     /////////
     const T_VALEACT: string = await this.getEstatusAct();
     if (['ABIERTO', 'ABIERTA'].includes(T_VALEACT)) {
@@ -1964,7 +2017,14 @@ export class EventCaptureComponent
       );
     } else {
       if (this.global.paperworkArea === 'RF' && n_CONT > 0) {
-        this.PUP_ING_REG_FOLIO_UNIV_SSF3(1, '', null, '').then().catch();
+        this.PUP_ING_REG_FOLIO_UNIV_SSF3(
+          this.proceeding.numFile,
+          `OFICIO DE PROGRAMACION: ${this.proceeding.keysProceedings}`,
+          null,
+          'ENTRE'
+        )
+          .then()
+          .catch();
         //// aqui hace los DDL que pedi a Edwin
         await this.firmaAndClosedOffi();
         ///////////////////////////////////////
@@ -2031,5 +2091,195 @@ export class EventCaptureComponent
     });
   }
 
-  UPDATE_ESTRATEGIA_BIENES(noFormat: number, no_Acta: string | number) {}
+  UPDATE_ESTRATEGIA_BIENES(noFormat: number, no_Acta: string | number) {
+    const model = {
+      minutesNumber: no_Acta,
+    };
+    this.goodPosessionThirdpartyService
+      .updateThirdPartyAdmonXFormatNumber(noFormat, model)
+      .subscribe({
+        next: (resp: any) => console.log(resp.message),
+        error: err => console.log(err),
+      });
+  }
+
+  async paqConv() {
+    let v_ind_proc: boolean;
+    let V_TIPO_ACTA: string | number;
+    let lv_PAQWHERE: string;
+
+    if (
+      this.proceeding.typeProceedings === 'CERRADO' ||
+      this.proceeding.statusProceedings === 'CERRADA'
+    ) {
+      this.onLoadToast('info', 'El Programa está cerrado.');
+      return;
+    }
+
+    if (this.blkCtrl.processingArea === null) {
+      this.onLoadToast('info', 'No se ha especificado el Tipo de Evento.');
+      return;
+    }
+
+    V_TIPO_ACTA = await this.getParameterGood(this.blkCtrl.processingArea);
+
+    if (V_TIPO_ACTA === null) {
+      this.onLoadToast('info', 'No se localizó el Tipo de Acta.');
+      return;
+    }
+
+    if (this.proceeding.keysProceedings === null) {
+      this.onLoadToast('info', 'No se ha ingresado el Programa.');
+      return;
+    }
+
+    v_ind_proc = false;
+
+    if (this.detail.length > 0) {
+      await this.alertQuestion(
+        'info',
+        'Información',
+        'La asignación de bienes ya se ha realizado, se ejecuta nuevamente?'
+      ).then(question => {
+        if (question.isConfirmed) {
+          v_ind_proc = true;
+        }
+      });
+    } else {
+      await this.alertQuestion(
+        'info',
+        'Información',
+        '¿Quiere continuar con la selección?'
+      ).then(question => {
+        if (question.isConfirmed) {
+          v_ind_proc = true;
+        }
+      });
+    }
+
+    if (v_ind_proc) {
+      if (this.blkCtrl.processingArea === 'DS') {
+        lv_PAQWHERE =
+          "ESTATUS_PAQ = 'C' AND TIPO_PAQUETE = 1 AND ESTATUS IN (SELECT ESTATUS FROM ESTATUS_X_PANTALLA WHERE CVE_PANTALLA = 'FINDICA_0035_1' AND ACCION = 'DS')";
+      } else if (this.blkCtrl.processingArea === 'DN') {
+        lv_PAQWHERE =
+          "ESTATUS_PAQ = 'C' AND TIPO_PAQUETE = 2 AND ESTATUS IN (SELECT ESTATUS FROM ESTATUS_X_PANTALLA WHERE CVE_PANTALLA = 'FINDICA_0035_1' AND ACCION = 'DN')";
+      }
+      //// -----> solo falta esto en este botón <----------
+      /* GO_ITEM('PAQ_DESTINO_ENC.NO_PAQUETE');
+      SET_BLOCK_PROPERTY('PAQ_DESTINO_ENC', 'DEFAULT_WHERE', lv_PAQWHERE);
+      CLEAR_BLOCK();
+      EXECUTE_QUERY(); */
+    }
+  }
+
+  getParameterGood(procedureArea: string | number) {
+    const params: ListParams = {};
+    params['filter.procedureAreaDetails.id=$eq:'] = procedureArea;
+    console.log(params);
+
+    return new Promise<string | number>((res, rej) => {
+      this.parameterGoodService.getIndicatorParameter().subscribe({
+        next: resp => res(resp.data[0].certificateType),
+        error: _err => rej('Error'),
+      });
+    });
+  }
+
+  async signOffice() {
+    let n_CONT: number;
+    let l_BAN: boolean;
+    let l_BAS: boolean;
+    let V_USUARIOTLP: number;
+    let V_USUARIOOST: number;
+
+    V_USUARIOTLP = this.authUserName.indexOf('TLP');
+    V_USUARIOOST = this.authUserName.indexOf('OST');
+
+    if (
+      ['CERRADO', 'CERRADA'].includes(this.proceeding.statusProceedings) &&
+      this.proceeding.typeProceedings === 'EVENTREC' &&
+      this.proceeding.id !== null &&
+      this.proceeding.numFile !== null &&
+      V_USUARIOTLP === 0 &&
+      V_USUARIOOST === 0
+    ) {
+      n_CONT = (await this.getExpedientsCount()) ?? 0;
+      if (n_CONT > 0) {
+        const SSF3_ACTAS_PROG_DST = {
+          EMAIL: '',
+          TIPO_DEST: '',
+        };
+        if (SSF3_ACTAS_PROG_DST.EMAIL === null) {
+          this.onLoadToast(
+            'info',
+            'No se cuenta con Lista de Distribución de correo.'
+          );
+          this.PUP_ING_CORREO_SAE();
+          return;
+        }
+        l_BAN = true;
+        l_BAS = true;
+        /*         while (SYSTEM.LAST_RECORD !== 'TRUE') {
+          if (SSF3_ACTAS_PROG_DST.TIPO_DEST === 'SAT') {
+            l_BAN = false;
+          }
+          if (SSF3_ACTAS_PROG_DST.TIPO_DEST === 'SAE') {
+            l_BAS = false;
+          }
+          NEXT_RECORD();
+        }
+        FIRST_RECORD(); */
+        if (l_BAN) {
+          this.onLoadToast(
+            'info',
+            'No se cuenta con Distribución de correo al SAT.'
+          );
+          return;
+        }
+        if (l_BAS) {
+          this.onLoadToast(
+            'info',
+            'No se cuenta con Distribución de correo al SAE.'
+          );
+          return;
+        }
+      }
+
+      /* GO_BLOCK('DETALLE_ACTA_ENT_RECEP');
+      FIRST_RECORD(); */
+      if (this.detail[0].goodnumber === null) {
+        this.onLoadToast('info', 'No se tienen bienes relacionados');
+        return;
+      } /* else if (DETALLE_ACTA_ENT_RECEP.FEC_APROBACION_X_ADMON === null) {
+        this.onLoadToast('info','No se cuenta con Fecha de inicio de acto.');
+        return
+      } else if (DETALLE_ACTA_ENT_RECEP.FEC_INDICA_USUARIO_APROBACION === null) {
+        this.onLoadToast('info','No se cuenta con Fecha de finalización de acto.');
+        return
+      } */
+      if (this.blkCtrl.processingArea === null) {
+        this.onLoadToast('info', 'No se ha especificado el Tipo de Evento.');
+        return;
+      }
+      if (this.PUF_VERIFICA_CLAVE()) {
+        this.onLoadToast(
+          'info',
+          'El Programa es inconsistente en su estructura.'
+        );
+        return;
+      }
+      this.PUP_GENERA_XML();
+    } else if (V_USUARIOTLP === 1 || V_USUARIOOST === 1) {
+      this.onLoadToast(
+        'info',
+        'Usuario TLP y OST no pueden realizar el cierre de Programaciones.'
+      );
+    } else {
+      this.onLoadToast('info', 'Inválido para firma de Oficio');
+    }
+  }
+
+  PUP_ING_CORREO_SAE() {}
+  PUP_GENERA_XML() {}
 }

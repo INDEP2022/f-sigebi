@@ -2618,6 +2618,7 @@ export class AbandonmentsDeclarationTradesComponent
         this.m_oficio_gestion.text1 = this.formOficiopageFin.get('page').value;
 
         let sender2 = this.formOficio.get('remitente').value;
+        console.log('sender2', sender2);
         let useerrrr = sender2.user;
         let obj: any = {
           flyerNumber: this.noVolante_,
@@ -2778,12 +2779,15 @@ export class AbandonmentsDeclarationTradesComponent
           };
           this.createDocumentOficiManagement(obj);
         }
+        let sender2 = this.formOficio.get('remitente').value;
+        console.log('sender2', sender2);
+        let useerrrr = sender2.user;
+        this.m_oficio_gestion.sender = useerrrr;
         // await this.getCopyOficioGestion(this.m_oficio_gestion.managementNumber);
         await this.lanzaReporte(this.m_oficio_gestion.managementNumber);
         this.formOficiopageFin
           .get('fin')
           .setValue(this.m_oficio_gestion.text2 + this.m_oficio_gestion.text3);
-        this.m_oficio_gestion.sender = this.formOficio.get('remitente').value;
         this.m_oficio_gestion.text1 = this.formOficiopageFin.get('page').value;
         this.m_oficio_gestion.nomPersExt =
           this.formOficio.get('destinatario').value;
