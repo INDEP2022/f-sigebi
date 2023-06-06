@@ -9,7 +9,6 @@ import {
 } from '@angular/core';
 import { FormBuilder, FormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { format } from 'date-fns';
 import {
   BehaviorSubject,
   catchError,
@@ -539,14 +538,14 @@ export class EventCaptureComponent
 
     this.detailDeliveryReceptionService
       .updateMassiveNew(
-        format(start, 'yyyy-MM-dd'),
-        format(end, 'yyyy-MM-dd'),
+        start.toLocaleDateString(),
+        end.toLocaleDateString(),
         Number(this.proceeding.id)
       )
       .subscribe({
         next: data => {
-          console.log(data);
           this.onLoadToast('success', 'Fechas actualizadas');
+          this.getDetail().subscribe();
         },
         error: error => {
           this.onLoadToast(
