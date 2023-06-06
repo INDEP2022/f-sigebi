@@ -43,18 +43,18 @@ export class NormsFormComponent extends BasePage implements OnInit {
 
   private prepareForm(): void {
     this.normForm = this.fb.group({
-      norm: [null, [Validators.required]],
+      norm: [null],
       article: [null],
-      type: [null, [Validators.required]],
-      destination: [null, [Validators.required]],
-      name: [null, [Validators.required]],
-      characteristics: [null, [Validators.required]],
-      merchandise: [null, [Validators.required]],
-      fundament: [null, [Validators.required]],
-      objective: [null, [Validators.required]],
+      type: [null],
+      destination: [null],
+      name: [null],
+      characteristics: [null],
+      merchandise: [null],
+      fundament: [null],
+      objective: [null],
       condition: [null],
       version: [null],
-      status: [null],
+      status: [null, [Validators.required]],
     });
     this.normForm.controls['version'].setValue(1);
     this.normForm.controls['status'].setValue(1);
