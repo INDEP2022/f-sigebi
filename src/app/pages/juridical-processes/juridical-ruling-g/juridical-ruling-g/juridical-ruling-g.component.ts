@@ -1016,6 +1016,8 @@ export class JuridicalRulingGComponent
   totalItems2: number = 0;
   params2 = new BehaviorSubject<ListParams>(new ListParams());
   loading2 = this.loading;
+  listParams = new BehaviorSubject<ListParams>(new ListParams());
+
   rowsSelected(event: any) {
     const idGood = { ...this.goodData };
     this.totalItems2 = 0;
@@ -1029,6 +1031,18 @@ export class JuridicalRulingGComponent
 
   getDocumentDicXStateM(id?: number) {
     this.loading2 = true;
+    let params = {
+      ...this.listParams.getValue(),
+      stateNumber: id,
+    };
+    this.documentService.getAll(params).subscribe({
+      next: resp => {
+        console.log('Documentos, ', resp);
+      },
+      error: error => {
+        console.log('No hay respuesta ', error);
+      },
+    });
   }
 
   onLoadDocumentsByGood() {
