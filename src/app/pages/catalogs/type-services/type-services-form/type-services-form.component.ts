@@ -48,7 +48,7 @@ export class TypeServicesFormComponent extends BasePage implements OnInit {
           Validators.pattern(STRING_PATTERN),
         ]),
       ],
-      version: [null, Validators.compose([Validators.required])],
+      version: [null],
     });
     if (this.typeService != null) {
       this.edit = true;

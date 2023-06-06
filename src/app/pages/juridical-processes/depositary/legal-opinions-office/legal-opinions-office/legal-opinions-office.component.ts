@@ -94,6 +94,9 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
   };
   officeTypeOption: any[] = officeTypeOption;
   origin: string = '';
+  origin3: string = '';
+  TIPO_VO: string = '';
+  CONSULTA: string = '';
   moreInfo1: boolean = false;
   moreInfo2: boolean = false;
   moreInfo3: boolean = false;
@@ -263,6 +266,9 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
         this.origin = params['origin2']
           ? params['origin2']
           : params['origin'] ?? null;
+        this.origin3 = params['origin3'] ?? null;
+        this.TIPO_VO = params['TIPO_VO'] ?? null;
+        this.CONSULTA = params['CONSULTA'] ?? null;
         if (
           this.origin &&
           this.paramsScreen.TIPO != null &&
@@ -2901,18 +2907,31 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
   }
   goBack() {
     if (this.origin == 'FACTJURDICTAMAS') {
-      this.router.navigate(['/pages/juridical/juridical-ruling']);
-      // this.router.navigate(['/pages/juridical/juridical-ruling-g'], {
-      //   queryParams: {
-      //     origin: this.screenKey,
-      //     P_GEST_OK: this.paramsScreen.P_GEST_OK,
-      //     P_NO_TRAMITE: this.paramsScreen.P_NO_TRAMITE,
-      //   },
-      // });
+      // this.router.navigate(['/pages/juridical/juridical-ruling']);
+      this.router.navigate(['/pages/juridical/juridical-ruling'], {
+        queryParams: {
+          origin: this.origin3,
+          P_GEST_OK: this.paramsScreen.P_GEST_OK,
+          P_NO_TRAMITE: this.paramsScreen.P_NO_TRAMITE,
+        },
+      });
     } else if (this.origin == 'FACTJURDICTAMASG') {
-      this.router.navigate(['/pages/juridical/juridical-ruling-g']);
-    } else if (this.origin == 'juridical-ruling-g') {
-      window.history.back();
+      // this.router.navigate(['/pages/juridical/juridical-ruling-g']);
+      this.router.navigate(['/pages/juridical/juridical-ruling-g'], {
+        queryParams: {
+          origin: this.origin3,
+          CLAVE_OFICIO_ARMADA: this.paramsScreen.CLAVE_OFICIO_ARMADA,
+          P_GEST_OK: this.paramsScreen.P_GEST_OK,
+          P_NO_TRAMITE: this.paramsScreen.P_NO_TRAMITE,
+          CONSULTA: this.CONSULTA,
+          VOLANTE: this.dictationData.wheelNumber,
+          EXPEDIENTE: this.dictationData.expedientNumber,
+          TIPO_DICT: this.paramsScreen.TIPO,
+          TIPO_VO: this.TIPO_VO,
+        },
+      });
+      // } else if (this.origin == 'juridical-ruling-g') {
+      //   window.history.back();
     } else {
       this.alert(
         'warning',
