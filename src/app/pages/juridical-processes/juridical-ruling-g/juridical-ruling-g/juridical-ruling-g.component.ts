@@ -60,6 +60,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { environment } from 'src/environments/environment';
 import Swal from 'sweetalert2';
 import { TempGood } from './dataTemp';
+import { DOCUMENTS_COLUMNS } from './documents-columns';
 
 /** LIBRERÍAS EXTERNAS IMPORTS */
 
@@ -150,6 +151,7 @@ export class JuridicalRulingGComponent
     pager: {
       display: false,
     },
+
     hideSubHeader: true,
     actions: false,
     selectedRowIndex: -1,
@@ -167,26 +169,32 @@ export class JuridicalRulingGComponent
           this.onGoodSelect(instance),
       },
       id: {
+        sort: false,
         title: 'No. Bien',
         type: 'number',
       },
       description: {
+        sort: false,
         title: 'Descripción',
         type: 'string',
       },
       quantity: {
+        sort: false,
         title: 'Cantidad',
         type: 'string',
       },
       identifier: {
+        sort: false,
         title: 'Ident.',
         type: 'string',
       },
       status: {
+        sort: false,
         title: 'Estatus',
         type: 'string',
       },
       processStatus: {
+        sort: false,
         title: 'Proceso',
         type: 'string',
       },
@@ -216,8 +224,9 @@ export class JuridicalRulingGComponent
     mode: 'external',
     columns: {
       name: {
-        title: '',
         sort: false,
+        title: '',
+
         type: 'custom',
         showAlways: true,
         valuePrepareFunction: (isSelected: boolean, row: IGood) =>
@@ -227,30 +236,37 @@ export class JuridicalRulingGComponent
           this.onGoodSelectValid(instance),
       },
       id: {
+        sort: false,
         title: 'No. Bien',
         type: 'number',
       },
       description: {
+        sort: false,
         title: 'Descripción Dictaminación',
         type: 'string',
       },
       menaje: {
+        sort: false,
         title: 'Menaje',
         type: 'string',
       },
       quantity: {
+        sort: false,
         title: 'Cant. Dictaminación',
         type: 'string',
       },
       status: {
+        sort: false,
         title: 'Estatus',
         type: 'string',
       },
       processStatus: {
+        sort: false,
         title: 'Proceso',
         type: 'string',
       },
       idDestino: {
+        sort: false,
         title: 'ID Destino',
         type: 'string',
       },
@@ -266,20 +282,8 @@ export class JuridicalRulingGComponent
     actions: false,
     selectedRowIndex: -1,
     mode: 'external',
-    columns: {
-      id: {
-        title: '#',
-        type: 'number',
-      },
-      descriptionDocument: {
-        title: 'Documentos',
-        type: 'string',
-      },
-      selectedDate: {
-        title: 'Fec. Recibido',
-        type: 'string',
-      },
-    },
+    columns: { ...DOCUMENTS_COLUMNS },
+
     noDataMessage: 'No se encontrarón registros',
   };
 
@@ -293,10 +297,12 @@ export class JuridicalRulingGComponent
     mode: 'external',
     columns: {
       numRegister: {
+        sort: false,
         title: '#',
         type: 'number',
       },
       key: {
+        sort: false,
         title: 'Documentos',
         type: 'string',
         valuePrepareFunction: (value: any) => {
@@ -304,6 +310,7 @@ export class JuridicalRulingGComponent
         },
       },
       fecha: {
+        sort: false,
         title: 'Fecha',
         type: 'custom',
         class: 'custom-title',
@@ -1004,12 +1011,12 @@ export class JuridicalRulingGComponent
       });
   }
 
-  selectRow(e: any) {
-    if (e) {
-      this.idGoodSelected = e.data?.id;
+  selectRow(row?: any) {
+    if (row) {
+      this.idGoodSelected = row.data?.id;
       this.onLoadDocumentsByGood();
     }
-    console.log('Información del bien seleccionado', e.data);
+    console.log('Información del bien seleccionado', row.data);
   }
 
   documentsDictumXStateMList: IDocumentsDictumXStateM[] = [];
@@ -1035,8 +1042,12 @@ export class JuridicalRulingGComponent
       ...this.listParams.getValue(),
       stateNumber: id,
     };
-    this.documentService.getAll(params).subscribe({
+    this.documentService.getDocumentsByGood(id, params).subscribe({
       next: resp => {
+        this.documentsDictumXStateMList = resp.data;
+        this.totalItems2 = resp.count;
+        this.loading2 = false;
+
         console.log('Documentos, ', resp);
       },
       error: error => {
