@@ -39,7 +39,6 @@ export class SiseProcessFormComponent extends BasePage implements OnInit {
         null,
         [
           Validators.required,
-          Validators.minLength(1),
           Validators.maxLength(50),
           Validators.pattern(STRING_PATTERN),
         ],

@@ -1055,7 +1055,7 @@ export class AbandonmentsDeclarationTradesComponent
         // }
         this.dictDate3 = this.datePipe.transform(
           this.dictamen.dictDate,
-          'MM/dd/yyyy'
+          'dd/MM/yyyy'
         );
 
         this.folioEscaneoNg = this.dictamen.folioUniversal;
@@ -1561,8 +1561,9 @@ export class AbandonmentsDeclarationTradesComponent
       const month = String(today.getMonth() + 1).padStart(2, '0');
       const day = String(today.getDate()).padStart(2, '0');
       const year = today.getFullYear();
-      const SYSDATE = `${day}/${month}/${year}`;
+      const SYSDATE = `${year}-${month}-${day}`;
 
+      console.log('SYSDATE', SYSDATE);
       this.dictDate3 = SYSDATE;
       this.dictamen.statusDict = 'DICTAMINADO';
       this.dictamen.expedientNumber = this.idExpediente;
@@ -2150,7 +2151,7 @@ export class AbandonmentsDeclarationTradesComponent
         this.m_oficio_gestion = resp.data[0];
         this.dateCapture2 = this.datePipe.transform(
           this.m_oficio_gestion.insertDate,
-          'MM/dd/yyyy'
+          'dd/MM/yyyy'
         );
         // this.m_oficio_gestion = resp.data[1];
         this.no_OficioGestion = this.m_oficio_gestion.managementNumber;
@@ -2579,7 +2580,7 @@ export class AbandonmentsDeclarationTradesComponent
       const month = String(today.getMonth() + 1).padStart(2, '0');
       const day = String(today.getDate()).padStart(2, '0');
       const year = today.getFullYear();
-      const SYSDATE = `${day}/${month}/${year}`;
+      const SYSDATE = `${year}-${month}-${day}`;
 
       this.dateCapture2 = SYSDATE;
       this.m_oficio_gestion.insertDate = SYSDATE;
@@ -2613,7 +2614,7 @@ export class AbandonmentsDeclarationTradesComponent
         this.statusOfMOficioGestion = 'EN REVISION';
         this.m_oficio_gestion.flyerNumber = this.noVolante_;
         this.m_oficio_gestion.proceedingsNumber = this.idExpediente;
-        this.m_oficio_gestion.insertDate;
+        // this.m_oficio_gestion.insertDate;
         let typeO = this.formOficio.get('tipoOficio').value;
         this.m_oficio_gestion.text1 = this.formOficiopageFin.get('page').value;
 
@@ -4093,7 +4094,7 @@ export class AbandonmentsDeclarationTradesComponent
       const month = String(today.getMonth() + 1).padStart(2, '0');
       const day = String(today.getDate()).padStart(2, '0');
       const year = today.getFullYear();
-      const SYSDATE = `${day}/${month}/${year}`;
+      const SYSDATE = `${year}-${month}-${day}`;
 
       this.dictDate3 = SYSDATE;
       this.dictamen.dictDate = new Date(SYSDATE);
