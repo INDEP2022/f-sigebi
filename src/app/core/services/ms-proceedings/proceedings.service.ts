@@ -9,7 +9,6 @@ import {
 import {
   IProceedings,
   IUpdateActasEntregaRecepcion,
-  IUpdateActasEntregaRecepcionDelegation,
 } from '../../models/ms-proceedings/proceedings.model';
 import {
   IBlkPost,
@@ -129,10 +128,7 @@ export class ProceedingsService extends HttpService {
     );
   }
 
-  updateActasEntregaRTurno(body: IUpdateActasEntregaRecepcionDelegation) {
-    return this.put<IListResponse<IUpdateActasEntregaRecepcionDelegation>>(
-      `${this.endpointU}`,
-      body
-    );
+  updateActasEntregaRTurno(body: any) {
+    return this.put<IListResponse<any>>(`${this.endpointU}`, body);
   }
 }

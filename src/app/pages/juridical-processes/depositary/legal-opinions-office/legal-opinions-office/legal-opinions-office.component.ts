@@ -1550,17 +1550,17 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
       );
       return;
     }
-    // if (
-    //   this.dictationData.delegationDictNumber !=
-    //   this.dataUserLogged.delegationNumber
-    // ) {
-    //   this.alertInfo(
-    //     'warning',
-    //     'La Delegación del usuario actual no corresponde a la Delegación del Dictamen',
-    //     ''
-    //   );
-    //   return;
-    // }
+    if (
+      this.dictationData.delegationDictNumber !=
+      this.dataUserLogged.delegationNumber
+    ) {
+      this.alertInfo(
+        'warning',
+        'La Delegación del usuario actual no corresponde a la Delegación del Dictamen',
+        ''
+      );
+      return;
+    }
     if (this.goodData.length == 0) {
       this.alertInfo(
         'warning',
@@ -1575,9 +1575,7 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
     let body: ICopiesOfficeSendDictation = {
       vc_pantalla: this.screenKey,
       clave_oficio_armada: this.dictationData.passOfficeArmy, //this.dictationData.keyArmyNumber.toString(),
-      estatus_of: this.officeDictationData.statusOf
-        ? this.officeDictationData.statusOf
-        : 'ENVIADO',
+      estatus_of: this.officeDictationData.statusOf,
       fec_dictaminacion: this.dictationData.dictDate,
       tipo_dictaminacion: this.dictationData.typeDict,
       identi: this.variables.identi,
@@ -1747,7 +1745,11 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
         case 'PA_VALIDA_CAMBIO_ESTATUS':
           // PA_VALIDA_CAMBIO_ESTATUS
           // CONTINUA PROCESO
-          this.execute_PA_VALIDA_CAMBIO_ESTATUS();
+          if (count > -1) {
+            this.execute_PA_VALIDA_CAMBIO_ESTATUS();
+          } else {
+            this.loadingSend = false;
+          }
           break;
         case 'PUP_LLAMA_VALIDACION':
           // PUP_LLAMA_VALIDACION
@@ -1791,6 +1793,11 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
         this.execute_PUP_GENERA_PDF();
       }
     } else {
+      if (response.estatus_of == 'ENVIADO') {
+        this.loadingSend = false;
+        this.blockSender = true;
+        this.onLoadToast('success', 'Dictamen enviado correctamente', '');
+      }
       // this.sendOffice(count);
     }
   }
@@ -1825,7 +1832,7 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
         this.loadingSend = false;
         this.onLoadToast(
           'error',
-          'Ocurrió un error al validar si el Dictamen a sido enviado',
+          'Ocurrió un error al validar si el Dictamen ha sido enviado',
           error.error.message
         );
       },
@@ -1837,12 +1844,17 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
       .getCopiesOfficeSendDictation(this.bodyCurrent)
       .subscribe({
         next: (res: any) => {
-          this.loadingSend = false;
           console.log(res);
+          this.validResponseSendOffice(res, -1);
         },
         error: error => {
           this.loadingSend = false;
           console.log(error);
+          this.onLoadToast(
+            'error',
+            'Ocurrió un error al validar si el Dictamen ha sido enviado',
+            error.error.message
+          );
         },
       });
   }

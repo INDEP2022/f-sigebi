@@ -1570,6 +1570,7 @@ carga la  información de la parte media de la página
   seteaTabla(datos: any) {
     let dato = JSON.parse(JSON.stringify(datos));
     let obj: any;
+
     if (datos.typePerson_I == 'I') {
       obj = {
         numberOfDicta: this.form.get('registerNumber').value,
@@ -1582,7 +1583,7 @@ carga la  información de la parte media de la página
       };
     } else if (datos.typePerson_I == 'E') {
       obj = {
-        managementNumber: this.form.get('registerNumber').value,
+        numberOfDicta: this.form.get('registerNumber').value,
         typeDictamination: this.form.get('typeDict').value,
         recipientCopy: null,
         copyDestinationNumber: null,
@@ -1601,7 +1602,7 @@ carga la  información de la parte media de la página
     //   namePersonExt: dato.personaExt_I,
     //   registerNumber: this.form.get('registerNumber').value,
     // };
-
+    console.log('obj', obj);
     this.insertRegistroExtCCP(obj);
     this.refreshTabla();
   }
