@@ -15,12 +15,12 @@ import { ILegend } from 'src/app/core/models/catalogs/legend.model';
 import { IDictationCopies } from 'src/app/core/models/ms-dictation/dictation-model';
 import { IAttachedDocument } from 'src/app/core/models/ms-documents/attached-document.model';
 import {
-  ICopiesJobManagementDto,
   IdatosLocales,
   IGoodJobManagement,
   ImanagementOffice,
 } from 'src/app/core/models/ms-officemanagement/good-job-management.model';
 import { ISegUsers } from 'src/app/core/models/ms-users/seg-users-model';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { DynamicCatalogsService } from 'src/app/core/services/dynamic-catalogs/dynamiccatalog.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
@@ -29,9 +29,10 @@ import { DocumentsService } from 'src/app/core/services/ms-documents/documents.s
 import { GoodsJobManagementService } from 'src/app/core/services/ms-office-management/goods-job-management.service';
 import { JobsService } from 'src/app/core/services/ms-office-management/jobs.service';
 import { MJobManagementService } from 'src/app/core/services/ms-office-management/m-job-management.service';
+import { SecurityService } from 'src/app/core/services/ms-security/security.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { COLUMNS_DOCUMENTS2 } from '../../../abandonments-declaration-trades/abandonments-declaration-trades/columns';
 import { tablaModalComponent } from '../tabla-modal/tablaModal-component';
@@ -62,7 +63,7 @@ export class OfficeComponent extends BasePage implements OnInit {
   form: FormGroup = new FormGroup({});
   nameUserDestinatario: ISegUsers;
   verBoton: boolean = false;
-  filtroPersonaExt: ICopiesJobManagementDto[] = [];
+  filtroPersonaExt: any[] = [];
 
   tipoImpresion: string;
   managementNumber_: any;
@@ -79,6 +80,7 @@ export class OfficeComponent extends BasePage implements OnInit {
   settings2 = { ...this.settings };
   params = new BehaviorSubject<ListParams>(new ListParams());
   copyOficio: any[] = [];
+  string_PTRN: `[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ@\\s\\.,_\\-¿?\\\\/()%$#¡!|]*'; [a-zA-Z0-9áéíóúÁÉÍÓÚñÑ@\\s\\.,_\\-¿?\\\\/()%$#¡!|]`;
   constructor(
     private fb: FormBuilder,
     private serviceOficces: GoodsJobManagementService,
@@ -92,7 +94,9 @@ export class OfficeComponent extends BasePage implements OnInit {
     private dictationService: DictationService,
     private modalRef: BsModalRef,
     private mJobManagementService: MJobManagementService,
-    private documentsService: DocumentsService
+    private documentsService: DocumentsService,
+    private token: AuthService,
+    private securityService: SecurityService
   ) {
     super();
 
@@ -121,7 +125,7 @@ export class OfficeComponent extends BasePage implements OnInit {
       columns: { ...COLUMNS_DOCUMENTS2 },
     };
   }
-
+  validUserToolbar: any;
   ngOnInit(): void {
     this.year = new Date().getFullYear();
 
@@ -131,6 +135,32 @@ export class OfficeComponent extends BasePage implements OnInit {
       { value: 'I', label: 'PERSONA INTERNA' },
     ];
     this.buildForm();
+    this.validUserToolbar = this.getRTdictaAarusr(
+      this.token.decodeToken().preferred_username
+    );
+  }
+
+  async getRTdictaAarusr(toolbar_user: any) {
+    return new Promise((resolve, reject) => {
+      const params = new ListParams();
+      params['filter.user'] = `$eq:${toolbar_user}`;
+      params['filter.reading'] = `$eq:S`;
+      params['filter.writing'] = `$eq:S`;
+      params['filter.typeNumber'] = `$eq:MODTEXTO`;
+      this.dictationService.getRTdictaAarusr(params).subscribe({
+        next: async (resp: any) => {
+          console.log('USER', resp);
+          resolve(1);
+          this.loading = false;
+        },
+        error: err => {
+          console.log('err', err);
+          resolve(0);
+          this.loading = false;
+          return;
+        },
+      });
+    });
   }
 
   /**
@@ -153,30 +183,30 @@ export class OfficeComponent extends BasePage implements OnInit {
         [Validators.pattern(NUMBERS_PATTERN), Validators.maxLength(11)],
       ],
       officio: [null, null],
-      charge: [null, [Validators.pattern(STRING_PATTERN)]],
+      charge: [null, [Validators.pattern(this.string_PTRN)]],
       addressee: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(2000)],
+        [Validators.pattern(this.string_PTRN), Validators.maxLength(2000)],
       ],
       RemitenteSenderUser: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
+        [Validators.pattern(this.string_PTRN), Validators.maxLength(4000)],
       ],
       paragraphInitial: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
+        [Validators.pattern(this.string_PTRN), Validators.maxLength(4000)],
       ],
       paragraphFinish: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
+        [Validators.pattern(this.string_PTRN), Validators.maxLength(4000)],
       ],
       paragraphOptional: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
+        [Validators.pattern(this.string_PTRN), Validators.maxLength(4000)],
       ],
       descriptionSender: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
+        [Validators.pattern(this.string_PTRN), Validators.maxLength(4000)],
       ],
       typePerson: [null, null],
       senderUser: [null, null],
@@ -241,13 +271,31 @@ export class OfficeComponent extends BasePage implements OnInit {
       }
     }
 
-    this.filterParamsLocal
-      .getValue()
-      .addFilter(
-        'insertDate',
-        this.year + '-01-01' + ',' + this.year + '-12-31',
-        SearchFilter.BTW
-      );
+    if (this.validUserToolbar > 0) {
+      this.filterParamsLocal
+        .getValue()
+        .addFilter(
+          'deleUser',
+          this.token.decodeToken().department,
+          SearchFilter.EQ
+        );
+    } else {
+      this.filterParamsLocal
+        .getValue()
+        .addFilter(
+          'insertDate',
+          this.year + '-01-01' + ',' + this.year + '-12-31',
+          SearchFilter.BTW
+        );
+
+      this.filterParamsLocal
+        .getValue()
+        .addFilter(
+          'deleUser',
+          this.token.decodeToken().department,
+          SearchFilter.EQ
+        );
+    }
 
     if (
       this.form.get('proceedingsNumber').value ||
@@ -320,7 +368,7 @@ export class OfficeComponent extends BasePage implements OnInit {
           //   error = err.message;
           // }
           // if (err.message.indexOf('registros') !== -1) {
-          this.alert('warning', err.error.message, '');
+          this.onLoadToast('warning', err.error.message, '');
           // }
           //this.onLoadToast('error', 'Error', error);
           console.log(error);
@@ -384,6 +432,7 @@ export class OfficeComponent extends BasePage implements OnInit {
 
   docAct() {
     this.openModalDoc({
+      IAttDocument: this.IAttDocument,
       typeOffice: this.typeOffice,
       arrayOfDocsCreados: this.IAttDocument,
       managementNumber: this.managementNumber_,
@@ -456,7 +505,7 @@ export class OfficeComponent extends BasePage implements OnInit {
         //------------------------------------------------------
         const respuesta = JSON.parse(JSON.stringify(next));
         this.managementNumber_ = respuesta.managementNumber;
-
+        this.typeOffice = respuesta.jobBy;
         this.tipoImpresion = respuesta.jobType;
         this.form
           .get('proceedingsNumber')
@@ -774,7 +823,7 @@ export class OfficeComponent extends BasePage implements OnInit {
 
   /*   Evento que se ejecuta para llenar los parametros de las personas involucradas si son externos o internos
 ===============================================================================================================*/
-  getPersonaExt_Int() {
+  async getPersonaExt_Int() {
     this.filterParams2.getValue().removeAllFilters();
     this.filterParams2
       .getValue()
@@ -786,13 +835,31 @@ export class OfficeComponent extends BasePage implements OnInit {
     this.serviceOficces
       .getPersonaExt_Int(this.filterParams2.getValue().getParams())
       .subscribe({
-        next: resp => {
+        next: async (resp: any) => {
           console.log('resp.data  => ');
           console.log(resp.data);
           //this.filtroPersonaExt = resp.data;
-          this.filtroPersonaExt = resp.data.map((data: any) =>
-            this.usuariosCCP(data)
-          );
+
+          let result = resp.data.map(async (data: any) => {
+            if (data.personExtInt == 'I') {
+              data['personExtInt_'] = 'INTERNO';
+              data['userOrPerson'] = await this.getSenders2OfiM2___(
+                data.addresseeCopy
+              );
+            } else if (data.personExtInt == 'E') {
+              data['personExtInt_'] = 'EXTERNO';
+              data['userOrPerson'] = data.nomPersonExt;
+            }
+          });
+
+          Promise.all(result).then(async (data: any) => {
+            this.filtroPersonaExt = resp.data;
+          });
+
+          // this.filtroPersonaExt = resp.data.map((data: any) => {
+          //   const a = ""
+          //   this.usuariosCCP(data)
+          // });
         },
         error: err => {
           let error = '';
@@ -809,6 +876,30 @@ export class OfficeComponent extends BasePage implements OnInit {
           // this.onLoadToast('error', 'Error', error);
         },
       });
+  }
+
+  async getSenders2OfiM2___(user: any) {
+    const params = new ListParams();
+    params['filter.user'] = `$eq:${user}`;
+    return new Promise((resolve, reject) => {
+      this.securityService.getAllUsersTracker(params).subscribe(
+        (data: any) => {
+          // this.formCcpOficio.get('nombreUsuario2').setValue(data.data[0]);
+          console.log('COPYY2', data);
+          let result = data.data.map(async (item: any) => {
+            item['userAndName'] = item.user + ' - ' + item.name;
+          });
+
+          resolve(data.data[0].userAndName);
+
+          this.loading = false;
+        },
+        error => {
+          resolve(null);
+          // this.senders = new DefaultSelect();
+        }
+      );
+    });
   }
 
   /*===========================================================
@@ -909,15 +1000,38 @@ export class OfficeComponent extends BasePage implements OnInit {
   }
   seteaTabla(datos: any) {
     let dato = JSON.parse(JSON.stringify(datos));
-    console.log('JSON.stringify(datos)  =>  ' + JSON.stringify(datos));
-    let obj = {
-      managementNumber: this.form.get('managementNumber').value,
-      addresseeCopy: dato.senderUser_I,
-      delDestinationCopyNumber: 0,
-      personExtInt: dato.typePerson_I,
-      nomPersonExt: dato.personaExt_I,
-      recordNumber: this.form.get('managementNumber').value,
-    };
+    console.log('JSON.stringify(datos)  =>  ', datos);
+
+    let obj: any;
+
+    if (datos.typePerson_I == 'I') {
+      obj = {
+        managementNumber: this.form.get('managementNumber').value,
+        addresseeCopy: datos.senderUser_I,
+        delDestinationCopyNumber: null,
+        recordNumber: null,
+        personExtInt: datos.typePerson_I,
+        nomPersonExt: null,
+      };
+    } else if (datos.typePerson_I == 'E') {
+      obj = {
+        managementNumber: this.form.get('managementNumber').value,
+        addresseeCopy: null,
+        delDestinationCopyNumber: null,
+        recordNumber: null,
+        personExtInt: datos.typePerson_I,
+        nomPersonExt: datos.personaExt_I,
+      };
+    }
+
+    // let obj = {
+    //   managementNumber: this.form.get('managementNumber').value,
+    //   addresseeCopy: dato.senderUser_I,
+    //   delDestinationCopyNumber: 0,
+    //   personExtInt: dato.typePerson_I,
+    //   nomPersonExt: dato.personaExt_I,
+    //   recordNumber: this.form.get('managementNumber').value,
+    // };
     console.log('resp  =>  ' + JSON.stringify(obj));
     this.serviceOficces.createCopiesJobManagement(obj).subscribe({
       next: resp => {
@@ -1012,7 +1126,7 @@ export class OfficeComponent extends BasePage implements OnInit {
       })
     );
   }
-  usuariosCCP(obj: ICopiesJobManagementDto) {
+  async usuariosCCP(obj: any) {
     return {
       id: obj.id,
       managementNumber: obj.managementNumber,
@@ -1021,6 +1135,7 @@ export class OfficeComponent extends BasePage implements OnInit {
       nomPersonExt: obj.nomPersonExt,
       personExtInt: obj.personExtInt == 'I' ? 'INTERNO' : 'EXTERNO',
       recordNumber: obj.recordNumber,
+      userAndName: obj.userAndName,
     };
   }
 

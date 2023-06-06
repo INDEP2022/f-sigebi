@@ -1002,7 +1002,7 @@ export class RegistrationOfRequestsComponent
     const idSolicitud = this.route.snapshot.paramMap.get('id');
     const idTypeDoc = this.idTypeDoc;
     const typeAnnex = 'approval-request';
-    const sign: boolean = await this.ableToSignDictamen();
+    const sign: any = await this.ableToSignDictamen();
     if (sign == false) {
       this.onLoadToast(
         'error',
@@ -1054,7 +1054,7 @@ export class RegistrationOfRequestsComponent
       return;
     }
 
-    const sign: boolean = await this.ableToSignDictamen();
+    const sign: any = await this.ableToSignDictamen();
     if (sign == false) {
       this.onLoadToast(
         'error',
@@ -1129,7 +1129,7 @@ export class RegistrationOfRequestsComponent
       return;
     }
 
-    const sign: boolean = await this.ableToSignDictamen();
+    const sign: any = await this.ableToSignDictamen();
     if (sign == false) {
       this.onLoadToast(
         'error',
@@ -1512,16 +1512,14 @@ export class RegistrationOfRequestsComponent
   }
 
   updateProcessStatus(body: any) {
-    console.log('Objeto para cambiar estatus; ', body);
     return new Promise((resolve, reject) => {
       this.goodfinderService.updateStatusProcess(body).subscribe({
         next: resp => {
           resolve(true);
-          console.log('Respuesta endpoint para cambiar estatus', resp);
         },
         error: error => {
-          reject('error al actualizar los status');
-          console.log('Error al actualizar los estatus', error);
+          reject('Error al actualizar los estados');
+          console.log('Error al actualizar los estados ', error);
           this.onLoadToast(
             'error',
             'Error al actualizar los estados de los bienes',
@@ -1640,22 +1638,22 @@ export class RegistrationOfRequestsComponent
   }
 
   async ableToSignDictamen() {
-    const goodsCount: any = await this.getAllGood();
-    let goods: any = null;
-    if (goodsCount.count > 10) {
-      goods = await this.getAllGood(goodsCount.count);
-    } else {
-      goods = goodsCount;
-    }
-    let canSign: boolean = false;
-    const filter = goods.data.filter(
-      (x: any) =>
-        x.processStatus == 'SOLICITAR_APROBACION' ||
-        x.processStatus == 'IMPROCEDENTE'
-    );
-
-    return filter.length == goods.count ? true : false;
-    //return true;
+    return new Promise((resolve, reject) => {
+      this.goodfinderService
+        .ableTosignDictamination(Number(this.requestData.id))
+        .subscribe({
+          next: resp => {
+            let result = false;
+            var goods =
+              Number(resp.solicitar_aprobacion) + Number(resp.improcedente);
+            result = goods == Number(resp.total) ? true : false;
+            resolve(result);
+          },
+          error: error => {
+            reject('Error');
+          },
+        });
+    });
   }
 
   msgGuardado(icon: any, title: string, message: string) {
