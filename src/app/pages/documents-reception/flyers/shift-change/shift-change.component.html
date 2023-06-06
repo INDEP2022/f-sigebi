@@ -121,7 +121,14 @@
           </form-field>
         </div>
       </div>
-
+      <br /><br /><br />
+      <div class="row w-100">
+        <div class="col-sm-12 col-12 col-md-12 p-2 alert alert-info">
+          <span>
+            SELECCIONA AL MENOS UN ACTA Y UN DICTAMEN PARA GUARDAR&#46;</span
+          >
+        </div>
+      </div>
       <div class="row mt-3">
         <div class="col-md-6">
           <h5 class="text-center">Dictaminaciones</h5>
@@ -130,18 +137,23 @@
               'height-limit': dictumColumns.length > 0,
               'height-min': dictumColumns.length == 0
             }">
-            <ng-scrollbar track="horizontal" [autoHeightDisabled]="false">
-              <div [class]="loading ? 'table-loading' : ''">
+            <div>
+              <div
+                [class]="loading ? 'table-loading' : ''"
+                class="overflow-auto">
                 <ng2-smart-table
                   class="col-md-12"
                   [settings]="dictumSettings"
                   [source]="dictumColumns"
-                  [attr.class]="'table-responsive table-bordered'"
+                  [attr.class]="'table-bordered'"
                   (userRowSelect)="selectDictums($event)"
                   readonly>
                 </ng2-smart-table>
+                <app-pagination
+                  [params]="paramsDict"
+                  [totalItems]="totalItemsDic"></app-pagination>
               </div>
-            </ng-scrollbar>
+            </div>
           </div>
         </div>
         <div class="col-md-6">
@@ -150,17 +162,22 @@
             class="{{
               proceedingColumns.length > 0 ? 'height-limit' : 'height-min'
             }}">
-            <ng-scrollbar track="horizontal" [autoHeightDisabled]="false">
-              <div [class]="loading ? 'table-loading' : ''">
+            <div>
+              <div
+                [class]="loading ? 'table-loading' : ''"
+                class="overflow-auto">
                 <ng2-smart-table
                   class="col-md-12"
                   [settings]="proceedingSettings"
                   [source]="proceedingColumns"
-                  [attr.class]="'table-responsive table-bordered'"
+                  [attr.class]="'table-bordered'"
                   (userRowSelect)="selectProceedings($event)">
                 </ng2-smart-table>
+                <app-pagination
+                  [params]="paramsActas"
+                  [totalItems]="totalItemsActas"></app-pagination>
               </div>
-            </ng-scrollbar>
+            </div>
           </div>
         </div>
       </div>
@@ -198,7 +215,7 @@
           <div class="m-3">
             <confirm-button
               text="Guardar"
-              [disabled]="!turnForm"
+              [disabled]="!valid"
               loadingText="Cargando"
               [loading]="loading"
               (confirm)="save()"></confirm-button>

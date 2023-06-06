@@ -28,6 +28,7 @@
                     <i class="fas fa-search"></i>
                   </button>
                   <button
+                    tooltip="Limpiar formulario"
                     (click)="clearForm()"
                     [disabled]="loading"
                     class="ml-2 btn btn-sm btn-secondary active">
@@ -85,21 +86,27 @@
       </div>
       <!-- TABLA----BIENES RELACIONADOS CON EL EXPEDIENTE -->
       <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2 text-center">
-        <button
-          (click)="addGoodOffice()"
-          class="btn btn-secondary btn-sm bg-success active m-3 p-3"
-          type="button">
-          <!-- Mover uno -->
-          <i class="bx bxs-right-arrow-circle bx-md"></i>
-        </button>
-        <br />
-        <button
-          (click)="deleteGoodOffice()"
-          class="btn btn-secondary btn-sm active bg-danger m-3 p-3"
-          type="button">
-          <!-- Mover uno -->
-          <i class="bx bxs-left-arrow-circle bx-md"></i>
-        </button>
+        <div class="d-flex justify-content-center align-items-center h-100">
+          <div>
+            <button
+              (click)="addGoodOffice()"
+              [disabled]="isAllDisabled"
+              class="btn btn-secondary btn-sm bg-success active m-3 p-3"
+              type="button">
+              <!-- Mover uno -->
+              <i class="bx bxs-right-arrow-circle bx-md"></i>
+            </button>
+            <br />
+            <button
+              (click)="deleteGoodOffice()"
+              [disabled]="isAllDisabled"
+              class="btn btn-secondary btn-sm active bg-danger m-3 p-3"
+              type="button">
+              <!-- Mover uno -->
+              <i class="bx bxs-left-arrow-circle bx-md"></i>
+            </button>
+          </div>
+        </div>
       </div>
       <!-- TABLA----BIENES RELACIONADOS CON EL OFICIO -->
       <div class="col-sm-12 col-12 col-md-5 col-lg-5 p-2 alert alert-success">
@@ -163,6 +170,7 @@
             <button
               type="button"
               class="btn btn-primary btn-sm active text-wrap"
+              [disabled]="isAllDisabled"
               (click)="btnInsertarTextoPredefinido()">
               Insertar Texto Predefinido
             </button>
@@ -173,7 +181,8 @@
             <button
               type="button"
               [disabled]="
-                !formPositionThirdParty.get('steeringwheelNumber').value
+                !formPositionThirdParty.get('steeringwheelNumber').value ||
+                isAllDisabled
               "
               class="btn btn-primary btn-sm active text-wrap"
               (click)="btnReemplazarMarcadores()">
@@ -280,7 +289,7 @@
         </form>
         <!-- Form CON COPIA PARA -->
         <form [formGroup]="formPositionThirdParty" class="form-material">
-          <div class="row tp-2 mb-2">
+          <!-- <div class="row tp-2 mb-2">
             <div class="col-sm-12 col-12 col-md-6 p-2">
               <form-field
                 [control]="formPositionThirdParty.get('delegationCloseNumber')"
@@ -306,6 +315,7 @@
             </div>
             <div class="col-sm-12 col-12 col-md-6 p-2">
               <form-field
+                []
                 maxlength="40"
                 [control]="formPositionThirdParty.get('closingDate')"
                 label="Fecha de Cierre">
@@ -313,9 +323,9 @@
                   class="form-control"
                   bsDatepicker
                   formControlName="closingDate" />
-              </form-field>
+              </form-field> 
             </div>
-          </div>
+          </div>-->
         </form>
       </div>
     </form>

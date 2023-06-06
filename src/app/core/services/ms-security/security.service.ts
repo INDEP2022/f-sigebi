@@ -59,4 +59,27 @@ export class SecurityService extends HttpService {
   getFilterAllUsersTracker(params: any) {
     return this.get<IListResponse<any>>(`access-tracking-x-area`, params);
   }
+
+  getStationClue(params: any) {
+    return this.get<IListResponse<any>>(
+      `${SecurityEndpoints.StationClue}/${params}`
+    );
+  }
+
+  getIdDelegationDelegationForwards(params: any) {
+    return this.get<IListResponse<any>>(
+      `${SecurityEndpoints.IdDelegationDelegationForwards}/${params}`
+    );
+  }
+  getIdDelegationDelegationAddressee(params: any) {
+    return this.get<IListResponse<any>>(
+      `${SecurityEndpoints.IdDelegationDelegationAddressee}/${params}`
+    );
+  }
+  getQueryIdenti(params: any) {
+    return this.post<IListResponse<any>>(
+      `${SecurityEndpoints.QueryIdenti}`,
+      params
+    );
+  }
 }

@@ -20,7 +20,7 @@ export const STATES_COLUMNS = {
     sort: false,
   },
   zoneHourlyVer: {
-    title: 'Version de zona horaria',
+    title: 'Versión de zona horaria',
     type: 'string',
     sort: false,
   },
@@ -35,18 +35,8 @@ export const STATES_COLUMNS = {
     sort: false,
   },
   version: {
-    title: 'Version',
+    title: 'Versión',
     type: 'number',
     sort: false,
   },
-  // status: {
-  //   title: 'Estatus',
-  //   type: 'html',
-  //   valuePrepareFunction: (value: number) => {
-  //     return value == 0
-  //       ? '<strong><span class="badge badge-pill badge-success">Activo</span></strong>'
-  //       : '<strong><span class="badge badge-pill badge-warning">Inactivo</span></strong>';
-  //   },
-  //   sort: false,
-  // },
 };

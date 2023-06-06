@@ -62,45 +62,6 @@
                   </button>
                 </div>
               </div>
-              <!-- <button
-                id="expedient-number"
-                [disabled]="!prevProce"
-                [class]="loading ? 'disabled' : ''"
-                class="btn btn-secondary btn-sm active"
-                (click)="prevProceeding()">
-                <i class="fa fa-angle-left"></i>
-              </button>
-              <span class="mr-3 ml-3"
-                >{{
-                  numberProceeding + 1 > proceedingData.length
-                    ? 'Nuevo'
-                    : numberProceeding + 1
-                }}
-                {{
-                  numberProceeding + 1 > proceedingData.length ? null : ' - '
-                }}
-                {{
-                  numberProceeding + 1 > proceedingData.length
-                    ? null
-                    : proceedingData.length
-                }}</span
-              >
-              <button
-                id="expedient-number"
-                class="btn btn-secondary btn-sm active"
-                [disabled]="!nextProce"
-                [class]="loading ? 'disabled' : ''"
-                (click)="nextProceeding()">
-                <i class="fa fa-angle-right"></i>
-              </button>
-              <button
-                *ngIf="newAct"
-                id="expedient-number"
-                [class]="loading ? 'disabled' : ''"
-                class="btn btn-primary btn-sm active ml-4"
-                (click)="newProceeding()">
-                Nueva acta
-              </button> -->
             </div>
           </div>
         </div>
@@ -428,68 +389,15 @@
 
       <hr class="row" />
 
-      <div class="row mb-4">
-        <div class="col-md-12">
-          <div class="row">
-            <div class="col-md-2"></div>
-            <div class="col">
-              <button
-                type="button"
-                data-toggle="tooltip"
-                class="btn btn-secondary btn-sm active mr-1"
-                title="Generar Folio de Escaneo y Solicitud">
-                <i class="bx bxs-add-to-queue"></i>
-              </button>
-              <button
-                type="button"
-                data-toggle="tooltip"
-                class="btn btn-secondary btn-sm active"
-                title="Escanear">
-                <i class="bx bxs-file"></i>
-              </button>
-            </div>
-            <div class="col-md-3">
-              <form-field
-                [control]="form.get('folioEscaneo')"
-                label="Folio de Escaneo">
-                <input
-                  type="number"
-                  class="form-control"
-                  min="1"
-                  formControlName="folioEscaneo"
-                  maxlength="15" />
-              </form-field>
-            </div>
-            <div class="col">
-              <button
-                class="btn btn-primary btn-sm active"
-                type="button"
-                size="small"
-                min="1"
-                (click)="replicateFolio()">
-                Replicar Folio
-              </button>
-            </div>
-            <div class="col">
-              <button
-                type="button"
-                data-toggle="tooltip"
-                class="btn btn-secondary btn-sm active mr-1"
-                title="imprimir Solicitud de Escaneo">
-                <i class="bx bxs-printer"></i>
-              </button>
-              <button
-                type="button"
-                data-toggle="tooltip"
-                class="btn btn-secondary btn-sm active"
-                title="Consulta de imágenes escaneadas">
-                <i class="bx bxs-file-find"></i>
-              </button>
-            </div>
-            <div class="col-md-2"></div>
-          </div>
-        </div>
-      </div>
+      <app-scan-file-shared
+        [form]="form"
+        [formControlName]="folioEscaneo"
+        [cveDocument]="form.get('acta2').value"
+        [noExpedient]="form.get('expediente').value"
+        [statusProceeding]="form.get('statusProceeding').value"
+        [cveScreen]="cveScreen"
+        [reportPrint]="nameReport">
+      </app-scan-file-shared>
 
       <hr class="row" />
       <div [class]="loading ? 'disabled' : ''" class="row mb-5">

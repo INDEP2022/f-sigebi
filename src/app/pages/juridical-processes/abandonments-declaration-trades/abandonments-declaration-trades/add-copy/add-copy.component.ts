@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { catchError, tap, throwError } from 'rxjs';
@@ -7,6 +7,7 @@ import {
   ListParams,
 } from 'src/app/common/repository/interfaces/list-params';
 import { ISegUsers } from 'src/app/core/models/ms-users/seg-users-model';
+import { CopiesOfficialOpinionService } from 'src/app/core/services/ms-dictation/ms-copies-official-opinion.service';
 import { MJobManagementService } from 'src/app/core/services/ms-office-management/m-job-management.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -19,6 +20,9 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 })
 export class AddCopyComponent extends BasePage implements OnInit {
   form: FormGroup;
+  @Input() screenKey: string = '';
+  @Input() numberOfDicta: number = null;
+  @Input() typeDictamination: string = '';
 
   @Output() dataCopy = new EventEmitter<any>();
   @Output() refresh = new EventEmitter<true>();
@@ -36,7 +40,8 @@ export class AddCopyComponent extends BasePage implements OnInit {
     private usersService: UsersService,
     private fb: FormBuilder,
     private modalRef: BsModalRef,
-    private mJobManagementService: MJobManagementService
+    private mJobManagementService: MJobManagementService,
+    private msCopiesOfficialOpinionService: CopiesOfficialOpinionService
   ) {
     super();
   }
@@ -106,31 +111,56 @@ export class AddCopyComponent extends BasePage implements OnInit {
 
   agregarExterno() {
     console.log('AAA', this.form.value);
-    if (this.managementNumber == null) {
-      this.dataCopy.emit(this.form.value);
+    if (this.screenKey == 'FACTJURDICTAMOFICIO') {
+      this.saveCopiesByScreenKey(); // OFICIO DE DICTAMINACIONES JURIDICAS
     } else {
-      let obj: any = {
-        managementNumber: this.managementNumber,
-        addresseeCopy: this.form.value.senderUser_I,
-        delDestinationCopyNumber: null,
-        recordNumber: null,
-        personExtInt: this.form.value.typePerson_I,
-        nomPersonExt: this.form.value.personaExt_I,
-      };
-
-      this.mJobManagementService.createCopyOficeManag(obj).subscribe({
-        next: (resp: any) => {
-          this.refresh.emit(true);
-          this.loading = false;
-          this.onLoadToast('success', 'CPP creado exitosamente', '');
-        },
-        error: err => {
-          this.onLoadToast('error', 'error al crear CPP', '');
-          this.loading = false;
-        },
-      });
+      if (this.managementNumber == null) {
+        this.dataCopy.emit(this.form.value);
+      } else {
+        let obj: any = {
+          managementNumber: this.managementNumber,
+          addresseeCopy: this.form.value.senderUser_I,
+          delDestinationCopyNumber: null,
+          recordNumber: null,
+          personExtInt: this.form.value.typePerson_I,
+          nomPersonExt: this.form.value.personaExt_I,
+        };
+        this.mJobManagementService.createCopyOficeManag(obj).subscribe({
+          next: (resp: any) => {
+            this.refresh.emit(true);
+            this.loading = false;
+            this.onLoadToast('success', 'CPP creado exitosamente', '');
+          },
+          error: err => {
+            this.onLoadToast('error', 'error al crear CPP', '');
+            this.loading = false;
+          },
+        });
+      }
     }
     // this.modalRef.content.callback(true, this.form.value);
     this.close();
+  }
+
+  saveCopiesByScreenKey() {
+    let obj: any = {
+      numberOfDicta: this.numberOfDicta,
+      typeDictamination: this.typeDictamination,
+      recipientCopy: this.form.value.senderUser_I,
+      copyDestinationNumber: null,
+      personExtInt: this.form.value.typePerson_I,
+      namePersonExt: this.form.value.personaExt_I,
+    };
+    this.msCopiesOfficialOpinionService.create(obj).subscribe({
+      next: (resp: any) => {
+        this.refresh.emit(true);
+        this.loading = false;
+        this.onLoadToast('success', 'CPP creado exitosamente', '');
+      },
+      error: err => {
+        this.onLoadToast('error', 'error al crear CPP', '');
+        this.loading = false;
+      },
+    });
   }
 }
