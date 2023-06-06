@@ -2180,7 +2180,7 @@ export class EventCaptureComponent
 
     const T_VALEACT: string = await this.getEstatusAct();
     console.log('PASO ----> ya paso getEstatusAct');
-    console.log(T_VALEACT);
+    console.log(this.global.paperworkArea, n_CONT);
 
     if (['ABIERTO', 'ABIERTA'].includes(T_VALEACT)) {
       this.onLoadToast(
