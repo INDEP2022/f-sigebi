@@ -180,9 +180,9 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   v_atrib_del = 0;
 
   //DATOS DE USUARIO
-  delUser: string
-  subDelUser: string
-  departmentUser: string
+  delUser: string;
+  subDelUser: string;
+  departmentUser: string;
 
   constructor(
     private fb: FormBuilder,
@@ -277,7 +277,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
       localStorage.removeItem('numberExpedient');
     }
 
-    this.getDataUser()
+    this.getDataUser();
   }
 
   getDataUser() {
@@ -286,14 +286,12 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         ? localStorage.getItem('username')
         : localStorage.getItem('username').toLocaleUpperCase();
     const routeUser = `?filter.name=$eq:${user}`;
-    this.serviceUser.getAllSegUsers(routeUser).subscribe(
-      res => {
-        const resJson = JSON.parse(JSON.stringify(res.data[0]));
-        this.delUser = resJson.usuario.delegationNumber
-        this.subDelUser = resJson.usuario.subdelegationNumber
-        this.departmentUser = resJson.usuario.departamentNumber
-      }
-    );
+    this.serviceUser.getAllSegUsers(routeUser).subscribe(res => {
+      const resJson = JSON.parse(JSON.stringify(res.data[0]));
+      this.delUser = resJson.usuario.delegationNumber;
+      this.subDelUser = resJson.usuario.subdelegationNumber;
+      this.departmentUser = resJson.usuario.departamentNumber;
+    });
   }
 
   prepareForm() {
@@ -1072,8 +1070,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
 
     this.serviceDetailProc.getAllFiltered(paramsF.getParams()).subscribe(
       res => {
-        this.dataGoodAct.load(res.data)
-
+        this.dataGoodAct.load(res.data);
 
         /* console.log(res.data)
         this.dataGoodAct.load(res.data).then(async res => {
@@ -1408,32 +1405,38 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         .valueChanges.subscribe(res => this.verifyTransferenteAndAct());
       this.form.get('ident').valueChanges.subscribe(res => this.fillActTwo());
       this.form.get('recibe').valueChanges.subscribe(res => {
-        console.log(res)
-        console.log(res.numberDelegation2)
-        console.log(this.delUser)
-        if(res != null){
-          if(res.numberDelegation2 != this.delUser){
-            this.form.get('recibe').reset()
+        console.log(res);
+        console.log(res.numberDelegation2);
+        console.log(this.delUser);
+        if (res != null) {
+          if (res.numberDelegation2 != this.delUser) {
+            this.form.get('recibe').reset();
             this.recibeSelect = new DefaultSelect();
-            this.alert('warning','La delegación es diferente a la del usuario','')
-            return
-          }else{
-            this.fillActTwo()
+            this.alert(
+              'warning',
+              'La delegación es diferente a la del usuario',
+              ''
+            );
+            return;
+          } else {
+            this.fillActTwo();
           }
         }
-        
       });
       this.form.get('admin').valueChanges.subscribe(res => {
-        if(res != null){
-          if(res.numberDelegation2 != this.delUser){
-            this.alert('warning','La delegación seleccionada es diferente a la del usuario','')
+        if (res != null) {
+          if (res.numberDelegation2 != this.delUser) {
+            this.alert(
+              'warning',
+              'La delegación seleccionada es diferente a la del usuario',
+              ''
+            );
             this.adminSelect = new DefaultSelect();
-            this.form.get('admin').reset()
-          }else{
-            this.fillActTwo()
+            this.form.get('admin').reset();
+          } else {
+            this.fillActTwo();
           }
         }
-        
       });
       this.form.get('folio').valueChanges.subscribe(res => {
         if (

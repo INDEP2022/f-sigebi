@@ -399,7 +399,7 @@ export class JuridicalRulingGComponent
       fechaPPFF: [null, [Validators.required]],
       fechaInstructora: [null],
       fechaResolucion: [null],
-      fechaDictaminacion: [null],
+      fechaDictaminacion: [this.datePipe.transform(new Date(), 'dd/MM/yyyy')],
       fechaNotificacion: [null],
       fechaNotificacionAseg: [null],
       autoriza_remitente: [null],
@@ -600,8 +600,7 @@ export class JuridicalRulingGComponent
           this.dictaminacionesForm
             .get('fechaDictaminacion')
             .setValue(
-              this.datePipe.transform(res.data[0].dictDate, 'dd-MM-yyyy') ||
-                undefined
+              this.datePipe.transform(new Date(), 'dd-MM-yyyy') || undefined
             );
           this.dictaminacionesForm
             .get('fechaResolucion')
