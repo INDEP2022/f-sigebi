@@ -1,5 +1,10 @@
 import { Component, OnInit, Renderer2 } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { Router } from '@angular/router';
 import { addDays, endOfMonth, format, subDays } from 'date-fns';
 import { LocalDataSource } from 'ng2-smart-table';
@@ -170,7 +175,6 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
   folioEscaneo = 'folioEscaneo';
   cveScreen = 'FACTREFACTAVENT';
   nameReport = 'RGERGENSOLICDIGIT';
-
 
   searchByOtherData = false;
   dataExpedients = new DefaultSelect();
@@ -963,7 +967,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
               'yyyy-MM-dd HH:mm'
             ),
             captureDate: format(new Date(), 'yyyy-MM-dd HH:mm'),
-            universalFolio: this.form.get('folioEscaneo').value
+            universalFolio: this.form.get('folioEscaneo').value,
           };
           const resData = JSON.parse(JSON.stringify(res.data[0]));
           console.log(modelEdit);
@@ -1618,12 +1622,12 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
                       P_PANTALLA: 'FACTREFACTAVENT',
                       P_FECHA_RE_FIS: this.form.get('fecReception').value,
                       P_TIPO_ACTA: 'DXCV',
-                      usuario: localStorage.getItem('username') ==
-                      'sigebiadmon'
-                        ? localStorage.getItem('username')
-                        : localStorage
-                            .getItem('username')
-                            .toLocaleUpperCase()
+                      usuario:
+                        localStorage.getItem('username') == 'sigebiadmon'
+                          ? localStorage.getItem('username')
+                          : localStorage
+                              .getItem('username')
+                              .toLocaleUpperCase(),
                     };
                     console.log(model);
                     this.serviceProgrammingGood.paChangeStatus(model).subscribe(

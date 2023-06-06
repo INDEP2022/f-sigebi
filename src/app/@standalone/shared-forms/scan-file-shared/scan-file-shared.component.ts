@@ -7,16 +7,16 @@ import { format } from 'date-fns';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { IDocuments } from 'src/app/core/models/ms-documents/documents';
+import { IProccedingsDeliveryReception } from 'src/app/core/models/ms-proceedings/proceedings-delivery-reception-model';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import { ParametersService } from 'src/app/core/services/ms-parametergood/parameters.service';
+import { ProceedingsDeliveryReceptionService } from 'src/app/core/services/ms-proceedings/proceedings-delivery-reception';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { PreviewDocumentsComponent } from '../../preview-documents/preview-documents.component';
-import { IProccedingsDeliveryReception } from 'src/app/core/models/ms-proceedings/proceedings-delivery-reception-model';
-import { ProceedingsDeliveryReceptionService } from 'src/app/core/services/ms-proceedings/proceedings-delivery-reception';
 
 @Component({
   selector: 'app-scan-file-shared',
@@ -47,7 +47,7 @@ export class ScanFileSharedComponent extends BasePage implements OnInit {
     private sanitizer: DomSanitizer,
     private router: Router,
     private serviceParameterG: ParametersService,
-    private serviceProcVal: ProceedingsDeliveryReceptionService,
+    private serviceProcVal: ProceedingsDeliveryReceptionService
   ) {
     super();
   }
@@ -75,10 +75,11 @@ export class ScanFileSharedComponent extends BasePage implements OnInit {
               ''
             );
           } else {
-            const routeFilter = `?filter.associateUniversalFolio=$null&filter.scanStatus=$eq:ESCANEADO&filter.id=$eq:${this.form.get(this.formControlName).value}`
-            this.serviceDocuments
-              .getAllFilter(routeFilter)
-              .subscribe(res => {
+            const routeFilter = `?filter.associateUniversalFolio=$null&filter.scanStatus=$eq:ESCANEADO&filter.id=$eq:${
+              this.form.get(this.formControlName).value
+            }`;
+            this.serviceDocuments.getAllFilter(routeFilter).subscribe(
+              res => {
                 console.log(res);
                 const route = `notification?filter.wheelNumber=$not:$null&filter.expedientNumber=$eq:${this.noExpedient}&sortBy=wheelNumber:DESC`;
                 this.serviceNotification.getAllFilter(route).subscribe(resp => {
@@ -136,8 +137,6 @@ export class ScanFileSharedComponent extends BasePage implements OnInit {
                           this.loading = false;
                           console.log(res.id);
                           this.form.get(this.formControlName).setValue(res.id);
-
-                          
 
                           const params = {
                             PARAMSFORM: 'NO',
@@ -267,28 +266,44 @@ export class ScanFileSharedComponent extends BasePage implements OnInit {
                       };
 
                       const modelEdit: IProccedingsDeliveryReception = {
-                        universalFolio: parseInt(this.form.get(this.formControlName).value)
-                      }
-                      const paramsF = new FilterParams()
-                      paramsF.addFilter('keysProceedings', this.form.get('acta2').value)
-                      this.serviceProcVal.getByFilter(paramsF.getParams()).subscribe(
-                        res => {
-                          const resData = JSON.parse(JSON.stringify(res.data[0]));
-                          console.log(resData.id)
-                          this.serviceProcVal.editProceeding(resData.id, modelEdit).subscribe(
-                            res => {
-                              this.downloadReport('RGERGENSOLICDIGIT', params);
-                            },
-                            err => {
-                              this.alert('error','Ocurrió un error al guardar el número de folio en el acta','Por favor presione el botón guardar en la pantalla para registrar el número de folio')
-                              this.downloadReport('RGERGENSOLICDIGIT', params);
-                            }
-                          )
-                        }
-                      )
-            
-                      
-
+                        universalFolio: parseInt(
+                          this.form.get(this.formControlName).value
+                        ),
+                      };
+                      const paramsF = new FilterParams();
+                      paramsF.addFilter(
+                        'keysProceedings',
+                        this.form.get('acta2').value
+                      );
+                      this.serviceProcVal
+                        .getByFilter(paramsF.getParams())
+                        .subscribe(res => {
+                          const resData = JSON.parse(
+                            JSON.stringify(res.data[0])
+                          );
+                          console.log(resData.id);
+                          this.serviceProcVal
+                            .editProceeding(resData.id, modelEdit)
+                            .subscribe(
+                              res => {
+                                this.downloadReport(
+                                  'RGERGENSOLICDIGIT',
+                                  params
+                                );
+                              },
+                              err => {
+                                this.alert(
+                                  'error',
+                                  'Ocurrió un error al guardar el número de folio en el acta',
+                                  'Por favor presione el botón guardar en la pantalla para registrar el número de folio'
+                                );
+                                this.downloadReport(
+                                  'RGERGENSOLICDIGIT',
+                                  params
+                                );
+                              }
+                            );
+                        });
                     },
                     err => {
                       this.alert(

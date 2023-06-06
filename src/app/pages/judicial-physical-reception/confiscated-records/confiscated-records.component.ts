@@ -604,22 +604,24 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   //Validations
 
   validateFolio() {
-    this.serviceDocuments.getByFolio(this.form.get('folioEscaneo').value).subscribe(
-      res => {
-        const data = JSON.parse(JSON.stringify(res));
-        const scanStatus = data.data[0]['scanStatus'];
-        console.log(scanStatus);
-        if (scanStatus === 'ESCANEADO') {
-          this.scanStatus = true;
-        } else {
+    this.serviceDocuments
+      .getByFolio(this.form.get('folioEscaneo').value)
+      .subscribe(
+        res => {
+          const data = JSON.parse(JSON.stringify(res));
+          const scanStatus = data.data[0]['scanStatus'];
+          console.log(scanStatus);
+          if (scanStatus === 'ESCANEADO') {
+            this.scanStatus = true;
+          } else {
+            this.scanStatus = false;
+          }
+          console.log(this.scanStatus);
+        },
+        err => {
           this.scanStatus = false;
         }
-        console.log(this.scanStatus);
-      },
-      err => {
-        this.scanStatus = false;
-      }
-    );
+      );
   }
 
   //Validacion de bienes
@@ -2815,7 +2817,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   closeProceeding() {
     console.log(this.saveDataAct);
     console.log(this.goodData);
-    
+
     if (this.dataGoodAct['data'].length == 0) {
       this.alert(
         'warning',
@@ -2904,7 +2906,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                           'El acta fue cerrada'
                         );
                         this.inputsInProceedingClose();
-                        this.getGoodsActFn()
+                        this.getGoodsActFn();
                       },
                       err => {
                         console.log(err);
@@ -2927,189 +2929,206 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
           );
         }
       } else {
-        if(this.form.get('folioEscaneo').value != null){
+        if (this.form.get('folioEscaneo').value != null) {
           this.serviceDocuments
-          .getByFolio(this.form.get('folioEscaneo').value)
-          .subscribe(
-            res => {
-              const data = JSON.parse(JSON.stringify(res));
-              const scanStatus = data.data[0]['scanStatus'];
+            .getByFolio(this.form.get('folioEscaneo').value)
+            .subscribe(
+              res => {
+                const data = JSON.parse(JSON.stringify(res));
+                const scanStatus = data.data[0]['scanStatus'];
 
-              if (scanStatus === 'ESCANEADO') {
-                const paramsF = new FilterParams();
-                if (
-                  this.dataGoodAct['data'].find(
-                    (e: any) =>
-                      e.indEdoFisico && e.good[`val${e.noColumna}`] == null
-                  )
-                ) {
-                  this.alert(
-                    'warning',
-                    'Hay bienes con estado físico requerido sin establecer',
-                    ''
-                  );
-                } else if (
-                  this.dataGoodAct['data'].find((e: any) => e.received != 'S')
-                ) {
-                  this.alert(
-                    'warning',
-                    'Hay bienes no marcados como recibido',
-                    ''
-                  );
-                } else if (
-                  this.dataGoodAct['data'].find(
-                    (e: any) => e.good.storeNumber == null
-                  )
-                ) {
-                  this.alert(
-                    'warning',
-                    'Hay bienes no guardados en almacén',
-                    ''
-                  );
-                } else if (
-                  this.dataGoodAct['data'].find(
-                    (e: any) => e.good.vaultNumber == null
-                  ) &&
-                  this.isBoveda
-                ) {
-                  this.alert(
-                    'warning',
-                    'Hay bienes no guardados en Bóveda',
-                    ''
-                  );
-                } else {
-                  paramsF.addFilter(
-                    'keysProceedings',
-                    this.form.get('acta2').value
-                  );
-                  this.serviceProcVal
-                    .getByFilter(paramsF.getParams())
-                    .subscribe(
-                      res => {
-                        console.log(res);
-                        const resData = JSON.parse(JSON.stringify(res.data[0]));
-                        console.log(resData.id);
-                        const noActa = resData.id;
-                        const model: IValidaCambioEstatus = {
-                          p1: 3,
-                          p2: resData.id.toString(),
-                          p3: null,
-                          p4: null,
-                        };
-                        this.serviceGood
-                          .PAValidaCambio(model)
-                          .subscribe(res => {
-                            const { P5 } = JSON.parse(JSON.stringify(res));
-                            console.log(P5);
-                            //!Forzando debería ser mayor y esta menor
-                            if (P5 < 0) {
-                              this.alert(
-                                'warning',
-                                'Bienes sin informacion requerida',
-                                'Se encontraron bienes sin información requerida para este proceso'
-                              );
-                            } else {
-                              const modelEdit: IProccedingsDeliveryReception = {
-                                statusProceedings: 'CERRADA',
-                                universalFolio:
-                                  this.form.get('folioEscaneo').value,
-                              };
-                              const splitActa = this.form
-                                .get('acta2')
-                                .value.split('/');
-                              const tipo_acta = ['D', 'ND'].includes(
-                                splitActa[0]
-                              )
-                                ? 'DECOMISO'
-                                : 'ENTREGA';
-                              const model: IPACambioStatus = {
-                                P_NOACTA: noActa,
-                                P_PANTALLA: 'FACTREFACTAENTREC',
-                                P_FECHA_RE_FIS:
-                                  this.form.get('fecReception').value,
-                                P_TIPO_ACTA: tipo_acta,
-                                usuario: localStorage.getItem('username') ==
-                                'sigebiadmon'
-                                  ? localStorage.getItem('username')
-                                  : localStorage
-                                      .getItem('username')
-                                      .toLocaleUpperCase()
-                              };
-                              console.log(model);
-                              const found = this.dataGoodAct['data'].find(
-                                (e: any) => {
-                                  return e.storeNumber === null;
-                                }
-                              );
-                              console.log(found);
-                              if (found === undefined) {
-                                this.serviceProgrammingGood
-                                  .paChangeStatus(model)
-                                  .subscribe(
-                                    res => {
-                                      console.log(res);
-                                      console.log(modelEdit);
-                                      this.serviceProcVal
-                                        .editProceeding(resData.id, modelEdit)
-                                        .subscribe(
-                                          res => {
-                                            console.log(res);
-                                            this.form
-                                              .get('statusProceeding')
-                                              .setValue('CERRADO');
-                                            this.labelActa = 'Abrir acta';
-                                            this.btnCSSAct = 'btn-success';
-                                            const btn =
-                                              document.getElementById(
-                                                'expedient-number'
-                                              );
-                                            this.render.removeClass(
-                                              btn,
-                                              'disabled'
-                                            );
-                                            this.render.addClass(
-                                              btn,
-                                              'enabled'
-                                            );
-                                            this.research = true;
-                        this.getGoodsActFn()
-
-                                            this.alert(
-                                              'success',
-                                              'El acta ha sido cerrada',
-                                              ''
-                                            );
-                                          },
-                                          err => {
-                                            console.log(err);
-                                            this.alert(
-                                              'error',
-                                              'Ocurrió un error inesperado',
-                                              'No se pudo cerrar el acta, ocurrió un error inesperado'
-                                            );
-                                          }
-                                        );
-                                    },
-                                    err => {
-                                      console.log(err);
-                                    }
-                                  );
-                              } else {
+                if (scanStatus === 'ESCANEADO') {
+                  const paramsF = new FilterParams();
+                  if (
+                    this.dataGoodAct['data'].find(
+                      (e: any) =>
+                        e.indEdoFisico && e.good[`val${e.noColumna}`] == null
+                    )
+                  ) {
+                    this.alert(
+                      'warning',
+                      'Hay bienes con estado físico requerido sin establecer',
+                      ''
+                    );
+                  } else if (
+                    this.dataGoodAct['data'].find((e: any) => e.received != 'S')
+                  ) {
+                    this.alert(
+                      'warning',
+                      'Hay bienes no marcados como recibido',
+                      ''
+                    );
+                  } else if (
+                    this.dataGoodAct['data'].find(
+                      (e: any) => e.good.storeNumber == null
+                    )
+                  ) {
+                    this.alert(
+                      'warning',
+                      'Hay bienes no guardados en almacén',
+                      ''
+                    );
+                  } else if (
+                    this.dataGoodAct['data'].find(
+                      (e: any) => e.good.vaultNumber == null
+                    ) &&
+                    this.isBoveda
+                  ) {
+                    this.alert(
+                      'warning',
+                      'Hay bienes no guardados en Bóveda',
+                      ''
+                    );
+                  } else {
+                    paramsF.addFilter(
+                      'keysProceedings',
+                      this.form.get('acta2').value
+                    );
+                    this.serviceProcVal
+                      .getByFilter(paramsF.getParams())
+                      .subscribe(
+                        res => {
+                          console.log(res);
+                          const resData = JSON.parse(
+                            JSON.stringify(res.data[0])
+                          );
+                          console.log(resData.id);
+                          const noActa = resData.id;
+                          const model: IValidaCambioEstatus = {
+                            p1: 3,
+                            p2: resData.id.toString(),
+                            p3: null,
+                            p4: null,
+                          };
+                          this.serviceGood
+                            .PAValidaCambio(model)
+                            .subscribe(res => {
+                              const { P5 } = JSON.parse(JSON.stringify(res));
+                              console.log(P5);
+                              //!Forzando debería ser mayor y esta menor
+                              if (P5 < 0) {
                                 this.alert(
                                   'warning',
-                                  'Debe guardar los Bienes en un almacen',
-                                  ''
+                                  'Bienes sin informacion requerida',
+                                  'Se encontraron bienes sin información requerida para este proceso'
                                 );
+                              } else {
+                                const modelEdit: IProccedingsDeliveryReception =
+                                  {
+                                    statusProceedings: 'CERRADA',
+                                    universalFolio:
+                                      this.form.get('folioEscaneo').value,
+                                  };
+                                const splitActa = this.form
+                                  .get('acta2')
+                                  .value.split('/');
+                                const tipo_acta = ['D', 'ND'].includes(
+                                  splitActa[0]
+                                )
+                                  ? 'DECOMISO'
+                                  : 'ENTREGA';
+                                const model: IPACambioStatus = {
+                                  P_NOACTA: noActa,
+                                  P_PANTALLA: 'FACTREFACTAENTREC',
+                                  P_FECHA_RE_FIS:
+                                    this.form.get('fecReception').value,
+                                  P_TIPO_ACTA: tipo_acta,
+                                  usuario:
+                                    localStorage.getItem('username') ==
+                                    'sigebiadmon'
+                                      ? localStorage.getItem('username')
+                                      : localStorage
+                                          .getItem('username')
+                                          .toLocaleUpperCase(),
+                                };
+                                console.log(model);
+                                const found = this.dataGoodAct['data'].find(
+                                  (e: any) => {
+                                    return e.storeNumber === null;
+                                  }
+                                );
+                                console.log(found);
+                                if (found === undefined) {
+                                  this.serviceProgrammingGood
+                                    .paChangeStatus(model)
+                                    .subscribe(
+                                      res => {
+                                        console.log(res);
+                                        console.log(modelEdit);
+                                        this.serviceProcVal
+                                          .editProceeding(resData.id, modelEdit)
+                                          .subscribe(
+                                            res => {
+                                              console.log(res);
+                                              this.form
+                                                .get('statusProceeding')
+                                                .setValue('CERRADO');
+                                              this.labelActa = 'Abrir acta';
+                                              this.btnCSSAct = 'btn-success';
+                                              const btn =
+                                                document.getElementById(
+                                                  'expedient-number'
+                                                );
+                                              this.render.removeClass(
+                                                btn,
+                                                'disabled'
+                                              );
+                                              this.render.addClass(
+                                                btn,
+                                                'enabled'
+                                              );
+                                              this.research = true;
+                                              this.getGoodsActFn();
+
+                                              this.alert(
+                                                'success',
+                                                'El acta ha sido cerrada',
+                                                ''
+                                              );
+                                            },
+                                            err => {
+                                              console.log(err);
+                                              this.alert(
+                                                'error',
+                                                'Ocurrió un error inesperado',
+                                                'No se pudo cerrar el acta, ocurrió un error inesperado'
+                                              );
+                                            }
+                                          );
+                                      },
+                                      err => {
+                                        console.log(err);
+                                      }
+                                    );
+                                } else {
+                                  this.alert(
+                                    'warning',
+                                    'Debe guardar los Bienes en un almacen',
+                                    ''
+                                  );
+                                }
                               }
-                            }
-                          });
-                      },
-                      err => {
-                        console.log(err);
-                      }
-                    );
+                            });
+                        },
+                        err => {
+                          console.log(err);
+                        }
+                      );
+                  }
+                } else {
+                  this.alert(
+                    'warning',
+                    'FALTA ESCANEAR FOLIO',
+                    'El número de folio debe ser escaneado para poder cerrar el acta.'
+                  );
+                  const btn = document.getElementById('expedient-number');
+                  this.render.removeClass(btn, 'disabled');
+                  this.render.addClass(btn, 'enabled');
+                  this.blockExpedient = false;
                 }
-              } else {
+                console.log(this.scanStatus);
+              },
+              err => {
                 this.alert(
                   'warning',
                   'FALTA ESCANEAR FOLIO',
@@ -3118,25 +3137,11 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                 const btn = document.getElementById('expedient-number');
                 this.render.removeClass(btn, 'disabled');
                 this.render.addClass(btn, 'enabled');
-                this.blockExpedient = false;
               }
-              console.log(this.scanStatus);
-            },
-            err => {
-              this.alert(
-                'warning',
-                'FALTA ESCANEAR FOLIO',
-                'El número de folio debe ser escaneado para poder cerrar el acta.'
-              );
-              const btn = document.getElementById('expedient-number');
-              this.render.removeClass(btn, 'disabled');
-              this.render.addClass(btn, 'enabled');
-            }
-          );
-        }else{
-          this.alert('warning','Debe registrar un número de folio','')
+            );
+        } else {
+          this.alert('warning', 'Debe registrar un número de folio', '');
         }
-        
       }
     }
   }
@@ -3959,7 +3964,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
               console.log(putGood);
               console.log('Sí?');
               this.serviceGood.update(putGood).subscribe(res => {
-                this.getGoodsActFn()
+                this.getGoodsActFn();
               });
             }
             console.log('No :(');
@@ -4008,8 +4013,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                 putGood.vaultNumber = this.form.get('boveda').value.idSafe;
               }
               this.serviceGood.update(putGood).subscribe(res => {
-                this.getGoodsActFn()
-
+                this.getGoodsActFn();
               });
             }
           });

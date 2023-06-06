@@ -85,4 +85,9 @@ export class MassiveGoodService extends HttpService {
     const route = `application/goodTracker`;
     return this.post<IMassiveGoodTracker>(route, body);
   }
+
+  pufVerificaComers(body: any) {
+    const route = `findica/pup-verif-comer`;
+    return this.post<IMassiveGoodTracker>(route, body);
+  }
 }
