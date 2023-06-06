@@ -9,6 +9,7 @@ import {
 } from '@angular/core';
 import { FormBuilder, FormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { format } from 'date-fns';
 import {
   BehaviorSubject,
   catchError,
@@ -28,7 +29,7 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
-import { minDate } from 'src/app/common/validations/date.validators';
+import { maxDate, minDate } from 'src/app/common/validations/date.validators';
 import {
   IHistoryProcesdingAct,
   IPAAbrirActasPrograma,
@@ -70,13 +71,13 @@ import { IndUserService } from 'src/app/core/services/ms-users/ind-user.service'
 import { SegAcessXAreasService } from 'src/app/core/services/ms-users/seg-acess-x-areas.service';
 import { ProcedureManagementService } from 'src/app/core/services/proceduremanagement/proceduremanagement.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { GOODS_TACKER_ROUTE } from 'src/app/utils/constants/main-routes';
 import {
   COLUMNS_CAPTURE_EVENTS,
   COLUMNS_CAPTURE_EVENTS_2,
 } from './columns-capture-events';
-import { DATA } from './data';
 import { SmartDateInputHeaderDirective } from './directives/smart-date-input.directive';
 import { CaptureEventProceeding } from './utils/capture-event-proceeding';
 import {
@@ -179,7 +180,7 @@ export class EventCaptureComponent
   formSiab = this.fb.group(new CaptureEventSiabForm());
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
-  detail: IGoodIndicator[] = DATA;
+  detail: IGoodIndicator[] = [];
   ctrlButtons = new EventCaptureButtons();
   blkCtrl: IBlkCtrl = {
     component: null, // COMPONENTE
@@ -254,6 +255,8 @@ export class EventCaptureComponent
   startDateCtrl = new FormControl<Date>(null, minDate(new Date()));
   endDateCtrl = new FormControl<Date>(null);
 
+  selectedProceedings: IGoodIndicator[] = [];
+
   constructor(
     private fb: FormBuilder,
     private parameterGoodService: ParametersService,
@@ -294,50 +297,33 @@ export class EventCaptureComponent
           sort: false,
           type: 'custom',
           showAlways: true,
-          // filter: {
-          //   type: 'custom',
-          //   component: DateCellComponent,
-          // },
-          // filterFunction: (value: any, query: any) => {
-          //   if (query != 'skip') {
-          //     this.detail = this.detail.map(d => {
-          //       return { ...d, dateapprovalxadmon: new Date(query) };
-          //     });
-          //   }
-          //   return query;
-          // },
           renderComponent: DateCellComponent,
           onComponentInitFunction: (instance: DateCellComponent) =>
-            this.test(instance),
+            this.setStartDate(instance),
         },
         dateindicatesuserapproval: {
           title: 'Finalización',
           sort: false,
           type: 'custom',
           showAlways: true,
-          // filter: {
-          //   type: 'custom',
-          //   component: DateCellComponent,
-          // },
-          // filterFunction: (value: any, query: any) => {
-          //   if (query != 'skip') {
-          //     this.detail = this.detail.map(d => {
-          //       return { ...d, dateindicatesuserapproval: new Date(query) };
-          //     });
-          //   }
-          //   return query;
-          // },
           renderComponent: DateCellComponent,
+          onComponentInitFunction: (instance: DateCellComponent) =>
+            this.setEndDate(instance),
         },
-        // select: {
-        //   title: 'Selec.',
-        //   sort: false,
-        //   type: 'custom',
-        //   filter: false,
-        //   showAlways: true,
-        //   renderComponent: CheckboxElementComponent,
-        // },
+
         ...COLUMNS_CAPTURE_EVENTS_2,
+        select: {
+          title: 'Selec.',
+          sort: false,
+          type: 'custom',
+          filter: false,
+          showAlways: true,
+          renderComponent: CheckboxElementComponent,
+          valuePrepareFunction: (departament: any, row: any) =>
+            this.isProceedingSelected(row),
+          onComponentInitFunction: (instance: CheckboxElementComponent) =>
+            this.proceedingSelectChange(instance),
+        },
       },
       // hideSubHeader: false,
       actions: false,
@@ -348,9 +334,67 @@ export class EventCaptureComponent
     });
   }
 
-  test(instance: DateCellComponent) {
+  onSelectProceeding(notification: any, selected: boolean) {
+    if (selected) {
+      this.selectedProceedings.push(notification);
+    } else {
+      this.selectedProceedings = this.selectedProceedings.filter(
+        proc => proc.goodnumber != proc.goodnumber
+      );
+    }
+  }
+
+  proceedingSelectChange(instance: CheckboxElementComponent) {
+    instance.toggle.pipe(takeUntil(this.$unSubscribe)).subscribe({
+      next: data => this.onSelectProceeding(data.row, data.toggle),
+    });
+  }
+
+  isProceedingSelected(proceeding: IGoodIndicator) {
+    const exists = this.selectedProceedings.find(
+      prc => prc.goodnumber == proceeding.goodnumber
+    );
+    if (!exists) return false;
+    return true;
+  }
+
+  setStartDate(instance: DateCellComponent) {
     instance.inputChange.subscribe(val => {
-      console.log(val);
+      const { row, value } = val;
+      row.dateapprovalxadmon = value;
+      this.updateDetail(row);
+    });
+  }
+
+  setEndDate(instance: DateCellComponent) {
+    instance.inputChange.subscribe(val => {
+      const { row, value } = val;
+      row.dateindicatesuserapproval = value;
+      this.updateDetail(row);
+    });
+  }
+
+  updateDetail(detail: any) {
+    const data = {
+      numberProceedings: this.proceeding.id,
+      numberGood: detail.goodnumber,
+      approvedDateXAdmon: detail.dateapprovalxadmon,
+      dateIndicatesUserApproval: detail.dateindicatesuserapproval,
+    };
+    this.loading = true;
+    this.detailDeliveryReceptionService.update(data as any).subscribe({
+      next: res => {
+        this.loading = false;
+        this.onLoadToast('success', 'Fecha actualizada');
+      },
+      error: error => {
+        this.loading = false;
+        this.onLoadToast(
+          'error',
+          'Error',
+          'Ocurrió un error al actualizar la fecha'
+        );
+      },
     });
   }
 
@@ -471,10 +515,52 @@ export class EventCaptureComponent
   }
 
   changeEndDate(end: Date) {
-    console.log(end);
+    if (end) {
+      this.startDateCtrl.addValidators(maxDate(end));
+    } else {
+      this.startDateCtrl.clearValidators();
+    }
+
+    this.startDateCtrl.addValidators(minDate(new Date()));
   }
 
-  validateDates(start: Date, end: Date) {}
+  validateDates() {
+    const start = this.startDateCtrl.value;
+    const end = this.endDateCtrl.value;
+    if (!start) {
+      this.throwDateErrors('La fecha inicial no puede se nula');
+      return;
+    }
+
+    if (!end) {
+      this.throwDateErrors('La fecha final no puede ser nula');
+      return;
+    }
+
+    this.detailDeliveryReceptionService
+      .updateMassiveNew(
+        format(start, 'yyyy-MM-dd'),
+        format(end, 'yyyy-MM-dd'),
+        Number(this.proceeding.id)
+      )
+      .subscribe({
+        next: data => {
+          console.log(data);
+          this.onLoadToast('success', 'Fechas actualizadas');
+        },
+        error: error => {
+          this.onLoadToast(
+            'error',
+            'Error',
+            'Ocurrio un error al actualizar las fechas'
+          );
+        },
+      });
+  }
+
+  throwDateErrors(message: string) {
+    this.onLoadToast('error', 'Error', message);
+  }
 
   ngAfterContentInit(): void {
     console.log(this.itemsElements);
@@ -485,7 +571,7 @@ export class EventCaptureComponent
 
   async transferClick() {
     const firstDetail = this.detail[0];
-    const { transference } = this.registerControls;
+    const { transference, type } = this.registerControls;
     if (!firstDetail) {
       transference.reset();
       return;
@@ -515,6 +601,13 @@ export class EventCaptureComponent
     this.transfers = new DefaultSelect([
       { value: transferent, label: transferent },
     ]);
+
+    if (transference.value == 'PGR' || transference.value == 'PJF') {
+      type.setValue('A');
+    } else {
+      type.setValue('RT');
+    }
+
     await this.generateCve();
   }
 
@@ -801,10 +894,12 @@ export class EventCaptureComponent
     const splitedArea = keysProceedings?.value?.split('/');
     const _area = splitedArea ? splitedArea[3] : null;
     const cons = splitedArea ? splitedArea[5] : null;
+    const __folio = splitedArea ? splitedArea[5] : null;
+    const existingTrans = splitedArea ? splitedArea[2] : null;
 
     this.setProg();
     const currentDate = new Date();
-    const currentMonth = `${currentDate.getMonth()}`.padStart(2, '0');
+    const currentMonth = `${currentDate.getMonth() + 1}`.padStart(2, '0');
     year.setValue(currentDate.getFullYear());
     month.setValue(currentMonth);
     user.setValue(this.authUser);
@@ -812,6 +907,11 @@ export class EventCaptureComponent
     this.users = new DefaultSelect([
       { value: this.authUser, label: this.authUserName },
     ]);
+    if (existingTrans == 'PGR' || existingTrans == 'PJF') {
+      type.setValue('A');
+    } else {
+      type.setValue('RT');
+    }
     this.validateTransfer(type.value ?? 'RT', transference.value);
 
     if (!area.value) {
@@ -827,8 +927,8 @@ export class EventCaptureComponent
       const indicator = await this.getProceedingType();
       const _folio = await this.getFolio(indicator.certificateType);
       this.global.cons = `${_folio}`.padStart(5, '0');
-      folio.setValue(this.global.cons);
     }
+    folio.setValue(this.global.cons);
 
     if (!this.global.type) {
       this.global.type = 'RT';
@@ -896,8 +996,10 @@ export class EventCaptureComponent
           tran != 'PJF' &&
           (_type == 'D' || _type == 'A')
         ) {
+          console.log('1');
           this.invalidTransfer();
         } else if ((tran == 'PGR' || tran == 'PJF') && _type == 'RT') {
+          console.log('2');
           this.invalidTransfer();
         } else if (tran != 'PGR' && tran != 'PJF' && _type == 'RT') {
           this.global.tran = tran;
@@ -905,25 +1007,23 @@ export class EventCaptureComponent
         }
       }
     } else {
-      console.log('llego al else de transferente', transfer);
-      // if(tran == transfer)  {
       if (
         (transfer == 'PGR' || transfer == 'PJF') &&
         (_type == 'D' || _type == 'A')
       ) {
         this.global.tran = transfer;
         this.global.type = _type;
-        console.log('llego al primero');
       } else if (
         transfer != 'PGR' &&
         transfer != 'PJF' &&
         (_type == 'D' || _type == 'A')
       ) {
+        console.log('3');
         this.invalidTransfer();
       } else if ((transfer == 'PGR' || transfer == 'PJF') && _type == 'RT') {
+        console.log('4');
         this.invalidTransfer();
       } else if (transfer != 'PGR' && transfer != 'PJF' && _type == 'Rt') {
-        console.log('llego al segundo');
         this.global.tran = transfer;
         this.global.type = _type;
       }
@@ -1067,11 +1167,11 @@ export class EventCaptureComponent
 
     typeEvent.setValue(this.global.paperworkArea);
     if (typeEvent.value == 'DS') {
-      this.ctrlButtons.convPack.show();
+      this.ctrlButtons.convPack.enable();
     }
 
     if (typeEvent.value == 'DN') {
-      this.ctrlButtons.convPack.show();
+      this.ctrlButtons.convPack.enable();
       this.ctrlButtons.deletePack.show();
       this.showPackNumCtrl = true;
     }
@@ -1163,6 +1263,7 @@ export class EventCaptureComponent
           };
           this.form.patchValue(form);
           await this.afterGetProceeding();
+
           this.getDetail().subscribe();
         })
       )
@@ -1198,6 +1299,8 @@ export class EventCaptureComponent
         }
       }
     }
+
+    await this.generateCve();
   }
 
   getDetail() {
@@ -1210,6 +1313,7 @@ export class EventCaptureComponent
         catchError(error => {
           this.loading = false;
           this.blkCtrl.goodQuantity = 0;
+          this.detail = [];
           return throwError(() => error);
         }),
         tap(res => {
@@ -1260,8 +1364,8 @@ export class EventCaptureComponent
 
   // PA_CALCULA_CANTIDADES
   calculateQuantities() {
+    console.log('xd');
     const { typeEvent } = this.registerControls;
-    // TODO: DESCOMENTAR CUANDO ARREGLEN LA INCIDENCIA
     this.programmingGoodService
       .computeEntities(this.proceeding.id, typeEvent.value)
       .pipe(
@@ -1334,6 +1438,7 @@ export class EventCaptureComponent
       }
     }
 
+    this.calculateQuantities();
     // TODO: PEDIR TODOS LOS CAMPOS DEL DETALLE
     // this.blkCtrl.cQuantity = (this.blkCtrl.cQuantity?? 0) + this.
   }

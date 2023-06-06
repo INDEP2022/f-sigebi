@@ -43,6 +43,7 @@ export class DateCellComponent
     this.control.valueChanges
       .pipe(distinctUntilChanged(), debounceTime(this.delay))
       .subscribe((value: Date) => {
+        this.onInputChange();
         this.query =
           value !== null ? this.control.value?.toString() ?? 'skip' : '';
         console.log(this.query);

@@ -249,8 +249,8 @@
         [formSiab]="formSiab"></app-capture-event-parameters>
 
       <div class="row">
-        <div class="col-md-12 d-flex justify-content-between">
-          <div *ngIf="ctrlButtons.loadGoods.visible">
+        <div class="col-md-12 d-flex">
+          <div class="mr-3" *ngIf="ctrlButtons.loadGoods.visible">
             <button
               (click)="loadGoods()"
               class="btn btn-sm btn-secondary active"
@@ -258,14 +258,7 @@
               {{ ctrlButtons.loadGoods.label }}
             </button>
           </div>
-          <div *ngIf="ctrlButtons.goodsTracker.visible">
-            <button
-              (click)="goToGoodsTracker()"
-              class="btn btn-sm btn-info active"
-              [disabled]="!ctrlButtons.goodsTracker.enabled">
-              {{ ctrlButtons.goodsTracker.label }}
-            </button>
-          </div>
+
           <div *ngIf="ctrlButtons.convPack.visible">
             <button
               (click)="paqConv()"
@@ -280,6 +273,40 @@
 
     <br />
     <hr class="row" />
+    <br />
+
+    <div class="row">
+      <form class="form-material d-flex">
+        <form-field
+          class="col-md-3"
+          [control]="startDateCtrl"
+          label="Fecha de Inicio">
+          <input
+            (bsValueChange)="changeStartDate($event)"
+            class="form-control"
+            bsDatepicker
+            [formControl]="startDateCtrl" />
+        </form-field>
+        <form-field
+          class="col-md-3"
+          [control]="endDateCtrl"
+          label="Fecha de Fin">
+          <input
+            (bsValueChange)="changeEndDate($event)"
+            class="form-control"
+            bsDatepicker
+            [formControl]="endDateCtrl" />
+        </form-field>
+        <div class="col-md-2" *ngIf="ctrlButtons.apply.visible">
+          <button
+            (click)="validateDates()"
+            class="btn btn-primary btn-sm active"
+            [disabled]="!ctrlButtons.apply.enabled">
+            {{ ctrlButtons.apply.label }}
+          </button>
+        </div>
+      </form>
+    </div>
 
     <div class="row">
       <div class="col-md-12 d-flex justify-content-end">
@@ -308,12 +335,23 @@
           </button>
         </div>
 
+        <div class="mr-4" *ngIf="ctrlButtons.goodsTracker.visible">
+          <button
+            (click)="goToGoodsTracker()"
+            class="btn btn-sm btn-primary active"
+            [disabled]="!ctrlButtons.goodsTracker.enabled">
+            {{ ctrlButtons.goodsTracker.label }}
+            <i class="fa fa-search"></i>
+          </button>
+        </div>
+
         <div class="mr-4" *ngIf="ctrlButtons.expExcel.visible">
           <button
             (click)="excelExport()"
             class="btn btn-sm btn-success active"
             [disabled]="!ctrlButtons.expExcel.enabled">
             {{ ctrlButtons.expExcel.label }}
+            <i class="bx bx-download float-icon"></i>
           </button>
         </div>
         <div class="mr-4" *ngIf="ctrlButtons.xml.visible">
@@ -335,37 +373,6 @@
         </app-columns-select>
       </div>
     </div>
-    <form class="form-material d-flex">
-      <div class="row">
-        <form-field
-          class="col-md-3"
-          [control]="startDateCtrl"
-          label="Fecha de Inicio">
-          <input
-            (bsValueChange)="changeStartDate($event)"
-            class="form-control"
-            bsDatepicker
-            [formControl]="startDateCtrl" />
-        </form-field>
-        <form-field
-          class="col-md-3"
-          [control]="endDateCtrl"
-          label="Fecha de Fin">
-          <input
-            (bsValueChange)="changeEndDate($event)"
-            class="form-control"
-            bsDatepicker
-            [formControl]="endDateCtrl" />
-        </form-field>
-        <div class="col-md-2" *ngIf="ctrlButtons.apply.visible">
-          <button
-            class="btn btn-primary btn-sm active"
-            [disabled]="!ctrlButtons.apply.enabled">
-            {{ ctrlButtons.apply.label }}
-          </button>
-        </div>
-      </div>
-    </form>
 
     <div class="row mt-5 justify-content-center justify-content-sm-end"></div>
     <div class="row mt-1">
