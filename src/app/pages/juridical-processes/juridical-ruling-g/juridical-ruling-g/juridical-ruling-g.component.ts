@@ -1036,18 +1036,22 @@ export class JuridicalRulingGComponent
   }
 
   onTypesChange(type: any) {
-    console.log(type);
+    if (type.no_clasif_bien == 0) {
+      this.onLoadGoodList();
+    } else {
+      const filter = new FilterParams();
+      const { noExpediente } = this.expedientesForm.value;
 
-    const filter = new FilterParams();
+      filter.addFilter('goodClassNumber', type.no_clasif_bien, SearchFilter.EQ);
+      filter.addFilter('fileNumber', noExpediente, SearchFilter.EQ);
 
-    filter.addFilter('goodClassNumber', type.no_clasif_bien, SearchFilter.EQ);
-
-    this.goodServices.getAllFilter(filter.getParams()).subscribe({
-      next: data => {
-        console.log(data);
-      },
-    });
-
+      this.goodServices.getAllFilter(filter.getParams()).subscribe({
+        next: response => {
+          this.goods = response.data;
+          this.totalItems = response.count || 0;
+        },
+      });
+    }
     // this.resetFields([this.subtype, this.ssubtype, this.sssubtype]);
     // this.subtypes = new DefaultSelect();
     // this.ssubtypes = new DefaultSelect();
