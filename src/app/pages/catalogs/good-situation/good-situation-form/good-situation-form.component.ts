@@ -13,11 +13,10 @@ import { STRING_PATTERN } from 'src/app/core/shared/patterns';
   styles: [],
 })
 export class GoodSituationFormComponent extends BasePage implements OnInit {
-  goodSituation: IGoodSituation;
-  edit: boolean = false;
   goodSituationForm: ModelForm<IGoodSituation>;
   title = 'Situación Bien';
-
+  edit: boolean = false;
+  situation: any;
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
@@ -30,24 +29,23 @@ export class GoodSituationFormComponent extends BasePage implements OnInit {
     this.prepareForm();
   }
 
-  prepareForm() {
+  private prepareForm() {
     this.goodSituationForm = this.fb.group({
-      situation: [null, [Validators.required]],
+      situation: [null],
       descSituation: [
         null,
-        [
-          Validators.required,
-          Validators.maxLength(300),
-          Validators.pattern(STRING_PATTERN),
-        ],
+        [Validators.maxLength(300), Validators.pattern(STRING_PATTERN)],
       ],
-      status: [null, [Validators.required, Validators.maxLength(3)]],
+      status: [null, [Validators.maxLength(3)]],
     });
-
-    if (this.goodSituation != null) {
+    if (this.situation != null) {
       this.edit = true;
-      this.goodSituationForm.patchValue(this.goodSituation);
+      this.goodSituationForm.patchValue(this.situation);
     }
+  }
+
+  close() {
+    this.modalRef.hide();
   }
 
   confirm() {
@@ -56,7 +54,6 @@ export class GoodSituationFormComponent extends BasePage implements OnInit {
 
   create() {
     this.loading = true;
-
     this.goodSituationService
       .create(this.goodSituationForm.getRawValue())
       .subscribe({
@@ -66,9 +63,11 @@ export class GoodSituationFormComponent extends BasePage implements OnInit {
   }
 
   update() {
+    this.loading = true;
+    console.log('Update ', this.situation);
     this.goodSituationService
-      .update(
-        this.goodSituation.situation,
+      .updateCatalogGoodSituation(
+        this.situation.situation,
         this.goodSituationForm.getRawValue()
       )
       .subscribe({
@@ -77,11 +76,9 @@ export class GoodSituationFormComponent extends BasePage implements OnInit {
       });
   }
 
-  close() {
-    this.modalRef.hide();
-  }
-
   handleSuccess() {
+    const message: string = this.edit ? 'Actualizada' : 'Guardada';
+    this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();
