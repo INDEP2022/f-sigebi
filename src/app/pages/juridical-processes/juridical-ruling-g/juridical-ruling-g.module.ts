@@ -15,9 +15,10 @@ import { JuridicalRulingGRoutingModule } from './juridical-ruling-g-routing.modu
 
 /** COMPONENTS IMPORTS */
 import { JuridicalRulingGComponent } from './juridical-ruling-g/juridical-ruling-g.component';
+import { RDictaminaDocModalComponent } from './r-dictamina-doc-modal/r-dictamina-doc-modal.component';
 
 @NgModule({
-  declarations: [JuridicalRulingGComponent],
+  declarations: [JuridicalRulingGComponent, RDictaminaDocModalComponent],
   imports: [
     CommonModule,
     JuridicalRulingGRoutingModule,
