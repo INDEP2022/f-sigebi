@@ -399,7 +399,7 @@ export class JuridicalRulingGComponent
       fechaPPFF: [null, [Validators.required]],
       fechaInstructora: [null],
       fechaResolucion: [null],
-      fechaDictaminacion: [null],
+      fechaDictaminacion: [this.datePipe.transform(new Date(), 'dd/MM/yyyy')],
       fechaNotificacion: [null],
       fechaNotificacionAseg: [null],
       autoriza_remitente: [null],
@@ -600,8 +600,7 @@ export class JuridicalRulingGComponent
           this.dictaminacionesForm
             .get('fechaDictaminacion')
             .setValue(
-              this.datePipe.transform(res.data[0].dictDate, 'dd-MM-yyyy') ||
-                undefined
+              this.datePipe.transform(new Date(), 'dd-MM-yyyy') || undefined
             );
           this.dictaminacionesForm
             .get('fechaResolucion')
@@ -802,6 +801,37 @@ export class JuridicalRulingGComponent
   }
 
   addAll() {
+    if (!this.expedientesForm.get('identifier').value) {
+      this.onLoadToast('error', 'Debe seleccionar un identificador');
+      return;
+    }
+
+    if (this.statusDict == 'DICTAMINADO' || this.statusDict == 'IMPROCEDENTE') {
+      this.onLoadToast(
+        'error',
+        'Este dictamen ya tiene un estatus DICTAMINADO'
+      );
+      return;
+    }
+
+    if (this.expedientesForm.get('identifier').value) {
+      this.isIdent = false;
+    }
+
+    if (!this.dictaminacionesForm.get('autoriza_remitente').value) {
+      this.onLoadToast('error', 'Debe especificar quien autoriza dictamen');
+      return;
+    }
+
+    if (!this.expedientesForm.get('type').value) {
+      this.onLoadToast('error', 'Debe seleccionar un tipo de bien');
+      return;
+    }
+
+    if (!this.dictaminacionesForm.get('fechaPPFF').value) {
+      this.onLoadToast('error', `Debe capturar la ${this.label}`);
+    }
+
     if (this.goods.length > 0) {
       this.goods.forEach(_g => {
         if (_g.status !== 'STI') {
@@ -1215,6 +1245,12 @@ export class JuridicalRulingGComponent
   }
 
   onTypeDictChange($event: any) {
+    const querys = this.activatedRoute.snapshot.queryParams;
+
+    const type = this.expedientesForm.get('tipoDictaminacion').value;
+
+    this.validateTypeVol(querys['tipoVo'], type);
+
     // ..activar para ver cambio
     // console.log($event);
   }

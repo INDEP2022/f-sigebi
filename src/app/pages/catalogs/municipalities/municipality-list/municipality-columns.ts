@@ -1,25 +1,20 @@
 export const MUNICIPALITIES_COLUMNS = {
-  key: {
+  stateKey: {
     title: 'Clave',
     type: 'number',
     sort: false,
   },
-  entity: {
-    title: 'Entidad',
+  nameMunicipality: {
+    title: 'Nombre De Municipalidad',
     type: 'string',
     sort: false,
   },
-  municipalityName: {
-    title: 'Nombre',
-    type: 'string',
-    sort: false,
-  },
-  userCreation: {
+  creationUser: {
     title: 'Creado por',
     type: 'string',
     sort: false,
   },
-  userModification: {
+  editionUser: {
     title: 'Modificado por',
     type: 'string',
     sort: false,
