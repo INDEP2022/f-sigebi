@@ -65,6 +65,7 @@ import {
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { EdoFisicoComponent } from './edo-fisico/edo-fisico.component.component';
+import { columnsGood, columnsGoodAct } from './settings-tables';
 
 @Component({
   selector: 'app-confiscated-records',
@@ -79,118 +80,15 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     rowClassFunction: (row: { data: { avalaible: any } }) =>
       row.data.avalaible ? 'available' : 'not-available',
     actions: false,
-    columns: {
-      goodId: {
-        title: 'No. Bien',
-        type: 'number',
-        sort: false,
-      },
-      description: {
-        title: 'Descripción',
-        type: 'string',
-        sort: false,
-      },
-      extDomProcess: {
-        title: 'Proceso',
-        type: 'string',
-        sort: false,
-      },
-      quantity: {
-        title: 'Cantidad',
-        type: 'number',
-        sort: false,
-      },
-      unit: {
-        title: 'Unidad',
-        type: 'string',
-        sort: false,
-      },
-      status: {
-        title: 'Estatus',
-        type: 'string',
-        sort: false,
-      },
-      acta: {
-        title: 'Acta',
-        type: 'string',
-        sort: false,
-      },
-    },
+    columns: columnsGood,
     noDataMessage: 'No se encontrarón registros',
   };
 
   settings2 = {
     ...TABLE_SETTINGS,
-    /* selectMode: 'multi',
-    selected: this.saveDataAct,
-    mode: 'external', */
     actions: false,
     columns: {
-      numberGood: {
-        title: 'No. Bien',
-        type: 'number',
-        sort: false,
-      },
-      'good.goodClassNumber': {
-        title: 'No. Clasificación',
-        type: 'number',
-        sort: false,
-        valuePrepareFunction: (cell: any, row: any) => {
-          if (row.good && row.good.goodClassNumber) {
-            return row.good.goodClassNumber;
-          } else {
-            return null;
-          }
-        },
-      },
-      'good.description': {
-        title: 'Descripción',
-        type: 'string',
-        sort: false,
-        valuePrepareFunction: (cell: any, row: any) => {
-          if (row.good && row.good.description) {
-            return row.good.description;
-          } else {
-            return null;
-          }
-        },
-      },
-      'good.extDomProcess': {
-        title: 'Proceso',
-        type: 'string',
-        sort: false,
-        valuePrepareFunction: (cell: any, row: any) => {
-          if (row.good && row.good.extDomProcess) {
-            return row.good.extDomProcess;
-          } else {
-            return null;
-          }
-        },
-      },
-      'good.quantity': {
-        title: 'Cantidad',
-        type: 'number',
-        sort: false,
-        valuePrepareFunction: (cell: any, row: any) => {
-          if (row.good && row.good.quantity) {
-            return row.good.quantity;
-          } else {
-            return null;
-          }
-        },
-      },
-      'good.unit': {
-        title: 'Unidad',
-        type: 'string',
-        sort: false,
-        valuePrepareFunction: (cell: any, row: any) => {
-          if (row.good && row.good.unit) {
-            return row.good.unit;
-          } else {
-            return null;
-          }
-        },
-      },
+      ...columnsGoodAct,
       received: {
         title: 'Recibido',
         type: 'custom',
@@ -280,6 +178,11 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   shouldReselect = true;
   showFecReception = false;
   v_atrib_del = 0;
+
+  //DATOS DE USUARIO
+  delUser: string
+  subDelUser: string
+  departmentUser: string
 
   constructor(
     private fb: FormBuilder,
@@ -373,6 +276,24 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
       this.newSearchExp();
       localStorage.removeItem('numberExpedient');
     }
+
+    this.getDataUser()
+  }
+
+  getDataUser() {
+    const user =
+      localStorage.getItem('username') == 'sigebiadmon'
+        ? localStorage.getItem('username')
+        : localStorage.getItem('username').toLocaleUpperCase();
+    const routeUser = `?filter.name=$eq:${user}`;
+    this.serviceUser.getAllSegUsers(routeUser).subscribe(
+      res => {
+        const resJson = JSON.parse(JSON.stringify(res.data[0]));
+        this.delUser = resJson.usuario.delegationNumber
+        this.subDelUser = resJson.usuario.subdelegationNumber
+        this.departmentUser = resJson.usuario.departamentNumber
+      }
+    );
   }
 
   prepareForm() {
@@ -488,7 +409,8 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
       this.fnOpenProceeding();
     } else if (this.labelActa == 'Cerrar acta') {
       console.log('Funciono');
-      this.closeProceeding();
+      /* this.closeProceeding(); */
+      this.newCloseProceeding();
     }
   }
 
@@ -655,23 +577,58 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
       );
     };
     return new Promise((resolve, reject) => {
+      //¿ES NUMERARIO?
       this.serviceGoodProcess.getVnNumerario(good.id).subscribe(
         res => {
+          //SI ES NUMERARIO
           console.log(res);
           di_numerario = true;
-          this.serviceGoodProcess.getValNume(valModel).subscribe(res => {
-            di_disponible = true;
-            console.log(res);
-            getAmparo();
-          });
+          this.serviceGoodProcess.getValNume(valModel).subscribe(
+            res => {
+              di_disponible = true;
+              const modelPosQuery: IBlkPost = {
+                no_bien: parseInt(good.id),
+                no_expediente: this.form.get('expediente').value,
+              };
+              console.log(modelPosQuery);
+              this.serviceProceeding
+                .getBiePosquery(modelPosQuery)
+                .subscribe(res => {
+                  if (res.data.length != 0) {
+                    di_disponible = false;
+                    getAmparo();
+                    resolve({
+                      avalaible: di_disponible,
+                      bamparo: bamparo,
+                      acta: null,
+                    });
+                  } else {
+                    resolve({
+                      avalaible: di_disponible,
+                      bamparo: bamparo,
+                      acta: null,
+                    });
+                  }
+                });
+            },
+            err => {
+              getAmparo();
+              di_disponible = false;
+              resolve({
+                avalaible: di_disponible,
+                bamparo: bamparo,
+                acta: null,
+              });
+            }
+          );
         },
+        //NO ES NUMERARIO
         err => {
           console.log(err);
           di_numerario = false;
-          di_disponible = true;
-          console.log(valModel);
           this.serviceGoodProcess.getValOtro(valModel).subscribe(
             res => {
+              di_disponible = true;
               console.log(res);
               const modelPosQuery: IBlkPost = {
                 no_bien: parseInt(good.id),
@@ -680,6 +637,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
               console.log(modelPosQuery);
               this.serviceProceeding.getBiePosquery(modelPosQuery).subscribe(
                 res => {
+                  console.log('Valida acta en bienes');
                   console.log(res.data);
                   if (res.data.length != 0) {
                     di_disponible = false;
@@ -705,6 +663,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                             JSON.stringify(res)
                           ).lv_programa;
                           if (lv_programa != 0) {
+                            di_disponible = true;
                             getAmparo();
                             resolve({
                               avalaible: di_disponible,
@@ -820,20 +779,24 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                 res => {
                   if (res.data.length > 0) {
                     resolve({
-                      avalaible: false,
+                      avalaible: di_disponible,
                       bamparo: bamparo,
                       acta: res.data[0]['cve_acta'],
                     });
                   } else {
                     resolve({
-                      avalaible: true,
+                      avalaible: di_disponible,
                       bamparo: bamparo,
                       acta: null,
                     });
                   }
                 },
                 err => {
-                  resolve({ avalaible: true, bamparo: bamparo, acta: null });
+                  resolve({
+                    avalaible: di_disponible,
+                    bamparo: bamparo,
+                    acta: null,
+                  });
                 }
               );
               /* resolve({ avalaible: di_disponible, bamparo: bamparo }); */
@@ -1108,7 +1071,11 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     );
 
     this.serviceDetailProc.getAllFiltered(paramsF.getParams()).subscribe(
-      async res => {
+      res => {
+        this.dataGoodAct.load(res.data)
+
+
+        /* console.log(res.data)
         this.dataGoodAct.load(res.data).then(async res => {
           let newData: any[] = [];
           for (let item of res.data) {
@@ -1118,10 +1085,9 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
               noColumna: edoFis.V_NO_COLUMNA,
               indEdoFisico: edoFis.V_IND_EDO_FISICO === 1 ? true : false,
             });
+            this.dataGoodAct.load(newData)
           }
-
-          this.dataGoodAct.load(newData);
-        });
+        }); */
         this.totalItemsDataGoodsAct = res.count;
         this.loading = false;
       },
@@ -1321,11 +1287,16 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
           err => {
             console.log(err);
             this.blockExpedient = false;
-            this.alert('error', 'Clave de transferente inválida', '');
+            this.transferSelect = new DefaultSelect([]);
+            this.getDataExpedient();
+            //!if de activar PGR
+            this.checkChange();
+            this.newGetGoods();
+            /* this.alert('error', 'Clave de transferente inválida', '');
             this.dataGoods.load([]);
             this.loading = false;
             this.dataGoodAct.load([]);
-            this.goodData = [];
+            this.goodData = []; */
           }
         );
       },
@@ -1373,7 +1344,6 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     this.serviceRNomencla.getRNomencla(paramsF.getParams()).subscribe(
       res => {
         this.adminSelect = new DefaultSelect(res.data, res.count);
-        console.log(this.form.get(''));
       },
       err => console.log(err)
     );
@@ -1437,8 +1407,34 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         .get('transfer')
         .valueChanges.subscribe(res => this.verifyTransferenteAndAct());
       this.form.get('ident').valueChanges.subscribe(res => this.fillActTwo());
-      this.form.get('recibe').valueChanges.subscribe(res => this.fillActTwo());
-      this.form.get('admin').valueChanges.subscribe(res => this.fillActTwo());
+      this.form.get('recibe').valueChanges.subscribe(res => {
+        console.log(res)
+        console.log(res.numberDelegation2)
+        console.log(this.delUser)
+        if(res != null){
+          if(res.numberDelegation2 != this.delUser){
+            this.form.get('recibe').reset()
+            this.recibeSelect = new DefaultSelect();
+            this.alert('warning','La delegación es diferente a la del usuario','')
+            return
+          }else{
+            this.fillActTwo()
+          }
+        }
+        
+      });
+      this.form.get('admin').valueChanges.subscribe(res => {
+        if(res != null){
+          if(res.numberDelegation2 != this.delUser){
+            this.alert('warning','La delegación seleccionada es diferente a la del usuario','')
+            this.adminSelect = new DefaultSelect();
+            this.form.get('admin').reset()
+          }else{
+            this.fillActTwo()
+          }
+        }
+        
+      });
       this.form.get('folio').valueChanges.subscribe(res => {
         if (
           this.form.get('folio').value != null &&
@@ -1475,12 +1471,17 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     this.clearInputs();
     console.log(this.form.get('expediente').value);
     if (this.form.get('expediente').value != null) {
-      this.searchByOtherData = false;
+      const paramsF = new FilterParams();
+      paramsF.page = this.paramsDataGoods.getValue().page;
+      paramsF.limit = this.paramsDataGoods.getValue().limit;
+      this.limitDataGoods = new FormControl(
+        this.paramsDataGoods.getValue().limit
+      );
       this.serviceGood
         .getAllFilterDetail(
           `filter.fileNumber=$eq:${
             this.form.get('expediente').value
-          }&filter.status=$not:ADM&filter.labelNumber=$not:6&filter.detail.actNumber=$not:$null`
+          }&filter.status=$not:ADM&filter.labelNumber=$not:6&${paramsF.getParams()}`
         )
         .subscribe({
           next: async (res: any) => {
@@ -1503,7 +1504,9 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                   };
                 })
               );
+              this.totalItemsDataGoods = res.count;
               this.dataGoods.load(newData);
+              this.getGoodsByExpedient();
               this.alert(
                 'success',
                 'Se encontraron Bienes',
@@ -1511,18 +1514,12 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
               );
               this.render.removeClass(btn, 'disabled');
               this.render.addClass(btn, 'enabled');
-              this.blockExpedient = false;
-              this.alert(
-                'success',
-                'Se encontraron Bienes',
-                'El número de expediente registrado tiene Bienes'
-              );
             } else {
               this.initialdisabled = false;
               this.requireAct1();
-              this.inputsNewProceeding();
-              this.newSearchExp();
               this.minDateFecElab = new Date();
+              this.inputsNewProceeding();
+              /* this.newSearchExp(); */
               this.alert(
                 'warning',
                 'Sin Bienes válidos',
@@ -1800,6 +1797,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
 
   clearInputs() {
     this.form.get('acta2').reset();
+    this.form.get('ident').reset();
     this.form.get('direccion').reset();
     this.form.get('entrega').reset();
     this.form.get('fecElabRec').reset();
@@ -1812,7 +1810,6 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     this.form.get('testigo').reset();
     this.form.get('acta').reset();
     this.form.get('transfer').reset();
-    this.form.get('ident').reset();
     this.form.get('recibe').reset();
     this.form.get('admin').reset();
     this.form.get('folio').reset();
@@ -1954,6 +1951,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         console.log(res);
         console.log(res.data);
         if (res.data.length > 0) {
+          console.log('Entró');
           this.proceedingData = res.data;
           console.log(this.proceedingData);
           const dataRes = JSON.parse(JSON.stringify(res.data[0]));
@@ -1970,6 +1968,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         }
       },
       err => {
+        console.log('Entro a error');
         console.log(err);
         this.loading = false;
         this.initialdisabled = false;
@@ -2526,212 +2525,6 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     );
   }
 
-  /*  openProceeding() {
-    if (
-      ['CERRADO', 'CERRADA'].includes(this.form.get('statusProceeding').value)
-    ) {
-      this.alertQuestion(
-        'warning',
-        `¿Está seguro de abrir el Acta ${this.form.get('acta2').value} ?`,
-        ''
-      ).then(q => {
-        if (q.isConfirmed) {
-          const paramsF = new FilterParams();
-          let VAL_MOVIMIENTO = 0;
-
-          paramsF.addFilter(
-            'valUser',
-            localStorage.getItem('username').toLocaleLowerCase()
-          );
-          paramsF.addFilter('valMinutesNumber', this.idProceeding);
-          this.serviceProgrammingGood
-            .getTmpProgValidation(paramsF.getParams())
-            .subscribe(
-              res => {
-                console.log(res);
-                VAL_MOVIMIENTO = res.data[0]['valmovement'];
-              },
-              err => {
-                console.log(err);
-                VAL_MOVIMIENTO = 0;
-              }
-            );
-          const splitActa = this.form.get('acta2').value.split('/');
-          const tipo_acta = ['D', 'ND'].includes(splitActa[0])
-            ? 'DECOMISO'
-            : 'ENTREGA';
-          const lv_TIP_ACTA = `RF,${tipo_acta}`;
-
-          const modelPaOpen: IPAAbrirActasPrograma = {
-            P_NOACTA: this.idProceeding,
-            P_AREATRA: lv_TIP_ACTA,
-            P_PANTALLA: 'FACTREFACTAENTREC',
-            P_TIPOMOV: 2,
-          };
-          console.log(modelPaOpen);
-          this.serviceProgrammingGood
-            .paOpenProceedingProgam(modelPaOpen)
-            .subscribe(
-              res => {
-                this.labelActa = 'Cerrar acta';
-                this.btnCSSAct = 'btn-primary';
-                this.form.get('statusProceeding').setValue('ABIERTA');
-                this.reopening = true;
-                this.inputsReopenProceeging();
-                if (VAL_MOVIMIENTO === 1) {
-                  this.serviceProgrammingGood
-                    .paRegresaEstAnterior(modelPaOpen)
-                    .subscribe(
-                      res => {
-                        this.research = true;
-                        this.labelActa = 'Abrir acta';
-                        this.btnCSSAct = 'btn-primary';
-                        this.form.get('statusProceeding').setValue('CERRADO');
-                        const btn = document.getElementById('expedient-number');
-                        this.render.removeClass(btn, 'disabled');
-                        this.render.addClass(btn, 'enabled');
-                        this.alert(
-                          'success',
-                          'Acta abierta',
-                          `El acta ${
-                            this.form.get('acta2').value
-                          } fue abierta`
-                        );
-                      },
-                      err => {
-                        console.log(err);
-                        const btn = document.getElementById('expedient-number');
-                        this.render.removeClass(btn, 'disabled');
-                        this.render.addClass(btn, 'enabled');
-                      }
-                    );
-                }
-              },
-              err => {
-                console.log(err);
-                const btn = document.getElementById('expedient-number');
-                this.render.removeClass(btn, 'disabled');
-                this.render.addClass(btn, 'enabled');
-                this.alert(
-                  'error',
-                  'No se pudo abrir el acta',
-                  'Ocurrió un error que no permite abrir el acta'
-                );
-              }
-            );
-        }
-      });
-    } else {
-      console.log(typeof this.form.get('folio').value);
-      if (this.goodData.length <= 0) {
-        this.alert(
-          'warning',
-          'No hay bienes registrados',
-          'Necesita registrar bienes en el acta para crearla'
-        );
-      } else {
-        let userDelegation: any;
-
-        let newProceeding: IProccedingsDeliveryReception = {
-          keysProceedings: this.form.get('acta2').value,
-          elaborationDate: format(
-            this.form.get('fecElab').value,
-            'yyyy-MM,dd HH:mm'
-          ),
-          datePhysicalReception: format(
-            this.form.get('fecReception').value,
-            'yyyy-MM,dd HH:mm'
-          ),
-          address: this.form.get('direccion').value,
-          statusProceedings: 'ABIERTA',
-          elaborate: localStorage.getItem('username').toLocaleUpperCase(),
-          numFile: this.form.get('expediente').value,
-          witness1: this.form.get('entrega').value,
-          witness2: this.form.get('recibe2').value,
-          typeProceedings: ['D', 'ND'].includes(this.form.get('acta').value)
-            ? 'DECOMISO'
-            : 'ENTREGA',
-          dateElaborationReceipt: format(
-            this.form.get('fecElabRec').value,
-            'yyyy-MM,dd HH:mm'
-          ),
-          dateDeliveryGood: format(
-            this.form.get('fecEntBien').value,
-            'yyyy-MM,dd HH:mm'
-          ),
-          responsible: null,
-          destructionMethod: null,
-          observations: this.form.get('observaciones').value,
-          approvalDateXAdmon: null,
-          approvalUserXAdmon: null,
-          numRegister: null,
-          captureDate: format(new Date(), 'yyyy-MM,dd HH:mm'),
-          numDelegation1: this.form.get('admin').value.numberDelegation2,
-          numDelegation2:
-            this.form.get('admin').value.numberDelegation2 === 11 ? 11 : null,
-          identifier: null,
-          label: null,
-          universalFolio: null,
-          numeraryFolio: null,
-          numTransfer: null,
-          idTypeProceedings: this.form.get('acta').value,
-          receiptKey: null,
-          comptrollerWitness: this.form.get('testigo').value,
-          numRequest: null,
-          closeDate: null,
-          maxDate: null,
-          indFulfilled: null,
-          dateCaptureHc: null,
-          dateCloseHc: null,
-          dateMaxHc: null,
-          receiveBy: null,
-          affair: null,
-        };
-        console.log(newProceeding);
-        this.serviceProcVal.postProceeding(newProceeding).subscribe(
-          res => {
-            const paramsF = new FilterParams();
-            paramsF.addFilter('keysProceedings', this.form.get('acta2').value);
-            this.serviceProcVal
-              .getByFilter(paramsF.getParams())
-              .subscribe(res => {
-                const resData = JSON.parse(JSON.stringify(res.data))[0];
-                this.form.get('fecCaptura').setValue(new Date());
-                this.form.get('statusProceeding').setValue('ABIERTA');
-                this.labelActa = 'Cerrar acta';
-                this.btnCSSAct = 'btn-primary';
-                this.research = true;
-                this.inputsInProceedingClose();
-                this.alert(
-                  'success',
-                  'Acta abierta',
-                  `El acta ${this.form.get('acta2').value} fue abierta`
-                );
-                const btn = document.getElementById('expedient-number');
-                this.render.removeClass(btn, 'disabled');
-                this.render.addClass(btn, 'enabled');
-                this.blockExpedient = false;
-              });
-          },
-          err => {
-            console.log(err);
-            console.log('Error al guardar');
-            this.alert(
-              'error',
-              'Error inesperado al abrir acta',
-              'Se presentó un error inesperado al abrir el acta, por favor intentelo nuevamente.'
-            );
-            const btn = document.getElementById('expedient-number');
-            this.render.removeClass(btn, 'disabled');
-            this.render.addClass(btn, 'enabled');
-            this.blockExpedient = false;
-          }
-        );
-        console.log(newProceeding);
-      }
-    }
-  } */
-
   newCloseProceeding() {
     if (this.dataGoodAct['data'].length == 0) {
       this.alert(
@@ -2739,8 +2532,11 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         'No se registraron bienes',
         'El Acta no contiene Bienes, no se podrá Cerrar.'
       );
-    }
-    if (
+    } else if (
+      ['CERRADO', 'CERRADA'].includes(this.form.get('statusProceeding').value)
+    ) {
+      this.alert('warning', 'El acta ya se encuentra cerrada', '');
+    } else if (
       this.dataGoodAct['data'].find(
         (e: any) => e.indEdoFisico && e.good[`val${e.noColumna}`] == null
       )
@@ -2762,6 +2558,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
       this.serviceProcVal.getByFilter(paramsF.getParams()).subscribe(
         res => {
           const resData = JSON.parse(JSON.stringify(res.data))[0];
+          const idProcee = resData.id;
           const model: IValidaCambioEstatus = {
             p1: 3,
             p2: resData.id.toString(),
@@ -2796,12 +2593,107 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                         ? 'DECOMISO'
                         : 'ENTREGA';
                       this.loading = true;
+                      const fec_elab = this.form.get('fecElab').value;
+                      if (
+                        fec_elab != null &&
+                        format(fec_elab, 'MM-yyyy') !=
+                          format(new Date(), 'MM-yyyy')
+                      ) {
+                        this.alert(
+                          'warning',
+                          'Está fuera de tiempo para cerrar el acta',
+                          ''
+                        );
+                      } else if (this.form.get('folioEscaneo').value === null) {
+                        this.alert(
+                          'warning',
+                          'Debe introducir el valor del folio',
+                          ''
+                        );
+                        this.validateFolio();
+                        if (this.scanStatus) {
+                          const splitActa = this.form
+                            .get('acta2')
+                            .value.split('/');
+                          const tipo_acta = ['D', 'ND'].includes(splitActa[0])
+                            ? 'DECOMISO'
+                            : 'ENTREGA';
+                          const model: IPACambioStatus = {
+                            P_NOACTA: idProcee,
+                            P_PANTALLA: 'FACTREFACTAENTREC',
+                            P_FECHA_RE_FIS: this.form.get('fecReception').value,
+                            P_TIPO_ACTA: tipo_acta,
+                            usuario:
+                              localStorage.getItem('username') == 'sigebiadmon'
+                                ? localStorage.getItem('username')
+                                : localStorage
+                                    .getItem('username')
+                                    .toLocaleUpperCase(),
+                          };
+                          this.serviceProgrammingGood
+                            .paChangeStatus(model)
+                            .subscribe(
+                              res => {
+                                console.log(res);
+                                const modelEdit: IProccedingsDeliveryReception =
+                                  {
+                                    comptrollerWitness:
+                                      this.form.get('testigo').value,
+                                    observations:
+                                      this.form.get('observaciones').value,
+                                    witness1: this.form.get('entrega').value,
+                                    witness2: this.form.get('recibe2').value,
+                                    address: this.form.get('direccion').value,
+                                    universalFolio:
+                                      this.form.get('folioEscaneo').value,
+                                  };
+                                this.serviceProcVal
+                                  .editProceeding(idProcee, modelEdit)
+                                  .subscribe(
+                                    res => {
+                                      console.log(res);
+                                      this.form
+                                        .get('statusProceeding')
+                                        .setValue('CERRADO');
+                                      this.labelActa = 'Abrir acta';
+                                      this.btnCSSAct = 'btn-success';
+                                      this.idProceeding = idProcee;
+                                      this.getGoodsActFn();
+                                      this.alert(
+                                        'success',
+                                        'Acta cerrada',
+                                        'El acta fue cerrada'
+                                      );
+                                      this.inputsInProceedingClose();
+                                    },
+                                    err => {
+                                      console.log(err);
+                                      this.alert(
+                                        'error',
+                                        'Ocurrió un error',
+                                        'Ocurrió un error inesperado que no permitió cerrar el acta'
+                                      );
+                                    }
+                                  );
+                              },
+                              err => {
+                                this.loading = false;
+                                this.alert(
+                                  'warning',
+                                  'Se presentó un error al cerrar el acta',
+                                  'Por favor verifique que el cambio se dio'
+                                );
+                              }
+                            );
+                        }
+                      }
                     } else {
                     }
                   },
                   err => {
                     console.log(err);
                     VAL_MOVIMIENTO = 0;
+                    this.closeProceedingFn(this.idProceeding);
                   }
                 );
             }
@@ -2809,9 +2701,78 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         },
         err => {
           console.log(err);
+          this.closeProceedingFn(this.idProceeding);
         }
       );
     }
+  }
+
+  closeProceedingFn(idProcee: any) {
+    this.alertQuestion(
+      'question',
+      '¿Seguro que desea realizar el cierre de este acta?',
+      ''
+    ).then(q => {
+      if (q.isConfirmed) {
+        const splitActa = this.form.get('acta2').value.split('/');
+        const tipo_acta = ['D', 'ND'].includes(splitActa[0])
+          ? 'DECOMISO'
+          : 'ENTREGA';
+        this.loading = true;
+        const model: IPACambioStatus = {
+          P_NOACTA: idProcee,
+          P_PANTALLA: 'FACTREFACTAENTREC',
+          P_FECHA_RE_FIS: this.form.get('fecReception').value,
+          P_TIPO_ACTA: tipo_acta,
+          usuario:
+            localStorage.getItem('username') == 'sigebiadmon'
+              ? localStorage.getItem('username')
+              : localStorage.getItem('username').toLocaleUpperCase(),
+        };
+        this.serviceProgrammingGood.paChangeStatus(model).subscribe(
+          res => {
+            console.log(res);
+            const modelEdit: IProccedingsDeliveryReception = {
+              comptrollerWitness: this.form.get('testigo').value,
+              observations: this.form.get('observaciones').value,
+              witness1: this.form.get('entrega').value,
+              witness2: this.form.get('recibe2').value,
+              address: this.form.get('direccion').value,
+              universalFolio: this.form.get('folioEscaneo').value,
+              typeProceedings: 'DXCVENT',
+            };
+            this.serviceProcVal.editProceeding(idProcee, modelEdit).subscribe(
+              res => {
+                console.log(res);
+                this.form.get('statusProceeding').setValue('CERRADO');
+                this.labelActa = 'Abrir acta';
+                this.btnCSSAct = 'btn-success';
+                this.idProceeding = idProcee;
+                this.getGoodsActFn();
+                this.alert('success', 'Acta cerrada', 'El acta fue cerrada');
+                this.inputsInProceedingClose();
+              },
+              err => {
+                console.log(err);
+                this.alert(
+                  'error',
+                  'Ocurrió un error',
+                  'Ocurrió un error inesperado que no permitió cerrar el acta'
+                );
+              }
+            );
+          },
+          err => {
+            this.loading = false;
+            this.alert(
+              'warning',
+              'Se presentó un error al cerrar el acta',
+              'Por favor verifique que el cambio se dio'
+            );
+          }
+        );
+      }
+    });
   }
 
   closeProceeding() {
@@ -2879,6 +2840,21 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
               this.serviceProcVal
                 .getByFilter(paramsF.getParams())
                 .subscribe(res => {
+                  const splitActa = this.form.get('acta2').value.split('/');
+                  const tipo_acta = ['D', 'ND'].includes(splitActa[0])
+                    ? 'DECOMISO'
+                    : 'ENTREGA';
+                  const model: IPACambioStatus = {
+                    P_NOACTA: idProcee,
+                    P_PANTALLA: 'FACTREFACTAENTREC',
+                    P_FECHA_RE_FIS: this.form.get('fecReception').value,
+                    P_TIPO_ACTA: tipo_acta,
+                    usuario:
+                      localStorage.getItem('username') == 'sigebiadmon'
+                        ? localStorage.getItem('username')
+                        : localStorage.getItem('username').toLocaleUpperCase(),
+                  };
+
                   const modelEdit: IProccedingsDeliveryReception = {
                     statusProceedings: 'CERRADA',
                     comptrollerWitness: this.form.get('testigo').value,
@@ -3205,24 +3181,37 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                     const realData = JSON.parse(JSON.stringify(res.data[0]));
                     this.serviceDetailProc
                       .PADelActaEntrega(realData.id)
-                      .subscribe(
-                        res => {
-                          this.getGoodsFn();
+                      .subscribe(async res => {
+                        this.clearInputs();
+                        this.alert(
+                          'success',
+                          'El acta fue eliminada',
+                          'Se recargará la página'
+                        );
+                        this.loading = true;
+                        /*
+                          this.clearInputs()
+                          this.loading = true
+                          this.form;
+                          this.goodsByExpediente()
+                          
+ */ this.newSearchExp();
+                        /* this.getGoodsFn(); */
 
-                          this.form
+                        /*  this.form
                             .get('expediente')
                             .setValue(this.numberExpedient);
                           this.clearInputs();
-                          this.getGoodsByExpedient();
                           console.log(this.proceedingData.length);
                           if (this.proceedingData.length === 1) {
+                            console.log('Primer if')
                             this.navigateProceedings = false;
                             this.nextProce = true;
                             this.prevProce = true;
                             this.numberProceeding = 0;
                             this.form.get('statusProceeding').reset();
-                            this.labelActa = 'Abrir acta';
-                            this.btnCSSAct = 'btn-success';
+                            this.labelActa = 'Cerrar acta';
+                            this.btnCSSAct = 'btn-primary';
                           } else {
                             this.proceedingData.filter((e: any) => {
                               return e.keysProceedings != keysProceedings;
@@ -3233,12 +3222,12 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                               this.prevProce = true;
                               this.numberProceeding = 0;
                               this.form.get('statusProceeding').reset();
-                              this.labelActa = 'Abrir acta';
-                              this.btnCSSAct = 'btn-success';
+                              this.labelActa = 'Cerrar acta';
+                              this.btnCSSAct = 'btn-primary';
                             } else {
                               this.numberProceeding =
-                                this.proceedingData.length - 1;
-                              this.prevProceeding();
+                                0;
+                          this.getGoodsByExpedient();
                             }
                           }
                           this.alert('success', 'Acta eliminada', '');
@@ -3250,9 +3239,8 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                             'error',
                             'No se pudo eliminar acta',
                             'Secudió un problema al eliminar el acta'
-                          );
-                        }
-                      );
+                          ); */
+                      });
                   },
                   err => {
                     console.log(err);
@@ -3751,7 +3739,9 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                                 });
                                 this.getGoodsActFn();
                                 /* this.dataGoodAct.load(this.goodData); */
-
+                                this.saveDataAct.push({
+                                  ...this.selectData,
+                                });
                                 this.selectData = null;
                               },
                               err => {
@@ -3838,76 +3828,23 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
             console.log(deleteModel);
             this.serviceDetailProc.deleteDetailProcee(deleteModel).subscribe(
               res => {
-                const paramsF = new FilterParams();
-                paramsF.addFilter('propertyNum', this.selectActData.good.id);
-                paramsF.sortBy = 'changeDate';
-                console.log(paramsF.getParams());
-                this.serviceHistoryGood
-                  .getAllFilter(paramsF.getParams())
-                  .subscribe(
-                    res => {
-                      console.log(res.data[res.data.length - 1]);
-                      const putGood: IGood = {
-                        id: this.selectActData.good.id,
-                        goodId: this.selectActData.good.goodId,
-                        status: res.data[res.data.length - 1]['status'],
-                      };
-                      this.serviceGood.update(putGood).subscribe(
-                        res => {
-                          console.log(this.dataGoodAct);
-                          this.goodData = this.goodData.filter(
-                            (e: any) => e.id != this.selectActData.good.id
-                          );
-                          this.getGoodsActFn();
+                console.log(this.dataGoodAct);
+                this.goodData = this.goodData.filter(
+                  (e: any) => e.id != this.selectActData.good.id
+                );
+                this.getGoodsActFn();
 
-                          this.dataGoods.load(
-                            this.dataGoods['data'].map((e: any) => {
-                              console.log(e);
-                              console.log(this.selectActData.good.id);
-                              if (e.id == this.selectActData.good.id) {
-                                return { ...e, avalaible: true };
-                              } else {
-                                return e;
-                              }
-                            })
-                          );
-                        },
-                        err => {
-                          console.log(err);
-                          this.getGoodsActFn();
-                          this.dataGoods.load(
-                            this.dataGoods['data'].map((e: any) => {
-                              console.log(e);
-                              console.log(this.selectActData.good.id);
-                              if (e.id == this.selectActData.good.id) {
-                                return { ...e, avalaible: true };
-                              } else {
-                                return e;
-                              }
-                            })
-                          );
-                        }
-                      );
-                    },
-                    err => {
-                      this.goodData = this.goodData.filter(
-                        (e: any) => e.id != this.selectActData.good.id
-                      );
-                      /* this.dataGoodAct.load(this.goodData); */
-                      this.getGoodsActFn();
-                      this.dataGoods.load(
-                        this.dataGoods['data'].map((e: any) => {
-                          console.log(e);
-                          console.log(this.selectActData.good.id);
-                          if (e.id == this.selectActData.good.id) {
-                            return { ...e, avalaible: true };
-                          } else {
-                            return e;
-                          }
-                        })
-                      );
+                this.dataGoods.load(
+                  this.dataGoods['data'].map((e: any) => {
+                    console.log(e);
+                    console.log(this.selectActData.good.id);
+                    if (e.id == this.selectActData.good.id) {
+                      return { ...e, avalaible: true };
+                    } else {
+                      return e;
                     }
-                  );
+                  })
+                );
               },
               err => {
                 console.log(err);

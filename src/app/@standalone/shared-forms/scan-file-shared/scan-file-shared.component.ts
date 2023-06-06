@@ -17,6 +17,7 @@ import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { PreviewDocumentsComponent } from '../../preview-documents/preview-documents.component';
+import { catchError, tap, throwError } from 'rxjs';
 
 @Component({
   selector: 'app-scan-file-shared',
@@ -336,7 +337,7 @@ export class ScanFileSharedComponent extends BasePage implements OnInit {
   downloadReport(reportName: string, params: any) {
     this.loading = true;
     this.loadingText = 'Generando reporte ...';
-    return this.siabService.fetchReport(reportName, params).subscribe({
+    this.siabService.fetchReport(reportName, params).subscribe({
       next: response => {
         const blob = new Blob([response], { type: 'application/pdf' });
         const url = URL.createObjectURL(blob);
