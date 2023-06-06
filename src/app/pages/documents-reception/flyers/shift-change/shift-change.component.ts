@@ -523,8 +523,8 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
     console.log(data);
     if (this.dictumColumns.length === 0 || this.selectedDictums.length === 0) {
       data.push({
-        minutesNumber: null,
-        delegation2Number: null,
+        delegationDictateNumber: null,
+        ofDictaNumber: null,
       });
     } else if (
       this.dictumColumns.length > 0 &&
@@ -537,8 +537,8 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
     ) {
       this.selectedProceedings.forEach(val => {
         data.push({
-          minutesNumber: Number(val.id),
-          delegation2Number: Number(val.numDelegation2),
+          delegationDictateNumber: Number(val.id),
+          ofDictaNumber: Number(val.delegationDictNumber),
         });
       });
     }
