@@ -3030,6 +3030,12 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                                 P_FECHA_RE_FIS:
                                   this.form.get('fecReception').value,
                                 P_TIPO_ACTA: tipo_acta,
+                                usuario: localStorage.getItem('username') ==
+                                'sigebiadmon'
+                                  ? localStorage.getItem('username')
+                                  : localStorage
+                                      .getItem('username')
+                                      .toLocaleUpperCase()
                               };
                               console.log(model);
                               const found = this.dataGoodAct['data'].find(
