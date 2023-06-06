@@ -1,6 +1,6 @@
 export const ESTATE_COLUMNS = {
   googId: {
-    title: 'No gestión',
+    title: 'Número gestión',
     type: 'string',
     sort: false,
   },
@@ -47,7 +47,7 @@ export const ESTATE_COLUMNS = {
   },
 
   esReprogramming: {
-    title: 'No. reprogramación',
+    title: 'Número reprogramación',
     type: 'string',
     sort: false,
   },
@@ -79,7 +79,7 @@ export const ESTATE_COLUMNS = {
 
 export const ESTATE_COLUMNS_VIEW = {
   goodId: {
-    title: 'No gestión',
+    title: 'Número gestión',
     type: 'string',
     sort: false,
   },
@@ -134,7 +134,7 @@ export const ESTATE_COLUMNS_VIEW = {
 
 export const ESTATE_COLUMNS_NOTIFY = {
   gestionNumber: {
-    title: 'No gestión',
+    title: 'Número gestión',
     type: 'string',
     sort: false,
   },
