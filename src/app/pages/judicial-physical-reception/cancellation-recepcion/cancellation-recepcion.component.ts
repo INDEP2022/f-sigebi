@@ -20,7 +20,11 @@ import {
   IPAAbrirActasPrograma,
   IPACambioStatus,
 } from 'src/app/core/models/good-programming/good-programming';
-import { IAcceptGoodActa, IValidaCambioEstatus, IVban } from 'src/app/core/models/ms-good/good';
+import {
+  IAcceptGoodActa,
+  IValidaCambioEstatus,
+  IVban,
+} from 'src/app/core/models/ms-good/good';
 import {
   IDeleteDetailProceeding,
   IDetailProceedingsDeliveryReception,
@@ -38,13 +42,13 @@ import { ProceedingsService } from 'src/app/core/services/ms-proceedings';
 import { DetailProceeDelRecService } from 'src/app/core/services/ms-proceedings/detail-proceedings-delivery-reception.service';
 import { ProceedingsDeliveryReceptionService } from 'src/app/core/services/ms-proceedings/proceedings-delivery-reception';
 import { ProgrammingGoodService } from 'src/app/core/services/ms-programming-request/programming-good.service';
+import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
   KEYGENERATION_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from '../../../shared/components/select/default-select';
-import { UsersService } from 'src/app/core/services/ms-users/users.service';
 
 @Component({
   selector: 'app-cancellation-recepcion',
@@ -258,9 +262,9 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
   v_atrib_del = 0;
 
   //DATOS DE USUARIO
-  delUser: string
-  subDelUser: string
-  departmentUser: string
+  delUser: string;
+  subDelUser: string;
+  departmentUser: string;
 
   constructor(
     private fb: FormBuilder,
@@ -276,7 +280,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
     private serviceGoodProcess: GoodProcessService,
     private serviceProgrammingGood: ProgrammingGoodService,
     private serviceProceeding: ProceedingsService,
-    private serviceUser: UsersService,
+    private serviceUser: UsersService
   ) {
     super();
   }
@@ -332,7 +336,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
         }
       });
 
-      this.getDataUser()
+    this.getDataUser();
   }
 
   getDataUser() {
@@ -341,14 +345,12 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
         ? localStorage.getItem('username')
         : localStorage.getItem('username').toLocaleUpperCase();
     const routeUser = `?filter.name=$eq:${user}`;
-    this.serviceUser.getAllSegUsers(routeUser).subscribe(
-      res => {
-        const resJson = JSON.parse(JSON.stringify(res.data[0]));
-        this.delUser = resJson.usuario.delegationNumber
-        this.subDelUser = resJson.usuario.subdelegationNumber
-        this.departmentUser = resJson.usuario.departamentNumber
-      }
-    );
+    this.serviceUser.getAllSegUsers(routeUser).subscribe(res => {
+      const resJson = JSON.parse(JSON.stringify(res.data[0]));
+      this.delUser = resJson.usuario.delegationNumber;
+      this.subDelUser = resJson.usuario.subdelegationNumber;
+      this.departmentUser = resJson.usuario.departamentNumber;
+    });
   }
 
   prepareForm() {
@@ -1430,7 +1432,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
       this.fnOpenProceeding();
     } else if (this.labelActa == 'Cerrar acta') {
       console.log('Funciono');
-      this.newCloseProceeding()
+      this.newCloseProceeding();
       /* this.closeProceeding(); */
     }
   }
@@ -1783,22 +1785,24 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
   //Validations
 
   validateFolio() {
-    this.serviceDocuments.getByFolio(this.form.get('folioEscaneo').value).subscribe(
-      res => {
-        const data = JSON.parse(JSON.stringify(res));
-        const scanStatus = data.data[0]['scanStatus'];
-        console.log(scanStatus);
-        if (scanStatus === 'ESCANEADO') {
-          this.scanStatus = true;
-        } else {
+    this.serviceDocuments
+      .getByFolio(this.form.get('folioEscaneo').value)
+      .subscribe(
+        res => {
+          const data = JSON.parse(JSON.stringify(res));
+          const scanStatus = data.data[0]['scanStatus'];
+          console.log(scanStatus);
+          if (scanStatus === 'ESCANEADO') {
+            this.scanStatus = true;
+          } else {
+            this.scanStatus = false;
+          }
+          console.log(this.scanStatus);
+        },
+        err => {
           this.scanStatus = false;
         }
-        console.log(this.scanStatus);
-      },
-      err => {
-        this.scanStatus = false;
-      }
-    );
+      );
   }
 
   searchKeyProceeding() {
@@ -1870,12 +1874,81 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                     ''
                   );
                 } else
-                  this.serviceDocuments.getByFolio(this.form.get('folioEscaneo').value).subscribe(
-                    res => {
-                      const data = JSON.parse(JSON.stringify(res));
-                      const scanStatus = data.data[0]['scanStatus'];
-                      let vBANVAL: boolean = true;
-                      if (scanStatus === 'ESCANEADO') {
+                  this.serviceDocuments
+                    .getByFolio(this.form.get('folioEscaneo').value)
+                    .subscribe(
+                      res => {
+                        const data = JSON.parse(JSON.stringify(res));
+                        const scanStatus = data.data[0]['scanStatus'];
+                        let vBANVAL: boolean = true;
+                        if (scanStatus === 'ESCANEADO') {
+                          if (this.goodData.length <= 0) {
+                            this.alert(
+                              'warning',
+                              'No hay bienes registrados',
+                              'Necesita registrar bienes en el acta para crearla'
+                            );
+                          } else {
+                            const modelEdit: IProccedingsDeliveryReception = {
+                              statusProceedings: 'ABIERTA',
+                              comptrollerWitness:
+                                this.form.get('testigo').value,
+                              observations:
+                                this.form.get('observaciones').value,
+                              witness1: this.form.get('autoridadCancela').value,
+                              witness2: this.form.get('elabora').value,
+                              address: this.form.get('direccion').value,
+                              elaborationDate: format(
+                                this.form.get('fecElab').value,
+                                'yyyy-MM,dd HH:mm'
+                              ),
+                              datePhysicalReception: format(
+                                this.form.get('fecCierreActa').value,
+                                'yyyy-MM,dd HH:mm'
+                              ),
+                              captureDate: format(
+                                new Date(),
+                                'yyyy-MM,dd HH:mm'
+                              ),
+                            };
+                            this.serviceProcVal
+                              .editProceeding(resData.id, modelEdit)
+                              .subscribe(
+                                res => {
+                                  this.labelActa = 'Cerrar acta';
+                                  this.btnCSSAct = 'btn-primary';
+                                  this.form
+                                    .get('statusProceeding')
+                                    .setValue('ABIERTA');
+                                  this.reopening = true;
+                                  this.inputsReopenProceeding();
+                                  this.alert(
+                                    'success',
+                                    'Acta abierta',
+                                    `El acta ${
+                                      this.form.get('acta2').value
+                                    } fue abierta con`
+                                  );
+                                },
+                                err => {
+                                  console.log(err);
+                                  this.alert(
+                                    'error',
+                                    'No se pudo abrir el acta',
+                                    'Ocurrió un error que no permite abrir el acta'
+                                  );
+                                }
+                              );
+                          }
+                        } else {
+                          this.alert(
+                            'warning',
+                            'No se ha realizado el escaneo',
+                            ''
+                          );
+                        }
+                      },
+                      err => {
                         if (this.goodData.length <= 0) {
                           this.alert(
                             'warning',
@@ -1883,241 +1956,183 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                             'Necesita registrar bienes en el acta para crearla'
                           );
                         } else {
-                          const modelEdit: IProccedingsDeliveryReception = {
-                            statusProceedings: 'ABIERTA',
-                            comptrollerWitness: this.form.get('testigo').value,
-                            observations: this.form.get('observaciones').value,
-                            witness1: this.form.get('autoridadCancela').value,
-                            witness2: this.form.get('elabora').value,
-                            address: this.form.get('direccion').value,
-                            elaborationDate: format(
-                              this.form.get('fecElab').value,
-                              'yyyy-MM,dd HH:mm'
-                            ),
-                            datePhysicalReception: format(
-                              this.form.get('fecCierreActa').value,
-                              'yyyy-MM,dd HH:mm'
-                            ),
-                            captureDate: format(new Date(), 'yyyy-MM,dd HH:mm'),
-                          };
-                          this.serviceProcVal
-                            .editProceeding(resData.id, modelEdit)
+                          const paramsF = new FilterParams();
+                          let VAL_MOVIMIENTO = 0;
+
+                          paramsF.addFilter(
+                            'valUser',
+                            localStorage.getItem('username') == 'sigebiadmon'
+                              ? localStorage.getItem('username')
+                              : localStorage
+                                  .getItem('username')
+                                  .toLocaleUpperCase()
+                          );
+                          paramsF.addFilter(
+                            'valMinutesNumber',
+                            this.idProceeding
+                          );
+                          this.serviceProgrammingGood
+                            .getTmpProgValidation(paramsF.getParams())
                             .subscribe(
                               res => {
-                                this.labelActa = 'Cerrar acta';
-                                this.btnCSSAct = 'btn-primary';
-                                this.form
-                                  .get('statusProceeding')
-                                  .setValue('ABIERTA');
-                                this.reopening = true;
-                                this.inputsReopenProceeding();
-                                this.alert(
-                                  'success',
-                                  'Acta abierta',
-                                  `El acta ${
-                                    this.form.get('acta2').value
-                                  } fue abierta con`
-                                );
+                                console.log(res);
                               },
                               err => {
-                                console.log(err);
-                                this.alert(
-                                  'error',
-                                  'No se pudo abrir el acta',
-                                  'Ocurrió un error que no permite abrir el acta'
-                                );
+                                const fec_elab = this.form.get('fecElab').value;
+                                if (
+                                  fec_elab != null &&
+                                  format(fec_elab, 'MM-yyyy') !=
+                                    format(new Date(), 'MM-yyyy')
+                                ) {
+                                  this.alert(
+                                    'warning',
+                                    'Está fuera de tiempo para cerrar el acta',
+                                    ''
+                                  );
+                                } else if (
+                                  this.form.get('folioEscaneo').value === null
+                                ) {
+                                  this.alert(
+                                    'warning',
+                                    'Debe introducir el valor del folio',
+                                    ''
+                                  );
+                                } else {
+                                  let newProceeding: IProccedingsDeliveryReception =
+                                    {
+                                      keysProceedings:
+                                        this.form.get('acta2').value,
+                                      elaborationDate: format(
+                                        this.form.get('fecElab').value,
+                                        'yyyy-MM,dd HH:mm'
+                                      ),
+                                      datePhysicalReception: format(
+                                        this.form.get('fecCierreActa').value,
+                                        'yyyy-MM,dd HH:mm'
+                                      ),
+                                      address: this.form.get('direccion').value,
+                                      statusProceedings: 'ABIERTA',
+                                      elaborate:
+                                        localStorage.getItem('username') ==
+                                        'sigebiadmon'
+                                          ? localStorage.getItem('username')
+                                          : localStorage
+                                              .getItem('username')
+                                              .toLocaleUpperCase(),
+                                      numFile:
+                                        this.form.get('expediente').value,
+                                      witness1:
+                                        this.form.get('autoridadCancela').value,
+                                      witness2: this.form.get('elabora').value,
+                                      typeProceedings:
+                                        this.form
+                                          .get('acta')
+                                          .value.split('/')[0] == 'C'
+                                          ? 'RECEPCAN'
+                                          : 'SUSPENSION',
+                                      responsible: null,
+                                      destructionMethod: null,
+                                      observations:
+                                        this.form.get('observaciones').value,
+                                      approvalDateXAdmon: null,
+                                      approvalUserXAdmon: null,
+                                      numRegister: null,
+                                      captureDate: format(
+                                        new Date(),
+                                        'yyyy-MM,dd HH:mm'
+                                      ),
+                                      numDelegation1:
+                                        this.form.get('admin').value
+                                          .numberDelegation2,
+                                      numDelegation2:
+                                        parseInt(
+                                          this.form.get('admin').value
+                                            .numberDelegation2
+                                        ) == 11
+                                          ? '11'
+                                          : null,
+                                      identifier: null,
+                                      label: null,
+                                      universalFolio: null,
+                                      numeraryFolio: null,
+                                      numTransfer: null,
+                                      idTypeProceedings:
+                                        this.form.get('acta').value,
+                                      receiptKey: null,
+                                      comptrollerWitness:
+                                        this.form.get('testigo').value,
+                                      numRequest: null,
+                                      closeDate: null,
+                                      maxDate: null,
+                                      indFulfilled: null,
+                                      dateCaptureHc: null,
+                                      dateCloseHc: null,
+                                      dateMaxHc: null,
+                                      receiveBy: null,
+                                      affair: null,
+                                    };
+                                  console.log(newProceeding);
+                                  this.serviceProcVal
+                                    .postProceeding(newProceeding)
+                                    .subscribe(
+                                      res => {
+                                        const paramsF = new FilterParams();
+                                        paramsF.addFilter(
+                                          'keysProceedings',
+                                          this.form.get('acta2').value
+                                        );
+                                        this.serviceProcVal
+                                          .getByFilter(paramsF.getParams())
+                                          .subscribe(res => {
+                                            const resData = JSON.parse(
+                                              JSON.stringify(res.data)
+                                            )[0];
+                                            this.form
+                                              .get('fecCaptura')
+                                              .setValue(new Date());
+                                            this.form
+                                              .get('statusProceeding')
+                                              .setValue('ABIERTA');
+                                            this.labelActa = 'Cerrar acta';
+                                            this.btnCSSAct = 'btn-primary';
+                                            this.inputsInProceedingClose();
+                                            this.alert(
+                                              'success',
+                                              'Acta abierta',
+                                              `El acta ${
+                                                this.form.get('acta2').value
+                                              } fue abierta con`
+                                            );
+                                            const btn =
+                                              document.getElementById(
+                                                'expedient-number'
+                                              );
+                                            this.render.removeClass(
+                                              btn,
+                                              'disabled'
+                                            );
+                                            this.render.addClass(
+                                              btn,
+                                              'enabled'
+                                            );
+                                            this.blockExpedient = false;
+                                          });
+                                      },
+                                      err => {
+                                        console.log(err);
+                                        this.alert(
+                                          'error',
+                                          'No se pudo abrir el acta',
+                                          'Ocurrió un error que no permite abrir el acta'
+                                        );
+                                      }
+                                    );
+                                }
                               }
                             );
                         }
-                      } else {
-                        this.alert(
-                          'warning',
-                          'No se ha realizado el escaneo',
-                          ''
-                        );
                       }
-                    },
-                    err => {
-                      if (this.goodData.length <= 0) {
-                        this.alert(
-                          'warning',
-                          'No hay bienes registrados',
-                          'Necesita registrar bienes en el acta para crearla'
-                        );
-                      } else {
-                        const paramsF = new FilterParams();
-                        let VAL_MOVIMIENTO = 0;
-
-                        paramsF.addFilter(
-                          'valUser',
-                          localStorage.getItem('username') == 'sigebiadmon'
-                            ? localStorage.getItem('username')
-                            : localStorage
-                                .getItem('username')
-                                .toLocaleUpperCase()
-                        );
-                        paramsF.addFilter(
-                          'valMinutesNumber',
-                          this.idProceeding
-                        );
-                        this.serviceProgrammingGood
-                          .getTmpProgValidation(paramsF.getParams())
-                          .subscribe(
-                            res => {
-                              console.log(res);
-                            },
-                            err => {
-                              const fec_elab = this.form.get('fecElab').value;
-                              if (
-                                fec_elab != null &&
-                                format(fec_elab, 'MM-yyyy') !=
-                                  format(new Date(), 'MM-yyyy')
-                              ) {
-                                this.alert(
-                                  'warning',
-                                  'Está fuera de tiempo para cerrar el acta',
-                                  ''
-                                );
-                              } else if (
-                                this.form.get('folioEscaneo').value === null
-                              ) {
-                                this.alert(
-                                  'warning',
-                                  'Debe introducir el valor del folio',
-                                  ''
-                                );
-                              } else {
-                                let newProceeding: IProccedingsDeliveryReception =
-                                  {
-                                    keysProceedings:
-                                      this.form.get('acta2').value,
-                                    elaborationDate: format(
-                                      this.form.get('fecElab').value,
-                                      'yyyy-MM,dd HH:mm'
-                                    ),
-                                    datePhysicalReception: format(
-                                      this.form.get('fecCierreActa').value,
-                                      'yyyy-MM,dd HH:mm'
-                                    ),
-                                    address: this.form.get('direccion').value,
-                                    statusProceedings: 'ABIERTA',
-                                    elaborate:
-                                      localStorage.getItem('username') ==
-                                      'sigebiadmon'
-                                        ? localStorage.getItem('username')
-                                        : localStorage
-                                            .getItem('username')
-                                            .toLocaleUpperCase(),
-                                    numFile: this.form.get('expediente').value,
-                                    witness1:
-                                      this.form.get('autoridadCancela').value,
-                                    witness2: this.form.get('elabora').value,
-                                    typeProceedings:
-                                      this.form
-                                        .get('acta')
-                                        .value.split('/')[0] == 'C'
-                                        ? 'RECEPCAN'
-                                        : 'SUSPENSION',
-                                    responsible: null,
-                                    destructionMethod: null,
-                                    observations:
-                                      this.form.get('observaciones').value,
-                                    approvalDateXAdmon: null,
-                                    approvalUserXAdmon: null,
-                                    numRegister: null,
-                                    captureDate: format(
-                                      new Date(),
-                                      'yyyy-MM,dd HH:mm'
-                                    ),
-                                    numDelegation1:
-                                      this.form.get('admin').value
-                                        .numberDelegation2,
-                                    numDelegation2:
-                                      parseInt(
-                                        this.form.get('admin').value
-                                          .numberDelegation2
-                                      ) == 11
-                                        ? '11'
-                                        : null,
-                                    identifier: null,
-                                    label: null,
-                                    universalFolio: null,
-                                    numeraryFolio: null,
-                                    numTransfer: null,
-                                    idTypeProceedings:
-                                      this.form.get('acta').value,
-                                    receiptKey: null,
-                                    comptrollerWitness:
-                                      this.form.get('testigo').value,
-                                    numRequest: null,
-                                    closeDate: null,
-                                    maxDate: null,
-                                    indFulfilled: null,
-                                    dateCaptureHc: null,
-                                    dateCloseHc: null,
-                                    dateMaxHc: null,
-                                    receiveBy: null,
-                                    affair: null,
-                                  };
-                                console.log(newProceeding);
-                                this.serviceProcVal
-                                  .postProceeding(newProceeding)
-                                  .subscribe(
-                                    res => {
-                                      const paramsF = new FilterParams();
-                                      paramsF.addFilter(
-                                        'keysProceedings',
-                                        this.form.get('acta2').value
-                                      );
-                                      this.serviceProcVal
-                                        .getByFilter(paramsF.getParams())
-                                        .subscribe(res => {
-                                          const resData = JSON.parse(
-                                            JSON.stringify(res.data)
-                                          )[0];
-                                          this.form
-                                            .get('fecCaptura')
-                                            .setValue(new Date());
-                                          this.form
-                                            .get('statusProceeding')
-                                            .setValue('ABIERTA');
-                                          this.labelActa = 'Cerrar acta';
-                                          this.btnCSSAct = 'btn-primary';
-                                          this.inputsInProceedingClose();
-                                          this.alert(
-                                            'success',
-                                            'Acta abierta',
-                                            `El acta ${
-                                              this.form.get('acta2').value
-                                            } fue abierta con`
-                                          );
-                                          const btn =
-                                            document.getElementById(
-                                              'expedient-number'
-                                            );
-                                          this.render.removeClass(
-                                            btn,
-                                            'disabled'
-                                          );
-                                          this.render.addClass(btn, 'enabled');
-                                          this.blockExpedient = false;
-                                        });
-                                    },
-                                    err => {
-                                      console.log(err);
-                                      this.alert(
-                                        'error',
-                                        'No se pudo abrir el acta',
-                                        'Ocurrió un error que no permite abrir el acta'
-                                      );
-                                    }
-                                  );
-                              }
-                            }
-                          );
-                      }
-                    }
-                  );
+                    );
               }
             }
           );
@@ -2694,7 +2709,8 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                           const model: IPACambioStatus = {
                             P_NOACTA: idProcee,
                             P_PANTALLA: 'FACTREFCANCELAR',
-                            P_FECHA_RE_FIS: this.form.get('fecCierreActa').value,
+                            P_FECHA_RE_FIS:
+                              this.form.get('fecCierreActa').value,
                             P_TIPO_ACTA: tipo_acta,
                             usuario:
                               localStorage.getItem('username') == 'sigebiadmon'
@@ -2703,7 +2719,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                                     .getItem('username')
                                     .toLocaleUpperCase(),
                           };
-                          console.log(model)
+                          console.log(model);
                           this.serviceProgrammingGood
                             .paChangeStatus(model)
                             .subscribe(
@@ -2804,7 +2820,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
               ? localStorage.getItem('username')
               : localStorage.getItem('username').toLocaleUpperCase(),
         };
-        console.log(model)
+        console.log(model);
         this.serviceProgrammingGood.paChangeStatus(model).subscribe(
           res => {
             console.log(res);
@@ -2881,8 +2897,6 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
             this.serviceProcVal
               .getByFilter(paramsF.getParams())
               .subscribe(res => {
-
-
                 const modelEdit: IProccedingsDeliveryReception = {
                   statusProceedings: 'CERRADA',
                   comptrollerWitness: this.form.get('testigo').value,
@@ -3045,7 +3059,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                                         .getItem('username')
                                         .toLocaleUpperCase(),
                               };
-                              console.log(model)
+                              console.log(model);
                               this.serviceProgrammingGood
                                 .paChangeStatus(model)
                                 .subscribe(res => {
@@ -3074,8 +3088,8 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                                         this.labelActa = 'Abrir acta';
                                         this.btnCSSAct = 'btn-success';
                                         this.idProceeding = idProceed;
-                                        this.getGoodsActFn()
-                                        this.getGoodsFn()
+                                        this.getGoodsActFn();
+                                        this.getGoodsFn();
                                         this.alert(
                                           'success',
                                           'Acta cerrada',
