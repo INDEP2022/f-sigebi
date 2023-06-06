@@ -1550,17 +1550,17 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
       );
       return;
     }
-    // if (
-    //   this.dictationData.delegationDictNumber !=
-    //   this.dataUserLogged.delegationNumber
-    // ) {
-    //   this.alertInfo(
-    //     'warning',
-    //     'La Delegación del usuario actual no corresponde a la Delegación del Dictamen',
-    //     ''
-    //   );
-    //   return;
-    // }
+    if (
+      this.dictationData.delegationDictNumber !=
+      this.dataUserLogged.delegationNumber
+    ) {
+      this.alertInfo(
+        'warning',
+        'La Delegación del usuario actual no corresponde a la Delegación del Dictamen',
+        ''
+      );
+      return;
+    }
     if (this.goodData.length == 0) {
       this.alertInfo(
         'warning',
