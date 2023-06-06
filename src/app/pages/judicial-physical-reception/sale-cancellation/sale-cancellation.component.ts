@@ -1618,6 +1618,12 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
                       P_PANTALLA: 'FACTREFACTAVENT',
                       P_FECHA_RE_FIS: this.form.get('fecReception').value,
                       P_TIPO_ACTA: 'DXCV',
+                      usuario: localStorage.getItem('username') ==
+                      'sigebiadmon'
+                        ? localStorage.getItem('username')
+                        : localStorage
+                            .getItem('username')
+                            .toLocaleUpperCase()
                     };
                     console.log(model);
                     this.serviceProgrammingGood.paChangeStatus(model).subscribe(
