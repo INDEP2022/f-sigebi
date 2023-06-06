@@ -363,6 +363,7 @@
         </div>
         <div class="mr-4" *ngIf="ctrlButtons.generateStrategy.visible">
           <button
+            (click)="generateStrategy()"
             [disabled]="!ctrlButtons.generateStrategy.enabled"
             class="btn btn-primary btn-sm active"
             routerLink="generate-estrategy">
