@@ -1063,8 +1063,6 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
       .subscribe({
         next: async (res: any) => {
           if (res.data.length > 0) {
-            this.form.get('ident').setValue('ADM');
-            /*  this.dataGoods.load(res.data); */
             const newData = await Promise.all(
               res.data.map(async (e: any) => {
                 let disponible: boolean;
