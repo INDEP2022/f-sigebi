@@ -293,11 +293,11 @@
             <ngx-select
               [searchOnInit]="true"
               [readonly]="!isIdent"
-              [data]="ident"
+              [data]="typesIdent"
               [form]="expedientesForm"
               label="Ident."
-              bindLabel="value"
-              value="id"
+              bindLabel="identificador"
+              value="identificador"
               control="identifier"></ngx-select>
           </form-field>
         </div>
@@ -308,21 +308,62 @@
               class="form-control"
               [searchOnInit]="true"
               (fetchItems)="getTypes($event)"
-              [data]="types"
+              [data]="typesClass"
               [form]="expedientesForm"
-              value="id"
+              value="no_clasif_bien"
               label="Subtipo - Ssubtipo - Sssubtipo"
               bindLabel="nameGoodType"
               control="type"
-              (change)="onTypesChange($event)">
+              (change)="onTypesChange($event)"
+              [labelTemplate]="classNo"
+              [optionTemplate]="classSub"
+              [searchable]="false">
             </ngx-select>
+            <ng-template #classNo let-item="item">
+              <div *ngIf="item.no_clasif_bien == 0">
+                {{ item.no_clasif_bien }} - {{ item.desc_sssubtipo }}
+              </div>
+              <div *ngIf="item.no_clasif_bien > 0">
+                {{ item.no_clasif_bien }} - {{ item.desc_ssubtipo }} -
+                {{ item.desc_ssubtipo }} - {{ item.desc_sssubtipo }}
+              </div>
+            </ng-template>
+            <ng-template #classSub let-item="item">
+              <div
+                *ngIf="item.no_clasif_bien == 0"
+                [title]="
+                  item.no_clasif_bien +
+                  '-' +
+                  item.desc_subtipo +
+                  '-' +
+                  item.desc_ssubtipo +
+                  '-' +
+                  item.desc_sssubtipo
+                ">
+                {{ item.no_clasif_bien }} - {{ item.desc_sssubtipo }}
+              </div>
+              <div
+                *ngIf="item.no_clasif_bien > 0"
+                [title]="
+                  item.no_clasif_bien +
+                  '-' +
+                  item.desc_subtipo +
+                  '-' +
+                  item.desc_ssubtipo +
+                  '-' +
+                  item.desc_sssubtipo
+                ">
+                {{ item.no_clasif_bien }} - {{ item.desc_ssubtipo }} -
+                {{ item.desc_ssubtipo }} - {{ item.desc_sssubtipo }}
+              </div>
+            </ng-template>
           </form-field>
         </div>
 
         <div class="col-md-8">
           <!-- <form-field [control]="subtipoForm.get('sssubtype')">
             <ngx-select [searchOnInit]="true" (fetchItems)="getSssubtypes($event)" [data]="sssubtypes"
-              [form]="subtipoForm" value="id" label="Subtipo - Ssubtipo - Sssubtipo" bindLabel="description"
+              [form]="subtipoForm" value="no_clasif_bien" label="Subtipo - Ssubtipo - Sssubtipo" bindLabel="description"
               control="sssubtype" (change)="onValuesChange($event)" [labelTemplate]="sssubtypeLabel"
               [optionTemplate]="sssubtypeOption">
          
@@ -332,12 +373,6 @@
         </div>
       </div>
     </form>
-    <ng-template #sssubtypeLabel let-item="item"
-      >{{ item.id }} - {{ item.description }}</ng-template
-    >
-    <ng-template #sssubtypeOption let-item="item"
-      >{{ item.id }} - {{ item.description }}</ng-template
-    >
 
     <div class="row pt-2">
       <div class="col-md-12 mt-4 mb-4">
