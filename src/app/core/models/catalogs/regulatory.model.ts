@@ -1,6 +1,6 @@
 export interface IRegulatory {
   id?: number;
-  id_fraccion: number;
+  fractionId: number;
   numero: number;
   descripcion: string;
   validar_ef: string;

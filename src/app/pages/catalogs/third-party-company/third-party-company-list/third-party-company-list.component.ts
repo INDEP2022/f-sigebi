@@ -52,7 +52,7 @@ export class ThirdPartyCompanyListComponent extends BasePage implements OnInit {
             filter.field == 'id' ||
             filter.field == 'keyCompany' ||
             filter.field == 'description' ||
-            filter.field == 'cveZoneContract'
+            filter.field == 'keyZoneContract'
               ? (searchFilter = SearchFilter.EQ)
               : (searchFilter = SearchFilter.ILIKE);
             if (filter.search !== '') {
