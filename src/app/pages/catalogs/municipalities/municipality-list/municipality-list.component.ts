@@ -26,6 +26,9 @@ export class MunicipalityListComponent extends BasePage implements OnInit {
     super();
     this.settings.columns = MUNICIPALITIES_COLUMNS;
     this.settings.actions.delete = true;
+    this.settings.actions.delete = true;
+    this.settings.actions.add = false;
+    this.settings.hideSubHeader = false;
   }
 
   ngOnInit(): void {
