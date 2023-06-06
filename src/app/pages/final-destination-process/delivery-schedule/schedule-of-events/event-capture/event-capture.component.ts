@@ -311,7 +311,7 @@ export class EventCaptureComponent
         },
         ...COLUMNS_CAPTURE_EVENTS_2,
         select: {
-          title: 'Selec.',
+          title: 'Seleccionar',
           sort: false,
           type: 'custom',
           filter: false,
@@ -1204,14 +1204,14 @@ export class EventCaptureComponent
       if (typeEvent.value == 'RF') {
         this.ctrlButtons.closeProg.show();
       }
-      this.ctrlButtons.closeProg.setText('Abrir Prog.');
+      this.ctrlButtons.closeProg.setText('Abrir Programación');
     } else if (
       this.proceeding.statusProceedings == 'ABIERTO' ||
       this.proceeding.statusProceedings == 'ABIERTA'
     ) {
-      this.ctrlButtons.closeProg.setText('Cerrar Prog.');
+      this.ctrlButtons.closeProg.setText('Cerrar Programación');
     } else if (this.proceeding.statusProceedings == null) {
-      this.ctrlButtons.closeProg.setText('Cerrar Prog.');
+      this.ctrlButtons.closeProg.setText('Cerrar Programación');
       if (this.authUser.startsWith('TLP')) {
         responsible.setValue('TLP');
         this.proceeding.responsible = 'TLP';
@@ -1276,7 +1276,7 @@ export class EventCaptureComponent
       const options = ['CERRADA', 'CERRADO'];
       if (options.find(opt => opt == this.proceeding.statusProceedings)) {
         this.ctrlButtons.closeProg.show();
-        this.ctrlButtons.closeProg.label = 'Abrir Prog.';
+        this.ctrlButtons.closeProg.label = 'Abrir Programación';
         if (count > 0) {
           if (this.proceeding.receiveBy != '1') {
             this.ctrlButtons.sendSise.show();
@@ -1287,7 +1287,7 @@ export class EventCaptureComponent
           this.ctrlButtons.sendSise.hide();
         }
       } else {
-        this.ctrlButtons.closeProg.label = 'Cerrar Prog.';
+        this.ctrlButtons.closeProg.label = 'Cerrar Programación';
         if (count > 0) {
           this.ctrlButtons.closeProg.hide();
         } else {
