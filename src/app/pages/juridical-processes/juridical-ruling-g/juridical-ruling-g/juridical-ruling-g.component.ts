@@ -686,7 +686,19 @@ export class JuridicalRulingGComponent
     this.btnDeleteDictation();
   }
 
+  CLAVE_OFICIO_ARMADA: any;
+  P_GEST_OK: any;
+  CONSULTA: any;
+  VOLANTE: any;
+  EXPEDIENTE: any;
+  TIPO_DICT: any;
+  TIPO_VO: any;
+
   btnImprimeOficio() {
+    this.activatedRoute.queryParams.subscribe((params: any) => {
+      this.TIPO_VO = params.tipoVo;
+    });
+
     console.log(this.expedientesForm);
     if (this.expedientesForm.get('noExpediente').value === null) {
       this.alert('warning', '', 'Debes seleccionar un expediente.');
@@ -696,9 +708,16 @@ export class JuridicalRulingGComponent
       baseMenu +
         baseMenuDepositaria +
         DEPOSITARY_ROUTES_2[0].link +
-        `?origin=juridical-ruling-g&P_VALOR=${
-          this.expedientesForm.get('noVolante').value
-        }&P_NO_TRAMITE=${this.expedientesForm.get('noExpediente').value}`
+        `?origin=juridical-ruling-g
+      &P_VALOR=${this.expedientesForm.get('noVolante').value}
+      &P_NO_TRAMITE=${this.expedientesForm.get('noExpediente').value}
+      &CLAVE_OFICIO_ARMADA=${this.dictaminacionesForm.get('cveOficio').value}
+      &P_GEST_OK=${this.P_GEST_OK}
+      &CONSULTA=${this.CONSULTA}
+      &VOLANTE=${this.dictaminacionesForm.get('wheelNumber').value}
+      &EXPEDIENTE=${this.expedientesForm.get('noExpediente').value}
+      &TIPO_DICT=${this.expedientesForm.get('tipoDictaminacion').value}
+      &TIPO_VO=${this.TIPO_VO}`
     );
   }
   btnParcializar() {
