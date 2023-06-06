@@ -63,9 +63,7 @@ export class ParametersComponent extends BasePage implements OnInit {
     super();
   }
 
-  ngOnInit(): void {
-    console.log('xd');
-  }
+  ngOnInit(): void {}
 
   openCoordination() {
     const { delegation } = this.siabControls;

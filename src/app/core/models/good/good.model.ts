@@ -12,6 +12,11 @@ export interface IGood {
   goodStatus?: string;
   aliasWarehouse?: string;
   cant: string;
+  physicalStatusName: string;
+  quantitySae: string;
+  saePhysicalState: string;
+  stateConservationSae: string;
+  regionalDelegationNumber: string;
   notifyDate?: string | Date;
   dateEntry: string;
   dateExit?: any;

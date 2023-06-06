@@ -9,11 +9,11 @@
           <form-field
             [control]="typeRelevantForm.get('description')"
             label="Descripci&oacute;n">
-            <textarea
+            <input
               class="form-control"
               type="text"
-              rows="2"
-              formControlName="description"></textarea>
+              formControlName="description"
+              maxlength="255" />
           </form-field>
         </div>
         <div class="col-md-6">
@@ -23,28 +23,30 @@
             <input
               type="number"
               class="form-control"
-              formControlName="version" />
+              formControlName="version"
+              min="0" />
           </form-field>
         </div>
         <div class="col-md-6">
           <form-field
-            [control]="typeRelevantForm.get('noPhotography')"
+            [control]="typeRelevantForm.get('numberPhotography')"
             label="N&uacute;mero fotograf&iacute;a">
             <input
               type="number"
               class="form-control"
-              formControlName="noPhotography" />
+              formControlName="numberPhotography"
+              min="0" />
           </form-field>
         </div>
         <div class="col-md-12">
           <form-field
             [control]="typeRelevantForm.get('detailsPhotography')"
             label="Detalle">
-            <textarea
+            <input
               class="form-control"
               type="text"
-              rows="2"
-              formControlName="detailsPhotography"></textarea>
+              formControlName="detailsPhotography"
+              maxlength="255" />
           </form-field>
         </div>
       </div>

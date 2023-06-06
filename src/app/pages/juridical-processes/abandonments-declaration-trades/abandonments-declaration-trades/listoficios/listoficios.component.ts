@@ -54,7 +54,7 @@ export class ListoficiosComponent extends BasePage implements OnInit {
         let result = data.data.map((item: any) => {
           item['dateOficio'] = this.datePipe.transform(
             item.insertDate,
-            'MM/dd/yyyy'
+            'dd/MM/yyyy'
           );
         });
 

@@ -44,7 +44,7 @@ export class ThirdPartyCompanyFormComponent extends BasePage implements OnInit {
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      cveZoneContract: [null, Validators.required],
+      keyZoneContract: [null, Validators.required],
     });
 
     if (this.thirdParty != null) {
