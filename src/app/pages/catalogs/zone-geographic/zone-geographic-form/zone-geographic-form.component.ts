@@ -33,7 +33,8 @@ export class ZoneGeographicFormComponent extends BasePage implements OnInit {
     this.zoneGeographicForm = this.fb.group({
       id: [null],
       description: [
-        null, [
+        null,
+        [
           Validators.required,
           Validators.maxLength(200),
           Validators.pattern(STRING_PATTERN),
@@ -42,10 +43,8 @@ export class ZoneGeographicFormComponent extends BasePage implements OnInit {
       contractNumber: [null, [Validators.required]],
       version: [null],
       thirdPartySpecialized: [
-        null, [
-          Validators.maxLength(20),
-          Validators.pattern(STRING_PATTERN),
-        ],
+        null,
+        [Validators.maxLength(20), Validators.pattern(STRING_PATTERN)],
       ],
       vat: [null, [Validators.pattern(IVA_PATTERN)]],
       status: [null],
