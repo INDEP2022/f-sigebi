@@ -118,9 +118,9 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
   origin: any;
   acta: IUpdateActasEntregaRecepcionDelegation;
   dictation: IUpdateDelDictation;
-  paramsDict = new BehaviorSubject(new ListParams());
-  paramsActas = new BehaviorSubject(new ListParams());
-  params = new BehaviorSubject(new ListParams());
+  paramsDict = new BehaviorSubject<ListParams>(new ListParams());
+  paramsActas = new BehaviorSubject<ListParams>(new ListParams());
+  params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
   totalItemsDic: number = 0;
   totalItemsActas: number = 0;
@@ -205,10 +205,10 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
   checkParams() {
     if (this.pageParams?.iden) {
       if (this.pageParams.iden) {
-        this.params
+        this.paramsActas
           .pipe(takeUntil(this.$unSubscribe))
           .subscribe(() => this.getNotification());
-        this.params
+        this.paramsDict
           .pipe(takeUntil(this.$unSubscribe))
           .subscribe(() => this.getDictums());
       }
@@ -556,10 +556,10 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
       this.dictumColumns.length > 0 &&
       this.selectedDictums.length > 0
     ) {
-      this.selectedProceedings.forEach(val => {
+      this.selectedDictums.forEach(val => {
         data.push({
-          delegationDictateNumber: Number(val.id),
-          ofDictaNumber: Number(val.delegationDictNumber),
+          delegationDictateNumber: Number(val.delegationDictNumber),
+          ofDictaNumber: Number(val.id),
         });
       });
     }
