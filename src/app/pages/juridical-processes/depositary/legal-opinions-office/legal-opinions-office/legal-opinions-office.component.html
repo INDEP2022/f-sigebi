@@ -82,6 +82,14 @@
                     Limpiar Campos
                     <i class="fas fa-trash-alt"></i>
                   </button> -->
+                  <!-- <button
+                    *ngIf="dictationData"
+                    type="button"
+                    class="btn btn-primary btn-sm active"
+                    (click)="openFirmModal()">
+                    TEST FIRMA
+                    <i aria-hidden="true" class="fa fa-filr"></i>
+                  </button> -->
                   <button
                     *ngIf="dictationData"
                     type="button"
@@ -127,9 +135,9 @@
                       </div>
                     </ng-container>
                     <ng-template #noStatus>
-                      <!-- <div class="badge badge-pill bg-default text-wrap ml-2 mr-2">
-                      &#91;Aquí va el Estatus&#93;
-                    </div> -->
+                      <div class="badge badge-pill bg-info text-wrap ml-2 mr-2">
+                        &#91;&nbsp;&nbsp;&#93;
+                      </div>
                     </ng-template>
                   </div>
                   <!-- <form-field
@@ -497,22 +505,18 @@
           </div>
         </div>
         <div class="col-md-12 alert alert-warning" *ngIf="loadingSend">
-          Realizando el proceso de "Enviar" los "Bienes Asociados",
-          <strong>
+          Realizando el proceso de "Enviar" los "Bienes Asociados"
+          <!-- <strong>
             {{ totalCurrent }}
           </strong>
-          de <strong> {{ totalData }}</strong
-          >, Espere un momento...
+          de <strong> {{ totalData }}</strong >-->
+          , Espere un momento...
         </div>
         <div class="col-md-12 alert alert-warning" *ngIf="loadDetail">
           Realizando el proceso para mostrar el Reporte correspondiente, Espere
           un momento...
         </div>
-        <div class="col-sm-12 col-12 col-md-12 text-center mt-3">
-          <!-- <button type="button" class="btn btn-primary btn-sm active m-3">
-            Reporte
-            <i class="fa fa-file" aria-hidden="true"></i>
-          </button> -->
+        <!-- <div class="col-sm-12 col-12 col-md-12 text-center mt-3">
           <button
             [disabled]="loadingSend || loadDetail"
             (click)="btnDetail()"
@@ -520,7 +524,6 @@
             class="btn btn-info btn-sm active m-3">
             Imprimir
             <i class="fa fa-file" aria-hidden="true"></i>
-            <!-- <i class="fa fa-info-circle" aria-hidden="true"></i> -->
           </button>
           <button
             [disabled]="loadingSend || blockSender || loadDetail"
@@ -530,11 +533,11 @@
             Enviar
             <i class="fa fa-paper-plane" aria-hidden="true"></i>
           </button>
-        </div>
+        </div> -->
       </div>
       <hr />
       <div class="row" *ngIf="showScanForm">
-        <div class="col-12 col-sm-12 col-md-12">
+        <div class="col-12 col-sm-12 col-md-9">
           <div class="card">
             <div class="card-body">
               <app-scanning-foil
@@ -551,6 +554,25 @@
                 "></app-scanning-foil>
             </div>
           </div>
+        </div>
+        <div class="col-12 col-sm-12 col-md-3">
+          <label for="imp">Imp.</label>
+          <button
+            name="imp"
+            (click)="btnDetail()"
+            [disabled]="loadingSend || loadDetail"
+            class="btn btn-secondary btn-sm active ml-2 mr-2">
+            <i class="bx bxs-printer"></i>
+          </button>
+
+          <label for="env">Envia</label>
+          <button
+            name="env"
+            (click)="sendOffice()"
+            [disabled]="loadingSend || blockSender || loadDetail"
+            class="btn btn-danger btn-sm active ml-2 mr-2">
+            <i class="bx bx-send"></i>
+          </button>
         </div>
       </div>
     </ng-container>

@@ -1916,11 +1916,12 @@ export class PerformProgrammingFormComponent
     this.programmingGoodService
       .showReportGoodProgramming(dataObject)
       .subscribe({
-        next: response => {
-          this.downloadExcel(response);
+        next: (response: any) => {
+          this.downloadExcel(response.base64File);
           this.loadingReport = false;
         },
         error: error => {
+          this.loadingReport = false;
           this.onLoadToast(
             'info',
             'Error',
@@ -1930,8 +1931,8 @@ export class PerformProgrammingFormComponent
       });
   }
 
-  downloadExcel(pdf: any) {
-    const linkSource = `data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,${pdf}`;
+  downloadExcel(excel: any) {
+    const linkSource = `data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,${excel}`;
     const downloadLink = document.createElement('a');
     downloadLink.href = linkSource;
     downloadLink.target = '_blank';

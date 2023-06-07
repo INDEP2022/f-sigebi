@@ -1,7 +1,7 @@
 export interface IRegulatory {
   id?: number;
-  id_fraccion: number;
-  numero: string;
+  fractionId: number;
+  numero: number;
   descripcion: string;
   validar_ef: string;
   validar_ec: string;

@@ -4,53 +4,53 @@ export const REGULATORY_COLUMNS = {
     type: 'number',
     sort: false,
   },
-  id_fraccion: {
-    title: 'Id Fraccion',
+  fractionId: {
+    title: 'Id Fracción',
     type: 'number',
     sort: false,
   },
-  numero: {
-    title: 'Numero',
+  number: {
+    title: 'Número',
     type: 'string',
     sort: false,
   },
-  descripcion: {
-    title: 'Descripcion',
+  description: {
+    title: 'Descripción',
     type: 'string',
     sort: false,
   },
-  validar_ef: {
+  validateEf: {
     title: 'validar Ef',
     type: 'string',
     sort: false,
   },
-  validar_ec: {
+  validateEc: {
     title: 'Validar Ec',
     type: 'string',
     sort: false,
   },
-  usuario_creacion: {
-    title: 'Usuario Creacion',
+  userCreation: {
+    title: 'Usuario Creación',
     type: 'string',
     sort: false,
   },
-  fecha_creacion: {
-    title: 'Fecha Creacion',
+  creationDate: {
+    title: 'Fecha Creación',
     type: 'Date',
     sort: false,
   },
-  usuario_modificacion: {
-    title: 'Usuario Modificacion',
+  userModification: {
+    title: 'Usuario Modificación',
     type: 'string',
     sort: false,
   },
-  fecha_modificacion: {
-    title: 'Fecha Modificacion',
+  modificationDate: {
+    title: 'Fecha Modificación',
     type: 'Date',
     sort: false,
   },
   version: {
-    title: 'Version',
+    title: 'Versión',
     type: 'number',
     sort: false,
   },

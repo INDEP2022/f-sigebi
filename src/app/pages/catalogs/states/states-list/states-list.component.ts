@@ -34,6 +34,8 @@ export class StatesListComponent extends BasePage implements OnInit {
     super();
     this.settings.columns = STATES_COLUMNS;
     this.settings.actions.delete = true;
+    this.settings.actions.add = false;
+    this.settings.hideSubHeader = false;
   }
 
   ngOnInit(): void {
@@ -48,13 +50,13 @@ export class StatesListComponent extends BasePage implements OnInit {
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
             filter.field == 'id' ||
-            filter.field == 'codeCondition' ||
-            filter.field == 'descCondition' ||
-            filter.field == 'zoneHourlyStd' ||
-            filter.field == 'zoneHourlyVer' ||
-            filter.field == 'userCreation' ||
-            filter.field == 'userModification' ||
-            filter.field == 'version'
+              filter.field == 'codeCondition' ||
+              filter.field == 'descCondition' ||
+              filter.field == 'zoneHourlyStd' ||
+              filter.field == 'zoneHourlyVer' ||
+              filter.field == 'userCreation' ||
+              filter.field == 'userModification' ||
+              filter.field == 'version'
               ? (searchFilter = SearchFilter.EQ)
               : (searchFilter = SearchFilter.ILIKE);
             if (filter.search !== '') {
@@ -118,6 +120,8 @@ export class StatesListComponent extends BasePage implements OnInit {
     this.stateService.remove(id).subscribe({
       next: () => {
         this.getStates(), this.alert('success', 'Estados', 'Borrado');
+      }, error: error => {
+        this.alert('warning', 'Estados', 'No se puede eliminar el objeto debido a una relación con otra tabla.');
       },
     });
   }

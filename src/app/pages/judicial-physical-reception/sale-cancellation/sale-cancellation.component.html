@@ -10,11 +10,15 @@
             <div class="col">
               <button
                 id="expedient-number"
+                [class]="loading ? 'disabled' : ''"
                 class="btn btn-primary btn-sm active mr-2 disabled"
                 (click)="goodsByExpediente()">
                 <i class="fa fa-search"></i> Buscar
               </button>
-              <button class="btn btn-danger btn-sm active" (click)="clearAll()">
+              <button
+                [class]="loading ? 'disabled' : ''"
+                class="btn btn-danger btn-sm active"
+                (click)="clearAll()">
                 Limpiar
               </button>
             </div>
@@ -28,6 +32,7 @@
                   control="listExpedients"
                   label="Expedientes"
                   bindLabel="id"
+                  [class]="loading ? 'disabled' : ''"
                   (change)="selectExpedient($event)"
                   [data]="dataExpedients"
                   [searchable]="false"
@@ -37,42 +42,27 @@
           </div>
         </div>
         <div *ngIf="navigateProceedings" class="col-md-4">
-          <div class="row">
+          <span>Navegación de actas</span>
+          <div class="row mt-3">
             <div class="col-md-9">
-              <button
-                [disabled]="!prevProce"
-                class="btn btn-secondary btn-sm active mr-2"
-                (click)="prevProceeding()">
-                <i class="fa fa-angle-left"></i>
-              </button>
-              <span class="mr-3 ml-3"
-                >{{
-                  numberProceeding + 1 > proceedingData.length
-                    ? 'Nuevo'
-                    : numberProceeding + 1
-                }}
-                {{
-                  numberProceeding + 1 > proceedingData.length ? null : ' - '
-                }}
-                {{
-                  numberProceeding + 1 > proceedingData.length
-                    ? null
-                    : proceedingData.length
-                }}</span
-              >
-              <button
-                class="btn btn-secondary btn-sm active"
-                [disabled]="!nextProce"
-                (click)="nextProceeding()">
-                <i class="fa fa-angle-right"></i>
-              </button>
-              <button
-                *ngIf="newAct"
-                id="expedient-number"
-                class="btn btn-primary btn-sm active ml-4"
-                (click)="newProceeding()">
-                Nueva acta
-              </button>
+              <div class="d-flex justify-content-center align-items-center">
+                <app-pagination
+                  [params]="paramsActNavigate"
+                  [totalItems]="proceedingData.length"
+                  [limit]="newLimitparamsActNavigate"
+                  [paginatorPageSize]="false"
+                  [paginatorRangeLabel]="false"
+                  [maxSize]="1"></app-pagination>
+                <div class="col">
+                  <button
+                    id="expedient-number"
+                    class="btn btn-primary btn-sm active ml-4"
+                    [class]="loading ? 'disabled' : ''"
+                    (click)="newProceeding()">
+                    Nueva acta
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -206,8 +196,8 @@
                   class="form-control"
                   [class]="initialBool ? 'disabled' : ''"
                   formControlName="folio"
-                  [min]="0"
-                  maxlength="5"
+                  min="0"
+                  [max-length]="5"
                   (change)="fillActTwo()" />
               </form-field>
             </div>
@@ -235,7 +225,7 @@
 
       <hr class="row" />
 
-      <div class="row">
+      <div [class]="loading ? 'disabled' : ''" class="row" class="row">
         <div class="col-md-6">
           <div class="row">
             <form-field [control]="form.get('acta2')" label="Acta">
@@ -255,6 +245,7 @@
                   rows="3"
                   [maxlength]="1000"
                   class="form-control"
+                  [class]="!isEnableDireccion ? 'disabled' : ''"
                   formControlName="direccion"></textarea>
               </form-field>
             </div>
@@ -300,25 +291,6 @@
                   [max-length]="10"
                   formControlName="fecEntregaBienes" />
               </form-field>
-            </div>
-          </div>
-
-          <div class="row">
-            <div class="col-md-5">
-              <form-field
-                [control]="form.get('folioEscaneo')"
-                label="Folio de Escaneo">
-                <input
-                  type="number"
-                  min="0"
-                  class="form-control"
-                  formControlName="folioEscaneo"
-                  maxlength="15" />
-              </form-field>
-            </div>
-
-            <div class="col-md-4 pt-3">
-              <button type="button" size="small">Replicar Folio</button>
             </div>
           </div>
         </div>
@@ -408,6 +380,18 @@
       </div>
 
       <hr class="row" />
+
+      <app-scan-file-shared
+        [form]="form"
+        [formControlName]="folioEscaneo"
+        [cveDocument]="form.get('acta2').value"
+        [noExpedient]="form.get('expediente').value"
+        [statusProceeding]="form.get('statusProceeding').value"
+        [cveScreen]="cveScreen"
+        [reportPrint]="nameReport">
+      </app-scan-file-shared>
+
+      <hr class="row" />
       <div class="row mb-5">
         <div class="d-flex justify-content-center">
           <div>
@@ -422,7 +406,7 @@
             <button
               type="button"
               [class]="btnCSSAct"
-              [disabled]="!form.valid"
+              S
               class="btn btn-sm active mr-2 ml-2"
               size="small"
               (click)="toggleActa()">
@@ -441,12 +425,6 @@
               (click)="deleteProceeding()">
               Eliminar Acta
             </button>
-            <button
-              type="button"
-              class="my-1 mx-2 btn btn-secondary active btn-sm"
-              (click)="goCargaMasiva()">
-              Carga Masiva
-            </button>
           </div>
         </div>
       </div>
@@ -459,6 +437,12 @@
           (userRowSelect)="rowSelect($event)"
           (rowDeselect)="deselectRow()"></ng2-smart-table>
       </div>
+      <app-pagination
+        *ngIf="!loading"
+        [params]="paramsDataGoods"
+        [pageSizeOptions]="[5, 10, 20]"
+        [limit]="limitDataGoods"
+        [totalItems]="totalItemsDataGoods"></app-pagination>
 
       <hr class="row" />
       <div class="row">
@@ -520,6 +504,12 @@
           (userRowSelect)="selectRowGoodActa($event)"
           (rowDeselect)="deselectRowGoodActa()"></ng2-smart-table>
       </div>
+      <app-pagination
+        *ngIf="!loading"
+        [params]="paramsDataGoodsAct"
+        [pageSizeOptions]="[5, 10, 20]"
+        [limit]="limitDataGoodsAct"
+        [totalItems]="totalItemsDataGoodsAct"></app-pagination>
       <hr class="row" />
       <div class="row">
         <div class="d-flex justify-content-center">
@@ -563,7 +553,7 @@
       <div class="row">
         <div class="col-md-12">
           <div class="col-md-6">
-            <div class="row">
+            <div *ngIf="isBoveda" class="row">
               <div class="col-md-9">
                 <form-field [control]="form.get('noAlmacen')">
                   <ngx-select
@@ -577,7 +567,7 @@
               </div>
             </div>
 
-            <div class="row">
+            <!-- <div *ngIf="isAlmacen" class="row">
               <div class="col-md-9">
                 <form-field [control]="form.get('noBoveda')">
                   <ngx-select
@@ -589,18 +579,22 @@
                     [data]="vaultSelect"></ngx-select>
                 </form-field>
               </div>
-            </div>
+            </div> -->
           </div>
           <div class="row">
             <div class="col-md-12">
               <button
                 type="button"
-                class="my-1 mx-2"
                 size="small"
+                class="btn btn-primary btn-sm active mr-2"
                 (click)="openEdoFisico()">
                 Espec&iacute;fica Edo&#46; F&iacute;sico
               </button>
-              <button type="button" class="my-1 mx-2" size="small">
+              <button
+                type="button"
+                size="small"
+                class="btn btn-primary btn-sm active"
+                (click)="applyWarehouseSafe()">
                 Aplica Almac&eacute;n/B&oacute;veda
               </button>
               <!-- <button type="button" class="my-1 mx-2" size="small">

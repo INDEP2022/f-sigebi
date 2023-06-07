@@ -187,6 +187,7 @@ export class MaintenanceOfPublicMinistriesComponent
       } else {
         this.form.get('entity').patchValue(data.state.descCondition);
       }
+      console.log(data);
       this.getDelegation(data.noDelegation);
       this.getSubDelegation(data.noSubDelegation);
     }
@@ -205,7 +206,7 @@ export class MaintenanceOfPublicMinistriesComponent
     params['filter.etapaEdo'] = 1;
 
     this.serviceDeleg.getAll(params).subscribe({
-      next: data => this.form.get('delegation').patchValue(data.data[0].description),
+      next: data => {this.form.get('delegation').patchValue(data.data[0].description)},
       error: error => this.onLoadToast('error', error.erro.message, ''),
     });
   }

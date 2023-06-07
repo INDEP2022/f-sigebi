@@ -1055,7 +1055,7 @@ export class AbandonmentsDeclarationTradesComponent
         // }
         this.dictDate3 = this.datePipe.transform(
           this.dictamen.dictDate,
-          'MM/dd/yyyy'
+          'dd/MM/yyyy'
         );
 
         this.folioEscaneoNg = this.dictamen.folioUniversal;
@@ -1561,8 +1561,9 @@ export class AbandonmentsDeclarationTradesComponent
       const month = String(today.getMonth() + 1).padStart(2, '0');
       const day = String(today.getDate()).padStart(2, '0');
       const year = today.getFullYear();
-      const SYSDATE = `${day}/${month}/${year}`;
+      const SYSDATE = `${year}-${month}-${day}`;
 
+      console.log('SYSDATE', SYSDATE);
       this.dictDate3 = SYSDATE;
       this.dictamen.statusDict = 'DICTAMINADO';
       this.dictamen.expedientNumber = this.idExpediente;
@@ -2150,7 +2151,7 @@ export class AbandonmentsDeclarationTradesComponent
         this.m_oficio_gestion = resp.data[0];
         this.dateCapture2 = this.datePipe.transform(
           this.m_oficio_gestion.insertDate,
-          'MM/dd/yyyy'
+          'dd/MM/yyyy'
         );
         // this.m_oficio_gestion = resp.data[1];
         this.no_OficioGestion = this.m_oficio_gestion.managementNumber;
@@ -2579,7 +2580,7 @@ export class AbandonmentsDeclarationTradesComponent
       const month = String(today.getMonth() + 1).padStart(2, '0');
       const day = String(today.getDate()).padStart(2, '0');
       const year = today.getFullYear();
-      const SYSDATE = `${day}/${month}/${year}`;
+      const SYSDATE = `${year}-${month}-${day}`;
 
       this.dateCapture2 = SYSDATE;
       this.m_oficio_gestion.insertDate = SYSDATE;
@@ -2613,11 +2614,13 @@ export class AbandonmentsDeclarationTradesComponent
         this.statusOfMOficioGestion = 'EN REVISION';
         this.m_oficio_gestion.flyerNumber = this.noVolante_;
         this.m_oficio_gestion.proceedingsNumber = this.idExpediente;
-        this.m_oficio_gestion.insertDate;
+        // this.m_oficio_gestion.insertDate;
         let typeO = this.formOficio.get('tipoOficio').value;
         this.m_oficio_gestion.text1 = this.formOficiopageFin.get('page').value;
-        console.log('aaa', sender.user);
-        let useerrrr = JSON.stringify(sender.user);
+
+        let sender2 = this.formOficio.get('remitente').value;
+        console.log('sender2', sender2);
+        let useerrrr = sender2.user;
         let obj: any = {
           flyerNumber: this.noVolante_,
           proceedingsNumber: this.idExpediente,
@@ -2777,12 +2780,15 @@ export class AbandonmentsDeclarationTradesComponent
           };
           this.createDocumentOficiManagement(obj);
         }
+        let sender2 = this.formOficio.get('remitente').value;
+        console.log('sender2', sender2);
+        let useerrrr = sender2.user;
+        this.m_oficio_gestion.sender = useerrrr;
         // await this.getCopyOficioGestion(this.m_oficio_gestion.managementNumber);
         await this.lanzaReporte(this.m_oficio_gestion.managementNumber);
         this.formOficiopageFin
           .get('fin')
           .setValue(this.m_oficio_gestion.text2 + this.m_oficio_gestion.text3);
-        this.m_oficio_gestion.sender = this.formOficio.get('remitente').value;
         this.m_oficio_gestion.text1 = this.formOficiopageFin.get('page').value;
         this.m_oficio_gestion.nomPersExt =
           this.formOficio.get('destinatario').value;
@@ -4088,7 +4094,7 @@ export class AbandonmentsDeclarationTradesComponent
       const month = String(today.getMonth() + 1).padStart(2, '0');
       const day = String(today.getDate()).padStart(2, '0');
       const year = today.getFullYear();
-      const SYSDATE = `${day}/${month}/${year}`;
+      const SYSDATE = `${year}-${month}-${day}`;
 
       this.dictDate3 = SYSDATE;
       this.dictamen.dictDate = new Date(SYSDATE);

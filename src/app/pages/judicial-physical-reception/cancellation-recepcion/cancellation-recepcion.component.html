@@ -343,36 +343,18 @@
           </div>
         </div>
       </div>
+
       <hr class="row" />
 
-      <div class="row">
-        <div class="col-md-12">
-          <div class="row">
-            <div class="col">
-              <form-field
-                [control]="form.get('folioEscaneo')"
-                label="Folio de Escaneo">
-                <input
-                  type="number"
-                  min="0"
-                  class="form-control"
-                  formControlName="folioEscaneo" />
-              </form-field>
-            </div>
+      <app-scan-file-shared
+        [form]="form"
+        [formControlName]="folioEscaneo"
+        [cveDocument]="form.get('acta2').value"
+        [noExpedient]="form.get('expediente').value"
+        [statusProceeding]="form.get('statusProceeding').value"
+        [cveScreen]="cveScreen"
+        [reportPrint]="nameReport"></app-scan-file-shared>
 
-            <div class="col">
-              <button
-                type="button"
-                class="btn btn-primary btn-sm active mr-2 ml-2"
-                [disabled]="form.get('folioEscaneo').value == null"
-                (click)="replicateFolio()"
-                size="small">
-                Replicar Folio
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
       <hr class="row" />
       <div [class]="loading ? 'disabled' : ''" class="row mb-5">
         <div class="d-flex justify-content-center">

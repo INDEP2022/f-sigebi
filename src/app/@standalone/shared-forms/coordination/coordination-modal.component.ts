@@ -45,7 +45,7 @@ export class CoordinationModalComponent extends BasePage implements OnInit {
       columns: {
         ...COORDINATION_COLUMNS,
         name: {
-          title: 'Seleccion',
+          title: 'Selección',
           sort: false,
           type: 'custom',
           valuePrepareFunction: (value: boolean, delegation: IDelegation) =>
