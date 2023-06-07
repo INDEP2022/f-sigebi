@@ -38,7 +38,11 @@ export class DocCompensationSatXmlService
     id: string | number,
     model: IDocCompensationSatXml
   ): Observable<Object> {
-    return this.docCompensationSatXMLRepository.update(this.route, id, model);
+    return this.docCompensationSatXMLRepository.updateManegement(
+      this.route,
+      id,
+      model
+    );
   }
 
   remove(id: string | number): Observable<Object> {

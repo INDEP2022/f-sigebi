@@ -125,14 +125,18 @@ export class ClarificationsListComponent extends BasePage implements OnInit {
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(clarification.id);
-        Swal.fire('Borrado', '', 'success');
       }
     });
   }
 
   delete(id: number) {
     this.clarificationService.remove(id).subscribe({
-      next: () => this.getClarifications(),
+      next: () => {
+        this.getClarifications(),
+          this.alert('success', 'Estados', 'Borrado')
+      }, error: error => {
+
+      },
     });
   }
 }

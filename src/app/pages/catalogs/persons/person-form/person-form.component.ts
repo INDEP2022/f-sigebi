@@ -149,6 +149,8 @@ export class PersonFormComponent extends BasePage implements OnInit {
     }
     this.tvalTable1Service.getAlls(params).subscribe(data => {
       this.entFed = new DefaultSelect(data.data, data.count);
+    }, error => {
+      this.entFed = new DefaultSelect();
     });
   }
   getTurn(params: ListParams, id?: string) {
@@ -158,6 +160,8 @@ export class PersonFormComponent extends BasePage implements OnInit {
     }
     this.tvalTable1Service.getAlls(params).subscribe(data => {
       this.operation = new DefaultSelect(data.data, data.count);
+    }, error => {
+      this.operation = new DefaultSelect();
     });
   }
   handleSuccess() {

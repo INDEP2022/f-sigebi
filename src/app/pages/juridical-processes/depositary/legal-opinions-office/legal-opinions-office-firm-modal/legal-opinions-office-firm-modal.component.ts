@@ -183,15 +183,16 @@ export class LegalOpinionsOfficeFirmModalComponent
         {
           next: (data: any) => {
             console.log(data);
-            this.alert(
+            this.alertInfo(
               'success',
               'Se realizó el proceso de Firmar el Dictamen correctamente',
               data.message
-            );
-            this.fileForm.controls['signature'] = data.signature;
-            this.fileForm.controls['fileData'] = data.fileData;
-            this.downloadFile(data.fileData, this.nameFileDictation);
-            this.close(true, data);
+            ).then(() => {
+              this.fileForm.controls['signature'] = data.signature;
+              this.fileForm.controls['fileData'] = data.fileData;
+              this.downloadFile(data.fileData, this.nameFileDictation);
+              this.close(true, data);
+            });
           },
           error: error => {
             console.log(error);

@@ -50,6 +50,6 @@ export class ClarificationService
   }
 
   remove(id: string | number): Observable<Object> {
-    return this.clarificationRepository.remove(this.route, id);
+    return this.clarificationRepository.remove(this.route + '/id/', id);
   }
 }
