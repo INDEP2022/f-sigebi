@@ -107,6 +107,7 @@ export class RelatedDocumentsComponent
   userCopies1 = new DefaultSelect();
   userCopies2 = new DefaultSelect();
   dataGoodTable: LocalDataSource = new LocalDataSource();
+  m_job_management: any = null;
   pantalla = (option: boolean) =>
     `${
       option == true
@@ -544,6 +545,7 @@ export class RelatedDocumentsComponent
           const mJobManagement = await firstValueFrom(
             this.getMJobManagement(res.wheelNumber)
           );
+          this.m_job_management = mJobManagement;
           console.log('mjobmanagement ', mJobManagement);
           this.formJobManagement.patchValue({
             ...mJobManagement,
@@ -1360,7 +1362,9 @@ export class RelatedDocumentsComponent
     });
   }
 
-  showDeleteAlert(legend: ILegend) {
+  showDeleteAlert(legend: any) {
+    //ILegend
+    //Desea eliminar el oficio con el expediente ${proceedingsNumber} y No. Oficio ${managementNumber}
     this.alertQuestion(
       'warning',
       'Eliminar',
@@ -1722,4 +1726,8 @@ export class RelatedDocumentsComponent
     this.selectedGood = event.selected;
     this.dictationService.goodNumber = event.data.id;
   }
+
+  /*delete(event:any){
+    console.log(event);
+  }*/
 }
