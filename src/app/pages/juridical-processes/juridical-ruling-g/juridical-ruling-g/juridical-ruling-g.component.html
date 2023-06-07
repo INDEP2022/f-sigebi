@@ -398,6 +398,15 @@
           [attr.class]="'table-bordered table-responsive'"
           [settings]="settings1"
           [source]="goods"></ng2-smart-table>
+        <div class="d-flex justify-content-between">
+          <p class="text-danger mt-2 ml-3">
+            <strong>{{ desc_estatus_good }}</strong>
+          </p>
+          <p class="text-primary mt-2 ml-3">
+            <strong>{{ consult }}</strong>
+          </p>
+        </div>
+
         <app-pagination
           [params]="params"
           [totalItems]="totalItems"></app-pagination>
