@@ -29,6 +29,8 @@ export class DocCompensationSatXmlListComponent
     super();
     this.settings.columns = COMPENSATION_COLUMNS;
     this.settings.actions.delete = true;
+    this.settings.actions.add = false;
+    this.settings.hideSubHeader = false;
   }
 
   ngOnInit(): void {

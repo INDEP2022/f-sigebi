@@ -121,6 +121,13 @@ export class StatesListComponent extends BasePage implements OnInit {
       next: () => {
         this.getStates(), this.alert('success', 'Estados', 'Borrado');
       },
+      error: error => {
+        this.alert(
+          'warning',
+          'Estados',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      },
     });
   }
 }

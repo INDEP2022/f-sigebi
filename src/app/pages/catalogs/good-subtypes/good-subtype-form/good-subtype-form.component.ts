@@ -63,14 +63,8 @@ export class GoodSubtypeFormComponent extends BasePage implements OnInit {
         null,
         [Validators.required, Validators.pattern(POSITVE_NUMBERS_PATTERN)],
       ],
-      noRegister: [
-        null,
-        [Validators.required, Validators.pattern(POSITVE_NUMBERS_PATTERN)],
-      ],
-      version: [
-        null,
-        [Validators.required, Validators.pattern(POSITVE_NUMBERS_PATTERN)],
-      ],
+      noRegister: [null],
+      version: [null],
     });
     if (this.goodSubtype != null) {
       this.edit = true;
@@ -109,8 +103,12 @@ export class GoodSubtypeFormComponent extends BasePage implements OnInit {
 
   update() {
     this.loading = true;
+    const ids = {
+      id: this.goodSubtypeForm.controls['id'].value,
+      idTypeGood: this.goodSubtypeForm.controls['idTypeGood'].value,
+    };
     this.goodSubtypeService
-      .update(this.goodSubtype.id, this.goodSubtypeForm.value)
+      .updateByIds(ids, this.goodSubtypeForm.value)
       .subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),
