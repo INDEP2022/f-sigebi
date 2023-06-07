@@ -5,7 +5,7 @@
   <div body>
     <form [formGroup]="compensationForm" class="form-material">
       <div class="row">
-        <div class="col-md-6">
+        <div *ngIf="edit" class="col-md-6">
           <form-field [control]="compensationForm.get('id')" label="Id">
             <input
               type="number"

@@ -19,7 +19,7 @@ export class DelegationModalComponent extends BasePage implements OnInit {
   delegationForm: ModelForm<IDelegation>;
   delegationM: IDelegation;
 
-  title: string = 'Delegaciones';
+  title: string = 'Delegación';
   edit: boolean = false;
 
   idZ = new DefaultSelect();
