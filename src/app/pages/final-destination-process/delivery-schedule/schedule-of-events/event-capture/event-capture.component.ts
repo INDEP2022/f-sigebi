@@ -1987,6 +1987,7 @@ export class EventCaptureComponent
       }
 
       this.blkCtrl.reopenInd = 0;
+      await this.initForm();
     } else {
       this.onLoadToast('info', C_DATVAL[0].valMessage);
     }
@@ -2206,6 +2207,7 @@ export class EventCaptureComponent
         this.onLoadToast('success', 'La programación ha sido cerrada');
         this.updateStatusGood();
       }
+      await this.initForm();
       ///// aqui va esto :PARAMETER.NO_FORMATO
       const parameterNoFormat: any = '';
       if (parameterNoFormat !== null) {
