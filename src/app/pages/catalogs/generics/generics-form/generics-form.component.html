@@ -44,6 +44,7 @@
             label="Versi&oacute;n">
             <input
               type="number"
+              min="1"
               class="form-control"
               formControlName="version" />
           </form-field>
@@ -69,7 +70,7 @@
               [searchable]="false"
               class="form-control"
               [clearable]="false">
-              <ng-option value="Y">Editabe</ng-option>
+              <ng-option value="Y">Editable</ng-option>
               <ng-option value="N">No editable</ng-option>
             </ng-select>
           </form-field>
