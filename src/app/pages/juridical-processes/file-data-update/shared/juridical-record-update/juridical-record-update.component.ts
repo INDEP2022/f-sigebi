@@ -1272,7 +1272,7 @@ export class JuridicalRecordUpdateComponent
       };
       this.router.navigate(
         [
-          '/pages/documents-reception/flyers-registration/related-document-management/1',
+          '/pages/documents-reception/flyers-registration/related-document-management-dictation/1',
         ],
         {
           queryParams: {
@@ -1630,13 +1630,13 @@ export class JuridicalRecordUpdateComponent
       queryParams: {
         origin: '/pages/juridical/file-data-update',
         form: 'FACTGENACTDATEX',
-        expediente: this.formControls.expedientNumber.value,
-        volante: this.formControls.wheelNumber.value,
-        tipoVo: this.formControls.wheelType.value,
-        tipoDic: dictumType,
-        consulta: this.dictConsultOnly,
-        pGestOk: this.pageParams.pGestOk,
-        pNoTramite: procedure,
+        EXPEDIENTE: this.formControls.expedientNumber.value,
+        VOLANTE: this.formControls.wheelNumber.value,
+        TIPO_VO: this.formControls.wheelType.value,
+        TIPO_DIC: dictumType,
+        CONSULTA: this.dictConsultOnly,
+        P_GEST_OK: this.pageParams.pGestOk,
+        P_NO_TRAMITE: procedure,
       },
     });
 
