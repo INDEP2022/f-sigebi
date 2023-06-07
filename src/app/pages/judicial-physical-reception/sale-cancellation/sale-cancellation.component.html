@@ -15,7 +15,10 @@
                 (click)="goodsByExpediente()">
                 <i class="fa fa-search"></i> Buscar
               </button>
-              <button [class]="loading ? 'disabled' : ''" class="btn btn-danger btn-sm active" (click)="clearAll()">
+              <button
+                [class]="loading ? 'disabled' : ''"
+                class="btn btn-danger btn-sm active"
+                (click)="clearAll()">
                 Limpiar
               </button>
             </div>
@@ -586,11 +589,11 @@
                 (click)="openEdoFisico()">
                 Espec&iacute;fica Edo&#46; F&iacute;sico
               </button>
-              <button  type="button"
-              size="small"
-              class="btn btn-primary btn-sm active"
-              (click)="applyWarehouseSafe()"
-              >
+              <button
+                type="button"
+                size="small"
+                class="btn btn-primary btn-sm active"
+                (click)="applyWarehouseSafe()">
                 Aplica Almac&eacute;n/B&oacute;veda
               </button>
               <!-- <button type="button" class="my-1 mx-2" size="small">
