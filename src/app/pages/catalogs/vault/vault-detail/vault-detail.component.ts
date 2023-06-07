@@ -78,10 +78,6 @@ export class VaultDetailComponent extends BasePage implements OnInit {
       localityCode: [null, []],
       stateCode: [null, []],
       cityCode: [null, []],
-      cityDetail: [null, [Validators.required]],
-      localityDetail: [null, [Validators.required]],
-      stateDetail: [null, [Validators.required]],
-      municipalityDetail: [null, [Validators.required]],
       registerNumber: [null, []],
     });
     if (this.vault != null) {
@@ -92,31 +88,35 @@ export class VaultDetailComponent extends BasePage implements OnInit {
       this.valueLocality = this.vault.localityDetail as ILocality;
       this.vaultForm.patchValue(this.vault);
       console.log(this.vault);
-      if (this.vaultForm.controls['municipalityDetail'].value) {
-        this.vaultForm.controls['cityDetail'].setValue(this.valueCity.nameCity);
-        this.vaultForm.controls['stateDetail'].setValue(
-          this.valueState.descCondition
-        );
-      }
 
-      if (this.vaultForm.controls['localityDetail'].value) {
-        this.vaultForm.controls['localityDetail'].setValue(
-          this.valueLocality.nameLocation
-        );
-      }
+      // if (this.vaultForm.controls['municipalityDetail'].value) {
+      //   this.vaultForm.controls['cityDetail'].setValue(this.valueCity.nameCity);
+      //   this.vaultForm.controls['stateDetail'].setValue(
+      //     this.valueState.descCondition
+      //   );
+      // }
 
-      if (this.vaultForm.controls['municipalityDetail'].value) {
-        this.vaultForm.controls['municipalityDetail'].setValue(
-          this.valueMunicipality.nameMunicipality
-        );
-      }
+      // if (this.vaultForm.controls['localityDetail'].value) {
+      //   this.vaultForm.controls['localityDetail'].setValue(
+      //     this.valueLocality.nameLocation
+      //   );
+      // }
+
+      // if (this.vaultForm.controls['municipalityDetail'].value) {
+      //   this.vaultForm.controls['municipalityDetail'].setValue(
+      //     this.valueMunicipality.nameMunicipality
+      //   );
+      // }
 
       if (this.vaultForm.controls['stateCode'].value) {
-        this.getCities(
+
+        this.getMunicipalities(
           new ListParams(),
           this.vaultForm.controls['stateCode'].value.toString()
         );
-        this.getMunicipalities(
+      }
+      if (this.vaultForm.controls['cityCode'].value) {
+        this.getCities(
           new ListParams(),
           this.vaultForm.controls['stateCode'].value.toString()
         );
@@ -147,6 +147,7 @@ export class VaultDetailComponent extends BasePage implements OnInit {
 
   update() {
     this.loading = true;
+    console.log(this.vaultForm.getRawValue());
     this.safeService.update(this.vault.idSafe, this.vaultForm.value).subscribe({
       next: data => this.handleSuccess(),
       error: error => {
@@ -209,7 +210,7 @@ export class VaultDetailComponent extends BasePage implements OnInit {
 
   getCities(params: ListParams, id?: string) {
     if (id) {
-      params['filter.state.id'] = `$eq:${id}`;
+      params['filter.state'] = `$eq:${id}`;
     }
     this.cityService.getAll(params).subscribe(data => {
       console.log(data);
@@ -222,6 +223,7 @@ export class VaultDetailComponent extends BasePage implements OnInit {
       params['filter.stateKey'] = `$eq:${id}`;
     }
     this.municipalityService.getAll(params).subscribe(data => {
+      console.log(data);
       this.municipalities = new DefaultSelect(data.data, data.count);
     });
   }
@@ -229,6 +231,7 @@ export class VaultDetailComponent extends BasePage implements OnInit {
   getLocalities(params: ListParams, id?: string) {
     if (id) {
       params['filter.municipalityId'] = `$eq:${id}`;
+      params['filter.stateKey'] = `$eq:${this.vaultForm.controls['stateCode'].value}`;
     }
     this.localityService.getAll(params).subscribe(data => {
       this.localities = new DefaultSelect(data.data, data.count);
@@ -237,34 +240,35 @@ export class VaultDetailComponent extends BasePage implements OnInit {
 
   onValuesChange1(safeChange1: ICity) {
     this.cityValue = safeChange1;
-    this.vaultForm.controls['cityCode'].setValue(safeChange1.idCity);
+    // this.vaultForm.controls['cityDetail'].setValue(safeChange1);
     this.vaultForm.controls['municipalityCode'].setValue('');
     this.vaultForm.controls['localityCode'].setValue('');
-    this.vaultForm.controls['municipalityDetail'].setValue('');
-    this.vaultForm.controls['localityDetail'].setValue('');
+    // this.vaultForm.controls['municipalityDetail'].setValue('');
+    // this.vaultForm.controls['localityDetail'].setValue('');
     this.localities = new DefaultSelect([], 0, true);
     this.safes1 = new DefaultSelect();
   }
   onValuesChange2(safeChange2: IMunicipality) {
     this.valueMunicipality = safeChange2;
-    this.vaultForm.controls['municipalityCode'].setValue(
-      safeChange2.idMunicipality
-    );
+    // this.vaultForm.controls['municipalityDetail'].setValue(
+    //   safeChange2
+    // );
     this.getLocalities(new ListParams(), safeChange2.idMunicipality);
     this.vaultForm.controls['localityCode'].setValue('');
-    this.vaultForm.controls['localityDetail'].setValue('');
+    // this.vaultForm.controls['localityDetail'].setValue('');
     this.localities = new DefaultSelect([], 0, true);
     this.safes2 = new DefaultSelect();
   }
   onValuesChange3(safeChange3: ILocality) {
     this.localityValue = safeChange3;
-    this.vaultForm.controls['localityCode'].setValue(safeChange3.id);
+
+    // this.vaultForm.controls['localityDetail'].setValue(safeChange3);
 
     this.safes3 = new DefaultSelect();
   }
   onValuesChange4(safeChange4: IStateOfRepublic) {
     this.valueState = safeChange4;
-    this.vaultForm.controls['stateCode'].setValue(safeChange4.id);
+    // this.vaultForm.controls['stateDetail'].setValue(safeChange4.descCondition);
     this.getCities(new ListParams(), safeChange4.id);
     this.getMunicipalities(new ListParams(), safeChange4.id);
     this.safes4 = new DefaultSelect();
@@ -272,8 +276,8 @@ export class VaultDetailComponent extends BasePage implements OnInit {
     this.vaultForm.controls['cityCode'].setValue('');
     this.vaultForm.controls['municipalityCode'].setValue('');
     this.vaultForm.controls['localityCode'].setValue('');
-    this.vaultForm.controls['cityDetail'].setValue('');
-    this.vaultForm.controls['municipalityDetail'].setValue('');
-    this.vaultForm.controls['localityDetail'].setValue('');
+    // this.vaultForm.controls['cityDetail'].setValue('');
+    // this.vaultForm.controls['municipalityDetail'].setValue('');
+    // this.vaultForm.controls['localityDetail'].setValue('');
   }
 }

@@ -12,7 +12,24 @@ export const COLUMNS = {
     sort: false,
   },
   typePerson: {
+    title: 'Tipo Persona',
+    sort: false,
+    valuePrepareFunction: (value: string) => {
+      if (value == 'M') return 'Persona moral';
+      if (value == 'F') return 'Persona física';
 
+      return value;
+    },
+    filter: {
+      type: 'list',
+      config: {
+        selectText: 'Seleccionar',
+        list: [
+          { value: 'M', title: 'Persona moral' },
+          { value: 'F', title: 'Persona física' },
+        ],
+      },
+    },
   },
   rfc: {
     title: 'R.F.C',
@@ -26,11 +43,11 @@ export const COLUMNS = {
     title: 'Calle',
     sort: false,
   },
-  insideNumber: {
+  apartmentNumber: {
     title: 'No.Interior',
     sort: false,
   },
-  outNumber: {
+  streetNumber: {
     title: 'No.Exterior',
     sort: false,
   },
