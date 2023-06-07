@@ -9,7 +9,11 @@
           <form-field
             [control]="goodSituationForm.get('status')"
             label="Estado">
-            <input type="text" class="form-control" formControlName="status" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="status"
+              maxlength="3" />
           </form-field>
         </div>
         <div class="col-md-4">
@@ -17,18 +21,21 @@
             [control]="goodSituationForm.get('situation')"
             label="Situación">
             <input
-              type="number"
+              type="text"
               class="form-control"
-              formControlName="situation" />
+              formControlName="situation"
+              min="0" />
           </form-field>
         </div>
         <div class="col-md-8 mt-5">
           <form-field
             [control]="goodSituationForm.get('descSituation')"
             label="Descripci&oacute;n">
-            <textarea
+            <input
+              type="text"
               class="form-control"
-              formControlName="descSituation"></textarea>
+              formControlName="descSituation"
+              maxlength="300" />
           </form-field>
         </div>
       </div>
