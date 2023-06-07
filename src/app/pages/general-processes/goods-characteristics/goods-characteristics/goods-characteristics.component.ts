@@ -142,11 +142,11 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     private segxAccessService: SegAcessXAreasService
   ) {
     super();
-    this.form.valueChanges.subscribe(async x => {
-      console.log(x);
-      // await this.preUpdate();
-      // await this.postRecord();
-    });
+    // this.form.valueChanges.subscribe(async x => {
+    //   console.log(x);
+    //   // await this.preUpdate();
+    //   // await this.postRecord();
+    // });
   }
 
   ngOnInit(): void {
