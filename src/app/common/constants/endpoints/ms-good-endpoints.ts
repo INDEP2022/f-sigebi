@@ -43,6 +43,7 @@ export enum GoodProcessPoints {
   dateRange = `util-pkg/getDate`,
   getFact = 'application/get-fact-juridict-amasg',
   getIdent = 'application/get-fact-juridict-amasg-2',
+  dicta = 'application/dictation-good-conciliation',
 }
 
 export enum GoodFinderEndpoint {

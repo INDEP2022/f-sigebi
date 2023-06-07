@@ -82,4 +82,8 @@ export class GoodProcessService extends HttpService {
   getIdent(data: Object): Observable<IListResponse<any>> {
     return this.post<IListResponse<any>>(GoodProcessPoints.getIdent, data);
   }
+
+  dictationConcilation(data: Object) {
+    return this.post<any>(GoodProcessPoints.dicta, data);
+  }
 }
