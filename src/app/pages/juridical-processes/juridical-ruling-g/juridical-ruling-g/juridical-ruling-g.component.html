@@ -78,19 +78,6 @@
                 <input class="form-control" formControlName="criminalCase" />
               </form-field>
 
-              <form-field
-                label="¿Es delito?"
-                [control]="expedientesForm.get('delito')">
-                <ng-select
-                  formControlName="delito"
-                  [searchable]="false"
-                  class="form-control"
-                  [clearable]="false">
-                  <ng-option value="S">Si</ng-option>
-                  <ng-option value="N">No</ng-option>
-                </ng-select>
-              </form-field>
-
               <!-- <form-field
                 [control]="expedientesForm.get('delito')"
                 *ngIf="isDelit">
@@ -139,6 +126,23 @@
               <b>Observaciones</b>
               {{ expedientesForm.get('observaciones').value }}
             </div> -->
+          </div>
+
+          <div class="row pt-5">
+            <div class="col-md-2">
+              <form-field
+                label="¿Es delito?"
+                [control]="expedientesForm.get('delito')">
+                <ng-select
+                  formControlName="delito"
+                  [searchable]="false"
+                  class="form-control"
+                  [clearable]="false">
+                  <ng-option value="S">Si</ng-option>
+                  <ng-option value="N">No</ng-option>
+                </ng-select>
+              </form-field>
+            </div>
           </div>
         </form>
         <!-- INICIA FORM #2 -->

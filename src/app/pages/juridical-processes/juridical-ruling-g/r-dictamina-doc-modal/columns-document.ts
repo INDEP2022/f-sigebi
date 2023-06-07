@@ -11,7 +11,7 @@ export const COLUMNS_DOCUMENTS = {
   },
   documentDetails: {
     sort: false,
-    title: 'Descripçión',
+    title: 'Descripción',
     type: 'string',
     valuePrepareFunction: (cell: any, row: any) => {
       console.log('Info de ', row.documentDetails.description);

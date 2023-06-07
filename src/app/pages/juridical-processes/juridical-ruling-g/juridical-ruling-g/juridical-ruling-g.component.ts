@@ -775,20 +775,22 @@ export class JuridicalRulingGComponent
       this.alert('warning', '', 'Debes seleccionar un expediente.');
       return; // Si 'documents' está vacío, detiene la ejecución aquí
     }
-    this.router.navigateByUrl(
-      baseMenu +
-        baseMenuDepositaria +
-        DEPOSITARY_ROUTES_2[0].link +
-        `?origin=FACTJURDICTAMASG
-      &P_VALOR=${this.expedientesForm.get('noVolante').value}
-      &P_NO_TRAMITE=${this.expedientesForm.get('noExpediente').value}
-      &CLAVE_OFICIO_ARMADA=${this.dictaminacionesForm.get('cveOficio').value}
-      &P_GEST_OK=${this.P_GEST_OK}
-      &CONSULTA=${this.CONSULTA}
-      &VOLANTE=${this.dictaminacionesForm.get('wheelNumber').value}
-      &EXPEDIENTE=${this.expedientesForm.get('noExpediente').value}
-      &TIPO_DICT=${this.expedientesForm.get('tipoDictaminacion').value}
-      &TIPO_VO=${this.TIPO_VO}`
+    this.router.navigate(
+      ['/pages/juridical/depositary/legal-opinions-office/'],
+      {
+        queryParams: {
+          origin: 'FACTJURDICTAMASG',
+          P_VALOR: this.expedientesForm.get('noVolante').value,
+          P_NO_TRAMITE: this.expedientesForm.get('noExpediente').value,
+          CLAVE_OFICIO_ARMADA: this.dictaminacionesForm.get('cveOficio').value,
+          P_GEST_OK: this.P_GEST_OK,
+          CONSULTA: this.CONSULTA,
+          VOLANTE: this.dictaminacionesForm.get('wheelNumber').value,
+          EXPEDIENTE: this.expedientesForm.get('noExpediente').value,
+          TIPO_DICT: this.expedientesForm.get('tipoDictaminacion').value,
+          TIPO_VO: this.TIPO_VO,
+        },
+      }
     );
   }
   btnParcializar() {
@@ -920,6 +922,7 @@ export class JuridicalRulingGComponent
 
     if (!this.dictaminacionesForm.get('fechaPPFF').value) {
       this.onLoadToast('error', `Debe capturar la ${this.label}`);
+      return;
     }
 
     if (this.goods.length > 0) {
@@ -980,6 +983,7 @@ export class JuridicalRulingGComponent
 
     if (!this.dictaminacionesForm.get('fechaPPFF').value) {
       this.onLoadToast('error', `Debe capturar la ${this.label}`);
+      return;
     }
 
     // Cambiar la forma en agregar bien ya que es un push y no dato directo para el estatus
