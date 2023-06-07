@@ -16,6 +16,7 @@ import { BehaviorSubject, takeUntil } from 'rxjs';
 import {
   FilterParams,
   ListParams,
+  SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -44,12 +45,13 @@ export class NotificationFileUpdateComponent
   formData: any;
   override loading: boolean = true;
   totalItems: number = 0;
+  columnFilters: any = [];
   //dataFactGen: INotificationUpdate[] = [];
   dataFactGen: LocalDataSource = new LocalDataSource();
   verBoton: boolean = false;
   params = new BehaviorSubject<ListParams>(new ListParams());
   filterParamsLocal = new BehaviorSubject<FilterParams>(new FilterParams());
-
+  filter: string;
   public form: FormGroup;
 
   constructor(
@@ -61,14 +63,47 @@ export class NotificationFileUpdateComponent
     super();
     this.settings = {
       ...this.settings,
+      hideSubHeader: false,
+      actions: {
+        columnTitle: 'Acciones',
+        edit: true,
+        add: false,
+        delete: false,
+        position: 'right',
+      },
       columns: { ...NOTIFICATION_COLUMNS },
     };
-    this.settings.actions.delete = false;
-    this.settings.actions.add = false;
-    this.settings.hideSubHeader = false;
   }
 
   ngOnInit(): void {
+    this.dataFactGen
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = ``;
+            let searchFilter = SearchFilter.ILIKE;
+            /*SPECIFIC CASES*/
+            filter.field == 'wheelNumber'
+              ? (field = `filter.${filter.field}`)
+              : (field = `filter.${filter.field}`);
+            filter.field == 'wheelNumber'
+              ? (searchFilter = SearchFilter.EQ)
+              : (searchFilter = SearchFilter.ILIKE);
+            if (filter.search !== '') {
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.params
+            .pipe(takeUntil(this.$unSubscribe))
+            .subscribe(() => this.getFilterExpedientNumber());
+        }
+      });
+
     this.prepareForm();
     this.loading = true;
     this.getParams();
@@ -84,6 +119,7 @@ export class NotificationFileUpdateComponent
             params['noExpediente'] ? Number(params['noExpediente']) : undefined
           );
       });
+
     this.onLoadListNotifications();
   }
 
@@ -120,9 +156,11 @@ export class NotificationFileUpdateComponent
       this.params
         .pipe(takeUntil(this.$unSubscribe))
         .subscribe(() => this.getFilterExpedientNumber());
+      //this.filterColumn();
       this.verBoton = false;
     } else {
       this.verBoton = true;
+
       this.loading = false;
     }
   }
@@ -134,21 +172,26 @@ export class NotificationFileUpdateComponent
     this.params.getValue()[
       'filter.expedientNumber'
     ] = `$eq:${this.form.controls['noExpediente'].value}`;
-    this.notificationService
-      .getAllFilterExpedient(this.params.getValue())
-      .subscribe({
-        next: data => {
+
+    let para = {
+      ...this.params.getValue(),
+      ...this.columnFilters,
+    };
+    this.notificationService.getAllFilterExpedient(para).subscribe({
+      next: data => {
+        if (data.count > 0) {
           this.totalItems = data.count || 0;
           this.dataFactGen.load(data.data);
           this.dataFactGen.refresh();
-          console.log(data.data);
+          //console.log(data.data);
           this.loading = false;
-        },
-        error: err => {
-          this.loading = false;
-          this.onLoadToast('error', 'Error', err.error.message);
-        },
-      });
+        }
+      },
+      error: err => {
+        this.loading = false;
+        this.onLoadToast('error', 'Error', err.error.message);
+      },
+    });
   }
 
   getDicts() {
@@ -183,5 +226,6 @@ export class NotificationFileUpdateComponent
   cleanExpediente() {
     this.verBoton = true;
     this.form.get('noExpediente').setValue('');
+    //this.onLoadListNotifications();
   }
 }
