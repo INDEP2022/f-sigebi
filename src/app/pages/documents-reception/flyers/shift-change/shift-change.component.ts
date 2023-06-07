@@ -253,9 +253,6 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
                     next: data => {
                       if (data.count > 0) {
                         this.formControls.prevUser.setValue(data.data[0]);
-                        //this.preUser = data.data[0].userAndName;
-                        //this.userHistory = data.data[0].user;
-                        // console.log(this.preUser);
                       }
                     },
                     error: error => {
