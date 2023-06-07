@@ -29,7 +29,7 @@ export interface IDeleteDetailProceeding {
 }
 
 export interface IDetailWithIndEdo {
-  no_acta: number,
-  vIndEdoFisicod?: boolean,
-  vNoColumna?: number
+  no_acta: number;
+  vIndEdoFisicod?: boolean;
+  vNoColumna?: number;
 }

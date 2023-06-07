@@ -30,6 +30,7 @@ import {
   IValNumeOtro,
   IVban,
 } from 'src/app/core/models/ms-good/good';
+import { ITransfActaEntrec } from 'src/app/core/models/ms-notification/notification.model';
 import {
   IDeleteDetailProceeding,
   IDetailProceedingsDeliveryReception,
@@ -37,7 +38,6 @@ import {
 } from 'src/app/core/models/ms-proceedings/detail-proceedings-delivery-reception.model';
 import { IProccedingsDeliveryReception } from 'src/app/core/models/ms-proceedings/proceedings-delivery-reception-model';
 import { ICveAct } from 'src/app/core/models/ms-proceedings/update-proceedings.model';
-import { TransferProceeding } from 'src/app/core/models/ms-proceedings/validations.model';
 import { IBlkPost } from 'src/app/core/models/ms-proceedings/warehouse-vault.model';
 import { GoodSssubtypeService } from 'src/app/core/services/catalogs/good-sssubtype.service';
 import { SafeService } from 'src/app/core/services/catalogs/safe.service';
@@ -67,7 +67,6 @@ import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-ele
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { EdoFisicoComponent } from './edo-fisico/edo-fisico.component.component';
 import { columnsGood, columnsGoodAct } from './settings-tables';
-import { ITransfActaEntrec } from 'src/app/core/models/ms-notification/notification.model';
 
 @Component({
   selector: 'app-confiscated-records',
@@ -499,21 +498,21 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
 
   verifyActAndTransfer() {
     let modelTransf: ITransfActaEntrec = {
-      indcap: "",
+      indcap: '',
       no_expediente: this.form.get('expediente').value,
-      id_tipo_acta: this.form.get('acta').value
-    }
+      id_tipo_acta: this.form.get('acta').value,
+    };
 
     this.serviceNotification.getTransferenteentrec(modelTransf).subscribe(
       res => {
-        this.transferSelect = new DefaultSelect(res.data)
+        this.transferSelect = new DefaultSelect(res.data);
       },
       err => {
-        this.transferSelect = new DefaultSelect()
-        this.loading = false
-        this.alert('warning','No se encontraron transferentes','')
+        this.transferSelect = new DefaultSelect();
+        this.loading = false;
+        this.alert('warning', 'No se encontraron transferentes', '');
       }
-    )
+    );
   }
 
   //Validations
@@ -1073,7 +1072,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         this.dataGoodAct.load(res.data);
         this.totalItemsDataGoodsAct = res.count;
         this.loading = false;
-        this.validateWarehouseAndVault(res.data)
+        this.validateWarehouseAndVault(res.data);
       },
       err => {
         console.log(err);
@@ -1238,7 +1237,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         } else {
           this.records = new DefaultSelect(['A', 'NA', 'D', 'NS']);
         }
-        this.goodsByExpediente()
+        this.goodsByExpediente();
       },
       err => {
         this.alert(
@@ -1340,14 +1339,12 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     if (this.research) {
       console.log('No');
     } else {
-      this.form
-        .get('acta')
-        .valueChanges.subscribe(res => {
-          if(res != null && res != undefined){
-            this.verifyActAndTransfer()
-          this.fillActTwo()
-          }
-        });
+      this.form.get('acta').valueChanges.subscribe(res => {
+        if (res != null && res != undefined) {
+          this.verifyActAndTransfer();
+          this.fillActTwo();
+        }
+      });
       this.form
         .get('transfer')
         .valueChanges.subscribe(res => this.fillActTwo());
@@ -1573,21 +1570,20 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
             exchangeValue: element.exchangeValue === '1' ? 1 : null,
             indEdoFisico: edoFis.V_IND_EDO_FISICO === 1 ? true : false,
           }); */
-          this.dataGoods
-            .load(
-              this.dataGoods['data'].map((e: any) => {
-                if (e.id == element.good.id) {
-                  return {
-                    ...e,
-                    avalaible: false,
-                    acta: dataRes.keysProceedings,
-                  };
-                } else {
-                  return e;
-                }
-              })
-            )
-            /* .then(res => {
+          this.dataGoods.load(
+            this.dataGoods['data'].map((e: any) => {
+              if (e.id == element.good.id) {
+                return {
+                  ...e,
+                  avalaible: false,
+                  acta: dataRes.keysProceedings,
+                };
+              } else {
+                return e;
+              }
+            })
+          );
+          /* .then(res => {
               for (let item of this.goodData) {
                 const goodClass = item.goodClassNumber;
 
@@ -1617,7 +1613,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
             }); */
         }
         this.dataGoodAct.load(incomeData);
-        this.validateWarehouseAndVault(incomeData)
+        this.validateWarehouseAndVault(incomeData);
 
         this.form.get('acta2').setValue(dataRes.keysProceedings);
         this.form.get('direccion').setValue(dataRes.address);
@@ -2147,14 +2143,13 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
             .paOpenProceedingProgam(modelPaOpen)
             .subscribe(
               res => {
-               
                 this.inputsReopenProceeging();
                 this.alert(
                   'success',
                   'Acta abierta',
                   `El acta ${this.form.get('acta2').value} fue abierta`
                 );
-                console.log(VAL_MOVIMIENTO)
+                console.log(VAL_MOVIMIENTO);
                 if (VAL_MOVIMIENTO === 1) {
                   this.serviceProgrammingGood
                     .paRegresaEstAnterior(modelPaOpen)
@@ -2483,12 +2478,16 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     } else if (this.dataGoodAct['data'].find((e: any) => e.received != 'S')) {
       this.alert('warning', 'Hay bienes no marcados como recibido', '');
     } else if (
-      this.isAlmacen && this.dataGoodAct['data'].find((e: any) => e.good.storeNumber == null)
+      this.isAlmacen &&
+      this.dataGoodAct['data'].find((e: any) => e.good.storeNumber == null)
     ) {
       this.alert('warning', 'Hay bienes no guardados en almacén', '');
-    } else if(this.isBoveda && this.dataGoodAct['data'].find((e: any) => e.good.vaultNumber == null)){
+    } else if (
+      this.isBoveda &&
+      this.dataGoodAct['data'].find((e: any) => e.good.vaultNumber == null)
+    ) {
       this.alert('warning', 'Hay bienes no guardados en bóveda', '');
-    }else {
+    } else {
       const paramsF = new FilterParams();
       paramsF.addFilter('keysProceedings', this.form.get('acta2').value);
       this.serviceProcVal.getByFilter(paramsF.getParams()).subscribe(
@@ -3478,26 +3477,24 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
 
   //Add good to Act
 
-  validateWarehouseAndVault(data: any){
-    for(let item of data){
+  validateWarehouseAndVault(data: any) {
+    for (let item of data) {
       const newParams = `filter.numClasifGoods=$eq:${item.good.goodClassNumber}`;
-      this.serviceSssubtypeGood.getFilter(newParams).subscribe(
-        res => {
-          const type = JSON.parse(JSON.stringify(res.data[0]['numType']));
-          const subtype = JSON.parse(JSON.stringify(res.data[0]['numSubType']));
+      this.serviceSssubtypeGood.getFilter(newParams).subscribe(res => {
+        const type = JSON.parse(JSON.stringify(res.data[0]['numType']));
+        const subtype = JSON.parse(JSON.stringify(res.data[0]['numSubType']));
 
-          const no_type = parseInt(type.id);
-          const no_subtype = parseInt(subtype.id);
-        
-          if (no_type === 7 || (no_type === 5 && no_subtype === 16)) {
-            this.isBoveda = true;
-          }
-          if (no_type === 5) {
-            this.isAlmacen = true;
-          }
-        })
+        const no_type = parseInt(type.id);
+        const no_subtype = parseInt(subtype.id);
+
+        if (no_type === 7 || (no_type === 5 && no_subtype === 16)) {
+          this.isBoveda = true;
+        }
+        if (no_type === 5) {
+          this.isAlmacen = true;
+        }
+      });
     }
-    
   }
 
   addGood() {
@@ -3841,38 +3838,42 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
           for (let i = 0; i < this.dataGoodAct['data'].length; i++) {
             const element = this.dataGoodAct['data'][i];
             const newParams = `filter.numClasifGoods=$eq:${element.good.goodClassNumber}`;
-            this.serviceSssubtypeGood.getFilter(newParams).subscribe(res => {
-              console.log(res)
-              const type = JSON.parse(JSON.stringify(res.data[0]['numType']));
-              const subtype = JSON.parse(
-                JSON.stringify(res.data[0]['numSubType'])
-              );
-              const ssubtype = JSON.parse(
-                JSON.stringify(res.data[0]['numSsubType'])
-              );
-              const no_type = type.id;
-              console.log(no_type);
-              if (no_type === '5') {
-                //Data new good
-                const putGood: IGood = {
-                  id: element.good.id,
-                  goodId: element.good.goodId,
-                  storeNumber: this.form.get('almacen').value.idWarehouse,
-                };
-                console.log(putGood);
-                console.log('Sí?');
-                this.serviceGood.update(putGood).subscribe(res => {
-                  console.log(res)
-                  this.getGoodsActFn();
-                },
-                err =>{
-                  console.log(err)
-                });
+            this.serviceSssubtypeGood.getFilter(newParams).subscribe(
+              res => {
+                console.log(res);
+                const type = JSON.parse(JSON.stringify(res.data[0]['numType']));
+                const subtype = JSON.parse(
+                  JSON.stringify(res.data[0]['numSubType'])
+                );
+                const ssubtype = JSON.parse(
+                  JSON.stringify(res.data[0]['numSsubType'])
+                );
+                const no_type = type.id;
+                console.log(no_type);
+                if (no_type === '5') {
+                  //Data new good
+                  const putGood: IGood = {
+                    id: element.good.id,
+                    goodId: element.good.goodId,
+                    storeNumber: this.form.get('almacen').value.idWarehouse,
+                  };
+                  console.log(putGood);
+                  console.log('Sí?');
+                  this.serviceGood.update(putGood).subscribe(
+                    res => {
+                      console.log(res);
+                      this.getGoodsActFn();
+                    },
+                    err => {
+                      console.log(err);
+                    }
+                  );
+                }
+              },
+              err => {
+                console.log(err);
               }
-            },
-            err  => {
-              console.log(err)
-            });
+            );
           }
           this.alert('success', 'Se registró el almacén en los bienes', '');
         } else {
@@ -3924,7 +3925,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                     this.getGoodsActFn();
                   });
                 }
-              }else{
+              } else {
                 let putGood: IGood = {
                   id: element.good.id,
                   goodId: element.good.id,
@@ -3934,7 +3935,6 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                   this.getGoodsActFn();
                 });
               }
-
             });
           }
           this.alert('success', 'Se registró los Bienes en la Bóveda', '');
