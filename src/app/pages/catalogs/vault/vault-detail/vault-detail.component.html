@@ -26,37 +26,36 @@
               value="user"
               bindLabel="name"
               label="Responsable"
-              control="manager"
-              (change)="onValuesChange4($event)">
+              control="manager">
             </ngx-select>
           </form-field>
         </div>
       </div>
       <div class="row pt-5">
         <div class="col-md-6">
-          <form-field [control]="vaultForm.get('stateDetail')">
+          <form-field [control]="vaultForm.get('stateCode')">
             <ngx-select
               (fetchItems)="getStates($event)"
               [data]="states"
               [form]="vaultForm"
-              value="descCondition"
+              value="id"
               bindLabel="descCondition"
               label="Estado"
-              control="stateDetail"
+              control="stateCode"
               (change)="onValuesChange4($event)">
             </ngx-select>
           </form-field>
         </div>
         <div class="col-md-6">
-          <form-field [control]="vaultForm.get('cityDetail')">
+          <form-field [control]="vaultForm.get('cityCode')">
             <ngx-select
               (fetchItems)="getCities($event)"
               [data]="cities"
               [form]="vaultForm"
-              value="nameCity"
+              value="idCity"
               bindLabel="nameCity"
               label="Ciudad"
-              control="cityDetail"
+              control="cityCode"
               (change)="onValuesChange1($event)">
             </ngx-select>
           </form-field>
@@ -64,29 +63,29 @@
       </div>
       <div class="row pt-5">
         <div class="col-md-6">
-          <form-field [control]="vaultForm.get('municipalityDetail')">
+          <form-field [control]="vaultForm.get('municipalityCode')">
             <ngx-select
               (fetchItems)="getMunicipalities($event)"
               [data]="municipalities"
               [form]="vaultForm"
-              value="nameMunicipality"
-              bindLabel="nameMunicipality"
+              value="idMunicipality"
+              bindLabel="description"
               label="Municipio"
-              control="municipalityDetail"
+              control="municipalityCode"
               (change)="onValuesChange2($event)">
             </ngx-select>
           </form-field>
         </div>
         <div class="col-md-6">
-          <form-field [control]="vaultForm.get('localityDetail')">
+          <form-field [control]="vaultForm.get('localityCode')">
             <ngx-select
               (fetchItems)="getLocalities($event)"
               [data]="localities"
               [form]="vaultForm"
-              value="nameLocation"
+              value="id"
               bindLabel="nameLocation"
               label="Localidad"
-              control="localityDetail"
+              control="localityCode"
               (change)="onValuesChange3($event)">
             </ngx-select>
           </form-field>

@@ -4,14 +4,14 @@ import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { COLUMNS_APPOINTMENT_RELATIONS_PAYS } from './appointments-relations-pays.columns';
+import { COLUMNS_APPOINTMENT_RELATIONS_PAYS } from './appointments-juridical-report.columns';
 
 @Component({
-  selector: 'app-appointments-relations-pays',
-  templateUrl: './appointments-relations-pays.component.html',
+  selector: 'app-appointments-juridical-report',
+  templateUrl: './appointments-juridical-report.component.html',
   styles: [],
 })
-export class AppointmentsRelationsPaysComponent
+export class AppointmentsJuridicalReportComponent
   extends BasePage
   implements OnInit
 {

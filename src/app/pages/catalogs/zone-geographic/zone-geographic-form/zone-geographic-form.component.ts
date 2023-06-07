@@ -34,30 +34,20 @@ export class ZoneGeographicFormComponent extends BasePage implements OnInit {
       id: [null],
       description: [
         null,
-        Validators.compose([
+        [
           Validators.required,
           Validators.maxLength(200),
           Validators.pattern(STRING_PATTERN),
-        ]),
+        ],
       ],
-      contractNumber: [null, Validators.compose([Validators.required])],
+      contractNumber: [null, [Validators.required]],
       version: [null],
       thirdPartySpecialized: [
         null,
-        Validators.compose([
-          Validators.required,
-          Validators.maxLength(20),
-          Validators.pattern(STRING_PATTERN),
-        ]),
+        [Validators.maxLength(20), Validators.pattern(STRING_PATTERN)],
       ],
-      vat: [
-        null,
-        Validators.compose([
-          Validators.required,
-          Validators.pattern(IVA_PATTERN),
-        ]),
-      ],
-      status: [null, Validators.compose([Validators.required])],
+      vat: [null, [Validators.pattern(IVA_PATTERN)]],
+      status: [null],
     });
     if (this.zoneGeographic != null) {
       this.edit = true;
