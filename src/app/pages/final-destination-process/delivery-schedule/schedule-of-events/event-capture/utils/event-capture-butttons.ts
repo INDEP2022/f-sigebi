@@ -1,14 +1,14 @@
 export class EventCaptureButtons {
   sendSise = new EventCaptureButton('Enviar SISE', false);
-  closeProg = new EventCaptureButton('Cerrar Prog.');
-  expExcel = new EventCaptureButton('Exp. a Excel');
+  closeProg = new EventCaptureButton('Cerrar Programación');
+  expExcel = new EventCaptureButton('Exportar Excel');
   signOffice = new EventCaptureButton('Firmar Oficio');
   printOffice = new EventCaptureButton('Impr. Oficio');
   notificationDest = new EventCaptureButton('Destinatario Notificación', false);
   loadGoods = new EventCaptureButton('Carga Bienes');
   goodsTracker = new EventCaptureButton('Rastreador');
-  convPack = new EventCaptureButton('Paq. Conv');
-  apply = new EventCaptureButton('Aplica');
+  convPack = new EventCaptureButton('Paq. Conv', true, false);
+  apply = new EventCaptureButton('Guardar');
   deletePack = new EventCaptureButton('Borrar Paq.', false);
   xml = new EventCaptureButton('XML', false);
   generateStrategy = new EventCaptureButton('Generar Estrategia');

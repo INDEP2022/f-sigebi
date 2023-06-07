@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
@@ -7,7 +8,6 @@ import { IGoodType } from 'src/app/core/models/catalogs/good-type.model';
 import { GoodTypeService } from 'src/app/core/services/catalogs/good-type.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { ModalCPMtaCMaximumTimesForAbandonmentComponent } from './modal-c-p-mta-c-maximum-times-for-abandonment/modal-c-p-mta-c-maximum-times-for-abandonment';
-import { LocalDataSource } from 'ng2-smart-table';
 
 @Component({
   selector: 'app-c-p-mta-c-maximum-times-for-abandonment',
@@ -16,15 +16,16 @@ import { LocalDataSource } from 'ng2-smart-table';
 })
 export class CPMtaCMaximumTimesForAbandonmentComponent
   extends BasePage
-  implements OnInit {
+  implements OnInit
+{
   contentData: IListResponse<IGoodType> = {} as IListResponse<IGoodType>;
   params = new BehaviorSubject<ListParams>(new ListParams());
   data: any = [];
   dataTable: LocalDataSource = new LocalDataSource();
   constructor(
     private modalService: BsModalService,
-    private goodTypeServ: GoodTypeService) {
-
+    private goodTypeServ: GoodTypeService
+  ) {
     super();
     this.settings = {
       ...this.settings,
@@ -49,11 +50,14 @@ export class CPMtaCMaximumTimesForAbandonmentComponent
   }
 
   openModal(context?: Partial<ModalCPMtaCMaximumTimesForAbandonmentComponent>) {
-    const modalRef = this.modalService.show(ModalCPMtaCMaximumTimesForAbandonmentComponent, {
-      initialState: { ...context, lengthData: this.data.length + 1 },
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
-    });
+    const modalRef = this.modalService.show(
+      ModalCPMtaCMaximumTimesForAbandonmentComponent,
+      {
+        initialState: { ...context, lengthData: this.data.length + 1 },
+        class: 'modal-lg modal-dialog-centered',
+        ignoreBackdropClick: true,
+      }
+    );
     modalRef.content.refresh.subscribe(next => {
       if (next) {
         this.getAllGoodTypes();
@@ -74,8 +78,8 @@ export class CPMtaCMaximumTimesForAbandonmentComponent
               id: item.id,
             });
             this.dataTable.load(this.data);
-            this.contentData = resp
-            console.log(resp)
+            this.contentData = resp;
+            console.log(resp);
           });
         }
       },

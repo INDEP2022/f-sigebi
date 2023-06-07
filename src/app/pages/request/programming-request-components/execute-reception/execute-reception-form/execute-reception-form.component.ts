@@ -33,6 +33,7 @@ import { WarehouseService } from 'src/app/core/services/catalogs/warehouse.servi
 import { GoodService } from 'src/app/core/services/good/good.service';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
 import { ProceedingsService } from 'src/app/core/services/ms-proceedings';
+import { ProgrammingGoodService } from 'src/app/core/services/ms-programming-request/programming-good.service';
 import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-request/programming-request.service';
 import { ReceptionGoodService } from 'src/app/core/services/reception/reception-good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -45,13 +46,14 @@ import { ESTATE_COLUMNS_VIEW } from '../../acept-programming/columns/estate-colu
 import { USER_COLUMNS_SHOW } from '../../acept-programming/columns/users-columns';
 import { GenerateReceiptGuardFormComponent } from '../../shared-components-programming/generate-receipt-guard-form/generate-receipt-guard-form.component';
 import { GoodsReceiptsFormComponent } from '../../shared-components-programming/goods-receipts-form/goods-receipts-form.component';
+import { CancelationGoodFormComponent } from '../cancelation-good-form/cancelation-good-form.component';
 import { EditGoodFormComponent } from '../edit-good-form/edit-good-form.component';
 import { ReschedulingFormComponent } from '../rescheduling-form/rescheduling-form.component';
 import {
   RECEIPT_COLUMNS,
   RECEIPT_GUARD_COLUMNS,
 } from './columns/minute-columns';
-import { receipts, tranGoods } from './execute-reception-data';
+import { tranGoods } from './execute-reception-data';
 
 @Component({
   selector: 'app-execute-reception-form',
@@ -69,28 +71,41 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   statusPhysical: IPhysicalStatus[] = [];
   measureUnits: IMeasureUnit[] = [];
   executeForm: FormGroup = new FormGroup({});
+  goodsGuardForm: FormGroup = new FormGroup({});
+  goodsWarehouseForm: FormGroup = new FormGroup({});
+  goodsReprogForm: FormGroup = new FormGroup({});
+  goodsCancelationForm: FormGroup = new FormGroup({});
   buildForm: FormGroup = new FormGroup({});
   params = new BehaviorSubject<ListParams>(new ListParams());
+  paramsgeneric = new BehaviorSubject<ListParams>(new ListParams());
+  paramsReceipts = new BehaviorSubject<ListParams>(new ListParams());
   paramsProceeding = new BehaviorSubject<ListParams>(new ListParams());
   paramsAuthority = new BehaviorSubject<ListParams>(new ListParams());
   paramsStation = new BehaviorSubject<ListParams>(new ListParams());
   paramsReception = new BehaviorSubject<ListParams>(new ListParams());
   paramsGuard = new BehaviorSubject<ListParams>(new ListParams());
   paramsGoodsWarehouse = new BehaviorSubject<ListParams>(new ListParams());
-  goodsWarehouse: LocalDataSource = new LocalDataSource();
+  //goodsWarehouse: LocalDataSource = new LocalDataSource();
+  paramsTransportableGoods = new BehaviorSubject<ListParams>(new ListParams());
+
   nameWarehouse: string = '';
   ubicationWarehouse: string = '';
   totalItems: number = 0;
   totalItemsGuard: number = 0;
   totalItemsWarehouse: number = 0;
-  selectGood: IGood;
+  totalItemsReceipt: number = 0;
+  selectGood: IGood[] = [];
+  selectGoodGuard: IGood[] = [];
   goodIdSelect: string | number;
+  goodIdSelectGuard: string | number;
   programmingId: number = 0;
   idTransferent: any;
   idRegDelegation: any;
   idTypeRelevat: any;
   headingGuard: string = `Resguardo(0)`;
-  headingWarehouse: string = `Almacén SAT(0)`;
+  headingWarehouse: string = `Almacén INDEP(0)`;
+  headingReprogramation: string = `Reprogramación(0)`;
+  headingCancelation: string = `Cancelación(0)`;
   idStation: any;
   transferentName: string = '';
   stationName: string = '';
@@ -151,7 +166,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   //Cambiar a modelos//
   guardGoods: LocalDataSource = new LocalDataSource();
   tranGoods = tranGoods;
-  receipts = receipts;
+  receipts: LocalDataSource = new LocalDataSource();
   search: FormControl = new FormControl({});
   programming: Iprogramming;
   constructor(
@@ -170,7 +185,8 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     private proccedingService: ProceedingsService,
     private showHideErrorInterceptorService: showHideErrorInterceptorService,
     private receptionService: ReceptionGoodService,
-    private genericService: GenericService
+    private genericService: GenericService,
+    private programmingGoodService: ProgrammingGoodService
   ) {
     super();
     this.settings = {
@@ -186,7 +202,10 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
-    this.formLoading = true;
+    this.prepareGuardForm();
+    this.prepareWarehouseForm();
+    this.prepareReprogForm();
+    this.prepareCancelForm();
     this.showDataProgramming();
 
     this.paramsGuard
@@ -220,8 +239,96 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     });
   }
 
+  prepareGuardForm() {
+    this.goodsGuardForm = this.fb.group({
+      goodsGuard: this.fb.array([]),
+      descriptionGoodSae: [
+        null,
+        [Validators.maxLength(100), Validators.pattern(STRING_PATTERN)],
+      ],
+      quantitySae: [
+        null,
+        [Validators.maxLength(50), Validators.pattern(NUMBERS_PATTERN)],
+      ],
+      saeMeasureUnit: [null],
+      saePhysicalState: [null],
+      stateConservationSae: [null],
+      selectColumn: [null],
+    });
+  }
+
+  prepareWarehouseForm() {
+    this.goodsWarehouseForm = this.fb.group({
+      goodsWarehouse: this.fb.array([]),
+      descriptionGoodSae: [
+        null,
+        [Validators.maxLength(100), Validators.pattern(STRING_PATTERN)],
+      ],
+      quantitySae: [
+        null,
+        [Validators.maxLength(50), Validators.pattern(NUMBERS_PATTERN)],
+      ],
+      saeMeasureUnit: [null],
+      saePhysicalState: [null],
+      stateConservationSae: [null],
+      selectColumn: [null],
+    });
+  }
+
+  prepareReprogForm() {
+    this.goodsReprogForm = this.fb.group({
+      goodsReprog: this.fb.array([]),
+      descriptionGoodSae: [
+        null,
+        [Validators.maxLength(100), Validators.pattern(STRING_PATTERN)],
+      ],
+      quantitySae: [
+        null,
+        [Validators.maxLength(50), Validators.pattern(NUMBERS_PATTERN)],
+      ],
+      saeMeasureUnit: [null],
+      saePhysicalState: [null],
+      stateConservationSae: [null],
+      selectColumn: [null],
+    });
+  }
+
+  prepareCancelForm() {
+    this.goodsCancelationForm = this.fb.group({
+      goodsCancelation: this.fb.array([]),
+      descriptionGoodSae: [
+        null,
+        [Validators.maxLength(100), Validators.pattern(STRING_PATTERN)],
+      ],
+      quantitySae: [
+        null,
+        [Validators.maxLength(50), Validators.pattern(NUMBERS_PATTERN)],
+      ],
+      saeMeasureUnit: [null],
+      saePhysicalState: [null],
+      stateConservationSae: [null],
+      selectColumn: [null],
+    });
+  }
+
   get goodsTransportable() {
     return this.executeForm.get('goodsTransportable') as FormArray;
+  }
+
+  get goodsGuards() {
+    return this.goodsGuardForm.get('goodsGuard') as FormArray;
+  }
+
+  get goodsWarehouse() {
+    return this.goodsWarehouseForm.get('goodsWarehouse') as FormArray;
+  }
+
+  get goodsReprog() {
+    return this.goodsReprogForm.get('goodsReprog') as FormArray;
+  }
+
+  get goodsCancelation() {
+    return this.goodsCancelationForm.get('goodsCancelation') as FormArray;
   }
 
   showDataProgramming() {
@@ -307,16 +414,19 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
 
   /*----------Show info goods programming --------- */
   getInfoGoodsProgramming() {
-    this.formLoading = true;
+    const params = new BehaviorSubject<ListParams>(new ListParams());
+
     this.goodsTransportable.reset();
-    this.params.getValue()['filter.programmingId'] = this.programmingId;
+    params.getValue()['filter.programmingId'] = this.programmingId;
     this.programmingService
-      .getGoodsProgramming(this.params.getValue())
+      .getGoodsProgramming(params.getValue())
       .subscribe(data => {
+        console.log('data', data);
         this.filterStatusTrans(data.data);
-        /*
+        this.filterStatusWarehouse(data.data);
         this.filterStatusGuard(data.data);
-        this.filterStatusWarehouse(data.data); */
+        this.filterStatusReprog(data.data);
+        this.filterStatusCancelation(data.data);
       });
   }
 
@@ -326,44 +436,47 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     });
 
     goodsTrans.map(items => {
-      this.goodService.getGoodByIds(items.goodId).subscribe({
+      this.params.getValue()['filter.id'] = items.goodId;
+      this.goodService.getAll(this.params.getValue()).subscribe({
         next: response => {
           console.log('repsonse', response);
-          if (response.physicalStatus == 1) {
-            response.physicalStatusName = 'BUENO';
-          } else if (response.physicalStatus == 2) {
-            response.physicalStatusName = 'MALO';
-          }
-          if (response.stateConservation == 1) {
-            response.stateConservationName = 'BUENO';
-          } else if (response.stateConservation == 2) {
-            response.stateConservationName = 'MALO';
-          }
-          this.goodsTransportable.clear();
-          this.goodData = response;
+          response.data.map(item => {
+            if (item.physicalStatus == 1) {
+              item.physicalStatusName = 'BUENO';
+            } else if (item.physicalStatus == 2) {
+              item.physicalStatusName = 'MALO';
+            }
+            if (item.stateConservation == 1) {
+              item.stateConservationName = 'BUENO';
+            } else if (item.stateConservation == 2) {
+              item.stateConservationName = 'MALO';
+            }
+            this.goodsTransportable.clear();
+            this.goodData = item;
 
-          const form = this.fb.group({
-            id: [response?.id],
-            goodId: [response?.goodId],
-            uniqueKey: [response?.uniqueKey],
-            fileNumber: [response?.fileNumber],
-            goodDescription: [response?.goodDescription],
-            quantity: [response?.quantity],
-            unitMeasure: [response?.unitMeasure],
-            descriptionGoodSae: [response?.descriptionGoodSae],
-            quantitySae: [response?.quantitySae],
-            saeMeasureUnit: [response?.saeMeasureUnit],
-            physicalStatus: [response?.physicalStatus],
-            physicalStatusName: [response?.physicalStatusName],
-            saePhysicalState: [response?.saePhysicalState],
-            stateConservation: [response?.stateConservation],
-            stateConservationName: [response?.stateConservationName],
-            stateConservationSae: [response?.stateConservationSae],
-            regionalDelegationNumber: [response?.regionalDelegationNumber],
+            const form = this.fb.group({
+              id: [item?.id],
+              goodId: [item?.goodId],
+              uniqueKey: [item?.uniqueKey],
+              fileNumber: [item?.fileNumber],
+              goodDescription: [item?.goodDescription],
+              quantity: [item?.quantity],
+              unitMeasure: [item?.unitMeasure],
+              descriptionGoodSae: [item?.descriptionGoodSae],
+              quantitySae: [item?.quantitySae],
+              saeMeasureUnit: [item?.saeMeasureUnit],
+              physicalStatus: [item?.physicalStatus],
+              physicalStatusName: [item?.physicalStatusName],
+              saePhysicalState: [item?.saePhysicalState],
+              stateConservation: [item?.stateConservation],
+              stateConservationName: [item?.stateConservationName],
+              stateConservationSae: [item?.stateConservationSae],
+              regionalDelegationNumber: [item?.regionalDelegationNumber],
+            });
+            this.goodsTransportable.push(form);
+            this.goodsTransportable.updateValueAndValidity();
+            this.formLoading = false;
           });
-          this.goodsTransportable.push(form);
-          this.goodsTransportable.updateValueAndValidity();
-          this.formLoading = false;
 
           /*if (response.saePhysicalState == 1)
             response.saePhysicalState = 'BUENO';
@@ -374,6 +487,230 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           // queda pendiente mostrar el alías del almacén // */
           //this.goodsTranportables.load(this.goodsInfoTrans);
           //this.totalItemsTransportable = this.goodsTranportables.count();
+        },
+        error: error => {
+          this.formLoading = false;
+        },
+      });
+    });
+  }
+
+  filterStatusGuard(data: IGoodProgramming[]) {
+    const goodRes = data.filter(items => {
+      return items.status == 'EN_RESGUARDO';
+    });
+
+    goodRes.map(items => {
+      this.params.getValue()['filter.id'] = items.goodId;
+      this.goodService.getAll(this.params.getValue()).subscribe({
+        next: data => {
+          data.data.map(response => {
+            if (response.physicalStatus == 1) {
+              response.physicalStatusName = 'BUENO';
+            } else if (response.physicalStatus == 2) {
+              response.physicalStatusName = 'MALO';
+            }
+            if (response.stateConservation == 1) {
+              response.stateConservationName = 'BUENO';
+            } else if (response.stateConservation == 2) {
+              response.stateConservationName = 'MALO';
+            }
+            this.goodsGuards.clear();
+            this.goodData = response;
+
+            const form = this.fb.group({
+              id: [response?.id],
+              goodId: [response?.goodId],
+              uniqueKey: [response?.uniqueKey],
+              fileNumber: [response?.fileNumber],
+              goodDescription: [response?.goodDescription],
+              quantity: [response?.quantity],
+              unitMeasure: [response?.unitMeasure],
+              descriptionGoodSae: [response?.descriptionGoodSae],
+              quantitySae: [response?.quantitySae],
+              saeMeasureUnit: [response?.saeMeasureUnit],
+              physicalStatus: [response?.physicalStatus],
+              physicalStatusName: [response?.physicalStatusName],
+              saePhysicalState: [response?.saePhysicalState],
+              stateConservation: [response?.stateConservation],
+              stateConservationName: [response?.stateConservationName],
+              stateConservationSae: [response?.stateConservationSae],
+              regionalDelegationNumber: [response?.regionalDelegationNumber],
+            });
+            this.goodsGuards.push(form);
+            this.goodsGuards.updateValueAndValidity();
+            this.formLoading = false;
+            this.headingGuard = `En Resguardo(${this.goodsGuards.length})`;
+          });
+        },
+        error: error => {
+          this.formLoading = false;
+        },
+      });
+    });
+  }
+
+  filterStatusWarehouse(data: IGoodProgramming[]) {
+    const goodWarehouse = data.filter(items => {
+      return items.status == 'EN_ALMACEN';
+    });
+
+    goodWarehouse.map(items => {
+      this.params.getValue()['filter.id'] = items.goodId;
+      this.goodService.getAll(this.params.getValue()).subscribe({
+        next: data => {
+          data.data.map(response => {
+            if (response.physicalStatus == 1) {
+              response.physicalStatusName = 'BUENO';
+            } else if (response.physicalStatus == 2) {
+              response.physicalStatusName = 'MALO';
+            }
+            if (response.stateConservation == 1) {
+              response.stateConservationName = 'BUENO';
+            } else if (response.stateConservation == 2) {
+              response.stateConservationName = 'MALO';
+            }
+            this.goodsWarehouse.clear();
+            this.goodData = response;
+
+            const form = this.fb.group({
+              id: [response?.id],
+              goodId: [response?.goodId],
+              uniqueKey: [response?.uniqueKey],
+              fileNumber: [response?.fileNumber],
+              goodDescription: [response?.goodDescription],
+              quantity: [response?.quantity],
+              unitMeasure: [response?.unitMeasure],
+              descriptionGoodSae: [response?.descriptionGoodSae],
+              quantitySae: [response?.quantitySae],
+              saeMeasureUnit: [response?.saeMeasureUnit],
+              physicalStatus: [response?.physicalStatus],
+              physicalStatusName: [response?.physicalStatusName],
+              saePhysicalState: [response?.saePhysicalState],
+              stateConservation: [response?.stateConservation],
+              stateConservationName: [response?.stateConservationName],
+              stateConservationSae: [response?.stateConservationSae],
+              regionalDelegationNumber: [response?.regionalDelegationNumber],
+            });
+            this.goodsWarehouse.push(form);
+            this.goodsWarehouse.updateValueAndValidity();
+            this.formLoading = false;
+            this.headingWarehouse = `Almacén INDEP(${this.goodsWarehouse.length})`;
+          });
+        },
+        error: error => {
+          this.formLoading = false;
+        },
+      });
+    });
+  }
+
+  filterStatusReprog(data: IGoodProgramming[]) {
+    const goodsReprog = data.filter(items => {
+      return items.status == 'EN_PROGRAMACION_TMP';
+    });
+
+    goodsReprog.map(items => {
+      this.params.getValue()['filter.id'] = items.goodId;
+      this.goodService.getAll(this.params.getValue()).subscribe({
+        next: data => {
+          data.data.map(response => {
+            if (response.physicalStatus == 1) {
+              response.physicalStatusName = 'BUENO';
+            } else if (response.physicalStatus == 2) {
+              response.physicalStatusName = 'MALO';
+            }
+            if (response.stateConservation == 1) {
+              response.stateConservationName = 'BUENO';
+            } else if (response.stateConservation == 2) {
+              response.stateConservationName = 'MALO';
+            }
+            this.goodsReprog.clear();
+            this.goodData = response;
+
+            const form = this.fb.group({
+              id: [response?.id],
+              goodId: [response?.goodId],
+              uniqueKey: [response?.uniqueKey],
+              fileNumber: [response?.fileNumber],
+              goodDescription: [response?.goodDescription],
+              quantity: [response?.quantity],
+              unitMeasure: [response?.unitMeasure],
+              descriptionGoodSae: [response?.descriptionGoodSae],
+              quantitySae: [response?.quantitySae],
+              saeMeasureUnit: [response?.saeMeasureUnit],
+              physicalStatus: [response?.physicalStatus],
+              physicalStatusName: [response?.physicalStatusName],
+              saePhysicalState: [response?.saePhysicalState],
+              stateConservation: [response?.stateConservation],
+              stateConservationName: [response?.stateConservationName],
+              stateConservationSae: [response?.stateConservationSae],
+              regionalDelegationNumber: [response?.regionalDelegationNumber],
+            });
+            this.goodsReprog.push(form);
+            this.goodsReprog.updateValueAndValidity();
+            this.formLoading = false;
+            this.headingReprogramation = `Reprogramación(${this.goodsReprog.length})`;
+          });
+        },
+        error: error => {
+          this.formLoading = false;
+        },
+      });
+    });
+  }
+
+  filterStatusCancelation(data: IGoodProgramming[]) {
+    const goodsCancel = data.filter(items => {
+      return items.status == 'CANCELADO_TMP';
+    });
+
+    goodsCancel.map(items => {
+      this.params.getValue()['filter.id'] = items.goodId;
+      this.goodService.getAll(this.params.getValue()).subscribe({
+        next: data => {
+          data.data.map(response => {
+            if (response.physicalStatus == 1) {
+              response.physicalStatusName = 'BUENO';
+            } else if (response.physicalStatus == 2) {
+              response.physicalStatusName = 'MALO';
+            }
+            if (response.stateConservation == 1) {
+              response.stateConservationName = 'BUENO';
+            } else if (response.stateConservation == 2) {
+              response.stateConservationName = 'MALO';
+            }
+            this.goodsCancelation.clear();
+            this.goodData = response;
+
+            const form = this.fb.group({
+              id: [response?.id],
+              goodId: [response?.goodId],
+              uniqueKey: [response?.uniqueKey],
+              fileNumber: [response?.fileNumber],
+              goodDescription: [response?.goodDescription],
+              quantity: [response?.quantity],
+              unitMeasure: [response?.unitMeasure],
+              descriptionGoodSae: [response?.descriptionGoodSae],
+              quantitySae: [response?.quantitySae],
+              saeMeasureUnit: [response?.saeMeasureUnit],
+              physicalStatus: [response?.physicalStatus],
+              physicalStatusName: [response?.physicalStatusName],
+              saePhysicalState: [response?.saePhysicalState],
+              stateConservation: [response?.stateConservation],
+              stateConservationName: [response?.stateConservationName],
+              stateConservationSae: [response?.stateConservationSae],
+              regionalDelegationNumber: [response?.regionalDelegationNumber],
+            });
+            this.goodsCancelation;
+            this.goodsCancelation.push(form);
+            this.goodsCancelation.updateValueAndValidity();
+            this.formLoading = false;
+            this.headingCancelation = `Cancelación(${this.goodsCancelation.length})`;
+          });
+        },
+        error: error => {
+          this.formLoading = false;
         },
       });
     });
@@ -424,7 +761,11 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   }
   goodSelect(good: IGood) {
     this.goodIdSelect = good.id;
-    this.selectGood = good;
+    this.selectGood.push(good);
+  }
+  goodSelectGuard(good: IGood) {
+    this.goodIdSelectGuard = good.id;
+    this.selectGoodGuard.push(good);
   }
 
   infoGoods() {
@@ -694,24 +1035,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     this.modalService.show(GenerateReceiptGuardFormComponent, config);
   }
 
-  /*-----------------Bienes en almacén---------------------------*/
-  getGoodsWarehouse(data: IGoodProgramming[]) {
-    const filter = data.filter(item => {
-      return item.status == 'EN_ALMACÉN';
-    });
-
-    filter.map(items => {
-      this.goodService.getById(items.goodId).subscribe({
-        next: response => {
-          this.goodsWareh.push(response);
-          this.goodsWarehouse.load(this.goodsWareh);
-          this.totalItemsWarehouse = this.goodsWarehouse.count();
-          this.headingWarehouse = `Almacén INDEP(${this.goodsWarehouse.count()})`;
-        },
-      });
-    });
-  }
-
   getUsersProgramming() {
     this.loading = true;
     this.params.getValue()['filter.programmingId'] = this.programmingId;
@@ -799,35 +1122,210 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   }
 
   assignReceipt() {
-    let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+    if (this.selectGood) {
+      let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+      config.initialState = {
+        programming: this.programming,
+        callback: (data: boolean) => {
+          if (data) {
+            this.sendGoodTransportable();
+          }
+        },
+      };
 
-    config.initialState = {
-      callback: (data: any) => {
-        if (data) {
-        }
-      },
-    };
+      this.modalService.show(AssignReceiptFormComponent, config);
+    } else {
+      this.onLoadToast(
+        'info',
+        'Acción no permitida',
+        'Se necesita tener un bien seleccionado'
+      );
+    }
+  }
 
-    const assignReceipt = this.modalService.show(
-      AssignReceiptFormComponent,
-      config
-    );
+  sendGoodTransportable() {
+    this.selectGood.map((item: any) => {
+      console.log('this.selectGood', this.selectGood);
+      this.goodsTransportable.clear();
+      const formData: Object = {
+        programmingId: this.programmingId,
+        goodId: item.id,
+        status: 'EN_TRANSPORTABLE',
+      };
+      this.programmingGoodService.updateGoodProgramming(formData).subscribe({
+        next: async response => {
+          console.log('ACTUALIZADO', response);
+          const changeStatusGuard = await this.changeStatusGoodTran(item);
+        },
+        error: error => {
+          console.log('error actualizar progr', error);
+        },
+      });
+    });
+  }
+
+  sendGoodGuard() {
+    if (this.selectGood) {
+      this.selectGood.map((item: any) => {
+        console.log('this.selectGood', this.selectGood);
+        this.goodsTransportable.clear();
+        const formData: Object = {
+          programmingId: this.programmingId,
+          goodId: item.id,
+          status: 'EN_RESGUARDO',
+        };
+        this.programmingGoodService.updateGoodProgramming(formData).subscribe({
+          next: async response => {
+            console.log('ACTUALIZADO', response);
+            const changeStatusGuard = await this.changeStatusGoodTran(item);
+          },
+          error: error => {
+            console.log('error actualizar progr', error);
+          },
+        });
+      });
+    } else {
+      this.onLoadToast(
+        'info',
+        'Acción no permitida',
+        'Se necesita tener un bien seleccionado'
+      );
+    }
+  }
+
+  sendWarehouse() {
+    if (this.selectGood) {
+      this.selectGood.map((item: any) => {
+        console.log('this.selectGood', this.selectGood);
+        this.goodsTransportable.clear();
+        const formData: Object = {
+          programmingId: this.programmingId,
+          goodId: item.id,
+          status: 'EN_ALMACEN',
+        };
+        this.programmingGoodService.updateGoodProgramming(formData).subscribe({
+          next: async response => {
+            console.log('ACTUALIZADO', response);
+            await this.changeStatusGoodWarehouse(item);
+          },
+          error: error => {
+            console.log('error actualizar progr', error);
+          },
+        });
+      });
+    } else {
+      this.onLoadToast(
+        'info',
+        'Acción no permitida',
+        'Se necesita tener un bien seleccionado'
+      );
+    }
+  }
+
+  changeStatusGoodTran(good: IGood) {
+    console.log('good', good);
+    return new Promise(async (resolve, reject) => {
+      this.goodsGuards.clear();
+      this.selectGood.map((item: any) => {
+        const formData: Object = {
+          id: Number(item.id),
+          goodId: Number(item.goodId),
+          goodStatus: 'EN_TRANSPORTABLE',
+        };
+
+        this.goodService.updateByBody(formData).subscribe({
+          next: () => {},
+        });
+      });
+      const showGoods: any = await this.getFilterGood('EN_TRANSPORTABLE');
+      if (showGoods) {
+        this.getInfoGoodsProgramming();
+        this.goodIdSelect = null;
+        this.headingReprogramation = `Reprogramación(${this.goodsReprog.length})`;
+      }
+    });
+  }
+
+  changeStatusGoodWarehouse(good: IGood) {
+    console.log('good', good);
+    return new Promise(async (resolve, reject) => {
+      this.goodsCancelation.clear();
+      this.selectGood.map((item: any) => {
+        const formData: Object = {
+          id: Number(item.id),
+          goodId: Number(item.goodId),
+          goodStatus: 'EN_TRANSPORTABLE',
+        };
+
+        this.goodService.updateByBody(formData).subscribe({
+          next: () => {},
+        });
+      });
+      const showGoods: any = await this.getFilterGood('EN_TRANSPORTABLE');
+      if (showGoods) {
+        this.getInfoGoodsProgramming();
+        this.goodIdSelect = null;
+        this.headingWarehouse = `Almacén INDEP(${this.goodsWarehouse.length})`;
+      }
+    });
+  }
+
+  changeStatusGoodCancelation(good: IGood) {
+    console.log('good', good);
+    return new Promise(async (resolve, reject) => {
+      this.goodsCancelation.clear();
+      this.selectGood.map((item: any) => {
+        const formData: Object = {
+          id: Number(item.id),
+          goodId: Number(item.goodId),
+          goodStatus: 'EN_TRANSPORTABLE',
+        };
+
+        this.goodService.updateByBody(formData).subscribe({
+          next: () => {},
+        });
+      });
+      const showGoods: any = await this.getFilterGood('EN_TRANSPORTABLE');
+      if (showGoods) {
+        this.getInfoGoodsProgramming();
+        this.goodIdSelect = null;
+        this.headingCancelation = `Cancelación(${this.goodsCancelation.length})`;
+      }
+    });
+  }
+
+  getFilterGood(type: string) {
+    return new Promise((resolve, reject) => {
+      this.paramsTransportableGoods.getValue()['filter.programmingId'] =
+        this.programmingId;
+
+      this.programmingService
+        .getGoodsProgramming(this.paramsTransportableGoods.getValue())
+        .subscribe(data => {
+          const filterGood = data.data.filter(item => {
+            return item.status == type;
+          });
+          resolve(filterGood);
+          //
+        });
+    });
   }
 
   rescheduling() {
     let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
 
     config.initialState = {
-      callback: (data: any) => {
-        if (data) {
+      goodSelect: this.selectGood,
+      programming: this.programming,
+      callback: (next: boolean) => {
+        if (next) {
+          this.goodsTransportable.clear();
+          this.getInfoGoodsProgramming();
         }
       },
     };
 
-    const rescheduling = this.modalService.show(
-      ReschedulingFormComponent,
-      config
-    );
+    this.modalService.show(ReschedulingFormComponent, config);
   }
 
   showGood(data: IGood) {
@@ -839,4 +1337,150 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   }
 
   delete() {}
+
+  deleteGoodGuard() {
+    if (this.goodIdSelect > 0) {
+      this.selectGood.map((item: any) => {
+        console.log('this.selectGood', this.selectGood);
+        const formData: Object = {
+          programmingId: this.programmingId,
+          goodId: item.id,
+          status: 'EN_TRANSPORTABLE',
+        };
+        this.programmingGoodService.updateGoodProgramming(formData).subscribe({
+          next: async response => {
+            console.log('ACTUALIZADO', response);
+            await this.changeStatusGoodTran(item);
+          },
+          error: error => {
+            console.log('error actualizar progr', error);
+          },
+        });
+      });
+    } else {
+      this.onLoadToast(
+        'info',
+        'Acción invalida',
+        'Se debe seleccionar un bien'
+      );
+    }
+  }
+
+  deleteGoodRep() {
+    if (this.goodIdSelect > 0) {
+      this.selectGood.map((item: any) => {
+        console.log('this.selectGood', this.selectGood);
+        const formData: Object = {
+          programmingId: this.programmingId,
+          goodId: item.id,
+          status: 'EN_TRANSPORTABLE',
+        };
+        this.programmingGoodService.updateGoodProgramming(formData).subscribe({
+          next: async response => {
+            console.log('ACTUALIZADO', response);
+            await this.changeStatusGoodTran(item);
+          },
+          error: error => {
+            console.log('error actualizar progr', error);
+          },
+        });
+      });
+    } else {
+      this.onLoadToast(
+        'info',
+        'Acción invalida',
+        'Se debe seleccionar un bien'
+      );
+    }
+  }
+
+  deleteGoodWarehouse() {
+    if (this.goodIdSelect > 0) {
+      this.selectGood.map((item: any) => {
+        console.log('this.selectGood', this.selectGood);
+        const formData: Object = {
+          programmingId: this.programmingId,
+          goodId: item.id,
+          status: 'EN_TRANSPORTABLE',
+        };
+        this.programmingGoodService.updateGoodProgramming(formData).subscribe({
+          next: async response => {
+            console.log('ACTUALIZADO', response);
+            await this.changeStatusGoodWarehouse(item);
+          },
+          error: error => {
+            console.log('error actualizar progr', error);
+          },
+        });
+      });
+    } else {
+      this.onLoadToast(
+        'info',
+        'Acción invalida',
+        'Se debe seleccionar un bien'
+      );
+    }
+  }
+
+  deleteGoodCancelation() {
+    if (this.goodIdSelect > 0) {
+      this.selectGood.map((item: any) => {
+        console.log('this.selectGood', this.selectGood);
+        const formData: Object = {
+          programmingId: this.programmingId,
+          goodId: item.id,
+          status: 'EN_TRANSPORTABLE',
+        };
+        this.programmingGoodService.updateGoodProgramming(formData).subscribe({
+          next: async response => {
+            console.log('ACTUALIZADO', response);
+            await this.changeStatusGoodCancelation(item);
+          },
+          error: error => {
+            console.log('error actualizar progr', error);
+          },
+        });
+      });
+    } else {
+      this.onLoadToast(
+        'info',
+        'Acción invalida',
+        'Se debe seleccionar un bien'
+      );
+    }
+  }
+
+  changeStatusGoodTransportable(good: IGood) {
+    console.log('good', good);
+    return new Promise(async (resolve, reject) => {
+      this.selectGood.map((item: any) => {
+        console.log('item', item);
+        const formData = {
+          id: item.id,
+          goodId: item.goodId,
+          status: 'EN_TRANSPORTABLE',
+        };
+        this.goodService.updateByBody(formData).subscribe({
+          next: () => {
+            this.getInfoGoodsProgramming();
+          },
+        });
+      });
+    });
+  }
+  cancelGood() {
+    let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+
+    config.initialState = {
+      goodSelect: this.selectGood,
+      programming: this.programming,
+      callback: (next: boolean) => {
+        if (next) {
+          this.goodsTransportable.clear();
+          this.getInfoGoodsProgramming();
+        }
+      },
+    };
+    this.modalService.show(CancelationGoodFormComponent, config);
+  }
 }

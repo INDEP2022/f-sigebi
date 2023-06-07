@@ -2,7 +2,7 @@ import { SeeMoreComponent } from 'src/app/shared/components/see-more/see-more.co
 
 export const COLUMNS_CAPTURE_EVENTS = {
   locTrans: {
-    title: 'Localidad Ent.',
+    title: 'Localidad Entidad',
     sort: false,
     filter: false,
   },

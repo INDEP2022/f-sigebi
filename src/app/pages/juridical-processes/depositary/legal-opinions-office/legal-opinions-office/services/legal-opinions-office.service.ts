@@ -29,6 +29,7 @@ import { HistoryGoodService } from 'src/app/core/services/ms-history-good/histor
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import { JobDictumTextsService } from 'src/app/core/services/ms-office-management/job-dictum-texts.service';
 import { ParametersService } from 'src/app/core/services/ms-parametergood/parameters.service';
+import { ProcessgoodreportService } from 'src/app/core/services/ms-processgoodreport/ms-processgoodreport.service';
 import { ScreenStatusService } from 'src/app/core/services/ms-screen-status/screen-status.service';
 import { SecurityService } from 'src/app/core/services/ms-security/security.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
@@ -56,7 +57,8 @@ export class LegalOpinionsOfficeService {
     private msGoodService: GoodService,
     private msIDocumentService: IDocumentService,
     private msHistoryGoodService: HistoryGoodService,
-    private msScreenStatusService: ScreenStatusService
+    private msScreenStatusService: ScreenStatusService,
+    private msProcessgoodreportService: ProcessgoodreportService
   ) {}
 
   getIssuingUserByDetail(params: _Params) {
@@ -183,6 +185,9 @@ export class LegalOpinionsOfficeService {
   lovCitiesRegCity(body: any, params: _Params) {
     return this.msSecurityService.lovCitiesRegCity(body, params);
   }
+  getAllUsersTracker(params: _Params) {
+    return this.msSecurityService.getAllUsersTracker(params);
+  }
   getPAValidaCambio(body: IValidaCambioEstatus) {
     return this.msGoodService.PAValidaCambio(body);
   }
@@ -203,6 +208,10 @@ export class LegalOpinionsOfficeService {
   }
   getScreenStatusService(params: _Params) {
     return this.msScreenStatusService.getAllFiltered(params);
+  }
+  // Obtener el XML del reporte que se ejecuta para la firma electrónica
+  getXMLReportToFirm(params: ListParams) {
+    return this.msProcessgoodreportService.getReportXMLToFirm(params);
   }
 
   getTexto3FromOfficeDictation(
@@ -261,6 +270,15 @@ export class LegalOpinionsOfficeService {
     officeDictationData: IOfficialDictation,
     type_of: string
   ) {
+    if (!officeDictationData) {
+      officeDictationData.text1 = null;
+    }
+    if (!officeDictationData) {
+      officeDictationData.text2 = null;
+    }
+    if (!officeDictationData) {
+      officeDictationData.text3 = null;
+    }
     if (dictationData.typeDict == 'PROCEDENCIA') {
       // -- ASEGURADOS ORDINARIOS
       if (type_of == 'A-O' && expedientData.preliminaryInquiry) {

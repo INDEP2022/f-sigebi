@@ -22,7 +22,7 @@ import { CityService } from '../../../../core/services/catalogs/city.service';
 export class CityDetailComponent extends BasePage implements OnInit {
   cityForm: ModelForm<ICity>;
   city: ICity;
-  title: string = 'Catálogos de Ciudades';
+  title: string = 'Ciudad';
   edit: boolean = false;
 
   states = new DefaultSelect();

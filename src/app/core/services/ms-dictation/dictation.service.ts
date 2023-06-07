@@ -12,7 +12,6 @@ import {
   IInitFormLegalOpinionOfficeResponse,
   ITmpDictationCreate,
   ITmpExpDesahogoB,
-  IUpdateDelDictation,
 } from '../../models/ms-dictation/dictation-model';
 import { IRTdictaAarusr } from '../../models/ms-dictation/r-tdicta-aarusr.model';
 @Injectable({
@@ -44,7 +43,7 @@ export class DictationService extends HttpService {
     return this.get(route);
   }
 
-  getAllWithFilters(params?: string): Observable<IListResponse<IDictation>> {
+  getAllWithFilters(params?: any): Observable<IListResponse<IDictation>> {
     return this.get<IListResponse<IDictation>>(this.route.Dictation, params);
   }
 
@@ -173,7 +172,7 @@ export class DictationService extends HttpService {
   }
 
   getRTdictaAarusr(
-    params?: ListParams
+    params?: _Params
   ): Observable<IListResponse<IRTdictaAarusr>> {
     return this.get<IListResponse<any>>(
       DictationEndpoints.RTdictaAarusr,
@@ -246,7 +245,7 @@ export class DictationService extends HttpService {
       obj
     );
   }
-  updateDictaEntregaRTurno(body: IUpdateDelDictation) {
-    return this.put<IListResponse<IUpdateDelDictation>>(`${this.routeN}`, body);
+  updateDictaEntregaRTurno(body: any) {
+    return this.put<IListResponse<any>>(`${this.routeN}`, body);
   }
 }

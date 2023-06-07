@@ -177,7 +177,7 @@
         <!--input type="text" class="form-control"  formControlName="senderUserRemitente"/-->
       </form-field>
     </div>
-    <div class="col-md-4 col-sm-12 col-xs-12 mt-3">
+    <div class="col-md-8 col-sm-12 col-xs-12 mt-3">
       <form-field [control]="form.get('charge')" label="Cargo">
         <input
           [readonly]="!dictatesNumber"
@@ -261,6 +261,7 @@
         [control]="form.get('masInfo_1_1')"
         label="M&aacute;s Informaci&oacute;n 1">
         <textarea
+          maxlength="4000"
           [readonly]="!dictatesNumber"
           type="text"
           class="form-control"
@@ -276,6 +277,7 @@
         [control]="form.get('masInfo_1_2')"
         label="M&aacute;s Informaci&oacute;n 2">
         <textarea
+          maxlength="4000"
           [readonly]="!dictatesNumber"
           type="text"
           class="form-control"
@@ -291,6 +293,7 @@
         [control]="form.get('masInfo_2')"
         label="M&aacute;s Informaci&oacute;n 3">
         <textarea
+          maxlength="4000"
           [readonly]="!dictatesNumber"
           type="text"
           class="form-control"
@@ -338,7 +341,7 @@
       <div class="d-flex justify-content-center">
         <div class="m-3">
           <button
-            [disabled]="!dictatesNumber"
+            [disabled]="!form.valid"
             type="button"
             class="btn btn-info active"
             (click)="updateDictamen()">
@@ -347,7 +350,7 @@
         </div>
         <div class="m-3">
           <confirm-button
-            [disabled]="!dictatesNumber"
+            [disabled]="!form.valid"
             text="Imprimir"
             [loading]="loading"
             (confirm)="confirm()">
