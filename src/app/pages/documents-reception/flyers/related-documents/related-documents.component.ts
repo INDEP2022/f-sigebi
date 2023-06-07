@@ -10,7 +10,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, firstValueFrom, skip, takeUntil, tap } from 'rxjs';
+import { BehaviorSubject, firstValueFrom, takeUntil } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import {
@@ -109,6 +109,7 @@ export class RelatedDocumentsComponent
   userCopies1 = new DefaultSelect();
   userCopies2 = new DefaultSelect();
   dataGoodTable: LocalDataSource = new LocalDataSource();
+  m_job_management: any = null;
   pantalla = (option: boolean) =>
     `${
       option == true
@@ -499,18 +500,22 @@ export class RelatedDocumentsComponent
         });
       }
     }
-    this.params
+    this.getTypesSelectors();
+    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(res => {
+      this.goodFilterParams('Todos');
+    });
+    /*this.params
       .pipe(
         skip(1),
         takeUntil(this.$unSubscribe),
         tap(() => {
           this.getTypesSelectors();
-          this.onLoadGoodList('all');
+          this.onLoadGoodList('Todos');
         })
       )
       .subscribe(res => {
         this.getGoods1(res);
-      });
+      });*/
     if (this.paramsGestionDictamen.tipoOf == 'INTERNO') {
       this.showDestinatario = true;
     } else {
@@ -721,6 +726,8 @@ export class RelatedDocumentsComponent
           const mJobManagement = await firstValueFrom(
             this.getMJobManagement(res.wheelNumber)
           );
+          this.m_job_management = mJobManagement;
+          console.log('mjobmanagement ', mJobManagement);
           // this.
           this.formJobManagement.patchValue({
             ...mJobManagement,
@@ -740,6 +747,7 @@ export class RelatedDocumentsComponent
               userAndName: mJobManagement.addressee,
             },
           });
+          console.log(this.formJobManagement.value);
           if (mJobManagement.city) {
             this.getCity(mJobManagement.city).subscribe({
               next: res => {
@@ -1597,7 +1605,9 @@ export class RelatedDocumentsComponent
     });
   }
 
-  showDeleteAlert(legend: ILegend) {
+  showDeleteAlert(legend: any) {
+    //ILegend
+    //Desea eliminar el oficio con el expediente ${proceedingsNumber} y No. Oficio ${managementNumber}
     this.alertQuestion(
       'warning',
       'Eliminar',
@@ -1734,9 +1744,20 @@ export class RelatedDocumentsComponent
   }
 
   typeSelected(type: any) {
-    console.log(type);
+    const filter = type.no_clasif_bien;
+    this.goodFilterParams(filter);
   }
 
+  goodFilterParams(filter: string) {
+    let params = {
+      ...this.params.getValue(),
+    };
+    params['filter.fileNumber'] = this.paramsGestionDictamen.expediente;
+    if (filter != 'Todos') {
+      params['filter.goodClassNumber'] = `$eq:${filter}`;
+    }
+    this.getGoods1(params);
+  }
   // OBTENER BIENES //
   async onLoadGoodList(filter: any) {
     this.formLoading = true;
@@ -1750,12 +1771,14 @@ export class RelatedDocumentsComponent
     params['filter.fileNumber'] = this.paramsGestionDictamen.expediente;
     params['filter.status'] = `$in:ADM,DXV,PRP,CPV,DEP`;
 
-    if (filter != 'all') {
+    if (filter != 'Todos') {
       params['filter.goodClassNumber'] = `$eq:${filter}`;
     }
-    this.filtroTipos(this.paramsGestionDictamen.expediente);
+    debugger;
+    //this.filtroTipos(this.paramsGestionDictamen.expediente);
     this.goodServices.getByExpedientAndParams(params).subscribe({
       next: response => {
+        console.log(response);
         let result = response.data.map(async (item: any) => {
           // item['SELECCIONAR'] = 0;
           // item['SEL_AUX'] = 0;
@@ -1946,4 +1969,8 @@ export class RelatedDocumentsComponent
     this.selectedGood = event.selected;
     this.dictationService.goodNumber = event.data.id;
   }
+
+  /*delete(event:any){
+    console.log(event);
+  }*/
 }
