@@ -126,13 +126,14 @@ export class Repository<T> implements IRepository<T> {
   }
 
   private buildRoute(route: string) {
+    debugger;
     const paths = route.split('/');
     paths.shift();
     if (paths.length === 0) {
       return `${environment.API_URL}catalog/api/v1/${route}`;
     }
     const ms = route.split('/')[0];
-    return `${environment.API_URL}${ms}${paths.join('/')}`;
+    return `${environment.API_URL}${ms}/api/v1/${paths.join('/')}`;
   }
 
   private makeIdsRoute(ids: Partial<T>): string {
