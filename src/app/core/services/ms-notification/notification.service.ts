@@ -13,6 +13,7 @@ import {
   INotificationTransferentIndiciadoCityGetData,
   INotificationUpdate,
   INotificationXProperty,
+  ITransfActaEntrec,
   ItVolanteNotificacionesByNoExpedient,
 } from '../../models/ms-notification/notification.model';
 
@@ -229,5 +230,10 @@ export class NotificationService extends HttpService {
     body: any
   ): Observable<{ statusCode: number; message: string[] }> {
     return this.put(`${this.route.Notification}/${wheelNumber}`, body);
+  }
+
+  getTransferenteentrec(model: ITransfActaEntrec){
+    const route = 'application/get-fact-ref-acta-entrec'
+    return this.post(route, model)
   }
 }
