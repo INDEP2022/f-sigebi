@@ -322,6 +322,10 @@ export class JuridicalRulingGComponent
   params2 = new BehaviorSubject<ListParams>(new ListParams());
   loading2 = this.loading;
   listParams = new BehaviorSubject<ListParams>(new ListParams());
+  desc_estatus_good: string = '';
+  consult: string =
+    '>> Click boton derecho para consultar dictaminaciones anteriores <<';
+
   constructor(
     private fb: FormBuilder,
     private activatedRoute: ActivatedRoute,
@@ -417,16 +421,17 @@ export class JuridicalRulingGComponent
   getParams() {
     this.dictaminacionesForm.get('wheelNumber').setValue(null);
     this.activatedRoute.queryParams.subscribe((params: any) => {
-      this.expedientesForm.get('noExpediente').setValue(params?.expediente);
-      if (params.tipoDic) {
+      this.expedientesForm.get('noExpediente').setValue(params?.EXPEDIENTE);
+      if (params.TIPO_DIC) {
         this.showCriminalCase = true;
+        //corregido
       }
-      this.expedientesForm.get('tipoDictaminacion').setValue(params?.tipoDic);
-      if (params?.tipoVo) {
-        this.validateTypeVol(params.tipoVo, params.tipoDic);
+      this.expedientesForm.get('tipoDictaminacion').setValue(params?.TIPO_DIC);
+      if (params?.TIPO_VO) {
+        this.validateTypeVol(params.TIPO_VO, params.TIPO_DIC);
       }
-      this.expedientesForm.get('noVolante').setValue(params?.volante);
-      this.dictaminacionesForm.get('wheelNumber').setValue(params?.volante);
+      this.expedientesForm.get('noVolante').setValue(params?.VOLANTE);
+      this.dictaminacionesForm.get('wheelNumber').setValue(params?.VOLANTE);
     });
 
     this.changeNumExpediente();
@@ -681,18 +686,18 @@ export class JuridicalRulingGComponent
             this.expedientesForm
               .get('noExpediente')
               .setValue(
-                params?.expediente ||
+                params?.EXPEDIENTE ||
                   this.expedientesForm.get('noExpediente').value
               );
             this.expedientesForm
               .get('tipoDictaminacion')
-              .setValue(params?.tipoDic);
+              .setValue(params?.TIPO_DIC);
             this.expedientesForm
               .get('noVolante')
-              .setValue(params?.volante || null);
+              .setValue(params?.VOLANTE || null);
             this.dictaminacionesForm
               .get('wheelNumber')
-              .setValue(params?.volante || null);
+              .setValue(params?.VOLANTE || null);
           });
 
           // this.expedientesForm.get('tipoDictaminacion').setValue(null);
@@ -720,8 +725,8 @@ export class JuridicalRulingGComponent
     console.log('GoodClassNumber', this.goodClassNumber);
 
     this.activatedRoute.queryParams.subscribe((params: any) => {
-      this.TIPO_VO = params.tipoVo;
-      this.typeDictation = params.tipoDic;
+      this.TIPO_VO = params.TIPO_VO;
+      this.typeDictation = params.TIPO_DIC;
     });
 
     //console.log('btnDocumentos ', this.goodData2);
@@ -771,7 +776,7 @@ export class JuridicalRulingGComponent
 
   btnImprimeOficio() {
     this.activatedRoute.queryParams.subscribe((params: any) => {
-      this.TIPO_VO = params.tipoVo;
+      this.TIPO_VO = params.TIPO_VO;
     });
 
     console.log(this.expedientesForm);
@@ -1126,6 +1131,7 @@ export class JuridicalRulingGComponent
                   good.est_disponible = state.EST_DISPONIBLE;
                   good.v_amp = state.v_amp ? state.v_amp : null;
                   good.pDiDescStatus = state.pDiDescStatus;
+                  this.desc_estatus_good = state.pDiDescStatus;
                   resolve(state);
                 },
                 error: () => {
@@ -1292,6 +1298,7 @@ export class JuridicalRulingGComponent
                   good.est_disponible = state.EST_DISPONIBLE;
                   good.v_amp = state.v_amp ? state.v_amp : null;
                   good.pDiDescStatus = state.pDiDescStatus;
+                  this.desc_estatus_good = state.pDiDescStatus;
                   resolve(state);
                 },
                 error: () => {
@@ -1506,7 +1513,7 @@ export class JuridicalRulingGComponent
 
     const type = this.expedientesForm.get('tipoDictaminacion').value;
 
-    this.validateTypeVol(querys['tipoVo'], type);
+    this.validateTypeVol(querys['TIPO_VO'], type);
 
     // ..activar para ver cambio
     // console.log($event);

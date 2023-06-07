@@ -236,7 +236,6 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
     const token = this.authService.decodeToken();
     console.log(token);
     this.dataUserLoggedTokenData = token;
-    this.cleanDataForm();
     // this.anotherSearchAppointment();
     if (token.preferred_username) {
       this.getUserDataLogged(
@@ -3500,7 +3499,10 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
   }
 
   saveCopiesOfficeDictation() {
-    this.continueSearchAppoinment(this.dictationData);
+    // this.continueSearchAppoinment(this.dictationData);
+    this.setInitValuesToSave(); // INIT SAVE VARIABLES
+    this.cleanDataForm();
+    this.btnSearchAppointment();
     // if (this.officeCopiesDictationData.length == 0) {
     //   this.continueSearchAppoinment(this.dictationData);
     //   return;
@@ -3710,12 +3712,12 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
       ...params,
       nombreReporte: nameReport + '.jasper',
     };
-    for (const key in paramsData) {
-      if (Object.prototype.hasOwnProperty.call(paramsData, key)) {
-        let dataToParse = paramsData[key];
-        paramsData[key] = encodeURIComponent(dataToParse);
-      }
-    }
+    // for (const key in paramsData) {
+    //   if (Object.prototype.hasOwnProperty.call(paramsData, key)) {
+    //     let dataToParse = paramsData[key];
+    //     paramsData[key] = encodeURIComponent(dataToParse);
+    //   }
+    // }
     // this.siabService
     //   .fetchReport(nameReport, params, SiabReportEndpoints.EXTENSION_XML)
     this.svLegalOpinionsOfficeService.getXMLReportToFirm(paramsData).subscribe(
@@ -3862,10 +3864,31 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
         .subscribe({
           next: data => {
             console.log('UPDATE OFFICE DICTAMEN', data);
-            this.blockSender = true;
-            this.officeDictationData.statusOf = objSend.statusOf;
-            // RUN PDF REPORT
-            this.sendElectronicFirmData();
+            const params = new FilterParams();
+            params.removeAllFilters();
+            params.addFilter('typeDict', this.paramsScreen.TIPO);
+            params.addFilter('id', this.paramsScreen.P_VALOR);
+            // params['sortBy'] = 'nameCity:ASC';
+            this.svLegalOpinionsOfficeService
+              .getDictations(params.getParams())
+              .subscribe({
+                next: data => {
+                  console.log('DICTAMEN', data);
+                  this.dictationData = data.data[0];
+                  this.callNextbtnSearchAppointment();
+                  this.goodsByDictation
+                    .pipe(takeUntil(this.$unSubscribe))
+                    .subscribe(() => this.loadGoodsByOfficeDictation());
+                  // FIRM PROCESS
+                  this.blockSender = true;
+                  this.officeDictationData.statusOf = objSend.statusOf;
+                  // RUN PDF REPORT
+                  this.sendElectronicFirmData();
+                },
+                error: error => {
+                  console.log(error);
+                },
+              });
           },
           error: error => {
             console.log(error);
