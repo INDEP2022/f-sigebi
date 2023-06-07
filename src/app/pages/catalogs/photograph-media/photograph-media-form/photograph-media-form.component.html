@@ -7,7 +7,11 @@
       <div class="row">
         <div class="col-12 pt-sm-5 pt-md-2">
           <form-field [control]="photographMediaForm.get('route')" label="Ruta">
-            <input type="text" class="form-control" formControlName="route" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="route"
+              maxlength="40" />
           </form-field>
         </div>
       </div>
@@ -16,7 +20,11 @@
           <form-field
             [control]="photographMediaForm.get('status')"
             label="Estado">
-            <input type="text" class="form-control" formControlName="status" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="status"
+              maxlength="1" />
           </form-field>
         </div>
       </div>
@@ -39,3 +47,52 @@
     </div>
   </div>
 </app-modal>
+
+<!-- 
+
+
+
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="photographMediaForm">
+      <div class="row">
+        <div class="col-12 pt-sm-5 pt-md-2">
+          <form-field [control]="photographMediaForm.get('route')" label="Ruta">
+            <input type="text" class="form-control" formControlName="route" maxlength="40" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-md-5">
+        <div class="col-12 pt-sm-5 pt-md-2">
+          <form-field
+            [control]="photographMediaForm.get('status')"
+            label="Estado">
+            <input type="text" class="form-control" formControlName="status" maxlength="1" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="photographMediaForm.invalid"
+          [loading]="loading"
+          (confirm)="confirm()">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>
+
+
+ -->

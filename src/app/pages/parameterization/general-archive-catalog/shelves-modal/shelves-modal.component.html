@@ -34,12 +34,7 @@
         </div>
       </div>
       <div class="row pt-5">
-        <div class="col-md-4">
-          <form-field label="Status" [control]="shelvesForm.get('status')">
-            <input type="text" class="form-control" formControlName="status" />
-          </form-field>
-        </div>
-        <div class="col-md-4">
+        <div class="col-md">
           <form-field
             label="Descripción"
             [control]="shelvesForm.get('description')">
@@ -47,6 +42,13 @@
               type="text"
               class="form-control"
               formControlName="description" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-4">
+          <form-field label="Status" [control]="shelvesForm.get('status')">
+            <input type="text" class="form-control" formControlName="status" />
           </form-field>
         </div>
       </div>

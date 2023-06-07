@@ -39,7 +39,7 @@ export class OfficesListComponent extends BasePage implements OnInit {
         columnTitle: 'Acciones',
         edit: true,
         add: false,
-        delete: true,
+        delete: false,
         position: 'right',
       },
     };

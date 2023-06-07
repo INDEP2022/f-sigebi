@@ -23,7 +23,7 @@ import { DateDocumentsDictumComponent } from '../date-documents-dictum/date-docu
   styles: [],
 })
 export class DateDocumentsModalComponent extends BasePage implements OnInit {
-  title: string = 'DOCUMENTOS POR EXPEDIENTE';
+  title: string = 'Fecha para Documento';
   edit: boolean = false;
   event: IDocumentsForDictum = null;
   dateDocuments: IDateDocuments;

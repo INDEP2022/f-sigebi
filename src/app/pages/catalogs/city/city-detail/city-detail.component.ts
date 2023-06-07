@@ -22,7 +22,7 @@ import { CityService } from '../../../../core/services/catalogs/city.service';
 export class CityDetailComponent extends BasePage implements OnInit {
   cityForm: ModelForm<ICity>;
   city: ICity;
-  title: string = 'Catálogos de Ciudades';
+  title: string = 'Ciudad';
   edit: boolean = false;
 
   states = new DefaultSelect();
@@ -100,9 +100,10 @@ export class CityDetailComponent extends BasePage implements OnInit {
     });
   }
 
-  getSubDelegations(params: ListParams) {
+  getSubDelegations(params: ListParams, subdelegationID?: number) {
     if (this.selectedDelegation.id)
       params['filter.delegationNumber'] = this.selectedDelegation.id;
+    if (subdelegationID) params['filter.id'] = subdelegationID;
 
     this.subdelegationService.getAll(params).subscribe({
       next: data => {
@@ -169,6 +170,7 @@ export class CityDetailComponent extends BasePage implements OnInit {
       this.edit = true;
       this.idState = this.city.state as IState;
       this.cityForm.patchValue(formCity);
+      this.getSubDelegations(new ListParams(), formCity.subDelegation.id);
     }
   }
 

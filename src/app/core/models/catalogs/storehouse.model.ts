@@ -2,7 +2,7 @@ import { ILocality } from './locality.model';
 import { IMunicipality } from './municipality.model';
 
 export interface IStorehouse {
-  idStorehouse: number | null;
+  id: number | null;
   manager: string | null;
   description: string | null;
   municipality: IMunicipality;

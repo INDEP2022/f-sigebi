@@ -5,7 +5,10 @@ import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IDeductiveVerification } from 'src/app/core/models/catalogs/deductive-verification.model';
 import { DeductiveVerificationService } from 'src/app/core/services/catalogs/deductive-verification.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { DOUBLE_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
+import {
+  PERCENTAGE_NUMBERS_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-create-deductives-verification-form',
@@ -37,15 +40,23 @@ export class DeductivesVerificationFormComponent
       id: [null],
       description: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(100),
+        ],
       ],
       percentagePena: [
         null,
-        [Validators.required, Validators.pattern(DOUBLE_PATTERN)],
+        [Validators.required, Validators.pattern(PERCENTAGE_NUMBERS_PATTERN)],
       ],
       verificationType: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(20),
+        ],
       ],
     });
     if (this.deductive != null) {

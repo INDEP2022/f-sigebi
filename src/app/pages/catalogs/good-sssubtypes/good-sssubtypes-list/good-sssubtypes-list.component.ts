@@ -26,6 +26,8 @@ export class GoodSssubtypesListComponent extends BasePage implements OnInit {
     super();
     this.settings.columns = GOOD_SSSUBTYPE_COLUMNS;
     this.settings.actions.delete = true;
+    this.settings.actions.add = false;
+    this.settings.hideSubHeader = false;
   }
 
   ngOnInit(): void {

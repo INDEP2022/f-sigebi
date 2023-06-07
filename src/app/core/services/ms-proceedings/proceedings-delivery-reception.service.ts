@@ -236,6 +236,10 @@ export class ProceedingsDeliveryReceptionService extends HttpService {
     );
   }
 
+  getAllFilterDelRec(params: any) {
+    return this.get<IListResponse<any>>(this.endpoint, params);
+  }
+
   update2(item: IProceedingDeliveryReception) {
     return this.put(this.endpoint + '/' + item.id, item);
   }

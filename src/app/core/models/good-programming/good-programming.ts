@@ -67,6 +67,7 @@ export interface IPACambioStatus {
   P_PANTALLA: string;
   P_FECHA_RE_FIS: Date;
   P_TIPO_ACTA: string;
+  usuario: string;
 }
 export interface ITmpProgValidation {
   valmovement: number;

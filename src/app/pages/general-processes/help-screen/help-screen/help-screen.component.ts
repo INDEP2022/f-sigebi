@@ -39,7 +39,6 @@ export class HelpScreenComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    //this.getBusiness(new ListParams());
     this.business
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))

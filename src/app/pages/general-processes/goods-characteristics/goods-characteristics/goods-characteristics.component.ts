@@ -157,7 +157,6 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
         if (param['noBien']) {
           this.searchGood(param['noBien']);
         }
-
         // this.goodService.getById2(param['noBien']).subscribe({
         //   next: data => {
         //     this.searchGood(data);
