@@ -1616,11 +1616,9 @@ export class RelatedDocumentsComponent
     });
   }
 
-  showDeleteAlert(legend: any) {
+  async showDeleteAlert(legend?: any) {
     //ILegend
     //Desea eliminar el oficio con el expediente ${proceedingsNumber} y No. Oficio ${managementNumber}
-    /*
-       //Desea eliminar el oficio con el expediente ${proceedingsNumber} y No. Oficio ${managementNumber}
     console.log(legend);
     console.log(this.managementForm);
     console.log(this.formJobManagement);
@@ -1633,6 +1631,7 @@ export class RelatedDocumentsComponent
       cveManagement,
       proceedingsNumber,
     } = this.m_job_management;
+    debugger;
     if (managementNumber == null) {
       this.onLoadToast('info', 'No se tiene oficio', '');
       return;
@@ -1649,10 +1648,10 @@ export class RelatedDocumentsComponent
       );
       return;
     }
-    //this.userHavePermission()
+    const ATJR: any = await this.userHavePermission();
 
     return;
-    */
+
     this.alertQuestion(
       'warning',
       'Eliminar',
@@ -2015,10 +2014,6 @@ export class RelatedDocumentsComponent
     this.dictationService.goodNumber = event.data.id;
   }
 
-  /*delete(event:any){
-    console.log(event);
-  }*/
-
   printRelationScreen() {
     const values = this.formJobManagement.value;
     if (values.statusOf == 'ENVIADO') {
@@ -2067,14 +2062,9 @@ export class RelatedDocumentsComponent
   userHavePermission() {
     //private useR: SegAcessXAreasService
     return new Promise((resolve, reject) => {
-      this.segAccessAreasService.userHavePermissions({
-        next: (resp: any) => {
-          resolve(resp);
-        },
-        error: (error: any) => {
-          reject('error no se realizo la petision');
-        },
-      });
+      debugger;
+      const body: any = { delegacionNo: '', user: '' };
+      //this.segAccessAreasService.userHavePermissions();
     });
   }
 }
