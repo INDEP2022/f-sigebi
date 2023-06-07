@@ -43,7 +43,10 @@ export class DocCompensationSatFormComponent
         [
           Validators.required,
           Validators.pattern(POSITVE_NUMBERS_PATTERN),
+          Validators.minLength(1),
           Validators.maxLength(3),
+          Validators.min(0),
+          Validators.max(999),
         ],
       ],
       typeDocSat: [
