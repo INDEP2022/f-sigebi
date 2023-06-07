@@ -56,10 +56,10 @@ export class DepartmentsListComponent extends BasePage implements OnInit {
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
             filter.field == 'id' ||
-              filter.field == 'dsarea' ||
-              filter.field == 'numDelegation' ||
-              filter.field == 'numSubDelegation' ||
-              filter.field == 'description'
+            filter.field == 'dsarea' ||
+            filter.field == 'numDelegation' ||
+            filter.field == 'numSubDelegation' ||
+            filter.field == 'description'
               ? (searchFilter = SearchFilter.EQ)
               : (searchFilter = SearchFilter.ILIKE);
             if (filter.search !== '') {
@@ -120,7 +120,7 @@ export class DepartmentsListComponent extends BasePage implements OnInit {
           numDelegation: department.numDelegation,
           numSubDelegation: department.numSubDelegation.id,
           phaseEdo: department.phaseEdo,
-        }
+        };
         this.delete(data);
       }
     });
