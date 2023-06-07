@@ -526,14 +526,33 @@
                 formControlName="ccp_TiPerson_1" />
             </form-field> -->
 
-            <ng2-smart-table
+            <!-- <ng2-smart-table
               class="col-md-12"
               id="goods"
               [attr.class]="'table-bordered'"
               [settings]="configTableCCp.settings"
               [source]="[]">
-            </ng2-smart-table>
-            <div></div>
+            </ng2-smart-table> -->
+            <!-- [disabled]="!disabledMOficGest" -->
+            <div class="row pt-4">
+              <button
+                (click)="openModalCopy(false)"
+                class="btn btn-primary active btn-sm ml-3">
+                Nuevo
+              </button>
+              <div class="col-md-12">
+                <div class="table-responsive">
+                  <div [class]="loading ? 'table-loading' : ''">
+                    <ng2-smart-table
+                      [attr.class]="'table-bordered'"
+                      [settings]="settings3"
+                      [source]="copyOficio"
+                      (delete)="showDeleteAlertCcp($event.data)">
+                    </ng2-smart-table>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

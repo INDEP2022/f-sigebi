@@ -43,6 +43,8 @@ import {
   POSITVE_NUMBERS_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
+import { AddCopyComponent } from 'src/app/pages/juridical-processes/abandonments-declaration-trades/abandonments-declaration-trades/add-copy/add-copy.component';
+import { EXTERNOS_COLUMS_OFICIO } from 'src/app/pages/juridical-processes/abandonments-declaration-trades/abandonments-declaration-trades/columns';
 import { LegalOpinionsOfficeService } from 'src/app/pages/juridical-processes/depositary/legal-opinions-office/legal-opinions-office/services/legal-opinions-office.service';
 import { IJuridicalDocumentManagementParams } from 'src/app/pages/juridical-processes/file-data-update/interfaces/file-data-update-parameters';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -65,6 +67,7 @@ import {
 } from './related-documents-message';
 import { RelateDocumentsResponse } from './related-documents-response';
 import { RelatedDocumentsService } from './services/related-documents.service';
+
 @Component({
   selector: 'app-related-documents',
   templateUrl: './related-documents.component.html',
@@ -172,6 +175,10 @@ export class RelatedDocumentsComponent
   showDestinatario: boolean = false;
   showDestinatarioInput: boolean = false;
   configTableCCp = ConfigTableCcp;
+
+  settings3 = { ...this.settings };
+  copyOficio: any[] = [];
+
   constructor(
     private fb: FormBuilder,
     private flyerService: FlyersService,
@@ -197,6 +204,17 @@ export class RelatedDocumentsComponent
     protected mJobManagementService: MJobManagementService
   ) {
     super();
+
+    this.settings3 = {
+      ...this.settings,
+      actions: {
+        edit: false,
+        add: false,
+        delete: true,
+      },
+      hideSubHeader: false,
+      columns: { ...EXTERNOS_COLUMS_OFICIO },
+    };
     RELATED_DOCUMENTS_COLUMNS_GOODS.seleccion = {
       ...RELATED_DOCUMENTS_COLUMNS_GOODS.seleccion,
       onComponentInitFunction: this.onClickSelect,
@@ -249,6 +267,171 @@ export class RelatedDocumentsComponent
       console.log(data);
       data.row.seleccion = data.toggle;
     });
+  }
+
+  openModalCopy(data: boolean) {
+    this.openFormCcp({
+      dataEdit: data,
+      managementNumber: this.formJobManagement.value.managementNumber,
+    });
+  }
+
+  openFormCcp(context?: Partial<AddCopyComponent>) {
+    const modalRef = this.modalService.show(AddCopyComponent, {
+      initialState: context,
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    });
+    modalRef.content.dataCopy.subscribe((next: any) => {
+      console.log('next', next);
+
+      if (next.typePerson_I == 'I') {
+        let array = this.copyOficio;
+        let arr = [];
+
+        let obj: any = {
+          managementNumber: null,
+          addresseeCopy: next.senderUser_I,
+          delDestinationCopyNumber: null,
+          nomPersonExt: null,
+          personExtInt: 'I',
+          recordNumber: null,
+          personExtInt_: 'INTERNO',
+          userOrPerson: next.senderUser_I + ' - ' + next.personaExt_I,
+        };
+
+        arr.push(obj);
+        for (let i = 0; i < array.length; i++) {
+          arr.push(array[i]);
+        }
+        this.copyOficio = arr;
+      } else if (next.typePerson_I == 'E') {
+        let array = this.copyOficio;
+        let arr = [];
+
+        let obj: any = {
+          managementNumber: null,
+          addresseeCopy: null,
+          delDestinationCopyNumber: null,
+          nomPersonExt: next.personaExt_I,
+          personExtInt: 'E',
+          personExtInt_: 'EXTERNO',
+          recordNumber: null,
+          userOrPerson: next.personaExt_I,
+        };
+
+        arr.push(obj);
+        for (let i = 0; i < array.length; i++) {
+          arr.push(array[i]);
+        }
+        this.copyOficio = arr;
+      }
+    });
+    modalRef.content.refresh.subscribe((next: any) => {
+      this.getCopyOficioGestion__(
+        this.formJobManagement.value.managementNumber
+      );
+    });
+  }
+
+  getCopyOficioGestion__(data: any) {
+    const params = new ListParams();
+    params['filter.managementNumber'] = `$eq:${data}`;
+    // return new Promise((resolve, reject) => {
+    this.mJobManagementService.getCopyOficeManag(data).subscribe({
+      next: async (resp: any) => {
+        // this.filtroPersonaExt = resp.data;
+        let result = resp.data.map(async (data: any) => {
+          if (data.personExtInt == 'I') {
+            data['personExtInt_'] = 'INTERNO';
+            data['userOrPerson'] = await this.getSenders2OfiM2___(
+              data.addresseeCopy
+            );
+          } else if (data.personExtInt == 'E') {
+            data['personExtInt_'] = 'EXTERNO';
+            data['userOrPerson'] = data.nomPersonExt;
+          }
+          // this.usuariosCCP(data)
+        });
+
+        Promise.all(result).then((data: any) => {
+          this.filtroPersonaExt = resp.data;
+          this.copyOficio = resp.data;
+          this.loading = false;
+        });
+
+        console.log('COPYYYY', resp);
+        this.loading = false;
+        // resolve(resp);
+      },
+      error: err => {
+        this.loading = false;
+        // resolve(null);
+      },
+    });
+    // });
+  }
+
+  async getSenders2OfiM2___(user: any) {
+    const params = new ListParams();
+    params['filter.user'] = `$eq:${user}`;
+    return new Promise((resolve, reject) => {
+      this.securityService.getAllUsersTracker(params).subscribe(
+        (data: any) => {
+          // this.formCcpOficio.get('nombreUsuario2').setValue(data.data[0]);
+          console.log('COPYY2', data);
+          let result = data.data.map(async (item: any) => {
+            item['userAndName'] = item.user + ' - ' + item.name;
+          });
+
+          resolve(data.data[0].userAndName);
+
+          this.loading = false;
+        },
+        error => {
+          resolve(null);
+          this.senders = new DefaultSelect();
+        }
+      );
+    });
+  }
+
+  showDeleteAlertCcp(event: any) {
+    console.log(event.id);
+    this.alertQuestion('question', 'Se borra el remitente?', '').then(
+      async question => {
+        if (question.isConfirmed) {
+          if (event.id == undefined) {
+            let arr = [];
+            for (let i = 0; i < this.copyOficio.length; i++) {
+              if (this.copyOficio[i] != event) {
+                arr.push(this.copyOficio[i]);
+              }
+            }
+            this.onLoadToast('success', 'Se eliminó correctamente', '');
+            this.copyOficio = arr;
+          } else {
+            this.mJobManagementService
+              .deleteCopyOficeManag(event.id)
+              .subscribe({
+                next: value => {
+                  let arr = [];
+
+                  for (let i = 0; i < this.copyOficio.length; i++) {
+                    if (this.copyOficio[i].id != event.id) {
+                      arr.push(this.copyOficio[i]);
+                    }
+                  }
+
+                  this.copyOficio = arr;
+                  this.onLoadToast('success', 'Se eliminó correctamente', '');
+                },
+                error: err => {},
+              });
+          }
+        }
+      }
+    );
   }
 
   onClickImprocedente(event: any) {
