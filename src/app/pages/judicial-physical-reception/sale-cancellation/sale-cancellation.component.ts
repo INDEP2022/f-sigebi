@@ -1630,32 +1630,36 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
       for (let item of this.dataGoodAct['data']) {
         const goodClass = item.good.goodClassNumber;
         const newParams = `filter.numClasifGoods=$eq:${goodClass}`;
-        this.serviceSssubtypeGood.getFilter(newParams).subscribe(res => {
-          const type = JSON.parse(JSON.stringify(res.data[0]['numType']));
-          const subtype = JSON.parse(JSON.stringify(res.data[0]['numSubType']));
+        this.serviceSssubtypeGood.getFilter(newParams).subscribe(
+          res => {
+            const type = JSON.parse(JSON.stringify(res.data[0]['numType']));
+            const subtype = JSON.parse(
+              JSON.stringify(res.data[0]['numSubType'])
+            );
 
-          const no_type = parseInt(type.id);
-          const no_subtype = parseInt(subtype.id);
-          if (no_type === 7 && item.storeNumber === null) {
-            resolve(false);
-          } else if (
-            no_type === 5 &&
-            no_subtype === 16 &&
-            item.storeNumber === null &&
-            item.vaultNumber === null
-          ) {
-            resolve(false);
-          } else if (
-            no_type === 5 &&
-            no_subtype != 16 &&
-            item.storeNumber === null
-          ) {
+            const no_type = parseInt(type.id);
+            const no_subtype = parseInt(subtype.id);
+            if (no_type === 7 && item.storeNumber === null) {
+              resolve(false);
+            } else if (
+              no_type === 5 &&
+              no_subtype === 16 &&
+              item.storeNumber === null &&
+              item.vaultNumber === null
+            ) {
+              resolve(false);
+            } else if (
+              no_type === 5 &&
+              no_subtype != 16 &&
+              item.storeNumber === null
+            ) {
+              resolve(false);
+            }
+          },
+          err => {
             resolve(false);
           }
-        },
-        err => {
-          resolve(false)
-        });
+        )
       }
     });
   }
@@ -1760,14 +1764,12 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
                   }
                 });
             }
-          } else {
-            this.alert('warning', 'No se ha realizado el escaneo', '');
           }
         },
-        err => {
-          this.alert('warning', 'No se ha realizado el escaneo', '');
-        }
-      );
+          err => {
+            this.alert('warning', 'No se ha realizado el escaneo', '');
+          }
+        );
     }
   }
 
@@ -1786,37 +1788,40 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
           const data = JSON.parse(JSON.stringify(res));
           const scanStatus = data.data[0]['scanStatus'];
 
-          if (scanStatus === 'ESCANEADO') {
-            this.form.get('statusProceeding').setValue('CERRADO');
-            this.labelActa = 'Abrir acta';
-            this.btnCSSAct = 'btn-info';
-            const paramsF = new FilterParams();
+            if (scanStatus === 'ESCANEADO') {
+              this.form.get('statusProceeding').setValue('CERRADO');
+              this.labelActa = 'Abrir acta';
+              this.btnCSSAct = 'btn-info';
+              const paramsF = new FilterParams();
 
-            paramsF.addFilter('keysProceedings', this.form.get('acta2').value);
-            this.serviceProcVal.getByFilter(paramsF.getParams()).subscribe(
-              res => {
-                console.log(res);
-                this.alert('success', 'El acta ha sido cerrada', '');
-              },
-              err => {}
-            );
-          } else {
+              paramsF.addFilter(
+                'keysProceedings',
+                this.form.get('acta2').value
+              );
+              this.serviceProcVal.getByFilter(paramsF.getParams()).subscribe(
+                res => {
+                  console.log(res);
+                  this.alert('success', 'El acta ha sido cerrada', '');
+                },
+                err => {}
+              );
+            } else {
+              this.alert(
+                'warning',
+                'FALTA ESCANEAR FOLIO',
+                'El número de folio debe ser escaneado para poder cerrar el acta.'
+              );
+            }
+            console.log(this.scanStatus);
+          },
+          err => {
             this.alert(
               'warning',
               'FALTA ESCANEAR FOLIO',
               'El número de folio debe ser escaneado para poder cerrar el acta.'
             );
           }
-          console.log(this.scanStatus);
-        },
-        err => {
-          this.alert(
-            'warning',
-            'FALTA ESCANEAR FOLIO',
-            'El número de folio debe ser escaneado para poder cerrar el acta.'
-          );
-        }
-      );
+        );
     }
   }
 
@@ -1831,12 +1836,8 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
         } else {
           this.scanStatus = false;
         }
-        console.log(this.scanStatus);
-      },
-      err => {
-        this.scanStatus = false;
       }
-    );
+      );
   }
 
   //*Agregar bienes
@@ -2329,6 +2330,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
         );
       }
       
+
     } else if (
       ['CERRADA', 'CERRADO'].includes(this.form.get('statusProceeding').value)
     ) {

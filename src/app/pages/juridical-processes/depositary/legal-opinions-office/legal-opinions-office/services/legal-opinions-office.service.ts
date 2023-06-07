@@ -185,6 +185,9 @@ export class LegalOpinionsOfficeService {
   lovCitiesRegCity(body: any, params: _Params) {
     return this.msSecurityService.lovCitiesRegCity(body, params);
   }
+  getAllUsersTracker(params: _Params) {
+    return this.msSecurityService.getAllUsersTracker(params);
+  }
   getPAValidaCambio(body: IValidaCambioEstatus) {
     return this.msGoodService.PAValidaCambio(body);
   }
@@ -267,6 +270,15 @@ export class LegalOpinionsOfficeService {
     officeDictationData: IOfficialDictation,
     type_of: string
   ) {
+    if (!officeDictationData) {
+      officeDictationData.text1 = null;
+    }
+    if (!officeDictationData) {
+      officeDictationData.text2 = null;
+    }
+    if (!officeDictationData) {
+      officeDictationData.text3 = null;
+    }
     if (dictationData.typeDict == 'PROCEDENCIA') {
       // -- ASEGURADOS ORDINARIOS
       if (type_of == 'A-O' && expedientData.preliminaryInquiry) {

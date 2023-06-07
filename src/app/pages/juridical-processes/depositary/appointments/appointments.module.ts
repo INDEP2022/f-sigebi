@@ -13,6 +13,7 @@ import { AppointmentsRoutingModule } from './appointments-routing.module';
 
 /** COMPONENTS IMPORTS */
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
+import { AppointmentsJuridicalReportComponent } from './appointments-juridical-report/appointments-juridical-report.component';
 import { AppointmentsRelationsPaysComponent } from './appointments-relations-pays/appointments-relations-pays.component';
 import { AppointmentsComponent } from './appointments/appointments.component';
 import { ScanningFoilAppointmentComponent } from './scanning-foil/scanning-foil.component';
@@ -22,6 +23,7 @@ import { ScanningFoilAppointmentComponent } from './scanning-foil/scanning-foil.
     AppointmentsComponent,
     ScanningFoilAppointmentComponent,
     AppointmentsRelationsPaysComponent,
+    AppointmentsJuridicalReportComponent,
   ],
   imports: [
     CommonModule,

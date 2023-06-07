@@ -2923,6 +2923,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                       );
                       this.inputsInProceedingClose();
                       this.getGoodsActFn();
+
                       this.getGoodsFn()
                     },
                     err => {

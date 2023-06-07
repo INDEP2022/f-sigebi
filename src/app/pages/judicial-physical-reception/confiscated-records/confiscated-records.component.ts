@@ -3514,7 +3514,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     console.log(arrAct);
 
     if (this.selectData && this.selectData != null) {
-      const goodClass = this.selectData.goodClassNumber;
+      const goodClass = this.selectData.good.goodClassNumber;
       const available = this.selectData.avalaible;
       //Valida si es disponible
       if (!available) {
