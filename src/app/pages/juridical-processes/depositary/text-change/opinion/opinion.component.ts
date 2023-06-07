@@ -35,13 +35,10 @@ import { OficialDictationService } from 'src/app/core/services/ms-dictation/ofic
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import { JobDictumTextsService } from 'src/app/core/services/ms-office-management/job-dictum-texts.service';
 import { SecurityService } from 'src/app/core/services/ms-security/security.service';
+import { SegAcessXAreasService } from 'src/app/core/services/ms-users/seg-acess-x-areas.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import {
-  KEYGENERATION_PATTERN,
-  NUMBERS_PATTERN,
-  STRING_PATTERN,
-} from 'src/app/core/shared/patterns';
+import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { BankAccount } from 'src/app/pages/administrative-processes/numerary/tesofe-movements/list-banks/bank';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { ModalComponent } from '../modal/modal-component';
@@ -99,7 +96,7 @@ export class OpinionComponent extends BasePage implements OnInit, OnChanges {
   copyDestinationNumber: number;
   idCopias: number;
   year: number;
-
+  SPECIAL_STRINGPATTERN: '[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ/s.,-()Üü“”;:]*';
   constructor(
     private fb: FormBuilder,
     private oficialDictationService: OficialDictationService,
@@ -115,7 +112,8 @@ export class OpinionComponent extends BasePage implements OnInit, OnChanges {
     private dictationService_1: DictationService,
     private securityService: SecurityService,
     private notificationService: NotificationService,
-    private token: AuthService
+    private token: AuthService,
+    private segAcessXAreasService: SegAcessXAreasService
   ) {
     super();
 
@@ -141,7 +139,7 @@ export class OpinionComponent extends BasePage implements OnInit, OnChanges {
   }
   validUserToolbar: any;
   async ngOnInit() {
-    this.prepareForm();
+    await this.prepareForm();
     this.year = new Date().getFullYear();
     console.log('this.token.decodeToken()', this.token.decodeToken());
     this.options = [
@@ -156,7 +154,7 @@ export class OpinionComponent extends BasePage implements OnInit, OnChanges {
     );
   }
 
-  prepareForm() {
+  async prepareForm() {
     this.form = this.fb.group({
       expedientNumber: [
         null,
@@ -164,7 +162,7 @@ export class OpinionComponent extends BasePage implements OnInit, OnChanges {
       ],
       registerNumber: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(11)],
+        [Validators.pattern(NUMBERS_PATTERN), Validators.maxLength(11)],
       ],
       wheelNumber: [
         null,
@@ -216,7 +214,7 @@ export class OpinionComponent extends BasePage implements OnInit, OnChanges {
       typePerson_I: [null, null],
       senderUser_I: [null, null],
       personaExt_I: [null, null],
-      key: [null, [Validators.pattern(KEYGENERATION_PATTERN)]],
+      key: [null],
       numberDictamination: [
         null,
         [Validators.pattern(NUMBERS_PATTERN), Validators.maxLength(11)],
@@ -397,9 +395,9 @@ Obtiene los filtros y en base a ellos se hace la búsqueda
           SearchFilter.BTW
         );
 
-      // // this.filterParamsLocal
-      // //   .getValue()
-      // //   .addFilter('dictDate', this.year + '-01-01' + ',' + this.year + '-12-31', SearchFilter.BTW);
+      // this.filterParamsLocal
+      //   .getValue()
+      //   .addFilter('dictDate', this.year + '-01-01' + ',' + this.year + '-12-31', SearchFilter.BTW);
 
       this.filterParamsLocal
         .getValue()
@@ -436,6 +434,7 @@ Obtiene los filtros y en base a ellos se hace la búsqueda
   }
 
   idDict: any;
+  keyArmyNumber: any;
   onEnterSearch(filterParams: BehaviorSubject<FilterParams>) {
     let valida: boolean = false;
     this.dictationService
@@ -447,6 +446,7 @@ Obtiene los filtros y en base a ellos se hace la búsqueda
           if (resp.count > 1) {
             this.loadModal(2, filterParams);
           } else {
+            this.keyArmyNumber = resp.data[0].keyArmyNumber;
             this.intIDictation = resp.data[0];
             this.idDict = this.intIDictation.id;
             this.form
@@ -504,6 +504,7 @@ Obtiene los filtros y en base a ellos se hace la búsqueda
         this.form.get('wheelNumber').setValue(data.wheelNumber);
         this.form.get('typeDict').setValue(data.typeDict);
         this.form.get('key').setValue(data.passOfficeArmy);
+        this.keyArmyNumber = data.keyArmyNumber;
         let obj = {
           officialNumber: this.form.get('registerNumber').value,
           typeDict: this.form.get('typeDict').value,
@@ -706,11 +707,38 @@ carga la  información de la parte media de la página
       tap(async response => {
         this.users$$ = new DefaultSelect(response.data, response.count);
         this.nameOfUser = response.data[0].name;
-        console.log('this.nameOfUser', this.nameOfUser);
-        this.department = await this.getRTdictaAarusr(response.data[0].user, 1);
+        console.log('this.nameOfUser', response);
+        this.department = await this.getsegAcessXAreasService(
+          response.data[0].id
+        );
+        console.log('this.department', this.department);
         this.getDescUserPuesto2(response.data[0].positionKey);
       })
     );
+  }
+
+  getsegAcessXAreasService(user: any) {
+    return new Promise((resolve, reject) => {
+      const params = new ListParams();
+      params['filter.user'] = `$eq:${user}`;
+      this.segAcessXAreasService.getAll(params).subscribe({
+        next: async (resp: any) => {
+          console.log('USER222', resp);
+          let result = resp.data.map(async (item: any) => {
+            item['departmentD'] = item.departament.description;
+          });
+
+          resolve(resp.data[0].departmentD);
+
+          this.loading = false;
+        },
+        error: err => {
+          resolve(null);
+          this.loading = false;
+          return;
+        },
+      });
+    });
   }
 
   getUsers$$($params: ListParams) {
@@ -1063,7 +1091,7 @@ carga la  información de la parte media de la página
       this.securityService.getStationClue(expedientNumber).subscribe({
         next: (resp: any) => {
           this.loading = false;
-          resolve(resp);
+          resolve(resp.data);
         },
         error: err => {
           this.loading = false;
@@ -1081,7 +1109,7 @@ carga la  información de la parte media de la página
         .subscribe({
           next: (resp: any) => {
             this.loading = false;
-            resolve(resp);
+            resolve(resp.data);
           },
           error: err => {
             this.loading = false;
@@ -1099,7 +1127,7 @@ carga la  información de la parte media de la página
         .subscribe({
           next: (resp: any) => {
             this.loading = false;
-            resolve(resp);
+            resolve(resp.data);
           },
           error: err => {
             this.loading = false;
@@ -1165,41 +1193,47 @@ carga la  información de la parte media de la página
     let vDELEGAREM: any;
     let vNOTR_FINAL: any;
     let vT_ACTA: string;
-    let vDELAGACION: string;
-    let vCLAVE_ARMADA: string;
+    let vDELAGACION: string = '';
+    let vCLAVE_ARMADA: string = '';
 
-    console.log('FORM', this.form.value);
+    // console.log('FORM', this.form.value);
 
-    if (this.form.get('typeDict').value == 'PROCEDENCIA') {
+    if (this.form.get('typeDict_').value == 'PROCEDENCIA') {
       const getStationClue: any = await this.getStationClue(
         this.form.value.expedientNumber
       );
-      console.log('AASD', getStationClue);
+      console.log('AQUIIIIIIIIII', getStationClue);
       if (getStationClue.length > 0) {
         vEMISORA = getStationClue[0].nombre_emisora;
         vTRANSF = getStationClue[0].clave_transferente;
       }
 
       // REMITENTE
-      const getIdDelegationDelegationForwards: any =
+      console.log(
+        'this.form.value.senderUserRemitente',
+        this.form.value.senderUserRemitente
+      );
+      const getIdDelegationDelegationForwards_: any =
         await this.getIdDelegationDelegationForwards(
           this.form.value.senderUserRemitente
         );
-      console.log('AASD2', getIdDelegationDelegationForwards);
-      if (getIdDelegationDelegationForwards.length > 0) {
-        vNO_DELREM = getIdDelegationDelegationForwards[0].id_delegacion;
-        vDELEGAREM = getIdDelegationDelegationForwards[0].delegacion;
+      console.log('AASD2', getIdDelegationDelegationForwards_);
+      if (getIdDelegationDelegationForwards_.length > 0) {
+        console.log('SI ENTRA1');
+        vNO_DELREM = getIdDelegationDelegationForwards_[0].id_delegacion;
+        vDELEGAREM = getIdDelegationDelegationForwards_[0].delegacion;
       }
 
       // DESTINATARIO
-      const getIdDelegationDelegationAddressee: any =
+      const getIdDelegationDelegationAddressee_: any =
         await this.getIdDelegationDelegationAddressee(
           this.form.value.addressee
         );
-      console.log('AASD3', getIdDelegationDelegationAddressee);
-      if (getIdDelegationDelegationAddressee.length > 0) {
-        vNO_DELDEST = getIdDelegationDelegationAddressee[0].id_delegacion;
-        vDELEGADEST = getIdDelegationDelegationAddressee[0].delegacion;
+      console.log('AASD3', getIdDelegationDelegationAddressee_);
+      if (getIdDelegationDelegationAddressee_.length > 0) {
+        console.log('SI ENTRA2');
+        vNO_DELDEST = getIdDelegationDelegationAddressee_[0].id_delegacion;
+        vDELEGADEST = getIdDelegationDelegationAddressee_[0].delegacion;
       }
 
       // NOTIFICATION
@@ -1208,7 +1242,28 @@ carga la  información de la parte media de la página
       if (getNotification_.length > 0) {
         vNOTR_FINAL = getNotification_[0].transference;
       }
+      this.form.get('key').value;
+      const today = new Date();
+      const month = String(today.getMonth() + 1).padStart(2, '0');
+      const day = String(today.getDate()).padStart(2, '0');
+      const year = today.getFullYear();
 
+      let armyKe = 0;
+      if (this.keyArmyNumber == null) {
+        armyKe = 0;
+      } else {
+        armyKe = this.keyArmyNumber;
+      }
+      const ln_oficio = armyKe; // Reemplaza 123 por el valor de LN_OFICIO
+      console.log(ln_oficio, 'aaaaaa');
+      const ln_oficio_str = ln_oficio.toString(); // Convierte el número a una cadena de caracteres
+      // console.log("3", ln_oficio_str)
+      // Rellena la cadena de caracteres con ceros a la izquierda hasta que tenga una longitud de 5 caracteres
+      const ln_oficio_padded = ln_oficio_str.padStart(5, '0');
+      // console.log("2", ln_oficio_padded)
+      // Remueve los espacios en blanco a la izquierda de la cadena de caracteres
+      const ln_oficio_trimmed = ln_oficio_padded.trimStart();
+      // console.log("1", ln_oficio_trimmed)
       if (vNOTR_FINAL == 1 || vNOTR_FINAL == 3) {
         vT_ACTA = 'A';
       } else {
@@ -1218,12 +1273,18 @@ carga la  información de la parte media de la página
       if (vNO_DELDEST == 0) {
         vDELAGACION = 'CRB';
         if (vTRANSF == 'SAT') {
-          vCLAVE_ARMADA = `${vT_ACTA}/${vEMISORA}/ADM/${vDELAGACION}/${vDELAGACION}/CONSECUTIVO/AÑO/MES`;
+          vCLAVE_ARMADA = `${vT_ACTA}/${
+            vEMISORA == undefined ? ' ' : vEMISORA
+          }/ADM/${vDELAGACION}/${vDELAGACION}/${ln_oficio_trimmed}/${year}/${month}`;
         } else {
-          vCLAVE_ARMADA = `${vT_ACTA}/${vEMISORA}/ADM/${vDELAGACION}/${vDELAGACION}/CONSECUTIVO/AÑO/MES`;
+          vCLAVE_ARMADA = `${vT_ACTA}/${
+            vTRANSF == undefined ? ' ' : vTRANSF
+          }/ADM/${vDELAGACION}/${vDELAGACION}/${ln_oficio_trimmed}/${year}/${month}`;
         }
       } else {
+        console.log('SI ENTRA3', vDELEGADEST);
         vDELAGACION = vDELEGADEST;
+
         if (vNO_DELREM == 3) {
           if (vNO_DELDEST == 2) {
             vDELAGACION = vDELEGAREM;
@@ -1231,11 +1292,17 @@ carga la  información de la parte media de la página
         }
 
         if (vTRANSF == 'SAT') {
-          vCLAVE_ARMADA = `${vT_ACTA}/${vEMISORA}/ADM/${vDELAGACION}/${vDELAGACION}/CONSECUTIVO/AÑO/MES`;
+          vCLAVE_ARMADA = `${vT_ACTA}/${
+            vEMISORA == undefined ? ' ' : vEMISORA
+          }/ADM/${vDELAGACION}/${vDELAGACION}/${ln_oficio_trimmed}/${year}/${month}`;
         } else {
-          vCLAVE_ARMADA = `${vT_ACTA}/${vEMISORA}/ADM/${vDELAGACION}/${vDELAGACION}/CONSECUTIVO/AÑO/MES`;
+          // vCLAVE_ARMADA = `${vT_ACTA}/${(vTRANSF == undefined) ? ' ' : vTRANSF}/ADM/${vDELAGACION}/${vDELAGACION}/?/${year}/${month}`;
+          vCLAVE_ARMADA = `${vT_ACTA}/${
+            vTRANSF == undefined ? ' ' : vTRANSF
+          }/ADM/${vDELAGACION}/${vDELAGACION}/${ln_oficio_trimmed}/${year}/${month}`;
         }
       }
+      console.log('vCLAVE_ARMADA', vCLAVE_ARMADA);
     }
 
     let body = {
@@ -1247,49 +1314,75 @@ carga la  información de la parte media de la página
     console.log('AASD5 ', VARIABLES);
 
     let valor1 = VARIABLES.includes('4');
-    // REPORTE PROCEDENCIA 1 //
+    // REPORTE PROCEDENCIA 1 // ---------------------------------------------------
     if (valor1 == true && this.form.value.typeDict_ == 'PROCEDENCIA') {
-      this.reporteProcedencia1(this.form.value);
+      let params = {
+        PDEPARTAMENTO: this.department,
+        PELABORO_DICTA: this.nameOfUser,
+        POFICIO: this.oficioDict.officialNumber,
+        PESTADODICT: this.oficioDict.statusOf,
+        PDICTAMEN: this.oficioDict.typeDict,
+        NOME_DICTPRO: vCLAVE_ARMADA,
+      };
+
+      await this.reporteProcedencia1(params);
       // this.alert('success', 'bien1', '');
-    }
+    } // --------------------------------------------------------------------------
 
     let valor2 = VARIABLES.includes('4');
-    // REPORTE PROCEDENCIA 2 //
+    // REPORTE PROCEDENCIA 2 // ---------------------------------------------------
     if (valor2 == true && this.form.value.typeDict_ != 'PROCEDENCIA') {
-      this.reporteProcedencia2(this.form.value);
-      // this.alert('success', 'bien1', '');
-    }
+      let params = {
+        PDEPARTAMENTO: this.department,
+        PELABORO_DICTA: this.nameOfUser,
+        POFICIO: this.oficioDict.officialNumber,
+        PESTADODICT: this.oficioDict.statusOf,
+        PDICTAMEN: this.oficioDict.typeDict,
+        NOME_DICTPRO: vCLAVE_ARMADA,
+      };
+
+      await this.reporteProcedencia2(params);
+    } // --------------------------------------------------------------------------
 
     let valor3 = VARIABLES.includes('A');
-    // REPORTE PROCEDENCIA 3 //
+    // REPORTE PROCEDENCIA 3 // ---------------------------------------------------
     if (valor3 == true && this.form.value.typeDict_ != 'ABANDONO') {
-      if (this.form.value.typeDict != 'PROCEDENCIA') {
-        this.reporteProcedencia3(this.form.value);
+      let params: any = {
+        PDEPARTAMENTO: this.department,
+        PELABORO_DICTA: this.nameOfUser,
+        POFICIO: this.oficioDict.officialNumber,
+        PESTADODICT: this.oficioDict.statusOf,
+        PDICTAMEN: this.oficioDict.typeDict,
+      };
+      if (this.form.value.typeDict == 'PROCEDENCIA') {
+        params.NOME_DICTPRO = vCLAVE_ARMADA;
       }
-    }
+
+      await this.reporteProcedencia3(params);
+    } // --------------------------------------------------------------------------
 
     let valor4 = VARIABLES.includes('T');
-    // REPORTE PROCEDENCIA 4 //
+    // REPORTE PROCEDENCIA 4 // ---------------------------------------------------
     if (valor4 == true && this.form.value.typeDict_ != 'ABANDONO') {
-      if (this.form.value.typeDict != 'PROCEDENCIA') {
-        this.reporteProcedencia3(this.form.value);
+      let params: any = {
+        PDEPARTAMENTO: this.department,
+        PELABORO_DICTA: this.nameOfUser,
+        POFICIO: this.oficioDict.officialNumber,
+        PESTADODICT: this.oficioDict.statusOf,
+        PDICTAMEN: this.oficioDict.typeDict,
+      };
+      if (this.form.value.typeDict == 'PROCEDENCIA') {
+        params.NOME_DICTPRO = vCLAVE_ARMADA;
       }
-    }
+      await this.reporteProcedencia3(params);
+    } // --------------------------------------------------------------------------
     // REPORTE ABANDONO //
     if (this.form.value.typeDict_ == 'ABANDONO') {
-      this.reporteAbandono(this.form.value);
-    }
+      await this.reporteAbandono(this.form.value);
+    } // --------------------------------------------------------------------------
   }
 
-  reporteProcedencia1(data: any) {
-    let params = {
-      PDEPARTAMENTO: this.department,
-      PELABORO_DICTA: this.nameOfUser,
-      POFICIO: this.oficioDict.officialNumber,
-      PESTADODICT: this.oficioDict.statusOf,
-      PDICTAMEN: this.oficioDict.typeDict,
-    };
-
+  async reporteProcedencia1(params: any) {
     this.siabServiceReport
       .fetchReport('RGENADBDICTAMASIV_EXT', params)
       .subscribe({
@@ -1312,15 +1405,7 @@ carga la  información de la parte media de la página
     this.onLoadToast('success', 'Reporte Generado', '');
   }
 
-  reporteProcedencia2(data: any) {
-    let params = {
-      PDEPARTAMENTO: this.department,
-      PELABORO_DICTA: this.nameOfUser,
-      POFICIO: this.oficioDict.officialNumber,
-      PESTADODICT: this.oficioDict.statusOf,
-      PDICTAMEN: this.oficioDict.typeDict,
-    };
-
+  async reporteProcedencia2(params: any) {
     this.siabServiceReport.fetchReport('RGENADBDICTAMASIV', params).subscribe({
       next: response => {
         const blob = new Blob([response], { type: 'application/pdf' });
@@ -1341,15 +1426,7 @@ carga la  información de la parte media de la página
     this.onLoadToast('success', 'Reporte Generado', '');
   }
 
-  reporteProcedencia3(data: any) {
-    let params = {
-      PDEPARTAMENTO: this.department,
-      PELABORO_DICTA: this.nameOfUser,
-      POFICIO: this.oficioDict.officialNumber,
-      PESTADODICT: this.oficioDict.statusOf,
-      PDICTAMEN: this.oficioDict.typeDict,
-    };
-
+  async reporteProcedencia3(params: any) {
     this.siabServiceReport.fetchReport('RGENADBDICTAMASIV', params).subscribe({
       next: response => {
         const blob = new Blob([response], { type: 'application/pdf' });
@@ -1370,15 +1447,7 @@ carga la  información de la parte media de la página
     this.onLoadToast('success', 'Reporte Generado', '');
   }
 
-  reporteProcedencia4(data: any) {
-    let params = {
-      PDEPARTAMENTO: this.department,
-      PELABORO_DICTA: this.nameOfUser,
-      POFICIO: this.oficioDict.officialNumber,
-      PESTADODICT: this.oficioDict.statusOf,
-      PDICTAMEN: this.oficioDict.typeDict,
-    };
-
+  async reporteProcedencia4(params: any) {
     this.siabServiceReport.fetchReport('RGENADBDICTAMASIV', params).subscribe({
       next: response => {
         const blob = new Blob([response], { type: 'application/pdf' });
@@ -1399,12 +1468,13 @@ carga la  información de la parte media de la página
     this.onLoadToast('success', 'Reporte Generado', '');
   }
 
-  reporteAbandono(data: any) {
+  async reporteAbandono(data: any) {
     let params = {
-      PNOOFICIO: data.registerNumber,
-      PTIPODIC: data.typeDict,
+      // PNOOFICIO: 53,
+      PNOOFICIO: parseInt(data.registerNumber),
+      PTIPODIC: data.typeDict_,
     };
-
+    console.log('params AQUI', params);
     this.siabServiceReport.fetchReport('RGENABANDEC', params).subscribe({
       next: response => {
         const blob = new Blob([response], { type: 'application/pdf' });
