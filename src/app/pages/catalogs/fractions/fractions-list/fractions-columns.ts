@@ -1,5 +1,4 @@
 import { INorm } from 'src/app/core/models/catalogs/norm.model';
-import { ISiabClasification } from 'src/app/core/models/catalogs/siab-clasification.model';
 
 export const FRACTIONS_COLUMNS = {
   id: {
@@ -44,15 +43,20 @@ export const FRACTIONS_COLUMNS = {
     },
   },
 
-  clasificationId: {
+  clasificationName: {
+    title: 'Clasificación',
+    type: 'string',
+    sort: false,
+  },
+
+  /*clasificationId: {
     title: 'Clasificación',
     type: 'string',
     valuePrepareFunction: (clasification: ISiabClasification) => {
       return clasification?.sssubtypeDescription;
     },
     sort: false,
-  },
-
+  },*/
   unit: {
     title: 'Unidad',
     type: 'string',
