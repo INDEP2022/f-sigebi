@@ -8,7 +8,7 @@
         <div class="col-md-4">
           <form-field
             [control]="delegationStateForm.get('regionalDelegation')"
-            label="ID">
+            label="Codigo">
             <input
               type="string"
               class="form-control"
@@ -21,14 +21,16 @@
               [form]="delegationStateForm"
               control="stateCode"
               [data]="states"
-              value="descCondition"
+              value="codeCondition"
               bindLabel="descCondition"
               label="Estado"
               (fetchItems)="getStates($event)"
               (change)="stateChange($event)"></ngx-select>
           </form-field>
         </div>
-        <div class="col-md-4">
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-6">
           <form-field
             [control]="delegationStateForm.get('keyState')"
             label="Clave de estado">
@@ -38,9 +40,7 @@
               formControlName="keyState" />
           </form-field>
         </div>
-      </div>
-      <div class="row pt-5">
-        <div class="col-md-3">
+        <div class="col-md-6">
           <form-field
             [control]="delegationStateForm.get('version')"
             label="Versi&oacute;n">
@@ -50,8 +50,9 @@
               formControlName="version" />
           </form-field>
         </div>
-
-        <div class="col-md-3 d-flex">
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-12 d-flex">
           <form-radio label="Activo">
             <input type="radio" formControlName="status" value="1" />
           </form-radio>

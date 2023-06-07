@@ -31,7 +31,7 @@ export class LegalSupportFormComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.legalSupportForm = this.fb.group({
-      id: [null, [Validators.required, Validators.maxLength(5)]],
+      id: [null, [Validators.maxLength(5)]],
       support: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
