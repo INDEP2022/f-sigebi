@@ -7,7 +7,10 @@
       <div class="row">
         <div class="col-md-5">
           <form-field [control]="form.get('bankCode')" label="Clave del Banco">
-            <input type="text" class="form-control" formControlName="bankCode" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="bankCode" />
           </form-field>
         </div>
         <div class="col-md-7">
@@ -24,10 +27,11 @@
           </form-field>
         </div> -->
         <div class="col-md-6">
-          <form-field [control]="form.get('code')" label="C&oacute;digo de Banco">
+          <form-field
+            [control]="form.get('code')"
+            label="C&oacute;digo de Banco">
             <input type="text" class="form-control" formControlName="code" />
           </form-field>
-
         </div>
         <div class="col-md-6">
           <form-field [control]="form.get('ifdsc')" label="IFDSC">
@@ -60,7 +64,10 @@
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <confirm-button [disabled]="!form.valid" [loading]="loading" (confirm)="confirm()"></confirm-button>
+        <confirm-button
+          [disabled]="!form.valid"
+          [loading]="loading"
+          (confirm)="confirm()"></confirm-button>
       </div>
       <div class="m-3">
         <button type="button" class="btn btn-danger active" (click)="close()">

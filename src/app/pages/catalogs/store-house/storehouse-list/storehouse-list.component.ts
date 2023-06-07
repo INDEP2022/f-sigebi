@@ -73,14 +73,15 @@ export class StorehouseListComponent extends BasePage implements OnInit {
       console.log(storeHouse);
       if (question.isConfirmed) {
         this.delete(storeHouse);
-
       }
     });
   }
 
   delete(data: any) {
     this.storehouseService.remove(data).subscribe({
-      next: () => { this.getStorehouses(), Swal.fire('Borrado', 'BODE', 'success') }
+      next: () => {
+        this.getStorehouses(), Swal.fire('Borrado', 'BODE', 'success');
+      },
     });
   }
 }
