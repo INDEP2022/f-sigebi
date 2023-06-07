@@ -1432,10 +1432,6 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
                 .paOpenProceedingProgam(modelPaOpen)
                 .subscribe(
                   res => {
-                    this.labelActa = 'Cerrar acta';
-                    this.btnCSSAct = 'btn-primary';
-                    this.form.get('statusProceeding').setValue('ABIERTA');
-                    this.reopening = true;
                     const paramsF = new FilterParams();
                     paramsF.addFilter(
                       'valUser',
@@ -1453,12 +1449,12 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
                               .paRegresaEstAnterior(modelPaOpen)
                               .subscribe(
                                 res => {
-                                  this.labelActa = 'Abrir acta';
+                                  this.labelActa = 'Cerrar acta';
                                   this.btnCSSAct = 'btn-primary';
                                   this.form
                                     .get('statusProceeding')
-                                    .setValue('CERRADO');
-
+                                    .setValue('ABIERTA');
+                                  this.reopening = true;
                                   const btn =
                                     document.getElementById('expedient-number');
                                   this.render.removeClass(btn, 'disabled');
@@ -1771,8 +1767,6 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
                   }
                 });
               }
-            } else {
-              this.alert('warning', 'No se ha realizado el escaneo', '');
             }
           },
           err => {
@@ -1839,22 +1833,16 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
   validateFolio() {
     this.serviceDocuments
       .getByFolio(this.form.get('folioEscaneo').value)
-      .subscribe(
-        res => {
-          const data = JSON.parse(JSON.stringify(res));
-          const scanStatus = data.data[0]['scanStatus'];
-          console.log(scanStatus);
-          if (scanStatus === 'ESCANEADO') {
-            this.scanStatus = true;
-          } else {
-            this.scanStatus = false;
-          }
-          console.log(this.scanStatus);
-        },
-        err => {
+      .subscribe(res => {
+        const data = JSON.parse(JSON.stringify(res));
+        const scanStatus = data.data[0]['scanStatus'];
+        console.log(scanStatus);
+        if (scanStatus === 'ESCANEADO') {
+          this.scanStatus = true;
+        } else {
           this.scanStatus = false;
         }
-      );
+      });
   }
 
   //*Agregar bienes
