@@ -14,7 +14,7 @@ import { IRepository } from './interfaces/repository.interface';
 
 @Injectable({ providedIn: 'root' })
 export class Repository<T> implements IRepository<T> {
-  constructor(public readonly httpClient: HttpClient) { }
+  constructor(public readonly httpClient: HttpClient) {}
 
   getAllPaginated(
     route: string,
@@ -126,7 +126,7 @@ export class Repository<T> implements IRepository<T> {
   }
 
   private buildRoute(route: string) {
-    debugger;
+    // debugger;
     const paths = route.split('/');
     paths.shift();
     if (paths.length === 0) {
