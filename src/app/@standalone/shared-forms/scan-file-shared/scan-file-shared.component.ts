@@ -139,7 +139,7 @@ export class ScanFileSharedComponent extends BasePage implements OnInit {
                           this.form.get(this.formControlName).setValue(res.id);
 
                           const params = {
-                            pn_folio: res.id,
+                            pn_folio: res.id
                           };
 
                           this.downloadReport('RGERGENSOLICDIGIT', params);
