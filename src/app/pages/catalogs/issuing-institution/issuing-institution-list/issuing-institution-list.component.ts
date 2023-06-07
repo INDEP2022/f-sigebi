@@ -65,7 +65,7 @@ export class IssuingInstitutionListComponent
       actions: {
         columnTitle: 'Acciones',
         edit: true,
-        delete: true,
+        delete: false,
         add: false,
         position: 'right',
       },
@@ -178,7 +178,7 @@ export class IssuingInstitutionListComponent
 
   //Método para borrar Clasificaciones instituciones
   delete2(id: number) {
-    this.institutionClasificationService.remove(id).subscribe({
+    this.institutionClasificationService.remove2(id).subscribe({
       next: () => this.getInstitutionClassification(),
     });
   }
@@ -302,7 +302,6 @@ export class IssuingInstitutionListComponent
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(issuingInstitution.id);
-        Swal.fire('Borrado', '', 'success');
       }
     });
   }
@@ -311,9 +310,10 @@ export class IssuingInstitutionListComponent
   delete(id: number) {
     const idInstitute = { ...this.institutes };
     this.issuingInstitutionService.remove2(id).subscribe({
-      next: () => (
-        this.getIssuingInstitution(idInstitute.id), (this.loading2 = true)
-      ),
+      next: () => {
+        Swal.fire('Borrado', '', 'success');
+        this.getIssuingInstitution(idInstitute.id), (this.loading2 = true);
+      },
     });
   }
 
