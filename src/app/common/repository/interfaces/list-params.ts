@@ -115,6 +115,7 @@ export enum SearchFilter {
   LTE = '$lte',
   BTW = '$btw',
   OR = '$or',
+  NOTIN = '$not:$in',
 }
 
 export interface DynamicFilterLike {
