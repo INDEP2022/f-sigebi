@@ -136,7 +136,14 @@ export abstract class RelateDocumentsResponse extends BasePage {
     );
   }
 
-  getGoodsManagement(list: ListParams) {
-    return firstValueFrom(this.serviceOficces.getGoodsJobManagement());
+  getGoodsManagement(list: ListParams): Promise<number> {
+    return firstValueFrom(
+      this.serviceOficces.getGoodsJobManagement(list).pipe(
+        map(x => x.count),
+        catchError(() => {
+          return of(0);
+        })
+      )
+    );
   }
 }
