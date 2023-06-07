@@ -4,6 +4,21 @@
   </div>
 
   <div body>
+    <!--<div>
+      <button type="button" class="btn btn-danger active" (click)="goBack()">
+        Regresar
+        <i class="fas fa-arrow-circle-left"></i>
+      </button>
+    </div>-->
+
+    <div>
+      <button class="btn btn-primary active btn-sm m-2" (click)="goBack()">
+        Regresar
+        <i class="fas fa-arrow-circle-left"></i>
+      </button>
+    </div>
+    <br /><br />
+
     <form [formGroup]="turnForm" class="form-material">
       <div class="row">
         <!-- <form-field
@@ -216,14 +231,6 @@
 
       <div class="row">
         <div class="d-flex justify-content-center">
-          <div class="m-3">
-            <button
-              type="button"
-              class="btn btn-danger active"
-              (click)="goBack()">
-              Regresar
-            </button>
-          </div>
           <div class="m-3">
             <confirm-button
               text="Guardar"

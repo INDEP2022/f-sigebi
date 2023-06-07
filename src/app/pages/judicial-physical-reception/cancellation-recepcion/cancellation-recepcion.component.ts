@@ -1071,7 +1071,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
     this.form.get('elabora').setValue(null);
     this.form.get('testigo').setValue(null);
     this.form.get('statusProceeding').reset();
-    this.form.get('folioEscaneo').reset()
+    this.form.get('folioEscaneo').reset();
     this.labelActa = 'Cerrar acta';
     this.btnCSSAct = 'btn-primary';
     this.act2Valid = false;
@@ -2841,7 +2841,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                 this.btnCSSAct = 'btn-success';
                 this.idProceeding = idProcee;
                 this.getGoodsActFn();
-                this.getGoodsFn()
+                this.getGoodsFn();
                 this.alert('success', 'Acta cerrada', 'El acta fue cerrada');
                 this.inputsInProceedingClose();
               },
@@ -2925,7 +2925,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                       );
                       this.inputsInProceedingClose();
                       this.getGoodsActFn();
-                      this.getGoodsFn()
+                      this.getGoodsFn();
                     },
                     err => {
                       console.log(err);
