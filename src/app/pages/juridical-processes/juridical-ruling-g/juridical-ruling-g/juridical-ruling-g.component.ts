@@ -298,7 +298,9 @@ export class JuridicalRulingGComponent
     selectedRowIndex: -1,
     mode: 'external',
     columns: { ...DOCUMENTS_COLUMNS },
-
+    rowClassFunction: (row: any) => {
+      return 'bg-primary text-white';
+    },
     noDataMessage: 'No se encontrarón registros',
   };
 
