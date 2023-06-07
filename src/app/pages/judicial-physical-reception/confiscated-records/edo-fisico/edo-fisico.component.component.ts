@@ -3,9 +3,11 @@ import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
+import { IDetailWithIndEdo } from 'src/app/core/models/ms-proceedings/detail-proceedings-delivery-reception.model';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
 import { ClassifyGoodService } from 'src/app/core/services/ms-classifygood/ms-classifygood.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { DetailProceeDelRecService } from 'src/app/core/services/ms-proceedings/detail-proceedings-delivery-reception.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { SelectElementComponent } from 'src/app/shared/components/select-element-smarttable/select-element';
 
@@ -48,8 +50,8 @@ export class EdoFisicoComponent extends BasePage implements OnInit {
         type: 'custom',
         sort: false,
         valuePrepareFunction: (cell: any, row: any) => {
-          if (row.good && row.good[`val${row.noColumna}`]) {
-            return row.good[`val${row.noColumna}`];
+          if (row.good && row.good[`val${row.vNoColumna}`]) {
+            return row.good[`val${row.vNoColumna}`];
           } else {
             return null;
           }
@@ -59,7 +61,7 @@ export class EdoFisicoComponent extends BasePage implements OnInit {
           const values = ['MALO', 'BUENO', 'REGULAR', 'OTRO'];
           instance.values.emit(values);
           instance.toggle.subscribe((data: any) => {
-            data.row.good[`val${data.row.noColumna}`] =
+            data.row.good[`val${data.row.vNoColumna}`] =
               data.toggle == 'OTRO' ? null : data.toggle;
           });
         },
@@ -69,18 +71,29 @@ export class EdoFisicoComponent extends BasePage implements OnInit {
   };
   dataGoods = new LocalDataSource();
   goodData: any[];
+  idProceeding: any
   constructor(
     private bsModel: BsModalRef,
     private serviceClassifyGood: ClassifyGoodService,
     private serviceGoodQuery: GoodsQueryService,
-    private serviceGood: GoodService
+    private serviceGood: GoodService,
+    private serviceDetailProc: DetailProceeDelRecService,
   ) {
     super();
   }
 
   ngOnInit(): void {
     /* this.verifyEstatus(); */
-    this.dataGoods = new LocalDataSource(this.goodData);
+    const model: IDetailWithIndEdo = {
+      no_acta: parseInt(this.idProceeding),
+      vIndEdoFisicod: true
+    };
+
+    this.serviceDetailProc.getAllwithEndFisico(model).subscribe(
+      res => {
+        this.dataGoods.load(res.data)
+      }
+    )
   }
 
   close() {
@@ -96,8 +109,8 @@ export class EdoFisicoComponent extends BasePage implements OnInit {
         generalModel.set('id', parseInt(item.good.id.toString()));
         generalModel.set('goodId', parseInt(item.good.goodId.toString()));
         generalModel.set(
-          `val${item.noColumna}`,
-          item.good[`val${item.noColumna}`]
+          `val${item.vNoColumna}`,
+          item.good[`val${item.vNoColumna}`]
         );
         const jsonModel = JSON.parse(
           JSON.stringify(Object.fromEntries(generalModel))
@@ -150,7 +163,7 @@ export class EdoFisicoComponent extends BasePage implements OnInit {
     let v_no_etiqueta: number;
     return new Promise((resolve, reject) => {
       if (e.indEdoFisico) {
-        if (e.good[`val${e.noColumna}`] == 'MALO') {
+        if (e.good[`val${e.vNoColumna}`] == 'MALO') {
           const paramsF = new FilterParams();
           paramsF.addFilter('type', 'EDO_FIS');
           paramsF.addFilter('classifyGoodNumber', e.good.goodClassNumber);
@@ -234,7 +247,7 @@ export class EdoFisicoComponent extends BasePage implements OnInit {
                   );
               }
             );
-        } else if (e.good[`val${e.noColumna}`] == 'REGULAR') {
+        } else if (e.good[`val${e.vNoColumna}`] == 'REGULAR') {
           const paramsF = new FilterParams();
           paramsF.addFilter('type', 'EDO_FIS');
           paramsF.addFilter('classifyGoodNumber', e.good.goodClassNumber);
