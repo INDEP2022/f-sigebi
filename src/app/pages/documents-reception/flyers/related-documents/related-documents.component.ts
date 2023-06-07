@@ -24,7 +24,6 @@ import { ILegend } from 'src/app/core/models/catalogs/legend.model';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { INotification } from 'src/app/core/models/ms-notification/notification.model';
 import { ICopiesJobManagementDto } from 'src/app/core/models/ms-officemanagement/good-job-management.model';
-import { IMJobManagement } from 'src/app/core/models/ms-officemanagement/m-job-management.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { DictationXGood1Service } from 'src/app/core/services/ms-dictation/dictation-x-good1.service';
@@ -43,6 +42,8 @@ import {
   POSITVE_NUMBERS_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
+import { AddCopyComponent } from 'src/app/pages/juridical-processes/abandonments-declaration-trades/abandonments-declaration-trades/add-copy/add-copy.component';
+import { EXTERNOS_COLUMS_OFICIO } from 'src/app/pages/juridical-processes/abandonments-declaration-trades/abandonments-declaration-trades/columns';
 import { LegalOpinionsOfficeService } from 'src/app/pages/juridical-processes/depositary/legal-opinions-office/legal-opinions-office/services/legal-opinions-office.service';
 import { IJuridicalDocumentManagementParams } from 'src/app/pages/juridical-processes/file-data-update/interfaces/file-data-update-parameters';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -65,6 +66,7 @@ import {
 } from './related-documents-message';
 import { RelateDocumentsResponse } from './related-documents-response';
 import { RelatedDocumentsService } from './services/related-documents.service';
+
 @Component({
   selector: 'app-related-documents',
   templateUrl: './related-documents.component.html',
@@ -155,7 +157,7 @@ export class RelatedDocumentsComponent
   };
   pantallaActual: string = '';
   disabledRadio: boolean = false;
-  oficioGestion: IMJobManagement;
+  // oficioGestion: IMJobManagement;
   disabledAddresse: boolean = false;
   data1: any = [];
   statusOf: string = undefined;
@@ -173,9 +175,13 @@ export class RelatedDocumentsComponent
   showDestinatario: boolean = false;
   showDestinatarioInput: boolean = false;
   configTableCCp = ConfigTableCcp;
+
+  settings3 = { ...this.settings };
+  copyOficio: any[] = [];
+
   constructor(
     private fb: FormBuilder,
-    private flyerService: FlyersService,
+    protected flyerService: FlyersService,
     private route: ActivatedRoute,
     private router: Router,
     private siabService: SiabService,
@@ -198,6 +204,17 @@ export class RelatedDocumentsComponent
     protected mJobManagementService: MJobManagementService
   ) {
     super();
+
+    this.settings3 = {
+      ...this.settings,
+      actions: {
+        edit: false,
+        add: false,
+        delete: true,
+      },
+      hideSubHeader: false,
+      columns: { ...EXTERNOS_COLUMS_OFICIO },
+    };
     RELATED_DOCUMENTS_COLUMNS_GOODS.seleccion = {
       ...RELATED_DOCUMENTS_COLUMNS_GOODS.seleccion,
       onComponentInitFunction: this.onClickSelect,
@@ -250,6 +267,171 @@ export class RelatedDocumentsComponent
       console.log(data);
       data.row.seleccion = data.toggle;
     });
+  }
+
+  openModalCopy(data: boolean) {
+    this.openFormCcp({
+      dataEdit: data,
+      managementNumber: this.formJobManagement.value.managementNumber,
+    });
+  }
+
+  openFormCcp(context?: Partial<AddCopyComponent>) {
+    const modalRef = this.modalService.show(AddCopyComponent, {
+      initialState: context,
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    });
+    modalRef.content.dataCopy.subscribe((next: any) => {
+      console.log('next', next);
+
+      if (next.typePerson_I == 'I') {
+        let array = this.copyOficio;
+        let arr = [];
+
+        let obj: any = {
+          managementNumber: null,
+          addresseeCopy: next.senderUser_I,
+          delDestinationCopyNumber: null,
+          nomPersonExt: null,
+          personExtInt: 'I',
+          recordNumber: null,
+          personExtInt_: 'INTERNO',
+          userOrPerson: next.senderUser_I + ' - ' + next.personaExt_I,
+        };
+
+        arr.push(obj);
+        for (let i = 0; i < array.length; i++) {
+          arr.push(array[i]);
+        }
+        this.copyOficio = arr;
+      } else if (next.typePerson_I == 'E') {
+        let array = this.copyOficio;
+        let arr = [];
+
+        let obj: any = {
+          managementNumber: null,
+          addresseeCopy: null,
+          delDestinationCopyNumber: null,
+          nomPersonExt: next.personaExt_I,
+          personExtInt: 'E',
+          personExtInt_: 'EXTERNO',
+          recordNumber: null,
+          userOrPerson: next.personaExt_I,
+        };
+
+        arr.push(obj);
+        for (let i = 0; i < array.length; i++) {
+          arr.push(array[i]);
+        }
+        this.copyOficio = arr;
+      }
+    });
+    modalRef.content.refresh.subscribe((next: any) => {
+      this.getCopyOficioGestion__(
+        this.formJobManagement.value.managementNumber
+      );
+    });
+  }
+
+  getCopyOficioGestion__(data: any) {
+    const params = new ListParams();
+    params['filter.managementNumber'] = `$eq:${data}`;
+    // return new Promise((resolve, reject) => {
+    this.mJobManagementService.getCopyOficeManag(data).subscribe({
+      next: async (resp: any) => {
+        // this.filtroPersonaExt = resp.data;
+        let result = resp.data.map(async (data: any) => {
+          if (data.personExtInt == 'I') {
+            data['personExtInt_'] = 'INTERNO';
+            data['userOrPerson'] = await this.getSenders2OfiM2___(
+              data.addresseeCopy
+            );
+          } else if (data.personExtInt == 'E') {
+            data['personExtInt_'] = 'EXTERNO';
+            data['userOrPerson'] = data.nomPersonExt;
+          }
+          // this.usuariosCCP(data)
+        });
+
+        Promise.all(result).then((data: any) => {
+          this.filtroPersonaExt = resp.data;
+          this.copyOficio = resp.data;
+          this.loading = false;
+        });
+
+        console.log('COPYYYY', resp);
+        this.loading = false;
+        // resolve(resp);
+      },
+      error: err => {
+        this.loading = false;
+        // resolve(null);
+      },
+    });
+    // });
+  }
+
+  async getSenders2OfiM2___(user: any) {
+    const params = new ListParams();
+    params['filter.user'] = `$eq:${user}`;
+    return new Promise((resolve, reject) => {
+      this.securityService.getAllUsersTracker(params).subscribe(
+        (data: any) => {
+          // this.formCcpOficio.get('nombreUsuario2').setValue(data.data[0]);
+          console.log('COPYY2', data);
+          let result = data.data.map(async (item: any) => {
+            item['userAndName'] = item.user + ' - ' + item.name;
+          });
+
+          resolve(data.data[0].userAndName);
+
+          this.loading = false;
+        },
+        error => {
+          resolve(null);
+          this.senders = new DefaultSelect();
+        }
+      );
+    });
+  }
+
+  showDeleteAlertCcp(event: any) {
+    console.log(event.id);
+    this.alertQuestion('question', 'Se borra el remitente?', '').then(
+      async question => {
+        if (question.isConfirmed) {
+          if (event.id == undefined) {
+            let arr = [];
+            for (let i = 0; i < this.copyOficio.length; i++) {
+              if (this.copyOficio[i] != event) {
+                arr.push(this.copyOficio[i]);
+              }
+            }
+            this.onLoadToast('success', 'Se eliminó correctamente', '');
+            this.copyOficio = arr;
+          } else {
+            this.mJobManagementService
+              .deleteCopyOficeManag(event.id)
+              .subscribe({
+                next: value => {
+                  let arr = [];
+
+                  for (let i = 0; i < this.copyOficio.length; i++) {
+                    if (this.copyOficio[i].id != event.id) {
+                      arr.push(this.copyOficio[i]);
+                    }
+                  }
+
+                  this.copyOficio = arr;
+                  this.onLoadToast('success', 'Se eliminó correctamente', '');
+                },
+                error: err => {},
+              });
+          }
+        }
+      }
+    );
   }
 
   onClickImprocedente(event: any) {
@@ -510,9 +692,9 @@ export class RelatedDocumentsComponent
     jobType: new FormControl(''), // tipo_oficio
     managementNumber: new FormControl(''), // no_of_gestion
     addressee: new FormControl<{
-      id: number | string;
+      user: number | string;
       name: string;
-      idName: string;
+      userAndName: string;
     }>(null), // destinatario,
     sender: new FormControl<{
       id: number | string;
@@ -527,12 +709,11 @@ export class RelatedDocumentsComponent
     cveManagement: new FormControl(''), // cve_of_gestion,
     city: new FormControl<{
       id: number | string;
-      name: string;
+      legendOffice: string;
       idName: string;
     }>(null), // ciudad,
+    statusOf: new FormControl(''), // estatus_of
   });
-
-  getCity() {}
 
   initForm() {
     const wheelNumber = this.getQueryParams('volante');
@@ -547,11 +728,12 @@ export class RelatedDocumentsComponent
           );
           this.m_job_management = mJobManagement;
           console.log('mjobmanagement ', mJobManagement);
+          // this.
           this.formJobManagement.patchValue({
             ...mJobManagement,
             city: {
               id: mJobManagement.city,
-              name: null,
+              legendOffice: null,
               idName: mJobManagement.city,
             },
             sender: {
@@ -560,12 +742,58 @@ export class RelatedDocumentsComponent
               idName: mJobManagement.sender,
             },
             addressee: {
-              id: mJobManagement.addressee,
+              user: mJobManagement.addressee,
               name: null,
-              idName: mJobManagement.addressee,
+              userAndName: mJobManagement.addressee,
             },
           });
           console.log(this.formJobManagement.value);
+          if (mJobManagement.city) {
+            this.getCity(mJobManagement.city).subscribe({
+              next: res => {
+                this.formJobManagement.get('city').setValue({
+                  id: res.idCity,
+                  legendOffice: res.legendOffice,
+                  idName: res.idCity + ' - ' + res.legendOffice,
+                });
+              },
+            });
+          }
+
+          if (mJobManagement.sender) {
+            const params = new ListParams();
+            params.limit = 1;
+            params['search'] = mJobManagement.sender;
+            this.flyerService.getSenderUser(params).subscribe({
+              next: res => {
+                // console.log(res);
+                const i = res.data[0];
+                this.formJobManagement.get('sender').setValue({
+                  id: i.userDetail.id,
+                  idName: i.userDetail.id + ' - ' + i.userDetail.name,
+                  name: i.userDetail.name,
+                });
+              },
+            });
+          }
+
+          if (mJobManagement.addressee) {
+            const params = new ListParams();
+            params.limit = 1;
+            params['search'] = mJobManagement.addressee;
+            this.securityService
+              .getAllUsersTracker(params)
+              .subscribe((data: any) => {
+                const item = data.data[0];
+                let result = {
+                  user: item.user,
+                  name: item.name,
+                  userAndName: item.user + ' - ' + item.name,
+                };
+
+                this.formJobManagement.get('addressee').setValue(result);
+              });
+          }
         } catch (e) {
           console.log(e);
         }
@@ -580,57 +808,57 @@ export class RelatedDocumentsComponent
     return this.route.snapshot.queryParamMap.get(name);
   }
 
-  async validOficioGestion() {
-    const params = new FilterParams();
-    params.addFilter(
-      'managementNumber',
-      this.managementForm.get('numero').value
-    );
-    params.addFilter('jobBy', 'POR DICTAMEN');
-    await this.flyerService.getMOficioGestion(params.getParams()).subscribe({
-      next: res => {
-        console.log('Dicataminacion', res.data[0]);
-        if (res.count == 0) {
-          // this.getDictationByWheel();
-        } else {
-          this.oficioGestion = res.data[0];
-          this.statusOf = res.data[0].statusOf;
-          this.setDataOficioGestion();
-          // Se tiene el registro
-          this.initFormFromImages();
-        }
-      },
-      error: err => {
-        console.log(err);
-        // this.getDictationByWheel();
-      },
-    });
-  }
+  // async validOficioGestion() {
+  //   const params = new FilterParams();
+  //   params.addFilter(
+  //     'managementNumber',
+  //     this.managementForm.get('numero').value
+  //   );
+  //   params.addFilter('jobBy', 'POR DICTAMEN');
+  //   await this.flyerService.getMOficioGestion(params.getParams()).subscribe({
+  //     next: res => {
+  //       console.log('Dicataminacion', res.data[0]);
+  //       if (res.count == 0) {
+  //         // this.getDictationByWheel();
+  //       } else {
+  //         this.oficioGestion = res.data[0];
+  //         this.statusOf = res.data[0].statusOf;
+  //         this.setDataOficioGestion();
+  //         // Se tiene el registro
+  //         this.initFormFromImages();
+  //       }
+  //     },
+  //     error: err => {
+  //       console.log(err);
+  //       // this.getDictationByWheel();
+  //     },
+  //   });
+  // }
 
-  setDataOficioGestion() {
-    this.managementForm.get('tipoOficio').setValue(this.oficioGestion.jobType);
-    console.log('asfasfasfasfa', this.oficioGestion);
-    // this.managementForm.get('statusOf').setValue(this.oficioGestion.statusOf);
-    this.managementForm.get('relacionado').setValue(this.oficioGestion.jobBy);
-    this.managementForm
-      .get('numero')
-      .setValue(this.oficioGestion.managementNumber);
-    this.managementForm
-      .get('cveGestion')
-      .setValue(this.oficioGestion.cveManagement);
-    // Set remitente, destinatario y ciudad
-    this.managementForm
-      .get('parrafoInicial')
-      .setValue(this.oficioGestion.text1);
-    this.managementForm.get('parrafoFinal').setValue(this.oficioGestion.text2);
-    this.managementForm.get('text3').setValue(this.oficioGestion.text3);
-    this.managementForm
-      .get('justificacionDetalle')
-      .setValue(this.oficioGestion.justification);
-    this.managementForm
-      .get('justificacion')
-      .setValue(this.oficioGestion.justification);
-  }
+  // setDataOficioGestion() {
+  //   this.managementForm.get('tipoOficio').setValue(this.oficioGestion.jobType);
+  //   // console.log('asfasfasfasfa', this.oficioGestion);
+  //   // this.managementForm.get('statusOf').setValue(this.oficioGestion.statusOf);
+  //   this.managementForm.get('relacionado').setValue(this.oficioGestion.jobBy);
+  //   this.managementForm
+  //     .get('numero')
+  //     .setValue(this.oficioGestion.managementNumber);
+  //   this.managementForm
+  //     .get('cveGestion')
+  //     .setValue(this.oficioGestion.cveManagement);
+  //   // Set remitente, destinatario y ciudad
+  //   this.managementForm
+  //     .get('parrafoInicial')
+  //     .setValue(this.oficioGestion.text1);
+  //   this.managementForm.get('parrafoFinal').setValue(this.oficioGestion.text2);
+  //   this.managementForm.get('text3').setValue(this.oficioGestion.text3);
+  //   this.managementForm
+  //     .get('justificacionDetalle')
+  //     .setValue(this.oficioGestion.justification);
+  //   this.managementForm
+  //     .get('justificacion')
+  //     .setValue(this.oficioGestion.justification);
+  // }
 
   reviewParametersGestion() {
     if (this.paramsGestionDictamen.sale == 'C') {
@@ -734,11 +962,11 @@ export class RelatedDocumentsComponent
       this.alertInfo('warning', PARAMETERSALEC, '');
       return;
     }
-    if (this.oficioGestion.statusOf == 'ENVIADO') {
+    if (this.formJobManagement.value?.statusOf == 'ENVIADO') {
       this.alertInfo('warning', MANAGEMENTOFFICESTATUSSEND, '');
       return;
     }
-    if (this.oficioGestion.managementNumber) {
+    if (this.formJobManagement.value?.managementNumber) {
       // /api/v1/m-job-management por numero de gestion
       // ### si tiene registros se eliminan  --- y se hace LIP_COMMIT_SILENCIOSO;
       this.getGoodsJobManagement();
@@ -759,10 +987,13 @@ export class RelatedDocumentsComponent
   }
 
   async getGoodsJobManagement() {
-    if (this.oficioGestion.managementNumber) {
+    if (this.formJobManagement.value.managementNumber) {
       const params = new FilterParams();
       params.removeAllFilters();
-      params.addFilter('managementNumber', this.oficioGestion.managementNumber);
+      params.addFilter(
+        'managementNumber',
+        this.formJobManagement.value.managementNumber
+      );
       await this.flyerService.getMOficioGestion(params.getParams()).subscribe({
         next: res => {
           console.log(res);
@@ -780,7 +1011,7 @@ export class RelatedDocumentsComponent
       this.alertInfo(
         'warning',
         'No existe el Número de Gestión: ' +
-          this.oficioGestion.managementNumber,
+          this.formJobManagement.value.managementNumber,
         ''
       );
     }
@@ -921,11 +1152,11 @@ export class RelatedDocumentsComponent
     count: number,
     total: number
   ) {
-    if (this.oficioGestion) {
+    if (this.formJobManagement.value.managementNumber) {
       await this.flyerService
         .getGoodsJobManagementByIds({
           goodNumber: dataGoodRes.goodId,
-          managementNumber: this.oficioGestion.managementNumber,
+          managementNumber: this.formJobManagement.value.managementNumber,
         })
         .subscribe({
           next: res => {
@@ -1138,13 +1369,15 @@ export class RelatedDocumentsComponent
       .getCityBySearch(params.getFilterParams())
       .subscribe({
         next: data => {
-          this.cities = new DefaultSelect(
-            data.data.map(i => {
-              i.nameCity = i.idCity + ' -- ' + i.legendOffice;
-              return i;
-            }),
-            data.count
-          );
+          const result = data.data.map(i => {
+            i.nameCity = i.idCity + ' -- ' + i.legendOffice;
+            return {
+              id: i.idCity,
+              legendOffice: i.legendOffice,
+              idName: i.idCity + ' -- ' + i.legendOffice,
+            };
+          });
+          this.cities = new DefaultSelect(result, data.count);
           subscription.unsubscribe();
         },
         error: error => {
@@ -1165,15 +1398,20 @@ export class RelatedDocumentsComponent
     params['order'] = 'DESC';
     let subscription = this.flyerService.getSenderUser(params).subscribe({
       next: data => {
-        console.log(data);
-        this.senders = new DefaultSelect(
-          data.data.map(i => {
-            i.userDetail.name =
-              '#' + i.userDetail.id + ' -- ' + i.userDetail.name;
-            return i.userDetail;
-          }),
-          data.count
-        );
+        // console.log(data);
+        const senders = data.data.map(i => {
+          // i.userDetail.name =
+          //   '#' + i.userDetail.id + ' -- ' + i.userDetail.name;
+
+          // return i.userDetail;
+          return {
+            id: i.userDetail.id,
+            idName: i.userDetail.id + ' -- ' + i.userDetail.name,
+            name: i.userDetail.name,
+          };
+        });
+        console.log(senders);
+        this.senders = new DefaultSelect(senders, data.count);
         subscription.unsubscribe();
       },
       error: error => {
@@ -1287,13 +1525,18 @@ export class RelatedDocumentsComponent
   getFromSelect(params: ListParams) {
     this.securityService.getAllUsersTracker(params).subscribe(
       (data: any) => {
-        let result = data.data.map(async (item: any) => {
-          item['userAndName'] = item.user + ' - ' + item.name;
+        let result = data.data.map((item: any) => {
+          // item['userAndName'] = item.user + ' - ' + item.name;
+          return {
+            user: item.user,
+            name: item.name,
+            userAndName: item.user + ' - ' + item.name,
+          };
         });
-        Promise.all(result).then((resp: any) => {
-          this.select = new DefaultSelect(data.data, data.count);
-          this.loading = false;
-        });
+        // Promise.all(result).then((resp: any) => {
+        this.select = new DefaultSelect(result, data.count);
+        //   this.loading = false;
+        // });
       },
       error => {
         this.select = new DefaultSelect();
