@@ -268,7 +268,7 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
                   });
               },
               error: () => {
-                this.usErrorUserPrev = true;
+                //this.usErrorUserPrev = true;
                 this.alert(
                   'error',
                   'Advertencia',
@@ -387,7 +387,7 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
         this.loading = false;
       },
       error: () => {
-        this.usErrorUserPrev = true;
+        //this.usErrorUserPrev = true;
         this.loading = false;
         /*
         this.alert(
@@ -413,6 +413,7 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
     ) {
       this.autoHeightDisabled = true;
       this.valid = false;
+      this.alert('warning', 'No se encontraron datos', '');
     } else {
       //console.log(this.turnForm.controls['newUser'].value.user);
       //this.getFilterUserHistory();
@@ -526,6 +527,7 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
           console.log(res);
           this.getFilterUserHistory();
           this.filterHistoryUserBefore();
+          //this.usErrorUserPrev = false;
           this.loading = false;
         },
         error: () => {},
@@ -881,7 +883,7 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
       },
       error: () => {
         this.loading = false;
-        this.usErrorUserPrev = true;
+        //this.usErrorUserPrev = true;
         /*
         this.alert(
           'warning',
