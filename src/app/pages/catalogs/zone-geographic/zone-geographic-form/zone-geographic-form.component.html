@@ -6,34 +6,18 @@
     <form [formGroup]="zoneGeographicForm" class="form-material">
       <div class="row">
         <div class="col-md-12">
-          <form-field
-            [control]="zoneGeographicForm.get('description')"
-            label="Descripci&oacute;n">
-            <textarea
-              class="form-control"
-              type="text"
-              rows="2"
-              formControlName="description"></textarea>
+          <form-field [control]="zoneGeographicForm.get('description')" label="Descripci&oacute;n">
+            <textarea class="form-control" type="text" rows="2" formControlName="description"></textarea>
           </form-field>
         </div>
         <div class="col-md-6">
-          <form-field
-            [control]="zoneGeographicForm.get('contractNumber')"
-            label="No de contrato">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="contractNumber" />
+          <form-field [control]="zoneGeographicForm.get('contractNumber')" label="No de contrato">
+            <input type="number" class="form-control" formControlName="contractNumber" />
           </form-field>
         </div>
         <div class="col-md-6">
-          <form-field
-            [control]="zoneGeographicForm.get('thirdPartySpecialized')"
-            label="Tercero especializado">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="thirdPartySpecialized" />
+          <form-field [control]="zoneGeographicForm.get('thirdPartySpecialized')" label="Tercero especializado">
+            <input type="text" class="form-control" formControlName="thirdPartySpecialized" />
           </form-field>
         </div>
         <div class="col-md-6">
@@ -41,7 +25,7 @@
             <input type="number" class="form-control" formControlName="vat" />
           </form-field>
         </div>
-        <div class="col-md-6">
+        <!-- <div class="col-md-6">
           <form-field
             [control]="zoneGeographicForm.get('status')"
             label="Estatus">
@@ -50,17 +34,14 @@
               class="form-control"
               formControlName="status" />
           </form-field>
-        </div>
+        </div> -->
       </div>
     </form>
   </div>
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <confirm-button
-          [disabled]="zoneGeographicForm.invalid"
-          [loading]="loading"
-          (confirm)="confirm()">
+        <confirm-button [disabled]="zoneGeographicForm.invalid" [loading]="loading" (confirm)="confirm()">
         </confirm-button>
       </div>
       <div class="m-3">
