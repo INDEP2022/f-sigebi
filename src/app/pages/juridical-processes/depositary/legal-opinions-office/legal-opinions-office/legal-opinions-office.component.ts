@@ -2497,6 +2497,10 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
         PDICTAMEN: this.dictationData.typeDict,
         PESTADODICT: this.officeDictationData
           ? this.officeDictationData.statusOf
+            ? this.officeDictationData.statusOf
+              ? this.officeDictationData.statusOf
+              : ''
+            : ''
           : '',
       };
       console.log(params, this.variables, this.paramsScreen);
@@ -3615,6 +3619,12 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
                 : 'ENVIADO',
               fileDocumentDictation: formData.get('file'), // DOCUMENTO XML GENERADO
             });
+          } else {
+            this.onLoadToast(
+              'warning',
+              'Ocurrió un error al CREAR el XML con el nombre: ' + nameFile,
+              ''
+            );
           }
         },
       }
