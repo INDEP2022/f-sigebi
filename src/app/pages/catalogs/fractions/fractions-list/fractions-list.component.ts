@@ -32,22 +32,9 @@ export class FractionsListComponent extends BasePage implements OnInit {
   ) {
     super();
     this.settings.columns = FRACTIONS_COLUMNS;
-    this.settings = {
-      ...this.settings,
-      hideSubHeader: false,
-      actions: {
-        ...this.settings.actions,
-        add: false,
-        edit: false,
-        delete: false,
-        custom: [
-          {
-            name: 'add',
-            title: '<i class="fa fa-plus text-success mx-2"></i>',
-          },
-        ],
-      },
-    };
+    this.settings.actions.delete = true;
+    this.settings.actions.add = false;
+    this.settings.hideSubHeader = false;
   }
 
   ngOnInit(): void {
