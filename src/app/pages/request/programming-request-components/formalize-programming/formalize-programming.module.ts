@@ -7,7 +7,6 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { FormalizeProgrammingFormComponent } from './formalize-programming-form/formalize-programming-form.component';
 import { FormalizeProgrammingRoutingModule } from './formalize-programming-routing.module';
 import { InformationRecordComponent } from './information-record/information-record.component';
-
 @NgModule({
   declarations: [FormalizeProgrammingFormComponent, InformationRecordComponent],
   imports: [
