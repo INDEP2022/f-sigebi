@@ -12,6 +12,7 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { AppointmentsRoutingModule } from './appointments-routing.module';
 
 /** COMPONENTS IMPORTS */
+import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { AppointmentsRelationsPaysComponent } from './appointments-relations-pays/appointments-relations-pays.component';
 import { AppointmentsComponent } from './appointments/appointments.component';
 import { ScanningFoilAppointmentComponent } from './scanning-foil/scanning-foil.component';
@@ -22,6 +23,11 @@ import { ScanningFoilAppointmentComponent } from './scanning-foil/scanning-foil.
     ScanningFoilAppointmentComponent,
     AppointmentsRelationsPaysComponent,
   ],
-  imports: [CommonModule, AppointmentsRoutingModule, SharedModule],
+  imports: [
+    CommonModule,
+    AppointmentsRoutingModule,
+    SharedModule,
+    TooltipModule.forRoot(),
+  ],
 })
 export class AppointmentsModule {}
