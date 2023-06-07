@@ -35,4 +35,9 @@ export class SegAcessXAreasService extends HttpService {
   remove(body: Partial<IUserAccessAreaRelational>) {
     return this.delete(this.route.SegAccessAreas, body);
   }
+
+  userHavePermissions(body: any) {
+    const route = UserEndpoints.VigSupervisionAccess;
+    return this.post(`${route}`, body);
+  }
 }

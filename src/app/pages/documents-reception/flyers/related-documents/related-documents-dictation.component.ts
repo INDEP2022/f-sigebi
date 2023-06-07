@@ -40,6 +40,7 @@ import { MJobManagementService } from 'src/app/core/services/ms-office-managemen
 import { ParametersService } from 'src/app/core/services/ms-parametergood/parameters.service';
 import { ScreenStatusService } from 'src/app/core/services/ms-screen-status/screen-status.service';
 import { SecurityService } from 'src/app/core/services/ms-security/security.service';
+import { SegAcessXAreasService } from 'src/app/core/services/ms-users/seg-acess-x-areas.service';
 import {
   POSITVE_NUMBERS_PATTERN,
   STRING_PATTERN,
@@ -203,7 +204,8 @@ export class RelatedDocumentsDictationComponent
     protected notificationService: NotificationService,
     protected mJobManagementService: MJobManagementService,
     protected parametersService: ParametersService,
-    protected departmentService: DepartamentService
+    protected departmentService: DepartamentService,
+    private segAccessAreasService: SegAcessXAreasService
   ) {
     super();
     console.log(authService.decodeToken());
@@ -241,15 +243,19 @@ export class RelatedDocumentsDictationComponent
   }
 
   disabledChecks() {
-    const tabla = document.getElementById('goods');
-    const types = document.getElementById('typesFilters');
-    const tbody = tabla.children[0].children[1].children;
-    for (let index = 0; index < tbody.length; index++) {
-      const element = tbody[index];
-      element.children[7].classList.add('not-press');
-      element.children[8].classList.add('not-press');
-    }
-    types.classList.add('not-press');
+    this.goodFilterParams('Todos');
+    //this.managementForm.controls['averiPrevia'].setValue('Todos')
+    setTimeout(() => {
+      const tabla = document.getElementById('goods');
+      const types = document.getElementById('typesFilters');
+      const tbody = tabla.children[0].children[1].children;
+      for (let index = 0; index < tbody.length; index++) {
+        const element = tbody[index];
+        element.children[7].classList.add('not-press');
+        element.children[8].classList.add('not-press');
+      }
+      types.classList.add('not-press');
+    }, 2000);
   }
 
   enableChecks() {
@@ -668,6 +674,7 @@ export class RelatedDocumentsDictationComponent
       ccp5: [null],
       averiPrevia: ['', [Validators.required]], //*
       ccp6: [null],
+      wheelStatus: [null],
     });
   }
 
@@ -724,6 +731,7 @@ export class RelatedDocumentsDictationComponent
       next: async res => {
         this.managementForm.get('noVolante').setValue(res.wheelNumber);
         this.managementForm.get('noExpediente').setValue(res.expedientNumber);
+        this.managementForm.get('wheelStatus').setValue(res.wheelStatus);
         try {
           const mJobManagement = await firstValueFrom(
             this.getMJobManagement(res.wheelNumber)
@@ -748,6 +756,7 @@ export class RelatedDocumentsDictationComponent
               name: null,
               userAndName: mJobManagement.addressee,
             },
+            statusOf: mJobManagement.statusOf,
           });
           console.log(this.formJobManagement.value);
           if (mJobManagement.city) {
@@ -1610,6 +1619,38 @@ export class RelatedDocumentsDictationComponent
   showDeleteAlert(legend: any) {
     //ILegend
     //Desea eliminar el oficio con el expediente ${proceedingsNumber} y No. Oficio ${managementNumber}
+    //Desea eliminar el oficio con el expediente ${proceedingsNumber} y No. Oficio ${managementNumber}
+    console.log(legend);
+    console.log(this.managementForm);
+    console.log(this.formJobManagement);
+    console.log(this.m_job_management);
+    const { wheelStatus } = this.managementForm.value;
+    const {
+      managementNumber,
+      flyerNumber,
+      statusOf,
+      cveManagement,
+      proceedingsNumber,
+    } = this.m_job_management;
+    if (managementNumber == null) {
+      this.onLoadToast('info', 'No se tiene oficio', '');
+      return;
+    }
+    if (wheelStatus == 'ENVIADO') {
+      this.onLoadToast('info', 'El oficio ya esta enviado no puede borrar', '');
+      return;
+    }
+    if (cveManagement.includes('?') == false) {
+      this.onLoadToast(
+        'info',
+        'La clave está armada, no puede borrar oficio',
+        ''
+      );
+      return;
+    }
+    //this.userHavePermission()
+
+    return;
     this.alertQuestion(
       'warning',
       'Eliminar',
@@ -1760,6 +1801,7 @@ export class RelatedDocumentsDictationComponent
     }
     this.getGoods1(params);
   }
+
   // OBTENER BIENES //
   async onLoadGoodList(filter: any) {
     this.formLoading = true;
@@ -1776,7 +1818,7 @@ export class RelatedDocumentsDictationComponent
     if (filter != 'Todos') {
       params['filter.goodClassNumber'] = `$eq:${filter}`;
     }
-    debugger;
+
     //this.filtroTipos(this.paramsGestionDictamen.expediente);
     this.goodServices.getByExpedientAndParams(params).subscribe({
       next: response => {
@@ -2019,5 +2061,19 @@ export class RelatedDocumentsDictationComponent
     if (!values.cveManagement && values.managementNumber) {
       const params = new ListParams();
     }
+  }
+
+  userHavePermission() {
+    //private useR: SegAcessXAreasService
+    return new Promise((resolve, reject) => {
+      this.segAccessAreasService.userHavePermissions({
+        next: (resp: any) => {
+          resolve(resp);
+        },
+        error: (error: any) => {
+          reject('error no se realizo la petision');
+        },
+      });
+    });
   }
 }

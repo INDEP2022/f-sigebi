@@ -5,4 +5,7 @@ export enum UserEndpoints {
   GetUserName = `seg-access-x-areas/get-user-name`,
   VigSupervisionAccess = 'vig-supervision-access',
   UserAsigne = 'seg-users/user-assigned',
+
+  //consulta del form
+  askForPermissions = 'factadboficiogestrel/delete-when-button-pressed',
 }
