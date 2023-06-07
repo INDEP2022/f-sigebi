@@ -1,5 +1,6 @@
 export enum ENDPOINT_LINKS {
   Affair = 'catalog/affair',
+  AffairTest = 'catalog/affair',
   Authority = 'catalog/authority',
   appraiser = 'catalog/appraisers',
   Appraisers = 'appraise/appraisal-x-good', // ? Agregado para el nuevo MS agregado el 20/02/23
