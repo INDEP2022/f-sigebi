@@ -89,7 +89,11 @@ export class FractionsListComponent extends BasePage implements OnInit {
     };
     this.fractionService.getAll(params).subscribe({
       next: response => {
-        this.paragraphs = response.data;
+        this.paragraphs = response.data.map((item: any) => {
+          item.clasificationName =
+            item.siabClasification?.sssubtypeDescription || '';
+          return item;
+        });
         this.totalItems = response.count || 0;
         this.data.load(this.paragraphs);
         this.data.refresh();
