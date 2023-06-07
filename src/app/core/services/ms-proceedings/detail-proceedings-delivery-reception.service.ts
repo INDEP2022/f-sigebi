@@ -6,6 +6,7 @@ import { IListResponse } from '../../interfaces/list-response.interface';
 import {
   IDeleteDetailProceeding,
   IDetailProceedingsDeliveryReception,
+  IDetailWithIndEdo,
 } from '../../models/ms-proceedings/detail-proceedings-delivery-reception.model';
 @Injectable({
   providedIn: 'root',
@@ -51,6 +52,10 @@ export class DetailProceeDelRecService extends HttpService {
       'detail-proceedings-delivery-reception',
       params
     );
+  }
+
+  getAllwithEndFisico(model: IDetailWithIndEdo){
+    return this.post('detail-proceedings-delivery-reception/get-detalle-acta-recepcion', model)
   }
 
   remove(numberGood: string | number, numberProceedings: string | number) {
