@@ -139,10 +139,7 @@ export class ScanFileSharedComponent extends BasePage implements OnInit {
                           this.form.get(this.formControlName).setValue(res.id);
 
                           const params = {
-                            PARAMSFORM: 'NO',
-                            PN_FOLIO: res.id,
-                            DESTYPE: 'PREVIEW',
-                            PRINTJOB: 'YES',
+                            pn_folio: res.id
                           };
 
                           this.downloadReport('RGERGENSOLICDIGIT', params);
@@ -259,10 +256,7 @@ export class ScanFileSharedComponent extends BasePage implements OnInit {
                       console.log(res.id);
                       this.form.get(this.formControlName).setValue(res.id);
                       const params = {
-                        PARAMSFORM: 'NO',
-                        PN_FOLIO: res.id,
-                        DESTYPE: 'PREVIEW',
-                        PRINTJOB: 'YES',
+                        pn_folio: res.id,
                       };
 
                       const modelEdit: IProccedingsDeliveryReception = {
@@ -396,10 +390,7 @@ export class ScanFileSharedComponent extends BasePage implements OnInit {
   printScanFile() {
     if (this.form.get(this.formControlName).value != null) {
       const params = {
-        PARAMSFORM: 'NO',
-        PN_FOLIO: this.form.get(this.formControlName).value,
-        DESTYPE: 'PREVIEW',
-        PRINTJOB: 'YES',
+        pn_folio: this.form.get(this.formControlName).value,
       };
       this.downloadReport(this.reportPrint, params);
     } else {

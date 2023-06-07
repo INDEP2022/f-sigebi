@@ -33,6 +33,7 @@ import {
 import {
   IDeleteDetailProceeding,
   IDetailProceedingsDeliveryReception,
+  IDetailWithIndEdo,
 } from 'src/app/core/models/ms-proceedings/detail-proceedings-delivery-reception.model';
 import { IProccedingsDeliveryReception } from 'src/app/core/models/ms-proceedings/proceedings-delivery-reception-model';
 import { ICveAct } from 'src/app/core/models/ms-proceedings/update-proceedings.model';
@@ -1068,25 +1069,17 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
       this.paramsDataGoodsAct.getValue().limit
     );
 
-    this.serviceDetailProc.getAllFiltered(paramsF.getParams()).subscribe(
-      res => {
-        this.dataGoodAct.load(res.data);
+    const model: IDetailWithIndEdo = {
+      no_acta: parseInt(this.idProceeding),
+    };
 
-        /* console.log(res.data)
-        this.dataGoodAct.load(res.data).then(async res => {
-          let newData: any[] = [];
-          for (let item of res.data) {
-            const edoFis: any = await this.getIndEdoFisAndVColumna(item.good);
-            newData.push({
-              ...item,
-              noColumna: edoFis.V_NO_COLUMNA,
-              indEdoFisico: edoFis.V_IND_EDO_FISICO === 1 ? true : false,
-            });
-            this.dataGoodAct.load(newData)
-          }
-        }); */
+    this.serviceDetailProc.getAllwithEndFisico(model).subscribe(
+      res => {
+        console.log(res.data);
+        this.dataGoodAct.load(res.data);
         this.totalItemsDataGoodsAct = res.count;
         this.loading = false;
+        this.validateWarehouseAndVault(res.data)
       },
       err => {
         console.log(err);
@@ -1406,7 +1399,6 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
       this.form.get('ident').valueChanges.subscribe(res => this.fillActTwo());
       this.form.get('recibe').valueChanges.subscribe(res => {
         console.log(res);
-        console.log(res.numberDelegation2);
         console.log(this.delUser);
         if (res != null) {
           if (res.numberDelegation2 != this.delUser) {
@@ -1605,11 +1597,13 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     this.initialdisabled = true;
     this.noRequireAct1();
     this.idProceeding = dataRes.id;
-    const paramsF = new FilterParams();
     this.minDateFecElab = addDays(new Date(dataRes.elaborationDate), 1);
-    paramsF.addFilter('numberProceedings', dataRes.id);
-    paramsF.addFilter('keysProceedings', dataRes.keysProceedings);
-    this.serviceDetailProc.getAllFiltered(paramsF.getParams()).subscribe(
+
+    const modelDetail: IDetailWithIndEdo = {
+      no_acta: dataRes.id,
+    };
+
+    this.serviceDetailProc.getAllwithEndFisico(modelDetail).subscribe(
       async res => {
         console.log(res);
         const data = this.dataGoods;
@@ -1618,12 +1612,12 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         for (let i = 0; i < incomeData.length; i++) {
           const element = JSON.parse(JSON.stringify(incomeData[i]));
           console.log(element.exchangeValue);
-          const edoFis: any = await this.getIndEdoFisAndVColumna(element.good);
+          /*    const edoFis: any = await this.getIndEdoFisAndVColumna(element.good);
           this.goodData.push({
             ...element.good,
             exchangeValue: element.exchangeValue === '1' ? 1 : null,
             indEdoFisico: edoFis.V_IND_EDO_FISICO === 1 ? true : false,
-          });
+          }); */
           this.dataGoods
             .load(
               this.dataGoods['data'].map((e: any) => {
@@ -1638,7 +1632,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                 }
               })
             )
-            .then(res => {
+            /* .then(res => {
               for (let item of this.goodData) {
                 const goodClass = item.goodClassNumber;
 
@@ -1665,29 +1659,10 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                     }
                   });
               }
-            });
+            }); */
         }
-        this.dataGoodAct.load(incomeData).then(async res => {
-          this.loading = false;
-          this.nextProce = true;
-          this.prevProce = true;
-          let newData: any[] = [];
-
-          try {
-            for (let item of incomeData) {
-              const edoFis: any = await this.getIndEdoFisAndVColumna(item.good);
-              newData.push({
-                ...item,
-                noColumna: edoFis.V_NO_COLUMNA,
-                indEdoFisico: edoFis.V_IND_EDO_FISICO === 1 ? true : false,
-              });
-            }
-          } catch (error) {
-            console.log('No se ejecuto el for');
-          } finally {
-            this.dataGoodAct.load(newData);
-          }
-        });
+        this.dataGoodAct.load(incomeData);
+        this.validateWarehouseAndVault(incomeData)
 
         this.form.get('acta2').setValue(dataRes.keysProceedings);
         this.form.get('direccion').setValue(dataRes.address);
@@ -1730,6 +1705,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         this.act2Valid = true;
         console.log('Está activando aquí');
         this.navigateProceedings = true;
+        this.loading = false;
       },
       err => {
         this.loading = false;
@@ -2151,6 +2127,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
           console.log(newProceeding);
           this.serviceProcVal.postProceeding(newProceeding).subscribe(
             res => {
+              console.log(res);
               this.initialdisabled = true;
               this.research = true;
               this.form.get('statusProceeding').setValue('ABIERTA');
@@ -2541,7 +2518,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
       this.alert('warning', 'El acta ya se encuentra cerrada', '');
     } else if (
       this.dataGoodAct['data'].find(
-        (e: any) => e.indEdoFisico && e.good[`val${e.noColumna}`] == null
+        (e: any) => e.indEdoFisico && e.good[`val${e.vNoColumna}`] == null
       )
     ) {
       this.alert(
@@ -2552,10 +2529,12 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     } else if (this.dataGoodAct['data'].find((e: any) => e.received != 'S')) {
       this.alert('warning', 'Hay bienes no marcados como recibido', '');
     } else if (
-      this.dataGoodAct['data'].find((e: any) => e.good.storeNumber == null)
+      this.isAlmacen && this.dataGoodAct['data'].find((e: any) => e.good.storeNumber == null)
     ) {
       this.alert('warning', 'Hay bienes no guardados en almacén', '');
-    } else {
+    } else if(this.isBoveda && this.dataGoodAct['data'].find((e: any) => e.good.vaultNumber == null)){
+      this.alert('warning', 'Hay bienes no guardados en bóveda', '');
+    }else {
       const paramsF = new FilterParams();
       paramsF.addFilter('keysProceedings', this.form.get('acta2').value);
       this.serviceProcVal.getByFilter(paramsF.getParams()).subscribe(
@@ -2742,7 +2721,6 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
               witness2: this.form.get('recibe2').value,
               address: this.form.get('direccion').value,
               universalFolio: this.form.get('folioEscaneo').value,
-              typeProceedings: 'DXCVENT',
             };
             this.serviceProcVal.editProceeding(idProcee, modelEdit).subscribe(
               res => {
@@ -2793,7 +2771,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
       if (this.reopening) {
         if (
           this.dataGoodAct['data'].find(
-            (e: any) => e.indEdoFisico && e.good[`val${e.noColumna}`] == null
+            (e: any) => e.indEdoFisico && e.good[`val${e.vNoColumna}`] == null
           )
         ) {
           this.alert(
@@ -2921,7 +2899,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                   if (
                     this.dataGoodAct['data'].find(
                       (e: any) =>
-                        e.indEdoFisico && e.good[`val${e.noColumna}`] == null
+                        e.indEdoFisico && e.good[`val${e.vNoColumna}`] == null
                     )
                   ) {
                     this.alert(
@@ -3495,10 +3473,10 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
       }
 
       this.selectActData = data;
-      /* this.estadoFisBien(data); */
+
       this.selectEdoFisRow(data, 'edoFisico');
       this.statusGood('estatusBienActa', data);
-      /* this.form.get('edoFisico', data.good[`val${data.noColumna}`]) */
+
       this.form.get('indEdoFisico').setValue(data.indEdoFisico);
       this.selectRowBovedaAlmacen(data);
     }
@@ -3546,6 +3524,28 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
 
   //Add good to Act
 
+  validateWarehouseAndVault(data: any){
+    for(let item of data){
+      const newParams = `filter.numClasifGoods=$eq:${item.good.goodClassNumber}`;
+      this.serviceSssubtypeGood.getFilter(newParams).subscribe(
+        res => {
+          const type = JSON.parse(JSON.stringify(res.data[0]['numType']));
+          const subtype = JSON.parse(JSON.stringify(res.data[0]['numSubType']));
+
+          const no_type = parseInt(type.id);
+          const no_subtype = parseInt(subtype.id);
+        
+          if (no_type === 7 || (no_type === 5 && no_subtype === 16)) {
+            this.isBoveda = true;
+          }
+          if (no_type === 5) {
+            this.isAlmacen = true;
+          }
+        })
+    }
+    
+  }
+
   addGood() {
     console.log(this.goodData);
 
@@ -3560,7 +3560,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     console.log(arrAct);
 
     if (this.selectData && this.selectData != null) {
-      const goodClass = this.selectData.goodClassNumber;
+      const goodClass = this.selectData.good.goodClassNumber;
       const available = this.selectData.avalaible;
       //Valida si es disponible
       if (!available) {
@@ -3714,6 +3714,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                       .subscribe(
                         res => {
                           const data = JSON.parse(JSON.stringify(res.data[0]));
+                          this.idProceeding = data.id;
                           let newDetailProceeding: IDetailProceedingsDeliveryReception =
                             {
                               numberProceedings: data.id,
@@ -3880,83 +3881,115 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   applyWarehouseSafe() {
     console.log('Prueba');
     if (this.form.get('statusProceeding').value === 'ABIERTA') {
-      if (this.form.get('almacen').value != null) {
-        for (let i = 0; i < this.dataGoodAct['data'].length; i++) {
-          const element = this.dataGoodAct['data'][i];
-          const newParams = `filter.numClasifGoods=$eq:${element.good.goodClassNumber}`;
-          this.serviceSssubtypeGood.getFilter(newParams).subscribe(res => {
-            const type = JSON.parse(JSON.stringify(res.data[0]['numType']));
-            const subtype = JSON.parse(
-              JSON.stringify(res.data[0]['numSubType'])
-            );
-            const ssubtype = JSON.parse(
-              JSON.stringify(res.data[0]['numSsubType'])
-            );
-            const no_type = type.id;
-            console.log(no_type);
-            if (no_type === '5') {
-              //Data new good
-              const putGood: IGood = {
-                id: element.good.id,
-                goodId: element.good.id,
-                storeNumber: this.form.get('almacen').value.idWarehouse,
-              };
-              console.log(putGood);
-              console.log('Sí?');
-              this.serviceGood.update(putGood).subscribe(res => {
-                this.getGoodsActFn();
-              });
-            }
-            console.log('No :(');
-          });
-        }
-        this.alert('success', 'Se registró el almacén en los bienes', '');
-      } else {
-        this.alert(
-          'warning',
-          'No se seleccionó almacén',
-          'Debe seleccionar un almacén válido'
-        );
-      }
-      console.log(this.form.get('boveda').value);
-      if (this.form.get('boveda').value != null) {
-        for (let i = 0; i < this.dataGoodAct['data'].length; i++) {
-          const element = this.dataGoodAct['data'][i];
-          let v_pasa: boolean = false;
-          const newParams = `filter.numType=$eq:7&filter.numSubType=$eq:34&filter.numClasifGoods=$eq:${element.good.goodClassNumber}`;
-          this.serviceSssubtypeGood.getFilter(newParams).subscribe(res => {
-            const type = JSON.parse(JSON.stringify(res.data[0]['numType']));
-            const subtype = JSON.parse(
-              JSON.stringify(res.data[0]['numSubType'])
-            );
-            const ssubtype = JSON.parse(
-              JSON.stringify(res.data[0]['numSsubType'])
-            );
-            const no_type = type.id;
-            const no_subtype = subtype.id;
-            let putGood: IGood = {
-              id: element.good.id,
-              goodId: element.good.id,
-              vaultNumber: this.form.get('boveda').value.idSafe,
-            };
-
-            console.log(res.data.length);
-            if (res.data.length != 0) {
-              v_pasa = true;
-            }
-            if (no_type === 7 || (no_type === 5 && no_subtype === 16)) {
-              if (no_type === 7 && v_pasa) {
-                if (element.good.vaultNumber === null) {
-                  putGood.vaultNumber = 9999;
-                }
-              } else {
-                putGood.vaultNumber = this.form.get('boveda').value.idSafe;
+      console.log(this.form.get('almacen').value);
+      if (this.isAlmacen) {
+        if (this.form.get('almacen').value != null) {
+          for (let i = 0; i < this.dataGoodAct['data'].length; i++) {
+            const element = this.dataGoodAct['data'][i];
+            const newParams = `filter.numClasifGoods=$eq:${element.good.goodClassNumber}`;
+            this.serviceSssubtypeGood.getFilter(newParams).subscribe(res => {
+              console.log(res)
+              const type = JSON.parse(JSON.stringify(res.data[0]['numType']));
+              const subtype = JSON.parse(
+                JSON.stringify(res.data[0]['numSubType'])
+              );
+              const ssubtype = JSON.parse(
+                JSON.stringify(res.data[0]['numSsubType'])
+              );
+              const no_type = type.id;
+              console.log(no_type);
+              if (no_type === '5') {
+                //Data new good
+                const putGood: IGood = {
+                  id: element.good.id,
+                  goodId: element.good.goodId,
+                  storeNumber: this.form.get('almacen').value.idWarehouse,
+                };
+                console.log(putGood);
+                console.log('Sí?');
+                this.serviceGood.update(putGood).subscribe(res => {
+                  console.log(res)
+                  this.getGoodsActFn();
+                },
+                err =>{
+                  console.log(err)
+                });
               }
-              this.serviceGood.update(putGood).subscribe(res => {
-                this.getGoodsActFn();
-              });
-            }
-          });
+            },
+            err  => {
+              console.log(err)
+            });
+          }
+          this.alert('success', 'Se registró el almacén en los bienes', '');
+        } else {
+          this.alert(
+            'warning',
+            'No se seleccionó almacén',
+            'Debe seleccionar un almacén válido'
+          );
+        }
+      }
+
+      if (this.isBoveda) {
+        if (this.form.get('boveda').value != null) {
+          for (let i = 0; i < this.dataGoodAct['data'].length; i++) {
+            const element = this.dataGoodAct['data'][i];
+            let v_pasa: boolean = false;
+            const newParams = `filter.numType=$eq:7&filter.numSubType=$eq:34&filter.numClasifGoods=$eq:${element.good.goodClassNumber}`;
+            this.serviceSssubtypeGood.getFilter(newParams).subscribe(res => {
+              console.log(res);
+              if (res.data.length != 0) {
+                const type = JSON.parse(JSON.stringify(res.data[0]['numType']));
+                const subtype = JSON.parse(
+                  JSON.stringify(res.data[0]['numSubType'])
+                );
+                const ssubtype = JSON.parse(
+                  JSON.stringify(res.data[0]['numSsubType'])
+                );
+                const no_type = type.id;
+                const no_subtype = subtype.id;
+                let putGood: IGood = {
+                  id: element.good.id,
+                  goodId: element.good.id,
+                  vaultNumber: this.form.get('boveda').value.idSafe,
+                };
+
+                console.log(res.data.length);
+                if (res.data.length != 0) {
+                  v_pasa = true;
+                }
+                if (no_type === 7 || (no_type === 5 && no_subtype === 16)) {
+                  if (no_type === 7 && v_pasa) {
+                    if (element.good.vaultNumber === null) {
+                      putGood.vaultNumber = 9999;
+                    }
+                  } else {
+                    putGood.vaultNumber = this.form.get('boveda').value.idSafe;
+                  }
+                  this.serviceGood.update(putGood).subscribe(res => {
+                    this.getGoodsActFn();
+                  });
+                }
+              }else{
+                let putGood: IGood = {
+                  id: element.good.id,
+                  goodId: element.good.id,
+                  vaultNumber: this.form.get('boveda').value.idSafe,
+                };
+                this.serviceGood.update(putGood).subscribe(res => {
+                  this.getGoodsActFn();
+                });
+              }
+
+            });
+          }
+          this.alert('success', 'Se registró los Bienes en la Bóveda', '');
+        } else {
+          this.alert(
+            'warning',
+            'No se seleccionó Boveda',
+            'Debe seleccionar una Bóveda válida'
+          );
         }
       }
     } else if (
@@ -4003,6 +4036,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
             );
         },
         err => {
+          console.log(data);
           console.log(err);
           V_IND_EDO_FISICO = 0;
           V_NO_COLUMNA = 0;
@@ -4020,6 +4054,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                 }
               },
               err => {
+                console.log(err);
                 V_NO_COLUMNA = 0;
                 resolve({ V_NO_COLUMNA, V_IND_EDO_FISICO });
               }
@@ -4032,7 +4067,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
 
   openEdoFisico() {
     console.log(this.dataGoodAct['data']);
-    if (this.goodData.length === 0) {
+    if (this.dataGoodAct['data'].length === 0) {
       this.alert(
         'warning',
         'No hay bienes en el acta',
@@ -4044,7 +4079,8 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
       let modalConfig = MODAL_CONFIG;
       modalConfig = {
         initialState: {
-          goodData: this.dataGoodAct['data'].filter(item => item.indEdoFisico),
+          idProceeding: this.idProceeding,
+          /* goodData: this.dataGoodAct['data'].filter(item => item.indEdoFisico),
           callback: (next: any) => {
             console.log(next);
             for (let item of next) {
@@ -4056,8 +4092,8 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                     console.log('cambio');
                     return {
                       ...e,
-                      [`val${item.noColumna}`]:
-                        item.good[`val${item.noColumna}`],
+                      [`val${item.vNoColumna}`]:
+                        item.good[`val${item.vNoColumna}`],
                     };
                   } else {
                     return e;
@@ -4065,7 +4101,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                 })
               );
             }
-          },
+          }, */
         },
         class: 'modal-lg modal-dialog-centered',
       };
