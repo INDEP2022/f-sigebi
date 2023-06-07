@@ -424,6 +424,7 @@ export class JuridicalRulingGComponent
       this.expedientesForm.get('noExpediente').setValue(params?.EXPEDIENTE);
       if (params.TIPO_DIC) {
         this.showCriminalCase = true;
+        //corregido
       }
       this.expedientesForm.get('tipoDictaminacion').setValue(params?.TIPO_DIC);
       if (params?.TIPO_VO) {
