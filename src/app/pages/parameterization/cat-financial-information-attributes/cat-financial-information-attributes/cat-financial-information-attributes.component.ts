@@ -23,7 +23,8 @@ import Swal from 'sweetalert2';
 })
 export class CatFinancialInformationAttributesComponent
   extends BasePage
-  implements OnInit {
+  implements OnInit
+{
   columns: IAttributesFinancialInfo[] = [];
   data: LocalDataSource = new LocalDataSource();
   columnFilters: any = [];
@@ -130,13 +131,14 @@ export class CatFinancialInformationAttributesComponent
   }
 
   delete(id: number) {
-    this.attributesInfoFinancialService.remove(id).subscribe; {
+    this.attributesInfoFinancialService.remove(id).subscribe;
+    {
       next: () => {
         this.getAttributesFinancialInfo(),
           this.params
             .pipe(takeUntil(this.$unSubscribe))
             .subscribe(() => this.getAttributesFinancialInfo());
-      }
+      };
     }
   }
 }
