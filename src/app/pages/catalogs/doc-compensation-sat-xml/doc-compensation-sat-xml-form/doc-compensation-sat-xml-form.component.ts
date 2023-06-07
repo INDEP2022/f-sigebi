@@ -17,7 +17,7 @@ export class DocCompensationSatXmlFormComponent
   implements OnInit
 {
   compensationForm: ModelForm<IDocCompensationSatXml>;
-  title: string = 'Documento resarcimiento sat xml';
+  title: string = 'Documento';
   edit: boolean = false;
   compensationSatXml: IDocCompensationSatXml;
 

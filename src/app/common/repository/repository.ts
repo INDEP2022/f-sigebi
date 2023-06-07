@@ -50,7 +50,7 @@ export class Repository<T> implements IRepository<T> {
     // console.log(`${fullRoute}/${id}`);
     // console.log(formData);
 
-    return this.httpClient.put(`${fullRoute}/${id}`, formData);
+    return this.httpClient.put(`${fullRoute}/id/${id}`, formData);
   }
 
   updateResponseRepuve(route: string, id: number | string, formData: Object) {
