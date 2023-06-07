@@ -867,6 +867,8 @@ export class EventCaptureComponent
   }
 
   async ngOnInit() {
+    console.log('PASO -------> Volver a cargar **************');
+
     const { responsible } = this.registerControls;
     responsible.valueChanges.pipe(skip(1)).subscribe(() => {
       this.generateCve();
@@ -1966,6 +1968,7 @@ export class EventCaptureComponent
       P_TIPOMOV: 1,
     };
     await this.openMinutesProyect(model);
+    this.global.paperworkArea = this.originalType;
     await this.initForm();
     /////////////////////////////////////
     if (C_DATVAL[0].valmovement === 1) {
@@ -2062,19 +2065,6 @@ export class EventCaptureComponent
         );
         return;
       }
-      console.log('PASO ------> Paso la Clave');
-
-      //  await this.PUP_DEPURA_DETALLE();
-
-      console.log('PASO ------> DEPURA DETALLE');
-      //// -----------> PREGUNTAR POR ESTO <-----------
-
-      /* SET_BLOCK_PROPERTY('ACTAS_ENTREGA_RECEPCION', DEFAULT_WHERE, 'NO_ACTA = ' + :ACTAS_ENTREGA_RECEPCION.NO_ACTA);
-        GO_BLOCK('ACTAS_ENTREGA_RECEPCION');
-        EXECUTE_QUERY();
-        GO_BLOCK('DETALLE_ACTA_ENT_RECEP');
-        FIRST_RECORD(); */
-
       if (this.detail[0].goodnumber === null) {
         this.onLoadToast(
           'info',
@@ -2082,9 +2072,7 @@ export class EventCaptureComponent
         );
         return;
       } else {
-        console.log('PASO ------> ACTUALIZACION Bienes');
         lv_VALFECP = 0;
-        //// recorrer el array que llene la tabla DETALLE_ACTA_ENT_RECEP
         for (const element of this.detail) {
           const deta: any = element;
           if (
@@ -2098,7 +2086,6 @@ export class EventCaptureComponent
         if (lv_VALFECP === 0) {
           if (this.global.paperworkArea === 'RF') {
             n_CONT = (await this.getExpedientsCount()) ?? 0;
-            console.log('PASO ------> Entro al if RF linea 2099');
           }
           if (this.proceeding.typeProceedings === 'EVENTREC' && n_CONT > 0) {
             //// VALIDA SI EXISTE EL XML GENERADO
@@ -2112,7 +2099,6 @@ export class EventCaptureComponent
             }
           }
           if (this.global.paperworkArea === 'RF' && n_CONT > 0) {
-            console.log('PASO --------> Ahora si entro a CERRAR EL ACTA');
             await this.closedProgramming(n_CONT);
           } else {
             await this.alertQuestion(
@@ -2170,19 +2156,12 @@ export class EventCaptureComponent
     console.log('PASO ----> Va a Cerrar');
     console.log(this.detail);
     console.log('---------------------------');
-
-    ///// llama al pack PA_CIERRE_INICIAL_PROGR
     await this.PA_CIERRE_INICIAL_PROGR(
       this.proceeding.id,
       'FINDICA_0035_1',
       this.registerControls.typeEvent.value
     );
-    /////////
-
     const T_VALEACT: string = await this.getEstatusAct();
-    console.log('PASO ----> ya paso getEstatusAct');
-    console.log(T_VALEACT);
-
     if (['ABIERTO', 'ABIERTA'].includes(T_VALEACT)) {
       this.onLoadToast(
         'info',
@@ -2205,11 +2184,11 @@ export class EventCaptureComponent
           `Se realizó la firma y cierre del oficio (Folio Universal: ${this.proceeding.universalFolio})`
         );
       } else {
+        this.global.paperworkArea = this.originalType;
+        await this.initForm();
         this.onLoadToast('success', 'La programación ha sido cerrada');
-        this.updateStatusGood();
       }
       await this.initForm();
-      ///// aqui va esto :PARAMETER.NO_FORMATO
       const parameterNoFormat: any = '';
       if (parameterNoFormat !== null) {
         this.UPDATE_ESTRATEGIA_BIENES(parameterNoFormat, this.proceeding.id);
