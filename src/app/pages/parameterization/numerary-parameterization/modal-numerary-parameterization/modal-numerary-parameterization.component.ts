@@ -49,7 +49,8 @@ export class ModalNumeraryParameterizationComponent
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      registerNumber: [null],
+      registerNumber: [
+        null,],
     });
     if (this.allotment != null) {
       this.edit = true;
