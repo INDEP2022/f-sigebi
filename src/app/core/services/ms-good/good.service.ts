@@ -367,4 +367,11 @@ export class GoodService extends HttpService {
     const route = GoodEndpoints.Good;
     return this.get<IListResponse<IGood>>(route, params);
   }
+
+  getFactaDbOficioGestrel(body: {
+    no_of_gestion: string | number;
+    no_bien: string | number;
+  }) {
+    return this.get('good/get-facta-dbo-ficio-gestrel', body);
+  }
 }
