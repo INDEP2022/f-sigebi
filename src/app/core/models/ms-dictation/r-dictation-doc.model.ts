@@ -13,5 +13,13 @@ export interface IRDictationDoc {
 
   typeSteeringwheel: string;
 
-  //documentDetails
+  documentDetails: string | IDocumentDetails;
+}
+
+export interface IDocumentDetails {
+  key: string;
+  description: string;
+  typeDictum: string;
+  numRegister: number;
+  nbOrigin: string;
 }

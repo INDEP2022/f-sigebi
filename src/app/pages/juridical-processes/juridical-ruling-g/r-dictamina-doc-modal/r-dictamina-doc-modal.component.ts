@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { BsModalRef } from 'ngx-bootstrap/modal';
+import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import {
   FilterParams,
@@ -9,6 +9,7 @@ import {
 import { IRDictationDoc } from 'src/app/core/models/ms-dictation/r-dictation-doc.model';
 import { DictationXGood1Service } from 'src/app/core/services/ms-dictation/r-dictation-doc.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { EditDocumentsModalComponent } from '../edit-documents-modal/edit-documents-modal.component';
 import { COLUMNS_DOCUMENTS } from './columns-document';
 
 @Component({
@@ -24,10 +25,10 @@ export class RDictaminaDocModalComponent extends BasePage implements OnInit {
   crime: any;
   typeSteeringwheel: any;
   dataDocuments: IRDictationDoc[] = [];
-
   constructor(
     private modalRef: BsModalRef,
-    private dictationXGood1Service: DictationXGood1Service
+    private dictationXGood1Service: DictationXGood1Service,
+    private modalService: BsModalService
   ) {
     super();
 
@@ -40,35 +41,38 @@ export class RDictaminaDocModalComponent extends BasePage implements OnInit {
         add: false,
         position: 'right',
       },
-      mode: 'inline',
       columns: { ...COLUMNS_DOCUMENTS },
     };
   }
 
   ngOnInit(): void {
-    /*let params = new FilterParams();
-    params.addFilter(
-      'numberClassifyGood', this.numberClassifyGood,
-      SearchFilter.EQ
-    );
-    params.addFilter(
-      'typeDictation', this.typeDictation,
-      SearchFilter.EQ
-    );
-    params.addFilter(
-      'crime', this.crime,
-      SearchFilter.EQ
-    );
-    params.addFilter(
-      'typeSteeringwheel', this.typeSteeringwheel,
-      SearchFilter.EQ
-    );*/
-
     let params = new FilterParams();
+    params.addFilter(
+      'numberClassifyGood',
+      this.numberClassifyGood,
+      SearchFilter.EQ
+    );
+    params.addFilter(
+      'typeDictation',
+      this.typeDictation, //ok
+      SearchFilter.EQ
+    );
+    params.addFilter(
+      'crime',
+      this.crime, //ok
+      SearchFilter.EQ
+    );
+    params.addFilter(
+      'typeSteeringwheel',
+      this.typeSteeringwheel, //ok
+      SearchFilter.EQ
+    );
+
+    /*let params = new FilterParams();
     params.addFilter('numberClassifyGood', 906, SearchFilter.EQ);
     params.addFilter('typeDictation', 'PROCEDENCIA', SearchFilter.EQ);
     params.addFilter('crime', 'N', SearchFilter.EQ);
-    params.addFilter('typeSteeringwheel', 'T', SearchFilter.EQ);
+    params.addFilter('typeSteeringwheel', 'T', SearchFilter.EQ);*/
 
     this.dictationXGood1Service.getAll(params.getParams()).subscribe({
       next: resp => {
@@ -79,6 +83,22 @@ export class RDictaminaDocModalComponent extends BasePage implements OnInit {
         console.log('Respuesta: ', error);
       },
     });
+  }
+
+  openForm(documents?: IRDictationDoc) {
+    let config: ModalOptions = {
+      initialState: {
+        documents,
+        callback: (next: boolean) => {
+          /*if (next) {
+            
+          }*/
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(EditDocumentsModalComponent, config);
   }
 
   close() {

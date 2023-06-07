@@ -7,6 +7,7 @@
       <ng2-smart-table
         [attr.class]="'table-bordered'"
         [settings]="settings"
+        (edit)="openForm($event.data)"
         [source]="dataDocuments"></ng2-smart-table>
     </div>
   </div>

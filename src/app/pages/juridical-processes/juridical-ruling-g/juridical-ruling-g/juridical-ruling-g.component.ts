@@ -369,7 +369,7 @@ export class JuridicalRulingGComponent
         ],
       ],
       criminalCase: [null, [Validators.pattern(STRING_PATTERN)]],
-      delito: [false],
+      delito: ['N'],
       averiguacionPrevia: [null, [Validators.pattern(STRING_PATTERN)]],
       causaPenal: [null, [Validators.pattern(STRING_PATTERN)]],
       observaciones: [null, [Validators.pattern(STRING_PATTERN)]],
@@ -713,21 +713,27 @@ export class JuridicalRulingGComponent
     // console.log('btnDocumentos');
     // this.listadoDocumentos = true;
 
+    console.log('GoodClassNumber', this.goodClassNumber);
+
     this.activatedRoute.queryParams.subscribe((params: any) => {
       this.TIPO_VO = params.tipoVo;
       this.typeDictation = params.tipoDic;
     });
+
     //console.log('btnDocumentos ', this.goodData2);
     //const numberClassifyGood = this.goodData2.goodClassNumber;
+
     const typeDictation = this.typeDictation;
-    //const crime : any;
+    const crime = this.expedientesForm.controls['delito'].value;
     const typeSteeringwheel = this.TIPO_VO;
+    const numberClassifyGood = this.goodClassNumber;
     let config: ModalOptions = {
       initialState: {
         // numberClassifyGood,
         typeDictation,
-        //crime,
+        crime,
         typeSteeringwheel,
+        numberClassifyGood,
         callback: (next: boolean) => {
           /*if (next) {
             
@@ -1193,37 +1199,39 @@ export class JuridicalRulingGComponent
       });
   }
 
+  goodClassNumber: number = 0;
   selectRow(row?: any) {
-    if (row) {
+    /*if (row) {
       this.idGoodSelected = row.data?.id;
       this.onLoadDocumentsByGood();
     }
-    console.log('Información del bien seleccionado', row.data);
-  }
+    console.log('Información del bien seleccionado', row.data);*/
 
-  rowsSelected(event: any) {
     const idGood = { ...this.goodData };
     this.totalItems2 = 0;
     this.documentsDictumXStateMList = [];
-    this.goodData = event.data;
-    console.log('Información del bien seleccionado rowsSelected', event.data);
-    this.params2
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getDocumentDicXStateM(idGood.id));
-  }
+    this.goodData = row.data;
 
-  rowsSelected2(event: any) {
-    const idGood = { ...this.goodData2 };
-    this.totalItems2 = 0;
-    this.documentsDictumXStateMList = [];
-    this.goodData2 = event.data;
+    this.goodClassNumber = Number(this.goodData.goodClassNumber);
+
     console.log(
       'Información del bien seleccionado rowsSelected2',
-      this.goodData2
+      this.goodData.goodClassNumber
     );
   }
 
-  getDocumentDicXStateM(id?: number) {
+  rowsSelected(event: any) {
+    /*const idGood = { ...this.goodData };
+    this.totalItems2 = 0;
+    this.documentsDictumXStateMList = [];
+    this.goodData = event.data;
+    console.log(
+      'Información del bien seleccionado rowsSelected2',
+      this.goodData.goodClassNumber
+    );*/
+  }
+
+  /*getDocumentDicXStateM(id?: number) {
     this.loading2 = true;
     let params = {
       ...this.listParams.getValue(),
@@ -1241,7 +1249,7 @@ export class JuridicalRulingGComponent
         console.log('No hay respuesta ', error);
       },
     });
-  }
+  }*/
 
   onLoadDocumentsByGood() {
     this.documentService.getDocumentsByGood(this.idGoodSelected).subscribe({

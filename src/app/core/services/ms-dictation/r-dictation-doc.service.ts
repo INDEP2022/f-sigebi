@@ -26,8 +26,8 @@ export class DictationXGood1Service extends HttpService {
     return this.post(this.route.DocumentByDictation, body);
   }
 
-  update(id: number | string, body: Partial<IRDictationDoc>) {
-    return this.put(this.route.DocumentByDictation, id, body);
+  update(id: number | string, body: IRDictationDoc) {
+    return this.put(`${this.route.DocumentByDictation}/${id}`, body);
   }
 
   remove(body: {
