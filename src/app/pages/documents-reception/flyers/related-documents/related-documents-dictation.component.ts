@@ -2018,6 +2018,8 @@ export class RelatedDocumentsDictationComponent
 
     if (!values.cveManagement && values.managementNumber) {
       const params = new ListParams();
+      const auth = this.authService.decodeToken;
+      params['filter.id'] = `$eq:${values.managementNumber}`;
     }
   }
 }
