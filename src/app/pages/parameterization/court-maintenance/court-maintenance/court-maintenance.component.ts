@@ -104,11 +104,7 @@ export class CourtMaintenanceComponent extends BasePage implements OnInit {
       ],
       numInside: [
         null,
-        [
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(10),
-        ],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(10)],
       ],
       cologne: [
         null,
