@@ -45,8 +45,8 @@ export class DepartamentService
     return this.departamentRepository.update4(this.route, model);
   }
 
-  remove(id: string | number): Observable<Object> {
-    return this.departamentRepository.remove(this.route, id);
+  remove3(model: any): Observable<Object> {
+    return this.departamentRepository.remove3(this.route, model);
   }
 
   getDelegations(params: ListParams) {

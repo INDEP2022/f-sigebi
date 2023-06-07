@@ -131,8 +131,14 @@ export class CatFinancialInformationAttributesComponent
   }
 
   delete(id: number) {
-    this.attributesInfoFinancialService.remove(id).subscribe({
-      next: () => this.getAttributesFinancialInfo(),
-    });
+    this.attributesInfoFinancialService.remove(id).subscribe;
+    {
+      next: () => {
+        this.getAttributesFinancialInfo(),
+          this.params
+            .pipe(takeUntil(this.$unSubscribe))
+            .subscribe(() => this.getAttributesFinancialInfo());
+      };
+    }
   }
 }

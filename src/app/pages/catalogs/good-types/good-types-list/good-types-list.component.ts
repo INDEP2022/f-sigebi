@@ -118,7 +118,11 @@ export class GoodTypesListComponent extends BasePage implements OnInit {
             this.getExample();
           },
           err => {
-            this.loading = false;
+            this.alert(
+              'warning',
+              'Tipo Bien',
+              'No se puede eliminar el objeto debido a una relación con otra tabla.'
+            );
           }
         );
       }

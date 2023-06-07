@@ -7,11 +7,16 @@ import { GoodsTypesSharedComponent } from 'src/app/@standalone/shared-forms/good
 import { SharedModule } from 'src/app/shared/shared.module';
 import { GoodsFilterSharedComponent } from '../../../@standalone/shared-forms/goods-shared/goods-filter-shared';
 import { GoodsCharacteristicsRoutingModule } from './goods-characteristics-routing.module';
+import { GoodTableDetailButtonComponent } from './goods-characteristics/good-table-vals/good-table-detail-button/good-table-detail-button.component';
 import { GoodTableValsComponent } from './goods-characteristics/good-table-vals/good-table-vals.component';
 import { GoodsCharacteristicsComponent } from './goods-characteristics/goods-characteristics.component';
 
 @NgModule({
-  declarations: [GoodsCharacteristicsComponent, GoodTableValsComponent],
+  declarations: [
+    GoodsCharacteristicsComponent,
+    GoodTableValsComponent,
+    GoodTableDetailButtonComponent,
+  ],
   imports: [
     CommonModule,
     GoodsCharacteristicsRoutingModule,

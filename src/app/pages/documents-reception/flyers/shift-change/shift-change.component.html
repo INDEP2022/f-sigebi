@@ -4,6 +4,21 @@
   </div>
 
   <div body>
+    <!--<div>
+      <button type="button" class="btn btn-danger active" (click)="goBack()">
+        Regresar
+        <i class="fas fa-arrow-circle-left"></i>
+      </button>
+    </div>-->
+
+    <div>
+      <button class="btn btn-primary active btn-sm m-2" (click)="goBack()">
+        Regresar
+        <i class="fas fa-arrow-circle-left"></i>
+      </button>
+    </div>
+    <br /><br />
+
     <form [formGroup]="turnForm" class="form-material">
       <div class="row">
         <!-- <form-field
@@ -84,12 +99,13 @@
       <hr class="row" />
       <div class="row">
         <div class="col-md-6">
-          <p class="font-weight-bold pb-5">Turno anterior</p>
+          <p class="font-weight-bold pb-2">Turno anterior</p>
           <!-- <form-field [control]="turnForm.get('prevUser')">
             <ngx-select [form]="turnForm" control="prevUser" label="Atención" [data]="users" bindLabel="userAndName"
               [readonly]="true">
             </ngx-select>
-          </form-field> -->
+          </form-field>
+        <small class="font-weight-semibold">Atención</small> -->
 
           <p
             [ngClass]="usErrorUserPrev ? 'text-danger' : 'text-muted'"
@@ -99,11 +115,15 @@
             >
             {{ preUser }}
           </p>
-          <small class="font-weight-semibold">Atención</small>
+          <p class="font-weight-bold pb-2">Atención</p>
 
-          <p>
+          <p
+            [ngClass]="usErrorUserPrev ? 'text-danger' : 'text-muted'"
+            class="font-weight-bold">
+            <ng-container *ngIf="usErrorUserPrev"
+              >El volante no tiene turnados</ng-container
+            >
             {{ newUser1 }}
-
             <!-- <ng-container *ngIf="usErrorUserPrev">El volante no tiene turnados</ng-container> -->
           </p>
         </div>
@@ -123,8 +143,8 @@
           </form-field>
         </div>
       </div>
-      <br /><br /><br />
-      <div class="row w-100">
+
+      <div class="row w-100 mt-3">
         <div class="col-sm-12 col-12 col-md-12 p-2 alert alert-info">
           <span>
             SELECCIONA AL MENOS UN ACTA O UN DICTAMEN PARA GUARDAR&#46;</span
@@ -134,62 +154,37 @@
       <div class="row mt-3">
         <div class="col-md-6">
           <h5 class="text-center">Dictaminaciones</h5>
-          <div
-            [ngClass]="{
-              'height-limit': dictumColumns.length > 0,
-              'height-min': dictumColumns.length == 0
-            }">
-            <div>
-              <ng-scrollbar track="horizontal" [autoHeightDisabled]="false">
-                <div
-                  [class]="loading ? 'table-loading' : ''"
-                  class="overflow-auto">
-                  <ng2-smart-table
-                    class="col-md-12"
-                    [settings]="dictumSettings"
-                    [source]="dictumColumns"
-                    [attr.class]="'table-responsive table-bordered'"
-                    (userRowSelect)="selectDictums($event)">
-                  </ng2-smart-table>
-                  <app-pagination
-                    [params]="paramsDict"
-                    [totalItems]="totalItemsDic"></app-pagination>
-                </div>
-              </ng-scrollbar>
-            </div>
+          <div [class]="loading ? 'table-loading' : ''" class="overflow-auto">
+            <ng2-smart-table
+              class="col-md-12"
+              [settings]="dictumSettings"
+              [source]="dictumColumns"
+              [attr.class]="'table-responsive table-bordered'"
+              (userRowSelect)="selectDictums($event)">
+            </ng2-smart-table>
+            <app-pagination
+              [params]="paramsDict"
+              [totalItems]="totalItemsDic"></app-pagination>
           </div>
         </div>
         <div class="col-md-6">
           <h5 class="text-center">Actas</h5>
-          <div
-            [ngClass]="{
-              'height-limit': proceedingColumns.length > 0,
-              'height-min': proceedingColumns.length == 0
-            }">
-            <div>
-              <ng-scrollbar track="horizontal" [autoHeightDisabled]="false">
-                <div
-                  [class]="loading ? 'table-loading' : ''"
-                  class="overflow-auto">
-                  <ng2-smart-table
-                    class="col-md-12"
-                    [settings]="proceedingSettings"
-                    [source]="proceedingColumns"
-                    [attr.class]="'table-responsive table-bordered'"
-                    (userRowSelect)="selectProceedings($event)">
-                  </ng2-smart-table>
-                  <app-pagination
-                    [params]="paramsActas"
-                    [totalItems]="totalItemsActas"></app-pagination>
-                </div>
-              </ng-scrollbar>
-            </div>
+          <div [class]="loading ? 'table-loading' : ''" class="overflow-auto">
+            <ng2-smart-table
+              class="col-md-12"
+              [settings]="proceedingSettings"
+              [source]="proceedingColumns"
+              [attr.class]="'table-responsive table-bordered'"
+              (userRowSelect)="selectProceedings($event)">
+            </ng2-smart-table>
+            <app-pagination
+              [params]="paramsActas"
+              [totalItems]="totalItemsActas"></app-pagination>
           </div>
         </div>
       </div>
-      <br /><br />
 
-      <div class="row pt-5">
+      <div class="row mt-3">
         <form-field
           [control]="turnForm.get('argument')"
           label="Argumento"
@@ -211,14 +206,6 @@
 
       <div class="row">
         <div class="d-flex justify-content-center">
-          <div class="m-3">
-            <button
-              type="button"
-              class="btn btn-danger active"
-              (click)="goBack()">
-              Regresar
-            </button>
-          </div>
           <div class="m-3">
             <confirm-button
               text="Guardar"

@@ -19,10 +19,7 @@
 
         <div class="col-md-6">
           <form-field [control]="fractionForm.get('level')" label="Nivel">
-            <input
-              type="text"
-              class="form-control disabled"
-              formControlName="level" />
+            <input type="text" class="form-control" formControlName="level" />
           </form-field>
         </div>
 
@@ -37,6 +34,7 @@
             </textarea>
           </form-field>
         </div>
+
         <div class="col-md-6">
           <form-field [control]="fractionForm.get('normId')">
             <ngx-select
@@ -84,7 +82,8 @@
             <input
               type="number"
               class="form-control"
-              formControlName="relevantTypeId" />
+              formControlName="relevantTypeId"
+              min="0" />
           </form-field>
         </div>
 
@@ -141,7 +140,7 @@
         <div class="col-md-4">
           <form-field
             [control]="fractionForm.get('fractionCode')"
-            label="Codigo Fracci&oacute;n">
+            label="Codigo Fracción">
             <input
               type="text"
               class="form-control disabled"
@@ -155,7 +154,7 @@
     <div class="d-flex justify-content-center">
       <div class="m-3">
         <confirm-button
-          [disabled]="fractionForm.valid"
+          [disabled]="fractionForm.invalid"
           [loading]="loading"
           (confirm)="confirm()"></confirm-button>
       </div>

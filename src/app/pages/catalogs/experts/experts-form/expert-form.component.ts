@@ -42,7 +42,11 @@ export class ExpertFormComponent extends BasePage implements OnInit {
       ],
       registryNumber: [
         null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(NUMBERS_PATTERN),
+          Validators.min(0),
+        ],
       ],
     });
     if (this.proficient != null) {
