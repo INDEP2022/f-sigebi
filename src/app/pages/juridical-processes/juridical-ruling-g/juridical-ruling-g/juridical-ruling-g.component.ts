@@ -50,6 +50,7 @@ import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.s
 import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { ApplicationGoodsQueryService } from 'src/app/core/services/ms-goodsquery/application.service';
+import { ScreenStatusService } from 'src/app/core/services/ms-screen-status/screen-status.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
@@ -210,18 +211,18 @@ export class JuridicalRulingGComponent
       },
     },
     rowClassFunction: (row: any) => {
-      if (row.data.estatus) {
-        console.log(row.data.estatus.descriptionStatus);
-      }
-
-      if (
-        row.data.status === 'STA' ||
-        row.data.status === 'ROP' ||
-        row.data.status === 'ADM'
-      ) {
-        return 'bg-success text-white';
+      if (row.data.est_disponible == 'S') {
+        if (row.data.v_amp == 'S') {
+          return 'bg-success text-danger';
+        } else {
+          return 'bg-success text-white';
+        }
       } else {
-        return 'bg-dark text-white';
+        if (row.data.v_amp == 'S') {
+          return 'bg-dark text-danger';
+        } else {
+          return 'bg-dark text-white';
+        }
       }
     },
     noDataMessage: 'No se encontrarón registros',
@@ -336,7 +337,8 @@ export class JuridicalRulingGComponent
     private router: Router,
     private usersService: UsersService,
     private documentsDictumStatetMService: DocumentsDictumStatetMService,
-    private modalService: BsModalService
+    private modalService: BsModalService,
+    private screenServ: ScreenStatusService
   ) {
     super();
   }
@@ -924,6 +926,8 @@ export class JuridicalRulingGComponent
       this.goods.forEach(_g => {
         if (_g.status !== 'STI') {
           // _g.status = 'STI';
+          _g.est_disponible = 'N';
+          _g.di_disponible = 'N';
           _g.name = false;
           let valid = this.goodsValid.some(goodV => goodV == _g);
           if (!valid) {
@@ -988,7 +992,11 @@ export class JuridicalRulingGComponent
         if (!this.goodsValid.some(v => v === good)) {
           if (good.status.toUpperCase() !== 'STI') {
             let indexGood = this.goods.findIndex(_good => _good == good);
-            // this.goods[indexGood].status = 'STI';
+            this.goods[indexGood].est_disponible = 'N';
+            this.goods[indexGood].di_disponible = 'N';
+
+            // if (row.data.est_disponible == 'S') {
+            // if (row.data.v_amp == 'S') {
 
             this.goodsValid = this.goodsValid.concat(this.selectedGooods);
             // this.goods = this.goods.filter(_good => _good.id != good.id);
@@ -1006,7 +1014,10 @@ export class JuridicalRulingGComponent
       this.selectedGooodsValid.forEach(good => {
         this.goodsValid = this.goodsValid.filter(_good => _good.id != good.id);
         let index = this.goods.findIndex(g => g === good);
-        this.goods[index].status = 'ADM';
+        this.goods[index].est_disponible = 'S';
+        this.goods[index].di_disponible = 'S';
+
+        //this.goods[index].status = 'ADM';
         this.goods[index].name = false;
         // this.selectedGooods = [];
       });
@@ -1018,7 +1029,10 @@ export class JuridicalRulingGComponent
       this.goodsValid.forEach(good => {
         this.goodsValid = this.goodsValid.filter(_good => _good.id != good.id);
         let index = this.goods.findIndex(g => g === good);
-        this.goods[index].status = 'ADM';
+        this.goods[index].est_disponible = 'S';
+        this.goods[index].di_disponible = 'S';
+
+        //this.goods[index].status = 'ADM';
         this.goods[index].name = false;
       });
       this.goodsValid = [];
@@ -1056,7 +1070,43 @@ export class JuridicalRulingGComponent
 
       this.goodServices.getAllFilter(filter.getParams()).subscribe({
         next: response => {
-          this.goods = response.data;
+          const data = response.data;
+
+          data.map(async (good: any) => {
+            console.log(good);
+
+            const resp = await new Promise((resolve, reject) => {
+              const body = {
+                pGoodNumber: good.goodId,
+                pClasifGoodNumber: good.goodClassNumber,
+                pStatus: good.status,
+                pTypeDicta: this.expedientesForm.get('tipoDictaminacion').value,
+                pLBTypesDicta:
+                  this.expedientesForm.get('tipoDictaminacion').value,
+                pIdentity: good.identifier,
+                pVcScreem: 'FACTJURDICTAMASG',
+                pDiDescStatus: good.estatus
+                  ? good.estatus.descriptionStatus
+                  : '',
+                pProccessExtDom: good.extDomProcess,
+              };
+
+              this.screenServ.getStatusCheck(body).subscribe({
+                next: state => {
+                  good.est_disponible = state.EST_DISPONIBLE;
+                  good.v_amp = state.v_amp ? state.v_amp : null;
+                  good.pDiDescStatus = state.pDiDescStatus;
+                  resolve(state);
+                },
+                error: () => {
+                  resolve(null);
+                  console.log('fallo');
+                },
+              });
+            });
+          });
+
+          this.goods = data;
           this.totalItems = response.count || 0;
         },
       });
@@ -1189,7 +1239,40 @@ export class JuridicalRulingGComponent
       )
       .subscribe({
         next: response => {
-          this.goods = response.data;
+          const data = response.data;
+
+          data.map(async (good: any) => {
+            const resp = await new Promise((resolve, reject) => {
+              const body = {
+                pGoodNumber: good.goodId,
+                pClasifGoodNumber: good.goodClassNumber,
+                pStatus: good.status,
+                pTypeDicta: this.expedientesForm.get('tipoDictaminacion').value,
+                pLBTypesDicta:
+                  this.expedientesForm.get('tipoDictaminacion').value,
+                pIdentity: good.identifier,
+                pVcScreem: 'FACTJURDICTAMASG',
+                pDiDescStatus: good.estatus.descriptionStatus ?? '',
+                pProccessExtDom: good.extDomProcess,
+              };
+
+              this.screenServ.getStatusCheck(body).subscribe({
+                next: state => {
+                  good.est_disponible = state.EST_DISPONIBLE;
+                  good.v_amp = state.v_amp ? state.v_amp : null;
+                  good.pDiDescStatus = state.pDiDescStatus;
+                  resolve(state);
+                },
+                error: () => {
+                  resolve(null);
+                  console.log('fallo');
+                },
+              });
+            });
+          });
+
+          this.goods = data;
+
           this.totalItems = response.count || 0;
         },
         error: err => {
