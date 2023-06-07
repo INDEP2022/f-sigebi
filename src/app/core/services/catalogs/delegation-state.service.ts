@@ -1,20 +1,21 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { HttpService } from 'src/app/common/services/http.service';
 import { ENDPOINT_LINKS } from '../../../common/constants/endpoints';
 import { ICrudMethods } from '../../../common/repository/interfaces/crud-methods';
 import { ListParams } from '../../../common/repository/interfaces/list-params';
 import { Repository } from '../../../common/repository/repository';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IDelegationState } from '../../models/catalogs/delegation-state.model';
-import { HttpService } from 'src/app/common/services/http.service';
 @Injectable({
   providedIn: 'root',
 })
-export class DelegationStateService extends HttpService implements ICrudMethods<IDelegationState> {
+export class DelegationStateService
+  extends HttpService
+  implements ICrudMethods<IDelegationState>
+{
   private readonly route: string = ENDPOINT_LINKS.DelegationState;
-  constructor(
-    private delegationStateRepository: Repository<IDelegationState>
-  ) {
+  constructor(private delegationStateRepository: Repository<IDelegationState>) {
     super();
     this.microservice = 'catalog';
   }

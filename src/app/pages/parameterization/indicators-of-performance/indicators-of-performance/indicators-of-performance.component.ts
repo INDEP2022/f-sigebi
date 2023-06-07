@@ -24,7 +24,8 @@ import {
 })
 export class IndicatorsOfPerformanceComponent
   extends BasePage
-  implements OnInit {
+  implements OnInit
+{
   indicatorsOfPerformanceForm: FormGroup;
   settings2 = { ...this.settings, actions: false };
 

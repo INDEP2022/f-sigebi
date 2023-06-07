@@ -6,6 +6,7 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { ModalTypeOfClaimsComponent } from '../modal-type-of-claims/modal-type-of-claims.component';
 import { TypesOfClaimsService } from '../types-of-claims.service';
+import { truncateNDecimals } from 'src/app/utils/functions/truncate.function';
 
 @Component({
   selector: 'app-types-of-claims-catalog',
@@ -13,8 +14,8 @@ import { TypesOfClaimsService } from '../types-of-claims.service';
   styles: [],
 })
 export class TypesOfClaimsCatalogComponent extends BasePage implements OnInit {
-  columns: any[] = [];
-  totalItems: number = 0;
+  columns: any[2] = [2];
+  totalItems: number = 9;
   params = new BehaviorSubject<ListParams>(new ListParams());
 
   dataTable: LocalDataSource = new LocalDataSource();

@@ -109,7 +109,6 @@ export class VaultDetailComponent extends BasePage implements OnInit {
       // }
 
       if (this.vaultForm.controls['stateCode'].value) {
-
         this.getMunicipalities(
           new ListParams(),
           this.vaultForm.controls['stateCode'].value.toString()
@@ -204,7 +203,7 @@ export class VaultDetailComponent extends BasePage implements OnInit {
 
         this.onLoadToast('error', 'Error', error);
       },
-      () => { }
+      () => {}
     );
   }
 
@@ -231,7 +230,9 @@ export class VaultDetailComponent extends BasePage implements OnInit {
   getLocalities(params: ListParams, id?: string) {
     if (id) {
       params['filter.municipalityId'] = `$eq:${id}`;
-      params['filter.stateKey'] = `$eq:${this.vaultForm.controls['stateCode'].value}`;
+      params[
+        'filter.stateKey'
+      ] = `$eq:${this.vaultForm.controls['stateCode'].value}`;
     }
     this.localityService.getAll(params).subscribe(data => {
       this.localities = new DefaultSelect(data.data, data.count);
