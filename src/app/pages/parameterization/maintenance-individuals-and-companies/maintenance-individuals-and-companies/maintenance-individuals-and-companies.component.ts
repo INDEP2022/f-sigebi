@@ -18,7 +18,8 @@ import {
 })
 export class MaintenanceIndividualsAndCompaniesComponent
   extends BasePage
-  implements OnInit {
+  implements OnInit
+{
   form!: FormGroup;
   isCreate: boolean = true;
   edit: boolean = false;
@@ -60,7 +61,10 @@ export class MaintenanceIndividualsAndCompaniesComponent
       streetNumber: [null, [Validators.maxLength(10)]],
       apartmentNumber: [null, [Validators.maxLength(10)]],
       suburb: [null, [Validators.maxLength(100)]],
-      zipCode: [null, [Validators.pattern(NUMBERS_PATTERN), Validators.maxLength(5)]],
+      zipCode: [
+        null,
+        [Validators.pattern(NUMBERS_PATTERN), Validators.maxLength(5)],
+      ],
       delegation: [null, [Validators.maxLength(100)]],
       federative: [null],
       phone: [

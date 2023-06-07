@@ -203,15 +203,15 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
   checkParams() {
     if (this.pageParams?.iden) {
       if (this.pageParams.iden) {
-        this.paramsActas
-          .pipe(takeUntil(this.$unSubscribe))
-          .subscribe(() => this.getNotification());
+        this.getNotification();
         this.paramsDict
           .pipe(takeUntil(this.$unSubscribe))
           .subscribe(() => this.getDictums());
       }
       if (this.pageParams.exp) {
-        this.getProceedings();
+        this.paramsActas
+          .pipe(takeUntil(this.$unSubscribe))
+          .subscribe(() => this.getProceedings());
       }
     } else {
       this.router.navigate(['/pages/juridical/file-data-update']);

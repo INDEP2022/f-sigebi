@@ -175,30 +175,28 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
     }
   }
 
-  async confirmScanRequest(createAutomatic: boolean = false) {
-    if (!createAutomatic) {
-      const response = await this.alertQuestion(
-        'question',
-        'Aviso',
-        'Se generará un nuevo folio de Escaneo para el Dictamen, ¿Desea continuar?'
+  async confirmScanRequest() {
+    const response = await this.alertQuestion(
+      'question',
+      'Aviso',
+      'Se generará un nuevo folio de Escaneo para el Dictamen, ¿Desea continuar?'
+    );
+
+    if (!response.isConfirmed) {
+      return;
+    }
+
+    const flyerNumber = this.dictationData.wheelNumber;
+    if (!flyerNumber) {
+      this.alert(
+        'error',
+        'Error',
+        'Al localizar la información de Volante: ' +
+          flyerNumber +
+          ' y Expediente: ' +
+          this.dictationData.expedientNumber
       );
-
-      if (!response.isConfirmed) {
-        return;
-      }
-
-      const flyerNumber = this.dictationData.wheelNumber;
-      if (!flyerNumber) {
-        this.alert(
-          'error',
-          'Error',
-          'Al localizar la información de Volante: ' +
-            flyerNumber +
-            ' y Expediente: ' +
-            this.dictationData.expedientNumber
-        );
-        return;
-      }
+      return;
     }
     // const { numFile, keysProceedings } = this.controls;
     const document = {
@@ -232,7 +230,7 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
             map(() => _document)
           );
         }),
-        switchMap(_document => this.generateScanRequestReport(createAutomatic))
+        switchMap(_document => this.generateScanRequestReport())
       )
       .subscribe();
   }
@@ -255,37 +253,29 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
     );
   }
 
-  generateScanRequestReport(createAutomatic: boolean = false) {
-    if (!createAutomatic) {
-      const pn_folio = this.form.get('scanningFoli').value;
-      return this.siabService
-        .fetchReport('RGERGENSOLICDIGIT', { pn_folio })
-        .pipe(
-          catchError(error => {
-            return throwError(() => error);
-          }),
-          tap(response => {
-            const blob = new Blob([response], { type: 'application/pdf' });
-            const url = URL.createObjectURL(blob);
-            let config = {
-              initialState: {
-                documento: {
-                  urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
-                  type: 'pdf',
-                },
-                callback: (data: any) => {},
-              },
-              class: 'modal-lg modal-dialog-centered',
-              ignoreBackdropClick: true,
-            };
-            this.modalService.show(PreviewDocumentsComponent, config);
-          })
-        );
-    } else {
-      // UPLOAD PDF
-      this.uploadPdfEmitter.emit(true);
-      return null;
-    }
+  generateScanRequestReport() {
+    const pn_folio = this.form.get('scanningFoli').value;
+    return this.siabService.fetchReport('RGERGENSOLICDIGIT', { pn_folio }).pipe(
+      catchError(error => {
+        return throwError(() => error);
+      }),
+      tap(response => {
+        const blob = new Blob([response], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+        let config = {
+          initialState: {
+            documento: {
+              urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+              type: 'pdf',
+            },
+            callback: (data: any) => {},
+          },
+          class: 'modal-lg modal-dialog-centered',
+          ignoreBackdropClick: true,
+        };
+        this.modalService.show(PreviewDocumentsComponent, config);
+      })
+    );
   }
 
   updateDictation(dictation: Partial<IDictation>) {
