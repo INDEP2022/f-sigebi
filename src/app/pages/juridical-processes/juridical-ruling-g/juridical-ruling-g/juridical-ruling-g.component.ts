@@ -729,6 +729,7 @@ export class JuridicalRulingGComponent
     const crime = this.expedientesForm.controls['delito'].value;
     const typeSteeringwheel = this.TIPO_VO;
     const numberClassifyGood = this.goodClassNumber;
+    const stateNumber = this.stateNumber;
     let config: ModalOptions = {
       initialState: {
         // numberClassifyGood,
@@ -736,6 +737,7 @@ export class JuridicalRulingGComponent
         crime,
         typeSteeringwheel,
         numberClassifyGood,
+        stateNumber,
         callback: (next: boolean) => {
           /*if (next) {
             
@@ -1317,6 +1319,7 @@ export class JuridicalRulingGComponent
   }
 
   goodClassNumber: number = 0;
+  stateNumber: any;
   selectRow(row?: any) {
     /*if (row) {
       this.idGoodSelected = row.data?.id;
@@ -1330,10 +1333,11 @@ export class JuridicalRulingGComponent
     this.goodData = row.data;
 
     this.goodClassNumber = Number(this.goodData.goodClassNumber);
+    this.stateNumber = this.goodData.goodId;
 
     console.log(
       'Información del bien seleccionado rowsSelected2',
-      this.goodData.goodClassNumber
+      this.goodData
     );
   }
 

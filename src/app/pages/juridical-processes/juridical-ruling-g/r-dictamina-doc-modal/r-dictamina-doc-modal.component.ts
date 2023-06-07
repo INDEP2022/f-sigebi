@@ -25,6 +25,7 @@ export class RDictaminaDocModalComponent extends BasePage implements OnInit {
   crime: any;
   typeSteeringwheel: any;
   dataDocuments: IRDictationDoc[] = [];
+  stateNumber: any;
   constructor(
     private modalRef: BsModalRef,
     private dictationXGood1Service: DictationXGood1Service,
@@ -37,7 +38,7 @@ export class RDictaminaDocModalComponent extends BasePage implements OnInit {
       actions: {
         columnTitle: 'Acciones',
         edit: true,
-        delete: true,
+        delete: false,
         add: false,
         position: 'right',
       },
@@ -86,8 +87,12 @@ export class RDictaminaDocModalComponent extends BasePage implements OnInit {
   }
 
   openForm(documents?: IRDictationDoc) {
+    const typeDictation = this.typeDictation;
+    const stateNumber = this.stateNumber;
     let config: ModalOptions = {
       initialState: {
+        typeDictation,
+        stateNumber,
         documents,
         callback: (next: boolean) => {
           /*if (next) {
