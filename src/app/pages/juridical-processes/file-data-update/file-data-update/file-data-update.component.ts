@@ -32,9 +32,7 @@ export class FileDataUpdateComponent
   columnsType = { ...JURIDICAL_FILE_UPDATE_SEARCH_COLUMNS };
   fieldsToSearch = [...JURIDICAL_FILE_UPDATE_SEARCH_FIELDS];
   constructor(
-    // private fb: FormBuilder,
     private activateRoute: ActivatedRoute,
-    // private modalService: BsModalService,
     private router: Router,
     public fileUpdateService: JuridicalFileUpdateService,
     private changeDetectorRef: ChangeDetectorRef,
@@ -45,11 +43,6 @@ export class FileDataUpdateComponent
   wheelNumber: string | null = null;
   previousRoute: string | null = null;
   ngOnInit(): void {
-    // if (this.docDataService.previousRoute) {
-    //   this.wheelNumber =
-    //     this.docDataService.previousRoute?.params?.wheelNumber || null;
-    // }
-    // console.log(document.referrer, 'previa ruta');
     this.previousRoute =
       this.activateRoute.snapshot.queryParams?.['previousRoute'] || null;
     this.wheelNumber =
@@ -87,7 +80,6 @@ export class FileDataUpdateComponent
   confirm(confirm: boolean) {
     this.confirmSearch = confirm;
     this.changeDetectorRef.detectChanges();
-    // console.log('confirm', confirm);
   }
 
   search(formData: Partial<IJuridicalFileDataUpdateForm>) {

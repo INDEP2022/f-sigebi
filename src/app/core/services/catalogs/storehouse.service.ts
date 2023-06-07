@@ -11,7 +11,7 @@ import { IStorehouse } from '../../models/catalogs/storehouse.model';
 })
 export class StorehouseService implements ICrudMethods<IStorehouse> {
   private readonly route: string = ENDPOINT_LINKS.Storehouse;
-  constructor(private storehouseRepository: Repository<IStorehouse>) {}
+  constructor(private storehouseRepository: Repository<IStorehouse>) { }
 
   getAll(params?: ListParams): Observable<IListResponse<IStorehouse>> {
     return this.storehouseRepository.getAllPaginated(this.route, params);
@@ -29,7 +29,10 @@ export class StorehouseService implements ICrudMethods<IStorehouse> {
     return this.storehouseRepository.update(this.route, id, model);
   }
 
-  remove(id: string | number): Observable<Object> {
-    return this.storehouseRepository.remove(this.route, id);
+  // remove(id: string | number): Observable<Object> {
+  //   return this.storehouseRepository.remove(this.route, id);
+  // }
+  remove(obj: Object): Observable<Object> {
+    return this.storehouseRepository.remove3(this.route, obj);
   }
 }

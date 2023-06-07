@@ -17,19 +17,22 @@ import { ExampleService } from 'src/app/core/services/catalogs/example.service';
 
 /** COMPONENTS IMPORTS */
 import { DatePipe } from '@angular/common';
+import { ActivatedRoute, Router } from '@angular/router';
+import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { IDescriptionByNoGoodBody } from 'src/app/core/models/good/good.model';
 import { IAppointmentDepositary } from 'src/app/core/models/ms-depositary/ms-depositary.interface';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import {
   CURP_PATTERN,
-  KEYGENERATION_PATTERN,
   NUM_POSITIVE,
   PHONE_PATTERN,
   RFC_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { AppointmentsJuridicalReportComponent } from '../appointments-juridical-report/appointments-juridical-report.component';
+import { AppointmentsRelationsPaysComponent } from '../appointments-relations-pays/appointments-relations-pays.component';
 import { AppointmentsService } from '../services/appointments.service';
 
 @Component({
@@ -44,6 +47,8 @@ export class AppointmentsComponent
   items = new DefaultSelect<Example>();
   params = new BehaviorSubject<FilterParams>(new FilterParams());
   public form: FormGroup;
+  formScan: FormGroup;
+  public noBienReadOnly: number = null;
   public checked = false;
   globalVars: any = {
     noExiste: 0,
@@ -60,6 +65,7 @@ export class AppointmentsComponent
   // Loadings
   loadingGood: boolean = false;
   loadingAppointment: boolean = false;
+  showScanForm: boolean = false;
   // Selects
   delegations = new DefaultSelect();
   delegationSelectValue: string = '';
@@ -75,14 +81,33 @@ export class AppointmentsComponent
     private fb: FormBuilder,
     private datePipe: DatePipe,
     private exampleService: ExampleService,
-    private appointmentsService: AppointmentsService
+    private appointmentsService: AppointmentsService,
+    private modalService: BsModalService,
+    private router: Router,
+    private activatedRoute: ActivatedRoute
   ) {
     super();
   }
 
   ngOnInit(): void {
     this.prepareForm();
-    this.loading = true;
+    this.showScanForm = true;
+    console.log(this.showScanForm);
+
+    const id = this.activatedRoute.snapshot.paramMap.get('id');
+    if (id) {
+      if (!isNaN(Number(id))) {
+        this.noBienReadOnly = Number(id);
+        this.form.get('noBien').setValue(this.noBienReadOnly);
+        this.validGoodNumberInDepositaryAppointment();
+      } else {
+        this.alert(
+          'warning',
+          'Número de Bien',
+          'El número de Bien ingresado como parámetro no es un número'
+        );
+      }
+    }
     // this.validGoodNumberInDepositaryAppointment(); // Buscar Bien
   }
   private prepareForm() {
@@ -267,13 +292,23 @@ export class AppointmentsComponent
         [Validators.maxLength(1000), Validators.pattern(STRING_PATTERN)],
       ],
 
-      folioRemocion: [
-        { value: '', disabled: true },
-        [Validators.maxLength(15), Validators.pattern(KEYGENERATION_PATTERN)],
+      // folioRemocion: [
+      //   { value: '', disabled: true },
+      //   [Validators.maxLength(15), Validators.pattern(NUM_POSITIVE)],
+      // ],
+      // folioActaDepositaria: [
+      //   { value: '', disabled: true },
+      //   [Validators.maxLength(15), Validators.pattern(NUM_POSITIVE)],
+      // ],
+    });
+    this.formScan = this.fb.group({
+      scanningFoli: [
+        { value: '', disabled: false },
+        [Validators.pattern(NUM_POSITIVE), Validators.maxLength(15)],
       ],
-      folioActaDepositaria: [
-        { value: '', disabled: true },
-        [Validators.maxLength(15), Validators.pattern(KEYGENERATION_PATTERN)],
+      returnFoli: [
+        { value: '', disabled: false },
+        [Validators.pattern(NUM_POSITIVE), Validators.maxLength(15)],
       ],
     });
   }
@@ -294,27 +329,64 @@ export class AppointmentsComponent
     console.log('Depositarias');
   }
 
-  btnDetallesPago() {
+  btnPaysDetails() {
     console.log('Detalle Pagos');
+    this.openModalPaysDetails({});
   }
 
-  btnReportesJuridicos() {
+  openModalPaysDetails(context?: Partial<AppointmentsRelationsPaysComponent>) {
+    const modalRef = this.modalService.show(
+      AppointmentsRelationsPaysComponent,
+      {
+        initialState: context,
+        class: 'modal-lg modal-dialog-centered',
+        ignoreBackdropClick: true,
+      }
+    );
+  }
+
+  btnJuridicalReport() {
     console.log('Reportes Juridicos');
+    this.openModalJuridicalReport({});
+  }
+
+  openModalJuridicalReport(
+    context?: Partial<AppointmentsJuridicalReportComponent>
+  ) {
+    const modalRef = this.modalService.show(
+      AppointmentsJuridicalReportComponent,
+      {
+        initialState: context,
+        class: 'modal-lg modal-dialog-centered',
+        ignoreBackdropClick: true,
+      }
+    );
   }
 
   btnReportesAdministrativos() {
     console.log('Reportes Administrativos');
   }
 
-  btnIngresoMasivoPagos() {
+  btnMasivIncomePays() {
     console.log('Ingresos Masivos Pagos');
+    // Llama pantalla FMASINSPAGDEPOSITARIAS
+    this.router.navigate(
+      ['/pages/juridical/depositary/bulk-loading-depository-cargo'],
+      {
+        // queryParams: {
+        //   origin: this.origin3,
+        //   P_GEST_OK: this.paramsScreen.P_GEST_OK,
+        //   P_NO_TRAMITE: this.paramsScreen.P_NO_TRAMITE,
+        // },
+      }
+    );
   }
 
-  btnCatalogoConceptosPagos() {
+  btnConceptsPaysCatalogs() {
     console.log('Conceptos de Pagos');
   }
 
-  btnCatalogoDepositariasPersona() {
+  btnDepositaryCatalog() {
     console.log('Cátalogo Depositarias');
   }
 

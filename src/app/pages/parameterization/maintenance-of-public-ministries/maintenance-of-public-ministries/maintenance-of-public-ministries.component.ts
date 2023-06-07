@@ -203,6 +203,7 @@ export class MaintenanceOfPublicMinistriesComponent
       } else {
         this.form.get('entity').patchValue(data.state.descCondition);
       }
+      console.log(data);
       this.getDelegation(data.noDelegation);
       this.getSubDelegation(data.noSubDelegation);
     }

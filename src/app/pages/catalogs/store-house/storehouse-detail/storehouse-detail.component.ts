@@ -51,7 +51,7 @@ export class StorehouseDetailComponent extends BasePage implements OnInit {
 
   prepareForm() {
     this.storeHouseForm = this.fb.group({
-      idStorehouse: [null],
+      id: [null],
       manager: [
         null,
         [Validators.pattern(STRING_PATTERN), Validators.required],
@@ -137,19 +137,19 @@ export class StorehouseDetailComponent extends BasePage implements OnInit {
       description: this.storeHouseForm.controls['description'].value,
       municipalityCode:
         this.storeHouse.municipality.nameMunicipality !=
-        this.storeHouseForm.get('municipality').value
+          this.storeHouseForm.get('municipality').value
           ? this.storeHouseForm.controls['municipality'].value
           : this.storeHouseForm.controls['municipalityCodeID'].value,
       localityCode:
         this.storeHouse.locality.nameLocation !=
-        this.storeHouseForm.get('locality').value
+          this.storeHouseForm.get('locality').value
           ? this.storeHouseForm.controls['locality'].value
           : this.storeHouseForm.controls['localityCodeID'].value,
       ubication: this.storeHouseForm.controls['ubication'].value,
       idEntity: this.storeHouseForm.controls['idEntity'].value,
     };
     this.storehouseService
-      .update(this.storeHouse.idStorehouse, this.storeHouseForm.value)
+      .update(this.storeHouse.id, this.storeHouseForm.value)
       .subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),
