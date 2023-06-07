@@ -1966,6 +1966,7 @@ export class EventCaptureComponent
       P_TIPOMOV: 1,
     };
     await this.openMinutesProyect(model);
+    await this.initForm();
     /////////////////////////////////////
     if (C_DATVAL[0].valmovement === 1) {
       console.log('Entro al otro if ');
