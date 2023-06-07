@@ -8,7 +8,7 @@ export const FRACTIONS_COLUMNS = {
   },
 
   code: {
-    title: 'Codigo',
+    title: 'Código',
     type: 'string',
     sort: false,
   },
@@ -70,18 +70,18 @@ export const FRACTIONS_COLUMNS = {
   },
 
   codeErp1: {
-    title: 'Codigo Erp 1',
+    title: 'Código  Erp 1',
     type: 'string',
     sort: false,
   },
   codeErp2: {
-    title: 'Codigo Erp 2',
+    title: 'Código  Erp 2',
     type: 'string',
     sort: false,
   },
 
   codeErp3: {
-    title: 'Codigo Erp 3',
+    title: 'Código  Erp 3',
     type: 'string',
     sort: false,
   },
