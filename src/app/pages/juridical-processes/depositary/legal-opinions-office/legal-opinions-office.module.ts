@@ -4,6 +4,7 @@ import { CitiesSharedComponent } from 'src/app/@standalone/shared-forms/cities-s
 import { UsersSharedComponent } from 'src/app/@standalone/shared-forms/user-shared/user-shared.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 
+import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { LegalOpinionsOfficeFindAppointmentComponent } from './legal-opinions-office-find-appointment/legal-opinions-office-find-appointment.component';
 import { LegalOpinionsOfficeFirmModalComponent } from './legal-opinions-office-firm-modal/legal-opinions-office-firm-modal.component';
 import { LegalOpinionsOfficeRoutingModule } from './legal-opinions-office-routing.module';
@@ -23,6 +24,7 @@ import { ScanningFoilComponent } from './scanning-foil/scanning-foil.component';
     SharedModule,
     UsersSharedComponent,
     CitiesSharedComponent,
+    TooltipModule.forRoot(),
   ],
 })
 export class LegalOpinionsOfficeModule {}
