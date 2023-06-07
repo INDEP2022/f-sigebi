@@ -929,7 +929,9 @@ export class JuridicalRulingGComponent
 
     if (this.goods.length > 0) {
       this.goods.forEach(_g => {
-        if (_g.est_disponible == 'S') {
+        console.log(_g);
+
+        if (_g.est_disponible == 'S' && _g.di_disponible == 'S') {
           _g.est_disponible = 'N';
           _g.di_disponible = 'N';
           _g.name = false;
@@ -1012,7 +1014,7 @@ export class JuridicalRulingGComponent
           this.goodsValid.push(good);
           this.goodsValid = [...this.goodsValid];
         } else {
-          if ((good.di_disponible = 'N')) {
+          if (good.di_disponible == 'N') {
             this.onLoadToast('error', `El bien ${good.goodId} ya existe`);
           }
         }
@@ -1100,8 +1102,7 @@ export class JuridicalRulingGComponent
           const data = response.data;
 
           data.map(async (good: any) => {
-            console.log(good);
-
+            good.di_disponible = 'S';
             const resp = await new Promise((resolve, reject) => {
               const body = {
                 pGoodNumber: good.goodId,
@@ -1269,6 +1270,7 @@ export class JuridicalRulingGComponent
           const data = response.data;
 
           data.map(async (good: any) => {
+            good.di_disponible = 'S';
             await new Promise((resolve, reject) => {
               const body = {
                 pGoodNumber: good.goodId,
