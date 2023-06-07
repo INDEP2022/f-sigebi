@@ -18,6 +18,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, catchError, takeUntil, tap, throwError } from 'rxjs';
 import { DEPOSITARY_ROUTES_2 } from 'src/app/common/constants/juridical-processes/depositary-routes-2';
 import {
@@ -58,10 +59,10 @@ import {
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
-import { DatePickerElementComponent } from 'src/app/shared/components/datepicker-element-smarttable/datepicker.component';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { environment } from 'src/environments/environment';
 import Swal from 'sweetalert2';
+import { RDictaminaDocModalComponent } from '../r-dictamina-doc-modal/r-dictamina-doc-modal.component';
 import { TempGood } from './dataTemp';
 import { DOCUMENTS_COLUMNS } from './documents-columns';
 import { GoodSubtype } from './model/good.model';
@@ -102,6 +103,7 @@ export class JuridicalRulingGComponent
   idGoodSelected = 0;
   @ViewChild('cveOficio', { static: true }) cveOficio: ElementRef;
   goodData: IGood;
+  goodData2: IGood;
 
   //tipos
   typesClass = new DefaultSelect<Partial<GoodSubtype>>();
@@ -300,42 +302,6 @@ export class JuridicalRulingGComponent
     noDataMessage: 'No se encontrarón registros',
   };
 
-  settings4 = {
-    pager: {
-      display: false,
-    },
-    hideSubHeader: true,
-    actions: false,
-    selectedRowIndex: -1,
-    mode: 'external',
-    columns: {
-      numRegister: {
-        sort: false,
-        title: '#',
-        type: 'number',
-      },
-      key: {
-        sort: false,
-        title: 'Documentos',
-        type: 'string',
-        valuePrepareFunction: (value: any) => {
-          return value.description;
-        },
-      },
-      fecha: {
-        sort: false,
-        title: 'Fecha',
-        type: 'custom',
-        class: 'custom-title',
-        valuePrepareFunction: (bsValue: Date, row: IDocuments) =>
-          this.isDocumentSelectedValid(row),
-        renderComponent: DatePickerElementComponent,
-        onComponentInitFunction: (instance: DatePickerElementComponent) =>
-          this.onDocsSelectValid(instance),
-      },
-    },
-    noDataMessage: 'No se encontrarón registros',
-  };
   expedientesForm: FormGroup;
   dictaminacionesForm: FormGroup;
   subtipoForm: FormGroup;
@@ -349,6 +315,11 @@ export class JuridicalRulingGComponent
   btnIsParcial: boolean = false;
   isIdent: boolean = true;
 
+  documentsDictumXStateMList: IDocumentsDictumXStateM[] = [];
+  totalItems2: number = 0;
+  params2 = new BehaviorSubject<ListParams>(new ListParams());
+  loading2 = this.loading;
+  listParams = new BehaviorSubject<ListParams>(new ListParams());
   constructor(
     private fb: FormBuilder,
     private activatedRoute: ActivatedRoute,
@@ -366,6 +337,7 @@ export class JuridicalRulingGComponent
     private router: Router,
     private usersService: UsersService,
     private documentsDictumStatetMService: DocumentsDictumStatetMService,
+    private modalService: BsModalService,
     private screenServ: ScreenStatusService
   ) {
     super();
@@ -734,9 +706,40 @@ export class JuridicalRulingGComponent
     });
   }
 
+  numberClassifyGood: string;
+  typeDictation: string;
+  crime: string;
+  typeSteeringwheel: string;
+
   btnDocumentos() {
-    console.log('btnDocumentos');
-    this.listadoDocumentos = true;
+    // console.log('btnDocumentos');
+    // this.listadoDocumentos = true;
+
+    this.activatedRoute.queryParams.subscribe((params: any) => {
+      this.TIPO_VO = params.tipoVo;
+      this.typeDictation = params.tipoDic;
+    });
+    //console.log('btnDocumentos ', this.goodData2);
+    //const numberClassifyGood = this.goodData2.goodClassNumber;
+    const typeDictation = this.typeDictation;
+    //const crime : any;
+    const typeSteeringwheel = this.TIPO_VO;
+    let config: ModalOptions = {
+      initialState: {
+        // numberClassifyGood,
+        typeDictation,
+        //crime,
+        typeSteeringwheel,
+        callback: (next: boolean) => {
+          /*if (next) {
+            
+          }*/
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(RDictaminaDocModalComponent, config);
   }
   btnAprobar() {
     console.log('btnAprobar');
@@ -770,7 +773,7 @@ export class JuridicalRulingGComponent
       baseMenu +
         baseMenuDepositaria +
         DEPOSITARY_ROUTES_2[0].link +
-        `?origin=juridical-ruling-g
+        `?origin=FACTJURDICTAMASG
       &P_VALOR=${this.expedientesForm.get('noVolante').value}
       &P_NO_TRAMITE=${this.expedientesForm.get('noExpediente').value}
       &CLAVE_OFICIO_ARMADA=${this.dictaminacionesForm.get('cveOficio').value}
@@ -859,16 +862,16 @@ export class JuridicalRulingGComponent
   //     next: data => this.documentSelectedChangeValid(data.row, data.toggle),
   //   });
   // }
-  onDocsSelectValid(instance: DatePickerElementComponent) {
-    instance.toggle.pipe(takeUntil(this.$unSubscribe)).subscribe({
-      next: (data: any) =>
-        this.documentSelectedChangeValid(data.row, data.toggle),
-    });
-  }
-  isDocumentSelectedValid(_doc: any) {
-    const exists = this.selectedDocuments.find(doc => doc.id == _doc.id);
-    return !exists ? false : true;
-  }
+  // onDocsSelectValid(instance: DatePickerElementComponent) {
+  //   instance.toggle.pipe(takeUntil(this.$unSubscribe)).subscribe({
+  //     next: (data: any) =>
+  //       this.documentSelectedChangeValid(data.row, data.toggle),
+  //   });
+  // }
+  // isDocumentSelectedValid(_doc: any) {
+  //   const exists = this.selectedDocuments.find(doc => doc.id == _doc.id);
+  //   return !exists ? false : true;
+  // }
   documentSelectedChangeValid(doc: any, selected?: string) {
     console.log('fecha ', selected);
     doc = { ...doc, selectedDate: selected };
@@ -1281,12 +1284,6 @@ export class JuridicalRulingGComponent
     console.log('Información del bien seleccionado', row.data);
   }
 
-  documentsDictumXStateMList: IDocumentsDictumXStateM[] = [];
-  totalItems2: number = 0;
-  params2 = new BehaviorSubject<ListParams>(new ListParams());
-  loading2 = this.loading;
-  listParams = new BehaviorSubject<ListParams>(new ListParams());
-
   rowsSelected(event: any) {
     const idGood = { ...this.goodData };
     this.totalItems2 = 0;
@@ -1296,6 +1293,17 @@ export class JuridicalRulingGComponent
     this.params2
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getDocumentDicXStateM(idGood.id));
+  }
+
+  rowsSelected2(event: any) {
+    const idGood = { ...this.goodData2 };
+    this.totalItems2 = 0;
+    this.documentsDictumXStateMList = [];
+    this.goodData2 = event.data;
+    console.log(
+      'Información del bien seleccionado rowsSelected2',
+      this.goodData2
+    );
   }
 
   getDocumentDicXStateM(id?: number) {
