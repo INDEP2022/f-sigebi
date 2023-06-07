@@ -38,6 +38,7 @@ export class GoodsStatusSharedComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    console.log(this.goodStatus.value);
     if (this.goodStatus.value) this.getGoodStatus(new ListParams());
   }
 

@@ -41,10 +41,7 @@ export class NotaryFormComponent extends BasePage implements OnInit {
       id: [null],
       name: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       valid: [null, [Validators.required]],
-      notaryNumber: [
-        null,
-        [Validators.required, Validators.pattern(POSITVE_NUMBERS_PATTERN)],
-      ],
+      notaryNumber: [null, [Validators.required, Validators.pattern(POSITVE_NUMBERS_PATTERN)]],
       ubication: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],

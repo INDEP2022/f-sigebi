@@ -70,16 +70,17 @@ export class StorehouseListComponent extends BasePage implements OnInit {
       'Eliminar',
       '¿Desea eliminar este registro?'
     ).then(question => {
+      console.log(storeHouse);
       if (question.isConfirmed) {
-        // this.delete(storeHouse.idStorehouse);
-        Swal.fire('Borrado', 'BODE', 'success');
+        this.delete(storeHouse);
+
       }
     });
   }
 
-  delete(id: string) {
-    this.storehouseService.remove(id).subscribe({
-      next: () => this.getStorehouses(),
+  delete(data: any) {
+    this.storehouseService.remove(data).subscribe({
+      next: () => { this.getStorehouses(), Swal.fire('Borrado', 'BODE', 'success') }
     });
   }
 }
