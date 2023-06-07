@@ -23,8 +23,7 @@ import { MaintenanceListComponent } from '../maintenance-list/maintenance-list.c
 })
 export class MaintenanceOfPublicMinistriesComponent
   extends BasePage
-  implements OnInit
-{
+  implements OnInit {
   form!: FormGroup;
   formData: Minpub = {} as Minpub;
   edit: boolean = false;
@@ -90,19 +89,11 @@ export class MaintenanceOfPublicMinistriesComponent
       ],
       insideNumber: [
         null,
-        [
-          Validators.required,
-          Validators.maxLength(10),
-          Validators.pattern(STRING_PATTERN),
-        ],
+        [Validators.required, Validators.maxLength(10), Validators.pattern(STRING_PATTERN)],
       ],
       outNumber: [
         null,
-        [
-          Validators.required,
-          Validators.maxLength(100),
-          Validators.pattern(STRING_PATTERN),
-        ],
+        [Validators.required, Validators.maxLength(100), Validators.pattern(STRING_PATTERN)],
       ],
       colony: [
         null,
@@ -122,17 +113,10 @@ export class MaintenanceOfPublicMinistriesComponent
           Validators.pattern(STRING_PATTERN),
         ],
       ],
-      zipCode: [
-        null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
-      ],
+      zipCode: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
       phone: [
         null,
-        [
-          Validators.required,
-          Validators.maxLength(20),
-          Validators.pattern(STRING_PATTERN),
-        ],
+        [Validators.required, Validators.maxLength(20), Validators.pattern(STRING_PATTERN)],
       ],
       idCity: [null, [Validators.required]],
       entity: [null],
@@ -203,6 +187,7 @@ export class MaintenanceOfPublicMinistriesComponent
       } else {
         this.form.get('entity').patchValue(data.state.descCondition);
       }
+      console.log(data);
       this.getDelegation(data.noDelegation);
       this.getSubDelegation(data.noSubDelegation);
     }
@@ -216,13 +201,12 @@ export class MaintenanceOfPublicMinistriesComponent
   }
 
   private getDelegation(delegation: number) {
-    const params = new ListParams();
+    const params = new ListParams;
     params['filter.id'] = delegation;
     params['filter.etapaEdo'] = 1;
 
     this.serviceDeleg.getAll(params).subscribe({
-      next: data =>
-        this.form.get('delegation').patchValue(data.data[0].description),
+      next: data => {this.form.get('delegation').patchValue(data.data[0].description)},
       error: error => this.onLoadToast('error', error.erro.message, ''),
     });
   }

@@ -12,7 +12,7 @@ export const DELEGATION_STATE_COLUMNS = {
     type: 'string',
     sort: false,
     valuePrepareFunction: (value: any) => {
-      return value.codeCondition;
+      return value != null ? value.codeCondition : '';
     },
   },
   version: {

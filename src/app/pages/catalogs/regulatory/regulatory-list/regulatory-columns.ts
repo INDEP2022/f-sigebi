@@ -4,7 +4,7 @@ export const REGULATORY_COLUMNS = {
     type: 'number',
     sort: false,
   },
-  id_fraccion: {
+  fractionId: {
     title: 'Id Fracción',
     type: 'number',
     sort: false,

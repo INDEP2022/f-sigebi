@@ -10,11 +10,15 @@
             <div class="col">
               <button
                 id="expedient-number"
+                [class]="loading ? 'disabled' : ''"
                 class="btn btn-primary btn-sm active mr-2 disabled"
                 (click)="goodsByExpediente()">
                 <i class="fa fa-search"></i> Buscar
               </button>
-              <button class="btn btn-danger btn-sm active" (click)="clearAll()">
+              <button
+                [class]="loading ? 'disabled' : ''"
+                class="btn btn-danger btn-sm active"
+                (click)="clearAll()">
                 Limpiar
               </button>
             </div>
@@ -28,6 +32,7 @@
                   control="listExpedients"
                   label="Expedientes"
                   bindLabel="id"
+                  [class]="loading ? 'disabled' : ''"
                   (change)="selectExpedient($event)"
                   [data]="dataExpedients"
                   [searchable]="false"
@@ -220,7 +225,7 @@
 
       <hr class="row" />
 
-      <div class="row">
+      <div [class]="loading ? 'disabled' : ''" class="row" class="row">
         <div class="col-md-6">
           <div class="row">
             <form-field [control]="form.get('acta2')" label="Acta">
@@ -240,6 +245,7 @@
                   rows="3"
                   [maxlength]="1000"
                   class="form-control"
+                  [class]="!isEnableDireccion ? 'disabled' : ''"
                   formControlName="direccion"></textarea>
               </form-field>
             </div>
@@ -287,7 +293,6 @@
               </form-field>
             </div>
           </div>
-
         </div>
         <div class="col-md-6">
           <div class="form-group row">
@@ -401,7 +406,7 @@
             <button
               type="button"
               [class]="btnCSSAct"
-              [disabled]="!form.valid"
+              S
               class="btn btn-sm active mr-2 ml-2"
               size="small"
               (click)="toggleActa()">
@@ -420,12 +425,6 @@
               (click)="deleteProceeding()">
               Eliminar Acta
             </button>
-            <button
-              type="button"
-              class="my-1 mx-2 btn btn-secondary active btn-sm"
-              (click)="goCargaMasiva()">
-              Carga Masiva
-            </button>
           </div>
         </div>
       </div>
@@ -438,6 +437,12 @@
           (userRowSelect)="rowSelect($event)"
           (rowDeselect)="deselectRow()"></ng2-smart-table>
       </div>
+      <app-pagination
+        *ngIf="!loading"
+        [params]="paramsDataGoods"
+        [pageSizeOptions]="[5, 10, 20]"
+        [limit]="limitDataGoods"
+        [totalItems]="totalItemsDataGoods"></app-pagination>
 
       <hr class="row" />
       <div class="row">
@@ -499,6 +504,12 @@
           (userRowSelect)="selectRowGoodActa($event)"
           (rowDeselect)="deselectRowGoodActa()"></ng2-smart-table>
       </div>
+      <app-pagination
+        *ngIf="!loading"
+        [params]="paramsDataGoodsAct"
+        [pageSizeOptions]="[5, 10, 20]"
+        [limit]="limitDataGoodsAct"
+        [totalItems]="totalItemsDataGoodsAct"></app-pagination>
       <hr class="row" />
       <div class="row">
         <div class="d-flex justify-content-center">
@@ -542,7 +553,7 @@
       <div class="row">
         <div class="col-md-12">
           <div class="col-md-6">
-            <div class="row">
+            <div *ngIf="isBoveda" class="row">
               <div class="col-md-9">
                 <form-field [control]="form.get('noAlmacen')">
                   <ngx-select
@@ -556,7 +567,7 @@
               </div>
             </div>
 
-            <div class="row">
+            <!-- <div *ngIf="isAlmacen" class="row">
               <div class="col-md-9">
                 <form-field [control]="form.get('noBoveda')">
                   <ngx-select
@@ -568,18 +579,22 @@
                     [data]="vaultSelect"></ngx-select>
                 </form-field>
               </div>
-            </div>
+            </div> -->
           </div>
           <div class="row">
             <div class="col-md-12">
               <button
                 type="button"
-                class="my-1 mx-2"
                 size="small"
+                class="btn btn-primary btn-sm active mr-2"
                 (click)="openEdoFisico()">
                 Espec&iacute;fica Edo&#46; F&iacute;sico
               </button>
-              <button type="button" class="my-1 mx-2" size="small">
+              <button
+                type="button"
+                size="small"
+                class="btn btn-primary btn-sm active"
+                (click)="applyWarehouseSafe()">
                 Aplica Almac&eacute;n/B&oacute;veda
               </button>
               <!-- <button type="button" class="my-1 mx-2" size="small">

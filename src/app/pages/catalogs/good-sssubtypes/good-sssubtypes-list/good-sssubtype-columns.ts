@@ -1,3 +1,7 @@
+import { IGoodSsubType } from 'src/app/core/models/catalogs/good-ssubtype.model';
+import { IGoodSubType } from 'src/app/core/models/catalogs/good-subtype.model';
+import { IGoodType } from 'src/app/core/models/catalogs/good-type.model';
+
 export const GOOD_SSSUBTYPE_COLUMNS = {
   id: {
     title: 'Id',
@@ -9,20 +13,29 @@ export const GOOD_SSSUBTYPE_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  numTypeName: {
+  numType: {
     title: 'Tipo bien',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (value: IGoodType) => {
+      return value.nameGoodType;
+    },
   },
-  numSubTypeName: {
+  numSubType: {
     title: 'Subtipo bien',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (value: IGoodSubType) => {
+      return value.nameSubtypeGood;
+    },
   },
-  numSsubTypeName: {
+  numSsubType: {
     title: 'Descripción',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (value: IGoodSsubType) => {
+      return value.description;
+    },
   },
   numClasifGoods: {
     title: 'N. Clasif Bien',

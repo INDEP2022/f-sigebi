@@ -12,7 +12,7 @@ export const INDICATED_COLUMNS = {
   },
 
   curp: {
-    title: 'Curp',
+    title: 'CURP',
     type: 'string',
     sort: false,
   },
