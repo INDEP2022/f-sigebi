@@ -534,11 +534,13 @@
             </ng2-smart-table> -->
             <!-- [disabled]="!disabledMOficGest" -->
             <div class="row pt-4">
-              <button
-                (click)="openModalCopy(false)"
-                class="btn btn-primary active btn-sm ml-3">
-                Nuevo
-              </button>
+              <div>
+                <button
+                  (click)="openModalCopy(false)"
+                  class="btn btn-primary active btn-sm ml-3 mb-3">
+                  Nuevo
+                </button>
+              </div>
               <div class="col-md-12">
                 <div class="table-responsive">
                   <div [class]="loading ? 'table-loading' : ''">

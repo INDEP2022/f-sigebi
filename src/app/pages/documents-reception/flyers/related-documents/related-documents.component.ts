@@ -24,7 +24,6 @@ import { ILegend } from 'src/app/core/models/catalogs/legend.model';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { INotification } from 'src/app/core/models/ms-notification/notification.model';
 import { ICopiesJobManagementDto } from 'src/app/core/models/ms-officemanagement/good-job-management.model';
-import { IMJobManagement } from 'src/app/core/models/ms-officemanagement/m-job-management.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { DictationXGood1Service } from 'src/app/core/services/ms-dictation/dictation-x-good1.service';
@@ -157,7 +156,7 @@ export class RelatedDocumentsComponent
   };
   pantallaActual: string = '';
   disabledRadio: boolean = false;
-  oficioGestion: IMJobManagement;
+  // oficioGestion: IMJobManagement;
   disabledAddresse: boolean = false;
   data1: any = [];
   statusOf: string = undefined;
@@ -708,6 +707,7 @@ export class RelatedDocumentsComponent
       legendOffice: string;
       idName: string;
     }>(null), // ciudad,
+    statusOf: new FormControl(''), // estatus_of
   });
 
   initForm() {
@@ -721,6 +721,7 @@ export class RelatedDocumentsComponent
           const mJobManagement = await firstValueFrom(
             this.getMJobManagement(res.wheelNumber)
           );
+          // this.
           this.formJobManagement.patchValue({
             ...mJobManagement,
             city: {
@@ -799,57 +800,57 @@ export class RelatedDocumentsComponent
     return this.route.snapshot.queryParamMap.get(name);
   }
 
-  async validOficioGestion() {
-    const params = new FilterParams();
-    params.addFilter(
-      'managementNumber',
-      this.managementForm.get('numero').value
-    );
-    params.addFilter('jobBy', 'POR DICTAMEN');
-    await this.flyerService.getMOficioGestion(params.getParams()).subscribe({
-      next: res => {
-        console.log('Dicataminacion', res.data[0]);
-        if (res.count == 0) {
-          // this.getDictationByWheel();
-        } else {
-          this.oficioGestion = res.data[0];
-          this.statusOf = res.data[0].statusOf;
-          this.setDataOficioGestion();
-          // Se tiene el registro
-          this.initFormFromImages();
-        }
-      },
-      error: err => {
-        console.log(err);
-        // this.getDictationByWheel();
-      },
-    });
-  }
+  // async validOficioGestion() {
+  //   const params = new FilterParams();
+  //   params.addFilter(
+  //     'managementNumber',
+  //     this.managementForm.get('numero').value
+  //   );
+  //   params.addFilter('jobBy', 'POR DICTAMEN');
+  //   await this.flyerService.getMOficioGestion(params.getParams()).subscribe({
+  //     next: res => {
+  //       console.log('Dicataminacion', res.data[0]);
+  //       if (res.count == 0) {
+  //         // this.getDictationByWheel();
+  //       } else {
+  //         this.oficioGestion = res.data[0];
+  //         this.statusOf = res.data[0].statusOf;
+  //         this.setDataOficioGestion();
+  //         // Se tiene el registro
+  //         this.initFormFromImages();
+  //       }
+  //     },
+  //     error: err => {
+  //       console.log(err);
+  //       // this.getDictationByWheel();
+  //     },
+  //   });
+  // }
 
-  setDataOficioGestion() {
-    this.managementForm.get('tipoOficio').setValue(this.oficioGestion.jobType);
-    console.log('asfasfasfasfa', this.oficioGestion);
-    // this.managementForm.get('statusOf').setValue(this.oficioGestion.statusOf);
-    this.managementForm.get('relacionado').setValue(this.oficioGestion.jobBy);
-    this.managementForm
-      .get('numero')
-      .setValue(this.oficioGestion.managementNumber);
-    this.managementForm
-      .get('cveGestion')
-      .setValue(this.oficioGestion.cveManagement);
-    // Set remitente, destinatario y ciudad
-    this.managementForm
-      .get('parrafoInicial')
-      .setValue(this.oficioGestion.text1);
-    this.managementForm.get('parrafoFinal').setValue(this.oficioGestion.text2);
-    this.managementForm.get('text3').setValue(this.oficioGestion.text3);
-    this.managementForm
-      .get('justificacionDetalle')
-      .setValue(this.oficioGestion.justification);
-    this.managementForm
-      .get('justificacion')
-      .setValue(this.oficioGestion.justification);
-  }
+  // setDataOficioGestion() {
+  //   this.managementForm.get('tipoOficio').setValue(this.oficioGestion.jobType);
+  //   // console.log('asfasfasfasfa', this.oficioGestion);
+  //   // this.managementForm.get('statusOf').setValue(this.oficioGestion.statusOf);
+  //   this.managementForm.get('relacionado').setValue(this.oficioGestion.jobBy);
+  //   this.managementForm
+  //     .get('numero')
+  //     .setValue(this.oficioGestion.managementNumber);
+  //   this.managementForm
+  //     .get('cveGestion')
+  //     .setValue(this.oficioGestion.cveManagement);
+  //   // Set remitente, destinatario y ciudad
+  //   this.managementForm
+  //     .get('parrafoInicial')
+  //     .setValue(this.oficioGestion.text1);
+  //   this.managementForm.get('parrafoFinal').setValue(this.oficioGestion.text2);
+  //   this.managementForm.get('text3').setValue(this.oficioGestion.text3);
+  //   this.managementForm
+  //     .get('justificacionDetalle')
+  //     .setValue(this.oficioGestion.justification);
+  //   this.managementForm
+  //     .get('justificacion')
+  //     .setValue(this.oficioGestion.justification);
+  // }
 
   reviewParametersGestion() {
     if (this.paramsGestionDictamen.sale == 'C') {
@@ -953,11 +954,11 @@ export class RelatedDocumentsComponent
       this.alertInfo('warning', PARAMETERSALEC, '');
       return;
     }
-    if (this.oficioGestion.statusOf == 'ENVIADO') {
+    if (this.formJobManagement.value?.statusOf == 'ENVIADO') {
       this.alertInfo('warning', MANAGEMENTOFFICESTATUSSEND, '');
       return;
     }
-    if (this.oficioGestion.managementNumber) {
+    if (this.formJobManagement.value?.managementNumber) {
       // /api/v1/m-job-management por numero de gestion
       // ### si tiene registros se eliminan  --- y se hace LIP_COMMIT_SILENCIOSO;
       this.getGoodsJobManagement();
@@ -978,10 +979,13 @@ export class RelatedDocumentsComponent
   }
 
   async getGoodsJobManagement() {
-    if (this.oficioGestion.managementNumber) {
+    if (this.formJobManagement.value.managementNumber) {
       const params = new FilterParams();
       params.removeAllFilters();
-      params.addFilter('managementNumber', this.oficioGestion.managementNumber);
+      params.addFilter(
+        'managementNumber',
+        this.formJobManagement.value.managementNumber
+      );
       await this.flyerService.getMOficioGestion(params.getParams()).subscribe({
         next: res => {
           console.log(res);
@@ -999,7 +1003,7 @@ export class RelatedDocumentsComponent
       this.alertInfo(
         'warning',
         'No existe el Número de Gestión: ' +
-          this.oficioGestion.managementNumber,
+          this.formJobManagement.value.managementNumber,
         ''
       );
     }
@@ -1140,11 +1144,11 @@ export class RelatedDocumentsComponent
     count: number,
     total: number
   ) {
-    if (this.oficioGestion) {
+    if (this.formJobManagement.value.managementNumber) {
       await this.flyerService
         .getGoodsJobManagementByIds({
           goodNumber: dataGoodRes.goodId,
-          managementNumber: this.oficioGestion.managementNumber,
+          managementNumber: this.formJobManagement.value.managementNumber,
         })
         .subscribe({
           next: res => {
