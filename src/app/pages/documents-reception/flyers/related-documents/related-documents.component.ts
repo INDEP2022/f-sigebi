@@ -1362,9 +1362,7 @@ export class RelatedDocumentsComponent
     });
   }
 
-  showDeleteAlert(legend: any) {
-    //ILegend
-    //Desea eliminar el oficio con el expediente ${proceedingsNumber} y No. Oficio ${managementNumber}
+  showDeleteAlert(legend: ILegend) {
     this.alertQuestion(
       'warning',
       'Eliminar',
