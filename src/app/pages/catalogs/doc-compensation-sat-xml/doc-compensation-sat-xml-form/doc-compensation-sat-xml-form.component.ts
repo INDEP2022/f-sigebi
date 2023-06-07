@@ -38,7 +38,14 @@ export class DocCompensationSatXmlFormComponent
       id: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       idOficioSat: [
         null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(NUMBERS_PATTERN),
+          Validators.minLength(1),
+          Validators.maxLength(3),
+          Validators.min(0),
+          Validators.max(999),
+        ],
       ],
       typeDocSatXml: [
         null,
