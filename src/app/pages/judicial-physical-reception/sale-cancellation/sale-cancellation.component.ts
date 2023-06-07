@@ -1433,10 +1433,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
                 .paOpenProceedingProgam(modelPaOpen)
                 .subscribe(
                   res => {
-                    this.labelActa = 'Cerrar acta';
-                    this.btnCSSAct = 'btn-primary';
-                    this.form.get('statusProceeding').setValue('ABIERTA');
-                    this.reopening = true;
+                    
                     const paramsF = new FilterParams();
                     paramsF.addFilter(
                       'valUser',
@@ -1454,12 +1451,10 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
                               .paRegresaEstAnterior(modelPaOpen)
                               .subscribe(
                                 res => {
-                                  this.labelActa = 'Abrir acta';
-                                  this.btnCSSAct = 'btn-primary';
-                                  this.form
-                                    .get('statusProceeding')
-                                    .setValue('CERRADO');
-
+                                  this.labelActa = 'Cerrar acta';
+                    this.btnCSSAct = 'btn-primary';
+                    this.form.get('statusProceeding').setValue('ABIERTA');
+                    this.reopening = true;
                                   const btn =
                                     document.getElementById('expedient-number');
                                   this.render.removeClass(btn, 'disabled');

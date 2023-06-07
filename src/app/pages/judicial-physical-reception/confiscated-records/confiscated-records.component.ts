@@ -67,6 +67,7 @@ import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-ele
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { EdoFisicoComponent } from './edo-fisico/edo-fisico.component.component';
 import { columnsGood, columnsGoodAct } from './settings-tables';
+import { ITransfActaEntrec } from 'src/app/core/models/ms-notification/notification.model';
 
 @Component({
   selector: 'app-confiscated-records',
@@ -207,7 +208,8 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     private serviceClassifyGood: ClassifyGoodService,
     private serviceGoodQuery: GoodsQueryService,
     private serviceTransferent: TransferenteService,
-    private serviceHistoryGood: HistoryGoodService
+    private serviceHistoryGood: HistoryGoodService,
+    private serviceNotification: NotificationService
   ) {
     super();
   }
@@ -496,30 +498,22 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   }
 
   verifyActAndTransfer() {
-    const transfer = this.form.get('transfer');
-    const acta = this.form.get('acta');
-    if (acta.value != null) {
-      this.enableElement('transfer');
-      this.fillActTwo();
-      if (
-        acta.value === 'A' &&
-        transfer.value != null &&
-        transfer.value.transferentKey != 'PGR' &&
-        transfer.value.transferentKey != 'PJF'
-      ) {
-        transfer.setValue(null);
-      }
+    let modelTransf: ITransfActaEntrec = {
+      indcap: "",
+      no_expediente: this.form.get('expediente').value,
+      id_tipo_acta: this.form.get('acta').value
     }
-  }
 
-  verifyTransferenteAndAct() {
-    if (this.form.get('acta').value != null) {
-      let actaValue = this.form.get('acta').value;
-      this.form
-        .get('transfer')
-        .setValidators([transferenteAndAct(actaValue), Validators.required]);
-      this.fillActTwo();
-    }
+    this.serviceNotification.getTransferenteentrec(modelTransf).subscribe(
+      res => {
+        this.transferSelect = new DefaultSelect(res.data)
+      },
+      err => {
+        this.transferSelect = new DefaultSelect()
+        this.loading = false
+        this.alert('warning','No se encontraron transferentes','')
+      }
+    )
   }
 
   //Validations
@@ -1239,56 +1233,12 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         this.form.get('causaPenal').setValue(resp.criminalCase);
         console.log(resp.preliminaryInquiry);
         this.form.get('averPrev').setValue(resp.preliminaryInquiry);
-        if (resp.transferNumber != null) {
-          const paramsF = new FilterParams();
-          paramsF.addFilter('id', resp.transferNumber);
-          this.serviceTransferent
-            .getAllWithFilter(paramsF.getParams())
-            .subscribe(
-              res => {
-                this.clave_transferente = res.data[0]['keyTransferent'];
-              },
-              err => {
-                this.alert('warning', 'Error al Leer transferentes', '');
-              }
-            );
-        }
-
         if (resp.expedientType == 'T') {
           this.records = new DefaultSelect(['RT']);
         } else {
           this.records = new DefaultSelect(['A', 'NA', 'D', 'NS']);
         }
-
-        let model: TransferProceeding = {
-          numFile: resp.transferNumber as number,
-          typeProceedings: resp.expedientType,
-        };
-        console.log(model);
-        this.serviceProcVal.getTransfer(model).subscribe(
-          res => {
-            console.log(res);
-            this.transferSelect = new DefaultSelect(res.data, res.count);
-            this.getDataExpedient();
-            //!if de activar PGR
-            this.checkChange();
-            this.newGetGoods();
-          },
-          err => {
-            console.log(err);
-            this.blockExpedient = false;
-            this.transferSelect = new DefaultSelect([]);
-            this.getDataExpedient();
-            //!if de activar PGR
-            this.checkChange();
-            this.newGetGoods();
-            /* this.alert('error', 'Clave de transferente inválida', '');
-            this.dataGoods.load([]);
-            this.loading = false;
-            this.dataGoodAct.load([]);
-            this.goodData = []; */
-          }
-        );
+        this.goodsByExpediente()
       },
       err => {
         this.alert(
@@ -1392,10 +1342,15 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     } else {
       this.form
         .get('acta')
-        .valueChanges.subscribe(res => this.verifyActAndTransfer());
+        .valueChanges.subscribe(res => {
+          if(res != null && res != undefined){
+            this.verifyActAndTransfer()
+          this.fillActTwo()
+          }
+        });
       this.form
         .get('transfer')
-        .valueChanges.subscribe(res => this.verifyTransferenteAndAct());
+        .valueChanges.subscribe(res => this.fillActTwo());
       this.form.get('ident').valueChanges.subscribe(res => this.fillActTwo());
       this.form.get('recibe').valueChanges.subscribe(res => {
         console.log(res);
@@ -2192,26 +2147,25 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
             .paOpenProceedingProgam(modelPaOpen)
             .subscribe(
               res => {
-                this.labelActa = 'Cerrar acta';
-                this.btnCSSAct = 'btn-primary';
-                this.form.get('statusProceeding').setValue('ABIERTA');
-                this.reopening = true;
+               
                 this.inputsReopenProceeging();
                 this.alert(
                   'success',
                   'Acta abierta',
                   `El acta ${this.form.get('acta2').value} fue abierta`
                 );
+                console.log(VAL_MOVIMIENTO)
                 if (VAL_MOVIMIENTO === 1) {
                   this.serviceProgrammingGood
                     .paRegresaEstAnterior(modelPaOpen)
                     .subscribe(
                       res => {
-                        console.log(res);
-                        this.labelActa = 'Abrir acta';
+                        this.labelActa = 'Cerrar acta';
                         this.btnCSSAct = 'btn-primary';
+                        this.form.get('statusProceeding').setValue('ABIERTA');
+                        this.reopening = true;
                         this.inputsReopenProceeging();
-                        this.form.get('statusProceeding').setValue('CERRADO');
+
                         const btn = document.getElementById('expedient-number');
                         this.render.removeClass(btn, 'disabled');
                         this.render.addClass(btn, 'enabled');
@@ -3290,7 +3244,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
       (this.form.get('acta').value != null ? this.form.get('acta').value : '') +
       '/' +
       (this.form.get('transfer').value != null
-        ? this.form.get('transfer').value.transferentkey
+        ? this.form.get('transfer').value.clave_transferente
         : '') +
       '/' +
       (this.form.get('ident').value != null
@@ -3560,7 +3514,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     console.log(arrAct);
 
     if (this.selectData && this.selectData != null) {
-      const goodClass = this.selectData.good.goodClassNumber;
+      const goodClass = this.selectData.goodClassNumber;
       const available = this.selectData.avalaible;
       //Valida si es disponible
       if (!available) {
