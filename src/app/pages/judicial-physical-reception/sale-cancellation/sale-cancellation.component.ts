@@ -1657,6 +1657,9 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
           ) {
             resolve(false);
           }
+        },
+        err => {
+          resolve(false)
         });
       }
     });

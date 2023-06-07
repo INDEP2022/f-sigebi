@@ -4,7 +4,11 @@ import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IGeneric } from 'src/app/core/models/catalogs/generic.model';
+import { Iprogramming } from 'src/app/core/models/good-programming/programming';
+import { IGood } from 'src/app/core/models/good/good.model';
 import { GenericService } from 'src/app/core/services/catalogs/generic.service';
+import { GoodService } from 'src/app/core/services/good/good.service';
+import { ProgrammingGoodService } from 'src/app/core/services/ms-programming-request/programming-good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
@@ -17,10 +21,14 @@ export class CancelationGoodFormComponent extends BasePage implements OnInit {
   params = new BehaviorSubject<ListParams>(new ListParams());
   form: FormGroup = new FormGroup({});
   cancelations = new DefaultSelect<IGeneric>();
+  goodSelect: IGood[] = [];
+  programming: Iprogramming;
   constructor(
     private modalRef: BsModalRef,
     private genericService: GenericService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private programmingGoodService: ProgrammingGoodService,
+    private goodService: GoodService
   ) {
     super();
   }
@@ -47,7 +55,38 @@ export class CancelationGoodFormComponent extends BasePage implements OnInit {
     });
   }
 
-  confirm() {}
+  confirm() {
+    this.goodSelect.map(item => {
+      const formData: Object = {
+        programmingId: this.programming.id,
+        goodId: item.goodId,
+        status: 'CANCELADO_TMP',
+      };
+
+      this.programmingGoodService.updateGoodProgramming(formData).subscribe({
+        next: response => {
+          console.log('updeado', response);
+          const formData: Object = {
+            id: item.id,
+            goodId: item.goodId,
+            goodStatus: 'CANCELADO_TMP',
+            programmationStatus: 'CANCELADO_TMP',
+            reasonCancReprog: this.form.get('cancelation').value,
+          };
+
+          this.goodService.updateByBody(formData).subscribe({
+            next: response => {
+              console.log('actualizado', response);
+              this.modalRef.content.callback(true);
+              this.modalRef.hide();
+            },
+            error: error => {},
+          });
+        },
+        error: error => {},
+      });
+    });
+  }
 
   close() {
     this.modalRef.hide();

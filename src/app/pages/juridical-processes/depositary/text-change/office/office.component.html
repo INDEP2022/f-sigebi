@@ -259,7 +259,7 @@
           <button
             type="button"
             class="btn btn-info active"
-            [disabled]="!managementNumber_"
+            [disabled]="!form.valid"
             (click)="updateOficio()">
             Actualizar
           </button>
@@ -268,7 +268,7 @@
           <button
             type="button"
             text="Imprimir"
-            [disabled]="!managementNumber_"
+            [disabled]="!form.valid"
             class="btn btn-primary active"
             (click)="confirm()">
             Imprimir
