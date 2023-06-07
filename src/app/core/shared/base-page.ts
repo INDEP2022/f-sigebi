@@ -8,6 +8,7 @@ import {
 } from 'ngx-bootstrap/datepicker';
 import { ToastrService } from 'ngx-toastr';
 import { BehaviorSubject, filter, Subject, takeUntil, tap } from 'rxjs';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { LoadingPercentService } from 'src/app/common/services/loading-percent.service';
 import { LoadingService } from 'src/app/common/services/loading.service';
 import { ScreenCodeService } from 'src/app/common/services/screen-code.service';
@@ -19,7 +20,6 @@ import Swal, {
   SweetAlertResult,
 } from 'sweetalert2';
 import { AlertsQueueService } from '../services/alerts/alerts-queue.service';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 
 export class SweetalertModel implements SweetAlertOptions {
   title: string;
@@ -106,7 +106,7 @@ const TABLE_SETTINGS: TableSettings = {
   },
   columns: {},
   noDataMessage: 'No se encontraron registros',
-  rowClassFunction: (row: any) => { },
+  rowClassFunction: (row: any) => {},
 };
 @Component({
   template: '',

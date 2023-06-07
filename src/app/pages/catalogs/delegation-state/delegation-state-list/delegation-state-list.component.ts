@@ -119,7 +119,10 @@ export class DelegationStateListComponent extends BasePage implements OnInit {
       console.log(delegationSate.regionalDelegation.id);
       console.log(delegationSate);
       if (question.isConfirmed) {
-        this.delete(delegationSate.regionalDelegation.id, delegationSate.stateCode.codeCondition);
+        this.delete(
+          delegationSate.regionalDelegation.id,
+          delegationSate.stateCode.codeCondition
+        );
         Swal.fire('Borrado', 'Delegacione Estado', 'success');
       }
     });

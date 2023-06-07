@@ -690,10 +690,7 @@ export class RelatedDocumentsDictationComponent
     // } else {
     //   this.alert(
     //     'warning',
-    //     'No existe un valor para Número de Gestión',
     //     'Sin valor'
-    //   );
-    // }
   }
 
   formJobManagement = new FormGroup({
@@ -1619,7 +1616,6 @@ export class RelatedDocumentsDictationComponent
   showDeleteAlert(legend: any) {
     //ILegend
     //Desea eliminar el oficio con el expediente ${proceedingsNumber} y No. Oficio ${managementNumber}
-    //Desea eliminar el oficio con el expediente ${proceedingsNumber} y No. Oficio ${managementNumber}
     console.log(legend);
     console.log(this.managementForm);
     console.log(this.formJobManagement);
@@ -1649,8 +1645,6 @@ export class RelatedDocumentsDictationComponent
       return;
     }
     //this.userHavePermission()
-
-    return;
     this.alertQuestion(
       'warning',
       'Eliminar',
@@ -1801,7 +1795,6 @@ export class RelatedDocumentsDictationComponent
     }
     this.getGoods1(params);
   }
-
   // OBTENER BIENES //
   async onLoadGoodList(filter: any) {
     this.formLoading = true;
@@ -1818,7 +1811,6 @@ export class RelatedDocumentsDictationComponent
     if (filter != 'Todos') {
       params['filter.goodClassNumber'] = `$eq:${filter}`;
     }
-
     //this.filtroTipos(this.paramsGestionDictamen.expediente);
     this.goodServices.getByExpedientAndParams(params).subscribe({
       next: response => {
@@ -2065,15 +2057,6 @@ export class RelatedDocumentsDictationComponent
 
   userHavePermission() {
     //private useR: SegAcessXAreasService
-    return new Promise((resolve, reject) => {
-      this.segAccessAreasService.userHavePermissions({
-        next: (resp: any) => {
-          resolve(resp);
-        },
-        error: (error: any) => {
-          reject('error no se realizo la petision');
-        },
-      });
-    });
+    return new Promise((resolve, reject) => {});
   }
 }

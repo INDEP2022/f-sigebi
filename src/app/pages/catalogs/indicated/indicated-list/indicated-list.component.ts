@@ -81,7 +81,13 @@ export class IndicatedListComponent extends BasePage implements OnInit {
 
   getIndicated() {
     this.loading = true;
-    this.indicatedService.getAll(this.params.getValue()).subscribe({
+
+    let params = {
+      ...this.params.getValue(),
+      ...this.columnFilters,
+    };
+
+    this.indicatedService.getAll(params).subscribe({
       next: response => {
         this.data.load(response.data);
         this.data.refresh();

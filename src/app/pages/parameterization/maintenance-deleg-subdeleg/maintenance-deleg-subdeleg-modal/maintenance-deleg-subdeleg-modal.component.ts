@@ -22,7 +22,7 @@ export class MaintenanceDelegSubdelegModalComponent
   extends BasePage
   implements OnInit
 {
-  title: string = 'Sub Delegaciones';
+  title: string = 'Sub Delegación';
   edit: boolean = false;
 
   subDelegationForm: ModelForm<ISubdelegation>;

@@ -32,9 +32,7 @@ export class IndicatedFormComponent extends BasePage implements OnInit {
   prepareForm() {
     this.indicatedForm = this.fb.group({
       name: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      noRegistration: [null, [Validators.required]],
       curp: [null, [Validators.required, Validators.pattern(CURP_PATTERN)]],
-      consecutive: [null, [Validators.required]],
     });
 
     if (this.indicated != null) {

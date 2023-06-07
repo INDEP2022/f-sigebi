@@ -78,7 +78,7 @@
                 <input class="form-control" formControlName="criminalCase" />
               </form-field>
 
-              <form-field
+              <!-- <form-field
                 [control]="expedientesForm.get('delito')"
                 *ngIf="isDelit">
                 <form-check label="¿Es delito?" for="delito">
@@ -88,7 +88,7 @@
                     class="form-control"
                     formControlName="delito" />
                 </form-check>
-              </form-field>
+              </form-field> -->
             </div>
             <!-- Averiguación Previa -->
             <!-- <div class="col-sm-12 col-12 col-md-6 p-2">
@@ -126,6 +126,23 @@
               <b>Observaciones</b>
               {{ expedientesForm.get('observaciones').value }}
             </div> -->
+          </div>
+
+          <div class="row pt-5">
+            <div class="col-md-4">
+              <form-field
+                label="¿Es delito?"
+                [control]="expedientesForm.get('delito')">
+                <ng-select
+                  formControlName="delito"
+                  [searchable]="false"
+                  class="form-control"
+                  [clearable]="false">
+                  <ng-option value="S">Si</ng-option>
+                  <ng-option value="N">No</ng-option>
+                </ng-select>
+              </form-field>
+            </div>
           </div>
         </form>
         <!-- INICIA FORM #2 -->
@@ -293,11 +310,11 @@
             <ngx-select
               [searchOnInit]="true"
               [readonly]="!isIdent"
-              [data]="ident"
+              [data]="typesIdent"
               [form]="expedientesForm"
               label="Ident."
-              bindLabel="value"
-              value="id"
+              bindLabel="identificador"
+              value="identificador"
               control="identifier"></ngx-select>
           </form-field>
         </div>
@@ -305,24 +322,62 @@
         <div class="col-md-8">
           <form-field [control]="expedientesForm.get('type')">
             <ngx-select
-              class="form-control"
-              [searchOnInit]="true"
-              (fetchItems)="getTypes($event)"
-              [data]="types"
+              [data]="typesClass"
               [form]="expedientesForm"
-              value="id"
+              value="no_clasif_bien"
               label="Subtipo - Ssubtipo - Sssubtipo"
               bindLabel="nameGoodType"
               control="type"
-              (change)="onTypesChange($event)">
+              (change)="onTypesChange($event)"
+              [labelTemplate]="classNo"
+              [optionTemplate]="classSub"
+              [searchable]="false">
             </ngx-select>
+            <ng-template #classNo let-item="item">
+              <div *ngIf="item.no_clasif_bien == 0">
+                {{ item.no_clasif_bien }} - {{ item.desc_sssubtipo }}
+              </div>
+              <div *ngIf="item.no_clasif_bien > 0">
+                {{ item.no_clasif_bien }} - {{ item.desc_ssubtipo }} -
+                {{ item.desc_ssubtipo }} - {{ item.desc_sssubtipo }}
+              </div>
+            </ng-template>
+            <ng-template #classSub let-item="item">
+              <div
+                *ngIf="item.no_clasif_bien == 0"
+                [title]="
+                  item.no_clasif_bien +
+                  '-' +
+                  item.desc_subtipo +
+                  '-' +
+                  item.desc_ssubtipo +
+                  '-' +
+                  item.desc_sssubtipo
+                ">
+                {{ item.no_clasif_bien }} - {{ item.desc_sssubtipo }}
+              </div>
+              <div
+                *ngIf="item.no_clasif_bien > 0"
+                [title]="
+                  item.no_clasif_bien +
+                  '-' +
+                  item.desc_subtipo +
+                  '-' +
+                  item.desc_ssubtipo +
+                  '-' +
+                  item.desc_sssubtipo
+                ">
+                {{ item.no_clasif_bien }} - {{ item.desc_subtipo }} -
+                {{ item.desc_ssubtipo }} - {{ item.desc_sssubtipo }}
+              </div>
+            </ng-template>
           </form-field>
         </div>
 
         <div class="col-md-8">
           <!-- <form-field [control]="subtipoForm.get('sssubtype')">
             <ngx-select [searchOnInit]="true" (fetchItems)="getSssubtypes($event)" [data]="sssubtypes"
-              [form]="subtipoForm" value="id" label="Subtipo - Ssubtipo - Sssubtipo" bindLabel="description"
+              [form]="subtipoForm" value="no_clasif_bien" label="Subtipo - Ssubtipo - Sssubtipo" bindLabel="description"
               control="sssubtype" (change)="onValuesChange($event)" [labelTemplate]="sssubtypeLabel"
               [optionTemplate]="sssubtypeOption">
          
@@ -332,12 +387,6 @@
         </div>
       </div>
     </form>
-    <ng-template #sssubtypeLabel let-item="item"
-      >{{ item.id }} - {{ item.description }}</ng-template
-    >
-    <ng-template #sssubtypeOption let-item="item"
-      >{{ item.id }} - {{ item.description }}</ng-template
-    >
 
     <div class="row pt-2">
       <div class="col-md-12 mt-4 mb-4">
@@ -349,6 +398,15 @@
           [attr.class]="'table-bordered table-responsive'"
           [settings]="settings1"
           [source]="goods"></ng2-smart-table>
+        <div class="d-flex justify-content-between">
+          <p class="text-danger mt-2 ml-3">
+            <strong>{{ desc_estatus_good }}</strong>
+          </p>
+          <p class="text-primary mt-2 ml-3">
+            <strong>{{ consult }}</strong>
+          </p>
+        </div>
+
         <app-pagination
           [params]="params"
           [totalItems]="totalItems"></app-pagination>
@@ -357,28 +415,28 @@
     <div class="row pt-2">
       <div class="col-md-12 text-center mt-4 mb-4">
         <button
-          class="btn btn-secondary btn-sm active m-3 p-3 pointer"
+          class="btn btn-secondary btn-sm active m-3 p-1 pointer"
           type="button"
           (click)="addSelect()">
           <!-- Mover uno -->
           <i class="bx bx-chevron-down bx-md"></i>
         </button>
         <button
-          class="btn btn-secondary btn-sm active m-3 p-3 pointer"
+          class="btn btn-secondary btn-sm active m-3 p-1 pointer"
           type="button"
           (click)="addAll()">
           <!-- Mover todos -->
           <i class="bx bx-chevrons-down bx-md"></i>
         </button>
         <button
-          class="btn btn-secondary btn-sm active m-3 p-3 pointer"
+          class="btn btn-secondary btn-sm active m-3 p-1 pointer"
           type="button"
           (click)="removeAll()">
           <!-- Quitar todos -->
           <i class="bx bx-chevrons-up bx-md"></i>
         </button>
         <button
-          class="btn btn-secondary btn-sm active m-3 p-3 pointer"
+          class="btn btn-secondary btn-sm active m-3 p-1 pointer"
           type="button"
           (click)="removeSelect()">
           <!-- Quitar uno -->
@@ -497,44 +555,6 @@
           Oficio Relacionado
         </button>
       </div> -->
-    </div>
-  </div>
-</app-card>
-
-<app-card [header]="true" *ngIf="listadoDocumentos == true">
-  <div class="ch-content" header>
-    <h5 class="title">Fecha de Documentos Asociados al Tr&aacute;mite</h5>
-  </div>
-
-  <div body>
-    <div class="row w-100">
-      <div class="col-sm-12 col-12 col-md-12 p-2">
-        <ng2-smart-table
-          [attr.class]="'table-bordered'"
-          [settings]="settings4"
-          [source]="data4"></ng2-smart-table>
-      </div>
-      <!-- <div class="col-sm-12 col-12 col-md-12 text-right p-2">
-        <div class="form-group">
-          <button class="btn btn-danger btn-sm active m-3" (click)="btnSalir()">
-            Cerrar Ventana
-          </button>
-        </div>
-      </div> -->
-      <div class="col-12 flex p-2">
-        <div class="form-group text-right">
-          <button
-            class="btn btn-danger active btn-sm m-3"
-            (click)="btnCloseDocs()">
-            Cerrar Ventana
-          </button>
-          <button
-            class="btn btn-primary active btn-sm m-3"
-            (click)="btnSalir()">
-            Cargar documentos
-          </button>
-        </div>
-      </div>
     </div>
   </div>
 </app-card>

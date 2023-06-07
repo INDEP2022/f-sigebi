@@ -14,21 +14,38 @@
         </div> -->
         <div class="col-md-8">
           <form-field [control]="goodSubtypeForm.get('idTypeGood')">
-            <ngx-select label="Tipo Bienes" [form]="goodSubtypeForm" control="idTypeGood" [data]="types" value="id"
-              bindLabel="nameGoodType" label="Tipo Bien" (fetchItems)="getTypes($event)"></ngx-select>
+            <ngx-select
+              label="Tipo Bienes"
+              [form]="goodSubtypeForm"
+              control="idTypeGood"
+              [data]="types"
+              value="id"
+              bindLabel="nameGoodType"
+              label="Tipo Bien"
+              (fetchItems)="getTypes($event)"></ngx-select>
           </form-field>
         </div>
       </div>
 
       <div class="row pt-5">
         <div class="col-md-6">
-          <form-field [control]="goodSubtypeForm.get('nameSubtypeGood')" label="Nombre Subtipo Bien">
-            <input type="text" class="form-control" formControlName="nameSubtypeGood" />
+          <form-field
+            [control]="goodSubtypeForm.get('nameSubtypeGood')"
+            label="Nombre Subtipo Bien">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="nameSubtypeGood" />
           </form-field>
         </div>
         <div class="col-md-6">
-          <form-field [control]="goodSubtypeForm.get('noPhotography')" label="Nº Fotograf&iacute;a">
-            <input type="text" class="form-control" formControlName="noPhotography" />
+          <form-field
+            [control]="goodSubtypeForm.get('noPhotography')"
+            label="Nº Fotograf&iacute;a">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="noPhotography" />
           </form-field>
         </div>
         <!-- <div class="col-md-3">
@@ -44,9 +61,13 @@
       </div>
       <div class="row pt-5">
         <div class="col-md-12">
-          <form-field [control]="goodSubtypeForm.get('descriptionPhotography')"
+          <form-field
+            [control]="goodSubtypeForm.get('descriptionPhotography')"
             label="Descripci&oacute;n Fotogr&aacute;fica">
-            <textarea rows="1" class="form-control" formControlName="descriptionPhotography"></textarea>
+            <textarea
+              rows="1"
+              class="form-control"
+              formControlName="descriptionPhotography"></textarea>
           </form-field>
         </div>
       </div>
@@ -64,7 +85,10 @@
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <confirm-button [disabled]="!goodSubtypeForm.valid" [loading]="loading" (confirm)="confirm()">
+        <confirm-button
+          [disabled]="!goodSubtypeForm.valid"
+          [loading]="loading"
+          (confirm)="confirm()">
         </confirm-button>
       </div>
       <div class="m-3">

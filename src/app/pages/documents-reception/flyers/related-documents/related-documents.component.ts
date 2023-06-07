@@ -732,6 +732,7 @@ export class RelatedDocumentsComponent
         this.managementForm.get('noVolante').setValue(res.wheelNumber);
         this.managementForm.get('noExpediente').setValue(res.expedientNumber);
         this.managementForm.get('wheelStatus').setValue(res.wheelStatus);
+
         try {
           const mJobManagement = await firstValueFrom(
             this.getMJobManagement(res.wheelNumber)
@@ -1615,7 +1616,43 @@ export class RelatedDocumentsComponent
     });
   }
 
-  showDeleteAlert(legend: ILegend) {
+  showDeleteAlert(legend: any) {
+    //ILegend
+    //Desea eliminar el oficio con el expediente ${proceedingsNumber} y No. Oficio ${managementNumber}
+    /*
+       //Desea eliminar el oficio con el expediente ${proceedingsNumber} y No. Oficio ${managementNumber}
+    console.log(legend);
+    console.log(this.managementForm);
+    console.log(this.formJobManagement);
+    console.log(this.m_job_management);
+    const { wheelStatus } = this.managementForm.value;
+    const {
+      managementNumber,
+      flyerNumber,
+      statusOf,
+      cveManagement,
+      proceedingsNumber,
+    } = this.m_job_management;
+    if (managementNumber == null) {
+      this.onLoadToast('info', 'No se tiene oficio', '');
+      return;
+    }
+    if (wheelStatus == 'ENVIADO') {
+      this.onLoadToast('info', 'El oficio ya esta enviado no puede borrar', '');
+      return;
+    }
+    if (cveManagement.includes('?') == false) {
+      this.onLoadToast(
+        'info',
+        'La clave está armada, no puede borrar oficio',
+        ''
+      );
+      return;
+    }
+    //this.userHavePermission()
+
+    return;
+    */
     this.alertQuestion(
       'warning',
       'Eliminar',
