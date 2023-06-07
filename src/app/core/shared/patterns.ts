@@ -67,10 +67,8 @@ export const VALID_VALUE_REGEXP = (
   };
 };
 const ERROR_REG_EXP = (nameField: string = '') =>
-  `El campo${
-    nameField ? ': ' + nameField + ',' : ''
+  `El campo${nameField ? ': ' + nameField + ',' : ''
   } tiene caracteres incorrectos los cuales se eliminaron.`;
 const ERROR_MAX_LENGTH = (nameField: string = '') =>
-  `El campo${
-    nameField ? ': ' + nameField + ',' : ''
+  `El campo${nameField ? ': ' + nameField + ',' : ''
   } tiene MÁS caracteres de los permitidos, se eliminaron los caracteres después de la longitud permitida.`;
