@@ -33,9 +33,9 @@ export class CityService extends HttpService implements ICrudMethods<ICity> {
     return this.cityRepository.getById(this.route + '/id', id);
   }
 
-  newGetById(id: string | number): Observable<ICity> {
-    return this.cityRepository.getById(this.route + '/id', id);
-  }
+  // newGetById(id: string | number): Observable<ICity> {
+  //   return this.cityRepository.getById(this.route + '/id', id);
+  // }
 
   create(model: ICity): Observable<ICity> {
     return this.cityRepository.create(this.route, model);
