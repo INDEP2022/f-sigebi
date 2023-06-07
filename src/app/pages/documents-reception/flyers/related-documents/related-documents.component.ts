@@ -174,7 +174,7 @@ export class RelatedDocumentsComponent
   configTableCCp = ConfigTableCcp;
   constructor(
     private fb: FormBuilder,
-    private flyerService: FlyersService,
+    protected flyerService: FlyersService,
     private route: ActivatedRoute,
     private router: Router,
     private siabService: SiabService,
@@ -505,9 +505,9 @@ export class RelatedDocumentsComponent
     jobType: new FormControl(''), // tipo_oficio
     managementNumber: new FormControl(''), // no_of_gestion
     addressee: new FormControl<{
-      id: number | string;
+      user: number | string;
       name: string;
-      idName: string;
+      userAndName: string;
     }>(null), // destinatario,
     sender: new FormControl<{
       id: number | string;
@@ -522,12 +522,10 @@ export class RelatedDocumentsComponent
     cveManagement: new FormControl(''), // cve_of_gestion,
     city: new FormControl<{
       id: number | string;
-      name: string;
+      legendOffice: string;
       idName: string;
     }>(null), // ciudad,
   });
-
-  getCity() {}
 
   initForm() {
     const wheelNumber = this.getQueryParams('volante');
@@ -544,7 +542,7 @@ export class RelatedDocumentsComponent
             ...mJobManagement,
             city: {
               id: mJobManagement.city,
-              name: null,
+              legendOffice: null,
               idName: mJobManagement.city,
             },
             sender: {
@@ -553,11 +551,57 @@ export class RelatedDocumentsComponent
               idName: mJobManagement.sender,
             },
             addressee: {
-              id: mJobManagement.addressee,
+              user: mJobManagement.addressee,
               name: null,
-              idName: mJobManagement.addressee,
+              userAndName: mJobManagement.addressee,
             },
           });
+          if (mJobManagement.city) {
+            this.getCity(mJobManagement.city).subscribe({
+              next: res => {
+                this.formJobManagement.get('city').setValue({
+                  id: res.idCity,
+                  legendOffice: res.legendOffice,
+                  idName: res.idCity + ' - ' + res.legendOffice,
+                });
+              },
+            });
+          }
+
+          if (mJobManagement.sender) {
+            const params = new ListParams();
+            params.limit = 1;
+            params['search'] = mJobManagement.sender;
+            this.flyerService.getSenderUser(params).subscribe({
+              next: res => {
+                // console.log(res);
+                const i = res.data[0];
+                this.formJobManagement.get('sender').setValue({
+                  id: i.userDetail.id,
+                  idName: i.userDetail.id + ' - ' + i.userDetail.name,
+                  name: i.userDetail.name,
+                });
+              },
+            });
+          }
+
+          if (mJobManagement.addressee) {
+            const params = new ListParams();
+            params.limit = 1;
+            params['search'] = mJobManagement.addressee;
+            this.securityService
+              .getAllUsersTracker(params)
+              .subscribe((data: any) => {
+                const item = data.data[0];
+                let result = {
+                  user: item.user,
+                  name: item.name,
+                  userAndName: item.user + ' - ' + item.name,
+                };
+
+                this.formJobManagement.get('addressee').setValue(result);
+              });
+          }
         } catch (e) {
           console.log(e);
         }
@@ -1130,13 +1174,15 @@ export class RelatedDocumentsComponent
       .getCityBySearch(params.getFilterParams())
       .subscribe({
         next: data => {
-          this.cities = new DefaultSelect(
-            data.data.map(i => {
-              i.nameCity = i.idCity + ' -- ' + i.legendOffice;
-              return i;
-            }),
-            data.count
-          );
+          const result = data.data.map(i => {
+            i.nameCity = i.idCity + ' -- ' + i.legendOffice;
+            return {
+              id: i.idCity,
+              legendOffice: i.legendOffice,
+              idName: i.idCity + ' -- ' + i.legendOffice,
+            };
+          });
+          this.cities = new DefaultSelect(result, data.count);
           subscription.unsubscribe();
         },
         error: error => {
@@ -1157,15 +1203,20 @@ export class RelatedDocumentsComponent
     params['order'] = 'DESC';
     let subscription = this.flyerService.getSenderUser(params).subscribe({
       next: data => {
-        console.log(data);
-        this.senders = new DefaultSelect(
-          data.data.map(i => {
-            i.userDetail.name =
-              '#' + i.userDetail.id + ' -- ' + i.userDetail.name;
-            return i.userDetail;
-          }),
-          data.count
-        );
+        // console.log(data);
+        const senders = data.data.map(i => {
+          // i.userDetail.name =
+          //   '#' + i.userDetail.id + ' -- ' + i.userDetail.name;
+
+          // return i.userDetail;
+          return {
+            id: i.userDetail.id,
+            idName: i.userDetail.id + ' -- ' + i.userDetail.name,
+            name: i.userDetail.name,
+          };
+        });
+        console.log(senders);
+        this.senders = new DefaultSelect(senders, data.count);
         subscription.unsubscribe();
       },
       error: error => {
@@ -1279,13 +1330,18 @@ export class RelatedDocumentsComponent
   getFromSelect(params: ListParams) {
     this.securityService.getAllUsersTracker(params).subscribe(
       (data: any) => {
-        let result = data.data.map(async (item: any) => {
-          item['userAndName'] = item.user + ' - ' + item.name;
+        let result = data.data.map((item: any) => {
+          // item['userAndName'] = item.user + ' - ' + item.name;
+          return {
+            user: item.user,
+            name: item.name,
+            userAndName: item.user + ' - ' + item.name,
+          };
         });
-        Promise.all(result).then((resp: any) => {
-          this.select = new DefaultSelect(data.data, data.count);
-          this.loading = false;
-        });
+        // Promise.all(result).then((resp: any) => {
+        this.select = new DefaultSelect(result, data.count);
+        //   this.loading = false;
+        // });
       },
       error => {
         this.select = new DefaultSelect();
