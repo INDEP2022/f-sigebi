@@ -1720,7 +1720,7 @@ export class EventCaptureComponent
     }
     const model: IPACambioStatusGood = {
       P_NOACTA: Number(this.proceeding.id),
-      P_AREATRA: this.blkCtrl.processingArea.toString(),
+      P_AREATRA: this.registerControls.typeEvent.value,
       P_PANTALLA: 'FINDICA_0035_1',
     };
     await this.PA_CAMBIO_ESTATUS_BIEN(model).then().catch();
@@ -1960,7 +1960,7 @@ export class EventCaptureComponent
 
   async openProg(C_DATVAL: ITmpProgValidation[], n_CONT: number) {
     const model: IPAAbrirActasPrograma = {
-      P_AREATRA: `${this.blkCtrl.processingArea}`,
+      P_AREATRA: `${this.registerControls.typeEvent.value}`,
       P_NOACTA: Number(this.proceeding.id),
       P_PANTALLA: 'FINDICA_0035_1',
       P_TIPOMOV: null,
@@ -1971,7 +1971,7 @@ export class EventCaptureComponent
       console.log('Entro al otro if ');
 
       const model: IPAAbrirActasPrograma = {
-        P_AREATRA: this.blkCtrl.processingArea.toString(),
+        P_AREATRA: this.registerControls.typeEvent.value,
         P_NOACTA: Number(this.proceeding.id),
         P_PANTALLA: 'FINDICA_0035_1',
         P_TIPOMOV: 1,
@@ -2090,13 +2090,6 @@ export class EventCaptureComponent
             deta.dateapprovalxadmon == null
           ) {
             lv_VALFECP = lv_VALFECP + 1;
-            console.log('PASO ------> Notiene fecha');
-            console.log('FEcha 1 ------> ', deta.dateindicatesuserapproval);
-            console.log(
-              'FEcha 2 ------> No tiene fecha',
-              deta.dateapprovalxadmon
-            );
-            console.log(deta);
             break;
           }
         }
@@ -2156,7 +2149,7 @@ export class EventCaptureComponent
         .PaCierreInicialProgr(no_Acta, lv_PANTALLA, blkCtrlArea)
         .subscribe({
           next: resp => res(resp.message[0]),
-          error: err => rej('Error'),
+          error: err => res('Error'),
         });
     });
   }
@@ -2173,14 +2166,14 @@ export class EventCaptureComponent
     await this.PA_CIERRE_INICIAL_PROGR(
       this.proceeding.id,
       'FINDICA_0035_1',
-      this.blkCtrl.processingArea
+      this.registerControls.typeEvent.value
     );
     /////////
     console.log('PASO ----> Llego a getEstatusAct');
 
     const T_VALEACT: string = await this.getEstatusAct();
     console.log('PASO ----> ya paso getEstatusAct');
-    console.log(this.global.paperworkArea, n_CONT);
+    console.log(T_VALEACT);
 
     if (['ABIERTO', 'ABIERTA'].includes(T_VALEACT)) {
       this.onLoadToast(
@@ -2276,12 +2269,14 @@ export class EventCaptureComponent
       return;
     }
 
-    if (this.blkCtrl.processingArea === null) {
+    if (this.registerControls.typeEvent.value === null) {
       this.onLoadToast('info', 'No se ha especificado el Tipo de Evento.');
       return;
     }
 
-    V_TIPO_ACTA = await this.getParameterGood(this.blkCtrl.processingArea);
+    V_TIPO_ACTA = await this.getParameterGood(
+      this.registerControls.typeEvent.value
+    );
 
     if (V_TIPO_ACTA === null) {
       this.onLoadToast('info', 'No se localizó el Tipo de Acta.');
@@ -2318,10 +2313,10 @@ export class EventCaptureComponent
     }
 
     if (v_ind_proc) {
-      if (this.blkCtrl.processingArea === 'DS') {
+      if (this.registerControls.typeEvent.value === 'DS') {
         lv_PAQWHERE =
           "ESTATUS_PAQ = 'C' AND TIPO_PAQUETE = 1 AND ESTATUS IN (SELECT ESTATUS FROM ESTATUS_X_PANTALLA WHERE CVE_PANTALLA = 'FINDICA_0035_1' AND ACCION = 'DS')";
-      } else if (this.blkCtrl.processingArea === 'DN') {
+      } else if (this.registerControls.typeEvent.value === 'DN') {
         lv_PAQWHERE =
           "ESTATUS_PAQ = 'C' AND TIPO_PAQUETE = 2 AND ESTATUS IN (SELECT ESTATUS FROM ESTATUS_X_PANTALLA WHERE CVE_PANTALLA = 'FINDICA_0035_1' AND ACCION = 'DN')";
       }
@@ -2419,7 +2414,7 @@ export class EventCaptureComponent
         );
         return;
       }
-      if (this.blkCtrl.processingArea === null) {
+      if (this.registerControls.typeEvent.value === null) {
         this.onLoadToast('info', 'No se ha especificado el Tipo de Evento.');
         return;
       }
