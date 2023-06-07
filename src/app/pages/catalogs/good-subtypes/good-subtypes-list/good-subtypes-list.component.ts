@@ -48,12 +48,12 @@ export class GoodSubtypesListComponent extends BasePage implements OnInit {
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
             filter.field == 'id' ||
-              filter.field == 'nameSubtypeGood' ||
-              filter.field == 'idTypeGood' ||
-              filter.field == 'noPhotography' ||
-              filter.field == 'descriptionPhotography' ||
-              filter.field == 'noRegister' ||
-              filter.field == 'version'
+            filter.field == 'nameSubtypeGood' ||
+            filter.field == 'idTypeGood' ||
+            filter.field == 'noPhotography' ||
+            filter.field == 'descriptionPhotography' ||
+            filter.field == 'noRegister' ||
+            filter.field == 'version'
               ? (searchFilter = SearchFilter.EQ)
               : (searchFilter = SearchFilter.ILIKE);
             if (filter.search !== '') {
@@ -119,9 +119,14 @@ export class GoodSubtypesListComponent extends BasePage implements OnInit {
     this.goodTypesService.removeByIds(ids).subscribe({
       next: () => {
         this.getExample(), this.alert('success', 'Sub-tipo', 'Borrado');
-      }, error: err => {
-        this.alert('warning', 'Sub-tipo', 'No se puede eliminar el objeto debido a una relación con otra tabla.');
-      }
+      },
+      error: err => {
+        this.alert(
+          'warning',
+          'Sub-tipo',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      },
     });
   }
 }
