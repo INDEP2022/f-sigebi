@@ -1,14 +1,20 @@
+import { formatDate } from '@angular/common';
 import { type FormGroup } from '@angular/forms';
 import { catchError, firstValueFrom, map, Observable, of } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
 import { ICity } from 'src/app/core/models/catalogs/city.model';
+import { IDepartment } from 'src/app/core/models/catalogs/department.model';
 import { IGood } from 'src/app/core/models/good/good.model';
 import { type INotification } from 'src/app/core/models/ms-notification/notification.model';
 import { IMJobManagement } from 'src/app/core/models/ms-officemanagement/m-job-management.model';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { DepartamentService } from 'src/app/core/services/catalogs/departament.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import { GoodsJobManagementService } from 'src/app/core/services/ms-office-management/goods-job-management.service';
 import { MJobManagementService } from 'src/app/core/services/ms-office-management/m-job-management.service';
+import { ParametersService } from 'src/app/core/services/ms-parametergood/parameters.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { FlyersService } from '../services/flyers.service';
 
@@ -18,6 +24,9 @@ export abstract class RelateDocumentsResponse extends BasePage {
   protected abstract notificationService: NotificationService;
   protected abstract mJobManagementService: MJobManagementService;
   protected abstract flyerService: FlyersService;
+  protected abstract parametersService: ParametersService;
+  protected abstract departmentService: DepartamentService;
+  protected abstract authService: AuthService;
 
   abstract data1: IGood[];
   abstract managementForm: FormGroup;
@@ -90,10 +99,41 @@ export abstract class RelateDocumentsResponse extends BasePage {
   }
 
   getCity(text: string | number): Observable<ICity> {
-    // const params = new ListParams();
-    // params.page = 1;
-    // params.limit = 1;
-    // params['filter.idCity'] = text;
     return this.flyerService.getCityById(text);
+  }
+
+  /**
+   *
+   * @param date Date
+   * @returns
+   */
+  getFaStageCreda(date: Date): Promise<number> {
+    const _date = formatDate(date, 'dd-MM-yyyy', 'en-US');
+    console.log(_date);
+    return firstValueFrom(
+      this.parametersService.getFaStageCreda(_date).pipe(
+        map(response => {
+          console.log(response);
+          return response.stagecreated;
+        })
+      )
+    );
+  }
+
+  getDepartment(
+    params: ListParams,
+    first: boolean = true
+  ): Promise<IListResponse<IDepartment> | IDepartment> {
+    return firstValueFrom(
+      this.departmentService.getAll(params).pipe(
+        map(res => {
+          if (first) {
+            return res.data[0];
+          } else {
+            return res;
+          }
+        })
+      )
+    );
   }
 }

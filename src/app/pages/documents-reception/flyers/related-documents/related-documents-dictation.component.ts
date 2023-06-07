@@ -50,7 +50,6 @@ import { LegalOpinionsOfficeService } from 'src/app/pages/juridical-processes/de
 import { IJuridicalDocumentManagementParams } from 'src/app/pages/juridical-processes/file-data-update/interfaces/file-data-update-parameters';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import Swal from 'sweetalert2';
-import { ERROR_REPORT } from '../related-documents/utils/related-documents.message';
 import { FlyersService } from '../services/flyers.service';
 import { DocumentsFormComponent } from './documents-form/documents-form.component';
 import { ModalPersonaOficinaComponent } from './modal-persona-oficina/modal-persona-oficina.component';
@@ -67,10 +66,11 @@ import {
 } from './related-documents-message';
 import { RelateDocumentsResponse } from './related-documents-response';
 import { RelatedDocumentsService } from './services/related-documents.service';
+import { ERROR_REPORT } from './utils/related-documents.message';
 
 @Component({
-  selector: 'app-related-documents',
-  templateUrl: './related-documents.component.html',
+  selector: 'app-related-documents-dictation',
+  templateUrl: './related-documents-dictation.component.html',
   styles: [
     `
       :host ::ng-deep form-radio .form-group {
@@ -84,7 +84,7 @@ import { RelatedDocumentsService } from './services/related-documents.service';
     `,
   ],
 })
-export class RelatedDocumentsComponent
+export class RelatedDocumentsDictationComponent
   extends RelateDocumentsResponse
   implements OnInit
 {
@@ -1607,7 +1607,9 @@ export class RelatedDocumentsComponent
     });
   }
 
-  showDeleteAlert(legend: ILegend) {
+  showDeleteAlert(legend: any) {
+    //ILegend
+    //Desea eliminar el oficio con el expediente ${proceedingsNumber} y No. Oficio ${managementNumber}
     this.alertQuestion(
       'warning',
       'Eliminar',

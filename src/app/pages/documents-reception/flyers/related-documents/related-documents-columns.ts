@@ -1,5 +1,4 @@
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
-import { CustomCellCcpComponent } from './custom-cell-ccp/custom-cell-ccp.component';
 
 export const RELATED_DOCUMENTS_COLUMNS_GOODS = {
   goodId: {
@@ -53,34 +52,6 @@ export const RELATED_DOCUMENTS_COLUMNS_GOODS = {
       });
     },
     sort: false,
-  },
-};
-
-export const ConfigTableCcp = {
-  settings: {
-    columns: {
-      type: {
-        title: 'Tipo de copia',
-        filter: {
-          type: 'list',
-          config: {
-            selectText: 'Seleccionar tipo de copia',
-            list: [
-              { value: 'internal', title: 'Interna' },
-              { value: 'external', title: 'Externa' },
-            ],
-          },
-        },
-      },
-      ccpPerson: {
-        title: 'Persona',
-        type: 'custom',
-        component: CustomCellCcpComponent,
-        // filter: {
-        // type: 'custom',
-        // },
-      },
-    },
   },
 };
 
