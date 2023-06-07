@@ -1963,7 +1963,7 @@ export class EventCaptureComponent
       P_AREATRA: `${this.registerControls.typeEvent.value}`,
       P_NOACTA: Number(this.proceeding.id),
       P_PANTALLA: 'FINDICA_0035_1',
-      P_TIPOMOV: null,
+      P_TIPOMOV: 1,
     };
     await this.openMinutesProyect(model);
     /////////////////////////////////////
@@ -2093,10 +2093,10 @@ export class EventCaptureComponent
             break;
           }
         }
-        console.log('PASO ------> Aca voy en Array detalla recorrer');
         if (lv_VALFECP === 0) {
           if (this.global.paperworkArea === 'RF') {
             n_CONT = (await this.getExpedientsCount()) ?? 0;
+            console.log('PASO ------> Entro al if RF linea 2099');
           }
           if (this.proceeding.typeProceedings === 'EVENTREC' && n_CONT > 0) {
             //// VALIDA SI EXISTE EL XML GENERADO
@@ -2110,7 +2110,7 @@ export class EventCaptureComponent
             }
           }
           if (this.global.paperworkArea === 'RF' && n_CONT > 0) {
-            console.log('Ahora si entro a CERRAR EL ACTA');
+            console.log('PASO --------> Ahora si entro a CERRAR EL ACTA');
             await this.closedProgramming(n_CONT);
           } else {
             await this.alertQuestion(
@@ -2148,7 +2148,10 @@ export class EventCaptureComponent
       this.programmingGoodService
         .PaCierreInicialProgr(no_Acta, lv_PANTALLA, blkCtrlArea)
         .subscribe({
-          next: resp => res(resp.message[0]),
+          next: resp => {
+            console.log(resp.message[0]);
+            res(resp.message[0]);
+          },
           error: err => res('Error'),
         });
     });
@@ -2162,6 +2165,10 @@ export class EventCaptureComponent
         return;
       }
     }
+    console.log('PASO ----> Va a Cerrar');
+    console.log(this.detail);
+    console.log('---------------------------');
+
     ///// llama al pack PA_CIERRE_INICIAL_PROGR
     await this.PA_CIERRE_INICIAL_PROGR(
       this.proceeding.id,
@@ -2169,7 +2176,6 @@ export class EventCaptureComponent
       this.registerControls.typeEvent.value
     );
     /////////
-    console.log('PASO ----> Llego a getEstatusAct');
 
     const T_VALEACT: string = await this.getEstatusAct();
     console.log('PASO ----> ya paso getEstatusAct');
@@ -2182,14 +2188,12 @@ export class EventCaptureComponent
       );
     } else {
       if (this.global.paperworkArea === 'RF' && n_CONT > 0) {
-        this.PUP_ING_REG_FOLIO_UNIV_SSF3(
+        await this.PUP_ING_REG_FOLIO_UNIV_SSF3(
           this.proceeding.numFile,
           `OFICIO DE PROGRAMACION: ${this.proceeding.keysProceedings}`,
           null,
           'ENTRE'
-        )
-          .then()
-          .catch();
+        );
         //// aqui hace los DDL que pedi a Edwin
         await this.firmaAndClosedOffi();
         ///////////////////////////////////////
