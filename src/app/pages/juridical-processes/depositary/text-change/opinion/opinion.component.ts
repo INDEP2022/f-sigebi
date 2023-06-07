@@ -38,10 +38,7 @@ import { SecurityService } from 'src/app/core/services/ms-security/security.serv
 import { SegAcessXAreasService } from 'src/app/core/services/ms-users/seg-acess-x-areas.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import {
-  KEYGENERATION_PATTERN,
-  NUMBERS_PATTERN,
-} from 'src/app/core/shared/patterns';
+import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { BankAccount } from 'src/app/pages/administrative-processes/numerary/tesofe-movements/list-banks/bank';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { ModalComponent } from '../modal/modal-component';
@@ -142,7 +139,7 @@ export class OpinionComponent extends BasePage implements OnInit, OnChanges {
   }
   validUserToolbar: any;
   async ngOnInit() {
-    this.prepareForm();
+    await this.prepareForm();
     this.year = new Date().getFullYear();
     console.log('this.token.decodeToken()', this.token.decodeToken());
     this.options = [
@@ -157,7 +154,7 @@ export class OpinionComponent extends BasePage implements OnInit, OnChanges {
     );
   }
 
-  prepareForm() {
+  async prepareForm() {
     this.form = this.fb.group({
       expedientNumber: [
         null,
@@ -173,73 +170,43 @@ export class OpinionComponent extends BasePage implements OnInit, OnChanges {
       ],
       typeDict: [
         null,
-        [
-          Validators.pattern(this.SPECIAL_STRINGPATTERN),
-          Validators.maxLength(4000),
-        ],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
       ],
       cve_banco: [
         null,
-        [
-          Validators.pattern(this.SPECIAL_STRINGPATTERN),
-          Validators.maxLength(4000),
-        ],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
       ],
       charge: [
         null,
-        [
-          Validators.pattern(this.SPECIAL_STRINGPATTERN),
-          Validators.maxLength(4000),
-        ],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
       ],
       senderUserRemitente: [
         null,
-        [
-          Validators.pattern(this.SPECIAL_STRINGPATTERN),
-          Validators.maxLength(4000),
-        ],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
       ],
       addressee: [
         null,
-        [
-          Validators.pattern(this.SPECIAL_STRINGPATTERN),
-          Validators.maxLength(4000),
-        ],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
       ],
       typeDict_: [
         null,
-        [
-          Validators.pattern(this.SPECIAL_STRINGPATTERN),
-          Validators.maxLength(4000),
-        ],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
       ],
       paragraphInitial: [
         null,
-        [
-          Validators.pattern(this.SPECIAL_STRINGPATTERN),
-          Validators.maxLength(4000),
-        ],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
       ],
       paragraphFinish: [
         null,
-        [
-          Validators.pattern(this.SPECIAL_STRINGPATTERN),
-          Validators.maxLength(4000),
-        ],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
       ],
       paragraphOptional: [
         null,
-        [
-          Validators.pattern(this.SPECIAL_STRINGPATTERN),
-          Validators.maxLength(4000),
-        ],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
       ],
       descriptionSender: [
         null,
-        [
-          Validators.pattern(this.SPECIAL_STRINGPATTERN),
-          Validators.maxLength(4000),
-        ],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
       ] /*
     typePerson: [null, null],
     senderUser: [null, null],
@@ -247,45 +214,30 @@ export class OpinionComponent extends BasePage implements OnInit, OnChanges {
       typePerson_I: [null, null],
       senderUser_I: [null, null],
       personaExt_I: [null, null],
-      key: [null, [Validators.pattern(KEYGENERATION_PATTERN)]],
+      key: [null],
       numberDictamination: [
         null,
         [Validators.pattern(NUMBERS_PATTERN), Validators.maxLength(11)],
       ],
       masInfo_1: [
         null,
-        [
-          Validators.pattern(this.SPECIAL_STRINGPATTERN),
-          Validators.maxLength(4000),
-        ],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
       ],
       masInfo_2: [
         null,
-        [
-          Validators.pattern(this.SPECIAL_STRINGPATTERN),
-          Validators.maxLength(4000),
-        ],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
       ],
       masInfo_3: [
         null,
-        [
-          Validators.pattern(this.SPECIAL_STRINGPATTERN),
-          Validators.maxLength(4000),
-        ],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
       ],
       masInfo_1_1: [
         null,
-        [
-          Validators.pattern(this.SPECIAL_STRINGPATTERN),
-          Validators.maxLength(4000),
-        ],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
       ],
       masInfo_1_2: [
         null,
-        [
-          Validators.pattern(this.SPECIAL_STRINGPATTERN),
-          Validators.maxLength(4000),
-        ],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
       ],
       extPerson: this.fb.array([]),
     });
@@ -1257,6 +1209,10 @@ carga la  información de la parte media de la página
       }
 
       // REMITENTE
+      console.log(
+        'this.form.value.senderUserRemitente',
+        this.form.value.senderUserRemitente
+      );
       const getIdDelegationDelegationForwards_: any =
         await this.getIdDelegationDelegationForwards(
           this.form.value.senderUserRemitente
@@ -1292,7 +1248,14 @@ carga la  información de la parte media de la página
       const day = String(today.getDate()).padStart(2, '0');
       const year = today.getFullYear();
 
-      const ln_oficio = this.keyArmyNumber; // Reemplaza 123 por el valor de LN_OFICIO
+      let armyKe = 0;
+      if (this.keyArmyNumber == null) {
+        armyKe = 0;
+      } else {
+        armyKe = this.keyArmyNumber;
+      }
+      const ln_oficio = armyKe; // Reemplaza 123 por el valor de LN_OFICIO
+      console.log(ln_oficio, 'aaaaaa');
       const ln_oficio_str = ln_oficio.toString(); // Convierte el número a una cadena de caracteres
       // console.log("3", ln_oficio_str)
       // Rellena la cadena de caracteres con ceros a la izquierda hasta que tenga una longitud de 5 caracteres
@@ -1310,9 +1273,13 @@ carga la  información de la parte media de la página
       if (vNO_DELDEST == 0) {
         vDELAGACION = 'CRB';
         if (vTRANSF == 'SAT') {
-          vCLAVE_ARMADA = `${vT_ACTA}/${vEMISORA}/ADM/${vDELAGACION}/${vDELAGACION}/${ln_oficio_trimmed}/${year}/${month}`;
+          vCLAVE_ARMADA = `${vT_ACTA}/${
+            vEMISORA == undefined ? ' ' : vEMISORA
+          }/ADM/${vDELAGACION}/${vDELAGACION}/${ln_oficio_trimmed}/${year}/${month}`;
         } else {
-          vCLAVE_ARMADA = `${vT_ACTA}/${vEMISORA}/ADM/${vDELAGACION}/${vDELAGACION}/${ln_oficio_trimmed}/${year}/${month}`;
+          vCLAVE_ARMADA = `${vT_ACTA}/${
+            vTRANSF == undefined ? ' ' : vTRANSF
+          }/ADM/${vDELAGACION}/${vDELAGACION}/${ln_oficio_trimmed}/${year}/${month}`;
         }
       } else {
         console.log('SI ENTRA3', vDELEGADEST);
@@ -1325,9 +1292,14 @@ carga la  información de la parte media de la página
         }
 
         if (vTRANSF == 'SAT') {
-          vCLAVE_ARMADA = `${vT_ACTA}/${vEMISORA}/ADM/${vDELAGACION}/${vDELAGACION}/${ln_oficio_trimmed}/${year}/${month}`;
+          vCLAVE_ARMADA = `${vT_ACTA}/${
+            vEMISORA == undefined ? ' ' : vEMISORA
+          }/ADM/${vDELAGACION}/${vDELAGACION}/${ln_oficio_trimmed}/${year}/${month}`;
         } else {
-          vCLAVE_ARMADA = `${vT_ACTA}/${vEMISORA}/ADM/${vDELAGACION}/${vDELAGACION}/${ln_oficio_trimmed}/${year}/${month}`;
+          // vCLAVE_ARMADA = `${vT_ACTA}/${(vTRANSF == undefined) ? ' ' : vTRANSF}/ADM/${vDELAGACION}/${vDELAGACION}/?/${year}/${month}`;
+          vCLAVE_ARMADA = `${vT_ACTA}/${
+            vTRANSF == undefined ? ' ' : vTRANSF
+          }/ADM/${vDELAGACION}/${vDELAGACION}/${ln_oficio_trimmed}/${year}/${month}`;
         }
       }
       console.log('vCLAVE_ARMADA', vCLAVE_ARMADA);
@@ -1382,7 +1354,7 @@ carga la  información de la parte media de la página
         PESTADODICT: this.oficioDict.statusOf,
         PDICTAMEN: this.oficioDict.typeDict,
       };
-      if (this.form.value.typeDict != 'PROCEDENCIA') {
+      if (this.form.value.typeDict == 'PROCEDENCIA') {
         params.NOME_DICTPRO = vCLAVE_ARMADA;
       }
 
@@ -1399,7 +1371,7 @@ carga la  información de la parte media de la página
         PESTADODICT: this.oficioDict.statusOf,
         PDICTAMEN: this.oficioDict.typeDict,
       };
-      if (this.form.value.typeDict != 'PROCEDENCIA') {
+      if (this.form.value.typeDict == 'PROCEDENCIA') {
         params.NOME_DICTPRO = vCLAVE_ARMADA;
       }
       await this.reporteProcedencia3(params);

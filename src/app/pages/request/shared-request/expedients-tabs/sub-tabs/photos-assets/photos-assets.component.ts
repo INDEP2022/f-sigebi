@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
@@ -14,7 +14,6 @@ import { RequestService } from 'src/app/core/services/requests/request.service';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { TABLE_SETTINGS } from '../../../../../../common/constants/table-settings';
 import { ListParams } from '../../../../../../common/repository/interfaces/list-params';
-import { ModelForm } from '../../../../../../core/interfaces/model-form';
 import { BasePage } from '../../../../../../core/shared/base-page';
 import { DefaultSelect } from '../../../../../../shared/components/select/default-select';
 import { LIST_ASSETS_COLUMNS_GOODFINDER } from './columns/list-assets-columns';
@@ -29,7 +28,7 @@ import { UploadFileComponent } from './upload-file/upload-file.component';
 export class PhotosAssetsComponent extends BasePage implements OnInit {
   parentRef: BsModalRef;
   showSearchFilter: boolean = true;
-  filterForm: ModelForm<any>;
+  filterForm: FormGroup = new FormGroup({});
   typeGoods = new DefaultSelect<IWarehouse>();
 
   paragraphs: any[] = [];
