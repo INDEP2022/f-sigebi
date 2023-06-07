@@ -9,7 +9,7 @@ import { BsModalService } from 'ngx-bootstrap/modal';
 
 import { ActivatedRoute, Router } from '@angular/router';
 import { format } from 'date-fns';
-import { BehaviorSubject, firstValueFrom } from 'rxjs';
+import { BehaviorSubject, firstValueFrom, takeUntil } from 'rxjs';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import {
   IDictation,
@@ -205,8 +205,12 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
   checkParams() {
     if (this.pageParams?.iden) {
       if (this.pageParams.iden) {
-        this.getNotification();
-        this.getDictums();
+        this.params
+          .pipe(takeUntil(this.$unSubscribe))
+          .subscribe(() => this.getNotification());
+        this.params
+          .pipe(takeUntil(this.$unSubscribe))
+          .subscribe(() => this.getDictums());
       }
       if (this.pageParams.exp) {
         this.getProceedings();
