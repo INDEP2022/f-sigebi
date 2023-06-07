@@ -93,7 +93,7 @@ export class GoodTableValsComponent implements OnInit {
   updateRow(row: IVal, index: number) {
     const good: any = { id: this.good.id, goodId: this.good.goodId };
     // let newValue: any = row.value;
-    console.log(row.value);
+    // console.log(row.value);
     good[row.column] = row.value;
     if (row.dataType === 'D' || row.attribute.includes('FECHA')) {
       row.value = firstFormatDate(row.value as any);
