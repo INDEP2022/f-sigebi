@@ -7,6 +7,7 @@ import {
 export class GenerateStrategyServiceForm {
   type = new FormControl(null, []);
   process = new FormControl(null, []);
+  strategyCve = new FormControl(null);
   processDescrip = new FormControl(null, [Validators.pattern(STRING_PATTERN)]);
   captureDate = new FormControl(null, []);
   regionalCoord = new FormControl(null, [Validators.pattern(STRING_PATTERN)]);
@@ -35,6 +36,10 @@ export class GenerateStrategyServiceForm {
   keyStore = new FormControl(null, [Validators.pattern(KEYGENERATION_PATTERN)]);
   storeDescrip = new FormControl(null, [Validators.pattern(STRING_PATTERN)]);
   ubication = new FormControl(null, [Validators.pattern(STRING_PATTERN)]);
+  location = new FormControl(null, [Validators.pattern(STRING_PATTERN)]);
+  municipality = new FormControl(null, [Validators.pattern(STRING_PATTERN)]);
+  state = new FormControl(null, [Validators.pattern(STRING_PATTERN)]);
+  providerFolio = new FormControl(null, [Validators.pattern(STRING_PATTERN)]);
 }
 
 export class GenerateStrategyGoodsForm {

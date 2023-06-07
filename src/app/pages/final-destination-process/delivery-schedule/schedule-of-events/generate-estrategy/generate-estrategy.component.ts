@@ -7,6 +7,7 @@ import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { DetailDelegationsComponent } from '../../../shared-final-destination/detail-delegations/detail-delegations.component';
 import { COLUMNS_GOODS } from './columns-goods';
 import { COLUMNS_ORDERS } from './columns-orders';
@@ -26,6 +27,18 @@ interface IGenerateStrategyParams {
   proceedingNum: string | number;
   proceedingType: string;
 }
+
+const TYPES = [
+  { value: 'N', label: 'Normal' },
+  { value: 'E', label: 'Especial' },
+];
+
+const STATUSES = [
+  { value: 'AUTORIZADA', label: 'Autorizada' },
+  { value: 'CANCELADA', label: 'Cancelada' },
+  { value: 'PROCESO', label: 'Proceso' },
+  { value: 'RECHAZADA', label: 'Rechazada' },
+];
 @Component({
   selector: 'app-generate-estrategy',
   templateUrl: './generate-estrategy.component.html',
@@ -45,6 +58,16 @@ export class GenerateEstrategyComponent extends BasePage implements OnInit {
     valuesIndicator: null, // INDICA_VALORES
     where: null, // LV_WHERE
   };
+
+  // ? LISTAS SELECT
+  types = new DefaultSelect(TYPES);
+  statuses = new DefaultSelect(STATUSES);
+  processes = new DefaultSelect();
+  transfers = new DefaultSelect();
+  transmitters = new DefaultSelect();
+  authorities = new DefaultSelect();
+  stores = new DefaultSelect();
+
   formService = this.fb.group(new GenerateStrategyServiceForm());
   formGoods = this.fb.group(new GenerateStrategyGoodsForm());
   bsModalRef?: BsModalRef;
