@@ -322,6 +322,10 @@ export class JuridicalRulingGComponent
   params2 = new BehaviorSubject<ListParams>(new ListParams());
   loading2 = this.loading;
   listParams = new BehaviorSubject<ListParams>(new ListParams());
+  desc_estatus_good: string = '';
+  consult: string =
+    '>> Click boton derecho para consultar dictaminaciones anteriores <<';
+
   constructor(
     private fb: FormBuilder,
     private activatedRoute: ActivatedRoute,
@@ -1126,6 +1130,7 @@ export class JuridicalRulingGComponent
                   good.est_disponible = state.EST_DISPONIBLE;
                   good.v_amp = state.v_amp ? state.v_amp : null;
                   good.pDiDescStatus = state.pDiDescStatus;
+                  this.desc_estatus_good = state.pDiDescStatus;
                   resolve(state);
                 },
                 error: () => {
@@ -1292,6 +1297,7 @@ export class JuridicalRulingGComponent
                   good.est_disponible = state.EST_DISPONIBLE;
                   good.v_amp = state.v_amp ? state.v_amp : null;
                   good.pDiDescStatus = state.pDiDescStatus;
+                  this.desc_estatus_good = state.pDiDescStatus;
                   resolve(state);
                 },
                 error: () => {
