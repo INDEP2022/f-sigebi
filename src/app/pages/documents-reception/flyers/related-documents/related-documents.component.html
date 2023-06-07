@@ -87,13 +87,13 @@
             </form-field>
 
             <form-field
-              [control]="managementForm.get('destinatario')"
+              [control]="formJobManagement.get('addressee')"
               class="col-md-4"
               *ngIf="showDestinatario">
               <ngx-select
                 [data]="select"
-                [form]="managementForm"
-                control="destinatario"
+                [form]="formJobManagement"
+                control="addressee"
                 [showTooltip]="true"
                 label="Destinatario"
                 (fetchItems)="getFromSelect($event)"
@@ -113,15 +113,14 @@
             </form-field>
 
             <form-field
-              [control]="managementForm.get('ciudad')"
+              [control]="formJobManagement.get('city')"
               class="col-md-4">
               <ngx-select
                 (fetchItems)="getCityByDetail($event)"
-                value="idCity"
-                bindLabel="nameCity"
+                bindLabel="idName"
                 [data]="cities"
-                [form]="managementForm"
-                control="ciudad"
+                [form]="formJobManagement"
+                control="city"
                 [showTooltip]="true"
                 label="Ciudad"></ngx-select>
             </form-field>
