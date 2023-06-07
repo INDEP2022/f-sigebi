@@ -39,13 +39,13 @@ export class GenericsFormComponent extends BasePage implements OnInit {
 
   private prepareForm(): void {
     this.genericsForm = this.fb.group({
-      name: [null, [Validators.required]],
+      name: [null, [Validators.required, Validators.maxLength(50)]],
       keyId: [
         null,
         [Validators.required, Validators.pattern(POSITVE_NUMBERS_PATTERN)],
       ],
-      description: [null],
-      version: [null],
+      description: [null, [Validators.maxLength(100)]],
+      version: [null, [Validators.pattern(POSITVE_NUMBERS_PATTERN)]],
       active: [null],
       editable: [null],
     });

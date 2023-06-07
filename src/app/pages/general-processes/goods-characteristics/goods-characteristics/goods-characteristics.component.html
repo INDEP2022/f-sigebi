@@ -45,6 +45,7 @@
                         type="text"
                         class="form-control"
                         formControlName="noClasif"
+                        (change)="updateClasif($event)"
                         (customEvent)="handleEvent($event)" />
                     </form-field>
                   </div>
@@ -60,8 +61,13 @@
               </div>
             </tab>
             <tab heading="Datos Generales del Bien">
+              <div class="row mb-4">
+                <h5 class="text-danger" style="text-align: right">
+                  {{ di_numerario_conciliado }}
+                </h5>
+              </div>
               <div class="row">
-                <div class="col-md-8">
+                <div class="col-md-12">
                   <div class="row">
                     <form-field
                       [control]="form.get('descripcion')"
@@ -101,7 +107,10 @@
                     </form-field>
                   </div>
                 </div>
-                <div class="col-md-4">
+              </div>
+              <div class="row mt-3">
+                <!-- <app-delegation-shared [form]="form"></app-delegation-shared> -->
+                <div class="col-md-6">
                   <div class="form-group row">
                     <form-field
                       [control]="form.get('delegation')"
@@ -113,6 +122,8 @@
                         class="form-control" />
                     </form-field>
                   </div>
+                </div>
+                <div class="col-md-6">
                   <div class="form-group row">
                     <form-field
                       [control]="form.get('subdelegation')"
@@ -126,7 +137,6 @@
                   </div>
                 </div>
               </div>
-
               <div class="row">
                 <form-field
                   [control]="form.get('fechaAval')"
@@ -193,7 +203,10 @@
                 </div>
               </div>
               <div class="row">
-                <app-good-table-vals [good]="good"></app-good-table-vals>
+                <app-good-table-vals
+                  *ngIf="good"
+                  [di_numerario_conciliado]="di_numerario_conciliado"
+                  [good]="good"></app-good-table-vals>
               </div>
             </tab>
           </tabset>

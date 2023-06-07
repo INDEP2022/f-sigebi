@@ -17,7 +17,7 @@ export class DocCompensationSatXmlFormComponent
   implements OnInit
 {
   compensationForm: ModelForm<IDocCompensationSatXml>;
-  title: string = 'Documento resarcimiento sat xml';
+  title: string = 'Documento';
   edit: boolean = false;
   compensationSatXml: IDocCompensationSatXml;
 
@@ -38,12 +38,16 @@ export class DocCompensationSatXmlFormComponent
       id: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       idOficioSat: [
         null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(NUMBERS_PATTERN),
+          Validators.minLength(1),
+          Validators.maxLength(3),
+          Validators.min(0),
+          Validators.max(999),
+        ],
       ],
-      typeDocSatXml: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
+      typeDocSatXml: [null, [Validators.pattern(STRING_PATTERN)]],
     });
 
     if (this.compensationSatXml != null) {

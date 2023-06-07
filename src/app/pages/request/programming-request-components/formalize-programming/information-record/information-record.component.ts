@@ -14,9 +14,10 @@ export class InformationRecordComponent extends BasePage implements OnInit {
   receiveForm: FormGroup = new FormGroup({});
   witnessOneForm: FormGroup = new FormGroup({});
   witnessTwoForm: FormGroup = new FormGroup({});
-
+  horaActual: string;
   constructor(private modalRef: BsModalRef, private fb: FormBuilder) {
     super();
+    this.obtenerHoraActual();
   }
 
   ngOnInit(): void {
@@ -25,7 +26,14 @@ export class InformationRecordComponent extends BasePage implements OnInit {
     this.prepareWitnessOneForm();
     this.prepareWitnessTwoForm();
   }
-
+  obtenerHoraActual() {
+    const fechaActual = new Date();
+    const opcionesHora: Intl.DateTimeFormatOptions = {
+      hour: 'numeric',
+      minute: 'numeric',
+    };
+    this.horaActual = fechaActual.toLocaleTimeString([], opcionesHora);
+  }
   prepareDevileryForm() {
     this.deliveryForm = this.fb.group({
       name: [null, [Validators.pattern(STRING_PATTERN)]],

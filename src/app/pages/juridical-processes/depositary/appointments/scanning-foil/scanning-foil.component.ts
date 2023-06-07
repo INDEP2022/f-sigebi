@@ -29,7 +29,7 @@ export class ScanningFoilAppointmentComponent
   implements OnInit
 {
   //Reactive Forms
-  @Input() form: FormGroup;
+  @Input() formScan: FormGroup;
   @Input() screenKey: string = '';
   @Input() screenKey2: string = '';
   @Input() officeDictationData: IOfficialDictation;
@@ -41,7 +41,10 @@ export class ScanningFoilAppointmentComponent
   @Output() viewPicturesEmitter = new EventEmitter<boolean>();
 
   get scanningFoli() {
-    return this.form.get('scanningFoli');
+    return this.formScan.get('scanningFoli');
+  }
+  get returnFoli() {
+    return this.formScan.get('returnFoli');
   }
 
   constructor(
@@ -57,8 +60,8 @@ export class ScanningFoilAppointmentComponent
   }
 
   ngOnInit(): void {
-    this.buildForm();
-    console.log(this.form.value);
+    // this.buildForm();
+    console.log(this.formScan.value);
   }
 
   /**
@@ -68,8 +71,27 @@ export class ScanningFoilAppointmentComponent
    */
 
   private buildForm() {
-    this.form = this.fb.group({
-      scanningFoli: [null, [Validators.pattern(NUM_POSITIVE)]],
+    this.formScan = this.fb.group({
+      scanningFoli: [
+        { value: '', disabled: false },
+        [
+          [
+            Validators.required,
+            Validators.pattern(NUM_POSITIVE),
+            Validators.maxLength(11),
+          ],
+        ],
+      ],
+      returnFoli: [
+        { value: '', disabled: false },
+        [
+          [
+            Validators.required,
+            Validators.pattern(NUM_POSITIVE),
+            Validators.maxLength(11),
+          ],
+        ],
+      ],
     });
   }
 
@@ -81,7 +103,7 @@ export class ScanningFoilAppointmentComponent
       this.officeDictationData.statusOf == 'ENVIADO' &&
       this.dictationData.passOfficeArmy
     ) {
-      if (!this.form.get('scanningFoli').value) {
+      if (!this.formScan.get('scanningFoli').value) {
         // Llamar a crear folio universal
         await this.confirmScanRequest();
       } else {
@@ -100,7 +122,7 @@ export class ScanningFoilAppointmentComponent
     if (!this.officeDictationData && !this.dictationData) {
       return;
     }
-    if (this.form.get('scanningFoli').value) {
+    if (this.formScan.get('scanningFoli').value) {
       // Insertar imagenes
       this.viewPicturesEmitter.emit(true);
     } else {
@@ -120,7 +142,7 @@ export class ScanningFoilAppointmentComponent
       this.officeDictationData.statusOf == 'ENVIADO' &&
       this.dictationData.passOfficeArmy
     ) {
-      if (this.form.get('scanningFoli').value) {
+      if (this.formScan.get('scanningFoli').value) {
         this.alertQuestion(
           'info',
           'Se abrirá la pantalla de escaneo para el folio de Escaneo del Dictamen. ¿Deseas continuar?',
@@ -134,7 +156,7 @@ export class ScanningFoilAppointmentComponent
               queryParams: {
                 origin: this.screenKey,
                 origin2: this.screenKey2,
-                folio: this.form.get('scanningFoli').value,
+                folio: this.formScan.get('scanningFoli').value,
                 ...this.paramsScreen,
               },
             });
@@ -157,11 +179,11 @@ export class ScanningFoilAppointmentComponent
   }
 
   showMessageDigitalization() {
-    if (this.form.get('scanningFoli').value) {
+    if (this.formScan.get('scanningFoli').value) {
       this.alertInfo(
         'success',
         'El folio universal generado es: "' +
-          this.form.get('scanningFoli').value +
+          this.formScan.get('scanningFoli').value +
           '"',
         ''
       );
@@ -216,11 +238,11 @@ export class ScanningFoilAppointmentComponent
     this.createDocument(document)
       .pipe(
         tap(_document => {
-          this.form.get('scanningFoli').setValue(_document.id);
+          this.formScan.get('scanningFoli').setValue(_document.id);
         }),
         switchMap(_document => {
           this.dictationData.folioUniversal =
-            this.form.get('scanningFoli').value;
+            this.formScan.get('scanningFoli').value;
           return this.updateDictation(this.dictationData).pipe(
             map(() => _document)
           );
@@ -247,7 +269,7 @@ export class ScanningFoilAppointmentComponent
   }
 
   generateScanRequestReport() {
-    const pn_folio = this.form.get('scanningFoli').value;
+    const pn_folio = this.formScan.get('scanningFoli').value;
     return this.siabService.fetchReport('RGERGENSOLICDIGIT', { pn_folio }).pipe(
       catchError(error => {
         return throwError(() => error);
@@ -292,7 +314,7 @@ export class ScanningFoilAppointmentComponent
       this.officeDictationData.statusOf == 'ENVIADO' &&
       this.dictationData.passOfficeArmy
     ) {
-      if (this.form.get('scanningFoli').value) {
+      if (this.formScan.get('scanningFoli').value) {
         // Replicate function
         const response = await this.alertQuestion(
           'question',
@@ -360,7 +382,7 @@ export class ScanningFoilAppointmentComponent
       numberDelegationRequested: this.dataUserLogged.delegationNumber,
       numberSubdelegationRequests: this.dataUserLogged.subdelegationNumber,
       numberDepartmentRequest: this.dataUserLogged.departamentNumber,
-      associateUniversalFolio: this.form.get('scanningFoli').value,
+      associateUniversalFolio: this.formScan.get('scanningFoli').value,
       flyerNumber: this.dictationData.wheelNumber,
     };
     console.log('Documento a crear para el folio asociado', document);
@@ -373,8 +395,8 @@ export class ScanningFoilAppointmentComponent
             ''
           );
           const folio = _document.id;
-          this.form.get('scanningFoli').setValue(folio);
-          this.form.get('scanningFoli').updateValueAndValidity();
+          this.formScan.get('scanningFoli').setValue(folio);
+          this.formScan.get('scanningFoli').updateValueAndValidity();
           this.alert('success', 'El folio universal generado es: ' + folio, '');
           // this.updateDocumentsByFolio(
           //   folio,
@@ -383,7 +405,7 @@ export class ScanningFoilAppointmentComponent
         }),
         switchMap(_document => {
           this.dictationData.folioUniversal = Number(_document.id);
-          // this.form.get('scanningFoli').value;
+          // this.formScan.get('scanningFoli').value;
           return this.updateDictation(this.dictationData).pipe(
             map(() => _document)
           );
@@ -405,7 +427,7 @@ export class ScanningFoilAppointmentComponent
   //     }),
   //     tap(() => {
   //       this.alert('success', 'Folio replicado correctamente ' + folioLNU, '');
-  //       this.form.get('scanningFoli').setValue(folioLNU);
+  //       this.formScan.get('scanningFoli').setValue(folioLNU);
   //     })
   //   );
   // }
@@ -418,7 +440,7 @@ export class ScanningFoilAppointmentComponent
       SearchFilter.NULL,
       SearchFilter.NULL
     );
-    params.addFilter('id', this.form.get('scanningFoli').value);
+    params.addFilter('id', this.formScan.get('scanningFoli').value);
     console.log(params);
     this.hideError();
     return this.documentsService.getAllFilter(params.getParams()).pipe(

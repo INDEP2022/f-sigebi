@@ -40,9 +40,12 @@ export const CITY_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  noSubDelegation: {
+  subDelegation: {
     title: 'Subdelegación',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (value: any) => {
+      return value?.description;
+    },
   },
 };

@@ -68,7 +68,7 @@ export class DelegationStateFormComponent extends BasePage implements OnInit {
       this.delegationSate.regionalDelegation.id
     );
     this.delegationStateForm.controls['stateCode'].setValue(
-      this.delegationSate.stateCode.descCondition
+      this.delegationSate.stateCode.codeCondition
     );
   }
 
@@ -84,6 +84,7 @@ export class DelegationStateFormComponent extends BasePage implements OnInit {
   }
 
   stateChange(state: IStateOfRepublic) {
+    console.log(state);
     this.delegationStateForm.controls.keyState.setValue(state.id);
   }
 
