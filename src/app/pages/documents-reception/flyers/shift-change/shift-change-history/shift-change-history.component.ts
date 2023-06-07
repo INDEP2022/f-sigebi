@@ -4,7 +4,7 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HistoryOfficialService } from 'src/app/core/services/ms-historyofficial/historyOfficial.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { IHistoryOfficial } from '../../../../../core/models/ms-historyofficial/historyofficial.model';
 import { SHIFT_CHANGE_HISTORY_COLUMNS } from './shift-change-history-columns';
 
@@ -43,7 +43,9 @@ export class ShiftChangeHistoryComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.getData();
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getData());
   }
 
   close() {
