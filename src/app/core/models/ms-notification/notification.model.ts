@@ -362,3 +362,9 @@ export interface INotificationUpdate {
   notificationDate?: any;
   userCorrectsKey?: any;*/
 }
+
+export interface ITransfActaEntrec {
+  indcap: string,
+  no_expediente: number,
+  id_tipo_acta: string
+}
