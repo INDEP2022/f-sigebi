@@ -204,7 +204,7 @@ export class JuridicalRulingGComponent
         title: 'Estatus',
         type: 'string',
       },
-      processStatus: {
+      extDomProcess: {
         sort: false,
         title: 'Proceso',
         type: 'string',
@@ -275,7 +275,7 @@ export class JuridicalRulingGComponent
         title: 'Estatus',
         type: 'string',
       },
-      processStatus: {
+      extDomProcess: {
         sort: false,
         title: 'Proceso',
         type: 'string',
@@ -1246,7 +1246,7 @@ export class JuridicalRulingGComponent
           const data = response.data;
 
           data.map(async (good: any) => {
-            const resp = await new Promise((resolve, reject) => {
+            await new Promise((resolve, reject) => {
               const body = {
                 pGoodNumber: good.goodId,
                 pClasifGoodNumber: good.goodClassNumber,
@@ -1269,10 +1269,40 @@ export class JuridicalRulingGComponent
                 },
                 error: () => {
                   resolve(null);
-                  console.log('fallo');
                 },
               });
             });
+
+            if ([62, 1424, 1426, 1590].includes(good.cgoodClassNumber)) {
+              good.di_es_numerario = 'S';
+              good.di_esta_conciliado = 'N';
+
+              await new Promise((resolve, reject) => {
+                const body = {
+                  pGoodNumber: good.goodId,
+                  pExpendientNumber: good.fileNumber,
+                  pVal1: good.val1 ?? '',
+                  pVal2: good.val2 ?? '',
+                  pVal4: good.val4 ?? '',
+                  pVal5: good.val5 ?? '',
+                  pVal6: good.val6 ?? '',
+                };
+
+                this.serviceGood.dictationConcilation(body).subscribe({
+                  next: state => {
+                    good.di_esta_conciliado = 'S';
+                    resolve(state);
+                  },
+                  error: () => {
+                    good.di_esta_conciliado = 'N';
+                    resolve(null);
+                  },
+                });
+              });
+            } else {
+              good.di_es_numerario = 'N';
+              good.di_esta_conciliado = 'N';
+            }
           });
 
           this.goods = data;
