@@ -27,3 +27,9 @@ export interface IDeleteDetailProceeding {
   numberGood: string | number;
   numberProceedings: string | number;
 }
+
+export interface IDetailWithIndEdo {
+  no_acta: number,
+  vIndEdoFisicod?: boolean,
+  vNoColumna?: number
+}
