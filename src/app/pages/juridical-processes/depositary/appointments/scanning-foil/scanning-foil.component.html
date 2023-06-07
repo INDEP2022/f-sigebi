@@ -1,6 +1,6 @@
 <div class="container">
   <div class="row">
-    <div class="col-sm-12 col-12 col-md-12">
+    <div class="col-sm-12 col-12 col-md-12 p-0">
       <div class="row">
         <div class="col-sm-12 col-12 col-md-3 text-center">
           <button
@@ -20,17 +20,29 @@
             <i class="bx bxs-file"></i>
           </button>
         </div>
-        <div class="col-sm-12 col-12 col-md-6 w-100">
-          <form [formGroup]="form" class="form-material">
-            <div class="col-md-full col-sm-12 col-xs-12">
-              <form-field
-                label="Folio de escaneo"
-                [control]="form.get('scanningFoli')">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="scanningFoli" />
-              </form-field>
+        <div class="col-sm-12 col-12 col-md-6 w-100 p-0">
+          <form [formGroup]="formScan" class="form-material">
+            <div class="col-md-12 col-sm-12 col-12 p-0">
+              <div class="col-md-6 col-sm-12 col-xs-12 p-1">
+                <form-field
+                  label="Folio de Remoci&oacute;n"
+                  [control]="formScan.get('returnFoli')">
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="returnFoli" />
+                </form-field>
+              </div>
+              <div class="col-md-6 col-sm-12 col-xs-12 p-1">
+                <form-field
+                  label="Folio de Escaneo"
+                  [control]="formScan.get('scanningFoli')">
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="scanningFoli" />
+                </form-field>
+              </div>
             </div>
             <div class="col-md-12 col-sm-12 col-12">
               <div class="d-flex justify-content-center">
