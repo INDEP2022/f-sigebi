@@ -2,13 +2,15 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { map, tap } from 'rxjs';
+import { catchError, firstValueFrom, map, of, tap, throwError } from 'rxjs';
 import {
   FilterParams,
   ListParams,
 } from 'src/app/common/repository/interfaces/list-params';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { ProceedingsDeliveryReceptionService } from 'src/app/core/services/ms-proceedings';
 import { ProgrammingGoodsService } from 'src/app/core/services/ms-programming-good/programming-good.service';
+import { StrategyProcessService } from 'src/app/core/services/ms-strategy/strategy-process.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -96,13 +98,19 @@ export class GenerateEstrategyComponent extends BasePage implements OnInit {
   };
   authUser: string = null;
   authUserName: string = null;
+
+  get controls() {
+    return this.formService.controls;
+  }
   constructor(
+    private strategyProcessService: StrategyProcessService,
     private fb: FormBuilder,
     private modalService: BsModalService,
     private programmingGoodService: ProgrammingGoodsService,
     private activatedRoute: ActivatedRoute,
     private authService: AuthService,
-    private usersService: UsersService
+    private usersService: UsersService,
+    private proceedingsDeliveryReception: ProceedingsDeliveryReceptionService
   ) {
     super();
     this.settingsOrders.columns = COLUMNS_ORDERS;
@@ -114,7 +122,7 @@ export class GenerateEstrategyComponent extends BasePage implements OnInit {
     // type;
   }
 
-  ngOnInit(): void {
+  async ngOnInit() {
     const { proceedingNum } = this.params;
     if (proceedingNum) {
       this.global.goods = 0;
@@ -122,7 +130,7 @@ export class GenerateEstrategyComponent extends BasePage implements OnInit {
       this.global.valuesIndicator = 1;
       this.global.where = null;
       this.initForm();
-      this.fillData();
+      await this.fillData();
       this.fillGoods();
     } else if (this.global.where) {
       this.initForm();
@@ -146,7 +154,95 @@ export class GenerateEstrategyComponent extends BasePage implements OnInit {
   }
 
   // PU_LLENA_DATOS
-  fillData() {}
+  async fillData() {
+    if (!this.params.proceedingNum) {
+      return;
+    }
+    const { captureDate, process } = this.controls;
+    // TODO: Deshabilitar el boton de programacion
+    // --
+    this.global.indicator = 1;
+    captureDate.setValue(new Date());
+
+    const params = new FilterParams();
+    params.addFilter('processNumber', '3');
+    params.addFilter('realayStrategy', 'S');
+    this.getStrategyProcess(params)
+      .pipe(
+        catchError(error => {
+          this.onLoadToast(
+            'error',
+            'Error',
+            'Ocurrió un error al obetener el proceso'
+          );
+          return throwError(() => error);
+        }),
+        tap(res => {
+          this.processes = new DefaultSelect(res.data, res.count);
+          process.setValue('3');
+        })
+      )
+      .subscribe();
+
+    const proceeding = await this.getProceedingById(this.params.proceedingNum);
+
+    const { numFile, elaborationDate } = proceeding;
+    const transferLevel = await this.getTransferLevelsByExpedient(numFile);
+    this.formService.patchValue({
+      strategyCve: transferLevel.cve_unica,
+      transferenceId: transferLevel.no_transferente,
+      transmitterId: transferLevel.no_emisora,
+      authorityId: transferLevel.no_autoridad,
+      eventEndDate: new Date(elaborationDate),
+      eventStartDate: new Date(elaborationDate),
+    });
+    this.transfers = new DefaultSelect([
+      {
+        value: transferLevel.no_transferente,
+        label: transferLevel.desc_transferente,
+      },
+    ]);
+    this.transmitters = new DefaultSelect([
+      {
+        value: transferLevel.no_emisora,
+        label: transferLevel.desc_emisora,
+      },
+    ]);
+    this.authorities = new DefaultSelect([
+      {
+        value: transferLevel.no_autoridad,
+        label: transferLevel.nombre_autoridad,
+      },
+    ]);
+  }
+
+  getTransferLevelsByExpedient(expedient: string | number) {
+    return firstValueFrom(
+      of({
+        no_transferente: 908,
+        no_emisora: 1,
+        no_autoridad: 1,
+        cve_unica: 12157,
+        desc_transferente: 'SECRETARIA DE SALUD',
+        desc_emisora: 'SECRETARIA DE SALUD',
+        nombre_autoridad: 'SECRETARIA DE SALUD',
+      })
+    );
+  }
+
+  getStrategyProcess(params: FilterParams) {
+    return this.strategyProcessService.getAll(params.getParams());
+  }
+
+  getProceedingById(id: number | string) {
+    const params = new FilterParams();
+    params.addFilter('id', id);
+    return firstValueFrom(
+      this.proceedingsDeliveryReception
+        .getAll(params.getParams())
+        .pipe(map(res => res.data[0]))
+    );
+  }
 
   // PU_LLENA_BIENES
   fillGoods() {}

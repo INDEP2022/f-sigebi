@@ -14,8 +14,8 @@
       class="form-material"
       [formGroup]="formService"
       (ngSubmit)="onSubmit()">
-      <div class="row pt-3">
-        <form-field class="col-md-3" [control]="formService.get('type')">
+      <div class="row pt-2">
+        <form-field class="col-md-2" [control]="formService.get('type')">
           <ngx-select
             [data]="types"
             [form]="formService"
@@ -26,18 +26,30 @@
             control="type">
           </ngx-select>
         </form-field>
-        <form-field class="col-md-3" [control]="formService.get('process')">
+        <form-field class="col-md-4" [control]="formService.get('process')">
           <ngx-select
             [data]="processes"
             [form]="formService"
-            value="area_tramite"
+            value="processNumber"
+            bindLabel="description"
             label="Proceso"
-            control="process">
+            control="process"
+            [labelTemplate]="processLabel"
+            [optionTemplate]="processOpion">
           </ngx-select>
         </form-field>
 
+        <ng-template #processLabel let-item="item">
+          <strong>{{ item.processNumber }}</strong> -
+          {{ item.description }}</ng-template
+        >
+        <ng-template #processOpion let-item="item">
+          <strong>{{ item.processNumber }}</strong> -
+          {{ item.description }}</ng-template
+        >
+
         <form-field
-          class="col-md-3"
+          class="col-md-2"
           [control]="formService.get('captureDate')"
           label="Fecha de Captura">
           <input
@@ -47,7 +59,7 @@
             formControlName="captureDate" />
         </form-field>
         <form-field
-          class="col-md-3"
+          class="col-md-4"
           [control]="formService.get('strategyCve')"
           label="Clave de Estrategia">
           <input
@@ -82,7 +94,8 @@
           <ngx-select
             [data]="transfers"
             [form]="formService"
-            value="area_tramite"
+            value="value"
+            bindLabel="label"
             label="Transferente"
             control="transferenceId">
           </ngx-select>
@@ -94,7 +107,8 @@
           <ngx-select
             [data]="transmitters"
             [form]="formService"
-            value="area_tramite"
+            value="value"
+            bindLabel="label"
             label="Emisora"
             control="transmitterId">
           </ngx-select>
@@ -106,7 +120,8 @@
           <ngx-select
             [data]="authorities"
             [form]="formService"
-            value="area_tramite"
+            value="value"
+            bindLabel="label"
             label="Autoridad"
             control="authorityId">
           </ngx-select>
@@ -155,18 +170,16 @@
             formControlName="providerFolio" />
         </form-field>
       </div>
-    </form>
 
-    <app-divider></app-divider>
+      <app-divider></app-divider>
 
-    <form class="form-material" [formGroup]="formGoods">
       <div class="row pt-3">
         <div class="col-md-6">
           <h5>Fechas Evento</h5>
           <div class="row pt-4">
             <form-field
               class="col-md-6"
-              [control]="formGoods.get('eventStartDate')"
+              [control]="formService.get('eventStartDate')"
               label="Fecha Inicial">
               <input
                 type="text"
@@ -177,7 +190,7 @@
 
             <form-field
               class="col-md-6"
-              [control]="formGoods.get('eventEndDate')"
+              [control]="formService.get('eventEndDate')"
               label="Fecha Final">
               <input
                 type="text"
@@ -188,7 +201,7 @@
           </div>
 
           <div class="row pt-3">
-            <form-field [control]="formGoods.get('eventTime')">
+            <form-field [control]="formService.get('eventTime')">
               <timepicker formControlName="eventTime"></timepicker>
             </form-field>
           </div>
@@ -196,11 +209,11 @@
         <div class="col-md-6">
           <h5>Cambio Estatus</h5>
           <div class="row pt-4">
-            <form-field [control]="formGoods.get('statusChange')">
+            <form-field [control]="formService.get('statusChange')">
               <ngx-select
                 class="col-md-6"
                 [data]="statuses"
-                [form]="formGoods"
+                [form]="formService"
                 value="value"
                 bindLabel="label"
                 [searchable]="false"

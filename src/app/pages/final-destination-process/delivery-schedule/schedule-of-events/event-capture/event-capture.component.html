@@ -361,7 +361,7 @@
             {{ ctrlButtons.xml.label }}
           </button>
         </div>
-        <div class="mr-4" *ngIf="ctrlButtons.generateStrategy.visible">
+        <!-- <div class="mr-4" *ngIf="ctrlButtons.generateStrategy.visible">
           <button
             (click)="generateStrategy()"
             [disabled]="!ctrlButtons.generateStrategy.enabled"
@@ -369,7 +369,7 @@
             routerLink="generate-estrategy">
             {{ ctrlButtons.generateStrategy.label }}
           </button>
-        </div>
+        </div> -->
         <app-columns-select [defaultColumns]="5" [(settings)]="settings">
         </app-columns-select>
       </div>
