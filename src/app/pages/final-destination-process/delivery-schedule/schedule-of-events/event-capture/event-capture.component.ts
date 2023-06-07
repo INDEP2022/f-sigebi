@@ -2149,7 +2149,7 @@ export class EventCaptureComponent
         .PaCierreInicialProgr(no_Acta, lv_PANTALLA, blkCtrlArea)
         .subscribe({
           next: resp => res(resp.message[0]),
-          error: err => rej('Error'),
+          error: err => res('Error'),
         });
     });
   }
