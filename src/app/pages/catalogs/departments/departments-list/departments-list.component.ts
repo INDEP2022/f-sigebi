@@ -56,10 +56,10 @@ export class DepartmentsListComponent extends BasePage implements OnInit {
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
             filter.field == 'id' ||
-            filter.field == 'dsarea' ||
-            filter.field == 'numDelegation' ||
-            filter.field == 'numSubDelegation' ||
-            filter.field == 'description'
+              filter.field == 'dsarea' ||
+              filter.field == 'numDelegation' ||
+              filter.field == 'numSubDelegation' ||
+              filter.field == 'description'
               ? (searchFilter = SearchFilter.EQ)
               : (searchFilter = SearchFilter.ILIKE);
             if (filter.search !== '') {
@@ -87,6 +87,7 @@ export class DepartmentsListComponent extends BasePage implements OnInit {
       next: response => {
         this.departments = response.data;
         this.data.load(this.departments);
+        console.log(this.data);
         this.data.refresh();
         console.log(this.departments);
         this.totalItems = response.count;
@@ -107,20 +108,26 @@ export class DepartmentsListComponent extends BasePage implements OnInit {
     this.modalService.show(DepartmentFormComponent, modalConfig);
   }
 
-  showDeleteAlert(department: IDepartment) {
+  showDeleteAlert(department: any) {
     this.alertQuestion(
       'warning',
       'Eliminar',
       'Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        this.delete(department.id);
+        let data = {
+          id: department.id,
+          numDelegation: department.numDelegation,
+          numSubDelegation: department.numSubDelegation.id,
+          phaseEdo: department.phaseEdo,
+        }
+        this.delete(data);
       }
     });
   }
 
-  delete(id: number) {
-    this.departmentService.remove(id).subscribe({
+  delete(data: any) {
+    this.departmentService.remove3(data).subscribe({
       next: () => {
         this.getDepartments(), this.alert('success', 'Departamento', 'Borrado');
       },
