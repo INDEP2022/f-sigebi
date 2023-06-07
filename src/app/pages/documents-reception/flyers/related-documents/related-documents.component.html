@@ -266,13 +266,27 @@
         <!-- <form-field [control]="managementForm.get('fechaAcuse')" class="col-md-4 mt-2" label="Fecha de Acuse">
           <input type="text" class="form-control" formControlName="fechaAcuse" readonly [disabled]="true" />
         </form-field> -->
-
-        <br /><br />
-
+      </div>
+      <br /><br />
+      <div class="row pt-4">
         <div class="col-md-4">
           <button type="button" class="btn btn-primary active btn-sm mr-2">
             Respuestas FGR
           </button>
+        </div>
+      </div>
+      <br /><br />
+      <div class="row pt-4">
+        <div class="col-md-2">
+          <form-field
+            [control]="managementForm.get('fechaAcuse')"
+            label="Fecha Acuse">
+            <input
+              type="text"
+              class="form-control"
+              #dp="bsDatepicker"
+              bsDatepicker />
+          </form-field>
         </div>
       </div>
       <br />
