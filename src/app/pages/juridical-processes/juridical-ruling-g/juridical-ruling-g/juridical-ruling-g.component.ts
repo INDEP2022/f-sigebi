@@ -929,8 +929,7 @@ export class JuridicalRulingGComponent
 
     if (this.goods.length > 0) {
       this.goods.forEach(_g => {
-        if (_g.status !== 'STI') {
-          // _g.status = 'STI';
+        if (_g.est_disponible == 'S') {
           _g.est_disponible = 'N';
           _g.di_disponible = 'N';
           _g.name = false;
@@ -939,6 +938,17 @@ export class JuridicalRulingGComponent
             this.goodsValid = [...this.goodsValid, _g];
           }
         }
+
+        // if (_g.status !== 'STI') {
+        //   // _g.status = 'STI';
+        //   _g.est_disponible = 'N';
+        //   _g.di_disponible = 'N';
+        //   _g.name = false;
+        //   let valid = this.goodsValid.some(goodV => goodV == _g);
+        //   if (!valid) {
+        //     this.goodsValid = [...this.goodsValid, _g];
+        //   }
+        // }
       });
     }
   }
@@ -994,27 +1004,30 @@ export class JuridicalRulingGComponent
     //   return
 
     if (this.selectedGooods.length > 0) {
-      this.selectedGooods.forEach(good => {
+      this.selectedGooods.forEach((good: any) => {
         if (!this.goodsValid.some(v => v === good)) {
-          if (good.status.toUpperCase() !== 'STI') {
-            let indexGood = this.goods.findIndex(_good => _good == good);
-            this.goods[indexGood].est_disponible = 'N';
-            this.goods[indexGood].di_disponible = 'N';
-
-            // if (row.data.est_disponible == 'S') {
-            // if (row.data.v_amp == 'S') {
-
-            this.goodsValid = this.goodsValid.concat(this.selectedGooods);
-            // this.goods = this.goods.filter(_good => _good.id != good.id);
-          }
+          let indexGood = this.goods.findIndex(_good => _good == good);
+          this.goods[indexGood].est_disponible = 'N';
+          this.goods[indexGood].di_disponible = 'N';
+          this.goodsValid.push(good);
+          this.goodsValid = [...this.goodsValid];
         } else {
-          // this.alert('error', '', 'El bien ya está seleccionado.');
+          if ((good.di_disponible = 'N')) {
+            this.onLoadToast('error', `El bien ${good.goodId} ya existe`);
+          }
         }
       });
-      // this.selectedGooods = [];
     }
   }
   removeSelect() {
+    if (this.statusDict == 'DICTAMINADO') {
+      this.onLoadToast(
+        'error',
+        'El bien ya esta Dictaminado... Imposible borrar'
+      );
+      return;
+    }
+
     if (this.selectedGooodsValid.length > 0) {
       // this.goods = this.goods.concat(this.selectedGooodsValid);
       this.selectedGooodsValid.forEach(good => {
@@ -1031,6 +1044,14 @@ export class JuridicalRulingGComponent
     }
   }
   removeAll() {
+    if (this.statusDict == 'DICTAMINADO') {
+      this.onLoadToast(
+        'error',
+        'El bien ya esta Dictaminado... Imposible borrar'
+      );
+      return;
+    }
+
     if (this.goodsValid.length > 0) {
       this.goodsValid.forEach(good => {
         this.goodsValid = this.goodsValid.filter(_good => _good.id != good.id);
