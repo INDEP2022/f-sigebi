@@ -40,9 +40,15 @@ export class ScheduledMaintenanceComponent
     private attribGoodBadService: AttribGoodBadService,
     private router: Router
   ) {
-    super(fb, deliveryService, detailService, 'filtersActa');
+    super(
+      fb,
+      deliveryService,
+      detailService,
+      'filtersActa',
+      'paramsActaProgramaciones'
+    );
     // debugger;
-    const paramsActa = localStorage.getItem('paramsActa');
+    const paramsActa = localStorage.getItem(this.paramsActa);
     if (paramsActa) {
       const params = JSON.parse(paramsActa);
       this.params.value.limit = params.limit;
@@ -69,7 +75,7 @@ export class ScheduledMaintenanceComponent
       next: response => {
         console.log(response);
         localStorage.setItem(
-          'paramsActa',
+          this.paramsActa,
           JSON.stringify({ limit: response.limit, page: response.page })
         );
         // this.router.navigate([], {
@@ -77,7 +83,8 @@ export class ScheduledMaintenanceComponent
         //   queryParams: { page: response.page },
         //   queryParamsHandling: 'merge'
         // })
-        this.getData(true);
+        this.getData(response.limit <= this.oldLimit ? true : false);
+        this.oldLimit = response.limit;
       },
     });
   }
@@ -87,7 +94,7 @@ export class ScheduledMaintenanceComponent
     this.data.load([]);
     this.totalItems = 0;
     localStorage.removeItem(this.formStorage);
-    localStorage.removeItem('paramsActa');
+    localStorage.removeItem(this.paramsActa);
     this.limit = new FormControl(10);
     this.columnFilters = [];
   }
