@@ -473,12 +473,12 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
       next: () => {
         this.updateProcedureUser();
         this.loading = true;
+        this.clean();
         this.alert(
           'success',
           'Usuario Turnado Exitosamente',
           `Se actualizó el usuario turnado al volante ${this.pageParams.iden}`
         );
-        this.clean();
       },
       error: err => {
         this.loading = false;
@@ -495,7 +495,11 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
     this.turnForm.controls['newUser'].setValue(null);
     this.turnForm.controls['argument'].setValue(null);
     this.checkParams();
+    this.valid = false;
     this.loading = false;
+    this.selectedProceedings.splice(0, this.selectedProceedings.length);
+    this.selectedDictums.splice(0, this.selectedDictums.length);
+    //console.log(this.selectedProceedings.length, this.selectedDictums.length);
   }
 
   updateProcedureUser() {
@@ -621,7 +625,6 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
   }
 
   selectDictums(event: any) {
-    console.log(event.selectedIndex);
     const existe = this.selectedDictums.some(
       (objeto: any) => objeto.id === event.data.id
     );
@@ -637,7 +640,10 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
       this.selectedDictums.push(event.data);
     }
     //console.log(this.selectedDictums);
-    if (this.selectedDictums.length === 0) {
+    if (
+      this.selectedDictums.length === 0 &&
+      this.selectedProceedings.length === 0
+    ) {
       this.valid = false;
     } else {
       this.valid = true;
@@ -662,7 +668,10 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
       this.selectedProceedings.push(event.data);
     }
     //console.log(this.selectedProceedings);
-    if (this.selectedProceedings.length === 0) {
+    if (
+      this.selectedProceedings.length === 0 &&
+      this.selectedDictums.length === 0
+    ) {
       this.valid = false;
     } else {
       this.valid = true;
