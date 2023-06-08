@@ -1624,7 +1624,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                                   });
                                   /* this.dataGoodAct.load(this.goodData); */
                                   this.getGoodsActFn();
-                                  this.getGoodsFn()
+                                  this.getGoodsFn();
                                   this.saveDataAct.push({
                                     ...this.selectData,
                                   });
