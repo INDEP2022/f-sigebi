@@ -1,11 +1,16 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
-import { ICategorizationAutomNumerary } from 'src/app/core/models/catalogs/numerary-categories-model';
+import {
+  ICategorizationAutomNumerary,
+  INumeraryCategories,
+} from 'src/app/core/models/catalogs/numerary-categories-model';
 import { NumeraryParameterizationAutomService } from 'src/app/core/services/catalogs/numerary-parameterization-autom.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
   selector: 'app-modal-numerary-parameterization',
@@ -19,7 +24,7 @@ export class ModalNumeraryParameterizationComponent
   title: string = 'Parametro Numerico';
   edit: boolean = false;
   form: ModelForm<ICategorizationAutomNumerary>;
-
+  categories = new DefaultSelect<INumeraryCategories>();
   allotment: ICategorizationAutomNumerary;
   @Output() refresh = new EventEmitter<true>();
 
@@ -53,7 +58,6 @@ export class ModalNumeraryParameterizationComponent
     });
     if (this.allotment != null) {
       this.edit = true;
-      console.log(this.allotment);
       this.form.patchValue(this.allotment);
     }
   }
@@ -78,6 +82,8 @@ export class ModalNumeraryParameterizationComponent
         error: error => (this.loading = false),
       });
   }
+
+  getCategories(params: ListParams) {}
 
   handleSuccess() {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';

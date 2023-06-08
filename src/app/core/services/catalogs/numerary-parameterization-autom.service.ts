@@ -28,6 +28,14 @@ export class NumeraryParameterizationAutomService implements ICrudMethods<any> {
       params
     );
   }
+
+  getCategories(params: ListParams) {
+    return this.categorizationNumerarysRepository.getAllPaginated(
+      this.route,
+      params
+    );
+  }
+
   create(
     model: ICategorizationAutomNumerary
   ): Observable<ICategorizationAutomNumerary> {
@@ -38,7 +46,6 @@ export class NumeraryParameterizationAutomService implements ICrudMethods<any> {
   }
 
   remove3(model: any): Observable<Object> {
-    console.log(model);
     return this.categorizationNumerarysRepository.remove3(this.route, model);
   }
 }
