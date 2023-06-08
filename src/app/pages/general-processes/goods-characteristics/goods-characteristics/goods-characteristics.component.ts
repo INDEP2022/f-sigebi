@@ -222,6 +222,8 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     // this.good = ssssubType.numClasifGoods;
   }
 
+  save() {}
+
   private async fillConciliate() {
     let clasificators = '62,1424,1426,1590';
     if (
@@ -429,7 +431,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
           this.service.goodChange.next(true);
           this.service.newGood = { id: this.good.id, goodId: this.good.goodId };
           // this.excepNumerario();
-          this.numberGood.setValue(response.goodId);
+          this.numberGood.setValue(response.id);
           this.type.setValue(response.goodTypeId);
           this.subtype.setValue(response.subTypeId);
           // this.form.get('ssubtype').setValue(response.goodTypeId);

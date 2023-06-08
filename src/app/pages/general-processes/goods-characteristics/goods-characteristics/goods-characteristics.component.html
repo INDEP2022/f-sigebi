@@ -11,7 +11,61 @@
             <tab heading="Datos de B&uacute;squeda">
               <div class="row">
                 <div class="col-md-6">
-                  <app-goods-types-shared
+                  <ng-template #typeLabel let-item="item">
+                    {{ item.id }} - {{ item.nameGoodType }}
+                  </ng-template>
+                  <ng-template #typeOption let-item="item">
+                    <div [title]="item.id + '-' + item.nameGoodType">
+                      {{ item.id }} - {{ item.nameGoodType }}
+                    </div>
+                  </ng-template>
+                  <div class="row pt-3">
+                    <ng-custom-select-loading
+                      [form]="form"
+                      formControlName="type"
+                      label="Tipo"
+                      path="catalog/api/v1/good-type"
+                      value="id"
+                      bindLabel="nameGoodType"
+                      paramSearch="search"
+                      [labelTemplate]="typeLabel"
+                      [optionTemplate]="typeOption">
+                    </ng-custom-select-loading>
+                  </div>
+                  <div class="row pt-3">
+                    <ng-custom-select-loading
+                      [form]="form"
+                      formControlName="subtype"
+                      label="Subtipo"
+                      path="catalog/api/v1/good-subtype"
+                      value="nameGoodType"
+                      bindLabel="nameGoodType"
+                      paramSearch="search">
+                    </ng-custom-select-loading>
+                  </div>
+                  <div class="row pt-3">
+                    <ng-custom-select-loading
+                      [form]="form"
+                      formControlName="ssubtype"
+                      label="Ssubtipo"
+                      path="catalog/api/v1/good-ssubtype"
+                      value="nameGoodType"
+                      bindLabel="nameGoodType"
+                      paramSearch="search">
+                    </ng-custom-select-loading>
+                  </div>
+                  <div class="row pt-3">
+                    <ng-custom-select-loading
+                      [form]="form"
+                      formControlName="sssubtype"
+                      label="Sssubtipo"
+                      path="catalog/api/v1/good-sssubtype"
+                      value="nameGoodType"
+                      bindLabel="nameGoodType"
+                      paramSearch="search">
+                    </ng-custom-select-loading>
+                  </div>
+                  <!-- <app-goods-types-shared
                     [form]="form"
                     typeField="type"
                     subtypeField="subtype"
@@ -19,7 +73,7 @@
                     sssubtypeField="sssubtype"
                     (goodSssubtypeChange)="
                       getGoods($event)
-                    "></app-goods-types-shared>
+                    "></app-goods-types-shared> -->
                 </div>
                 <div class="col-md-6">
                   <div class="row pt-3">
@@ -71,7 +125,19 @@
               </div>
             </tab>
             <tab heading="Datos Generales del Bien">
-              <div class="row mb-4">
+              <div
+                class="mb-5"
+                style="
+                  display: flex;
+                  justify-content: space-between;
+                  align-items: center;
+                ">
+                <button
+                  type="button"
+                  class="btn btn-sm btn-success active"
+                  (click)="save()">
+                  Guardar
+                </button>
                 <h5 class="text-danger" style="text-align: right">
                   {{ di_numerario_conciliado }}
                 </h5>
