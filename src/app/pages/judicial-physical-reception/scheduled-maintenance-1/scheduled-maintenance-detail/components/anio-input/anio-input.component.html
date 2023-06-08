@@ -1,0 +1,12 @@
+<form class="form-material mb-0 pb-0" [formGroup]="form">
+  <form-field [control]="form.get('anio')">
+    <input
+      type="number"
+      class="form-control"
+      max="2999"
+      min="1"
+      class="form-control"
+      formControlName="anio"
+      (input)="updateData()" />
+  </form-field>
+</form>

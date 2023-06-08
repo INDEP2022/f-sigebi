@@ -16,9 +16,13 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { KeyProceedingsFormComponent } from '../key-proceedings-form/key-proceedings-form.component';
 import { TableGoodsComponent } from '../table-goods/table-goods.component';
 import { UpdateDatesGoodsComponent } from '../update-dates-goods/update-dates-goods.component';
+import { AnioInputComponent } from './scheduled-maintenance-detail/components/anio-input/anio-input.component';
 import { CantsComponent } from './scheduled-maintenance-detail/components/cants/cants.component';
 import { ExcelButtonComponent } from './scheduled-maintenance-detail/components/excel-button/excel-button.component';
+import { FolioInputComponent } from './scheduled-maintenance-detail/components/folio-input/folio-input.component';
 import { MassiveDeleteButtonComponent } from './scheduled-maintenance-detail/components/massive-delete-button/massive-delete-button.component';
+import { MesInputComponent } from './scheduled-maintenance-detail/components/mes-input/mes-input.component';
+import { TransferSelectComponent } from './scheduled-maintenance-detail/components/transfer-select/transfer-select.component';
 import { ScheduledMaintenanceDetailComponent } from './scheduled-maintenance-detail/scheduled-maintenance-detail.component';
 import { ScheduledMaintenanceRoutingModule } from './scheduled-maintenance-routing.module';
 import { ScheduledMaintenanceComponent } from './scheduled-maintenance.component';
@@ -30,6 +34,10 @@ import { ScheduledMaintenanceComponent } from './scheduled-maintenance.component
     CantsComponent,
     MassiveDeleteButtonComponent,
     ExcelButtonComponent,
+    AnioInputComponent,
+    FolioInputComponent,
+    MesInputComponent,
+    TransferSelectComponent,
   ],
   imports: [
     CommonModule,

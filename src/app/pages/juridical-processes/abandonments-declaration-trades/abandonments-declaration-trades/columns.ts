@@ -31,6 +31,24 @@ export const COLUMNS_BIENES = {
   },
 };
 
+// export const
+
+export const COLUMNS_GOOD_JOB_MANAGEMENT = {
+  goodNumber: {
+    title: 'No. Bien',
+    type: 'string',
+    sort: false,
+    valuePrepareFunction: (value: any) => {
+      return value?.goodId;
+    },
+  },
+  goods: {
+    title: 'Bienes',
+    type: 'string',
+    sort: false,
+  },
+};
+
 export const COLUMNS_DOCUMENTS = {
   key: {
     title: 'CVE. Documento',
