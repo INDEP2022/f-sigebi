@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import {
   FilterParams,
   ListParams,
@@ -18,6 +19,8 @@ import {
 } from 'src/app/shared/utils/date';
 import { GoodsCharacteristicsService } from '../../services/goods-characteristics.service';
 import { GoodCharacteristicModalComponent } from './good-characteristic-modal/good-characteristic-modal.component';
+import { GoodSituationsModalComponent } from './good-situations-modal/good-situations-modal.component';
+import { GoodTableDetailButtonComponent } from './good-table-detail-button/good-table-detail-button.component';
 
 export interface IVal {
   column: string;
@@ -257,5 +260,25 @@ export class GoodTableValsComponent extends BasePage implements OnInit {
         }
       },
     });
+  }
+
+  openModal1() {
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      callback: (next: boolean) => {
+        //if (next)
+      },
+    };
+    this.modalService.show(GoodTableDetailButtonComponent, modalConfig);
+  }
+
+  openModal2() {
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      callback: (next: boolean) => {
+        //if (next)
+      },
+    };
+    this.modalService.show(GoodSituationsModalComponent, modalConfig);
   }
 }
