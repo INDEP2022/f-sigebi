@@ -122,6 +122,7 @@ export class LogicalTablesRegisterComponent extends BasePage implements OnInit {
       if (question.isConfirmed) {
         this.delete(dinamicTables.table);
         Swal.fire('Borrado', '', 'success');
+        this.getDinamicTables();
       }
     });
   }
