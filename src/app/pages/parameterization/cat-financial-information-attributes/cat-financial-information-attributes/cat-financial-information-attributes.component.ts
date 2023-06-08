@@ -124,20 +124,27 @@ export class CatFinancialInformationAttributesComponent
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(attributesFinancialInfo.id);
-        Swal.fire('Borrado', '', 'success');
+
       }
     });
   }
 
   delete(id: number) {
-    this.attributesInfoFinancialService.remove(id).subscribe;
-    {
+    this.attributesInfoFinancialService.remove(id).subscribe({
       next: () => {
-        this.getAttributesFinancialInfo(),
-          this.params
-            .pipe(takeUntil(this.$unSubscribe))
-            .subscribe(() => this.getAttributesFinancialInfo());
-      };
-    }
+        this.getAttributesFinancialInfo();
+        this.alert(
+          'success',
+          'Borrado',
+          ''
+        );
+      }, error: erro => {
+        this.alert(
+          'warning',
+          'Atributos de Informaci&oacute;n Financiera',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      }
+    });
   }
 }

@@ -6,6 +6,7 @@ import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IDelegationState } from 'src/app/core/models/catalogs/delegation-state.model';
 import { IStateOfRepublic } from 'src/app/core/models/catalogs/state-of-republic.model';
 import { DelegationStateService } from 'src/app/core/services/catalogs/delegation-state.service';
+import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
 import { StateOfRepublicService } from 'src/app/core/services/catalogs/state-of-republic.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
@@ -22,18 +23,20 @@ export class DelegationStateFormComponent extends BasePage implements OnInit {
   edit: boolean = false;
   delegationSate: any;
   states = new DefaultSelect<IStateOfRepublic>();
+  regionalDelegation = new DefaultSelect<IStateOfRepublic>();
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
     private delegationStateService: DelegationStateService,
-    private stateOfRepublicService: StateOfRepublicService
+    private stateOfRepublicService: StateOfRepublicService,
+    private regionalDelegationService: RegionalDelegationService
   ) {
     super();
   }
 
   ngOnInit(): void {
     this.prepareForm();
-    this.getStates(new ListParams());
+
   }
 
   private prepareForm() {
@@ -57,22 +60,24 @@ export class DelegationStateFormComponent extends BasePage implements OnInit {
       ],
     });
     if (this.delegationSate) {
-      this.fillForm();
+      this.edit = true;
+      this.delegationStateForm.patchValue(this.delegationSate);
+      this.delegationStateForm.controls['regionalDelegation'].setValue(
+        this.delegationSate.regionalDelegation.id
+      );
+      this.delegationStateForm.controls['stateCode'].setValue(
+        this.delegationSate.stateCode.codeCondition
+      );
+      this.getStates(new ListParams(), this.delegationStateForm.controls['keyState'].value);
+      this.getRegionalDelegation(new ListParams(), this.delegationStateForm.controls['regionalDelegation'].value);
     }
+    this.getStates(new ListParams());
+    this.getRegionalDelegation(new ListParams());
   }
-
-  fillForm() {
-    this.edit = true;
-    this.delegationStateForm.patchValue(this.delegationSate);
-    this.delegationStateForm.controls['regionalDelegation'].setValue(
-      this.delegationSate.regionalDelegation.id
-    );
-    this.delegationStateForm.controls['stateCode'].setValue(
-      this.delegationSate.stateCode.codeCondition
-    );
-  }
-
-  getStates(params: ListParams) {
+  getStates(params: ListParams, id?: string) {
+    if (id) {
+      params['filter.id'] = id;
+    }
     this.stateOfRepublicService.getAll(params).subscribe({
       next: data => {
         this.states = new DefaultSelect(data.data, data.count);
@@ -82,7 +87,20 @@ export class DelegationStateFormComponent extends BasePage implements OnInit {
       },
     });
   }
-
+  getRegionalDelegation(params: ListParams, id?: string) {
+    if (id) {
+      params['filter.id'] = id;
+    }
+    this.regionalDelegationService.getAll(params).subscribe({
+      next: data => {
+        console.log(data);
+        this.regionalDelegation = new DefaultSelect(data.data, data.count);
+      },
+      error: () => {
+        this.regionalDelegation = new DefaultSelect();
+      },
+    });
+  }
   stateChange(state: IStateOfRepublic) {
     console.log(state);
     this.delegationStateForm.controls.keyState.setValue(state.id);
@@ -99,7 +117,7 @@ export class DelegationStateFormComponent extends BasePage implements OnInit {
   create() {
     this.loading = true;
     this.delegationStateService
-      .create(this.delegationStateForm.value)
+      .create(this.delegationStateForm.getRawValue())
       .subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),
@@ -111,7 +129,7 @@ export class DelegationStateFormComponent extends BasePage implements OnInit {
     this.delegationStateService
       .newUpdate(
         // this.delegationSate.regionalDelegation,
-        this.delegationStateForm.value
+        this.delegationStateForm.getRawValue()
       )
       .subscribe({
         next: data => this.handleSuccess(),
