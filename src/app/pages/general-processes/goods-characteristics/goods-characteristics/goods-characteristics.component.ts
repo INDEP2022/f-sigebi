@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { BehaviorSubject, catchError, firstValueFrom, map, of } from 'rxjs';
 import {
@@ -8,7 +7,6 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { IGoodSssubtype } from 'src/app/core/models/catalogs/good-sssubtype.model';
-import { IGood } from 'src/app/core/models/good/good.model';
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
 import { ParameterCatService } from 'src/app/core/services/catalogs/parameter.service';
 import { GoodService } from 'src/app/core/services/good/good.service';
@@ -18,9 +16,9 @@ import { StatusXScreenService } from 'src/app/core/services/ms-screen-status/sta
 import { SurvillanceService } from 'src/app/core/services/ms-survillance/survillance.service';
 import { SegAcessXAreasService } from 'src/app/core/services/ms-users/seg-acess-x-areas.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { SubdelegationService } from '../../../../core/services/catalogs/subdelegation.service';
+import { GoodsCharacteristicsService } from '../services/goods-characteristics.service';
 
 @Component({
   selector: 'app-goods-characteristics',
@@ -29,21 +27,52 @@ import { SubdelegationService } from '../../../../core/services/catalogs/subdele
 })
 export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
   params = new BehaviorSubject<ListParams>(new ListParams());
-  goods: IGood[] = [];
-  disabledBienes = true;
-  disabledDescripcion = false;
-  form: FormGroup;
-  permisions = false;
-  good: IGood | any;
-  di_numerario_conciliado = 'No conciliado';
+  formLoading = false;
   showConciliado = false;
   LVALIDA = true;
-  handleEvent(data: any) {
-    console.log('Evento recibido:', data);
+
+  get good() {
+    return this.service.good;
   }
 
-  updateClasif(event: any) {
-    console.log(event);
+  set good(value) {
+    this.service.good = value;
+  }
+
+  get form() {
+    return this.service.form ? this.service.form : null;
+  }
+
+  get permisions() {
+    return this.service.permisions;
+  }
+
+  set permisions(value) {
+    this.service.permisions = value;
+  }
+
+  get di_numerario_conciliado() {
+    return this.service.di_numerario_conciliado;
+  }
+
+  set di_numerario_conciliado(value) {
+    this.service.di_numerario_conciliado = value;
+  }
+
+  get disabledBienes() {
+    return this.service.disabledBienes;
+  }
+
+  set disabledBienes(value) {
+    this.service.disabledBienes = value;
+  }
+
+  get disabledDescripcion() {
+    return this.service.disabledDescripcion;
+  }
+
+  set disabledDescripcion(value) {
+    this.service.disabledDescripcion = value;
   }
 
   get numberGood() {
@@ -126,10 +155,15 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     return this.form.get('descripcion');
   }
 
+  get pathDelegation() {
+    return (
+      'catalog/api/v1/delegation/get-all?filter.etapaEdo:$eq:' + this.good.e
+    );
+  }
+
   select = new DefaultSelect();
 
   constructor(
-    private fb: FormBuilder,
     private goodService: GoodService,
     private serviceDeleg: DelegationService,
     private subdelegationService: SubdelegationService,
@@ -139,18 +173,19 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     private activatedRoute: ActivatedRoute,
     private parameterService: ParameterCatService,
     private accountMovementsService: AccountMovements,
-    private segxAccessService: SegAcessXAreasService
+    private segxAccessService: SegAcessXAreasService,
+    private service: GoodsCharacteristicsService
   ) {
     super();
-    this.form.valueChanges.subscribe(async x => {
-      console.log(x);
-      // await this.preUpdate();
-      // await this.postRecord();
-    });
+    // this.form.valueChanges.subscribe(async x => {
+    //   console.log(x);
+    //   // await this.preUpdate();
+    //   // await this.postRecord();
+    // });
   }
 
   ngOnInit(): void {
-    this.prepareForm();
+    this.service.prepareForm();
     this.activatedRoute.queryParams.subscribe({
       next: param => {
         console.log(param);
@@ -175,28 +210,12 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     // });
   }
 
-  prepareForm() {
-    this.form = this.fb.group({
-      type: [null],
-      subtype: [null],
-      ssubtype: [null],
-      sssubtype: [null],
-      noBien: [null],
-      noClasif: [null, [Validators.pattern(STRING_PATTERN)]],
-      status: [null, [Validators.pattern(STRING_PATTERN)]],
-      descripcion: [null, [Validators.pattern(STRING_PATTERN)]],
-      unidad: [null, [Validators.pattern(STRING_PATTERN)]],
-      cantidad: [null, [Validators.pattern(STRING_PATTERN)]],
-      delegation: [null],
-      subdelegation: [null],
-      valRef: [null, [Validators.pattern(STRING_PATTERN)]],
-      fechaAval: [null],
-      valorAval: [null, [Validators.pattern(STRING_PATTERN)]],
-      observaciones: [null, [Validators.pattern(STRING_PATTERN)]],
-      latitud: [null],
-      longitud: [null],
-      avaluo: ['0'],
-    });
+  handleEvent(data: any) {
+    console.log('Evento recibido:', data);
+  }
+
+  updateClasif(event: any) {
+    console.log(event);
   }
 
   getGoods(ssssubType: IGoodSssubtype) {
@@ -399,44 +418,53 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
 
   searchGood(good: any) {
     // const numberGood = Number(this.numberGood.value);
-
+    if (!good) {
+      return;
+    }
     this.goodService.getById2(good).subscribe({
       next: response => {
         console.log(response);
-
-        this.good = response;
-        // this.excepNumerario();
-        this.type.setValue(response.goodTypeId);
-        this.subtype.setValue(response.subTypeId);
-        // this.form.get('ssubtype').setValue(response.goodTypeId);
-        // this.form.get('sssubtype').setValue(response.goodTypeId);
-        // this.getDelegation(response.delegationNumber);
-        // this.getSubdelegation(response.subDelegationNumber);
-        this.delegation.setValue(response.delegationNumber.description);
-        this.subdelegation.setValue(response.subDelegationNumber.description);
-        this.getLatitudLongitud(response.goodId);
-        // this.getDelegation(response.)
-        this.numberClassification.setValue(response.goodClassNumber);
-        this.goodStatus.setValue(response.goodStatus);
-        this.goodDescription.setValue(response.description);
-        this.goodUnit.setValue(response.unit);
-        this.goodQuantity.setValue(response.quantity);
-        this.goodReference.setValue(response.referenceValue);
-        this.goodAppraisal.setValue(response.appraisedValue);
-        this.goodDateVigency.setValue(new Date(response.appraisalVigDate));
-        // this.goodLatitude.setValue(response.latitude);
-        // this.goodLongitude.setValue(response.longitud);
-        this.goodObservations.setValue(response.observationss);
-        if (response.appraisal === null) {
-          this.goodAppraisal2.setValue('0');
+        if (response) {
+          this.good = response;
+          this.service.goodChange.next(true);
+          this.service.newGood = { id: this.good.id, goodId: this.good.goodId };
+          // this.excepNumerario();
+          this.numberGood.setValue(response.goodId);
+          this.type.setValue(response.goodTypeId);
+          this.subtype.setValue(response.subTypeId);
+          // this.form.get('ssubtype').setValue(response.goodTypeId);
+          // this.form.get('sssubtype').setValue(response.goodTypeId);
+          // this.getDelegation(response.delegationNumber);
+          // this.getSubdelegation(response.subDelegationNumber);
+          this.delegation.setValue(response.delegationNumber.description);
+          this.subdelegation.setValue(response.subDelegationNumber.description);
+          this.getLatitudLongitud(response.goodId);
+          // this.getDelegation(response.)
+          this.numberClassification.setValue(response.goodClassNumber);
+          this.goodStatus.setValue(response.goodStatus);
+          this.goodDescription.setValue(response.description);
+          this.goodUnit.setValue(response.unit);
+          this.goodQuantity.setValue(response.quantity);
+          this.goodReference.setValue(response.referenceValue);
+          this.goodAppraisal.setValue(response.appraisedValue);
+          this.goodDateVigency.setValue(new Date(response.appraisalVigDate));
+          // this.goodLatitude.setValue(response.latitude);
+          // this.goodLongitude.setValue(response.longitud);
+          this.goodObservations.setValue(response.observationss);
+          if (response.appraisal === null) {
+            this.goodAppraisal2.setValue(false);
+          } else {
+            this.goodAppraisal2.setValue(true);
+          }
+          // this.getTDicta();
+          this.postQuery();
         } else {
-          this.goodAppraisal2.setValue('1');
+          this.service.goodChange.next(false);
         }
-        // this.getTDicta();
-        this.postQuery();
       },
       error: err => {
         console.log(err);
+        this.service.goodChange.next(false);
         this.onLoadToast('error', 'ERROR', 'No existe el Bien ingresado');
       },
     });
