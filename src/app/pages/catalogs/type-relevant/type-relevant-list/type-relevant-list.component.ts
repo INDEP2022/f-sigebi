@@ -107,14 +107,22 @@ export class TypeRelevantListComponent extends BasePage implements OnInit {
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(typeRelevant.id);
-        Swal.fire('Borrado', '', 'success');
       }
     });
   }
 
   delete(id: number) {
     this.typeRelevantService.remove(id).subscribe({
-      next: () => this.getExample(),
+      next: () => {
+        this.getExample(), this.alert('success', 'Tipo Relevante', 'Borrado');
+      },
+      error: error => {
+        this.alert(
+          'warning',
+          'Tipo Relevante',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      },
     });
   }
 }

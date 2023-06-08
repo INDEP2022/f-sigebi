@@ -72,7 +72,24 @@ export class MunicipalityListComponent extends BasePage implements OnInit {
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
+        this.remove(batch.idMunicipality);
       }
     });
+  }
+
+  remove(id: string) {
+    this.municipalityService.remove(id).subscribe(
+      res => {
+        this.alert('success', 'Municipio', 'Borrado.');
+        this.getExample();
+      },
+      err => {
+        this.alert(
+          'warning',
+          'Municipio',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      }
+    );
   }
 }

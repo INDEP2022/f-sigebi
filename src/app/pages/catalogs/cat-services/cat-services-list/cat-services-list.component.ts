@@ -118,14 +118,22 @@ export class CatServicesListComponent extends BasePage implements OnInit {
       if (question.isConfirmed) {
         //Ejecutar el servicio
         this.deleteReg(catservice.code);
-        Swal.fire('Borrado', '', 'success');
       }
     });
   }
 
   deleteReg(id: string | number) {
     this.catserviceService.delete(id).subscribe({
-      next: () => this.getExample(),
+      next: response => {
+        this.alert('success', 'Servicio', 'Borrado'), this.getExample();
+      },
+      error: err => {
+        this.alert(
+          'warning',
+          'Servicio',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      },
     });
   }
 }
