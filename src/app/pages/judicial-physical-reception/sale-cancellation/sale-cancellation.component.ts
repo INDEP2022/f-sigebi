@@ -257,6 +257,31 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
       localStorage.removeItem('numberExpedient');
     }
 
+    this.paramsDataGoods
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(params => {
+        this.getGoodsFn();
+      });
+
+    this.paramsActNavigate
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(params => {
+        console.log('Sís');
+        console.log(this.paramsActNavigate);
+        console.log(this.paramsActNavigate.getValue().page);
+        console.log(this.proceedingData.length);
+        this.dataGoodAct.load([]);
+        if (this.proceedingData.length > 0) {
+          this.loading = true;
+          const dataRes = JSON.parse(
+            JSON.stringify(
+              this.proceedingData[this.paramsActNavigate.getValue().page - 1]
+            )
+          );
+          this.fillIncomeProceeding(dataRes);
+        }
+      });
+
     this.getDataUser()
   }
 
@@ -1103,6 +1128,55 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
         }
       );
     }
+  }
+
+  getGoodsFn() {
+    this.loading = true;
+
+    const paramsF = new FilterParams();
+    paramsF.page = this.paramsDataGoods.getValue().page;
+    paramsF.limit = this.paramsDataGoods.getValue().limit;
+    this.limitDataGoods = new FormControl(
+      this.paramsDataGoods.getValue().limit
+    );
+    console.log(this.paramsDataGoods);
+    console.log(paramsF.getParams());
+    this.serviceGood
+      .getAllFilterDetail(
+        `filter.fileNumber=$eq:${this.form.get('expediente').value}`
+      )
+      .subscribe({
+        next: async (res: any) => {
+          if (res.data.length > 0) {
+            const newData = await Promise.all(
+              res.data.map(async (e: any) => {
+                let disponible: boolean;
+                const resp = await this.validateGood(e);
+                const ind = await this.validateRequired(e);
+                console.log(ind);
+                console.log(resp);
+                disponible = JSON.parse(JSON.stringify(resp)).avalaible;
+                const cveAct = JSON.parse(JSON.stringify(resp)).acta;
+                return {
+                  ...e,
+                  avalaible: disponible,
+                  indEdoFisico: ind,
+                  acta: cveAct,
+                };
+              })
+            );
+            this.dataGoods.load(newData);
+            this.totalItemsDataGoods = res.count;
+            this.loading = false;
+          }
+        },
+        error: (err: any) => {
+          console.error(err);
+          this.loading = false;
+          this.dataGoods.load([]);
+          this.totalItemsDataGoods = 0;
+        },
+      });
   }
 
   getGoodsActFn() {

@@ -1149,6 +1149,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
             this.blockExpedient = false;
           } else {
             this.initialdisabled = false;
+            this.loading = false
             this.requireAct1();
             this.inputsInProceedingClose();
             this.minDateFecElab = new Date();
@@ -1475,6 +1476,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
               this.requireAct1();
               this.minDateFecElab = new Date();
               this.inputsNewProceeding();
+              this.loading = false
               /* this.newSearchExp(); */
               this.alert(
                 'warning',
@@ -2187,11 +2189,13 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                             }
                           );
                       }else{
+                        this.loading = false
                         this.alert('warning','Error al abrir acta','Por favor intente nuevamente')
                       }
                     },
                     err => {
                       console.log(err);
+                      this.loading = false
                       VAL_MOVIMIENTO = 0;
                       this.alert('warning','Error en tmp','')
                     }
@@ -2202,6 +2206,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                 const btn = document.getElementById('expedient-number');
                 this.render.removeClass(btn, 'disabled');
                 this.render.addClass(btn, 'enabled');
+                this.loading = false
                 this.alert(
                   'error',
                   'No se pudo abrir el acta',
@@ -3237,6 +3242,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     this.form.get('ident').setValue('ADM');
     this.minDateFecElab = new Date();
     this.form.get('statusProceeding').reset();
+    this.totalItemsDataGoodsAct = 0
     this.labelActa = 'Abrir acta';
     this.btnCSSAct = 'btn-success';
     this.act2Valid = false;
