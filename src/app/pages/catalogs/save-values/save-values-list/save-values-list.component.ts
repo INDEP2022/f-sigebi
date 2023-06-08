@@ -26,6 +26,8 @@ export class SaveValuesListComponent extends BasePage implements OnInit {
     super();
     this.settings.columns = SAVE_VALUES_COLUMNS;
     this.settings.actions.delete = true;
+    this.settings.actions.add = false;
+    this.settings.hideSubHeader = false;
   }
 
   ngOnInit(): void {
