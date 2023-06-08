@@ -170,6 +170,7 @@
         <div class="col-md-8">
           <form-field [control]="personForm.get('keyOperation')">
             <ngx-select
+              [searchOnInit]="true"
               [form]="personForm"
               [data]="operation"
               bindLabel="otvalor"

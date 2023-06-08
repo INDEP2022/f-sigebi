@@ -13,8 +13,8 @@ import { TypesOfClaimsService } from '../types-of-claims.service';
   styles: [],
 })
 export class TypesOfClaimsCatalogComponent extends BasePage implements OnInit {
-  columns: any[] = [];
-  totalItems: number = 0;
+  columns: any[2] = [2];
+  totalItems: number = 9;
   params = new BehaviorSubject<ListParams>(new ListParams());
 
   dataTable: LocalDataSource = new LocalDataSource();

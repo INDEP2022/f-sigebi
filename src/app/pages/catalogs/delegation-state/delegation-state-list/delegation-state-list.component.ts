@@ -32,9 +32,17 @@ export class DelegationStateListComponent extends BasePage implements OnInit {
   ) {
     super();
     this.settings.columns = DELEGATION_STATE_COLUMNS;
-    this.settings.actions.delete = true;
-    this.settings.actions.add = false;
-    this.settings.hideSubHeader = false;
+    this.settings = {
+      ...this.settings,
+      hideSubHeader: false,
+      actions: {
+        columnTitle: 'Acciones',
+        edit: true,
+        add: false,
+        delete: true,
+        position: 'right',
+      },
+    };
   }
 
   ngOnInit(): void {
@@ -48,20 +56,10 @@ export class DelegationStateListComponent extends BasePage implements OnInit {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
-            filter.field == 'regionalDelegation' ||
-            filter.field == 'stateCode' ||
-            filter.field == 'keyState' ||
-            filter.field == 'status' ||
-            filter.field == 'version'
+            filter.field == 'regionalDelegation'
               ? (searchFilter = SearchFilter.EQ)
               : (searchFilter = SearchFilter.ILIKE);
             if (filter.search !== '') {
-              if (filter.field == 'regionalDelegation') {
-                filter.field = 'regionalDelegation.id';
-              }
-              if (filter.field == 'stateCode') {
-                filter.field = 'stateCode.codeCondition';
-              }
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
               delete this.columnFilters[field];
@@ -84,10 +82,13 @@ export class DelegationStateListComponent extends BasePage implements OnInit {
     };
     this.delegationStateService.getAll(params).subscribe({
       next: (response: any) => {
+        console.log(response.data);
         this.delegationsState = response.data;
-        this.totalItems = response.count || 0;
-        this.data.load(response.data);
+
+        this.data.load(this.delegationsState);
+        console.log(this.data);
         this.data.refresh();
+        this.totalItems = response.count;
         this.loading = false;
       },
       error: error => (this.loading = false),
@@ -99,28 +100,40 @@ export class DelegationStateListComponent extends BasePage implements OnInit {
     modalConfig.initialState = {
       delegationSate,
       callback: (next: boolean) => {
-        if (next) this.getData();
+        if (next) {
+          this.params
+            .pipe(takeUntil(this.$unSubscribe))
+            .subscribe(() => this.getData());
+        }
       },
     };
     this.modalService.show(DelegationStateFormComponent, modalConfig);
   }
 
-  showDeleteAlert(delegationSate: IDelegationState) {
+  showDeleteAlert(delegationSate: any) {
     this.alertQuestion(
       'warning',
       'Eliminar',
       'Desea eliminar este registro?'
     ).then(question => {
+      console.log(delegationSate.regionalDelegation.id);
+      console.log(delegationSate);
       if (question.isConfirmed) {
-        this.delete(delegationSate.id);
-        Swal.fire('Borrado', 'Deductivas', 'success');
+        this.delete(
+          delegationSate.regionalDelegation.id,
+          delegationSate.stateCode.codeCondition
+        );
+        Swal.fire('Borrado', 'Delegacione Estado', 'success');
       }
     });
   }
-  delete(id: number) {
-    this.delegationStateService.newRemove(id).subscribe({
+  delete(regionalDelegation: number, id: string) {
+    this.delegationStateService.newRemove(regionalDelegation, id).subscribe({
       next: () => {
-        this.getData(), this.alert('success', 'Deductivas', 'Borrado');
+        this.params
+          .pipe(takeUntil(this.$unSubscribe))
+          .subscribe(() => this.getData());
+        this.alert('success', 'Delegacione Estado', 'Borrado');
       },
     });
   }

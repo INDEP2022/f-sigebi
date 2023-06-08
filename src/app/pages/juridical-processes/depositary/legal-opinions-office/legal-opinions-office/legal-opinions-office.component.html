@@ -90,8 +90,15 @@
                     TEST FIRMA
                     <i aria-hidden="true" class="fa fa-filr"></i>
                   </button> -->
+                  <!-- <button
+                    class="btn btn-danger active btn-sm m-2"
+                    (click)="testUploadPdf()">
+                    Test Files
+                    <i class="fas fa-trash-alt"></i>
+                  </button> -->
                   <button
                     *ngIf="dictationData"
+                    [disabled]="blockSender"
                     type="button"
                     class="btn btn-primary btn-sm active"
                     (click)="saveDataForm()">
@@ -135,9 +142,9 @@
                       </div>
                     </ng-container>
                     <ng-template #noStatus>
-                      <!-- <div class="badge badge-pill bg-default text-wrap ml-2 mr-2">
-                      &#91;Aquí va el Estatus&#93;
-                    </div> -->
+                      <div class="badge badge-pill bg-info text-wrap ml-2 mr-2">
+                        &#91;&nbsp;&nbsp;&#93;
+                      </div>
                     </ng-template>
                   </div>
                   <!-- <form-field
