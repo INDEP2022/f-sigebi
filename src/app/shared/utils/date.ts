@@ -58,6 +58,7 @@ export function formatForIsoDate(
   format: 'string' | 'date' = 'date',
   replaceText: string = '-'
 ) {
+  if (!value) return null;
   const position = value.indexOf('T');
   console.log(position);
   const newValue = value
