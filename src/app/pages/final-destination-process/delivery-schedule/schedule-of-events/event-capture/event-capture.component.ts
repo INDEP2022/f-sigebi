@@ -457,7 +457,7 @@ export class EventCaptureComponent
 
   async createProceeding() {
     await this.generateCve();
-    const formValue = this.form.value;
+    const formValue = this.form.getRawValue();
     const { numFile, keysProceedings, captureDate, responsible } = formValue;
     if (!responsible) {
       this.alert('error', 'Error', 'Eliga un responsable');
@@ -917,6 +917,7 @@ export class EventCaptureComponent
     const _user = splitedArea ? splitedArea[4] : null;
     const _month = splitedArea ? splitedArea[7] : null;
     const _year = splitedArea ? splitedArea[6] : null;
+    console.log(existingTrans);
     if (existingTrans) {
       if (['PGR', 'PJF'].includes(existingTrans)) {
         type.setValue('A');
