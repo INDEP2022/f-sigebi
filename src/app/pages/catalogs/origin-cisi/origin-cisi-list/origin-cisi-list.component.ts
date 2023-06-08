@@ -108,14 +108,23 @@ export class OriginCisiListComponent extends BasePage implements OnInit {
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(originCisi.id);
-        Swal.fire('Borrado', '', 'success');
       }
     });
   }
 
   delete(id: number) {
     this.originCisiService.remove(id).subscribe({
-      next: () => this.getDeductives(),
+      next: () => {
+        this.alert('success', 'Procedencias CiSi', 'Borrado');
+        this.getDeductives();
+      },
+      error: error => {
+        this.alert(
+          'warning',
+          'Procedencias CiSi',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      },
     });
   }
 }

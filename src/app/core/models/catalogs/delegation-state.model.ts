@@ -1,7 +1,7 @@
 import { IStateOfRepublic } from './state-of-republic.model';
 
 export class IDelegationState {
-  regionalDelegation?: number;
+  regionalDelegation?: string;
   id?: number;
   stateCode?: IStateOfRepublic[];
   userCreated?: string;

@@ -106,14 +106,23 @@ export class ThirdPartyCompanyListComponent extends BasePage implements OnInit {
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(thirdPartyCompany.id);
-        Swal.fire('Borrado', '', 'success');
       }
     });
   }
 
   delete(id: number) {
-    this.thirdPartyCompanyService.removeThirdPartyCompany(id).subscribe({
-      next: () => this.getDeductives(),
-    });
+    this.thirdPartyCompanyService.removeThirdPartyCompany(id).subscribe(
+      res => {
+        this.alert('success', 'Empresa de Tercero', 'Borrado.');
+        this.getDeductives();
+      },
+      err => {
+        this.alert(
+          'warning',
+          'Empresa de Tercero',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      }
+    );
   }
 }
