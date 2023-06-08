@@ -675,7 +675,7 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
           localStorage.removeItem(this.nameStorageDictationDate);
           // this.deleteTempDictation(true);
           this.alertInfo(
-            'warning',
+            'success',
             'Se realizó la firma del dictamen',
             ''
           ).then(() => {
@@ -1411,7 +1411,7 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
         this.officeDictationData.delegacionRecipientNumber =
           event.delegationNumber;
         event.delegationNumber;
-        this.officeDictationData.delegacionRecipientNumber =
+        this.officeDictationData.recipientDepartmentNumber =
           event.departamentNumber;
         // this.officeDictationData.sender
         const params: any = new FilterParams();
@@ -1421,6 +1421,7 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
           .getAllUsersTracker(params.getParams())
           .subscribe({
             next: data => {
+              console.log(data);
               this.officeDictationData.cveChargeRem = data.data[0].postKey;
             },
             error: error => {},
@@ -3767,9 +3768,9 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
               return;
             }
             if (
-              response.includes(this.dictationData.expedientNumber) ||
-              response.includes(this.dictationData.wheelNumber) ||
-              response.includes(this.dictationData.typeDict)
+              // response.includes(this.dictationData.expedientNumber) ||
+              // response.includes(this.dictationData.wheelNumber) ||
+              !response.includes('xml')
             ) {
               this.onLoadToast(
                 'warning',

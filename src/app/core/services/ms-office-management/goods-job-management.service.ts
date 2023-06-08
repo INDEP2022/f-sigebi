@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 import { GoodsJobManagementEndpoints } from 'src/app/common/constants/endpoints/officemanagement/ms-goods-jog-management-endpoint';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
@@ -73,5 +74,15 @@ export class GoodsJobManagementService extends HttpService {
       GoodsJobManagementEndpoints.OfficeManagementCopies,
       obj
     );
+  }
+
+  getGoodsJobManagement(list?: ListParams): Observable<
+    IListResponse<{
+      managementNumber: string;
+      goodNumber: string;
+      recordNumber: string;
+    }>
+  > {
+    return this.get<IListResponse<any>>(`goods-job-management`);
   }
 }
