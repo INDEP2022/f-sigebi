@@ -34,10 +34,7 @@ export class NonWorkingDaysComponent extends BasePage implements OnInit {
     this.settings.columns = NONWORKINGDAYS_COLUMNS;
     this.settings.actions.delete = true;
     this.settings.actions.add = false;
-    this.settings = {
-      ...this.settings,
-      hideSubHeader: false,
-    };
+    this.settings.hideSubHeader = false;
   }
 
   ngOnInit(): void {
@@ -51,16 +48,16 @@ export class NonWorkingDaysComponent extends BasePage implements OnInit {
           filters.map((filter: any) => {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
-            /*SPECIFIC CASES*/
-            // filter.field == 'id'
-            //   ? (searchFilter = SearchFilter.EQ)
-            //   : (searchFilter = SearchFilter.ILIKE);
+            filter.field == 'id' || filter.field == 'description'
+              ? (searchFilter = SearchFilter.EQ)
+              : (searchFilter = SearchFilter.ILIKE);
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
               delete this.columnFilters[field];
             }
           });
+          this.params = this.pageFilter(this.params);
           this.getCalendarAll();
         }
       });
@@ -81,7 +78,6 @@ export class NonWorkingDaysComponent extends BasePage implements OnInit {
     };
     this.calendarService.getAll(params).subscribe({
       next: response => {
-        console.log(response.data);
         this.calendar = response.data;
         this.data.load(this.calendar);
         this.data.refresh();
@@ -97,7 +93,6 @@ export class NonWorkingDaysComponent extends BasePage implements OnInit {
     this.calendarService.getById3(file).subscribe({
       next: response => {
         this.calendar = response.data;
-        console.log(response);
         this.totalItems = response.count;
         this.loading = false;
       },
@@ -105,7 +100,6 @@ export class NonWorkingDaysComponent extends BasePage implements OnInit {
     });
   }
   openForm(calendar?: ICalendar) {
-    console.log(calendar);
     let config: ModalOptions = {
       initialState: {
         calendar,

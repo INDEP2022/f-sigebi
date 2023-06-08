@@ -26,7 +26,7 @@ export class RackListComponent extends BasePage implements OnInit {
   ) {
     super();
     this.settings.columns = RACK_COLUMNS;
-    this.settings.actions.delete = true;
+    this.settings.actions.delete = false;
   }
 
   ngOnInit(): void {

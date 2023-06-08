@@ -48,12 +48,12 @@ export class DeductivesListComponent extends BasePage implements OnInit {
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
             filter.field == 'id' ||
-            filter.field == 'contractNumber' ||
-            filter.field == 'weightedDeduction' ||
-            filter.field == 'startingRankPercentage' ||
-            filter.field == 'finalRankPercentage' ||
-            filter.field == 'status' ||
-            filter.field == 'version'
+              filter.field == 'contractNumber' ||
+              filter.field == 'weightedDeduction' ||
+              filter.field == 'startingRankPercentage' ||
+              filter.field == 'finalRankPercentage' ||
+              filter.field == 'status' ||
+              filter.field == 'version'
               ? (searchFilter = SearchFilter.EQ)
               : (searchFilter = SearchFilter.ILIKE);
             if (filter.search !== '') {
@@ -116,6 +116,12 @@ export class DeductivesListComponent extends BasePage implements OnInit {
     this.deductiveService.remove(id).subscribe({
       next: () => {
         this.getDeductives(), this.alert('success', 'Deductiva', 'Borrado');
+      }, error: err => {
+        this.alert(
+          'warning',
+          'Sub-tipo',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
       },
     });
   }

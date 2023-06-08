@@ -15,14 +15,18 @@
               formControlName="typeProceeding" />
           </form-field>
         </div>
-        <div class="col-md-4">
-          <form-field
-            [control]="form.get('initialCategory')"
-            label="Categor&iacute;a Inicial">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="initialCategory" />
+        <div class="col-md-4 offset-md-2">
+          <form-field [control]="form.get('initialCategory')">
+            <ngx-select
+              [form]="form"
+              control="initialCategory"
+              value="category"
+              bindLabel="cateogry"
+              [data]="categories"
+              (fetchItems)="getCategories($event)"
+              (change)="categoriesChange($event)"
+              label="Categoría inicial">
+            </ngx-select>
           </form-field>
         </div>
         <div class="col-md-4">
