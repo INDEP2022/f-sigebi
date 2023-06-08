@@ -76,7 +76,7 @@ export class TypeServicesListComponent extends BasePage implements OnInit {
   remove(id: number) {
     this.typeServicesService.remove(id).subscribe({
       next: () => {
-        this.getExample(), this.alert('success', 'Tipo Servicio', 'Borrado');
+        this.alert('success', 'Tipo Servicio', 'Borrado'), this.getExample();
       },
       error: error => {
         this.alert(

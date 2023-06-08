@@ -8,8 +8,6 @@ import { ListParams } from '../../../common/repository/interfaces/list-params';
 import { Repository } from '../../../common/repository/repository';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { ILabelOKey } from '../../models/catalogs/label-okey.model';
-import { LabelGoodEndPoints } from 'src/app/common/constants/endpoints/label-good-endpoint';
-import { HttpService } from 'src/app/common/services/http.service';
 @Injectable({
   providedIn: 'root',
 })

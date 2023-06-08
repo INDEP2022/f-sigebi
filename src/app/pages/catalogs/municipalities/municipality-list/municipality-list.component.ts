@@ -25,8 +25,8 @@ export class MunicipalityListComponent extends BasePage implements OnInit {
   ) {
     super();
     this.settings.columns = MUNICIPALITIES_COLUMNS;
-    this.settings.actions.delete = true;
-    this.settings.actions.delete = true;
+    this.settings.actions.delete = false;
+    this.settings.actions.delete = false;
     this.settings.actions.add = false;
     this.settings.hideSubHeader = false;
   }
@@ -72,13 +72,19 @@ export class MunicipalityListComponent extends BasePage implements OnInit {
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
-        this.remove(batch.idMunicipality);
+        this.remove(batch);
       }
     });
   }
 
-  remove(id: string) {
-    this.municipalityService.remove(id).subscribe(
+  remove(model: IMunicipality) {
+    console.log('model:', model);
+    const data = {
+      idMunicipality: model.idMunicipality,
+      stateKey: model.stateKey,
+    };
+
+    this.municipalityService.remove2(data).subscribe(
       res => {
         this.alert('success', 'Municipio', 'Borrado.');
         this.getExample();

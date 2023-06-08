@@ -30,6 +30,6 @@ export class ManagementService implements ICrudMethods<IManagement> {
   }
 
   remove(id: string | number): Observable<Object> {
-    return this.managementRepository.remove(this.route, id);
+    return this.managementRepository.remove(`${this.route}/id`, id);
   }
 }

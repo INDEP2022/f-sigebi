@@ -63,7 +63,7 @@ export class SatSubclassificationListComponent
     this.modalService.show(SatSubclassificationFormComponent, config);
   }
 
-  delete(satSubclassification?: ISatSubclassification) {
+  AlertQuestion(satSubclassification?: ISatSubclassification) {
     this.alertQuestion(
       'warning',
       'Eliminar',
@@ -71,7 +71,24 @@ export class SatSubclassificationListComponent
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
+        this.remove(satSubclassification.id);
       }
     });
+  }
+
+  remove(id: number) {
+    this.satSubclassificationService.remove(id).subscribe(
+      res => {
+        this.alert('success', 'Sat Sub Clasificación', 'Borrado.');
+        this.getExample();
+      },
+      err => {
+        this.alert(
+          'warning',
+          'Sat Sub Clasificación',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      }
+    );
   }
 }

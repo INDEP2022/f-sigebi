@@ -30,6 +30,6 @@ export class IfaiSerieService implements ICrudMethods<IIfaiSerie> {
   }
 
   remove(id: string | number): Observable<Object> {
-    return this.ifaiSerieRepository.remove(this.route, id);
+    return this.ifaiSerieRepository.remove(`${this.route}/id`, id);
   }
 }

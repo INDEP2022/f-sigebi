@@ -8,8 +8,6 @@ import { ListParams } from '../../../common/repository/interfaces/list-params';
 import { Repository } from '../../../common/repository/repository';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IEdosXCoor } from '../../models/catalogs/edos-x-coor.model';
-import { HttpService } from 'src/app/common/services/http.service';
-import { EdosXCoorEndpoints } from 'src/app/common/constants/endpoints/edos-x-coor';
 @Injectable({
   providedIn: 'root',
 })
