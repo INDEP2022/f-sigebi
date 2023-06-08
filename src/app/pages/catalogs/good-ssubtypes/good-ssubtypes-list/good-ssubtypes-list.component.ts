@@ -99,20 +99,37 @@ export class GoodSsubtypesListComponent extends BasePage implements OnInit {
   }
 
   showDeleteAlert(goodSsubtype: IGoodSsubType) {
+    console.log('goodSsubtype:', goodSsubtype);
+
     this.alertQuestion(
       'warning',
       'Eliminar',
       'Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        this.delete(goodSsubtype.id);
+        this.delete(goodSsubtype);
       }
     });
   }
-  delete(id: number) {
-    this.goodSsubtypeService.remove(id).subscribe({
+
+  delete(data: any) {
+    const ids = {
+      id: data.id,
+      idSubtypeGood: data.noSubType?.id,
+      idTypeGood: data.noType?.id,
+    };
+
+    this.goodSsubtypeService.removeByIds(ids).subscribe({
       next: () => {
-        this.getGoodSsubtypes(), this.alert('success', 'Ssub Tipo', 'Borrado');
+        this.getGoodSsubtypes(),
+          this.alert('success', 'Subtipo Tipo', 'Borrado');
+      },
+      error: error => {
+        this.alert(
+          'warning',
+          'Subtipo Tipo',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
       },
     });
   }

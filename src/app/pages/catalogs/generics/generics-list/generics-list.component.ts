@@ -124,7 +124,11 @@ export class GenericsListComponent extends BasePage implements OnInit {
         this.getExample(), this.alert('success', 'Genérico', 'Borrado');
       },
       error: error => {
-        this.alert('warning', 'Genérico', error.error.message);
+        this.alert(
+          'warning',
+          'Genérico',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
       },
     });
   }

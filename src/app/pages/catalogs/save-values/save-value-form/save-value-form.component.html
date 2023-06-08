@@ -45,7 +45,7 @@
           </form-field>
         </div>
 
-        <div class="col-md-6">
+        <div *ngIf="edit" class="col-md-6">
           <form-field
             [control]="saveValueForm.get('noRegistration')"
             label="Número de registro">

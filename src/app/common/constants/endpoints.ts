@@ -150,7 +150,7 @@ export enum ENDPOINT_LINKS {
   AffairType = 'affair-type',
   FinancialInformation = 'parameterfinantial/financial-information',
   FinancialIndicators = 'financial-indicators',
-  AttributesFinancialInfo = 'attributes-financial-information',
+  AttributesFinancialInfo = 'catalog/attributes-financial-information',
   BankConcepts = 'concept-movis-bank',
   NumeraryCategories = 'numerary-categories',
   NumeraryCategoriesAutom = 'categorization-autom-numerary',

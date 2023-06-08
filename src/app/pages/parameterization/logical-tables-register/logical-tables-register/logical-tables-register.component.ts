@@ -14,7 +14,6 @@ import { ITables } from 'src/app/core/models/catalogs/dinamic-tables.model';
 //service
 import { LocalDataSource } from 'ng2-smart-table';
 import { DinamicTablesService } from 'src/app/core/services/catalogs/dinamic-tables.service';
-import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-logical-tables-register',
@@ -119,16 +118,26 @@ export class LogicalTablesRegisterComponent extends BasePage implements OnInit {
       'Eliminar',
       '¿Desea eliminar este registro?'
     ).then(question => {
+      console.log(dinamicTables);
       if (question.isConfirmed) {
         this.delete(dinamicTables.table);
-        Swal.fire('Borrado', '', 'success');
       }
     });
   }
 
   delete(id: number) {
     this.dinamicTablesService.remove2(id).subscribe({
-      next: () => this.getDinamicTables(),
+      next: () => {
+        this.getDinamicTables();
+        this.alert('success', 'Borrado', '');
+      },
+      error: erro => {
+        this.alert(
+          'warning',
+          'Atributos de Informaci&oacute;n Financiera',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      },
     });
   }
 }

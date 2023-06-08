@@ -1,3 +1,18 @@
+.legend {
+  justify-content: center;
+  display: flex;
+  column-gap: 10px;
+  > div {
+    display: flex;
+    column-gap: 10px;
+    align-items: center;
+    .rectangle {
+      width: 15px;
+      height: 15px;
+    }
+  }
+}
+
 th,
 td {
   margin: 0;
@@ -6,7 +21,7 @@ td {
 td {
   font-size: 0.875em;
   input.form-control {
-    font-size: 0.875em !important;
+    font-size: 1em !important;
   }
 }
 
@@ -19,6 +34,47 @@ tr > * {
   }
   &:last-child {
     width: 70%;
+  }
+}
+
+.requiredAva {
+  background-color: #dc3545;
+}
+
+.required {
+  background-color: #ffc107;
+}
+
+.update {
+  background-color: #17a2b8;
+  input.form-control {
+    &:focus {
+      background-color: #17a2b8;
+    }
+  }
+}
+
+td {
+  &.requiredAva,
+  &.update {
+    color: white;
+    input.form-control {
+      color: white;
+    }
+  }
+  &.requiredAva {
+    input.form-control {
+      &:focus {
+        background-color: #dc3545;
+      }
+    }
+  }
+  &.update {
+    input.form-control {
+      &:focus {
+        background-color: #17a2b8;
+      }
+    }
   }
 }
 

@@ -13,6 +13,7 @@ import {
 import { RegulatoryService } from 'src/app/core/services/catalogs/regulatory.service';
 import { RegulatoyFormComponent } from '../regulatory-form/regulatoy-form.component';
 import { REGULATORY_COLUMNS } from './regulatory-columns';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-regulatory-list',
@@ -111,8 +112,24 @@ export class RegulatoryListComponent extends BasePage implements OnInit {
       '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        //this.regulatoryService.remove(regulatory.id);
+        this.remove(regulatory.id);
       }
+    });
+  }
+
+  remove(id: number) {
+    this.regulatoryService.remove(id).subscribe({
+      next: () => {
+        this.alert('success', 'Regulaciones', 'Borrado');
+        this.getExample();
+      },
+      error: error => {
+        this.alert(
+          'warning',
+          'Regulaciones',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      },
     });
   }
 }
