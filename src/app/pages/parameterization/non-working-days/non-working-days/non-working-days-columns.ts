@@ -5,6 +5,7 @@ export const NONWORKINGDAYS_COLUMNS = {
   },
   description: {
     title: 'Descripción',
+    type: 'string',
     sort: false,
   },
 };
