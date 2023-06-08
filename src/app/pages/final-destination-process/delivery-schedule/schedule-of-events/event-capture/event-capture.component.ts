@@ -714,16 +714,16 @@ export class EventCaptureComponent
     let continueProcess = false;
     if (this.blkCtrl.goodQuantity > 0) {
       const response = await this.alertQuestion(
-        'warning',
-        'Advertencia',
-        'La asignación de bienes ya se ha realizado, ¿se ejecuta nuevamente?'
+        'question',
+        'La asignación de bienes ya se ha realizado',
+        '¿Se ejecuta nuevamente?'
       );
       continueProcess = response.isConfirmed;
     } else {
       const response = await this.alertQuestion(
-        'warning',
-        'Advertencia',
-        '¿Quiere continuar con el proceso?'
+        'question',
+        '¿Quiere continuar con el proceso?',
+        ''
       );
       continueProcess = response.isConfirmed;
     }
@@ -2106,7 +2106,7 @@ export class EventCaptureComponent
       // Valida que la clave de la programación este completa (valida 2)
       if (this.PUF_VERIFICA_CLAVE()) {
         this.alert(
-          'info',
+          'error',
           'El Programa es inconsistente en su estructura.',
           ''
         );
@@ -2114,7 +2114,7 @@ export class EventCaptureComponent
       }
       if (this.detail[0].goodnumber === null) {
         this.alert(
-          'info',
+          'error',
           'No se pudo realizar la actualización de bienes.',
           ''
         );
@@ -2140,7 +2140,7 @@ export class EventCaptureComponent
             v_COUNT = (await this.getVCount()) ?? 0;
             if (v_COUNT === 0) {
               this.alert(
-                'info',
+                'error',
                 'No se ha firmado el oficio de programación de entrega.',
                 ''
               );
@@ -2151,7 +2151,7 @@ export class EventCaptureComponent
             await this.closedProgramming(n_CONT);
           } else {
             await this.alertQuestion(
-              'warning',
+              'question',
               'Cerrar programación',
               '¿Seguro que desea realizar el cierre de esta Programación ?'
             )
@@ -2166,9 +2166,9 @@ export class EventCaptureComponent
           this.global.paperworkArea = this.originalType;
           await this.initForm();
           this.alert(
-            'info',
-            'Falta complementar Fechas de Recepción/Entrega y/o Finalización.',
-            ''
+            'error',
+            'Error',
+            'Falta complementar Fechas de Recepción/Entrega y/o Finalización'
           );
         }
       }
@@ -2213,9 +2213,9 @@ export class EventCaptureComponent
       this.global.paperworkArea = this.originalType;
       await this.initForm();
       this.alert(
-        'info',
-        'La Programación no ha sido cerrada, verifique sus datos...',
-        ''
+        'error',
+        'Error',
+        'La Programación no ha sido cerrada, verifique sus datos...'
       );
     } else {
       if (this.global.paperworkArea === 'RF' && n_CONT > 0) {
@@ -2299,12 +2299,12 @@ export class EventCaptureComponent
       this.proceeding.typeProceedings === 'CERRADO' ||
       this.proceeding.statusProceedings === 'CERRADA'
     ) {
-      this.alert('info', 'El Programa está cerrado.', '');
+      this.alert('error', 'Error', 'El Programa está cerrado');
       return;
     }
 
     if (this.registerControls.typeEvent.value === null) {
-      this.alert('info', 'No se ha especificado el Tipo de Evento.', '');
+      this.alert('error', 'Error', 'No se ha especificado el Tipo de Evento');
       return;
     }
 
@@ -2313,12 +2313,12 @@ export class EventCaptureComponent
     );
 
     if (V_TIPO_ACTA === null) {
-      this.alert('info', 'No se localizó el Tipo de Acta.', '');
+      this.alert('error', 'Error', 'No se localizó el Tipo de Acta');
       return;
     }
 
     if (this.proceeding.keysProceedings === null) {
-      this.alert('info', 'No se ha ingresado el Programa.', '');
+      this.alert('error', 'Error', 'No se ha ingresado el Programa');
       return;
     }
 
@@ -2326,9 +2326,9 @@ export class EventCaptureComponent
 
     if (this.detail.length > 0) {
       await this.alertQuestion(
-        'info',
-        'Información',
-        'La asignación de bienes ya se ha realizado, ¿se ejecuta nuevamente?'
+        'question',
+        'La asignación de bienes ya se ha realizado',
+        '¿Se ejecuta nuevamente?'
       ).then(question => {
         if (question.isConfirmed) {
           v_ind_proc = true;
@@ -2336,9 +2336,9 @@ export class EventCaptureComponent
       });
     } else {
       await this.alertQuestion(
-        'info',
-        'Información',
-        '¿Quiere continuar con la selección?'
+        'question',
+        '¿Quiere continuar con la selección?',
+        ''
       ).then(question => {
         if (question.isConfirmed) {
           v_ind_proc = true;
@@ -2400,9 +2400,9 @@ export class EventCaptureComponent
         };
         if (SSF3_ACTAS_PROG_DST.EMAIL === null) {
           this.alert(
-            'info',
-            'No se cuenta con Lista de Distribución de correo.',
-            ''
+            'error',
+            'Error',
+            'No se cuenta con Lista de Distribución de correo'
           );
           this.PUP_ING_CORREO_SAE();
           return;
