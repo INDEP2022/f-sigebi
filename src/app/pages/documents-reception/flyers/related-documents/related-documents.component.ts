@@ -2071,7 +2071,7 @@ export class RelatedDocumentsComponent
   }
 
   async printRelationScreen() {
-    const values = this.formJobManagement.value;
+    let values = this.formJobManagement.value;
     if (values.statusOf == 'ENVIADO') {
       this.alert(
         'warning',
@@ -2111,6 +2111,7 @@ export class RelatedDocumentsComponent
     }
 
     const etapaCreda = await this.getFaStageCreda(new Date());
+    const checkText = this.managementForm.get('checkText').value;
 
     if (!values.cveManagement && values.managementNumber) {
       const department = (await this.getDSAreaInDeparment(
@@ -2145,7 +2146,6 @@ export class RelatedDocumentsComponent
         .setValue(this.pupGenerateKey());
       this.formJobManagement.get('statusOf').setValue('EN REVISION');
 
-      const checkText = this.managementForm.get('checkText').value;
       if (checkText == this.se_refiere_a.A) {
         this.pupAddGood();
       }
@@ -2164,6 +2164,21 @@ export class RelatedDocumentsComponent
       params['filter.managementNumber'] =
         this.formJobManagement.value.managementNumber;
       const counter = await this.getGoodsManagement(params);
+
+      if (checkText == this.se_refiere_a.A && counter == 0) {
+        this.pupAddGood();
+      }
+
+      if (checkText == this.se_refiere_a.B && counter == 0) {
+        this.pupAddAnyGood();
+      }
+      this.commit();
+    }
+
+    this.pupShowReport();
+    values = this.formJobManagement.value;
+    if (values.cveManagement && values.refersTo == this.se_refiere_a.A) {
+      // linea 137
     }
   }
 
@@ -2192,6 +2207,8 @@ export class RelatedDocumentsComponent
   }
 
   pupAddGood() {}
+
+  pupShowReport() {}
 
   pupAddAnyGood() {}
 
