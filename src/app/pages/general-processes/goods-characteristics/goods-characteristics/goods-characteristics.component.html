@@ -7,7 +7,7 @@
     <div class="row">
       <div class="col-md-12 md-tabs" *ngIf="form">
         <form [formGroup]="form" class="form-material">
-          <tabset>
+          <tabset #staticTabs>
             <tab heading="Datos de B&uacute;squeda">
               <div class="row">
                 <div class="col-md-6">
@@ -122,6 +122,7 @@
                         type="text"
                         class="form-control"
                         formControlName="noClasif"
+                        [disabled]="disabledNoClasifBien"
                         (change)="updateClasif($event)"
                         (customEvent)="handleEvent($event)" />
                     </form-field>
@@ -172,7 +173,8 @@
                       label="Descripci&oacute;n">
                       <textarea
                         formControlName="descripcion"
-                        class="form-control"></textarea>
+                        class="form-control"
+                        [disabled]="disabledDescripcion"></textarea>
                     </form-field>
                   </div>
                   <div class="row pt-3">
@@ -183,7 +185,8 @@
                       <input
                         type="text"
                         formControlName="unidad"
-                        class="form-control" />
+                        class="form-control"
+                        [disabled]="disabledBienes" />
                     </form-field>
                     <form-field
                       class="col-md-4"
@@ -192,7 +195,8 @@
                       <input
                         type="text"
                         formControlName="cantidad"
-                        class="form-control" />
+                        class="form-control"
+                        [disabled]="disabledBienes" />
                     </form-field>
                     <form-field
                       class="col-md-4"
@@ -201,7 +205,8 @@
                       <input
                         type="text"
                         formControlName="valRef"
-                        class="form-control" />
+                        class="form-control"
+                        [disabled]="disabledBienes" />
                     </form-field>
                   </div>
                 </div>
@@ -212,6 +217,7 @@
                   <div class="form-group row">
                     <ng-custom-select-loading
                       [form]="form"
+                      [disabled]="disabledBienes"
                       formControlName="delegation"
                       label="Delegación"
                       path="catalog/api/v1/delegation/get-all"
@@ -239,7 +245,8 @@
                       <input
                         type="text"
                         formControlName="subdelegation"
-                        class="form-control" />
+                        class="form-control"
+                        [disabled]="disabledBienes" />
                     </form-field>
                   </div>
                 </div>
@@ -254,6 +261,7 @@
                     formControlName="fechaAval"
                     class="form-control"
                     style="background-color: white"
+                    [disabled]="disabledBienes"
                     readonly
                     bsDatepicker />
                 </form-field>
@@ -265,7 +273,8 @@
                   <input
                     type="text"
                     formControlName="valorAval"
-                    class="form-control" />
+                    class="form-control"
+                    [disabled]="disabledBienes" />
                 </form-field>
 
                 <form-field
@@ -296,7 +305,8 @@
                   class="col-md-8">
                   <textarea
                     formControlName="observaciones"
-                    class="form-control"></textarea>
+                    class="form-control"
+                    [disabled]="disabledBienes"></textarea>
                 </form-field>
 
                 <div class="col-md-4">

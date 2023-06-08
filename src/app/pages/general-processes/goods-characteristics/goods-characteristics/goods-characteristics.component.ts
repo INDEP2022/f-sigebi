@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { TabsetComponent } from 'ngx-bootstrap/tabs';
 import { BehaviorSubject, catchError, firstValueFrom, map, of } from 'rxjs';
 import {
   FilterParams,
@@ -27,6 +28,7 @@ import { GoodsCharacteristicsService } from '../services/goods-characteristics.s
 })
 export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
   params = new BehaviorSubject<ListParams>(new ListParams());
+  @ViewChild('staticTabs', { static: false }) staticTabs?: TabsetComponent;
   formLoading = false;
   showConciliado = false;
   LVALIDA = true;
@@ -43,12 +45,12 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     return this.service.form ? this.service.form : null;
   }
 
-  get permisions() {
-    return this.service.permisions;
+  get haveTdictaUser() {
+    return this.service.haveTdictaUser;
   }
 
-  set permisions(value) {
-    this.service.permisions = value;
+  set haveTdictaUser(value) {
+    this.service.haveTdictaUser = value;
   }
 
   get di_numerario_conciliado() {
@@ -73,6 +75,22 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
 
   set disabledDescripcion(value) {
     this.service.disabledDescripcion = value;
+  }
+
+  get disabledNoClasifBien() {
+    return this.service.disabledNoClasifBien;
+  }
+
+  set disabledNoClasifBien(value) {
+    this.service.disabledNoClasifBien = value;
+  }
+
+  get disabledTable() {
+    return this.service.disabledTable;
+  }
+
+  set disabledTable(value) {
+    this.service.disabledTable = value;
   }
 
   get numberGood() {
@@ -184,12 +202,22 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     // });
   }
 
+  selectTab() {
+    console.log(this.staticTabs);
+
+    if (this.staticTabs?.tabs[1]) {
+      this.staticTabs.tabs[0].disabled = true;
+      this.staticTabs.tabs[1].active = true;
+    }
+  }
+
   ngOnInit(): void {
     this.service.prepareForm();
     this.activatedRoute.queryParams.subscribe({
       next: param => {
         console.log(param);
         if (param['noBien']) {
+          // this.selectTab();
           this.searchGood(param['noBien']);
         }
         // this.goodService.getById2(param['noBien']).subscribe({
@@ -208,6 +236,13 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     //     });
     //   },
     // });
+  }
+
+  ngAfterViewInit() {
+    // this.selectTab();
+    setTimeout(() => {
+      this.selectTab();
+    }, 1000);
   }
 
   handleEvent(data: any) {
@@ -504,7 +539,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
       this.dictationService.getRTdictaAarusr(filterParams.getParams())
     );
     if (rdicta && rdicta.count && rdicta.count > 0) {
-      this.permisions = true;
+      this.haveTdictaUser = true;
     }
     if (postQuery) {
       this.fillAvaluo();
@@ -557,13 +592,25 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
       const di_disponible_d = response.filter(x => x.action === 'D').length;
       if (di_disponible > 0) {
         this.disabledBienes = false;
+        this.disabledTable = false;
+        this.disabledNoClasifBien = false;
+        this.disabledDescripcion = false;
       } else {
-        if (di_disponible_e > 0 && this.permisions) {
+        if (di_disponible_e > 0 && this.haveTdictaUser) {
           this.disabledBienes = false;
-        } else if (di_disponible_d > 0 && this.permisions) {
+          this.disabledDescripcion = false;
+          this.disabledTable = false;
+          this.disabledNoClasifBien = false;
+        } else if (di_disponible_d > 0 && this.haveTdictaUser) {
           this.disabledBienes = false;
+          this.disabledDescripcion = false;
+          this.disabledTable = false;
+          this.disabledNoClasifBien = false;
         } else {
           this.disabledBienes = true;
+          this.disabledDescripcion = true;
+          this.disabledTable = true;
+          this.disabledNoClasifBien = true;
         }
       }
     }
