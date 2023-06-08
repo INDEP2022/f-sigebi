@@ -1,10 +1,14 @@
 import { FormControl, Validators } from '@angular/forms';
+import { minDate } from 'src/app/common/validations/date.validators';
 import { IDelegation } from 'src/app/core/models/catalogs/delegation.model';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 export class CaptureEventRegisterForm {
   typeEvent = new FormControl(null, [Validators.required]);
-  captureDate = new FormControl(null, [Validators.required]);
+  captureDate = new FormControl(null, [
+    Validators.required,
+    minDate(new Date()),
+  ]);
   elaborate = new FormControl(null);
   responsible = new FormControl(null, []);
   prog = new FormControl({ value: null, disabled: true }, [
