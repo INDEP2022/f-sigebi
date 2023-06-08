@@ -202,6 +202,8 @@ export class CustomSelectWidthLoading
   }
 
   fetchMore(text: any) {
+    console.log(text);
+    // if (!this.isLoading && this.items.length < this.totalItems) {
     this.page++;
     this.isLoading = true;
     this.getItemsObservable(text).subscribe({
@@ -214,6 +216,7 @@ export class CustomSelectWidthLoading
         this.isLoading = false;
       },
     });
+    // }
   }
 
   isRequired() {

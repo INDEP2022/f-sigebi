@@ -79,7 +79,8 @@ export class DocCompensationSatListComponent
   delete(id: number) {
     this.docCompesationSatService.remove(id).subscribe({
       next: () => {
-        this.getExample(), this.alert('success', 'Deduct', 'Borrado');
+        this.getExample(),
+          this.alert('success', 'Documento Resarcimiento', 'Borrado');
       },
     });
   }
