@@ -48,6 +48,21 @@ export class GoodService extends HttpService implements ICrudMethods<IGood> {
     );
   }
 
+  getByIdv3(goodId: string | number) {
+    const route = `${GoodEndpoints.Good}`;
+    return this.get<IListResponse<IGood>>(
+      `${route}?filter.goodId=$eq:${goodId}`
+    ).pipe(
+      map(items => {
+        return items.data
+          ? items.data.length > 0
+            ? items.data[0]
+            : null
+          : null;
+      })
+    );
+  }
+
   getGoodByIds(id: string | number): Observable<any> {
     const route = `good/good/getGoodById/${id}/${id}`;
     return this.goodRepository.getGoodByIds(route);
