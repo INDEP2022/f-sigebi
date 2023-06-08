@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl } from '@angular/forms';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { takeUntil } from 'rxjs';
 import { IProceedingDeliveryReception } from 'src/app/core/models/ms-proceedings/proceeding-delivery-reception';
 import {
   INotSucess,
@@ -40,9 +39,15 @@ export class ScheduledMaintenanceComponent
     private attribGoodBadService: AttribGoodBadService,
     private router: Router
   ) {
-    super(fb, deliveryService, detailService, 'filtersActa');
+    super(
+      fb,
+      deliveryService,
+      detailService,
+      'filtersActa',
+      'paramsActaProgramaciones'
+    );
     // debugger;
-    const paramsActa = localStorage.getItem('paramsActa');
+    const paramsActa = localStorage.getItem(this.paramsActa);
     if (paramsActa) {
       const params = JSON.parse(paramsActa);
       this.params.value.limit = params.limit;
@@ -64,30 +69,12 @@ export class ScheduledMaintenanceComponent
     // console.log(this.settings1);
   }
 
-  override updateByPaginator() {
-    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe({
-      next: response => {
-        console.log(response);
-        localStorage.setItem(
-          'paramsActa',
-          JSON.stringify({ limit: response.limit, page: response.page })
-        );
-        // this.router.navigate([], {
-        //   relativeTo: this._route,
-        //   queryParams: { page: response.page },
-        //   queryParamsHandling: 'merge'
-        // })
-        this.getData(true);
-      },
-    });
-  }
-
   override resetView() {
     console.log('RESET VIEW');
     this.data.load([]);
     this.totalItems = 0;
     localStorage.removeItem(this.formStorage);
-    localStorage.removeItem('paramsActa');
+    localStorage.removeItem(this.paramsActa);
     this.limit = new FormControl(10);
     this.columnFilters = [];
   }

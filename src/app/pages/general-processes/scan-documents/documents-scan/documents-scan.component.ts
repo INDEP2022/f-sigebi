@@ -64,6 +64,7 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
     P_VALOR: '',
   };
   origin2: string = ''; // Pantalla para regresar a la anterior de la que se llamo
+  origin3: string = ''; // Pantalla para regresar a la anterior de la que se llamo desde la origin2
 
   constructor(
     private fb: FormBuilder,
@@ -92,6 +93,7 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
             }
           }
           this.origin2 = params['origin2'] ?? null;
+          this.origin3 = params['origin3'] ?? null;
         }
       });
     this.settings = {
@@ -451,8 +453,8 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
         {
           queryParams: {
             ...this.paramsScreen,
-            origin: this.requestOrigin,
-            origin2: this.origin2,
+            origin: this.origin2,
+            origin3: this.origin3,
           },
         }
       );

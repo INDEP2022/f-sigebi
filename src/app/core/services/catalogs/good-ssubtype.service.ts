@@ -49,6 +49,10 @@ export class GoodSsubtypeService
     return this.goodSsubtypeRepository.remove(this.route, id);
   }
 
+  removeByIds(ids: Partial<IGoodSsubType>): Observable<Object> {
+    return this.goodSsubtypeRepository.removeByIds(this.route, ids);
+  }
+
   getByManyIds(body: any, params?: ListParams) {
     const route = 'good-ssubtype/search-by-type';
     return this.post<IListResponse<IGoodSsubType>>(route, body, params);

@@ -172,14 +172,14 @@
             <i class="fa fa-search"></i>
             Buscar
           </button>
-          <button
+          <!-- <button
             class="btn btn-primary btn-sm active"
             type="submit"
             size="small"
             (click)="getNulls()">
             <i class="fa fa-search"></i>
             Bienes nulos
-          </button>
+          </button> -->
         </div>
         <div class="col-md-4">
           <app-clean-filters-shared
@@ -240,7 +240,8 @@
     <app-pagination
       [params]="params"
       [totalItems]="totalItems"
-      [limit]="limit"></app-pagination>
+      [limit]="limit"
+      [pageSizeOptions]="pageSizeOptions"></app-pagination>
     <hr class="row" />
   </div>
 </app-card>

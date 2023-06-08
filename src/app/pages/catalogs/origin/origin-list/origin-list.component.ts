@@ -10,7 +10,6 @@ import {
 } from 'src/app/common/repository/interfaces/list-params';
 import { OriginService } from 'src/app/core/services/catalogs/origin.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import Swal from 'sweetalert2';
 import { IOrigin } from '../../../../core/models/catalogs/origin.model';
 import { OriginFormComponent } from '../origin-form/origin-form.component';
 import { ORIGIN_COLUMNS } from './origin-columns';
@@ -112,14 +111,23 @@ export class OriginListComponent extends BasePage implements OnInit {
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(origins.id);
-        Swal.fire('Borrado', '', 'success');
       }
     });
   }
 
   delete(id: number) {
     this.originService.remove(id).subscribe({
-      next: () => this.getExample(),
+      next: () => {
+        this.alert('success', 'Procedencias', 'Borrado');
+        this.getExample();
+      },
+      error: error => {
+        this.alert(
+          'warning',
+          'Procedencias',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      },
     });
   }
 }
