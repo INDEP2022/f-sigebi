@@ -82,6 +82,8 @@ export interface IGoodProgrammingSelect {
   addressGood: number;
   aliasWarehouse: string;
   code: number;
+  delegationRegionalId: number;
+  transfereeId: number;
   googId: number;
   cveSettlement: number;
   cveState: number;
