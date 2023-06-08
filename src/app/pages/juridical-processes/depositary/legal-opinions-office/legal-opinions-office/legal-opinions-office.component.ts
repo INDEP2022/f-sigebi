@@ -1647,10 +1647,12 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
       destinatario: this.officeDictationData.recipient,
       // no_clasif_bien: null, // Bienes
       // no_bien: null, // Bienes
-      no_departamento_destinatario:
-        this.officeDictationData.recipientDepartmentNumber,
-      no_delegacion_destinatario:
-        this.officeDictationData.delegacionRecipientNumber,
+      no_departamento_destinatario: Number(
+        this.officeDictationData.recipientDepartmentNumber
+      ),
+      no_delegacion_destinatario: Number(
+        this.officeDictationData.delegacionRecipientNumber
+      ),
       no_delegacion_dictam: this.dictationData.delegationDictNumber, // Data del usuario
       tipo: this.paramsScreen.TIPO,
       usuario:

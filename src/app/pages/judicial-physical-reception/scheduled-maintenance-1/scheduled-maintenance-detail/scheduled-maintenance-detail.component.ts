@@ -30,6 +30,7 @@ import { StatusXScreenService } from 'src/app/core/services/ms-screen-status/sta
 import { BasePage } from 'src/app/core/shared/base-page';
 import { getTrackedGoods } from 'src/app/pages/general-processes/goods-tracker/store/goods-tracker.selector';
 import { firstFormatDateToSecondFormatDate } from 'src/app/shared/utils/date';
+import { KeyProceedingsService } from '../../key-proceedings-form/key-proceedings.service';
 import { IParametersIndicators } from './../../../../core/models/catalogs/parameters-indicators.model';
 import { IProceedingDeliveryReception } from './../../../../core/models/ms-proceedings/proceeding-delivery-reception';
 import { GOOD_TRACKER_ORIGINS } from './../../../general-processes/goods-tracker/utils/constants/origins';
@@ -89,7 +90,8 @@ export class ScheduledMaintenanceDetailComponent
     private statusScreenService: StatusXScreenService,
     private indicatorService: ParameterIndicatorsService,
     private goodService: GoodService,
-    private historyGoodService: HistoryGoodService
+    private historyGoodService: HistoryGoodService,
+    private keyProceedingsService: KeyProceedingsService
   ) {
     super();
 
@@ -820,6 +822,12 @@ export class ScheduledMaintenanceDetailComponent
           next: response => {
             // console.log(response);
             this.data = response.data;
+
+            this.keyProceedingsService.detail = this.data
+              ? this.data.length > 0
+                ? this.data[0]
+                : null
+              : null;
             this.goodsCant = response.total;
             // console.log(this.goodsCant);
             this.totalItems = response.count;

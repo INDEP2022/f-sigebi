@@ -8,6 +8,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { IRack } from '../../../../core/models/catalogs/rack.model';
 import { RackFormComponent } from '../rack-form/rack-form.component';
 import { RACK_COLUMNS } from './rack-columns';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-rack-list',
@@ -67,8 +68,24 @@ export class RackListComponent extends BasePage implements OnInit {
       'Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        //this.rackService.remove(rack.id);
+        this.remove(rack.id);
       }
+    });
+  }
+
+  remove(id: number) {
+    this.rackService.remove(id).subscribe({
+      next: () => {
+        this.alert('success', 'Estantes', 'Borrado');
+        this.getExample();
+      },
+      error: error => {
+        this.alert(
+          'warning',
+          'Estantes',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      },
     });
   }
 }
