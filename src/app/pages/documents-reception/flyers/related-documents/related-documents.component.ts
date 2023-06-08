@@ -20,6 +20,7 @@ import {
 } from 'src/app/common/repository/interfaces/list-params';
 import { _Params } from 'src/app/common/services/http.service';
 import { IUserRowSelectEvent } from 'src/app/core/interfaces/ng2-smart-table.interface';
+import { IDepartment } from 'src/app/core/models/catalogs/department.model';
 import { ILegend } from 'src/app/core/models/catalogs/legend.model';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { INotification } from 'src/app/core/models/ms-notification/notification.model';
@@ -112,6 +113,7 @@ export class RelatedDocumentsComponent
   userCopies2 = new DefaultSelect();
   dataGoodTable: LocalDataSource = new LocalDataSource();
   m_job_management: any = null;
+  authUser: any = null;
   pantalla = (option: boolean) =>
     `${
       option == true
@@ -209,6 +211,7 @@ export class RelatedDocumentsComponent
   ) {
     super();
     console.log(authService.decodeToken());
+    this.authUser = authService.decodeToken();
     this.settings3 = {
       ...this.settings,
       actions: {
@@ -696,32 +699,59 @@ export class RelatedDocumentsComponent
     // }
   }
 
+  formNotification = new FormGroup({
+    /** @descripiton  no_volante*/
+    wheelNumber: new FormControl(null),
+    /** @descripition no_expediente */
+    expedientNumber: new FormControl(null),
+    /** @descripition no_registro*/
+    registerNumber: new FormControl(null),
+    /** @descripition  AVERIGUACION_PREVIA*/
+    preliminaryInquiry: new FormControl(null),
+    /** @description causa_penal*/
+    criminalCase: new FormControl(null),
+    /** @description tipo_volante */
+    wheelType: new FormControl(null),
+    /** @description tipo_oficio */
+  });
+
   formJobManagement = new FormGroup({
-    flyerNumber: new FormControl(''), // no_volante
-    jobType: new FormControl(''), // tipo_oficio
-    managementNumber: new FormControl(''), // no_of_gestion
+    /** @description no_volante */
+    flyerNumber: new FormControl(''),
+    /** @description tipo_oficio */
+    jobType: new FormControl(''),
+    /** @description no_of_gestion */
+    managementNumber: new FormControl(''),
+    /** @description  destinatario*/
     addressee: new FormControl<{
       user: number | string;
       name: string;
       userAndName: string;
-    }>(null), // destinatario,
+    }>(null),
     sender: new FormControl<{
       id: number | string;
       name: string;
       idName: string;
     }>(null), // remitente
-    cveChargeRem: new FormControl(''), // cve_cargo_rem,
-    desSenderpa: new FormControl(''), //DES_REMITENTE_PA
-    delRemNumber: new FormControl(''), // NO_DEL_REM
-    depRemNumber: new FormControl(''), // NO_DEP_REM
-    jobBy: new FormControl(''), // oficio_por
-    cveManagement: new FormControl(''), // cve_of_gestion,
+    /** @descripiton  cve_cargo_rem*/
+    cveChargeRem: new FormControl(''),
+    /**@description DES_REMITENTE_PA */
+    desSenderpa: new FormControl(''),
+    /** @description NO_DEL_REM */
+    delRemNumber: new FormControl(''),
+    /** @description NO_DEP_REM */
+    depRemNumber: new FormControl(''),
+    /** @description oficio_por */
+    jobBy: new FormControl(''),
+    /** @description cve_of_gestion */
+    cveManagement: new FormControl(''),
     city: new FormControl<{
       id: number | string;
       legendOffice: string;
       idName: string;
     }>(null), // ciudad,
     statusOf: new FormControl(''), // estatus_of
+    refersTo: new FormControl(''), // se_refiere_a
   });
 
   initForm() {
@@ -729,6 +759,7 @@ export class RelatedDocumentsComponent
     const expedient = this.getQueryParams('expediente');
     this.getNotification(wheelNumber, expedient).subscribe({
       next: async res => {
+        this.formNotification.patchValue(res);
         this.managementForm.get('noVolante').setValue(res.wheelNumber);
         this.managementForm.get('noExpediente').setValue(res.expedientNumber);
         this.managementForm.get('wheelStatus').setValue(res.wheelStatus);
@@ -1623,13 +1654,17 @@ export class RelatedDocumentsComponent
     console.log(this.managementForm);
     console.log(this.formJobManagement);
     console.log(this.m_job_management);
-    const { wheelStatus } = this.managementForm.value;
     const {
-      managementNumber,
-      flyerNumber,
-      statusOf,
-      cveManagement,
-      proceedingsNumber,
+      noVolante, //no_volante
+      wheelStatus, //status
+    } = this.managementForm.value;
+    const {
+      managementNumber, //no_of_gestion
+      flyerNumber, //no_volante
+      statusOf, //status_of
+      cveManagement, //cve_of_gestion
+      proceedingsNumber, //no_expediente
+      insertUser, //usuario insert
     } = this.m_job_management;
     debugger;
     if (managementNumber == null) {
@@ -1648,24 +1683,38 @@ export class RelatedDocumentsComponent
       );
       return;
     }
-    const ATJR: any = await this.userHavePermission();
-
-    return;
+    if (insertUser != this.authUser.username) {
+      const ATJR: any = await this.userHavePermission();
+      console.log(ATJR);
+      if (ATJR == 0) {
+        this.onLoadToast(
+          'error',
+          'Error',
+          'El Usuario no está autorizado para eliminar el Oficio'
+        );
+        return;
+      }
+    } else {
+      this.onLoadToast('error', 'Error', 'Usuario inválido para borrar oficio');
+      return;
+    }
 
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      `Desea eliminar el oficio con el expediente ${proceedingsNumber} y No. Oficio ${managementNumber}`
     ).then(question => {
       if (question.isConfirmed) {
-        this.delete(legend.id);
+        this.delete(managementNumber, noVolante);
         Swal.fire('Borrado', '', 'success');
       }
     });
   }
 
-  delete(id: number) {
-    this.serviceOficces.deleteCopiesJobManagement(id).subscribe({
+  delete(managementNumber: number | string, noVolante: number | string) {
+    //trabajando en eliminar
+    return;
+    /* this.serviceOficces.deleteCopiesJobManagement(id).subscribe({
       next: resp => {
         console.log('resp  =>  ' + resp);
         this.refreshTabla();
@@ -1674,6 +1723,13 @@ export class RelatedDocumentsComponent
         this.onLoadToast('error', 'Error', errror.error.message);
       },
     });
+    //actualiza cve_dictamen 
+    const notifBody:any = {dictumKey: null}
+    this.notificationService.update(Number(noVolante),notifBody).subscribe({
+      next: resp => {
+        
+      }
+    })*/
   }
 
   changeCopiesType(event: any, ccp: number) {
@@ -2014,7 +2070,7 @@ export class RelatedDocumentsComponent
     this.dictationService.goodNumber = event.data.id;
   }
 
-  printRelationScreen() {
+  async printRelationScreen() {
     const values = this.formJobManagement.value;
     if (values.statusOf == 'ENVIADO') {
       this.alert(
@@ -2054,8 +2110,60 @@ export class RelatedDocumentsComponent
       return;
     }
 
+    const etapaCreda = await this.getFaStageCreda(new Date());
+
     if (!values.cveManagement && values.managementNumber) {
+      const department = (await this.getDSAreaInDeparment(
+        etapaCreda
+      )) as IDepartment;
+
+      const department2 = (await this.getDSAreaForOfficeInDepartment(
+        etapaCreda
+      )) as IDepartment;
+
+      const year = new Date().getFullYear();
+      const month = new Date().getMonth() + 1;
+      this.formJobManagement
+        .get('cveManagement')
+        .setValue(this.pupGenerateKey());
+      this.formJobManagement.get('statusOf').setValue('EN REVISION');
+    }
+
+    if (!values.cveManagement && !values.managementNumber) {
+      const department = (await this.getDSAreaInDeparment(
+        etapaCreda
+      )) as IDepartment;
+
+      const department2 = (await this.getDSAreaForOfficeInDepartment(
+        etapaCreda
+      )) as IDepartment;
+
+      const year = new Date().getFullYear();
+      const month = new Date().getMonth() + 1;
+      this.formJobManagement
+        .get('cveManagement')
+        .setValue(this.pupGenerateKey());
+      this.formJobManagement.get('statusOf').setValue('EN REVISION');
+
+      const checkText = this.managementForm.get('checkText').value;
+      if (checkText == this.se_refiere_a.A) {
+        this.pupAddGood();
+      }
+
+      if (checkText == this.se_refiere_a.B) {
+        this.pupAddAnyGood();
+      }
+      this.commit();
+    }
+
+    if (
+      this.formJobManagement.value.cveManagement &&
+      this.formJobManagement.value.managementNumber
+    ) {
       const params = new ListParams();
+      params['filter.managementNumber'] =
+        this.formJobManagement.value.managementNumber;
+      const counter = await this.getGoodsManagement(params);
     }
   }
 
@@ -2063,8 +2171,54 @@ export class RelatedDocumentsComponent
     //private useR: SegAcessXAreasService
     return new Promise((resolve, reject) => {
       debugger;
-      const body: any = { delegacionNo: '', user: '' };
-      //this.segAccessAreasService.userHavePermissions();
+      const body: any = {
+        delegacionNo: this.authUser.department,
+        user: this.authUser.username,
+      };
+      this.segAccessAreasService.userHavePermissions(body).subscribe({
+        next: resp => {
+          resolve(resp.data);
+        },
+        error: error => {
+          reject('error while trying to answert permissions');
+          this.onLoadToast(
+            'error',
+            'Error',
+            'Ocurrio un error al consultar los permisos del usuario'
+          );
+        },
+      });
     });
+  }
+
+  pupAddGood() {}
+
+  pupAddAnyGood() {}
+
+  commit() {}
+
+  pupGenerateKey(): string {
+    //:TODO: Cambiar por el servicio de generacion de llaves
+    return 'test';
+  }
+
+  async getDSAreaInDeparment(etapaCreda: string | number) {
+    const params = new ListParams();
+    const auth = this.authService.decodeToken();
+    params['filter.id'] = auth.department;
+    params['filter.numDelegation'] = auth.department;
+    params['filter.numSubDelegation'] = etapaCreda;
+    params['filter.phaseEdo'] = etapaCreda;
+
+    return (await this.getDepartment(params, true)) as IDepartment;
+  }
+
+  async getDSAreaForOfficeInDepartment(etapaCreda: string | number) {
+    const params = new ListParams();
+    params['filter.numDelegation'] = this.formJobManagement.value.delRemNumber;
+    params['filter.id'] = this.formJobManagement.value.depRemNumber;
+    params['filter.phaseEdo'] = etapaCreda;
+
+    return (await this.getDepartment(params, true)) as IDepartment;
   }
 }
