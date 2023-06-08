@@ -71,13 +71,13 @@ export class EdoFisicoComponent extends BasePage implements OnInit {
   };
   dataGoods = new LocalDataSource();
   goodData: any[];
-  idProceeding: any
+  idProceeding: any;
   constructor(
     private bsModel: BsModalRef,
     private serviceClassifyGood: ClassifyGoodService,
     private serviceGoodQuery: GoodsQueryService,
     private serviceGood: GoodService,
-    private serviceDetailProc: DetailProceeDelRecService,
+    private serviceDetailProc: DetailProceeDelRecService
   ) {
     super();
   }
@@ -86,14 +86,12 @@ export class EdoFisicoComponent extends BasePage implements OnInit {
     /* this.verifyEstatus(); */
     const model: IDetailWithIndEdo = {
       no_acta: parseInt(this.idProceeding),
-      vIndEdoFisicod: true
+      vIndEdoFisicod: true,
     };
 
-    this.serviceDetailProc.getAllwithEndFisico(model).subscribe(
-      res => {
-        this.dataGoods.load(res.data)
-      }
-    )
+    this.serviceDetailProc.getAllwithEndFisico(model).subscribe(res => {
+      this.dataGoods.load(res.data);
+    });
   }
 
   close() {

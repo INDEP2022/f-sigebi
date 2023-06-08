@@ -9,7 +9,7 @@ import {
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
-import { BsModalService } from 'ngx-bootstrap/modal';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, firstValueFrom, skip, takeUntil } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
@@ -55,6 +55,7 @@ import {
 import { LegalOpinionsOfficeService } from 'src/app/pages/juridical-processes/depositary/legal-opinions-office/legal-opinions-office/services/legal-opinions-office.service';
 import { IJuridicalDocumentManagementParams } from 'src/app/pages/juridical-processes/file-data-update/interfaces/file-data-update-parameters';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import Swal from 'sweetalert2';
 import { ERROR_REPORT } from '../related-documents/utils/related-documents.message';
 import { FlyersService } from '../services/flyers.service';
 import { DocumentsFormComponent } from './documents-form/documents-form.component';
@@ -72,6 +73,7 @@ import {
 } from './related-documents-message';
 import { RelateDocumentsResponse } from './related-documents-response';
 import { RelatedDocumentsService } from './services/related-documents.service';
+import { UploadDictamenFilesModalComponent } from './upload-dictamen-files-modal/upload-dictamen-files-modal.component';
 
 export type IGoodAndAvailable = IGood & { available: boolean };
 export interface IGoodJobManagement {
@@ -792,6 +794,7 @@ export class RelatedDocumentsComponent
     const expedient = this.getQueryParams('expediente');
     this.getNotification(wheelNumber, expedient).subscribe({
       next: async res => {
+        console.log(res);
         this.formNotification.patchValue(res);
         this.managementForm.get('noVolante').setValue(res.wheelNumber);
         this.managementForm.get('noExpediente').setValue(res.expedientNumber);
@@ -1721,20 +1724,23 @@ export class RelatedDocumentsComponent
   async showDeleteAlert(legend?: any) {
     //ILegend
     //Desea eliminar el oficio con el expediente ${proceedingsNumber} y No. Oficio ${managementNumber}
-    /*
-       //Desea eliminar el oficio con el expediente ${proceedingsNumber} y No. Oficio ${managementNumber}
     console.log(legend);
     console.log(this.managementForm);
     console.log(this.formJobManagement);
     console.log(this.m_job_management);
-    const { wheelStatus } = this.managementForm.value;
     const {
-      managementNumber,
-      flyerNumber,
-      statusOf,
-      cveManagement,
-      proceedingsNumber,
+      noVolante, //no_volante
+      wheelStatus, //status
+    } = this.managementForm.value;
+    const {
+      managementNumber, //no_of_gestion
+      flyerNumber, //no_volante
+      statusOf, //status_of
+      cveManagement, //cve_of_gestion
+      proceedingsNumber, //no_expediente
+      insertUser, //usuario insert
     } = this.m_job_management;
+    debugger;
     if (managementNumber == null) {
       this.onLoadToast('info', 'No se tiene oficio', '');
       return;
@@ -1751,26 +1757,37 @@ export class RelatedDocumentsComponent
       );
       return;
     }
-    //this.userHavePermission()
+    if (insertUser != this.authUser.username) {
+      const ATJR: any = await this.userHavePermission();
+      console.log(ATJR);
+      if (ATJR == 0) {
+        this.onLoadToast(
+          'error',
+          'Error',
+          'El Usuario no está autorizado para eliminar el Oficio'
+        );
+        return;
+      }
+    } else {
+      this.onLoadToast('error', 'Error', 'Usuario inválido para borrar oficio');
+      return;
+    }
 
-    return;
-    */
-    // this.alertQuestion(
-    //   'warning',
-    //   'Eliminar',
-    //   `Desea eliminar el oficio con el expediente ${proceedingsNumber} y No. Oficio ${managementNumber}`
-    // ).then(question => {
-    //   if (question.isConfirmed) {
-    //     this.delete(managementNumber, noVolante);
-    //     Swal.fire('Borrado', '', 'success');
-    //   }
-    // });
+    this.alertQuestion(
+      'warning',
+      'Eliminar',
+      `Desea eliminar el oficio con el expediente ${proceedingsNumber} y No. Oficio ${managementNumber}`
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.delete(managementNumber, noVolante);
+        Swal.fire('Borrado', '', 'success');
+      }
+    });
   }
 
   delete(managementNumber: number | string, noVolante: number | string) {
     //trabajando en eliminar
-    return;
-    /* this.serviceOficces.deleteCopiesJobManagement(id).subscribe({
+    this.serviceOficces.deleteCopiesJobManagement(managementNumber).subscribe({
       next: resp => {
         console.log('resp  =>  ' + resp);
         this.refreshTabla();
@@ -1779,13 +1796,15 @@ export class RelatedDocumentsComponent
         this.onLoadToast('error', 'Error', errror.error.message);
       },
     });
+    /*
     //actualiza cve_dictamen 
     const notifBody:any = {dictumKey: null}
     this.notificationService.update(Number(noVolante),notifBody).subscribe({
       next: resp => {
         
       }
-    })*/
+    })
+    */
   }
 
   changeCopiesType(event: any, ccp: number) {
@@ -1815,6 +1834,55 @@ export class RelatedDocumentsComponent
     }
   }
 
+  // getUsersCopies(
+  //   paramsData: ListParams,
+  //   ccp: number,
+  //   getByValue: boolean = false
+  // ) {
+  //   const params: any = new FilterParams();
+  //   if (paramsData['search'] == undefined) {
+  //     paramsData['search'] = '';
+  //   }
+  //   params.removeAllFilters();
+  //   if (getByValue) {
+  //     params.addFilter(
+  //       'id',
+  //       this.managementForm.get('ccp_addressee' + (ccp == 1 ? '' : '_1')).value
+  //     );
+  //   } else {
+  //     params.search = paramsData['search'];
+  //     // params.addFilter('name', paramsData['search'], SearchFilter.LIKE);
+  //   }
+  //   params['sortBy'] = 'name:ASC';
+  //   let subscription = this.svLegalOpinionsOfficeService
+  //     .getIssuingUserByDetail(params.getParams())
+  //     .subscribe({
+  //       next: data => {
+  //         let tempDataUser = new DefaultSelect(
+  //           data.data.map(i => {
+  //             i.name = i.id + ' -- ' + i.name;
+  //             return i;
+  //           }),
+  //           data.count
+  //         );
+  //         if (ccp == 1) {
+  //           this.userCopies1 = tempDataUser;
+  //         } else {
+  //           this.userCopies2 = tempDataUser;
+  //         }
+  //         console.log(data, this.userCopies1);
+  //         subscription.unsubscribe();
+  //       },
+  //       error: error => {
+  //         if (ccp == 1) {
+  //           this.userCopies1 = new DefaultSelect();
+  //         } else {
+  //           this.userCopies2 = new DefaultSelect();
+  //         }
+  //         subscription.unsubscribe();
+  //       },
+  //     });
+  // }
   // getUsersCopies(
   //   paramsData: ListParams,
   //   ccp: number,
@@ -1922,6 +1990,12 @@ export class RelatedDocumentsComponent
   //   let params = {
   //     ...this.params.getValue(),
   //   };
+  // async onLoadGoodList(filter: any) {
+  //   this.formLoading = true;
+  //   // this.loadingText = 'Cargando';
+  //   let params = {
+  //     ...this.params.getValue(),
+  //   };
 
   //   console.log('FILTER GOODS', filter);
 
@@ -1967,6 +2041,28 @@ export class RelatedDocumentsComponent
   //         this.loading = false;
   //       });
 
+  //       //     IF: BIENES.EST_DISPONIBLE = 'S' THEN
+  //       //     : BIENES.NO_OF_DICTA := NULL;
+  //       //      FOR REG IN(SELECT NO_OF_DICTA
+  //       //                    FROM DICTAMINACION_X_BIEN1
+  //       //                   WHERE NO_BIEN = : BIENES.NO_BIEN
+  //       //                     AND TIPO_DICTAMINACION = 'ABANDONO')
+  //       //     LOOP
+  //       //     : BIENES.NO_OF_DICTA := REG.NO_OF_DICTA;
+  //       //        : BIENES.EST_DISPONIBLE := 'N';
+  //       //     EXIT;
+  //       //      END LOOP;
+  //       //  END IF;
+  //     },
+  //     error: err => {
+  //       this.loading = false;
+  //       this.formLoading = false;
+  //       console.log('ERRROR BIEN X EXPEDIENTE', err.error.message);
+  //       this.data1 = [];
+  //     },
+  //   });
+  //   this.loading = false;
+  // }
   //       //     IF: BIENES.EST_DISPONIBLE = 'S' THEN
   //       //     : BIENES.NO_OF_DICTA := NULL;
   //       //      FOR REG IN(SELECT NO_OF_DICTA
@@ -2267,12 +2363,22 @@ export class RelatedDocumentsComponent
   userHavePermission() {
     //private useR: SegAcessXAreasService
     return new Promise((resolve, reject) => {
-      this.segAccessAreasService.userHavePermissions({
-        next: (resp: any) => {
-          resolve(resp);
+      debugger;
+      const body: any = {
+        delegacionNo: this.authUser.department,
+        user: this.authUser.username,
+      };
+      this.segAccessAreasService.userHavePermissions(body).subscribe({
+        next: resp => {
+          resolve(resp.data);
         },
-        error: (error: any) => {
-          reject('error no se realizo la petision');
+        error: error => {
+          reject('error while trying to answert permissions');
+          this.onLoadToast(
+            'error',
+            'Error',
+            'Ocurrio un error al consultar los permisos del usuario'
+          );
         },
       });
     });
@@ -2298,5 +2404,20 @@ export class RelatedDocumentsComponent
     params['filter.phaseEdo'] = etapaCreda;
 
     return (await this.getDepartment(params, true)) as IDepartment;
+  }
+
+  sendDictamen() {
+    let config: ModalOptions = {
+      initialState: {
+        documento: {
+          urlDoc: '',
+          type: 'pdf',
+        },
+        callback: (data: any) => {},
+      }, //pasar datos por aca
+      class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+      ignoreBackdropClick: true, //ignora el click fuera del modal
+    };
+    this.modalService.show(UploadDictamenFilesModalComponent, config);
   }
 }

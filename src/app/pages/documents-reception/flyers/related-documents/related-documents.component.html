@@ -420,15 +420,15 @@
               </div>
             </div>
             <!-- <div class="col-md-2 text-end">
-             <app-columns-select [(settings)]="settings"></app-columns-select>
-           </div> -->
+            <app-columns-select [(settings)]="settings"></app-columns-select>
+          </div> -->
             <!-- <div class="col-md-12" style="max-height: 600px; overflow-y: scroll">
-             <div [class]="loadingGoods ? 'table-loading' : ''">
-               <ng2-smart-table class="col-md-12" id="goods" [attr.class]="'table-bordered'" [settings]="settings"
-                 [source]="data1"></ng2-smart-table>
-               <app-pagination [params]="params" [totalItems]="totalItems"></app-pagination>
-             </div>
-           </div> -->
+            <div [class]="loadingGoods ? 'table-loading' : ''">
+              <ng2-smart-table class="col-md-12" id="goods" [attr.class]="'table-bordered'" [settings]="settings"
+                [source]="data1"></ng2-smart-table>
+              <app-pagination [params]="params" [totalItems]="totalItems"></app-pagination>
+            </div>
+          </div> -->
             <div class="col-md-12 mt-3 text-right">
               <button
                 type="button"
@@ -444,7 +444,7 @@
                 tooltip="Imprimir"
                 containerClass="tooltip-style"
                 class="btn btn-secondary active btn-sm m-1"
-                (click)="onClickBtnPrint()">
+                (click)="send()">
                 <i class="bx bxs-printer"></i>
               </button>
               <button
@@ -455,14 +455,15 @@
                 class="btn btn-danger active btn-sm m-1">
                 <i class="bx bxs-trash"></i>
               </button>
+              <!-- [attr.disabled]="
+                paramsGestionDictamen.sale == 'C' ||
+                paramsGestionDictamen.sale == 'D'
+              " -->
               <button
-                [attr.disabled]="
-                  paramsGestionDictamen.sale == 'C' ||
-                  paramsGestionDictamen.sale == 'D'
-                "
                 type="submit"
                 class="btn btn-primary btn-sm active"
                 tooltip="Enviar"
+                (click)="sendDictamen()"
                 containerClass="tooltip-style">
                 <i class="bx bx-send"></i>
               </button>
@@ -497,103 +498,103 @@
                 <h6>C.C.P.</h6>
               </div>
               <!-- <form-field
-               class="col-sm-12 col-12 col-md-4 p-2"
-               [control]="managementForm.get('ccp_person')"
-               label="">
-               <select
-                 class="form-control"
-                 formControlName="ccp_person"
-                 (change)="changeCopiesType($event, 1)">
-                 <option value="">Seleccione un valor</option>
-                 <option value="E">EXTERNA</option>
-                 <option value="I">INTERNA</option>
-               </select>
-             </form-field>
-             <div
-               class="col-sm-12 col-12 col-md-8 p-2"
-               *ngIf="
-                 managementForm.get('ccp_person').value != 'I' &&
-                 managementForm.get('ccp_person').value != 'E'
-               ">
-               <div class="alert alert-info">
-                 Selecciona el Tipo de Copia para ingresar el Nombre del Usuario
-                 o Seleccionar un Usuario desde el catálogo
-               </div>
-             </div>
-             <div
-               class="col-sm-12 col-12 col-md-8 p-2"
-               *ngIf="managementForm.get('ccp_person').value == 'I'">
-               <ngx-select
-                 [data]="userCopies1"
-                 bindLabel="name"
-                 label="C.C.P."
-                 value="id"
-                 (fetchItems)="getUsersCopies($event, 1)"
-                 [form]="managementForm"
-                 [showTooltip]="true"
-                 [searchOnInit]="true"
-                 termMaxLength="100"
-                 control="ccp_addressee"></ngx-select>
-             </div>
-             <form-field
-               *ngIf="managementForm.get('ccp_person').value == 'E'"
-               class="col-sm-12 col-12 col-md-8 p-2"
-               [control]="managementForm.get('ccp_TiPerson')"
-               label="Nombre Destinatario">
-               <input
-                 type="text"
-                 class="form-control"
-                 formControlName="ccp_TiPerson" />
-             </form-field>
-             <form-field
-               class="col-sm-12 col-12 col-md-4 p-2"
-               [control]="managementForm.get('ccp_person_1')"
-               label="">
-               <select
-                 class="form-control"
-                 formControlName="ccp_person_1"
-                 (change)="changeCopiesType($event, 2)">
-                 <option value="">Seleccione un valor</option>
-                 <option value="E">EXTERNA</option>
-                 <option value="I">INTERNA</option>
-               </select>
-             </form-field>
-             <div
-               class="col-sm-12 col-12 col-md-8 p-2"
-               *ngIf="
-                 managementForm.get('ccp_person_1').value != 'I' &&
-                 managementForm.get('ccp_person_1').value != 'E'
-               ">
-               <div class="alert alert-info">
-                 Selecciona el Tipo de Copia para ingresar el Nombre del Usuario
-                 o Seleccionar un Usuario desde el catálogo
-               </div>
-             </div>
-             <div
-               class="col-sm-12 col-12 col-md-8 p-2"
-               *ngIf="managementForm.get('ccp_person_1').value == 'I'">
-               <ngx-select
-                 [data]="userCopies2"
-                 bindLabel="name"
-                 label="C.C.P."
-                 value="id"
-                 (fetchItems)="getUsersCopies($event, 2)"
-                 [form]="managementForm"
-                 [showTooltip]="true"
-                 [searchOnInit]="true"
-                 termMaxLength="100"
-                 control="ccp_addressee_1"></ngx-select>
-             </div>
-             <form-field
-               *ngIf="managementForm.get('ccp_person_1').value == 'E'"
-               class="col-sm-12 col-12 col-md-8 p-2"
-               [control]="managementForm.get('ccp_TiPerson_1')"
-               label="Nombre Destinatario">
-               <input
-                 type="text"
-                 class="form-control"
-                 formControlName="ccp_TiPerson_1" />
-             </form-field> -->
+              class="col-sm-12 col-12 col-md-4 p-2"
+              [control]="managementForm.get('ccp_person')"
+              label="">
+              <select
+                class="form-control"
+                formControlName="ccp_person"
+                (change)="changeCopiesType($event, 1)">
+                <option value="">Seleccione un valor</option>
+                <option value="E">EXTERNA</option>
+                <option value="I">INTERNA</option>
+              </select>
+            </form-field>
+            <div
+              class="col-sm-12 col-12 col-md-8 p-2"
+              *ngIf="
+                managementForm.get('ccp_person').value != 'I' &&
+                managementForm.get('ccp_person').value != 'E'
+              ">
+              <div class="alert alert-info">
+                Selecciona el Tipo de Copia para ingresar el Nombre del Usuario
+                o Seleccionar un Usuario desde el catálogo
+              </div>
+            </div>
+            <div
+              class="col-sm-12 col-12 col-md-8 p-2"
+              *ngIf="managementForm.get('ccp_person').value == 'I'">
+              <ngx-select
+                [data]="userCopies1"
+                bindLabel="name"
+                label="C.C.P."
+                value="id"
+                (fetchItems)="getUsersCopies($event, 1)"
+                [form]="managementForm"
+                [showTooltip]="true"
+                [searchOnInit]="true"
+                termMaxLength="100"
+                control="ccp_addressee"></ngx-select>
+            </div>
+            <form-field
+              *ngIf="managementForm.get('ccp_person').value == 'E'"
+              class="col-sm-12 col-12 col-md-8 p-2"
+              [control]="managementForm.get('ccp_TiPerson')"
+              label="Nombre Destinatario">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="ccp_TiPerson" />
+            </form-field>
+            <form-field
+              class="col-sm-12 col-12 col-md-4 p-2"
+              [control]="managementForm.get('ccp_person_1')"
+              label="">
+              <select
+                class="form-control"
+                formControlName="ccp_person_1"
+                (change)="changeCopiesType($event, 2)">
+                <option value="">Seleccione un valor</option>
+                <option value="E">EXTERNA</option>
+                <option value="I">INTERNA</option>
+              </select>
+            </form-field>
+            <div
+              class="col-sm-12 col-12 col-md-8 p-2"
+              *ngIf="
+                managementForm.get('ccp_person_1').value != 'I' &&
+                managementForm.get('ccp_person_1').value != 'E'
+              ">
+              <div class="alert alert-info">
+                Selecciona el Tipo de Copia para ingresar el Nombre del Usuario
+                o Seleccionar un Usuario desde el catálogo
+              </div>
+            </div>
+            <div
+              class="col-sm-12 col-12 col-md-8 p-2"
+              *ngIf="managementForm.get('ccp_person_1').value == 'I'">
+              <ngx-select
+                [data]="userCopies2"
+                bindLabel="name"
+                label="C.C.P."
+                value="id"
+                (fetchItems)="getUsersCopies($event, 2)"
+                [form]="managementForm"
+                [showTooltip]="true"
+                [searchOnInit]="true"
+                termMaxLength="100"
+                control="ccp_addressee_1"></ngx-select>
+            </div>
+            <form-field
+              *ngIf="managementForm.get('ccp_person_1').value == 'E'"
+              class="col-sm-12 col-12 col-md-8 p-2"
+              [control]="managementForm.get('ccp_TiPerson_1')"
+              label="Nombre Destinatario">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="ccp_TiPerson_1" />
+            </form-field> -->
 
               <!-- <ng2-smart-table
                class="col-md-12"
