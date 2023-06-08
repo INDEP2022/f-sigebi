@@ -115,7 +115,7 @@ export class ProgrammingGoodService implements ICrudMethods<IGoodProgramming> {
 
   updateGoodSim(actaNumber: number) {
     return this.httpClient.get(
-      `${environment.API_URL}/programminggood/api/v1/programminggood/apps/open-minutes-program/${actaNumber}`
+      `${environment.API_URL}/programminggood/api/v1/programminggood/apps/update-good-sinm/${actaNumber}`
     );
   }
 
