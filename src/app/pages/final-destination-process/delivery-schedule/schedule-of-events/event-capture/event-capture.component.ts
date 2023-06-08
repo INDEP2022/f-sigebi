@@ -1799,7 +1799,9 @@ export class EventCaptureComponent
       );
       this.PUP_GENERA_PDF();
     } else {
-      this.alert('info', 'La programación ha sido cerrada', '');
+      this.global.paperworkArea = this.originalType;
+      await this.initForm();
+      this.alert('success', 'La programación ha sido cerrada', '');
     }
   }
   ////api/v1/programminggood/apps/return-previous-status
@@ -2037,7 +2039,7 @@ export class EventCaptureComponent
       this.blkCtrl.reopenInd = 0;
       this.global.paperworkArea = this.originalType;
       await this.initForm();
-      this.onLoadToast('success', 'La programación a sido abierta');
+      this.alert('success', 'La programación ha sido abierta', '');
     } else {
       this.global.paperworkArea = this.originalType;
       await this.initForm();
@@ -2161,6 +2163,8 @@ export class EventCaptureComponent
               .catch(error => console.error(error));
           }
         } else {
+          this.global.paperworkArea = this.originalType;
+          await this.initForm();
           this.alert(
             'info',
             'Falta complementar Fechas de Recepción/Entrega y/o Finalización.',
@@ -2206,6 +2210,8 @@ export class EventCaptureComponent
     );
     const T_VALEACT: string = await this.getEstatusAct();
     if (['ABIERTO', 'ABIERTA'].includes(T_VALEACT)) {
+      this.global.paperworkArea = this.originalType;
+      await this.initForm();
       this.alert(
         'info',
         'La Programación no ha sido cerrada, verifique sus datos...',
@@ -2222,7 +2228,8 @@ export class EventCaptureComponent
         //// aqui hace los DDL que pedi a Edwin
         await this.firmaAndClosedOffi();
         ///////////////////////////////////////
-        //// esperar que se resuelva el DDL y mostrar el mensaje
+        this.global.paperworkArea = this.originalType;
+        await this.initForm();
         this.alert(
           'success',
           `Se realizó la firma y cierre del oficio (Folio Universal: ${this.proceeding.universalFolio})`,
