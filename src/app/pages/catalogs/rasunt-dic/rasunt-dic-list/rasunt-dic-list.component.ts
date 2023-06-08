@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 
 import { LocalDataSource } from 'ng2-smart-table';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import {
   ListParams,
   SearchFilter,
@@ -36,26 +37,26 @@ export class RAsuntDicListComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.totalItems = 0;
     this.data
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe((change: { action: string; filter: { filters: any } }) => {
+      .subscribe(change => {
         if (change.action === 'filter') {
           let filters = change.filter.filters;
           filters.map((filter: any) => {
-            console.log(filter);
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
-            switch (filter.field) {
-              case 'id':
-                searchFilter = SearchFilter.EQ;
-                break;
-              default:
-                searchFilter = SearchFilter.ILIKE;
-                break;
-            }
+            filter.field == 'code' ||
+            filter.field == 'dictum' ||
+            filter.field == 'flyerType' ||
+            filter.field == 'doc' ||
+            filter.field == 'property' ||
+            filter.field == 'g_of' ||
+            filter.field == 'i' ||
+            filter.field == 'e'
+              ? (searchFilter = SearchFilter.EQ)
+              : (searchFilter = SearchFilter.ILIKE);
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
@@ -66,7 +67,6 @@ export class RAsuntDicListComponent extends BasePage implements OnInit {
           this.getExample();
         }
       });
-
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getExample());
@@ -81,7 +81,7 @@ export class RAsuntDicListComponent extends BasePage implements OnInit {
     this.rAsuntDicService.getAll(params).subscribe({
       next: response => {
         this.rAsuntDics = response.data;
-        this.totalItems = response.count;
+        this.totalItems = response.count || 0;
         this.data.load(response.data);
         this.data.refresh();
         this.loading = false;
@@ -91,17 +91,14 @@ export class RAsuntDicListComponent extends BasePage implements OnInit {
   }
 
   openForm(rAsuntDic?: IRAsuntDic) {
-    let config: ModalOptions = {
-      initialState: {
-        rAsuntDic,
-        callback: (next: boolean) => {
-          if (next) this.getExample();
-        },
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      rAsuntDic,
+      callback: (next: boolean) => {
+        if (next) this.getExample();
       },
-      class: 'modal-md modal-dialog-centered',
-      ignoreBackdropClick: true,
     };
-    this.BsModalService.show(RAsuntDicFormComponent, config);
+    this.BsModalService.show(RAsuntDicFormComponent, modalConfig);
   }
 
   delete(rAsuntDic?: IRAsuntDic) {
