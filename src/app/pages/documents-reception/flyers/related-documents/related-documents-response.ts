@@ -109,7 +109,6 @@ export abstract class RelateDocumentsResponse extends BasePage {
    */
   getFaStageCreda(date: Date): Promise<number> {
     const _date = formatDate(date, 'dd-MM-yyyy', 'en-US');
-    console.log(_date);
     return firstValueFrom(
       this.parametersService.getFaStageCreda(_date).pipe(
         map(response => {
@@ -132,6 +131,17 @@ export abstract class RelateDocumentsResponse extends BasePage {
           } else {
             return res;
           }
+        })
+      )
+    );
+  }
+
+  getGoodsManagement(list: ListParams): Promise<number> {
+    return firstValueFrom(
+      this.serviceOficces.getGoodsJobManagement(list).pipe(
+        map(x => x.count),
+        catchError(() => {
+          return of(0);
         })
       )
     );
