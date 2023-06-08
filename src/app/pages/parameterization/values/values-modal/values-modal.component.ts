@@ -33,7 +33,7 @@ export class ValuesModalComponent extends BasePage implements OnInit {
   private prepareForm() {
     this.valuesForm = this.fb.group({
       otKey: [null],
-      value: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      value: [null, [Validators.required, Validators.pattern(STRING_PATTERN),]],
       table: [null],
       numRegister: [null],
       abbreviation: [null],
