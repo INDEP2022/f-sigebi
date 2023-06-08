@@ -306,11 +306,16 @@
               <form-field
                 [control]="form.get('fecElab')"
                 label="Fecha Elaboraci&oacute;n">
-                <input
+                  <input
                   (ngModelChange)="verifyDateAndFill()"
                   bsDatepicker
+                  [bsConfig]="{
+                    dateInputFormat: 'DD-MM-YYYY hh:mm',
+                    displayOneMonthRange: true,
+                    withTimepicker: true
+                  }"
                   class="form-control"
-                  [maxlength]="10"
+                  [maxlength]="16"
                   [class]="!isEnablefecElab ? 'disabled' : ''"
                   [minDate]="minDateFecElab"
                   formControlName="fecElab" />
@@ -321,18 +326,13 @@
               <form-field
                 [control]="form.get('fecReception')"
                 label="Fecha Recepci&oacute;n F&iacute;sica">
-                <div class="input-group">
+
                   <input
                     bsDatepicker
                     class="form-control disabled"
                     [readOnly]="true"
                     formControlName="fecReception" />
-                  <div class="input-group-append">
-                    <span class="input-group-text">
-                      <i class="fa fa-clock"></i>
-                    </span>
-                  </div>
-                </div>
+                  
               </form-field>
             </div>
 
@@ -584,7 +584,7 @@
 
       <hr class="row" />
       <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-6" [class] = "['CERRADO','CERRADA'].includes(form.get('statusProceeding').value) ? 'disabled' :''">
           <div class="row" *ngIf="isAlmacen">
             <div class="col-md-9">
               <form-field [control]="form.get('almacen')">
