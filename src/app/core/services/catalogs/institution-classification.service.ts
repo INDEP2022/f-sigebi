@@ -57,6 +57,11 @@ export class InstitutionClasificationService
     return this.institutionClasificationRepository.remove(this.route, id);
   }
 
+  remove2(id: string | number) {
+    const route = `${InstitutionClasificationEndpoints.InstitutionClasification}/${id}`;
+    return this.delete(route);
+  }
+
   getAll2(
     params?: ListParams | string
   ): Observable<IListResponse<IInstitutionClassification>> {
