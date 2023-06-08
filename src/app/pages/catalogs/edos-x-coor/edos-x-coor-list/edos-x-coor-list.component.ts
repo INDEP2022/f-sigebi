@@ -8,6 +8,7 @@ import { EdosXCoorService } from 'src/app/core/services/catalogs/edos-x-coor.ser
 import { BasePage } from 'src/app/core/shared/base-page';
 import { EdosXCoorFormComponent } from '../edos-x-coor-form/edos-x-coor-form.component';
 import { EDOSXCOOR_COLUMS } from './edos-x-coor-columns';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-edos-x-coor-list',
@@ -68,7 +69,24 @@ export class EdosXCoorListComponent extends BasePage implements OnInit {
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
+        this.remove(edosXCoor);
       }
+    });
+  }
+
+  remove(edosXCoor: IEdosXCoor) {
+    this.edosXCoorService.remove2(edosXCoor).subscribe({
+      next: () => {
+        this.alert('success', 'Edos x coor', 'Borrado');
+        this.getExample();
+      },
+      error: error => {
+        this.alert(
+          'warning',
+          'Edos x coor',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      },
     });
   }
 }

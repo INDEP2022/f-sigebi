@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpService } from 'src/app/common/services/http.service';
+import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import {
   ICertificateProgDst,
@@ -22,9 +22,10 @@ export class EventProgrammingService extends HttpService {
     return this.post<{ level: string }>('functions/fa-val-user-ind', body);
   }
 
-  getGoodsIndicators(keyProceeding: string | number) {
+  getGoodsIndicators(keyProceeding: string | number, params?: _Params) {
     return this.get<IListResponse<IGoodIndicator>>(
-      'goods-indicators/get-goods-indicators/' + keyProceeding
+      'goods-indicators/get-goods-indicators/' + keyProceeding,
+      params
     );
   }
   putCertificateProgDst(model: ICertificateProgDst) {

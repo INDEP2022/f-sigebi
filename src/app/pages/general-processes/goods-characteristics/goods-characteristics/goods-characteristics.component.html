@@ -38,10 +38,20 @@
                       formControlName="subtype"
                       label="Subtipo"
                       path="catalog/api/v1/good-subtype"
-                      value="nameGoodType"
-                      bindLabel="nameGoodType"
-                      paramSearch="search">
+                      value="id"
+                      bindLabel="nameSubtypeGood"
+                      paramSearch="search"
+                      [labelTemplate]="subtypeLabel"
+                      [optionTemplate]="subtypeOption">
                     </ng-custom-select-loading>
+                    <ng-template #subtypeLabel let-item="item">
+                      {{ item.id }} - {{ item.nameSubtypeGood }}
+                    </ng-template>
+                    <ng-template #subtypeOption let-item="item">
+                      <div [title]="item.id + '-' + item.nameSubtypeGood">
+                        {{ item.id }} - {{ item.nameSubtypeGood }}
+                      </div>
+                    </ng-template>
                   </div>
                   <div class="row pt-3">
                     <ng-custom-select-loading
@@ -49,9 +59,11 @@
                       formControlName="ssubtype"
                       label="Ssubtipo"
                       path="catalog/api/v1/good-ssubtype"
-                      value="nameGoodType"
-                      bindLabel="nameGoodType"
-                      paramSearch="search">
+                      value="id"
+                      bindLabel="description"
+                      paramSearch="search"
+                      [labelTemplate]="ssubtypeLabel"
+                      [optionTemplate]="ssubtypeOption">
                     </ng-custom-select-loading>
                   </div>
                   <div class="row pt-3">
@@ -60,11 +72,21 @@
                       formControlName="sssubtype"
                       label="Sssubtipo"
                       path="catalog/api/v1/good-sssubtype"
-                      value="nameGoodType"
-                      bindLabel="nameGoodType"
-                      paramSearch="search">
+                      value="id"
+                      bindLabel="description"
+                      paramSearch="search"
+                      [labelTemplate]="ssubtypeLabel"
+                      [optionTemplate]="ssubtypeOption">
                     </ng-custom-select-loading>
                   </div>
+                  <ng-template #ssubtypeLabel let-item="item">
+                    {{ item.id }} - {{ item.description }}
+                  </ng-template>
+                  <ng-template #ssubtypeOption let-item="item">
+                    <div [title]="item.id + '-' + item.description">
+                      {{ item.id }} - {{ item.description }}
+                    </div>
+                  </ng-template>
                   <!-- <app-goods-types-shared
                     [form]="form"
                     typeField="type"
@@ -95,7 +117,7 @@
                   <div class="row pt-4">
                     <form-field
                       [control]="form.get('noClasif')"
-                      label="No Clasif Bien">
+                      label="No. Clasificación Bien">
                       <input
                         type="text"
                         class="form-control"
@@ -175,7 +197,7 @@
                     <form-field
                       class="col-md-4"
                       [control]="form.get('valRef')"
-                      label="Val&#46; Referencia">
+                      label="Valor de Referencia">
                       <input
                         type="text"
                         formControlName="valRef"

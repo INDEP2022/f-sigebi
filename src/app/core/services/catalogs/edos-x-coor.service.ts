@@ -6,12 +6,20 @@ import { ListParams } from '../../../common/repository/interfaces/list-params';
 import { Repository } from '../../../common/repository/repository';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IEdosXCoor } from '../../models/catalogs/edos-x-coor.model';
+import { HttpService } from 'src/app/common/services/http.service';
+import { EdosXCoorEndpoints } from 'src/app/common/constants/endpoints/edos-x-coor';
 @Injectable({
   providedIn: 'root',
 })
-export class EdosXCoorService implements ICrudMethods<IEdosXCoor> {
+export class EdosXCoorService
+  extends HttpService
+  implements ICrudMethods<IEdosXCoor>
+{
   private readonly route: string = ENDPOINT_LINKS.EdosXCoor;
-  constructor(private edosXCoorRepository: Repository<IEdosXCoor>) {}
+  constructor(private edosXCoorRepository: Repository<IEdosXCoor>) {
+    super();
+    this.microservice = EdosXCoorEndpoints.BasePath;
+  }
 
   getAll(params?: ListParams): Observable<IListResponse<IEdosXCoor>> {
     return this.edosXCoorRepository.getAllPaginated(this.route, params);
@@ -31,5 +39,10 @@ export class EdosXCoorService implements ICrudMethods<IEdosXCoor> {
 
   remove(id: string | number): Observable<Object> {
     return this.edosXCoorRepository.remove(this.route, id);
+  }
+
+  remove2(model: IEdosXCoor) {
+    const route = `${EdosXCoorEndpoints.EdosXCoor}`;
+    return this.delete(route, model);
   }
 }

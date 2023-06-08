@@ -248,4 +248,8 @@ export class DictationService extends HttpService {
   updateDictaEntregaRTurno(body: any) {
     return this.put<IListResponse<any>>(`${this.routeN}`, body);
   }
+
+  checkGoodAvaliable(data: Object) {
+    return this.post(DictationEndpoints.Check, data);
+  }
 }
