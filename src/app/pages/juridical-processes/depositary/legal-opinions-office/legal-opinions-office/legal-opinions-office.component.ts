@@ -675,7 +675,7 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
           localStorage.removeItem(this.nameStorageDictationDate);
           // this.deleteTempDictation(true);
           this.alertInfo(
-            'warning',
+            'success',
             'Se realizó la firma del dictamen',
             ''
           ).then(() => {
@@ -3767,9 +3767,9 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
               return;
             }
             if (
-              response.includes(this.dictationData.expedientNumber) ||
-              response.includes(this.dictationData.wheelNumber) ||
-              response.includes(this.dictationData.typeDict)
+              // response.includes(this.dictationData.expedientNumber) ||
+              // response.includes(this.dictationData.wheelNumber) ||
+              !response.includes('xml')
             ) {
               this.onLoadToast(
                 'warning',
