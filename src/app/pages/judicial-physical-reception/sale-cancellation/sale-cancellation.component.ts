@@ -27,13 +27,13 @@ import {
   IAcceptGoodStatusScreen,
   IGood,
 } from 'src/app/core/models/ms-good/good';
+import { ITransfActaEntrec } from 'src/app/core/models/ms-notification/notification.model';
 import {
   IDeleteDetailProceeding,
   IDetailProceedingsDeliveryReception,
   IDetailWithIndEdo,
 } from 'src/app/core/models/ms-proceedings/detail-proceedings-delivery-reception.model';
 import { IProccedingsDeliveryReception } from 'src/app/core/models/ms-proceedings/proceedings-delivery-reception-model';
-import { TransferProceeding } from 'src/app/core/models/ms-proceedings/validations.model';
 import { GoodSssubtypeService } from 'src/app/core/services/catalogs/good-sssubtype.service';
 import { SafeService } from 'src/app/core/services/catalogs/safe.service';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
@@ -43,6 +43,7 @@ import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.s
 import { GoodParametersService } from 'src/app/core/services/ms-good-parameters/good-parameters.service';
 import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import { ParametersService } from 'src/app/core/services/ms-parametergood/parameters.service';
 import { DetailProceeDelRecService } from 'src/app/core/services/ms-proceedings/detail-proceedings-delivery-reception.service';
 import { ProceedingsDeliveryReceptionService } from 'src/app/core/services/ms-proceedings/proceedings-delivery-reception';
@@ -59,8 +60,6 @@ import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-ele
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { EdoFisicoComponent } from '../confiscated-records/edo-fisico/edo-fisico.component.component';
 import { columnsGoodAct } from '../confiscated-records/settings-tables';
-import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
-import { ITransfActaEntrec } from 'src/app/core/models/ms-notification/notification.model';
 
 @Component({
   selector: 'app-sale-cancellation',
@@ -1747,7 +1746,6 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
                 VAL_MOVIMIENTO = res.data[0]['valmovement'];
                 if (VAL_MOVIMIENTO === 1) {
                   const tipo_acta = 'DXCV';
-  
                 } else {
                   this.closeProceedingFn();
                 }

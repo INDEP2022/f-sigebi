@@ -241,4 +241,5 @@ export class NotificationService extends HttpService {
     const route = 'application/get-fact-ref-cancelar'
     return this.post(route, model)
   }
+
 }
