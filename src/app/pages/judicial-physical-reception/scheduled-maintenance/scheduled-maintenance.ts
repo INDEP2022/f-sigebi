@@ -29,7 +29,7 @@ export abstract class ScheduledMaintenance extends BasePageWidhtDinamicFiltersEx
   first = true;
   @ViewChild(Ng2SmartTableComponent) table: Ng2SmartTableComponent;
   elementToExport: any[];
-
+  pageSizeOptions = [5, 10, 15, 20];
   like = SearchFilter.LIKE;
   hoy = new Date();
   settings1 = {
@@ -112,7 +112,9 @@ export abstract class ScheduledMaintenance extends BasePageWidhtDinamicFiltersEx
     { id: 'ABIERTA', description: 'Abierto' },
     { id: 'CERRADA', description: 'Cerrado' },
   ];
+
   stringPattern = STRING_PATTERN;
+  // oldLimit = 10;
   // data: IProceedingDeliveryReception[] = [];
   paramsTypes: ListParams = new ListParams();
   paramsStatus: ListParams = new ListParams();
@@ -127,7 +129,8 @@ export abstract class ScheduledMaintenance extends BasePageWidhtDinamicFiltersEx
     protected fb: FormBuilder,
     protected deliveryService: ProceedingsDeliveryReceptionService,
     protected detailService: ProceedingsDetailDeliveryReceptionService,
-    @Inject('formStorage') protected formStorage: string
+    @Inject('formStorage') protected formStorage: string,
+    @Inject('paramsActa') protected paramsActa: string
   ) {
     super();
     this.service = this.deliveryService;
@@ -184,7 +187,10 @@ export abstract class ScheduledMaintenance extends BasePageWidhtDinamicFiltersEx
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe({
       next: response => {
         console.log(response);
-
+        localStorage.setItem(
+          this.paramsActa,
+          JSON.stringify({ limit: response.limit, page: response.page })
+        );
         this.getData(true);
       },
     });
@@ -381,7 +387,7 @@ export abstract class ScheduledMaintenance extends BasePageWidhtDinamicFiltersEx
     } else {
       this.params.value.page = 1;
       localStorage.setItem(
-        'paramsActa',
+        this.paramsActa,
         JSON.stringify({ limit: this.params.getValue().limit, page: 1 })
       );
       // this.params.value.limit = 10;

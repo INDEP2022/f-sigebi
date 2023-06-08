@@ -4,6 +4,7 @@ import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 
+import { LocalDataSource } from 'ng2-smart-table';
 import {
   ListParams,
   SearchFilter,
@@ -14,7 +15,6 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import Swal from 'sweetalert2';
 import { DelegationStateFormComponent } from '../delegation-state-form/delegation-state-form.component';
 import { DELEGATION_STATE_COLUMNS } from './delegation-state-columns';
-import { LocalDataSource } from 'ng2-smart-table';
 @Component({
   selector: 'app-delegation-state-list',
   templateUrl: './delegation-state-list.component.html',

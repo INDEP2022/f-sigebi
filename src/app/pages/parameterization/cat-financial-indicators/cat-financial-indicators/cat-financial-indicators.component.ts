@@ -14,7 +14,6 @@ import { IFinancialIndicators } from 'src/app/core/models/catalogs/financial-ind
 //services
 import { LocalDataSource } from 'ng2-smart-table';
 import { FinancialIndicatorsService } from 'src/app/core/services/catalogs/financial-indicators-service';
-import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-cat-financial-indicators',
@@ -23,7 +22,8 @@ import Swal from 'sweetalert2';
 })
 export class CatFinancialIndicatorsComponent
   extends BasePage
-  implements OnInit {
+  implements OnInit
+{
   columns: IFinancialIndicators[] = [];
   data: LocalDataSource = new LocalDataSource();
   columnFilters: any = [];
@@ -142,19 +142,16 @@ export class CatFinancialIndicatorsComponent
   delete(id: number) {
     this.financialIndicatorsService.remove(id).subscribe({
       next: () => {
-        this.getAttributesFinancialInfo()
-        this.alert(
-          'success',
-          'Borrado',
-          ''
-        );
-      }, error: erro => {
+        this.getAttributesFinancialInfo();
+        this.alert('success', 'Borrado', '');
+      },
+      error: erro => {
         this.alert(
           'warning',
           'Atributos de Informaci&oacute;n Financiera',
           'No se puede eliminar el objeto debido a una relación con otra tabla.'
         );
-      }
+      },
     });
   }
 }
