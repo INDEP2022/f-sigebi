@@ -3,7 +3,7 @@ import { ToastrService } from 'ngx-toastr';
 import { firstValueFrom } from 'rxjs';
 import { LoadingService } from 'src/app/common/services/loading.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
-import { SweetalertModel } from 'src/app/core/shared/base-page';
+import { SweetalertModel } from 'src/app/core/shared';
 import Swal, { SweetAlertIcon, SweetAlertResult } from 'sweetalert2';
 import { PartializeGeneralGoodService } from '../services/partialize-general-good.service';
 

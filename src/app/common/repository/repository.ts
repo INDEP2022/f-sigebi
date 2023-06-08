@@ -14,7 +14,7 @@ import { IRepository } from './interfaces/repository.interface';
 
 @Injectable({ providedIn: 'root' })
 export class Repository<T> implements IRepository<T> {
-  constructor(public readonly httpClient: HttpClient) { }
+  constructor(public readonly httpClient: HttpClient) {}
 
   getAllPaginated(
     route: string,
@@ -155,7 +155,7 @@ export class Repository<T> implements IRepository<T> {
       return `${environment.API_URL}catalog/api/v1/${route}`;
     }
     const ms = route.split('/')[0];
-    return `${environment.API_URL}${ms}${paths.join('/')}`;
+    return `${environment.API_URL}${ms}/api/v1/${paths.join('/')}`;
   }
 
   private makeIdsRoute(ids: Partial<T>): string {

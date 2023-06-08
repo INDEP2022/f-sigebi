@@ -123,7 +123,11 @@ export class StatusProcessListComponent extends BasePage implements OnInit {
         this.getExample(), this.alert('success', 'Estatus Proceso', 'Borrado');
       },
       error: error => {
-        this.alert('warning', 'Estatus Proceso', error.error.message);
+        this.alert(
+          'warning',
+          'Estatus Proceso',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
       },
     });
   }

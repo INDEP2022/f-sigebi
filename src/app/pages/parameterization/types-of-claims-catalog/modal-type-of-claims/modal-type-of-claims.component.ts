@@ -81,6 +81,5 @@ export class ModalTypeOfClaimsComponent extends BasePage implements OnInit {
     // this.modalRef.content.callback(true);
     this.modalRef.hide();
   }
-  close() {
-  }
+  close() {}
 }
