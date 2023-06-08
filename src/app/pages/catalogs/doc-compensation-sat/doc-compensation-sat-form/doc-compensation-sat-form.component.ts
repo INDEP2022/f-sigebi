@@ -40,11 +40,7 @@ export class DocCompensationSatFormComponent
       id: [null],
       officeSatId: [
         null,
-        [
-          Validators.required,
-          Validators.pattern(POSITVE_NUMBERS_PATTERN),
-          Validators.maxLength(3),
-        ],
+        [Validators.pattern(POSITVE_NUMBERS_PATTERN), Validators.maxLength(3)],
       ],
       typeDocSat: [
         null,
