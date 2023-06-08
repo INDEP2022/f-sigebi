@@ -243,6 +243,7 @@
                   [control]="form.get('introductoryParagraph')"
                   label="P&aacute;rrafo Inicial">
                   <textarea
+                    maxlength="2000"
                     class="form-control"
                     formControlName="introductoryParagraph"
                     rows="5"></textarea>
@@ -285,6 +286,7 @@
                   [control]="form.get('finalParagraph')"
                   label="P&aacute;rrafo Final">
                   <textarea
+                    maxlength="4000"
                     class="form-control"
                     formControlName="finalParagraph"
                     rows="5"></textarea>
@@ -338,6 +340,7 @@
                   [control]="form.get('moreInformation1')"
                   label="M&aacute;s Información 1">
                   <textarea
+                    maxlength="4000"
                     class="form-control"
                     formControlName="moreInformation1"
                     rows="5"></textarea>
@@ -348,6 +351,7 @@
                   [control]="form.get('moreInformation2')"
                   label="M&aacute;s Información 2">
                   <textarea
+                    maxlength="4000"
                     class="form-control"
                     formControlName="moreInformation2"
                     rows="5"></textarea>
@@ -358,6 +362,7 @@
                   [control]="form.get('moreInformation3')"
                   label="M&aacute;s Información 3">
                   <textarea
+                    maxlength="4000"
                     class="form-control"
                     formControlName="moreInformation3"
                     rows="5"></textarea>
@@ -551,6 +556,7 @@
                 [form]="formScan"
                 [screenKey]="screenKey"
                 [screenKey2]="origin"
+                [screenKey3]="origin3"
                 [paramsScreen]="paramsScreen"
                 [officeDictationData]="officeDictationData"
                 [dictationData]="dictationData"

@@ -69,7 +69,24 @@ export class CourtListComponent extends BasePage implements OnInit {
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
+        this.remove(batch.id);
       }
+    });
+  }
+
+  remove(id: number) {
+    this.courtService.remove(id).subscribe({
+      next: () => {
+        this.alert('success', 'Juzgado', 'Borrado');
+        this.getExample();
+      },
+      error: error => {
+        this.alert(
+          'warning',
+          'Juzgado',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      },
     });
   }
 }

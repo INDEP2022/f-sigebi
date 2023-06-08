@@ -143,6 +143,7 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
   userHistory: string;
   usernewHistory: string;
   autoHeightDisabled: boolean;
+  userSelected: any;
 
   form: ModelForm<any>;
 
@@ -203,12 +204,14 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
   checkParams() {
     if (this.pageParams?.iden) {
       if (this.pageParams.iden) {
+        //this.autoHeightDictaDisabled = false;
         this.getNotification();
         this.paramsDict
           .pipe(takeUntil(this.$unSubscribe))
           .subscribe(() => this.getDictums());
       }
       if (this.pageParams.exp) {
+        //this.autoHeightActaDisabled = false;
         this.paramsActas
           .pipe(takeUntil(this.$unSubscribe))
           .subscribe(() => this.getProceedings());
@@ -216,6 +219,11 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
     } else {
       this.router.navigate(['/pages/juridical/file-data-update']);
     }
+  }
+
+  getUserSelected(params: ListParams) {
+    this.userSelected = params;
+    //console.log(this.userSelected.departamentNumber);
   }
 
   usErrorUserPrev = false;
@@ -301,7 +309,6 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
 
   getProceedings() {
     this.loading = true;
-
     this.paramsActas.getValue()[
       'filter.numFile'
     ] = `$eq:${this.pageParams.exp}`;
@@ -392,6 +399,7 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
       this.proceedingColumns.length === 0
     ) {
       this.autoHeightDisabled = true;
+      this.autoHeightDisabled = true;
       this.valid = false;
       this.alert('warning', 'No se encontraron datos', '');
     } else {
@@ -401,7 +409,7 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
         numberJob: this.notifData.officeNumber,
         personbefore: this.usernewHistory,
         areaDestinationbefore: this.notifData.departamentDestinyNumber,
-        personnew: this.turnForm.controls['newUser'].value.user,
+        personnew: this.userSelected.user,
         areaDestinationnew: Number(this.formControls.newUser.value?.delegation),
         argument: this.formControls.argument.value,
         numberRecord: this.notifData.registerNumber,
@@ -409,10 +417,10 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
         numberOftheDestinationbefore: this.notifData.delDestinyNumber,
         numberSubdelDestinationbefore: this.notifData.subDelDestinyNumber,
         numberOftheDestinationnew: Number(
-          this.formControls.newUser.value?.delegation
+          this.formControls.newUser.value?.delegation.id
         ),
         numberSubdelDestinationnew: Number(
-          this.formControls.newUser.value?.subdelegationNumber
+          this.userSelected.subdelegationNumber
         ),
         nbOrigin: this.origin,
       };
@@ -440,7 +448,7 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
           this.procedureManageService.updateForWheelNumber(
             this.notifData.wheelNumber,
             {
-              tiKeyNewPerson: this.formControls.newUser.value?.user,
+              tiKeyNewPerson: this.userSelected.user,
             }
           )
         );
@@ -455,10 +463,9 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
 
   updateNotification() {
     const body = {
-      delDestinyNumber: this.formControls.newUser.value?.delegationNumber,
-      subDelDestinyNumber: this.formControls.newUser.value?.subdelegationNumber,
-      departamentDestinyNumber:
-        this.formControls.newUser.value?.departamentNumber,
+      delDestinyNumber: this.userSelected.user.delegationNumber,
+      subDelDestinyNumber: this.userSelected.user.subdelegationNumber,
+      departamentDestinyNumber: this.userSelected.user.departamentNumber,
     };
     console.log(body);
 
@@ -466,12 +473,12 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
       next: () => {
         this.updateProcedureUser();
         this.loading = true;
+        this.clean();
         this.alert(
           'success',
           'Usuario Turnado Exitosamente',
           `Se actualizó el usuario turnado al volante ${this.pageParams.iden}`
         );
-        this.loading = false;
       },
       error: err => {
         this.loading = false;
@@ -484,10 +491,21 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
     });
   }
 
+  clean() {
+    this.turnForm.controls['newUser'].setValue(null);
+    this.turnForm.controls['argument'].setValue(null);
+    this.checkParams();
+    this.valid = false;
+    this.loading = false;
+    this.selectedProceedings.splice(0, this.selectedProceedings.length);
+    this.selectedDictums.splice(0, this.selectedDictums.length);
+    //console.log(this.selectedProceedings.length, this.selectedDictums.length);
+  }
+
   updateProcedureUser() {
     this.procedureManageService
       .update(this.pageParams.pNoTramite, {
-        userTurned: this.formControls.newUser.value?.user,
+        userTurned: this.userSelected.user,
       })
       .subscribe({
         next: res => {
@@ -520,11 +538,12 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
     ) {
       this.selectedDictums.forEach(val => {
         data.push({
-          delegationDictateNumber: Number(val.delegationDictNumber),
+          delegationDictateNumber: Number(this.userSelected.delegationNumber),
           ofDictaNumber: Number(val.id),
         });
       });
     }
+    console.log(data);
 
     this.dictationService.updateDictaEntregaRTurno(data).subscribe({
       next: resp => {
@@ -561,10 +580,11 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
       this.selectedProceedings.forEach(val => {
         data.push({
           minutesNumber: Number(val.id),
-          delegation2Number: Number(val.numDelegation2),
+          delegation2Number: Number(this.userSelected.delegationNumber),
         });
       });
     }
+    console.log(data);
     this.proceedingsService.updateActasEntregaRTurno(data).subscribe({
       next: resp => {
         console.log(resp);
@@ -607,7 +627,6 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
   }
 
   selectDictums(event: any) {
-    console.log(event.selectedIndex);
     const existe = this.selectedDictums.some(
       (objeto: any) => objeto.id === event.data.id
     );
@@ -618,13 +637,20 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
         objeto => objeto.id === event.data.id
       );
       this.selectedDictums.splice(index, 1);
-      this.valid = false;
     } else {
       // Agregar el objeto al arreglo
+      //event.data = this.userSelected.delegationNumber.numDelegation2;
       this.selectedDictums.push(event.data);
+    }
+    //console.log(this.selectedDictums);
+    if (
+      this.selectedDictums.length === 0 &&
+      this.selectedProceedings.length === 0
+    ) {
+      this.valid = false;
+    } else {
       this.valid = true;
     }
-    console.log(this.selectedDictums);
   }
 
   selectProceedings(event: any) {
@@ -640,13 +666,19 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
         objeto => objeto.id === event.data.id
       );
       this.selectedProceedings.splice(index, 1);
-      this.valid = false;
     } else {
       // Agregar el objeto al arreglo
       this.selectedProceedings.push(event.data);
+    }
+    //console.log(this.selectedProceedings);
+    if (
+      this.selectedProceedings.length === 0 &&
+      this.selectedDictums.length === 0
+    ) {
+      this.valid = false;
+    } else {
       this.valid = true;
     }
-    console.log(this.selectedProceedings);
   }
 
   getUsersCopy(lparams: ListParams) {
@@ -658,6 +690,8 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
     this.docRegisterService.getUsersSegAreas(params.getParams()).subscribe({
       next: data => {
         this.users = new DefaultSelect(data.data, data.count);
+
+        //this.filterHistoryUser(this.turnForm.controls['newUser'].value.user);
       },
       error: () => {
         this.users = new DefaultSelect();
@@ -682,6 +716,8 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
           this.usersFilter[0].userAndName != undefined
         ) {
           this.newUser1 = this.usersFilter[0].userAndName;
+          //this.
+          console.log(this.usersFilter);
         }
       },
       error: () => {
@@ -689,6 +725,7 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
       },
     });
   }
+
   filterHistoryUserBefore() {
     let historyUser1: any = null;
     const param = new FilterParams();

@@ -585,6 +585,10 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
         next: data => {
           console.log('DICTAMEN', data);
           this.dictationData = data.data[0];
+          try {
+            localStorage.removeItem(this.nameStorageKeyArmedOffice);
+            localStorage.removeItem(this.nameStorageDictationDate);
+          } catch (error) {}
           subscription.unsubscribe();
           this.callNextbtnSearchAppointment();
           this.goodsByDictation
@@ -675,7 +679,7 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
           localStorage.removeItem(this.nameStorageDictationDate);
           // this.deleteTempDictation(true);
           this.alertInfo(
-            'warning',
+            'success',
             'Se realizó la firma del dictamen',
             ''
           ).then(() => {
@@ -726,6 +730,8 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
               this.startLoopGoods(); // Inicar Loop de bienes
             }
           } else {
+            localStorage.removeItem(this.nameStorageKeyArmedOffice);
+            localStorage.removeItem(this.nameStorageDictationDate);
             this.alertInfo(
               'warning',
               'No se encontró el archivo firmado. El documento no ha sido enviado',
@@ -1409,7 +1415,7 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
         this.officeDictationData.delegacionRecipientNumber =
           event.delegationNumber;
         event.delegationNumber;
-        this.officeDictationData.delegacionRecipientNumber =
+        this.officeDictationData.recipientDepartmentNumber =
           event.departamentNumber;
         // this.officeDictationData.sender
         const params: any = new FilterParams();
@@ -1419,6 +1425,7 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
           .getAllUsersTracker(params.getParams())
           .subscribe({
             next: data => {
+              console.log(data);
               this.officeDictationData.cveChargeRem = data.data[0].postKey;
             },
             error: error => {},
@@ -1556,6 +1563,10 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
   }
 
   sendOffice(count: number = 0) {
+    try {
+      localStorage.removeItem(this.nameStorageKeyArmedOffice);
+      localStorage.removeItem(this.nameStorageDictationDate);
+    } catch (error) {}
     if (this.officeDictationData) {
       if (this.officeDictationData.statusOf == 'ENVIADO' && !this.blockSender) {
         this.btnDetail();
@@ -1644,10 +1655,12 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
       destinatario: this.officeDictationData.recipient,
       // no_clasif_bien: null, // Bienes
       // no_bien: null, // Bienes
-      no_departamento_destinatario:
-        this.officeDictationData.recipientDepartmentNumber,
-      no_delegacion_destinatario:
-        this.officeDictationData.delegacionRecipientNumber,
+      no_departamento_destinatario: Number(
+        this.officeDictationData.recipientDepartmentNumber
+      ),
+      no_delegacion_destinatario: Number(
+        this.officeDictationData.delegacionRecipientNumber
+      ),
       no_delegacion_dictam: this.dictationData.delegationDictNumber, // Data del usuario
       tipo: this.paramsScreen.TIPO,
       usuario:
@@ -1675,10 +1688,12 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
         this.dictationData.passOfficeArmy
       ); // SAVE CLAVE_OFICIO_ARMADA
       console.log(this.dictationData.dictDate);
-      localStorage.setItem(
-        this.nameStorageDictationDate,
-        this.dictationData.dictDate.toString()
-      ); // SAVE FECHA_DICTAMEN
+      if (this.dictationData.dictDate) {
+        localStorage.setItem(
+          this.nameStorageDictationDate,
+          this.dictationData.dictDate.toString()
+        ); // SAVE FECHA_DICTAMEN
+      }
     }, 300);
     this.sendGoodDataToSendOffice(count, body);
   }
@@ -1697,6 +1712,7 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
     //   this.totalData
     // );
     this.sendOfficeAndGoodData(count, body);
+    // console.log(body);
   }
 
   sendOfficeAndGoodData(count: number, body: any) {
@@ -3761,6 +3777,18 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
               );
               return;
             }
+            if (
+              // response.includes(this.dictationData.expedientNumber) ||
+              // response.includes(this.dictationData.wheelNumber) ||
+              !response.includes('xml')
+            ) {
+              this.onLoadToast(
+                'warning',
+                'Ocurrió un error al cargar el XML con el nombre: ' + nameFile,
+                ''
+              );
+              return;
+            }
             // const encoded: string = response;
             // const decoded: string = Buffer.from(encoded, 'base64').toString(
             //   'utf8'
@@ -3875,7 +3903,7 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
                 next: data => {
                   console.log('DICTAMEN', data);
                   this.dictationData = data.data[0];
-                  this.callNextbtnSearchAppointment();
+                  // this.callNextbtnSearchAppointment();
                   this.goodsByDictation
                     .pipe(takeUntil(this.$unSubscribe))
                     .subscribe(() => this.loadGoodsByOfficeDictation());

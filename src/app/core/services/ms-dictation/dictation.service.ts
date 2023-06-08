@@ -253,4 +253,8 @@ export class DictationService extends HttpService {
     const route = `${DictationEndpoints.DeletePupDeleteDictum}`;
     return this.post(route, params);
   }
+
+  checkGoodAvaliable(data: Object) {
+    return this.post(DictationEndpoints.Check, data);
+  }
 }

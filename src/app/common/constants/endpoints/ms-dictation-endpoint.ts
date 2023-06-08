@@ -29,4 +29,5 @@ export enum DictationEndpoints {
   FaFlagDest = '/application/fa-flag-dest',
   DictamenDelegation = 'application/delegationDictamXofDicta',
   DeletePupDeleteDictum = 'application/pupDeleteDictum',
+  Check = 'application/destruction-check-good-available',
 }

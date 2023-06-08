@@ -68,7 +68,24 @@ export class EdosXCoorListComponent extends BasePage implements OnInit {
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
+        this.remove(edosXCoor);
       }
+    });
+  }
+
+  remove(edosXCoor: IEdosXCoor) {
+    this.edosXCoorService.remove2(edosXCoor).subscribe({
+      next: () => {
+        this.alert('success', 'Edos x coor', 'Borrado');
+        this.getExample();
+      },
+      error: error => {
+        this.alert(
+          'warning',
+          'Edos x coor',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      },
     });
   }
 }
