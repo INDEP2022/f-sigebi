@@ -15,6 +15,7 @@ import {
 })
 export class NumeraryParameterizationAutomService implements ICrudMethods<any> {
   private readonly route: string = ENDPOINT_LINKS.NumeraryCategoriesAutom;
+  private readonly routeNumerarys: string = ENDPOINT_LINKS.NumeraryCategories;
   constructor(
     private categorizationAutomNumerarysRepository: Repository<INumeraryParameterization>,
     private categorizationNumerarysRepository: Repository<ICategorizationAutomNumerary>
@@ -31,7 +32,7 @@ export class NumeraryParameterizationAutomService implements ICrudMethods<any> {
 
   getCategories(params: ListParams) {
     return this.categorizationNumerarysRepository.getAllPaginated(
-      this.route,
+      this.routeNumerarys,
       params
     );
   }

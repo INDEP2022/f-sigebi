@@ -38,6 +38,7 @@ export class ModalNumeraryParameterizationComponent
 
   ngOnInit(): void {
     this.prepareForm();
+    this.getCategories(new ListParams());
   }
 
   private prepareForm() {
@@ -83,7 +84,15 @@ export class ModalNumeraryParameterizationComponent
       });
   }
 
-  getCategories(params: ListParams) {}
+  getCategories(params: ListParams) {
+    this.numeraryParameterizationAutomService
+      .getCategories(params)
+      .subscribe(item => {
+        this.categories = new DefaultSelect(item.data, item.count);
+      });
+  }
+
+  categoriesChange(categories: INumeraryCategories) {}
 
   handleSuccess() {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
