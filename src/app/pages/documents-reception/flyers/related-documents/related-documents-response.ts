@@ -5,7 +5,6 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
 import { ICity } from 'src/app/core/models/catalogs/city.model';
 import { IDepartment } from 'src/app/core/models/catalogs/department.model';
-import { IGood } from 'src/app/core/models/good/good.model';
 import { type INotification } from 'src/app/core/models/ms-notification/notification.model';
 import { IMJobManagement } from 'src/app/core/models/ms-officemanagement/m-job-management.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
@@ -17,6 +16,7 @@ import { MJobManagementService } from 'src/app/core/services/ms-office-managemen
 import { ParametersService } from 'src/app/core/services/ms-parametergood/parameters.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { FlyersService } from '../services/flyers.service';
+import { IGoodAndAvailable } from './related-documents.component';
 
 export abstract class RelateDocumentsResponse extends BasePage {
   protected abstract goodServices: GoodService;
@@ -28,7 +28,7 @@ export abstract class RelateDocumentsResponse extends BasePage {
   protected abstract departmentService: DepartamentService;
   protected abstract authService: AuthService;
 
-  abstract data1: IGood[];
+  abstract dataTableGoods: IGoodAndAvailable[];
   abstract managementForm: FormGroup;
   isLoadingGood: boolean;
   abstract totalItems: number;
@@ -47,7 +47,7 @@ export abstract class RelateDocumentsResponse extends BasePage {
             available: isAvailable,
           };
         });
-        this.data1 = await Promise.all(goods as any);
+        this.dataTableGoods = await Promise.all(goods);
         this.totalItems = data.count;
         this.isLoadingGood = false;
       },
@@ -141,6 +141,20 @@ export abstract class RelateDocumentsResponse extends BasePage {
       this.serviceOficces.getGoodsJobManagement(list).pipe(
         map(x => x.count),
         catchError(() => {
+          return of(0);
+        })
+      )
+    );
+  }
+
+  getDocOficioGestion(params: ListParams) {
+    params.page = 1;
+    params.limit = 1;
+
+    return firstValueFrom(
+      this.mJobManagementService.getDocOficioGestion(params).pipe(
+        map(x => x.count),
+        catchError(ex => {
           return of(0);
         })
       )

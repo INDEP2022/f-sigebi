@@ -89,7 +89,10 @@
             <form-field
               [control]="formJobManagement.get('addressee')"
               class="col-md-4"
-              *ngIf="showDestinatario">
+              *ngIf="
+                formJobManagement.get('jobType').value === 'INTERNO';
+                else templateInputAddressee
+              ">
               <ngx-select
                 [data]="select"
                 [form]="formJobManagement"
@@ -101,16 +104,17 @@
                 value="user"></ngx-select>
             </form-field>
 
-            <form-field
-              [control]="managementForm.get('destinatarioInput')"
-              class="col-md-4"
-              label="Nombre Destinatario"
-              *ngIf="showDestinatarioInput">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="destinatarioInput" />
-            </form-field>
+            <ng-template #templateInputAddressee>
+              <form-field
+                [control]="formJobManagement.get('addressee')"
+                class="col-md-4"
+                label="Nombre Destinatario">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="addressee" />
+              </form-field>
+            </ng-template>
 
             <form-field
               [control]="formJobManagement.get('city')"
@@ -136,6 +140,7 @@
             [ngClass]="{ 'not-press': se_refiere_a_Disabled.A }">
             <form-radio label="{{ se_refiere_a.A }}">
               <input
+                id="se_refiere_a_A"
                 type="radio"
                 formControlName="checkText"
                 value="{{ se_refiere_a.A }}"
@@ -147,6 +152,7 @@
             [ngClass]="{ 'not-press': se_refiere_a_Disabled.B }">
             <form-radio label="{{ se_refiere_a.B }}" class="mt-0 pt-0 bt-0">
               <input
+                id="se_refiere_a_B"
                 type="radio"
                 formControlName="checkText"
                 value="{{ se_refiere_a.B }}"
@@ -158,6 +164,7 @@
             [ngClass]="{ 'not-press': se_refiere_a_Disabled.C }">
             <form-radio label="{{ se_refiere_a.C }}">
               <input
+                id="se_refiere_a_C"
                 type="radio"
                 formControlName="checkText"
                 value="{{ se_refiere_a.C }}" />
@@ -342,7 +349,25 @@
                   (userRowSelect)="selectProceedings($event)"
                   [attr.class]="'table-responsive table-bordered'"
                   [settings]="settings"
-                  [source]="data1">
+                  [source]="dataTableGoods">
+                </ng2-smart-table>
+                <br />
+                <div>
+                  <app-pagination
+                    [params]="params"
+                    [totalItems]="totalItems"></app-pagination>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-12 col-12 col-md-12 pr-3">
+              <div class="col-12">Biene(s)</div>
+              <div [class]="isLoadingGood ? 'table-loading' : ''">
+                <!-- (userRowSelect)="selectProceedings($event)" -->
+                <ng2-smart-table
+                  id="goodsJobManagement"
+                  [attr.class]="'table-responsive table-bordered'"
+                  [settings]="settingsGoodsJobManagement"
+                  [source]="dataTableGoodsJobManagement">
                 </ng2-smart-table>
                 <br />
                 <div>
@@ -379,6 +404,7 @@
             <button
               type="button"
               tooltip="Documentos"
+              [disabled]="isDisabledBtnDocs"
               containerClass="tooltip-style"
               class="btn btn-info active btn-sm m-1"
               (click)="openModal()">
