@@ -112,7 +112,9 @@ export abstract class ScheduledMaintenance extends BasePageWidhtDinamicFiltersEx
     { id: 'ABIERTA', description: 'Abierto' },
     { id: 'CERRADA', description: 'Cerrado' },
   ];
+
   stringPattern = STRING_PATTERN;
+  oldLimit = 10;
   // data: IProceedingDeliveryReception[] = [];
   paramsTypes: ListParams = new ListParams();
   paramsStatus: ListParams = new ListParams();
@@ -127,7 +129,8 @@ export abstract class ScheduledMaintenance extends BasePageWidhtDinamicFiltersEx
     protected fb: FormBuilder,
     protected deliveryService: ProceedingsDeliveryReceptionService,
     protected detailService: ProceedingsDetailDeliveryReceptionService,
-    @Inject('formStorage') protected formStorage: string
+    @Inject('formStorage') protected formStorage: string,
+    @Inject('paramsActa') protected paramsActa: string
   ) {
     super();
     this.service = this.deliveryService;
@@ -173,6 +176,7 @@ export abstract class ScheduledMaintenance extends BasePageWidhtDinamicFiltersEx
     console.log('RESET VIEW');
     this.data.load([]);
     this.totalItems = 0;
+    this.oldLimit = 10;
     localStorage.removeItem(this.formStorage);
     this.columnFilters = [];
     // this.dinamicFilterUpdate();
@@ -185,7 +189,8 @@ export abstract class ScheduledMaintenance extends BasePageWidhtDinamicFiltersEx
       next: response => {
         console.log(response);
 
-        this.getData(true);
+        this.getData(response.limit <= this.oldLimit ? true : false);
+        this.oldLimit = response.limit;
       },
     });
   }
@@ -381,7 +386,7 @@ export abstract class ScheduledMaintenance extends BasePageWidhtDinamicFiltersEx
     } else {
       this.params.value.page = 1;
       localStorage.setItem(
-        'paramsActa',
+        this.paramsActa,
         JSON.stringify({ limit: this.params.getValue().limit, page: 1 })
       );
       // this.params.value.limit = 10;

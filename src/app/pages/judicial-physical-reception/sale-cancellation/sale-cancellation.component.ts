@@ -59,6 +59,8 @@ import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-ele
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { EdoFisicoComponent } from '../confiscated-records/edo-fisico/edo-fisico.component.component';
 import { columnsGoodAct } from '../confiscated-records/settings-tables';
+import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
+import { ITransfActaEntrec } from 'src/app/core/models/ms-notification/notification.model';
 
 @Component({
   selector: 'app-sale-cancellation',
@@ -161,7 +163,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
   nameReport = 'RGERGENSOLICDIGIT';
 
   //VARIABLES GENERALES
-  idProceeding: string;
+  idProceeding: string
 
   searchByOtherData = false;
   dataExpedients = new DefaultSelect();
@@ -198,7 +200,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
   isEnableObservaciones = true;
   isEnableRecibe = true;
   isEnableTestigo = true;
-  isEnableDireccion = true;
+  isEnableDireccion = true
   warehouseSelect = new DefaultSelect();
   vaultSelect = new DefaultSelect();
   reopening = false;
@@ -206,7 +208,13 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
   isSelectGood = false;
   isBoveda = false;
   isAlmacen = false;
+  research = false
   dataEdoFisico = new DefaultSelect(['MALO', 'REGULAR', 'BUENO']);
+
+  //DATOS DE USUARIO
+  delUser: string;
+  subDelUser: string;
+  departmentUser: string;
 
   constructor(
     private fb: FormBuilder,
@@ -227,7 +235,8 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
     private serviceProgrammingGood: ProgrammingGoodService,
     private serviceWarehouse: WarehouseFilterService,
     private serviceVault: SafeService,
-    private modalService: BsModalService
+    private modalService: BsModalService,
+    private serviceNotification: NotificationService
   ) {
     super();
   }
@@ -247,6 +256,22 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
       this.goodsByExpediente();
       localStorage.removeItem('numberExpedient');
     }
+
+    this.getDataUser()
+  }
+
+  getDataUser() {
+    const user =
+      localStorage.getItem('username') == 'sigebiadmon'
+        ? localStorage.getItem('username')
+        : localStorage.getItem('username').toLocaleUpperCase();
+    const routeUser = `?filter.name=$eq:${user}`;
+    this.serviceUser.getAllSegUsers(routeUser).subscribe(res => {
+      const resJson = JSON.parse(JSON.stringify(res.data[0]));
+      this.delUser = resJson.usuario.delegationNumber;
+      this.subDelUser = resJson.usuario.subdelegationNumber;
+      this.departmentUser = resJson.usuario.departamentNumber;
+    });
   }
 
   prepareForm() {
@@ -451,8 +476,12 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
 
   //Validate Proceeding
   changeAct() {
+    if(this.form.get('acta').value != null && this.form.get('acta').value != undefined){
+      this.getTransfer()
+    }
     this.fillActTwo();
   }
+
 
   verifyTransferenteAndAct() {
     if (this.form.get('acta').value != null) {
@@ -644,9 +673,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
   async applyEdoFisOne(e: any) {
     console.log(this.selectActData);
     console.log(e);
-    const edoFis: any = await this.getIndEdoFisAndVColumna(
-      this.selectActData.good
-    );
+    const edoFis: any = await this.getIndEdoFisAndVColumna(this.selectActData.good);
     console.log(edoFis);
     const generalModel: Map<string, any> = new Map();
     generalModel.set('id', parseInt(this.selectActData.id.toString()));
@@ -671,31 +698,22 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
 
   //*Traer bienes
   getTransfer() {
-    this.serviceExpedient
-      .getById(this.form.get('expediente').value)
-      .subscribe(res => {
-        console.log(res.expedientType);
-        let model: TransferProceeding = {
-          numFile: res.transferNumber as number,
-          typeProceedings: res.expedientType,
-        };
-        console.log(model);
-        this.serviceProcVal.getTransfer(model).subscribe(
-          res => {
-            console.log(res);
-            this.transferSelect = new DefaultSelect(res.data, res.count);
-          },
-          err => {
-            console.log(err);
-            this.blockExpedient = false;
-            this.alert('error', 'Clave de transferente inválida', '');
-            this.dataGoods.load([]);
-            this.dataGoodAct.load([]);
-            this.goodData = [];
-          }
-        );
-        /* this.enableElement('acta'); */
-      });
+    let modelTransf: ITransfActaEntrec = {
+      indcap: '',
+      no_expediente: this.form.get('expediente').value,
+      id_tipo_acta: this.form.get('acta').value,
+    };
+
+    this.serviceNotification.getTransferenteentrec(modelTransf).subscribe(
+      res => {
+        this.transferSelect = new DefaultSelect(res.data);
+      },
+      err => {
+        this.transferSelect = new DefaultSelect();
+        this.loading = false;
+        this.alert('warning', 'No se encontraron transferentes', '');
+      }
+    );
   }
 
   fillIncomeProceeding(dataRes: any) {
@@ -720,20 +738,21 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
             exchangeValue: element.exchangeValue === '1' ? 1 : null,
             indEdoFisico: edoFis.V_IND_EDO_FISICO === 1 ? true : false,
           }); */
-          this.dataGoods.load(
-            this.dataGoods['data'].map((e: any) => {
-              if (e.id == element.good.id) {
-                return {
-                  ...e,
-                  avalaible: false,
-                  acta: dataRes.keysProceedings,
-                };
-              } else {
-                return e;
-              }
-            })
-          );
-          /* .then(res => {
+          this.dataGoods
+            .load(
+              this.dataGoods['data'].map((e: any) => {
+                if (e.id == element.good.id) {
+                  return {
+                    ...e,
+                    avalaible: false,
+                    acta: dataRes.keysProceedings,
+                  };
+                } else {
+                  return e;
+                }
+              })
+            )
+            /* .then(res => {
               for (let item of this.goodData) {
                 const goodClass = item.goodClassNumber;
 
@@ -763,7 +782,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
             }); */
         }
         this.dataGoodAct.load(incomeData);
-        this.validateWarehouseAndVault(incomeData);
+        this.validateWarehouseAndVault(incomeData)
 
         this.form.get('acta2').setValue(dataRes.keysProceedings);
         this.form.get('direccion').setValue(dataRes.address);
@@ -840,24 +859,26 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
     );
   }
 
-  validateWarehouseAndVault(data: any) {
-    for (let item of data) {
+  validateWarehouseAndVault(data: any){
+    for(let item of data){
       const newParams = `filter.numClasifGoods=$eq:${item.good.goodClassNumber}`;
-      this.serviceSssubtypeGood.getFilter(newParams).subscribe(res => {
-        const type = JSON.parse(JSON.stringify(res.data[0]['numType']));
-        const subtype = JSON.parse(JSON.stringify(res.data[0]['numSubType']));
+      this.serviceSssubtypeGood.getFilter(newParams).subscribe(
+        res => {
+          const type = JSON.parse(JSON.stringify(res.data[0]['numType']));
+          const subtype = JSON.parse(JSON.stringify(res.data[0]['numSubType']));
 
-        const no_type = parseInt(type.id);
-        const no_subtype = parseInt(subtype.id);
-
-        if (no_type === 7 || (no_type === 5 && no_subtype === 16)) {
-          this.isBoveda = true;
-        }
-        if (no_type === 5) {
-          this.isAlmacen = true;
-        }
-      });
+          const no_type = parseInt(type.id);
+          const no_subtype = parseInt(subtype.id);
+        
+          if (no_type === 7 || (no_type === 5 && no_subtype === 16)) {
+            this.isBoveda = true;
+          }
+          if (no_type === 5) {
+            this.isAlmacen = true;
+          }
+        })
     }
+    
   }
 
   getIndEdoFisAndVColumna(data: any) {
@@ -1105,7 +1126,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
         this.dataGoodAct.load(res.data);
         this.totalItemsDataGoodsAct = res.count;
         this.loading = false;
-        this.validateWarehouseAndVault(res.data);
+        this.validateWarehouseAndVault(res.data)
       },
       err => {
         console.log(err);
@@ -1121,7 +1142,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
   }
 
   getGoodsByExpedient() {
-    //Validar si hay un acta abierta
+    this.research = false
     const paramsF = new FilterParams();
     paramsF.addFilter(
       'numFile',
@@ -1146,14 +1167,12 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
           this.initialBool = false;
           this.minDateFecElab = new Date();
           this.checkChange();
-          this.getTransfer();
         }
       },
       err => {
         console.log(err);
         this.initialBool = false;
         this.checkChange();
-        this.getTransfer();
         this.blockExpedient = false;
       }
     );
@@ -1216,6 +1235,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
             if (res.data.length > 0) {
               this.form.get('ident').setValue('DEV');
               this.form.get('entrego').setValue('PART');
+              this.totalItemsDataGoods = res.count
               this.dataGoods.load(res.data);
               console.log(res);
               const newData = await Promise.all(
@@ -1298,10 +1318,54 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
 
   //
 
+  fecElabFn(){
+    let fecElab = new Date(this.form.get('fecElab').value);
+    if (this.form.get('fecElab').value != null) {
+      this.form.get('fecReception').setValue(new Date(fecElab));
+    } else {
+      {
+        this.form.get('fecReception').setValue('');
+      }
+    }
+  }
+
   checkChange() {
-    this.form.get('fecElab').valueChanges.subscribe(res => {
-      this.form.get('fecRecepFisica').setValue(res);
-    });
+    if (this.research) {
+      console.log('No');
+    } else {
+      this.form
+        .get('transfer')
+        .valueChanges.subscribe(res => this.fillActTwo());
+      this.form.get('ident').valueChanges.subscribe(res => this.fillActTwo());
+      this.form.get('recibe').valueChanges.subscribe(res => {
+        console.log(res);
+        console.log(this.delUser);
+        if (res != null && res != undefined && res.numberDelegation2) {
+          if (res.numberDelegation2 != this.delUser) {
+            this.form.get('recibe').reset();
+            this.recibeSelect = new DefaultSelect();
+            this.alert(
+              'warning',
+              'La delegación es diferente a la del usuario',
+              ''
+            );
+            return;
+          } else {
+            this.fillActTwo();
+          }
+        }
+      });
+      this.form.get('folio').valueChanges.subscribe(res => {
+        if (
+          this.form.get('folio').value != null &&
+          this.form.get('folio').value.toString().length <= 5
+        ) {
+          this.fillActTwo();
+        }
+      });
+      this.form.get('year').valueChanges.subscribe(res => this.fillActTwo());
+      this.form.get('mes').valueChanges.subscribe(res => this.fillActTwo());
+    }
   }
 
   //Fill Act 2
@@ -1321,7 +1385,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
       (this.form.get('acta').value != null ? this.form.get('acta').value : '') +
       '/' +
       (this.form.get('transfer').value != null
-        ? this.form.get('transfer').value.transferentkey
+        ? this.form.get('transfer').value.clave_transferente
         : '') +
       '/' +
       (this.form.get('ident').value != null
@@ -1427,6 +1491,11 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
                 P_AREATRA: lv_TIP_ACTA,
                 P_PANTALLA: 'FACTREFACTAENTREC',
                 P_TIPOMOV: 2,
+                USUARIO: localStorage.getItem('username') == 'sigebiadmon'
+                ? localStorage.getItem('username')
+                : localStorage
+                    .getItem('username')
+                    .toLocaleUpperCase()
               };
               this.serviceProgrammingGood
                 .paOpenProceedingProgam(modelPaOpen)
@@ -1450,11 +1519,9 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
                               .subscribe(
                                 res => {
                                   this.labelActa = 'Cerrar acta';
-                                  this.btnCSSAct = 'btn-primary';
-                                  this.form
-                                    .get('statusProceeding')
-                                    .setValue('ABIERTA');
-                                  this.reopening = true;
+                    this.btnCSSAct = 'btn-primary';
+                    this.form.get('statusProceeding').setValue('ABIERTA');
+                    this.reopening = true;
                                   const btn =
                                     document.getElementById('expedient-number');
                                   this.render.removeClass(btn, 'disabled');
@@ -1565,17 +1632,15 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
   }
 
   newCloseProceeding() {
-    if (this.dataGoodAct['data'].length == 0) {
+    if(this.dataGoodAct['data'].length == 0){
       this.alert(
         'warning',
         'No se registraron bienes',
         'El Acta no contiene Bienes, no se podrá Cerrar.'
       );
-    } else if (
-      this.dataGoodAct['data'].find(
-        (e: any) => e.indEdoFisico && e.good[`val${e.vNoColumna}`] == null
-      )
-    ) {
+    } else if(this.dataGoodAct['data'].find(
+      (e: any) => e.indEdoFisico && e.good[`val${e.vNoColumna}`] == null
+    )){
       this.alert(
         'warning',
         'Hay bienes con estado físico requerido sin establecer',
@@ -1583,12 +1648,11 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
       );
     } else if (this.dataGoodAct['data'].find((e: any) => e.received != 'S')) {
       this.alert('warning', 'Hay bienes no marcados como recibido', '');
-    } else if (
-      this.isAlmacen &&
-      this.dataGoodAct['data'].find((e: any) => e.good.storeNumber == null)
+    }else if (
+      this.isAlmacen && this.dataGoodAct['data'].find((e: any) => e.good.storeNumber == null)
     ) {
       this.alert('warning', 'Hay bienes no guardados en almacén', '');
-    } else {
+    } else{
       const paramsF = new FilterParams();
       paramsF.addFilter('keysProceedings', this.form.get('acta2').value);
       this.serviceProcVal.getByFilter(paramsF.getParams()).subscribe(
@@ -1609,7 +1673,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
                 VAL_MOVIMIENTO = res.data[0]['valmovement'];
                 if (VAL_MOVIMIENTO === 1) {
                   const tipo_acta = 'DXCV';
-                  this.openProceedingFn(resData.id);
+  
                 } else {
                   this.closeProceedingFn();
                 }
@@ -1620,10 +1684,12 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
             );
         },
         err => {
-          console.log(err);
+          console.log(err)
+          
         }
       );
     }
+    
   }
 
   waitVBANVAL() {
@@ -1660,7 +1726,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
           err => {
             resolve(false);
           }
-        );
+        )
       }
     });
   }
@@ -1683,14 +1749,12 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
     } else if (this.form.get('folioEscaneo').value == null) {
       this.alert('warning', 'Debe introducir el valor del folio', '');
     } else {
-      this.serviceDocuments
-        .getByFolio(this.form.get('folioEscaneo').value)
-        .subscribe(
-          async res => {
-            const data = JSON.parse(JSON.stringify(res));
-            const scanStatus = data.data[0]['scanStatus'];
-            console.log(scanStatus);
-            if (scanStatus === 'ESCANEADO') {
+      this.serviceDocuments.getByFolio(this.form.get('folioEscaneo').value).subscribe(
+        async res => {
+          const data = JSON.parse(JSON.stringify(res));
+          const scanStatus = data.data[0]['scanStatus'];
+          console.log(scanStatus);
+          if (scanStatus === 'ESCANEADO') {
               const vanbal = await this.waitVBANVAL();
               if (vanbal == false) {
                 this.alert('warning', 'Debe especificar almacen', '');
@@ -1707,7 +1771,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
                       P_PANTALLA: 'FACTREFACTAVENT',
                       P_FECHA_RE_FIS: this.form.get('fecReception').value,
                       P_TIPO_ACTA: 'DXCV',
-                      usuario:
+                      USUARIO:
                         localStorage.getItem('username') == 'sigebiadmon'
                           ? localStorage.getItem('username')
                           : localStorage
@@ -1717,7 +1781,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
                     console.log(model);
                     this.serviceProgrammingGood.paChangeStatus(model).subscribe(
                       res => {
-                        console.log(res);
+                        console.log(res)
                         const paramsF = new FilterParams();
                         paramsF.addFilter(
                           'valUser',
@@ -1745,11 +1809,11 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
                                 );
                               } else {
                                 //!ELSE DE CERRAR
-                                console.log('Entro a else');
+                                console.log('Entro a else')
                               }
                             },
                             err => {
-                              console.log('Entro a else');
+                              console.log('Entro a else')
                               //!ELSE DE CERRAR
                             }
                           );
@@ -1766,9 +1830,10 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
                     );
                   }
                 });
-              }
+
             }
-          },
+          }
+        },
           err => {
             this.alert('warning', 'No se ha realizado el escaneo', '');
           }
@@ -1786,12 +1851,10 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
         'El Acta no contiene Bienes, no se podrá Cerrar.'
       );
     } else {
-      this.serviceDocuments
-        .getByFolio(this.form.get('folioEscaneo').value)
-        .subscribe(
-          res => {
-            const data = JSON.parse(JSON.stringify(res));
-            const scanStatus = data.data[0]['scanStatus'];
+      this.serviceDocuments.getByFolio(this.form.get('folioEscaneo').value).subscribe(
+        res => {
+          const data = JSON.parse(JSON.stringify(res));
+          const scanStatus = data.data[0]['scanStatus'];
 
             if (scanStatus === 'ESCANEADO') {
               this.form.get('statusProceeding').setValue('CERRADO');
@@ -1831,9 +1894,8 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
   }
 
   validateFolio() {
-    this.serviceDocuments
-      .getByFolio(this.form.get('folioEscaneo').value)
-      .subscribe(res => {
+    this.serviceDocuments.getByFolio(this.form.get('folioEscaneo').value).subscribe(
+      res => {
         const data = JSON.parse(JSON.stringify(res));
         const scanStatus = data.data[0]['scanStatus'];
         console.log(scanStatus);
@@ -1842,7 +1904,8 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
         } else {
           this.scanStatus = false;
         }
-      });
+      }
+      );
   }
 
   //*Agregar bienes
@@ -1923,7 +1986,8 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
                         })
                       );
                       /* console.log(dataTry.data); */
-                      this.getGoodsActFn();
+                      this.getGoodsActFn()
+                      
                       /* console.log(this.dataGoods);
                       this.goodData.push(this.selectData);
                       this.dataGoodAct.load(this.goodData);
@@ -1979,9 +2043,9 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
           'Error en la fecha de elaboración',
           'No puede realizar modificaciones a esta acta, por estar fuera del mes'
         );
-      } else if (this.selectActData == null) {
-      }
-      {
+      } else if(this.selectActData == null){
+
+      }{
         const deleteModel: IDeleteDetailProceeding = {
           numberGood: this.selectActData.good.goodId,
           numberProceedings: this.idProceeding,
@@ -1995,7 +2059,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
             );
             /*this.dataGoodAct.load(this.goodData);
             console.log(this.goodData); */
-            this.getGoodsActFn();
+            this.getGoodsActFn()
 
             this.dataGoods.load(
               this.dataGoods['data'].map((e: any) => {
@@ -2121,7 +2185,6 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
         this.initialBool = false;
         this.goodData = [];
         this.dataGoodAct.load(this.goodData);
-        this.getTransfer();
       }
     }
   }
@@ -2260,7 +2323,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
       let modalConfig = MODAL_CONFIG;
       modalConfig = {
         initialState: {
-          idProceeding: this.idProceeding,
+          idProceeding: this.idProceeding
           /* goodData: this.dataGoodAct['data'].filter(item => item.indEdoFisico),
           callback: (next: any) => {
             console.log(next);
@@ -2334,6 +2397,8 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
           'Debe seleccionar un almacén válido'
         );
       }
+      
+
     } else if (
       ['CERRADA', 'CERRADO'].includes(this.form.get('statusProceeding').value)
     ) {

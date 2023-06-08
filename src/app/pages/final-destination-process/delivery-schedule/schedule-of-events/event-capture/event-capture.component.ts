@@ -1999,6 +1999,11 @@ export class EventCaptureComponent
       P_NOACTA: Number(this.proceeding.id),
       P_PANTALLA: 'FINDICA_0035_1',
       P_TIPOMOV: 1,
+      USUARIO: localStorage.getItem('username') == 'sigebiadmon'
+      ? localStorage.getItem('username')
+      : localStorage
+          .getItem('username')
+          .toLocaleUpperCase()
     };
     await this.openMinutesProyect(model);
     this.global.paperworkArea = this.originalType;
@@ -2010,6 +2015,11 @@ export class EventCaptureComponent
         P_NOACTA: Number(this.proceeding.id),
         P_PANTALLA: 'FINDICA_0035_1',
         P_TIPOMOV: 1,
+        USUARIO: localStorage.getItem('username') == 'sigebiadmon'
+        ? localStorage.getItem('username')
+        : localStorage
+            .getItem('username')
+            .toLocaleUpperCase()
       };
       this.returPreviosStatus(model);
       //////////////////////////////// aqui va el endpoint esperado por EDWIN
