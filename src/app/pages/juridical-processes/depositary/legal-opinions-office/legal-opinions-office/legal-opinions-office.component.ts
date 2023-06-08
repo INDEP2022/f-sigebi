@@ -726,6 +726,8 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
               this.startLoopGoods(); // Inicar Loop de bienes
             }
           } else {
+            localStorage.removeItem(this.nameStorageKeyArmedOffice);
+            localStorage.removeItem(this.nameStorageDictationDate);
             this.alertInfo(
               'warning',
               'No se encontró el archivo firmado. El documento no ha sido enviado',
@@ -1675,10 +1677,12 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
         this.dictationData.passOfficeArmy
       ); // SAVE CLAVE_OFICIO_ARMADA
       console.log(this.dictationData.dictDate);
-      localStorage.setItem(
-        this.nameStorageDictationDate,
-        this.dictationData.dictDate.toString()
-      ); // SAVE FECHA_DICTAMEN
+      if (this.dictationData.dictDate) {
+        localStorage.setItem(
+          this.nameStorageDictationDate,
+          this.dictationData.dictDate.toString()
+        ); // SAVE FECHA_DICTAMEN
+      }
     }, 300);
     this.sendGoodDataToSendOffice(count, body);
   }
@@ -1697,6 +1701,7 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
     //   this.totalData
     // );
     this.sendOfficeAndGoodData(count, body);
+    // console.log(body);
   }
 
   sendOfficeAndGoodData(count: number, body: any) {
@@ -3761,6 +3766,18 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
               );
               return;
             }
+            if (
+              response.includes(this.dictationData.expedientNumber) ||
+              response.includes(this.dictationData.wheelNumber) ||
+              response.includes(this.dictationData.typeDict)
+            ) {
+              this.onLoadToast(
+                'warning',
+                'Ocurrió un error al cargar el XML con el nombre: ' + nameFile,
+                ''
+              );
+              return;
+            }
             // const encoded: string = response;
             // const decoded: string = Buffer.from(encoded, 'base64').toString(
             //   'utf8'
@@ -3875,7 +3892,7 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
                 next: data => {
                   console.log('DICTAMEN', data);
                   this.dictationData = data.data[0];
-                  this.callNextbtnSearchAppointment();
+                  // this.callNextbtnSearchAppointment();
                   this.goodsByDictation
                     .pipe(takeUntil(this.$unSubscribe))
                     .subscribe(() => this.loadGoodsByOfficeDictation());
