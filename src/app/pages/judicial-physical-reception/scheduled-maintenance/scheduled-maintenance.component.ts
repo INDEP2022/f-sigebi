@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { Router } from '@angular/router';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, firstValueFrom } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IProceedingDeliveryReception } from 'src/app/core/models/ms-proceedings/proceeding-delivery-reception';
 import { MsIndicatorGoodsService } from 'src/app/core/services/ms-indicator-goods/ms-indicator-goods.service';
@@ -180,21 +180,27 @@ export class ScheduledMaintenanceComponent
     //   };
     // })
     this.loadingExcel = true;
+    this.elementToExport = null;
     this.onLoadToast(
       'info',
       'Reporte de Mantenimiento de Programaciones',
       'Consiguiendo datos'
     );
+    debugger;
     const data = await this.data.getAll();
-    this.deliveryService.getExcel2(data).subscribe(x => {
-      this.elementToExport = x;
-      this.flagDownload = !this.flagDownload;
-      console.log(x);
+    try {
+      const array = await firstValueFrom(this.deliveryService.getExcel2(data));
+      if (array.length > 0) {
+        this.elementToExport = array;
+        this.flagDownload = !this.flagDownload;
+        console.log(this.elementToExport);
+      }
       this.loadingExcel = false;
-      setTimeout(() => {
-        this._toastrService.clear();
-      }, 1000);
-    });
+    } catch (x) {
+      this.onLoadToast('error', 'Error en obtención de datos');
+      this.loadingExcel = false;
+    }
+
     // this.service.getExcel(this.filterParams).subscribe(x => {
     //   this.elementToExport = x;
     //   this.flagDownload = !this.flagDownload;
@@ -204,6 +210,6 @@ export class ScheduledMaintenanceComponent
     //     this._toastrService.clear();
     //   }, 1000);
     // });
-    console.log(this.table);
+    // console.log(this.table);
   }
 }

@@ -61,7 +61,7 @@ export class Repository<T> implements IRepository<T> {
     // console.log(`${fullRoute}/${id}`);
     // console.log(formData);
 
-    return this.httpClient.put(`${fullRoute}/id/${id}`, formData);
+    return this.httpClient.put(`${fullRoute}/${id}`, formData);
   }
 
   updateClaimConclusion(route: string, id: number | string, formData: Object) {
