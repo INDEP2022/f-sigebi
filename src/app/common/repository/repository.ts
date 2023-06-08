@@ -25,6 +25,17 @@ export class Repository<T> implements IRepository<T> {
     return this.httpClient.get<IListResponse<T>>(`${fullRoute}`, { params });
   }
 
+  getAll(
+    route: string,
+    _params?: ListParams | string
+  ): Observable<IListResponse<T>> {
+    const params = this.makeParams(_params);
+    const fullRoute = this.buildRoute(route);
+    return this.httpClient.get<IListResponse<T>>(`${fullRoute}/get-all`, {
+      params,
+    });
+  }
+
   getById(route: string, id: number | string): Observable<T> {
     const fullRoute = this.buildRoute(route);
     return this.httpClient.get<T>(`${fullRoute}/${id}`);
@@ -50,6 +61,11 @@ export class Repository<T> implements IRepository<T> {
     // console.log(`${fullRoute}/${id}`);
     // console.log(formData);
 
+    return this.httpClient.put(`${fullRoute}/${id}`, formData);
+  }
+
+  updateClaimConclusion(route: string, id: number | string, formData: Object) {
+    const fullRoute = this.buildRoute(route);
     return this.httpClient.put(`${fullRoute}/${id}`, formData);
   }
 
