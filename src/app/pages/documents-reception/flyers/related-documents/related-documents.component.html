@@ -33,13 +33,13 @@
             <div class="col-md-4">
               <div>
                 <label for="">No&#46; Volante&#58;</label>
-                {{ managementForm?.get('noVolante').value }}
+                {{ formNotification?.get('wheelNumber').value }}
               </div>
             </div>
             <div class="col-md-4">
               <div>
                 <label for="">No. Expediente&#58;</label>
-                {{ managementForm?.get('noExpediente').value }}
+                {{ formNotification?.get('expedientNumber').value }}
               </div>
             </div>
             <div class="col-md-4">
@@ -266,13 +266,27 @@
         <!-- <form-field [control]="managementForm.get('fechaAcuse')" class="col-md-4 mt-2" label="Fecha de Acuse">
           <input type="text" class="form-control" formControlName="fechaAcuse" readonly [disabled]="true" />
         </form-field> -->
-
-        <br /><br />
-
+      </div>
+      <br /><br />
+      <div class="row pt-4">
         <div class="col-md-4">
           <button type="button" class="btn btn-primary active btn-sm mr-2">
             Respuestas FGR
           </button>
+        </div>
+      </div>
+      <br /><br />
+      <div class="row pt-4">
+        <div class="col-md-2">
+          <form-field
+            [control]="managementForm.get('fechaAcuse')"
+            label="Fecha Acuse">
+            <input
+              type="text"
+              class="form-control"
+              #dp="bsDatepicker"
+              bsDatepicker />
+          </form-field>
         </div>
       </div>
       <br />
@@ -382,6 +396,7 @@
               type="button"
               tooltip="Borrar"
               containerClass="tooltip-style"
+              (click)="showDeleteAlert($event)"
               class="btn btn-danger active btn-sm m-1">
               <i class="bx bxs-trash"></i>
             </button>
