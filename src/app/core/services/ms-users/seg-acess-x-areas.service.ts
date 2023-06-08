@@ -39,4 +39,9 @@ export class SegAcessXAreasService extends HttpService {
   getDelegationUser(user: string) {
     return this.get(this.route.DelegationUser + '/' + user);
   }
+
+  userHavePermissions(body: any) {
+    const route = UserEndpoints.askForPermissions;
+    return this.post(`${route}`, body);
+  }
 }
