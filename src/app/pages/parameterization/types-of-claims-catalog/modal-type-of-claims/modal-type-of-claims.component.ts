@@ -31,7 +31,7 @@ export class ModalTypeOfClaimsComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.form = this.fb.group({
-      keyClaims: [null, [Validators.required]],
+      keyClaims: [null, [Validators.required, Validators.max(9)]],
       description: [null, [Validators.required]],
     });
     if (this.allotment != null) {
@@ -81,7 +81,5 @@ export class ModalTypeOfClaimsComponent extends BasePage implements OnInit {
     // this.modalRef.content.callback(true);
     this.modalRef.hide();
   }
-  close() {
-    this.modalRef.hide();
-  }
+  close() {}
 }

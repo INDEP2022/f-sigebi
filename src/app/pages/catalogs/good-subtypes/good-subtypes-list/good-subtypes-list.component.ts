@@ -31,7 +31,7 @@ export class GoodSubtypesListComponent extends BasePage implements OnInit {
   ) {
     super();
     this.settings.columns = GOOD_SUBTYPES_COLUMNS;
-    this.settings.actions.delete = false;
+    this.settings.actions.delete = true;
     this.settings.actions.add = false;
     this.settings.hideSubHeader = false;
   }
@@ -106,14 +106,26 @@ export class GoodSubtypesListComponent extends BasePage implements OnInit {
       'Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        this.delete(goodSubtype.id);
+        console.log(goodSubtype);
+        this.delete(goodSubtype);
       }
     });
   }
-  delete(id: number) {
-    this.goodTypesService.remove(id).subscribe({
+  delete(data: any) {
+    const ids = {
+      id: data.id,
+      idTypeGood: data.idTypeGood.id,
+    };
+    this.goodTypesService.removeByIds(ids).subscribe({
       next: () => {
         this.getExample(), this.alert('success', 'Sub-tipo', 'Borrado');
+      },
+      error: err => {
+        this.alert(
+          'warning',
+          'Sub-tipo',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
       },
     });
   }

@@ -12,6 +12,7 @@ import { StationService } from 'src/app/core/services/catalogs/station.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { StationFormComponent } from '../station-form/station-form.component';
 import { STATION_COLUMS } from './station-columns';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-station-list',
@@ -116,7 +117,24 @@ export class StationListComponent extends BasePage implements OnInit {
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
+        this.remove(station.id);
       }
+    });
+  }
+
+  remove(id: number) {
+    this.stationService.remove(id).subscribe({
+      next: () => {
+        this.alert('success', 'Emisora', 'Borrado');
+        this.getExample();
+      },
+      error: error => {
+        this.alert(
+          'warning',
+          'Emisora',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      },
     });
   }
 }

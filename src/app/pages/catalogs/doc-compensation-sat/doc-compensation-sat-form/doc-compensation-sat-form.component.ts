@@ -40,32 +40,17 @@ export class DocCompensationSatFormComponent
       id: [null],
       officeSatId: [
         null,
-        [
-          Validators.required,
-          Validators.pattern(POSITVE_NUMBERS_PATTERN),
-          Validators.maxLength(3),
-        ],
+        [Validators.pattern(POSITVE_NUMBERS_PATTERN), Validators.maxLength(3)],
       ],
       typeDocSat: [
         null,
-        [
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(250),
-        ],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(250)],
       ],
       addressee: [
         null,
-        [
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(150),
-        ],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(150)],
       ],
-      subjectCode: [
-        null,
-        [Validators.required, Validators.pattern(POSITVE_NUMBERS_PATTERN)],
-      ],
+      subjectCode: [null, [Validators.required, Validators.maxLength(10)]],
     });
     if (this.docCompesationSat != null) {
       this.edit = true;

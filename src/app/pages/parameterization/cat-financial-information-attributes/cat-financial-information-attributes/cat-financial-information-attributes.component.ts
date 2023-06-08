@@ -14,7 +14,6 @@ import { IAttributesFinancialInfo } from 'src/app/core/models/catalogs/attribute
 //Services
 import { LocalDataSource } from 'ng2-smart-table';
 import { AttributesInfoFinancialService } from 'src/app/core/services/catalogs/attributes-info-financial-service';
-import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-cat-financial-information-attributes',
@@ -23,8 +22,7 @@ import Swal from 'sweetalert2';
 })
 export class CatFinancialInformationAttributesComponent
   extends BasePage
-  implements OnInit
-{
+  implements OnInit {
   columns: IAttributesFinancialInfo[] = [];
   data: LocalDataSource = new LocalDataSource();
   columnFilters: any = [];
@@ -125,14 +123,26 @@ export class CatFinancialInformationAttributesComponent
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(attributesFinancialInfo.id);
-        Swal.fire('Borrado', '', 'success');
       }
     });
   }
 
   delete(id: number) {
     this.attributesInfoFinancialService.remove(id).subscribe({
-      next: () => this.getAttributesFinancialInfo(),
+      next: () => {
+        this.getAttributesFinancialInfo();
+        this.alert(
+          'success',
+          'Borrado',
+          ''
+        );
+      }, error: erro => {
+        this.alert(
+          'warning',
+          'Atributos de Informaci&oacute;n Financiera',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      }
     });
   }
 }

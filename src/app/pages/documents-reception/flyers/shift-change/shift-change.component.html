@@ -138,13 +138,14 @@
               [data]="users"
               bindLabel="userAndName"
               [searchOnInit]="true"
-              termMaxLength="30">
+              termMaxLength="30"
+              (change)="getUserSelected($event)">
             </ngx-select>
           </form-field>
         </div>
       </div>
-      <br /><br /><br />
-      <div class="row w-100">
+
+      <div class="row w-100 mt-3">
         <div class="col-sm-12 col-12 col-md-12 p-2 alert alert-info">
           <span>
             SELECCIONA AL MENOS UN ACTA O UN DICTAMEN PARA GUARDAR&#46;</span
@@ -154,62 +155,41 @@
       <div class="row mt-3">
         <div class="col-md-6">
           <h5 class="text-center">Dictaminaciones</h5>
-          <div
-            [ngClass]="{
-              'height-limit': dictumColumns.length > 0,
-              'height-min': dictumColumns.length == 0
-            }">
-            <div>
-              <ng-scrollbar track="horizontal" [autoHeightDisabled]="false">
-                <div
-                  [class]="loading ? 'table-loading' : ''"
-                  class="overflow-auto">
-                  <ng2-smart-table
-                    class="col-md-12"
-                    [settings]="dictumSettings"
-                    [source]="dictumColumns"
-                    [attr.class]="'table-responsive table-bordered'"
-                    (userRowSelect)="selectDictums($event)">
-                  </ng2-smart-table>
-                  <app-pagination
-                    [params]="paramsDict"
-                    [totalItems]="totalItemsDic"></app-pagination>
-                </div>
-              </ng-scrollbar>
+          <ng-scrollbar track="horizontal" [autoHeightDisabled]="false">
+            <div [class]="loading ? 'table-loading' : ''" class="overflow-auto">
+              <ng2-smart-table
+                class="col-md-12"
+                [settings]="dictumSettings"
+                [source]="dictumColumns"
+                [attr.class]="'table-responsive table-bordered'"
+                (userRowSelect)="selectDictums($event)">
+              </ng2-smart-table>
+              <app-pagination
+                [params]="paramsDict"
+                [totalItems]="totalItemsDic"></app-pagination>
             </div>
-          </div>
+          </ng-scrollbar>
         </div>
         <div class="col-md-6">
           <h5 class="text-center">Actas</h5>
-          <div
-            [ngClass]="{
-              'height-limit': proceedingColumns.length > 0,
-              'height-min': proceedingColumns.length == 0
-            }">
-            <div>
-              <ng-scrollbar track="horizontal" [autoHeightDisabled]="false">
-                <div
-                  [class]="loading ? 'table-loading' : ''"
-                  class="overflow-auto">
-                  <ng2-smart-table
-                    class="col-md-12"
-                    [settings]="proceedingSettings"
-                    [source]="proceedingColumns"
-                    [attr.class]="'table-responsive table-bordered'"
-                    (userRowSelect)="selectProceedings($event)">
-                  </ng2-smart-table>
-                  <app-pagination
-                    [params]="paramsActas"
-                    [totalItems]="totalItemsActas"></app-pagination>
-                </div>
-              </ng-scrollbar>
+          <ng-scrollbar track="horizontal" [autoHeightDisabled]="false">
+            <div [class]="loading ? 'table-loading' : ''" class="overflow-auto">
+              <ng2-smart-table
+                class="col-md-12"
+                [settings]="proceedingSettings"
+                [source]="proceedingColumns"
+                [attr.class]="'table-responsive table-bordered'"
+                (userRowSelect)="selectProceedings($event)">
+              </ng2-smart-table>
+              <app-pagination
+                [params]="paramsActas"
+                [totalItems]="totalItemsActas"></app-pagination>
             </div>
-          </div>
+          </ng-scrollbar>
         </div>
       </div>
-      <br /><br />
 
-      <div class="row pt-5">
+      <div class="row mt-5">
         <form-field
           [control]="turnForm.get('argument')"
           label="Argumento"

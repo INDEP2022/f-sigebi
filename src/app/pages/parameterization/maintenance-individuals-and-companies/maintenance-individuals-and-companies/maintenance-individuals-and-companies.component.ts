@@ -61,7 +61,10 @@ export class MaintenanceIndividualsAndCompaniesComponent
       streetNumber: [null, [Validators.maxLength(10)]],
       apartmentNumber: [null, [Validators.maxLength(10)]],
       suburb: [null, [Validators.maxLength(100)]],
-      zipCode: [null, Validators.pattern(NUMBERS_PATTERN)],
+      zipCode: [
+        null,
+        [Validators.pattern(NUMBERS_PATTERN), Validators.maxLength(5)],
+      ],
       delegation: [null, [Validators.maxLength(100)]],
       federative: [null],
       phone: [
@@ -73,9 +76,9 @@ export class MaintenanceIndividualsAndCompaniesComponent
       curp: [null, [Validators.pattern(CURP_PATTERN)]],
       curriculumV: [null],
       curriculum: ['N'],
-      typePerson: [null, Validators.required],
+      typePerson: [null, [Validators.required]],
       keyOperation: [null],
-      profile: [null, [Validators.maxLength(500)]],
+      profile: [null, [Validators.required, Validators.maxLength(500)]],
       manager: [null, [Validators.maxLength(60)]],
       numberDeep: [null, [Validators.maxLength(20)]],
       keyEntFed: [null, [Validators.required]],
@@ -133,7 +136,10 @@ export class MaintenanceIndividualsAndCompaniesComponent
             this.handleSuccess();
             this.loading = false;
           },
-          error: error => this.onLoadToast('error', error.error.message, ''),
+          error: error => {
+            this.onLoadToast('error', error.error.message, '');
+            this.loading = false;
+          },
         });
       } else {
         this.personService.create(this.form.value).subscribe({

@@ -2191,11 +2191,6 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
             .paOpenProceedingProgam(modelPaOpen)
             .subscribe(
               res => {
-                this.labelActa = 'Cerrar acta';
-                this.btnCSSAct = 'btn-primary';
-                this.form.get('statusProceeding').setValue('ABIERTA');
-                this.reopening = true;
-                this.inputsReopenProceeding();
                 this.alert(
                   'success',
                   'Acta abierta',
@@ -2206,10 +2201,11 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                     .paRegresaEstAnterior(modelPaOpen)
                     .subscribe(
                       res => {
-                        this.labelActa = 'Abrir acta';
-                        this.btnCSSAct = 'btn-success';
-                        this.form.get('statusProceeding').setValue('CERRADO');
-                        this.inputsInProceedingClose();
+                        this.labelActa = 'Cerrar acta';
+                        this.btnCSSAct = 'btn-primary';
+                        this.form.get('statusProceeding').setValue('ABIERTA');
+                        this.reopening = true;
+                        this.inputsReopenProceeding(); /*  */
                         this.saveDataAct = [];
                         /* const btn = document.getElementById('expedient-number');
                         this.render.removeClass(btn, 'disabled');
@@ -2925,6 +2921,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                       );
                       this.inputsInProceedingClose();
                       this.getGoodsActFn();
+
                       this.getGoodsFn();
                     },
                     err => {

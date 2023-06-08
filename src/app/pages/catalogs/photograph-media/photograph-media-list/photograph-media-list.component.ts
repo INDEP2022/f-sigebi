@@ -114,10 +114,14 @@ export class PhotographMediaListComponent extends BasePage implements OnInit {
   ShowDeleteAlert(id: number) {
     this.photographMediaService.removeCatalogPhotographMedia(id).subscribe({
       next: () => {
-        this.getExample(), this.alert('success', 'Genérico', 'Borrado');
+        this.getExample(), this.alert('success', 'Medio Fotografía', 'Borrado');
       },
       error: error => {
-        this.alert('warning', 'Genérico', error.error.message);
+        this.alert(
+          'warning',
+          'Medio Fotografía',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
       },
     });
   }

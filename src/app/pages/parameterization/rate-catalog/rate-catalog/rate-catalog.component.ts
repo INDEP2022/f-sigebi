@@ -2,8 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { ParameterBaseCatService } from 'src/app/core/services/catalogs/rate-catalog.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { ModalRatesCatalogComponent } from '../modal-rates-catalog/modal-rates-catalog.component';
+import { RATECATALOG_COLUMS } from './rate-catalog-columns';
 
 @Component({
   selector: 'app-rate-catalog',
@@ -14,8 +16,12 @@ export class RateCatalogComponent extends BasePage implements OnInit {
   columns: any[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
+  paragraphs: any[] = [];
 
-  constructor(private modalService: BsModalService) {
+  constructor(
+    private modalService: BsModalService,
+    private rateCatalogService: ParameterBaseCatService
+  ) {
     super();
     this.settings = {
       ...this.settings,
@@ -44,9 +50,14 @@ export class RateCatalogComponent extends BasePage implements OnInit {
         },
       },
     };
+    this.settings.columns = RATECATALOG_COLUMS;
+    this.settings.actions.delete = true;
+    this.settings.actions.add = false;
+    this.settings.hideSubHeader = false;
   }
 
   ngOnInit(): void {
+    this.getExample();
     this.getPagination();
   }
 
@@ -73,6 +84,19 @@ export class RateCatalogComponent extends BasePage implements OnInit {
     this.columns = this.data;
     this.totalItems = this.data.length;
     this.loading = false;
+  }
+
+  getExample() {
+    this.loading = true;
+    this.rateCatalogService.getItems(this.params.getValue()).subscribe({
+      next: response => {
+        console.log('TESDSASD', response);
+        this.paragraphs = response.data;
+        this.totalItems = response.count;
+        this.loading = false;
+      },
+      error: error => (this.loading = false),
+    });
   }
 
   getPagination() {
