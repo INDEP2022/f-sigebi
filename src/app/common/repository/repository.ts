@@ -14,7 +14,7 @@ import { IRepository } from './interfaces/repository.interface';
 
 @Injectable({ providedIn: 'root' })
 export class Repository<T> implements IRepository<T> {
-  constructor(public readonly httpClient: HttpClient) { }
+  constructor(public readonly httpClient: HttpClient) {}
 
   getAllPaginated(
     route: string,
@@ -56,6 +56,12 @@ export class Repository<T> implements IRepository<T> {
   updateManegement(route: string, id: number | string, formData: Object) {
     const fullRoute = this.buildRoute(route);
     return this.httpClient.put(`${fullRoute}/id/${id}`, formData);
+  }
+
+  updateSaveValue(route: string, id: number | string, formData: any) {
+    const fullRoute = this.buildRoute(route);
+    formData.id = id;
+    return this.httpClient.put(`${fullRoute}`, formData);
   }
 
   updateResponseRepuve(route: string, id: number | string, formData: Object) {
@@ -126,6 +132,7 @@ export class Repository<T> implements IRepository<T> {
   }
 
   private buildRoute(route: string) {
+    // debugger;
     const paths = route.split('/');
     paths.shift();
     if (paths.length === 0) {
