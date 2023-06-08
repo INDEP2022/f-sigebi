@@ -145,7 +145,6 @@ export class DelegationStateListComponent extends BasePage implements OnInit {
           delegationSate.regionalDelegation.id,
           delegationSate.stateCode.codeCondition
         );
-        Swal.fire('Borrado', 'Delegacione Estado', 'success');
       }
     });
   }
@@ -156,7 +155,14 @@ export class DelegationStateListComponent extends BasePage implements OnInit {
           .pipe(takeUntil(this.$unSubscribe))
           .subscribe(() => this.getData());
         this.alert('success', 'Delegacione Estado', 'Borrado');
+      }, error: err => {
+        this.alert(
+          'warning',
+          'Sub-tipo',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
       },
+
     });
   }
 }
