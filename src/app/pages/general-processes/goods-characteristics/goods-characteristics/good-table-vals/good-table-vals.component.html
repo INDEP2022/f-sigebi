@@ -13,7 +13,7 @@
   </div>
 </div>
 
-<table class="table-responsive table-bordered">
+<table>
   <thead>
     <tr>
       <th>Acciones</th>
@@ -84,6 +84,26 @@
     </tr>
   </tbody>
 </table>
+
+<div class="row">
+  <div class="col-md-3">
+    <button
+      type="button"
+      class="btn-sm btn-danger active"
+      (click)="openModal1()">
+      openModal1
+    </button>
+  </div>
+  <div class="col-md-3">
+    <button
+      type="button"
+      class="btn-sm btn-danger active"
+      (click)="openModal2()">
+      openModal2
+    </button>
+  </div>
+</div>
+
 <app-pagination
   [params]="params"
   [pageSizeOptions]="pageSizeOptions"

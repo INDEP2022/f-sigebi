@@ -1,3 +1,20 @@
-<a>
-  <span class="fa fa-eye text-success mx-2"></span>
-</a>
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Modal</h5>
+  </div>
+  <div body>HYola</div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [type]="'button'"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

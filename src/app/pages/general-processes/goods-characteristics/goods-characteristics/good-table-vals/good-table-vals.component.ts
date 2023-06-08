@@ -1,7 +1,9 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
+import { BsModalService } from 'ngx-bootstrap/modal';
 import { ToastrService } from 'ngx-toastr';
 import { BehaviorSubject, Subject, takeUntil } from 'rxjs';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import {
   FilterParams,
   ListParams,
@@ -17,6 +19,7 @@ import {
 } from 'src/app/shared/utils/date';
 import { SweetAlertIcon } from 'sweetalert2';
 import { GoodsCharacteristicsService } from '../../services/goods-characteristics.service';
+import { GoodTableDetailButtonComponent } from './good-table-detail-button/good-table-detail-button.component';
 
 export interface IVal {
   column: string;
@@ -53,7 +56,8 @@ export class GoodTableValsComponent implements OnInit {
   constructor(
     private goodsqueryService: GoodsQueryService,
     private goodService: GoodService,
-    private service: GoodsCharacteristicsService
+    private service: GoodsCharacteristicsService,
+    private modalService: BsModalService
   ) {
     this.params.value.limit = 5;
   }
@@ -297,4 +301,16 @@ export class GoodTableValsComponent implements OnInit {
       },
     });
   }
+
+  openModal1() {
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      callback: (next: boolean) => {
+        //if (next)
+      },
+    };
+    this.modalService.show(GoodTableDetailButtonComponent, modalConfig);
+  }
+
+  openModal2() {}
 }
