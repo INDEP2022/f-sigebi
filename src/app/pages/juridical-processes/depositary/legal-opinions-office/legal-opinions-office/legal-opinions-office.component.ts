@@ -1411,7 +1411,7 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
         this.officeDictationData.delegacionRecipientNumber =
           event.delegationNumber;
         event.delegationNumber;
-        this.officeDictationData.delegacionRecipientNumber =
+        this.officeDictationData.recipientDepartmentNumber =
           event.departamentNumber;
         // this.officeDictationData.sender
         const params: any = new FilterParams();
@@ -1421,6 +1421,7 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
           .getAllUsersTracker(params.getParams())
           .subscribe({
             next: data => {
+              console.log(data);
               this.officeDictationData.cveChargeRem = data.data[0].postKey;
             },
             error: error => {},
