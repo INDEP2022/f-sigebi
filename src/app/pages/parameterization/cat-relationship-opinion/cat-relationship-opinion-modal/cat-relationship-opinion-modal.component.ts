@@ -22,7 +22,8 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 })
 export class CatRelationshipOpinionModalComponent
   extends BasePage
-  implements OnInit {
+  implements OnInit
+{
   rAsuntDicForm: ModelForm<IRAsuntDic>;
   rAsuntDic: IRAsuntDic;
 

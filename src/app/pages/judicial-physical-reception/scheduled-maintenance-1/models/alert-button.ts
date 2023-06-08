@@ -1,4 +1,4 @@
-import { SweetalertModel } from 'src/app/core/shared/base-page';
+import { SweetalertModel } from 'src/app/core/shared';
 import Swal, { SweetAlertIcon, SweetAlertResult } from 'sweetalert2';
 
 export class AlertButton {

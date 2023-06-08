@@ -31,7 +31,7 @@ export class GenericsListComponent extends BasePage implements OnInit {
   ) {
     super();
     this.settings.columns = GENERICS_COLUMNS;
-    this.settings.actions.delete = false;
+    this.settings.actions.delete = true;
     this.settings.actions.add = false;
     this.settings.hideSubHeader = false;
   }
@@ -124,7 +124,11 @@ export class GenericsListComponent extends BasePage implements OnInit {
         this.getExample(), this.alert('success', 'Genérico', 'Borrado');
       },
       error: error => {
-        this.alert('warning', 'Genérico', error.error.message);
+        this.alert(
+          'warning',
+          'Genérico',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
       },
     });
   }

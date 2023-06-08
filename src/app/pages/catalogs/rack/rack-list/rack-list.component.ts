@@ -25,7 +25,7 @@ export class RackListComponent extends BasePage implements OnInit {
   ) {
     super();
     this.settings.columns = RACK_COLUMNS;
-    this.settings.actions.delete = true;
+    this.settings.actions.delete = false;
   }
 
   ngOnInit(): void {
@@ -67,8 +67,24 @@ export class RackListComponent extends BasePage implements OnInit {
       'Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        //this.rackService.remove(rack.id);
+        this.remove(rack.id);
       }
+    });
+  }
+
+  remove(id: number) {
+    this.rackService.remove(id).subscribe({
+      next: () => {
+        this.alert('success', 'Estantes', 'Borrado');
+        this.getExample();
+      },
+      error: error => {
+        this.alert(
+          'warning',
+          'Estantes',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      },
     });
   }
 }

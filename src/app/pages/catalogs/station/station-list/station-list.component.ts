@@ -50,7 +50,11 @@ export class StationListComponent extends BasePage implements OnInit {
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
             switch (filter.field) {
-              case 'keyId':
+              case 'transferent':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}.nameTransferent`;
+                break;
+              case 'id':
                 searchFilter = SearchFilter.EQ;
                 break;
               default:
@@ -112,7 +116,24 @@ export class StationListComponent extends BasePage implements OnInit {
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
+        this.remove(station.id);
       }
+    });
+  }
+
+  remove(id: number) {
+    this.stationService.remove(id).subscribe({
+      next: () => {
+        this.alert('success', 'Emisora', 'Borrado');
+        this.getExample();
+      },
+      error: error => {
+        this.alert(
+          'warning',
+          'Emisora',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      },
     });
   }
 }

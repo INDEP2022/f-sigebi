@@ -50,7 +50,7 @@ export class RevisionReasonListComponent extends BasePage implements OnInit {
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
             switch (filter.field) {
-              case 'keyId':
+              case 'id':
                 searchFilter = SearchFilter.EQ;
                 break;
               default:
@@ -113,7 +113,24 @@ export class RevisionReasonListComponent extends BasePage implements OnInit {
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
+        this.remove(batch.id);
       }
+    });
+  }
+
+  remove(id: number) {
+    this.revisionReasonService.remove(id).subscribe({
+      next: () => {
+        this.getExample(),
+          this.alert('success', 'Motivo de Revisión', 'Borrado');
+      },
+      error: error => {
+        this.alert(
+          'warning',
+          'Motivo de Revisión',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      },
     });
   }
 }
