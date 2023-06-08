@@ -11,7 +11,7 @@ import { ISubdelegation } from '../../models/catalogs/subdelegation.model';
 })
 export class SubdelegationService implements ICrudMethods<ISubdelegation> {
   private readonly route: string = ENDPOINT_LINKS.Subdelegation;
-  constructor(private subdelegationRepository: Repository<ISubdelegation>) {}
+  constructor(private subdelegationRepository: Repository<ISubdelegation>) { }
 
   getAll(params?: ListParams): Observable<IListResponse<ISubdelegation>> {
     return this.subdelegationRepository.getAllPaginated(this.route, params);
@@ -29,7 +29,7 @@ export class SubdelegationService implements ICrudMethods<ISubdelegation> {
     return this.subdelegationRepository.update(this.route, id, model);
   }
 
-  remove(id: string | number): Observable<Object> {
-    return this.subdelegationRepository.remove(this.route, id);
+  remove(model: any): Observable<Object> {
+    return this.subdelegationRepository.remove3(this.route, model);
   }
 }

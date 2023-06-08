@@ -8,7 +8,6 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { IRack } from '../../../../core/models/catalogs/rack.model';
 import { RackFormComponent } from '../rack-form/rack-form.component';
 import { RACK_COLUMNS } from './rack-columns';
-import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-rack-list',
@@ -26,7 +25,7 @@ export class RackListComponent extends BasePage implements OnInit {
   ) {
     super();
     this.settings.columns = RACK_COLUMNS;
-    this.settings.actions.delete = true;
+    this.settings.actions.delete = false;
   }
 
   ngOnInit(): void {

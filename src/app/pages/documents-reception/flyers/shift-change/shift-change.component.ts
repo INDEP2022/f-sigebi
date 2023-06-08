@@ -643,7 +643,6 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
       this.selectedDictums.push(event.data);
     }
     //console.log(this.selectedDictums);
-
     if (
       this.selectedDictums.length === 0 &&
       this.selectedProceedings.length === 0

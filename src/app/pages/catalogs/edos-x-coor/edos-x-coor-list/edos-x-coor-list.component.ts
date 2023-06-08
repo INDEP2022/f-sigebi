@@ -8,7 +8,6 @@ import { EdosXCoorService } from 'src/app/core/services/catalogs/edos-x-coor.ser
 import { BasePage } from 'src/app/core/shared/base-page';
 import { EdosXCoorFormComponent } from '../edos-x-coor-form/edos-x-coor-form.component';
 import { EDOSXCOOR_COLUMS } from './edos-x-coor-columns';
-import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-edos-x-coor-list',
