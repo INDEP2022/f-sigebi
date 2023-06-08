@@ -8,6 +8,7 @@ import { ResponseRepuveService } from 'src/app/core/services/catalogs/response-r
 import { BasePage } from 'src/app/core/shared/base-page';
 import { ResponseRepuveFormComponent } from '../response-repuve-form/response-repuve-form.component';
 import { RESPONSE_REPUVE_COLUMNS } from './response-repuve-columns';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-response-repuve-list',
@@ -69,8 +70,24 @@ export class ResponseRepuveListComponent extends BasePage implements OnInit {
       'Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        //this.responseRepuveService.remove(responseRepuve.id);
+        this.remove(responseRepuve.id);
       }
+    });
+  }
+
+  remove(id: number) {
+    this.responseRepuveService.remove(id).subscribe({
+      next: () => {
+        this.alert('success', 'Respuesta Repuve', 'Borrado');
+        this.getExample();
+      },
+      error: error => {
+        this.alert(
+          'warning',
+          'Respuestas Repuve',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      },
     });
   }
 }

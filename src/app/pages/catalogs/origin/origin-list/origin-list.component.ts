@@ -112,14 +112,23 @@ export class OriginListComponent extends BasePage implements OnInit {
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(origins.id);
-        Swal.fire('Borrado', '', 'success');
       }
     });
   }
 
   delete(id: number) {
     this.originService.remove(id).subscribe({
-      next: () => this.getExample(),
+      next: () => {
+        this.alert('success', 'Procedencias', 'Borrado');
+        this.getExample();
+      },
+      error: error => {
+        this.alert(
+          'warning',
+          'Procedencias',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      },
     });
   }
 }

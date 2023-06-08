@@ -11,6 +11,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { SiseProcessService } from '../../../../core/services/catalogs/sise-process.service';
 import { SiseProcessFormComponent } from '../sise-process-form/sise-process-form.component';
 import { SISI_PROCESS_COLUMNS } from './sisi-process-columns';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-sise-process-list',
@@ -110,11 +111,24 @@ export class SiseProcessListComponent extends BasePage implements OnInit {
       'Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        this.siseProcessService.remove(sisi.id).subscribe({
-          next: () => this.getExample(),
-        });
-        // this.siseProcessService.remove(sisi.id);
+        this.remove(sisi.id);
       }
+    });
+  }
+
+  remove(id: number) {
+    this.siseProcessService.remove(id).subscribe({
+      next: () => {
+        this.alert('success', 'Procesos Sise', 'Borrado');
+        this.getExample();
+      },
+      error: error => {
+        this.alert(
+          'warning',
+          'Procesos Sise',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      },
     });
   }
 }
