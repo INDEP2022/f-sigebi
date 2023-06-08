@@ -372,22 +372,32 @@ export class AppointmentsComponent
     // Llama pantalla FMASINSPAGDEPOSITARIAS
     this.router.navigate(
       ['/pages/juridical/depositary/bulk-loading-depository-cargo'],
-      {
-        // queryParams: {
-        //   origin: this.origin3,
-        //   P_GEST_OK: this.paramsScreen.P_GEST_OK,
-        //   P_NO_TRAMITE: this.paramsScreen.P_NO_TRAMITE,
-        // },
-      }
+      {}
     );
   }
 
   btnConceptsPaysCatalogs() {
     console.log('Conceptos de Pagos');
+    // Llama pantalla FCATCATCONCEPPAGO
+    // this.router.navigate(
+    //   ['/pages/juridical/depositary/bulk-loading-depository-cargo'],
+    //   {
+    //     // queryParams: {
+    //     //   origin: this.origin3,
+    //     //   P_GEST_OK: this.paramsScreen.P_GEST_OK,
+    //     //   P_NO_TRAMITE: this.paramsScreen.P_NO_TRAMITE,
+    //     // },
+    //   }
+    // );
   }
 
   btnDepositaryCatalog() {
     console.log('Cátalogo Depositarias');
+    // Llama pantalla FCATCATMTOPERSONA
+    this.router.navigate(
+      ['/pages/parameterization/maintenance-individuals-and-companies'],
+      {}
+    );
   }
 
   btnFolioEscaneoSolicitud() {

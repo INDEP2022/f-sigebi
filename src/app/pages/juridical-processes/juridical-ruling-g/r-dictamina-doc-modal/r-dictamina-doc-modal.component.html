@@ -5,9 +5,11 @@
   <div body>
     <div class="col-sm-12 col-12 col-md-12 p-2">
       <ng2-smart-table
+        #tabla
         [attr.class]="'table-bordered'"
         [settings]="settings"
         (edit)="openForm($event.data)"
+        (userRowSelect)="selectProceedings($event)"
         [source]="dataDocuments"></ng2-smart-table>
     </div>
   </div>
