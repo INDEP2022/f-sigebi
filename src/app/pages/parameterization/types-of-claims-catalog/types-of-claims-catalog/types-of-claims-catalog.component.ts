@@ -6,7 +6,6 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { ModalTypeOfClaimsComponent } from '../modal-type-of-claims/modal-type-of-claims.component';
 import { TypesOfClaimsService } from '../types-of-claims.service';
-import { truncateNDecimals } from 'src/app/utils/functions/truncate.function';
 
 @Component({
   selector: 'app-types-of-claims-catalog',
