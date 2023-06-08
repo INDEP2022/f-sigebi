@@ -41,7 +41,7 @@ export class SegAcessXAreasService extends HttpService {
   }
 
   userHavePermissions(body: any) {
-    const route = UserEndpoints.VigSupervisionAccess;
+    const route = UserEndpoints.askForPermissions;
     return this.post(`${route}`, body);
   }
 }

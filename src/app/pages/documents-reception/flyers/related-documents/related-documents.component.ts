@@ -117,6 +117,7 @@ export class RelatedDocumentsComponent
   // userCopies2 = new DefaultSelect();
   dataGoodTable: LocalDataSource = new LocalDataSource();
   m_job_management: any = null;
+  authUser: any = null;
   pantalla = (option: boolean) =>
     `${
       option == true
@@ -225,6 +226,7 @@ export class RelatedDocumentsComponent
   ) {
     super();
     console.log(authService.decodeToken());
+    this.authUser = authService.decodeToken();
     this.settings3 = {
       ...this.settings,
       actions: {
@@ -1665,7 +1667,7 @@ export class RelatedDocumentsComponent
     });
   }
 
-  showDeleteAlert(legend: any) {
+  async showDeleteAlert(legend?: any) {
     //ILegend
     //Desea eliminar el oficio con el expediente ${proceedingsNumber} y No. Oficio ${managementNumber}
     /*
@@ -1705,17 +1707,19 @@ export class RelatedDocumentsComponent
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      `Desea eliminar el oficio con el expediente ${proceedingsNumber} y No. Oficio ${managementNumber}`
     ).then(question => {
       if (question.isConfirmed) {
-        this.delete(legend.id);
+        this.delete(managementNumber, noVolante);
         Swal.fire('Borrado', '', 'success');
       }
     });
   }
 
-  delete(id: number) {
-    this.serviceOficces.deleteCopiesJobManagement(id).subscribe({
+  delete(managementNumber: number | string, noVolante: number | string) {
+    //trabajando en eliminar
+    return;
+    /* this.serviceOficces.deleteCopiesJobManagement(id).subscribe({
       next: resp => {
         console.log('resp  =>  ' + resp);
         this.refreshTabla();
@@ -1724,6 +1728,13 @@ export class RelatedDocumentsComponent
         this.onLoadToast('error', 'Error', errror.error.message);
       },
     });
+    //actualiza cve_dictamen 
+    const notifBody:any = {dictumKey: null}
+    this.notificationService.update(Number(noVolante),notifBody).subscribe({
+      next: resp => {
+        
+      }
+    })*/
   }
 
   changeCopiesType(event: any, ccp: number) {
