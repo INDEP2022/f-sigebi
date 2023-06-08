@@ -63,12 +63,8 @@ export class GoodSubtypeFormComponent extends BasePage implements OnInit {
         null,
         [Validators.required, Validators.pattern(POSITVE_NUMBERS_PATTERN)],
       ],
-      noRegister: [
-        null,
-      ],
-      version: [
-        null,
-      ],
+      noRegister: [null],
+      version: [null],
     });
     if (this.goodSubtype != null) {
       this.edit = true;

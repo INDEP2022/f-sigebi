@@ -13,7 +13,7 @@ export class StateOfRepublicService implements ICrudMethods<IStateOfRepublic> {
   private readonly route: string = ENDPOINT_LINKS.StateOfRepublic;
   constructor(
     private stateOfRepublicRepository: Repository<IStateOfRepublic>
-  ) { }
+  ) {}
 
   getAll(params?: ListParams): Observable<IListResponse<IStateOfRepublic>> {
     return this.stateOfRepublicRepository.getAllPaginated(this.route, params);

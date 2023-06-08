@@ -58,7 +58,14 @@ export function formatForIsoDate(
   format: 'string' | 'date' = 'date',
   replaceText: string = '-'
 ) {
-  const newValue = value ? value.substring(0, value.indexOf('T')) : null;
+  if (!value) return null;
+  const position = value.indexOf('T');
+  console.log(position);
+  const newValue = value
+    ? position > 0
+      ? value.substring(0, position)
+      : value
+    : null;
   if (newValue === null) return null;
   const values = newValue.split(replaceText);
   let mes: any = +values[1];

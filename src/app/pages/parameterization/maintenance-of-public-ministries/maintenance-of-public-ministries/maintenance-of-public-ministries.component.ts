@@ -206,7 +206,9 @@ export class MaintenanceOfPublicMinistriesComponent
     params['filter.etapaEdo'] = 1;
 
     this.serviceDeleg.getAll(params).subscribe({
-      next: data => {this.form.get('delegation').patchValue(data.data[0].description)},
+      next: data => {
+        this.form.get('delegation').patchValue(data.data[0].description);
+      },
       error: error => this.onLoadToast('error', error.erro.message, ''),
     });
   }

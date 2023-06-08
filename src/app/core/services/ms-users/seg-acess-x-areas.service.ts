@@ -35,4 +35,13 @@ export class SegAcessXAreasService extends HttpService {
   remove(body: Partial<IUserAccessAreaRelational>) {
     return this.delete(this.route.SegAccessAreas, body);
   }
+
+  getDelegationUser(user: string) {
+    return this.get(this.route.DelegationUser + '/' + user);
+  }
+
+  userHavePermissions(body: any) {
+    const route = UserEndpoints.askForPermissions;
+    return this.post(`${route}`, body);
+  }
 }

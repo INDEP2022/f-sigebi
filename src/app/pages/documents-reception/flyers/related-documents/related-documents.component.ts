@@ -1,11 +1,16 @@
 import { DatePipe } from '@angular/common';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, takeUntil, tap } from 'rxjs';
+import { BehaviorSubject, firstValueFrom, takeUntil } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import {
@@ -15,12 +20,13 @@ import {
 } from 'src/app/common/repository/interfaces/list-params';
 import { _Params } from 'src/app/common/services/http.service';
 import { IUserRowSelectEvent } from 'src/app/core/interfaces/ng2-smart-table.interface';
+import { IDepartment } from 'src/app/core/models/catalogs/department.model';
 import { ILegend } from 'src/app/core/models/catalogs/legend.model';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { INotification } from 'src/app/core/models/ms-notification/notification.model';
 import { ICopiesJobManagementDto } from 'src/app/core/models/ms-officemanagement/good-job-management.model';
-import { IMJobManagement } from 'src/app/core/models/ms-officemanagement/m-job-management.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { DepartamentService } from 'src/app/core/services/catalogs/departament.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { DictationXGood1Service } from 'src/app/core/services/ms-dictation/dictation-x-good1.service';
 import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
@@ -29,14 +35,19 @@ import { StatusGoodService } from 'src/app/core/services/ms-good/status-good.ser
 import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
 import { ApplicationGoodsQueryService } from 'src/app/core/services/ms-goodsquery/application.service';
 import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive-good.service';
+import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import { GoodsJobManagementService } from 'src/app/core/services/ms-office-management/goods-job-management.service';
+import { MJobManagementService } from 'src/app/core/services/ms-office-management/m-job-management.service';
+import { ParametersService } from 'src/app/core/services/ms-parametergood/parameters.service';
 import { ScreenStatusService } from 'src/app/core/services/ms-screen-status/screen-status.service';
 import { SecurityService } from 'src/app/core/services/ms-security/security.service';
-import { BasePage } from 'src/app/core/shared/base-page';
+import { SegAcessXAreasService } from 'src/app/core/services/ms-users/seg-acess-x-areas.service';
 import {
   POSITVE_NUMBERS_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
+import { AddCopyComponent } from 'src/app/pages/juridical-processes/abandonments-declaration-trades/abandonments-declaration-trades/add-copy/add-copy.component';
+import { EXTERNOS_COLUMS_OFICIO } from 'src/app/pages/juridical-processes/abandonments-declaration-trades/abandonments-declaration-trades/columns';
 import { LegalOpinionsOfficeService } from 'src/app/pages/juridical-processes/depositary/legal-opinions-office/legal-opinions-office/services/legal-opinions-office.service';
 import { IJuridicalDocumentManagementParams } from 'src/app/pages/juridical-processes/file-data-update/interfaces/file-data-update-parameters';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -56,7 +67,9 @@ import {
   TEXT1Abandono,
   TEXT2,
 } from './related-documents-message';
+import { RelateDocumentsResponse } from './related-documents-response';
 import { RelatedDocumentsService } from './services/related-documents.service';
+
 @Component({
   selector: 'app-related-documents',
   templateUrl: './related-documents.component.html',
@@ -73,7 +86,10 @@ import { RelatedDocumentsService } from './services/related-documents.service';
     `,
   ],
 })
-export class RelatedDocumentsComponent extends BasePage implements OnInit {
+export class RelatedDocumentsComponent
+  extends RelateDocumentsResponse
+  implements OnInit
+{
   disabled: boolean = true;
   filtroPersonaExt: ICopiesJobManagementDto[] = [];
   filterParams2 = new BehaviorSubject<FilterParams>(new FilterParams());
@@ -96,6 +112,8 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
   userCopies1 = new DefaultSelect();
   userCopies2 = new DefaultSelect();
   dataGoodTable: LocalDataSource = new LocalDataSource();
+  m_job_management: any = null;
+  authUser: any = null;
   pantalla = (option: boolean) =>
     `${
       option == true
@@ -143,7 +161,7 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
   };
   pantallaActual: string = '';
   disabledRadio: boolean = false;
-  oficioGestion: IMJobManagement;
+  // oficioGestion: IMJobManagement;
   disabledAddresse: boolean = false;
   data1: any = [];
   statusOf: string = undefined;
@@ -160,9 +178,13 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
   disabledTypes: boolean = false;
   showDestinatario: boolean = false;
   showDestinatarioInput: boolean = false;
+
+  settings3 = { ...this.settings };
+  copyOficio: any[] = [];
+
   constructor(
     private fb: FormBuilder,
-    private flyerService: FlyersService,
+    protected flyerService: FlyersService,
     private route: ActivatedRoute,
     private router: Router,
     private siabService: SiabService,
@@ -171,18 +193,35 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
     private dictationService: DictationService,
     private serviceRelatedDocumentsService: RelatedDocumentsService,
     private securityService: SecurityService,
-    private serviceOficces: GoodsJobManagementService,
-    private readonly authService: AuthService,
+    protected serviceOficces: GoodsJobManagementService,
+    protected readonly authService: AuthService,
     private applicationGoodsQueryService: ApplicationGoodsQueryService,
     private svLegalOpinionsOfficeService: LegalOpinionsOfficeService,
-    private readonly goodServices: GoodService,
+    protected readonly goodServices: GoodService,
     private statusGoodService: StatusGoodService,
     private screenStatusService: ScreenStatusService,
     private DictationXGood1Service: DictationXGood1Service,
     private goodprocessService: GoodprocessService,
-    private massiveGoodService: MassiveGoodService
+    private massiveGoodService: MassiveGoodService,
+    protected notificationService: NotificationService,
+    protected mJobManagementService: MJobManagementService,
+    protected parametersService: ParametersService,
+    protected departmentService: DepartamentService,
+    private segAccessAreasService: SegAcessXAreasService
   ) {
     super();
+    console.log(authService.decodeToken());
+    this.authUser = authService.decodeToken();
+    this.settings3 = {
+      ...this.settings,
+      actions: {
+        edit: false,
+        add: false,
+        delete: true,
+      },
+      hideSubHeader: false,
+      columns: { ...EXTERNOS_COLUMS_OFICIO },
+    };
     RELATED_DOCUMENTS_COLUMNS_GOODS.seleccion = {
       ...RELATED_DOCUMENTS_COLUMNS_GOODS.seleccion,
       onComponentInitFunction: this.onClickSelect,
@@ -196,19 +235,30 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
       actions: false,
       selectMode: 'multi',
       columns: { ...RELATED_DOCUMENTS_COLUMNS_GOODS },
+      rowClassFunction: (row: any) => {
+        if (!row.data.available) {
+          return 'bg-dark text-white disabled-custom';
+        } else {
+          return 'bg-success text-white';
+        }
+      },
     };
   }
 
   disabledChecks() {
-    const tabla = document.getElementById('goods');
-    const types = document.getElementById('typesFilters');
-    const tbody = tabla.children[0].children[1].children;
-    for (let index = 0; index < tbody.length; index++) {
-      const element = tbody[index];
-      element.children[7].classList.add('not-press');
-      element.children[8].classList.add('not-press');
-    }
-    types.classList.add('not-press');
+    this.goodFilterParams('Todos');
+    this.managementForm.controls['averiPrevia'].setValue('Todos');
+    setTimeout(() => {
+      const tabla = document.getElementById('goods');
+      const types = document.getElementById('typesFilters');
+      const tbody = tabla.children[0].children[1].children;
+      for (let index = 0; index < tbody.length; index++) {
+        const element = tbody[index];
+        element.children[7].classList.add('not-press');
+        element.children[8].classList.add('not-press');
+      }
+      types.classList.add('not-press');
+    }, 2000);
   }
 
   enableChecks() {
@@ -228,6 +278,171 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
       console.log(data);
       data.row.seleccion = data.toggle;
     });
+  }
+
+  openModalCopy(data: boolean) {
+    this.openFormCcp({
+      dataEdit: data,
+      managementNumber: this.formJobManagement.value.managementNumber,
+    });
+  }
+
+  openFormCcp(context?: Partial<AddCopyComponent>) {
+    const modalRef = this.modalService.show(AddCopyComponent, {
+      initialState: context,
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    });
+    modalRef.content.dataCopy.subscribe((next: any) => {
+      console.log('next', next);
+
+      if (next.typePerson_I == 'I') {
+        let array = this.copyOficio;
+        let arr = [];
+
+        let obj: any = {
+          managementNumber: null,
+          addresseeCopy: next.senderUser_I,
+          delDestinationCopyNumber: null,
+          nomPersonExt: null,
+          personExtInt: 'I',
+          recordNumber: null,
+          personExtInt_: 'INTERNO',
+          userOrPerson: next.senderUser_I + ' - ' + next.personaExt_I,
+        };
+
+        arr.push(obj);
+        for (let i = 0; i < array.length; i++) {
+          arr.push(array[i]);
+        }
+        this.copyOficio = arr;
+      } else if (next.typePerson_I == 'E') {
+        let array = this.copyOficio;
+        let arr = [];
+
+        let obj: any = {
+          managementNumber: null,
+          addresseeCopy: null,
+          delDestinationCopyNumber: null,
+          nomPersonExt: next.personaExt_I,
+          personExtInt: 'E',
+          personExtInt_: 'EXTERNO',
+          recordNumber: null,
+          userOrPerson: next.personaExt_I,
+        };
+
+        arr.push(obj);
+        for (let i = 0; i < array.length; i++) {
+          arr.push(array[i]);
+        }
+        this.copyOficio = arr;
+      }
+    });
+    modalRef.content.refresh.subscribe((next: any) => {
+      this.getCopyOficioGestion__(
+        this.formJobManagement.value.managementNumber
+      );
+    });
+  }
+
+  getCopyOficioGestion__(data: any) {
+    const params = new ListParams();
+    params['filter.managementNumber'] = `$eq:${data}`;
+    // return new Promise((resolve, reject) => {
+    this.mJobManagementService.getCopyOficeManag(data).subscribe({
+      next: async (resp: any) => {
+        // this.filtroPersonaExt = resp.data;
+        let result = resp.data.map(async (data: any) => {
+          if (data.personExtInt == 'I') {
+            data['personExtInt_'] = 'INTERNO';
+            data['userOrPerson'] = await this.getSenders2OfiM2___(
+              data.addresseeCopy
+            );
+          } else if (data.personExtInt == 'E') {
+            data['personExtInt_'] = 'EXTERNO';
+            data['userOrPerson'] = data.nomPersonExt;
+          }
+          // this.usuariosCCP(data)
+        });
+
+        Promise.all(result).then((data: any) => {
+          this.filtroPersonaExt = resp.data;
+          this.copyOficio = resp.data;
+          this.loading = false;
+        });
+
+        console.log('COPYYYY', resp);
+        this.loading = false;
+        // resolve(resp);
+      },
+      error: err => {
+        this.loading = false;
+        // resolve(null);
+      },
+    });
+    // });
+  }
+
+  async getSenders2OfiM2___(user: any) {
+    const params = new ListParams();
+    params['filter.user'] = `$eq:${user}`;
+    return new Promise((resolve, reject) => {
+      this.securityService.getAllUsersTracker(params).subscribe(
+        (data: any) => {
+          // this.formCcpOficio.get('nombreUsuario2').setValue(data.data[0]);
+          console.log('COPYY2', data);
+          let result = data.data.map(async (item: any) => {
+            item['userAndName'] = item.user + ' - ' + item.name;
+          });
+
+          resolve(data.data[0].userAndName);
+
+          this.loading = false;
+        },
+        error => {
+          resolve(null);
+          this.senders = new DefaultSelect();
+        }
+      );
+    });
+  }
+
+  showDeleteAlertCcp(event: any) {
+    console.log(event.id);
+    this.alertQuestion('question', 'Se borra el remitente?', '').then(
+      async question => {
+        if (question.isConfirmed) {
+          if (event.id == undefined) {
+            let arr = [];
+            for (let i = 0; i < this.copyOficio.length; i++) {
+              if (this.copyOficio[i] != event) {
+                arr.push(this.copyOficio[i]);
+              }
+            }
+            this.onLoadToast('success', 'Se eliminó correctamente', '');
+            this.copyOficio = arr;
+          } else {
+            this.mJobManagementService
+              .deleteCopyOficeManag(event.id)
+              .subscribe({
+                next: value => {
+                  let arr = [];
+
+                  for (let i = 0; i < this.copyOficio.length; i++) {
+                    if (this.copyOficio[i].id != event.id) {
+                      arr.push(this.copyOficio[i]);
+                    }
+                  }
+
+                  this.copyOficio = arr;
+                  this.onLoadToast('success', 'Se eliminó correctamente', '');
+                },
+                error: err => {},
+              });
+          }
+        }
+      }
+    );
   }
 
   onClickImprocedente(event: any) {
@@ -261,11 +476,12 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
       return;
     } else {
       if (this.pantallaActual == '2' || this.pantallaActual == '1') {
+        this.initForm();
         this.setDataParams();
         this.pantallaOption = this.flyerService.getPantallaOption(
           this.pantallaActual
         );
-        let params = this.flyerService.getParams(true);
+        // let params = this.flyerService.getParams(true);
         // console.log(params, this.pantallaOption, this.pantallaActual);
         this.paramsGestionDictamen.sale = 'C';
         // if (params['parametros']) {
@@ -295,15 +511,22 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
         });
       }
     }
-    this.params
+    this.getTypesSelectors();
+    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(res => {
+      this.goodFilterParams('Todos');
+    });
+    /*this.params
       .pipe(
+        skip(1),
         takeUntil(this.$unSubscribe),
         tap(() => {
           this.getTypesSelectors();
-          this.onLoadGoodList('all');
+          this.onLoadGoodList('Todos');
         })
       )
-      .subscribe();
+      .subscribe(res => {
+        this.getGoods1(res);
+      });*/
     if (this.paramsGestionDictamen.tipoOf == 'INTERNO') {
       this.showDestinatario = true;
     } else {
@@ -454,6 +677,7 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
       ccp5: [null],
       averiPrevia: ['', [Validators.required]], //*
       ccp6: [null],
+      wheelStatus: [null],
     });
   }
 
@@ -475,57 +699,208 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
     // }
   }
 
-  async validOficioGestion() {
-    const params = new FilterParams();
-    params.addFilter(
-      'managementNumber',
-      this.managementForm.get('numero').value
-    );
-    params.addFilter('jobBy', 'POR DICTAMEN');
-    await this.flyerService.getMOficioGestion(params.getParams()).subscribe({
-      next: res => {
-        console.log('Dicataminacion', res.data[0]);
-        if (res.count == 0) {
-          // this.getDictationByWheel();
-        } else {
-          this.oficioGestion = res.data[0];
-          this.statusOf = res.data[0].statusOf;
-          this.setDataOficioGestion();
-          // Se tiene el registro
-          this.initFormFromImages();
+  formNotification = new FormGroup({
+    /** @descripiton  no_volante*/
+    wheelNumber: new FormControl(null),
+    /** @descripition no_expediente */
+    expedientNumber: new FormControl(null),
+    /** @descripition no_registro*/
+    registerNumber: new FormControl(null),
+    /** @descripition  AVERIGUACION_PREVIA*/
+    preliminaryInquiry: new FormControl(null),
+    /** @description causa_penal*/
+    criminalCase: new FormControl(null),
+    /** @description tipo_volante */
+    wheelType: new FormControl(null),
+    /** @description tipo_oficio */
+  });
+
+  formJobManagement = new FormGroup({
+    /** @description no_volante */
+    flyerNumber: new FormControl(''),
+    /** @description tipo_oficio */
+    jobType: new FormControl(''),
+    /** @description no_of_gestion */
+    managementNumber: new FormControl(''),
+    /** @description  destinatario*/
+    addressee: new FormControl<{
+      user: number | string;
+      name: string;
+      userAndName: string;
+    }>(null),
+    sender: new FormControl<{
+      id: number | string;
+      name: string;
+      idName: string;
+    }>(null), // remitente
+    /** @descripiton  cve_cargo_rem*/
+    cveChargeRem: new FormControl(''),
+    /**@description DES_REMITENTE_PA */
+    desSenderpa: new FormControl(''),
+    /** @description NO_DEL_REM */
+    delRemNumber: new FormControl(''),
+    /** @description NO_DEP_REM */
+    depRemNumber: new FormControl(''),
+    /** @description oficio_por */
+    jobBy: new FormControl(''),
+    /** @description cve_of_gestion */
+    cveManagement: new FormControl(''),
+    city: new FormControl<{
+      id: number | string;
+      legendOffice: string;
+      idName: string;
+    }>(null), // ciudad,
+    statusOf: new FormControl(''), // estatus_of
+    refersTo: new FormControl(''), // se_refiere_a
+  });
+
+  initForm() {
+    const wheelNumber = this.getQueryParams('volante');
+    const expedient = this.getQueryParams('expediente');
+    this.getNotification(wheelNumber, expedient).subscribe({
+      next: async res => {
+        this.formNotification.patchValue(res);
+        this.managementForm.get('noVolante').setValue(res.wheelNumber);
+        this.managementForm.get('noExpediente').setValue(res.expedientNumber);
+        this.managementForm.get('wheelStatus').setValue(res.wheelStatus);
+
+        try {
+          const mJobManagement = await firstValueFrom(
+            this.getMJobManagement(res.wheelNumber)
+          );
+          this.m_job_management = mJobManagement;
+          console.log('mjobmanagement ', mJobManagement);
+          // this.
+          this.formJobManagement.patchValue({
+            ...mJobManagement,
+            city: {
+              id: mJobManagement.city,
+              legendOffice: null,
+              idName: mJobManagement.city,
+            },
+            sender: {
+              id: mJobManagement.sender,
+              name: null,
+              idName: mJobManagement.sender,
+            },
+            addressee: {
+              user: mJobManagement.addressee,
+              name: null,
+              userAndName: mJobManagement.addressee,
+            },
+          });
+          console.log(this.formJobManagement.value);
+          if (mJobManagement.city) {
+            this.getCity(mJobManagement.city).subscribe({
+              next: res => {
+                this.formJobManagement.get('city').setValue({
+                  id: res.idCity,
+                  legendOffice: res.legendOffice,
+                  idName: res.idCity + ' - ' + res.legendOffice,
+                });
+              },
+            });
+          }
+
+          if (mJobManagement.sender) {
+            const params = new ListParams();
+            params.limit = 1;
+            params['search'] = mJobManagement.sender;
+            this.flyerService.getSenderUser(params).subscribe({
+              next: res => {
+                // console.log(res);
+                const i = res.data[0];
+                this.formJobManagement.get('sender').setValue({
+                  id: i.userDetail.id,
+                  idName: i.userDetail.id + ' - ' + i.userDetail.name,
+                  name: i.userDetail.name,
+                });
+              },
+            });
+          }
+
+          if (mJobManagement.addressee) {
+            const params = new ListParams();
+            params.limit = 1;
+            params['search'] = mJobManagement.addressee;
+            this.securityService
+              .getAllUsersTracker(params)
+              .subscribe((data: any) => {
+                const item = data.data[0];
+                let result = {
+                  user: item.user,
+                  name: item.name,
+                  userAndName: item.user + ' - ' + item.name,
+                };
+
+                this.formJobManagement.get('addressee').setValue(result);
+              });
+          }
+        } catch (e) {
+          console.log(e);
         }
-      },
-      error: err => {
-        console.log(err);
-        // this.getDictationByWheel();
+        const params = new ListParams();
+        params['filter.fileeNumber'] = res.expedientNumber;
+        this.getGoods1(params);
       },
     });
   }
 
-  setDataOficioGestion() {
-    this.managementForm.get('tipoOficio').setValue(this.oficioGestion.jobType);
-    console.log('asfasfasfasfa', this.oficioGestion);
-    // this.managementForm.get('statusOf').setValue(this.oficioGestion.statusOf);
-    this.managementForm.get('relacionado').setValue(this.oficioGestion.jobBy);
-    this.managementForm
-      .get('numero')
-      .setValue(this.oficioGestion.managementNumber);
-    this.managementForm
-      .get('cveGestion')
-      .setValue(this.oficioGestion.cveManagement);
-    // Set remitente, destinatario y ciudad
-    this.managementForm
-      .get('parrafoInicial')
-      .setValue(this.oficioGestion.text1);
-    this.managementForm.get('parrafoFinal').setValue(this.oficioGestion.text2);
-    this.managementForm.get('text3').setValue(this.oficioGestion.text3);
-    this.managementForm
-      .get('justificacionDetalle')
-      .setValue(this.oficioGestion.justification);
-    this.managementForm
-      .get('justificacion')
-      .setValue(this.oficioGestion.justification);
+  getQueryParams(name: string) {
+    return this.route.snapshot.queryParamMap.get(name);
   }
+
+  // async validOficioGestion() {
+  //   const params = new FilterParams();
+  //   params.addFilter(
+  //     'managementNumber',
+  //     this.managementForm.get('numero').value
+  //   );
+  //   params.addFilter('jobBy', 'POR DICTAMEN');
+  //   await this.flyerService.getMOficioGestion(params.getParams()).subscribe({
+  //     next: res => {
+  //       console.log('Dicataminacion', res.data[0]);
+  //       if (res.count == 0) {
+  //         // this.getDictationByWheel();
+  //       } else {
+  //         this.oficioGestion = res.data[0];
+  //         this.statusOf = res.data[0].statusOf;
+  //         this.setDataOficioGestion();
+  //         // Se tiene el registro
+  //         this.initFormFromImages();
+  //       }
+  //     },
+  //     error: err => {
+  //       console.log(err);
+  //       // this.getDictationByWheel();
+  //     },
+  //   });
+  // }
+
+  // setDataOficioGestion() {
+  //   this.managementForm.get('tipoOficio').setValue(this.oficioGestion.jobType);
+  //   // console.log('asfasfasfasfa', this.oficioGestion);
+  //   // this.managementForm.get('statusOf').setValue(this.oficioGestion.statusOf);
+  //   this.managementForm.get('relacionado').setValue(this.oficioGestion.jobBy);
+  //   this.managementForm
+  //     .get('numero')
+  //     .setValue(this.oficioGestion.managementNumber);
+  //   this.managementForm
+  //     .get('cveGestion')
+  //     .setValue(this.oficioGestion.cveManagement);
+  //   // Set remitente, destinatario y ciudad
+  //   this.managementForm
+  //     .get('parrafoInicial')
+  //     .setValue(this.oficioGestion.text1);
+  //   this.managementForm.get('parrafoFinal').setValue(this.oficioGestion.text2);
+  //   this.managementForm.get('text3').setValue(this.oficioGestion.text3);
+  //   this.managementForm
+  //     .get('justificacionDetalle')
+  //     .setValue(this.oficioGestion.justification);
+  //   this.managementForm
+  //     .get('justificacion')
+  //     .setValue(this.oficioGestion.justification);
+  // }
 
   reviewParametersGestion() {
     if (this.paramsGestionDictamen.sale == 'C') {
@@ -629,11 +1004,11 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
       this.alertInfo('warning', PARAMETERSALEC, '');
       return;
     }
-    if (this.oficioGestion.statusOf == 'ENVIADO') {
+    if (this.formJobManagement.value?.statusOf == 'ENVIADO') {
       this.alertInfo('warning', MANAGEMENTOFFICESTATUSSEND, '');
       return;
     }
-    if (this.oficioGestion.managementNumber) {
+    if (this.formJobManagement.value?.managementNumber) {
       // /api/v1/m-job-management por numero de gestion
       // ### si tiene registros se eliminan  --- y se hace LIP_COMMIT_SILENCIOSO;
       this.getGoodsJobManagement();
@@ -654,10 +1029,13 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
   }
 
   async getGoodsJobManagement() {
-    if (this.oficioGestion.managementNumber) {
+    if (this.formJobManagement.value.managementNumber) {
       const params = new FilterParams();
       params.removeAllFilters();
-      params.addFilter('managementNumber', this.oficioGestion.managementNumber);
+      params.addFilter(
+        'managementNumber',
+        this.formJobManagement.value.managementNumber
+      );
       await this.flyerService.getMOficioGestion(params.getParams()).subscribe({
         next: res => {
           console.log(res);
@@ -675,7 +1053,7 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
       this.alertInfo(
         'warning',
         'No existe el Número de Gestión: ' +
-          this.oficioGestion.managementNumber,
+          this.formJobManagement.value.managementNumber,
         ''
       );
     }
@@ -816,11 +1194,11 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
     count: number,
     total: number
   ) {
-    if (this.oficioGestion) {
+    if (this.formJobManagement.value.managementNumber) {
       await this.flyerService
         .getGoodsJobManagementByIds({
           goodNumber: dataGoodRes.goodId,
-          managementNumber: this.oficioGestion.managementNumber,
+          managementNumber: this.formJobManagement.value.managementNumber,
         })
         .subscribe({
           next: res => {
@@ -1033,13 +1411,15 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
       .getCityBySearch(params.getFilterParams())
       .subscribe({
         next: data => {
-          this.cities = new DefaultSelect(
-            data.data.map(i => {
-              i.nameCity = i.idCity + ' -- ' + i.legendOffice;
-              return i;
-            }),
-            data.count
-          );
+          const result = data.data.map(i => {
+            i.nameCity = i.idCity + ' -- ' + i.legendOffice;
+            return {
+              id: i.idCity,
+              legendOffice: i.legendOffice,
+              idName: i.idCity + ' -- ' + i.legendOffice,
+            };
+          });
+          this.cities = new DefaultSelect(result, data.count);
           subscription.unsubscribe();
         },
         error: error => {
@@ -1060,15 +1440,20 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
     params['order'] = 'DESC';
     let subscription = this.flyerService.getSenderUser(params).subscribe({
       next: data => {
-        console.log(data);
-        this.senders = new DefaultSelect(
-          data.data.map(i => {
-            i.userDetail.name =
-              '#' + i.userDetail.id + ' -- ' + i.userDetail.name;
-            return i.userDetail;
-          }),
-          data.count
-        );
+        // console.log(data);
+        const senders = data.data.map(i => {
+          // i.userDetail.name =
+          //   '#' + i.userDetail.id + ' -- ' + i.userDetail.name;
+
+          // return i.userDetail;
+          return {
+            id: i.userDetail.id,
+            idName: i.userDetail.id + ' -- ' + i.userDetail.name,
+            name: i.userDetail.name,
+          };
+        });
+        console.log(senders);
+        this.senders = new DefaultSelect(senders, data.count);
         subscription.unsubscribe();
       },
       error: error => {
@@ -1182,13 +1567,18 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
   getFromSelect(params: ListParams) {
     this.securityService.getAllUsersTracker(params).subscribe(
       (data: any) => {
-        let result = data.data.map(async (item: any) => {
-          item['userAndName'] = item.user + ' - ' + item.name;
+        let result = data.data.map((item: any) => {
+          // item['userAndName'] = item.user + ' - ' + item.name;
+          return {
+            user: item.user,
+            name: item.name,
+            userAndName: item.user + ' - ' + item.name,
+          };
         });
-        Promise.all(result).then((resp: any) => {
-          this.select = new DefaultSelect(data.data, data.count);
-          this.loading = false;
-        });
+        // Promise.all(result).then((resp: any) => {
+        this.select = new DefaultSelect(result, data.count);
+        //   this.loading = false;
+        // });
       },
       error => {
         this.select = new DefaultSelect();
@@ -1257,21 +1647,74 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
     });
   }
 
-  showDeleteAlert(legend: ILegend) {
+  async showDeleteAlert(legend?: any) {
+    //ILegend
+    //Desea eliminar el oficio con el expediente ${proceedingsNumber} y No. Oficio ${managementNumber}
+    console.log(legend);
+    console.log(this.managementForm);
+    console.log(this.formJobManagement);
+    console.log(this.m_job_management);
+    const {
+      noVolante, //no_volante
+      wheelStatus, //status
+    } = this.managementForm.value;
+    const {
+      managementNumber, //no_of_gestion
+      flyerNumber, //no_volante
+      statusOf, //status_of
+      cveManagement, //cve_of_gestion
+      proceedingsNumber, //no_expediente
+      insertUser, //usuario insert
+    } = this.m_job_management;
+    debugger;
+    if (managementNumber == null) {
+      this.onLoadToast('info', 'No se tiene oficio', '');
+      return;
+    }
+    if (wheelStatus == 'ENVIADO') {
+      this.onLoadToast('info', 'El oficio ya esta enviado no puede borrar', '');
+      return;
+    }
+    if (cveManagement.includes('?') == false) {
+      this.onLoadToast(
+        'info',
+        'La clave está armada, no puede borrar oficio',
+        ''
+      );
+      return;
+    }
+    if (insertUser != this.authUser.username) {
+      const ATJR: any = await this.userHavePermission();
+      console.log(ATJR);
+      if (ATJR == 0) {
+        this.onLoadToast(
+          'error',
+          'Error',
+          'El Usuario no está autorizado para eliminar el Oficio'
+        );
+        return;
+      }
+    } else {
+      this.onLoadToast('error', 'Error', 'Usuario inválido para borrar oficio');
+      return;
+    }
+
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      `Desea eliminar el oficio con el expediente ${proceedingsNumber} y No. Oficio ${managementNumber}`
     ).then(question => {
       if (question.isConfirmed) {
-        this.delete(legend.id);
+        this.delete(managementNumber, noVolante);
         Swal.fire('Borrado', '', 'success');
       }
     });
   }
 
-  delete(id: number) {
-    this.serviceOficces.deleteCopiesJobManagement(id).subscribe({
+  delete(managementNumber: number | string, noVolante: number | string) {
+    //trabajando en eliminar
+    return;
+    /* this.serviceOficces.deleteCopiesJobManagement(id).subscribe({
       next: resp => {
         console.log('resp  =>  ' + resp);
         this.refreshTabla();
@@ -1280,6 +1723,13 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
         this.onLoadToast('error', 'Error', errror.error.message);
       },
     });
+    //actualiza cve_dictamen 
+    const notifBody:any = {dictumKey: null}
+    this.notificationService.update(Number(noVolante),notifBody).subscribe({
+      next: resp => {
+        
+      }
+    })*/
   }
 
   changeCopiesType(event: any, ccp: number) {
@@ -1394,9 +1844,20 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
   }
 
   typeSelected(type: any) {
-    console.log(type);
+    const filter = type.no_clasif_bien;
+    this.goodFilterParams(filter);
   }
 
+  goodFilterParams(filter: string) {
+    let params = {
+      ...this.params.getValue(),
+    };
+    params['filter.fileNumber'] = this.paramsGestionDictamen.expediente;
+    if (filter != 'Todos') {
+      params['filter.goodClassNumber'] = `$eq:${filter}`;
+    }
+    this.getGoods1(params);
+  }
   // OBTENER BIENES //
   async onLoadGoodList(filter: any) {
     this.formLoading = true;
@@ -1410,12 +1871,14 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
     params['filter.fileNumber'] = this.paramsGestionDictamen.expediente;
     params['filter.status'] = `$in:ADM,DXV,PRP,CPV,DEP`;
 
-    if (filter != 'all') {
+    if (filter != 'Todos') {
       params['filter.goodClassNumber'] = `$eq:${filter}`;
     }
-    this.filtroTipos(this.paramsGestionDictamen.expediente);
+    debugger;
+    //this.filtroTipos(this.paramsGestionDictamen.expediente);
     this.goodServices.getByExpedientAndParams(params).subscribe({
       next: response => {
+        console.log(response);
         let result = response.data.map(async (item: any) => {
           // item['SELECCIONAR'] = 0;
           // item['SEL_AUX'] = 0;
@@ -1469,6 +1932,7 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
     });
     this.loading = false;
   }
+
   getStatusGood(data: any) {
     const params = new ListParams();
     params['filter.status'] = `$eq:${data}`;
@@ -1579,6 +2043,7 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
       });
     });
   }
+
   getDictaXGood(id: any, type: string) {
     const params = new ListParams();
     params['filter.id'] = `$eq:${id}`;
@@ -1603,5 +2068,174 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
     this.getStatusGood(event.data.status);
     this.selectedGood = event.selected;
     this.dictationService.goodNumber = event.data.id;
+  }
+
+  async printRelationScreen() {
+    let values = this.formJobManagement.value;
+    if (values.statusOf == 'ENVIADO') {
+      this.alert(
+        'warning',
+        '',
+        'El oficio ya fue enviado ... mande a imprimir en el candado'
+      );
+      return;
+    }
+
+    if (!values.jobType) {
+      this.alert('warning', '', 'Debe especificar el TIPO OFICIO');
+      return;
+    }
+
+    if (!values.sender) {
+      this.alert('warning', '', 'Debe especificar el REMITENTE');
+      return;
+    }
+
+    if (values.jobType == 'INTERNO') {
+      if (!values.addressee.user) {
+        this.alert('warning', '', 'Debe especificar el DESTINATARIO');
+        return;
+      }
+    }
+
+    if (values.jobType == 'EXTERNO') {
+      if (!values.addressee.name) {
+        this.alert('warning', '', 'Debe especificar el DESTINATARIO EXTERNO');
+        return;
+      }
+    }
+
+    if (!values.city) {
+      this.alert('warning', '', 'Debe especificar la CIUDAD');
+      return;
+    }
+
+    const etapaCreda = await this.getFaStageCreda(new Date());
+    const checkText = this.managementForm.get('checkText').value;
+
+    if (!values.cveManagement && values.managementNumber) {
+      const department = (await this.getDSAreaInDeparment(
+        etapaCreda
+      )) as IDepartment;
+
+      const department2 = (await this.getDSAreaForOfficeInDepartment(
+        etapaCreda
+      )) as IDepartment;
+
+      const year = new Date().getFullYear();
+      const month = new Date().getMonth() + 1;
+      this.formJobManagement
+        .get('cveManagement')
+        .setValue(this.pupGenerateKey());
+      this.formJobManagement.get('statusOf').setValue('EN REVISION');
+    }
+
+    if (!values.cveManagement && !values.managementNumber) {
+      const department = (await this.getDSAreaInDeparment(
+        etapaCreda
+      )) as IDepartment;
+
+      const department2 = (await this.getDSAreaForOfficeInDepartment(
+        etapaCreda
+      )) as IDepartment;
+
+      const year = new Date().getFullYear();
+      const month = new Date().getMonth() + 1;
+      this.formJobManagement
+        .get('cveManagement')
+        .setValue(this.pupGenerateKey());
+      this.formJobManagement.get('statusOf').setValue('EN REVISION');
+
+      if (checkText == this.se_refiere_a.A) {
+        this.pupAddGood();
+      }
+
+      if (checkText == this.se_refiere_a.B) {
+        this.pupAddAnyGood();
+      }
+      this.commit();
+    }
+
+    if (
+      this.formJobManagement.value.cveManagement &&
+      this.formJobManagement.value.managementNumber
+    ) {
+      const params = new ListParams();
+      params['filter.managementNumber'] =
+        this.formJobManagement.value.managementNumber;
+      const counter = await this.getGoodsManagement(params);
+
+      if (checkText == this.se_refiere_a.A && counter == 0) {
+        this.pupAddGood();
+      }
+
+      if (checkText == this.se_refiere_a.B && counter == 0) {
+        this.pupAddAnyGood();
+      }
+      this.commit();
+    }
+
+    this.pupShowReport();
+    values = this.formJobManagement.value;
+    if (values.cveManagement && values.refersTo == this.se_refiere_a.A) {
+      // linea 137
+    }
+  }
+
+  userHavePermission() {
+    //private useR: SegAcessXAreasService
+    return new Promise((resolve, reject) => {
+      debugger;
+      const body: any = {
+        delegacionNo: this.authUser.department,
+        user: this.authUser.username,
+      };
+      this.segAccessAreasService.userHavePermissions(body).subscribe({
+        next: resp => {
+          resolve(resp.data);
+        },
+        error: error => {
+          reject('error while trying to answert permissions');
+          this.onLoadToast(
+            'error',
+            'Error',
+            'Ocurrio un error al consultar los permisos del usuario'
+          );
+        },
+      });
+    });
+  }
+
+  pupAddGood() {}
+
+  pupShowReport() {}
+
+  pupAddAnyGood() {}
+
+  commit() {}
+
+  pupGenerateKey(): string {
+    //:TODO: Cambiar por el servicio de generacion de llaves
+    return 'test';
+  }
+
+  async getDSAreaInDeparment(etapaCreda: string | number) {
+    const params = new ListParams();
+    const auth = this.authService.decodeToken();
+    params['filter.id'] = auth.department;
+    params['filter.numDelegation'] = auth.department;
+    params['filter.numSubDelegation'] = etapaCreda;
+    params['filter.phaseEdo'] = etapaCreda;
+
+    return (await this.getDepartment(params, true)) as IDepartment;
+  }
+
+  async getDSAreaForOfficeInDepartment(etapaCreda: string | number) {
+    const params = new ListParams();
+    params['filter.numDelegation'] = this.formJobManagement.value.delRemNumber;
+    params['filter.id'] = this.formJobManagement.value.depRemNumber;
+    params['filter.phaseEdo'] = etapaCreda;
+
+    return (await this.getDepartment(params, true)) as IDepartment;
   }
 }

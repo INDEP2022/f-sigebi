@@ -147,22 +147,28 @@ export class PersonFormComponent extends BasePage implements OnInit {
     if (id != null) {
       params['filter.otkey'] = `$eq:${id}`;
     }
-    this.tvalTable1Service.getAlls(params).subscribe(data => {
-      this.entFed = new DefaultSelect(data.data, data.count);
-    }, error => {
-      this.entFed = new DefaultSelect();
-    });
+    this.tvalTable1Service.getAlls(params).subscribe(
+      data => {
+        this.entFed = new DefaultSelect(data.data, data.count);
+      },
+      error => {
+        this.entFed = new DefaultSelect();
+      }
+    );
   }
   getTurn(params: ListParams, id?: string) {
     params['filter.nmtable'] = `$eq:8`;
     if (id != null) {
       params['filter.otkey'] = `$eq:${id}`;
     }
-    this.tvalTable1Service.getAlls(params).subscribe(data => {
-      this.operation = new DefaultSelect(data.data, data.count);
-    }, error => {
-      this.operation = new DefaultSelect();
-    });
+    this.tvalTable1Service.getAlls(params).subscribe(
+      data => {
+        this.operation = new DefaultSelect(data.data, data.count);
+      },
+      error => {
+        this.operation = new DefaultSelect();
+      }
+    );
   }
   handleSuccess() {
     const message: string = this.edit ? 'Actualizada' : 'Guardada';
