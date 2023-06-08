@@ -76,8 +76,8 @@ export class SubDelegationListComponent extends BasePage implements OnInit {
           dailyConNumber: subdelegation.dailyConNumber,
           dateDailyCon: subdelegation.dateDailyCon,
           registerNumber: subdelegation.registerNumber,
-          phaseEdo: subdelegation.phaseEdo
-        }
+          phaseEdo: subdelegation.phaseEdo,
+        };
         this.delete1(data);
       }
     });
@@ -85,9 +85,9 @@ export class SubDelegationListComponent extends BasePage implements OnInit {
   delete1(data: any) {
     this.subdelegationService.remove(data).subscribe({
       next: () => {
-        this.getExample(),
-          this.alert('success', 'Sub Delegaciones', 'Borrado');
-      }, error: err => {
+        this.getExample(), this.alert('success', 'Sub Delegaciones', 'Borrado');
+      },
+      error: err => {
         this.alert(
           'warning',
           'Sub Delegaciones',

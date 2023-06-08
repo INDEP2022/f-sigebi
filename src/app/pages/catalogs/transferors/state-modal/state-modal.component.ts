@@ -60,7 +60,7 @@ export class StateModalComponent extends BasePage implements OnInit {
         this.idTrans.nameTransferent
       );
       this.stateForm.controls['stateKey'].setValue(this.id.id);
-      this.getStates(new ListParams, this.id.id);
+      this.getStates(new ListParams(), this.id.id);
     } else {
       this.edit = false;
       this.stateForm.controls['nameTransferee'].setValue(
