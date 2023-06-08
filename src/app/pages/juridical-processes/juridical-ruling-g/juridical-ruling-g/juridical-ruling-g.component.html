@@ -238,6 +238,7 @@
                   formControlName="autoriza_remitente" /> -->
                 <ngx-select
                   label="Autoriza Dict."
+                  value="id"
                   [form]="dictaminacionesForm"
                   [data]="users$"
                   (change)="userChange($event)"
@@ -266,7 +267,10 @@
               <form-field
                 [control]="dictaminacionesForm.get('autoriza_nombre')"
                 label="">
-                <input class="form-control" formControlName="autoriza_nombre" />
+                <input
+                  readonly
+                  class="form-control"
+                  formControlName="autoriza_nombre" />
               </form-field>
             </div>
 
@@ -501,60 +505,87 @@
       <!--  -->
 
       <div class="col-4 custom-grid">
-        <button
-          class="btn btn-info btn-sm active m-3 text-wrap"
-          (click)="btnDocumentos()">
-          Documentos
-        </button>
-        <!-- [disabled]="isDocsEmpty()" -->
-        <button
-          class="btn btn-primary btn-sm active m-3 text-wrap"
-          (click)="btnApprove()">
-          <!-- [routerLink]="rutaAprobado" -->
-          Aprobar
-        </button>
-        <button
-          class="btn btn-danger btn-sm active m-3 text-wrap"
-          (click)="btnBorrarDictamen()"
-          [disabled]="buttonDeleteDisabled">
-          Borrar Dictamen
-        </button>
+        <div class="row justify-content-center">
+          <div class="col-md-6 text-align-center">
+            <button
+              class="btn btn-info btn-sm active m-3 text-wrap w-100"
+              (click)="btnDocumentos()">
+              Documentos
+            </button>
+          </div>
+          <div class="col-6 text-align-center">
+            <button
+              [disabled]="!buttonApr"
+              class="btn btn-primary btn-sm active m-3 text-wrap w-100"
+              (click)="btnApprove()">
+              <!-- [routerLink]="rutaAprobado" -->
+              Aprobar
+            </button>
+          </div>
+          <div class="col-6 text-align-center">
+            <button
+              class="btn btn-danger btn-sm active m-3 text-wrap w-100"
+              (click)="btnBorrarDictamen()"
+              [disabled]="!buttonDeleteDisabled">
+              Borrar Dictamen
+            </button>
+          </div>
+          <div class="col-6 text-align-center">
+            <button
+              class="btn btn-primary btn-sm active m-3 text-wrap w-100"
+              (click)="btnImprimeOficio()">
+              <!-- [routerLink]="returnRoute" -->
+              Imprime Oficio
+            </button>
+          </div>
+          <div class="col-6 text-align-center">
+            <button
+              class="btn btn-info btn-sm active m-3 text-wrap w-100"
+              (click)="btnParcializar()"
+              [disabled]="!buttonDisabled">
+              Parcializar
+            </button>
+          </div>
+          <div class="col-6 text-align-center">
+            <button
+              class="btn btn-danger btn-sm active m-3 text-wrap w-100"
+              (click)="btnRechazar()">
+              Rechazar
+            </button>
+          </div>
+          <div class="col-6 text-align-center">
+            <button
+              class="btn btn-info btn-sm active m-3 text-wrap w-100"
+              (click)="btnOficioSubstanciacion()">
+              Oficio Substanciaci&oacute;n
+            </button>
+          </div>
+          <div class="col-6 text-align-center">
+            <button
+              class="btn btn-info btn-sm active m-3 text-wrap w-100"
+              (click)="btnOficioRelacionado()">
+              Oficio Relacionado
+            </button>
+          </div>
+
+          <!-- [disabled]="isDocsEmpty()" -->
+        </div>
+
         <!-- <button class="btn btn-primary active btn-sm m-2" (click)="goBack()">
           Regresar
           <i class="fas fa-arrow-circle-left"></i>
         </button> -->
 
-        <button
-          class="btn btn-primary btn-sm active m-3 text-wrap"
-          (click)="btnImprimeOficio()">
-          <!-- [routerLink]="returnRoute" -->
-          Imprime Oficio
-        </button>
-        <button
-          class="btn btn-info btn-sm active m-3 text-wrap"
-          (click)="btnParcializar()"
-          [disabled]="buttonDisabled">
-          Parcializar
-        </button>
-      </div>
-      <!-- <button
-          class="btn btn-danger btn-sm active m-3 text-wrap"
-          (click)="btnRechazar()">
-          Rechazar
-        </button> -->
+        <!-- <div class="col-sm-12 col-12 col-md-8 p-2 text-center">
+          <button class="btn btn-info btn-sm active m-3 text-wrap" (click)="btnOficioSubstanciacion()">
+            Oficio Substanciaci&oacute;n
+          </button>
 
-      <!-- <div class="col-sm-12 col-12 col-md-8 p-2 text-center">
-        <button
-          class="btn btn-info btn-sm active m-3 text-wrap"
-          (click)="btnOficioSubstanciacion()">
-          Oficio Substanciaci&oacute;n
-        </button>
-        <button
-          class="btn btn-info btn-sm active m-3 text-wrap"
-          (click)="btnOficioRelacionado()">
-          Oficio Relacionado
-        </button>
-      </div> -->
+          <button class="btn btn-info btn-sm active m-3 text-wrap" (click)="btnOficioRelacionado()">
+            Oficio Relacionado
+          </button>
+        </div> -->
+      </div>
     </div>
   </div>
 </app-card>
