@@ -31,6 +31,7 @@ export class DocCompensationSatXmlListComponent
     this.settings.actions.delete = true;
     this.settings.actions.add = false;
     this.settings.hideSubHeader = false;
+    console.log('FSDFSDFSDFSDF', this.settings);
   }
 
   ngOnInit(): void {
