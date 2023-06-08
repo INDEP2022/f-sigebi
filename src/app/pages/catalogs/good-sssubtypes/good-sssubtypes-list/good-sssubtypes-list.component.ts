@@ -70,7 +70,33 @@ export class GoodSssubtypesListComponent extends BasePage implements OnInit {
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
+        this.remove(goodSssubtype);
       }
+    });
+  }
+
+  remove(data: any) {
+    console.log('data:', data);
+
+    const ids = {
+      id: data.id,
+      idSsubtypeGood: data.numSsubType?.id,
+      idSubtypeGood: data.numSubType?.id,
+      idTypeGood: data.numType?.id,
+    };
+
+    this.goodSssubtypeService.removeByIds(ids).subscribe({
+      next: () => {
+        this.getGoodSssubtypes(),
+          this.alert('success', 'Sssubtipo Bienes', 'Borrado');
+      },
+      error: error => {
+        this.alert(
+          'warning',
+          'Sssubtipo Bienes',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      },
     });
   }
 }

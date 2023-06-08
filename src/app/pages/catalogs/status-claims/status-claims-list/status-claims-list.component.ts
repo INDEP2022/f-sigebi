@@ -112,6 +112,13 @@ export class StatusClaimsListComponent extends BasePage implements OnInit {
       next: () => {
         this.getStatus(), this.alert('success', 'Estado Siniestro', 'Borrado');
       },
+      error: error => {
+        this.alert(
+          'warning',
+          'Estado Siniestro',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      },
     });
   }
 }

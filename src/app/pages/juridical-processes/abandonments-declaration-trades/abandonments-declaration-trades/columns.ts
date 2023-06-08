@@ -38,6 +38,9 @@ export const COLUMNS_GOOD_JOB_MANAGEMENT = {
     title: 'No. Bien',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (value: any) => {
+      return value?.goodId;
+    },
   },
   goods: {
     title: 'Bienes',

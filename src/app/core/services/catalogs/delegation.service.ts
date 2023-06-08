@@ -32,7 +32,7 @@ export class DelegationService
   }
 
   getAll(params?: ListParams): Observable<IListResponse<IDelegation>> {
-    return this.delegationRepository.getAllPaginated(this.route, params);
+    return this.delegationRepository.getAll(this.route, params);
   }
 
   getAppsAll(): Observable<IListResponse<IDelegation>> {

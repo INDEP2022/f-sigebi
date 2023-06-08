@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { LabelGoodEndPoints } from 'src/app/common/constants/endpoints/label-good-endpoint';
+import { HttpService } from 'src/app/common/services/http.service';
 import { ENDPOINT_LINKS } from '../../../common/constants/endpoints';
 import { ICrudMethods } from '../../../common/repository/interfaces/crud-methods';
 import { ListParams } from '../../../common/repository/interfaces/list-params';
@@ -9,9 +11,16 @@ import { ILabelOKey } from '../../models/catalogs/label-okey.model';
 @Injectable({
   providedIn: 'root',
 })
-export class LabelOkeyService implements ICrudMethods<ILabelOKey> {
+export class LabelOkeyService
+  extends HttpService
+  implements ICrudMethods<ILabelOKey>
+{
   private readonly route: string = ENDPOINT_LINKS.LabelOkey;
-  constructor(private labelOkeyRepository: Repository<ILabelOKey>) {}
+
+  constructor(private labelOkeyRepository: Repository<ILabelOKey>) {
+    super();
+    this.microservice = LabelGoodEndPoints.BasePage;
+  }
 
   getAll(params?: ListParams): Observable<IListResponse<ILabelOKey>> {
     return this.labelOkeyRepository.getAllPaginated(this.route, params);
@@ -31,5 +40,10 @@ export class LabelOkeyService implements ICrudMethods<ILabelOKey> {
 
   remove(id: string | number): Observable<Object> {
     return this.labelOkeyRepository.remove(this.route, id);
+  }
+
+  remove2(id: string | number) {
+    const route = `${LabelGoodEndPoints.labelGood}/id/${id}`;
+    return this.delete(route);
   }
 }

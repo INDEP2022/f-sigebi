@@ -11,7 +11,6 @@ import {
 import { IThirdPartyCompany } from 'src/app/core/models/catalogs/third-party-company.model';
 import { ThirdPartyService } from 'src/app/core/services/catalogs/third-party-company.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import Swal from 'sweetalert2';
 import { ThirdPartyCompanyFormComponent } from '../third-party-company-form/third-party-company-form.component';
 import { THIRDPARTYCOMPANY_COLUMS } from './third-party-company-columns';
 
@@ -106,14 +105,23 @@ export class ThirdPartyCompanyListComponent extends BasePage implements OnInit {
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(thirdPartyCompany.id);
-        Swal.fire('Borrado', '', 'success');
       }
     });
   }
 
   delete(id: number) {
-    this.thirdPartyCompanyService.removeThirdPartyCompany(id).subscribe({
-      next: () => this.getDeductives(),
-    });
+    this.thirdPartyCompanyService.removeThirdPartyCompany(id).subscribe(
+      res => {
+        this.alert('success', 'Empresa de Tercero', 'Borrado.');
+        this.getDeductives();
+      },
+      err => {
+        this.alert(
+          'warning',
+          'Empresa de Tercero',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      }
+    );
   }
 }

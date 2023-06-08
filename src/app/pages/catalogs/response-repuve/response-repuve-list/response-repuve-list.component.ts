@@ -69,8 +69,24 @@ export class ResponseRepuveListComponent extends BasePage implements OnInit {
       'Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        //this.responseRepuveService.remove(responseRepuve.id);
+        this.remove(responseRepuve.id);
       }
+    });
+  }
+
+  remove(id: number) {
+    this.responseRepuveService.remove(id).subscribe({
+      next: () => {
+        this.alert('success', 'Respuesta Repuve', 'Borrado');
+        this.getExample();
+      },
+      error: error => {
+        this.alert(
+          'warning',
+          'Respuestas Repuve',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      },
     });
   }
 }

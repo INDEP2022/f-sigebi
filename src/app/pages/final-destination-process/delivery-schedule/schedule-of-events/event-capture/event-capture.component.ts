@@ -177,7 +177,7 @@ export class EventCaptureComponent
   form = this.fb.group(new CaptureEventRegisterForm());
   formSiab = this.fb.group(new CaptureEventSiabForm());
   totalItems: number = 0;
-  params = new BehaviorSubject<ListParams>(new ListParams());
+  params = new BehaviorSubject<FilterParams>(new FilterParams());
   detail: IGoodIndicator[] = [];
   ctrlButtons = new EventCaptureButtons();
   blkCtrl: IBlkCtrl = {
@@ -254,6 +254,8 @@ export class EventCaptureComponent
   endDateCtrl = new FormControl<Date>(null);
 
   selectedProceedings: IGoodIndicator[] = [];
+
+  allSelected = false;
 
   constructor(
     private fb: FormBuilder,
@@ -349,6 +351,9 @@ export class EventCaptureComponent
   }
 
   isProceedingSelected(proceeding: IGoodIndicator) {
+    if (this.allSelected) {
+      return true;
+    }
     const exists = this.selectedProceedings.find(
       prc => prc.goodnumber == proceeding.goodnumber
     );
@@ -405,10 +410,8 @@ export class EventCaptureComponent
   }
 
   updateProceeding() {
-    console.log(this.proceeding);
     const formValue = this.form.value;
     const { numFile, keysProceedings, captureDate, responsible } = formValue;
-    console.log({ numFile, keysProceedings, captureDate, responsible });
     const data = {
       ...this.proceeding,
       numFile,
@@ -487,7 +490,6 @@ export class EventCaptureComponent
         this.global.proceedingNum = res.id;
         this.global.paperworkArea = this.originalType;
         await this.initForm();
-        console.log(this.proceeding.keysProceedings);
         this.registerControls.keysProceedings.setValue(
           this.proceeding.keysProceedings
         );
@@ -544,7 +546,8 @@ export class EventCaptureComponent
       .subscribe({
         next: data => {
           this.onLoadToast('success', 'Fechas actualizadas');
-          this.getDetail().subscribe();
+          const params = new FilterParams();
+          this.params.next(params);
         },
         error: error => {
           this.onLoadToast(
@@ -570,12 +573,8 @@ export class EventCaptureComponent
     this.onLoadToast('error', 'Error', message);
   }
 
-  ngAfterContentInit(): void {
-    console.log(this.itemsElements);
-  }
-  ngAfterViewInit(): void {
-    console.log(this.itemsElements);
-  }
+  ngAfterContentInit(): void {}
+  ngAfterViewInit(): void {}
 
   async transferClick() {
     const firstDetail = this.detail[0];
@@ -610,7 +609,7 @@ export class EventCaptureComponent
       { value: transferent, label: transferent },
     ]);
 
-    if (transference.value == 'PGR' || transference.value == 'PJF') {
+    if (['PGR', 'PJF'].includes(transference.value)) {
       type.setValue('A');
     } else {
       type.setValue('RT');
@@ -724,14 +723,14 @@ export class EventCaptureComponent
       const response = await this.alertQuestion(
         'warning',
         'Advertencia',
-        'La asignación de bienes ya se ha realizado, se ejecuta nuevamente?'
+        'La asignación de bienes ya se ha realizado, ¿se ejecuta nuevamente?'
       );
       continueProcess = response.isConfirmed;
     } else {
       const response = await this.alertQuestion(
         'warning',
         'Advertencia',
-        'Quiere continuar con el proceso'
+        '¿Quiere continuar con el proceso?'
       );
       continueProcess = response.isConfirmed;
     }
@@ -806,7 +805,6 @@ export class EventCaptureComponent
     };
 
     this.fIndicaService.pupGenerateWhere(body).subscribe(res => {
-      console.log({ res });
       this.pupUpdate();
     });
   }
@@ -877,8 +875,18 @@ export class EventCaptureComponent
   }
 
   async ngOnInit() {
-    console.log('PASO -------> Volver a cargar **************');
-
+    this.params
+      .pipe(
+        takeUntil(this.$unSubscribe),
+        switchMap(params => {
+          if (this.proceeding.id) {
+            return this.getDetail(params);
+          } else {
+            return of();
+          }
+        })
+      )
+      .subscribe();
     const { responsible } = this.registerControls;
     responsible.valueChanges.pipe(skip(1)).subscribe(() => {
       this.generateCve();
@@ -897,6 +905,7 @@ export class EventCaptureComponent
       prog,
       transference,
       type,
+      typeEvent,
     } = this.registerControls;
     this.global.type = null;
     this.global.tran = null;
@@ -904,24 +913,31 @@ export class EventCaptureComponent
     const splitedArea = keysProceedings?.value?.split('/');
     const _area = splitedArea ? splitedArea[3] : null;
     const cons = splitedArea ? splitedArea[5] : null;
-    const __folio = splitedArea ? splitedArea[5] : null;
     const existingTrans = splitedArea ? splitedArea[2] : null;
-
+    const _user = splitedArea ? splitedArea[4] : null;
+    const _month = splitedArea ? splitedArea[7] : null;
+    const _year = splitedArea ? splitedArea[6] : null;
+    if (existingTrans) {
+      if (['PGR', 'PJF'].includes(existingTrans)) {
+        type.setValue('A');
+      } else {
+        type.setValue('RT');
+      }
+    }
     this.setProg();
     const currentDate = new Date();
     const currentMonth = `${currentDate.getMonth() + 1}`.padStart(2, '0');
-    year.setValue(currentDate.getFullYear());
-    month.setValue(currentMonth);
-    user.setValue(this.authUser);
+    year.setValue(_year ?? currentDate.getFullYear());
+    month.setValue(_month ?? currentMonth);
+    user.setValue(_user ?? this.authUser);
     // TODO: PASAR A LA FORMA CORRECTA "VALUE" Y "LABEL"
     this.users = new DefaultSelect([
-      { value: this.authUser, label: this.authUserName },
+      {
+        value: _user ?? this.authUser,
+        label: _user ?? this.authUserName,
+      },
     ]);
-    if (existingTrans == 'PGR' || existingTrans == 'PJF') {
-      type.setValue('A');
-    } else {
-      type.setValue('RT');
-    }
+
     this.validateTransfer(type.value ?? 'RT', transference.value);
 
     if (!area.value) {
@@ -938,11 +954,10 @@ export class EventCaptureComponent
       const _folio = await this.getFolio(indicator.certificateType);
       this.global.cons = `${_folio}`.padStart(5, '0');
     }
-    folio.setValue(this.global.cons);
-
     if (!this.global.type) {
       this.global.type = 'RT';
     }
+    folio.setValue(this.global.cons);
     const cve = `${this.global.type ?? ''}/${prog.value ?? ''}/${
       this.global.tran ?? ''
     }/${this.global.regi ?? ''}/${user.value ?? ''}/${this.global.cons ?? ''}/${
@@ -1006,10 +1021,8 @@ export class EventCaptureComponent
           tran != 'PJF' &&
           (_type == 'D' || _type == 'A')
         ) {
-          console.log('1');
           this.invalidTransfer();
         } else if ((tran == 'PGR' || tran == 'PJF') && _type == 'RT') {
-          console.log('2');
           this.invalidTransfer();
         } else if (tran != 'PGR' && tran != 'PJF' && _type == 'RT') {
           this.global.tran = tran;
@@ -1028,10 +1041,8 @@ export class EventCaptureComponent
         transfer != 'PJF' &&
         (_type == 'D' || _type == 'A')
       ) {
-        console.log('3');
         this.invalidTransfer();
       } else if ((transfer == 'PGR' || transfer == 'PJF') && _type == 'RT') {
-        console.log('4');
         this.invalidTransfer();
       } else if (transfer != 'PGR' && transfer != 'PJF' && _type == 'Rt') {
         this.global.tran = transfer;
@@ -1170,7 +1181,6 @@ export class EventCaptureComponent
       }
       await this.getAreasR();
     } else {
-      console.log('muestra 790');
       this.ctrlButtons.closeProg.show();
       // TODO: LLenar los datos con la consulta de "CU_AREA_E"
     }
@@ -1188,7 +1198,6 @@ export class EventCaptureComponent
     const params = new FilterParams();
     if (this.global.proceedingNum) {
       const indicator = await this.getProceedingType();
-      // console.log(indicator.procedureArea.id);
       params.addFilter('typeProceedings', indicator.certificateType);
       params.addFilter('id', this.global.proceedingNum);
       await this.getProceeding(params);
@@ -1274,7 +1283,8 @@ export class EventCaptureComponent
           this.form.patchValue(form);
           await this.afterGetProceeding();
 
-          this.getDetail().subscribe();
+          const params = new FilterParams();
+          this.params.next(params);
         })
       )
     );
@@ -1284,7 +1294,6 @@ export class EventCaptureComponent
     const { typeEvent } = this.registerControls;
     if (typeEvent.value == 'RF') {
       const count = (await this.getExpedientsCount()) ?? 0;
-      console.log(count);
       const options = ['CERRADA', 'CERRADO'];
       if (options.find(opt => opt == this.proceeding.statusProceedings)) {
         this.ctrlButtons.closeProg.show();
@@ -1313,12 +1322,34 @@ export class EventCaptureComponent
     await this.generateCve();
   }
 
-  getDetail() {
-    const params = new FilterParams();
+  checkAll() {
+    const els = document.getElementsByClassName('ng2-smart-th select');
+    const el = els[0];
+    if (!el) {
+      return;
+    }
+    el.innerHTML = `<input id="select-all-check" type="checkbox" checked="${this.allSelected}">`;
+
+    const check = document.getElementById(
+      'select-all-check'
+    ) as HTMLInputElement;
+    check.checked = this.allSelected;
+    check.addEventListener('change', $event => {
+      this.selectedProceedings = [];
+      const detail = [...this.detail];
+      this.detail = [];
+      this.detail = detail;
+      const target = $event.target as HTMLInputElement;
+      this.allSelected = target.checked;
+    });
+  }
+
+  getDetail(_params?: FilterParams) {
+    const params = _params ?? new FilterParams();
     params.addFilter('numberProceedings', this.proceeding.id);
     this.loading = true;
     return this.eventProgrammingService
-      .getGoodsIndicators(this.proceeding.id)
+      .getGoodsIndicators(this.proceeding.id, params.getParams())
       .pipe(
         catchError(error => {
           this.loading = false;
@@ -1327,12 +1358,13 @@ export class EventCaptureComponent
           return throwError(() => error);
         }),
         tap(res => {
+          this.checkAll();
+          this.totalItems = res.count;
           this.loading = false;
           const detail = res.data[0];
           this.blkCtrl.goodQuantity = res.data.length;
           this.afterGetDetail(detail);
           this.detail = res.data.map(detail => {
-            console.log(detail);
             if (
               detail.expedientnumber &&
               (this.proceeding.numFile == 2 || !this.proceeding.numFile)
@@ -1374,7 +1406,6 @@ export class EventCaptureComponent
 
   // PA_CALCULA_CANTIDADES
   calculateQuantities() {
-    console.log('xd');
     const { typeEvent } = this.registerControls;
     this.programmingGoodService
       .computeEntities(this.proceeding.id, typeEvent.value)
@@ -1592,11 +1623,9 @@ export class EventCaptureComponent
   }
 
   openMinutesProyect(model: IPAAbrirActasPrograma) {
-    console.log(model);
     return new Promise((res, rej) => {
       this.progammingServ.paOpenProceedingProgam(model).subscribe({
         next: resp => {
-          console.log(resp);
           res(resp);
         },
         error: error => error,
@@ -1662,12 +1691,10 @@ export class EventCaptureComponent
       this.onLoadToast('info', 'No se tienen bienes ingresados.', '');
       return;
     }
-    console.log('PAso bienes');
 
     if (this.global.paperworkArea === 'RF') {
       n_CONT = (await this.getExpedientsCount()) ?? 0;
     }
-    console.log('PAso Parameter Area');
 
     if (['CERRADO', 'CERRADA'].includes(this.proceeding.statusProceedings)) {
       if (this.proceeding.typeProceedings === 'EVENTREC' && n_CONT > 0) {
@@ -1696,16 +1723,13 @@ export class EventCaptureComponent
         })
         .catch(error => console.error(error));
     } else {
-      console.log('PASO --- Al else de no esta cerrada');
       /// this.onLoadToast('info','El estado del acta es diferente a CERRADO o CERRADA, no se puede abrir.');
       if (C_DATVAL[0].valmovement === null) {
-        console.log('Entro a vacio');
         C_DATVAL[0].valmovement = 0;
       }
       if (C_DATVAL[0].valmovement === 1) {
         await this.valMotodIsOne(n_CONT).then().catch();
       } else if (C_DATVAL[0].valmovement === 0) {
-        console.log('PASO ----> Entro Cierre');
         ///////// Llamar a la funcion PUP_CIERRE_PRI
         this.PUP_CIERRE_PRI();
       }
@@ -1910,10 +1934,9 @@ export class EventCaptureComponent
             invoiceUniversal: resp.id,
             minutesNumber: Number(this.proceeding.id), /// Aqui va el :ACTAS_ENTREGA_RECEPCION.NO_ACTA)
           };
-          this.progammingServ.createHistoryProcedingAct(postHistory).subscribe({
-            next: resp => console.log(resp),
-            error: err => console.error(err),
-          });
+          this.progammingServ
+            .createHistoryProcedingAct(postHistory)
+            .subscribe();
         },
         error: err => console.error(err),
       });
@@ -1976,19 +1999,25 @@ export class EventCaptureComponent
       P_NOACTA: Number(this.proceeding.id),
       P_PANTALLA: 'FINDICA_0035_1',
       P_TIPOMOV: 1,
+      USUARIO:
+        localStorage.getItem('username') == 'sigebiadmon'
+          ? localStorage.getItem('username')
+          : localStorage.getItem('username').toLocaleUpperCase(),
     };
     await this.openMinutesProyect(model);
     this.global.paperworkArea = this.originalType;
     await this.initForm();
     /////////////////////////////////////
     if (C_DATVAL[0].valmovement === 1) {
-      console.log('Entro al otro if ');
-
       const model: IPAAbrirActasPrograma = {
         P_AREATRA: this.registerControls.typeEvent.value,
         P_NOACTA: Number(this.proceeding.id),
         P_PANTALLA: 'FINDICA_0035_1',
         P_TIPOMOV: 1,
+        USUARIO:
+          localStorage.getItem('username') == 'sigebiadmon'
+            ? localStorage.getItem('username')
+            : localStorage.getItem('username').toLocaleUpperCase(),
       };
       this.returPreviosStatus(model);
       //////////////////////////////// aqui va el endpoint esperado por EDWIN
@@ -2016,8 +2045,6 @@ export class EventCaptureComponent
       //// esperar el ms de proceding
       const params: _Params = {};
       params['filter.id'] = `$eq:${this.proceeding.id}`;
-      console.log(params);
-      console.log('ESTO ------> Paramas');
 
       this.proceedingDeliveryReceptionService.getAll(params).subscribe({
         next: resp => res(resp.data[0].statusProceedings),
@@ -2065,7 +2092,6 @@ export class EventCaptureComponent
         this.onLoadToast('info', 'No se ha especificado el Tipo de Evento.');
         return;
       }
-      console.log('PASO ------> Paso tipo Event');
 
       // Valida que la clave de la programación este completa (valida 2)
       if (this.PUF_VERIFICA_CLAVE()) {
@@ -2147,7 +2173,6 @@ export class EventCaptureComponent
         .PaCierreInicialProgr(no_Acta, lv_PANTALLA, blkCtrlArea)
         .subscribe({
           next: resp => {
-            console.log(resp.message[0]);
             res(resp.message[0]);
           },
           error: err => res('Error'),
@@ -2158,14 +2183,10 @@ export class EventCaptureComponent
   async closedProgramming(n_CONT: number) {
     if (this.proceeding.typeProceedings === 'EVENCOMER') {
       const message: string = await this.PUF_VERIF_COMER(this.proceeding.id);
-      console.log('Aqui es el mensaje', message);
       if (message !== 'OK') {
         return;
       }
     }
-    console.log('PASO ----> Va a Cerrar');
-    console.log(this.detail);
-    console.log('---------------------------');
     await this.PA_CIERRE_INICIAL_PROGR(
       this.proceeding.id,
       'FINDICA_0035_1',
@@ -2246,10 +2267,7 @@ export class EventCaptureComponent
     };
     this.goodPosessionThirdpartyService
       .updateThirdPartyAdmonXFormatNumber(noFormat, model)
-      .subscribe({
-        next: (resp: any) => console.log(resp.message),
-        error: err => console.log(err),
-      });
+      .subscribe();
   }
 
   async paqConv() {
@@ -2290,7 +2308,7 @@ export class EventCaptureComponent
       await this.alertQuestion(
         'info',
         'Información',
-        'La asignación de bienes ya se ha realizado, se ejecuta nuevamente?'
+        'La asignación de bienes ya se ha realizado, ¿se ejecuta nuevamente?'
       ).then(question => {
         if (question.isConfirmed) {
           v_ind_proc = true;
@@ -2327,7 +2345,6 @@ export class EventCaptureComponent
   getParameterGood(procedureArea: string | number) {
     const params: ListParams = {};
     params['filter.procedureAreaDetails.id=$eq:'] = procedureArea;
-    console.log(params);
 
     return new Promise<string | number>((res, rej) => {
       this.parameterGoodService.getIndicatorParameter().subscribe({

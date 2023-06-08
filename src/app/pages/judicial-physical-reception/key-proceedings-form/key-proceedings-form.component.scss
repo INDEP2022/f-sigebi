@@ -1,0 +1,74 @@
+// .error {
+//   input {
+//     border-bottom-color: #f46a6a;
+//   }
+//   .errorMessage {
+//     width: 100%;
+//     margin-top: 0.25rem;
+//     font-size: 80%;
+//     color: #dc3545;
+//   }
+//   .checkEdit {
+//     pointer-events: none;
+//     .text-success {
+//       color: #6c757d !important;
+//     }
+//   }
+// }
+
+// th,
+// td {
+//   margin: 0;
+//   padding: 0.5em 1em;
+// }
+
+:host::ng-deep ng2-smart-table td {
+  font-size: 0.875em;
+  input.form-control {
+    font-size: 1em !important;
+  }
+
+  select {
+    font-size: 0.875em !important;
+  }
+}
+
+// table {
+//   @media screen and (max-width: 768px) {
+//     display: flex;
+//     justify-content: center;
+//     padding: 0px;
+//     tbody {
+//       width: 100%;
+//     }
+//     tr {
+//       display: flex;
+//       flex-direction: column;
+//       border: none;
+//     }
+//     th,
+//     td {
+//       border-bottom-width: 1px;
+//       border-top-width: 1px;
+//       display: flex;
+//       justify-content: center;
+//       align-items: center;
+//       &:not(:first-child) {
+//         min-height: 57px;
+//       }
+//       &:first-child {
+//         height: 40px;
+//       }
+//     }
+//   }
+//   @media screen and (max-width: 576px) {
+//     thead {
+//       display: none;
+//     }
+//   }
+// }
+
+a {
+  margin-right: 0.25rem;
+  box-sizing: border-box;
+}
