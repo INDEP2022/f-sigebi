@@ -4,6 +4,7 @@ import { GoodsJobManagementEndpoints } from 'src/app/common/constants/endpoints/
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
+import { IGood } from '../../models/ms-good/good';
 import {
   ICopiesJobManagementDto,
   IGoodJobManagement,
@@ -79,7 +80,7 @@ export class GoodsJobManagementService extends HttpService {
   getGoodsJobManagement(list?: ListParams): Observable<
     IListResponse<{
       managementNumber: string;
-      goodNumber: string;
+      goodNumber: IGood;
       recordNumber: string;
     }>
   > {

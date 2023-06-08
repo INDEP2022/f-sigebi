@@ -10,7 +10,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, firstValueFrom, takeUntil } from 'rxjs';
+import { BehaviorSubject, firstValueFrom, skip, takeUntil } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import {
@@ -185,7 +185,12 @@ export class RelatedDocumentsComponent
   settings3 = { ...this.settings };
   copyOficio: any[] = [];
 
-  dataTableGoodsJobManagement: IGoodAndAvailable[] = [];
+  dataTableGoodsJobManagement: {
+    managementNumber: string;
+    goodNumber: IGood;
+    recordNumber: string;
+  }[] = [];
+
   settingsGoodsJobManagement = {
     ...this.settings,
     actions: {
@@ -193,17 +198,73 @@ export class RelatedDocumentsComponent
       add: false,
       delete: false,
     },
-    hideSubHeader: false,
+    hideSubHeader: true,
     columns: COLUMNS_GOOD_JOB_MANAGEMENT,
   };
+
+  override formNotification = new FormGroup({
+    /** @descripiton  no_volante*/
+    wheelNumber: new FormControl(null),
+    /** @descripition no_expediente */
+    expedientNumber: new FormControl(null),
+    /** @descripition no_registro*/
+    registerNumber: new FormControl(null),
+    /** @descripition  AVERIGUACION_PREVIA*/
+    preliminaryInquiry: new FormControl(null),
+    /** @description causa_penal*/
+    criminalCase: new FormControl(null),
+    /** @description tipo_volante */
+    wheelType: new FormControl(null),
+    /** @description tipo_oficio */
+  });
+
+  override formJobManagement = new FormGroup({
+    /** @description no_volante */
+    flyerNumber: new FormControl(''),
+    /** @description tipo_oficio */
+    jobType: new FormControl(''),
+    /** @description no_of_gestion */
+    managementNumber: new FormControl(''),
+    /** @description  destinatario*/
+    addressee: new FormControl<{
+      user: number | string;
+      name: string;
+      userAndName: string;
+    }>(null),
+    /** @description remitente */
+    sender: new FormControl<{
+      id: number | string;
+      name: string;
+      idName: string;
+    }>(null), // remitente
+    /** @descripiton  cve_cargo_rem*/
+    cveChargeRem: new FormControl(''),
+    /**@description DES_REMITENTE_PA */
+    desSenderpa: new FormControl(''),
+    /** @description NO_DEL_REM */
+    delRemNumber: new FormControl(''),
+    /** @description NO_DEP_REM */
+    depRemNumber: new FormControl(''),
+    /** @description oficio_por */
+    jobBy: new FormControl(''),
+    /** @description cve_of_gestion */
+    cveManagement: new FormControl(''),
+    city: new FormControl<{
+      id: number | string;
+      legendOffice: string;
+      idName: string;
+    }>(null), // ciudad,
+    statusOf: new FormControl(''), // estatus_of
+    refersTo: new FormControl(''), // se_refiere_a
+  });
   constructor(
     private fb: FormBuilder,
     protected flyerService: FlyersService,
-    private route: ActivatedRoute,
+    protected override route: ActivatedRoute,
     private router: Router,
-    private siabService: SiabService,
-    private modalService: BsModalService,
-    private sanitizer: DomSanitizer,
+    protected siabService: SiabService,
+    protected modalService: BsModalService,
+    protected sanitizer: DomSanitizer,
     private dictationService: DictationService,
     private serviceRelatedDocumentsService: RelatedDocumentsService,
     private securityService: SecurityService,
@@ -496,26 +557,13 @@ export class RelatedDocumentsComponent
         this.pantallaOption = this.flyerService.getPantallaOption(
           this.pantallaActual
         );
-        // let params = this.flyerService.getParams(true);
-        // console.log(params, this.pantallaOption, this.pantallaActual);
         this.paramsGestionDictamen.sale = 'C';
-        // if (params['parametros']) {
         if (this.pantallaOption) {
           this.screenKey = this.screenKeyManagement;
-          // this.getDictationByWheel();
-          // Pantalla dictamen
           this.initComponentDictamen();
         } else {
           this.screenKey = this.screenKeyRelated;
-          // Pantalla relacionados
         }
-        // } else {
-        //   this.alert(
-        //     'warning',
-        //     'No existen parámetros para la pantalla',
-        //     'Sin parametros'
-        //   );
-        // }
       } else {
         this.alertInfo(
           'warning',
@@ -527,7 +575,7 @@ export class RelatedDocumentsComponent
       }
     }
     this.getTypesSelectors();
-    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(res => {
+    this.params.pipe(skip(1), takeUntil(this.$unSubscribe)).subscribe(res => {
       this.goodFilterParams('Todos');
     });
     /*this.params
@@ -714,62 +762,6 @@ export class RelatedDocumentsComponent
     // }
   }
 
-  formNotification = new FormGroup({
-    /** @descripiton  no_volante*/
-    wheelNumber: new FormControl(null),
-    /** @descripition no_expediente */
-    expedientNumber: new FormControl(null),
-    /** @descripition no_registro*/
-    registerNumber: new FormControl(null),
-    /** @descripition  AVERIGUACION_PREVIA*/
-    preliminaryInquiry: new FormControl(null),
-    /** @description causa_penal*/
-    criminalCase: new FormControl(null),
-    /** @description tipo_volante */
-    wheelType: new FormControl(null),
-    /** @description tipo_oficio */
-  });
-
-  formJobManagement = new FormGroup({
-    /** @description no_volante */
-    flyerNumber: new FormControl(''),
-    /** @description tipo_oficio */
-    jobType: new FormControl(''),
-    /** @description no_of_gestion */
-    managementNumber: new FormControl(''),
-    /** @description  destinatario*/
-    addressee: new FormControl<{
-      user: number | string;
-      name: string;
-      userAndName: string;
-    }>(null),
-    /** @description remitente */
-    sender: new FormControl<{
-      id: number | string;
-      name: string;
-      idName: string;
-    }>(null), // remitente
-    /** @descripiton  cve_cargo_rem*/
-    cveChargeRem: new FormControl(''),
-    /**@description DES_REMITENTE_PA */
-    desSenderpa: new FormControl(''),
-    /** @description NO_DEL_REM */
-    delRemNumber: new FormControl(''),
-    /** @description NO_DEP_REM */
-    depRemNumber: new FormControl(''),
-    /** @description oficio_por */
-    jobBy: new FormControl(''),
-    /** @description cve_of_gestion */
-    cveManagement: new FormControl(''),
-    city: new FormControl<{
-      id: number | string;
-      legendOffice: string;
-      idName: string;
-    }>(null), // ciudad,
-    statusOf: new FormControl(''), // estatus_of
-    refersTo: new FormControl(''), // se_refiere_a
-  });
-
   initForm() {
     const wheelNumber = this.getQueryParams('volante');
     const expedient = this.getQueryParams('expediente');
@@ -786,7 +778,6 @@ export class RelatedDocumentsComponent
           );
           this.m_job_management = mJobManagement;
           console.log('mjobmanagement ', mJobManagement);
-          // this.
           this.formJobManagement.patchValue({
             ...mJobManagement,
             city: {
@@ -855,12 +846,27 @@ export class RelatedDocumentsComponent
                 this.formJobManagement.get('addressee').setValue(result);
               });
           }
+
+          if (mJobManagement.managementNumber) {
+            const params = new ListParams();
+            params['filter.managementNumber'] = mJobManagement.managementNumber;
+            try {
+              this.dataTableGoodsJobManagement = (
+                await this.getGoodsJobManagement(params)
+              ).data;
+            } catch (ex) {
+              console.log(ex);
+            }
+          }
         } catch (e) {
           console.log(e);
         }
-        const params = new ListParams();
-        params['filter.fileeNumber'] = res.expedientNumber;
-        this.getGoods1(params);
+        console.log('res', res);
+        if (res.expedientNumber) {
+          const params = new ListParams();
+          params['filter.fileeNumber'] = res.expedientNumber;
+          this.getGoods1(params);
+        }
       },
     });
   }
@@ -1030,7 +1036,7 @@ export class RelatedDocumentsComponent
     if (this.formJobManagement.value?.managementNumber) {
       // /api/v1/m-job-management por numero de gestion
       // ### si tiene registros se eliminan  --- y se hace LIP_COMMIT_SILENCIOSO;
-      this.getGoodsJobManagement();
+      // this.getGoodsJobManagement();
       // /api/v1/document-job-management por numero de gestion
       // ### si tiene registros se eliminan  --- y se hace LIP_COMMIT_SILENCIOSO;  ---  y setea VARIABLES.D en S
       ///
@@ -1047,36 +1053,36 @@ export class RelatedDocumentsComponent
     // y setea VARIABLES.B en N
   }
 
-  async getGoodsJobManagement() {
-    if (this.formJobManagement.value.managementNumber) {
-      const params = new FilterParams();
-      params.removeAllFilters();
-      params.addFilter(
-        'managementNumber',
-        this.formJobManagement.value.managementNumber
-      );
-      await this.flyerService.getMOficioGestion(params.getParams()).subscribe({
-        next: res => {
-          console.log(res);
-          if (res.count != 0) {
-            this.managementForm.get('tipoOficio').setValue('D');
-          }
-          this.getDocumentsJobManagement();
-        },
-        error: err => {
-          console.log(err);
-          this.getDocumentsJobManagement();
-        },
-      });
-    } else {
-      this.alertInfo(
-        'warning',
-        'No existe el Número de Gestión: ' +
-          this.formJobManagement.value.managementNumber,
-        ''
-      );
-    }
-  }
+  // async getGoodsJobManagement() {
+  //   if (this.formJobManagement.value.managementNumber) {
+  //     const params = new FilterParams();
+  //     params.removeAllFilters();
+  //     params.addFilter(
+  //       'managementNumber',
+  //       this.formJobManagement.value.managementNumber
+  //     );
+  //     await this.flyerService.getMOficioGestion(params.getParams()).subscribe({
+  //       next: res => {
+  //         console.log(res);
+  //         if (res.count != 0) {
+  //           this.managementForm.get('tipoOficio').setValue('D');
+  //         }
+  //         this.getDocumentsJobManagement();
+  //       },
+  //       error: err => {
+  //         console.log(err);
+  //         this.getDocumentsJobManagement();
+  //       },
+  //     });
+  //   } else {
+  //     this.alertInfo(
+  //       'warning',
+  //       'No existe el Número de Gestión: ' +
+  //         this.formJobManagement.value.managementNumber,
+  //       ''
+  //     );
+  //   }
+  // }
 
   async getDocumentsJobManagement() {
     // if (this.oficioGestion.managementNumber) {
@@ -2207,19 +2213,6 @@ export class RelatedDocumentsComponent
     // EXECUTE_QUERY(NO_VALIDATE);
   }
 
-  enableOrDisabledRadioRefersTo(letter: 'A' | 'B' | 'C', isEnable = true) {
-    if (!isEnable) {
-      document
-        .getElementById(`se_refiere_a_${letter}`)
-        .setAttribute('disabled', 'disabled');
-    } else {
-      document
-        .getElementById(`se_refiere_a_${letter}`)
-        .removeAttribute('disabled');
-    }
-    // document.getElementById(`se_refiere_a_${letter}`).removeAttribute('disabled');
-  }
-
   userHavePermission() {
     //private useR: SegAcessXAreasService
     return new Promise((resolve, reject) => {
@@ -2235,12 +2228,87 @@ export class RelatedDocumentsComponent
   }
 
   pupAddGood() {
-    this.dataTableGoods.forEach(element => {});
+    const goodAvailables = this.dataTableGoods.filter(item => item.available);
+    const newRows = [];
+
+    goodAvailables.forEach(item => {
+      newRows.push({
+        goodNumber: item.goodId,
+        classif: item.goodClassNumber,
+        managementNumber: this.formJobManagement.value.managementNumber,
+      });
+      item.available = false;
+    });
   }
 
-  pupShowReport() {}
+  // pupShowReport() {
+  //   const params = {
+  //     // PARAMFORM: 'NO',
+  //     // P_FIRMA: 'S',
+  //     PARAMFORM: 'NO',
+  //     NO_OF_GES: this.formJobManagement.value.managementNumber,
+  //     TIPO_OF: this.formJobManagement.value.jobType,
+  //     VOLANTE: this.formNotification.value.wheelNumber,
+  //     EXP: this.formNotification.value.expedientNumber,
+  //   };
 
-  pupAddAnyGood() {}
+  //   let nameReport = 'RGEROFGESTION';
+  //   const jobType = this.formJobManagement.value.jobType;
+  //   const PLLAMO = this.getParamsForName('PLLAMO');
+  //   if (jobType == 'INTERNO' && PLLAMO != 'ABANDONO') {
+  //     nameReport = 'RGEROFGESTION';
+  //   } else if (jobType == 'EXTERNO' && PLLAMO != 'ABANDONO') {
+  //     nameReport = 'RGEROFGESTION_EXT';
+  //   } else if (jobType == 'EXTERNO' && PLLAMO == 'ABANDONO') {
+  //     nameReport = 'RGENABANSUB';
+  //   } else {
+  //     this.alert(
+  //       'error',
+  //       'Error',
+  //       'No se ha especificado el tipo de oficio (EXTERNO,INTERNO)'
+  //     );
+  //   }
+
+  //   this.siabService
+  //     .fetchReport('FBIEVALPOSTERCERO', params)
+  //     .subscribe(response => {
+  //       if (response !== null) {
+  //         const blob = new Blob([response], { type: 'application/pdf' });
+  //         const url = URL.createObjectURL(blob);
+  //         let config = {
+  //           initialState: {
+  //             documento: {
+  //               urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+  //               type: 'pdf',
+  //             },
+  //             callback: (data: any) => {},
+  //           }, //pasar datos por aca
+  //           class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+  //           ignoreBackdropClick: true, //ignora el click fuera del modal
+  //         };
+  //         this.modalService.show(PreviewDocumentsComponent, config);
+  //       } else {
+  //         const blob = new Blob([response], { type: 'application/pdf' });
+  //         const url = URL.createObjectURL(blob);
+  //         let config = {
+  //           initialState: {
+  //             documento: {
+  //               urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+  //               type: 'pdf',
+  //             },
+  //             callback: (data: any) => {},
+  //           }, //pasar datos por aca
+  //           class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+  //           ignoreBackdropClick: true, //ignora el click fuera del modal
+  //         };
+  //         this.modalService.show(PreviewDocumentsComponent, config);
+  //       }
+  //     });
+  // }
+
+  pupAddAnyGood() {
+    const goodAvailables = this.dataTableGoods.filter(item => item.available);
+  }
 
   commit() {}
 
