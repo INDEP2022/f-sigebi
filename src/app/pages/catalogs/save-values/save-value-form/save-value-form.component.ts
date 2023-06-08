@@ -27,14 +27,35 @@ export class SaveValueFormComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.prepareForm();
   }
-
   prepareForm() {
     this.saveValueForm = this.fb.group({
-      id: [null, [Validators.required]],
-      description: [null, [Validators.required]],
-      location: [null, [Validators.required]],
+      id: [
+        null,
+        [
+          Validators.minLength(0),
+          Validators.maxLength(5),
+          Validators.min(0),
+          Validators.max(5),
+        ],
+      ],
+      description: [
+        null,
+        [
+          Validators.required,
+          Validators.minLength(0),
+          Validators.maxLength(60),
+        ],
+      ],
+      location: [
+        null,
+        [
+          Validators.required,
+          Validators.minLength(0),
+          Validators.maxLength(60),
+        ],
+      ],
       responsible: [null, [Validators.required]],
-      noRegistration: [null, [Validators.required]],
+      noRegistration: [null],
     });
 
     if (this.saveValue != null) {
