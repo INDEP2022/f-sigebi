@@ -195,7 +195,6 @@ export class PersonListComponent extends BasePage implements OnInit {
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(person.id);
-        Swal.fire('Borrado', '', 'success');
       }
     });
   }
@@ -203,9 +202,26 @@ export class PersonListComponent extends BasePage implements OnInit {
   delete(id: number) {
     this.personService.remove(id).subscribe({
       next: () => {
+        Swal.fire('Borrado', '', 'success');
         this.params
           .pipe(takeUntil(this.$unSubscribe))
           .subscribe(() => this.getPersons());
+      },
+    });
+
+    this.personService.remove(id).subscribe({
+      next: () => {
+        this.alert('success', 'Alerta', 'Borrado');
+        this.params
+          .pipe(takeUntil(this.$unSubscribe))
+          .subscribe(() => this.getPersons());
+      },
+      error: error => {
+        this.alert(
+          'warning',
+          'Alerta',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
       },
     });
   }

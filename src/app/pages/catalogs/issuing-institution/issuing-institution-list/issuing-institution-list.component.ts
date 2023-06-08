@@ -311,8 +311,16 @@ export class IssuingInstitutionListComponent
     const idInstitute = { ...this.institutes };
     this.issuingInstitutionService.remove2(id).subscribe({
       next: () => {
-        Swal.fire('Borrado', '', 'success');
-        this.getIssuingInstitution(idInstitute.id), (this.loading2 = true);
+        this.alert('success', 'Autoridad Emisora', 'Borrado');
+        this.getIssuingInstitution(idInstitute.id);
+        this.loading2 = true;
+      },
+      error: error => {
+        this.alert(
+          'warning',
+          'Autoridad Emisora',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
       },
     });
   }
