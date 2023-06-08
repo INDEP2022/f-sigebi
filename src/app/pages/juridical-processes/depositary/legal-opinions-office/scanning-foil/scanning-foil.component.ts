@@ -29,6 +29,7 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
   @Input() form: FormGroup;
   @Input() screenKey: string = '';
   @Input() screenKey2: string = '';
+  @Input() screenKey3: string = '';
   @Input() officeDictationData: IOfficialDictation;
   @Input() dictationData: IDictation;
   @Input() dataUserLogged: any;
@@ -139,6 +140,7 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
               queryParams: {
                 origin: this.screenKey,
                 origin2: this.screenKey2,
+                origin3: this.screenKey3,
                 folio: this.form.get('scanningFoli').value,
                 ...this.paramsScreen,
               },

@@ -11,7 +11,6 @@ import {
 import { IOriginCisi } from 'src/app/core/models/catalogs/origin-cisi.model';
 import { OiriginCisiService } from 'src/app/core/services/catalogs/origin-cisi.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import Swal from 'sweetalert2';
 import { OrignCisiFormComponent } from '../orign-cisi-form/orign-cisi-form.component';
 import { ORIGIN_CISI_COLUMNS } from './origin-cisi-columns';
 

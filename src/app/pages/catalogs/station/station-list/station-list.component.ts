@@ -12,7 +12,6 @@ import { StationService } from 'src/app/core/services/catalogs/station.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { StationFormComponent } from '../station-form/station-form.component';
 import { STATION_COLUMS } from './station-columns';
-import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-station-list',

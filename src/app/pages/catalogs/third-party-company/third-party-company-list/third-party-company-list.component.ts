@@ -11,7 +11,6 @@ import {
 import { IThirdPartyCompany } from 'src/app/core/models/catalogs/third-party-company.model';
 import { ThirdPartyService } from 'src/app/core/services/catalogs/third-party-company.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import Swal from 'sweetalert2';
 import { ThirdPartyCompanyFormComponent } from '../third-party-company-form/third-party-company-form.component';
 import { THIRDPARTYCOMPANY_COLUMS } from './third-party-company-columns';
 
