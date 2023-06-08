@@ -14,8 +14,9 @@ import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 })
 export class ModalNumeraryParameterizationComponent
   extends BasePage
-  implements OnInit {
-  title: string = 'parámetro numerario';
+  implements OnInit
+{
+  title: string = 'Parametro Numerico';
   edit: boolean = false;
   form: ModelForm<ICategorizationAutomNumerary>;
 

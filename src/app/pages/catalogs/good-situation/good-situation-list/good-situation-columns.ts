@@ -1,7 +1,7 @@
 export const GOOD_SITUATION_COLUMS = {
   situation: {
     title: 'Id',
-    type: 'number',
+    type: 'string',
     sort: false,
   },
   descSituation: {

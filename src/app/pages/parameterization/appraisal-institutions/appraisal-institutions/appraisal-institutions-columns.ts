@@ -15,7 +15,7 @@ export const APPRAISALINSTITUTIONS_COLUMNS = {
     title: 'No.Exterior',
     sort: false,
   },
-  noInside: {
+  noInterior: {
     title: 'No.Interior',
     sort: false,
   },
@@ -37,6 +37,18 @@ export const APPRAISALINSTITUTIONS_COLUMNS = {
   },
   represent: {
     title: 'Representante',
+    sort: false,
+  },
+  curp: {
+    title: 'CURP',
+    sort: false,
+  },
+  tel: {
+    title: 'Telefono',
+    sort: false,
+  },
+  rfc: {
+    title: 'RFC',
     sort: false,
   },
 };

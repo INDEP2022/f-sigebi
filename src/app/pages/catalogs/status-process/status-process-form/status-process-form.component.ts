@@ -33,9 +33,22 @@ export class StatusProcessFormComponent extends BasePage implements OnInit {
   private prepareForm() {
     console.log(this.statusProcess);
     this.statusProcessForm = this.fb.group({
-      status: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      process: [null, [Validators.pattern(STRING_PATTERN)]],
-      description: [null, [Validators.pattern(STRING_PATTERN)]],
+      status: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(50),
+          Validators.pattern(STRING_PATTERN),
+        ],
+      ],
+      process: [
+        null,
+        [Validators.maxLength(50), Validators.pattern(STRING_PATTERN)],
+      ],
+      description: [
+        null,
+        [Validators.maxLength(200), Validators.pattern(STRING_PATTERN)],
+      ],
     });
     const field = document.getElementById('inputstatus');
     if (this.statusProcess != null) {

@@ -133,6 +133,7 @@
         [control]="form.get('paragraphInitial')"
         label="P&aacute;rrafo Inicial">
         <textarea
+          maxlength="4000"
           type="text"
           rows="4"
           [readonly]="!managementNumber_"
@@ -148,6 +149,7 @@
         [control]="form.get('paragraphFinish')"
         label="P&aacute;rrafo Final">
         <textarea
+          maxlength="4000"
           type="text"
           [readonly]="!managementNumber_"
           class="form-control"
@@ -159,6 +161,7 @@
     <div class="col-md-12 col-sm-12 col-xs-12">
       <form-field [control]="form.get('paragraphOptional')" label="">
         <textarea
+          maxlength="4000"
           type="text"
           [readonly]="!managementNumber_"
           class="form-control"
@@ -170,6 +173,7 @@
     <div class="col-md-12 col-sm-12 col-xs-12">
       <form-field [control]="form.get('descriptionSender')" label="">
         <textarea
+          maxlength="500"
           type="text"
           [readonly]="!managementNumber_"
           class="form-control"
@@ -255,7 +259,7 @@
           <button
             type="button"
             class="btn btn-info active"
-            [disabled]="!managementNumber_"
+            [disabled]="!form.valid"
             (click)="updateOficio()">
             Actualizar
           </button>
@@ -264,7 +268,7 @@
           <button
             type="button"
             text="Imprimir"
-            [disabled]="!managementNumber_"
+            [disabled]="!form.valid"
             class="btn btn-primary active"
             (click)="confirm()">
             Imprimir

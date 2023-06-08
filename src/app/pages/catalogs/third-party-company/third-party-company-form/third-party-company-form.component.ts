@@ -17,9 +17,10 @@ import {
 })
 export class ThirdPartyCompanyFormComponent extends BasePage implements OnInit {
   thirdPartyCompanyForm: ModelForm<IThirdPartyCompany>;
-  title: string = 'EMPRESAS DE TERCEROS';
-  edit: boolean = false;
-  thirdPartyCompany: IThirdPartyCompany;
+  title = 'EMPRESAS DE TERCEROS';
+  edit = false;
+  thirdParty: any;
+
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
@@ -32,63 +33,59 @@ export class ThirdPartyCompanyFormComponent extends BasePage implements OnInit {
     this.prepareForm();
   }
 
-  private prepareForm() {
+  private prepareForm(): void {
     this.thirdPartyCompanyForm = this.fb.group({
       id: [null],
       keyCompany: [
         null,
-        Validators.compose([
-          Validators.required,
-          Validators.pattern(KEYGENERATION_PATTERN),
-        ]),
+        [Validators.required, Validators.pattern(KEYGENERATION_PATTERN)],
       ],
       description: [
         null,
-        Validators.compose([
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-        ]),
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      cveZoneContract: [null, Validators.compose([Validators.required])],
+      keyZoneContract: [null, Validators.required],
     });
-    if (this.thirdPartyCompany != null) {
+
+    if (this.thirdParty != null) {
       this.edit = true;
-      this.thirdPartyCompanyForm.patchValue(this.thirdPartyCompany);
+      this.thirdPartyCompanyForm.patchValue(this.thirdParty);
     }
   }
-  close() {
+
+  close(): void {
     this.modalRef.hide();
   }
 
-  confirm() {
+  confirm(): void {
     this.edit ? this.update() : this.create();
   }
 
-  create() {
+  create(): void {
     this.loading = true;
     this.thirdPartyCompanyService
-      .create(this.thirdPartyCompanyForm.getRawValue())
+      .create(this.thirdPartyCompanyForm.value)
       .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
+        next: () => this.handleSuccess(),
+        error: () => (this.loading = false),
       });
   }
 
-  update() {
+  update(): void {
     this.loading = true;
     this.thirdPartyCompanyService
-      .update(
-        this.thirdPartyCompany.id,
-        this.thirdPartyCompanyForm.getRawValue()
+      .updateThirdPartyCompany(
+        this.thirdParty.id,
+        this.thirdPartyCompanyForm.value
       )
       .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
+        next: () => this.handleSuccess(),
+        error: () => (this.loading = false),
       });
   }
 
-  handleSuccess() {
-    const message: string = this.edit ? 'Actualizado' : 'Guardado';
+  handleSuccess(): void {
+    const message = this.edit ? 'Actualizado' : 'Guardado';
     this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);

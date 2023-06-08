@@ -85,4 +85,14 @@ export class MassiveGoodService extends HttpService {
     const route = `application/goodTracker`;
     return this.post<IMassiveGoodTracker>(route, body);
   }
+
+  chargeGoodsByExpedient(expedient: number | string) {
+    const route = MassiveGoodEndpoints.chargeGoodByExpedient;
+    return this.get(`${route}/${expedient}`);
+  }
+
+  pufVerificaComers(body: any) {
+    const route = `findica/pup-verif-comer`;
+    return this.post<IMassiveGoodTracker>(route, body);
+  }
 }

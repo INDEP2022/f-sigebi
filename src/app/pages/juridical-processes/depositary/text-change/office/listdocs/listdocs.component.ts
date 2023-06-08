@@ -8,7 +8,6 @@ import { DocumentsService } from 'src/app/core/services/ms-documents/documents.s
 import { MJobManagementService } from 'src/app/core/services/ms-office-management/m-job-management.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { COLUMNS_DOCUMENTS } from 'src/app/pages/juridical-processes/abandonments-declaration-trades/abandonments-declaration-trades/columns';
-import { Documents } from 'src/app/pages/juridical-processes/abandonments-declaration-trades/abandonments-declaration-trades/models';
 
 @Component({
   selector: 'app-listdocs',
@@ -24,6 +23,9 @@ export class ListdocsComponent extends BasePage implements OnInit {
   selectedDocs: any[] = [];
   typeOffice: any;
   arrayOfDocsCreados: any;
+  managementNumber: any;
+  rulingType: any;
+  IAttDocument: any;
   constructor(
     private modalRef: BsModalRef,
     private documentsService: DocumentsService,
@@ -39,8 +41,16 @@ export class ListdocsComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.data2 = Documents;
-    this.getDocsParaDictum(this.typeOffice);
+    // this.data2 = Documents;
+    let arr_11 = [];
+    for (let i = 0; i < this.IAttDocument.length; i++) {
+      arr_11.push(this.IAttDocument[i].cveDocument);
+    }
+    const arr = arr_11;
+    const str = arr.join(','); // "25,26,25,28"
+
+    console.log(this.typeOffice);
+    this.getDocsParaDictum(this.typeOffice, str);
   }
 
   selectProceedings(event: IUserRowSelectEvent<any>) {
@@ -56,8 +66,23 @@ export class ListdocsComponent extends BasePage implements OnInit {
     let data = this.selectedDocs;
     console.log('aaa', this.selectedDocs);
     console.log('bb', this.arrayOfDocsCreados);
-    for (let i = 0; i < this.arrayOfDocsCreados.length; i++) {
-      await this.docsSeleccionados(this.arrayOfDocsCreados[i]);
+
+    if (this.arrayOfDocsCreados.length > 0) {
+      for (let i = 0; i < this.arrayOfDocsCreados.length; i++) {
+        await this.docsSeleccionados(this.arrayOfDocsCreados[i]);
+      }
+    } else {
+      for (let i = 0; i < this.selectedDocs.length; i++) {
+        // if (arrayOfDocsCreados.cveDocument != this.selectedDocs[i].key) {
+        let obj = {
+          managementNumber: this.managementNumber,
+          cveDocument: this.selectedDocs[i].key,
+          rulingType: this.rulingType,
+        };
+        console.log(obj);
+        await this.createDocumentOficiManagement(obj);
+        // }
+      }
     }
 
     this.loading = false;
@@ -94,9 +119,10 @@ export class ListdocsComponent extends BasePage implements OnInit {
       });
     });
   }
-  getDocsParaDictum(typeOffice: any) {
+  getDocsParaDictum(typeOffice: any, inNot: any) {
     const params = new ListParams();
     params['filter.typeDictum'] = `$eq:${typeOffice}`;
+    params['filter.key'] = `$not:$in:${inNot}`;
     this.documentsService.getDocParaDictum(params).subscribe({
       next: (resp: any) => {
         this.data2 = resp.data;

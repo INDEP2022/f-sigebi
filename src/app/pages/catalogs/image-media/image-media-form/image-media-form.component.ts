@@ -33,8 +33,8 @@ export class ImageMediaFormComponent extends BasePage implements OnInit {
 
   private prepareForm(): void {
     this.imageMediaForm = this.fb.group({
-      route: [null, [Validators.required]],
-      status: [null, [Validators.required, Validators.maxLength(1)]],
+      route: [null, [Validators.maxLength(40)]],
+      status: [null, [Validators.maxLength(1)]],
     });
     if (this.imageMedia != null) {
       this.edit = true;
@@ -62,7 +62,7 @@ export class ImageMediaFormComponent extends BasePage implements OnInit {
   update() {
     this.loading = true;
     this.imageMediaService
-      .update(this.imageMedia.id, this.imageMediaForm.value)
+      .newUpdateId(this.imageMedia.id, this.imageMediaForm.value)
       .subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),

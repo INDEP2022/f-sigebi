@@ -26,6 +26,8 @@ export class ManagementsListComponent extends BasePage implements OnInit {
     super();
     this.settings.columns = MANAGEMENT_COLUMNS;
     this.settings.actions.delete = true;
+    this.settings.actions.add = false;
+    this.settings.hideSubHeader = false;
   }
 
   ngOnInit(): void {
