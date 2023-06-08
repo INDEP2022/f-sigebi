@@ -75,8 +75,8 @@
               class="form-control"
               [clearable]="false">
               <ng-option value="TODOS">Todos</ng-option>
-              <ng-option value="ABIERTA">Abierta</ng-option>
-              <ng-option value="CERRADA">Cerrada</ng-option>
+              <ng-option value="ABIERT">Abierta</ng-option>
+              <ng-option value="CERRAD">Cerrada</ng-option>
             </ng-select>
           </form-field>
 
@@ -201,6 +201,7 @@
               loading || loadingExcel || items.length === 0 ? 'disabled' : ''
             "
             (click)="exportExcel()">
+            <!-- <button>excel</button> -->
             <app-excel-report
               [elementToExport]="elementToExport"
               [externalClick]="flagDownload"

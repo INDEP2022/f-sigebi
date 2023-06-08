@@ -1,0 +1,39 @@
+<form class="form-material mt-2" [formGroup]="form">
+  <div class="d-flex align-items-center justify-content-center">
+    <div class="w-100 overflow-x-scroll" *ngIf="transfers">
+      <form-field [control]="form.get('transfer')" (click)="transferClick()">
+        <select name="transfer" class="form-control" formControlName="transfer">
+          <option *ngFor="let transfer of transfers" [value]="transfer.value">
+            {{ transfer.label }}
+          </option>
+        </select>
+        <!-- <input
+          type="number"
+          class="form-control"
+          max="2999"
+          min="1"
+          class="form-control"
+          formControlName="anio"
+          (input)="updateData()" /> -->
+      </form-field>
+
+      <!-- <select name="transfer" id="pet-select">
+        <option value="dog">Dog</option>
+        <option value="cat">Cat</option>
+        <option value="hamster">Hamster</option>
+        <option value="parrot">Parrot</option>
+        <option value="spider">Spider</option>
+        <option value="goldfish">Goldfish</option>
+      </select> -->
+      <!-- <ngx-select
+        (click)="transferClick()"
+        [data]="transfers"
+        [form]="form"
+        value="value"
+        bindLabel="label"
+        label=""
+        control="transfer">
+      </ngx-select> -->
+    </div>
+  </div>
+</form>

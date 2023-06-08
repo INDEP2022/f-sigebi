@@ -1501,7 +1501,6 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
                 .paOpenProceedingProgam(modelPaOpen)
                 .subscribe(
                   res => {
-                    
                     const paramsF = new FilterParams();
                     paramsF.addFilter(
                       'valUser',
@@ -1831,6 +1830,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
                     );
                   }
                 });
+
             }
           }
         },

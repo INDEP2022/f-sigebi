@@ -53,7 +53,10 @@ export class GoodSssubtypeService
     return this.goodSssubtypeRepository.updateByIds(this.route, ids, model);
   }
 
-  remove(id: string | number): Observable<Object> {
+  removeByIds(ids: Partial<IGoodSssubtype>): Observable<Object> {
+    return this.goodSssubtypeRepository.removeByIds(this.route, ids);
+  }
+  removeIds(id: string | number): Observable<Object> {
     return this.goodSssubtypeRepository.remove(this.route, id);
   }
 

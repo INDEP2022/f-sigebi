@@ -1,5 +1,6 @@
 export enum ENDPOINT_LINKS {
   Affair = 'catalog/affair',
+  AffairTest = 'catalog/affair',
   Authority = 'catalog/authority',
   appraiser = 'catalog/appraisers',
   Appraisers = 'appraise/appraisal-x-good', // ? Agregado para el nuevo MS agregado el 20/02/23
@@ -149,7 +150,7 @@ export enum ENDPOINT_LINKS {
   AffairType = 'affair-type',
   FinancialInformation = 'parameterfinantial/financial-information',
   FinancialIndicators = 'financial-indicators',
-  AttributesFinancialInfo = 'attributes-financial-information',
+  AttributesFinancialInfo = 'catalog/attributes-financial-information',
   BankConcepts = 'concept-movis-bank',
   NumeraryCategories = 'numerary-categories',
   NumeraryCategoriesAutom = 'categorization-autom-numerary',

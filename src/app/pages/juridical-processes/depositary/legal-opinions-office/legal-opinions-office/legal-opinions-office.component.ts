@@ -6,7 +6,15 @@ import { format } from 'date-fns';
 import { LocalDataSource } from 'ng2-smart-table';
 import { isArray } from 'ngx-bootstrap/chronos';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, takeUntil } from 'rxjs';
+import {
+  BehaviorSubject,
+  catchError,
+  map,
+  switchMap,
+  takeUntil,
+  tap,
+  throwError,
+} from 'rxjs';
 import { DocumentsViewerByFolioComponent } from 'src/app/@standalone/modals/documents-viewer-by-folio/documents-viewer-by-folio.component';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
@@ -15,6 +23,7 @@ import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { showHideErrorInterceptorService } from 'src/app/common/services/show-hide-error-interceptor.service';
 import { ICopiesOfficialOpinion } from 'src/app/core/models/ms-dictation/copies-official-opinion.model';
 import {
   ICopiesOfficeSendDictation,
@@ -32,6 +41,7 @@ import { IJobDictumTexts } from 'src/app/core/models/ms-officemanagement/job-dic
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
+import { FileBrowserService } from 'src/app/core/services/ms-ldocuments/file-browser.service';
 import { SecurityService } from 'src/app/core/services/ms-security/security.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { NUM_POSITIVE, STRING_PATTERN } from 'src/app/core/shared/patterns';
@@ -136,6 +146,7 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
   numberNotaryVisible: boolean = false;
   V_ARCHOSAL: string = '';
   pup_genera_xml: boolean = false;
+  pup_genera_pdf: boolean = false;
   V_URL_OPEN_FIRM: string = '';
   // Cargar n cantidad de Copias para
   totalCopiesTo: number = 2;
@@ -183,7 +194,9 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
     private siabService: SiabService,
     private sanitizer: DomSanitizer,
     private router: Router,
-    private securityService: SecurityService
+    private securityService: SecurityService,
+    private fileBrowserService: FileBrowserService,
+    private _blockErrors: showHideErrorInterceptorService
   ) {
     super();
     this.settings = {
@@ -223,7 +236,6 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
     const token = this.authService.decodeToken();
     console.log(token);
     this.dataUserLoggedTokenData = token;
-    this.cleanDataForm();
     // this.anotherSearchAppointment();
     if (token.preferred_username) {
       this.getUserDataLogged(
@@ -663,10 +675,11 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
           localStorage.removeItem(this.nameStorageDictationDate);
           // this.deleteTempDictation(true);
           this.alertInfo(
-            'warning',
+            'success',
             'Se realizó la firma del dictamen',
             ''
           ).then(() => {
+            this.pup_genera_pdf = true;
             // PUP_GENERA_PDF
             this.execute_PUP_GENERA_PDF();
           });
@@ -713,6 +726,8 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
               this.startLoopGoods(); // Inicar Loop de bienes
             }
           } else {
+            localStorage.removeItem(this.nameStorageKeyArmedOffice);
+            localStorage.removeItem(this.nameStorageDictationDate);
             this.alertInfo(
               'warning',
               'No se encontró el archivo firmado. El documento no ha sido enviado',
@@ -1396,7 +1411,7 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
         this.officeDictationData.delegacionRecipientNumber =
           event.delegationNumber;
         event.delegationNumber;
-        this.officeDictationData.delegacionRecipientNumber =
+        this.officeDictationData.recipientDepartmentNumber =
           event.departamentNumber;
         // this.officeDictationData.sender
         const params: any = new FilterParams();
@@ -1406,6 +1421,7 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
           .getAllUsersTracker(params.getParams())
           .subscribe({
             next: data => {
+              console.log(data);
               this.officeDictationData.cveChargeRem = data.data[0].postKey;
             },
             error: error => {},
@@ -1631,10 +1647,12 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
       destinatario: this.officeDictationData.recipient,
       // no_clasif_bien: null, // Bienes
       // no_bien: null, // Bienes
-      no_departamento_destinatario:
-        this.officeDictationData.recipientDepartmentNumber,
-      no_delegacion_destinatario:
-        this.officeDictationData.delegacionRecipientNumber,
+      no_departamento_destinatario: Number(
+        this.officeDictationData.recipientDepartmentNumber
+      ),
+      no_delegacion_destinatario: Number(
+        this.officeDictationData.delegacionRecipientNumber
+      ),
       no_delegacion_dictam: this.dictationData.delegationDictNumber, // Data del usuario
       tipo: this.paramsScreen.TIPO,
       usuario:
@@ -1662,10 +1680,12 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
         this.dictationData.passOfficeArmy
       ); // SAVE CLAVE_OFICIO_ARMADA
       console.log(this.dictationData.dictDate);
-      localStorage.setItem(
-        this.nameStorageDictationDate,
-        this.dictationData.dictDate.toString()
-      ); // SAVE FECHA_DICTAMEN
+      if (this.dictationData.dictDate) {
+        localStorage.setItem(
+          this.nameStorageDictationDate,
+          this.dictationData.dictDate.toString()
+        ); // SAVE FECHA_DICTAMEN
+      }
     }, 300);
     this.sendGoodDataToSendOffice(count, body);
   }
@@ -1684,6 +1704,7 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
     //   this.totalData
     // );
     this.sendOfficeAndGoodData(count, body);
+    // console.log(body);
   }
 
   sendOfficeAndGoodData(count: number, body: any) {
@@ -2300,10 +2321,39 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
     this.getDocumentsByFlyer(this.dictationData.wheelNumber);
   }
 
-  uploadPdfEmitter(event: any) {
-    if (event) {
-      // UPLOAD PDF TO DOCUMENTS
-    }
+  uploadPdfEmitter(
+    blobFile: Blob,
+    nameAndExtension: string,
+    folioUniversal: string | number
+  ) {
+    console.log(
+      'DOCUMENT PDF UPLOAD ',
+      blobFile,
+      nameAndExtension,
+      folioUniversal
+    );
+    // UPLOAD PDF TO DOCUMENTS
+    this._blockErrors.blockAllErrors = true;
+    // const formData = new FormData();
+    // formData.append('file', blobFile, nameAndExtension);
+    let filePdf = new File([blobFile], nameAndExtension);
+    this.fileBrowserService
+      .uploadFileByFolio(folioUniversal, filePdf)
+      .subscribe({
+        next: response => {
+          console.log(response);
+        },
+        error: error => {
+          this.onLoadToast(
+            'error',
+            'Error',
+            'Ocurrió un error al subir el reporte'
+          );
+        },
+        complete: async () => {
+          console.log('COMPLETADO SUBIR PDF');
+        },
+      });
   }
 
   openDocumentsModal(flyerNum: string | number, title: string) {
@@ -2381,6 +2431,7 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
       error: error => {
         console.log(error);
         this.loadDetail = false;
+        this.pup_genera_pdf = false;
         this.onLoadToast(
           'error',
           'No se encontró la ruta para depositar el XML',
@@ -2410,6 +2461,8 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
       if (this.dictationData.dictDate) {
         this.getEtapaByDictation();
       } else {
+        this.loadDetail = false;
+        this.pup_genera_pdf = false;
         this.alert(
           'warning',
           'El Dictamen no tiene una fecha: ' + this.dictationData.dictDate,
@@ -2437,6 +2490,7 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
         },
         error: error => {
           this.loadDetail = false;
+          this.pup_genera_pdf = false;
           console.log(error);
           this.alert(
             'warning',
@@ -2483,6 +2537,7 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
             }
           } else {
             this.loadDetail = false;
+            this.pup_genera_pdf = false;
           }
         },
       });
@@ -2504,6 +2559,7 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
         },
         error: error => {
           this.loadDetail = false;
+          this.pup_genera_pdf = false;
           console.log(error);
           this.alert(
             'warning',
@@ -2587,6 +2643,7 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
         this.runReport('RGENABANDEC', params, onlyDetail);
       } else {
         this.pup_genera_xml = false;
+        this.pup_genera_pdf = false;
         this.loadDetail = false;
         this.loadingSend = false;
         this.onLoadToast(
@@ -2762,11 +2819,78 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
               // }
             });
           }
+          if (this.pup_genera_pdf) {
+            let nameFile = this.dictationData.passOfficeArmy
+              .replaceAll('/', '-')
+              .replaceAll('?', '0')
+              .replaceAll(' ', '');
+            this.pup_genera_pdf = false;
+            const document = {
+              numberProceedings: this.dictationData.expedientNumber,
+              keySeparator: '60',
+              keyTypeDocument: 'ENTRE',
+              natureDocument: 'ORIGINAL',
+              descriptionDocument: `DICTAMEN ${this.dictationData.passOfficeArmy}`, // Clave de Oficio Armada
+              significantDate: format(new Date(), 'MM-yyyy'),
+              scanStatus: 'SOLICITADO',
+              userRequestsScan:
+                this.dataUserLogged.user == 'SIGEBIADMON'
+                  ? this.dataUserLogged.user.toLocaleLowerCase()
+                  : this.dataUserLogged.user,
+              scanRequestDate: new Date(),
+              numberDelegationRequested: this.dataUserLogged.delegationNumber,
+              numberSubdelegationRequests:
+                this.dataUserLogged.subdelegationNumber,
+              numberDepartmentRequest: this.dataUserLogged.departamentNumber,
+              flyerNumber: this.dictationData.wheelNumber,
+            };
+
+            this.createDocument(document)
+              .pipe(
+                tap(_document => {
+                  this.showScanForm = false;
+                  this.formScan.get('scanningFoli').setValue(_document.id);
+                  setTimeout(() => {
+                    this.showScanForm = true;
+                  }, 300);
+                }),
+                switchMap(_document => {
+                  let obj: any = {
+                    id: this.dictationData.id,
+                    typeDict: this.dictationData.typeDict,
+                    folioUniversal: _document.id,
+                  };
+                  return this.svLegalOpinionsOfficeService
+                    .updateDictations(obj)
+                    .pipe(map(() => _document));
+                }),
+                switchMap(async _document =>
+                  this.uploadPdfEmitter(blob, nameFile + '.pdf', _document.id)
+                )
+              )
+              .subscribe();
+          }
         }
       } else {
         this.alert('warning', 'Reporte no disponible por el momento', '');
       }
     });
+  }
+
+  createDocument(document: IDocuments) {
+    return this.documentsService.create(document).pipe(
+      tap(_document => {
+        // END PROCESS
+      }),
+      catchError(error => {
+        this.onLoadToast(
+          'error',
+          'Error',
+          'Ocurrió un error al generar el reporte PDF'
+        );
+        return throwError(() => error);
+      })
+    );
   }
 
   postReport() {
@@ -2802,6 +2926,7 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
       error: error => {
         console.log(error);
         this.loadDetail = false;
+        this.pup_genera_pdf = false;
         this.alert('warning', 'Error al obtener la Emisora por expediente', '');
       },
     });
@@ -2821,6 +2946,7 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
       error: error => {
         console.log(error);
         this.loadDetail = false;
+        this.pup_genera_pdf = false;
         this.alert(
           'warning',
           'Error al obtener la Delegación y Subdelegación del Remitente',
@@ -2844,6 +2970,7 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
       error: error => {
         console.log(error);
         this.loadDetail = false;
+        this.pup_genera_pdf = false;
         this.alert(
           'warning',
           'Error al obtener la Delegación y Subdelegación del Destinatario',
@@ -2868,6 +2995,7 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
         },
         error: error => {
           this.loadDetail = false;
+          this.pup_genera_pdf = false;
           console.log(error);
           this.alert(
             'warning',
@@ -3027,6 +3155,9 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
   }
 
   saveDataForm() {
+    if (this.blockSender) {
+      return;
+    }
     console.log(this.form);
     if (this.form.invalid) {
       this.form.markAllAsTouched();
@@ -3041,6 +3172,9 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
   }
 
   setDataDictationSave(saveData: boolean = false) {
+    if (this.blockSender) {
+      return;
+    }
     // DICTAMINACIONES
     this.dictationData = {
       ...this.dictationData,
@@ -3373,7 +3507,10 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
   }
 
   saveCopiesOfficeDictation() {
-    this.continueSearchAppoinment(this.dictationData);
+    // this.continueSearchAppoinment(this.dictationData);
+    this.setInitValuesToSave(); // INIT SAVE VARIABLES
+    this.cleanDataForm();
+    this.btnSearchAppointment();
     // if (this.officeCopiesDictationData.length == 0) {
     //   this.continueSearchAppoinment(this.dictationData);
     //   return;
@@ -3583,12 +3720,12 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
       ...params,
       nombreReporte: nameReport + '.jasper',
     };
-    for (const key in paramsData) {
-      if (Object.prototype.hasOwnProperty.call(paramsData, key)) {
-        let dataToParse = paramsData[key];
-        paramsData[key] = encodeURIComponent(dataToParse);
-      }
-    }
+    // for (const key in paramsData) {
+    //   if (Object.prototype.hasOwnProperty.call(paramsData, key)) {
+    //     let dataToParse = paramsData[key];
+    //     paramsData[key] = encodeURIComponent(dataToParse);
+    //   }
+    // }
     // this.siabService
     //   .fetchReport(nameReport, params, SiabReportEndpoints.EXTENSION_XML)
     this.svLegalOpinionsOfficeService.getXMLReportToFirm(paramsData).subscribe(
@@ -3625,6 +3762,18 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
             // console.log('XML DICTAMEN', typeof response, response);
             // console.log(response);
             if (!response) {
+              this.onLoadToast(
+                'warning',
+                'Ocurrió un error al cargar el XML con el nombre: ' + nameFile,
+                ''
+              );
+              return;
+            }
+            if (
+              // response.includes(this.dictationData.expedientNumber) ||
+              // response.includes(this.dictationData.wheelNumber) ||
+              !response.includes('xml')
+            ) {
               this.onLoadToast(
                 'warning',
                 'Ocurrió un error al cargar el XML con el nombre: ' + nameFile,
@@ -3735,10 +3884,31 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
         .subscribe({
           next: data => {
             console.log('UPDATE OFFICE DICTAMEN', data);
-            this.blockSender = true;
-            this.officeDictationData.statusOf = objSend.statusOf;
-            // RUN PDF REPORT
-            this.sendElectronicFirmData();
+            const params = new FilterParams();
+            params.removeAllFilters();
+            params.addFilter('typeDict', this.paramsScreen.TIPO);
+            params.addFilter('id', this.paramsScreen.P_VALOR);
+            // params['sortBy'] = 'nameCity:ASC';
+            this.svLegalOpinionsOfficeService
+              .getDictations(params.getParams())
+              .subscribe({
+                next: data => {
+                  console.log('DICTAMEN', data);
+                  this.dictationData = data.data[0];
+                  // this.callNextbtnSearchAppointment();
+                  this.goodsByDictation
+                    .pipe(takeUntil(this.$unSubscribe))
+                    .subscribe(() => this.loadGoodsByOfficeDictation());
+                  // FIRM PROCESS
+                  this.blockSender = true;
+                  this.officeDictationData.statusOf = objSend.statusOf;
+                  // RUN PDF REPORT
+                  this.sendElectronicFirmData();
+                },
+                error: error => {
+                  console.log(error);
+                },
+              });
           },
           error: error => {
             console.log(error);
@@ -3766,5 +3936,60 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
     }
     const byteArray = new Uint8Array(byteNumbers);
     return new Blob([byteArray], { type: 'application/xml;charset=UTF-8' });
+  }
+
+  testUploadPdf() {
+    // let nameFile = this.dictationData.passOfficeArmy
+    //   .replaceAll('/', '-')
+    //   .replaceAll('?', '0')
+    //   .replaceAll(' ', '');
+    // this.siabService.fetchReport('blank', {}).subscribe(response => {
+    //   console.log(response);
+    //   const blob = new Blob([response], { type: 'application/pdf' });
+    //   const document = {
+    //     numberProceedings: this.dictationData.expedientNumber,
+    //     keySeparator: '60',
+    //     keyTypeDocument: 'ENTRE',
+    //     natureDocument: 'ORIGINAL',
+    //     descriptionDocument: `DICTAMEN ${this.dictationData.passOfficeArmy}`, // Clave de Oficio Armada
+    //     significantDate: format(new Date(), 'MM-yyyy'),
+    //     scanStatus: 'SOLICITADO',
+    //     userRequestsScan:
+    //       this.dataUserLogged.user == 'SIGEBIADMON'
+    //         ? this.dataUserLogged.user.toLocaleLowerCase()
+    //         : this.dataUserLogged.user,
+    //     scanRequestDate: new Date(),
+    //     numberDelegationRequested: this.dataUserLogged.delegationNumber,
+    //     numberSubdelegationRequests: this.dataUserLogged.subdelegationNumber,
+    //     numberDepartmentRequest: this.dataUserLogged.departamentNumber,
+    //     flyerNumber: this.dictationData.wheelNumber,
+    //   };
+    //   this.createDocument(document)
+    //     .pipe(
+    //       tap(_document => {
+    //         console.log('DOCUMENT ', _document);
+    //         this.showScanForm = false;
+    //         this.formScan.get('scanningFoli').setValue(_document.id);
+    //         setTimeout(() => {
+    //           this.showScanForm = true;
+    //         }, 300);
+    //       }),
+    //       switchMap(_document => {
+    //         console.log('UPDATE DICTAMEN ', _document);
+    //         let obj: any = {
+    //           id: this.dictationData.id,
+    //           typeDict: this.dictationData.typeDict,
+    //           folioUniversal: _document.id,
+    //         };
+    //         return this.svLegalOpinionsOfficeService
+    //           .updateDictations(obj)
+    //           .pipe(map(() => _document));
+    //       }),
+    //       switchMap(async _document =>
+    //         this.uploadPdfEmitter(blob, nameFile+'.pdf', _document.id)
+    //       )
+    //     )
+    //     .subscribe();
+    // });
   }
 }

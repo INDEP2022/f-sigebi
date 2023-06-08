@@ -53,4 +53,8 @@ export class ScreenStatusService extends HttpService {
       `status-x-screen?filter.status=$eq:${params.estatus}&filter.screenKey=$eq:${params.vc_pantalla}&filter.identifier=$eq:${params.identifier}&filter.processExtSun=$eq:${params.processExtSun}`
     );
   }
+
+  getStatusCheck(data: any) {
+    return this.post('application/check-status-good', data);
+  }
 }
