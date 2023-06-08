@@ -33,7 +33,7 @@ export class ImageMediaFormComponent extends BasePage implements OnInit {
 
   private prepareForm(): void {
     this.imageMediaForm = this.fb.group({
-      route: [null],
+      route: [null, [Validators.maxLength(40)]],
       status: [null, [Validators.maxLength(1)]],
     });
     if (this.imageMedia != null) {

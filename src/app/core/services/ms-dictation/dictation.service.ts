@@ -248,4 +248,13 @@ export class DictationService extends HttpService {
   updateDictaEntregaRTurno(body: any) {
     return this.put<IListResponse<any>>(`${this.routeN}`, body);
   }
+
+  deletePupDeleteDictum(params: any) {
+    const route = `${DictationEndpoints.DeletePupDeleteDictum}`;
+    return this.post(route, params);
+  }
+
+  checkGoodAvaliable(data: Object) {
+    return this.post(DictationEndpoints.Check, data);
+  }
 }

@@ -90,8 +90,15 @@
                     TEST FIRMA
                     <i aria-hidden="true" class="fa fa-filr"></i>
                   </button> -->
+                  <!-- <button
+                    class="btn btn-danger active btn-sm m-2"
+                    (click)="testUploadPdf()">
+                    Test Files
+                    <i class="fas fa-trash-alt"></i>
+                  </button> -->
                   <button
                     *ngIf="dictationData"
+                    [disabled]="blockSender"
                     type="button"
                     class="btn btn-primary btn-sm active"
                     (click)="saveDataForm()">
@@ -135,9 +142,9 @@
                       </div>
                     </ng-container>
                     <ng-template #noStatus>
-                      <!-- <div class="badge badge-pill bg-default text-wrap ml-2 mr-2">
-                      &#91;Aquí va el Estatus&#93;
-                    </div> -->
+                      <div class="badge badge-pill bg-info text-wrap ml-2 mr-2">
+                        &#91;&nbsp;&nbsp;&#93;
+                      </div>
                     </ng-template>
                   </div>
                   <!-- <form-field
@@ -236,6 +243,7 @@
                   [control]="form.get('introductoryParagraph')"
                   label="P&aacute;rrafo Inicial">
                   <textarea
+                    maxlength="2000"
                     class="form-control"
                     formControlName="introductoryParagraph"
                     rows="5"></textarea>
@@ -278,6 +286,7 @@
                   [control]="form.get('finalParagraph')"
                   label="P&aacute;rrafo Final">
                   <textarea
+                    maxlength="4000"
                     class="form-control"
                     formControlName="finalParagraph"
                     rows="5"></textarea>
@@ -331,6 +340,7 @@
                   [control]="form.get('moreInformation1')"
                   label="M&aacute;s Información 1">
                   <textarea
+                    maxlength="4000"
                     class="form-control"
                     formControlName="moreInformation1"
                     rows="5"></textarea>
@@ -341,6 +351,7 @@
                   [control]="form.get('moreInformation2')"
                   label="M&aacute;s Información 2">
                   <textarea
+                    maxlength="4000"
                     class="form-control"
                     formControlName="moreInformation2"
                     rows="5"></textarea>
@@ -351,6 +362,7 @@
                   [control]="form.get('moreInformation3')"
                   label="M&aacute;s Información 3">
                   <textarea
+                    maxlength="4000"
                     class="form-control"
                     formControlName="moreInformation3"
                     rows="5"></textarea>
@@ -544,6 +556,7 @@
                 [form]="formScan"
                 [screenKey]="screenKey"
                 [screenKey2]="origin"
+                [screenKey3]="origin3"
                 [paramsScreen]="paramsScreen"
                 [officeDictationData]="officeDictationData"
                 [dictationData]="dictationData"

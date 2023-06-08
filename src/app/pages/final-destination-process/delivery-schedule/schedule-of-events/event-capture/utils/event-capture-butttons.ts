@@ -1,6 +1,6 @@
 export class EventCaptureButtons {
   sendSise = new EventCaptureButton('Enviar SISE', false);
-  closeProg = new EventCaptureButton('Cerrar Prog.');
+  closeProg = new EventCaptureButton('Cerrar Programación');
   expExcel = new EventCaptureButton('Exportar Excel');
   signOffice = new EventCaptureButton('Firmar Oficio');
   printOffice = new EventCaptureButton('Impr. Oficio');

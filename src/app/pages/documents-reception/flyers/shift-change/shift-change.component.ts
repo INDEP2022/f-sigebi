@@ -9,7 +9,7 @@ import { BsModalService } from 'ngx-bootstrap/modal';
 
 import { ActivatedRoute, Router } from '@angular/router';
 import { format } from 'date-fns';
-import { BehaviorSubject, firstValueFrom } from 'rxjs';
+import { BehaviorSubject, firstValueFrom, takeUntil } from 'rxjs';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import {
   IDictation,
@@ -118,9 +118,9 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
   origin: any;
   acta: IUpdateActasEntregaRecepcionDelegation;
   dictation: IUpdateDelDictation;
-  paramsDict = new BehaviorSubject(new ListParams());
-  paramsActas = new BehaviorSubject(new ListParams());
-  params = new BehaviorSubject(new ListParams());
+  paramsDict = new BehaviorSubject<ListParams>(new ListParams());
+  paramsActas = new BehaviorSubject<ListParams>(new ListParams());
+  params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
   totalItemsDic: number = 0;
   totalItemsActas: number = 0;
@@ -137,8 +137,13 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
   flyerNumber: number;
   historyColumns: IHistoryOfficial[] = [];
   historyUser: IHistoryOfficial = null;
+  hitoryNewUser: IHistoryOfficial = null;
   usersFilter: IUserAccessAreaRelational[] = [];
+  userNewFilter: IUserAccessAreaRelational[] = [];
   userHistory: string;
+  usernewHistory: string;
+  autoHeightDisabled: boolean;
+  userSelected: any;
 
   form: ModelForm<any>;
 
@@ -193,22 +198,32 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
     //TODO: Deshablitar controles de fecha
     this.checkParams();
     this.getFilterUserHistory();
-    //this.filterHistoryUser();
-    // console.log('AQUÍ', this.pageParams.affair);
+    this.filterHistoryUserBefore();
   }
 
   checkParams() {
     if (this.pageParams?.iden) {
       if (this.pageParams.iden) {
+        //this.autoHeightDictaDisabled = false;
         this.getNotification();
-        this.getDictums();
+        this.paramsDict
+          .pipe(takeUntil(this.$unSubscribe))
+          .subscribe(() => this.getDictums());
       }
       if (this.pageParams.exp) {
-        this.getProceedings();
+        //this.autoHeightActaDisabled = false;
+        this.paramsActas
+          .pipe(takeUntil(this.$unSubscribe))
+          .subscribe(() => this.getProceedings());
       }
     } else {
       this.router.navigate(['/pages/juridical/file-data-update']);
     }
+  }
+
+  getUserSelected(params: ListParams) {
+    this.userSelected = params;
+    //console.log(this.userSelected.departamentNumber);
   }
 
   usErrorUserPrev = false;
@@ -232,12 +247,6 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
           );
           this.formControls.captureDate.disable();
           this.formControls.receiptDate.disable();
-          // if (notif.affairKey != null)
-          //   this.affairService.getById(notif.affairKey).subscribe({
-          //     next: data => {
-          //       this.formControls.affair.setValue(data.description);
-          //     },
-          //   });
           this.fileUpdateService
             .getRecipientUser({
               /*  copyNumber: 1, */ flierNumber: notif.wheelNumber,
@@ -252,9 +261,6 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
                     next: data => {
                       if (data.count > 0) {
                         this.formControls.prevUser.setValue(data.data[0]);
-                        //this.preUser = data.data[0].userAndName;
-                        //this.userHistory = data.data[0].user;
-                        // console.log(this.preUser);
                       }
                     },
                     error: error => {
@@ -263,7 +269,7 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
                   });
               },
               error: () => {
-                this.usErrorUserPrev = true;
+                //this.usErrorUserPrev = true;
                 this.alert(
                   'error',
                   'Advertencia',
@@ -281,7 +287,6 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
     // TODO: llenar dictamenes al tener filtros dinamicos
     this.loading = true;
     const param = new FilterParams();
-    //param.addFilter('wheelNumber', this.pageParams.iden);
     this.paramsDict.getValue()[
       'filter.wheelNumber'
     ] = `$eq:${this.pageParams.iden}`;
@@ -304,11 +309,9 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
 
   getProceedings() {
     this.loading = true;
-
     this.paramsActas.getValue()[
       'filter.numFile'
     ] = `$eq:${this.pageParams.exp}`;
-    //param.addFilter('numFile', this.pageParams.exp);
     this.proceedingsDelRecService
       .getAll(this.paramsActas.getValue())
       .subscribe({
@@ -352,7 +355,7 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
                 data1.data[data1.data.length - this.totalItems];
               param1.addFilter(
                 'user',
-                this.historyUser.personnew,
+                this.historyUser.personbefore,
                 SearchFilter.EQ
               );
               this.docRegisterService
@@ -365,13 +368,9 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
                       this.preUser = this.usersFilter[0].userAndName;
                       this.userHistory = this.usersFilter[0].user;
                     }
-                    //this.users = new DefaultSelect(data.data, data.count);
-
-                    //console.log(this.preUser);
                   },
                   error: () => {
                     this.users = new DefaultSelect();
-                    this.preUser = 'El volante no tiene turnados';
                   },
                 });
             },
@@ -383,12 +382,6 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
       },
       error: () => {
         this.loading = false;
-        /*
-        this.alert(
-          'warning',
-          'El volante no tiene turnados',
-          ``
-        );*/
       },
     });
   }
@@ -401,97 +394,93 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
       return;
     }
 
-    //console.log(this.turnForm.controls['newUser'].value.user);
-    //this.getFilterUserHistory();
-    //console.log(this.userHistory);
-    // this.preUser;
-    const body: IHistoryOfficial = {
-      numberSteeringwheel: this.notifData.wheelNumber,
-      datereassignment: format(new Date(), 'dd/MM/yyyy'),
-      numberJob: this.notifData.officeNumber,
-      personbefore: this.userHistory,
-      areaDestinationbefore: this.notifData.departamentDestinyNumber,
-      personnew: this.turnForm.controls['newUser'].value.user,
-      areaDestinationnew: Number(this.formControls.newUser.value?.delegation),
-      argument: this.formControls.argument.value,
-      numberRecord: this.notifData.registerNumber,
-      cveJobExternal: this.notifData.officeExternalKey,
-      numberOftheDestinationbefore: this.notifData.delDestinyNumber,
-      numberSubdelDestinationbefore: this.notifData.subDelDestinyNumber,
-      numberOftheDestinationnew: Number(
-        this.formControls.newUser.value?.delegation
-      ),
-      numberSubdelDestinationnew: Number(
-        this.formControls.newUser.value?.subdelegationNumber
-      ),
-      nbOrigin: this.origin,
-    };
-    console.log(
-      this.turnForm.value,
-      body,
-      this.selectedDictums,
-      this.selectedProceedings
-    );
-    this.loading = true;
-    //this.newUser1 = this.formControls.newUser.value?.user;
-
-    try {
-      await firstValueFrom(this.historyOfficeService.create(body));
-      this.updateProceedings();
-      this.updateDictums();
-      //console.log(this.formControls.newUser.value?.user);
-      //this.newUser1 = this.formControls.newUser.value?.user;
-      //this.filterHistoryUser(this.formControls.newUser.value?.user);
-      this.loading = false;
-    } catch (ex) {
-      this.loading = false;
-      // await firstValueFrom(this.historyOfficeService.update(body));
-      this.alert('error', ' ', 'Turno no actualizado');
-      return;
-    }
-
-    try {
-      await firstValueFrom(
-        this.procedureManageService.updateForWheelNumber(
-          this.notifData.wheelNumber,
-          {
-            tiKeyNewPerson: this.formControls.newUser.value?.user,
-          }
-        )
+    if (
+      this.dictumColumns.length === 0 &&
+      this.proceedingColumns.length === 0
+    ) {
+      this.autoHeightDisabled = true;
+      this.autoHeightDisabled = true;
+      this.valid = false;
+      this.alert('warning', 'No se encontraron datos', '');
+    } else {
+      const body: IHistoryOfficial = {
+        numberSteeringwheel: this.notifData.wheelNumber,
+        datereassignment: format(new Date(), 'dd/MM/yyyy'),
+        numberJob: this.notifData.officeNumber,
+        personbefore: this.usernewHistory,
+        areaDestinationbefore: this.notifData.departamentDestinyNumber,
+        personnew: this.userSelected.user,
+        areaDestinationnew: Number(this.formControls.newUser.value?.delegation),
+        argument: this.formControls.argument.value,
+        numberRecord: this.notifData.registerNumber,
+        cveJobExternal: this.notifData.officeExternalKey,
+        numberOftheDestinationbefore: this.notifData.delDestinyNumber,
+        numberSubdelDestinationbefore: this.notifData.subDelDestinyNumber,
+        numberOftheDestinationnew: Number(
+          this.formControls.newUser.value?.delegation.id
+        ),
+        numberSubdelDestinationnew: Number(
+          this.userSelected.subdelegationNumber
+        ),
+        nbOrigin: this.origin,
+      };
+      console.log(
+        this.turnForm.value,
+        body,
+        this.selectedDictums,
+        this.selectedProceedings
       );
-      this.updateNotification();
-    } catch (ex) {
-      //console.log(ex);
-      this.alert('error', 'Turno no actualizado', '');
-      this.loading = false;
+      this.loading = true;
+
+      try {
+        await firstValueFrom(this.historyOfficeService.create(body));
+        this.updateProceedings();
+        this.updateDictums();
+        this.loading = false;
+      } catch (ex) {
+        this.loading = false;
+        this.alert('error', ' ', 'Turno no actualizado');
+        return;
+      }
+
+      try {
+        await firstValueFrom(
+          this.procedureManageService.updateForWheelNumber(
+            this.notifData.wheelNumber,
+            {
+              tiKeyNewPerson: this.userSelected.user,
+            }
+          )
+        );
+        this.updateNotification();
+      } catch (ex) {
+        //console.log(ex);
+        this.alert('error', 'Turno no actualizado', '');
+        this.loading = false;
+      }
     }
   }
 
   updateNotification() {
     const body = {
-      delDestinyNumber: this.formControls.newUser.value?.delegationNumber,
-      subDelDestinyNumber: this.formControls.newUser.value?.subdelegationNumber,
-      departamentDestinyNumber:
-        this.formControls.newUser.value?.departamentNumber,
+      delDestinyNumber: this.userSelected.user.delegationNumber,
+      subDelDestinyNumber: this.userSelected.user.subdelegationNumber,
+      departamentDestinyNumber: this.userSelected.user.departamentNumber,
     };
     console.log(body);
 
     this.notifService.update(this.notifData.wheelNumber, body).subscribe({
       next: () => {
         this.updateProcedureUser();
-        // this.updateDictums();
-        // this.updateProceedings();
         this.loading = true;
-        //this.filterHistoryUser();
+        this.clean();
         this.alert(
           'success',
           'Usuario Turnado Exitosamente',
           `Se actualizó el usuario turnado al volante ${this.pageParams.iden}`
         );
-        this.loading = false;
       },
       error: err => {
-        // console.log(err);
         this.loading = false;
         this.alert(
           'error',
@@ -502,15 +491,27 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
     });
   }
 
+  clean() {
+    this.turnForm.controls['newUser'].setValue(null);
+    this.turnForm.controls['argument'].setValue(null);
+    this.checkParams();
+    this.valid = false;
+    this.loading = false;
+    this.selectedProceedings.splice(0, this.selectedProceedings.length);
+    this.selectedDictums.splice(0, this.selectedDictums.length);
+    //console.log(this.selectedProceedings.length, this.selectedDictums.length);
+  }
+
   updateProcedureUser() {
     this.procedureManageService
       .update(this.pageParams.pNoTramite, {
-        userTurned: this.formControls.newUser.value?.user,
+        userTurned: this.userSelected.user,
       })
       .subscribe({
         next: res => {
           console.log(res);
           this.getFilterUserHistory();
+          this.filterHistoryUserBefore();
           this.loading = false;
         },
         error: () => {},
@@ -535,13 +536,14 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
       this.dictumColumns.length > 0 &&
       this.selectedDictums.length > 0
     ) {
-      this.selectedProceedings.forEach(val => {
+      this.selectedDictums.forEach(val => {
         data.push({
-          delegationDictateNumber: Number(val.id),
-          ofDictaNumber: Number(val.delegationDictNumber),
+          delegationDictateNumber: Number(this.userSelected.delegationNumber),
+          ofDictaNumber: Number(val.id),
         });
       });
     }
+    console.log(data);
 
     this.dictationService.updateDictaEntregaRTurno(data).subscribe({
       next: resp => {
@@ -549,7 +551,6 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
         this.loading = false;
       },
       error: () => {
-        //this.alert('info', 'La delegacion actual es igual a la anterior', '');
         console.log(Error);
       },
     });
@@ -579,10 +580,11 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
       this.selectedProceedings.forEach(val => {
         data.push({
           minutesNumber: Number(val.id),
-          delegation2Number: Number(val.numDelegation2),
+          delegation2Number: Number(this.userSelected.delegationNumber),
         });
       });
     }
+    console.log(data);
     this.proceedingsService.updateActasEntregaRTurno(data).subscribe({
       next: resp => {
         console.log(resp);
@@ -590,7 +592,6 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
       },
       error: err => {
         console.log(err.message);
-        //this.alert('info', err.message , '');
       },
     });
   }
@@ -602,10 +603,6 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
       pNoTramite: this.pageParams?.pNoTramite,
       dictamen: false,
     };
-    // if (params == null) {
-    // } else {
-    //   params.dictamen = false;
-    // }
     this.fileUpdComService.fileDataUpdateParams = params;
     if (this.origin == 'ABANDONMENT') {
       this.router.navigateByUrl(
@@ -630,8 +627,6 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
   }
 
   selectDictums(event: any) {
-    console.log(event.selectedIndex);
-    //if(event.selectedIndex === undefined || )
     const existe = this.selectedDictums.some(
       (objeto: any) => objeto.id === event.data.id
     );
@@ -642,23 +637,23 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
         objeto => objeto.id === event.data.id
       );
       this.selectedDictums.splice(index, 1);
-      this.valid = false;
     } else {
       // Agregar el objeto al arreglo
+      //event.data = this.userSelected.delegationNumber.numDelegation2;
       this.selectedDictums.push(event.data);
+    }
+    //console.log(this.selectedDictums);
+    if (
+      this.selectedDictums.length === 0 &&
+      this.selectedProceedings.length === 0
+    ) {
+      this.valid = false;
+    } else {
       this.valid = true;
     }
-    console.log(this.selectedDictums);
-
-    this.valid = true;
-    /*console.log({ selectedDictums: this.selectedDictums });
-    this.updateDictums();
-    */
   }
 
   selectProceedings(event: any) {
-    //console.log(event);
-    // this.selectedProceedings = event.selected;
     console.log(event.selectedIndex);
     console.log(this.selectedProceedings);
     const existe = this.selectedProceedings.some(
@@ -671,53 +666,20 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
         objeto => objeto.id === event.data.id
       );
       this.selectedProceedings.splice(index, 1);
-      this.valid = false;
     } else {
       // Agregar el objeto al arreglo
       this.selectedProceedings.push(event.data);
+    }
+    //console.log(this.selectedProceedings);
+    if (
+      this.selectedProceedings.length === 0 &&
+      this.selectedDictums.length === 0
+    ) {
+      this.valid = false;
+    } else {
       this.valid = true;
     }
-    console.log(this.selectedProceedings);
   }
-
-  /*selectDictums(event: any) {
-    this.idDelDicta = event.data.id;
-    let params: IUpdateDelDictation = {
-      ofDictaNumber: event.data.id,
-      delegationDictateNumber:
-        this.formControls.newUser?.value.delegationNumber,
-    };
-    this.dictation = params;
-    console.log(this.dictation);
-    this.updateDictums();
-  }
-
-  selectProceedings(event: any) {
-
-    
-
-    this.form = this.fb.group({
-      minutesNumber: [null],
-      delegation2Number: [null],
-    });
-
-
-    this.idDelActa = event.data.id;
-    const data: any = {};
-
-    data['minutesNumber'] = event.data.id;
-    data['delegation2Number'] = event.data.numDelegation_2.id;
-    //data['delegation2Number'] = this.formControls.newUser?.value.delegationNumber;
-
-    let params: IUpdateActasEntregaRecepcionDelegation = {
-      minutesNumber: event.data.id,
-      delegation2Number: this.formControls.newUser?.value.delegationNumber,
-    };
-    //this.acta = params;
-    //console.log(event.data.numDelegation_2.id);
-    console.log(data);
-    this.updateProceedings();
-  }*/
 
   getUsersCopy(lparams: ListParams) {
     const params = new FilterParams();
@@ -728,8 +690,8 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
     this.docRegisterService.getUsersSegAreas(params.getParams()).subscribe({
       next: data => {
         this.users = new DefaultSelect(data.data, data.count);
-        /*this.newUser1 = this.turnForm.controls['newUser'].value.userAndName;
-        console.log(this.newUser1);*/
+
+        //this.filterHistoryUser(this.turnForm.controls['newUser'].value.user);
       },
       error: () => {
         this.users = new DefaultSelect();
@@ -747,110 +709,71 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
     param.addFilter('user', user, SearchFilter.EQ);
     this.docRegisterService.getUsersSegAreas(param.getParams()).subscribe({
       next: resp => {
-        //this.users = new DefaultSelect(data.data, data.count);
         this.usersFilter = resp.data;
         console.log(this.usersFilter[0].userAndName);
-        //this.usersFilter[0].userAndName;
         if (
           this.usersFilter[0].userAndName != null ||
           this.usersFilter[0].userAndName != undefined
         ) {
           this.newUser1 = this.usersFilter[0].userAndName;
+          //this.
+          console.log(this.usersFilter);
         }
-        //console.log(this.preUser);
       },
       error: () => {
         this.users = new DefaultSelect();
       },
     });
-
-    //param.addFilter('flyerNumber', this.flyerNumber);
-    /*params['filter.flyerNumber'] = `$eq:${this.pageParams.iden}`;
-    // console.log(this.pageParams.iden);
-    this.historyOfficeService.getFilterUser(params).subscribe({
-      next: data => {
-        if (data.count > 0) {
-          this.historyColumns = data.data;
-          //this.historyColumns[0].personNew;
-          //param['filter.flyerNumber'] = `$eq:${this.newUser}`;
-          //params.page = lparams.page;
-          //params.limit = lparams.limit;
-          param.addFilter(
-            'user',
-            this.historyColumns[0].personNew,
-            SearchFilter.EQ
-          );
-          this.docRegisterService
-            .getUsersSegAreas(param.getParams())
-            .subscribe({
-              next: resp => {
-                //this.users = new DefaultSelect(data.data, data.count);
-                this.usersFilter = resp.data;
-                console.log(this.usersFilter);
-                this.newUser = this.usersFilter[0].userAndName;
-                if (
-                  this.usersFilter[0].userAndName != null ||
-                  this.usersFilter[0].userAndName != undefined
-                ) {
-                  this.newUser = this.usersFilter[0].userAndName;
-                }
-                //console.log(this.preUser);
-              },
-              error: () => {
-                this.users = new DefaultSelect();
-              },
-            });
-          //console.log(this.historyColumns[0].personNew);
-        }
-        this.loading = false;
-      },
-      error: () => {
-        this.loading = false;
-      },
-    });*/
   }
-  filterHistoryUserBefore(idUpdate: string) {
-    this.loading = true;
+
+  filterHistoryUserBefore() {
+    let historyUser1: any = null;
     const param = new FilterParams();
-    const params = new ListParams();
-    const data1: any = {};
-    //param.addFilter('flyerNumber', this.flyerNumber);
-    params['filter.flyerNumber'] = `$eq:${this.pageParams.iden}`;
-    // console.log(this.pageParams.iden);
-    this.historyOfficeService.getFilterUser(params).subscribe({
+    const params = new FilterParams();
+    this.params.getValue()[
+      'filter.numberSteeringwheel'
+    ] = `$eq:${this.pageParams.iden}`;
+
+    this.historyOfficeService.getAll(this.params.getValue()).subscribe({
       next: data => {
         if (data.count > 0) {
+          this.totalItems = data.count || 0;
           this.historyColumns = data.data;
-          this.historyColumns[0].personbefore;
-          //param['filter.flyerNumber'] = `$eq:${this.newUser}`;
-          //params.page = lparams.page;
-          //params.limit = lparams.limit;
-          param.addFilter(
-            'user',
-            this.historyColumns[0].personbefore,
-            SearchFilter.EQ
-          );
-          this.docRegisterService
-            .getUsersSegAreas(param.getParams())
-            .subscribe({
-              next: resp => {
-                //this.users = new DefaultSelect(data.data, data.count);
-                this.usersFilter = resp.data;
-                console.log(this.usersFilter);
-                this.preUser = this.usersFilter[0].userAndName;
-                if (
-                  this.usersFilter[0].userAndName != null ||
-                  this.usersFilter[0].userAndName != undefined
-                ) {
-                  this.preUser = this.usersFilter[0].userAndName;
-                }
-                //console.log(this.preUser);
-              },
-              error: () => {
-                this.users = new DefaultSelect();
-              },
-            });
-          //console.log(this.historyColumns[0].personNew);
+          const param1 = new FilterParams();
+          const param = new ListParams();
+          param['filter.numberSteeringwheel'] = `$eq:${this.pageParams.iden}`;
+          param.page = 0;
+          param.limit = this.totalItems;
+          this.historyOfficeService.getAll(param).subscribe({
+            next: data1 => {
+              console.log(data1.data);
+              console.log(data1.data.length + this.totalItems);
+              this.hitoryNewUser =
+                data1.data[data1.data.length - this.totalItems];
+              param1.addFilter(
+                'user',
+                this.hitoryNewUser.personnew,
+                SearchFilter.EQ
+              );
+              this.docRegisterService
+                .getUsersSegAreas(param1.getParams())
+                .subscribe({
+                  next: resp => {
+                    if (resp.count > 0) {
+                      this.userNewFilter = resp.data;
+                      console.log(this.userNewFilter);
+                      this.newUser1 = this.userNewFilter[0].userAndName;
+                      this.usernewHistory = this.userNewFilter[0].user;
+                    }
+                  },
+                  error: () => {
+                    this.users = new DefaultSelect();
+                  },
+                });
+            },
+          });
+        } else {
+          this.usernewHistory = this.turnForm.controls['newUser'].value.user;
         }
         this.loading = false;
       },

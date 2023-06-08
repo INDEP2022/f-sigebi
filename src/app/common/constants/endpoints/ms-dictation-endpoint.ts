@@ -28,4 +28,6 @@ export enum DictationEndpoints {
   GetOfficeByYear3 = 'application/get-office-by-year-3',
   FaFlagDest = '/application/fa-flag-dest',
   DictamenDelegation = 'application/delegationDictamXofDicta',
+  DeletePupDeleteDictum = 'application/pupDeleteDictum',
+  Check = 'application/destruction-check-good-available',
 }

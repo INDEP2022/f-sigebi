@@ -27,12 +27,13 @@ import {
   IAcceptGoodStatusScreen,
   IGood,
 } from 'src/app/core/models/ms-good/good';
+import { ITransfActaEntrec } from 'src/app/core/models/ms-notification/notification.model';
 import {
   IDeleteDetailProceeding,
   IDetailProceedingsDeliveryReception,
+  IDetailWithIndEdo,
 } from 'src/app/core/models/ms-proceedings/detail-proceedings-delivery-reception.model';
 import { IProccedingsDeliveryReception } from 'src/app/core/models/ms-proceedings/proceedings-delivery-reception-model';
-import { TransferProceeding } from 'src/app/core/models/ms-proceedings/validations.model';
 import { GoodSssubtypeService } from 'src/app/core/services/catalogs/good-sssubtype.service';
 import { SafeService } from 'src/app/core/services/catalogs/safe.service';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
@@ -42,6 +43,7 @@ import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.s
 import { GoodParametersService } from 'src/app/core/services/ms-good-parameters/good-parameters.service';
 import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import { ParametersService } from 'src/app/core/services/ms-parametergood/parameters.service';
 import { DetailProceeDelRecService } from 'src/app/core/services/ms-proceedings/detail-proceedings-delivery-reception.service';
 import { ProceedingsDeliveryReceptionService } from 'src/app/core/services/ms-proceedings/proceedings-delivery-reception';
@@ -57,6 +59,7 @@ import {
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { EdoFisicoComponent } from '../confiscated-records/edo-fisico/edo-fisico.component.component';
+import { columnsGoodAct } from '../confiscated-records/settings-tables';
 
 @Component({
   selector: 'app-sale-cancellation',
@@ -65,6 +68,7 @@ import { EdoFisicoComponent } from '../confiscated-records/edo-fisico/edo-fisico
 })
 export class SaleCancellationComponent extends BasePage implements OnInit {
   itemsSelect = new DefaultSelect();
+
   settings1 = {
     ...TABLE_SETTINGS,
     rowClassFunction: (row: { data: { avalaible: any } }) =>
@@ -121,44 +125,15 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
     selectedRowIndex: -1,
     mode: 'external',
     columns: {
-      goodId: {
-        title: 'No. Bien',
-        type: 'number',
-        sort: false,
-      },
-      clasificacion: {
-        title: 'No Clasificación',
-        type: 'number',
-        sort: false,
-      },
-      description: {
-        title: 'Descripción',
-        type: 'string',
-        sort: false,
-      },
-      proceso: {
-        title: 'Proceso',
-        type: 'string',
-        sort: false,
-      },
-      quantity: {
-        title: 'Cantidad',
-        type: 'number',
-        sort: false,
-      },
-      unit: {
-        title: 'Unidad',
-        type: 'string',
-        sort: false,
-      },
-      exchangeValue: {
+      ...columnsGoodAct,
+      received: {
         title: 'Recibido',
         type: 'custom',
         filter: false,
         sort: false,
         renderComponent: CheckboxElementComponent,
         valuePrepareFunction: (isSelected: any, row: any) => {
-          return row.exchangeValue == 1 ? true : false;
+          return row.received == 'S' ? true : false;
         },
         onComponentInitFunction: (instance: CheckboxElementComponent) =>
           this.onSelectRow(instance),
@@ -171,10 +146,23 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
   paramsActNavigate = new BehaviorSubject<ListParams>(new ListParams());
   newLimitparamsActNavigate = new FormControl(1);
 
+  //NAVEGACION DE TABLA DE BIENES
+  paramsDataGoods = new BehaviorSubject<ListParams>(new ListParams());
+  totalItemsDataGoods: number = 0;
+  limitDataGoods = new FormControl(10);
+
+  //NAVEGACION DE TABLA DE BIENES DE ACTA
+  paramsDataGoodsAct = new BehaviorSubject<ListParams>(new ListParams());
+  totalItemsDataGoodsAct: number = 0;
+  limitDataGoodsAct = new FormControl(10);
+
   //FOLIO DE ESCANEO
   folioEscaneo = 'folioEscaneo';
   cveScreen = 'FACTREFACTAVENT';
   nameReport = 'RGERGENSOLICDIGIT';
+
+  //VARIABLES GENERALES
+  idProceeding: string;
 
   searchByOtherData = false;
   dataExpedients = new DefaultSelect();
@@ -184,7 +172,6 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
   dataGoods = new LocalDataSource();
   form: FormGroup;
   goodData: any[] = [];
-  idProceeding: number;
   initialBool = true;
   labelActa = 'Abrir acta';
   maxDate = new Date();
@@ -212,6 +199,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
   isEnableObservaciones = true;
   isEnableRecibe = true;
   isEnableTestigo = true;
+  isEnableDireccion = true;
   warehouseSelect = new DefaultSelect();
   vaultSelect = new DefaultSelect();
   reopening = false;
@@ -219,7 +207,13 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
   isSelectGood = false;
   isBoveda = false;
   isAlmacen = false;
+  research = false;
   dataEdoFisico = new DefaultSelect(['MALO', 'REGULAR', 'BUENO']);
+
+  //DATOS DE USUARIO
+  delUser: string;
+  subDelUser: string;
+  departmentUser: string;
 
   constructor(
     private fb: FormBuilder,
@@ -240,7 +234,8 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
     private serviceProgrammingGood: ProgrammingGoodService,
     private serviceWarehouse: WarehouseFilterService,
     private serviceVault: SafeService,
-    private modalService: BsModalService
+    private modalService: BsModalService,
+    private serviceNotification: NotificationService
   ) {
     super();
   }
@@ -251,6 +246,31 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
     this.form.get('mes').setValue(format(new Date(), 'MM'));
     this.checkChange();
     this.initalizateProceeding();
+
+    if (localStorage.getItem('numberExpedient')) {
+      this.loading = true;
+      this.form
+        .get('expediente')
+        .setValue(localStorage.getItem('numberExpedient'));
+      this.goodsByExpediente();
+      localStorage.removeItem('numberExpedient');
+    }
+
+    this.getDataUser();
+  }
+
+  getDataUser() {
+    const user =
+      localStorage.getItem('username') == 'sigebiadmon'
+        ? localStorage.getItem('username')
+        : localStorage.getItem('username').toLocaleUpperCase();
+    const routeUser = `?filter.name=$eq:${user}`;
+    this.serviceUser.getAllSegUsers(routeUser).subscribe(res => {
+      const resJson = JSON.parse(JSON.stringify(res.data[0]));
+      this.delUser = resJson.usuario.delegationNumber;
+      this.subDelUser = resJson.usuario.subdelegationNumber;
+      this.departmentUser = resJson.usuario.departamentNumber;
+    });
   }
 
   prepareForm() {
@@ -455,6 +475,12 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
 
   //Validate Proceeding
   changeAct() {
+    if (
+      this.form.get('acta').value != null &&
+      this.form.get('acta').value != undefined
+    ) {
+      this.getTransfer();
+    }
     this.fillActTwo();
   }
 
@@ -546,7 +572,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
   statusGood(formName: string, data: any) {
     console.log(formName);
     const paramsF = new FilterParams();
-    paramsF.addFilter('status', data.status);
+    paramsF.addFilter('status', data.good.status || data.status);
     this.serviceGood.getStatusGood(paramsF.getParams()).subscribe(
       res => {
         this.form.get(formName).setValue(res.data[0]['description']);
@@ -570,7 +596,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
   }
 
   async selectEdoFisRow(data: any, formName: string) {
-    const edoFis: any = await this.getIndEdoFisAndVColumna(data);
+    const edoFis: any = await this.getIndEdoFisAndVColumna(data.good);
     console.log(edoFis);
     if (edoFis.V_NO_COLUMNA === 0) {
       console.log(edoFis.V_NO_COLUMNA);
@@ -585,7 +611,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
 
   selectRowBovedaAlmacen(data: any) {
     const paramsF = new FilterParams();
-    paramsF.addFilter('idWarehouse', data.storeNumber);
+    paramsF.addFilter('idWarehouse', data.good.storeNumber);
     this.serviceWarehouse.getWarehouseFilter(paramsF.getParams()).subscribe(
       res => {
         console.log(res);
@@ -596,7 +622,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
       }
     );
     this.serviceVault
-      .getAllFilter(`filter.idSafe=$eq:${data.vaultNumber}`)
+      .getAllFilter(`filter.idSafe=$eq:${data.good.vaultNumber}`)
       .subscribe(
         res => {
           this.form.get('noBoveda').setValue(res.data[0]);
@@ -648,7 +674,9 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
   async applyEdoFisOne(e: any) {
     console.log(this.selectActData);
     console.log(e);
-    const edoFis: any = await this.getIndEdoFisAndVColumna(this.selectActData);
+    const edoFis: any = await this.getIndEdoFisAndVColumna(
+      this.selectActData.good
+    );
     console.log(edoFis);
     const generalModel: Map<string, any> = new Map();
     generalModel.set('id', parseInt(this.selectActData.id.toString()));
@@ -673,70 +701,60 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
 
   //*Traer bienes
   getTransfer() {
-    this.serviceExpedient
-      .getById(this.form.get('expediente').value)
-      .subscribe(res => {
-        console.log(res.expedientType);
-        let model: TransferProceeding = {
-          numFile: res.transferNumber as number,
-          typeProceedings: res.expedientType,
-        };
-        console.log(model);
-        this.serviceProcVal.getTransfer(model).subscribe(
-          res => {
-            console.log(res);
-            this.transferSelect = new DefaultSelect(res.data, res.count);
-          },
-          err => {
-            console.log(err);
-            this.blockExpedient = false;
-            this.alert('error', 'Clave de transferente inválida', '');
-            this.dataGoods.load([]);
-            this.dataGoodAct.load([]);
-            this.goodData = [];
-          }
-        );
-        /* this.enableElement('acta'); */
-      });
+    let modelTransf: ITransfActaEntrec = {
+      indcap: '',
+      no_expediente: this.form.get('expediente').value,
+      id_tipo_acta: this.form.get('acta').value,
+    };
+
+    this.serviceNotification.getTransferenteentrec(modelTransf).subscribe(
+      res => {
+        this.transferSelect = new DefaultSelect(res.data);
+      },
+      err => {
+        this.transferSelect = new DefaultSelect();
+        this.loading = false;
+        this.alert('warning', 'No se encontraron transferentes', '');
+      }
+    );
   }
 
   fillIncomeProceeding(dataRes: any) {
     console.log(dataRes);
-    const paramsF = new FilterParams();
     this.initialBool = true;
     this.minDateFecElab = addDays(new Date(dataRes.elaborationDate), 1);
-    paramsF.addFilter('numberProceedings', dataRes.id);
-    paramsF.addFilter('keysProceedings', dataRes.keysProceedings);
-    this.serviceDetailProc.getAllFiltered(paramsF.getParams()).subscribe(
+
+    const modelDetail: IDetailWithIndEdo = {
+      no_acta: dataRes.id,
+    };
+
+    this.serviceDetailProc.getAllwithEndFisico(modelDetail).subscribe(
       async res => {
         console.log(res);
         const data = this.dataGoods;
         const incomeData = res.data;
         for (let i = 0; i < incomeData.length; i++) {
           const element = JSON.parse(JSON.stringify(incomeData[i]));
-          const edoFis: any = await this.getIndEdoFisAndVColumna(element.good);
+          /* const edoFis: any = await this.getIndEdoFisAndVColumna(element.good);
           this.goodData.push({
             ...element.good,
             exchangeValue: element.exchangeValue === '1' ? 1 : null,
             indEdoFisico: edoFis.V_IND_EDO_FISICO === 1 ? true : false,
-          });
-          this.dataGoods
-            .load(
-              this.dataGoods['data'].map((e: any) => {
-                if (e.id == element.good.id) {
-                  return {
-                    ...e,
-                    avalaible: false,
-                    exchangeValue: element.exchangeValue === '1' ? 1 : null,
-                    received: element.exchangeValue ? 'S' : null,
-                    acta: dataRes.keysProceedings,
-                  };
-                } else {
-                  return e;
-                }
-              })
-            )
-            .then(res => {
+          }); */
+          this.dataGoods.load(
+            this.dataGoods['data'].map((e: any) => {
+              if (e.id == element.good.id) {
+                return {
+                  ...e,
+                  avalaible: false,
+                  acta: dataRes.keysProceedings,
+                };
+              } else {
+                return e;
+              }
+            })
+          );
+          /* .then(res => {
               for (let item of this.goodData) {
                 const goodClass = item.goodClassNumber;
 
@@ -763,9 +781,10 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
                     }
                   });
               }
-            });
+            }); */
         }
-        this.dataGoodAct.load(this.goodData);
+        this.dataGoodAct.load(incomeData);
+        this.validateWarehouseAndVault(incomeData);
 
         this.form.get('acta2').setValue(dataRes.keysProceedings);
         this.form.get('direccion').setValue(dataRes.address);
@@ -840,6 +859,26 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
         this.idProceeding = dataRes.id;
       }
     );
+  }
+
+  validateWarehouseAndVault(data: any) {
+    for (let item of data) {
+      const newParams = `filter.numClasifGoods=$eq:${item.good.goodClassNumber}`;
+      this.serviceSssubtypeGood.getFilter(newParams).subscribe(res => {
+        const type = JSON.parse(JSON.stringify(res.data[0]['numType']));
+        const subtype = JSON.parse(JSON.stringify(res.data[0]['numSubType']));
+
+        const no_type = parseInt(type.id);
+        const no_subtype = parseInt(subtype.id);
+
+        if (no_type === 7 || (no_type === 5 && no_subtype === 16)) {
+          this.isBoveda = true;
+        }
+        if (no_type === 5) {
+          this.isAlmacen = true;
+        }
+      });
+    }
   }
 
   getIndEdoFisAndVColumna(data: any) {
@@ -1066,8 +1105,44 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
     }
   }
 
+  getGoodsActFn() {
+    this.loading = true;
+    const paramsF = new FilterParams();
+    paramsF.addFilter('numberProceedings', this.idProceeding);
+    paramsF.addFilter('keysProceedings', this.form.get('acta2').value);
+    paramsF.page = this.paramsDataGoodsAct.getValue().page;
+    paramsF.limit = this.paramsDataGoodsAct.getValue().limit;
+    this.limitDataGoods = new FormControl(
+      this.paramsDataGoodsAct.getValue().limit
+    );
+
+    const model: IDetailWithIndEdo = {
+      no_acta: parseInt(this.idProceeding),
+    };
+
+    this.serviceDetailProc.getAllwithEndFisico(model).subscribe(
+      res => {
+        console.log(res.data);
+        this.dataGoodAct.load(res.data);
+        this.totalItemsDataGoodsAct = res.count;
+        this.loading = false;
+        this.validateWarehouseAndVault(res.data);
+      },
+      err => {
+        console.log(err);
+        this.loading = false;
+        this.dataGoodAct.load([]);
+        this.form.get('almacen').reset();
+        this.form.get('boveda').reset();
+        this.isAlmacen = false;
+        this.isBoveda = false;
+        this.totalItemsDataGoodsAct = 0;
+      }
+    );
+  }
+
   getGoodsByExpedient() {
-    //Validar si hay un acta abierta
+    this.research = false;
     const paramsF = new FilterParams();
     paramsF.addFilter(
       'numFile',
@@ -1092,14 +1167,12 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
           this.initialBool = false;
           this.minDateFecElab = new Date();
           this.checkChange();
-          this.getTransfer();
         }
       },
       err => {
         console.log(err);
         this.initialBool = false;
         this.checkChange();
-        this.getTransfer();
         this.blockExpedient = false;
       }
     );
@@ -1162,6 +1235,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
             if (res.data.length > 0) {
               this.form.get('ident').setValue('DEV');
               this.form.get('entrego').setValue('PART');
+              this.totalItemsDataGoods = res.count;
               this.dataGoods.load(res.data);
               console.log(res);
               const newData = await Promise.all(
@@ -1244,10 +1318,54 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
 
   //
 
+  fecElabFn() {
+    let fecElab = new Date(this.form.get('fecElab').value);
+    if (this.form.get('fecElab').value != null) {
+      this.form.get('fecReception').setValue(new Date(fecElab));
+    } else {
+      {
+        this.form.get('fecReception').setValue('');
+      }
+    }
+  }
+
   checkChange() {
-    this.form.get('fecElab').valueChanges.subscribe(res => {
-      this.form.get('fecRecepFisica').setValue(res);
-    });
+    if (this.research) {
+      console.log('No');
+    } else {
+      this.form
+        .get('transfer')
+        .valueChanges.subscribe(res => this.fillActTwo());
+      this.form.get('ident').valueChanges.subscribe(res => this.fillActTwo());
+      this.form.get('recibe').valueChanges.subscribe(res => {
+        console.log(res);
+        console.log(this.delUser);
+        if (res != null && res != undefined && res.numberDelegation2) {
+          if (res.numberDelegation2 != this.delUser) {
+            this.form.get('recibe').reset();
+            this.recibeSelect = new DefaultSelect();
+            this.alert(
+              'warning',
+              'La delegación es diferente a la del usuario',
+              ''
+            );
+            return;
+          } else {
+            this.fillActTwo();
+          }
+        }
+      });
+      this.form.get('folio').valueChanges.subscribe(res => {
+        if (
+          this.form.get('folio').value != null &&
+          this.form.get('folio').value.toString().length <= 5
+        ) {
+          this.fillActTwo();
+        }
+      });
+      this.form.get('year').valueChanges.subscribe(res => this.fillActTwo());
+      this.form.get('mes').valueChanges.subscribe(res => this.fillActTwo());
+    }
   }
 
   //Fill Act 2
@@ -1267,7 +1385,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
       (this.form.get('acta').value != null ? this.form.get('acta').value : '') +
       '/' +
       (this.form.get('transfer').value != null
-        ? this.form.get('transfer').value.transferentkey
+        ? this.form.get('transfer').value.clave_transferente
         : '') +
       '/' +
       (this.form.get('ident').value != null
@@ -1373,15 +1491,15 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
                 P_AREATRA: lv_TIP_ACTA,
                 P_PANTALLA: 'FACTREFACTAENTREC',
                 P_TIPOMOV: 2,
+                USUARIO:
+                  localStorage.getItem('username') == 'sigebiadmon'
+                    ? localStorage.getItem('username')
+                    : localStorage.getItem('username').toLocaleUpperCase(),
               };
               this.serviceProgrammingGood
                 .paOpenProceedingProgam(modelPaOpen)
                 .subscribe(
                   res => {
-                    this.labelActa = 'Cerrar acta';
-                    this.btnCSSAct = 'btn-primary';
-                    this.form.get('statusProceeding').setValue('ABIERTA');
-                    this.reopening = true;
                     const paramsF = new FilterParams();
                     paramsF.addFilter(
                       'valUser',
@@ -1399,12 +1517,12 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
                               .paRegresaEstAnterior(modelPaOpen)
                               .subscribe(
                                 res => {
-                                  this.labelActa = 'Abrir acta';
+                                  this.labelActa = 'Cerrar acta';
                                   this.btnCSSAct = 'btn-primary';
                                   this.form
                                     .get('statusProceeding')
-                                    .setValue('CERRADO');
-
+                                    .setValue('ABIERTA');
+                                  this.reopening = true;
                                   const btn =
                                     document.getElementById('expedient-number');
                                   this.render.removeClass(btn, 'disabled');
@@ -1515,68 +1633,101 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
   }
 
   newCloseProceeding() {
-    const paramsF = new FilterParams();
-    paramsF.addFilter('keysProceedings', this.form.get('acta2').value);
-    this.serviceProcVal.getByFilter(paramsF.getParams()).subscribe(
-      res => {
-        const resData = JSON.parse(JSON.stringify(res.data))[0];
-        const paramsF = new FilterParams();
-        let VAL_MOVIMIENTO = 0;
-        paramsF.addFilter(
-          'valUser',
-          localStorage.getItem('username').toLocaleLowerCase()
-        );
-        paramsF.addFilter('valMinutesNumber', this.idProceeding);
-        this.serviceProgrammingGood
-          .getTmpProgValidation(paramsF.getParams())
-          .subscribe(
-            res => {
-              console.log(res);
-              VAL_MOVIMIENTO = res.data[0]['valmovement'];
-              if (VAL_MOVIMIENTO === 1) {
-                const tipo_acta = 'DXCV';
-                this.openProceedingFn(resData.id);
-              } else {
+    if (this.dataGoodAct['data'].length == 0) {
+      this.alert(
+        'warning',
+        'No se registraron bienes',
+        'El Acta no contiene Bienes, no se podrá Cerrar.'
+      );
+    } else if (
+      this.dataGoodAct['data'].find(
+        (e: any) => e.indEdoFisico && e.good[`val${e.vNoColumna}`] == null
+      )
+    ) {
+      this.alert(
+        'warning',
+        'Hay bienes con estado físico requerido sin establecer',
+        ''
+      );
+    } else if (this.dataGoodAct['data'].find((e: any) => e.received != 'S')) {
+      this.alert('warning', 'Hay bienes no marcados como recibido', '');
+    } else if (
+      this.isAlmacen &&
+      this.dataGoodAct['data'].find((e: any) => e.good.storeNumber == null)
+    ) {
+      this.alert('warning', 'Hay bienes no guardados en almacén', '');
+    } else {
+      const paramsF = new FilterParams();
+      paramsF.addFilter('keysProceedings', this.form.get('acta2').value);
+      this.serviceProcVal.getByFilter(paramsF.getParams()).subscribe(
+        res => {
+          const resData = JSON.parse(JSON.stringify(res.data))[0];
+          const paramsF = new FilterParams();
+          let VAL_MOVIMIENTO = 0;
+          paramsF.addFilter(
+            'valUser',
+            localStorage.getItem('username').toLocaleLowerCase()
+          );
+          paramsF.addFilter('valMinutesNumber', this.idProceeding);
+          this.serviceProgrammingGood
+            .getTmpProgValidation(paramsF.getParams())
+            .subscribe(
+              res => {
+                console.log(res);
+                VAL_MOVIMIENTO = res.data[0]['valmovement'];
+                if (VAL_MOVIMIENTO === 1) {
+                  const tipo_acta = 'DXCV';
+                } else {
+                  this.closeProceedingFn();
+                }
+              },
+              err => {
                 this.closeProceedingFn();
               }
-            },
-            err => {
-              this.closeProceedingFn();
-            }
-          );
-      },
-      err => {}
-    );
+            );
+        },
+        err => {
+          console.log(err);
+        }
+      );
+    }
   }
 
   waitVBANVAL() {
     return new Promise((resolve, reject) => {
       for (let item of this.dataGoodAct['data']) {
-        const goodClass = item.goodClassNumber;
+        const goodClass = item.good.goodClassNumber;
         const newParams = `filter.numClasifGoods=$eq:${goodClass}`;
-        this.serviceSssubtypeGood.getFilter(newParams).subscribe(res => {
-          const type = JSON.parse(JSON.stringify(res.data[0]['numType']));
-          const subtype = JSON.parse(JSON.stringify(res.data[0]['numSubType']));
+        this.serviceSssubtypeGood.getFilter(newParams).subscribe(
+          res => {
+            const type = JSON.parse(JSON.stringify(res.data[0]['numType']));
+            const subtype = JSON.parse(
+              JSON.stringify(res.data[0]['numSubType'])
+            );
 
-          const no_type = parseInt(type.id);
-          const no_subtype = parseInt(subtype.id);
-          if (no_type === 7 && item.storeNumber === null) {
-            resolve(false);
-          } else if (
-            no_type === 5 &&
-            no_subtype === 16 &&
-            item.storeNumber === null &&
-            item.vaultNumber === null
-          ) {
-            resolve(false);
-          } else if (
-            no_type === 5 &&
-            no_subtype != 16 &&
-            item.storeNumber === null
-          ) {
+            const no_type = parseInt(type.id);
+            const no_subtype = parseInt(subtype.id);
+            if (no_type === 7 && item.storeNumber === null) {
+              resolve(false);
+            } else if (
+              no_type === 5 &&
+              no_subtype === 16 &&
+              item.storeNumber === null &&
+              item.vaultNumber === null
+            ) {
+              resolve(false);
+            } else if (
+              no_type === 5 &&
+              no_subtype != 16 &&
+              item.storeNumber === null
+            ) {
+              resolve(false);
+            }
+          },
+          err => {
             resolve(false);
           }
-        });
+        );
       }
     });
   }
@@ -1599,13 +1750,14 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
     } else if (this.form.get('folioEscaneo').value == null) {
       this.alert('warning', 'Debe introducir el valor del folio', '');
     } else {
-      this.serviceDocuments.getByFolio(-73378).subscribe(
-        async res => {
-          const data = JSON.parse(JSON.stringify(res));
-          const scanStatus = data.data[0]['scanStatus'];
-          console.log(scanStatus);
-          if (scanStatus === 'ESCANEADO') {
-            for (let item of this.dataGoodAct['data']) {
+      this.serviceDocuments
+        .getByFolio(this.form.get('folioEscaneo').value)
+        .subscribe(
+          async res => {
+            const data = JSON.parse(JSON.stringify(res));
+            const scanStatus = data.data[0]['scanStatus'];
+            console.log(scanStatus);
+            if (scanStatus === 'ESCANEADO') {
               const vanbal = await this.waitVBANVAL();
               if (vanbal == false) {
                 this.alert('warning', 'Debe especificar almacen', '');
@@ -1622,7 +1774,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
                       P_PANTALLA: 'FACTREFACTAVENT',
                       P_FECHA_RE_FIS: this.form.get('fecReception').value,
                       P_TIPO_ACTA: 'DXCV',
-                      usuario:
+                      USUARIO:
                         localStorage.getItem('username') == 'sigebiadmon'
                           ? localStorage.getItem('username')
                           : localStorage
@@ -1632,6 +1784,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
                     console.log(model);
                     this.serviceProgrammingGood.paChangeStatus(model).subscribe(
                       res => {
+                        console.log(res);
                         const paramsF = new FilterParams();
                         paramsF.addFilter(
                           'valUser',
@@ -1659,9 +1812,11 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
                                 );
                               } else {
                                 //!ELSE DE CERRAR
+                                console.log('Entro a else');
                               }
                             },
                             err => {
+                              console.log('Entro a else');
                               //!ELSE DE CERRAR
                             }
                           );
@@ -1680,14 +1835,11 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
                 });
               }
             }
-          } else {
+          },
+          err => {
             this.alert('warning', 'No se ha realizado el escaneo', '');
           }
-        },
-        err => {
-          this.alert('warning', 'No se ha realizado el escaneo', '');
-        }
-      );
+        );
     }
   }
 
@@ -1701,48 +1853,54 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
         'El Acta no contiene Bienes, no se podrá Cerrar.'
       );
     } else {
-      this.serviceDocuments.getByFolio(-73378).subscribe(
-        res => {
-          const data = JSON.parse(JSON.stringify(res));
-          const scanStatus = data.data[0]['scanStatus'];
+      this.serviceDocuments
+        .getByFolio(this.form.get('folioEscaneo').value)
+        .subscribe(
+          res => {
+            const data = JSON.parse(JSON.stringify(res));
+            const scanStatus = data.data[0]['scanStatus'];
 
-          if (scanStatus === 'ESCANEADO') {
-            this.form.get('statusProceeding').setValue('CERRADO');
-            this.labelActa = 'Abrir acta';
-            this.btnCSSAct = 'btn-info';
-            const paramsF = new FilterParams();
+            if (scanStatus === 'ESCANEADO') {
+              this.form.get('statusProceeding').setValue('CERRADO');
+              this.labelActa = 'Abrir acta';
+              this.btnCSSAct = 'btn-info';
+              const paramsF = new FilterParams();
 
-            paramsF.addFilter('keysProceedings', this.form.get('acta2').value);
-            this.serviceProcVal.getByFilter(paramsF.getParams()).subscribe(
-              res => {
-                console.log(res);
-                this.alert('success', 'El acta ha sido cerrada', '');
-              },
-              err => {}
-            );
-          } else {
+              paramsF.addFilter(
+                'keysProceedings',
+                this.form.get('acta2').value
+              );
+              this.serviceProcVal.getByFilter(paramsF.getParams()).subscribe(
+                res => {
+                  console.log(res);
+                  this.alert('success', 'El acta ha sido cerrada', '');
+                },
+                err => {}
+              );
+            } else {
+              this.alert(
+                'warning',
+                'FALTA ESCANEAR FOLIO',
+                'El número de folio debe ser escaneado para poder cerrar el acta.'
+              );
+            }
+            console.log(this.scanStatus);
+          },
+          err => {
             this.alert(
               'warning',
               'FALTA ESCANEAR FOLIO',
               'El número de folio debe ser escaneado para poder cerrar el acta.'
             );
           }
-          console.log(this.scanStatus);
-        },
-        err => {
-          this.alert(
-            'warning',
-            'FALTA ESCANEAR FOLIO',
-            'El número de folio debe ser escaneado para poder cerrar el acta.'
-          );
-        }
-      );
+        );
     }
   }
 
   validateFolio() {
-    this.serviceDocuments.getByFolio(-73378).subscribe(
-      res => {
+    this.serviceDocuments
+      .getByFolio(this.form.get('folioEscaneo').value)
+      .subscribe(res => {
         const data = JSON.parse(JSON.stringify(res));
         const scanStatus = data.data[0]['scanStatus'];
         console.log(scanStatus);
@@ -1751,12 +1909,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
         } else {
           this.scanStatus = false;
         }
-        console.log(this.scanStatus);
-      },
-      err => {
-        this.scanStatus = false;
-      }
-    );
+      });
   }
 
   //*Agregar bienes
@@ -1837,11 +1990,13 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
                         })
                       );
                       /* console.log(dataTry.data); */
-                      console.log(this.dataGoods);
+                      this.getGoodsActFn();
+
+                      /* console.log(this.dataGoods);
                       this.goodData.push(this.selectData);
                       this.dataGoodAct.load(this.goodData);
                       console.log(this.dataGoodAct);
-                      this.selectData = null;
+                      this.selectData = null; */
                     },
                     err => {
                       this.alert(
@@ -1892,31 +2047,33 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
           'Error en la fecha de elaboración',
           'No puede realizar modificaciones a esta acta, por estar fuera del mes'
         );
-      } else {
+      } else if (this.selectActData == null) {
+      }
+      {
         const deleteModel: IDeleteDetailProceeding = {
-          numberGood: this.selectActData.id,
+          numberGood: this.selectActData.good.goodId,
           numberProceedings: this.idProceeding,
         };
         console.log(deleteModel);
         this.serviceDetailProc.deleteDetailProcee(deleteModel).subscribe(
           res => {
+            console.log(this.dataGoodAct);
             this.goodData = this.goodData.filter(
-              (e: any) => e.id != this.selectActData.id
+              (e: any) => e.id != this.selectActData.good.id
             );
-            this.dataGoodAct.load(this.goodData);
-            console.log(this.goodData);
+            /*this.dataGoodAct.load(this.goodData);
+            console.log(this.goodData); */
+            this.getGoodsActFn();
 
             this.dataGoods.load(
               this.dataGoods['data'].map((e: any) => {
-                if (e.id == this.selectActData.id) {
+                if (e.id == this.selectActData.good.id) {
                   return { ...e, avalaible: true };
                 } else {
                   return e;
                 }
               })
             );
-            this.form.get('estatusBienActa').setValue('');
-            this.selectActData = null;
           },
           err => {
             this.alert(
@@ -1938,6 +2095,8 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
 
   //Botones
   goParcializacion() {
+    localStorage.setItem('numberExpedient', this.numberExpedient);
+
     this.router.navigate([
       '/pages/judicial-physical-reception/partializes-general-goods',
     ]);
@@ -2030,7 +2189,6 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
         this.initialBool = false;
         this.goodData = [];
         this.dataGoodAct.load(this.goodData);
-        this.getTransfer();
       }
     }
   }
@@ -2159,7 +2317,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
 
   openEdoFisico() {
     console.log(this.dataGoodAct['data']);
-    if (this.goodData.length === 0) {
+    if (this.dataGoodAct['data'].length === 0) {
       this.alert(
         'warning',
         'No hay bienes en el acta',
@@ -2169,7 +2327,8 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
       let modalConfig = MODAL_CONFIG;
       modalConfig = {
         initialState: {
-          goodData: this.dataGoodAct['data'].filter(item => item.indEdoFisico),
+          idProceeding: this.idProceeding,
+          /* goodData: this.dataGoodAct['data'].filter(item => item.indEdoFisico),
           callback: (next: any) => {
             console.log(next);
             for (let item of next) {
@@ -2186,7 +2345,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
                 })
               );
             }
-          },
+          }, */
         },
         class: 'modal-lg modal-dialog-centered',
       };
@@ -2199,7 +2358,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
     if (this.form.get('statusProceeding').value === 'ABIERTA') {
       if (this.form.get('noAlmacen').value != null) {
         for (let i = 0; i < this.dataGoodAct['data'].length; i++) {
-          const element = this.dataGoodAct['data'][i];
+          const element = this.dataGoodAct['data'][i].good;
           const newParams = `filter.numClasifGoods=$eq:${element.goodClassNumber}`;
           this.serviceSssubtypeGood.getFilter(newParams).subscribe(res => {
             const type = JSON.parse(JSON.stringify(res.data[0]['numType']));
@@ -2241,54 +2400,6 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
           'No se seleccionó almacén',
           'Debe seleccionar un almacén válido'
         );
-      }
-      console.log(this.form.get('noBoveda').value);
-      if (this.form.get('noBoveda').value != null) {
-        for (let i = 0; i < this.dataGoodAct['data'].length; i++) {
-          const element = this.dataGoodAct['data'][i];
-          let v_pasa: boolean = false;
-          const newParams = `filter.numType=$eq:7&filter.numSubType=$eq:34&filter.numClasifGoods=$eq:${element.goodClassNumber}`;
-          this.serviceSssubtypeGood.getFilter(newParams).subscribe(res => {
-            const type = JSON.parse(JSON.stringify(res.data[0]['numType']));
-            const subtype = JSON.parse(
-              JSON.stringify(res.data[0]['numSubType'])
-            );
-            const ssubtype = JSON.parse(
-              JSON.stringify(res.data[0]['numSsubType'])
-            );
-            const no_type = type.id;
-            const no_subtype = subtype.id;
-            let putGood: IGood = {
-              id: element.id,
-              goodId: element.id,
-              vaultNumber: this.form.get('noBoveda').value.idSafe,
-            };
-
-            console.log(res.data.length);
-            if (res.data.length != 0) {
-              v_pasa = true;
-            }
-            if (no_type === 7 || (no_type === 5 && no_subtype === 16)) {
-              if (no_type === 7 && v_pasa) {
-                if (element.vaultNumber === null) {
-                  putGood.vaultNumber = 9999;
-                }
-              } else {
-                putGood.vaultNumber = this.form.get('noBoveda').value.idSafe;
-              }
-              this.serviceGood.update(putGood).subscribe(res => {
-                this.dataGoodAct.load(
-                  this.dataGoodAct['data'].map((e: any) => {
-                    return {
-                      ...e,
-                      vaultNumber: this.form.get('noBoveda').value.idSafe,
-                    };
-                  })
-                );
-              });
-            }
-          });
-        }
       }
     } else if (
       ['CERRADA', 'CERRADO'].includes(this.form.get('statusProceeding').value)

@@ -37,6 +37,6 @@ export class StateOfRepublicService implements ICrudMethods<IStateOfRepublic> {
   }
 
   remove(id: string | number): Observable<Object> {
-    return this.stateOfRepublicRepository.remove(this.route, id);
+    return this.stateOfRepublicRepository.remove(this.route + '/id/', id);
   }
 }

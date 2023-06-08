@@ -151,7 +151,7 @@
                   control="transfer"
                   [class]="initialdisabled ? 'disabled' : ''"
                   label="Transferente"
-                  bindLabel="transferentkey"
+                  bindLabel="clave_transferente"
                   [searchable]="false"
                   [data]="transferSelect"
                   [form]="form"></ngx-select>
@@ -309,8 +309,13 @@
                 <input
                   (ngModelChange)="verifyDateAndFill()"
                   bsDatepicker
+                  [bsConfig]="{
+                    dateInputFormat: 'DD-MM-YYYY hh:mm',
+                    displayOneMonthRange: true,
+                    withTimepicker: true
+                  }"
                   class="form-control"
-                  [maxlength]="10"
+                  [maxlength]="16"
                   [class]="!isEnablefecElab ? 'disabled' : ''"
                   [minDate]="minDateFecElab"
                   formControlName="fecElab" />
@@ -577,7 +582,13 @@
 
       <hr class="row" />
       <div class="row">
-        <div class="col-md-6">
+        <div
+          class="col-md-6"
+          [class]="
+            ['CERRADO', 'CERRADA'].includes(form.get('statusProceeding').value)
+              ? 'disabled'
+              : ''
+          ">
           <div class="row" *ngIf="isAlmacen">
             <div class="col-md-9">
               <form-field [control]="form.get('almacen')">

@@ -29,7 +29,10 @@ export class StorehouseService implements ICrudMethods<IStorehouse> {
     return this.storehouseRepository.update(this.route, id, model);
   }
 
-  remove(id: string | number): Observable<Object> {
-    return this.storehouseRepository.remove(this.route, id);
+  // remove(id: string | number): Observable<Object> {
+  //   return this.storehouseRepository.remove(this.route, id);
+  // }
+  remove(obj: Object): Observable<Object> {
+    return this.storehouseRepository.remove3(this.route, obj);
   }
 }

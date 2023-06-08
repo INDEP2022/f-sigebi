@@ -1209,6 +1209,10 @@ carga la  información de la parte media de la página
       }
 
       // REMITENTE
+      console.log(
+        'this.form.value.senderUserRemitente',
+        this.form.value.senderUserRemitente
+      );
       const getIdDelegationDelegationForwards_: any =
         await this.getIdDelegationDelegationForwards(
           this.form.value.senderUserRemitente
@@ -1244,7 +1248,14 @@ carga la  información de la parte media de la página
       const day = String(today.getDate()).padStart(2, '0');
       const year = today.getFullYear();
 
-      const ln_oficio = this.keyArmyNumber; // Reemplaza 123 por el valor de LN_OFICIO
+      let armyKe = 0;
+      if (this.keyArmyNumber == null) {
+        armyKe = 0;
+      } else {
+        armyKe = this.keyArmyNumber;
+      }
+      const ln_oficio = armyKe; // Reemplaza 123 por el valor de LN_OFICIO
+      console.log(ln_oficio, 'aaaaaa');
       const ln_oficio_str = ln_oficio.toString(); // Convierte el número a una cadena de caracteres
       // console.log("3", ln_oficio_str)
       // Rellena la cadena de caracteres con ceros a la izquierda hasta que tenga una longitud de 5 caracteres
@@ -1262,9 +1273,13 @@ carga la  información de la parte media de la página
       if (vNO_DELDEST == 0) {
         vDELAGACION = 'CRB';
         if (vTRANSF == 'SAT') {
-          vCLAVE_ARMADA = `${vT_ACTA}/${vEMISORA}/ADM/${vDELAGACION}/${vDELAGACION}/${ln_oficio_trimmed}/${year}/${month}`;
+          vCLAVE_ARMADA = `${vT_ACTA}/${
+            vEMISORA == undefined ? ' ' : vEMISORA
+          }/ADM/${vDELAGACION}/${vDELAGACION}/${ln_oficio_trimmed}/${year}/${month}`;
         } else {
-          vCLAVE_ARMADA = `${vT_ACTA}/${vEMISORA}/ADM/${vDELAGACION}/${vDELAGACION}/${ln_oficio_trimmed}/${year}/${month}`;
+          vCLAVE_ARMADA = `${vT_ACTA}/${
+            vTRANSF == undefined ? ' ' : vTRANSF
+          }/ADM/${vDELAGACION}/${vDELAGACION}/${ln_oficio_trimmed}/${year}/${month}`;
         }
       } else {
         console.log('SI ENTRA3', vDELEGADEST);
@@ -1277,9 +1292,14 @@ carga la  información de la parte media de la página
         }
 
         if (vTRANSF == 'SAT') {
-          vCLAVE_ARMADA = `${vT_ACTA}/${vEMISORA}/ADM/${vDELAGACION}/${vDELAGACION}/${ln_oficio_trimmed}/${year}/${month}`;
+          vCLAVE_ARMADA = `${vT_ACTA}/${
+            vEMISORA == undefined ? ' ' : vEMISORA
+          }/ADM/${vDELAGACION}/${vDELAGACION}/${ln_oficio_trimmed}/${year}/${month}`;
         } else {
-          vCLAVE_ARMADA = `${vT_ACTA}/${vEMISORA}/ADM/${vDELAGACION}/${vDELAGACION}/${ln_oficio_trimmed}/${year}/${month}`;
+          // vCLAVE_ARMADA = `${vT_ACTA}/${(vTRANSF == undefined) ? ' ' : vTRANSF}/ADM/${vDELAGACION}/${vDELAGACION}/?/${year}/${month}`;
+          vCLAVE_ARMADA = `${vT_ACTA}/${
+            vTRANSF == undefined ? ' ' : vTRANSF
+          }/ADM/${vDELAGACION}/${vDELAGACION}/${ln_oficio_trimmed}/${year}/${month}`;
         }
       }
       console.log('vCLAVE_ARMADA', vCLAVE_ARMADA);
@@ -1334,7 +1354,7 @@ carga la  información de la parte media de la página
         PESTADODICT: this.oficioDict.statusOf,
         PDICTAMEN: this.oficioDict.typeDict,
       };
-      if (this.form.value.typeDict != 'PROCEDENCIA') {
+      if (this.form.value.typeDict == 'PROCEDENCIA') {
         params.NOME_DICTPRO = vCLAVE_ARMADA;
       }
 
@@ -1351,7 +1371,7 @@ carga la  información de la parte media de la página
         PESTADODICT: this.oficioDict.statusOf,
         PDICTAMEN: this.oficioDict.typeDict,
       };
-      if (this.form.value.typeDict != 'PROCEDENCIA') {
+      if (this.form.value.typeDict == 'PROCEDENCIA') {
         params.NOME_DICTPRO = vCLAVE_ARMADA;
       }
       await this.reporteProcedencia3(params);

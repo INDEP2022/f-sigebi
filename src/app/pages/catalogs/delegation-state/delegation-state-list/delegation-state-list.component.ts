@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { LocalDataSource } from 'ng2-smart-table';
+
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 
+import { LocalDataSource } from 'ng2-smart-table';
 import {
   ListParams,
   SearchFilter,
@@ -14,7 +15,6 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import Swal from 'sweetalert2';
 import { DelegationStateFormComponent } from '../delegation-state-form/delegation-state-form.component';
 import { DELEGATION_STATE_COLUMNS } from './delegation-state-columns';
-
 @Component({
   selector: 'app-delegation-state-list',
   templateUrl: './delegation-state-list.component.html',
@@ -32,9 +32,17 @@ export class DelegationStateListComponent extends BasePage implements OnInit {
   ) {
     super();
     this.settings.columns = DELEGATION_STATE_COLUMNS;
-    this.settings.actions.delete = true;
-    this.settings.actions.add = false;
-    this.settings.hideSubHeader = false;
+    this.settings = {
+      ...this.settings,
+      hideSubHeader: false,
+      actions: {
+        columnTitle: 'Acciones',
+        edit: true,
+        add: false,
+        delete: false,
+        position: 'right',
+      },
+    };
   }
 
   ngOnInit(): void {
@@ -45,29 +53,35 @@ export class DelegationStateListComponent extends BasePage implements OnInit {
         if (change.action === 'filter') {
           let filters = change.filter.filters;
           filters.map((filter: any) => {
+            console.log(filter);
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
-            filter.field == 'regionalDelegation' ||
-            filter.field == 'stateCode' ||
-            filter.field == 'keyState' ||
-            filter.field == 'status' ||
-            filter.field == 'version'
-              ? (searchFilter = SearchFilter.EQ)
-              : (searchFilter = SearchFilter.ILIKE);
+            /*SPECIFIC CASES*/
+            switch (filter.field) {
+              case 'regionalDelegation':
+                // searchFilter = '';
+                field = `filter.${filter.field}.description`;
+                break;
+              case 'stateCode':
+                searchFilter = SearchFilter.ILIKE;
+
+                break;
+              case 'keyState':
+                searchFilter = SearchFilter.EQ;
+                break;
+
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
             if (filter.search !== '') {
-              if (filter.field == 'regionalDelegation') {
-                filter.field = 'regionalDelegation.id';
-              }
-              if (filter.field == 'stateCode') {
-                filter.field = 'stateCode.codeCondition';
-              }
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
               delete this.columnFilters[field];
             }
           });
-          this.params = this.pageFilter(this.params);
+          console.log(this.params);
           this.getData();
         }
       });
@@ -82,15 +96,23 @@ export class DelegationStateListComponent extends BasePage implements OnInit {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
+    console.log(params);
     this.delegationStateService.getAll(params).subscribe({
-      next: (response: any) => {
+      next: response => {
+        console.log(response.data);
         this.delegationsState = response.data;
-        this.totalItems = response.count || 0;
-        this.data.load(response.data);
+        console.log(this.delegationsState);
+        this.data.load(this.delegationsState);
         this.data.refresh();
+        console.log(this.data);
+        this.totalItems = response.count;
         this.loading = false;
       },
-      error: error => (this.loading = false),
+      error: error => {
+        this.loading = false;
+        this.data.load([]);
+        this.data.refresh();
+      },
     });
   }
 
@@ -99,28 +121,40 @@ export class DelegationStateListComponent extends BasePage implements OnInit {
     modalConfig.initialState = {
       delegationSate,
       callback: (next: boolean) => {
-        if (next) this.getData();
+        if (next) {
+          this.params
+            .pipe(takeUntil(this.$unSubscribe))
+            .subscribe(() => this.getData());
+        }
       },
     };
     this.modalService.show(DelegationStateFormComponent, modalConfig);
   }
 
-  showDeleteAlert(delegationSate: IDelegationState) {
+  showDeleteAlert(delegationSate: any) {
     this.alertQuestion(
       'warning',
       'Eliminar',
       'Desea eliminar este registro?'
     ).then(question => {
+      console.log(delegationSate.regionalDelegation.id);
+      console.log(delegationSate);
       if (question.isConfirmed) {
-        this.delete(delegationSate.id);
-        Swal.fire('Borrado', 'Deductivas', 'success');
+        this.delete(
+          delegationSate.regionalDelegation.id,
+          delegationSate.stateCode.codeCondition
+        );
+        Swal.fire('Borrado', 'Delegacione Estado', 'success');
       }
     });
   }
-  delete(id: number) {
-    this.delegationStateService.newRemove(id).subscribe({
+  delete(regionalDelegation: number, id: string) {
+    this.delegationStateService.newRemove(regionalDelegation, id).subscribe({
       next: () => {
-        this.getData(), this.alert('success', 'Deductivas', 'Borrado');
+        this.params
+          .pipe(takeUntil(this.$unSubscribe))
+          .subscribe(() => this.getData());
+        this.alert('success', 'Delegacione Estado', 'Borrado');
       },
     });
   }

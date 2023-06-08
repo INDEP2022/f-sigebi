@@ -33,19 +33,19 @@
             <div class="col-md-4">
               <div>
                 <label for="">No&#46; Volante&#58;</label>
-                {{ managementForm?.get('noVolante').value }}
+                {{ formNotification?.get('wheelNumber').value }}
               </div>
             </div>
             <div class="col-md-4">
               <div>
                 <label for="">No. Expediente&#58;</label>
-                {{ managementForm?.get('noExpediente').value }}
+                {{ formNotification?.get('expedientNumber').value }}
               </div>
             </div>
             <div class="col-md-4">
               <div>
                 <label for="">Tipo oficio&#58;</label>
-                {{ managementForm?.get('tipoOficio').value }}
+                {{ formJobManagement?.get('jobType').value }}
               </div>
             </div>
           </div>
@@ -53,47 +53,50 @@
             <div class="col-lg-4">
               <div>
                 <label for="">Oficio Por&#58;</label>
-                {{ managementForm?.get('relacionado').value }}
+                {{ formJobManagement?.get('jobBy').value }}
               </div>
             </div>
             <div class="col-md-4">
               <div>
                 <label for="">Número de Gestión&#58;</label>
-                {{ managementForm?.get('numero').value }}
+                {{ formJobManagement?.get('managementNumber').value }}
               </div>
             </div>
             <div class="col-md-4">
               <div>
                 <label for="">Clave Oficio&#58;</label>
-                {{ managementForm?.get('cveGestion').value }}
+                {{ formJobManagement?.get('cveManagement').value }}
               </div>
             </div>
           </div>
           <div class="row pt-4"></div>
           <div class="row pt-4">
+            <!-- value="id" -->
+            <!-- (change)="changeSender()" -->
             <form-field
-              [control]="managementForm.get('remitente')"
+              [control]="formJobManagement.get('sender')"
               class="col-md-4">
               <ngx-select
                 (fetchItems)="getSenderByDetail($event)"
-                (change)="changeSender()"
-                value="id"
-                bindLabel="name"
+                bindLabel="idName"
                 [data]="senders"
-                [form]="managementForm"
-                control="remitente"
+                [form]="formJobManagement"
+                control="sender"
                 [showTooltip]="true"
                 label="Remitente"></ngx-select>
             </form-field>
 
             <form-field
-              [control]="managementForm.get('destinatario')"
+              [control]="formJobManagement.get('addressee')"
               class="col-md-4"
-              *ngIf="showDestinatario">
+              *ngIf="
+                formJobManagement.get('jobType').value === 'INTERNO';
+                else templateInputAddressee
+              ">
               <ngx-select
                 [data]="select"
-                [form]="managementForm"
-                control="destinatario"
+                [form]="formJobManagement"
+                control="addressee"
                 [showTooltip]="true"
                 label="Destinatario"
                 (fetchItems)="getFromSelect($event)"
@@ -101,27 +104,27 @@
                 value="user"></ngx-select>
             </form-field>
 
-            <form-field
-              [control]="managementForm.get('destinatarioInput')"
-              class="col-md-4"
-              label="Nombre Destinatario"
-              *ngIf="showDestinatarioInput">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="destinatarioInput" />
-            </form-field>
+            <ng-template #templateInputAddressee>
+              <form-field
+                [control]="formJobManagement.get('addressee')"
+                class="col-md-4"
+                label="Nombre Destinatario">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="addressee" />
+              </form-field>
+            </ng-template>
 
             <form-field
-              [control]="managementForm.get('ciudad')"
+              [control]="formJobManagement.get('city')"
               class="col-md-4">
               <ngx-select
                 (fetchItems)="getCityByDetail($event)"
-                value="idCity"
-                bindLabel="nameCity"
+                bindLabel="idName"
                 [data]="cities"
-                [form]="managementForm"
-                control="ciudad"
+                [form]="formJobManagement"
+                control="city"
                 [showTooltip]="true"
                 label="Ciudad"></ngx-select>
             </form-field>
@@ -137,6 +140,7 @@
             [ngClass]="{ 'not-press': se_refiere_a_Disabled.A }">
             <form-radio label="{{ se_refiere_a.A }}">
               <input
+                id="se_refiere_a_A"
                 type="radio"
                 formControlName="checkText"
                 value="{{ se_refiere_a.A }}"
@@ -148,6 +152,7 @@
             [ngClass]="{ 'not-press': se_refiere_a_Disabled.B }">
             <form-radio label="{{ se_refiere_a.B }}" class="mt-0 pt-0 bt-0">
               <input
+                id="se_refiere_a_B"
                 type="radio"
                 formControlName="checkText"
                 value="{{ se_refiere_a.B }}"
@@ -159,6 +164,7 @@
             [ngClass]="{ 'not-press': se_refiere_a_Disabled.C }">
             <form-radio label="{{ se_refiere_a.C }}">
               <input
+                id="se_refiere_a_C"
                 type="radio"
                 formControlName="checkText"
                 value="{{ se_refiere_a.C }}" />
@@ -267,13 +273,27 @@
         <!-- <form-field [control]="managementForm.get('fechaAcuse')" class="col-md-4 mt-2" label="Fecha de Acuse">
           <input type="text" class="form-control" formControlName="fechaAcuse" readonly [disabled]="true" />
         </form-field> -->
-
-        <br /><br />
-
+      </div>
+      <br /><br />
+      <div class="row pt-4">
         <div class="col-md-4">
           <button type="button" class="btn btn-primary active btn-sm mr-2">
             Respuestas FGR
           </button>
+        </div>
+      </div>
+      <br /><br />
+      <div class="row pt-4">
+        <div class="col-md-2">
+          <form-field
+            [control]="managementForm.get('fechaAcuse')"
+            label="Fecha Acuse">
+            <input
+              type="text"
+              class="form-control"
+              #dp="bsDatepicker"
+              bsDatepicker />
+          </form-field>
         </div>
       </div>
       <br />
@@ -323,13 +343,31 @@
 
           <div class="row pt-2 mb-2" *ngIf="!formLoading">
             <div class="col-sm-12 col-12 col-md-12 pr-3">
-              <div [class]="loading ? 'table-loading' : ''">
+              <div [class]="isLoadingGood ? 'table-loading' : ''">
                 <ng2-smart-table
                   id="goods"
                   (userRowSelect)="selectProceedings($event)"
                   [attr.class]="'table-responsive table-bordered'"
                   [settings]="settings"
-                  [source]="data1">
+                  [source]="dataTableGoods">
+                </ng2-smart-table>
+                <br />
+                <div>
+                  <app-pagination
+                    [params]="params"
+                    [totalItems]="totalItems"></app-pagination>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-12 col-12 col-md-12 pr-3">
+              <div class="col-12">Biene(s)</div>
+              <div [class]="isLoadingGood ? 'table-loading' : ''">
+                <!-- (userRowSelect)="selectProceedings($event)" -->
+                <ng2-smart-table
+                  id="goodsJobManagement"
+                  [attr.class]="'table-responsive table-bordered'"
+                  [settings]="settingsGoodsJobManagement"
+                  [source]="dataTableGoodsJobManagement">
                 </ng2-smart-table>
                 <br />
                 <div>
@@ -366,6 +404,7 @@
             <button
               type="button"
               tooltip="Documentos"
+              [disabled]="isDisabledBtnDocs"
               containerClass="tooltip-style"
               class="btn btn-info active btn-sm m-1"
               (click)="openModal()">
@@ -383,17 +422,19 @@
               type="button"
               tooltip="Borrar"
               containerClass="tooltip-style"
+              (click)="showDeleteAlert($event)"
               class="btn btn-danger active btn-sm m-1">
               <i class="bx bxs-trash"></i>
             </button>
-            <button
-              [attr.disabled]="
+            <!-- [attr.disabled]="
                 paramsGestionDictamen.sale == 'C' ||
                 paramsGestionDictamen.sale == 'D'
-              "
+              " -->
+            <button
               type="submit"
               class="btn btn-primary btn-sm active"
               tooltip="Enviar"
+              (click)="sendDictamen()"
               containerClass="tooltip-style">
               <i class="bx bx-send"></i>
             </button>
@@ -427,7 +468,7 @@
             <div class="col-12 col-sm-12 col-md-12">
               <h6>C.C.P.</h6>
             </div>
-            <form-field
+            <!-- <form-field
               class="col-sm-12 col-12 col-md-4 p-2"
               [control]="managementForm.get('ccp_person')"
               label="">
@@ -524,7 +565,37 @@
                 type="text"
                 class="form-control"
                 formControlName="ccp_TiPerson_1" />
-            </form-field>
+            </form-field> -->
+
+            <!-- <ng2-smart-table
+              class="col-md-12"
+              id="goods"
+              [attr.class]="'table-bordered'"
+              [settings]="configTableCCp.settings"
+              [source]="[]">
+            </ng2-smart-table> -->
+            <!-- [disabled]="!disabledMOficGest" -->
+            <div class="row pt-4">
+              <div>
+                <button
+                  (click)="openModalCopy(false)"
+                  class="btn btn-primary active btn-sm ml-3 mb-3">
+                  Nuevo
+                </button>
+              </div>
+              <div class="col-md-12">
+                <div class="table-responsive">
+                  <div [class]="loading ? 'table-loading' : ''">
+                    <ng2-smart-table
+                      [attr.class]="'table-bordered'"
+                      [settings]="settings3"
+                      [source]="copyOficio"
+                      (delete)="showDeleteAlertCcp($event.data)">
+                    </ng2-smart-table>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

@@ -17,7 +17,7 @@ import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { KEYGENERATION_PATTERN } from 'src/app/core/shared/patterns';
+import { NUM_POSITIVE } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-scanning-foil',
@@ -29,6 +29,7 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
   @Input() form: FormGroup;
   @Input() screenKey: string = '';
   @Input() screenKey2: string = '';
+  @Input() screenKey3: string = '';
   @Input() officeDictationData: IOfficialDictation;
   @Input() dictationData: IDictation;
   @Input() dataUserLogged: any;
@@ -36,6 +37,7 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
   @Input() disabled: boolean = false;
 
   @Output() viewPicturesEmitter = new EventEmitter<boolean>();
+  @Output() uploadPdfEmitter = new EventEmitter<boolean>();
 
   get scanningFoli() {
     return this.form.get('scanningFoli');
@@ -67,8 +69,12 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
   private buildForm() {
     this.form = this.fb.group({
       scanningFoli: [
-        null,
-        [Validators.required, Validators.pattern(KEYGENERATION_PATTERN)],
+        { value: '', disabled: false },
+        [
+          Validators.required,
+          Validators.pattern(NUM_POSITIVE),
+          Validators.maxLength(11),
+        ],
       ],
     });
   }
@@ -134,6 +140,7 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
               queryParams: {
                 origin: this.screenKey,
                 origin2: this.screenKey2,
+                origin3: this.screenKey3,
                 folio: this.form.get('scanningFoli').value,
                 ...this.paramsScreen,
               },
@@ -210,7 +217,7 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
       numberDelegationRequested: this.dataUserLogged.delegationNumber,
       numberSubdelegationRequests: this.dataUserLogged.subdelegationNumber,
       numberDepartmentRequest: this.dataUserLogged.departamentNumber,
-      flyerNumber: flyerNumber,
+      flyerNumber: this.dictationData.wheelNumber,
     };
 
     this.createDocument(document)
@@ -229,6 +236,8 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
       )
       .subscribe();
   }
+
+  addPdf() {}
 
   createDocument(document: IDocuments) {
     return this.documentsService.create(document).pipe(

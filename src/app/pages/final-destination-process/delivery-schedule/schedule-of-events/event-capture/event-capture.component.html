@@ -240,7 +240,7 @@
 
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">Parámetros para traer información del SIAB</h5>
+    <h5 class="title">Parámetros para traer información de SIGEBI</h5>
   </div>
   <div body>
     <form class="form-material" [formGroup]="formSiab" (ngSubmit)="onSubmit2()">
@@ -361,14 +361,15 @@
             {{ ctrlButtons.xml.label }}
           </button>
         </div>
-        <div class="mr-4" *ngIf="ctrlButtons.generateStrategy.visible">
+        <!-- <div class="mr-4" *ngIf="ctrlButtons.generateStrategy.visible">
           <button
+            (click)="generateStrategy()"
             [disabled]="!ctrlButtons.generateStrategy.enabled"
             class="btn btn-primary btn-sm active"
             routerLink="generate-estrategy">
             {{ ctrlButtons.generateStrategy.label }}
           </button>
-        </div>
+        </div> -->
         <app-columns-select [defaultColumns]="5" [(settings)]="settings">
         </app-columns-select>
       </div>
@@ -380,6 +381,10 @@
         <div [class]="loading ? 'table-loading' : ''">
           <ng2-smart-table [settings]="settings" [source]="detail">
           </ng2-smart-table>
+
+          <app-pagination
+            [filterParams]="params"
+            [totalItems]="totalItems"></app-pagination>
         </div>
       </div>
     </div>

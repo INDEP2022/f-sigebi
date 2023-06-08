@@ -13,49 +13,9 @@ import { LoadingPercentService } from 'src/app/common/services/loading-percent.s
 import { LoadingService } from 'src/app/common/services/loading.service';
 import { ScreenCodeService } from 'src/app/common/services/screen-code.service';
 import { showHideErrorInterceptorService } from 'src/app/common/services/show-hide-error-interceptor.service';
-import Swal, {
-  SweetAlertIcon,
-  SweetAlertOptions,
-  SweetAlertPosition,
-  SweetAlertResult,
-} from 'sweetalert2';
-import { AlertsQueueService } from '../services/alerts/alerts-queue.service';
+import { SweetAlertIcon } from 'sweetalert2';
+import { ClassWidthAlert } from './alert-class';
 
-export class SweetalertModel implements SweetAlertOptions {
-  title: string;
-  text: string;
-  icon: SweetAlertIcon;
-  footer: string;
-  background: string;
-  showConfirmButton: boolean;
-  toast: boolean;
-  showCancelButton: boolean;
-  buttonsStyling: boolean;
-  focusConfirm: boolean;
-  focusCancel: boolean;
-  showCloseButton: boolean;
-  confirmButtonText: string;
-  cancelButtonText: string;
-  confirmButtonClass: string;
-  cancelButtonClass: string;
-  timer: number;
-  html?: string;
-  timerProgressBar: boolean;
-  position: SweetAlertPosition;
-  constructor() {
-    this.icon = 'success';
-    this.toast = false;
-    this.background = '';
-    this.showConfirmButton = false;
-    this.showCancelButton = false;
-    this.confirmButtonText = 'Aceptar';
-    this.cancelButtonText = 'Cancelar';
-    this.showCloseButton = false;
-    this.confirmButtonClass = 'btn btn-primary active btn-sm';
-    this.cancelButtonClass = 'btn btn-danger active btn-sm';
-    this.buttonsStyling = false;
-  }
-}
 interface TableSettings {
   selectMode: string;
   actions: any;
@@ -111,7 +71,7 @@ const TABLE_SETTINGS: TableSettings = {
 @Component({
   template: '',
 })
-export abstract class BasePage implements OnDestroy {
+export abstract class BasePage extends ClassWidthAlert implements OnDestroy {
   loading: boolean = false;
   $unSubscribe = new Subject<void>();
   minMode: BsDatepickerViewMode = 'day';
@@ -122,11 +82,12 @@ export abstract class BasePage implements OnDestroy {
   private _activatedRoute = inject(ActivatedRoute);
   private _router = inject(Router);
   private _screenCode = inject(ScreenCodeService);
-  private _alertsService = inject(AlertsQueueService);
+
   protected loader = inject(LoadingService);
   protected loaderProgress = inject(LoadingPercentService);
   protected _toastrService = inject(ToastrService);
   constructor() {
+    super();
     this.bsConfig = {
       minMode: this.minMode,
       isAnimated: true,
@@ -160,49 +121,6 @@ export abstract class BasePage implements OnDestroy {
         this._toastrService.info(text, title),
     };
     return throwToast[icon](title, text);
-  }
-
-  protected alert(
-    icon: SweetAlertIcon,
-    title: string,
-    text: string,
-    html?: string
-  ) {
-    let sweetalert = new SweetalertModel();
-    sweetalert.title = title;
-    sweetalert.text = text;
-    sweetalert.icon = icon;
-    sweetalert.html = html;
-    sweetalert.showConfirmButton = true;
-    this._alertsService.alerts.push(sweetalert);
-    this._alertsService.alertQueue.next(true);
-  }
-
-  protected alertInfo(icon: SweetAlertIcon, title: string, text: string) {
-    let sweetalert = new SweetalertModel();
-    sweetalert.title = title;
-    sweetalert.text = text;
-    sweetalert.icon = icon;
-    sweetalert.showConfirmButton = true;
-    return Swal.fire(sweetalert);
-  }
-
-  protected alertQuestion(
-    icon: SweetAlertIcon,
-    title: string,
-    text: string,
-    confirmButtonText?: string,
-    cancelButtonText: string = 'Cancelar'
-  ): Promise<SweetAlertResult> {
-    let sweetalert = new SweetalertModel();
-    sweetalert.title = title;
-    sweetalert.text = text;
-    sweetalert.icon = icon;
-    confirmButtonText ? (sweetalert.confirmButtonText = confirmButtonText) : '';
-    cancelButtonText ? (sweetalert.cancelButtonText = cancelButtonText) : '';
-    sweetalert.showConfirmButton = true;
-    sweetalert.showCancelButton = true;
-    return Swal.fire(sweetalert);
   }
 
   protected encodeData<T>(data: T) {
