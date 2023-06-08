@@ -48,6 +48,7 @@ import {
 } from 'src/app/core/shared/patterns';
 import { AddCopyComponent } from 'src/app/pages/juridical-processes/abandonments-declaration-trades/abandonments-declaration-trades/add-copy/add-copy.component';
 import {
+  COLUMNS_DOCUMENTS,
   COLUMNS_GOOD_JOB_MANAGEMENT,
   EXTERNOS_COLUMS_OFICIO,
 } from 'src/app/pages/juridical-processes/abandonments-declaration-trades/abandonments-declaration-trades/columns';
@@ -73,6 +74,14 @@ import { RelateDocumentsResponse } from './related-documents-response';
 import { RelatedDocumentsService } from './services/related-documents.service';
 
 export type IGoodAndAvailable = IGood & { available: boolean };
+export interface IGoodJobManagement {
+  managementNumber: string;
+  goodNumber: number;
+  recordNumber: string;
+  classify: string | number;
+  goods: string;
+  good: IGood;
+}
 @Component({
   selector: 'app-related-documents',
   templateUrl: './related-documents.component.html',
@@ -185,11 +194,7 @@ export class RelatedDocumentsComponent
   settings3 = { ...this.settings };
   copyOficio: any[] = [];
 
-  dataTableGoodsJobManagement: {
-    managementNumber: string;
-    goodNumber: IGood;
-    recordNumber: string;
-  }[] = [];
+  dataTableGoodsJobManagement: IGoodJobManagement[] = [];
 
   settingsGoodsJobManagement = {
     ...this.settings,
@@ -200,6 +205,19 @@ export class RelatedDocumentsComponent
     },
     hideSubHeader: true,
     columns: COLUMNS_GOOD_JOB_MANAGEMENT,
+  };
+
+  dataTableDocuments: any[] = [];
+
+  settingsTableDocuments = {
+    ...this.settings,
+    actions: {
+      edit: false,
+      add: false,
+      delete: false,
+    },
+    hideSubHeader: true,
+    columns: COLUMNS_DOCUMENTS,
   };
 
   override formNotification = new FormGroup({
@@ -257,6 +275,7 @@ export class RelatedDocumentsComponent
     statusOf: new FormControl(''), // estatus_of
     refersTo: new FormControl(''), // se_refiere_a
   });
+
   constructor(
     private fb: FormBuilder,
     protected flyerService: FlyersService,
@@ -267,7 +286,7 @@ export class RelatedDocumentsComponent
     protected sanitizer: DomSanitizer,
     private dictationService: DictationService,
     private serviceRelatedDocumentsService: RelatedDocumentsService,
-    private securityService: SecurityService,
+    protected securityService: SecurityService,
     protected serviceOficces: GoodsJobManagementService,
     protected readonly authService: AuthService,
     private applicationGoodsQueryService: ApplicationGoodsQueryService,
@@ -306,10 +325,16 @@ export class RelatedDocumentsComponent
       ...RELATED_DOCUMENTS_COLUMNS_GOODS.improcedente,
       onComponentInitFunction: this.onClickImprocedente,
     };
+
+    if (!this.pantallaOption) {
+      const columns = RELATED_DOCUMENTS_COLUMNS_GOODS;
+      delete columns.improcedente;
+    }
+
     this.settings = {
       ...this.settings,
       actions: false,
-      selectMode: 'multi',
+      // selectMode: 'multi',
       columns: { ...RELATED_DOCUMENTS_COLUMNS_GOODS },
       rowClassFunction: (row: any) => {
         if (!row.data.available) {
@@ -848,27 +873,48 @@ export class RelatedDocumentsComponent
           }
 
           if (mJobManagement.managementNumber) {
-            const params = new ListParams();
-            params['filter.managementNumber'] = mJobManagement.managementNumber;
-            try {
-              this.dataTableGoodsJobManagement = (
-                await this.getGoodsJobManagement(params)
-              ).data;
-            } catch (ex) {
-              console.log(ex);
-            }
+            // const params = new ListParams();
+            // params['filter.managementNumber'] = mJobManagement.managementNumber;
+            // try {
+            //   this.dataTableGoodsJobManagement = (
+            //     await this.getGoodsJobManagement(params)
+            //   ).data;
+            // } catch (ex) {
+            //   console.log(ex);
+            // }\
+            this.refreshTableGoodsJobManagement();
           }
         } catch (e) {
           console.log(e);
         }
         console.log('res', res);
         if (res.expedientNumber) {
-          const params = new ListParams();
-          params['filter.fileeNumber'] = res.expedientNumber;
-          this.getGoods1(params);
+          // const params = new ListParams();
+          // params['filter.fileNumber'] = res.expedientNumber;
+          // this.getGoods1(params);
+          this.refreshTableGoods();
         }
       },
     });
+  }
+
+  refreshTableGoods() {
+    const params = new ListParams();
+    params['filter.fileNumber'] = this.formNotification.value.expedientNumber;
+    this.getGoods1(params);
+  }
+
+  async refreshTableGoodsJobManagement() {
+    const params = new ListParams();
+    params['filter.managementNumber'] =
+      this.formJobManagement.value.managementNumber;
+    try {
+      this.dataTableGoodsJobManagement = (
+        await this.getGoodsJobManagement(params)
+      ).data;
+    } catch (ex) {
+      console.log(ex);
+    }
   }
 
   getQueryParams(name: string) {
@@ -2082,7 +2128,13 @@ export class RelatedDocumentsComponent
   }
 
   isDisabledBtnDocs = false;
+  async onClickBtnPrint() {
+    // if (!this.pantallaOption) {
+    await this.printRelationScreen();
+    // }
+  }
   async printRelationScreen() {
+    console.log('PRINT RELATION SCREEN');
     let values = this.formJobManagement.value;
     if (values.statusOf == 'ENVIADO') {
       this.alert(
@@ -2134,11 +2186,11 @@ export class RelatedDocumentsComponent
         etapaCreda
       )) as IDepartment;
 
-      const year = new Date().getFullYear();
-      const month = new Date().getMonth() + 1;
-      this.formJobManagement
-        .get('cveManagement')
-        .setValue(this.pupGenerateKey());
+      // const year = new Date().getFullYear();
+      // const month = new Date().getMonth() + 1;
+      const key = await this.pupGeneratorKey();
+
+      this.formJobManagement.get('cveManagement').setValue(key);
       this.formJobManagement.get('statusOf').setValue('EN REVISION');
     }
 
@@ -2151,11 +2203,10 @@ export class RelatedDocumentsComponent
         etapaCreda
       )) as IDepartment;
 
-      const year = new Date().getFullYear();
-      const month = new Date().getMonth() + 1;
-      this.formJobManagement
-        .get('cveManagement')
-        .setValue(this.pupGenerateKey());
+      // const year = new Date().getFullYear();
+      // const month = new Date().getMonth() + 1;
+      const key = await this.pupGeneratorKey();
+      this.formJobManagement.get('cveManagement').setValue(key);
       this.formJobManagement.get('statusOf').setValue('EN REVISION');
 
       if (checkText == this.se_refiere_a.A) {
@@ -2175,7 +2226,7 @@ export class RelatedDocumentsComponent
       const params = new ListParams();
       params['filter.managementNumber'] =
         this.formJobManagement.value.managementNumber;
-      const counter = await this.getGoodsManagement(params);
+      const counter = await this.getGoodsJobManagementCount(params);
 
       if (checkText == this.se_refiere_a.A && counter == 0) {
         this.pupAddGood();
@@ -2227,95 +2278,7 @@ export class RelatedDocumentsComponent
     });
   }
 
-  pupAddGood() {
-    const goodAvailables = this.dataTableGoods.filter(item => item.available);
-    const newRows = [];
-
-    goodAvailables.forEach(item => {
-      newRows.push({
-        goodNumber: item.goodId,
-        classif: item.goodClassNumber,
-        managementNumber: this.formJobManagement.value.managementNumber,
-      });
-      item.available = false;
-    });
-  }
-
-  // pupShowReport() {
-  //   const params = {
-  //     // PARAMFORM: 'NO',
-  //     // P_FIRMA: 'S',
-  //     PARAMFORM: 'NO',
-  //     NO_OF_GES: this.formJobManagement.value.managementNumber,
-  //     TIPO_OF: this.formJobManagement.value.jobType,
-  //     VOLANTE: this.formNotification.value.wheelNumber,
-  //     EXP: this.formNotification.value.expedientNumber,
-  //   };
-
-  //   let nameReport = 'RGEROFGESTION';
-  //   const jobType = this.formJobManagement.value.jobType;
-  //   const PLLAMO = this.getParamsForName('PLLAMO');
-  //   if (jobType == 'INTERNO' && PLLAMO != 'ABANDONO') {
-  //     nameReport = 'RGEROFGESTION';
-  //   } else if (jobType == 'EXTERNO' && PLLAMO != 'ABANDONO') {
-  //     nameReport = 'RGEROFGESTION_EXT';
-  //   } else if (jobType == 'EXTERNO' && PLLAMO == 'ABANDONO') {
-  //     nameReport = 'RGENABANSUB';
-  //   } else {
-  //     this.alert(
-  //       'error',
-  //       'Error',
-  //       'No se ha especificado el tipo de oficio (EXTERNO,INTERNO)'
-  //     );
-  //   }
-
-  //   this.siabService
-  //     .fetchReport('FBIEVALPOSTERCERO', params)
-  //     .subscribe(response => {
-  //       if (response !== null) {
-  //         const blob = new Blob([response], { type: 'application/pdf' });
-  //         const url = URL.createObjectURL(blob);
-  //         let config = {
-  //           initialState: {
-  //             documento: {
-  //               urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
-  //               type: 'pdf',
-  //             },
-  //             callback: (data: any) => {},
-  //           }, //pasar datos por aca
-  //           class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
-  //           ignoreBackdropClick: true, //ignora el click fuera del modal
-  //         };
-  //         this.modalService.show(PreviewDocumentsComponent, config);
-  //       } else {
-  //         const blob = new Blob([response], { type: 'application/pdf' });
-  //         const url = URL.createObjectURL(blob);
-  //         let config = {
-  //           initialState: {
-  //             documento: {
-  //               urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
-  //               type: 'pdf',
-  //             },
-  //             callback: (data: any) => {},
-  //           }, //pasar datos por aca
-  //           class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
-  //           ignoreBackdropClick: true, //ignora el click fuera del modal
-  //         };
-  //         this.modalService.show(PreviewDocumentsComponent, config);
-  //       }
-  //     });
-  // }
-
-  pupAddAnyGood() {
-    const goodAvailables = this.dataTableGoods.filter(item => item.available);
-  }
-
   commit() {}
-
-  pupGenerateKey(): string {
-    //:TODO: Cambiar por el servicio de generacion de llaves
-    return 'test';
-  }
 
   async getDSAreaInDeparment(etapaCreda: string | number) {
     const params = new ListParams();

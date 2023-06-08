@@ -14,14 +14,15 @@
       </span>
       / Estatus:
       <span class="badge bg-info ml-3 mr-3" style="display: initial !important">
-        {{ statusOf || '-----' }}
+        {{ formJobManagement.get('statusOf')?.value || '-----' }}
       </span>
     </div>
   </div>
   <!-- </div> -->
 
   <div body>
-    <form [formGroup]="managementForm" class="form-material">
+    <!-- [formGroup]="managementForm" -->
+    <div class="form-material">
       <app-card [header]="false">
         <div body>
           <div class="row">
@@ -70,7 +71,7 @@
             </div>
           </div>
           <div class="row pt-4"></div>
-          <div class="row pt-4">
+          <div [formGroup]="formJobManagement" class="row pt-4">
             <!-- value="id" -->
             <!-- (change)="changeSender()" -->
             <form-field
@@ -132,476 +133,505 @@
         </div>
       </app-card>
 
-      <div class="row pt-4">
-        <div class="col-md-12">
-          <h6>Se Refiere A:</h6>
-          <div
-            class="col-md-3"
-            [ngClass]="{ 'not-press': se_refiere_a_Disabled.A }">
-            <form-radio label="{{ se_refiere_a.A }}">
-              <input
-                id="se_refiere_a_A"
-                type="radio"
-                formControlName="checkText"
-                value="{{ se_refiere_a.A }}"
-                (change)="disabledChecks()" />
-            </form-radio>
+      <div [formGroup]="managementForm">
+        <div class="row pt-4">
+          <div class="col-md-12">
+            <h6>Se Refiere A:</h6>
+            <div
+              class="col-md-3"
+              [ngClass]="{ 'not-press': se_refiere_a_Disabled.A }">
+              <form-radio label="{{ se_refiere_a.A }}">
+                <input
+                  id="se_refiere_a_A"
+                  type="radio"
+                  formControlName="checkText"
+                  value="{{ se_refiere_a.A }}"
+                  (change)="disabledChecks()" />
+              </form-radio>
+            </div>
+            <div
+              class="col-md-4"
+              [ngClass]="{ 'not-press': se_refiere_a_Disabled.B }">
+              <form-radio label="{{ se_refiere_a.B }}" class="mt-0 pt-0 bt-0">
+                <input
+                  id="se_refiere_a_B"
+                  type="radio"
+                  formControlName="checkText"
+                  value="{{ se_refiere_a.B }}"
+                  (change)="enableChecks()" />
+              </form-radio>
+            </div>
+            <div
+              class="col-md-4"
+              [ngClass]="{ 'not-press': se_refiere_a_Disabled.C }">
+              <form-radio label="{{ se_refiere_a.C }}">
+                <input
+                  id="se_refiere_a_C"
+                  type="radio"
+                  formControlName="checkText"
+                  value="{{ se_refiere_a.C }}" />
+              </form-radio>
+            </div>
+            <div class="col-md-1 text-right">
+              <button
+                type="button"
+                tooltip="Cambio"
+                containerClass="tooltip-style"
+                class="btn btn-success active btn-sm m-2"
+                (click)="changeOffice()">
+                <i class="bx bx-undo"></i>
+              </button>
+            </div>
           </div>
-          <div
-            class="col-md-4"
-            [ngClass]="{ 'not-press': se_refiere_a_Disabled.B }">
-            <form-radio label="{{ se_refiere_a.B }}" class="mt-0 pt-0 bt-0">
-              <input
-                id="se_refiere_a_B"
-                type="radio"
-                formControlName="checkText"
-                value="{{ se_refiere_a.B }}"
-                (change)="enableChecks()" />
-            </form-radio>
+          <div class="col-md-12 mb-3">
+            <h6>Tipos de Texto:</h6>
+            <div class="col-md-3">
+              <form-radio label="ACUSE DE RECIBO" (change)="changeTextType()">
+                <input type="radio" formControlName="tipoTexto" value="UNO" />
+              </form-radio>
+            </div>
+            <div class="col-md-3">
+              <form-radio
+                label="DOCUMENTO DEVOLUCIÓN"
+                (change)="changeTextType()">
+                <input type="radio" formControlName="tipoTexto" value="DOS" />
+              </form-radio>
+            </div>
+            <div class="col-md-3">
+              <form-radio
+                label="DOCUMENTO DE BIENES"
+                (change)="changeTextType()">
+                <input type="radio" formControlName="tipoTexto" value="TRES" />
+              </form-radio>
+            </div>
+            <div class="col-md-3">
+              <form-radio
+                label="DOCUMENTO DE NUMERARIO"
+                (change)="changeTextType()">
+                <input
+                  type="radio"
+                  formControlName="tipoTexto"
+                  value="CUATRO" />
+              </form-radio>
+            </div>
+            <div class="col-md-3">
+              <form-radio
+                label="ACLARA INFORMACIÓN"
+                (change)="changeTextType()">
+                <input type="radio" formControlName="tipoTexto" value="CINCO" />
+              </form-radio>
+            </div>
+            <div class="col-md-3">
+              <form-radio
+                label="SOLICITAR INFORMACIÓN"
+                (change)="changeTextType()">
+                <input type="radio" formControlName="tipoTexto" value="SEIS" />
+              </form-radio>
+            </div>
+            <div class="col-md-3">
+              <form-radio label="SAT" (change)="changeTextType()">
+                <input type="radio" formControlName="tipoTexto" value="SIETE" />
+              </form-radio>
+            </div>
+            <div class="col-md-3">
+              <form-radio label="ABANDONO" (change)="changeTextType()">
+                <input type="radio" formControlName="tipoTexto" value="OCHO" />
+              </form-radio>
+            </div>
           </div>
-          <div
-            class="col-md-4"
-            [ngClass]="{ 'not-press': se_refiere_a_Disabled.C }">
-            <form-radio label="{{ se_refiere_a.C }}">
-              <input
-                id="se_refiere_a_C"
-                type="radio"
-                formControlName="checkText"
-                value="{{ se_refiere_a.C }}" />
-            </form-radio>
-          </div>
-          <div class="col-md-1 text-right">
-            <button
-              type="button"
-              tooltip="Cambio"
-              containerClass="tooltip-style"
-              class="btn btn-success active btn-sm m-2"
-              (click)="changeOffice()">
-              <i class="bx bx-undo"></i>
-            </button>
-          </div>
-        </div>
-        <div class="col-md-12 mb-3">
-          <h6>Tipos de Texto:</h6>
-          <div class="col-md-3">
-            <form-radio label="ACUSE DE RECIBO" (change)="changeTextType()">
-              <input type="radio" formControlName="tipoTexto" value="UNO" />
-            </form-radio>
-          </div>
-          <div class="col-md-3">
-            <form-radio
-              label="DOCUMENTO DEVOLUCIÓN"
-              (change)="changeTextType()">
-              <input type="radio" formControlName="tipoTexto" value="DOS" />
-            </form-radio>
-          </div>
-          <div class="col-md-3">
-            <form-radio label="DOCUMENTO DE BIENES" (change)="changeTextType()">
-              <input type="radio" formControlName="tipoTexto" value="TRES" />
-            </form-radio>
-          </div>
-          <div class="col-md-3">
-            <form-radio
-              label="DOCUMENTO DE NUMERARIO"
-              (change)="changeTextType()">
-              <input type="radio" formControlName="tipoTexto" value="CUATRO" />
-            </form-radio>
-          </div>
-          <div class="col-md-3">
-            <form-radio label="ACLARA INFORMACIÓN" (change)="changeTextType()">
-              <input type="radio" formControlName="tipoTexto" value="CINCO" />
-            </form-radio>
-          </div>
-          <div class="col-md-3">
-            <form-radio
-              label="SOLICITAR INFORMACIÓN"
-              (change)="changeTextType()">
-              <input type="radio" formControlName="tipoTexto" value="SEIS" />
-            </form-radio>
-          </div>
-          <div class="col-md-3">
-            <form-radio label="SAT" (change)="changeTextType()">
-              <input type="radio" formControlName="tipoTexto" value="SIETE" />
-            </form-radio>
-          </div>
-          <div class="col-md-3">
-            <form-radio label="ABANDONO" (change)="changeTextType()">
-              <input type="radio" formControlName="tipoTexto" value="OCHO" />
-            </form-radio>
-          </div>
-        </div>
-        <form-field
-          [control]="managementForm.get('parrafoInicial')"
-          class="col-md-12 mt-2 pt-3"
-          label="Parrafo Inicial">
-          <textarea
-            rows="7"
-            class="form-control"
-            formControlName="parrafoInicial"></textarea>
-        </form-field>
-      </div>
-
-      <div class="row pt-4">
-        <form-field
-          [control]="managementForm.get('justificacion')"
-          class="col-md-6">
-          <ngx-select
-            (fetchItems)="getJustification($event)"
-            value="id"
-            bindLabel="clarifications"
-            [form]="managementForm"
-            control="justificacion"
-            [data]="justificacion"
-            [showTooltip]="true"
-            label="Justificación">
-          </ngx-select>
-        </form-field>
-        <!-- <form-field [control]="managementForm.get('justificacionDetalle')" class="col-md-6" label="Justificación">
-          <input type="text" class="form-control" formControlName="justificacionDetalle" readonly [disabled]="true" />
-        </form-field> -->
-        <form-field
-          [control]="managementForm.get('noOficio')"
-          class="col-md-4 mt-2"
-          label="Número de Oficio">
-          <input
-            type="text"
-            class="form-control"
-            formControlName="noOficio"
-            readonly
-            [disabled]="true" />
-        </form-field>
-        <!-- <form-field [control]="managementForm.get('fechaAcuse')" class="col-md-4 mt-2" label="Fecha de Acuse">
-          <input type="text" class="form-control" formControlName="fechaAcuse" readonly [disabled]="true" />
-        </form-field> -->
-      </div>
-      <br /><br />
-      <div class="row pt-4">
-        <div class="col-md-4">
-          <button type="button" class="btn btn-primary active btn-sm mr-2">
-            Respuestas FGR
-          </button>
-        </div>
-      </div>
-      <br /><br />
-      <div class="row pt-4">
-        <div class="col-md-2">
           <form-field
-            [control]="managementForm.get('fechaAcuse')"
-            label="Fecha Acuse">
+            [control]="managementForm.get('parrafoInicial')"
+            class="col-md-12 mt-2 pt-3"
+            label="Parrafo Inicial">
+            <textarea
+              rows="7"
+              class="form-control"
+              formControlName="parrafoInicial"></textarea>
+          </form-field>
+        </div>
+
+        <div class="row pt-4">
+          <form-field
+            [control]="managementForm.get('justificacion')"
+            class="col-md-6">
+            <ngx-select
+              (fetchItems)="getJustification($event)"
+              value="id"
+              bindLabel="clarifications"
+              [form]="managementForm"
+              control="justificacion"
+              [data]="justificacion"
+              [showTooltip]="true"
+              label="Justificación">
+            </ngx-select>
+          </form-field>
+          <!-- <form-field [control]="managementForm.get('justificacionDetalle')" class="col-md-6" label="Justificación">
+           <input type="text" class="form-control" formControlName="justificacionDetalle" readonly [disabled]="true" />
+         </form-field> -->
+          <form-field
+            [control]="managementForm.get('noOficio')"
+            class="col-md-4 mt-2"
+            label="Número de Oficio">
             <input
               type="text"
               class="form-control"
-              #dp="bsDatepicker"
-              bsDatepicker />
+              formControlName="noOficio"
+              readonly
+              [disabled]="true" />
           </form-field>
+          <!-- <form-field [control]="managementForm.get('fechaAcuse')" class="col-md-4 mt-2" label="Fecha de Acuse">
+           <input type="text" class="form-control" formControlName="fechaAcuse" readonly [disabled]="true" />
+         </form-field> -->
         </div>
-      </div>
-      <br />
-      <br />
-
-      <div class="row pb-5">
-        <div class="col-md-12">
-          <div class="col-sm-12 col-12 col-md-12">
-            <ngx-select
-              [form]="managementForm"
-              control="averiPrevia"
-              (fetchItems)="getTypesSelectors($event)"
-              [showTooltip]="true"
-              [data]="tiposDatosSelect"
-              bindLabel="tipoSupbtipoDescription"
-              label="Tipo &#45; Subtipo &#45; Descripci&oacute;n"
-              value="no_clasif_bien"
-              id="typesFilters"
-              (change)="typeSelected($event)">
-            </ngx-select>
-            <!-- <form-field
-              [control]="managementForm.get('averiPrevia')"
-              label="Tipo &#45; Subtipo &#45; Descripci&oacute;n">
-              <ng-select
-                (change)="onLoadGoodList($event)"
-                formControlName="averiPrevia"
+        <br /><br />
+        <div class="row pt-4">
+          <div class="col-md-4">
+            <button type="button" class="btn btn-primary active btn-sm mr-2">
+              Respuestas FGR
+            </button>
+          </div>
+        </div>
+        <br /><br />
+        <div class="row pt-4">
+          <div class="col-md-2">
+            <form-field
+              [control]="managementForm.get('fechaAcuse')"
+              label="Fecha Acuse">
+              <input
+                type="text"
                 class="form-control"
-                id="typesFilters">
-                <ng-option *ngIf="valTiposAll" value="all"
-                  >Todos - 0 - TODOS - 0</ng-option
-                >
-                <ng-option
-                  *ngFor="let item of tiposData; index as i"
-                  value="{{ item.no_clasif_bien }}">
-                  {{ item.tipoSupbtipoDescription }}
-                </ng-option>
-              </ng-select>
-            </form-field> -->
+                #dp="bsDatepicker"
+                bsDatepicker />
+            </form-field>
           </div>
+        </div>
+        <br />
+        <br />
 
-          <!-- <form-check class="col-md-2 text-end" label="Improcedente(s) todo(s)" for="improcedente">
-            <input id="improcedente" type="checkbox" (change)="changeImprocedente($event.target)"
-              formControlName="improcedente" />
-          </form-check> -->
+        <div class="row pb-5">
+          <div class="col-md-12">
+            <div class="col-sm-12 col-12 col-md-12">
+              <ngx-select
+                [form]="managementForm"
+                control="averiPrevia"
+                (fetchItems)="getTypesSelectors($event)"
+                [showTooltip]="true"
+                [data]="tiposDatosSelect"
+                bindLabel="tipoSupbtipoDescription"
+                label="Tipo &#45; Subtipo &#45; Descripci&oacute;n"
+                value="no_clasif_bien"
+                id="typesFilters"
+                (change)="typeSelected($event)">
+              </ngx-select>
+              <!-- <form-field
+               [control]="managementForm.get('averiPrevia')"
+               label="Tipo &#45; Subtipo &#45; Descripci&oacute;n">
+               <ng-select
+                 (change)="onLoadGoodList($event)"
+                 formControlName="averiPrevia"
+                 class="form-control"
+                 id="typesFilters">
+                 <ng-option *ngIf="valTiposAll" value="all"
+                   >Todos - 0 - TODOS - 0</ng-option
+                 >
+                 <ng-option
+                   *ngFor="let item of tiposData; index as i"
+                   value="{{ item.no_clasif_bien }}">
+                   {{ item.tipoSupbtipoDescription }}
+                 </ng-option>
+               </ng-select>
+             </form-field> -->
+            </div>
 
-          <form-loader *ngIf="formLoading"></form-loader>
+            <!-- <form-check class="col-md-2 text-end" label="Improcedente(s) todo(s)" for="improcedente">
+             <input id="improcedente" type="checkbox" (change)="changeImprocedente($event.target)"
+               formControlName="improcedente" />
+           </form-check> -->
 
-          <div class="row pt-2 mb-2" *ngIf="!formLoading">
-            <div class="col-sm-12 col-12 col-md-12 pr-3">
-              <div [class]="isLoadingGood ? 'table-loading' : ''">
-                <ng2-smart-table
-                  id="goods"
-                  (userRowSelect)="selectProceedings($event)"
-                  [attr.class]="'table-responsive table-bordered'"
-                  [settings]="settings"
-                  [source]="dataTableGoods">
-                </ng2-smart-table>
-                <br />
-                <div>
-                  <app-pagination
-                    [params]="params"
-                    [totalItems]="totalItems"></app-pagination>
+            <form-loader *ngIf="formLoading"></form-loader>
+
+            <div class="row pt-2 mb-2" *ngIf="!formLoading">
+              <div class="col-sm-12 col-12 col-md-12 pr-3">
+                <div [class]="isLoadingGood ? 'table-loading' : ''">
+                  <ng2-smart-table
+                    id="goods"
+                    (userRowSelect)="selectProceedings($event)"
+                    [attr.class]="'table-responsive table-bordered'"
+                    [settings]="settings"
+                    [source]="dataTableGoods">
+                  </ng2-smart-table>
+                  <br />
+                  <div>
+                    <app-pagination
+                      [params]="params"
+                      [totalItems]="totalItems"></app-pagination>
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-12 col-12 col-md-12 pr-3">
+                <div class="col-md-6">
+                  <div [class]="isLoadingGood ? 'table-loading' : ''">
+                    <div class="col-12">Biene(s)</div>
+                    <!-- (userRowSelect)="selectProceedings($event)" -->
+                    <ng2-smart-table
+                      id="goodsJobManagement"
+                      [attr.class]="'table-responsive table-bordered'"
+                      [settings]="settingsGoodsJobManagement"
+                      [source]="dataTableGoodsJobManagement">
+                    </ng2-smart-table>
+                    <br />
+                    <!-- <div>
+                     <app-pagination
+                       [params]="params"
+                       [totalItems]="totalItems"></app-pagination>
+                   </div> -->
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="col-12">Documento(s)</div>
+                  <div [class]="isLoadingGood ? 'table-loading' : ''">
+                    <!-- (userRowSelect)="selectProceedings($event)" -->
+                    <ng2-smart-table
+                      id="goodsJobManagement"
+                      [attr.class]="'table-responsive table-bordered'"
+                      [settings]="settingsTableDocuments"
+                      [source]="dataTableDocuments">
+                    </ng2-smart-table>
+                    <br />
+                    <!-- <div>
+                      <app-pagination
+                        [params]="params"
+                        [totalItems]="totalItems"></app-pagination>
+                    </div> -->
+                  </div>
                 </div>
               </div>
             </div>
-            <div class="col-sm-12 col-12 col-md-12 pr-3">
-              <div class="col-12">Biene(s)</div>
-              <div [class]="isLoadingGood ? 'table-loading' : ''">
-                <!-- (userRowSelect)="selectProceedings($event)" -->
-                <ng2-smart-table
-                  id="goodsJobManagement"
-                  [attr.class]="'table-responsive table-bordered'"
-                  [settings]="settingsGoodsJobManagement"
-                  [source]="dataTableGoodsJobManagement">
-                </ng2-smart-table>
-                <br />
-                <div>
-                  <app-pagination
-                    [params]="params"
-                    [totalItems]="totalItems"></app-pagination>
-                </div>
+
+            <div class="row">
+              <div class="col-sm-12 col-12 col-md-6 mt-5">
+                <form-field [control]="managementForm.get('di_desc_estatus')">
+                  <input
+                    type="text"
+                    formControlName="di_desc_estatus"
+                    class="form-control"
+                    readonly />
+                </form-field>
               </div>
             </div>
+            <!-- <div class="col-md-2 text-end">
+             <app-columns-select [(settings)]="settings"></app-columns-select>
+           </div> -->
+            <!-- <div class="col-md-12" style="max-height: 600px; overflow-y: scroll">
+             <div [class]="loadingGoods ? 'table-loading' : ''">
+               <ng2-smart-table class="col-md-12" id="goods" [attr.class]="'table-bordered'" [settings]="settings"
+                 [source]="data1"></ng2-smart-table>
+               <app-pagination [params]="params" [totalItems]="totalItems"></app-pagination>
+             </div>
+           </div> -->
+            <div class="col-md-12 mt-3 text-right">
+              <button
+                type="button"
+                tooltip="Documentos"
+                [disabled]="isDisabledBtnDocs"
+                containerClass="tooltip-style"
+                class="btn btn-info active btn-sm m-1"
+                (click)="openModal()">
+                <i class="bx bxs-file"></i>
+              </button>
+              <button
+                type="button"
+                tooltip="Imprimir"
+                containerClass="tooltip-style"
+                class="btn btn-secondary active btn-sm m-1"
+                (click)="onClickBtnPrint()">
+                <i class="bx bxs-printer"></i>
+              </button>
+              <button
+                type="button"
+                tooltip="Borrar"
+                containerClass="tooltip-style"
+                (click)="showDeleteAlert($event)"
+                class="btn btn-danger active btn-sm m-1">
+                <i class="bx bxs-trash"></i>
+              </button>
+              <button
+                [attr.disabled]="
+                  paramsGestionDictamen.sale == 'C' ||
+                  paramsGestionDictamen.sale == 'D'
+                "
+                type="submit"
+                class="btn btn-primary btn-sm active"
+                tooltip="Enviar"
+                containerClass="tooltip-style">
+                <i class="bx bx-send"></i>
+              </button>
+            </div>
           </div>
-
-          <div class="row">
-            <div class="col-sm-12 col-12 col-md-6 mt-5">
-              <form-field [control]="managementForm.get('di_desc_estatus')">
-                <input
-                  type="text"
-                  formControlName="di_desc_estatus"
+        </div>
+        <hr class="row" />
+        <div class="row">
+          <div class="col-md-12">
+            <div class="row">
+              <form-field
+                [control]="managementForm.get('parrafoFinal')"
+                label="Parrafo Final">
+                <textarea
+                  rows="5"
                   class="form-control"
-                  readonly />
+                  formControlName="parrafoFinal"></textarea>
+              </form-field>
+              <form-field
+                [control]="managementForm.get('text3')"
+                label="Parrafo por ausencia">
+                <textarea
+                  rows="3"
+                  class="form-control"
+                  formControlName="text3"></textarea>
               </form-field>
             </div>
           </div>
-          <!-- <div class="col-md-2 text-end">
-            <app-columns-select [(settings)]="settings"></app-columns-select>
-          </div> -->
-          <!-- <div class="col-md-12" style="max-height: 600px; overflow-y: scroll">
-            <div [class]="loadingGoods ? 'table-loading' : ''">
-              <ng2-smart-table class="col-md-12" id="goods" [attr.class]="'table-bordered'" [settings]="settings"
-                [source]="data1"></ng2-smart-table>
-              <app-pagination [params]="params" [totalItems]="totalItems"></app-pagination>
-            </div>
-          </div> -->
-          <div class="col-md-12 mt-3 text-right">
-            <button
-              type="button"
-              tooltip="Documentos"
-              [disabled]="isDisabledBtnDocs"
-              containerClass="tooltip-style"
-              class="btn btn-info active btn-sm m-1"
-              (click)="openModal()">
-              <i class="bx bxs-file"></i>
-            </button>
-            <button
-              type="button"
-              tooltip="Imprimir"
-              containerClass="tooltip-style"
-              class="btn btn-secondary active btn-sm m-1"
-              (click)="send()">
-              <i class="bx bxs-printer"></i>
-            </button>
-            <button
-              type="button"
-              tooltip="Borrar"
-              containerClass="tooltip-style"
-              (click)="showDeleteAlert($event)"
-              class="btn btn-danger active btn-sm m-1">
-              <i class="bx bxs-trash"></i>
-            </button>
-            <button
-              [attr.disabled]="
-                paramsGestionDictamen.sale == 'C' ||
-                paramsGestionDictamen.sale == 'D'
-              "
-              type="submit"
-              class="btn btn-primary btn-sm active"
-              tooltip="Enviar"
-              containerClass="tooltip-style">
-              <i class="bx bx-send"></i>
-            </button>
-          </div>
-        </div>
-      </div>
-      <hr class="row" />
-      <div class="row">
-        <div class="col-md-12">
-          <div class="row">
-            <form-field
-              [control]="managementForm.get('parrafoFinal')"
-              label="Parrafo Final">
-              <textarea
-                rows="5"
-                class="form-control"
-                formControlName="parrafoFinal"></textarea>
-            </form-field>
-            <form-field
-              [control]="managementForm.get('text3')"
-              label="Parrafo por ausencia">
-              <textarea
-                rows="3"
-                class="form-control"
-                formControlName="text3"></textarea>
-            </form-field>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-footer row">
-            <div class="col-12 col-sm-12 col-md-12">
-              <h6>C.C.P.</h6>
-            </div>
-            <!-- <form-field
-              class="col-sm-12 col-12 col-md-4 p-2"
-              [control]="managementForm.get('ccp_person')"
-              label="">
-              <select
-                class="form-control"
-                formControlName="ccp_person"
-                (change)="changeCopiesType($event, 1)">
-                <option value="">Seleccione un valor</option>
-                <option value="E">EXTERNA</option>
-                <option value="I">INTERNA</option>
-              </select>
-            </form-field>
-            <div
-              class="col-sm-12 col-12 col-md-8 p-2"
-              *ngIf="
-                managementForm.get('ccp_person').value != 'I' &&
-                managementForm.get('ccp_person').value != 'E'
-              ">
-              <div class="alert alert-info">
-                Selecciona el Tipo de Copia para ingresar el Nombre del Usuario
-                o Seleccionar un Usuario desde el catálogo
+          <div class="card">
+            <div class="card-footer row">
+              <div class="col-12 col-sm-12 col-md-12">
+                <h6>C.C.P.</h6>
               </div>
-            </div>
-            <div
-              class="col-sm-12 col-12 col-md-8 p-2"
-              *ngIf="managementForm.get('ccp_person').value == 'I'">
-              <ngx-select
-                [data]="userCopies1"
-                bindLabel="name"
-                label="C.C.P."
-                value="id"
-                (fetchItems)="getUsersCopies($event, 1)"
-                [form]="managementForm"
-                [showTooltip]="true"
-                [searchOnInit]="true"
-                termMaxLength="100"
-                control="ccp_addressee"></ngx-select>
-            </div>
-            <form-field
-              *ngIf="managementForm.get('ccp_person').value == 'E'"
-              class="col-sm-12 col-12 col-md-8 p-2"
-              [control]="managementForm.get('ccp_TiPerson')"
-              label="Nombre Destinatario">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="ccp_TiPerson" />
-            </form-field>
-            <form-field
-              class="col-sm-12 col-12 col-md-4 p-2"
-              [control]="managementForm.get('ccp_person_1')"
-              label="">
-              <select
-                class="form-control"
-                formControlName="ccp_person_1"
-                (change)="changeCopiesType($event, 2)">
-                <option value="">Seleccione un valor</option>
-                <option value="E">EXTERNA</option>
-                <option value="I">INTERNA</option>
-              </select>
-            </form-field>
-            <div
-              class="col-sm-12 col-12 col-md-8 p-2"
-              *ngIf="
-                managementForm.get('ccp_person_1').value != 'I' &&
-                managementForm.get('ccp_person_1').value != 'E'
-              ">
-              <div class="alert alert-info">
-                Selecciona el Tipo de Copia para ingresar el Nombre del Usuario
-                o Seleccionar un Usuario desde el catálogo
-              </div>
-            </div>
-            <div
-              class="col-sm-12 col-12 col-md-8 p-2"
-              *ngIf="managementForm.get('ccp_person_1').value == 'I'">
-              <ngx-select
-                [data]="userCopies2"
-                bindLabel="name"
-                label="C.C.P."
-                value="id"
-                (fetchItems)="getUsersCopies($event, 2)"
-                [form]="managementForm"
-                [showTooltip]="true"
-                [searchOnInit]="true"
-                termMaxLength="100"
-                control="ccp_addressee_1"></ngx-select>
-            </div>
-            <form-field
-              *ngIf="managementForm.get('ccp_person_1').value == 'E'"
-              class="col-sm-12 col-12 col-md-8 p-2"
-              [control]="managementForm.get('ccp_TiPerson_1')"
-              label="Nombre Destinatario">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="ccp_TiPerson_1" />
-            </form-field> -->
+              <!-- <form-field
+               class="col-sm-12 col-12 col-md-4 p-2"
+               [control]="managementForm.get('ccp_person')"
+               label="">
+               <select
+                 class="form-control"
+                 formControlName="ccp_person"
+                 (change)="changeCopiesType($event, 1)">
+                 <option value="">Seleccione un valor</option>
+                 <option value="E">EXTERNA</option>
+                 <option value="I">INTERNA</option>
+               </select>
+             </form-field>
+             <div
+               class="col-sm-12 col-12 col-md-8 p-2"
+               *ngIf="
+                 managementForm.get('ccp_person').value != 'I' &&
+                 managementForm.get('ccp_person').value != 'E'
+               ">
+               <div class="alert alert-info">
+                 Selecciona el Tipo de Copia para ingresar el Nombre del Usuario
+                 o Seleccionar un Usuario desde el catálogo
+               </div>
+             </div>
+             <div
+               class="col-sm-12 col-12 col-md-8 p-2"
+               *ngIf="managementForm.get('ccp_person').value == 'I'">
+               <ngx-select
+                 [data]="userCopies1"
+                 bindLabel="name"
+                 label="C.C.P."
+                 value="id"
+                 (fetchItems)="getUsersCopies($event, 1)"
+                 [form]="managementForm"
+                 [showTooltip]="true"
+                 [searchOnInit]="true"
+                 termMaxLength="100"
+                 control="ccp_addressee"></ngx-select>
+             </div>
+             <form-field
+               *ngIf="managementForm.get('ccp_person').value == 'E'"
+               class="col-sm-12 col-12 col-md-8 p-2"
+               [control]="managementForm.get('ccp_TiPerson')"
+               label="Nombre Destinatario">
+               <input
+                 type="text"
+                 class="form-control"
+                 formControlName="ccp_TiPerson" />
+             </form-field>
+             <form-field
+               class="col-sm-12 col-12 col-md-4 p-2"
+               [control]="managementForm.get('ccp_person_1')"
+               label="">
+               <select
+                 class="form-control"
+                 formControlName="ccp_person_1"
+                 (change)="changeCopiesType($event, 2)">
+                 <option value="">Seleccione un valor</option>
+                 <option value="E">EXTERNA</option>
+                 <option value="I">INTERNA</option>
+               </select>
+             </form-field>
+             <div
+               class="col-sm-12 col-12 col-md-8 p-2"
+               *ngIf="
+                 managementForm.get('ccp_person_1').value != 'I' &&
+                 managementForm.get('ccp_person_1').value != 'E'
+               ">
+               <div class="alert alert-info">
+                 Selecciona el Tipo de Copia para ingresar el Nombre del Usuario
+                 o Seleccionar un Usuario desde el catálogo
+               </div>
+             </div>
+             <div
+               class="col-sm-12 col-12 col-md-8 p-2"
+               *ngIf="managementForm.get('ccp_person_1').value == 'I'">
+               <ngx-select
+                 [data]="userCopies2"
+                 bindLabel="name"
+                 label="C.C.P."
+                 value="id"
+                 (fetchItems)="getUsersCopies($event, 2)"
+                 [form]="managementForm"
+                 [showTooltip]="true"
+                 [searchOnInit]="true"
+                 termMaxLength="100"
+                 control="ccp_addressee_1"></ngx-select>
+             </div>
+             <form-field
+               *ngIf="managementForm.get('ccp_person_1').value == 'E'"
+               class="col-sm-12 col-12 col-md-8 p-2"
+               [control]="managementForm.get('ccp_TiPerson_1')"
+               label="Nombre Destinatario">
+               <input
+                 type="text"
+                 class="form-control"
+                 formControlName="ccp_TiPerson_1" />
+             </form-field> -->
 
-            <!-- <ng2-smart-table
-              class="col-md-12"
-              id="goods"
-              [attr.class]="'table-bordered'"
-              [settings]="configTableCCp.settings"
-              [source]="[]">
-            </ng2-smart-table> -->
-            <!-- [disabled]="!disabledMOficGest" -->
-            <div class="row pt-4">
-              <div>
-                <button
-                  (click)="openModalCopy(false)"
-                  class="btn btn-primary active btn-sm ml-3 mb-3">
-                  Nuevo
-                </button>
-              </div>
-              <div class="col-md-12">
-                <div class="table-responsive">
-                  <div [class]="loading ? 'table-loading' : ''">
-                    <ng2-smart-table
-                      [attr.class]="'table-bordered'"
-                      [settings]="settings3"
-                      [source]="copyOficio"
-                      (delete)="showDeleteAlertCcp($event.data)">
-                    </ng2-smart-table>
+              <!-- <ng2-smart-table
+               class="col-md-12"
+               id="goods"
+               [attr.class]="'table-bordered'"
+               [settings]="configTableCCp.settings"
+               [source]="[]">
+             </ng2-smart-table> -->
+              <!-- [disabled]="!disabledMOficGest" -->
+              <div class="row pt-4">
+                <div>
+                  <button
+                    (click)="openModalCopy(false)"
+                    class="btn btn-primary active btn-sm ml-3 mb-3">
+                    Nuevo
+                  </button>
+                </div>
+                <div class="col-md-12">
+                  <div class="table-responsive">
+                    <div [class]="loading ? 'table-loading' : ''">
+                      <ng2-smart-table
+                        [attr.class]="'table-bordered'"
+                        [settings]="settings3"
+                        [source]="copyOficio"
+                        (delete)="showDeleteAlertCcp($event.data)">
+                      </ng2-smart-table>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <div class="row">
-        <div class="col-md-12 text-right"></div>
+        <div class="row">
+          <div class="col-md-12 text-right"></div>
+        </div>
       </div>
-    </form>
+    </div>
   </div>
 </app-card>
