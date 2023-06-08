@@ -17,7 +17,7 @@ export class CaptureEventRegisterForm {
   folio = new FormControl({ value: null, disabled: true });
   year = new FormControl({ value: null, disabled: true });
   month = new FormControl({ value: null, disabled: true });
-  keysProceedings = new FormControl(null, [
+  keysProceedings = new FormControl({ value: null, disabled: true }, [
     Validators.maxLength(60),
     Validators.required,
   ]);
