@@ -138,7 +138,7 @@ export class ProceedingsDeliveryReceptionService extends HttpService {
     const array: Observable<any>[] = [];
     if (data && data.length > 0) {
       data.forEach(item => {
-        console.log(item);
+        // console.log(item);
         const paramsDetail = new FilterParams();
         paramsDetail.limit = 100000;
         paramsDetail.addFilter('numberProceedings', item.id);
@@ -198,7 +198,7 @@ export class ProceedingsDeliveryReceptionService extends HttpService {
 
   getExcel(filterParams?: FilterParams) {
     const params = new FilterParams(filterParams);
-    params.limit = 10000;
+    params.limit = 100000;
     return this.get<IListResponse<IProceedingDeliveryReception>>(
       this.endpoint,
       params.getParams()

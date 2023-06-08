@@ -23,8 +23,7 @@ import Swal from 'sweetalert2';
 })
 export class CatFinancialInformationAttributesComponent
   extends BasePage
-  implements OnInit
-{
+  implements OnInit {
   columns: IAttributesFinancialInfo[] = [];
   data: LocalDataSource = new LocalDataSource();
   columnFilters: any = [];

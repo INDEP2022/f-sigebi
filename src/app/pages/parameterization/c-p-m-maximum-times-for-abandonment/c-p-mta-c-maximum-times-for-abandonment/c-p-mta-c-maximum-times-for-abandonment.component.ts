@@ -17,8 +17,7 @@ import { ModalCPMtaCMaximumTimesForAbandonmentComponent } from './modal-c-p-mta-
 })
 export class CPMtaCMaximumTimesForAbandonmentComponent
   extends BasePage
-  implements OnInit
-{
+  implements OnInit {
   contentData: IListResponse<IGoodType> = {} as IListResponse<IGoodType>;
   params = new BehaviorSubject<ListParams>(new ListParams());
   data: any = [];
