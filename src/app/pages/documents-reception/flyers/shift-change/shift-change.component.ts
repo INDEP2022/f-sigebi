@@ -538,11 +538,12 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
     ) {
       this.selectedDictums.forEach(val => {
         data.push({
-          delegationDictateNumber: Number(val.delegationDictNumber),
+          delegationDictateNumber: Number(this.userSelected.delegationNumber),
           ofDictaNumber: Number(val.id),
         });
       });
     }
+    console.log(data);
 
     this.dictationService.updateDictaEntregaRTurno(data).subscribe({
       next: resp => {
@@ -579,10 +580,11 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
       this.selectedProceedings.forEach(val => {
         data.push({
           minutesNumber: Number(val.id),
-          delegation2Number: Number(val.numDelegation2),
+          delegation2Number: Number(this.userSelected.delegationNumber),
         });
       });
     }
+    console.log(data);
     this.proceedingsService.updateActasEntregaRTurno(data).subscribe({
       next: resp => {
         console.log(resp);
@@ -637,9 +639,11 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
       this.selectedDictums.splice(index, 1);
     } else {
       // Agregar el objeto al arreglo
+      //event.data = this.userSelected.delegationNumber.numDelegation2;
       this.selectedDictums.push(event.data);
     }
     //console.log(this.selectedDictums);
+
     if (
       this.selectedDictums.length === 0 &&
       this.selectedProceedings.length === 0

@@ -18,7 +18,6 @@ export class AttributesInfoFinancialService extends HttpService
     private attributesFinancialInfoRepository: Repository<IAttributesFinancialInfo>
   ) {
     super();
-    this.microservice = 'catalog';
   }
 
   getAll(
@@ -44,11 +43,7 @@ export class AttributesInfoFinancialService extends HttpService
     id: string | number,
     model: IAttributesFinancialInfo
   ): Observable<Object> {
-    return this.attributesFinancialInfoRepository.newUpdateId(
-      this.route,
-      id,
-      model
-    );
+    return this.attributesFinancialInfoRepository.newUpdateId(this.route, id, model);
   }
 
   remove(id: string | number): Observable<Object> {
