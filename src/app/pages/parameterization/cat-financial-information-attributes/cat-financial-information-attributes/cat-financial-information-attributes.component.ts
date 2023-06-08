@@ -22,8 +22,7 @@ import { AttributesInfoFinancialService } from 'src/app/core/services/catalogs/a
 })
 export class CatFinancialInformationAttributesComponent
   extends BasePage
-  implements OnInit
-{
+  implements OnInit {
   columns: IAttributesFinancialInfo[] = [];
   data: LocalDataSource = new LocalDataSource();
   columnFilters: any = [];
@@ -132,15 +131,18 @@ export class CatFinancialInformationAttributesComponent
     this.attributesInfoFinancialService.remove(id).subscribe({
       next: () => {
         this.getAttributesFinancialInfo();
-        this.alert('success', 'Borrado', '');
-      },
-      error: erro => {
+        this.alert(
+          'success',
+          'Borrado',
+          ''
+        );
+      }, error: erro => {
         this.alert(
           'warning',
           'Atributos de Informaci&oacute;n Financiera',
           'No se puede eliminar el objeto debido a una relación con otra tabla.'
         );
-      },
+      }
     });
   }
 }

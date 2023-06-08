@@ -12,13 +12,8 @@
         </div> -->
         <div class="col-md-12">
           <form-field [control]="delegationStateForm.get('regionalDelegation')">
-            <ngx-select
-              [form]="delegationStateForm"
-              control="regionalDelegation"
-              [data]="regionalDelegation"
-              value="id"
-              bindLabel="description"
-              label="Delegacion Regional"
+            <ngx-select [form]="delegationStateForm" control="regionalDelegation" [data]="regionalDelegation" value="id"
+              bindLabel="description" label="Delegacion Regional"
               (fetchItems)="getRegionalDelegation($event)"></ngx-select>
           </form-field>
         </div>
@@ -31,23 +26,15 @@
         </div> -->
         <div class="col-md-12">
           <form-field [control]="delegationStateForm.get('stateCode')">
-            <ngx-select
-              [form]="delegationStateForm"
-              control="stateCode"
-              [data]="states"
-              value="codeCondition"
-              bindLabel="descCondition"
-              label="Estado"
-              (fetchItems)="getStates($event)"
+            <ngx-select [form]="delegationStateForm" control="stateCode" [data]="states" value="codeCondition"
+              bindLabel="descCondition" label="Estado" (fetchItems)="getStates($event)"
               (change)="stateChange($event)"></ngx-select>
           </form-field>
         </div>
       </div>
       <div class="row pt-5">
         <div class="col-md-6">
-          <form-field
-            [control]="delegationStateForm.get('status')"
-            label="Número de contrato">
+          <form-field [control]="delegationStateForm.get('status')" label="Número de contrato">
             <input type="text" class="form-control" formControlName="status" />
           </form-field>
           <!-- <form-radio label="Activo">
@@ -58,13 +45,8 @@
           </form-radio> -->
         </div>
         <div class="col-md-6">
-          <form-field
-            [control]="delegationStateForm.get('version')"
-            label="Versi&oacute;n">
-            <input
-              type="string"
-              class="form-control"
-              formControlName="version" />
+          <form-field [control]="delegationStateForm.get('version')" label="Versi&oacute;n">
+            <input type="string" class="form-control" formControlName="version" />
           </form-field>
         </div>
       </div>
@@ -73,10 +55,7 @@
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <confirm-button
-          [disabled]="delegationStateForm.invalid"
-          [loading]="loading"
-          (confirm)="confirm()">
+        <confirm-button [disabled]="delegationStateForm.invalid" [loading]="loading" (confirm)="confirm()">
         </confirm-button>
       </div>
       <div class="m-3">
