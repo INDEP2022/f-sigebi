@@ -119,11 +119,15 @@ export class StatusTransferListComponent extends BasePage implements OnInit {
   ShowDeleteAlert(id: number) {
     this.statusTransferService.remove(id).subscribe({
       next: () => {
-        this.getExample(),
-          this.alert('success', 'Estado Transferencia', 'Borrado');
+        this.alert('success', 'Estado Transferencia', 'Borrado');
+        this.getExample();
       },
       error: error => {
-        this.alert('warning', 'Estado Transferencia', error.error.message);
+        this.alert(
+          'warning',
+          'Estado Transferencia',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
       },
     });
   }

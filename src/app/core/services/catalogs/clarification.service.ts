@@ -18,7 +18,7 @@ export class ClarificationService
 
   constructor(private clarificationRepository: Repository<IClarification>) {
     super();
-    this.microservice = 'clarification';
+    // this.microservice = 'clarification';
   }
 
   getAll(

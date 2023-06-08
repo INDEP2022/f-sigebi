@@ -67,9 +67,18 @@ export class LabelOkeyListComponent extends BasePage implements OnInit {
       '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        this.labelOkeyService.remove(labelOKey.id).subscribe({
-          next: data => this.getLabelsOkey(),
-          error: error => (this.loading = false),
+        this.labelOkeyService.remove2(labelOKey.id).subscribe({
+          next: () => {
+            this.getLabelsOkey(),
+              this.alert('success', 'Etiquetas bien', 'Borrado');
+          },
+          error: error => {
+            this.alert(
+              'warning',
+              'Etiquetas bien',
+              'No se puede eliminar el objeto debido a una relación con otra tabla.'
+            );
+          },
         });
       }
     });
