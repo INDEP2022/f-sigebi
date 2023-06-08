@@ -10,8 +10,7 @@ import { IAttributesFinancialInfo } from '../../models/catalogs/attributes-finan
 @Injectable({
   providedIn: 'root',
 })
-export class AttributesInfoFinancialService
-  extends HttpService
+export class AttributesInfoFinancialService extends HttpService
   implements ICrudMethods<IAttributesFinancialInfo>
 {
   private readonly route: string = ENDPOINT_LINKS.AttributesFinancialInfo;
@@ -52,9 +51,6 @@ export class AttributesInfoFinancialService
   }
 
   remove(id: string | number): Observable<Object> {
-    return this.attributesFinancialInfoRepository.remove(
-      this.route + '/id/',
-      id
-    );
+    return this.attributesFinancialInfoRepository.remove(this.route + '/id/', id);
   }
 }
