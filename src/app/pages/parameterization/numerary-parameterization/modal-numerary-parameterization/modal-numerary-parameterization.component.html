@@ -6,13 +6,8 @@
     <form class="form-material" [formGroup]="form">
       <div class="row">
         <div class="col-md-4">
-          <form-field
-            [control]="form.get('typeProceeding')"
-            label="Tipo de Acta o Pantalla">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="typeProceeding" />
+          <form-field [control]="form.get('typeProceeding')" label="Tipo de Acta o Pantalla">
+            <input type="text" class="form-control" formControlName="typeProceeding" />
           </form-field>
         </div>
         <div class="col-md-4">
@@ -26,13 +21,8 @@
           </form-field>
         </div>
         <div class="col-md-4">
-          <form-field
-            [control]="form.get('finalCategory')"
-            label="Categor&iacute;a Final">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="finalCategory" />
+          <form-field [control]="form.get('finalCategory')" label="Categor&iacute;a Final">
+            <input type="text" class="form-control" formControlName="finalCategory" />
           </form-field>
         </div>
       </div>
@@ -41,10 +31,7 @@
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <confirm-button
-          [type]="'button'"
-          [disabled]="!form.valid"
-          (click)="confirm()"></confirm-button>
+        <confirm-button [type]="'button'" [disabled]="!form.valid" (click)="confirm()"></confirm-button>
       </div>
       <div class="m-3">
         <button type="button" class="btn btn-danger active" (click)="close()">

@@ -95,7 +95,7 @@ export class TableGoodsComponent extends BasePage implements OnInit {
   }
 
   private updateSettingsGoods(value = this.statusActaValue) {
-    debugger;
+    // debugger;
     this.settingsTable = {
       ...this.settingsTable,
       actions: {
