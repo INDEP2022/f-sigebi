@@ -2020,12 +2020,9 @@ export class EventCaptureComponent
   }
 
   PUP_DEPURA_DETALLE() {
-    return new Promise((res, rej) => {
-      this.detail.forEach(deta => {
-        if (deta) {
-        }
-      });
-    });
+    this.detail = this.detail.filter(
+      good => !this.selectedProceedings.includes(good)
+    );
   }
 
   async PUP_CIERRE_PRI() {
