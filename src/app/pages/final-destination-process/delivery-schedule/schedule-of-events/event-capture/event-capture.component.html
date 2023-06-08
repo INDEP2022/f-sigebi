@@ -381,6 +381,10 @@
         <div [class]="loading ? 'table-loading' : ''">
           <ng2-smart-table [settings]="settings" [source]="detail">
           </ng2-smart-table>
+
+          <app-pagination
+            [filterParams]="params"
+            [totalItems]="totalItems"></app-pagination>
         </div>
       </div>
     </div>
