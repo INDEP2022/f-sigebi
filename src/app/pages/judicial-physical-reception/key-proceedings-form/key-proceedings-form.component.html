@@ -1,20 +1,20 @@
 <ng-container>
-  <div class="row mr-0">
-    <!-- <div class="col-md-12 mt-3 pr-0">
+  <!-- <div class="row mr-0" style="margin: auto">
+    <div class="col-md-12 mt-3 pr-0">
       <ng2-smart-table
         *ngIf="source"
         class="col-md-12 p-0 table-responsive"
         [settings]="settingKeysProceedings"
         [source]="source"
         (editConfirm)="updateKeysProcedding($event)"></ng2-smart-table>
-    </div> -->
+    </div>
     <table class="table-bordered">
       <thead>
         <tr>
           <th *ngIf="!disabled">Acciones</th>
           <th>Tipo</th>
           <th>Prog.</th>
-          <!-- <th>Transferente</th> -->
+          <th>Transferente</th>
           <th>Área</th>
           <th>Usuario</th>
           <th>Folio</th>
@@ -34,9 +34,7 @@
               (click)="row.editing = false; updateRow(row)">
               <span class="fa fa-solid fa-check text-success mx-2"></span>
             </a>
-            <a
-              *ngIf="row.editing"
-              (click)="row.editing = false; row = rowOldValue">
+            <a *ngIf="row.editing" (click)="row.editing = false; revert()">
               <span class="fa fa-solid fa-ban text-danger mx-2"></span>
             </a>
           </td>
@@ -58,6 +56,18 @@
               <ng-select [(ngModel)]="row[1]" [clearable]="false">
                 <ng-option
                   *ngFor="let item of progOptions"
+                  [value]="item.value"
+                  >{{ item.label }}</ng-option
+                >
+              </ng-select>
+            </div>
+          </td>
+          <td>
+            <div *ngIf="!row.editing">{{ row[2] }}</div>
+            <div *ngIf="row.editing">
+              <ng-select [(ngModel)]="row[2]" [clearable]="false">
+                <ng-option
+                  *ngFor="let item of transfers"
                   [value]="item.value"
                   >{{ item.label }}</ng-option
                 >
@@ -105,7 +115,7 @@
             </div>
           </td>
           <td [class]="haveErrorRequired(row[6]) ? 'error' : ''">
-            <div *ngIf="!row.editing">{{ row[5] }}</div>
+            <div *ngIf="!row.editing">{{ row[6] }}</div>
             <div *ngIf="row.editing">
               <input
                 type="number"
@@ -137,17 +147,6 @@
     </table>
   </div>
 
-  <!-- <ng-template #textValue let-data="item">
-    {{ item.value }}
-  </ng-template>
-  <ng-template #inputValue let-data="item">
-    <input
-      type="text"
-      class="form-control"
-      [maxlength]="item.length"
-      [(ngModel)]="item.value" />
-  </ng-template> -->
-
   <ng-template #requiredError let-row="row">
     <div class="errorMessage" *ngIf="row === true">El campo es obligatorio</div>
   </ng-template>
@@ -155,10 +154,18 @@
     <div class="errorMessage" *ngIf="row === true">
       El campo debe ser númerico
     </div>
-  </ng-template>
+  </ng-template> -->
 
   <div class="row mr-0" [formGroup]="form">
-    <div class="col-md-8 mt-5 pr-0">
+    <div class="col-md-12 mt-3 pr-0">
+      <ng2-smart-table
+        *ngIf="source"
+        class="col-md-12 p-0 table-responsive"
+        [settings]="settingKeysProceedings"
+        [source]="source"
+        (editConfirm)="updateRow($event)"></ng2-smart-table>
+    </div>
+    <div class="col-md-9 mt-5 pr-0">
       <div>
         <form-field [control]="form.get(formField)" label="Clave Acta">
           <input class="form-control" formControlName="claveActa" readonly />
