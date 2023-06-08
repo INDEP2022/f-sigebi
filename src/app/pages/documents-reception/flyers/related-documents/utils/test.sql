@@ -218,3 +218,30 @@ BEGIN
     END IF;
     
 END;
+
+
+
+PROCEDURE PUP_AGREGA_ALGUNOS_BIENES IS
+
+BIENES number;
+clasif number;
+BEGIN
+GO_BLOCK('bienes');
+FIRST_RECORD;
+LOOP	
+ IF :bienes.SELECCION = 'S' AND :bienes.disponible = 'S' Then
+    bienes := :bienes.no_bien;
+    clasif := :bienes.no_clasif_bien;
+    GO_BLOCK('BIENES_OFICIO_GESTION');
+    CREATE_RECORD;
+    :BIENES_OFICIO_GESTION.NO_BIEN := BIENES;	 
+    :BIENES_OFICIO_GESTION.clasif := clasif;	
+    :BIENES_OFICIO_GESTION.NO_OF_GESTION := :M_OFICIO_GESTION.NO_OF_GESTION;
+    :bienes.disponible := 'N';
+ END IF;
+ GO_BLOCK('bienes');
+ EXIT WHEN :system.last_record = 'TRUE';
+ NEXT_RECORD;
+END LOOP;
+:variables.b := 'S';
+END;

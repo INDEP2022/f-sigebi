@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { DocumentsReceptionRegisterComponent } from './documents-reception-register/documents-reception-register.component';
 import { RecordUpdateComponent } from './record-update/record-update.component';
-import { RelatedDocumentsDictationComponent } from './related-documents/related-documents-dictation.component';
+// import { RelatedDocumentsDictationComponent } from './related-documents/related-documents-dictation.component';
 import { RelatedDocumentsComponent } from './related-documents/related-documents.component';
 
 const routes: Routes = [
@@ -26,10 +26,10 @@ const routes: Routes = [
     path: 'related-document-management/:id',
     component: RelatedDocumentsComponent,
   },
-  {
-    path: 'related-document-management-dictation/:id',
-    component: RelatedDocumentsDictationComponent,
-  },
+  // {
+  //   path: 'related-document-management-dictation/:id',
+  //   component: RelatedDocumentsDictationComponent,
+  // },
 ];
 
 @NgModule({
