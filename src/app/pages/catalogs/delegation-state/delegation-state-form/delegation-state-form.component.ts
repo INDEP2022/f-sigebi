@@ -36,7 +36,6 @@ export class DelegationStateFormComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
-
   }
 
   private prepareForm() {

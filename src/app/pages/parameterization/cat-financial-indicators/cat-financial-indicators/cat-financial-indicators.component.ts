@@ -14,7 +14,6 @@ import { IFinancialIndicators } from 'src/app/core/models/catalogs/financial-ind
 //services
 import { LocalDataSource } from 'ng2-smart-table';
 import { FinancialIndicatorsService } from 'src/app/core/services/catalogs/financial-indicators-service';
-import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-cat-financial-indicators',

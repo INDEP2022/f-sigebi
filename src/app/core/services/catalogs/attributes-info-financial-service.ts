@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { HttpService } from 'src/app/common/services/http.service';
 import { ENDPOINT_LINKS } from '../../../common/constants/endpoints';
 import { ICrudMethods } from '../../../common/repository/interfaces/crud-methods';
 import { ListParams } from '../../../common/repository/interfaces/list-params';
 import { Repository } from '../../../common/repository/repository';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IAttributesFinancialInfo } from '../../models/catalogs/attributes-financial-info-model';
-import { HttpService } from 'src/app/common/services/http.service';
 @Injectable({
   providedIn: 'root',
 })
@@ -43,7 +43,11 @@ export class AttributesInfoFinancialService extends HttpService
     id: string | number,
     model: IAttributesFinancialInfo
   ): Observable<Object> {
-    return this.attributesFinancialInfoRepository.newUpdateId(this.route, id, model);
+    return this.attributesFinancialInfoRepository.newUpdateId(
+      this.route,
+      id,
+      model
+    );
   }
 
   remove(id: string | number): Observable<Object> {

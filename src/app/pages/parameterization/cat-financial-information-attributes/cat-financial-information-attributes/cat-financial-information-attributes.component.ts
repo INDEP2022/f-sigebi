@@ -14,7 +14,6 @@ import { IAttributesFinancialInfo } from 'src/app/core/models/catalogs/attribute
 //Services
 import { LocalDataSource } from 'ng2-smart-table';
 import { AttributesInfoFinancialService } from 'src/app/core/services/catalogs/attributes-info-financial-service';
-import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-cat-financial-information-attributes',
@@ -124,7 +123,6 @@ export class CatFinancialInformationAttributesComponent
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(attributesFinancialInfo.id);
-
       }
     });
   }

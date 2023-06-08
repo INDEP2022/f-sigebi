@@ -61,6 +61,7 @@ export class DelegationStateListComponent extends BasePage implements OnInit {
             switch (filter.field) {
               case 'regionalDelegation':
                 // searchFilter = '';
+                searchFilter = SearchFilter.ILIKE;
                 field = `filter.${filter.field}.description`;
                 break;
               case 'stateCode':
