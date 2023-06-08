@@ -236,4 +236,9 @@ export class NotificationService extends HttpService {
     const route = 'application/get-fact-ref-acta-entrec'
     return this.post(route, model)
   }
+
+  getTransferenteCancel(model: ITransfActaEntrec){
+    const route = 'application/get-fact-ref-cancelar'
+    return this.post(route, model)
+  }
 }

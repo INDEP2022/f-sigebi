@@ -112,11 +112,11 @@ export class ScanFileSharedComponent extends BasePage implements OnInit {
                         numberProceedings: this.noExpedient,
                         sheets: '',
                         numberDelegationRequested:
-                          resJson.usuario.delegationNumber,
+                        resJson.usuario.delegationNumber,
                         numberSubdelegationRequests:
-                          resJson.usuario.subdelegationNumber,
+                        resJson.usuario.subdelegationNumber,
                         numberDepartmentRequest:
-                          resJson.usuario.departamentNumber,
+                        resJson.usuario.departamentNumber,
                         registrationNumber: 0,
                         flyerNumber: wheelNumber,
                         userSend: '',

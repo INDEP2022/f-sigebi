@@ -149,7 +149,7 @@
                   control="transfer"
                   label="Transferente"
                   [class]="initialBool ? 'disabled' : ''"
-                  bindLabel="transferentkey"
+                  bindLabel="clave_transferente"
                   (change)="verifyTransferenteAndAct()"
                   [data]="transferSelect"
                   [form]="form"></ngx-select>
@@ -170,14 +170,14 @@
                   type="text"
                   class="form-control disabled"
                   formControlName="entrego"
-                  (change)="fillActTwo()" />
+                   />
               </form-field>
             </div>
             <div class="col-2">
               <form-field [control]="form.get('recibe')">
                 <ngx-select
                   (fetchItems)="getRecibe($event)"
-                  (change)="fillActTwo()"
+                  
                   [class]="initialBool ? 'disabled' : ''"
                   control="recibe"
                   label="Recibe"
@@ -195,7 +195,7 @@
                   formControlName="folio"
                   min="0"
                   [max-length]="5"
-                  (change)="fillActTwo()" />
+                  />
               </form-field>
             </div>
             <div class="col">
@@ -204,7 +204,7 @@
                   type="number"
                   class="form-control disabled"
                   formControlName="year"
-                  (change)="fillActTwo()" />
+                   />
               </form-field>
             </div>
             <div class="col">
@@ -213,7 +213,7 @@
                   type="number"
                   class="form-control disabled"
                   formControlName="mes"
-                  (change)="fillActTwo()" />
+                   />
               </form-field>
             </div>
           </div>
@@ -299,9 +299,15 @@
                 label="Fecha Elaboraci&oacute;n">
                 <input
                   bsDatepicker
+                  [bsConfig]="{
+                    dateInputFormat: 'DD-MM-YYYY hh:mm',
+                    displayOneMonthRange: true,
+                    withTimepicker: true
+                  }"
                   [class]="isEnableFecElab ? '' : 'disabled'"
                   id="fecElab"
                   [max-length]="10"
+                  (change)="fecElabFn()"
                   class="form-control"
                   [maxDate]="maxDate"
                   formControlName="fecElab" />

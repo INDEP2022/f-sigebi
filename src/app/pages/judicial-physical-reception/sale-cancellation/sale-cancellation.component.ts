@@ -59,6 +59,8 @@ import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-ele
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { EdoFisicoComponent } from '../confiscated-records/edo-fisico/edo-fisico.component.component';
 import { columnsGoodAct } from '../confiscated-records/settings-tables';
+import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
+import { ITransfActaEntrec } from 'src/app/core/models/ms-notification/notification.model';
 
 @Component({
   selector: 'app-sale-cancellation',
@@ -206,7 +208,13 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
   isSelectGood = false;
   isBoveda = false;
   isAlmacen = false;
+  research = false
   dataEdoFisico = new DefaultSelect(['MALO', 'REGULAR', 'BUENO']);
+
+  //DATOS DE USUARIO
+  delUser: string;
+  subDelUser: string;
+  departmentUser: string;
 
   constructor(
     private fb: FormBuilder,
@@ -227,7 +235,8 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
     private serviceProgrammingGood: ProgrammingGoodService,
     private serviceWarehouse: WarehouseFilterService,
     private serviceVault: SafeService,
-    private modalService: BsModalService
+    private modalService: BsModalService,
+    private serviceNotification: NotificationService
   ) {
     super();
   }
@@ -247,6 +256,22 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
       this.goodsByExpediente();
       localStorage.removeItem('numberExpedient');
     }
+
+    this.getDataUser()
+  }
+
+  getDataUser() {
+    const user =
+      localStorage.getItem('username') == 'sigebiadmon'
+        ? localStorage.getItem('username')
+        : localStorage.getItem('username').toLocaleUpperCase();
+    const routeUser = `?filter.name=$eq:${user}`;
+    this.serviceUser.getAllSegUsers(routeUser).subscribe(res => {
+      const resJson = JSON.parse(JSON.stringify(res.data[0]));
+      this.delUser = resJson.usuario.delegationNumber;
+      this.subDelUser = resJson.usuario.subdelegationNumber;
+      this.departmentUser = resJson.usuario.departamentNumber;
+    });
   }
 
   prepareForm() {
@@ -451,8 +476,12 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
 
   //Validate Proceeding
   changeAct() {
+    if(this.form.get('acta').value != null && this.form.get('acta').value != undefined){
+      this.getTransfer()
+    }
     this.fillActTwo();
   }
+
 
   verifyTransferenteAndAct() {
     if (this.form.get('acta').value != null) {
@@ -669,31 +698,22 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
 
   //*Traer bienes
   getTransfer() {
-    this.serviceExpedient
-      .getById(this.form.get('expediente').value)
-      .subscribe(res => {
-        console.log(res.expedientType);
-        let model: TransferProceeding = {
-          numFile: res.transferNumber as number,
-          typeProceedings: res.expedientType,
-        };
-        console.log(model);
-        this.serviceProcVal.getTransfer(model).subscribe(
-          res => {
-            console.log(res);
-            this.transferSelect = new DefaultSelect(res.data, res.count);
-          },
-          err => {
-            console.log(err);
-            this.blockExpedient = false;
-            this.alert('error', 'Clave de transferente inválida', '');
-            this.dataGoods.load([]);
-            this.dataGoodAct.load([]);
-            this.goodData = [];
-          }
-        );
-        /* this.enableElement('acta'); */
-      });
+    let modelTransf: ITransfActaEntrec = {
+      indcap: '',
+      no_expediente: this.form.get('expediente').value,
+      id_tipo_acta: this.form.get('acta').value,
+    };
+
+    this.serviceNotification.getTransferenteentrec(modelTransf).subscribe(
+      res => {
+        this.transferSelect = new DefaultSelect(res.data);
+      },
+      err => {
+        this.transferSelect = new DefaultSelect();
+        this.loading = false;
+        this.alert('warning', 'No se encontraron transferentes', '');
+      }
+    );
   }
 
   fillIncomeProceeding(dataRes: any) {
@@ -1122,7 +1142,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
   }
 
   getGoodsByExpedient() {
-    //Validar si hay un acta abierta
+    this.research = false
     const paramsF = new FilterParams();
     paramsF.addFilter(
       'numFile',
@@ -1147,14 +1167,12 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
           this.initialBool = false;
           this.minDateFecElab = new Date();
           this.checkChange();
-          this.getTransfer();
         }
       },
       err => {
         console.log(err);
         this.initialBool = false;
         this.checkChange();
-        this.getTransfer();
         this.blockExpedient = false;
       }
     );
@@ -1217,6 +1235,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
             if (res.data.length > 0) {
               this.form.get('ident').setValue('DEV');
               this.form.get('entrego').setValue('PART');
+              this.totalItemsDataGoods = res.count
               this.dataGoods.load(res.data);
               console.log(res);
               const newData = await Promise.all(
@@ -1299,10 +1318,54 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
 
   //
 
+  fecElabFn(){
+    let fecElab = new Date(this.form.get('fecElab').value);
+    if (this.form.get('fecElab').value != null) {
+      this.form.get('fecReception').setValue(new Date(fecElab));
+    } else {
+      {
+        this.form.get('fecReception').setValue('');
+      }
+    }
+  }
+
   checkChange() {
-    this.form.get('fecElab').valueChanges.subscribe(res => {
-      this.form.get('fecRecepFisica').setValue(res);
-    });
+    if (this.research) {
+      console.log('No');
+    } else {
+      this.form
+        .get('transfer')
+        .valueChanges.subscribe(res => this.fillActTwo());
+      this.form.get('ident').valueChanges.subscribe(res => this.fillActTwo());
+      this.form.get('recibe').valueChanges.subscribe(res => {
+        console.log(res);
+        console.log(this.delUser);
+        if (res != null && res != undefined && res.numberDelegation2) {
+          if (res.numberDelegation2 != this.delUser) {
+            this.form.get('recibe').reset();
+            this.recibeSelect = new DefaultSelect();
+            this.alert(
+              'warning',
+              'La delegación es diferente a la del usuario',
+              ''
+            );
+            return;
+          } else {
+            this.fillActTwo();
+          }
+        }
+      });
+      this.form.get('folio').valueChanges.subscribe(res => {
+        if (
+          this.form.get('folio').value != null &&
+          this.form.get('folio').value.toString().length <= 5
+        ) {
+          this.fillActTwo();
+        }
+      });
+      this.form.get('year').valueChanges.subscribe(res => this.fillActTwo());
+      this.form.get('mes').valueChanges.subscribe(res => this.fillActTwo());
+    }
   }
 
   //Fill Act 2
@@ -1322,7 +1385,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
       (this.form.get('acta').value != null ? this.form.get('acta').value : '') +
       '/' +
       (this.form.get('transfer').value != null
-        ? this.form.get('transfer').value.transferentkey
+        ? this.form.get('transfer').value.clave_transferente
         : '') +
       '/' +
       (this.form.get('ident').value != null
@@ -1428,6 +1491,11 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
                 P_AREATRA: lv_TIP_ACTA,
                 P_PANTALLA: 'FACTREFACTAENTREC',
                 P_TIPOMOV: 2,
+                USUARIO: localStorage.getItem('username') == 'sigebiadmon'
+                ? localStorage.getItem('username')
+                : localStorage
+                    .getItem('username')
+                    .toLocaleUpperCase()
               };
               this.serviceProgrammingGood
                 .paOpenProceedingProgam(modelPaOpen)
@@ -1606,7 +1674,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
                 VAL_MOVIMIENTO = res.data[0]['valmovement'];
                 if (VAL_MOVIMIENTO === 1) {
                   const tipo_acta = 'DXCV';
-                  this.openProceedingFn(resData.id);
+  
                 } else {
                   this.closeProceedingFn();
                 }
@@ -1704,7 +1772,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
                       P_PANTALLA: 'FACTREFACTAVENT',
                       P_FECHA_RE_FIS: this.form.get('fecReception').value,
                       P_TIPO_ACTA: 'DXCV',
-                      usuario:
+                      USUARIO:
                         localStorage.getItem('username') == 'sigebiadmon'
                           ? localStorage.getItem('username')
                           : localStorage
@@ -1919,6 +1987,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
                       );
                       /* console.log(dataTry.data); */
                       this.getGoodsActFn()
+                      
                       /* console.log(this.dataGoods);
                       this.goodData.push(this.selectData);
                       this.dataGoodAct.load(this.goodData);
@@ -2116,7 +2185,6 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
         this.initialBool = false;
         this.goodData = [];
         this.dataGoodAct.load(this.goodData);
-        this.getTransfer();
       }
     }
   }
