@@ -23,8 +23,7 @@ import Swal from 'sweetalert2';
 })
 export class CatFinancialIndicatorsComponent
   extends BasePage
-  implements OnInit
-{
+  implements OnInit {
   columns: IFinancialIndicators[] = [];
   data: LocalDataSource = new LocalDataSource();
   columnFilters: any = [];
@@ -136,14 +135,26 @@ export class CatFinancialIndicatorsComponent
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(financialIndicators.id);
-        Swal.fire('Borrado', '', 'success');
       }
     });
   }
 
   delete(id: number) {
     this.financialIndicatorsService.remove(id).subscribe({
-      next: () => this.getAttributesFinancialInfo(),
+      next: () => {
+        this.getAttributesFinancialInfo()
+        this.alert(
+          'success',
+          'Borrado',
+          ''
+        );
+      }, error: erro => {
+        this.alert(
+          'warning',
+          'Atributos de Informaci&oacute;n Financiera',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      }
     });
   }
 }

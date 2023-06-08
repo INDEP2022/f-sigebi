@@ -12,7 +12,8 @@
             <input
               type="number"
               class="form-control"
-              formControlName="officeSatId" />
+              formControlName="officeSatId"
+              min="0" />
           </form-field>
         </div>
         <div class="col-md-9">
@@ -30,7 +31,7 @@
             [control]="docCompesationSatForm.get('subjectCode')"
             label="Asunto c&oacute;digo">
             <input
-              type="number"
+              type="text"
               class="form-control"
               formControlName="subjectCode"
               min="0" />
