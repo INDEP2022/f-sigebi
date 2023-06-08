@@ -54,7 +54,6 @@ import {
 import { LegalOpinionsOfficeService } from 'src/app/pages/juridical-processes/depositary/legal-opinions-office/legal-opinions-office/services/legal-opinions-office.service';
 import { IJuridicalDocumentManagementParams } from 'src/app/pages/juridical-processes/file-data-update/interfaces/file-data-update-parameters';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
-import Swal from 'sweetalert2';
 import { ERROR_REPORT } from '../related-documents/utils/related-documents.message';
 import { FlyersService } from '../services/flyers.service';
 import { DocumentsFormComponent } from './documents-form/documents-form.component';
@@ -1704,16 +1703,16 @@ export class RelatedDocumentsComponent
 
     return;
     */
-    this.alertQuestion(
-      'warning',
-      'Eliminar',
-      `Desea eliminar el oficio con el expediente ${proceedingsNumber} y No. Oficio ${managementNumber}`
-    ).then(question => {
-      if (question.isConfirmed) {
-        this.delete(managementNumber, noVolante);
-        Swal.fire('Borrado', '', 'success');
-      }
-    });
+    // this.alertQuestion(
+    //   'warning',
+    //   'Eliminar',
+    //   `Desea eliminar el oficio con el expediente ${proceedingsNumber} y No. Oficio ${managementNumber}`
+    // ).then(question => {
+    //   if (question.isConfirmed) {
+    //     this.delete(managementNumber, noVolante);
+    //     Swal.fire('Borrado', '', 'success');
+    //   }
+    // });
   }
 
   delete(managementNumber: number | string, noVolante: number | string) {
