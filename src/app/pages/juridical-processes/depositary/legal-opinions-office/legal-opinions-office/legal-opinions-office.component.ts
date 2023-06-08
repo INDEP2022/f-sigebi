@@ -585,6 +585,10 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
         next: data => {
           console.log('DICTAMEN', data);
           this.dictationData = data.data[0];
+          try {
+            localStorage.removeItem(this.nameStorageKeyArmedOffice);
+            localStorage.removeItem(this.nameStorageDictationDate);
+          } catch (error) {}
           subscription.unsubscribe();
           this.callNextbtnSearchAppointment();
           this.goodsByDictation
@@ -1559,6 +1563,10 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
   }
 
   sendOffice(count: number = 0) {
+    try {
+      localStorage.removeItem(this.nameStorageKeyArmedOffice);
+      localStorage.removeItem(this.nameStorageDictationDate);
+    } catch (error) {}
     if (this.officeDictationData) {
       if (this.officeDictationData.statusOf == 'ENVIADO' && !this.blockSender) {
         this.btnDetail();
