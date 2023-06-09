@@ -10,7 +10,7 @@ export const PENALTY_COLUMNS = {
     sort: false,
   },
   penaltyPercentage: {
-    title: 'Porcentaje Penalizacion',
+    title: 'Porcentaje Penalización',
     type: 'string',
     sort: false,
   },
