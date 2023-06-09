@@ -45,7 +45,11 @@ export class ModalNumeraryParameterizationComponent
     this.form = this.fb.group({
       typeProceeding: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(11),
+        ],
       ],
       initialCategory: [
         null,
@@ -59,6 +63,7 @@ export class ModalNumeraryParameterizationComponent
     });
     if (this.allotment != null) {
       this.edit = true;
+      this.form.get('typeProceeding').disable();
       this.form.patchValue(this.allotment);
     }
   }

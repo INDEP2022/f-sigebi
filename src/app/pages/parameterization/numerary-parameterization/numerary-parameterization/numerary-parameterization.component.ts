@@ -55,7 +55,6 @@ export class NumeraryParameterizationComponent
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
-            filter.field == 'registerNumber' ||
             filter.field == 'typeProceeding' ||
             filter.field == 'initialCategory' ||
             filter.field == 'finalCategory'
