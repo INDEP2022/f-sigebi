@@ -1658,11 +1658,11 @@ export class EventCaptureComponent
           console.info(resp.data);
           resolve(resp.data);
         },
-        error: error => {
+        error: (error: HttpErrorResponse) => {
           const err: ITmpProgValidation[] = [
             {
               valmovement: 0,
-              valMessage: 'No se puede cerrar el acta',
+              valMessage: error.error.message,
               valMinutesNumber: 0,
               valUser: '',
             },
@@ -1683,6 +1683,8 @@ export class EventCaptureComponent
     let n_FOLIO_UNIVERSAL: number;
     let n_CONT: number = 0;
 
+    console.log('INCIO DEL PROG');
+
     const C_DATVAL: any = await this.tmpProgValidacion();
 
     if (this.detail.length <= 0) {
@@ -1693,6 +1695,7 @@ export class EventCaptureComponent
     if (this.global.paperworkArea === 'RF') {
       n_CONT = (await this.getExpedientsCount()) ?? 0;
     }
+    console.log('Paso las validaciones');
 
     if (['CERRADO', 'CERRADA'].includes(this.proceeding.statusProceedings)) {
       if (this.proceeding.typeProceedings === 'EVENTREC' && n_CONT > 0) {
@@ -1710,25 +1713,24 @@ export class EventCaptureComponent
           return;
         }
       }
-      await this.alertQuestion(
+      const response = await this.alertQuestion(
         'warning',
         'Abrir programación',
         `¿Está seguro de abrir la Programación ${this.proceeding.keysProceedings} ?`
-      )
-        .then(question => {
-          if (question.isConfirmed) {
-            this.openProg(C_DATVAL, n_CONT);
-          }
-        })
-        .catch(error => console.error(error));
+      );
+      if (response.isConfirmed) {
+        await this.openProg(C_DATVAL, n_CONT);
+      }
     } else {
-      /// this.alert('info','El estado del acta es diferente a CERRADO o CERRADA, no se puede abrir.');
       if (C_DATVAL[0].valmovement === null) {
         C_DATVAL[0].valmovement = 0;
       }
-      if (C_DATVAL[0].valmovement === '1') {
+      if (C_DATVAL[0].valmovement === '1' || C_DATVAL[0].valmovement === 1) {
         await this.valMotodIsOne(n_CONT).then().catch();
-      } else if (C_DATVAL[0].valmovement === 0) {
+      } else if (
+        C_DATVAL[0].valmovement === '0' ||
+        C_DATVAL[0].valmovement === 0
+      ) {
         ///////// Llamar a la funcion PUP_CIERRE_PRI
         await this.PUP_CIERRE_PRI();
       }
@@ -1746,7 +1748,7 @@ export class EventCaptureComponent
           'No se ha firmado el oficio de programación de entrega.',
           ''
         );
-        throw new Error('FORM_TRIGGER_FAILURE');
+        return;
       } else {
         console.log(' **** PRUEBA **** ');
       }
@@ -1756,6 +1758,7 @@ export class EventCaptureComponent
       const no_Acta: number | string = this.proceeding.id; //// :ACTAS_ENTREGA_RECEPCION.NO_ACTA
       const message: string = await this.PUF_VERIF_COMER(no_Acta); //// esta variable se llena con lo que devuelva la funcion PUF_VERIF_COMER
       if (message !== 'OK') {
+        this.onLoadToast('error', message);
         throw new Error('e_EXCEPPROC');
       }
     }
@@ -1783,21 +1786,25 @@ export class EventCaptureComponent
         .then()
         .catch();
       ///// y hace este update c_STR := 'UPDATE ACTAS_ENTREGA_RECEPCION SET FOLIO_UNIVERSAL = '||TO_CHAR(n_FOLIO_UNIVERSAL)||', TESTIGO1 ='''||:BLK_TOOLBAR.TOOLBAR_USUARIO||''' WHERE NO_ACTA = '||TO_CHAR(:ACTAS_ENTREGA_RECEPCION.NO_ACTA);
+      await this.UPDATE_ACTAS_ENTREGA_RECEPCION(
+        this.proceeding.universalFolio,
+        this.authUserName,
+        this.proceeding.id
+      );
     }
 
-    if (this.global.paperworkArea === 'RF' && n_CONT > 0) {
+    if (this.global.paperworkArea === 'RFA' && n_CONT > 0) {
       const no_Acta: number | string = this.proceeding.id; //// :ACTAS_ENTREGA_RECEPCION.NO_ACTA
       // await this.INSERT_ACTAS_CTL_NOTIF_SSF3(no_Acta, 'CERRADA');
       /// AQUI HACER ESA ACTUALIZACION UPDATE_SSF3_ACTAS_PROG_DST Esperando enpoint
       //c_STR UPDATE SSF3_ACTAS_PROG_DST SET IND_ENVIO = 0 WHERE NO_ACTA = ||TO_CHAR(:ACTAS_ENTREGA_RECEPCION.NO_ACTA);
       await this.UPDATE_SSF3_ACTAS_PROG_DST(null);
-
       this.alert(
         'info',
         `Se realizó la firma y cierre del oficio (Folio Universal: ${this.proceeding.universalFolio})`,
         ''
       );
-      this.PUP_GENERA_PDF();
+      await this.PUP_GENERA_PDF();
     } else {
       this.global.paperworkArea = this.originalType;
       await this.initForm();
@@ -1862,20 +1869,8 @@ export class EventCaptureComponent
       this.alert('info', 'No se encontró la ruta y URL para el PDF.', '');
       throw new Error('FORM_TRIGGER_FAILURE');
     }
-
     v_NOMBRE = this.proceeding.keysProceedings.replace('/', '-');
     v_ARCHOSAL = v_RUTA + v_NOMBRE + '.PDF';
-
-    // GENERA LISTA DE PARÁMETROS
-    /*    REPID = FIND_REPORT_OBJECT('RPROGENTREGA');
-   SET_REPORT_OBJECT_PROPERTY(REPID, REPORT_EXECUTION_MODE, BATCH);
-   SET_REPORT_OBJECT_PROPERTY(REPID, REPORT_COMM_MODE, SYNCHRONOUS);
-   SET_REPORT_OBJECT_PROPERTY(REPID, REPORT_DESTYPE, FILE);
-   SET_REPORT_OBJECT_PROPERTY(REPID, REPORT_DESNAME, "'" + v_ARCHOSAL + "'");
-   SET_REPORT_OBJECT_PROPERTY(REPID, REPORT_DESFORMAT, 'PDF');
-   SET_REPORT_OBJECT_PROPERTY(REPID, REPORT_OTHER, 'PARAMFORM=NO P_NO_ACTA=' + LTRIM(TO_CHAR(:ACTAS_ENTREGA_RECEPCION.NO_ACTA)));
-   v_REP = RUN_REPORT_OBJECT(REPID);
- */
     /* >> JACG 30/06/15 Ingresa PDF a BD */
     this.PUP_ELIMINA_PDF_BD_SSF3(this.proceeding.universalFolio, 1);
     this.PUP_CARGA_PDF_BD_SSF3(this.proceeding.universalFolio, 1, v_ARCHOSAL);
@@ -1999,10 +1994,10 @@ export class EventCaptureComponent
 
   async openProg(C_DATVAL: any, n_CONT: number) {
     const model: IPAAbrirActasPrograma = {
-      P_AREATRA: `${this.registerControls.typeEvent.value}`,
       P_NOACTA: Number(this.proceeding.id),
-      P_PANTALLA: 'FINDICA_0035_1',
       P_TIPOMOV: 1,
+      P_AREATRA: `${this.registerControls.typeEvent.value}`,
+      P_PANTALLA: 'FINDICA_0035_1',
       USUARIO:
         localStorage.getItem('username') == 'sigebiadmon'
           ? localStorage.getItem('username')
@@ -2016,8 +2011,8 @@ export class EventCaptureComponent
     if (C_DATVAL1[0].valmovement === '1') {
       console.log('Entro porque C_DAT1 = 1  ');
       const model: IPAAbrirActasPrograma = {
-        P_AREATRA: this.registerControls.typeEvent.value,
         P_NOACTA: Number(this.proceeding.id),
+        P_AREATRA: this.registerControls.typeEvent.value,
         P_PANTALLA: 'FINDICA_0035_1',
         P_TIPOMOV: 1,
         USUARIO:
@@ -2035,7 +2030,6 @@ export class EventCaptureComponent
         const no_Acta: number | string = this.proceeding.id; /// :ACTAS_ENTREGA_RECEPCION.NO_ACTA
         //  await this.INSERT_ACTAS_CTL_NOTIF_SSF3(no_Acta, 'ABIERTA');
       }
-
       this.blkCtrl.reopenInd = 0;
       this.global.paperworkArea = this.originalType;
       await this.initForm();
@@ -2043,7 +2037,7 @@ export class EventCaptureComponent
     } else {
       this.global.paperworkArea = this.originalType;
       await this.initForm();
-      this.alert('info', C_DATVAL[0].valMessage, '');
+      this.alert('info', C_DATVAL1[0].valMessage, '');
     }
   }
 
