@@ -9,6 +9,8 @@ import { HttpService } from 'src/app/common/services/http.service';
 export class ReceptionGoodService extends HttpService {
   private readonly receiptGuardRoute = ReceptionGoodEndpoint.ReceptionGuard;
   private readonly receiptGuardGoods = ReceptionGoodEndpoint.ReceptionGuardGood;
+  private readonly receiptRoute = ReceptionGoodEndpoint.Receipt;
+  private readonly ReceiptGood = ReceptionGoodEndpoint.ReceiptGood;
   constructor() {
     super();
     this.microservice = ReceptionGoodEndpoint.BasePath;
@@ -16,6 +18,10 @@ export class ReceptionGoodService extends HttpService {
 
   getReceptions(params: ListParams) {
     return this.get(this.receiptGuardRoute, params);
+  }
+
+  getReceipt(params: ListParams) {
+    return this.get(this.receiptRoute, params);
   }
 
   getReceptionGoods(params: ListParams) {
@@ -26,7 +32,14 @@ export class ReceptionGoodService extends HttpService {
     return this.post(this.receiptGuardRoute, formData);
   }
 
+  createReceiptGood(formData: Object) {
+    return this.post(this.ReceiptGood, formData);
+  }
   createReceptionGoods(formData: Object) {
     return this.post(this.receiptGuardGoods, formData);
+  }
+
+  createReceipt(formData: Object) {
+    return this.post(this.receiptRoute, formData);
   }
 }

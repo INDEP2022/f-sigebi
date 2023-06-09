@@ -50,7 +50,7 @@ export class InformationRecordComponent extends BasePage implements OnInit {
   prepareReceiveForm() {
     this.receiveForm = this.fb.group({
       name: [null, [Validators.pattern(STRING_PATTERN)]],
-      electronicSignature: [null],
+      ng: [null],
       charge: [null, [Validators.pattern(STRING_PATTERN)]],
       resistance: [null, [Validators.pattern(STRING_PATTERN)]],
       identification: [null],

@@ -394,7 +394,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
 
   filterStatusGuard(data: IGoodProgramming[]) {
     const goodsTrans = data.filter(items => {
-      return items.status == 'EN_RESGUARDO';
+      return items.status == 'EN_RESGUARDO_TMP';
     });
 
     goodsTrans.map(items => {
@@ -419,7 +419,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
 
   filterStatusWarehouse(data: IGoodProgramming[]) {
     const goodswarehouse = data.filter(items => {
-      return items.status == 'EN_ALMACEN';
+      return items.status == 'EN_ALMACEN_TMP';
     });
 
     goodswarehouse.map(items => {
