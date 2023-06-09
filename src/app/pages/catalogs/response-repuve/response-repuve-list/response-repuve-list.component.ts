@@ -8,6 +8,7 @@ import { ResponseRepuveService } from 'src/app/core/services/catalogs/response-r
 import { BasePage } from 'src/app/core/shared/base-page';
 import { ResponseRepuveFormComponent } from '../response-repuve-form/response-repuve-form.component';
 import { RESPONSE_REPUVE_COLUMNS } from './response-repuve-columns';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-response-repuve-list',

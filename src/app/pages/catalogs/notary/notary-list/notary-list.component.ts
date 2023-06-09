@@ -111,10 +111,14 @@ export class NotaryListComponent extends BasePage implements OnInit {
   delete(notary?: INotary) {
     this.notaryService.remove(notary.id).subscribe({
       next: () => {
-        Swal.fire('Borrado', '', 'success');
-        this.params
-          .pipe(takeUntil(this.$unSubscribe))
-          .subscribe(() => this.getExample());
+        this.getExample(), this.alert('success', 'Notario', 'Borrado');
+      },
+      error: error => {
+        this.alert(
+          'warning',
+          'Notario',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
       },
     });
   }

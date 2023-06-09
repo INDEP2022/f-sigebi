@@ -68,7 +68,23 @@ export class TypeServicesListComponent extends BasePage implements OnInit {
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
+        this.remove(typeService.id);
       }
+    });
+  }
+
+  remove(id: number) {
+    this.typeServicesService.remove(id).subscribe({
+      next: () => {
+        this.alert('success', 'Tipo Servicio', 'Borrado'), this.getExample();
+      },
+      error: error => {
+        this.alert(
+          'warning',
+          'Tipo Servicio',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      },
     });
   }
 }

@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { LocalDataSource } from 'ng2-smart-table';
-import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import {
   ListParams,
   SearchFilter,
@@ -11,6 +12,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { SiseProcessService } from '../../../../core/services/catalogs/sise-process.service';
 import { SiseProcessFormComponent } from '../sise-process-form/sise-process-form.component';
 import { SISI_PROCESS_COLUMNS } from './sisi-process-columns';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-sise-process-list',
@@ -21,8 +23,8 @@ export class SiseProcessListComponent extends BasePage implements OnInit {
   siseProcess: ISiseProcess[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
-  columnFilters: any = [];
   data: LocalDataSource = new LocalDataSource();
+  columnFilters: any = [];
 
   constructor(
     private siseProcessService: SiseProcessService,
@@ -36,26 +38,19 @@ export class SiseProcessListComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.totalItems = 0;
     this.data
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe((change: { action: string; filter: { filters: any } }) => {
+      .subscribe(change => {
         if (change.action === 'filter') {
           let filters = change.filter.filters;
           filters.map((filter: any) => {
-            console.log(filter);
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
-            switch (filter.field) {
-              case 'id':
-                searchFilter = SearchFilter.EQ;
-                break;
-              default:
-                searchFilter = SearchFilter.ILIKE;
-                break;
-            }
+            filter.field == 'id' || filter.field == 'description'
+              ? (searchFilter = SearchFilter.EQ)
+              : (searchFilter = SearchFilter.ILIKE);
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
@@ -80,7 +75,7 @@ export class SiseProcessListComponent extends BasePage implements OnInit {
     this.siseProcessService.getAll(params).subscribe({
       next: response => {
         this.siseProcess = response.data;
-        this.totalItems = response.count;
+        this.totalItems = response.count || 0;
         this.data.load(response.data);
         this.data.refresh();
         this.loading = false;
@@ -90,17 +85,14 @@ export class SiseProcessListComponent extends BasePage implements OnInit {
   }
 
   openForm(sisi?: ISiseProcess) {
-    let config: ModalOptions = {
-      initialState: {
-        sisi,
-        callback: (next: boolean) => {
-          if (next) this.getExample();
-        },
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      sisi,
+      callback: (next: boolean) => {
+        if (next) this.getExample();
       },
-      class: 'modal-md modal-dialog-centered',
-      ignoreBackdropClick: true,
     };
-    this.BsModalService.show(SiseProcessFormComponent, config);
+    this.BsModalService.show(SiseProcessFormComponent, modalConfig);
   }
 
   delete(sisi?: ISiseProcess) {

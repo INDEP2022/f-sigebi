@@ -37,6 +37,6 @@ export class DocCompensationSATService
   }
 
   remove(id: string | number): Observable<Object> {
-    return this.docCompensationSATRepository.removeDocSac(this.route, id);
+    return this.docCompensationSATRepository.remove(`${this.route}/id`, id);
   }
 }

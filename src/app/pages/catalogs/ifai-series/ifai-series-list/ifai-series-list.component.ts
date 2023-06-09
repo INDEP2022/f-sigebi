@@ -107,7 +107,24 @@ export class IfaiSeriesListComponent extends BasePage implements OnInit {
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
+        this.remove(ifaiSerie.status);
       }
     });
+  }
+
+  remove(id: string) {
+    this.ifaiSerieService.remove(id).subscribe(
+      res => {
+        this.alert('success', 'Series Ifai', 'Borrado.');
+        this.getExample();
+      },
+      err => {
+        this.alert(
+          'warning',
+          'Series Ifai',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      }
+    );
   }
 }

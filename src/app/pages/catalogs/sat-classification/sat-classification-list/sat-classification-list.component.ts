@@ -60,7 +60,7 @@ export class SatClassificationListComponent extends BasePage implements OnInit {
     this.modalService.show(SatClassificationFormComponent, config);
   }
 
-  delete(satclasification?: ISatClassification) {
+  AlertQuestion(satclasification?: ISatClassification) {
     this.alertQuestion(
       'warning',
       'Eliminar',
@@ -68,7 +68,24 @@ export class SatClassificationListComponent extends BasePage implements OnInit {
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
+        this.remove(satclasification.id);
       }
     });
+  }
+
+  remove(id: number) {
+    this.satClassificationService.remove(id).subscribe(
+      res => {
+        this.alert('success', 'Sat Clasificación', 'Borrado.');
+        this.getExample();
+      },
+      err => {
+        this.alert(
+          'warning',
+          'Sat Clasificación',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      }
+    );
   }
 }

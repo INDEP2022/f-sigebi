@@ -126,11 +126,15 @@ export class TypeWharehouseListComponent extends BasePage implements OnInit {
       if (question.isConfirmed) {
         this.typeWarehouseService.remove(typeWarehouse.id).subscribe({
           next: response => {
-            this.onLoadToast('success', 'Exito', 'Eliminado Correctamente');
+            this.alert('success', 'Almacén', 'Borrado');
             this.getExample();
           },
           error: err => {
-            this.onLoadToast('error', 'Error', 'Intente nuevamente');
+            this.alert(
+              'warning',
+              'Almacén',
+              'No se puede eliminar el objeto debido a una relación con otra tabla.'
+            );
           },
         });
         //Ejecutar el servicio
