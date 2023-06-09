@@ -21,6 +21,7 @@
       </div>
       <div class="p-2">
         <button
+          [disabled]="requestForm.invalid"
           type="button"
           class="btn btn-secondary btn-sm active"
           (click)="turnRequest()">
