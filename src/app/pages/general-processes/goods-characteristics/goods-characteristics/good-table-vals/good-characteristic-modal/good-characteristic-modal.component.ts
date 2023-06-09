@@ -1,5 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  AbstractControl,
+  FormBuilder,
+  FormGroup,
+  ValidationErrors,
+  ValidatorFn,
+  Validators,
+} from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BasePage } from 'src/app/core/shared';
 import {
@@ -36,8 +43,35 @@ export class GoodCharacteristicModalComponent
     }
   }
 
+  moneyValidator: ValidatorFn = (
+    control: AbstractControl
+  ): ValidationErrors | null => {
+    const value = control.get('value');
+    const goodClassNumber = control.get('goodClassNumber');
+    if (
+      goodClassNumber.value === 62 &&
+      value.value != 'MN' &&
+      value.value != 'USD'
+    ) {
+      return null;
+      // return 'El numerario solo acepta Moneda Nacional o dólares';
+    } else if (this.good.goodClassNumber === 1424 && this.row.value != 'MN') {
+      return null;
+    } else if (this.good.goodClassNumber === 1426 && this.row.value != 'USD') {
+      return null;
+    } else if (this.good.goodClassNumber === 1590 && this.row.value != 'EUR') {
+      return null;
+    }
+
+    return { money: true };
+  };
+
   private prepareForm() {
     let validators = [];
+    this.form = this.fb.group({
+      value: [this.row.value],
+      goodClassNumber: [this.good.goodClassNumber],
+    });
     if (this.row.required) {
       validators.push(Validators.required);
     }
@@ -47,16 +81,18 @@ export class GoodCharacteristicModalComponent
     if (this.row.dataType === 'F') {
       validators.push(Validators.pattern(DOUBLE_POSITIVE_PATTERN));
     }
-    this.form = this.fb.group({
-      value: [this.row.value, []],
-    });
+
+    this.form.setValidators(validators);
   }
 
   get good() {
     return this.service.good;
   }
 
-  saved() {}
+  saved() {
+    this.modalRef.content.callback(this.form.value);
+    this.modalRef.hide();
+  }
 
   haveError() {
     return (

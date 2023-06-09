@@ -7,6 +7,14 @@
     <div class="row">
       <div class="col-md-12 md-tabs" *ngIf="form">
         <form [formGroup]="form" class="form-material">
+          <div class="paginator">
+            <app-pagination
+              [params]="params"
+              [totalItems]="totalItems"
+              [limit]="newLimit"
+              [maxSize]="1"></app-pagination>
+          </div>
+
           <tabset #staticTabs>
             <tab heading="Datos de B&uacute;squeda">
               <div class="row">
@@ -140,7 +148,14 @@
                       [disabled]="formLoading"
                       class="btn btn-primary btn-sm active"
                       type="button"
-                      (click)="searchGood(numberGood.value)">
+                      (click)="clearFilter()">
+                      Limpiar Filtros
+                    </button>
+                    <button
+                      [disabled]="formLoading"
+                      class="btn btn-primary btn-sm active"
+                      type="button"
+                      (click)="searchGood()">
                       Buscar
                     </button>
                   </div>
