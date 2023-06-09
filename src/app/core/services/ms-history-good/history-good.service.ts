@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { HistoryGoodEndpoints } from 'src/app/common/constants/endpoints/ms-historygood-endpoints';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { HttpService } from 'src/app/common/services/http.service';
+import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import {
   IHistoryGood,
@@ -85,5 +85,10 @@ export class HistoryGoodService extends HttpService {
   getChangeDateHistory(noBien: number | string) {
     const route = HistoryGoodEndpoints.GetChangeDate;
     return this.get(`${route}/${noBien}`);
+  }
+
+  getHistoryGoodStatus(goodId: number | string, params: _Params) {
+    const route = `application/getHistoryStatusGood/${goodId}`;
+    return this.get(route, params);
   }
 }
