@@ -121,6 +121,30 @@ interface IBlkProceeding {
   templateUrl: './event-capture.component.html',
   styles: [
     `
+      .title {
+        font-size: 15px !important;
+        font-weight: 500 !important;
+        position: relative !important;
+      }
+      .btn-return {
+        color: #9d2449;
+        padding-left: 0px;
+        left: -10px;
+        position: relative;
+        display: flex;
+        align-items: center;
+        top: -20px;
+        margin-top: 5px;
+
+        > i {
+          font-size: 35px;
+        }
+
+        &:hover {
+          color: #9d2449;
+        }
+      }
+
       .r-label {
         margin-top: -14px !important;
       }
@@ -363,6 +387,11 @@ export class EventCaptureComponent
   }
 
   setStartDate(instance: DateCellComponent) {
+    if (this.proceeding?.statusProceedings?.includes('CERRAD')) {
+      instance.disabled = true;
+    } else {
+      instance.disabled = false;
+    }
     instance.inputChange.subscribe(val => {
       const { row, value } = val;
       row.dateapprovalxadmon = value;
@@ -371,6 +400,11 @@ export class EventCaptureComponent
   }
 
   setEndDate(instance: DateCellComponent) {
+    if (this.proceeding?.statusProceedings?.includes('CERRAD')) {
+      instance.disabled = true;
+    } else {
+      instance.disabled = false;
+    }
     instance.inputChange.subscribe(val => {
       const { row, value } = val;
       row.dateindicatesuserapproval = value;
@@ -398,8 +432,18 @@ export class EventCaptureComponent
     });
   }
 
+  back() {
+    this.router.navigate([
+      '/pages/judicial-physical-reception/scheduled-maintenance',
+    ]);
+  }
+
   async saveProceeding() {
     if (this.proceeding.id) {
+      if (this.proceeding.statusProceedings.includes('CERRAD')) {
+        this.alert('error', 'Error', 'El programa esta cerrado');
+        return;
+      }
       this.updateProceeding().subscribe();
       return;
     }
@@ -518,6 +562,10 @@ export class EventCaptureComponent
   }
 
   validateDates() {
+    if (this.proceeding?.statusProceedings?.includes('CERRAD')) {
+      this.alert('error', 'Error', 'El programa esta cerrado');
+      return;
+    }
     const start = this.startDateCtrl.value;
     const end = this.endDateCtrl.value;
     if (!start) {
@@ -813,6 +861,7 @@ export class EventCaptureComponent
         next: res => {
           if (res.data.length > 0) {
             this.alert('success', 'Bienes cargados correctamente', '');
+
             this.formSiab = this.fb.group(new CaptureEventSiabForm());
           } else {
             this.alert('info', 'No se encontraron bienes para agregar', '');
@@ -903,6 +952,7 @@ export class EventCaptureComponent
     this.global.type = null;
     this.global.tran = null;
     this.global.regi = null;
+
     const splitedArea = keysProceedings?.value?.split('/');
     const _area = splitedArea ? splitedArea[3] : null;
     const cons = splitedArea ? splitedArea[5] : null;
@@ -958,6 +1008,15 @@ export class EventCaptureComponent
       year.value ?? ''
     }/${month.value ?? ''}`;
     // .slice(-2)
+    if (!area.value && this.global.regi) {
+      area.setValue(this.global.regi);
+    }
+    if (!transference.value && this.global.tran) {
+      transference.setValue(this.global.tran);
+      this.transfers = new DefaultSelect([
+        { value: this.global.tran, label: this.global.tran },
+      ]);
+    }
     keysProceedings.setValue(cve);
   }
 
@@ -1346,7 +1405,7 @@ export class EventCaptureComponent
           this.detail = [];
           return throwError(() => error);
         }),
-        tap(res => {
+        tap(async res => {
           this.checkAll();
           this.totalItems = res.count;
           this.loading = false;
@@ -1389,8 +1448,35 @@ export class EventCaptureComponent
             }
             return { ...detail, locTrans };
           });
+          if (
+            this.detail[0]?.expedientnumber &&
+            !this.registerControls.transference.value
+          ) {
+            console.log('no hay trans guardado');
+            await this.transferClick();
+            this.updateTransfer().subscribe();
+          }
         })
       );
+  }
+
+  updateTransfer() {
+    const formValue = this.form.getRawValue();
+    const { numFile, keysProceedings, captureDate, responsible } = formValue;
+    console.log({ keysProceedings });
+
+    const data = {
+      ...this.proceeding,
+      numFile,
+      keysProceedings,
+      captureDate,
+      responsible,
+    };
+
+    return this.proceedingDeliveryReceptionService.update(
+      this.proceeding.id,
+      data as any
+    );
   }
 
   // PA_CALCULA_CANTIDADES
@@ -1471,6 +1557,10 @@ export class EventCaptureComponent
     this.calculateQuantities();
     // TODO: PEDIR TODOS LOS CAMPOS DEL DETALLE
     // this.blkCtrl.cQuantity = (this.blkCtrl.cQuantity?? 0) + this.
+    console.log(
+      this.detail[0]?.expedientnumber,
+      this.registerControls.transference.value
+    );
   }
 
   patchProceedingValue(proceeding: IProceedings) {}
@@ -1662,7 +1752,7 @@ export class EventCaptureComponent
           const err: ITmpProgValidation[] = [
             {
               valmovement: 0,
-              valMessage: 'No se puede cerrar el acta',
+              valMessage: error.error.message,
               valMinutesNumber: 0,
               valUser: '',
             },
