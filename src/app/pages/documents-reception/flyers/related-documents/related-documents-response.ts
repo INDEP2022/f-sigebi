@@ -5,7 +5,10 @@ import { ActivatedRoute } from '@angular/router';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { catchError, firstValueFrom, map, Observable, of } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  ListParams,
+} from 'src/app/common/repository/interfaces/list-params';
 import { _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
 import { ICity } from 'src/app/core/models/catalogs/city.model';
@@ -19,13 +22,17 @@ import {
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { DepartamentService } from 'src/app/core/services/catalogs/departament.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
+import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import { GoodsJobManagementService } from 'src/app/core/services/ms-office-management/goods-job-management.service';
 import { MJobManagementService } from 'src/app/core/services/ms-office-management/m-job-management.service';
 import { ParametersService } from 'src/app/core/services/ms-parametergood/parameters.service';
 import { SecurityService } from 'src/app/core/services/ms-security/security.service';
+import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { LegalOpinionsOfficeService } from 'src/app/pages/juridical-processes/depositary/legal-opinions-office/legal-opinions-office/services/legal-opinions-office.service';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { FlyersService } from '../services/flyers.service';
 import {
   IGoodAndAvailable,
@@ -40,6 +47,7 @@ export abstract class RelateDocumentsResponse extends BasePage {
   protected abstract flyerService: FlyersService;
   protected abstract parametersService: ParametersService;
   protected abstract departmentService: DepartamentService;
+  protected abstract svLegalOpinionsOfficeService: LegalOpinionsOfficeService;
   protected abstract authService: AuthService;
   protected abstract formJobManagement: FormGroup;
   protected abstract formNotification: FormGroup;
@@ -48,10 +56,13 @@ export abstract class RelateDocumentsResponse extends BasePage {
   protected abstract sanitizer: DomSanitizer;
   protected abstract modalService: BsModalService;
   protected abstract securityService: SecurityService;
+  protected abstract documentsService: DocumentsService;
+  protected abstract usersService: UsersService;
   abstract dataTableGoods: IGoodAndAvailable[];
   abstract dataTableGoodsJobManagement: IGoodJobManagement[];
+  abstract isDisabledBtnDocs: boolean;
   // abstract managementForm: FormGroup;
-  isLoadingGood: boolean;
+  isLoadingGood: boolean = false;
   abstract totalItems: number;
   getGoods1(params: ListParams) {
     this.isLoadingGood = true;
@@ -167,10 +178,18 @@ export abstract class RelateDocumentsResponse extends BasePage {
     );
   }
 
-  getDocOficioGestion(params: ListParams) {
-    params.page = 1;
-    params.limit = 1;
+  getDocJobManagement(params: ListParams | null = null) {
+    if (!params) {
+      params = new ListParams();
+      params['filter.managementNumber'] =
+        this.formJobManagement.value.managementNumber;
+    }
+    return this.mJobManagementService.getDocOficioGestion(params);
+  }
 
+  getDocJobManagementCount(params: ListParams) {
+    params.limit = 1;
+    params.page = 1;
     return firstValueFrom(
       this.mJobManagementService.getDocOficioGestion(params).pipe(
         map(x => x.count),
@@ -253,6 +272,22 @@ export abstract class RelateDocumentsResponse extends BasePage {
   }) {
     return this.serviceOficces.postGoodsJobManagement(obj);
   }
+
+  getDocumentForDictationSearch(params: _Params) {
+    return this.documentsService.getDocumentForDictationSearch(params);
+  }
+
+  getDocumentForDictation(params: ListParams) {
+    return this.documentsService.getDocumentForDictation(params);
+  }
+
+  postSegAccessXAreasTvalTabla1(body: {
+    delegacionNo: string | number;
+    user: string;
+  }) {
+    this.usersService.postSegAccessXAreasTvalTabla1(body);
+  }
+
   /*-------------------------- TOOLS----------------------------------*/
 
   getParamsForName(name: string): string | null {
@@ -333,6 +368,28 @@ export abstract class RelateDocumentsResponse extends BasePage {
         .removeAttribute('disabled');
     }
     // document.getElementById(`se_refiere_a_${letter}`).removeAttribute('disabled');
+  }
+
+  async getUserInfo() {
+    const auth = this.authService.decodeToken();
+    const data = await this.getUserDataLogged(
+      auth.preferred_username?.toLocaleUpperCase() || auth.preferred_username
+    );
+    console.log({ data, auth });
+    return { ...data, ...auth };
+  }
+
+  async getUserDataLogged(userId: string) {
+    const params = new FilterParams();
+    params.removeAllFilters();
+    params.addFilter(
+      'user',
+      userId == 'SIGEBIADMON' ? userId.toLocaleLowerCase() : userId
+    );
+    let subscription = await firstValueFrom(
+      this.svLegalOpinionsOfficeService.getInfoUserLogued(params.getParams())
+    );
+    return subscription.data?.[0];
   }
 
   async pupGeneratorKey(): Promise<string> {
@@ -439,30 +496,6 @@ export abstract class RelateDocumentsResponse extends BasePage {
         );
         throw ex;
       }
-
-      // try {
-      //   const params = {
-      //     'filter.user': values.sender.id,
-      //     'filter.assigned': 'S',
-      //   };
-      //   _segAccessXAreas = (await this.getSegAccessXAreas(
-      //     params
-      //   )) as IAccesTrackingXArea;
-      // } catch (ex) {
-      //   this.alert(
-      //     'error',
-      //     'Error',
-      //     'No se localizaron datos del destinatario.'
-      //   );
-      //   throw ex;
-      // }
-
-      // const paramsDepartment = new ListParams();
-      // paramsDepartment['filter.numDelegation'] =
-      //   _segAccessXAreas.delegationNumber;
-      // paramsDepartment['filter.id'] = _segAccessXAreas.departmentNumber;
-      // paramsDepartment['filter.phaseEdo'] = faEtapaCreada;
-      // const __department = await this.getDepartment(paramsDepartment, false);
       const year = new Date().getFullYear().toString();
 
       let joyKey = `${level2}/${level3}/${level4}`;
@@ -479,7 +512,7 @@ export abstract class RelateDocumentsResponse extends BasePage {
   }
 
   pupAddGood() {
-    // console.log('pupAddGood');
+    console.log('pupAddGood');
     const goodAvailables = this.dataTableGoods.filter(item => item.available);
     const newRows: IGoodJobManagement[] = [];
 
@@ -531,5 +564,51 @@ export abstract class RelateDocumentsResponse extends BasePage {
       ...this.dataTableGoodsJobManagement,
       ...newRows,
     ];
+  }
+
+  dataSelectDictation = new DefaultSelect([]);
+  searchDocumentForDictation(params: ListParams) {
+    /*  select distinct tipo_dictaminacion
+      from documentos_para_dictamen
+      WHERE tipo_dictaminacion IN ('PROCEDENCIA','DECOMISO','DEVOLUCION','TRANSFERENTE')
+      order by tipo_dictaminacion 
+  */
+    // const params = new ListParams();
+    params['filter.typeDictum'] =
+      '$in:PROCEDENCIA,DECOMISO,DEVOLUCION,TRANSFERENTE';
+    params['order'] = 'typeDictum';
+    this.getDocumentForDictationSearch(params).subscribe({
+      next: res => {
+        const data = res.data.map(item => {
+          return {
+            ...item,
+            keyDescription: `${item.key} - ${item.description}`,
+          };
+        });
+        this.dataSelectDictation = new DefaultSelect(data);
+      },
+    });
+  }
+
+  onClickBtnErase() {
+    const values = this.formJobManagement.value;
+    if (!values.managementNumber) {
+      this.alert('error', 'Error', 'No se tiene oficio.');
+      return;
+    }
+    if (values.statusOf == 'ENVIADO') {
+      this.alert(
+        'error',
+        'Error',
+        'El oficio ya esta enviado no puede borrar.'
+      );
+      return;
+    }
+    const auth = this.authService.decodeToken();
+    if (
+      values.insertUser?.toLowerCase() !==
+      auth.preferred_username?.toLowerCase()
+    ) {
+    }
   }
 }

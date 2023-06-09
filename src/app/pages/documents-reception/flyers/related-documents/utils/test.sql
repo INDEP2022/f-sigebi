@@ -342,3 +342,150 @@ BEGIN
    END IF;
    RETURN(V_CVE_OF_GESTION);
 END;
+
+
+
+
+
+
+
+------------------------------------//TODO: BOTON BORRAR  --------------------------------------------------------------------------------------
+
+/* Se le agregó el botón de Eliminar Oficios Realcionados
+ ZCMA --06 de Octubre de 2008--*/
+
+DECLARE 
+   v_no_of_gestion M_OFICIO_GESTION.NO_OF_GESTION%TYPE;
+   v_no_volante    M_OFICIO_GESTION.NO_VOLANTE%TYPE;
+   ATJR						 NUMBER(1);
+BEGIN
+	-- Comentado ya que primero debe realizar las validaciones y despues las actualizaciones ELC 08082011
+   /*BEGIN
+      UPDATE NOTIFICACIONES
+         SET CVE_DICTAMEN = NULL
+       WHERE NO_VOLANTE = :NOTIFICACIONES.NO_VOLANTE;
+      EXCEPTION
+               WHEN OTHERS THEN
+                  NULL;
+   END;
+   LIP_COMMIT_SILENCIOSO;*/
+   IF :M_OFICIO_GESTION.NO_OF_GESTION IS NULL THEN
+      LIP_MENSAJE('No se tiene oficio','S');
+      RAISE Form_Trigger_Failure;
+   END IF;
+   IF :ESTATUS_OF = 'ENVIADO' THEN 
+      LIP_MENSAJE('El oficio ya esta enviado no puede borrar','S');
+      RAISE Form_Trigger_Failure;
+   END IF;
+   IF :M_OFICIO_GESTION.USUARO_INSERT <> :global.toolbar_usuario THEN
+   	
+   	      
+   BEGIN
+      SELECT COUNT(0)
+        INTO ATJR
+        FROM SEG_ACCESO_X_AREAS SA,
+       			 SEG_USUARIOS SU,
+       			 TVALTABLA1 TVL
+			 WHERE SA.USUARIO = SU.USUARIO
+   			 AND NO_DELEGACION = :BLK_TOOLBAR.TOOLBAR_NO_DELEGACION
+   			 AND SU.CVE_CARGO = TVL.OTCLAVE
+   			 AND TVL.OTCLAVE LIKE 'ATJR%'
+   			 AND SA.USUARIO = :global.toolbar_usuario;
+   EXCEPTION
+   	WHEN OTHERS THEN
+   		 ATJR := 0;
+   	   LIP_MENSAJE('VERIFICAR PERMISOS','A');
+   END;
+   
+      IF	ATJR = 0 THEN
+   	      LIP_MENSAJE('El Usuario no está autorizado para eliminar el Oficio','A');
+          RAISE FORM_TRIGGER_FAILURE;   	 
+      END IF;   
+   	/*
+   	  LIP_MENSAJE('Usuario inválido para borrar oficio','S');
+      RAISE Form_Trigger_Failure;
+    */
+      
+   END IF;
+   IF INSTR(:M_OFICIO_GESTION.CVE_OF_GESTION,'?') = 0 THEN
+   	  LIP_MENSAJE('La clave está armada, no puede borrar oficio','S');
+      RAISE Form_Trigger_Failure;
+   END IF;
+
+      v_no_of_gestion := :M_OFICIO_GESTION.NO_OF_GESTION;
+      v_no_volante    := :M_OFICIO_GESTION.NO_VOLANTE;
+      IF PUF_MENSAJE_SI_NO('Se borra oficio (Exp.: '||TO_CHAR(:NOTIFICACIONES.NO_EXPEDIENTE)||' No.oficio: '||TO_CHAR(v_no_of_gestion)||')?') = 'N' THEN
+         GO_ITEM('NOTIFICACIONES.NO_EXPEDIENTE');
+         RAISE FORM_TRIGGER_FAILURE;
+      ELSE
+-- Borra BIENES_OFICIO_GESTION
+         BEGIN
+            DELETE FROM BIENES_OFICIO_GESTION
+             WHERE NO_OF_GESTION  = v_no_of_gestion;
+            LIP_COMMIT_SILENCIOSO;
+            GO_BLOCK('BIENES_OFICIO_GESTION');
+            Clear_Block(No_Validate);
+         EXCEPTION
+            WHEN OTHERS THEN
+               NULL;
+         END;
+-- Borra COPIAS_OFICIO_GESTION
+         BEGIN
+            DELETE FROM COPIAS_OFICIO_GESTION
+             WHERE NO_OF_GESTION  = v_no_of_gestion;
+            LIP_COMMIT_SILENCIOSO;
+            GO_BLOCK('COPIAS_OFICIO_GESTION');
+            Clear_Block(No_Validate);
+         EXCEPTION
+            WHEN OTHERS THEN
+               NULL;
+         END;
+-- Borra DOCUM_OFICIO_GESTION
+         BEGIN
+            DELETE FROM DOCUM_OFICIO_GESTION
+             WHERE NO_OF_GESTION  = v_no_of_gestion;
+            LIP_COMMIT_SILENCIOSO;
+            GO_BLOCK('DOCUM_OFICIO_GESTION');
+            Clear_Block(No_Validate);
+         EXCEPTION
+            WHEN OTHERS THEN
+               NULL;
+         END;
+-- Borra M_OFICIO_GESTION
+         BEGIN
+            DELETE FROM M_OFICIO_GESTION
+             WHERE NO_OF_GESTION  = v_no_of_gestion
+               AND NO_VOLANTE = v_no_volante;
+               
+-- Actualiza cve_dcitamen en volante 080307 JAM
+            BEGIN
+               UPDATE NOTIFICACIONES
+                  SET CVE_DICTAMEN = NULL
+                WHERE NO_VOLANTE = v_no_volante;
+            EXCEPTION
+               WHEN OTHERS THEN
+                  NULL;
+            END;
+            LIP_COMMIT_SILENCIOSO;
+            GO_BLOCK('M_OFICIO_GESTION');
+            Clear_Block(No_Validate);
+            :se_refiere_a := 'D';
+         EXCEPTION
+            WHEN OTHERS THEN
+               NULL;
+         END;
+-- actualizo bienes con estatus ROP -- 140607 JAC --
+       /*  GO_BLOCK('BIENES');
+         FIRST_RECORD;
+         LOOP
+            :BIENES.ESTATUS  := 'ROP';
+            EXIT WHEN :system.last_record = 'TRUE';
+            NEXT_RECORD;			
+         END LOOP;
+         LIP_COMMIT_SILENCIOSO;*/
+     END IF;
+      Set_Radio_Button_Property('se_refiere_a','a',ENABLED,PROPERTY_TRUE);
+         Set_Radio_Button_Property('se_refiere_a','b',ENABLED,PROPERTY_TRUE);
+   GO_ITEM('NOTIFICACIONES.NO_EXPEDIENTE');
+   LIP_EXEQRY;
+END;

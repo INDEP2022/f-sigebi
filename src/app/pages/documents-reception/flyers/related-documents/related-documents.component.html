@@ -146,7 +146,7 @@
           <h6>Se Refiere A:</h6>
           <div
             class="col-md-3"
-            [ngClass]="{ 'not-press': se_refiere_a_Disabled.A }">
+            [ngClass]="{ 'disabled-input': se_refiere_a_Disabled.A }">
             <form-radio label="{{ se_refiere_a.A }}">
               <input
                 id="se_refiere_a_A"
@@ -158,7 +158,7 @@
           </div>
           <div
             class="col-md-4"
-            [ngClass]="{ 'not-press': se_refiere_a_Disabled.B }">
+            [ngClass]="{ 'disabled-input': se_refiere_a_Disabled.B }">
             <form-radio label="{{ se_refiere_a.B }}" class="mt-0 pt-0 bt-0">
               <input
                 id="se_refiere_a_B"
@@ -170,7 +170,7 @@
           </div>
           <div
             class="col-md-4"
-            [ngClass]="{ 'not-press': se_refiere_a_Disabled.C }">
+            [ngClass]="{ 'disabled-input': se_refiere_a_Disabled.C }">
             <form-radio label="{{ se_refiere_a.C }}">
               <input
                 id="se_refiere_a_C"
@@ -380,6 +380,21 @@
                       [totalItems]="totalItems"></app-pagination>
                   </div>
                 </div>
+              </div>
+
+              <div class="col-12">
+                <ngx-select
+                  [form]="formVariables"
+                  control="dictamen"
+                  (fetchItems)="searchDocumentForDictation($event)"
+                  [showTooltip]="true"
+                  [data]="dataSelectDictation"
+                  bindLabel="keyDescription"
+                  label="Dictaminación"
+                  value="no_clasif_bien"
+                  id="typesFilters"
+                  (change)="typeSelected($event)">
+                </ngx-select>
               </div>
               <div class="col-sm-12 col-12 col-md-12 pr-3">
                 <div class="col-md-6">

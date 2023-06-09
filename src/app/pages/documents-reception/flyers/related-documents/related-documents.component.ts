@@ -10,7 +10,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, firstValueFrom, skip, takeUntil } from 'rxjs';
+import { BehaviorSubject, firstValueFrom, map, skip, takeUntil } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import {
@@ -30,6 +30,7 @@ import { DepartamentService } from 'src/app/core/services/catalogs/departament.s
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { DictationXGood1Service } from 'src/app/core/services/ms-dictation/dictation-x-good1.service';
 import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
+import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { StatusGoodService } from 'src/app/core/services/ms-good/status-good.service';
 import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
@@ -43,6 +44,7 @@ import { ParametersService } from 'src/app/core/services/ms-parametergood/parame
 import { ScreenStatusService } from 'src/app/core/services/ms-screen-status/screen-status.service';
 import { SecurityService } from 'src/app/core/services/ms-security/security.service';
 import { SegAcessXAreasService } from 'src/app/core/services/ms-users/seg-acess-x-areas.service';
+import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { OfficeManagementService } from 'src/app/core/services/office-management/officeManagement.service';
 import {
   POSITVE_NUMBERS_PATTERN,
@@ -98,6 +100,10 @@ export interface IGoodJobManagement {
       }
       .disabled[disabled] {
         color: red;
+      }
+      .disabled-input {
+        color: #939393;
+        pointer-events: none;
       }
     `,
   ],
@@ -226,7 +232,7 @@ export class RelatedDocumentsComponent
   };
 
   //m_job_management
-  override formNotification = new FormGroup({
+  formNotification = new FormGroup({
     /** @descripiton  no_volante*/
     wheelNumber: new FormControl(null),
     /** @descripition no_expediente */
@@ -242,7 +248,7 @@ export class RelatedDocumentsComponent
     /** @description tipo_oficio */
   });
 
-  override formJobManagement = new FormGroup({
+  formJobManagement = new FormGroup({
     /** @description no_volante */
     flyerNumber: new FormControl(''),
     /** @description tipo_oficio */
@@ -280,7 +286,8 @@ export class RelatedDocumentsComponent
       legendOffice: string;
       idName: string;
     }>(null), // ciudad,
-    statusOf: new FormControl(''), // estatus_of
+    /** @description estatus_of */
+    statusOf: new FormControl(''),
     refersTo: new FormControl(''), // se_refiere_a
     /** @Description texto1 */
     text1: new FormControl(''),
@@ -288,8 +295,17 @@ export class RelatedDocumentsComponent
     text2: new FormControl(''),
     /** @Description texto3 */
     text3: new FormControl(''),
-    /** @Description des_remitente_pa */
-    // desSenderpa: new FormControl(''),
+    /** @description usuaro_insert */
+    insertUser: new FormControl(''),
+  });
+
+  formVariables = new FormGroup({
+    b: new FormControl(''),
+    d: new FormControl(''),
+    dictamen: new FormControl(''),
+    classify: new FormControl(''),
+    classify2: new FormControl(''),
+    crime: new FormControl(''),
   });
 
   constructor(
@@ -306,7 +322,7 @@ export class RelatedDocumentsComponent
     protected serviceOficces: GoodsJobManagementService,
     protected readonly authService: AuthService,
     private applicationGoodsQueryService: ApplicationGoodsQueryService,
-    private svLegalOpinionsOfficeService: LegalOpinionsOfficeService,
+    protected svLegalOpinionsOfficeService: LegalOpinionsOfficeService,
     protected readonly goodServices: GoodService,
     private statusGoodService: StatusGoodService,
     private screenStatusService: ScreenStatusService,
@@ -319,10 +335,12 @@ export class RelatedDocumentsComponent
     protected departmentService: DepartamentService,
     private segAccessAreasService: SegAcessXAreasService,
     private officeManagementSerivice: OfficeManagementService,
-    private goodHistoryService: HistoryGoodService
+    private goodHistoryService: HistoryGoodService, // protected abstract svLegalOpinionsOfficeService: LegalOpinionsOfficeService;
+    protected documentsService: DocumentsService,
+    protected usersService: UsersService
   ) {
     super();
-    console.log(authService.decodeToken());
+    // console.log(authService.decodeToken());
     this.authUser = authService.decodeToken();
     this.settings3 = {
       ...this.settings,
@@ -574,6 +592,7 @@ export class RelatedDocumentsComponent
 
   ngOnInit(): void {
     // console.log("status OF: ", this.oficioGestion.statusOf);
+    this.getUserInfo();
     this.setInitVariables();
     this.prepareForm();
     this.route.queryParams
@@ -906,33 +925,49 @@ export class RelatedDocumentsComponent
           }
 
           if (mJobManagement.managementNumber) {
-            // const params = new ListParams();
-            // params['filter.managementNumber'] = mJobManagement.managementNumber;
-            // try {
-            //   this.dataTableGoodsJobManagement = (
-            //     await this.getGoodsJobManagement(params)
-            //   ).data;
-            // } catch (ex) {
-            //   console.log(ex);
-            // }\
             this.refreshTableGoodsJobManagement();
+            this.refreshTableDocuments();
+          }
+
+          if (mJobManagement.statusOf == 'ENVIADO') {
+            this.formJobManagement.disable();
           }
         } catch (e) {
           console.log(e);
         }
         console.log('res', res);
         if (res.expedientNumber) {
-          // const params = new ListParams();
-          // params['filter.fileNumber'] = res.expedientNumber;
-          // this.getGoods1(params);
           this.refreshTableGoods();
         }
       },
     });
   }
 
+  refreshTableDocuments() {
+    this.getDocJobManagement().subscribe({
+      next: async res => {
+        const response = await res.data.map(async item => {
+          const params = new ListParams();
+          params['filter.id'] = item.cveDocument;
+          params.limit = 1;
+          params.page = 1;
+          const description = await firstValueFrom(
+            this.getDocumentForDictation(params).pipe(map(res => res.data[0]))
+          );
+          return {
+            ...item,
+            description: description.description,
+            key: description.key,
+          };
+        });
+        this.dataTableDocuments = await Promise.all(response);
+      },
+    });
+  }
+
   refreshTableGoods() {
     const params = new ListParams();
+
     params['filter.fileNumber'] = this.formNotification.value.expedientNumber;
     this.getGoods1(params);
   }
@@ -2057,7 +2092,8 @@ export class RelatedDocumentsComponent
     let params = {
       ...this.params.getValue(),
     };
-    params['filter.fileNumber'] = this.paramsGestionDictamen.expediente;
+    // params['filter.fileNumber'] = this.paramsGestionDictamen.expediente;
+    params['filter.fileNumber'] = this.formNotification.value.expedientNumber;
     if (filter != 'Todos') {
       params['filter.goodClassNumber'] = `$eq:${filter}`;
     }
@@ -2417,20 +2453,24 @@ export class RelatedDocumentsComponent
     this.pupShowReport();
     values = this.formJobManagement.value;
     if (values.cveManagement && values.refersTo == this.se_refiere_a.A) {
-      this.enableOrDisabledRadioRefersTo('B', false);
-      this.enableOrDisabledRadioRefersTo('C', false);
+      // this.enableOrDisabledRadioRefersTo('B', false);
+      this.se_refiere_a_Disabled.B = true;
+      this.se_refiere_a_Disabled.C = true;
+      // this.enableOrDisabledRadioRefersTo('C', false);
     }
 
     if (values.cveManagement && values.refersTo == this.se_refiere_a.B) {
-      this.enableOrDisabledRadioRefersTo('A', false);
-      this.enableOrDisabledRadioRefersTo('C', false);
+      this.se_refiere_a_Disabled.A = true;
+      this.se_refiere_a_Disabled.C = true;
+      // this.enableOrDisabledRadioRefersTo('A', false);
+      // this.enableOrDisabledRadioRefersTo('C', false);
     }
 
     if (values.cveManagement) {
       const params = new ListParams();
       params['filter.managementNumber'] =
         this.formJobManagement.value.managementNumber;
-      const count = await this.getDocOficioGestion(params);
+      const count = await this.getDocJobManagementCount(params);
       if (count > 0) {
         this.isDisabledBtnDocs = true;
       }
@@ -2468,10 +2508,10 @@ export class RelatedDocumentsComponent
 
   async getDSAreaInDeparment(etapaCreda: string | number) {
     const params = new ListParams();
-    const auth = this.authService.decodeToken();
+    const auth = await this.getUserInfo();
     params['filter.id'] = auth.department;
-    params['filter.numDelegation'] = auth.department;
-    params['filter.numSubDelegation'] = etapaCreda;
+    params['filter.numDelegation'] = auth.delegationNumber;
+    params['filter.numSubDelegation'] = auth.subdelegationNumber;
     params['filter.phaseEdo'] = etapaCreda;
 
     return (await this.getDepartment(params, true)) as IDepartment;
