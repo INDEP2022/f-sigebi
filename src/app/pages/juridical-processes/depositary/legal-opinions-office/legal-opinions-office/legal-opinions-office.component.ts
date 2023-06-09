@@ -3107,7 +3107,7 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
           CONSULTA: this.CONSULTA,
           VOLANTE: this.dictationData.wheelNumber,
           EXPEDIENTE: this.dictationData.expedientNumber,
-          TIPO_DICT: this.paramsScreen.TIPO,
+          TIPO_DIC: this.paramsScreen.TIPO,
           TIPO_VO: this.TIPO_VO,
         },
       });

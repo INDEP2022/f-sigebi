@@ -58,11 +58,7 @@ import { ScreenStatusService } from 'src/app/core/services/ms-screen-status/scre
 import { SegAcessXAreasService } from 'src/app/core/services/ms-users/seg-acess-x-areas.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import {
-  KEYGENERATION_PATTERN,
-  NUMBERS_PATTERN,
-  STRING_PATTERN,
-} from 'src/app/core/shared/patterns';
+import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { environment } from 'src/environments/environment';
@@ -105,7 +101,7 @@ export class JuridicalRulingGComponent
   totalItems: number = 0;
   totalDocuments: number = 0;
   label: string = '';
-  idGoodSelected = 0;
+  idGoodSelected: any = '';
   @ViewChild('cveOficio', { static: true }) cveOficio: ElementRef;
   goodData: IGood;
   goodData2: IGood;
@@ -304,7 +300,7 @@ export class JuridicalRulingGComponent
     mode: 'external',
     columns: { ...DOCUMENTS_COLUMNS },
     rowClassFunction: (row: any) => {
-      return 'bg-primary text-white';
+      return 'bg-info text-white';
     },
     noDataMessage: 'No se encontrarón registros',
   };
@@ -332,6 +328,7 @@ export class JuridicalRulingGComponent
     '>> Click boton derecho para consultar dictaminaciones anteriores <<';
 
   origin: string = 'FACTJURDICTAMASG';
+  disabledListDictums: boolean = false;
   constructor(
     private fb: FormBuilder,
     private activatedRoute: ActivatedRoute,
@@ -454,7 +451,7 @@ export class JuridicalRulingGComponent
       autoriza_remitente: [null],
       criminalCase: [null, [Validators.pattern(STRING_PATTERN)]],
       autoriza_nombre: [null, [Validators.pattern(STRING_PATTERN)]],
-      cveOficio: [null, [Validators.pattern(KEYGENERATION_PATTERN)]],
+      cveOficio: [null],
       estatus: [null],
     });
     this.subtipoForm = this.fb.group({
@@ -484,6 +481,7 @@ export class JuridicalRulingGComponent
         this.showCriminalCase = true;
         //corregido
       }
+      console.log('params?', params);
       this.expedientesForm.get('tipoDictaminacion').setValue(params?.TIPO_DIC);
       console.log('params?.TIPO_DIC', params?.TIPO_DIC);
 
@@ -563,6 +561,7 @@ export class JuridicalRulingGComponent
     this.goodsValid = [];
     this.data4 = [];
     this.documents = [];
+    this.documentsDictumXStateMList = [];
     this.idGoodSelected = null;
     this.statusDict = null;
     this.dictaminacionesForm.get('cveOficio').setValue(null);
@@ -744,6 +743,9 @@ export class JuridicalRulingGComponent
     // params['filter.expedientNumber'] = `$eq:${noExpediente}`
     this.dictationService.getAllWithFilters(params.getParams()).subscribe({
       next: async (res: any) => {
+        if (res.data.length > 1) {
+          this.disabledListDictums = true;
+        }
         console.log('res', res);
         console.log('fecha dic', res.data[0].dictDate);
         this.dictNumber = res.data[0].id;
@@ -788,9 +790,17 @@ export class JuridicalRulingGComponent
           .setValue(res.data[0].observations || undefined);
         this.keyArmyNumber = res.data[0].keyArmyNumber;
         this.statusDict = res.data[0].statusDict;
+
         this.dictaminacionesForm
           .get('etiqueta')
-          .setValue(new Date(res.data[0].instructorDate) || undefined);
+          .setValue(res.data[0].instructorDate);
+
+        const noFecha: any = new Date(res.data[0].instructorDate);
+        noFecha.setUTCDate(noFecha.getUTCDate() + 1);
+        const _noFecha: any = new Date(noFecha.toISOString());
+
+        this.dictaminacionesForm.get('fechaPPFF').setValue(_noFecha);
+
         this.dictaminacionesForm
           .get('estatus')
           .setValue(res.data[0].statusDict || undefined);
@@ -1600,9 +1610,16 @@ export class JuridicalRulingGComponent
       .subscribe({
         next: response => {
           const data = response.data;
+          console.log('GODDDDSS', response);
 
-          data.map(async (good: any) => {
+          let arr: any = [];
+          let result = data.map(async (good: any) => {
             good.di_disponible = 'S';
+            const dictamenXGood1: any = await this.getDictaXGood(good.id);
+
+            if (dictamenXGood1 != null) {
+              arr.push(good);
+            }
             await new Promise((resolve, reject) => {
               const body = {
                 pGoodNumber: good.goodId,
@@ -1663,15 +1680,41 @@ export class JuridicalRulingGComponent
             }
           });
 
-          this.goods = data;
-
-          this.totalItems = response.count || 0;
+          Promise.all(result).then((resp: any) => {
+            console.log('this.goods', arr);
+            this.goods = data;
+            this.goodsValid = arr;
+            if (this.goodsValid.length > 0) {
+              this.idGoodSelected = this.goodsValid[0].id;
+            }
+            this.totalItems = response.count || 0;
+          });
         },
         error: err => {
           console.log(err);
           this.goods = [];
         },
       });
+  }
+
+  getDictaXGood(id: any) {
+    const params = new ListParams();
+    params['filter.id'] = `$eq:${id}`;
+    return new Promise((resolve, reject) => {
+      this.DictationXGood1Service.getAll(params).subscribe({
+        next: (resp: any) => {
+          // console.log('DICTAMINACION X BIEN', resp.data);
+          const data = resp.data[0];
+          resolve(true);
+          this.loading = false;
+        },
+        error: error => {
+          // console.log('ERROR DICTAMINACION X BIEN', error.error.message);
+          resolve(null);
+          this.loading = false;
+        },
+      });
+    });
   }
 
   goodClassNumber: number = 0;
@@ -1690,7 +1733,7 @@ export class JuridicalRulingGComponent
 
     this.goodClassNumber = Number(this.goodData.goodClassNumber);
     this.stateNumber = this.goodData.goodId;
-
+    this.idGoodSelected = row.data.id;
     console.log(
       'Información del bien seleccionado rowsSelected2',
       this.goodData
@@ -2261,7 +2304,7 @@ export class JuridicalRulingGComponent
               [baseMenu + baseMenuDepositaria + DEPOSITARY_ROUTES_2[0].link],
               {
                 queryParams: {
-                  PAQUETE: '',
+                  PAQUETE: 0,
                   P_GEST_OK: '',
                   CLAVE_OFICIO_ARMADA: this.dictamen.passOfficeArmy,
                   P_NO_TRAMITE: this.P_NO_TRAMITE,
@@ -2274,7 +2317,7 @@ export class JuridicalRulingGComponent
                   // P_GEST_OK: 1, // ..hardcoded - no llega de la pantalla anterior
                   // P_NO_TRAMITE: 1044141, // ..hardcoded - no llega de la pantalla anterior
                   origin: 'FACTJURDICTAMASG',
-                  origin3: 'FACTJURDICTAMASG',
+                  origin3: 'FACTGENACTDATEX',
                 },
               }
             );
@@ -2507,22 +2550,42 @@ export class JuridicalRulingGComponent
     });
   }
   async getSenders2(params: ListParams) {
-    params['filter.user'] = `$eq:${params.text}`;
-    // this.securityService.getAllUsersTracker(params).subscribe(
-    //   (data: any) => {
-    //     let result = data.data.map(async (item: any) => {
-    //       item['userAndName'] = item.user + ' - ' + item.name;
-    //     });
-    //     Promise.all(result).then((resp: any) => {
-    //       this.declarationForm.get('sender').setValue(data.data[0]);
-    //       // this.senders = new DefaultSelect(data.data, data.count);
-    //       this.loading = false;
-    //     });
-    //   },
-    //   error => {
-    //     this.senders = new DefaultSelect();
-    //   }
+    // return this.usersService.getAllSegUsers(params).pipe(
+    //   catchError(error => {
+    //     console.log("USUARIOEE", error)
+    //     this.users$ = new DefaultSelect([], 0, true);
+    //     return throwError(() => error);
+    //   }),
+    //   tap(response => {
+    //     console.log("USUARIO", response)
+
+    //     // this.users$ = new DefaultSelect(response.data, response.count);
+
+    //   })
     // );
+    // params['filter.user'] = `$eq:${params.text}`;
+    this.usersService.getAllSegUsers(params).subscribe(
+      (data: any) => {
+        console.log('USUARIO', data);
+        let result = data.data.map(async (item: any) => {
+          item['userAndName'] = item.id + ' - ' + item.name;
+        });
+        Promise.all(result).then((resp: any) => {
+          this.dictaminacionesForm
+            .get('autoriza_remitente')
+            .setValue(data.data[0].id);
+          this.dictaminacionesForm
+            .get('autoriza_nombre')
+            .setValue(data.data[0].name);
+          // this.senders = new DefaultSelect(data.data, data.count);
+          this.loading = false;
+        });
+      },
+      error => {
+        console.log('ERR', error);
+        this.users$ = new DefaultSelect([], 0, true);
+      }
+    );
   }
 
   async createDocumentDictum(document: any) {
@@ -2533,7 +2596,7 @@ export class JuridicalRulingGComponent
         stateNumber: this.goodsValid[i].id,
         key: document.cveDocument,
         typeDictum: this.expedientesForm.get('tipoDictaminacion').value,
-        dateReceipt: document.dae,
+        dateReceipt: document.date,
         userReceipt: '',
         insertionDate: document.dae,
         userInsertion: token.preferred_username,
@@ -2667,5 +2730,7 @@ export class JuridicalRulingGComponent
     });
   }
 
-  getDocumentsDictumXStateMList() {}
+  newDictums() {}
+
+  listDictums() {}
 }
