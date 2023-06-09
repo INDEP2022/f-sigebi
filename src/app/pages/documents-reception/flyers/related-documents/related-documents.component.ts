@@ -50,6 +50,7 @@ import {
 } from 'src/app/core/shared/patterns';
 import { AddCopyComponent } from 'src/app/pages/juridical-processes/abandonments-declaration-trades/abandonments-declaration-trades/add-copy/add-copy.component';
 import {
+  COLUMNS_DOCUMENTS,
   COLUMNS_GOOD_JOB_MANAGEMENT,
   EXTERNOS_COLUMS_OFICIO,
 } from 'src/app/pages/juridical-processes/abandonments-declaration-trades/abandonments-declaration-trades/columns';
@@ -77,6 +78,14 @@ import { RelatedDocumentsService } from './services/related-documents.service';
 import { UploadDictamenFilesModalComponent } from './upload-dictamen-files-modal/upload-dictamen-files-modal.component';
 
 export type IGoodAndAvailable = IGood & { available: boolean };
+export interface IGoodJobManagement {
+  managementNumber: string;
+  goodNumber: number;
+  recordNumber: string;
+  classify: string | number;
+  goods: string;
+  good: IGood;
+}
 @Component({
   selector: 'app-related-documents',
   templateUrl: './related-documents.component.html',
@@ -189,11 +198,8 @@ export class RelatedDocumentsComponent
   settings3 = { ...this.settings };
   copyOficio: any[] = [];
 
-  dataTableGoodsJobManagement: {
-    managementNumber: string;
-    goodNumber: IGood;
-    recordNumber: string;
-  }[] = [];
+  //Good Job Mananagemet
+  dataTableGoodsJobManagement: IGoodJobManagement[] = [];
 
   settingsGoodsJobManagement = {
     ...this.settings,
@@ -206,6 +212,20 @@ export class RelatedDocumentsComponent
     columns: COLUMNS_GOOD_JOB_MANAGEMENT,
   };
 
+  dataTableDocuments: any[] = [];
+
+  settingsTableDocuments = {
+    ...this.settings,
+    actions: {
+      edit: false,
+      add: false,
+      delete: false,
+    },
+    hideSubHeader: true,
+    columns: COLUMNS_DOCUMENTS,
+  };
+
+  //m_job_management
   override formNotification = new FormGroup({
     /** @descripiton  no_volante*/
     wheelNumber: new FormControl(null),
@@ -244,7 +264,9 @@ export class RelatedDocumentsComponent
     /** @descripiton  cve_cargo_rem*/
     cveChargeRem: new FormControl(''),
     /**@description DES_REMITENTE_PA */
-    desSenderpa: new FormControl(''),
+    desSenderpa: new FormControl(
+      'Con fundamento en el artículo 24 del Reglamento Interior del Servicio de Administración de Bienes Asegurados, el Jefe de Departamento de dictaminación de expedientes de bienes asegurados del cuarto transitorio, firma en ausencia de la Directora Jurídica Consultiva.'
+    ),
     /** @description NO_DEL_REM */
     delRemNumber: new FormControl(''),
     /** @description NO_DEP_REM */
@@ -260,11 +282,15 @@ export class RelatedDocumentsComponent
     }>(null), // ciudad,
     statusOf: new FormControl(''), // estatus_of
     refersTo: new FormControl(''), // se_refiere_a
+    /** @Description texto1 */
+    text1: new FormControl(''),
+    /** @Description texto2 */
+    text2: new FormControl(''),
+    /** @Description texto3 */
+    text3: new FormControl(''),
+    /** @Description des_remitente_pa */
+    // desSenderpa: new FormControl(''),
   });
-
-  // Informacion del usuario logueado
-  dataUserLogged: any;
-  dataUserLoggedTokenData: any;
 
   constructor(
     private fb: FormBuilder,
@@ -276,7 +302,7 @@ export class RelatedDocumentsComponent
     protected sanitizer: DomSanitizer,
     private dictationService: DictationService,
     private serviceRelatedDocumentsService: RelatedDocumentsService,
-    private securityService: SecurityService,
+    protected securityService: SecurityService,
     protected serviceOficces: GoodsJobManagementService,
     protected readonly authService: AuthService,
     private applicationGoodsQueryService: ApplicationGoodsQueryService,
@@ -317,10 +343,16 @@ export class RelatedDocumentsComponent
       ...RELATED_DOCUMENTS_COLUMNS_GOODS.improcedente,
       onComponentInitFunction: this.onClickImprocedente,
     };
+
+    if (!this.pantallaOption) {
+      const columns = RELATED_DOCUMENTS_COLUMNS_GOODS;
+      delete columns.improcedente;
+    }
+
     this.settings = {
       ...this.settings,
       actions: false,
-      selectMode: 'multi',
+      // selectMode: 'multi',
       columns: { ...RELATED_DOCUMENTS_COLUMNS_GOODS },
       rowClassFunction: (row: any) => {
         if (!row.data.available) {
@@ -362,6 +394,7 @@ export class RelatedDocumentsComponent
 
   onClickSelect(event: any) {
     event.toggle.subscribe((data: any) => {
+      console.log(data);
       data.row.seleccion = data.toggle;
     });
   }
@@ -540,16 +573,6 @@ export class RelatedDocumentsComponent
   }
 
   ngOnInit(): void {
-    const token = this.authService.decodeToken();
-    console.log(token);
-    this.dataUserLoggedTokenData = token;
-    if (token.preferred_username) {
-      this.getUserDataLogged(
-        token.preferred_username
-          ? token.preferred_username.toLocaleUpperCase()
-          : token.preferred_username
-      );
-    }
     // console.log("status OF: ", this.oficioGestion.statusOf);
     this.setInitVariables();
     this.prepareForm();
@@ -606,7 +629,7 @@ export class RelatedDocumentsComponent
         });
       }
     }
-    this.getTypesSelectors();
+    // this.getTypesSelectors();
     this.params.pipe(skip(1), takeUntil(this.$unSubscribe)).subscribe(res => {
       this.goodFilterParams('Todos');
     });
@@ -627,26 +650,6 @@ export class RelatedDocumentsComponent
     } else {
       this.showDestinatarioInput = true;
     }
-  }
-
-  getUserDataLogged(userId: string) {
-    const params = new FilterParams();
-    params.removeAllFilters();
-    params.addFilter(
-      'user',
-      userId == 'SIGEBIADMON' ? userId.toLocaleLowerCase() : userId
-    );
-    this.svLegalOpinionsOfficeService
-      .getInfoUserLogued(params.getParams())
-      .subscribe({
-        next: (res: any) => {
-          console.log('USER INFO', res);
-          this.dataUserLogged = res.data[0];
-        },
-        error: error => {
-          console.log(error);
-        },
-      });
   }
 
   setInitVariables() {
@@ -820,7 +823,9 @@ export class RelatedDocumentsComponent
     this.getNotification(wheelNumber, expedient).subscribe({
       next: async res => {
         console.log(res);
+
         this.formNotification.patchValue(res);
+        this.getTypesSelectors();
         this.managementForm.get('noVolante').setValue(res.wheelNumber);
         this.managementForm.get('noExpediente').setValue(res.expedientNumber);
         this.managementForm.get('wheelStatus').setValue(res.wheelStatus);
@@ -901,27 +906,48 @@ export class RelatedDocumentsComponent
           }
 
           if (mJobManagement.managementNumber) {
-            const params = new ListParams();
-            params['filter.managementNumber'] = mJobManagement.managementNumber;
-            try {
-              this.dataTableGoodsJobManagement = (
-                await this.getGoodsJobManagement(params)
-              ).data;
-            } catch (ex) {
-              console.log(ex);
-            }
+            // const params = new ListParams();
+            // params['filter.managementNumber'] = mJobManagement.managementNumber;
+            // try {
+            //   this.dataTableGoodsJobManagement = (
+            //     await this.getGoodsJobManagement(params)
+            //   ).data;
+            // } catch (ex) {
+            //   console.log(ex);
+            // }\
+            this.refreshTableGoodsJobManagement();
           }
         } catch (e) {
           console.log(e);
         }
         console.log('res', res);
         if (res.expedientNumber) {
-          const params = new ListParams();
-          params['filter.fileeNumber'] = res.expedientNumber;
-          this.getGoods1(params);
+          // const params = new ListParams();
+          // params['filter.fileNumber'] = res.expedientNumber;
+          // this.getGoods1(params);
+          this.refreshTableGoods();
         }
       },
     });
+  }
+
+  refreshTableGoods() {
+    const params = new ListParams();
+    params['filter.fileNumber'] = this.formNotification.value.expedientNumber;
+    this.getGoods1(params);
+  }
+
+  async refreshTableGoodsJobManagement() {
+    const params = new ListParams();
+    params['filter.managementNumber'] =
+      this.formJobManagement.value.managementNumber;
+    try {
+      this.dataTableGoodsJobManagement = (
+        await this.getGoodsJobManagement(params)
+      ).data;
+    } catch (ex) {
+      console.log(ex);
+    }
   }
 
   getQueryParams(name: string) {
@@ -1732,7 +1758,6 @@ export class RelatedDocumentsComponent
     console.log(this.managementForm);
     console.log(this.formJobManagement);
     console.log(this.m_job_management);
-    console.log(this.formNotification);
     const {
       noVolante, //no_volante
       wheelStatus, //status
@@ -1744,6 +1769,7 @@ export class RelatedDocumentsComponent
       cveManagement, //cve_of_gestion
       proceedingsNumber, //no_expediente
       insertUser, //usuario insert
+      insertDate, //fecha inserto
     } = this.m_job_management;
     debugger;
     if (managementNumber == null) {
@@ -1754,7 +1780,7 @@ export class RelatedDocumentsComponent
       this.onLoadToast('info', 'El oficio ya esta enviado no puede borrar', '');
       return;
     }
-    /*if (cveManagement.includes('?') == false) {
+    if (cveManagement.includes('?') == false) {
       this.onLoadToast(
         'info',
         'La clave está armada, no puede borrar oficio',
@@ -1776,7 +1802,7 @@ export class RelatedDocumentsComponent
     } else {
       this.onLoadToast('error', 'Error', 'Usuario inválido para borrar oficio');
       return;
-    }*/
+    }
 
     this.alertQuestion(
       'warning',
@@ -1784,16 +1810,28 @@ export class RelatedDocumentsComponent
       `Desea eliminar el oficio con el expediente ${proceedingsNumber} y No. Oficio ${managementNumber}`
     ).then(question => {
       if (question.isConfirmed) {
-        this.delete(managementNumber, noVolante);
+        this.delete(managementNumber, noVolante, insertDate);
+        Swal.fire('Borrado', '', 'success');
       }
     });
   }
 
-  async delete(managementNumber: number | string, noVolante: number | string) {
+  async delete(
+    managementNumber: number | string,
+    noVolante: number | string,
+    insertDate: string
+  ) {
     console.log(this.dataTableGoodsJobManagement);
-    this.dataTableGoodsJobManagement.map((item: any) => {
+    this.dataTableGoodsJobManagement.map(async (item: any) => {
       const p_dictamen = Number(this.paramsGestionDictamen.pDictamen);
       if (p_dictamen == 25) {
+        const PREXDO_ANTERIOR = await this.getProcessExtDom(item.id);
+        const FECHA_CAMBIO = await this.getChangeDate(item.id);
+
+        const FECHA_INSERTO = new Date(insertDate);
+
+        if (FECHA_CAMBIO == FECHA_INSERTO) {
+        }
       }
     });
     return;
@@ -1808,7 +1846,7 @@ export class RelatedDocumentsComponent
                 this.officeManagementSerivice
                   .removeMOfficeManagement(managementNumber)
                   .subscribe({
-                    next: async resp => {
+                    next: async () => {
                       const existDictamen: any = await this.dictationCount(
                         noVolante
                       );
@@ -1830,7 +1868,7 @@ export class RelatedDocumentsComponent
                     },
                   });
               },
-              error: errror => {
+              error: (errror: { error: { message: string } }) => {
                 this.onLoadToast('error', 'Error', errror.error.message);
               },
             });
@@ -1977,7 +2015,8 @@ export class RelatedDocumentsComponent
   //OBTENER TIPOS, SUBTIPOS DESCRIPCION
 
   getTypesSelectors(event?: any) {
-    const expedient = this.paramsGestionDictamen.expediente;
+    const expedient = this.formNotification.value.expedientNumber;
+    console.log(expedient);
     this.massiveGoodService.chargeGoodsByExpedient(expedient).subscribe({
       next: resp => {
         const all = {
@@ -2265,7 +2304,13 @@ export class RelatedDocumentsComponent
   }
 
   isDisabledBtnDocs = false;
+  async onClickBtnPrint() {
+    // if (!this.pantallaOption) {
+    await this.printRelationScreen();
+    // }
+  }
   async printRelationScreen() {
+    console.log('PRINT RELATION SCREEN');
     let values = this.formJobManagement.value;
     if (values.statusOf == 'ENVIADO') {
       this.alert(
@@ -2306,7 +2351,7 @@ export class RelatedDocumentsComponent
     }
 
     const etapaCreda = await this.getFaStageCreda(new Date());
-    const checkText = this.managementForm.get('checkText').value;
+    const checkText = this.formJobManagement.get('refersTo').value;
 
     if (!values.cveManagement && values.managementNumber) {
       const department = (await this.getDSAreaInDeparment(
@@ -2317,11 +2362,11 @@ export class RelatedDocumentsComponent
         etapaCreda
       )) as IDepartment;
 
-      const year = new Date().getFullYear();
-      const month = new Date().getMonth() + 1;
-      this.formJobManagement
-        .get('cveManagement')
-        .setValue(this.pupGenerateKey());
+      // const year = new Date().getFullYear();
+      // const month = new Date().getMonth() + 1;
+      const key = await this.pupGeneratorKey();
+
+      this.formJobManagement.get('cveManagement').setValue(key);
       this.formJobManagement.get('statusOf').setValue('EN REVISION');
     }
 
@@ -2334,11 +2379,10 @@ export class RelatedDocumentsComponent
         etapaCreda
       )) as IDepartment;
 
-      const year = new Date().getFullYear();
-      const month = new Date().getMonth() + 1;
-      this.formJobManagement
-        .get('cveManagement')
-        .setValue(this.pupGenerateKey());
+      // const year = new Date().getFullYear();
+      // const month = new Date().getMonth() + 1;
+      const key = await this.pupGeneratorKey();
+      this.formJobManagement.get('cveManagement').setValue(key);
       this.formJobManagement.get('statusOf').setValue('EN REVISION');
 
       if (checkText == this.se_refiere_a.A) {
@@ -2358,7 +2402,7 @@ export class RelatedDocumentsComponent
       const params = new ListParams();
       params['filter.managementNumber'] =
         this.formJobManagement.value.managementNumber;
-      const counter = await this.getGoodsManagement(params);
+      const counter = await this.getGoodsJobManagementCount(params);
 
       if (checkText == this.se_refiere_a.A && counter == 0) {
         this.pupAddGood();
@@ -2420,95 +2464,7 @@ export class RelatedDocumentsComponent
     });
   }
 
-  pupAddGood() {
-    const goodAvailables = this.dataTableGoods.filter(item => item.available);
-    const newRows = [];
-
-    goodAvailables.forEach(item => {
-      newRows.push({
-        goodNumber: item.goodId,
-        classif: item.goodClassNumber,
-        managementNumber: this.formJobManagement.value.managementNumber,
-      });
-      item.available = false;
-    });
-  }
-
-  // pupShowReport() {
-  //   const params = {
-  //     // PARAMFORM: 'NO',
-  //     // P_FIRMA: 'S',
-  //     PARAMFORM: 'NO',
-  //     NO_OF_GES: this.formJobManagement.value.managementNumber,
-  //     TIPO_OF: this.formJobManagement.value.jobType,
-  //     VOLANTE: this.formNotification.value.wheelNumber,
-  //     EXP: this.formNotification.value.expedientNumber,
-  //   };
-
-  //   let nameReport = 'RGEROFGESTION';
-  //   const jobType = this.formJobManagement.value.jobType;
-  //   const PLLAMO = this.getParamsForName('PLLAMO');
-  //   if (jobType == 'INTERNO' && PLLAMO != 'ABANDONO') {
-  //     nameReport = 'RGEROFGESTION';
-  //   } else if (jobType == 'EXTERNO' && PLLAMO != 'ABANDONO') {
-  //     nameReport = 'RGEROFGESTION_EXT';
-  //   } else if (jobType == 'EXTERNO' && PLLAMO == 'ABANDONO') {
-  //     nameReport = 'RGENABANSUB';
-  //   } else {
-  //     this.alert(
-  //       'error',
-  //       'Error',
-  //       'No se ha especificado el tipo de oficio (EXTERNO,INTERNO)'
-  //     );
-  //   }
-
-  //   this.siabService
-  //     .fetchReport('FBIEVALPOSTERCERO', params)
-  //     .subscribe(response => {
-  //       if (response !== null) {
-  //         const blob = new Blob([response], { type: 'application/pdf' });
-  //         const url = URL.createObjectURL(blob);
-  //         let config = {
-  //           initialState: {
-  //             documento: {
-  //               urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
-  //               type: 'pdf',
-  //             },
-  //             callback: (data: any) => {},
-  //           }, //pasar datos por aca
-  //           class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
-  //           ignoreBackdropClick: true, //ignora el click fuera del modal
-  //         };
-  //         this.modalService.show(PreviewDocumentsComponent, config);
-  //       } else {
-  //         const blob = new Blob([response], { type: 'application/pdf' });
-  //         const url = URL.createObjectURL(blob);
-  //         let config = {
-  //           initialState: {
-  //             documento: {
-  //               urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
-  //               type: 'pdf',
-  //             },
-  //             callback: (data: any) => {},
-  //           }, //pasar datos por aca
-  //           class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
-  //           ignoreBackdropClick: true, //ignora el click fuera del modal
-  //         };
-  //         this.modalService.show(PreviewDocumentsComponent, config);
-  //       }
-  //     });
-  // }
-
-  pupAddAnyGood() {
-    const goodAvailables = this.dataTableGoods.filter(item => item.available);
-  }
-
   commit() {}
-
-  pupGenerateKey(): string {
-    //:TODO: Cambiar por el servicio de generacion de llaves
-    return 'test';
-  }
 
   async getDSAreaInDeparment(etapaCreda: string | number) {
     const params = new ListParams();
@@ -2560,123 +2516,31 @@ export class RelatedDocumentsComponent
     });
   }
 
-  openModalFirm(nameReport: string = 'RGEROFGESTION', params: any = null) {
-    this.hideError(true);
-    let nameFile = this.formJobManagement
-      .get('cveManagement')
-      .value.replaceAll('/', '-')
-      .replaceAll('?', '0')
-      .replaceAll(' ', '');
-    let paramsData = new ListParams();
-    if (nameReport == 'RGEROFGESTION') {
-      params = {
-        NO_OF_GES: this.formJobManagement.get('managementNumber').value,
-        TIPO_OF: this.formJobManagement.get('jobType').value,
-        VOLANTE: this.formNotification.get('wheelNumber').value,
-        EXP: this.formNotification?.get('expedientNumber').value,
-        // PARAMETRO QUE NO ESTA EN EL REPORTE DE JASPER
-        ESTAT_DIC: 'ENVIADO',
-        // PARAMETROS DE MÁS EN JASPER
-        DEP: this.dataUserLogged.departament
-          ? this.dataUserLogged.departament.description
-          : '', // DEPARTAMENTO DEL USUARIO
-        NOMBRE_REM: this.formJobManagement.get('sender').value.name, // NOMBRE DEL REMITENTE
-        PUESTO_REM: '', // PUESTO DEL REMITENTE
-        P_1: '',
-        P_2: '',
-      };
-    } else {
-      params = {
-        NO_OF_GES: this.formJobManagement.get('managementNumber').value,
-        // TIPO_OF: this.formJobManagement.get('jobType').value,
-        // VOLANTE: this.formNotification.get('wheelNumber').value,
-        // EXP: this.formNotification?.get('expedientNumber').value,
-        // // PARAMETRO QUE NO ESTA EN EL REPORTE DE JASPER
-        // ESTAT_DIC: 'ENVIADO',
-        // // PARAMETROS DE MÁS EN JASPER
-        // DEP: '',
-        // NOMBRE_REM: '',
-        // PUESTO_REM: '',
-        // P_1: '',
-        // P_2: '',
-      };
-    }
-    paramsData = {
-      ...params,
-      nombreReporte: nameReport + '.jasper',
-    };
-    this.svLegalOpinionsOfficeService.getXMLReportToFirm(paramsData).subscribe({
-      next: (response: any) => {
-        console.log(response);
-        if (!response) {
-          this.onLoadToast(
-            'warning',
-            'Ocurrió un error al cargar el XML con el nombre: ' + nameFile,
-            ''
-          );
-          return;
-        }
-        const formData = new FormData();
-        const file = new File([response], nameFile + '.xml', {
-          type: 'text/xml',
-        });
-        formData.append('file', file);
-        this.startFirmComponent({
-          nameFileDictation: nameFile,
-          ...params,
-          fileDocumentDictation: formData.get('file'), // DOCUMENTO XML GENERADO
-        });
-      },
-      error: error => {
-        console.log(error);
-        if (error.status == 200) {
-          let response = error.error.text;
-          if (!response) {
-            this.onLoadToast(
-              'warning',
-              'Ocurrió un error al cargar el XML con el nombre: ' + nameFile,
-              ''
-            );
-            return;
-          }
-          if (!response.includes('xml')) {
-            this.onLoadToast(
-              'warning',
-              'Ocurrió un error al cargar el XML con el nombre: ' + nameFile,
-              ''
-            );
-            return;
-          }
-          const formData = new FormData();
-          const file = new File([response], nameFile + '.xml', {
-            type: 'text/xml',
-          });
-          formData.append('file', file);
-          this.startFirmComponent({
-            nameFileDictation: nameFile,
-            ...params,
-            fileDocumentDictation: formData.get('file'), // DOCUMENTO XML GENERADO
-          });
-        } else {
-          this.onLoadToast(
-            'warning',
-            'Ocurrió un error al CREAR el XML con el nombre: ' + nameFile,
-            ''
-          );
-        }
-      },
+  getProcessExtDom(noBien: number | string) {
+    return new Promise((resolve, reject) => {
+      this.goodHistoryService.getPrexdoAnterior(noBien).subscribe({
+        next: resp => {
+          resolve(resp);
+        },
+        error: error => {
+          console.log(error);
+          resolve(null);
+        },
+      });
     });
   }
 
-  startFirmComponent(context?: Partial<UploadDictamenFilesModalComponent>) {
-    const modalRef = this.modalService.show(UploadDictamenFilesModalComponent, {
-      initialState: context,
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
-    });
-    modalRef.content.responseFirm.subscribe((next: any) => {
-      console.log('next', next);
-      // CONTINUAR DESPUÉS DE FIRMADO
+  getChangeDate(noBien: number | string) {
+    return new Promise((resolve, reject) => {
+      this.goodHistoryService.getChangeDateHistory(noBien).subscribe({
+        next: resp => {
+          resolve(resp);
+        },
+        error: error => {
+          console.log(error);
+          resolve(null);
+        },
+      });
     });
   }
 }
