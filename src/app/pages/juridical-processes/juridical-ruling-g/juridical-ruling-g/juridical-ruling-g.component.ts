@@ -904,7 +904,6 @@ export class JuridicalRulingGComponent
     this.activatedRoute.queryParams.subscribe((params: any) => {
       this.TIPO_VO = params.TIPO_VO;
     });
-
     console.log(this.expedientesForm);
     if (
       this.expedientesForm.get('noExpediente').value == (null || '') &&
@@ -921,9 +920,9 @@ export class JuridicalRulingGComponent
         ['/pages/juridical/depositary/legal-opinions-office/'],
         {
           queryParams: {
-            origin: 'FACTJURDICTAMASG',
+            origin: 'FACTJURDICTAMASG', //Cambiar
             P_VALOR: this.dictamen.id,
-            // P_NO_TRAMITE: this.expedientesForm.get('noExpediente').value,
+            P_NO_TRAMITE: this.expedientesForm.get('noExpediente').value,
             CLAVE_OFICIO_ARMADA:
               this.dictaminacionesForm.get('cveOficio').value,
             P_GEST_OK: this.P_GEST_OK,
@@ -943,9 +942,46 @@ export class JuridicalRulingGComponent
   }
   btnOficioSubstanciacion() {
     console.log('btnOficioSubstanciacion');
+
+    //MANDA A  LLAMAR LA FORMA FACTADBOFICIOGEST
+    this.router.navigate(
+      [
+        '/pages/documents-reception/flyers-registration/related-document-management/1',
+      ],
+      {
+        queryParams: {
+          VOLANTE: this.dictaminacionesForm.get('wheelNumber').value,
+          EXPEDIENTE: this.expedientesForm.get('noExpediente').value,
+          DOC: 'N',
+          TIPO_OF: 'EXTERNO',
+          SALE: 'C',
+          BIEN: this.stateNumber,
+          PLLAMO: 'ABANDONO',
+          P_GEST_OK: this.P_GEST_OK,
+          P_NO_TRAMITE: this.P_NO_TRAMITE,
+          NO_DICTAMEN: this.dictamen.id, //No lo pide originalmente
+        },
+      }
+    );
   }
   btnOficioRelacionado() {
     console.log('btnOficioRelacionado');
+
+    //MANDA A LLAMAR A LA FORMA FACTADBOFICIOGESTREL
+    this.router.navigate(
+      [
+        '/pages/documents-reception/flyers-registration/related-document-management/2',
+      ],
+      {
+        queryParams: {
+          VOLANTE: this.dictaminacionesForm.get('wheelNumber').value,
+          EXPEDIENTE: this.expedientesForm.get('noExpediente').value,
+          P_GEST_OK: this.P_GEST_OK,
+          P_NO_TRAMITE: this.P_NO_TRAMITE,
+          PLLAMO: 'ABANDONO',
+        },
+      }
+    );
   }
 
   btnSalir() {
