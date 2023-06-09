@@ -2115,8 +2115,8 @@ export class JuridicalRulingGComponent
       );
       if (OFICIO != null) {
         VALOR = OFICIO;
-        this.dictamen.id = VALOR;
-        this.oficioDictamen.officialNumber = VALOR;
+        // this.dictamen.id = VALOR;
+        // this.oficioDictamen.officialNumber = VALOR;
       }
       if (typeDict == 'PROCEDENCIA') {
         this.PUP_DICTA_LOG(
