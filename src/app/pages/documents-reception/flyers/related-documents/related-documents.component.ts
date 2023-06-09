@@ -9,7 +9,7 @@ import {
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
-import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, firstValueFrom, skip, takeUntil } from 'rxjs';
 import { PgrFilesComponent } from 'src/app/@standalone/modals/pgr-files/pgr-files.component';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
@@ -76,7 +76,6 @@ import {
 } from './related-documents-message';
 import { RelateDocumentsResponse } from './related-documents-response';
 import { RelatedDocumentsService } from './services/related-documents.service';
-import { UploadDictamenFilesModalComponent } from './upload-dictamen-files-modal/upload-dictamen-files-modal.component';
 
 export type IGoodAndAvailable = IGood & { available: boolean };
 export interface IGoodJobManagement {
@@ -107,6 +106,14 @@ export class RelatedDocumentsComponent
   extends RelateDocumentsResponse
   implements OnInit
 {
+  // Send variables
+  blockSend: boolean = false;
+  variablesSend = {
+    ESTATUS_OF: '',
+    CVE_OF_GESTION: '',
+    FECHA_INSERTO: '',
+    V_JUSTIFICACION: '',
+  };
   disabled: boolean = true;
   filtroPersonaExt: ICopiesJobManagementDto[] = [];
   filterParams2 = new BehaviorSubject<FilterParams>(new FilterParams());
@@ -292,6 +299,8 @@ export class RelatedDocumentsComponent
     text3: new FormControl(''),
     /** @Description des_remitente_pa */
     // desSenderpa: new FormControl(''),
+    /** @Description insertDate */
+    insertDate: new FormControl(''),
   });
 
   constructor(
@@ -947,7 +956,6 @@ export class RelatedDocumentsComponent
       this.dataTableGoodsJobManagement = (
         await this.getGoodsJobManagement(params)
       ).data;
-      console.log(this.dataTableGoodsJobManagement);
     } catch (ex) {
       console.log(ex);
     }
@@ -2559,18 +2567,28 @@ export class RelatedDocumentsComponent
   }
 
   sendDictamen() {
-    let config: ModalOptions = {
-      initialState: {
-        documento: {
-          urlDoc: '',
-          type: 'pdf',
-        },
-        callback: (data: any) => {},
-      }, //pasar datos por aca
-      class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
-      ignoreBackdropClick: true, //ignora el click fuera del modal
-    };
-    this.modalService.show(UploadDictamenFilesModalComponent, config);
+    // let config: ModalOptions = {
+    //   initialState: {
+    //     documento: {
+    //       urlDoc: '',
+    //       type: 'pdf',
+    //     },
+    //     callback: (data: any) => {},
+    //   }, //pasar datos por aca
+    //   class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+    //   ignoreBackdropClick: true, //ignora el click fuera del modal
+    // };
+    // this.modalService.show(UploadDictamenFilesModalComponent, config);
+    if (
+      this.formJobManagement.value.statusOf == 'ENVIADO' &&
+      !this.formJobManagement.value.cveManagement.includes('?')
+    ) {
+      // Primer condicion al enviar
+      this.firstConditionSend();
+    } else {
+      // Segunda condicion al enviar
+      this.secondConditionSend();
+    }
   }
 
   dictationCount(wheelNumber: string | number) {
@@ -2614,6 +2632,104 @@ export class RelatedDocumentsComponent
         },
       });
     });
+  }
+
+  firstConditionSend() {
+    const params = new FilterParams();
+    params.removeAllFilters();
+    params.addFilter('natureDocument', this.formJobManagement.value.jobType);
+    params.addFilter(
+      'documentNumber',
+      this.formJobManagement.value.managementNumber
+    );
+    this.svLegalOpinionsOfficeService
+      .getElectronicFirmData(params.getParams())
+      .subscribe({
+        next: data => {
+          console.log('FIRMA ELECTRONICA', data);
+          if (data.count > 0) {
+            // Valida FOLIO_UNIVERSAL
+            // Se llama PUP_CONSULTA_PDF_BD_SSF3
+            this._PUP_CONSULTA_PDF_BD_SSF3();
+          }
+        },
+        error: error => {
+          console.log(error);
+          if (error.status == 400) {
+            // se llama PUP_LANZA_REPORTE
+            this._PUP_LANZA_REPORTE();
+            // se llama PUP_GENERA_XML
+            this._PUP_GENERA_XML();
+          } else {
+            this.onLoadToast(
+              'error',
+              'Se tiene problemas al mostrar el reporte',
+              ''
+            );
+          }
+        },
+      });
+  }
+
+  enabledPrintAndBlockSend() {
+    this.blockSend = true;
+  }
+
+  _PUP_GENERA_XML() {}
+
+  _PUP_LANZA_REPORTE() {}
+
+  _PUP_CONSULTA_PDF_BD_SSF3() {}
+
+  secondConditionSend() {
+    this.variablesSend.ESTATUS_OF = this.formJobManagement.value.statusOf;
+    this.variablesSend.CVE_OF_GESTION =
+      this.formJobManagement.value.cveManagement;
+    this.variablesSend.FECHA_INSERTO = this.formJobManagement.value.insertDate;
+    if (!this.formJobManagement.value.jobType) {
+      this.alertInfo('warning', 'Debe especificar el TIPO OFICIO', '');
+      return;
+    }
+    if (!this.formJobManagement.value.sender) {
+      this.alertInfo('warning', 'Debe especificar el REMITENTE', '');
+      return;
+    }
+    if (this.formJobManagement.value.jobType == 'INTERNO') {
+      this.alertInfo('warning', 'Debe especificar el DESTINATARIO', '');
+      return;
+    }
+    if (this.formJobManagement.value.jobType == 'EXTERNO') {
+      this.alertInfo('warning', 'Debe especificar al DESTINATARIO EXTERNO', '');
+      return;
+    }
+    if (!this.formJobManagement.value.city) {
+      this.alertInfo('warning', 'Debe especificar la CIUDAD', '');
+      return;
+    }
+    if (
+      this.formJobManagement.value.statusOf == 'EN REVISION' &&
+      !this.formJobManagement.value.statusOf
+    ) {
+      if (!this.variablesSend.V_JUSTIFICACION) {
+        this.alertInfo(
+          'warning',
+          'Es necesario contar con una justificación para poder cerrar el oficio',
+          ''
+        );
+        return;
+      }
+      // CONSULTAR ACTNOM
+      let actnom = 0;
+      if (actnom == 0) {
+        this.alertInfo(
+          'info',
+          'SE ACTUALIZARÁ LA NOMENCLATURA CONFORME AL NUEVO ESTATUTO YA QUE FUE ELABORADO ANTES DE LA PUBLICACION DE ESTÉ',
+          ''
+        );
+        // Se llama PUF_GENERA_CLAVE para crear clave
+        // this.formJobManagement.get('cveManagemen').setValue();
+      }
+    }
   }
 
   getEstPreviousHistory(body: any) {

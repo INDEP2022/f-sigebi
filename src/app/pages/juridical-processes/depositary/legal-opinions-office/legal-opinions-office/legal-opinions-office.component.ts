@@ -94,12 +94,12 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
   officeTextDictationData: IJobDictumTexts;
   addresseeDataSelect: any;
   paramsScreen: IParamsLegalOpinionsOffice = {
-    PAQUETE: '',
-    P_GEST_OK: '',
-    CLAVE_OFICIO_ARMADA: '',
-    P_NO_TRAMITE: '',
-    TIPO: '',
-    P_VALOR: '',
+    PAQUETE: '', // PAQUETE
+    P_GEST_OK: '', // P_GEST_OK
+    CLAVE_OFICIO_ARMADA: '', // CLAVE_OFICIO_ARMADA
+    P_NO_TRAMITE: '', // NO_TRAMITE
+    TIPO: '', // TIPO_DICTAMEN
+    P_VALOR: '', // NO_OF_DICTA
   };
   officeTypeOption: any[] = officeTypeOption;
   origin: string = '';
@@ -1412,15 +1412,19 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
     if (event) {
       this.addresseeDataSelect = event;
       if (event.user) {
+        if (!this.officeDictationData) {
+          this.officeDictationData = { ...this.officeDictationData };
+        }
         this.officeDictationData.delegacionRecipientNumber =
           event.delegationNumber;
         event.delegationNumber;
         this.officeDictationData.recipientDepartmentNumber =
           event.departamentNumber;
+        console.log(this.officeDictationData);
         // this.officeDictationData.sender
         const params: any = new FilterParams();
         params.removeAllFilters();
-        params.addFilter('user', this.officeDictationData.sender);
+        params.addFilter('user', event.user);
         this.svLegalOpinionsOfficeService
           .getAllUsersTracker(params.getParams())
           .subscribe({
@@ -1458,6 +1462,7 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
           );
           if (getByValue) {
             this.addresseeDataSelect = data.data[0];
+            this.changeAddreseeDetail(data.data[0]);
           }
           console.log(data, this.addressee);
           subscription.unsubscribe();
@@ -2041,6 +2046,9 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
           origin: this.screenKey,
           TIPO_PROC: 2,
           NO_INDICADOR: this.dictationData.id,
+          origin2: this.origin,
+          origin3: this.origin3,
+          ...this.paramsScreen,
         },
       }
     );
@@ -3104,7 +3112,7 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
           CONSULTA: this.CONSULTA,
           VOLANTE: this.dictationData.wheelNumber,
           EXPEDIENTE: this.dictationData.expedientNumber,
-          TIPO_DICT: this.paramsScreen.TIPO,
+          TIPO_DIC: this.paramsScreen.TIPO,
           TIPO_VO: this.TIPO_VO,
         },
       });

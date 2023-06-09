@@ -23,7 +23,6 @@ import {
   IPACambioStatus,
 } from 'src/app/core/models/good-programming/good-programming';
 import {
-  IAcceptGoodStatus,
   IAcceptGoodStatusScreen,
   IGood,
 } from 'src/app/core/models/ms-good/good';
@@ -34,6 +33,7 @@ import {
   IDetailWithIndEdo,
 } from 'src/app/core/models/ms-proceedings/detail-proceedings-delivery-reception.model';
 import { IProccedingsDeliveryReception } from 'src/app/core/models/ms-proceedings/proceedings-delivery-reception-model';
+import { ICveAct } from 'src/app/core/models/ms-proceedings/update-proceedings.model';
 import { GoodSssubtypeService } from 'src/app/core/services/catalogs/good-sssubtype.service';
 import { SafeService } from 'src/app/core/services/catalogs/safe.service';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
@@ -45,6 +45,7 @@ import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.s
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import { ParametersService } from 'src/app/core/services/ms-parametergood/parameters.service';
+import { ProceedingsService } from 'src/app/core/services/ms-proceedings';
 import { DetailProceeDelRecService } from 'src/app/core/services/ms-proceedings/detail-proceedings-delivery-reception.service';
 import { ProceedingsDeliveryReceptionService } from 'src/app/core/services/ms-proceedings/proceedings-delivery-reception';
 import { ProgrammingGoodService } from 'src/app/core/services/ms-programming-request/programming-good.service';
@@ -91,6 +92,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
         type: 'string',
         sort: false,
       },
+
       extDomProcess: {
         title: 'Proceso',
         type: 'string',
@@ -104,6 +106,11 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
       unit: {
         title: 'Unidad',
         type: 'string',
+        sort: false,
+      },
+      status: {
+        title: 'Estatus',
+        tipe: 'string',
         sort: false,
       },
       acta: {
@@ -167,13 +174,13 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
   searchByOtherData = false;
   dataExpedients = new DefaultSelect();
   act2Valid: boolean = false;
-  btnCSSAct = 'btn-success';
+  btnCSSAct = 'btn-primary';
   dataGoodAct = new LocalDataSource();
   dataGoods = new LocalDataSource();
   form: FormGroup;
   goodData: any[] = [];
   initialBool = true;
-  labelActa = 'Abrir acta';
+  labelActa = 'Cerrar acta';
   maxDate = new Date();
   maxDatefecElab = subDays(new Date(), 1);
   minDateFecElab: Date;
@@ -235,7 +242,8 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
     private serviceWarehouse: WarehouseFilterService,
     private serviceVault: SafeService,
     private modalService: BsModalService,
-    private serviceNotification: NotificationService
+    private serviceNotification: NotificationService,
+    private serviceProceeding: ProceedingsService
   ) {
     super();
   }
@@ -544,47 +552,64 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
       pVcScreen: 'FACTREFACTAVENT',
     };
 
-    const modelStatus: IAcceptGoodStatus = {
-      pNumberGood: element.id,
-      pExpedients: this.form.get('expediente').value,
+    const model: ICveAct = {
+      pExpedientNumber: this.numberExpedient,
+      pGoodNumber: element.id,
+      pVarTypeActa1: 'DXCVENT',
+      pVarTypeActa2: 'DXCVENT',
     };
     console.log(modelScreen);
     return new Promise((resolve, reject) => {
       this.serviceGoodProcess.getacceptGoodStatusScreen(modelScreen).subscribe(
         res => {
-          console.log(res);
-          console.log(res.message);
-          if (typeof res == 'number' && res > 0) {
-            di_disponible = true;
-            console.log('Entro if');
-            this.serviceGoodProcess.getacceptGoodStatus(modelStatus).subscribe(
-              res => {
-                const resDis = JSON.stringify(res);
-                if (typeof res == 'string' && res != 'S') {
-                  resolve({ disponible: false });
-                } else {
-                  resolve({ disponible: true });
-                }
-              },
-              err => {
-                resolve({ disponible: false });
+          di_disponible = true;
+
+          this.serviceProceeding.getCveAct(model).subscribe(
+            res => {
+              if (res.data.length > 0) {
+                resolve({
+                  avalaible: false,
+                  acta: res.data[0]['cve_acta'],
+                });
+              } else {
+                resolve({
+                  avalaible: di_disponible,
+                  acta: null,
+                });
               }
-            );
-          } else {
-            di_disponible = false;
-            console.log('Entro else');
-            this.serviceGoodProcess.getacceptGoodStatus(modelStatus).subscribe(
-              res => {
-                resolve({ disponible: false });
-              },
-              err => {
-                resolve({ disponible: false });
-              }
-            );
-          }
+            },
+            err => {
+              resolve({
+                avalaible: di_disponible,
+                acta: null,
+              });
+            }
+          );
         },
         err => {
-          resolve({ disponible: false });
+          di_disponible = false;
+
+          this.serviceProceeding.getCveAct(model).subscribe(
+            res => {
+              if (res.data.length > 0) {
+                resolve({
+                  avalaible: false,
+                  acta: res.data[0]['cve_acta'],
+                });
+              } else {
+                resolve({
+                  avalaible: di_disponible,
+                  acta: null,
+                });
+              }
+            },
+            err => {
+              resolve({
+                avalaible: di_disponible,
+                acta: null,
+              });
+            }
+          );
         }
       );
     });
@@ -756,6 +781,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
     this.serviceDetailProc.getAllwithEndFisico(modelDetail).subscribe(
       async res => {
         console.log(res);
+        this.totalItemsDataGoodsAct = res.count;
         const data = this.dataGoods;
         const incomeData = res.data;
         for (let i = 0; i < incomeData.length; i++) {
@@ -847,6 +873,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
         this.act2Valid = true;
         this.navigateProceedings = true;
         this.idProceeding = dataRes.id;
+        this.loading = false;
       },
       err => {
         this.form.get('acta2').setValue(dataRes.keysProceedings);
@@ -872,6 +899,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
         this.form.get('recibe2').setValue(dataRes.witness2);
         this.form.get('testigo').setValue(dataRes.comptrollerWitness);
         this.form.get('statusProceeding').setValue(dataRes.statusProceedings);
+        this.form.get('folioEscaneo').setValue(dataRes.universalFolio);
         if (this.form.get('statusProceeding').value === 'ABIERTA') {
           this.labelActa = 'Cerrar acta';
           this.btnCSSAct = 'btn-primary';
@@ -881,6 +909,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
         }
         this.act2Valid = true;
         this.navigateProceedings = true;
+        this.loading = false;
         this.idProceeding = dataRes.id;
       }
     );
@@ -1114,6 +1143,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
           this.serviceProcVal.postProceeding(newProceeding).subscribe(
             res => {
               this.initialBool = true;
+              this.form.get('statusProceeding').setValue('ABIERTA');
               console.log(res);
               this.alert('success', 'Se guardo el acta de manera éxitosa', '');
             },
@@ -1143,7 +1173,9 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
     console.log(paramsF.getParams());
     this.serviceGood
       .getAllFilterDetail(
-        `filter.fileNumber=$eq:${this.form.get('expediente').value}`
+        `filter.fileNumber=$eq:${
+          this.form.get('expediente').value
+        }&${paramsF.getParams()}`
       )
       .subscribe({
         next: async (res: any) => {
@@ -1152,6 +1184,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
               res.data.map(async (e: any) => {
                 let disponible: boolean;
                 const resp = await this.validateGood(e);
+
                 const ind = await this.validateRequired(e);
                 console.log(ind);
                 console.log(resp);
@@ -1238,6 +1271,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
           console.log(typeof dataRes);
         } else {
           console.log('No entro');
+          this.loading = false;
           this.initialBool = false;
           this.minDateFecElab = new Date();
           this.checkChange();
@@ -1246,6 +1280,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
       err => {
         console.log(err);
         this.initialBool = false;
+        this.loading = false;
         this.checkChange();
         this.blockExpedient = false;
       }
@@ -1282,6 +1317,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
     this.act2Valid = false;
     this.initialBool = true;
     this.blockExpedient = true;
+    this.loading = true;
     this.goodData = [];
     this.dataGoodAct.load(this.goodData);
     this.numberProceeding = 0;
@@ -1316,11 +1352,10 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
                 res.data.map(async (e: any) => {
                   let disponible: boolean;
                   const resp = await this.validateGood(e);
-                  const ind = await this.validateRequired(e);
-                  console.log(ind);
+                  const cveAct = JSON.parse(JSON.stringify(resp)).acta;
                   console.log(resp);
-                  disponible = JSON.parse(JSON.stringify(resp)).disponible;
-                  return { ...e, avalaible: disponible, indEdoFisico: ind };
+                  disponible = JSON.parse(JSON.stringify(resp)).avalaible;
+                  return { ...e, avalaible: disponible, acta: cveAct };
                 })
               );
               this.dataGoods.load(newData);
@@ -1339,10 +1374,12 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
                 'El número de expediente registrado no tiene bienes válidos'
               );
               this.blockExpedient = false;
+              this.loading = false;
             }
           },
           error: (err: any) => {
             console.error(err);
+            this.loading = false;
             this.blockExpedient = false;
             this.blockAllInputs();
             this.alert(
@@ -1394,11 +1431,12 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
 
   fecElabFn() {
     let fecElab = new Date(this.form.get('fecElab').value);
+    console.log(fecElab);
     if (this.form.get('fecElab').value != null) {
-      this.form.get('fecReception').setValue(new Date(fecElab));
+      this.form.get('fecRecepFisica').setValue(new Date(fecElab));
     } else {
       {
-        this.form.get('fecReception').setValue('');
+        this.form.get('fecRecepFisica').setValue('');
       }
     }
   }
@@ -1546,167 +1584,112 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
   newOpenProceeding() {
     const paramsF = new FilterParams();
     paramsF.addFilter('keysProceedings', this.form.get('acta2').value);
-    this.serviceProcVal.getByFilter(paramsF.getParams()).subscribe(
-      res => {
-        if (
-          ['CERRADO', 'CERRADA'].includes(
-            this.form.get('statusProceeding').value
-          )
-        ) {
-          this.alertQuestion(
-            'question',
-            `¿Está seguro de abrir el acta ${this.form.get('acta2').value}?`,
-            ''
-          ).then(q => {
-            if (q.isConfirmed) {
-              const lv_TIP_ACTA = 'DX,DXCV';
-              const modelPaOpen: IPAAbrirActasPrograma = {
-                P_NOACTA: this.idProceeding,
-                P_AREATRA: lv_TIP_ACTA,
-                P_PANTALLA: 'FACTREFACTAENTREC',
-                P_TIPOMOV: 2,
-                USUARIO:
-                  localStorage.getItem('username') == 'sigebiadmon'
-                    ? localStorage.getItem('username')
-                    : localStorage.getItem('username').toLocaleUpperCase(),
-              };
-              this.serviceProgrammingGood
-                .paOpenProceedingProgam(modelPaOpen)
-                .subscribe(
-                  res => {
-                    const paramsF = new FilterParams();
-                    paramsF.addFilter(
-                      'valUser',
-                      localStorage.getItem('username').toLocaleLowerCase()
-                    );
-                    paramsF.addFilter('valMinutesNumber', this.idProceeding);
-                    this.serviceProgrammingGood
-                      .getTmpProgValidation(paramsF.getParams())
-                      .subscribe(
-                        res => {
-                          console.log(res);
-                          const VAL_MOVIMIENTO = res.data[0]['valmovement'];
-                          if (VAL_MOVIMIENTO === 1) {
-                            this.serviceProgrammingGood
-                              .paRegresaEstAnterior(modelPaOpen)
-                              .subscribe(
-                                res => {
-                                  this.labelActa = 'Cerrar acta';
-                                  this.btnCSSAct = 'btn-primary';
-                                  this.form
-                                    .get('statusProceeding')
-                                    .setValue('ABIERTA');
-                                  this.reopening = true;
-                                  const btn =
-                                    document.getElementById('expedient-number');
-                                  this.render.removeClass(btn, 'disabled');
-                                  this.render.addClass(btn, 'enabled');
-                                },
-                                err => {
-                                  console.log(err);
-                                  const btn =
-                                    document.getElementById('expedient-number');
-                                  this.render.removeClass(btn, 'disabled');
-                                  this.render.addClass(btn, 'enabled');
-                                }
-                              );
-                          } else {
-                            this.alert('success', 'El acta fue abierta', '');
-                          }
-                        },
-                        err => {
-                          this.alert('success', 'El acta fue abierta', '');
+    this.serviceProcVal.getByFilter(paramsF.getParams()).subscribe(res => {
+      if (
+        ['CERRADO', 'CERRADA'].includes(this.form.get('statusProceeding').value)
+      ) {
+        this.alertQuestion(
+          'question',
+          `¿Está seguro de abrir el acta ${this.form.get('acta2').value}?`,
+          ''
+        ).then(q => {
+          if (q.isConfirmed) {
+            const lv_TIP_ACTA = 'DX,DXCV';
+            const modelPaOpen: IPAAbrirActasPrograma = {
+              P_NOACTA: this.idProceeding,
+              P_AREATRA: lv_TIP_ACTA,
+              P_PANTALLA: 'FACTREFACTAVENT',
+              P_TIPOMOV: 2,
+              USUARIO:
+                localStorage.getItem('username') == 'sigebiadmon'
+                  ? localStorage.getItem('username')
+                  : localStorage.getItem('username').toLocaleUpperCase(),
+            };
+            this.serviceProgrammingGood
+              .paOpenProceedingProgam(modelPaOpen)
+              .subscribe(
+                res => {
+                  const paramsF = new FilterParams();
+                  paramsF.addFilter(
+                    'valUser',
+                    localStorage.getItem('username') == 'sigebiadmon'
+                      ? localStorage.getItem('username')
+                      : localStorage.getItem('username').toLocaleUpperCase()
+                  );
+                  paramsF.addFilter('valMinutesNumber', this.idProceeding);
+                  this.serviceProgrammingGood
+                    .getTmpProgValidation(paramsF.getParams())
+                    .subscribe(
+                      res => {
+                        console.log(res);
+                        const VAL_MOVIMIENTO = res.data[0]['valmovement'];
+                        if (VAL_MOVIMIENTO == 1) {
+                          this.serviceProgrammingGood
+                            .paRegresaEstAnterior(modelPaOpen)
+                            .subscribe(
+                              res => {
+                                this.labelActa = 'Cerrar acta';
+                                this.btnCSSAct = 'btn-primary';
+                                this.form
+                                  .get('statusProceeding')
+                                  .setValue('ABIERTA');
+                                this.reopening = true;
+                                this.loading = true;
+                                const btn =
+                                  document.getElementById('expedient-number');
+                                this.render.removeClass(btn, 'disabled');
+                                this.render.addClass(btn, 'enabled');
+                                this.getGoodsActFn();
+                                this.getGoodsFn();
+                                this.alert(
+                                  'success',
+                                  'El acta fue abierta',
+                                  ''
+                                );
+                              },
+                              err => {
+                                console.log(err);
+                                const btn =
+                                  document.getElementById('expedient-number');
+                                this.render.removeClass(btn, 'disabled');
+                                this.render.addClass(btn, 'enabled');
+                              }
+                            );
+                        } else {
+                          this.alert(
+                            'warning',
+                            'Error al abrir acta',
+                            'El estatus de los bienes no regresaron a su estado anterior, por favor volver a intentar abrir el acta'
+                          );
                         }
-                      );
-                  },
-                  err => {
-                    this.alert(
-                      'error',
-                      'Se presentó un error inesperado',
-                      'Se presentó un error inesperado al intentar abrir el acta. Por favor intentelo nuevamente'
+                      },
+                      err => {
+                        this.alert(
+                          'warning',
+                          'Hubo un error al abrir el acta',
+                          'Lo bienes no regresaron a su estado anterior'
+                        );
+                      }
                     );
-                  }
-                );
-            }
-          });
-        } else {
-          const resData = JSON.parse(JSON.stringify(res.data))[0];
-          const paramsF = new FilterParams();
-          let VAL_MOVIMIENTO = 0;
-          paramsF.addFilter(
-            'valUser',
-            localStorage.getItem('username').toLocaleLowerCase()
-          );
-          paramsF.addFilter('valMinutesNumber', this.idProceeding);
-          this.serviceProgrammingGood
-            .getTmpProgValidation(paramsF.getParams())
-            .subscribe(
-              res => {
-                console.log(res);
-                VAL_MOVIMIENTO = res.data[0]['valmovement'];
-                if (VAL_MOVIMIENTO === 1) {
-                  const tipo_acta = 'DXCV';
-                  this.openProceedingFn(resData.id);
-                } else {
-                  this.openProceedingFn(resData.id);
+                },
+                err => {
+                  this.alert(
+                    'error',
+                    'Se presentó un error inesperado',
+                    'Se presentó un error inesperado al intentar abrir el acta. Por favor intentelo nuevamente'
+                  );
                 }
-              },
-              err => {
-                this.openProceedingFn(resData.id);
-              }
-            );
-        }
-      },
-      err => {}
-    );
-  }
-
-  openProceedingFn(id: string) {
-    const modelEdit: IProccedingsDeliveryReception = {
-      comptrollerWitness: this.form.get('testigo').value,
-      observations: this.form.get('observaciones').value,
-      witness1: this.form.get('entrega').value,
-      witness2: this.form.get('recibe2').value,
-      address: this.form.get('direccion').value,
-      statusProceedings: 'ABIERTA',
-      elaborationDate: format(
-        this.form.get('fecElab').value,
-        'yyyy-MM,dd HH:mm'
-      ),
-      datePhysicalReception: format(
-        this.form.get('fecRecepFisica').value,
-        'yyyy-MM,dd HH:mm'
-      ),
-      dateElaborationReceipt: format(
-        this.form.get('fecElabRecibo').value,
-        'yyyy-MM,dd HH:mm'
-      ),
-      dateDeliveryGood: format(
-        this.form.get('fecEntregaBienes').value,
-        'yyyy-MM,dd HH:mm'
-      ),
-      captureDate: format(new Date(), 'yyyy-MM,dd HH:mm'),
-    };
-    this.serviceProcVal.editProceeding(id, modelEdit).subscribe(
-      res => {
-        this.form.get('statusProceeding').setValue('ABIERTA');
-        this.labelActa = 'Cerrar acta';
-        this.btnCSSAct = 'btn-primary';
-        this.form.get('fecCaptura').setValue(new Date());
-        this.inputOpenProceeding();
-        this.alert('success', 'El acta se abrió con éxito', '');
-      },
-      err => {
-        this.alert(
-          'error',
-          'Ocurrió un error inesperado',
-          'Se presentó un error inesperado al intentar abrir el acta. Por favor intentelo nuevamente'
-        );
+              );
+          }
+        });
+      } else {
+        this.alert('info', 'El acta ya está abierta', '');
       }
-    );
+    });
   }
 
   newCloseProceeding() {
+    this.validateFolio();
     if (this.dataGoodAct['data'].length == 0) {
       this.alert(
         'warning',
@@ -1730,6 +1713,10 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
       this.dataGoodAct['data'].find((e: any) => e.good.storeNumber == null)
     ) {
       this.alert('warning', 'Hay bienes no guardados en almacén', '');
+    } else if (this.form.get('folioEscaneo').value == null) {
+      this.alert('warning', 'No se ha ingresado un número de folio', '');
+    } else if (!this.scanStatus) {
+      this.alert('warning', 'El folio no ha sido escaneado', '');
     } else {
       const paramsF = new FilterParams();
       paramsF.addFilter('keysProceedings', this.form.get('acta2').value);
@@ -1751,6 +1738,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
                 VAL_MOVIMIENTO = res.data[0]['valmovement'];
                 if (VAL_MOVIMIENTO === 1) {
                   const tipo_acta = 'DXCV';
+                  this.closeProceedingFn();
                 } else {
                   this.closeProceedingFn();
                 }
@@ -1774,6 +1762,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
         const newParams = `filter.numClasifGoods=$eq:${goodClass}`;
         this.serviceSssubtypeGood.getFilter(newParams).subscribe(
           res => {
+            console.log(res);
             const type = JSON.parse(JSON.stringify(res.data[0]['numType']));
             const subtype = JSON.parse(
               JSON.stringify(res.data[0]['numSubType'])
@@ -1796,10 +1785,12 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
               item.storeNumber === null
             ) {
               resolve(false);
+            } else {
+              resolve(true);
             }
           },
           err => {
-            resolve(false);
+            resolve(true);
           }
         );
       }
@@ -1828,11 +1819,13 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
         .getByFolio(this.form.get('folioEscaneo').value)
         .subscribe(
           async res => {
+            console.log(res);
             const data = JSON.parse(JSON.stringify(res));
             const scanStatus = data.data[0]['scanStatus'];
             console.log(scanStatus);
-            if (scanStatus === 'ESCANEADO') {
+            if (scanStatus == 'ESCANEADO') {
               const vanbal = await this.waitVBANVAL();
+              console.log(vanbal);
               if (vanbal == false) {
                 this.alert('warning', 'Debe especificar almacen', '');
               } else {
@@ -1846,7 +1839,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
                     const model: IPACambioStatus = {
                       P_NOACTA: this.idProceeding,
                       P_PANTALLA: 'FACTREFACTAVENT',
-                      P_FECHA_RE_FIS: this.form.get('fecReception').value,
+                      P_FECHA_RE_FIS: this.form.get('fecRecepFisica').value,
                       P_TIPO_ACTA: 'DXCV',
                       USUARIO:
                         localStorage.getItem('username') == 'sigebiadmon'
@@ -1859,42 +1852,12 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
                     this.serviceProgrammingGood.paChangeStatus(model).subscribe(
                       res => {
                         console.log(res);
-                        const paramsF = new FilterParams();
-                        paramsF.addFilter(
-                          'valUser',
-                          localStorage.getItem('username').toLocaleLowerCase()
-                        );
-                        paramsF.addFilter(
-                          'valMinutesNumber',
-                          this.idProceeding
-                        );
-                        this.serviceProgrammingGood
-                          .getTmpProgValidation(paramsF.getParams())
-                          .subscribe(
-                            res => {
-                              const VAL_MOVIMIENTO = res.data[0]['valmovement'];
-                              if (VAL_MOVIMIENTO != 0) {
-                                this.form
-                                  .get('statusProceeding')
-                                  .setValue('CERRADO');
-                                this.labelActa = 'Abrir acta';
-                                this.btnCSSAct = 'btn-success';
-                                this.alert(
-                                  'success',
-                                  'El acta ha sido cerrada',
-                                  ''
-                                );
-                              } else {
-                                //!ELSE DE CERRAR
-                                console.log('Entro a else');
-                              }
-                            },
-                            err => {
-                              console.log('Entro a else');
-                              //!ELSE DE CERRAR
-                            }
-                          );
-                        console.log(res);
+                        this.getGoodsActFn();
+                        this.getGoodsFn();
+                        this.form.get('statusProceeding').setValue('CERRADO');
+                        this.labelActa = 'Abrir acta';
+                        this.btnCSSAct = 'btn-success';
+                        this.alert('success', 'El acta ha sido cerrada', '');
                       },
                       err => {
                         console.log(err);
@@ -1919,7 +1882,6 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
 
   closeProceeding() {
     console.log(this.dataGoodAct['data']);
-    this.validateFolio();
     if (this.dataGoodAct['data'].length == 0) {
       this.alert(
         'warning',
@@ -1971,8 +1933,8 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
     }
   }
 
-  validateFolio() {
-    this.serviceDocuments
+  async validateFolio() {
+    await this.serviceDocuments
       .getByFolio(this.form.get('folioEscaneo').value)
       .subscribe(res => {
         const data = JSON.parse(JSON.stringify(res));
@@ -2199,6 +2161,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
     this.limitDataGoodsAct = new FormControl(10);
 
     this.dataGoods.load([]);
+    this.dataGoodAct.load([]);
 
     this.blockExpedient = false;
     this.navigateProceedings = false;
@@ -2225,13 +2188,16 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
     this.form.get('entrego').reset();
     this.form.get('recibe').reset();
     this.form.get('folio').reset();
+    this.form.get('folioEscaneo').reset();
+    this.form.get('testigo').reset();
   }
 
   newProceeding() {
     /* this.inputsNewProceeding(); */
     this.numberProceeding = this.proceedingData.length;
     this.clearInputs();
-    this.form.get('ident').setValue('ADM');
+    this.form.get('ident').setValue('DEV');
+    this.form.get('entrego').setValue('PART');
     this.checkChange();
     this.minDateFecElab = new Date();
     this.form.get('statusProceeding').reset();
