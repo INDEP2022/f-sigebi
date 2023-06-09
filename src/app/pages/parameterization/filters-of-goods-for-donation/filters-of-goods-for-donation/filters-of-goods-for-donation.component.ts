@@ -19,8 +19,7 @@ import { COLUMNS } from './columns';
 })
 export class FiltersOfGoodsForDonationComponent
   extends BasePage
-  implements OnInit
-{
+  implements OnInit {
   columns: any[] = [];
   totalItems: number = 0;
   data: LocalDataSource = new LocalDataSource();
@@ -136,10 +135,19 @@ export class FiltersOfGoodsForDonationComponent
         //Ejecutar el servicio
         this.donationServ.remove(event).subscribe({
           next: () => {
-            this.onLoadToast('success', 'Eliminado correctamente', '');
+            this.alert(
+              'success',
+              'Borrado',
+              ''
+            );
             this.getPagination();
           },
           error: err => {
+            this.alert(
+              'warning',
+              'FILTROS DE BIENES PARA DONACIÓN',
+              'No se puede eliminar el objeto debido a una relación con otra tabla.'
+            );
             this.onLoadToast('error', err.error.message, '');
           },
         });

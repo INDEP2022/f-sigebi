@@ -31,7 +31,7 @@ export class StationListComponent extends BasePage implements OnInit {
   ) {
     super();
     this.settings.columns = STATION_COLUMS;
-    this.settings.actions.delete = true;
+    this.settings.actions.delete = false;
     this.settings.actions.add = false;
     this.settings.hideSubHeader = false;
   }

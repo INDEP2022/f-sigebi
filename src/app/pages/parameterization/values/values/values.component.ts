@@ -49,6 +49,8 @@ export class ValuesComponent extends BasePage implements OnInit {
     };
     this.settings2.columns = TVALTABLA1_COLUMNS;
     this.settings2.actions.add = false;
+    this.settings2.actions.delet = false;
+
     this.settings2 = {
       ...this.settings2,
       hideSubHeader: false,

@@ -4,17 +4,15 @@
       <h5 class="title">TRANSFERENTES</h5>
       <div class="col-md-5 buttons">
         <div>
-          <button
-            (click)="openForm()"
-            class="btn btn-primary active btn-sm ml-3">
+          <button (click)="openForm()" class="btn btn-primary active btn-sm ml-3">
             Nuevo
           </button>
         </div>
-        <div>
+        <!-- <div>
           <button class="btn btn-secondary active btn-sm ml-3 disabled">
             Ver documentos
           </button>
-        </div>
+        </div> -->
       </div>
     </div>
   </div>
@@ -27,14 +25,9 @@
     <div class="row">
       <div class="table-responsive">
         <div [class]="loading ? 'table-loading' : ''">
-          <ng2-smart-table
-            [attr.class]="'table-bordered'"
-            [settings]="settings"
-            [source]="data"
-            (edit)="openForm($event.data)"
-            (delete)="showDeleteAlert($event.data)"
-            (userRowSelect)="rowsSelected($event)"
-            (rowSelect)="selectRow($event.data)">
+          <ng2-smart-table [attr.class]="'table-bordered'" [settings]="settings" [source]="data"
+            (edit)="openForm($event.data)" (delete)="showDeleteAlert($event.data)"
+            (userRowSelect)="rowsSelected($event)" (rowSelect)="selectRow($event.data)">
           </ng2-smart-table>
         </div>
       </div>
@@ -47,9 +40,7 @@
         <h5 class="title">Emisoras</h5>
         <div class="col-md-5 buttons">
           <div>
-            <button
-              class="btn btn-primary active btn-sm ml-3"
-              (click)="openForm2()">
+            <button class="btn btn-primary active btn-sm ml-3" (click)="openForm2()">
               Nuevo
             </button>
           </div>
@@ -57,14 +48,9 @@
       </div>
       <div class="table-responsive">
         <div [class]="loading ? 'table-loading' : ''">
-          <ng2-smart-table
-            [attr.class]="'table-bordered'"
-            [settings]="settings2"
-            [source]="stationList"
-            (edit)="openForm2($event.data)"
-            (delete)="showDeleteAlert2($event.data)"
-            (userRowSelect)="rowsSelected2($event)"
-            (rowSelect)="selectRow2($event.data)">
+          <ng2-smart-table [attr.class]="'table-bordered'" [settings]="settings2" [source]="stationList"
+            (edit)="openForm2($event.data)" (delete)="showDeleteAlert2($event.data)"
+            (userRowSelect)="rowsSelected2($event)" (rowSelect)="selectRow2($event.data)">
           </ng2-smart-table>
         </div>
       </div>
@@ -76,9 +62,7 @@
         <h5 class="title">Autoridades</h5>
         <div class="col-md-5 buttons">
           <div>
-            <button
-              class="btn btn-primary active btn-sm ml-3"
-              (click)="openForm3()">
+            <button class="btn btn-primary active btn-sm ml-3" (click)="openForm3()">
               Nuevo
             </button>
           </div>
@@ -86,12 +70,8 @@
       </div>
       <div class="table-responsive">
         <div [class]="loading ? 'table-loading' : ''">
-          <ng2-smart-table
-            [attr.class]="'table-bordered'"
-            [settings]="settings3"
-            [source]="authorityList"
-            (edit)="openForm3($event.data)"
-            (delete)="showDeleteAlert3($event.data)">
+          <ng2-smart-table [attr.class]="'table-bordered'" [settings]="settings3" [source]="authorityList"
+            (edit)="openForm3($event.data)" (delete)="showDeleteAlert3($event.data)">
           </ng2-smart-table>
         </div>
       </div>
@@ -101,9 +81,7 @@
   </div>
   <div footer>
     <div *ngIf="rowSelected">
-      <button
-        (click)="resetScreen()"
-        class="btn btn-primary active btn-sm ml-3">
+      <button (click)="resetScreen()" class="btn btn-primary active btn-sm ml-3">
         Reiniciar
       </button>
     </div>

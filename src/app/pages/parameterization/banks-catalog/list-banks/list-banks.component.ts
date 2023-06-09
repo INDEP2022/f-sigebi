@@ -128,10 +128,19 @@ export class ListBanksComponent extends BasePage implements OnInit {
       if (question.isConfirmed) {
         this.bankService.remove(accountNumber).subscribe({
           next: () => {
-            this.onLoadToast('success', 'Ha sido eliminado', '');
+            this.alert(
+              'success',
+              'Borrado',
+              ''
+            );
             this.getCourts();
-          },
-          error: err => this.onLoadToast('error', err.error.message, ''),
+          }, error: error => {
+            this.alert(
+              'warning',
+              'Bancos',
+              'No se puede eliminar el objeto debido a una relación con otra tabla.'
+            );
+          }
         });
       }
     });

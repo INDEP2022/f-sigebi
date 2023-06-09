@@ -38,7 +38,7 @@ export class CatDocRequireComponent extends BasePage implements OnInit {
       actions: {
         columnTitle: 'Acciones',
         edit: true,
-        delete: true,
+        delete: false,
         add: false,
         position: 'right',
       },
@@ -59,8 +59,8 @@ export class CatDocRequireComponent extends BasePage implements OnInit {
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
             filter.field == 'id' ||
-            filter.field == 'description' ||
-            filter.field == 'typeDictum'
+              filter.field == 'description' ||
+              filter.field == 'typeDictum'
               ? (searchFilter = SearchFilter.EQ)
               : (searchFilter = SearchFilter.ILIKE);
             if (filter.search !== '') {

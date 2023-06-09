@@ -11,7 +11,7 @@ import { IIfaiSerie } from '../../models/catalogs/ifai-serie.model';
 })
 export class IfaiSerieService implements ICrudMethods<IIfaiSerie> {
   private readonly route: string = ENDPOINT_LINKS.IfaiSerie;
-  constructor(private ifaiSerieRepository: Repository<IIfaiSerie>) {}
+  constructor(private ifaiSerieRepository: Repository<IIfaiSerie>) { }
 
   getAll(params?: ListParams): Observable<IListResponse<IIfaiSerie>> {
     return this.ifaiSerieRepository.getAllPaginated(this.route, params);
@@ -26,7 +26,7 @@ export class IfaiSerieService implements ICrudMethods<IIfaiSerie> {
   }
 
   update(id: string | number, model: IIfaiSerie): Observable<Object> {
-    return this.ifaiSerieRepository.update(this.route, id, model);
+    return this.ifaiSerieRepository.update(this.route + '/id', id, model);
   }
 
   remove(id: string | number): Observable<Object> {
