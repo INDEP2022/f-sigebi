@@ -3816,6 +3816,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
           'Debe especificar/buscar el acta para después eliminar el bien de esta'
         );
       } else {
+        //REGISTRAR EN HISTORICO ANTES DE BORRAR
         const paramsF = new FilterParams();
         paramsF.addFilter('numberGood', this.selectActData.good.goodId);
         paramsF.addFilter('numberProceedings', this.idProceeding);
