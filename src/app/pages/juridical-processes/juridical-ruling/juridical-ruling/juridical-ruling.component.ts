@@ -51,6 +51,7 @@ import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.s
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { ApplicationGoodsQueryService } from 'src/app/core/services/ms-goodsquery/application.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
+import { ParametersService } from 'src/app/core/services/ms-parametergood/parameters.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { POSITVE_NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
@@ -59,7 +60,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { IGlobalVars } from 'src/app/shared/global-vars/models/IGlobalVars.model';
 import { environment } from 'src/environments/environment';
 import { GoodSubtype } from '../../juridical-ruling-g/juridical-ruling-g/model/good.model';
-import { RDictaminaDocModalComponent } from '../../juridical-ruling-g/r-dictamina-doc-modal/r-dictamina-doc-modal.component';
+import { RDictaminaDocModalComponent } from '../r-dictamina-doc-modal/r-dictamina-doc-modal.component';
 /** ROUTING MODULE */
 
 /** COMPONENTS IMPORTS */
@@ -79,7 +80,7 @@ export class JuridicalRulingComponent
   selectedGooodsValid: IGood[] = [];
   goods: IGood[] | any[] = [];
   goodsValid: IGood[] = [];
-  idGoodSelected = 0;
+  idGoodSelected: any;
   statusDict: string = undefined;
   dictNumber: string | number = undefined;
   wheelNumber: string | number = undefined;
@@ -237,17 +238,21 @@ export class JuridicalRulingComponent
     selectedRowIndex: -1,
     mode: 'external',
     columns: {
-      id: {
-        title: '#',
-        type: 'number',
+      cveDocument: {
+        title: 'Cve. Documento',
+        sort: false,
+        filter: false,
       },
-      descriptionDocument: {
-        title: 'Documentos',
-        type: 'string',
+      crime: {
+        title: 'Descripción',
+        sort: false,
+        valuePrepareFunction: (cell: any, value: any) => {
+          return value.documentDetails.description;
+        },
       },
-      selectedDate: {
-        title: 'Fec. Recibido',
-        type: 'string',
+      date: {
+        title: 'Fecha. Recibido',
+        sort: false,
       },
     },
     noDataMessage: 'No se encontrarón registros',
@@ -301,7 +306,11 @@ export class JuridicalRulingComponent
   typesIdent = new DefaultSelect<Partial<{ identificador: string }>>();
   desc_estatus_good: string = '';
   isSearch: boolean = false;
+  isDisabledExp: boolean = false;
   variablesForm: FormGroup;
+  buttonRefuse: boolean = true;
+  buttonAprove: boolean = true;
+  di_desc_est: string = '';
 
   constructor(
     private fb: FormBuilder,
@@ -321,7 +330,8 @@ export class JuridicalRulingComponent
     private serviceGood: GoodProcessService,
     private dictationServ: DictationService,
     private notServ: NotificationService,
-    private modalService: BsModalService
+    private modalService: BsModalService,
+    private parametersService: ParametersService
   ) {
     super();
   }
@@ -387,6 +397,7 @@ export class JuridicalRulingComponent
     this.goodsValid = [];
     this.isSearch = false;
     this.isIdent = false;
+    this.isDisabledExp = false;
   }
 
   searchExp() {
@@ -394,6 +405,7 @@ export class JuridicalRulingComponent
       this.legalForm.value;
     if (!noExpediente && !preliminaryInquiry && !criminalCase) return;
     this.isSearch = true;
+    this.isDisabledExp = true;
     this.onLoadExpedientData();
     this.onLoadDictationInfo();
     const { tipoDictaminacion, subtype } = this.subtipoForm.value;
@@ -410,7 +422,9 @@ export class JuridicalRulingComponent
 
               const data = resp.data;
 
-              data.map(async (good: any) => {
+              data.map(async (good: any, index) => {
+                if (index == 0)
+                  this.di_desc_est = good.estatus.descriptionStatus;
                 good.di_disponible = 'S';
                 await new Promise((resolve, reject) => {
                   const body = {
@@ -608,7 +622,8 @@ export class JuridicalRulingComponent
           next: response => {
             const data = response.data;
 
-            data.map(async (good: any) => {
+            data.map(async (good: any, index) => {
+              if (index == 0) this.di_desc_est = good.estatus.descriptionStatus;
               good.di_disponible = 'S';
               await new Promise((resolve, reject) => {
                 const body = {
@@ -693,7 +708,7 @@ export class JuridicalRulingComponent
     this.variablesForm = this.fb.group({
       tipo_vol: [null],
       clasif2: [null],
-      clsif: [null],
+      clasif: [null],
     });
   }
 
@@ -724,7 +739,11 @@ export class JuridicalRulingComponent
         next: response => {
           const data = response.data;
 
-          data.map(async (good: any) => {
+          data.map(async (good: any, index) => {
+            if (index == 0)
+              this.di_desc_est = good?.estatus
+                ? good?.estatus.descriptionStatus
+                : '';
             good.di_disponible = 'S';
             await new Promise((resolve, reject) => {
               const body = {
@@ -927,6 +946,7 @@ export class JuridicalRulingComponent
     });
   }
   goodSelectedChange(good: IGood, selected: boolean) {
+    this.di_desc_est = good.estatus ? good.estatus.descriptionStatus : '';
     if (selected) {
       this.selectedGooods.push(good);
     } else {
@@ -1133,7 +1153,9 @@ export class JuridicalRulingComponent
 
   rowSelected(e: any) {
     if (e) {
-      this.idGoodSelected = e.data?.id;
+      this.idGoodSelected = e;
+      console.log(e);
+
       this.onLoadDocumentsByGood();
     }
   }
@@ -1143,58 +1165,99 @@ export class JuridicalRulingComponent
    * --
    */
   btnDocumentos() {
-    this.variablesForm.get('tipo_vol').setValue('');
-    let tipo_vol = '';
     let dicta = '';
-    let classif = '';
     const { noExpediente } = this.legalForm.value;
-    const params = new FilterParams();
-    params.addFilter('wheelNumber', noExpediente, SearchFilter.EQ);
-    this.notServ.getAllFilter(params.getParams()).subscribe({
+    this.notServ.getVariableType(noExpediente).subscribe({
       next: resp => {
-        this.variablesForm.get('tipo_vol').patchValue(resp.data[0].wheelType);
+        this.variablesForm.get('tipo_vol').patchValue(resp.volType);
         if (!this.legalForm.get('esPropiedad').value) {
           dicta = 'N';
         } else {
           dicta = this.legalForm.get('esPropiedad').value;
         }
-
         if (!this.legalForm.get('fechaPPFF')) {
           this.onLoadToast('error', `Debe especificar la ${this.label}`);
           return;
         }
-        classif = null;
+        this.variablesForm.get('clasif').setValue(null);
 
-        const typeDictation = this.legalForm.get('tipoDictaminacion').value;
-        const crime = this.legalForm.get('esPropiedad').value ?? 'N';
-        const typeSteeringwheel = this.variablesForm.get('tipo_vol').value;
-        const numberClassifyGood = 1206;
-        const stateNumber = this.idGoodSelected;
-        let config: ModalOptions = {
-          initialState: {
-            // numberClassifyGood,
-            typeDictation,
-            crime,
-            typeSteeringwheel,
-            numberClassifyGood,
-            stateNumber,
-            callback: (next: boolean) => {
-              /*if (next) {
-                
-              }*/
-            },
-          },
-          class: 'modal-lg modal-dialog-centered',
-          ignoreBackdropClick: true,
-        };
-        this.modalService.show(RDictaminaDocModalComponent, config);
+        if (this.idGoodSelected.goodClassNumber) {
+          if (
+            !['DEVOLUCION', 'ABANDONO'].includes(
+              this.legalForm.get('tipoDictaminacion').value
+            )
+          ) {
+            this.variablesForm.get('clasif').setValue(null);
+
+            if (
+              this.variablesForm.get('clasif').value == null &&
+              this.idGoodSelected.goodClassNumber
+            ) {
+              this.variablesForm
+                .get('clasif')
+                .setValue(
+                  this.variablesForm.get('clasif').value ??
+                    '' + this.idGoodSelected.goodClassNumber
+                );
+            } else if (
+              this.variablesForm
+                .get('clasif')
+                .value.indexOf(this.idGoodSelected.goodClassNumber) == 0 &&
+              this.idGoodSelected.goodClassNumber
+            ) {
+              this.variablesForm
+                .get('clasif')
+                .setValue(
+                  this.variablesForm.get('clasif').value +
+                    ',' +
+                    this.idGoodSelected.goodClassNumber
+                );
+            }
+
+            if (
+              this.idGoodSelected.goodClassNumber &&
+              this.variablesForm
+                .get('clasif')
+                .value.indexOf(this.idGoodSelected.goodClassNumber) == 0
+            ) {
+              this.variablesForm
+                .get('clasif')
+                .setValue(this.variablesForm.get('clasif').value);
+            }
+
+            this.variablesForm
+              .get('clasif2')
+              .patchValue(this.variablesForm.get('clasif').value);
+
+            const typeDictation = this.legalForm.get('tipoDictaminacion').value;
+            const typeSteeringwheel = this.variablesForm.get('tipo_vol').value;
+            const numberClassifyGood = this.variablesForm.get('clasif2').value;
+            const dateValid = this.legalForm.get('fechaPPFF').value;
+            let config: ModalOptions = {
+              initialState: {
+                typeDictation,
+                typeSteeringwheel,
+                numberClassifyGood,
+                dateValid,
+                callback: (next: any[]) => {
+                  this.buttonAprove = true;
+                  this.buttonRefuse = false;
+                  this.documents = next;
+                },
+              },
+              class: 'modal-lg modal-dialog-centered',
+              ignoreBackdropClick: true,
+            };
+            this.modalService.show(RDictaminaDocModalComponent, config);
+          }
+        }
       },
       error: () => {},
     });
   }
 
   onLoadDocumentsByGood() {
-    this.documentService.getByGood(this.idGoodSelected).subscribe({
+    this.documentService.getByGood(this.idGoodSelected.goodId).subscribe({
       next: response => {
         this.data4 = response.data;
       },
@@ -1257,24 +1320,72 @@ export class JuridicalRulingComponent
     return this.documents.length === 0;
   }
 
-  btnApprove() {
-    let token = this.authService.decodeToken();
-    const pNumber = Number(token.department);
-    this.applicationGoodsQueryService.getDictamenSeq(pNumber).subscribe({
-      next: (response: any) => {
-        this.generateCveOficio(response.dictamenDelregSeq);
-        // document.getElementById('cveOficio').focus();
-        this.cveOficio.nativeElement.focus();
-        setTimeout(
-          () =>
-            this.alert(
-              'success',
-              '',
-              'Clave de oficio generada correctamente.'
-            ),
-          1000
-        );
-      },
+  async btnApprove() {
+    let SIGLA,
+      AR_REMITENTE,
+      ANIO,
+      MES,
+      OFICIO,
+      VALOR,
+      DATO,
+      LST_ID,
+      vNO_DELEGACION,
+      vNO_SUBDELEGACION,
+      vNO_DEPARTAMENTO,
+      vCVE_CARGO,
+      vniveld2,
+      vniveld3,
+      vniveld4,
+      vniveld5,
+      vnivel,
+      vdepend,
+      vdep_deleg,
+      vnivelp,
+      vdependp,
+      vdep_delegP,
+      SIGLAp;
+
+    const today = new Date();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    const year = today.getFullYear();
+    const SYSDATE = `${day}/${month}/${year}`;
+    const SYSDATE2 = `${month}/${day}/${year}`;
+    const ETAPA: number = await this.getFaStageCreda(SYSDATE2);
+
+    // let token = this.authService.decodeToken();
+    // const pNumber = Number(token.department);
+    // this.applicationGoodsQueryService.getDictamenSeq(pNumber).subscribe({
+    //   next: (response: any) => {
+    //     this.generateCveOficio(response.dictamenDelregSeq);
+    //     // document.getElementById('cveOficio').focus();
+    //     this.cveOficio.nativeElement.focus();
+    //     setTimeout(
+    //       () =>
+    //         this.alert(
+    //           'success',
+    //           '',
+    //           'Clave de oficio generada correctamente.'
+    //         ),
+    //       1000
+    //     );
+    //   },
+    // });
+  }
+
+  async getFaStageCreda(data: any) {
+    return new Promise<number>((resolve, reject) => {
+      this.parametersService.getFaStageCreda(data).subscribe({
+        next: (resp: any) => {
+          console.log(resp);
+          this.loading = false;
+          resolve(resp.stagecreated);
+        },
+        error: err => {
+          this.loading = false;
+          resolve(null);
+        },
+      });
     });
   }
 
@@ -1301,7 +1412,7 @@ export class JuridicalRulingComponent
         //Manda a llamar a FACTGENPARCIALIZA
         this.router.navigate(['pages/general-processes/goods-partialization'], {
           queryParams: {
-            good: this.idGoodSelected,
+            good: this.idGoodSelected.id,
             screen: 'FACTJURDICTAMAS',
           },
         });
@@ -1442,18 +1553,38 @@ export class JuridicalRulingComponent
 
   // IMPRESIONES - BUTTON //
   btnImprimeOficio() {
+    const { tipoDictaminacion, tipo } = this.legalForm.value;
+
+    let lv_valor;
+    let tipo_dict;
+    let v_paquete;
+    let v_estatus;
+
+    lv_valor = '';
+    tipo_dict = tipoDictaminacion;
+
+    if (tipo == 'P') {
+      v_paquete = ''; //es del paquete no se dabe si se usara
+    } else {
+      v_paquete = 0;
+    }
+
     this.router.navigate(
       ['/pages/juridical/depositary/legal-opinions-office/'],
       {
         queryParams: {
-          origin: 'FACTGENACTDATEX', //Cambiar
-          P_VALOR: this.dictNumber,
-          TIPO: this.legalForm.get('tipoDictaminacion').value,
-          PAQUETE: "this.expedientesForm.get('tipoDictaminacion').value",
+          origin: 'FACTJURDICTAMAS', //Cambiar
+          P_VALOR: lv_valor,
+          TIPO: tipo,
+          PAQUETE: v_paquete,
         },
       }
     );
+
+    this.activeGestion();
   }
+
+  activeGestion() {}
 
   btnRefuse() {
     console.log('btnRechazar');
