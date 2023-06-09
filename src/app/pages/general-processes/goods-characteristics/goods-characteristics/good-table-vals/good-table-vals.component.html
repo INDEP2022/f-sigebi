@@ -19,12 +19,35 @@
         class="col-md-12"
         [settings]="settings"
         [source]="dataPaginated"
-        (edit)="openForm($event.data)"></ng2-smart-table>
+        (edit)="openForm($event)"
+        (delete)="showModals($event.data)"></ng2-smart-table>
     </div>
   </div>
 </div>
-
-<!-- <table class="table-responsive table-bordered">
+<app-pagination
+  [params]="params"
+  [pageSizeOptions]="pageSizeOptions"
+  [limit]="limit"
+  [totalItems]="totalItems"></app-pagination>
+<!-- <div class="row">
+  <div class="col-md-3">
+    <button
+      type="button"
+      class="btn-sm btn-danger active"
+      (click)="openModal1()">
+      openModal1
+    </button>
+  </div>
+  <div class="col-md-3">
+    <button
+      type="button"
+      class="btn-sm btn-danger active"
+      (click)="openModal2()">
+      openModal2
+    </button>
+  </div>
+</div> -->
+<!-- <table>
   <thead>
     <tr>
       <th>Acciones</th>
@@ -95,8 +118,3 @@
     </tr>
   </tbody>
 </table> -->
-<app-pagination
-  [params]="params"
-  [pageSizeOptions]="pageSizeOptions"
-  [limit]="limit"
-  [totalItems]="totalItems"></app-pagination>

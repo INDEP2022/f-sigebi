@@ -257,4 +257,8 @@ export class DictationService extends HttpService {
   checkGoodAvaliable(data: Object) {
     return this.post(DictationEndpoints.Check, data);
   }
+  getFactjurdictamasg(typeDict: any) {
+    const route = `${DictationEndpoints.FactJur}`;
+    return this.get(route + `/${typeDict}`);
+  }
 }
