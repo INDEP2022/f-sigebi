@@ -364,7 +364,7 @@ export interface INotificationUpdate {
 }
 
 export interface ITransfActaEntrec {
-  indcap: string;
-  no_expediente: number;
-  id_tipo_acta: string;
+  indcap: string,
+  no_expediente: number,
+  id_tipo_acta: string
 }

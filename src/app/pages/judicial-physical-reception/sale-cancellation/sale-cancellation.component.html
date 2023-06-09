@@ -15,10 +15,7 @@
                 (click)="goodsByExpediente()">
                 <i class="fa fa-search"></i> Buscar
               </button>
-              <button
-                [class]="loading ? 'disabled' : ''"
-                class="btn btn-danger btn-sm active"
-                (click)="clearAll()">
+              <button [class]="loading ? 'disabled' : ''" class="btn btn-danger btn-sm active" (click)="clearAll()">
                 Limpiar
               </button>
             </div>
@@ -153,7 +150,6 @@
                   label="Transferente"
                   [class]="initialBool ? 'disabled' : ''"
                   bindLabel="clave_transferente"
-                  (change)="verifyTransferenteAndAct()"
                   [data]="transferSelect"
                   [form]="form"></ngx-select>
               </form-field>
@@ -172,7 +168,8 @@
                 <input
                   type="text"
                   class="form-control disabled"
-                  formControlName="entrego" />
+                  formControlName="entrego"
+                   />
               </form-field>
             </div>
             <div class="col-2">
@@ -195,7 +192,8 @@
                   [class]="initialBool ? 'disabled' : ''"
                   formControlName="folio"
                   min="0"
-                  [max-length]="5" />
+                  [max-length]="5"
+                  />
               </form-field>
             </div>
             <div class="col">
@@ -203,7 +201,8 @@
                 <input
                   type="number"
                   class="form-control disabled"
-                  formControlName="year" />
+                  formControlName="year"
+                   />
               </form-field>
             </div>
             <div class="col">
@@ -211,7 +210,8 @@
                 <input
                   type="number"
                   class="form-control disabled"
-                  formControlName="mes" />
+                  formControlName="mes"
+                   />
               </form-field>
             </div>
           </div>
@@ -305,7 +305,7 @@
                   [class]="isEnableFecElab ? '' : 'disabled'"
                   id="fecElab"
                   [max-length]="10"
-                  (change)="fecElabFn()"
+                  (ngModelChange)="fecElabFn()"
                   class="form-control"
                   [maxDate]="maxDate"
                   formControlName="fecElab" />
@@ -429,9 +429,10 @@
         </div>
       </div>
       <hr class="row" />
-      <div class="row pt-2 scroll-table mt-5">
+      <div [class]="loading ? 'table-loading' : 'row pt-2'" class="table-responsive table-bordered">
         <ng2-smart-table
           class="col-md-12"
+          [attr.class]="'table-responsive table-bordered '"
           [settings]="settings1"
           [source]="dataGoods"
           (userRowSelect)="rowSelect($event)"
@@ -496,7 +497,7 @@
         </div>
       </div>
 
-      <div class="row pt-2 scroll-table mt-5">
+      <div  [class]="loading ? 'table-loading' : 'row pt-2'" class="table-responsive">
         <ng2-smart-table
           class="col-md-12"
           [settings]="settings2"
@@ -590,11 +591,11 @@
                 (click)="openEdoFisico()">
                 Espec&iacute;fica Edo&#46; F&iacute;sico
               </button>
-              <button
-                type="button"
-                size="small"
-                class="btn btn-primary btn-sm active"
-                (click)="applyWarehouseSafe()">
+              <button  type="button"
+              size="small"
+              class="btn btn-primary btn-sm active"
+              (click)="applyWarehouseSafe()"
+              >
                 Aplica Almac&eacute;n/B&oacute;veda
               </button>
               <!-- <button type="button" class="my-1 mx-2" size="small">
