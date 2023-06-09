@@ -431,7 +431,7 @@
       <hr class="row" />
       <div [class]="loading ? 'table-loading' : 'row pt-2'" class="table-responsive table-bordered">
         <ng2-smart-table
-          class="col-md-12"
+          class="col-md-12 scroll-table"
           [attr.class]="'table-responsive table-bordered '"
           [settings]="settings1"
           [source]="dataGoods"
@@ -499,7 +499,7 @@
 
       <div  [class]="loading ? 'table-loading' : 'row pt-2'" class="table-responsive">
         <ng2-smart-table
-          class="col-md-12"
+          class="col-md-12 scroll-table"
           [settings]="settings2"
           [source]="dataGoodAct"
           (userRowSelect)="selectRowGoodActa($event)"

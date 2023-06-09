@@ -60,6 +60,8 @@ import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-ele
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { EdoFisicoComponent } from '../confiscated-records/edo-fisico/edo-fisico.component.component';
 import { columnsGoodAct } from '../confiscated-records/settings-tables';
+import { ICveAct } from 'src/app/core/models/ms-proceedings/update-proceedings.model';
+import { ProceedingsService } from 'src/app/core/services/ms-proceedings';
 
 @Component({
   selector: 'app-sale-cancellation',
@@ -91,6 +93,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
         type: 'string',
         sort: false,
       },
+      
       extDomProcess: {
         title: 'Proceso',
         type: 'string',
@@ -105,6 +108,11 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
         title: 'Unidad',
         type: 'string',
         sort: false,
+      },
+      status:{
+        title: 'Estatus',
+        tipe: 'string',
+        sort: false
       },
       acta: {
         title: 'Acta',
@@ -235,7 +243,8 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
     private serviceWarehouse: WarehouseFilterService,
     private serviceVault: SafeService,
     private modalService: BsModalService,
-    private serviceNotification: NotificationService
+    private serviceNotification: NotificationService,
+    private serviceProceeding: ProceedingsService,
   ) {
     super();
   }
@@ -544,47 +553,64 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
       pVcScreen: 'FACTREFACTAVENT',
     };
 
-    const modelStatus: IAcceptGoodStatus = {
-      pNumberGood: element.id,
-      pExpedients: this.form.get('expediente').value,
+    const model: ICveAct = {
+      pExpedientNumber: this.numberExpedient,
+      pGoodNumber: element.id,
+      pVarTypeActa1: 'DXCVENT',
+      pVarTypeActa2: 'DXCVENT',
     };
     console.log(modelScreen);
     return new Promise((resolve, reject) => {
       this.serviceGoodProcess.getacceptGoodStatusScreen(modelScreen).subscribe(
         res => {
-          console.log(res);
-          console.log(res.message);
-          if (typeof res == 'number' && res > 0) {
-            di_disponible = true;
-            console.log('Entro if');
-            this.serviceGoodProcess.getacceptGoodStatus(modelStatus).subscribe(
-              res => {
-                const resDis = JSON.stringify(res);
-                if (typeof res == 'string' && res != 'S') {
-                  resolve({ disponible: false });
-                } else {
-                  resolve({ disponible: true });
-                }
-              },
-              err => {
-                resolve({ disponible: false });
+          di_disponible = true
+         
+          this.serviceProceeding.getCveAct(model).subscribe(
+            res =>{
+              if (res.data.length > 0) {
+                resolve({
+                  avalaible: false,
+                  acta: res.data[0]['cve_acta'],
+                });
+              } else {
+                resolve({
+                  avalaible: di_disponible,
+                  acta: null,
+                });
               }
-            );
-          } else {
-            di_disponible = false;
-            console.log('Entro else');
-            this.serviceGoodProcess.getacceptGoodStatus(modelStatus).subscribe(
-              res => {
-                resolve({ disponible: false });
-              },
-              err => {
-                resolve({ disponible: false });
-              }
-            );
-          }
+            },
+            err => {
+              resolve({
+                avalaible: di_disponible,
+                acta: null,
+              });
+            }
+          )
         },
         err => {
-          resolve({ disponible: false });
+          di_disponible = false
+
+          this.serviceProceeding.getCveAct(model).subscribe(
+            res =>{
+              if (res.data.length > 0) {
+                resolve({
+                  avalaible: false,
+                  acta: res.data[0]['cve_acta'],
+                });
+              } else {
+                resolve({
+                  avalaible: di_disponible,
+                  acta: null,
+                });
+              }
+            },
+            err => {
+              resolve({
+                avalaible: di_disponible,
+                acta: null,
+              });
+            }
+          )
         }
       );
     });
@@ -1118,6 +1144,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
           this.serviceProcVal.postProceeding(newProceeding).subscribe(
             res => {
               this.initialBool = true;
+              this.form.get('statusProceeding').setValue('ABIERTA')
               console.log(res);
               this.alert('success', 'Se guardo el acta de manera éxitosa', '');
             },
@@ -1147,7 +1174,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
     console.log(paramsF.getParams());
     this.serviceGood
       .getAllFilterDetail(
-        `filter.fileNumber=$eq:${this.form.get('expediente').value}`
+        `filter.fileNumber=$eq:${this.form.get('expediente').value}&${paramsF.getParams()}`
       )
       .subscribe({
         next: async (res: any) => {
@@ -1156,6 +1183,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
               res.data.map(async (e: any) => {
                 let disponible: boolean;
                 const resp = await this.validateGood(e);
+
                 const ind = await this.validateRequired(e);
                 console.log(ind);
                 console.log(resp);
@@ -1323,11 +1351,10 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
                 res.data.map(async (e: any) => {
                   let disponible: boolean;
                   const resp = await this.validateGood(e);
-                  const ind = await this.validateRequired(e);
-                  console.log(ind);
+                  const cveAct = JSON.parse(JSON.stringify(resp)).acta;
                   console.log(resp);
-                  disponible = JSON.parse(JSON.stringify(resp)).disponible;
-                  return { ...e, avalaible: disponible, indEdoFisico: ind };
+                  disponible = JSON.parse(JSON.stringify(resp)).avalaible;
+                  return { ...e, avalaible: disponible, acta: cveAct};
                 })
               );
               this.dataGoods.load(newData);
@@ -1570,7 +1597,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
             const modelPaOpen: IPAAbrirActasPrograma = {
               P_NOACTA: this.idProceeding,
               P_AREATRA: lv_TIP_ACTA,
-              P_PANTALLA: 'FACTREFACTAENTREC',
+              P_PANTALLA: 'FACTREFACTAVENT',
               P_TIPOMOV: 2,
               USUARIO:
                 localStorage.getItem('username') == 'sigebiadmon'
@@ -1584,7 +1611,9 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
                   const paramsF = new FilterParams();
                   paramsF.addFilter(
                     'valUser',
-                    localStorage.getItem('username').toLocaleLowerCase()
+                    localStorage.getItem('username') == 'sigebiadmon'
+                  ? localStorage.getItem('username')
+                  : localStorage.getItem('username').toLocaleUpperCase()
                   );
                   paramsF.addFilter('valMinutesNumber', this.idProceeding);
                   this.serviceProgrammingGood
@@ -1593,7 +1622,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
                       res => {
                         console.log(res);
                         const VAL_MOVIMIENTO = res.data[0]['valmovement'];
-                        if (VAL_MOVIMIENTO === 1) {
+                        if (VAL_MOVIMIENTO == 1) {
                           this.serviceProgrammingGood
                             .paRegresaEstAnterior(modelPaOpen)
                             .subscribe(
@@ -1604,10 +1633,14 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
                                   .get('statusProceeding')
                                   .setValue('ABIERTA');
                                 this.reopening = true;
+                                this.loading = true
                                 const btn =
                                   document.getElementById('expedient-number');
                                 this.render.removeClass(btn, 'disabled');
                                 this.render.addClass(btn, 'enabled');
+                                this.getGoodsActFn()
+                                this.getGoodsFn()
+                                this.alert('success','El acta fue abierta','')
                               },
                               err => {
                                 console.log(err);
@@ -1618,7 +1651,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
                               }
                             );
                         } else {
-                          this.alert('success', 'El acta fue abierta', '');
+                          this.alert('warning', 'Error al abrir acta', 'El estatus de los bienes no regresaron a su estado anterior, por favor volver a intentar abrir el acta');
                         }
                       },
                       err => {
@@ -1811,6 +1844,8 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
                     this.serviceProgrammingGood.paChangeStatus(model).subscribe(
                       res => {
                         console.log(res);
+                        this.getGoodsActFn()
+                        this.getGoodsFn()
                         this.form
                                   .get('statusProceeding')
                                   .setValue('CERRADO');
@@ -2124,6 +2159,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
     this.limitDataGoodsAct = new FormControl(10);
 
     this.dataGoods.load([]);
+    this.dataGoodAct.load([])
 
     this.blockExpedient = false;
     this.navigateProceedings = false;
@@ -2150,6 +2186,8 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
     this.form.get('entrego').reset();
     this.form.get('recibe').reset();
     this.form.get('folio').reset();
+    this.form.get('folioEscaneo').reset()
+    this.form.get('testigo').reset()
   }
 
   newProceeding() {
