@@ -327,7 +327,7 @@ export class RelatedDocumentsComponent
     private statusGoodService: StatusGoodService,
     private screenStatusService: ScreenStatusService,
     private DictationXGood1Service: DictationXGood1Service,
-    private goodprocessService: GoodprocessService,
+    protected goodprocessService: GoodprocessService,
     private massiveGoodService: MassiveGoodService,
     protected notificationService: NotificationService,
     protected mJobManagementService: MJobManagementService,
@@ -337,7 +337,7 @@ export class RelatedDocumentsComponent
     private officeManagementSerivice: OfficeManagementService,
     private goodHistoryService: HistoryGoodService, // protected abstract svLegalOpinionsOfficeService: LegalOpinionsOfficeService;
     protected documentsService: DocumentsService,
-    protected usersService: UsersService
+    protected usersService: UsersService // protected goodProcessService: GoodprocessService,
   ) {
     super();
     // console.log(authService.decodeToken());

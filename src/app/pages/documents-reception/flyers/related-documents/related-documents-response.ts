@@ -5,6 +5,7 @@ import { ActivatedRoute } from '@angular/router';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { catchError, firstValueFrom, map, Observable, of } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
+import { showQuestion } from 'src/app/common/helpers/helpers';
 import {
   FilterParams,
   ListParams,
@@ -24,6 +25,7 @@ import { DepartamentService } from 'src/app/core/services/catalogs/departament.s
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import { GoodsJobManagementService } from 'src/app/core/services/ms-office-management/goods-job-management.service';
 import { MJobManagementService } from 'src/app/core/services/ms-office-management/m-job-management.service';
@@ -58,6 +60,7 @@ export abstract class RelateDocumentsResponse extends BasePage {
   protected abstract securityService: SecurityService;
   protected abstract documentsService: DocumentsService;
   protected abstract usersService: UsersService;
+  protected abstract goodprocessService: GoodprocessService;
   abstract dataTableGoods: IGoodAndAvailable[];
   abstract dataTableGoodsJobManagement: IGoodJobManagement[];
   abstract isDisabledBtnDocs: boolean;
@@ -285,7 +288,37 @@ export abstract class RelateDocumentsResponse extends BasePage {
     delegacionNo: string | number;
     user: string;
   }) {
-    this.usersService.postSegAccessXAreasTvalTabla1(body);
+    return firstValueFrom(
+      this.usersService.postSegAccessXAreasTvalTabla1(body).pipe(
+        map(res => {
+          return res.data[0];
+        }),
+        catchError(() => {
+          this.alert(
+            'error',
+            'Error',
+            'El Usuario no está autorizado para eliminar el OficioS'
+          );
+          throw new Error('Error al obtener el siguiente valor');
+        })
+      )
+    );
+  }
+
+  getNextVal(): Promise<number> {
+    return firstValueFrom(
+      this.goodprocessService.getNextValManagement().pipe(
+        map(x => x.data[0].nextval),
+        catchError(() => {
+          this.alert(
+            'error',
+            'Error',
+            'Error al obtener el siguiente valor de la gestión'
+          );
+          throw new Error('Error al obtener el siguiente valor');
+        })
+      )
+    );
   }
 
   /*-------------------------- TOOLS----------------------------------*/
@@ -590,7 +623,7 @@ export abstract class RelateDocumentsResponse extends BasePage {
     });
   }
 
-  onClickBtnErase() {
+  async onClickBtnErase() {
     const values = this.formJobManagement.value;
     if (!values.managementNumber) {
       this.alert('error', 'Error', 'No se tiene oficio.');
@@ -609,6 +642,31 @@ export abstract class RelateDocumentsResponse extends BasePage {
       values.insertUser?.toLowerCase() !==
       auth.preferred_username?.toLowerCase()
     ) {
+      const userInfo = await this.getUserInfo();
+      await this.postSegAccessXAreasTvalTabla1({
+        delegacionNo: userInfo.delegationNumber,
+        user: userInfo.preferred_username,
+      });
     }
+    if (!(values.managementNumber as string).includes('?')) {
+      this.alert(
+        'error',
+        'Error',
+        'La clave está armada, no puede borrar oficio.'
+      );
+      return;
+    }
+    const question = await showQuestion({
+      icon: 'question',
+      title: 'Confirmación',
+      text: `Se borra oficio (Exp.: ${this.formNotification.value.expedientNumber}) No. Oficio: ${values.managementNumber}?`,
+    });
+    if (!question.isConfirmed) {
+      return;
+    }
+
+    // const promises = [
+    //   this.mJobManagementService.deleteGoodsJobManagement1(values.managementNumber),
+    // ]
   }
 }

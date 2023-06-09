@@ -102,4 +102,37 @@ export class MJobManagementService extends HttpService {
   deleteCopyOficeManag(id?: any): Observable<IListResponse<any>> {
     return this.delete<IListResponse<any>>(`copies-job-management/${id}`);
   }
+
+  deleteGoodsJobManagement1(
+    managementNumber: string | number,
+    no_of_gestion: string | number
+  ): Observable<any> {
+    return this.delete(`application/delete1/${managementNumber}`, {
+      no_of_gestion,
+    });
+  }
+  deleteDocumentJobManagement2(
+    managementNumber: string | number,
+    no_of_gestion: string | number
+  ): Observable<any> {
+    return this.delete(`application/delete2/${managementNumber}`, {
+      no_of_gestion,
+    });
+  }
+  deleteMJobManagement3(
+    managementNumber: string | number,
+    no_of_gestion: string | number
+  ): Observable<any> {
+    return this.delete(`application/delete3/${managementNumber}`, {
+      no_of_gestion,
+    });
+  }
+  deleteCopiesJobManagement4(
+    managementNumber: string | number,
+    no_of_gestion: string | number
+  ): Observable<any> {
+    return this.delete(`application/delete4/${managementNumber}`, {
+      no_of_gestion,
+    });
+  }
 }
