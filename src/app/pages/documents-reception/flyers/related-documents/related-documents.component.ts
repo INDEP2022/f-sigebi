@@ -34,6 +34,7 @@ import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { StatusGoodService } from 'src/app/core/services/ms-good/status-good.service';
 import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
 import { ApplicationGoodsQueryService } from 'src/app/core/services/ms-goodsquery/application.service';
+import { HistoryGoodService } from 'src/app/core/services/ms-history-good/history-good.service';
 import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive-good.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import { GoodsJobManagementService } from 'src/app/core/services/ms-office-management/goods-job-management.service';
@@ -286,7 +287,8 @@ export class RelatedDocumentsComponent
     protected parametersService: ParametersService,
     protected departmentService: DepartamentService,
     private segAccessAreasService: SegAcessXAreasService,
-    private officeManagementSerivice: OfficeManagementService
+    private officeManagementSerivice: OfficeManagementService,
+    private goodHistoryService: HistoryGoodService
   ) {
     super();
     console.log(authService.decodeToken());
@@ -549,12 +551,12 @@ export class RelatedDocumentsComponent
         this.paramsGestionDictamen.sale = params['sale'] ?? null;
         this.paramsGestionDictamen.pGestOk = params['pGestOk'] ?? null;
 
-        /*this.origin = params['origin'] ?? null; //no
+        /*this.origin = params['origin'] ?? null; //no hay
         this.paramsGestionDictamen.volante = params['VOLANTE'] ?? null;
         this.paramsGestionDictamen.expediente = params['EXPEDIENTE'] ?? null;
         this.paramsGestionDictamen.tipoOf = params['TIPO_OF'] ?? null;
         this.paramsGestionDictamen.doc = params['DOC'] ?? null;
-        this.paramsGestionDictamen.pDictamen = params['pDictamen'] ?? null;  //no
+        this.paramsGestionDictamen.pDictamen = params['pDictamen'] ?? null;  //no hay
         this.paramsGestionDictamen.sale = params['SALE'] ?? null;
         this.paramsGestionDictamen.pGestOk = params['BIEN'] ?? null;
         this.paramsGestionDictamen.pGestOk = params['PLLAMO'] ?? null;
@@ -1754,7 +1756,11 @@ export class RelatedDocumentsComponent
 
   async delete(managementNumber: number | string, noVolante: number | string) {
     console.log(this.dataTableGoodsJobManagement);
-
+    this.dataTableGoodsJobManagement.map((item: any) => {
+      const p_dictamen = Number(this.paramsGestionDictamen.pDictamen);
+      if (p_dictamen == 25) {
+      }
+    });
     return;
     this.officeManagementSerivice
       .removeGoodOfficeManagement(managementNumber)

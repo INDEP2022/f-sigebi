@@ -76,4 +76,6 @@ export class HistoryGoodService extends HttpService {
   returnStatusProcess(data: IReturnStatusProcess) {
     return this.post<any>(HistoryGoodEndpoints.ReturnStatusProcess, data);
   }
+
+  getPrexdoAnterior() {}
 }
