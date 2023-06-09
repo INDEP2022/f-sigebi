@@ -453,6 +453,7 @@
                 <i class="bx bxs-file"></i>
               </button>
               <button
+                [disabled]="!blockSend"
                 type="button"
                 tooltip="Imprimir"
                 containerClass="tooltip-style"
@@ -474,6 +475,7 @@
               " -->
               <button
                 type="submit"
+                [disabled]="blockSend"
                 class="btn btn-primary btn-sm active"
                 tooltip="Enviar"
                 (click)="sendDictamen()"

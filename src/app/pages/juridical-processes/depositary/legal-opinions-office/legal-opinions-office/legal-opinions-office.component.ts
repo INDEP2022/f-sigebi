@@ -1412,15 +1412,19 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
     if (event) {
       this.addresseeDataSelect = event;
       if (event.user) {
+        if (!this.officeDictationData) {
+          this.officeDictationData = { ...this.officeDictationData };
+        }
         this.officeDictationData.delegacionRecipientNumber =
           event.delegationNumber;
         event.delegationNumber;
         this.officeDictationData.recipientDepartmentNumber =
           event.departamentNumber;
+        console.log(this.officeDictationData);
         // this.officeDictationData.sender
         const params: any = new FilterParams();
         params.removeAllFilters();
-        params.addFilter('user', this.officeDictationData.sender);
+        params.addFilter('user', event.user);
         this.svLegalOpinionsOfficeService
           .getAllUsersTracker(params.getParams())
           .subscribe({
@@ -1458,6 +1462,7 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
           );
           if (getByValue) {
             this.addresseeDataSelect = data.data[0];
+            this.changeAddreseeDetail(data.data[0]);
           }
           console.log(data, this.addressee);
           subscription.unsubscribe();
