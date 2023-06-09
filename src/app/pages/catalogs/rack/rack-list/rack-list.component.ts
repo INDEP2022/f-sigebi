@@ -13,6 +13,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { IRack } from '../../../../core/models/catalogs/rack.model';
 import { RackFormComponent } from '../rack-form/rack-form.component';
 import { RACK_COLUMNS } from './rack-columns';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-rack-list',

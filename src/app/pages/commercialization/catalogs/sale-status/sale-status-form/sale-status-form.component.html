@@ -4,18 +4,18 @@
   </div>
   <div body>
     <form class="form-material" [formGroup]="form">
-      <div class="row mb-3 mt-3">
-        <div class="col-lg-6 col-md-6 col-sm-12 col-12 mb-3 mt-3">
-          <form-field [control]="form.get('description')" label="Descripción">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="description" />
+      <div class="row mb-3">
+
+        <div class="col-md-6">
+          <form-field [control]="form.get('id')" label="Estatus">
+            <input type="text" class="form-control" formControlName="id" maxlength="4" />
           </form-field>
         </div>
-        <div class="col-lg-3 col-md-3 col-sm-12 col-12 mb-3 mt-3">
-          <form-field [control]="form.get('status')" label="Estatus">
-            <input type="text" class="form-control" formControlName="status" />
+      </div>
+      <div class="row mb-3">
+        <div class=" col-md-12">
+          <form-field [control]="form.get('description')" label="Descripción">
+            <input type="text" class="form-control" formControlName="description" />
           </form-field>
         </div>
       </div>
@@ -24,10 +24,7 @@
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <confirm-button
-          [disabled]="!form.valid"
-          [loading]="loading"
-          (confirm)="confirm()"></confirm-button>
+        <confirm-button [disabled]="!form.valid" [loading]="loading" (confirm)="confirm()"></confirm-button>
       </div>
       <div class="m-3">
         <button type="button" class="btn btn-danger active" (click)="close()">

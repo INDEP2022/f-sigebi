@@ -69,11 +69,24 @@ export class ManagementsListComponent extends BasePage implements OnInit {
       '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        this.managementService.remove(management.id).subscribe({
-          next: data => this.getManagements(),
-          error: error => (this.loading = false),
-        });
+        this.remove(management.id);
       }
     });
+  }
+
+  remove(id: number) {
+    this.managementService.remove(id).subscribe(
+      res => {
+        this.alert('success', 'Gestión', 'Borrado.');
+        this.getManagements();
+      },
+      err => {
+        this.alert(
+          'warning',
+          'Gestión',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      }
+    );
   }
 }

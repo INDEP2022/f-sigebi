@@ -70,7 +70,24 @@ export class ClaimConclusionListComponent extends BasePage implements OnInit {
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
+        this.deleteReg(claimConclusion.id);
       }
+    });
+  }
+
+  deleteReg(id: string | number) {
+    this.claimConclusionService.remove(id).subscribe({
+      next: response => {
+        this.alert('success', 'Conclusión de Registro', 'Borrado'),
+          this.getExample();
+      },
+      error: err => {
+        this.alert(
+          'warning',
+          'Conclusión de Registro',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      },
     });
   }
 }

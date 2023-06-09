@@ -6,32 +6,20 @@
     <form class="form-material" [formGroup]="ifaiSerieForm">
       <div class="row">
         <div class="col-md-6">
-          <form-field
-            [control]="ifaiSerieForm.get('code')"
-            label="C&oacute;digo">
+          <form-field [control]="ifaiSerieForm.get('code')" label="C&oacute;digo">
             <input type="text" class="form-control" formControlName="code" />
           </form-field>
         </div>
 
         <div class="col-md-6">
-          <form-field
-            [control]="ifaiSerieForm.get('typeProcedure')"
-            label="Tipo de tr&aacute;mite">
-            <input
-              type="string"
-              class="form-control"
-              formControlName="typeProcedure" />
+          <form-field [control]="ifaiSerieForm.get('typeProcedure')" label="Tipo de tr&aacute;mite">
+            <input type="string" class="form-control" formControlName="typeProcedure" />
           </form-field>
         </div>
 
         <div class="col-md-12">
-          <form-field
-            [control]="ifaiSerieForm.get('description')"
-            label="Descripci&oacute;n">
-            <textarea
-              type="text"
-              class="form-control"
-              formControlName="description">
+          <form-field [control]="ifaiSerieForm.get('description')" label="Descripci&oacute;n">
+            <textarea type="text" class="form-control" formControlName="description">
             </textarea>
           </form-field>
         </div>
@@ -42,7 +30,7 @@
           </form-field>
         </div>
 
-        <div class="col-md-6">
+        <!-- <div class="col-md-6">
           <form-field
             [control]="ifaiSerieForm.get('registryNumber')"
             label="No&#46; registro">
@@ -51,17 +39,14 @@
               class="form-control"
               formControlName="registryNumber" />
           </form-field>
-        </div>
+        </div> -->
       </div>
     </form>
   </div>
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <confirm-button
-          [disabled]="ifaiSerieForm.invalid"
-          [loading]="loading"
-          (confirm)="confirm()">
+        <confirm-button [disabled]="ifaiSerieForm.invalid" [loading]="loading" (confirm)="confirm()">
         </confirm-button>
       </div>
       <div class="m-3">

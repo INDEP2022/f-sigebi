@@ -32,8 +32,7 @@ import Swal from 'sweetalert2';
 })
 export class CatRelationshipOpinionComponent
   extends BasePage
-  implements OnInit
-{
+  implements OnInit {
   data: LocalDataSource = new LocalDataSource();
   columns: IAffair[] = [];
   columnFilters: any = [];
@@ -221,7 +220,7 @@ export class CatRelationshipOpinionComponent
         idAffair,
         rAsuntDic,
         affairType,
-        callback: (next: boolean) => {},
+        callback: (next: boolean) => { },
       },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
@@ -238,14 +237,27 @@ export class CatRelationshipOpinionComponent
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(rAsuntDic);
-        Swal.fire('Borrado', '', 'success');
+
       }
     });
   }
 
   delete(rAsuntDic?: IRAsuntDic) {
     this.RAsuntDicService.remove2(rAsuntDic).subscribe({
-      next: () => this.getRAsuntDic(),
+      next: () => {
+        this.getRAsuntDic();
+        this.alert(
+          'success',
+          'Borrado',
+          ''
+        );
+      }, error: error => {
+        this.alert(
+          'warning',
+          'Relación y de asunto dictamen',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      }
     });
   }
 
@@ -254,7 +266,7 @@ export class CatRelationshipOpinionComponent
   openDictum() {
     let config: ModalOptions = {
       initialState: {
-        callback: (next: boolean) => {},
+        callback: (next: boolean) => { },
       },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
