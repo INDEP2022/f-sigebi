@@ -1,4 +1,4 @@
-<div [class]="haveError(row)">
+<!-- <div [class]="haveError(row)">
   <input
     *ngIf="row.dataType !== 'D' && !row.attribute.includes('FECHA')"
     type="text"
@@ -30,4 +30,8 @@
       {{ haveMoneyError(row) }}
     </div>
   </ng-container>
+</div> -->
+
+<div [class]="getClassColour()">
+  {{ value?.value }}
 </div>
