@@ -113,6 +113,10 @@ export class JuridicalRulingComponent
   documents: IDocuments[] = [];
   selectedDocuments: IDocuments[] = [];
 
+  totalItems: number = 0;
+  totalItems2: number = 0;
+  totalItems3: number = 0;
+
   settings1 = {
     pager: {
       display: false,
@@ -434,6 +438,7 @@ export class JuridicalRulingComponent
               });
 
               this.goods = data;
+              this.totalItems = resp.count || 0;
             },
             error: err => {
               console.log(err);
@@ -631,6 +636,7 @@ export class JuridicalRulingComponent
             });
 
             this.goods = data;
+            this.totalItems2 = response.count || 0;
           },
           error: err => {
             console.log(err);
@@ -746,6 +752,7 @@ export class JuridicalRulingComponent
           });
 
           this.goods = data;
+          this.totalItems3 = response.count || 0;
 
           // data.map(async (good: any) => {
           //   good.di_disponible = 'S';
@@ -1291,6 +1298,7 @@ export class JuridicalRulingComponent
       if (!this.legalForm.get('noExpediente').value) {
         this.onLoadToast('error', 'Falta seleccionar expediente');
       } else {
+        //Manda a llamar a FACTGENPARCIALIZA
         this.router.navigate(['pages/general-processes/goods-partialization'], {
           queryParams: {
             good: this.idGoodSelected,
@@ -1421,5 +1429,33 @@ export class JuridicalRulingComponent
 
   btnCloseDocs() {
     this.listadoDocumentos = false;
+  }
+
+  CLAVE_OFICIO_ARMADA: any;
+  P_GEST_OK: any;
+  CONSULTA: any;
+  VOLANTE: any;
+  EXPEDIENTE: any;
+  TIPO_DICT: any;
+  TIPO_VO: any;
+  P_NO_TRAMITE: any;
+
+  // IMPRESIONES - BUTTON //
+  btnImprimeOficio() {
+    this.router.navigate(
+      ['/pages/juridical/depositary/legal-opinions-office/'],
+      {
+        queryParams: {
+          origin: 'FACTGENACTDATEX', //Cambiar
+          P_VALOR: this.dictNumber,
+          TIPO: this.legalForm.get('tipoDictaminacion').value,
+          PAQUETE: "this.expedientesForm.get('tipoDictaminacion').value",
+        },
+      }
+    );
+  }
+
+  btnRefuse() {
+    console.log('btnRechazar');
   }
 }

@@ -1,20 +1,16 @@
 import {
   Component,
   ElementRef,
-  inject,
+  EventEmitter,
+  Input,
   OnInit,
+  Output,
   ViewChild,
 } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { Observable, ReplaySubject } from 'rxjs';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { ModelForm } from 'src/app/core/interfaces/model-form';
-import { ISignatories } from 'src/app/core/models/ms-electronicfirm/signatories-model';
-import { AuthService } from 'src/app/core/services/authentication/auth.service';
-import { ProcessgoodreportService } from 'src/app/core/services/ms-processgoodreport/ms-processgoodreport.service';
+import { SignatoriesService } from 'src/app/core/services/ms-electronicfirm/signatories.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { RFC_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-upload-dictamen-files-modal',
@@ -25,30 +21,35 @@ export class UploadDictamenFilesModalComponent
   extends BasePage
   implements OnInit
 {
-  @ViewChild('FileInputCert', { static: true })
-  cert: ElementRef<HTMLInputElement>;
-  @ViewChild('FileInputKey', { static: true })
-  keyI: ElementRef<HTMLInputElement>;
-  fileForm: ModelForm<ISignatories>;
-  hide = true;
+  fileForm: FormGroup;
+  @Input() nameFileDictation: string = ''; // NOMBRE DEL DICTAMEN APARTIR DE LA CLAVE ARMADA
+  @Input() fileDocumentDictation: any = null; // ARCHIVO XML PARA FIRMAR
+  @Input() nameReportDictation: any = null; // NOMBRE DEL REPORTE PARA CARGAR PARAMETROS
+  @Input() reportParamsDictation: any = null; // PARAMETROS PARA EL REPORTE
 
+  hide: boolean = true;
   certiFile: File | null = null;
   keyCertiFile: File | null = null;
-  typeReport: string = null;
-  isRFCHided: boolean = true;
-  edit: boolean = false;
-  base64Cer: string;
-  base64Key: string;
-  encrypResult: string;
-  idReportAclara: any;
 
-  /* injections */
-  private modalRef = inject(BsModalRef);
-  private fb = inject(FormBuilder);
-  private processGoodReport = inject(ProcessgoodreportService);
-  private authService = inject(AuthService);
+  // CER
+  @ViewChild('FileInputCert', { static: true })
+  cert: ElementRef<HTMLInputElement>;
+  // KEY
+  @ViewChild('FileInputKey', { static: true })
+  keyI: ElementRef<HTMLInputElement>;
 
-  constructor() {
+  // @ViewChild('FileInputTEST', { static: true })
+  // test: ElementRef<HTMLInputElement>;
+  // testFile: File | null = null;
+
+  @Output() responseFirm = new EventEmitter<any>();
+  @Output() errorFirm = new EventEmitter<boolean>();
+
+  constructor(
+    private modalRef: BsModalRef,
+    private fb: FormBuilder,
+    private msSignatoriesService: SignatoriesService
+  ) {
     super();
   }
 
@@ -58,73 +59,39 @@ export class UploadDictamenFilesModalComponent
 
   initForm() {
     this.fileForm = this.fb.group({
-      learnedType: [null],
-      learnedId: [null],
-      name: [
-        null,
-        [
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(100),
-        ],
-      ],
-      post: [
-        null,
-        [
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(100),
-        ],
-      ],
       certificate: [null, [Validators.required]],
       keycertificate: [null, [Validators.required]],
-      pass: [null, [Validators.required, Validators.maxLength(10)]],
-      rfcUser: [
-        null,
-        [
-          Validators.required,
-          Validators.pattern(RFC_PATTERN),
-          Validators.maxLength(13),
-        ],
-      ],
-      signatoryId: [null],
+      secpwd: [null, [Validators.required, Validators.maxLength(10)]],
       signature: [null],
+      fileDataBase64: [null],
     });
-    /*if (this.signatories != null) {
-      this.edit = true;
-      this.fileForm.controls['name'].setValue(this.signatories.name);
-      this.fileForm.controls['post'].setValue(this.signatories.post);
-      this.fileForm.controls['signature'].setValue(this.signatories.signature);
-      //this.fileForm.patchValue(this.signatories); //Llenar todo el formulario
+    // Recorrer los parametros
+    for (const key in this.reportParamsDictation) {
+      if (
+        Object.prototype.hasOwnProperty.call(this.reportParamsDictation, key)
+      ) {
+        const element = this.reportParamsDictation;
+        if (key) {
+          this.fileForm.addControl(key, element);
+        }
+      }
     }
-
-    this.passForm = this.fb.group({
-      cadena: [this.fileForm.controls['pass'].value],
-    });*/
   }
 
   chargeCertifications(event: any) {
     let certiToUpload = event.target.files[0];
-    this.certiFile = certiToUpload;
 
     if (certiToUpload.name.includes('.cer')) {
-      this.loader.load = true;
-      //Convierte archivo seleccionado a base 64 y lo guarda
-      this.convertFile(event.target.files[0]).subscribe({
-        next: base64 => {
-          this.base64Cer = base64;
-          this.loader.load = false;
-        },
-        error: () => {
-          this.loader.load = false;
-        },
-      });
+      console.log(event.target.files[0]);
+      event.target.files[0];
+      this.certiFile = certiToUpload;
     } else {
       this.onLoadToast(
         'error',
         'No es un archivo con formato valido.',
         'Favor de verificar'
       );
+      this.certiFile = null;
       this.cert.nativeElement.value = '';
       this.fileForm.get('certificate').patchValue('');
     }
@@ -132,51 +99,98 @@ export class UploadDictamenFilesModalComponent
 
   chargeKeyCertifications(event: any) {
     let keyCertiToUpload = event.target.files[0];
-    this.keyCertiFile = keyCertiToUpload;
+
     if (keyCertiToUpload.name.includes('.key')) {
-      this.loader.load = true;
-      //Convierte archivo seleccionado a base 64 y lo guarda
-      this.convertFile(event.target.files[0]).subscribe({
-        next: base64 => {
-          this.base64Key = base64;
-          this.loader.load = false;
-        },
-        error: () => {
-          this.loader.load = false;
-        },
-      });
+      console.log(event.target.files[0]);
+      event.target.files[0];
+      this.keyCertiFile = keyCertiToUpload;
     } else {
       this.onLoadToast(
         'error',
         'No es un archivo con formato valido.',
         'Favor de verificar'
       );
+      this.keyCertiFile = null;
       this.keyI.nativeElement.value = '';
       this.fileForm.get('keycertificate').patchValue('');
     }
   }
 
-  //Convierte archivo a base64
-  convertFile(file: File): Observable<string> {
-    const result = new ReplaySubject<string>(1);
-    const reader = new FileReader();
-    reader.readAsBinaryString(file);
-    reader.onload = event => result.next(btoa(event.target.result.toString()));
-    return result;
-  }
-
-  close() {
+  close(closeEmit: boolean = false, data: any = null) {
+    if (closeEmit) {
+      this.responseFirm.emit(data); // Emmit response
+    }
     this.modalRef.hide();
   }
 
   confirm() {
-    const params = new ListParams();
-    const user = this.authService.decodeToken();
-    params['nombreReporte'] = 'RGENADBDICTAMASIV.jasper';
-    params['nombreReporte'] = user.username;
-    params['PDEPARTAMENTO'] = user.delegacionreg;
-    params['PDEPARTAMENTO'] = user.delegacionreg;
+    this.alertQuestion(
+      'question',
+      'Se va a comenzar el proceso del firmado electrónico. ¿Desea Continuar?',
+      ''
+    ).then(async question => {
+      if (question.isConfirmed) {
+        this.sendFormAndFilesToFirm();
+      }
+    });
+  }
 
-    this.processGoodReport.getReportXMLToFirm(params).subscribe({});
+  sendFormAndFilesToFirm() {
+    console.log(this.fileForm);
+    const formData = new FormData();
+    formData.append('files', this.fileDocumentDictation);
+    formData.append('files', this.certiFile);
+    formData.append('files', this.keyCertiFile);
+    formData.append('secpwd', this.fileForm.controls['secpwd'].value);
+    if (this.reportParamsDictation) {
+      // Recorrer los parametros
+      for (const key in this.reportParamsDictation) {
+        if (
+          Object.prototype.hasOwnProperty.call(this.reportParamsDictation, key)
+        ) {
+          const element = this.reportParamsDictation;
+          if (key) {
+            // this.fileForm.addControl(key, element);
+            formData.append(key, element);
+          }
+        }
+      }
+    }
+    this.msSignatoriesService
+      .signerServiceForOfficeDictation(formData)
+      .subscribe({
+        next: (data: any) => {
+          console.log(data);
+          this.alertInfo(
+            'success',
+            'Se realizó el proceso de Firmar el Dictamen correctamente',
+            data.message
+          ).then(() => {
+            this.fileForm.controls['signature'] = data.signature;
+            this.fileForm.controls['fileData'] = data.fileData;
+            this.downloadFile(data.fileData, this.nameFileDictation);
+            this.close(true, data);
+          });
+        },
+        error: error => {
+          console.log(error);
+          this.errorFirm.emit(true);
+          this.alert(
+            'error',
+            'Ocurrió un erro al Firmar el Dictamen ',
+            error.message
+          );
+        },
+      });
+  }
+
+  downloadFile(base64: any, fileName: any) {
+    const linkSource = `data:application/xml;charset=UTF-8;base64,${base64}`;
+    const downloadLink = document.createElement('a');
+    downloadLink.href = linkSource;
+    downloadLink.download = fileName + '.xml';
+    downloadLink.target = '_blank';
+    downloadLink.click();
+    downloadLink.remove();
   }
 }
