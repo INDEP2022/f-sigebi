@@ -198,7 +198,7 @@ export class LegalOpinionsOfficeFirmModalComponent
           this.errorFirm.emit(true);
           this.alert(
             'error',
-            'Ocurrió un erro al Firmar el Dictamen ',
+            'Ocurrió un error al Firmar el Dictamen ',
             error.message
           ),
             console.log('Error en el firmante', error.error);
