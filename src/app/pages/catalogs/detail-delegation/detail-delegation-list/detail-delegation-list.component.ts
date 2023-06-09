@@ -126,18 +126,27 @@ export class DetailDelegationListComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(detailDelegation.id);
-        Swal.fire('Borrado', '', 'success');
       }
     });
   }
 
   delete(id: number) {
     this.detailDelegationService.remove(id).subscribe({
-      next: () => this.getDetailDelegation(),
+      next: () => {
+        this.alert('success', 'Detalle Delegación', 'Borrado');
+        this.getDetailDelegation();
+      },
+      error: error => {
+        this.alert(
+          'warning',
+          'Detalle Delegación',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      },
     });
   }
 }

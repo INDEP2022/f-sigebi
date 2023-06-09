@@ -1,6 +1,6 @@
 export const DOCUMENTS_COLUMNS = {
   key: {
-    title: 'cve_documentos',
+    title: 'Cve. Documento',
     sort: false,
     filter: false,
     valuePrepareFunction: (value: any) => {

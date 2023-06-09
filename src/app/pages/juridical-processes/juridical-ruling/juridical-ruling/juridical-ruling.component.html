@@ -299,6 +299,9 @@
           [attr.class]="'table-bordered table-responsive'"
           [settings]="settings1"
           [source]="goods"></ng2-smart-table>
+        <app-pagination
+          [params]="params"
+          [totalItems]="totalItems"></app-pagination>
       </div>
     </div>
     <div class="row pt-2">
@@ -342,27 +345,96 @@
           (rowSelect)="rowSelected($event)"></ng2-smart-table>
       </div>
     </div>
-
-    <div class="row pt-2">
-      <div class="col-md-12">
-        <hr class="row" />
-      </div>
-      <div class="col-md-8">
-        <h5 class="title">DOCUMENTOS</h5>
-        <div class="row">
-          <div class="col-md-10">
-            <ng2-smart-table
-              [attr.class]="'table-bordered table-responsive'"
-              [settings]="settings3"
-              [source]="documents"></ng2-smart-table>
-          </div>
-          <div class="col-md-2">
-            <p class="text-info h5">No&#46; bien</p>
-            <p class="text-info h5">{{ idGoodSelected }}</p>
+    <div class="row w-100">
+      <div class="col-8 pt-2">
+        <div class="col-md-12">
+          <hr class="row" />
+        </div>
+        <div class="col-md-8">
+          <h5 class="title">DOCUMENTOS</h5>
+          <div class="row">
+            <div class="col-md-10">
+              <ng2-smart-table
+                [attr.class]="'table-bordered table-responsive'"
+                [settings]="settings3"
+                [source]="documents"></ng2-smart-table>
+            </div>
+            <div class="col-md-2">
+              <p class="text-info h5">No&#46; bien</p>
+              <p class="text-info h5">{{ idGoodSelected }}</p>
+            </div>
           </div>
         </div>
       </div>
-      <div class="col-md-4">
+
+      <div class="col-4 custom-grid">
+        <div class="row justify-content-center">
+          <div class="col-md-6 text-align-center">
+            <button
+              class="btn btn-info btn-sm active m-3 text-wrap w-100"
+              (click)="btnDocumentos()">
+              Documentos
+            </button>
+          </div>
+          <div class="col-6 text-align-center">
+            <button
+              class="btn btn-primary btn-sm active m-3 text-wrap w-100"
+              [disabled]="isDocsEmpty()"
+              (click)="btnApprove()">
+              <!-- [routerLink]="rutaAprobado" -->
+              Aprobar
+            </button>
+          </div>
+          <!-- BOTON QUE MANDA A LLAMAR A FACTGENPARCIALIZA -->
+          <div class="col-6 text-align-center">
+            <button
+              class="btn btn-info btn-sm active m-3 text-wrap w-100"
+              [disabled]="buttonDisabled"
+              (click)="btnVerify()"
+              [disabled]="!buttonDisabled">
+              Parcializar
+            </button>
+          </div>
+          <div class="col-6 text-align-center">
+            <button
+              class="btn btn-info btn-sm active m-3 text-wrap w-100"
+              [disabled]="buttonDisabled"
+              (click)="btnRefuse()"
+              [disabled]="!buttonDisabled">
+              Rechazar
+            </button>
+          </div>
+          <div class="col-6 text-align-center">
+            <button
+              class="btn btn-danger btn-sm active m-3 text-wrap w-100"
+              [disabled]="isDocsEmpty()"
+              (click)="btnDeleteDictation()"
+              [disabled]="!buttonDeleteDisabled">
+              Borrar Dictamen
+            </button>
+          </div>
+          <!-- BOTON QUE MANDA A LLAMAR A FACTJURDICTAMOFICIO -->
+          <div class="col-6 text-align-center">
+            <button
+              class="btn btn-primary btn-sm active m-3 text-wrap w-100"
+              (click)="btnImprimeOficio()">
+              <!-- [routerLink]="returnRoute" -->
+              Imprime Oficio
+            </button>
+          </div>
+
+          <div class="col-6 text-align-center">
+            <button
+              class="btn btn-info btn-sm active m-3 text-wrap w-100"
+              (click)="btnDeleteListDocs()">
+              Limpiar Documento
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- <div class="col-md-4">
         <button
           class="btn btn-primary btn-sm active m-3"
           [disabled]="isDocsEmpty()"
@@ -377,7 +449,7 @@
         </button>
         <button
           class="btn btn-info btn-sm active m-3"
-          (click)="btnDocumentos()">
+          (click)="btnDocumentos()"> 
           Documentos
         </button>
         <button
@@ -392,10 +464,11 @@
           Limpiar documentos
         </button>
       </div>
-    </div>
+     -->
   </div>
 </app-card>
 
+<!-- 
 <app-card [header]="true" *ngIf="listadoDocumentos == true">
   <div class="ch-content" header>
     <h5 class="title">Fecha de Documentos Asociados al Tr&aacute;mite</h5>
@@ -426,4 +499,4 @@
       </div>
     </div>
   </div>
-</app-card>
+</app-card> -->
