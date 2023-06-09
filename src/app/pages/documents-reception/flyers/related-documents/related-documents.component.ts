@@ -42,6 +42,7 @@ import { ParametersService } from 'src/app/core/services/ms-parametergood/parame
 import { ScreenStatusService } from 'src/app/core/services/ms-screen-status/screen-status.service';
 import { SecurityService } from 'src/app/core/services/ms-security/security.service';
 import { SegAcessXAreasService } from 'src/app/core/services/ms-users/seg-acess-x-areas.service';
+import { OfficeManagementService } from 'src/app/core/services/office-management/officeManagement.service';
 import {
   POSITVE_NUMBERS_PATTERN,
   STRING_PATTERN,
@@ -284,7 +285,8 @@ export class RelatedDocumentsComponent
     protected mJobManagementService: MJobManagementService,
     protected parametersService: ParametersService,
     protected departmentService: DepartamentService,
-    private segAccessAreasService: SegAcessXAreasService
+    private segAccessAreasService: SegAcessXAreasService,
+    private officeManagementSerivice: OfficeManagementService
   ) {
     super();
     console.log(authService.decodeToken());
@@ -353,7 +355,6 @@ export class RelatedDocumentsComponent
 
   onClickSelect(event: any) {
     event.toggle.subscribe((data: any) => {
-      console.log(data);
       data.row.seleccion = data.toggle;
     });
   }
@@ -547,6 +548,18 @@ export class RelatedDocumentsComponent
         this.paramsGestionDictamen.pDictamen = params['pDictamen'] ?? null;
         this.paramsGestionDictamen.sale = params['sale'] ?? null;
         this.paramsGestionDictamen.pGestOk = params['pGestOk'] ?? null;
+
+        /*this.origin = params['origin'] ?? null; //no
+        this.paramsGestionDictamen.volante = params['VOLANTE'] ?? null;
+        this.paramsGestionDictamen.expediente = params['EXPEDIENTE'] ?? null;
+        this.paramsGestionDictamen.tipoOf = params['TIPO_OF'] ?? null;
+        this.paramsGestionDictamen.doc = params['DOC'] ?? null;
+        this.paramsGestionDictamen.pDictamen = params['pDictamen'] ?? null;  //no
+        this.paramsGestionDictamen.sale = params['SALE'] ?? null;
+        this.paramsGestionDictamen.pGestOk = params['BIEN'] ?? null;
+        this.paramsGestionDictamen.pGestOk = params['PLLAMO'] ?? null;
+        this.paramsGestionDictamen.pGestOk = params['P_GEST_OK'] ?? null;
+        this.paramsGestionDictamen.pGestOk = params['P_NO_TRAMITE'] ?? null;*/
       });
     this.pantallaActual = this.route.snapshot.paramMap.get('id');
     if (!this.pantallaActual) {
@@ -1682,6 +1695,7 @@ export class RelatedDocumentsComponent
     console.log(this.managementForm);
     console.log(this.formJobManagement);
     console.log(this.m_job_management);
+    console.log(this.formNotification);
     const {
       noVolante, //no_volante
       wheelStatus, //status
@@ -1703,7 +1717,7 @@ export class RelatedDocumentsComponent
       this.onLoadToast('info', 'El oficio ya esta enviado no puede borrar', '');
       return;
     }
-    if (cveManagement.includes('?') == false) {
+    /*if (cveManagement.includes('?') == false) {
       this.onLoadToast(
         'info',
         'La clave está armada, no puede borrar oficio',
@@ -1725,7 +1739,7 @@ export class RelatedDocumentsComponent
     } else {
       this.onLoadToast('error', 'Error', 'Usuario inválido para borrar oficio');
       return;
-    }
+    }*/
 
     this.alertQuestion(
       'warning',
@@ -1734,22 +1748,54 @@ export class RelatedDocumentsComponent
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(managementNumber, noVolante);
-        Swal.fire('Borrado', '', 'success');
       }
     });
   }
 
-  delete(managementNumber: number | string, noVolante: number | string) {
-    //trabajando en eliminar
-    this.serviceOficces.deleteCopiesJobManagement(managementNumber).subscribe({
-      next: resp => {
-        console.log('resp  =>  ' + resp);
-        this.refreshTabla();
-      },
-      error: errror => {
-        this.onLoadToast('error', 'Error', errror.error.message);
-      },
-    });
+  async delete(managementNumber: number | string, noVolante: number | string) {
+    console.log(this.dataTableGoodsJobManagement);
+
+    return;
+    this.officeManagementSerivice
+      .removeGoodOfficeManagement(managementNumber)
+      .subscribe({
+        next: resp => {
+          this.officeManagementSerivice
+            .removeCopiesManagement(managementNumber)
+            .subscribe({
+              next: resp => {
+                this.officeManagementSerivice
+                  .removeMOfficeManagement(managementNumber)
+                  .subscribe({
+                    next: async resp => {
+                      const existDictamen: any = await this.dictationCount(
+                        noVolante
+                      );
+                      if (existDictamen.count == 0) {
+                        const notifBody: any = { dictumKey: null };
+                        this.notificationService
+                          .update(Number(noVolante), notifBody)
+                          .subscribe({
+                            next: resp => {
+                              Swal.fire('Borrado', '', 'success');
+                              console.log('resp  =>  ' + resp);
+                              this.refreshTabla();
+                            },
+                          });
+                      } else {
+                        Swal.fire('Borrado', '', 'success');
+                        this.refreshTabla();
+                      }
+                    },
+                  });
+              },
+              error: errror => {
+                this.onLoadToast('error', 'Error', errror.error.message);
+              },
+            });
+        },
+      });
+
     /*
     //actualiza cve_dictamen 
     const notifBody:any = {dictumKey: null}
@@ -2456,5 +2502,20 @@ export class RelatedDocumentsComponent
       ignoreBackdropClick: true, //ignora el click fuera del modal
     };
     this.modalService.show(UploadDictamenFilesModalComponent, config);
+  }
+
+  dictationCount(wheelNumber: string | number) {
+    return new Promise((resolve, reject) => {
+      const params = new ListParams();
+      params['filter.wheelNumber'] = `$eq:${wheelNumber}`;
+      this.dictationService.getAll().subscribe({
+        next: resp => {
+          resolve(resp);
+        },
+        error: error => {
+          console.log(error);
+        },
+      });
+    });
   }
 }
