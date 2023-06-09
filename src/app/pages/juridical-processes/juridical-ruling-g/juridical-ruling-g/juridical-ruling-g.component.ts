@@ -1040,7 +1040,9 @@ export class JuridicalRulingGComponent
         ['/pages/juridical/depositary/legal-opinions-office/'],
         {
           queryParams: {
-            origin: 'FACTJURDICTAMASG', //Cambiar
+            origin: 'FACTJURDICTAMASG', //Pantalla actual
+            origin3: 'FACTGENACTDATEX', //Pantalla anterior a la actual
+            PAQUETE: 0, // REVISAR
             P_VALOR: this.dictamen.id,
             P_NO_TRAMITE: this.expedientesForm.get('noExpediente').value,
             CLAVE_OFICIO_ARMADA:
