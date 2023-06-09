@@ -81,6 +81,31 @@ export class ParametersComponent extends BasePage implements OnInit {
     this.modalService.show(CoordinationModalComponent, modalConfig);
   }
 
+  transferChange() {
+    const { transfer, transmitter, authority } = this.siabControls;
+
+    if (transfer.value?.length == 0) {
+      this.transmitters = new DefaultSelect();
+      this.authorities = new DefaultSelect();
+      return;
+    }
+    transmitter.setValue([]);
+    authority.setValue([]);
+
+    this.getTransmitters();
+  }
+
+  transmitterChange() {
+    const { transmitter, authority } = this.siabControls;
+    if (transmitter.value?.length == 0) {
+      this.authorities = new DefaultSelect();
+      return;
+    }
+    authority.setValue([]);
+
+    this.getAuthorities();
+  }
+
   getTransfers(params: FilterParams) {
     this.transferentService.getAllWithFilter(params.getParams()).subscribe({
       next: response => {
@@ -167,5 +192,15 @@ export class ParametersComponent extends BasePage implements OnInit {
     }
     initialDate.addValidators(maxDate(new Date(date)));
     initialDate.updateValueAndValidity();
+  }
+
+  sliceLongName(value: string) {
+    if (!value) {
+      return '';
+    }
+    if (value.length <= 25) {
+      return value;
+    }
+    return value.slice(0, 25) + '...';
   }
 }

@@ -208,6 +208,7 @@ export class GoodsPartializationComponent extends BasePage implements OnInit {
 
   getGoodById(goodId: string | number) {
     return this.goodService.getById(goodId).pipe(
+      map((res: any) => res.data[0] as IGood),
       catchError(error => {
         this.onLoadToast('error', 'Error', GOOD_NOT_FOUND);
         this.controls.bien.reset();
