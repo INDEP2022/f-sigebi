@@ -50,7 +50,7 @@ export abstract class RelateDocumentsResponse extends BasePage {
   protected abstract securityService: SecurityService;
   abstract dataTableGoods: IGoodAndAvailable[];
   abstract dataTableGoodsJobManagement: IGoodJobManagement[];
-  abstract managementForm: FormGroup;
+  // abstract managementForm: FormGroup;
   isLoadingGood: boolean;
   abstract totalItems: number;
   getGoods1(params: ListParams) {

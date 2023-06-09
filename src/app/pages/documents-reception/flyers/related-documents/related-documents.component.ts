@@ -264,7 +264,9 @@ export class RelatedDocumentsComponent
     /** @descripiton  cve_cargo_rem*/
     cveChargeRem: new FormControl(''),
     /**@description DES_REMITENTE_PA */
-    desSenderpa: new FormControl(''),
+    desSenderpa: new FormControl(
+      'Con fundamento en el artículo 24 del Reglamento Interior del Servicio de Administración de Bienes Asegurados, el Jefe de Departamento de dictaminación de expedientes de bienes asegurados del cuarto transitorio, firma en ausencia de la Directora Jurídica Consultiva.'
+    ),
     /** @description NO_DEL_REM */
     delRemNumber: new FormControl(''),
     /** @description NO_DEP_REM */
@@ -280,6 +282,14 @@ export class RelatedDocumentsComponent
     }>(null), // ciudad,
     statusOf: new FormControl(''), // estatus_of
     refersTo: new FormControl(''), // se_refiere_a
+    /** @Description texto1 */
+    text1: new FormControl(''),
+    /** @Description texto2 */
+    text2: new FormControl(''),
+    /** @Description texto3 */
+    text3: new FormControl(''),
+    /** @Description des_remitente_pa */
+    // desSenderpa: new FormControl(''),
   });
 
   constructor(
@@ -619,7 +629,7 @@ export class RelatedDocumentsComponent
         });
       }
     }
-    this.getTypesSelectors();
+    // this.getTypesSelectors();
     this.params.pipe(skip(1), takeUntil(this.$unSubscribe)).subscribe(res => {
       this.goodFilterParams('Todos');
     });
@@ -813,7 +823,9 @@ export class RelatedDocumentsComponent
     this.getNotification(wheelNumber, expedient).subscribe({
       next: async res => {
         console.log(res);
+
         this.formNotification.patchValue(res);
+        this.getTypesSelectors();
         this.managementForm.get('noVolante').setValue(res.wheelNumber);
         this.managementForm.get('noExpediente').setValue(res.expedientNumber);
         this.managementForm.get('wheelStatus').setValue(res.wheelStatus);
@@ -2003,7 +2015,8 @@ export class RelatedDocumentsComponent
   //OBTENER TIPOS, SUBTIPOS DESCRIPCION
 
   getTypesSelectors(event?: any) {
-    const expedient = this.paramsGestionDictamen.expediente;
+    const expedient = this.formNotification.value.expedientNumber;
+    console.log(expedient);
     this.massiveGoodService.chargeGoodsByExpedient(expedient).subscribe({
       next: resp => {
         const all = {
@@ -2338,7 +2351,7 @@ export class RelatedDocumentsComponent
     }
 
     const etapaCreda = await this.getFaStageCreda(new Date());
-    const checkText = this.managementForm.get('checkText').value;
+    const checkText = this.formJobManagement.get('refersTo').value;
 
     if (!values.cveManagement && values.managementNumber) {
       const department = (await this.getDSAreaInDeparment(
