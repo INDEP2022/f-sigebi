@@ -297,6 +297,7 @@ export class JuridicalRulingComponent
   typesIdent = new DefaultSelect<Partial<{ identificador: string }>>();
   desc_estatus_good: string = '';
   isSearch: boolean = false;
+  variablesForm: FormGroup;
 
   constructor(
     private fb: FormBuilder,
@@ -681,6 +682,12 @@ export class JuridicalRulingComponent
         { value: null, disabled: true },
         Validators.pattern(NUMBERS_PATTERN),
       ],
+    });
+
+    this.variablesForm = this.fb.group({
+      tipo_vol: [null],
+      clasif2: [null],
+      clsif: [null],
     });
   }
 
@@ -1129,6 +1136,7 @@ export class JuridicalRulingComponent
    * --
    */
   btnDocumentos() {
+    this.variablesForm.get('tipo_vol').setValue('');
     let tipo_vol = '';
     let dicta = '';
     let classif = '';
@@ -1137,7 +1145,7 @@ export class JuridicalRulingComponent
     params.addFilter('wheelNumber', noExpediente, SearchFilter.EQ);
     this.notServ.getAllFilter(params.getParams()).subscribe({
       next: resp => {
-        tipo_vol = resp.data[0].wheelType;
+        this.variablesForm.get('tipo_vol').patchValue(resp.data[0].wheelType);
         if (!this.legalForm.get('esPropiedad').value) {
           dicta = 'N';
         } else {
@@ -1152,7 +1160,7 @@ export class JuridicalRulingComponent
 
         const typeDictation = this.legalForm.get('tipoDictaminacion').value;
         const crime = this.legalForm.get('esPropiedad').value ?? 'N';
-        const typeSteeringwheel = tipo_vol;
+        const typeSteeringwheel = this.variablesForm.get('tipo_vol').value;
         const numberClassifyGood = 1206;
         const stateNumber = this.idGoodSelected;
         let config: ModalOptions = {
