@@ -92,13 +92,13 @@ export class HistoryGoodService extends HttpService {
     return this.get(route, params);
   }
 
-  getPreviousHistoryGood(noGood: number | string) {
+  getPreviousHistoryGood(body: any) {
     const route = HistoryGoodEndpoints.GetEstPreviousHistory;
-    return this.get(`${route}`);
+    return this.post(`${route}`, body);
   }
 
-  getPreviousHistoryGood2(noGood: number | string) {
+  getPreviousHistoryGood2(body: any) {
     const route = HistoryGoodEndpoints.GetEstPreviousHistory2;
-    return this.get(`${route}`);
+    return this.post(`${route}`, body);
   }
 }

@@ -15,7 +15,10 @@
         TEST FIRMA
         <i aria-hidden="true" class="fa fa-filr"></i>
       </button> -->
-
+      <button class="btn btn-primary active btn-sm m-2" (click)="goBack()">
+        Regresar
+        <i class="fas fa-arrow-circle-left"></i>
+      </button>
       Fec&#46; Captura:
       <span class="badge bg-info ml-3 mr-3" style="display: initial !important">
         {{ today || '00/00/0000' }}
@@ -265,6 +268,7 @@
       <div [formGroup]="managementForm">
         <div class="row pt-4">
           <form-field
+            *ngIf="pantallaActual == '1'"
             [control]="managementForm.get('justificacion')"
             class="col-md-6">
             <ngx-select
@@ -297,9 +301,12 @@
          </form-field> -->
         </div>
         <br /><br />
-        <div class="row pt-4">
+        <div class="row pt-4" *ngIf="pantallaActual == '1'">
           <div class="col-md-4">
-            <button type="button" class="btn btn-primary active btn-sm mr-2">
+            <button
+              type="button"
+              class="btn btn-primary active btn-sm mr-2"
+              (click)="fgrResponses()">
               Respuestas FGR
             </button>
           </div>
