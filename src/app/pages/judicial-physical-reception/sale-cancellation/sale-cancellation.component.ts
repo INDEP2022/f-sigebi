@@ -756,7 +756,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
     this.serviceDetailProc.getAllwithEndFisico(modelDetail).subscribe(
       async res => {
         console.log(res);
-        this.totalItemsDataGoodsAct = res.count
+        this.totalItemsDataGoodsAct = res.count;
         const data = this.dataGoods;
         const incomeData = res.data;
         for (let i = 0; i < incomeData.length; i++) {
@@ -848,7 +848,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
         this.act2Valid = true;
         this.navigateProceedings = true;
         this.idProceeding = dataRes.id;
-        this.loading = false
+        this.loading = false;
       },
       err => {
         this.form.get('acta2').setValue(dataRes.keysProceedings);
@@ -874,7 +874,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
         this.form.get('recibe2').setValue(dataRes.witness2);
         this.form.get('testigo').setValue(dataRes.comptrollerWitness);
         this.form.get('statusProceeding').setValue(dataRes.statusProceedings);
-        this.form.get('folioEscaneo').setValue(dataRes.universalFolio)
+        this.form.get('folioEscaneo').setValue(dataRes.universalFolio);
         if (this.form.get('statusProceeding').value === 'ABIERTA') {
           this.labelActa = 'Cerrar acta';
           this.btnCSSAct = 'btn-primary';
@@ -884,7 +884,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
         }
         this.act2Valid = true;
         this.navigateProceedings = true;
-        this.loading = false
+        this.loading = false;
         this.idProceeding = dataRes.id;
       }
     );
@@ -1242,8 +1242,8 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
           console.log(typeof dataRes);
         } else {
           console.log('No entro');
-        this.loading = false
-        this.initialBool = false;
+          this.loading = false;
+          this.initialBool = false;
           this.minDateFecElab = new Date();
           this.checkChange();
         }
@@ -1251,7 +1251,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
       err => {
         console.log(err);
         this.initialBool = false;
-        this.loading = false
+        this.loading = false;
         this.checkChange();
         this.blockExpedient = false;
       }
@@ -1288,7 +1288,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
     this.act2Valid = false;
     this.initialBool = true;
     this.blockExpedient = true;
-    this.loading = true
+    this.loading = true;
     this.goodData = [];
     this.dataGoodAct.load(this.goodData);
     this.numberProceeding = 0;
@@ -1346,13 +1346,13 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
                 'El número de expediente registrado no tiene bienes válidos'
               );
               this.blockExpedient = false;
-              this.loading = false
+              this.loading = false;
             }
           },
           error: (err: any) => {
             console.error(err);
-              this.loading = false
-              this.blockExpedient = false;
+            this.loading = false;
+            this.blockExpedient = false;
             this.blockAllInputs();
             this.alert(
               'warning',
@@ -1403,7 +1403,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
 
   fecElabFn() {
     let fecElab = new Date(this.form.get('fecElab').value);
-    console.log(fecElab)
+    console.log(fecElab);
     if (this.form.get('fecElab').value != null) {
       this.form.get('fecRecepFisica').setValue(new Date(fecElab));
     } else {
@@ -1647,7 +1647,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
   }
 
   newCloseProceeding() {
-    this.validateFolio()
+    this.validateFolio();
     if (this.dataGoodAct['data'].length == 0) {
       this.alert(
         'warning',
@@ -1671,11 +1671,11 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
       this.dataGoodAct['data'].find((e: any) => e.good.storeNumber == null)
     ) {
       this.alert('warning', 'Hay bienes no guardados en almacén', '');
-    } else if(this.form.get('folioEscaneo').value == null){
-      this.alert('warning','No se ha ingresado un número de folio','')
-    } else if(!this.scanStatus){
-      this.alert('warning','El folio no ha sido escaneado','')
-    }else{
+    } else if (this.form.get('folioEscaneo').value == null) {
+      this.alert('warning', 'No se ha ingresado un número de folio', '');
+    } else if (!this.scanStatus) {
+      this.alert('warning', 'El folio no ha sido escaneado', '');
+    } else {
       const paramsF = new FilterParams();
       paramsF.addFilter('keysProceedings', this.form.get('acta2').value);
       this.serviceProcVal.getByFilter(paramsF.getParams()).subscribe(
@@ -1696,7 +1696,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
                 VAL_MOVIMIENTO = res.data[0]['valmovement'];
                 if (VAL_MOVIMIENTO === 1) {
                   const tipo_acta = 'DXCV';
-                  this.closeProceedingFn()
+                  this.closeProceedingFn();
                 } else {
                   this.closeProceedingFn();
                 }
@@ -1720,7 +1720,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
         const newParams = `filter.numClasifGoods=$eq:${goodClass}`;
         this.serviceSssubtypeGood.getFilter(newParams).subscribe(
           res => {
-            console.log(res)
+            console.log(res);
             const type = JSON.parse(JSON.stringify(res.data[0]['numType']));
             const subtype = JSON.parse(
               JSON.stringify(res.data[0]['numSubType'])
@@ -1743,10 +1743,9 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
               item.storeNumber === null
             ) {
               resolve(false);
-            }else{
-              resolve(true)
+            } else {
+              resolve(true);
             }
-            
           },
           err => {
             resolve(true);
@@ -1778,13 +1777,13 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
         .getByFolio(this.form.get('folioEscaneo').value)
         .subscribe(
           async res => {
-            console.log(res)
+            console.log(res);
             const data = JSON.parse(JSON.stringify(res));
             const scanStatus = data.data[0]['scanStatus'];
             console.log(scanStatus);
             if (scanStatus == 'ESCANEADO') {
               const vanbal = await this.waitVBANVAL();
-              console.log(vanbal)
+              console.log(vanbal);
               if (vanbal == false) {
                 this.alert('warning', 'Debe especificar almacen', '');
               } else {
@@ -1811,16 +1810,10 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
                     this.serviceProgrammingGood.paChangeStatus(model).subscribe(
                       res => {
                         console.log(res);
-                        this.form
-                                  .get('statusProceeding')
-                                  .setValue('CERRADO');
-                                this.labelActa = 'Abrir acta';
-                                this.btnCSSAct = 'btn-success';
-                                this.alert(
-                                  'success',
-                                  'El acta ha sido cerrada',
-                                  ''
-                                );
+                        this.form.get('statusProceeding').setValue('CERRADO');
+                        this.labelActa = 'Abrir acta';
+                        this.btnCSSAct = 'btn-success';
+                        this.alert('success', 'El acta ha sido cerrada', '');
                       },
                       err => {
                         console.log(err);
@@ -2157,7 +2150,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
     this.numberProceeding = this.proceedingData.length;
     this.clearInputs();
     this.form.get('ident').setValue('DEV');
-    this.form.get('entrego').setValue('PART')
+    this.form.get('entrego').setValue('PART');
     this.checkChange();
     this.minDateFecElab = new Date();
     this.form.get('statusProceeding').reset();
