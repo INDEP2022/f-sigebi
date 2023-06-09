@@ -1,6 +1,8 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">Campos para el bien:</h5>
+    <h5 class="modal-title">
+      Seleccione los tipos de Situaciones para el Bien:
+    </h5>
   </div>
   <div body>
     <div class="row">
@@ -9,9 +11,8 @@
           <ng2-smart-table
             [attr.class]="'table-bordered'"
             [settings]="settings"
-            [source]="data"
-            (edit)="openForm($event.data)"
-            (delete)="showDeleteAlert($event.data)"></ng2-smart-table>
+            [source]="data">
+          </ng2-smart-table>
         </div>
       </div>
     </div>

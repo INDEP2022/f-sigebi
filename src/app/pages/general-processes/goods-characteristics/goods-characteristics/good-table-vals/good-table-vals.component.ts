@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import {
   FilterParams,
   ListParams,
@@ -17,7 +18,10 @@ import {
   formatForIsoDate,
 } from 'src/app/shared/utils/date';
 import { GoodsCharacteristicsService } from '../../services/goods-characteristics.service';
+import { GoodCellValueComponent } from './good-cell-value/good-cell-value.component';
 import { GoodCharacteristicModalComponent } from './good-characteristic-modal/good-characteristic-modal.component';
+import { GoodSituationsModalComponent } from './good-situations-modal/good-situations-modal.component';
+import { GoodTableDetailButtonComponent } from './good-table-detail-button/good-table-detail-button.component';
 
 export interface IVal {
   column: string;
@@ -62,7 +66,12 @@ export class GoodTableValsComponent extends BasePage implements OnInit {
         position: 'left',
         add: false,
         edit: true,
-        delete: false,
+        delete: true,
+      },
+      delete: {
+        deleteButtonContent:
+          '<span class="fa fa-eye text-success mx-2"></span>',
+        confirmDelete: false,
       },
       hideSubHeader: false,
       columns: {
@@ -74,9 +83,11 @@ export class GoodTableValsComponent extends BasePage implements OnInit {
         },
         value: {
           title: 'Valores',
-          type: 'string',
+          type: 'custom',
           sort: false,
           editable: false,
+          valuePrepareFunction: (cell: any, row: any) => row,
+          renderComponent: GoodCellValueComponent,
         },
       },
     };
@@ -120,12 +131,30 @@ export class GoodTableValsComponent extends BasePage implements OnInit {
     return false;
   }
 
-  openForm(row: IVal) {
+  private pupReservado(row: IVal) {
+    let cadena = row.value;
+    // let noDatos =
+  }
+
+  showModals(row: IVal) {
+    console.log(row);
+    if (row.attribute === 'RESERVADO') {
+      this.pupReservado(row);
+    }
+  }
+
+  openForm(row: any) {
+    console.log(row);
+
     let config: ModalOptions = {
       initialState: {
-        row,
+        row: row.data,
+        callback: (data: any) => {
+          console.log(data);
+          this.data[row.index].value = data.value;
+        },
       },
-      class: 'modal-lg modal-dialog-centered',
+      class: 'modal-md modal-dialog-centered',
       ignoreBackdropClick: true,
     };
     this.modalService.show(GoodCharacteristicModalComponent, config);
@@ -166,16 +195,6 @@ export class GoodTableValsComponent extends BasePage implements OnInit {
     //       this.data[index].value = row.oldValue;
     //     },
     //   });
-  }
-
-  getClassColour(row: IVal) {
-    return row.requiredAva
-      ? 'requiredAva'
-      : row.required
-      ? 'required'
-      : row.update
-      ? 'update'
-      : '';
   }
 
   private getPaginated(params: ListParams) {
@@ -257,5 +276,25 @@ export class GoodTableValsComponent extends BasePage implements OnInit {
         }
       },
     });
+  }
+
+  openModal1() {
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      callback: (next: boolean) => {
+        //if (next)
+      },
+    };
+    this.modalService.show(GoodTableDetailButtonComponent, modalConfig);
+  }
+
+  openModal2() {
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      callback: (next: boolean) => {
+        //if (next)
+      },
+    };
+    this.modalService.show(GoodSituationsModalComponent, modalConfig);
   }
 }
