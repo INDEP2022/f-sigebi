@@ -1709,6 +1709,7 @@ export class RelatedDocumentsComponent
       cveManagement, //cve_of_gestion
       proceedingsNumber, //no_expediente
       insertUser, //usuario insert
+      insertDate, //fecha inserto
     } = this.m_job_management;
     debugger;
     if (managementNumber == null) {
@@ -1749,16 +1750,27 @@ export class RelatedDocumentsComponent
       `Desea eliminar el oficio con el expediente ${proceedingsNumber} y No. Oficio ${managementNumber}`
     ).then(question => {
       if (question.isConfirmed) {
-        this.delete(managementNumber, noVolante);
+        this.delete(managementNumber, noVolante, insertDate);
       }
     });
   }
 
-  async delete(managementNumber: number | string, noVolante: number | string) {
+  async delete(
+    managementNumber: number | string,
+    noVolante: number | string,
+    insertDate: string
+  ) {
     console.log(this.dataTableGoodsJobManagement);
-    this.dataTableGoodsJobManagement.map((item: any) => {
+    this.dataTableGoodsJobManagement.map(async (item: any) => {
       const p_dictamen = Number(this.paramsGestionDictamen.pDictamen);
       if (p_dictamen == 25) {
+        const PREXDO_ANTERIOR = await this.getProcessExtDom(item.id);
+        const FECHA_CAMBIO = await this.getChangeDate(item.id);
+
+        const FECHA_INSERTO = new Date(insertDate);
+
+        if (FECHA_CAMBIO == FECHA_INSERTO) {
+        }
       }
     });
     return;
@@ -2520,6 +2532,34 @@ export class RelatedDocumentsComponent
         },
         error: error => {
           console.log(error);
+        },
+      });
+    });
+  }
+
+  getProcessExtDom(noBien: number | string) {
+    return new Promise((resolve, reject) => {
+      this.goodHistoryService.getPrexdoAnterior(noBien).subscribe({
+        next: resp => {
+          resolve(resp);
+        },
+        error: error => {
+          console.log(error);
+          resolve(null);
+        },
+      });
+    });
+  }
+
+  getChangeDate(noBien: number | string) {
+    return new Promise((resolve, reject) => {
+      this.goodHistoryService.getChangeDateHistory(noBien).subscribe({
+        next: resp => {
+          resolve(resp);
+        },
+        error: error => {
+          console.log(error);
+          resolve(null);
         },
       });
     });

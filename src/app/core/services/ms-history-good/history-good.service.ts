@@ -77,5 +77,13 @@ export class HistoryGoodService extends HttpService {
     return this.post<any>(HistoryGoodEndpoints.ReturnStatusProcess, data);
   }
 
-  getPrexdoAnterior() {}
+  getPrexdoAnterior(noBien: number | string) {
+    const route = HistoryGoodEndpoints.GetPrexdoAnterior;
+    return this.get(`${route}/${noBien}`);
+  }
+
+  getChangeDateHistory(noBien: number | string) {
+    const route = HistoryGoodEndpoints.GetChangeDate;
+    return this.get(`${route}/${noBien}`);
+  }
 }
