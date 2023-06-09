@@ -261,6 +261,11 @@ export class RelatedDocumentsComponent
     statusOf: new FormControl(''), // estatus_of
     refersTo: new FormControl(''), // se_refiere_a
   });
+
+  // Informacion del usuario logueado
+  dataUserLogged: any;
+  dataUserLoggedTokenData: any;
+
   constructor(
     private fb: FormBuilder,
     protected flyerService: FlyersService,
@@ -535,6 +540,16 @@ export class RelatedDocumentsComponent
   }
 
   ngOnInit(): void {
+    const token = this.authService.decodeToken();
+    console.log(token);
+    this.dataUserLoggedTokenData = token;
+    if (token.preferred_username) {
+      this.getUserDataLogged(
+        token.preferred_username
+          ? token.preferred_username.toLocaleUpperCase()
+          : token.preferred_username
+      );
+    }
     // console.log("status OF: ", this.oficioGestion.statusOf);
     this.setInitVariables();
     this.prepareForm();
@@ -612,6 +627,26 @@ export class RelatedDocumentsComponent
     } else {
       this.showDestinatarioInput = true;
     }
+  }
+
+  getUserDataLogged(userId: string) {
+    const params = new FilterParams();
+    params.removeAllFilters();
+    params.addFilter(
+      'user',
+      userId == 'SIGEBIADMON' ? userId.toLocaleLowerCase() : userId
+    );
+    this.svLegalOpinionsOfficeService
+      .getInfoUserLogued(params.getParams())
+      .subscribe({
+        next: (res: any) => {
+          console.log('USER INFO', res);
+          this.dataUserLogged = res.data[0];
+        },
+        error: error => {
+          console.log(error);
+        },
+      });
   }
 
   setInitVariables() {
@@ -2522,6 +2557,126 @@ export class RelatedDocumentsComponent
           console.log(error);
         },
       });
+    });
+  }
+
+  openModalFirm(nameReport: string = 'RGEROFGESTION', params: any = null) {
+    this.hideError(true);
+    let nameFile = this.formJobManagement
+      .get('cveManagement')
+      .value.replaceAll('/', '-')
+      .replaceAll('?', '0')
+      .replaceAll(' ', '');
+    let paramsData = new ListParams();
+    if (nameReport == 'RGEROFGESTION') {
+      params = {
+        NO_OF_GES: this.formJobManagement.get('managementNumber').value,
+        TIPO_OF: this.formJobManagement.get('jobType').value,
+        VOLANTE: this.formNotification.get('wheelNumber').value,
+        EXP: this.formNotification?.get('expedientNumber').value,
+        // PARAMETRO QUE NO ESTA EN EL REPORTE DE JASPER
+        ESTAT_DIC: 'ENVIADO',
+        // PARAMETROS DE MÁS EN JASPER
+        DEP: this.dataUserLogged.departament
+          ? this.dataUserLogged.departament.description
+          : '', // DEPARTAMENTO DEL USUARIO
+        NOMBRE_REM: this.formJobManagement.get('sender').value.name, // NOMBRE DEL REMITENTE
+        PUESTO_REM: '', // PUESTO DEL REMITENTE
+        P_1: '',
+        P_2: '',
+      };
+    } else {
+      params = {
+        NO_OF_GES: this.formJobManagement.get('managementNumber').value,
+        // TIPO_OF: this.formJobManagement.get('jobType').value,
+        // VOLANTE: this.formNotification.get('wheelNumber').value,
+        // EXP: this.formNotification?.get('expedientNumber').value,
+        // // PARAMETRO QUE NO ESTA EN EL REPORTE DE JASPER
+        // ESTAT_DIC: 'ENVIADO',
+        // // PARAMETROS DE MÁS EN JASPER
+        // DEP: '',
+        // NOMBRE_REM: '',
+        // PUESTO_REM: '',
+        // P_1: '',
+        // P_2: '',
+      };
+    }
+    paramsData = {
+      ...params,
+      nombreReporte: nameReport + '.jasper',
+    };
+    this.svLegalOpinionsOfficeService.getXMLReportToFirm(paramsData).subscribe({
+      next: (response: any) => {
+        console.log(response);
+        if (!response) {
+          this.onLoadToast(
+            'warning',
+            'Ocurrió un error al cargar el XML con el nombre: ' + nameFile,
+            ''
+          );
+          return;
+        }
+        const formData = new FormData();
+        const file = new File([response], nameFile + '.xml', {
+          type: 'text/xml',
+        });
+        formData.append('file', file);
+        this.startFirmComponent({
+          nameFileDictation: nameFile,
+          ...params,
+          fileDocumentDictation: formData.get('file'), // DOCUMENTO XML GENERADO
+        });
+      },
+      error: error => {
+        console.log(error);
+        if (error.status == 200) {
+          let response = error.error.text;
+          if (!response) {
+            this.onLoadToast(
+              'warning',
+              'Ocurrió un error al cargar el XML con el nombre: ' + nameFile,
+              ''
+            );
+            return;
+          }
+          if (!response.includes('xml')) {
+            this.onLoadToast(
+              'warning',
+              'Ocurrió un error al cargar el XML con el nombre: ' + nameFile,
+              ''
+            );
+            return;
+          }
+          const formData = new FormData();
+          const file = new File([response], nameFile + '.xml', {
+            type: 'text/xml',
+          });
+          formData.append('file', file);
+          this.startFirmComponent({
+            nameFileDictation: nameFile,
+            ...params,
+            fileDocumentDictation: formData.get('file'), // DOCUMENTO XML GENERADO
+          });
+        } else {
+          this.onLoadToast(
+            'warning',
+            'Ocurrió un error al CREAR el XML con el nombre: ' + nameFile,
+            ''
+          );
+        }
+      },
+    });
+  }
+
+  startFirmComponent(context?: Partial<UploadDictamenFilesModalComponent>) {
+    const modalRef = this.modalService.show(UploadDictamenFilesModalComponent, {
+      initialState: context,
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    });
+    modalRef.content.responseFirm.subscribe((next: any) => {
+      console.log('next', next);
+      // CONTINUAR DESPUÉS DE FIRMADO
     });
   }
 }
