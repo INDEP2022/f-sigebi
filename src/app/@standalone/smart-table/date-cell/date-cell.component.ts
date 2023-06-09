@@ -26,6 +26,7 @@ export class DateCellComponent
   @Input() value: string;
   @Input() rowData: any;
   @Input() label: string;
+  @Input() disabled: boolean = false;
   @Output() inputChange = new EventEmitter<{
     row: any;
     value: Date;
@@ -37,6 +38,11 @@ export class DateCellComponent
   }
 
   ngOnInit(): void {
+    if (this.disabled) {
+      this.control.disable();
+    } else {
+      this.control.enable();
+    }
     if (this.value) {
       const date = new Date(this.value).toISOString();
       const d = date.slice(0, -1);

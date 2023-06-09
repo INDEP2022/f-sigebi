@@ -6,11 +6,49 @@
 
   <div body>
     <div>
-      <div>
-        <button class="btn btn-primary active btn-sm m-2" (click)="goBack()">
-          Regresar
-          <i class="fas fa-arrow-circle-left"></i>
-        </button>
+      <!-- <div class="row justify-content-end">
+        <div class="">
+          <button class="btn btn-primary active btn-sm m-2" style="float: right" (click)="goBack()">
+            <i class="fas fa-arrow-left"></i>
+            Regresar
+          </button>
+        </div>
+      </div> -->
+      <div class="row">
+        <!-- <div class="d-inline mx-2"> -->
+        <div class="col-6 btn-group">
+          <button
+            class="btn btn-primary active btn-sm m-2"
+            style="float: left"
+            (click)="goBack()">
+            <i class="fas fa-arrow-left"></i>
+            Regresar
+          </button>
+        </div>
+        <div class="col-6">
+          <div class="d-inline mx-2">
+            <button
+              style="float: right"
+              type="button"
+              [disabled]="!disabledListDictums"
+              (click)="listDictums()"
+              tooltip="Dictámenes Disponibles"
+              containerClass="tooltip-style"
+              class="btn btn-primary btn-sm active mr-3">
+              <i class="bx bx-list-plus bx-sm float-icon"></i>
+            </button>
+            <button
+              style="float: right"
+              type="button"
+              (click)="newDictums()"
+              tooltip="Agregar Dictamen"
+              containerClass="tooltip-style"
+              class="btn btn-info btn-sm active ml-2 mr-2">
+              <i class="bx bx-plus bx-sm float-icon"></i>
+            </button>
+          </div>
+        </div>
+        <!-- </div> -->
       </div>
       <div class="row">
         <!-- INICIA FORM #1 -->
@@ -398,6 +436,7 @@
         <br />
 
         <ng2-smart-table
+          id="bienesJuridicos"
           (rowSelect)="onSelectedRow($event)"
           [attr.class]="'table-bordered table-responsive'"
           [settings]="settings1"
@@ -491,20 +530,21 @@
           <div class="row">
             <div class="col-md-10">
               <ng2-smart-table
+                id="juridicasSelect"
                 [attr.class]="'table-bordered'"
                 [settings]="settings3"
                 [source]="documentsDictumXStateMList"></ng2-smart-table>
             </div>
-            <div class="col-md-2">
+            <div class="col-md-2 text-center">
               <p class="text-info h5">No. Bien</p>
-              <p class="text-info h5">{{ idGoodSelected }}</p>
+              <p class="text-info h4">{{ idGoodSelected }}</p>
             </div>
           </div>
         </div>
       </div>
       <!--  -->
 
-      <div class="col-4 custom-grid">
+      <div class="col-4">
         <div class="row justify-content-center">
           <div class="col-md-6 text-align-center">
             <button
@@ -546,13 +586,11 @@
               Parcializar
             </button>
           </div>
-          <div class="col-6 text-align-center">
-            <button
-              class="btn btn-danger btn-sm active m-3 text-wrap w-100"
-              (click)="btnRechazar()">
+          <!-- <div class="col-6 text-align-center">
+            <button disabled class="btn btn-danger btn-sm active m-3 text-wrap w-100" (click)="btnRechazar()">
               Rechazar
             </button>
-          </div>
+          </div> -->
           <div class="col-6 text-align-center">
             <button
               class="btn btn-info btn-sm active m-3 text-wrap w-100"
