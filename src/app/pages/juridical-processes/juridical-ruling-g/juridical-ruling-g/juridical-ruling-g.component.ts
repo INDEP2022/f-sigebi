@@ -821,6 +821,7 @@ export class JuridicalRulingGComponent
   crime: string;
   typeSteeringwheel: string;
   documentsSeleccionados: any[] = [];
+
   btnDocumentos() {
     // console.log('btnDocumentos');
     // this.listadoDocumentos = true;
@@ -920,7 +921,7 @@ export class JuridicalRulingGComponent
         ['/pages/juridical/depositary/legal-opinions-office/'],
         {
           queryParams: {
-            origin: 'FACTJURDICTAMASG', //Cambiar
+            origin: 'FACTGENACTDATEX', //Cambiar
             P_VALOR: this.dictamen.id,
             P_NO_TRAMITE: this.expedientesForm.get('noExpediente').value,
             CLAVE_OFICIO_ARMADA:
@@ -1615,6 +1616,7 @@ export class JuridicalRulingGComponent
               screen: 'FACTJURDICTAMASG',
             };
 
+            //Manda a llamar a FACTGENPARCBIEN
             console.log('OBJ', obj);
             this.router.navigate(
               ['/pages/judicial-physical-reception/partializes-general-goods'],
