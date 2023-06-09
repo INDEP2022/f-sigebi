@@ -1149,7 +1149,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
             this.blockExpedient = false;
           } else {
             this.initialdisabled = false;
-            this.loading = false
+            this.loading = false;
             this.requireAct1();
             this.inputsInProceedingClose();
             this.minDateFecElab = new Date();
@@ -1476,7 +1476,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
               this.requireAct1();
               this.minDateFecElab = new Date();
               this.inputsNewProceeding();
-              this.loading = false
+              this.loading = false;
               /* this.newSearchExp(); */
               this.alert(
                 'warning',
@@ -2126,13 +2126,14 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         if (q.isConfirmed) {
           const paramsF = new FilterParams();
           let VAL_MOVIMIENTO = 0;
-          const user = localStorage.getItem('username') == 'sigebiadmon'
-          ? localStorage.getItem('username')
-          : localStorage.getItem('username').toLocaleUpperCase()
+          const user =
+            localStorage.getItem('username') == 'sigebiadmon'
+              ? localStorage.getItem('username')
+              : localStorage.getItem('username').toLocaleUpperCase();
 
           paramsF.addFilter('valUser', user);
           paramsF.addFilter('valMinutesNumber', this.idProceeding);
-          this.loading = true
+          this.loading = true;
 
           const splitActa = this.form.get('acta2').value.split('/');
           const tipo_acta = ['D', 'ND'].includes(splitActa[0])
@@ -2145,7 +2146,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
             P_AREATRA: lv_TIP_ACTA,
             P_PANTALLA: 'FACTREFACTAENTREC',
             P_TIPOMOV: 2,
-            USUARIO:user,
+            USUARIO: user,
           };
           console.log(modelPaOpen);
           this.serviceProgrammingGood
@@ -2158,7 +2159,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                     res => {
                       console.log(res);
                       VAL_MOVIMIENTO = res.data[0]['valmovement'];
-                      console.log(VAL_MOVIMIENTO)
+                      console.log(VAL_MOVIMIENTO);
                       if (VAL_MOVIMIENTO == 1) {
                         this.serviceProgrammingGood
                           .paRegresaEstAnterior(modelPaOpen)
@@ -2171,10 +2172,10 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                                 .setValue('ABIERTA');
                               this.reopening = true;
                               this.inputsReopenProceeging();
-                              this.loading = false
+                              this.loading = false;
                               this.research = true;
-                              this.getGoodsActFn()
-                              this.getGoodsFn()
+                              this.getGoodsActFn();
+                              this.getGoodsFn();
 
                               this.alert(
                                 'success',
@@ -2185,19 +2186,23 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                               );
                             },
                             err => {
-                              this.alert('warning','Error al abrir acta','')
+                              this.alert('warning', 'Error al abrir acta', '');
                             }
                           );
-                      }else{
-                        this.loading = false
-                        this.alert('warning','Error al abrir acta','Por favor intente nuevamente')
+                      } else {
+                        this.loading = false;
+                        this.alert(
+                          'warning',
+                          'Error al abrir acta',
+                          'Por favor intente nuevamente'
+                        );
                       }
                     },
                     err => {
                       console.log(err);
-                      this.loading = false
+                      this.loading = false;
                       VAL_MOVIMIENTO = 0;
-                      this.alert('warning','Error en tmp','')
+                      this.alert('warning', 'Error en tmp', '');
                     }
                   );
               },
@@ -2206,7 +2211,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                 const btn = document.getElementById('expedient-number');
                 this.render.removeClass(btn, 'disabled');
                 this.render.addClass(btn, 'enabled');
-                this.loading = false
+                this.loading = false;
                 this.alert(
                   'error',
                   'No se pudo abrir el acta',
@@ -3242,7 +3247,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     this.form.get('ident').setValue('ADM');
     this.minDateFecElab = new Date();
     this.form.get('statusProceeding').reset();
-    this.totalItemsDataGoodsAct = 0
+    this.totalItemsDataGoodsAct = 0;
     this.labelActa = 'Abrir acta';
     this.btnCSSAct = 'btn-success';
     this.act2Valid = false;
