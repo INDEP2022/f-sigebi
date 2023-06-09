@@ -14,6 +14,7 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { JuridicalRulingGRoutingModule } from './juridical-ruling-g-routing.module';
 
 /** COMPONENTS IMPORTS */
+import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { EditDocumentsModalComponent } from './edit-documents-modal/edit-documents-modal.component';
 import { JuridicalRulingGComponent } from './juridical-ruling-g/juridical-ruling-g.component';
 import { RDictaminaDocModalComponent } from './r-dictamina-doc-modal/r-dictamina-doc-modal.component';
@@ -30,6 +31,7 @@ import { RDictaminaDocModalComponent } from './r-dictamina-doc-modal/r-dictamina
     SharedModule,
     UsersSharedComponent,
     ClassificationTypeSsubtypeOfGoodsSharedComponent,
+    TooltipModule.forRoot(),
   ],
   exports: [JuridicalRulingGComponent],
 })
