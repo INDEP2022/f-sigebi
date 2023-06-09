@@ -1,11 +1,11 @@
 export const RECEIPT_COLUMNS = {
-  noMinute: {
+  actId: {
     title: 'Número de acta',
     type: 'number',
     sort: false,
   },
 
-  receipt: {
+  id: {
     title: 'Recibo',
     type: 'string',
     sort: false,
