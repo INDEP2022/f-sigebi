@@ -2,21 +2,29 @@
   <div class="ch-content" header>
     <div class="d-flex justify-content-between">
       <h5 class="title">DICTAMINACIONES JUR&Iacute;DICAS</h5>
-      <div class="d-inline mr-2">
+      <div class="d-inline mr-2" *ngIf="!isSearch">
         <button
-          *ngIf="!isSearch"
           type="button"
           class="btn btn-primary active btn-sm"
-          (click)="searchExp()">
+          (click)="isSearch = true">
           <i class="bx bx-search-alt bx-sm float-icon"></i>
         </button>
-        <button
-          *ngIf="isSearch"
-          type="button"
-          class="btn btn-primary active btn-sm ml-2"
-          (click)="clearSearch()">
-          <i class="bx bx-x bx-sm float-icon"></i>
-        </button>
+      </div>
+      <div class="d-inline mx-2" *ngIf="isSearch">
+        <div class="btn-group">
+          <button
+            type="button"
+            class="btn btn-primary btn-sm"
+            (click)="searchExp()">
+            <i class="bx bx-check bx-sm float-icon"></i>
+          </button>
+          <button
+            type="button"
+            class="btn btn-primary btn-sm"
+            (click)="clearSearch()">
+            <i class="bx bx-x bx-sm float-icon"></i>
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -47,7 +55,7 @@
                   label="No. Expediente">
                   <input
                     type="text"
-                    [readOnly]="isSearch"
+                    [readOnly]="isDisabledExp"
                     class="form-control"
                     formControlName="noExpediente" />
                 </form-field>
@@ -57,7 +65,7 @@
                   [control]="legalForm.get('preliminaryInquiry')"
                   label="Averiguaci&oacute;n Previa">
                   <input
-                    [readOnly]="isSearch"
+                    [readOnly]="isDisabledExp"
                     class="form-control"
                     formControlName="preliminaryInquiry" />
                 </form-field>
@@ -67,7 +75,7 @@
                   [control]="legalForm.get('criminalCase')"
                   label="Causa Penal">
                   <input
-                    [readOnly]="isSearch"
+                    [readOnly]="isDisabledExp"
                     class="form-control"
                     formControlName="criminalCase" />
                 </form-field>
@@ -299,6 +307,9 @@
           [attr.class]="'table-bordered table-responsive'"
           [settings]="settings1"
           [source]="goods"></ng2-smart-table>
+        <p class="text-danger">
+          <strong> {{ di_desc_est }} </strong>
+        </p>
         <app-pagination
           [params]="params"
           [totalItems]="totalItems"></app-pagination>
@@ -342,32 +353,34 @@
           [attr.class]="'table-bordered table-responsive'"
           [settings]="settings2"
           [source]="goodsValid"
-          (rowSelect)="rowSelected($event)"></ng2-smart-table>
+          (rowSelect)="rowSelected($event.data)"></ng2-smart-table>
       </div>
     </div>
     <div class="row w-100">
-      <div class="col-8 pt-2">
+      <div class="col-md-8 pt-2">
         <div class="col-md-12">
           <hr class="row" />
         </div>
-        <div class="col-md-8">
-          <h5 class="title">DOCUMENTOS</h5>
-          <div class="row">
-            <div class="col-md-10">
-              <ng2-smart-table
-                [attr.class]="'table-bordered table-responsive'"
-                [settings]="settings3"
-                [source]="documents"></ng2-smart-table>
-            </div>
-            <div class="col-md-2">
-              <p class="text-info h5">No&#46; bien</p>
-              <p class="text-info h5">{{ idGoodSelected }}</p>
+        <div class="row">
+          <div class="col-md-12">
+            <h5 class="title">DOCUMENTOS</h5>
+            <div class="row">
+              <div class="col-md-9">
+                <ng2-smart-table
+                  [attr.class]="'table-bordered table-responsive'"
+                  [settings]="settings3"
+                  [source]="documents"></ng2-smart-table>
+              </div>
+              <div class="col-md-3">
+                <p class="text-info h5">No&#46; bien</p>
+                <p class="text-info h5">{{ idGoodSelected?.goodId }}</p>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      <div class="col-4 custom-grid">
+      <div class="col-md-4 custom-grid">
         <div class="row justify-content-center">
           <div class="col-md-6 text-align-center">
             <button
@@ -379,7 +392,7 @@
           <div class="col-6 text-align-center">
             <button
               class="btn btn-primary btn-sm active m-3 text-wrap w-100"
-              [disabled]="isDocsEmpty()"
+              [disabled]="!buttonAprove"
               (click)="btnApprove()">
               <!-- [routerLink]="rutaAprobado" -->
               Aprobar
@@ -390,20 +403,16 @@
             <button
               class="btn btn-info btn-sm active m-3 text-wrap w-100"
               [disabled]="buttonDisabled"
-              (click)="btnVerify()"
-              [disabled]="!buttonDisabled">
+              (click)="btnVerify()">
               Parcializar
             </button>
           </div>
-          <div class="col-6 text-align-center">
-            <button
-              class="btn btn-info btn-sm active m-3 text-wrap w-100"
-              [disabled]="buttonDisabled"
-              (click)="btnRefuse()"
-              [disabled]="!buttonDisabled">
+          <!-- <div class="col-6 text-align-center">
+            <button class="btn btn-info btn-sm active m-3 text-wrap w-100" [disabled]="!buttonRefuse"
+              (click)="btnRefuse()">
               Rechazar
             </button>
-          </div>
+          </div> -->
           <div class="col-6 text-align-center">
             <button
               class="btn btn-danger btn-sm active m-3 text-wrap w-100"
@@ -414,22 +423,31 @@
             </button>
           </div>
           <!-- BOTON QUE MANDA A LLAMAR A FACTJURDICTAMOFICIO -->
-          <div class="col-6 text-align-center">
+          <div class="col-12 text-center">
             <button
-              class="btn btn-primary btn-sm active m-3 text-wrap w-100"
+              type="button"
+              class="btn btn-primary active btn-sm"
               (click)="btnImprimeOficio()">
-              <!-- [routerLink]="returnRoute" -->
-              Imprime Oficio
+              <i class="bx bx-printer bx-sm float-icon"></i>
             </button>
+            <!-- <button class="btn btn-primary btn-sm active m-3 text-wrap w-100" >
+                        <i class="bx bx-printer"></i>
+            </button> -->
+          </div>
+          <div class="col-12">
+            <p class="text-info">
+              <strong
+                >Click boton derecho para consultar dictaminaciones
+                anteriores</strong
+              >
+            </p>
           </div>
 
-          <div class="col-6 text-align-center">
-            <button
-              class="btn btn-info btn-sm active m-3 text-wrap w-100"
-              (click)="btnDeleteListDocs()">
+          <!-- <div class="col-6 text-align-center">
+            <button class="btn btn-info btn-sm active m-3 text-wrap w-100" (click)="btnDeleteListDocs()">
               Limpiar Documento
             </button>
-          </div>
+          </div> -->
         </div>
       </div>
     </div>
