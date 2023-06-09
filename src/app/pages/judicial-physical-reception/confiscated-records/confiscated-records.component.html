@@ -306,7 +306,7 @@
               <form-field
                 [control]="form.get('fecElab')"
                 label="Fecha Elaboraci&oacute;n">
-                  <input
+                <input
                   (ngModelChange)="verifyDateAndFill()"
                   bsDatepicker
                   [bsConfig]="{
@@ -326,13 +326,11 @@
               <form-field
                 [control]="form.get('fecReception')"
                 label="Fecha Recepci&oacute;n F&iacute;sica">
-
-                  <input
-                    bsDatepicker
-                    class="form-control disabled"
-                    [readOnly]="true"
-                    formControlName="fecReception" />
-                  
+                <input
+                  bsDatepicker
+                  class="form-control disabled"
+                  [readOnly]="true"
+                  formControlName="fecReception" />
               </form-field>
             </div>
 
@@ -584,7 +582,13 @@
 
       <hr class="row" />
       <div class="row">
-        <div class="col-md-6" [class] = "['CERRADO','CERRADA'].includes(form.get('statusProceeding').value) ? 'disabled' :''">
+        <div
+          class="col-md-6"
+          [class]="
+            ['CERRADO', 'CERRADA'].includes(form.get('statusProceeding').value)
+              ? 'disabled'
+              : ''
+          ">
           <div class="row" *ngIf="isAlmacen">
             <div class="col-md-9">
               <form-field [control]="form.get('almacen')">
