@@ -15,8 +15,10 @@ export class GoodsCharacteristicsService {
   good: IGood | any;
   form: FormGroup;
   disabledBienes = true;
-  disabledDescripcion = false;
-  permisions = false;
+  disabledTable = true;
+  disabledNoClasifBien = true;
+  disabledDescripcion = true;
+  haveTdictaUser = false;
   di_numerario_conciliado = 'No conciliado';
   newGood: any;
   goodChange = new Subject<boolean>();

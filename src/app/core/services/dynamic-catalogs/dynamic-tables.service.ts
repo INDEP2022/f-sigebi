@@ -11,6 +11,7 @@ import {
   ITable,
   ITables,
   ITablesData,
+  ITvalTable1,
   TvalTable1Data,
 } from '../../models/catalogs/dinamic-tables.model';
 @Injectable({
@@ -46,6 +47,11 @@ export class DynamicTablesService extends HttpService {
       DynamicCatalogEndpoint.DinamicTables,
       params
     );
+  }
+  getAllTvalTable1(
+    params?: ListParams
+  ): Observable<IListResponse<ITvalTable1>> {
+    return this.get<IListResponse<ITvalTable1>>('tval-table-1', params);
   }
 
   getTvalTable1ByTableKey(
