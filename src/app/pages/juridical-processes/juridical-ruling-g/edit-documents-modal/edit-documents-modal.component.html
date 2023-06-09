@@ -28,6 +28,8 @@
             [control]="form.get('dateReceipt')"
             label="Fecha recibida">
             <input
+              [minDate]="minDate"
+              [maxDate]="maxDate"
               type="text"
               class="form-control"
               formControlName="dateReceipt"

@@ -8,7 +8,6 @@ import {
 import { BasePage } from 'src/app/core/shared/base-page';
 
 import { LocalDataSource } from 'ng2-smart-table';
-import Swal from 'sweetalert2';
 import { NotaryFormComponent } from '../notary-form/notary-form.component';
 import { INotary } from './../../../../core/models/catalogs/notary.model';
 import { NotaryService } from './../../../../core/services/catalogs/notary.service';
@@ -111,10 +110,14 @@ export class NotaryListComponent extends BasePage implements OnInit {
   delete(notary?: INotary) {
     this.notaryService.remove(notary.id).subscribe({
       next: () => {
-        Swal.fire('Borrado', '', 'success');
-        this.params
-          .pipe(takeUntil(this.$unSubscribe))
-          .subscribe(() => this.getExample());
+        this.getExample(), this.alert('success', 'Notario', 'Borrado');
+      },
+      error: error => {
+        this.alert(
+          'warning',
+          'Notario',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
       },
     });
   }

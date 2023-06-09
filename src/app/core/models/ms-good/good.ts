@@ -418,8 +418,8 @@ export interface IGood {
   storeNumber?: number;
   lotNumber?: number;
   goodClassNumber?: number | string;
-  subDelegationNumber?: number;
-  delegationNumber?: number;
+  subDelegationNumber?: any;
+  delegationNumber?: any;
   physicalReceptionDate?: Date;
   statusResourceReview?: string;
   judicialDate?: Date;
@@ -730,6 +730,14 @@ export interface IValidaCambioEstatus {
   p1: number | string | null;
   p3: string | number | null;
   p4: string | number | null;
+}
+
+export interface ICharacteristicsGoodDTO {
+  noType?: number;
+  noSubType?: number;
+  noSsubType?: number;
+  noSssubType?: number;
+  noGood?: number;
 }
 
 export interface IValNumeOtro {

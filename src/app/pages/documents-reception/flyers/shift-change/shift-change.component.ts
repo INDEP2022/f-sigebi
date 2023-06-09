@@ -144,6 +144,7 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
   usernewHistory: string;
   autoHeightDisabled: boolean;
   userSelected: any;
+  checkDicta: any;
 
   form: ModelForm<any>;
 
@@ -223,7 +224,11 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
 
   getUserSelected(params: ListParams) {
     this.userSelected = params;
-    //console.log(this.userSelected.departamentNumber);
+    console.log(
+      this.userSelected.delegationNumber,
+      this.userSelected.subdelegationNumber,
+      this.userSelected.departamentNumber
+    );
   }
 
   usErrorUserPrev = false;
@@ -463,9 +468,9 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
 
   updateNotification() {
     const body = {
-      delDestinyNumber: this.userSelected.user.delegationNumber,
-      subDelDestinyNumber: this.userSelected.user.subdelegationNumber,
-      departamentDestinyNumber: this.userSelected.user.departamentNumber,
+      delDestinyNumber: this.userSelected.delegationNumber,
+      subDelDestinyNumber: this.userSelected.subdelegationNumber,
+      departamentDestinyNumber: this.userSelected.departamentNumber,
     };
     console.log(body);
 
@@ -627,23 +632,29 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
   }
 
   selectDictums(event: any) {
-    const existe = this.selectedDictums.some(
-      (objeto: any) => objeto.id === event.data.id
-    );
-    console.log(existe);
-    if (existe) {
-      // Eliminar el objeto si ya existe en el arreglo
-      const index = this.selectedDictums.findIndex(
-        objeto => objeto.id === event.data.id
-      );
-      this.selectedDictums.splice(index, 1);
+    if (this.turnForm.controls['newUser'].value === null) {
+      this.alert('warning', 'Debe seleccionar un usuario', ``);
+      this.selectedDictums.splice(0, this.selectedDictums.length);
+      this.checkParams();
     } else {
-      // Agregar el objeto al arreglo
-      //event.data = this.userSelected.delegationNumber.numDelegation2;
-      this.selectedDictums.push(event.data);
+      const existe = this.selectedDictums.some(
+        (objeto: any) => objeto.id === event.data.id
+      );
+      console.log(existe);
+      if (existe) {
+        // Eliminar el objeto si ya existe en el arreglo
+        const index = this.selectedDictums.findIndex(
+          objeto => objeto.id === event.data.id
+        );
+        this.selectedDictums.splice(index, 1);
+      } else {
+        // Agregar el objeto al arreglo
+        //event.data = this.userSelected.delegationNumber.numDelegation2;
+        this.selectedDictums.push(event.data);
+      }
     }
-    //console.log(this.selectedDictums);
 
+    //console.log(this.selectedDictums);
     if (
       this.selectedDictums.length === 0 &&
       this.selectedProceedings.length === 0
@@ -657,19 +668,35 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
   selectProceedings(event: any) {
     console.log(event.selectedIndex);
     console.log(this.selectedProceedings);
-    const existe = this.selectedProceedings.some(
-      (objeto: any) => objeto.id === event.data.id
-    );
-    console.log(existe);
-    if (existe) {
-      // Eliminar el objeto si ya existe en el arreglo
-      const index = this.selectedProceedings.findIndex(
-        objeto => objeto.id === event.data.id
-      );
-      this.selectedProceedings.splice(index, 1);
+    if (this.turnForm.controls['newUser'].value === null) {
+      this.alert('warning', 'Debe seleccionar un usuario', ``);
+      this.selectedDictums.splice(0, this.selectedProceedings.length);
+      this.checkParams();
     } else {
-      // Agregar el objeto al arreglo
-      this.selectedProceedings.push(event.data);
+      const existe = this.selectedProceedings.some(
+        (objeto: any) => objeto.id === event.data.id
+      );
+      if (existe) {
+        // Eliminar el objeto si ya existe en el arreglo
+        const index = this.selectedProceedings.findIndex(
+          objeto => objeto.id === event.data.id
+        );
+        this.selectedProceedings.splice(index, 1);
+      } else {
+        // Agregar el objeto al arreglo
+        this.checkDicta = event.data;
+        if (
+          this.userSelected.delegationNumber === this.checkDicta.numDelegation2
+        ) {
+          this.alert('warning', 'Se asigno al turno anterior', ``);
+          this.selectedProceedings.push(event.data);
+        } else {
+          this.selectedProceedings.push(event.data);
+        }
+        /*this.checkDicta = event.data;
+        console.log(this.checkDicta.numDelegation2);
+        this.selectedProceedings.push(event.data);**/
+      }
     }
     //console.log(this.selectedProceedings);
     if (

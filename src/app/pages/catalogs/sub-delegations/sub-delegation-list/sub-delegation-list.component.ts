@@ -38,6 +38,7 @@ export class SubDelegationListComponent extends BasePage implements OnInit {
     this.loading = true;
     this.subdelegationService.getAll(this.params.getValue()).subscribe({
       next: response => {
+        console.log(response);
         this.paragraphs = response.data;
         this.totalItems = response.count;
         this.loading = false;
@@ -60,7 +61,7 @@ export class SubDelegationListComponent extends BasePage implements OnInit {
     this.modalService.show(SubDelegationFormComponent, config);
   }
 
-  delete(subdelegation: ISubdelegation) {
+  delete(subdelegation: any) {
     this.alertQuestion(
       'warning',
       'Eliminar',
@@ -68,7 +69,31 @@ export class SubDelegationListComponent extends BasePage implements OnInit {
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
+        let data = {
+          id: subdelegation.id,
+          description: subdelegation.description,
+          delegationNumber: subdelegation.delegationNumber.id,
+          dailyConNumber: subdelegation.dailyConNumber,
+          dateDailyCon: subdelegation.dateDailyCon,
+          registerNumber: subdelegation.registerNumber,
+          phaseEdo: subdelegation.phaseEdo,
+        };
+        this.delete1(data);
       }
+    });
+  }
+  delete1(data: any) {
+    this.subdelegationService.remove(data).subscribe({
+      next: () => {
+        this.getExample(), this.alert('success', 'Sub Delegaciones', 'Borrado');
+      },
+      error: err => {
+        this.alert(
+          'warning',
+          'Sub Delegaciones',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      },
     });
   }
 }

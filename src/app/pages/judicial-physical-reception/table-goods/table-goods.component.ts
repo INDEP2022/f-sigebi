@@ -45,6 +45,7 @@ export class TableGoodsComponent extends BasePage implements OnInit {
   @Output() rowsSelected = new EventEmitter();
   @Output() updateGoodsRow = new EventEmitter();
   @Output() showDeleteAlert = new EventEmitter();
+  pageSizeOptions = [5, 10, 15, 20];
   dataPaginated: any[] = [];
   count = 0;
   private _statusActaValue: string;

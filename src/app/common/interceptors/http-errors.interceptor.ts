@@ -176,7 +176,6 @@ export class HttpErrorsInterceptor extends BasePage implements HttpInterceptor {
     const statusCode = Number(response.body?.statusCode);
     if (!statusCode) return;
     if (statusCode >= 400) {
-      console.log(response);
       const error = new HttpErrorResponse({
         error: {
           message: response.body?.message

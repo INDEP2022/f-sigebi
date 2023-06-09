@@ -8,12 +8,12 @@
     <form class="form-material" [formGroup]="form">
       <div class="row mb-3 mt-3">
         <div class="col-lg-3 col-md-3 col-sm-12 col-12 mb-3 mt-3">
-          <form-field [control]="form.get('idParam')" label="Parámetro">
+          <form-field [control]="form.get('parameter')" label="Parámetro">
             <input
               type="text"
               id="idP"
               class="form-control disabled"
-              formControlName="idParam" />
+              formControlName="parameter" />
           </form-field>
         </div>
         <div class="col-lg-6 col-md-6 col-sm-12 col-12 mb-3 mt-3">
@@ -25,14 +25,17 @@
           </form-field>
         </div>
         <div class="col-lg-3 col-md-3 col-sm-12 col-12 mb-3 mt-3">
-          <form-field [control]="form.get('idValue')" label="Valor">
-            <input type="text" class="form-control" formControlName="idValue" />
+          <form-field [control]="form.get('value')" label="Valor">
+            <input
+              type="text"
+              class="form-control disabled"
+              formControlName="value" />
           </form-field>
         </div>
         <!--VALUE SELECT PROVISIONAL-->
         <div class="col-lg-6 col-md-6 col-sm-12 col-12 mb-3 mt-3">
-          <form-field [control]="form.get('idDirection')" label="Dirección">
-            <select class="form-control" formControlName="idDirection">
+          <form-field [control]="form.get('address')" label="Dirección">
+            <select class="form-contro disabled" formControlName="address">
               <option [value]="null">Selecciona un Valor</option>
               <option value="M">Muebles</option>
               <option value="C">Comercial</option>
@@ -42,7 +45,7 @@
         </div>
         <!--Event Types Component-->
         <div class="col-lg-6 col-md-6 col-sm-12 col-12 mb-3 mt-3">
-          <app-event-type-shared [form]="form" [eventField]="'eventTypeId'">
+          <app-event-type-shared [form]="form" [eventField]="'typeEventId'">
           </app-event-type-shared>
         </div>
       </div>

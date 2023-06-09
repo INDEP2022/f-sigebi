@@ -65,7 +65,7 @@ export class DocCompensationSatXmlListComponent
     this.modalService.show(DocCompensationSatXmlFormComponent, config);
   }
 
-  delete(compensationSatXml: IDocCompensationSatXml) {
+  showDeleteAlert(compensationSatXml: IDocCompensationSatXml) {
     this.alertQuestion(
       'warning',
       'Eliminar',
@@ -73,7 +73,24 @@ export class DocCompensationSatXmlListComponent
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
+        this.delete(compensationSatXml.id);
       }
+    });
+  }
+
+  delete(id: number) {
+    this.docConpensation.remove(id).subscribe({
+      next: response => {
+        this.alert('success', 'Documento Resarcimiento Xml', 'Borrado'),
+          this.getExample();
+      },
+      error: err => {
+        this.alert(
+          'warning',
+          'Documento Resarcimiento Xml',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      },
     });
   }
 }

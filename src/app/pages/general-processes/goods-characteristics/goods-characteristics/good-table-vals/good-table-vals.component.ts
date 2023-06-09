@@ -1,7 +1,8 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { ToastrService } from 'ngx-toastr';
-import { BehaviorSubject, Subject, takeUntil } from 'rxjs';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { BehaviorSubject, takeUntil } from 'rxjs';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import {
   FilterParams,
   ListParams,
@@ -10,13 +11,17 @@ import {
 import { IAttribClassifGoods } from 'src/app/core/models/ms-goods-query/attributes-classification-good';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { BasePage } from 'src/app/core/shared';
 import {
   firstFormatDate,
   firstFormatDateToSecondFormatDate,
   formatForIsoDate,
 } from 'src/app/shared/utils/date';
-import { SweetAlertIcon } from 'sweetalert2';
 import { GoodsCharacteristicsService } from '../../services/goods-characteristics.service';
+import { GoodCellValueComponent } from './good-cell-value/good-cell-value.component';
+import { GoodCharacteristicModalComponent } from './good-characteristic-modal/good-characteristic-modal.component';
+import { GoodSituationsModalComponent } from './good-situations-modal/good-situations-modal.component';
+import { GoodTableDetailButtonComponent } from './good-table-detail-button/good-table-detail-button.component';
 
 export interface IVal {
   column: string;
@@ -37,24 +42,55 @@ export interface IVal {
   templateUrl: './good-table-vals.component.html',
   styleUrls: ['./good-table-vals.component.scss'],
 })
-export class GoodTableValsComponent implements OnInit {
-  private _toastrService = inject(ToastrService);
-  $unSubscribe = new Subject<void>();
-  totalItems: number = 0;
+export class GoodTableValsComponent extends BasePage implements OnInit {
   pageSizeOptions = [5, 10, 15, 20];
   limit: FormControl = new FormControl(5);
   params = new BehaviorSubject<ListParams>(new ListParams());
   data: IVal[];
   dataPaginated: IVal[];
-  loading: boolean = true;
   actualiza: boolean;
   requerido: boolean;
-  today: Date = new Date();
+
+  totalItems = 0;
   constructor(
     private goodsqueryService: GoodsQueryService,
     private goodService: GoodService,
-    private service: GoodsCharacteristicsService
+    private service: GoodsCharacteristicsService,
+    private modalService: BsModalService
   ) {
+    super();
+    this.settings = {
+      ...this.settings,
+      actions: {
+        columnTitle: 'Acciones',
+        position: 'left',
+        add: false,
+        edit: true,
+        delete: true,
+      },
+      delete: {
+        deleteButtonContent:
+          '<span class="fa fa-eye text-success mx-2"></span>',
+        confirmDelete: false,
+      },
+      hideSubHeader: false,
+      columns: {
+        attribute: {
+          title: 'Atributo',
+          type: 'string',
+          sort: true,
+          editable: false,
+        },
+        value: {
+          title: 'Valores',
+          type: 'custom',
+          sort: false,
+          editable: false,
+          valuePrepareFunction: (cell: any, row: any) => row,
+          renderComponent: GoodCellValueComponent,
+        },
+      },
+    };
     this.params.value.limit = 5;
   }
 
@@ -86,22 +122,6 @@ export class GoodTableValsComponent implements OnInit {
       : false;
   }
 
-  onLoadToast(icon: SweetAlertIcon, title: string, text: string) {
-    const throwToast = {
-      success: (title: string, text: string) =>
-        this._toastrService.success(text, title),
-      info: (title: string, text: string) =>
-        this._toastrService.info(text, title),
-      warning: (title: string, text: string) =>
-        this._toastrService.warning(text, title),
-      error: (title: string, text: string) =>
-        this._toastrService.error(text, title),
-      question: (title: string, text: string) =>
-        this._toastrService.info(text, title),
-    };
-    return throwToast[icon](title, text);
-  }
-
   private haveUpdate(update: string) {
     if (update) {
       if (update === 'S' && this.di_numerario_conciliado !== 'Conciliado') {
@@ -109,6 +129,35 @@ export class GoodTableValsComponent implements OnInit {
       }
     }
     return false;
+  }
+
+  private pupReservado(row: IVal) {
+    let cadena = row.value;
+    // let noDatos =
+  }
+
+  showModals(row: IVal) {
+    console.log(row);
+    if (row.attribute === 'RESERVADO') {
+      this.pupReservado(row);
+    }
+  }
+
+  openForm(row: any) {
+    console.log(row);
+
+    let config: ModalOptions = {
+      initialState: {
+        row: row.data,
+        callback: (data: any) => {
+          console.log(data);
+          this.data[row.index].value = data.value;
+        },
+      },
+      class: 'modal-md modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(GoodCharacteristicModalComponent, config);
   }
 
   // getNewRowValue(row: IVal) {
@@ -165,23 +214,6 @@ export class GoodTableValsComponent implements OnInit {
     });
   }
 
-  notInt(valor: any) {
-    valor = parseInt(valor);
-    if (isNaN(valor)) {
-      return true;
-    }
-    return false;
-  }
-
-  isFloat(valor: any) {
-    var RE = /^\d*(\.\d{1})?\d{0,3}$/;
-    if (RE.test(valor)) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
   getValue(good: any, item: IAttribClassifGoods) {
     const column = 'val' + item.columnNumber;
     return item.dataType === 'D' || item.attribute.includes('FECHA')
@@ -189,60 +221,8 @@ export class GoodTableValsComponent implements OnInit {
       : good[column];
   }
 
-  haveError(row: IVal) {
-    return (
-      this.haveErrorRequired(row) ||
-      this.haveNumericError(row) ||
-      this.haveFloatError(row) ||
-      this.haveMoneyError(row).length > 0
-    );
-  }
-
-  haveNumericError(row: IVal) {
-    return row.dataType === 'N' && this.notInt(row.value);
-  }
-
-  haveFloatError(row: IVal) {
-    return row.dataType === 'F' && !this.isFloat(row.value);
-  }
-
-  haveMoneyError(row: IVal) {
-    if (row.attribute === 'MONEDA') {
-      if (
-        this.good.goodClassNumber === 62 &&
-        row.value != 'MN' &&
-        row.value != 'USD'
-      ) {
-        return 'El numerario solo acepta Moneda Nacional o dólares';
-      } else if (this.good.goodClassNumber === 1424 && row.value != 'MN') {
-        return 'El numerario solo acepta Moneda Nacional';
-      } else if (this.good.goodClassNumber === 1426 && row.value != 'USD') {
-        return 'El numerario solo acepta Dólares (USD)';
-      } else if (this.good.goodClassNumber === 1590 && row.value != 'EUR') {
-        return 'El numerario solo acepta Euros (EUR)';
-      }
-    }
-    return '';
-  }
-
-  haveErrorRequired(row: IVal) {
-    return (
-      row.required && (!row.value || (row.value && row.value.trim() == ''))
-    );
-  }
-
   haveRequiredAva(attribute: string) {
     return this.avaluo ? (attribute === 'CON AVALUO' ? true : false) : false;
-  }
-
-  classValue(row: IVal) {
-    return row.requiredAva
-      ? 'requiredAva'
-      : row.required
-      ? 'required'
-      : row.update
-      ? 'update'
-      : '';
   }
 
   ngOnInit() {
@@ -296,5 +276,25 @@ export class GoodTableValsComponent implements OnInit {
         }
       },
     });
+  }
+
+  openModal1() {
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      callback: (next: boolean) => {
+        //if (next)
+      },
+    };
+    this.modalService.show(GoodTableDetailButtonComponent, modalConfig);
+  }
+
+  openModal2() {
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      callback: (next: boolean) => {
+        //if (next)
+      },
+    };
+    this.modalService.show(GoodSituationsModalComponent, modalConfig);
   }
 }

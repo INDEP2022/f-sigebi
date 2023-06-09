@@ -23,7 +23,7 @@ export class DetailProceeDelRecService extends HttpService {
   }
 
   PADelActaEntrega(actNumber: string | number) {
-    return this.get(`${ProceedingsEndpoints.PADelActaEntrega}/${actNumber}`);
+    return this.delete(`${ProceedingsEndpoints.PADelActaEntrega}/${actNumber}`);
   }
 
   editDetailProcee(model: IDetailProceedingsDeliveryReception) {

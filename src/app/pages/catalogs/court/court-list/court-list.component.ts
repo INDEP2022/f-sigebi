@@ -8,7 +8,6 @@ import { ICourt } from '../../../../core/models/catalogs/court.model';
 import { CourtFormComponent } from '../court-form/court-form.component';
 import { CourtService } from './../../../../core/services/catalogs/court.service';
 import { COURT_COLUMNS } from './court-columns';
-import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-court-list',
@@ -26,7 +25,7 @@ export class CourtListComponent extends BasePage implements OnInit {
   ) {
     super();
     this.settings.columns = COURT_COLUMNS;
-    this.settings.actions.delete = true;
+    this.settings.actions.delete = false;
   }
 
   ngOnInit(): void {

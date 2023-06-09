@@ -34,7 +34,13 @@ export class ScheduledMaintenanceComponent
     private serviceIndicator: MsIndicatorGoodsService,
     private router: Router
   ) {
-    super(fb, deliveryService, detailService, 'filtersIndica');
+    super(
+      fb,
+      deliveryService,
+      detailService,
+      'filtersIndica',
+      'paramsActaRecepciones'
+    );
     // this.settings1 = {
     //   ...this.settings1,
     //   actions: null,

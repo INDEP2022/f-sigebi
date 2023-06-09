@@ -11,7 +11,6 @@ import {
 import { IOriginCisi } from 'src/app/core/models/catalogs/origin-cisi.model';
 import { OiriginCisiService } from 'src/app/core/services/catalogs/origin-cisi.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import Swal from 'sweetalert2';
 import { OrignCisiFormComponent } from '../orign-cisi-form/orign-cisi-form.component';
 import { ORIGIN_CISI_COLUMNS } from './origin-cisi-columns';
 
@@ -21,7 +20,6 @@ import { ORIGIN_CISI_COLUMNS } from './origin-cisi-columns';
   styles: [],
 })
 export class OriginCisiListComponent extends BasePage implements OnInit {
-  [x: string]: any;
   originCisis: IOriginCisi[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -50,10 +48,7 @@ export class OriginCisiListComponent extends BasePage implements OnInit {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
-            filter.field == 'id' ||
-            filter.field == 'description' ||
-            filter.field == 'dict_ofi' ||
-            filter.field == 'areaProcess'
+            filter.field == 'id' || filter.field == 'description'
               ? (searchFilter = SearchFilter.EQ)
               : (searchFilter = SearchFilter.ILIKE);
             if (filter.search !== '') {
@@ -62,15 +57,16 @@ export class OriginCisiListComponent extends BasePage implements OnInit {
               delete this.columnFilters[field];
             }
           });
-          this.getDeductives();
+          this.params = this.pageFilter(this.params);
+          this.getOriginCisi();
         }
       });
     this.params
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getDeductives());
+      .subscribe(() => this.getOriginCisi());
   }
 
-  getDeductives() {
+  getOriginCisi() {
     this.loading = true;
     let params = {
       ...this.params.getValue(),
@@ -79,9 +75,9 @@ export class OriginCisiListComponent extends BasePage implements OnInit {
     this.originCisiService.getAll(params).subscribe({
       next: response => {
         this.originCisis = response.data;
-        this.data.load(this.originCisis);
+        this.totalItems = response.count || 0;
+        this.data.load(response.data);
         this.data.refresh();
-        this.totalItems = response.count;
         this.loading = false;
       },
       error: error => (this.loading = false),
@@ -92,9 +88,9 @@ export class OriginCisiListComponent extends BasePage implements OnInit {
     const modalConfig = MODAL_CONFIG;
     modalConfig.initialState = {
       originCisi,
-      edit: !!originCisi,
+
       callback: (next: boolean) => {
-        if (next) this.getDeductives();
+        if (next) this.getOriginCisi();
       },
     };
     this.modalService.show(OrignCisiFormComponent, modalConfig);
@@ -116,7 +112,7 @@ export class OriginCisiListComponent extends BasePage implements OnInit {
     this.originCisiService.remove(id).subscribe({
       next: () => {
         this.alert('success', 'Procedencias CiSi', 'Borrado');
-        this.getDeductives();
+        this.getOriginCisi();
       },
       error: error => {
         this.alert(

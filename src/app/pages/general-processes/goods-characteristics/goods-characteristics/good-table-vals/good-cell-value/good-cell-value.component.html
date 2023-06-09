@@ -1,0 +1,37 @@
+<!-- <div [class]="haveError(row)">
+  <input
+    *ngIf="row.dataType !== 'D' && !row.attribute.includes('FECHA')"
+    type="text"
+    class="form-control"
+    [maxlength]="row.length"
+    [attr.required]="row.required"
+    [(ngModel)]="row.value" />
+  <input
+    *ngIf="row.dataType === 'D' || row.attribute.includes('FECHA')"
+    bsDatepicker
+    readonly
+    class="form-control"
+    style="background-color: white"
+    [maxDate]="today"
+    [maxlength]="row.dataType === 'F' ? 42 : row.length"
+    [attr.required]="row.required"
+    [(ngModel)]="row.value" />
+  <div class="errorMessage" *ngIf="haveErrorRequired(row)">
+    El campo es obligatorio
+  </div>
+  <ng-container *ngIf="row.value">
+    <div class="errorMessage" *ngIf="haveNumericError(row)">
+      El campo debe ser númerico
+    </div>
+    <div class="errorMessage" *ngIf="haveFloatError(row)">
+      El campo debe ser flotante (38,4)
+    </div>
+    <div class="errorMessage" *ngIf="haveMoneyError(row).length > 1">
+      {{ haveMoneyError(row) }}
+    </div>
+  </ng-container>
+</div> -->
+
+<div [class]="getClassColour()">
+  {{ value?.value }}
+</div>

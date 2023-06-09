@@ -60,6 +60,7 @@ export interface IPAAbrirActasPrograma {
   P_AREATRA: string;
   P_PANTALLA: string;
   P_TIPOMOV: number;
+  USUARIO: string;
 }
 
 export interface IPACambioStatus {
@@ -67,7 +68,7 @@ export interface IPACambioStatus {
   P_PANTALLA: string;
   P_FECHA_RE_FIS: Date;
   P_TIPO_ACTA: string;
-  usuario: string;
+  USUARIO: string;
 }
 export interface ITmpProgValidation {
   valmovement: number;
@@ -81,6 +82,8 @@ export interface IGoodProgrammingSelect {
   addressGood: number;
   aliasWarehouse: string;
   code: number;
+  delegationRegionalId: number;
+  transfereeId: number;
   googId: number;
   cveSettlement: number;
   cveState: number;

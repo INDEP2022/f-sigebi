@@ -13,6 +13,23 @@
   }
 }
 
+.requiredAva {
+  background-color: #dc3545;
+}
+
+.required {
+  background-color: #ffc107;
+}
+
+.update {
+  background-color: #17a2b8;
+  input.form-control {
+    &:focus {
+      background-color: #17a2b8;
+    }
+  }
+}
+
 th,
 td {
   margin: 0;
@@ -37,63 +54,20 @@ tr > * {
   }
 }
 
-.requiredAva {
-  background-color: #dc3545;
-}
-
-.required {
-  background-color: #ffc107;
-}
-
-.update {
-  background-color: #17a2b8;
-  input.form-control {
-    &:focus {
-      background-color: #17a2b8;
-    }
+:host ::ng-deep ng2-smart-table table tr td {
+  &:last-child {
+    padding: 0px !important;
+    margin: 0px !important;
   }
-}
-
-td {
-  &.requiredAva,
-  &.update {
-    color: white;
-    input.form-control {
-      color: white;
-    }
-  }
-  &.requiredAva {
-    input.form-control {
-      &:focus {
-        background-color: #dc3545;
-      }
-    }
-  }
-  &.update {
-    input.form-control {
-      &:focus {
-        background-color: #17a2b8;
-      }
-    }
-  }
-}
-
-.error {
-  input {
-    border-bottom-color: #f46a6a;
-  }
-  .errorMessage {
-    width: 100%;
-    margin-top: 0.25rem;
-    font-size: 80%;
-    color: #dc3545;
-  }
-  .checkEdit {
-    pointer-events: none;
-    .text-success {
-      color: #6c757d !important;
-    }
-  }
+  // &:has(ng-deep .required) {
+  //   background-color: #ffc107;
+  // }
+  // &:has(.update) {
+  //   background-color: #17a2b8;
+  // }
+  // &.requiredAva {
+  //   background-color: #dc3545;
+  // }
 }
 
 a {

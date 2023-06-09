@@ -3,18 +3,20 @@
     <h5 class="modal-title">{{ title }}</h5>
   </div>
   <div body>
-    <div class="row">
+    <div class="row pt-4">
       <div class="col-12">
-        <div class="form-material col-md-5">
-          <search-bar></search-bar>
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings"
+            [source]="data"
+            (userRowSelect)="selected($event)">
+          </ng2-smart-table>
         </div>
       </div>
     </div>
-    <ng2-smart-table
-      [attr.class]="'table-bordered'"
-      [settings]="settings"
-      [source]="data"
-      (userRowSelect)="selected($event)">
-    </ng2-smart-table>
+    <app-pagination
+      [params]="params"
+      [totalItems]="totalItems"></app-pagination>
   </div>
 </app-modal>

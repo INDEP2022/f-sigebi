@@ -147,12 +147,12 @@
             <div class="col-md-2">
               <form-field [control]="form.get('autoridad')">
                 <ngx-select
-                  (fetchItems)="fetchTransfer($event)"
                   id="transfer"
                   [class]="initialBool ? 'disabled' : ''"
                   control="autoridad"
                   label="Autoridad"
-                  bindLabel="transferentkey"
+                  bindLabel="clave_transferente"
+                  [searchable]="false"
                   [data]="transferSelect"
                   [form]="form"></ngx-select>
               </form-field>
@@ -244,8 +244,13 @@
                 [control]="form.get('fecElab')"
                 label="Fecha Elaboraci&oacute;n">
                 <input
-                  bsDatepicker
                   (ngModelChange)="fecElab()"
+                  bsDatepicker
+                  [bsConfig]="{
+                    dateInputFormat: 'DD-MM-YYYY hh:mm',
+                    displayOneMonthRange: true,
+                    withTimepicker: true
+                  }"
                   class="form-control"
                   [max-length]="10"
                   [class]="!isEnableFecElab ? 'disabled' : ''"
@@ -509,6 +514,8 @@
           <input
             type="text"
             class="form-control"
+            ngbTooltip="Prueba"
+            triggers="hover focus"
             (dblclick)="goToHistorico()"
             [readOnly]="true"
             formControlName="estatusBienActa" />
