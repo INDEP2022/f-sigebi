@@ -1816,8 +1816,10 @@ export class RelatedDocumentsComponent
       `Desea eliminar el oficio con el expediente ${proceedingsNumber} y No. Oficio ${managementNumber}`
     ).then(question => {
       if (question.isConfirmed) {
-        this.delete(managementNumber, noVolante, insertDate);
-        Swal.fire('Borrado', '', 'success');
+        if (this.pantallaActual == '1') {
+          this.delete(managementNumber, noVolante, insertDate);
+          //Swal.fire('Borrado', '', 'success');
+        }
       }
     });
   }
