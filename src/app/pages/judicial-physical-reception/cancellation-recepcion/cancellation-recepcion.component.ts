@@ -950,7 +950,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
               this.initialBool = false;
               this.requireAct1();
               this.maxDate = new Date();
-              this.loading = false;
+              this.loading = false
               this.checkChange();
               this.alert(
                 'warning',
@@ -1045,7 +1045,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
 
   newProceeding() {
     this.numberProceeding = this.proceedingData.length;
-    this.totalItemsDataGoodsAct = 0;
+    this.totalItemsDataGoodsAct = 0
     this.checkChange();
     this.maxDate = new Date();
     this.form.get('acta2').setValue(null);
@@ -2356,7 +2356,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
             .paOpenProceedingProgam(modelPaOpen)
             .subscribe(
               res => {
-                console.log(res);
+                console.log(res)
                 const paramsF = new FilterParams();
                 let VAL_MOVIMIENTO = 0;
 
@@ -2455,7 +2455,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
       this.alert('warning', 'El acta ya se encuentra cerrada', '');
     } else if (this.form.get('folioEscaneo').value == null) {
       this.alert('warning', 'No se registro un número de folio', '');
-    } else {
+    }else{
       const paramsF = new FilterParams();
       paramsF.addFilter('keysProceedings', this.form.get('acta2').value);
       this.serviceProcVal.getByFilter(paramsF.getParams()).subscribe(res => {
