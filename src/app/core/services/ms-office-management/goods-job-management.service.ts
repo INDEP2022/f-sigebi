@@ -84,6 +84,14 @@ export class GoodsJobManagementService extends HttpService {
       recordNumber: string;
     }>
   > {
-    return this.get<IListResponse<any>>(`goods-job-management`);
+    return this.get<IListResponse<any>>(`goods-job-management`, list);
+  }
+
+  postGoodsJobManagement(obj: {
+    managementNumber: string;
+    goodNumber: number | string;
+    recordNumber: string;
+  }) {
+    return this.post<IListResponse<any>>(`goods-job-management`, obj);
   }
 }

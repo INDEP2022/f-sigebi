@@ -245,3 +245,100 @@ LOOP
 END LOOP;
 :variables.b := 'S';
 END;
+
+
+FUNCTION PUF_GENERA_CLAVE RETURN VARCHAR2 IS
+   SIGLA					   VARCHAR2(30);
+   ANIO					     VARCHAR2(4);
+   MES						   VARCHAR2(2);
+   vNO_DELEGACION    SEG_ACCESO_X_AREAS.NO_DELEGACION%TYPE;
+   vNO_SUBDELEGACION SEG_ACCESO_X_AREAS.NO_SUBDELEGACION%TYPE;
+   vNO_DEPARTAMENTO  SEG_ACCESO_X_AREAS.NO_DEPARTAMENTO%TYPE;
+   vCVE_CARGO        SEG_USUARIOS.CVE_CARGO%TYPE;
+   vniveld2      		 CAT_DEPARTAMENTOS.DSAREA%TYPE;
+   vniveld3      		 CAT_DEPARTAMENTOS.DSAREA%TYPE;
+   vniveld4      		 CAT_DEPARTAMENTOS.DSAREA%TYPE;
+   vniveld5      		 CAT_DEPARTAMENTOS.DSAREA%TYPE;
+   vnivel        		 CAT_DEPARTAMENTOS.NIVEL%TYPE;
+   vdepend       		 CAT_DEPARTAMENTOS.DEPEND%TYPE;
+   vdep_deleg				 CAT_DEPARTAMENTOS.DEP_DELEGACION%TYPE;
+   SIGLAp				     VARCHAR2(30);
+   vnivelp           CAT_DEPARTAMENTOS.NIVEL%TYPE;
+   vdependp          CAT_DEPARTAMENTOS.DEPEND%TYPE;
+   vdep_delegP			 CAT_DEPARTAMENTOS.DEP_DELEGACION%TYPE;
+   VI                NUMBER;
+   V_CVE_OF_GESTION  M_OFICIO_GESTION.CVE_OF_GESTION%TYPE;
+   ETAPA             NUMBER;
+BEGIN
+	 ETAPA := FA_ETAPACREDA(SYSDATE);
+-- GENERA CLAVE DE OFICIO -- JAM 241007
+   ANIO := TO_CHAR(SYSDATE,'YYYY');
+   MES	 := TO_CHAR(SYSDATE,'MM');
+   IF :PARAMETER.PLLAMO = 'ABANDONO' THEN
+      V_CVE_OF_GESTION := 'SAE'||'/'||MES||'/'||'?'||'/'||ANIO;
+   ELSE
+      BEGIN
+         SELECT NO_DELEG1,NO_SUBDELEGACION,NO_DEPART1 
+           INTO   vNO_DELEGACION,vNO_SUBDELEGACION,vNO_DEPARTAMENTO
+           FROM SEG_ACCESO_X_AREAS
+          WHERE USUARIO = :M_OFICIO_GESTION.REMITENTE
+            AND ASIGNADO = 'S';
+            
+         SELECT CVE_CARGO
+           INTO vCVE_CARGO
+           FROM SEG_USUARIOS
+          WHERE USUARIO = :M_OFICIO_GESTION.REMITENTE;
+      EXCEPTION
+         WHEN OTHERS THEN
+            LIP_MENSAJE('No se localizaron datos de la persona que autoriza.','A');
+            RAISE FORM_TRIGGER_FAILURE;
+      END;
+      BEGIN
+         SELECT	DSAREA, NIVEL, DEPEND, DEP_DELEGACION
+           INTO	SIGLA, vnivel, vdepend,vdep_deleg
+           FROM	CAT_DEPARTAMENTOS
+          WHERE	NO_DEPARTAMENTO 	= vNO_DEPARTAMENTO
+            AND	NO_DELEGACION 		= vNO_DELEGACION
+            AND	NO_SUBDELEGACION	= vNO_SUBDELEGACION
+            AND ETAPA_EDO = ETAPA;
+      EXCEPTION
+         WHEN OTHERS THEN
+            LIP_MENSAJE('No se localizó la dependencia de la persona que autoriza.','A');
+            RAISE FORM_TRIGGER_FAILURE;
+      END;
+      IF vnivel = 4 THEN
+         vniveld4 := 	SIGLA;
+         vniveld5 := 	vCVE_CARGO;
+      ELSE
+         vniveld4 := 	vCVE_CARGO;
+         vniveld3 := SIGLA;
+      END IF;
+      FOR VI IN REVERSE 2..vnivel-1 LOOP
+         BEGIN
+            SELECT DSAREA, NIVEL, DEPEND, DEP_DELEGACION
+              INTO SIGLAp, vnivelp, vdependp,vdep_delegP
+              FROM CAT_DEPARTAMENTOS
+             WHERE NO_DEPARTAMENTO 	= vdepend
+               AND NO_DELEGACION 		= vdep_deleg
+               AND ETAPA_EDO = ETAPA;
+         EXCEPTION
+            WHEN OTHERS THEN
+               LIP_MENSAJE('No se localizó el predecesor de la persona que autoriza.','A');
+               RAISE FORM_TRIGGER_FAILURE;
+         END;
+         IF vnivelp = 3 THEN
+            vniveld3 := SIGLAp;
+         ELSIF vnivelp = 2 THEN
+            vniveld2 := SIGLAp;
+         END IF;
+         vdepend := vdependp;
+         vdep_deleg := vdep_delegP;
+      END LOOP;
+      V_CVE_OF_GESTION := vniveld2||'/'||vniveld3||'/'||vniveld4;
+      IF vnivel+1 = 5 THEN
+         V_CVE_OF_GESTION := V_CVE_OF_GESTION||'/'||vniveld5;
+      END IF;
+      V_CVE_OF_GESTION := LTRIM(V_CVE_OF_GESTION||'/?/'||ANIO,'/');
+   END IF;
+   RETURN(V_CVE_OF_GESTION);
+END;
