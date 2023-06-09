@@ -63,7 +63,14 @@ export class PaginationComponent implements OnInit {
   }
 
   pageSizeChange() {
+    // debugger;
     const params = this.params.getValue();
+    if (
+      +(this.limit.value + '') > params.limit &&
+      +(this.limit.value + '') * (params.page - 1) > this.totalItems
+    ) {
+      params.page = 1;
+    }
     this.emitEvent({ ...params, limit: Number(this.limit.value) });
   }
 }
