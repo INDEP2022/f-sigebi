@@ -950,6 +950,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
               this.initialBool = false;
               this.requireAct1();
               this.maxDate = new Date();
+              this.loading = false
               this.checkChange();
               this.alert(
                 'warning',
@@ -2355,6 +2356,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
             .paOpenProceedingProgam(modelPaOpen)
             .subscribe(
               res => {
+                console.log(res)
                 const paramsF = new FilterParams();
                 let VAL_MOVIMIENTO = 0;
 
