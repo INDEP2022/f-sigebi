@@ -91,4 +91,14 @@ export class HistoryGoodService extends HttpService {
     const route = `application/getHistoryStatusGood/${goodId}`;
     return this.get(route, params);
   }
+
+  getPreviousHistoryGood(noGood: number | string) {
+    const route = HistoryGoodEndpoints.GetEstPreviousHistory;
+    return this.get(`${route}`);
+  }
+
+  getPreviousHistoryGood2(noGood: number | string) {
+    const route = HistoryGoodEndpoints.GetEstPreviousHistory2;
+    return this.get(`${route}`);
+  }
 }

@@ -945,6 +945,7 @@ export class RelatedDocumentsComponent
       this.dataTableGoodsJobManagement = (
         await this.getGoodsJobManagement(params)
       ).data;
+      console.log(this.dataTableGoodsJobManagement);
     } catch (ex) {
       console.log(ex);
     }
@@ -1755,9 +1756,10 @@ export class RelatedDocumentsComponent
     //ILegend
     //Desea eliminar el oficio con el expediente ${proceedingsNumber} y No. Oficio ${managementNumber}
     console.log(legend);
-    console.log(this.managementForm);
-    console.log(this.formJobManagement);
+    console.log(this.managementForm.value);
+    console.log(this.formJobManagement.value);
     console.log(this.m_job_management);
+    console.log(this.dataTableGoods);
     const {
       noVolante, //no_volante
       wheelStatus, //status
@@ -1771,7 +1773,7 @@ export class RelatedDocumentsComponent
       insertUser, //usuario insert
       insertDate, //fecha inserto
     } = this.m_job_management;
-    debugger;
+
     if (managementNumber == null) {
       this.onLoadToast('info', 'No se tiene oficio', '');
       return;
@@ -1780,7 +1782,7 @@ export class RelatedDocumentsComponent
       this.onLoadToast('info', 'El oficio ya esta enviado no puede borrar', '');
       return;
     }
-    if (cveManagement.includes('?') == false) {
+    /*if (cveManagement.includes('?') == false) {
       this.onLoadToast(
         'info',
         'La clave está armada, no puede borrar oficio',
@@ -1802,7 +1804,7 @@ export class RelatedDocumentsComponent
     } else {
       this.onLoadToast('error', 'Error', 'Usuario inválido para borrar oficio');
       return;
-    }
+    }*/
 
     this.alertQuestion(
       'warning',
@@ -1819,9 +1821,10 @@ export class RelatedDocumentsComponent
   async delete(
     managementNumber: number | string,
     noVolante: number | string,
-    insertDate: string
+    insertDate: string //m_job_management date insert
   ) {
     console.log(this.dataTableGoodsJobManagement);
+    //LOOP BIENES_OFICIO_ESTATUS
     this.dataTableGoodsJobManagement.map(async (item: any) => {
       const p_dictamen = Number(this.paramsGestionDictamen.pDictamen);
       if (p_dictamen == 25) {
@@ -1831,6 +1834,28 @@ export class RelatedDocumentsComponent
         const FECHA_INSERTO = new Date(insertDate);
 
         if (FECHA_CAMBIO == FECHA_INSERTO) {
+          const PROCESO_EXT_DOM = PREXDO_ANTERIOR; // igual a BIEN.proceso_ext_dom
+        }
+
+        //commit bien
+      } else {
+        let EST_ANTERIOR = null;
+        EST_ANTERIOR = await this.getEstPreviousHistory(item.id);
+
+        if (EST_ANTERIOR == null) {
+          EST_ANTERIOR = await this.getEstPreviousHistory2(item.id);
+
+          if (EST_ANTERIOR == null) {
+            EST_ANTERIOR = item.status; //IGUALAMOS BIEN_OFICIO_ESTATUS
+          }
+        }
+
+        const FECHA_CAMBIO = await this.getChangeDate(item.id);
+        const FECHA_INSERTO = new Date(insertDate);
+        if (FECHA_CAMBIO == FECHA_INSERTO) {
+          //actualiar bien
+        } else {
+          //actualizar bien
         }
       }
     });
@@ -2533,6 +2558,34 @@ export class RelatedDocumentsComponent
   getChangeDate(noBien: number | string) {
     return new Promise((resolve, reject) => {
       this.goodHistoryService.getChangeDateHistory(noBien).subscribe({
+        next: resp => {
+          resolve(resp);
+        },
+        error: error => {
+          console.log(error);
+          resolve(null);
+        },
+      });
+    });
+  }
+
+  getEstPreviousHistory(noBien: number | string) {
+    return new Promise((resolve, reject) => {
+      this.goodHistoryService.getPreviousHistoryGood(noBien).subscribe({
+        next: resp => {
+          resolve(resp);
+        },
+        error: error => {
+          console.log(error);
+          resolve(null);
+        },
+      });
+    });
+  }
+
+  getEstPreviousHistory2(noBien: number | string) {
+    return new Promise((resolve, reject) => {
+      this.goodHistoryService.getPreviousHistoryGood2(noBien).subscribe({
         next: resp => {
           resolve(resp);
         },
