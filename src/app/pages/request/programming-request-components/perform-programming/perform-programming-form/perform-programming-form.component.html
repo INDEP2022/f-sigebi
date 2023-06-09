@@ -487,6 +487,7 @@
         <app-columns-select [(settings)]="settings"></app-columns-select>
         <button
           class="btn btn-primary btn-sm active"
+          *ngIf="idTypeRelevant != 1"
           (click)="sendTransportable()">
           <i class="fa fa-plus-circle" aria-hidden="true"></i> Transportable
         </button>

@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl } from '@angular/forms';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { takeUntil } from 'rxjs';
 import { IProceedingDeliveryReception } from 'src/app/core/models/ms-proceedings/proceeding-delivery-reception';
 import {
   INotSucess,
@@ -68,25 +67,6 @@ export class ScheduledMaintenanceComponent
     };
 
     // console.log(this.settings1);
-  }
-
-  override updateByPaginator() {
-    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe({
-      next: response => {
-        console.log(response);
-        localStorage.setItem(
-          this.paramsActa,
-          JSON.stringify({ limit: response.limit, page: response.page })
-        );
-        // this.router.navigate([], {
-        //   relativeTo: this._route,
-        //   queryParams: { page: response.page },
-        //   queryParamsHandling: 'merge'
-        // })
-        this.getData(response.limit <= this.oldLimit ? true : false);
-        this.oldLimit = response.limit;
-      },
-    });
   }
 
   override resetView() {
