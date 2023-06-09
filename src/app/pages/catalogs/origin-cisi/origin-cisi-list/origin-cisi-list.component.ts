@@ -112,7 +112,7 @@ export class OriginCisiListComponent extends BasePage implements OnInit {
     this.originCisiService.remove(id).subscribe({
       next: () => {
         this.alert('success', 'Procedencias CiSi', 'Borrado');
-        this.getDeductives();
+        this.getOriginCisi();
       },
       error: error => {
         this.alert(
