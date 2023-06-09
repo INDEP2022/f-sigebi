@@ -50,6 +50,7 @@ import {
 } from 'src/app/core/shared/patterns';
 import { AddCopyComponent } from 'src/app/pages/juridical-processes/abandonments-declaration-trades/abandonments-declaration-trades/add-copy/add-copy.component';
 import {
+  COLUMNS_DOCUMENTS,
   COLUMNS_GOOD_JOB_MANAGEMENT,
   EXTERNOS_COLUMS_OFICIO,
 } from 'src/app/pages/juridical-processes/abandonments-declaration-trades/abandonments-declaration-trades/columns';
@@ -211,6 +212,20 @@ export class RelatedDocumentsComponent
     columns: COLUMNS_GOOD_JOB_MANAGEMENT,
   };
 
+  dataTableDocuments: any[] = [];
+
+  settingsTableDocuments = {
+    ...this.settings,
+    actions: {
+      edit: false,
+      add: false,
+      delete: false,
+    },
+    hideSubHeader: true,
+    columns: COLUMNS_DOCUMENTS,
+  };
+
+  //m_job_management
   override formNotification = new FormGroup({
     /** @descripiton  no_volante*/
     wheelNumber: new FormControl(null),
@@ -226,7 +241,7 @@ export class RelatedDocumentsComponent
     wheelType: new FormControl(null),
     /** @description tipo_oficio */
   });
-  //m_job_management
+
   override formJobManagement = new FormGroup({
     /** @description no_volante */
     flyerNumber: new FormControl(''),
@@ -266,6 +281,7 @@ export class RelatedDocumentsComponent
     statusOf: new FormControl(''), // estatus_of
     refersTo: new FormControl(''), // se_refiere_a
   });
+
   constructor(
     private fb: FormBuilder,
     protected flyerService: FlyersService,
@@ -317,10 +333,16 @@ export class RelatedDocumentsComponent
       ...RELATED_DOCUMENTS_COLUMNS_GOODS.improcedente,
       onComponentInitFunction: this.onClickImprocedente,
     };
+
+    if (!this.pantallaOption) {
+      const columns = RELATED_DOCUMENTS_COLUMNS_GOODS;
+      delete columns.improcedente;
+    }
+
     this.settings = {
       ...this.settings,
       actions: false,
-      selectMode: 'multi',
+      // selectMode: 'multi',
       columns: { ...RELATED_DOCUMENTS_COLUMNS_GOODS },
       rowClassFunction: (row: any) => {
         if (!row.data.available) {
@@ -362,6 +384,7 @@ export class RelatedDocumentsComponent
 
   onClickSelect(event: any) {
     event.toggle.subscribe((data: any) => {
+      console.log(data);
       data.row.seleccion = data.toggle;
     });
   }
@@ -871,27 +894,48 @@ export class RelatedDocumentsComponent
           }
 
           if (mJobManagement.managementNumber) {
-            const params = new ListParams();
-            params['filter.managementNumber'] = mJobManagement.managementNumber;
-            try {
-              this.dataTableGoodsJobManagement = (
-                await this.getGoodsJobManagement(params)
-              ).data;
-            } catch (ex) {
-              console.log(ex);
-            }
+            // const params = new ListParams();
+            // params['filter.managementNumber'] = mJobManagement.managementNumber;
+            // try {
+            //   this.dataTableGoodsJobManagement = (
+            //     await this.getGoodsJobManagement(params)
+            //   ).data;
+            // } catch (ex) {
+            //   console.log(ex);
+            // }\
+            this.refreshTableGoodsJobManagement();
           }
         } catch (e) {
           console.log(e);
         }
         console.log('res', res);
         if (res.expedientNumber) {
-          const params = new ListParams();
-          params['filter.fileeNumber'] = res.expedientNumber;
-          this.getGoods1(params);
+          // const params = new ListParams();
+          // params['filter.fileNumber'] = res.expedientNumber;
+          // this.getGoods1(params);
+          this.refreshTableGoods();
         }
       },
     });
+  }
+
+  refreshTableGoods() {
+    const params = new ListParams();
+    params['filter.fileNumber'] = this.formNotification.value.expedientNumber;
+    this.getGoods1(params);
+  }
+
+  async refreshTableGoodsJobManagement() {
+    const params = new ListParams();
+    params['filter.managementNumber'] =
+      this.formJobManagement.value.managementNumber;
+    try {
+      this.dataTableGoodsJobManagement = (
+        await this.getGoodsJobManagement(params)
+      ).data;
+    } catch (ex) {
+      console.log(ex);
+    }
   }
 
   getQueryParams(name: string) {
@@ -1700,9 +1744,8 @@ export class RelatedDocumentsComponent
     //Desea eliminar el oficio con el expediente ${proceedingsNumber} y No. Oficio ${managementNumber}
     console.log(legend);
     console.log(this.managementForm);
-    console.log(this.formJobManagement); //
+    console.log(this.formJobManagement);
     console.log(this.m_job_management);
-    console.log(this.formNotification);
     const {
       noVolante, //no_volante
       wheelStatus, //status
@@ -1725,7 +1768,7 @@ export class RelatedDocumentsComponent
       this.onLoadToast('info', 'El oficio ya esta enviado no puede borrar', '');
       return;
     }
-    /*if (cveManagement.includes('?') == false) {
+    if (cveManagement.includes('?') == false) {
       this.onLoadToast(
         'info',
         'La clave está armada, no puede borrar oficio',
@@ -1747,7 +1790,7 @@ export class RelatedDocumentsComponent
     } else {
       this.onLoadToast('error', 'Error', 'Usuario inválido para borrar oficio');
       return;
-    }*/
+    }
 
     this.alertQuestion(
       'warning',
@@ -1756,6 +1799,7 @@ export class RelatedDocumentsComponent
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(managementNumber, noVolante, insertDate);
+        Swal.fire('Borrado', '', 'success');
       }
     });
   }
@@ -1790,7 +1834,7 @@ export class RelatedDocumentsComponent
                 this.officeManagementSerivice
                   .removeMOfficeManagement(managementNumber)
                   .subscribe({
-                    next: async resp => {
+                    next: async () => {
                       const existDictamen: any = await this.dictationCount(
                         noVolante
                       );
@@ -1812,7 +1856,7 @@ export class RelatedDocumentsComponent
                     },
                   });
               },
-              error: errror => {
+              error: (errror: { error: { message: string } }) => {
                 this.onLoadToast('error', 'Error', errror.error.message);
               },
             });
@@ -2247,7 +2291,13 @@ export class RelatedDocumentsComponent
   }
 
   isDisabledBtnDocs = false;
+  async onClickBtnPrint() {
+    // if (!this.pantallaOption) {
+    await this.printRelationScreen();
+    // }
+  }
   async printRelationScreen() {
+    console.log('PRINT RELATION SCREEN');
     let values = this.formJobManagement.value;
     if (values.statusOf == 'ENVIADO') {
       this.alert(
@@ -2299,11 +2349,11 @@ export class RelatedDocumentsComponent
         etapaCreda
       )) as IDepartment;
 
-      const year = new Date().getFullYear();
-      const month = new Date().getMonth() + 1;
-      this.formJobManagement
-        .get('cveManagement')
-        .setValue(this.pupGenerateKey());
+      // const year = new Date().getFullYear();
+      // const month = new Date().getMonth() + 1;
+      const key = await this.pupGeneratorKey();
+
+      this.formJobManagement.get('cveManagement').setValue(key);
       this.formJobManagement.get('statusOf').setValue('EN REVISION');
     }
 
@@ -2316,11 +2366,10 @@ export class RelatedDocumentsComponent
         etapaCreda
       )) as IDepartment;
 
-      const year = new Date().getFullYear();
-      const month = new Date().getMonth() + 1;
-      this.formJobManagement
-        .get('cveManagement')
-        .setValue(this.pupGenerateKey());
+      // const year = new Date().getFullYear();
+      // const month = new Date().getMonth() + 1;
+      const key = await this.pupGeneratorKey();
+      this.formJobManagement.get('cveManagement').setValue(key);
       this.formJobManagement.get('statusOf').setValue('EN REVISION');
 
       if (checkText == this.se_refiere_a.A) {
@@ -2403,11 +2452,6 @@ export class RelatedDocumentsComponent
   }
 
   commit() {}
-
-  pupGenerateKey(): string {
-    //:TODO: Cambiar por el servicio de generacion de llaves
-    return 'test';
-  }
 
   async getDSAreaInDeparment(etapaCreda: string | number) {
     const params = new ListParams();
