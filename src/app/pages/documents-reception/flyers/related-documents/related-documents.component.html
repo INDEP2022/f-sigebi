@@ -474,6 +474,7 @@
               " -->
               <button
                 type="submit"
+                [disabled]="blockSend"
                 class="btn btn-primary btn-sm active"
                 tooltip="Enviar"
                 (click)="sendDictamen()"
