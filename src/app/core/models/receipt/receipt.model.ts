@@ -8,6 +8,7 @@ export interface IReceipt {
   chargeSeg: string;
   closingDate: string;
   companySeg: string;
+  statusReceipt: string;
   contentId: number;
   contractNumber: string;
   expIdFuncSeg: number;

@@ -13,6 +13,7 @@ import {
 import { RegulatoryService } from 'src/app/core/services/catalogs/regulatory.service';
 import { RegulatoyFormComponent } from '../regulatory-form/regulatoy-form.component';
 import { REGULATORY_COLUMNS } from './regulatory-columns';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-regulatory-list',

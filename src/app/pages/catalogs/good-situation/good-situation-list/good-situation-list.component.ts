@@ -107,7 +107,6 @@ export class GoodSituationListComponent extends BasePage implements OnInit {
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(goodSituation);
-        Swal.fire('Borrado', '', 'success');
       }
     });
   }
@@ -116,7 +115,16 @@ export class GoodSituationListComponent extends BasePage implements OnInit {
     this.goodSituationService
       .removeCatalogGoodSituation(goodSituation.situation, goodSituation.status)
       .subscribe({
-        next: () => this.getExample(),
+        next: response => {
+          this.alert('success', 'Situación Bien', 'Borrado'), this.getExample();
+        },
+        error: err => {
+          this.alert(
+            'warning',
+            'Situación Bien',
+            'No se puede eliminar el objeto debido a una relación con otra tabla.'
+          );
+        },
       });
   }
 }

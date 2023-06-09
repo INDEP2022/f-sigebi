@@ -126,14 +126,23 @@ export class LegalAffairListComponent extends BasePage implements OnInit {
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(legalAffair.id);
-        Swal.fire('Borrado', '', 'success');
       }
     });
   }
 
   delete(id: number) {
-    this.legalAffairService.remove(id).subscribe({
-      next: () => this.getLegalAffairAll(),
-    });
+    this.legalAffairService.remove(id).subscribe(
+      res => {
+        this.alert('success', 'Asuntos Jurídicos', 'Borrado.');
+        this.getLegalAffairAll();
+      },
+      err => {
+        this.alert(
+          'warning',
+          'Asuntos Jurídicos',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      }
+    );
   }
 }

@@ -521,6 +521,17 @@ export class PerformProgrammingFormComponent
     const postalCode = this.searchGoodsForm.get('postalCode').value;
     const state = this.searchGoodsForm.get('state').value;
 
+    if (!municipality && !colony && !akaWarehouse && !postalCode && !state) {
+      const filterColumns: Object = {
+        regionalDelegation: Number(this.regionalDelegationUser.id),
+        transferent: Number(this.transferentId),
+        relevantType: Number(this.idTypeRelevant),
+        statusGood: 'APROBADO',
+        municipality: municipality,
+      };
+      this.getProgGoods();
+    }
+
     if (municipality && !colony && !akaWarehouse && !postalCode && !state) {
       const filterColumns: Object = {
         regionalDelegation: Number(this.regionalDelegationUser.id),
@@ -1072,6 +1083,7 @@ export class PerformProgrammingFormComponent
             'No hay bienes disponibles para programar'
           );
           this.estatesList.load([]);
+          this.totalItems = filter.length;
         }
       });
   }
@@ -1088,9 +1100,30 @@ export class PerformProgrammingFormComponent
         'info',
         'Acción',
         'Los bienes seleccionados serán enviados a transportable'
-      ).then(question => {
+      ).then(async question => {
         if (question.isConfirmed) {
-          this.insertGoodsProgTrans();
+          const createProgGood = await this.insertGoodsProgTrans();
+          console.log('createProgGood', createProgGood);
+          if (createProgGood) {
+            const updateGood: any = await this.changeStatusGoodTrans();
+            console.log('updateGood', updateGood);
+            if (updateGood) {
+              const showGoods: any = await this.getFilterGood(
+                'EN_TRANSPORTABLE'
+              );
+
+              console.log('showGoods', showGoods);
+              if (showGoods) {
+                const _showGoods = await this.showGoodsTransportable(showGoods);
+
+                console.log('_showGoods', _showGoods);
+                if (_showGoods) {
+                  this.getProgGoods();
+                  this.goodSelect = [];
+                }
+              }
+            }
+          }
         }
       });
     } else {
@@ -1099,30 +1132,28 @@ export class PerformProgrammingFormComponent
   }
 
   /*------Inserta bienes con status transportable -----*/
-  async insertGoodsProgTrans() {
-    this.goodSelect.map((item: any) => {
-      const formData: Object = {
-        programmingId: this.idProgramming,
-        creationUser: this.userInfo.name,
-        modificationUser: this.userInfo.name,
-        goodId: item.goodNumber,
-        version: '1',
-        status: 'EN_TRANSPORTABLE',
-      };
-      this.programmingGoodService.createGoodsService(formData).subscribe({
-        next: () => {},
-        error: error => {},
+  insertGoodsProgTrans() {
+    return new Promise((resolve, reject) => {
+      this.goodSelect.map((item: any) => {
+        const formData: Object = {
+          programmingId: this.idProgramming,
+          creationUser: this.userInfo.name,
+          modificationUser: this.userInfo.name,
+          goodId: item.googId,
+          version: '1',
+          status: 'EN_TRANSPORTABLE',
+        };
+
+        this.programmingGoodService.createGoodProgramming(formData).subscribe({
+          next: () => {
+            resolve(true);
+          },
+          error: error => {
+            resolve(false);
+          },
+        });
       });
     });
-
-    const goods: any = await this.changeStatusGoodTrans();
-    if (goods) {
-      const showGoodtran: any = await this.showGoodsTransportable(goods);
-      if (showGoodtran) {
-        this.getProgGoods();
-        this.goodSelect = [];
-      }
-    }
   }
 
   /*------------Cambiar status del bien a transportable ------------------*/
@@ -1133,17 +1164,17 @@ export class PerformProgrammingFormComponent
           id: Number(item.goodNumber),
           goodId: item.googId,
           goodStatus: 'EN_TRANSPORTABLE',
+          programmationStatus: 'EN_TRANSPORTABLE',
         };
         this.goodService.updateByBody(formData).subscribe({
-          next: () => {},
-          error: error => {},
+          next: () => {
+            resolve(true);
+          },
+          error: error => {
+            resolve(false);
+          },
         });
       });
-
-      const showGoods: any = await this.getFilterGood('EN_TRANSPORTABLE');
-      if (showGoods) {
-        resolve(showGoods);
-      }
     });
   }
   /*------ MOSTRAMOS LOS BIENES DISPONIBLES A PROGRAMAR -------*/
@@ -1227,22 +1258,77 @@ export class PerformProgrammingFormComponent
         'info',
         'Acción',
         'Los bienes seleccionados serán enviados a resguardo'
-      ).then(question => {
+      ).then(async question => {
         if (question.isConfirmed) {
-          let config = {
-            ...MODAL_CONFIG,
-            class: 'modal-lg modal-dialog-centered',
-          };
-          const idTransferent = this.transferentId;
-          config.initialState = {
-            idTransferent,
-            typeTransportable: 'guard',
-            callback: (data: any) => {
-              if (data) this.addGoodsGuards(data);
-            },
-          };
+          const params = new ListParams();
+          if (this.idTypeRelevant == 1) {
+            const tieneMenaje = '';
+            const menajes = 0;
+            this.goodSelect.map(item => {
+              params['filter.id'] = item.googId;
+              console.log('good', this.goodSelect);
+              this.goodService.getAll(params).subscribe(data => {
+                console.log('data', data);
+              });
+            });
+          } else {
+            console.log('this.programming', this.goodSelect);
+            const data = this.goodSelect.map(item => {
+              const data = {
+                idTransferent: item.transfereeId,
+                idDelegation: item.delegationRegionalId,
+                typeTransferent: item.typeTransfer,
+              };
+              return data;
+            });
 
-          this.modalService.show(WarehouseSelectFormComponent, config);
+            console.log('filtros', data);
+
+            let config = {
+              ...MODAL_CONFIG,
+              class: 'modal-lg modal-dialog-centered',
+            };
+            config.initialState = {
+              data,
+              typeTransportable: 'guard',
+              callback: async (data: any) => {
+                if (data) {
+                  const createProgGood = await this.addGoodsGuards();
+                  console.log('createProgGood', createProgGood);
+                  if (createProgGood) {
+                    const updateGood: any = await this.changeStatusGoodGuard();
+                    console.log('updateGood', updateGood);
+                    if (updateGood) {
+                      const showGoods: any = await this.getFilterGood(
+                        'EN_RESGUARDO_TMP'
+                      );
+
+                      console.log('showGoods', showGoods);
+                      if (showGoods) {
+                        const _showGoods = await this.showGoodsGuard(showGoods);
+
+                        console.log('_showGoods', _showGoods);
+                        if (_showGoods) {
+                          this.getProgGoods();
+                          this.goodSelect = [];
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+            };
+
+            this.modalService.show(WarehouseSelectFormComponent, config);
+          }
+          /* if (this.idTypeRelevant == 1) {
+            
+            this.goodSelect.forEach(item => {
+              console.log('info', item);
+            });
+          } else {
+            
+          } */
         }
       });
     } else {
@@ -1250,49 +1336,49 @@ export class PerformProgrammingFormComponent
     }
   }
 
-  async addGoodsGuards(data: any) {
-    this.goodSelect.map((item: any) => {
-      const formData: Object = {
-        programmingId: this.idProgramming,
-        creationUser: this.userInfo.name,
-        modificationUser: this.userInfo.name,
-        goodId: item.goodNumber,
-        version: '1',
-        status: 'EN_RESGUARDO_TMP',
-      };
-      this.programmingGoodService
-        .createGoodsService(formData)
-        .subscribe(() => {});
-    });
+  async addGoodsGuards() {
+    return new Promise((resolve, reject) => {
+      this.goodSelect.map((item: any) => {
+        const formData: Object = {
+          programmingId: this.idProgramming,
+          creationUser: this.userInfo.name,
+          modificationUser: this.userInfo.name,
+          goodId: item.googId,
+          version: '1',
+          status: 'EN_RESGUARDO_TMP',
+        };
 
-    const goods: any = await this.changeStatusGoodGuard();
-    if (goods) {
-      const showGoodGuard: any = await this.showGoodsGuard(goods);
-      if (showGoodGuard) {
-        this.getProgGoods();
-        this.goodSelect = [];
-      }
-    }
+        this.programmingGoodService.createGoodProgramming(formData).subscribe({
+          next: () => {
+            resolve(true);
+          },
+          error: error => {
+            resolve(false);
+          },
+        });
+      });
+    });
   }
 
   /*------------Cambio de status a resguardo ------------------*/
   changeStatusGoodGuard() {
     return new Promise(async (resolve, reject) => {
-      this.goodSelect.map((item: any) => {
+      this.goodSelect.map(item => {
         const formData: Object = {
           id: Number(item.goodNumber),
-          goodId: Number(item.goodNumber),
+          goodId: item.googId,
           goodStatus: 'EN_RESGUARDO_TMP',
+          programmationStatus: 'EN_RESGUARDO_TMP',
         };
-
         this.goodService.updateByBody(formData).subscribe({
-          next: () => {},
+          next: () => {
+            resolve(true);
+          },
+          error: error => {
+            resolve(false);
+          },
         });
       });
-      const showGoods: any = await this.getFilterGood('EN_RESGUARDO_TMP');
-      if (showGoods) {
-        resolve(showGoods);
-      }
     });
   }
 
@@ -1342,8 +1428,34 @@ export class PerformProgrammingFormComponent
           config.initialState = {
             idTransferent,
             typeTransportable: 'warehouse',
-            callback: (data: any) => {
-              if (data) this.addGoodsWarehouse();
+            callback: async (data: any) => {
+              if (data) {
+                const createProgGood = await this.addGoodsWarehouse();
+                console.log('createProgGood', createProgGood);
+                if (createProgGood) {
+                  const updateGood: any =
+                    await this.changeStatusGoodWarehouse();
+                  console.log('updateGood', updateGood);
+                  if (updateGood) {
+                    const showGoods: any = await this.getFilterGood(
+                      'EN_ALMACEN_TMP'
+                    );
+
+                    console.log('showGoods', showGoods);
+                    if (showGoods) {
+                      const _showGoods = await this.showGoodsWarehouse(
+                        showGoods
+                      );
+
+                      console.log('_showGoods', _showGoods);
+                      if (_showGoods) {
+                        this.getProgGoods();
+                        this.goodSelect = [];
+                      }
+                    }
+                  }
+                }
+              }
             },
           };
 
@@ -1356,49 +1468,49 @@ export class PerformProgrammingFormComponent
   }
 
   async addGoodsWarehouse() {
-    this.goodSelect.map((item: any) => {
-      const formData: Object = {
-        programmingId: this.idProgramming,
-        creationUser: this.userInfo.name,
-        modificationUser: this.userInfo.name,
-        goodId: item.goodNumber,
-        version: '1',
-        status: 'EN_ALMACEN_TMP',
-      };
-      this.programmingGoodService
-        .createGoodsService(formData)
-        .subscribe(() => {});
-    });
+    return new Promise((resolve, reject) => {
+      this.goodSelect.map((item: any) => {
+        const formData: Object = {
+          programmingId: this.idProgramming,
+          creationUser: this.userInfo.name,
+          modificationUser: this.userInfo.name,
+          goodId: item.googId,
+          version: '1',
+          status: 'EN_ALMACEN_TMP',
+        };
 
-    const goods: any = await this.changeStatusGoodWarehouse();
-    if (goods) {
-      const showGoodGuard: any = await this.showGoodsWarehouse(goods);
-      if (showGoodGuard) {
-        this.getProgGoods();
-        this.goodSelect = [];
-      }
-    }
+        this.programmingGoodService.createGoodProgramming(formData).subscribe({
+          next: () => {
+            resolve(true);
+          },
+          error: error => {
+            resolve(false);
+          },
+        });
+      });
+    });
   }
 
   //Cambio de status en la programación//
 
   async changeStatusGoodWarehouse() {
     return new Promise(async (resolve, reject) => {
-      this.goodSelect.map((item: any) => {
+      this.goodSelect.map(item => {
         const formData: Object = {
           id: Number(item.goodNumber),
           goodId: item.googId,
           goodStatus: 'EN_ALMACEN_TMP',
+          programmationStatus: 'EN_ALMACEN_TMP',
         };
         this.goodService.updateByBody(formData).subscribe({
-          next: () => {},
+          next: () => {
+            resolve(true);
+          },
+          error: error => {
+            resolve(false);
+          },
         });
       });
-
-      const showGoods: any = await this.getFilterGood('EN_ALMACEN_TMP');
-      if (showGoods) {
-        resolve(showGoods);
-      }
     });
   }
 
@@ -1448,26 +1560,28 @@ export class PerformProgrammingFormComponent
       'warning',
       'Confirmación',
       '¿Desea eliminar el bien de transportable?'
-    ).then(question => {
+    ).then(async question => {
       if (question.isConfirmed) {
         this.goodsTranportables.remove(item);
-        this.removeStatusGood(item);
-        const formData: Object = {
-          programmingId: this.idProgramming,
-          goodId: item.id,
-        };
-        this.programmingGoodService
-          .deleteGoodProgramming(formData)
-          .subscribe(() => {
-            this.onLoadToast(
-              'success',
-              'Correcto',
-              'Bien eliminado de transportable correctamente'
-            );
-            const deleteGood = this.goodsTranportables.count();
-            this.headingTransportable = `Transportable(${deleteGood})`;
-            this.getProgGoods();
-          });
+        const backInfoGood = await this.removeStatusGood(item);
+        if (backInfoGood) {
+          const formData: Object = {
+            programmingId: this.idProgramming,
+            goodId: item.id,
+          };
+          this.programmingGoodService
+            .deleteGoodProgramming(formData)
+            .subscribe(() => {
+              this.onLoadToast(
+                'success',
+                'Correcto',
+                'Bien eliminado de transportable correctamente'
+              );
+              const deleteGood = this.goodsTranportables.count();
+              this.headingTransportable = `Transportable(${deleteGood})`;
+              this.getProgGoods();
+            });
+        }
       }
     });
   }
@@ -1476,32 +1590,49 @@ export class PerformProgrammingFormComponent
     return new Promise((resolve, reject) => {
       const _good: Object = {
         id: good.id,
+        goodId: good.goodId,
+        goodStatus: 'APROBADO',
         programmationStatus: null,
       };
       this.goodService.updateByBody(_good).subscribe({
         next: res => {
           resolve(true);
         },
-        error: error => {},
+        error: error => {
+          resolve(false);
+        },
       });
     });
   }
 
-  removeGoodGuard(item: IGoodProgrammingSelect) {
+  removeGoodGuard(item: IGood) {
     this.alertQuestion(
       'warning',
       'Confirmación',
-      '¿Desea remover el bien?'
-    ).then(question => {
+      '¿Desea eliminar el bien de resguardo?'
+    ).then(async question => {
       if (question.isConfirmed) {
         this.goodsGuards.remove(item);
-        this.estatesList.getElements().then(items => {
-          items.push(item);
-          this.estatesList.load(items);
-          this.headingGuard = `Resguardo(${this.goodsGuards.count()})`;
-          this.totalItems = this.totalItems + 1;
-          this.onLoadToast('success', 'Bien removido correctamente', '');
-        });
+        const backInfoGood = await this.removeStatusGood(item);
+        if (backInfoGood) {
+          const formData: Object = {
+            programmingId: this.idProgramming,
+            goodId: item.id,
+          };
+          this.programmingGoodService
+            .deleteGoodProgramming(formData)
+            .subscribe(() => {
+              this.onLoadToast(
+                'success',
+                'Correcto',
+                'Bien eliminado de resguardo correctamente'
+              );
+              const deleteGood = this.goodsGuards.count();
+              this.headingGuard = `Resguardo(${deleteGood})`;
+
+              this.getProgGoods();
+            });
+        }
       }
     });
   }
@@ -1510,27 +1641,28 @@ export class PerformProgrammingFormComponent
     this.alertQuestion(
       'warning',
       'Confirmación',
-      '¿Desea remover el bien de almacén?'
+      '¿Desea eliminar el bien de almacén?'
     ).then(async question => {
       if (question.isConfirmed) {
-        const removeStatusGood = await this.removeStatusGood(item);
-        if (removeStatusGood) {
+        this.goodsWarehouse.remove(item);
+        const backInfoGood = await this.removeStatusGood(item);
+        if (backInfoGood) {
           const formData: Object = {
             programmingId: this.idProgramming,
             goodId: item.id,
           };
           this.programmingGoodService
             .deleteGoodProgramming(formData)
-            .subscribe({
-              next: res => {
-                this.onLoadToast(
-                  'success',
-                  'Correcto',
-                  'Bien eliminado correctamente'
-                );
-                this.getProgGoods();
-              },
-              error: error => {},
+            .subscribe(() => {
+              this.onLoadToast(
+                'success',
+                'Correcto',
+                'Bien eliminado de alamcén correctamente'
+              );
+              const deleteGood = this.goodsWarehouse.count();
+              this.headingWarehouse = `Almacén INDEP(${deleteGood})`;
+
+              this.getProgGoods();
             });
         }
       }
@@ -2082,7 +2214,7 @@ export class PerformProgrammingFormComponent
 
   showGuard(goodsProg: IGoodProgramming[]) {
     const filterTrans = goodsProg.filter(item => {
-      return item.status == 'EN_RESGUARDO';
+      return item.status == 'EN_RESGUARDO_TMP';
     });
     const showGuard: any = [];
     filterTrans.map((item: IGoodProgramming) => {
@@ -2111,12 +2243,12 @@ export class PerformProgrammingFormComponent
   }
 
   goodsSelect(data: any) {
-    this.goodSelect.push(data[0]);
+    this.goodSelect = data;
   }
 
   showWarehouseGoods(goodsProg: IGoodProgramming[]) {
     const filterTrans = goodsProg.filter(item => {
-      return item.status == 'EN_ALMACEN';
+      return item.status == 'EN_ALMACEN_TMP';
     });
     const showWarehouse: any = [];
     filterTrans.map((item: IGoodProgramming) => {

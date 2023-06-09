@@ -79,7 +79,7 @@ export class ProgrammingGoodService implements ICrudMethods<IGoodProgramming> {
     return this.httpClient.post(`${environment.API_URL}/${route}`, formData);
   }
 
-  createGoodsService(formData: Object) {
+  createGoodProgramming(formData: Object) {
     const route = `${this.route}/programming-goods`;
     return this.httpClient.post(`${environment.API_URL}/${route}`, formData);
   }

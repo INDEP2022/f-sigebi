@@ -99,21 +99,30 @@ export class DrawersListComponent extends BasePage implements OnInit {
     this.modalService.show(DrawerFormComponent, modalConfig);
   }
 
-  showDeleteAlert(drawer: IDrawer) {
+  showDeleteAlert(drawer: any) {
     this.alertQuestion(
       'warning',
       'Eliminar',
       '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        let { noDrawer, noBobeda } = drawer;
-        const idBobeda = (noBobeda as ISafe).idSafe;
-        noBobeda = idBobeda;
-        this.drawerService.removeByIds({ noDrawer, noBobeda }).subscribe({
-          next: data => this.getDrawers(),
-          error: error => (this.loading = false),
-        });
+        this.delete(drawer.id);
       }
+    });
+  }
+
+  delete(id: number) {
+    this.drawerService.delete(id).subscribe({
+      next: response => {
+        this.alert('success', 'Gaveta', 'Borrado'), this.getDrawers();
+      },
+      error: err => {
+        this.alert(
+          'warning',
+          'Gaveta',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      },
     });
   }
 }
