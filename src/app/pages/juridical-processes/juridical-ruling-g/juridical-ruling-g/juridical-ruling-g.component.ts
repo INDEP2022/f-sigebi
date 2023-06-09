@@ -932,7 +932,6 @@ export class JuridicalRulingGComponent
   crime: string;
   typeSteeringwheel: string;
   documentsSeleccionados: any[] = [];
-
   btnDocumentos() {
     // console.log('btnDocumentos');
     // this.listadoDocumentos = true;
@@ -1033,34 +1032,15 @@ export class JuridicalRulingGComponent
       this.TIPO_VO = params.TIPO_VO;
       this.P_GEST_OK = params.P_GEST_OK;
     });
-<<<<<<< HEAD
 
     console.log('this.dictamen.id', this.dictamen.id);
     let exp = this.expedientesForm.get('noExpediente').value;
     if (exp !== '' && this.dictamen.id !== null) {
-=======
-    console.log(this.expedientesForm);
-    if (
-      this.expedientesForm.get('noExpediente').value == (null || '') &&
-      this.expedientesForm.get('tipoDictaminacion').value == null
-    ) {
-      this.alert(
-        'warning',
-        '',
-        'Necesitas un número de expedientes con oficio.'
-      );
-      return; // Si 'documents' está vacío, detiene la ejecución aquí
-    } else {
->>>>>>> 02159bb84f0a519beb372c19a82fe679083a7515
       this.router.navigate(
         ['/pages/juridical/depositary/legal-opinions-office/'],
         {
           queryParams: {
-<<<<<<< HEAD
             origin: 'FACTJURDICTAMASG', //Cambiar
-=======
-            origin: 'FACTGENACTDATEX', //Cambiar
->>>>>>> 02159bb84f0a519beb372c19a82fe679083a7515
             P_VALOR: this.dictamen.id,
             P_NO_TRAMITE: this.expedientesForm.get('noExpediente').value,
             CLAVE_OFICIO_ARMADA:
@@ -1132,7 +1112,6 @@ export class JuridicalRulingGComponent
         },
       }
     );
-<<<<<<< HEAD
   }
   // PUP_DICTA_LOG
   async PUP_DICTA_LOG(data: any) {
@@ -1147,8 +1126,6 @@ export class JuridicalRulingGComponent
 
     const LST_TIEMPO = `${dia}-${mes}-${anio} ${hora}:${minutos}:${segundos}`;
     return LST_TIEMPO;
-=======
->>>>>>> 02159bb84f0a519beb372c19a82fe679083a7515
   }
 
   btnSalir() {
@@ -1808,7 +1785,6 @@ export class JuridicalRulingGComponent
               screen: 'FACTJURDICTAMASG',
             };
 
-            //Manda a llamar a FACTGENPARCBIEN
             console.log('OBJ', obj);
             this.router.navigate(
               ['/pages/judicial-physical-reception/partializes-general-goods'],
