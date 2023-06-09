@@ -30,4 +30,5 @@ export enum DictationEndpoints {
   DictamenDelegation = 'application/delegationDictamXofDicta',
   DeletePupDeleteDictum = 'application/pupDeleteDictum',
   Check = 'application/destruction-check-good-available',
+  FactJur = 'application/factjurdictamasg',
 }

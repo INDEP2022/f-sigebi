@@ -9,6 +9,7 @@ import { GoodsFilterSharedComponent } from '../../../@standalone/shared-forms/go
 import { GoodsCharacteristicsRoutingModule } from './goods-characteristics-routing.module';
 import { GoodCellValueComponent } from './goods-characteristics/good-table-vals/good-cell-value/good-cell-value.component';
 import { GoodCharacteristicModalComponent } from './goods-characteristics/good-table-vals/good-characteristic-modal/good-characteristic-modal.component';
+import { GoodSituationsModalComponent } from './goods-characteristics/good-table-vals/good-situations-modal/good-situations-modal.component';
 import { GoodTableDetailButtonComponent } from './goods-characteristics/good-table-vals/good-table-detail-button/good-table-detail-button.component';
 import { GoodTableValsComponent } from './goods-characteristics/good-table-vals/good-table-vals.component';
 import { GoodsCharacteristicsComponent } from './goods-characteristics/goods-characteristics.component';
@@ -20,6 +21,7 @@ import { GoodsCharacteristicsComponent } from './goods-characteristics/goods-cha
     GoodTableDetailButtonComponent,
     GoodCellValueComponent,
     GoodCharacteristicModalComponent,
+    GoodSituationsModalComponent,
   ],
   imports: [
     CommonModule,

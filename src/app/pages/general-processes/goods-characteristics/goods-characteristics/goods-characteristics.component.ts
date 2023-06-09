@@ -1,6 +1,15 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { FormControl } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { BehaviorSubject, catchError, firstValueFrom, map, of } from 'rxjs';
+import { TabsetComponent } from 'ngx-bootstrap/tabs';
+import {
+  BehaviorSubject,
+  catchError,
+  firstValueFrom,
+  map,
+  of,
+  takeUntil,
+} from 'rxjs';
 import {
   FilterParams,
   ListParams,
@@ -9,9 +18,10 @@ import {
 import { IGoodSssubtype } from 'src/app/core/models/catalogs/good-sssubtype.model';
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
 import { ParameterCatService } from 'src/app/core/services/catalogs/parameter.service';
-import { GoodService } from 'src/app/core/services/good/good.service';
 import { AccountMovements } from 'src/app/core/services/ms-account-movements/account-movements.service';
 import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
+import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
 import { StatusXScreenService } from 'src/app/core/services/ms-screen-status/statusxscreen.service';
 import { SurvillanceService } from 'src/app/core/services/ms-survillance/survillance.service';
 import { SegAcessXAreasService } from 'src/app/core/services/ms-users/seg-acess-x-areas.service';
@@ -23,14 +33,18 @@ import { GoodsCharacteristicsService } from '../services/goods-characteristics.s
 @Component({
   selector: 'app-goods-characteristics',
   templateUrl: './goods-characteristics.component.html',
-  styles: [],
+  styleUrls: ['./goods-characteristics.component.scss'],
 })
 export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
   params = new BehaviorSubject<ListParams>(new ListParams());
+  @ViewChild('staticTabs', { static: false }) staticTabs?: TabsetComponent;
   formLoading = false;
   showConciliado = false;
   LVALIDA = true;
-
+  filterParams = new FilterParams();
+  newLimit = new FormControl(1);
+  totalItems = 0;
+  count = 0;
   get good() {
     return this.service.good;
   }
@@ -43,12 +57,12 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     return this.service.form ? this.service.form : null;
   }
 
-  get permisions() {
-    return this.service.permisions;
+  get haveTdictaUser() {
+    return this.service.haveTdictaUser;
   }
 
-  set permisions(value) {
-    this.service.permisions = value;
+  set haveTdictaUser(value) {
+    this.service.haveTdictaUser = value;
   }
 
   get di_numerario_conciliado() {
@@ -73,6 +87,22 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
 
   set disabledDescripcion(value) {
     this.service.disabledDescripcion = value;
+  }
+
+  get disabledNoClasifBien() {
+    return this.service.disabledNoClasifBien;
+  }
+
+  set disabledNoClasifBien(value) {
+    this.service.disabledNoClasifBien = value;
+  }
+
+  get disabledTable() {
+    return this.service.disabledTable;
+  }
+
+  set disabledTable(value) {
+    this.service.disabledTable = value;
   }
 
   get numberGood() {
@@ -151,19 +181,26 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     return this.form.get('subtype');
   }
 
+  get ssubtype() {
+    return this.form.get('ssubtype');
+  }
+
+  get sssubtype() {
+    return this.form.get('sssubtype');
+  }
+
   get descripcion() {
     return this.form.get('descripcion');
   }
 
   get pathDelegation() {
-    return (
-      'catalog/api/v1/delegation/get-all?filter.etapaEdo:$eq:' + this.good.e
-    );
+    return 'catalog/api/v1/delegation/get-all?filter.etapaEdo:$eq:' + this.good;
   }
 
   select = new DefaultSelect();
 
   constructor(
+    private goodProcessService: GoodprocessService,
     private goodService: GoodService,
     private serviceDeleg: DelegationService,
     private subdelegationService: SubdelegationService,
@@ -177,11 +214,26 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     private service: GoodsCharacteristicsService
   ) {
     super();
+    this.params.value.limit = 1;
+    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(params => {
+      console.log(params);
+      if (this.count > 0) this.searchGood(true);
+      this.count++;
+    });
     // this.form.valueChanges.subscribe(async x => {
     //   console.log(x);
     //   // await this.preUpdate();
     //   // await this.postRecord();
     // });
+  }
+
+  selectTab() {
+    console.log(this.staticTabs);
+
+    if (this.staticTabs?.tabs[1]) {
+      this.staticTabs.tabs[0].disabled = true;
+      this.staticTabs.tabs[1].active = true;
+    }
   }
 
   ngOnInit(): void {
@@ -190,7 +242,9 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
       next: param => {
         console.log(param);
         if (param['noBien']) {
-          this.searchGood(param['noBien']);
+          // this.selectTab();
+          this.numberGood.setValue(param['noBien']);
+          this.searchGood();
         }
         // this.goodService.getById2(param['noBien']).subscribe({
         //   next: data => {
@@ -210,6 +264,13 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     // });
   }
 
+  ngAfterViewInit() {
+    // this.selectTab();
+    setTimeout(() => {
+      this.selectTab();
+    }, 1000);
+  }
+
   handleEvent(data: any) {
     console.log('Evento recibido:', data);
   }
@@ -222,7 +283,9 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     // this.good = ssssubType.numClasifGoods;
   }
 
-  save() {}
+  save() {
+    this.preUpdate();
+  }
 
   private async fillConciliate() {
     let clasificators = '62,1424,1426,1590';
@@ -245,6 +308,11 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     }
   }
 
+  clearFilter() {
+    this.form.reset();
+    this.good = null;
+    this.totalItems = 0;
+  }
   private async getDelegacionJoinSubdelDepartamentos() {
     return firstValueFrom(
       this.segxAccessService
@@ -331,7 +399,22 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     // console.log(accounts);
   }
 
-  private excepNumerario() {
+  private getNewApraisedValueForVnValores(vnPunto: number, val: string) {
+    return (
+      +val.substring(0, vnPunto - 1) +
+      (+val.substring(vnPunto + 1, val.length - vnPunto) / 100).toFixed(2)
+    );
+  }
+
+  private pupBuscaNumerario(): boolean {
+    let vn_simb: number,
+      vf_fecha: Date,
+      vn_impor: string,
+      lbln_encontro: boolean,
+      lbln_conciliado: string;
+    return true;
+  }
+  private async excepNumerario() {
     const filterParams = new FilterParams();
     // filterParams.limit = 1000;
     filterParams.addFilter(
@@ -339,42 +422,116 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
       'CLASINUMER,CLASINUMEF,CLASIOTMON,CLASIVALOR,CLASICTAS',
       SearchFilter.IN
     );
-    this.parameterService
-      .getAllWithFilters(filterParams.getParams())
-      .subscribe({
-        next: response => {
-          console.log(response);
-          const data = response ? response.data : [];
-          const vn_NumEfe = data.find(
-            item => item.id === 'CLASINUMER'
-          )?.initialValue;
-          const vn_NumFis = data.find(
-            item => item.id === 'CLASINUMEF'
-          )?.initialValue;
-          const vn_OtrMon = data.find(
-            item => item.id === 'CLASIOTMON'
-          )?.initialValue;
-          const vn_Valores = data.find(
-            item => item.id === 'CLASIVALOR'
-          )?.initialValue;
-          const vn_Ctas = data.find(
-            item => item.id === 'CLASICTAS'
-          )?.initialValue;
-          let clasificators = '62,1424,1426,1575,1590';
-          if (vn_NumFis) {
-            clasificators = clasificators + ',' + vn_NumFis;
-          }
-          if (vn_OtrMon) {
-            clasificators = clasificators + ',' + vn_OtrMon;
-          }
-          if (
-            this.numberClassification.value &&
-            clasificators.includes(this.numberClassification.value + '')
-          ) {
-            // if('62,1424,1426,1590'.includes(this.numberClassification.value + '') && this.good.num)
-          }
-        },
-      });
+    const parameters = await firstValueFrom(
+      this.parameterService
+        .getAllWithFilters(filterParams.getParams())
+        .pipe(catchError(x => of(null)))
+    );
+    if (!parameters) {
+      this.onLoadToast(
+        'error',
+        'Excep Numerario',
+        'No pudo cargar los parametros'
+      );
+      return false;
+    }
+    const data = parameters ? parameters.data : [];
+    const vn_NumEfe = data.find(item => item.id === 'CLASINUMER')?.initialValue;
+    const vn_NumFis = data.find(item => item.id === 'CLASINUMEF')?.initialValue;
+    const vn_OtrMon = data.find(item => item.id === 'CLASIOTMON')?.initialValue;
+    const vn_Valores = data.find(
+      item => item.id === 'CLASIVALOR'
+    )?.initialValue;
+    const vn_Ctas = data.find(item => item.id === 'CLASICTAS')?.initialValue;
+    let clasificators = '62,1424,1426,1575,1590';
+    if (vn_NumFis) {
+      clasificators = clasificators + ',' + vn_NumFis;
+    }
+    if (vn_OtrMon) {
+      clasificators = clasificators + ',' + vn_OtrMon;
+    }
+    if (
+      this.numberClassification.value &&
+      clasificators.includes(this.numberClassification.value + '')
+    ) {
+      if (
+        '62,1424,1426,1590'.includes(this.numberClassification.value + '') &&
+        this.di_numerario_conciliado === 'No Conciliado'
+      ) {
+        const result = this.pupBuscaNumerario();
+        if (result === false) {
+          return false;
+        }
+      }
+      this.good.val2 = +(this.good.val2 + '').replace(',', '.') + '';
+      let vnPunto = (this.good.val2 + '').indexOf('.');
+      if (vnPunto != 0) {
+        try {
+          this.goodAppraisal.setValue(+this.good.val2 + '');
+        } catch (x) {
+          this.onLoadToast('error', 'Verifique el valor númerico del campo 2');
+          return false;
+        }
+      } else {
+        try {
+          this.goodAppraisal.setValue(this.good.val2);
+          // this.good.appraisedValue = this.good.val2;
+        } catch (x) {
+          this.onLoadToast('error', 'Verifique el valor númerico del campo 2');
+          return false;
+        }
+      }
+      if (this.numberClassification.value === vn_NumFis) {
+        this.good.cveCurrencyAppraisal = this.good.val3;
+      } else {
+        this.good.cveCurrencyAppraisal = this.good.val1;
+      }
+    } else if (this.numberClassification.value === vn_Valores) {
+      this.good.val3 = +(this.good.val2 + '').replace(',', '.') + '';
+      let vnPunto = (this.good.val3 + '').indexOf('.');
+      if (vnPunto != 0) {
+        try {
+          this.numberClassification.setValue(
+            this.getNewApraisedValueForVnValores(vnPunto, this.good.val3)
+          );
+        } catch (x) {
+          this.onLoadToast('error', 'Verifique el valor númerico del campo 3');
+          return false;
+        }
+      } else {
+        try {
+          this.goodAppraisal.setValue(this.good.val3);
+          // this.good.appraisedValue = this.good.val3;
+        } catch (x) {
+          this.onLoadToast('error', 'Verifique el valor númerico del campo 3');
+          return false;
+        }
+      }
+      this.good.cveCurrencyAppraisal = this.good.val2;
+    } else if (this.numberClassification.value === vn_Ctas) {
+      this.good.val7 = +(this.good.val2 + '').replace(',', '.') + '';
+      let vnPunto = (this.good.val2 + '').indexOf('.');
+      if (vnPunto != 0) {
+        try {
+          this.numberClassification.setValue(
+            this.getNewApraisedValueForVnValores(vnPunto, this.good.val7)
+          );
+        } catch (x) {
+          this.onLoadToast('error', 'Verifique el valor númerico del campo 7');
+          return false;
+        }
+      } else {
+        try {
+          this.goodAppraisal.setValue(this.good.val7);
+          // this.good.appraisedValue = this.good.val3;
+        } catch (x) {
+          this.onLoadToast('error', 'Verifique el valor númerico del campo 7');
+          return false;
+        }
+      }
+      this.good.cveCurrencyAppraisal = this.good.val6;
+    }
+    return true;
   }
 
   validationTypeSubtype() {
@@ -385,7 +542,6 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
       this.subtype.value + '' === '1'
     );
   }
-
   preUpdate() {
     if (this.descripcion && this.descripcion.value) {
       const tamanio = this.descripcion.value.length;
@@ -418,58 +574,100 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     }
   }
 
-  searchGood(good: any) {
-    // const numberGood = Number(this.numberGood.value);
-    if (!good) {
-      return;
+  private fillParams(byPage = false) {
+    if (byPage) {
+      this.filterParams.page = this.params.getValue().page;
+      return true;
     }
-    this.goodService.getById2(good).subscribe({
-      next: response => {
-        console.log(response);
-        if (response) {
-          this.good = response;
-          this.service.goodChange.next(true);
-          this.service.newGood = { id: this.good.id, goodId: this.good.goodId };
-          // this.excepNumerario();
-          this.numberGood.setValue(response.id);
-          this.type.setValue(response.goodTypeId);
-          this.subtype.setValue(response.subTypeId);
-          // this.form.get('ssubtype').setValue(response.goodTypeId);
-          // this.form.get('sssubtype').setValue(response.goodTypeId);
-          // this.getDelegation(response.delegationNumber);
-          // this.getSubdelegation(response.subDelegationNumber);
-          this.delegation.setValue(response.delegationNumber.description);
-          this.subdelegation.setValue(response.subDelegationNumber.description);
-          this.getLatitudLongitud(response.goodId);
-          // this.getDelegation(response.)
-          this.numberClassification.setValue(response.goodClassNumber);
-          this.goodStatus.setValue(response.goodStatus);
-          this.goodDescription.setValue(response.description);
-          this.goodUnit.setValue(response.unit);
-          this.goodQuantity.setValue(response.quantity);
-          this.goodReference.setValue(response.referenceValue);
-          this.goodAppraisal.setValue(response.appraisedValue);
-          this.goodDateVigency.setValue(new Date(response.appraisalVigDate));
-          // this.goodLatitude.setValue(response.latitude);
-          // this.goodLongitude.setValue(response.longitud);
-          this.goodObservations.setValue(response.observationss);
-          if (response.appraisal === null) {
-            this.goodAppraisal2.setValue(false);
+    this.filterParams = new FilterParams();
+    this.filterParams.limit = 1;
+    this.filterParams.page = this.params.getValue().page;
+    if (this.numberGood && this.numberGood.value) {
+      this.filterParams.addFilter('id', this.numberGood.value);
+      return true;
+    }
+    if (this.type && this.type.value) {
+      this.filterParams.addFilter('goodTypeId', this.type.value);
+    }
+    if (this.subtype && this.subtype.value) {
+      this.filterParams.addFilter('subTypeId', this.subtype.value);
+    }
+    if (this.ssubtype && this.ssubtype.value) {
+      this.filterParams.addFilter('ssubTypeId', this.ssubtype.value);
+    }
+    if (this.sssubtype && this.sssubtype.value) {
+      this.filterParams.addFilter('sssubTypeId', this.sssubtype.value);
+    }
+    if (this.filterParams.getFilterParams()) {
+      return true;
+    }
+    return false;
+  }
+
+  searchGood(byPage = false) {
+    // const numberGood = Number(this.numberGood.value);
+    this.loading = true;
+    if (this.fillParams(byPage)) {
+      this.goodService.getAll(this.filterParams.getParams()).subscribe({
+        next: async response => {
+          console.log(response);
+          if (response.data && response.data.length > 0) {
+            let item = response.data[0];
+            this.totalItems = response.count ?? 0;
+            if (item) {
+              this.good = item;
+              this.service.goodChange.next(true);
+              this.service.newGood = {
+                id: this.good.id,
+                goodId: this.good.goodId,
+              };
+              // this.excepNumerario();
+              this.numberGood.setValue(item.id);
+              this.type.setValue(item.goodTypeId);
+              this.subtype.setValue(item.subTypeId);
+              // this.form.get('ssubtype').setValue(item.goodTypeId);
+              // this.form.get('sssubtype').setValue(item.goodTypeId);
+              // this.getDelegation(item.delegationNumber);
+              // this.getSubdelegation(item.subDelegationNumber);
+              this.delegation.setValue(item.delegationNumber.description);
+              this.subdelegation.setValue(item.subDelegationNumber.description);
+              this.getLatitudLongitud(item.goodId);
+              // this.getDelegation(item.)
+              this.numberClassification.setValue(item.goodClassNumber);
+              this.goodStatus.setValue(item.goodStatus);
+              this.goodDescription.setValue(item.description);
+              this.goodUnit.setValue(item.unit);
+              this.goodQuantity.setValue(item.quantity);
+              this.goodReference.setValue(item.referenceValue);
+              this.goodAppraisal.setValue(item.appraisedValue);
+              this.goodDateVigency.setValue(new Date(item.appraisalVigDate));
+              // this.goodLatitude.setValue(item.latitude);
+              // this.goodLongitude.setValue(item.longitud);
+              this.goodObservations.setValue(item.observationss);
+              if (item.appraisal === null) {
+                this.goodAppraisal2.setValue(false);
+              } else {
+                this.goodAppraisal2.setValue(true);
+              }
+              // this.getTDicta();
+              await this.postQuery();
+              this.loading = false;
+            } else {
+              this.service.goodChange.next(false);
+            }
           } else {
-            this.goodAppraisal2.setValue(true);
+            this.totalItems = 0;
+            this.loading = false;
           }
-          // this.getTDicta();
-          this.postQuery();
-        } else {
+        },
+        error: err => {
+          this.loading = false;
+          console.log(err);
           this.service.goodChange.next(false);
-        }
-      },
-      error: err => {
-        console.log(err);
-        this.service.goodChange.next(false);
-        this.onLoadToast('error', 'ERROR', 'No existe el Bien ingresado');
-      },
-    });
+          this.onLoadToast('error', 'ERROR', 'No existe el Bien ingresado');
+        },
+      });
+    }
   }
 
   getDelegation(id: any) {
@@ -497,14 +695,14 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     // debugger;
     const filterParams = new FilterParams();
     filterParams.addFilter('typeNumber', 'CARBIEN');
-    // filterParams.addFilter('user', localStorage.getItem('username'));
+    filterParams.addFilter('user', localStorage.getItem('username'));
     filterParams.addFilter('reading', 'S');
     // filterParams.addFilter()
     const rdicta = await firstValueFrom(
       this.dictationService.getRTdictaAarusr(filterParams.getParams())
     );
     if (rdicta && rdicta.count && rdicta.count > 0) {
-      this.permisions = true;
+      this.haveTdictaUser = true;
     }
     if (postQuery) {
       this.fillAvaluo();
@@ -557,13 +755,25 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
       const di_disponible_d = response.filter(x => x.action === 'D').length;
       if (di_disponible > 0) {
         this.disabledBienes = false;
+        this.disabledTable = false;
+        this.disabledNoClasifBien = false;
+        this.disabledDescripcion = false;
       } else {
-        if (di_disponible_e > 0 && this.permisions) {
+        if (di_disponible_e > 0 && this.haveTdictaUser) {
           this.disabledBienes = false;
-        } else if (di_disponible_d > 0 && this.permisions) {
+          this.disabledDescripcion = false;
+          this.disabledTable = false;
+          this.disabledNoClasifBien = false;
+        } else if (di_disponible_d > 0 && this.haveTdictaUser) {
           this.disabledBienes = false;
+          this.disabledDescripcion = false;
+          this.disabledTable = false;
+          this.disabledNoClasifBien = false;
         } else {
           this.disabledBienes = true;
+          this.disabledDescripcion = true;
+          this.disabledTable = true;
+          this.disabledNoClasifBien = true;
         }
       }
     }
