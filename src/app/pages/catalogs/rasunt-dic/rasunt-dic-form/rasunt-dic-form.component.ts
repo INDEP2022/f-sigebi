@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Renderer2 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
@@ -26,7 +26,8 @@ export class RAsuntDicFormComponent extends BasePage implements OnInit {
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
-    private rAsuntDicService: RAsuntDicService
+    private rAsuntDicService: RAsuntDicService,
+    private render: Renderer2
   ) {
     super();
   }
@@ -74,10 +75,15 @@ export class RAsuntDicFormComponent extends BasePage implements OnInit {
       e: [null, [Validators.maxLength(1), Validators.pattern(STRING_PATTERN)]],
       // registryNumber: [null],
     });
+
     if (this.rAsuntDic != null) {
       this.edit = true;
       this.form.patchValue(this.rAsuntDic);
+      this.form.get('flyerType').disable();
+      this.form.get('dictum').disable();
+      this.form.get('code').disable();
     }
+    this.getData(new ListParams());
   }
 
   getData(params: ListParams) {

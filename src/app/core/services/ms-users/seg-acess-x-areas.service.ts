@@ -44,4 +44,8 @@ export class SegAcessXAreasService extends HttpService {
     const route = UserEndpoints.askForPermissions;
     return this.post(`${route}`, body);
   }
+
+  getAll__(params?: _Params): Observable<IListResponse<any>> {
+    return this.get<IListResponse<any>>(this.route.SegUsers, params);
+  }
 }

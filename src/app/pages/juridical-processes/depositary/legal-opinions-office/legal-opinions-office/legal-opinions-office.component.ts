@@ -94,12 +94,12 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
   officeTextDictationData: IJobDictumTexts;
   addresseeDataSelect: any;
   paramsScreen: IParamsLegalOpinionsOffice = {
-    PAQUETE: '',
-    P_GEST_OK: '',
-    CLAVE_OFICIO_ARMADA: '',
-    P_NO_TRAMITE: '',
-    TIPO: '',
-    P_VALOR: '',
+    PAQUETE: '', // PAQUETE
+    P_GEST_OK: '', // P_GEST_OK
+    CLAVE_OFICIO_ARMADA: '', // CLAVE_OFICIO_ARMADA
+    P_NO_TRAMITE: '', // NO_TRAMITE
+    TIPO: '', // TIPO_DICTAMEN
+    P_VALOR: '', // NO_OF_DICTA
   };
   officeTypeOption: any[] = officeTypeOption;
   origin: string = '';
@@ -2041,6 +2041,9 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
           origin: this.screenKey,
           TIPO_PROC: 2,
           NO_INDICADOR: this.dictationData.id,
+          origin2: this.origin,
+          origin3: this.origin3,
+          ...this.paramsScreen,
         },
       }
     );

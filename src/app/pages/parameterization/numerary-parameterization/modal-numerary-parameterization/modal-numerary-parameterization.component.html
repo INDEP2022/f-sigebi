@@ -20,8 +20,8 @@
             <ngx-select
               [form]="form"
               control="initialCategory"
-              value="category"
-              bindLabel="cateogry"
+              value="id"
+              bindLabel="id"
               [data]="categories"
               (fetchItems)="getCategories($event)"
               (change)="categoriesChange($event)"
@@ -30,13 +30,17 @@
           </form-field>
         </div>
         <div class="col-md-4">
-          <form-field
-            [control]="form.get('finalCategory')"
-            label="Categor&iacute;a Final">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="finalCategory" />
+          <form-field [control]="form.get('finalCategory')">
+            <ngx-select
+              [form]="form"
+              control="finalCategory"
+              value="id"
+              bindLabel="id"
+              [data]="categories"
+              (fetchItems)="getCategories($event)"
+              (change)="categoriesChange($event)"
+              label="Categoría final">
+            </ngx-select>
           </form-field>
         </div>
       </div>
