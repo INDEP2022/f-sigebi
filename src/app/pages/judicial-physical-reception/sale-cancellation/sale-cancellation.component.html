@@ -153,7 +153,6 @@
                   label="Transferente"
                   [class]="initialBool ? 'disabled' : ''"
                   bindLabel="clave_transferente"
-                  (change)="verifyTransferenteAndAct()"
                   [data]="transferSelect"
                   [form]="form"></ngx-select>
               </form-field>
@@ -305,7 +304,7 @@
                   [class]="isEnableFecElab ? '' : 'disabled'"
                   id="fecElab"
                   [max-length]="10"
-                  (change)="fecElabFn()"
+                  (ngModelChange)="fecElabFn()"
                   class="form-control"
                   [maxDate]="maxDate"
                   formControlName="fecElab" />
@@ -429,9 +428,12 @@
         </div>
       </div>
       <hr class="row" />
-      <div class="row pt-2 scroll-table mt-5">
+      <div
+        [class]="loading ? 'table-loading' : 'row pt-2'"
+        class="table-responsive table-bordered">
         <ng2-smart-table
           class="col-md-12"
+          [attr.class]="'table-responsive table-bordered '"
           [settings]="settings1"
           [source]="dataGoods"
           (userRowSelect)="rowSelect($event)"
@@ -496,7 +498,9 @@
         </div>
       </div>
 
-      <div class="row pt-2 scroll-table mt-5">
+      <div
+        [class]="loading ? 'table-loading' : 'row pt-2'"
+        class="table-responsive">
         <ng2-smart-table
           class="col-md-12"
           [settings]="settings2"
