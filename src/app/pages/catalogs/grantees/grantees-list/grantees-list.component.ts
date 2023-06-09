@@ -60,7 +60,7 @@ export class GranteesListComponent extends BasePage implements OnInit {
     this.modalService.show(GranteesFormComponent, config);
   }
 
-  delete(grantee: IGrantee): void {
+  showDeleteAlert(grantee: IGrantee): void {
     this.alertQuestion(
       'warning',
       'Eliminar',
@@ -68,7 +68,23 @@ export class GranteesListComponent extends BasePage implements OnInit {
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
+        this.delete(grantee.id);
       }
+    });
+  }
+
+  delete(id: number) {
+    this.granteeService.remove(id).subscribe({
+      next: response => {
+        this.alert('success', 'Donatorio', 'Borrado'), this.getExample();
+      },
+      error: err => {
+        this.alert(
+          'warning',
+          'Donatorio',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      },
     });
   }
 }

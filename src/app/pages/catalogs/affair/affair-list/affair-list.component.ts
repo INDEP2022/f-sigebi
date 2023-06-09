@@ -121,14 +121,23 @@ export class AffairListComponent extends BasePage implements OnInit {
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(affair.id, affair.nbOrigen);
-        Swal.fire('Borrado', '', 'success');
       }
     });
   }
 
   delete(id: number, nb: string) {
-    this.affairService.remove2(id, nb).subscribe({
-      next: () => this.getAffairAll(),
-    });
+    this.affairService.remove2(id, nb).subscribe(
+      res => {
+        this.alert('success', 'Asuntos', 'Borrado.');
+        this.getAffairAll();
+      },
+      err => {
+        this.alert(
+          'warning',
+          'Asuntos',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      }
+    );
   }
 }

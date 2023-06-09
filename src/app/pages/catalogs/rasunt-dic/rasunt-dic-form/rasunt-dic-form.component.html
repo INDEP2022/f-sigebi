@@ -6,6 +6,11 @@
     <form class="form-material" [formGroup]="form">
       <div class="row">
         <div class="col-md-12">
+          <form-field [control]="form.get('code')" label="codigo">
+            <input type="text" class="form-control" formControlName="code" />
+          </form-field>
+        </div>
+        <div class="col-md-12">
           <form-field [control]="form.get('dictum')" label="Dictum">
             <input type="text" class="form-control" formControlName="dictum" />
           </form-field>

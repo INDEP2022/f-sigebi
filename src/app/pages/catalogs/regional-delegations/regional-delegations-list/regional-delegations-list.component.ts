@@ -131,14 +131,23 @@ export class RegionalDelegationsListComponent
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(reginalDelegation.id);
-        Swal.fire('Borrado', '', 'success');
       }
     });
   }
 
   delete(id: number) {
     this.regionalDelegationService.remove(id).subscribe({
-      next: () => this.getRegionalDelegations(),
+      next: () => {
+        this.alert('success', 'Delegación Regional', 'Borrado');
+        this.getRegionalDelegations();
+      },
+      error: error => {
+        this.alert(
+          'warning',
+          'Delegación Regional',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      },
     });
   }
 }

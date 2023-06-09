@@ -15,7 +15,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 })
 export class WarehouseSelectFormComponent extends BasePage implements OnInit {
   form: FormGroup = new FormGroup({});
-  idTransferent: number = 0;
+  data: any[] = [];
   warehouses = new DefaultSelect<IWarehouse>();
   warehouse: IWarehouse;
   typeTransportable: string = '';
@@ -31,6 +31,7 @@ export class WarehouseSelectFormComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.prepareForm();
     this.getWarehouses(new ListParams());
+    console.log('data', this.data);
   }
 
   prepareForm() {

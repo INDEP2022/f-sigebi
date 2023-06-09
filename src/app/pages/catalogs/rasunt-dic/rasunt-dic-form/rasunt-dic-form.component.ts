@@ -37,16 +37,27 @@ export class RAsuntDicFormComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.form = this.fb.group({
-      code: [null],
+      code: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(5),
+          Validators.pattern(POSITVE_NUMBERS_PATTERN),
+        ],
+      ],
       dictum: [
         null,
-        [Validators.required, Validators.pattern(POSITVE_NUMBERS_PATTERN)],
+        [
+          Validators.required,
+          Validators.maxLength(3),
+          Validators.pattern(POSITVE_NUMBERS_PATTERN),
+        ],
       ],
       flyerType: [
         null,
         [
           Validators.required,
-          Validators.maxLength(1),
+          Validators.maxLength(2),
           Validators.pattern(STRING_PATTERN),
         ],
       ],
@@ -92,10 +103,12 @@ export class RAsuntDicFormComponent extends BasePage implements OnInit {
 
   update() {
     this.loading = true;
+    console.log(this.form.getRawValue());
     this.rAsuntDicService
       .update(this.rAsuntDic.code, this.form.getRawValue())
       .subscribe({
         next: data => this.handleSuccess(),
+
         error: error => (this.loading = false),
       });
   }

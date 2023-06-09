@@ -84,7 +84,7 @@ export abstract class BasePageWidhtDinamicFilters<T = any> extends BasePage {
   }
 
   getData() {
-    debugger;
+
     this.loading = true;
     let params = {
       ...this.params.getValue(),

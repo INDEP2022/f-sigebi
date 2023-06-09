@@ -7,15 +7,19 @@ import { ListParams } from '../../../common/repository/interfaces/list-params';
 import { Repository } from '../../../common/repository/repository';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IGeneric } from '../../models/catalogs/generic.model';
+import { HttpService } from 'src/app/common/services/http.service';
 @Injectable({
   providedIn: 'root',
 })
-export class GenericService implements ICrudMethods<IGeneric> {
+export class GenericService extends HttpService implements ICrudMethods<IGeneric> {
   private readonly route: string = ENDPOINT_LINKS.Generic;
   constructor(
     private genericRepository: Repository<IGeneric>,
     private catGenericRepository: CatGeneticsRepository
-  ) {}
+  ) {
+    super();
+    this.microservice = 'catalog';
+  }
 
   getAll(params?: ListParams): Observable<IListResponse<IGeneric>> {
     return this.genericRepository.getAllPaginated(this.route, params);
@@ -33,8 +37,10 @@ export class GenericService implements ICrudMethods<IGeneric> {
     return this.genericRepository.newUpdate(this.route, model);
   }
 
-  remove(id: string | number): Observable<Object> {
-    return this.genericRepository.remove(this.route, id);
+  remove1(name: string, key: number): Observable<Object> {
+    const route = `${'generics'}/name/${name}/key/${key}`;
+    return this.delete(route);
+    // return this.genericRepository.remove(this.route, id);
   }
 
   getBySearch(params: ListParams): Observable<IListResponse<IGeneric>> {

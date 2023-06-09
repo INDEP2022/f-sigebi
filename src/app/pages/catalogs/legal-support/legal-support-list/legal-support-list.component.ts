@@ -73,7 +73,24 @@ export class LegalSupportListComponent extends BasePage implements OnInit {
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
+        this.remove(legalSupport.id);
       }
     });
+  }
+
+  remove(id: string) {
+    this.legalSupportService.remove(id).subscribe(
+      res => {
+        this.alert('success', 'Sustento Legal', 'Borrado.');
+        this.getExample();
+      },
+      err => {
+        this.alert(
+          'warning',
+          'Sustento Legal',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      }
+    );
   }
 }
