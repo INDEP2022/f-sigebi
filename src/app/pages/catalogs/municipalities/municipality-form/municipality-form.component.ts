@@ -78,7 +78,6 @@ export class MunicipalityFormComponent extends BasePage implements OnInit {
     });
     if (this.municipality != null) {
       this.edit = true;
-      console.log(this.municipality);
       this.municipalityForm.patchValue(this.municipality);
     }
   }
@@ -93,6 +92,7 @@ export class MunicipalityFormComponent extends BasePage implements OnInit {
 
   create() {
     this.loading = true;
+    console.log(this.municipalityForm.value);
     this.municipalityService.create(this.municipalityForm.value).subscribe({
       next: data => this.handleSuccess(),
       error: error => (this.loading = false),
