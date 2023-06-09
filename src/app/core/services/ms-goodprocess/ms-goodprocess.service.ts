@@ -2,7 +2,12 @@ import { Injectable } from '@angular/core';
 import { GoodprocessEndpoints } from 'src/app/common/constants/endpoints/ms-goodprocess-endpoint';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
-import { IListResponse } from '../../interfaces/list-response.interface';
+import {
+  IListResponse,
+  IListResponseMessage,
+} from '../../interfaces/list-response.interface';
+import { ICharacteristicsGoodDTO } from '../../models/ms-good/good';
+import { IGoodDistinctTypes } from '../../models/ms-good/good-distinct-types';
 
 @Injectable({
   providedIn: 'root',
@@ -14,8 +19,15 @@ export class GoodprocessService extends HttpService {
   }
 
   getById(id: number | string) {
-    return this.get<IListResponse<any>>(
+    return this.get<IListResponse<IGoodDistinctTypes>>(
       `${GoodprocessEndpoints.AplicationValidStatus}/${id}`
+    );
+  }
+
+  getDistinctTypes(model: ICharacteristicsGoodDTO) {
+    return this.post<IListResponseMessage<any>>(
+      GoodprocessEndpoints.GetDistinctTypes,
+      model
     );
   }
 
