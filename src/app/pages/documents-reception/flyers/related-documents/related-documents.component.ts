@@ -304,6 +304,8 @@ export class RelatedDocumentsComponent
     text3: new FormControl(''),
     /** @description usuaro_insert */
     insertUser: new FormControl(''),
+    /**@description  fecha_inserto*/
+    insertDate: new FormControl(''),
   });
 
   formVariables = new FormGroup({

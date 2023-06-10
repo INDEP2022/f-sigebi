@@ -665,8 +665,17 @@ export abstract class RelateDocumentsResponse extends BasePage {
       return;
     }
 
-    // const promises = [
-    //   this.mJobManagementService.deleteGoodsJobManagement1(values.managementNumber),
-    // ]
+    const promises = [
+      this.mJobManagementService.deleteGoodsJobManagement1(
+        values.managementNumber
+      ),
+      this.mJobManagementService.deleteDocumentJobManagement2(
+        values.managementNumber
+      ),
+      this.mJobManagementService.deleteMJobManagement3(values.managementNumber),
+      this.mJobManagementService.deleteCopiesJobManagement4(
+        values.managementNumber
+      ),
+    ];
   }
 }
