@@ -1667,7 +1667,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
                   this.alert(
                     'error',
                     'Se presentó un error inesperado',
-                    'Se presentó un error inesperado al intentar abrir el acta. Por favor intentelo nuevamente'
+                    err.error.message
                   );
                 }
               );

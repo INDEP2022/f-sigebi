@@ -2431,7 +2431,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                 this.alert(
                   'error',
                   'No se pudo abrir el acta',
-                  'Ocurrió un error que no permite abrir el acta'
+                  err.error.message
                 );
               }
             );
