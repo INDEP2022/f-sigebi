@@ -62,11 +62,20 @@ export class RDictaminaDocModalComponent extends BasePage implements OnInit {
       this.typeDictation, //ok
       SearchFilter.EQ
     );
-    params.addFilter(
-      'crime',
-      this.crime, //ok
-      SearchFilter.EQ
-    );
+    if (this.crime != null) {
+      params.addFilter(
+        'crime',
+        this.crime, //ok
+        SearchFilter.EQ
+      );
+    } else {
+      params.addFilter(
+        'crime',
+        'N', //ok
+        SearchFilter.EQ
+      );
+    }
+
     params.addFilter(
       'typeSteeringwheel',
       this.typeSteeringwheel, //ok
