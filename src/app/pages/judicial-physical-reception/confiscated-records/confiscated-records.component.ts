@@ -11,6 +11,7 @@ import * as moment from 'moment';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
+import { SelectListFilteredModalComponent } from 'src/app/@standalone/modals/select-list-filtered-modal/select-list-filtered-modal.component';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import {
@@ -46,6 +47,7 @@ import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.
 import { ClassifyGoodService } from 'src/app/core/services/ms-classifygood/ms-classifygood.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
+import { AttribGoodBadService } from 'src/app/core/services/ms-good/attrib-good-bad.service';
 import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { HistoryGoodService } from 'src/app/core/services/ms-history-good/history-good.service';
@@ -67,8 +69,6 @@ import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-ele
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { EdoFisicoComponent } from './edo-fisico/edo-fisico.component.component';
 import { columnsGood, columnsGoodAct } from './settings-tables';
-import { AttribGoodBadService } from 'src/app/core/services/ms-good/attrib-good-bad.service';
-import { SelectListFilteredModalComponent } from 'src/app/@standalone/modals/select-list-filtered-modal/select-list-filtered-modal.component';
 
 @Component({
   selector: 'app-confiscated-records',
@@ -211,7 +211,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     private serviceTransferent: TransferenteService,
     private serviceHistoryGood: HistoryGoodService,
     private serviceNotification: NotificationService,
-    private attribGoodBadService: AttribGoodBadService,
+    private attribGoodBadService: AttribGoodBadService
   ) {
     super();
   }
@@ -2550,7 +2550,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   }
 
   newCloseProceeding() {
-    this.validateFolio()
+    this.validateFolio();
     if (this.dataGoodAct['data'].length == 0) {
       this.alert(
         'warning',
@@ -2608,7 +2608,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                 'Bienes sin información requerida',
                 'Se encontraron bienes sin información requerida para este proceso'
               );
-              this.getNulls()
+              this.getNulls();
             } else {
               if (this.scanStatus) {
                 const paramsF = new FilterParams();
@@ -3630,7 +3630,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                 'Error en el tipo de bien',
                 'Bien con tipo inválido para el acta (INMUEBLE)'
               );
-            }else if (
+            } else if (
               ['CERRADO', 'CERRADA'].includes(
                 this.form.get('statusProceeding').value
               )
