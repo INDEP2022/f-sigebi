@@ -846,7 +846,10 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     // debugger;
     const filterParams = new FilterParams();
     filterParams.addFilter('typeNumber', 'CARBIEN');
-    filterParams.addFilter('user', localStorage.getItem('username'));
+    filterParams.addFilter(
+      'user',
+      localStorage.getItem('username').toUpperCase()
+    );
     filterParams.addFilter('reading', 'S');
     // filterParams.addFilter()
     const rdicta = await firstValueFrom(

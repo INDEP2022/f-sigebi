@@ -20,7 +20,7 @@ export class GoodsCharacteristicsService {
   disabledNoClasifBien = true;
   disabledDescripcion = true;
   haveTdictaUser = false;
-  di_numerario_conciliado = 'No conciliado';
+  di_numerario_conciliado: string;
   newGood: any;
   data: IVal[];
   goodChange = new Subject<boolean>();

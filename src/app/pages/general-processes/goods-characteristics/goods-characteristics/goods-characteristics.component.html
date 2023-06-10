@@ -178,7 +178,10 @@
                   (click)="save()">
                   Guardar
                 </button>
-                <h5 class="text-danger" style="text-align: right">
+                <h5
+                  class="text-danger"
+                  style="text-align: right"
+                  *ngIf="di_numerario_conciliado">
                   {{ di_numerario_conciliado }}
                 </h5>
               </div>
