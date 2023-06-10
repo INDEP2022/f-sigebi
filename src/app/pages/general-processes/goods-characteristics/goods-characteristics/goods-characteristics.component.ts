@@ -321,6 +321,14 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
       goodId: this.good.goodId,
     };
     this.service.data.forEach(row => {
+      if (row.required && !row.value) {
+        this.onLoadToast(
+          'error',
+          'Bien ' + this.numberGood.value,
+          'Complete las características requeridas'
+        );
+        return;
+      }
       body[row.column] = row.value;
     });
     this.good.description;
