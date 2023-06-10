@@ -3,7 +3,7 @@ export const COLUMNS_GOOD = {
     title: 'Abreviatura',
     sort: false,
   },
-  otValor: {
+  otvalor: {
     title: 'OTVALOR',
     sort: false,
   },

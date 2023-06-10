@@ -6,17 +6,55 @@
 
   <div body>
     <div>
-      <div class="row justify-content-end">
+      <!-- <div class="row justify-content-end">
         <div class="">
           <button class="btn btn-primary active btn-sm m-2" style="float: right" (click)="goBack()">
             <i class="fas fa-arrow-left"></i>
             Regresar
           </button>
         </div>
+      </div> -->
+      <div class="row">
+        <!-- <div class="d-inline mx-2"> -->
+        <div class="col-6 btn-group">
+          <button
+            class="btn btn-primary active btn-sm m-2"
+            style="float: left"
+            (click)="goBack()">
+            <i class="fas fa-arrow-left"></i>
+            Regresar
+          </button>
+        </div>
+        <div class="col-6">
+          <div class="d-inline mx-2">
+            <button
+              style="float: right"
+              type="button"
+              [disabled]="!disabledListDictums"
+              (click)="listDictums()"
+              tooltip="Dictámenes Disponibles"
+              containerClass="tooltip-style"
+              class="btn btn-primary btn-sm active mr-3">
+              <i class="bx bx-list-plus bx-sm float-icon"></i>
+            </button>
+            <button
+              style="float: right"
+              type="button"
+              (click)="newDictums()"
+              tooltip="Agregar Dictamen"
+              containerClass="tooltip-style"
+              class="btn btn-info btn-sm active ml-2 mr-2">
+              <i class="bx bx-plus bx-sm float-icon"></i>
+            </button>
+          </div>
+        </div>
+        <!-- </div> -->
       </div>
       <div class="row">
         <!-- INICIA FORM #1 -->
-        <form [formGroup]="expedientesForm" class="container-fluid form-material col-md-6 p-4">
+        <form
+          [formGroup]="expedientesForm"
+          class="container-fluid form-material col-md-5 p-4">
           <div class="row p-4">
             <!-- No. Expediente -->
             <!-- <div class="col-sm-12 col-12 col-md-6 p-2">
@@ -35,27 +73,48 @@
                   formControlName="tipoDictaminacion"
                   readonly
                   [disabled]="true" /> -->
-                <ngx-select [searchOnInit]="true" [data]="typesDict" [searchable]="false" [form]="expedientesForm"
-                  label="Tipo Dictaminación" bindLabel="typeDict" value="id" control="tipoDictaminacion"
+                <ngx-select
+                  [readonly]="disabledD"
+                  [searchOnInit]="true"
+                  [data]="typesDict"
+                  [searchable]="false"
+                  [form]="expedientesForm"
+                  label="Tipo Dictaminación"
+                  bindLabel="typeDict"
+                  value="id"
+                  control="tipoDictaminacion"
                   (change)="onTypeDictChange($event)"></ngx-select>
               </form-field>
             </div>
 
             <div class="col-12 p-2">
-              <form-field [control]="expedientesForm.get('noExpediente')" label="No. Expediente">
-                <input type="text" class="form-control" (blur)="changeNumExpediente()" (keypress)="onKeyPress($event)"
+              <form-field
+                [control]="expedientesForm.get('noExpediente')"
+                label="No. Expediente">
+                <input
+                  readonly
+                  type="text"
+                  class="form-control"
+                  (keypress)="onKeyPress($event)"
                   formControlName="noExpediente" />
               </form-field>
             </div>
 
             <div class="col-sm-12 col-12 col-md-12 p-2">
-              <form-field [control]="expedientesForm.get('averiguacionPrevia')" label="Averiguaci&oacute;n Previa">
-                <input class="form-control" formControlName="averiguacionPrevia" />
+              <form-field
+                *ngIf="!inputsVisuales"
+                [control]="expedientesForm.get('averiguacionPrevia')"
+                label="Averiguaci&oacute;n Previa">
+                <input
+                  class="form-control"
+                  formControlName="averiguacionPrevia" />
               </form-field>
             </div>
 
             <div class="col-12 p-2" *ngIf="showCriminalCase">
-              <form-field [control]="expedientesForm.get('criminalCase')" label="Causa Penal">
+              <form-field
+                [control]="expedientesForm.get('criminalCase')"
+                label="Causa Penal">
                 <input class="form-control" formControlName="criminalCase" />
               </form-field>
 
@@ -111,8 +170,16 @@
 
           <div class="row pt-5">
             <div class="col-md-4">
-              <form-field label="¿Es delito?" [control]="expedientesForm.get('delito')">
-                <ng-select formControlName="delito" [searchable]="false" class="form-control" [clearable]="false">
+              <form-field
+                *ngIf="showCriminalCase"
+                label="¿Es delito?"
+                [control]="expedientesForm.get('delito')">
+                <ng-select
+                  formControlName="delito"
+                  [searchable]="false"
+                  class="form-control"
+                  [clearable]="false">
+                  <ng-option value=""></ng-option>
                   <ng-option value="S">Si</ng-option>
                   <ng-option value="N">No</ng-option>
                 </ng-select>
@@ -121,7 +188,9 @@
           </div>
         </form>
         <!-- INICIA FORM #2 -->
-        <form [formGroup]="dictaminacionesForm" class="container-fluid form-material col-md-6 p-4">
+        <form
+          [formGroup]="dictaminacionesForm"
+          class="container-fluid form-material col-md-7 p-4">
           <div class="row p-4">
             <!-- Fecha Instructora -->
             <!-- <div class="col-sm-12 col-12 col-md-4 p-2">
@@ -136,20 +205,37 @@
             </div> -->
 
             <div class="col-sm-12 col-12 col-md-4 p-2">
-              <form-field [control]="dictaminacionesForm.get('fechaPPFF')" [label]="label">
-                <input class="form-control" formControlName="fechaPPFF" bsDatepicker [maxDate]="maxDate" />
+              <form-field
+                [control]="dictaminacionesForm.get('fechaPPFF')"
+                [label]="label">
+                <input
+                  class="form-control"
+                  formControlName="fechaPPFF"
+                  bsDatepicker
+                  [maxDate]="maxDate" />
               </form-field>
             </div>
 
             <div class="col-sm-12 col-12 col-md-4 p-2">
-              <form-field [control]="dictaminacionesForm.get('wheelNumber')" label="Volante">
-                <input class="form-control" formControlName="wheelNumber" readonly [disabled]="true" />
+              <form-field
+                [control]="dictaminacionesForm.get('wheelNumber')"
+                label="Volante">
+                <input
+                  class="form-control"
+                  formControlName="wheelNumber"
+                  readonly
+                  [disabled]="true" />
               </form-field>
             </div>
 
             <div class="col-sm-12 col-12 col-md-4 p-2">
-              <form-field [control]="dictaminacionesForm.get('fechaDictaminacion')" label="Fecha Dictaminación">
-                <input class="form-control" formControlName="fechaDictaminacion" readonly />
+              <form-field
+                [control]="dictaminacionesForm.get('fechaDictaminacion')"
+                label="Fecha Dictaminación">
+                <input
+                  class="form-control"
+                  formControlName="fechaDictaminacion"
+                  readonly />
               </form-field>
             </div>
 
@@ -187,14 +273,25 @@
             </div> -->
             <!--  -->
             <div class="col-md-4 p-2">
-              <form-field [control]="dictaminacionesForm.get('autoriza_remitente')">
+              <form-field
+                [control]="dictaminacionesForm.get('autoriza_remitente')">
                 <!-- <input
                   class="form-control"
                   formControlName="autoriza_remitente" /> -->
-                <ngx-select label="Autoriza Dict." value="id" [form]="dictaminacionesForm" [data]="users$"
-                  (change)="userChange($event)" (fetchItems)="getUsers($event)" bindLabel="userAndName"
-                  control="autoriza_remitente" [searchOnInit]="true" [showTooltip]="true" termMaxLength="30"
-                  [labelTemplate]="userLabel" [optionTemplate]="userOption">
+                <ngx-select
+                  label="Autoriza Dict."
+                  value="id"
+                  [form]="dictaminacionesForm"
+                  [data]="users$"
+                  (change)="userChange($event)"
+                  (fetchItems)="getUsers($event)"
+                  bindLabel="userAndName"
+                  control="autoriza_remitente"
+                  [searchOnInit]="true"
+                  [showTooltip]="true"
+                  termMaxLength="30"
+                  [labelTemplate]="userLabel"
+                  [optionTemplate]="userOption">
                 </ngx-select>
                 <ng-template #userLabel let-item="item">
                   <!-- {{ item.name }} -->
@@ -209,14 +306,26 @@
             </div>
 
             <div class="col-md-8 p-2">
-              <form-field [control]="dictaminacionesForm.get('autoriza_nombre')" label="">
-                <input readonly class="form-control" formControlName="autoriza_nombre" />
+              <form-field
+                [control]="dictaminacionesForm.get('autoriza_nombre')"
+                label="">
+                <input
+                  readonly
+                  class="form-control"
+                  formControlName="autoriza_nombre" />
               </form-field>
             </div>
 
             <div class="col-12 p-2">
-              <form-field [control]="dictaminacionesForm.get('cveOficio')" label="Cve. Oficio">
-                <input class="form-control" #cveOficio formControlName="cveOficio" readonly [disabled]="true" />
+              <form-field
+                [control]="dictaminacionesForm.get('cveOficio')"
+                label="Cve. Oficio">
+                <input
+                  class="form-control"
+                  #cveOficio
+                  formControlName="cveOficio"
+                  readonly
+                  [disabled]="true" />
               </form-field>
             </div>
             <div class="col-12 p-2">
@@ -233,7 +342,9 @@
     <hr class="row" />
 
     <!-- INICIA FORM #3 TODO: -->
-    <form [formGroup]="expedientesForm" class="container-fluid form-material col-12 px-2 pt-4">
+    <form
+      [formGroup]="expedientesForm"
+      class="container-fluid form-material col-12 px-2 pt-4">
       <div class="row">
         <div class="col-md-4">
           <form-field [control]="expedientesForm.get('identifier')">
@@ -242,16 +353,30 @@
               <option [value]="'Alta'">Alta</option>
               <option [value]="'Normal'">Normal</option>
             </select> -->
-            <ngx-select [searchOnInit]="true" [readonly]="!isIdent" [data]="typesIdent" [form]="expedientesForm"
-              label="Ident." bindLabel="identificador" value="identificador" control="identifier"></ngx-select>
+            <ngx-select
+              [searchOnInit]="true"
+              [readonly]="!isIdent"
+              [data]="typesIdent"
+              [form]="expedientesForm"
+              label="Ident."
+              bindLabel="identificador"
+              value="identificador"
+              control="identifier"></ngx-select>
           </form-field>
         </div>
 
         <div class="col-md-8">
           <form-field [control]="expedientesForm.get('type')">
-            <ngx-select [data]="typesClass" [form]="expedientesForm" value="no_clasif_bien"
-              label="Subtipo - Ssubtipo - Sssubtipo" bindLabel="nameGoodType" control="type"
-              (change)="onTypesChange($event)" [labelTemplate]="classNo" [optionTemplate]="classSub"
+            <ngx-select
+              [data]="typesClass"
+              [form]="expedientesForm"
+              value="no_clasif_bien"
+              label="Subtipo - Ssubtipo - Sssubtipo"
+              bindLabel="nameGoodType"
+              control="type"
+              (change)="onTypesChange($event)"
+              [labelTemplate]="classNo"
+              [optionTemplate]="classSub"
               [searchable]="false">
             </ngx-select>
             <ng-template #classNo let-item="item">
@@ -264,7 +389,9 @@
               </div>
             </ng-template>
             <ng-template #classSub let-item="item">
-              <div *ngIf="item.no_clasif_bien == 0" [title]="
+              <div
+                *ngIf="item.no_clasif_bien == 0"
+                [title]="
                   item.no_clasif_bien +
                   '-' +
                   item.desc_subtipo +
@@ -275,7 +402,9 @@
                 ">
                 {{ item.no_clasif_bien }} - {{ item.desc_sssubtipo }}
               </div>
-              <div *ngIf="item.no_clasif_bien > 0" [title]="
+              <div
+                *ngIf="item.no_clasif_bien > 0"
+                [title]="
                   item.no_clasif_bien +
                   '-' +
                   item.desc_subtipo +
@@ -309,9 +438,16 @@
       <div class="col-md-12 mt-4 mb-4">
         <h5 class="title">BIENES</h5>
         <br />
-
-        <ng2-smart-table (rowSelect)="onSelectedRow($event)" [attr.class]="'table-bordered table-responsive'"
-          [settings]="settings1" [source]="goods"></ng2-smart-table>
+        <form-loader *ngIf="formLoading"></form-loader>
+        <div>
+          <ng2-smart-table
+            *ngIf="!formLoading"
+            id="bienesJuridicos"
+            (rowSelect)="onSelectedRow($event)"
+            [attr.class]="'table-bordered table-responsive'"
+            [settings]="settings1"
+            [source]="goods"></ng2-smart-table>
+        </div>
         <div class="d-flex justify-content-between">
           <p class="text-danger mt-2 ml-3">
             <strong>{{ desc_estatus_good }}</strong>
@@ -321,24 +457,38 @@
           </p>
         </div>
 
-        <app-pagination [params]="params" [totalItems]="totalItems"></app-pagination>
+        <app-pagination
+          [params]="params"
+          [totalItems]="totalItems"></app-pagination>
       </div>
     </div>
     <div class="row pt-2">
       <div class="col-md-12 text-center mt-4 mb-4">
-        <button class="btn btn-secondary btn-sm active m-3 p-1 pointer" type="button" (click)="addSelect()">
+        <button
+          class="btn btn-secondary btn-sm active m-3 p-1 pointer"
+          type="button"
+          (click)="addSelect()">
           <!-- Mover uno -->
           <i class="bx bx-chevron-down bx-md"></i>
         </button>
-        <button class="btn btn-secondary btn-sm active m-3 p-1 pointer" type="button" (click)="addAll()">
+        <button
+          class="btn btn-secondary btn-sm active m-3 p-1 pointer"
+          type="button"
+          (click)="addAll()">
           <!-- Mover todos -->
           <i class="bx bx-chevrons-down bx-md"></i>
         </button>
-        <button class="btn btn-secondary btn-sm active m-3 p-1 pointer" type="button" (click)="removeAll()">
+        <button
+          class="btn btn-secondary btn-sm active m-3 p-1 pointer"
+          type="button"
+          (click)="removeAll()">
           <!-- Quitar todos -->
           <i class="bx bx-chevrons-up bx-md"></i>
         </button>
-        <button class="btn btn-secondary btn-sm active m-3 p-1 pointer" type="button" (click)="removeSelect()">
+        <button
+          class="btn btn-secondary btn-sm active m-3 p-1 pointer"
+          type="button"
+          (click)="removeSelect()">
           <!-- Quitar uno -->
           <i class="bx bx-chevron-up bx-md"></i>
         </button>
@@ -346,8 +496,10 @@
     </div>
     <div class="row pt-2">
       <div class="col-md-12 mt-4 mb-4">
-        <ng2-smart-table [attr.class]="'table-bordered table-responsive'" [settings]="settings2"
-          (rowSelect)="selectRow($event)" (userRowSelect)="rowsSelected($event)"
+        <ng2-smart-table
+          [attr.class]="'table-bordered table-responsive'"
+          [settings]="settings2"
+          (userRowSelect)="rowsSelected($event)"
           [source]="goodsValid"></ng2-smart-table>
       </div>
     </div>
@@ -383,46 +535,59 @@
           <h5 class="title">DOCUMENTOS</h5>
           <div class="row">
             <div class="col-md-10">
-              <ng2-smart-table [attr.class]="'table-bordered'" [settings]="settings3"
+              <ng2-smart-table
+                id="juridicasSelect"
+                [attr.class]="'table-bordered'"
+                [settings]="settings3"
                 [source]="documentsDictumXStateMList"></ng2-smart-table>
             </div>
-            <div class="col-md-2">
+            <div class="col-md-2 text-center">
               <p class="text-info h5">No. Bien</p>
-              <p class="text-info h5">{{ idGoodSelected }}</p>
+              <p class="text-info h4">{{ idGoodSelected }}</p>
             </div>
           </div>
         </div>
       </div>
       <!--  -->
 
-      <div class="col-4 custom-grid">
+      <div class="col-4">
         <div class="row justify-content-center">
           <div class="col-md-6 text-align-center">
-            <button class="btn btn-info btn-sm active m-3 text-wrap w-100" (click)="btnDocumentos()">
+            <button
+              class="btn btn-info btn-sm active m-3 text-wrap w-100"
+              (click)="btnDocumentos()">
               Documentos
             </button>
           </div>
           <div class="col-6 text-align-center">
-            <button [disabled]="!buttonApr" class="btn btn-primary btn-sm active m-3 text-wrap w-100"
+            <button
+              [disabled]="!buttonApr"
+              class="btn btn-primary btn-sm active m-3 text-wrap w-100"
               (click)="btnApprove()">
               <!-- [routerLink]="rutaAprobado" -->
               Aprobar
             </button>
           </div>
           <div class="col-6 text-align-center">
-            <button class="btn btn-danger btn-sm active m-3 text-wrap w-100" (click)="btnBorrarDictamen()"
+            <button
+              class="btn btn-danger btn-sm active m-3 text-wrap w-100"
+              (click)="btnBorrarDictamen()"
               [disabled]="!buttonDeleteDisabled">
               Borrar Dictamen
             </button>
           </div>
           <div class="col-6 text-align-center">
-            <button class="btn btn-primary btn-sm active m-3 text-wrap w-100" (click)="btnImprimeOficio()">
+            <button
+              class="btn btn-primary btn-sm active m-3 text-wrap w-100"
+              (click)="btnImprimeOficio()">
               <!-- [routerLink]="returnRoute" -->
               Imprime Oficio
             </button>
           </div>
           <div class="col-6 text-align-center">
-            <button class="btn btn-info btn-sm active m-3 text-wrap w-100" (click)="btnParcializar()"
+            <button
+              class="btn btn-info btn-sm active m-3 text-wrap w-100"
+              (click)="btnParcializar()"
               [disabled]="!buttonDisabled">
               Parcializar
             </button>
@@ -433,12 +598,16 @@
             </button>
           </div> -->
           <div class="col-6 text-align-center">
-            <button class="btn btn-info btn-sm active m-3 text-wrap w-100" (click)="btnOficioSubstanciacion()">
+            <button
+              class="btn btn-info btn-sm active m-3 text-wrap w-100"
+              (click)="btnOficioSubstanciacion()">
               Oficio Substanciaci&oacute;n
             </button>
           </div>
           <div class="col-6 text-align-center">
-            <button class="btn btn-info btn-sm active m-3 text-wrap w-100" (click)="btnOficioRelacionado()">
+            <button
+              class="btn btn-info btn-sm active m-3 text-wrap w-100"
+              (click)="btnOficioRelacionado()">
               Oficio Relacionado
             </button>
           </div>

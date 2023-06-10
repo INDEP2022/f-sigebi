@@ -15,6 +15,7 @@ import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { IHistoryGood } from 'src/app/core/models/administrative-processes/history-good.model';
 import {
   IPAAbrirActasPrograma,
   IPACambioStatus,
@@ -32,6 +33,7 @@ import { DocumentsService } from 'src/app/core/services/ms-documents/documents.s
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { HistoryGoodService } from 'src/app/core/services/ms-history-good/history-good.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import { ParametersService } from 'src/app/core/services/ms-parametergood/parameters.service';
 import { ProceedingsService } from 'src/app/core/services/ms-proceedings';
@@ -277,7 +279,8 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
     private serviceProgrammingGood: ProgrammingGoodService,
     private serviceProceeding: ProceedingsService,
     private serviceUser: UsersService,
-    private serviceNotification: NotificationService
+    private serviceNotification: NotificationService,
+    private serviceHistoryGood: HistoryGoodService
   ) {
     super();
   }
@@ -950,7 +953,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
               this.initialBool = false;
               this.requireAct1();
               this.maxDate = new Date();
-              this.loading = false
+              this.loading = false;
               this.checkChange();
               this.alert(
                 'warning',
@@ -1045,7 +1048,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
 
   newProceeding() {
     this.numberProceeding = this.proceedingData.length;
-    this.totalItemsDataGoodsAct = 0
+    this.totalItemsDataGoodsAct = 0;
     this.checkChange();
     this.maxDate = new Date();
     this.form.get('acta2').setValue(null);
@@ -1217,6 +1220,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
     this.form.get('averPrev').reset();
     this.form.get('causaPenal').reset();
     this.form.get('statusProceeding').reset();
+    this.form.get('acta2').reset();
 
     this.limitDataGoodsAct = new FormControl(10);
     this.limitDataGoods = new FormControl(10);
@@ -1256,6 +1260,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
     this.form.get('recibe').reset();
     this.form.get('admin').reset();
     this.form.get('folio').reset();
+    this.form.get('folioEscaneo').reset();
     this.goodData = [];
     this.dataGoodAct.load(this.goodData);
   }
@@ -1602,37 +1607,119 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                                         .getItem('username')
                                         .toLocaleUpperCase(),
                               };
-                            this.serviceDetailProc
-                              .addGoodToProceedings(newDetailProceeding)
+
+                            const modelHistoryGood: IHistoryGood = {
+                              propertyNum: this.selectData.goodId,
+                              status: this.selectData.status,
+                              changeDate: new Date().toISOString(),
+                              userChange:
+                                localStorage.getItem('username') ==
+                                'sigebiadmon'
+                                  ? localStorage.getItem('username')
+                                  : localStorage
+                                      .getItem('username')
+                                      .toLocaleUpperCase(),
+                              statusChangeProgram: 'FACTREFACTAVENT',
+                              reasonForChange:
+                                'Estatus actual al agregar a acta',
+                              extDomProcess: this.selectData.extDomProcess,
+                            };
+
+                            this.serviceHistoryGood
+                              .create(modelHistoryGood)
                               .subscribe(
                                 res => {
-                                  this.dataGoods.load(
-                                    this.dataGoods['data'].map((e: any) => {
-                                      if (e.id == this.selectData.id) {
-                                        return { ...e, avalaible: false };
-                                      } else {
-                                        return e;
+                                  this.serviceDetailProc
+                                    .addGoodToProceedings(newDetailProceeding)
+                                    .subscribe(
+                                      res => {
+                                        this.dataGoods.load(
+                                          this.dataGoods['data'].map(
+                                            (e: any) => {
+                                              if (e.id == this.selectData.id) {
+                                                return {
+                                                  ...e,
+                                                  avalaible: false,
+                                                };
+                                              } else {
+                                                return e;
+                                              }
+                                            }
+                                          )
+                                        );
+                                        this.goodData.push({
+                                          ...this.selectData,
+                                          exchangeValue: 1,
+                                        });
+                                        /* this.dataGoodAct.load(this.goodData); */
+                                        this.getGoodsActFn();
+                                        this.getGoodsFn();
+                                        this.saveDataAct.push({
+                                          ...this.selectData,
+                                        });
+                                        this.selectData = null;
+                                      },
+                                      err => {
+                                        this.alert(
+                                          'error',
+                                          'Ocurrió un error inesperado al intentar mover el bien',
+                                          'Ocurrió un error inesperado al intentar mover el bien. Por favor intentelo nuevamente'
+                                        );
                                       }
-                                    })
-                                  );
-                                  this.goodData.push({
-                                    ...this.selectData,
-                                    exchangeValue: 1,
-                                  });
-                                  /* this.dataGoodAct.load(this.goodData); */
-                                  this.getGoodsActFn();
-                                  this.getGoodsFn();
-                                  this.saveDataAct.push({
-                                    ...this.selectData,
-                                  });
-                                  this.selectData = null;
+                                    );
                                 },
                                 err => {
-                                  this.alert(
-                                    'error',
-                                    'Ocurrió un error inesperado al intentar mover el bien',
-                                    'Ocurrió un error inesperado al intentar mover el bien. Por favor intentelo nuevamente'
-                                  );
+                                  if (
+                                    err.error.message ==
+                                    'duplicate key value violates unique constraint "his_est_bie_pk"'
+                                  ) {
+                                    this.serviceDetailProc
+                                      .addGoodToProceedings(newDetailProceeding)
+                                      .subscribe(
+                                        res => {
+                                          this.dataGoods.load(
+                                            this.dataGoods['data'].map(
+                                              (e: any) => {
+                                                if (
+                                                  e.id == this.selectData.id
+                                                ) {
+                                                  return {
+                                                    ...e,
+                                                    avalaible: false,
+                                                  };
+                                                } else {
+                                                  return e;
+                                                }
+                                              }
+                                            )
+                                          );
+                                          this.goodData.push({
+                                            ...this.selectData,
+                                            exchangeValue: 1,
+                                          });
+                                          /* this.dataGoodAct.load(this.goodData); */
+                                          this.getGoodsActFn();
+                                          this.getGoodsFn();
+                                          this.saveDataAct.push({
+                                            ...this.selectData,
+                                          });
+                                          this.selectData = null;
+                                        },
+                                        err => {
+                                          this.alert(
+                                            'error',
+                                            'Ocurrió un error inesperado al intentar mover el bien',
+                                            'Ocurrió un error inesperado al intentar mover el bien. Por favor intentelo nuevamente'
+                                          );
+                                        }
+                                      );
+                                  } else {
+                                    this.alert(
+                                      'error',
+                                      'Se presentó un error inesperado',
+                                      ''
+                                    );
+                                  }
                                 }
                               );
                           },
@@ -2356,7 +2443,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
             .paOpenProceedingProgam(modelPaOpen)
             .subscribe(
               res => {
-                console.log(res)
+                console.log(res);
                 const paramsF = new FilterParams();
                 let VAL_MOVIMIENTO = 0;
 
@@ -2383,7 +2470,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                               this.form
                                 .get('statusProceeding')
                                 .setValue('ABIERTA');
-                              this.inputsInProceedingClose();
+                              this.getGoodsActFn();
                               this.reopening = true;
                               this.inputsReopenProceeding();
                               this.saveDataAct = [];
@@ -2431,7 +2518,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                 this.alert(
                   'error',
                   'No se pudo abrir el acta',
-                  'Ocurrió un error que no permite abrir el acta'
+                  err.error.message
                 );
               }
             );
@@ -2455,7 +2542,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
       this.alert('warning', 'El acta ya se encuentra cerrada', '');
     } else if (this.form.get('folioEscaneo').value == null) {
       this.alert('warning', 'No se registro un número de folio', '');
-    }else{
+    } else {
       const paramsF = new FilterParams();
       paramsF.addFilter('keysProceedings', this.form.get('acta2').value);
       this.serviceProcVal.getByFilter(paramsF.getParams()).subscribe(res => {
