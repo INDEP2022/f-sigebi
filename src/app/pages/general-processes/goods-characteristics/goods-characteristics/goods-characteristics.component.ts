@@ -320,6 +320,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
       id: this.good.id,
       goodId: this.good.goodId,
     };
+    let tableValid = true;
     this.service.data.forEach(row => {
       if (row.required && !row.value) {
         this.onLoadToast(
@@ -327,10 +328,15 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
           'Bien ' + this.numberGood.value,
           'Complete las características requeridas'
         );
+        tableValid = false;
         return;
       }
       body[row.column] = row.value;
     });
+    if (!tableValid) {
+      console.log(this.service.data);
+      return;
+    }
     this.good.description;
     body['description'] = this.descripcion.value;
     body['unit'] = this.goodUnit.value;
@@ -846,10 +852,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     // debugger;
     const filterParams = new FilterParams();
     filterParams.addFilter('typeNumber', 'CARBIEN');
-    filterParams.addFilter(
-      'user',
-      localStorage.getItem('username').toUpperCase()
-    );
+    filterParams.addFilter('user', 'DR_SIGEBI');
     filterParams.addFilter('reading', 'S');
     // filterParams.addFilter()
     const rdicta = await firstValueFrom(
