@@ -11,6 +11,7 @@ import * as moment from 'moment';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
+import { SelectListFilteredModalComponent } from 'src/app/@standalone/modals/select-list-filtered-modal/select-list-filtered-modal.component';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import {
@@ -46,6 +47,7 @@ import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.
 import { ClassifyGoodService } from 'src/app/core/services/ms-classifygood/ms-classifygood.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
+import { AttribGoodBadService } from 'src/app/core/services/ms-good/attrib-good-bad.service';
 import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { HistoryGoodService } from 'src/app/core/services/ms-history-good/history-good.service';
@@ -208,7 +210,8 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     private serviceGoodQuery: GoodsQueryService,
     private serviceTransferent: TransferenteService,
     private serviceHistoryGood: HistoryGoodService,
-    private serviceNotification: NotificationService
+    private serviceNotification: NotificationService,
+    private attribGoodBadService: AttribGoodBadService
   ) {
     super();
   }
@@ -420,6 +423,55 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     } else if (this.labelActa == 'Cerrar acta') {
       this.newCloseProceeding();
     }
+  }
+
+  openModalSelect(
+    context?: Partial<SelectListFilteredModalComponent>,
+    callback?: Function
+  ) {
+    const modalRef = this.modalService.show(SelectListFilteredModalComponent, {
+      initialState: { ...context },
+      class: 'modal-lg modal-dialog-centered modal-not-top-padding',
+      ignoreBackdropClick: true,
+    });
+    modalRef.content.onSelect.subscribe(data => {
+      if (data) callback(data, this);
+    });
+  }
+
+  getNulls() {
+    this.openModalSelect(
+      {
+        title: 'Listado de bienes con información requerida nula',
+        columnsType: {
+          id: {
+            title: 'No. Bien',
+            type: 'string',
+            sort: false,
+          },
+          motive: {
+            title: 'Motivo',
+            type: 'string',
+            sort: false,
+          },
+        },
+        service: this.attribGoodBadService,
+        dataObservableFn: this.attribGoodBadService.getAllModal,
+        searchFilter: null,
+        type: 'text',
+        showError: false,
+        widthButton: false,
+        placeholder: 'Buscar',
+      },
+      this.selectGoodNull
+    );
+  }
+
+  selectGoodNull(good: any, self: ConfiscatedRecordsComponent) {
+    console.log(good);
+    self.router.navigate(['pages/general-processes/goods-characteristics'], {
+      queryParams: { noBien: good.id },
+    });
   }
 
   requireAct1() {
@@ -2213,7 +2265,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                 this.alert(
                   'error',
                   'No se pudo abrir el acta',
-                  'Ocurrió un error que no permite abrir el acta'
+                  err.error.message
                 );
               }
             );
@@ -2253,11 +2305,12 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                 const paramsF = new FilterParams();
                 let VAL_MOVIMIENTO = 0;
 
-                paramsF.addFilter('valUser', localStorage.getItem('username') == 'sigebiadmon'
-                ? localStorage.getItem('username')
-                : localStorage
-                    .getItem('username')
-                    .toLocaleUpperCase());
+                paramsF.addFilter(
+                  'valUser',
+                  localStorage.getItem('username') == 'sigebiadmon'
+                    ? localStorage.getItem('username')
+                    : localStorage.getItem('username').toLocaleUpperCase()
+                );
                 paramsF.addFilter('valMinutesNumber', this.idProceeding);
                 this.serviceProgrammingGood
                   .getTmpProgValidation(paramsF.getParams())
@@ -2350,11 +2403,12 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
           const paramsF = new FilterParams();
           let VAL_MOVIMIENTO = 0;
 
-          paramsF.addFilter('valUser', localStorage.getItem('username') == 'sigebiadmon'
-          ? localStorage.getItem('username')
-          : localStorage
-              .getItem('username')
-              .toLocaleUpperCase());
+          paramsF.addFilter(
+            'valUser',
+            localStorage.getItem('username') == 'sigebiadmon'
+              ? localStorage.getItem('username')
+              : localStorage.getItem('username').toLocaleUpperCase()
+          );
           paramsF.addFilter('valMinutesNumber', this.idProceeding);
           this.serviceProgrammingGood
             .getTmpProgValidation(paramsF.getParams())
@@ -2393,11 +2447,10 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                     address: this.form.get('direccion').value,
                     statusProceedings: 'ABIERTA',
                     /* elaborate: 'SERA', */
-                    elaborate: localStorage.getItem('username') == 'sigebiadmon'
-                    ? localStorage.getItem('username')
-                    : localStorage
-                        .getItem('username')
-                        .toLocaleUpperCase(),
+                    elaborate:
+                      localStorage.getItem('username') == 'sigebiadmon'
+                        ? localStorage.getItem('username')
+                        : localStorage.getItem('username').toLocaleUpperCase(),
                     numFile: parseInt(this.idProceeding.toString()),
                     witness1: this.form.get('entrega').value,
                     witness2: this.form.get('recibe2').value,
@@ -2497,6 +2550,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   }
 
   newCloseProceeding() {
+    this.validateFolio();
     if (this.dataGoodAct['data'].length == 0) {
       this.alert(
         'warning',
@@ -2532,7 +2586,6 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     } else if (this.form.get('folioEscaneo').value == null) {
       this.alert('warning', 'No se registro número de folio', '');
     } else {
-      
       const paramsF = new FilterParams();
       paramsF.addFilter('keysProceedings', this.form.get('acta2').value);
       this.serviceProcVal.getByFilter(paramsF.getParams()).subscribe(
@@ -2552,20 +2605,21 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
             if (P5 > 0) {
               this.alert(
                 'warning',
-                'Bienes sin informacion requerida',
+                'Bienes sin información requerida',
                 'Se encontraron bienes sin información requerida para este proceso'
               );
+              this.getNulls();
             } else {
-              
               if (this.scanStatus) {
                 const paramsF = new FilterParams();
                 let VAL_MOVIMIENTO = 0;
 
-                paramsF.addFilter('valUser', localStorage.getItem('username') == 'sigebiadmon'
-                ? localStorage.getItem('username')
-                : localStorage
-                    .getItem('username')
-                    .toLocaleUpperCase());
+                paramsF.addFilter(
+                  'valUser',
+                  localStorage.getItem('username') == 'sigebiadmon'
+                    ? localStorage.getItem('username')
+                    : localStorage.getItem('username').toLocaleUpperCase()
+                );
                 paramsF.addFilter('valMinutesNumber', this.idProceeding);
                 this.serviceProgrammingGood
                   .getTmpProgValidation(paramsF.getParams())
@@ -2593,7 +2647,6 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                             ''
                           );
                         } else {
-                          
                           const splitActa = this.form
                             .get('acta2')
                             .value.split('/');
@@ -3108,11 +3161,10 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     if (!this.act2Valid) {
       this.alert('warning', 'No se registro un número de acta válido', '');
     } else {
-      const user = localStorage.getItem('username') == 'sigebiadmon'
-      ? localStorage.getItem('username')
-      : localStorage
-          .getItem('username')
-          .toLocaleUpperCase();
+      const user =
+        localStorage.getItem('username') == 'sigebiadmon'
+          ? localStorage.getItem('username')
+          : localStorage.getItem('username').toLocaleUpperCase();
       if (this.form.get('statusProceeding').value != '') {
         if (
           !['MARRIETA', 'SERA', 'DESARROLLO', 'ALEDESMA', 'JRAMIREZ'].includes(
@@ -3578,9 +3630,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                 'Error en el tipo de bien',
                 'Bien con tipo inválido para el acta (INMUEBLE)'
               );
-            }
-            //Valida si el acta esta cerrada
-            if (
+            } else if (
               ['CERRADO', 'CERRADA'].includes(
                 this.form.get('statusProceeding').value
               )
@@ -3679,11 +3729,12 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                                 amount: this.selectData.quantity,
                                 exchangeValue: 1,
                                 approvedUserXAdmon:
-                                localStorage.getItem('username') == 'sigebiadmon'
-                                ? localStorage.getItem('username')
-                                : localStorage
-                                    .getItem('username')
-                                    .toLocaleUpperCase(),
+                                  localStorage.getItem('username') ==
+                                  'sigebiadmon'
+                                    ? localStorage.getItem('username')
+                                    : localStorage
+                                        .getItem('username')
+                                        .toLocaleUpperCase(),
                               };
                             this.serviceDetailProc
                               .addGoodToProceedings(newDetailProceeding)
