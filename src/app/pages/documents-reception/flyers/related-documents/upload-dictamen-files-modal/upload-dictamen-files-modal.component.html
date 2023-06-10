@@ -1,30 +1,22 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title pull-left">Carga de Archivos</h5>
+    <h5 class="modal-title pull-left">Proceso de Firma Electr&oacute;nica</h5>
   </div>
   <div body class="body">
     <form [formGroup]="fileForm" class="form-material">
-      <div class="row">
-        <div class="col-md-6">
-          <form-field [control]="fileForm.get('name')" label="Nombre">
-            <input type="text" class="form-control" formControlName="name" />
-          </form-field>
-        </div>
-        <div class="col-md-6">
-          <form-field [control]="fileForm.get('post')" label="Cargo">
-            <input type="text" class="form-control" formControlName="post" />
-          </form-field>
-        </div>
-      </div>
       <div class="row pt-4">
+        <div class="col-md-6 text-wrap">
+          <label> Documento a Firmar&#58;&nbsp; </label>
+          <span class="fs-4">&nbsp;{{ nameFileDictation }}</span>
+        </div>
         <div class="col-md-6">
           <form-field
-            [control]="fileForm.get('pass')"
+            [control]="fileForm.get('secpwd')"
             label="Contrase&ntilde;a">
             <input
               [type]="hide ? 'password' : 'text'"
               class="form-control"
-              formControlName="pass"
+              formControlName="secpwd"
               maxlength="10" />
             <button
               class="btn btn-secondary btn-sm active"
@@ -34,18 +26,7 @@
             </button>
           </form-field>
         </div>
-        <!-- *ngIf="!isRFCHided" -->
-        <div class="col-md-6">
-          <form-field [control]="fileForm.get('rfcUser')" label="RFC">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="rfcUser"
-              maxlength="13" />
-          </form-field>
-        </div>
       </div>
-
       <div class="row pt-4">
         <div class="col-md-6">
           <form-field
@@ -59,11 +40,6 @@
               formControlName="certificate"
               (change)="chargeCertifications($event)" />
           </form-field>
-          <!-- <input
-            type="file"
-            formControlName="certification"
-            placeholder="Seleccione un certificado"
-            (change)="chargeCertifications($event.target)" /> -->
         </div>
         <div class="col-md-6">
           <form-field [control]="fileForm.get('keycertificate')" label="Key">
@@ -87,13 +63,8 @@
           class="btn btn-primary btn-sm active"
           [disabled]="fileForm.invalid"
           (click)="confirm()">
-          Guardar
+          Firmar
         </button>
-        <!--<confirm-button
-          [disabled]="fileForm.invalid"
-          [loading]="loading"
-          (confirm)="confirm()">
-        </confirm-button>-->
       </div>
       <div class="m-3">
         <button
