@@ -16,6 +16,7 @@ import { ICity } from 'src/app/core/models/catalogs/city.model';
 import { IDepartment } from 'src/app/core/models/catalogs/department.model';
 import { type INotification } from 'src/app/core/models/ms-notification/notification.model';
 import { IMJobManagement } from 'src/app/core/models/ms-officemanagement/m-job-management.model';
+import { IProceduremanagement } from 'src/app/core/models/ms-proceduremanagement/ms-proceduremanagement.interface';
 import {
   IAccesTrackingXArea,
   IUsersTracking,
@@ -32,6 +33,7 @@ import { MJobManagementService } from 'src/app/core/services/ms-office-managemen
 import { ParametersService } from 'src/app/core/services/ms-parametergood/parameters.service';
 import { SecurityService } from 'src/app/core/services/ms-security/security.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
+import { ProcedureManagementService } from 'src/app/core/services/proceduremanagement/proceduremanagement.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { LegalOpinionsOfficeService } from 'src/app/pages/juridical-processes/depositary/legal-opinions-office/legal-opinions-office/services/legal-opinions-office.service';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -46,6 +48,7 @@ export abstract class RelateDocumentsResponse extends BasePage {
   protected abstract serviceOficces: GoodsJobManagementService;
   protected abstract notificationService: NotificationService;
   protected abstract mJobManagementService: MJobManagementService;
+  protected abstract msProcedureManagementService: ProcedureManagementService;
   protected abstract flyerService: FlyersService;
   protected abstract parametersService: ParametersService;
   protected abstract departmentService: DepartamentService;
@@ -189,6 +192,16 @@ export abstract class RelateDocumentsResponse extends BasePage {
     params.limit = 1;
     params['filter.flyerNumber'] = wheelNumber;
     return this.mJobManagementService.getAll(params).pipe(map(x => x.data[0]));
+  }
+
+  getJobManagement(params: ListParams): Observable<IProceduremanagement> {
+    // const params = new ListParams();
+    // params.page = 1;
+    // params.limit = 1;
+    // params['filter.flyerNumber'] = wheelNumber;
+    return this.msProcedureManagementService
+      .getAllFiltered(params)
+      .pipe(map(x => x.data[0]));
   }
 
   getCity(text: string | number): Observable<ICity> {

@@ -7,6 +7,7 @@ import {
   Output,
   SimpleChanges,
 } from '@angular/core';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -45,13 +46,27 @@ export class TableGoodsComponent extends BasePage implements OnInit {
   @Output() rowsSelected = new EventEmitter();
   @Output() updateGoodsRow = new EventEmitter();
   @Output() showDeleteAlert = new EventEmitter();
+  dataOld: any[] = [];
+  datatoShow: LocalDataSource = new LocalDataSource();
   pageSizeOptions = [5, 10, 15, 20];
-  dataPaginated: any[] = [];
+  // dataPaginated: any[] = [];
   count = 0;
   private _statusActaValue: string;
   params = new BehaviorSubject<ListParams>(new ListParams());
   constructor() {
     super();
+    this.searchNotServerPagination();
+  }
+
+  private getPaginated(params: ListParams) {
+    const cantidad = params.page * params.limit;
+    this.datatoShow.load([
+      ...this.data.slice(
+        (params.page - 1) * params.limit,
+        cantidad > this.data.length ? this.data.length : cantidad
+      ),
+    ]);
+    this.datatoShow.refresh();
   }
 
   ngOnInit(): void {
@@ -63,28 +78,51 @@ export class TableGoodsComponent extends BasePage implements OnInit {
         }
         this.count++;
       } else {
-        const cantidad = params.page * params.limit;
-        this.dataPaginated = this.data.slice(
-          (params.page - 1) * params.limit,
-          cantidad > this.data.length ? this.data.length : cantidad
-        );
+        this.getPaginated(params);
       }
     });
+  }
+
+  private searchNotServerPagination() {
+    this.datatoShow
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter' && !this.haveServerPagination) {
+          // this.data = this.dataOld;
+          // debugger;
+          let filters = change.filter.filters;
+          filters.map((filter: any, index: number) => {
+            console.log(filter, index);
+            if (index === 0) {
+              this.data = [...this.dataOld];
+            }
+            this.data = this.data.filter(item =>
+              filter.search !== ''
+                ? (item[filter['field']] + '').includes(filter.search)
+                : true
+            );
+          });
+          // this.totalItems = filterData.length;
+          console.log(this.data);
+          this.totalItems = this.data.length;
+          this.params.value.page = 1;
+          this.getPaginated(this.params.getValue());
+        }
+      });
   }
 
   ngOnChanges(changes: SimpleChanges) {
     console.log(changes);
     const data = changes['data'];
     if (data !== undefined) {
+      this.dataOld = [...data.currentValue];
       if (this.haveServerPagination === false) {
-        const cantidad = 1 * 10;
-        this.dataPaginated = data.currentValue.slice(
-          0,
-          cantidad > data.currentValue.length
-            ? data.currentValue.length
-            : cantidad
-        );
+        this.getPaginated(this.params.getValue());
+      } else {
+        this.datatoShow.load(data.currentValue);
       }
+      this.datatoShow.refresh();
     }
   }
 
