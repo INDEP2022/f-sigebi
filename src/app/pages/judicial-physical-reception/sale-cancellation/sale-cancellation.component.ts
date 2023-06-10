@@ -1742,38 +1742,41 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
       this.alert('warning', 'Hay bienes no guardados en almacén', '');
     } else if (this.form.get('folioEscaneo').value == null) {
       this.alert('warning', 'No se ha ingresado un número de folio', '');
-    } else if (!this.scanStatus) {
-      this.alert('warning', 'El folio no ha sido escaneado', '');
     } else {
       const paramsF = new FilterParams();
       paramsF.addFilter('keysProceedings', this.form.get('acta2').value);
       this.serviceProcVal.getByFilter(paramsF.getParams()).subscribe(
         res => {
-          const resData = JSON.parse(JSON.stringify(res.data))[0];
-          const paramsF = new FilterParams();
-          let VAL_MOVIMIENTO = 0;
-          paramsF.addFilter(
-            'valUser',
-            localStorage.getItem('username').toLocaleLowerCase()
-          );
-          paramsF.addFilter('valMinutesNumber', this.idProceeding);
-          this.serviceProgrammingGood
-            .getTmpProgValidation(paramsF.getParams())
-            .subscribe(
-              res => {
-                console.log(res);
-                VAL_MOVIMIENTO = res.data[0]['valmovement'];
-                if (VAL_MOVIMIENTO === 1) {
-                  const tipo_acta = 'DXCV';
-                  this.closeProceedingFn();
-                } else {
+          if(this.scanStatus){
+            const resData = JSON.parse(JSON.stringify(res.data))[0];
+            const paramsF = new FilterParams();
+            let VAL_MOVIMIENTO = 0;
+            paramsF.addFilter(
+              'valUser',
+              localStorage.getItem('username').toLocaleLowerCase()
+            );
+            paramsF.addFilter('valMinutesNumber', this.idProceeding);
+            this.serviceProgrammingGood
+              .getTmpProgValidation(paramsF.getParams())
+              .subscribe(
+                res => {
+                  console.log(res);
+                  VAL_MOVIMIENTO = res.data[0]['valmovement'];
+                  if (VAL_MOVIMIENTO === 1) {
+                    const tipo_acta = 'DXCV';
+                    this.closeProceedingFn();
+                  } else {
+                    this.closeProceedingFn();
+                  }
+                },
+                err => {
                   this.closeProceedingFn();
                 }
-              },
-              err => {
-                this.closeProceedingFn();
-              }
-            );
+              );
+          }else{
+            this.alert('warning', 'El folio no ha sido escaneado', '');
+          }
+          
         },
         err => {
           console.log(err);
