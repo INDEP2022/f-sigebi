@@ -342,7 +342,11 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     await this.preUpdate();
     this.goodService.update(body).subscribe({
       next: response => {
-        this.onLoadToast('success', 'Bien actualizado correctamente');
+        this.onLoadToast(
+          'success',
+          'Bien ' + this.numberGood.value,
+          'Actualizado correctamente'
+        );
       },
     });
     await this.pupInsertGeoreferencia();
