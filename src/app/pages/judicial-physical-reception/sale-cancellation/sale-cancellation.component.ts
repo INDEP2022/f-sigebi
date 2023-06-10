@@ -293,6 +293,18 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
       });
 
     this.getDataUser();
+
+    this.form.get('statusProceeding').valueChanges.subscribe(
+      res => {
+        if( ['CERRADA', 'CERRADO'].includes(res)){
+          this.labelActa = 'Abrir acta'
+          this.btnCSSAct = 'btn-success'
+        }else{
+          this.labelActa = 'Cerrar acta'
+          this.btnCSSAct = 'btn-primary'
+        }
+      }
+    )
   }
 
   getDataUser() {
@@ -913,13 +925,13 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
         this.form.get('folioEscaneo').setValue(dataRes.universalFolio);
         console.log(this.form.get('statusProceeding').value);
         console.log(dataRes.statusProceedings);
-        if (this.form.get('statusProceeding').value === 'ABIERTA') {
+/*         if (this.form.get('statusProceeding').value === 'ABIERTA') {
           this.labelActa = 'Cerrar acta';
           this.btnCSSAct = 'btn-primary';
         } else {
           this.labelActa = 'Abrir acta';
           this.btnCSSAct = 'btn-success';
-        }
+        } */
         this.act2Valid = true;
         this.navigateProceedings = true;
         this.idProceeding = dataRes.id;
@@ -950,13 +962,13 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
         this.form.get('testigo').setValue(dataRes.comptrollerWitness);
         this.form.get('statusProceeding').setValue(dataRes.statusProceedings);
         this.form.get('folioEscaneo').setValue(dataRes.universalFolio);
-        if (this.form.get('statusProceeding').value === 'ABIERTA') {
+/*         if (this.form.get('statusProceeding').value === 'ABIERTA') {
           this.labelActa = 'Cerrar acta';
           this.btnCSSAct = 'btn-primary';
         } else {
           this.labelActa = 'Abrir acta';
           this.btnCSSAct = 'btn-success';
-        }
+        } */
         this.act2Valid = true;
         this.navigateProceedings = true;
         this.loading = false;
@@ -1354,8 +1366,8 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
     this.form.get('statusProceeding').reset();
     this.numberExpedient = this.form.get('expediente').value;
     this.form.get('folioEscaneo').reset();
-    this.labelActa = 'Abrir acta';
-    this.btnCSSAct = 'btn-success';
+/*     this.labelActa = 'Abrir acta';
+    this.btnCSSAct = 'btn-success'; */
 
     const btn = document.getElementById('expedient-number');
 
@@ -1658,8 +1670,8 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
                             .paRegresaEstAnterior(modelPaOpen)
                             .subscribe(
                               res => {
-                                this.labelActa = 'Cerrar acta';
-                                this.btnCSSAct = 'btn-primary';
+                               /*  this.labelActa = 'Cerrar acta';
+                                this.btnCSSAct = 'btn-primary'; */
                                 this.form
                                   .get('statusProceeding')
                                   .setValue('ABIERTA');
@@ -1882,8 +1894,8 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
                         this.getGoodsActFn();
                         this.getGoodsFn();
                         this.form.get('statusProceeding').setValue('CERRADO');
-                        this.labelActa = 'Abrir acta';
-                        this.btnCSSAct = 'btn-success';
+                        /* this.labelActa = 'Abrir acta';
+                        this.btnCSSAct = 'btn-success'; */
                         this.alert('success', 'El acta ha sido cerrada', '');
                       },
                       err => {
@@ -1925,8 +1937,8 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
 
             if (scanStatus === 'ESCANEADO') {
               this.form.get('statusProceeding').setValue('CERRADO');
-              this.labelActa = 'Abrir acta';
-              this.btnCSSAct = 'btn-info';
+             /*  this.labelActa = 'Abrir acta';
+              this.btnCSSAct = 'btn-info'; */
               const paramsF = new FilterParams();
 
               paramsF.addFilter(
@@ -2237,6 +2249,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
     this.form.get('averPrev').reset();
     this.form.get('causaPenal').reset();
     this.form.get('statusProceeding').reset();
+    this.form.get('acta2').reset()
     this.transferSelect = new DefaultSelect();
 
     //LIMPIAR TABLAS
@@ -2288,8 +2301,8 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
     this.checkChange();
     this.minDateFecElab = new Date();
     this.form.get('statusProceeding').reset();
-    this.labelActa = 'Abrir acta';
-    this.btnCSSAct = 'btn-success';
+    /* this.labelActa = 'Abrir acta';
+    this.btnCSSAct = 'btn-success'; */
     this.act2Valid = false;
     this.navigateProceedings = true;
     this.nextProce = false;
@@ -2317,8 +2330,8 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
         this.minDateFecElab = new Date();
         this.clearInputs();
         this.form.get('statusProceeding').reset();
-        this.labelActa = 'Abrir acta';
-        this.btnCSSAct = 'btn-info';
+        /* this.labelActa = 'Abrir acta';
+        this.btnCSSAct = 'btn-info'; */
         this.act2Valid = false;
         this.navigateProceedings = true;
         this.nextProce = false;
@@ -2395,8 +2408,8 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
                   this.clearInputs();
                   this.getGoodsByExpedient();
                   this.alert('success', 'Acta eliminada con éxito', '');
-                  this.labelActa = 'Abrir acta';
-                  this.btnCSSAct = 'btn-success';
+                  /* this.labelActa = 'Abrir acta';
+                  this.btnCSSAct = 'btn-success'; */
                 },
                 err => {
                   console.log(err);
