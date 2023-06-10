@@ -11,6 +11,7 @@ import * as moment from 'moment';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
+import { SelectListFilteredModalComponent } from 'src/app/@standalone/modals/select-list-filtered-modal/select-list-filtered-modal.component';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import {
@@ -46,6 +47,7 @@ import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.
 import { ClassifyGoodService } from 'src/app/core/services/ms-classifygood/ms-classifygood.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
+import { AttribGoodBadService } from 'src/app/core/services/ms-good/attrib-good-bad.service';
 import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { HistoryGoodService } from 'src/app/core/services/ms-history-good/history-good.service';
@@ -208,7 +210,8 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     private serviceGoodQuery: GoodsQueryService,
     private serviceTransferent: TransferenteService,
     private serviceHistoryGood: HistoryGoodService,
-    private serviceNotification: NotificationService
+    private serviceNotification: NotificationService,
+    private attribGoodBadService: AttribGoodBadService
   ) {
     super();
   }
@@ -420,6 +423,55 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     } else if (this.labelActa == 'Cerrar acta') {
       this.newCloseProceeding();
     }
+  }
+
+  openModalSelect(
+    context?: Partial<SelectListFilteredModalComponent>,
+    callback?: Function
+  ) {
+    const modalRef = this.modalService.show(SelectListFilteredModalComponent, {
+      initialState: { ...context },
+      class: 'modal-lg modal-dialog-centered modal-not-top-padding',
+      ignoreBackdropClick: true,
+    });
+    modalRef.content.onSelect.subscribe(data => {
+      if (data) callback(data, this);
+    });
+  }
+
+  getNulls() {
+    this.openModalSelect(
+      {
+        title: 'Listado de bienes con información requerida nula',
+        columnsType: {
+          id: {
+            title: 'No. Bien',
+            type: 'string',
+            sort: false,
+          },
+          motive: {
+            title: 'Motivo',
+            type: 'string',
+            sort: false,
+          },
+        },
+        service: this.attribGoodBadService,
+        dataObservableFn: this.attribGoodBadService.getAllModal,
+        searchFilter: null,
+        type: 'text',
+        showError: false,
+        widthButton: false,
+        placeholder: 'Buscar',
+      },
+      this.selectGoodNull
+    );
+  }
+
+  selectGoodNull(good: any, self: ConfiscatedRecordsComponent) {
+    console.log(good);
+    self.router.navigate(['pages/general-processes/goods-characteristics'], {
+      queryParams: { noBien: good.id },
+    });
   }
 
   requireAct1() {
@@ -2213,7 +2265,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                 this.alert(
                   'error',
                   'No se pudo abrir el acta',
-                  'Ocurrió un error que no permite abrir el acta'
+                  err.error.message
                 );
               }
             );
@@ -2498,6 +2550,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   }
 
   newCloseProceeding() {
+    this.validateFolio();
     if (this.dataGoodAct['data'].length == 0) {
       this.alert(
         'warning',
@@ -2552,9 +2605,10 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
             if (P5 > 0) {
               this.alert(
                 'warning',
-                'Bienes sin informacion requerida',
+                'Bienes sin información requerida',
                 'Se encontraron bienes sin información requerida para este proceso'
               );
+              this.getNulls();
             } else {
               if (this.scanStatus) {
                 const paramsF = new FilterParams();
@@ -3510,6 +3564,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     let no_type: number | string;
     let no_subtype: number | string;
     console.log(arrAct);
+    console.log(this.selectData);
 
     if (this.selectData && this.selectData != null) {
       const goodClass = this.selectData.goodClassNumber;
@@ -3556,12 +3611,199 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
             'Problema con el tipo de acta',
             'Las actas con esta nomenclatura solo deben contener bienes de numerario efectivo'
           );
+        } else {
+          const newParams = `filter.numClasifGoods=$eq:${goodClass}`;
+          this.serviceSssubtypeGood.getFilter(newParams).subscribe(
+            res => {
+              console.log(res);
+              const type = JSON.parse(JSON.stringify(res.data[0]['numType']));
+              const subtype = JSON.parse(
+                JSON.stringify(res.data[0]['numSubType'])
+              );
+
+              no_type = parseInt(type.id);
+              no_subtype = parseInt(subtype.id);
+              //Validar Admin y tipo
+              if (admin === 'DEABI' && no_type != 6) {
+                this.alert(
+                  'warning',
+                  'Error en el tipo de bien',
+                  'Bien con tipo inválido para el acta (INMUEBLE)'
+                );
+              } else if (
+                ['CERRADO', 'CERRADA'].includes(
+                  this.form.get('statusProceeding').value
+                )
+              ) {
+                this.alert(
+                  'warning',
+                  'Acta cerrada',
+                  'El acta ya esta cerrada, no puede realizar modificaciones a esta'
+                );
+              } else if (
+                this.form.get('fecElab').value != null &&
+                format(this.form.get('fecElab').value, 'MM-yyyy') !=
+                  format(new Date(), 'MM-yyyy')
+              ) {
+                this.alert(
+                  'warning',
+                  'Error en la fecha de elaboración',
+                  'No puede realizar modificaciones a esta acta, por estar fuera del mes'
+                );
+              } else if (this.form.get('fecElab').value === null) {
+                this.alert(
+                  'warning',
+                  'Falta fecha de elaboración',
+                  'Necesita registrar el dato de fecha de elaboración para agregar un bien al acta'
+                );
+              } else if (
+                this.form.get('fecElab').value != null &&
+                format(this.form.get('fecElab').value, 'dd-MM-yyyy') <
+                  format(new Date(), 'dd-MM-yyyy')
+              ) {
+                this.alert(
+                  'warning',
+                  'Error en la fecha de elaboración',
+                  'La fecha de elaboración debe ser igual a hoy o una fecha después'
+                );
+              } else {
+                v_ban = true;
+                if (no_type === 7 && no_subtype === 1) {
+                  v_tipo_acta = 'NUME';
+                } else if (['D', 'ND'].includes(valAct)) {
+                  v_tipo_acta = 'DECOMISO';
+                } else {
+                  v_tipo_acta = 'ENTREGA';
+                }
+
+                if (no_type === 7 || (no_type === 5 && no_subtype === 16)) {
+                  this.isBoveda = true;
+                }
+                if (no_type === 5) {
+                  this.isAlmacen = true;
+                }
+                console.log(v_tipo_acta);
+                //NECESARIO ENDPOINT QUE VALIDE EL QUERY
+                v_ban = true;
+                const model: IVban = {
+                  array: [
+                    {
+                      screenKey: 'FACTREFACTAENTREC',
+                      goodNumber: this.selectData.id,
+                      identificador: this.selectData.identifier,
+                      typeAct: v_tipo_acta,
+                    },
+                  ],
+                };
+                console.log(model);
+                this.serviceGood.getVBan(model).subscribe(
+                  res => {
+                    console.log(res);
+                    v_ban = res.data[0]['ban'];
+                    console.log(v_ban);
+                    v_ban = false; //!Forzando el false
+                    if (v_ban) {
+                      this.alert(
+                        'warning',
+                        'Bien no valido',
+                        'El bien no es válido para esta acta'
+                      );
+                    } else {
+                      if (this.selectData.avalaible) {
+                        const paramsF = new FilterParams();
+                        paramsF.addFilter(
+                          'keysProceedings',
+                          this.form.get('acta2').value
+                        );
+                        this.serviceProcVal
+                          .getByFilter(paramsF.getParams())
+                          .subscribe(
+                            res => {
+                              const data = JSON.parse(
+                                JSON.stringify(res.data[0])
+                              );
+                              this.idProceeding = data.id;
+                              let newDetailProceeding: IDetailProceedingsDeliveryReception =
+                                {
+                                  numberProceedings: data.id,
+                                  numberGood: this.selectData.goodId,
+                                  amount: this.selectData.quantity,
+                                  exchangeValue: 1,
+                                  approvedUserXAdmon:
+                                    localStorage.getItem('username') ==
+                                    'sigebiadmon'
+                                      ? localStorage.getItem('username')
+                                      : localStorage
+                                          .getItem('username')
+                                          .toLocaleUpperCase(),
+                                };
+                              this.serviceDetailProc
+                                .addGoodToProceedings(newDetailProceeding)
+                                .subscribe(
+                                  res => {
+                                    this.dataGoods.load(
+                                      this.dataGoods['data'].map((e: any) => {
+                                        if (e.id == this.selectData.id) {
+                                          return { ...e, avalaible: false };
+                                        } else {
+                                          return e;
+                                        }
+                                      })
+                                    );
+                                    this.goodData.push({
+                                      ...this.selectData,
+                                      exchangeValue: 1,
+                                    });
+                                    this.getGoodsActFn();
+                                    /* this.dataGoodAct.load(this.goodData); */
+                                    this.saveDataAct.push({
+                                      ...this.selectData,
+                                    });
+                                    this.selectData = null;
+                                    this.alert(
+                                      'success',
+                                      'El bien fue agregado',
+                                      ''
+                                    );
+                                  },
+                                  err => {
+                                    this.alert(
+                                      'error',
+                                      'Ocurrió un error inesperado al intentar mover el bien',
+                                      'Ocurrió un error inesperado al intentar mover el bien. Por favor intentelo nuevamente'
+                                    );
+                                  }
+                                );
+                            },
+                            err => {
+                              this.alert(
+                                'warning',
+                                'Debe registrar un Acta antes de poder mover el bien',
+                                ''
+                              );
+                            }
+                          );
+                        /*  */
+                      }
+                    }
+                  },
+                  err => {
+                    console.log(err);
+                  }
+                );
+              }
+            },
+            err => {
+              console.log(err);
+            }
+          );
         }
       } else {
         //Tipo y subtipo de bien
         const newParams = `filter.numClasifGoods=$eq:${goodClass}`;
         this.serviceSssubtypeGood.getFilter(newParams).subscribe(
           res => {
+            console.log(res);
             const type = JSON.parse(JSON.stringify(res.data[0]['numType']));
             const subtype = JSON.parse(
               JSON.stringify(res.data[0]['numSubType'])
@@ -3576,9 +3818,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                 'Error en el tipo de bien',
                 'Bien con tipo inválido para el acta (INMUEBLE)'
               );
-            }
-            //Valida si el acta esta cerrada
-            if (
+            } else if (
               ['CERRADO', 'CERRADA'].includes(
                 this.form.get('statusProceeding').value
               )
@@ -3646,6 +3886,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
               console.log(model);
               this.serviceGood.getVBan(model).subscribe(
                 res => {
+                  console.log(res);
                   v_ban = res.data[0]['ban'];
                   console.log(v_ban);
                   v_ban = false; //!Forzando el false
@@ -3707,6 +3948,11 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                                     ...this.selectData,
                                   });
                                   this.selectData = null;
+                                  this.alert(
+                                    'success',
+                                    'El bien fue agregado',
+                                    ''
+                                  );
                                 },
                                 err => {
                                   this.alert(

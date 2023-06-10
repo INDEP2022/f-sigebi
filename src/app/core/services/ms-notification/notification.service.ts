@@ -246,4 +246,8 @@ export class NotificationService extends HttpService {
     const route = `application/getVariablesVolType/${numberExp}`;
     return this.get(route);
   }
+
+  getMaxFlyer(fileNumber: number) {
+    return this.get(`notification/maxCFlyer/${fileNumber}`);
+  }
 }
