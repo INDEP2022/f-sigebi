@@ -946,6 +946,17 @@ export class RelatedDocumentsComponent
           if (mJobManagement.statusOf == 'ENVIADO') {
             this.formJobManagement.disable();
           }
+          if (mJobManagement.refersTo == this.se_refiere_a.A) {
+            this.se_refiere_a_Disabled.B = true;
+            this.se_refiere_a_Disabled.C = true;
+          }
+          if (mJobManagement.refersTo == this.se_refiere_a.B) {
+            this.se_refiere_a_Disabled.A = true;
+            this.se_refiere_a_Disabled.C = true;
+          }
+          if (mJobManagement.refersTo == this.se_refiere_a.C) {
+            this.formVariables.get('b').setValue('N');
+          }
         } catch (e) {
           console.log(e);
         }
