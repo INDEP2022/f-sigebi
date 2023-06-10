@@ -32,6 +32,7 @@ import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { DictationXGood1Service } from 'src/app/core/services/ms-dictation/dictation-x-good1.service';
 import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
+import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { StatusGoodService } from 'src/app/core/services/ms-good/status-good.service';
 import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
@@ -211,7 +212,6 @@ export class RelatedDocumentsComponent
 
   settings3 = { ...this.settings, hideSubHeader: true };
   copyOficio: any[] = [];
-
   //Good Job Mananagemet
   dataTableGoodsJobManagement: IGoodJobManagement[] = [];
 
@@ -322,6 +322,10 @@ export class RelatedDocumentsComponent
     crime: new FormControl(''),
   });
 
+  selectVariable: any;
+  checkRefiere: any;
+  checkSelectTable: boolean = false;
+
   constructor(
     private fb: FormBuilder,
     protected flyerService: FlyersService,
@@ -351,7 +355,8 @@ export class RelatedDocumentsComponent
     private officeManagementSerivice: OfficeManagementService,
     private goodHistoryService: HistoryGoodService, // protected abstract svLegalOpinionsOfficeService: LegalOpinionsOfficeService;
     protected documentsService: DocumentsService,
-    protected usersService: UsersService // protected goodProcessService: GoodprocessService,
+    protected usersService: UsersService, // protected goodProcessService: GoodprocessService,
+    private expedientService: ExpedientService
   ) {
     super();
     // console.log(authService.decodeToken());
@@ -395,6 +400,7 @@ export class RelatedDocumentsComponent
       },
     };
   }
+  selectedRadio: string;
 
   disabledChecks() {
     this.goodFilterParams('Todos');
@@ -415,18 +421,24 @@ export class RelatedDocumentsComponent
   enableChecks() {
     const tabla = document.getElementById('goods');
     const types = document.getElementById('typesFilters');
-    const tbody = tabla.children[0].children[1].children;
-    for (let index = 0; index < tbody.length; index++) {
-      const element = tbody[index];
-      element.children[7].classList.remove('not-press');
-      element.children[8].classList.remove('not-press');
+
+    if (tabla && types) {
+      const tbody = tabla.children[0]?.children[1]?.children;
+
+      if (tbody) {
+        for (let index = 0; index < tbody.length; index++) {
+          const element = tbody[index];
+          element.children[7]?.classList.remove('not-press');
+          element.children[8]?.classList.remove('not-press');
+        }
+      }
+      types.classList.remove('not-press');
     }
-    types.classList.remove('not-press');
   }
 
   onClickSelect(event: any) {
     event.toggle.subscribe((data: any) => {
-      console.log(data);
+      console.log(JSON.stringify(data));
       data.row.seleccion = data.toggle;
     });
   }
@@ -1705,6 +1717,48 @@ export class RelatedDocumentsComponent
   }
 
   openModal(context?: Partial<DocumentsFormComponent>) {
+    if (!this.selectVariable) {
+      this.onLoadToast(
+        'error',
+        'Error',
+        `Especifique el tipo de Dictaminación S `
+      );
+      return;
+    }
+    this.expedientService.getNextVal().subscribe({
+      next: data => {
+        this.variablesSend.CVE_OF_GESTION = data.nextval;
+        if (
+          this.managementForm.get('tipoOficio').value ==
+          'Se refiere a todos los bienes'
+        ) {
+          /* await PUP_AGREGA_BIENES();
+           await LIP_COMMIT_SILENCIOSO();*/
+        }
+        if (
+          this.managementForm.get('tipoOficio').value ===
+          'Se refiere a algun (os) bien (es) del expediente'
+        ) {
+          /* await PUP_AGREGA_ALGUNOS_BIENES();
+           await LIP_COMMIT_SILENCIOSO();*/
+        }
+      },
+    });
+    if (!this.checkSelectTable) {
+      this.onLoadToast('error', 'Error', `Seleccione Un Registro de La Tabla `);
+      return;
+    }
+    if (this.formJobManagement.value.cveManagement !== null) {
+      /*SELECT COUNT(0) into contador
+      from BIENES_OFICIO_GESTION
+      where no_of_gestion = : M_OFICIO_GESTION.no_of_gestion;
+      if (this.managementForm.get('tipoOficio').value == 'Se refiere a todos los bienes') {
+        this.variables.clasif = this.variables.clasif || this.formJobManagement.value....
+         : VARIABLES.CLASIF := : VARIABLES.CLASIF || TO_CHAR(: BIENES_OFICIO_GESTION.CLASIF);    
+        /*PUP_AGREGA_BIENES;
+        LIP_COMMIT_SILENCIOSO;
+      }*/
+    }
     const modalRef = this.modalService.show(DocumentsFormComponent, {
       initialState: context,
       class: 'modal-lg modal-dialog-centered',
@@ -2190,6 +2244,8 @@ export class RelatedDocumentsComponent
 
   typeSelected(type: any) {
     const filter = type.no_clasif_bien;
+    console.log('FILTRO DICTAMINACION', filter);
+    this.selectVariable = filter;
     this.goodFilterParams(filter);
   }
 
@@ -2317,7 +2373,8 @@ export class RelatedDocumentsComponent
         this.managementForm
           .get('di_desc_estatus')
           .setValue(data[0].description);
-        console.log('SCREEN', data);
+        console.log('SCREEN', JSON.stringify(data));
+        this.checkSelectTable = true;
       },
       error => {
         console.log('SCREEN', error.error.message);
@@ -2493,7 +2550,7 @@ export class RelatedDocumentsComponent
 
     const etapaCreda = await this.getFaStageCreda(new Date());
     const checkText = this.formJobManagement.get('refersTo').value;
-
+    this.checkRefiere = checkText;
     if (!values.cveManagement && values.managementNumber) {
       const department = (await this.getDSAreaInDeparment(
         etapaCreda
@@ -2754,7 +2811,7 @@ export class RelatedDocumentsComponent
     this.variablesSend.ESTATUS_OF = this.formJobManagement.value.statusOf;
     this.variablesSend.CVE_OF_GESTION =
       this.formJobManagement.value.cveManagement;
-    this.variablesSend.FECHA_INSERTO = this.formJobManagement.value.insertDate;
+    //this.variablesSend.FECHA_INSERTO = this.formJobManagement.value.insertDate;
     if (!this.formJobManagement.value.jobType) {
       this.alertInfo('warning', 'Debe especificar el TIPO OFICIO', '');
       return;
