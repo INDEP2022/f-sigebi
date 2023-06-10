@@ -67,6 +67,8 @@ import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-ele
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { EdoFisicoComponent } from './edo-fisico/edo-fisico.component.component';
 import { columnsGood, columnsGoodAct } from './settings-tables';
+import { AttribGoodBadService } from 'src/app/core/services/ms-good/attrib-good-bad.service';
+import { SelectListFilteredModalComponent } from 'src/app/@standalone/modals/select-list-filtered-modal/select-list-filtered-modal.component';
 
 @Component({
   selector: 'app-confiscated-records',
@@ -208,7 +210,8 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     private serviceGoodQuery: GoodsQueryService,
     private serviceTransferent: TransferenteService,
     private serviceHistoryGood: HistoryGoodService,
-    private serviceNotification: NotificationService
+    private serviceNotification: NotificationService,
+    private attribGoodBadService: AttribGoodBadService,
   ) {
     super();
   }
@@ -420,6 +423,55 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     } else if (this.labelActa == 'Cerrar acta') {
       this.newCloseProceeding();
     }
+  }
+
+  openModalSelect(
+    context?: Partial<SelectListFilteredModalComponent>,
+    callback?: Function
+  ) {
+    const modalRef = this.modalService.show(SelectListFilteredModalComponent, {
+      initialState: { ...context },
+      class: 'modal-lg modal-dialog-centered modal-not-top-padding',
+      ignoreBackdropClick: true,
+    });
+    modalRef.content.onSelect.subscribe(data => {
+      if (data) callback(data, this);
+    });
+  }
+
+  getNulls() {
+    this.openModalSelect(
+      {
+        title: 'Listado de bienes con información requerida nula',
+        columnsType: {
+          id: {
+            title: 'No. Bien',
+            type: 'string',
+            sort: false,
+          },
+          motive: {
+            title: 'Motivo',
+            type: 'string',
+            sort: false,
+          },
+        },
+        service: this.attribGoodBadService,
+        dataObservableFn: this.attribGoodBadService.getAllModal,
+        searchFilter: null,
+        type: 'text',
+        showError: false,
+        widthButton: false,
+        placeholder: 'Buscar',
+      },
+      this.selectGoodNull
+    );
+  }
+
+  selectGoodNull(good: any, self: ConfiscatedRecordsComponent) {
+    console.log(good);
+    self.router.navigate(['pages/general-processes/goods-characteristics'], {
+      queryParams: { noBien: good.id },
+    });
   }
 
   requireAct1() {
@@ -2213,7 +2265,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                 this.alert(
                   'error',
                   'No se pudo abrir el acta',
-                  'Ocurrió un error que no permite abrir el acta'
+                  err.error.message
                 );
               }
             );
@@ -2498,6 +2550,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   }
 
   newCloseProceeding() {
+    this.validateFolio()
     if (this.dataGoodAct['data'].length == 0) {
       this.alert(
         'warning',
@@ -2552,9 +2605,10 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
             if (P5 > 0) {
               this.alert(
                 'warning',
-                'Bienes sin informacion requerida',
+                'Bienes sin información requerida',
                 'Se encontraron bienes sin información requerida para este proceso'
               );
+              this.getNulls()
             } else {
               if (this.scanStatus) {
                 const paramsF = new FilterParams();
@@ -3576,9 +3630,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                 'Error en el tipo de bien',
                 'Bien con tipo inválido para el acta (INMUEBLE)'
               );
-            }
-            //Valida si el acta esta cerrada
-            if (
+            }else if (
               ['CERRADO', 'CERRADA'].includes(
                 this.form.get('statusProceeding').value
               )
