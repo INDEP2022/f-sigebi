@@ -1220,6 +1220,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
     this.form.get('averPrev').reset();
     this.form.get('causaPenal').reset();
     this.form.get('statusProceeding').reset();
+    this.form.get('acta2').reset();
 
     this.limitDataGoodsAct = new FormControl(10);
     this.limitDataGoods = new FormControl(10);
@@ -1259,6 +1260,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
     this.form.get('recibe').reset();
     this.form.get('admin').reset();
     this.form.get('folio').reset();
+    this.form.get('folioEscaneo').reset();
     this.goodData = [];
     this.dataGoodAct.load(this.goodData);
   }

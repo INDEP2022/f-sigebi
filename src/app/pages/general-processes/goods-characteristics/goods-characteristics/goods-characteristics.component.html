@@ -327,7 +327,8 @@
                     type="text"
                     formControlName="latitud"
                     class="form-control"
-                    maxlength="30" />
+                    maxlength="30"
+                    [readonly]="disabledBienes" />
                 </form-field>
 
                 <form-field
@@ -338,7 +339,8 @@
                     type="text"
                     formControlName="longitud"
                     class="form-control"
-                    maxlength="30" />
+                    maxlength="30"
+                    [readonly]="disabledBienes" />
                 </form-field>
               </div>
 

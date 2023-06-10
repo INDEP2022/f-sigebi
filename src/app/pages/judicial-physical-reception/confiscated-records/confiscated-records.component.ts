@@ -3564,6 +3564,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     let no_type: number | string;
     let no_subtype: number | string;
     console.log(arrAct);
+    console.log(this.selectData);
 
     if (this.selectData && this.selectData != null) {
       const goodClass = this.selectData.goodClassNumber;
@@ -3610,12 +3611,199 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
             'Problema con el tipo de acta',
             'Las actas con esta nomenclatura solo deben contener bienes de numerario efectivo'
           );
+        } else {
+          const newParams = `filter.numClasifGoods=$eq:${goodClass}`;
+          this.serviceSssubtypeGood.getFilter(newParams).subscribe(
+            res => {
+              console.log(res);
+              const type = JSON.parse(JSON.stringify(res.data[0]['numType']));
+              const subtype = JSON.parse(
+                JSON.stringify(res.data[0]['numSubType'])
+              );
+
+              no_type = parseInt(type.id);
+              no_subtype = parseInt(subtype.id);
+              //Validar Admin y tipo
+              if (admin === 'DEABI' && no_type != 6) {
+                this.alert(
+                  'warning',
+                  'Error en el tipo de bien',
+                  'Bien con tipo inválido para el acta (INMUEBLE)'
+                );
+              } else if (
+                ['CERRADO', 'CERRADA'].includes(
+                  this.form.get('statusProceeding').value
+                )
+              ) {
+                this.alert(
+                  'warning',
+                  'Acta cerrada',
+                  'El acta ya esta cerrada, no puede realizar modificaciones a esta'
+                );
+              } else if (
+                this.form.get('fecElab').value != null &&
+                format(this.form.get('fecElab').value, 'MM-yyyy') !=
+                  format(new Date(), 'MM-yyyy')
+              ) {
+                this.alert(
+                  'warning',
+                  'Error en la fecha de elaboración',
+                  'No puede realizar modificaciones a esta acta, por estar fuera del mes'
+                );
+              } else if (this.form.get('fecElab').value === null) {
+                this.alert(
+                  'warning',
+                  'Falta fecha de elaboración',
+                  'Necesita registrar el dato de fecha de elaboración para agregar un bien al acta'
+                );
+              } else if (
+                this.form.get('fecElab').value != null &&
+                format(this.form.get('fecElab').value, 'dd-MM-yyyy') <
+                  format(new Date(), 'dd-MM-yyyy')
+              ) {
+                this.alert(
+                  'warning',
+                  'Error en la fecha de elaboración',
+                  'La fecha de elaboración debe ser igual a hoy o una fecha después'
+                );
+              } else {
+                v_ban = true;
+                if (no_type === 7 && no_subtype === 1) {
+                  v_tipo_acta = 'NUME';
+                } else if (['D', 'ND'].includes(valAct)) {
+                  v_tipo_acta = 'DECOMISO';
+                } else {
+                  v_tipo_acta = 'ENTREGA';
+                }
+
+                if (no_type === 7 || (no_type === 5 && no_subtype === 16)) {
+                  this.isBoveda = true;
+                }
+                if (no_type === 5) {
+                  this.isAlmacen = true;
+                }
+                console.log(v_tipo_acta);
+                //NECESARIO ENDPOINT QUE VALIDE EL QUERY
+                v_ban = true;
+                const model: IVban = {
+                  array: [
+                    {
+                      screenKey: 'FACTREFACTAENTREC',
+                      goodNumber: this.selectData.id,
+                      identificador: this.selectData.identifier,
+                      typeAct: v_tipo_acta,
+                    },
+                  ],
+                };
+                console.log(model);
+                this.serviceGood.getVBan(model).subscribe(
+                  res => {
+                    console.log(res);
+                    v_ban = res.data[0]['ban'];
+                    console.log(v_ban);
+                    v_ban = false; //!Forzando el false
+                    if (v_ban) {
+                      this.alert(
+                        'warning',
+                        'Bien no valido',
+                        'El bien no es válido para esta acta'
+                      );
+                    } else {
+                      if (this.selectData.avalaible) {
+                        const paramsF = new FilterParams();
+                        paramsF.addFilter(
+                          'keysProceedings',
+                          this.form.get('acta2').value
+                        );
+                        this.serviceProcVal
+                          .getByFilter(paramsF.getParams())
+                          .subscribe(
+                            res => {
+                              const data = JSON.parse(
+                                JSON.stringify(res.data[0])
+                              );
+                              this.idProceeding = data.id;
+                              let newDetailProceeding: IDetailProceedingsDeliveryReception =
+                                {
+                                  numberProceedings: data.id,
+                                  numberGood: this.selectData.goodId,
+                                  amount: this.selectData.quantity,
+                                  exchangeValue: 1,
+                                  approvedUserXAdmon:
+                                    localStorage.getItem('username') ==
+                                    'sigebiadmon'
+                                      ? localStorage.getItem('username')
+                                      : localStorage
+                                          .getItem('username')
+                                          .toLocaleUpperCase(),
+                                };
+                              this.serviceDetailProc
+                                .addGoodToProceedings(newDetailProceeding)
+                                .subscribe(
+                                  res => {
+                                    this.dataGoods.load(
+                                      this.dataGoods['data'].map((e: any) => {
+                                        if (e.id == this.selectData.id) {
+                                          return { ...e, avalaible: false };
+                                        } else {
+                                          return e;
+                                        }
+                                      })
+                                    );
+                                    this.goodData.push({
+                                      ...this.selectData,
+                                      exchangeValue: 1,
+                                    });
+                                    this.getGoodsActFn();
+                                    /* this.dataGoodAct.load(this.goodData); */
+                                    this.saveDataAct.push({
+                                      ...this.selectData,
+                                    });
+                                    this.selectData = null;
+                                    this.alert(
+                                      'success',
+                                      'El bien fue agregado',
+                                      ''
+                                    );
+                                  },
+                                  err => {
+                                    this.alert(
+                                      'error',
+                                      'Ocurrió un error inesperado al intentar mover el bien',
+                                      'Ocurrió un error inesperado al intentar mover el bien. Por favor intentelo nuevamente'
+                                    );
+                                  }
+                                );
+                            },
+                            err => {
+                              this.alert(
+                                'warning',
+                                'Debe registrar un Acta antes de poder mover el bien',
+                                ''
+                              );
+                            }
+                          );
+                        /*  */
+                      }
+                    }
+                  },
+                  err => {
+                    console.log(err);
+                  }
+                );
+              }
+            },
+            err => {
+              console.log(err);
+            }
+          );
         }
       } else {
         //Tipo y subtipo de bien
         const newParams = `filter.numClasifGoods=$eq:${goodClass}`;
         this.serviceSssubtypeGood.getFilter(newParams).subscribe(
           res => {
+            console.log(res);
             const type = JSON.parse(JSON.stringify(res.data[0]['numType']));
             const subtype = JSON.parse(
               JSON.stringify(res.data[0]['numSubType'])
@@ -3698,6 +3886,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
               console.log(model);
               this.serviceGood.getVBan(model).subscribe(
                 res => {
+                  console.log(res);
                   v_ban = res.data[0]['ban'];
                   console.log(v_ban);
                   v_ban = false; //!Forzando el false
@@ -3759,6 +3948,11 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                                     ...this.selectData,
                                   });
                                   this.selectData = null;
+                                  this.alert(
+                                    'success',
+                                    'El bien fue agregado',
+                                    ''
+                                  );
                                 },
                                 err => {
                                   this.alert(
