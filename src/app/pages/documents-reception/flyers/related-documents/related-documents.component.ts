@@ -631,6 +631,9 @@ export class RelatedDocumentsComponent
         this.paramsGestionDictamen.volante = params['volante'] ?? null;
         this.paramsGestionDictamen.expediente = params['expediente'] ?? null;
         this.paramsGestionDictamen.tipoOf = params['tipoOf'] ?? null;
+        this.formJobManagement
+          .get('jobType')
+          .setValue(params['tipoOf'] ?? null);
         this.paramsGestionDictamen.doc = params['doc'] ?? null;
         this.paramsGestionDictamen.pDictamen = params['pDictamen'] ?? null;
         this.paramsGestionDictamen.sale = params['sale'] ?? null;
@@ -1884,69 +1887,81 @@ export class RelatedDocumentsComponent
   async showDeleteAlert(legend?: any) {
     //ILegend
     //Desea eliminar el oficio con el expediente ${proceedingsNumber} y No. Oficio ${managementNumber}
-    const {
-      noVolante, //no_volante
-      wheelStatus, //status
-    } = this.managementForm.value;
-    const {
-      managementNumber, //no_of_gestion
-      flyerNumber, //no_volante
-      statusOf, //status_of
-      cveManagement, //cve_of_gestion
-      proceedingsNumber, //no_expediente
-      insertUser, //usuario insert
-      insertDate, //fecha inserto
-    } = this.m_job_management;
+    if (this.pantallaActual == '1') {
+      const {
+        noVolante, //no_volante
+        wheelStatus, //status
+      } = this.managementForm.value;
+      const {
+        managementNumber, //no_of_gestion
+        flyerNumber, //no_volante
+        statusOf, //status_of
+        cveManagement, //cve_of_gestion
+        proceedingsNumber, //no_expediente
+        insertUser, //usuario insert
+        insertDate, //fecha inserto
+      } = this.m_job_management;
 
-    if (managementNumber == null) {
-      this.onLoadToast('info', 'No se tiene oficio', '');
-      return;
-    }
+      if (managementNumber == null) {
+        this.onLoadToast('info', 'No se tiene oficio', '');
+        return;
+      }
 
-    if (wheelStatus == 'ENVIADO') {
-      this.onLoadToast('info', 'El oficio ya esta enviado no puede borrar', '');
-      return;
-    }
-
-    if (cveManagement.includes('?') == false) {
-      this.onLoadToast(
-        'info',
-        'La clave está armada, no puede borrar oficio',
-        ''
-      );
-      return;
-    }
-
-    if (insertUser != this.authUser.username) {
-      const ATJR: any = await this.userHavePermission();
-      console.log(ATJR);
-      if (Number(ATJR[0]) == 0) {
+      if (wheelStatus == 'ENVIADO') {
         this.onLoadToast(
-          'error',
-          'Error',
-          'El Usuario no está autorizado para eliminar el Oficio'
+          'info',
+          'El oficio ya esta enviado no puede borrar',
+          ''
         );
         return;
       }
-    } else {
-      this.onLoadToast('error', 'Error', 'Usuario inválido para borrar oficio');
-      return;
-    }
 
-    this.alertQuestion(
-      'warning',
-      'Eliminar',
-      `Desea eliminar el oficio con el expediente ${proceedingsNumber} y No. Oficio ${managementNumber}`
-    ).then(question => {
-      if (question.isConfirmed) {
-        if (this.pantallaActual == '1') {
-          this.deleteOfficeDesahogo(managementNumber, noVolante, insertDate);
-          //Swal.fire('Borrado', '', 'success');
-        } else {
-          this.deleteOfficeRelacionado(managementNumber, noVolante);
-        }
+      if (cveManagement.includes('?') == false) {
+        this.onLoadToast(
+          'info',
+          'La clave está armada, no puede borrar oficio',
+          ''
+        );
+        return;
       }
-    });
+
+      if (insertUser != this.authUser.username) {
+        const ATJR: any = await this.userHavePermission();
+        console.log(ATJR);
+        if (Number(ATJR[0]) == 0) {
+          this.onLoadToast(
+            'error',
+            'Error',
+            'El Usuario no está autorizado para eliminar el Oficio'
+          );
+          return;
+        }
+      } else {
+        this.onLoadToast(
+          'error',
+          'Error',
+          'Usuario inválido para borrar oficio'
+        );
+        return;
+      }
+
+      this.alertQuestion(
+        'warning',
+        'Eliminar',
+        `Desea eliminar el oficio con el expediente ${proceedingsNumber} y No. Oficio ${managementNumber}`
+      ).then(question => {
+        if (question.isConfirmed) {
+          if (this.pantallaActual == '1') {
+            this.deleteOfficeDesahogo(managementNumber, noVolante, insertDate);
+            //Swal.fire('Borrado', '', 'success');
+          } else {
+            this.deleteOfficeRelacionado(managementNumber, noVolante);
+          }
+        }
+      });
+    } else {
+      this.onClickBtnErase();
+    }
   }
 
   async deleteOfficeDesahogo(
@@ -2560,6 +2575,7 @@ export class RelatedDocumentsComponent
       });
     });
   }
+
   selectProceedings(event: IUserRowSelectEvent<IGood>) {
     this.getStatusGood(event.data.status);
     this.selectedGood = event.selected;
@@ -2568,10 +2584,11 @@ export class RelatedDocumentsComponent
 
   isDisabledBtnDocs = false;
   async onClickBtnPrint() {
-    // if (!this.pantallaOption) {
-    await this.printRelationScreen();
-    // }
+    if (this.pantallaActual == '2') {
+      await this.printRelationScreen();
+    }
   }
+
   async printRelationScreen() {
     console.log('PRINT RELATION SCREEN');
     let values = this.formJobManagement.value;
