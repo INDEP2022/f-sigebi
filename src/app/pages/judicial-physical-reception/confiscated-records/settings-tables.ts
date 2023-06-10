@@ -90,7 +90,7 @@ export const columnsGoodAct = {
       }
     },
   },
-  'good.status':{
+  'good.status': {
     title: 'Estatus',
     type: 'string',
     sort: false,

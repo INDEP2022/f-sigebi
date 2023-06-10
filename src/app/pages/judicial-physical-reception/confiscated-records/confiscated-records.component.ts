@@ -2253,11 +2253,12 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                 const paramsF = new FilterParams();
                 let VAL_MOVIMIENTO = 0;
 
-                paramsF.addFilter('valUser', localStorage.getItem('username') == 'sigebiadmon'
-                ? localStorage.getItem('username')
-                : localStorage
-                    .getItem('username')
-                    .toLocaleUpperCase());
+                paramsF.addFilter(
+                  'valUser',
+                  localStorage.getItem('username') == 'sigebiadmon'
+                    ? localStorage.getItem('username')
+                    : localStorage.getItem('username').toLocaleUpperCase()
+                );
                 paramsF.addFilter('valMinutesNumber', this.idProceeding);
                 this.serviceProgrammingGood
                   .getTmpProgValidation(paramsF.getParams())
@@ -2350,11 +2351,12 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
           const paramsF = new FilterParams();
           let VAL_MOVIMIENTO = 0;
 
-          paramsF.addFilter('valUser', localStorage.getItem('username') == 'sigebiadmon'
-          ? localStorage.getItem('username')
-          : localStorage
-              .getItem('username')
-              .toLocaleUpperCase());
+          paramsF.addFilter(
+            'valUser',
+            localStorage.getItem('username') == 'sigebiadmon'
+              ? localStorage.getItem('username')
+              : localStorage.getItem('username').toLocaleUpperCase()
+          );
           paramsF.addFilter('valMinutesNumber', this.idProceeding);
           this.serviceProgrammingGood
             .getTmpProgValidation(paramsF.getParams())
@@ -2393,11 +2395,10 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                     address: this.form.get('direccion').value,
                     statusProceedings: 'ABIERTA',
                     /* elaborate: 'SERA', */
-                    elaborate: localStorage.getItem('username') == 'sigebiadmon'
-                    ? localStorage.getItem('username')
-                    : localStorage
-                        .getItem('username')
-                        .toLocaleUpperCase(),
+                    elaborate:
+                      localStorage.getItem('username') == 'sigebiadmon'
+                        ? localStorage.getItem('username')
+                        : localStorage.getItem('username').toLocaleUpperCase(),
                     numFile: parseInt(this.idProceeding.toString()),
                     witness1: this.form.get('entrega').value,
                     witness2: this.form.get('recibe2').value,
@@ -2532,7 +2533,6 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     } else if (this.form.get('folioEscaneo').value == null) {
       this.alert('warning', 'No se registro número de folio', '');
     } else {
-      
       const paramsF = new FilterParams();
       paramsF.addFilter('keysProceedings', this.form.get('acta2').value);
       this.serviceProcVal.getByFilter(paramsF.getParams()).subscribe(
@@ -2556,16 +2556,16 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                 'Se encontraron bienes sin información requerida para este proceso'
               );
             } else {
-              
               if (this.scanStatus) {
                 const paramsF = new FilterParams();
                 let VAL_MOVIMIENTO = 0;
 
-                paramsF.addFilter('valUser', localStorage.getItem('username') == 'sigebiadmon'
-                ? localStorage.getItem('username')
-                : localStorage
-                    .getItem('username')
-                    .toLocaleUpperCase());
+                paramsF.addFilter(
+                  'valUser',
+                  localStorage.getItem('username') == 'sigebiadmon'
+                    ? localStorage.getItem('username')
+                    : localStorage.getItem('username').toLocaleUpperCase()
+                );
                 paramsF.addFilter('valMinutesNumber', this.idProceeding);
                 this.serviceProgrammingGood
                   .getTmpProgValidation(paramsF.getParams())
@@ -2593,7 +2593,6 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                             ''
                           );
                         } else {
-                          
                           const splitActa = this.form
                             .get('acta2')
                             .value.split('/');
@@ -3108,11 +3107,10 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     if (!this.act2Valid) {
       this.alert('warning', 'No se registro un número de acta válido', '');
     } else {
-      const user = localStorage.getItem('username') == 'sigebiadmon'
-      ? localStorage.getItem('username')
-      : localStorage
-          .getItem('username')
-          .toLocaleUpperCase();
+      const user =
+        localStorage.getItem('username') == 'sigebiadmon'
+          ? localStorage.getItem('username')
+          : localStorage.getItem('username').toLocaleUpperCase();
       if (this.form.get('statusProceeding').value != '') {
         if (
           !['MARRIETA', 'SERA', 'DESARROLLO', 'ALEDESMA', 'JRAMIREZ'].includes(
@@ -3679,11 +3677,12 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                                 amount: this.selectData.quantity,
                                 exchangeValue: 1,
                                 approvedUserXAdmon:
-                                localStorage.getItem('username') == 'sigebiadmon'
-                                ? localStorage.getItem('username')
-                                : localStorage
-                                    .getItem('username')
-                                    .toLocaleUpperCase(),
+                                  localStorage.getItem('username') ==
+                                  'sigebiadmon'
+                                    ? localStorage.getItem('username')
+                                    : localStorage
+                                        .getItem('username')
+                                        .toLocaleUpperCase(),
                               };
                             this.serviceDetailProc
                               .addGoodToProceedings(newDetailProceeding)
