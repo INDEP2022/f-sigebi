@@ -418,8 +418,6 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     if (this.labelActa == 'Abrir acta') {
       this.fnOpenProceeding();
     } else if (this.labelActa == 'Cerrar acta') {
-      console.log('Funciono');
-      /* this.closeProceeding(); */
       this.newCloseProceeding();
     }
   }
@@ -2255,7 +2253,11 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                 const paramsF = new FilterParams();
                 let VAL_MOVIMIENTO = 0;
 
-                paramsF.addFilter('valUser', localStorage.getItem('username'));
+                paramsF.addFilter('valUser', localStorage.getItem('username') == 'sigebiadmon'
+                ? localStorage.getItem('username')
+                : localStorage
+                    .getItem('username')
+                    .toLocaleUpperCase());
                 paramsF.addFilter('valMinutesNumber', this.idProceeding);
                 this.serviceProgrammingGood
                   .getTmpProgValidation(paramsF.getParams())
@@ -2348,7 +2350,11 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
           const paramsF = new FilterParams();
           let VAL_MOVIMIENTO = 0;
 
-          paramsF.addFilter('valUser', localStorage.getItem('username'));
+          paramsF.addFilter('valUser', localStorage.getItem('username') == 'sigebiadmon'
+          ? localStorage.getItem('username')
+          : localStorage
+              .getItem('username')
+              .toLocaleUpperCase());
           paramsF.addFilter('valMinutesNumber', this.idProceeding);
           this.serviceProgrammingGood
             .getTmpProgValidation(paramsF.getParams())
@@ -2387,7 +2393,11 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                     address: this.form.get('direccion').value,
                     statusProceedings: 'ABIERTA',
                     /* elaborate: 'SERA', */
-                    elaborate: localStorage.getItem('username'),
+                    elaborate: localStorage.getItem('username') == 'sigebiadmon'
+                    ? localStorage.getItem('username')
+                    : localStorage
+                        .getItem('username')
+                        .toLocaleUpperCase(),
                     numFile: parseInt(this.idProceeding.toString()),
                     witness1: this.form.get('entrega').value,
                     witness2: this.form.get('recibe2').value,
@@ -2522,6 +2532,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     } else if (this.form.get('folioEscaneo').value == null) {
       this.alert('warning', 'No se registro número de folio', '');
     } else {
+      
       const paramsF = new FilterParams();
       paramsF.addFilter('keysProceedings', this.form.get('acta2').value);
       this.serviceProcVal.getByFilter(paramsF.getParams()).subscribe(
@@ -2545,12 +2556,16 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                 'Se encontraron bienes sin información requerida para este proceso'
               );
             } else {
-              this.validateFolio();
+              
               if (this.scanStatus) {
                 const paramsF = new FilterParams();
                 let VAL_MOVIMIENTO = 0;
 
-                paramsF.addFilter('valUser', localStorage.getItem('username'));
+                paramsF.addFilter('valUser', localStorage.getItem('username') == 'sigebiadmon'
+                ? localStorage.getItem('username')
+                : localStorage
+                    .getItem('username')
+                    .toLocaleUpperCase());
                 paramsF.addFilter('valMinutesNumber', this.idProceeding);
                 this.serviceProgrammingGood
                   .getTmpProgValidation(paramsF.getParams())
@@ -2577,14 +2592,8 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                             'Está fuera de tiempo para cerrar el acta',
                             ''
                           );
-                        } else if (
-                          this.form.get('folioEscaneo').value === null
-                        ) {
-                          this.alert(
-                            'warning',
-                            'Debe introducir el valor del folio',
-                            ''
-                          );
+                        } else {
+                          
                           const splitActa = this.form
                             .get('acta2')
                             .value.split('/');
@@ -3099,7 +3108,11 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     if (!this.act2Valid) {
       this.alert('warning', 'No se registro un número de acta válido', '');
     } else {
-      const user = localStorage.getItem('username');
+      const user = localStorage.getItem('username') == 'sigebiadmon'
+      ? localStorage.getItem('username')
+      : localStorage
+          .getItem('username')
+          .toLocaleUpperCase();
       if (this.form.get('statusProceeding').value != '') {
         if (
           !['MARRIETA', 'SERA', 'DESARROLLO', 'ALEDESMA', 'JRAMIREZ'].includes(
@@ -3162,57 +3175,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                           'Se recargará la página'
                         );
                         this.loading = true;
-                        /*
-                          this.clearInputs()
-                          this.loading = true
-                          this.form;
-                          this.goodsByExpediente()
-                          
- */ this.newSearchExp();
-                        /* this.getGoodsFn(); */
-
-                        /*  this.form
-                            .get('expediente')
-                            .setValue(this.numberExpedient);
-                          this.clearInputs();
-                          console.log(this.proceedingData.length);
-                          if (this.proceedingData.length === 1) {
-                            console.log('Primer if')
-                            this.navigateProceedings = false;
-                            this.nextProce = true;
-                            this.prevProce = true;
-                            this.numberProceeding = 0;
-                            this.form.get('statusProceeding').reset();
-                            this.labelActa = 'Cerrar acta';
-                            this.btnCSSAct = 'btn-primary';
-                          } else {
-                            this.proceedingData.filter((e: any) => {
-                              return e.keysProceedings != keysProceedings;
-                            });
-                            if (this.proceedingData.length === 1) {
-                              this.navigateProceedings = false;
-                              this.nextProce = true;
-                              this.prevProce = true;
-                              this.numberProceeding = 0;
-                              this.form.get('statusProceeding').reset();
-                              this.labelActa = 'Cerrar acta';
-                              this.btnCSSAct = 'btn-primary';
-                            } else {
-                              this.numberProceeding =
-                                0;
-                          this.getGoodsByExpedient();
-                            }
-                          }
-                          this.alert('success', 'Acta eliminada', '');
-                        },
-                        err => {
-                          console.log(err);
-
-                          this.alert(
-                            'error',
-                            'No se pudo eliminar acta',
-                            'Secudió un problema al eliminar el acta'
-                          ); */
+                        this.newSearchExp();
                       });
                   },
                   err => {
@@ -3716,7 +3679,11 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                                 amount: this.selectData.quantity,
                                 exchangeValue: 1,
                                 approvedUserXAdmon:
-                                  localStorage.getItem('username'),
+                                localStorage.getItem('username') == 'sigebiadmon'
+                                ? localStorage.getItem('username')
+                                : localStorage
+                                    .getItem('username')
+                                    .toLocaleUpperCase(),
                               };
                             this.serviceDetailProc
                               .addGoodToProceedings(newDetailProceeding)
@@ -4086,28 +4053,6 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         modalConfig = {
           initialState: {
             idProceeding: this.idProceeding,
-            /* goodData: this.dataGoodAct['data'].filter(item => item.indEdoFisico),
-          callback: (next: any) => {
-            console.log(next);
-            for (let item of next) {
-              console.log(item);
-              this.dataGoodAct.load(
-                this.dataGoodAct['data'].map((e: any) => {
-                  if (e.id === item.id) {
-                    console;
-                    console.log('cambio');
-                    return {
-                      ...e,
-                      [`val${item.vNoColumna}`]:
-                        item.good[`val${item.vNoColumna}`],
-                    };
-                  } else {
-                    return e;
-                  }
-                })
-              );
-            }
-          }, */
           },
           class: 'modal-lg modal-dialog-centered',
         };
