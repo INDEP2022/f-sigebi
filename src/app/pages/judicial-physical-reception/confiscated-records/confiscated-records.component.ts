@@ -2265,7 +2265,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                 this.alert(
                   'error',
                   'No se pudo abrir el acta',
-                  'Ocurrió un error que no permite abrir el acta'
+                  err.error.message
                 );
               }
             );
@@ -2549,6 +2549,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   }
 
   newCloseProceeding() {
+    this.validateFolio()
     if (this.dataGoodAct['data'].length == 0) {
       this.alert(
         'warning',
@@ -2604,7 +2605,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
             if (P5 > 0) {
               this.alert(
                 'warning',
-                'Bienes sin informacion requerida',
+                'Bienes sin información requerida',
                 'Se encontraron bienes sin información requerida para este proceso'
               );
               this.getNulls()
@@ -3631,9 +3632,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                 'Error en el tipo de bien',
                 'Bien con tipo inválido para el acta (INMUEBLE)'
               );
-            }
-            //Valida si el acta esta cerrada
-            if (
+            }else if (
               ['CERRADO', 'CERRADA'].includes(
                 this.form.get('statusProceeding').value
               )
