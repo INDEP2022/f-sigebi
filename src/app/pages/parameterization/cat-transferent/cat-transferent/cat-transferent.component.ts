@@ -268,18 +268,15 @@ export class CatTransferentComponent extends BasePage implements OnInit {
     this.stationService.remove(id).subscribe({
       next: () => {
         this.getStationByTransferent();
-        this.alert(
-          'success',
-          'Borrado',
-          ''
-        );
-      }, error: err => {
+        this.alert('success', 'Borrado', '');
+      },
+      error: err => {
         this.alert(
           'warning',
           'Emisoras',
           'No se puede eliminar debe eliminar sus AUTORIDADES'
         );
-      }
+      },
     });
   }
 

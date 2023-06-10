@@ -6,11 +6,6 @@ import { COLUMNS } from './columns';
 
 //Provisional Data
 import { BasePageWidhtDinamicFilters } from 'src/app/core/shared/base-page-dinamic-filters';
-import {
-  ICreateConfirmEvent,
-  IDeleteConfirmEvent,
-  IEditConfirmEvent,
-} from '../../../../../core/interfaces/ng2-smart-table.interface';
 import { IComerSaleStatus } from '../../../../../core/models/ms-event/sale-status.model';
 import { ComerSaleStatusService } from '../../../../../core/services/ms-event/comer-sale-status.service';
 import { SaleStatusFormComponent } from '../sale-status-form/sale-status-form.component';
@@ -22,7 +17,8 @@ import { SaleStatusFormComponent } from '../sale-status-form/sale-status-form.co
 })
 export class SaleStatusComponent
   extends BasePageWidhtDinamicFilters
-  implements OnInit {
+  implements OnInit
+{
   saleStatusD: IComerSaleStatus[];
   selectedRow: IComerSaleStatus | null = null;
 
@@ -59,7 +55,6 @@ export class SaleStatusComponent
     };
     this.modalService.show(SaleStatusFormComponent, config);
   }
-
 
   onDeleteConfirm(data: any): void {
     this.alertQuestion(

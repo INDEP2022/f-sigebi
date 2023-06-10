@@ -9,7 +9,6 @@ import {
 import { ILegalAffair } from 'src/app/core/models/catalogs/legal-affair-model';
 import { LegalAffairService } from 'src/app/core/services/catalogs/legal-affair.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import Swal from 'sweetalert2';
 import { LegalAffairDetailComponent } from '../legal-affair-detail/legal-affair-detail.component';
 import { LEGAL_AFFAIR_COLUMNS } from './columns';
 

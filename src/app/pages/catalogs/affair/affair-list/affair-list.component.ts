@@ -9,7 +9,6 @@ import {
 import { IAffair } from 'src/app/core/models/catalogs/affair.model';
 import { AffairService } from 'src/app/core/services/catalogs/affair.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import Swal from 'sweetalert2';
 import { AffailrDetailComponent } from '../affailr-detail/affailr-detail.component';
 import { AFFAIR_COLUMNS } from './columns';
 
