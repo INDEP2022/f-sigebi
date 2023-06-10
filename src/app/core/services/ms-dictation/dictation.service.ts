@@ -261,4 +261,8 @@ export class DictationService extends HttpService {
     const route = `${DictationEndpoints.FactJur}`;
     return this.get(route + `/${typeDict}`);
   }
+
+  getNoGoodClass(data: Object) {
+    return this.post(DictationEndpoints.GetGoodClass, data);
+  }
 }
