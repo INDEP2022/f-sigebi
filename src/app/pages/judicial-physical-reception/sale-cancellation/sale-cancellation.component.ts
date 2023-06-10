@@ -2262,6 +2262,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
   deleteProceeding() {
     const perm = 1;
 
+    console.log('delete')
     if (perm == 1) {
       if (
         ['CERRADO', 'CERRADA'].includes(this.form.get('statusProceeding').value)
@@ -2282,7 +2283,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
           'No puede eliminar un Acta fuera del mes de elaboración'
         );
       }
-    } else if (
+     else if (
       this.act2Valid &&
       this.form.get('statusProceeding').value != null
     ) {
@@ -2337,6 +2338,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
       );
     }
   }
+}
 
   getWarehouses(params: ListParams) {
     const paramsF = new FilterParams();
