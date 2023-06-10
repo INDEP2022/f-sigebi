@@ -131,4 +131,8 @@ export class ProceedingsService extends HttpService {
   updateActasEntregaRTurno(body: any) {
     return this.put<IListResponse<any>>(`${this.endpointU}`, body);
   }
+
+  insertsAndUpdatesValmotosOne(model: Object) {
+    return this.post<IListResponse>('aplication/get-detail-acta-types', model);
+  }
 }

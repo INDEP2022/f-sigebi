@@ -7,12 +7,13 @@ import {
   POSITVE_NUMBERS_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
+import { IVal } from '../goods-characteristics/good-table-vals/good-table-vals.component';
 
 @Injectable({
   providedIn: 'root',
 })
 export class GoodsCharacteristicsService {
-  good: IGood | any;
+  good: IGood;
   form: FormGroup;
   disabledBienes = true;
   disabledTable = true;
@@ -21,7 +22,9 @@ export class GoodsCharacteristicsService {
   haveTdictaUser = false;
   di_numerario_conciliado = 'No conciliado';
   newGood: any;
+  data: IVal[];
   goodChange = new Subject<boolean>();
+  v_bien_inm: boolean;
   constructor(private fb: FormBuilder) {}
 
   prepareForm() {
@@ -33,7 +36,10 @@ export class GoodsCharacteristicsService {
       noBien: [null, [Validators.pattern(POSITVE_NUMBERS_PATTERN)]],
       noClasif: [null, [Validators.pattern(POSITVE_NUMBERS_PATTERN)]],
       status: [null, [Validators.pattern(STRING_PATTERN)]],
-      descripcion: [null, [Validators.pattern(STRING_PATTERN)]],
+      descripcion: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       unidad: [null, [Validators.pattern(STRING_PATTERN)]],
       cantidad: [null, [Validators.pattern(DOUBLE_POSITIVE_PATTERN)]],
       delegation: [null],
