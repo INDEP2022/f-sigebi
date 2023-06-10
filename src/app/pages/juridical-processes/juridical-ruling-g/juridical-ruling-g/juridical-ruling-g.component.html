@@ -439,13 +439,15 @@
         <h5 class="title">BIENES</h5>
         <br />
         <form-loader *ngIf="formLoading"></form-loader>
-        <ng2-smart-table
-          *ngIf="!formLoading"
-          id="bienesJuridicos"
-          (rowSelect)="onSelectedRow($event)"
-          [attr.class]="'table-bordered table-responsive'"
-          [settings]="settings1"
-          [source]="goods"></ng2-smart-table>
+        <div>
+          <ng2-smart-table
+            *ngIf="!formLoading"
+            id="bienesJuridicos"
+            (rowSelect)="onSelectedRow($event)"
+            [attr.class]="'table-bordered table-responsive'"
+            [settings]="settings1"
+            [source]="goods"></ng2-smart-table>
+        </div>
         <div class="d-flex justify-content-between">
           <p class="text-danger mt-2 ml-3">
             <strong>{{ desc_estatus_good }}</strong>

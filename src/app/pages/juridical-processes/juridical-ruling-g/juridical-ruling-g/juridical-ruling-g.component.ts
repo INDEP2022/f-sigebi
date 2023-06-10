@@ -91,7 +91,7 @@ export class JuridicalRulingGComponent
   selectedGooods: IGood[] = [];
   selectedGooodsValid: IGood[] = [];
   goods: IGood[] | any[] = TempGood;
-  goodsValid: IGood[] = [];
+  goodsValid: any[] = [];
   documents: any[] = [];
   selectedDocuments: IDocuments[] = [];
   statusDict: string = undefined;
@@ -258,7 +258,7 @@ export class JuridicalRulingGComponent
         title: 'No. Bien',
         type: 'number',
       },
-      description: {
+      descriptionDict: {
         sort: false,
         title: 'Descripción Dictaminación',
         type: 'string',
@@ -268,7 +268,7 @@ export class JuridicalRulingGComponent
         title: 'Menaje',
         type: 'string',
       },
-      quantity: {
+      amountDict: {
         sort: false,
         title: 'Cant. Dictaminación',
         type: 'string',
@@ -547,11 +547,12 @@ export class JuridicalRulingGComponent
     return null;
   }
 
-  changeNumExpediente() {
+  async changeNumExpediente() {
     this.resetALL();
-    this.onLoadGoodList(0, 'all');
-    this.onLoadExpedientData();
-    this.onLoadDictationInfo(0, 'all');
+    await this.onLoadDictationInfo(0, 'all');
+
+    await this.onLoadExpedientData();
+    await this.onLoadGoodList(0, 'all');
   }
 
   onKeyPress($event: any) {
@@ -661,7 +662,7 @@ export class JuridicalRulingGComponent
     return this.expedientesForm.get('tipoDictaminacion');
   }
 
-  onLoadExpedientData() {
+  async onLoadExpedientData() {
     let noExpediente = this.expedientesForm.get('noExpediente').value || '';
     if (noExpediente !== '') {
       const body = {
@@ -827,6 +828,7 @@ export class JuridicalRulingGComponent
           this.buttonDeleteDisabled = true;
         }
         this.buttonApr = false;
+
         await this.checkDictumXGood(this.dictamen);
         await this.getOficioDictamen(this.dictamen);
       },
@@ -940,6 +942,12 @@ export class JuridicalRulingGComponent
     this.DictationXGood1Service.getAll(params).subscribe({
       next: async (data: any) => {
         // this.dictamenesXBien1 = data.data;
+
+        let result = data.data.map(async (item: any) => {
+          item['status'] = item.good.status;
+          item['extDomProcess'] = item.good.extDomProcess;
+        });
+        this.goodsValid = data.data;
         this.dictamenXGood1 = data.data[0];
         console.log('DATA DICTXGOOD', data);
 
@@ -953,6 +961,15 @@ export class JuridicalRulingGComponent
     });
   }
 
+  arrgetFunt(Dicta: any) {
+    let arr: any = [];
+    for (let i = 0; i < this.arrDXG.length; i++) {
+      if (this.arrDXG[i].id == Dicta.id) {
+        arr.push(this.arrDXG[i]);
+      }
+    }
+    return arr;
+  }
   numberClassifyGood: string;
   typeDictation: string;
   crime: string;
@@ -1500,7 +1517,7 @@ export class JuridicalRulingGComponent
                   good.est_disponible = state.EST_DISPONIBLE;
                   good.v_amp = state.v_amp ? state.v_amp : null;
                   good.pDiDescStatus = state.pDiDescStatus;
-                  this.desc_estatus_good = state.pDiDescStatus;
+                  // this.desc_estatus_good = state.pDiDescStatus;
                   resolve(state);
                 },
                 error: () => {
@@ -1635,6 +1652,7 @@ export class JuridicalRulingGComponent
   /**
    * Listado de bienes según No. de expediente
    */
+  arrDXG: any[] = [];
   async onLoadGoodList(id: any, filter: any) {
     this.formLoading = true;
     this.loading = true;
@@ -1652,12 +1670,19 @@ export class JuridicalRulingGComponent
           let arrD: any = [];
           let result = data.map(async (good: any) => {
             good.di_disponible = 'S';
-            const dictamenXGood1: any = await this.getDictaXGood(good.id);
 
+            const dictamenXGood1: any = await this.getDictaXGood(
+              good.id,
+              this.dictamen.id
+            );
+            console.log(dictamenXGood1);
             if (dictamenXGood1 != null) {
-              arr.push(good);
-              arrD.push(dictamenXGood1);
+              if (dictamenXGood1.ofDictNumber == this.dictamen.id) {
+                arr.push(good);
+                arrD.push(dictamenXGood1);
+              }
             }
+
             await new Promise((resolve, reject) => {
               const body = {
                 pGoodNumber: good.goodId,
@@ -1721,8 +1746,11 @@ export class JuridicalRulingGComponent
           Promise.all(result).then((resp: any) => {
             console.log('this.goods', arr);
             this.goods = data;
-            let arr2 = [];
-            this.goodsValid = arr;
+            // let arr2 = [];
+            // this.arrDXG = arr;
+
+            // this.goodsValid = arr;
+
             // for (let i = 0; i < arrD.length; i++) {
             //   if (id == arrD[i].ofDictNumber) {
             //     arr2.push(arr[i])
@@ -1750,9 +1778,16 @@ export class JuridicalRulingGComponent
       });
   }
 
-  getDictaXGood(id: any) {
+  async getDictXGood() {}
+
+  getDictaXGood(id: any, filter: any) {
     const params = new ListParams();
+    // if (filter == null) {
+    //   params['filter.id'] = `$eq:${id}`;
+    // } else {
     params['filter.id'] = `$eq:${id}`;
+    params['filter.ofDictNumber'] = `$eq:${filter}`;
+    // }
     return new Promise((resolve, reject) => {
       this.DictationXGood1Service.getAll(params).subscribe({
         next: (resp: any) => {

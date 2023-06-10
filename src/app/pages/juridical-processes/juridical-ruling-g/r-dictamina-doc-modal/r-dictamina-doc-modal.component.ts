@@ -68,6 +68,12 @@ export class RDictaminaDocModalComponent extends BasePage implements OnInit {
         this.crime, //ok
         SearchFilter.EQ
       );
+    } else {
+      params.addFilter(
+        'crime',
+        'N', //ok
+        SearchFilter.EQ
+      );
     }
 
     params.addFilter(
