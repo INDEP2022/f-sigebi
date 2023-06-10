@@ -1773,8 +1773,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
                 err => {
                   this.closeProceedingFn();
                 }
-              );
-          
+              );          
         },
         err => {
           console.log(err);
