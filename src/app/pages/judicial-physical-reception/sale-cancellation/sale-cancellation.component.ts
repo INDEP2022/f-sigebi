@@ -61,6 +61,8 @@ import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-ele
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { EdoFisicoComponent } from '../confiscated-records/edo-fisico/edo-fisico.component.component';
 import { columnsGoodAct } from '../confiscated-records/settings-tables';
+import { HistoryGoodService } from 'src/app/core/services/ms-history-good/history-good.service';
+import { IHistoryGood } from 'src/app/core/models/administrative-processes/history-good.model';
 
 @Component({
   selector: 'app-sale-cancellation',
@@ -243,7 +245,8 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
     private serviceVault: SafeService,
     private modalService: BsModalService,
     private serviceNotification: NotificationService,
-    private serviceProceeding: ProceedingsService
+    private serviceProceeding: ProceedingsService,
+    private serviceHistoryGood: HistoryGoodService,
   ) {
     super();
   }
@@ -1716,7 +1719,6 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
   }
 
   newCloseProceeding() {
-    this.validateFolio();
     if (this.dataGoodAct['data'].length == 0) {
       this.alert(
         'warning',
@@ -1747,7 +1749,6 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
       paramsF.addFilter('keysProceedings', this.form.get('acta2').value);
       this.serviceProcVal.getByFilter(paramsF.getParams()).subscribe(
         res => {
-          if(this.scanStatus){
             const resData = JSON.parse(JSON.stringify(res.data))[0];
             const paramsF = new FilterParams();
             let VAL_MOVIMIENTO = 0;
@@ -1772,11 +1773,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
                 err => {
                   this.closeProceedingFn();
                 }
-              );
-          }else{
-            this.alert('warning', 'El folio no ha sido escaneado', '');
-          }
-          
+              );          
         },
         err => {
           console.log(err);
@@ -1980,6 +1977,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
 
   //*Agregar bienes
   newAddGood() {
+    console.log()
     if (this.selectData != null) {
       if (
         ['CERRADO', 'CERRADA'].includes(this.form.get('statusProceeding').value)
@@ -2032,46 +2030,105 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
                           AND EXP.IDENTIFICADOR      = :BLK_BIE.IDENTIFICADOR
                            AND EXP.PROCESO_EXT_DOM	 = BIE.PROCESO_EXT_DOM
               */
+
+                const user = localStorage
+                .getItem('username') == 'sigebiadmon' ?  localStorage
+                .getItem('username') :
+                localStorage
+                .getItem('username').toLocaleUpperCase()
+
                 let newDetailProceeding: IDetailProceedingsDeliveryReception = {
                   numberProceedings: data.id,
-                  numberGood: this.selectData.id,
+                  numberGood: this.selectData.goodId,
                   amount: this.selectData.quantity,
                   exchangeValue: 1,
                   received: 'S',
-                  approvedUserXAdmon: localStorage
-                    .getItem('username')
-                    .toLocaleUpperCase(),
+                  approvedUserXAdmon: user,
                 };
-                this.serviceDetailProc
-                  .addGoodToProceedings(newDetailProceeding)
-                  .subscribe(
-                    res => {
-                      this.dataGoods.load(
-                        this.dataGoods['data'].map((e: any) => {
-                          if (e.id == this.selectData.id) {
-                            return { ...e, avalaible: false };
-                          } else {
-                            return e;
-                          }
-                        })
-                      );
-                      /* console.log(dataTry.data); */
-                      this.getGoodsActFn();
+                
+                const modelHistoryGood: IHistoryGood = {
+                  propertyNum: this.selectData.goodId,
+                  status: this.selectData.status,
+                  changeDate: new Date().toISOString(),
+                  userChange: user,
+                  statusChangeProgram: 'FACTREFACTAVENT',
+                  reasonForChange: 'Estatus actual al agregar a acta',
+                  extDomProcess: this.selectData.extDomProcess
+                }
 
-                      /* console.log(this.dataGoods);
-                      this.goodData.push(this.selectData);
-                      this.dataGoodAct.load(this.goodData);
-                      console.log(this.dataGoodAct);
-                      this.selectData = null; */
-                    },
-                    err => {
-                      this.alert(
-                        'error',
-                        'Ocurrió un erro inesperado al intentar mover el bien',
-                        'Ocurrió un error inesperado al intentar mover el bien. Por favor intentelo nuevamente'
-                      );
+                this.serviceHistoryGood.create(modelHistoryGood).subscribe(
+                  res => {
+                    this.serviceDetailProc
+                    .addGoodToProceedings(newDetailProceeding)
+                    .subscribe(
+                      res => {
+                        this.dataGoods.load(
+                          this.dataGoods['data'].map((e: any) => {
+                            if (e.id == this.selectData.id) {
+                              return { ...e, avalaible: false };
+                            } else {
+                              return e;
+                            }
+                          })
+                        );
+                        /* console.log(dataTry.data); */
+                        this.getGoodsActFn();
+  
+                        /* console.log(this.dataGoods);
+                        this.goodData.push(this.selectData);
+                        this.dataGoodAct.load(this.goodData);
+                        console.log(this.dataGoodAct);
+                        this.selectData = null; */
+                      },
+                      err => {
+                        this.alert(
+                          'error',
+                          'Ocurrió un erro inesperado al intentar mover el bien',
+                          'Ocurrió un error inesperado al intentar mover el bien. Por favor intentelo nuevamente'
+                        );
+                      }
+                    );
+                  },
+                  err =>{
+                    if(err.error.message == 'duplicate key value violates unique constraint "his_est_bie_pk"'){
+                      this.serviceDetailProc
+                    .addGoodToProceedings(newDetailProceeding)
+                    .subscribe(
+                      res => {
+                        this.dataGoods.load(
+                          this.dataGoods['data'].map((e: any) => {
+                            if (e.id == this.selectData.id) {
+                              return { ...e, avalaible: false };
+                            } else {
+                              return e;
+                            }
+                          })
+                        );
+                        /* console.log(dataTry.data); */
+                        this.getGoodsActFn();
+  
+                        /* console.log(this.dataGoods);
+                        this.goodData.push(this.selectData);
+                        this.dataGoodAct.load(this.goodData);
+                        console.log(this.dataGoodAct);
+                        this.selectData = null; */
+                      },
+                      err => {
+                        this.alert(
+                          'error',
+                          'Ocurrió un erro inesperado al intentar mover el bien',
+                          'Ocurrió un error inesperado al intentar mover el bien. Por favor intentelo nuevamente'
+                        );
+                      }
+                    );
+                    }else{
+                      this.alert('error','Se presentó un error inesperado','')
                     }
-                  );
+                  }
+                )
+
+
+                
               }
             },
             err => {
