@@ -498,10 +498,9 @@ export class RelatedDocumentsComponent
         Promise.all(result).then((data: any) => {
           this.filtroPersonaExt = resp.data;
           this.copyOficio = resp.data;
+          console.log('El usuario tiene', resp.count);
           this.loading = false;
         });
-
-        console.log('COPYYYY', resp);
         this.loading = false;
         // resolve(resp);
       },
@@ -1114,8 +1113,13 @@ export class RelatedDocumentsComponent
   }
 
   changeOffice() {
-    const elem = document.getElementById('se_refiere_a_C') as HTMLInputElement;
-    elem.checked = true;
+    const elemC = document.getElementById('se_refiere_a_C') as HTMLInputElement;
+    elemC.checked = true;
+    const elemB = document.getElementById('se_refiere_a_B') as HTMLInputElement;
+    elemB.checked = false;
+    const elemA = document.getElementById('se_refiere_a_A') as HTMLInputElement;
+    elemA.checked = false;
+
     this.se_refiere_a_Disabled.C = false;
     if (this.paramsGestionDictamen.sale == 'C') {
       this.alertInfo('warning', PARAMETERSALEC, '');
@@ -1767,11 +1771,6 @@ export class RelatedDocumentsComponent
   async showDeleteAlert(legend?: any) {
     //ILegend
     //Desea eliminar el oficio con el expediente ${proceedingsNumber} y No. Oficio ${managementNumber}
-    console.log(legend);
-    console.log(this.managementForm.value);
-    console.log(this.formJobManagement.value);
-    console.log(this.m_job_management);
-    console.log(this.dataTableGoods);
     const {
       noVolante, //no_volante
       wheelStatus, //status
@@ -1790,11 +1789,13 @@ export class RelatedDocumentsComponent
       this.onLoadToast('info', 'No se tiene oficio', '');
       return;
     }
+
     if (wheelStatus == 'ENVIADO') {
       this.onLoadToast('info', 'El oficio ya esta enviado no puede borrar', '');
       return;
     }
-    /*if (cveManagement.includes('?') == false) {
+
+    if (cveManagement.includes('?') == false) {
       this.onLoadToast(
         'info',
         'La clave está armada, no puede borrar oficio',
@@ -1802,10 +1803,11 @@ export class RelatedDocumentsComponent
       );
       return;
     }
+
     if (insertUser != this.authUser.username) {
       const ATJR: any = await this.userHavePermission();
       console.log(ATJR);
-      if (ATJR == 0) {
+      if (Number(ATJR[0]) == 0) {
         this.onLoadToast(
           'error',
           'Error',
@@ -1816,7 +1818,7 @@ export class RelatedDocumentsComponent
     } else {
       this.onLoadToast('error', 'Error', 'Usuario inválido para borrar oficio');
       return;
-    }*/
+    }
 
     this.alertQuestion(
       'warning',
@@ -1825,136 +1827,128 @@ export class RelatedDocumentsComponent
     ).then(question => {
       if (question.isConfirmed) {
         if (this.pantallaActual == '1') {
-          this.delete(managementNumber, noVolante, insertDate);
+          this.deleteOfficeDesahogo(managementNumber, noVolante, insertDate);
           //Swal.fire('Borrado', '', 'success');
+        } else {
+          this.deleteOfficeRelacionado(managementNumber, noVolante);
         }
       }
     });
   }
 
-  async delete(
+  async deleteOfficeDesahogo(
     managementNumber: number | string,
     noVolante: number | string,
     insertDate: string //m_job_management date insert
   ) {
     //console.log(this.dataTableGoodsJobManagement);
     //LOOP BIENES_OFICIO_ESTATUS
-    let result = await this.dataTableGoodsJobManagement.map(
-      async (item: any) => {
-        const p_dictamen = Number(this.paramsGestionDictamen.pDictamen);
-        if (p_dictamen == 25) {
-          const PREXDO_ANTERIOR = await this.getProcessExtDom(item.good.id);
-
-          const f_cambio: any = await this.getChangeDate(item.good.id);
-
-          const FECHA_INSERTO = new Date(insertDate);
-          const FECHA_CAMBIO = new Date(f_cambio.data[0].date);
-
-          if (FECHA_CAMBIO == FECHA_INSERTO) {
-            this.dataTableGoods.filter(
-              x => x.id == item.goodNumber
-            )[0].extDomProcess = PREXDO_ANTERIOR.toString();
-            const body = {
-              id: item.good.id,
-              recordId: item.good.goodId,
-              extDomProcess: item.good.extDomProcess,
-            };
-            await this.updateGood(body);
-          } else {
-            const body = {
-              id: item.good.id,
-              recordId: item.good.goodId,
-              extDomProcess: item.good.extDomProcess,
-            };
-            await this.updateGood(body);
-          }
-        } else {
-          console.log(item);
-          let EST_ANTERIOR = null;
-          const body = {
-            pGoodNumber: item.good.id,
-            pStatus: item.good.status,
-            pScreen: 'FACTADBOFICIOGEST',
+    let limit = 10;
+    let page = 1;
+    let quantity = 10;
+    let goodOfficeManagement: any = null;
+    let exit = false;
+    const getData = async () => {
+      do {
+        goodOfficeManagement = await this.getGoodOfficeManagements(page, limit);
+        goodOfficeManagement.data.map(async (item: any) => {
+          const INSERT_DATE = insertDate;
+          const body: any = {
+            insertDate: INSERT_DATE,
+            goodNum: item.goodNumber.id,
+            processExtDom: item.goodNumber.extDomProcess,
+            screen: 'FACTADBOFICIOGEST',
+            dictum: managementNumber,
+            status: item.goodNumber.status,
           };
-          EST_ANTERIOR = await this.getEstPreviousHistory(body);
-
-          if (EST_ANTERIOR == null) {
-            EST_ANTERIOR = await this.getEstPreviousHistory2(body);
-
-            if (EST_ANTERIOR == null) {
-              EST_ANTERIOR = item.good.status; // BIEN_OFICIO_ESTATUS.STATUS
-            }
-          }
-
-          const f_cambio: any = await this.getChangeDate(item.good.id);
-
-          const FECHA_CAMBIO = new Date(f_cambio.data[0].date);
-          const FECHA_INSERTO = new Date(insertDate);
-
-          if (FECHA_CAMBIO == FECHA_INSERTO) {
-            //actualiar bien
-            const body: any = {
-              id: item.good.id,
-              recordId: item.good.goodId,
-              status: EST_ANTERIOR,
-            };
-            await this.updateGood(body);
-          } else {
-            //actualizar bien
-            const body: any = {
-              id: item.good.id,
-              recordId: item.good.goodId,
-              status: item.good.status,
-            };
-            await this.updateGood(body);
-          }
-        }
-      }
-    );
-
-    Promise.all(result).then(() => {
-      console.log(result);
-
-      this.officeManagementSerivice
-        .removeGoodOfficeManagement(managementNumber)
-        .subscribe({
-          next: resp => {
-            this.officeManagementSerivice
-              .removeCopiesManagement(managementNumber)
-              .subscribe({
-                next: resp => {
-                  this.officeManagementSerivice
-                    .removeMOfficeManagement(managementNumber)
-                    .subscribe({
-                      next: async () => {
-                        const existDictamen: any = await this.dictationCount(
-                          noVolante
-                        );
-                        if (existDictamen.count == 0) {
-                          const notifBody: any = { dictumKey: null };
-                          this.notificationService
-                            .update(Number(noVolante), notifBody)
-                            .subscribe({
-                              next: resp => {
-                                Swal.fire('Borrado', '', 'success');
-                                console.log('resp  =>  ' + resp);
-                                this.refreshTabla();
-                              },
-                            });
-                        } else {
-                          Swal.fire('Borrado', '', 'success');
-                          this.refreshTabla();
-                        }
-                      },
-                    });
-                },
-                error: (errror: { error: { message: string } }) => {
-                  this.onLoadToast('error', 'Error', errror.error.message);
-                },
-              });
-          },
+          const validation = await this.validateGDateToUpdateGoodStatus(body);
         });
-    });
+
+        if (quantity < goodOfficeManagement.count) {
+          page = page + 1;
+          quantity = quantity + 10;
+        } else {
+          exit = true;
+        }
+      } while (exit == false);
+    };
+    //const res = await getData();
+
+    const management = managementNumber;
+    const volante = noVolante;
+    //se elimina bienes_officio_gestion
+    this.officeManagementSerivice
+      .removeGoodOfficeManagement(managementNumber)
+      .subscribe({
+        next: resp => {
+          //se elimina COPIAS_OFICIO_GESION
+          this.officeManagementSerivice
+            .removeCopiesManagement(managementNumber)
+            .subscribe({
+              next: resp => {
+                //se elimina DOCUM_OFICIO_GESTION
+                this.officeManagementSerivice
+                  .removeDocumOfficeManagement(managementNumber)
+                  .subscribe({
+                    next: resp => {
+                      //se elimina M_OFICIO_GESTION
+                      this.officeManagementSerivice
+                        .removeMOfficeManagement(managementNumber)
+                        .subscribe({
+                          next: async () => {
+                            //selecciona los dictamenes segun el no_volante
+                            const existDictamen: any =
+                              await this.dictationCount(noVolante);
+                            //actuliza si no tiene dictamenes
+                            if (existDictamen.count == 0) {
+                              const notifBody: any = { dictumKey: null };
+                              this.notificationService
+                                .update(Number(noVolante), notifBody)
+                                .subscribe({
+                                  next: resp => {
+                                    Swal.fire('Borrado', '', 'success');
+                                    console.log('resp  =>  ' + resp);
+                                    this.refreshTabla();
+                                  },
+                                  error: (error: {
+                                    error: { message: string };
+                                  }) => {
+                                    this.onLoadToast(
+                                      'error',
+                                      'Error al actualizar',
+                                      error.error.message
+                                    );
+                                  },
+                                });
+                            } else {
+                              Swal.fire('Borrado', '', 'success');
+                              this.refreshTabla();
+                            }
+                          },
+                          error: (error: { error: { message: string } }) => {
+                            this.onLoadToast(
+                              'error',
+                              'Error',
+                              error.error.message
+                            );
+                          },
+                        });
+                    },
+                    error: error => {
+                      this.onLoadToast('error', 'Error', error.error.message);
+                    },
+                  });
+              },
+              error: (errror: { error: { message: string } }) => {
+                this.onLoadToast('error', 'Error', errror.error.message);
+              },
+            });
+        },
+        error: error => {
+          this.onLoadToast('error', 'Error al eliminar', error.error.message);
+        },
+      });
+
     /*
     //actualiza cve_dictamen 
     const notifBody:any = {dictumKey: null}
@@ -1964,6 +1958,78 @@ export class RelatedDocumentsComponent
       }
     })
     */
+  }
+
+  deleteOfficeRelacionado(
+    managementNumber: number | string,
+    noVolante: number | string
+  ) {
+    const management = managementNumber;
+    const volante = noVolante;
+    //se elimina bienes_officio_gestion
+    this.officeManagementSerivice
+      .removeGoodOfficeManagement(managementNumber)
+      .subscribe({
+        next: resp => {
+          //se elimina COPIAS_OFICIO_GESION
+          this.officeManagementSerivice
+            .removeCopiesManagement(managementNumber)
+            .subscribe({
+              next: resp => {
+                //se elimina DOCUM_OFICIO_GESTION
+                this.officeManagementSerivice
+                  .removeDocumOfficeManagement(managementNumber)
+                  .subscribe({
+                    next: resp => {
+                      //se elimina M_OFICIO_GESTION
+                      this.officeManagementSerivice
+                        .removeMOfficeManagement(managementNumber)
+                        .subscribe({
+                          next: async () => {
+                            //actualiza los dictamenes en notificaciones
+                            const notifBody: any = { dictumKey: null };
+                            this.notificationService
+                              .update(Number(noVolante), notifBody)
+                              .subscribe({
+                                next: resp => {
+                                  Swal.fire('Borrado', '', 'success');
+                                  console.log('resp  =>  ' + resp);
+                                  this.refreshTabla();
+                                },
+                                error: (error: {
+                                  error: { message: string };
+                                }) => {
+                                  this.onLoadToast(
+                                    'error',
+                                    'Error al actualizar',
+                                    error.error.message
+                                  );
+                                },
+                              });
+                          },
+                          error: (error: { error: { message: string } }) => {
+                            this.onLoadToast(
+                              'error',
+                              'Error',
+                              error.error.message
+                            );
+                          },
+                        });
+                    },
+                    error: error => {
+                      this.onLoadToast('error', 'Error', error.error.message);
+                    },
+                  });
+              },
+              error: (errror: { error: { message: string } }) => {
+                this.onLoadToast('error', 'Error', errror.error.message);
+              },
+            });
+        },
+        error: error => {
+          this.onLoadToast('error', 'Error al eliminar', error.error.message);
+        },
+      });
   }
 
   changeCopiesType(event: any, ccp: number) {
@@ -2523,7 +2589,6 @@ export class RelatedDocumentsComponent
   userHavePermission() {
     //private useR: SegAcessXAreasService
     return new Promise((resolve, reject) => {
-      debugger;
       const body: any = {
         delegacionNo: this.authUser.department,
         user: this.authUser.username,
@@ -2796,5 +2861,75 @@ export class RelatedDocumentsComponent
       ignoreBackdropClick: true,
     };
     this.modalService.show(PgrFilesComponent, config);
+  }
+
+  getGoodOfficeManagements(page: number, limit: number) {
+    return new Promise((resolve, reject) => {
+      const params = new ListParams();
+      params['filter.managementNumber'] =
+        this.formJobManagement.value.managementNumber;
+      params.limit = limit;
+      params.page = page;
+      this.serviceOficces.getGoodsJobManagement(params).subscribe({
+        next: resp => {
+          resolve(resp);
+        },
+        error: error => {
+          resolve(null);
+        },
+      });
+    });
+  }
+
+  validateGDateToUpdateGoodStatus(body: any) {
+    return new Promise((resolve, reject) => {
+      this.goodHistoryService.validateDateToUpdateStatus(body).subscribe({
+        next: resp => {
+          resolve(resp);
+        },
+        error: error => {
+          reject('error');
+          this.onLoadToast(
+            'error',
+            'Error en la validacion',
+            'No se pudo validar las fechas'
+          );
+        },
+      });
+    });
+  }
+
+  setMonthsAndDay(month: number) {
+    let result = month.toString();
+    if (month === 1) {
+      result = '01';
+    } else if (month === 2) {
+      result = '02';
+    } else if (month === 3) {
+      result = '03';
+    } else if (month === 4) {
+      result = '04';
+    } else if (month === 5) {
+      result = '05';
+    } else if (month === 6) {
+      result = '06';
+    } else if (month === 7) {
+      result = '07';
+    } else if (month === 8) {
+      result = '08';
+    } else if (month === 9) {
+      result = '09';
+    }
+
+    return result;
+  }
+  convertdateNumeric(date: Date) {
+    return (
+      date.getFullYear() +
+      '-' +
+      this.setMonthsAndDay(date.getMonth()) +
+      '-' +
+      date.getDate()
+    );
   }
 }

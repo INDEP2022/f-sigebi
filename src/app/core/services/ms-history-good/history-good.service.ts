@@ -101,4 +101,9 @@ export class HistoryGoodService extends HttpService {
     const route = HistoryGoodEndpoints.GetEstPreviousHistory2;
     return this.post(`${route}`, body);
   }
+
+  validateDateToUpdateStatus(body: any) {
+    const route = HistoryGoodEndpoints.ValidateDatesToUpdateStatus;
+    return this.post(`${route}`, body);
+  }
 }
