@@ -2383,7 +2383,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                               this.form
                                 .get('statusProceeding')
                                 .setValue('ABIERTA');
-                              this.getGoodsActFn()
+                              this.getGoodsActFn();
                               this.reopening = true;
                               this.inputsReopenProceeding();
                               this.saveDataAct = [];
