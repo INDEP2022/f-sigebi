@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { SelectListFilteredModalComponent } from 'src/app/@standalone/modals/select-list-filtered-modal/select-list-filtered-modal.component';
@@ -58,11 +59,12 @@ export class GoodTableValsComponent extends BasePage implements OnInit {
   limit: FormControl = new FormControl(5);
   params = new BehaviorSubject<ListParams>(new ListParams());
   val_atributos_inmuebles = 0;
-  dataPaginated: IVal[];
+  dataPaginated: LocalDataSource = new LocalDataSource();
   actualiza: boolean;
   requerido: boolean;
   selectedRow: number;
   totalItems = 0;
+  dataTemp: IVal[];
   constructor(
     private goodsqueryService: GoodsQueryService,
     private goodService: GoodService,
@@ -111,6 +113,7 @@ export class GoodTableValsComponent extends BasePage implements OnInit {
       },
     };
     this.params.value.limit = 5;
+    this.searchNotServerPagination();
   }
 
   get di_numerario_conciliado() {
@@ -150,6 +153,35 @@ export class GoodTableValsComponent extends BasePage implements OnInit {
         ? this.form.get('avaluo').value
         : false
       : false;
+  }
+
+  private searchNotServerPagination() {
+    this.dataPaginated
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          // this.data = this.dataOld;
+          // debugger;
+          let filters = change.filter.filters;
+          filters.map((filter: any, index: number) => {
+            console.log(filter, index);
+            if (index === 0) {
+              this.dataTemp = [...this.data];
+            }
+            this.dataTemp = this.dataTemp.filter((item: any) =>
+              filter.search !== ''
+                ? (item[filter['field']] + '').includes(filter.search)
+                : true
+            );
+          });
+          // this.totalItems = filterData.length;
+          console.log(this.dataTemp);
+          this.totalItems = this.dataTemp.length;
+          this.params.value.page = 1;
+          this.getPaginated(this.params.getValue());
+        }
+      });
   }
 
   private haveUpdate(update: string) {
@@ -226,7 +258,8 @@ export class GoodTableValsComponent extends BasePage implements OnInit {
           },
         },
         type: 'text',
-        multi: 'multi',
+        multi: this.disabledBienes ? '' : 'multi',
+        permitSelect: this.disabledBienes ? false : true,
         searchFilter: null,
         service: this.dynamicTablesService,
         selecteds: { column: 'otvalor', data },
@@ -292,6 +325,7 @@ export class GoodTableValsComponent extends BasePage implements OnInit {
         callback: (data: any) => {
           console.log(data);
           this.data[row.index].value = data.value;
+          this.getPaginated(this.params.getValue());
         },
       },
       class: 'modal-md modal-dialog-centered',
@@ -339,12 +373,13 @@ export class GoodTableValsComponent extends BasePage implements OnInit {
 
   private getPaginated(params: ListParams) {
     const cantidad = params.page * params.limit;
-    this.dataPaginated = [
-      ...this.data.slice(
+    this.dataPaginated.load([
+      ...this.dataTemp.slice(
         (params.page - 1) * params.limit,
-        cantidad > this.data.length ? this.data.length : cantidad
+        cantidad > this.dataTemp.length ? this.dataTemp.length : cantidad
       ),
-    ];
+    ]);
+    this.dataPaginated.refresh();
   }
 
   private subsPaginated() {
@@ -423,6 +458,7 @@ export class GoodTableValsComponent extends BasePage implements OnInit {
                     };
                   });
                   this.totalItems = this.data.length;
+                  this.dataTemp = [...this.data];
                   this.getPaginated(this.params.value);
                   this.loading = false;
                   console.log(this.data);

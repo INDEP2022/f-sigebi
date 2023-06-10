@@ -67,6 +67,7 @@ export class SelectListFilteredModalComponent
   showError: boolean = true;
   widthButton = false;
   multi = '';
+  permitSelect = true;
   searchFilter: SearchBarFilter; // Input requerido al llamar el modal
   filters: DynamicFilterLike[] = []; // Input opcional para agregar varios filtros dinamicos
   searchFilterCompatible: boolean = true; // Input opcional para deshabilitar el filtro "search" en la busqueda cuando el endpoint no lo soporta
@@ -205,10 +206,12 @@ export class SelectListFilteredModalComponent
   }
 
   selectEvent(event: IUserRowSelectEvent<any>) {
-    if (this.settings.selectMode === 'multi') {
-      this.selectRow(event.selected);
-    } else {
-      this.selectRow(event.data);
+    if (this.permitSelect) {
+      if (this.settings.selectMode === 'multi') {
+        this.selectRow(event.selected);
+      } else {
+        this.selectRow(event.data);
+      }
     }
   }
 

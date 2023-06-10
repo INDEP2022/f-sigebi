@@ -179,7 +179,7 @@
                     [control]="legalForm.get('cveOficio')"
                     label="Cve&#46; Oficio">
                     <input
-                      [readOnly]="true"
+                      [readOnly]="!isDelit"
                       class="form-control"
                       #cveOficio
                       formControlName="cveOficio" />
@@ -394,7 +394,6 @@
               class="btn btn-primary btn-sm active m-3 text-wrap w-100"
               [disabled]="!buttonAprove"
               (click)="btnApprove()">
-              <!-- [routerLink]="rutaAprobado" -->
               Aprobar
             </button>
           </div>

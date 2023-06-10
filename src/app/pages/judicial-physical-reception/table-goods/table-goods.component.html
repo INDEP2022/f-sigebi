@@ -5,7 +5,7 @@
         <ng2-smart-table
           class="col-md-12"
           [settings]="settingsTable"
-          [source]="haveServerPagination ? data : dataPaginated"
+          [source]="datatoShow"
           (userRowSelect)="rowsSelected.emit($event.selected)"
           (editConfirm)="updateRow($event)"
           (deleteConfirm)="showDeleteAlert.emit($event.data)"></ng2-smart-table>
