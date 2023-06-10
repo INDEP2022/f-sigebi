@@ -23,10 +23,8 @@ export class RDictaminaDocModalComponent extends BasePage implements OnInit {
   listParams = new BehaviorSubject<ListParams>(new ListParams());
   numberClassifyGood: any;
   typeDictation: any;
-  crime: any;
   typeSteeringwheel: any;
   dataDocuments: any[] = [];
-  stateNumber: any;
   selectedDocs: any;
   dateValid: any;
   @ViewChild('tabla') tabla: Ng2SmartTableComponent;
@@ -62,20 +60,6 @@ export class RDictaminaDocModalComponent extends BasePage implements OnInit {
       this.typeDictation, //ok
       SearchFilter.EQ
     );
-    if (this.crime != null) {
-      params.addFilter(
-        'crime',
-        this.crime, //ok
-        SearchFilter.EQ
-      );
-    } else {
-      params.addFilter(
-        'crime',
-        'N', //ok
-        SearchFilter.EQ
-      );
-    }
-
     params.addFilter(
       'typeSteeringwheel',
       this.typeSteeringwheel, //ok
@@ -109,7 +93,7 @@ export class RDictaminaDocModalComponent extends BasePage implements OnInit {
 
   openForm(documents?: IRDictationDoc) {
     const typeDictation = this.typeDictation;
-    const stateNumber = this.stateNumber;
+    //const stateNumber = this.stateNumber;
     const dateValid = this.dateValid;
     // let config: ModalOptions = {
     //   initialState: {
@@ -130,7 +114,7 @@ export class RDictaminaDocModalComponent extends BasePage implements OnInit {
     const modalRef = this.modalService.show(EditDocumentsModalComponent, {
       initialState: {
         typeDictation,
-        stateNumber,
+        //stateNumber,
         documents,
         dateValid,
       },
@@ -169,6 +153,10 @@ export class RDictaminaDocModalComponent extends BasePage implements OnInit {
       }
     }
     this.modalRef.content.callback(this.dataDocuments);
+    this.modalRef.hide();
+  }
+
+  closeModal() {
     this.modalRef.hide();
   }
 }

@@ -18,7 +18,5 @@ export const MINUTES_COLUMNS = {
     type: 'custom',
     showAlways: true,
     renderComponent: InputCellComponent,
-    // onComponentInitFunction: (instance: InputCellComponent) =>
-    //   this.(instance),
   },
 };

@@ -24,6 +24,12 @@ export class GoodPartializeService extends HttpService {
     this.microservice = PartializeGoodEndpoints.BasePath;
   }
 
+  isPartializeGood(noBien: number) {
+    return this.get(
+      PartializeGoodEndpoints.IsPartializeGood + '?noBien=' + noBien
+    );
+  }
+
   getTTTTTTNietos(
     fatherIndicator: string,
     childIndicator: string,

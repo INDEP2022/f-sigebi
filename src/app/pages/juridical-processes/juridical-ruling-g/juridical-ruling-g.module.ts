@@ -15,8 +15,10 @@ import { JuridicalRulingGRoutingModule } from './juridical-ruling-g-routing.modu
 
 /** COMPONENTS IMPORTS */
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
+import { FormLoaderComponent } from 'src/app/@standalone/form-loader/form-loader.component';
 import { EditDocumentsModalComponent } from './edit-documents-modal/edit-documents-modal.component';
 import { JuridicalRulingGComponent } from './juridical-ruling-g/juridical-ruling-g.component';
+import { ListdictumsComponent } from './juridical-ruling-g/listdictums/listdictums.component';
 import { RDictaminaDocModalComponent } from './r-dictamina-doc-modal/r-dictamina-doc-modal.component';
 
 @NgModule({
@@ -24,6 +26,7 @@ import { RDictaminaDocModalComponent } from './r-dictamina-doc-modal/r-dictamina
     JuridicalRulingGComponent,
     RDictaminaDocModalComponent,
     EditDocumentsModalComponent,
+    ListdictumsComponent,
   ],
   imports: [
     CommonModule,
@@ -32,6 +35,7 @@ import { RDictaminaDocModalComponent } from './r-dictamina-doc-modal/r-dictamina
     UsersSharedComponent,
     ClassificationTypeSsubtypeOfGoodsSharedComponent,
     TooltipModule.forRoot(),
+    FormLoaderComponent,
   ],
   exports: [JuridicalRulingGComponent],
 })
