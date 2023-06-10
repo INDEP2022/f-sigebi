@@ -44,7 +44,9 @@
 
 :host ::ng-deep ng2-smart-table table tr {
   height: 55px;
-
+  td:last-child {
+    width: 50px;
+  }
   th,
   td {
     margin: 0;

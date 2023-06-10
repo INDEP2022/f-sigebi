@@ -75,7 +75,6 @@ export class GoodTableValsComponent extends BasePage implements OnInit {
     super();
     this.settings = {
       ...this.settings,
-      mode: 'inline',
       actions: {
         columnTitle: '',
         position: 'right',
