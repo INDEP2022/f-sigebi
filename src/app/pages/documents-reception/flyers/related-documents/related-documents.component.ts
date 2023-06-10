@@ -44,6 +44,7 @@ import { ScreenStatusService } from 'src/app/core/services/ms-screen-status/scre
 import { SecurityService } from 'src/app/core/services/ms-security/security.service';
 import { SegAcessXAreasService } from 'src/app/core/services/ms-users/seg-acess-x-areas.service';
 import { OfficeManagementService } from 'src/app/core/services/office-management/officeManagement.service';
+import { ProcedureManagementService } from 'src/app/core/services/proceduremanagement/proceduremanagement.service';
 import {
   POSITVE_NUMBERS_PATTERN,
   STRING_PATTERN,
@@ -324,6 +325,7 @@ export class RelatedDocumentsComponent
     private massiveGoodService: MassiveGoodService,
     protected notificationService: NotificationService,
     protected mJobManagementService: MJobManagementService,
+    protected msProcedureManagementService: ProcedureManagementService,
     protected parametersService: ParametersService,
     protected departmentService: DepartamentService,
     private segAccessAreasService: SegAcessXAreasService,
@@ -333,6 +335,7 @@ export class RelatedDocumentsComponent
     super();
     console.log(authService.decodeToken());
     this.authUser = authService.decodeToken();
+    console.log('USER DATA', this.authUser);
     this.settings3 = {
       ...this.settings,
       actions: {
@@ -597,6 +600,7 @@ export class RelatedDocumentsComponent
         this.paramsGestionDictamen.pDictamen = params['pDictamen'] ?? null;
         this.paramsGestionDictamen.sale = params['sale'] ?? null;
         this.paramsGestionDictamen.pGestOk = params['pGestOk'] ?? null;
+        this.paramsGestionDictamen.pllamo = params['pllamo'] ?? null; // Se agrego
 
         /*this.origin = params['origin'] ?? null; //no hay
         this.paramsGestionDictamen.volante = params['VOLANTE'] ?? null;
@@ -2508,15 +2512,20 @@ export class RelatedDocumentsComponent
     //   ignoreBackdropClick: true, //ignora el click fuera del modal
     // };
     // this.modalService.show(UploadDictamenFilesModalComponent, config);
-    if (
-      this.formJobManagement.value.statusOf == 'ENVIADO' &&
-      !this.formJobManagement.value.cveManagement.includes('?')
-    ) {
-      // Primer condicion al enviar
-      this.firstConditionSend();
+    if (this.pantallaOption) {
+      // Gestion Send button
+      if (
+        this.formJobManagement.value.statusOf == 'ENVIADO' &&
+        !this.formJobManagement.value.cveManagement.includes('?')
+      ) {
+        // Primer condicion al enviar
+        this.firstConditionSend();
+      } else {
+        // Segunda condicion al enviar
+        this.secondConditionSend();
+      }
     } else {
-      // Segunda condicion al enviar
-      this.secondConditionSend();
+      // Related Send button
     }
   }
 
@@ -2580,6 +2589,7 @@ export class RelatedDocumentsComponent
             // Valida FOLIO_UNIVERSAL
             // Se llama PUP_CONSULTA_PDF_BD_SSF3
             this._PUP_CONSULTA_PDF_BD_SSF3();
+            this._end_firmProcess(); // Termina el proceso
           }
         },
         error: error => {
@@ -2595,6 +2605,7 @@ export class RelatedDocumentsComponent
               'Se tiene problemas al mostrar el reporte',
               ''
             );
+            this._end_firmProcess(); // Termina el proceso
           }
         },
       });
@@ -2604,13 +2615,17 @@ export class RelatedDocumentsComponent
     this.blockSend = true;
   }
 
-  _PUP_GENERA_XML() {}
+  _PUP_GENERA_XML() {
+    this._end_firmProcess(); // Termina el proceso
+  }
+
+  _PUP_GENERA_PDF() {}
 
   _PUP_LANZA_REPORTE() {}
 
   _PUP_CONSULTA_PDF_BD_SSF3() {}
 
-  secondConditionSend() {
+  async secondConditionSend() {
     this.variablesSend.ESTATUS_OF = this.formJobManagement.value.statusOf;
     this.variablesSend.CVE_OF_GESTION =
       this.formJobManagement.value.cveManagement;
@@ -2649,15 +2664,157 @@ export class RelatedDocumentsComponent
       }
       // CONSULTAR ACTNOM
       let actnom = 0;
-      if (actnom == 0) {
+      if (actnom == 1) {
         this.alertInfo(
           'info',
           'SE ACTUALIZARÁ LA NOMENCLATURA CONFORME AL NUEVO ESTATUTO YA QUE FUE ELABORADO ANTES DE LA PUBLICACION DE ESTÉ',
           ''
-        );
-        // Se llama PUF_GENERA_CLAVE para crear clave
-        // this.formJobManagement.get('cveManagemen').setValue();
+        ).then(() => {
+          // Se llama PUF_GENERA_CLAVE para crear clave
+          // this.formJobManagement.get('cveManagemen').setValue();
+        });
       }
+
+      const _valida_ext_dom = await this._PUP_VALIDA_EXT_DOM();
+
+      if (_valida_ext_dom) {
+        if (
+          this.paramsGestionDictamen.pllamo == 'ABANDONO' ||
+          this.paramsGestionDictamen.pllamo == 'EXT_DOM'
+        ) {
+          const _busca_numero = await this._PUP_BUSCA_NUMERO();
+          const _cambia_estatus = await this._PUP_CAMBIA_ESTATUS();
+          const _act_gestion = await this._PUP_ACT_GESTION();
+          if (this.paramsGestionDictamen.pllamo == 'ABANDONO') {
+            const _abandono = await this._PUP_ABANDONO();
+          }
+          this.enabledPrintAndBlockSend();
+          this.formJobManagement.value.statusOf = 'ENVIADO';
+          // Save M_OFICIO_GESTION
+          this._end_firmProcess(); // Termina el proceso
+        } else {
+          if (
+            this.formJobManagement.value.sender ==
+            this.authUser.preferred_username
+          ) {
+            const params = new FilterParams();
+            params.removeAllFilters();
+            params.addFilter(
+              'natureDocument',
+              this.formJobManagement.value.jobType
+            );
+            params.addFilter(
+              'documentNumber',
+              this.formJobManagement.value.managementNumber
+            );
+            params.addFilter(
+              'documentType',
+              this.formJobManagement.value.statusOf
+            );
+            this.svLegalOpinionsOfficeService
+              .getElectronicFirmData(params.getParams())
+              .subscribe({
+                next: data => {
+                  console.log('FIRMA ELECTRONICA', data);
+                  if (data.count > 0) {
+                    this.alertInfo(
+                      'info',
+                      'Se realizó la firma del dictamen',
+                      ''
+                    ).then(async () => {
+                      const _cambia_estatus = await this._PUP_CAMBIA_ESTATUS();
+                      const _act_gestion = await this._PUP_ACT_GESTION();
+
+                      this.formJobManagement.value.statusOf = 'ENVIADO';
+                      // se llama PUP_GENERA_PDF
+                      this._PUP_GENERA_PDF();
+                      this.enabledPrintAndBlockSend();
+                      // Save M_OFICIO_GESTION
+                      this._end_firmProcess(); // Termina el proceso
+                    });
+                  }
+                },
+                error: async error => {
+                  console.log(error);
+                  if (error.status == 400) {
+                    // se llama PUP_GENERA_XML
+                    this._PUP_GENERA_XML();
+
+                    this.alertInfo(
+                      'info',
+                      'Se realizó la firma del dictamen',
+                      ''
+                    ).then(async () => {
+                      const _act_gestion = await this._PUP_ACT_GESTION();
+
+                      this.formJobManagement.value.statusOf = 'ENVIADO';
+                      // se llama PUP_GENERA_PDF
+                      this._PUP_GENERA_PDF();
+                      this.enabledPrintAndBlockSend();
+                      // Save M_OFICIO_GESTION
+                      this._end_firmProcess(); // Termina el proceso
+                    });
+                  } else {
+                    this.onLoadToast(
+                      'error',
+                      'Se tiene problemas al mostrar el reporte',
+                      ''
+                    );
+                  }
+                },
+              });
+          }
+        }
+      }
+    } else {
+      this._end_firmProcess(); // Termina el proceso
     }
   }
+
+  _PUP_VALIDA_EXT_DOM() {
+    return true;
+  }
+
+  _PUP_BUSCA_NUMERO() {}
+
+  _PUP_CAMBIA_ESTATUS() {}
+
+  _PUP_ACT_GESTION() {}
+
+  _PUP_ABANDONO() {}
+
+  async _end_firmProcess() {
+    let LV_TRAMITE = await this._GESTION_TRAMITE_TIPO_TRAMITE();
+    if (LV_TRAMITE.typeManagement == 3) {
+      this._PGR_IMAGENES_LV_PGRIMAG();
+    }
+  }
+
+  async _GESTION_TRAMITE_TIPO_TRAMITE() {
+    const params = new ListParams();
+    params.page = 1;
+    params.limit = 1;
+    params['filter.officeNumber'] =
+      this.formJobManagement.value.managementNumber;
+    params['filter.expedient'] = this.managementForm.get('noExpediente').value;
+    params['filter.flierNumber'] = this.managementForm.get('noVolante').value;
+    return await firstValueFrom(this.getJobManagement(params));
+    // return 0;
+  }
+
+  _PGR_IMAGENES_LV_PGRIMAG() {
+    // LV_PGRIMAG == 0
+    let LV_PGRIMAG = 0;
+    if (LV_PGRIMAG == 0) {
+      this._PUP_ENVIA_PGR();
+    } else {
+      this.onLoadToast(
+        'info',
+        'EL OFICIO DE ACLARACION YA HA SIDO ENVIADO A PGR',
+        ''
+      );
+    }
+  }
+
+  _PUP_ENVIA_PGR() {}
 }
