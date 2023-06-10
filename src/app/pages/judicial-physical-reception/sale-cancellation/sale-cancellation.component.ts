@@ -1891,12 +1891,10 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
                         this.getGoodsActFn();
                         this.getGoodsFn();
                         this.form.get('statusProceeding').setValue('CERRADO');
-                        /* this.labelActa = 'Abrir acta';
-                        this.btnCSSAct = 'btn-success'; */
-                        this.alert('success', 'El acta ha sido cerrada', '');
+                        this.labelActa = 'Abrir acta';
+                        this.btnCSSAct = 'btn-success';
                       },
                       err => {
-                        console.log(err);
                         this.alert(
                           'error',
                           'Ocurrió un error inesperado',
