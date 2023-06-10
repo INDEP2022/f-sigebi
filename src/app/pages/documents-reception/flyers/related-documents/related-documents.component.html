@@ -15,19 +15,21 @@
         TEST FIRMA
         <i aria-hidden="true" class="fa fa-filr"></i>
       </button> -->
-      <<<<<<< HEAD
-      <button class="btn btn-primary active btn-sm m-2" (click)="goBack()">
-        Regresar
-        <i class="fas fa-arrow-circle-left"></i>
-      </button>
-      ======= >>>>>>> 5dd9a0ca8ee544fd3e6ca397a6bb6ad8da5834c3 Fec&#46; Captura:
+      Fec&#46; Captura:
       <span class="badge bg-info ml-3 mr-3" style="display: initial !important">
-        {{ today || '00/00/0000' }}
+        {{
+          (formJobManagement.get('insertDate').value | date : 'M/d/yyyy') ||
+            '00/00/0000'
+        }}
       </span>
       / Estatus:
       <span class="badge bg-info ml-3 mr-3" style="display: initial !important">
         {{ formJobManagement.get('statusOf')?.value || '-----' }}
       </span>
+      <button class="btn btn-primary active btn-sm m-2" (click)="goBack()">
+        Regresar
+        <i class="fas fa-arrow-circle-left"></i>
+      </button>
     </div>
   </div>
   <!-- </div> -->
@@ -267,68 +269,65 @@
       </div>
 
       <div [formGroup]="managementForm">
-        <div class="row pt-4">
-          <form-field
-            *ngIf="pantallaActual == '1'"
-            [control]="managementForm.get('justificacion')"
-            class="col-md-6">
-            <ngx-select
-              (fetchItems)="getJustification($event)"
-              value="id"
-              bindLabel="clarifications"
-              [form]="managementForm"
-              control="justificacion"
-              [data]="justificacion"
-              [showTooltip]="true"
-              label="Justificación">
-            </ngx-select>
-          </form-field>
-          <!-- <form-field [control]="managementForm.get('justificacionDetalle')" class="col-md-6" label="Justificación">
-           <input type="text" class="form-control" formControlName="justificacionDetalle" readonly [disabled]="true" />
-         </form-field> -->
-          <form-field
-            [control]="managementForm.get('noOficio')"
-            class="col-md-4 mt-2"
-            label="Número de Oficio">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="noOficio"
-              readonly
-              [disabled]="true" />
-          </form-field>
-          <!-- <form-field [control]="managementForm.get('fechaAcuse')" class="col-md-4 mt-2" label="Fecha de Acuse">
-           <input type="text" class="form-control" formControlName="fechaAcuse" readonly [disabled]="true" />
-         </form-field> -->
-        </div>
-        <br /><br />
-        <div class="row pt-4" *ngIf="pantallaActual == '1'">
-          <div class="col-md-4">
-            <button
-              type="button"
-              class="btn btn-primary active btn-sm mr-2"
-              (click)="fgrResponses()">
-              Respuestas FGR
-            </button>
-          </div>
-        </div>
-        <br /><br />
-        <div class="row pt-4">
-          <div class="col-md-2">
+        <ng-container *ngIf="pantallaActual == '1'">
+          <div class="row pt-4">
             <form-field
-              [control]="managementForm.get('fechaAcuse')"
-              label="Fecha Acuse">
+              *ngIf="pantallaActual == '1'"
+              [control]="managementForm.get('justificacion')"
+              class="col-md-6">
+              <ngx-select
+                (fetchItems)="getJustification($event)"
+                value="id"
+                bindLabel="clarifications"
+                [form]="managementForm"
+                control="justificacion"
+                [data]="justificacion"
+                [showTooltip]="true"
+                label="Justificación">
+              </ngx-select>
+            </form-field>
+
+            <form-field
+              *ngIf="pantallaActual == '1'"
+              [control]="managementForm.get('noOficio')"
+              class="col-md-4 mt-2"
+              label="Número de Oficio">
               <input
                 type="text"
                 class="form-control"
-                #dp="bsDatepicker"
-                bsDatepicker />
+                formControlName="noOficio"
+                readonly
+                [disabled]="true" />
             </form-field>
           </div>
-        </div>
+          <br /><br />
+          <div class="row pt-4" *ngIf="pantallaActual == '1'">
+            <div class="col-md-4">
+              <button
+                type="button"
+                class="btn btn-primary active btn-sm mr-2"
+                (click)="fgrResponses()">
+                Respuestas FGR
+              </button>
+            </div>
+          </div>
+          <br /><br />
+          <div *ngIf="pantallaOption" class="row pt-4">
+            <div class="col-md-2">
+              <form-field
+                [control]="managementForm.get('fechaAcuse')"
+                label="Fecha Acuse">
+                <input
+                  type="text"
+                  class="form-control"
+                  #dp="bsDatepicker"
+                  bsDatepicker />
+              </form-field>
+            </div>
+          </div>
+        </ng-container>
         <br />
         <br />
-
         <div class="row pb-5">
           <div class="col-md-12">
             <div class="col-sm-12 col-12 col-md-12">
@@ -425,7 +424,7 @@
                 </div>
                 <div class="col-md-6">
                   <div class="col-12">Documento(s)</div>
-                  <div [class]="isLoadingGood ? 'table-loading' : ''">
+                  <div [class]="isLoadingDocuments ? 'table-loading' : ''">
                     <!-- (userRowSelect)="selectProceedings($event)" -->
                     <ng2-smart-table
                       id="goodsJobManagement"
@@ -444,7 +443,7 @@
               </div>
             </div>
 
-            <div class="row">
+            <div *ngIf="pantallaActual == '1'" class="row">
               <div class="col-sm-12 col-12 col-md-6 mt-5">
                 <form-field [control]="managementForm.get('di_desc_estatus')">
                   <input
@@ -485,6 +484,7 @@
               </button>
               <button
                 type="button"
+                [disabled]="isLoadingBtnEraser"
                 tooltip="Borrar"
                 containerClass="tooltip-style"
                 (click)="showDeleteAlert($event)"
@@ -508,6 +508,7 @@
           </div>
         </div>
       </div>
+
       <hr class="row" />
       <div [formGroup]="formJobManagement" class="row">
         <div class="col-md-12">

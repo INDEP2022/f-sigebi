@@ -209,7 +209,7 @@ export class RelatedDocumentsComponent
   showDestinatario: boolean = false;
   showDestinatarioInput: boolean = false;
 
-  settings3 = { ...this.settings };
+  settings3 = { ...this.settings, hideSubHeader: true };
   copyOficio: any[] = [];
 
   //Good Job Mananagemet
@@ -297,7 +297,8 @@ export class RelatedDocumentsComponent
     }>(null), // ciudad,
     /** @description estatus_of */
     statusOf: new FormControl(''),
-    refersTo: new FormControl(''), // se_refiere_a
+    /**@description se_refiere_a */
+    refersTo: new FormControl(''),
     /** @Description texto1 */
     text1: new FormControl(''),
     /** @Description texto2 */
@@ -308,6 +309,8 @@ export class RelatedDocumentsComponent
     insertUser: new FormControl(''),
     /**@description  fecha_inserto*/
     insertDate: new FormControl(''),
+    /**@description num_clave_armada */
+    armedKeyNumber: new FormControl(''),
   });
 
   formVariables = new FormGroup({
@@ -360,7 +363,7 @@ export class RelatedDocumentsComponent
         add: false,
         delete: true,
       },
-      hideSubHeader: false,
+      hideSubHeader: true,
       columns: { ...EXTERNOS_COLUMS_OFICIO },
     };
 
@@ -954,7 +957,9 @@ export class RelatedDocumentsComponent
     });
   }
 
+  isLoadingDocuments = false;
   refreshTableDocuments() {
+    this.isLoadingDocuments = true;
     this.getDocJobManagement().subscribe({
       next: async res => {
         const response = await res.data.map(async item => {
@@ -972,6 +977,10 @@ export class RelatedDocumentsComponent
           };
         });
         this.dataTableDocuments = await Promise.all(response);
+        this.isLoadingDocuments = false;
+      },
+      error: err => {
+        this.isLoadingDocuments = false;
       },
     });
   }
@@ -1802,34 +1811,41 @@ export class RelatedDocumentsComponent
   async showDeleteAlert(legend?: any) {
     //ILegend
     //Desea eliminar el oficio con el expediente ${proceedingsNumber} y No. Oficio ${managementNumber}
-    console.log(legend);
-    console.log(this.managementForm.value);
-    console.log(this.formJobManagement.value);
-    console.log(this.m_job_management);
-    console.log(this.dataTableGoods);
-    const {
-      noVolante, //no_volante
-      wheelStatus, //status
-    } = this.managementForm.value;
-    const {
-      managementNumber, //no_of_gestion
-      flyerNumber, //no_volante
-      statusOf, //status_of
-      cveManagement, //cve_of_gestion
-      proceedingsNumber, //no_expediente
-      insertUser, //usuario insert
-      insertDate, //fecha inserto
-    } = this.m_job_management;
+    try {
+      this.isLoadingBtnEraser = true;
+      if (this.pantallaActual == '1') {
+        console.log(legend);
+        console.log(this.managementForm.value);
+        console.log(this.formJobManagement.value);
+        console.log(this.m_job_management);
+        console.log(this.dataTableGoods);
+        const {
+          noVolante, //no_volante
+          wheelStatus, //status
+        } = this.managementForm.value;
+        const {
+          managementNumber, //no_of_gestion
+          flyerNumber, //no_volante
+          statusOf, //status_of
+          cveManagement, //cve_of_gestion
+          proceedingsNumber, //no_expediente
+          insertUser, //usuario insert
+          insertDate, //fecha inserto
+        } = this.m_job_management;
 
-    if (managementNumber == null) {
-      this.onLoadToast('info', 'No se tiene oficio', '');
-      return;
-    }
-    if (wheelStatus == 'ENVIADO') {
-      this.onLoadToast('info', 'El oficio ya esta enviado no puede borrar', '');
-      return;
-    }
-    /*if (cveManagement.includes('?') == false) {
+        if (managementNumber == null) {
+          this.onLoadToast('info', 'No se tiene oficio', '');
+          return;
+        }
+        if (wheelStatus == 'ENVIADO') {
+          this.onLoadToast(
+            'info',
+            'El oficio ya esta enviado no puede borrar',
+            ''
+          );
+          return;
+        }
+        /*if (cveManagement.includes('?') == false) {
       this.onLoadToast(
         'info',
         'La clave está armada, no puede borrar oficio',
@@ -1853,18 +1869,27 @@ export class RelatedDocumentsComponent
       return;
     }*/
 
-    this.alertQuestion(
-      'warning',
-      'Eliminar',
-      `Desea eliminar el oficio con el expediente ${proceedingsNumber} y No. Oficio ${managementNumber}`
-    ).then(question => {
-      if (question.isConfirmed) {
-        if (this.pantallaActual == '1') {
-          this.delete(managementNumber, noVolante, insertDate);
-          //Swal.fire('Borrado', '', 'success');
-        }
+        this.alertQuestion(
+          'warning',
+          'Eliminar',
+          `Desea eliminar el oficio con el expediente ${proceedingsNumber} y No. Oficio ${managementNumber}`
+        ).then(question => {
+          if (question.isConfirmed) {
+            if (this.pantallaActual == '1') {
+              this.delete(managementNumber, noVolante, insertDate);
+              //Swal.fire('Borrado', '', 'success');
+            }
+          }
+        });
+      } else {
+        await this.onClickBtnErase();
+        this.isLoadingBtnEraser = false;
       }
-    });
+    } catch (error) {
+      console.log(error);
+      this.onLoadToast('error', 'Error', 'Ocurrion un error al borrar');
+      this.isLoadingBtnEraser = false;
+    }
   }
 
   async delete(
@@ -2619,15 +2644,19 @@ export class RelatedDocumentsComponent
     //   ignoreBackdropClick: true, //ignora el click fuera del modal
     // };
     // this.modalService.show(UploadDictamenFilesModalComponent, config);
-    if (
-      this.formJobManagement.value.statusOf == 'ENVIADO' &&
-      !this.formJobManagement.value.cveManagement.includes('?')
-    ) {
-      // Primer condicion al enviar
-      this.firstConditionSend();
+    if (this.pantallaActual == '1') {
+      if (
+        this.formJobManagement.value.statusOf == 'ENVIADO' &&
+        !this.formJobManagement.value.cveManagement.includes('?')
+      ) {
+        // Primer condicion al enviar
+        this.firstConditionSend();
+      } else {
+        // Segunda condicion al enviar
+        this.secondConditionSend();
+      }
     } else {
-      // Segunda condicion al enviar
-      this.secondConditionSend();
+      this.onClickBtnSend();
     }
   }
 

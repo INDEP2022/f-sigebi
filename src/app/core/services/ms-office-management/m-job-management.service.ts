@@ -143,4 +143,24 @@ export class MJobManagementService extends HttpService {
     } */
     );
   }
+
+  getActNom(no_of_management: any): Observable<{ actnom: number }> {
+    return this.get(`application/get-actnom/${no_of_management}`);
+  }
+
+  postPupSearchNumber(body: {
+    pCveOfManagement: string;
+    pDelegationNumber: number | string;
+    pManagementOfNumber: string;
+  }): Observable<{
+    // statusCode: number;
+    // message: string[];
+    // data: {
+    NUM_CLAVE_ARMADA: string;
+    CVE_OF_GESTION: string;
+    FECHA_INSERTO: string;
+    // };
+  }> {
+    return this.post('application/pup-serach-number', body);
+  }
 }

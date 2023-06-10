@@ -487,3 +487,156 @@ BEGIN
    GO_ITEM('NOTIFICACIONES.NO_EXPEDIENTE');
    LIP_EXEQRY;
 END;
+
+
+---------------------------------------- BUTTON ENVIAR -----------------------------------------------------
+
+DECLARE
+	
+ACTNOM			NUMBER;
+
+BEGIN
+
+IF :M_OFICIO_GESTION.ESTATUS_OF = 'ENVIADO' THEN 
+   PUP_ACT_GESTION;
+   COMMIT;
+   PUP_LANZA_REPORTE; 
+END IF;
+
+IF :M_OFICIO_GESTION.CVE_OF_GESTION LIKE '%?%' AND 
+   :M_OFICIO_GESTION.ESTATUS_OF = 'EN REVISION' THEN 	
+   
+--    
+		BEGIN
+		   BEGIN
+			    SELECT COUNT(0)
+			      INTO ACTNOM
+            FROM M_OFICIO_GESTION 
+           WHERE NO_OF_GESTION = :M_OFICIO_GESTION.NO_OF_GESTION
+             AND TRUNC(NVL(FEC_PROYECTO,SYSDATE)) < (SELECT TRUNC(TO_DATE(OTVALOR,'DD/MM/YYYY')) 
+                                                       FROM TVALTABLA1  
+                                                      WHERE NMTABLA = 14
+                                                        AND OTCLAVE = (SELECT FA_ETAPACREDA(SYSDATE)FROM DUAL));   
+		   EXCEPTION
+		   	WHEN OTHERS THEN
+		   	ACTNOM := 0;
+		   END;
+		   
+		      IF ACTNOM = 1 THEN
+		         LIP_MENSAJE('SE ACTUALIZARÁ LA NOMENCLATURA CONFORME AL NUEVO ESTATUTO YA QUE FUE ELABORADO ANTES DE LA PUBLICACION DE ESTÉ','A');  
+             :M_OFICIO_GESTION.CVE_OF_GESTION := PUF_GENERA_CLAVE;
+          END IF;
+    
+		EXCEPTION
+			WHEN OTHERS THEN
+			LIP_MENSAJE('AL ACTUALIZAR NOMENCLATURA '||SQLERRM,'A');
+      END;
+--        
+   
+   
+   PUP_BUSCA_NUMERO;
+   :M_OFICIO_GESTION.ESTATUS_OF := 'ENVIADO';
+   PUP_ACT_GESTION;
+   COMMIT;
+	 Set_Item_Property('enviar',ICON_NAME,'../iconos/rt_lock');
+	 SET_ITEM_PROPERTY('oficio',ENABLED,PROPERTY_FALSE);
+	 PUP_LANZA_REPORTE; 
+END IF;
+
+   GO_BLOCK('NOTIFICACIONES');
+   EXECUTE_QUERY(NO_VALIDATE);
+   
+END;   
+
+
+
+
+PROCEDURE PUP_ACT_GESTION IS
+  LST_USR_TURNAR  VARCHAR2(50);
+	VAR1						VARCHAR2(3);
+  VAR2						VARCHAR2(3);
+
+BEGIN
+	IF :parameter.p_gest_ok = 1  or :global.gnu_activa_gestion = 1 THEN
+    --LIP_MENSAJE(:PARAMETER.P_NO_TRAMITE,'A');
+     IF :parameter.pllamo != 'ABANDONO' THEN
+				VAR1 := 'DJS';
+				VAR2 := 'DJ';
+     ELSE
+				VAR1 := 'FNI';
+				VAR2 := 'AB';
+  	 END IF;
+
+			UPDATE	GESTION_TRAMITE 
+		  SET			ESTATUS_TRAMITE = VAR1
+		 	WHERE 	(NO_TRAMITE = :PARAMETER.P_NO_TRAMITE OR NO_VOLANTE = :NOTIFICACIONES.NO_VOLANTE) 
+      AND			SUBSTR(ESTATUS_TRAMITE,1,2) = VAR2;        
+	END IF;	
+END;
+
+
+
+
+PROCEDURE PUP_BUSCA_NUMERO IS
+   LN_OFICIO    NUMBER;
+   CONT         NUMBER;
+   LN_VAL_FIN   NUMBER;
+   ANIO         VARCHAR2(4);
+   SIGLA        VARCHAR2(30);
+   AR_REMITENTE VARCHAR2(30);
+   MES				  VARCHAR2(2);
+   AUXILIAR     VARCHAR2(20);
+   ETAPA2       NUMBER(1);
+BEGIN
+   ANIO := SUBSTR(:M_OFICIO_GESTION.CVE_OF_GESTION,INSTR(:M_OFICIO_GESTION.CVE_OF_GESTION,'/',-1)+1,LENGTH(:M_OFICIO_GESTION.CVE_OF_GESTION)-INSTR(:M_OFICIO_GESTION.CVE_OF_GESTION,'/',-1));
+      BEGIN           
+           SELECT FA_ETAPACREDA(TRUNC(NVL(FECHA_INSERTO,SYSDATE)))
+             INTO ETAPA2
+           FROM M_OFICIO_GESTION
+          WHERE NO_OF_GESTION = :M_OFICIO_GESTION.NO_OF_GESTION;           
+      END;
+
+       IF ETAPA2 = FA_ETAPACREDA(TRUNC(SYSDATE)) THEN  
+         BEGIN
+		         SELECT NVL(MAX(NUM_CLAVE_ARMADA),0)+1
+		           INTO LN_OFICIO
+		           FROM M_OFICIO_GESTION a, NOTIFICACIONES b
+		          WHERE a.NO_VOLANTE = b.NO_VOLANTE
+		            AND DELE_USUARIO = :blk_toolbar.toolbar_no_DELEGACION
+		            AND NUM_CLAVE_ARMADA IS NOT NULL
+		            AND CVE_OF_GESTION  LIKE '%'||ANIO
+		            AND TRUNC(NVL(A.FEC_PROYECTO,SYSDATE)) > (SELECT TRUNC(TO_DATE(OTVALOR,'DD/MM/YYYY')) -- MODIFICADO POR NUEVO ESTATUTO ELC 21/10/2011 
+		                                                         FROM TVALTABLA1  
+		                                                        WHERE NMTABLA = 14
+		                                                          AND OTCLAVE = (SELECT FA_ETAPACREDA(SYSDATE)FROM DUAL));        
+		      EXCEPTION
+		         WHEN OTHERS THEN
+		         --NULL; 
+		            LIP_MENSAJE('Al buscar el número del Oficio... '||SQLERRM,'S');
+		            RAISE FORM_TRIGGER_FAILURE;
+		      END;
+        ELSE
+       	   BEGIN
+		         SELECT NVL(MAX(NUM_CLAVE_ARMADA),0)+1
+		           INTO LN_OFICIO
+		           FROM M_OFICIO_GESTION a, NOTIFICACIONES b
+		          WHERE a.NO_VOLANTE = b.NO_VOLANTE
+		            AND DELE_USUARIO = :blk_toolbar.toolbar_no_DELEGACION
+		            AND NUM_CLAVE_ARMADA IS NOT NULL
+		            AND CVE_OF_GESTION  LIKE '%'||ANIO;     
+		       EXCEPTION
+		         WHEN OTHERS THEN
+		         --NULL; 
+		            LIP_MENSAJE('Al buscar el número del Oficio... '||SQLERRM,'S');
+		            RAISE FORM_TRIGGER_FAILURE;
+		       END;
+		       
+        END IF;
+   :M_OFICIO_GESTION.NUM_CLAVE_ARMADA := LN_OFICIO;
+   :M_OFICIO_GESTION.CVE_OF_GESTION := REPLACE(:M_OFICIO_GESTION.CVE_OF_GESTION,'?',LTRIM(TO_CHAR(LN_OFICIO,'00000')));
+   --** Actualiza la fecha de inserción ZCMA 10-12-2007
+   :M_OFICIO_GESTION.FECHA_INSERTO := SYSDATE;
+END;
+
+			
+	

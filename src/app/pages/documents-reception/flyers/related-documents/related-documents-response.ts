@@ -1,11 +1,11 @@
 import { formatDate } from '@angular/common';
-import { type FormGroup } from '@angular/forms';
+import { type FormControl, type FormGroup } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { catchError, firstValueFrom, map, Observable, of } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
-import { showQuestion } from 'src/app/common/helpers/helpers';
+import { showQuestion, showToast } from 'src/app/common/helpers/helpers';
 import {
   FilterParams,
   ListParams,
@@ -51,7 +51,59 @@ export abstract class RelateDocumentsResponse extends BasePage {
   protected abstract departmentService: DepartamentService;
   protected abstract svLegalOpinionsOfficeService: LegalOpinionsOfficeService;
   protected abstract authService: AuthService;
-  protected abstract formJobManagement: FormGroup;
+  protected abstract formJobManagement: FormGroup<{
+    /** @description no_volante */
+    flyerNumber: FormControl;
+    /** @description tipo_oficio */
+    jobType: FormControl;
+    /** @description no_of_gestion */
+    managementNumber: FormControl;
+    /** @description  destinatario*/
+    addressee: FormControl<{
+      user: number | string;
+      name: string;
+      userAndName: string;
+    }>;
+    /** @description remitente */
+    sender: FormControl<{
+      id: number | string;
+      name: string;
+      idName: string;
+    }>; // remitente
+    /** @descripiton  cve_cargo_rem*/
+    cveChargeRem: FormControl;
+    /**@description DES_REMITENTE_PA */
+    desSenderpa: FormControl;
+    /** @description NO_DEL_REM */
+    delRemNumber: FormControl;
+    /** @description NO_DEP_REM */
+    depRemNumber: FormControl;
+    /** @description oficio_por */
+    jobBy: FormControl;
+    /** @description cve_of_gestion */
+    cveManagement: FormControl;
+    city: FormControl<{
+      id: number | string;
+      legendOffice: string;
+      idName: string;
+    }>; // ciudad,
+    /** @description estatus_of */
+    statusOf: FormControl;
+    /**@description se_refiere_a */
+    refersTo: FormControl;
+    /** @Description texto1 */
+    text1: FormControl;
+    /** @Description texto2 */
+    text2: FormControl;
+    /** @Description texto3 */
+    text3: FormControl;
+    /** @description usuaro_insert */
+    insertUser: FormControl;
+    /**@description  fecha_inserto*/
+    insertDate: FormControl;
+    /**@description num_clave_armada */
+    armedKeyNumber: FormControl;
+  }>;
   protected abstract formNotification: FormGroup;
   protected abstract route: ActivatedRoute;
   protected abstract siabService: SiabService;
@@ -64,9 +116,16 @@ export abstract class RelateDocumentsResponse extends BasePage {
   abstract dataTableGoods: IGoodAndAvailable[];
   abstract dataTableGoodsJobManagement: IGoodJobManagement[];
   abstract isDisabledBtnDocs: boolean;
+  abstract se_refiere_a_Disabled: {
+    A: boolean;
+    B: boolean;
+    C: boolean;
+    D: boolean;
+  };
   // abstract managementForm: FormGroup;
   isLoadingGood: boolean = false;
   abstract totalItems: number;
+
   getGoods1(params: ListParams) {
     this.isLoadingGood = true;
     this.goodServices.getAll(params).subscribe({
@@ -623,7 +682,11 @@ export abstract class RelateDocumentsResponse extends BasePage {
     });
   }
 
+  abstract initForm(): void;
+
+  isLoadingBtnEraser = false;
   async onClickBtnErase() {
+    console.log('onClickBtnErase');
     const values = this.formJobManagement.value;
     if (!values.managementNumber) {
       this.alert('error', 'Error', 'No se tiene oficio.');
@@ -672,10 +735,78 @@ export abstract class RelateDocumentsResponse extends BasePage {
       this.mJobManagementService.deleteDocumentJobManagement2(
         values.managementNumber
       ),
-      this.mJobManagementService.deleteMJobManagement3(values.managementNumber),
+      this.mJobManagementService.deleteMJobGestion({
+        managementNumber: values.managementNumber,
+        flyerNumber: values.flyerNumber,
+      }),
       this.mJobManagementService.deleteCopiesJobManagement4(
         values.managementNumber
       ),
+      this.notificationService.update(values.flyerNumber, {
+        dictumKey: '',
+      }),
     ];
+    await Promise.all(promises);
+    this.formJobManagement.get('refersTo').setValue('D');
+    this.se_refiere_a_Disabled.A = false;
+    this.se_refiere_a_Disabled.B = false;
+
+    this.initForm();
+  }
+
+  async pupSearchNumber(delegationNumber: any) {
+    const result = await firstValueFrom(
+      this.mJobManagementService.postPupSearchNumber({
+        pCveOfManagement: this.formJobManagement.value.cveManagement,
+        pDelegationNumber: delegationNumber,
+        pManagementOfNumber: this.formJobManagement.value.managementNumber,
+      })
+    );
+
+    this.formJobManagement
+      .get('armedKeyNumber')
+      .setValue(result.NUM_CLAVE_ARMADA);
+    this.formJobManagement.get('cveManagement').setValue(result.CVE_OF_GESTION);
+    this.formJobManagement.get('insertDate').setValue(result.FECHA_INSERTO);
+  }
+
+  async onClickBtnSend() {
+    const values = this.formJobManagement.value;
+    if (values.statusOf == 'ENVIADO') {
+      //TODO: pup_act_gestion
+
+      this.pupShowReport();
+      return;
+    }
+
+    if (
+      values.cveManagement.includes('?') &&
+      values.statusOf == 'EN REVISION'
+    ) {
+      const counter = await firstValueFrom(
+        this.mJobManagementService.getActNom(values.managementNumber).pipe(
+          map(x => {
+            console.log(x);
+            return x.actnom;
+          }),
+          catchError(err => of(0))
+        )
+      );
+      if (counter == 1) {
+        showToast({
+          icon: 'error',
+          title: 'Error',
+          text: 'SE ACTUALIZARÁ LA NOMENCLATURA CONFORME AL NUEVO ESTATUTO YA QUE FUE ELABORADO ANTES DE LA PUBLICACION DE ESTÉ.',
+        });
+        const key = await this.pupGeneratorKey();
+        this.formJobManagement.get('cveManagement').setValue(key);
+      }
+      const userInfo = await this.getUserInfo();
+      this.pupSearchNumber(userInfo.delegationNumber);
+      this.formJobManagement.get('statusOf').setValue('ENVIADO');
+      //TODO: pup_act_gestion
+      //TODO: Guardar m_job_gestion
+      this.pupShowReport();
+    }
   }
 }
