@@ -26,6 +26,7 @@ export enum DictationEndpoints {
   GetOfficeByYear1 = 'application/get-office-by-year-1',
   GetOfficeByYear2 = 'application/get-office-by-year-2',
   GetOfficeByYear3 = 'application/get-office-by-year-3',
+  GetGoodClass = 'application/get-no-bien-classif-cve-doc',
   FaFlagDest = '/application/fa-flag-dest',
   DictamenDelegation = 'application/delegationDictamXofDicta',
   DeletePupDeleteDictum = 'application/pupDeleteDictum',

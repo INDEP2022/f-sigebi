@@ -59,12 +59,10 @@ export class GoodTableValsComponent extends BasePage implements OnInit {
   limit: FormControl = new FormControl(5);
   params = new BehaviorSubject<ListParams>(new ListParams());
   val_atributos_inmuebles = 0;
-
   actualiza: boolean;
   requerido: boolean;
   selectedRow: number;
   totalItems = 0;
-
   constructor(
     private goodsqueryService: GoodsQueryService,
     private goodService: GoodService,
