@@ -557,7 +557,7 @@
       <div class="row">
         <div class="col-md-12">
           <div class="col-md-6">
-            <div *ngIf="isBoveda" class="row">
+            <div *ngIf="isAlmacen" class="row">
               <div class="col-md-9">
                 <form-field [control]="form.get('noAlmacen')">
                   <ngx-select
@@ -571,7 +571,7 @@
               </div>
             </div>
 
-            <!-- <div *ngIf="isAlmacen" class="row">
+            <!-- <div *ngIf="isBoveda" class="row">
               <div class="col-md-9">
                 <form-field [control]="form.get('noBoveda')">
                   <ngx-select

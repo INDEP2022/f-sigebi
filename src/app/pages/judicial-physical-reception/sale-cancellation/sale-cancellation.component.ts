@@ -82,7 +82,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
     selectedRowIndex: -1,
     mode: 'external',
     columns: {
-      id: {
+      goodId: {
         title: 'No. Bien',
         type: 'string',
         sort: false,
@@ -544,17 +544,37 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
     });
   }
 
+  validateWarehouseAndVault(data: any) {
+    for (let item of data) {
+      const newParams = `filter.numClasifGoods=$eq:${item.good.goodClassNumber}`;
+      this.serviceSssubtypeGood.getFilter(newParams).subscribe(res => {
+        const type = JSON.parse(JSON.stringify(res.data[0]['numType']));
+        const subtype = JSON.parse(JSON.stringify(res.data[0]['numSubType']));
+
+        const no_type = parseInt(type.id);
+        const no_subtype = parseInt(subtype.id);
+
+        if (no_type === 7 || (no_type === 5 && no_subtype === 16)) {
+          this.isBoveda = true;
+        }
+        if (no_type === 5) {
+          this.isAlmacen = true;
+        }
+      });
+    }
+  }
+
   validateGood(element: any) {
     let di_disponible: boolean;
     /* return new Promise((resolve, reject) => { */
     const modelScreen: IAcceptGoodStatusScreen = {
-      pNumberGood: element.id,
+      pNumberGood: parseInt(element.goodId),
       pVcScreen: 'FACTREFACTAVENT',
     };
 
     const model: ICveAct = {
       pExpedientNumber: this.numberExpedient,
-      pGoodNumber: element.id,
+      pGoodNumber: element.gooId,
       pVarTypeActa1: 'DXCVENT',
       pVarTypeActa2: 'DXCVENT',
     };
@@ -562,7 +582,32 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
     return new Promise((resolve, reject) => {
       this.serviceGoodProcess.getacceptGoodStatusScreen(modelScreen).subscribe(
         res => {
-          di_disponible = true;
+          console.log(res)
+          if(typeof res == 'number' && res > 0){
+            di_disponible = true;
+            this.serviceProceeding.getCveAct(model).subscribe(
+              res => {
+                if (res.data.length > 0) {
+                  resolve({
+                    avalaible: false,
+                    acta: res.data[0]['cve_acta'],
+                  });
+                } else {
+                  resolve({
+                    avalaible: di_disponible,
+                    acta: null,
+                  });
+                }
+              },
+              err => {
+                resolve({
+                  avalaible: di_disponible,
+                  acta: null,
+                });
+              }
+            );
+          }else{
+            di_disponible = false;
 
           this.serviceProceeding.getCveAct(model).subscribe(
             res => {
@@ -585,6 +630,8 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
               });
             }
           );
+          }
+          
         },
         err => {
           di_disponible = false;
@@ -622,7 +669,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
   statusGood(formName: string, data: any) {
     console.log(formName);
     const paramsF = new FilterParams();
-    paramsF.addFilter('status', data.good.status || data.status);
+    paramsF.addFilter('status', data.status || data.good.status);
     this.serviceGood.getStatusGood(paramsF.getParams()).subscribe(
       res => {
         this.form.get(formName).setValue(res.data[0]['description']);
@@ -915,26 +962,6 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
     );
   }
 
-  validateWarehouseAndVault(data: any) {
-    for (let item of data) {
-      const newParams = `filter.numClasifGoods=$eq:${item.good.goodClassNumber}`;
-      this.serviceSssubtypeGood.getFilter(newParams).subscribe(res => {
-        const type = JSON.parse(JSON.stringify(res.data[0]['numType']));
-        const subtype = JSON.parse(JSON.stringify(res.data[0]['numSubType']));
-
-        const no_type = parseInt(type.id);
-        const no_subtype = parseInt(subtype.id);
-
-        if (no_type === 7 || (no_type === 5 && no_subtype === 16)) {
-          this.isBoveda = true;
-        }
-        if (no_type === 5) {
-          this.isAlmacen = true;
-        }
-      });
-    }
-  }
-
   getIndEdoFisAndVColumna(data: any) {
     let V_IND_EDO_FISICO: number;
     let V_NO_COLUMNA: number;
@@ -1144,8 +1171,8 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
             res => {
               this.initialBool = true;
               this.form.get('statusProceeding').setValue('ABIERTA');
-              console.log(res);
               this.alert('success', 'Se guardo el acta de manera éxitosa', '');
+              console.log(res);
             },
             err => {
               this.alert(
@@ -1232,8 +1259,8 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
         console.log(res.data);
         this.dataGoodAct.load(res.data);
         this.totalItemsDataGoodsAct = res.count;
-        this.loading = false;
         this.validateWarehouseAndVault(res.data);
+        this.loading = false;
       },
       err => {
         console.log(err);
