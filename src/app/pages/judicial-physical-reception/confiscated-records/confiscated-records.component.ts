@@ -11,6 +11,7 @@ import * as moment from 'moment';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
+import { SelectListFilteredModalComponent } from 'src/app/@standalone/modals/select-list-filtered-modal/select-list-filtered-modal.component';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import {
@@ -46,6 +47,7 @@ import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.
 import { ClassifyGoodService } from 'src/app/core/services/ms-classifygood/ms-classifygood.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
+import { AttribGoodBadService } from 'src/app/core/services/ms-good/attrib-good-bad.service';
 import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { HistoryGoodService } from 'src/app/core/services/ms-history-good/history-good.service';
@@ -208,7 +210,8 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     private serviceGoodQuery: GoodsQueryService,
     private serviceTransferent: TransferenteService,
     private serviceHistoryGood: HistoryGoodService,
-    private serviceNotification: NotificationService
+    private serviceNotification: NotificationService,
+    private attribGoodBadService: AttribGoodBadService
   ) {
     super();
   }
@@ -418,10 +421,57 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     if (this.labelActa == 'Abrir acta') {
       this.fnOpenProceeding();
     } else if (this.labelActa == 'Cerrar acta') {
-      console.log('Funciono');
-      /* this.closeProceeding(); */
       this.newCloseProceeding();
     }
+  }
+
+  openModalSelect(
+    context?: Partial<SelectListFilteredModalComponent>,
+    callback?: Function
+  ) {
+    const modalRef = this.modalService.show(SelectListFilteredModalComponent, {
+      initialState: { ...context },
+      class: 'modal-lg modal-dialog-centered modal-not-top-padding',
+      ignoreBackdropClick: true,
+    });
+    modalRef.content.onSelect.subscribe(data => {
+      if (data) callback(data, this);
+    });
+  }
+
+  getNulls() {
+    this.openModalSelect(
+      {
+        title: 'Listado de bienes con información requerida nula',
+        columnsType: {
+          id: {
+            title: 'No. Bien',
+            type: 'string',
+            sort: false,
+          },
+          motive: {
+            title: 'Motivo',
+            type: 'string',
+            sort: false,
+          },
+        },
+        service: this.attribGoodBadService,
+        dataObservableFn: this.attribGoodBadService.getAllModal,
+        searchFilter: null,
+        type: 'text',
+        showError: false,
+        widthButton: false,
+        placeholder: 'Buscar',
+      },
+      this.selectGoodNull
+    );
+  }
+
+  selectGoodNull(good: any, self: ConfiscatedRecordsComponent) {
+    console.log(good);
+    self.router.navigate(['pages/general-processes/goods-characteristics'], {
+      queryParams: { noBien: good.id },
+    });
   }
 
   requireAct1() {
@@ -1149,7 +1199,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
             this.blockExpedient = false;
           } else {
             this.initialdisabled = false;
-            this.loading = false
+            this.loading = false;
             this.requireAct1();
             this.inputsInProceedingClose();
             this.minDateFecElab = new Date();
@@ -1476,7 +1526,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
               this.requireAct1();
               this.minDateFecElab = new Date();
               this.inputsNewProceeding();
-              this.loading = false
+              this.loading = false;
               /* this.newSearchExp(); */
               this.alert(
                 'warning',
@@ -2126,13 +2176,14 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         if (q.isConfirmed) {
           const paramsF = new FilterParams();
           let VAL_MOVIMIENTO = 0;
-          const user = localStorage.getItem('username') == 'sigebiadmon'
-          ? localStorage.getItem('username')
-          : localStorage.getItem('username').toLocaleUpperCase()
+          const user =
+            localStorage.getItem('username') == 'sigebiadmon'
+              ? localStorage.getItem('username')
+              : localStorage.getItem('username').toLocaleUpperCase();
 
           paramsF.addFilter('valUser', user);
           paramsF.addFilter('valMinutesNumber', this.idProceeding);
-          this.loading = true
+          this.loading = true;
 
           const splitActa = this.form.get('acta2').value.split('/');
           const tipo_acta = ['D', 'ND'].includes(splitActa[0])
@@ -2145,7 +2196,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
             P_AREATRA: lv_TIP_ACTA,
             P_PANTALLA: 'FACTREFACTAENTREC',
             P_TIPOMOV: 2,
-            USUARIO:user,
+            USUARIO: user,
           };
           console.log(modelPaOpen);
           this.serviceProgrammingGood
@@ -2158,7 +2209,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                     res => {
                       console.log(res);
                       VAL_MOVIMIENTO = res.data[0]['valmovement'];
-                      console.log(VAL_MOVIMIENTO)
+                      console.log(VAL_MOVIMIENTO);
                       if (VAL_MOVIMIENTO == 1) {
                         this.serviceProgrammingGood
                           .paRegresaEstAnterior(modelPaOpen)
@@ -2171,10 +2222,10 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                                 .setValue('ABIERTA');
                               this.reopening = true;
                               this.inputsReopenProceeging();
-                              this.loading = false
+                              this.loading = false;
                               this.research = true;
-                              this.getGoodsActFn()
-                              this.getGoodsFn()
+                              this.getGoodsActFn();
+                              this.getGoodsFn();
 
                               this.alert(
                                 'success',
@@ -2185,19 +2236,23 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                               );
                             },
                             err => {
-                              this.alert('warning','Error al abrir acta','')
+                              this.alert('warning', 'Error al abrir acta', '');
                             }
                           );
-                      }else{
-                        this.loading = false
-                        this.alert('warning','Error al abrir acta','Por favor intente nuevamente')
+                      } else {
+                        this.loading = false;
+                        this.alert(
+                          'warning',
+                          'Error al abrir acta',
+                          'Por favor intente nuevamente'
+                        );
                       }
                     },
                     err => {
                       console.log(err);
-                      this.loading = false
+                      this.loading = false;
                       VAL_MOVIMIENTO = 0;
-                      this.alert('warning','Error en tmp','')
+                      this.alert('warning', 'Error en tmp', '');
                     }
                   );
               },
@@ -2206,11 +2261,11 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                 const btn = document.getElementById('expedient-number');
                 this.render.removeClass(btn, 'disabled');
                 this.render.addClass(btn, 'enabled');
-                this.loading = false
+                this.loading = false;
                 this.alert(
                   'error',
                   'No se pudo abrir el acta',
-                  'Ocurrió un error que no permite abrir el acta'
+                  err.error.message
                 );
               }
             );
@@ -2250,7 +2305,12 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                 const paramsF = new FilterParams();
                 let VAL_MOVIMIENTO = 0;
 
-                paramsF.addFilter('valUser', localStorage.getItem('username'));
+                paramsF.addFilter(
+                  'valUser',
+                  localStorage.getItem('username') == 'sigebiadmon'
+                    ? localStorage.getItem('username')
+                    : localStorage.getItem('username').toLocaleUpperCase()
+                );
                 paramsF.addFilter('valMinutesNumber', this.idProceeding);
                 this.serviceProgrammingGood
                   .getTmpProgValidation(paramsF.getParams())
@@ -2343,7 +2403,12 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
           const paramsF = new FilterParams();
           let VAL_MOVIMIENTO = 0;
 
-          paramsF.addFilter('valUser', localStorage.getItem('username'));
+          paramsF.addFilter(
+            'valUser',
+            localStorage.getItem('username') == 'sigebiadmon'
+              ? localStorage.getItem('username')
+              : localStorage.getItem('username').toLocaleUpperCase()
+          );
           paramsF.addFilter('valMinutesNumber', this.idProceeding);
           this.serviceProgrammingGood
             .getTmpProgValidation(paramsF.getParams())
@@ -2382,7 +2447,10 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                     address: this.form.get('direccion').value,
                     statusProceedings: 'ABIERTA',
                     /* elaborate: 'SERA', */
-                    elaborate: localStorage.getItem('username'),
+                    elaborate:
+                      localStorage.getItem('username') == 'sigebiadmon'
+                        ? localStorage.getItem('username')
+                        : localStorage.getItem('username').toLocaleUpperCase(),
                     numFile: parseInt(this.idProceeding.toString()),
                     witness1: this.form.get('entrega').value,
                     witness2: this.form.get('recibe2').value,
@@ -2482,6 +2550,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   }
 
   newCloseProceeding() {
+    this.validateFolio();
     if (this.dataGoodAct['data'].length == 0) {
       this.alert(
         'warning',
@@ -2536,16 +2605,21 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
             if (P5 > 0) {
               this.alert(
                 'warning',
-                'Bienes sin informacion requerida',
+                'Bienes sin información requerida',
                 'Se encontraron bienes sin información requerida para este proceso'
               );
+              this.getNulls();
             } else {
-              this.validateFolio();
               if (this.scanStatus) {
                 const paramsF = new FilterParams();
                 let VAL_MOVIMIENTO = 0;
 
-                paramsF.addFilter('valUser', localStorage.getItem('username'));
+                paramsF.addFilter(
+                  'valUser',
+                  localStorage.getItem('username') == 'sigebiadmon'
+                    ? localStorage.getItem('username')
+                    : localStorage.getItem('username').toLocaleUpperCase()
+                );
                 paramsF.addFilter('valMinutesNumber', this.idProceeding);
                 this.serviceProgrammingGood
                   .getTmpProgValidation(paramsF.getParams())
@@ -2572,14 +2646,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                             'Está fuera de tiempo para cerrar el acta',
                             ''
                           );
-                        } else if (
-                          this.form.get('folioEscaneo').value === null
-                        ) {
-                          this.alert(
-                            'warning',
-                            'Debe introducir el valor del folio',
-                            ''
-                          );
+                        } else {
                           const splitActa = this.form
                             .get('acta2')
                             .value.split('/');
@@ -3094,7 +3161,10 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     if (!this.act2Valid) {
       this.alert('warning', 'No se registro un número de acta válido', '');
     } else {
-      const user = localStorage.getItem('username');
+      const user =
+        localStorage.getItem('username') == 'sigebiadmon'
+          ? localStorage.getItem('username')
+          : localStorage.getItem('username').toLocaleUpperCase();
       if (this.form.get('statusProceeding').value != '') {
         if (
           !['MARRIETA', 'SERA', 'DESARROLLO', 'ALEDESMA', 'JRAMIREZ'].includes(
@@ -3157,57 +3227,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                           'Se recargará la página'
                         );
                         this.loading = true;
-                        /*
-                          this.clearInputs()
-                          this.loading = true
-                          this.form;
-                          this.goodsByExpediente()
-                          
- */ this.newSearchExp();
-                        /* this.getGoodsFn(); */
-
-                        /*  this.form
-                            .get('expediente')
-                            .setValue(this.numberExpedient);
-                          this.clearInputs();
-                          console.log(this.proceedingData.length);
-                          if (this.proceedingData.length === 1) {
-                            console.log('Primer if')
-                            this.navigateProceedings = false;
-                            this.nextProce = true;
-                            this.prevProce = true;
-                            this.numberProceeding = 0;
-                            this.form.get('statusProceeding').reset();
-                            this.labelActa = 'Cerrar acta';
-                            this.btnCSSAct = 'btn-primary';
-                          } else {
-                            this.proceedingData.filter((e: any) => {
-                              return e.keysProceedings != keysProceedings;
-                            });
-                            if (this.proceedingData.length === 1) {
-                              this.navigateProceedings = false;
-                              this.nextProce = true;
-                              this.prevProce = true;
-                              this.numberProceeding = 0;
-                              this.form.get('statusProceeding').reset();
-                              this.labelActa = 'Cerrar acta';
-                              this.btnCSSAct = 'btn-primary';
-                            } else {
-                              this.numberProceeding =
-                                0;
-                          this.getGoodsByExpedient();
-                            }
-                          }
-                          this.alert('success', 'Acta eliminada', '');
-                        },
-                        err => {
-                          console.log(err);
-
-                          this.alert(
-                            'error',
-                            'No se pudo eliminar acta',
-                            'Secudió un problema al eliminar el acta'
-                          ); */
+                        this.newSearchExp();
                       });
                   },
                   err => {
@@ -3242,7 +3262,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     this.form.get('ident').setValue('ADM');
     this.minDateFecElab = new Date();
     this.form.get('statusProceeding').reset();
-    this.totalItemsDataGoodsAct = 0
+    this.totalItemsDataGoodsAct = 0;
     this.labelActa = 'Abrir acta';
     this.btnCSSAct = 'btn-success';
     this.act2Valid = false;
@@ -3610,9 +3630,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                 'Error en el tipo de bien',
                 'Bien con tipo inválido para el acta (INMUEBLE)'
               );
-            }
-            //Valida si el acta esta cerrada
-            if (
+            } else if (
               ['CERRADO', 'CERRADA'].includes(
                 this.form.get('statusProceeding').value
               )
@@ -3711,7 +3729,12 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                                 amount: this.selectData.quantity,
                                 exchangeValue: 1,
                                 approvedUserXAdmon:
-                                  localStorage.getItem('username'),
+                                  localStorage.getItem('username') ==
+                                  'sigebiadmon'
+                                    ? localStorage.getItem('username')
+                                    : localStorage
+                                        .getItem('username')
+                                        .toLocaleUpperCase(),
                               };
                             this.serviceDetailProc
                               .addGoodToProceedings(newDetailProceeding)
@@ -4081,28 +4104,6 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         modalConfig = {
           initialState: {
             idProceeding: this.idProceeding,
-            /* goodData: this.dataGoodAct['data'].filter(item => item.indEdoFisico),
-          callback: (next: any) => {
-            console.log(next);
-            for (let item of next) {
-              console.log(item);
-              this.dataGoodAct.load(
-                this.dataGoodAct['data'].map((e: any) => {
-                  if (e.id === item.id) {
-                    console;
-                    console.log('cambio');
-                    return {
-                      ...e,
-                      [`val${item.vNoColumna}`]:
-                        item.good[`val${item.vNoColumna}`],
-                    };
-                  } else {
-                    return e;
-                  }
-                })
-              );
-            }
-          }, */
           },
           class: 'modal-lg modal-dialog-centered',
         };

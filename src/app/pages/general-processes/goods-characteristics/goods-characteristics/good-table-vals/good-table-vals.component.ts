@@ -95,7 +95,7 @@ export class GoodTableValsComponent extends BasePage implements OnInit {
         },
         value: {
           title: 'Valores',
-          type: 'string',
+          type: 'custom',
           sort: false,
           editable: false,
           // valuePrepareFunction: (cell: any, row: any) => row,

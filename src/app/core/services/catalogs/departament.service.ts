@@ -101,4 +101,9 @@ export class DepartamentService
     const route = `${DepartamentEndpoints.Departament}?filter.numDelegation=${idDelegation}&filter.numSubDelegation=${idSubdelegation}`;
     return this.get(route, params);
   }
+
+  getInCatDepartaments(body: any) {
+    const route = `${DepartamentEndpoints.GetInCatDepartaments}`;
+    return this.post(route, body);
+  }
 }

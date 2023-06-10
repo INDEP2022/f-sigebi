@@ -787,7 +787,8 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
           if (item.appraisal === null) {
             this.goodAppraisal2.setValue(false);
           } else {
-            this.goodAppraisal2.setValue(true);
+            this.totalItems = 0;
+            this.loading = false;
           }
           // this.getTDicta();
           await this.postQuery();
@@ -833,7 +834,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     // debugger;
     const filterParams = new FilterParams();
     filterParams.addFilter('typeNumber', 'CARBIEN');
-    // filterParams.addFilter('user', localStorage.getItem('username'));
+    filterParams.addFilter('user', localStorage.getItem('username'));
     filterParams.addFilter('reading', 'S');
     // filterParams.addFilter()
     const rdicta = await firstValueFrom(
