@@ -46,7 +46,8 @@
         <confirm-button
           [type]="'button'"
           [loading]="loading"
-          (click)="saved()"></confirm-button>
+          [disabled]="form.invalid"
+          (click)="save()"></confirm-button>
       </div>
       <div class="m-3">
         <button type="button" class="btn btn-danger active" (click)="close()">
