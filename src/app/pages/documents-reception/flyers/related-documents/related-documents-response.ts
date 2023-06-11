@@ -114,6 +114,7 @@ export abstract class RelateDocumentsResponse extends BasePage {
     insertDate: FormControl;
     /**@description num_clave_armada */
     armedKeyNumber: FormControl;
+    tipoTexto: FormControl;
   }>;
   protected abstract formNotification: FormGroup;
   protected abstract route: ActivatedRoute;
@@ -137,6 +138,7 @@ export abstract class RelateDocumentsResponse extends BasePage {
   isLoadingGood: boolean = false;
   abstract totalItems: number;
 
+  isCreate = false;
   getGoods1(params: ListParams) {
     this.isLoadingGood = true;
     this.goodServices.getAll(params).subscribe({
@@ -841,6 +843,7 @@ export abstract class RelateDocumentsResponse extends BasePage {
         result[key] = (values as any)[key];
       }
     });
+    delete values.tipoTexto;
     if (values.addressee) {
       result.addressee =
         values.jobType == 'EXTERNO' ? values.addressee : values.addressee?.name;
@@ -855,6 +858,26 @@ export abstract class RelateDocumentsResponse extends BasePage {
   }
 
   async commit() {
+    if (this.isCreate) {
+      const values = this.getValuesNotNull();
+      values.jobBy =
+        this.getParamsForName('PLLAMO') == 'ABANDONO'
+          ? 'ABANDONO'
+          : 'RELACIONADO';
+
+      const result = await firstValueFrom(
+        this.mJobManagementService.create(values).pipe(
+          catchError(() => {
+            showToast({
+              icon: 'error',
+              title: 'Error',
+              text: 'Error al guardar los datos',
+            });
+            return of(null);
+          })
+        )
+      );
+    }
     const values = this.getValuesNotNull();
     if (values.cveManagement) {
       await firstValueFrom(
@@ -874,5 +897,110 @@ export abstract class RelateDocumentsResponse extends BasePage {
 
   selectedChecksC() {
     this.formVariables.get('b').setValue('N');
+  }
+
+  async onClickBtnDocuments() {
+    const valuesVariables = this.formVariables.value;
+    const valuesJobManagement = this.formJobManagement.value;
+    console.log(valuesVariables);
+    if (!valuesVariables.dictamen) {
+      this.alert('error', 'Error', 'Especifique el tipo de Dictaminación.');
+      return;
+    }
+
+    if (valuesVariables.b == 'S') {
+      if (!valuesJobManagement.cveManagement) {
+        const sequencialOfManagement = await this.getNextVal();
+        this.formJobManagement
+          .get('managementNumber')
+          .setValue(sequencialOfManagement);
+        if (valuesJobManagement.refersTo == 'Se refiere a todos los bienes') {
+          this.pupAddGood();
+        }
+        if (
+          valuesJobManagement.refersTo ==
+          'Se refiere a algun (os) bien (es) del expediente'
+        ) {
+          this.pupAddAnyGood();
+        }
+        this.formVariables.get('classify').setValue(null);
+        if (this.dataTableGoodsJobManagement?.[0].classify) {
+          const auxArr: string[] = [];
+          this.dataTableGoodsJobManagement.forEach(x => {
+            if (x.classify) {
+              // this.formVariables.get('classify').setValue(`${valuesVariables.classify || ''}${x.classify || ''}`);
+              auxArr.push(x.classify as string);
+            }
+          });
+          auxArr.length > 0 &&
+            this.formVariables.get('classify').setValue(auxArr.join(','));
+        }
+      }
+
+      if (valuesJobManagement.cveManagement) {
+        const params = new ListParams();
+        params.limit = 1;
+        params.page = 1;
+        params['filter.managementNumber'] =
+          valuesJobManagement.managementNumber;
+        const counter = await this.getGoodsJobManagementCount(params);
+
+        if (
+          valuesJobManagement.refersTo == 'Se refiere a todos los bienes' &&
+          counter == 0
+        ) {
+          this.pupAddGood();
+        }
+        if (
+          valuesJobManagement.refersTo ==
+            'Se refiere a algun (os) bien (es) del expediente' &&
+          counter == 0
+        ) {
+          this.pupAddAnyGood();
+        }
+
+        this.formVariables.get('classify').setValue(null);
+        if (this.dataTableGoodsJobManagement?.[0].classify) {
+          const auxArr: string[] = [];
+          this.dataTableGoodsJobManagement.forEach(x => {
+            if (x.classify) {
+              // this.formVariables.get('classify').setValue(`${valuesVariables.classify || ''}${x.classify || ''}`);
+              auxArr.push(x.classify as string);
+            }
+          });
+          if (auxArr.length > 0) {
+            this.formVariables.get('classify').setValue(auxArr.join(','));
+            this.formVariables.get('classify2').setValue(auxArr.join(','));
+          }
+        }
+      }
+
+      if (
+        valuesJobManagement.cveManagement &&
+        valuesJobManagement.refersTo == 'Se refiere a todos los bienes'
+      ) {
+        this.se_refiere_a_Disabled.B = true;
+        this.se_refiere_a_Disabled.C = true;
+      }
+
+      if (
+        valuesJobManagement.cveManagement &&
+        valuesJobManagement.refersTo ==
+          'Se refiere a algun (os) bien (es) del expediente'
+      ) {
+        this.se_refiere_a_Disabled.A = true;
+        this.se_refiere_a_Disabled.C = true;
+      }
+
+      this.openRDictaminaDoc();
+    }
+  }
+
+  openRDictaminaDoc() {
+    // const modalRef = this.modalService.show(DocumentsFormComponent, {
+    //   initialState: context,
+    //   class: 'modal-lg modal-dialog-centered',
+    //   ignoreBackdropClick: true,
+    // });
   }
 }

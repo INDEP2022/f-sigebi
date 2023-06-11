@@ -118,7 +118,7 @@ export class RelatedDocumentsComponent
   extends RelateDocumentsResponse
   implements OnInit
 {
-  @ViewChild('tableGoods', { static: true }) tabla: Ng2SmartTableComponent;
+  @ViewChild('tableGoods') tableGoods: Ng2SmartTableComponent;
 
   // Send variables
   blockSend: boolean = false;
@@ -318,6 +318,7 @@ export class RelatedDocumentsComponent
     insertDate: new FormControl(''),
     /**@description num_clave_armada */
     armedKeyNumber: new FormControl(''),
+    tipoTexto: new FormControl(''),
   });
 
   formVariables = new FormGroup({
@@ -412,8 +413,14 @@ export class RelatedDocumentsComponent
   selectedRadio: string;
 
   disabledChecks() {
+    console.log(this.tableGoods);
+    const columnas = this.tableGoods.grid.getColumns();
+    const columnaOpciones = columnas.find(
+      columna => columna.id === 'seleccion'
+    );
+    columnaOpciones.hide = true;
     console.log(this.settings);
-    (this.settings.columns as any).seleccion['hide'] = false;
+    // (this.settings.columns as any).seleccion['hide'] = false;
     this.managementForm.get('averiPrevia').disable();
     this.formVariables.get('b').setValue('S');
     // }
@@ -433,7 +440,11 @@ export class RelatedDocumentsComponent
   }
 
   enableChecks() {
-    delete (this.settings.columns as any).seleccion;
+    const columnas = this.tableGoods.grid.getColumns();
+    const columnaOpciones = columnas.find(
+      columna => columna.id === 'seleccion'
+    );
+    columnaOpciones.hide = false;
     this.managementForm.get('averiPrevia').enable();
     this.formVariables.get('b').setValue('S');
     // const tabla = document.getElementById('goods');
@@ -988,6 +999,7 @@ export class RelatedDocumentsComponent
           //   this.formVariables.get('b').setValue('N');
           // }
         } catch (e) {
+          this.isCreate = true;
           console.log(e);
         }
         console.log('res', res);
@@ -1191,11 +1203,11 @@ export class RelatedDocumentsComponent
 
   changeTextType() {
     let textRespone = this.serviceRelatedDocumentsService.changeTextType(
-      this.managementForm.get('tipoTexto').value,
+      this.formJobManagement.get('tipoTexto').value,
       this.managementForm.get('noOficio').value
     );
-    this.managementForm.get('parrafoInicial').setValue(textRespone.text1);
-    this.managementForm.get('parrafoFinal').setValue(textRespone.text2);
+    this.formJobManagement.get('text1').setValue(textRespone.text1);
+    this.formJobManagement.get('text3').setValue(textRespone.text2);
   }
 
   changeOffice() {
@@ -1750,7 +1762,11 @@ export class RelatedDocumentsComponent
     }
   }
 
-  openModal(context?: Partial<DocumentsFormComponent>) {
+  async openModal(context?: Partial<DocumentsFormComponent>) {
+    if (this.pantallaActual == '2') {
+      await this.onClickBtnDocuments();
+      return;
+    }
     if (!this.selectVariable) {
       this.onLoadToast(
         'error',
@@ -2792,7 +2808,7 @@ export class RelatedDocumentsComponent
     //   ignoreBackdropClick: true, //ignora el click fuera del modal
     // };
     // this.modalService.show(UploadDictamenFilesModalComponent, config);
-    if (this.pantallaOption) {
+    if (this.pantallaActual == '1') {
       // Gestion Send button
       if (
         this.formJobManagement.value.statusOf == 'ENVIADO' &&
@@ -2805,7 +2821,7 @@ export class RelatedDocumentsComponent
         this.secondConditionSend();
       }
     } else {
-      // Related Send button
+      this.onClickBtnSend();
     }
   }
 

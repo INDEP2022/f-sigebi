@@ -198,6 +198,67 @@
             </button>
           </div>
         </div>
+
+        <div *ngIf="pantallaOption" class="col-md-12 mb-3">
+          <h6>Tipos de Texto:</h6>
+          <div class="col-md-3">
+            <form-radio label="ACUSE DE RECIBO" (change)="changeTextType()">
+              <input type="radio" formControlName="tipoTexto" value="UNO" />
+            </form-radio>
+          </div>
+          <div class="col-md-3">
+            <form-radio
+              label="DOCUMENTO DEVOLUCIÓN"
+              (change)="changeTextType()">
+              <input type="radio" formControlName="tipoTexto" value="DOS" />
+            </form-radio>
+          </div>
+          <div class="col-md-3">
+            <form-radio label="DOCUMENTO DE BIENES" (change)="changeTextType()">
+              <input type="radio" formControlName="tipoTexto" value="TRES" />
+            </form-radio>
+          </div>
+          <div class="col-md-3">
+            <form-radio
+              label="DOCUMENTO DE NUMERARIO"
+              (change)="changeTextType()">
+              <input type="radio" formControlName="tipoTexto" value="CUATRO" />
+            </form-radio>
+          </div>
+          <div class="col-md-3">
+            <form-radio label="ACLARA INFORMACIÓN" (change)="changeTextType()">
+              <input type="radio" formControlName="tipoTexto" value="CINCO" />
+            </form-radio>
+          </div>
+          <div class="col-md-3">
+            <form-radio
+              label="SOLICITAR INFORMACIÓN"
+              (change)="changeTextType()">
+              <input type="radio" formControlName="tipoTexto" value="SEIS" />
+            </form-radio>
+          </div>
+          <div class="col-md-3">
+            <form-radio label="SAT" (change)="changeTextType()">
+              <input type="radio" formControlName="tipoTexto" value="SIETE" />
+            </form-radio>
+          </div>
+          <div class="col-md-3">
+            <form-radio label="ABANDONO" (change)="changeTextType()">
+              <input type="radio" formControlName="tipoTexto" value="OCHO" />
+            </form-radio>
+          </div>
+          <!-- <form-field
+            [control]="managementForm.get('parrafoInicial')"
+            class="col-md-12 mt-2 pt-3"
+            label="Parrafo Inicial">
+            <textarea
+              rows="7"
+              class="form-control"
+              maxlength="4000"
+              formControlName="parrafoInicial"></textarea>
+          </form-field> -->
+        </div>
+
         <div>
           <form-field
             [control]="formJobManagement.get('text1')"
@@ -210,65 +271,6 @@
               formControlName="text1"></textarea>
           </form-field>
         </div>
-      </div>
-
-      <div
-        [formGroup]="managementForm"
-        *ngIf="pantallaOption"
-        class="col-md-12 mb-3">
-        <h6>Tipos de Texto:</h6>
-        <div class="col-md-3">
-          <form-radio label="ACUSE DE RECIBO" (change)="changeTextType()">
-            <input type="radio" formControlName="tipoTexto" value="UNO" />
-          </form-radio>
-        </div>
-        <div class="col-md-3">
-          <form-radio label="DOCUMENTO DEVOLUCIÓN" (change)="changeTextType()">
-            <input type="radio" formControlName="tipoTexto" value="DOS" />
-          </form-radio>
-        </div>
-        <div class="col-md-3">
-          <form-radio label="DOCUMENTO DE BIENES" (change)="changeTextType()">
-            <input type="radio" formControlName="tipoTexto" value="TRES" />
-          </form-radio>
-        </div>
-        <div class="col-md-3">
-          <form-radio
-            label="DOCUMENTO DE NUMERARIO"
-            (change)="changeTextType()">
-            <input type="radio" formControlName="tipoTexto" value="CUATRO" />
-          </form-radio>
-        </div>
-        <div class="col-md-3">
-          <form-radio label="ACLARA INFORMACIÓN" (change)="changeTextType()">
-            <input type="radio" formControlName="tipoTexto" value="CINCO" />
-          </form-radio>
-        </div>
-        <div class="col-md-3">
-          <form-radio label="SOLICITAR INFORMACIÓN" (change)="changeTextType()">
-            <input type="radio" formControlName="tipoTexto" value="SEIS" />
-          </form-radio>
-        </div>
-        <div class="col-md-3">
-          <form-radio label="SAT" (change)="changeTextType()">
-            <input type="radio" formControlName="tipoTexto" value="SIETE" />
-          </form-radio>
-        </div>
-        <div class="col-md-3">
-          <form-radio label="ABANDONO" (change)="changeTextType()">
-            <input type="radio" formControlName="tipoTexto" value="OCHO" />
-          </form-radio>
-        </div>
-        <form-field
-          [control]="managementForm.get('parrafoInicial')"
-          class="col-md-12 mt-2 pt-3"
-          label="Parrafo Inicial">
-          <textarea
-            rows="7"
-            class="form-control"
-            maxlength="4000"
-            formControlName="parrafoInicial"></textarea>
-        </form-field>
       </div>
 
       <div [formGroup]="managementForm">
@@ -413,7 +415,7 @@
                   [data]="dataSelectDictation"
                   bindLabel="keyDescription"
                   label="Dictaminación"
-                  value="no_clasif_bien"
+                  value="key"
                   id="typesFilters"
                   (change)="typeSelected($event)">
                 </ngx-select>
