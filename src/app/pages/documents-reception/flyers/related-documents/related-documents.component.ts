@@ -212,7 +212,7 @@ export class RelatedDocumentsComponent
 
   settingsGoodsJobManagement = {
     ...this.settings,
-    actions: {
+    actions: { 
       edit: false,
       add: false,
       delete: false,
@@ -338,9 +338,10 @@ export class RelatedDocumentsComponent
     console.log(authService.decodeToken());
     this.authUser = authService.decodeToken();
     console.log('USER DATA', this.authUser);
-    this.settings3 = {
+    this.settings3 = { 
       ...this.settings,
       actions: {
+        columnTitle: 'Acciones',
         edit: false,
         add: false,
         delete: true,
@@ -1503,7 +1504,7 @@ export class RelatedDocumentsComponent
           console.log(data);
           this.justificacion = new DefaultSelect(
             data.data.map(i => {
-              i.clarifications = '#' + i.id + ' -- ' + i.clarifications;
+              i.clarifications = i.id + ' -- ' + i.clarifications;
               return i;
             }),
             data.count
