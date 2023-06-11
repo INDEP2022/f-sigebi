@@ -860,7 +860,6 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
       .subscribe({
         next: async (res: any) => {
           if (res.data.length > 0) {
-            this.form.get('ident').setValue('ADM');
             const newData = await Promise.all(
               res.data.map(async (e: any) => {
                 let disponible: boolean;
@@ -1429,7 +1428,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
     //Validar Acta 2
     if (countAct == 8) {
       this.act2Valid = true;
-      this.searchKeyProceeding();
+
     } else {
       this.act2Valid = false;
     }
@@ -1913,39 +1912,6 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
       );
   }
 
-  searchKeyProceeding() {
-    const acta2Input = this.form.get('folio');
-    console.log(this.act2Valid);
-    console.log(
-      !['CERRADA', 'ABIERTA', 'CERRADO'].includes(
-        this.form.get('statusProceeding').value
-      )
-    );
-    if (
-      this.act2Valid &&
-      !['CERRADA', 'ABIERTA', 'CERRADO'].includes(
-        this.form.get('statusProceeding').value
-      )
-    ) {
-      const paramsF = new FilterParams();
-      paramsF.addFilter('keysProceedings', this.form.get('acta2').value);
-      this.serviceProcVal.getByFilter(paramsF.getParams()).subscribe(
-        res => {
-          console.log(res.data[0]['typeProceedings']);
-          this.form.get('folio').setValue(this.form.get('folio').value + 1);
-          this.alert(
-            'warning',
-            'El acta ya existe',
-            'El acta registrado ya exista, por favor modifique el número de folio o revise los datos.'
-          );
-        },
-        err => {
-          console.log('No existe');
-        }
-      );
-    }
-  }
-
   newOpenProceeding() {
     const paramsF = new FilterParams();
     paramsF.addFilter('keysProceedings', this.form.get('acta2').value);
@@ -2277,28 +2243,34 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
       paramsF.addFilter('keysProceedings', this.form.get('acta2').value);
       this.serviceProcVal.getByFilter(paramsF.getParams()).subscribe(
         res => {
-          const modelEdit: IProccedingsDeliveryReception = {
-            observations: this.form.get('observaciones').value,
-            witness1: this.form.get('autoridadCancela').value,
-            witness2: this.form.get('elabora').value,
-            address: this.form.get('direccion').value,
-            captureDate: format(new Date(), 'yyyy-MM,dd HH:mm'),
-            universalFolio: this.form.get('folioEscaneo').value,
-          };
-          const resData = JSON.parse(JSON.stringify(res.data[0]));
-          console.log(modelEdit);
-          this.serviceProcVal.editProceeding(resData.id, modelEdit).subscribe(
-            res => {
-              this.alert('success', 'Se modificaron los datos del acta', '');
-            },
-            err => {
-              this.alert(
-                'error',
-                'Se presento un error inesperado',
-                'No se puedo guardar el acta'
-              );
-            }
-          );
+          if(this.form.get('statusProceeding').value != null){
+            const modelEdit: IProccedingsDeliveryReception = {
+              observations: this.form.get('observaciones').value,
+              witness1: this.form.get('autoridadCancela').value,
+              witness2: this.form.get('elabora').value,
+              address: this.form.get('direccion').value,
+              captureDate: format(new Date(), 'yyyy-MM,dd HH:mm'),
+              universalFolio: this.form.get('folioEscaneo').value,
+            };
+            const resData = JSON.parse(JSON.stringify(res.data[0]));
+            console.log(modelEdit);
+            this.serviceProcVal.editProceeding(resData.id, modelEdit).subscribe(
+              res => {
+                this.alert('success', 'Se modificaron los datos del acta', '');
+              },
+              err => {
+                this.alert(
+                  'error',
+                  'Se presento un error inesperado',
+                  'No se puedo guardar el acta'
+                );
+              }
+            );
+          }else{
+            this.alert('warning','El número de acta existe','')
+            this.form.get('folio').setValue(this.form.get('folio').value + 1)
+          }
+          
         },
         err => {
           console.log(this.form.get('acta').value.split('/')[0]);
@@ -2360,10 +2332,10 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
 
           this.serviceProcVal.postProceeding(newProceeding).subscribe(
             res => {
+              console.log(res);
               this.initialBool = true;
               this.form.get('statusProceeding').setValue('ABIERTA');
               this.form.get('fecCaptura').setValue(new Date());
-              console.log(res);
               this.proceedingData.push(res);
               this.navigateProceedings = true;
               this.idProceeding = JSON.parse(JSON.stringify(res)).id;
@@ -2471,6 +2443,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                                 .get('statusProceeding')
                                 .setValue('ABIERTA');
                               this.getGoodsActFn();
+                              this.getGoodsFn()
                               this.reopening = true;
                               this.inputsReopenProceeding();
                               this.saveDataAct = [];
