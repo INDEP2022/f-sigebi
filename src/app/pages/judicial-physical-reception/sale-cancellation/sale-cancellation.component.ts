@@ -2400,7 +2400,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
       ) {
         this.alertQuestion(
           'question',
-          '¿Desea eliminar el acta?',
+          '¿Desea eliminar completamente el acta?',
           `Se eliminará el acta ${this.idProceeding}`,
           'Eliminar'
         ).then(q => {
