@@ -1063,9 +1063,11 @@ export class EventCaptureComponent
       }
     } else {
       if (cons) {
+        this.global.regi = area.value;
+        area.setValue(this.global.regi);
         this.global.cons = cons;
         folio.setValue(this.global.cons);
-        return;
+      } else {
       }
       this.global.regi = area.value;
       const indicator = await this.getProceedingType();

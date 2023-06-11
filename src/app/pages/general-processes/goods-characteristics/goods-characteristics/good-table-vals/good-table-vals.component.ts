@@ -112,8 +112,8 @@ export class GoodTableValsComponent extends BasePage implements OnInit {
     };
     this.params.value.limit = 5;
     this.searchNotServerPagination();
-    let re = new RegExp('^((?!(@)).)*$');
-    console.log('123131///#42', 'STRING_PATTERN', re.test('123131///#42'));
+    // let re = new RegExp('^((?!(@#%&)).)*$');
+    // console.log('123131///42', 'STRING_PATTERN', re.test('123131///42'));
   }
 
   get dataTemp() {
