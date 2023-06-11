@@ -236,18 +236,6 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
       console.log(res);
     });
 
-    const paramsF = new FilterParams();
-    paramsF.addFilter('propertyNum', 737766);
-    paramsF.sortBy = 'changeDate';
-    this.serviceHistoryGood.getAllFilter(paramsF.getParams()).subscribe(
-      res => {
-        console.log(res.data[res.data.length - 1]);
-      },
-      err => {
-        console.log(err);
-      }
-    );
-
     this.paramsDataGoods
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(params => {
@@ -702,7 +690,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                   } else {
                     console.log('Entró a Val Otro');
                     const modelLvlPrograma: ILvlPrograma = {
-                      no_bien: good.id,
+                      no_bien: parseInt(good.id),
                       no_expediente: this.form.get('expediente').value,
                     };
                     console.log(modelLvlPrograma);
@@ -711,6 +699,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                       .getLvlPrograma(modelLvlPrograma)
                       .subscribe(
                         res => {
+                          console.log(res);
                           lv_programa = JSON.parse(
                             JSON.stringify(res)
                           ).lv_programa;
@@ -748,7 +737,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                 err => {
                   console.log('Entró a Val Otro');
                   const modelLvlPrograma: ILvlPrograma = {
-                    no_bien: good.id,
+                    no_bien: parseInt(good.id),
                     no_expediente: this.form.get('expediente').value,
                   };
                   console.log(modelLvlPrograma);
@@ -1252,6 +1241,10 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     this.newAct = true;
     this.act2Valid = false;
     this.totalItemsDataGoods = 0;
+    this.totalItemsDataGoodsAct = 0;
+    this.paramsActNavigate.next(new ListParams());
+    this.paramsDataGoods.next(new ListParams());
+    this.paramsDataGoodsAct.next(new ListParams());
 
     if (this.form.get('expediente').value != null) {
       this.newSearchExp();
@@ -1775,8 +1768,14 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     this.form.get('causaPenal').reset();
     this.form.get('statusProceeding').reset();
     this.totalItemsDataGoods = 0;
+    this.totalItemsDataGoodsAct = 0;
 
     this.dataGoods.load([]);
+    this.dataGoodAct.load([]);
+
+    /* this.paramsActNavigate.next(new ListParams());
+    this.paramsDataGoods.next(new ListParams());
+    this.paramsDataGoodsAct.next(new ListParams()); */
 
     this.blockExpedient = false;
     this.navigateProceedings = false;
@@ -2145,6 +2144,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
             res => {
               console.log(res);
               this.initialdisabled = true;
+              this.idProceeding = JSON.parse(JSON.stringify(res)).id;
               this.research = true;
               this.form.get('statusProceeding').setValue('ABIERTA');
               this.form.get('fecCaptura').setValue(new Date());
@@ -3564,7 +3564,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     let no_type: number | string;
     let no_subtype: number | string;
     console.log(arrAct);
-    console.log(this.selectData)
+    console.log(this.selectData);
 
     if (this.selectData && this.selectData != null) {
       const goodClass = this.selectData.goodClassNumber;
@@ -3611,16 +3611,16 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
             'Problema con el tipo de acta',
             'Las actas con esta nomenclatura solo deben contener bienes de numerario efectivo'
           );
-        }else{
+        } else {
           const newParams = `filter.numClasifGoods=$eq:${goodClass}`;
           this.serviceSssubtypeGood.getFilter(newParams).subscribe(
             res => {
-              console.log(res)
+              console.log(res);
               const type = JSON.parse(JSON.stringify(res.data[0]['numType']));
               const subtype = JSON.parse(
                 JSON.stringify(res.data[0]['numSubType'])
               );
-  
+
               no_type = parseInt(type.id);
               no_subtype = parseInt(subtype.id);
               //Validar Admin y tipo
@@ -3630,7 +3630,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                   'Error en el tipo de bien',
                   'Bien con tipo inválido para el acta (INMUEBLE)'
                 );
-              }else if (
+              } else if (
                 ['CERRADO', 'CERRADA'].includes(
                   this.form.get('statusProceeding').value
                 )
@@ -3675,7 +3675,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                 } else {
                   v_tipo_acta = 'ENTREGA';
                 }
-  
+
                 if (no_type === 7 || (no_type === 5 && no_subtype === 16)) {
                   this.isBoveda = true;
                 }
@@ -3698,7 +3698,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                 console.log(model);
                 this.serviceGood.getVBan(model).subscribe(
                   res => {
-                    console.log(res)
+                    console.log(res);
                     v_ban = res.data[0]['ban'];
                     console.log(v_ban);
                     v_ban = false; //!Forzando el false
@@ -3760,7 +3760,11 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                                       ...this.selectData,
                                     });
                                     this.selectData = null;
-                                    this.alert('success','El bien fue agregado', '')
+                                    this.alert(
+                                      'success',
+                                      'El bien fue agregado',
+                                      ''
+                                    );
                                   },
                                   err => {
                                     this.alert(
@@ -3799,7 +3803,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         const newParams = `filter.numClasifGoods=$eq:${goodClass}`;
         this.serviceSssubtypeGood.getFilter(newParams).subscribe(
           res => {
-            console.log(res)
+            console.log(res);
             const type = JSON.parse(JSON.stringify(res.data[0]['numType']));
             const subtype = JSON.parse(
               JSON.stringify(res.data[0]['numSubType'])
@@ -3882,7 +3886,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
               console.log(model);
               this.serviceGood.getVBan(model).subscribe(
                 res => {
-                  console.log(res)
+                  console.log(res);
                   v_ban = res.data[0]['ban'];
                   console.log(v_ban);
                   v_ban = false; //!Forzando el false
@@ -3944,7 +3948,11 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                                     ...this.selectData,
                                   });
                                   this.selectData = null;
-                                  this.alert('success','El bien fue agregado', '')
+                                  this.alert(
+                                    'success',
+                                    'El bien fue agregado',
+                                    ''
+                                  );
                                 },
                                 err => {
                                   this.alert(

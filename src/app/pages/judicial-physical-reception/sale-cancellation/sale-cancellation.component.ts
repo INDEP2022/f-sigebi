@@ -255,7 +255,6 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
     this.prepareForm();
     this.form.get('year').setValue(format(new Date(), 'yyyy'));
     this.form.get('mes').setValue(format(new Date(), 'MM'));
-    this.checkChange();
     this.initalizateProceeding();
 
     if (localStorage.getItem('numberExpedient')) {
@@ -589,7 +588,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
 
     const model: ICveAct = {
       pExpedientNumber: this.numberExpedient,
-      pGoodNumber: element.gooId,
+      pGoodNumber: element.goodId,
       pVarTypeActa1: 'DXCVENT',
       pVarTypeActa2: 'DXCVENT',
     };
@@ -1108,6 +1107,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
           console.log(modelEdit);
           this.serviceProcVal.editProceeding(resData.id, modelEdit).subscribe(
             res => {
+              console.log(res)
               this.alert(
                 'success',
                 'Se modificaron los datos del acta de manera éxitosa',
@@ -1185,6 +1185,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
           this.serviceProcVal.postProceeding(newProceeding).subscribe(
             res => {
               this.initialBool = true;
+              this.idProceeding = JSON.parse(JSON.stringify(res)).id
               this.form.get('statusProceeding').setValue('ABIERTA');
               this.alert('success', 'Se guardo el acta de manera éxitosa', '');
               console.log(res);
@@ -1492,8 +1493,6 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
         .valueChanges.subscribe(res => this.fillActTwo());
       this.form.get('ident').valueChanges.subscribe(res => this.fillActTwo());
       this.form.get('recibe').valueChanges.subscribe(res => {
-        console.log(res);
-        console.log(this.delUser);
         if (res != null && res != undefined && res.numberDelegation2) {
           if (res.numberDelegation2 != this.delUser) {
             this.form.get('recibe').reset();
@@ -1910,6 +1909,8 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
                   }
                 });
               }
+            }else{
+            this.alert('warning', 'No se ha realizado el escaneo', '');
             }
           },
           err => {
@@ -2095,7 +2096,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
                       err => {
                         this.alert(
                           'error',
-                          'Ocurrió un erro inesperado al intentar mover el bien',
+                          'Ocurrió un error inesperado al intentar mover el bien',
                           'Ocurrió un error inesperado al intentar mover el bien. Por favor intentelo nuevamente'
                         );
                       }
@@ -2128,7 +2129,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
                       err => {
                         this.alert(
                           'error',
-                          'Ocurrió un erro inesperado al intentar mover el bien',
+                          'Ocurrió un error inesperado al intentar mover el bien',
                           'Ocurrió un error inesperado al intentar mover el bien. Por favor intentelo nuevamente'
                         );
                       }
@@ -2203,7 +2204,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
             this.dataGoods.load(
               this.dataGoods['data'].map((e: any) => {
                 if (e.id == this.selectActData.good.id) {
-                  return { ...e, avalaible: true };
+                  return { ...e, avalaible: true, acta:null };
                 } else {
                   return e;
                 }
@@ -2307,6 +2308,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
     this.navigateProceedings = true;
     this.nextProce = false;
     this.initialBool = false;
+    this.idProceeding = null
     /* this.newAct = false;
     this.requireAct1(); */
     this.prevProce = true;
@@ -2531,14 +2533,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
               console.log(putGood);
               console.log('Sí?');
               this.serviceGood.update(putGood).subscribe(res => {
-                this.dataGoodAct.load(
-                  this.dataGoodAct['data'].map((e: any) => {
-                    return {
-                      ...e,
-                      storeNumber: this.form.get('noAlmacen').value.idWarehouse,
-                    };
-                  })
-                );
+                this.getGoodsActFn()
               });
             }
             console.log('No :(');
