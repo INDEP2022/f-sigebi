@@ -219,13 +219,13 @@ export class FlyerSubjectCatalogComponent extends BasePage implements OnInit {
   delete(id: number, nb: string) {
     this.affairService.remove2(id, nb).subscribe({
       next: () => {
-        Swal.fire('Borrado', '', 'success');
         this.getAffairAll();
+        this.alert('success', 'Borrado', '');
         this.rowSelected = false;
       },
       error: err => {
-        this.alertQuestion(
-          'error',
+        this.alert(
+          'warning',
           'No se puede eliminar Asunto',
           'Primero elimine sus tipos de asuntos'
         );

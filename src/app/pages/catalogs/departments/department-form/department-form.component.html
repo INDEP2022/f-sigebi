@@ -10,12 +10,13 @@
             <ngx-select
               [form]="departmentForm"
               control="numDelegation"
+              (fetchItems)="getDelegations($event)"
               [data]="delegations"
-              value="id"
-              (change)="onSubDelegation($event)"
               bindLabel="description"
               label="Delegaci&oacute;n"
-              (fetchItems)="getDelegations($event)"></ngx-select>
+              value="id"
+              (change)="onSubDelegation($event)"
+              [readonly]="false"></ngx-select>
           </form-field>
         </div>
 

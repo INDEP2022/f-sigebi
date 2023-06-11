@@ -5,6 +5,7 @@ import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IGrantee } from 'src/app/core/models/catalogs/grantees.model';
 import { GranteeService } from 'src/app/core/services/catalogs/grantees.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { POSITVE_NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-grantees-form',
@@ -31,19 +32,26 @@ export class GranteesFormComponent extends BasePage implements OnInit {
 
   prepareForm(): void {
     this.granteesForm = this.fb.group({
-      id: [null],
-      description: [null, Validators.required],
-      puesto: [null, Validators.required],
-      type: [null, Validators.required],
-      razonSocial: [null, Validators.required],
-      street: [null, Validators.required],
-      noInside: [null, Validators.required],
-      noExterior: [null, Validators.required],
-      col: [null, Validators.required],
-      nommun: [null, Validators.required],
-      nomedo: [null, Validators.required],
-      cp: [null, Validators.required],
-      usrStatus: [null, Validators.required],
+      id: [null, [Validators.pattern(POSITVE_NUMBERS_PATTERN)]],
+      description: [null, [Validators.required, Validators.maxLength(100)]],
+      puesto: [null, [Validators.required, Validators.maxLength(100)]],
+      type: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(POSITVE_NUMBERS_PATTERN),
+          Validators.maxLength(4),
+        ],
+      ],
+      razonSocial: [null, [Validators.required, Validators.maxLength(255)]],
+      street: [null, [Validators.required, Validators.maxLength(255)]],
+      noInside: [null, [Validators.maxLength(50)]],
+      noExterior: [null, [Validators.required, Validators.maxLength(50)]],
+      col: [null, [Validators.required, Validators.maxLength(100)]],
+      nommun: [null, [Validators.required, Validators.maxLength(255)]],
+      nomedo: [null, [Validators.required, Validators.maxLength(100)]],
+      cp: [null, [Validators.required, Validators.maxLength(10)]],
+      usrStatus: [null, [Validators.required, Validators.maxLength(5)]],
     });
 
     if (this.grantee != null) {

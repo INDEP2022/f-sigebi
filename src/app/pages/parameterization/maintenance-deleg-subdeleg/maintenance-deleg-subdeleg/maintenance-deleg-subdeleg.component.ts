@@ -55,7 +55,7 @@ export class MaintenanceDelegSubdelegComponent
       actions: {
         columnTitle: 'Acciones',
         edit: true,
-        delete: true,
+        delete: false,
         add: false,
         position: 'right',
       },
@@ -86,7 +86,7 @@ export class MaintenanceDelegSubdelegComponent
   getDelegationAll() {
     this.loading1 = true;
 
-    this.delegationService.getAll2(this.params.getValue()).subscribe({
+    this.delegationService.getAll3(this.params.getValue()).subscribe({
       next: response => {
         this.delegationList = response.data;
         this.totalItems = response.count;
@@ -155,9 +155,15 @@ export class MaintenanceDelegSubdelegComponent
       .getById(delegation.id, this.params2.getValue())
       .subscribe({
         next: response => {
-          this.subDelegationList = response.data;
-          this.totalItems2 = response.count;
-          this.loading2 = false;
+          if (response.data.length > 0) {
+            this.subDelegationList = response.data;
+            this.totalItems2 = response.count;
+            this.loading2 = false;
+          } else {
+            this.subDelegationList = [];
+            this.totalItems2 = 0;
+            this.loading2 = false;
+          }
         },
         error: error => (this.loading2 = false),
       });
@@ -206,11 +212,12 @@ export class MaintenanceDelegSubdelegComponent
     };
     console.log('datos a eliminar:', formData);
     this.subDelegationService.remove(formData).subscribe({
-      next: () => (
-        Swal.fire('Borrado', '', 'success'), this.getSubDelegations(this.dataId)
-      ),
+      next: () => {
+        this.getSubDelegations(this.dataId);
+        this.alert('success', 'Borrado', '');
+      },
       error: err =>
-        this.onLoadToast(
+        this.alert(
           'warning',
           'No se puede eliminar',
           'Contactar con administrador'

@@ -253,6 +253,13 @@ export class MaintenanceOfAreasComponent extends BasePage implements OnInit {
         this.getDepartmentByIds();
         this.alert('success', '', 'Borrado');
       },
+      error: error => {
+        this.alert(
+          'warning',
+          'Mantenimiento de Areas',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      },
     });
   }
 

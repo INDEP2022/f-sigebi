@@ -104,18 +104,30 @@ export class FractionsListComponent extends BasePage implements OnInit {
     this.modalService.show(FractionsFormComponent, config);
   }
 
-  delete(fraction: IFraction) {
+  showDeleteAlert(drawer: IFraction) {
     this.alertQuestion(
       'warning',
       'Eliminar',
       '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        this.fractionService.remove(fraction.id).subscribe({
-          next: data => this.getFractions(),
-          error: error => (this.loading = false),
-        });
+        this.delete(drawer.id);
       }
+    });
+  }
+
+  delete(id: number) {
+    this.fractionService.remove(id).subscribe({
+      next: response => {
+        this.alert('success', 'Fraccion', 'Borrado'), this.getFractions();
+      },
+      error: err => {
+        this.alert(
+          'warning',
+          'Fraccion',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      },
     });
   }
 }

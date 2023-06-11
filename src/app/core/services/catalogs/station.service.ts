@@ -8,6 +8,7 @@ import { ListParams } from '../../../common/repository/interfaces/list-params';
 import { Repository } from '../../../common/repository/repository';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IStation, IStation2 } from '../../models/catalogs/station.model';
+import { ITransferente } from '../../models/catalogs/transferente.model';
 @Injectable({
   providedIn: 'root',
 })
@@ -16,7 +17,11 @@ export class StationService
   implements ICrudMethods<IStation>
 {
   private readonly route: string = ENDPOINT_LINKS.Station;
-  constructor(private stationRepository: Repository<IStation>) {
+  private readonly transferRoute: string = ENDPOINT_LINKS.Transferente;
+  constructor(
+    private stationRepository: Repository<IStation>,
+    private transferenteRepository: Repository<ITransferente>
+  ) {
     super();
     this.microservice = 'catalog';
   }
@@ -56,5 +61,12 @@ export class StationService
   ): Observable<IListResponse<IStation2>> {
     const route = `${Station.Station}?filter.idTransferent=${id}`;
     return this.get(route);
+  }
+
+  getTransfers(params?: ListParams): Observable<IListResponse<ITransferente>> {
+    return this.transferenteRepository.getAllPaginated(
+      this.transferRoute,
+      params
+    );
   }
 }
