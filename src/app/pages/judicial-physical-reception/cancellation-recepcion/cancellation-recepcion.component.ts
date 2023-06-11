@@ -1428,7 +1428,6 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
     //Validar Acta 2
     if (countAct == 8) {
       this.act2Valid = true;
-
     } else {
       this.act2Valid = false;
     }
@@ -2243,7 +2242,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
       paramsF.addFilter('keysProceedings', this.form.get('acta2').value);
       this.serviceProcVal.getByFilter(paramsF.getParams()).subscribe(
         res => {
-          if(this.form.get('statusProceeding').value != null){
+          if (this.form.get('statusProceeding').value != null) {
             const modelEdit: IProccedingsDeliveryReception = {
               observations: this.form.get('observaciones').value,
               witness1: this.form.get('autoridadCancela').value,
@@ -2266,11 +2265,10 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                 );
               }
             );
-          }else{
-            this.alert('warning','El número de acta existe','')
-            this.form.get('folio').setValue(this.form.get('folio').value + 1)
+          } else {
+            this.alert('warning', 'El número de acta existe', '');
+            this.form.get('folio').setValue(this.form.get('folio').value + 1);
           }
-          
         },
         err => {
           console.log(this.form.get('acta').value.split('/')[0]);
@@ -2443,7 +2441,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                                 .get('statusProceeding')
                                 .setValue('ABIERTA');
                               this.getGoodsActFn();
-                              this.getGoodsFn()
+                              this.getGoodsFn();
                               this.reopening = true;
                               this.inputsReopenProceeding();
                               this.saveDataAct = [];

@@ -265,4 +265,13 @@ export class DictationService extends HttpService {
   getNoGoodClass(data: Object) {
     return this.post(DictationEndpoints.GetGoodClass, data);
   }
+
+  //eliminar dictattion condiciones
+  getVElimina(user: string) {
+    return this.get(`${DictationEndpoints.DEl1}?usuario=${user}`);
+  }
+
+  getValid(data: Object) {
+    return this.post(DictationEndpoints.DEL2, data);
+  }
 }
