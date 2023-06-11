@@ -654,6 +654,8 @@ export class EventCaptureComponent
         next: data => {
           this.alert('success', 'Fechas actualizadas', '');
           const params = new FilterParams();
+          this.startDateCtrl.setValue(null, { emitEvent: false });
+          this.endDateCtrl.setValue(null, { emitEvent: false });
           this.params.next(params);
         },
         error: error => {
