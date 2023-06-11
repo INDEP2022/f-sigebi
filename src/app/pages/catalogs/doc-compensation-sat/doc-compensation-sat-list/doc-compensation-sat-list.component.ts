@@ -69,7 +69,7 @@ export class DocCompensationSatListComponent
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(docCompesationSat.id);
@@ -78,9 +78,16 @@ export class DocCompensationSatListComponent
   }
   delete(id: number) {
     this.docCompesationSatService.remove(id).subscribe({
-      next: () => {
-        this.getExample(),
-          this.alert('success', 'Documento Resarcimiento', 'Borrado');
+      next: response => {
+        this.alert('success', 'Documento Resarcimiento', 'Borrado'),
+          this.getExample();
+      },
+      error: err => {
+        this.alert(
+          'warning',
+          'Documento Resarcimiento',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
       },
     });
   }

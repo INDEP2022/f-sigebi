@@ -1802,6 +1802,22 @@ export class JuridicalRulingGComponent
     let index: number = this.goods.findIndex(elm => elm === obj);
     console.log(index);
   }
+  // getStatusGood(data: any) {
+  //   const params = new ListParams();
+  //   params['filter.status'] = `$eq:${data}`;
+
+  //   this.statusGoodService.getAll(params).subscribe(
+  //     (response: any) => {
+  //       const { data } = response;
+  //       this.desc_estatus_good = data[0].description;
+  //       // this.di_status.get('di_desc_estatus').setValue(data[0].description);
+  //       console.log('SCREEN', data);
+  //     },
+  //     error => {
+  //       console.log('SCREEN', error.error.message);
+  //     }
+  //   );
+  // }
 
   getStatusGood(data: any) {
     // const params = new ListParams();
@@ -1899,7 +1915,7 @@ export class JuridicalRulingGComponent
                   good.est_disponible = state.EST_DISPONIBLE;
                   good.v_amp = state.v_amp ? state.v_amp : null;
                   good.pDiDescStatus = state.pDiDescStatus;
-                  this.desc_estatus_good = state.pDiDescStatus;
+                  // this.desc_estatus_good = state.pDiDescStatus;
                   resolve(state);
                 },
                 error: () => {
@@ -2311,7 +2327,7 @@ export class JuridicalRulingGComponent
               good: this.goodsValid[0].id,
               screen: 'FACTJURDICTAMASG',
             };
-
+            //MANDA A LLAMAR A FACTGENPARCBIEN
             console.log('OBJ', obj);
             this.router.navigate(
               ['/pages/judicial-physical-reception/partializes-general-goods'],

@@ -44,6 +44,7 @@ export enum GoodProcessPoints {
   getFact = 'application/get-fact-juridict-amasg',
   getIdent = 'application/get-fact-juridict-amasg-2',
   dicta = 'application/dictation-good-conciliation',
+  getDocGod = 'application/getDictGood',
 }
 
 export enum GoodFinderEndpoint {

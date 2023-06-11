@@ -14,7 +14,7 @@ import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 })
 export class ClaimConclusionFormComponent extends BasePage implements OnInit {
   ClaimConclusionForm: ModelForm<IClaimConclusion>;
-  title: string = 'Conclusion de siniestros';
+  title: string = 'Conclusión de siniestros';
   edit: boolean = false;
   claimConclusion: IClaimConclusion;
   constructor(

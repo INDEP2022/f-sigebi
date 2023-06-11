@@ -17,6 +17,7 @@ import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { BasePage } from 'src/app/core/shared';
 import { formatForIsoDate, secondFormatDate } from 'src/app/shared/utils/date';
 import { GoodsCharacteristicsService } from '../../services/goods-characteristics.service';
+import { GoodCellValueComponent } from './good-cell-value/good-cell-value.component';
 import { GoodCharacteristicModalComponent } from './good-characteristic-modal/good-characteristic-modal.component';
 import { GoodSituationsModalComponent } from './good-situations-modal/good-situations-modal.component';
 import { GoodTableDetailButtonComponent } from './good-table-detail-button/good-table-detail-button.component';
@@ -58,7 +59,6 @@ export class GoodTableValsComponent extends BasePage implements OnInit {
   limit: FormControl = new FormControl(5);
   params = new BehaviorSubject<ListParams>(new ListParams());
   val_atributos_inmuebles = 0;
-  dataPaginated: IVal[];
   actualiza: boolean;
   requerido: boolean;
   selectedRow: number;
@@ -74,10 +74,10 @@ export class GoodTableValsComponent extends BasePage implements OnInit {
     this.settings = {
       ...this.settings,
       actions: {
-        columnTitle: 'Acciones',
-        position: 'left',
+        columnTitle: '',
+        position: 'right',
         add: false,
-        edit: this.service.disabledTable ? false : true,
+        edit: false,
         delete: true,
       },
       delete: {
@@ -95,11 +95,11 @@ export class GoodTableValsComponent extends BasePage implements OnInit {
         },
         value: {
           title: 'Valores',
-          type: 'string',
+          type: 'custom',
           sort: false,
           editable: false,
-          // valuePrepareFunction: (cell: any, row: any) => row,
-          // renderComponent: GoodCellValueComponent,
+          valuePrepareFunction: (cell: any, row: any) => row,
+          renderComponent: GoodCellValueComponent,
         },
       },
       rowClassFunction: (row: any) => {
@@ -111,6 +111,17 @@ export class GoodTableValsComponent extends BasePage implements OnInit {
       },
     };
     this.params.value.limit = 5;
+    this.searchNotServerPagination();
+    let re = new RegExp('^((?!(@)).)*$');
+    console.log('123131///#42', 'STRING_PATTERN', re.test('123131///#42'));
+  }
+
+  get dataTemp() {
+    return this.service.dataTemp;
+  }
+
+  set dataTemp(value) {
+    this.service.dataTemp = value;
   }
 
   get di_numerario_conciliado() {
@@ -150,6 +161,39 @@ export class GoodTableValsComponent extends BasePage implements OnInit {
         ? this.form.get('avaluo').value
         : false
       : false;
+  }
+
+  get dataPaginated() {
+    return this.service.dataPaginated;
+  }
+
+  private searchNotServerPagination() {
+    this.dataPaginated
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          // this.data = this.dataOld;
+          // debugger;
+          let filters = change.filter.filters;
+          filters.map((filter: any, index: number) => {
+            console.log(filter, index);
+            if (index === 0) {
+              this.dataTemp = [...this.data];
+            }
+            this.dataTemp = this.dataTemp.filter((item: any) =>
+              filter.search !== ''
+                ? (item[filter['field']] + '').includes(filter.search)
+                : true
+            );
+          });
+          // this.totalItems = filterData.length;
+          console.log(this.dataTemp);
+          this.totalItems = this.dataTemp.length;
+          this.params.value.page = 1;
+          this.getPaginated(this.params.getValue());
+        }
+      });
   }
 
   private haveUpdate(update: string) {
@@ -215,6 +259,9 @@ export class GoodTableValsComponent extends BasePage implements OnInit {
         ? row.value.split('/')
         : []
       : [];
+    // debugger;
+    const isNormal =
+      this.disabledBienes || row.attribute !== 'SITUACION JURIDICA';
     this.openModalSelect(
       {
         title: 'los tipos de situaciones para el Bien',
@@ -226,7 +273,8 @@ export class GoodTableValsComponent extends BasePage implements OnInit {
           },
         },
         type: 'text',
-        multi: 'multi',
+        multi: isNormal ? '' : 'multi',
+        permitSelect: this.disabledBienes ? false : true,
         searchFilter: null,
         service: this.dynamicTablesService,
         selecteds: { column: 'otvalor', data },
@@ -292,6 +340,8 @@ export class GoodTableValsComponent extends BasePage implements OnInit {
         callback: (data: any) => {
           console.log(data);
           this.data[row.index].value = data.value;
+          this.dataTemp[row.index].value = data.value;
+          this.getPaginated(this.params.getValue());
         },
       },
       class: 'modal-md modal-dialog-centered',
@@ -339,12 +389,13 @@ export class GoodTableValsComponent extends BasePage implements OnInit {
 
   private getPaginated(params: ListParams) {
     const cantidad = params.page * params.limit;
-    this.dataPaginated = [
-      ...this.data.slice(
+    this.dataPaginated.load([
+      ...this.dataTemp.slice(
         (params.page - 1) * params.limit,
-        cantidad > this.data.length ? this.data.length : cantidad
+        cantidad > this.dataTemp.length ? this.dataTemp.length : cantidad
       ),
-    ];
+    ]);
+    this.dataPaginated.refresh();
   }
 
   private subsPaginated() {
@@ -423,6 +474,7 @@ export class GoodTableValsComponent extends BasePage implements OnInit {
                     };
                   });
                   this.totalItems = this.data.length;
+                  this.dataTemp = [...this.data];
                   this.getPaginated(this.params.value);
                   this.loading = false;
                   console.log(this.data);

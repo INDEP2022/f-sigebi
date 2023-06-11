@@ -3,8 +3,10 @@ import { FormBuilder } from '@angular/forms';
 import { Router } from '@angular/router';
 import { BehaviorSubject, firstValueFrom } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { FileSaverService } from 'src/app/common/services/file-saver.service';
 import { IProceedingDeliveryReception } from 'src/app/core/models/ms-proceedings/proceeding-delivery-reception';
 import { MsIndicatorGoodsService } from 'src/app/core/services/ms-indicator-goods/ms-indicator-goods.service';
+import { ProceedingsExcelService } from 'src/app/core/services/ms-proceedings/proceeding-excel.service';
 import { ProceedingsDeliveryReceptionService } from 'src/app/core/services/ms-proceedings/proceedings-delivery-reception.service';
 import { ProceedingsDetailDeliveryReceptionService } from 'src/app/core/services/ms-proceedings/proceedings-detail-delivery-reception.service';
 import { ScheduledMaintenance } from './scheduled-maintenance';
@@ -32,7 +34,9 @@ export class ScheduledMaintenanceComponent
     protected override deliveryService: ProceedingsDeliveryReceptionService,
     protected override detailService: ProceedingsDetailDeliveryReceptionService,
     private serviceIndicator: MsIndicatorGoodsService,
-    private router: Router
+    private excelService: ProceedingsExcelService,
+    private router: Router,
+    private fileSaverService: FileSaverService
   ) {
     super(
       fb,
@@ -174,6 +178,106 @@ export class ScheduledMaintenanceComponent
       //     },
       //   });
     }
+  }
+
+  public base64ToArrayBuffer(base64String: string) {
+    let binaryString = window.atob(base64String);
+    let binaryLength = binaryString.length;
+    let bytes = new Uint8Array(binaryLength);
+    for (var i = 0; i < binaryString.length; i++) {
+      bytes[i] = binaryString.charCodeAt(i);
+    }
+    return bytes.buffer;
+  }
+
+  public downloadDocument(
+    filename: string,
+    documentType: string,
+    base64String: string
+  ): void {
+    let documentTypeAvailable = new Map();
+    documentTypeAvailable.set(
+      'excel',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    );
+    documentTypeAvailable.set(
+      'word',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+    );
+    documentTypeAvailable.set('pdf', '');
+
+    let bytes = this.base64ToArrayBuffer(base64String);
+    let blob = new Blob([bytes], {
+      type: documentTypeAvailable.get(documentType),
+    });
+    let objURL: string = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = objURL;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+
+    URL.revokeObjectURL(objURL);
+  }
+
+  dataURItoBlob(dataURI: any) {
+    const byteString = window.atob(dataURI);
+    const arrayBuffer = new ArrayBuffer(byteString.length);
+    const int8Array = new Uint8Array(arrayBuffer);
+    for (let i = 0; i < byteString.length; i++) {
+      int8Array[i] = byteString.charCodeAt(i);
+    }
+    const blob = new Blob([int8Array], { type: 'image/png' });
+    return blob;
+  }
+
+  async exportExcel2() {
+    this.loadingExcel = true;
+    this.onLoadToast(
+      'info',
+      'Reporte de Mantenimiento de Programaciones',
+      'Consiguiendo datos'
+    );
+
+    this.excelService.getExcel().subscribe({
+      next: resp => {
+        console.log(resp);
+        this.downloadDocument('test', 'excel', resp.file);
+        // let workbook = read(bstr, {
+        //   type: 'binary',
+        // });
+        // writeFile(workbook, fullFilename);
+        // const data: Blob = new Blob([resp.file], {
+        //   type: 'xlsx',
+        // });
+        // saveAs(data, fullFilename);
+        // const workBook: WorkBook = {
+        //   Sheets: { 'Hoja 1': workSheet },
+        //   SheetNames: ['Hoja 1'],
+        // };
+        // const buffer = write(workBook, { bookType: 'xlsx', type: 'binary' });
+        // const saveFileOptions = {
+        //   type: EXCEL_TYPE,
+        //   filename,
+        //   extension: '.xlsx',
+        // };
+        // this.fileSaverService.saveFromBuffer(buffer, saveFileOptions);
+        this.loadingExcel = false;
+      },
+      error: error => {
+        this.loadingExcel = false;
+        this.onLoadToast(
+          'error',
+          'Error',
+          `Error al obtener el documento ${error.error.message}`
+        );
+      },
+    });
+    // if(result as any){
+    //   const blob =  new Blob(result);
+
+    // }
   }
 
   async exportExcel() {

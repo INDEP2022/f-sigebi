@@ -1,6 +1,7 @@
+import { Location } from '@angular/common';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { TabsetComponent } from 'ngx-bootstrap/tabs';
 import {
   BehaviorSubject,
@@ -28,6 +29,7 @@ import { StatusXScreenService } from 'src/app/core/services/ms-screen-status/sta
 import { SurvillanceService } from 'src/app/core/services/ms-survillance/survillance.service';
 import { SegAcessXAreasService } from 'src/app/core/services/ms-users/seg-acess-x-areas.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { IParamsLegalOpinionsOffice } from 'src/app/pages/juridical-processes/depositary/legal-opinions-office/legal-opinions-office/legal-opinions-office.component';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import {
   firstFormatDate,
@@ -217,8 +219,28 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
 
   select = new DefaultSelect();
 
+  screenKey: string = 'FACTDIRDATOSBIEN'; // Clave de la pantalla actual
+  origin: string = null;
+  origin1: string = ''; // Pantalla para regresar a la anterior de la que se llamo origin
+  origin2: string = ''; // Pantalla para regresar a la anterior de la que se llamo desde la origin1
+  origin3: string = ''; // Pantalla para regresar a la anterior de la que se llamo desde la origin2
+  paramsScreenOffice: IParamsLegalOpinionsOffice = {
+    PAQUETE: '',
+    P_GEST_OK: '',
+    CLAVE_OFICIO_ARMADA: '',
+    P_NO_TRAMITE: '',
+    TIPO: '',
+    P_VALOR: '',
+    TIPO_VO: '',
+    NO_EXP: '',
+    CONSULTA: '',
+  };
+  TIPO_PROC: string = '';
+  NO_INDICADOR: string = '';
+
   constructor(
     private goodProcessService: GoodprocessService,
+    private location: Location,
     private goodService: GoodService,
     private serviceDeleg: DelegationService,
     private subdelegationService: SubdelegationService,
@@ -231,7 +253,8 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     private segxAccessService: SegAcessXAreasService,
     private service: GoodsCharacteristicsService,
     private goodPartialize: GoodPartializeService,
-    private comerDetailService: ComerDetailsService
+    private comerDetailService: ComerDetailsService,
+    public router: Router
   ) {
     super();
     this.loading = true;
@@ -257,11 +280,33 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     }
   }
 
+  back() {
+    this.location.back();
+  }
+
   ngOnInit(): void {
     this.service.prepareForm();
     this.activatedRoute.queryParams.subscribe({
       next: param => {
         console.log(param);
+        this.origin = param['origin'] ?? null;
+        this.origin1 = param['origin1'] ?? null;
+        if (
+          this.origin1 == 'FACTJURDICTAMOFICIO' &&
+          this.origin == 'FATRIBREQUERIDO'
+        ) {
+          for (const key in this.paramsScreenOffice) {
+            if (Object.prototype.hasOwnProperty.call(param, key)) {
+              this.paramsScreenOffice[
+                key as keyof typeof this.paramsScreenOffice
+              ] = param[key] ?? null;
+            }
+          }
+          this.origin2 = param['origin2'] ?? null;
+          this.origin3 = param['origin3'] ?? null;
+          this.TIPO_PROC = param['TIPO_PROC'] ?? null;
+          this.NO_INDICADOR = param['NO_INDICADOR'] ?? null;
+        }
         if (param['noBien']) {
           // this.selectTab();
           this.numberGood.setValue(param['noBien']);
@@ -320,9 +365,23 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
       id: this.good.id,
       goodId: this.good.goodId,
     };
+    let tableValid = true;
     this.service.data.forEach(row => {
+      if (row.required && !row.value) {
+        this.onLoadToast(
+          'error',
+          'Bien ' + this.numberGood.value,
+          'Complete las características requeridas'
+        );
+        tableValid = false;
+        return;
+      }
       body[row.column] = row.value;
     });
+    if (!tableValid) {
+      console.log(this.service.data);
+      return;
+    }
     this.good.description;
     body['description'] = this.descripcion.value;
     body['unit'] = this.goodUnit.value;
@@ -791,6 +850,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
           if (item.appraisal === null) {
             this.goodAppraisal2.setValue(false);
           } else {
+            this.goodAppraisal2.setValue(true);
             this.totalItems = 0;
             this.loading = false;
           }
@@ -838,7 +898,11 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     // debugger;
     const filterParams = new FilterParams();
     filterParams.addFilter('typeNumber', 'CARBIEN');
-    filterParams.addFilter('user', localStorage.getItem('username'));
+    filterParams.addFilter('user', 'DR_SIGEBI');
+    // filterParams.addFilter(
+    //   'user',
+    //   localStorage.getItem('username').toUpperCase()
+    // );
     filterParams.addFilter('reading', 'S');
     // filterParams.addFilter()
     const rdicta = await firstValueFrom(
@@ -859,25 +923,25 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     if (this.type.value === '6' && this.subtype.value) {
       if (this.goodAppraisal.value === null) {
         if (this.good.val14 === 'S') {
-          this.goodAppraisal2.setValue('S');
+          this.goodAppraisal2.setValue(true);
         } else if (this.good.val14 === 'N') {
-          this.goodAppraisal2.setValue('N');
+          this.goodAppraisal2.setValue(false);
         } else {
           if (this.good.val14 === null) {
-            this.goodAppraisal2.setValue('X');
+            this.goodAppraisal2.setValue(false);
           } else {
-            this.goodAppraisal2.setValue('S');
+            this.goodAppraisal2.setValue(true);
           }
         }
       } else {
         if (this.good.val14 === 'S') {
-          this.goodAppraisal2.setValue('S');
+          this.goodAppraisal2.setValue(true);
         }
         if (this.good.val14 === 'N') {
-          this.goodAppraisal2.setValue('S');
+          this.goodAppraisal2.setValue(true);
         }
         if (this.good.val14 !== 'S' && this.good.val14 !== 'N') {
-          this.goodAppraisal2.setValue('S');
+          this.goodAppraisal2.setValue(true);
         }
         if (this.goodAppraisal.value != null && this.good.val14 === 'N') {
           this.good.val14 = 'S';
@@ -987,5 +1051,30 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
         console.log(err);
       },
     });
+  }
+
+  goBack() {
+    console.log(this.origin1, this.origin);
+
+    if (
+      this.origin1 == 'FACTJURDICTAMOFICIO' &&
+      this.origin == 'FATRIBREQUERIDO'
+    ) {
+      this.router.navigate(
+        [`/pages/general-processes/goods-with-required-information`],
+        {
+          queryParams: {
+            ...this.paramsScreenOffice,
+            TIPO_PROC: this.TIPO_PROC,
+            NO_INDICADOR: this.NO_INDICADOR,
+            origin: this.origin1,
+            origin2: this.origin2,
+            origin3: this.origin3,
+          },
+        }
+      );
+    } else {
+      this.location.back();
+    }
   }
 }

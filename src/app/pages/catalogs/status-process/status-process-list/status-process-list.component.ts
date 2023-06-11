@@ -104,21 +104,24 @@ export class StatusProcessListComponent extends BasePage implements OnInit {
     this.modalService.show(StatusProcessFormComponent, config);
   }
 
-  delete(statusProcess: IStatusProcess) {
+  ShowDeleteAlert(statusProcess: IStatusProcess) {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
-        this.ShowDeleteAlert(statusProcess.id);
+        this.delete(statusProcess.status);
       }
     });
   }
 
-  ShowDeleteAlert(id: number) {
-    this.statusProcessService.remove(id).subscribe({
+  delete(status: string) {
+    const data = {
+      status: status,
+    };
+    this.statusProcessService.remove2(data).subscribe({
       next: () => {
         this.getExample(), this.alert('success', 'Estatus Proceso', 'Borrado');
       },

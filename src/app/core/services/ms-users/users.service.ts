@@ -102,6 +102,13 @@ export class UsersService extends HttpService {
     return this.get<IListResponse<any>>(UserEndpoints.UserAsigne, _params);
   }
 
+  postSegAccessXAreasTvalTabla1(body: {
+    delegacionNo: string | number;
+    user: string;
+  }) {
+    return this.post(`factadboficiogestrel/delete-when-button-pressed`, body);
+  }
+
   /*
  getUsersJob() {
     return this.get<IListResponse<ISegUsers>>(UserEndpoints.SegUsers);
