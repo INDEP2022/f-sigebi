@@ -843,10 +843,10 @@ export abstract class RelateDocumentsResponse extends BasePage {
         result[key] = (values as any)[key];
       }
     });
-    delete values.tipoTexto;
+    delete result.tipoTexto;
     if (values.addressee) {
       result.addressee =
-        values.jobType == 'EXTERNO' ? values.addressee : values.addressee?.name;
+        values.jobType == 'EXTERNO' ? values.addressee : values.addressee?.user;
     }
     if (values.sender) {
       result.sender = values.sender.id;
@@ -897,6 +897,26 @@ export abstract class RelateDocumentsResponse extends BasePage {
 
   selectedChecksC() {
     this.formVariables.get('b').setValue('N');
+  }
+
+  getGlobals(key: string): number {
+    return 2;
+  }
+
+  pupActManagement() {
+    let var1, var2;
+    if (
+      this.getParamsForName('P_GEST_OK') == '1' ||
+      this.getGlobals('gnu_activa_gestion') == 1
+    ) {
+      if (this.getParamsForName('PLLAMO') == 'ABANDONO') {
+        var1 = 'DJS';
+        var2 = 'DJ';
+      } else {
+        var1 = 'FNI';
+        var2 = 'AB';
+      }
+    }
   }
 
   async onClickBtnDocuments() {

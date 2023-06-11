@@ -962,7 +962,7 @@ export class RelatedDocumentsComponent
             });
           }
 
-          if (mJobManagement.addressee && mJobManagement.jobType != 'INTERNO') {
+          if (mJobManagement.addressee && mJobManagement.jobType == 'INTERNO') {
             const params = new ListParams();
             params.limit = 1;
             params['search'] = mJobManagement.addressee;
