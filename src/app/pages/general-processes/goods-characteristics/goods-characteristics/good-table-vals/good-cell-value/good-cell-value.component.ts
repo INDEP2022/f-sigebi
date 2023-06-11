@@ -59,6 +59,8 @@ export class GoodCellValueComponent extends DefaultEditor implements OnInit {
     );
   }
 
+  haveCaracteresEspeciales() {}
+
   notInt(valor: any) {
     valor = parseInt(valor);
     if (isNaN(valor)) {
@@ -75,6 +77,8 @@ export class GoodCellValueComponent extends DefaultEditor implements OnInit {
       return false;
     }
   }
+
+  haveSpecialCharacters() {}
 
   haveNumericError(row: IVal) {
     return row.dataType === 'N' && this.notInt(row.value);

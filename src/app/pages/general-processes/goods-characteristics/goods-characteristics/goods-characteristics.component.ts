@@ -1,3 +1,4 @@
+import { Location } from '@angular/common';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
@@ -219,6 +220,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
 
   constructor(
     private goodProcessService: GoodprocessService,
+    private location: Location,
     private goodService: GoodService,
     private serviceDeleg: DelegationService,
     private subdelegationService: SubdelegationService,
@@ -255,6 +257,10 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
       this.staticTabs.tabs[0].disabled = true;
       this.staticTabs.tabs[1].active = true;
     }
+  }
+
+  back() {
+    this.location.back();
   }
 
   ngOnInit(): void {
@@ -852,7 +858,11 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     // debugger;
     const filterParams = new FilterParams();
     filterParams.addFilter('typeNumber', 'CARBIEN');
-    filterParams.addFilter('user', 'DR_SIGEBI');
+    // filterParams.addFilter('user', 'DR_SIGEBI');
+    filterParams.addFilter(
+      'user',
+      localStorage.getItem('username').toUpperCase()
+    );
     filterParams.addFilter('reading', 'S');
     // filterParams.addFilter()
     const rdicta = await firstValueFrom(
