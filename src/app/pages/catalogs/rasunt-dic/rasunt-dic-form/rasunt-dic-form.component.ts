@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Renderer2 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
@@ -26,7 +26,8 @@ export class RAsuntDicFormComponent extends BasePage implements OnInit {
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
-    private rAsuntDicService: RAsuntDicService
+    private rAsuntDicService: RAsuntDicService,
+    private render: Renderer2
   ) {
     super();
   }
@@ -37,16 +38,27 @@ export class RAsuntDicFormComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.form = this.fb.group({
-      code: [null],
+      code: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(5),
+          Validators.pattern(POSITVE_NUMBERS_PATTERN),
+        ],
+      ],
       dictum: [
         null,
-        [Validators.required, Validators.pattern(POSITVE_NUMBERS_PATTERN)],
+        [
+          Validators.required,
+          Validators.maxLength(3),
+          Validators.pattern(POSITVE_NUMBERS_PATTERN),
+        ],
       ],
       flyerType: [
         null,
         [
           Validators.required,
-          Validators.maxLength(1),
+          Validators.maxLength(2),
           Validators.pattern(STRING_PATTERN),
         ],
       ],
@@ -63,10 +75,15 @@ export class RAsuntDicFormComponent extends BasePage implements OnInit {
       e: [null, [Validators.maxLength(1), Validators.pattern(STRING_PATTERN)]],
       // registryNumber: [null],
     });
+
     if (this.rAsuntDic != null) {
       this.edit = true;
       this.form.patchValue(this.rAsuntDic);
+      this.form.get('flyerType').disable();
+      this.form.get('dictum').disable();
+      this.form.get('code').disable();
     }
+    this.getData(new ListParams());
   }
 
   getData(params: ListParams) {
@@ -92,10 +109,12 @@ export class RAsuntDicFormComponent extends BasePage implements OnInit {
 
   update() {
     this.loading = true;
+    console.log(this.form.getRawValue());
     this.rAsuntDicService
       .update(this.rAsuntDic.code, this.form.getRawValue())
       .subscribe({
         next: data => this.handleSuccess(),
+
         error: error => (this.loading = false),
       });
   }

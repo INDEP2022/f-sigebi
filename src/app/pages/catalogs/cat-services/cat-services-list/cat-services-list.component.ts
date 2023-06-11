@@ -10,7 +10,6 @@ import {
 import { IServiceCat } from 'src/app/core/models/catalogs/service-cat.model';
 import { ServiceCatService } from 'src/app/core/services/catalogs/service-cat.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import Swal from 'sweetalert2';
 import { CatServicesFormComponent } from '../cat-services-form/cat-services-form.component';
 import { SERVICES_COLUMS } from './cat-service-columns';
 
@@ -113,19 +112,27 @@ export class CatServicesListComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
         this.deleteReg(catservice.code);
-        Swal.fire('Borrado', '', 'success');
       }
     });
   }
 
   deleteReg(id: string | number) {
     this.catserviceService.delete(id).subscribe({
-      next: () => this.getExample(),
+      next: response => {
+        this.alert('success', 'Servicio', 'Borrado'), this.getExample();
+      },
+      error: err => {
+        this.alert(
+          'warning',
+          'Servicio',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      },
     });
   }
 }

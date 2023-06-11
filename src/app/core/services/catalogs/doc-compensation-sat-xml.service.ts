@@ -46,6 +46,6 @@ export class DocCompensationSatXmlService
   }
 
   remove(id: string | number): Observable<Object> {
-    return this.docCompensationSatXMLRepository.remove(this.route, id);
+    return this.docCompensationSatXMLRepository.remove(`${this.route}/id`, id);
   }
 }

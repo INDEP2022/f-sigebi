@@ -31,7 +31,7 @@ export class OpinionFormComponent extends BasePage implements OnInit {
   private prepareForm() {
     this.opinionForm = this.fb.group({
       id: [null],
-      description: [null],
+      description: [null, [Validators.required]],
       dict_ofi: [null, [Validators.maxLength(1)]],
       areaProcess: [null, [Validators.maxLength(2)]],
     });
