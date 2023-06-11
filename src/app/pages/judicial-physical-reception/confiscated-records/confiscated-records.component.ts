@@ -2690,6 +2690,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                 'Bienes sin información requerida',
                 'Se encontraron bienes sin información requerida para este proceso'
               );
+              localStorage.setItem('numberExpedient', this.numberExpedient)
               this.getNulls();
             } else {
               if (this.scanStatus) {
@@ -3338,7 +3339,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   }
 
   newProceeding() {
-    this.inputsNewProceeding();
+    
     this.numberProceeding = this.proceedingData.length;
     this.clearInputs();
     this.form.get('ident').setValue('ADM');
@@ -3357,6 +3358,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     this.goodData = [];
     this.saveDataAct = [];
     this.dataGoodAct.load(this.goodData);
+    this.inputsNewProceeding();
   }
 
   //"Acta 2"
