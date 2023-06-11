@@ -6,8 +6,13 @@
     <form [formGroup]="stateForm" class="form-material">
       <div class="row">
         <div class="col-md-3">
-          <form-field [control]="stateForm.get('id')" label="CVE Estado">
-            <input type="text" class="form-control" formControlName="id" />
+          <form-field
+            [control]="stateForm.get('abbreviation')"
+            label="CVE Estado">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="abbreviation" />
           </form-field>
         </div>
 

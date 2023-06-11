@@ -1,3 +1,5 @@
+import { DatePipe } from '@angular/common';
+
 export const REGULATORY_COLUMNS = {
   id: {
     title: 'Id',
@@ -8,6 +10,9 @@ export const REGULATORY_COLUMNS = {
     title: 'Id Fracción',
     type: 'number',
     sort: false,
+    valuePrepareFunction: (value: any) => {
+      return value.id;
+    },
   },
   number: {
     title: 'Número',
@@ -38,6 +43,11 @@ export const REGULATORY_COLUMNS = {
     title: 'Fecha Creación',
     type: 'Date',
     sort: false,
+    valuePrepareFunction: (date: Date) => {
+      var raw = new Date(date);
+      var formatted = new DatePipe('en-EN').transform(raw, 'dd/MM/yyyy');
+      return formatted;
+    },
   },
   userModification: {
     title: 'Usuario Modificación',
@@ -48,6 +58,11 @@ export const REGULATORY_COLUMNS = {
     title: 'Fecha Modificación',
     type: 'Date',
     sort: false,
+    valuePrepareFunction: (date: Date) => {
+      var raw = new Date(date);
+      var formatted = new DatePipe('en-EN').transform(raw, 'dd/MM/yyyy');
+      return formatted;
+    },
   },
   version: {
     title: 'Versión',

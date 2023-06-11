@@ -16,75 +16,74 @@
           </form-field>
         </div>
         <div class="col-md-6">
-          <form-field [control]="form.get('numero')" label="N&uacute;mero">
-            <input type="text" class="form-control" formControlName="numero" />
+          <form-field [control]="form.get('number')" label="N&uacute;mero">
+            <input type="text" class="form-control" formControlName="number" />
           </form-field>
         </div>
         <div class="col-md-12">
           <form-field
-            [control]="form.get('descripcion')"
+            [control]="form.get('description')"
             label="Descripci&oacute;n">
             <input
               type="text"
               class="form-control"
-              formControlName="descripcion" />
+              formControlName="description" />
           </form-field>
         </div>
         <div class="col-md-12">
-          <form-field [control]="form.get('validar_ef')" label="Validar Ef">
+          <form-field [control]="form.get('validateEf')" label="Validar Ef">
             <input
               type="text"
               class="form-control"
-              formControlName="validar_ef" />
+              formControlName="validateEf" />
           </form-field>
         </div>
         <div class="col-md-12">
-          <form-field [control]="form.get('validar_ec')" label="Validar Ec">
+          <form-field [control]="form.get('validateEc')" label="Validar Ec">
             <input
               type="text"
               class="form-control"
-              formControlName="validar_ec" />
+              formControlName="validateEc" />
           </form-field>
         </div>
         <div class="col-md-12">
           <form-field
-            [control]="form.get('usuario_creacion')"
+            [control]="form.get('userCreation')"
             label="Usuario Creaci&oacute;n">
             <input
               type="text"
               class="form-control"
-              formControlName="usuario_creacion" />
+              formControlName="userCreation" />
           </form-field>
         </div>
         <div *ngIf="!edit" class="col-md-12">
           <form-field
-            [control]="form.get('fecha_creacion')"
+            [control]="form.get('createDate')"
             label="Fecha Creaci&oacute;n">
             <input
               type="date"
               class="form-control"
-              [(ngModel)]="fechaActual"
-              formControlName="fecha_creacion" />
+              formControlName="createDate" />
           </form-field>
         </div>
         <div class="col-md-12">
           <form-field
-            [control]="form.get('usuario_modificacion')"
+            [control]="form.get('userModification')"
             label="Usuario Modificaci&oacute;n">
             <input
               type="text"
               class="form-control"
-              formControlName="usuario_modificacion" />
+              formControlName="userModification" />
           </form-field>
         </div>
         <div *ngIf="edit" class="col-md-12">
           <form-field
-            [control]="form.get('fecha_modificacion')"
+            [control]="form.get('modificationDate')"
             label="Fecha Modificaci&oacute;n">
             <input
               type="date"
               class="form-control"
-              formControlName="fecha_modificacion" />
+              formControlName="modificationDate" />
           </form-field>
         </div>
         <div class="col-md-12">

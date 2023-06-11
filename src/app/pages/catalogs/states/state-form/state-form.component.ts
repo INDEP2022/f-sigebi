@@ -36,10 +36,6 @@ export class StateFormComponent extends BasePage implements OnInit {
   private prepareForm() {
     this.stateForm = this.fb.group({
       id: [null],
-      cveState: [
-        null,
-        [Validators.required, Validators.pattern(POSITVE_NUMBERS_PATTERN)],
-      ],
       descCondition: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
@@ -66,6 +62,7 @@ export class StateFormComponent extends BasePage implements OnInit {
       userModification: [null],
       modificationDate: [null],
     });
+    debugger;
     if (this.state != null) {
       this.edit = true;
       this.stateForm.patchValue(this.state);

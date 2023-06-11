@@ -30,6 +30,33 @@
   </div>
 
   <div body>
+    <div class="row">
+      <!-- <div class="d-inline mx-2"> -->
+      <div class="col-md-6"></div>
+      <div class="col-6">
+        <div class="d-inline mx-2">
+          <button
+            style="float: right"
+            type="button"
+            (click)="listDictums()"
+            tooltip="Dictámenes Disponibles"
+            containerClass="tooltip-style"
+            class="btn btn-primary btn-sm active mr-3">
+            <i class="bx bx-list-plus bx-sm float-icon"></i>
+          </button>
+          <button
+            style="float: right"
+            type="button"
+            (click)="newDictums()"
+            tooltip="Agregar Dictamen"
+            containerClass="tooltip-style"
+            class="btn btn-info btn-sm active ml-2 mr-2">
+            <i class="bx bx-plus bx-sm float-icon"></i>
+          </button>
+        </div>
+      </div>
+      <!-- </div> -->
+    </div>
     <form [formGroup]="legalForm" class="container-fluid form-material">
       <div class="row">
         <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2">
@@ -107,7 +134,7 @@
                   </form-field>
                 </div>
 
-                <div class="col-md-6">
+                <div class="col-md-6" ngClass="not-press">
                   <form-field
                     [control]="legalForm.get('fecDicta')"
                     label="Fecha Dictaminación">
@@ -179,7 +206,7 @@
                     [control]="legalForm.get('cveOficio')"
                     label="Cve&#46; Oficio">
                     <input
-                      [readOnly]="!isDelit"
+                      [readOnly]="true"
                       class="form-control"
                       #cveOficio
                       formControlName="cveOficio" />
@@ -197,7 +224,7 @@
                 <form-check
                   class="col-md-12"
                   label="&#191;El expediente es delito propiedad intelectual&#63;"
-                  for="esPropiedad">
+                  for="esPropiedad-check">
                   <input
                     id="esPropiedad-check"
                     type="checkbox"
@@ -369,7 +396,7 @@
                 <ng2-smart-table
                   [attr.class]="'table-bordered table-responsive'"
                   [settings]="settings3"
-                  [source]="documents"></ng2-smart-table>
+                  [source]="documents_m1"></ng2-smart-table>
               </div>
               <div class="col-md-3">
                 <p class="text-info h5">No&#46; bien</p>
