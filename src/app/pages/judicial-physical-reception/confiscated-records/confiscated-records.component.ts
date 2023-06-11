@@ -435,6 +435,9 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     this.attribGoodBadService.selectedGoods = this.dataGoodAct['data'].map(
       (item: any) => item.good.goodId
     );
+    console.log(this.dataGoodAct['data'])
+    console.log({msg: 'Elements', data: this.dataGoodAct['data'].map(
+      (item: any) => item.good.goodId)})
     this.openModalSelect(
       {
         title: 'Listado de bienes con información requerida nula',
@@ -451,7 +454,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
           },
         },
         service: this.attribGoodBadService,
-        dataObservableFn: this.attribGoodBadService.getAllModal,
+        dataObservableFn: this.attribGoodBadService.getAllModalSelectedGoods,
         searchFilter: null,
         type: 'text',
         showError: false,
