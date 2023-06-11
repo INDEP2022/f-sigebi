@@ -2688,6 +2688,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                 'Bienes sin información requerida',
                 'Se encontraron bienes sin información requerida para este proceso'
               );
+              localStorage.setItem('numberExpedient', this.numberExpedient)
               this.getNulls();
             } else {
               if (this.scanStatus) {
