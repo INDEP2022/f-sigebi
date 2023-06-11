@@ -64,6 +64,9 @@ export interface IParamsLegalOpinionsOffice {
   P_NO_TRAMITE: string;
   TIPO: string;
   P_VALOR: string;
+  TIPO_VO: string;
+  NO_EXP: string;
+  CONSULTA: string;
 }
 @Component({
   selector: 'app-legal-opinions-office',
@@ -100,11 +103,15 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
     P_NO_TRAMITE: '', // NO_TRAMITE
     TIPO: '', // TIPO_DICTAMEN
     P_VALOR: '', // NO_OF_DICTA
+    TIPO_VO: '',
+    NO_EXP: '',
+    CONSULTA: '',
   };
   officeTypeOption: any[] = officeTypeOption;
   origin: string = '';
   origin3: string = '';
   TIPO_VO: string = '';
+  NO_EXP: string = '';
   CONSULTA: string = '';
   moreInfo1: boolean = false;
   moreInfo2: boolean = false;
@@ -282,6 +289,7 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
         this.origin3 = params['origin3'] ?? null;
         this.TIPO_VO = params['TIPO_VO'] ?? null;
         this.CONSULTA = params['CONSULTA'] ?? null;
+        this.NO_EXP = params['NO_EXP'] ?? null;
         if (
           this.origin &&
           this.paramsScreen.TIPO != null &&
@@ -546,19 +554,22 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
     this.showSearchAppointment = false;
     if (event) {
       if (event.id) {
-        this.cleanDataForm();
-        this.dictationData = event;
-        this.paramsScreen = {
-          PAQUETE: '0',
-          P_GEST_OK: '',
-          CLAVE_OFICIO_ARMADA: this.dictationData.passOfficeArmy,
-          P_NO_TRAMITE: '',
-          TIPO: this.dictationData.typeDict,
-          P_VALOR: this.dictationData.id.toString(),
-        };
-        console.log(this.dictationData, this.paramsScreen);
-        this.initForm();
-        this.callNextbtnSearchAppointment();
+        // this.cleanDataForm();
+        // this.dictationData = event;
+        // this.paramsScreen = {
+        //   PAQUETE: '0',
+        //   P_GEST_OK: '',
+        //   CLAVE_OFICIO_ARMADA: this.dictationData.passOfficeArmy,
+        //   P_NO_TRAMITE: '',
+        //   TIPO: this.dictationData.typeDict,
+        //   P_VALOR: this.dictationData.id.toString(),
+        //   TIPO_VO: '',
+        //   NO_EXP: '',
+        //   CONSULTA: '',
+        // };
+        // console.log(this.dictationData, this.paramsScreen);
+        // this.initForm();
+        // this.callNextbtnSearchAppointment();
       }
     }
   }
@@ -762,7 +773,10 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
         'processExtSun',
         this.goodLoopTmpData[count].good.extDomProcess
       );
-      params.addFilter('status', this.goodLoopTmpData[count].good.goodStatus);
+      params.addFilter(
+        'Status.status',
+        this.goodLoopTmpData[count].good.status
+      );
       this.svLegalOpinionsOfficeService
         .getScreenStatusService(params.getParams())
         .subscribe({
@@ -780,15 +794,6 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
           error: error => {
             console.log(error);
             if (error.status == 400) {
-              this.goodLoopCurrent++;
-              if (dataLength == count + 1) {
-                this.goodLoopPage++;
-                this.controlGoodLoop([]);
-              } else {
-                count++;
-                this.returnStatusProcess(dataLength, count, dataCurrent);
-              }
-            } else {
               // Return Status
               let body: any = {
                 pGoodNumber: this.goodLoopTmpData[count].good.goodId,
@@ -824,6 +829,15 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
                     );
                   },
                 });
+            } else {
+              this.goodLoopCurrent++;
+              if (dataLength == count + 1) {
+                this.goodLoopPage++;
+                this.controlGoodLoop([]);
+              } else {
+                count++;
+                this.returnStatusProcess(dataLength, count, dataCurrent);
+              }
             }
           },
         });
@@ -845,6 +859,7 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
     this.goodLoopCurrent = 1;
     this.goodLoopTotal = 0;
     this.goodLoopTmpData = [];
+    this.goodLoopPage = 1;
     this.getLoopGoodList();
   }
 
@@ -873,6 +888,8 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
           this.getLoopGoodList();
         } else if ((this.goodLoopCurrent = this.goodLoopTotal)) {
           // FIN PROCESO
+          // this._endProcess_LooopGood();
+          this.controlGoodLoop([]);
         }
       },
     });
@@ -886,8 +903,15 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
         this.getLoopGoodList();
       } else if ((this.goodLoopCurrent = this.goodLoopTotal)) {
         // FIN PROCESO
+        this._endProcess_LooopGood();
       }
     }
+  }
+
+  _endProcess_LooopGood() {
+    this.goodsByDictation
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.loadGoodsByOfficeDictation());
   }
 
   updateStatusGood(
@@ -898,7 +922,8 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
     goodId: number
   ) {
     let body: any = {
-      goodStatus: statusGood,
+      ...dataCurrent[count].good,
+      status: statusGood,
       goodId: goodId,
     };
     this.svLegalOpinionsOfficeService.updateGood(body).subscribe({
@@ -1421,19 +1446,21 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
         this.officeDictationData.recipientDepartmentNumber =
           event.departamentNumber;
         console.log(this.officeDictationData);
+        this.officeDictationData.cveChargeRem =
+          this.dataUserLoggedTokenData.siglasnivel4;
         // this.officeDictationData.sender
-        const params: any = new FilterParams();
-        params.removeAllFilters();
-        params.addFilter('user', event.user);
-        this.svLegalOpinionsOfficeService
-          .getAllUsersTracker(params.getParams())
-          .subscribe({
-            next: data => {
-              console.log(data);
-              this.officeDictationData.cveChargeRem = data.data[0].postKey;
-            },
-            error: error => {},
-          });
+        // const params: any = new FilterParams();
+        // params.removeAllFilters();
+        // params.addFilter('user', event.user);
+        // this.svLegalOpinionsOfficeService
+        //   .getAllUsersTracker(params.getParams())
+        //   .subscribe({
+        //     next: data => {
+        //       console.log(data);
+        //       this.officeDictationData.cveChargeRem = data.data[0].postKey;
+        //     },
+        //     error: error => {},
+        //   });
       }
     }
   }
@@ -2417,6 +2444,14 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
   }
 
   btnDetail() {
+    if (this._saveOfficeDictation) {
+      this.alertInfo(
+        'warning',
+        'Se debe guardar la información primero para poder consultar el reporte',
+        ''
+      );
+      return;
+    }
     // this.setDataDictationSave(true);
     this.loadDetail = true;
     this.objDetail = {
@@ -3096,6 +3131,7 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
           origin: this.origin3,
           P_GEST_OK: this.paramsScreen.P_GEST_OK,
           P_NO_TRAMITE: this.paramsScreen.P_NO_TRAMITE,
+          NO_EXP: this.NO_EXP,
         },
       });
     } else if (this.origin == 'FACTJURDICTAMASG') {
@@ -3891,39 +3927,41 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
   }
 
   errorFirmOnGetXml() {
-    let save = false;
-    let obj: any = {
-      ...this.dictationData,
-    };
-    // this.deleteTempDictation(true);
-    let armedKey = localStorage.getItem(this.nameStorageKeyArmedOffice); // GET CLAVE_OFICIO_ARMADA
-    if (armedKey) {
-      obj['passOfficeArmy'] = armedKey;
-      save = true;
-    }
-    let localDateDictation = localStorage.getItem(
-      this.nameStorageDictationDate
-    ); // GET FECHA_DICTAMEN
-    if (localDateDictation) {
-      let dateLocal = format(new Date(localDateDictation), 'yyyy-MM-dd');
-      obj['dictDate'] = new Date(dateLocal);
-      save = true;
-    }
-    localStorage.removeItem(this.nameStorageKeyArmedOffice);
-    localStorage.removeItem(this.nameStorageDictationDate);
-    if (save) {
-      this.svLegalOpinionsOfficeService.updateDictations(obj).subscribe({
-        next: data => {
-          console.log('UPDATE DICTAMEN', data);
-          this.startLoopGoods(); // Inicar Loop de bienes
-        },
-        error: error => {
-          console.log(error);
-        },
-      }); // SAVE DICTATION SIN CONSECUTIVO
-    } else {
-      this.startLoopGoods(); // Inicar Loop de bienes
-    }
+    this.blockSender = false;
+    this.sendElectronicFirmData();
+    // let save = false;
+    // let obj: any = {
+    //   ...this.dictationData,
+    // };
+    // // this.deleteTempDictation(true);
+    // let armedKey = localStorage.getItem(this.nameStorageKeyArmedOffice); // GET CLAVE_OFICIO_ARMADA
+    // if (armedKey) {
+    //   obj['passOfficeArmy'] = armedKey;
+    //   save = true;
+    // }
+    // let localDateDictation = localStorage.getItem(
+    //   this.nameStorageDictationDate
+    // ); // GET FECHA_DICTAMEN
+    // if (localDateDictation) {
+    //   let dateLocal = format(new Date(localDateDictation), 'yyyy-MM-dd');
+    //   obj['dictDate'] = new Date(dateLocal);
+    //   save = true;
+    // }
+    // localStorage.removeItem(this.nameStorageKeyArmedOffice);
+    // localStorage.removeItem(this.nameStorageDictationDate);
+    // if (save) {
+    //   this.svLegalOpinionsOfficeService.updateDictations(obj).subscribe({
+    //     next: data => {
+    //       console.log('UPDATE DICTAMEN', data);
+    //       this.startLoopGoods(); // Inicar Loop de bienes
+    //     },
+    //     error: error => {
+    //       console.log(error);
+    //     },
+    //   }); // SAVE DICTATION SIN CONSECUTIVO
+    // } else {
+    //   this.startLoopGoods(); // Inicar Loop de bienes
+    // }
   }
 
   startFirmComponent(context?: Partial<LegalOpinionsOfficeFirmModalComponent>) {
