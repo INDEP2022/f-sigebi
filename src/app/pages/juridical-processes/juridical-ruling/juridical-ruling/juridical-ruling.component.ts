@@ -70,9 +70,9 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { IGlobalVars } from 'src/app/shared/global-vars/models/IGlobalVars.model';
 import { environment } from 'src/environments/environment';
 import Swal from 'sweetalert2';
+import { ListdictumsComponent } from '../../juridical-ruling-g/juridical-ruling-g/listdictums/listdictums.component';
 import { GoodSubtype } from '../../juridical-ruling-g/juridical-ruling-g/model/good.model';
 import { RDictaminaDocModalComponent } from '../r-dictamina-doc-modal/r-dictamina-doc-modal.component';
-import { ListdictumsComponent } from '../../juridical-ruling-g/juridical-ruling-g/listdictums/listdictums.component';
 /** ROUTING MODULE */
 
 /** COMPONENTS IMPORTS */
@@ -2364,7 +2364,7 @@ export class JuridicalRulingComponent
     this.onTypesChange(obj);
   }
 
-  openModalDictums(context?: Partial<ListdictumsComponent>) { 
+  openModalDictums(context?: Partial<ListdictumsComponent>) {
     const modalRef = this.modalService.show(ListdictumsComponent, {
       initialState: context,
       class: 'modal-lg modal-dialog-centered',
