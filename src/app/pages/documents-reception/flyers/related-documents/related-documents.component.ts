@@ -8,9 +8,9 @@ import {
 } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
-import { LocalDataSource } from 'ng2-smart-table';
+import { LocalDataSource, Ng2SmartTableComponent } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, firstValueFrom, skip, takeUntil } from 'rxjs';
+import { BehaviorSubject, firstValueFrom, map, skip, takeUntil } from 'rxjs';
 import { PgrFilesComponent } from 'src/app/@standalone/modals/pgr-files/pgr-files.component';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
@@ -103,6 +103,14 @@ export interface IGoodJobManagement {
       .disabled[disabled] {
         color: red;
       }
+      .disabled-input {
+        color: #939393;
+        pointer-events: none;
+      }
+      #bienesJuridicos table:not(.normal-hover) tbody tr:hover {
+        color: black !important;
+        font-weight: bold;
+      }
     `,
   ],
 })
@@ -110,6 +118,8 @@ export class RelatedDocumentsComponent
   extends RelateDocumentsResponse
   implements OnInit
 {
+  @ViewChild('tableGoods') tableGoods: Ng2SmartTableComponent;
+
   // Send variables
   blockSend: boolean = false;
   variablesSend = {
@@ -142,7 +152,7 @@ export class RelatedDocumentsComponent
   dataGoodTable: LocalDataSource = new LocalDataSource();
   m_job_management: any = null;
   authUser: any = null;
-  isLoadingDocuments = false;
+
   pantalla = (option: boolean) =>
     `${
       option == true
@@ -208,9 +218,8 @@ export class RelatedDocumentsComponent
   showDestinatario: boolean = false;
   showDestinatarioInput: boolean = false;
 
-  settings3 = { ...this.settings };
+  settings3 = { ...this.settings, hideSubHeader: true };
   copyOficio: any[] = [];
-
   //Good Job Mananagemet
   dataTableGoodsJobManagement: IGoodJobManagement[] = [];
 
@@ -239,7 +248,7 @@ export class RelatedDocumentsComponent
   };
 
   //m_job_management
-  override formNotification = new FormGroup({
+  formNotification = new FormGroup({
     /** @descripiton  no_volante*/
     wheelNumber: new FormControl(null),
     /** @descripition no_expediente */
@@ -310,6 +319,7 @@ export class RelatedDocumentsComponent
     insertDate: new FormControl(''),
     /**@description num_clave_armada */
     armedKeyNumber: new FormControl(''),
+    tipoTexto: new FormControl(''),
   });
 
   formVariables = new FormGroup({
@@ -320,6 +330,10 @@ export class RelatedDocumentsComponent
     classify2: new FormControl(''),
     crime: new FormControl(''),
   });
+
+  selectVariable: any;
+  checkRefiere: any;
+  checkSelectTable: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -355,7 +369,7 @@ export class RelatedDocumentsComponent
     private expedientService: ExpedientService
   ) {
     super();
-    console.log(authService.decodeToken());
+    // console.log(authService.decodeToken());
     this.authUser = authService.decodeToken();
     console.log('USER DATA', this.authUser);
     this.settings3 = {
@@ -366,7 +380,7 @@ export class RelatedDocumentsComponent
         add: false,
         delete: true,
       },
-      hideSubHeader: false,
+      hideSubHeader: true,
       columns: { ...EXTERNOS_COLUMS_OFICIO },
     };
 
@@ -378,8 +392,8 @@ export class RelatedDocumentsComponent
       ...RELATED_DOCUMENTS_COLUMNS_GOODS.improcedente,
       onComponentInitFunction: this.onClickImprocedente,
     };
-
-    if (!this.pantallaOption) {
+    const screen = this.route.snapshot.paramMap.get('id');
+    if (screen === '2') {
       const columns = RELATED_DOCUMENTS_COLUMNS_GOODS;
       delete columns.improcedente;
     }
@@ -398,38 +412,61 @@ export class RelatedDocumentsComponent
       },
     };
   }
+  selectedRadio: string;
 
   disabledChecks() {
-    this.goodFilterParams('Todos');
-    this.managementForm.controls['averiPrevia'].setValue('Todos');
-    setTimeout(() => {
-      const tabla = document.getElementById('goods');
-      const types = document.getElementById('typesFilters');
-      const tbody = tabla.children[0].children[1].children;
-      for (let index = 0; index < tbody.length; index++) {
-        const element = tbody[index];
-        element.children[7].classList.add('not-press');
-        element.children[8].classList.add('not-press');
-      }
-      types.classList.add('not-press');
-    }, 2000);
+    console.log(this.tableGoods);
+    const columnas = this.tableGoods.grid.getColumns();
+    const columnaOpciones = columnas.find(
+      columna => columna.id === 'seleccion'
+    );
+    columnaOpciones.hide = true;
+    console.log(this.settings);
+    // (this.settings.columns as any).seleccion['hide'] = false;
+    this.managementForm.get('averiPrevia').disable();
+    this.formVariables.get('b').setValue('S');
+    // }
+    // this.goodFilterParams('Todos');
+    // this.managementForm.controls['averiPrevia'].setValue('Todos');
+    // setTimeout(() => {
+    //   const tabla = document.getElementById('goods');
+    //   const types = document.getElementById('typesFilters');
+    //   const tbody = tabla.children[0].children[1].children;
+    //   for (let index = 0; index < tbody.length; index++) {
+    //     const element = tbody[index];
+    //     element.children[7].classList.add('not-press');
+    //     element.children[8].classList.add('not-press');
+    //   }
+    //   types.classList.add('not-press');
+    // }, 2000);
   }
 
   enableChecks() {
-    const tabla = document.getElementById('goods');
-    const types = document.getElementById('typesFilters');
-    const tbody = tabla.children[0].children[1].children;
-    for (let index = 0; index < tbody.length; index++) {
-      const element = tbody[index];
-      element.children[7].classList.remove('not-press');
-      element.children[8].classList.remove('not-press');
-    }
-    types.classList.remove('not-press');
+    const columnas = this.tableGoods.grid.getColumns();
+    const columnaOpciones = columnas.find(
+      columna => columna.id === 'seleccion'
+    );
+    columnaOpciones.hide = false;
+    this.managementForm.get('averiPrevia').enable();
+    this.formVariables.get('b').setValue('S');
+    // const tabla = document.getElementById('goods');
+    // const types = document.getElementById('typesFilters');
+    // if (tabla && types) {
+    //   const tbody = tabla.children[0]?.children[1]?.children;
+    //   if (tbody) {
+    //     for (let index = 0; index < tbody.length; index++) {
+    //       const element = tbody[index];
+    //       element.children[7]?.classList.remove('not-press');
+    //       element.children[8]?.classList.remove('not-press');
+    //     }
+    //   }
+    //   types.classList.remove('not-press');
+    // }
   }
 
   onClickSelect(event: any) {
     event.toggle.subscribe((data: any) => {
-      console.log(data);
+      console.log(JSON.stringify(data));
       data.row.seleccion = data.toggle;
     });
   }
@@ -608,6 +645,7 @@ export class RelatedDocumentsComponent
 
   ngOnInit(): void {
     // console.log("status OF: ", this.oficioGestion.statusOf);
+    this.getUserInfo();
     this.setInitVariables();
     this.prepareForm();
     this.route.queryParams
@@ -618,6 +656,9 @@ export class RelatedDocumentsComponent
         this.paramsGestionDictamen.volante = params['volante'] ?? null;
         this.paramsGestionDictamen.expediente = params['expediente'] ?? null;
         this.paramsGestionDictamen.tipoOf = params['tipoOf'] ?? null;
+        this.formJobManagement
+          .get('jobType')
+          .setValue(params['tipoOf'] ?? null);
         this.paramsGestionDictamen.doc = params['doc'] ?? null;
         this.paramsGestionDictamen.pDictamen = params['pDictamen'] ?? null;
         this.paramsGestionDictamen.sale = params['sale'] ?? null;
@@ -922,7 +963,7 @@ export class RelatedDocumentsComponent
             });
           }
 
-          if (mJobManagement.addressee) {
+          if (mJobManagement.addressee && mJobManagement.jobType != 'INTERNO') {
             const params = new ListParams();
             params.limit = 1;
             params['search'] = mJobManagement.addressee;
@@ -941,16 +982,25 @@ export class RelatedDocumentsComponent
           }
 
           if (mJobManagement.managementNumber) {
-            // const params = new ListParams();
-            // params['filter.managementNumber'] = mJobManagement.managementNumber;
-            // try {
-            //   this.dataTableGoodsJobManagement = (
-            //     await this.getGoodsJobManagement(params)
-            //   ).data;
-            // } catch (ex) {
-            //   console.log(ex);
-            // }\
             this.refreshTableGoodsJobManagement();
+            this.refreshTableDocuments();
+          }
+
+          if (mJobManagement.statusOf == 'ENVIADO') {
+            this.formJobManagement.disable();
+          }
+          if (mJobManagement.refersTo == this.se_refiere_a.A) {
+            this.se_refiere_a_Disabled.B = true;
+            this.se_refiere_a_Disabled.C = true;
+            this.disabledChecks();
+          }
+          if (mJobManagement.refersTo == this.se_refiere_a.B) {
+            this.se_refiere_a_Disabled.A = true;
+            this.se_refiere_a_Disabled.C = true;
+            this.enableChecks();
+          }
+          if (mJobManagement.refersTo == this.se_refiere_a.C) {
+            this.formVariables.get('b').setValue('N');
           }
 
           if (this.formJobManagement.value.managementNumber) {
@@ -959,21 +1009,48 @@ export class RelatedDocumentsComponent
             );
           }
         } catch (e) {
+          this.isCreate = true;
           console.log(e);
         }
         console.log('res', res);
         if (res.expedientNumber) {
-          // const params = new ListParams();
-          // params['filter.fileNumber'] = res.expedientNumber;
-          // this.getGoods1(params);
           this.refreshTableGoods();
         }
       },
     });
   }
 
+  isLoadingDocuments = false;
+  refreshTableDocuments() {
+    this.isLoadingDocuments = true;
+    this.getDocJobManagement().subscribe({
+      next: async res => {
+        const response = await res.data.map(async item => {
+          const params = new ListParams();
+          params['filter.id'] = item.cveDocument;
+          params.limit = 1;
+          params.page = 1;
+          const description = await firstValueFrom(
+            this.getDocumentForDictation(params).pipe(map(res => res.data[0]))
+          );
+          return {
+            ...item,
+            description: description.description,
+            key: description.key,
+          };
+        });
+        this.dataTableDocuments = await Promise.all(response);
+        this.isLoadingDocuments = false;
+      },
+      error: err => {
+        this.isLoadingDocuments = false;
+      },
+    });
+  }
+
   refreshTableGoods() {
     const params = new ListParams();
+
     params['filter.fileNumber'] = this.formNotification.value.expedientNumber;
     this.getGoods1(params);
   }
@@ -1136,11 +1213,11 @@ export class RelatedDocumentsComponent
 
   changeTextType() {
     let textRespone = this.serviceRelatedDocumentsService.changeTextType(
-      this.managementForm.get('tipoTexto').value,
+      this.formJobManagement.get('tipoTexto').value,
       this.managementForm.get('noOficio').value
     );
-    this.managementForm.get('parrafoInicial').setValue(textRespone.text1);
-    this.managementForm.get('parrafoFinal').setValue(textRespone.text2);
+    this.formJobManagement.get('text1').setValue(textRespone.text1);
+    this.formJobManagement.get('text3').setValue(textRespone.text2);
   }
 
   changeOffice() {
@@ -1695,7 +1772,53 @@ export class RelatedDocumentsComponent
     }
   }
 
-  openModal(context?: Partial<DocumentsFormComponent>) {
+  async openModal(context?: Partial<DocumentsFormComponent>) {
+    if (this.pantallaActual == '2') {
+      await this.onClickBtnDocuments();
+      return;
+    }
+    if (!this.selectVariable) {
+      this.onLoadToast(
+        'error',
+        'Error',
+        `Especifique el tipo de Dictaminación S `
+      );
+      return;
+    }
+    this.expedientService.getNextVal().subscribe({
+      next: data => {
+        this.variablesSend.CVE_OF_GESTION = data.nextval;
+        if (
+          this.managementForm.get('tipoOficio').value ==
+          'Se refiere a todos los bienes'
+        ) {
+          /* await PUP_AGREGA_BIENES();
+           await LIP_COMMIT_SILENCIOSO();*/
+        }
+        if (
+          this.managementForm.get('tipoOficio').value ===
+          'Se refiere a algun (os) bien (es) del expediente'
+        ) {
+          /* await PUP_AGREGA_ALGUNOS_BIENES();
+           await LIP_COMMIT_SILENCIOSO();*/
+        }
+      },
+    });
+    if (!this.checkSelectTable) {
+      this.onLoadToast('error', 'Error', `Seleccione Un Registro de La Tabla `);
+      return;
+    }
+    if (this.formJobManagement.value.cveManagement !== null) {
+      /*SELECT COUNT(0) into contador
+      from BIENES_OFICIO_GESTION
+      where no_of_gestion = : M_OFICIO_GESTION.no_of_gestion;
+      if (this.managementForm.get('tipoOficio').value == 'Se refiere a todos los bienes') {
+        this.variables.clasif = this.variables.clasif || this.formJobManagement.value....
+         : VARIABLES.CLASIF := : VARIABLES.CLASIF || TO_CHAR(: BIENES_OFICIO_GESTION.CLASIF);    
+        /*PUP_AGREGA_BIENES;
+        LIP_COMMIT_SILENCIOSO;
+      }*/
+    }
     const modalRef = this.modalService.show(DocumentsFormComponent, {
       initialState: context,
       class: 'modal-lg modal-dialog-centered',
@@ -2124,6 +2247,8 @@ export class RelatedDocumentsComponent
 
   typeSelected(type: any) {
     const filter = type.no_clasif_bien;
+    console.log('FILTRO DICTAMINACION', filter);
+    this.selectVariable = filter;
     this.goodFilterParams(filter);
   }
 
@@ -2131,7 +2256,8 @@ export class RelatedDocumentsComponent
     let params = {
       ...this.params.getValue(),
     };
-    params['filter.fileNumber'] = this.paramsGestionDictamen.expediente;
+    // params['filter.fileNumber'] = this.paramsGestionDictamen.expediente;
+    params['filter.fileNumber'] = this.formNotification.value.expedientNumber;
     if (filter != 'Todos') {
       params['filter.goodClassNumber'] = `$eq:${filter}`;
     }
@@ -2250,7 +2376,8 @@ export class RelatedDocumentsComponent
         this.managementForm
           .get('di_desc_estatus')
           .setValue(data[0].description);
-        console.log('SCREEN', data);
+        console.log('SCREEN', JSON.stringify(data));
+        this.checkSelectTable = true;
       },
       error => {
         console.log('SCREEN', error.error.message);
@@ -2371,6 +2498,7 @@ export class RelatedDocumentsComponent
       });
     });
   }
+
   selectProceedings(event: IUserRowSelectEvent<IGood>) {
     this.getStatusGood(event.data.status);
     this.selectedGood = event.selected;
@@ -2379,10 +2507,11 @@ export class RelatedDocumentsComponent
 
   isDisabledBtnDocs = false;
   async onClickBtnPrint() {
-    // if (!this.pantallaOption) {
-    await this.printRelationScreen();
-    // }
+    if (this.pantallaActual == '2') {
+      await this.printRelationScreen();
+    }
   }
+
   async printRelationScreen() {
     console.log('PRINT RELATION SCREEN');
     let values = this.formJobManagement.value;
@@ -2426,7 +2555,7 @@ export class RelatedDocumentsComponent
 
     const etapaCreda = await this.getFaStageCreda(new Date());
     const checkText = this.formJobManagement.get('refersTo').value;
-
+    this.checkRefiere = checkText;
     if (!values.cveManagement && values.managementNumber) {
       const department = (await this.getDSAreaInDeparment(
         etapaCreda
@@ -2491,13 +2620,17 @@ export class RelatedDocumentsComponent
     this.pupShowReport();
     values = this.formJobManagement.value;
     if (values.cveManagement && values.refersTo == this.se_refiere_a.A) {
-      this.enableOrDisabledRadioRefersTo('B', false);
-      this.enableOrDisabledRadioRefersTo('C', false);
+      // this.enableOrDisabledRadioRefersTo('B', false);
+      this.se_refiere_a_Disabled.B = true;
+      this.se_refiere_a_Disabled.C = true;
+      // this.enableOrDisabledRadioRefersTo('C', false);
     }
 
     if (values.cveManagement && values.refersTo == this.se_refiere_a.B) {
-      this.enableOrDisabledRadioRefersTo('A', false);
-      this.enableOrDisabledRadioRefersTo('C', false);
+      this.se_refiere_a_Disabled.A = true;
+      this.se_refiere_a_Disabled.C = true;
+      // this.enableOrDisabledRadioRefersTo('A', false);
+      // this.enableOrDisabledRadioRefersTo('C', false);
     }
 
     if (values.cveManagement) {
@@ -2539,10 +2672,10 @@ export class RelatedDocumentsComponent
 
   async getDSAreaInDeparment(etapaCreda: string | number) {
     const params = new ListParams();
-    const auth = this.authService.decodeToken();
+    const auth = await this.getUserInfo();
     params['filter.id'] = auth.department;
-    params['filter.numDelegation'] = auth.department;
-    params['filter.numSubDelegation'] = etapaCreda;
+    params['filter.numDelegation'] = auth.delegationNumber;
+    params['filter.numSubDelegation'] = auth.subdelegationNumber;
     params['filter.phaseEdo'] = etapaCreda;
 
     return (await this.getDepartment(params, true)) as IDepartment;
@@ -2570,7 +2703,7 @@ export class RelatedDocumentsComponent
     //   ignoreBackdropClick: true, //ignora el click fuera del modal
     // };
     // this.modalService.show(UploadDictamenFilesModalComponent, config);
-    if (this.pantallaOption) {
+    if (this.pantallaActual == '1') {
       // Gestion Send button
       if (
         this.formJobManagement.value.statusOf == 'ENVIADO' &&
@@ -2583,7 +2716,7 @@ export class RelatedDocumentsComponent
         this.secondConditionSend();
       }
     } else {
-      // Related Send button
+      this.onClickBtnSend();
     }
   }
 
@@ -2687,7 +2820,7 @@ export class RelatedDocumentsComponent
     this.variablesSend.ESTATUS_OF = this.formJobManagement.value.statusOf;
     this.variablesSend.CVE_OF_GESTION =
       this.formJobManagement.value.cveManagement;
-    this.variablesSend.FECHA_INSERTO = this.formJobManagement.value.insertDate;
+    //this.variablesSend.FECHA_INSERTO = this.formJobManagement.value.insertDate;
     if (!this.formJobManagement.value.jobType) {
       this.alertInfo('warning', 'Debe especificar el TIPO OFICIO', '');
       return;
