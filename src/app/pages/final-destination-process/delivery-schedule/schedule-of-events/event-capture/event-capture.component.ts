@@ -316,7 +316,7 @@ export class EventCaptureComponent
     this.authUserName = this.authService.decodeToken().name;
     this.settings = {
       ...this.settings,
-      actions: { title: 'Acciones', delete: true, edit: false },
+      actions: { columnTitle: 'Acciones', delete: true, edit: false },
       columns: {
         ...COLUMNS_CAPTURE_EVENTS,
         dateapprovalxadmon: {
@@ -420,6 +420,7 @@ export class EventCaptureComponent
   }
 
   setStartDate(instance: DateCellComponent) {
+    instance.control.addValidators(minDate(new Date()));
     if (this.proceeding?.statusProceedings?.includes('CERRAD')) {
       instance.disabled = true;
     } else {
@@ -428,6 +429,12 @@ export class EventCaptureComponent
     instance.inputChange.subscribe(val => {
       const { row, value } = val;
       row.dateapprovalxadmon = value;
+      if (!row.dateapprovalxadmon && !row.dateindicatesuserapproval) {
+        return;
+      }
+      if (!instance.control.valid) {
+        return;
+      }
       this.updateDetail(row);
     });
   }
@@ -439,7 +446,29 @@ export class EventCaptureComponent
       instance.disabled = false;
     }
     instance.inputChange.subscribe(val => {
+      if (!val) {
+        return;
+      }
+      instance.control.clearValidators();
       const { row, value } = val;
+      if (row.dateapprovalxadmon) {
+        const min = new Date(instance.rowData.dateapprovalxadmon).toISOString();
+        instance.control.setValidators(minDate(new Date(min.slice(0, -1))));
+      }
+      instance.control.updateValueAndValidity();
+      if (!instance.control.valid) {
+        this.alert(
+          'error',
+          'Error',
+          'La fecha de finalización no puede ser menor a la fecha de inicio'
+        );
+        instance.control.setValue(null, { emitEvent: false });
+        return;
+      }
+      if (!row.dateapprovalxadmon && !row.dateindicatesuserapproval) {
+        return;
+      }
+      console.log('paso');
       row.dateindicatesuserapproval = value;
       this.updateDetail(row);
     });
@@ -597,6 +626,10 @@ export class EventCaptureComponent
   validateDates() {
     if (this.proceeding?.statusProceedings?.includes('CERRAD')) {
       this.alert('error', 'Error', 'El programa esta cerrado');
+      return;
+    }
+    if (!this.startDateCtrl.valid || !this.endDateCtrl.valid) {
+      this.alert('error', 'Error', 'Verifique las fechas');
       return;
     }
     const start = this.startDateCtrl.value;
@@ -1017,6 +1050,7 @@ export class EventCaptureComponent
 
     this.validateTransfer(type.value ?? 'RT', transference.value);
 
+    console.log({ area, _area });
     if (!area.value) {
       if (!_area) {
         this.global.regi = null;
@@ -1026,6 +1060,11 @@ export class EventCaptureComponent
         this.global.cons = cons;
       }
     } else {
+      if (cons) {
+        this.global.cons = cons;
+        folio.setValue(this.global.cons);
+        return;
+      }
       this.global.regi = area.value;
       const indicator = await this.getProceedingType();
       const _folio = await this.getFolio(indicator.certificateType);
