@@ -86,4 +86,8 @@ export class GoodProcessService extends HttpService {
   dictationConcilation(data: Object) {
     return this.post<any>(GoodProcessPoints.dicta, data);
   }
+
+  getDicGood(data: Object) {
+    return this.post<any>(GoodProcessPoints.getDocGod, data);
+  }
 }

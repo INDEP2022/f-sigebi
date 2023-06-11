@@ -1,5 +1,4 @@
-<div *ngIf="disabledTable">{{ value.value }}</div>
-
+<div *ngIf="disabledTable" style="padding: 0 10px">{{ value.value }}</div>
 <div
   class="goodCellContainer"
   *ngIf="!disabledTable"
@@ -26,6 +25,9 @@
     El campo es obligatorio
   </div>
   <ng-container *ngIf="value.value">
+    <div class="errorMessage" *ngIf="haveCaracteresEspeciales(value)">
+      El campo es inválido
+    </div>
     <div class="errorMessage" *ngIf="haveNumericError(value)">
       El campo debe ser númerico
     </div>

@@ -3,7 +3,7 @@ import * as FileSaver from 'file-saver';
 import { read, utils, WorkBook, WorkSheet, write } from 'xlsx';
 import { FileSaverService } from './file-saver.service';
 
-const EXCEL_TYPE =
+export const EXCEL_TYPE =
   'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
 
 const XLSX_EXTENSIONS = {
