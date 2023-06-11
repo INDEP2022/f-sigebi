@@ -4,14 +4,17 @@ export const STATION_COLUMS = {
     type: 'number',
     sort: false,
   },
-  numStation: {
+  stationName: {
     title: 'Estación',
     type: 'number',
     sort: false,
   },
-  descStation: {
-    title: 'Descripción',
+  transferent: {
+    title: 'Transferencia',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (value: any) => {
+      return value != null ? value.nameTransferent : '';
+    },
   },
 };

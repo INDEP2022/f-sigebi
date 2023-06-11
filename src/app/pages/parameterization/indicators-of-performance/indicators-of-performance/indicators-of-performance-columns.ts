@@ -12,6 +12,11 @@ export const INDICATORSOFPERFORMANCE_COLUMNS = {
     sort: false,
   },
   procedureArea: {
+    title: 'Codigo Área de Trámite',
+    width: '10%',
+    sort: false,
+  },
+  procedureAreaDetails: {
     title: 'Área de Trámite',
     valuePrepareFunction: (value: IProcedureArea) => {
       return value != null ? value.description : '';

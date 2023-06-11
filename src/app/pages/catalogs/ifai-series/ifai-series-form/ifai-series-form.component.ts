@@ -74,6 +74,7 @@ export class IfaiSeriesFormComponent extends BasePage implements OnInit {
     if (this.ifaiSerie != null) {
       this.edit = true;
       this.ifaiSerieForm.patchValue(this.ifaiSerie);
+      this.ifaiSerieForm.controls['status'].disable();
     }
   }
   close() {
@@ -95,7 +96,7 @@ export class IfaiSeriesFormComponent extends BasePage implements OnInit {
   update() {
     this.loading = true;
     this.ifaiSeriService
-      .update(this.ifaiSerie.code, this.ifaiSerieForm.getRawValue())
+      .update(this.ifaiSerie.status, this.ifaiSerieForm.getRawValue())
       .subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),

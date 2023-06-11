@@ -15,6 +15,7 @@ import {
 })
 export class NumeraryParameterizationAutomService implements ICrudMethods<any> {
   private readonly route: string = ENDPOINT_LINKS.NumeraryCategoriesAutom;
+  private readonly routeNumerarys: string = ENDPOINT_LINKS.NumeraryCategories;
   constructor(
     private categorizationAutomNumerarysRepository: Repository<INumeraryParameterization>,
     private categorizationNumerarysRepository: Repository<ICategorizationAutomNumerary>
@@ -28,6 +29,14 @@ export class NumeraryParameterizationAutomService implements ICrudMethods<any> {
       params
     );
   }
+
+  getCategories(params: ListParams) {
+    return this.categorizationNumerarysRepository.getAllPaginated(
+      this.routeNumerarys,
+      params
+    );
+  }
+
   create(
     model: ICategorizationAutomNumerary
   ): Observable<ICategorizationAutomNumerary> {
@@ -38,7 +47,6 @@ export class NumeraryParameterizationAutomService implements ICrudMethods<any> {
   }
 
   remove3(model: any): Observable<Object> {
-    console.log(model);
     return this.categorizationNumerarysRepository.remove3(this.route, model);
   }
 }

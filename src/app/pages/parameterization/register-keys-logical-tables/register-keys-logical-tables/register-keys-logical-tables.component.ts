@@ -223,8 +223,8 @@ export class RegisterKeysLogicalTablesComponent
     this.form.controls['description'].setValue(tablesChange.description);
     this.form.controls['tableType'].setValue(tablesChange.tableType);
     this.form.controls['table'].setValue(tablesChange.table);
-    this.tableSelect = new DefaultSelect();
-
+    // this.tableSelect = new DefaultSelect();
+    this.tdescCve = [];
     this.getKeys();
   }
 

@@ -103,11 +103,27 @@ export class ParagraphsListComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
+        this.delete(batch.id);
       }
+    });
+  }
+
+  delete(id?: number) {
+    this.paragraphService.remove(id).subscribe({
+      next: () => {
+        this.getExample(), this.alert('success', 'Párrafo', 'Borrado');
+      },
+      error: error => {
+        this.alert(
+          'warning',
+          'Párrafo',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      },
     });
   }
 }
