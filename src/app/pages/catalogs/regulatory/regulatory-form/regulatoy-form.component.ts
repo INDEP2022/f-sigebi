@@ -1,5 +1,6 @@
+import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IRegulatory } from 'src/app/core/models/catalogs/regulatory.model';
@@ -8,7 +9,6 @@ import {
   POSITVE_NUMBERS_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
-import { ModelForm } from '../../../../core/interfaces/model-form';
 import { RegulatoryService } from '../../../../core/services/catalogs/regulatory.service';
 import { DefaultSelect } from '../../../../shared/components/select/default-select';
 
@@ -18,16 +18,23 @@ import { DefaultSelect } from '../../../../shared/components/select/default-sele
   styles: [],
 })
 export class RegulatoyFormComponent extends BasePage implements OnInit {
-  form: ModelForm<IRegulatory>;
+  //form: ModelForm<IRegulatory>;
+  form: FormGroup = new FormGroup({});
   title: string = 'Regulacion';
   edit: boolean = false;
   regulatory: IRegulatory;
   racks = new DefaultSelect<IRegulatory>();
   fechaActual: string;
+  idFraction: any;
+  date: Date = new Date(); // Aquí puedes inicializarla con la fecha que desees mostrar
+  dateFormat: string;
+  creationDate: Date;
+
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
-    private regulatoryService: RegulatoryService
+    private regulatoryService: RegulatoryService,
+    private datePipe: DatePipe
   ) {
     super();
     const fecha = new Date();
@@ -38,44 +45,54 @@ export class RegulatoyFormComponent extends BasePage implements OnInit {
     this.prepareForm();
   }
 
-  private prepareForm() {
+  prepareForm() {
     this.form = this.fb.group({
       id: [null],
       fractionId: [
         null,
         [Validators.required, Validators.pattern(POSITVE_NUMBERS_PATTERN)],
       ],
-      numero: [
+      number: [
         null,
         [Validators.required, Validators.pattern(POSITVE_NUMBERS_PATTERN)],
       ],
-      descripcion: [
+      description: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      validar_ef: [
+      validateEf: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      validar_ec: [
+      validateEc: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      usuario_creacion: [
+      userCreation: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      fecha_creacion: [null],
-      usuario_modificacion: [
+      createDate: [null],
+      userModification: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      fecha_modificacion: [null],
+      modificationDate: [null],
       version: [null, [Validators.required]],
     });
     if (this.regulatory != null) {
       this.edit = true;
+      this.idFraction = this.regulatory.fractionId;
+      this.creationDate = this.regulatory.creationDate;
+      this.dateFormat = this.datePipe.transform(
+        this.creationDate,
+        'dd/MM/yyyy'
+      );
+      console.log(this.dateFormat);
+      console.log(this.regulatory);
       this.form.patchValue(this.regulatory);
+      this.form.controls['fractionId'].setValue(this.idFraction.id);
+      this.form.controls['createDate'].setValue(this.dateFormat);
     }
   }
 
