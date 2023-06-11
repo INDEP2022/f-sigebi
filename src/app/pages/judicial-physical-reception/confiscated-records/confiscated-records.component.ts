@@ -192,6 +192,9 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   private unsubscribe$ = new Subject<void>();
   private acta2Subscription: Subscription;
 
+  //DOBLE CLICK
+  lastClick: number = 0;
+
   constructor(
     private fb: FormBuilder,
     private serviceGood: GoodService,
@@ -429,6 +432,9 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   }
 
   getNulls() {
+    this.attribGoodBadService.selectedGoods = this.dataGoodAct['data'].map(
+      (item: any) => item.good.goodId
+    );
     this.openModalSelect(
       {
         title: 'Listado de bienes con información requerida nula',
@@ -3479,9 +3485,18 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     this.statusGood('estatusPrueba', data);
     this.validateGood(data);
     console.log(e);
-    if (e.doubleClick) {
-      this.openOptionsHistory(e);
-    }
+
+    this.lastClick += 1;
+    setTimeout(() => {
+      if (this.lastClick > 1) {
+        this.openOptionsHistory(data);
+      } else {
+        if (this.lastClick > 0) {
+          console.log('single clik');
+        }
+      }
+      this.lastClick = 0;
+    }, 500);
   }
 
   deselectRow() {
@@ -4366,6 +4381,10 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     console.log(e);
     let modalConfig = MODAL_CONFIG;
     modalConfig = {
+      initialState: {
+        idGood: e.goodId,
+        numberExpedient: this.numberExpedient,
+      },
       class: 'modal-lg modal-dialog-centered',
     };
     this.modalService.show(OptionsHistoryGoodDelegation, modalConfig);
