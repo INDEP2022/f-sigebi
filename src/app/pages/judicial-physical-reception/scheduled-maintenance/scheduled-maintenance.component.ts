@@ -5,6 +5,7 @@ import { BehaviorSubject, firstValueFrom } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IProceedingDeliveryReception } from 'src/app/core/models/ms-proceedings/proceeding-delivery-reception';
 import { MsIndicatorGoodsService } from 'src/app/core/services/ms-indicator-goods/ms-indicator-goods.service';
+import { ProceedingsExcelService } from 'src/app/core/services/ms-proceedings/proceeding-excel.service';
 import { ProceedingsDeliveryReceptionService } from 'src/app/core/services/ms-proceedings/proceedings-delivery-reception.service';
 import { ProceedingsDetailDeliveryReceptionService } from 'src/app/core/services/ms-proceedings/proceedings-detail-delivery-reception.service';
 import { ScheduledMaintenance } from './scheduled-maintenance';
@@ -32,6 +33,7 @@ export class ScheduledMaintenanceComponent
     protected override deliveryService: ProceedingsDeliveryReceptionService,
     protected override detailService: ProceedingsDetailDeliveryReceptionService,
     private serviceIndicator: MsIndicatorGoodsService,
+    private excelService: ProceedingsExcelService,
     private router: Router
   ) {
     super(
@@ -174,6 +176,17 @@ export class ScheduledMaintenanceComponent
       //     },
       //   });
     }
+  }
+
+  async exportExcel2() {
+    this.loadingExcel = true;
+    this.onLoadToast(
+      'info',
+      'Reporte de Mantenimiento de Programaciones',
+      'Consiguiendo datos'
+    );
+    await firstValueFrom(this.excelService.getExcel());
+    this.loadingExcel = false;
   }
 
   async exportExcel() {
