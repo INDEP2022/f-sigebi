@@ -112,6 +112,8 @@ export class GoodTableValsComponent extends BasePage implements OnInit {
     };
     this.params.value.limit = 5;
     this.searchNotServerPagination();
+    let re = new RegExp('^((?!(@)).)*$');
+    console.log('123131///#42', 'STRING_PATTERN', re.test('123131///#42'));
   }
 
   get dataTemp() {
@@ -257,6 +259,9 @@ export class GoodTableValsComponent extends BasePage implements OnInit {
         ? row.value.split('/')
         : []
       : [];
+    // debugger;
+    const isNormal =
+      this.disabledBienes || row.attribute !== 'SITUACION JURIDICA';
     this.openModalSelect(
       {
         title: 'los tipos de situaciones para el Bien',
@@ -268,10 +273,7 @@ export class GoodTableValsComponent extends BasePage implements OnInit {
           },
         },
         type: 'text',
-        multi:
-          this.disabledBienes || row.attribute !== 'SITUACION JURIDICA'
-            ? ''
-            : 'multi',
+        multi: isNormal ? '' : 'multi',
         permitSelect: this.disabledBienes ? false : true,
         searchFilter: null,
         service: this.dynamicTablesService,

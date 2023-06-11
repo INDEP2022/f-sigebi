@@ -1,5 +1,9 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { DefaultEditor } from 'ng2-smart-table';
+import {
+  SPECIAL2_STRING_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 import { GoodsCharacteristicsService } from '../../../services/goods-characteristics.service';
 import { IVal } from '../good-table-vals.component';
 
@@ -55,7 +59,25 @@ export class GoodCellValueComponent extends DefaultEditor implements OnInit {
       this.haveErrorRequired(row) ||
       this.haveNumericError(row) ||
       this.haveFloatError(row) ||
+      this.haveCaracteresEspeciales(row) ||
       this.haveMoneyError(row).length > 0
+    );
+  }
+
+  haveCaracteresEspeciales(row: IVal) {
+    if (row.dataType === 'V') {
+      if (this.haveVerticalSlash(row)) {
+        return !this.isSpecial2String(row.value);
+      } else {
+        return !this.isString(row.value);
+      }
+    }
+    return false;
+  }
+
+  haveVerticalSlash(row: IVal) {
+    return (
+      row.attribute === 'RESERVADO' || row.attribute === 'SITUACION JURIDICA'
     );
   }
 
@@ -70,6 +92,24 @@ export class GoodCellValueComponent extends DefaultEditor implements OnInit {
   isFloat(valor: any) {
     var RE = /^\d*(\.\d{1})?\d{0,3}$/;
     if (RE.test(valor)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  isString(valor: any) {
+    let re = new RegExp(STRING_PATTERN);
+    if (re.test(valor)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  isSpecial2String(valor: any) {
+    let re = new RegExp(SPECIAL2_STRING_PATTERN);
+    if (re.test(valor)) {
       return true;
     } else {
       return false;
