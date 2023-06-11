@@ -6,11 +6,8 @@
     <form class="form-material" [formGroup]="storeHouseForm">
       <div class="row mt-4">
         <div class="col-md-6">
-          <form-field [control]="storeHouseForm.get('idStorehouse')" label="ID">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="idStorehouse" />
+          <form-field [control]="storeHouseForm.get('id')" label="No.Bodega">
+            <input type="text" class="form-control" formControlName="id" />
           </form-field>
         </div>
       </div>

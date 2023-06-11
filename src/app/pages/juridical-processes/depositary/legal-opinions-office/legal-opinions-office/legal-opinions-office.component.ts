@@ -196,7 +196,8 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
     private router: Router,
     private securityService: SecurityService,
     private fileBrowserService: FileBrowserService,
-    private _blockErrors: showHideErrorInterceptorService
+    private _blockErrors: showHideErrorInterceptorService,
+    private route: ActivatedRoute
   ) {
     super();
     this.settings = {
@@ -1611,10 +1612,7 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
       );
       return;
     }
-    if (
-      this.form.get('issuingUser').value.toLocaleLowerCase() !=
-      this.dataUserLogged.user.toLocaleLowerCase()
-    ) {
+    if (this.form.get('issuingUser').value != this.dataUserLogged.user) {
       this.alertInfo(
         'warning',
         'El usuario actual no corresponde al del campo "Autoriza Dictaminación"',
@@ -3749,6 +3747,20 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
         next: (response: any) => {
           console.log(response);
           if (!response) {
+            this.errorFirmOnGetXml(); // Error y regresa los datos a como estaban
+            this.onLoadToast(
+              'warning',
+              'Ocurrió un error al cargar el XML con el nombre: ' + nameFile,
+              ''
+            );
+            return;
+          }
+          if (
+            // response.includes(this.dictationData.expedientNumber) ||
+            // response.includes(this.dictationData.wheelNumber) ||
+            !response.includes('xml')
+          ) {
+            this.errorFirmOnGetXml(); // Error y regresa los datos a como estaban
             this.onLoadToast(
               'warning',
               'Ocurrió un error al cargar el XML con el nombre: ' + nameFile,
@@ -3778,6 +3790,7 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
             // console.log('XML DICTAMEN', typeof response, response);
             // console.log(response);
             if (!response) {
+              this.errorFirmOnGetXml(); // Error y regresa los datos a como estaban
               this.onLoadToast(
                 'warning',
                 'Ocurrió un error al cargar el XML con el nombre: ' + nameFile,
@@ -3790,6 +3803,7 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
               // response.includes(this.dictationData.wheelNumber) ||
               !response.includes('xml')
             ) {
+              this.errorFirmOnGetXml(); // Error y regresa los datos a como estaban
               this.onLoadToast(
                 'warning',
                 'Ocurrió un error al cargar el XML con el nombre: ' + nameFile,
@@ -3823,6 +3837,7 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
               fileDocumentDictation: formData.get('file'), // DOCUMENTO XML GENERADO
             });
           } else {
+            this.errorFirmOnGetXml(); // Error y regresa los datos a como estaban
             this.onLoadToast(
               'warning',
               'Ocurrió un error al CREAR el XML con el nombre: ' + nameFile,
@@ -3874,6 +3889,42 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
       //   });
       // }
     );
+  }
+
+  errorFirmOnGetXml() {
+    let save = false;
+    let obj: any = {
+      ...this.dictationData,
+    };
+    // this.deleteTempDictation(true);
+    let armedKey = localStorage.getItem(this.nameStorageKeyArmedOffice); // GET CLAVE_OFICIO_ARMADA
+    if (armedKey) {
+      obj['passOfficeArmy'] = armedKey;
+      save = true;
+    }
+    let localDateDictation = localStorage.getItem(
+      this.nameStorageDictationDate
+    ); // GET FECHA_DICTAMEN
+    if (localDateDictation) {
+      let dateLocal = format(new Date(localDateDictation), 'yyyy-MM-dd');
+      obj['dictDate'] = new Date(dateLocal);
+      save = true;
+    }
+    localStorage.removeItem(this.nameStorageKeyArmedOffice);
+    localStorage.removeItem(this.nameStorageDictationDate);
+    if (save) {
+      this.svLegalOpinionsOfficeService.updateDictations(obj).subscribe({
+        next: data => {
+          console.log('UPDATE DICTAMEN', data);
+          this.startLoopGoods(); // Inicar Loop de bienes
+        },
+        error: error => {
+          console.log(error);
+        },
+      }); // SAVE DICTATION SIN CONSECUTIVO
+    } else {
+      this.startLoopGoods(); // Inicar Loop de bienes
+    }
   }
 
   startFirmComponent(context?: Partial<LegalOpinionsOfficeFirmModalComponent>) {
@@ -3935,10 +3986,13 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
       if (next) {
         // Run error
         // this.sendElectronicFirmData();
+        this.errorFirmOnGetXml(); // Error y regresa los datos a como estaban
       }
     });
   }
-  errorFirm() {}
+  errorFirm() {
+    this.errorFirmOnGetXml(); // Error y regresa los datos a como estaban
+  }
   convertXMLStringToblob(xmlstring: any) {
     // Convert xml string to base64data
     let xmlval = new DOMParser().parseFromString(xmlstring, 'application/xml');

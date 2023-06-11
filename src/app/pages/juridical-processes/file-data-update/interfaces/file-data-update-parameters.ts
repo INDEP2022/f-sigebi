@@ -43,6 +43,7 @@ export interface IJuridicalDocumentManagementParams {
   pGestOk: number;
   pNoTramite: number;
   pDictamen: number | string;
+  pllamo?: string;
 }
 
 export interface IJuridicalRelatedDocumentManagementParams {

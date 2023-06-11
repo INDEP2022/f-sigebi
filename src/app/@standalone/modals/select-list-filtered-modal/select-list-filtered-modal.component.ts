@@ -1,5 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  OnInit,
+  Output,
+  ViewChild,
+} from '@angular/core';
+import { Ng2SmartTableComponent } from 'ng2-smart-table';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { NgScrollbarModule } from 'ngx-scrollbar';
 import { BehaviorSubject, Observable, takeUntil } from 'rxjs';
@@ -12,7 +19,6 @@ import { SearchBarFilter } from 'src/app/common/repository/interfaces/search-bar
 import { BasePage } from 'src/app/core/shared/base-page';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { IUserRowSelectEvent } from '../../../core/interfaces/ng2-smart-table.interface';
-
 @Component({
   selector: 'app-select-list-filtered-modal',
   standalone: true,
@@ -42,6 +48,7 @@ export class SelectListFilteredModalComponent
   selectedRow: any = null;
   columns: any[] = [];
   totalItems: number = 0;
+  selecteds: { column: string; data: any[] }; // Input para marcar seleccionados en el modal
   params = new BehaviorSubject<ListParams>(new ListParams());
   filterParams = new BehaviorSubject<FilterParams>(new FilterParams());
   id = new BehaviorSubject<string>('0');
@@ -59,12 +66,15 @@ export class SelectListFilteredModalComponent
   haveSearch = true;
   showError: boolean = true;
   widthButton = false;
+  multi = '';
+  permitSelect = true;
   searchFilter: SearchBarFilter; // Input requerido al llamar el modal
   filters: DynamicFilterLike[] = []; // Input opcional para agregar varios filtros dinamicos
   searchFilterCompatible: boolean = true; // Input opcional para deshabilitar el filtro "search" en la busqueda cuando el endpoint no lo soporta
   selectOnClick: boolean = false; //Input opcional para seleccionar registro al dar click en la tabla
   placeholder: string = 'Buscar...'; //Input opcional para establecer el mensaje del input de busqueda
   @Output() onSelect = new EventEmitter<any>();
+  @ViewChild('table') table: Ng2SmartTableComponent;
 
   constructor(private modalRef: BsModalRef) {
     super();
@@ -73,6 +83,7 @@ export class SelectListFilteredModalComponent
   ngOnInit(): void {
     this.settings = {
       ...this.settings,
+      selectMode: this.multi,
       selectedRowIndex: -1,
       actions: false,
       columns: { ...this.columnsType },
@@ -112,6 +123,30 @@ export class SelectListFilteredModalComponent
     }
   }
 
+  private fillSelectedRows() {
+    setTimeout(() => {
+      if (
+        this.selecteds &&
+        this.selecteds.data &&
+        this.selecteds.data.length > 0
+      ) {
+        this.table.grid.getRows().forEach(row => {
+          console.log(row);
+
+          if (
+            this.selecteds.data.find(
+              item => row.getData()[this.selecteds.column] === item
+            )
+          ) {
+            this.table.grid.multipleSelectRow(row);
+          }
+          // if(row.getData())
+          // this.table.grid.multipleSelectRow(row)
+        });
+      }
+    }, 500);
+  }
+
   getData(): void {
     console.log(this.filterParams.getValue().getParams());
     this.loading = true;
@@ -132,6 +167,7 @@ export class SelectListFilteredModalComponent
           this.columns = data.data;
           this.totalItems = data.count || 0;
           this.loading = false;
+          this.fillSelectedRows();
         },
         error: err => {
           console.log(err);
@@ -170,10 +206,12 @@ export class SelectListFilteredModalComponent
   }
 
   selectEvent(event: IUserRowSelectEvent<any>) {
-    if (this.settings.selectMode === 'multi') {
-      this.selectRow(event.selected);
-    } else {
-      this.selectRow(event.data);
+    if (this.permitSelect) {
+      if (this.settings.selectMode === 'multi') {
+        this.selectRow(event.selected);
+      } else {
+        this.selectRow(event.data);
+      }
     }
   }
 
