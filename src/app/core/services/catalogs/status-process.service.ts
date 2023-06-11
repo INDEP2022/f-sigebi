@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { StatusProcessCode } from 'src/app/common/constants/endpoints/status-process';
+import { HttpService } from 'src/app/common/services/http.service';
 import { ENDPOINT_LINKS } from '../../../common/constants/endpoints';
 import { ICrudMethods } from '../../../common/repository/interfaces/crud-methods';
 import { ListParams } from '../../../common/repository/interfaces/list-params';
 import { Repository } from '../../../common/repository/repository';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IStatusProcess } from '../../models/catalogs/status-process.model';
-import { HttpService } from 'src/app/common/services/http.service';
-import { StatusProcessCode } from 'src/app/common/constants/endpoints/status-process';
 @Injectable({
   providedIn: 'root',
 })
