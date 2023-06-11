@@ -193,7 +193,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   private acta2Subscription: Subscription;
 
   //DOBLE CLICK
-  lastClick:number = 0
+  lastClick: number = 0;
 
   constructor(
     private fb: FormBuilder,
@@ -432,7 +432,9 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   }
 
   getNulls() {
-    this.attribGoodBadService.selectedGoods = this.dataGoodAct['data'].map((item:any) => item.good.goodId)
+    this.attribGoodBadService.selectedGoods = this.dataGoodAct['data'].map(
+      (item: any) => item.good.goodId
+    );
     this.openModalSelect(
       {
         title: 'Listado de bienes con información requerida nula',
@@ -3482,15 +3484,15 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     this.selectData = data;
     this.statusGood('estatusPrueba', data);
     this.validateGood(data);
-    console.log(e)
+    console.log(e);
 
-    this.lastClick += 1
+    this.lastClick += 1;
     setTimeout(() => {
       if (this.lastClick > 1) {
-         this.openOptionsHistory(data)
+        this.openOptionsHistory(data);
       } else {
         if (this.lastClick > 0) {
-       console.log('single clik')
+          console.log('single clik');
         }
       }
       this.lastClick = 0;
@@ -4379,13 +4381,13 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     console.log(e);
     let modalConfig = MODAL_CONFIG;
     modalConfig = {
-      initialState:{
+      initialState: {
         idGood: e.goodId,
-        numberExpedient: this.numberExpedient
+        numberExpedient: this.numberExpedient,
       },
-      class: 'modal-lg modal-dialog-centered'
-    }
-    this.modalService.show(OptionsHistoryGoodDelegation, modalConfig)
+      class: 'modal-lg modal-dialog-centered',
+    };
+    this.modalService.show(OptionsHistoryGoodDelegation, modalConfig);
   }
 
   openEdoFisico() {

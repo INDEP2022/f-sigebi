@@ -49,7 +49,7 @@ export class RDictaminaDocModalComponent extends BasePage implements OnInit {
       columns: { ...COLUMNS_DOCUMENTS },
     };
   }
-
+  validDocs: boolean = false;
   ngOnInit(): void {
     let params = new FilterParams();
     params.addFilter(
@@ -159,17 +159,22 @@ export class RDictaminaDocModalComponent extends BasePage implements OnInit {
   }
 
   close() {
-    for (let i = 0; i < this.dataDocuments.length; i++) {
-      if (this.dataDocuments[i].date == '') {
-        this.onLoadToast(
-          'info',
-          'Asegúrese de ingresar las fechas en los documentos',
-          ''
-        );
-        return;
+    if (this.validDocs == true) {
+      this.modalRef.content.callback([]);
+      this.modalRef.hide();
+    } else {
+      for (let i = 0; i < this.dataDocuments.length; i++) {
+        if (this.dataDocuments[i].date == '') {
+          this.onLoadToast(
+            'info',
+            'Asegúrese de ingresar las fechas en los documentos',
+            ''
+          );
+          return;
+        }
       }
+      this.modalRef.content.callback(this.dataDocuments);
+      this.modalRef.hide();
     }
-    this.modalRef.content.callback(this.dataDocuments);
-    this.modalRef.hide();
   }
 }
