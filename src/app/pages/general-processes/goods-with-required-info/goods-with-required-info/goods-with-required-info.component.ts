@@ -123,17 +123,21 @@ export class GoodsWithRequiredInfoComponent extends BasePage implements OnInit {
     });
   }
 
-  openGood(data: any): void {
-    console.log(data);
-    //console.log(localStorage.setItem(`Task`, JSON.stringify(data)));
-    localStorage.setItem(`Task`, JSON.stringify(data));
+  openGood(dataGood: any): void {
+    console.log(dataGood);
+    //console.log(localStorage.setItem(`Task`, JSON.stringify(dataGood)));
+    localStorage.setItem(`Task`, JSON.stringify(dataGood));
 
-    if (data.requestId !== null && data.urlNb !== null) {
+    if (dataGood.requestId !== null && dataGood.urlNb !== null) {
+      this.router.navigate([`/pages/general-processes/goods-characteristics`], {
+        queryParams: { noBien: dataGood.id.id },
+      });
+      /*
       let url = `${`/pages/general-processes/goods-characteristics`}`;
       console.log(url);
       this.customEvent.emit('Hola');
       //console.log()
-      this.router.navigateByUrl(url);
+      this.router.navigateByUrl(url);*/
     } else {
       this.alert('warning', 'No disponible', 'Tarea no disponible');
     }

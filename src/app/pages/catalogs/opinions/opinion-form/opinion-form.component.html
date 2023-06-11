@@ -4,42 +4,24 @@
   </div>
   <div body>
     <form [formGroup]="opinionForm" class="form-material">
-      <div class="row pt-5">
+      <div class="row">
         <div class="col-md-12">
-          <form-field
-            [control]="opinionForm.get('description')"
-            label="Descripci&oacute;n">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="description"
-              maxlength="100" />
+          <form-field [control]="opinionForm.get('description')" label="Descripci&oacute;n">
+            <textarea rows="3" class="form-control" formControlName="description" maxlength="100"></textarea>
           </form-field>
         </div>
       </div>
 
       <div class="row pt-5">
         <div class="col-md-3">
-          <form-field
-            [control]="opinionForm.get('dict_ofi')"
-            label="Dictamen del Oficio">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="dict_ofi"
-              maxlength="1" />
+          <form-field [control]="opinionForm.get('dict_ofi')" label="Dictamen del Oficio">
+            <input type="text" class="form-control" formControlName="dict_ofi" maxlength="1" />
           </form-field>
         </div>
 
         <div class="col-md-3">
-          <form-field
-            [control]="opinionForm.get('areaProcess')"
-            label="&Aacute;rea de Proceso">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="areaProcess"
-              maxlength="2" />
+          <form-field [control]="opinionForm.get('areaProcess')" label="&Aacute;rea de Proceso">
+            <input type="text" class="form-control" formControlName="areaProcess" maxlength="2" />
           </form-field>
         </div>
       </div>
@@ -48,10 +30,7 @@
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <confirm-button
-          [disabled]="opinionForm.invalid"
-          [loading]="loading"
-          (confirm)="confirm()">
+        <confirm-button [disabled]="opinionForm.invalid" [loading]="loading" (confirm)="confirm()">
         </confirm-button>
       </div>
       <div class="m-3">

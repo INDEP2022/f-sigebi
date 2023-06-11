@@ -23,7 +23,6 @@ import { IRAsuntDic } from 'src/app/core/models/catalogs/r-asunt-dic.model';
 import { AffairTypeService } from 'src/app/core/services/affair/affair-type.service';
 import { AffairService } from 'src/app/core/services/catalogs/affair.service';
 import { RAsuntDicService } from 'src/app/core/services/catalogs/r-asunt-dic.service';
-import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-cat-relationship-opinion',
@@ -238,14 +237,23 @@ export class CatRelationshipOpinionComponent
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(rAsuntDic);
-        Swal.fire('Borrado', '', 'success');
       }
     });
   }
 
   delete(rAsuntDic?: IRAsuntDic) {
     this.RAsuntDicService.remove2(rAsuntDic).subscribe({
-      next: () => this.getRAsuntDic(),
+      next: () => {
+        this.getRAsuntDic();
+        this.alert('success', 'Borrado', '');
+      },
+      error: error => {
+        this.alert(
+          'warning',
+          'Relación y de asunto dictamen',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      },
     });
   }
 

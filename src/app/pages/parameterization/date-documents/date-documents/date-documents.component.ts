@@ -39,6 +39,7 @@ export class DateDocumentsComponent extends BasePage implements OnInit {
       columns: DATEDOCUMENTS_COLUMNS,
     };
     this.settings.actions.add = false;
+    this.settings.actions.delet = false;
     this.settings = {
       ...this.settings,
       hideSubHeader: false,
