@@ -3337,7 +3337,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   }
 
   newProceeding() {
-    this.inputsNewProceeding();
+    
     this.numberProceeding = this.proceedingData.length;
     this.clearInputs();
     this.form.get('ident').setValue('ADM');
@@ -3356,6 +3356,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     this.goodData = [];
     this.saveDataAct = [];
     this.dataGoodAct.load(this.goodData);
+    this.inputsNewProceeding();
   }
 
   //"Acta 2"
