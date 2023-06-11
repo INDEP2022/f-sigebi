@@ -68,7 +68,9 @@ export class ScanFileSharedComponent extends BasePage implements OnInit {
         'Continuar'
       ).then(q => {
         if (q.isConfirmed) {
+          this.loading = true;
           if (this.form.get(this.formControlName).value == null) {
+            this.loading = false
             this.alert(
               'warning',
               'Especificque el folio de escaneo a replicar',
@@ -134,7 +136,6 @@ export class ScanFileSharedComponent extends BasePage implements OnInit {
                       console.log(modelDocument);
                       this.serviceDocuments.create(modelDocument).subscribe(
                         res => {
-                          this.loading = false;
                           console.log(res.id);
                           this.form.get(this.formControlName).setValue(res.id);
 
@@ -252,7 +253,7 @@ export class ScanFileSharedComponent extends BasePage implements OnInit {
                   console.log(modelDocument);
                   this.serviceDocuments.create(modelDocument).subscribe(
                     res => {
-                      this.loading = false;
+                      
                       console.log(res.id);
                       this.form.get(this.formControlName).setValue(res.id);
                       const params = {
@@ -297,6 +298,14 @@ export class ScanFileSharedComponent extends BasePage implements OnInit {
                                 );
                               }
                             );
+                        },
+                        err => {
+                          this.loading = false;
+                          this.alert(
+                            'error',
+                            'Se presentó un error inesperado',
+                            ''
+                          );
                         });
                     },
                     err => {
@@ -328,10 +337,11 @@ export class ScanFileSharedComponent extends BasePage implements OnInit {
   }
 
   downloadReport(reportName: string, params: any) {
-    this.loading = true;
+    
     this.loadingText = 'Generando reporte ...';
     this.siabService.fetchReport(reportName, params).subscribe({
       next: response => {
+        this.loading = false
         const blob = new Blob([response], { type: 'application/pdf' });
         const url = URL.createObjectURL(blob);
         let config = {

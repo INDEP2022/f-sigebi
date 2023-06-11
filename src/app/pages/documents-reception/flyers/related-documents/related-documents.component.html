@@ -15,7 +15,6 @@
         TEST FIRMA
         <i aria-hidden="true" class="fa fa-filr"></i>
       </button> -->
-
       <button class="btn btn-primary active btn-sm m-2" (click)="goBack()">
         Regresar
         <i class="fas fa-arrow-circle-left"></i>
@@ -203,6 +202,7 @@
             <textarea
               rows="7"
               class="form-control"
+              maxlength="4000"
               formControlName="text1"></textarea>
           </form-field>
         </div>
@@ -262,6 +262,7 @@
           <textarea
             rows="7"
             class="form-control"
+            maxlength="4000"
             formControlName="parrafoInicial"></textarea>
         </form-field>
       </div>
@@ -503,6 +504,7 @@
               <textarea
                 rows="5"
                 class="form-control"
+                maxlength="4000"
                 formControlName="text2"></textarea>
             </form-field>
             <form-field [control]="formJobManagement.get('text3')">

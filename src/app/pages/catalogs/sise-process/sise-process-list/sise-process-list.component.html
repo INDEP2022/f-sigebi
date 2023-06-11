@@ -2,6 +2,7 @@
   <div class="ch-content" header>
     <h5 class="title">Lista Procesos Sise</h5>
     <div class="col-md-5 buttons">
+      <app-columns-select [(settings)]="settings"></app-columns-select>
       <div>
         <button (click)="openForm()" class="btn btn-primary active btn-sm ml-3">
           Nuevo
@@ -17,7 +18,6 @@
             [attr.class]="'table-bordered'"
             [settings]="settings"
             [source]="data"
-            [source]="siseProcess"
             (edit)="openForm($event.data)"
             (delete)="delete($event.data)">
           </ng2-smart-table>
