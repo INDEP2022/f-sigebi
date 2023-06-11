@@ -24,8 +24,7 @@ import {
 })
 export class IndicatorsOfPerformanceComponent
   extends BasePage
-  implements OnInit
-{
+  implements OnInit {
   indicatorsOfPerformanceForm: FormGroup;
   settings2 = { ...this.settings, actions: false };
 
@@ -82,8 +81,10 @@ export class IndicatorsOfPerformanceComponent
               case 'id':
                 searchFilter = SearchFilter.EQ;
                 break;
-              case 'procedureArea':
-                searchFilter = SearchFilter.EQ;
+              case 'procedureAreaDetails':
+                // searchFilter = SearchFilter.EQ;
+                filter.field == 'procedureAreaDetails';
+                field = `filter.${filter.field}.description`;
                 break;
               default:
                 searchFilter = SearchFilter.ILIKE;
@@ -101,9 +102,8 @@ export class IndicatorsOfPerformanceComponent
               delete this.columnFilters1[field];
             }
           });
-          this.params
-            .pipe(takeUntil(this.$unSubscribe))
-            .subscribe(() => this.getValuesAll());
+          this.params = this.pageFilter(this.params);
+          this.getValuesAll();
         }
       });
     this.data2
@@ -115,10 +115,16 @@ export class IndicatorsOfPerformanceComponent
           filters.map((filter: any) => {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
             /*SPECIFIC CASES*/
-            filter.field == 'id'
-              ? (searchFilter = SearchFilter.EQ)
-              : (searchFilter = SearchFilter.ILIKE);
+            switch (filter.field) {
+              case 'indicatorNumber':
+                searchFilter = SearchFilter.EQ;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
             if (filter.search !== '') {
               this.columnFilters2[field] = `${searchFilter}:${filter.search}`;
             } else {
@@ -163,6 +169,7 @@ export class IndicatorsOfPerformanceComponent
       next: response => {
         console.log(response);
         this.indicatorsParamenter = response.data;
+        console.log(this.indicatorsParamenter);
         this.data1.load(this.indicatorsParamenter);
         this.data1.refresh();
         this.totalItems = response.count;
@@ -176,7 +183,9 @@ export class IndicatorsOfPerformanceComponent
   }
   getDetailIndParameterAll(id?: string) {
     this.loading = true;
-    this.params.getValue()['filter.indicatorNumber'] = id;
+    if (id) {
+      this.params.getValue()['filter.indicatorNumber'] = id;
+    }
     let params = {
       ...this.params.getValue(),
       ...this.columnFilters2,

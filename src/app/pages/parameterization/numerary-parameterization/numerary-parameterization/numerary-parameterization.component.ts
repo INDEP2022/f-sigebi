@@ -1,7 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { LocalDataSource } from 'ng2-smart-table';
+import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
+import {
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import {
   ICategorizationAutomNumerary,
   INumeraryParameterization,
@@ -23,60 +28,78 @@ export class NumeraryParameterizationComponent
 {
   numeraryParameterization: INumeraryParameterization[] = [];
   totalItems: number = 0;
+  data: LocalDataSource = new LocalDataSource();
   params = new BehaviorSubject<ListParams>(new ListParams());
+  columnFilters: any = [];
 
   constructor(
     private modalService: BsModalService,
     private numeraryParameterizationAutomService: NumeraryParameterizationAutomService
   ) {
     super();
-    this.settings = {
-      ...this.settings,
-      actions: {
-        columnTitle: 'Acciones',
-        edit: true,
-        delete: true,
-        position: 'right',
-      },
-      columns: NUMERARY_PARAMETERIZATION_COLUMNS,
-    };
+    this.settings.actions.edit = true;
+    this.settings.actions.delete = true;
+    this.settings.actions.add = false;
+    this.settings.columns = NUMERARY_PARAMETERIZATION_COLUMNS;
+    this.settings.hideSubHeader = false;
   }
 
   ngOnInit(): void {
+    this.data
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = ``;
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+            filter.field == 'typeProceeding' ||
+            filter.field == 'initialCategory' ||
+            filter.field == 'finalCategory'
+              ? (searchFilter = SearchFilter.EQ)
+              : (searchFilter = SearchFilter.ILIKE);
+            if (filter.search !== '') {
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.params = this.pageFilter(this.params);
+          this.getValuesAll();
+        }
+      });
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getValuesAll());
   }
   getValuesAll() {
     this.loading = true;
-    this.numeraryParameterizationAutomService
-      .getAll(this.params.getValue())
-      .subscribe({
-        next: response => {
-          console.log(response);
-          this.numeraryParameterization = response.data;
-          this.totalItems = response.count;
-          this.loading = false;
-        },
-        error: error => {
-          this.loading = false;
-          console.log(error);
-        },
-      });
+    let params = {
+      ...this.params.getValue(),
+      ...this.columnFilters,
+    };
+    this.numeraryParameterizationAutomService.getAll(params).subscribe({
+      next: response => {
+        this.numeraryParameterization = response.data;
+        this.totalItems = response.count || 0;
+        this.data.load(response.data);
+        this.data.refresh();
+        this.loading = false;
+      },
+      error: error => (this.loading = false),
+    });
   }
   openForm(allotment?: ICategorizationAutomNumerary) {
-    console.log(allotment);
-    let config: ModalOptions = {
-      initialState: {
-        allotment,
-        callback: (next: boolean) => {
-          if (next) this.getValuesAll();
-        },
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      allotment,
+      callback: (next: boolean) => {
+        if (next) this.getValuesAll();
       },
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
     };
-    this.modalService.show(ModalNumeraryParameterizationComponent, config);
+    this.modalService.show(ModalNumeraryParameterizationComponent, modalConfig);
   }
   showDeleteAlert(event: ICategorizationAutomNumerary) {
     this.alertQuestion(

@@ -1,15 +1,17 @@
+import { IStateOfRepublic } from 'src/app/core/models/catalogs/state-of-republic.model';
+
 export const DELEGATION_STATE_COLUMNS = {
   keyDelegation: {
-    title: 'Clave Delegacion',
+    title: 'Clave Delegación',
     type: 'string',
     sort: false,
   },
   regionalDelegation: {
-    title: 'Delegación reginal',
+    title: 'Delegación regional',
     type: 'string',
     sort: false,
     valuePrepareFunction: (value: any) => {
-      return value.description;
+      return value != null ? value.description : '';
     },
   },
   keyState: {
@@ -21,7 +23,7 @@ export const DELEGATION_STATE_COLUMNS = {
     title: 'Estado',
     type: 'string',
     sort: false,
-    valuePrepareFunction: (value: any) => {
+    valuePrepareFunction: (value: IStateOfRepublic) => {
       return value != null ? value.descCondition : '';
     },
   },
@@ -33,7 +35,7 @@ export const DELEGATION_STATE_COLUMNS = {
 
   status: {
     title: 'Número de contrato',
-    type: 'string',
+    type: 'number',
     sort: false,
   },
   // editionUser: {
