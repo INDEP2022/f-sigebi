@@ -137,7 +137,6 @@ export abstract class RelateDocumentsResponse extends BasePage {
   // abstract managementForm: FormGroup;
   isLoadingGood: boolean = false;
   abstract totalItems: number;
-
   isCreate = false;
   getGoods1(params: ListParams) {
     this.isLoadingGood = true;
