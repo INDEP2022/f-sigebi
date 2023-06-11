@@ -107,7 +107,7 @@
                 else templateInputAddressee
               ">
               <ngx-select
-              [searchOnInit]="true"
+                [searchOnInit]="true"
                 [data]="select"
                 [form]="formJobManagement"
                 control="addressee"
@@ -134,7 +134,7 @@
               [control]="formJobManagement.get('city')"
               class="col-md-4">
               <ngx-select
-              [searchOnInit]="true"
+                [searchOnInit]="true"
                 (fetchItems)="getCityByDetail($event)"
                 bindLabel="idName"
                 [data]="cities"

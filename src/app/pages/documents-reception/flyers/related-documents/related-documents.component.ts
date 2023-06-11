@@ -212,7 +212,7 @@ export class RelatedDocumentsComponent
 
   settingsGoodsJobManagement = {
     ...this.settings,
-    actions: { 
+    actions: {
       edit: false,
       add: false,
       delete: false,
@@ -338,7 +338,7 @@ export class RelatedDocumentsComponent
     console.log(authService.decodeToken());
     this.authUser = authService.decodeToken();
     console.log('USER DATA', this.authUser);
-    this.settings3 = { 
+    this.settings3 = {
       ...this.settings,
       actions: {
         columnTitle: 'Acciones',
@@ -1776,6 +1776,11 @@ export class RelatedDocumentsComponent
   async showDeleteAlert(legend?: any) {
     //ILegend
     //Desea eliminar el oficio con el expediente ${proceedingsNumber} y No. Oficio ${managementNumber}
+    console.log(this.managementForm.value);
+    console.log(this.formJobManagement.value);
+    console.log(this.m_job_management);
+    console.log(this.dataTableGoods);
+
     const {
       noVolante, //no_volante
       wheelStatus, //status
