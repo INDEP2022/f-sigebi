@@ -269,7 +269,7 @@ export class GoodTableValsComponent extends BasePage implements OnInit {
         },
         type: 'text',
         multi:
-          this.disabledBienes || row.attribute === 'SITUACION JURIDICA'
+          this.disabledBienes || row.attribute !== 'SITUACION JURIDICA'
             ? ''
             : 'multi',
         permitSelect: this.disabledBienes ? false : true,
