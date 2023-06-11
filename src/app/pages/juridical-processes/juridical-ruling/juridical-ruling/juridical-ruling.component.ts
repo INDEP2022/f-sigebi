@@ -251,22 +251,26 @@ export class JuridicalRulingComponent
     selectedRowIndex: -1,
     mode: 'external',
     columns: {
-      cveDocument: {
+      k: {
         title: 'Cve. Documento',
         sort: false,
         filter: false,
       },
-      crime: {
+      d: {
         title: 'Descripción',
         sort: false,
-        valuePrepareFunction: (cell: any, value: any) => {
-          return value.documentDetails.description;
-        },
+        // valuePrepareFunction: (cell: any, value: any) => {
+        //   return value.documentDetails.description;
+        // },
       },
       date: {
         title: 'Fecha. Recibido',
         sort: false,
       },
+    },
+
+    rowClassFunction: (row: any) => {
+      return 'bg-primary text-white';
     },
     noDataMessage: 'No se encontrarón registros',
   };
@@ -429,60 +433,52 @@ export class JuridicalRulingComponent
     this.isSearch = true;
     this.isDisabledExp = true;
     this.onLoadExpedientData();
-    this.onLoadDictationInfo();
-    const { tipoDictaminacion, subtype } = this.subtipoForm.value;
+    this.params.getValue().page = 1;
+    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+      this.goodServices
+        .getByExpedient(noExpediente, this.params.getValue())
+        .subscribe({
+          next: resp => {
+            const data = resp.data;
 
-    if (tipoDictaminacion == 0 || !subtype) {
-      this.params.getValue().page = 1;
-      this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
-        this.goodServices
-          .getByExpedient(noExpediente, this.params.getValue())
-          .subscribe({
-            next: resp => {
-              this.consulta1();
-              this.consulta2();
+            data.map(async (good: any, index) => {
+              if (index == 0) this.di_desc_est = good.estatus.descriptionStatus;
+              good.di_disponible = 'S';
+              await new Promise((resolve, reject) => {
+                const body = {
+                  no_bien: good.goodId,
+                  estatus: good.status,
+                  tipo_dicta: this.legalForm.get('tipoDictaminacion').value,
+                  identificador: good.identifier,
+                  vc_pantalla: 'FACTJURDICTAMAS',
+                  proceso_ext_dom: good.extDomProcess ?? '',
+                  sel_paq: this.legalForm.get('tipo').value,
+                };
 
-              const data = resp.data;
-
-              data.map(async (good: any, index) => {
-                if (index == 0)
-                  this.di_desc_est = good.estatus.descriptionStatus;
-                good.di_disponible = 'S';
-                await new Promise((resolve, reject) => {
-                  const body = {
-                    no_bien: good.goodId,
-                    estatus: good.status,
-                    tipo_dicta: this.legalForm.get('tipoDictaminacion').value,
-                    identificador: good.identifier,
-                    vc_pantalla: 'FACTJURDICTAMAS',
-                    proceso_ext_dom: good.extDomProcess ?? '',
-                    sel_paq: this.legalForm.get('tipo').value,
-                  };
-
-                  this.dictationServ.checkGoodAvaliable(body).subscribe({
-                    next: state => {
-                      good.est_disponible = state.est_disponible;
-                      good.v_amp = state.v_amp ? state.v_amp : null;
-                      good.pDiDescStatus = state.pDiDescStatus;
-                      this.desc_estatus_good = state.pDiDescStatus ?? '';
-                    },
-                    error: () => {
-                      resolve(null);
-                    },
-                  });
+                this.dictationServ.checkGoodAvaliable(body).subscribe({
+                  next: state => {
+                    good.est_disponible = state.est_disponible;
+                    good.v_amp = state.v_amp ? state.v_amp : null;
+                    good.pDiDescStatus = state.pDiDescStatus;
+                    this.desc_estatus_good = state.pDiDescStatus ?? '';
+                  },
+                  error: () => {
+                    resolve(null);
+                  },
                 });
               });
+            });
 
-              this.goods = data;
-              this.totalItems = resp.count || 0;
-            },
-            error: err => {
-              console.log(err);
-            },
-          });
-      });
-    } else {
-    }
+            this.goods = data;
+            this.totalItems = resp.count || 0;
+
+            this.onLoadDictationInfo();
+          },
+          error: err => {
+            console.log(err);
+          },
+        });
+    });
   }
 
   getUsers($params: ListParams) {
@@ -575,6 +571,9 @@ export class JuridicalRulingComponent
           .setValue(response.preliminaryInquiry);
       },
     });
+
+    this.consulta1();
+    this.consulta2();
   }
 
   /**
@@ -588,24 +587,31 @@ export class JuridicalRulingComponent
     params.addFilter('expedientNumber', noExpediente, SearchFilter.EQ);
 
     this.dictationServ.getAllWithFilters(params.getParams()).subscribe({
-      next: res => {
+      next: async res => {
         this.dictNumber = res.data[0].id;
         this.wheelNumber = res.data[0].wheelNumber;
         this.delegationDictNumber = res.data[0].delegationDictNumber;
         this.legalForm
           .get('tipoDictaminacion')
           .setValue(res.data[0].typeDict || undefined);
-        this.legalForm
-          .get('fecDicta')
-          .setValue(new Date(res.data[0].dictDate) || undefined);
+        const date = res.data[0].dictDate
+          ? new Date(
+              String(res.data[0].dictDate).split('-').reverse().join('/')
+            )
+          : '';
+        this.legalForm.get('fecDicta').setValue(date);
         this.legalForm
           .get('observations')
           .setValue(res.data[0].observations || undefined);
         this.keyArmyNumber = res.data[0].keyArmyNumber;
         this.statusDict = res.data[0].statusDict;
-        this.legalForm
-          .get('fechaPPFF')
-          .setValue(new Date(res.data[0].instructorDate) || undefined);
+        const date2 = res.data[0].instructorDate
+          ? new Date(
+              String(res.data[0].instructorDate).split('-').reverse().join('/')
+            )
+          : '';
+
+        this.legalForm.get('fechaPPFF').setValue(date2);
         this.legalForm.get('cveOficio').setValue(res.data[0].passOfficeArmy);
         if (res.data[0].typeDict == 'PROCEDENCIA') {
           this.buttonDisabled = true;
@@ -615,14 +621,49 @@ export class JuridicalRulingComponent
           res.data[0].statusDict == 'ABIERTO'
         ) {
           this.buttonDeleteDisabled = false;
+          this.buttonAprove = false;
         }
 
         this.getOficioDictamen({
           id: res.data[0].id,
           typeDict: res.data[0].typeDict,
         });
+
+        await this.getDictaionXGoo1();
+
+        this.goods.forEach(async good => {
+          await this.getDictaDoc(res.data[0].id, res.data[0].typeDict, good.id);
+        });
+
+        return;
       },
       error: () => {},
+    });
+  }
+
+  getDictaDoc(dica: number, type: string, good: number) {
+    return new Promise((resolve, reject) => {
+      const params = new FilterParams();
+      params.addFilter('officialNumber', dica, SearchFilter.EQ);
+      params.addFilter('typeDictum', type, SearchFilter.EQ);
+      params.addFilter('stateNumber', good, SearchFilter.EQ);
+      this.documentsMServ.getAllDictum(params.getParams()).subscribe({
+        next: resp => {
+          resp.data.map((doc: any) => {
+            (doc.k = doc.key.key),
+              (doc.d = doc.key.description),
+              (doc.date = doc.dateReceipt);
+          });
+
+          this.documents_m1 = [...resp.data];
+          console.log(this.documents_m1);
+
+          resolve(true);
+        },
+        error: () => {
+          resolve(false);
+        },
+      });
     });
   }
 
@@ -645,7 +686,7 @@ export class JuridicalRulingComponent
                   tipo_dicta: this.legalForm.get('tipoDictaminacion').value,
                   identificador: good.identifier,
                   vc_pantalla: 'FACTJURDICTAMAS',
-                  proceso_ext_dom: good.extDomProcess,
+                  proceso_ext_dom: good.extDomProcess ?? '',
                   sel_paq: this.legalForm.get('tipo').value,
                 };
 
@@ -892,7 +933,7 @@ export class JuridicalRulingComponent
     params['filter.officialNumber'] = `$eq:${data.id}`;
     params['filter.typeDict'] = `$eq:${data.typeDict}`;
 
-    this.oficialDictationService.getAll(params).subscribe({
+    return this.oficialDictationService.getAll(params).subscribe({
       next: resp => {
         console.log('OFICIO,', resp);
         const params = new ListParams();
@@ -1655,8 +1696,6 @@ export class JuridicalRulingComponent
       } = this.legalForm.value;
       const { no_volante } = this.dictationForm.value;
 
-      console.log(no_volante);
-
       const body: any = {
         id: no_of_dicta,
         passOfficeArmy: cveOficio,
@@ -1666,8 +1705,8 @@ export class JuridicalRulingComponent
         dictDate: new Date(SYSDATE),
         userDict: user.username.toUpperCase(),
         observations: observations,
-        delegationDictNumber: Number(user.delegacionreg),
-        areaDict: user.department,
+        delegationDictNumber: Number(user.department),
+        areaDict: '',
         instructorDate: fechaPPFF,
         registerNumber: '',
         esDelit: esPropiedad ? 'S' : 'N',
@@ -1785,6 +1824,28 @@ export class JuridicalRulingComponent
     }
 
     //this.onLoadGoodList();
+  }
+
+  async getDictaionXGoo1() {
+    const { noExpediente } = this.legalForm.value;
+    const params = new FilterParams();
+    params.addFilter('proceedingsNumber', noExpediente, SearchFilter.EQ);
+    // params.addFilter('')
+    return new Promise((resolve, reject) => {
+      this.DictationXGood1Service.getAll(params.getParams()).subscribe({
+        next: resp => {
+          resp.data.map((goodx: any) => {
+            goodx = goodx.good;
+          });
+
+          this.goodsValid = [...resp.data];
+          resolve(true);
+        },
+        error: () => {
+          resolve(false);
+        },
+      });
+    });
   }
 
   async createDictamenXGood1(body: any) {
@@ -2252,7 +2313,7 @@ export class JuridicalRulingComponent
     let v_paquete;
     let v_estatus;
 
-    lv_valor = '';
+    lv_valor = this.dictNumber;
     tipo_dict = tipoDictaminacion;
 
     if (tipo == 'P') {
