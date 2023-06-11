@@ -5,7 +5,7 @@ export const EDOSXCOOR_COLUMS = {
     sort: false,
   },
   description: {
-    title: 'Descripcion',
+    title: 'Descripción',
     type: 'string',
     sort: false,
   },

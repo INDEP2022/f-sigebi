@@ -97,7 +97,9 @@ export class CostCatalogComponent extends BasePage implements OnInit {
         this.loading = false;
       },
     });
+    console.log(this.data);
   }
+
   openForm(allotment?: any) {
     let config: ModalOptions = {
       initialState: {

@@ -1,6 +1,6 @@
 export const STOREHOUSE_COLUMNS = {
   id: {
-    title: 'Registro',
+    title: 'No.Bodega',
     type: 'string',
     sort: false,
   },

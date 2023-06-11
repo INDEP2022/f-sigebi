@@ -10,7 +10,7 @@ import { IDocumentsTypeMethods } from '../interfaces/ms-documents-type-methods';
 export class DocumentsTypeRepository<T> implements IDocumentsTypeMethods<T> {
   ms: string = `${environment.API_URL}documents/api/v1/`;
 
-  constructor(public readonly httpClient: HttpClient) {}
+  constructor(public readonly httpClient: HttpClient) { }
 
   getAll(route: string, _params?: ListParams) {
     const fullRoute = `${this.ms}${route}`;
@@ -31,7 +31,7 @@ export class DocumentsTypeRepository<T> implements IDocumentsTypeMethods<T> {
   }
 
   update(route: string, id: number | string, formData: Object) {
-    const fullRoute = `${this.ms}${route}${id}`;
+    const fullRoute = `${this.ms}${route}/${id}`;
     return this.httpClient.put<IListResponse<T>>(fullRoute, formData);
   }
 

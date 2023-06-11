@@ -136,16 +136,24 @@ export class DepartmentFormComponent extends BasePage implements OnInit {
     this.departmentService.getDelegationsCatalog(params).subscribe({
       next: data => {
         this.delegations = new DefaultSelect(data.data, data.count);
-        console.log('consola 2', data.data);
+      },
+      error: () => {
+        this.delegations = new DefaultSelect();
+        this.loading = false;
       },
     });
   }
+
   getDelegationsId(params: ListParams, id: any) {
     params['filter.id'] = `$eq:${id}`;
     this.departmentService.getDelegationsCatalog(params).subscribe({
       next: data => {
         this.delegations = new DefaultSelect(data.data, data.count);
         console.log('consola 3', data.data);
+      },
+      error: () => {
+        this.delegations = new DefaultSelect();
+        this.loading = false;
       },
     });
   }
@@ -161,8 +169,32 @@ export class DepartmentFormComponent extends BasePage implements OnInit {
     });
   }
   onSubDelegation(data: any) {
-    console.log('consola 4', data);
-    this.getSubdelegations(new ListParams(), data.id);
+    //console.log(data);
+    if (data === null || data === undefined) {
+      this.departmentForm.controls['numSubDelegation'].setValue(null);
+    } else {
+      const params = new ListParams();
+      params['filter.delegationDetail.id'] = `$eq:${data.id}`;
+      this.departmentService.getSubdelegations(params).subscribe({
+        next: resp => {
+          console.log(resp);
+          this.subdelegations = new DefaultSelect(resp.data, resp.count);
+        },
+        error: error => {
+          console.log(error);
+          this.subdelegations = new DefaultSelect();
+        },
+      });
+    }
+    /*for (const controlName in this.departmentForm.controls) {
+      if (this.departmentForm.controls.hasOwnProperty(controlName)) {
+        if (controlName != 'numDelegation') {
+          this.departmentForm.controls['numSubDelegation'].setValue(null);
+        }
+      }
+    }*/
+    //console.log('consola 4', data);
+    //this.getSubdelegations(new ListParams(), data.id);
   }
   close() {
     this.modalRef.hide();
