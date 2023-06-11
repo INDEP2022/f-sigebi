@@ -26,7 +26,7 @@ export class DocumentsDictumStatetMService extends HttpService {
     params?: _Params
   ): Observable<IListResponse<IDocumentsDictumXStateM>> {
     return this.get<IListResponse<IDocumentsDictumXStateM>>(
-      this.route.DocumentsDictuXState,
+      this.route.DocumentsDictuXStateM,
       params
     );
   }
