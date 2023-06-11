@@ -255,6 +255,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
     this.prepareForm();
     this.form.get('year').setValue(format(new Date(), 'yyyy'));
     this.form.get('mes').setValue(format(new Date(), 'MM'));
+
     this.initalizateProceeding();
 
     if (localStorage.getItem('numberExpedient')) {
@@ -1909,8 +1910,6 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
                   }
                 });
               }
-            }else{
-            this.alert('warning', 'No se ha realizado el escaneo', '');
             }
           },
           err => {
