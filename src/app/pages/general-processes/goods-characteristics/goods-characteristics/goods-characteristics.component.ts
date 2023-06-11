@@ -308,6 +308,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
           this.NO_INDICADOR = param['NO_INDICADOR'] ?? null;
         }
         if (param['noBien']) {
+          this.origin = '1';
           // this.selectTab();
           this.numberGood.setValue(param['noBien']);
           this.searchGood();
