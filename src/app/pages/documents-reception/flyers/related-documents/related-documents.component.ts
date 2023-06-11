@@ -31,6 +31,8 @@ import { DepartamentService } from 'src/app/core/services/catalogs/departament.s
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { DictationXGood1Service } from 'src/app/core/services/ms-dictation/dictation-x-good1.service';
 import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
+import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
+import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { StatusGoodService } from 'src/app/core/services/ms-good/status-good.service';
 import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
@@ -44,6 +46,7 @@ import { ParametersService } from 'src/app/core/services/ms-parametergood/parame
 import { ScreenStatusService } from 'src/app/core/services/ms-screen-status/screen-status.service';
 import { SecurityService } from 'src/app/core/services/ms-security/security.service';
 import { SegAcessXAreasService } from 'src/app/core/services/ms-users/seg-acess-x-areas.service';
+import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { OfficeManagementService } from 'src/app/core/services/office-management/officeManagement.service';
 import { ProcedureManagementService } from 'src/app/core/services/proceduremanagement/proceduremanagement.service';
 import {
@@ -139,6 +142,7 @@ export class RelatedDocumentsComponent
   dataGoodTable: LocalDataSource = new LocalDataSource();
   m_job_management: any = null;
   authUser: any = null;
+  isLoadingDocuments = false;
   pantalla = (option: boolean) =>
     `${
       option == true
@@ -252,7 +256,7 @@ export class RelatedDocumentsComponent
     officeExternalKey: new FormControl(null),
   });
 
-  override formJobManagement = new FormGroup({
+  formJobManagement = new FormGroup({
     /** @description no_volante */
     flyerNumber: new FormControl(''),
     /** @description tipo_oficio */
@@ -290,18 +294,31 @@ export class RelatedDocumentsComponent
       legendOffice: string;
       idName: string;
     }>(null), // ciudad,
-    statusOf: new FormControl(''), // estatus_of
-    refersTo: new FormControl(''), // se_refiere_a
+    /** @description estatus_of */
+    statusOf: new FormControl(''),
+    /**@description se_refiere_a */
+    refersTo: new FormControl(''),
     /** @Description texto1 */
     text1: new FormControl(''),
     /** @Description texto2 */
     text2: new FormControl(''),
     /** @Description texto3 */
     text3: new FormControl(''),
-    /** @Description des_remitente_pa */
-    // desSenderpa: new FormControl(''),
-    /** @Description insertDate */
+    /** @description usuaro_insert */
+    insertUser: new FormControl(''),
+    /**@description  fecha_inserto*/
     insertDate: new FormControl(''),
+    /**@description num_clave_armada */
+    armedKeyNumber: new FormControl(''),
+  });
+
+  formVariables = new FormGroup({
+    b: new FormControl(''),
+    d: new FormControl(''),
+    dictamen: new FormControl(''),
+    classify: new FormControl(''),
+    classify2: new FormControl(''),
+    crime: new FormControl(''),
   });
 
   constructor(
@@ -318,12 +335,12 @@ export class RelatedDocumentsComponent
     protected serviceOficces: GoodsJobManagementService,
     protected readonly authService: AuthService,
     private applicationGoodsQueryService: ApplicationGoodsQueryService,
-    private svLegalOpinionsOfficeService: LegalOpinionsOfficeService,
+    protected svLegalOpinionsOfficeService: LegalOpinionsOfficeService,
     protected readonly goodServices: GoodService,
     private statusGoodService: StatusGoodService,
     private screenStatusService: ScreenStatusService,
     private DictationXGood1Service: DictationXGood1Service,
-    private goodprocessService: GoodprocessService,
+    protected goodprocessService: GoodprocessService,
     private massiveGoodService: MassiveGoodService,
     protected notificationService: NotificationService,
     protected mJobManagementService: MJobManagementService,
@@ -332,7 +349,10 @@ export class RelatedDocumentsComponent
     protected departmentService: DepartamentService,
     private segAccessAreasService: SegAcessXAreasService,
     private officeManagementSerivice: OfficeManagementService,
-    private goodHistoryService: HistoryGoodService
+    private goodHistoryService: HistoryGoodService, // protected abstract svLegalOpinionsOfficeService: LegalOpinionsOfficeService;
+    protected documentsService: DocumentsService,
+    protected usersService: UsersService, // protected goodProcessService: GoodprocessService,
+    private expedientService: ExpedientService
   ) {
     super();
     console.log(authService.decodeToken());
@@ -1776,74 +1796,81 @@ export class RelatedDocumentsComponent
   async showDeleteAlert(legend?: any) {
     //ILegend
     //Desea eliminar el oficio con el expediente ${proceedingsNumber} y No. Oficio ${managementNumber}
-    console.log(this.managementForm.value);
-    console.log(this.formJobManagement.value);
-    console.log(this.m_job_management);
-    console.log(this.dataTableGoods);
+    if (this.pantallaActual == '1') {
+      const {
+        noVolante, //no_volante
+        wheelStatus, //status
+      } = this.managementForm.value;
+      const {
+        managementNumber, //no_of_gestion
+        flyerNumber, //no_volante
+        statusOf, //status_of
+        cveManagement, //cve_of_gestion
+        proceedingsNumber, //no_expediente
+        insertUser, //usuario insert
+        insertDate, //fecha inserto
+      } = this.m_job_management;
 
-    const {
-      noVolante, //no_volante
-      wheelStatus, //status
-    } = this.managementForm.value;
-    const {
-      managementNumber, //no_of_gestion
-      flyerNumber, //no_volante
-      statusOf, //status_of
-      cveManagement, //cve_of_gestion
-      proceedingsNumber, //no_expediente
-      insertUser, //usuario insert
-      insertDate, //fecha inserto
-    } = this.m_job_management;
+      if (managementNumber == null) {
+        this.onLoadToast('info', 'No se tiene oficio', '');
+        return;
+      }
 
-    if (managementNumber == null) {
-      this.onLoadToast('info', 'No se tiene oficio', '');
-      return;
-    }
-
-    if (wheelStatus == 'ENVIADO') {
-      this.onLoadToast('info', 'El oficio ya esta enviado no puede borrar', '');
-      return;
-    }
-
-    if (cveManagement.includes('?') == false) {
-      this.onLoadToast(
-        'info',
-        'La clave está armada, no puede borrar oficio',
-        ''
-      );
-      return;
-    }
-
-    if (insertUser != this.authUser.username) {
-      const ATJR: any = await this.userHavePermission();
-      console.log(ATJR);
-      if (Number(ATJR[0]) == 0) {
+      if (wheelStatus == 'ENVIADO') {
         this.onLoadToast(
-          'error',
-          'Error',
-          'El Usuario no está autorizado para eliminar el Oficio'
+          'info',
+          'El oficio ya esta enviado no puede borrar',
+          ''
         );
         return;
       }
-    } else {
-      this.onLoadToast('error', 'Error', 'Usuario inválido para borrar oficio');
-      return;
-    }
 
-    this.alertQuestion(
-      'warning',
-      'Eliminar',
-      `Desea eliminar el oficio con el expediente ${proceedingsNumber} y No. Oficio ${managementNumber}`
-    ).then(question => {
-      if (question.isConfirmed) {
-        if (this.pantallaActual == '1') {
-          this.deleteOfficeDesahogo(managementNumber, noVolante, insertDate);
-          //Swal.fire('Borrado', '', 'success');
-        } else {
-          this.deleteOfficeRelacionado(managementNumber, noVolante);
-        }
+      if (cveManagement.includes('?') == false) {
+        this.onLoadToast(
+          'info',
+          'La clave está armada, no puede borrar oficio',
+          ''
+        );
+        return;
       }
-    });
+
+      if (insertUser != this.authUser.username) {
+        const ATJR: any = await this.userHavePermission();
+        console.log(ATJR);
+        if (Number(ATJR[0]) == 0) {
+          this.onLoadToast(
+            'error',
+            'Error',
+            'El Usuario no está autorizado para eliminar el Oficio'
+          );
+          return;
+        }
+      } else {
+        this.onLoadToast(
+          'error',
+          'Error',
+          'Usuario inválido para borrar oficio'
+        );
+        return;
+      }
+
+      this.alertQuestion(
+        'warning',
+        'Eliminar',
+        `Desea eliminar el oficio con el expediente ${proceedingsNumber} y No. Oficio ${managementNumber}`
+      ).then(question => {
+        if (question.isConfirmed) {
+          if (this.pantallaActual == '1') {
+            this.deleteOfficeDesahogo(managementNumber, noVolante, insertDate);
+            //Swal.fire('Borrado', '', 'success');
+          } else {
+            this.deleteOfficeRelacionado(managementNumber, noVolante);
+          }
+        }
+      });
+    } else {
+      this.onClickBtnErase();
+    }
   }
 
   async deleteOfficeDesahogo(
@@ -2586,7 +2613,7 @@ export class RelatedDocumentsComponent
       const params = new ListParams();
       params['filter.managementNumber'] =
         this.formJobManagement.value.managementNumber;
-      const count = await this.getDocOficioGestion(params);
+      const count = await this.getDocJobManagementCount(params);
       if (count > 0) {
         this.isDisabledBtnDocs = true;
       }
@@ -2618,8 +2645,6 @@ export class RelatedDocumentsComponent
       });
     });
   }
-
-  commit() {}
 
   async getDSAreaInDeparment(etapaCreda: string | number) {
     const params = new ListParams();
