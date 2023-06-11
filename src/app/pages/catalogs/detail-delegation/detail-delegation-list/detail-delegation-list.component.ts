@@ -11,7 +11,6 @@ import {
 import { IDetailDelegation } from 'src/app/core/models/catalogs/detail-delegation.model';
 import { DetailDelegationService } from 'src/app/core/services/catalogs/detail-delegation.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import Swal from 'sweetalert2';
 import { DetailDelegationFormComponent } from '../detail-delegation-form/detail-delegation-form.component';
 import { DETAIL_DELEGATION_COLUMNS } from './detail-delegation-columns';
 

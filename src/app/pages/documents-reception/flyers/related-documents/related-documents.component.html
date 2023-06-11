@@ -92,6 +92,7 @@
               [control]="formJobManagement.get('sender')"
               class="col-md-4">
               <ngx-select
+                [searchOnInit]="true"
                 (fetchItems)="getSenderByDetail($event)"
                 bindLabel="idName"
                 [data]="senders"
@@ -109,6 +110,7 @@
                 else templateInputAddressee
               ">
               <ngx-select
+                [searchOnInit]="true"
                 [data]="select"
                 [form]="formJobManagement"
                 control="addressee"
@@ -135,6 +137,7 @@
               [control]="formJobManagement.get('city')"
               class="col-md-4">
               <ngx-select
+                [searchOnInit]="true"
                 (fetchItems)="getCityByDetail($event)"
                 bindLabel="idName"
                 [data]="cities"
@@ -521,7 +524,7 @@
           <div class="row">
             <form-field
               [control]="formJobManagement.get('text2')"
-              label="Parrafo Final">
+              label="Párrafo Final">
               <textarea
                 rows="5"
                 class="form-control"
@@ -537,7 +540,7 @@
             <ng-container *ngIf="!pantallaOption">
               <form-field
                 [control]="formJobManagement.get('desSenderpa')"
-                label="Parrafo por ausencia">
+                label="Párrafo por ausencia">
                 <textarea
                   rows="3"
                   class="form-control mt-2"

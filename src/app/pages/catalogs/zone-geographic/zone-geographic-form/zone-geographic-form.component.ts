@@ -44,7 +44,11 @@ export class ZoneGeographicFormComponent extends BasePage implements OnInit {
       version: [null],
       thirdPartySpecialized: [
         null,
-        [Validators.required, Validators.maxLength(20), Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.maxLength(20),
+          Validators.pattern(STRING_PATTERN),
+        ],
       ],
       vat: [null, [Validators.pattern(IVA_PATTERN)]],
       status: [null],
