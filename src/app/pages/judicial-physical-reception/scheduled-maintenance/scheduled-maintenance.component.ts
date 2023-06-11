@@ -243,7 +243,11 @@ export class ScheduledMaintenanceComponent
     this.excelService.getExcel().subscribe({
       next: resp => {
         console.log(resp);
-        this.downloadDocument('test', 'excel', resp.file);
+        this.downloadDocument(
+          'Programación de Recepciones',
+          'excel',
+          resp.file
+        );
         // let workbook = read(bstr, {
         //   type: 'binary',
         // });
