@@ -543,6 +543,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
 
   verifyDateAndFill() {
     let fecElab = new Date(this.form.get('fecElab').value);
+    console.log(fecElab)
     if (this.form.get('fecElab').value != null) {
       this.form.get('fecReception').setValue(new Date(fecElab));
       this.showFecReception = true;
