@@ -104,7 +104,10 @@ export class DocumentsFormComponent extends BasePage implements OnInit {
 
   getDocumentsbyDictation() {
     this.loading = true;
-    const params = new HttpParams().set('filter.typeDictum', 'DESTRUCCION');
+    const params = new HttpParams().set(
+      'filter.typeDictum',
+      this.dictationService.typeDictamination.typeDictum
+    );
     this.DictationXGood1Service.getAll(params).subscribe({
       next: (resp: any) => {
         const data = resp.data.map((item: any) => {
