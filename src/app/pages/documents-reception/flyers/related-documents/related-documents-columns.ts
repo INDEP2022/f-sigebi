@@ -30,6 +30,7 @@ export const RELATED_DOCUMENTS_COLUMNS_GOODS = {
     title: 'Des. Estatus',
     type: 'string',
     sort: false,
+    hide: true,
   },
   seleccion: {
     title: 'Selección',
@@ -41,6 +42,7 @@ export const RELATED_DOCUMENTS_COLUMNS_GOODS = {
       });
     },
     sort: false,
+    hide: false,
   },
   improcedente: {
     title: 'Improcedente',
