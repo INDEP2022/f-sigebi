@@ -18,7 +18,7 @@ export class IndicatorsParameterService
 
   constructor(
     private indicatorsParameterRepository: Repository<IIndicatorsParamenter>
-  ) { }
+  ) {}
 
   getAll(
     params?: ListParams
