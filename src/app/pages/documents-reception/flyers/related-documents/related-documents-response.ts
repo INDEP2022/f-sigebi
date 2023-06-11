@@ -54,6 +54,14 @@ export abstract class RelateDocumentsResponse extends BasePage {
   protected abstract departmentService: DepartamentService;
   protected abstract svLegalOpinionsOfficeService: LegalOpinionsOfficeService;
   protected abstract authService: AuthService;
+  abstract formVariables: FormGroup<{
+    b: FormControl;
+    d: FormControl;
+    dictamen: FormControl;
+    classify: FormControl;
+    classify2: FormControl;
+    crime: FormControl;
+  }>;
   protected abstract formJobManagement: FormGroup<{
     /** @description no_volante */
     flyerNumber: FormControl;
@@ -819,7 +827,52 @@ export abstract class RelateDocumentsResponse extends BasePage {
       this.formJobManagement.get('statusOf').setValue('ENVIADO');
       //TODO: pup_act_gestion
       //TODO: Guardar m_job_gestion
+      this.commit();
       this.pupShowReport();
     }
+  }
+
+  getValuesNotNull() {
+    const values = this.formJobManagement.value;
+    const keys = Object.keys(values);
+    const result: any = {};
+    keys.forEach(key => {
+      if ((values as any)[key] != null) {
+        result[key] = (values as any)[key];
+      }
+    });
+    if (values.addressee) {
+      result.addressee =
+        values.jobType == 'EXTERNO' ? values.addressee : values.addressee?.name;
+    }
+    if (values.sender) {
+      result.sender = values.sender.id;
+    }
+    if (values.city) {
+      result.city = values.city.id;
+    }
+    return result;
+  }
+
+  async commit() {
+    const values = this.getValuesNotNull();
+    if (values.cveManagement) {
+      await firstValueFrom(
+        this.mJobManagementService.update(values).pipe(
+          catchError(() => {
+            showToast({
+              icon: 'error',
+              title: 'Error',
+              text: 'Error al guardar los datos',
+            });
+            return of(null);
+          })
+        )
+      );
+    }
+  }
+
+  selectedChecksC() {
+    this.formVariables.get('b').setValue('N');
   }
 }

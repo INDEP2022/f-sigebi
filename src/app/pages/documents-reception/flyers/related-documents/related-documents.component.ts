@@ -107,6 +107,10 @@ export interface IGoodJobManagement {
         color: #939393;
         pointer-events: none;
       }
+      #bienesJuridicos table:not(.normal-hover) tbody tr:hover {
+        color: black !important;
+        font-weight: bold;
+      }
     `,
   ],
 })
@@ -406,37 +410,43 @@ export class RelatedDocumentsComponent
   selectedRadio: string;
 
   disabledChecks() {
-    this.goodFilterParams('Todos');
-    this.managementForm.controls['averiPrevia'].setValue('Todos');
-    setTimeout(() => {
-      const tabla = document.getElementById('goods');
-      const types = document.getElementById('typesFilters');
-      const tbody = tabla.children[0].children[1].children;
-      for (let index = 0; index < tbody.length; index++) {
-        const element = tbody[index];
-        element.children[7].classList.add('not-press');
-        element.children[8].classList.add('not-press');
-      }
-      types.classList.add('not-press');
-    }, 2000);
+    console.log(this.settings);
+    (this.settings.columns as any).seleccion['show'] = false;
+    this.managementForm.get('averiPrevia').disable();
+    this.formVariables.get('b').setValue('S');
+    // }
+    // this.goodFilterParams('Todos');
+    // this.managementForm.controls['averiPrevia'].setValue('Todos');
+    // setTimeout(() => {
+    //   const tabla = document.getElementById('goods');
+    //   const types = document.getElementById('typesFilters');
+    //   const tbody = tabla.children[0].children[1].children;
+    //   for (let index = 0; index < tbody.length; index++) {
+    //     const element = tbody[index];
+    //     element.children[7].classList.add('not-press');
+    //     element.children[8].classList.add('not-press');
+    //   }
+    //   types.classList.add('not-press');
+    // }, 2000);
   }
 
   enableChecks() {
-    const tabla = document.getElementById('goods');
-    const types = document.getElementById('typesFilters');
-
-    if (tabla && types) {
-      const tbody = tabla.children[0]?.children[1]?.children;
-
-      if (tbody) {
-        for (let index = 0; index < tbody.length; index++) {
-          const element = tbody[index];
-          element.children[7]?.classList.remove('not-press');
-          element.children[8]?.classList.remove('not-press');
-        }
-      }
-      types.classList.remove('not-press');
-    }
+    delete (this.settings.columns as any).seleccion;
+    this.managementForm.get('averiPrevia').enable();
+    this.formVariables.get('b').setValue('S');
+    // const tabla = document.getElementById('goods');
+    // const types = document.getElementById('typesFilters');
+    // if (tabla && types) {
+    //   const tbody = tabla.children[0]?.children[1]?.children;
+    //   if (tbody) {
+    //     for (let index = 0; index < tbody.length; index++) {
+    //       const element = tbody[index];
+    //       element.children[7]?.classList.remove('not-press');
+    //       element.children[8]?.classList.remove('not-press');
+    //     }
+    //   }
+    //   types.classList.remove('not-press');
+    // }
   }
 
   onClickSelect(event: any) {
@@ -938,7 +948,7 @@ export class RelatedDocumentsComponent
             });
           }
 
-          if (mJobManagement.addressee) {
+          if (mJobManagement.addressee && mJobManagement.jobType != 'INTERNO') {
             const params = new ListParams();
             params.limit = 1;
             params['search'] = mJobManagement.addressee;
@@ -961,20 +971,20 @@ export class RelatedDocumentsComponent
             this.refreshTableDocuments();
           }
 
-          if (mJobManagement.statusOf == 'ENVIADO') {
-            this.formJobManagement.disable();
-          }
-          if (mJobManagement.refersTo == this.se_refiere_a.A) {
-            this.se_refiere_a_Disabled.B = true;
-            this.se_refiere_a_Disabled.C = true;
-          }
-          if (mJobManagement.refersTo == this.se_refiere_a.B) {
-            this.se_refiere_a_Disabled.A = true;
-            this.se_refiere_a_Disabled.C = true;
-          }
-          if (mJobManagement.refersTo == this.se_refiere_a.C) {
-            this.formVariables.get('b').setValue('N');
-          }
+          // if (mJobManagement.statusOf == 'ENVIADO') {
+          //   this.formJobManagement.disable();
+          // }
+          // if (mJobManagement.refersTo == this.se_refiere_a.A) {
+          //   this.se_refiere_a_Disabled.B = true;
+          //   this.se_refiere_a_Disabled.C = true;
+          // }
+          // if (mJobManagement.refersTo == this.se_refiere_a.B) {
+          //   this.se_refiere_a_Disabled.A = true;
+          //   this.se_refiere_a_Disabled.C = true;
+          // }
+          // if (mJobManagement.refersTo == this.se_refiere_a.C) {
+          //   this.formVariables.get('b').setValue('N');
+          // }
         } catch (e) {
           console.log(e);
         }
@@ -2746,8 +2756,6 @@ export class RelatedDocumentsComponent
       });
     });
   }
-
-  commit() {}
 
   async getDSAreaInDeparment(etapaCreda: string | number) {
     const params = new ListParams();

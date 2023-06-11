@@ -182,7 +182,8 @@
                 id="se_refiere_a_C"
                 type="radio"
                 formControlName="refersTo"
-                value="{{ se_refiere_a.C }}" />
+                value="{{ se_refiere_a.C }}"
+                (change)="selectedChecksC()" />
             </form-radio>
           </div>
           <div class="col-md-1 text-right">
@@ -332,7 +333,7 @@
         <br />
         <div class="row pb-5">
           <div class="col-md-12">
-            <div class="col-sm-12 col-12 col-md-12">
+            <div class="col-md-8 col-12">
               <ngx-select
                 [form]="managementForm"
                 control="averiPrevia"
@@ -345,7 +346,8 @@
                 id="typesFilters"
                 (change)="typeSelected($event)">
               </ngx-select>
-              <!-- <form-field
+            </div>
+            <!-- <form-field
                [control]="managementForm.get('averiPrevia')"
                label="Tipo &#45; Subtipo &#45; Descripci&oacute;n">
                <ng-select
@@ -363,6 +365,16 @@
                  </ng-option>
                </ng-select>
              </form-field> -->
+            <div class="col-md-4 col-12">
+              <form-field
+                label="Descripción estatus"
+                [control]="managementForm.get('di_desc_estatus')">
+                <input
+                  type="text"
+                  formControlName="di_desc_estatus"
+                  class="form-control"
+                  readonly />
+              </form-field>
             </div>
 
             <!-- <form-check class="col-md-2 text-end" label="Improcedente(s) todo(s)" for="improcedente">
@@ -376,7 +388,7 @@
               <div class="col-sm-12 col-12 col-md-12 pr-3">
                 <div [class]="isLoadingGood ? 'table-loading' : ''">
                   <ng2-smart-table
-                    id="goods"
+                    id="bienesJuridicos"
                     (userRowSelect)="selectProceedings($event)"
                     [attr.class]="'table-responsive table-bordered'"
                     [settings]="settings"
@@ -445,17 +457,6 @@
               </div>
             </div>
 
-            <div *ngIf="pantallaActual == '1'" class="row">
-              <div class="col-sm-12 col-12 col-md-6 mt-5">
-                <form-field [control]="managementForm.get('di_desc_estatus')">
-                  <input
-                    type="text"
-                    formControlName="di_desc_estatus"
-                    class="form-control"
-                    readonly />
-                </form-field>
-              </div>
-            </div>
             <!-- <div class="col-md-2 text-end">
             <app-columns-select [(settings)]="settings"></app-columns-select>
           </div> -->
