@@ -371,7 +371,6 @@ export class RelatedDocumentsComponent
     super();
     // console.log(authService.decodeToken());
     this.authUser = authService.decodeToken();
-    console.log('USER DATA', this.authUser);
     this.settings3 = {
       ...this.settings,
       actions: {
@@ -421,7 +420,6 @@ export class RelatedDocumentsComponent
       columna => columna.id === 'seleccion'
     );
     columnaOpciones.hide = true;
-    console.log(this.settings);
     // (this.settings.columns as any).seleccion['hide'] = false;
     this.managementForm.get('averiPrevia').disable();
     this.formVariables.get('b').setValue('S');
@@ -580,7 +578,6 @@ export class RelatedDocumentsComponent
       this.securityService.getAllUsersTracker(params).subscribe(
         (data: any) => {
           // this.formCcpOficio.get('nombreUsuario2').setValue(data.data[0]);
-          console.log('COPYY2', data);
           let result = data.data.map(async (item: any) => {
             item['userAndName'] = item.user + ' - ' + item.name;
           });
@@ -2247,7 +2244,8 @@ export class RelatedDocumentsComponent
 
   typeSelected(type: any) {
     const filter = type.no_clasif_bien;
-    console.log('FILTRO DICTAMINACION', filter);
+    this.dictationService.typeDictamination = type;
+
     this.selectVariable = filter;
     this.goodFilterParams(filter);
   }
@@ -2485,7 +2483,6 @@ export class RelatedDocumentsComponent
     return new Promise((resolve, reject) => {
       this.DictationXGood1Service.getAll(params).subscribe({
         next: (resp: any) => {
-          console.log('DICTAMINACION X BIEN', resp.data);
           const data = resp.data[0];
           resolve(data);
           this.loading = false;
