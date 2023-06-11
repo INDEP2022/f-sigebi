@@ -20,7 +20,8 @@ import { ModalCatalogOfDocumentTypesComponent } from '../modal-catalog-of-docume
 })
 export class CatalogOfDocumentTypesComponent
   extends BasePage
-  implements OnInit {
+  implements OnInit
+{
   columns: any[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -90,7 +91,6 @@ export class CatalogOfDocumentTypesComponent
           });
           this.getPagination();
         }
-
       });
     this.params
       .pipe(takeUntil(this.$unSubscribe))

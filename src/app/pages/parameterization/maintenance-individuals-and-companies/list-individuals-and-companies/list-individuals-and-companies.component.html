@@ -1,11 +1,15 @@
 <app-card [header]="true">
   <div header>
     <div class="ch-content">
-      <h5 class="title">Lista mantenimiento de personas f&Iacute;sicas y morales</h5>
+      <h5 class="title">
+        Lista mantenimiento de personas f&Iacute;sicas y morales
+      </h5>
       <div class="buttons">
         <app-columns-select [(settings)]="settings"></app-columns-select>
         <div>
-          <button class="btn btn-primary active btn-sm ml-3" (click)="openModal()">
+          <button
+            class="btn btn-primary active btn-sm ml-3"
+            (click)="openModal()">
             Nuevo
           </button>
         </div>
@@ -18,8 +22,12 @@
       <div class="col-md-12">
         <div class="table-responsive">
           <div [class]="loading ? 'table-loading' : ''">
-            <ng2-smart-table [attr.class]="'table-bordered table-responsive'" [settings]="settings" [source]="data"
-              (edit)="openModal($event.data)" (delete)="deletePerson($event.data)">
+            <ng2-smart-table
+              [attr.class]="'table-bordered table-responsive'"
+              [settings]="settings"
+              [source]="data"
+              (edit)="openModal($event.data)"
+              (delete)="deletePerson($event.data)">
             </ng2-smart-table>
           </div>
         </div>

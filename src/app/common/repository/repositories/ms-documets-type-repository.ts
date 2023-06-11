@@ -10,7 +10,7 @@ import { IDocumentsTypeMethods } from '../interfaces/ms-documents-type-methods';
 export class DocumentsTypeRepository<T> implements IDocumentsTypeMethods<T> {
   ms: string = `${environment.API_URL}documents/api/v1/`;
 
-  constructor(public readonly httpClient: HttpClient) { }
+  constructor(public readonly httpClient: HttpClient) {}
 
   getAll(route: string, _params?: ListParams) {
     const fullRoute = `${this.ms}${route}`;
