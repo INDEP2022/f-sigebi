@@ -6,22 +6,55 @@
 
   <div body>
     <div>
-      <div class="row justify-content-end">
+      <!-- <div class="row justify-content-end">
         <div class="">
+          <button class="btn btn-primary active btn-sm m-2" style="float: right" (click)="goBack()">
+            <i class="fas fa-arrow-left"></i>
+            Regresar
+          </button>
+        </div>
+      </div> -->
+      <div class="row">
+        <!-- <div class="d-inline mx-2"> -->
+        <div class="col-6 btn-group">
           <button
             class="btn btn-primary active btn-sm m-2"
-            style="float: right"
+            style="float: left"
             (click)="goBack()">
             <i class="fas fa-arrow-left"></i>
             Regresar
           </button>
         </div>
+        <div class="col-6">
+          <div class="d-inline mx-2">
+            <button
+              style="float: right"
+              type="button"
+              [disabled]="!disabledListDictums"
+              (click)="listDictums()"
+              tooltip="Dictámenes Disponibles"
+              containerClass="tooltip-style"
+              class="btn btn-primary btn-sm active mr-3">
+              <i class="bx bx-list-plus bx-sm float-icon"></i>
+            </button>
+            <button
+              style="float: right"
+              type="button"
+              (click)="newDictums()"
+              tooltip="Agregar Dictamen"
+              containerClass="tooltip-style"
+              class="btn btn-info btn-sm active ml-2 mr-2">
+              <i class="bx bx-plus bx-sm float-icon"></i>
+            </button>
+          </div>
+        </div>
+        <!-- </div> -->
       </div>
       <div class="row">
         <!-- INICIA FORM #1 -->
         <form
           [formGroup]="expedientesForm"
-          class="container-fluid form-material col-md-6 p-4">
+          class="container-fluid form-material col-md-5 p-4">
           <div class="row p-4">
             <!-- No. Expediente -->
             <!-- <div class="col-sm-12 col-12 col-md-6 p-2">
@@ -41,6 +74,7 @@
                   readonly
                   [disabled]="true" /> -->
                 <ngx-select
+                  [readonly]="disabledD"
                   [searchOnInit]="true"
                   [data]="typesDict"
                   [searchable]="false"
@@ -58,9 +92,9 @@
                 [control]="expedientesForm.get('noExpediente')"
                 label="No. Expediente">
                 <input
+                  readonly
                   type="text"
                   class="form-control"
-                  (blur)="changeNumExpediente()"
                   (keypress)="onKeyPress($event)"
                   formControlName="noExpediente" />
               </form-field>
@@ -68,6 +102,7 @@
 
             <div class="col-sm-12 col-12 col-md-12 p-2">
               <form-field
+                *ngIf="!inputsVisuales"
                 [control]="expedientesForm.get('averiguacionPrevia')"
                 label="Averiguaci&oacute;n Previa">
                 <input
@@ -136,6 +171,7 @@
           <div class="row pt-5">
             <div class="col-md-4">
               <form-field
+                *ngIf="showCriminalCase"
                 label="¿Es delito?"
                 [control]="expedientesForm.get('delito')">
                 <ng-select
@@ -143,6 +179,7 @@
                   [searchable]="false"
                   class="form-control"
                   [clearable]="false">
+                  <ng-option value=""></ng-option>
                   <ng-option value="S">Si</ng-option>
                   <ng-option value="N">No</ng-option>
                 </ng-select>
@@ -153,7 +190,7 @@
         <!-- INICIA FORM #2 -->
         <form
           [formGroup]="dictaminacionesForm"
-          class="container-fluid form-material col-md-6 p-4">
+          class="container-fluid form-material col-md-7 p-4">
           <div class="row p-4">
             <!-- Fecha Instructora -->
             <!-- <div class="col-sm-12 col-12 col-md-4 p-2">
@@ -401,12 +438,16 @@
       <div class="col-md-12 mt-4 mb-4">
         <h5 class="title">BIENES</h5>
         <br />
-
-        <ng2-smart-table
-          (rowSelect)="onSelectedRow($event)"
-          [attr.class]="'table-bordered table-responsive'"
-          [settings]="settings1"
-          [source]="goods"></ng2-smart-table>
+        <form-loader *ngIf="formLoading"></form-loader>
+        <div>
+          <ng2-smart-table
+            *ngIf="!formLoading"
+            id="bienesJuridicos"
+            (rowSelect)="onSelectedRow($event)"
+            [attr.class]="'table-bordered table-responsive'"
+            [settings]="settings1"
+            [source]="goods"></ng2-smart-table>
+        </div>
         <div class="d-flex justify-content-between">
           <p class="text-danger mt-2 ml-3">
             <strong>{{ desc_estatus_good }}</strong>
@@ -458,7 +499,6 @@
         <ng2-smart-table
           [attr.class]="'table-bordered table-responsive'"
           [settings]="settings2"
-          (rowSelect)="selectRow($event)"
           (userRowSelect)="rowsSelected($event)"
           [source]="goodsValid"></ng2-smart-table>
       </div>
@@ -496,20 +536,21 @@
           <div class="row">
             <div class="col-md-10">
               <ng2-smart-table
+                id="juridicasSelect"
                 [attr.class]="'table-bordered'"
                 [settings]="settings3"
                 [source]="documentsDictumXStateMList"></ng2-smart-table>
             </div>
-            <div class="col-md-2">
+            <div class="col-md-2 text-center">
               <p class="text-info h5">No. Bien</p>
-              <p class="text-info h5">{{ idGoodSelected }}</p>
+              <p class="text-info h4">{{ idGoodSelected }}</p>
             </div>
           </div>
         </div>
       </div>
       <!--  -->
 
-      <div class="col-4 custom-grid">
+      <div class="col-4">
         <div class="row justify-content-center">
           <div class="col-md-6 text-align-center">
             <button
