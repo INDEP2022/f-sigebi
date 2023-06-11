@@ -12,6 +12,7 @@ import { StatusTransferService } from 'src/app/core/services/catalogs/status-tra
 import { BasePage } from 'src/app/core/shared/base-page';
 import { StatusTransferFormComponent } from '../status-transfer-form/status-transfer-form.component';
 import { STATUSTRANSFER_COLUMS } from './status-transfer-columns';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-status-transfer-list',
@@ -107,7 +108,7 @@ export class StatusTransferListComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
         this.ShowDeleteAlert(statusTransfer.id);

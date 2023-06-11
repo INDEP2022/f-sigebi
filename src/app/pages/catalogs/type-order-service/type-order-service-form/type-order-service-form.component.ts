@@ -35,7 +35,7 @@ export class TypeOrderServiceFormComponent extends BasePage implements OnInit {
   private prepareForm() {
     this.typeOrderServiceForm = this.fb.group({
       id: [null],
-      cve: [
+      key: [
         null,
         Validators.compose([
           Validators.required,
@@ -78,7 +78,7 @@ export class TypeOrderServiceFormComponent extends BasePage implements OnInit {
   update() {
     this.loading = true;
     this.typeOrderServicesService
-      .update(this.typeOrderService.id, this.typeOrderServiceForm.getRawValue())
+      .newUpdate(this.typeOrderServiceForm.getRawValue())
       .subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),

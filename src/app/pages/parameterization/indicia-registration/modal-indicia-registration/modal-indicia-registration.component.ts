@@ -15,7 +15,7 @@ export class ModalIndiciaRegistrationComponent
   extends BasePage
   implements OnInit
 {
-  title: string = 'TASA';
+  title: string = 'INDICIADOS';
   edit: boolean = false;
   form: ModelForm<IIndiciados>;
   indicated: IIndiciados;
@@ -37,7 +37,7 @@ export class ModalIndiciaRegistrationComponent
     this.form = this.fb.group({
       id: [null],
       name: [null, [Validators.required]],
-      curp: [null],
+      curp: [null, [Validators.maxLength(40)]],
       noRegistration: [null],
       consecutive: [null],
     });

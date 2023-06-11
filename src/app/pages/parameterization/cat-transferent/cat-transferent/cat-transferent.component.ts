@@ -259,7 +259,6 @@ export class CatTransferentComponent extends BasePage implements OnInit {
     ).then(question => {
       if (question.isConfirmed) {
         this.delete2(station.id);
-        Swal.fire('Borrado', '', 'success');
       }
     });
   }
@@ -267,7 +266,17 @@ export class CatTransferentComponent extends BasePage implements OnInit {
   //método para borrar emisora
   delete2(id: number) {
     this.stationService.remove(id).subscribe({
-      next: () => this.getStationByTransferent(),
+      next: () => {
+        this.getStationByTransferent();
+        this.alert('success', 'Borrado', '');
+      },
+      error: err => {
+        this.alert(
+          'warning',
+          'Emisoras',
+          'No se puede eliminar debe eliminar sus AUTORIDADES'
+        );
+      },
     });
   }
 

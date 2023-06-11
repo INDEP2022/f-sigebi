@@ -11,7 +11,6 @@ import {
 import { IIdentifier } from 'src/app/core/models/catalogs/identifier.model';
 import { IdentifierService } from 'src/app/core/services/catalogs/identifier.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import Swal from 'sweetalert2';
 import { IdentifierFormComponent } from '../identifier-form/identifier-form.component';
 import { IDENTIFIER_COLUMNS } from './identifier-columns';
 
@@ -112,15 +111,23 @@ export class IdentifiersListComponent extends BasePage implements OnInit {
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(identifier);
-        Swal.fire('Borrado', '', 'success');
       }
     });
   }
 
   delete(identifier: IIdentifier) {
-    this.identifierService.remove(identifier.id).subscribe({
-      next: data => this.getIdentifiers(),
-      error: error => (this.loading = false),
-    });
+    this.identifierService.remove(identifier.id).subscribe(
+      res => {
+        this.alert('success', 'Identificador', 'Borrado.');
+        this.getIdentifiers();
+      },
+      err => {
+        this.alert(
+          'warning',
+          'Identificador',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      }
+    );
   }
 }

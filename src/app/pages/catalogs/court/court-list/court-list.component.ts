@@ -25,7 +25,7 @@ export class CourtListComponent extends BasePage implements OnInit {
   ) {
     super();
     this.settings.columns = COURT_COLUMNS;
-    this.settings.actions.delete = true;
+    this.settings.actions.delete = false;
   }
 
   ngOnInit(): void {

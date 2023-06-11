@@ -50,7 +50,8 @@ export class LawyerListComponent extends BasePage implements OnInit {
           filters.map((filter: any) => {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
-            filter.field == 'id';
+            field = `filter.${filter.field}`;
+            filter.field == 'id' ||
             filter.field == 'office' ||
             filter.field == 'name' ||
             filter.field == 'street' ||
@@ -84,16 +85,16 @@ export class LawyerListComponent extends BasePage implements OnInit {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-    this.lawyerService.getAll(params).subscribe(
-      response => {
+    this.lawyerService.getAll(params).subscribe({
+      next: response => {
         this.lawyers = response.data;
         this.data.load(this.lawyers);
         this.data.refresh();
         this.totalItems = response.count;
         this.loading = false;
       },
-      error => (this.loading = false)
-    );
+      error: error => (this.loading = false),
+    });
   }
 
   openForm(lawyer?: ILawyer) {
@@ -105,6 +106,12 @@ export class LawyerListComponent extends BasePage implements OnInit {
       },
     };
     this.modalService.show(LawyerDetailComponent, modalConfig);
+  }
+
+  cleanCreate() {
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getLawyers());
   }
 
   showDeleteAlert(lawyer: ILawyer) {
