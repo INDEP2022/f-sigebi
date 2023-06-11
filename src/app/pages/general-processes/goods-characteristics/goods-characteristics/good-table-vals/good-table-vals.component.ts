@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { SelectListFilteredModalComponent } from 'src/app/@standalone/modals/select-list-filtered-modal/select-list-filtered-modal.component';
@@ -18,6 +17,7 @@ import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { BasePage } from 'src/app/core/shared';
 import { formatForIsoDate, secondFormatDate } from 'src/app/shared/utils/date';
 import { GoodsCharacteristicsService } from '../../services/goods-characteristics.service';
+import { GoodCellValueComponent } from './good-cell-value/good-cell-value.component';
 import { GoodCharacteristicModalComponent } from './good-characteristic-modal/good-characteristic-modal.component';
 import { GoodSituationsModalComponent } from './good-situations-modal/good-situations-modal.component';
 import { GoodTableDetailButtonComponent } from './good-table-detail-button/good-table-detail-button.component';
@@ -59,12 +59,10 @@ export class GoodTableValsComponent extends BasePage implements OnInit {
   limit: FormControl = new FormControl(5);
   params = new BehaviorSubject<ListParams>(new ListParams());
   val_atributos_inmuebles = 0;
-  dataPaginated: LocalDataSource = new LocalDataSource();
   actualiza: boolean;
   requerido: boolean;
   selectedRow: number;
   totalItems = 0;
-  dataTemp: IVal[];
   constructor(
     private goodsqueryService: GoodsQueryService,
     private goodService: GoodService,
@@ -76,10 +74,10 @@ export class GoodTableValsComponent extends BasePage implements OnInit {
     this.settings = {
       ...this.settings,
       actions: {
-        columnTitle: 'Acciones',
-        position: 'left',
+        columnTitle: '',
+        position: 'right',
         add: false,
-        edit: this.service.disabledTable ? false : true,
+        edit: false,
         delete: true,
       },
       delete: {
@@ -97,11 +95,11 @@ export class GoodTableValsComponent extends BasePage implements OnInit {
         },
         value: {
           title: 'Valores',
-          type: 'string',
+          type: 'custom',
           sort: false,
           editable: false,
-          // valuePrepareFunction: (cell: any, row: any) => row,
-          // renderComponent: GoodCellValueComponent,
+          valuePrepareFunction: (cell: any, row: any) => row,
+          renderComponent: GoodCellValueComponent,
         },
       },
       rowClassFunction: (row: any) => {
@@ -114,6 +112,14 @@ export class GoodTableValsComponent extends BasePage implements OnInit {
     };
     this.params.value.limit = 5;
     this.searchNotServerPagination();
+  }
+
+  get dataTemp() {
+    return this.service.dataTemp;
+  }
+
+  set dataTemp(value) {
+    this.service.dataTemp = value;
   }
 
   get di_numerario_conciliado() {
@@ -153,6 +159,10 @@ export class GoodTableValsComponent extends BasePage implements OnInit {
         ? this.form.get('avaluo').value
         : false
       : false;
+  }
+
+  get dataPaginated() {
+    return this.service.dataPaginated;
   }
 
   private searchNotServerPagination() {
@@ -258,7 +268,10 @@ export class GoodTableValsComponent extends BasePage implements OnInit {
           },
         },
         type: 'text',
-        multi: this.disabledBienes ? '' : 'multi',
+        multi:
+          this.disabledBienes || row.attribute !== 'SITUACION JURIDICA'
+            ? ''
+            : 'multi',
         permitSelect: this.disabledBienes ? false : true,
         searchFilter: null,
         service: this.dynamicTablesService,
@@ -325,6 +338,7 @@ export class GoodTableValsComponent extends BasePage implements OnInit {
         callback: (data: any) => {
           console.log(data);
           this.data[row.index].value = data.value;
+          this.dataTemp[row.index].value = data.value;
           this.getPaginated(this.params.getValue());
         },
       },

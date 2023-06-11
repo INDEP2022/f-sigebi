@@ -117,6 +117,13 @@ export class DeductivesListComponent extends BasePage implements OnInit {
       next: () => {
         this.getDeductives(), this.alert('success', 'Deductiva', 'Borrado');
       },
+      error: err => {
+        this.alert(
+          'warning',
+          'Sub-tipo',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      },
     });
   }
 }

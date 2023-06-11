@@ -9,7 +9,6 @@ import {
 import { IAffair } from 'src/app/core/models/catalogs/affair.model';
 import { AffairService } from 'src/app/core/services/catalogs/affair.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import Swal from 'sweetalert2';
 import { AffailrDetailComponent } from '../affailr-detail/affailr-detail.component';
 import { AFFAIR_COLUMNS } from './columns';
 
@@ -121,14 +120,23 @@ export class AffairListComponent extends BasePage implements OnInit {
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(affair.id, affair.nbOrigen);
-        Swal.fire('Borrado', '', 'success');
       }
     });
   }
 
   delete(id: number, nb: string) {
-    this.affairService.remove2(id, nb).subscribe({
-      next: () => this.getAffairAll(),
-    });
+    this.affairService.remove2(id, nb).subscribe(
+      res => {
+        this.alert('success', 'Asuntos', 'Borrado.');
+        this.getAffairAll();
+      },
+      err => {
+        this.alert(
+          'warning',
+          'Asuntos',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      }
+    );
   }
 }
