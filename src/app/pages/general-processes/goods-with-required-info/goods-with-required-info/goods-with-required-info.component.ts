@@ -146,9 +146,13 @@ export class GoodsWithRequiredInfoComponent extends BasePage implements OnInit {
     // localStorage.setItem(`Task`, JSON.stringify(data));
 
     if (data.requestId !== null && data.urlNb !== null) {
+      // this.router.navigate([`/pages/general-processes/goods-characteristics`], {
+      //   queryParams: { noBien: data.id.id },
+      // });
       let url = `${`/pages/general-processes/goods-characteristics`}`;
+      /*
       console.log(url, data);
-      this.customEvent.emit('Hola');
+      this.customEvent.emit('Hola');*/
       //console.log()
       // this.router.navigateByUrl(url);
       this.router.navigate([url], {

@@ -255,7 +255,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
     this.prepareForm();
     this.form.get('year').setValue(format(new Date(), 'yyyy'));
     this.form.get('mes').setValue(format(new Date(), 'MM'));
-    this.checkChange();
+
     this.initalizateProceeding();
 
     if (localStorage.getItem('numberExpedient')) {
@@ -587,7 +587,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
 
     const model: ICveAct = {
       pExpedientNumber: this.numberExpedient,
-      pGoodNumber: element.gooId,
+      pGoodNumber: element.goodId,
       pVarTypeActa1: 'DXCVENT',
       pVarTypeActa2: 'DXCVENT',
     };
@@ -1076,49 +1076,56 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
       paramsF.addFilter('keysProceedings', this.form.get('acta2').value);
       this.serviceProcVal.getByFilter(paramsF.getParams()).subscribe(
         res => {
-          const modelEdit: IProccedingsDeliveryReception = {
-            comptrollerWitness: this.form.get('testigo').value,
-            observations: this.form.get('observaciones').value,
-            witness1: this.form.get('entrega').value,
-            witness2: this.form.get('recibe2').value,
-            address: this.form.get('direccion').value,
-            elaborationDate: format(
-              this.form.get('fecElab').value,
-              'yyyy-MM-dd HH:mm'
-            ),
-            datePhysicalReception: format(
-              this.form.get('fecRecepFisica').value,
-              'yyyy-MM-dd HH:mm'
-            ),
-            dateElaborationReceipt: format(
-              this.form.get('fecElabRecibo').value,
-              'yyyy-MM-dd HH:mm'
-            ),
-            dateDeliveryGood: format(
-              this.form.get('fecEntregaBienes').value,
-              'yyyy-MM-dd HH:mm'
-            ),
-            captureDate: format(new Date(), 'yyyy-MM-dd HH:mm'),
-            universalFolio: this.form.get('folioEscaneo').value,
-          };
-          const resData = JSON.parse(JSON.stringify(res.data[0]));
-          console.log(modelEdit);
-          this.serviceProcVal.editProceeding(resData.id, modelEdit).subscribe(
-            res => {
-              this.alert(
-                'success',
-                'Se modificaron los datos del acta de manera éxitosa',
-                ''
-              );
-            },
-            err => {
-              this.alert(
-                'error',
-                'Se presento un error inesperado',
-                'No se puedo guardar el acta'
-              );
-            }
-          );
+          if (this.form.get('statusProceeding').value != null) {
+            const modelEdit: IProccedingsDeliveryReception = {
+              comptrollerWitness: this.form.get('testigo').value,
+              observations: this.form.get('observaciones').value,
+              witness1: this.form.get('entrega').value,
+              witness2: this.form.get('recibe2').value,
+              address: this.form.get('direccion').value,
+              elaborationDate: format(
+                this.form.get('fecElab').value,
+                'yyyy-MM-dd HH:mm'
+              ),
+              datePhysicalReception: format(
+                this.form.get('fecRecepFisica').value,
+                'yyyy-MM-dd HH:mm'
+              ),
+              dateElaborationReceipt: format(
+                this.form.get('fecElabRecibo').value,
+                'yyyy-MM-dd HH:mm'
+              ),
+              dateDeliveryGood: format(
+                this.form.get('fecEntregaBienes').value,
+                'yyyy-MM-dd HH:mm'
+              ),
+              captureDate: format(new Date(), 'yyyy-MM-dd HH:mm'),
+              universalFolio: this.form.get('folioEscaneo').value,
+            };
+            const resData = JSON.parse(JSON.stringify(res.data[0]));
+            console.log(modelEdit);
+            this.serviceProcVal.editProceeding(resData.id, modelEdit).subscribe(
+              res => {
+                console.log(res);
+                this.alert(
+                  'success',
+                  'Se modificaron los datos del acta de manera éxitosa',
+                  ''
+                );
+              },
+              err => {
+                this.alert(
+                  'error',
+                  'Se presento un error inesperado',
+                  'No se puedo guardar el acta'
+                );
+              }
+            );
+          } else {
+            console.log('Busco validacion de acta 2');
+            this.alert('warning', 'El número de acta existe', '');
+            this.form.get('folio').setValue(this.form.get('folio').value + 1);
+          }
         },
         err => {
           let newProceeding: IProccedingsDeliveryReception = {
@@ -1182,6 +1189,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
           this.serviceProcVal.postProceeding(newProceeding).subscribe(
             res => {
               this.initialBool = true;
+              this.idProceeding = JSON.parse(JSON.stringify(res)).id;
               this.form.get('statusProceeding').setValue('ABIERTA');
               this.alert('success', 'Se guardo el acta de manera éxitosa', '');
               console.log(res);
@@ -1489,8 +1497,6 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
         .valueChanges.subscribe(res => this.fillActTwo());
       this.form.get('ident').valueChanges.subscribe(res => this.fillActTwo());
       this.form.get('recibe').valueChanges.subscribe(res => {
-        console.log(res);
-        console.log(this.delUser);
         if (res != null && res != undefined && res.numberDelegation2) {
           if (res.numberDelegation2 != this.delUser) {
             this.form.get('recibe').reset();
@@ -1891,10 +1897,12 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
                         this.getGoodsActFn();
                         this.getGoodsFn();
                         this.form.get('statusProceeding').setValue('CERRADO');
-                        this.labelActa = 'Abrir acta';
-                        this.btnCSSAct = 'btn-success';
+                        /* this.labelActa = 'Abrir acta';
+                        this.btnCSSAct = 'btn-success'; */
+                        this.alert('success', 'El acta ha sido cerrada', '');
                       },
                       err => {
+                        console.log(err);
                         this.alert(
                           'error',
                           'Ocurrió un error inesperado',
@@ -1905,6 +1913,8 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
                   }
                 });
               }
+            } else {
+              this.alert('warning', 'No se ha realizado el escaneo', '');
             }
           },
           err => {
@@ -2089,7 +2099,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
                         err => {
                           this.alert(
                             'error',
-                            'Ocurrió un erro inesperado al intentar mover el bien',
+                            'Ocurrió un error inesperado al intentar mover el bien',
                             'Ocurrió un error inesperado al intentar mover el bien. Por favor intentelo nuevamente'
                           );
                         }
@@ -2125,7 +2135,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
                           err => {
                             this.alert(
                               'error',
-                              'Ocurrió un erro inesperado al intentar mover el bien',
+                              'Ocurrió un error inesperado al intentar mover el bien',
                               'Ocurrió un error inesperado al intentar mover el bien. Por favor intentelo nuevamente'
                             );
                           }
@@ -2201,7 +2211,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
             this.dataGoods.load(
               this.dataGoods['data'].map((e: any) => {
                 if (e.id == this.selectActData.good.id) {
-                  return { ...e, avalaible: true };
+                  return { ...e, avalaible: true, acta: null };
                 } else {
                   return e;
                 }
@@ -2305,6 +2315,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
     this.navigateProceedings = true;
     this.nextProce = false;
     this.initialBool = false;
+    this.idProceeding = null;
     /* this.newAct = false;
     this.requireAct1(); */
     this.prevProce = true;
@@ -2528,14 +2539,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
               console.log(putGood);
               console.log('Sí?');
               this.serviceGood.update(putGood).subscribe(res => {
-                this.dataGoodAct.load(
-                  this.dataGoodAct['data'].map((e: any) => {
-                    return {
-                      ...e,
-                      storeNumber: this.form.get('noAlmacen').value.idWarehouse,
-                    };
-                  })
-                );
+                this.getGoodsActFn();
               });
             }
             console.log('No :(');

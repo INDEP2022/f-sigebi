@@ -32,7 +32,7 @@ export class CatAppraisersComponent extends BasePage implements OnInit {
   ) {
     super();
     this.settings.columns = COLUMNS;
-    this.settings.actions.delete = true;
+    this.settings.actions.delete = false;
     this.settings.actions.add = false;
     this.settings = {
       ...this.settings,

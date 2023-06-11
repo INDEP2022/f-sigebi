@@ -203,7 +203,8 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
     private router: Router,
     private securityService: SecurityService,
     private fileBrowserService: FileBrowserService,
-    private _blockErrors: showHideErrorInterceptorService
+    private _blockErrors: showHideErrorInterceptorService,
+    private route: ActivatedRoute
   ) {
     super();
     this.settings = {

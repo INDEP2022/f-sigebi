@@ -14,6 +14,8 @@ export class IndicatorsParameterService
   implements ICrudMethods<IIndicatorsParamenter>
 {
   private readonly route: string = ENDPOINT_LINKS.IndicatorsParameter;
+  private readonly route1: string = ENDPOINT_LINKS.IndicatorsParameterAll;
+
   constructor(
     private indicatorsParameterRepository: Repository<IIndicatorsParamenter>
   ) {}
@@ -22,7 +24,7 @@ export class IndicatorsParameterService
     params?: ListParams
   ): Observable<IListResponse<IIndicatorsParamenter>> {
     return this.indicatorsParameterRepository.getAllPaginated(
-      this.route,
+      this.route1,
       params
     );
   }
