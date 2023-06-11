@@ -9,7 +9,6 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { IDrawer } from 'src/app/core/models/catalogs/drawer.model';
-import { ISafe } from 'src/app/core/models/catalogs/safe.model';
 import { DrawerService } from 'src/app/core/services/catalogs/drawer.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DrawerFormComponent } from '../drawer-form/drawer-form.component';

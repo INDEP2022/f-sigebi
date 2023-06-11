@@ -48,15 +48,13 @@ export class StateModalComponent extends BasePage implements OnInit {
       idTransferee: [null, []],
       stateKey: [null, []],
       nameTransferee: [null, []],
-      version: [null]
+      version: [null],
     });
     if (this.stateByTransferent != null) {
       this.edit = true;
       this.id = this.stateByTransferent.state as IState;
       this.stateForm.patchValue(this.stateByTransferent);
-      this.stateForm.controls['idTransferee'].setValue(
-        this.idTrans.id
-      );
+      this.stateForm.controls['idTransferee'].setValue(this.idTrans.id);
       this.stateForm.controls['nameTransferee'].setValue(
         this.idTrans.nameTransferent
       );

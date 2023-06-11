@@ -11,7 +11,6 @@ import {
 import { IGoodSituation } from 'src/app/core/models/catalogs/good-situation.model';
 import { GoodSituationService } from 'src/app/core/services/catalogs/good-situation.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import Swal from 'sweetalert2';
 import { GoodSituationFormComponent } from '../good-situation-form/good-situation-form.component';
 import { GOOD_SITUATION_COLUMS } from './good-situation-columns';
 

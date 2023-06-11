@@ -19,7 +19,11 @@ export class SaleStatusFormComponent extends BasePage implements OnInit {
 
   @Output() refresh = new EventEmitter<true>();
 
-  constructor(private fb: FormBuilder, private modalRef: BsModalRef, private saleStatusService: ComerSaleStatusService) {
+  constructor(
+    private fb: FormBuilder,
+    private modalRef: BsModalRef,
+    private saleStatusService: ComerSaleStatusService
+  ) {
     super();
   }
 
@@ -33,7 +37,14 @@ export class SaleStatusFormComponent extends BasePage implements OnInit {
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      id: [null, [Validators.required, Validators.pattern(STRING_PATTERN), Validators.maxLength(4)]],
+      id: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(4),
+        ],
+      ],
     });
 
     if (this.saleStatus) {
@@ -55,34 +66,36 @@ export class SaleStatusFormComponent extends BasePage implements OnInit {
 
   create() {
     this.loading = true;
-    this.saleStatusService.checkExistingId(this.form.controls['id'].value).subscribe({
-      next: response => {
-        console.log(response);
-        if (response) {
-          this.loading = false;
-          this.onLoadToast(
-            'error',
-            'Estatus No Válido',
-            'El estatus ingresado ya existe'
-          );
-        } else {
-          this.saleStatusService.create(this.form.getRawValue()).subscribe({
-            next: response => {
-              this.loading = false;
-              this.handleSuccess();
-            },
-            error: () => {
-              this.loading = false;
-              this.onLoadToast(
-                'error',
-                'Error al conectar con el servidor',
-                ''
-              );
-            },
-          });
-        }
-      },
-    });
+    this.saleStatusService
+      .checkExistingId(this.form.controls['id'].value)
+      .subscribe({
+        next: response => {
+          console.log(response);
+          if (response) {
+            this.loading = false;
+            this.onLoadToast(
+              'error',
+              'Estatus No Válido',
+              'El estatus ingresado ya existe'
+            );
+          } else {
+            this.saleStatusService.create(this.form.getRawValue()).subscribe({
+              next: response => {
+                this.loading = false;
+                this.handleSuccess();
+              },
+              error: () => {
+                this.loading = false;
+                this.onLoadToast(
+                  'error',
+                  'Error al conectar con el servidor',
+                  ''
+                );
+              },
+            });
+          }
+        },
+      });
     this.handleSuccess();
   }
   handleSuccess() {
@@ -95,15 +108,17 @@ export class SaleStatusFormComponent extends BasePage implements OnInit {
 
   update() {
     this.loading = true;
-    this.saleStatusService.update(this.form.controls['id'].value, this.form.getRawValue()).subscribe({
-      next: response => {
-        this.handleSuccess();
-        this.loading = false;
-      },
-      error: () => {
-        this.loading = false;
-        this.onLoadToast('error', 'Error al conectar con el servidor', '');
-      },
-    });
+    this.saleStatusService
+      .update(this.form.controls['id'].value, this.form.getRawValue())
+      .subscribe({
+        next: response => {
+          this.handleSuccess();
+          this.loading = false;
+        },
+        error: () => {
+          this.loading = false;
+          this.onLoadToast('error', 'Error al conectar con el servidor', '');
+        },
+      });
   }
 }
