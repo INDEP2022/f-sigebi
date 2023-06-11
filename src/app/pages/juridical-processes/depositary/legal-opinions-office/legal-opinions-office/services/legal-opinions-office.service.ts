@@ -29,6 +29,7 @@ import { HistoryGoodService } from 'src/app/core/services/ms-history-good/histor
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import { JobDictumTextsService } from 'src/app/core/services/ms-office-management/job-dictum-texts.service';
 import { ParametersService } from 'src/app/core/services/ms-parametergood/parameters.service';
+import { ProcessV2Service } from 'src/app/core/services/ms-prepareevent/process-v2.service';
 import { ProcessgoodreportService } from 'src/app/core/services/ms-processgoodreport/ms-processgoodreport.service';
 import { ScreenStatusService } from 'src/app/core/services/ms-screen-status/screen-status.service';
 import { SecurityService } from 'src/app/core/services/ms-security/security.service';
@@ -58,7 +59,8 @@ export class LegalOpinionsOfficeService {
     private msIDocumentService: IDocumentService,
     private msHistoryGoodService: HistoryGoodService,
     private msScreenStatusService: ScreenStatusService,
-    private msProcessgoodreportService: ProcessgoodreportService
+    private msProcessgoodreportService: ProcessgoodreportService,
+    private msProcessV2Service: ProcessV2Service
   ) {}
 
   getIssuingUserByDetail(params: _Params) {
@@ -189,7 +191,8 @@ export class LegalOpinionsOfficeService {
     return this.msSecurityService.getAllUsersTracker(params);
   }
   getPAValidaCambio(body: IValidaCambioEstatus) {
-    return this.msGoodService.PAValidaCambio(body);
+    // return this.msGoodService.PAValidaCambio(body);
+    return this.msProcessV2Service.PA_Change_Status(body);
   }
   createTmpExpDesahogoB(body: ITmpExpDesahogoB) {
     return this.msDictationService.createTmpExpDesahogoB(body);
