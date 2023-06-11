@@ -1079,50 +1079,59 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
       paramsF.addFilter('keysProceedings', this.form.get('acta2').value);
       this.serviceProcVal.getByFilter(paramsF.getParams()).subscribe(
         res => {
-          const modelEdit: IProccedingsDeliveryReception = {
-            comptrollerWitness: this.form.get('testigo').value,
-            observations: this.form.get('observaciones').value,
-            witness1: this.form.get('entrega').value,
-            witness2: this.form.get('recibe2').value,
-            address: this.form.get('direccion').value,
-            elaborationDate: format(
-              this.form.get('fecElab').value,
-              'yyyy-MM-dd HH:mm'
-            ),
-            datePhysicalReception: format(
-              this.form.get('fecRecepFisica').value,
-              'yyyy-MM-dd HH:mm'
-            ),
-            dateElaborationReceipt: format(
-              this.form.get('fecElabRecibo').value,
-              'yyyy-MM-dd HH:mm'
-            ),
-            dateDeliveryGood: format(
-              this.form.get('fecEntregaBienes').value,
-              'yyyy-MM-dd HH:mm'
-            ),
-            captureDate: format(new Date(), 'yyyy-MM-dd HH:mm'),
-            universalFolio: this.form.get('folioEscaneo').value,
-          };
-          const resData = JSON.parse(JSON.stringify(res.data[0]));
-          console.log(modelEdit);
-          this.serviceProcVal.editProceeding(resData.id, modelEdit).subscribe(
-            res => {
-              console.log(res)
-              this.alert(
-                'success',
-                'Se modificaron los datos del acta de manera éxitosa',
-                ''
-              );
-            },
-            err => {
-              this.alert(
-                'error',
-                'Se presento un error inesperado',
-                'No se puedo guardar el acta'
-              );
-            }
-          );
+          if(this.form.get('statusProceeding').value != null){
+            const modelEdit: IProccedingsDeliveryReception = {
+              comptrollerWitness: this.form.get('testigo').value,
+              observations: this.form.get('observaciones').value,
+              witness1: this.form.get('entrega').value,
+              witness2: this.form.get('recibe2').value,
+              address: this.form.get('direccion').value,
+              elaborationDate: format(
+                this.form.get('fecElab').value,
+                'yyyy-MM-dd HH:mm'
+              ),
+              datePhysicalReception: format(
+                this.form.get('fecRecepFisica').value,
+                'yyyy-MM-dd HH:mm'
+              ),
+              dateElaborationReceipt: format(
+                this.form.get('fecElabRecibo').value,
+                'yyyy-MM-dd HH:mm'
+              ),
+              dateDeliveryGood: format(
+                this.form.get('fecEntregaBienes').value,
+                'yyyy-MM-dd HH:mm'
+              ),
+              captureDate: format(new Date(), 'yyyy-MM-dd HH:mm'),
+              universalFolio: this.form.get('folioEscaneo').value,
+            };
+            const resData = JSON.parse(JSON.stringify(res.data[0]));
+            console.log(modelEdit);
+            this.serviceProcVal.editProceeding(resData.id, modelEdit).subscribe(
+              res => {
+                console.log(res)
+                this.alert(
+                  'success',
+                  'Se modificaron los datos del acta de manera éxitosa',
+                  ''
+                );
+              },
+              err => {
+                this.alert(
+                  'error',
+                  'Se presento un error inesperado',
+                  'No se puedo guardar el acta'
+                );
+              }
+            );
+          }else{
+            console.log('Busco validacion de acta 2');
+              this.alert('warning', 'El número de acta existe', '');
+              this.form
+                .get('folio')
+                .setValue(this.form.get('folio').value + 1);
+          }
+          
         },
         err => {
           let newProceeding: IProccedingsDeliveryReception = {
