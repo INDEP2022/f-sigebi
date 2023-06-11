@@ -811,6 +811,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
           if (item.appraisal === null) {
             this.goodAppraisal2.setValue(false);
           } else {
+            this.goodAppraisal2.setValue(true);
             this.totalItems = 0;
             this.loading = false;
           }
@@ -858,11 +859,11 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     // debugger;
     const filterParams = new FilterParams();
     filterParams.addFilter('typeNumber', 'CARBIEN');
-    // filterParams.addFilter('user', 'DR_SIGEBI');
-    filterParams.addFilter(
-      'user',
-      localStorage.getItem('username').toUpperCase()
-    );
+    filterParams.addFilter('user', 'DR_SIGEBI');
+    // filterParams.addFilter(
+    //   'user',
+    //   localStorage.getItem('username').toUpperCase()
+    // );
     filterParams.addFilter('reading', 'S');
     // filterParams.addFilter()
     const rdicta = await firstValueFrom(
@@ -883,25 +884,25 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     if (this.type.value === '6' && this.subtype.value) {
       if (this.goodAppraisal.value === null) {
         if (this.good.val14 === 'S') {
-          this.goodAppraisal2.setValue('S');
+          this.goodAppraisal2.setValue(true);
         } else if (this.good.val14 === 'N') {
-          this.goodAppraisal2.setValue('N');
+          this.goodAppraisal2.setValue(false);
         } else {
           if (this.good.val14 === null) {
-            this.goodAppraisal2.setValue('X');
+            this.goodAppraisal2.setValue(false);
           } else {
-            this.goodAppraisal2.setValue('S');
+            this.goodAppraisal2.setValue(true);
           }
         }
       } else {
         if (this.good.val14 === 'S') {
-          this.goodAppraisal2.setValue('S');
+          this.goodAppraisal2.setValue(true);
         }
         if (this.good.val14 === 'N') {
-          this.goodAppraisal2.setValue('S');
+          this.goodAppraisal2.setValue(true);
         }
         if (this.good.val14 !== 'S' && this.good.val14 !== 'N') {
-          this.goodAppraisal2.setValue('S');
+          this.goodAppraisal2.setValue(true);
         }
         if (this.goodAppraisal.value != null && this.good.val14 === 'N') {
           this.good.val14 = 'S';
