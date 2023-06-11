@@ -2,13 +2,13 @@ import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-ele
 
 export const COLUMNS = {
   keyServices: {
-    title: 'Cve Servicio',
+    title: 'Cve. Servicio',
     type: 'string',
     sort: false,
   },
 
   descriptionServices: {
-    title: 'Descripcion de Servicios',
+    title: 'Descripción de Servicios',
     type: 'string',
     sort: false,
   },
@@ -38,6 +38,7 @@ export const COLUMNS = {
         data.row.to = data.toggle;
       });
     },
+
     sort: false,
   },
   expenditure: {

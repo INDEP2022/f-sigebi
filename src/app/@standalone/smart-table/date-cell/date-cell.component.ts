@@ -74,4 +74,10 @@ export class DateCellComponent
       }
     }
   }
+
+  showError() {
+    this.control.updateValueAndValidity();
+    this.control.markAsTouched();
+    this.control.markAsDirty();
+  }
 }

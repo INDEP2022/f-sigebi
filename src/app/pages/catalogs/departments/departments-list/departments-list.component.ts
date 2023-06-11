@@ -57,9 +57,13 @@ export class DepartmentsListComponent extends BasePage implements OnInit {
             field = `filter.${filter.field}`;
             filter.field == 'id' ||
             filter.field == 'dsarea' ||
-            filter.field == 'numDelegation' ||
+            filter.field == 'delegation' ||
             filter.field == 'numSubDelegation' ||
-            filter.field == 'description'
+            filter.field == 'description' ||
+            filter.field == 'numRegister' ||
+            filter.field == 'lastOffice' ||
+            filter.field == 'level' ||
+            filter.field == 'phaseEdo'
               ? (searchFilter = SearchFilter.EQ)
               : (searchFilter = SearchFilter.ILIKE);
             if (filter.search !== '') {
@@ -85,12 +89,12 @@ export class DepartmentsListComponent extends BasePage implements OnInit {
     };
     this.departmentService.getAll(params).subscribe({
       next: response => {
+        this.totalItems = response.count;
         this.departments = response.data;
         this.data.load(this.departments);
-        console.log(this.data);
+        //console.log(this.data);
         this.data.refresh();
-        console.log(this.departments);
-        this.totalItems = response.count;
+        //console.log(this.departments);
         this.loading = false;
       },
       error: error => (this.loading = false),

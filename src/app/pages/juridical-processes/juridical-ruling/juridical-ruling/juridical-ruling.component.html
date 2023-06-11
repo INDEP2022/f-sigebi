@@ -30,6 +30,33 @@
   </div>
 
   <div body>
+    <div class="row">
+      <!-- <div class="d-inline mx-2"> -->
+      <div class="col-12">
+        <div class="d-inline mx-2">
+          <button
+            style="float: right"
+            [disabled]="!moreDictation"
+            type="button"
+            (click)="listDictums()"
+            tooltip="Lista Dictámenes"
+            containerClass="tooltip-style"
+            class="btn btn-primary btn-sm active mr-3">
+            <i class="bx bx-list-plus bx-sm float-icon"></i>
+          </button>
+          <button
+            style="float: right"
+            type="button"
+            (click)="newDictums()"
+            tooltip="Agregar Dictamen"
+            containerClass="tooltip-style"
+            class="btn btn-info btn-sm active ml-2 mr-2">
+            <i class="bx bx-plus bx-sm float-icon"></i>
+          </button>
+        </div>
+      </div>
+      <!-- </div> -->
+    </div>
     <form [formGroup]="legalForm" class="container-fluid form-material">
       <div class="row">
         <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2">
@@ -55,6 +82,7 @@
                   label="No. Expediente">
                   <input
                     type="text"
+                    oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10)"
                     [readOnly]="isDisabledExp"
                     class="form-control"
                     formControlName="noExpediente" />
@@ -65,6 +93,7 @@
                   [control]="legalForm.get('preliminaryInquiry')"
                   label="Averiguaci&oacute;n Previa">
                   <input
+                    oninput="if(this.value.length > 40) this.value = this.value.slice(0, 40)"
                     [readOnly]="isDisabledExp"
                     class="form-control"
                     formControlName="preliminaryInquiry" />
@@ -75,6 +104,7 @@
                   [control]="legalForm.get('criminalCase')"
                   label="Causa Penal">
                   <input
+                    oninput="if(this.value.length > 40) this.value = this.value.slice(0, 40)"
                     [readOnly]="isDisabledExp"
                     class="form-control"
                     formControlName="criminalCase" />
@@ -107,7 +137,7 @@
                   </form-field>
                 </div>
 
-                <div class="col-md-6">
+                <div class="col-md-6" ngClass="not-press">
                   <form-field
                     [control]="legalForm.get('fecDicta')"
                     label="Fecha Dictaminación">
@@ -197,7 +227,7 @@
                 <form-check
                   class="col-md-12"
                   label="&#191;El expediente es delito propiedad intelectual&#63;"
-                  for="esPropiedad">
+                  for="esPropiedad-check">
                   <input
                     id="esPropiedad-check"
                     type="checkbox"
@@ -211,6 +241,7 @@
                   label="Observaciones del Dictamen">
                   <textarea
                     rows="3"
+                    oninput="if(this.value.length > 1000) this.value = this.value.slice(0, 1000)"
                     class="form-control"
                     formControlName="observations"></textarea>
                 </form-field>
@@ -357,7 +388,7 @@
       </div>
     </div>
     <div class="row w-100">
-      <div class="col-md-8 pt-2">
+      <div class="col-lg-8 pt-2">
         <div class="col-md-12">
           <hr class="row" />
         </div>
@@ -369,7 +400,7 @@
                 <ng2-smart-table
                   [attr.class]="'table-bordered table-responsive'"
                   [settings]="settings3"
-                  [source]="documents"></ng2-smart-table>
+                  [source]="documents_m1"></ng2-smart-table>
               </div>
               <div class="col-md-3">
                 <p class="text-info h5">No&#46; bien</p>
@@ -380,8 +411,8 @@
         </div>
       </div>
 
-      <div class="col-md-4 custom-grid">
-        <div class="row justify-content-center">
+      <div class="col-lg-4 custom-grid pb-4">
+        <div class="row justify-content-center pb-4">
           <div class="col-md-6 text-align-center">
             <button
               class="btn btn-info btn-sm active m-3 text-wrap w-100"
@@ -394,7 +425,6 @@
               class="btn btn-primary btn-sm active m-3 text-wrap w-100"
               [disabled]="!buttonAprove"
               (click)="btnApprove()">
-              <!-- [routerLink]="rutaAprobado" -->
               Aprobar
             </button>
           </div>
@@ -416,9 +446,7 @@
           <div class="col-6 text-align-center">
             <button
               class="btn btn-danger btn-sm active m-3 text-wrap w-100"
-              [disabled]="isDocsEmpty()"
-              (click)="btnDeleteDictation()"
-              [disabled]="!buttonDeleteDisabled">
+              (click)="btnDeleteDictation()">
               Borrar Dictamen
             </button>
           </div>
@@ -428,11 +456,8 @@
               type="button"
               class="btn btn-primary active btn-sm"
               (click)="btnImprimeOficio()">
-              <i class="bx bx-printer bx-sm float-icon"></i>
+              Imprimir <i class="bx bx-printer bx-sm float-icon"></i>
             </button>
-            <!-- <button class="btn btn-primary btn-sm active m-3 text-wrap w-100" >
-                        <i class="bx bx-printer"></i>
-            </button> -->
           </div>
           <div class="col-12">
             <p class="text-info">
@@ -442,12 +467,6 @@
               >
             </p>
           </div>
-
-          <!-- <div class="col-6 text-align-center">
-            <button class="btn btn-info btn-sm active m-3 text-wrap w-100" (click)="btnDeleteListDocs()">
-              Limpiar Documento
-            </button>
-          </div> -->
         </div>
       </div>
     </div>
@@ -485,36 +504,3 @@
      -->
   </div>
 </app-card>
-
-<!-- 
-<app-card [header]="true" *ngIf="listadoDocumentos == true">
-  <div class="ch-content" header>
-    <h5 class="title">Fecha de Documentos Asociados al Tr&aacute;mite</h5>
-  </div>
-
-  <div body>
-    <div class="row w-100">
-      <div class="col-sm-12 col-12 col-md-12 p-2">
-        <ng2-smart-table
-          [attr.class]="'table-bordered'"
-          [settings]="settings4"
-          [source]="data4"></ng2-smart-table>
-      </div>
-
-      <div class="col-12 flex p-2">
-        <div class="form-group text-right">
-          <button
-            class="btn btn-danger active btn-sm m-3"
-            (click)="btnCloseDocs()">
-            Cerrar Ventana
-          </button>
-          <button
-            class="btn btn-primary active btn-sm m-3"
-            (click)="btnSalir()">
-            Cargar documentos
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-</app-card> -->

@@ -10,7 +10,7 @@ import { BsModalRef } from 'ngx-bootstrap/modal';
 import { IParameter } from 'src/app/core/models/ms-parametercomer/parameter';
 import { ParameterModService } from 'src/app/core/services/ms-parametercomer/parameter.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { NUM_POSITIVE, STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-parameters-form',
@@ -41,20 +41,38 @@ export class ParametersFormComponent extends BasePage implements OnInit {
 
   prepareForm() {
     this.form = this.fb.group({
-      idParam: [
+      parameter: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(20),
+        ],
       ],
       description: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(200)],
       ],
-      idValue: [
+      value: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(500),
+        ],
       ],
-      idDirection: [null, [Validators.required]],
-      eventTypeId: [null, []],
+      address: [
+        null,
+        [
+          Validators.pattern(STRING_PATTERN),
+          Validators.required,
+          Validators.maxLength(1),
+        ],
+      ],
+      typeEventId: [
+        null,
+        [Validators.pattern(NUM_POSITIVE), Validators.max(999)],
+      ],
     });
 
     if (this.parameter) {

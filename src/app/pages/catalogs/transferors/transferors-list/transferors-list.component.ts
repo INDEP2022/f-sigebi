@@ -69,8 +69,8 @@ export class TransferorsListComponent extends BasePage implements OnInit {
       hideSubHeader: true,
       actions: {
         columnTitle: 'Acciones',
-        edit: true,
-        delete: false,
+        edit: false,
+        delete: true,
         position: 'right',
       },
       columns: { ...STATE_COLUMS },
@@ -181,7 +181,7 @@ export class TransferorsListComponent extends BasePage implements OnInit {
         transferentsI,
         idTrans,
         callback: (next: boolean) => {
-          if (next) this.getTransferents(idTrans.id);
+          if (next) this.getStateByTransferent(idTrans.id);
         },
       },
       class: 'modal-lg modal-dialog-centered',
@@ -211,5 +211,33 @@ export class TransferorsListComponent extends BasePage implements OnInit {
 
   resetScreen() {
     this.rowSelected = false;
+  }
+  showDelet(data: any) {
+    this.alertQuestion(
+      'warning',
+      'Eliminar',
+      'Desea eliminar este registro?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.delet(data);
+      }
+    });
+  }
+  delet(data: any) {
+    this.transferenteSaeService
+      .remove(data.idTransferee, data.stateKey)
+      .subscribe({
+        next: () => {
+          this.alert('success', 'Borrado', '');
+          this.getStateByTransferent();
+        },
+        error: err => {
+          this.alert(
+            'warning',
+            'Transferentes por estado',
+            'No se puede eliminar el objeto debido a una relación con otra tabla.'
+          );
+        },
+      });
   }
 }
