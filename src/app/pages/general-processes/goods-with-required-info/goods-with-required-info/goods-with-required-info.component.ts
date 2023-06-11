@@ -31,7 +31,15 @@ export class GoodsWithRequiredInfoComponent extends BasePage implements OnInit {
     P_NO_TRAMITE: '',
     TIPO: '',
     P_VALOR: '',
+    TIPO_VO: '',
+    NO_EXP: '',
+    CONSULTA: '',
   };
+  paramsCurrentScreen = {
+    TIPO_PROC: '',
+    NO_INDICADOR: '',
+  };
+  screenKey: string = 'FATRIBREQUERIDO'; // Clave de la pantalla actual
   origin: string = null;
   origin2: string = ''; // Pantalla para regresar a la anterior de la que se llamo
   origin3: string = ''; // Pantalla para regresar a la anterior de la que se llamo desde la origin2
@@ -64,6 +72,9 @@ export class GoodsWithRequiredInfoComponent extends BasePage implements OnInit {
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(paramsQuery => {
         this.origin = paramsQuery['origin'] ?? null;
+        this.paramsCurrentScreen.NO_INDICADOR =
+          paramsQuery['NO_INDICADOR'] ?? null;
+        this.paramsCurrentScreen.TIPO_PROC = paramsQuery['TIPO_PROC'] ?? null;
         if (this.origin == 'FACTJURDICTAMOFICIO') {
           for (const key in this.paramsScreen) {
             if (Object.prototype.hasOwnProperty.call(paramsQuery, key)) {
@@ -108,6 +119,12 @@ export class GoodsWithRequiredInfoComponent extends BasePage implements OnInit {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
+    if (this.paramsCurrentScreen.TIPO_PROC) {
+      params['filter.pair1'] = this.paramsCurrentScreen.TIPO_PROC;
+    }
+    if (this.paramsCurrentScreen.NO_INDICADOR) {
+      params['filter.pair2'] = this.paramsCurrentScreen.NO_INDICADOR;
+    }
     this.goodService.getAttribGoodBadAll(params).subscribe({
       next: resp => {
         console.log(resp);
@@ -123,21 +140,34 @@ export class GoodsWithRequiredInfoComponent extends BasePage implements OnInit {
     });
   }
 
-  openGood(dataGood: any): void {
-    console.log(dataGood);
-    //console.log(localStorage.setItem(`Task`, JSON.stringify(dataGood)));
-    localStorage.setItem(`Task`, JSON.stringify(dataGood));
+  openGood(data: any): void {
+    console.log(data);
+    //console.log(localStorage.setItem(`Task`, JSON.stringify(data)));
+    // localStorage.setItem(`Task`, JSON.stringify(data));
 
-    if (dataGood.requestId !== null && dataGood.urlNb !== null) {
-      this.router.navigate([`/pages/general-processes/goods-characteristics`], {
-        queryParams: { noBien: dataGood.id.id },
-      });
-      /*
+    if (data.requestId !== null && data.urlNb !== null) {
+      // this.router.navigate([`/pages/general-processes/goods-characteristics`], {
+      //   queryParams: { noBien: data.id.id },
+      // });
       let url = `${`/pages/general-processes/goods-characteristics`}`;
-      console.log(url);
-      this.customEvent.emit('Hola');
+      /*
+      console.log(url, data);
+      this.customEvent.emit('Hola');*/
       //console.log()
-      this.router.navigateByUrl(url);*/
+      // this.router.navigateByUrl(url);
+      this.router.navigate([url], {
+        queryParams: {
+          ...this.paramsScreen,
+          ...this.paramsCurrentScreen,
+          origin: this.screenKey,
+          origin1: this.origin,
+          origin2: this.origin2,
+          origin3: this.origin3,
+          noBien: data.id.goodId,
+          TIPO_PROC: this.paramsCurrentScreen.TIPO_PROC,
+          NO_INDICADOR: this.paramsCurrentScreen.NO_INDICADOR,
+        },
+      });
     } else {
       this.alert('warning', 'No disponible', 'Tarea no disponible');
     }

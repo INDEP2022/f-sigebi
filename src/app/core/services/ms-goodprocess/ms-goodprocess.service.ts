@@ -94,4 +94,8 @@ export class GoodprocessService extends HttpService {
   getGoodScreenSend(params: any) {
     return this.post(`${GoodprocessEndpoints.GetGoodScreenSend}`, params);
   }
+
+  getNextValManagement() {
+    return this.get('application/get-nextval-gestion');
+  }
 }

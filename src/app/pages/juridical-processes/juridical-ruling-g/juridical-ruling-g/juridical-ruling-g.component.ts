@@ -1923,7 +1923,7 @@ export class JuridicalRulingGComponent
               good: this.goodsValid[0].id,
               screen: 'FACTJURDICTAMASG',
             };
-
+            //MANDA A LLAMAR A FACTGENPARCBIEN
             console.log('OBJ', obj);
             this.router.navigate(
               ['/pages/judicial-physical-reception/partializes-general-goods'],
