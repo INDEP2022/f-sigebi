@@ -1919,6 +1919,8 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
                   }
                 });
               }
+            }else{
+              this.alert('warning', 'No se ha realizado el escaneo', '');
             }
           },
           err => {
