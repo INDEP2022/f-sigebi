@@ -10,14 +10,12 @@ import { ClassifyGoodService } from 'src/app/core/services/ms-classifygood/ms-cl
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { DetailProceeDelRecService } from 'src/app/core/services/ms-proceedings/detail-proceedings-delivery-reception.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { SelectElementComponent } from 'src/app/shared/components/select-element-smarttable/select-element';
 
 @Component({
-    selector: 'app-options-history-good-delegation',
-    templateUrl: './option-history-good-delegation.component.html',
-    styleUrls: []
+  selector: 'app-options-history-good-delegation',
+  templateUrl: './option-history-good-delegation.component.html',
+  styleUrls: [],
 })
-
 export class OptionsHistoryGoodDelegation extends BasePage implements OnInit {
     idGood: number
     numberExpedient: string

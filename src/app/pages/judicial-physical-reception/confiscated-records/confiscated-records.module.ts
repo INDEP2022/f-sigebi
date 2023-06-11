@@ -11,14 +11,18 @@ import { EdoFisicoComponent } from './edo-fisico/edo-fisico.component.component'
 import { OptionsHistoryGoodDelegation } from './options-history-good-delegation/options-history-good-delegation.components';
 
 @NgModule({
-  declarations: [ConfiscatedRecordsComponent, EdoFisicoComponent,OptionsHistoryGoodDelegation],
+  declarations: [
+    ConfiscatedRecordsComponent,
+    EdoFisicoComponent,
+    OptionsHistoryGoodDelegation,
+  ],
   imports: [
     CommonModule,
     ConfiscatedRecordsRoutingModule,
     SharedModule,
     ModalModule.forChild(),
     TabsModule,
-    ScanFileSharedComponent
+    ScanFileSharedComponent,
   ],
 })
 export class ConfiscatedRecordsModule {}
