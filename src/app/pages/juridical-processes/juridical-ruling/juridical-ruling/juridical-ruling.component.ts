@@ -72,6 +72,7 @@ import { environment } from 'src/environments/environment';
 import Swal from 'sweetalert2';
 import { GoodSubtype } from '../../juridical-ruling-g/juridical-ruling-g/model/good.model';
 import { RDictaminaDocModalComponent } from '../r-dictamina-doc-modal/r-dictamina-doc-modal.component';
+import { ListdictumsComponent } from '../../juridical-ruling-g/juridical-ruling-g/listdictums/listdictums.component';
 /** ROUTING MODULE */
 
 /** COMPONENTS IMPORTS */
@@ -2341,5 +2342,42 @@ export class JuridicalRulingComponent
 
   btnRefuse() {
     console.log('btnRechazar');
+  }
+
+  listDictums() {
+    const expedient = this.legalForm.get('noExpediente').value;
+    const volante = this.wheelNumber;
+    this.openModalDictums({ noVolante_: volante, noExpediente_: expedient });
+  }
+
+  newDictums() {
+    this.resetALL();
+    let obj = {
+      no_clasif_bien: 0,
+    };
+    this.statusDict = '';
+    //this.dictaminacionesForm.get('fechaPPFF').setValue('');
+    //this.dictaminacionesForm.get('autoriza_remitente').setValue(null);
+    //this.dictaminacionesForm.get('autoriza_nombre').setValue('');
+    //this.buttonApr = true;
+    this.buttonDeleteDisabled = false;
+    this.onTypesChange(obj);
+  }
+
+  openModalDictums(context?: Partial<ListdictumsComponent>) { 
+    const modalRef = this.modalService.show(ListdictumsComponent, {
+      initialState: context,
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    });
+    modalRef.content.dataText.subscribe(async (next: any) => {
+      console.log('NEXT', next);
+      //await this.onLoadDictationInfo(next.data.id, 'id');
+      this.goodsValid = [];
+      //await this.onLoadGoodList(next.data.id, 'id');
+
+      // await this.checkDictum(next.data.id, 'id');
+      // await this.checkDictum_(this.noVolante_, 'all');
+    });
   }
 }
