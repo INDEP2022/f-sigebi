@@ -38,6 +38,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { LegalOpinionsOfficeService } from 'src/app/pages/juridical-processes/depositary/legal-opinions-office/legal-opinions-office/services/legal-opinions-office.service';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { FlyersService } from '../services/flyers.service';
+import { DocumentsFormComponent } from './documents-form/documents-form.component';
 import {
   IGoodAndAvailable,
   IGoodJobManagement,
@@ -996,10 +997,10 @@ export abstract class RelateDocumentsResponse extends BasePage {
   }
 
   openRDictaminaDoc() {
-    // const modalRef = this.modalService.show(DocumentsFormComponent, {
-    //   initialState: context,
-    //   class: 'modal-lg modal-dialog-centered',
-    //   ignoreBackdropClick: true,
-    // });
+    const modalRef = this.modalService.show(DocumentsFormComponent, {
+      //initialState: context,
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    });
   }
 }
