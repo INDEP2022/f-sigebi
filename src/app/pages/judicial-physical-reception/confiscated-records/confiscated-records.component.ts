@@ -236,18 +236,6 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
       console.log(res);
     });
 
-    const paramsF = new FilterParams();
-    paramsF.addFilter('propertyNum', 737766);
-    paramsF.sortBy = 'changeDate';
-    this.serviceHistoryGood.getAllFilter(paramsF.getParams()).subscribe(
-      res => {
-        console.log(res.data[res.data.length - 1]);
-      },
-      err => {
-        console.log(err);
-      }
-    );
-
     this.paramsDataGoods
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(params => {
@@ -702,7 +690,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                   } else {
                     console.log('Entró a Val Otro');
                     const modelLvlPrograma: ILvlPrograma = {
-                      no_bien: good.id,
+                      no_bien: parseInt(good.id),
                       no_expediente: this.form.get('expediente').value,
                     };
                     console.log(modelLvlPrograma);
@@ -711,6 +699,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                       .getLvlPrograma(modelLvlPrograma)
                       .subscribe(
                         res => {
+                          console.log(res);
                           lv_programa = JSON.parse(
                             JSON.stringify(res)
                           ).lv_programa;
@@ -748,7 +737,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                 err => {
                   console.log('Entró a Val Otro');
                   const modelLvlPrograma: ILvlPrograma = {
-                    no_bien: good.id,
+                    no_bien: parseInt(good.id),
                     no_expediente: this.form.get('expediente').value,
                   };
                   console.log(modelLvlPrograma);
@@ -1252,6 +1241,10 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     this.newAct = true;
     this.act2Valid = false;
     this.totalItemsDataGoods = 0;
+    this.totalItemsDataGoodsAct = 0;
+    this.paramsActNavigate.next(new ListParams());
+    this.paramsDataGoods.next(new ListParams());
+    this.paramsDataGoodsAct.next(new ListParams());
 
     if (this.form.get('expediente').value != null) {
       this.newSearchExp();
@@ -1775,8 +1768,14 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     this.form.get('causaPenal').reset();
     this.form.get('statusProceeding').reset();
     this.totalItemsDataGoods = 0;
+    this.totalItemsDataGoodsAct = 0;
 
     this.dataGoods.load([]);
+    this.dataGoodAct.load([]);
+
+    /* this.paramsActNavigate.next(new ListParams());
+    this.paramsDataGoods.next(new ListParams());
+    this.paramsDataGoodsAct.next(new ListParams()); */
 
     this.blockExpedient = false;
     this.navigateProceedings = false;
@@ -2145,6 +2144,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
             res => {
               console.log(res);
               this.initialdisabled = true;
+              this.idProceeding = JSON.parse(JSON.stringify(res)).id;
               this.research = true;
               this.form.get('statusProceeding').setValue('ABIERTA');
               this.form.get('fecCaptura').setValue(new Date());

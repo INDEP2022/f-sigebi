@@ -11,7 +11,6 @@ import {
 import { IGoodSituation } from 'src/app/core/models/catalogs/good-situation.model';
 import { GoodSituationService } from 'src/app/core/services/catalogs/good-situation.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import Swal from 'sweetalert2';
 import { GoodSituationFormComponent } from '../good-situation-form/good-situation-form.component';
 import { GOOD_SITUATION_COLUMS } from './good-situation-columns';
 
@@ -107,7 +106,6 @@ export class GoodSituationListComponent extends BasePage implements OnInit {
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(goodSituation);
-        Swal.fire('Borrado', '', 'success');
       }
     });
   }
@@ -116,7 +114,16 @@ export class GoodSituationListComponent extends BasePage implements OnInit {
     this.goodSituationService
       .removeCatalogGoodSituation(goodSituation.situation, goodSituation.status)
       .subscribe({
-        next: () => this.getExample(),
+        next: response => {
+          this.alert('success', 'Situación Bien', 'Borrado'), this.getExample();
+        },
+        error: err => {
+          this.alert(
+            'warning',
+            'Situación Bien',
+            'No se puede eliminar el objeto debido a una relación con otra tabla.'
+          );
+        },
       });
   }
 }

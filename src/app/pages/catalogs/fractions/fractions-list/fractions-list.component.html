@@ -21,7 +21,8 @@
               [settings]="settings"
               [source]="data"
               (custom)="openForm($event.data)"
-              (edit)="openForm($event.data)">
+              (edit)="openForm($event.data)"
+              (delete)="showDeleteAlert($event.data)">
             </ng2-smart-table>
           </div>
         </div>

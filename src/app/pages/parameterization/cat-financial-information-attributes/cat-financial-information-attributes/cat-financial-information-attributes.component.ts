@@ -132,7 +132,11 @@ export class CatFinancialInformationAttributesComponent
     this.attributesInfoFinancialService.remove(id).subscribe({
       next: () => {
         this.getAttributesFinancialInfo();
-        this.alert('success', 'Borrado', '');
+        this.alert(
+          'success',
+          'Atributos de Informaci&oacute;n Financiera',
+          'Borrado'
+        );
       },
       error: erro => {
         this.alert(

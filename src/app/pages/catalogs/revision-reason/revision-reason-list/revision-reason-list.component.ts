@@ -50,7 +50,7 @@ export class RevisionReasonListComponent extends BasePage implements OnInit {
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
             switch (filter.field) {
-              case 'keyId':
+              case 'id':
                 searchFilter = SearchFilter.EQ;
                 break;
               default:
@@ -109,7 +109,7 @@ export class RevisionReasonListComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
