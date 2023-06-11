@@ -152,6 +152,7 @@ export class RelatedDocumentsComponent
   dataGoodTable: LocalDataSource = new LocalDataSource();
   m_job_management: any = null;
   authUser: any = null;
+
   pantalla = (option: boolean) =>
     `${
       option == true
@@ -420,7 +421,6 @@ export class RelatedDocumentsComponent
       columna => columna.id === 'seleccion'
     );
     columnaOpciones.hide = true;
-    console.log(this.settings);
     // (this.settings.columns as any).seleccion['hide'] = false;
     this.managementForm.get('averiPrevia').disable();
     this.formVariables.get('b').setValue('S');
@@ -579,7 +579,6 @@ export class RelatedDocumentsComponent
       this.securityService.getAllUsersTracker(params).subscribe(
         (data: any) => {
           // this.formCcpOficio.get('nombreUsuario2').setValue(data.data[0]);
-          console.log('COPYY2', data);
           let result = data.data.map(async (item: any) => {
             item['userAndName'] = item.user + ' - ' + item.name;
           });
@@ -1000,6 +999,12 @@ export class RelatedDocumentsComponent
           }
           if (mJobManagement.refersTo == this.se_refiere_a.C) {
             this.formVariables.get('b').setValue('N');
+          }
+
+          if (this.formJobManagement.value.managementNumber) {
+            this.getCopyOficioGestion__(
+              this.formJobManagement.value.managementNumber
+            );
           }
         } catch (e) {
           this.isCreate = true;
@@ -1817,6 +1822,23 @@ export class RelatedDocumentsComponent
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     });
+    //this.showDocuments()
+  }
+
+  showDocuments() {
+    if (this.paramsGestionDictamen.doc === 'N') {
+      this.onLoadToast('info', 'Este oficio no lleva Documentos', '');
+      return;
+    }
+
+    if (this.m_job_management.status_of === 'ENVIADO') {
+      this.onLoadToast(
+        'info',
+        'El oficio ya está enviado, no pude ser actualizado',
+        ''
+      );
+      return;
+    }
   }
 
   generateCveOficio(noDictamen: string) {
@@ -1955,8 +1977,11 @@ export class RelatedDocumentsComponent
         );
         return;
       }
-
-      if (insertUser != this.authUser.username) {
+      //username
+      if (
+        insertUser.toLowerCase() !==
+        this.authUser.preferred_username.toLowerCase()
+      ) {
         const ATJR: any = await this.userHavePermission();
         console.log(ATJR);
         if (Number(ATJR[0]) == 0) {
@@ -1985,8 +2010,6 @@ export class RelatedDocumentsComponent
           if (this.pantallaActual == '1') {
             this.deleteOfficeDesahogo(managementNumber, noVolante, insertDate);
             //Swal.fire('Borrado', '', 'success');
-          } else {
-            this.deleteOfficeRelacionado(managementNumber, noVolante);
           }
         }
       });
@@ -2031,164 +2054,31 @@ export class RelatedDocumentsComponent
         }
       } while (exit == false);
     };
-    //const res = await getData();
+    const res = await getData();
 
     const management = managementNumber;
     const volante = noVolante;
     //se elimina bienes_officio_gestion
-    this.officeManagementSerivice
-      .removeGoodOfficeManagement(managementNumber)
-      .subscribe({
-        next: resp => {
-          //se elimina COPIAS_OFICIO_GESION
-          this.officeManagementSerivice
-            .removeCopiesManagement(managementNumber)
-            .subscribe({
-              next: resp => {
-                //se elimina DOCUM_OFICIO_GESTION
-                this.officeManagementSerivice
-                  .removeDocumOfficeManagement(managementNumber)
-                  .subscribe({
-                    next: resp => {
-                      //se elimina M_OFICIO_GESTION
-                      this.officeManagementSerivice
-                        .removeMOfficeManagement(managementNumber)
-                        .subscribe({
-                          next: async () => {
-                            //selecciona los dictamenes segun el no_volante
-                            const existDictamen: any =
-                              await this.dictationCount(noVolante);
-                            //actuliza si no tiene dictamenes
-                            if (existDictamen.count == 0) {
-                              const notifBody: any = { dictumKey: null };
-                              this.notificationService
-                                .update(Number(noVolante), notifBody)
-                                .subscribe({
-                                  next: resp => {
-                                    Swal.fire('Borrado', '', 'success');
-                                    console.log('resp  =>  ' + resp);
-                                    this.refreshTabla();
-                                  },
-                                  error: (error: {
-                                    error: { message: string };
-                                  }) => {
-                                    this.onLoadToast(
-                                      'error',
-                                      'Error al actualizar',
-                                      error.error.message
-                                    );
-                                  },
-                                });
-                            } else {
-                              Swal.fire('Borrado', '', 'success');
-                              this.refreshTabla();
-                            }
-                          },
-                          error: (error: { error: { message: string } }) => {
-                            this.onLoadToast(
-                              'error',
-                              'Error',
-                              error.error.message
-                            );
-                          },
-                        });
-                    },
-                    error: error => {
-                      this.onLoadToast('error', 'Error', error.error.message);
-                    },
-                  });
-              },
-              error: (errror: { error: { message: string } }) => {
-                this.onLoadToast('error', 'Error', errror.error.message);
-              },
-            });
-        },
-        error: error => {
-          this.onLoadToast('error', 'Error al eliminar', error.error.message);
-        },
-      });
+    const promises = [
+      this.mJobManagementService.deleteGoodsJobManagement1(management),
+      this.mJobManagementService.deleteDocumentJobManagement2(management),
+      this.officeManagementSerivice.removeMOfficeManagement(management),
+      this.mJobManagementService.deleteCopiesJobManagement4(management),
+      this.updateIfHaveDictamen(volante),
+    ];
+    await Promise.all(promises);
 
-    /*
-    //actualiza cve_dictamen 
-    const notifBody:any = {dictumKey: null}
-    this.notificationService.update(Number(noVolante),notifBody).subscribe({
-      next: resp => {
-        
-      }
-    })
-    */
-  }
+    this.se_refiere_a_Disabled.A = true;
+    this.se_refiere_a_Disabled.B = true;
 
-  deleteOfficeRelacionado(
-    managementNumber: number | string,
-    noVolante: number | string
-  ) {
-    const management = managementNumber;
-    const volante = noVolante;
-    //se elimina bienes_officio_gestion
-    this.officeManagementSerivice
-      .removeGoodOfficeManagement(managementNumber)
-      .subscribe({
-        next: resp => {
-          //se elimina COPIAS_OFICIO_GESION
-          this.officeManagementSerivice
-            .removeCopiesManagement(managementNumber)
-            .subscribe({
-              next: resp => {
-                //se elimina DOCUM_OFICIO_GESTION
-                this.officeManagementSerivice
-                  .removeDocumOfficeManagement(managementNumber)
-                  .subscribe({
-                    next: resp => {
-                      //se elimina M_OFICIO_GESTION
-                      this.officeManagementSerivice
-                        .removeMOfficeManagement(managementNumber)
-                        .subscribe({
-                          next: async () => {
-                            //actualiza los dictamenes en notificaciones
-                            const notifBody: any = { dictumKey: null };
-                            this.notificationService
-                              .update(Number(noVolante), notifBody)
-                              .subscribe({
-                                next: resp => {
-                                  Swal.fire('Borrado', '', 'success');
-                                  console.log('resp  =>  ' + resp);
-                                  this.refreshTabla();
-                                },
-                                error: (error: {
-                                  error: { message: string };
-                                }) => {
-                                  this.onLoadToast(
-                                    'error',
-                                    'Error al actualizar',
-                                    error.error.message
-                                  );
-                                },
-                              });
-                          },
-                          error: (error: { error: { message: string } }) => {
-                            this.onLoadToast(
-                              'error',
-                              'Error',
-                              error.error.message
-                            );
-                          },
-                        });
-                    },
-                    error: error => {
-                      this.onLoadToast('error', 'Error', error.error.message);
-                    },
-                  });
-              },
-              error: (errror: { error: { message: string } }) => {
-                this.onLoadToast('error', 'Error', errror.error.message);
-              },
-            });
-        },
-        error: error => {
-          this.onLoadToast('error', 'Error al eliminar', error.error.message);
-        },
-      });
+    if (this.paramsGestionDictamen.sale == 'D') {
+      this.se_refiere_a_Disabled.C = true;
+    } else {
+      this.se_refiere_a_Disabled.C = false;
+    }
+
+    Swal.fire('Borrado', '', 'success');
+    this.refreshTabla();
   }
 
   changeCopiesType(event: any, ccp: number) {
@@ -2355,7 +2245,8 @@ export class RelatedDocumentsComponent
 
   typeSelected(type: any) {
     const filter = type.no_clasif_bien;
-    console.log('FILTRO DICTAMINACION', filter);
+    this.dictationService.typeDictamination = type;
+
     this.selectVariable = filter;
     this.goodFilterParams(filter);
   }
@@ -2593,7 +2484,6 @@ export class RelatedDocumentsComponent
     return new Promise((resolve, reject) => {
       this.DictationXGood1Service.getAll(params).subscribe({
         next: (resp: any) => {
-          console.log('DICTAMINACION X BIEN', resp.data);
           const data = resp.data[0];
           resolve(data);
           this.loading = false;
@@ -3251,4 +3141,13 @@ export class RelatedDocumentsComponent
   }
 
   _PUP_ENVIA_PGR() {}
+
+  async updateIfHaveDictamen(no_volante: number | string) {
+    const existDictamen: any = await this.dictationCount(no_volante);
+    //actuliza si no tiene dictamenes
+    if (existDictamen.count == 0) {
+      const notifBody: any = { dictumKey: null };
+      this.notificationService.update(Number(no_volante), notifBody);
+    }
+  }
 }

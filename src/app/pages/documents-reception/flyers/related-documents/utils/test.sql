@@ -767,4 +767,8 @@ BEGIN
 	go_block('DOCUMENTOS_PARA_DICTAMEN');
   LIP_EXEQRY; 
 end if;
+<<<<<<< HEAD
 end;
+=======
+end;
+>>>>>>> 3c150061f6a3e91c660cb561b57e31ea5542b885

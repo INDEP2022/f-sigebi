@@ -274,7 +274,7 @@ export abstract class RelateDocumentsResponse extends BasePage {
 
   getDocJobManagementCount(params: ListParams) {
     params.limit = 1;
-    params.page = 1;
+
     return firstValueFrom(
       this.mJobManagementService.getDocOficioGestion(params).pipe(
         map(x => x.count),

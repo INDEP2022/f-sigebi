@@ -640,7 +640,18 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
     this.form.get('numberOfficeDic').setValue(this.dictationData.id);
     this.form.get('numberOfficeDic').updateValueAndValidity();
     this.showScanForm = false;
+    if (this._saveOfficeDictation) {
+      this.form.get('issuingUser').setValue(this.dictationData.userDict); // Remitente
+      this.form.get('issuingUser').updateValueAndValidity();
+    } else {
+      this.form.get('issuingUser').setValue(this.officeDictationData.sender); // Remitente
+      this.form.get('issuingUser').updateValueAndValidity();
+    }
+    if (this.dictationData.statusDict == 'DICTAMINADO') {
+      this.form.get('issuingUser').disable();
+    }
     setTimeout(() => {
+      this.getIssuingUserByDetail(new ListParams(), true);
       this.formScan
         .get('scanningFoli')
         .setValue(this.dictationData.folioUniversal);
@@ -1006,8 +1017,9 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
   }
   setDataOfficeDictation() {
     this._saveOfficeDictation = false; // Se actualiza el registro actual solamente
-    this.form.get('issuingUser').setValue(this.officeDictationData.sender); // Remitente
-    this.form.get('issuingUser').updateValueAndValidity();
+    // this.form.get('issuingUser').setValue(this.officeDictationData.sender); // Remitente
+    // this.form.get('issuingUser').updateValueAndValidity();
+    // this.form.get('issuingUser').disable();
     this.form.get('addressee').setValue(this.officeDictationData.recipient); // Destinatario
     this.form.get('addressee').updateValueAndValidity();
     this.form.get('city').setValue(this.officeDictationData.city); // Ciudad
@@ -1051,13 +1063,13 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
       'ISSUING',
       this.officeDictationData.recipient
     );
-    this.getIssuingUserByDetail(new ListParams(), true);
+    // this.getIssuingUserByDetail(new ListParams(), true);
     this.getAddresseeByDetail(new ListParams(), true);
     this.getCityByDetail(new ListParams(), true);
   }
 
   enabledDataOffice() {
-    this.form.get('issuingUser').enable();
+    // this.form.get('issuingUser').enable();
     this.form.get('addressee').enable();
     this.form.get('city').enable();
     this.form.get('introductoryParagraph').enable();
@@ -1077,7 +1089,7 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
   }
 
   disabledDataOffice() {
-    this.form.get('issuingUser').disable();
+    // this.form.get('issuingUser').disable();
     this.form.get('addressee').disable();
     this.form.get('city').disable();
     this.form.get('introductoryParagraph').disable();
@@ -1319,7 +1331,7 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
       // }
       console.log(paramsData);
       const params = new FilterParams();
-      if (paramsData['search'] == undefined) {
+      if (paramsData['search'] == undefined || paramsData['search'] == null) {
         paramsData['search'] = '';
       }
       params.removeAllFilters();
@@ -1359,7 +1371,7 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
     } else {
       console.log(paramsData);
       const params = new FilterParams();
-      if (paramsData['search'] == undefined) {
+      if (paramsData['search'] == undefined || paramsData['search'] == null) {
         paramsData['search'] = '';
       }
       params.removeAllFilters();
@@ -1401,7 +1413,7 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
   }
   getIssuingUserByDetail(paramsData: ListParams, getByValue: boolean = false) {
     const params: any = new FilterParams();
-    if (paramsData['search'] == undefined) {
+    if (paramsData['search'] == undefined || paramsData['search'] == null) {
       paramsData['search'] = '';
     }
     params.removeAllFilters();
@@ -1467,7 +1479,9 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
   }
   // DELEGACION Y DEPARTAMENTO EN DESTINATARIO
   getAddresseeByDetail(paramsData: ListParams, getByValue: boolean = false) {
-    if (paramsData['search'] == undefined) {
+    console.log(paramsData);
+
+    if (paramsData['search'] == undefined || paramsData['search'] == null) {
       paramsData['search'] = '';
     }
     if (getByValue) {

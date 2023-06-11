@@ -1330,6 +1330,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
         this.loading = false;
         this.checkChange();
         this.blockExpedient = false;
+        this.inputOpenProceeding();
       }
     );
   }
@@ -1626,6 +1627,8 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
     this.noRequireAct();
   }
 
+  inputsnewProceeding() {}
+
   newOpenProceeding() {
     const paramsF = new FilterParams();
     paramsF.addFilter('keysProceedings', this.form.get('acta2').value);
@@ -1897,12 +1900,10 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
                         this.getGoodsActFn();
                         this.getGoodsFn();
                         this.form.get('statusProceeding').setValue('CERRADO');
-                        /* this.labelActa = 'Abrir acta';
-                        this.btnCSSAct = 'btn-success'; */
-                        this.alert('success', 'El acta ha sido cerrada', '');
+                        this.labelActa = 'Abrir acta';
+                        this.btnCSSAct = 'btn-success';
                       },
                       err => {
-                        console.log(err);
                         this.alert(
                           'error',
                           'Ocurrió un error inesperado',
@@ -2384,8 +2385,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
           'No puede elimar acta',
           'No puede eliminar un Acta cerrada'
         );
-      }
-      if (
+      } else if (
         format(this.form.get('fecElab').value, 'MM-yyyy') !=
         format(new Date(), 'MM-yyyy')
       ) {
@@ -2518,32 +2518,40 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
       if (this.form.get('noAlmacen').value != null) {
         for (let i = 0; i < this.dataGoodAct['data'].length; i++) {
           const element = this.dataGoodAct['data'][i].good;
+          console.log(element);
           const newParams = `filter.numClasifGoods=$eq:${element.goodClassNumber}`;
-          this.serviceSssubtypeGood.getFilter(newParams).subscribe(res => {
-            const type = JSON.parse(JSON.stringify(res.data[0]['numType']));
-            const subtype = JSON.parse(
-              JSON.stringify(res.data[0]['numSubType'])
-            );
-            const ssubtype = JSON.parse(
-              JSON.stringify(res.data[0]['numSsubType'])
-            );
-            const no_type = type.id;
-            console.log(no_type);
-            if (no_type === '5') {
-              //Data new good
-              const putGood: IGood = {
-                id: element.id,
-                goodId: element.id,
-                storeNumber: this.form.get('noAlmacen').value.idWarehouse,
-              };
-              console.log(putGood);
-              console.log('Sí?');
-              this.serviceGood.update(putGood).subscribe(res => {
-                this.getGoodsActFn();
-              });
+          this.serviceSssubtypeGood.getFilter(newParams).subscribe(
+            res => {
+              const type = JSON.parse(JSON.stringify(res.data[0]['numType']));
+              const subtype = JSON.parse(
+                JSON.stringify(res.data[0]['numSubType'])
+              );
+              const ssubtype = JSON.parse(
+                JSON.stringify(res.data[0]['numSsubType'])
+              );
+              const no_type = type.id;
+              console.log(no_type);
+              if (no_type == '5') {
+                //Data new good
+                const putGood: IGood = {
+                  id: element.id,
+                  goodId: element.id,
+                  storeNumber: this.form.get('noAlmacen').value.idWarehouse,
+                };
+                console.log(putGood);
+                console.log('Sí?');
+                this.serviceGood.update(putGood).subscribe(res => {
+                  this.getGoodsActFn();
+                });
+              } else {
+                console.log({ message: 'No :(', type: no_type });
+              }
+            },
+            err => {
+              console.log(err);
+              console.log({ msg: 'err', data: element });
             }
-            console.log('No :(');
-          });
+          );
         }
         this.alert('success', 'Se registró el almacén en los bienes', '');
       } else {
