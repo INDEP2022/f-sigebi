@@ -316,6 +316,7 @@ export class EventCaptureComponent
     this.authUserName = this.authService.decodeToken().name;
     this.settings = {
       ...this.settings,
+      actions: { title: 'Acciones', delete: true, edit: false },
       columns: {
         ...COLUMNS_CAPTURE_EVENTS,
         dateapprovalxadmon: {
@@ -337,26 +338,58 @@ export class EventCaptureComponent
             this.setEndDate(instance),
         },
         ...COLUMNS_CAPTURE_EVENTS_2,
-        select: {
-          title: 'Seleccionar',
-          sort: false,
-          type: 'custom',
-          filter: false,
-          showAlways: true,
-          renderComponent: CheckboxElementComponent,
-          valuePrepareFunction: (departament: any, row: any) =>
-            this.isProceedingSelected(row),
-          onComponentInitFunction: (instance: CheckboxElementComponent) =>
-            this.proceedingSelectChange(instance),
-        },
+        // select: {
+        //   title: 'Seleccionar',
+        //   sort: false,
+        //   type: 'custom',
+        //   filter: false,
+        //   showAlways: true,
+        //   renderComponent: CheckboxElementComponent,
+        //   valuePrepareFunction: (departament: any, row: any) =>
+        //     this.isProceedingSelected(row),
+        //   onComponentInitFunction: (instance: CheckboxElementComponent) =>
+        //     this.proceedingSelectChange(instance),
+        // },
       },
-      // hideSubHeader: false,
-      actions: false,
     };
     this.activatedRoute.queryParams.subscribe(params => {
       this.global.proceedingNum = params['numeroActa'] ?? null;
       this.global.paperworkArea = params['tipoEvento'] ?? null;
     });
+  }
+
+  async removeDetail(detail: any) {
+    if (this.proceeding.statusProceedings.includes('CERRAD')) {
+      this.alert('error', 'Error', 'El programa esta cerrado');
+      return;
+    }
+
+    const response = await this.alertQuestion(
+      'question',
+      '¿Estas seguro?',
+      '¿Seguro que deseas eliminar el bien?'
+    );
+    if (response.isConfirmed) {
+      this.loading = true;
+      this.detailDeliveryReceptionService
+        .deleteById(detail.goodnumber, Number(this.proceeding.id))
+        .subscribe({
+          next: () => {
+            this.loading = false;
+            this.alert('success', 'Bien eliminado', '');
+            this.getDetail().subscribe();
+            this.calculateQuantities();
+          },
+          error: () => {
+            this.loading = false;
+            this.alert(
+              'error',
+              'Error',
+              'Ocurrio un error al eliminar el bien'
+            );
+          },
+        });
+    }
   }
 
   onSelectProceeding(notification: any, selected: boolean) {
@@ -1403,6 +1436,7 @@ export class EventCaptureComponent
           this.loading = false;
           this.blkCtrl.goodQuantity = 0;
           this.detail = [];
+          this.totalItems = 0;
           return throwError(() => error);
         }),
         tap(async res => {
