@@ -68,6 +68,7 @@ import {
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { EdoFisicoComponent } from './edo-fisico/edo-fisico.component.component';
+import { OptionsHistoryGoodDelegation } from './options-history-good-delegation/options-history-good-delegation.components';
 import { columnsGood, columnsGoodAct } from './settings-tables';
 
 @Component({
@@ -2581,8 +2582,55 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     );
   }
 
-  newCloseProceeding() {
+  async validateIsInWarehouseOrVault() {
+    return new Promise((resolve, reject) => {
+      for (let item of this.dataGoodAct['data']) {
+        console.log(item);
+        const newParams = `filter.numClasifGoods=$eq:${item.good.goodClassNumber}`;
+        this.serviceSssubtypeGood.getFilter(newParams).subscribe(
+          res => {
+            const type = JSON.parse(JSON.stringify(res.data[0]['numType']));
+            const subtype = JSON.parse(
+              JSON.stringify(res.data[0]['numSubType'])
+            );
+
+            const no_type = parseInt(type.id);
+            const no_subtype = parseInt(subtype.id);
+            console.log(no_type);
+            console.log(no_subtype);
+            if (no_type == 7 && item.good.vaultNumber == null) {
+              resolve(true);
+            } else if (
+              no_type == 5 &&
+              no_subtype == 16 &&
+              item.good.storeNumber == null &&
+              item.good.vaultNumber == null
+            ) {
+              resolve(true);
+            } else if (
+              no_type == 5 &&
+              no_subtype != 16 &&
+              item.good.storeNumber == null
+            ) {
+              resolve(true);
+            }
+          },
+          err => {}
+        );
+      }
+      resolve(false);
+    });
+  }
+
+  async newCloseProceeding() {
     this.validateFolio();
+    const validate = await this.validateIsInWarehouseOrVault();
+    console.log(validate);
+    console.log({
+      tipo: typeof validate,
+      valor: validate,
+      msg: 'Validar bodega',
+    });
     if (this.dataGoodAct['data'].length == 0) {
       this.alert(
         'warning',
@@ -2605,16 +2653,12 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
       );
     } else if (this.dataGoodAct['data'].find((e: any) => e.received != 'S')) {
       this.alert('warning', 'Hay bienes no marcados como recibido', '');
-    } else if (
-      this.isAlmacen &&
-      this.dataGoodAct['data'].find((e: any) => e.good.storeNumber == null)
-    ) {
-      this.alert('warning', 'Hay bienes no guardados en almacén', '');
-    } else if (
-      this.isBoveda &&
-      this.dataGoodAct['data'].find((e: any) => e.good.vaultNumber == null)
-    ) {
-      this.alert('warning', 'Hay bienes no guardados en bóveda', '');
+    } else if (validate) {
+      this.alert(
+        'warning',
+        'Se debe especificar el Almacén y/o la Bóveda para cerrar el Acta, favor de ingresar',
+        ''
+      );
     } else if (this.form.get('folioEscaneo').value == null) {
       this.alert('warning', 'No se registro número de folio', '');
     } else {
@@ -3434,6 +3478,10 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     this.selectData = data;
     this.statusGood('estatusPrueba', data);
     this.validateGood(data);
+    console.log(e);
+    if (e.doubleClick) {
+      this.openOptionsHistory(e);
+    }
   }
 
   deselectRow() {
@@ -3442,9 +3490,12 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   }
 
   goToHistorico() {
-    this.router.navigate([
-      '/pages/general-processes/historical-good-situation',
-    ]);
+    localStorage.setItem('numberExpedient', this.numberExpedient);
+
+    this.router.navigate(
+      ['/pages/general-processes/historical-good-situation'],
+      { queryParams: { noBien: 73 } }
+    );
   }
 
   selectRowBovedaAlmacen(data: any) {
@@ -3624,15 +3675,13 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
             'Problema con el tipo de acta',
             'Para este bien la Clave de Acta debe iniciar con " N "'
           );
-        }
-        if ([1424, 1426, 1590].includes(goodClass) && admin != 'CCB') {
+        } else if ([1424, 1426, 1590].includes(goodClass) && admin != 'CCB') {
           this.alert(
             'warning',
             'Problema con quien administra en la clave',
             'En la parte de Quien Administra en la clave de acta debe ser para este bien " CCB "'
           );
-        }
-        if (
+        } else if (
           goodClass != 1424 &&
           goodClass != 1590 &&
           goodClass != 1426 &&
@@ -4140,6 +4189,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                   JSON.stringify(res.data[0]['numSsubType'])
                 );
                 const no_type = type.id;
+                console.log(element);
                 console.log(no_type);
                 if (no_type === '5') {
                   //Data new good
@@ -4159,6 +4209,8 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                       console.log(err);
                     }
                   );
+                } else {
+                  console.log({ message: 'No :(', type: no_type });
                 }
               },
               err => {
@@ -4308,6 +4360,15 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         }
       );
     });
+  }
+
+  openOptionsHistory(e: any) {
+    console.log(e);
+    let modalConfig = MODAL_CONFIG;
+    modalConfig = {
+      class: 'modal-lg modal-dialog-centered',
+    };
+    this.modalService.show(OptionsHistoryGoodDelegation, modalConfig);
   }
 
   openEdoFisico() {

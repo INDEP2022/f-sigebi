@@ -15,18 +15,21 @@
         TEST FIRMA
         <i aria-hidden="true" class="fa fa-filr"></i>
       </button> -->
-      <button class="btn btn-primary active btn-sm m-2" (click)="goBack()">
-        Regresar
-        <i class="fas fa-arrow-circle-left"></i>
-      </button>
       Fec&#46; Captura:
       <span class="badge bg-info ml-3 mr-3" style="display: initial !important">
-        {{ today || '00/00/0000' }}
+        {{
+          (formJobManagement.get('insertDate').value | date : 'M/d/yyyy') ||
+            '00/00/0000'
+        }}
       </span>
       / Estatus:
       <span class="badge bg-info ml-3 mr-3" style="display: initial !important">
         {{ formJobManagement.get('statusOf')?.value || '-----' }}
       </span>
+      <button class="btn btn-primary active btn-sm m-2" (click)="goBack()">
+        Regresar
+        <i class="fas fa-arrow-circle-left"></i>
+      </button>
     </div>
   </div>
   <!-- </div> -->
@@ -107,7 +110,7 @@
                 else templateInputAddressee
               ">
               <ngx-select
-              [searchOnInit]="true"
+                [searchOnInit]="true"
                 [data]="select"
                 [form]="formJobManagement"
                 control="addressee"
@@ -134,7 +137,7 @@
               [control]="formJobManagement.get('city')"
               class="col-md-4">
               <ngx-select
-              [searchOnInit]="true"
+                [searchOnInit]="true"
                 (fetchItems)="getCityByDetail($event)"
                 bindLabel="idName"
                 [data]="cities"
@@ -152,7 +155,7 @@
           <h6>Se Refiere A:</h6>
           <div
             class="col-md-3"
-            [ngClass]="{ 'not-press': se_refiere_a_Disabled.A }">
+            [ngClass]="{ 'disabled-input': se_refiere_a_Disabled.A }">
             <form-radio label="{{ se_refiere_a.A }}">
               <input
                 id="se_refiere_a_A"
@@ -164,7 +167,7 @@
           </div>
           <div
             class="col-md-4"
-            [ngClass]="{ 'not-press': se_refiere_a_Disabled.B }">
+            [ngClass]="{ 'disabled-input': se_refiere_a_Disabled.B }">
             <form-radio label="{{ se_refiere_a.B }}" class="mt-0 pt-0 bt-0">
               <input
                 id="se_refiere_a_B"
@@ -176,13 +179,14 @@
           </div>
           <div
             class="col-md-4"
-            [ngClass]="{ 'not-press': se_refiere_a_Disabled.C }">
+            [ngClass]="{ 'disabled-input': se_refiere_a_Disabled.C }">
             <form-radio label="{{ se_refiere_a.C }}">
               <input
                 id="se_refiere_a_C"
                 type="radio"
                 formControlName="refersTo"
-                value="{{ se_refiere_a.C }}" />
+                value="{{ se_refiere_a.C }}"
+                (change)="selectedChecksC()" />
             </form-radio>
           </div>
           <div class="col-md-1 text-right">
@@ -197,11 +201,72 @@
             </button>
           </div>
         </div>
+
+        <div *ngIf="pantallaOption" class="col-md-12 mb-3">
+          <h6>Tipos de Texto:</h6>
+          <div class="col-md-3">
+            <form-radio label="ACUSE DE RECIBO" (change)="changeTextType()">
+              <input type="radio" formControlName="tipoTexto" value="UNO" />
+            </form-radio>
+          </div>
+          <div class="col-md-3">
+            <form-radio
+              label="DOCUMENTO DEVOLUCIÓN"
+              (change)="changeTextType()">
+              <input type="radio" formControlName="tipoTexto" value="DOS" />
+            </form-radio>
+          </div>
+          <div class="col-md-3">
+            <form-radio label="DOCUMENTO DE BIENES" (change)="changeTextType()">
+              <input type="radio" formControlName="tipoTexto" value="TRES" />
+            </form-radio>
+          </div>
+          <div class="col-md-3">
+            <form-radio
+              label="DOCUMENTO DE NUMERARIO"
+              (change)="changeTextType()">
+              <input type="radio" formControlName="tipoTexto" value="CUATRO" />
+            </form-radio>
+          </div>
+          <div class="col-md-3">
+            <form-radio label="ACLARA INFORMACIÓN" (change)="changeTextType()">
+              <input type="radio" formControlName="tipoTexto" value="CINCO" />
+            </form-radio>
+          </div>
+          <div class="col-md-3">
+            <form-radio
+              label="SOLICITAR INFORMACIÓN"
+              (change)="changeTextType()">
+              <input type="radio" formControlName="tipoTexto" value="SEIS" />
+            </form-radio>
+          </div>
+          <div class="col-md-3">
+            <form-radio label="SAT" (change)="changeTextType()">
+              <input type="radio" formControlName="tipoTexto" value="SIETE" />
+            </form-radio>
+          </div>
+          <div class="col-md-3">
+            <form-radio label="ABANDONO" (change)="changeTextType()">
+              <input type="radio" formControlName="tipoTexto" value="OCHO" />
+            </form-radio>
+          </div>
+          <!-- <form-field
+            [control]="managementForm.get('parrafoInicial')"
+            class="col-md-12 mt-2 pt-3"
+            label="Parrafo Inicial">
+            <textarea
+              rows="7"
+              class="form-control"
+              maxlength="4000"
+              formControlName="parrafoInicial"></textarea>
+          </form-field> -->
+        </div>
+
         <div>
           <form-field
             [control]="formJobManagement.get('text1')"
             class="col-md-12 mt-2 pt-3"
-            label="Párrafo Inicial">
+            label="Parrafo Inicial">
             <textarea
               rows="7"
               class="form-control"
@@ -211,131 +276,69 @@
         </div>
       </div>
 
-      <div
-        [formGroup]="managementForm"
-        *ngIf="pantallaOption"
-        class="col-md-12 mb-3">
-        <h6>Tipos de Texto:</h6>
-        <div class="col-md-3">
-          <form-radio label="ACUSE DE RECIBO" (change)="changeTextType()">
-            <input type="radio" formControlName="tipoTexto" value="UNO" />
-          </form-radio>
-        </div>
-        <div class="col-md-3">
-          <form-radio label="DOCUMENTO DEVOLUCIÓN" (change)="changeTextType()">
-            <input type="radio" formControlName="tipoTexto" value="DOS" />
-          </form-radio>
-        </div>
-        <div class="col-md-3">
-          <form-radio label="DOCUMENTO DE BIENES" (change)="changeTextType()">
-            <input type="radio" formControlName="tipoTexto" value="TRES" />
-          </form-radio>
-        </div>
-        <div class="col-md-3">
-          <form-radio
-            label="DOCUMENTO DE NUMERARIO"
-            (change)="changeTextType()">
-            <input type="radio" formControlName="tipoTexto" value="CUATRO" />
-          </form-radio>
-        </div>
-        <div class="col-md-3">
-          <form-radio label="ACLARA INFORMACIÓN" (change)="changeTextType()">
-            <input type="radio" formControlName="tipoTexto" value="CINCO" />
-          </form-radio>
-        </div>
-        <div class="col-md-3">
-          <form-radio label="SOLICITAR INFORMACIÓN" (change)="changeTextType()">
-            <input type="radio" formControlName="tipoTexto" value="SEIS" />
-          </form-radio>
-        </div>
-        <div class="col-md-3">
-          <form-radio label="SAT" (change)="changeTextType()">
-            <input type="radio" formControlName="tipoTexto" value="SIETE" />
-          </form-radio>
-        </div>
-        <div class="col-md-3">
-          <form-radio label="ABANDONO" (change)="changeTextType()">
-            <input type="radio" formControlName="tipoTexto" value="OCHO" />
-          </form-radio>
-        </div>
-        <form-field
-          [control]="managementForm.get('parrafoInicial')"
-          class="col-md-12 mt-2 pt-3"
-          label="Párrafo Inicial">
-          <textarea
-            rows="7"
-            class="form-control"
-            maxlength="4000"
-            formControlName="parrafoInicial"></textarea>
-        </form-field>
-      </div>
-
       <div [formGroup]="managementForm">
-        <div class="row pt-4">
-          <form-field
-            *ngIf="pantallaActual == '1'"
-            [control]="managementForm.get('justificacion')"
-            class="col-md-6">
-            <ngx-select
-              (fetchItems)="getJustification($event)"
-              value="id"
-              bindLabel="clarifications"
-              [form]="managementForm"
-              control="justificacion"
-              [data]="justificacion"
-              [showTooltip]="true"
-              label="Justificación">
-            </ngx-select>
-          </form-field>
-          <!-- <form-field [control]="managementForm.get('justificacionDetalle')" class="col-md-6" label="Justificación">
-           <input type="text" class="form-control" formControlName="justificacionDetalle" readonly [disabled]="true" />
-         </form-field> -->
-          <form-field
-            [control]="managementForm.get('noOficio')"
-            class="col-md-4 mt-2"
-            label="Número de Oficio">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="noOficio"
-              readonly
-              [disabled]="true" />
-          </form-field>
-          <!-- <form-field [control]="managementForm.get('fechaAcuse')" class="col-md-4 mt-2" label="Fecha de Acuse">
-           <input type="text" class="form-control" formControlName="fechaAcuse" readonly [disabled]="true" />
-         </form-field> -->
-        </div>
-        <br /><br />
-        <div class="row pt-4" *ngIf="pantallaActual == '1'">
-          <div class="col-md-4">
-            <button
-              type="button"
-              class="btn btn-primary active btn-sm mr-2"
-              (click)="fgrResponses()">
-              Respuestas FGR
-            </button>
-          </div>
-        </div>
-        <br /><br />
-        <div class="row pt-4">
-          <div class="col-md-2">
+        <ng-container *ngIf="pantallaActual == '1'">
+          <div class="row pt-4">
             <form-field
-              [control]="managementForm.get('fechaAcuse')"
-              label="Fecha Acuse">
+              *ngIf="pantallaActual == '1'"
+              [control]="managementForm.get('justificacion')"
+              class="col-md-6">
+              <ngx-select
+                (fetchItems)="getJustification($event)"
+                value="id"
+                bindLabel="clarifications"
+                [form]="managementForm"
+                control="justificacion"
+                [data]="justificacion"
+                [showTooltip]="true"
+                label="Justificación">
+              </ngx-select>
+            </form-field>
+
+            <form-field
+              *ngIf="pantallaActual == '1'"
+              [control]="managementForm.get('noOficio')"
+              class="col-md-4 mt-2"
+              label="Número de Oficio">
               <input
                 type="text"
                 class="form-control"
-                #dp="bsDatepicker"
-                bsDatepicker />
+                formControlName="noOficio"
+                readonly
+                [disabled]="true" />
             </form-field>
           </div>
-        </div>
+          <br /><br />
+          <div class="row pt-4" *ngIf="pantallaActual == '1'">
+            <div class="col-md-4">
+              <button
+                type="button"
+                class="btn btn-primary active btn-sm mr-2"
+                (click)="fgrResponses()">
+                Respuestas FGR
+              </button>
+            </div>
+          </div>
+          <br /><br />
+          <div *ngIf="pantallaOption" class="row pt-4">
+            <div class="col-md-2">
+              <form-field
+                [control]="managementForm.get('fechaAcuse')"
+                label="Fecha Acuse">
+                <input
+                  type="text"
+                  class="form-control"
+                  #dp="bsDatepicker"
+                  bsDatepicker />
+              </form-field>
+            </div>
+          </div>
+        </ng-container>
         <br />
         <br />
-
         <div class="row pb-5">
           <div class="col-md-12">
-            <div class="col-sm-12 col-12 col-md-12">
+            <div class="col-md-8 col-12">
               <ngx-select
                 [form]="managementForm"
                 control="averiPrevia"
@@ -348,7 +351,8 @@
                 id="typesFilters"
                 (change)="typeSelected($event)">
               </ngx-select>
-              <!-- <form-field
+            </div>
+            <!-- <form-field
                [control]="managementForm.get('averiPrevia')"
                label="Tipo &#45; Subtipo &#45; Descripci&oacute;n">
                <ng-select
@@ -366,6 +370,16 @@
                  </ng-option>
                </ng-select>
              </form-field> -->
+            <div class="col-md-4 col-12">
+              <form-field
+                label="Descripción estatus"
+                [control]="managementForm.get('di_desc_estatus')">
+                <input
+                  type="text"
+                  formControlName="di_desc_estatus"
+                  class="form-control"
+                  readonly />
+              </form-field>
             </div>
 
             <!-- <form-check class="col-md-2 text-end" label="Improcedente(s) todo(s)" for="improcedente">
@@ -379,7 +393,8 @@
               <div class="col-sm-12 col-12 col-md-12 pr-3">
                 <div [class]="isLoadingGood ? 'table-loading' : ''">
                   <ng2-smart-table
-                    id="goods"
+                    id="bienesJuridicos"
+                    #tableGoods
                     (userRowSelect)="selectProceedings($event)"
                     [attr.class]="'table-responsive table-bordered'"
                     [settings]="settings"
@@ -392,6 +407,21 @@
                       [totalItems]="totalItems"></app-pagination>
                   </div>
                 </div>
+              </div>
+
+              <div class="col-12">
+                <ngx-select
+                  [form]="formVariables"
+                  control="dictamen"
+                  (fetchItems)="searchDocumentForDictation($event)"
+                  [showTooltip]="true"
+                  [data]="dataSelectDictation"
+                  bindLabel="keyDescription"
+                  label="Dictaminación"
+                  value="key"
+                  id="typesFilters"
+                  (change)="typeSelected($event)">
+                </ngx-select>
               </div>
               <div class="col-sm-12 col-12 col-md-12 pr-3">
                 <div class="col-md-6">
@@ -414,7 +444,7 @@
                 </div>
                 <div class="col-md-6">
                   <div class="col-12">Documento(s)</div>
-                  <div [class]="isLoadingGood ? 'table-loading' : ''">
+                  <div [class]="isLoadingDocuments ? 'table-loading' : ''">
                     <!-- (userRowSelect)="selectProceedings($event)" -->
                     <ng2-smart-table
                       id="goodsJobManagement"
@@ -433,17 +463,6 @@
               </div>
             </div>
 
-            <div class="row">
-              <div class="col-sm-12 col-12 col-md-6 mt-5">
-                <form-field [control]="managementForm.get('di_desc_estatus')">
-                  <input
-                    type="text"
-                    formControlName="di_desc_estatus"
-                    class="form-control"
-                    readonly />
-                </form-field>
-              </div>
-            </div>
             <!-- <div class="col-md-2 text-end">
             <app-columns-select [(settings)]="settings"></app-columns-select>
           </div> -->
@@ -474,6 +493,7 @@
               </button>
               <button
                 type="button"
+                [disabled]="isLoadingBtnEraser"
                 tooltip="Borrar"
                 containerClass="tooltip-style"
                 (click)="showDeleteAlert($event)"
@@ -497,6 +517,7 @@
           </div>
         </div>
       </div>
+
       <hr class="row" />
       <div [formGroup]="formJobManagement" class="row">
         <div class="col-md-12">
