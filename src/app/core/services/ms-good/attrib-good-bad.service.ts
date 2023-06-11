@@ -28,7 +28,7 @@ export class AttribGoodBadService extends HttpService {
   ): Observable<IListResponseMessage<IAttribGoodBad>> {
     return self
       .get<IListResponseMessage<IAttribGoodBad>>(
-        'attrib-good-bad' + this.selectedGoods
+        'attrib-good-bad' + self.selectedGoods
           ? '?filter.id=$in:' + String(self.selectedGoods)
           : '',
         params
