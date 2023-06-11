@@ -53,10 +53,11 @@ export class GoodCellValueComponent extends DefaultEditor implements OnInit {
   haveError(row: IVal) {
     return (
       this.haveErrorRequired(row) ||
-      this.haveNumericError(row) ||
-      this.haveFloatError(row) ||
-      this.haveCaracteresEspeciales(row) ||
-      this.haveMoneyError(row).length > 0
+      (!(row.dataType === 'D' || row.attribute.includes('FECHA')) &&
+        (this.haveNumericError(row) ||
+          this.haveFloatError(row) ||
+          this.haveCaracteresEspeciales(row) ||
+          this.haveMoneyError(row).length > 0))
     );
   }
 
