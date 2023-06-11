@@ -389,6 +389,7 @@
                 <div [class]="isLoadingGood ? 'table-loading' : ''">
                   <ng2-smart-table
                     id="bienesJuridicos"
+                    #tableGoods
                     (userRowSelect)="selectProceedings($event)"
                     [attr.class]="'table-responsive table-bordered'"
                     [settings]="settings"

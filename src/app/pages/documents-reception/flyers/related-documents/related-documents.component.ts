@@ -8,7 +8,7 @@ import {
 } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
-import { LocalDataSource } from 'ng2-smart-table';
+import { LocalDataSource, Ng2SmartTableComponent } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, firstValueFrom, map, skip, takeUntil } from 'rxjs';
 import { PgrFilesComponent } from 'src/app/@standalone/modals/pgr-files/pgr-files.component';
@@ -118,6 +118,8 @@ export class RelatedDocumentsComponent
   extends RelateDocumentsResponse
   implements OnInit
 {
+  @ViewChild('tableGoods', { static: true }) tabla: Ng2SmartTableComponent;
+
   // Send variables
   blockSend: boolean = false;
   variablesSend = {
@@ -387,8 +389,8 @@ export class RelatedDocumentsComponent
       ...RELATED_DOCUMENTS_COLUMNS_GOODS.improcedente,
       onComponentInitFunction: this.onClickImprocedente,
     };
-
-    if (!this.pantallaOption) {
+    const screen = this.route.snapshot.paramMap.get('id');
+    if (screen === '2') {
       const columns = RELATED_DOCUMENTS_COLUMNS_GOODS;
       delete columns.improcedente;
     }
@@ -411,7 +413,7 @@ export class RelatedDocumentsComponent
 
   disabledChecks() {
     console.log(this.settings);
-    (this.settings.columns as any).seleccion['show'] = false;
+    (this.settings.columns as any).seleccion['hide'] = false;
     this.managementForm.get('averiPrevia').disable();
     this.formVariables.get('b').setValue('S');
     // }
