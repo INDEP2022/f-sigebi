@@ -432,7 +432,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   }
 
   getNulls() {
-    this.attribGoodBadService.selectedProceeding = this.idProceeding;
+    this.attribGoodBadService.selectedProceeding = parseInt(this.idProceeding);
     this.attribGoodBadService.selectedGoods = this.dataGoodAct['data'].map(
       (item: any) => item.good.goodId
     );
@@ -633,10 +633,11 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
       this.serviceGoodProcess.getVnNumerario(good.id).subscribe(
         res => {
           //SI ES NUMERARIO
-          console.log(res);
+          console.log({msg: 'Si es numerario', data: res});
           di_numerario = true;
           this.serviceGoodProcess.getValNume(valModel).subscribe(
             res => {
+              console.log({msg: 'Es Val nume', data: res})
               di_disponible = true;
               const modelPosQuery: IBlkPost = {
                 no_bien: parseInt(good.id),
@@ -646,6 +647,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
               this.serviceProceeding
                 .getBiePosquery(modelPosQuery)
                 .subscribe(res => {
+              console.log({msg: 'Res en biePosquery', data: res})
                   if (res.data.length != 0) {
                     di_disponible = false;
                     getAmparo();
@@ -661,9 +663,13 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                       acta: null,
                     });
                   }
+                },
+                err => {
+              console.log({msg: 'Error en biePosquery', data: err})
                 });
             },
             err => {
+              console.log({msg: 'No es Val nume', data: res})
               getAmparo();
               di_disponible = false;
               resolve({
@@ -676,10 +682,11 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         },
         //NO ES NUMERARIO
         err => {
-          console.log(err);
+          console.log({msg: 'No es numerario', data: err});
           di_numerario = false;
           this.serviceGoodProcess.getValOtro(valModel).subscribe(
             res => {
+              console.log({msg: 'Es Val otro', data: res})
               di_disponible = true;
               console.log(res);
               const modelPosQuery: IBlkPost = {
@@ -697,7 +704,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                     resolve({
                       avalaible: di_disponible,
                       bamparo: bamparo,
-                      acta: null,
+                      acta: res.data[0]['cve_acta'],
                     });
                   } else {
                     console.log('Entró a Val Otro');
@@ -819,6 +826,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
               );
             },
             err => {
+              console.log({msg: 'No es Val otro', data: err})
               console.log(err);
               di_disponible = false;
               getAmparo();
@@ -1504,16 +1512,19 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
               console.log(res);
               const newData = await Promise.all(
                 res.data.map(async (e: any) => {
+                  console.log(e)
                   let disponible: boolean;
                   const resp = await this.validateGood(e);
                   const ind = await this.validateRequired(e);
                   console.log(ind);
                   console.log(resp);
                   disponible = JSON.parse(JSON.stringify(resp)).avalaible;
+                  const acta = JSON.parse(JSON.stringify(resp)).acta
                   return {
                     ...e,
                     avalaible: disponible,
                     indEdoFisico: ind,
+                    acta: acta
                   };
                 })
               );
@@ -1638,7 +1649,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
             exchangeValue: element.exchangeValue === '1' ? 1 : null,
             indEdoFisico: edoFis.V_IND_EDO_FISICO === 1 ? true : false,
           }); */
-          this.dataGoods.load(
+          /* this.dataGoods.load(
             this.dataGoods['data'].map((e: any) => {
               if (e.id == element.good.id) {
                 return {
@@ -1650,7 +1661,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                 return e;
               }
             })
-          );
+          ); */
           /* .then(res => {
               for (let item of this.goodData) {
                 const goodClass = item.goodClassNumber;
