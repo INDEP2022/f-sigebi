@@ -284,6 +284,8 @@ export class EventCaptureComponent
 
   allSelected = false;
 
+  flag = false;
+
   constructor(
     private fb: FormBuilder,
     private parameterGoodService: ParametersService,
@@ -950,7 +952,7 @@ export class EventCaptureComponent
       .pupUpdate(typeEvent.value, expedient, this.proceeding.id)
       .subscribe({
         next: res => {
-          if (res.data.length > 0) {
+          if (res.data?.registros > 0) {
             this.alert('success', 'Bienes cargados correctamente', '');
 
             this.formSiab = this.fb.group(new CaptureEventSiabForm());
