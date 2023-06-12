@@ -10,7 +10,6 @@ import {
 import { IServiceCat } from 'src/app/core/models/catalogs/service-cat.model';
 import { ServiceCatService } from 'src/app/core/services/catalogs/service-cat.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import Swal from 'sweetalert2';
 import { CatServicesFormComponent } from '../cat-services-form/cat-services-form.component';
 import { SERVICES_COLUMS } from './cat-service-columns';
 

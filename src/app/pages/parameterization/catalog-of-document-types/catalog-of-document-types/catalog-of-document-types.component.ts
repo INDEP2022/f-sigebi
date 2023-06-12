@@ -60,7 +60,6 @@ export class CatalogOfDocumentTypesComponent
       ...this.settings,
       hideSubHeader: false,
     };
-    this.searchFilter = { field: 'description', operator: SearchFilter.ILIKE };
   }
 
   ngOnInit(): void {
@@ -74,9 +73,16 @@ export class CatalogOfDocumentTypesComponent
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             /*SPECIFIC CASES*/
-            // filter.field == 'id'
-            //   ? (searchFilter = SearchFilter.EQ)
-            //   : (searchFilter = SearchFilter.ILIKE);
+            field = `filter.${filter.field}`;
+            /*SPECIFIC CASES*/
+            switch (filter.field) {
+              case 'id':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {

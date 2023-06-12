@@ -87,10 +87,19 @@ export class ParametersComponent extends BasePage implements OnInit {
     if (transfer.value?.length == 0) {
       this.transmitters = new DefaultSelect();
       this.authorities = new DefaultSelect();
+      transmitter.setValue([]);
+      authority.setValue([]);
       return;
     }
-    transmitter.setValue([]);
-    authority.setValue([]);
+
+    const filterT = transmitter.value.filter(t =>
+      transfer.value.includes(t.split(',')[0])
+    );
+    transmitter.setValue(filterT);
+    const filterAuth = authority.value.filter(t =>
+      transmitter.value.includes(`${t.split(',')[0]},${t.split(',')[1]}`)
+    );
+    authority.setValue(filterAuth);
 
     this.getTransmitters();
   }
@@ -99,9 +108,14 @@ export class ParametersComponent extends BasePage implements OnInit {
     const { transmitter, authority } = this.siabControls;
     if (transmitter.value?.length == 0) {
       this.authorities = new DefaultSelect();
+      authority.setValue([]);
       return;
     }
-    authority.setValue([]);
+    const filterAuth = authority.value.filter(t =>
+      transmitter.value.includes(`${t.split(',')[0]},${t.split(',')[1]}`)
+    );
+    console.log(filterAuth);
+    authority.setValue(filterAuth);
 
     this.getAuthorities();
   }
@@ -133,7 +147,11 @@ export class ParametersComponent extends BasePage implements OnInit {
 
     this.stationService.getAllFilter(_params.getParams()).subscribe({
       next: response => {
-        this.transmitters = new DefaultSelect(response.data, response.count);
+        const modTran = response.data.map((t: any) => {
+          return { value: `${t.idTransferent},${t.id}`, ...t };
+        });
+        console.log({ modTran });
+        this.transmitters = new DefaultSelect(modTran, response.count);
       },
       error: error => {
         this.transmitters = new DefaultSelect();
@@ -154,15 +172,20 @@ export class ParametersComponent extends BasePage implements OnInit {
       transfer.value.join(','),
       SearchFilter.IN
     );
-    _params.addFilter(
-      'idStation',
-      transmitter.value.join(','),
-      SearchFilter.IN
-    );
+    const stations = transmitter.value.map(t => t.split(',')[1]);
+
+    console.log({ stations });
+    _params.addFilter('idStation', stations.join(','), SearchFilter.IN);
 
     this.authoritiesService.getAllFilter(_params.getParams()).subscribe({
       next: response => {
-        this.authorities = new DefaultSelect(response.data, response.count);
+        const modAuth = response.data.map((a: any) => {
+          return {
+            value: `${a.idTransferer},${a.idStation},${a.idAuthority}`,
+            ...a,
+          };
+        });
+        this.authorities = new DefaultSelect(modAuth, response.count);
       },
       error: error => {
         this.authorities = new DefaultSelect();

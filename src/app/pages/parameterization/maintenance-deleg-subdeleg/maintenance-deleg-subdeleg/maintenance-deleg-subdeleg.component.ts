@@ -24,7 +24,8 @@ import { DelegationModalComponent } from '../delegation-modal/delegation-modal.c
 })
 export class MaintenanceDelegSubdelegComponent
   extends BasePage
-  implements OnInit {
+  implements OnInit
+{
   totalItems: number = 0;
   totalItems2: number = 0;
 
@@ -163,7 +164,6 @@ export class MaintenanceDelegSubdelegComponent
             this.totalItems2 = 0;
             this.loading2 = false;
           }
-
         },
         error: error => (this.loading2 = false),
       });
@@ -213,12 +213,8 @@ export class MaintenanceDelegSubdelegComponent
     console.log('datos a eliminar:', formData);
     this.subDelegationService.remove(formData).subscribe({
       next: () => {
-        this.getSubDelegations(this.dataId)
-        this.alert(
-          'success',
-          'Borrado',
-          ''
-        );
+        this.getSubDelegations(this.dataId);
+        this.alert('success', 'Borrado', '');
       },
       error: err =>
         this.alert(

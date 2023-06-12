@@ -8,9 +8,14 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { ConfiscatedRecordsRoutingModule } from './confiscated-records-routing.module';
 import { ConfiscatedRecordsComponent } from './confiscated-records.component';
 import { EdoFisicoComponent } from './edo-fisico/edo-fisico.component.component';
+import { OptionsHistoryGoodDelegation } from './options-history-good-delegation/options-history-good-delegation.components';
 
 @NgModule({
-  declarations: [ConfiscatedRecordsComponent, EdoFisicoComponent],
+  declarations: [
+    ConfiscatedRecordsComponent,
+    EdoFisicoComponent,
+    OptionsHistoryGoodDelegation,
+  ],
   imports: [
     CommonModule,
     ConfiscatedRecordsRoutingModule,

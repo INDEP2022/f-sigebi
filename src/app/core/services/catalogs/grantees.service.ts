@@ -26,7 +26,7 @@ export class GranteeService implements ICrudMethods<IGrantee> {
   }
 
   update(id: string | number, model: IGrantee): Observable<Object> {
-    return this.granteeRepository.update(this.route, id, model);
+    return this.granteeRepository.update(this.route + '/id', id, model);
   }
 
   remove(id: string | number): Observable<Object> {

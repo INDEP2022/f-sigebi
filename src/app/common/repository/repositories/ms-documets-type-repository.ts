@@ -31,7 +31,7 @@ export class DocumentsTypeRepository<T> implements IDocumentsTypeMethods<T> {
   }
 
   update(route: string, id: number | string, formData: Object) {
-    const fullRoute = `${this.ms}${route}${id}`;
+    const fullRoute = `${this.ms}${route}/${id}`;
     return this.httpClient.put<IListResponse<T>>(fullRoute, formData);
   }
 

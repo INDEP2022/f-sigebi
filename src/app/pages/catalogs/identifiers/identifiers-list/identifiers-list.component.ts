@@ -11,7 +11,6 @@ import {
 import { IIdentifier } from 'src/app/core/models/catalogs/identifier.model';
 import { IdentifierService } from 'src/app/core/services/catalogs/identifier.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import Swal from 'sweetalert2';
 import { IdentifierFormComponent } from '../identifier-form/identifier-form.component';
 import { IDENTIFIER_COLUMNS } from './identifier-columns';
 

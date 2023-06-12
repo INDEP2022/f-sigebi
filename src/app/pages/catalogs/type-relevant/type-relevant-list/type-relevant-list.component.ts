@@ -11,7 +11,6 @@ import {
 import { ITypeRelevant } from 'src/app/core/models/catalogs/type-relevant.model';
 import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import Swal from 'sweetalert2';
 import { TypeRelevantFormComponent } from '../type-relevant-form/type-relevant-form.component';
 import { TYPERELEVANT_COLUMS } from './type-relevant-columns';
 

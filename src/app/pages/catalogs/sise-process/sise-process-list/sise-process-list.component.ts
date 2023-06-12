@@ -12,7 +12,6 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { SiseProcessService } from '../../../../core/services/catalogs/sise-process.service';
 import { SiseProcessFormComponent } from '../sise-process-form/sise-process-form.component';
 import { SISI_PROCESS_COLUMNS } from './sisi-process-columns';
-import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-sise-process-list',

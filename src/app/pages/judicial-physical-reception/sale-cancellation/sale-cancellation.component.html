@@ -131,7 +131,7 @@
       <div class="row">
         <div class="col-md-12">
           <div class="row">
-            <div class="col-md-1">
+            <div class="col">
               <form-field [control]="form.get('acta')">
                 <ngx-select
                   id="acta"
@@ -297,7 +297,7 @@
                 <input
                   bsDatepicker
                   [bsConfig]="{
-                    dateInputFormat: 'DD-MM-YYYY hh:mm',
+                    dateInputFormat: 'DD/MM/YYYY hh:mm',
                     displayOneMonthRange: true,
                     withTimepicker: true
                   }"
@@ -432,7 +432,7 @@
         [class]="loading ? 'table-loading' : 'row pt-2'"
         class="table-responsive table-bordered">
         <ng2-smart-table
-          class="col-md-12"
+          class="col-md-12 scroll-table"
           [attr.class]="'table-responsive table-bordered '"
           [settings]="settings1"
           [source]="dataGoods"
@@ -502,7 +502,7 @@
         [class]="loading ? 'table-loading' : 'row pt-2'"
         class="table-responsive">
         <ng2-smart-table
-          class="col-md-12"
+          class="col-md-12 scroll-table"
           [settings]="settings2"
           [source]="dataGoodAct"
           (userRowSelect)="selectRowGoodActa($event)"
@@ -557,7 +557,7 @@
       <div class="row">
         <div class="col-md-12">
           <div class="col-md-6">
-            <div *ngIf="isBoveda" class="row">
+            <div *ngIf="isAlmacen" class="row">
               <div class="col-md-9">
                 <form-field [control]="form.get('noAlmacen')">
                   <ngx-select
@@ -571,7 +571,7 @@
               </div>
             </div>
 
-            <!-- <div *ngIf="isAlmacen" class="row">
+            <!-- <div *ngIf="isBoveda" class="row">
               <div class="col-md-9">
                 <form-field [control]="form.get('noBoveda')">
                   <ngx-select

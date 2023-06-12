@@ -220,11 +220,7 @@ export class FlyerSubjectCatalogComponent extends BasePage implements OnInit {
     this.affairService.remove2(id, nb).subscribe({
       next: () => {
         this.getAffairAll();
-        this.alert(
-          'success',
-          'Borrado',
-          ''
-        );
+        this.alert('success', 'Borrado', '');
         this.rowSelected = false;
       },
       error: err => {

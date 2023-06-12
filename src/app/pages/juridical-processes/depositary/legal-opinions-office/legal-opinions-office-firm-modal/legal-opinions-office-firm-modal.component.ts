@@ -138,9 +138,9 @@ export class LegalOpinionsOfficeFirmModalComponent
   }
 
   close(closeEmit: boolean = false, data: any = null) {
-    if (closeEmit) {
-      this.responseFirm.emit(data); // Emmit response
-    }
+    // if (closeEmit) {
+    // }
+    this.responseFirm.emit(data); // Emmit response
     this.modalRef.hide();
   }
 
@@ -195,11 +195,11 @@ export class LegalOpinionsOfficeFirmModalComponent
         },
         error: error => {
           console.log(error);
-          this.errorFirm.emit(true);
+          // this.errorFirm.emit(true);
           this.alert(
             'error',
             'Ocurrió un error al Firmar el Dictamen ',
-            error.message
+            error.error.message
           ),
             console.log('Error en el firmante', error.error);
         },

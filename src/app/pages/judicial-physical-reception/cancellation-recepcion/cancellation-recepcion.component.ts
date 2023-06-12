@@ -15,6 +15,7 @@ import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { IHistoryGood } from 'src/app/core/models/administrative-processes/history-good.model';
 import {
   IPAAbrirActasPrograma,
   IPACambioStatus,
@@ -32,6 +33,7 @@ import { DocumentsService } from 'src/app/core/services/ms-documents/documents.s
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { HistoryGoodService } from 'src/app/core/services/ms-history-good/history-good.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import { ParametersService } from 'src/app/core/services/ms-parametergood/parameters.service';
 import { ProceedingsService } from 'src/app/core/services/ms-proceedings';
@@ -277,7 +279,8 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
     private serviceProgrammingGood: ProgrammingGoodService,
     private serviceProceeding: ProceedingsService,
     private serviceUser: UsersService,
-    private serviceNotification: NotificationService
+    private serviceNotification: NotificationService,
+    private serviceHistoryGood: HistoryGoodService
   ) {
     super();
   }
@@ -857,7 +860,6 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
       .subscribe({
         next: async (res: any) => {
           if (res.data.length > 0) {
-            this.form.get('ident').setValue('ADM');
             const newData = await Promise.all(
               res.data.map(async (e: any) => {
                 let disponible: boolean;
@@ -1217,6 +1219,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
     this.form.get('averPrev').reset();
     this.form.get('causaPenal').reset();
     this.form.get('statusProceeding').reset();
+    this.form.get('acta2').reset();
 
     this.limitDataGoodsAct = new FormControl(10);
     this.limitDataGoods = new FormControl(10);
@@ -1256,6 +1259,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
     this.form.get('recibe').reset();
     this.form.get('admin').reset();
     this.form.get('folio').reset();
+    this.form.get('folioEscaneo').reset();
     this.goodData = [];
     this.dataGoodAct.load(this.goodData);
   }
@@ -1424,7 +1428,6 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
     //Validar Acta 2
     if (countAct == 8) {
       this.act2Valid = true;
-      this.searchKeyProceeding();
     } else {
       this.act2Valid = false;
     }
@@ -1602,37 +1605,119 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                                         .getItem('username')
                                         .toLocaleUpperCase(),
                               };
-                            this.serviceDetailProc
-                              .addGoodToProceedings(newDetailProceeding)
+
+                            const modelHistoryGood: IHistoryGood = {
+                              propertyNum: this.selectData.goodId,
+                              status: this.selectData.status,
+                              changeDate: new Date().toISOString(),
+                              userChange:
+                                localStorage.getItem('username') ==
+                                'sigebiadmon'
+                                  ? localStorage.getItem('username')
+                                  : localStorage
+                                      .getItem('username')
+                                      .toLocaleUpperCase(),
+                              statusChangeProgram: 'FACTREFACTAVENT',
+                              reasonForChange:
+                                'Estatus actual al agregar a acta',
+                              extDomProcess: this.selectData.extDomProcess,
+                            };
+
+                            this.serviceHistoryGood
+                              .create(modelHistoryGood)
                               .subscribe(
                                 res => {
-                                  this.dataGoods.load(
-                                    this.dataGoods['data'].map((e: any) => {
-                                      if (e.id == this.selectData.id) {
-                                        return { ...e, avalaible: false };
-                                      } else {
-                                        return e;
+                                  this.serviceDetailProc
+                                    .addGoodToProceedings(newDetailProceeding)
+                                    .subscribe(
+                                      res => {
+                                        this.dataGoods.load(
+                                          this.dataGoods['data'].map(
+                                            (e: any) => {
+                                              if (e.id == this.selectData.id) {
+                                                return {
+                                                  ...e,
+                                                  avalaible: false,
+                                                };
+                                              } else {
+                                                return e;
+                                              }
+                                            }
+                                          )
+                                        );
+                                        this.goodData.push({
+                                          ...this.selectData,
+                                          exchangeValue: 1,
+                                        });
+                                        /* this.dataGoodAct.load(this.goodData); */
+                                        this.getGoodsActFn();
+                                        this.getGoodsFn();
+                                        this.saveDataAct.push({
+                                          ...this.selectData,
+                                        });
+                                        this.selectData = null;
+                                      },
+                                      err => {
+                                        this.alert(
+                                          'error',
+                                          'Ocurrió un error inesperado al intentar mover el bien',
+                                          'Ocurrió un error inesperado al intentar mover el bien. Por favor intentelo nuevamente'
+                                        );
                                       }
-                                    })
-                                  );
-                                  this.goodData.push({
-                                    ...this.selectData,
-                                    exchangeValue: 1,
-                                  });
-                                  /* this.dataGoodAct.load(this.goodData); */
-                                  this.getGoodsActFn();
-                                  this.getGoodsFn();
-                                  this.saveDataAct.push({
-                                    ...this.selectData,
-                                  });
-                                  this.selectData = null;
+                                    );
                                 },
                                 err => {
-                                  this.alert(
-                                    'error',
-                                    'Ocurrió un error inesperado al intentar mover el bien',
-                                    'Ocurrió un error inesperado al intentar mover el bien. Por favor intentelo nuevamente'
-                                  );
+                                  if (
+                                    err.error.message ==
+                                    'duplicate key value violates unique constraint "his_est_bie_pk"'
+                                  ) {
+                                    this.serviceDetailProc
+                                      .addGoodToProceedings(newDetailProceeding)
+                                      .subscribe(
+                                        res => {
+                                          this.dataGoods.load(
+                                            this.dataGoods['data'].map(
+                                              (e: any) => {
+                                                if (
+                                                  e.id == this.selectData.id
+                                                ) {
+                                                  return {
+                                                    ...e,
+                                                    avalaible: false,
+                                                  };
+                                                } else {
+                                                  return e;
+                                                }
+                                              }
+                                            )
+                                          );
+                                          this.goodData.push({
+                                            ...this.selectData,
+                                            exchangeValue: 1,
+                                          });
+                                          /* this.dataGoodAct.load(this.goodData); */
+                                          this.getGoodsActFn();
+                                          this.getGoodsFn();
+                                          this.saveDataAct.push({
+                                            ...this.selectData,
+                                          });
+                                          this.selectData = null;
+                                        },
+                                        err => {
+                                          this.alert(
+                                            'error',
+                                            'Ocurrió un error inesperado al intentar mover el bien',
+                                            'Ocurrió un error inesperado al intentar mover el bien. Por favor intentelo nuevamente'
+                                          );
+                                        }
+                                      );
+                                  } else {
+                                    this.alert(
+                                      'error',
+                                      'Se presentó un error inesperado',
+                                      ''
+                                    );
+                                  }
                                 }
                               );
                           },
@@ -1824,39 +1909,6 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
           this.scanStatus = false;
         }
       );
-  }
-
-  searchKeyProceeding() {
-    const acta2Input = this.form.get('folio');
-    console.log(this.act2Valid);
-    console.log(
-      !['CERRADA', 'ABIERTA', 'CERRADO'].includes(
-        this.form.get('statusProceeding').value
-      )
-    );
-    if (
-      this.act2Valid &&
-      !['CERRADA', 'ABIERTA', 'CERRADO'].includes(
-        this.form.get('statusProceeding').value
-      )
-    ) {
-      const paramsF = new FilterParams();
-      paramsF.addFilter('keysProceedings', this.form.get('acta2').value);
-      this.serviceProcVal.getByFilter(paramsF.getParams()).subscribe(
-        res => {
-          console.log(res.data[0]['typeProceedings']);
-          this.form.get('folio').setValue(this.form.get('folio').value + 1);
-          this.alert(
-            'warning',
-            'El acta ya existe',
-            'El acta registrado ya exista, por favor modifique el número de folio o revise los datos.'
-          );
-        },
-        err => {
-          console.log('No existe');
-        }
-      );
-    }
   }
 
   newOpenProceeding() {
@@ -2190,28 +2242,33 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
       paramsF.addFilter('keysProceedings', this.form.get('acta2').value);
       this.serviceProcVal.getByFilter(paramsF.getParams()).subscribe(
         res => {
-          const modelEdit: IProccedingsDeliveryReception = {
-            observations: this.form.get('observaciones').value,
-            witness1: this.form.get('autoridadCancela').value,
-            witness2: this.form.get('elabora').value,
-            address: this.form.get('direccion').value,
-            captureDate: format(new Date(), 'yyyy-MM,dd HH:mm'),
-            universalFolio: this.form.get('folioEscaneo').value,
-          };
-          const resData = JSON.parse(JSON.stringify(res.data[0]));
-          console.log(modelEdit);
-          this.serviceProcVal.editProceeding(resData.id, modelEdit).subscribe(
-            res => {
-              this.alert('success', 'Se modificaron los datos del acta', '');
-            },
-            err => {
-              this.alert(
-                'error',
-                'Se presento un error inesperado',
-                'No se puedo guardar el acta'
-              );
-            }
-          );
+          if (this.form.get('statusProceeding').value != null) {
+            const modelEdit: IProccedingsDeliveryReception = {
+              observations: this.form.get('observaciones').value,
+              witness1: this.form.get('autoridadCancela').value,
+              witness2: this.form.get('elabora').value,
+              address: this.form.get('direccion').value,
+              captureDate: format(new Date(), 'yyyy-MM,dd HH:mm'),
+              universalFolio: this.form.get('folioEscaneo').value,
+            };
+            const resData = JSON.parse(JSON.stringify(res.data[0]));
+            console.log(modelEdit);
+            this.serviceProcVal.editProceeding(resData.id, modelEdit).subscribe(
+              res => {
+                this.alert('success', 'Se modificaron los datos del acta', '');
+              },
+              err => {
+                this.alert(
+                  'error',
+                  'Se presento un error inesperado',
+                  'No se puedo guardar el acta'
+                );
+              }
+            );
+          } else {
+            this.alert('warning', 'El número de acta existe', '');
+            this.form.get('folio').setValue(this.form.get('folio').value + 1);
+          }
         },
         err => {
           console.log(this.form.get('acta').value.split('/')[0]);
@@ -2273,10 +2330,10 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
 
           this.serviceProcVal.postProceeding(newProceeding).subscribe(
             res => {
+              console.log(res);
               this.initialBool = true;
               this.form.get('statusProceeding').setValue('ABIERTA');
               this.form.get('fecCaptura').setValue(new Date());
-              console.log(res);
               this.proceedingData.push(res);
               this.navigateProceedings = true;
               this.idProceeding = JSON.parse(JSON.stringify(res)).id;
@@ -2383,7 +2440,8 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                               this.form
                                 .get('statusProceeding')
                                 .setValue('ABIERTA');
-                              this.inputsInProceedingClose();
+                              this.getGoodsActFn();
+                              this.getGoodsFn();
                               this.reopening = true;
                               this.inputsReopenProceeding();
                               this.saveDataAct = [];
@@ -2431,7 +2489,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                 this.alert(
                   'error',
                   'No se pudo abrir el acta',
-                  'Ocurrió un error que no permite abrir el acta'
+                  err.error.message
                 );
               }
             );
