@@ -35,4 +35,5 @@ export enum DictationEndpoints {
 
   DEl1 = 'application/get-v-elimina',
   DEL2 = 'application/get-v-valid',
+  AplicationLaunchReport = 'application/pupLanceReport',
 }
