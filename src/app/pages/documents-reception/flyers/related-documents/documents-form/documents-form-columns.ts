@@ -1,5 +1,5 @@
 export const DOCUMENTS_COLUMNS = {
-  cve_documento: {
+  cveDocument: {
     title: 'Documento',
     type: 'string',
     sort: false,

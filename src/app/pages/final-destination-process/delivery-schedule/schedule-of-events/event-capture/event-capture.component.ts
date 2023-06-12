@@ -10,6 +10,7 @@ import {
 } from '@angular/core';
 import { FormBuilder, FormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { format } from 'date-fns';
 import {
   BehaviorSubject,
   catchError,
@@ -176,6 +177,7 @@ export class EventCaptureComponent
 {
   @ViewChildren(SmartDateInputHeaderDirective, { read: ElementRef })
   private itemsElements: QueryList<ElementRef>;
+  _today = new Date();
   saveLoading = false;
   eventTypes = new DefaultSelect([
     { area_tramite: 'OP', descripcion: 'Oficialía de partes' },
@@ -281,6 +283,8 @@ export class EventCaptureComponent
   selectedProceedings: IGoodIndicator[] = [];
 
   allSelected = false;
+
+  flag = false;
 
   constructor(
     private fb: FormBuilder,
@@ -501,6 +505,10 @@ export class EventCaptureComponent
   }
 
   async saveProceeding() {
+    if (!this.registerControls.captureDate.valid) {
+      this.alert('error', 'Error', 'Verifica el formulario');
+      return;
+    }
     if (this.proceeding.id) {
       if (this.proceeding.statusProceedings.includes('CERRAD')) {
         this.alert('error', 'Error', 'El programa esta cerrado');
@@ -576,8 +584,8 @@ export class EventCaptureComponent
     const numDelegation1 = await this.getUserDelegation();
     const dataToSave = {
       keysProceedings,
-      elaborationDate,
-      captureDate,
+      elaborationDate: format(elaborationDate, 'yyyy-MM-dd HH:mm:ss'),
+      captureDate: format(captureDate, 'yyyy-MM-dd HH:mm:ss'),
       responsible,
       numFile: formValue.numFile,
       statusProceedings,
@@ -606,24 +614,39 @@ export class EventCaptureComponent
   }
 
   changeStartDate(start: Date) {
+    this.endDateCtrl.clearValidators();
+    this.startDateCtrl.addValidators(minDate(new Date()));
     if (start) {
       this.endDateCtrl.addValidators(minDate(start));
     } else {
       this.endDateCtrl.clearValidators();
     }
+    this.endDateCtrl.updateValueAndValidity();
+    this.startDateCtrl.updateValueAndValidity();
   }
 
   changeEndDate(end: Date) {
+    this.startDateCtrl.clearValidators();
     if (end) {
       this.startDateCtrl.addValidators(maxDate(end));
+      this.startDateCtrl.addValidators(minDate(new Date()));
     } else {
       this.startDateCtrl.clearValidators();
+      this.startDateCtrl.addValidators(minDate(new Date()));
     }
-
-    this.startDateCtrl.addValidators(minDate(new Date()));
+    this.startDateCtrl.updateValueAndValidity();
+    this.endDateCtrl.updateValueAndValidity();
   }
 
   validateDates() {
+    if (!this.proceeding.id) {
+      this.alert('error', 'Error', 'No hay un programa');
+      return;
+    }
+    if (this.detail.length == 0) {
+      this.alert('error', 'Error', 'No hay bienes agregados');
+      return;
+    }
     if (this.proceeding?.statusProceedings?.includes('CERRAD')) {
       this.alert('error', 'Error', 'El programa esta cerrado');
       return;
@@ -891,15 +914,17 @@ export class EventCaptureComponent
       transmitter,
       authority,
     } = this.formSiab.value;
+    console.log({ delegation });
     const body = {
       startDate: initialDate,
       endDate: finalDate,
       processingArea: typeEvent,
-      steeringWheel: flyer,
-      proceedings: expedient,
-      opinion: dictumCve,
-      coordination: delegation.join(','),
-      program: programed,
+      steeringWheel: flyer ? `${flyer}` : null,
+      proceedings: expedient ? `${expedient}` : null,
+      opinion: dictumCve ? `'${dictumCve}'` : null,
+      coordination:
+        delegation.length > 0 ? delegation.map(d => d.id).join(',') : null,
+      program: programed ? `${programed}` : null,
       cdonacKey: cdonacCve,
       idLot: lot,
       doneeNumber: donatNumber,
@@ -908,9 +933,9 @@ export class EventCaptureComponent
       storeNumber: warehouse,
       iniAutDate: autoInitialDate,
       endAutDate: autoFinalDate,
-      transferee: transfer.join(','),
-      station: transmitter.join(','),
-      authority: authority.join(','),
+      transferee: transfer.length > 0 ? transfer.join(',') : null,
+      station: transmitter.length > 0 ? `(${transmitter.join('),(')})` : null,
+      authority: authority.length > 0 ? `(${authority.join('),(')})` : null,
     };
 
     this.fIndicaService.pupGenerateWhere(body).subscribe(res => {
@@ -927,12 +952,12 @@ export class EventCaptureComponent
       .pupUpdate(typeEvent.value, expedient, this.proceeding.id)
       .subscribe({
         next: res => {
-          if (res.data.length > 0) {
+          if (res.data?.registros > 0) {
             this.alert('success', 'Bienes cargados correctamente', '');
 
             this.formSiab = this.fb.group(new CaptureEventSiabForm());
           } else {
-            this.alert('info', 'No se encontraron bienes para agregar', '');
+            this.alert('warning', 'No se encontraron bienes para agregar', '');
           }
           this.loading = false;
           const params = new FilterParams();
@@ -1068,11 +1093,11 @@ export class EventCaptureComponent
         this.global.cons = cons;
         folio.setValue(this.global.cons);
       } else {
+        this.global.regi = area.value;
+        const indicator = await this.getProceedingType();
+        const _folio = await this.getFolio(indicator.certificateType);
+        this.global.cons = `${_folio}`.padStart(5, '0');
       }
-      this.global.regi = area.value;
-      const indicator = await this.getProceedingType();
-      const _folio = await this.getFolio(indicator.certificateType);
-      this.global.cons = `${_folio}`.padStart(5, '0');
     }
     if (!this.global.type) {
       this.global.type = 'RT';
@@ -1845,6 +1870,8 @@ export class EventCaptureComponent
     let n_CONT: number = 0;
     let C_DATVAL: any;
 
+    console.log('Bienes ...', this.detail);
+
     if (this.detail.length <= 0) {
       this.alert('info', 'No se tienen bienes ingresados.', '');
       return;
@@ -2157,11 +2184,12 @@ export class EventCaptureComponent
     console.log('Este es el response que necesito', response);
     if (response.statusCode !== 200) {
       console.log(response.error.message);
-
       this.alert(
         'error',
         'Ha ocurrido un error',
-        response.message[0] ? response.message[0] : response.error.message
+        response.error.message
+          ? response.error.message
+          : 'No se ha podido abrir la programación'
       );
       return;
     }
@@ -2180,7 +2208,7 @@ export class EventCaptureComponent
       };
       this.returPreviosStatus(model);
       //////////////////////////////// aqui va el endpoint esperado por EDWIN
-      ///await this.insertsAndUpdate();
+      await this.insertsAndUpdate(this.proceeding.id);
       ////////////////////////////////////////
       if (this.global.paperworkArea === 'RF' && n_CONT > 0) {
         ///////////// Hacer inset a esta tabla ACTAS_CTL_NOTIF_SSF3
@@ -2198,12 +2226,12 @@ export class EventCaptureComponent
     }
   }
 
-  insertsAndUpdate(no_Acta: string | number) {
+  insertsAndUpdate(actNumber: string | number) {
     const model = {
-      no_Acta,
+      actNumber,
     };
     return new Promise((res, _rej) => {
-      this.proceedingsService.insertsAndUpdatesValmotosOne(model).subscribe({
+      this.eventProgrammingService.massiveDeleteAndUpdate(model).subscribe({
         next: resp => res(resp.message),
         error: err => res(err.error.message),
       });
@@ -2303,17 +2331,14 @@ export class EventCaptureComponent
           if (this.global.paperworkArea === 'RF' && n_CONT > 0) {
             await this.closedProgramming(n_CONT);
           } else {
-            await this.alertQuestion(
+            const response = await this.alertQuestion(
               'question',
               'Cerrar programación',
               '¿Seguro que desea realizar el cierre de esta Programación ?'
-            )
-              .then(async question => {
-                if (question.isConfirmed) {
-                  await this.closedProgramming(n_CONT);
-                }
-              })
-              .catch(error => console.error(error));
+            );
+            if (response.isConfirmed) {
+              await this.closedProgramming(n_CONT);
+            }
           }
         } else {
           this.global.paperworkArea = this.originalType;
@@ -2342,6 +2367,7 @@ export class EventCaptureComponent
         .PaCierreInicialProgr(no_Acta, lv_PANTALLA, blkCtrlArea)
         .subscribe({
           next: resp => {
+            console.log(resp.message[0]);
             res(resp.message[0]);
           },
           error: err => res('Error'),
@@ -2368,7 +2394,7 @@ export class EventCaptureComponent
       this.alert(
         'error',
         'Ha ocurrido un error',
-        'La Programación no ha sido cerrada, problamente los bienes no tienen un estatus válido'
+        'La Programación no ha sido cerrada, probableamente los bienes no tienen un estatus válido'
       );
     } else {
       if (this.global.paperworkArea === 'RF' && n_CONT > 0) {

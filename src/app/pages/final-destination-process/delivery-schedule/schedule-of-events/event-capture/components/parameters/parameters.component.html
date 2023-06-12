@@ -184,6 +184,8 @@
       <ngx-select
         [data]="transmitters"
         [multiple]="true"
+        [class.disabled]="formSiab.get('transfer').value?.length == 0"
+        [readonly]="formSiab.get('transfer').value?.length == 0"
         (change)="transmitterChange()"
         (fetchByParamsItems)="getTransmitters($event)"
         [fetchByList]="false"
@@ -216,6 +218,8 @@
       <ngx-select
         [data]="authorities"
         [form]="formSiab"
+        [class.disabled]="formSiab.get('transmitter').value?.length == 0"
+        [readonly]="formSiab.get('transmitter').value?.length == 0"
         [multiple]="true"
         (fetchByParamsItems)="getAuthorities($event)"
         [fetchByList]="false"

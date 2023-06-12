@@ -3,11 +3,14 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 
+import { HttpParams } from '@angular/common/http';
 import { BehaviorSubject } from 'rxjs';
 import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
+import { DictationXGood1Service } from 'src/app/core/services/ms-dictation/r-dictation-doc.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DOCUMENTS_COLUMNS } from './documents-form-columns';
+
 @Component({
   selector: 'app-documents-form',
   templateUrl: './documents-form.component.html',
@@ -27,7 +30,8 @@ export class DocumentsFormComponent extends BasePage implements OnInit {
     private modalRef: BsModalRef,
     private fb: FormBuilder,
     private dictationService: DictationService,
-    private readonly documentService: DocumentsService
+    private readonly documentService: DocumentsService,
+    private DictationXGood1Service: DictationXGood1Service
   ) {
     super();
     this.settings.columns = DOCUMENTS_COLUMNS;
@@ -40,6 +44,7 @@ export class DocumentsFormComponent extends BasePage implements OnInit {
   }
 
   prepareForm() {
+    console.log('TESTDATASELECTOR', this.fb);
     this.documentForm = this.fb.group({
       id: [null],
       description: [
@@ -99,14 +104,35 @@ export class DocumentsFormComponent extends BasePage implements OnInit {
 
   getDocumentsbyDictation() {
     this.loading = true;
-    let num = this.dictationService.goodNumber;
-    this.documentService.getByGoodId(num).subscribe({
-      next: data => {
-        this.documents = data.data;
-        this.totalItems = data.count;
+    let params = new HttpParams();
+
+    if (this.dictationService.typeDictamination.typeDictum === 'PROCEDENCIA') {
+      params = params
+        .set('filter.crime', this.dictationService.crime)
+        .set(
+          'filter.typeDictum',
+          this.dictationService.typeDictamination.typeDictum
+        );
+    }
+    if (this.dictationService.typeDictamination.typeDictum !== 'PROCEDENCIA') {
+      params = params.set(
+        'filter.typeDictum',
+        this.dictationService.typeDictamination.typeDictum
+      );
+    }
+
+    this.DictationXGood1Service.getAll(params).subscribe({
+      next: (resp: any) => {
+        const data = resp.data.map((item: any) => {
+          item.descripcion = item.documentDetails.description;
+          return item;
+        });
+        this.documents = data;
         this.loading = false;
       },
-      error: error => (this.loading = false),
+      error: error => {
+        this.loading = false;
+      },
     });
   }
 }
