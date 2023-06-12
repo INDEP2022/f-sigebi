@@ -58,6 +58,11 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
   count = 0;
   delegacion: number;
   subdelegacion: number;
+
+  get data() {
+    return this.service.data;
+  }
+
   get good() {
     return this.service.good;
   }
@@ -361,13 +366,13 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
   }
 
   async save() {
-    console.log(this.service.data);
+    console.log(this.data);
     let body: any = {
       id: this.good.id,
       goodId: this.good.goodId,
     };
     let tableValid = true;
-    this.service.data.forEach(row => {
+    this.data.forEach(row => {
       if (row.required && !row.value) {
         this.onLoadToast(
           'error',
@@ -380,7 +385,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
       body[row.column] = row.value;
     });
     if (!tableValid) {
-      console.log(this.service.data);
+      console.log(this.data);
       return;
     }
     this.good.description;
@@ -394,9 +399,15 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     body['appraisalVigDate'] = firstFormatDateToSecondFormatDate(
       this.goodDateVigency.value
     );
+    body['cveCurrencyAppraisal'] = this.good.cveCurrencyAppraisal;
     body['observationss'] = this.goodObservations.value;
     if (this.goodAppraisal2.value) {
       body['appraisal'] = 'Y';
+    }
+    if (this.type.value + '' === '6' && this.subtype.value + '' === '1') {
+      if (!this.good.val14) {
+        body.val14 = 'S';
+      }
     }
     console.log(body);
     await this.preUpdate();
@@ -491,6 +502,12 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     }
   }
 
+  nval(column: number) {
+    const valTemp = this.data.find(row => row.column === 'val' + column);
+    const good: any = this.good;
+    return valTemp ? valTemp.value : good ? good['val' + column] ?? null : null;
+  }
+
   // private async
 
   async postQuery() {
@@ -545,20 +562,19 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
       vn_impor: number,
       lbln_encontro: boolean,
       lbln_conciliado: string;
-
-    vn_simb = this.good.val5.indexOf('/');
+    vn_simb = this.nval(5).indexOf('/');
     if (vn_simb > 0) {
-      vf_fecha = firstFormatDate(new Date(this.good.val5));
+      vf_fecha = firstFormatDate(new Date(this.nval(5)));
     } else {
-      vn_simb = this.good.val5.indexOf('-');
+      vn_simb = this.nval(5).indexOf('-');
       if (vn_simb > 0) {
-        vf_fecha = secondFormatDate(new Date(this.good.val5));
+        vf_fecha = secondFormatDate(new Date(this.nval(5)));
       } else {
-        vf_fecha = thirdFormatDate(new Date(this.good.val5));
+        vf_fecha = thirdFormatDate(new Date(this.nval(5)));
       }
     }
     try {
-      vn_impor = +this.good.val2;
+      vn_impor = +this.nval(2);
     } catch (x) {
       this.onLoadToast(
         'error',
@@ -573,9 +589,9 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
       this.comerDetailService.faCoinciliationGood({
         goodNumber: this.numberGood.value,
         expedientNumber: this.good.fileNumber,
-        coinKey: this.good.val1,
-        bankKey: this.good.val4,
-        accountKey: this.good.val6,
+        coinKey: this.nval(1),
+        bankKey: this.nval(4),
+        accountKey: this.nval(6),
         deposit: vn_impor,
         vf_fecha,
         update: 'S',
@@ -589,6 +605,49 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
         'Conciliación',
         'No se encontró un movimiento relacionado'
       );
+    }
+    return true;
+  }
+
+  private fillValInNumerario(column: number = 2, type: number = 0) {
+    let index = this.data.findIndex(row => row.column === 'val' + column);
+    if (index > -1) {
+      this.data[index].value =
+        this.pufQuitaCero((this.data[index] + '').replace(',', '.')) + '';
+      let vnPunto = (this.data[index] + '').indexOf('.');
+      if (vnPunto != 0) {
+        try {
+          if (type === 0) {
+            this.goodAppraisal.setValue(this.data[index].value);
+          } else {
+            this.numberClassification.setValue(
+              this.getNewApraisedValueForVnValores(
+                vnPunto,
+                this.data[index].value
+              )
+            );
+          }
+          return true;
+        } catch (x) {
+          this.onLoadToast(
+            'error',
+            'Verifique el valor númerico del campo ' + column
+          );
+          return false;
+        }
+      } else {
+        try {
+          this.goodAppraisal.setValue(this.data[index].value);
+          return true;
+          // this.good.appraisedValue = this.good.val2;
+        } catch (x) {
+          this.onLoadToast(
+            'error',
+            'Verifique el valor númerico del campo ' + column
+          );
+          return false;
+        }
+      }
     }
     return true;
   }
@@ -614,7 +673,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
       return false;
     }
     const data = parameters ? parameters.data : [];
-    const vn_NumEfe = data.find(item => item.id === 'CLASINUMER')?.initialValue;
+    // const vn_NumEfe = data.find(item => item.id === 'CLASINUMER')?.initialValue;
     const vn_NumFis = data.find(item => item.id === 'CLASINUMEF')?.initialValue;
     const vn_OtrMon = data.find(item => item.id === 'CLASIOTMON')?.initialValue;
     const vn_Valores = data.find(
@@ -641,76 +700,26 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
           return false;
         }
       }
-      this.good.val2 =
-        this.pufQuitaCero((this.good.val2 + '').replace(',', '.')) + '';
-      let vnPunto = (this.good.val2 + '').indexOf('.');
-      if (vnPunto != 0) {
-        try {
-          this.goodAppraisal.setValue(+this.good.val2 + '');
-        } catch (x) {
-          this.onLoadToast('error', 'Verifique el valor númerico del campo 2');
-          return false;
-        }
-      } else {
-        try {
-          this.goodAppraisal.setValue(this.good.val2);
-          // this.good.appraisedValue = this.good.val2;
-        } catch (x) {
-          this.onLoadToast('error', 'Verifique el valor númerico del campo 2');
-          return false;
-        }
+      if (!this.fillValInNumerario(2)) {
+        return false;
       }
+
+      const val3 = this.data.find(item => item.column === 'val3');
       if (this.numberClassification.value === vn_NumFis) {
-        this.good.cveCurrencyAppraisal = this.good.val3;
+        this.good.cveCurrencyAppraisal = val3 ? val3.value : null;
       } else {
-        this.good.cveCurrencyAppraisal = this.good.val1;
+        this.good.cveCurrencyAppraisal = this.nval(1);
       }
     } else if (this.numberClassification.value === vn_Valores) {
-      this.good.val3 =
-        this.pufQuitaCero((this.good.val2 + '').replace(',', '.')) + '';
-      let vnPunto = (this.good.val3 + '').indexOf('.');
-      if (vnPunto != 0) {
-        try {
-          this.numberClassification.setValue(
-            this.getNewApraisedValueForVnValores(vnPunto, this.good.val3)
-          );
-        } catch (x) {
-          this.onLoadToast('error', 'Verifique el valor númerico del campo 3');
-          return false;
-        }
-      } else {
-        try {
-          this.goodAppraisal.setValue(this.good.val3);
-          // this.good.appraisedValue = this.good.val3;
-        } catch (x) {
-          this.onLoadToast('error', 'Verifique el valor númerico del campo 3');
-          return false;
-        }
+      if (!this.fillValInNumerario(3, 1)) {
+        return false;
       }
-      this.good.cveCurrencyAppraisal = this.good.val2;
+      this.good.cveCurrencyAppraisal = this.nval(2);
     } else if (this.numberClassification.value === vn_Ctas) {
-      this.good.val7 =
-        this.pufQuitaCero((this.good.val7 + '').replace(',', '.')) + '';
-      let vnPunto = (this.good.val7 + '').indexOf('.');
-      if (vnPunto != 0) {
-        try {
-          this.numberClassification.setValue(
-            this.getNewApraisedValueForVnValores(vnPunto, this.good.val7)
-          );
-        } catch (x) {
-          this.onLoadToast('error', 'Verifique el valor númerico del campo 7');
-          return false;
-        }
-      } else {
-        try {
-          this.goodAppraisal.setValue(this.good.val7);
-          // this.good.appraisedValue = this.good.val3;
-        } catch (x) {
-          this.onLoadToast('error', 'Verifique el valor númerico del campo 7');
-          return false;
-        }
+      if (!this.fillValInNumerario(7, 1)) {
+        return false;
       }
-      this.good.cveCurrencyAppraisal = this.good.val6;
+      this.good.cveCurrencyAppraisal = this.nval(6);
     }
     return true;
   }
@@ -735,7 +744,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
         return false;
       }
       if (this.validationTypeSubtype()) {
-        if (this.good.val14 === 'S') {
+        if (this.nval(14) === 'S') {
           if (this.goodAppraisal.value === null) {
             this.onLoadToast(
               'error',
@@ -853,7 +862,6 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
           } else {
             this.goodAppraisal2.setValue(true);
             this.totalItems = 0;
-            this.loading = false;
           }
           // this.getTDicta();
           await this.postQuery();
@@ -895,15 +903,15 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
       .pipe(map(x => (x.data ? x.data : [])));
   }
 
-  private async postRecord(postQuery = false) {
-    // debugger;
+  // debugger;
+  private async postRecord(isPostQuery = false) {
     const filterParams = new FilterParams();
     filterParams.addFilter('typeNumber', 'CARBIEN');
-    filterParams.addFilter('user', 'DR_SIGEBI');
-    // filterParams.addFilter(
-    //   'user',
-    //   localStorage.getItem('username').toUpperCase()
-    // );
+    // filterParams.addFilter('user', 'DR_SIGEBI');
+    filterParams.addFilter(
+      'user',
+      localStorage.getItem('username').toUpperCase()
+    );
     filterParams.addFilter('reading', 'S');
     // filterParams.addFilter()
     const rdicta = await firstValueFrom(
@@ -914,7 +922,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     if (rdicta && rdicta.count && rdicta.count > 0) {
       this.haveTdictaUser = true;
     }
-    if (postQuery) {
+    if (isPostQuery) {
       this.fillAvaluo();
     }
     await this.getValidations();

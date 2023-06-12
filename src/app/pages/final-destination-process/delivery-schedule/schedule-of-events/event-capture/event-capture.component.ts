@@ -1866,6 +1866,8 @@ export class EventCaptureComponent
     let n_CONT: number = 0;
     let C_DATVAL: any;
 
+    console.log('Bienes ...', this.detail);
+
     if (this.detail.length <= 0) {
       this.alert('info', 'No se tienen bienes ingresados.', '');
       return;
@@ -2178,11 +2180,12 @@ export class EventCaptureComponent
     console.log('Este es el response que necesito', response);
     if (response.statusCode !== 200) {
       console.log(response.error.message);
-
       this.alert(
         'error',
         'Ha ocurrido un error',
-        response.message[0] ? response.message[0] : response.error.message
+        response.error.message
+          ? response.error.message
+          : 'No se ha podido abrir la programación'
       );
       return;
     }
@@ -2201,7 +2204,7 @@ export class EventCaptureComponent
       };
       this.returPreviosStatus(model);
       //////////////////////////////// aqui va el endpoint esperado por EDWIN
-      ///await this.insertsAndUpdate();
+      await this.insertsAndUpdate(this.proceeding.id);
       ////////////////////////////////////////
       if (this.global.paperworkArea === 'RF' && n_CONT > 0) {
         ///////////// Hacer inset a esta tabla ACTAS_CTL_NOTIF_SSF3
@@ -2219,12 +2222,12 @@ export class EventCaptureComponent
     }
   }
 
-  insertsAndUpdate(no_Acta: string | number) {
+  insertsAndUpdate(actNumber: string | number) {
     const model = {
-      no_Acta,
+      actNumber,
     };
     return new Promise((res, _rej) => {
-      this.proceedingsService.insertsAndUpdatesValmotosOne(model).subscribe({
+      this.eventProgrammingService.massiveDeleteAndUpdate(model).subscribe({
         next: resp => res(resp.message),
         error: err => res(err.error.message),
       });
@@ -2324,17 +2327,14 @@ export class EventCaptureComponent
           if (this.global.paperworkArea === 'RF' && n_CONT > 0) {
             await this.closedProgramming(n_CONT);
           } else {
-            await this.alertQuestion(
+            const response = await this.alertQuestion(
               'question',
               'Cerrar programación',
               '¿Seguro que desea realizar el cierre de esta Programación ?'
-            )
-              .then(async question => {
-                if (question.isConfirmed) {
-                  await this.closedProgramming(n_CONT);
-                }
-              })
-              .catch(error => console.error(error));
+            );
+            if (response.isConfirmed) {
+              await this.closedProgramming(n_CONT);
+            }
           }
         } else {
           this.global.paperworkArea = this.originalType;
@@ -2363,6 +2363,7 @@ export class EventCaptureComponent
         .PaCierreInicialProgr(no_Acta, lv_PANTALLA, blkCtrlArea)
         .subscribe({
           next: resp => {
+            console.log(resp.message[0]);
             res(resp.message[0]);
           },
           error: err => res('Error'),
@@ -2389,7 +2390,7 @@ export class EventCaptureComponent
       this.alert(
         'error',
         'Ha ocurrido un error',
-        'La Programación no ha sido cerrada, problamente los bienes no tienen un estatus válido'
+        'La Programación no ha sido cerrada, probableamente los bienes no tienen un estatus válido'
       );
     } else {
       if (this.global.paperworkArea === 'RF' && n_CONT > 0) {
