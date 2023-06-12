@@ -88,13 +88,13 @@ export class GoodTableValsComponent extends BasePage implements OnInit {
       hideSubHeader: false,
       columns: {
         attribute: {
-          title: 'Atributo',
+          title: 'ATRIBUTO',
           type: 'string',
-          sort: true,
+          sort: false,
           editable: false,
         },
         value: {
-          title: 'Valores',
+          title: 'VALORES',
           type: 'custom',
           sort: false,
           editable: false,
