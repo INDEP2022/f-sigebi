@@ -30,6 +30,7 @@
             [control]="form.get('captureDate')"
             label="Fecha Captura">
             <input
+              [minDate]="_today"
               type="text"
               class="form-control"
               bsDatepicker
@@ -279,6 +280,7 @@
           [control]="startDateCtrl"
           label="Fecha de Inicio">
           <input
+            [minDate]="_today"
             (bsValueChange)="changeStartDate($event)"
             class="form-control"
             bsDatepicker
@@ -289,6 +291,7 @@
           [control]="endDateCtrl"
           label="Fecha de Fin">
           <input
+            [minDate]="_today"
             (bsValueChange)="changeEndDate($event)"
             class="form-control"
             bsDatepicker
