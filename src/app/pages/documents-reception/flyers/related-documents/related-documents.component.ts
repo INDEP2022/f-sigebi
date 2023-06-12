@@ -67,6 +67,7 @@ import { ERROR_REPORT } from '../related-documents/utils/related-documents.messa
 import { FlyersService } from '../services/flyers.service';
 import { DocumentsFormComponent } from './documents-form/documents-form.component';
 import { ModalPersonaOficinaComponent } from './modal-persona-oficina/modal-persona-oficina.component';
+import { RelatedDocumentDesahogo } from './related-document-desahogo';
 import {
   IDataGoodsTable,
   RELATED_DOCUMENTS_COLUMNS_GOODS,
@@ -113,6 +114,7 @@ export interface IGoodJobManagement {
       }
     `,
   ],
+  providers: [RelatedDocumentDesahogo],
 })
 export class RelatedDocumentsComponent
   extends RelateDocumentsResponse
@@ -366,7 +368,8 @@ export class RelatedDocumentsComponent
     private goodHistoryService: HistoryGoodService, // protected abstract svLegalOpinionsOfficeService: LegalOpinionsOfficeService;
     protected documentsService: DocumentsService,
     protected usersService: UsersService, // protected goodProcessService: GoodprocessService,
-    private expedientService: ExpedientService
+    private expedientService: ExpedientService,
+    private relatedDocumentDesahogo: RelatedDocumentDesahogo
   ) {
     super();
     // console.log(authService.decodeToken());
@@ -3151,5 +3154,9 @@ export class RelatedDocumentsComponent
       const notifBody: any = { dictumKey: null };
       this.notificationService.update(Number(no_volante), notifBody);
     }
+  }
+
+  otro() {
+    this.relatedDocumentDesahogo.mimetodo();
   }
 }
