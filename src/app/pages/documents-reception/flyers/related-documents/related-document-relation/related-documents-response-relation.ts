@@ -3,7 +3,15 @@ import { type FormControl, type FormGroup } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { catchError, firstValueFrom, map, Observable, of, tap } from 'rxjs';
+import {
+  catchError,
+  firstValueFrom,
+  map,
+  Observable,
+  of,
+  take,
+  tap,
+} from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { showQuestion, showToast } from 'src/app/common/helpers/helpers';
 import {
@@ -15,7 +23,10 @@ import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
 import { ICity } from 'src/app/core/models/catalogs/city.model';
 import { IDepartment } from 'src/app/core/models/catalogs/department.model';
 import { type INotification } from 'src/app/core/models/ms-notification/notification.model';
-import { IMJobManagement } from 'src/app/core/models/ms-officemanagement/m-job-management.model';
+import {
+  IMJobManagement,
+  IRSender,
+} from 'src/app/core/models/ms-officemanagement/m-job-management.model';
 import { IProceduremanagement } from 'src/app/core/models/ms-proceduremanagement/ms-proceduremanagement.interface';
 import {
   IAccesTrackingXArea,
@@ -43,6 +54,7 @@ import {
   IGoodAndAvailable,
   IGoodJobManagement,
 } from '../related-documents.component';
+import { IDocumentJobManagement } from './related-documents-relation.component';
 
 export abstract class RelateDocumentsResponseRelation extends BasePage {
   protected abstract goodServices: GoodService;
@@ -71,17 +83,9 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
     /** @description no_of_gestion */
     managementNumber: FormControl;
     /** @description  destinatario*/
-    addressee: FormControl<{
-      user: number | string;
-      name: string;
-      userAndName: string;
-    }>;
+    addressee: FormControl<IRSender>;
     /** @description remitente */
-    sender: FormControl<{
-      id: number | string;
-      name: string;
-      idName: string;
-    }>; // remitente
+    sender: FormControl<IRSender>; // remitente
     /** @descripiton  cve_cargo_rem*/
     cveChargeRem: FormControl;
     /**@description DES_REMITENTE_PA */
@@ -154,8 +158,8 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
     session_state: string;
     acr: string;
     'allowed-origins': string[];
-    realm_access: import('d:/laragon/www/f-sigebi/src/app/core/models/authentication/auth.model').RealmAccessModel;
-    resource_access: import('d:/laragon/www/f-sigebi/src/app/core/models/authentication/auth.model').ResourceAccessModel;
+    realm_access: any;
+    resource_access: any;
     scope: string;
     sid: string;
     email_verified: boolean;
@@ -185,10 +189,10 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
     delegation1Number: number;
     departament1Number: number;
     lastActive: number;
-    delegation: import('d:/laragon/www/f-sigebi/src/app/core/models/catalogs/delegation.model').IDelegation;
-    subDelegation: import('d:/laragon/www/f-sigebi/src/app/core/models/catalogs/subdelegation.model').ISubdelegation;
+    delegation: any;
+    subDelegation: any;
     departament: IDepartment;
-    userDetail: import('d:/laragon/www/f-sigebi/src/app/core/models/ms-users/seg-user-non-relational.model').ISegUsersNonRelational;
+    userDetail: any;
     userAndName?: string;
   };
   getGoods1(params: ListParams) {
@@ -315,7 +319,9 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
     );
   }
 
-  getDocJobManagement(params: ListParams | null = null) {
+  getDocJobManagement(
+    params: ListParams | null = null
+  ): Observable<IListResponse<IDocumentJobManagement>> {
     if (!params) {
       params = new ListParams();
       params['filter.managementNumber'] =
@@ -589,7 +595,7 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
 
       try {
         const params = {
-          'filter.user': values.sender.id,
+          'filter.user': values.sender.usuario,
           'filter.assigned': 'S',
         };
         segAccessXAreas = (await this.getSegAccessXAreas(
@@ -597,7 +603,7 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
         )) as IAccesTrackingXArea;
 
         segUser = (await this.getSegUsers({
-          'filter.user': values.sender.id,
+          'filter.user': values.sender.usuario,
         })) as IUsersTracking;
       } catch (ex) {
         this.alert(
@@ -650,11 +656,6 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
             department.depDelegation = _department.depDelegation;
           }
         } else {
-          this.alert(
-            'error',
-            'Error',
-            'No se localizó la dependencia de la persona que autoriza.'
-          );
           throw new Error(
             'No se localizó la dependencia de la persona que autoriza.'
           );
@@ -688,6 +689,10 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
     const newRows: IGoodJobManagement[] = [];
 
     goodAvailables.forEach(item => {
+      const existRow = this.dataTableGoodsJobManagement.find(
+        x => x.goodNumber == item.goodId
+      );
+      if (existRow) return;
       newRows.push({
         goodNumber: item.goodId,
         recordNumber: '',
@@ -696,13 +701,14 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
         good: item,
         goods: item.description,
       });
-
-      this.postGoodsJobManagement({
-        goodNumber: item.goodId,
-        recordNumber: '',
-        managementNumber: this.formJobManagement.value.managementNumber,
-      }).subscribe();
       item.available = false;
+      if (!this.isCreate) {
+        this.postGoodsJobManagement({
+          goodNumber: item.goodId,
+          recordNumber: '',
+          managementNumber: this.formJobManagement.value.managementNumber,
+        }).subscribe();
+      }
     });
     this.dataTableGoodsJobManagement = [
       ...this.dataTableGoodsJobManagement,
@@ -711,12 +717,15 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
   }
 
   pupAddAnyGood() {
-    console.log('pupAddAnyGood');
     const goodAvailables = this.dataTableGoods.filter(
       item => item.available && (item as any)?.['seleccion']
     );
     const newRows: IGoodJobManagement[] = [];
     goodAvailables.forEach(item => {
+      const existRow = this.dataTableGoodsJobManagement.find(
+        x => x.goodNumber == item.goodId
+      );
+      if (existRow) return;
       newRows.push({
         goodNumber: item.goodId,
         recordNumber: '',
@@ -725,12 +734,14 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
         good: item,
         goods: item.description,
       });
-      this.postGoodsJobManagement({
-        goodNumber: item.goodId,
-        recordNumber: '',
-        managementNumber: this.formJobManagement.value.managementNumber,
-      }).subscribe();
-      item.available = false;
+      if (!this.isCreate) {
+        this.postGoodsJobManagement({
+          goodNumber: item.goodId,
+          recordNumber: '',
+          managementNumber: this.formJobManagement.value.managementNumber,
+        }).subscribe();
+        item.available = false;
+      }
     });
     this.dataTableGoodsJobManagement = [
       ...this.dataTableGoodsJobManagement,
@@ -754,7 +765,7 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
         const data = res.data.map(item => {
           return {
             ...item,
-            keyDescription: `${item.key} - ${item.description}`,
+            keyDescription: `${item.key} - ${item.description} - ${item.typeDictum}`,
           };
         });
         this.dataSelectDictation = new DefaultSelect(data);
@@ -791,7 +802,7 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
         user: userInfo.preferred_username,
       });
     }
-    if (!(values.managementNumber as string).includes('?')) {
+    if (values.cveManagement.indexOf('?') === -1) {
       this.alert(
         'error',
         'Error',
@@ -809,24 +820,41 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
     }
 
     const promises = [
-      this.mJobManagementService.deleteGoodsJobManagement1(
-        values.managementNumber
+      firstValueFrom(
+        this.mJobManagementService.deleteGoodsJobManagement1(
+          values.managementNumber
+        )
       ),
-      this.mJobManagementService.deleteDocumentJobManagement2(
-        values.managementNumber
+      firstValueFrom(
+        this.mJobManagementService.deleteDocumentJobManagement2(
+          values.managementNumber
+        )
       ),
-      this.mJobManagementService.deleteMJobGestion({
-        managementNumber: values.managementNumber,
-        flyerNumber: values.flyerNumber,
-      }),
-      this.mJobManagementService.deleteCopiesJobManagement4(
-        values.managementNumber
+      firstValueFrom(
+        this.mJobManagementService.deleteMJobGestion({
+          managementNumber: values.managementNumber,
+          flyerNumber: values.flyerNumber,
+        })
       ),
-      this.notificationService.update(values.flyerNumber, {
-        dictumKey: '',
-      }),
+      firstValueFrom(
+        this.mJobManagementService.deleteCopiesJobManagement4(
+          values.managementNumber
+        )
+      ),
+      firstValueFrom(
+        this.notificationService.update(values.flyerNumber, {
+          dictumKey: '',
+        })
+      ),
     ];
-    await Promise.all(promises);
+    //
+    for (const promise of promises) {
+      try {
+        await promise;
+      } catch (ex) {
+        console.log(ex);
+      }
+    }
     this.formJobManagement.get('refersTo').setValue('D');
     this.se_refiere_a_Disabled.A = false;
     this.se_refiere_a_Disabled.B = false;
@@ -903,10 +931,12 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
     delete result.tipoTexto;
     if (values.addressee) {
       result.addressee =
-        values.jobType == 'EXTERNO' ? values.addressee : values.addressee?.user;
+        values.jobType == 'EXTERNO'
+          ? values.addressee
+          : values.addressee?.usuario;
     }
     if (values.sender) {
-      result.sender = values.sender.id;
+      result.sender = values.sender.usuario;
     }
     if (values.city) {
       result.city = values.city.id;
@@ -916,6 +946,7 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
 
   async commit() {
     if (this.isCreate) {
+      this.formJobManagement.get('jobBy').setValue('RELACIONADO');
       const values = this.getValuesNotNull();
       values.jobBy =
         this.getParamsForName('PLLAMO') == 'ABANDONO'
@@ -924,9 +955,27 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
 
       await firstValueFrom(
         this.mJobManagementService.create(values).pipe(
-          tap(() => {
+          tap(e => {
             this.isCreate = false;
-            this.formJobManagement.get('jobBy').setValue('RELACIONADO');
+            console.log({ values: e });
+            this.formJobManagement.patchValue(e as any);
+            this.dataTableGoodsJobManagement.forEach(item => {
+              this.postGoodsJobManagement({
+                goodNumber: item.goodNumber,
+                recordNumber: '',
+                managementNumber: this.formJobManagement.value.managementNumber,
+              }).subscribe();
+            });
+            this.dataTableDocuments.forEach(item => {
+              this.mJobManagementService
+                .createDocumentOficeManag({
+                  goodNumber: item.goodNumber,
+                  cveDocument: item.cveDocument,
+                  managementNumber:
+                    this.formJobManagement.value.managementNumber,
+                })
+                .subscribe();
+            });
           }),
           catchError(() => {
             showToast({
@@ -938,21 +987,22 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
           })
         )
       );
-    }
-    const values = this.getValuesNotNull();
-    if (values.cveManagement) {
-      await firstValueFrom(
-        this.mJobManagementService.update(values).pipe(
-          catchError(() => {
-            showToast({
-              icon: 'error',
-              title: 'Error',
-              text: 'Error al guardar los datos',
-            });
-            return of(null);
-          })
-        )
-      );
+    } else {
+      const values = this.getValuesNotNull();
+      if (values.cveManagement) {
+        await firstValueFrom(
+          this.mJobManagementService.update(values).pipe(
+            catchError(() => {
+              showToast({
+                icon: 'error',
+                title: 'Error',
+                text: 'Error al guardar los datos',
+              });
+              return of(null);
+            })
+          )
+        );
+      }
     }
   }
 
@@ -996,7 +1046,7 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
           .get('managementNumber')
           .setValue(sequencialOfManagement);
         if (valuesJobManagement.refersTo == 'Se refiere a todos los bienes') {
-          await this.commit();
+          //TODO: await this.commit();
           this.pupAddGood();
         }
         if (
@@ -1004,10 +1054,10 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
           'Se refiere a algun(os) bien(es) del expediente'
         ) {
           this.pupAddAnyGood();
-          await this.commit();
+          //TODO: await this.commit();
         }
         this.formVariables.get('classify').setValue(null);
-        if (this.dataTableGoodsJobManagement?.[0].classify) {
+        if (this.dataTableGoodsJobManagement?.[0]?.classify) {
           const auxArr: string[] = [];
           this.dataTableGoodsJobManagement.forEach(x => {
             if (x.classify) {
@@ -1043,7 +1093,7 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
         }
 
         this.formVariables.get('classify').setValue(null);
-        if (this.dataTableGoodsJobManagement?.[0].classify) {
+        if (this.dataTableGoodsJobManagement?.[0]?.classify) {
           const auxArr: string[] = [];
           this.dataTableGoodsJobManagement.forEach(x => {
             if (x.classify) {
@@ -1085,10 +1135,54 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
     //   class: 'modal-lg modal-dialog-centered',
     //   ignoreBackdropClick: true,
     // });
+    let context: Partial<DocumentsFormComponent> = { queryParams: {} };
+    if (this.formVariables.get('dictamen').value == 'PROCEDENCIA') {
+      context.queryParams = {
+        crime: this.formVariables.get('crime').value,
+        typeDictation: this.formVariables.get('dictamen').value,
+        typeSteeringwheel: this.formNotification.get('wheelType').value,
+        numberClassifyGood: `$in:${this.formVariables.get('classify2').value}`,
+      };
+    } else if (this.formVariables.get('dictamen').value != 'PROCEDENCIA') {
+      context.queryParams = {
+        typeDictation: this.formVariables.get('dictamen').value,
+        typeSteeringwheel: this.formNotification.get('wheelType').value,
+        numberClassifyGood: `$in:${this.formVariables.get('classify2').value}`,
+      };
+    }
+    console.log({ context });
+
     const modalRef = this.modalService.show(DocumentsFormComponent, {
-      //initialState: context,
+      initialState: context,
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     });
+    modalRef.content.onClose.pipe(take(1)).subscribe(result => {
+      console.log({ result });
+      if (result && result?.length > 0) {
+        result.forEach(item => {
+          const doc = this.dataTableDocuments.find(
+            x => x.cveDocument == item.cveDocument
+          );
+          if (!doc) {
+            this.dataTableDocuments = [
+              ...this.dataTableDocuments,
+              {
+                cveDocument: item.cveDocument,
+                description: item.descripcion,
+                goodNumber: '',
+                managementNumber: this.formJobManagement.value.managementNumber,
+                recordNumber: '',
+                rulingType: this.formVariables.value.dictamen,
+              },
+            ];
+          }
+        });
+        // this.dataTableDocuments = result;
+        // this.formVariables.get('document').setValue(result);
+      }
+    });
   }
+
+  abstract dataTableDocuments: IDocumentJobManagement[];
 }

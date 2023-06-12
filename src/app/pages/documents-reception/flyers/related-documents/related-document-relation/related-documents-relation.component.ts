@@ -26,6 +26,7 @@ import { ILegend } from 'src/app/core/models/catalogs/legend.model';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { INotification } from 'src/app/core/models/ms-notification/notification.model';
 import { ICopiesJobManagementDto } from 'src/app/core/models/ms-officemanagement/good-job-management.model';
+import { IRSender } from 'src/app/core/models/ms-officemanagement/m-job-management.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { DepartamentService } from 'src/app/core/services/catalogs/departament.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
@@ -82,6 +83,15 @@ import { ERROR_REPORT } from '../utils/related-documents.message';
 import { RelateDocumentsResponseRelation } from './related-documents-response-relation';
 
 export type IGoodAndAvailable = IGood & { available: boolean };
+
+export type IDocumentJobManagement = {
+  cveDocument: string;
+  goodNumber: any;
+  managementNumber: string;
+  recordNumber: string;
+  rulingType: string;
+  description?: string;
+};
 export interface IGoodJobManagement {
   managementNumber: string;
   goodNumber: number;
@@ -147,8 +157,6 @@ export class RelatedDocumentsRelationComponent
   valTiposAll: boolean;
   tiposData: any = [];
   tiposDatosSelect = new DefaultSelect();
-  // userCopies1 = new DefaultSelect();
-  // userCopies2 = new DefaultSelect();
   dataGoodTable: LocalDataSource = new LocalDataSource();
   m_job_management: any = null;
   authUser: any = null;
@@ -182,7 +190,7 @@ export class RelatedDocumentsRelationComponent
   se_refiere_a_Disabled = {
     A: false,
     B: false,
-    C: true,
+    C: false,
     D: false,
   };
   variables = {
@@ -233,7 +241,7 @@ export class RelatedDocumentsRelationComponent
     columns: COLUMNS_GOOD_JOB_MANAGEMENT,
   };
 
-  dataTableDocuments: any[] = [];
+  dataTableDocuments: IDocumentJobManagement[] = [];
 
   settingsTableDocuments = {
     ...this.settings,
@@ -248,13 +256,13 @@ export class RelatedDocumentsRelationComponent
 
   //m_job_management
   formNotification = new FormGroup({
-    /** @descripiton  no_volante*/
+    /** @description  no_volante*/
     wheelNumber: new FormControl(null),
-    /** @descripition no_expediente */
+    /** @description no_expediente */
     expedientNumber: new FormControl(null),
-    /** @descripition no_registro*/
+    /** @description no_registro*/
     registerNumber: new FormControl(null),
-    /** @descripition  AVERIGUACION_PREVIA*/
+    /** @description  AVERIGUACION_PREVIA*/
     preliminaryInquiry: new FormControl(null),
     /** @description causa_penal*/
     criminalCase: new FormControl(null),
@@ -272,17 +280,9 @@ export class RelatedDocumentsRelationComponent
     /** @description no_of_gestion */
     managementNumber: new FormControl(''),
     /** @description  destinatario*/
-    addressee: new FormControl<{
-      user: number | string;
-      name: string;
-      userAndName: string;
-    }>(null),
+    addressee: new FormControl<IRSender>(null),
     /** @description remitente */
-    sender: new FormControl<{
-      id: number | string;
-      name: string;
-      idName: string;
-    }>(null), // remitente
+    sender: new FormControl<IRSender>(null), // remitente
     /** @descripiton  cve_cargo_rem*/
     cveChargeRem: new FormControl(''),
     /**@description DES_REMITENTE_PA */
@@ -423,23 +423,8 @@ export class RelatedDocumentsRelationComponent
     );
     columnaOpciones.hide = true;
     console.log(this.settings);
-    // (this.settings.columns as any).seleccion['hide'] = false;
     this.managementForm.get('averiPrevia').disable();
     this.formVariables.get('b').setValue('S');
-    // }
-    // this.goodFilterParams('Todos');
-    // this.managementForm.controls['averiPrevia'].setValue('Todos');
-    // setTimeout(() => {
-    //   const tabla = document.getElementById('goods');
-    //   const types = document.getElementById('typesFilters');
-    //   const tbody = tabla.children[0].children[1].children;
-    //   for (let index = 0; index < tbody.length; index++) {
-    //     const element = tbody[index];
-    //     element.children[7].classList.add('not-press');
-    //     element.children[8].classList.add('not-press');
-    //   }
-    //   types.classList.add('not-press');
-    // }, 2000);
   }
 
   enableChecks() {
@@ -450,24 +435,11 @@ export class RelatedDocumentsRelationComponent
     columnaOpciones.hide = false;
     this.managementForm.get('averiPrevia').enable();
     this.formVariables.get('b').setValue('S');
-    // const tabla = document.getElementById('goods');
-    // const types = document.getElementById('typesFilters');
-    // if (tabla && types) {
-    //   const tbody = tabla.children[0]?.children[1]?.children;
-    //   if (tbody) {
-    //     for (let index = 0; index < tbody.length; index++) {
-    //       const element = tbody[index];
-    //       element.children[7]?.classList.remove('not-press');
-    //       element.children[8]?.classList.remove('not-press');
-    //     }
-    //   }
-    //   types.classList.remove('not-press');
-    // }
   }
 
   onClickSelect(event: any) {
     event.toggle.subscribe((data: any) => {
-      console.log(JSON.stringify(data));
+      console.log(data);
       data.row.seleccion = data.toggle;
     });
   }
@@ -903,7 +875,7 @@ export class RelatedDocumentsRelationComponent
       .setValue(formatDate(new Date(), 'dd-MM-yyyy', 'en-US'));
     this.getNotification(wheelNumber, expedient).subscribe({
       next: async res => {
-        console.log(res);
+        // console.log(res);
         this.formJobManagement
           .get('flyerNumber')
           .setValue(res.wheelNumber as any);
@@ -931,10 +903,10 @@ export class RelatedDocumentsRelationComponent
               idName: mJobManagement.city,
             },
             sender: {
-              id: mJobManagement.sender,
-              name: null,
-              idName: mJobManagement.sender,
-            },
+              usuario: mJobManagement.sender,
+              nombre: null,
+              userAndName: mJobManagement.sender,
+            } as any,
             addressee:
               mJobManagement.jobType == 'INTERNO'
                 ? {
@@ -944,7 +916,6 @@ export class RelatedDocumentsRelationComponent
                   }
                 : mJobManagement.addressee,
           });
-          console.log(this.formJobManagement.value);
           if (mJobManagement.city) {
             this.getCity(mJobManagement.city).subscribe({
               next: res => {
@@ -963,13 +934,12 @@ export class RelatedDocumentsRelationComponent
             params['search'] = mJobManagement.sender;
             this.flyerService.getSenderUser(params).subscribe({
               next: res => {
-                // console.log(res);
                 const i = res.data[0];
                 this.formJobManagement.get('sender').setValue({
-                  id: i.userDetail.id,
-                  idName: i.userDetail.id + ' - ' + i.userDetail.name,
+                  usuario: i.userDetail.id,
+                  userAndName: i.userDetail.id + ' - ' + i.userDetail.name,
                   name: i.userDetail.name,
-                });
+                } as any);
               },
             });
           }
@@ -978,18 +948,20 @@ export class RelatedDocumentsRelationComponent
             const params = new ListParams();
             params.limit = 1;
             params['search'] = mJobManagement.addressee;
-            this.securityService
-              .getAllUsersTracker(params)
-              .subscribe((data: any) => {
-                const item = data.data[0];
-                let result = {
-                  user: item.user,
-                  name: item.name,
-                  userAndName: item.user + ' - ' + item.name,
-                };
+            // this.securityService
+            //   .getAllUsersTracker(params)
+            //   .subscribe((data: any) => {
+            //     const item = data.data[0];
+            //     let result = {
+            //       user: item.user,
+            //       name: item.name,
+            //       userAndName: item.user + ' - ' + item.name,
+            //     };
 
-                this.formJobManagement.get('addressee').setValue(result);
-              });
+            //     this.formJobManagement.get('addressee').setValue(result);
+            //   });
+            // const params = new ListParams();
+            this.getSenderByDetail(params);
           }
 
           if (mJobManagement.managementNumber) {
@@ -1200,7 +1172,7 @@ export class RelatedDocumentsRelationComponent
     }
   }
 
-  changeSender(sender: any) {
+  changeSender(sender: IRSender) {
     console.log({ sender });
     // if (this.managementForm.get('tipoOficio').value == 'EXTERNO') {
     //   this.managementForm.get('destinatario').disable();
@@ -1223,7 +1195,9 @@ export class RelatedDocumentsRelationComponent
     // from seg_usuarios usu,
     //      seg_acceso_x_areas  axa
     // where usu.usuario   = axa.usuario
-    this.formJobManagement.get('delRemNumber').setValue(sender.name);
+    this.formJobManagement.get('delRemNumber').setValue(sender.no_delegacion);
+    // this.formJobManagement.value.
+    this.formJobManagement.get('depRemNumber').setValue(sender.no_departamento);
     //TODO: lov remitente
   }
 
@@ -1682,33 +1656,49 @@ export class RelatedDocumentsRelationComponent
    * @param params Parametos de busqueda de tipo @ListParams
    * @returns
    */
-  getSenderByDetail(params: ListParams) {
+  async getSenderByDetail(params: ListParams) {
     params.take = 20;
     params['order'] = 'DESC';
-    let subscription = this.flyerService.getSenderUser(params).subscribe({
-      next: data => {
-        // console.log(data);
-        const senders = data.data.map(i => {
-          // i.userDetail.name =
-          //   '#' + i.userDetail.id + ' -- ' + i.userDetail.name;
+    // let subscription = this.flyerService.getSenderUser(params).subscribe({
+    //   next: data => {
+    //     // console.log(data);
+    //     const senders = data.data.map(i => {
+    //       // i.userDetail.name =
+    //       //   '#' + i.userDetail.id + ' -- ' + i.userDetail.name;
 
-          // return i.userDetail;
+    //       // return i.userDetail;
+    //       return {
+    //         id: i.userDetail.id,
+    //         idName: i.userDetail.id + ' -- ' + i.userDetail.name,
+    //         name: i.userDetail.name,
+    //       };
+    //     });
+    //     console.log(senders);
+    //     this.senders = new DefaultSelect(senders, data.count);
+    //     subscription.unsubscribe();
+    //   },
+    //   error: error => {
+    //     this.senders = new DefaultSelect();
+    //     this.onLoadToast('error', 'Error', error.error.message);
+    //     subscription.unsubscribe();
+    //   },
+    // });
+    const delegationNumber = (await this.getUserInfo()).delegationNumber as any;
+    this.mJobManagementService.getRegSender(delegationNumber).subscribe(
+      data => {
+        console.log(data);
+        let result = data.data.map(item => {
           return {
-            id: i.userDetail.id,
-            idName: i.userDetail.id + ' -- ' + i.userDetail.name,
-            name: i.userDetail.name,
+            ...item,
+            userAndName: item.usuario + ' - ' + item.nombre,
           };
         });
-        console.log(senders);
-        this.senders = new DefaultSelect(senders, data.count);
-        subscription.unsubscribe();
+        this.senders = new DefaultSelect(result, data.count);
       },
-      error: error => {
-        this.senders = new DefaultSelect();
-        this.onLoadToast('error', 'Error', error.error.message);
-        subscription.unsubscribe();
-      },
-    });
+      error => {
+        this.select = new DefaultSelect();
+      }
+    );
   }
 
   send(): any {
@@ -1795,53 +1785,53 @@ export class RelatedDocumentsRelationComponent
       await this.onClickBtnDocuments();
       return;
     }
-    if (!this.selectVariable) {
-      this.onLoadToast(
-        'error',
-        'Error',
-        `Especifique el tipo de Dictaminación S `
-      );
-      return;
-    }
-    this.expedientService.getNextVal().subscribe({
-      next: data => {
-        this.variablesSend.CVE_OF_GESTION = data.nextval;
-        if (
-          this.managementForm.get('tipoOficio').value ==
-          'Se refiere a todos los bienes'
-        ) {
-          /* await PUP_AGREGA_BIENES();
-           await LIP_COMMIT_SILENCIOSO();*/
-        }
-        if (
-          this.managementForm.get('tipoOficio').value ===
-          'Se refiere a algun (os) bien (es) del expediente'
-        ) {
-          /* await PUP_AGREGA_ALGUNOS_BIENES();
-           await LIP_COMMIT_SILENCIOSO();*/
-        }
-      },
-    });
-    if (!this.checkSelectTable) {
-      this.onLoadToast('error', 'Error', `Seleccione Un Registro de La Tabla `);
-      return;
-    }
-    if (this.formJobManagement.value.cveManagement !== null) {
-      /*SELECT COUNT(0) into contador
-      from BIENES_OFICIO_GESTION
-      where no_of_gestion = : M_OFICIO_GESTION.no_of_gestion;
-      if (this.managementForm.get('tipoOficio').value == 'Se refiere a todos los bienes') {
-        this.variables.clasif = this.variables.clasif || this.formJobManagement.value....
-         : VARIABLES.CLASIF := : VARIABLES.CLASIF || TO_CHAR(: BIENES_OFICIO_GESTION.CLASIF);    
-        /*PUP_AGREGA_BIENES;
-        LIP_COMMIT_SILENCIOSO;
-      }*/
-    }
-    const modalRef = this.modalService.show(DocumentsFormComponent, {
-      initialState: context,
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
-    });
+    // if (!this.selectVariable) {
+    //   this.onLoadToast(
+    //     'error',
+    //     'Error',
+    //     `Especifique el tipo de Dictaminación S `
+    //   );
+    //   return;
+    // }
+    // this.expedientService.getNextVal().subscribe({
+    //   next: data => {
+    //     this.variablesSend.CVE_OF_GESTION = data.nextval;
+    //     if (
+    //       this.managementForm.get('tipoOficio').value ==
+    //       'Se refiere a todos los bienes'
+    //     ) {
+    //       /* await PUP_AGREGA_BIENES();
+    //        await LIP_COMMIT_SILENCIOSO();*/
+    //     }
+    //     if (
+    //       this.managementForm.get('tipoOficio').value ===
+    //       'Se refiere a algun (os) bien (es) del expediente'
+    //     ) {
+    //       /* await PUP_AGREGA_ALGUNOS_BIENES();
+    //        await LIP_COMMIT_SILENCIOSO();*/
+    //     }
+    //   },
+    // });
+    // if (!this.checkSelectTable) {
+    //   this.onLoadToast('error', 'Error', `Seleccione Un Registro de La Tabla `);
+    //   return;
+    // }
+    // if (this.formJobManagement.value.cveManagement !== null) {
+    //   /*SELECT COUNT(0) into contador
+    //   from BIENES_OFICIO_GESTION
+    //   where no_of_gestion = : M_OFICIO_GESTION.no_of_gestion;
+    //   if (this.managementForm.get('tipoOficio').value == 'Se refiere a todos los bienes') {
+    //     this.variables.clasif = this.variables.clasif || this.formJobManagement.value....
+    //      : VARIABLES.CLASIF := : VARIABLES.CLASIF || TO_CHAR(: BIENES_OFICIO_GESTION.CLASIF);
+    //     /*PUP_AGREGA_BIENES;
+    //     LIP_COMMIT_SILENCIOSO;
+    //   }*/
+    // }
+    // const modalRef = this.modalService.show(DocumentsFormComponent, {
+    //   initialState: context,
+    //   class: 'modal-lg modal-dialog-centered',
+    //   ignoreBackdropClick: true,
+    // });
   }
 
   generateCveOficio(noDictamen: string) {
@@ -1862,22 +1852,43 @@ export class RelatedDocumentsRelationComponent
       await this.getUserInfo()
     ).delegationNumber) as any;
     this.mJobManagementService.getRegSender(delegationNumber).subscribe(
-      (data: any) => {
+      data => {
         console.log(data);
-        // let result = data.data.map((item: any) => {
-        //   return {
-        //     user: item.user,
-        //     name: item.name,
-        //     userAndName: item.user + ' - ' + item.name,
-        //   };
-        // });
-        // this.select = new DefaultSelect(result, data.count);
+        let result = data.data.map(item => {
+          return {
+            ...item,
+            userAndName: item.usuario + ' - ' + item.nombre,
+          };
+        });
+        this.select = new DefaultSelect(result, data.count);
       },
       error => {
         this.select = new DefaultSelect();
       }
     );
   }
+  // SELECT  DISTINCT USU.USUARIO
+  //                 ,USU.NOMBRE,
+  //                 AXA.NO_DELEGACION,
+  //                 AXA.NO_SUBDELEGACION,
+  //                 AXA.NO_DEPARTAMENTO
+  // FROM    SEG_USUARIOS          USU
+  //        ,SEG_ACCESO_X_AREAS    AXA
+  // WHERE   AXA.USUARIO       = USU.USUARIO
+  // AND     AXA.NO_DELEGACION = :TOOLBAR_NO_DELEGACION
+  // AND     AXA.ASIGNADO      = 'S'
+
+  // select usu.usuario,
+  //        usu.nombre,
+  //        AXA.NO_DELEGACION,
+  //        AXA.NO_SUBDELEGACION,
+  //        AXA.NO_DEPARTAMENTO
+  // from seg_usuarios usu,
+  //      seg_acceso_x_areas  axa
+  // where usu.usuario   = axa.usuario
+  // and   axa.asignado  = 'S'
+  // AND   usu.usuario   != :M_OFICIO_GESTION.remitente
+  // ORDER BY 1
 
   openForm(legend?: ILegend) {
     const modalConfig = { ...MODAL_CONFIG, class: 'modal-dialog-centered' };
@@ -2385,6 +2396,10 @@ export class RelatedDocumentsRelationComponent
     this.goodFilterParams(filter);
   }
 
+  selectDictation(event: any) {
+    this.formVariables.get('crime').setValue('S');
+  }
+
   goodFilterParams(filter: string) {
     let params = {
       ...this.params.getValue(),
@@ -2668,7 +2683,7 @@ export class RelatedDocumentsRelationComponent
     }
 
     if (values.jobType == 'INTERNO') {
-      if (!values.addressee?.user) {
+      if (!values.addressee?.usuario) {
         this.alert('warning', '', 'Debe especificar el DESTINATARIO');
         return;
       }
