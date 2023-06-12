@@ -17,6 +17,7 @@ import { PublicMinistriesComponent } from './public-ministries/public-ministries
 import { RecordUpdateComponent } from './record-update/record-update.component';
 import { DocumentsFormComponent } from './related-documents/documents-form/documents-form.component';
 import { ModalPersonaOficinaComponent } from './related-documents/modal-persona-oficina/modal-persona-oficina.component';
+import { RelatedDocumentsRelationComponent } from './related-documents/related-document-relation/related-documents-relation.component';
 import { RelatedDocumentsComponent } from './related-documents/related-documents.component';
 import { UploadDictamenFilesModalComponent } from './related-documents/upload-dictamen-files-modal/upload-dictamen-files-modal.component';
 import { ShiftChangeHistoryComponent } from './shift-change/shift-change-history/shift-change-history.component';
@@ -37,6 +38,7 @@ import { RdFShiftChangeComponent } from './shift-change/shift-change.component';
     DocumentsFormComponent,
     ModalPersonaOficinaComponent,
     UploadDictamenFilesModalComponent,
+    RelatedDocumentsRelationComponent,
   ],
   imports: [
     CommonModule,

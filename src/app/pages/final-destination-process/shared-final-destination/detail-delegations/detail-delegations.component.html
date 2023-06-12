@@ -1,6 +1,13 @@
 <app-modal>
   <div header>
     <h5 class="modal-title">{{ title }}</h5>
+    <div class="row justify-content-center">
+      <div class="col-12 col-sm-12 col-md-12">
+        <search-bar-simple
+          (eventEmit)="search($event)"
+          [placeholder]="'N&uacute;mero de expediente'"></search-bar-simple>
+      </div>
+    </div>
   </div>
   <div body>
     <div class="row pt-4">

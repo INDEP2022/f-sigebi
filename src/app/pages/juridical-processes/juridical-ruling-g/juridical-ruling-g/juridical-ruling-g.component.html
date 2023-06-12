@@ -448,7 +448,35 @@
         <h5 class="title">BIENES</h5>
         <br />
         <form-loader *ngIf="formLoading"></form-loader>
-        <div>
+
+        <div class="row pt-2 mb-2" *ngIf="!formLoading">
+          <div class="col-sm-12 col-12 col-md-12 pr-3">
+            <div [class]="loading ? 'table-loading' : ''">
+              <ng2-smart-table
+                id="bienesJuridicos"
+                (rowSelect)="onSelectedRow($event)"
+                [attr.class]="'table-bordered table-responsive'"
+                [settings]="settings1"
+                [source]="goods"></ng2-smart-table>
+              <br />
+              <div class="d-flex justify-content-between">
+                <p class="text-danger mt-2 ml-3">
+                  <strong>{{ desc_estatus_good }}</strong>
+                </p>
+                <p class="text-primary mt-2 ml-3">
+                  <strong>{{ consult }}</strong>
+                </p>
+              </div>
+              <div>
+                <app-pagination
+                  [params]="params"
+                  [totalItems]="totalItems"></app-pagination>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- <div>
           <ng2-smart-table
             *ngIf="!formLoading"
             id="bienesJuridicos"
@@ -468,7 +496,7 @@
 
         <app-pagination
           [params]="params"
-          [totalItems]="totalItems"></app-pagination>
+          [totalItems]="totalItems"></app-pagination> -->
       </div>
     </div>
     <div class="row pt-2">
