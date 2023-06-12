@@ -435,6 +435,11 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     this.attribGoodBadService.selectedGoods = this.dataGoodAct['data'].map(
       (item: any) => item.good.goodId
     );
+    console.log(this.dataGoodAct['data']);
+    console.log({
+      msg: 'Elements',
+      data: this.dataGoodAct['data'].map((item: any) => item.good.goodId),
+    });
     this.openModalSelect(
       {
         title: 'Listado de bienes con información requerida nula',
@@ -451,7 +456,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
           },
         },
         service: this.attribGoodBadService,
-        dataObservableFn: this.attribGoodBadService.getAllModal,
+        dataObservableFn: this.attribGoodBadService.getAllModalSelectedGoods,
         searchFilter: null,
         type: 'text',
         showError: false,
@@ -540,6 +545,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
 
   verifyDateAndFill() {
     let fecElab = new Date(this.form.get('fecElab').value);
+    console.log(fecElab);
     if (this.form.get('fecElab').value != null) {
       this.form.get('fecReception').setValue(new Date(fecElab));
       this.showFecReception = true;
@@ -2690,7 +2696,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                 'Bienes sin información requerida',
                 'Se encontraron bienes sin información requerida para este proceso'
               );
-              localStorage.setItem('numberExpedient', this.numberExpedient)
+              localStorage.setItem('numberExpedient', this.numberExpedient);
               this.getNulls();
             } else {
               if (this.scanStatus) {
@@ -3339,7 +3345,6 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   }
 
   newProceeding() {
-    
     this.numberProceeding = this.proceedingData.length;
     this.clearInputs();
     this.form.get('ident').setValue('ADM');
