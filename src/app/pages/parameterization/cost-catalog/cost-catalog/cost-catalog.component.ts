@@ -82,10 +82,8 @@ export class CostCatalogComponent extends BasePage implements OnInit {
               keyServices: item.code,
               descriptionServices: item.description,
               typeExpenditure: item.subaccount,
-              unaffordable:
-                item.unaffordabilityCriterion === 'N' ? false : true,
-              cost: item.cost !== 'GASTO' ? true : false,
-              expenditure: item.cost === 'GASTO' ? true : false,
+              unaffordable: item.unaffordabilityCriterion,
+              cost: item.cost,
             });
           });
           this.totalItems = resp.count;
@@ -97,7 +95,6 @@ export class CostCatalogComponent extends BasePage implements OnInit {
         this.loading = false;
       },
     });
-    console.log(this.data);
   }
 
   openForm(allotment?: any) {
