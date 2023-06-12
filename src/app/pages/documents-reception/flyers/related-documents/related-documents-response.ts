@@ -24,6 +24,7 @@ import {
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { DepartamentService } from 'src/app/core/services/catalogs/departament.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
+import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
@@ -125,6 +126,7 @@ export abstract class RelateDocumentsResponse extends BasePage {
   protected abstract documentsService: DocumentsService;
   protected abstract usersService: UsersService;
   protected abstract goodprocessService: GoodprocessService;
+  protected abstract dictationService: DictationService;
   abstract dataTableGoods: IGoodAndAvailable[];
   abstract dataTableGoodsJobManagement: IGoodJobManagement[];
   abstract isDisabledBtnDocs: boolean;
@@ -1022,5 +1024,9 @@ export abstract class RelateDocumentsResponse extends BasePage {
     //   class: 'modal-lg modal-dialog-centered',
     //   ignoreBackdropClick: true,
     // });
+  }
+
+  sendFunction_pupLaunchReport(params: ListParams): Observable<any> {
+    return this.dictationService.pupLaunchReport(params).pipe(map(x => x.data));
   }
 }

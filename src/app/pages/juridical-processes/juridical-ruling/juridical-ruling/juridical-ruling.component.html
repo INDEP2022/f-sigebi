@@ -6,7 +6,7 @@
         <button
           type="button"
           class="btn btn-primary active btn-sm"
-          (click)="isSearch = true">
+          (click)="isSearch = true; clearSearch()">
           <i class="bx bx-search-alt bx-sm float-icon"></i>
         </button>
       </div>
@@ -15,13 +15,13 @@
           <button
             type="button"
             class="btn btn-primary btn-sm"
-            (click)="searchExp()">
+            (click)="searchExp(); isSearch = false">
             <i class="bx bx-check bx-sm float-icon"></i>
           </button>
           <button
             type="button"
             class="btn btn-primary btn-sm"
-            (click)="clearSearch()">
+            (click)="clearSearch(); isSearch = false">
             <i class="bx bx-x bx-sm float-icon"></i>
           </button>
         </div>
@@ -223,7 +223,7 @@
               </div>
             </div>
             <div class="col-md-6">
-              <div class="row">
+              <div class="row" [ngClass]="{ 'not-press': isDisabledExp }">
                 <form-check
                   class="col-md-12"
                   label="&#191;El expediente es delito propiedad intelectual&#63;"
@@ -337,7 +337,8 @@
         <ng2-smart-table
           [attr.class]="'table-bordered table-responsive'"
           [settings]="settings1"
-          [source]="goods"></ng2-smart-table>
+          [source]="goods"
+          (rowSelect)="rowSelectedStatus($event.data)"></ng2-smart-table>
         <p class="text-danger">
           <strong> {{ di_desc_est }} </strong>
         </p>
@@ -385,6 +386,9 @@
           [settings]="settings2"
           [source]="goodsValid"
           (rowSelect)="rowSelected($event.data)"></ng2-smart-table>
+        <app-pagination
+          [params]="params2"
+          [totalItems]="totalItems2"></app-pagination>
       </div>
     </div>
     <div class="row w-100">
