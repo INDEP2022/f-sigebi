@@ -10,6 +10,7 @@ import {
   IDictationCopies,
   IInitFormLegalOpinionOfficeBody,
   IInitFormLegalOpinionOfficeResponse,
+  IPupLaunchReport,
   ITmpDictationCreate,
   ITmpExpDesahogoB,
 } from '../../models/ms-dictation/dictation-model';
@@ -20,6 +21,7 @@ import { IRTdictaAarusr } from '../../models/ms-dictation/r-tdicta-aarusr.model'
 export class DictationService extends HttpService {
   public clasifGoodNumber: number | string;
   public goodNumber: number | string;
+  public typeDictamination: any;
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
   private readonly route = DictationEndpoints;
@@ -264,5 +266,41 @@ export class DictationService extends HttpService {
 
   getNoGoodClass(data: Object) {
     return this.post(DictationEndpoints.GetGoodClass, data);
+  }
+
+  //eliminar dictattion condiciones
+  getVElimina(user: string) {
+    return this.get(`${DictationEndpoints.DEl1}?usuario=${user}`);
+  }
+
+  getValid(data: Object) {
+    return this.post(DictationEndpoints.DEL2, data);
+  }
+
+  getVExist(data: Object) {
+    return this.post(DictationEndpoints.DEL3, data);
+  }
+
+  getStatusIni(good: number) {
+    return this.get(`${DictationEndpoints.DEL4}?noBien=${good}`);
+  }
+
+  updateVEstatus(data: Object) {
+    return this.put(DictationEndpoints.DEL5, data);
+  }
+
+  getVEstatus(data: Object) {
+    return this.post(DictationEndpoints.DEL6, data);
+  }
+
+  getUpdateAndDelete(data: Object) {
+    return this.post(DictationEndpoints.DEL7, data);
+  }
+
+  pupLaunchReport(data: Object) {
+    return this.post<IListResponse<IPupLaunchReport>>(
+      DictationEndpoints.AplicationLaunchReport,
+      data
+    );
   }
 }

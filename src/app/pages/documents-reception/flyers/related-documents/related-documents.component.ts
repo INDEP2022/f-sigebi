@@ -152,6 +152,7 @@ export class RelatedDocumentsComponent
   dataGoodTable: LocalDataSource = new LocalDataSource();
   m_job_management: any = null;
   authUser: any = null;
+
   pantalla = (option: boolean) =>
     `${
       option == true
@@ -342,7 +343,7 @@ export class RelatedDocumentsComponent
     protected siabService: SiabService,
     protected modalService: BsModalService,
     protected sanitizer: DomSanitizer,
-    private dictationService: DictationService,
+    protected dictationService: DictationService,
     private serviceRelatedDocumentsService: RelatedDocumentsService,
     protected securityService: SecurityService,
     protected serviceOficces: GoodsJobManagementService,
@@ -370,7 +371,6 @@ export class RelatedDocumentsComponent
     super();
     // console.log(authService.decodeToken());
     this.authUser = authService.decodeToken();
-    console.log('USER DATA', this.authUser);
     this.settings3 = {
       ...this.settings,
       actions: {
@@ -420,7 +420,6 @@ export class RelatedDocumentsComponent
       columna => columna.id === 'seleccion'
     );
     columnaOpciones.hide = true;
-    console.log(this.settings);
     // (this.settings.columns as any).seleccion['hide'] = false;
     this.managementForm.get('averiPrevia').disable();
     this.formVariables.get('b').setValue('S');
@@ -579,7 +578,6 @@ export class RelatedDocumentsComponent
       this.securityService.getAllUsersTracker(params).subscribe(
         (data: any) => {
           // this.formCcpOficio.get('nombreUsuario2').setValue(data.data[0]);
-          console.log('COPYY2', data);
           let result = data.data.map(async (item: any) => {
             item['userAndName'] = item.user + ' - ' + item.name;
           });
@@ -1000,6 +998,12 @@ export class RelatedDocumentsComponent
           }
           if (mJobManagement.refersTo == this.se_refiere_a.C) {
             this.formVariables.get('b').setValue('N');
+          }
+
+          if (this.formJobManagement.value.managementNumber) {
+            this.getCopyOficioGestion__(
+              this.formJobManagement.value.managementNumber
+            );
           }
         } catch (e) {
           this.isCreate = true;
@@ -1817,6 +1821,23 @@ export class RelatedDocumentsComponent
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     });
+    //this.showDocuments()
+  }
+
+  showDocuments() {
+    if (this.paramsGestionDictamen.doc === 'N') {
+      this.onLoadToast('info', 'Este oficio no lleva Documentos', '');
+      return;
+    }
+
+    if (this.m_job_management.status_of === 'ENVIADO') {
+      this.onLoadToast(
+        'info',
+        'El oficio ya está enviado, no pude ser actualizado',
+        ''
+      );
+      return;
+    }
   }
 
   generateCveOficio(noDictamen: string) {
@@ -1955,8 +1976,11 @@ export class RelatedDocumentsComponent
         );
         return;
       }
-
-      if (insertUser != this.authUser.username) {
+      //username
+      if (
+        insertUser.toLowerCase() !==
+        this.authUser.preferred_username.toLowerCase()
+      ) {
         const ATJR: any = await this.userHavePermission();
         console.log(ATJR);
         if (Number(ATJR[0]) == 0) {
@@ -1985,8 +2009,6 @@ export class RelatedDocumentsComponent
           if (this.pantallaActual == '1') {
             this.deleteOfficeDesahogo(managementNumber, noVolante, insertDate);
             //Swal.fire('Borrado', '', 'success');
-          } else {
-            this.deleteOfficeRelacionado(managementNumber, noVolante);
           }
         }
       });
@@ -2031,164 +2053,31 @@ export class RelatedDocumentsComponent
         }
       } while (exit == false);
     };
-    //const res = await getData();
+    const res = await getData();
 
     const management = managementNumber;
     const volante = noVolante;
     //se elimina bienes_officio_gestion
-    this.officeManagementSerivice
-      .removeGoodOfficeManagement(managementNumber)
-      .subscribe({
-        next: resp => {
-          //se elimina COPIAS_OFICIO_GESION
-          this.officeManagementSerivice
-            .removeCopiesManagement(managementNumber)
-            .subscribe({
-              next: resp => {
-                //se elimina DOCUM_OFICIO_GESTION
-                this.officeManagementSerivice
-                  .removeDocumOfficeManagement(managementNumber)
-                  .subscribe({
-                    next: resp => {
-                      //se elimina M_OFICIO_GESTION
-                      this.officeManagementSerivice
-                        .removeMOfficeManagement(managementNumber)
-                        .subscribe({
-                          next: async () => {
-                            //selecciona los dictamenes segun el no_volante
-                            const existDictamen: any =
-                              await this.dictationCount(noVolante);
-                            //actuliza si no tiene dictamenes
-                            if (existDictamen.count == 0) {
-                              const notifBody: any = { dictumKey: null };
-                              this.notificationService
-                                .update(Number(noVolante), notifBody)
-                                .subscribe({
-                                  next: resp => {
-                                    Swal.fire('Borrado', '', 'success');
-                                    console.log('resp  =>  ' + resp);
-                                    this.refreshTabla();
-                                  },
-                                  error: (error: {
-                                    error: { message: string };
-                                  }) => {
-                                    this.onLoadToast(
-                                      'error',
-                                      'Error al actualizar',
-                                      error.error.message
-                                    );
-                                  },
-                                });
-                            } else {
-                              Swal.fire('Borrado', '', 'success');
-                              this.refreshTabla();
-                            }
-                          },
-                          error: (error: { error: { message: string } }) => {
-                            this.onLoadToast(
-                              'error',
-                              'Error',
-                              error.error.message
-                            );
-                          },
-                        });
-                    },
-                    error: error => {
-                      this.onLoadToast('error', 'Error', error.error.message);
-                    },
-                  });
-              },
-              error: (errror: { error: { message: string } }) => {
-                this.onLoadToast('error', 'Error', errror.error.message);
-              },
-            });
-        },
-        error: error => {
-          this.onLoadToast('error', 'Error al eliminar', error.error.message);
-        },
-      });
+    const promises = [
+      this.mJobManagementService.deleteGoodsJobManagement1(management),
+      this.mJobManagementService.deleteDocumentJobManagement2(management),
+      this.officeManagementSerivice.removeMOfficeManagement(management),
+      this.mJobManagementService.deleteCopiesJobManagement4(management),
+      this.updateIfHaveDictamen(volante),
+    ];
+    await Promise.all(promises);
 
-    /*
-    //actualiza cve_dictamen 
-    const notifBody:any = {dictumKey: null}
-    this.notificationService.update(Number(noVolante),notifBody).subscribe({
-      next: resp => {
-        
-      }
-    })
-    */
-  }
+    this.se_refiere_a_Disabled.A = true;
+    this.se_refiere_a_Disabled.B = true;
 
-  deleteOfficeRelacionado(
-    managementNumber: number | string,
-    noVolante: number | string
-  ) {
-    const management = managementNumber;
-    const volante = noVolante;
-    //se elimina bienes_officio_gestion
-    this.officeManagementSerivice
-      .removeGoodOfficeManagement(managementNumber)
-      .subscribe({
-        next: resp => {
-          //se elimina COPIAS_OFICIO_GESION
-          this.officeManagementSerivice
-            .removeCopiesManagement(managementNumber)
-            .subscribe({
-              next: resp => {
-                //se elimina DOCUM_OFICIO_GESTION
-                this.officeManagementSerivice
-                  .removeDocumOfficeManagement(managementNumber)
-                  .subscribe({
-                    next: resp => {
-                      //se elimina M_OFICIO_GESTION
-                      this.officeManagementSerivice
-                        .removeMOfficeManagement(managementNumber)
-                        .subscribe({
-                          next: async () => {
-                            //actualiza los dictamenes en notificaciones
-                            const notifBody: any = { dictumKey: null };
-                            this.notificationService
-                              .update(Number(noVolante), notifBody)
-                              .subscribe({
-                                next: resp => {
-                                  Swal.fire('Borrado', '', 'success');
-                                  console.log('resp  =>  ' + resp);
-                                  this.refreshTabla();
-                                },
-                                error: (error: {
-                                  error: { message: string };
-                                }) => {
-                                  this.onLoadToast(
-                                    'error',
-                                    'Error al actualizar',
-                                    error.error.message
-                                  );
-                                },
-                              });
-                          },
-                          error: (error: { error: { message: string } }) => {
-                            this.onLoadToast(
-                              'error',
-                              'Error',
-                              error.error.message
-                            );
-                          },
-                        });
-                    },
-                    error: error => {
-                      this.onLoadToast('error', 'Error', error.error.message);
-                    },
-                  });
-              },
-              error: (errror: { error: { message: string } }) => {
-                this.onLoadToast('error', 'Error', errror.error.message);
-              },
-            });
-        },
-        error: error => {
-          this.onLoadToast('error', 'Error al eliminar', error.error.message);
-        },
-      });
+    if (this.paramsGestionDictamen.sale == 'D') {
+      this.se_refiere_a_Disabled.C = true;
+    } else {
+      this.se_refiere_a_Disabled.C = false;
+    }
+
+    Swal.fire('Borrado', '', 'success');
+    this.refreshTabla();
   }
 
   changeCopiesType(event: any, ccp: number) {
@@ -2355,7 +2244,8 @@ export class RelatedDocumentsComponent
 
   typeSelected(type: any) {
     const filter = type.no_clasif_bien;
-    console.log('FILTRO DICTAMINACION', filter);
+    this.dictationService.typeDictamination = type;
+
     this.selectVariable = filter;
     this.goodFilterParams(filter);
   }
@@ -2593,7 +2483,6 @@ export class RelatedDocumentsComponent
     return new Promise((resolve, reject) => {
       this.DictationXGood1Service.getAll(params).subscribe({
         next: (resp: any) => {
-          console.log('DICTAMINACION X BIEN', resp.data);
           const data = resp.data[0];
           resolve(data);
           this.loading = false;
@@ -2891,19 +2780,54 @@ export class RelatedDocumentsComponent
             this._end_firmProcess(); // Termina el proceso
           }
         },
-        error: error => {
+        error: async error => {
           console.log(error);
           if (error.status == 400) {
-            // se llama PUP_LANZA_REPORTE
-            this._PUP_LANZA_REPORTE();
             // se llama PUP_GENERA_XML
             this._PUP_GENERA_XML();
           } else {
-            this.onLoadToast(
-              'error',
-              'Se tiene problemas al mostrar el reporte',
-              ''
-            );
+            // this.onLoadToast(
+            //   'error',
+            //   'Se tiene problemas al mostrar el reporte',
+            //   ''
+            // );
+            let paramsReport = {
+              proceedingsNumber: this.notificationData.expedientNumber,
+              steeringWheelNumber: this.notificationData.wheelNumber,
+              ofManagementKey: this.formJobManagement.value.cveManagement,
+            };
+            // se llama PUP_LANZA_REPORTE
+            const _launchReport = await this._PUP_LANZA_REPORTE(paramsReport);
+            //  = {
+            //   no_exp: 0,
+            //   correo: null,
+            //   oficios: null,
+            // };
+            console.log(_launchReport);
+            let nameReport: string = '';
+            if (
+              this.formJobManagement.value.jobType == 'INTERNO' &&
+              this.paramsGestionDictamen.pllamo != 'ABANDONO'
+            ) {
+              nameReport = 'RGEROFGESTION';
+            }
+            if (
+              this.formJobManagement.value.jobType == 'EXTERNO' &&
+              this.paramsGestionDictamen.pllamo != 'ABANDONO'
+            ) {
+              nameReport = 'RGEROFGESTION_EXT';
+            }
+            if (
+              this.formJobManagement.value.jobType == 'EXTERNO' &&
+              this.paramsGestionDictamen.pllamo == 'ABANDONO'
+            ) {
+              nameReport = 'RGENABANSUB';
+            }
+            this._conditions_Report(nameReport);
+            if (_launchReport.no_exp > 0) {
+              // http://sigebimsqa.indep.gob.mx/dictation/api/v1/application/getVOficTrans
+              // Llamar el MS y validar cual es la respuesta
+            }
             this._end_firmProcess(); // Termina el proceso
           }
         },
@@ -2920,7 +2844,22 @@ export class RelatedDocumentsComponent
 
   _PUP_GENERA_PDF() {}
 
-  _PUP_LANZA_REPORTE() {}
+  async _PUP_LANZA_REPORTE(params: any) {
+    return await firstValueFrom(this.sendFunction_pupLaunchReport(params));
+    // this.dictationService.sendFunction_pupLaunchReport();
+  }
+
+  _conditions_Report(nameReport: string) {
+    // Parametros de la forma
+    let params: any = {
+      NO_OF_GES: this.formJobManagement.value.managementNumber, // NO_OF_GES
+      TIPO_OF: this.formJobManagement.value.jobType, // TIPO_OF
+      VOLANTE: this.notificationData.wheelNumber, // VOLANTE
+      EXP: this.notificationData.expedientNumber, // EXPEDIENTE
+      ESTAT_DIC: this.formJobManagement.value.statusOf, // ESTATUS DEL OFICIO
+    };
+    this.runReport(nameReport, params);
+  }
 
   _PUP_CONSULTA_PDF_BD_SSF3() {}
 
@@ -3251,4 +3190,37 @@ export class RelatedDocumentsComponent
   }
 
   _PUP_ENVIA_PGR() {}
+
+  async updateIfHaveDictamen(no_volante: number | string) {
+    const existDictamen: any = await this.dictationCount(no_volante);
+    //actuliza si no tiene dictamenes
+    if (existDictamen.count == 0) {
+      const notifBody: any = { dictumKey: null };
+      this.notificationService.update(Number(no_volante), notifBody);
+    }
+  }
+
+  runReport(nameReport: string = '', params: any) {
+    this.siabService.fetchReport(nameReport, params).subscribe(response => {
+      console.log(response);
+      if (response !== null) {
+        const blob = new Blob([response], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+        let config = {
+          initialState: {
+            documento: {
+              urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+              type: 'pdf',
+            },
+            callback: (data: any) => {},
+          }, //pasar datos por aca
+          class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+          ignoreBackdropClick: true, //ignora el click fuera del modal
+        };
+        this.modalService.show(PreviewDocumentsComponent, config);
+      } else {
+        this.alert('warning', ERROR_REPORT, '');
+      }
+    });
+  }
 }
