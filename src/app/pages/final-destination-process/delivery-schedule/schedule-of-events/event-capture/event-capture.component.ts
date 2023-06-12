@@ -316,6 +316,7 @@ export class EventCaptureComponent
     this.authUserName = this.authService.decodeToken().name;
     this.settings = {
       ...this.settings,
+      actions: { columnTitle: 'Acciones', delete: true, edit: false },
       columns: {
         ...COLUMNS_CAPTURE_EVENTS,
         dateapprovalxadmon: {
@@ -337,26 +338,58 @@ export class EventCaptureComponent
             this.setEndDate(instance),
         },
         ...COLUMNS_CAPTURE_EVENTS_2,
-        select: {
-          title: 'Seleccionar',
-          sort: false,
-          type: 'custom',
-          filter: false,
-          showAlways: true,
-          renderComponent: CheckboxElementComponent,
-          valuePrepareFunction: (departament: any, row: any) =>
-            this.isProceedingSelected(row),
-          onComponentInitFunction: (instance: CheckboxElementComponent) =>
-            this.proceedingSelectChange(instance),
-        },
+        // select: {
+        //   title: 'Seleccionar',
+        //   sort: false,
+        //   type: 'custom',
+        //   filter: false,
+        //   showAlways: true,
+        //   renderComponent: CheckboxElementComponent,
+        //   valuePrepareFunction: (departament: any, row: any) =>
+        //     this.isProceedingSelected(row),
+        //   onComponentInitFunction: (instance: CheckboxElementComponent) =>
+        //     this.proceedingSelectChange(instance),
+        // },
       },
-      // hideSubHeader: false,
-      actions: false,
     };
     this.activatedRoute.queryParams.subscribe(params => {
       this.global.proceedingNum = params['numeroActa'] ?? null;
       this.global.paperworkArea = params['tipoEvento'] ?? null;
     });
+  }
+
+  async removeDetail(detail: any) {
+    if (this.proceeding.statusProceedings.includes('CERRAD')) {
+      this.alert('error', 'Error', 'El programa esta cerrado');
+      return;
+    }
+
+    const response = await this.alertQuestion(
+      'question',
+      '¿Estas seguro?',
+      '¿Seguro que deseas eliminar el bien?'
+    );
+    if (response.isConfirmed) {
+      this.loading = true;
+      this.detailDeliveryReceptionService
+        .deleteById(detail.goodnumber, Number(this.proceeding.id))
+        .subscribe({
+          next: () => {
+            this.loading = false;
+            this.alert('success', 'Bien eliminado', '');
+            this.getDetail().subscribe();
+            this.calculateQuantities();
+          },
+          error: () => {
+            this.loading = false;
+            this.alert(
+              'error',
+              'Error',
+              'Ocurrio un error al eliminar el bien'
+            );
+          },
+        });
+    }
   }
 
   onSelectProceeding(notification: any, selected: boolean) {
@@ -387,6 +420,7 @@ export class EventCaptureComponent
   }
 
   setStartDate(instance: DateCellComponent) {
+    instance.control.addValidators(minDate(new Date()));
     if (this.proceeding?.statusProceedings?.includes('CERRAD')) {
       instance.disabled = true;
     } else {
@@ -395,6 +429,12 @@ export class EventCaptureComponent
     instance.inputChange.subscribe(val => {
       const { row, value } = val;
       row.dateapprovalxadmon = value;
+      if (!row.dateapprovalxadmon && !row.dateindicatesuserapproval) {
+        return;
+      }
+      if (!instance.control.valid) {
+        return;
+      }
       this.updateDetail(row);
     });
   }
@@ -406,7 +446,29 @@ export class EventCaptureComponent
       instance.disabled = false;
     }
     instance.inputChange.subscribe(val => {
+      if (!val) {
+        return;
+      }
+      instance.control.clearValidators();
       const { row, value } = val;
+      if (row.dateapprovalxadmon) {
+        const min = new Date(instance.rowData.dateapprovalxadmon).toISOString();
+        instance.control.setValidators(minDate(new Date(min.slice(0, -1))));
+      }
+      instance.control.updateValueAndValidity();
+      if (!instance.control.valid) {
+        this.alert(
+          'error',
+          'Error',
+          'La fecha de finalización no puede ser menor a la fecha de inicio'
+        );
+        instance.control.setValue(null, { emitEvent: false });
+        return;
+      }
+      if (!row.dateapprovalxadmon && !row.dateindicatesuserapproval) {
+        return;
+      }
+      console.log('paso');
       row.dateindicatesuserapproval = value;
       this.updateDetail(row);
     });
@@ -566,6 +628,10 @@ export class EventCaptureComponent
       this.alert('error', 'Error', 'El programa esta cerrado');
       return;
     }
+    if (!this.startDateCtrl.valid || !this.endDateCtrl.valid) {
+      this.alert('error', 'Error', 'Verifique las fechas');
+      return;
+    }
     const start = this.startDateCtrl.value;
     const end = this.endDateCtrl.value;
     if (!start) {
@@ -588,6 +654,8 @@ export class EventCaptureComponent
         next: data => {
           this.alert('success', 'Fechas actualizadas', '');
           const params = new FilterParams();
+          this.startDateCtrl.setValue(null, { emitEvent: false });
+          this.endDateCtrl.setValue(null, { emitEvent: false });
           this.params.next(params);
         },
         error: error => {
@@ -984,6 +1052,7 @@ export class EventCaptureComponent
 
     this.validateTransfer(type.value ?? 'RT', transference.value);
 
+    console.log({ area, _area });
     if (!area.value) {
       if (!_area) {
         this.global.regi = null;
@@ -993,6 +1062,13 @@ export class EventCaptureComponent
         this.global.cons = cons;
       }
     } else {
+      if (cons) {
+        this.global.regi = area.value;
+        area.setValue(this.global.regi);
+        this.global.cons = cons;
+        folio.setValue(this.global.cons);
+      } else {
+      }
       this.global.regi = area.value;
       const indicator = await this.getProceedingType();
       const _folio = await this.getFolio(indicator.certificateType);
@@ -1403,6 +1479,7 @@ export class EventCaptureComponent
           this.loading = false;
           this.blkCtrl.goodQuantity = 0;
           this.detail = [];
+          this.totalItems = 0;
           return throwError(() => error);
         }),
         tap(async res => {
@@ -1768,6 +1845,8 @@ export class EventCaptureComponent
     let n_CONT: number = 0;
     let C_DATVAL: any;
 
+    console.log('Bienes ...', this.detail);
+
     if (this.detail.length <= 0) {
       this.alert('info', 'No se tienen bienes ingresados.', '');
       return;
@@ -2080,11 +2159,12 @@ export class EventCaptureComponent
     console.log('Este es el response que necesito', response);
     if (response.statusCode !== 200) {
       console.log(response.error.message);
-
       this.alert(
         'error',
         'Ha ocurrido un error',
-        response.message[0] ? response.message[0] : response.error.message
+        response.error.message
+          ? response.error.message
+          : 'No se ha podido abrir la programación'
       );
       return;
     }
@@ -2103,7 +2183,7 @@ export class EventCaptureComponent
       };
       this.returPreviosStatus(model);
       //////////////////////////////// aqui va el endpoint esperado por EDWIN
-      ///await this.insertsAndUpdate();
+      await this.insertsAndUpdate(this.proceeding.id);
       ////////////////////////////////////////
       if (this.global.paperworkArea === 'RF' && n_CONT > 0) {
         ///////////// Hacer inset a esta tabla ACTAS_CTL_NOTIF_SSF3
@@ -2121,12 +2201,12 @@ export class EventCaptureComponent
     }
   }
 
-  insertsAndUpdate(no_Acta: string | number) {
+  insertsAndUpdate(actNumber: string | number) {
     const model = {
-      no_Acta,
+      actNumber,
     };
     return new Promise((res, _rej) => {
-      this.proceedingsService.insertsAndUpdatesValmotosOne(model).subscribe({
+      this.eventProgrammingService.massiveDeleteAndUpdate(model).subscribe({
         next: resp => res(resp.message),
         error: err => res(err.error.message),
       });
@@ -2226,17 +2306,14 @@ export class EventCaptureComponent
           if (this.global.paperworkArea === 'RF' && n_CONT > 0) {
             await this.closedProgramming(n_CONT);
           } else {
-            await this.alertQuestion(
+            const response = await this.alertQuestion(
               'question',
               'Cerrar programación',
               '¿Seguro que desea realizar el cierre de esta Programación ?'
-            )
-              .then(async question => {
-                if (question.isConfirmed) {
-                  await this.closedProgramming(n_CONT);
-                }
-              })
-              .catch(error => console.error(error));
+            );
+            if (response.isConfirmed) {
+              await this.closedProgramming(n_CONT);
+            }
           }
         } else {
           this.global.paperworkArea = this.originalType;
@@ -2265,6 +2342,7 @@ export class EventCaptureComponent
         .PaCierreInicialProgr(no_Acta, lv_PANTALLA, blkCtrlArea)
         .subscribe({
           next: resp => {
+            console.log(resp.message[0]);
             res(resp.message[0]);
           },
           error: err => res('Error'),
@@ -2291,7 +2369,7 @@ export class EventCaptureComponent
       this.alert(
         'error',
         'Ha ocurrido un error',
-        'La Programación no ha sido cerrada, problamente los bienes no tienen un estatus válido'
+        'La Programación no ha sido cerrada, probableamente los bienes no tienen un estatus válido'
       );
     } else {
       if (this.global.paperworkArea === 'RF' && n_CONT > 0) {

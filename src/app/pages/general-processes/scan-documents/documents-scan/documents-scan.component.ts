@@ -62,6 +62,9 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
     P_NO_TRAMITE: '',
     TIPO: '',
     P_VALOR: '',
+    TIPO_VO: '',
+    NO_EXP: '',
+    CONSULTA: '',
   };
   origin2: string = ''; // Pantalla para regresar a la anterior de la que se llamo
   origin3: string = ''; // Pantalla para regresar a la anterior de la que se llamo desde la origin2

@@ -1,5 +1,4 @@
-<div *ngIf="disabledTable">{{ value.value }}</div>
-
+<div *ngIf="disabledTable" style="padding: 0 10px">{{ value.value }}</div>
 <div
   class="goodCellContainer"
   *ngIf="!disabledTable"
@@ -9,7 +8,7 @@
     type="text"
     class="form-control"
     style="height: 35px"
-    [maxlength]="value.length"
+    [maxlength]="value.dataType === 'F' ? 42 : value.length"
     [attr.required]="value.required"
     [(ngModel)]="value.value"
     (ngModelChange)="updateCell($event)" />
@@ -19,13 +18,19 @@
     readonly
     class="form-control"
     [maxDate]="today"
-    [maxlength]="value.dataType === 'F' ? 42 : value.length"
     [attr.required]="value.required"
     [(ngModel)]="value.value" />
   <div class="errorMessage" *ngIf="haveErrorRequired(value)">
     El campo es obligatorio
   </div>
-  <ng-container *ngIf="value.value">
+  <ng-container
+    *ngIf="
+      value.value &&
+      !(value.dataType === 'D' || value.attribute.includes('FECHA'))
+    ">
+    <div class="errorMessage" *ngIf="haveCaracteresEspeciales(value)">
+      El campo es inválido
+    </div>
     <div class="errorMessage" *ngIf="haveNumericError(value)">
       El campo debe ser númerico
     </div>

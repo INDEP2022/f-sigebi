@@ -28,6 +28,15 @@
         <div class="col-6">
           <div class="d-inline mx-2">
             <button
+              [disabled]="!dictNumber"
+              style="float: right"
+              type="button"
+              class="btn btn-primary btn-sm active"
+              (click)="saveDataForm()">
+              Guardar
+              <i aria-hidden="true" class="fa fa-save"></i>
+            </button>
+            <button
               style="float: right"
               type="button"
               [disabled]="!disabledListDictums"
@@ -465,6 +474,7 @@
     <div class="row pt-2">
       <div class="col-md-12 text-center mt-4 mb-4">
         <button
+          [disabled]="!disabledButtons"
           class="btn btn-secondary btn-sm active m-3 p-1 pointer"
           type="button"
           (click)="addSelect()">
@@ -472,6 +482,7 @@
           <i class="bx bx-chevron-down bx-md"></i>
         </button>
         <button
+          [disabled]="!disabledButtons"
           class="btn btn-secondary btn-sm active m-3 p-1 pointer"
           type="button"
           (click)="addAll()">
@@ -479,6 +490,7 @@
           <i class="bx bx-chevrons-down bx-md"></i>
         </button>
         <button
+          [disabled]="!disabledButtons"
           class="btn btn-secondary btn-sm active m-3 p-1 pointer"
           type="button"
           (click)="removeAll()">
@@ -486,6 +498,7 @@
           <i class="bx bx-chevrons-up bx-md"></i>
         </button>
         <button
+          [disabled]="!disabledButtons"
           class="btn btn-secondary btn-sm active m-3 p-1 pointer"
           type="button"
           (click)="removeSelect()">

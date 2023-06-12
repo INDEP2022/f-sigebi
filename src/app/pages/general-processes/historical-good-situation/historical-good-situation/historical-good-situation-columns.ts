@@ -10,7 +10,7 @@ export const HISTORICAL_GOOD_SITUATION_COLUMNS = {
     title: 'Fecha Cambio',
     sort: false,
     valuePrepareFunction: (value: string) =>
-      value ? format(new Date(value), 'yyyy-MM-dd') : '',
+      value ? format(new Date(value), 'dd/MM/yyyy H:mm:ss') : '',
   },
   usuario_cambio: {
     title: 'Usuario',

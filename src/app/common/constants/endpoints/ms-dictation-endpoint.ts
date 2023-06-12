@@ -32,4 +32,8 @@ export enum DictationEndpoints {
   DeletePupDeleteDictum = 'application/pupDeleteDictum',
   Check = 'application/destruction-check-good-available',
   FactJur = 'application/factjurdictamasg',
+
+  DEl1 = 'application/get-v-elimina',
+  DEL2 = 'application/get-v-valid',
+  AplicationLaunchReport = 'application/pupLanceReport',
 }

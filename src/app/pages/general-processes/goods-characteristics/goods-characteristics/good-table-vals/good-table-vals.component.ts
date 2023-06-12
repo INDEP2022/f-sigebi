@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
+import { isArray } from 'ngx-bootstrap/chronos';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { SelectListFilteredModalComponent } from 'src/app/@standalone/modals/select-list-filtered-modal/select-list-filtered-modal.component';
@@ -9,7 +10,6 @@ import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
-import { ITvalTable1 } from 'src/app/core/models/catalogs/dinamic-tables.model';
 import { IAttribClassifGoods } from 'src/app/core/models/ms-goods-query/attributes-classification-good';
 import { DynamicTablesService } from 'src/app/core/services/dynamic-catalogs/dynamic-tables.service';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
@@ -112,6 +112,8 @@ export class GoodTableValsComponent extends BasePage implements OnInit {
     };
     this.params.value.limit = 5;
     this.searchNotServerPagination();
+    // let re = new RegExp('^((?!(@#%&)).)*$');
+    // console.log('123131///42', 'STRING_PATTERN', re.test('123131///42'));
   }
 
   get dataTemp() {
@@ -175,7 +177,7 @@ export class GoodTableValsComponent extends BasePage implements OnInit {
           // debugger;
           let filters = change.filter.filters;
           filters.map((filter: any, index: number) => {
-            console.log(filter, index);
+            // console.log(filter, index);
             if (index === 0) {
               this.dataTemp = [...this.data];
             }
@@ -186,7 +188,7 @@ export class GoodTableValsComponent extends BasePage implements OnInit {
             );
           });
           // this.totalItems = filterData.length;
-          console.log(this.dataTemp);
+          // console.log(this.dataTemp);
           this.totalItems = this.dataTemp.length;
           this.params.value.page = 1;
           this.getPaginated(this.params.getValue());
@@ -237,12 +239,17 @@ export class GoodTableValsComponent extends BasePage implements OnInit {
     });
   }
 
-  selectSituations(vals: ITvalTable1[], self: GoodTableValsComponent) {
+  selectSituations(vals: any, self: GoodTableValsComponent) {
     console.log(vals);
     let newString = '';
-    vals.forEach((val, index) => {
-      newString += (index > 0 ? '/' : '') + val.otvalor;
-    });
+    if (isArray(vals)) {
+      vals.forEach((val: any, index) => {
+        newString += (index > 0 ? '/' : '') + val.otvalor;
+      });
+    } else {
+      newString = vals.otvalor;
+    }
+
     self.data[self.selectedRow].value =
       newString.length > 1500 ? newString.substring(0, 1500) : newString;
     self.data = [...self.data];
@@ -257,6 +264,9 @@ export class GoodTableValsComponent extends BasePage implements OnInit {
         ? row.value.split('/')
         : []
       : [];
+    // debugger;
+    const isNormal =
+      this.disabledBienes || row.attribute !== 'SITUACION JURIDICA';
     this.openModalSelect(
       {
         title: 'los tipos de situaciones para el Bien',
@@ -268,10 +278,7 @@ export class GoodTableValsComponent extends BasePage implements OnInit {
           },
         },
         type: 'text',
-        multi:
-          this.disabledBienes || row.attribute === 'SITUACION JURIDICA'
-            ? ''
-            : 'multi',
+        multi: isNormal ? '' : 'multi',
         permitSelect: this.disabledBienes ? false : true,
         searchFilter: null,
         service: this.dynamicTablesService,
@@ -289,7 +296,7 @@ export class GoodTableValsComponent extends BasePage implements OnInit {
 
   private showAddCaracteristicsWebModal(row: IVal) {
     const modalConfig = MODAL_CONFIG;
-    console.log(row);
+    // console.log(row);
 
     modalConfig.initialState = {
       valor: row.value,
@@ -298,7 +305,7 @@ export class GoodTableValsComponent extends BasePage implements OnInit {
       callback: (cadena: string) => {
         //if (next)
         // debugger;
-        console.log(cadena);
+        // console.log(cadena);
         this.data[this.selectedRow].value = cadena;
         // this.data = [...this.data];
         this.getPaginated(this.params.value);
@@ -312,7 +319,7 @@ export class GoodTableValsComponent extends BasePage implements OnInit {
   private pupCatWebOpc(row: IVal) {}
 
   showModals(item: { data: IVal; index: number }) {
-    console.log(item);
+    // console.log(item);
     const params = this.params.getValue();
     this.selectedRow = (params.page - 1) * params.limit + item.index;
     const row = item.data;
@@ -330,13 +337,13 @@ export class GoodTableValsComponent extends BasePage implements OnInit {
   }
 
   openForm(row: any) {
-    console.log(row);
+    // console.log(row);
 
     let config: ModalOptions = {
       initialState: {
         row: row.data,
         callback: (data: any) => {
-          console.log(data);
+          // console.log(data);
           this.data[row.index].value = data.value;
           this.dataTemp[row.index].value = data.value;
           this.getPaginated(this.params.getValue());
@@ -398,7 +405,7 @@ export class GoodTableValsComponent extends BasePage implements OnInit {
 
   private subsPaginated() {
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(params => {
-      console.log(params);
+      // console.log(params);
       if (this.data) {
         this.getPaginated(params);
       }
@@ -435,8 +442,14 @@ export class GoodTableValsComponent extends BasePage implements OnInit {
             .subscribe({
               next: response => {
                 this.val_atributos_inmuebles = 0;
+
                 if (response.data && response.data.length > 0) {
-                  this.data = response.data.map(item => {
+                  const newData = response.data.sort((a, b) => {
+                    return a.columnNumber - b.columnNumber;
+                  });
+                  // console.log(newData);
+
+                  this.data = newData.map(item => {
                     const column = 'val' + item.columnNumber;
                     if (item.attribute === 'SITUACION JURIDICA') {
                       if (good[column]) {
@@ -475,7 +488,7 @@ export class GoodTableValsComponent extends BasePage implements OnInit {
                   this.dataTemp = [...this.data];
                   this.getPaginated(this.params.value);
                   this.loading = false;
-                  console.log(this.data);
+                  // console.log(this.data);
                 } else {
                   this.loading = false;
                 }
