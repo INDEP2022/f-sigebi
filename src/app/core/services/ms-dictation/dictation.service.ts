@@ -10,6 +10,7 @@ import {
   IDictationCopies,
   IInitFormLegalOpinionOfficeBody,
   IInitFormLegalOpinionOfficeResponse,
+  IPupLaunchReport,
   ITmpDictationCreate,
   ITmpExpDesahogoB,
 } from '../../models/ms-dictation/dictation-model';
@@ -274,5 +275,11 @@ export class DictationService extends HttpService {
 
   getValid(data: Object) {
     return this.post(DictationEndpoints.DEL2, data);
+  }
+  pupLaunchReport(data: Object) {
+    return this.post<IListResponse<IPupLaunchReport>>(
+      DictationEndpoints.AplicationLaunchReport,
+      data
+    );
   }
 }

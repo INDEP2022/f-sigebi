@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
+import { isArray } from 'ngx-bootstrap/chronos';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { SelectListFilteredModalComponent } from 'src/app/@standalone/modals/select-list-filtered-modal/select-list-filtered-modal.component';
@@ -9,7 +10,6 @@ import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
-import { ITvalTable1 } from 'src/app/core/models/catalogs/dinamic-tables.model';
 import { IAttribClassifGoods } from 'src/app/core/models/ms-goods-query/attributes-classification-good';
 import { DynamicTablesService } from 'src/app/core/services/dynamic-catalogs/dynamic-tables.service';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
@@ -239,12 +239,17 @@ export class GoodTableValsComponent extends BasePage implements OnInit {
     });
   }
 
-  selectSituations(vals: ITvalTable1[], self: GoodTableValsComponent) {
-    // console.log(vals);
+  selectSituations(vals: any, self: GoodTableValsComponent) {
+    console.log(vals);
     let newString = '';
-    vals.forEach((val, index) => {
-      newString += (index > 0 ? '/' : '') + val.otvalor;
-    });
+    if (isArray(vals)) {
+      vals.forEach((val: any, index) => {
+        newString += (index > 0 ? '/' : '') + val.otvalor;
+      });
+    } else {
+      newString = vals.otvalor;
+    }
+
     self.data[self.selectedRow].value =
       newString.length > 1500 ? newString.substring(0, 1500) : newString;
     self.data = [...self.data];
