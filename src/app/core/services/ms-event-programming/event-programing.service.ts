@@ -35,4 +35,10 @@ export class EventProgrammingService extends HttpService {
     return this.post<ICertificateProgDst>('/functions/update-ssf3', model);
   }
   //http://sigebimsdev.indep.gob.mx/eventprogramming/api/v1/functions/update-ssf3
+  massiveDeleteAndUpdate(model: any) {
+    return this.post<IListResponse>(
+      'ssf3-certificate-prog-dst/massiveDeleteAndUpdate',
+      model
+    );
+  }
 }

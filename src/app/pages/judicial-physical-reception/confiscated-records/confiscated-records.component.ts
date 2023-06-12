@@ -68,6 +68,7 @@ import {
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { EdoFisicoComponent } from './edo-fisico/edo-fisico.component.component';
+import { OptionsHistoryGoodDelegation } from './options-history-good-delegation/options-history-good-delegation.components';
 import { columnsGood, columnsGoodAct } from './settings-tables';
 
 @Component({
@@ -190,6 +191,9 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   //VALIDAR SUSCRIPCION
   private unsubscribe$ = new Subject<void>();
   private acta2Subscription: Subscription;
+
+  //DOBLE CLICK
+  lastClick: number = 0;
 
   constructor(
     private fb: FormBuilder,
@@ -428,6 +432,14 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   }
 
   getNulls() {
+    this.attribGoodBadService.selectedGoods = this.dataGoodAct['data'].map(
+      (item: any) => item.good.goodId
+    );
+    console.log(this.dataGoodAct['data']);
+    console.log({
+      msg: 'Elements',
+      data: this.dataGoodAct['data'].map((item: any) => item.good.goodId),
+    });
     this.openModalSelect(
       {
         title: 'Listado de bienes con información requerida nula',
@@ -444,7 +456,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
           },
         },
         service: this.attribGoodBadService,
-        dataObservableFn: this.attribGoodBadService.getAllModal,
+        dataObservableFn: this.attribGoodBadService.getAllModalSelectedGoods,
         searchFilter: null,
         type: 'text',
         showError: false,
@@ -533,6 +545,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
 
   verifyDateAndFill() {
     let fecElab = new Date(this.form.get('fecElab').value);
+    console.log(fecElab);
     if (this.form.get('fecElab').value != null) {
       this.form.get('fecReception').setValue(new Date(fecElab));
       this.showFecReception = true;
@@ -2581,8 +2594,55 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     );
   }
 
-  newCloseProceeding() {
+  async validateIsInWarehouseOrVault() {
+    return new Promise((resolve, reject) => {
+      for (let item of this.dataGoodAct['data']) {
+        console.log(item);
+        const newParams = `filter.numClasifGoods=$eq:${item.good.goodClassNumber}`;
+        this.serviceSssubtypeGood.getFilter(newParams).subscribe(
+          res => {
+            const type = JSON.parse(JSON.stringify(res.data[0]['numType']));
+            const subtype = JSON.parse(
+              JSON.stringify(res.data[0]['numSubType'])
+            );
+
+            const no_type = parseInt(type.id);
+            const no_subtype = parseInt(subtype.id);
+            console.log(no_type);
+            console.log(no_subtype);
+            if (no_type == 7 && item.good.vaultNumber == null) {
+              resolve(true);
+            } else if (
+              no_type == 5 &&
+              no_subtype == 16 &&
+              item.good.storeNumber == null &&
+              item.good.vaultNumber == null
+            ) {
+              resolve(true);
+            } else if (
+              no_type == 5 &&
+              no_subtype != 16 &&
+              item.good.storeNumber == null
+            ) {
+              resolve(true);
+            }
+          },
+          err => {}
+        );
+      }
+      resolve(false);
+    });
+  }
+
+  async newCloseProceeding() {
     this.validateFolio();
+    const validate = await this.validateIsInWarehouseOrVault();
+    console.log(validate);
+    console.log({
+      tipo: typeof validate,
+      valor: validate,
+      msg: 'Validar bodega',
+    });
     if (this.dataGoodAct['data'].length == 0) {
       this.alert(
         'warning',
@@ -2605,16 +2665,12 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
       );
     } else if (this.dataGoodAct['data'].find((e: any) => e.received != 'S')) {
       this.alert('warning', 'Hay bienes no marcados como recibido', '');
-    } else if (
-      this.isAlmacen &&
-      this.dataGoodAct['data'].find((e: any) => e.good.storeNumber == null)
-    ) {
-      this.alert('warning', 'Hay bienes no guardados en almacén', '');
-    } else if (
-      this.isBoveda &&
-      this.dataGoodAct['data'].find((e: any) => e.good.vaultNumber == null)
-    ) {
-      this.alert('warning', 'Hay bienes no guardados en bóveda', '');
+    } else if (validate) {
+      this.alert(
+        'warning',
+        'Se debe especificar el Almacén y/o la Bóveda para cerrar el Acta, favor de ingresar',
+        ''
+      );
     } else if (this.form.get('folioEscaneo').value == null) {
       this.alert('warning', 'No se registro número de folio', '');
     } else {
@@ -2640,6 +2696,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                 'Bienes sin información requerida',
                 'Se encontraron bienes sin información requerida para este proceso'
               );
+              localStorage.setItem('numberExpedient', this.numberExpedient);
               this.getNulls();
             } else {
               if (this.scanStatus) {
@@ -3288,7 +3345,6 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   }
 
   newProceeding() {
-    this.inputsNewProceeding();
     this.numberProceeding = this.proceedingData.length;
     this.clearInputs();
     this.form.get('ident').setValue('ADM');
@@ -3307,6 +3363,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     this.goodData = [];
     this.saveDataAct = [];
     this.dataGoodAct.load(this.goodData);
+    this.inputsNewProceeding();
   }
 
   //"Acta 2"
@@ -3434,6 +3491,19 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     this.selectData = data;
     this.statusGood('estatusPrueba', data);
     this.validateGood(data);
+    console.log(e);
+
+    this.lastClick += 1;
+    setTimeout(() => {
+      if (this.lastClick > 1) {
+        this.openOptionsHistory(data);
+      } else {
+        if (this.lastClick > 0) {
+          console.log('single clik');
+        }
+      }
+      this.lastClick = 0;
+    }, 500);
   }
 
   deselectRow() {
@@ -3442,9 +3512,12 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   }
 
   goToHistorico() {
-    this.router.navigate([
-      '/pages/general-processes/historical-good-situation',
-    ]);
+    localStorage.setItem('numberExpedient', this.numberExpedient);
+
+    this.router.navigate(
+      ['/pages/general-processes/historical-good-situation'],
+      { queryParams: { noBien: 73 } }
+    );
   }
 
   selectRowBovedaAlmacen(data: any) {
@@ -3624,15 +3697,13 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
             'Problema con el tipo de acta',
             'Para este bien la Clave de Acta debe iniciar con " N "'
           );
-        }
-        if ([1424, 1426, 1590].includes(goodClass) && admin != 'CCB') {
+        } else if ([1424, 1426, 1590].includes(goodClass) && admin != 'CCB') {
           this.alert(
             'warning',
             'Problema con quien administra en la clave',
             'En la parte de Quien Administra en la clave de acta debe ser para este bien " CCB "'
           );
-        }
-        if (
+        } else if (
           goodClass != 1424 &&
           goodClass != 1590 &&
           goodClass != 1426 &&
@@ -4140,6 +4211,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                   JSON.stringify(res.data[0]['numSsubType'])
                 );
                 const no_type = type.id;
+                console.log(element);
                 console.log(no_type);
                 if (no_type === '5') {
                   //Data new good
@@ -4159,6 +4231,8 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                       console.log(err);
                     }
                   );
+                } else {
+                  console.log({ message: 'No :(', type: no_type });
                 }
               },
               err => {
@@ -4308,6 +4382,19 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         }
       );
     });
+  }
+
+  openOptionsHistory(e: any) {
+    console.log(e);
+    let modalConfig = MODAL_CONFIG;
+    modalConfig = {
+      initialState: {
+        idGood: e.goodId,
+        numberExpedient: this.numberExpedient,
+      },
+      class: 'modal-lg modal-dialog-centered',
+    };
+    this.modalService.show(OptionsHistoryGoodDelegation, modalConfig);
   }
 
   openEdoFisico() {

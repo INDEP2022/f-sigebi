@@ -105,7 +105,6 @@ export class LawyerDetailComponent extends BasePage implements OnInit {
       this.offices = new DefaultSelect([idOffice], 1);
       this.delegations = new DefaultSelect([delegation], 1);
     }*/
-    debugger;
     if (this.lawyer != null) {
       this.edit = true;
       this.form.patchValue(this.lawyer);

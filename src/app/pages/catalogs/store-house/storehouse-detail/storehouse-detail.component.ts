@@ -20,7 +20,7 @@ import { StorehouseService } from '../../../../core/services/catalogs/storehouse
 })
 export class StorehouseDetailComponent extends BasePage implements OnInit {
   storeHouseForm: ModelForm<IStorehouse>;
-  storeHouse: IStorehouse;
+  storeHouse: any;
   title: string = 'Catálogos de Bodegas';
   edit: boolean = false;
   states = new DefaultSelect();
@@ -74,18 +74,23 @@ export class StorehouseDetailComponent extends BasePage implements OnInit {
       ],
       idEntity: [null],
     });
-    debugger;
     if (this.storeHouse != null) {
       console.log(this.storeHouse);
       this.edit = true;
       this.storeHouseForm.patchValue(this.storeHouse);
       //this.storeHouseForm.controls['municipality'].setValue(this.storeHouse.municipality);
       //this.storeHouseForm.controls['locality'].setValue(this.storeHouse.locality);
-      //this.getUpdateLocalities(new ListParams(), this.storeHouse.locality);
-      //this.getUpdateMunicipalities(new ListParams(), this.storeHouse.municipality);
-      this.getMunicipalities(new ListParams());
-      this.getLocalities(new ListParams());
+      this.getUpdateMunicipalities(
+        new ListParams(),
+        this.storeHouse.municipality
+      );
+
+      this.getUpdateLocalities(new ListParams(), this.storeHouse.locality);
+
+      //this.getMunicipalities(new ListParams());
+      //this.getLocalities(new ListParams());
     }
+    this.getMunicipalities(new ListParams());
   }
 
   confirm() {
@@ -107,7 +112,7 @@ export class StorehouseDetailComponent extends BasePage implements OnInit {
   update() {
     this.loading = true;
     this.storehouseService
-      .update(this.storeHouse.id, this.storeHouseForm.getRawValue())
+      .newUpdate(this.storeHouseForm.getRawValue())
       .subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),
@@ -128,12 +133,13 @@ export class StorehouseDetailComponent extends BasePage implements OnInit {
     this.storeHouseForm.controls['locality'].setValue(null);
     this.getMunicipalities(new ListParams(), data.state);
   }*/
-  getUpdateMunicipalities(params: ListParams, value: any) {
+  getUpdateMunicipalities(params: ListParams, value: string) {
     console.log(this.storeHouseForm.controls['municipality'].value);
-    params['filter.description'] = `$eq:${value}`;
+    params['filter.nameMunicipality'] = `$ilike:${value}`;
     this.municipalityService.getAll(params).subscribe({
       next: data => {
         this.municipalities = new DefaultSelect(data.data, data.count);
+        this.getLocalitie(data.data[0]);
       },
       error: error => {
         this.municipalities = new DefaultSelect();
@@ -164,8 +170,8 @@ export class StorehouseDetailComponent extends BasePage implements OnInit {
     }
   }
 
-  getUpdateLocalities(params: ListParams, value: any) {
-    params['filter.nameLocation'] = `$eq:${value}`;
+  getUpdateLocalities(params: ListParams, value: string) {
+    params['filter.nameLocation'] = `$ilike:${value}`;
     this.localityService.getAll(params).subscribe({
       next: data => {
         this.localities = new DefaultSelect(data.data, data.count);
@@ -178,7 +184,7 @@ export class StorehouseDetailComponent extends BasePage implements OnInit {
   }
 
   getLocalities(params: ListParams) {
-    params['filter.id'] = this.stateKey;
+    params['filter.municipalityId'] = this.stateKey;
     this.localityService.getAll(params).subscribe({
       next: data => {
         this.localities = new DefaultSelect(data.data, data.count);

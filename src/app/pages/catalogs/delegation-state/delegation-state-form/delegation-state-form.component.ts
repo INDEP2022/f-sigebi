@@ -54,7 +54,7 @@ export class DelegationStateFormComponent extends BasePage implements OnInit {
       ],
       status: [
         null,
-        [Validators.pattern(NUMBERS_PATTERN), Validators.maxLength(20)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(20)],
       ],
       version: [
         null,

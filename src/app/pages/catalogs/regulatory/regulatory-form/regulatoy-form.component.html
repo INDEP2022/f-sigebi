@@ -5,32 +5,26 @@
   <div body>
     <form class="form-material" [formGroup]="form">
       <div class="row">
-        <div class="col-md-6">
-          <form-field
-            [control]="form.get('fractionId')"
-            label="Id Fracci&oacute;n">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="fractionId" />
+        <div class="col-md-12">
+          <form-field [control]="form.get('fractionId')">
+            <ngx-select
+              [form]="form"
+              control="fractionId"
+              [data]="fractionIdSelected"
+              value="id"
+              bindLabel="description"
+              label="No.Fracci&oacute;n"
+              (fetchItems)="getFractionAll($event)"></ngx-select>
           </form-field>
         </div>
+      </div>
+      <div class="row pt-5">
         <div class="col-md-6">
           <form-field [control]="form.get('number')" label="N&uacute;mero">
             <input type="text" class="form-control" formControlName="number" />
           </form-field>
         </div>
-        <div class="col-md-12">
-          <form-field
-            [control]="form.get('description')"
-            label="Descripci&oacute;n">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="description" />
-          </form-field>
-        </div>
-        <div class="col-md-12">
+        <div class="col-md-6">
           <form-field [control]="form.get('validateEf')" label="Validar Ef">
             <input
               type="text"
@@ -38,7 +32,9 @@
               formControlName="validateEf" />
           </form-field>
         </div>
-        <div class="col-md-12">
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-6">
           <form-field [control]="form.get('validateEc')" label="Validar Ec">
             <input
               type="text"
@@ -46,52 +42,24 @@
               formControlName="validateEc" />
           </form-field>
         </div>
-        <div class="col-md-12">
-          <form-field
-            [control]="form.get('userCreation')"
-            label="Usuario Creaci&oacute;n">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="userCreation" />
-          </form-field>
-        </div>
-        <div *ngIf="!edit" class="col-md-12">
-          <form-field
-            [control]="form.get('createDate')"
-            label="Fecha Creaci&oacute;n">
-            <input
-              type="date"
-              class="form-control"
-              formControlName="createDate" />
-          </form-field>
-        </div>
-        <div class="col-md-12">
-          <form-field
-            [control]="form.get('userModification')"
-            label="Usuario Modificaci&oacute;n">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="userModification" />
-          </form-field>
-        </div>
-        <div *ngIf="edit" class="col-md-12">
-          <form-field
-            [control]="form.get('modificationDate')"
-            label="Fecha Modificaci&oacute;n">
-            <input
-              type="date"
-              class="form-control"
-              formControlName="modificationDate" />
-          </form-field>
-        </div>
-        <div class="col-md-12">
+        <div class="col-md-6">
           <form-field [control]="form.get('version')" label="Versi&oacute;n">
             <input
               type="number"
               class="form-control"
               formControlName="version" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-12">
+          <form-field
+            [control]="form.get('description')"
+            label="Descripci&oacute;n">
+            <textarea
+              rows="3"
+              class="form-control"
+              formControlName="description"></textarea>
           </form-field>
         </div>
       </div>
