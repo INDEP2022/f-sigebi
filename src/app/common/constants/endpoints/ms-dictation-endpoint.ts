@@ -35,5 +35,11 @@ export enum DictationEndpoints {
 
   DEl1 = 'application/get-v-elimina',
   DEL2 = 'application/get-v-valid',
+  DEL3 = 'application/get-v-exist',
+  DEL4 = 'application/get-estatus-ini',
+  DEL5 = 'application/update-estatus-bien',
+  DEL6 = 'application/get-v-estatus',
+  DEL7 = 'application/update-bien-delete-hist',
+
   AplicationLaunchReport = 'application/pupLanceReport',
 }
