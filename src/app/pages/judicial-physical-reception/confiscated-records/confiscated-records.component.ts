@@ -468,9 +468,8 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
 
   selectGoodNull(good: any, self: ConfiscatedRecordsComponent) {
     console.log(good);
-    self.router.navigate(['pages/general-processes/goods-characteristics'], {
-      queryParams: { noBien: good.id },
-    });
+    localStorage.setItem('selectedBad', JSON.stringify(good));
+    self.router.navigate(['pages/general-processes/goods-characteristics']);
   }
 
   requireAct1() {

@@ -17,11 +17,13 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { IGoodSssubtype } from 'src/app/core/models/catalogs/good-sssubtype.model';
+import { IAttribGoodBad } from 'src/app/core/models/ms-good/good';
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
 import { ParameterCatService } from 'src/app/core/services/catalogs/parameter.service';
 import { AccountMovements } from 'src/app/core/services/ms-account-movements/account-movements.service';
 import { ComerDetailsService } from 'src/app/core/services/ms-coinciliation/comer-details.service';
 import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
+import { AttribGoodBadService } from 'src/app/core/services/ms-good/attrib-good-bad.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
 import { GoodPartializeService } from 'src/app/core/services/ms-partialize/partialize.service';
@@ -58,7 +60,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
   count = 0;
   delegacion: number;
   subdelegacion: number;
-
+  selectedBad: IAttribGoodBad;
   get data() {
     return this.service.data;
   }
@@ -259,6 +261,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     private service: GoodsCharacteristicsService,
     private goodPartialize: GoodPartializeService,
     private comerDetailService: ComerDetailsService,
+    private attribGoodBadService: AttribGoodBadService,
     public router: Router
   ) {
     super();
@@ -311,12 +314,19 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
           this.origin3 = param['origin3'] ?? null;
           this.TIPO_PROC = param['TIPO_PROC'] ?? null;
           this.NO_INDICADOR = param['NO_INDICADOR'] ?? null;
-        }
-        if (param['noBien']) {
-          this.origin = '1';
-          // this.selectTab();
-          this.numberGood.setValue(param['noBien']);
-          this.searchGood();
+        } else {
+          const selectedBadString = localStorage.getItem('selectedBad');
+          if (selectedBadString) {
+            this.selectedBad = JSON.parse(selectedBadString);
+            console.log(this.selectedBad);
+
+            this.origin = '1';
+            console.log(this.origin);
+
+            // this.selectTab();
+            this.numberGood.setValue(this.selectedBad.id);
+            this.searchGood();
+          }
         }
         // this.goodService.getById2(param['noBien']).subscribe({
         //   next: data => {
@@ -411,15 +421,32 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     }
     console.log(body);
     await this.preUpdate();
-    this.goodService.update(body).subscribe({
-      next: response => {
-        this.onLoadToast(
-          'success',
-          'Bien ' + this.numberGood.value,
-          'Actualizado correctamente'
-        );
-      },
-    });
+    if (this.selectedBad) {
+      this.attribGoodBadService
+        .remove(this.selectedBad)
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe({
+          next: response => {
+            console.log(response);
+          },
+          error: err => {
+            console.log(err);
+          },
+        });
+    }
+
+    this.goodService
+      .update(body)
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: response => {
+          this.onLoadToast(
+            'success',
+            'Bien ' + this.numberGood.value,
+            'Actualizado correctamente'
+          );
+        },
+      });
     await this.pupInsertGeoreferencia();
   }
 
@@ -907,11 +934,11 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
   private async postRecord(isPostQuery = false) {
     const filterParams = new FilterParams();
     filterParams.addFilter('typeNumber', 'CARBIEN');
-    filterParams.addFilter('user', 'DR_SIGEBI');
-    // filterParams.addFilter(
-    //   'user',
-    //   localStorage.getItem('username').toUpperCase()
-    // );
+    // filterParams.addFilter('user', 'DR_SIGEBI');
+    filterParams.addFilter(
+      'user',
+      localStorage.getItem('username').toUpperCase()
+    );
     filterParams.addFilter('reading', 'S');
     // filterParams.addFilter()
     const rdicta = await firstValueFrom(
