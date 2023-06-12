@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BasePage } from 'src/app/core/shared/base-page';
 
 @Component({
@@ -7,7 +9,29 @@ import { BasePage } from 'src/app/core/shared/base-page';
   styleUrls: [],
 })
 export class OptionsHistoryGoodDelegation extends BasePage implements OnInit {
-  ngOnInit(): void {
-    throw new Error('Method not implemented.');
+  idGood: number;
+  numberExpedient: string;
+
+  constructor(private router: Router, private bsModel: BsModalRef) {
+    super();
+  }
+
+  ngOnInit(): void {}
+
+  goToDelegation() {
+    this.alert('info', 'Funcion en desarrollo', '');
+  }
+
+  goToHistorico() {
+    localStorage.setItem('numberExpedient', this.numberExpedient);
+
+    this.router.navigate(
+      ['/pages/general-processes/historical-good-situation'],
+      { queryParams: { noBien: this.idGood } }
+    );
+  }
+
+  close() {
+    this.bsModel.hide();
   }
 }

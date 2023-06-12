@@ -1330,7 +1330,10 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
         this.loading = false;
         this.checkChange();
         this.blockExpedient = false;
-        this.inputOpenProceeding();
+        this.form.get('ident').setValue('DEV');
+        this.form.get('entrego').setValue('PART');
+        this.minDateFecElab = new Date();
+        this.inputsnewProceeding();
       }
     );
   }
@@ -1627,7 +1630,17 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
     this.noRequireAct();
   }
 
-  inputsnewProceeding() {}
+  inputsnewProceeding() {
+    this.initialBool = false;
+    this.isEnableEntrega = true;
+    this.isEnableFecElabRecibo = true;
+    this.isEnableFecEntrBien = true;
+    this.isEnableFecElab = true;
+    this.isEnableObservaciones = true;
+    this.isEnableRecibe = true;
+    this.isEnableTestigo = true;
+    this.noRequireAct();
+  }
 
   newOpenProceeding() {
     const paramsF = new FilterParams();
@@ -1900,12 +1913,10 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
                         this.getGoodsActFn();
                         this.getGoodsFn();
                         this.form.get('statusProceeding').setValue('CERRADO');
-                        /* this.labelActa = 'Abrir acta';
-                        this.btnCSSAct = 'btn-success'; */
-                        this.alert('success', 'El acta ha sido cerrada', '');
+                        this.labelActa = 'Abrir acta';
+                        this.btnCSSAct = 'btn-success';
                       },
                       err => {
-                        console.log(err);
                         this.alert(
                           'error',
                           'Ocurrió un error inesperado',
@@ -2402,7 +2413,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
       ) {
         this.alertQuestion(
           'question',
-          '¿Desea eliminar el acta?',
+          '¿Desea eliminar completamente el acta?',
           `Se eliminará el acta ${this.idProceeding}`,
           'Eliminar'
         ).then(q => {

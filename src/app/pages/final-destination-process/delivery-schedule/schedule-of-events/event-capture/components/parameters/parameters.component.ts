@@ -85,9 +85,10 @@ export class ParametersComponent extends BasePage implements OnInit {
     const { transfer, transmitter, authority } = this.siabControls;
 
     if (transfer.value?.length == 0) {
-      console.log('llego');
       this.transmitters = new DefaultSelect();
       this.authorities = new DefaultSelect();
+      transmitter.setValue([]);
+      authority.setValue([]);
       return;
     }
 
@@ -107,6 +108,7 @@ export class ParametersComponent extends BasePage implements OnInit {
     const { transmitter, authority } = this.siabControls;
     if (transmitter.value?.length == 0) {
       this.authorities = new DefaultSelect();
+      authority.setValue([]);
       return;
     }
     const filterAuth = authority.value.filter(t =>
