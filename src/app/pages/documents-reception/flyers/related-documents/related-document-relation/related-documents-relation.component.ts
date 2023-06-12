@@ -1,4 +1,4 @@
-import { DatePipe } from '@angular/common';
+import { DatePipe, formatDate } from '@angular/common';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import {
   FormBuilder,
@@ -114,7 +114,7 @@ export interface IGoodJobManagement {
     `,
   ],
 })
-export class RelatedDocumentsComponent
+export class RelatedDocumentsRelationComponent
   extends RelateDocumentsResponseRelation
   implements OnInit
 {
@@ -319,6 +319,8 @@ export class RelatedDocumentsComponent
     /**@description num_clave_armada */
     armedKeyNumber: new FormControl(''),
     tipoTexto: new FormControl(''),
+    /**@descripcion no_expediente */
+    proceedingsNumber: new FormControl(''),
   });
 
   formVariables = new FormGroup({
@@ -895,9 +897,19 @@ export class RelatedDocumentsComponent
   initForm() {
     const wheelNumber = this.getQueryParams('volante');
     const expedient = this.getQueryParams('expediente');
+    this.formJobManagement.get('proceedingsNumber').setValue(expedient);
+    this.formJobManagement
+      .get('insertDate')
+      .setValue(formatDate(new Date(), 'dd-MM-yyyy', 'en-US'));
     this.getNotification(wheelNumber, expedient).subscribe({
       next: async res => {
         console.log(res);
+        this.formJobManagement
+          .get('flyerNumber')
+          .setValue(res.wheelNumber as any);
+        this.formJobManagement
+          .get('flyerNumber')
+          .setValue(res.wheelNumber as any);
 
         this.formNotification.patchValue(res);
         this.getTypesSelectors();
@@ -1188,20 +1200,31 @@ export class RelatedDocumentsComponent
     }
   }
 
-  changeSender() {
-    if (this.managementForm.get('tipoOficio').value == 'EXTERNO') {
-      this.managementForm.get('destinatario').disable();
-      this.managementForm.get('destinatario').updateValueAndValidity();
-      this.disabledAddresse = true;
-    } else if (this.managementForm.get('tipoOficio').value == 'INTERNO') {
-      this.managementForm.get('destinatario').enable();
-      this.managementForm.get('destinatario').updateValueAndValidity();
-      this.disabledAddresse = false;
-    } else {
-      this.managementForm.get('destinatario').enable();
-      this.managementForm.get('destinatario').updateValueAndValidity();
-      this.disabledAddresse = false;
-    }
+  changeSender(sender: any) {
+    console.log({ sender });
+    // if (this.managementForm.get('tipoOficio').value == 'EXTERNO') {
+    //   this.managementForm.get('destinatario').disable();
+    //   this.managementForm.get('destinatario').updateValueAndValidity();
+    //   this.disabledAddresse = true;
+    // } else if (this.managementForm.get('tipoOficio').value == 'INTERNO') {
+    //   this.managementForm.get('destinatario').enable();
+    //   this.managementForm.get('destinatario').updateValueAndValidity();
+    //   this.disabledAddresse = false;
+    // } else {
+    //   this.managementForm.get('destinatario').enable();
+    //   this.managementForm.get('destinatario').updateValueAndValidity();
+    //   this.disabledAddresse = false;
+    // }
+    //     select usu.usuario,
+    //        usu.nombre,
+    //        AXA.NO_DELEGACION,
+    //        AXA.NO_SUBDELEGACION,
+    //        AXA.NO_DEPARTAMENTO
+    // from seg_usuarios usu,
+    //      seg_acceso_x_areas  axa
+    // where usu.usuario   = axa.usuario
+    this.formJobManagement.get('delRemNumber').setValue(sender.name);
+    //TODO: lov remitente
   }
 
   changeTextType() {
@@ -1628,7 +1651,9 @@ export class RelatedDocumentsComponent
   getCityByDetail(paramsData: ListParams) {
     const params = new FilterParams();
     params.removeAllFilters();
-    params.addFilter('nameCity', paramsData['search'], SearchFilter.LIKE);
+    if (paramsData['search']) {
+      params.addFilter('nameCity', paramsData['search'], SearchFilter.LIKE);
+    }
     let subscription = this.flyerService
       .getCityBySearch(params.getFilterParams())
       .subscribe({
@@ -1832,21 +1857,21 @@ export class RelatedDocumentsComponent
     this.managementForm.get('cveGestion').setValue(cveOficio);
   }
 
-  getFromSelect(params: ListParams) {
-    this.securityService.getAllUsersTracker(params).subscribe(
+  async getFromSelect(params: ListParams) {
+    const delegationNumber = (await (
+      await this.getUserInfo()
+    ).delegationNumber) as any;
+    this.mJobManagementService.getRegSender(delegationNumber).subscribe(
       (data: any) => {
-        let result = data.data.map((item: any) => {
-          // item['userAndName'] = item.user + ' - ' + item.name;
-          return {
-            user: item.user,
-            name: item.name,
-            userAndName: item.user + ' - ' + item.name,
-          };
-        });
-        // Promise.all(result).then((resp: any) => {
-        this.select = new DefaultSelect(result, data.count);
-        //   this.loading = false;
+        console.log(data);
+        // let result = data.data.map((item: any) => {
+        //   return {
+        //     user: item.user,
+        //     name: item.name,
+        //     userAndName: item.user + ' - ' + item.name,
+        //   };
         // });
+        // this.select = new DefaultSelect(result, data.count);
       },
       error => {
         this.select = new DefaultSelect();
@@ -3251,4 +3276,8 @@ export class RelatedDocumentsComponent
   }
 
   _PUP_ENVIA_PGR() {}
+
+  // changeSender(sender) {
+  //   console.log({sender});
+  // }
 }

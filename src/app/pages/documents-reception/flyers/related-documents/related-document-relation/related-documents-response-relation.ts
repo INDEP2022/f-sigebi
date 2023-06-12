@@ -3,7 +3,7 @@ import { type FormControl, type FormGroup } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { catchError, firstValueFrom, map, Observable, of } from 'rxjs';
+import { catchError, firstValueFrom, map, Observable, of, tap } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { showQuestion, showToast } from 'src/app/common/helpers/helpers';
 import {
@@ -38,6 +38,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { LegalOpinionsOfficeService } from 'src/app/pages/juridical-processes/depositary/legal-opinions-office/legal-opinions-office/services/legal-opinions-office.service';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { FlyersService } from '../../services/flyers.service';
+import { DocumentsFormComponent } from '../documents-form/documents-form.component';
 import {
   IGoodAndAvailable,
   IGoodJobManagement,
@@ -115,6 +116,8 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
     /**@description num_clave_armada */
     armedKeyNumber: FormControl;
     tipoTexto: FormControl;
+    /**@descripcion no_expediente */
+    proceedingsNumber: FormControl;
   }>;
   protected abstract formNotification: FormGroup;
   protected abstract route: ActivatedRoute;
@@ -139,6 +142,55 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
   abstract totalItems: number;
 
   isCreate = false;
+  userInfo: {
+    exp: number;
+    iat: number;
+    jti: string;
+    iss: string;
+    aud: string[];
+    sub: string;
+    typ: string;
+    azp: string;
+    session_state: string;
+    acr: string;
+    'allowed-origins': string[];
+    realm_access: import('d:/laragon/www/f-sigebi/src/app/core/models/authentication/auth.model').RealmAccessModel;
+    resource_access: import('d:/laragon/www/f-sigebi/src/app/core/models/authentication/auth.model').ResourceAccessModel;
+    scope: string;
+    sid: string;
+    email_verified: boolean;
+    name: string;
+    preferred_username: string;
+    given_name: string;
+    family_name: string;
+    email: string;
+    department: string;
+    employeetype: string;
+    puesto: string;
+    username: string;
+    cargonivel1: string;
+    cargonivel2: string;
+    cargonivel3: string;
+    siglasnivel1: string;
+    siglasnivel2: string;
+    siglasnivel3: string;
+    siglasnivel4: string;
+    delegacionreg: string;
+    delegationNumber: number;
+    subdelegationNumber: number;
+    departamentNumber: number;
+    user: string;
+    assigned: string;
+    registryNumber?: number;
+    delegation1Number: number;
+    departament1Number: number;
+    lastActive: number;
+    delegation: import('d:/laragon/www/f-sigebi/src/app/core/models/catalogs/delegation.model').IDelegation;
+    subDelegation: import('d:/laragon/www/f-sigebi/src/app/core/models/catalogs/subdelegation.model').ISubdelegation;
+    departament: IDepartment;
+    userDetail: import('d:/laragon/www/f-sigebi/src/app/core/models/ms-users/seg-user-non-relational.model').ISegUsersNonRelational;
+    userAndName?: string;
+  };
   getGoods1(params: ListParams) {
     this.isLoadingGood = true;
     this.goodServices.getAll(params).subscribe({
@@ -486,12 +538,16 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
   }
 
   async getUserInfo() {
+    if (this.userInfo) {
+      return this.userInfo;
+    }
     const auth = this.authService.decodeToken();
     const data = await this.getUserDataLogged(
       auth.preferred_username?.toLocaleUpperCase() || auth.preferred_username
     );
     console.log({ data, auth });
-    return { ...data, ...auth };
+    this.userInfo = { ...data, ...auth };
+    return this.userInfo;
   }
 
   async getUserDataLogged(userId: string) {
@@ -640,6 +696,7 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
         good: item,
         goods: item.description,
       });
+
       this.postGoodsJobManagement({
         goodNumber: item.goodId,
         recordNumber: '',
@@ -865,15 +922,19 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
           ? 'ABANDONO'
           : 'RELACIONADO';
 
-      const result = await firstValueFrom(
+      await firstValueFrom(
         this.mJobManagementService.create(values).pipe(
+          tap(() => {
+            this.isCreate = false;
+            this.formJobManagement.get('jobBy').setValue('RELACIONADO');
+          }),
           catchError(() => {
             showToast({
               icon: 'error',
               title: 'Error',
               text: 'Error al guardar los datos',
             });
-            return of(null);
+            throw new Error('Error al guardar los datos');
           })
         )
       );
@@ -935,13 +996,15 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
           .get('managementNumber')
           .setValue(sequencialOfManagement);
         if (valuesJobManagement.refersTo == 'Se refiere a todos los bienes') {
+          await this.commit();
           this.pupAddGood();
         }
         if (
           valuesJobManagement.refersTo ==
-          'Se refiere a algun (os) bien (es) del expediente'
+          'Se refiere a algun(os) bien(es) del expediente'
         ) {
           this.pupAddAnyGood();
+          await this.commit();
         }
         this.formVariables.get('classify').setValue(null);
         if (this.dataTableGoodsJobManagement?.[0].classify) {
@@ -1022,5 +1085,10 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
     //   class: 'modal-lg modal-dialog-centered',
     //   ignoreBackdropClick: true,
     // });
+    const modalRef = this.modalService.show(DocumentsFormComponent, {
+      //initialState: context,
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    });
   }
 }

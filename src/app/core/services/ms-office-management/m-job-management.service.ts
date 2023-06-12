@@ -163,4 +163,16 @@ export class MJobManagementService extends HttpService {
   }> {
     return this.post('application/pup-serach-number', body);
   }
+
+  getRegSender(no_delegacion: string): Observable<
+    {
+      no_delegacion: string;
+      no_departamento: string;
+      no_subdelegacion: string;
+      nombre: string;
+      usuario: string;
+    }[]
+  > {
+    return this.get(`application/regRemitente`, { no_delegacion });
+  }
 }
