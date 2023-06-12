@@ -2245,7 +2245,8 @@ export class RelatedDocumentsComponent
   typeSelected(type: any) {
     const filter = type.no_clasif_bien;
     this.dictationService.typeDictamination = type;
-
+    //this.dictationService.numberClassifyGood = this.formJobManagement.value.managementNumber ||  cveDocument;
+    this.dictationService.crime = this.formVariables.get('b').value;
     this.selectVariable = filter;
     this.goodFilterParams(filter);
   }
@@ -2783,6 +2784,14 @@ export class RelatedDocumentsComponent
         error: async error => {
           console.log(error);
           if (error.status == 400) {
+            // se llama PUP_GENERA_XML
+            this._PUP_GENERA_XML();
+          } else {
+            // this.onLoadToast(
+            //   'error',
+            //   'Se tiene problemas al mostrar el reporte',
+            //   ''
+            // );
             let paramsReport = {
               proceedingsNumber: this.notificationData.expedientNumber,
               steeringWheelNumber: this.notificationData.wheelNumber,
@@ -2790,14 +2799,36 @@ export class RelatedDocumentsComponent
             };
             // se llama PUP_LANZA_REPORTE
             const _launchReport = await this._PUP_LANZA_REPORTE(paramsReport);
-            // se llama PUP_GENERA_XML
-            this._PUP_GENERA_XML();
-          } else {
-            this.onLoadToast(
-              'error',
-              'Se tiene problemas al mostrar el reporte',
-              ''
-            );
+            //  = {
+            //   no_exp: 0,
+            //   correo: null,
+            //   oficios: null,
+            // };
+            console.log(_launchReport);
+            let nameReport: string = '';
+            if (
+              this.formJobManagement.value.jobType == 'INTERNO' &&
+              this.paramsGestionDictamen.pllamo != 'ABANDONO'
+            ) {
+              nameReport = 'RGEROFGESTION';
+            }
+            if (
+              this.formJobManagement.value.jobType == 'EXTERNO' &&
+              this.paramsGestionDictamen.pllamo != 'ABANDONO'
+            ) {
+              nameReport = 'RGEROFGESTION_EXT';
+            }
+            if (
+              this.formJobManagement.value.jobType == 'EXTERNO' &&
+              this.paramsGestionDictamen.pllamo == 'ABANDONO'
+            ) {
+              nameReport = 'RGENABANSUB';
+            }
+            this._conditions_Report(nameReport);
+            if (_launchReport.no_exp > 0) {
+              // http://sigebimsqa.indep.gob.mx/dictation/api/v1/application/getVOficTrans
+              // Llamar el MS y validar cual es la respuesta
+            }
             this._end_firmProcess(); // Termina el proceso
           }
         },
@@ -2819,13 +2850,16 @@ export class RelatedDocumentsComponent
     // this.dictationService.sendFunction_pupLaunchReport();
   }
 
-  _conditions_Report() {
+  _conditions_Report(nameReport: string) {
+    // Parametros de la forma
     let params: any = {
       NO_OF_GES: this.formJobManagement.value.managementNumber, // NO_OF_GES
       TIPO_OF: this.formJobManagement.value.jobType, // TIPO_OF
       VOLANTE: this.notificationData.wheelNumber, // VOLANTE
       EXP: this.notificationData.expedientNumber, // EXPEDIENTE
+      ESTAT_DIC: this.formJobManagement.value.statusOf, // ESTATUS DEL OFICIO
     };
+    this.runReport(nameReport, params);
   }
 
   _PUP_CONSULTA_PDF_BD_SSF3() {}
@@ -3165,5 +3199,29 @@ export class RelatedDocumentsComponent
       const notifBody: any = { dictumKey: null };
       this.notificationService.update(Number(no_volante), notifBody);
     }
+  }
+
+  runReport(nameReport: string = '', params: any) {
+    this.siabService.fetchReport(nameReport, params).subscribe(response => {
+      console.log(response);
+      if (response !== null) {
+        const blob = new Blob([response], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+        let config = {
+          initialState: {
+            documento: {
+              urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+              type: 'pdf',
+            },
+            callback: (data: any) => {},
+          }, //pasar datos por aca
+          class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+          ignoreBackdropClick: true, //ignora el click fuera del modal
+        };
+        this.modalService.show(PreviewDocumentsComponent, config);
+      } else {
+        this.alert('warning', ERROR_REPORT, '');
+      }
+    });
   }
 }
