@@ -219,7 +219,9 @@ export class GoodService extends HttpService {
   }
 
   removeGood(body: Object) {
+    console.log('Object ', body);
     const route = `${GoodEndpoints.Good}`;
+    console.log(route);
     return this.delete(route, body);
   }
 
