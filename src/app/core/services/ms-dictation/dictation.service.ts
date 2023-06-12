@@ -274,4 +274,24 @@ export class DictationService extends HttpService {
   getValid(data: Object) {
     return this.post(DictationEndpoints.DEL2, data);
   }
+
+  getVExist(data: Object) {
+    return this.post(DictationEndpoints.DEL3, data);
+  }
+
+  getStatusIni(good: number) {
+    return this.get(`${DictationEndpoints.DEL4}?noBien=${good}`);
+  }
+
+  updateVEstatus(data: Object) {
+    return this.put(DictationEndpoints.DEL5, data);
+  }
+
+  getVEstatus(data: Object) {
+    return this.post(DictationEndpoints.DEL6, data);
+  }
+
+  getUpdateAndDelete(data: Object) {
+    return this.post(DictationEndpoints.DEL7, data);
+  }
 }
