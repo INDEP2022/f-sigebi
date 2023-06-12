@@ -1,13 +1,15 @@
-import { Component, OnInit } from '@angular/core';
-import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
+import { Component, OnInit } from '@angular/core';
+import { ListParams, SearchFilter } from 'src/app/common/repository/interfaces/list-params';
 
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { ISatClassification } from 'src/app/core/models/catalogs/sat-classification.model';
-import { SatClassificationService } from 'src/app/core/services/catalogs/sat-classification.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { SatClassificationFormComponent } from '../sat-classification-form/sat-classification-form.component';
+import { BsModalService } from 'ngx-bootstrap/modal';
+import { ISatClassification } from 'src/app/core/models/catalogs/sat-classification.model';
+import { LocalDataSource } from 'ng2-smart-table';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { SAT_CLASSIFICATION_COLUMNS } from './sat-classification-columns';
+import { SatClassificationFormComponent } from '../sat-classification-form/sat-classification-form.component';
+import { SatClassificationService } from 'src/app/core/services/catalogs/sat-classification.service';
 
 @Component({
   selector: 'app-sat-classification-list',
@@ -15,10 +17,11 @@ import { SAT_CLASSIFICATION_COLUMNS } from './sat-classification-columns';
   styles: [],
 })
 export class SatClassificationListComponent extends BasePage implements OnInit {
-  paragraphs: ISatClassification[] = [];
+  satClasification: ISatClassification[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
-
+  data: LocalDataSource = new LocalDataSource();
+  columnFilters: any = [];
   constructor(
     private satClassificationService: SatClassificationService,
     private modalService: BsModalService
@@ -26,20 +29,52 @@ export class SatClassificationListComponent extends BasePage implements OnInit {
     super();
     this.settings.columns = SAT_CLASSIFICATION_COLUMNS;
     this.settings.actions.delete = true;
+    this.settings.actions.add = false;
+    this.settings.hideSubHeader = false;
   }
 
   ngOnInit(): void {
+    this.data
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = ``;
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+            filter.field == 'id' ||
+              filter.field == 'nombre_clasificacion'
+              ? (searchFilter = SearchFilter.EQ)
+              : (searchFilter = SearchFilter.ILIKE);
+            if (filter.search !== '') {
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.params = this.pageFilter(this.params);
+          this.getSatClasifications();
+        }
+      });
     this.params
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getExample());
+      .subscribe(() => this.getSatClasifications());
   }
 
-  getExample() {
+  getSatClasifications() {
     this.loading = true;
-    this.satClassificationService.getAll(this.params.getValue()).subscribe({
+    let params = {
+      ...this.params.getValue(),
+      ...this.columnFilters,
+    };
+    this.satClassificationService.getAll(params).subscribe({
       next: response => {
-        this.paragraphs = response.data;
-        this.totalItems = response.count;
+        this.satClasification = response.data;
+        this.totalItems = response.count || 0;
+        this.data.load(response.data);
+        this.data.refresh();
         this.loading = false;
       },
       error: error => (this.loading = false),
@@ -47,28 +82,40 @@ export class SatClassificationListComponent extends BasePage implements OnInit {
   }
 
   openForm(satclasification?: ISatClassification) {
-    let config: ModalOptions = {
-      initialState: {
-        satclasification,
-        callback: (next: boolean) => {
-          if (next) this.getExample();
-        },
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      satclasification,
+      callback: (next: boolean) => {
+        if (next) this.getSatClasifications();
       },
-      class: 'modal-md modal-dialog-centered',
-      ignoreBackdropClick: true,
     };
-    this.modalService.show(SatClassificationFormComponent, config);
+    this.modalService.show(SatClassificationFormComponent, modalConfig);
   }
 
-  delete(satclasification?: ISatClassification) {
+  showDeleteAlert(satclasification: ISatClassification) {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        //Ejecutar el servicio
+        this.delete(satclasification.id);
       }
+    });
+  }
+
+  delete(id: number) {
+    this.satClassificationService.remove(id).subscribe({
+      next: () => {
+        this.getSatClasifications(), this.alert('success', 'Sat Clasification', 'Borrado');
+      },
+      error: err => {
+        this.alert(
+          'warning',
+          'Sub-tipo',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      },
     });
   }
 }
