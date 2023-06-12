@@ -18,8 +18,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 })
 export class RegionalDelegationFormComponent
   extends BasePage
-  implements OnInit
-{
+  implements OnInit {
   regionalDelegationForm: ModelForm<IRegionalDelegation>;
   regionalDelegation: IRegionalDelegation;
   title: string = 'Delegación Regional';
@@ -53,12 +52,12 @@ export class RegionalDelegationFormComponent
       registerNumber: [null],
       idGeographicZona: [
         null,
-        [Validators.required],
-        Validators.pattern(NUMBERS_PATTERN),
+        [Validators.required,
+        Validators.pattern(NUMBERS_PATTERN)],
       ],
       version: [1],
       regionalDelegate: [null, [Validators.required]],
-      officeAddress: [null, [Validators.required]],
+      officeAddress: [null, [Validators.required, Validators.maxLength(200)]],
       status: [1],
       keyZone: [null, [Validators.required]],
       iva: [0.16, [Validators.required]],

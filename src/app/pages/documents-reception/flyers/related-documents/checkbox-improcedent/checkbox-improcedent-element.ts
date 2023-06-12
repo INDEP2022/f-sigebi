@@ -9,9 +9,10 @@ import {
   SimpleChanges,
   ViewChild,
 } from '@angular/core';
+import { BasePage } from 'src/app/core/shared';
 
 @Component({
-  selector: 'app-checkbox-element',
+  selector: 'app-checkbox-improcedent-element',
   template: `
     <div class="row justify-content-center">
       <input
@@ -24,7 +25,10 @@ import {
   `,
   styles: [],
 })
-export class CheckboxElementComponent<T = any> implements OnInit, OnChanges {
+export class CheckboxImprocedentElementComponent<T = any>
+  extends BasePage
+  implements OnInit, OnChanges
+{
   checked: boolean;
   disabled: boolean;
   @ViewChild('box', { static: true }) box: ElementRef<HTMLInputElement>;
@@ -34,7 +38,9 @@ export class CheckboxElementComponent<T = any> implements OnInit, OnChanges {
   @Output() toggle: EventEmitter<{ row: T; toggle: boolean }> =
     new EventEmitter();
 
-  constructor() {}
+  constructor() {
+    super();
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     console.log(changes);
@@ -42,16 +48,18 @@ export class CheckboxElementComponent<T = any> implements OnInit, OnChanges {
 
   ngOnInit(): void {
     this.checked = this.value;
-    console.log(this.checked);
   }
 
   onToggle($event: Event) {
     let row: any = this.rowData;
     let toggle = ($event.currentTarget as HTMLInputElement).checked;
-    this.toggle.emit({ row, toggle });
-  }
-
-  setValue(value: boolean) {
-    this.checked = value;
+    if (row.seleccion == true && toggle == true) {
+      this.box.nativeElement.checked = false;
+      toggle = false;
+      this.toggle.emit({ row, toggle });
+      this.onLoadToast('info', 'No se puede seleccionar dos casillas a la vez');
+    } else {
+      this.toggle.emit({ row, toggle });
+    }
   }
 }

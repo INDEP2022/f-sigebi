@@ -10,6 +10,7 @@ import {
 } from '@angular/core';
 import { FormBuilder, FormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { format } from 'date-fns';
 import {
   BehaviorSubject,
   catchError,
@@ -172,8 +173,7 @@ interface IBlkProceeding {
 })
 export class EventCaptureComponent
   extends BasePage
-  implements OnInit, AfterViewInit, AfterContentInit
-{
+  implements OnInit, AfterViewInit, AfterContentInit {
   @ViewChildren(SmartDateInputHeaderDirective, { read: ElementRef })
   private itemsElements: QueryList<ElementRef>;
   _today = new Date();
@@ -282,6 +282,8 @@ export class EventCaptureComponent
   selectedProceedings: IGoodIndicator[] = [];
 
   allSelected = false;
+
+  flag = false;
 
   constructor(
     private fb: FormBuilder,
@@ -581,8 +583,8 @@ export class EventCaptureComponent
     const numDelegation1 = await this.getUserDelegation();
     const dataToSave = {
       keysProceedings,
-      elaborationDate,
-      captureDate,
+      elaborationDate: format(elaborationDate, 'yyyy-MM-dd HH:mm:ss'),
+      captureDate: format(captureDate, 'yyyy-MM-dd HH:mm:ss'),
       responsible,
       numFile: formValue.numFile,
       statusProceedings,
@@ -702,8 +704,8 @@ export class EventCaptureComponent
     this.alert('error', 'Error', message);
   }
 
-  ngAfterContentInit(): void {}
-  ngAfterViewInit(): void {}
+  ngAfterContentInit(): void { }
+  ngAfterViewInit(): void { }
 
   async transferClick() {
     const firstDetail = this.detail[0];
@@ -886,7 +888,7 @@ export class EventCaptureComponent
   }
 
   // PUP_TOTALES_PROG
-  progTotal() {}
+  progTotal() { }
 
   // PUP_GENERA_WHERE
   createFilters() {
@@ -916,12 +918,12 @@ export class EventCaptureComponent
       startDate: initialDate,
       endDate: finalDate,
       processingArea: typeEvent,
-      steeringWheel: flyer,
-      proceedings: expedient,
-      opinion: dictumCve,
+      steeringWheel: flyer ? `${flyer}` : null,
+      proceedings: expedient ? `${expedient}` : null,
+      opinion: dictumCve ? `'${dictumCve}'` : null,
       coordination:
         delegation.length > 0 ? delegation.map(d => d.id).join(',') : null,
-      program: programed,
+      program: programed ? `${programed}` : null,
       cdonacKey: cdonacCve,
       idLot: lot,
       doneeNumber: donatNumber,
@@ -949,18 +951,17 @@ export class EventCaptureComponent
       .pupUpdate(typeEvent.value, expedient, this.proceeding.id)
       .subscribe({
         next: res => {
-          if (res.data.length > 0) {
+          this.loading = false;
+          if (res?.registros > 0) {
             this.alert('success', 'Bienes cargados correctamente', '');
-
             this.formSiab = this.fb.group(new CaptureEventSiabForm());
           } else {
-            this.alert('info', 'No se encontraron bienes para agregar', '');
+            this.alert('warning', 'No se encontraron bienes para agregar', '');
           }
-          this.loading = false;
           const params = new FilterParams();
           this.params.next(params);
         },
-        error: error => {
+        error: () => {
           this.loading = false;
         },
       });
@@ -1100,11 +1101,9 @@ export class EventCaptureComponent
       this.global.type = 'RT';
     }
     folio.setValue(this.global.cons);
-    const cve = `${this.global.type ?? ''}/${prog.value ?? ''}/${
-      this.global.tran ?? ''
-    }/${this.global.regi ?? ''}/${user.value ?? ''}/${this.global.cons ?? ''}/${
-      year.value ?? ''
-    }/${month.value ?? ''}`;
+    const cve = `${this.global.type ?? ''}/${prog.value ?? ''}/${this.global.tran ?? ''
+      }/${this.global.regi ?? ''}/${user.value ?? ''}/${this.global.cons ?? ''}/${year.value ?? ''
+      }/${month.value ?? ''}`;
     // .slice(-2)
     if (!area.value && this.global.regi) {
       area.setValue(this.global.regi);
@@ -1259,7 +1258,7 @@ export class EventCaptureComponent
   }
 
   // CU_AREA_E
-  async getAreasE() {}
+  async getAreasE() { }
   // CU_AREA_R;
   async getAreasR() {
     return await lastValueFrom(
@@ -1662,7 +1661,7 @@ export class EventCaptureComponent
     );
   }
 
-  patchProceedingValue(proceeding: IProceedings) {}
+  patchProceedingValue(proceeding: IProceedings) { }
 
   async getProceedingType() {
     const { typeEvent } = this.registerControls;
@@ -1692,11 +1691,11 @@ export class EventCaptureComponent
     );
   }
 
-  onSubmit() {}
+  onSubmit() { }
 
-  onSubmit2() {}
+  onSubmit2() { }
 
-  search() {}
+  search() { }
 
   errorForm(message?: string) {
     if (message) {
@@ -2067,9 +2066,9 @@ export class EventCaptureComponent
     });
   }
 
-  PUP_ELIMINA_PDF_BD_SSF3(p_LLAVE: string, p_NO_ARCHO: number) {}
+  PUP_ELIMINA_PDF_BD_SSF3(p_LLAVE: string, p_NO_ARCHO: number) { }
 
-  PUP_CARGA_PDF_BD_SSF3(p_LLAVE: string, p_NO_ARCHO: number, p_RUTA: string) {}
+  PUP_CARGA_PDF_BD_SSF3(p_LLAVE: string, p_NO_ARCHO: number, p_RUTA: string) { }
 
   async PUP_ING_REG_FOLIO_UNIV_SSF3(
     p_NO_EXPEDIENTE: number,
@@ -2348,8 +2347,7 @@ export class EventCaptureComponent
         }
       }
     } catch (e_EXCEPPROC) {
-      c_MENSAJE =
-        'Favor de Informar a Informática. < ' || 'e_EXCEPPROC.MESSAGE' || ' >';
+      c_MENSAJE = 'Ocurrió un error inesperado';
       this.alert('error', 'Ha ocurrido un error', c_MENSAJE);
     }
   }
@@ -2649,6 +2647,6 @@ export class EventCaptureComponent
     }
   }
 
-  PUP_ING_CORREO_SAE() {}
-  PUP_GENERA_XML() {}
+  PUP_ING_CORREO_SAE() { }
+  PUP_GENERA_XML() { }
 }
