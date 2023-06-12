@@ -511,7 +511,7 @@ export class ConciliationDepositaryPaymentsComponent
               'warning',
               '',
               NOT_FOUND_GET_VALID_STATUS(
-                res.message[0],
+                res.message[0] + '',
                 Number(this.depositaryAppointment.appointmentNumber)
               )
             );

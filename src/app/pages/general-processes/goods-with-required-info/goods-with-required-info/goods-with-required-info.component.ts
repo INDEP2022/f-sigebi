@@ -1,6 +1,6 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import {
@@ -9,6 +9,7 @@ import {
 } from 'src/app/common/repository/interfaces/list-params';
 import { GoodService } from 'src/app/core/services/good/good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { IParamsLegalOpinionsOffice } from 'src/app/pages/juridical-processes/depositary/legal-opinions-office/legal-opinions-office/legal-opinions-office.component';
 import { GOODS_WITH_REQUIRED_INFO_COLUMNS } from './goods-with-required-info-columns';
 
 @Component({
@@ -23,10 +24,31 @@ export class GoodsWithRequiredInfoComponent extends BasePage implements OnInit {
   params = new BehaviorSubject<ListParams>(new ListParams());
   @Output() customEvent = new EventEmitter<string>();
 
+  paramsScreen: IParamsLegalOpinionsOffice = {
+    PAQUETE: '',
+    P_GEST_OK: '',
+    CLAVE_OFICIO_ARMADA: '',
+    P_NO_TRAMITE: '',
+    TIPO: '',
+    P_VALOR: '',
+    TIPO_VO: '',
+    NO_EXP: '',
+    CONSULTA: '',
+  };
+  paramsCurrentScreen = {
+    TIPO_PROC: '',
+    NO_INDICADOR: '',
+  };
+  screenKey: string = 'FATRIBREQUERIDO'; // Clave de la pantalla actual
+  origin: string = null;
+  origin2: string = ''; // Pantalla para regresar a la anterior de la que se llamo
+  origin3: string = ''; // Pantalla para regresar a la anterior de la que se llamo desde la origin2
+
   constructor(
     private fb: FormBuilder,
     private goodService: GoodService,
-    public router: Router
+    public router: Router,
+    private activatedRoute: ActivatedRoute
   ) {
     super();
     //this.settings.actions = false;
@@ -46,6 +68,24 @@ export class GoodsWithRequiredInfoComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    this.activatedRoute.queryParams
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(paramsQuery => {
+        this.origin = paramsQuery['origin'] ?? null;
+        this.paramsCurrentScreen.NO_INDICADOR =
+          paramsQuery['NO_INDICADOR'] ?? null;
+        this.paramsCurrentScreen.TIPO_PROC = paramsQuery['TIPO_PROC'] ?? null;
+        if (this.origin == 'FACTJURDICTAMOFICIO') {
+          for (const key in this.paramsScreen) {
+            if (Object.prototype.hasOwnProperty.call(paramsQuery, key)) {
+              this.paramsScreen[key as keyof typeof this.paramsScreen] =
+                paramsQuery[key] ?? null;
+            }
+          }
+          this.origin2 = paramsQuery['origin2'] ?? null;
+          this.origin3 = paramsQuery['origin3'] ?? null;
+        }
+      });
     this.attribGoodBad
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
@@ -79,6 +119,12 @@ export class GoodsWithRequiredInfoComponent extends BasePage implements OnInit {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
+    if (this.paramsCurrentScreen.TIPO_PROC) {
+      params['filter.pair1'] = this.paramsCurrentScreen.TIPO_PROC;
+    }
+    if (this.paramsCurrentScreen.NO_INDICADOR) {
+      params['filter.pair2'] = this.paramsCurrentScreen.NO_INDICADOR;
+    }
     this.goodService.getAttribGoodBadAll(params).subscribe({
       next: resp => {
         console.log(resp);
@@ -97,16 +143,48 @@ export class GoodsWithRequiredInfoComponent extends BasePage implements OnInit {
   openGood(data: any): void {
     console.log(data);
     //console.log(localStorage.setItem(`Task`, JSON.stringify(data)));
-    localStorage.setItem(`Task`, JSON.stringify(data));
+    // localStorage.setItem(`Task`, JSON.stringify(data));
 
     if (data.requestId !== null && data.urlNb !== null) {
+      // this.router.navigate([`/pages/general-processes/goods-characteristics`], {
+      //   queryParams: { noBien: data.id.id },
+      // });
       let url = `${`/pages/general-processes/goods-characteristics`}`;
-      console.log(url);
-      this.customEvent.emit('Hola');
+      /*
+      console.log(url, data);
+      this.customEvent.emit('Hola');*/
       //console.log()
-      this.router.navigateByUrl(url);
+      // this.router.navigateByUrl(url);
+      this.router.navigate([url], {
+        queryParams: {
+          ...this.paramsScreen,
+          ...this.paramsCurrentScreen,
+          origin: this.screenKey,
+          origin1: this.origin,
+          origin2: this.origin2,
+          origin3: this.origin3,
+          noBien: data.id.goodId,
+          TIPO_PROC: this.paramsCurrentScreen.TIPO_PROC,
+          NO_INDICADOR: this.paramsCurrentScreen.NO_INDICADOR,
+        },
+      });
     } else {
       this.alert('warning', 'No disponible', 'Tarea no disponible');
+    }
+  }
+
+  goBack() {
+    if (this.origin == 'FACTJURDICTAMOFICIO') {
+      this.router.navigate(
+        [`/pages/juridical/depositary/legal-opinions-office`],
+        {
+          queryParams: {
+            ...this.paramsScreen,
+            origin: this.origin2,
+            origin3: this.origin3,
+          },
+        }
+      );
     }
   }
 }

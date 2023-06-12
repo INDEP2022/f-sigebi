@@ -108,11 +108,27 @@ export class TypeOrderServiceListComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
+        this.remove(typeOrderService.id);
         //Ejecutar el servicio
       }
+    });
+  }
+
+  remove(id?: number) {
+    this.typeServicesService.remove(id).subscribe({
+      next: () => {
+        this.getExample(), this.alert('success', 'Orden Servicio', 'Borrado');
+      },
+      error: error => {
+        this.alert(
+          'warning',
+          'Orden Servicio',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      },
     });
   }
 }

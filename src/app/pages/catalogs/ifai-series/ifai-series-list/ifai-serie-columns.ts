@@ -19,9 +19,9 @@ export const IFAI_SERIE_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  registryNumber: {
-    title: 'No. de registro',
-    type: 'number',
-    sort: false,
-  },
+  // registryNumber: {
+  //   title: 'No. de registro',
+  //   type: 'number',
+  //   sort: false,
+  // },
 };

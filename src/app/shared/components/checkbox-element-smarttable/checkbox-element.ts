@@ -36,6 +36,7 @@ export class CheckboxElementComponent<T = any> implements OnInit {
 
   ngOnInit(): void {
     this.checked = this.value;
+    console.log(this.checked);
   }
 
   onToggle($event: Event) {

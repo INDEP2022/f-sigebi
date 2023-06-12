@@ -19,3 +19,10 @@ export interface IDetailGoodPossessionThirdParty {
   steeringwheelNumber: string;
   nbOrigin: string;
 }
+
+export interface IStatusHistory {
+  changeDate: string;
+  justification: string;
+  status: string;
+  usrRegister: string;
+}

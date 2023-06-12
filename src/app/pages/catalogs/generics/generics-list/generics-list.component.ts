@@ -31,7 +31,7 @@ export class GenericsListComponent extends BasePage implements OnInit {
   ) {
     super();
     this.settings.columns = GENERICS_COLUMNS;
-    this.settings.actions.delete = true;
+    this.settings.actions.delete = false;
     this.settings.actions.add = false;
     this.settings.hideSubHeader = false;
   }
@@ -113,13 +113,13 @@ export class GenericsListComponent extends BasePage implements OnInit {
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
-        this.ShowDeleteAlert(batch.keyId);
+        this.ShowDeleteAlert(batch.name, batch.keyId);
       }
     });
   }
 
-  ShowDeleteAlert(id: number) {
-    this.genericsService.remove(id).subscribe({
+  ShowDeleteAlert(name: string, id: number) {
+    this.genericsService.remove1(name, id).subscribe({
       next: () => {
         this.getExample(), this.alert('success', 'Genérico', 'Borrado');
       },

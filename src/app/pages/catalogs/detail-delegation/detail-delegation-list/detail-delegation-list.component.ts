@@ -11,7 +11,6 @@ import {
 import { IDetailDelegation } from 'src/app/core/models/catalogs/detail-delegation.model';
 import { DetailDelegationService } from 'src/app/core/services/catalogs/detail-delegation.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import Swal from 'sweetalert2';
 import { DetailDelegationFormComponent } from '../detail-delegation-form/detail-delegation-form.component';
 import { DETAIL_DELEGATION_COLUMNS } from './detail-delegation-columns';
 
@@ -126,18 +125,27 @@ export class DetailDelegationListComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(detailDelegation.id);
-        Swal.fire('Borrado', '', 'success');
       }
     });
   }
 
   delete(id: number) {
     this.detailDelegationService.remove(id).subscribe({
-      next: () => this.getDetailDelegation(),
+      next: () => {
+        this.alert('success', 'Detalle Delegación', 'Borrado');
+        this.getDetailDelegation();
+      },
+      error: error => {
+        this.alert(
+          'warning',
+          'Detalle Delegación',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      },
     });
   }
 }

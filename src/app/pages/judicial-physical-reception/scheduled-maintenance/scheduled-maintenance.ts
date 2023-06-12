@@ -1,5 +1,10 @@
 import { Component, Inject, inject, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { Ng2SmartTableComponent } from 'ng2-smart-table';
 import { takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
@@ -29,7 +34,7 @@ export abstract class ScheduledMaintenance extends BasePageWidhtDinamicFiltersEx
   first = true;
   @ViewChild(Ng2SmartTableComponent) table: Ng2SmartTableComponent;
   elementToExport: any[];
-
+  pageSizeOptions = [5, 10, 15, 20];
   like = SearchFilter.LIKE;
   hoy = new Date();
   settings1 = {
@@ -114,7 +119,7 @@ export abstract class ScheduledMaintenance extends BasePageWidhtDinamicFiltersEx
   ];
 
   stringPattern = STRING_PATTERN;
-  oldLimit = 10;
+  // oldLimit = 10;
   // data: IProceedingDeliveryReception[] = [];
   paramsTypes: ListParams = new ListParams();
   paramsStatus: ListParams = new ListParams();
@@ -125,6 +130,7 @@ export abstract class ScheduledMaintenance extends BasePageWidhtDinamicFiltersEx
   paramsUsers = new FilterParams();
   delegationService = inject(DelegationService);
   userService = inject(UsersService);
+  limit: FormControl = new FormControl(10);
   constructor(
     protected fb: FormBuilder,
     protected deliveryService: ProceedingsDeliveryReceptionService,
@@ -144,6 +150,13 @@ export abstract class ScheduledMaintenance extends BasePageWidhtDinamicFiltersEx
       'comptrollerWitness',
       'observations',
     ];
+    const paramsActa2 = localStorage.getItem(this.paramsActa);
+    if (paramsActa2) {
+      const params = JSON.parse(paramsActa2);
+      this.params.value.limit = params.limit;
+      this.params.value.page = params.page;
+      this.limit = new FormControl(params.limit);
+    }
     // this.maxDate = new Date();
     // console.log(this.settings1);
   }
@@ -174,10 +187,16 @@ export abstract class ScheduledMaintenance extends BasePageWidhtDinamicFiltersEx
 
   resetView() {
     console.log('RESET VIEW');
+
+    // const filter = this.data.getFilter();
+    this.data.setFilter([], true, false);
     this.data.load([]);
+    // console.log(filter);
+    this.data.refresh();
     this.totalItems = 0;
-    this.oldLimit = 10;
     localStorage.removeItem(this.formStorage);
+    localStorage.removeItem(this.paramsActa);
+    this.limit = new FormControl(10);
     this.columnFilters = [];
     // this.dinamicFilterUpdate();
   }
@@ -188,9 +207,11 @@ export abstract class ScheduledMaintenance extends BasePageWidhtDinamicFiltersEx
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe({
       next: response => {
         console.log(response);
-
-        this.getData(response.limit <= this.oldLimit ? true : false);
-        this.oldLimit = response.limit;
+        localStorage.setItem(
+          this.paramsActa,
+          JSON.stringify({ limit: response.limit, page: response.page })
+        );
+        this.getData(true);
       },
     });
   }

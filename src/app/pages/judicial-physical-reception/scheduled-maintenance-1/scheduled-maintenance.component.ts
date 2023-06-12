@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormControl } from '@angular/forms';
+import { FormBuilder } from '@angular/forms';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { takeUntil } from 'rxjs';
 import { IProceedingDeliveryReception } from 'src/app/core/models/ms-proceedings/proceeding-delivery-reception';
 import {
   INotSucess,
@@ -31,7 +30,7 @@ export class ScheduledMaintenanceComponent
   implements OnInit
 {
   selecteds: IProceedingDeliveryReception[] = [];
-  limit: FormControl = new FormControl(10);
+
   constructor(
     private modalService: BsModalService,
     protected override fb: FormBuilder,
@@ -48,13 +47,7 @@ export class ScheduledMaintenanceComponent
       'paramsActaProgramaciones'
     );
     // debugger;
-    const paramsActa = localStorage.getItem(this.paramsActa);
-    if (paramsActa) {
-      const params = JSON.parse(paramsActa);
-      this.params.value.limit = params.limit;
-      this.params.value.page = params.page;
-      this.limit = new FormControl(params.limit);
-    }
+
     this.settings1 = {
       ...this.settings1,
       selectMode: 'multi',
@@ -68,35 +61,6 @@ export class ScheduledMaintenanceComponent
     };
 
     // console.log(this.settings1);
-  }
-
-  override updateByPaginator() {
-    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe({
-      next: response => {
-        console.log(response);
-        localStorage.setItem(
-          this.paramsActa,
-          JSON.stringify({ limit: response.limit, page: response.page })
-        );
-        // this.router.navigate([], {
-        //   relativeTo: this._route,
-        //   queryParams: { page: response.page },
-        //   queryParamsHandling: 'merge'
-        // })
-        this.getData(response.limit <= this.oldLimit ? true : false);
-        this.oldLimit = response.limit;
-      },
-    });
-  }
-
-  override resetView() {
-    console.log('RESET VIEW');
-    this.data.load([]);
-    this.totalItems = 0;
-    localStorage.removeItem(this.formStorage);
-    localStorage.removeItem(this.paramsActa);
-    this.limit = new FormControl(10);
-    this.columnFilters = [];
   }
 
   private showMessageProceedingsRemoved(

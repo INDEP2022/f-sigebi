@@ -19,7 +19,8 @@
               value="id"
               bindLabel="description"
               label="Delegacion Regional"
-              (fetchItems)="getRegionalDelegation($event)"></ngx-select>
+              (fetchItems)="getRegionalDelegation($event)"
+              [readonly]="false"></ngx-select>
           </form-field>
         </div>
       </div>
@@ -39,7 +40,8 @@
               bindLabel="descCondition"
               label="Estado"
               (fetchItems)="getStates($event)"
-              (change)="stateChange($event)"></ngx-select>
+              (change)="stateChange($event)"
+              [readonly]="false"></ngx-select>
           </form-field>
         </div>
       </div>
@@ -62,7 +64,7 @@
             [control]="delegationStateForm.get('version')"
             label="Versi&oacute;n">
             <input
-              type="string"
+              type="number"
               class="form-control"
               formControlName="version" />
           </form-field>

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { HistoryGoodEndpoints } from 'src/app/common/constants/endpoints/ms-historygood-endpoints';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { HttpService } from 'src/app/common/services/http.service';
+import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import {
   IHistoryGood,
@@ -75,5 +75,35 @@ export class HistoryGoodService extends HttpService {
   }
   returnStatusProcess(data: IReturnStatusProcess) {
     return this.post<any>(HistoryGoodEndpoints.ReturnStatusProcess, data);
+  }
+
+  getPrexdoAnterior(noBien: number | string) {
+    const route = HistoryGoodEndpoints.GetPrexdoAnterior;
+    return this.get(`${route}/${noBien}`);
+  }
+
+  getChangeDateHistory(noBien: number | string) {
+    const route = HistoryGoodEndpoints.GetChangeDate;
+    return this.get(`${route}/${noBien}`);
+  }
+
+  getHistoryGoodStatus(goodId: number | string, params: _Params) {
+    const route = `application/getHistoryStatusGood/${goodId}`;
+    return this.get(route, params);
+  }
+
+  getPreviousHistoryGood(body: any) {
+    const route = HistoryGoodEndpoints.GetEstPreviousHistory;
+    return this.post(`${route}`, body);
+  }
+
+  getPreviousHistoryGood2(body: any) {
+    const route = HistoryGoodEndpoints.GetEstPreviousHistory2;
+    return this.post(`${route}`, body);
+  }
+
+  validateDateToUpdateStatus(body: any) {
+    const route = HistoryGoodEndpoints.ValidateDatesToUpdateStatus;
+    return this.post(`${route}`, body);
   }
 }

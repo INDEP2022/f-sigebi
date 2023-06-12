@@ -9,7 +9,7 @@ import {
 import { ActivatedRoute } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, catchError, takeUntil, throwError } from 'rxjs';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { showHideErrorInterceptorService } from 'src/app/common/services/show-hide-error-interceptor.service';
@@ -96,7 +96,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   totalItemsReceipt: number = 0;
   selectGood: IGood[] = [];
   selectGoodGuard: IGood[] = [];
-  goodIdSelect: string | number;
+  goodIdSelect: any;
   goodIdSelectGuard: string | number;
   programmingId: number = 0;
   idTransferent: any;
@@ -207,11 +207,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     this.prepareReprogForm();
     this.prepareCancelForm();
     this.showDataProgramming();
-
-    this.paramsGuard
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getGoodsProgramming());
-
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getInfoGoodsProgramming());
@@ -421,7 +416,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     this.programmingService
       .getGoodsProgramming(params.getValue())
       .subscribe(data => {
-        console.log('data', data);
         this.filterStatusTrans(data.data);
         this.filterStatusWarehouse(data.data);
         this.filterStatusGuard(data.data);
@@ -435,12 +429,19 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       return items.status == 'EN_TRANSPORTABLE';
     });
 
-    goodsTrans.map(items => {
+    const goodInfo = goodsTrans.map(good => {
+      this.params.getValue()['filter.id'] = good.goodId;
+      this.goodService.getAll(this.params.getValue()).subscribe(response => {
+        this.formDataTrans(response.data);
+        return response.data;
+      });
+    });
+
+    /*const formData = goodsTrans.map(items => {
       this.params.getValue()['filter.id'] = items.goodId;
       this.goodService.getAll(this.params.getValue()).subscribe({
         next: response => {
-          console.log('repsonse', response);
-          response.data.map(item => {
+          const info = response.data.map(item => {
             if (item.physicalStatus == 1) {
               item.physicalStatusName = 'BUENO';
             } else if (item.physicalStatus == 2) {
@@ -473,31 +474,29 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
               stateConservationSae: [item?.stateConservationSae],
               regionalDelegationNumber: [item?.regionalDelegationNumber],
             });
-            this.goodsTransportable.push(form);
-            this.goodsTransportable.updateValueAndValidity();
-            this.formLoading = false;
-          });
 
-          /*if (response.saePhysicalState == 1)
-            response.saePhysicalState = 'BUENO';
-          if (response.saePhysicalState == 2)
-            response.saePhysicalState = 'MALO';
-          if (response.decriptionGoodSae == null)
-            response.decriptionGoodSae = 'Sin descripción';
-          // queda pendiente mostrar el alías del almacén // */
-          //this.goodsTranportables.load(this.goodsInfoTrans);
-          //this.totalItemsTransportable = this.goodsTranportables.count();
+            return form;
+          });
+          console.log('dataForm', info);
         },
         error: error => {
           this.formLoading = false;
         },
       });
     });
+
+    this.goodsTransportable.push(form);
+          this.goodsTransportable.updateValueAndValidity();
+            this.formLoading = false; */
+  }
+
+  formDataTrans(good: IGood[]) {
+    console.log('goodsTrans', good);
   }
 
   filterStatusGuard(data: IGoodProgramming[]) {
     const goodRes = data.filter(items => {
-      return items.status == 'EN_RESGUARDO';
+      return items.status == 'EN_RESGUARDO_TMP';
     });
 
     goodRes.map(items => {
@@ -726,7 +725,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: resp => {
-          console.log('Unit measure', resp);
           this.measureUnits = resp.data;
         },
         error: error => {},
@@ -740,7 +738,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: (data: any) => {
-          console.log('data', data);
           this.stateConservation = data.data;
         },
         error: error => {},
@@ -754,7 +751,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: (data: any) => {
-          console.log('status', data);
           this.statusPhysical = data.data;
         },
       });
@@ -770,15 +766,12 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
 
   infoGoods() {
     this.goods.forEach(items => {
-      console.log(items.quantitySae);
       this.executeForm.get('quantitySae').setValue(items.quantitySae);
-      console.log('mee', this.executeForm.get('quantitySae').value);
     });
   }
 
   // Actualizar la información del bien //
   updateInfoGood(goodNumber: number, goodId: number) {
-    console.log('numero de bien', goodNumber);
     const GoodData: Object = {
       id: Number(goodNumber),
       goodId: Number(goodId),
@@ -796,56 +789,12 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       'Actualizar'
     ).then(question => {
       if (question.isConfirmed) {
-        console.log('Se manda', GoodData);
         this.goodService.updateByBody(GoodData).subscribe(() => {
           this.onLoadToast('success', 'Bien actualizado correctamente', '');
           //this.getReportGoods();
         });
       }
     });
-  }
-
-  /*----------Mostrar bienes transportable, resguardo y almacén-------------*/
-
-  getGoodsProgramming() {
-    /*this.paramsGuard.getValue()['filter.programmingId'] = this.programmingId;
-    this.programmingService
-      .getGoodsProgramming(this.paramsGuard.getValue())
-      .subscribe(data => {
-        this.getGoodsGuards(data.data);
-        this.getGoodsWarehouse(data.data);
-        this.formLoading = false;
-      }); */
-  }
-
-  /*------------------ Goods in guard ---------------------------*/
-  getGoodsGuards(data: IGoodProgramming[]) {
-    const filter = data.filter(item => {
-      return item.status == 'EN_RESGUARDO';
-    });
-
-    filter.map(items => {
-      this.goodService.getById(items.goodId).subscribe({
-        next: response => {
-          if (response.saePhysicalState == 1)
-            response.saePhysicalState = 'BUENO';
-          if (response.saePhysicalState == 2)
-            response.saePhysicalState = 'MALO';
-          if (response.decriptionGoodSae == null)
-            response.decriptionGoodSae = 'Sin descripción';
-          this.goodsGuard.push(response);
-          console.log('Bienes', response);
-          this.guardGoods.load(this.goodsGuard);
-          this.totalItemsGuard = this.guardGoods.count();
-          this.headingGuard = `Resguardo(${this.guardGoods.count()})`;
-        },
-      });
-    });
-    /*const infoGood = filter.map(goods => {
-      return goods.view;
-    });
-    this.guardGoods.load(infoGood);
-    console.log('guards goods', this.guardGoods); */
   }
 
   editGood(good: IGood) {
@@ -894,121 +843,12 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         'Aceptar'
       ).then(question => {
         if (question.isConfirmed) {
-          this.checkProccedingsExist();
+          this.getInfoGoodsProgramming();
         }
       });
     } else {
       this.onLoadToast('warning', 'Se necesita tener un bien seleccionado', '');
     }
-  }
-
-  //Verificar si hay actas abiertas y relacionadas a la programación//
-  checkProccedingsExist() {
-    this.paramsProceeding.getValue()['filter.statusProceeedings'] = 'ABIERTO';
-    this.paramsProceeding.getValue()['filter.idPrograming'] =
-      this.programmingId;
-
-    this.proccedingService
-      .getProceedings(this.paramsProceeding.getValue())
-      .pipe(
-        catchError(error => {
-          if (error.status == 400) {
-            this.createProceeding();
-          } else {
-            this.showProceedings();
-          }
-          return throwError(() => error);
-        })
-      )
-      .subscribe(data => {
-        console.log(data);
-      });
-  }
-
-  //----------------Creando actas----------------------------------
-  createProceeding() {
-    const formData: Object = {
-      id: '108',
-      idPrograming: Number(this.programmingId),
-      status: null,
-    };
-
-    console.log(formData);
-    this.proccedingService.createProceedings(formData).subscribe({
-      next: response => {
-        this.onLoadToast(
-          'success',
-          'Bienes agregados a el acta correctamente',
-          ''
-        );
-        console.log('Acta creada', response);
-        this.generateReceipt(response.id);
-      },
-    });
-  }
-
-  //----------------Mostrando actas-------------------------------
-  showProceedings() {
-    console.log('Mostrando actas');
-  }
-
-  //Generando el recibo resguardo y los bienes del recibo resguardo
-  generateReceipt(idProceeding: number) {
-    //Primero se crea el recibo
-    const formData: Object = {
-      id: 456400,
-      programmingId: Number(this.programmingId),
-      receiptDate: '2023-03-16',
-      typeReceipt: 'RESGUARDO',
-      actId: Number(idProceeding),
-      statusReceiptGuard: 'ABIERTO',
-      creationUser: 'sigebiadmon',
-      creationDate: new Date(),
-      modificationUser: 'sigebiadmon',
-      modificationDate: new Date(),
-    };
-
-    this.receptionService.createReception(formData).subscribe({
-      next: response => {
-        this.assingGoodsGuards(response.id);
-      },
-    });
-  }
-
-  //Se insertan los bienes a ese recibo
-  assingGoodsGuards(receiptId: number) {
-    this.goodsSelect.forEach(item => {
-      const formData: Object = {
-        receiptGuardId: Number(receiptId),
-        idGood: item.id,
-        creationUser: 'sigebiadmon',
-        creationDate: '2023-03-16',
-        modificationUser: 'sigebiadmon',
-        modificationDate: '2023-03-16',
-        version: 1,
-      };
-
-      this.receptionService.createReceptionGoods(formData).subscribe({
-        next: () => {
-          this.showReceiptsGuard();
-        },
-      });
-    });
-  }
-
-  //Mostrando recibo
-  showReceiptsGuard() {
-    this.paramsReception.getValue()['filter.typeReceipt'] = 'RESGUARDO';
-    this.paramsReception.getValue()['filter.programmingId'] =
-      this.programmingId;
-    return this.receptionService
-      .getReceptions(this.paramsReception.getValue())
-      .subscribe({
-        next: response => {
-          this.receiptGuards = response.data;
-          console.log('recibos', response.data);
-        },
-      });
   }
 
   //Bienes asociados a recibo
@@ -1126,6 +966,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
       config.initialState = {
         programming: this.programming,
+        selectGoods: this.selectGood,
         callback: (data: boolean) => {
           if (data) {
             this.sendGoodTransportable();
@@ -1145,7 +986,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
 
   sendGoodTransportable() {
     this.selectGood.map((item: any) => {
-      console.log('this.selectGood', this.selectGood);
       this.goodsTransportable.clear();
       const formData: Object = {
         programmingId: this.programmingId,
@@ -1154,12 +994,9 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       };
       this.programmingGoodService.updateGoodProgramming(formData).subscribe({
         next: async response => {
-          console.log('ACTUALIZADO', response);
           const changeStatusGuard = await this.changeStatusGoodTran(item);
         },
-        error: error => {
-          console.log('error actualizar progr', error);
-        },
+        error: error => {},
       });
     });
   }
@@ -1167,7 +1004,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   sendGoodGuard() {
     if (this.selectGood) {
       this.selectGood.map((item: any) => {
-        console.log('this.selectGood', this.selectGood);
         this.goodsTransportable.clear();
         const formData: Object = {
           programmingId: this.programmingId,
@@ -1176,12 +1012,9 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         };
         this.programmingGoodService.updateGoodProgramming(formData).subscribe({
           next: async response => {
-            console.log('ACTUALIZADO', response);
             const changeStatusGuard = await this.changeStatusGoodTran(item);
           },
-          error: error => {
-            console.log('error actualizar progr', error);
-          },
+          error: error => {},
         });
       });
     } else {
@@ -1196,7 +1029,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   sendWarehouse() {
     if (this.selectGood) {
       this.selectGood.map((item: any) => {
-        console.log('this.selectGood', this.selectGood);
         this.goodsTransportable.clear();
         const formData: Object = {
           programmingId: this.programmingId,
@@ -1205,7 +1037,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         };
         this.programmingGoodService.updateGoodProgramming(formData).subscribe({
           next: async response => {
-            console.log('ACTUALIZADO', response);
             await this.changeStatusGoodWarehouse(item);
           },
           error: error => {
@@ -1223,7 +1054,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   }
 
   changeStatusGoodTran(good: IGood) {
-    console.log('good', good);
     return new Promise(async (resolve, reject) => {
       this.goodsGuards.clear();
       this.selectGood.map((item: any) => {
@@ -1247,7 +1077,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   }
 
   changeStatusGoodWarehouse(good: IGood) {
-    console.log('good', good);
     return new Promise(async (resolve, reject) => {
       this.goodsCancelation.clear();
       this.selectGood.map((item: any) => {
@@ -1271,7 +1100,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   }
 
   changeStatusGoodCancelation(good: IGood) {
-    console.log('good', good);
     return new Promise(async (resolve, reject) => {
       this.goodsCancelation.clear();
       this.selectGood.map((item: any) => {
@@ -1329,11 +1157,8 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   }
 
   showGood(data: IGood) {
-    console.log('good', data);
-    console.log('programming', this.programming);
     let report = '/showReport?nombreReporte=Etiqueta_TDR.jasper&CID_BIEN=';
     report += [data.goodId];
-    console.log('report', report);
   }
 
   delete() {}
@@ -1341,7 +1166,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   deleteGoodGuard() {
     if (this.goodIdSelect > 0) {
       this.selectGood.map((item: any) => {
-        console.log('this.selectGood', this.selectGood);
         const formData: Object = {
           programmingId: this.programmingId,
           goodId: item.id,
@@ -1349,7 +1173,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         };
         this.programmingGoodService.updateGoodProgramming(formData).subscribe({
           next: async response => {
-            console.log('ACTUALIZADO', response);
             await this.changeStatusGoodTran(item);
           },
           error: error => {
@@ -1369,7 +1192,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   deleteGoodRep() {
     if (this.goodIdSelect > 0) {
       this.selectGood.map((item: any) => {
-        console.log('this.selectGood', this.selectGood);
         const formData: Object = {
           programmingId: this.programmingId,
           goodId: item.id,
@@ -1377,12 +1199,9 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         };
         this.programmingGoodService.updateGoodProgramming(formData).subscribe({
           next: async response => {
-            console.log('ACTUALIZADO', response);
             await this.changeStatusGoodTran(item);
           },
-          error: error => {
-            console.log('error actualizar progr', error);
-          },
+          error: error => {},
         });
       });
     } else {
@@ -1397,7 +1216,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   deleteGoodWarehouse() {
     if (this.goodIdSelect > 0) {
       this.selectGood.map((item: any) => {
-        console.log('this.selectGood', this.selectGood);
         const formData: Object = {
           programmingId: this.programmingId,
           goodId: item.id,
@@ -1405,7 +1223,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         };
         this.programmingGoodService.updateGoodProgramming(formData).subscribe({
           next: async response => {
-            console.log('ACTUALIZADO', response);
             await this.changeStatusGoodWarehouse(item);
           },
           error: error => {
@@ -1425,7 +1242,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   deleteGoodCancelation() {
     if (this.goodIdSelect > 0) {
       this.selectGood.map((item: any) => {
-        console.log('this.selectGood', this.selectGood);
         const formData: Object = {
           programmingId: this.programmingId,
           goodId: item.id,
@@ -1433,7 +1249,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         };
         this.programmingGoodService.updateGoodProgramming(formData).subscribe({
           next: async response => {
-            console.log('ACTUALIZADO', response);
             await this.changeStatusGoodCancelation(item);
           },
           error: error => {
@@ -1451,10 +1266,8 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   }
 
   changeStatusGoodTransportable(good: IGood) {
-    console.log('good', good);
     return new Promise(async (resolve, reject) => {
       this.selectGood.map((item: any) => {
-        console.log('item', item);
         const formData = {
           id: item.id,
           goodId: item.goodId,

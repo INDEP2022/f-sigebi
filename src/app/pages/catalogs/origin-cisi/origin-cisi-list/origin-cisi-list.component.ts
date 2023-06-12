@@ -100,7 +100,7 @@ export class OriginCisiListComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(originCisi.id);
@@ -112,7 +112,7 @@ export class OriginCisiListComponent extends BasePage implements OnInit {
     this.originCisiService.remove(id).subscribe({
       next: () => {
         this.alert('success', 'Procedencias CiSi', 'Borrado');
-        // this.getDeductives();
+        this.getOriginCisi();
       },
       error: error => {
         this.alert(

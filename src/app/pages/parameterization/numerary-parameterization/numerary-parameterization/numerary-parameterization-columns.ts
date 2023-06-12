@@ -1,9 +1,4 @@
 export const NUMERARY_PARAMETERIZATION_COLUMNS = {
-  registerNumber: {
-    title: 'No. Registro',
-    type: 'number',
-    sort: true,
-  },
   typeProceeding: {
     title: 'Tipo de Acta o Pantalla',
     type: 'string',
@@ -14,9 +9,25 @@ export const NUMERARY_PARAMETERIZATION_COLUMNS = {
     type: 'string',
     sort: false,
   },
+  initialCategoryDetails: {
+    title: 'Desc. Categoría Inicial',
+    type: 'string',
+    valuePrepareFunction: (value: any) => {
+      return value.description;
+    },
+    sort: false,
+  },
   finalCategory: {
     title: 'Categoria Final',
     type: 'string',
+    sort: false,
+  },
+  finalCategoryDetails: {
+    title: 'Desc. Categoría Final',
+    type: 'string',
+    valuePrepareFunction: (value: any) => {
+      return value.description;
+    },
     sort: false,
   },
 };

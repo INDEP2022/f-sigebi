@@ -196,18 +196,26 @@
               [(settings)]="settings1"
               [defaultColumns]="5"></app-columns-select>
           </div>
-          <div
+          <button
+            class="btn btn-info btn-sm active"
+            type="submit"
+            size="small"
+            [disabled]="loading || loadingExcel || items.length === 0"
+            (click)="exportExcel2()">
+            <i class="bx bx-download float-icon"></i>
+            Exportar Excel
+          </button>
+          <!-- <div
             [class]="
               loading || loadingExcel || items.length === 0 ? 'disabled' : ''
             "
             (click)="exportExcel()">
-            <!-- <button>excel</button> -->
             <app-excel-report
               [elementToExport]="elementToExport"
               [externalClick]="flagDownload"
               [nameExcel]="'Reporte de Mantenimiento de Programaciones.xlsx'"
               text="Exportar Excel"></app-excel-report>
-          </div>
+          </div> -->
         </div>
       </div>
       <div class="row pt-4 scheduledTable">
@@ -232,7 +240,9 @@
       </div>
       <app-pagination
         [params]="params"
-        [totalItems]="totalItems"></app-pagination>
+        [totalItems]="totalItems"
+        [limit]="limit"
+        [pageSizeOptions]="pageSizeOptions"></app-pagination>
     </form>
   </div>
 </app-card>

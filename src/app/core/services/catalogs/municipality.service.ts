@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { MunicipalityEndpoints } from 'src/app/common/constants/endpoints/municipality';
+import { HttpService } from 'src/app/common/services/http.service';
 import { ENDPOINT_LINKS } from '../../../common/constants/endpoints';
 import { ICrudMethods } from '../../../common/repository/interfaces/crud-methods';
 import { ListParams } from '../../../common/repository/interfaces/list-params';
@@ -9,9 +11,15 @@ import { IMunicipality } from '../../models/catalogs/municipality.model';
 @Injectable({
   providedIn: 'root',
 })
-export class MunicipalityService implements ICrudMethods<IMunicipality> {
+export class MunicipalityService
+  extends HttpService
+  implements ICrudMethods<IMunicipality>
+{
   private readonly route: string = ENDPOINT_LINKS.Municipality;
-  constructor(private municipalityRepository: Repository<IMunicipality>) {}
+  constructor(private municipalityRepository: Repository<IMunicipality>) {
+    super();
+    this.microservice = MunicipalityEndpoints.BasePage;
+  }
 
   getAll(params?: ListParams): Observable<IListResponse<IMunicipality>> {
     return this.municipalityRepository.getAllPaginated(this.route, params);
@@ -38,5 +46,10 @@ export class MunicipalityService implements ICrudMethods<IMunicipality> {
 
   remove(id: string | number): Observable<Object> {
     return this.municipalityRepository.remove(this.route, id);
+  }
+
+  remove2(model: any): Observable<Object> {
+    console.log('model', model);
+    return this.delete(this.route, model);
   }
 }

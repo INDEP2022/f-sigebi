@@ -1,6 +1,7 @@
 export const NONWORKINGDAYS_COLUMNS = {
   id: {
     title: 'Día',
+    type: 'string',
     sort: false,
   },
   description: {

@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
-import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { Ng2SmartTableComponent } from 'ng2-smart-table';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import {
   FilterParams,
@@ -24,8 +25,11 @@ export class RDictaminaDocModalComponent extends BasePage implements OnInit {
   typeDictation: any;
   crime: any;
   typeSteeringwheel: any;
-  dataDocuments: IRDictationDoc[] = [];
+  dataDocuments: any[] = [];
   stateNumber: any;
+  selectedDocs: any;
+  dateValid: any;
+  @ViewChild('tabla') tabla: Ng2SmartTableComponent;
   constructor(
     private modalRef: BsModalRef,
     private dictationXGood1Service: DictationXGood1Service,
@@ -45,7 +49,7 @@ export class RDictaminaDocModalComponent extends BasePage implements OnInit {
       columns: { ...COLUMNS_DOCUMENTS },
     };
   }
-
+  validDocs: boolean = false;
   ngOnInit(): void {
     let params = new FilterParams();
     params.addFilter(
@@ -58,11 +62,20 @@ export class RDictaminaDocModalComponent extends BasePage implements OnInit {
       this.typeDictation, //ok
       SearchFilter.EQ
     );
-    params.addFilter(
-      'crime',
-      this.crime, //ok
-      SearchFilter.EQ
-    );
+    if (this.crime != null) {
+      params.addFilter(
+        'crime',
+        this.crime, //ok
+        SearchFilter.EQ
+      );
+    } else {
+      params.addFilter(
+        'crime',
+        'N', //ok
+        SearchFilter.EQ
+      );
+    }
+
     params.addFilter(
       'typeSteeringwheel',
       this.typeSteeringwheel, //ok
@@ -77,37 +90,91 @@ export class RDictaminaDocModalComponent extends BasePage implements OnInit {
 
     this.dictationXGood1Service.getAll(params.getParams()).subscribe({
       next: resp => {
+        let result = resp.data.map(async (item: any) => {
+          item['date'] = '';
+        });
         this.dataDocuments = resp.data;
         console.log('Respuesta: ', resp.data);
       },
       error: error => {
+        this.onLoadToast('warning', 'No hay documentos relacionados', '');
         console.log('Respuesta: ', error);
       },
     });
   }
 
+  selectProceedings(event: any) {
+    console.log('EVENT', event);
+    this.selectedDocs = event.selected;
+  }
+
   openForm(documents?: IRDictationDoc) {
     const typeDictation = this.typeDictation;
     const stateNumber = this.stateNumber;
-    let config: ModalOptions = {
+    const dateValid = this.dateValid;
+    // let config: ModalOptions = {
+    //   initialState: {
+    //     typeDictation,
+    //     stateNumber,
+    //     documents,
+    //     callback: (next: any) => {
+    //       console.log("NEXT", next)
+    //       /*if (next) {
+
+    //       }*/
+    //     },
+    //   },
+    //   class: 'modal-lg modal-dialog-centered',
+    //   ignoreBackdropClick: true,
+    // };
+    // this.modalService.show(EditDocumentsModalComponent, config)
+    const modalRef = this.modalService.show(EditDocumentsModalComponent, {
       initialState: {
         typeDictation,
         stateNumber,
         documents,
-        callback: (next: boolean) => {
-          /*if (next) {
-            
-          }*/
-        },
+        dateValid,
       },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
-    };
-    this.modalService.show(EditDocumentsModalComponent, config);
+    });
+    modalRef.content.dataText.subscribe((next: any) => {
+      let filaAEditar = this.dataDocuments.find(
+        item => item.cveDocument === next.cve
+      );
+      filaAEditar.date = next.date;
+      this.actualizarTabla();
+      // filaAEditar.email = 'maria.fernanda@gmail.com';
+      for (let i = 0; i < this.dataDocuments.length; i++) {
+        console.log('this.dataDocuments[i]', this.dataDocuments[i]);
+        if (next.cve === this.dataDocuments[i].cveDocument) {
+          this.dataDocuments[i].date = next.date;
+        }
+      }
+    });
+  }
+
+  actualizarTabla() {
+    this.tabla.grid.dataSet.setData(this.dataDocuments);
   }
 
   close() {
-    this.modalRef.content.callback(true);
-    this.modalRef.hide();
+    if (this.validDocs == true) {
+      this.modalRef.content.callback([]);
+      this.modalRef.hide();
+    } else {
+      for (let i = 0; i < this.dataDocuments.length; i++) {
+        if (this.dataDocuments[i].date == '') {
+          this.onLoadToast(
+            'info',
+            'Asegúrese de ingresar las fechas en los documentos',
+            ''
+          );
+          return;
+        }
+      }
+      this.modalRef.content.callback(this.dataDocuments);
+      this.modalRef.hide();
+    }
   }
 }

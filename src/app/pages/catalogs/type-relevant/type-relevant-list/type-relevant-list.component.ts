@@ -11,7 +11,6 @@ import {
 import { ITypeRelevant } from 'src/app/core/models/catalogs/type-relevant.model';
 import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import Swal from 'sweetalert2';
 import { TypeRelevantFormComponent } from '../type-relevant-form/type-relevant-form.component';
 import { TYPERELEVANT_COLUMS } from './type-relevant-columns';
 
@@ -103,18 +102,26 @@ export class TypeRelevantListComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(typeRelevant.id);
-        Swal.fire('Borrado', '', 'success');
       }
     });
   }
 
   delete(id: number) {
     this.typeRelevantService.remove(id).subscribe({
-      next: () => this.getExample(),
+      next: () => {
+        this.getExample(), this.alert('success', 'Tipo Relevante', 'Borrado');
+      },
+      error: error => {
+        this.alert(
+          'warning',
+          'Tipo Relevante',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      },
     });
   }
 }
