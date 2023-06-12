@@ -343,7 +343,7 @@ export class RelatedDocumentsComponent
     protected siabService: SiabService,
     protected modalService: BsModalService,
     protected sanitizer: DomSanitizer,
-    private dictationService: DictationService,
+    protected dictationService: DictationService,
     private serviceRelatedDocumentsService: RelatedDocumentsService,
     protected securityService: SecurityService,
     protected serviceOficces: GoodsJobManagementService,
@@ -2780,11 +2780,16 @@ export class RelatedDocumentsComponent
             this._end_firmProcess(); // Termina el proceso
           }
         },
-        error: error => {
+        error: async error => {
           console.log(error);
           if (error.status == 400) {
+            let paramsReport = {
+              proceedingsNumber: this.notificationData.expedientNumber,
+              steeringWheelNumber: this.notificationData.wheelNumber,
+              ofManagementKey: this.formJobManagement.value.cveManagement,
+            };
             // se llama PUP_LANZA_REPORTE
-            this._PUP_LANZA_REPORTE();
+            const _launchReport = await this._PUP_LANZA_REPORTE(paramsReport);
             // se llama PUP_GENERA_XML
             this._PUP_GENERA_XML();
           } else {
@@ -2809,7 +2814,19 @@ export class RelatedDocumentsComponent
 
   _PUP_GENERA_PDF() {}
 
-  _PUP_LANZA_REPORTE() {}
+  async _PUP_LANZA_REPORTE(params: any) {
+    return await firstValueFrom(this.sendFunction_pupLaunchReport(params));
+    // this.dictationService.sendFunction_pupLaunchReport();
+  }
+
+  _conditions_Report() {
+    let params: any = {
+      NO_OF_GES: this.formJobManagement.value.managementNumber, // NO_OF_GES
+      TIPO_OF: this.formJobManagement.value.jobType, // TIPO_OF
+      VOLANTE: this.notificationData.wheelNumber, // VOLANTE
+      EXP: this.notificationData.expedientNumber, // EXPEDIENTE
+    };
+  }
 
   _PUP_CONSULTA_PDF_BD_SSF3() {}
 

@@ -640,18 +640,18 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
     this.form.get('numberOfficeDic').setValue(this.dictationData.id);
     this.form.get('numberOfficeDic').updateValueAndValidity();
     this.showScanForm = false;
-    if (this._saveOfficeDictation) {
-      this.form.get('issuingUser').setValue(this.dictationData.userDict); // Remitente
-      this.form.get('issuingUser').updateValueAndValidity();
-    } else {
-      this.form.get('issuingUser').setValue(this.officeDictationData.sender); // Remitente
-      this.form.get('issuingUser').updateValueAndValidity();
-    }
-    if (this.dictationData.statusDict == 'DICTAMINADO') {
-      this.form.get('issuingUser').disable();
-    }
+    // if (this._saveOfficeDictation) {
+    //   this.form.get('issuingUser').setValue(this.dictationData.userDict); // Remitente
+    //   this.form.get('issuingUser').updateValueAndValidity();
+    // } else {
+    //   this.form.get('issuingUser').setValue(this.officeDictationData.sender); // Remitente
+    //   this.form.get('issuingUser').updateValueAndValidity();
+    // }
+    // if (this.dictationData.statusDict == 'DICTAMINADO') {
+    //   this.form.get('issuingUser').disable();
+    // }
+    // this.getIssuingUserByDetail(new ListParams(), true);
     setTimeout(() => {
-      this.getIssuingUserByDetail(new ListParams(), true);
       this.formScan
         .get('scanningFoli')
         .setValue(this.dictationData.folioUniversal);
@@ -1020,6 +1020,18 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
     // this.form.get('issuingUser').setValue(this.officeDictationData.sender); // Remitente
     // this.form.get('issuingUser').updateValueAndValidity();
     // this.form.get('issuingUser').disable();
+    // #############
+    // if (this._saveOfficeDictation) {
+    //   this.form.get('issuingUser').setValue(this.dictationData.userDict); // Remitente
+    //   this.form.get('issuingUser').updateValueAndValidity();
+    // } else {
+    // }
+    this.form.get('issuingUser').setValue(this.officeDictationData.sender); // Remitente
+    this.form.get('issuingUser').updateValueAndValidity();
+    if (this.dictationData.statusDict == 'DICTAMINADO') {
+      this.form.get('issuingUser').disable();
+    }
+    // this.getIssuingUserByDetail(new ListParams(), true);
     this.form.get('addressee').setValue(this.officeDictationData.recipient); // Destinatario
     this.form.get('addressee').updateValueAndValidity();
     this.form.get('city').setValue(this.officeDictationData.city); // Ciudad
@@ -1063,9 +1075,18 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
       'ISSUING',
       this.officeDictationData.recipient
     );
-    // this.getIssuingUserByDetail(new ListParams(), true);
-    this.getAddresseeByDetail(new ListParams(), true);
-    this.getCityByDetail(new ListParams(), true);
+    this.getIssuingUserByDetail(
+      new ListParams(),
+      this.officeDictationData.sender ? true : false
+    );
+    this.getAddresseeByDetail(
+      new ListParams(),
+      this.officeDictationData.recipient ? true : false
+    );
+    this.getCityByDetail(
+      new ListParams(),
+      this.officeDictationData.city ? true : false
+    );
   }
 
   enabledDataOffice() {
