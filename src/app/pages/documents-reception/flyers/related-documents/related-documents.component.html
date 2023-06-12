@@ -280,7 +280,7 @@
         <ng-container *ngIf="pantallaActual == '1'">
           <div class="row pt-4">
             <form-field
-              *ngIf="pantallaActual == '1'"
+              *ngIf="isPGR == true"
               [control]="managementForm.get('justificacion')"
               class="col-md-6">
               <ngx-select
@@ -309,7 +309,7 @@
             </form-field>
           </div>
           <br /><br />
-          <div class="row pt-4" *ngIf="pantallaActual == '1'">
+          <div class="row pt-4" *ngIf="isPGR == true">
             <div class="col-md-4">
               <button
                 type="button"
@@ -320,7 +320,7 @@
             </div>
           </div>
           <br /><br />
-          <div *ngIf="pantallaOption" class="row pt-4">
+          <!-- <div *ngIf="pantallaOption" class="row pt-4">
             <div class="col-md-2">
               <form-field
                 [control]="managementForm.get('fechaAcuse')"
@@ -332,7 +332,7 @@
                   bsDatepicker />
               </form-field>
             </div>
-          </div>
+          </div> -->
         </ng-container>
         <br />
         <br />
@@ -409,7 +409,7 @@
                 </div>
               </div>
 
-              <div class="col-12">
+              <!-- <div class="col-12" *ngIf="pantallaActual == '1'">
                 <ngx-select
                   [form]="formVariables"
                   control="dictamen"
@@ -422,7 +422,7 @@
                   id="typesFilters"
                   (change)="typeSelected($event)">
                 </ngx-select>
-              </div>
+              </div> -->
               <div class="col-sm-12 col-12 col-md-12 pr-3">
                 <div class="col-md-6">
                   <div [class]="isLoadingGood ? 'table-loading' : ''">
