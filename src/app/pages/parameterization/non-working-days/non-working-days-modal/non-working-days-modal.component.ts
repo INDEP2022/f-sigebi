@@ -75,7 +75,6 @@ export class NonWorkingDaysModalComponent extends BasePage implements OnInit {
       description: this.nonWorkingDaysForm.value.description,
       idDate: this.nonWorkingDaysForm.value.idDate,
     };
-    console.log(object);
     this.calendarService.update(object).subscribe({
       next: data => this.handleSuccess(),
       error: error => (this.loading = false),
