@@ -81,6 +81,7 @@ export class RDictaminaDocModalComponent extends BasePage implements OnInit {
         console.log('Respuesta: ', resp.data);
       },
       error: error => {
+        this.onLoadToast('warning', 'No hay documentos relacionados', '');
         console.log('Respuesta: ', error);
       },
     });

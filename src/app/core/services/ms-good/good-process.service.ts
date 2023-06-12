@@ -86,4 +86,58 @@ export class GoodProcessService extends HttpService {
   dictationConcilation(data: Object) {
     return this.post<any>(GoodProcessPoints.dicta, data);
   }
+
+  getDicGood(data: Object) {
+    return this.post<any>(GoodProcessPoints.getDocGod, data);
+  }
+  GetVexist(params?: any) {
+    return this.get<IListResponse<any>>(
+      GoodProcessPoints.GetVexist + `/${params}`
+    );
+  }
+  GetVstatusIniVproextdomIni(params?: any) {
+    return this.get<IListResponse<any>>(
+      GoodProcessPoints.GetVstatusIniVproextdomIni + `/${params}`
+    );
+  }
+
+  updateGoodXGoodNumber(params?: any, body?: any) {
+    return this.put<IListResponse<any>>(
+      GoodProcessPoints.UpdateGoodXGoodNumber + `/${params}`,
+      body
+    );
+  }
+
+  getVstatusIni2(params?: any) {
+    return this.post<IListResponse<any>>(
+      GoodProcessPoints.GetVstatusIni2,
+      params
+    );
+  }
+
+  GetVstatusIniVproextdomIni2(params?: any) {
+    return this.post<IListResponse<any>>(
+      GoodProcessPoints.GetVstatusIniVproextdomIni2,
+      params
+    );
+  }
+
+  GetVstatusIniVnoRegisterVproextdomIni(params?: any) {
+    return this.post<IListResponse<any>>(
+      GoodProcessPoints.GetVstatusIniVnoRegisterVproextdomIni,
+      params
+    );
+  }
+  deleteHistoricalStatusGoodXrecord(params?: any) {
+    return this.delete<IListResponse<any>>(
+      GoodProcessPoints.deleteHistoricalStatusGoodXrecord,
+      params
+    );
+  }
+  getVstatusIniVnoRegister(params?: any) {
+    return this.post<IListResponse<any>>(
+      GoodProcessPoints.getVstatusIniVnoRegister,
+      params
+    );
+  }
 }

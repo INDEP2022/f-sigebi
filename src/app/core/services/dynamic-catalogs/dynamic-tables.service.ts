@@ -14,6 +14,7 @@ import {
   ITvalTable1,
   TvalTable1Data,
 } from '../../models/catalogs/dinamic-tables.model';
+
 @Injectable({
   providedIn: 'root',
 })
@@ -84,7 +85,7 @@ export class DynamicTablesService extends HttpService {
 
   getAllOtkeyReservadoModal(self?: DynamicTablesService, params?: _Params) {
     return self.post(
-      'dinamic-tables/get-otkey-otvalue',
+      'dinamic-tables/get-otkey-otvalue?filter.nmtabla=417',
       {
         classificationGoodNumber: self.selectedClasification,
         table: self.selectedTable,
@@ -101,7 +102,7 @@ export class DynamicTablesService extends HttpService {
 
   getAllOtkeySJuridaModal(self?: DynamicTablesService, params?: _Params) {
     return self.post(
-      'dinamic-tables/get-otkey-otvalue',
+      'dinamic-tables/get-otkey-otvalue?filter.nmTablefilter.nmtabla=418',
       {
         classificationGoodNumber: self.selectedClasification,
         table: self.selectedTable,

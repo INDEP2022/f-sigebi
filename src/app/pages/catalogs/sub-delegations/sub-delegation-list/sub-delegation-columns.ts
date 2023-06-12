@@ -14,7 +14,7 @@ export const SUB_DELEGATION_COLUMS = {
     type: 'number',
     sort: false,
     valuePrepareFunction: (value: any) => {
-      return value.id;
+      return value != null ? value.id : '';
     },
   },
   dailyConNumber: {
@@ -32,9 +32,9 @@ export const SUB_DELEGATION_COLUMS = {
     type: 'number',
     sort: false,
   },
-  registerNumber: {
-    title: 'Registro',
-    type: 'number',
-    sort: false,
-  },
+  // registerNumber: {
+  //   title: 'Registro',
+  //   type: 'number',
+  //   sort: false,
+  // },
 };

@@ -85,3 +85,9 @@ export interface IUpdateDelDictation {
   ofDictaNumber?: number;
   delegationDictateNumber?: number;
 }
+
+export interface IPupLaunchReport {
+  no_exp: number;
+  correo: string;
+  oficios: string;
+}

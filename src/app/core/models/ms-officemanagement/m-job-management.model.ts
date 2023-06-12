@@ -30,3 +30,11 @@ export interface IMJobManagement {
   cveChargeRem: string;
   justification: string;
 }
+
+export interface IRSender {
+  no_delegacion: string;
+  no_departamento: string;
+  no_subdelegacion: string;
+  nombre: string;
+  usuario: string;
+}

@@ -58,7 +58,8 @@
             label="Delegaci&oacute;n o municipio"
             value="id"
             (fetchItems)="getFromSelect($event)"
-            control="delegation"></ngx-select>
+            control="delegation"
+            [readonly]="false"></ngx-select>
         </div>
         <div class="col-md-4">
           <form-field
@@ -93,7 +94,8 @@
             label="No. de Despacho"
             value="id"
             (fetchItems)="getOffices($event)"
-            control="idOffice"></ngx-select>
+            control="idOffice"
+            [readonly]="false"></ngx-select>
         </div>
       </div>
     </form>

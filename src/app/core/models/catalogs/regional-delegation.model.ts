@@ -16,7 +16,7 @@ export class IRegionalDelegation {
   // iva: number | null;
   // city: string;
   // keyState: string;
-  id: number | null;
+  id?: number | null;
   description: string;
   registerNumber: number | null;
   idGeographicZona: number | null;

@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { LocalDataSource } from 'ng2-smart-table';
 import { Subject } from 'rxjs';
 import { IGood } from 'src/app/core/models/good/good.model';
 import {
@@ -20,11 +21,13 @@ export class GoodsCharacteristicsService {
   disabledNoClasifBien = true;
   disabledDescripcion = true;
   haveTdictaUser = false;
-  di_numerario_conciliado = 'No conciliado';
+  di_numerario_conciliado: string;
+  dataPaginated: LocalDataSource = new LocalDataSource();
   newGood: any;
   data: IVal[];
   goodChange = new Subject<boolean>();
   v_bien_inm: boolean;
+  dataTemp: IVal[];
   constructor(private fb: FormBuilder) {}
 
   prepareForm() {
