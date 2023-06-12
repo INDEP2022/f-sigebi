@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { BasePageWidhtDinamicFilters } from 'src/app/core/shared/base-page-dinamic-filters';
+import Swal from 'sweetalert2';
 import { COLUMNS } from './columns';
 //Provisional Data
 import { data } from './data';
@@ -16,32 +17,14 @@ export class StatusComponent
 {
   comercializationGoods: any[] = [];
   goodsAFSD = data;
-
   rowSelected: boolean = false;
   selectedRow: any = null;
-
   status: any;
-
-  //Columns
   columns = COLUMNS;
 
   constructor(private goodService: GoodService) {
     super();
-
     this.service = this.goodService;
-
-    /* this.settings = {
-      ...this.settings,
-      actions: {
-        ...this.settings.actions,
-        add: true,
-        edit: true,
-        delete: true,
-      },
-      mode: 'inline',
-      hideSubHeader: false,
-      columns: COLUMNS,
-    }; */
     this.service = this.goodService;
     this.ilikeFilters = ['description'];
     this.settings = {
@@ -63,19 +46,25 @@ export class StatusComponent
     this.onLoadToast('success', 'Elemento Creado', '');
   }
 
-  onDeleteConfirm(event: any) {
+  showDeleteAlert(event: any) {
+    const body = {
+      id: event.id,
+      goodId: event.goodId,
+    };
     this.alertQuestion(
       'warning',
       'Eliminar',
       'Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        event.confirm.resolve();
-        this.goodService.remove(event.data.id).subscribe();
-
-        this.onLoadToast('success', 'Elemento Eliminado', '');
+        this.delete(body);
+        Swal.fire('Borrado', '', 'success');
       }
     });
+  }
+
+  delete(body: Object) {
+    this.goodService.removeGood(body).subscribe();
   }
 
   selectRow(row: any) {
