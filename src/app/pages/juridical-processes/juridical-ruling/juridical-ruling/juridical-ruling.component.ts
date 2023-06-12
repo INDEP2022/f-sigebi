@@ -2480,15 +2480,15 @@ export class JuridicalRulingComponent
     return new Promise<number>((resolver, reject) => {
       const user = this.authService.decodeToken();
 
-      // const body = {
-      //   usuario: user.username.toUpperCase(),
-      //   noDelegacionDictam: this.delegationDictNumber,
-      // };
-
       const body = {
-        usuario: 'JVILLAVICENCIOC' || user.username.toUpperCase(),
-        noDelegacionDictam: 12 || this.delegationDictNumber,
+        usuario: user.username.toUpperCase(),
+        noDelegacionDictam: this.delegationDictNumber,
       };
+
+      // const body = {
+      //   usuario: 'JVILLAVICENCIOC' || user.username.toUpperCase(),
+      //   noDelegacionDictam: 12 || this.delegationDictNumber,
+      // };
 
       this.dictationServ.getValid(body).subscribe({
         next: resp => {
@@ -2505,17 +2505,15 @@ export class JuridicalRulingComponent
     return new Promise<string>((resolver, reject) => {
       const user = this.authService.decodeToken();
 
-      this.dictationServ
-        .getVElimina('JVILLAVICENCIOC' || user.username.toUpperCase())
-        .subscribe({
-          //this.dictationServ.getVElimina(user.username.toUpperCase()).subscribe({
-          next: resp => {
-            resolver(resp.resultado);
-          },
-          error: () => {
-            resolver('X');
-          },
-        });
+      //this.dictationServ.getVElimina('JVILLAVICENCIOC' || user.username.toUpperCase()).subscribe({
+      this.dictationServ.getVElimina(user.username.toUpperCase()).subscribe({
+        next: resp => {
+          resolver(resp.resultado);
+        },
+        error: () => {
+          resolver('X');
+        },
+      });
     });
   }
 
