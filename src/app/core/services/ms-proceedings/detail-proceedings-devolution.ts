@@ -31,4 +31,9 @@ export class DetailProceedingsDevolutionService extends HttpService {
       `${this.endpoint}/get-total-movement-accounts-by-proceeding/${proceedingId}`
     );
   }
+  getRecepcionProcedings(params: string | number) {
+    return this.get<IListResponse<any>>(
+      `${this.endpoint}?filter.numGoodId=${params}`
+    );
+  }
 }

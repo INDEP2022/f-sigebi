@@ -28,6 +28,15 @@
         <div class="col-6">
           <div class="d-inline mx-2">
             <button
+              [disabled]="!dictNumber"
+              style="float: right"
+              type="button"
+              class="btn btn-primary btn-sm active"
+              (click)="saveDataForm()">
+              Guardar
+              <i aria-hidden="true" class="fa fa-save"></i>
+            </button>
+            <button
               style="float: right"
               type="button"
               [disabled]="!disabledListDictums"
@@ -384,7 +393,7 @@
                 {{ item.no_clasif_bien }} - {{ item.desc_sssubtipo }}
               </div>
               <div *ngIf="item.no_clasif_bien > 0">
-                {{ item.no_clasif_bien }} - {{ item.desc_ssubtipo }} -
+                {{ item.no_clasif_bien }} - {{ item.desc_subtipo }} -
                 {{ item.desc_ssubtipo }} - {{ item.desc_sssubtipo }}
               </div>
             </ng-template>
@@ -465,6 +474,7 @@
     <div class="row pt-2">
       <div class="col-md-12 text-center mt-4 mb-4">
         <button
+          [disabled]="!disabledButtons"
           class="btn btn-secondary btn-sm active m-3 p-1 pointer"
           type="button"
           (click)="addSelect()">
@@ -472,6 +482,7 @@
           <i class="bx bx-chevron-down bx-md"></i>
         </button>
         <button
+          [disabled]="!disabledButtons"
           class="btn btn-secondary btn-sm active m-3 p-1 pointer"
           type="button"
           (click)="addAll()">
@@ -479,6 +490,7 @@
           <i class="bx bx-chevrons-down bx-md"></i>
         </button>
         <button
+          [disabled]="!disabledButtons"
           class="btn btn-secondary btn-sm active m-3 p-1 pointer"
           type="button"
           (click)="removeAll()">
@@ -486,6 +498,7 @@
           <i class="bx bx-chevrons-up bx-md"></i>
         </button>
         <button
+          [disabled]="!disabledButtons"
           class="btn btn-secondary btn-sm active m-3 p-1 pointer"
           type="button"
           (click)="removeSelect()">
@@ -554,6 +567,7 @@
         <div class="row justify-content-center">
           <div class="col-md-6 text-align-center">
             <button
+              [disabled]="!disabledButtons"
               class="btn btn-info btn-sm active m-3 text-wrap w-100"
               (click)="btnDocumentos()">
               Documentos

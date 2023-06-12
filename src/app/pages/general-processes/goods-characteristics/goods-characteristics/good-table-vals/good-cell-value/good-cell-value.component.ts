@@ -22,7 +22,7 @@ export class GoodCellValueComponent extends DefaultEditor implements OnInit {
   }
 
   updateCell(value: any) {
-    console.log(value, this.value);
+    // console.log(value, this.value, this.isAddCat(value));
     this.service.data.forEach(x => {
       if (x.column === this.value.column) {
         x.value = value;
@@ -43,7 +43,7 @@ export class GoodCellValueComponent extends DefaultEditor implements OnInit {
   }
 
   ngOnInit() {
-    console.log(this.value);
+    // console.log(this.value);
   }
 
   get good() {
@@ -53,10 +53,35 @@ export class GoodCellValueComponent extends DefaultEditor implements OnInit {
   haveError(row: IVal) {
     return (
       this.haveErrorRequired(row) ||
-      this.haveNumericError(row) ||
-      this.haveFloatError(row) ||
-      this.haveMoneyError(row).length > 0
+      (!(row.dataType === 'D' || row.attribute.includes('FECHA')) &&
+        (this.haveNumericError(row) ||
+          this.haveFloatError(row) ||
+          this.haveCaracteresEspeciales(row) ||
+          this.haveMoneyError(row).length > 0))
     );
+  }
+
+  haveCaracteresEspeciales(row: IVal) {
+    if (row.dataType === 'V') {
+      if (this.haveVerticalSlash(row)) {
+        return !this.isAddCat(row.value);
+      } else if (this.haveAddWeb(row)) {
+        return !this.isCatWeb(row.value);
+      } else {
+        return !this.isNormal(row.value);
+      }
+    }
+    return false;
+  }
+
+  haveVerticalSlash(row: IVal) {
+    return (
+      row.attribute === 'RESERVADO' || row.attribute === 'SITUACION JURIDICA'
+    );
+  }
+
+  haveAddWeb(row: IVal) {
+    return row.attribute.includes('CATÁLOGO COMERCIAL');
   }
 
   notInt(valor: any) {
@@ -70,6 +95,33 @@ export class GoodCellValueComponent extends DefaultEditor implements OnInit {
   isFloat(valor: any) {
     var RE = /^\d*(\.\d{1})?\d{0,3}$/;
     if (RE.test(valor)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  isAddCat(valor: any) {
+    let re = new RegExp(`^((?!(@|#|%)).)*$`);
+    if (re.test(valor)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  isCatWeb(valor: any) {
+    let re = new RegExp(`^((?!(@|#|%|:|\\|)).)*$`);
+    if (re.test(valor)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  isNormal(valor: any) {
+    let re = new RegExp('^((?!(@|#|%|&|:|/|\\|)).)*$');
+    if (re.test(valor)) {
       return true;
     } else {
       return false;
