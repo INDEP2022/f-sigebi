@@ -94,6 +94,7 @@ export class StorehouseListComponent extends BasePage implements OnInit {
   }
 
   openForm(storeHouse?: IStorehouse) {
+    console.log(storeHouse);
     const modalConfig = { ...MODAL_CONFIG, class: 'modal-dialog-centered' };
     modalConfig.initialState = {
       storeHouse,

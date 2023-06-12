@@ -45,10 +45,7 @@ export class StateFormComponent extends BasePage implements OnInit {
       nmtable: [null],
       abbreviation: [null],
       risk: [null],
-      version: [
-        null,
-        [Validators.required, Validators.pattern(POSITVE_NUMBERS_PATTERN)],
-      ],
+      version: [null, [Validators.pattern(POSITVE_NUMBERS_PATTERN)]],
       zoneHourlyStd: [
         null,
         [Validators.required, Validators.pattern(ZONE_NUMBER_PATTERM)],
@@ -62,9 +59,9 @@ export class StateFormComponent extends BasePage implements OnInit {
       userModification: [null],
       modificationDate: [null],
     });
-    debugger;
     if (this.state != null) {
       this.edit = true;
+      console.log(this.state);
       this.stateForm.patchValue(this.state);
     }
   }

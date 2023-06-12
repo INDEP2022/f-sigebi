@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IRegulatory } from 'src/app/core/models/catalogs/regulatory.model';
+import { FractionService } from 'src/app/core/services/catalogs/fraction.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
   POSITVE_NUMBERS_PATTERN,
@@ -29,12 +30,15 @@ export class RegulatoyFormComponent extends BasePage implements OnInit {
   date: Date = new Date(); // Aquí puedes inicializarla con la fecha que desees mostrar
   dateFormat: string;
   creationDate: Date;
+  fractionIdSelected = new DefaultSelect();
+  fractionsId: string;
 
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
     private regulatoryService: RegulatoryService,
-    private datePipe: DatePipe
+    private datePipe: DatePipe,
+    private fractionService: FractionService
   ) {
     super();
     const fecha = new Date();
@@ -58,42 +62,49 @@ export class RegulatoyFormComponent extends BasePage implements OnInit {
       ],
       description: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.maxLength(600),
+          Validators.pattern(STRING_PATTERN),
+        ],
       ],
       validateEf: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.maxLength(2),
+          Validators.pattern(STRING_PATTERN),
+        ],
       ],
       validateEc: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.maxLength(5),
+          Validators.pattern(STRING_PATTERN),
+        ],
       ],
-      userCreation: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
+      userCreation: [null],
       createDate: [null],
-      userModification: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
+      userModification: [null],
       modificationDate: [null],
-      version: [null, [Validators.required]],
+      version: [null],
     });
     if (this.regulatory != null) {
       this.edit = true;
-      this.idFraction = this.regulatory.fractionId;
-      this.creationDate = this.regulatory.creationDate;
-      this.dateFormat = this.datePipe.transform(
-        this.creationDate,
-        'dd/MM/yyyy'
-      );
-      console.log(this.dateFormat);
-      console.log(this.regulatory);
       this.form.patchValue(this.regulatory);
-      this.form.controls['fractionId'].setValue(this.idFraction.id);
-      this.form.controls['createDate'].setValue(this.dateFormat);
+      this.idFraction = this.regulatory.fractionId;
+      this.fractionsId = this.idFraction.id;
+      this.form.controls['fractionId'].setValue(this.fractionsId);
+      console.log(this.fractionsId, this.idFraction);
+      //this.fractionsId = this.idFraction;
+      this.getUpdateFractionAll(new ListParams(), this.fractionsId);
+      //this.getFractionAll(new ListParams());
+      //this.getFractionAll(new ListParams());
     }
+    setTimeout(() => {
+      this.getFractionAll(new ListParams());
+    }, 1000);
   }
 
   getData(params: ListParams) {
@@ -135,5 +146,34 @@ export class RegulatoyFormComponent extends BasePage implements OnInit {
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();
+  }
+
+  getFractionAll(params: ListParams) {
+    this.fractionService.getAll(params).subscribe({
+      next: data => {
+        this.fractionIdSelected = new DefaultSelect(data.data, data.count);
+        console.log('consola 5', data.data);
+      },
+      error: error => {
+        console.log(error);
+        this.fractionIdSelected = new DefaultSelect();
+      },
+    });
+  }
+
+  getUpdateFractionAll(params: ListParams, id: string) {
+    if (id) {
+      params['filter.id'] = `$eq:${id}`;
+    }
+    this.fractionService.getAll(params).subscribe({
+      next: data => {
+        this.fractionIdSelected = new DefaultSelect(data.data, data.count);
+        console.log('consola 5', data.data);
+      },
+      error: error => {
+        console.log(error);
+        this.fractionIdSelected = new DefaultSelect();
+      },
+    });
   }
 }

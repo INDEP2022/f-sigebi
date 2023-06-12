@@ -28,7 +28,7 @@
               [data]="municipalities"
               bindLabel="description"
               label="Municipio"
-              value="idMunicipality"
+              value="nameMunicipality"
               (fetchItems)="getMunicipalities($event)"
               (change)="getLocalitie($event)"
               control="municipality"
@@ -41,8 +41,8 @@
               [form]="storeHouseForm"
               [data]="localities"
               label="Localidad"
-              bindLabel="nameLocation"
-              value="id"
+              bindLabel="description"
+              value="nameLocation"
               (fetchItems)="getLocalities($event)"
               control="locality"></ngx-select>
           </form-field>
