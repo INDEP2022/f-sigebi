@@ -642,6 +642,7 @@ export class EventCaptureComponent
     }
     if (this.detail.length == 0) {
       this.alert('error', 'Error', 'No hay bienes agregados');
+      return;
     }
     if (this.proceeding?.statusProceedings?.includes('CERRAD')) {
       this.alert('error', 'Error', 'El programa esta cerrado');
