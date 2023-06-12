@@ -55,6 +55,7 @@ import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { StatusGoodService } from 'src/app/core/services/ms-good/status-good.service';
 import { ApplicationGoodsQueryService } from 'src/app/core/services/ms-goodsquery/application.service';
 import { ParametersService } from 'src/app/core/services/ms-parametergood/parameters.service';
+import { DetailProceedingsDevolutionService } from 'src/app/core/services/ms-proceedings/detail-proceedings-devolution';
 import { ScreenStatusService } from 'src/app/core/services/ms-screen-status/screen-status.service';
 import { SegAcessXAreasService } from 'src/app/core/services/ms-users/seg-acess-x-areas.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
@@ -361,7 +362,8 @@ export class JuridicalRulingGComponent
     private departamentService: DepartamentService,
     private oficialDictationService: OficialDictationService,
     private statusGoodService: StatusGoodService,
-    private abandonmentsService: AbandonmentsDeclarationTradesService
+    private abandonmentsService: AbandonmentsDeclarationTradesService,
+    private detailProceedingsDevolutionService: DetailProceedingsDevolutionService
   ) {
     super();
     this.dictamen = {
@@ -970,6 +972,8 @@ export class JuridicalRulingGComponent
           item['di_disponible'] = null;
           item['name'] = null;
           item['goodClassNumber'] = item.good.goodClassNumber;
+          item['identifier'] = item.good.identifier;
+          item['statusDict'] = item.dictation.statusDict;
           // this.goods[index].est_disponible = 'S';
           // this.goods[index].di_disponible = 'S';
           // this.goods[index].name = false;
@@ -1058,7 +1062,7 @@ export class JuridicalRulingGComponent
     const object = {
       vProceedingsNumber: this.expedientesForm.get('noExpediente').value,
       vTypeDicta: this.expedientesForm.get('tipoDictaminacion').value,
-      vOfNumberDicta: this.dictNumber,
+      vOfNumberDicta: this.dictamen.id ? this.dictamen.id : this.dictNumber,
       vWheelNumber: this.dictaminacionesForm.get('wheelNumber').value,
     };
 
@@ -1124,7 +1128,7 @@ export class JuridicalRulingGComponent
         'info',
         `Se borra dictamen cerrado (Exp.: ${object.vProceedingsNumber} Tipo: ${object.vTypeDicta} No.Dict.: ${this.dictNumber})?`,
         '¿Deseas continuar?'
-      ).then(question => {
+      ).then(async question => {
         if (question.isConfirmed) {
           for (let i = 0; i < this.goodsValid.length; i++) {
             if (
@@ -1132,22 +1136,15 @@ export class JuridicalRulingGComponent
               'DEVOLUCION'
             ) {
               // REALIZAR CONSULTA
-              V_EXIST = 'XX';
+              V_EXIST = await this.getVexist(this.goodsValid[i].id);
+              console.log(V_EXIST);
             } else if (
               this.expedientesForm.get('tipoDictaminacion').value == 'DECOMISO'
             ) {
               V_EXIST = 'XX';
             } else {
-              // REALIZAR CONSULTA
-              // BEGIN
-              //     SELECT 'S'
-              //     INTO V_EXIST
-              //     FROM DETALLE_ACTA_ENT_RECEP
-              //     WHERE NO_BIEN = reg_dictaminacion_x_bien1.NO_BIEN;
-              // EXCEPTION
-              //     WHEN OTHERS THEN
-              // V_EXIST:= 'XX';
-              // END;
+              V_EXIST = await this.getDetailProeedings(this.goodsValid[i].id);
+              // RESPUESTA DE CONSULTA 'S' o 'XX'
             }
 
             if (V_EXIST == 'S') {
@@ -1163,23 +1160,47 @@ export class JuridicalRulingGComponent
                 'DECOMISO'
               ) {
                 // SE REALIZA CONSULTA //
-                let V_ESTATUS_INI;
+                const statusAndProExtDom: any =
+                  await this.GetVstatusIniVproextdomIni(this.goodsValid[i].id);
+                let V_ESTATUS_INI = statusAndProExtDom.V_ESTATUS_INI;
+                let V_PROEXTDOM_INI = statusAndProExtDom.V_PROEXTDOM_INI;
                 if (V_ESTATUS_INI != null) {
-                  // UPDATE DE BIENE //
+                  let obj = {
+                    vStatusIni: V_ESTATUS_INI,
+                  };
+                  await this.updateGoodXGoodNumber(this.goodsValid[i].id, obj);
+                  // UPDATE DE BIENES //
                 }
               } else if (
                 this.expedientesForm.get('tipoDictaminacion').value == 'EXT_DOM'
               ) {
                 // SE REALIZA CONSULTA //
-                let V_ESTATUS_INI;
+                const statusAndProExtDom: any =
+                  await this.GetVstatusIniVproextdomIni(this.goodsValid[i].id);
+                let V_ESTATUS_INI = statusAndProExtDom.V_ESTATUS_INI;
+                let V_PROEXTDOM_INI = statusAndProExtDom.V_PROEXTDOM_INI;
                 if (V_ESTATUS_INI != null) {
-                  // UPDATE DE BIENE //
+                  let obj = {
+                    vStatusIni: V_ESTATUS_INI,
+                  };
+                  await this.updateGoodXGoodNumber(this.goodsValid[i].id, obj);
+                  // UPDATE DE BIENES //
                 }
               } else {
                 // SE REALIZA CONSULTA //
-                let V_ESTATUS_INI;
+                let obj = {
+                  goodNumber: this.goodsValid[i].id,
+                  vcScreen: 'FACTJURDICTAMASG',
+                };
+                const statusAndProExtDom: any = await this.getVstatusIni2(obj);
+                let V_ESTATUS_INI = statusAndProExtDom.V_ESTATUS_INI;
+
                 if (V_ESTATUS_INI != null) {
                   // UPDATE DE BIENE //
+                  let obj = {
+                    vStatusIni: V_ESTATUS_INI,
+                  };
+                  await this.updateGoodXGoodNumber(this.goodsValid[i].id, obj);
                 }
               }
             }
@@ -1195,7 +1216,9 @@ export class JuridicalRulingGComponent
               );
               this.onLoadGoodList(0, 'all');
               this.resetALL();
-              this.cveOficio.nativeElement.focus();
+              setTimeout(() => {
+                this.cveOficio.nativeElement.focus();
+              }, 1000);
               this.buttonDeleteDisabled = false;
               this.statusDict = '';
               this.dictaminacionesForm.get('fechaPPFF').setValue('');
@@ -1218,8 +1241,104 @@ export class JuridicalRulingGComponent
         'info',
         `Se borra dictamen cerrado (Exp.: ${object.vProceedingsNumber} Tipo: ${object.vTypeDicta} No.Dict.: ${this.dictNumber})?`,
         '¿Deseas continuar?'
-      ).then(question => {
+      ).then(async question => {
         if (question.isConfirmed) {
+          for (let i = 0; i < this.goodsValid.length; i++) {
+            let obj = {
+              identifier: this.goodsValid[i].identifier,
+              rulingStatus: this.goodsValid[i].statusDict,
+              opinionType: this.goodsValid[i].typeDict,
+              goodNumber: this.goodsValid[i].id,
+            };
+            const statusHistGood: any = await this.GetVstatusIniVproextdomIni2(
+              obj
+            );
+            if (statusHistGood.V_ESTATUS == 'XXX' && V_BAN == true) {
+              this.alert(
+                'error',
+                'Al menos un bien se encuentra en otra fase...',
+                ''
+              );
+              return;
+            }
+
+            if (statusHistGood.V_ESTATUS != 'XXX') {
+              if (
+                this.expedientesForm.get('tipoDictaminacion').value ==
+                'DECOMISO'
+              ) {
+                let obj = {
+                  vProextdom: this.goodsValid[i].extDomProcess,
+                  goodNumber: this.goodsValid[i].id,
+                };
+                const getHistoryGood: any =
+                  await this.GetVstatusIniVnoRegisterVproextdomIni(obj);
+
+                if (getHistoryGood.V_ESTATUS_INI != null) {
+                  let obj = {
+                    vStatusIni: getHistoryGood.V_ESTATUS_INI,
+                  };
+                  await this.updateGoodXGoodNumber(this.goodsValid[i].id, obj);
+                }
+
+                if (getHistoryGood.V_NO_REGISTRO != null) {
+                  let obj = {
+                    goodNumber: this.goodsValid[i].id,
+                    recordNumber: getHistoryGood.V_NO_REGISTRO,
+                  };
+                  await this.deleteHistoryGoodStatus(obj);
+                }
+              } else if (
+                this.expedientesForm.get('tipoDictaminacion').value == 'EXT_DOM'
+              ) {
+                let obj = {
+                  vProextdom: this.goodsValid[i].extDomProcess,
+                  goodNumber: this.goodsValid[i].id,
+                };
+                const getHistoryGood: any =
+                  await this.GetVstatusIniVnoRegisterVproextdomIni(obj);
+
+                if (getHistoryGood.V_ESTATUS_INI != null) {
+                  let obj = {
+                    vStatusIni: getHistoryGood.V_ESTATUS_INI,
+                  };
+                  await this.updateGoodXGoodNumber(this.goodsValid[i].id, obj);
+                }
+
+                if (getHistoryGood.V_NO_REGISTRO != null) {
+                  let obj = {
+                    goodNumber: this.goodsValid[i].id,
+                    recordNumber: getHistoryGood.V_NO_REGISTRO,
+                  };
+                  await this.deleteHistoryGoodStatus(obj);
+                }
+              } else {
+                let obj = {
+                  goodNumber: this.goodsValid[i].id,
+                  vcScreen: 'FACTJURDICTAMASG',
+                  vStatus: this.goodsValid[i].statusDict,
+                };
+                const getHistoryGood: any = await this.getVstatusIniVnoRegister(
+                  obj
+                );
+
+                if (getHistoryGood.V_ESTATUS_INI != null) {
+                  let obj = {
+                    vStatusIni: getHistoryGood.V_ESTATUS_INI,
+                  };
+                  await this.updateGoodXGoodNumber(this.goodsValid[i].id, obj);
+                }
+
+                if (getHistoryGood.V_NO_REGISTRO != null) {
+                  let obj = {
+                    goodNumber: this.goodsValid[i].id,
+                    recordNumber: getHistoryGood.V_NO_REGISTRO,
+                  };
+                  await this.deleteHistoryGoodStatus(obj);
+                }
+              }
+            }
+          }
           this.dictationService.deletePupDeleteDictum(object).subscribe({
             next: (value: any) => {
               this.buttonApr = true;
@@ -1251,6 +1370,254 @@ export class JuridicalRulingGComponent
     }
 
     // this.btnDeleteDictation();
+  }
+
+  async updateGoodXGoodNumber(params: any, body: any) {
+    return new Promise((resolve, reject) => {
+      this.serviceGood.updateGoodXGoodNumber(params, body).subscribe({
+        next: async (resp: any) => {
+          resolve(resp);
+
+          this.loading = false;
+        },
+        error: err => {
+          resolve(null);
+          this.loading = false;
+          return;
+        },
+      });
+    });
+  }
+  async deleteHistoryGoodStatus(params: any) {
+    return new Promise((resolve, reject) => {
+      this.serviceGood.deleteHistoricalStatusGoodXrecord(params).subscribe({
+        next: async (resp: any) => {
+          console.log('resp', resp);
+
+          resolve(true);
+          this.loading = false;
+        },
+        error: err => {
+          console.log('err', err);
+          resolve(false);
+          this.loading = false;
+          return;
+        },
+      });
+    });
+  }
+  async getVstatusIni2(params: any) {
+    return new Promise((resolve, reject) => {
+      this.serviceGood.getVstatusIni2(params).subscribe({
+        next: async (resp: any) => {
+          console.log('resp', resp);
+          if (resp.data.length > 0) {
+            let obj: any = {
+              V_ESTATUS_INI: null,
+            };
+            resolve(obj);
+          } else {
+            let obj: any = {
+              V_ESTATUS_INI: null,
+            };
+            resolve(obj);
+          }
+
+          this.loading = false;
+        },
+        error: err => {
+          console.log('err', err);
+          let obj: any = {
+            V_ESTATUS_INI: null,
+          };
+          resolve(obj);
+          this.loading = false;
+          return;
+        },
+      });
+    });
+  }
+  async getVstatusIniVnoRegister(params: any) {
+    return new Promise((resolve, reject) => {
+      this.serviceGood.getVstatusIniVnoRegister(params).subscribe({
+        next: async (resp: any) => {
+          console.log('resp', resp);
+          if (resp.data.length > 0) {
+            let obj: any = {
+              V_ESTATUS_INI: null,
+              V_NO_REGISTRO: null,
+            };
+            resolve(obj);
+          } else {
+            let obj: any = {
+              ESTATUS: null,
+              V_NO_REGISTRO: null,
+            };
+            resolve(obj);
+          }
+
+          this.loading = false;
+        },
+        error: err => {
+          console.log('err', err);
+          let obj: any = {
+            V_ESTATUS: null,
+            V_NO_REGISTRO: null,
+          };
+          resolve(obj);
+          this.loading = false;
+          return;
+        },
+      });
+    });
+  }
+
+  async GetVstatusIniVnoRegisterVproextdomIni(params: any) {
+    return new Promise((resolve, reject) => {
+      this.serviceGood.GetVstatusIniVnoRegisterVproextdomIni(params).subscribe({
+        next: async (resp: any) => {
+          console.log('resp', resp);
+          if (resp.data.length > 0) {
+            let obj: any = {
+              V_ESTATUS_INI: null,
+              V_NO_REGISTRO: null,
+              V_PROEXTDOM_INI: null,
+            };
+            resolve(obj);
+          } else {
+            let obj: any = {
+              ESTATUS: null,
+              V_NO_REGISTRO: null,
+              V_PROEXTDOM_INI: null,
+            };
+            resolve(obj);
+          }
+
+          this.loading = false;
+        },
+        error: err => {
+          console.log('err', err);
+          let obj: any = {
+            V_ESTATUS: null,
+            V_NO_REGISTRO: null,
+            V_PROEXTDOM_INI: null,
+          };
+          resolve(obj);
+          this.loading = false;
+          return;
+        },
+      });
+    });
+  }
+  async GetVstatusIniVproextdomIni2(params: any) {
+    return new Promise((resolve, reject) => {
+      this.serviceGood.GetVstatusIniVproextdomIni2(params).subscribe({
+        next: async (resp: any) => {
+          console.log('resp', resp);
+          if (resp.data.length > 0) {
+            let obj: any = {
+              V_ESTATUS: null,
+              V_PROEXTDOM: null,
+            };
+            resolve(obj);
+          } else {
+            let obj: any = {
+              V_ESTATUS: null,
+              V_PROEXTDOM: null,
+            };
+            resolve(obj);
+          }
+
+          this.loading = false;
+        },
+        error: err => {
+          console.log('err', err);
+          let obj: any = {
+            V_ESTATUS: 'XXX',
+            V_PROEXTDOM: 'XXX',
+          };
+          resolve(obj);
+          this.loading = false;
+          return;
+        },
+      });
+    });
+  }
+
+  async GetVstatusIniVproextdomIni(params: any) {
+    return new Promise((resolve, reject) => {
+      this.serviceGood.GetVstatusIniVproextdomIni(params).subscribe({
+        next: async (resp: any) => {
+          console.log('resp', resp);
+          if (resp.data.length > 0) {
+            let obj: any = {
+              V_ESTATUS_INI: null,
+              V_PROEXTDOM_INI: null,
+            };
+            resolve(obj);
+          } else {
+            let obj: any = {
+              V_ESTATUS_INI: null,
+              V_PROEXTDOM_INI: null,
+            };
+            resolve(obj);
+          }
+
+          this.loading = false;
+        },
+        error: err => {
+          console.log('err', err);
+          let obj: any = {
+            V_ESTATUS_INI: null,
+            V_PROEXTDOM_INI: null,
+          };
+          resolve(obj);
+          this.loading = false;
+          return;
+        },
+      });
+    });
+  }
+  async getDetailProeedings(params: any) {
+    return new Promise((resolve, reject) => {
+      this.detailProceedingsDevolutionService
+        .getRecepcionProcedings(params)
+        .subscribe({
+          next: async (resp: any) => {
+            console.log('USER', resp);
+
+            resolve('S');
+
+            this.loading = false;
+          },
+          error: err => {
+            console.log('err', err);
+            resolve('XX');
+            this.loading = false;
+            return;
+          },
+        });
+    });
+  }
+
+  async getVexist(params: any) {
+    return new Promise((resolve, reject) => {
+      this.serviceGood.GetVexist(params).subscribe({
+        next: async (resp: any) => {
+          console.log('USER', resp);
+
+          resolve('S');
+
+          this.loading = false;
+        },
+        error: err => {
+          console.log('err', err);
+          resolve('XX');
+          this.loading = false;
+          return;
+        },
+      });
+    });
   }
 
   async getRTdictaAarusr(toolbar_user: any) {
@@ -1318,7 +1685,7 @@ export class JuridicalRulingGComponent
     console.log('this.dictamen.id', this.dictamen.id);
     let exp = this.expedientesForm.get('noExpediente').value;
     let typeDict = this.expedientesForm.get('tipoDictaminacion').value;
-    if (exp !== '' && this.dictamen.id !== null) {
+    if (exp !== '' && this.dictNumber !== null) {
       this.router.navigate(
         [baseMenu + baseMenuDepositaria + DEPOSITARY_ROUTES_2[0].link],
         {
@@ -1328,7 +1695,7 @@ export class JuridicalRulingGComponent
             CLAVE_OFICIO_ARMADA: this.dictamen.passOfficeArmy,
             P_NO_TRAMITE: this.P_NO_TRAMITE,
             TIPO: typeDict,
-            P_VALOR: this.dictamen.id,
+            P_VALOR: this.dictNumber ? this.dictNumber : this.dictamen.id,
             TIPO_VO: this.TIPO_VO,
             // CLAVE_OFICIO_ARMADA: cveOficio,
             // TIPO: tipo,
@@ -1393,7 +1760,7 @@ export class JuridicalRulingGComponent
           PLLAMO: 'ABANDONO',
           P_GEST_OK: this.P_GEST_OK,
           P_NO_TRAMITE: this.P_NO_TRAMITE,
-          NO_DICTAMEN: this.dictamen.id, //No lo pide originalmente
+          NO_DICTAMEN: this.dictamen.id ? this.dictamen.id : this.dictNumber, //No lo pide originalmente
         },
       }
     );
@@ -1831,12 +2198,17 @@ export class JuridicalRulingGComponent
       pLBTypesDicta: this.expedientesForm.get('tipoDictaminacion').value,
       pIdentity: data.identifier,
       pVcScreem: 'FACTJURDICTAMASG',
-      pDiDescStatus: data.estatus ? data.estatus.descriptionStatus : '',
+      pDiDescStatus: data.estatus
+        ? data.estatus.descriptionStatus
+        : data.statusDetails.descriptionStatus,
       pProccessExtDom: data.extDomProcess,
     };
 
     this.screenServ.getStatusCheck(body).subscribe({
       next: state => {
+        data.est_disponible = state.EST_DISPONIBLE;
+        data.v_amp = state.v_amp ? state.v_amp : null;
+        data.pDiDescStatus = state.pDiDescStatus;
         this.desc_estatus_good = state.pDiDescStatus;
       },
       error: () => {
@@ -1882,6 +2254,7 @@ export class JuridicalRulingGComponent
 
       this.goodServices.getAllFilter(filter.getParams()).subscribe({
         next: response => {
+          console.log('GODDDDSS12312312', response);
           const data = response.data;
 
           data.map(async (good: any) => {
@@ -1904,8 +2277,8 @@ export class JuridicalRulingGComponent
                   this.expedientesForm.get('tipoDictaminacion').value,
                 pIdentity: good.identifier,
                 pVcScreem: 'FACTJURDICTAMASG',
-                pDiDescStatus: good.estatus
-                  ? good.estatus.descriptionStatus
+                pDiDescStatus: good.statusDetails
+                  ? good.statusDetails.descriptionStatus
                   : '',
                 pProccessExtDom: good.extDomProcess,
               };
@@ -1915,7 +2288,7 @@ export class JuridicalRulingGComponent
                   good.est_disponible = state.EST_DISPONIBLE;
                   good.v_amp = state.v_amp ? state.v_amp : null;
                   good.pDiDescStatus = state.pDiDescStatus;
-                  // this.desc_estatus_good = state.pDiDescStatus;
+                  this.desc_estatus_good = state.pDiDescStatus;
                   resolve(state);
                 },
                 error: () => {
@@ -2113,7 +2486,7 @@ export class JuridicalRulingGComponent
               });
             });
 
-            if ([62, 1424, 1426, 1590].includes(good.cgoodClassNumber)) {
+            if ([62, 1424, 1426, 1590].includes(good.goodClassNumber)) {
               good.di_es_numerario = 'S';
               good.di_esta_conciliado = 'N';
 
@@ -2147,6 +2520,7 @@ export class JuridicalRulingGComponent
 
           Promise.all(result).then((resp: any) => {
             console.log('this.goods', arr);
+            console.log('GODDDDSS222', data);
             this.goods = data;
             // let arr2 = [];
             // this.arrDXG = arr;
@@ -2243,6 +2617,7 @@ export class JuridicalRulingGComponent
       'Información del bien seleccionado rowsSelected2',
       this.goodData.goodClassNumber
     );*/
+    this.idGoodSelected = event.data.id;
   }
 
   async getDocumentDicXStateM(id?: number) {
@@ -2265,6 +2640,7 @@ export class JuridicalRulingGComponent
         console.log('Documentos, ', resp);
       },
       error: error => {
+        this.documentsDictumXStateMList = [];
         console.log('No hay respuesta ', error);
       },
     });
@@ -2834,7 +3210,9 @@ export class JuridicalRulingGComponent
                   CLAVE_OFICIO_ARMADA: this.dictamen.passOfficeArmy,
                   P_NO_TRAMITE: this.P_NO_TRAMITE,
                   TIPO: typeDict,
-                  P_VALOR: this.dictamen.id,
+                  P_VALOR: this.dictamen.id
+                    ? this.dictamen.id
+                    : this.dictNumber,
                   TIPO_VO: this.TIPO_VO,
                   // CLAVE_OFICIO_ARMADA: cveOficio,
                   // TIPO: tipo,
@@ -3266,6 +3644,7 @@ export class JuridicalRulingGComponent
       no_clasif_bien: 0,
     };
     this.statusDict = '';
+    this.disabledButtons = true;
     this.dictaminacionesForm.get('fechaPPFF').setValue('');
     this.dictaminacionesForm.get('autoriza_remitente').setValue(null);
     this.dictaminacionesForm.get('autoriza_nombre').setValue('');
@@ -3308,11 +3687,17 @@ export class JuridicalRulingGComponent
     // this.dictamen.typeDict = this.expedientesForm.get('tipoDictaminacion').value;
 
     // this.dictamen.instructorDate = this.dictaminacionesForm.get('fechaPPFF').value;
+    let fecha = new Date(this.dictaminacionesForm.get('fechaPPFF').value);
 
+    // Restar un día
+    fecha.setDate(fecha.getDate() - 1);
+
+    // Imprimir la fecha resultante
+    console.log(fecha.toString());
     let obj = {
       id: this.dictamen.id ? this.dictamen.id : this.dictNumber,
       typeDict: this.expedientesForm.get('tipoDictaminacion').value,
-      instructorDate: this.dictaminacionesForm.get('fechaPPFF').value,
+      instructorDate: fecha.toString(),
     };
     console.log(obj);
     await this.updateDictamen(obj);
@@ -3350,8 +3735,6 @@ export class JuridicalRulingGComponent
   async updateDictamen(obj: any) {
     this.dictationService.update(obj).subscribe({
       next: async (response: any) => {
-        this.dictamen.id = response.id;
-
         this.alert('success', 'Dictamen actualizados correctamente', '');
       },
       error: (err: any) => {
