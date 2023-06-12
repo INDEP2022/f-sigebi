@@ -1,5 +1,10 @@
 import { Component, Inject, inject, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { Ng2SmartTableComponent } from 'ng2-smart-table';
 import { takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
@@ -125,6 +130,7 @@ export abstract class ScheduledMaintenance extends BasePageWidhtDinamicFiltersEx
   paramsUsers = new FilterParams();
   delegationService = inject(DelegationService);
   userService = inject(UsersService);
+  limit: FormControl = new FormControl(10);
   constructor(
     protected fb: FormBuilder,
     protected deliveryService: ProceedingsDeliveryReceptionService,
@@ -144,6 +150,13 @@ export abstract class ScheduledMaintenance extends BasePageWidhtDinamicFiltersEx
       'comptrollerWitness',
       'observations',
     ];
+    const paramsActa2 = localStorage.getItem(this.paramsActa);
+    if (paramsActa2) {
+      const params = JSON.parse(paramsActa2);
+      this.params.value.limit = params.limit;
+      this.params.value.page = params.page;
+      this.limit = new FormControl(params.limit);
+    }
     // this.maxDate = new Date();
     // console.log(this.settings1);
   }
@@ -174,9 +187,16 @@ export abstract class ScheduledMaintenance extends BasePageWidhtDinamicFiltersEx
 
   resetView() {
     console.log('RESET VIEW');
+
+    // const filter = this.data.getFilter();
+    this.data.setFilter([], true, false);
     this.data.load([]);
+    // console.log(filter);
+    this.data.refresh();
     this.totalItems = 0;
     localStorage.removeItem(this.formStorage);
+    localStorage.removeItem(this.paramsActa);
+    this.limit = new FormControl(10);
     this.columnFilters = [];
     // this.dinamicFilterUpdate();
   }
