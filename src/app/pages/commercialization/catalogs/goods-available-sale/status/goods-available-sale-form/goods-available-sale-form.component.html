@@ -1,0 +1,91 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form [formGroup]="goodsAvailableSaleForm" class="form-material">
+      <div class="row">
+        <div class="col-md-12">
+          <form-field
+            [control]="goodsAvailableSaleForm.get('goodStatus')"
+            label="Estatus">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="goodStatus"
+              maxlength="80" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row pt-5">
+        <div class="col-md-6">
+          <form-field
+            [control]="goodsAvailableSaleForm.get('description')"
+            label="Descripción">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="description"
+              maxlength="60" />
+          </form-field>
+        </div>
+
+        <div class="col-md-3">
+          <form-field
+            [control]="goodsAvailableSaleForm.get('processStatus')"
+            label="Estatus del proceso">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="processStatus"
+              maxlength="60" />
+          </form-field>
+        </div>
+
+        <div class="col-md-3">
+          <form-field
+            [control]="goodsAvailableSaleForm.get('quantity')"
+            label="Cantidad">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="quantity"
+              min="0"
+              oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10);" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row pt-5">
+        <div class="col-md-4">
+          <form-field
+            [control]="goodsAvailableSaleForm.get('transferentDestiny')"
+            label="Destino">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="transferentDestiny"
+              maxlength="100" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="goodsAvailableSaleForm.invalid"
+          [loading]="loading"
+          (confirm)="confirm()">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

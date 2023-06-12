@@ -50,7 +50,7 @@ export const COLUMNS_GOOD_JOB_MANAGEMENT = {
 };
 
 export const COLUMNS_DOCUMENTS = {
-  key: {
+  cveDocument: {
     title: 'CVE. Documento',
     type: 'string',
     sort: false,

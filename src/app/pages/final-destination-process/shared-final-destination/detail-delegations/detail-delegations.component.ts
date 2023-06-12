@@ -23,6 +23,7 @@ export class DetailDelegationsComponent extends BasePage implements OnInit {
   data: LocalDataSource = new LocalDataSource();
   columnFilters: any = [];
   title?: string = '';
+  formatNumber: number = 0;
 
   constructor(
     public bsModalRef: BsModalRef,
@@ -70,53 +71,25 @@ export class DetailDelegationsComponent extends BasePage implements OnInit {
         .pipe(takeUntil(this.$unSubscribe))
         .subscribe(() => this.setData(caseType));
     } else if (caseType2 === 'delegations') {
-      console.log('caseType2');
-      // this.data
-      //   .onChanged()
-      //   .pipe(takeUntil(this.$unSubscribe))
-      //   .subscribe(change => {
-      //     if (change.action === 'filter') {
-      //       let filters = change.filter.filters;
-      //       filters.map((filter: any) => {
-      //         let field = ``;
-      //         let searchFilter = SearchFilter.ILIKE;
-      //         field = `filter.${filter.field}`;
-      //         filter.field == 'filtro1' ||
-      //         filter.field == 'filtro2' ||
-      //         filter.field == 'filtro3' ||
-      //         filter.field == 'filtro4'
-      //           ? (searchFilter = SearchFilter.EQ)
-      //           : (searchFilter = SearchFilter.ILIKE);
-      //         if (filter.search !== '') {
-      //           this.columnFilters[field] = `${searchFilter}:${filter.search}`;
-      //         } else {
-      //           delete this.columnFilters[field];
-      //         }
-      //       });
-      //       this.setData(caseType2);
-      //     }
-      //   });
-      // this.params
-      //   .pipe(takeUntil(this.$unSubscribe))
-      //   .subscribe(() => this.setData(caseType2));
+      // console.log('caseType2');
     }
+  }
+
+  search(event: any) {
+    this.formatNumber = Number(event);
+    this.setData('status-history');
   }
 
   setData(caseType: string) {
     switch (caseType) {
       case 'delegations':
-        console.log('Case delegation');
         // this.settings.columns = DELEGATIONS_COLUMNS;
         // this.data = EXAMPLE_DATA1;
         break;
 
       case 'status-history':
         this.loading = true;
-        let params = {
-          ...this.params.getValue(),
-          ...this.columnFilters,
-        };
-        this.statusHistoryService.getAll1(params).subscribe({
+        this.statusHistoryService.getAllSearch(this.formatNumber).subscribe({
           next: response => {
             this.statusHistory = response.data.map(
               (item: { usrRegister: { id: any } }) => ({
@@ -131,8 +104,6 @@ export class DetailDelegationsComponent extends BasePage implements OnInit {
           },
           error: error => (this.loading = false),
         });
-
-        // Asignar el valor correcto al campo "user" en la definición de columnas
         COLUMNS_STATUS_HISTORY['usrRegister'] = {
           title: 'Usuario',
           type: 'string',
@@ -146,7 +117,7 @@ export class DetailDelegationsComponent extends BasePage implements OnInit {
   }
 
   selected(e: any) {
-    console.log(e);
+    // console.log(e);
   }
 }
 
