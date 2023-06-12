@@ -5,9 +5,12 @@ export const REGULATORY_COLUMNS = {
     sort: false,
   },
   fractionId: {
-    title: 'Id Fracción',
+    title: 'No.Fracción',
     type: 'number',
     sort: false,
+    valuePrepareFunction: (value: any) => {
+      return value.id;
+    },
   },
   number: {
     title: 'Número',
@@ -20,33 +23,13 @@ export const REGULATORY_COLUMNS = {
     sort: false,
   },
   validateEf: {
-    title: 'validar Ef',
+    title: 'Validar Ef',
     type: 'string',
     sort: false,
   },
   validateEc: {
     title: 'Validar Ec',
     type: 'string',
-    sort: false,
-  },
-  userCreation: {
-    title: 'Usuario Creación',
-    type: 'string',
-    sort: false,
-  },
-  creationDate: {
-    title: 'Fecha Creación',
-    type: 'Date',
-    sort: false,
-  },
-  userModification: {
-    title: 'Usuario Modificación',
-    type: 'string',
-    sort: false,
-  },
-  modificationDate: {
-    title: 'Fecha Modificación',
-    type: 'Date',
     sort: false,
   },
   version: {

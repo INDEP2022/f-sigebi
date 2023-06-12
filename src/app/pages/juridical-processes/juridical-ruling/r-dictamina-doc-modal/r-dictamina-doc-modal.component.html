@@ -1,0 +1,36 @@
+<app-modal>
+  <div header class="d-flex justify-content-between">
+    <div>
+      <h5 class="modal-title">Fechas para la Documentación</h5>
+    </div>
+    <div class="buttons">
+      <button class="btn btn-danger btn-sm active" (click)="closeModal()">
+        Cerrar
+      </button>
+    </div>
+  </div>
+  <div body>
+    <div class="col-sm-12 col-12 col-md-12 p-2">
+      <ng2-smart-table
+        #tabla
+        [attr.class]="'table-bordered table-responsive'"
+        [settings]="settings"
+        (edit)="openForm($event.data)"
+        (userRowSelect)="selectProceedings($event)"
+        [source]="dataDocuments"></ng2-smart-table>
+    </div>
+  </div>
+
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-danger btn-sm active"
+          (click)="close()">
+          Regresar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

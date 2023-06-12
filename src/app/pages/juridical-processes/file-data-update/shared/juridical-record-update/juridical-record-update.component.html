@@ -627,16 +627,14 @@
               Oficio Relacionado
             </button>
           </div>
+
+          <!-- Agregar esta linea despues adentro del botón -->
+          <!-- [disabled]="userRecipient == null || delDestinyNumber == null || dictum == '' " -->
           <div *ngIf="layout == 'FILE-UPDATE'">
             <button
               outline
               type="button"
               class="mr-3 mt-3 btn btn-sm active btn-primary"
-              [disabled]="
-                userRecipient == null ||
-                delDestinyNumber == null ||
-                dictum == ''
-              "
               (click)="openFlyerCopies()">
               Captura de Copias
             </button>

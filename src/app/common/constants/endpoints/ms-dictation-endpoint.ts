@@ -26,9 +26,20 @@ export enum DictationEndpoints {
   GetOfficeByYear1 = 'application/get-office-by-year-1',
   GetOfficeByYear2 = 'application/get-office-by-year-2',
   GetOfficeByYear3 = 'application/get-office-by-year-3',
+  GetGoodClass = 'application/get-no-bien-classif-cve-doc',
   FaFlagDest = '/application/fa-flag-dest',
   DictamenDelegation = 'application/delegationDictamXofDicta',
   DeletePupDeleteDictum = 'application/pupDeleteDictum',
   Check = 'application/destruction-check-good-available',
   FactJur = 'application/factjurdictamasg',
+
+  DEl1 = 'application/get-v-elimina',
+  DEL2 = 'application/get-v-valid',
+  DEL3 = 'application/get-v-exist',
+  DEL4 = 'application/get-estatus-ini',
+  DEL5 = 'application/update-estatus-bien',
+  DEL6 = 'application/get-v-estatus',
+  DEL7 = 'application/update-bien-delete-hist',
+
+  AplicationLaunchReport = 'application/pupLanceReport',
 }

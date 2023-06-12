@@ -224,22 +224,20 @@ export class TransferorsListComponent extends BasePage implements OnInit {
     });
   }
   delet(data: any) {
-    this.transferenteSaeService.remove(data.idTransferee, data.stateKey).subscribe({
-      next: () => {
-        this.alert(
-          'success',
-          'Borrado',
-          ''
-        )
-        this.getStateByTransferent();
-      },
-      error: err => {
-        this.alert(
-          'warning',
-          'Transferentes por estado',
-          'No se puede eliminar el objeto debido a una relación con otra tabla.'
-        );
-      }
-    });
+    this.transferenteSaeService
+      .remove(data.idTransferee, data.stateKey)
+      .subscribe({
+        next: () => {
+          this.alert('success', 'Borrado', '');
+          this.getStateByTransferent();
+        },
+        error: err => {
+          this.alert(
+            'warning',
+            'Transferentes por estado',
+            'No se puede eliminar el objeto debido a una relación con otra tabla.'
+          );
+        },
+      });
   }
 }

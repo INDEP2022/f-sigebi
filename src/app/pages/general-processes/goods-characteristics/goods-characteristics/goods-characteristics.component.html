@@ -1,13 +1,27 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">Caracter&Iacute;sticas del bien</h5>
+    <!-- <h5 class="title">Caracter&Iacute;sticas del bien</h5> -->
+    <div class="row w-100">
+      <div class="col-12 col-sm-12 col-md-8">
+        <h5 class="title">
+          Caracter&Iacute;sticas del bien
+          <ng-container *ngIf="numberGood">{{ numberGood.value }}</ng-container>
+        </h5>
+      </div>
+      <div class="col-12 col-sm-12 col-md-4 text-end" *ngIf="origin">
+        <button class="btn btn-primary active btn-sm m-2" (click)="goBack()">
+          Regresar
+          <i class="fas fa-arrow-circle-left"></i>
+        </button>
+      </div>
+    </div>
   </div>
 
   <div body>
     <div class="row">
       <div class="col-md-12 md-tabs" *ngIf="form">
         <form [formGroup]="form" class="form-material">
-          <div class="paginator">
+          <div class="paginator" *ngIf="totalItems > 1">
             <app-pagination
               [params]="params"
               [totalItems]="totalItems"
@@ -129,6 +143,7 @@
                       <input
                         type="text"
                         class="form-control"
+                        maxlength="6"
                         formControlName="noClasif"
                         [disabled]="disabledNoClasifBien"
                         (change)="updateClasif($event)"
@@ -143,7 +158,7 @@
                         formControlName="status" />
                     </form-field>
                   </div>
-                  <div class="row pt-3" style="margin: auto">
+                  <!-- <div class="row pt-3" style="margin: auto">
                     <button
                       [disabled]="formLoading"
                       class="btn btn-primary btn-sm active"
@@ -158,7 +173,7 @@
                       (click)="searchGood()">
                       Buscar
                     </button>
-                  </div>
+                  </div> -->
                 </div>
               </div>
             </tab>
@@ -171,12 +186,16 @@
                   align-items: center;
                 ">
                 <button
+                  *ngIf="!disabledBienes"
                   type="button"
                   class="btn btn-sm btn-success active"
                   (click)="save()">
                   Guardar
                 </button>
-                <h5 class="text-danger" style="text-align: right">
+                <h5
+                  class="text-danger"
+                  style="text-align: right"
+                  *ngIf="di_numerario_conciliado">
                   {{ di_numerario_conciliado }}
                 </h5>
               </div>
@@ -189,7 +208,8 @@
                       <textarea
                         formControlName="descripcion"
                         class="form-control"
-                        [disabled]="disabledDescripcion"></textarea>
+                        [readonly]="disabledDescripcion2"
+                        maxlength="1250"></textarea>
                     </form-field>
                   </div>
                   <div class="row pt-3">
@@ -201,7 +221,8 @@
                         type="text"
                         formControlName="unidad"
                         class="form-control"
-                        [disabled]="disabledBienes" />
+                        [readonly]="disabledBienes"
+                        maxlength="30" />
                     </form-field>
                     <form-field
                       class="col-md-4"
@@ -211,7 +232,8 @@
                         type="text"
                         formControlName="cantidad"
                         class="form-control"
-                        [disabled]="disabledBienes" />
+                        [readonly]="disabledBienes"
+                        maxlength="21" />
                     </form-field>
                     <form-field
                       class="col-md-4"
@@ -221,7 +243,8 @@
                         type="text"
                         formControlName="valRef"
                         class="form-control"
-                        [disabled]="disabledBienes" />
+                        [readonly]="disabledBienes"
+                        maxlength="18" />
                     </form-field>
                   </div>
                 </div>
@@ -232,13 +255,14 @@
                   <div class="form-group row">
                     <ng-custom-select-loading
                       [form]="form"
-                      [disabled]="disabledBienes"
+                      [readonly]="disabledBienes"
                       formControlName="delegation"
                       label="Delegación"
                       path="catalog/api/v1/delegation/get-all"
                       value="description"
                       bindLabel="description"
-                      paramSearch="search">
+                      paramSearch="search"
+                      (valueChange)="updateDelegation($event)">
                     </ng-custom-select-loading>
                     <!-- <form-field
                       [control]="form.get('delegation')"
@@ -253,7 +277,19 @@
                 </div>
                 <div class="col-md-6">
                   <div class="form-group row">
-                    <form-field
+                    <ng-custom-select-loading
+                      [form]="form"
+                      [readonly]="disabledBienes"
+                      formControlName="subdelegation"
+                      label="Delegación"
+                      path="catalog/api/v1/subdelegation/get-all"
+                      value="description"
+                      bindLabel="description"
+                      paramSearch="search"
+                      (valueChange)="updateSubdelegation($event)">
+                    </ng-custom-select-loading>
+
+                    <!-- <form-field
                       [control]="form.get('subdelegation')"
                       label="Subdelegación"
                       class="col-md-12">
@@ -261,8 +297,8 @@
                         type="text"
                         formControlName="subdelegation"
                         class="form-control"
-                        [disabled]="disabledBienes" />
-                    </form-field>
+                        [readonly]="disabledBienes" />
+                    </form-field> -->
                   </div>
                 </div>
               </div>
@@ -272,6 +308,7 @@
                   label="Fecha Aval&uacute;o Vigencia"
                   class="col-md-3">
                   <input
+                    *ngIf="!disabledBienes"
                     type="text"
                     formControlName="fechaAval"
                     class="form-control"
@@ -279,6 +316,12 @@
                     [disabled]="disabledBienes"
                     readonly
                     bsDatepicker />
+                  <input
+                    *ngIf="disabledBienes"
+                    type="text"
+                    formControlName="fechaAval"
+                    class="form-control"
+                    readonly />
                 </form-field>
 
                 <form-field
@@ -289,7 +332,8 @@
                     type="text"
                     formControlName="valorAval"
                     class="form-control"
-                    [disabled]="disabledBienes" />
+                    [readonly]="disabledBienes"
+                    maxlength="22" />
                 </form-field>
 
                 <form-field
@@ -299,7 +343,9 @@
                   <input
                     type="text"
                     formControlName="latitud"
-                    class="form-control" />
+                    class="form-control"
+                    maxlength="30"
+                    [readonly]="disabledBienes" />
                 </form-field>
 
                 <form-field
@@ -309,7 +355,9 @@
                   <input
                     type="text"
                     formControlName="longitud"
-                    class="form-control" />
+                    class="form-control"
+                    maxlength="30"
+                    [readonly]="disabledBienes" />
                 </form-field>
               </div>
 
@@ -321,12 +369,15 @@
                   <textarea
                     formControlName="observaciones"
                     class="form-control"
-                    [disabled]="disabledBienes"></textarea>
+                    maxlength="600"
+                    [readonly]="disabledBienes"></textarea>
                 </form-field>
 
                 <div class="col-md-4">
                   <small>¿Con Aval&uacute;o?</small>
-                  <div class="d-flex">
+                  <div
+                    class="d-flex"
+                    [class]="disabledBienes ? 'not-press' : ''">
                     <form-radio label="Si">
                       <input
                         type="radio"
@@ -342,7 +393,7 @@
                   </div>
                 </div>
               </div>
-              <div class="row">
+              <div class="row" *ngIf="loading === false">
                 <app-good-table-vals></app-good-table-vals>
               </div>
             </tab>

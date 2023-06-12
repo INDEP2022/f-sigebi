@@ -90,6 +90,18 @@ export const columnsGoodAct = {
       }
     },
   },
+  'good.status': {
+    title: 'Estatus',
+    type: 'string',
+    sort: false,
+    valuePrepareFunction: (cell: any, row: any) => {
+      if (row.good && row.good.status) {
+        return row.good.status;
+      } else {
+        return null;
+      }
+    },
+  },
   'good.unit': {
     title: 'Unidad',
     type: 'string',

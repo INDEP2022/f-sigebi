@@ -144,12 +144,13 @@ export class HistoricalGoodSituationComponent
       .pipe(
         catchError(error => {
           this.loading = false;
+          this.totalItems = this.totalItems ?? 0;
           return throwError(() => error);
         }),
         tap(res => {
           this.loading = false;
           this.history = res.data;
-          this.totalItems = res.count;
+          this.totalItems = res.count ?? 0;
         })
       );
   }

@@ -3,8 +3,12 @@ export const COLUMNS = {
     title: 'No.Persona',
     sort: false,
   },
+  personName: {
+    title: 'Nombre',
+    sort: false,
+  },
   name: {
-    title: 'Nombre Completo',
+    title: 'Apellido Paterno y Materno',
     sort: false,
   },
   manager: {

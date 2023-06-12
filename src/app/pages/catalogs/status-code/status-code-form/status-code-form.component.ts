@@ -5,6 +5,7 @@ import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IStatusCode } from 'src/app/core/models/catalogs/status-code.model';
 import { StatusCodeService } from 'src/app/core/services/catalogs/status-code.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-status-code-form',
@@ -31,29 +32,26 @@ export class StatusCodeFormComponent extends BasePage implements OnInit {
   private prepareForm() {
     this.statusCodeForm = this.fb.group({
       id: [
-        null,
-        Validators.compose([
+        null, [
           Validators.required,
           Validators.minLength(1),
           Validators.maxLength(5),
-          Validators.pattern('STRING_PATTERN'),
-        ]),
+          Validators.pattern(STRING_PATTERN),
+        ],
       ],
       descCode: [
-        null,
-        Validators.compose([
+        null, [
           Validators.minLength(1),
           Validators.maxLength(50),
-          Validators.pattern('STRING_PATTERN'),
-        ]),
+          Validators.pattern(STRING_PATTERN),
+        ],
       ],
       order: [
-        null,
-        Validators.compose([
+        null, [
           Validators.minLength(1),
           Validators.maxLength(3),
-          Validators.pattern('NUMBERS_PATTERN'),
-        ]),
+          Validators.pattern(NUMBERS_PATTERN),
+        ]
       ],
     });
     if (this.statusCode != null) {
@@ -80,7 +78,7 @@ export class StatusCodeFormComponent extends BasePage implements OnInit {
   update() {
     this.loading = true;
     this.statusCodeService
-      .update(this.statusCode.id, this.statusCodeForm.getRawValue())
+      .newUpdate(this.statusCodeForm.getRawValue())
       .subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),

@@ -38,7 +38,8 @@ import { RegisterKeyOneModalComponent } from '../register-key-one-modal/register
 })
 export class RegisterKeysLogicalTablesComponent
   extends BasePage
-  implements OnInit {
+  implements OnInit
+{
   columns: ITable[] = [];
   data: LocalDataSource = new LocalDataSource();
   columnFilters: any = [];
@@ -343,8 +344,7 @@ export class RegisterKeysLogicalTablesComponent
     const idCve = { ...this.descriptionCve };
     this.tdescCveService.remove(id).subscribe({
       next: () => (
-        Swal.fire('Borrado', '', 'success'),
-        this.getKeys(idCve.table)
+        Swal.fire('Borrado', '', 'success'), this.getKeys(idCve.table)
       ),
     });
   }

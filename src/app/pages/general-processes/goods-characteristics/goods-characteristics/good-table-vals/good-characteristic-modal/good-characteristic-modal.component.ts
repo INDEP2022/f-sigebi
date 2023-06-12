@@ -26,7 +26,7 @@ export class GoodCharacteristicModalComponent
   implements OnInit
 {
   row: IVal;
-  form: FormGroup = new FormGroup({});
+  form: FormGroup;
   title: string = 'CARACTERÍSTICA DE BIEN';
   today: Date = new Date();
   constructor(
@@ -89,7 +89,7 @@ export class GoodCharacteristicModalComponent
     return this.service.good;
   }
 
-  saved() {
+  save() {
     this.modalRef.content.callback(this.form.value);
     this.modalRef.hide();
   }

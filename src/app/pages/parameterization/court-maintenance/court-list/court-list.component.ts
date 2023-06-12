@@ -136,12 +136,8 @@ export class CourtListComponent extends BasePage implements OnInit {
               if (question.isConfirmed) {
                 this.courtService.remove(id).subscribe({
                   next: () => {
-                    this.alert(
-                      'success',
-                      'Borrado',
-                      ''
-                    )
-                    this.getCourts()
+                    this.alert('success', 'Borrado', '');
+                    this.getCourts();
                   },
                   error: err => {
                     this.alert(
@@ -149,7 +145,7 @@ export class CourtListComponent extends BasePage implements OnInit {
                       'Juzgado con ciudades',
                       'No se puede eliminar el objeto debido a una relación con otra tabla.'
                     );
-                  }
+                  },
                 });
               }
             });

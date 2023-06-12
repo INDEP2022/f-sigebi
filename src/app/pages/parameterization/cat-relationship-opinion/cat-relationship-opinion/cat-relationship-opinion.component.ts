@@ -23,7 +23,6 @@ import { IRAsuntDic } from 'src/app/core/models/catalogs/r-asunt-dic.model';
 import { AffairTypeService } from 'src/app/core/services/affair/affair-type.service';
 import { AffairService } from 'src/app/core/services/catalogs/affair.service';
 import { RAsuntDicService } from 'src/app/core/services/catalogs/r-asunt-dic.service';
-import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-cat-relationship-opinion',
@@ -32,7 +31,8 @@ import Swal from 'sweetalert2';
 })
 export class CatRelationshipOpinionComponent
   extends BasePage
-  implements OnInit {
+  implements OnInit
+{
   data: LocalDataSource = new LocalDataSource();
   columns: IAffair[] = [];
   columnFilters: any = [];
@@ -220,7 +220,7 @@ export class CatRelationshipOpinionComponent
         idAffair,
         rAsuntDic,
         affairType,
-        callback: (next: boolean) => { },
+        callback: (next: boolean) => {},
       },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
@@ -237,7 +237,6 @@ export class CatRelationshipOpinionComponent
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(rAsuntDic);
-
       }
     });
   }
@@ -246,18 +245,15 @@ export class CatRelationshipOpinionComponent
     this.RAsuntDicService.remove2(rAsuntDic).subscribe({
       next: () => {
         this.getRAsuntDic();
-        this.alert(
-          'success',
-          'Borrado',
-          ''
-        );
-      }, error: error => {
+        this.alert('success', 'Borrado', '');
+      },
+      error: error => {
         this.alert(
           'warning',
           'Relación y de asunto dictamen',
           'No se puede eliminar el objeto debido a una relación con otra tabla.'
         );
-      }
+      },
     });
   }
 
@@ -266,7 +262,7 @@ export class CatRelationshipOpinionComponent
   openDictum() {
     let config: ModalOptions = {
       initialState: {
-        callback: (next: boolean) => { },
+        callback: (next: boolean) => {},
       },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,

@@ -4,13 +4,10 @@
   </div>
   <div body>
     <form class="form-material" [formGroup]="storeHouseForm">
-      <div class="row mt-4">
+      <div class="row">
         <div class="col-md-6">
-          <form-field [control]="storeHouseForm.get('idStorehouse')" label="ID">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="idStorehouse" />
+          <form-field [control]="storeHouseForm.get('id')" label="No.Bodega">
+            <input type="text" class="form-control" formControlName="id" />
           </form-field>
         </div>
       </div>
@@ -31,10 +28,11 @@
               [data]="municipalities"
               bindLabel="description"
               label="Municipio"
-              value="idMunicipality"
+              value="nameMunicipality"
               (fetchItems)="getMunicipalities($event)"
               (change)="getLocalitie($event)"
-              control="municipality"></ngx-select>
+              control="municipality"
+              [readonly]="false"></ngx-select>
           </form-field>
         </div>
         <div class="col-md-6">
@@ -43,15 +41,15 @@
               [form]="storeHouseForm"
               [data]="localities"
               label="Localidad"
-              bindLabel="nameLocation"
-              value="id"
+              bindLabel="description"
+              value="nameLocation"
               (fetchItems)="getLocalities($event)"
               control="locality"></ngx-select>
           </form-field>
         </div>
       </div>
       <div class="row mt-4">
-        <div class="col-md-6">
+        <div class="col-md-12">
           <form-field
             [control]="storeHouseForm.get('description')"
             label="Descripci&oacute;n">
@@ -61,7 +59,9 @@
               formControlName="description"></textarea>
           </form-field>
         </div>
-        <div class="col-md-6">
+      </div>
+      <div class="row mt-4">
+        <div class="col-md-12">
           <form-field
             [control]="storeHouseForm.get('ubication')"
             label="Ubicaci&oacute;n">
