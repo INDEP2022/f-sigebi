@@ -45,6 +45,14 @@ export enum GoodProcessPoints {
   getIdent = 'application/get-fact-juridict-amasg-2',
   dicta = 'application/dictation-good-conciliation',
   getDocGod = 'application/getDictGood',
+  GetVexist = 'application/getVexist',
+  GetVstatusIniVproextdomIni = 'application/getVstatusIniVproextdomIni',
+  GetVstatusIniVproextdomIni2 = 'application/getVstatusIniVproextdomIni2',
+  GetVstatusIniVnoRegisterVproextdomIni = 'getVstatusIniVnoRegisterVproextdomIni',
+  UpdateGoodXGoodNumber = 'application/updateGoodXGoodNumber',
+  GetVstatusIni2 = 'application/getVstatusIni2',
+  deleteHistoricalStatusGoodXrecord = 'application/deleteHistoricalStatusGoodXrecord',
+  getVstatusIniVnoRegister = 'application/getVstatusIniVnoRegister',
 }
 
 export enum GoodFinderEndpoint {
