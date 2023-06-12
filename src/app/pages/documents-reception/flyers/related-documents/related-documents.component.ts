@@ -154,6 +154,7 @@ export class RelatedDocumentsComponent
   dataGoodTable: LocalDataSource = new LocalDataSource();
   m_job_management: any = null;
   authUser: any = null;
+  isPGR: boolean = false;
 
   pantalla = (option: boolean) =>
     `${
@@ -645,7 +646,7 @@ export class RelatedDocumentsComponent
     });
   }
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     // console.log("status OF: ", this.oficioGestion.statusOf);
     this.getUserInfo();
     this.setInitVariables();
@@ -1219,7 +1220,7 @@ export class RelatedDocumentsComponent
       this.managementForm.get('noOficio').value
     );
     this.formJobManagement.get('text1').setValue(textRespone.text1);
-    this.formJobManagement.get('text3').setValue(textRespone.text2);
+    this.formJobManagement.get('text2').setValue(textRespone.text2);
   }
 
   changeOffice() {
@@ -1516,11 +1517,17 @@ export class RelatedDocumentsComponent
       await this.flyerService
         .getNotificationByFilter(params.getParams())
         .subscribe({
-          next: res => {
+          next: async res => {
             console.log('prueba', res);
             this.notificationData = res.data[0];
             this.statusOf = res.data[0].wheelStatus;
             this.setDataNotification();
+
+            const noOfice = this.notificationData.officeExternalKey;
+            this.isPGR = await this.relatedDocumentDesahogo.isPGRAndElectronic(
+              noOfice
+            );
+            console.log(this.isPGR);
           },
           error: err => {
             console.log(err);
@@ -1779,6 +1786,7 @@ export class RelatedDocumentsComponent
       await this.onClickBtnDocuments();
       return;
     }
+
     if (!this.selectVariable) {
       this.onLoadToast(
         'error',
@@ -1826,23 +1834,6 @@ export class RelatedDocumentsComponent
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     });
-    //this.showDocuments()
-  }
-
-  showDocuments() {
-    if (this.paramsGestionDictamen.doc === 'N') {
-      this.onLoadToast('info', 'Este oficio no lleva Documentos', '');
-      return;
-    }
-
-    if (this.m_job_management.status_of === 'ENVIADO') {
-      this.onLoadToast(
-        'info',
-        'El oficio ya está enviado, no pude ser actualizado',
-        ''
-      );
-      return;
-    }
   }
 
   generateCveOficio(noDictamen: string) {
@@ -1973,7 +1964,7 @@ export class RelatedDocumentsComponent
         return;
       }
 
-      if (cveManagement.includes('?') == false) {
+      /*if (cveManagement.includes('?') == false) {
         this.onLoadToast(
           'info',
           'La clave está armada, no puede borrar oficio',
@@ -2003,7 +1994,7 @@ export class RelatedDocumentsComponent
           'Usuario inválido para borrar oficio'
         );
         return;
-      }
+      }*/
 
       this.alertQuestion(
         'warning',
@@ -2029,37 +2020,15 @@ export class RelatedDocumentsComponent
   ) {
     //console.log(this.dataTableGoodsJobManagement);
     //LOOP BIENES_OFICIO_ESTATUS
-    let limit = 10;
-    let page = 1;
-    let quantity = 10;
-    let goodOfficeManagement: any = null;
-    let exit = false;
-    const getData = async () => {
-      do {
-        goodOfficeManagement = await this.getGoodOfficeManagements(page, limit);
-        goodOfficeManagement.data.map(async (item: any) => {
-          const INSERT_DATE = insertDate;
-          const body: any = {
-            insertDate: INSERT_DATE,
-            goodNum: item.goodNumber.id,
-            processExtDom: item.goodNumber.extDomProcess,
-            screen: 'FACTADBOFICIOGEST',
-            dictum: managementNumber,
-            status: item.goodNumber.status,
-          };
-          const validation = await this.validateGDateToUpdateGoodStatus(body);
-        });
 
-        if (quantity < goodOfficeManagement.count) {
-          page = page + 1;
-          quantity = quantity + 10;
-        } else {
-          exit = true;
-        }
-      } while (exit == false);
+    const body: any = {
+      managementNumber: managementNumber,
+      insertDate: insertDate,
+      screen: 'FACTADBOFICIOGEST',
+      dictum: managementNumber,
     };
-    const res = await getData();
 
+    return;
     const management = managementNumber;
     const volante = noVolante;
     //se elimina bienes_officio_gestion
@@ -3043,7 +3012,9 @@ export class RelatedDocumentsComponent
   }
 
   goBack() {
-    this.router.navigate(['/pages/juridical/file-data-update']);
+    this.router.navigate(['/pages/juridical/file-data-update'], {
+      queryParams: { wheelNumber: this.formJobManagement.value.flyerNumber },
+    });
   }
 
   updateGood(good: any) {
@@ -3087,6 +3058,7 @@ export class RelatedDocumentsComponent
         this.formJobManagement.value.managementNumber;
       params.limit = limit;
       params.page = page;
+      debugger;
       this.serviceOficces.getGoodsJobManagement(params).subscribe({
         next: resp => {
           resolve(resp);
