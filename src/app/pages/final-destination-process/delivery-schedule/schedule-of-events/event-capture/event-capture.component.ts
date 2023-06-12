@@ -176,6 +176,7 @@ export class EventCaptureComponent
 {
   @ViewChildren(SmartDateInputHeaderDirective, { read: ElementRef })
   private itemsElements: QueryList<ElementRef>;
+  _today = new Date();
   saveLoading = false;
   eventTypes = new DefaultSelect([
     { area_tramite: 'OP', descripcion: 'Oficialía de partes' },
@@ -501,6 +502,10 @@ export class EventCaptureComponent
   }
 
   async saveProceeding() {
+    if (!this.registerControls.captureDate.valid) {
+      this.alert('error', 'Error', 'Verifica el formulario');
+      return;
+    }
     if (this.proceeding.id) {
       if (this.proceeding.statusProceedings.includes('CERRAD')) {
         this.alert('error', 'Error', 'El programa esta cerrado');
@@ -606,24 +611,38 @@ export class EventCaptureComponent
   }
 
   changeStartDate(start: Date) {
+    this.endDateCtrl.clearValidators();
+    this.startDateCtrl.addValidators(minDate(new Date()));
     if (start) {
       this.endDateCtrl.addValidators(minDate(start));
     } else {
       this.endDateCtrl.clearValidators();
     }
+    this.endDateCtrl.updateValueAndValidity();
+    this.startDateCtrl.updateValueAndValidity();
   }
 
   changeEndDate(end: Date) {
+    this.startDateCtrl.clearValidators();
     if (end) {
       this.startDateCtrl.addValidators(maxDate(end));
+      this.startDateCtrl.addValidators(minDate(new Date()));
     } else {
       this.startDateCtrl.clearValidators();
+      this.startDateCtrl.addValidators(minDate(new Date()));
     }
-
-    this.startDateCtrl.addValidators(minDate(new Date()));
+    this.startDateCtrl.updateValueAndValidity();
+    this.endDateCtrl.updateValueAndValidity();
   }
 
   validateDates() {
+    if (!this.proceeding.id) {
+      this.alert('error', 'Error', 'No hay un programa');
+      return;
+    }
+    if (this.detail.length == 0) {
+      this.alert('error', 'Error', 'No hay bienes agregados');
+    }
     if (this.proceeding?.statusProceedings?.includes('CERRAD')) {
       this.alert('error', 'Error', 'El programa esta cerrado');
       return;
@@ -891,6 +910,7 @@ export class EventCaptureComponent
       transmitter,
       authority,
     } = this.formSiab.value;
+    console.log({ delegation });
     const body = {
       startDate: initialDate,
       endDate: finalDate,
@@ -898,7 +918,8 @@ export class EventCaptureComponent
       steeringWheel: flyer,
       proceedings: expedient,
       opinion: dictumCve,
-      coordination: delegation.join(','),
+      coordination:
+        delegation.length > 0 ? delegation.map(d => d.id).join(',') : null,
       program: programed,
       cdonacKey: cdonacCve,
       idLot: lot,
@@ -908,9 +929,9 @@ export class EventCaptureComponent
       storeNumber: warehouse,
       iniAutDate: autoInitialDate,
       endAutDate: autoFinalDate,
-      transferee: transfer.join(','),
-      station: transmitter.join(','),
-      authority: authority.join(','),
+      transferee: transfer.length > 0 ? transfer.join(',') : null,
+      station: transmitter.length > 0 ? `(${transmitter.join('),(')})` : null,
+      authority: authority.length > 0 ? `(${authority.join('),(')})` : null,
     };
 
     this.fIndicaService.pupGenerateWhere(body).subscribe(res => {
@@ -1068,11 +1089,11 @@ export class EventCaptureComponent
         this.global.cons = cons;
         folio.setValue(this.global.cons);
       } else {
+        this.global.regi = area.value;
+        const indicator = await this.getProceedingType();
+        const _folio = await this.getFolio(indicator.certificateType);
+        this.global.cons = `${_folio}`.padStart(5, '0');
       }
-      this.global.regi = area.value;
-      const indicator = await this.getProceedingType();
-      const _folio = await this.getFolio(indicator.certificateType);
-      this.global.cons = `${_folio}`.padStart(5, '0');
     }
     if (!this.global.type) {
       this.global.type = 'RT';
