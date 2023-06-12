@@ -131,7 +131,7 @@ export class SelectListFilteredModalComponent
         this.selecteds.data.length > 0
       ) {
         this.table.grid.getRows().forEach(row => {
-          console.log(row);
+          // console.log(row);
 
           if (
             this.selecteds.data.find(
@@ -148,7 +148,7 @@ export class SelectListFilteredModalComponent
   }
 
   getData(): void {
-    console.log(this.filterParams.getValue().getParams());
+    // console.log(this.filterParams.getValue().getParams());
     this.loading = true;
     let servicio = this.dataObservableFn
       ? this.dataObservableFn(
@@ -163,7 +163,7 @@ export class SelectListFilteredModalComponent
     if (servicio) {
       servicio.subscribe({
         next: data => {
-          console.log(data);
+          // console.log(data);
           this.columns = data.data;
           this.totalItems = data.count || 0;
           this.loading = false;

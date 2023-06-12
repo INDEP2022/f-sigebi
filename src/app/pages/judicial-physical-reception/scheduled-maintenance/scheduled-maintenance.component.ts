@@ -239,45 +239,14 @@ export class ScheduledMaintenanceComponent
       'Reporte de Mantenimiento de Programaciones',
       'Consiguiendo datos'
     );
-
-    this.excelService.getExcel().subscribe({
-      next: resp => {
-        console.log(resp);
-        this.downloadDocument('test', 'excel', resp.file);
-        // let workbook = read(bstr, {
-        //   type: 'binary',
-        // });
-        // writeFile(workbook, fullFilename);
-        // const data: Blob = new Blob([resp.file], {
-        //   type: 'xlsx',
-        // });
-        // saveAs(data, fullFilename);
-        // const workBook: WorkBook = {
-        //   Sheets: { 'Hoja 1': workSheet },
-        //   SheetNames: ['Hoja 1'],
-        // };
-        // const buffer = write(workBook, { bookType: 'xlsx', type: 'binary' });
-        // const saveFileOptions = {
-        //   type: EXCEL_TYPE,
-        //   filename,
-        //   extension: '.xlsx',
-        // };
-        // this.fileSaverService.saveFromBuffer(buffer, saveFileOptions);
-        this.loadingExcel = false;
-      },
-      error: error => {
-        this.loadingExcel = false;
-        this.onLoadToast(
-          'error',
-          'Error',
-          `Error al obtener el documento ${error.error.message}`
-        );
-      },
-    });
-    // if(result as any){
-    //   const blob =  new Blob(result);
-
-    // }
+    try {
+      const resp = await firstValueFrom(this.excelService.getExcel());
+      this.downloadDocument('Programación de Recepciones', 'excel', resp.file);
+      this.loadingExcel = false;
+    } catch (error) {
+      this.loadingExcel = false;
+      this.onLoadToast('error', 'Error', `Error al obtener el documento `);
+    }
   }
 
   async exportExcel() {

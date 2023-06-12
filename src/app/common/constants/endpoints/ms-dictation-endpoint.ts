@@ -40,4 +40,6 @@ export enum DictationEndpoints {
   DEL5 = 'application/update-estatus-bien',
   DEL6 = 'application/get-v-estatus',
   DEL7 = 'application/update-bien-delete-hist',
+
+  AplicationLaunchReport = 'application/pupLanceReport',
 }
