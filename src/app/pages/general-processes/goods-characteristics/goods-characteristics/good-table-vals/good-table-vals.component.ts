@@ -90,7 +90,7 @@ export class GoodTableValsComponent extends BasePage implements OnInit {
         attribute: {
           title: 'Atributo',
           type: 'string',
-          sort: true,
+          sort: false,
           editable: false,
         },
         value: {
