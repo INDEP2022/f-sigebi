@@ -19,14 +19,14 @@ export const DEDUCTIVE_VERIFICATION_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  creationUser: {
-    title: 'Creado por',
-    type: 'string',
-    sort: false,
-  },
-  editionUser: {
-    title: 'Modificado por',
-    type: 'string',
-    sort: false,
-  },
+  // creationUser: {
+  //   title: 'Creado por',
+  //   type: 'string',
+  //   sort: false,
+  // },
+  // editionUser: {
+  //   title: 'Modificado por',
+  //   type: 'string',
+  //   sort: false,
+  // },
 };
