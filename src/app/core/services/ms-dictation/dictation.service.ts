@@ -10,6 +10,7 @@ import {
   IDictationCopies,
   IInitFormLegalOpinionOfficeBody,
   IInitFormLegalOpinionOfficeResponse,
+  IPupLaunchReport,
   ITmpDictationCreate,
   ITmpExpDesahogoB,
 } from '../../models/ms-dictation/dictation-model';
@@ -21,6 +22,8 @@ export class DictationService extends HttpService {
   public clasifGoodNumber: number | string;
   public goodNumber: number | string;
   public typeDictamination: any;
+  public crime: any;
+  public numberClassifyGood: any;
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
   private readonly route = DictationEndpoints;
@@ -274,5 +277,32 @@ export class DictationService extends HttpService {
 
   getValid(data: Object) {
     return this.post(DictationEndpoints.DEL2, data);
+  }
+
+  getVExist(data: Object) {
+    return this.post(DictationEndpoints.DEL3, data);
+  }
+
+  getStatusIni(good: number) {
+    return this.get(`${DictationEndpoints.DEL4}?noBien=${good}`);
+  }
+
+  updateVEstatus(data: Object) {
+    return this.put(DictationEndpoints.DEL5, data);
+  }
+
+  getVEstatus(data: Object) {
+    return this.post(DictationEndpoints.DEL6, data);
+  }
+
+  getUpdateAndDelete(data: Object) {
+    return this.post(DictationEndpoints.DEL7, data);
+  }
+
+  pupLaunchReport(data: Object) {
+    return this.post<IListResponse<IPupLaunchReport>>(
+      DictationEndpoints.AplicationLaunchReport,
+      data
+    );
   }
 }

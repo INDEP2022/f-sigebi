@@ -432,6 +432,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   }
 
   getNulls() {
+    this.attribGoodBadService.selectedProceeding = this.idProceeding;
     this.attribGoodBadService.selectedGoods = this.dataGoodAct['data'].map(
       (item: any) => item.good.goodId
     );
@@ -2694,7 +2695,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                 'Bienes sin información requerida',
                 'Se encontraron bienes sin información requerida para este proceso'
               );
-              localStorage.setItem('numberExpedient', this.numberExpedient)
+              localStorage.setItem('numberExpedient', this.numberExpedient);
               this.getNulls();
             } else {
               if (this.scanStatus) {
@@ -3343,7 +3344,6 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   }
 
   newProceeding() {
-    
     this.numberProceeding = this.proceedingData.length;
     this.clearInputs();
     this.form.get('ident').setValue('ADM');

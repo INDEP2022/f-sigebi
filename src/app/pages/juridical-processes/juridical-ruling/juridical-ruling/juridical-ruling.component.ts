@@ -88,6 +88,7 @@ export class JuridicalRulingComponent
   implements OnInit, OnDestroy
 {
   params = new BehaviorSubject<ListParams>(new ListParams());
+  params2 = new BehaviorSubject<ListParams>(new ListParams());
   expedientesForm: FormGroup;
   selectedGooods: IGood[] = [];
   selectedGooodsValid: IGood[] = [];
@@ -336,6 +337,7 @@ export class JuridicalRulingComponent
   dictantion: any;
   moreDictation: boolean = false;
   typeDictation: string;
+  user_dicta: string;
 
   constructor(
     private fb: FormBuilder,
@@ -433,10 +435,11 @@ export class JuridicalRulingComponent
     this.documents_m1 = [];
     this.documents = [];
     this.buttonAprove = true;
-    this.isSearch = false;
     this.isIdent = true;
     this.isDisabledExp = false;
     this.statusDict = '';
+
+    this.onTypeDictChange({ id: 'DESTRUCCION' });
   }
 
   searchExp() {
@@ -624,6 +627,7 @@ export class JuridicalRulingComponent
         this.wheelNumber = res.data[0].wheelNumber;
         this.delegationDictNumber = res.data[0].delegationDictNumber;
         this.typeDictation = res.data[0].typeDict;
+        this.user_dicta = res.data[0].userDict;
         // this.legalForm
         //   .get('tipoDictaminacion')
         //   .setValue(res.data[0].typeDict || undefined);
@@ -734,7 +738,7 @@ export class JuridicalRulingComponent
             });
 
             this.goods = data;
-            this.totalItems2 = response.count || 0;
+            this.totalItems = response.count;
           },
           error: err => {
             console.log(err);
@@ -864,43 +868,6 @@ export class JuridicalRulingComponent
           });
 
           this.goods = data;
-          this.totalItems3 = response.count || 0;
-
-          // data.map(async (good: any) => {
-          //   good.di_disponible = 'S';
-          //   const resp = await new Promise((resolve, reject) => {
-          //     const body = {
-          //       pGoodNumber: good.goodId,
-          //       pClasifGoodNumber: good.goodClassNumber,
-          //       pStatus: good.status,
-          //       pTypeDicta: this.expedientesForm.get('tipoDictaminacion').value,
-          //       pLBTypesDicta:
-          //         this.expedientesForm.get('tipoDictaminacion').value,
-          //       pIdentity: good.identifier,
-          //       pVcScreem: 'FACTJURDICTAMASG',
-          //       pDiDescStatus: good.estatus
-          //         ? good.estatus.descriptionStatus
-          //         : '',
-          //       pProccessExtDom: good.extDomProcess,
-          //     };
-
-          //     this.screenServ.getStatusCheck(body).subscribe({
-          //       next: state => {
-          //         good.est_disponible = state.EST_DISPONIBLE;
-          //         good.v_amp = state.v_amp ? state.v_amp : null;
-          //         good.pDiDescStatus = state.pDiDescStatus;
-          //         this.desc_estatus_good = state.pDiDescStatus;
-          //         resolve(state);
-          //       },
-          //       error: () => {
-          //         resolve(null);
-          //         console.log('fallo');
-          //       },
-          //     });
-          //   });
-          // });
-
-          //this.totalItems = response.count || 0;
         },
       });
     }
@@ -1286,9 +1253,7 @@ export class JuridicalRulingComponent
   rowSelected(e: any) {
     if (e) {
       this.idGoodSelected = e;
-      console.log(e);
-
-      this.onLoadDocumentsByGood();
+      //this.onLoadDocumentsByGood();
     }
   }
 
@@ -1391,6 +1356,8 @@ export class JuridicalRulingComponent
   onLoadDocumentsByGood() {
     this.documentService.getByGood(this.idGoodSelected.id).subscribe({
       next: response => {
+        console.log(response);
+
         this.data4 = response.data;
       },
       error: err => {
@@ -1874,6 +1841,7 @@ export class JuridicalRulingComponent
           });
 
           this.goodsValid = [...resp.data];
+          this.totalItems2 = resp.count;
 
           resolve(true);
         },
@@ -2210,21 +2178,23 @@ export class JuridicalRulingComponent
   async btnDeleteDictation() {
     const cursorDoc = await this.getDicGood();
 
+    const user = this.authService.decodeToken();
+
     const { noExpediente, tipoDictaminacion, cveOficio, fecDicta } =
       this.legalForm.value;
-    let v_no_expediente,
-      v_tipo_dicta,
-      v_no_of_dicta,
-      v_no_volante,
+    let v_no_expediente: any,
+      v_tipo_dicta: any,
+      v_no_of_dicta: any,
+      v_no_volante: any,
       prueba,
       v_elimina,
       v_usuario,
-      v_ban,
+      v_ban: boolean,
       v_estatus,
       v_estatus_ini,
       v_no_registro,
       v_valid,
-      v_exist,
+      v_exist: string,
       vc_pantalla,
       v_FEC_DICTAMINACION,
       v_FEC_ACTUAL;
@@ -2234,6 +2204,8 @@ export class JuridicalRulingComponent
     v_no_of_dicta = this.dictNumber;
     v_no_volante = this.wheelNumber;
     v_ban = false;
+
+    console.log(v_no_of_dicta);
 
     if (!v_no_of_dicta) {
       this.onLoadToast('error', 'No existe dictamen a eliminar');
@@ -2247,38 +2219,261 @@ export class JuridicalRulingComponent
     if (v_ban) {
       v_elimina = await this.getVDelete();
 
-      if (v_elimina == 'X') {
-        this.onLoadToast(
-          'error',
-          'EL usuario no está autorizado para eliminar el dictamen cerrado'
-        );
-        return;
-      } else if (v_elimina == 'S') {
-        v_valid = await this.getValid();
-
-        if (v_valid == 0) {
+      if (
+        !cveOficio.includes('?') &&
+        this.user_dicta == user.username.toUpperCase()
+      ) {
+        null;
+      } else {
+        if (v_elimina == 'X') {
           this.onLoadToast(
             'error',
-            'El usuario no está autorizado para eliminar el dictamen'
+            'EL usuario no está autorizado para eliminar el dictamen cerrado'
           );
           return;
-        }
+        } else if (v_elimina == 'S') {
+          v_valid = await this.getValid();
 
-        v_FEC_DICTAMINACION = this.datePipe.transform(fecDicta, 'MM/yyyy');
-        v_FEC_ACTUAL = this.datePipe.transform(new Date(), 'MM/yyyy');
-        if (v_FEC_DICTAMINACION != v_FEC_ACTUAL) {
-          this.onLoadToast(
-            'error',
-            'El dictamen a eliminar no fue realizado dentro del mes'
-          );
+          if (v_valid == 0) {
+            this.onLoadToast(
+              'error',
+              'El usuario no está autorizado para eliminar el dictamen'
+            );
+            return;
+          }
+
+          v_FEC_DICTAMINACION = this.datePipe.transform(fecDicta, 'MM/yyyy');
+          v_FEC_ACTUAL = this.datePipe.transform(new Date(), 'MM/yyyy');
+          if (v_FEC_DICTAMINACION != v_FEC_ACTUAL) {
+            this.onLoadToast(
+              'error',
+              'El dictamen a eliminar no fue realizado dentro del mes'
+            );
+            return;
+          }
         }
       }
     }
 
-    console.log(v_ban);
-    console.log(cursorDoc);
-    console.log(v_elimina);
-    console.log(v_FEC_DICTAMINACION);
+    if (v_ban && v_elimina == 'S') {
+      this.alertQuestion(
+        'info',
+        'Se borra dictamen cerrado',
+        `(Exp.: ${v_no_expediente} Tipo: ${v_tipo_dicta} No. Dict.: ${v_no_of_dicta} )`
+      ).then(async resp => {
+        if (resp.isConfirmed) {
+          let stop = false;
+          cursorDoc.forEach(async good => {
+            if (tipoDictaminacion == 'DESTRUCCION') {
+              v_exist = await this.getVExist(
+                Number(good.no_bien),
+                good.identificador
+              );
+            } else {
+              v_exist = await this.getVExist(
+                Number(good.no_bien),
+                good.identificador
+              );
+            }
+
+            if (v_exist == 'S') {
+              this.onLoadToast(
+                'error',
+                'Al menos un bien se encuentra en otra fase'
+              );
+              stop = true;
+              return;
+            } else if (v_exist == 'XX') {
+              v_estatus_ini = await this.getStausIn(Number(good.no_bien));
+
+              if (v_estatus_ini) {
+                await this.getUpdateStatus(Number(good.no_bien), v_estatus_ini);
+              }
+            }
+          });
+
+          if (stop) return;
+
+          //Aqui se elimina el dictamen cerrado
+
+          const body: any = {
+            vProceedingsNumber: v_no_expediente,
+            vTypeDicta: v_tipo_dicta,
+            vWheelNumber: v_no_volante,
+            vOfNumberDicta: v_no_of_dicta,
+          };
+
+          if (!stop) return;
+
+          await this.deteleDictation(body);
+
+          Swal.fire('Dictamen ha eliminado correctamente', '', 'success').then(
+            () => {
+              //Limpiar todo
+            }
+          );
+        }
+      });
+    } else {
+      this.alertQuestion(
+        'info',
+        'Se borra dictamen',
+        `(Exp.: ${v_no_expediente} Tipo: ${v_tipo_dicta} No. Dict.: ${v_no_of_dicta} )`
+      ).then(async resp => {
+        if (resp.isConfirmed) {
+          let stop = false;
+          cursorDoc.forEach(async good => {
+            v_estatus = await this.getVStatus(
+              Number(good.no_bien),
+              v_tipo_dicta,
+              good.identificador,
+              good.estatus
+            );
+
+            if (v_estatus == 'XXX' && v_ban) {
+              this.onLoadToast(
+                'error',
+                'Al menos un bien se encuentra en otra fase'
+              );
+              stop = true;
+              return;
+            }
+
+            if (v_estatus != 'XXX') {
+              await this.getUpdateAndDeleteHisto(
+                Number(good.no_bien),
+                v_estatus
+              );
+            }
+          });
+
+          //Aqui se elimina el dictamen
+
+          const body: any = {
+            vProceedingsNumber: v_no_expediente,
+            vTypeDicta: v_tipo_dicta,
+            vWheelNumber: v_no_volante,
+            vOfNumberDicta: v_no_of_dicta,
+          };
+
+          if (!stop) return;
+
+          await this.deteleDictation(body);
+
+          Swal.fire('Dictamen ha eliminado correctamente', '', 'success').then(
+            () => {
+              //Limpiar todo
+            }
+          );
+        }
+      });
+    }
+  }
+
+  async getUpdateAndDeleteHisto(goodId: number, estatus: string) {
+    return new Promise<boolean>((resolver, reject) => {
+      const body = {
+        noBien: goodId,
+        vEstatus: estatus,
+      };
+
+      this.dictationServ.getUpdateAndDelete(body).subscribe({
+        next: resp => {
+          resolver(true);
+        },
+        error: () => {
+          resolver(false);
+        },
+      });
+    });
+  }
+
+  async getVStatus(
+    goodId: number,
+    tipoDic: string,
+    identificador: string,
+    estatus: string
+  ) {
+    return new Promise<string>((resolver, reject) => {
+      const body = {
+        noBien: goodId,
+        identificador,
+        estatus_dictaminacion: estatus,
+        tipo_dictaminacion: tipoDic,
+      };
+
+      this.dictationServ.getVEstatus(body).subscribe({
+        next: resp => {
+          resolver(resp.V_ESTATUS);
+        },
+        error: () => {
+          resolver('XXX');
+        },
+      });
+    });
+  }
+
+  async deteleDictation(body: any) {
+    return new Promise<boolean>((resolver, reject) => {
+      this.dictationServ.deletePupDeleteDictum(body).subscribe({
+        next: resp => {
+          console.log(resp);
+          resolver(true);
+        },
+        error: () => {
+          resolver(false);
+        },
+      });
+    });
+  }
+
+  async getUpdateStatus(goodId: number, estatus: string) {
+    return new Promise<boolean>((resolver, reject) => {
+      const body = {
+        noBien: goodId,
+        estatus,
+      };
+
+      this.dictationServ.updateVEstatus(body).subscribe({
+        next: resp => {
+          resolver(true);
+        },
+        error: () => {
+          resolver(false);
+        },
+      });
+    });
+  }
+
+  async getStausIn(goodId: number) {
+    return new Promise<string>((resolver, reject) => {
+      this.dictationServ.getStatusIni(goodId).subscribe({
+        next: resp => {
+          resolver(resp.V_ESTATUS_INI);
+        },
+        error: () => {
+          resolver(null);
+        },
+      });
+    });
+  }
+
+  async getVExist(goodId: number, tipoDic: string) {
+    return new Promise<string>((resolver, reject) => {
+      const body = {
+        noBien: goodId,
+        tipoDicta: tipoDic,
+      };
+
+      this.dictationServ.getVExist(body).subscribe({
+        next: resp => {
+          resolver(resp.V_EXIST);
+        },
+        error: () => {
+          resolver('XX');
+        },
+      });
+    });
   }
 
   async getValid() {
@@ -2292,8 +2487,8 @@ export class JuridicalRulingComponent
 
       // const body = {
       //   usuario: 'JVILLAVICENCIOC' || user.username.toUpperCase(),
-      //   noDelegacionDictam: 12 || this.delegationDictNumber
-      // }
+      //   noDelegacionDictam: 12 || this.delegationDictNumber,
+      // };
 
       this.dictationServ.getValid(body).subscribe({
         next: resp => {
@@ -2310,7 +2505,7 @@ export class JuridicalRulingComponent
     return new Promise<string>((resolver, reject) => {
       const user = this.authService.decodeToken();
 
-      // this.dictationServ.getVElimina('JVILLAVICENCIOC' || user.username.toUpperCase()).subscribe(
+      //this.dictationServ.getVElimina('JVILLAVICENCIOC' || user.username.toUpperCase()).subscribe({
       this.dictationServ.getVElimina(user.username.toUpperCase()).subscribe({
         next: resp => {
           resolver(resp.resultado);
@@ -2323,7 +2518,9 @@ export class JuridicalRulingComponent
   }
 
   async getDicGood() {
-    return new Promise((resolver, reject) => {
+    return new Promise<
+      { estatus: string; identificador: string; no_bien: string }[]
+    >((resolver, reject) => {
       const { noExpediente } = this.legalForm.value;
 
       const body = {
@@ -2392,6 +2589,12 @@ export class JuridicalRulingComponent
         this.label = 'Fec. Dest.';
       }
     }
+  }
+
+  rowSelectedStatus(good: any) {
+    this.di_desc_est = good.estatus
+      ? good.estatus.descriptionStatus
+      : good.statusDetails.descriptionStatus;
   }
 
   btnCloseDocs() {

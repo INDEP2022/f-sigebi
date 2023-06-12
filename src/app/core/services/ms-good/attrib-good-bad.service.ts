@@ -10,6 +10,7 @@ import { IAttribGoodBad } from '../../models/ms-good/good';
 })
 export class AttribGoodBadService extends HttpService {
   selectedGoods: number[];
+  selectedProceeding: number;
   constructor() {
     super();
     this.microservice = GoodEndpoints.Good;
@@ -28,13 +29,17 @@ export class AttribGoodBadService extends HttpService {
   ): Observable<IListResponseMessage<IAttribGoodBad>> {
     return self
       .get<IListResponseMessage<IAttribGoodBad>>(
-        `attrib-good-bad${self.selectedGoods
-          ? '?filter.id=$in:' + String(self.selectedGoods)
-          : ''}`
+        `attrib-good-bad?filter.pair1=3${
+          (self.selectedProceeding
+            ? '&filter.pair2=' + self.selectedProceeding
+            : '') +
+          (self.selectedGoods
+            ? '&filter.id=$in:' + String(self.selectedGoods)
+            : '')
+        }`,
         /* 'attrib-good-bad' + self.selectedGoods
           ? '?filter.id=$in:' + String(self.selectedGoods)
-          : '' */,
-        params
+          : '' */ params
       )
       .pipe(
         map(response => {
