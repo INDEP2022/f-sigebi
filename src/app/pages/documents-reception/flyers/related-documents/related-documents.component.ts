@@ -2245,7 +2245,8 @@ export class RelatedDocumentsComponent
   typeSelected(type: any) {
     const filter = type.no_clasif_bien;
     this.dictationService.typeDictamination = type;
-
+    //this.dictationService.numberClassifyGood = this.formJobManagement.value.managementNumber ||  cveDocument;
+    this.dictationService.crime = this.formVariables.get('b').value;
     this.selectVariable = filter;
     this.goodFilterParams(filter);
   }
