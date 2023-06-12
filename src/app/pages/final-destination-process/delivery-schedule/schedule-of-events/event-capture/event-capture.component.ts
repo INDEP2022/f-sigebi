@@ -468,7 +468,6 @@ export class EventCaptureComponent
       if (!row.dateapprovalxadmon && !row.dateindicatesuserapproval) {
         return;
       }
-      console.log('paso');
       row.dateindicatesuserapproval = value;
       this.updateDetail(row);
     });
@@ -1051,8 +1050,6 @@ export class EventCaptureComponent
     ]);
 
     this.validateTransfer(type.value ?? 'RT', transference.value);
-
-    console.log({ area, _area });
     if (!area.value) {
       if (!_area) {
         this.global.regi = null;
@@ -1529,7 +1526,6 @@ export class EventCaptureComponent
             this.detail[0]?.expedientnumber &&
             !this.registerControls.transference.value
           ) {
-            console.log('no hay trans guardado');
             await this.transferClick();
             this.updateTransfer().subscribe();
           }
@@ -1540,7 +1536,6 @@ export class EventCaptureComponent
   updateTransfer() {
     const formValue = this.form.getRawValue();
     const { numFile, keysProceedings, captureDate, responsible } = formValue;
-    console.log({ keysProceedings });
 
     const data = {
       ...this.proceeding,
@@ -1912,8 +1907,6 @@ export class EventCaptureComponent
 
     if (this.proceeding.typeProceedings === 'EVENCOMER') {
       const message: string = await this.PUF_VERIF_COMER(this.proceeding.id);
-      console.log('Noooooooooooooooooooooooooooooo');
-
       if (message !== 'OK') {
         this.onLoadToast('error', message);
         return;
@@ -1947,8 +1940,6 @@ export class EventCaptureComponent
     if (this.global.paperworkArea === 'RF' && n_CONT > 0) {
       const no_Acta: number | string = this.proceeding.id; //// :ACTAS_ENTREGA_RECEPCION.NO_ACTA
       // await this.INSERT_ACTAS_CTL_NOTIF_SSF3(no_Acta, 'CERRADA');
-      /// AQUI HACER ESA ACTUALIZACION UPDATE_SSF3_ACTAS_PROG_DST Esperando enpoint
-      //c_STR UPDATE SSF3_ACTAS_PROG_DST SET IND_ENVIO = 0 WHERE NO_ACTA = ||TO_CHAR(:ACTAS_ENTREGA_RECEPCION.NO_ACTA);
       await this.UPDATE_SSF3_ACTAS_PROG_DST(null);
       this.alert(
         'info',
@@ -2326,8 +2317,7 @@ export class EventCaptureComponent
         }
       }
     } catch (e_EXCEPPROC) {
-      c_MENSAJE =
-        'Favor de Informar a Informática. < ' || 'e_EXCEPPROC.MESSAGE' || ' >';
+      c_MENSAJE = 'Favor de Informar a Informática.';
       this.alert('error', 'Ha ocurrido un error', c_MENSAJE);
     }
   }
@@ -2342,7 +2332,6 @@ export class EventCaptureComponent
         .PaCierreInicialProgr(no_Acta, lv_PANTALLA, blkCtrlArea)
         .subscribe({
           next: resp => {
-            console.log(resp.message[0]);
             res(resp.message[0]);
           },
           error: err => res('Error'),
