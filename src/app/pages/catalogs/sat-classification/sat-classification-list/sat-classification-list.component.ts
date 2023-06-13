@@ -38,6 +38,7 @@ export class SatClassificationListComponent extends BasePage implements OnInit {
     this.loading = true;
     this.satClassificationService.getAll(this.params.getValue()).subscribe({
       next: response => {
+        console.log(response.data);
         this.paragraphs = response.data;
         this.totalItems = response.count;
         this.loading = false;
