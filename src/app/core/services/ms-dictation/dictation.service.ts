@@ -301,7 +301,42 @@ export class DictationService extends HttpService {
 
   pupLaunchReport(data: Object) {
     return this.post<IListResponse<IPupLaunchReport>>(
-      DictationEndpoints.AplicationLaunchReport,
+      DictationEndpoints.ApplicationLaunchReport,
+      data
+    );
+  }
+
+  getVOficTrans(data: Object) {
+    return this.post<IListResponse<any>>(
+      DictationEndpoints.ApplicationGetVOficTrans,
+      data
+    );
+  }
+  nUniversalFolio(data: Object) {
+    return this.post<IListResponse<any>>(
+      DictationEndpoints.ApplicationNUniversalFolio,
+      data
+    );
+  }
+  getActnom(managementNumber: number) {
+    return this.get<IListResponse<any>>(
+      DictationEndpoints.ApplicationGetActnom + '/' + managementNumber
+    );
+  }
+  pupValidExtDom(wheelNumber: number) {
+    return this.get<IListResponse<any>>(
+      DictationEndpoints.ApplicationPupValidExtDom + '/' + wheelNumber
+    );
+  }
+  updateManagerTransfer(data: Object) {
+    return this.post<IListResponse<any>>(
+      DictationEndpoints.ApplicationUpdateManagerTransfer,
+      data
+    );
+  }
+  findOffficeNu(data: Object) {
+    return this.post<IListResponse<any>>(
+      DictationEndpoints.ApplicationFindOffficeNu,
       data
     );
   }
