@@ -3,7 +3,15 @@ import { type FormControl, type FormGroup } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { catchError, firstValueFrom, map, Observable, of } from 'rxjs';
+import {
+  catchError,
+  firstValueFrom,
+  map,
+  Observable,
+  of,
+  take,
+  tap,
+} from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { showQuestion, showToast } from 'src/app/common/helpers/helpers';
 import {
@@ -15,7 +23,10 @@ import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
 import { ICity } from 'src/app/core/models/catalogs/city.model';
 import { IDepartment } from 'src/app/core/models/catalogs/department.model';
 import { type INotification } from 'src/app/core/models/ms-notification/notification.model';
-import { IMJobManagement } from 'src/app/core/models/ms-officemanagement/m-job-management.model';
+import {
+  IMJobManagement,
+  IRSender,
+} from 'src/app/core/models/ms-officemanagement/m-job-management.model';
 import { IProceduremanagement } from 'src/app/core/models/ms-proceduremanagement/ms-proceduremanagement.interface';
 import {
   IAccesTrackingXArea,
@@ -24,7 +35,6 @@ import {
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { DepartamentService } from 'src/app/core/services/catalogs/departament.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
-import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
@@ -38,13 +48,15 @@ import { ProcedureManagementService } from 'src/app/core/services/proceduremanag
 import { BasePage } from 'src/app/core/shared/base-page';
 import { LegalOpinionsOfficeService } from 'src/app/pages/juridical-processes/depositary/legal-opinions-office/legal-opinions-office/services/legal-opinions-office.service';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
-import { FlyersService } from '../services/flyers.service';
+import { FlyersService } from '../../services/flyers.service';
+import { DocumentsFormComponent } from '../documents-form/documents-form.component';
 import {
   IGoodAndAvailable,
   IGoodJobManagement,
-} from './related-documents.component';
+} from '../related-documents.component';
+import { IDocumentJobManagement } from './related-documents-relation.component';
 
-export abstract class RelateDocumentsResponse extends BasePage {
+export abstract class RelateDocumentsResponseRelation extends BasePage {
   protected abstract goodServices: GoodService;
   protected abstract serviceOficces: GoodsJobManagementService;
   protected abstract notificationService: NotificationService;
@@ -71,17 +83,9 @@ export abstract class RelateDocumentsResponse extends BasePage {
     /** @description no_of_gestion */
     managementNumber: FormControl;
     /** @description  destinatario*/
-    addressee: FormControl<{
-      user: number | string;
-      name: string;
-      userAndName: string;
-    }>;
+    addressee: FormControl<IRSender>;
     /** @description remitente */
-    sender: FormControl<{
-      id: number | string;
-      name: string;
-      idName: string;
-    }>; // remitente
+    sender: FormControl<IRSender>; // remitente
     /** @descripiton  cve_cargo_rem*/
     cveChargeRem: FormControl;
     /**@description DES_REMITENTE_PA */
@@ -116,6 +120,8 @@ export abstract class RelateDocumentsResponse extends BasePage {
     /**@description num_clave_armada */
     armedKeyNumber: FormControl;
     tipoTexto: FormControl;
+    /**@descripcion no_expediente */
+    proceedingsNumber: FormControl;
   }>;
   protected abstract formNotification: FormGroup;
   protected abstract route: ActivatedRoute;
@@ -126,7 +132,6 @@ export abstract class RelateDocumentsResponse extends BasePage {
   protected abstract documentsService: DocumentsService;
   protected abstract usersService: UsersService;
   protected abstract goodprocessService: GoodprocessService;
-  protected abstract dictationService: DictationService;
   abstract dataTableGoods: IGoodAndAvailable[];
   abstract dataTableGoodsJobManagement: IGoodJobManagement[];
   abstract isDisabledBtnDocs: boolean;
@@ -141,6 +146,55 @@ export abstract class RelateDocumentsResponse extends BasePage {
   abstract totalItems: number;
 
   isCreate = false;
+  userInfo: {
+    exp: number;
+    iat: number;
+    jti: string;
+    iss: string;
+    aud: string[];
+    sub: string;
+    typ: string;
+    azp: string;
+    session_state: string;
+    acr: string;
+    'allowed-origins': string[];
+    realm_access: any;
+    resource_access: any;
+    scope: string;
+    sid: string;
+    email_verified: boolean;
+    name: string;
+    preferred_username: string;
+    given_name: string;
+    family_name: string;
+    email: string;
+    department: string;
+    employeetype: string;
+    puesto: string;
+    username: string;
+    cargonivel1: string;
+    cargonivel2: string;
+    cargonivel3: string;
+    siglasnivel1: string;
+    siglasnivel2: string;
+    siglasnivel3: string;
+    siglasnivel4: string;
+    delegacionreg: string;
+    delegationNumber: number;
+    subdelegationNumber: number;
+    departamentNumber: number;
+    user: string;
+    assigned: string;
+    registryNumber?: number;
+    delegation1Number: number;
+    departament1Number: number;
+    lastActive: number;
+    delegation: any;
+    subDelegation: any;
+    departament: IDepartment;
+    userDetail: any;
+    userAndName?: string;
+  };
   getGoods1(params: ListParams) {
     this.isLoadingGood = true;
     this.goodServices.getAll(params).subscribe({
@@ -265,7 +319,9 @@ export abstract class RelateDocumentsResponse extends BasePage {
     );
   }
 
-  getDocJobManagement(params: ListParams | null = null) {
+  getDocJobManagement(
+    params: ListParams | null = null
+  ): Observable<IListResponse<IDocumentJobManagement>> {
     if (!params) {
       params = new ListParams();
       params['filter.managementNumber'] =
@@ -276,7 +332,7 @@ export abstract class RelateDocumentsResponse extends BasePage {
 
   getDocJobManagementCount(params: ListParams) {
     params.limit = 1;
-
+    params.page = 1;
     return firstValueFrom(
       this.mJobManagementService.getDocOficioGestion(params).pipe(
         map(x => x.count),
@@ -488,12 +544,16 @@ export abstract class RelateDocumentsResponse extends BasePage {
   }
 
   async getUserInfo() {
+    if (this.userInfo) {
+      return this.userInfo;
+    }
     const auth = this.authService.decodeToken();
     const data = await this.getUserDataLogged(
       auth.preferred_username?.toLocaleUpperCase() || auth.preferred_username
     );
     console.log({ data, auth });
-    return { ...data, ...auth };
+    this.userInfo = { ...data, ...auth };
+    return this.userInfo;
   }
 
   async getUserDataLogged(userId: string) {
@@ -535,7 +595,7 @@ export abstract class RelateDocumentsResponse extends BasePage {
 
       try {
         const params = {
-          'filter.user': values.sender.id,
+          'filter.user': values.sender.usuario,
           'filter.assigned': 'S',
         };
         segAccessXAreas = (await this.getSegAccessXAreas(
@@ -543,7 +603,7 @@ export abstract class RelateDocumentsResponse extends BasePage {
         )) as IAccesTrackingXArea;
 
         segUser = (await this.getSegUsers({
-          'filter.user': values.sender.id,
+          'filter.user': values.sender.usuario,
         })) as IUsersTracking;
       } catch (ex) {
         this.alert(
@@ -596,11 +656,6 @@ export abstract class RelateDocumentsResponse extends BasePage {
             department.depDelegation = _department.depDelegation;
           }
         } else {
-          this.alert(
-            'error',
-            'Error',
-            'No se localizó la dependencia de la persona que autoriza.'
-          );
           throw new Error(
             'No se localizó la dependencia de la persona que autoriza.'
           );
@@ -634,6 +689,10 @@ export abstract class RelateDocumentsResponse extends BasePage {
     const newRows: IGoodJobManagement[] = [];
 
     goodAvailables.forEach(item => {
+      const existRow = this.dataTableGoodsJobManagement.find(
+        x => x.goodNumber == item.goodId
+      );
+      if (existRow) return;
       newRows.push({
         goodNumber: item.goodId,
         recordNumber: '',
@@ -642,12 +701,14 @@ export abstract class RelateDocumentsResponse extends BasePage {
         good: item,
         goods: item.description,
       });
-      this.postGoodsJobManagement({
-        goodNumber: item.goodId,
-        recordNumber: '',
-        managementNumber: this.formJobManagement.value.managementNumber,
-      }).subscribe();
       item.available = false;
+      if (!this.isCreate) {
+        this.postGoodsJobManagement({
+          goodNumber: item.goodId,
+          recordNumber: '',
+          managementNumber: this.formJobManagement.value.managementNumber,
+        }).subscribe();
+      }
     });
     this.dataTableGoodsJobManagement = [
       ...this.dataTableGoodsJobManagement,
@@ -656,12 +717,15 @@ export abstract class RelateDocumentsResponse extends BasePage {
   }
 
   pupAddAnyGood() {
-    console.log('pupAddAnyGood');
     const goodAvailables = this.dataTableGoods.filter(
       item => item.available && (item as any)?.['seleccion']
     );
     const newRows: IGoodJobManagement[] = [];
     goodAvailables.forEach(item => {
+      const existRow = this.dataTableGoodsJobManagement.find(
+        x => x.goodNumber == item.goodId
+      );
+      if (existRow) return;
       newRows.push({
         goodNumber: item.goodId,
         recordNumber: '',
@@ -670,12 +734,14 @@ export abstract class RelateDocumentsResponse extends BasePage {
         good: item,
         goods: item.description,
       });
-      this.postGoodsJobManagement({
-        goodNumber: item.goodId,
-        recordNumber: '',
-        managementNumber: this.formJobManagement.value.managementNumber,
-      }).subscribe();
-      item.available = false;
+      if (!this.isCreate) {
+        this.postGoodsJobManagement({
+          goodNumber: item.goodId,
+          recordNumber: '',
+          managementNumber: this.formJobManagement.value.managementNumber,
+        }).subscribe();
+        item.available = false;
+      }
     });
     this.dataTableGoodsJobManagement = [
       ...this.dataTableGoodsJobManagement,
@@ -699,7 +765,7 @@ export abstract class RelateDocumentsResponse extends BasePage {
         const data = res.data.map(item => {
           return {
             ...item,
-            keyDescription: `${item.key} - ${item.description}`,
+            keyDescription: `${item.key} - ${item.description} - ${item.typeDictum}`,
           };
         });
         this.dataSelectDictation = new DefaultSelect(data);
@@ -736,7 +802,7 @@ export abstract class RelateDocumentsResponse extends BasePage {
         user: userInfo.preferred_username,
       });
     }
-    if (!(values.managementNumber as string).includes('?')) {
+    if (values.cveManagement.indexOf('?') === -1) {
       this.alert(
         'error',
         'Error',
@@ -754,24 +820,41 @@ export abstract class RelateDocumentsResponse extends BasePage {
     }
 
     const promises = [
-      this.mJobManagementService.deleteGoodsJobManagement1(
-        values.managementNumber
+      firstValueFrom(
+        this.mJobManagementService.deleteGoodsJobManagement1(
+          values.managementNumber
+        )
       ),
-      this.mJobManagementService.deleteDocumentJobManagement2(
-        values.managementNumber
+      firstValueFrom(
+        this.mJobManagementService.deleteDocumentJobManagement2(
+          values.managementNumber
+        )
       ),
-      this.mJobManagementService.deleteMJobGestion({
-        managementNumber: values.managementNumber,
-        flyerNumber: values.flyerNumber,
-      }),
-      this.mJobManagementService.deleteCopiesJobManagement4(
-        values.managementNumber
+      firstValueFrom(
+        this.mJobManagementService.deleteMJobGestion({
+          managementNumber: values.managementNumber,
+          flyerNumber: values.flyerNumber,
+        })
       ),
-      this.notificationService.update(values.flyerNumber, {
-        dictumKey: '',
-      }),
+      firstValueFrom(
+        this.mJobManagementService.deleteCopiesJobManagement4(
+          values.managementNumber
+        )
+      ),
+      firstValueFrom(
+        this.notificationService.update(values.flyerNumber, {
+          dictumKey: '',
+        })
+      ),
     ];
-    await Promise.all(promises);
+    //
+    for (const promise of promises) {
+      try {
+        await promise;
+      } catch (ex) {
+        console.log(ex);
+      }
+    }
     this.formJobManagement.get('refersTo').setValue('D');
     this.se_refiere_a_Disabled.A = false;
     this.se_refiere_a_Disabled.B = false;
@@ -848,10 +931,12 @@ export abstract class RelateDocumentsResponse extends BasePage {
     delete result.tipoTexto;
     if (values.addressee) {
       result.addressee =
-        values.jobType == 'EXTERNO' ? values.addressee : values.addressee?.user;
+        values.jobType == 'EXTERNO'
+          ? values.addressee
+          : values.addressee?.usuario;
     }
     if (values.sender) {
-      result.sender = values.sender.id;
+      result.sender = values.sender.usuario;
     }
     if (values.city) {
       result.city = values.city.id;
@@ -861,39 +946,63 @@ export abstract class RelateDocumentsResponse extends BasePage {
 
   async commit() {
     if (this.isCreate) {
+      this.formJobManagement.get('jobBy').setValue('RELACIONADO');
       const values = this.getValuesNotNull();
       values.jobBy =
         this.getParamsForName('PLLAMO') == 'ABANDONO'
           ? 'ABANDONO'
           : 'RELACIONADO';
 
-      const result = await firstValueFrom(
-        this.mJobManagementService.create(values).pipe(
-          catchError(() => {
-            showToast({
-              icon: 'error',
-              title: 'Error',
-              text: 'Error al guardar los datos',
-            });
-            return of(null);
-          })
-        )
-      );
-    }
-    const values = this.getValuesNotNull();
-    if (values.cveManagement) {
       await firstValueFrom(
-        this.mJobManagementService.update(values).pipe(
+        this.mJobManagementService.create(values).pipe(
+          tap(e => {
+            this.isCreate = false;
+            console.log({ values: e });
+            this.formJobManagement.patchValue(e as any);
+            this.dataTableGoodsJobManagement.forEach(item => {
+              this.postGoodsJobManagement({
+                goodNumber: item.goodNumber,
+                recordNumber: '',
+                managementNumber: this.formJobManagement.value.managementNumber,
+              }).subscribe();
+            });
+            this.dataTableDocuments.forEach(item => {
+              this.mJobManagementService
+                .createDocumentOficeManag({
+                  goodNumber: item.goodNumber,
+                  cveDocument: item.cveDocument,
+                  managementNumber:
+                    this.formJobManagement.value.managementNumber,
+                })
+                .subscribe();
+            });
+          }),
           catchError(() => {
             showToast({
               icon: 'error',
               title: 'Error',
               text: 'Error al guardar los datos',
             });
-            return of(null);
+            throw new Error('Error al guardar los datos');
           })
         )
       );
+    } else {
+      const values = this.getValuesNotNull();
+      if (values.cveManagement) {
+        await firstValueFrom(
+          this.mJobManagementService.update(values).pipe(
+            catchError(() => {
+              showToast({
+                icon: 'error',
+                title: 'Error',
+                text: 'Error al guardar los datos',
+              });
+              return of(null);
+            })
+          )
+        );
+      }
     }
   }
 
@@ -937,16 +1046,18 @@ export abstract class RelateDocumentsResponse extends BasePage {
           .get('managementNumber')
           .setValue(sequencialOfManagement);
         if (valuesJobManagement.refersTo == 'Se refiere a todos los bienes') {
+          //TODO: await this.commit();
           this.pupAddGood();
         }
         if (
           valuesJobManagement.refersTo ==
-          'Se refiere a algun (os) bien (es) del expediente'
+          'Se refiere a algun(os) bien(es) del expediente'
         ) {
           this.pupAddAnyGood();
+          //TODO: await this.commit();
         }
         this.formVariables.get('classify').setValue(null);
-        if (this.dataTableGoodsJobManagement?.[0].classify) {
+        if (this.dataTableGoodsJobManagement?.[0]?.classify) {
           const auxArr: string[] = [];
           this.dataTableGoodsJobManagement.forEach(x => {
             if (x.classify) {
@@ -982,7 +1093,7 @@ export abstract class RelateDocumentsResponse extends BasePage {
         }
 
         this.formVariables.get('classify').setValue(null);
-        if (this.dataTableGoodsJobManagement?.[0].classify) {
+        if (this.dataTableGoodsJobManagement?.[0]?.classify) {
           const auxArr: string[] = [];
           this.dataTableGoodsJobManagement.forEach(x => {
             if (x.classify) {
@@ -1024,32 +1135,54 @@ export abstract class RelateDocumentsResponse extends BasePage {
     //   class: 'modal-lg modal-dialog-centered',
     //   ignoreBackdropClick: true,
     // });
+    let context: Partial<DocumentsFormComponent> = { queryParams: {} };
+    if (this.formVariables.get('dictamen').value == 'PROCEDENCIA') {
+      context.queryParams = {
+        crime: this.formVariables.get('crime').value,
+        typeDictation: this.formVariables.get('dictamen').value,
+        typeSteeringwheel: this.formNotification.get('wheelType').value,
+        numberClassifyGood: `$in:${this.formVariables.get('classify2').value}`,
+      };
+    } else if (this.formVariables.get('dictamen').value != 'PROCEDENCIA') {
+      context.queryParams = {
+        typeDictation: this.formVariables.get('dictamen').value,
+        typeSteeringwheel: this.formNotification.get('wheelType').value,
+        numberClassifyGood: `$in:${this.formVariables.get('classify2').value}`,
+      };
+    }
+    console.log({ context });
+
+    const modalRef = this.modalService.show(DocumentsFormComponent, {
+      initialState: context,
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    });
+    modalRef.content.onClose.pipe(take(1)).subscribe(result => {
+      console.log({ result });
+      if (result && result?.length > 0) {
+        result.forEach(item => {
+          const doc = this.dataTableDocuments.find(
+            x => x.cveDocument == item.cveDocument
+          );
+          if (!doc) {
+            this.dataTableDocuments = [
+              ...this.dataTableDocuments,
+              {
+                cveDocument: item.cveDocument,
+                description: item.descripcion,
+                goodNumber: '',
+                managementNumber: this.formJobManagement.value.managementNumber,
+                recordNumber: '',
+                rulingType: this.formVariables.value.dictamen,
+              },
+            ];
+          }
+        });
+        // this.dataTableDocuments = result;
+        // this.formVariables.get('document').setValue(result);
+      }
+    });
   }
 
-  sendFunction_pupLaunchReport(params: Object): Observable<any> {
-    return this.dictationService.pupLaunchReport(params).pipe(map(x => x.data));
-  }
-  sendFunction_getVOficTrans(params: Object): Observable<any> {
-    return this.dictationService
-      .getVOficTrans(params)
-      .pipe(map(x => x.data[0]));
-  }
-  sendFunction_nUniversalFolio(params: Object): Observable<any> {
-    return this.dictationService
-      .nUniversalFolio(params)
-      .pipe(map(x => x.data[0]));
-  }
-  sendFunction_getActnom(managementNumber: number): Observable<any> {
-    return this.dictationService
-      .getActnom(managementNumber)
-      .pipe(map(x => x.data[0]));
-  }
-  sendFunction_pupValidExtDom(wheelNumber: number): Observable<any> {
-    return this.dictationService
-      .pupValidExtDom(wheelNumber)
-      .pipe(map(x => x.data));
-  }
-  sendFunction_findOffficeNu(params: Object): Observable<any> {
-    return this.dictationService.findOffficeNu(params).pipe(map(x => x.data));
-  }
+  abstract dataTableDocuments: IDocumentJobManagement[];
 }

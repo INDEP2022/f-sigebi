@@ -22,6 +22,8 @@ export class DictationService extends HttpService {
   public clasifGoodNumber: number | string;
   public goodNumber: number | string;
   public typeDictamination: any;
+  public crime: any;
+  public numberClassifyGood: any;
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
   private readonly route = DictationEndpoints;
