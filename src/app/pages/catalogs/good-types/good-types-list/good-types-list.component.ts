@@ -48,15 +48,15 @@ export class GoodTypesListComponent extends BasePage implements OnInit {
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
             filter.field == 'id' ||
-            filter.field == 'nameGoodType' ||
-            filter.field == 'maxAsseguranceTime' ||
-            filter.field == 'maxFractionTime' ||
-            filter.field == 'maxExtensionTime' ||
-            filter.field == 'maxStatementTime' ||
-            filter.field == 'maxLimitTime1' ||
-            filter.field == 'maxLimitTime2' ||
-            filter.field == 'maxLimitTime3' ||
-            filter.field == 'noRegister'
+              filter.field == 'nameGoodType' ||
+              filter.field == 'maxAsseguranceTime' ||
+              filter.field == 'maxFractionTime' ||
+              filter.field == 'maxExtensionTime' ||
+              filter.field == 'maxStatementTime' ||
+              filter.field == 'maxLimitTime1' ||
+              filter.field == 'maxLimitTime2' ||
+              filter.field == 'maxLimitTime3' ||
+              filter.field == 'noRegister'
               ? (searchFilter = SearchFilter.EQ)
               : (searchFilter = SearchFilter.ILIKE);
             if (filter.search !== '') {
@@ -110,7 +110,7 @@ export class GoodTypesListComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
         this.goodTypesService.remove(goodType.id).subscribe(

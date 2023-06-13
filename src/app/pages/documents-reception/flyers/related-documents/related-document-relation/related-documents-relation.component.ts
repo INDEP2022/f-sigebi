@@ -26,7 +26,10 @@ import { ILegend } from 'src/app/core/models/catalogs/legend.model';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { INotification } from 'src/app/core/models/ms-notification/notification.model';
 import { ICopiesJobManagementDto } from 'src/app/core/models/ms-officemanagement/good-job-management.model';
-import { IRSender } from 'src/app/core/models/ms-officemanagement/m-job-management.model';
+import {
+  IMJobManagement,
+  IRSender,
+} from 'src/app/core/models/ms-officemanagement/m-job-management.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { DepartamentService } from 'src/app/core/services/catalogs/departament.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
@@ -888,113 +891,119 @@ export class RelatedDocumentsRelationComponent
         this.managementForm.get('noVolante').setValue(res.wheelNumber);
         this.managementForm.get('noExpediente').setValue(res.expedientNumber);
         this.managementForm.get('wheelStatus').setValue(res.wheelStatus);
-
+        let mJobManagement;
         try {
           const mJobManagement = await firstValueFrom(
             this.getMJobManagement(res.wheelNumber)
           );
-          this.m_job_management = mJobManagement;
-          console.log('mjobmanagement ', mJobManagement);
-          this.formJobManagement.patchValue({
-            ...mJobManagement,
-            city: {
-              id: mJobManagement.city,
-              legendOffice: null,
-              idName: mJobManagement.city,
-            },
-            sender: {
-              usuario: mJobManagement.sender,
-              nombre: null,
-              userAndName: mJobManagement.sender,
-            } as any,
-            addressee:
-              mJobManagement.jobType == 'INTERNO'
-                ? {
-                    user: mJobManagement.addressee,
-                    name: null,
-                    userAndName: mJobManagement.addressee,
-                  }
-                : mJobManagement.addressee,
-          });
-          if (mJobManagement.city) {
-            this.getCity(mJobManagement.city).subscribe({
-              next: res => {
-                this.formJobManagement.get('city').setValue({
-                  id: res.idCity,
-                  legendOffice: res.legendOffice,
-                  idName: res.idCity + ' - ' + res.legendOffice,
-                });
-              },
-            });
-          }
-
-          if (mJobManagement.sender) {
-            const params = new ListParams();
-            params.limit = 1;
-            params['search'] = mJobManagement.sender;
-            this.flyerService.getSenderUser(params).subscribe({
-              next: res => {
-                const i = res.data[0];
-                this.formJobManagement.get('sender').setValue({
-                  usuario: i.userDetail.id,
-                  userAndName: i.userDetail.id + ' - ' + i.userDetail.name,
-                  name: i.userDetail.name,
-                } as any);
-              },
-            });
-          }
-
-          if (mJobManagement.addressee && mJobManagement.jobType == 'INTERNO') {
-            const params = new ListParams();
-            params.limit = 1;
-            params['search'] = mJobManagement.addressee;
-            // this.securityService
-            //   .getAllUsersTracker(params)
-            //   .subscribe((data: any) => {
-            //     const item = data.data[0];
-            //     let result = {
-            //       user: item.user,
-            //       name: item.name,
-            //       userAndName: item.user + ' - ' + item.name,
-            //     };
-
-            //     this.formJobManagement.get('addressee').setValue(result);
-            //   });
-            // const params = new ListParams();
-            this.getSenderByDetail(params);
-          }
-
-          if (mJobManagement.managementNumber) {
-            this.refreshTableGoodsJobManagement();
-            this.refreshTableDocuments();
-          }
-
-          if (mJobManagement.statusOf == 'ENVIADO') {
-            this.formJobManagement.disable();
-          }
-          if (mJobManagement.refersTo == this.se_refiere_a.A) {
-            this.se_refiere_a_Disabled.B = true;
-            this.se_refiere_a_Disabled.C = true;
-            this.disabledChecks();
-          }
-          if (mJobManagement.refersTo == this.se_refiere_a.B) {
-            this.se_refiere_a_Disabled.A = true;
-            this.se_refiere_a_Disabled.C = true;
-            this.enableChecks();
-          }
-          if (mJobManagement.refersTo == this.se_refiere_a.C) {
-            this.formVariables.get('b').setValue('N');
-          }
         } catch (e) {
           this.isCreate = true;
           console.log(e);
         }
-        console.log('res', res);
-        if (res.expedientNumber) {
-          this.refreshTableGoods();
-        }
+        this.loadInfo(mJobManagement);
+        // console.log('res', res);
+        // if (res.expedientNumber) {
+        //   this.refreshTableGoods();
+        // }
       },
     });
+  }
+
+  async loadInfo(mJobManagement: IMJobManagement) {
+    console.log('res', this.formNotification.value.expedientNumber);
+    if (mJobManagement) {
+      try {
+        // const mJobManagement = await firstValueFrom(
+        //   this.getMJobManagement(this.formJobManagement.value.flyerNumber)
+        // );
+        this.m_job_management = mJobManagement;
+        console.log('mjobmanagement ', mJobManagement);
+        this.formJobManagement.patchValue({
+          ...mJobManagement,
+          city: {
+            id: mJobManagement.city,
+            legendOffice: null,
+            idName: mJobManagement.city,
+          },
+          sender: {
+            usuario: mJobManagement.sender,
+            nombre: null,
+            userAndName: mJobManagement.sender,
+          } as any,
+          addressee:
+            mJobManagement.jobType == 'INTERNO'
+              ? {
+                  user: mJobManagement.addressee,
+                  name: null,
+                  userAndName: mJobManagement.addressee,
+                }
+              : mJobManagement.addressee,
+        });
+        if (mJobManagement.city) {
+          this.getCity(mJobManagement.city).subscribe({
+            next: res => {
+              this.formJobManagement.get('city').setValue({
+                id: res.idCity,
+                legendOffice: res.legendOffice,
+                idName: res.idCity + ' - ' + res.legendOffice,
+              });
+            },
+          });
+        }
+
+        if (mJobManagement.sender) {
+          const params = new ListParams();
+          params.limit = 1;
+          params['search'] = mJobManagement.sender;
+          this.flyerService.getSenderUser(params).subscribe({
+            next: res => {
+              const i = res.data[0];
+              this.formJobManagement.get('sender').setValue({
+                usuario: i.userDetail.id,
+                userAndName: i.userDetail.id + ' - ' + i.userDetail.name,
+                name: i.userDetail.name,
+              } as any);
+            },
+          });
+        }
+
+        if (mJobManagement.addressee && mJobManagement.jobType == 'INTERNO') {
+          const params = new ListParams();
+          params.limit = 1;
+          params['search'] = mJobManagement.addressee;
+          this.getSenderByDetail(params);
+        }
+
+        if (mJobManagement.managementNumber) {
+          this.refreshTableGoodsJobManagement();
+          this.refreshTableDocuments();
+        }
+
+        if (mJobManagement.statusOf == 'ENVIADO') {
+          this.formJobManagement.disable();
+        }
+        if (mJobManagement.refersTo == this.se_refiere_a.A) {
+          this.se_refiere_a_Disabled.B = true;
+          this.se_refiere_a_Disabled.C = true;
+          this.disabledChecks();
+        }
+        if (mJobManagement.refersTo == this.se_refiere_a.B) {
+          this.se_refiere_a_Disabled.A = true;
+          this.se_refiere_a_Disabled.C = true;
+          this.enableChecks();
+        }
+        if (mJobManagement.refersTo == this.se_refiere_a.C) {
+          this.formVariables.get('b').setValue('N');
+        }
+      } catch (e) {
+        this.isCreate = true;
+        console.log(e);
+      }
+    }
+    if (this.formNotification.value.expedientNumber) {
+      console.log('refreshTableGoods');
+      this.refreshTableGoods();
+    }
   }
 
   isLoadingDocuments = false;
@@ -1848,12 +1857,10 @@ export class RelatedDocumentsRelationComponent
   }
 
   async getFromSelect(params: ListParams) {
-    const delegationNumber = (await (
-      await this.getUserInfo()
-    ).delegationNumber) as any;
-    this.mJobManagementService.getRegSender(delegationNumber).subscribe(
+    const senderUser = this.formJobManagement.value.sender.usuario;
+    this.mJobManagementService.getRegAddressee(senderUser).subscribe(
       data => {
-        console.log(data);
+        console.log({ addressee: data });
         let result = data.data.map(item => {
           return {
             ...item,
@@ -2654,13 +2661,8 @@ export class RelatedDocumentsRelationComponent
   }
 
   isDisabledBtnDocs = false;
+  isDisabledBtnPrint = false;
   async onClickBtnPrint() {
-    if (this.pantallaActual == '2') {
-      await this.printRelationScreen();
-    }
-  }
-
-  async printRelationScreen() {
     console.log('PRINT RELATION SCREEN');
     let values = this.formJobManagement.value;
     if (values.statusOf == 'ENVIADO') {
@@ -2701,98 +2703,103 @@ export class RelatedDocumentsRelationComponent
       return;
     }
 
-    const etapaCreda = await this.getFaStageCreda(new Date());
-    const checkText = this.formJobManagement.get('refersTo').value;
-    this.checkRefiere = checkText;
-    if (!values.cveManagement && values.managementNumber) {
-      const department = (await this.getDSAreaInDeparment(
-        etapaCreda
-      )) as IDepartment;
+    this.isDisabledBtnPrint = true;
 
-      const department2 = (await this.getDSAreaForOfficeInDepartment(
-        etapaCreda
-      )) as IDepartment;
+    try {
+      const etapaCreda = await this.getFaStageCreda(new Date());
+      const checkText = this.formJobManagement.get('refersTo').value;
+      this.checkRefiere = checkText;
+      if (!values.cveManagement && values.managementNumber) {
+        const department = (await this.getDSAreaInDeparment(
+          etapaCreda
+        )) as IDepartment;
 
-      // const year = new Date().getFullYear();
-      // const month = new Date().getMonth() + 1;
-      const key = await this.pupGeneratorKey();
+        const department2 = (await this.getDSAreaForOfficeInDepartment(
+          etapaCreda
+        )) as IDepartment;
 
-      this.formJobManagement.get('cveManagement').setValue(key);
-      this.formJobManagement.get('statusOf').setValue('EN REVISION');
-    }
+        // const year = new Date().getFullYear();
+        // const month = new Date().getMonth() + 1;
+        const key = await this.pupGeneratorKey();
 
-    if (!values.cveManagement && !values.managementNumber) {
-      const department = (await this.getDSAreaInDeparment(
-        etapaCreda
-      )) as IDepartment;
-
-      const department2 = (await this.getDSAreaForOfficeInDepartment(
-        etapaCreda
-      )) as IDepartment;
-
-      // const year = new Date().getFullYear();
-      // const month = new Date().getMonth() + 1;
-      const key = await this.pupGeneratorKey();
-      this.formJobManagement.get('cveManagement').setValue(key);
-      this.formJobManagement.get('statusOf').setValue('EN REVISION');
-
-      if (checkText == this.se_refiere_a.A) {
-        this.pupAddGood();
+        this.formJobManagement.get('cveManagement').setValue(key);
+        this.formJobManagement.get('statusOf').setValue('EN REVISION');
       }
 
-      if (checkText == this.se_refiere_a.B) {
-        this.pupAddAnyGood();
+      if (!values.cveManagement && !values.managementNumber) {
+        const department = (await this.getDSAreaInDeparment(
+          etapaCreda
+        )) as IDepartment;
+
+        const department2 = (await this.getDSAreaForOfficeInDepartment(
+          etapaCreda
+        )) as IDepartment;
+
+        // const year = new Date().getFullYear();
+        // const month = new Date().getMonth() + 1;
+        const key = await this.pupGeneratorKey();
+        this.formJobManagement.get('cveManagement').setValue(key);
+        this.formJobManagement.get('statusOf').setValue('EN REVISION');
+
+        if (checkText == this.se_refiere_a.A) {
+          this.pupAddGood();
+        }
+
+        if (checkText == this.se_refiere_a.B) {
+          this.pupAddAnyGood();
+        }
+        this.commit();
       }
-      this.commit();
-    }
 
-    if (
-      this.formJobManagement.value.cveManagement &&
-      this.formJobManagement.value.managementNumber
-    ) {
-      const params = new ListParams();
-      params['filter.managementNumber'] =
-        this.formJobManagement.value.managementNumber;
-      const counter = await this.getGoodsJobManagementCount(params);
+      if (
+        this.formJobManagement.value.cveManagement &&
+        this.formJobManagement.value.managementNumber
+      ) {
+        const params = new ListParams();
+        params['filter.managementNumber'] =
+          this.formJobManagement.value.managementNumber;
+        const counter = await this.getGoodsJobManagementCount(params);
 
-      if (checkText == this.se_refiere_a.A && counter == 0) {
-        this.pupAddGood();
+        if (checkText == this.se_refiere_a.A && counter == 0) {
+          this.pupAddGood();
+        }
+
+        if (checkText == this.se_refiere_a.B && counter == 0) {
+          this.pupAddAnyGood();
+        }
+        this.commit();
       }
 
-      if (checkText == this.se_refiere_a.B && counter == 0) {
-        this.pupAddAnyGood();
+      this.pupShowReport();
+      values = this.formJobManagement.value;
+      if (values.cveManagement && values.refersTo == this.se_refiere_a.A) {
+        // this.enableOrDisabledRadioRefersTo('B', false);
+        this.se_refiere_a_Disabled.B = true;
+        this.se_refiere_a_Disabled.C = true;
+        // this.enableOrDisabledRadioRefersTo('C', false);
       }
-      this.commit();
-    }
 
-    this.pupShowReport();
-    values = this.formJobManagement.value;
-    if (values.cveManagement && values.refersTo == this.se_refiere_a.A) {
-      // this.enableOrDisabledRadioRefersTo('B', false);
-      this.se_refiere_a_Disabled.B = true;
-      this.se_refiere_a_Disabled.C = true;
-      // this.enableOrDisabledRadioRefersTo('C', false);
-    }
-
-    if (values.cveManagement && values.refersTo == this.se_refiere_a.B) {
-      this.se_refiere_a_Disabled.A = true;
-      this.se_refiere_a_Disabled.C = true;
-      // this.enableOrDisabledRadioRefersTo('A', false);
-      // this.enableOrDisabledRadioRefersTo('C', false);
-    }
-
-    if (values.cveManagement) {
-      const params = new ListParams();
-      params['filter.managementNumber'] =
-        this.formJobManagement.value.managementNumber;
-      const count = await this.getDocJobManagementCount(params);
-      if (count > 0) {
-        this.isDisabledBtnDocs = true;
+      if (values.cveManagement && values.refersTo == this.se_refiere_a.B) {
+        this.se_refiere_a_Disabled.A = true;
+        this.se_refiere_a_Disabled.C = true;
+        // this.enableOrDisabledRadioRefersTo('A', false);
+        // this.enableOrDisabledRadioRefersTo('C', false);
       }
+
+      if (values.cveManagement) {
+        const params = new ListParams();
+        params['filter.managementNumber'] =
+          this.formJobManagement.value.managementNumber;
+        const count = await this.getDocJobManagementCount(params);
+        if (count > 0) {
+          this.isDisabledBtnDocs = true;
+        }
+      }
+      this.isDisabledBtnPrint = false;
+    } catch (error) {
+      console.error(error);
+      this.isDisabledBtnPrint = false;
     }
-    // this.
-    //TODO:  GO_BLOCK('NOTIFICACIONES');
-    // EXECUTE_QUERY(NO_VALIDATE);
   }
 
   userHavePermission() {
@@ -3139,7 +3146,9 @@ export class RelatedDocumentsRelationComponent
   }
 
   goBack() {
-    this.router.navigate(['/pages/juridical/file-data-update']);
+    this.router.navigate(['/pages/juridical/file-data-update'], {
+      queryParams: { wheelNumber: this.formNotification.value.wheelNumber },
+    });
   }
 
   updateGood(good: any) {

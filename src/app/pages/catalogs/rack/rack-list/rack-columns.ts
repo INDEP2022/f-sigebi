@@ -1,8 +1,9 @@
+import { IBatch } from 'src/app/core/models/catalogs/batch.model';
 import { IWarehouse } from 'src/app/core/models/catalogs/warehouse.model';
 
 export const RACK_COLUMNS = {
   id: {
-    title: 'Id',
+    title: 'Código',
     type: 'number',
     sort: false,
   },
@@ -15,7 +16,10 @@ export const RACK_COLUMNS = {
     sort: false,
   },
   idBatch: {
-    title: 'Id Lote',
+    title: 'Lote',
+    valuePrepareFunction: (value: IBatch) => {
+      return value.description;
+    },
     type: 'number',
     sort: false,
   },
@@ -24,11 +28,11 @@ export const RACK_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  status: {
-    title: 'Estado',
-    type: 'string',
-    sort: false,
-  },
+  // status: {
+  //   title: 'Estado',
+  //   type: 'string',
+  //   sort: false,
+  // },
   // registerNumber: {
   //   title: 'Numero Registro',
   //   type: 'number',

@@ -24,6 +24,9 @@ export class DelegationStateFormComponent extends BasePage implements OnInit {
   delegationSate: any;
   states = new DefaultSelect<IStateOfRepublic>();
   regionalDelegation = new DefaultSelect<IStateOfRepublic>();
+  idState: any;
+  idRegional: any;
+
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
@@ -56,13 +59,11 @@ export class DelegationStateFormComponent extends BasePage implements OnInit {
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(20)],
       ],
-      version: [
-        null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
-      ],
+      version: [null, [Validators.pattern(NUMBERS_PATTERN)]],
     });
     if (this.delegationSate) {
       this.edit = true;
+      console.log(this.delegationSate);
       this.delegationStateForm.patchValue(this.delegationSate);
       this.delegationStateForm.controls['regionalDelegation'].setValue(
         this.delegationSate.regionalDelegation.id
@@ -70,6 +71,7 @@ export class DelegationStateFormComponent extends BasePage implements OnInit {
       this.delegationStateForm.controls['stateCode'].setValue(
         this.delegationSate.stateCode.codeCondition
       );
+
       this.getStates(
         new ListParams(),
         this.delegationStateForm.controls['keyState'].value
@@ -79,9 +81,25 @@ export class DelegationStateFormComponent extends BasePage implements OnInit {
         this.delegationStateForm.controls['regionalDelegation'].value
       );
     }
-    this.getStates(new ListParams());
-    this.getRegionalDelegation(new ListParams());
+
+    //this.getStates(new ListParams());
+    setTimeout(() => {
+      this.getRegionalDelegation(new ListParams());
+      this.getStates(new ListParams());
+    }, 1000);
   }
+
+  getStatesAll(params: ListParams) {
+    this.stateOfRepublicService.getAll(params).subscribe({
+      next: data => {
+        this.states = new DefaultSelect(data.data, data.count);
+      },
+      error: () => {
+        this.states = new DefaultSelect();
+      },
+    });
+  }
+
   getStates(params: ListParams, id?: string) {
     if (id) {
       params['filter.id'] = id;
@@ -109,6 +127,11 @@ export class DelegationStateFormComponent extends BasePage implements OnInit {
       },
     });
   }
+
+  stateRegional(data: any) {
+    console.log(data);
+  }
+
   stateChange(state: IStateOfRepublic) {
     console.log(state);
     this.delegationStateForm.controls.keyState.setValue(state.id);

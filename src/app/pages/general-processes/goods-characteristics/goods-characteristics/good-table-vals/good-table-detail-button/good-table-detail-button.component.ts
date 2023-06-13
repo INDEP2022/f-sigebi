@@ -1,9 +1,12 @@
 import { Component, OnInit } from '@angular/core';
+import { FormControl } from '@angular/forms';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { SearchBarFilter } from 'src/app/common/repository/interfaces/search-bar-filters';
 import { DynamicTablesService } from 'src/app/core/services/dynamic-catalogs/dynamic-tables.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { GoodsCharacteristicsService } from '../../../services/goods-characteristics.service';
 import { COLUMNS_GOOD } from './columns-good';
 import { GoodValueEditWebCar } from './good-value-edit-web-car/good-value-edit-web-car.component';
 
@@ -13,24 +16,30 @@ import { GoodValueEditWebCar } from './good-value-edit-web-car/good-value-edit-w
   styleUrls: ['./good-table-detail-button.component.scss'],
 })
 export class GoodTableDetailButtonComponent extends BasePage implements OnInit {
-  data: any[];
   valor: string;
   dato: string;
   cadena: string[];
   tableCd: string;
   noClasif: number;
+  disabled: boolean = false;
   params = new BehaviorSubject<ListParams>(new ListParams());
+  totalItems: number;
+  pageSizeOptions = [5, 10, 15];
+  limit: FormControl = new FormControl(5);
+  searchFilter: SearchBarFilter; // Input requerido al llamar el modal
   constructor(
     private modalRef: BsModalRef,
     private modalService: BsModalService,
-    private dynamicTablesService: DynamicTablesService
+    private dynamicTablesService: DynamicTablesService,
+    private goodsCharacteristicsService: GoodsCharacteristicsService
   ) {
     super();
     this.settings = {
       ...this.settings,
+      mode: 'inline',
       actions: {
         columnTitle: 'Acciones',
-        edit: true,
+        edit: false,
         delete: false,
         add: false,
         position: 'left',
@@ -38,6 +47,15 @@ export class GoodTableDetailButtonComponent extends BasePage implements OnInit {
       columns: { ...COLUMNS_GOOD },
       hideSubHeader: true,
     };
+    this.params.value.limit = 5;
+  }
+
+  get data() {
+    return this.goodsCharacteristicsService.dataDetails;
+  }
+
+  set data(value) {
+    this.goodsCharacteristicsService.dataDetails = value;
   }
 
   private pupValidaNumero(indexRow: number) {
@@ -83,7 +101,7 @@ export class GoodTableDetailButtonComponent extends BasePage implements OnInit {
     this.data = [...this.data];
   }
 
-  ngOnInit() {
+  getData() {
     console.log(this.valor);
     this.cadena = this.valor
       ? this.valor.trim() !== ''
@@ -91,6 +109,20 @@ export class GoodTableDetailButtonComponent extends BasePage implements OnInit {
         : []
       : [];
     console.log(this.cadena);
+    // const params = this.params.getValue();
+    // params['filter.nmtable'] = 428;
+    // this.dynamicTablesService.getAllTvalTable1(params).subscribe({
+    //   next: response => {
+    //     if (response && response.data && response.data.length > 0) {
+    //       this.data = response.data;
+    //       this.totalItems = response.count ?? 0;
+    //       this.fillInfo();
+    //     } else {
+    //       this.data = [];
+    //       this.totalItems = 0;
+    //     }
+    //   },
+    // });
     this.dynamicTablesService
       .getAllOtkey(this.noClasif, this.tableCd, this.params.getValue())
       .subscribe({
@@ -98,12 +130,22 @@ export class GoodTableDetailButtonComponent extends BasePage implements OnInit {
           console.log(response);
           if (response && response.data && response.data.length > 0) {
             this.data = response.data;
+            this.totalItems = response.count ?? 0;
             this.fillInfo();
           } else {
             this.data = [];
+            this.totalItems = 0;
           }
         },
       });
+  }
+
+  ngOnInit() {
+    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe({
+      next: resp => {
+        this.getData();
+      },
+    });
   }
 
   openForm(row?: any) {
@@ -141,7 +183,7 @@ export class GoodTableDetailButtonComponent extends BasePage implements OnInit {
         }
       }
     });
-    // console.log(cadena);
+    console.log(cadena);
 
     this.modalRef.content.callback(cadena);
     this.modalRef.hide();
