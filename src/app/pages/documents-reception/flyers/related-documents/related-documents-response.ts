@@ -34,6 +34,7 @@ import { MJobManagementService } from 'src/app/core/services/ms-office-managemen
 import { ParametersService } from 'src/app/core/services/ms-parametergood/parameters.service';
 import { SecurityService } from 'src/app/core/services/ms-security/security.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
+import { OfficeManagementService } from 'src/app/core/services/office-management/officeManagement.service';
 import { ProcedureManagementService } from 'src/app/core/services/proceduremanagement/proceduremanagement.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { LegalOpinionsOfficeService } from 'src/app/pages/juridical-processes/depositary/legal-opinions-office/legal-opinions-office/services/legal-opinions-office.service';
@@ -127,6 +128,7 @@ export abstract class RelateDocumentsResponse extends BasePage {
   protected abstract usersService: UsersService;
   protected abstract goodprocessService: GoodprocessService;
   protected abstract dictationService: DictationService;
+  protected abstract msOfficeManagementService: OfficeManagementService;
   abstract dataTableGoods: IGoodAndAvailable[];
   abstract dataTableGoodsJobManagement: IGoodJobManagement[];
   abstract isDisabledBtnDocs: boolean;
@@ -1054,5 +1056,15 @@ export abstract class RelateDocumentsResponse extends BasePage {
   }
   sendFunction_findOffficeNu(params: Object): Observable<any> {
     return this.dictationService.findOffficeNu(params).pipe(map(x => x.data));
+  }
+  sendFunction_updateManagerTransfer(params: Object): Observable<any> {
+    return this.dictationService
+      .updateManagerTransfer(params)
+      .pipe(map(x => x.data));
+  }
+  sendFunction_ObtainKeyOffice(params: Object): Observable<any> {
+    return this.msOfficeManagementService
+      .ObtainKeyOffice(params)
+      .pipe(map(x => x.data));
   }
 }

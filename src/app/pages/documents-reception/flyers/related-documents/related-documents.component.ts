@@ -8,6 +8,7 @@ import {
 } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
+import { format } from 'date-fns';
 import { LocalDataSource, Ng2SmartTableComponent } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, firstValueFrom, map, skip, takeUntil } from 'rxjs';
@@ -379,7 +380,8 @@ export class RelatedDocumentsComponent
     protected documentsService: DocumentsService,
     protected usersService: UsersService, // protected goodProcessService: GoodprocessService,
     private expedientService: ExpedientService,
-    private relatedDocumentDesahogo: RelatedDocumentDesahogo
+    private relatedDocumentDesahogo: RelatedDocumentDesahogo,
+    protected msOfficeManagementService: OfficeManagementService
   ) {
     super();
     // console.log(authService.decodeToken());
@@ -2977,7 +2979,56 @@ export class RelatedDocumentsComponent
     // });
   }
 
-  _PUP_GENERA_PDF() {}
+  async _PUP_GENERA_PDF() {
+    const userInfo = await this.getUserInfo();
+    let nameFile = this.formJobManagement.value.cveManagement.replaceAll(
+      '/',
+      '-'
+    );
+    const document = {
+      numberProceedings: this.paramsGestionDictamen.expediente,
+      keySeparator: '60',
+      keyTypeDocument: 'ENTRE',
+      natureDocument: 'ORIGINAL',
+      descriptionDocument: `OFICIO DE ACLARACION ${this.formJobManagement.value.jobType} ${this.formJobManagement.value.cveManagement}`, // Clave de Oficio Armada
+      significantDate: format(new Date(), 'MM-yyyy'),
+      scanStatus: 'ESCANEADO',
+      userRequestsScan:
+        userInfo.user == 'SIGEBIADMON'
+          ? userInfo.user.toLocaleLowerCase()
+          : userInfo.user,
+      scanRequestDate: new Date(),
+      numberDelegationRequested: userInfo.delegationNumber,
+      numberSubdelegationRequests: userInfo.subdelegationNumber,
+      numberDepartmentRequest: userInfo.departamentNumber,
+      flyerNumber: this.notificationData.wheelNumber,
+    };
+
+    // this.createDocument(document)
+    //   .pipe(
+    //     tap(_document => {
+    //       this.showScanForm = false;
+    //       this.formScan.get('scanningFoli').setValue(_document.id);
+    //       setTimeout(() => {
+    //         this.showScanForm = true;
+    //       }, 300);
+    //     }),
+    //     switchMap(_document => {
+    //       let obj: any = {
+    //         id: this.dictationData.id,
+    //         typeDict: this.dictationData.typeDict,
+    //         folioUniversal: _document.id,
+    //       };
+    //       return this.svLegalOpinionsOfficeService
+    //         .updateDictations(obj)
+    //         .pipe(map(() => _document));
+    //     }),
+    //     switchMap(async _document =>
+    //       this.uploadPdfEmitter(blob, nameFile + '.pdf', _document.id)
+    //     )
+    //   )
+    //   .subscribe();
+  }
 
   async _PUP_LANZA_REPORTE(params: any) {
     return await firstValueFrom(this.sendFunction_pupLaunchReport(params));
@@ -3152,10 +3203,27 @@ export class RelatedDocumentsComponent
         if (this.formJobManagement.value.managementNumber == null) {
           // this.formJobManagement.value.managementNumber = _busca_numero.;
           // BUSCA NUMERO REVISAR RESPUESTA
+          //         {
+          //   "LN_OFICIO": "7",
+          //   "numberOfGestion": 390475,
+          //   "cveOfGestion": "DCCM/DECBMI/ESC/0681/2023",
+          //   "InsertDate": "2023-06-12T22:35:01-06:00"
+          // }
         }
         const _cambia_estatus = await this._PUP_CAMBIA_ESTATUS();
-        // PENDIENTE CON CARLOS
-        const _act_gestion = await this._PUP_ACT_GESTION();
+        // Llamar las globales y obtener gnu_activa_gestion
+        let paramsActGestion = {
+          pGestOk: this.paramsGestionDictamen.pGestOk,
+          gnuActivaManagement: 1,
+          pCall: this.paramsGestionDictamen.pllamo,
+          pNoProcess: this.paramsGestionDictamen.pNoTramite,
+          noFlyer: this.notificationData.wheelNumber,
+        };
+        const _act_gestion = await this._PUP_ACT_GESTION(paramsActGestion);
+        if (_act_gestion.status != 200) {
+          this.onLoadToast('error', _act_gestion.message, '');
+          return;
+        }
         if (this.paramsGestionDictamen.pllamo == 'ABANDONO') {
           let reportCondition = this._conditions_Report();
           this.variablesSend.ESTATUS_OF = this.formJobManagement.value.statusOf;
@@ -3202,8 +3270,22 @@ export class RelatedDocumentsComponent
                     ''
                   ).then(async () => {
                     const _cambia_estatus = await this._PUP_CAMBIA_ESTATUS();
-                    const _act_gestion = await this._PUP_ACT_GESTION();
+                    // Llamar las globales y obtener gnu_activa_gestion
+                    let paramsActGestion = {
+                      pGestOk: this.paramsGestionDictamen.pGestOk,
+                      gnuActivaManagement: 1,
+                      pCall: this.paramsGestionDictamen.pllamo,
+                      pNoProcess: this.paramsGestionDictamen.pNoTramite,
+                      noFlyer: this.notificationData.wheelNumber,
+                    };
+                    const _act_gestion = await this._PUP_ACT_GESTION(
+                      paramsActGestion
+                    );
 
+                    if (_act_gestion.status != 200) {
+                      this.onLoadToast('error', _act_gestion.message, '');
+                      return;
+                    }
                     this.formJobManagement.value.statusOf = 'ENVIADO';
                     // se llama PUP_GENERA_PDF
                     this._PUP_GENERA_PDF();
@@ -3224,8 +3306,22 @@ export class RelatedDocumentsComponent
                     'Se realizó la firma del dictamen',
                     ''
                   ).then(async () => {
-                    const _act_gestion = await this._PUP_ACT_GESTION();
+                    // Llamar las globales y obtener gnu_activa_gestion
+                    let paramsActGestion = {
+                      pGestOk: this.paramsGestionDictamen.pGestOk,
+                      gnuActivaManagement: 1,
+                      pCall: this.paramsGestionDictamen.pllamo,
+                      pNoProcess: this.paramsGestionDictamen.pNoTramite,
+                      noFlyer: this.notificationData.wheelNumber,
+                    };
+                    const _act_gestion = await this._PUP_ACT_GESTION(
+                      paramsActGestion
+                    );
 
+                    if (_act_gestion.status != 200) {
+                      this.onLoadToast('error', _act_gestion.message, '');
+                      return;
+                    }
                     this.formJobManagement.value.statusOf = 'ENVIADO';
                     // se llama PUP_GENERA_PDF
                     this._PUP_GENERA_PDF();
@@ -3247,6 +3343,19 @@ export class RelatedDocumentsComponent
     } else {
       this._end_firmProcess(); // Termina el proceso
     }
+  }
+
+  errorFirm() {
+    this.formJobManagement
+      .get('statusOf')
+      .setValue(this.variablesSend.ESTATUS_OF);
+    this.formJobManagement
+      .get('cveManagement')
+      .setValue(this.variablesSend.CVE_OF_GESTION);
+    this.formJobManagement
+      .get('insertDate')
+      .setValue(this.variablesSend.FECHA_INSERTO);
+    this.blockSend = false;
   }
 
   getEstPreviousHistory(body: any) {
@@ -3399,7 +3508,9 @@ export class RelatedDocumentsComponent
 
   _PUP_CAMBIA_ESTATUS() {}
 
-  _PUP_ACT_GESTION() {}
+  async _PUP_ACT_GESTION(obj: any) {
+    return await firstValueFrom(this.sendFunction_ObtainKeyOffice(obj));
+  }
 
   _PUP_ABANDONO() {}
 
