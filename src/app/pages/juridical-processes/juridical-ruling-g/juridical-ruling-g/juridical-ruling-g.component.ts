@@ -1225,7 +1225,7 @@ export class JuridicalRulingGComponent
                 let V_ESTATUS_INI = statusAndProExtDom.V_ESTATUS_INI;
 
                 if (V_ESTATUS_INI != null) {
-                  // UPDATE DE BIENE //
+                  // UPDATE DE BIENES //
                   let obj = {
                     vStatusIni: V_ESTATUS_INI,
                   };
@@ -1277,34 +1277,10 @@ export class JuridicalRulingGComponent
           // DELETE DICTAMINACIONES
           await this.deleteDictamen(V_NO_OF_DICTA, V_TIPO_DICTA);
 
-          // this.dictationService.deletePupDeleteDictum(object).subscribe({
-          //   next: (value: any) => {
-          //     this.buttonApr = true;
-          //     this.alert(
-          //       'success',
-          //       'Se ha eliminado el Dictamen correctamente',
-          //       ''
-          //     );
-          //     this.onLoadGoodList(0, 'all');
-          //     this.resetALL();
-          //     setTimeout(() => {
-          //       this.cveOficio.nativeElement.focus();
-          //     }, 1000);
-          //     this.buttonDeleteDisabled = false;
-          //     this.statusDict = '';
-          //     this.dictaminacionesForm.get('fechaPPFF').setValue('');
-          //     this.dictaminacionesForm.get('autoriza_remitente').setValue(null);
-          //     this.dictaminacionesForm.get('autoriza_nombre').setValue('');
-          //     this.getDocumentDicXStateM(null);
-          //   },
-          //   error: (err: any) => {
-          //     this.alert(
-          //       'error',
-          //       'Ha ocurrido un error al eliminar el dictamen',
-          //       ''
-          //     );
-          //   },
-          // });
+          this.dictationService.deletePupDeleteDictum(object).subscribe({
+            next: (value: any) => {},
+            error: (err: any) => {},
+          });
         }
       });
     } else {
@@ -1430,7 +1406,7 @@ export class JuridicalRulingGComponent
                 let obj1 = {
                   expedientNumber: getDocs[e].expedientNumber,
                   stateNumber: getDocs[e].stateNumber,
-                  key: getDocs[e].key,
+                  key: getDocs[e].key.key,
                   typeDictum: getDocs[e].typeDictum,
                 };
                 await this.deleteDocsDictXGoodM(obj1);
@@ -3561,7 +3537,8 @@ export class JuridicalRulingGComponent
         this.dictamen.passOfficeArmy =
           vniveld2 + '/' + vniveld3 + '/' + vniveld4;
       }
-      let vnivel_ = vnivel + 1;
+      let vnivel_ = Number(vnivel) + 1;
+      console.log('vnivel_', vnivel_);
       if (vnivel_ == 5) {
         this.dictamen.passOfficeArmy =
           this.dictamen.passOfficeArmy + '/' + vniveld5;
@@ -4163,10 +4140,8 @@ export class JuridicalRulingGComponent
 
     // this.dictamen.instructorDate = this.dictaminacionesForm.get('fechaPPFF').value;
     let fecha = new Date(this.dictaminacionesForm.get('fechaPPFF').value);
-
     // Restar un día
     fecha.setDate(fecha.getDate() - 1);
-
     // Imprimir la fecha resultante
     console.log(fecha.toString());
     let obj = {
