@@ -3,6 +3,19 @@
     <h5 class="modal-title">Campos para el bien:</h5>
   </div>
   <div body>
+    <div class="row mt-n3 mb-3">
+      <div class="form-material col-md-7">
+        <search-bar
+          label=""
+          [type]="'text'"
+          [haveSearch]="true"
+          [params]="params"
+          [filterField]="searchFilter"
+          [searchFilterCompatible]="true"
+          [placeholder]="'Buscar...'"></search-bar>
+      </div>
+    </div>
+
     <div class="row">
       <div class="table-responsive">
         <div [class]="loading ? 'table-loading' : ''">
@@ -15,6 +28,11 @@
         </div>
       </div>
     </div>
+    <app-pagination
+      [params]="params"
+      [pageSizeOptions]="pageSizeOptions"
+      [limit]="limit"
+      [totalItems]="totalItems"></app-pagination>
   </div>
   <div footer>
     <div class="d-flex justify-content-center">
@@ -22,6 +40,7 @@
         <confirm-button
           [text]="'Aceptar'"
           [type]="'button'"
+          [disabled]="disabled"
           (confirm)="confirm()"></confirm-button>
       </div>
       <div class="m-3">
