@@ -4,4 +4,5 @@ export enum OfficeManagementEndpoint {
   DeleteDocumentOffice = 'application/delete2',
   DeleteMOffice = 'application/delete3',
   DeleteCopiesOffice = 'application/delete4',
+  ObtainKeyOffice = 'factadboficiogestrel3/obtain-key-office',
 }

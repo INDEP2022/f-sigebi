@@ -94,6 +94,7 @@ export class RackListComponent extends BasePage implements OnInit {
       callback: (next: boolean) => {
         if (next) this.getExample();
       },
+      class: 'modal-lg modal-dialog-centered',
     };
     this.BsModalService.show(RackFormComponent, modalConfig);
   }

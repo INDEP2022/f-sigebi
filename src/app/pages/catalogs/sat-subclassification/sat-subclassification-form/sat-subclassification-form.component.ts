@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
+
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
@@ -39,7 +40,6 @@ export class SatSubclassificationFormComponent
   }
 
   private prepareForm() {
-    console.log(this.satSubclassification);
     this.satSubclassificationForm = this.fb.group({
       id: [null],
       nameSubClasification: [

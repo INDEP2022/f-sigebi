@@ -24,9 +24,10 @@
               (fetchItems)="getGeoZone($event)"
               [form]="regionalDelegationForm"
               [data]="selectGeoZone"
-              bindLabel="id"
+              value="id"
+              bindLabel="description"
               [searchable]="true"
-              label="Id zona geogr&aacute;fica"
+              label="Id Zona Geogr&aacute;fica"
               control="idGeographicZona"
               (change)="fillSelectZone()">
             </ngx-select>
@@ -48,7 +49,7 @@
         <div class="col-md-8">
           <form-field
             [control]="regionalDelegationForm.get('officeAddress')"
-            label="Domicilio de la oficina">
+            label="Domicilio de la Oficina">
             <input
               type="text"
               class="form-control"
@@ -58,7 +59,7 @@
         <div class="col-md-4">
           <form-field
             [control]="regionalDelegationForm.get('keyZone')"
-            label="Clave de la zona">
+            label="Clave de la Zona">
             <input type="text" class="form-control" formControlName="keyZone" />
           </form-field>
         </div>
@@ -87,7 +88,7 @@
         <div class="col-md-4">
           <form-field
             [control]="regionalDelegationForm.get('keyState')"
-            label="Clave del estado">
+            label="Clave del Estado">
             <input
               type="text"
               class="form-control disabled"

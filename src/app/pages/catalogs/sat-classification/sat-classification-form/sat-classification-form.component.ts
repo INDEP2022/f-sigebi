@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
+
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { ISatClassification } from 'src/app/core/models/catalogs/sat-classification.model';
@@ -27,6 +28,7 @@ export class SatClassificationFormComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
+    console.log(this.satclassification);
   }
 
   private prepareForm() {
@@ -51,7 +53,7 @@ export class SatClassificationFormComponent extends BasePage implements OnInit {
   create() {
     this.loading = true;
     this.satClassificationService
-      .create(this.satClassificationForm.getRawValue())
+      .create(this.satClassificationForm.value)
       .subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),
@@ -61,10 +63,7 @@ export class SatClassificationFormComponent extends BasePage implements OnInit {
   update() {
     this.loading = true;
     this.satClassificationService
-      .update(
-        this.satclassification.id,
-        this.satClassificationForm.getRawValue()
-      )
+      .update(this.satclassification.id, this.satClassificationForm.value)
       .subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),

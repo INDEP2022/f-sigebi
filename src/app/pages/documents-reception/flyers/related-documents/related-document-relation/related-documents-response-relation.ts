@@ -49,6 +49,8 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { LegalOpinionsOfficeService } from 'src/app/pages/juridical-processes/depositary/legal-opinions-office/legal-opinions-office/services/legal-opinions-office.service';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { FlyersService } from '../../services/flyers.service';
+
+import { DialogSelectedManagementsComponent } from '../dialog-selected-managements/dialog-selected-managements.component';
 import { DocumentsFormComponent } from '../documents-form/documents-form.component';
 import {
   IGoodAndAvailable,
@@ -133,6 +135,7 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
   protected abstract usersService: UsersService;
   protected abstract goodprocessService: GoodprocessService;
   abstract dataTableGoods: IGoodAndAvailable[];
+  abstract loadInfo(data: IMJobManagement): Promise<void>;
   abstract dataTableGoodsJobManagement: IGoodJobManagement[];
   abstract isDisabledBtnDocs: boolean;
   abstract se_refiere_a_Disabled: {
@@ -252,12 +255,45 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
     return this.notificationService.getAll(params).pipe(map(x => x.data[0]));
   }
 
+  countManagements = 0;
   getMJobManagement(wheelNumber: string | number): Observable<IMJobManagement> {
     const params = new ListParams();
     params.page = 1;
-    params.limit = 1;
     params['filter.flyerNumber'] = wheelNumber;
-    return this.mJobManagementService.getAll(params).pipe(map(x => x.data[0]));
+    return this.mJobManagementService.getAll(params).pipe(
+      map(x => {
+        this.countManagements = x.count;
+        if (this.countManagements > 1) {
+          this.openDialogSelectedManagement(x);
+        }
+        return x.data[0];
+      })
+    );
+  }
+
+  openDialogSelectedManagement(data?: IListResponse<IMJobManagement>) {
+    let context: Partial<DialogSelectedManagementsComponent> = {
+      queryParams: { flyerNumber: this.formJobManagement.value.flyerNumber },
+      mJobManagements: data ? data.data : [],
+      totalItems: data ? data.count : 0,
+    };
+
+    console.log({ context });
+
+    const modalRef = this.modalService.show(
+      DialogSelectedManagementsComponent,
+      {
+        initialState: context,
+        class: 'modal-lg modal-dialog-centered',
+        ignoreBackdropClick: true,
+      }
+    );
+    modalRef.content.onClose.pipe(take(1)).subscribe(result => {
+      console.log({ result });
+      if (result) {
+        this.loadInfo(result);
+      }
+    });
   }
 
   getJobManagement(params: ListParams): Observable<IProceduremanagement> {
@@ -540,7 +576,6 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
         .getElementById(`se_refiere_a_${letter}`)
         .removeAttribute('disabled');
     }
-    // document.getElementById(`se_refiere_a_${letter}`).removeAttribute('disabled');
   }
 
   async getUserInfo() {
@@ -749,7 +784,12 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
     ];
   }
 
-  dataSelectDictation = new DefaultSelect([]);
+  dataSelectDictation = new DefaultSelect([
+    { key: 'PROCEDENCIA' },
+    { key: 'DECOMISO' },
+    { key: 'DEVOLUCION' },
+    { key: 'TRANSFERENTE' },
+  ]);
   searchDocumentForDictation(params: ListParams) {
     /*  select distinct tipo_dictaminacion
       from documentos_para_dictamen
@@ -757,10 +797,15 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
       order by tipo_dictaminacion 
   */
     // const params = new ListParams();
+
+    if (params['search'])
+      params['filter.description'] = params['search']
+        ? `$like:${params['filter.search']}`
+        : '';
     params['filter.typeDictum'] =
       '$in:PROCEDENCIA,DECOMISO,DEVOLUCION,TRANSFERENTE';
     params['order'] = 'typeDictum';
-    this.getDocumentForDictationSearch(params).subscribe({
+    this.documentsService.getDocumentForDictation(params).subscribe({
       next: res => {
         const data = res.data.map(item => {
           return {
@@ -769,6 +814,10 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
           };
         });
         this.dataSelectDictation = new DefaultSelect(data);
+      },
+
+      error: err => {
+        this.dataSelectDictation = new DefaultSelect([]);
       },
     });
   }
@@ -1065,8 +1114,9 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
               auxArr.push(x.classify as string);
             }
           });
-          auxArr.length > 0 &&
-            this.formVariables.get('classify').setValue(auxArr.join(','));
+
+          this.formVariables.get('classify').setValue(auxArr.join(','));
+          this.formVariables.get('classify2').setValue(auxArr.join(','));
         }
       }
 
@@ -1097,14 +1147,11 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
           const auxArr: string[] = [];
           this.dataTableGoodsJobManagement.forEach(x => {
             if (x.classify) {
-              // this.formVariables.get('classify').setValue(`${valuesVariables.classify || ''}${x.classify || ''}`);
               auxArr.push(x.classify as string);
             }
           });
-          if (auxArr.length > 0) {
-            this.formVariables.get('classify').setValue(auxArr.join(','));
-            this.formVariables.get('classify2').setValue(auxArr.join(','));
-          }
+          this.formVariables.get('classify').setValue(auxArr.join(','));
+          this.formVariables.get('classify2').setValue(auxArr.join(','));
         }
       }
 
@@ -1178,8 +1225,6 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
             ];
           }
         });
-        // this.dataTableDocuments = result;
-        // this.formVariables.get('document').setValue(result);
       }
     });
   }
