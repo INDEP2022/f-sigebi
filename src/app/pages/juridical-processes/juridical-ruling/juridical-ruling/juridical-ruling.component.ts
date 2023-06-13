@@ -2584,14 +2584,14 @@ export class JuridicalRulingComponent
 
           //Aqui se elimina el dictamen
 
+          if (stop) true;
+
           const body: any = {
             vProceedingsNumber: v_no_expediente,
             vTypeDicta: v_tipo_dicta,
             vWheelNumber: v_no_volante,
             vOfNumberDicta: v_no_of_dicta,
           };
-
-          if (!stop) return;
 
           await this.deteleDictation(body);
 
