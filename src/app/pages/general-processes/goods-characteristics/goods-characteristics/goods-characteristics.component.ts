@@ -268,7 +268,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     this.loading = true;
     this.params.value.limit = 1;
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(params => {
-      console.log(params);
+      // console.log(params);
       if (this.count > 0) this.searchGood(true);
       this.count++;
     });
@@ -420,7 +420,10 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
       }
     }
     console.log(body);
-    await this.preUpdate();
+    const preUpdateValid = await this.preUpdate();
+    if (!preUpdateValid) {
+      return;
+    }
     if (this.selectedBad) {
       this.attribGoodBadService
         .remove(this.selectedBad)

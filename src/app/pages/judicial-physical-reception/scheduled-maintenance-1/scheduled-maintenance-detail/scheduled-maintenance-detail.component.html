@@ -117,7 +117,7 @@
         </div>
         <div class="col-md-6 goodTracker mt-4">
           <app-goodtracker-button
-            [disabled]="true"
+            [disabled]="statusActaValue !== 'ABIERTA'"
             [data]="data"
             [origin]="origin"></app-goodtracker-button>
         </div>
