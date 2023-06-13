@@ -33,7 +33,7 @@ export class ClarificationsDetailComponent extends BasePage implements OnInit {
     this.prepareForm();
   }
 
-  prepareForm() {
+  private prepareForm() {
     this.clarificationForm = this.fb.group({
       id: [null, [Validators.pattern(STRING_PATTERN), Validators.minLength(1)]],
       clarification: [
