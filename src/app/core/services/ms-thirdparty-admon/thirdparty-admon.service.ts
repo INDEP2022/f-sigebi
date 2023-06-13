@@ -15,6 +15,12 @@ export class StatusHistoryService extends HttpService {
   getAll1(params?: _Params): Observable<any> {
     return this.get(`${ThirdPartyAdmonEndpoints.StatusHistory}`, params);
   }
+  getAllSearch(formatNumber: number): Observable<any> {
+    return this.get(
+      `${ThirdPartyAdmonEndpoints.StatusHistory}/?filter.formatNumber=${formatNumber}`
+    );
+  }
 }
 
 //http://sigebimsdev.indep.gob.mx/thirdpartyadmon/api/v1/strategy-log
+//http://sigebimsdev.indep.gob.mx/thirdpartyadmon/api/v1/strategy-log?filter.formatNumber=1263

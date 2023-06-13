@@ -10,6 +10,7 @@ import {
 } from '@angular/core';
 import { FormBuilder, FormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { format } from 'date-fns';
 import {
   BehaviorSubject,
   catchError,
@@ -282,6 +283,8 @@ export class EventCaptureComponent
   selectedProceedings: IGoodIndicator[] = [];
 
   allSelected = false;
+
+  flag = false;
 
   constructor(
     private fb: FormBuilder,
@@ -580,8 +583,8 @@ export class EventCaptureComponent
     const numDelegation1 = await this.getUserDelegation();
     const dataToSave = {
       keysProceedings,
-      elaborationDate,
-      captureDate,
+      elaborationDate: format(elaborationDate, 'yyyy-MM-dd HH:mm:ss'),
+      captureDate: format(captureDate, 'yyyy-MM-dd HH:mm:ss'),
       responsible,
       numFile: formValue.numFile,
       statusProceedings,
@@ -915,12 +918,12 @@ export class EventCaptureComponent
       startDate: initialDate,
       endDate: finalDate,
       processingArea: typeEvent,
-      steeringWheel: flyer,
-      proceedings: expedient,
-      opinion: dictumCve,
+      steeringWheel: flyer ? `${flyer}` : null,
+      proceedings: expedient ? `${expedient}` : null,
+      opinion: dictumCve ? `'${dictumCve}'` : null,
       coordination:
         delegation.length > 0 ? delegation.map(d => d.id).join(',') : null,
-      program: programed,
+      program: programed ? `${programed}` : null,
       cdonacKey: cdonacCve,
       idLot: lot,
       doneeNumber: donatNumber,
@@ -948,18 +951,17 @@ export class EventCaptureComponent
       .pupUpdate(typeEvent.value, expedient, this.proceeding.id)
       .subscribe({
         next: res => {
-          if (res.data.length > 0) {
+          this.loading = false;
+          if (res?.registros > 0) {
             this.alert('success', 'Bienes cargados correctamente', '');
-
             this.formSiab = this.fb.group(new CaptureEventSiabForm());
           } else {
-            this.alert('info', 'No se encontraron bienes para agregar', '');
+            this.alert('warning', 'No se encontraron bienes para agregar', '');
           }
-          this.loading = false;
           const params = new FilterParams();
           this.params.next(params);
         },
-        error: error => {
+        error: () => {
           this.loading = false;
         },
       });
@@ -2339,7 +2341,7 @@ export class EventCaptureComponent
         }
       }
     } catch (e_EXCEPPROC) {
-      c_MENSAJE = '';
+      c_MENSAJE = 'Ocurrió un error inesperado';
       this.alert('error', 'Ha ocurrido un error', c_MENSAJE);
     }
   }
