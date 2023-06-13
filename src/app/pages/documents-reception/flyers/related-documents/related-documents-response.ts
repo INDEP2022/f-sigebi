@@ -39,7 +39,6 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { LegalOpinionsOfficeService } from 'src/app/pages/juridical-processes/depositary/legal-opinions-office/legal-opinions-office/services/legal-opinions-office.service';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { FlyersService } from '../services/flyers.service';
-import { DocumentsFormComponent } from './documents-form/documents-form.component';
 import {
   IGoodAndAvailable,
   IGoodJobManagement,
@@ -140,6 +139,7 @@ export abstract class RelateDocumentsResponse extends BasePage {
   // abstract managementForm: FormGroup;
   isLoadingGood: boolean = false;
   abstract totalItems: number;
+
   isCreate = false;
   getGoods1(params: ListParams) {
     this.isLoadingGood = true;
@@ -276,7 +276,7 @@ export abstract class RelateDocumentsResponse extends BasePage {
 
   getDocJobManagementCount(params: ListParams) {
     params.limit = 1;
-    params.page = 1;
+
     return firstValueFrom(
       this.mJobManagementService.getDocOficioGestion(params).pipe(
         map(x => x.count),
@@ -292,6 +292,9 @@ export abstract class RelateDocumentsResponse extends BasePage {
   ): Promise<IListResponse<IGoodJobManagement>> {
     return firstValueFrom(
       this.serviceOficces.getGoodsJobManagement(params).pipe(
+        catchError(() => {
+          return of({ data: [], count: 0 });
+        }),
         map(x => {
           return {
             ...x,
@@ -845,10 +848,10 @@ export abstract class RelateDocumentsResponse extends BasePage {
         result[key] = (values as any)[key];
       }
     });
-    delete values.tipoTexto;
+    delete result.tipoTexto;
     if (values.addressee) {
       result.addressee =
-        values.jobType == 'EXTERNO' ? values.addressee : values.addressee?.name;
+        values.jobType == 'EXTERNO' ? values.addressee : values.addressee?.user;
     }
     if (values.sender) {
       result.sender = values.sender.id;
@@ -899,6 +902,26 @@ export abstract class RelateDocumentsResponse extends BasePage {
 
   selectedChecksC() {
     this.formVariables.get('b').setValue('N');
+  }
+
+  getGlobals(key: string): number {
+    return 2;
+  }
+
+  pupActManagement() {
+    let var1, var2;
+    if (
+      this.getParamsForName('P_GEST_OK') == '1' ||
+      this.getGlobals('gnu_activa_gestion') == 1
+    ) {
+      if (this.getParamsForName('PLLAMO') == 'ABANDONO') {
+        var1 = 'DJS';
+        var2 = 'DJ';
+      } else {
+        var1 = 'FNI';
+        var2 = 'AB';
+      }
+    }
   }
 
   async onClickBtnDocuments() {
@@ -999,11 +1022,11 @@ export abstract class RelateDocumentsResponse extends BasePage {
   }
 
   openRDictaminaDoc() {
-    const modalRef = this.modalService.show(DocumentsFormComponent, {
-      //initialState: context,
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
-    });
+    // const modalRef = this.modalService.show(DocumentsFormComponent, {
+    //   initialState: context,
+    //   class: 'modal-lg modal-dialog-centered',
+    //   ignoreBackdropClick: true,
+    // });
   }
 
   sendFunction_pupLaunchReport(params: ListParams): Observable<any> {

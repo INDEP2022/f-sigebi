@@ -61,7 +61,7 @@ export class GoodTableValsComponent extends BasePage implements OnInit {
   val_atributos_inmuebles = 0;
   actualiza: boolean;
   requerido: boolean;
-  selectedRow: number;
+  selectedAttribute: string;
   totalItems = 0;
   constructor(
     private goodsqueryService: GoodsQueryService,
@@ -88,13 +88,13 @@ export class GoodTableValsComponent extends BasePage implements OnInit {
       hideSubHeader: false,
       columns: {
         attribute: {
-          title: 'Atributo',
+          title: 'ATRIBUTO',
           type: 'string',
-          sort: true,
+          sort: false,
           editable: false,
         },
         value: {
-          title: 'Valores',
+          title: 'VALORES',
           type: 'custom',
           sort: false,
           editable: false,
@@ -183,7 +183,9 @@ export class GoodTableValsComponent extends BasePage implements OnInit {
             }
             this.dataTemp = this.dataTemp.filter((item: any) =>
               filter.search !== ''
-                ? (item[filter['field']] + '').includes(filter.search)
+                ? (item[filter['field']] + '')
+                    .toUpperCase()
+                    .includes((filter.search + '').toUpperCase())
                 : true
             );
           });
@@ -249,10 +251,18 @@ export class GoodTableValsComponent extends BasePage implements OnInit {
     } else {
       newString = vals.otvalor;
     }
-
-    self.data[self.selectedRow].value =
+    newString =
       newString.length > 1500 ? newString.substring(0, 1500) : newString;
-    self.data = [...self.data];
+    self.data.forEach(x => {
+      if (x.attribute === self.selectedAttribute) {
+        x.value = newString;
+      }
+    });
+    self.dataTemp.forEach(x => {
+      if (x.attribute === self.selectedAttribute) {
+        x.value = newString;
+      }
+    });
     self.getPaginated(self.params.value);
   }
 
@@ -300,13 +310,23 @@ export class GoodTableValsComponent extends BasePage implements OnInit {
 
     modalConfig.initialState = {
       valor: row.value,
-      tableCd: row.tableCd,
+      disabled: this.disabledBienes,
+      tableCd: 'INMUEBLES', //row.tableCd,
       noClasif: this.noClasif.value,
       callback: (cadena: string) => {
         //if (next)
         // debugger;
-        // console.log(cadena);
-        this.data[this.selectedRow].value = cadena;
+        console.log(cadena, this.selectedAttribute, this.dataTemp);
+        this.data.forEach(x => {
+          if (x.attribute === this.selectedAttribute) {
+            x.value = cadena;
+          }
+        });
+        this.dataTemp.forEach(x => {
+          if (x.attribute === this.selectedAttribute) {
+            x.value = cadena;
+          }
+        });
         // this.data = [...this.data];
         this.getPaginated(this.params.value);
       },
@@ -321,10 +341,11 @@ export class GoodTableValsComponent extends BasePage implements OnInit {
   showModals(item: { data: IVal; index: number }) {
     // console.log(item);
     const params = this.params.getValue();
-    this.selectedRow = (params.page - 1) * params.limit + item.index;
+    this.selectedAttribute = item.data.attribute;
     const row = item.data;
     if (row.attribute === 'RESERVADO') {
       this.showAddCaracteristicsModal(row);
+      // this.showAddCaracteristicsWebModal(row);
     } else if (row.attribute === 'SITUACION JURIDICA') {
       this.showAddCaracteristicsModal(row);
     } else if (row.attribute === 'CATÁLOGO COMERCIAL') {
