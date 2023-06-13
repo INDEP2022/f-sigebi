@@ -27,6 +27,7 @@ export class DepartmentFormComponent extends BasePage implements OnInit {
   delegations = new DefaultSelect();
   subdelegations = new DefaultSelect();
   delegacionId: any;
+  phaseEdo: any;
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
@@ -135,7 +136,9 @@ export class DepartmentFormComponent extends BasePage implements OnInit {
       this.departmentForm.controls['numDelegation'].disable();
       this.departmentForm.controls['numSubDelegation'].disable();
       this.departmentForm.controls['id'].disable();
+      this.departmentForm.controls['phaseEdo'].disable();
     }
+    this.departmentForm.controls['phaseEdo'].disable();
     setTimeout(() => {
       this.getDelegations(new ListParams());
     }, 1000);
@@ -184,7 +187,7 @@ export class DepartmentFormComponent extends BasePage implements OnInit {
     });
   }
   onSubDelegation(data: any) {
-    //console.log(data);
+    console.log(data);
 
     if (data === null || data === undefined) {
       this.departmentForm.controls['numSubDelegation'].setValue(null);
@@ -194,8 +197,10 @@ export class DepartmentFormComponent extends BasePage implements OnInit {
       params['filter.delegationDetail.id'] = `$eq:${this.delegacionId}`;
       this.departmentService.getSubdelegations(params).subscribe({
         next: resp => {
-          console.log(resp);
+          console.log(resp.data);
           this.subdelegations = new DefaultSelect(resp.data, resp.count);
+          //this.departmentForm.controls['phaseEdo'].setValue(this.subdelegations[0].phaseEdo);
+          //console.log(this.phaseEdo);
         },
         error: error => {
           console.log(error);
@@ -203,6 +208,7 @@ export class DepartmentFormComponent extends BasePage implements OnInit {
         },
       });
     }
+
     /*for (const controlName in this.departmentForm.controls) {
       if (this.departmentForm.controls.hasOwnProperty(controlName)) {
         if (controlName != 'numDelegation') {
@@ -213,6 +219,12 @@ export class DepartmentFormComponent extends BasePage implements OnInit {
     //console.log('consola 4', data);
     //this.getSubdelegations(new ListParams(), data.id);
   }
+
+  onPhaseEdo(data: any) {
+    console.log(data.phaseEdo);
+    this.departmentForm.controls['phaseEdo'].setValue(data.phaseEdo);
+  }
+
   close() {
     this.modalRef.hide();
   }
