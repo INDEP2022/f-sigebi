@@ -439,7 +439,7 @@
                   [attr.class]="'table-bordered'"
                   [settings]="settingsReceipt"
                   [source]="receipts"
-                  (edit)="createReceipt()"
+                  (edit)="createReceipt($event.data)"
                   (delete)="delete()">
                 </ng2-smart-table>
                 <app-pagination
@@ -450,12 +450,6 @@
                 <div class="justify-content-start">
                   <app-columns-select
                     [(settings)]="settingsGuardGoods"></app-columns-select>
-
-                  <button
-                    (click)="assingMinute()"
-                    class="btn btn-primary btn-sm active ml-2">
-                    Asignar Acta
-                  </button>
 
                   <button
                     (click)="deleteGoodGuard()"
@@ -475,7 +469,7 @@
                   </button>
                 </div>
                 <div class="row" *ngIf="!formLoading">
-                  <form [formGroup]="executeForm">
+                  <form [formGroup]="receptionForm">
                     <div class="table-responsive text-nowrap">
                       <table class="table table-bordered">
                         <col style="width: 60%" />
@@ -512,10 +506,10 @@
                           </tr>
                         </thead>
                         <tbody>
-                          <ng-container formArrayName="goodsTransportable">
+                          <ng-container formArrayName="goodsReception">
                             <tr
                               *ngFor="
-                                let good of goodsTransportable.controls;
+                                let good of goodsReception.controls;
                                 let i = index
                               ">
                               <ng-container [formGroupName]="i">
@@ -896,7 +890,7 @@
                   [(settings)]="settingsGuardGoods"></app-columns-select>
 
                 <button
-                  (click)="assingMinute()"
+                  (click)="assingMinuteWarehouse()"
                   class="btn btn-primary btn-sm active ml-2">
                   Asignar Acta
                 </button>
@@ -1109,8 +1103,10 @@
               <div class="row pt-5">
                 <ng2-smart-table
                   [attr.class]="'table-bordered'"
-                  [settings]="settingsReceiptsGuards"
-                  [source]="receiptGuards">
+                  [settings]="settingsReceiptWarehouse"
+                  [source]="receiptWarehouse"
+                  (edit)="showGoodsReceipt($event.data)"
+                  (delete)="generateReceiptWarehouse($event.data)">
                 </ng2-smart-table>
               </div>
             </tab>
@@ -1330,14 +1326,6 @@
                   </div>
                 </form>
               </div>
-
-              <div class="row pt-5">
-                <ng2-smart-table
-                  [attr.class]="'table-bordered'"
-                  [settings]="settingsReceiptsGuards"
-                  [source]="receiptGuards">
-                </ng2-smart-table>
-              </div>
             </tab>
 
             <tab [heading]="headingCancelation">
@@ -1554,14 +1542,6 @@
                     </table>
                   </div>
                 </form>
-              </div>
-
-              <div class="row pt-5">
-                <ng2-smart-table
-                  [attr.class]="'table-bordered'"
-                  [settings]="settingsReceiptsGuards"
-                  [source]="receiptGuards">
-                </ng2-smart-table>
               </div>
             </tab>
           </tabset>

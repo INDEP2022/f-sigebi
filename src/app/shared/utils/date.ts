@@ -67,6 +67,15 @@ export function firstFormatDateToSecondFormatDate(date: string) {
   }
 }
 
+export function secondFormatDateTofirstFormatDate(date: string) {
+  if (date) {
+    const array = date.split('-');
+    return array[2] + '/' + array[1] + '/' + array[0];
+  } else {
+    return null;
+  }
+}
+
 export function formatForIsoDateDatetime(value: string) {
   return value
     ? value.substring(0, value.indexOf('.')).replace('T', ' ')
@@ -80,7 +89,7 @@ export function formatForIsoDate(
 ) {
   if (!value) return null;
   const position = value.indexOf('T');
-  console.log(position);
+  // console.log(position);
   const newValue = value
     ? position > 0
       ? value.substring(0, position)

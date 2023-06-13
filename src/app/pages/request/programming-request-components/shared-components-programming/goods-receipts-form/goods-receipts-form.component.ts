@@ -4,7 +4,10 @@ import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IGood } from 'src/app/core/models/good/good.model';
-import { IRecepitGuard } from 'src/app/core/models/receipt/receipt.model';
+import {
+  IReceipt,
+  IRecepitGuard,
+} from 'src/app/core/models/receipt/receipt.model';
 import { GoodService } from 'src/app/core/services/good/good.service';
 import { ReceptionGoodService } from 'src/app/core/services/reception/reception-good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -16,10 +19,11 @@ import { ESTATE_COLUMNS_VIEW } from '../../acept-programming/columns/estate-colu
   styles: [],
 })
 export class GoodsReceiptsFormComponent extends BasePage implements OnInit {
-  receiptId: number;
+  receipt: IReceipt;
   receipGuards: IGood[] = [];
   goodsReceiptGuards: LocalDataSource = new LocalDataSource();
   params = new BehaviorSubject<ListParams>(new ListParams());
+  paramsGuardGood = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
   constructor(
     private modalRef: BsModalRef,
@@ -41,7 +45,43 @@ export class GoodsReceiptsFormComponent extends BasePage implements OnInit {
   }
 
   getGoodsReceipt() {
-    this.params.getValue()['filter.receiptGuardId'] = 456400;
+    this.loading = true;
+    this.params.getValue()['filter.receiptGuardId'] = this.receipt.id;
+    this.receptionService.getReceptionGoods(this.params.getValue()).subscribe({
+      next: response => {
+        const goodsGuard: IGood[] = [];
+        response.data.map((item: IRecepitGuard) => {
+          this.paramsGuardGood.getValue()['filter.id'] = item.idGood;
+          this.goodService.getAll(this.paramsGuardGood.getValue()).subscribe({
+            next: response => {
+              if (response.data[0].physicalStatus == 1) {
+                response.data[0].physicalStatusName = 'BUENO';
+              }
+              if (response.data[0].physicalStatus == 2) {
+                response.data[0].stateConservationName = 'MALO';
+              }
+              if (response.data[0].stateConservation == 1) {
+                response.data[0].physicalStatusName = 'BUENO';
+              }
+              if (response.data[0].stateConservation == 2) {
+                response.data[0].stateConservationName = 'MALO';
+              }
+              goodsGuard.push(response.data[0]);
+              console.log('goodsGuard', goodsGuard);
+              this.goodsReceiptGuards.load(goodsGuard);
+              this.loading = false;
+            },
+            error: error => {
+              console.log(error);
+            },
+          });
+        });
+      },
+      error: error => {
+        console.log('error', error);
+      },
+    });
+    /* this.params.getValue()['filter.receiptGuardId'] = 456400;
     this.receptionService.getReceptionGoods(this.params.getValue()).subscribe({
       next: response => {
         response.data.map((items: IRecepitGuard) => {
@@ -56,7 +96,7 @@ export class GoodsReceiptsFormComponent extends BasePage implements OnInit {
           });
         });
       },
-    });
+    }); */
   }
 
   close() {
