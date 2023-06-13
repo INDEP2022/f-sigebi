@@ -1730,6 +1730,8 @@ export class JuridicalRulingComponent
           vdepend = CAT_DEPARTAMENTOS.depend;
           vdep_deleg = CAT_DEPARTAMENTOS.depDelegation;
 
+          console.log(CAT_DEPARTAMENTOS);
+
           if (vnivel == 4) {
             vniveld4 = SIGLA;
             vniveld5 = vCVE_CARGO;
@@ -1737,6 +1739,8 @@ export class JuridicalRulingComponent
             vniveld4 = vCVE_CARGO;
             vniveld3 = SIGLA;
           }
+
+          console.log((vniveld4 = SIGLA), (vniveld5 = vCVE_CARGO));
 
           // SIGUIENTE CONSULTA
           let obj2 = {
@@ -1768,6 +1772,8 @@ export class JuridicalRulingComponent
           vdependp = CAT_DEPARTAMENTOS2.depend;
           vdep_delegP = CAT_DEPARTAMENTOS2.dep_delegacion;
 
+          console.log(CAT_DEPARTAMENTOS2);
+
           await this.PUP_DICTA_LOG(
             LST_ID + `ANTES DE SELECT DSAREA: *${user.department}`
           );
@@ -1786,7 +1792,7 @@ export class JuridicalRulingComponent
               }/${vniveld4}`
             );
 
-          const level = vnivel + 1;
+          const level = Number(vnivel) + 1;
 
           if (level == 5) {
             const cv = this.legalForm.get('cveOficio').value;
@@ -1867,7 +1873,7 @@ export class JuridicalRulingComponent
     const day = String(today.getDate()).padStart(2, '0');
     const year = today.getFullYear();
     const user = this.authService.decodeToken();
-    return new Promise((resolver, reject) => {
+    return new Promise((resolve, reject) => {
       const {
         tipoDictaminacion,
         fechaPPFF,
@@ -1925,10 +1931,10 @@ export class JuridicalRulingComponent
             await this.createDocumentDictum(this.documents[i]);
           }
 
-          resolver(true);
+          resolve(true);
         },
         error: () => {
-          resolver(true);
+          resolve(true);
         },
       });
     });
@@ -2215,28 +2221,28 @@ export class JuridicalRulingComponent
   }
 
   async getMaxVolan(exp: number) {
-    return new Promise<number>((resolver, reject) => {
+    return new Promise<number>((resolve, reject) => {
       this.notServ.getMaxFlyer(exp).subscribe({
         next: resp => {
-          resolver(resp.data[0].max);
+          resolve(resp.data[0].max);
         },
         error: () => {
-          resolver(null);
+          resolve(null);
         },
       });
     });
   }
 
   async getTypeVolan(volant: number) {
-    return new Promise((resolver, reject) => {
+    return new Promise((resolve, reject) => {
       const params = new FilterParams();
       params.addFilter('wheelNumber', volant, SearchFilter.EQ);
       this.notServ.getAllWithFilter(params.getParams()).subscribe({
         next: resp => {
-          resolver(resp.data[0].wheelType);
+          resolve(resp.data[0].wheelType);
         },
         error: () => {
-          resolver(null);
+          resolve(null);
         },
       });
     });
@@ -2420,16 +2426,16 @@ export class JuridicalRulingComponent
     v_no_of_dicta = this.dictNumber;
     v_no_volante = this.wheelNumber;
     v_ban = false;
-    let stop;
+    let stop = false;
 
     if (!v_no_of_dicta) {
       this.onLoadToast('error', 'No existe dictamen a eliminar');
       return;
     }
 
-    const cadena = cveOficio ? cveOficio.indexOf('?') : 0;
+    const cadena = cveOficio.indexOf('?');
 
-    if (cadena == 0) {
+    if (cadena == -1) {
       v_ban = true;
     }
 
@@ -2438,7 +2444,7 @@ export class JuridicalRulingComponent
     v_elimina = await this.getVDelete();
 
     if (
-      cadena != 0 &&
+      cadena != -1 &&
       this.user_dicta == user.username.toUpperCase()
       // !cveOficio.includes('?') &&
       // this.user_dicta == user.username.toUpperCase()
@@ -2488,7 +2494,7 @@ export class JuridicalRulingComponent
             if (tipoDictaminacion == 'DESTRUCCION') {
               v_exist = await this.getVExist(
                 Number(good.no_bien),
-                good.identificador
+                'DESTRUCCION'
               );
             } else {
               v_exist = await this.getVExist(
@@ -2513,7 +2519,11 @@ export class JuridicalRulingComponent
             }
           });
 
+          console.log('continua a eliminar');
+
           if (stop) return;
+
+          console.log(stop);
 
           //Aqui se elimina el dictamen cerrado
 
@@ -2553,6 +2563,9 @@ export class JuridicalRulingComponent
               good.estatus
             );
 
+            console.log(v_estatus);
+            console.log(v_ban);
+
             if (v_estatus == 'XXX' && v_ban) {
               this.onLoadToast(
                 'error',
@@ -2571,6 +2584,8 @@ export class JuridicalRulingComponent
           });
 
           //Aqui se elimina el dictamen
+
+          if (stop) true;
 
           const body: any = {
             vProceedingsNumber: v_no_expediente,
@@ -2612,7 +2627,7 @@ export class JuridicalRulingComponent
   }
 
   async getUpdateAndDeleteHisto(goodId: number, estatus: string) {
-    return new Promise<boolean>((resolver, reject) => {
+    return new Promise<boolean>((resolve, reject) => {
       const body = {
         noBien: goodId,
         vEstatus: estatus,
@@ -2620,10 +2635,10 @@ export class JuridicalRulingComponent
 
       this.dictationServ.getUpdateAndDelete(body).subscribe({
         next: resp => {
-          resolver(true);
+          resolve(true);
         },
         error: () => {
-          resolver(false);
+          resolve(false);
         },
       });
     });
@@ -2635,7 +2650,7 @@ export class JuridicalRulingComponent
     identificador: string,
     estatus: string
   ) {
-    return new Promise<string>((resolver, reject) => {
+    return new Promise<string>((resolve, reject) => {
       const body = {
         noBien: goodId,
         identificador,
@@ -2645,31 +2660,33 @@ export class JuridicalRulingComponent
 
       this.dictationServ.getVEstatus(body).subscribe({
         next: resp => {
-          resolver(resp.V_ESTATUS);
+          resolve(resp.V_ESTATUS);
         },
         error: () => {
-          resolver('XXX');
+          console.log('aqui nop hay datos');
+
+          resolve('XXX');
         },
       });
     });
   }
 
   async deteleDictation(body: any) {
-    return new Promise<boolean>((resolver, reject) => {
+    return new Promise<boolean>((resolve, reject) => {
       this.dictationServ.deletePupDeleteDictum(body).subscribe({
         next: resp => {
           console.log(resp);
-          resolver(true);
+          resolve(true);
         },
         error: () => {
-          resolver(false);
+          resolve(false);
         },
       });
     });
   }
 
   async getUpdateStatus(goodId: number, estatus: string) {
-    return new Promise<boolean>((resolver, reject) => {
+    return new Promise<boolean>((resolve, reject) => {
       const body = {
         noBien: goodId,
         estatus,
@@ -2677,30 +2694,30 @@ export class JuridicalRulingComponent
 
       this.dictationServ.updateVEstatus(body).subscribe({
         next: resp => {
-          resolver(true);
+          resolve(true);
         },
         error: () => {
-          resolver(false);
+          resolve(false);
         },
       });
     });
   }
 
   async getStausIn(goodId: number) {
-    return new Promise<string>((resolver, reject) => {
+    return new Promise<string>((resolve, reject) => {
       this.dictationServ.getStatusIni(goodId).subscribe({
         next: resp => {
-          resolver(resp.V_ESTATUS_INI);
+          resolve(resp.V_ESTATUS_INI);
         },
         error: () => {
-          resolver(null);
+          resolve(null);
         },
       });
     });
   }
 
   async getVExist(goodId: number, tipoDic: string) {
-    return new Promise<string>((resolver, reject) => {
+    return new Promise<string>((resolve, reject) => {
       const body = {
         noBien: goodId,
         tipoDicta: tipoDic,
@@ -2708,17 +2725,17 @@ export class JuridicalRulingComponent
 
       this.dictationServ.getVExist(body).subscribe({
         next: resp => {
-          resolver(resp.V_EXIST);
+          resolve(resp.V_EXIST);
         },
         error: () => {
-          resolver('XX');
+          resolve('XX');
         },
       });
     });
   }
 
   async getValid() {
-    return new Promise<number>((resolver, reject) => {
+    return new Promise<number>((resolve, reject) => {
       const user = this.authService.decodeToken();
 
       const body = {
@@ -2728,25 +2745,25 @@ export class JuridicalRulingComponent
 
       this.dictationServ.getValid(body).subscribe({
         next: resp => {
-          resolver(resp.V_VALID);
+          resolve(resp.V_VALID);
         },
         error: () => {
-          resolver(0);
+          resolve(0);
         },
       });
     });
   }
 
   async getVDelete() {
-    return new Promise<string>((resolver, reject) => {
+    return new Promise<string>((resolve, reject) => {
       const user = this.authService.decodeToken();
 
       this.dictationServ.getVElimina(user.username.toUpperCase()).subscribe({
         next: resp => {
-          resolver(resp.resultado);
+          resolve(resp.resultado);
         },
         error: () => {
-          resolver('X');
+          resolve('X');
         },
       });
     });
@@ -2755,7 +2772,7 @@ export class JuridicalRulingComponent
   async getDicGood() {
     return new Promise<
       { estatus: string; identificador: string; no_bien: string }[]
-    >((resolver, reject) => {
+    >((resolve, reject) => {
       const { noExpediente } = this.legalForm.value;
 
       const body = {
@@ -2766,10 +2783,10 @@ export class JuridicalRulingComponent
 
       this.serviceGood.getDicGood(body).subscribe({
         next: resp => {
-          resolver(resp.data);
+          resolve(resp.data);
         },
         error: () => {
-          resolver([]);
+          resolve([]);
         },
       });
     });
