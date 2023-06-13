@@ -5,6 +5,8 @@ import { ITransferNumber } from './transfer-number.model';
 
 export interface IProceedings {
   id: number;
+  actId: number;
+  programmingId: number;
   proceedingsType: string;
   proceedingsCve: string;
   elaborationDate: Date;
