@@ -952,18 +952,17 @@ export class EventCaptureComponent
       .pupUpdate(typeEvent.value, expedient, this.proceeding.id)
       .subscribe({
         next: res => {
-          if (res.data?.registros > 0) {
+          this.loading = false;
+          if (res?.registros > 0) {
             this.alert('success', 'Bienes cargados correctamente', '');
-
             this.formSiab = this.fb.group(new CaptureEventSiabForm());
           } else {
             this.alert('warning', 'No se encontraron bienes para agregar', '');
           }
-          this.loading = false;
           const params = new FilterParams();
           this.params.next(params);
         },
-        error: error => {
+        error: () => {
           this.loading = false;
         },
       });
@@ -2351,8 +2350,7 @@ export class EventCaptureComponent
         }
       }
     } catch (e_EXCEPPROC) {
-      c_MENSAJE =
-        'Favor de Informar a Informática. < ' || 'e_EXCEPPROC.MESSAGE' || ' >';
+      c_MENSAJE = 'Ocurrió un error inesperado';
       this.alert('error', 'Ha ocurrido un error', c_MENSAJE);
     }
   }
