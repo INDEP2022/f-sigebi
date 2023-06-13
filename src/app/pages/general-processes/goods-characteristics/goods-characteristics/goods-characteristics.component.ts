@@ -268,7 +268,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     this.loading = true;
     this.params.value.limit = 1;
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(params => {
-      console.log(params);
+      // console.log(params);
       if (this.count > 0) this.searchGood(true);
       this.count++;
     });
@@ -314,19 +314,17 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
           this.origin3 = param['origin3'] ?? null;
           this.TIPO_PROC = param['TIPO_PROC'] ?? null;
           this.NO_INDICADOR = param['NO_INDICADOR'] ?? null;
-        } else {
-          const selectedBadString = localStorage.getItem('selectedBad');
-          if (selectedBadString) {
-            this.selectedBad = JSON.parse(selectedBadString);
-            console.log(this.selectedBad);
+        }
+        const selectedBadString = localStorage.getItem('selectedBad');
+        if (selectedBadString) {
+          this.selectedBad = JSON.parse(selectedBadString);
+          console.log(this.selectedBad);
+          if (!this.origin) this.origin = '1';
+          console.log(this.origin);
 
-            this.origin = '1';
-            console.log(this.origin);
-
-            // this.selectTab();
-            this.numberGood.setValue(this.selectedBad.id);
-            this.searchGood();
-          }
+          // this.selectTab();
+          this.numberGood.setValue(this.selectedBad.id);
+          this.searchGood();
         }
         // this.goodService.getById2(param['noBien']).subscribe({
         //   next: data => {
@@ -420,7 +418,10 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
       }
     }
     console.log(body);
-    await this.preUpdate();
+    const preUpdateValid = await this.preUpdate();
+    if (!preUpdateValid) {
+      return;
+    }
     if (this.selectedBad) {
       this.attribGoodBadService
         .remove(this.selectedBad)

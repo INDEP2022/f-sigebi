@@ -183,7 +183,7 @@ export class SelectFormComponent implements OnInit {
   }
 
   setParams(params: ListParams) {
-    console.log(params, this.page);
+    // console.log(params, this.page);
     this.paramsChange.emit(params);
     // if (!this.lastValue) {
     //   this.page++;
@@ -237,7 +237,7 @@ export class SelectFormComponent implements OnInit {
     this.loading = true;
     this.subscription = this.getListObservable.subscribe({
       next: data => {
-        console.log(data, this.form);
+        // console.log(data, this.form);
         // debugger;
         // this.loadingData.emit(false);
         if (data.data && data.data.length > 0) {
@@ -292,7 +292,7 @@ export class SelectFormComponent implements OnInit {
   }
 
   getData() {
-    console.log(this.data);
+    // console.log(this.data);
     if (this.list && this.list.length > 0) {
       this.getDataOfList();
     } else {
@@ -318,7 +318,7 @@ export class SelectFormComponent implements OnInit {
   }
 
   onChange(event: any) {
-    console.log(event);
+    // console.log(event);
     // if (event.length == 0) {
     //   return;
     // }

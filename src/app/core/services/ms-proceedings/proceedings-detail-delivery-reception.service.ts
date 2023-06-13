@@ -5,9 +5,9 @@ import { ProceedingsEndpoints } from 'src/app/common/constants/endpoints/ms-proc
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
 import {
-  firstFormatDate,
   firstFormatDateToSecondFormatDate,
   formatForIsoDate,
+  secondFormatDate,
 } from 'src/app/shared/utils/date';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { ITrackedGood } from '../../models/ms-good-tracker/tracked-good.model';
@@ -26,13 +26,13 @@ export function trackerGoodToDetailProceeding(
     amount: 1,
     received: 'S',
     approvedXAdmon: 'S',
-    approvedDateXAdmon: firstFormatDate(new Date()),
-    approvedUserXAdmon: '',
-    dateIndicatesUserApproval: firstFormatDate(new Date()),
+    approvedDateXAdmon: secondFormatDate(new Date()),
+    approvedUserXAdmon: 'S',
+    dateIndicatesUserApproval: secondFormatDate(new Date()),
     numberRegister: 0,
     reviewIndft: 0,
     correctIndft: 0,
-    idftUser: '',
+    idftUser: null,
     idftDate: new Date(),
     numDelegationIndft: 0,
     yearIndft: 0,

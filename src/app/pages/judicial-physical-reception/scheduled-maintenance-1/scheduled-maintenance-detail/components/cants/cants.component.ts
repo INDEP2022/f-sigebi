@@ -67,7 +67,7 @@ export class CantsComponent implements OnInit {
               .getCountDictationByAct(response.data[0].areaProcess, this.id)
               .subscribe({
                 next: response => {
-                  console.log(response);
+                  // console.log(response);
                   this.dictamenes = +response;
                   // this.form.get('dictamenes').setValue(response);
                 },
