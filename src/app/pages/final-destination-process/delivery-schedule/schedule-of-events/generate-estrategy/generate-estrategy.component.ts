@@ -276,6 +276,8 @@ export class GenerateEstrategyComponent extends BasePage implements OnInit {
         title: 'Histórico de Estatus',
         optionColumn: 'status-history',
       },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: false,
     };
     this.bsModalRef = this.modalService.show(
       DetailDelegationsComponent,
