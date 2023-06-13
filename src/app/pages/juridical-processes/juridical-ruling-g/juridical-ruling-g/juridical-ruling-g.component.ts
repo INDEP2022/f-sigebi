@@ -1103,6 +1103,7 @@ export class JuridicalRulingGComponent
     const cadena = this.dictamen.passOfficeArmy
       ? this.dictamen.passOfficeArmy.indexOf('?')
       : 0;
+    console.log('cadena', cadena);
     if (cadena == 0) {
       V_BAN = true;
     }
@@ -2004,11 +2005,11 @@ export class JuridicalRulingGComponent
 
   async getRTdictaAarusr(toolbar_user: any) {
     return new Promise((resolve, reject) => {
-      const params = new ListParams();
-      params['filter.user'] = `$eq:${toolbar_user}`;
-      params['filter.reading'] = `$eq:S`;
-      params['filter.writing'] = `$eq:S`;
-      this.dictationService.getRTdictaAarusr(params).subscribe({
+      // const params = new ListParams();
+      // params['filter.user'] = `$eq:${toolbar_user}`;
+      // params['filter.reading'] = `$eq:S`;
+      // params['filter.writing'] = `$eq:S`;
+      this.dictationService.getVElimina(toolbar_user).subscribe({
         next: async (resp: any) => {
           console.log('USER', resp);
           resolve('S');

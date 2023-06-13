@@ -4,4 +4,5 @@ export enum ReceptionGoodEndpoint {
   ReceiptGood = 'receipt-good',
   ReceptionGuardGood = 'receipt-guard-good',
   ReceptionGuard = 'receipt-guard',
+  ReceiptWitness = 'receipt-witness',
 }
