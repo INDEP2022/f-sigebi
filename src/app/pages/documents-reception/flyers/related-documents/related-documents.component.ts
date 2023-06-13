@@ -423,15 +423,27 @@ export class RelatedDocumentsComponent
   selectedRadio: string;
 
   disabledChecks() {
-    console.log(this.tableGoods);
     const columnas = this.tableGoods.grid.getColumns();
-    const columnaOpciones = columnas.find(
+    const columnaSelectRigth = columnas.find(
       columna => columna.id === 'seleccion'
     );
-    columnaOpciones.hide = true;
+    const columnaImprocedence = columnas.find(
+      columna => columna.id === 'improcedente'
+    );
+    //oculta la columna aclarado
+    columnaSelectRigth.hide = true;
+    //oculta la columa improcedente
+    columnaImprocedence.hide = true;
     // (this.settings.columns as any).seleccion['hide'] = false;
     this.managementForm.get('averiPrevia').disable();
     this.formVariables.get('b').setValue('S');
+
+    const values = (columnas[7]['dataSet']['rows'][0].isSelected = true);
+    console.log(values);
+
+    //onComponentInitFunction: true
+    //this.relatedDocumentDesahogo.pup_cambio_impro(this.dataTableGoods);
+
     // }
     // this.goodFilterParams('Todos');
     // this.managementForm.controls['averiPrevia'].setValue('Todos');
@@ -450,12 +462,16 @@ export class RelatedDocumentsComponent
 
   enableChecks() {
     const columnas = this.tableGoods.grid.getColumns();
-    const columnaOpciones = columnas.find(
+    const columnaSelectRigth = columnas.find(
       columna => columna.id === 'seleccion'
     );
-    columnaOpciones.hide = false;
+    const columnaImprocedent = columnas.find(
+      columna => columna.id === 'improcedente'
+    );
+    columnaSelectRigth.hide = false;
+    columnaImprocedent.hide = false;
     this.managementForm.get('averiPrevia').enable();
-    this.formVariables.get('b').setValue('S');
+    this.formVariables.get('b').setValue('N');
     // const tabla = document.getElementById('goods');
     // const types = document.getElementById('typesFilters');
     // if (tabla && types) {
@@ -1416,16 +1432,16 @@ export class RelatedDocumentsComponent
   //   this.dataGoodTable.refresh();
   // }
 
-  // changeImprocedente(event: any) {
-  //   this.dataGood.forEach(element => {
-  //     if (element.disponible) {
-  //       element.improcedente = event.checked;
-  //       element.seleccion = false;
-  //     }
-  //   });
-  //   this.dataGoodTable.load(this.dataGood);
-  //   this.dataGoodTable.refresh();
-  // }
+  changeImprocedente(event: any) {
+    this.dataGood.forEach(element => {
+      if (element.disponible) {
+        element.improcedente = event.checked;
+        element.seleccion = false;
+      }
+    });
+    this.dataGoodTable.load(this.dataGood);
+    this.dataGoodTable.refresh();
+  }
 
   async getAvailableGood(
     dataGoodRes: IDataGoodsTable,
@@ -1668,7 +1684,8 @@ export class RelatedDocumentsComponent
         },
         error: error => {
           this.cities = new DefaultSelect();
-          this.onLoadToast('error', 'Error', error.error.message);
+          console.log('Error Cargando la cidad', error.error.message);
+          //this.onLoadToast('error', 'Error', error.error.message);
           subscription.unsubscribe();
         },
       });

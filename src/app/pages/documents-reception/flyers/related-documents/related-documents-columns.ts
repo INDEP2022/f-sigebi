@@ -34,7 +34,7 @@ export const RELATED_DOCUMENTS_COLUMNS_GOODS = {
     hide: true,
   },
   seleccion: {
-    title: 'Selección',
+    title: 'Aclaración',
     type: 'custom',
     renderComponent: CheckboxSelectElementComponent, //CheckboxElementComponent,
     onComponentInitFunction(instance: any) {
