@@ -28,6 +28,7 @@ export class AssignReceiptFormComponent extends BasePage implements OnInit {
   receiptId: number = 0;
   actId: number = 0;
   statusReceipt: string = '';
+  loadingTable: boolean = false;
   constructor(
     private modalRef: BsModalRef,
     private modalService: BsModalService,
@@ -46,15 +47,18 @@ export class AssignReceiptFormComponent extends BasePage implements OnInit {
   }
 
   getReceipts() {
-    this.loading = true;
+    this.loadingTable = true;
     this.params.getValue()['filter.programmingId'] = this.programming.id;
 
     this.receptionGoodService.getReceipt(this.params.getValue()).subscribe({
       next: response => {
         this.receipts = response.data;
-        this.loading = false;
+        this.loadingTable = false;
       },
-      error: error => {},
+      error: error => {
+        this.onLoadToast('info', 'Información', 'No se encontraron recibos');
+        this.loadingTable = false;
+      },
     });
   }
 
@@ -65,20 +69,79 @@ export class AssignReceiptFormComponent extends BasePage implements OnInit {
     this.statusReceipt = receipt.statusReceipt;
   }
 
-  confirm() {
+  async confirm() {
     if (this.statusReceipt == 'ABIERTO') {
+      const updateProgrammingGood = await this.updateProgGoood();
+      console.log('updateProgramming', updateProgrammingGood);
+      if (updateProgrammingGood) {
+        const updateGood = await this.updateGood();
+        console.log('updateGood', updateGood);
+        if (updateGood) {
+          const createReceipGood = await this.createReceiptGood();
+          console.log('createReceipGood', createReceipGood);
+          if (createReceipGood) {
+            this.modalRef.content.callback(true);
+            this.close();
+          }
+        }
+      }
+    } else {
+      this.onLoadToast(
+        'info',
+        'Acción Invalida',
+        'Se debe seleccionar un bien con status Abierto'
+      );
+    }
+  }
+
+  updateProgGoood() {
+    return new Promise((resolve, reject) => {
+      this.selectGoods.map(item => {
+        const formData: Object = {
+          programmingId: this.programming.id,
+          goodId: item.goodId,
+          status: 'EN_RECEPCION_TMP',
+        };
+
+        this.programminGoodService.updateGoodProgramming(formData).subscribe({
+          next: response => {
+            resolve(true);
+          },
+          error: error => {
+            resolve(false);
+          },
+        });
+      });
+    });
+  }
+
+  updateGood() {
+    return new Promise((resolve, reject) => {
+      this.selectGoods.map(item => {
+        console.log('Actualizando programminggood', true);
+        const formData: Object = {
+          id: item.id,
+          goodId: item.goodId,
+          goodStatus: 'EN_RECEPCION_TMP',
+          programmationStatus: 'EN_RECEPCION_TMP',
+        };
+        this.goodService.updateByBody(formData).subscribe({
+          next: response => {
+            resolve(true);
+          },
+          error: error => {
+            resolve(false);
+          },
+        });
+      });
+    });
+  }
+
+  createReceiptGood() {
+    return new Promise((resolve, reject) => {
       const user: any = this.authService.decodeToken();
       this.selectGoods.map(item => {
         const formData: Object = {
-          /*id: 1,
-          receiptId: this.receiptId,
-          actId: this.actId,
-          goodId: item.goodId,
-          programmationId: this.programming.id,
-          userCreation: user.username,
-          creationDate: new Date(),
-          userModification: user.username,
-          modificationDate: new Date(), */
           id: 1,
           receiptId: this.receiptId,
           actId: this.actId,
@@ -92,48 +155,15 @@ export class AssignReceiptFormComponent extends BasePage implements OnInit {
         console.log('formData', formData);
         this.receptionGoodService.createReceiptGood(formData).subscribe({
           next: response => {
-            console.log('creando recibo bien', true);
-            const formData: Object = {
-              programmingId: this.programming.id,
-              goodId: item.goodId,
-              status: 'EN_RECEPCION_TMP',
-            };
-
-            this.programminGoodService
-              .updateGoodProgramming(formData)
-              .subscribe({
-                next: response => {
-                  console.log('Actualizando programminggood', true);
-                  const formData: Object = {
-                    id: item.id,
-                    goodId: item.goodId,
-                    goodStatus: 'EN_RECEPCION_TMP',
-                    programmationStatus: 'EN_RECEPCION_TMP',
-                  };
-                  this.goodService.updateByBody(formData).subscribe({
-                    next: response => {
-                      console.log('update good', response);
-                      this.modalRef.content.callback(true);
-                      this.close();
-                    },
-                    error: error => {},
-                  });
-                },
-                error: error => {},
-              });
+            resolve(true);
           },
           error: error => {
+            resolve(false);
             console.log('error al crear el recibo', error);
           },
         });
       });
-    } else {
-      this.onLoadToast(
-        'info',
-        'Acción Invalida',
-        'Se debe seleccionar un bien con status Abierto'
-      );
-    }
+    });
   }
 
   close() {
@@ -141,16 +171,21 @@ export class AssignReceiptFormComponent extends BasePage implements OnInit {
   }
 
   createReceipt() {
-    if (this.receipts[0].statusReceipt != 'ABIERTO') {
+    if (this.receipts[0]?.statusReceipt == 'ABIERTO') {
+      this.onLoadToast(
+        'info',
+        'Acción invalida',
+        'Aun se encuentran recibos abiertos'
+      );
+    } else {
       const form: Object = {
         minutesId: '1',
         idPrograming: this.programming.id,
       };
-
       this.proceedingService.createProceedings(form).subscribe({
         next: response => {
           const receiptForm: Object = {
-            id: 8,
+            id: 1,
             actId: response.id,
             programmingId: this.programming.id,
             statusReceipt: 'ABIERTO',
@@ -168,12 +203,6 @@ export class AssignReceiptFormComponent extends BasePage implements OnInit {
           console.log(error);
         },
       });
-    } else {
-      this.onLoadToast(
-        'info',
-        'Acción Invalida',
-        'El acta tiene recibos que aun no se encuentran cerrados, cierre todos los recibos asociados al acta antes de cerrar el acta.'
-      );
     }
   }
 }
