@@ -23,8 +23,11 @@ import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { HistoryGoodService } from 'src/app/core/services/ms-history-good/history-good.service';
 import { MsIndicatorGoodsService } from 'src/app/core/services/ms-indicator-goods/ms-indicator-goods.service';
 import {
+  INotSucess,
+  ISucess,
   ProceedingsDeliveryReceptionService,
   ProceedingsDetailDeliveryReceptionService,
+  trackerGoodToDetailProceeding,
 } from 'src/app/core/services/ms-proceedings/index';
 import { StatusXScreenService } from 'src/app/core/services/ms-screen-status/statusxscreen.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -98,20 +101,20 @@ export class ScheduledMaintenanceDetailComponent
     this.prepareForm();
     // this.getStatusPantalla();
     this.statusActa.valueChanges.subscribe(x => {
-      console.log(x);
+      // console.log(x);
       if (x === 'CERRADA') {
         this.closeActa();
       } else {
         const detail = JSON.parse(
           window.localStorage.getItem('detailActa')
         ) as IProceedingDeliveryReception;
-        console.log(this.form.get('fechaCaptura').value);
+        // console.log(this.form.get('fechaCaptura').value);
 
         detail.keysProceedings = this.form.get('claveActa').value;
         detail.statusProceedings = this.statusActaValue;
         detail.closeDate = new Date().toISOString();
         detail.closeDate = new Date().toISOString();
-        console.log(this.form.get('fechaCaptura').value);
+        // console.log(this.form.get('fechaCaptura').value);
         const newDate = this.form.get('fechaCaptura').value;
         detail.captureDate = (newDate + '').includes('/')
           ? firstFormatDateToSecondFormatDate(newDate)
@@ -159,7 +162,6 @@ export class ScheduledMaintenanceDetailComponent
   }
 
   finishMassiveDelete(deleteds: IGoodsByProceeding[]) {
-    console.log();
     this.getData();
   }
 
@@ -266,7 +268,7 @@ export class ScheduledMaintenanceDetailComponent
         detail.keysProceedings = this.form.get('claveActa').value;
         detail.statusProceedings = this.statusActaValue;
         detail.closeDate = new Date().toISOString();
-        console.log(this.form.get('fechaCaptura').value);
+        // console.log(this.form.get('fechaCaptura').value);
         const newDate = this.form.get('fechaCaptura').value;
         detail.captureDate = (newDate + '').includes('/')
           ? firstFormatDateToSecondFormatDate(newDate)
@@ -380,13 +382,13 @@ export class ScheduledMaintenanceDetailComponent
   }
 
   updateData(event: any) {
-    console.log(event);
+    // console.log(event);
     this.params = event;
     this.getData();
   }
 
   updateDatesTable(newData: any[]) {
-    console.log(newData);
+    // console.log(newData);
     if (newData.length > 0) {
       this.alertQuestion(
         'question',
@@ -507,7 +509,7 @@ export class ScheduledMaintenanceDetailComponent
   }
 
   updateGoodsRow(event: any) {
-    console.log(event);
+    // console.log(event);
     let { newData, confirm, data } = event;
     // confirm.resolve(data);
 
@@ -627,6 +629,7 @@ export class ScheduledMaintenanceDetailComponent
     //   this.getData();
     // });
     this.fillColumnsGoods();
+    this.fillGoodsByRastrer();
     // this.$trackedGoods.pipe(first(), takeUntil(this.$unSubscribe)).subscribe({
     //   next: response => {
     //     if (response && response.length > 0) {
@@ -705,7 +708,7 @@ export class ScheduledMaintenanceDetailComponent
             indicator => indicator.typeActa === this.typeProceeding
           );
           if (!indicator) return;
-          console.log(indicator);
+          // console.log(indicator);
           this.areaProcess = indicator.areaProcess;
           if (indicator.areaProcess === 'RF') {
             newColumns = { ciudad_transferente: columnGoodId, ...columnsGoods };
@@ -738,17 +741,17 @@ export class ScheduledMaintenanceDetailComponent
           };
           this.getData();
 
-          console.log(this.settingsGoods);
+          // console.log(this.settingsGoods);
         },
       });
   }
 
-  fillGoodsByRastrerContent(
+  private fillGoodsByRastrerContent(
     response: any[],
     deleteds: IGoodsByProceeding[] = []
   ) {
     // this.loadingRastrerGoods = true;
-    console.log(this.areaProcess);
+    // console.log(this.areaProcess);
     this.detailService
       .getGoodByRastrer(
         response.map(item => +item.goodNumber),
@@ -758,7 +761,7 @@ export class ScheduledMaintenanceDetailComponent
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: goods => {
-          console.log(goods);
+          // console.log(goods);
 
           this.bienesRas = goods.bienes;
           this.expedientesRas = goods.expedientes;
@@ -772,7 +775,7 @@ export class ScheduledMaintenanceDetailComponent
           }
           this.data = [...this.data.concat(this.goodsByRastrer)];
           this.totalItems += this.goodsByRastrer.length;
-          console.log(this.totalItems);
+          // console.log(this.totalItems);
           this.loading = false;
         },
         error: err => {
@@ -786,7 +789,36 @@ export class ScheduledMaintenanceDetailComponent
     this.$trackedGoods.pipe(first(), takeUntil(this.$unSubscribe)).subscribe({
       next: response => {
         if (response && response.length > 0) {
-          this.fillGoodsByRastrerContent(response, deleteds);
+          console.log('Bienes por Rastreador', response);
+          this.detailService
+            .createMassive(
+              response.map(item =>
+                trackerGoodToDetailProceeding(item, this.form.get('acta').value)
+              )
+            )
+            .subscribe({
+              next: response2 => {
+                const addeds: string[] = [];
+                const notAddeds: string[] = [];
+                response2.forEach(item => {
+                  const { sucess } = item as ISucess;
+                  const { error } = item as INotSucess;
+                  if (sucess) {
+                    addeds.push(sucess);
+                  }
+                  if (error) {
+                    notAddeds.push(error);
+                  }
+                });
+                this.showMessageRemoved(addeds, notAddeds, 'agregaron');
+                this.fillColumnsGoods();
+              },
+              error: err => {
+                this.onLoadToast('error', 'Bienes', 'No Agregados');
+                this.fillColumnsGoods();
+              },
+            });
+          // this.fillGoodsByRastrerContent(response, deleteds);
         } else {
           this.loading = false;
         }
@@ -800,9 +832,9 @@ export class ScheduledMaintenanceDetailComponent
 
   getData(deleteds: IGoodsByProceeding[] = []) {
     const idActa = this.actaId;
-    console.log(idActa);
-    console.log(new Date());
-    console.log(new Date().toISOString());
+    // console.log(idActa);
+    // console.log(new Date());
+    // console.log(new Date().toISOString());
     this.loading = true;
     this.params['id'] = idActa;
     const newParams = this.params;
@@ -903,7 +935,7 @@ export class ScheduledMaintenanceDetailComponent
             .pipe(takeUntil(this.$unSubscribe))
             .subscribe({
               next: response => {
-                console.log(response);
+                // console.log(response);
                 this.getData();
                 this.onLoadToast(
                   'success',
@@ -912,7 +944,7 @@ export class ScheduledMaintenanceDetailComponent
                 );
               },
               error: err => {
-                console.log(err);
+                // console.log(err);
                 this.loading = false;
                 this.onLoadToast(
                   'error',
@@ -922,7 +954,7 @@ export class ScheduledMaintenanceDetailComponent
               },
             });
         } else {
-          console.log(item);
+          // console.log(item);
           // const toDelete = this.data.findIndex(row => row == row);
           this.data = [...this.data.filter(row => row !== item)];
 
