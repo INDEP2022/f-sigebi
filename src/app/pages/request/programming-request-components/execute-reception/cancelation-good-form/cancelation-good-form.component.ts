@@ -60,7 +60,7 @@ export class CancelationGoodFormComponent extends BasePage implements OnInit {
       const formData: Object = {
         programmingId: this.programming.id,
         goodId: item.goodId,
-        status: 'CANCELADO',
+        status: 'CANCELADO_TMP',
       };
 
       this.programmingGoodService.updateGoodProgramming(formData).subscribe({
@@ -69,8 +69,8 @@ export class CancelationGoodFormComponent extends BasePage implements OnInit {
           const formData: Object = {
             id: item.id,
             goodId: item.goodId,
-            goodStatus: 'CANCELADO',
-            programmationStatus: 'CANCELADO',
+            goodStatus: 'CANCELADO_TMP',
+            programmationStatus: 'CANCELADO_TMP',
             reasonCancReprog: this.form.get('cancelation').value,
           };
 
