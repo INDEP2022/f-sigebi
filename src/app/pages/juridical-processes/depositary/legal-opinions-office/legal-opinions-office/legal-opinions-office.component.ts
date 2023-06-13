@@ -970,15 +970,15 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
   }
 
   deleteTempDictation(onlydelete: boolean) {
-    let body: any = {};
-    this.svLegalOpinionsOfficeService.deleteTmpDictation(body).subscribe({
-      next: data => {
-        console.log('DELETE TMP_DICTAMINACIONES', data);
-      },
-      error: error => {
-        console.log(error);
-      },
-    });
+    // let body: any = {};
+    // this.svLegalOpinionsOfficeService.deleteTmpDictation(body).subscribe({
+    //   next: data => {
+    //     console.log('DELETE TMP_DICTAMINACIONES', data);
+    //   },
+    //   error: error => {
+    //     console.log(error);
+    //   },
+    // });
   }
 
   getOfficeDictationData() {

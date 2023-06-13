@@ -170,4 +170,8 @@ export class MJobManagementService extends HttpService {
   getRegSender(no_delegacion: string): Observable<IListResponse<IRSender>> {
     return this.get(`application/regRemitente`, { no_delegacion });
   }
+
+  getRegAddressee(remitente: string): Observable<IListResponse<IRSender>> {
+    return this.get(`application/regDestinatario`, { remitente });
+  }
 }

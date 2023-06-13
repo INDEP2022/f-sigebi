@@ -3,6 +3,7 @@ import { HttpService } from 'src/app/common/services/http.service';
 
 import { Observable } from 'rxjs';
 import { OfficeManagementEndpoint } from 'src/app/common/constants/endpoints/office-management-endpoint';
+import { IListResponse } from '../../interfaces/list-response.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -31,5 +32,12 @@ export class OfficeManagementService extends HttpService {
   removeCopiesManagement(no_management: string | number): Observable<any> {
     const route = `${OfficeManagementEndpoint.DeleteCopiesOffice}/${no_management}`;
     return this.delete(route);
+  }
+
+  ObtainKeyOffice(data: Object) {
+    return this.post<IListResponse<any>>(
+      OfficeManagementEndpoint.ObtainKeyOffice,
+      data
+    );
   }
 }
