@@ -292,6 +292,9 @@ export abstract class RelateDocumentsResponse extends BasePage {
   ): Promise<IListResponse<IGoodJobManagement>> {
     return firstValueFrom(
       this.serviceOficces.getGoodsJobManagement(params).pipe(
+        catchError(() => {
+          return of({ data: [], count: 0 });
+        }),
         map(x => {
           return {
             ...x,
