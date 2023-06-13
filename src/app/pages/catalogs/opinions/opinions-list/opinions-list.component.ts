@@ -1,19 +1,19 @@
-import { Component, OnInit } from '@angular/core';
-import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
-
-import { LocalDataSource } from 'ng2-smart-table';
+import { Component, OnInit } from '@angular/core';
 import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
-import { IOpinion } from 'src/app/core/models/catalogs/opinion.model';
-import { OpinionService } from 'src/app/core/services/catalogs/opinion.service';
+
 import { BasePage } from 'src/app/core/shared/base-page';
-import Swal from 'sweetalert2';
-import { OpinionFormComponent } from '../opinion-form/opinion-form.component';
+import { BsModalService } from 'ngx-bootstrap/modal';
+import { IOpinion } from 'src/app/core/models/catalogs/opinion.model';
+import { LocalDataSource } from 'ng2-smart-table';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { OPINION_COLUMNS } from './opinion-columns';
+import { OpinionFormComponent } from '../opinion-form/opinion-form.component';
+import { OpinionService } from 'src/app/core/services/catalogs/opinion.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-opinions-list',
@@ -50,9 +50,7 @@ export class OpinionsListComponent extends BasePage implements OnInit {
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
             filter.field == 'id' ||
-            filter.field == 'description' ||
-            filter.field == 'dict_ofi' ||
-            filter.field == 'areaProcess'
+              filter.field == 'dict_ofi'
               ? (searchFilter = SearchFilter.EQ)
               : (searchFilter = SearchFilter.ILIKE);
             if (filter.search !== '') {
@@ -102,18 +100,26 @@ export class OpinionsListComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(opinion.id);
-        Swal.fire('Borrado', '', 'success');
       }
     });
   }
 
   delete(id: number) {
     this.opinionService.removeCatalogOpinions(id).subscribe({
-      next: () => this.getDeductives(),
+      next: () => {
+        this.getDeductives(), this.alert('success', 'Dictámen', 'Borrado');
+      },
+      error: err => {
+        this.alert(
+          'warning',
+          'Dictámen',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      },
     });
   }
 }
