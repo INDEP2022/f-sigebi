@@ -1902,6 +1902,28 @@ export class RelatedDocumentsComponent
         // }
       }
     }
+
+    if (
+      bien == 'S' &&
+      doc == 'S' &&
+      this.variables.dictaminacion == 'DEVOLUCION'
+    ) {
+      if (refersTo.value == 'D' || this.se_refiere_a.D) {
+        this.alert('error', 'Para este oficio es necesario tener bienes', '');
+        return;
+      } else {
+        // DOCUMENTOS_PARA_DICTAMEN
+        alert('go block');
+      }
+    }
+
+    if (bien == 'N' && doc == 'S') {
+      // DOCUMENTOS_PARA_DICTAMEN
+      alert('go block');
+    }
+
+    this.variables.d = 'N';
+    this.variables.proc_doc_dic = 'S';
   }
 
   getGoodOMCount() {

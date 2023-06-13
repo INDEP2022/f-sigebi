@@ -11,42 +11,42 @@ import { routesJuridicalProcesses } from 'src/app/common/constants/juridical-pro
 /** COMPONENTS IMPORTS */
 
 const routes: Routes = [
-  // {
-  //   // DICTAMINACIONES JURIDICAS
-  //   path: routesJuridicalProcesses[0].link,
-  //   loadChildren: async () =>
-  //     (await import('./juridical-ruling/juridical-ruling.module'))
-  //       .JuridicalRulingModule,
-  //   data: {
-  //     title: routesJuridicalProcesses[0].label,
-  //     screen: 'FACTJURDICTAMAS',
-  //   },
-  // },
-  // {
-  //   // ACTUALIZACIÓN DE EXPEDIENTE
-  //   path: routesJuridicalProcesses[1].link,
-  //   loadChildren: async () =>
-  //     (await import('./file-data-update/file-data-update.module'))
-  //       .FileDataUpdateModule,
-  //   data: {
-  //     title: routesJuridicalProcesses[1].label,
-  //     screen: 'FACTGENACTDATEX',
-  //   },
-  // },
-  // {
-  //   // ACTUALIZACIÓN DE EXPEDIENTE EN NOTIFICACIÓN
-  //   path: routesJuridicalProcesses[2].link,
-  //   loadChildren: async () =>
-  //     (
-  //       await import(
-  //         './notification-file-update/notification-file-update.module'
-  //       )
-  //     ).NotificationFileUpdateModule,
-  //   data: {
-  //     title: routesJuridicalProcesses[2].label,
-  //     screen: 'FACTGENEXPEDNOTIF',
-  //   },
-  // },
+  {
+    // DICTAMINACIONES JURIDICAS
+    path: routesJuridicalProcesses[0].link,
+    loadChildren: async () =>
+      (await import('./juridical-ruling/juridical-ruling.module'))
+        .JuridicalRulingModule,
+    data: {
+      title: routesJuridicalProcesses[0].label,
+      screen: 'FACTJURDICTAMAS',
+    },
+  },
+  {
+    // ACTUALIZACIÓN DE EXPEDIENTE
+    path: routesJuridicalProcesses[1].link,
+    loadChildren: async () =>
+      (await import('./file-data-update/file-data-update.module'))
+        .FileDataUpdateModule,
+    data: {
+      title: routesJuridicalProcesses[1].label,
+      screen: 'FACTGENACTDATEX',
+    },
+  },
+  {
+    // ACTUALIZACIÓN DE EXPEDIENTE EN NOTIFICACIÓN
+    path: routesJuridicalProcesses[2].link,
+    loadChildren: async () =>
+      (
+        await import(
+          './notification-file-update/notification-file-update.module'
+        )
+      ).NotificationFileUpdateModule,
+    data: {
+      title: routesJuridicalProcesses[2].label,
+      screen: 'FACTGENEXPEDNOTIF',
+    },
+  },
   {
     // DECLARATORIA Y OFICIOS DE ABANDONOS
     path: routesJuridicalProcesses[3].link,
