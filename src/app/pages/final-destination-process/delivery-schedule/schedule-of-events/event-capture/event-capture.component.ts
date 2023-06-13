@@ -10,6 +10,7 @@ import {
 } from '@angular/core';
 import { FormBuilder, FormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { format } from 'date-fns';
 import {
   BehaviorSubject,
   catchError,
@@ -526,9 +527,12 @@ export class EventCaptureComponent
       ...this.proceeding,
       numFile,
       keysProceedings,
-      captureDate,
+      captureDate: new Date(
+        format(captureDate, 'yyyy-MM-dd HH:mm:ss')
+      ).getTime(),
       responsible,
     };
+    delete data.elaborationDate;
 
     return this.proceedingDeliveryReceptionService
       .update(this.proceeding.id, data as any)
@@ -593,15 +597,19 @@ export class EventCaptureComponent
     if (!numFile) {
       formValue.numFile = 2;
     }
-    const elaborationDate = new Date().getTime();
+    const elaborationDate = new Date();
     const statusProceedings = 'ABIERTA';
     const typeProceedings = this.originalType;
     const elaborate = this.authUser;
     const numDelegation1 = await this.getUserDelegation();
     const dataToSave = {
       keysProceedings,
-      elaborationDate,
-      captureDate: captureDate.getTime(),
+      elaborationDate: new Date(
+        format(elaborationDate, 'yyyy-MM-dd HH:mm:ss')
+      ).getTime(),
+      captureDate: new Date(
+        format(captureDate, 'yyyy-MM-dd HH:mm:ss')
+      ).getTime(),
       responsible,
       numFile: formValue.numFile,
       statusProceedings,
