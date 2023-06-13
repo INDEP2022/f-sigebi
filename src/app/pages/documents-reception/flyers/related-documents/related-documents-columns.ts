@@ -34,7 +34,7 @@ export const RELATED_DOCUMENTS_COLUMNS_GOODS = {
     hide: true,
   },
   seleccion: {
-    title: 'Selección',
+    title: 'Aclaración',
     type: 'custom',
     renderComponent: CheckboxSelectElementComponent, //CheckboxElementComponent,
     onComponentInitFunction(instance: any) {
@@ -54,6 +54,21 @@ export const RELATED_DOCUMENTS_COLUMNS_GOODS = {
         data.row.to = data.toggle;
       });
     },
+    sort: false,
+  },
+};
+// Columnas de la tabla de documentos relacionados al volante y folio universal
+export const RELATED_FOLIO_COLUMNS = {
+  id: {
+    title: 'Folio',
+    sort: false,
+  },
+  sheets: {
+    title: 'Documentos',
+    sort: false,
+  },
+  descriptionDocument: {
+    title: 'Descripción del documento',
     sort: false,
   },
 };

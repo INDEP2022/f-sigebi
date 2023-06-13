@@ -79,7 +79,7 @@ export const TRANSPORTABLE_GOODS = {
 
 export const TRANSPORTABLE_GOODS_FORMALIZE = {
   goodId: {
-    title: 'NoX gestión',
+    title: 'Nº gestión',
     type: 'string',
     sort: false,
   },
@@ -126,95 +126,30 @@ export const TRANSPORTABLE_GOODS_FORMALIZE = {
   },
   saeMeasureUnit: {
     title: 'Unidad medida INDEP',
-    type: 'html',
-    editor: {
-      type: 'list',
-      config: {
-        list: [
-          { value: 'KILOWATT', title: 'KILOWATT' },
-          { value: 'HORA', title: 'HORA' },
-          { value: 'BARRIL', title: 'BARRIL' },
-          { value: 'GRAMO', title: 'GRAMO' },
-          { value: 'METRO CUADRADO', title: 'METRO CUADRADO' },
-          { value: 'METRO CÚBICO', title: 'METRO CÚBICO' },
-          { value: 'MILLAR', title: 'MILLAR' },
-          { value: 'PAR', title: 'PAR' },
-          { value: 'KILOGRAMOS', title: 'KILOGRAMOS' },
-          { value: 'METRO', title: 'METRO' },
-          { value: 'PIEZA', title: 'PIEZA' },
-          { value: 'CABEZA', title: 'CABEZA' },
-          { value: 'LITRO', title: 'LITRO' },
-        ],
-      },
-    },
+    type: 'string',
     sort: false,
+    // type: 'html',
+    // editor: {
+    //   type: 'list',
+    //   config: {
+    //     list: [
+    //       { value: 'KILOWATT', title: 'KILOWATT' },
+    //       { value: 'HORA', title: 'HORA' },
+    //       { value: 'BARRIL', title: 'BARRIL' },
+    //       { value: 'GRAMO', title: 'GRAMO' },
+    //       { value: 'METRO CUADRADO', title: 'METRO CUADRADO' },
+    //       { value: 'METRO CÚBICO', title: 'METRO CÚBICO' },
+    //       { value: 'MILLAR', title: 'MILLAR' },
+    //       { value: 'PAR', title: 'PAR' },
+    //       { value: 'KILOGRAMOS', title: 'KILOGRAMOS' },
+    //       { value: 'METRO', title: 'METRO' },
+    //       { value: 'PIEZA', title: 'PIEZA' },
+    //       { value: 'CABEZA', title: 'CABEZA' },
+    //       { value: 'LITRO', title: 'LITRO' },
+    //     ],
+    //   },
+    // },
   },
-  // sort: false,
-  // type: 'html',
-  //     valuePrepareFunction: (cell, row, companyList) => {
-
-  //       // this.placeholder();
-  //       let bn = this.measureTlUnit.find(x => x.value === cell);
-  //       if (bn) {
-  //         return bn.title;
-  //       }
-  //       else {
-
-  //         return cell;
-  //       }
-  //     },
-  //     editor: {
-  //       type: 'list',
-  //       config: {
-
-  //         selectText: 'Select',
-  //         list: this.saeMeasureUnit
-
-  //       }
-  //     }
-  // },
-
-  // type: 'select',
-  // config: {
-  //   selectText: 'Seleccionar',
-  //   options: [
-  //     { value: 'KILOWATT', title: 'KILOWATT' },
-  //     { value: 'HORA', title: 'HORA' },
-  //     { value: 'BARRIL', title: 'BARRIL' },
-  //     { value: 'GRAMO', title: 'GRAMO' },
-  //     { value: 'METRO CUADRADO', title: 'METRO CUADRADO' },
-  //     { value: 'METRO CÚBICO', title: 'METRO CÚBICO' },
-  //     { value: 'MILLAR', title: 'MILLAR' },
-  //     { value: 'PAR', title: 'PAR' },
-  //     { value: 'KILOGRAMOS', title: 'KILOGRAMOS' },
-  //     { value: 'METRO', title: 'METRO' },
-  //     { value: 'PIEZA', title: 'PIEZA' },
-  //     { value: 'CABEZA', title: 'CABEZA' },
-  //     { value: 'LITRO', title: 'LITRO' },
-  //   ],
-  // },
-  // saeMeasureUnit:  {
-  //   title: 'Unidad medida INDEP',
-  //   type: 'html',
-  //   sort: false,
-  //   valuePrepareFunction: (value: string) => {
-  //     if (value == '1')
-  //       return '<strong><span class="badge badge-pill badge-success">Activo</span></strong>';
-  //     if (value == '0')
-  //       return '<strong><span class="badge badge-pill badge-warning">Inactivo</span></strong>';
-  //     return value;
-  //   },
-  //   filter: {
-  //     type: 'list',
-  //     config: {
-  //       selectText: 'Seleccionar',
-  //       list: [
-  //         { value: '1', title: 'Activo' },
-  //         { value: '0', title: 'Inactivo' },
-  //       ],
-  //     },
-  //   },
-  // },
 
   physicalStatusName: {
     title: 'Estado Físico transferente',
