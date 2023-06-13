@@ -1632,7 +1632,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     this.initialdisabled = true;
     this.noRequireAct1();
     this.idProceeding = dataRes.id;
-    this.minDateFecElab = addDays(new Date(dataRes.elaborationDate), 1);
+    this.minDateFecElab =new Date(dataRes.elaborationDate);
 
     const modelDetail: IDetailWithIndEdo = {
       no_acta: dataRes.id,
@@ -1707,7 +1707,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
           .setValue(addDays(new Date(dataRes.dateDeliveryGood), 1));
         this.form
           .get('fecElab')
-          .setValue(new Date('2023-05-20'));
+          .setValue(new Date(new Date(dataRes.elaborationDate).toLocaleString("en-US", { timeZone: "GMT" })));
         console.log({msg: 'Fecha ya guardada', data: this.form.get('fecElab').value})
         this.form
           .get('fecReception')
@@ -1977,71 +1977,6 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   }
 
   saveButton() {
-    /* let newProceeding: IProccedingsDeliveryReception = {
-      keysProceedings: this.form.get('acta2').value,
-      statusProceedings: 'ABIERTA',
-      elaborationDate: format(
-        this.form.get('fecElab').value,
-        'yyyy-MM-dd HH:mm'
-      ),
-      datePhysicalReception: format(
-        this.form.get('fecReception').value,
-        'yyyy-MM-dd HH:mm'
-      ),
-      address: this.form.get('direccion').value,
-      elaborate:
-        localStorage.getItem('username') == 'sigebiadmon'
-          ? localStorage.getItem('username')
-          : localStorage.getItem('username').toLocaleUpperCase(),
-      numFile: this.form.get('expediente').value,
-      witness1: this.form.get('entrega').value,
-      witness2: this.form.get('recibe2').value,
-      typeProceedings: ['D', 'ND'].includes(
-        this.form.get('acta').value
-      )
-        ? 'DECOMISO'
-        : 'ENTREGA',
-      dateElaborationReceipt: format(
-        this.form.get('fecElabRec').value,
-        'yyyy-MM-dd HH:mm'
-      ),
-      dateDeliveryGood: format(
-        this.form.get('fecEntBien').value,
-        'yyyy-MM-dd HH:mm'
-      ),
-      responsible: null,
-      destructionMethod: null,
-      observations: this.form.get('observaciones').value,
-      approvalDateXAdmon: null,
-      approvalUserXAdmon: null,
-      numRegister: null,
-      captureDate: format(new Date(), 'yyyy-MM-dd HH:mm'),
-      numDelegation1: this.form.get('admin').value.numberDelegation2,
-      numDelegation2:
-        this.form.get('admin').value.numberDelegation2 == 11
-          ? '11'
-          : null,
-      identifier: null,
-      label: null,
-      universalFolio: null,
-      numeraryFolio: null,
-      numTransfer: null,
-      idTypeProceedings: this.form.get('acta').value,
-      receiptKey: null,
-      comptrollerWitness: this.form.get('testigo').value,
-      numRequest: null,
-      closeDate: null,
-      maxDate: null,
-      indFulfilled: null,
-      dateCaptureHc: null,
-      dateCloseHc: null,
-      dateMaxHc: null,
-      receiveBy: null,
-      affair: null,
-    };
-
-    console.log(newProceeding) */
-
     if (!this.act2Valid) {
       this.alert('warning', 'Debe registrar un acta válida', '');
     } else if (!this.form.get('direccion').valid) {
