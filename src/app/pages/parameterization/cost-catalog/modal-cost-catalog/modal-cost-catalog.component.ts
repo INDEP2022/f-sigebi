@@ -76,20 +76,16 @@ export class ModalCostCatalogComponent extends BasePage implements OnInit {
 
   putCatalog() {
     this.loading = true;
+    const code = this.form.get('keyServices').value;
     const body = {
       cost: this.form.get('cost').value === 'cost' ? 'COSTO' : 'GASTO',
       description: this.form.get('descriptionServices').value,
-      code: this.form.get('keyServices').value,
       subaccount: this.form.get('typeExpenditure').value,
       unaffordabilityCriterion: this.form.get('unaffordable').value ? 'Y' : 'N',
-      // registryNumber: this.form.get('keyServices').value,
     };
-    this.catalogService.putCostCatalog(body.code, body).subscribe({
-      next: (resp: any) => {
-        if (resp) {
-          this.handleSuccess();
-        }
-      },
+    this.catalogService.putCostCatalog(code, body).subscribe({
+      next: data => this.handleSuccess(),
+      error: error => (this.loading = false),
     });
   }
 
@@ -101,15 +97,10 @@ export class ModalCostCatalogComponent extends BasePage implements OnInit {
       code: this.form.get('keyServices').value,
       subaccount: this.form.get('typeExpenditure').value,
       unaffordabilityCriterion: this.form.get('unaffordable').value ? 'Y' : 'N',
-      registryNumber: this.form.get('keyServices').value,
     };
     this.catalogService.postCostCatalog(body).subscribe({
-      next: (resp: any) => {
-        if (resp) {
-          this.loading = false;
-          this.handleSuccess();
-        }
-      },
+      next: data => this.handleSuccess(),
+      error: error => (this.loading = false),
     });
   }
 
@@ -117,9 +108,8 @@ export class ModalCostCatalogComponent extends BasePage implements OnInit {
     this.modalRef.hide();
   }
   handleSuccess() {
-    this.loading = false;
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.alert('success', this.title, `${message} Correctamente`);
+    this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();

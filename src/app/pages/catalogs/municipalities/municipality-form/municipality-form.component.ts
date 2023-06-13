@@ -60,10 +60,7 @@ export class MunicipalityFormComponent extends BasePage implements OnInit {
           Validators.pattern('^([0-9]|[1-9][0-9])$'),
         ],
       ],
-      noRegister: [
-        null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
-      ],
+      noRegister: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       risk: [
         null,
         [
@@ -78,7 +75,6 @@ export class MunicipalityFormComponent extends BasePage implements OnInit {
       ],
     });
     if (this.municipality != null) {
-      console.log(this.municipality);
       this.edit = true;
       this.municipalityForm.patchValue(this.municipality);
       let firstValue = this.municipality.stateKey;
@@ -107,10 +103,10 @@ export class MunicipalityFormComponent extends BasePage implements OnInit {
   }
 
   update() {
+    this.loading = true;
     this.municipalityForm.value.idMunicipality =
       this.municipality.idMunicipality;
     this.municipalityForm.value.stateKey = this.municipality.stateKey;
-    this.loading = true;
     this.municipalityService.update(this.municipalityForm.value).subscribe({
       next: data => this.handleSuccess(),
       error: error => (this.loading = false),
