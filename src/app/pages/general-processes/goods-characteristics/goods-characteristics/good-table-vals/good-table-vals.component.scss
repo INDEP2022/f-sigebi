@@ -30,44 +30,75 @@
   }
 }
 
-th,
-td {
-  margin: 0;
-  padding: 0.5em 1em;
-}
-td {
-  font-size: 0.875em;
-  input.form-control {
-    font-size: 1em !important;
-  }
-}
+// tr > * {
+//   // &:first-child {
+//   //   width: 110px;
+//   // }
+//   &:nth-child(2) {
+//     width: 30%;
+//   }
+//   &:last-child {
+//     width: 70%;
+//   }
+// }
 
-tr > * {
-  &:first-child {
-    width: 110px;
+:host ::ng-deep ng2-smart-table table tr {
+  height: 55px;
+  td:last-child {
+    width: 50px;
   }
-  &:nth-child(2) {
-    width: 30%;
+  th,
+  td {
+    margin: 0;
+    padding: 0.5em 1em;
   }
-  &:last-child {
-    width: 70%;
+  td {
+    font-size: 0.875em;
+    &:nth-child(2) {
+      padding: 0px;
+    }
+    // input.form-control {
+    //   font-size: 0.875em !important;
+    // }
   }
-}
+  &.requiredAva {
+    td {
+      &:nth-child(2) {
+        background-color: #dc3545;
+        input.form-control {
+          background-color: #dc3545;
+        }
+      }
+    }
+  }
 
-:host ::ng-deep ng2-smart-table table tr td {
-  &:last-child {
-    padding: 0px !important;
-    margin: 0px !important;
+  &.required {
+    td {
+      &:nth-child(2) {
+        background-color: #ffc107;
+        input.form-control {
+          background-color: #ffc107;
+        }
+      }
+    }
   }
-  // &:has(ng-deep .required) {
-  //   background-color: #ffc107;
-  // }
-  // &:has(.update) {
-  //   background-color: #17a2b8;
-  // }
-  // &.requiredAva {
-  //   background-color: #dc3545;
-  // }
+
+  &.update {
+    td {
+      &:nth-child(2) {
+        background-color: #17a2b8;
+        input.form-control {
+          background-color: #17a2b8;
+        }
+      }
+    }
+  }
+
+  &.notTableCd {
+    .ng2-smart-action-delete-delete {
+      display: none;
+    }
+  }
 }
 
 a {

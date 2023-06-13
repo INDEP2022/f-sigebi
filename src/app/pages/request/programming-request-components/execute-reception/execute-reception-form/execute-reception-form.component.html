@@ -693,6 +693,7 @@
                   <i class="fa fa-camera"></i> Adjuntar fotografias
                 </button>
               </div>
+
               <div class="row">
                 <form [formGroup]="goodsGuardForm">
                   <div class="table-responsive text-nowrap">
@@ -1113,6 +1114,7 @@
                 </ng2-smart-table>
               </div>
             </tab>
+
             <tab [heading]="headingReprogramation">
               <div class="justify-content-start">
                 <app-columns-select
@@ -1337,6 +1339,7 @@
                 </ng2-smart-table>
               </div>
             </tab>
+
             <tab [heading]="headingCancelation">
               <div class="justify-content-start">
                 <app-columns-select
@@ -1585,7 +1588,7 @@
                   <button (click)="uploadPicture()" class="btn btn-info btn-sm active">
                     <i class="fa fa-camera"></i> Integrar fotograf&iacute;a
                   </button>
-  
+
                   <button class="btn btn-danger btn-sm active">
                     <i class="fa fa-trash"></i> Eliminar
                   </button>
@@ -1603,14 +1606,14 @@
               </ng2-smart-table>
               <app-pagination [params]="paramsGuard" [totalItems]="totalItemsGuard"></app-pagination>
             </tab>
-            
-  
+
+
             <tab heading="Reprogramación(0)">
               <ng2-smart-table [attr.class]="'table-bordered'" [settings]="settingsTranGoods" [source]="tranGoods">
               </ng2-smart-table>
               <app-pagination [params]="params" [totalItems]="totalItems"></app-pagination>
             </tab>
-  
+
             <tab heading="Cancelación(0)">
               <ng2-smart-table [attr.class]="'table-bordered'" [settings]="settingsTranGoods" [source]="tranGoods">
               </ng2-smart-table>

@@ -44,6 +44,14 @@ export class SurvillanceService extends HttpService {
     );
   }
 
+  postGeoreferencieObject(model: IGeoreferencieObject) {
+    return this.post(this.route.Georeferencie, model);
+  }
+
+  putGeoreferencieObject(model: IGeoreferencieObject) {
+    return this.put(this.route.Georeferencie, model);
+  }
+
   postVigProcessPercentages(data: IVigProcessPercentages) {
     return this.post(this.route.VigProcessPercentages, data);
   }

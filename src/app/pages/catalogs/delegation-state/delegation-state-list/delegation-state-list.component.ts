@@ -56,32 +56,20 @@ export class DelegationStateListComponent extends BasePage implements OnInit {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
-            /*SPECIFIC CASES*/
-            switch (filter.field) {
-              case 'regionalDelegation':
-                // searchFilter = '';
-                searchFilter = SearchFilter.ILIKE;
-                field = `filter.${filter.field}.description`;
-                break;
-              case 'stateCode':
-                searchFilter = SearchFilter.ILIKE;
-
-                break;
-              case 'keyState':
-                searchFilter = SearchFilter.EQ;
-                break;
-
-              default:
-                searchFilter = SearchFilter.ILIKE;
-                break;
-            }
+            filter.field == 'keyDelegation' ||
+            filter.field == 'regionalDelegation' ||
+            filter.field == 'stateCode' ||
+            filter.field == 'keyState' ||
+            filter.field == 'status'
+              ? (searchFilter = SearchFilter.EQ)
+              : (searchFilter = SearchFilter.ILIKE);
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
               delete this.columnFilters[field];
             }
           });
-          console.log(this.params);
+          this.params = this.pageFilter(this.params);
           this.getData();
         }
       });
@@ -99,19 +87,19 @@ export class DelegationStateListComponent extends BasePage implements OnInit {
     console.log(params);
     this.delegationStateService.getAll(params).subscribe({
       next: response => {
-        console.log(response.data);
-        this.delegationsState = response.data;
-        console.log(this.delegationsState);
-        this.data.load(this.delegationsState);
+        this.totalItems = response.count || 0;
+        //console.log(response.data);
+        //this.delegationsState = response.data;
+        //console.log(this.delegationsState);
+        this.data.load(response.data);
         this.data.refresh();
-        console.log(this.data);
-        this.totalItems = response.count;
+        //console.log(this.data);
         this.loading = false;
       },
       error: error => {
         this.loading = false;
-        this.data.load([]);
-        this.data.refresh();
+        //this.data.load([]);
+        //this.data.refresh();
       },
     });
   }

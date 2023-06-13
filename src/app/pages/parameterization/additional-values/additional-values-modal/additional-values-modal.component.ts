@@ -104,7 +104,7 @@ export class AdditionalValuesModalComponent extends BasePage implements OnInit {
     }
   }
   getAditionalValues(params: ListParams) {
-    this.valuesService.getAll(params).subscribe(
+    this.valuesService.getAll2(params).subscribe(
       (data: any) => {
         this.values = new DefaultSelect(data.data, data.count);
       },

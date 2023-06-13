@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Ng2SmartTableComponent } from 'ng2-smart-table';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
@@ -12,7 +13,6 @@ import { DictationXGood1Service } from 'src/app/core/services/ms-dictation/r-dic
 import { BasePage } from 'src/app/core/shared/base-page';
 import { EditDocumentsModalComponent } from '../edit-documents-modal/edit-documents-modal.component';
 import { COLUMNS_DOCUMENTS } from './columns-document';
-
 @Component({
   selector: 'app-r-dictamina-doc-modal',
   templateUrl: './r-dictamina-doc-modal.component.html',
@@ -33,7 +33,8 @@ export class RDictaminaDocModalComponent extends BasePage implements OnInit {
   constructor(
     private modalRef: BsModalRef,
     private dictationXGood1Service: DictationXGood1Service,
-    private modalService: BsModalService
+    private modalService: BsModalService,
+    private datePipe: DatePipe
   ) {
     super();
 
@@ -49,7 +50,7 @@ export class RDictaminaDocModalComponent extends BasePage implements OnInit {
       columns: { ...COLUMNS_DOCUMENTS },
     };
   }
-
+  validDocs: boolean = false;
   ngOnInit(): void {
     let params = new FilterParams();
     params.addFilter(
@@ -62,11 +63,20 @@ export class RDictaminaDocModalComponent extends BasePage implements OnInit {
       this.typeDictation, //ok
       SearchFilter.EQ
     );
-    params.addFilter(
-      'crime',
-      this.crime, //ok
-      SearchFilter.EQ
-    );
+    if (this.crime != null) {
+      params.addFilter(
+        'crime',
+        this.crime, //ok
+        SearchFilter.EQ
+      );
+    } else {
+      params.addFilter(
+        'crime',
+        'N', //ok
+        SearchFilter.EQ
+      );
+    }
+
     params.addFilter(
       'typeSteeringwheel',
       this.typeSteeringwheel, //ok
@@ -88,6 +98,7 @@ export class RDictaminaDocModalComponent extends BasePage implements OnInit {
         console.log('Respuesta: ', resp.data);
       },
       error: error => {
+        this.onLoadToast('warning', 'No hay documentos relacionados', '');
         console.log('Respuesta: ', error);
       },
     });
@@ -132,13 +143,16 @@ export class RDictaminaDocModalComponent extends BasePage implements OnInit {
       let filaAEditar = this.dataDocuments.find(
         item => item.cveDocument === next.cve
       );
-      filaAEditar.date = next.date;
+      filaAEditar.date = this.datePipe.transform(next.date, 'dd/MM/yyyy');
       this.actualizarTabla();
       // filaAEditar.email = 'maria.fernanda@gmail.com';
       for (let i = 0; i < this.dataDocuments.length; i++) {
         console.log('this.dataDocuments[i]', this.dataDocuments[i]);
         if (next.cve === this.dataDocuments[i].cveDocument) {
-          this.dataDocuments[i].date = next.date;
+          this.dataDocuments[i].date = this.datePipe.transform(
+            next.date,
+            'dd/MM/yyyy'
+          );
         }
       }
     });
@@ -149,17 +163,22 @@ export class RDictaminaDocModalComponent extends BasePage implements OnInit {
   }
 
   close() {
-    for (let i = 0; i < this.dataDocuments.length; i++) {
-      if (this.dataDocuments[i].date == '') {
-        this.onLoadToast(
-          'info',
-          'Asegúrese de ingresar las fechas en los documentos',
-          ''
-        );
-        return;
+    if (this.validDocs == true) {
+      this.modalRef.content.callback([]);
+      this.modalRef.hide();
+    } else {
+      for (let i = 0; i < this.dataDocuments.length; i++) {
+        if (this.dataDocuments[i].date == '') {
+          this.onLoadToast(
+            'info',
+            'Asegúrese de ingresar las fechas en los documentos',
+            ''
+          );
+          return;
+        }
       }
+      this.modalRef.content.callback(this.dataDocuments);
+      this.modalRef.hide();
     }
-    this.modalRef.content.callback(this.dataDocuments);
-    this.modalRef.hide();
   }
 }

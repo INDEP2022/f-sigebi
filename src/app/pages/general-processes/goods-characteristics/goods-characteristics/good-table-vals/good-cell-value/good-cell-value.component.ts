@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { DefaultEditor } from 'ng2-smart-table';
 import { GoodsCharacteristicsService } from '../../../services/goods-characteristics.service';
+import { IVal } from '../good-table-vals.component';
 
 @Component({
   selector: 'app-good-cell-value',
@@ -13,6 +14,19 @@ export class GoodCellValueComponent extends DefaultEditor implements OnInit {
   today: Date = new Date();
   constructor(private service: GoodsCharacteristicsService) {
     super();
+  }
+
+  get disabledTable() {
+    return this.service.disabledTable;
+  }
+
+  updateCell(value: any) {
+    // console.log(value, this.value, this.isAddCat(value));
+    this.service.data.forEach(x => {
+      if (x.column === this.value.column) {
+        x.value = value;
+      }
+    });
   }
 
   getClassColour() {
@@ -28,71 +42,123 @@ export class GoodCellValueComponent extends DefaultEditor implements OnInit {
   }
 
   ngOnInit() {
-    console.log(this.value);
+    // console.log(this.value);
   }
 
   get good() {
     return this.service.good;
   }
 
-  // haveError(row: IVal) {
-  //   return (
-  //     this.haveErrorRequired(row) ||
-  //     this.haveNumericError(row) ||
-  //     this.haveFloatError(row) ||
-  //     this.haveMoneyError(row).length > 0
-  //   );
-  // }
+  haveError(row: IVal) {
+    return (
+      this.haveErrorRequired(row) ||
+      (!(row.dataType === 'D' || row.attribute.includes('FECHA')) &&
+        (this.haveNumericError(row) ||
+          this.haveFloatError(row) ||
+          this.haveCaracteresEspeciales(row) ||
+          this.haveMoneyError(row).length > 0))
+    );
+  }
 
-  // notInt(valor: any) {
-  //   valor = parseInt(valor);
-  //   if (isNaN(valor)) {
-  //     return true;
-  //   }
-  //   return false;
-  // }
+  haveCaracteresEspeciales(row: IVal) {
+    if (row.dataType === 'V') {
+      if (this.haveVerticalSlash(row)) {
+        return !this.isAddCat(row.value);
+      } else if (this.haveAddWeb(row)) {
+        return !this.isCatWeb(row.value);
+      } else {
+        return !this.isNormal(row.value);
+      }
+    }
+    return false;
+  }
 
-  // isFloat(valor: any) {
-  //   var RE = /^\d*(\.\d{1})?\d{0,3}$/;
-  //   if (RE.test(valor)) {
-  //     return true;
-  //   } else {
-  //     return false;
-  //   }
-  // }
+  haveVerticalSlash(row: IVal) {
+    return (
+      row.attribute === 'RESERVADO' || row.attribute === 'SITUACION JURIDICA'
+    );
+  }
 
-  // haveNumericError(row: IVal) {
-  //   return row.dataType === 'N' && this.notInt(row.value);
-  // }
+  haveAddWeb(row: IVal) {
+    return row.attribute.includes('CATÁLOGO COMERCIAL');
+  }
 
-  // haveFloatError(row: IVal) {
-  //   return row.dataType === 'F' && !this.isFloat(row.value);
-  // }
+  notInt(valor: any) {
+    valor = parseInt(valor);
+    if (isNaN(valor)) {
+      return true;
+    }
+    return false;
+  }
 
-  // haveMoneyError(row: IVal) {
-  //   if (row.attribute === 'MONEDA') {
-  //     if (
-  //       this.good.goodClassNumber === 62 &&
-  //       row.value != 'MN' &&
-  //       row.value != 'USD'
-  //     ) {
-  //       return 'El numerario solo acepta Moneda Nacional o dólares';
-  //     } else if (this.good.goodClassNumber === 1424 && row.value != 'MN') {
-  //       return 'El numerario solo acepta Moneda Nacional';
-  //     } else if (this.good.goodClassNumber === 1426 && row.value != 'USD') {
-  //       return 'El numerario solo acepta Dólares (USD)';
-  //     } else if (this.good.goodClassNumber === 1590 && row.value != 'EUR') {
-  //       return 'El numerario solo acepta Euros (EUR)';
-  //     }
-  //   }
-  //   return '';
-  // }
+  isFloat(valor: any) {
+    var RE = /^\d*(\.\d{1})?\d{0,3}$/;
+    if (RE.test(valor)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 
-  // haveErrorRequired(row: IVal) {
-  //   return (
-  //     row.required && (!row.value || (row.value && row.value.trim() == ''))
-  //   );
-  // }
+  isAddCat(valor: any) {
+    let re = new RegExp(`^((?!(@|#|%)).)*$`);
+    if (re.test(valor)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  isCatWeb(valor: any) {
+    let re = new RegExp(`^((?!(@|#|%|:|\\|)).)*$`);
+    if (re.test(valor)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  isNormal(valor: any) {
+    let re = new RegExp('^((?!(@|#|%|&|:|/|\\|)).)*$');
+    if (re.test(valor)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  haveNumericError(row: IVal) {
+    return row.dataType === 'N' && this.notInt(row.value);
+  }
+
+  haveFloatError(row: IVal) {
+    return row.dataType === 'F' && !this.isFloat(row.value);
+  }
+
+  haveMoneyError(row: IVal) {
+    if (row.attribute === 'MONEDA') {
+      if (
+        this.good.goodClassNumber === 62 &&
+        row.value != 'MN' &&
+        row.value != 'USD'
+      ) {
+        return 'El numerario solo acepta Moneda Nacional o dólares';
+      } else if (this.good.goodClassNumber === 1424 && row.value != 'MN') {
+        return 'El numerario solo acepta Moneda Nacional';
+      } else if (this.good.goodClassNumber === 1426 && row.value != 'USD') {
+        return 'El numerario solo acepta Dólares (USD)';
+      } else if (this.good.goodClassNumber === 1590 && row.value != 'EUR') {
+        return 'El numerario solo acepta Euros (EUR)';
+      }
+    }
+    return '';
+  }
+
+  haveErrorRequired(row: IVal) {
+    return (
+      row.required && (!row.value || (row.value && row.value.trim() == ''))
+    );
+  }
 
   // classValue(row: IVal) {
   //   return  this.haveError(row);

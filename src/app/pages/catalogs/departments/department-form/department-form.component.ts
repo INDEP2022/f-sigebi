@@ -26,6 +26,7 @@ export class DepartmentFormComponent extends BasePage implements OnInit {
   edit: boolean = false;
   delegations = new DefaultSelect();
   subdelegations = new DefaultSelect();
+  delegacionId: any;
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
@@ -108,27 +109,37 @@ export class DepartmentFormComponent extends BasePage implements OnInit {
       ],
       phaseEdo: [
         null,
-        [Validators.required, Validators.pattern(POSITVE_NUMBERS_PATTERN)],
+        [
+          Validators.required,
+          Validators.maxLength(1),
+          Validators.pattern(POSITVE_NUMBERS_PATTERN),
+        ],
       ],
     });
     if (this.department != null) {
       this.edit = true;
+
       this.departmentForm.patchValue(this.department);
       let numSubDelegation = this.department.numSubDelegation as ISubdelegation;
       console.log('consola 1', this.departmentForm.value);
       this.departmentForm.controls['numSubDelegation'].setValue(
         numSubDelegation.id
       );
+      this.delegacionId = this.department.numDelegation;
       this.getDelegationsId(
         new ListParams(),
         this.departmentForm.controls['numDelegation'].value
       );
-      this.getSubdelegations(
-        new ListParams(),
-        this.departmentForm.controls['numDelegation'].value
-      );
+      this.getSubdelegations(new ListParams());
+      this.departmentForm.controls['dsarea'].disable();
+      this.departmentForm.controls['numDelegation'].disable();
+      this.departmentForm.controls['numSubDelegation'].disable();
+      this.departmentForm.controls['id'].disable();
     }
-    this.getDelegations(new ListParams());
+    setTimeout(() => {
+      this.getDelegations(new ListParams());
+    }, 1000);
+
     // this.getSubdelegations(new ListParams);
   }
 
@@ -136,10 +147,14 @@ export class DepartmentFormComponent extends BasePage implements OnInit {
     this.departmentService.getDelegationsCatalog(params).subscribe({
       next: data => {
         this.delegations = new DefaultSelect(data.data, data.count);
-        console.log('consola 2', data.data);
+      },
+      error: () => {
+        this.delegations = new DefaultSelect();
+        this.loading = false;
       },
     });
   }
+
   getDelegationsId(params: ListParams, id: any) {
     params['filter.id'] = `$eq:${id}`;
     this.departmentService.getDelegationsCatalog(params).subscribe({
@@ -147,22 +162,56 @@ export class DepartmentFormComponent extends BasePage implements OnInit {
         this.delegations = new DefaultSelect(data.data, data.count);
         console.log('consola 3', data.data);
       },
+      error: () => {
+        this.delegations = new DefaultSelect();
+        this.loading = false;
+      },
     });
   }
-  getSubdelegations(params: ListParams, id?: any) {
-    if (id) {
-      params['filter.delegationDetail.id'] = `$eq:${id}`;
+  getSubdelegations(params: ListParams) {
+    if (this.delegacionId) {
+      params['filter.delegationDetail.id'] = `$eq:${this.delegacionId}`;
     }
     this.departmentService.getSubdelegations(params).subscribe({
       next: data => {
         this.subdelegations = new DefaultSelect(data.data, data.count);
         console.log('consola 5', data.data);
       },
+      error: error => {
+        console.log(error);
+        this.subdelegations = new DefaultSelect();
+      },
     });
   }
   onSubDelegation(data: any) {
-    console.log('consola 4', data);
-    this.getSubdelegations(new ListParams(), data.id);
+    //console.log(data);
+
+    if (data === null || data === undefined) {
+      this.departmentForm.controls['numSubDelegation'].setValue(null);
+    } else {
+      this.delegacionId = data.id;
+      const params = new ListParams();
+      params['filter.delegationDetail.id'] = `$eq:${this.delegacionId}`;
+      this.departmentService.getSubdelegations(params).subscribe({
+        next: resp => {
+          console.log(resp);
+          this.subdelegations = new DefaultSelect(resp.data, resp.count);
+        },
+        error: error => {
+          console.log(error);
+          this.subdelegations = new DefaultSelect();
+        },
+      });
+    }
+    /*for (const controlName in this.departmentForm.controls) {
+      if (this.departmentForm.controls.hasOwnProperty(controlName)) {
+        if (controlName != 'numDelegation') {
+          this.departmentForm.controls['numSubDelegation'].setValue(null);
+        }
+      }
+    }*/
+    //console.log('consola 4', data);
+    //this.getSubdelegations(new ListParams(), data.id);
   }
   close() {
     this.modalRef.hide();
@@ -174,7 +223,7 @@ export class DepartmentFormComponent extends BasePage implements OnInit {
 
   create() {
     this.loading = true;
-    this.departmentService.create(this.departmentForm.value).subscribe({
+    this.departmentService.create(this.departmentForm.getRawValue()).subscribe({
       next: data => this.handleSuccess(),
       error: error => (this.loading = false),
     });
@@ -182,10 +231,12 @@ export class DepartmentFormComponent extends BasePage implements OnInit {
 
   update() {
     this.loading = true;
-    this.departmentService.update4(this.departmentForm.value).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
-    });
+    this.departmentService
+      .update4(this.departmentForm.getRawValue())
+      .subscribe({
+        next: data => this.handleSuccess(),
+        error: error => (this.loading = false),
+      });
   }
 
   handleSuccess() {

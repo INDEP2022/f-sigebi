@@ -6,59 +6,35 @@
     <form class="form-material" [formGroup]="regionalDelegationForm">
       <div class="row">
         <div class="col-md-12">
-          <form-field
-            [control]="regionalDelegationForm.get('description')"
-            label="Descripci&oacute;n">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="description" />
+          <form-field [control]="regionalDelegationForm.get('description')" label="Descripci&oacute;n">
+            <input type="text" class="form-control" formControlName="description" />
           </form-field>
         </div>
       </div>
       <div class="row pt-5">
         <div class="col-md-4">
-          <form-field
-            [control]="regionalDelegationForm.get('idGeographicZona')">
-            <ngx-select
-              (fetchItems)="getGeoZone($event)"
-              [form]="regionalDelegationForm"
-              [data]="selectGeoZone"
-              bindLabel="id"
-              [searchable]="true"
-              label="Id zona geogr&aacute;fica"
-              control="idGeographicZona"
-              (change)="fillSelectZone()">
+          <form-field [control]="regionalDelegationForm.get('idGeographicZona')">
+            <ngx-select (fetchItems)="getGeoZone($event)" [form]="regionalDelegationForm" [data]="selectGeoZone"
+              value="id" bindLabel="description" [searchable]="true" label="Id Zona Geogr&aacute;fica"
+              control="idGeographicZona" (change)="fillSelectZone()">
             </ngx-select>
           </form-field>
         </div>
         <div class="col-md-8">
-          <form-field
-            [control]="regionalDelegationForm.get('regionalDelegate')"
-            label="Delegado Regional">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="regionalDelegate" />
+          <form-field [control]="regionalDelegationForm.get('regionalDelegate')" label="Delegado Regional">
+            <input type="text" class="form-control" formControlName="regionalDelegate" />
           </form-field>
         </div>
       </div>
       <!-- ------ -->
       <div class="row pt-5">
         <div class="col-md-8">
-          <form-field
-            [control]="regionalDelegationForm.get('officeAddress')"
-            label="Domicilio de la oficina">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="officeAddress" />
+          <form-field [control]="regionalDelegationForm.get('officeAddress')" label="Domicilio de la Oficina">
+            <input type="text" class="form-control" formControlName="officeAddress" />
           </form-field>
         </div>
         <div class="col-md-4">
-          <form-field
-            [control]="regionalDelegationForm.get('keyZone')"
-            label="Clave de la zona">
+          <form-field [control]="regionalDelegationForm.get('keyZone')" label="Clave de la Zona">
             <input type="text" class="form-control" formControlName="keyZone" />
           </form-field>
         </div>
@@ -72,26 +48,14 @@
         </div>
         <div class="col-md-4">
           <form-field [control]="regionalDelegationForm.get('city')">
-            <ngx-select
-              (fetchItems)="getCity($event)"
-              [form]="regionalDelegationForm"
-              [data]="selectCity"
-              [searchable]="true"
-              bindLabel="nameCity"
-              label="Ciudad"
-              control="city"
-              (change)="fillSelectCity()">
+            <ngx-select (fetchItems)="getCity($event)" [form]="regionalDelegationForm" [data]="selectCity"
+              [searchable]="true" bindLabel="nameCity" label="Ciudad" control="city" (change)="fillSelectCity()">
             </ngx-select>
           </form-field>
         </div>
         <div class="col-md-4">
-          <form-field
-            [control]="regionalDelegationForm.get('keyState')"
-            label="Clave del estado">
-            <input
-              type="text"
-              class="form-control disabled"
-              formControlName="keyState" />
+          <form-field [control]="regionalDelegationForm.get('keyState')" label="Clave del Estado">
+            <input type="text" class="form-control disabled" formControlName="keyState" />
           </form-field>
         </div>
       </div>
@@ -100,10 +64,7 @@
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <confirm-button
-          [disabled]="regionalDelegationForm.invalid"
-          [loading]="loading"
-          (confirm)="confirm()">
+        <confirm-button [disabled]="regionalDelegationForm.invalid" [loading]="loading" (confirm)="confirm()">
         </confirm-button>
       </div>
       <div class="m-3">

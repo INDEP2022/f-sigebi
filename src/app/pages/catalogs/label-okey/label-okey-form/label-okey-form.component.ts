@@ -1,6 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import {
+  AbstractControl,
+  AsyncValidatorFn,
+  FormBuilder,
+  Validators,
+} from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { delay, map, of } from 'rxjs';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { ILabelOKey } from 'src/app/core/models/catalogs/label-okey.model';
 import { LabelOkeyService } from 'src/app/core/services/catalogs/label-okey.service';
@@ -38,12 +44,30 @@ export class LabelOkeyFormComponent extends BasePage implements OnInit {
           Validators.maxLength(30),
           Validators.pattern(STRING_PATTERN),
         ],
+        [this.descriptionValidator()],
       ],
     });
     if (this.labelOKey != null) {
       this.edit = true;
       this.labelOkeyForm.patchValue(this.labelOKey);
+      this.descriptionValidator();
     }
+  }
+
+  private descriptionValidator(): AsyncValidatorFn {
+    return (control: AbstractControl) => {
+      const description = control.value;
+      // Simula una verificación asíncrona (reemplaza esta parte con tu lógica real)
+      return this.checkDescriptionUniqueness(description).pipe(
+        delay(500), // Simula una llamada asíncrona
+        map((isUnique: boolean) => {
+          return isUnique ? null : { duplicateDescription: true };
+        })
+      );
+    };
+  }
+  private checkDescriptionUniqueness(description: string) {
+    return of(true).pipe(delay(500));
   }
 
   confirm() {

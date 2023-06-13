@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormControl } from '@angular/forms';
+import { FormBuilder } from '@angular/forms';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { IProceedingDeliveryReception } from 'src/app/core/models/ms-proceedings/proceeding-delivery-reception';
 import {
@@ -30,7 +30,7 @@ export class ScheduledMaintenanceComponent
   implements OnInit
 {
   selecteds: IProceedingDeliveryReception[] = [];
-  limit: FormControl = new FormControl(10);
+
   constructor(
     private modalService: BsModalService,
     protected override fb: FormBuilder,
@@ -47,13 +47,7 @@ export class ScheduledMaintenanceComponent
       'paramsActaProgramaciones'
     );
     // debugger;
-    const paramsActa = localStorage.getItem(this.paramsActa);
-    if (paramsActa) {
-      const params = JSON.parse(paramsActa);
-      this.params.value.limit = params.limit;
-      this.params.value.page = params.page;
-      this.limit = new FormControl(params.limit);
-    }
+
     this.settings1 = {
       ...this.settings1,
       selectMode: 'multi',
@@ -67,16 +61,6 @@ export class ScheduledMaintenanceComponent
     };
 
     // console.log(this.settings1);
-  }
-
-  override resetView() {
-    console.log('RESET VIEW');
-    this.data.load([]);
-    this.totalItems = 0;
-    localStorage.removeItem(this.formStorage);
-    localStorage.removeItem(this.paramsActa);
-    this.limit = new FormControl(10);
-    this.columnFilters = [];
   }
 
   private showMessageProceedingsRemoved(
@@ -191,12 +175,11 @@ export class ScheduledMaintenanceComponent
             );
           },
           error: err => {
-            console.log(err);
-            let message = `No se pudo eliminar el Acta No. ${item.id}`;
+            let message = `No se pudo eliminar`;
             if (err.error.message.includes('detalle_acta_ent_recep')) {
               message = message + ` porque tiene detalles de acta`;
             }
-            this.onLoadToast('error', 'ERROR', message);
+            this.onLoadToast('error', `Acta No. ${item.id}`, message);
           },
         });
       }
@@ -238,9 +221,8 @@ export class ScheduledMaintenanceComponent
 
   selectGoodNull(good: any, self: ScheduledMaintenanceComponent) {
     console.log(good);
-    self.router.navigate(['pages/general-processes/goods-characteristics'], {
-      queryParams: { noBien: good.id },
-    });
+    localStorage.setItem('selectedBad', JSON.stringify(good));
+    self.router.navigate(['pages/general-processes/goods-characteristics']);
   }
 
   openModalActas() {

@@ -1,37 +1,50 @@
-<!-- <div [class]="haveError(row)">
+<div *ngIf="disabledTable || value.tableCd" style="padding: 0 10px">
+  {{ value.value }}
+</div>
+<div
+  class="goodCellContainer"
+  *ngIf="!disabledTable && !value.tableCd"
+  [class]="haveError(value) ? 'error' : ''">
   <input
-    *ngIf="row.dataType !== 'D' && !row.attribute.includes('FECHA')"
+    *ngIf="value.dataType !== 'D' && !value.attribute.includes('FECHA')"
     type="text"
     class="form-control"
-    [maxlength]="row.length"
-    [attr.required]="row.required"
-    [(ngModel)]="row.value" />
+    style="height: 35px"
+    [maxlength]="value.dataType === 'F' ? 42 : value.length"
+    [attr.required]="value.required"
+    [(ngModel)]="value.value"
+    (ngModelChange)="updateCell($event)" />
   <input
-    *ngIf="row.dataType === 'D' || row.attribute.includes('FECHA')"
+    *ngIf="value.dataType === 'D' || value.attribute.includes('FECHA')"
     bsDatepicker
     readonly
     class="form-control"
-    style="background-color: white"
     [maxDate]="today"
-    [maxlength]="row.dataType === 'F' ? 42 : row.length"
-    [attr.required]="row.required"
-    [(ngModel)]="row.value" />
-  <div class="errorMessage" *ngIf="haveErrorRequired(row)">
+    [attr.required]="value.required"
+    [(ngModel)]="value.value" />
+  <div class="errorMessage" *ngIf="haveErrorRequired(value)">
     El campo es obligatorio
   </div>
-  <ng-container *ngIf="row.value">
-    <div class="errorMessage" *ngIf="haveNumericError(row)">
+  <ng-container
+    *ngIf="
+      value.value &&
+      !(value.dataType === 'D' || value.attribute.includes('FECHA'))
+    ">
+    <div class="errorMessage" *ngIf="haveCaracteresEspeciales(value)">
+      El campo es inválido
+    </div>
+    <div class="errorMessage" *ngIf="haveNumericError(value)">
       El campo debe ser númerico
     </div>
-    <div class="errorMessage" *ngIf="haveFloatError(row)">
+    <div class="errorMessage" *ngIf="haveFloatError(value)">
       El campo debe ser flotante (38,4)
     </div>
-    <div class="errorMessage" *ngIf="haveMoneyError(row).length > 1">
-      {{ haveMoneyError(row) }}
+    <div class="errorMessage" *ngIf="haveMoneyError(value).length > 1">
+      {{ haveMoneyError(value) }}
     </div>
   </ng-container>
-</div> -->
-
-<div [class]="getClassColour()">
-  {{ value?.value }}
 </div>
+
+<!-- <div [class]="getClassColour()">
+  {{ value?.value }}
+</div> -->
