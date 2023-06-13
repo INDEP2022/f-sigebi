@@ -1,8 +1,8 @@
-<app-card [header]="true">
+<!--<app-card [header]="true">
   <div header>
     <div class="ch-content">
       <h5 class="title">Relaci&oacute;n de asunto&#45;dictamen</h5>
-    </div>
+   </div>
   </div>
   <div body>
     <div class="table-responsive">
@@ -13,5 +13,32 @@
         (createConfirm)="onAddConfirm($event)"
         (editConfirm)="onSaveConfirm($event)"></ng2-smart-table>
     </div>
+  </div>
+</app-card>-->
+<app-card [header]="true">
+  <div header>
+    <div class="ch-content">
+      <h5 class="title">Relaci&oacute;n de asunto&#45;dictamen</h5>
+      <div class="col-md-5 buttons">
+        <div>
+          <button
+            class="btn btn-primary active btn-sm ml-3"
+            (click)="openForm()">
+            Nuevo
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div body>
+    <div class="table-responsive">
+      <ng2-smart-table
+        [settings]="settings"
+        [source]="data"
+        (edit)="openForm($event.data)"
+        (delete)="delete($event.data)"></ng2-smart-table>
+    </div>
+    <app-pagination [params]="params" [totalItems]="totalItems">
+    </app-pagination>
   </div>
 </app-card>
