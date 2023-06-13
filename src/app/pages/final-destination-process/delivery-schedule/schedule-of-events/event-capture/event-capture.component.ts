@@ -1826,15 +1826,20 @@ export class EventCaptureComponent
   }
 
   returPreviosStatus(model: IPAAbrirActasPrograma) {
-    this.progammingServ.paRegresaEstAnterior(model).subscribe({
-      next: resp => resp,
-      error: error => error,
+    return new Promise((res, _rej) => {
+      this.progammingServ.paRegresaEstAnterior(model).subscribe({
+        next: resp => res(resp),
+        error: error => res(error.error),
+      });
     });
   }
 
   async tmpProgValidacion() {
     const filter = new FilterParams();
-    const user = this.authService.decodeToken().username;
+    const user =
+      localStorage.getItem('username') == 'sigebiadmon'
+        ? localStorage.getItem('username')
+        : localStorage.getItem('username').toLocaleUpperCase();
     filter.addFilter('valUser', user, SearchFilter.EQ);
     filter.addFilter('valMinutesNumber', this.proceeding.id, SearchFilter.EQ);
     return new Promise<ITmpProgValidation[]>((resolve, reject) => {
@@ -1963,7 +1968,9 @@ export class EventCaptureComponent
       ///// y hace este update c_STR := 'UPDATE ACTAS_ENTREGA_RECEPCION SET FOLIO_UNIVERSAL = '||TO_CHAR(n_FOLIO_UNIVERSAL)||', TESTIGO1 ='''||:BLK_TOOLBAR.TOOLBAR_USUARIO||''' WHERE NO_ACTA = '||TO_CHAR(:ACTAS_ENTREGA_RECEPCION.NO_ACTA);
       await this.UPDATE_ACTAS_ENTREGA_RECEPCION(
         this.proceeding.universalFolio,
-        this.authUserName,
+        localStorage.getItem('username') == 'sigebiadmon'
+          ? localStorage.getItem('username')
+          : localStorage.getItem('username').toLocaleUpperCase(),
         this.proceeding.id
       );
     }
@@ -2205,7 +2212,7 @@ export class EventCaptureComponent
             ? localStorage.getItem('username')
             : localStorage.getItem('username').toLocaleUpperCase(),
       };
-      this.returPreviosStatus(model);
+      await this.returPreviosStatus(model);
       //////////////////////////////// aqui va el endpoint esperado por EDWIN
       await this.insertsAndUpdate(this.proceeding.id);
       ////////////////////////////////////////

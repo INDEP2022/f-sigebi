@@ -865,10 +865,16 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
           // this.form.get('sssubtype').setValue(item.goodTypeId);
           // this.getDelegation(item.delegationNumber);
           // this.getSubdelegation(item.subDelegationNumber);
-          this.delegacion = item.delegationNumber.id ?? null;
-          this.delegation.setValue(item.delegationNumber.description);
-          this.subdelegacion = item.subDelegationNumber.id ?? null;
-          this.subdelegation.setValue(item.subDelegationNumber.description);
+          const delegacion = item.delegationNumber;
+          if (delegacion) {
+            this.delegacion = item.delegationNumber.id ?? null;
+            this.delegation.setValue(item.delegationNumber.description);
+          }
+          const subdelegacion = item.subDelegationNumber;
+          if (subdelegacion) {
+            this.subdelegacion = item.subDelegationNumber.id ?? null;
+            this.subdelegation.setValue(item.subDelegationNumber.description);
+          }
           this.getLatitudLongitud(item.goodId);
           // this.getDelegation(item.)
           this.numberClassification.setValue(item.goodClassNumber);
