@@ -34,7 +34,8 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
   valuesSign: ISignatories;
   requestInfo: IRequest;
   dataClarifications2: IChatClarifications;
-
+  idProg: number = 0;
+  receiptId: number = 0;
   src = '';
   isPdfLoaded = false;
   private pdf: PDFDocumentProxy;
@@ -105,15 +106,38 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
   userName: any[] = [];
 
   ngOnInit(): void {
+    console.log('this.typeDoc', this.idTypeDoc);
+    console.log('programming', this.idProg);
+    console.log('this.receiptId', this.receiptId);
+    if (this.idTypeDoc == 185) {
+      let linkDoc: string = `${this.urlBaseReport}Recibo_Resguardo.jasper&ID_RECIBO_RESGUARDO=${this.idReportAclara}`;
+      this.src = linkDoc;
+      console.log('URL reporte ', linkDoc);
+    }
+
+    if (this.idTypeDoc == 186) {
+      let linkDoc: string = `${this.urlBaseReport}Recibo_Resguardo.jasper&ID_RECIBO_RESGUARDO=${this.idReportAclara}`;
+      this.src = linkDoc;
+      console.log('URL reporte ', linkDoc);
+    }
+
     //this.idSolicitud = this.requestInfo.id;
-    this.idRegionalDelegation = this.requestInfo.regionalDelegationId;
+    if (this.requestInfo) {
+      this.idRegionalDelegation = this.requestInfo.regionalDelegationId;
+    }
     //Borrar firmantes existentes
     this.verificateFirm();
-
     this.signParams();
 
     //Condición para saber que ID tipo de documento lelga
     switch (this.idTypeDoc) {
+      case 103: {
+        console.log('Tipo 103, 103');
+        let linkDoc: string = `${this.urlBaseReport}Recibo_Entrega.jasper&ID_PROG=${this.idProg}&ID_RECIBO=${this.receiptId}`;
+        this.src = linkDoc;
+        console.log('URL reporte ', linkDoc);
+        break;
+      }
       case 50: {
         console.log('Tipo 50, Aclaración');
         let linkDoc: string = `${this.urlBaseReport}Dictamen_Procedencia.jasper&ID_SOLICITUD=${this.idReportAclara}&ID_TIPO_DOCTO=${this.idTypeDoc}`;
@@ -210,31 +234,33 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
   }
 
   registerSign() {
-    this.signatoriesService
-      .getSignatoriesName(this.idTypeDoc, this.idReportAclara)
-      .subscribe({
-        next: response => {
-          console.log('Existe firmante, ya no crear');
-        },
-        error: error => {
-          console.log('Si no hay firmantes, entonces crear nuevo');
-          let token = this.authService.decodeToken();
-          const formData: Object = {
-            name: token.name,
-            post: token.cargonivel1,
-            learnedType: this.idTypeDoc,
-            learnedId: this.idReportAclara, // Para los demás reportes
-          };
+    if (this.idTypeDoc && this.idReportAclara) {
+      this.signatoriesService
+        .getSignatoriesName(this.idTypeDoc, this.idReportAclara)
+        .subscribe({
+          next: response => {
+            console.log('Existe firmante, ya no crear');
+          },
+          error: error => {
+            console.log('Si no hay firmantes, entonces crear nuevo');
+            let token = this.authService.decodeToken();
+            const formData: Object = {
+              name: token.name,
+              post: token.cargonivel1,
+              learnedType: this.idTypeDoc,
+              learnedId: this.idReportAclara, // Para los demás reportes
+            };
 
-          //Asigna un firmante según el usuario logeado
-          this.signatoriesService.create(formData).subscribe({
-            next: response => {
-              this.signParams(), console.log('Firmante creado: ', response);
-            },
-            error: error => console.log('No se puede crear: ', error),
-          });
-        },
-      });
+            //Asigna un firmante según el usuario logeado
+            this.signatoriesService.create(formData).subscribe({
+              next: response => {
+                this.signParams(), console.log('Firmante creado: ', response);
+              },
+              error: error => console.log('No se puede crear: ', error),
+            });
+          },
+        });
+    }
   }
 
   signParams() {
