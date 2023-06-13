@@ -6,7 +6,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
-import { addDays, format } from 'date-fns';
+import { addDays, format, subDays } from 'date-fns';
 import * as moment from 'moment';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
@@ -887,8 +887,6 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     });
   }
 
-  validateCveAct() {}
-
   validatePreInsert(e: any) {
     let v_no_clasif_camb: number;
     let v_no_etiqueta: number;
@@ -1627,6 +1625,10 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     console.log(dataRes.id);
     console.log(dataRes.keysProceedings);
     console.log({msg: 'Respuesta fill', data: dataRes})
+    const realDate = new Date(dataRes.elaborationDate).toLocaleString("en-US", { timeZone: "GMT" })
+    console.log({msg: 'Fecha de la BD', data: new Date(new Date(dataRes.elaborationDate).toLocaleString("en-US", { timeZone: "GMT" }))})
+    console.log({msg: 'Fecha de la BD', data: dataRes.datePhysicalReception})
+    /* console.log({msg: 'Fecha de la BD pasada por New Date', data: dataRes.elaborationDate.getTime()}) */
     this.initialdisabled = true;
     this.noRequireAct1();
     this.idProceeding = dataRes.id;
@@ -1657,7 +1659,10 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
           .setValue(addDays(new Date(dataRes.dateDeliveryGood), 1));
         this.form
           .get('fecElab')
-          .setValue(addDays(new Date(dataRes.elaborationDate), 1));
+          .setValue(new Date(new Date(dataRes.elaborationDate).toLocaleString("en-US", { timeZone: "GMT" })));
+         
+        console.log({msg: 'Fecha ya guardada',data: this.form.get('fecElab').value})
+          
         this.form
           .get('fecReception')
           .setValue(addDays(new Date(dataRes.datePhysicalReception), 1));
@@ -1702,7 +1707,8 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
           .setValue(addDays(new Date(dataRes.dateDeliveryGood), 1));
         this.form
           .get('fecElab')
-          .setValue(addDays(new Date(dataRes.elaborationDate), 1));
+          .setValue(new Date('2023-05-20'));
+        console.log({msg: 'Fecha ya guardada', data: this.form.get('fecElab').value})
         this.form
           .get('fecReception')
           .setValue(addDays(new Date(dataRes.datePhysicalReception), 1));
@@ -2090,10 +2096,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
               witness2: this.form.get('recibe2').value,
               address: this.form.get('direccion').value,
               universalFolio: parseInt(this.form.get('folioEscaneo').value),
-              elaborationDate: format(
-                this.form.get('fecElab').value,
-                'yyyy-MM-dd HH:mm'
-              ),
+              elaborationDate: new Date(this.form.get('fecElab').value).getTime(),
               datePhysicalReception: format(
                 this.form.get('fecReception').value,
                 'yyyy-MM-dd HH:mm'
@@ -2148,10 +2151,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
               let newProceeding: IProccedingsDeliveryReception = {
                 keysProceedings: this.form.get('acta2').value,
                 statusProceedings: 'ABIERTA',
-                elaborationDate: format(
-                  this.form.get('fecElab').value,
-                  'yyyy-MM-dd HH:mm'
-                ),
+                elaborationDate: new Date(this.form.get('fecElab').value).getTime(),
                 datePhysicalReception: format(
                   this.form.get('fecReception').value,
                   'yyyy-MM-dd HH:mm'
@@ -2810,6 +2810,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                                       this.btnCSSAct = 'btn-success';
                                       this.idProceeding = idProcee;
                                       this.getGoodsActFn();
+                                      this.getGoodsFn() //*Agregué esto
                                       this.alert(
                                         'success',
                                         'Acta cerrada',
@@ -2900,6 +2901,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                 this.btnCSSAct = 'btn-success';
                 this.idProceeding = idProcee;
                 this.getGoodsActFn();
+                this.getGoodsFn() //*Agregué esto
                 this.alert('success', 'Acta cerrada', 'El acta fue cerrada');
                 this.inputsInProceedingClose();
               },
