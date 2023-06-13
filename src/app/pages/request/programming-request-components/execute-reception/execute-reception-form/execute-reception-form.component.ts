@@ -362,6 +362,8 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       },
       error: error => {
         this.formLoadingReceipt = false;
+        this.totalItemsReceipt = 0;
+        this.receipts = null;
       },
     });
   }
@@ -1592,7 +1594,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         callback: (data: boolean) => {
           if (data) {
             this.goodsTransportable.clear();
-            this.getReceiptsGuard();
+            this.getReceipts();
             this.getInfoGoodsProgramming();
           }
         },
@@ -1691,10 +1693,11 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           next: () => {},
         });
       });
-      const showGoods: any = await this.getFilterGood('EN_TRANSPORTABLE');
+      const showGoods: any = await this.getFilterGood('EN_RECEPCION_TMP');
       if (showGoods) {
         this.getInfoGoodsProgramming();
         this.goodIdSelect = null;
+        this.selectGood = null;
       }
     });
   }
