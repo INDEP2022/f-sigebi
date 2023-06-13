@@ -57,10 +57,16 @@
                 {{ formNotification?.get('expedientNumber').value }}
               </div>
             </div>
-            <div class="col-md-4">
-              <div>
-                <label for="">Tipo oficio&#58;</label>
+            <div [formGroup]="formJobManagement" class="col-md-4">
+              <div class="d-flex align-items-center">
+                <label class="m-0" for="">Tipo oficio&#58;</label>
                 {{ formJobManagement?.get('jobType').value }}
+                <!-- <select
+                  class="border-bottom border-left-0 border-right-0 border-top-0 p-2 px-2 py-1 w-auto"
+                  formControlName="jobType">
+                  <option selected value="INTERNO">INTERNO</option>
+                  <option value="EXTERNO">EXTERNO</option>
+                </select> -->
               </div>
             </div>
           </div>
@@ -117,8 +123,7 @@
                 [showTooltip]="true"
                 label="Destinatario"
                 (fetchItems)="getFromSelect($event)"
-                bindLabel="userAndName"
-                value="user"></ngx-select>
+                bindLabel="userAndName"></ngx-select>
             </form-field>
 
             <ng-template #templateInputAddressee>
@@ -280,7 +285,7 @@
         <ng-container *ngIf="pantallaActual == '1'">
           <div class="row pt-4">
             <form-field
-              *ngIf="pantallaActual == '1'"
+              *ngIf="isPGR == true"
               [control]="managementForm.get('justificacion')"
               class="col-md-6">
               <ngx-select
@@ -309,7 +314,7 @@
             </form-field>
           </div>
           <br /><br />
-          <div class="row pt-4" *ngIf="pantallaActual == '1'">
+          <div class="row pt-4" *ngIf="isPGR == true">
             <div class="col-md-4">
               <button
                 type="button"
@@ -320,7 +325,7 @@
             </div>
           </div>
           <br /><br />
-          <div *ngIf="pantallaOption" class="row pt-4">
+          <!-- <div *ngIf="pantallaOption" class="row pt-4">
             <div class="col-md-2">
               <form-field
                 [control]="managementForm.get('fechaAcuse')"
@@ -332,7 +337,7 @@
                   bsDatepicker />
               </form-field>
             </div>
-          </div>
+          </div> -->
         </ng-container>
         <br />
         <br />
@@ -409,7 +414,7 @@
                 </div>
               </div>
 
-              <div class="col-12">
+              <!-- <div class="col-12" *ngIf="pantallaActual == '1'">
                 <ngx-select
                   [form]="formVariables"
                   control="dictamen"
@@ -422,7 +427,7 @@
                   id="typesFilters"
                   (change)="typeSelected($event)">
                 </ngx-select>
-              </div>
+              </div> -->
               <div class="col-sm-12 col-12 col-md-12 pr-3">
                 <div class="col-md-6">
                   <div [class]="isLoadingGood ? 'table-loading' : ''">
@@ -435,11 +440,11 @@
                       [source]="dataTableGoodsJobManagement">
                     </ng2-smart-table>
                     <br />
-                    <!-- <div>
-                     <app-pagination
-                       [params]="params"
-                       [totalItems]="totalItems"></app-pagination>
-                   </div> -->
+                    <div>
+                      <app-pagination
+                        [params]="goodParams"
+                        [totalItems]="goodTotalItems"></app-pagination>
+                    </div>
                   </div>
                 </div>
                 <div class="col-md-6">
@@ -453,11 +458,11 @@
                       [source]="dataTableDocuments">
                     </ng2-smart-table>
                     <br />
-                    <!-- <div>
+                    <div>
                       <app-pagination
-                        [params]="params"
-                        [totalItems]="totalItems"></app-pagination>
-                    </div> -->
+                        [params]="docParams"
+                        [totalItems]="docTotalItems"></app-pagination>
+                    </div>
                   </div>
                 </div>
               </div>

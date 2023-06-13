@@ -95,6 +95,7 @@ export class GoodsWithRequiredInfoComponent extends BasePage implements OnInit {
           filters.map((filter: any) => {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
             filter.field == 'id'
               ? (searchFilter = SearchFilter.EQ)
               : (searchFilter = SearchFilter.ILIKE);
@@ -144,7 +145,17 @@ export class GoodsWithRequiredInfoComponent extends BasePage implements OnInit {
     console.log(data);
     //console.log(localStorage.setItem(`Task`, JSON.stringify(data)));
     // localStorage.setItem(`Task`, JSON.stringify(data));
-
+    localStorage.setItem(
+      'selectedBad',
+      JSON.stringify({
+        id: data.id.goodId,
+        motive: data.motive,
+        pair1: data.pair1,
+        pair2: data.pair2,
+        pair3: data.pair3,
+        pair4: data.pair4,
+      })
+    );
     if (data.requestId !== null && data.urlNb !== null) {
       // this.router.navigate([`/pages/general-processes/goods-characteristics`], {
       //   queryParams: { noBien: data.id.id },

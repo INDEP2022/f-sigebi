@@ -34,25 +34,36 @@
       <!-- <div class="d-inline mx-2"> -->
       <div class="col-12">
         <div class="d-inline mx-2">
-          <button
-            style="float: right"
-            [disabled]="!moreDictation"
-            type="button"
-            (click)="listDictums()"
-            tooltip="Lista Dictámenes"
-            containerClass="tooltip-style"
-            class="btn btn-primary btn-sm active mr-3">
-            <i class="bx bx-list-plus bx-sm float-icon"></i>
-          </button>
-          <button
-            style="float: right"
-            type="button"
-            (click)="newDictums()"
-            tooltip="Agregar Dictamen"
-            containerClass="tooltip-style"
-            class="btn btn-info btn-sm active ml-2 mr-2">
-            <i class="bx bx-plus bx-sm float-icon"></i>
-          </button>
+          <div class="d-inline mx-2">
+            <button
+              [disabled]="!dictNumber"
+              style="float: right"
+              type="button"
+              class="btn btn-primary btn-sm active"
+              (click)="saveDataForm()">
+              Guardar
+              <i aria-hidden="true" class="fa fa-save"></i>
+            </button>
+            <button
+              style="float: right"
+              [disabled]="!moreDictation"
+              type="button"
+              (click)="listDictums()"
+              tooltip="Lista Dictámenes"
+              containerClass="tooltip-style"
+              class="btn btn-primary btn-sm active mr-3">
+              <i class="bx bx-list-plus bx-sm float-icon"></i>
+            </button>
+            <button
+              style="float: right"
+              type="button"
+              (click)="newDictums()"
+              tooltip="Agregar Dictamen"
+              containerClass="tooltip-style"
+              class="btn btn-info btn-sm active ml-2 mr-2">
+              <i class="bx bx-plus bx-sm float-icon"></i>
+            </button>
+          </div>
         </div>
       </div>
       <!-- </div> -->
@@ -251,7 +262,7 @@
         </div>
       </div>
     </form>
-    <form [formGroup]="subtipoForm" class="container-fluid form-material">
+    <form [formGroup]="legalForm" class="container-fluid form-material">
       <div class="row">
         <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2">
           <div class="row">
@@ -343,7 +354,12 @@
           <strong> {{ di_desc_est }} </strong>
         </p>
         <app-pagination
+          *ngIf="isExp"
           [params]="params"
+          [totalItems]="totalItems"></app-pagination>
+        <app-pagination
+          *ngIf="!isExp"
+          [filterParams]="filter1"
           [totalItems]="totalItems"></app-pagination>
       </div>
     </div>
@@ -408,7 +424,7 @@
               </div>
               <div class="col-md-3">
                 <p class="text-info h5">No&#46; bien</p>
-                <p class="text-info h5">{{ idGoodSelected?.goodId }}</p>
+                <p class="text-info h5">{{ idGoodSelected?.id }}</p>
               </div>
             </div>
           </div>
@@ -453,6 +469,13 @@
               (click)="btnDeleteDictation()">
               Borrar Dictamen
             </button>
+            <!-- <button
+              class="btn btn-danger btn-sm active m-3 text-wrap w-100"
+              [disabled]="isDocsEmpty()"
+              (click)="btnDeleteDictation()"
+              [disabled]="!buttonDeleteDisabled">
+              Borrar Dictamen
+            </button> -->
           </div>
           <!-- BOTON QUE MANDA A LLAMAR A FACTJURDICTAMOFICIO -->
           <div class="col-12 text-center">

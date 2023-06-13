@@ -21,8 +21,7 @@ import { DEDUCTIVE_VERIFICATION_COLUMNS } from './deductives-verification-column
 })
 export class DeductivesVerificationListComponent
   extends BasePage
-  implements OnInit
-{
+  implements OnInit {
   deductives: IDeductiveVerification[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -101,7 +100,7 @@ export class DeductivesVerificationListComponent
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(deductive.id);
@@ -112,8 +111,7 @@ export class DeductivesVerificationListComponent
   delete(id: number) {
     this.deductiveVerificationService.remove(id).subscribe({
       next: () => {
-        this.getData(),
-          this.alert('success', 'Deductivas verificación', 'Borrado');
+        this.getData(), this.alert('success', 'Registro Eliminado', 'Borrado');
       },
     });
   }
