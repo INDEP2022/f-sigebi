@@ -32,7 +32,7 @@ export function trackerGoodToDetailProceeding(
     numberRegister: 0,
     reviewIndft: 0,
     correctIndft: 0,
-    idftUser: '',
+    idftUser: null,
     idftDate: new Date(),
     numDelegationIndft: 0,
     yearIndft: 0,
