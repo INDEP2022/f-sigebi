@@ -2042,7 +2042,6 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
 
     console.log(newProceeding) */
 
-
     if (!this.act2Valid) {
       this.alert('warning', 'Debe registrar un acta válida', '');
     } else if (!this.form.get('direccion').valid) {

@@ -1,4 +1,6 @@
 import { inject, Injectable } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { takeUntil } from 'rxjs';
 import {
   FilterParams,
   ListParams,
@@ -7,12 +9,19 @@ import { InterfacefgrService } from 'src/app/core/services/ms-interfacefgr/ms-in
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import { MJobManagementService } from 'src/app/core/services/ms-office-management/m-job-management.service';
 import { BasePage } from 'src/app/core/shared';
-
+import { IJuridicalDocumentManagementParams } from 'src/app/pages/juridical-processes/file-data-update/interfaces/file-data-update-parameters';
 @Injectable()
 export class RelatedDocumentDesahogo extends BasePage {
+  paramsGestionDictamen: IJuridicalDocumentManagementParams;
+  origin: any = null;
+  pantallaActual: string;
+
+  /* injections */
   private notificationService = inject(NotificationService);
   private interfaceFgrService = inject(InterfacefgrService);
   private mJobManagementService = inject(MJobManagementService);
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
 
   constructor() {
     super();
@@ -30,6 +39,24 @@ export class RelatedDocumentDesahogo extends BasePage {
     }
 
     return displayInputs;
+  }
+
+  getQueryParams() {
+    this.route.queryParams
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe((params: any) => {
+        console.log(params);
+        this.origin = params['origin'] ?? null;
+        this.paramsGestionDictamen.volante = params['volante'] ?? null;
+        this.paramsGestionDictamen.expediente = params['expediente'] ?? null;
+        this.paramsGestionDictamen.tipoOf = params['tipoOf'] ?? null;
+        this.paramsGestionDictamen.doc = params['doc'] ?? null;
+        this.paramsGestionDictamen.pDictamen = params['pDictamen'] ?? null;
+        this.paramsGestionDictamen.sale = params['sale'] ?? null;
+        this.paramsGestionDictamen.pGestOk = params['pGestOk'] ?? null;
+        this.paramsGestionDictamen.pllamo = params['pllamo'] ?? null; // Se agrego
+      });
+    this.pantallaActual = this.route.snapshot.paramMap.get('id');
   }
 
   getNotification(params: ListParams) {
@@ -55,23 +82,28 @@ export class RelatedDocumentDesahogo extends BasePage {
     });
   }
 
-  getMJobManagement() {
-    this.mJobManagementService.getAll().subscribe({});
+  getMJobManagement(params: ListParams) {
+    return new Promise((resolve, reject) => {
+      this.mJobManagementService.getAll(params).subscribe({
+        next: resp => {
+          resolve(resp);
+        },
+        error: error => {
+          resolve(null);
+        },
+      });
+    });
   }
 
-  pupBienDoc(paramsGestionDictamen: any) {
+  async pupBienDoc(paramsGestionDictamen: any) {
+    const volante = paramsGestionDictamen.volante;
+    const params = new ListParams();
+    params[`filter.flyerNumber`] = `$eq:${volante}`;
+    const m_job_management = await this.getMJobManagement(params);
+
     if (paramsGestionDictamen.doc === 'N') {
       this.onLoadToast('info', 'Este oficio no lleva Documentos', '');
       return;
     }
-
-    /*if (this.m_job_management.status_of === 'ENVIADO') {
-      this.onLoadToast(
-        'info',
-        'El oficio ya está enviado, no pude ser actualizado',
-        ''
-      );
-      return;
-    }*/
   }
 }

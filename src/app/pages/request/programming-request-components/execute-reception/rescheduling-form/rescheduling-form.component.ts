@@ -63,8 +63,8 @@ export class ReschedulingFormComponent extends BasePage implements OnInit {
       const formData: Object = {
         id: item.id,
         goodId: item.goodId,
-        goodStatus: 'EN_PROGRAMACION_TMP',
-        programmationStatus: 'EN_PROGRAMACION_TMP',
+        goodStatus: 'EN_PROGRAMACION',
+        programmationStatus: 'EN_PROGRAMACION',
         reasonCancReprog: this.form.get('reason').value,
       };
 
@@ -74,7 +74,7 @@ export class ReschedulingFormComponent extends BasePage implements OnInit {
           const formData: Object = {
             programmingId: this.programming.id,
             goodId: item.id,
-            status: 'EN_PROGRAMACION_TMP',
+            status: 'EN_PROGRAMACION',
           };
           this.programmingGoodService
             .updateGoodProgramming(formData)

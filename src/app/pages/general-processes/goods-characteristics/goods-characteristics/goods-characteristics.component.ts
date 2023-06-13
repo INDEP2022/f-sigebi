@@ -268,7 +268,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     this.loading = true;
     this.params.value.limit = 1;
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(params => {
-      console.log(params);
+      // console.log(params);
       if (this.count > 0) this.searchGood(true);
       this.count++;
     });
@@ -314,19 +314,17 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
           this.origin3 = param['origin3'] ?? null;
           this.TIPO_PROC = param['TIPO_PROC'] ?? null;
           this.NO_INDICADOR = param['NO_INDICADOR'] ?? null;
-        } else {
-          const selectedBadString = localStorage.getItem('selectedBad');
-          if (selectedBadString) {
-            this.selectedBad = JSON.parse(selectedBadString);
-            console.log(this.selectedBad);
+        }
+        const selectedBadString = localStorage.getItem('selectedBad');
+        if (selectedBadString) {
+          this.selectedBad = JSON.parse(selectedBadString);
+          console.log(this.selectedBad);
+          if (!this.origin) this.origin = '1';
+          console.log(this.origin);
 
-            this.origin = '1';
-            console.log(this.origin);
-
-            // this.selectTab();
-            this.numberGood.setValue(this.selectedBad.id);
-            this.searchGood();
-          }
+          // this.selectTab();
+          this.numberGood.setValue(this.selectedBad.id);
+          this.searchGood();
         }
         // this.goodService.getById2(param['noBien']).subscribe({
         //   next: data => {
@@ -420,7 +418,10 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
       }
     }
     console.log(body);
-    await this.preUpdate();
+    const preUpdateValid = await this.preUpdate();
+    if (!preUpdateValid) {
+      return;
+    }
     if (this.selectedBad) {
       this.attribGoodBadService
         .remove(this.selectedBad)
@@ -865,10 +866,16 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
           // this.form.get('sssubtype').setValue(item.goodTypeId);
           // this.getDelegation(item.delegationNumber);
           // this.getSubdelegation(item.subDelegationNumber);
-          this.delegacion = item.delegationNumber.id ?? null;
-          this.delegation.setValue(item.delegationNumber.description);
-          this.subdelegacion = item.subDelegationNumber.id ?? null;
-          this.subdelegation.setValue(item.subDelegationNumber.description);
+          const delegacion = item.delegationNumber;
+          if (delegacion) {
+            this.delegacion = item.delegationNumber.id ?? null;
+            this.delegation.setValue(item.delegationNumber.description);
+          }
+          const subdelegacion = item.subDelegationNumber;
+          if (subdelegacion) {
+            this.subdelegacion = item.subDelegationNumber.id ?? null;
+            this.subdelegation.setValue(item.subDelegationNumber.description);
+          }
           this.getLatitudLongitud(item.goodId);
           // this.getDelegation(item.)
           this.numberClassification.setValue(item.goodClassNumber);

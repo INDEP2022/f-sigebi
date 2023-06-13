@@ -11,6 +11,7 @@ export class ReceptionGoodService extends HttpService {
   private readonly receiptGuardGoods = ReceptionGoodEndpoint.ReceptionGuardGood;
   private readonly receiptRoute = ReceptionGoodEndpoint.Receipt;
   private readonly ReceiptGood = ReceptionGoodEndpoint.ReceiptGood;
+  private readonly ReceiptWitness = ReceptionGoodEndpoint.ReceiptWitness;
   constructor() {
     super();
     this.microservice = ReceptionGoodEndpoint.BasePath;
@@ -32,6 +33,10 @@ export class ReceptionGoodService extends HttpService {
     return this.post(this.receiptGuardRoute, formData);
   }
 
+  createReceiptGoodGuard(formData: Object) {
+    return this.post(this.receiptGuardGoods, formData);
+  }
+
   createReceiptGood(formData: Object) {
     return this.post(this.ReceiptGood, formData);
   }
@@ -41,5 +46,25 @@ export class ReceptionGoodService extends HttpService {
 
   createReceipt(formData: Object) {
     return this.post(this.receiptRoute, formData);
+  }
+
+  updateReceipt(formData: Object) {
+    return this.put(this.receiptRoute, formData);
+  }
+
+  updateReceiptGuard(id: number, formData: FormData) {
+    return this.put(`${this.receiptGuardRoute}/${id}`, formData);
+  }
+
+  getReceiptsWitness(params: ListParams) {
+    return this.get(`${this.ReceiptWitness}`, params);
+  }
+
+  createReceiptWitness(formData: Object) {
+    return this.post(`${this.ReceiptWitness}`, formData);
+  }
+
+  deleteReceiptWitness(formData: Object) {
+    return this.delete(`${this.ReceiptWitness}`, formData);
   }
 }
