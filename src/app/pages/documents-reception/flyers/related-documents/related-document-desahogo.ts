@@ -55,11 +55,25 @@ export class RelatedDocumentDesahogo extends BasePage {
     });
   }
 
-  getMJobManagement() {
-    this.mJobManagementService.getAll().subscribe({});
+  getMJobManagement(params: ListParams) {
+    return new Promise((resolve, reject) => {
+      this.mJobManagementService.getAll(params).subscribe({
+        next: resp => {
+          resolve(resp);
+        },
+        error: error => {
+          resolve(null);
+        },
+      });
+    });
   }
 
-  pupBienDoc(paramsGestionDictamen: any) {
+  async pupBienDoc(paramsGestionDictamen: any) {
+    const volante = paramsGestionDictamen.volante;
+    const params = new ListParams();
+    params[`filter.flyerNumber`] = `$eq:${volante}`;
+    const m_job_management = await this.getMJobManagement(params);
+
     if (paramsGestionDictamen.doc === 'N') {
       this.onLoadToast('info', 'Este oficio no lleva Documentos', '');
       return;
