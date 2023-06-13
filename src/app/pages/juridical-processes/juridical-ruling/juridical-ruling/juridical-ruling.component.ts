@@ -71,8 +71,8 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { IGlobalVars } from 'src/app/shared/global-vars/models/IGlobalVars.model';
 import { environment } from 'src/environments/environment';
 import Swal from 'sweetalert2';
-import { ListdictumsComponent } from '../../juridical-ruling-g/juridical-ruling-g/listdictums/listdictums.component';
 import { GoodSubtype } from '../../juridical-ruling-g/juridical-ruling-g/model/good.model';
+import { ListdictumsComponent } from '../listdictums/listdictums.component';
 import { RDictaminaDocModalComponent } from '../r-dictamina-doc-modal/r-dictamina-doc-modal.component';
 /** ROUTING MODULE */
 
@@ -2420,6 +2420,7 @@ export class JuridicalRulingComponent
     v_no_of_dicta = this.dictNumber;
     v_no_volante = this.wheelNumber;
     v_ban = false;
+    let stop;
 
     if (!v_no_of_dicta) {
       this.onLoadToast('error', 'No existe dictamen a eliminar');
@@ -2482,7 +2483,7 @@ export class JuridicalRulingComponent
         `(Exp.: ${v_no_expediente} Tipo: ${v_tipo_dicta} No. Dict.: ${v_no_of_dicta} )`
       ).then(async resp => {
         if (resp.isConfirmed) {
-          let stop = false;
+          stop = false;
           cursorDoc.forEach(async good => {
             if (tipoDictaminacion == 'DESTRUCCION') {
               v_exist = await this.getVExist(
@@ -2523,14 +2524,15 @@ export class JuridicalRulingComponent
             vOfNumberDicta: v_no_of_dicta,
           };
 
-          if (!stop) return;
+          const success = await this.deteleDictation(body);
 
-          await this.deteleDictation(body);
+          if (!success) return;
 
           Swal.fire('Dictamen ha eliminado correctamente', '', 'success').then(
             () => {
               //Limpiar todo
               this.clearSearch();
+              this.getExp();
             }
           );
         }
@@ -2542,7 +2544,7 @@ export class JuridicalRulingComponent
         `(Exp.: ${v_no_expediente} Tipo: ${v_tipo_dicta} No. Dict.: ${v_no_of_dicta} )`
       ).then(async resp => {
         if (resp.isConfirmed) {
-          let stop = false;
+          stop = false;
           cursorDoc.forEach(async good => {
             v_estatus = await this.getVStatus(
               Number(good.no_bien),
@@ -2577,18 +2579,36 @@ export class JuridicalRulingComponent
             vOfNumberDicta: v_no_of_dicta,
           };
 
-          if (!stop) return;
+          if (stop) return;
 
-          await this.deteleDictation(body);
+          const sucess = await this.deteleDictation(body);
+
+          if (!sucess) return;
 
           Swal.fire('Dictamen ha eliminado correctamente', '', 'success').then(
             () => {
               this.clearSearch();
+              this.getExp();
             }
           );
         }
       });
     }
+  }
+
+  getExp() {
+    const { NO_EXP } = this.activatedRoute.snapshot.queryParams;
+
+    this.expedientServices.getById(NO_EXP).subscribe({
+      next: response => {
+        // ..Datos del expediente
+        this.isDisabledExp = true;
+        this.legalForm.get('criminalCase').setValue(response.criminalCase);
+        this.legalForm
+          .get('preliminaryInquiry')
+          .setValue(response.preliminaryInquiry);
+      },
+    });
   }
 
   async getUpdateAndDeleteHisto(goodId: number, estatus: string) {
