@@ -1006,7 +1006,30 @@ export abstract class RelateDocumentsResponse extends BasePage {
     });
   }
 
-  sendFunction_pupLaunchReport(params: ListParams): Observable<any> {
+  sendFunction_pupLaunchReport(params: Object): Observable<any> {
     return this.dictationService.pupLaunchReport(params).pipe(map(x => x.data));
+  }
+  sendFunction_getVOficTrans(params: Object): Observable<any> {
+    return this.dictationService
+      .getVOficTrans(params)
+      .pipe(map(x => x.data[0]));
+  }
+  sendFunction_nUniversalFolio(params: Object): Observable<any> {
+    return this.dictationService
+      .nUniversalFolio(params)
+      .pipe(map(x => x.data[0]));
+  }
+  sendFunction_getActnom(managementNumber: number): Observable<any> {
+    return this.dictationService
+      .getActnom(managementNumber)
+      .pipe(map(x => x.data[0]));
+  }
+  sendFunction_pupValidExtDom(wheelNumber: number): Observable<any> {
+    return this.dictationService
+      .pupValidExtDom(wheelNumber)
+      .pipe(map(x => x.data));
+  }
+  sendFunction_findOffficeNu(params: Object): Observable<any> {
+    return this.dictationService.findOffficeNu(params).pipe(map(x => x.data));
   }
 }
