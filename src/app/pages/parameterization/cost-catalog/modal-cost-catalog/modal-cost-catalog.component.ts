@@ -36,20 +36,34 @@ export class ModalCostCatalogComponent extends BasePage implements OnInit {
     this.form = this.fb.group({
       keyServices: [
         null,
-        [Validators.required, Validators.pattern(KEYGENERATION_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(KEYGENERATION_PATTERN),
+          Validators.maxLength(30),
+        ],
       ],
       descriptionServices: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(200),
+        ],
       ],
-      typeExpenditure: [null, [Validators.required]],
-      unaffordable: [null],
-      cost: [null, [Validators.required]],
+      typeExpenditure: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(4),
+        ],
+      ],
+      unaffordable: [null, Validators.maxLength(1)],
+      cost: [null, [Validators.maxLength(5)]],
       expenditure: [null],
     });
     if (this.allotment != null) {
       this.edit = true;
-      console.log(this.allotment);
       this.form.patchValue(this.allotment);
       if (this.allotment.cost) {
         this.form.get('cost').setValue('cost');

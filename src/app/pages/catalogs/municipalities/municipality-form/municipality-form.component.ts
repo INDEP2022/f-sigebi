@@ -1,6 +1,7 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import {
@@ -16,7 +17,7 @@ import { MunicipalityService } from './../../../../core/services/catalogs/munici
   styles: [],
 })
 export class MunicipalityFormComponent extends BasePage implements OnInit {
-  municipalityForm: FormGroup = new FormGroup({});
+  municipalityForm: ModelForm<IMunicipality>;
   title: string = 'Municipio';
   edit: boolean = false;
   municipality: IMunicipality;
@@ -77,8 +78,15 @@ export class MunicipalityFormComponent extends BasePage implements OnInit {
       ],
     });
     if (this.municipality != null) {
+      console.log(this.municipality);
       this.edit = true;
       this.municipalityForm.patchValue(this.municipality);
+      let firstValue = this.municipality.stateKey;
+      let secondValue = this.municipality.idMunicipality;
+      //  this.municipalityForm.controls['stateKey'].setValue(firstValue);
+      this.municipalityForm.get('stateKey').disable();
+      // this.municipalityForm.controls['idMunicipality'].setValue(secondValue);
+      this.municipalityForm.get('idMunicipality').disable();
     }
   }
 
@@ -99,13 +107,14 @@ export class MunicipalityFormComponent extends BasePage implements OnInit {
   }
 
   update() {
+    this.municipalityForm.value.idMunicipality =
+      this.municipality.idMunicipality;
+    this.municipalityForm.value.stateKey = this.municipality.stateKey;
     this.loading = true;
-    this.municipalityService
-      .update(this.municipality.idMunicipality, this.municipalityForm.value)
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
+    this.municipalityService.update(this.municipalityForm.value).subscribe({
+      next: data => this.handleSuccess(),
+      error: error => (this.loading = false),
+    });
   }
 
   handleSuccess() {
