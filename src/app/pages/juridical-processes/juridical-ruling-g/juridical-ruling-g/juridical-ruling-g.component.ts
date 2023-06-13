@@ -435,6 +435,7 @@ export class JuridicalRulingGComponent
       )
       .subscribe();
 
+
     this.params2
       .pipe(
         takeUntil(this.$unSubscribe),
@@ -1277,6 +1278,7 @@ export class JuridicalRulingGComponent
           // DELETE DICTAMINACIONES
           await this.deleteDictamen(V_NO_OF_DICTA, V_TIPO_DICTA);
 
+
           this.dictationService.deletePupDeleteDictum(object).subscribe({
             next: (value: any) => {},
             error: (err: any) => {},
@@ -1651,7 +1653,9 @@ export class JuridicalRulingGComponent
     return new Promise((resolve, reject) => {
       this.DictationXGood1Service.getAll(params).subscribe({
         next: (resp: any) => {
+
           console.log('respresprespresp', resp);
+
           const data = resp.data;
           this.loading = false;
           resolve(data);

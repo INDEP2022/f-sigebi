@@ -388,8 +388,10 @@ export class RelatedDocumentsComponent
     protected documentsService: DocumentsService,
     protected usersService: UsersService, // protected goodProcessService: GoodprocessService,
     private expedientService: ExpedientService,
+
     private relatedDocumentDesahogo: RelatedDocumentDesahogo,
     protected msOfficeManagementService: OfficeManagementService
+
   ) {
     super();
     // console.log(authService.decodeToken());
@@ -1807,6 +1809,7 @@ export class RelatedDocumentsComponent
       await this.onClickBtnDocuments();
       return;
     }
+
 
     if (this.variables.proc_doc_dic == 'S') {
       this.alert('info', 'Info', 'Los Documentos y Bienes ya fueron agregados');

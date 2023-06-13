@@ -49,6 +49,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { LegalOpinionsOfficeService } from 'src/app/pages/juridical-processes/depositary/legal-opinions-office/legal-opinions-office/services/legal-opinions-office.service';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { FlyersService } from '../../services/flyers.service';
+
 import { DialogSelectedManagementsComponent } from '../dialog-selected-managements/dialog-selected-managements.component';
 import { DocumentsFormComponent } from '../documents-form/documents-form.component';
 import {
@@ -253,6 +254,7 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
     }
     return this.notificationService.getAll(params).pipe(map(x => x.data[0]));
   }
+
 
   countManagements = 0;
   getMJobManagement(wheelNumber: string | number): Observable<IMJobManagement> {
@@ -783,6 +785,7 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
     ];
   }
 
+
   dataSelectDictation = new DefaultSelect([
     { key: 'PROCEDENCIA' },
     { key: 'DECOMISO' },
@@ -796,6 +799,7 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
       order by tipo_dictaminacion 
   */
     // const params = new ListParams();
+
     if (params['search'])
       params['filter.description'] = params['search']
         ? `$like:${params['filter.search']}`
@@ -813,6 +817,7 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
         });
         this.dataSelectDictation = new DefaultSelect(data);
       },
+
       error: err => {
         this.dataSelectDictation = new DefaultSelect([]);
       },
@@ -1111,6 +1116,7 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
               auxArr.push(x.classify as string);
             }
           });
+
           this.formVariables.get('classify').setValue(auxArr.join(','));
           this.formVariables.get('classify2').setValue(auxArr.join(','));
         }
@@ -1143,6 +1149,7 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
           const auxArr: string[] = [];
           this.dataTableGoodsJobManagement.forEach(x => {
             if (x.classify) {
+
               auxArr.push(x.classify as string);
             }
           });
@@ -1221,6 +1228,7 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
             ];
           }
         });
+
       }
     });
   }

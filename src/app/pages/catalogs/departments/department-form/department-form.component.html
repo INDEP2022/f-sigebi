@@ -25,11 +25,12 @@
             <ngx-select
               [form]="departmentForm"
               control="numSubDelegation"
+              (fetchItems)="getSubdelegations($event)"
               [data]="subdelegations"
               value="id"
               bindLabel="description"
               label="Subdelegaci&oacute;n"
-              (fetchItems)="getSubdelegations($event)"></ngx-select>
+              (change)="onPhaseEdo($event)"></ngx-select>
           </form-field>
         </div>
       </div>

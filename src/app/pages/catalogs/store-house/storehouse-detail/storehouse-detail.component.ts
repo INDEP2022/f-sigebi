@@ -9,7 +9,10 @@ import { LocalityService } from 'src/app/core/services/catalogs/locality.service
 import { MunicipalityService } from 'src/app/core/services/catalogs/municipality.service';
 import { StateOfRepublicService } from 'src/app/core/services/catalogs/state-of-republic.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import {
+  POSITVE_NUMBERS_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { StorehouseService } from '../../../../core/services/catalogs/storehouse.service';
 
@@ -21,7 +24,7 @@ import { StorehouseService } from '../../../../core/services/catalogs/storehouse
 export class StorehouseDetailComponent extends BasePage implements OnInit {
   storeHouseForm: ModelForm<IStorehouse>;
   storeHouse: any;
-  title: string = 'Catálogos de Bodegas';
+  title: string = 'Catálogo de Bodega';
   edit: boolean = false;
   states = new DefaultSelect();
   municipalities = new DefaultSelect();
@@ -72,7 +75,7 @@ export class StorehouseDetailComponent extends BasePage implements OnInit {
         null,
         [Validators.pattern(STRING_PATTERN), Validators.required],
       ],
-      idEntity: [null],
+      idEntity: [null, [Validators.pattern(POSITVE_NUMBERS_PATTERN)]],
     });
     if (this.storeHouse != null) {
       console.log(this.storeHouse);

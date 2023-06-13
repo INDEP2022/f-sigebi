@@ -136,7 +136,7 @@ export class LawyerDetailComponent extends BasePage implements OnInit {
 
   handleSuccess() {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.onLoadToast('success', 'ABOGADO', `${message} Correctamente`);
+    this.onLoadToast('success', 'Abogado', `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();
