@@ -167,6 +167,8 @@ export class RelatedDocumentsComponent
   totalItems: number = 0;
   docParams = new BehaviorSubject<ListParams>(new ListParams());
   docTotalItems = 0;
+  goodParams = new BehaviorSubject<ListParams>(new ListParams());
+  goodTotalItems = 0;
   idExpediente: any = null;
   paramsGestionDictamen: IJuridicalDocumentManagementParams = {
     volante: null,
@@ -709,22 +711,17 @@ export class RelatedDocumentsComponent
         });
       }
     }
-    // this.getTypesSelectors();
+
     this.params.pipe(skip(1), takeUntil(this.$unSubscribe)).subscribe(res => {
       this.goodFilterParams('Todos');
     });
-    /*this.params
-      .pipe(
-        skip(1),
-        takeUntil(this.$unSubscribe),
-        tap(() => {
-          this.getTypesSelectors();
-          this.onLoadGoodList('Todos');
-        })
-      )
+
+    this.docParams
+      .pipe(skip(1), takeUntil(this.$unSubscribe))
       .subscribe(res => {
-        this.getGoods1(res);
-      });*/
+        this.refreshTableDocuments(res);
+      });
+
     if (this.paramsGestionDictamen.tipoOf == 'INTERNO') {
       this.showDestinatario = true;
     } else {
@@ -1025,15 +1022,12 @@ export class RelatedDocumentsComponent
   }
 
   isLoadingDocuments = false;
-  refreshTableDocuments() {
+  refreshTableDocuments(params: ListParams = new ListParams()) {
     this.isLoadingDocuments = true;
     this.getDocJobManagement().subscribe({
       next: async res => {
         const response = await res.data.map(async item => {
-          const params = new ListParams();
           params['filter.id'] = item.cveDocument;
-          params.limit = 1;
-          params.page = 1;
           const description = await firstValueFrom(
             this.getDocumentForDictation(params).pipe(map(res => res.data[0]))
           );
@@ -1043,11 +1037,14 @@ export class RelatedDocumentsComponent
             key: description.key,
           };
         });
+        debugger;
         this.dataTableDocuments = await Promise.all(response);
         this.isLoadingDocuments = false;
+        this.docTotalItems = res.count;
       },
       error: err => {
         this.isLoadingDocuments = false;
+        this.docTotalItems = 0;
       },
     });
   }
@@ -1060,14 +1057,22 @@ export class RelatedDocumentsComponent
   }
 
   async refreshTableGoodsJobManagement() {
-    const params = new ListParams();
-    params['filter.managementNumber'] =
-      this.formJobManagement.value.managementNumber;
+    //const params = new ListParams();
+    //params['filter.managementNumber'] =
+    //this.formJobManagement.value.managementNumber;
     try {
-      this.dataTableGoodsJobManagement = (
-        await this.getGoodsJobManagement(params)
-      ).data;
+      this.goodParams
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe(async data => {
+          //this.goodParams.value['filter.managementNumber'] =  this.formJobManagement.value.managementNumber;
+          data['filter.managementNumber'] =
+            this.formJobManagement.value.managementNumber;
+          const goodManagementResult = await this.getGoodsJobManagement(data);
+          this.dataTableGoodsJobManagement = goodManagementResult.data;
+          this.goodTotalItems = goodManagementResult.count;
+        });
     } catch (ex) {
+      this.goodTotalItems = 0;
       console.log(ex);
     }
   }

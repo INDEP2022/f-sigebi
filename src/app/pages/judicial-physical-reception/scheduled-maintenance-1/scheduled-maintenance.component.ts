@@ -175,12 +175,11 @@ export class ScheduledMaintenanceComponent
             );
           },
           error: err => {
-            console.log(err);
-            let message = `No se pudo eliminar el Acta No. ${item.id}`;
+            let message = `No se pudo eliminar`;
             if (err.error.message.includes('detalle_acta_ent_recep')) {
               message = message + ` porque tiene detalles de acta`;
             }
-            this.onLoadToast('error', 'ERROR', message);
+            this.onLoadToast('error', `Acta No. ${item.id}`, message);
           },
         });
       }
