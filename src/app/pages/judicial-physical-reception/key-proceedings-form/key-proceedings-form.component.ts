@@ -75,7 +75,7 @@ export class KeyProceedingsFormComponent
     super();
     this.authUser = this.authService.decodeToken().preferred_username;
     // this.authUserName = this.authService.decodeToken().name;
-    console.log(this.authUser);
+    // console.log(this.authUser);
 
     this.users = [{ value: this.authUser, title: this.authUser }];
     this.settingKeysProceedings = {
@@ -91,7 +91,7 @@ export class KeyProceedingsFormComponent
         },
       },
     };
-    console.log(this.settingKeysProceedings);
+    // console.log(this.settingKeysProceedings);
   }
 
   protected onLoadToast(icon: SweetAlertIcon, title: string, text?: string) {
@@ -431,7 +431,7 @@ export class KeyProceedingsFormComponent
   }
 
   revert() {
-    console.log(this.row, this.rowOldValue);
+    // console.log(this.row, this.rowOldValue);
     this.row = { ...this.rowOldValue };
   }
 
