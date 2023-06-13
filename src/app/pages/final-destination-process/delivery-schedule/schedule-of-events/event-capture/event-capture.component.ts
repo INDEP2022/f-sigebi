@@ -2339,7 +2339,7 @@ export class EventCaptureComponent
         }
       }
     } catch (e_EXCEPPROC) {
-      c_MENSAJE = 'Favor de Informar a Informática.';
+      c_MENSAJE = '';
       this.alert('error', 'Ha ocurrido un error', c_MENSAJE);
     }
   }
