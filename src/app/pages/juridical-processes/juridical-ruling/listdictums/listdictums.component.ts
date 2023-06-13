@@ -2,6 +2,7 @@ import { DatePipe } from '@angular/common';
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import {
   FilterParams,
   SearchFilter,
@@ -38,36 +39,47 @@ export class ListdictumsComponent extends BasePage implements OnInit {
     };
   }
 
+  params = new BehaviorSubject<FilterParams>(new FilterParams());
+  totalItems: number = 0;
   ngOnInit(): void {
-    this.checkDictum(this.noVolante_, this.noExpediente_);
+    this.params
+      .getValue()
+      .addFilter('wheelNumber', this.noVolante_, SearchFilter.EQ);
+    this.params
+      .getValue()
+      .addFilter('expedientNumber', this.noExpediente_, SearchFilter.EQ);
+    this.params
+      .getValue()
+      .addFilter('typeDict', 'DESTRUCCION', SearchFilter.EQ);
+    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe({
+      next: () => this.checkDictum(),
+    });
   }
 
-  async checkDictum(wheelNumber: any, noExpediente_: any) {
+  async checkDictum() {
     this.loading = true;
-    const params = new FilterParams();
-    params.addFilter('wheelNumber', wheelNumber, SearchFilter.EQ);
-    params.addFilter('expedientNumber', noExpediente_, SearchFilter.EQ);
-    params.addFilter('typeDict', 'DESTRUCCION', SearchFilter.EQ);
-    this.fileUpdateService.getDictation(params.getParams()).subscribe({
-      next: data => {
-        let result = data.data.map((item: any) => {
-          item['dateDicta'] = this.datePipe.transform(
-            item.dictDate,
-            'dd/MM/yyyy'
-          );
-        });
+    this.fileUpdateService
+      .getDictation(this.params.getValue().getParams())
+      .subscribe({
+        next: data => {
+          let result = data.data.map((item: any) => {
+            item['dateDicta'] = this.datePipe.transform(
+              item.dictDate,
+              'dd/MM/yyyy'
+            );
+          });
 
-        this.data1 = data.data;
+          this.data1 = data.data;
+          this.totalItems = data.count;
 
-        console.log('DATA DICTAMENES MODAL', data);
-        this.loading = false;
-      },
-      error: error => {
-        this.data1 = [];
-        this.loading = false;
-        console.log('ERR', error.error.message);
-      },
-    });
+          this.loading = false;
+        },
+        error: error => {
+          this.data1 = [];
+          this.loading = false;
+          console.log('ERR', error.error.message);
+        },
+      });
   }
 
   selectProceedings(event: any) {
