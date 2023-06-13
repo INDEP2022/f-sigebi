@@ -502,7 +502,6 @@
     <div class="row pt-2">
       <div class="col-md-12 text-center mt-4 mb-4">
         <button
-          [disabled]="!disabledButtons"
           class="btn btn-secondary btn-sm active m-3 p-1 pointer"
           type="button"
           (click)="addSelect()">
@@ -510,7 +509,6 @@
           <i class="bx bx-chevron-down bx-md"></i>
         </button>
         <button
-          [disabled]="!disabledButtons"
           class="btn btn-secondary btn-sm active m-3 p-1 pointer"
           type="button"
           (click)="addAll()">
@@ -518,7 +516,6 @@
           <i class="bx bx-chevrons-down bx-md"></i>
         </button>
         <button
-          [disabled]="!disabledButtons"
           class="btn btn-secondary btn-sm active m-3 p-1 pointer"
           type="button"
           (click)="removeAll()">
@@ -526,7 +523,6 @@
           <i class="bx bx-chevrons-up bx-md"></i>
         </button>
         <button
-          [disabled]="!disabledButtons"
           class="btn btn-secondary btn-sm active m-3 p-1 pointer"
           type="button"
           (click)="removeSelect()">
@@ -542,6 +538,11 @@
           [settings]="settings2"
           (userRowSelect)="rowsSelected($event)"
           [source]="goodsValid"></ng2-smart-table>
+        <div>
+          <app-pagination
+            [params]="params3"
+            [totalItems]="totalItems3"></app-pagination>
+        </div>
       </div>
     </div>
   </div>
@@ -581,10 +582,16 @@
                 [attr.class]="'table-bordered'"
                 [settings]="settings3"
                 [source]="documentsDictumXStateMList"></ng2-smart-table>
+              <div>
+                <app-pagination
+                  [params]="params2"
+                  [totalItems]="totalItems2"></app-pagination>
+              </div>
             </div>
+
             <div class="col-md-2 text-center">
               <p class="text-info h5">No. Bien</p>
-              <p class="text-info h4">{{ idGoodSelected }}</p>
+              <p class="text-info h5">{{ idGoodSelected }}</p>
             </div>
           </div>
         </div>
@@ -595,7 +602,7 @@
         <div class="row justify-content-center">
           <div class="col-md-6 text-align-center">
             <button
-              [disabled]="!disabledButtons"
+              [disabled]="statusDict == 'DICTAMINADO'"
               class="btn btn-info btn-sm active m-3 text-wrap w-100"
               (click)="btnDocumentos()">
               Documentos

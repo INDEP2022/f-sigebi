@@ -41,5 +41,11 @@ export enum DictationEndpoints {
   DEL6 = 'application/get-v-estatus',
   DEL7 = 'application/update-bien-delete-hist',
 
-  AplicationLaunchReport = 'application/pupLanceReport',
+  ApplicationLaunchReport = 'application/pupLanceReport',
+  ApplicationGetVOficTrans = 'application/getVOficTrans',
+  ApplicationNUniversalFolio = 'application/nUniversalFolio',
+  ApplicationGetActnom = 'application/getActnom',
+  ApplicationPupValidExtDom = 'application/pupValidExtDom',
+  ApplicationUpdateManagerTransfer = 'application/updateManagerTransfer',
+  ApplicationFindOffficeNu = 'application/findOffficeNu',
 }
