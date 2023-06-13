@@ -115,7 +115,7 @@ export class DynamicTablesService extends HttpService {
   getAllOtkeyCatWebObligModal(self?: DynamicTablesService, params?: _Params) {
     return self
       .post(
-        'dinamic-tables/get-otkey-otvalue',
+        'dinamic-tables/get-otkey-otvalue?filter.nmTablefilter.nmtabla=427',
         {
           classificationGoodNumber: self.selectedClasification,
           table: self.selectedTable,
