@@ -1,15 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
+
+import { BasePage } from 'src/app/core/shared/base-page';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { ModelForm } from 'src/app/core/interfaces/model-form';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { ISatClassification } from 'src/app/core/models/catalogs/sat-classification.model';
 import { ISatSubclassification } from 'src/app/core/models/catalogs/sat-subclassification.model';
-import { SatClassificationService } from 'src/app/core/services/catalogs/sat-classification.service';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { SATSubclassificationService } from 'src/app/core/services/catalogs/sat-subclassification.service';
-import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
-import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { SatClassificationService } from 'src/app/core/services/catalogs/sat-classification.service';
 
 @Component({
   selector: 'app-sat-subclassification-form',
@@ -18,8 +19,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 })
 export class SatSubclassificationFormComponent
   extends BasePage
-  implements OnInit
-{
+  implements OnInit {
   satSubclassificationForm: ModelForm<ISatSubclassification>;
   title: string = 'SAT Subclasificacion';
   edit: boolean = false;
@@ -39,7 +39,6 @@ export class SatSubclassificationFormComponent
   }
 
   private prepareForm() {
-    console.log(this.satSubclassification);
     this.satSubclassificationForm = this.fb.group({
       id: [null],
       nameSubClasification: [

@@ -173,8 +173,7 @@ interface IBlkProceeding {
 })
 export class EventCaptureComponent
   extends BasePage
-  implements OnInit, AfterViewInit, AfterContentInit
-{
+  implements OnInit, AfterViewInit, AfterContentInit {
   @ViewChildren(SmartDateInputHeaderDirective, { read: ElementRef })
   private itemsElements: QueryList<ElementRef>;
   _today = new Date();
@@ -705,8 +704,8 @@ export class EventCaptureComponent
     this.alert('error', 'Error', message);
   }
 
-  ngAfterContentInit(): void {}
-  ngAfterViewInit(): void {}
+  ngAfterContentInit(): void { }
+  ngAfterViewInit(): void { }
 
   async transferClick() {
     const firstDetail = this.detail[0];
@@ -889,7 +888,7 @@ export class EventCaptureComponent
   }
 
   // PUP_TOTALES_PROG
-  progTotal() {}
+  progTotal() { }
 
   // PUP_GENERA_WHERE
   createFilters() {
@@ -1102,11 +1101,9 @@ export class EventCaptureComponent
       this.global.type = 'RT';
     }
     folio.setValue(this.global.cons);
-    const cve = `${this.global.type ?? ''}/${prog.value ?? ''}/${
-      this.global.tran ?? ''
-    }/${this.global.regi ?? ''}/${user.value ?? ''}/${this.global.cons ?? ''}/${
-      year.value ?? ''
-    }/${month.value ?? ''}`;
+    const cve = `${this.global.type ?? ''}/${prog.value ?? ''}/${this.global.tran ?? ''
+      }/${this.global.regi ?? ''}/${user.value ?? ''}/${this.global.cons ?? ''}/${year.value ?? ''
+      }/${month.value ?? ''}`;
     // .slice(-2)
     if (!area.value && this.global.regi) {
       area.setValue(this.global.regi);
@@ -1261,7 +1258,7 @@ export class EventCaptureComponent
   }
 
   // CU_AREA_E
-  async getAreasE() {}
+  async getAreasE() { }
   // CU_AREA_R;
   async getAreasR() {
     return await lastValueFrom(
@@ -1664,7 +1661,7 @@ export class EventCaptureComponent
     );
   }
 
-  patchProceedingValue(proceeding: IProceedings) {}
+  patchProceedingValue(proceeding: IProceedings) { }
 
   async getProceedingType() {
     const { typeEvent } = this.registerControls;
@@ -1694,11 +1691,11 @@ export class EventCaptureComponent
     );
   }
 
-  onSubmit() {}
+  onSubmit() { }
 
-  onSubmit2() {}
+  onSubmit2() { }
 
-  search() {}
+  search() { }
 
   errorForm(message?: string) {
     if (message) {
@@ -1826,15 +1823,20 @@ export class EventCaptureComponent
   }
 
   returPreviosStatus(model: IPAAbrirActasPrograma) {
-    this.progammingServ.paRegresaEstAnterior(model).subscribe({
-      next: resp => resp,
-      error: error => error,
+    return new Promise((res, _rej) => {
+      this.progammingServ.paRegresaEstAnterior(model).subscribe({
+        next: resp => res(resp),
+        error: error => res(error.error),
+      });
     });
   }
 
   async tmpProgValidacion() {
     const filter = new FilterParams();
-    const user = this.authService.decodeToken().username;
+    const user =
+      localStorage.getItem('username') == 'sigebiadmon'
+        ? localStorage.getItem('username')
+        : localStorage.getItem('username').toLocaleUpperCase();
     filter.addFilter('valUser', user, SearchFilter.EQ);
     filter.addFilter('valMinutesNumber', this.proceeding.id, SearchFilter.EQ);
     return new Promise<ITmpProgValidation[]>((resolve, reject) => {
@@ -1963,7 +1965,9 @@ export class EventCaptureComponent
       ///// y hace este update c_STR := 'UPDATE ACTAS_ENTREGA_RECEPCION SET FOLIO_UNIVERSAL = '||TO_CHAR(n_FOLIO_UNIVERSAL)||', TESTIGO1 ='''||:BLK_TOOLBAR.TOOLBAR_USUARIO||''' WHERE NO_ACTA = '||TO_CHAR(:ACTAS_ENTREGA_RECEPCION.NO_ACTA);
       await this.UPDATE_ACTAS_ENTREGA_RECEPCION(
         this.proceeding.universalFolio,
-        this.authUserName,
+        localStorage.getItem('username') == 'sigebiadmon'
+          ? localStorage.getItem('username')
+          : localStorage.getItem('username').toLocaleUpperCase(),
         this.proceeding.id
       );
     }
@@ -2069,9 +2073,9 @@ export class EventCaptureComponent
     });
   }
 
-  PUP_ELIMINA_PDF_BD_SSF3(p_LLAVE: string, p_NO_ARCHO: number) {}
+  PUP_ELIMINA_PDF_BD_SSF3(p_LLAVE: string, p_NO_ARCHO: number) { }
 
-  PUP_CARGA_PDF_BD_SSF3(p_LLAVE: string, p_NO_ARCHO: number, p_RUTA: string) {}
+  PUP_CARGA_PDF_BD_SSF3(p_LLAVE: string, p_NO_ARCHO: number, p_RUTA: string) { }
 
   async PUP_ING_REG_FOLIO_UNIV_SSF3(
     p_NO_EXPEDIENTE: number,
@@ -2205,7 +2209,7 @@ export class EventCaptureComponent
             ? localStorage.getItem('username')
             : localStorage.getItem('username').toLocaleUpperCase(),
       };
-      this.returPreviosStatus(model);
+      await this.returPreviosStatus(model);
       //////////////////////////////// aqui va el endpoint esperado por EDWIN
       await this.insertsAndUpdate(this.proceeding.id);
       ////////////////////////////////////////
@@ -2650,6 +2654,6 @@ export class EventCaptureComponent
     }
   }
 
-  PUP_ING_CORREO_SAE() {}
-  PUP_GENERA_XML() {}
+  PUP_ING_CORREO_SAE() { }
+  PUP_GENERA_XML() { }
 }

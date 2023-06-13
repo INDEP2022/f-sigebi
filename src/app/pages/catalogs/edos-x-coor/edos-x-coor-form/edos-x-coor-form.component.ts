@@ -14,7 +14,7 @@ import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 })
 export class EdosXCoorFormComponent extends BasePage implements OnInit {
   edosXCoorForm: ModelForm<IEdosXCoor>;
-  title: string = 'Edos X Coor';
+  title: string = 'Lista de Estados por Coordinación';
   edit: boolean = false;
   edosXCoor: IEdosXCoor;
   constructor(

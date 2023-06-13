@@ -500,7 +500,7 @@ const routes: Routes = [
     path: 'edos-x-coor',
     loadChildren: async () =>
       (await import('./edos-x-coor/edos-x-coor.module')).EdosXCoorModule,
-    data: { title: 'Lista de Edos X Coor' },
+    data: { title: 'Lista de Estados por Coordinación' },
   },
   {
     path: 'station',

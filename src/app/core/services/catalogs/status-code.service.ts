@@ -33,8 +33,8 @@ export class StatusCodeService
     return this.statusCodeRepository.create(this.route, model);
   }
 
-  update(id: string | number, model: IStatusCode): Observable<Object> {
-    return this.statusCodeRepository.update(this.route, id, model);
+  newUpdate(model: IStatusCode): Observable<Object> {
+    return this.statusCodeRepository.newUpdate(this.route, model);
   }
 
   remove(id: string | number): Observable<Object> {
@@ -42,6 +42,6 @@ export class StatusCodeService
   }
 
   remove2(data: any): Observable<Object> {
-    return this.delete(this.route, data);
+    return this.delete('status-code', data);
   }
 }

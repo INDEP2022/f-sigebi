@@ -32,6 +32,7 @@ export class SaveValueFormComponent extends BasePage implements OnInit {
       id: [
         null,
         [
+          Validators.required,
           Validators.minLength(0),
           Validators.maxLength(5),
           Validators.min(0),

@@ -42,8 +42,10 @@ export class RegisterKeyOneModalComponent extends BasePage implements OnInit {
   private prepareForom() {
     this.tdescCveForm = this.fb.group({
       id: [null, []],
-
-      dsKey1: [null, [Validators.pattern(KEYGENERATION_PATTERN)]],
+      dsKey1: [
+        null,
+        [Validators.maxLength(8), Validators.pattern(KEYGENERATION_PATTERN)],
+      ],
       swFormat1: [null, [Validators.pattern(STRING_PATTERN)]],
       longMin1: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       longMax1: [null, [Validators.pattern(NUMBERS_PATTERN)]],
