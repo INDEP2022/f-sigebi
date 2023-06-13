@@ -144,7 +144,7 @@
       <h5 class="title">Bienes</h5>
       <div class="md-tabs">
         <tabset>
-          <tab heading="Recibos(0)" id="tab1">
+          <tab heading="Recibos" id="tab1">
             <div class="row">
               <ng2-smart-table
                 [attr.class]="'table-bordered'"
@@ -154,98 +154,142 @@
             </div>
 
             <div class="row pt-4">
-              <div class="d-flex">
+              <div class="justify-content-start">
                 <app-columns-select
                   [(settings)]="settingsTranGoods"></app-columns-select>
               </div>
-              <ng2-smart-table
-                [attr.class]="'table-bordered'"
-                [settings]="settingsTranGoods"
-                [source]="tranGoods">
-              </ng2-smart-table>
+              <div class="row pt-4 table-container">
+                <div class="col-md-12 table-responsive">
+                  <div [class]="loading ? 'table-loading' : ''">
+                    <ng2-smart-table
+                      [attr.class]="'table-bordered'"
+                      [settings]="settingsTranGoods"
+                      [source]="receiptGuards">
+                    </ng2-smart-table>
+                  </div>
+                </div>
+              </div>
               <app-pagination
                 [params]="params"
                 [totalItems]="totalItems"></app-pagination>
             </div>
           </tab>
+          <!-- RESGUARDO -->
+          <tab [heading]="headingGuard">
+            <div class="row pt-4">
+              <div class="d-flex">
+                <app-columns-select
+                  [(settings)]="settingsGuardGoods"></app-columns-select>
+              </div>
 
-          <tab heading="Resguardo(0)">
+              <div class="row pt-4 table-container">
+                <div class="col-md-12 table-responsive">
+                  <div [class]="loading ? 'table-loading' : ''">
+                    <ng2-smart-table
+                      [attr.class]="'table-bordered'"
+                      [settings]="settingsTranGoods"
+                      [source]="goodsGuard">
+                    </ng2-smart-table>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row pt-5">
+                <ng2-smart-table
+                  [attr.class]="'table-bordered'"
+                  [settings]="settingsReceiptsGuards"
+                  [source]="receiptGuards"
+                  (edit)="showGoodsReceipt($event.data)"
+                  (delete)="generateReceiptGuard($event.data)">
+                </ng2-smart-table>
+              </div>
+              <!-- <app-pagination
+                [params]="params"
+                [totalItems]="totalItems"></app-pagination> -->
+            </div>
+          </tab>
+          <!-- ALMACEN -->
+          <tab [heading]="headingWarehouse">
             <div class="row pt-4">
               <div class="d-flex">
                 <app-columns-select
-                  [(settings)]="settingsTranGoods"></app-columns-select>
+                  [(settings)]="settingsGuardGoods"></app-columns-select>
               </div>
-              <ng2-smart-table
-                [attr.class]="'table-bordered'"
-                [settings]="settingsTranGoods"
-                [source]="tranGoods">
-              </ng2-smart-table>
+              <div class="row pt-4 table-container">
+                <div class="col-md-12 table-responsive">
+                  <div [class]="loading ? 'table-loading' : ''">
+                    <ng2-smart-table
+                      [attr.class]="'table-bordered'"
+                      [settings]="settingsTranGoods"
+                      [source]="goodsWareh">
+                    </ng2-smart-table>
+                  </div>
+                </div>
+              </div>
               <app-pagination
                 [params]="params"
                 [totalItems]="totalItems"></app-pagination>
             </div>
           </tab>
-          <tab heading="Almacén INDEP(0)">
+          <!-- REPROGRAMACION -->
+          <tab [heading]="headingReprogramation">
             <div class="row pt-4">
               <div class="d-flex">
                 <app-columns-select
                   [(settings)]="settingsTranGoods"></app-columns-select>
               </div>
-              <ng2-smart-table
-                [attr.class]="'table-bordered'"
-                [settings]="settingsTranGoods"
-                [source]="tranGoods">
-              </ng2-smart-table>
+              <div class="row pt-4 table-container">
+                <div class="col-md-12 table-responsive">
+                  <ng2-smart-table
+                    [attr.class]="'table-bordered'"
+                    [settings]="settingsTranGoods"
+                    [source]="goodsRepro">
+                  </ng2-smart-table>
+                </div>
+              </div>
               <app-pagination
                 [params]="params"
                 [totalItems]="totalItems"></app-pagination>
             </div>
           </tab>
-          <tab heading="Reprogramación(0)">
-            <div class="row pt-4">
-              <div class="d-flex">
-                <app-columns-select
-                  [(settings)]="settingsTranGoods"></app-columns-select>
-              </div>
-              <ng2-smart-table
-                [attr.class]="'table-bordered'"
-                [settings]="settingsTranGoods"
-                [source]="tranGoods">
-              </ng2-smart-table>
-              <app-pagination
-                [params]="params"
-                [totalItems]="totalItems"></app-pagination>
+          <!-- CANCELACION -->
+          <tab [heading]="headingCancelation">
+            <div class="justify-content-start">
+              <app-columns-select
+                [(settings)]="settingsGuardGoods"></app-columns-select>
             </div>
-          </tab>
-          <tab heading="Cancelación(0)">
-            <div class="row pt-4">
-              <div class="d-flex">
-                <app-columns-select
-                  [(settings)]="settingsTranGoods"></app-columns-select>
+            <div class="row pt-4 table-container">
+              <div class="col-md-12 table-responsive">
+                <div [class]="loading ? 'table-loading' : ''">
+                  <ng2-smart-table
+                    [attr.class]="'table-bordered'"
+                    [settings]="settingsTranGoods"
+                    [source]="goodsSelect">
+                  </ng2-smart-table>
+                </div>
               </div>
+            </div>
+            <div class="row pt-5">
               <ng2-smart-table
                 [attr.class]="'table-bordered'"
-                [settings]="settingsTranGoods"
-                [source]="tranGoods">
+                [settings]="settingsReceiptsGuards"
+                [source]="receiptGuards">
               </ng2-smart-table>
-              <app-pagination
-                [params]="params"
-                [totalItems]="totalItems"></app-pagination>
             </div>
           </tab>
         </tabset>
       </div>
-    </div>
-    <div class="d-flex justify-content-center">
-      <div class="m-3">
-        <confirm-button
-          [loading]="loading"
-          (confirm)="confirm()"></confirm-button>
-      </div>
-      <div class="m-3">
-        <button type="button" class="btn btn-danger active" (click)="close()">
-          Cancelar
-        </button>
+      <div class="d-flex justify-content-center">
+        <div class="m-3">
+          <confirm-button
+            [loading]="loading"
+            (confirm)="confirm()"></confirm-button>
+        </div>
+        <div class="m-3">
+          <button type="button" class="btn btn-danger active" (click)="close()">
+            Cancelar
+          </button>
+        </div>
       </div>
     </div>
   </div>

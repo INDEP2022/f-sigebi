@@ -9,7 +9,6 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { IDrawer } from 'src/app/core/models/catalogs/drawer.model';
-import { ISafe } from 'src/app/core/models/catalogs/safe.model';
 import { DrawerService } from 'src/app/core/services/catalogs/drawer.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DrawerFormComponent } from '../drawer-form/drawer-form.component';
@@ -99,21 +98,30 @@ export class DrawersListComponent extends BasePage implements OnInit {
     this.modalService.show(DrawerFormComponent, modalConfig);
   }
 
-  showDeleteAlert(drawer: IDrawer) {
+  showDeleteAlert(drawer: any) {
     this.alertQuestion(
       'warning',
       'Eliminar',
       '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        let { noDrawer, noBobeda } = drawer;
-        const idBobeda = (noBobeda as ISafe).idSafe;
-        noBobeda = idBobeda;
-        this.drawerService.removeByIds({ noDrawer, noBobeda }).subscribe({
-          next: data => this.getDrawers(),
-          error: error => (this.loading = false),
-        });
+        this.delete(drawer.id);
       }
+    });
+  }
+
+  delete(id: number) {
+    this.drawerService.delete(id).subscribe({
+      next: response => {
+        this.alert('success', 'Gaveta', 'Borrado'), this.getDrawers();
+      },
+      error: err => {
+        this.alert(
+          'warning',
+          'Gaveta',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      },
     });
   }
 }

@@ -130,9 +130,18 @@
         [form]="formSiab"
         bindLabel="description"
         label="Delegación(es)"
-        control="delegation">
+        control="delegation"
+        [labelTemplate]="delLabel">
       </ngx-select>
     </form-field>
+
+    <ng-template #delLabel let-item="item" let-clear="clear">
+      <div class="ng-value">
+        <span class="ng-value-label" [title]="item.description">
+          {{ sliceLongName(item.description) }}
+        </span>
+      </div>
+    </ng-template>
 
     <form-field
       class="col-md-4 mt-4 {{
@@ -143,16 +152,30 @@
         [data]="transferents"
         [form]="formSiab"
         [multiple]="true"
-        (change)="getTransmitters()"
+        (change)="transferChange()"
         (fetchByParamsItems)="getTransfers($event)"
         [fetchByList]="false"
         [searchOnInit]="true"
         value="id"
         bindLabel="nameTransferent"
         label="Transferente(s)"
+        [labelTemplate]="transferLabel"
         control="transfer">
       </ngx-select>
     </form-field>
+    <ng-template #transferLabel let-item="item" let-clear="clear">
+      <div class="ng-value">
+        <span class="ng-value-label" [title]="item.nameTransferent">
+          {{ sliceLongName(item.nameTransferent) }}
+        </span>
+        <span
+          class="ng-value-icon right"
+          (click)="clear(item)"
+          aria-hidden="true"
+          >×</span
+        >
+      </div>
+    </ng-template>
     <form-field
       class="col-md-4 mt-4 {{
         siabControls.transmitter.value.length > 2 ? ' d-flex mb-3' : ''
@@ -161,16 +184,32 @@
       <ngx-select
         [data]="transmitters"
         [multiple]="true"
-        (change)="getAuthorities()"
+        [class.disabled]="formSiab.get('transfer').value?.length == 0"
+        [readonly]="formSiab.get('transfer').value?.length == 0"
+        (change)="transmitterChange()"
         (fetchByParamsItems)="getTransmitters($event)"
         [fetchByList]="false"
         [form]="formSiab"
-        value="id"
+        value="value"
         bindLabel="stationName"
         label="Emisora(s)"
-        control="transmitter">
+        control="transmitter"
+        [labelTemplate]="transmitterLabel">
       </ngx-select>
     </form-field>
+    <ng-template #transmitterLabel let-item="item" let-clear="clear">
+      <div class="ng-value">
+        <span class="ng-value-label" [title]="item.stationName">
+          {{ sliceLongName(item.stationName) }}
+        </span>
+        <span
+          class="ng-value-icon right"
+          (click)="clear(item)"
+          aria-hidden="true"
+          >×</span
+        >
+      </div>
+    </ng-template>
     <form-field
       class="col-md-4 mt-4 {{
         siabControls.authority.value.length > 2 ? ' d-flex mb-3' : ''
@@ -179,15 +218,31 @@
       <ngx-select
         [data]="authorities"
         [form]="formSiab"
+        [class.disabled]="formSiab.get('transmitter').value?.length == 0"
+        [readonly]="formSiab.get('transmitter').value?.length == 0"
         [multiple]="true"
         (fetchByParamsItems)="getAuthorities($event)"
         [fetchByList]="false"
-        value="idAuthority"
+        value="value"
         bindLabel="authorityName"
         label="Autoridad(es)"
-        control="authority">
+        control="authority"
+        [labelTemplate]="authLabel">
       </ngx-select>
     </form-field>
+    <ng-template #authLabel let-item="item" let-clear="clear">
+      <div class="ng-value">
+        <span class="ng-value-label" [title]="item.authorityName">
+          {{ sliceLongName(item.authorityName) }}
+        </span>
+        <span
+          class="ng-value-icon right"
+          (click)="clear(item)"
+          aria-hidden="true"
+          >×</span
+        >
+      </div>
+    </ng-template>
     <form-field
       *ngIf="registerControls.typeEvent.value == 'RF'"
       class="col-md-4 mt-4"

@@ -39,7 +39,7 @@ export const COLUMNS_GOOD_JOB_MANAGEMENT = {
     type: 'string',
     sort: false,
     valuePrepareFunction: (value: any) => {
-      return value?.goodId;
+      return value?.goodId || value;
     },
   },
   goods: {
@@ -50,7 +50,7 @@ export const COLUMNS_GOOD_JOB_MANAGEMENT = {
 };
 
 export const COLUMNS_DOCUMENTS = {
-  key: {
+  cveDocument: {
     title: 'CVE. Documento',
     type: 'string',
     sort: false,

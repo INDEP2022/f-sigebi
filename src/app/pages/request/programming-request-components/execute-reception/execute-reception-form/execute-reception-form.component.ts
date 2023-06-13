@@ -98,7 +98,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   selectGood: IGood[] = [];
   infoGood: IGood[] = [];
   selectGoodGuard: IGood[] = [];
-  goodIdSelect: string | number;
+  goodIdSelect: any;
   goodIdSelectGuard: string | number;
   programmingId: number = 0;
   idTransferent: any;

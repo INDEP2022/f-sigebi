@@ -4,16 +4,16 @@
   </div>
   <div body>
     <form [formGroup]="opinionForm" class="form-material">
-      <div class="row pt-5">
+      <div class="row">
         <div class="col-md-12">
           <form-field
             [control]="opinionForm.get('description')"
             label="Descripci&oacute;n">
-            <input
-              type="text"
+            <textarea
+              rows="3"
               class="form-control"
               formControlName="description"
-              maxlength="100" />
+              maxlength="100"></textarea>
           </form-field>
         </div>
       </div>

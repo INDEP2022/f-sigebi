@@ -89,6 +89,14 @@ export class DelegationService
       params
     );
   }
+  getAll3(
+    params?: ListParams | string
+  ): Observable<IListResponse<IDelegation>> {
+    return this.get<IListResponse<IDelegation>>(
+      DelegationsEndpoints.DelegationAll,
+      params
+    );
+  }
 
   create2(model: IDelegation) {
     return this.post(DelegationsEndpoints.Delegation, model);

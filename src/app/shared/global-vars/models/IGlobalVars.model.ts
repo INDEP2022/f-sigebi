@@ -33,4 +33,5 @@ export interface IGlobalVars {
   P_GEST_OK?: string | number;
   P_NO_TRAMITE?: string | number;
   REL_BIENES?: number;
+  IMP_OF?: any;
 }

@@ -119,11 +119,24 @@ export class IndicatedListComponent extends BasePage implements OnInit {
       '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        this.indicatedService.remove(indicated.id).subscribe({
-          next: data => this.getIndicated(),
-          error: error => (this.loading = false),
-        });
+        this.remove(indicated.id);
       }
     });
+  }
+
+  remove(id: number) {
+    this.indicatedService.remove(id).subscribe(
+      res => {
+        this.alert('success', 'Indiciado', 'Borrado.');
+        this.getIndicated();
+      },
+      err => {
+        this.alert(
+          'warning',
+          'Indiciado',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      }
+    );
   }
 }

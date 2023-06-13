@@ -1,20 +1,16 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">Captura de Programaci&oacute;n de Eventos</h5>
+    <h5 class="title">
+      <button class="btn btn-sm btn-return" (click)="back()">
+        <i class="bx bx-chevron-left float-icon"></i>
+        <span class="title">Captura de Programaci&oacute;n de Eventos</span>
+      </button>
+    </h5>
   </div>
 
   <div body>
     <div class="row">
-      <div class="col-md-12 d-flex justify-content-between">
-        <div>
-          <a
-            class="btn btn-primary btn-sm active"
-            [routerLink]="[
-              '/pages/judicial-physical-reception/scheduled-maintenance'
-            ]"
-            >Regresar</a
-          >
-        </div>
+      <div class="col-md-12 d-flex justify-content-end">
         <div>
           <confirm-button
             [btnSmall]="true"
@@ -34,6 +30,7 @@
             [control]="form.get('captureDate')"
             label="Fecha Captura">
             <input
+              [minDate]="_today"
               type="text"
               class="form-control"
               bsDatepicker
@@ -66,6 +63,7 @@
             <ngx-select
               [data]="eventTypes"
               [form]="form"
+              [readonly]="true"
               value="area_tramite"
               label="Tipo de Evento"
               control="typeEvent"
@@ -153,7 +151,7 @@
               [data]="users"
               [form]="form"
               value="value"
-              bindLabel="label"
+              bindLabel="value"
               label="Usuario"
               control="user">
             </ngx-select>
@@ -282,6 +280,7 @@
           [control]="startDateCtrl"
           label="Fecha de Inicio">
           <input
+            [minDate]="_today"
             (bsValueChange)="changeStartDate($event)"
             class="form-control"
             bsDatepicker
@@ -292,6 +291,7 @@
           [control]="endDateCtrl"
           label="Fecha de Fin">
           <input
+            [minDate]="_today"
             (bsValueChange)="changeEndDate($event)"
             class="form-control"
             bsDatepicker
@@ -379,7 +379,10 @@
     <div class="row mt-1">
       <div class="col-md-12 table-responsive">
         <div [class]="loading ? 'table-loading' : ''">
-          <ng2-smart-table [settings]="settings" [source]="detail">
+          <ng2-smart-table
+            [settings]="settings"
+            [source]="detail"
+            (delete)="removeDetail($event.data)">
           </ng2-smart-table>
 
           <app-pagination

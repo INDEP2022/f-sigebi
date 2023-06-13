@@ -154,6 +154,34 @@ export class DocumentsService extends HttpService {
     const route = `${DocumentsEndpoints.DocumentsForDictum}/getDescriptionByGood/${id}`;
     return this.get(route, params);
   }
+
+  getDocumentForDictation(params?: ListParams): Observable<
+    IListResponse<{
+      key: string;
+      description: string;
+      typeDictum: string;
+      numRegister: string;
+      nbOrigin: string;
+      keyDocument: any;
+    }>
+  > {
+    const route = `documents-for-dictum`;
+    return this.get(route, params);
+  }
+
+  getDocumentForDictationSearch(params?: _Params): Observable<
+    IListResponse<{
+      key: string;
+      description: string;
+      typeDictum: string;
+      numRegister: string;
+      nbOrigin: string;
+      keyDocument: any;
+    }>
+  > {
+    const route = `documents-for-dictum/search`;
+    return this.get(route, params);
+  }
   // updateClarDocImp(id: string | number, data: Object) {
   //   const route = `clarification-documents-impro/${id}`;
   //   return this.post<Inappropriateness>(route, data);

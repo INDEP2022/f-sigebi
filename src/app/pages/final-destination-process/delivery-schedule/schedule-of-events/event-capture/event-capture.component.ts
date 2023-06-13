@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import {
   AfterContentInit,
   AfterViewInit,
@@ -9,6 +10,7 @@ import {
 } from '@angular/core';
 import { FormBuilder, FormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { format } from 'date-fns';
 import {
   BehaviorSubject,
   catchError,
@@ -120,6 +122,30 @@ interface IBlkProceeding {
   templateUrl: './event-capture.component.html',
   styles: [
     `
+      .title {
+        font-size: 15px !important;
+        font-weight: 500 !important;
+        position: relative !important;
+      }
+      .btn-return {
+        color: #9d2449;
+        padding-left: 0px;
+        left: -10px;
+        position: relative;
+        display: flex;
+        align-items: center;
+        top: -20px;
+        margin-top: 5px;
+
+        > i {
+          font-size: 35px;
+        }
+
+        &:hover {
+          color: #9d2449;
+        }
+      }
+
       .r-label {
         margin-top: -14px !important;
       }
@@ -151,6 +177,7 @@ export class EventCaptureComponent
 {
   @ViewChildren(SmartDateInputHeaderDirective, { read: ElementRef })
   private itemsElements: QueryList<ElementRef>;
+  _today = new Date();
   saveLoading = false;
   eventTypes = new DefaultSelect([
     { area_tramite: 'OP', descripcion: 'Oficialía de partes' },
@@ -257,6 +284,8 @@ export class EventCaptureComponent
 
   allSelected = false;
 
+  flag = false;
+
   constructor(
     private fb: FormBuilder,
     private parameterGoodService: ParametersService,
@@ -291,6 +320,7 @@ export class EventCaptureComponent
     this.authUserName = this.authService.decodeToken().name;
     this.settings = {
       ...this.settings,
+      actions: { columnTitle: 'Acciones', delete: true, edit: false },
       columns: {
         ...COLUMNS_CAPTURE_EVENTS,
         dateapprovalxadmon: {
@@ -312,26 +342,58 @@ export class EventCaptureComponent
             this.setEndDate(instance),
         },
         ...COLUMNS_CAPTURE_EVENTS_2,
-        select: {
-          title: 'Seleccionar',
-          sort: false,
-          type: 'custom',
-          filter: false,
-          showAlways: true,
-          renderComponent: CheckboxElementComponent,
-          valuePrepareFunction: (departament: any, row: any) =>
-            this.isProceedingSelected(row),
-          onComponentInitFunction: (instance: CheckboxElementComponent) =>
-            this.proceedingSelectChange(instance),
-        },
+        // select: {
+        //   title: 'Seleccionar',
+        //   sort: false,
+        //   type: 'custom',
+        //   filter: false,
+        //   showAlways: true,
+        //   renderComponent: CheckboxElementComponent,
+        //   valuePrepareFunction: (departament: any, row: any) =>
+        //     this.isProceedingSelected(row),
+        //   onComponentInitFunction: (instance: CheckboxElementComponent) =>
+        //     this.proceedingSelectChange(instance),
+        // },
       },
-      // hideSubHeader: false,
-      actions: false,
     };
     this.activatedRoute.queryParams.subscribe(params => {
       this.global.proceedingNum = params['numeroActa'] ?? null;
       this.global.paperworkArea = params['tipoEvento'] ?? null;
     });
+  }
+
+  async removeDetail(detail: any) {
+    if (this.proceeding.statusProceedings.includes('CERRAD')) {
+      this.alert('error', 'Error', 'El programa esta cerrado');
+      return;
+    }
+
+    const response = await this.alertQuestion(
+      'question',
+      '¿Estas seguro?',
+      '¿Seguro que deseas eliminar el bien?'
+    );
+    if (response.isConfirmed) {
+      this.loading = true;
+      this.detailDeliveryReceptionService
+        .deleteById(detail.goodnumber, Number(this.proceeding.id))
+        .subscribe({
+          next: () => {
+            this.loading = false;
+            this.alert('success', 'Bien eliminado', '');
+            this.getDetail().subscribe();
+            this.calculateQuantities();
+          },
+          error: () => {
+            this.loading = false;
+            this.alert(
+              'error',
+              'Error',
+              'Ocurrio un error al eliminar el bien'
+            );
+          },
+        });
+    }
   }
 
   onSelectProceeding(notification: any, selected: boolean) {
@@ -362,16 +424,55 @@ export class EventCaptureComponent
   }
 
   setStartDate(instance: DateCellComponent) {
+    instance.control.addValidators(minDate(new Date()));
+    if (this.proceeding?.statusProceedings?.includes('CERRAD')) {
+      instance.disabled = true;
+    } else {
+      instance.disabled = false;
+    }
     instance.inputChange.subscribe(val => {
       const { row, value } = val;
       row.dateapprovalxadmon = value;
+      if (!row.dateapprovalxadmon && !row.dateindicatesuserapproval) {
+        return;
+      }
+      if (!instance.control.valid) {
+        return;
+      }
       this.updateDetail(row);
     });
   }
 
   setEndDate(instance: DateCellComponent) {
+    if (this.proceeding?.statusProceedings?.includes('CERRAD')) {
+      instance.disabled = true;
+    } else {
+      instance.disabled = false;
+    }
     instance.inputChange.subscribe(val => {
+      if (!val) {
+        return;
+      }
+      instance.control.clearValidators();
       const { row, value } = val;
+      if (row.dateapprovalxadmon) {
+        const min = new Date(instance.rowData.dateapprovalxadmon).toISOString();
+        instance.control.setValidators(minDate(new Date(min.slice(0, -1))));
+      }
+      instance.control.updateValueAndValidity();
+      if (!instance.control.valid) {
+        this.alert(
+          'error',
+          'Error',
+          'La fecha de finalización no puede ser menor a la fecha de inicio'
+        );
+        instance.control.setValue(null, { emitEvent: false });
+        return;
+      }
+      if (!row.dateapprovalxadmon && !row.dateindicatesuserapproval) {
+        return;
+      }
+      console.log('paso');
       row.dateindicatesuserapproval = value;
       this.updateDetail(row);
     });
@@ -397,8 +498,22 @@ export class EventCaptureComponent
     });
   }
 
+  back() {
+    this.router.navigate([
+      '/pages/judicial-physical-reception/scheduled-maintenance',
+    ]);
+  }
+
   async saveProceeding() {
+    if (!this.registerControls.captureDate.valid) {
+      this.alert('error', 'Error', 'Verifica el formulario');
+      return;
+    }
     if (this.proceeding.id) {
+      if (this.proceeding.statusProceedings.includes('CERRAD')) {
+        this.alert('error', 'Error', 'El programa esta cerrado');
+        return;
+      }
       this.updateProceeding().subscribe();
       return;
     }
@@ -469,8 +584,8 @@ export class EventCaptureComponent
     const numDelegation1 = await this.getUserDelegation();
     const dataToSave = {
       keysProceedings,
-      elaborationDate,
-      captureDate,
+      elaborationDate: format(elaborationDate, 'yyyy-MM-dd HH:mm:ss'),
+      captureDate: format(captureDate, 'yyyy-MM-dd HH:mm:ss'),
       responsible,
       numFile: formValue.numFile,
       statusProceedings,
@@ -499,24 +614,47 @@ export class EventCaptureComponent
   }
 
   changeStartDate(start: Date) {
+    this.endDateCtrl.clearValidators();
+    this.startDateCtrl.addValidators(minDate(new Date()));
     if (start) {
       this.endDateCtrl.addValidators(minDate(start));
     } else {
       this.endDateCtrl.clearValidators();
     }
+    this.endDateCtrl.updateValueAndValidity();
+    this.startDateCtrl.updateValueAndValidity();
   }
 
   changeEndDate(end: Date) {
+    this.startDateCtrl.clearValidators();
     if (end) {
       this.startDateCtrl.addValidators(maxDate(end));
+      this.startDateCtrl.addValidators(minDate(new Date()));
     } else {
       this.startDateCtrl.clearValidators();
+      this.startDateCtrl.addValidators(minDate(new Date()));
     }
-
-    this.startDateCtrl.addValidators(minDate(new Date()));
+    this.startDateCtrl.updateValueAndValidity();
+    this.endDateCtrl.updateValueAndValidity();
   }
 
   validateDates() {
+    if (!this.proceeding.id) {
+      this.alert('error', 'Error', 'No hay un programa');
+      return;
+    }
+    if (this.detail.length == 0) {
+      this.alert('error', 'Error', 'No hay bienes agregados');
+      return;
+    }
+    if (this.proceeding?.statusProceedings?.includes('CERRAD')) {
+      this.alert('error', 'Error', 'El programa esta cerrado');
+      return;
+    }
+    if (!this.startDateCtrl.valid || !this.endDateCtrl.valid) {
+      this.alert('error', 'Error', 'Verifique las fechas');
+      return;
+    }
     const start = this.startDateCtrl.value;
     const end = this.endDateCtrl.value;
     if (!start) {
@@ -539,6 +677,8 @@ export class EventCaptureComponent
         next: data => {
           this.alert('success', 'Fechas actualizadas', '');
           const params = new FilterParams();
+          this.startDateCtrl.setValue(null, { emitEvent: false });
+          this.endDateCtrl.setValue(null, { emitEvent: false });
           this.params.next(params);
         },
         error: error => {
@@ -713,16 +853,16 @@ export class EventCaptureComponent
     let continueProcess = false;
     if (this.blkCtrl.goodQuantity > 0) {
       const response = await this.alertQuestion(
-        'warning',
-        'Advertencia',
-        'La asignación de bienes ya se ha realizado, ¿se ejecuta nuevamente?'
+        'question',
+        'La asignación de bienes ya se ha realizado',
+        '¿Se ejecuta nuevamente?'
       );
       continueProcess = response.isConfirmed;
     } else {
       const response = await this.alertQuestion(
-        'warning',
-        'Advertencia',
-        '¿Quiere continuar con el proceso?'
+        'question',
+        '¿Quiere continuar con el proceso?',
+        ''
       );
       continueProcess = response.isConfirmed;
     }
@@ -774,15 +914,17 @@ export class EventCaptureComponent
       transmitter,
       authority,
     } = this.formSiab.value;
+    console.log({ delegation });
     const body = {
       startDate: initialDate,
       endDate: finalDate,
       processingArea: typeEvent,
-      steeringWheel: flyer,
-      proceedings: expedient,
-      opinion: dictumCve,
-      coordination: delegation.join(','),
-      program: programed,
+      steeringWheel: flyer ? `${flyer}` : null,
+      proceedings: expedient ? `${expedient}` : null,
+      opinion: dictumCve ? `'${dictumCve}'` : null,
+      coordination:
+        delegation.length > 0 ? delegation.map(d => d.id).join(',') : null,
+      program: programed ? `${programed}` : null,
       cdonacKey: cdonacCve,
       idLot: lot,
       doneeNumber: donatNumber,
@@ -791,9 +933,9 @@ export class EventCaptureComponent
       storeNumber: warehouse,
       iniAutDate: autoInitialDate,
       endAutDate: autoFinalDate,
-      transferee: transfer.join(','),
-      station: transmitter.join(','),
-      authority: authority.join(','),
+      transferee: transfer.length > 0 ? transfer.join(',') : null,
+      station: transmitter.length > 0 ? `(${transmitter.join('),(')})` : null,
+      authority: authority.length > 0 ? `(${authority.join('),(')})` : null,
     };
 
     this.fIndicaService.pupGenerateWhere(body).subscribe(res => {
@@ -810,17 +952,17 @@ export class EventCaptureComponent
       .pupUpdate(typeEvent.value, expedient, this.proceeding.id)
       .subscribe({
         next: res => {
-          if (res.data.length > 0) {
+          this.loading = false;
+          if (res?.registros > 0) {
             this.alert('success', 'Bienes cargados correctamente', '');
             this.formSiab = this.fb.group(new CaptureEventSiabForm());
           } else {
-            this.alert('info', 'No se encontraron bienes para agregar', '');
+            this.alert('warning', 'No se encontraron bienes para agregar', '');
           }
-          this.loading = false;
           const params = new FilterParams();
           this.params.next(params);
         },
-        error: error => {
+        error: () => {
           this.loading = false;
         },
       });
@@ -902,6 +1044,7 @@ export class EventCaptureComponent
     this.global.type = null;
     this.global.tran = null;
     this.global.regi = null;
+
     const splitedArea = keysProceedings?.value?.split('/');
     const _area = splitedArea ? splitedArea[3] : null;
     const cons = splitedArea ? splitedArea[5] : null;
@@ -933,6 +1076,7 @@ export class EventCaptureComponent
 
     this.validateTransfer(type.value ?? 'RT', transference.value);
 
+    console.log({ area, _area });
     if (!area.value) {
       if (!_area) {
         this.global.regi = null;
@@ -942,10 +1086,17 @@ export class EventCaptureComponent
         this.global.cons = cons;
       }
     } else {
-      this.global.regi = area.value;
-      const indicator = await this.getProceedingType();
-      const _folio = await this.getFolio(indicator.certificateType);
-      this.global.cons = `${_folio}`.padStart(5, '0');
+      if (cons) {
+        this.global.regi = area.value;
+        area.setValue(this.global.regi);
+        this.global.cons = cons;
+        folio.setValue(this.global.cons);
+      } else {
+        this.global.regi = area.value;
+        const indicator = await this.getProceedingType();
+        const _folio = await this.getFolio(indicator.certificateType);
+        this.global.cons = `${_folio}`.padStart(5, '0');
+      }
     }
     if (!this.global.type) {
       this.global.type = 'RT';
@@ -957,6 +1108,15 @@ export class EventCaptureComponent
       year.value ?? ''
     }/${month.value ?? ''}`;
     // .slice(-2)
+    if (!area.value && this.global.regi) {
+      area.setValue(this.global.regi);
+    }
+    if (!transference.value && this.global.tran) {
+      transference.setValue(this.global.tran);
+      this.transfers = new DefaultSelect([
+        { value: this.global.tran, label: this.global.tran },
+      ]);
+    }
     keysProceedings.setValue(cve);
   }
 
@@ -1343,9 +1503,10 @@ export class EventCaptureComponent
           this.loading = false;
           this.blkCtrl.goodQuantity = 0;
           this.detail = [];
+          this.totalItems = 0;
           return throwError(() => error);
         }),
-        tap(res => {
+        tap(async res => {
           this.checkAll();
           this.totalItems = res.count;
           this.loading = false;
@@ -1388,8 +1549,35 @@ export class EventCaptureComponent
             }
             return { ...detail, locTrans };
           });
+          if (
+            this.detail[0]?.expedientnumber &&
+            !this.registerControls.transference.value
+          ) {
+            console.log('no hay trans guardado');
+            await this.transferClick();
+            this.updateTransfer().subscribe();
+          }
         })
       );
+  }
+
+  updateTransfer() {
+    const formValue = this.form.getRawValue();
+    const { numFile, keysProceedings, captureDate, responsible } = formValue;
+    console.log({ keysProceedings });
+
+    const data = {
+      ...this.proceeding,
+      numFile,
+      keysProceedings,
+      captureDate,
+      responsible,
+    };
+
+    return this.proceedingDeliveryReceptionService.update(
+      this.proceeding.id,
+      data as any
+    );
   }
 
   // PA_CALCULA_CANTIDADES
@@ -1470,6 +1658,10 @@ export class EventCaptureComponent
     this.calculateQuantities();
     // TODO: PEDIR TODOS LOS CAMPOS DEL DETALLE
     // this.blkCtrl.cQuantity = (this.blkCtrl.cQuantity?? 0) + this.
+    console.log(
+      this.detail[0]?.expedientnumber,
+      this.registerControls.transference.value
+    );
   }
 
   patchProceedingValue(proceeding: IProceedings) {}
@@ -1617,7 +1809,9 @@ export class EventCaptureComponent
         next: resp => {
           res(resp);
         },
-        error: error => error,
+        error: (err: HttpErrorResponse) => {
+          res(err);
+        },
       });
     });
   }
@@ -1632,15 +1826,20 @@ export class EventCaptureComponent
   }
 
   returPreviosStatus(model: IPAAbrirActasPrograma) {
-    this.progammingServ.paRegresaEstAnterior(model).subscribe({
-      next: resp => resp,
-      error: error => error,
+    return new Promise((res, _rej) => {
+      this.progammingServ.paRegresaEstAnterior(model).subscribe({
+        next: resp => res(resp),
+        error: error => res(error.error),
+      });
     });
   }
 
   async tmpProgValidacion() {
     const filter = new FilterParams();
-    const user = this.authService.decodeToken().username;
+    const user =
+      localStorage.getItem('username') == 'sigebiadmon'
+        ? localStorage.getItem('username')
+        : localStorage.getItem('username').toLocaleUpperCase();
     filter.addFilter('valUser', user, SearchFilter.EQ);
     filter.addFilter('valMinutesNumber', this.proceeding.id, SearchFilter.EQ);
     return new Promise<ITmpProgValidation[]>((resolve, reject) => {
@@ -1649,11 +1848,11 @@ export class EventCaptureComponent
           console.info(resp.data);
           resolve(resp.data);
         },
-        error: error => {
+        error: (error: HttpErrorResponse) => {
           const err: ITmpProgValidation[] = [
             {
               valmovement: 0,
-              valMessage: 'No se puede cerrar el acta',
+              valMessage: error.error.message,
               valMinutesNumber: 0,
               valUser: '',
             },
@@ -1673,8 +1872,9 @@ export class EventCaptureComponent
     let c_MENSAJE: string = null;
     let n_FOLIO_UNIVERSAL: number;
     let n_CONT: number = 0;
+    let C_DATVAL: any;
 
-    const C_DATVAL: any = await this.tmpProgValidacion();
+    console.log('Bienes ...', this.detail);
 
     if (this.detail.length <= 0) {
       this.alert('info', 'No se tienen bienes ingresados.', '');
@@ -1701,27 +1901,27 @@ export class EventCaptureComponent
           return;
         }
       }
-      await this.alertQuestion(
+      const response = await this.alertQuestion(
         'warning',
         'Abrir programación',
         `¿Está seguro de abrir la Programación ${this.proceeding.keysProceedings} ?`
-      )
-        .then(question => {
-          if (question.isConfirmed) {
-            this.openProg(C_DATVAL, n_CONT);
-          }
-        })
-        .catch(error => console.error(error));
+      );
+      if (response.isConfirmed) {
+        await this.openProg(C_DATVAL, n_CONT);
+      }
     } else {
-      /// this.alert('info','El estado del acta es diferente a CERRADO o CERRADA, no se puede abrir.');
+      const C_DATVAL: any = await this.tmpProgValidacion();
       if (C_DATVAL[0].valmovement === null) {
         C_DATVAL[0].valmovement = 0;
       }
-      if (C_DATVAL[0].valmovement === 1) {
+      if (C_DATVAL[0].valmovement === '1' || C_DATVAL[0].valmovement === 1) {
         await this.valMotodIsOne(n_CONT).then().catch();
-      } else if (C_DATVAL[0].valmovement === 0) {
+      } else if (
+        C_DATVAL[0].valmovement === '0' ||
+        C_DATVAL[0].valmovement === 0
+      ) {
         ///////// Llamar a la funcion PUP_CIERRE_PRI
-        this.PUP_CIERRE_PRI();
+        await this.PUP_CIERRE_PRI();
       }
     }
   }
@@ -1735,52 +1935,62 @@ export class EventCaptureComponent
           'No se ha firmado el oficio de programación de entrega.',
           ''
         );
-        throw new Error('FORM_TRIGGER_FAILURE');
+        return;
       }
     }
+
     if (this.proceeding.typeProceedings === 'EVENCOMER') {
-      const no_Acta: number | string = this.proceeding.id; //// :ACTAS_ENTREGA_RECEPCION.NO_ACTA
-      const message: string = await this.PUF_VERIF_COMER(no_Acta); //// esta variable se llena con lo que devuelva la funcion PUF_VERIF_COMER
+      const message: string = await this.PUF_VERIF_COMER(this.proceeding.id);
+      console.log('Noooooooooooooooooooooooooooooo');
+
       if (message !== 'OK') {
-        throw new Error('e_EXCEPPROC');
+        this.onLoadToast('error', message);
+        return;
       }
     }
+
     const model: IPACambioStatusGood = {
       P_NOACTA: Number(this.proceeding.id),
       P_AREATRA: this.registerControls.typeEvent.value,
       P_PANTALLA: 'FINDICA_0035_1',
     };
-    await this.PA_CAMBIO_ESTATUS_BIEN(model).then().catch();
-    const no_Acta: number | string = this.proceeding.id; //// :ACTAS_ENTREGA_RECEPCION.NO_ACTA
-    await this.PA_ACTUALIZA_BIENES_SIN_M(no_Acta).then().catch();
+
+    await this.PA_CAMBIO_ESTATUS_BIEN(model);
+    await this.PA_ACTUALIZA_BIENES_SIN_M(this.proceeding.id);
 
     if (this.proceeding.typeProceedings === 'EVENTREC' && n_CONT > 0) {
       await this.PUP_ING_REG_FOLIO_UNIV_SSF3(
         this.proceeding.numFile,
-        `'OFICIO DE PROGRAMACION: ${this.proceeding.keysProceedings}`,
+        `OFICIO DE PROGRAMACION: ${this.proceeding.keysProceedings}`,
         null,
         'ENTRE'
-      )
-        .then()
-        .catch();
+      );
       ///// y hace este update c_STR := 'UPDATE ACTAS_ENTREGA_RECEPCION SET FOLIO_UNIVERSAL = '||TO_CHAR(n_FOLIO_UNIVERSAL)||', TESTIGO1 ='''||:BLK_TOOLBAR.TOOLBAR_USUARIO||''' WHERE NO_ACTA = '||TO_CHAR(:ACTAS_ENTREGA_RECEPCION.NO_ACTA);
+      await this.UPDATE_ACTAS_ENTREGA_RECEPCION(
+        this.proceeding.universalFolio,
+        localStorage.getItem('username') == 'sigebiadmon'
+          ? localStorage.getItem('username')
+          : localStorage.getItem('username').toLocaleUpperCase(),
+        this.proceeding.id
+      );
     }
 
     if (this.global.paperworkArea === 'RF' && n_CONT > 0) {
       const no_Acta: number | string = this.proceeding.id; //// :ACTAS_ENTREGA_RECEPCION.NO_ACTA
-      await this.INSERT_ACTAS_CTL_NOTIF_SSF3(no_Acta, 'CERRADA');
+      // await this.INSERT_ACTAS_CTL_NOTIF_SSF3(no_Acta, 'CERRADA');
       /// AQUI HACER ESA ACTUALIZACION UPDATE_SSF3_ACTAS_PROG_DST Esperando enpoint
       //c_STR UPDATE SSF3_ACTAS_PROG_DST SET IND_ENVIO = 0 WHERE NO_ACTA = ||TO_CHAR(:ACTAS_ENTREGA_RECEPCION.NO_ACTA);
       await this.UPDATE_SSF3_ACTAS_PROG_DST(null);
-
       this.alert(
         'info',
         `Se realizó la firma y cierre del oficio (Folio Universal: ${this.proceeding.universalFolio})`,
         ''
       );
-      this.PUP_GENERA_PDF();
+      // await this.PUP_GENERA_PDF();
     } else {
-      this.alert('info', 'La programación ha sido cerrada', '');
+      this.global.paperworkArea = this.originalType;
+      await this.initForm();
+      this.alert('success', 'La programación ha sido cerrada', '');
     }
   }
 
@@ -1841,20 +2051,8 @@ export class EventCaptureComponent
       this.alert('info', 'No se encontró la ruta y URL para el PDF.', '');
       throw new Error('FORM_TRIGGER_FAILURE');
     }
-
     v_NOMBRE = this.proceeding.keysProceedings.replace('/', '-');
     v_ARCHOSAL = v_RUTA + v_NOMBRE + '.PDF';
-
-    // GENERA LISTA DE PARÁMETROS
-    /*    REPID = FIND_REPORT_OBJECT('RPROGENTREGA');
-   SET_REPORT_OBJECT_PROPERTY(REPID, REPORT_EXECUTION_MODE, BATCH);
-   SET_REPORT_OBJECT_PROPERTY(REPID, REPORT_COMM_MODE, SYNCHRONOUS);
-   SET_REPORT_OBJECT_PROPERTY(REPID, REPORT_DESTYPE, FILE);
-   SET_REPORT_OBJECT_PROPERTY(REPID, REPORT_DESNAME, "'" + v_ARCHOSAL + "'");
-   SET_REPORT_OBJECT_PROPERTY(REPID, REPORT_DESFORMAT, 'PDF');
-   SET_REPORT_OBJECT_PROPERTY(REPID, REPORT_OTHER, 'PARAMFORM=NO P_NO_ACTA=' + LTRIM(TO_CHAR(:ACTAS_ENTREGA_RECEPCION.NO_ACTA)));
-   v_REP = RUN_REPORT_OBJECT(REPID);
- */
     /* >> JACG 30/06/15 Ingresa PDF a BD */
     this.PUP_ELIMINA_PDF_BD_SSF3(this.proceeding.universalFolio, 1);
     this.PUP_CARGA_PDF_BD_SSF3(this.proceeding.universalFolio, 1, v_ARCHOSAL);
@@ -1965,15 +2163,6 @@ export class EventCaptureComponent
   }
 
   async getVCount() {
-    //// falta cambiar los filtros y la tabla
-    /* 
-    SELECT COUNT(0)
-                 INTO v_COUNT
-                 FROM SSF3_FIRMA_ELEC_DOCS
-                WHERE NATURALEZA_DOC = 'PROGRAMACION'
-                  AND NO_DOCUMENTO   = :ACTAS_ENTREGA_RECEPCION.NO_ACTA 
-                  AND TIPO_DOCUMENTO = 'EVENTREC';
-    */
     const params = new FilterParams();
     params.addFilter('expedient', this.proceeding.numFile);
     params.addFilter('typeManagement', 2);
@@ -1985,25 +2174,37 @@ export class EventCaptureComponent
     );
   }
 
-  async openProg(C_DATVAL: ITmpProgValidation[], n_CONT: number) {
+  async openProg(C_DATVAL: any, n_CONT: number) {
     const model: IPAAbrirActasPrograma = {
-      P_AREATRA: `${this.registerControls.typeEvent.value}`,
       P_NOACTA: Number(this.proceeding.id),
-      P_PANTALLA: 'FINDICA_0035_1',
       P_TIPOMOV: 1,
+      P_AREATRA: `${this.registerControls.typeEvent.value}`,
+      P_PANTALLA: 'FINDICA_0035_1',
       USUARIO:
         localStorage.getItem('username') == 'sigebiadmon'
           ? localStorage.getItem('username')
           : localStorage.getItem('username').toLocaleUpperCase(),
     };
-    await this.openMinutesProyect(model);
-    this.global.paperworkArea = this.originalType;
-    await this.initForm();
+    console.log(model);
+    const response: any = await this.openMinutesProyect(model);
+    console.log('Este es el response que necesito', response);
+    if (response.statusCode !== 200) {
+      console.log(response.error.message);
+      this.alert(
+        'error',
+        'Ha ocurrido un error',
+        response.error.message
+          ? response.error.message
+          : 'No se ha podido abrir la programación'
+      );
+      return;
+    }
+    const C_DATVAL1: any = await this.tmpProgValidacion();
     /////////////////////////////////////
-    if (C_DATVAL[0].valmovement === 1) {
+    if (C_DATVAL1[0].valmovement === '1' || C_DATVAL1[0].valmovement === 1) {
       const model: IPAAbrirActasPrograma = {
-        P_AREATRA: this.registerControls.typeEvent.value,
         P_NOACTA: Number(this.proceeding.id),
+        P_AREATRA: this.registerControls.typeEvent.value,
         P_PANTALLA: 'FINDICA_0035_1',
         P_TIPOMOV: 1,
         USUARIO:
@@ -2011,33 +2212,42 @@ export class EventCaptureComponent
             ? localStorage.getItem('username')
             : localStorage.getItem('username').toLocaleUpperCase(),
       };
-      this.returPreviosStatus(model);
+      await this.returPreviosStatus(model);
       //////////////////////////////// aqui va el endpoint esperado por EDWIN
-
-      ////////////////////////////////////////7
+      await this.insertsAndUpdate(this.proceeding.id);
+      ////////////////////////////////////////
       if (this.global.paperworkArea === 'RF' && n_CONT > 0) {
         ///////////// Hacer inset a esta tabla ACTAS_CTL_NOTIF_SSF3
         const no_Acta: number | string = this.proceeding.id; /// :ACTAS_ENTREGA_RECEPCION.NO_ACTA
-        await this.INSERT_ACTAS_CTL_NOTIF_SSF3(no_Acta, 'ABIERTA');
+        //  await this.INSERT_ACTAS_CTL_NOTIF_SSF3(no_Acta, 'ABIERTA');
       }
-
       this.blkCtrl.reopenInd = 0;
+      this.global.paperworkArea = this.originalType;
       await this.initForm();
+      this.alert('success', 'La programación ha sido abierta', '');
     } else {
-      this.alert('info', C_DATVAL[0].valMessage, '');
+      this.global.paperworkArea = this.originalType;
+      await this.initForm();
+      this.alert('info', C_DATVAL1[0].valMessage, '');
     }
   }
 
-  GET_APPLICATION_PROPERTY(currentDate: any): string {
-    return '';
+  insertsAndUpdate(actNumber: string | number) {
+    const model = {
+      actNumber,
+    };
+    return new Promise((res, _rej) => {
+      this.eventProgrammingService.massiveDeleteAndUpdate(model).subscribe({
+        next: resp => res(resp.message),
+        error: err => res(err.error.message),
+      });
+    });
   }
 
   getEstatusAct() {
     return new Promise<string>((res, rej) => {
-      //// esperar el ms de proceding
       const params: _Params = {};
       params['filter.id'] = `$eq:${this.proceeding.id}`;
-
       this.proceedingDeliveryReceptionService.getAll(params).subscribe({
         next: resp => res(resp.data[0].statusProceedings),
         error: err => rej('Error'),
@@ -2049,56 +2259,51 @@ export class EventCaptureComponent
   }
 
   PUP_DEPURA_DETALLE() {
-    return new Promise((res, rej) => {
-      this.detail.forEach(deta => {
-        if (deta) {
-        }
-      });
-    });
+    this.detail = this.detail.filter(
+      good => !this.selectedProceedings.includes(good)
+    );
   }
 
   async PUP_CIERRE_PRI() {
     let lv_VALFECP: number;
-    let lv_PANTALLA: string = this.GET_APPLICATION_PROPERTY('');
-    let lv_VALESTAC: string;
     let v_COUNT: number;
-    let c_RESP: string;
-    let n_FOLIO_UNIVERSAL: number;
-    let c_STR: string;
     let n_CONT: number = 0;
     let c_MENSAJE: string;
-    let e_EXCEPPROC: Error;
     try {
       // Valida que la llave de la programación no sea nula ni el tipo de acta (valida 3)
       if (
         this.proceeding.id === null &&
         this.proceeding.typeProceedings === null
       ) {
-        this.alert('info', 'No se tiene Programa a cerrar.', '');
+        this.alert('info', 'Información', 'No se tiene Programa a cerrar.', '');
         return;
       }
 
       // Area de Tramite no puede ser nula para cerrar una programación (valida 1)
       if (this.form.get('typeEvent').value === null) {
-        ////:BLK_CONTROL.AREA_TRAMITE preguntar donde esta esta propiedad
-        this.alert('info', 'No se ha especificado el Tipo de Evento.', '');
+        this.alert(
+          'info',
+          'Información',
+          'No se ha especificado el Tipo de Evento.',
+          ''
+        );
         return;
       }
 
       // Valida que la clave de la programación este completa (valida 2)
       if (this.PUF_VERIFICA_CLAVE()) {
         this.alert(
-          'info',
+          'error',
           'El Programa es inconsistente en su estructura.',
-          ''
+          'Valide que la CVE Acta este correcta'
         );
         return;
       }
       if (this.detail[0].goodnumber === null) {
         this.alert(
-          'info',
+          'error',
           'No se pudo realizar la actualización de bienes.',
-          ''
+          'Revise que los bienes sean los correctos'
         );
         return;
       } else {
@@ -2122,7 +2327,7 @@ export class EventCaptureComponent
             v_COUNT = (await this.getVCount()) ?? 0;
             if (v_COUNT === 0) {
               this.alert(
-                'info',
+                'error',
                 'No se ha firmado el oficio de programación de entrega.',
                 ''
               );
@@ -2132,30 +2337,28 @@ export class EventCaptureComponent
           if (this.global.paperworkArea === 'RF' && n_CONT > 0) {
             await this.closedProgramming(n_CONT);
           } else {
-            await this.alertQuestion(
-              'warning',
+            const response = await this.alertQuestion(
+              'question',
               'Cerrar programación',
               '¿Seguro que desea realizar el cierre de esta Programación ?'
-            )
-              .then(async question => {
-                if (question.isConfirmed) {
-                  await this.closedProgramming(n_CONT);
-                }
-              })
-              .catch(error => console.error(error));
+            );
+            if (response.isConfirmed) {
+              await this.closedProgramming(n_CONT);
+            }
           }
         } else {
+          this.global.paperworkArea = this.originalType;
+          await this.initForm();
           this.alert(
-            'info',
-            'Falta complementar Fechas de Recepción/Entrega y/o Finalización.',
-            ''
+            'error',
+            'Ha ocurrido un error',
+            'Falta complementar Fechas de Recepción/Entrega y/o Finalización de los bienes'
           );
         }
       }
     } catch (e_EXCEPPROC) {
-      c_MENSAJE =
-        'Favor de Informar a Informática. < ' || 'e_EXCEPPROC.MESSAGE' || ' >';
-      this.alert('error', c_MENSAJE, '');
+      c_MENSAJE = 'Ocurrió un error inesperado';
+      this.alert('error', 'Ha ocurrido un error', c_MENSAJE);
     }
   }
 
@@ -2169,6 +2372,7 @@ export class EventCaptureComponent
         .PaCierreInicialProgr(no_Acta, lv_PANTALLA, blkCtrlArea)
         .subscribe({
           next: resp => {
+            console.log(resp.message[0]);
             res(resp.message[0]);
           },
           error: err => res('Error'),
@@ -2190,10 +2394,12 @@ export class EventCaptureComponent
     );
     const T_VALEACT: string = await this.getEstatusAct();
     if (['ABIERTO', 'ABIERTA'].includes(T_VALEACT)) {
+      this.global.paperworkArea = this.originalType;
+      await this.initForm();
       this.alert(
-        'info',
-        'La Programación no ha sido cerrada, verifique sus datos...',
-        ''
+        'error',
+        'Ha ocurrido un error',
+        'La Programación no ha sido cerrada, probableamente los bienes no tienen un estatus válido'
       );
     } else {
       if (this.global.paperworkArea === 'RF' && n_CONT > 0) {
@@ -2203,10 +2409,11 @@ export class EventCaptureComponent
           null,
           'ENTRE'
         );
-        //// aqui hace los DDL que pedi a Edwin
+        //// aqui hace los DDL
         await this.firmaAndClosedOffi();
         ///////////////////////////////////////
-        //// esperar que se resuelva el DDL y mostrar el mensaje
+        this.global.paperworkArea = this.originalType;
+        await this.initForm();
         this.alert(
           'success',
           `Se realizó la firma y cierre del oficio (Folio Universal: ${this.proceeding.universalFolio})`,
@@ -2217,8 +2424,7 @@ export class EventCaptureComponent
         await this.initForm();
         this.alert('success', 'La programación ha sido cerrada', '');
       }
-      await this.initForm();
-      const parameterNoFormat: any = '';
+      const parameterNoFormat: any = null;
       if (parameterNoFormat !== null) {
         this.UPDATE_ESTRATEGIA_BIENES(parameterNoFormat, this.proceeding.id);
       }
@@ -2231,14 +2437,12 @@ export class EventCaptureComponent
       this.authUserName,
       this.proceeding.id
     );
-    const respActCtr = await this.INSERT_ACTAS_CTL_NOTIF_SSF3(
+    /* const respActCtr = await this.INSERT_ACTAS_CTL_NOTIF_SSF3(
       this.proceeding.id,
       'CERRADA'
-    );
+    ); */
     const respActProg = await this.UPDATE_SSF3_ACTAS_PROG_DST(null);
   }
-
-  updateStatusGood() {}
 
   UPDATE_ACTAS_ENTREGA_RECEPCION(
     universalFolio: string,
@@ -2277,12 +2481,12 @@ export class EventCaptureComponent
       this.proceeding.typeProceedings === 'CERRADO' ||
       this.proceeding.statusProceedings === 'CERRADA'
     ) {
-      this.alert('info', 'El Programa está cerrado.', '');
+      this.alert('error', 'Error', 'El Programa está cerrado');
       return;
     }
 
     if (this.registerControls.typeEvent.value === null) {
-      this.alert('info', 'No se ha especificado el Tipo de Evento.', '');
+      this.alert('error', 'Error', 'No se ha especificado el Tipo de Evento');
       return;
     }
 
@@ -2291,12 +2495,12 @@ export class EventCaptureComponent
     );
 
     if (V_TIPO_ACTA === null) {
-      this.alert('info', 'No se localizó el Tipo de Acta.', '');
+      this.alert('error', 'Error', 'No se localizó el Tipo de Acta');
       return;
     }
 
     if (this.proceeding.keysProceedings === null) {
-      this.alert('info', 'No se ha ingresado el Programa.', '');
+      this.alert('error', 'Error', 'No se ha ingresado el Programa');
       return;
     }
 
@@ -2304,9 +2508,9 @@ export class EventCaptureComponent
 
     if (this.detail.length > 0) {
       await this.alertQuestion(
-        'info',
-        'Información',
-        'La asignación de bienes ya se ha realizado, ¿se ejecuta nuevamente?'
+        'question',
+        'La asignación de bienes ya se ha realizado',
+        '¿Se ejecuta nuevamente?'
       ).then(question => {
         if (question.isConfirmed) {
           v_ind_proc = true;
@@ -2314,9 +2518,9 @@ export class EventCaptureComponent
       });
     } else {
       await this.alertQuestion(
-        'info',
-        'Información',
-        '¿Quiere continuar con la selección?'
+        'question',
+        '¿Quiere continuar con la selección?',
+        ''
       ).then(question => {
         if (question.isConfirmed) {
           v_ind_proc = true;
@@ -2332,11 +2536,6 @@ export class EventCaptureComponent
         lv_PAQWHERE =
           "ESTATUS_PAQ = 'C' AND TIPO_PAQUETE = 2 AND ESTATUS IN (SELECT ESTATUS FROM ESTATUS_X_PANTALLA WHERE CVE_PANTALLA = 'FINDICA_0035_1' AND ACCION = 'DN')";
       }
-      //// -----> solo falta esto en este botón <----------
-      /* GO_ITEM('PAQ_DESTINO_ENC.NO_PAQUETE');
-      SET_BLOCK_PROPERTY('PAQ_DESTINO_ENC', 'DEFAULT_WHERE', lv_PAQWHERE);
-      CLEAR_BLOCK();
-      EXECUTE_QUERY(); */
     }
   }
 
@@ -2378,9 +2577,9 @@ export class EventCaptureComponent
         };
         if (SSF3_ACTAS_PROG_DST.EMAIL === null) {
           this.alert(
-            'info',
-            'No se cuenta con Lista de Distribución de correo.',
-            ''
+            'error',
+            'Error',
+            'No se cuenta con Lista de Distribución de correo'
           );
           this.PUP_ING_CORREO_SAE();
           return;
@@ -2430,14 +2629,19 @@ export class EventCaptureComponent
         return;
       }
       if (this.registerControls.typeEvent.value === null) {
-        this.alert('info', 'No se ha especificado el Tipo de Evento.', '');
+        this.alert(
+          'info',
+          'Información',
+          'No se ha especificado el Tipo de Evento.',
+          ''
+        );
         return;
       }
       if (this.PUF_VERIFICA_CLAVE()) {
         this.alert(
           'info',
-          'El Programa es inconsistente en su estructura.',
-          ''
+          'Información',
+          'El Programa es inconsistente en su estructura, verifique que la CVE de Acta sea correcto'
         );
         return;
       }

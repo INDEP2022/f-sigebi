@@ -138,9 +138,9 @@ export class LegalOpinionsOfficeFirmModalComponent
   }
 
   close(closeEmit: boolean = false, data: any = null) {
-    if (closeEmit) {
-      this.responseFirm.emit(data); // Emmit response
-    }
+    // if (closeEmit) {
+    // }
+    this.responseFirm.emit(data); // Emmit response
     this.modalRef.hide();
   }
 
@@ -179,49 +179,31 @@ export class LegalOpinionsOfficeFirmModalComponent
     );
     this.msSignatoriesService
       .signerServiceForOfficeDictation(formData)
-      .subscribe(
-        {
-          next: (data: any) => {
-            console.log(data);
-            this.alertInfo(
-              'success',
-              'Se realizó el proceso de Firmar el Dictamen correctamente',
-              data.message
-            ).then(() => {
-              this.fileForm.controls['signature'] = data.signature;
-              this.fileForm.controls['fileData'] = data.fileData;
-              this.downloadFile(data.fileData, this.nameFileDictation);
-              this.close(true, data);
-            });
-          },
-          error: error => {
-            console.log(error);
-            this.errorFirm.emit(true);
-            this.alert(
-              'error',
-              'Ocurrió un erro al Firmar el Dictamen ',
-              error.message
-            ),
-              console.log('Error en el firmante', error.error);
-          },
-        }
-        // data => {
-
-        //   this.alert(
-        //     'success',
-        //     'Se realizó el proceso de Firmar el Dictamen correctamente',
-        //     data.error.message
-        //   ),
-        // },
-        // error => (
-        //   this.alert(
-        //     'error',
-        //     'Ocurrió un erro al Firmar el Dictamen ',
-        //     error.error.message
-        //   ),
-        //   console.log('Error en el firmante', error.error)
-        // )
-      );
+      .subscribe({
+        next: (data: any) => {
+          console.log(data);
+          this.alertInfo(
+            'success',
+            'Se realizó el proceso de Firmar el Dictamen correctamente',
+            data.message
+          ).then(() => {
+            this.fileForm.controls['signature'] = data.signature;
+            this.fileForm.controls['fileData'] = data.fileData;
+            this.downloadFile(data.fileData, this.nameFileDictation);
+            this.close(true, data);
+          });
+        },
+        error: error => {
+          console.log(error);
+          // this.errorFirm.emit(true);
+          this.alert(
+            'error',
+            'Ocurrió un error al Firmar el Dictamen ',
+            error.error.message
+          ),
+            console.log('Error en el firmante', error.error);
+        },
+      });
   }
 
   downloadFile(base64: any, fileName: any) {
@@ -232,17 +214,5 @@ export class LegalOpinionsOfficeFirmModalComponent
     downloadLink.target = '_blank';
     downloadLink.click();
     downloadLink.remove();
-    // https://stackoverflow.com/questions/27159179/how-to-convert-blob-to-file-in-javascript
-    //     Richo, [6/5/2023 1:37 AM]
-    // const linkSource = data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,${base64};
-
-    // Dir. Carlos Hernández, [6/5/2023 1:39 AM]
-    // if (IsGenerate) {      const blob = new Blob([this.xw], { type: 'application/xml;charset=UTF-8' });
-    //       FileSaver.saveAs(blob, paramData.ReferenceNo + '.xml');
-    //       return '';
-    //     } else {
-    //       return this.xw.output;
-    //     }
-    // }
   }
 }

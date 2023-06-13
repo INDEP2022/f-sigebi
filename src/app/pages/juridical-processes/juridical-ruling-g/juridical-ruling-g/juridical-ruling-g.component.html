@@ -6,17 +6,64 @@
 
   <div body>
     <div>
-      <div>
-        <button class="btn btn-primary active btn-sm m-2" (click)="goBack()">
-          Regresar
-          <i class="fas fa-arrow-circle-left"></i>
-        </button>
+      <!-- <div class="row justify-content-end">
+        <div class="">
+          <button class="btn btn-primary active btn-sm m-2" style="float: right" (click)="goBack()">
+            <i class="fas fa-arrow-left"></i>
+            Regresar
+          </button>
+        </div>
+      </div> -->
+      <div class="row">
+        <!-- <div class="d-inline mx-2"> -->
+        <div class="col-6 btn-group">
+          <button
+            class="btn btn-primary active btn-sm m-2"
+            style="float: left"
+            (click)="goBack()">
+            <i class="fas fa-arrow-left"></i>
+            Regresar
+          </button>
+        </div>
+        <div class="col-6">
+          <div class="d-inline mx-2">
+            <button
+              [disabled]="!dictNumber"
+              style="float: right"
+              type="button"
+              class="btn btn-primary btn-sm active"
+              (click)="saveDataForm()">
+              Guardar
+              <i aria-hidden="true" class="fa fa-save"></i>
+            </button>
+            <button
+              style="float: right"
+              type="button"
+              [disabled]="!disabledListDictums"
+              (click)="listDictums()"
+              tooltip="Dictámenes Disponibles"
+              containerClass="tooltip-style"
+              class="btn btn-primary btn-sm active mr-3">
+              <i class="bx bx-list-plus bx-sm float-icon"></i>
+            </button>
+            <button
+              style="float: right"
+              type="button"
+              (click)="newDictums()"
+              tooltip="Agregar Dictamen"
+              containerClass="tooltip-style"
+              class="btn btn-info btn-sm active ml-2 mr-2">
+              <i class="bx bx-plus bx-sm float-icon"></i>
+            </button>
+          </div>
+        </div>
+        <!-- </div> -->
       </div>
       <div class="row">
         <!-- INICIA FORM #1 -->
         <form
           [formGroup]="expedientesForm"
-          class="container-fluid form-material col-md-6 p-4">
+          class="container-fluid form-material col-md-5 p-4">
           <div class="row p-4">
             <!-- No. Expediente -->
             <!-- <div class="col-sm-12 col-12 col-md-6 p-2">
@@ -36,6 +83,7 @@
                   readonly
                   [disabled]="true" /> -->
                 <ngx-select
+                  [readonly]="disabledD"
                   [searchOnInit]="true"
                   [data]="typesDict"
                   [searchable]="false"
@@ -53,9 +101,9 @@
                 [control]="expedientesForm.get('noExpediente')"
                 label="No. Expediente">
                 <input
+                  readonly
                   type="text"
                   class="form-control"
-                  (blur)="changeNumExpediente()"
                   (keypress)="onKeyPress($event)"
                   formControlName="noExpediente" />
               </form-field>
@@ -63,6 +111,7 @@
 
             <div class="col-sm-12 col-12 col-md-12 p-2">
               <form-field
+                *ngIf="!inputsVisuales"
                 [control]="expedientesForm.get('averiguacionPrevia')"
                 label="Averiguaci&oacute;n Previa">
                 <input
@@ -131,6 +180,7 @@
           <div class="row pt-5">
             <div class="col-md-4">
               <form-field
+                *ngIf="showCriminalCase"
                 label="¿Es delito?"
                 [control]="expedientesForm.get('delito')">
                 <ng-select
@@ -138,6 +188,7 @@
                   [searchable]="false"
                   class="form-control"
                   [clearable]="false">
+                  <ng-option value=""></ng-option>
                   <ng-option value="S">Si</ng-option>
                   <ng-option value="N">No</ng-option>
                 </ng-select>
@@ -148,7 +199,7 @@
         <!-- INICIA FORM #2 -->
         <form
           [formGroup]="dictaminacionesForm"
-          class="container-fluid form-material col-md-6 p-4">
+          class="container-fluid form-material col-md-7 p-4">
           <div class="row p-4">
             <!-- Fecha Instructora -->
             <!-- <div class="col-sm-12 col-12 col-md-4 p-2">
@@ -342,7 +393,7 @@
                 {{ item.no_clasif_bien }} - {{ item.desc_sssubtipo }}
               </div>
               <div *ngIf="item.no_clasif_bien > 0">
-                {{ item.no_clasif_bien }} - {{ item.desc_ssubtipo }} -
+                {{ item.no_clasif_bien }} - {{ item.desc_subtipo }} -
                 {{ item.desc_ssubtipo }} - {{ item.desc_sssubtipo }}
               </div>
             </ng-template>
@@ -396,12 +447,44 @@
       <div class="col-md-12 mt-4 mb-4">
         <h5 class="title">BIENES</h5>
         <br />
+        <form-loader *ngIf="formLoading"></form-loader>
 
-        <ng2-smart-table
-          (rowSelect)="onSelectedRow($event)"
-          [attr.class]="'table-bordered table-responsive'"
-          [settings]="settings1"
-          [source]="goods"></ng2-smart-table>
+        <div class="row pt-2 mb-2" *ngIf="!formLoading">
+          <div class="col-sm-12 col-12 col-md-12 pr-3">
+            <div [class]="loading ? 'table-loading' : ''">
+              <ng2-smart-table
+                id="bienesJuridicos"
+                (rowSelect)="onSelectedRow($event)"
+                [attr.class]="'table-bordered table-responsive'"
+                [settings]="settings1"
+                [source]="goods"></ng2-smart-table>
+              <br />
+              <div class="d-flex justify-content-between">
+                <p class="text-danger mt-2 ml-3">
+                  <strong>{{ desc_estatus_good }}</strong>
+                </p>
+                <p class="text-primary mt-2 ml-3">
+                  <strong>{{ consult }}</strong>
+                </p>
+              </div>
+              <div>
+                <app-pagination
+                  [params]="params"
+                  [totalItems]="totalItems"></app-pagination>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- <div>
+          <ng2-smart-table
+            *ngIf="!formLoading"
+            id="bienesJuridicos"
+            (rowSelect)="onSelectedRow($event)"
+            [attr.class]="'table-bordered table-responsive'"
+            [settings]="settings1"
+            [source]="goods"></ng2-smart-table>
+        </div>
         <div class="d-flex justify-content-between">
           <p class="text-danger mt-2 ml-3">
             <strong>{{ desc_estatus_good }}</strong>
@@ -413,7 +496,7 @@
 
         <app-pagination
           [params]="params"
-          [totalItems]="totalItems"></app-pagination>
+          [totalItems]="totalItems"></app-pagination> -->
       </div>
     </div>
     <div class="row pt-2">
@@ -453,9 +536,13 @@
         <ng2-smart-table
           [attr.class]="'table-bordered table-responsive'"
           [settings]="settings2"
-          (rowSelect)="selectRow($event)"
           (userRowSelect)="rowsSelected($event)"
           [source]="goodsValid"></ng2-smart-table>
+        <div>
+          <app-pagination
+            [params]="params3"
+            [totalItems]="totalItems3"></app-pagination>
+        </div>
       </div>
     </div>
   </div>
@@ -491,11 +578,18 @@
           <div class="row">
             <div class="col-md-10">
               <ng2-smart-table
+                id="juridicasSelect"
                 [attr.class]="'table-bordered'"
                 [settings]="settings3"
                 [source]="documentsDictumXStateMList"></ng2-smart-table>
+              <div>
+                <app-pagination
+                  [params]="params2"
+                  [totalItems]="totalItems2"></app-pagination>
+              </div>
             </div>
-            <div class="col-md-2">
+
+            <div class="col-md-2 text-center">
               <p class="text-info h5">No. Bien</p>
               <p class="text-info h5">{{ idGoodSelected }}</p>
             </div>
@@ -504,10 +598,11 @@
       </div>
       <!--  -->
 
-      <div class="col-4 custom-grid">
+      <div class="col-4">
         <div class="row justify-content-center">
           <div class="col-md-6 text-align-center">
             <button
+              [disabled]="statusDict == 'DICTAMINADO'"
               class="btn btn-info btn-sm active m-3 text-wrap w-100"
               (click)="btnDocumentos()">
               Documentos
@@ -546,13 +641,11 @@
               Parcializar
             </button>
           </div>
-          <div class="col-6 text-align-center">
-            <button
-              class="btn btn-danger btn-sm active m-3 text-wrap w-100"
-              (click)="btnRechazar()">
+          <!-- <div class="col-6 text-align-center">
+            <button disabled class="btn btn-danger btn-sm active m-3 text-wrap w-100" (click)="btnRechazar()">
               Rechazar
             </button>
-          </div>
+          </div> -->
           <div class="col-6 text-align-center">
             <button
               class="btn btn-info btn-sm active m-3 text-wrap w-100"
