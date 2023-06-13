@@ -1653,7 +1653,7 @@ export class JuridicalRulingComponent
     const year = today.getFullYear();
     const SYSDATE = `${day}/${month}/${year}`;
     const SYSDATE2 = `${month}/${day}/${year}`;
-    const ETAPA: number = await this.getFaStageCreda(SYSDATE);
+    const ETAPA: number = await this.getFaStageCreda(SYSDATE2);
 
     const systemLevel = 0;
 
@@ -2289,6 +2289,7 @@ export class JuridicalRulingComponent
       this.departamentService.getAll(params).subscribe({
         next: (resp: any) => {
           const data = resp.data[0];
+          resolve(data);
           this.loading = false;
         },
         error: error => {
