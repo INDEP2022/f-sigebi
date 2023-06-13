@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
+import { PdfViewerModule } from 'ng2-pdf-viewer';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { TabsModule } from 'ngx-bootstrap/tabs';
 import { FormLoaderComponent } from 'src/app/@standalone/form-loader/form-loader.component';
@@ -11,6 +12,7 @@ import { EditGoodFormComponent } from './edit-good-form/edit-good-form.component
 import { ExecuteReceptionFormComponent } from './execute-reception-form/execute-reception-form.component';
 import { ExecuteReceptionRoutingModule } from './execute-reception-routing.module';
 import { ReschedulingFormComponent } from './rescheduling-form/rescheduling-form.component';
+import { ShowReportComponentComponent } from './show-report-component/show-report-component.component';
 
 @NgModule({
   declarations: [
@@ -19,6 +21,7 @@ import { ReschedulingFormComponent } from './rescheduling-form/rescheduling-form
     ReschedulingFormComponent,
     EditGoodFormComponent,
     CancelationGoodFormComponent,
+    ShowReportComponentComponent,
   ],
   imports: [
     CommonModule,
@@ -26,6 +29,7 @@ import { ReschedulingFormComponent } from './rescheduling-form/rescheduling-form
     SharedRequestModule,
     TabsModule,
     ExecuteReceptionRoutingModule,
+    PdfViewerModule,
     FormLoaderComponent,
     ModalModule.forChild(),
   ],
