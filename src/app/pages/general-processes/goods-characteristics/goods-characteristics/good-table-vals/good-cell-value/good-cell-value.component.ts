@@ -12,7 +12,6 @@ export class GoodCellValueComponent extends DefaultEditor implements OnInit {
   // form: FormGroup = new FormGroup({});
   @Input() value: any;
   today: Date = new Date();
-  pressed: boolean;
   constructor(private service: GoodsCharacteristicsService) {
     super();
   }
