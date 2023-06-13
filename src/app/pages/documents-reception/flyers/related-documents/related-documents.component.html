@@ -18,7 +18,7 @@
       Fec&#46; Captura:
       <span class="badge bg-info ml-3 mr-3" style="display: initial !important">
         {{
-          (formJobManagement.get('insertDate').value | date: 'M/d/yyyy') ||
+          (formJobManagement.get('insertDate').value | date : 'M/d/yyyy') ||
             '00/00/0000'
         }}
       </span>
@@ -387,10 +387,12 @@
               </form-field>
             </div>
 
-            <!-- <form-check class="col-md-2 text-end" label="Improcedente(s) todo(s)" for="improcedente">
+            <<!-- div class = "row pt-4">
+            <form-check class="col-md-2 text-end" label="Improcedente(s) todo(s)" for="improcedente">
              <input id="improcedente" type="checkbox" (change)="changeImprocedente($event.target)"
                formControlName="improcedente" />
-           </form-check> -->
+           </form-check> 
+          </div> -->
 
             <form-loader *ngIf="formLoading"></form-loader>
 

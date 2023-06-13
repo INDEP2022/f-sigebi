@@ -70,7 +70,7 @@ export class LegalOpinionsOfficeFirmModalComponent
       // test: [null, [Validators.required]],
       certificate: [null, [Validators.required]],
       keycertificate: [null, [Validators.required]],
-      secpwd: [null, [Validators.required, Validators.maxLength(10)]],
+      secpwd: [null, [Validators.required, Validators.maxLength(40)]],
       signature: [null],
       fileDataBase64: [null],
       DICTAMEN: [this.nameFileDictation],
