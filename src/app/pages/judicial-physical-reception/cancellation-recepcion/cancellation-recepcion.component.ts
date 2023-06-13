@@ -1103,7 +1103,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
   fillIncomeProceeding(dataRes: any, action: string) {
     console.log(dataRes);
     const paramsF = new FilterParams();
-    this.maxDate = addDays(new Date(dataRes.elaborationDate), 1);
+    this.maxDate = new Date(dataRes.elaborationDate);
     paramsF.addFilter('numberProceedings', dataRes.id);
     paramsF.addFilter('keysProceedings', dataRes.keysProceedings);
     this.serviceDetailProc.getAllFiltered(paramsF.getParams()).subscribe(
@@ -1132,7 +1132,13 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
         this.form.get('autoridadCancela').setValue(dataRes.witness1);
         this.form
           .get('fecElab')
-          .setValue(addDays(new Date(dataRes.elaborationDate), 1));
+          .setValue(
+            new Date(
+              new Date(dataRes.elaborationDate).toLocaleString('en-US', {
+                timeZone: 'GMT',
+              })
+            )
+          );
         this.form
           .get('fecCierreActa')
           .setValue(addDays(new Date(dataRes.datePhysicalReception), 1));
@@ -1174,7 +1180,13 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
         this.form.get('autoridadCancela').setValue(dataRes.witness1);
         this.form
           .get('fecElab')
-          .setValue(addDays(new Date(dataRes.elaborationDate), 1));
+          .setValue(
+            new Date(
+              new Date(dataRes.elaborationDate).toLocaleString('en-US', {
+                timeZone: 'GMT',
+              })
+            )
+          );
         this.form
           .get('fecCierreActa')
           .setValue(addDays(new Date(dataRes.datePhysicalReception), 1));
@@ -1971,10 +1983,9 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                               witness1: this.form.get('autoridadCancela').value,
                               witness2: this.form.get('elabora').value,
                               address: this.form.get('direccion').value,
-                              elaborationDate: format(
-                                this.form.get('fecElab').value,
-                                'yyyy-MM,dd HH:mm'
-                              ),
+                              elaborationDate: new Date(
+                                this.form.get('fecElab').value
+                              ).getTime(),
                               datePhysicalReception: format(
                                 this.form.get('fecCierreActa').value,
                                 'yyyy-MM,dd HH:mm'
@@ -2075,10 +2086,9 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                                     {
                                       keysProceedings:
                                         this.form.get('acta2').value,
-                                      elaborationDate: format(
-                                        this.form.get('fecElab').value,
-                                        'yyyy-MM,dd HH:mm'
-                                      ),
+                                      elaborationDate: new Date(
+                                        this.form.get('fecElab').value
+                                      ).getTime(),
                                       datePhysicalReception: format(
                                         this.form.get('fecCierreActa').value,
                                         'yyyy-MM,dd HH:mm'
@@ -2275,10 +2285,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
 
           let newProceeding: IProccedingsDeliveryReception = {
             keysProceedings: this.form.get('acta2').value,
-            elaborationDate: format(
-              this.form.get('fecElab').value,
-              'yyyy-MM,dd HH:mm'
-            ),
+            elaborationDate: new Date(this.form.get('fecElab').value).getTime(),
             datePhysicalReception: format(
               this.form.get('fecCierreActa').value,
               'yyyy-MM,dd HH:mm'

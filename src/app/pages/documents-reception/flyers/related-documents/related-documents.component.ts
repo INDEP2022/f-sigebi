@@ -3139,7 +3139,6 @@ export class RelatedDocumentsComponent
     // this.createDocument(document)
     //   .pipe(
     //     tap(_document => {
-    //       this.showScanForm = false;
     //       this.formScan.get('scanningFoli').setValue(_document.id);
     //       setTimeout(() => {
     //         this.showScanForm = true;
@@ -3161,6 +3160,22 @@ export class RelatedDocumentsComponent
     //   )
     //   .subscribe();
   }
+
+  // createDocument(document: IDocuments) {
+  //   return this.documentsService.create(document).pipe(
+  //     tap(_document => {
+  //       // END PROCESS
+  //     }),
+  //     catchError(error => {
+  //       this.onLoadToast(
+  //         'error',
+  //         'Error',
+  //         'Ocurrió un error al generar el reporte PDF'
+  //       );
+  //       return throwError(() => error);
+  //     })
+  //   );
+  // }
 
   async _PUP_LANZA_REPORTE(params: any) {
     return await firstValueFrom(this.sendFunction_pupLaunchReport(params));
