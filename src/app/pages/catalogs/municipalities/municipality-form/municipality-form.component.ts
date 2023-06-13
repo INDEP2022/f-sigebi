@@ -92,7 +92,6 @@ export class MunicipalityFormComponent extends BasePage implements OnInit {
 
   create() {
     this.loading = true;
-    console.log(this.municipalityForm.value);
     this.municipalityService.create(this.municipalityForm.value).subscribe({
       next: data => this.handleSuccess(),
       error: error => (this.loading = false),
@@ -113,7 +112,7 @@ export class MunicipalityFormComponent extends BasePage implements OnInit {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
     this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
-    this.refresh.emit(true);
+    this.modalRef.content.callback(true);
     this.modalRef.hide();
   }
 }
