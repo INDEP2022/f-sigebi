@@ -50,4 +50,8 @@ export class CheckboxElementComponent<T = any> implements OnInit, OnChanges {
     let toggle = ($event.currentTarget as HTMLInputElement).checked;
     this.toggle.emit({ row, toggle });
   }
+
+  setValue(value: boolean) {
+    this.checked = value;
+  }
 }

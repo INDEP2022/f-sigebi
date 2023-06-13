@@ -28,6 +28,13 @@ export class GoodsCharacteristicsService {
   goodChange = new Subject<boolean>();
   v_bien_inm: boolean;
   dataTemp: IVal[];
+  dataDetails: {
+    abreviatura: string;
+    nmtabla: string;
+    otclave: string;
+    otvalor: string;
+    info: string | number;
+  }[];
   constructor(private fb: FormBuilder) {}
 
   prepareForm() {
