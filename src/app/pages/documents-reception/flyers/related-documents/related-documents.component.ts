@@ -11,7 +11,15 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { format } from 'date-fns';
 import { LocalDataSource, Ng2SmartTableComponent } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, firstValueFrom, map, skip, takeUntil } from 'rxjs';
+import {
+  BehaviorSubject,
+  catchError,
+  firstValueFrom,
+  map,
+  of,
+  skip,
+  takeUntil,
+} from 'rxjs';
 import { DocumentsViewerByFolioComponent } from 'src/app/@standalone/modals/documents-viewer-by-folio/documents-viewer-by-folio.component';
 import { PgrFilesComponent } from 'src/app/@standalone/modals/pgr-files/pgr-files.component';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
@@ -1800,53 +1808,143 @@ export class RelatedDocumentsComponent
       return;
     }
 
-    if (!this.selectVariable) {
-      this.onLoadToast(
-        'error',
-        'Error',
-        `Especifique el tipo de Dictaminación S `
+    if (this.variables.proc_doc_dic == 'S') {
+      this.alert('info', 'Info', 'Los Documentos y Bienes ya fueron agregados');
+      return;
+    }
+
+    await this.pupGoodDoc();
+  }
+
+  async pupGoodDoc() {
+    const user = this.authService.decodeToken().preferred_username;
+    const doc = this.getQueryParams('doc');
+    if (doc == 'N') {
+      this.alert('warning', 'Este oficio no lleva Documentos', '');
+      return;
+    }
+
+    const status = this.formJobManagement.get('statusOf')?.value;
+    if (status == 'ENVIADO') {
+      this.alert(
+        'warning',
+        'El Oficio ya esta enviado, no puede ser actualizado',
+        ''
       );
       return;
     }
-    this.expedientService.getNextVal().subscribe({
-      next: data => {
-        this.variablesSend.CVE_OF_GESTION = data.nextval;
-        if (
-          this.managementForm.get('tipoOficio').value ==
-          'Se refiere a todos los bienes'
-        ) {
-          /* await PUP_AGREGA_BIENES();
-           await LIP_COMMIT_SILENCIOSO();*/
+
+    // ! NO ESTA PASANDO ESTA VALIDACION
+    // if (!this.variables.dictaminacion) {
+    //   this.alert('error', 'Debe especificar el tipo de Dictaminación', '');
+    //   return;
+    // }
+    const bien = this.getQueryParams('bien');
+    console.log(this.m_job_management);
+    const { managementNumber, cveManagement } = this.m_job_management;
+    const { refersTo } = this.formJobManagement.controls;
+    if (bien == 'S' && doc == 'S') {
+      console.log('paso');
+      if (!managementNumber && !cveManagement) {
+        console.log('cond 1');
+        if (refersTo.value == this.se_refiere_a.A) {
+          this.pupAddGood();
+          console.log('1');
         }
-        if (
-          this.managementForm.get('tipoOficio').value ===
-          'Se refiere a algun (os) bien (es) del expediente'
-        ) {
-          /* await PUP_AGREGA_ALGUNOS_BIENES();
-           await LIP_COMMIT_SILENCIOSO();*/
+        if (refersTo.value == this.se_refiere_a.B) {
+          this.pupAddAnyGood();
+          console.log('2');
         }
-      },
-    });
-    if (!this.checkSelectTable) {
-      this.onLoadToast('error', 'Error', `Seleccione Un Registro de La Tabla `);
-      return;
+      }
+
+      if (managementNumber && cveManagement) {
+        console.log('cond 2');
+        const count = await this.getGoodOMCount();
+        if (refersTo.value == this.se_refiere_a.A && count == 0) {
+          this.pupAddGood();
+          console.log('3');
+        }
+        if (refersTo.value == this.se_refiere_a.B && count == 0) {
+          this.pupAddAnyGood();
+          console.log('3');
+        }
+      }
+
+      if (
+        (cveManagement || !cveManagement) &&
+        refersTo.value == this.se_refiere_a.A
+      ) {
+        console.log('cond 3');
+        this.se_refiere_a_Disabled.B = true;
+        this.se_refiere_a_Disabled.C = true;
+      }
+
+      if (
+        (cveManagement || !cveManagement) &&
+        refersTo.value == this.se_refiere_a.B
+      ) {
+        console.log('cond 4');
+        this.se_refiere_a_Disabled.A = true;
+        this.se_refiere_a_Disabled.C = true;
+      }
     }
-    if (this.formJobManagement.value.cveManagement !== null) {
-      /*SELECT COUNT(0) into contador
-      from BIENES_OFICIO_GESTION
-      where no_of_gestion = : M_OFICIO_GESTION.no_of_gestion;
-      if (this.managementForm.get('tipoOficio').value == 'Se refiere a todos los bienes') {
-        this.variables.clasif = this.variables.clasif || this.formJobManagement.value....
-         : VARIABLES.CLASIF := : VARIABLES.CLASIF || TO_CHAR(: BIENES_OFICIO_GESTION.CLASIF);    
-        /*PUP_AGREGA_BIENES;
-        LIP_COMMIT_SILENCIOSO;
-      }*/
+
+    this.variables.clasif = null;
+
+    if (
+      bien == 'S' &&
+      doc == 'S' &&
+      this.variables.dictaminacion != 'DEVOLUCION'
+    ) {
+      if (refersTo.value == 'D' || refersTo.value == this.se_refiere_a.D) {
+        this.alert(
+          'error',
+          'Error',
+          'Para este oficio es necesario tener bienes'
+        );
+        return;
+      } else {
+        // if(){
+        console.log(this.dataTableGoodsJobManagement);
+        // }
+      }
     }
-    const modalRef = this.modalService.show(DocumentsFormComponent, {
-      initialState: context,
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
-    });
+
+    if (
+      bien == 'S' &&
+      doc == 'S' &&
+      this.variables.dictaminacion == 'DEVOLUCION'
+    ) {
+      if (refersTo.value == 'D' || this.se_refiere_a.D) {
+        this.alert('error', 'Para este oficio es necesario tener bienes', '');
+        return;
+      } else {
+        // DOCUMENTOS_PARA_DICTAMEN
+        alert('go block');
+      }
+    }
+
+    if (bien == 'N' && doc == 'S') {
+      // DOCUMENTOS_PARA_DICTAMEN
+      alert('go block');
+    }
+
+    this.variables.d = 'N';
+    this.variables.proc_doc_dic = 'S';
+  }
+
+  getGoodOMCount() {
+    const params = new FilterParams();
+    params.addFilter(
+      'managementNumber',
+      this.m_job_management.managementNumber
+    );
+    return firstValueFrom(
+      this.serviceOficces.getAllFiltered(params.getParams()).pipe(
+        catchError(() => of({ count: 0 })),
+        map(res => res.count)
+      )
+    );
   }
 
   generateCveOficio(noDictamen: string) {
