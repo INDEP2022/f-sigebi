@@ -10,7 +10,6 @@ import {
 } from '@angular/core';
 import { FormBuilder, FormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { format } from 'date-fns';
 import {
   BehaviorSubject,
   catchError,
@@ -594,15 +593,15 @@ export class EventCaptureComponent
     if (!numFile) {
       formValue.numFile = 2;
     }
-    const elaborationDate = new Date();
+    const elaborationDate = new Date().getTime();
     const statusProceedings = 'ABIERTA';
     const typeProceedings = this.originalType;
     const elaborate = this.authUser;
     const numDelegation1 = await this.getUserDelegation();
     const dataToSave = {
       keysProceedings,
-      elaborationDate: format(elaborationDate, 'yyyy-MM-dd HH:mm:ss'),
-      captureDate: format(captureDate, 'yyyy-MM-dd HH:mm:ss'),
+      elaborationDate,
+      captureDate: captureDate.getTime(),
       responsible,
       numFile: formValue.numFile,
       statusProceedings,
