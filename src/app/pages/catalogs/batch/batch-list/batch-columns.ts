@@ -1,6 +1,6 @@
 export const BATCH_COLUMNS = {
   id: {
-    title: 'ID',
+    title: 'Codigo',
     type: 'number',
     sort: false,
   },

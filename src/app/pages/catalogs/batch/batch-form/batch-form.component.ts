@@ -34,9 +34,22 @@ export class BatchFormComponent extends BasePage implements OnInit {
 
   private prepareForm(): void {
     this.batchForm = this.fb.group({
+      id: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(3),
+          Validators.pattern(NUMBERS_PATTERN),
+        ],
+      ],
+
       numStore: [
         null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+        [
+          Validators.required,
+          Validators.maxLength(5),
+          Validators.pattern(NUMBERS_PATTERN),
+        ],
       ],
       numRegister: [
         null,
@@ -44,9 +57,13 @@ export class BatchFormComponent extends BasePage implements OnInit {
       ],
       description: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.maxLength(30),
+          Validators.pattern(STRING_PATTERN),
+        ],
       ],
-      status: [null, [Validators.required, Validators.minLength(1)]],
+      status: [null, [Validators.required, Validators.maxLength(1)]],
     });
     if (this.batch != null) {
       this.edit = true;
