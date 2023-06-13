@@ -3146,7 +3146,9 @@ export class RelatedDocumentsRelationComponent
   }
 
   goBack() {
-    this.router.navigate(['/pages/juridical/file-data-update']);
+    this.router.navigate(['/pages/juridical/file-data-update'], {
+      queryParams: { wheelNumber: this.formNotification.value.wheelNumber },
+    });
   }
 
   updateGood(good: any) {
