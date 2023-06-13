@@ -10,7 +10,7 @@ export const DEDUCTIVE_VERIFICATION_COLUMNS = {
     sort: false,
   },
   percentagePena: {
-    title: 'Porcentaje Pena',
+    title: 'Porcentaje pena',
     type: 'string',
     sort: false,
   },

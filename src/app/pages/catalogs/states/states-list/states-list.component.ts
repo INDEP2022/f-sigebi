@@ -33,9 +33,17 @@ export class StatesListComponent extends BasePage implements OnInit {
   ) {
     super();
     this.settings.columns = STATES_COLUMNS;
-    this.settings.actions.delete = true;
-    this.settings.actions.add = false;
-    this.settings.hideSubHeader = false;
+    this.settings = {
+      ...this.settings,
+      hideSubHeader: false,
+      actions: {
+        columnTitle: 'Acciones',
+        edit: true,
+        add: false,
+        delete: true,
+        position: 'right',
+      },
+    };
   }
 
   ngOnInit(): void {

@@ -20,7 +20,7 @@ export class DeductivesVerificationFormComponent
   implements OnInit
 {
   deductiveForm: ModelForm<IDeductiveVerification>;
-  title: string = 'Deductiva Verifiación';
+  title: string = 'Deductiva Verificación';
   edit: boolean = false;
   deductive: IDeductiveVerification;
   constructor(

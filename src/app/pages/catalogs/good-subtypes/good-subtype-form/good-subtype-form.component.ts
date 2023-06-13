@@ -77,11 +77,19 @@ export class GoodSubtypeFormComponent extends BasePage implements OnInit {
     } else {
       this.getTypes({ page: 1, text: '' });
     }
+    setTimeout(() => {
+      this.getTypes(new ListParams());
+    }, 1000);
   }
 
   getTypes(params: ListParams) {
-    this.goodSubtypeService.getTypes(params).subscribe(data => {
-      this.types = new DefaultSelect(data.data, data.count);
+    this.goodSubtypeService.getTypes(params).subscribe({
+      next: data => {
+        this.types = new DefaultSelect(data.data, data.count);
+      },
+      error: error => {
+        this.types = new DefaultSelect();
+      },
     });
   }
 
