@@ -29,6 +29,8 @@ export class OptionsHistoryGoodDelegation extends BasePage implements OnInit {
       ['/pages/general-processes/historical-good-situation'],
       { queryParams: { noBien: this.idGood } }
     );
+
+    this.bsModel.hide();
   }
 
   close() {

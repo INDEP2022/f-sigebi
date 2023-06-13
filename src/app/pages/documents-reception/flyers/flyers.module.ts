@@ -15,6 +15,7 @@ import { DocumentsReceptionRegisterComponent } from './documents-reception-regis
 import { FlyersRoutingModule } from './flyers-routing.module';
 import { PublicMinistriesComponent } from './public-ministries/public-ministries.component';
 import { RecordUpdateComponent } from './record-update/record-update.component';
+import { DialogSelectedManagementsComponent } from './related-documents/dialog-selected-managements/dialog-selected-managements.component';
 import { DocumentsFormComponent } from './related-documents/documents-form/documents-form.component';
 import { ModalPersonaOficinaComponent } from './related-documents/modal-persona-oficina/modal-persona-oficina.component';
 import { RelatedDocumentsRelationComponent } from './related-documents/related-document-relation/related-documents-relation.component';
@@ -39,6 +40,7 @@ import { RdFShiftChangeComponent } from './shift-change/shift-change.component';
     ModalPersonaOficinaComponent,
     UploadDictamenFilesModalComponent,
     RelatedDocumentsRelationComponent,
+    DialogSelectedManagementsComponent,
   ],
   imports: [
     CommonModule,

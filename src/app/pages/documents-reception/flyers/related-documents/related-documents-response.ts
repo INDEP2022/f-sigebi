@@ -34,6 +34,7 @@ import { MJobManagementService } from 'src/app/core/services/ms-office-managemen
 import { ParametersService } from 'src/app/core/services/ms-parametergood/parameters.service';
 import { SecurityService } from 'src/app/core/services/ms-security/security.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
+import { OfficeManagementService } from 'src/app/core/services/office-management/officeManagement.service';
 import { ProcedureManagementService } from 'src/app/core/services/proceduremanagement/proceduremanagement.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { LegalOpinionsOfficeService } from 'src/app/pages/juridical-processes/depositary/legal-opinions-office/legal-opinions-office/services/legal-opinions-office.service';
@@ -127,6 +128,7 @@ export abstract class RelateDocumentsResponse extends BasePage {
   protected abstract usersService: UsersService;
   protected abstract goodprocessService: GoodprocessService;
   protected abstract dictationService: DictationService;
+  protected abstract msOfficeManagementService: OfficeManagementService;
   abstract dataTableGoods: IGoodAndAvailable[];
   abstract dataTableGoodsJobManagement: IGoodJobManagement[];
   abstract isDisabledBtnDocs: boolean;
@@ -292,6 +294,9 @@ export abstract class RelateDocumentsResponse extends BasePage {
   ): Promise<IListResponse<IGoodJobManagement>> {
     return firstValueFrom(
       this.serviceOficces.getGoodsJobManagement(params).pipe(
+        catchError(() => {
+          return of({ data: [], count: 0 });
+        }),
         map(x => {
           return {
             ...x,
@@ -1026,7 +1031,40 @@ export abstract class RelateDocumentsResponse extends BasePage {
     // });
   }
 
-  sendFunction_pupLaunchReport(params: ListParams): Observable<any> {
+  sendFunction_pupLaunchReport(params: Object): Observable<any> {
     return this.dictationService.pupLaunchReport(params).pipe(map(x => x.data));
+  }
+  sendFunction_getVOficTrans(params: Object): Observable<any> {
+    return this.dictationService
+      .getVOficTrans(params)
+      .pipe(map(x => x.data[0]));
+  }
+  sendFunction_nUniversalFolio(params: Object): Observable<any> {
+    return this.dictationService
+      .nUniversalFolio(params)
+      .pipe(map(x => x.data[0]));
+  }
+  sendFunction_getActnom(managementNumber: number): Observable<any> {
+    return this.dictationService
+      .getActnom(managementNumber)
+      .pipe(map(x => x.data[0]));
+  }
+  sendFunction_pupValidExtDom(wheelNumber: number): Observable<any> {
+    return this.dictationService
+      .pupValidExtDom(wheelNumber)
+      .pipe(map(x => x.data));
+  }
+  sendFunction_findOffficeNu(params: Object): Observable<any> {
+    return this.dictationService.findOffficeNu(params).pipe(map(x => x.data));
+  }
+  sendFunction_updateManagerTransfer(params: Object): Observable<any> {
+    return this.dictationService
+      .updateManagerTransfer(params)
+      .pipe(map(x => x.data));
+  }
+  sendFunction_ObtainKeyOffice(params: Object): Observable<any> {
+    return this.msOfficeManagementService
+      .ObtainKeyOffice(params)
+      .pipe(map(x => x.data));
   }
 }
