@@ -33,13 +33,10 @@ import { ProgrammingGoodService } from 'src/app/core/services/ms-programming-req
 import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-request/programming-request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
-import { GenerateReceiptFormComponent } from '../../../shared-request/generate-receipt-form/generate-receipt-form.component';
 import { PhotographyFormComponent } from '../../../shared-request/photography-form/photography-form.component';
 import { ESTATE_COLUMNS_VIEW } from '../../acept-programming/columns/estate-columns';
-import { USER_COLUMNS_SHOW } from '../../acept-programming/columns/users-columns';
 import { CancelationGoodFormComponent } from '../../execute-reception/cancelation-good-form/cancelation-good-form.component';
 import { DocumentsListComponent } from '../../execute-reception/documents-list/documents-list.component';
-import { EditGoodFormComponent } from '../../execute-reception/edit-good-form/edit-good-form.component';
 import {
   RECEIPT_COLUMNS,
   RECEIPT_GUARD_COLUMNS,
@@ -64,6 +61,7 @@ export class FormalizeProgrammingFormComponent
   goods: any[] = [];
   receiptGuards: IReception[] = [];
   goodsGuard: IGood[] = [];
+  goodsRepro: IGood[] = [];
   goodsWareh: IGood[] = [];
   goodsSelect: IGood[] = [];
   stateConservation: IStateConservation[] = [];
@@ -177,31 +175,27 @@ export class FormalizeProgrammingFormComponent
   };
 
   settingsTranGoods = {
+    ...this.settings,
+    selectMode: 'multi',
     columns: TRANSPORTABLE_GOODS_FORMALIZE,
-    edit: {
-      confirmSave: true,
-      editButtonContent: '<i class="fa fa-edit"></i>', // Icono de edición
-      cancelButtonContent: '<i class="fa fa-times"></i>', // Icono de cancelar
-      saveButtonContent: '<i class="fa fa-check"></i>', // Icono de actualizar
-    },
-    actions: {
-      add: false,
-      delete: false,
-      edit: true,
-    },
+    actions: false,
+    // edit: {
+    //   confirmSave: true,
+    //   editButtonContent: '<i class="fa fa-edit"></i>', // Icono de edición
+    //   cancelButtonContent: '<i class="fa fa-times"></i>', // Icono de cancelar
+    //   saveButtonContent: '<i class="fa fa-check"></i>', // Icono de actualizar
+    // },
+    // actions: {
+    //   add: false,
+    //   delete: false,
+    //   edit: true,
+    // },
   };
 
   minutes = minutes;
 
   nameTransferent: string = '';
   nameStation: string = '';
-  // authorityName: string = '';
-  // typeRelevantName: string = '';
-  // nameWarehouse: string = '';
-  // ubicationWarehouse: string = '';
-  // formLoading: boolean = false;
-  // paramsStation = new BehaviorSubject<ListParams>(new ListParams());
-  // paramsAuthority = new BehaviorSubject<ListParams>(new ListParams());
 
   constructor(
     private modalService: BsModalService,
@@ -220,11 +214,11 @@ export class FormalizeProgrammingFormComponent
     super();
     this.settings.columns = TRANSPORTABLE_GOODS_FORMALIZE;
 
-    this.settings = {
-      ...this.settings,
-      actions: false,
-      columns: USER_COLUMNS_SHOW,
-    };
+    // this.settings = {
+    //   ...this.settings,
+    //   actions: false,
+    //   columns: USER_COLUMNS_SHOW,
+    // };
     this.programmingId = this.activatedRoute.snapshot.paramMap.get(
       'id'
     ) as unknown as number;
@@ -654,77 +648,7 @@ export class FormalizeProgrammingFormComponent
       );
     }
   }
-  // Actualizar la información del bien //
-  updateInfoGood(goodNumber: number, goodId: number) {
-    const GoodData: Object = {
-      id: Number(goodNumber),
-      goodId: Number(goodId),
-      quantitySae: this.executeForm.get('quantitySae').value,
-      //descriptionGoodSae: this.executeForm.get('descriptionGoodSae').value
-      /*
-      saeMeasureUnit: this.executeForm.get('saeMeasureUnit').value,
-      saePhysicalState: this.executeForm.get('saePhysicalState').value,
-      stateConservationSae: this.executeForm.get('stateConservationSae').value,¨*/
-    };
-    this.alertQuestion(
-      'warning',
-      '¿Desea actualizar el bien?',
-      '',
-      'Actualizar'
-    ).then(question => {
-      if (question.isConfirmed) {
-        this.goodService.updateByBody(GoodData).subscribe(() => {
-          this.onLoadToast('success', 'Bien actualizado correctamente', '');
-          //this.getReportGoods();
-        });
-      }
-    });
-  }
-  updateInfo(data: IGood) {
-    this.alertQuestion(
-      'question',
-      'Confirmación',
-      '¿Desea editar el bien?'
-    ).then(question => {
-      if (question.isConfirmed) {
-        this.goodService.updateByBody(data).subscribe({
-          next: () => {
-            this.getInfoGoodsProgramming();
-          },
-          error: error => {
-            console.log('error bien', error);
-          },
-        });
-      }
-    });
-  }
 
-  editGood(good: IGood) {
-    let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
-    config.initialState = {
-      good,
-      callback: (next: boolean) => {
-        if (next) this.getInfoGoodsProgramming();
-      },
-    };
-
-    this.modalService.show(EditGoodFormComponent, config);
-  }
-  createReceipt() {
-    let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
-
-    config.initialState = {
-      callback: (data: any) => {
-        if (data) {
-        }
-      },
-    };
-
-    const createReceipt = this.modalService.show(
-      GenerateReceiptFormComponent,
-      config
-    );
-  }
   generateMinute() {
     let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
 
