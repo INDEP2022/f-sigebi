@@ -1034,6 +1034,7 @@ export abstract class RelateDocumentsResponse extends BasePage {
   sendFunction_pupLaunchReport(params: Object): Observable<any> {
     return this.dictationService.pupLaunchReport(params).pipe(map(x => x.data));
   }
+
   sendFunction_getVOficTrans(params: Object): Observable<any> {
     return this.dictationService
       .getVOficTrans(params)
