@@ -1100,7 +1100,7 @@ export class RelatedDocumentsComponent
             key: description.key,
           };
         });
-        debugger;
+        // debugger;
         this.dataTableDocuments = await Promise.all(response);
         this.isLoadingDocuments = false;
         this.docTotalItems = res.count;
@@ -1893,7 +1893,7 @@ export class RelatedDocumentsComponent
     //   this.alert('error', 'Debe especificar el tipo de Dictaminación', '');
     //   return;
     // }
-    debugger;
+    // debugger;
     /* BIENES */
     //console.log(this.dataTableGoodsJobManagement);
     const bien = this.getQueryParams('bien');
@@ -3788,7 +3788,7 @@ export class RelatedDocumentsComponent
         this.formJobManagement.value.managementNumber;
       params.limit = limit;
       params.page = page;
-      debugger;
+      // debugger;
       this.serviceOficces.getGoodsJobManagement(params).subscribe({
         next: resp => {
           resolve(resp);
