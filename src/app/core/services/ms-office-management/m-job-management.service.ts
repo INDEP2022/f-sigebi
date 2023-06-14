@@ -174,4 +174,11 @@ export class MJobManagementService extends HttpService {
   getRegAddressee(params: ListParams): Observable<IListResponse<IRSender>> {
     return this.get(`application/regDestinatario`, params);
   }
+
+  deleteJobManagement(pCveOfManagement: number, pFlyerNumber: number) {
+    return this.post(`application/delete-job-gestion`, {
+      pCveOfManagement,
+      pFlyerNumber,
+    });
+  }
 }
