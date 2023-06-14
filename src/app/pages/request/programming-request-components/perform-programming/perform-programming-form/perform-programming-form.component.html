@@ -37,10 +37,19 @@
       </button>
 
       <confirm-button
+        *ngIf="infoTask?.State == null"
         [disabled]="!performForm.valid"
         [loading]="loading"
         [btnSmall]="true"
         class="mr-2"
+        (confirm)="confirm()"></confirm-button>
+
+      <confirm-button
+        *ngIf="infoTask?.State == 'FINALIZADA'"
+        [disabled]="!performForm.valid"
+        [loading]="loading"
+        [btnSmall]="true"
+        class="mr-2 disabled"
         (confirm)="confirm()"></confirm-button>
 
       <button
@@ -179,6 +188,11 @@
                 formControlName="startDate"
                 (ngModelChange)="checkInfoDate($event)"
                 [daysDisabled]="[6, 0]"
+                [bsConfig]="{
+                  withTimepicker: true,
+                  rangeInputFormat: 'DD/MMMM/YYYY, h:mm:ss a',
+                  dateInputFormat: 'DD/MMMM/YYYY, h:mm:ss a'
+                }"
                 bsDatepicker />
             </form-field>
           </div>

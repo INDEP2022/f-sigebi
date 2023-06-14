@@ -254,23 +254,6 @@ export class PerformProgrammingFormComponent
       error: error => {},
     });
   }
-  addUsingDates(date: Date, days: number) {
-    let nextDay = date;
-    let daysToAdd = 1;
-    while (days > 0) {
-      const _nextDay = new Date(
-        nextDay.getTime() + daysToAdd * 24 * 60 * 60 * 1000
-      );
-      if (_nextDay.getDay() < 4) {
-        nextDay = _nextDay;
-        daysToAdd = 1;
-        days--;
-      } else {
-        daysToAdd++;
-      }
-    }
-    return nextDay;
-  }
 
   obtainInfoWarehouse() {
     this.paramsNewWarehouse.getValue()['filter.idProgramming'] =
@@ -338,11 +321,7 @@ export class PerformProgrammingFormComponent
   }
 
   prepareForm() {
-    let now = moment();
     this.formLoading = true;
-    const daysToAdd = 5;
-    const date = new Date(now.format());
-    const dateformat = this.addUsingDates(date, daysToAdd);
 
     this.performForm = this.fb.group({
       emailTransfer: [
@@ -370,7 +349,7 @@ export class PerformProgrammingFormComponent
         ],
       ],
       startDate: [null, [Validators.required]],
-      endDate: [null, [Validators.required, minDate(new Date(dateformat))]],
+      endDate: [null, [Validators.required]],
       observation: [
         null,
         [Validators.maxLength(400), Validators.pattern(STRING_PATTERN)],
@@ -383,17 +362,6 @@ export class PerformProgrammingFormComponent
       typeRelevantId: [null, [Validators.required]],
       storeId: [null],
       folio: [null],
-    });
-  }
-
-  getDateValidate(date: string) {
-    return new Promise((resolve, reject) => {
-      this.goodProcessService.getDateRange(date, 5).subscribe({
-        next: data => {
-          resolve(data);
-        },
-        error: error => {},
-      });
     });
   }
 
@@ -1947,6 +1915,7 @@ export class PerformProgrammingFormComponent
     task['idDelegationRegional'] = this.delegationId;
     task['urlNb'] = 'pages/request/programming-request/acept-programming';
     task['processName'] = 'SolicitudProgramacion';
+    task['taskDefinitionId'] = _task.id;
     body['task'] = task;
 
     const taskResult = await this.createTaskOrderService(body);
@@ -2061,6 +2030,7 @@ export class PerformProgrammingFormComponent
   setDataProgramming() {
     if (this.dataProgramming.folio) {
       this.showForm = true;
+      console.log('startDate', this.dataProgramming.startDate);
       this.performForm.get('address').setValue(this.dataProgramming.address);
       this.performForm.get('city').setValue(this.dataProgramming.city);
       this.performForm.get('stateKey').setValue(this.dataProgramming.stateKey);
@@ -2269,29 +2239,50 @@ export class PerformProgrammingFormComponent
 
   checkInfoDate(event: any) {
     const startDate = event;
-    const _startDateFormat = moment(startDate).format('YYYY-MM-DD');
+    const _startDateFormat = moment(startDate).format(
+      'DD/MMMM/YYYY, h:mm:ss a'
+    );
+
+    const _endDateFormat = moment(this.performForm.get('endDate').value).format(
+      'DD/MMMM/YYYY, h:mm:ss a'
+    );
     const date = moment(new Date()).format('YYYY-MM-DD');
     this.programmingService.getDateProgramming(date, 5).subscribe({
       next: (response: any) => {
-        const correctDate = moment(response).format('YYYY-MM-DD');
-        if (correctDate > _startDateFormat) {
+        const correctDate = moment(response).format('DD/MMMM/YYYY, h:mm:ss a');
+        if (correctDate > _startDateFormat || correctDate > _endDateFormat) {
           this.performForm
             .get('startDate')
             .addValidators([Validators.required, minDate(new Date(response))]);
           this.performForm
             .get('startDate')
             .setErrors({ minDate: { min: new Date(response) } });
+          this.performForm
+            .get('endDate')
+            .addValidators([Validators.required, minDate(new Date(response))]);
+          this.performForm
+            .get('endDate')
+            .setErrors({ minDate: { min: new Date(response) } });
           this.performForm.markAllAsTouched();
 
-          this.performForm.get('endDate').clearValidators();
-          this.performForm
-            .get('endDate')
-            .addValidators([Validators.required, minDate(new Date(startDate))]);
-          this.performForm.get('endDate').updateValueAndValidity();
-          this.performForm
-            .get('endDate')
-            .setErrors({ minDate: { min: startDate } });
-          this.performForm.markAllAsTouched();
+          /*const endDate = this.performForm.get('endDate').value;
+          const _endDateFormat = moment(endDate).format(
+            'DD/MMMM/YYYY, h:mm:ss a'
+          );
+          if (correctDate > _endDateFormat) {
+            this.performForm.get('endDate').clearValidators();
+            this.performForm
+              .get('endDate')
+              .addValidators([
+                Validators.required,
+                minDate(new Date(response)),
+              ]);
+            this.performForm.get('endDate').updateValueAndValidity();
+            this.performForm
+              .get('endDate')
+              .setErrors({ minDate: { min: response } });
+            this.performForm.markAllAsTouched();
+          } */
         }
       },
     });
