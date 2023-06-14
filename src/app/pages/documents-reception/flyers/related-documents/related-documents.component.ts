@@ -162,6 +162,7 @@ export class RelatedDocumentsComponent
   origin: string = '';
   valTiposAll: boolean;
   tiposData: any = [];
+  selectedAllImpro: boolean = false;
   tiposDatosSelect = new DefaultSelect();
   // userCopies1 = new DefaultSelect();
   // userCopies2 = new DefaultSelect();
@@ -238,6 +239,8 @@ export class RelatedDocumentsComponent
   disabledTypes: boolean = false;
   showDestinatario: boolean = false;
   showDestinatarioInput: boolean = false;
+  listSelected: any = [];
+  listImprocendents: any = [];
 
   settings3 = { ...this.settings, hideSubHeader: true };
   copyOficio: any[] = [];
@@ -409,11 +412,11 @@ export class RelatedDocumentsComponent
 
     RELATED_DOCUMENTS_COLUMNS_GOODS.seleccion = {
       ...RELATED_DOCUMENTS_COLUMNS_GOODS.seleccion,
-      onComponentInitFunction: this.onClickSelect,
+      onComponentInitFunction: this.onClickSelect.bind(this),
     };
     RELATED_DOCUMENTS_COLUMNS_GOODS.improcedente = {
       ...RELATED_DOCUMENTS_COLUMNS_GOODS.improcedente,
-      onComponentInitFunction: this.onClickImprocedente,
+      onComponentInitFunction: this.onClickImprocedente.bind(this),
     };
     const screen = this.route.snapshot.paramMap.get('id');
     if (screen === '2') {
@@ -457,16 +460,8 @@ export class RelatedDocumentsComponent
     this.managementForm.get('improcedente').setValue(true);
     this.managementForm.get('improcedente').disable();
 
-    const { managementNumber } = this.formJobManagement.value;
-    const { expedientNumber } = this.formNotification.value;
-    /*this.relatedDocumentDesahogo.PUP_CAMBIO_IMPRO(
-      true,
-      Number(managementNumber),
-      Number(expedientNumber)
-    );*/
-
-    //const values = (columnas[7]['dataSet']['rows'][0].isSelected = true);
-    //console.log(values);
+    this.selectedAllImpro = true;
+    this.refreshTableGoods();
 
     //onComponentInitFunction: true
     //this.relatedDocumentDesahogo.pup_cambio_impro(this.dataTableGoods);
@@ -503,6 +498,7 @@ export class RelatedDocumentsComponent
 
     this.managementForm.get('improcedente').setValue(false);
     this.managementForm.get('improcedente').enable();
+
     // const tabla = document.getElementById('goods');
     // const types = document.getElementById('typesFilters');
     // if (tabla && types) {
@@ -520,8 +516,15 @@ export class RelatedDocumentsComponent
 
   onClickSelect(event: any) {
     event.toggle.subscribe((data: any) => {
-      console.log(JSON.stringify(data));
+      //console.log(JSON.stringify(data));
       data.row.seleccion = data.toggle;
+
+      const index = this.listSelected.indexOf(data.row);
+      if (index == -1 && data.toggle == true) {
+        this.listSelected.push(data.row);
+      } else if (index != -1 && data.toggle == false) {
+        this.listSelected.splice(index, 1);
+      }
     });
   }
 
@@ -693,6 +696,13 @@ export class RelatedDocumentsComponent
     event.toggle.subscribe((data: any) => {
       // console.log(data);
       data.row.improcedente = data.toggle;
+
+      const index = this.listImprocendents.indexOf(data.row);
+      if (index == -1 && data.toggle == true) {
+        this.listImprocendents.push(data.row);
+      } else if (index != -1 && data.toggle == false) {
+        this.listImprocendents.splice(index, 1);
+      }
     });
   }
 
@@ -1084,7 +1094,6 @@ export class RelatedDocumentsComponent
             key: description.key,
           };
         });
-        debugger;
         this.dataTableDocuments = await Promise.all(response);
         this.isLoadingDocuments = false;
         this.docTotalItems = res.count;
@@ -1464,19 +1473,27 @@ export class RelatedDocumentsComponent
   // }
 
   changeImprocedente(event: any) {
-    this.onLoadToast(
-      'info',
-      'se tiene que seleccionar todas las casillas improcedentes',
-      ''
-    );
-    this.dataGood.forEach(element => {
+    /* this.dataGood.forEach(element => {
       if (element.disponible) {
         element.improcedente = event.checked;
         element.seleccion = false;
       }
     });
     this.dataGoodTable.load(this.dataGood);
-    this.dataGoodTable.refresh();
+    this.dataGoodTable.refresh();*/
+    if (event.checked == true) {
+      this.selectedAllImpro = true;
+      const { managementNumber } = this.formJobManagement.value;
+      /* const { expedientNumber } = this.formNotification.value;
+        this.relatedDocumentDesahogo.PUP_CAMBIO_IMPRO(
+          true,
+          Number(managementNumber),
+          Number(expedientNumber)
+        ); */
+    } else {
+      this.selectedAllImpro = false;
+    }
+    this.refreshTableGoods();
   }
 
   async getAvailableGood(
@@ -1885,6 +1902,7 @@ export class RelatedDocumentsComponent
     const { managementNumber, cveManagement } = this.m_job_management;
     const { refersTo } = this.formJobManagement.controls;
     const goodJobs = this.dataTableGoodsJobManagement.values;
+    console.log(goodJobs);
     if (bien == 'S' && doc == 'S') {
       console.log('paso');
       if (!managementNumber && !cveManagement) {
@@ -1963,6 +1981,8 @@ export class RelatedDocumentsComponent
         return;
       } else {
         // DOCUMENTOS_PARA_DICTAMEN
+        //verificar si bienes oficio gestion classif no es nulo
+
         alert('go block');
       }
     }
