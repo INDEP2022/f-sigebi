@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { takeUntil } from 'rxjs';
@@ -19,7 +19,7 @@ export class VaultConsultationComponent
 {
   form: FormGroup;
   vaults: ISafe[] = [];
-
+  @Output() idSafe: EventEmitter<number> = new EventEmitter<number>();
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
