@@ -456,6 +456,15 @@ export class RelatedDocumentsComponent
 
     this.managementForm.get('improcedente').setValue(true);
     this.managementForm.get('improcedente').disable();
+
+    const { managementNumber } = this.formJobManagement.value;
+    const { expedientNumber } = this.formNotification.value;
+    /*this.relatedDocumentDesahogo.PUP_CAMBIO_IMPRO(
+      true,
+      Number(managementNumber),
+      Number(expedientNumber)
+    );*/
+
     //const values = (columnas[7]['dataSet']['rows'][0].isSelected = true);
     //console.log(values);
 
