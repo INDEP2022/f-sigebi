@@ -1,143 +1,84 @@
 import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, takeUntil } from 'rxjs';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { takeUntil } from 'rxjs';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ISafe } from 'src/app/core/models/catalogs/safe.model';
 import { SafeService } from 'src/app/core/services/catalogs/safe.service';
-import { BasePage } from 'src/app/core/shared/base-page';
+import { BasePageWidhtDinamicFilters } from 'src/app/core/shared/base-page-dinamic-filters';
 import { ModalListGoodsComponent } from '../modal-list-goods/modal-list-goods.component';
-
-export interface ExampleVault {
-  number: number;
-  description: string;
-  location: string;
-  responsible: string;
-  entity: string;
-  municipality: string;
-  city: string;
-  locality: string;
-  goods?: ExapleGoods[];
-}
-
-export interface ExapleGoods {
-  numberGood: number;
-  description: string;
-  quantity: number;
-  dossier: string;
-}
-
+import { COUNT_SAFE_COLUMNS } from './vault-consultation-column';
 @Component({
   selector: 'app-vault-consultation',
   templateUrl: './vault-consultation.component.html',
   styles: [],
 })
-export class VaultConsultationComponent extends BasePage implements OnInit {
-  totalItems: number = 0;
-  params = new BehaviorSubject<ListParams>(new ListParams());
+export class VaultConsultationComponent
+  extends BasePageWidhtDinamicFilters
+  implements OnInit
+{
+  form: FormGroup;
   vaults: ISafe[] = [];
-  //Data Table
 
   constructor(
+    private fb: FormBuilder,
     private modalService: BsModalService,
     private safeService: SafeService
   ) {
     super();
+    this.ilikeFilters = ['user'];
+    // this.ilikeFilters = ['user'];
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.search());
+    this.service = this.safeService;
     this.settings = {
       ...this.settings,
-      actions: false,
-      columns: {
-        idSafe: {
-          title: 'No',
-          width: '10%',
-          sort: false,
-        },
-        description: {
-          title: 'Descripcion',
-          width: '20%',
-          sort: false,
-        },
-        ubication: {
-          title: 'Ubicacion',
-          width: '10%',
-          sort: false,
-        },
-        manager: {
-          title: 'Responsable',
-          width: '10%',
-          sort: false,
-        },
-        stateCode: {
-          title: 'Entidad',
-          width: '10%',
-          sort: false,
-        },
-        municipalityCode: {
-          title: 'Municipio',
-          width: '10%',
-          sort: false,
-        },
-        cityCode: {
-          title: 'Ciudad',
-          width: '10%',
-          sort: false,
-        },
-        localityCode: {
-          title: 'Localidad',
-          width: '10%',
-          sort: false,
-        },
+      actions: {
+        // columnTitle: 'Acciones',
+        edit: false,
+        delete: false,
+        add: false,
+        position: 'right',
       },
+      columns: { ...COUNT_SAFE_COLUMNS },
+      noDataMessage: 'No se encontrarón registros',
     };
   }
 
-  ngOnInit(): void {
-    this.params
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getVaults());
+  openForm(provider?: any) {
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      provider,
+      callback: (next: boolean) => {
+        if (next) this.getData();
+      },
+    };
+    this.modalService.show(ModalListGoodsComponent, modalConfig);
   }
 
-  getVaults() {
-    this.loading = true;
-    this.params.getValue()['filter.description'] = `$ilike:${
-      this.params.getValue().text
-    }`;
-    this.safeService.getAll(this.params.getValue()).subscribe({
-      next: response => {
-        console.log(response);
-        this.vaults = response.data.map(vault => {
-          return {
-            idSafe: vault.idSafe,
-            description: vault.description,
-            localityCode: vault.localityDetail.nameLocation,
-            cityCode: vault.cityDetail.nameCity,
-            municipalityCode: vault.municipalityDetail.nameMunicipality,
-            registerNumber: vault.registerNumber,
-            responsibleDelegation: vault.manager,
-            stateCode: vault.stateDetail.descCondition,
-            ubication: vault.ubication,
-            cityDetail: null,
-            manager: vault.manager,
-          };
-        });
-        this.totalItems = response.count;
-        this.loading = false;
-      },
-      error: error => (this.loading = false),
+  openModal(context?: Partial<ModalListGoodsComponent>) {
+    const modalRef = this.modalService.show(ModalListGoodsComponent, {
+      initialState: { ...context },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
     });
   }
 
+  search() {
+    this.safeService.getAll(this.params.getValue()).subscribe({
+      next: (data: any) => {
+        this.totalItems = data.count;
+        this.vaults = data.data;
+        this.loading = false;
+        console.log(this.vaults);
+      },
+    });
+  }
   select(event: any) {
     console.log(event.data.idSafe);
     event.data
       ? this.openModal(event.data.idSafe)
       : this.alert('info', 'Ooop...', 'Esta Bóveda no contiene Bines');
-  }
-
-  openModal(data: any): void {
-    this.modalService.show(ModalListGoodsComponent, {
-      initialState: data,
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
-    });
   }
 }
