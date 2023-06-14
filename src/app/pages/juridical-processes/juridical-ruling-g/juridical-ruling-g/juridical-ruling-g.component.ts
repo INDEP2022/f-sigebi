@@ -4214,7 +4214,7 @@ export class JuridicalRulingGComponent
   async createDictamenXGood1(body: any) {
     this.DictationXGood1Service.createDictaXGood1(body).subscribe({
       next: resp => {
-        console.log('CREADO', resp);
+        console.log('SE GUARDARON LOS BIENES ', resp);
       },
       error: error => {
         console.log('ERROR', error.error);
