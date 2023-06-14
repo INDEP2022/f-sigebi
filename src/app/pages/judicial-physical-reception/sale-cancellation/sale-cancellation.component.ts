@@ -1060,7 +1060,9 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
       this.serviceProcVal.getByFilter(paramsF.getParams()).subscribe(
         res => {
           if (this.form.get('statusProceeding').value != null) {
+
             const modelEdit: IProccedingsDeliveryReception = {
+
               comptrollerWitness: this.form.get('testigo').value,
               observations: this.form.get('observaciones').value,
               witness1: this.form.get('entrega').value,
@@ -1069,19 +1071,16 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
               elaborationDate: new Date(
                 this.form.get('fecElab').value
               ).getTime(),
-              datePhysicalReception: format(
-                this.form.get('fecRecepFisica').value,
-                'yyyy-MM-dd HH:mm'
-              ),
-              dateElaborationReceipt: format(
-                this.form.get('fecElabRecibo').value,
-                'yyyy-MM-dd HH:mm'
-              ),
-              dateDeliveryGood: format(
-                this.form.get('fecEntregaBienes').value,
-                'yyyy-MM-dd HH:mm'
-              ),
-              captureDate: format(new Date(), 'yyyy-MM-dd HH:mm'),
+              datePhysicalReception: new Date(
+                this.form.get('fecRecepFisica').value
+              ).getTime(),
+              dateElaborationReceipt: new Date(
+                this.form.get('fecElabRecibo').value
+              ).getTime(),
+              dateDeliveryGood: new Date(
+                this.form.get('fecEntregaBienes').value
+              ).getTime(),
+              captureDate: new Date().getTime(),
               universalFolio: this.form.get('folioEscaneo').value,
             };
             const resData = JSON.parse(JSON.stringify(res.data[0]));
@@ -1117,19 +1116,16 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
             witness2: this.form.get('recibe2').value,
             address: this.form.get('direccion').value,
             elaborationDate: new Date(this.form.get('fecElab').value).getTime(),
-            datePhysicalReception: format(
-              this.form.get('fecRecepFisica').value,
-              'yyyy-MM-dd HH:mm'
-            ),
-            dateElaborationReceipt: format(
-              this.form.get('fecElabRecibo').value,
-              'yyyy-MM-dd HH:mm'
-            ),
-            dateDeliveryGood: format(
-              this.form.get('fecEntregaBienes').value,
-              'yyyy-MM-dd HH:mm'
-            ),
-            captureDate: format(new Date(), 'yyyy-MM-dd HH:mm'),
+            datePhysicalReception: new Date(
+              this.form.get('fecRecepFisica').value
+            ).getTime(),
+            dateElaborationReceipt: new Date(
+              this.form.get('fecElabRecibo').value
+            ).getTime(),
+            dateDeliveryGood: new Date(
+              this.form.get('fecEntregaBienes').value
+            ).getTime(),
+            captureDate: new Date().getTime(),
 
             keysProceedings: this.form.get('acta2').value,
             /* elaborate: 'SERA', */
@@ -1199,8 +1195,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
     console.log(paramsF.getParams());
     this.serviceGood
       .getAllFilterDetail(
-        `filter.fileNumber=$eq:${
-          this.form.get('expediente').value
+        `filter.fileNumber=$eq:${this.form.get('expediente').value
         }&${paramsF.getParams()}`
       )
       .subscribe({
@@ -1890,8 +1885,8 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
                         localStorage.getItem('username') == 'sigebiadmon'
                           ? localStorage.getItem('username')
                           : localStorage
-                              .getItem('username')
-                              .toLocaleUpperCase(),
+                            .getItem('username')
+                            .toLocaleUpperCase(),
                     };
                     console.log(model);
                     this.serviceProgrammingGood.paChangeStatus(model).subscribe(
@@ -1956,7 +1951,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
                   console.log(res);
                   this.alert('success', 'El acta ha sido cerrada', '');
                 },
-                err => {}
+                err => { }
               );
             } else {
               this.alert(
@@ -2184,7 +2179,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
       } else if (
         this.form.get('fecElab').value != null &&
         format(this.form.get('fecElab').value, 'MM-yyyy') !=
-          format(new Date(), 'MM-yyyy')
+        format(new Date(), 'MM-yyyy')
       ) {
         this.alert(
           'error',
