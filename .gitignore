@@ -42,3 +42,6 @@ environment.ts
 # System files
 .DS_Store
 Thumbs.db
+
+#Env
+src/environments/environment.ts
