@@ -155,9 +155,8 @@ export class JuridicalRulingComponent
         valuePrepareFunction: (isSelected: boolean, row: IGood) =>
           this.isGoodSelected(row),
         renderComponent: CheckboxElementComponent,
-        onComponentInitFunction: (instance: CheckboxElementComponent) => (
-          console.log((instance.checked = false)), this.onGoodSelect(instance)
-        ),
+        onComponentInitFunction: (instance: CheckboxElementComponent) =>
+          this.onGoodSelect(instance),
       },
       id: {
         title: 'No. Bien',
@@ -1752,8 +1751,6 @@ export class JuridicalRulingComponent
           vdepend = CAT_DEPARTAMENTOS.depend;
           vdep_deleg = CAT_DEPARTAMENTOS.depDelegation;
 
-          console.log(CAT_DEPARTAMENTOS);
-
           if (vnivel == 4) {
             vniveld4 = SIGLA;
             vniveld5 = vCVE_CARGO;
@@ -1762,7 +1759,7 @@ export class JuridicalRulingComponent
             vniveld3 = SIGLA;
           }
 
-          console.log((vniveld4 = SIGLA), (vniveld5 = vCVE_CARGO));
+          // console.log((vniveld4 = SIGLA), (vniveld5 = vCVE_CARGO));
 
           // SIGUIENTE CONSULTA
           let obj2 = {
@@ -1793,8 +1790,6 @@ export class JuridicalRulingComponent
           vnivelp = CAT_DEPARTAMENTOS2.nivel;
           vdependp = CAT_DEPARTAMENTOS2.depend;
           vdep_delegP = CAT_DEPARTAMENTOS2.dep_delegacion;
-
-          console.log(CAT_DEPARTAMENTOS2);
 
           await this.PUP_DICTA_LOG(
             LST_ID + `ANTES DE SELECT DSAREA: *${user.department}`
@@ -2559,7 +2554,7 @@ export class JuridicalRulingComponent
             () => {
               //Limpiar todo
               this.clearSearch();
-              this.getExp();
+              this.getExp(v_no_expediente);
             }
           );
         }
@@ -2614,7 +2609,7 @@ export class JuridicalRulingComponent
           Swal.fire('Dictamen ha eliminado correctamente', '', 'success').then(
             () => {
               this.clearSearch();
-              this.getExp();
+              this.getExp(v_no_expediente);
             }
           );
         }
@@ -2622,16 +2617,13 @@ export class JuridicalRulingComponent
     }
   }
 
-  getExp() {
+  getExp(exp: number) {
     const { NO_EXP } = this.activatedRoute.snapshot.queryParams;
-
-    console.log(this.activatedRoute.snapshot.queryParams);
-
-    this.expedientServices.getById(NO_EXP).subscribe({
+    this.expedientServices.getById(exp ?? NO_EXP).subscribe({
       next: response => {
         // ..Datos del expediente
         this.isDisabledExp = true;
-        this.legalForm.get('noExpediente').patchValue(NO_EXP);
+        this.legalForm.get('noExpediente').patchValue(exp ?? NO_EXP);
         this.legalForm.get('criminalCase').setValue(response.criminalCase);
         this.legalForm
           .get('preliminaryInquiry')

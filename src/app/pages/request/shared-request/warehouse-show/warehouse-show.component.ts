@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import * as moment from 'moment';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { Iprogramming } from 'src/app/core/models/good-programming/programming';
 import { IStoreStock } from 'src/app/core/models/ms-store-alias-stock/store-alias-stock.model';
 import { CityService } from 'src/app/core/services/catalogs/city.service';
 import { LocalityService } from 'src/app/core/services/catalogs/locality.service';
@@ -12,6 +13,7 @@ import { MunicipalityService } from 'src/app/core/services/catalogs/municipality
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
 import { StateOfRepublicService } from 'src/app/core/services/catalogs/state-of-republic.service';
 import { TypeWarehouseService } from 'src/app/core/services/catalogs/type-warehouse.service';
+import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-request/programming-request.service';
 import { StoreAliasStockService } from 'src/app/core/services/ms-store/store-alias-stock.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { WarehouseConfirmComponent } from '../warehouse-confirm/warehouse-confirm.component';
@@ -33,6 +35,7 @@ export class WarehouseShowComponent extends BasePage implements OnInit {
   typeWarehouseName: string = '';
   startDate: string = '';
   endDate: string = '';
+  programming: Iprogramming;
   constructor(
     private modalService: BsModalService,
     private activatedRoute: ActivatedRoute,
@@ -42,7 +45,9 @@ export class WarehouseShowComponent extends BasePage implements OnInit {
     private municipalityService: MunicipalityService,
     private cityService: CityService,
     private localityService: LocalityService,
-    private typeWarehouseService: TypeWarehouseService
+    private typeWarehouseService: TypeWarehouseService,
+    private router: Router,
+    private programmingService: ProgrammingRequestService
   ) {
     super();
     this.programmingId = Number(
@@ -67,6 +72,7 @@ export class WarehouseShowComponent extends BasePage implements OnInit {
         const locality = response.data[0].wildebeestSettlement;
         const typeWarehouse = response.data[0].tpstore;
 
+        this.getProgramming(response.data[0].idProgramming);
         this.getRegionalDelegation(idDelegationReg);
         this.getStateOfRepublic(idStateOfRep);
         this.getMunicipality(idMunicipality, idStateOfRep);
@@ -141,7 +147,6 @@ export class WarehouseShowComponent extends BasePage implements OnInit {
     this.params.getValue()['filter.id'] = idLocality;
     this.localityService.getAll(this.params.getValue()).subscribe({
       next: response => {
-        console.log('Colonia', response);
         this.localityName = response.data[0].nameLocation;
       },
       error: error => {
@@ -153,7 +158,6 @@ export class WarehouseShowComponent extends BasePage implements OnInit {
   getTypeWarehouse(idTypeWarehouse: number) {
     this.typeWarehouseService.getById(idTypeWarehouse).subscribe({
       next: response => {
-        console.log('Tipo almacen', response);
         this.typeWarehouseName = response.description;
       },
       error: error => {
@@ -164,7 +168,7 @@ export class WarehouseShowComponent extends BasePage implements OnInit {
 
   confirm() {
     const store = this.store;
-    console.log('almac', store);
+
     let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
     config.initialState = {
       store,
@@ -179,7 +183,16 @@ export class WarehouseShowComponent extends BasePage implements OnInit {
     }); */
   }
 
+  getProgramming(idProgramming: string) {
+    this.programmingService.getProgrammingId(Number(idProgramming)).subscribe({
+      next: response => {
+        this.programming = response;
+      },
+      error: error => {},
+    });
+  }
+
   close() {
-    this.modalService.hide();
+    this.router.navigate(['/pages/siab-web/sami/consult-tasks']);
   }
 }
