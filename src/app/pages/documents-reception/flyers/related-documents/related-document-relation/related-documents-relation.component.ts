@@ -575,6 +575,9 @@ export class RelatedDocumentsRelationComponent
 
   showDeleteAlertCcp(event: any) {
     console.log(event.id);
+    if (this.formJobManagement.value.statusOf == 'ENVIADO') {
+      return;
+    }
     this.alertQuestion('question', 'Se borra el remitente?', '').then(
       async question => {
         if (question.isConfirmed) {
@@ -875,10 +878,9 @@ export class RelatedDocumentsRelationComponent
     this.formJobManagement.get('proceedingsNumber').setValue(expedient);
     this.formJobManagement
       .get('insertDate')
-      .setValue(formatDate(new Date(), 'dd-MM-yyyy', 'en-US'));
+      .setValue(formatDate(new Date(), 'yyyy-MM-dd', 'en-US'));
     this.getNotification(wheelNumber, expedient).subscribe({
       next: async res => {
-        // console.log(res);
         this.formJobManagement
           .get('flyerNumber')
           .setValue(res.wheelNumber as any);
@@ -891,16 +893,16 @@ export class RelatedDocumentsRelationComponent
         this.managementForm.get('noVolante').setValue(res.wheelNumber);
         this.managementForm.get('noExpediente').setValue(res.expedientNumber);
         this.managementForm.get('wheelStatus').setValue(res.wheelStatus);
-        let mJobManagement;
         try {
-          const mJobManagement = await firstValueFrom(
-            this.getMJobManagement(res.wheelNumber)
-          );
+          await firstValueFrom(this.getMJobManagement(res.wheelNumber));
         } catch (e) {
           this.isCreate = true;
-          console.log(e);
+          if (this.formNotification.value.expedientNumber) {
+            console.log('refreshTableGoods');
+            this.refreshTableGoods();
+          }
         }
-        this.loadInfo(mJobManagement);
+        // this.loadInfo(mJobManagement);
         // console.log('res', res);
         // if (res.expedientNumber) {
         //   this.refreshTableGoods();
@@ -909,15 +911,12 @@ export class RelatedDocumentsRelationComponent
     });
   }
 
+  isDisabledBtnCcp = false;
   async loadInfo(mJobManagement: IMJobManagement) {
     console.log('res', this.formNotification.value.expedientNumber);
     if (mJobManagement) {
       try {
-        // const mJobManagement = await firstValueFrom(
-        //   this.getMJobManagement(this.formJobManagement.value.flyerNumber)
-        // );
         this.m_job_management = mJobManagement;
-        console.log('mjobmanagement ', mJobManagement);
         this.formJobManagement.patchValue({
           ...mJobManagement,
           city: {
@@ -939,6 +938,11 @@ export class RelatedDocumentsRelationComponent
                 }
               : mJobManagement.addressee,
         });
+        if (this.formJobManagement.value.statusOf === 'ENVIADO') {
+          console.log('ENVIADO');
+          this.isDisabledBtnCcp = true;
+          this.settings3.actions.delete = false;
+        }
         if (mJobManagement.city) {
           this.getCity(mJobManagement.city).subscribe({
             next: res => {
@@ -977,6 +981,7 @@ export class RelatedDocumentsRelationComponent
         if (mJobManagement.managementNumber) {
           this.refreshTableGoodsJobManagement();
           this.refreshTableDocuments();
+          this.refreshTableCopies();
         }
 
         if (mJobManagement.statusOf == 'ENVIADO') {
@@ -1032,6 +1037,20 @@ export class RelatedDocumentsRelationComponent
         this.isLoadingDocuments = false;
       },
     });
+  }
+
+  refreshTableCopies() {
+    // const params = new ListParams();
+    // params['filter.managementNumber'] =
+    //   this.formJobManagement.value.managementNumber;
+    // this.mJobManagementService
+    //   .getCopyOficeManag(this.formJobManagement.value.managementNumber)
+    //   .subscribe({
+    //     next: res => {
+    //       this.copyOficio = res.data;
+    //     },
+    //   });
+    this.getCopyOficioGestion__(this.formJobManagement.value.managementNumber);
   }
 
   refreshTableGoods() {
@@ -1660,41 +1679,21 @@ export class RelatedDocumentsRelationComponent
       });
   }
 
+  isLoadingSender = false;
   /**
    * Obtener el listado de Remitente
    * @param params Parametos de busqueda de tipo @ListParams
    * @returns
    */
   async getSenderByDetail(params: ListParams) {
+    // this.isLoadingSender = true;
     params.take = 20;
     params['order'] = 'DESC';
-    // let subscription = this.flyerService.getSenderUser(params).subscribe({
-    //   next: data => {
-    //     // console.log(data);
-    //     const senders = data.data.map(i => {
-    //       // i.userDetail.name =
-    //       //   '#' + i.userDetail.id + ' -- ' + i.userDetail.name;
-
-    //       // return i.userDetail;
-    //       return {
-    //         id: i.userDetail.id,
-    //         idName: i.userDetail.id + ' -- ' + i.userDetail.name,
-    //         name: i.userDetail.name,
-    //       };
-    //     });
-    //     console.log(senders);
-    //     this.senders = new DefaultSelect(senders, data.count);
-    //     subscription.unsubscribe();
-    //   },
-    //   error: error => {
-    //     this.senders = new DefaultSelect();
-    //     this.onLoadToast('error', 'Error', error.error.message);
-    //     subscription.unsubscribe();
-    //   },
-    // });
     const delegationNumber = (await this.getUserInfo()).delegationNumber as any;
-    this.mJobManagementService.getRegSender(delegationNumber).subscribe(
-      data => {
+    params['no_delegacion'] = delegationNumber;
+    params['search'] = params['search'] ? params['search'] : '';
+    this.mJobManagementService.getRegSender(params).subscribe({
+      next: data => {
         console.log(data);
         let result = data.data.map(item => {
           return {
@@ -1703,11 +1702,14 @@ export class RelatedDocumentsRelationComponent
           };
         });
         this.senders = new DefaultSelect(result, data.count);
+        this.isLoadingSender = false;
       },
-      error => {
-        this.select = new DefaultSelect();
-      }
-    );
+      error: err => {
+        console.log(err);
+        this.select = new DefaultSelect([], 0);
+        this.isLoadingSender = false;
+      },
+    });
   }
 
   send(): any {
@@ -1858,7 +1860,8 @@ export class RelatedDocumentsRelationComponent
 
   async getFromSelect(params: ListParams) {
     const senderUser = this.formJobManagement.value.sender.usuario;
-    this.mJobManagementService.getRegAddressee(senderUser).subscribe(
+    params['remitente'] = senderUser;
+    this.mJobManagementService.getRegAddressee(params).subscribe(
       data => {
         console.log({ addressee: data });
         let result = data.data.map(item => {
@@ -1869,7 +1872,7 @@ export class RelatedDocumentsRelationComponent
         });
         this.select = new DefaultSelect(result, data.count);
       },
-      error => {
+      () => {
         this.select = new DefaultSelect();
       }
     );
@@ -1958,85 +1961,85 @@ export class RelatedDocumentsRelationComponent
     });
   }
 
-  async showDeleteAlert(legend?: any) {
-    //ILegend
-    //Desea eliminar el oficio con el expediente ${proceedingsNumber} y No. Oficio ${managementNumber}
-    if (this.pantallaActual == '1') {
-      const {
-        noVolante, //no_volante
-        wheelStatus, //status
-      } = this.managementForm.value;
-      const {
-        managementNumber, //no_of_gestion
-        flyerNumber, //no_volante
-        statusOf, //status_of
-        cveManagement, //cve_of_gestion
-        proceedingsNumber, //no_expediente
-        insertUser, //usuario insert
-        insertDate, //fecha inserto
-      } = this.m_job_management;
+  // async showDeleteAlert(legend?: any) {
+  //   //ILegend
+  //   //Desea eliminar el oficio con el expediente ${proceedingsNumber} y No. Oficio ${managementNumber}
+  //   if (this.pantallaActual == '1') {
+  //     const {
+  //       noVolante, //no_volante
+  //       wheelStatus, //status
+  //     } = this.managementForm.value;
+  //     const {
+  //       managementNumber, //no_of_gestion
+  //       flyerNumber, //no_volante
+  //       statusOf, //status_of
+  //       cveManagement, //cve_of_gestion
+  //       proceedingsNumber, //no_expediente
+  //       insertUser, //usuario insert
+  //       insertDate, //fecha inserto
+  //     } = this.m_job_management;
 
-      if (managementNumber == null) {
-        this.onLoadToast('info', 'No se tiene oficio', '');
-        return;
-      }
+  //     if (managementNumber == null) {
+  //       this.onLoadToast('info', 'No se tiene oficio', '');
+  //       return;
+  //     }
 
-      if (wheelStatus == 'ENVIADO') {
-        this.onLoadToast(
-          'info',
-          'El oficio ya esta enviado no puede borrar',
-          ''
-        );
-        return;
-      }
+  //     if (wheelStatus == 'ENVIADO') {
+  //       this.onLoadToast(
+  //         'info',
+  //         'El oficio ya esta enviado no puede borrar',
+  //         ''
+  //       );
+  //       return;
+  //     }
 
-      if (cveManagement.includes('?') == false) {
-        this.onLoadToast(
-          'info',
-          'La clave está armada, no puede borrar oficio',
-          ''
-        );
-        return;
-      }
+  //     if (cveManagement.includes('?') == false) {
+  //       this.onLoadToast(
+  //         'info',
+  //         'La clave está armada, no puede borrar oficio',
+  //         ''
+  //       );
+  //       return;
+  //     }
 
-      if (insertUser != this.authUser.username) {
-        const ATJR: any = await this.userHavePermission();
-        console.log(ATJR);
-        if (Number(ATJR[0]) == 0) {
-          this.onLoadToast(
-            'error',
-            'Error',
-            'El Usuario no está autorizado para eliminar el Oficio'
-          );
-          return;
-        }
-      } else {
-        this.onLoadToast(
-          'error',
-          'Error',
-          'Usuario inválido para borrar oficio'
-        );
-        return;
-      }
+  //     if (insertUser != this.authUser.username) {
+  //       const ATJR: any = await this.userHavePermission();
+  //       console.log(ATJR);
+  //       if (Number(ATJR[0]) == 0) {
+  //         this.onLoadToast(
+  //           'error',
+  //           'Error',
+  //           'El Usuario no está autorizado para eliminar el Oficio'
+  //         );
+  //         return;
+  //       }
+  //     } else {
+  //       this.onLoadToast(
+  //         'error',
+  //         'Error',
+  //         'Usuario inválido para borrar oficio'
+  //       );
+  //       return;
+  //     }
 
-      this.alertQuestion(
-        'warning',
-        'Eliminar',
-        `Desea eliminar el oficio con el expediente ${proceedingsNumber} y No. Oficio ${managementNumber}`
-      ).then(question => {
-        if (question.isConfirmed) {
-          if (this.pantallaActual == '1') {
-            this.deleteOfficeDesahogo(managementNumber, noVolante, insertDate);
-            //Swal.fire('Borrado', '', 'success');
-          } else {
-            this.deleteOfficeRelacionado(managementNumber, noVolante);
-          }
-        }
-      });
-    } else {
-      this.onClickBtnErase();
-    }
-  }
+  //     this.alertQuestion(
+  //       'warning',
+  //       'Eliminar',
+  //       `Desea eliminar el oficio con el expediente ${proceedingsNumber} y No. Oficio ${managementNumber}`
+  //     ).then(question => {
+  //       if (question.isConfirmed) {
+  //         if (this.pantallaActual == '1') {
+  //           this.deleteOfficeDesahogo(managementNumber, noVolante, insertDate);
+  //           //Swal.fire('Borrado', '', 'success');
+  //         } else {
+  //           this.deleteOfficeRelacionado(managementNumber, noVolante);
+  //         }
+  //       }
+  //     });
+  //   } else {
+  //     this.onClickBtnDelete();
+  //   }
+  // }
 
   async deleteOfficeDesahogo(
     managementNumber: number | string,
@@ -2845,35 +2848,35 @@ export class RelatedDocumentsRelationComponent
     return (await this.getDepartment(params, true)) as IDepartment;
   }
 
-  sendDictamen() {
-    // let config: ModalOptions = {
-    //   initialState: {
-    //     documento: {
-    //       urlDoc: '',
-    //       type: 'pdf',
-    //     },
-    //     callback: (data: any) => {},
-    //   }, //pasar datos por aca
-    //   class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
-    //   ignoreBackdropClick: true, //ignora el click fuera del modal
-    // };
-    // this.modalService.show(UploadDictamenFilesModalComponent, config);
-    if (this.pantallaActual == '1') {
-      // Gestion Send button
-      if (
-        this.formJobManagement.value.statusOf == 'ENVIADO' &&
-        !this.formJobManagement.value.cveManagement.includes('?')
-      ) {
-        // Primer condicion al enviar
-        this.firstConditionSend();
-      } else {
-        // Segunda condicion al enviar
-        this.secondConditionSend();
-      }
-    } else {
-      this.onClickBtnSend();
-    }
-  }
+  // sendDictamen() {
+  //   // let config: ModalOptions = {
+  //   //   initialState: {
+  //   //     documento: {
+  //   //       urlDoc: '',
+  //   //       type: 'pdf',
+  //   //     },
+  //   //     callback: (data: any) => {},
+  //   //   }, //pasar datos por aca
+  //   //   class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+  //   //   ignoreBackdropClick: true, //ignora el click fuera del modal
+  //   // };
+  //   // this.modalService.show(UploadDictamenFilesModalComponent, config);
+  //   if (this.pantallaActual == '1') {
+  //     // Gestion Send button
+  //     if (
+  //       this.formJobManagement.value.statusOf == 'ENVIADO' &&
+  //       !this.formJobManagement.value.cveManagement.includes('?')
+  //     ) {
+  //       // Primer condicion al enviar
+  //       this.firstConditionSend();
+  //     } else {
+  //       // Segunda condicion al enviar
+  //       this.secondConditionSend();
+  //     }
+  //   } else {
+  //     this.onClickBtnSend();
+  //   }
+  // }
 
   dictationCount(wheelNumber: string | number) {
     return new Promise((resolve, reject) => {
@@ -3303,5 +3306,4 @@ export class RelatedDocumentsRelationComponent
 
   // changeSender(sender) {
   //   console.log({sender});
-  // }
 }
