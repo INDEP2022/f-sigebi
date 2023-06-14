@@ -1,7 +1,11 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="modal-title">
+    <h5 class="modal-title" *ngIf="!programming?.folio">
       Solicitud de alta almac&eacute;n con folio&#58; {{ programmingId }}
+    </h5>
+
+    <h5 class="modal-title" *ngIf="programming?.folio">
+      Solicitud de alta almac&eacute;n con folio&#58; {{ programming?.folio }}
     </h5>
 
     <div class="row pt-2">
