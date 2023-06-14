@@ -17,10 +17,7 @@
       </button> -->
       Fec&#46; Captura:
       <span class="badge bg-info ml-3 mr-3" style="display: initial !important">
-        {{
-          (formJobManagement.get('insertDate').value | date : 'M/d/yyyy') ||
-            '00/00/0000'
-        }}
+        {{ formJobManagement.get('insertDate').value || '00/00/0000' }}
       </span>
       / Estatus:
       <span class="badge bg-info ml-3 mr-3" style="display: initial !important">
@@ -112,8 +109,10 @@
                 bindLabel="userAndName"
                 [data]="senders"
                 [form]="formJobManagement"
+                [loading]="isLoadingSender"
                 control="sender"
                 [showTooltip]="true"
+                [searchOnInit]="true"
                 (change)="changeSender($event)"
                 label="Remitente"></ngx-select>
             </form-field>
@@ -489,9 +488,9 @@
                 class="btn btn-info active btn-sm m-1"
                 (click)="openModal()">
                 <i class="bx bxs-file"></i>
-                <ng-container *ngIf="isDisabledBtnDocs"
+                <!-- <ng-container *ngIf="isDisabledBtnDocs"
                   ><span class="spinner-border ml-2"></span
-                ></ng-container>
+                ></ng-container> -->
               </button>
               <button
                 type="button"

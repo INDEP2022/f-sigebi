@@ -875,7 +875,7 @@ export class RelatedDocumentsRelationComponent
     this.formJobManagement.get('proceedingsNumber').setValue(expedient);
     this.formJobManagement
       .get('insertDate')
-      .setValue(formatDate(new Date(), 'dd-MM-yyyy', 'en-US'));
+      .setValue(formatDate(new Date(), 'yyyy-MM-dd', 'en-US'));
     this.getNotification(wheelNumber, expedient).subscribe({
       next: async res => {
         // console.log(res);
@@ -891,16 +891,17 @@ export class RelatedDocumentsRelationComponent
         this.managementForm.get('noVolante').setValue(res.wheelNumber);
         this.managementForm.get('noExpediente').setValue(res.expedientNumber);
         this.managementForm.get('wheelStatus').setValue(res.wheelStatus);
-        let mJobManagement;
         try {
-          const mJobManagement = await firstValueFrom(
-            this.getMJobManagement(res.wheelNumber)
-          );
+          await firstValueFrom(this.getMJobManagement(res.wheelNumber));
         } catch (e) {
           this.isCreate = true;
           console.log(e);
+          if (this.formNotification.value.expedientNumber) {
+            console.log('refreshTableGoods');
+            this.refreshTableGoods();
+          }
         }
-        this.loadInfo(mJobManagement);
+        // this.loadInfo(mJobManagement);
         // console.log('res', res);
         // if (res.expedientNumber) {
         //   this.refreshTableGoods();
@@ -913,9 +914,6 @@ export class RelatedDocumentsRelationComponent
     console.log('res', this.formNotification.value.expedientNumber);
     if (mJobManagement) {
       try {
-        // const mJobManagement = await firstValueFrom(
-        //   this.getMJobManagement(this.formJobManagement.value.flyerNumber)
-        // );
         this.m_job_management = mJobManagement;
         console.log('mjobmanagement ', mJobManagement);
         this.formJobManagement.patchValue({
@@ -1660,41 +1658,21 @@ export class RelatedDocumentsRelationComponent
       });
   }
 
+  isLoadingSender = false;
   /**
    * Obtener el listado de Remitente
    * @param params Parametos de busqueda de tipo @ListParams
    * @returns
    */
   async getSenderByDetail(params: ListParams) {
+    // this.isLoadingSender = true;
     params.take = 20;
     params['order'] = 'DESC';
-    // let subscription = this.flyerService.getSenderUser(params).subscribe({
-    //   next: data => {
-    //     // console.log(data);
-    //     const senders = data.data.map(i => {
-    //       // i.userDetail.name =
-    //       //   '#' + i.userDetail.id + ' -- ' + i.userDetail.name;
-
-    //       // return i.userDetail;
-    //       return {
-    //         id: i.userDetail.id,
-    //         idName: i.userDetail.id + ' -- ' + i.userDetail.name,
-    //         name: i.userDetail.name,
-    //       };
-    //     });
-    //     console.log(senders);
-    //     this.senders = new DefaultSelect(senders, data.count);
-    //     subscription.unsubscribe();
-    //   },
-    //   error: error => {
-    //     this.senders = new DefaultSelect();
-    //     this.onLoadToast('error', 'Error', error.error.message);
-    //     subscription.unsubscribe();
-    //   },
-    // });
     const delegationNumber = (await this.getUserInfo()).delegationNumber as any;
-    this.mJobManagementService.getRegSender(delegationNumber).subscribe(
-      data => {
+    params['no_delegacion'] = delegationNumber;
+    params['search'] = params['search'] ? params['search'] : '';
+    this.mJobManagementService.getRegSender(params).subscribe({
+      next: data => {
         console.log(data);
         let result = data.data.map(item => {
           return {
@@ -1703,11 +1681,14 @@ export class RelatedDocumentsRelationComponent
           };
         });
         this.senders = new DefaultSelect(result, data.count);
+        this.isLoadingSender = false;
       },
-      error => {
-        this.select = new DefaultSelect();
-      }
-    );
+      error: err => {
+        console.log(err);
+        this.select = new DefaultSelect([], 0);
+        this.isLoadingSender = false;
+      },
+    });
   }
 
   send(): any {
@@ -1858,7 +1839,8 @@ export class RelatedDocumentsRelationComponent
 
   async getFromSelect(params: ListParams) {
     const senderUser = this.formJobManagement.value.sender.usuario;
-    this.mJobManagementService.getRegAddressee(senderUser).subscribe(
+    params['remitente'] = senderUser;
+    this.mJobManagementService.getRegAddressee(params).subscribe(
       data => {
         console.log({ addressee: data });
         let result = data.data.map(item => {
@@ -1869,7 +1851,7 @@ export class RelatedDocumentsRelationComponent
         });
         this.select = new DefaultSelect(result, data.count);
       },
-      error => {
+      () => {
         this.select = new DefaultSelect();
       }
     );
@@ -3303,5 +3285,4 @@ export class RelatedDocumentsRelationComponent
 
   // changeSender(sender) {
   //   console.log({sender});
-  // }
 }
