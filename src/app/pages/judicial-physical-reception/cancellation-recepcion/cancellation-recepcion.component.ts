@@ -200,6 +200,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
 
   //NAVEGACION DE ACTAS
   paramsActNavigate = new BehaviorSubject<ListParams>(new ListParams());
+  totalItemsNavigate: number = 0;
   newLimitparamsActNavigate = new FormControl(1);
 
   //NAVEGACION EN TABLA DE BIENES
@@ -320,20 +321,28 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
     this.paramsActNavigate
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(params => {
-        console.log('Sís');
-        console.log(this.paramsActNavigate);
-        console.log(this.paramsActNavigate.getValue().page);
-        console.log(this.proceedingData.length);
+        this.loading = true;
         this.dataGoodAct.load([]);
-        if (this.proceedingData.length > 0) {
-          this.loading = true;
-          const dataRes = JSON.parse(
-            JSON.stringify(
-              this.proceedingData[this.paramsActNavigate.getValue().page - 1]
-            )
-          );
-          this.fillIncomeProceeding(dataRes, 'nextProceeding');
-        }
+        this.clearInputs();
+        const paramsF = new FilterParams();
+        paramsF.page = params.page;
+        paramsF.limit = 1;
+        paramsF.addFilter('numFile', this.form.get('expediente').value);
+        paramsF.addFilter(
+          'typeProceedings',
+          'SUSPENSION,RECEPCAN',
+          SearchFilter.IN
+        );
+        this.serviceProcVal.getByFilter(paramsF.getParams()).subscribe(
+          res => {
+            console.log(res);
+            const dataRes = JSON.parse(JSON.stringify(res.data[0]));
+            this.fillIncomeProceeding(dataRes, '');
+          },
+          err => {
+            this.loading = false;
+          }
+        );
       });
 
     this.getDataUser();
@@ -903,6 +912,11 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
     this.labelActa = 'Cerrar acta';
     this.btnCSSAct = 'btn-primary';
 
+    //SETEAR EN UNO
+    const newParams = new ListParams();
+    newParams.limit = 1;
+    this.paramsActNavigate.next(newParams);
+
     const btn = document.getElementById('expedient-number');
 
     this.render.removeClass(btn, 'enabled');
@@ -1130,15 +1144,13 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
         this.form.get('acta2').setValue(dataRes.keysProceedings);
         this.form.get('direccion').setValue(dataRes.address);
         this.form.get('autoridadCancela').setValue(dataRes.witness1);
-        this.form
-          .get('fecElab')
-          .setValue(
-            new Date(
-              new Date(dataRes.elaborationDate).toLocaleString('en-US', {
-                timeZone: 'GMT',
-              })
-            )
-          );
+        this.form.get('fecElab').setValue(
+          new Date(
+            new Date(dataRes.elaborationDate).toLocaleString('en-US', {
+              timeZone: 'GMT',
+            })
+          )
+        );
         this.form
           .get('fecCierreActa')
           .setValue(addDays(new Date(dataRes.datePhysicalReception), 1));
@@ -1178,15 +1190,13 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
         this.form.get('acta2').setValue(dataRes.keysProceedings);
         this.form.get('direccion').setValue(dataRes.address);
         this.form.get('autoridadCancela').setValue(dataRes.witness1);
-        this.form
-          .get('fecElab')
-          .setValue(
-            new Date(
-              new Date(dataRes.elaborationDate).toLocaleString('en-US', {
-                timeZone: 'GMT',
-              })
-            )
-          );
+        this.form.get('fecElab').setValue(
+          new Date(
+            new Date(dataRes.elaborationDate).toLocaleString('en-US', {
+              timeZone: 'GMT',
+            })
+          )
+        );
         this.form
           .get('fecCierreActa')
           .setValue(addDays(new Date(dataRes.datePhysicalReception), 1));
@@ -1294,6 +1304,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
         console.log(res);
         if (res.data != null) {
           this.proceedingData = res.data;
+          this.totalItemsNavigate = res.count;
           const dataRes = JSON.parse(JSON.stringify(res.data[0]));
           this.fillIncomeProceeding(dataRes, '');
           console.log(typeof dataRes);
@@ -1986,14 +1997,10 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                               elaborationDate: new Date(
                                 this.form.get('fecElab').value
                               ).getTime(),
-                              datePhysicalReception: format(
-                                this.form.get('fecCierreActa').value,
-                                'yyyy-MM,dd HH:mm'
-                              ),
-                              captureDate: format(
-                                new Date(),
-                                'yyyy-MM,dd HH:mm'
-                              ),
+                              datePhysicalReception: new Date(
+                                this.form.get('fecCierreActa').value
+                              ).getTime(),
+                              captureDate: new Date().getTime(),
                             };
                             this.serviceProcVal
                               .editProceeding(resData.id, modelEdit)
@@ -2089,10 +2096,9 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                                       elaborationDate: new Date(
                                         this.form.get('fecElab').value
                                       ).getTime(),
-                                      datePhysicalReception: format(
-                                        this.form.get('fecCierreActa').value,
-                                        'yyyy-MM,dd HH:mm'
-                                      ),
+                                      datePhysicalReception: new Date(
+                                        this.form.get('fecCierreActa').value
+                                      ).getTime(),
                                       address: this.form.get('direccion').value,
                                       statusProceedings: 'ABIERTA',
                                       elaborate:
@@ -2120,10 +2126,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                                       approvalDateXAdmon: null,
                                       approvalUserXAdmon: null,
                                       numRegister: null,
-                                      captureDate: format(
-                                        new Date(),
-                                        'yyyy-MM,dd HH:mm'
-                                      ),
+                                      captureDate: new Date().getTime(),
                                       numDelegation1:
                                         this.form.get('admin').value
                                           .numberDelegation2,
@@ -2258,7 +2261,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
               witness1: this.form.get('autoridadCancela').value,
               witness2: this.form.get('elabora').value,
               address: this.form.get('direccion').value,
-              captureDate: format(new Date(), 'yyyy-MM,dd HH:mm'),
+              captureDate: new Date().getTime(),
               universalFolio: this.form.get('folioEscaneo').value,
             };
             const resData = JSON.parse(JSON.stringify(res.data[0]));
@@ -2286,10 +2289,9 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
           let newProceeding: IProccedingsDeliveryReception = {
             keysProceedings: this.form.get('acta2').value,
             elaborationDate: new Date(this.form.get('fecElab').value).getTime(),
-            datePhysicalReception: format(
-              this.form.get('fecCierreActa').value,
-              'yyyy-MM,dd HH:mm'
-            ),
+            datePhysicalReception: new Date(
+              this.form.get('fecCierreActa').value
+            ).getTime(),
             address: this.form.get('direccion').value,
             elaborate:
               localStorage.getItem('username') == 'sigebiadmon'
@@ -2309,7 +2311,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
             approvalDateXAdmon: null,
             approvalUserXAdmon: null,
             numRegister: null,
-            captureDate: format(new Date(), 'yyyy-MM,dd HH:mm'),
+            captureDate: new Date().getTime(),
             numDelegation1: this.form.get('admin').value.numberDelegation2,
             numDelegation2:
               parseInt(this.form.get('admin').value.numberDelegation2) == 11

@@ -533,6 +533,15 @@ export class EventCaptureComponent
       responsible,
     };
     delete data.elaborationDate;
+    delete data.datePhysicalReception;
+    delete data.dateElaborationReceipt;
+    delete data.dateDeliveryGood;
+    delete data.approvalDateXAdmon;
+    delete data.closeDate;
+    delete data.maxDate;
+    delete data.dateCaptureHc;
+    delete data.dateCloseHc;
+    delete data.dateMaxHc;
 
     return this.proceedingDeliveryReceptionService
       .update(this.proceeding.id, data as any)
