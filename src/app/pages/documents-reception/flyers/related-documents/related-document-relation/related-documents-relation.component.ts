@@ -2662,7 +2662,6 @@ export class RelatedDocumentsRelationComponent
 
   isDisabledBtnDocs = false;
   isDisabledBtnPrint = false;
-
   async onClickBtnPrint() {
     console.log('PRINT RELATION SCREEN');
     let values = this.formJobManagement.value;
@@ -2703,6 +2702,7 @@ export class RelatedDocumentsRelationComponent
       this.alert('warning', '', 'Debe especificar la CIUDAD');
       return;
     }
+
     this.isDisabledBtnPrint = true;
 
     try {

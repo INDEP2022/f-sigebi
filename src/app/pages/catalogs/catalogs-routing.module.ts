@@ -98,6 +98,7 @@ const routes: Routes = [
     path: 'states',
     loadChildren: async () =>
       (await import('./states/states.module')).StatesModule,
+    data: { title: 'Estados' },
   },
   {
     path: 'sat-clasification',

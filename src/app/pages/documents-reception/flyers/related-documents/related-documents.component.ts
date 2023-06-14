@@ -388,6 +388,7 @@ export class RelatedDocumentsComponent
     protected documentsService: DocumentsService,
     protected usersService: UsersService, // protected goodProcessService: GoodprocessService,
     private expedientService: ExpedientService,
+
     private relatedDocumentDesahogo: RelatedDocumentDesahogo,
     protected msOfficeManagementService: OfficeManagementService
   ) {

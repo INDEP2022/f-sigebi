@@ -445,12 +445,6 @@ export class JuridicalRulingGComponent
       )
       .subscribe();
 
-    this.filter1.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
-      if (this.goods.length > 0) {
-        this.onLoadWithClass();
-      }
-    });
-
     this.params2
       .pipe(
         takeUntil(this.$unSubscribe),
@@ -1681,6 +1675,7 @@ export class JuridicalRulingGComponent
       this.DictationXGood1Service.getAll(params).subscribe({
         next: (resp: any) => {
           console.log('respresprespresp', resp);
+
           const data = resp.data;
           this.loading = false;
           resolve(data);
