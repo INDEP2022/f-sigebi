@@ -9,6 +9,7 @@ export interface IStoreAliasStock {
 
 export interface IStoreStock {
   nbidstore?: string;
+  idProgramming?: string;
   idCity?: string;
   wildebeestDelegationregion?: number;
   idState?: string;
