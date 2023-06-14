@@ -39,6 +39,17 @@
         </div>
         <div class="col-md-2">
           <form-field
+            [control]="indicatorsOfPerformanceForm.get('endDate')"
+            label="Fin">
+            <input
+              type="text"
+              formControlName="endDate"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field
             label="D&iacute;as L&iacute;mite"
             [control]="indicatorsOfPerformanceForm.get('daysLimNumber')">
             <input

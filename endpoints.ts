@@ -123,6 +123,7 @@ export enum ENDPOINT_LINKS {
   IndicatorsParameter = 'parametergood/indicators-parameter',
   DetailIndParameter = 'parametergood/detalle-ind-parametro',
   parametergood = 'parametergood/tmp-max-cierre-acta-dev',
+  parametergoodBase = 'parametergood/api/v1/rates/get-all',
   parametergoodActa = 'proceeding/proceedings-validators',
   parametergoodCat = 'parametergood/cat-motivosrev',
   WarehouseTypeWarehouse = 'parametergood/warehouse-types-warehouse',

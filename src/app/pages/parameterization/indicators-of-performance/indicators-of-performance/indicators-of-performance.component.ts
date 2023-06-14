@@ -152,6 +152,7 @@ export class IndicatorsOfPerformanceComponent
   private prepareForm() {
     this.indicatorsOfPerformanceForm = this.fb.group({
       initialDate: [null, Validators.required],
+      endDate: [null, Validators.required],
       daysLimNumber: [null, Validators.required],
       hoursLimNumber: [null, Validators.required],
       contractZoneKey: [null, Validators.required],
