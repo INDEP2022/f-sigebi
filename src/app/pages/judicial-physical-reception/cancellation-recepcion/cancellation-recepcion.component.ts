@@ -2307,7 +2307,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
             keysProceedings: this.form.get('acta2').value,
             elaborationDate: new Date(this.form.get('fecElab').value).getTime(),
             datePhysicalReception: new Date(
-              this.form.get('fecRecepFisica').value
+              this.form.get('fecCierreActa').value
             ).getTime(),
             address: this.form.get('direccion').value,
             elaborate:
