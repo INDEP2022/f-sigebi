@@ -55,7 +55,7 @@ export const OFFICES_COLUMNS = {
     sort: false,
   },
   fax: {
-    title: 'Segundo Teléfono',
+    title: 'Fax',
     type: 'string',
     sort: false,
   },
