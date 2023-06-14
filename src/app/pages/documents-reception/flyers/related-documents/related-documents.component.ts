@@ -2851,9 +2851,13 @@ export class RelatedDocumentsComponent
         this.formJobManagement.value.statusOf == 'ENVIADO' &&
         !this.formJobManagement.value.cveManagement.includes('?')
       ) {
+        console.log('PRIMER CONDICION');
+
         // Primer condicion al enviar
         this.firstConditionSend();
       } else {
+        console.log('SEGUNDA CONDICION');
+
         // Segunda condicion al enviar
         this.secondConditionSend();
       }
@@ -3489,7 +3493,7 @@ export class RelatedDocumentsComponent
       return;
     }
     if (
-      this.formJobManagement.value.statusOf == 'EN REVISION' &&
+      this.formJobManagement.value.statusOf == 'EN REVISION' ||
       !this.formJobManagement.value.statusOf
     ) {
       if (!this.variablesSend.V_JUSTIFICACION) {
@@ -3873,8 +3877,11 @@ export class RelatedDocumentsComponent
 
   async _end_firmProcess() {
     let LV_TRAMITE = await this._GESTION_TRAMITE_TIPO_TRAMITE();
-    if (LV_TRAMITE.typeManagement == 3) {
-      this._PGR_IMAGENES_LV_PGRIMAG();
+    console.log(LV_TRAMITE);
+    if (LV_TRAMITE) {
+      if (LV_TRAMITE.typeManagement == 3) {
+        this._PGR_IMAGENES_LV_PGRIMAG();
+      }
     }
   }
 
