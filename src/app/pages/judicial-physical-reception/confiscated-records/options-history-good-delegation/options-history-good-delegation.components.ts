@@ -19,7 +19,7 @@ export class OptionsHistoryGoodDelegation extends BasePage implements OnInit {
   ngOnInit(): void {}
 
   goToDelegation() {
-    this.alert('info', 'Funcion en desarrollo', '');
+    this.alert('info', 'Función en desarrollo', '');
   }
 
   goToHistorico() {
