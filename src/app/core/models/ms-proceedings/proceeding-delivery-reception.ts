@@ -1,7 +1,7 @@
 export interface IProceedingDeliveryReception {
   id: string;
   keysProceedings: string;
-  elaborationDate: string;
+  elaborationDate: any;
   datePhysicalReception: string;
   address: string;
   statusProceedings: string;
@@ -20,7 +20,7 @@ export interface IProceedingDeliveryReception {
   approvalDateXAdmon: string;
   approvalUserXAdmon: string;
   numRegister: string;
-  captureDate: string;
+  captureDate: any;
   numDelegation1: string;
   numDelegation2: string;
   identifier: Identifier;
@@ -32,7 +32,7 @@ export interface IProceedingDeliveryReception {
   receiptKey: string;
   comptrollerWitness: string;
   numRequest: string;
-  closeDate: string;
+  closeDate: any;
   maxDate: string;
   indFulfilled: string;
   dateCaptureHc: string;
