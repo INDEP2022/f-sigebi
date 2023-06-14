@@ -452,10 +452,11 @@
           <form-field
             class="col-md-3"
             [control]="form.get('estatusPrueba')"
-            label="Estatus ">
+            label="Estatus">
             <input
               type="text"
               [readOnly]="true"
+              (dblclick)="goToHistorico('generalGood')"
               class="form-control"
               formControlName="estatusPrueba" />
           </form-field>
@@ -543,10 +544,11 @@
           <form-field
             class="col-md-3"
             [control]="form.get('etiqueta')"
-            label="Estatus ">
+            label="Estatus">
             <input
               type="text"
               [readOnly]="true"
+              (dblclick)="goToHistorico('goodActa')"
               class="form-control"
               formControlName="etiqueta" />
           </form-field>

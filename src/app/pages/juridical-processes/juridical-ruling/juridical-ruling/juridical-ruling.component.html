@@ -345,7 +345,9 @@
         <hr class="row" />
         <h5 class="title">BIENES</h5>
         <br />
+        <form-loader *ngIf="formLoading"></form-loader>
         <ng2-smart-table
+          *ngIf="!formLoading"
           [attr.class]="'table-bordered table-responsive'"
           [settings]="settings1"
           [source]="goods"

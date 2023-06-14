@@ -387,16 +387,18 @@
               </form-field>
             </div>
 
-            <<!-- div class = "row pt-4">
-            <form-check class="col-md-2 text-end" label="Improcedente(s) todo(s)" for="improcedente">
-             <input id="improcedente" type="checkbox" (change)="changeImprocedente($event.target)"
-               formControlName="improcedente" />
-           </form-check> 
-          </div> -->
+            <!-- <div class = "row pt-4">
+              <div class="d-flex flex-row-reverse">
+                <form-check class="col-md-2 text-end" label="Improcedente(s) todo(s)" for="improcedente">
+                  <input id="improcedente" type="checkbox" (change)="changeImprocedente($event.target)"
+                    formControlName="improcedente" />
+                </form-check>
+              </div>
+            </div> -->
 
             <form-loader *ngIf="formLoading"></form-loader>
 
-            <div class="row pt-2 mb-2" *ngIf="!formLoading">
+            <div class="row pt-4 mb-2" *ngIf="!formLoading">
               <div class="col-sm-12 col-12 col-md-12 pr-3">
                 <div [class]="isLoadingGood ? 'table-loading' : ''">
                   <ng2-smart-table
