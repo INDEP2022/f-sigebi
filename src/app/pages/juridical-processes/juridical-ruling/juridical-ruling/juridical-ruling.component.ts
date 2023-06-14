@@ -2554,7 +2554,7 @@ export class JuridicalRulingComponent
             () => {
               //Limpiar todo
               this.clearSearch();
-              this.getExp(noExpediente);
+              this.getExp(v_no_expediente);
             }
           );
         }
@@ -2609,7 +2609,7 @@ export class JuridicalRulingComponent
           Swal.fire('Dictamen ha eliminado correctamente', '', 'success').then(
             () => {
               this.clearSearch();
-              this.getExp(noExpediente);
+              this.getExp(v_no_expediente);
             }
           );
         }
