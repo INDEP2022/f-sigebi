@@ -262,6 +262,9 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
     return this.mJobManagementService.getAll(params).pipe(
       map(x => {
         this.countManagements = x.count;
+        if (this.countManagements === 1) {
+          this.loadInfo(x.data[0]);
+        }
         if (this.countManagements > 1) {
           this.openDialogSelectedManagement(x);
         }
@@ -315,7 +318,7 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
    * @returns
    */
   getFaStageCreda(date: Date): Promise<number> {
-    const _date = formatDate(date, 'dd-MM-yyyy', 'en-US');
+    const _date = formatDate(date, 'MM-dd-yyyy', 'en-US');
     return firstValueFrom(
       this.parametersService.getFaStageCreda(_date).pipe(
         map(response => {
@@ -970,7 +973,7 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
     const keys = Object.keys(values);
     const result: any = {};
     keys.forEach(key => {
-      if ((values as any)[key] != null) {
+      if ((values as any)[key]) {
         result[key] = (values as any)[key];
       }
     });
@@ -987,6 +990,7 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
     if (values.city) {
       result.city = values.city.id;
     }
+    result.insertDate = '06-13-2023';
     return result;
   }
 
@@ -1048,6 +1052,17 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
             })
           )
         );
+        this.dataTableDocuments.forEach(item => {
+          this.mJobManagementService
+            .createDocumentOficeManag({
+              managementNumber: this.formJobManagement.value.managementNumber,
+              cveDocument: item.cveDocument,
+              rulingType: item.rulingType,
+              goodNumber: item.goodNumber,
+              recordNumber: '',
+            })
+            .subscribe();
+        });
       }
     }
   }
