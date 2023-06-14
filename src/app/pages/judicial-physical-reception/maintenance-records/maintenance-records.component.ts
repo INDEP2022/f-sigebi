@@ -300,7 +300,9 @@ export class MaintenanceRecordsComponent extends BasePage implements OnInit {
         Promise.all(newData)
           .then(x => {
             console.log(x);
-            this.service.data = [...x];
+            this.service.data = [
+              ...x.sort((a, b) => a.numberGood - b.numberGood),
+            ];
             this.service.totalGoods = response.count;
             this.loadingGoods = false;
           })

@@ -48,4 +48,5 @@ export enum DictationEndpoints {
   ApplicationPupValidExtDom = 'application/pupValidExtDom',
   ApplicationUpdateManagerTransfer = 'application/updateManagerTransfer',
   ApplicationFindOffficeNu = 'application/findOffficeNu',
+  ApplicationPupCambiaEstatus = 'application/pup-cambia-estatus',
 }

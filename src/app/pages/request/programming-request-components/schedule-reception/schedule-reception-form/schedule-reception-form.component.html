@@ -14,7 +14,9 @@
             (confirm)="confirm()"></confirm-button>
         </div>
         <div class="m-2">
-          <button class="btn btn-danger btn-sm active">Cancelar</button>
+          <button (click)="close()" class="btn btn-danger btn-sm active">
+            Cancelar
+          </button>
         </div>
       </div>
     </div>
