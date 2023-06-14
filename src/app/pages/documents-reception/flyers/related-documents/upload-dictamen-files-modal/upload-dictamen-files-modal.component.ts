@@ -26,6 +26,9 @@ export class UploadDictamenFilesModalComponent
   @Input() fileDocumentDictation: any = null; // ARCHIVO XML PARA FIRMAR
   @Input() nameReportDictation: any = null; // NOMBRE DEL REPORTE PARA CARGAR PARAMETROS
   @Input() reportParamsDictation: any = null; // PARAMETROS PARA EL REPORTE
+  @Input() natureDocumentDictation: string = ''; // TIPO DE DICTAMEN
+  @Input() numberDictation: string = null; // NUMERO DEL DICTAMEN
+  @Input() typeDocumentDictation: string = ''; // ESTATUS DEL OFICIO
 
   hide: boolean = true;
   certiFile: File | null = null;
@@ -64,6 +67,10 @@ export class UploadDictamenFilesModalComponent
       secpwd: [null, [Validators.required, Validators.maxLength(10)]],
       signature: [null],
       fileDataBase64: [null],
+      DICTAMEN: [this.nameFileDictation],
+      NATURALEZ_DOC: [this.natureDocumentDictation],
+      NO_DOCUMENTO: [this.numberDictation],
+      TIPO_DOCUMENTO: [this.typeDocumentDictation],
     });
     // Recorrer los parametros
     for (const key in this.reportParamsDictation) {
@@ -142,20 +149,33 @@ export class UploadDictamenFilesModalComponent
     formData.append('files', this.certiFile);
     formData.append('files', this.keyCertiFile);
     formData.append('secpwd', this.fileForm.controls['secpwd'].value);
-    if (this.reportParamsDictation) {
-      // Recorrer los parametros
-      for (const key in this.reportParamsDictation) {
-        if (
-          Object.prototype.hasOwnProperty.call(this.reportParamsDictation, key)
-        ) {
-          const element = this.reportParamsDictation;
-          if (key) {
-            // this.fileForm.addControl(key, element);
-            formData.append(key, element);
-          }
-        }
-      }
-    }
+    formData.append('DICTAMEN', this.fileForm.controls['DICTAMEN'].value);
+    formData.append(
+      'NATURALEZ_DOC',
+      this.fileForm.controls['NATURALEZ_DOC'].value
+    );
+    formData.append(
+      'NO_DOCUMENTO',
+      this.fileForm.controls['NO_DOCUMENTO'].value
+    );
+    formData.append(
+      'TIPO_DOCUMENTO',
+      this.fileForm.controls['TIPO_DOCUMENTO'].value
+    );
+    // if (this.reportParamsDictation) {
+    //   // Recorrer los parametros
+    //   for (const key in this.reportParamsDictation) {
+    //     if (
+    //       Object.prototype.hasOwnProperty.call(this.reportParamsDictation, key)
+    //     ) {
+    //       const element = this.reportParamsDictation;
+    //       if (key) {
+    //         // this.fileForm.addControl(key, element);
+    //         formData.append(key, element);
+    //       }
+    //     }
+    //   }
+    // }
     this.msSignatoriesService
       .signerServiceForOfficeDictation(formData)
       .subscribe({
