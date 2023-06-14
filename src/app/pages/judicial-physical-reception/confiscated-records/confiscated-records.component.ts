@@ -256,7 +256,6 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     this.paramsActNavigate
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(params => {
-<<<<<<< HEAD
         this.loading = true
         this.dataGoodAct.load([])
         this.clearInputs()
@@ -276,10 +275,6 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
           }
         )
 
-=======
-        console.log(params);
-        this.dataGoodAct.load([]);
->>>>>>> fafe87ff3a3f4c9ae7250e1eea7706ec120ede4c
       });
 
     if (localStorage.getItem('numberExpedient')) {
@@ -1913,11 +1908,6 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         if (res.data.length > 0) {
           this.proceedingData = res.data;
           this.totalItemsNavigate = res.count;
-<<<<<<< HEAD
-=======
-          this.newLimitparamsActNavigate = new FormControl(1);
-          console.log(this.proceedingData);
->>>>>>> fafe87ff3a3f4c9ae7250e1eea7706ec120ede4c
           const dataRes = JSON.parse(JSON.stringify(res.data[0]));
           console.log(dataRes);
           this.fillIncomeProceeding(dataRes, '');
