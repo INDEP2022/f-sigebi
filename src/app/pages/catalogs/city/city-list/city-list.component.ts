@@ -107,8 +107,6 @@ export class CityListComponent extends BasePage implements OnInit {
 
     this.cityService.getAll(params).subscribe({
       next: response => {
-        // this.city = response.data;
-        // this.totalItems = response.count;
         this.columns = response.data;
         this.totalItems = response.count || 0;
 
