@@ -133,8 +133,13 @@ export const ESTATE_COLUMNS_VIEW = {
 
   physicalStatusName: {
     title: 'Estado físico transferente',
-    type: 'string',
+    type: 'html',
     sort: false,
+    valuePrepareFunction: (value: string) => {
+      if (value == '1') return 'BUENO';
+      if (value == '0') return 'MALO';
+      return value;
+    },
   },
 
   saePhysicalState: {

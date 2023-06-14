@@ -1,19 +1,18 @@
-import { BehaviorSubject, takeUntil } from 'rxjs';
 import { Component, OnInit } from '@angular/core';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 
-import { BasePage } from 'src/app/core/shared/base-page';
-import { BsModalService } from 'ngx-bootstrap/modal';
-import { IOpinion } from 'src/app/core/models/catalogs/opinion.model';
 import { LocalDataSource } from 'ng2-smart-table';
+import { BsModalService } from 'ngx-bootstrap/modal';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
-import { OPINION_COLUMNS } from './opinion-columns';
-import { OpinionFormComponent } from '../opinion-form/opinion-form.component';
+import { IOpinion } from 'src/app/core/models/catalogs/opinion.model';
 import { OpinionService } from 'src/app/core/services/catalogs/opinion.service';
-import Swal from 'sweetalert2';
+import { BasePage } from 'src/app/core/shared/base-page';
+import { OpinionFormComponent } from '../opinion-form/opinion-form.component';
+import { OPINION_COLUMNS } from './opinion-columns';
 
 @Component({
   selector: 'app-opinions-list',
@@ -49,8 +48,7 @@ export class OpinionsListComponent extends BasePage implements OnInit {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
-            filter.field == 'id' ||
-              filter.field == 'dict_ofi'
+            filter.field == 'id' || filter.field == 'dict_ofi'
               ? (searchFilter = SearchFilter.EQ)
               : (searchFilter = SearchFilter.ILIKE);
             if (filter.search !== '') {

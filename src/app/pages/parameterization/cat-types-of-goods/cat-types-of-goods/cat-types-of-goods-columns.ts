@@ -1,6 +1,6 @@
 export const TYPE_COLUMNS = {
   id: {
-    title: 'No Tipo',
+    title: 'No. Tipo',
     sort: false,
     // filter: false,
   },
@@ -13,7 +13,7 @@ export const TYPE_COLUMNS = {
 
 export const SUBTYPE_COLUMNS = {
   id: {
-    title: 'No Subtipo',
+    title: 'No. Subtipo',
     sort: false,
     // filter: false,
   },
@@ -25,7 +25,7 @@ export const SUBTYPE_COLUMNS = {
 };
 export const SUBSUBTYPE_COLUMNS = {
   id: {
-    title: 'No Ssubtipo',
+    title: 'No. Ssubtipo',
     sort: false,
     // filter: false,
   },
@@ -37,7 +37,7 @@ export const SUBSUBTYPE_COLUMNS = {
 };
 export const SUBSUBSUBTYPE_COLUMNS = {
   id: {
-    title: 'No Ssstipo',
+    title: 'No. Ssstipo',
     sort: false,
     // filter: false,
   },

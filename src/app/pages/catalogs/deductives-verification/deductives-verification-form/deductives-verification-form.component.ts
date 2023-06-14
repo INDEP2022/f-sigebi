@@ -5,12 +5,7 @@ import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IDeductiveVerification } from 'src/app/core/models/catalogs/deductive-verification.model';
 import { DeductiveVerificationService } from 'src/app/core/services/catalogs/deductive-verification.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import {
-  DOUBLE_PATTERN,
-  NUMBERS_PATTERN,
-  PERCENTAGE_NUMBERS_PATTERN,
-  STRING_PATTERN,
-} from 'src/app/core/shared/patterns';
+import { DOUBLE_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-create-deductives-verification-form',
@@ -19,7 +14,8 @@ import {
 })
 export class DeductivesVerificationFormComponent
   extends BasePage
-  implements OnInit {
+  implements OnInit
+{
   deductiveForm: ModelForm<IDeductiveVerification>;
   title: string = 'Deductiva Verificación';
   edit: boolean = false;

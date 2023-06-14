@@ -215,7 +215,6 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
     this.paramsAuthority.getValue()['filter.idAuthority'] =
       this.programming.autorityId;
     this.paramsAuthority.getValue()['filter.idTransferer'] = this.idTransferent;
-    this.paramsAuthority.getValue()['filter.idStation'] = this.idStation;
 
     this.authorityService.getAll(this.paramsAuthority.getValue()).subscribe({
       next: response => {
@@ -321,7 +320,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
       callback: (next: boolean) => {
         if (next) {
           console.log('next', next);
-          
+
           //this.electronicSign();
         }
       },
@@ -456,7 +455,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
       this.alertInfo(
         'info',
         'Acción no permitida',
-        'Se neceaita firmar el oficio para poder aprobar la solicitud'
+        'Se necesita firmar el oficio para poder aprobar la solicitud'
       );
     }
   }
@@ -527,7 +526,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
           this.onLoadToast(
             'success',
             'Notificación',
-            'Se envio el correo electronico a los usuarios correctamente'
+            'Se envio el correo electrónico a los usuarios correctamente'
           );
           this.createTaskNotification();
           this.createTaskExecuteProgramming();
