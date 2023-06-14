@@ -96,7 +96,7 @@ import { RelateDocumentsResponse } from './related-documents-response';
 import { RelatedDocumentsService } from './services/related-documents.service';
 import { UploadDictamenFilesModalComponent } from './upload-dictamen-files-modal/upload-dictamen-files-modal.component';
 
-export type IGoodAndAvailable = IGood & { available: boolean };
+export type IGoodAndAvailable = IGood & { available: boolean, seleccion?: boolean, improcedente?: boolean };
 export interface IGoodJobManagement {
   managementNumber: string;
   goodNumber: number;
@@ -132,8 +132,7 @@ export interface IGoodJobManagement {
 })
 export class RelatedDocumentsComponent
   extends RelateDocumentsResponse
-  implements OnInit
-{
+  implements OnInit {
   @ViewChild('tableGoods') tableGoods: Ng2SmartTableComponent;
 
   // Send variables
@@ -171,10 +170,9 @@ export class RelatedDocumentsComponent
   isPGR: boolean = false;
 
   pantalla = (option: boolean) =>
-    `${
-      option == true
-        ? '"Oficio de Gestión por Dictamen"'
-        : '"Oficio Gestión Relacionados"'
+    `${option == true
+      ? '"Oficio de Gestión por Dictamen"'
+      : '"Oficio Gestión Relacionados"'
     }.`;
   pantallaOption: boolean = false;
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -509,6 +507,7 @@ export class RelatedDocumentsComponent
       console.log(JSON.stringify(data));
       data.row.seleccion = data.toggle;
     });
+    // console.log(this.dataTableGoods);
   }
 
   openModalCopy(data: boolean) {
@@ -666,7 +665,7 @@ export class RelatedDocumentsComponent
                   this.copyOficio = arr;
                   this.onLoadToast('success', 'Se eliminó correctamente', '');
                 },
-                error: err => {},
+                error: err => { },
               });
           }
         }
@@ -961,10 +960,10 @@ export class RelatedDocumentsComponent
             addressee:
               mJobManagement.jobType == 'INTERNO'
                 ? {
-                    user: mJobManagement.addressee,
-                    name: null,
-                    userAndName: mJobManagement.addressee,
-                  }
+                  user: mJobManagement.addressee,
+                  name: null,
+                  userAndName: mJobManagement.addressee,
+                }
                 : mJobManagement.addressee,
           });
           console.log(this.formJobManagement.value);
@@ -1576,10 +1575,10 @@ export class RelatedDocumentsComponent
       this.alertInfo(
         'warning',
         'No existe el Número de Expediente: ' +
-          this.paramsGestionDictamen.expediente +
-          ' ni el Número de Volante: ' +
-          this.paramsGestionDictamen.volante +
-          ' para consultar la información.',
+        this.paramsGestionDictamen.expediente +
+        ' ni el Número de Volante: ' +
+        this.paramsGestionDictamen.volante +
+        ' para consultar la información.',
         ''
       );
     }
@@ -1784,7 +1783,7 @@ export class RelatedDocumentsComponent
                   urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
                   type: 'pdf',
                 },
-                callback: (data: any) => {},
+                callback: (data: any) => { },
               }, //pasar datos por aca
               class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
               ignoreBackdropClick: true, //ignora el click fuera del modal
@@ -1808,7 +1807,7 @@ export class RelatedDocumentsComponent
                   urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
                   type: 'pdf',
                 },
-                callback: (data: any) => {},
+                callback: (data: any) => { },
               }, //pasar datos por aca
               class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
               ignoreBackdropClick: true, //ignora el click fuera del modal
@@ -2609,8 +2608,22 @@ export class RelatedDocumentsComponent
 
   isDisabledBtnDocs = false;
   async onClickBtnPrint() {
+    console.log(this.pantallaActual);
     if (this.pantallaActual == '2') {
       await this.printRelationScreen();
+    } else if (this.pantallaActual == '1') {
+      console.log(this.paramsGestionDictamen);
+      console.log(this.dataTableGoods);
+      // if (
+      //   this.formJobManagement.value.statusOf == 'ENVIADO' &&
+      //   !this.formJobManagement.value.cveManagement.includes('?')
+      // ) {
+      //   // Primer condicion al imprimir
+      //   this.firstConditionSendPrint();
+      // } else {
+      //   // Segunda condicion al imprimir
+      //   this.secondConditionSendPrint();
+      // }
     }
   }
 
@@ -2864,7 +2877,93 @@ export class RelatedDocumentsComponent
       });
     });
   }
+  firstConditionSendPrint() {
+    const params = new FilterParams();
+    params.removeAllFilters();
+    params.addFilter('natureDocument', this.formJobManagement.value.jobType);
+    params.addFilter(
+      'documentNumber',
+      this.formJobManagement.value.managementNumber
+    );
+    this.svLegalOpinionsOfficeService
+      .getElectronicFirmData(params.getParams())
+      .subscribe({
+        next: async data => {
+          console.log('FIRMA ELECTRONICA', data);
+          this.svLegalOpinionsOfficeService
+            .getElectronicFirmData(params.getParams()) // CAMBIAR POR EL ENDPOIT QUE SE VA A DESPLEGAR CON FILTROS
+            .subscribe({
+              next: async dataM => {
+                console.log('M_OFICIO_GESTION_EXT_SSF3', dataM);
+                if (data.count > 0 && dataM.count > 0) {
+                  // Valida FOLIO_UNIVERSAL
+                  let _nUniversalFolio = await firstValueFrom(
+                    this.sendFunction_nUniversalFolio(params)
+                  );
+                  if (_nUniversalFolio) {
+                    if (_nUniversalFolio.n_folio_universal) {
+                      // Se llama PUP_CONSULTA_PDF_BD_SSF3
+                      this._PUP_CONSULTA_PDF_BD_SSF3();
+                      this._end_firmProcess(); // Termina el proceso
+                    } else {
+                      this.onLoadToast(
+                        'error',
+                        'No se encontró el folio universal',
+                        ''
+                      );
+                    }
+                  } else {
+                    this.onLoadToast(
+                      'error',
+                      'Error al buscar el folio universal del documento',
+                      ''
+                    );
+                  }
+                }
+              }, error: async error => {
+                console.log(error);
+                if (error.status == 400) {
+                  // se llama PUP_GENERA_PDF
+                  this._PUP_GENERA_PDF();
+                }
+              }
+            })
 
+        }, error: async error => {
+          console.log(error);
+          if (error.status == 400) {
+            let paramsReport = {
+              proceedingsNumber: this.notificationData.expedientNumber,
+              steeringWheelNumber: this.notificationData.wheelNumber,
+              ofManagementKey: this.formJobManagement.value.cveManagement,
+            };
+            // se llama PUP_LANZA_REPORTE
+            const _launchReport = await this._PUP_LANZA_REPORTE(paramsReport);
+            console.log(_launchReport);
+            let reportCondition = this._conditions_Report();
+            this.runReport(reportCondition.nameReport, reportCondition.params);
+            if (_launchReport.no_exp > 0) {
+              let _getVOficTrans = await firstValueFrom(
+                this.sendFunction_getVOficTrans(params)
+              );
+              if (_getVOficTrans) {
+                // _getVOficTrans.v_ofic_trans RESPUESTA
+                if (_getVOficTrans.v_ofic_trans) {
+                  if (
+                    this.formJobManagement.value.statusOf != 'EN REVISION' &&
+                    !this.formJobManagement.value.cveManagement.includes('?')
+                  ) {
+                    // EN REVISION POR RUBEN
+                    // Subir el PDF a la ruta de documentos y reemplazarlo por el anterior
+                  }
+                }
+              }
+            }
+            this._end_firmProcess();
+          }
+        }
+      });
+  }
   firstConditionSend() {
     const params = new FilterParams();
     params.removeAllFilters();
@@ -2878,6 +2977,7 @@ export class RelatedDocumentsComponent
       .subscribe({
         next: async data => {
           console.log('FIRMA ELECTRONICA', data);
+
           if (data.count > 0) {
             // Valida FOLIO_UNIVERSAL
             let _nUniversalFolio = await firstValueFrom(
@@ -3256,7 +3356,93 @@ export class RelatedDocumentsComponent
     };
     this.modalService.show(DocumentsViewerByFolioComponent, config);
   }
+  async secondConditionSendPrint() {
+    if (!this.formJobManagement.value.jobType) {
+      this.alertInfo('warning', 'Debe especificar el TIPO OFICIO', '');
+      return;
+    }
+    if (!this.formJobManagement.value.sender) {
+      this.alertInfo('warning', 'Debe especificar el REMITENTE', '');
+      return;
+    }
+    if (this.formJobManagement.value.jobType == 'INTERNO') {
+      this.alertInfo('warning', 'Debe especificar el DESTINATARIO', '');
+      return;
+    }
+    if (this.formJobManagement.value.jobType == 'EXTERNO') {
+      this.alertInfo('warning', 'Debe especificar al DESTINATARIO EXTERNO', '');
+      return;
+    }
+    if (!this.formJobManagement.value.city) {
+      this.alertInfo('warning', 'Debe especificar la CIUDAD', '');
+      return;
+    }
+    if (this.variables.proc_doc_dic === 'N' && this.paramsGestionDictamen.doc === 'S' && this.paramsGestionDictamen.bien === 'S' && !this.formJobManagement.value.cveManagement) {
+      this.alertInfo('warning', 'Antes de Imprimir debe de Agregar Documentos', '');
+      return;
+    } else if (this.variables.proc_doc_dic === 'N' && this.paramsGestionDictamen.doc === 'N' && this.paramsGestionDictamen.bien === 'S' && !this.formJobManagement.value.cveManagement) {
+      this.alertInfo('warning', 'Antes de Imprimir debe de Agregar Documentos', '');
+      return;
+    } else {
+      if (this.paramsGestionDictamen.bien == 'S' && this.paramsGestionDictamen.doc === 'S') {
+        if (this.variables.b === 'N' || !this.variables.b) {
+          this.alertInfo('warning', 'Este oficio requiere de BIENES y DOCUMENTOS', '');
+          return;
+        }
+      }
+      if (this.paramsGestionDictamen.bien == 'S' && this.paramsGestionDictamen.doc === 'S') {
+        if (this.variables.d === 'N' || !this.variables.d) {
+          this.alertInfo('warning', 'Este oficio requiere de DOCUMENTOS y BIENES', '');
+          return;
+        }
+      }
+      if (this.paramsGestionDictamen.doc === 'S') {
+        if (this.variables.d === 'N' || !this.variables.d) {
+          this.alertInfo('warning', 'Este oficio requiere de DOCUMENTOS', '');
+          return;
+        }
+      }
+      if (!this.formJobManagement.value.cveManagement && !this.formJobManagement.value.managementNumber) {
+        this.seqOfGestion();
+        if (this.paramsGestionDictamen.doc === 'N' && this.paramsGestionDictamen.bien === 'S') {
+          if (this.se_refiere_a.A === 'Se refiere a todos los bienes') {
+            //PUP_AGREGA_BIENES;
+          }
+          if (this.se_refiere_a.B === 'Se refiere a algun(os) bien(es) del expediente') {
+            //PUP_AGREGA_ALGUNOS_BIENES;
+          }
+        }
+        this.formJobManagement.value.cveManagement = '' //PUF_GENERA_CLAVE
+        if (this.variables.b === 'S') {
+          this.formJobManagement.value.statusOf = 'EN REVISION'
+          //GO_BLOCK('BIENES');
+        }
+        if (this.dataTableGoods.length > 0) {
+          let n_COUNT = 0;
+          for (let i = 0; i < this.dataTableGoods.length; i++) {
+            if (this.dataTableGoods[i].seleccion === true) {
+              if (this.dataTableGoods[i].improcedente === true) {
+                n_COUNT = 2;
+              } else {
+                n_COUNT = 1
+              }
+            } else {
+              n_COUNT = 0;
+            }
+            //UPDATE BIENES_EXTENSION_CAMPOS
 
+            this.dataTableGoods[i].id;
+          }
+        }
+      }
+    }
+
+
+  }
+  async seqOfGestion() {
+    //edpoit para nextval 
+    this.formJobManagement.value.managementNumber //mandar valor a enpoit
+  }
   async secondConditionSend() {
     this.variablesSend.ESTATUS_OF = this.formJobManagement.value.statusOf;
     this.variablesSend.CVE_OF_GESTION =
@@ -3638,13 +3824,13 @@ export class RelatedDocumentsComponent
     return await firstValueFrom(this.sendFunction_findOffficeNu(obj));
   }
 
-  _PUP_CAMBIA_ESTATUS() {}
+  _PUP_CAMBIA_ESTATUS() { }
 
   async _PUP_ACT_GESTION(obj: any) {
     return await firstValueFrom(this.sendFunction_ObtainKeyOffice(obj));
   }
 
-  _PUP_ABANDONO() {}
+  _PUP_ABANDONO() { }
 
   async _end_firmProcess() {
     let LV_TRAMITE = await this._GESTION_TRAMITE_TIPO_TRAMITE();
@@ -3679,7 +3865,7 @@ export class RelatedDocumentsComponent
     }
   }
 
-  _PUP_ENVIA_PGR() {}
+  _PUP_ENVIA_PGR() { }
 
   async updateIfHaveDictamen(no_volante: number | string) {
     const existDictamen: any = await this.dictationCount(no_volante);
@@ -3702,7 +3888,7 @@ export class RelatedDocumentsComponent
               urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
               type: 'pdf',
             },
-            callback: (data: any) => {},
+            callback: (data: any) => { },
           }, //pasar datos por aca
           class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
           ignoreBackdropClick: true, //ignora el click fuera del modal
