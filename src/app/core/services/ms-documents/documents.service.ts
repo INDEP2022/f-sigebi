@@ -6,6 +6,7 @@ import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IClarificationDocumentsImpro } from '../../models/ms-documents/clarification-documents-impro-model';
 import { IDocuments } from '../../models/ms-documents/documents';
+import { IReceipyGuardDocument } from '../../models/receipt/receipt.model';
 
 @Injectable({
   providedIn: 'root',
@@ -80,6 +81,11 @@ export class DocumentsService extends HttpService {
   }
 
   createClarDocImp(model: IClarificationDocumentsImpro) {
+    const route = DocumentsEndpoints.ClarificationDocumentsImpro;
+    return this.post<IClarificationDocumentsImpro>(route, model);
+  }
+
+  createDocReceipt(model: IReceipyGuardDocument) {
     const route = DocumentsEndpoints.ClarificationDocumentsImpro;
     return this.post<IClarificationDocumentsImpro>(route, model);
   }
