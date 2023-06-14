@@ -215,7 +215,6 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
     this.paramsAuthority.getValue()['filter.idAuthority'] =
       this.programming.autorityId;
     this.paramsAuthority.getValue()['filter.idTransferer'] = this.idTransferent;
-    this.paramsAuthority.getValue()['filter.idStation'] = this.idStation;
 
     this.authorityService.getAll(this.paramsAuthority.getValue()).subscribe({
       next: response => {
