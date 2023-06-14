@@ -325,7 +325,7 @@ export class GoodFormComponent extends AlertButton implements OnInit {
       return;
     }
     if (this.version === 1) {
-      debugger;
+      // debugger;
       let vb_estatus_valido;
       // vb_estatus_valido = await this.validateStatusXPantalla(good);
       try {
