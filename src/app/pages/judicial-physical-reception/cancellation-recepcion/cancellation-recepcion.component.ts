@@ -1516,7 +1516,6 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
     this.selectData = data;
     this.idGood = data.goodId
     this.statusGood('estatusPrueba', data);
-    /* this.form.get('estatusPrueba').setValue(data.goodStatus); */
   }
 
   deselectRow() {
