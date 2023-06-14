@@ -4,7 +4,6 @@ import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { GoodSssubtypeService } from 'src/app/core/services/catalogs/good-sssubtype.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-cat-types-of-goods-sub-sub-sub-type',
@@ -21,7 +20,7 @@ export class CatTypesOfGoodsSubSubSubTypeComponent
   idTypeGood: string;
   idSsTypeGood: string;
   idSssTypeGood: string;
-
+  numGood: string;
   constructor(
     private fb: FormBuilder,
     private modalRef: BsModalRef,
@@ -35,9 +34,9 @@ export class CatTypesOfGoodsSubSubSubTypeComponent
   }
   prepareForm() {
     this.typeGoodsForm = this.fb.group({
-      id: [null, [Validators.required], Validators.pattern(NUMBERS_PATTERN)],
+      id: [null],
       description: ['', Validators.compose([Validators.required])],
-      // numClasifGoods: [null],
+      //numClasifGoods: [null],
       numSsubType: [null],
       numSubType: [null],
       numType: [null],
@@ -46,8 +45,10 @@ export class CatTypesOfGoodsSubSubSubTypeComponent
     });
     if (this.data != null) {
       this.edit = true;
-      console.log(this.data);
+      console.log(this.data.numClasifGoods);
       this.typeGoodsForm.patchValue(this.data);
+      //this.typeGoodsForm.controls['id'].setValue(this.data.numClasifGoods);
+      this.typeGoodsForm.controls['id'].disable();
       this.typeGoodsForm.controls['numSsubType'].setValue(
         this.data.numSsubType.id
       );
@@ -56,6 +57,8 @@ export class CatTypesOfGoodsSubSubSubTypeComponent
       );
       this.typeGoodsForm.controls['numType'].setValue(this.data.numType.id);
     } else {
+      //console.log(this.numGood);
+      //this.typeGoodsForm.controls['id'].setValue(this.numGood);
       this.typeGoodsForm.controls['numType'].setValue(this.idTypeGood);
       this.typeGoodsForm.controls['numSubType'].setValue(this.idSsTypeGood);
       this.typeGoodsForm.controls['numSsubType'].setValue(this.idSssTypeGood);
