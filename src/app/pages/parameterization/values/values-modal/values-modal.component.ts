@@ -32,7 +32,7 @@ export class ValuesModalComponent extends BasePage implements OnInit {
   }
   private prepareForm() {
     this.valuesForm = this.fb.group({
-      otKey: [null],
+      otKey: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       value: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       table: [null],
       numRegister: [null],
@@ -56,6 +56,7 @@ export class ValuesModalComponent extends BasePage implements OnInit {
   create(): void {
     this.loading = true;
     this.valuesForm.controls['table'].setValue(this.value.nmtabla);
+
     this.tvalTableService
       .create2(this.value.ottipotb, this.valuesForm.value)
       .subscribe({

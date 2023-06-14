@@ -91,6 +91,7 @@ export class WarehousesListComponent extends BasePage implements OnInit {
               delete this.columnFilters[field];
             }
           });
+          console.log('this.params:', this.params);
           this.params = this.pageFilter(this.params);
           this.getWarehouses();
         }
