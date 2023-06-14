@@ -3587,7 +3587,9 @@ export class RelatedDocumentsComponent
   }
   async secondConditionSendPrint() {
     // variables let colocar aqui
-
+    let n_COUNT = 0;
+    let cuantos = 0;
+    let conta = 0;
     if (!this.formJobManagement.value.jobType) {
       this.alertInfo('warning', 'Debe especificar el TIPO OFICIO', '');
       return;
@@ -3608,7 +3610,7 @@ export class RelatedDocumentsComponent
       this.alertInfo('warning', 'Debe especificar la CIUDAD', '');
       return;
     }
-    if (this.formVariables.get('proc_doc_dic').value === 'N' && this.paramsGestionDictamen.doc === 'S' && this.paramsGestionDictamen.bien === 'S' && !this.formJobManagement.value.cveManagement) {
+    if (this.variables.proc_doc_dic === 'N' && this.paramsGestionDictamen.doc === 'S' && this.paramsGestionDictamen.bien === 'S' && !this.formJobManagement.value.cveManagement) {
       this.alertInfo('warning', 'Antes de Imprimir debe de Agregar Documentos', '');
       // PUP_BIEN_DOC;
       return;
@@ -3651,7 +3653,7 @@ export class RelatedDocumentsComponent
           //GO_BLOCK('BIENES');
           //empiza el LOOP
           if (this.dataTableGoods.length > 0) {
-            let n_COUNT = 0;
+
             for (let i = 0; i < this.dataTableGoods.length; i++) {
               if (this.dataTableGoods[i].seleccion === true) {
                 if (this.dataTableGoods[i].improcedente === true) {
@@ -3662,7 +3664,6 @@ export class RelatedDocumentsComponent
               } else {
                 n_COUNT = 0;
               }
-              //UPDATE BIENES_EXTENSION_CAMPOS
               let data = {
                 nCount: n_COUNT,
                 goodNumber: this.dataTableGoods[i].id
@@ -3700,7 +3701,7 @@ export class RelatedDocumentsComponent
         }
       }
       if (!this.formJobManagement.value.cveManagement) {
-        let conta = 0;
+
         conta = await this.conta();
         if (conta !== 0) {
           this.isDisabledBtnDocs = true;
@@ -3709,11 +3710,38 @@ export class RelatedDocumentsComponent
       if (this.formJobManagement.value.sender === this.authUser.user) {
         this.blockSend = false;
       }
-      //PUP_LANZA_REPORTE;
-      let cuantos = 0;
+      const params = new FilterParams();
+      params.removeAllFilters();
+      params.addFilter('externalOfficeNumber', this.formNotification.value.officeExternalKey);
+      let paramsReport = {
+        proceedingsNumber: this.notificationData.expedientNumber,
+        steeringWheelNumber: this.notificationData.wheelNumber,
+        ofManagementKey: this.formJobManagement.value.cveManagement,
+      };
+      const _launchReport = await this._PUP_LANZA_REPORTE(paramsReport);
+      console.log(_launchReport);
+      let reportCondition = this._conditions_Report();
+      this.runReport(reportCondition.nameReport, reportCondition.params);
+      if (_launchReport.no_exp > 0) {
+        let _getVOficTrans = await firstValueFrom(
+          this.sendFunction_getVOficTrans(params)
+        );
+        if (_getVOficTrans) {
+          // _getVOficTrans.v_ofic_trans RESPUESTA
+          if (_getVOficTrans.v_ofic_trans) {
+            if (
+              this.formJobManagement.value.statusOf != 'EN REVISION' &&
+              !this.formJobManagement.value.cveManagement.includes('?')
+            ) {
+              // EN REVISION POR RUBEN
+              // Subir el PDF a la ruta de documentos y reemplazarlo por el anterior
+            }
+          }
+        }
+      }
       cuantos = await this.cuatos();
       if (cuantos !== 0) {
-        let lst_where = this.formJobManagement.value.managementNumber
+        //funcion q actualiza vista
 
       }
     }
@@ -4166,7 +4194,7 @@ export class RelatedDocumentsComponent
 
   _PUP_ABANDONO() { }
 
-  _PUF_GENERA_CLAVE() {}
+  _PUF_GENERA_CLAVE() { }
 
   async _end_firmProcess() {
     let LV_TRAMITE = await this._GESTION_TRAMITE_TIPO_TRAMITE();
