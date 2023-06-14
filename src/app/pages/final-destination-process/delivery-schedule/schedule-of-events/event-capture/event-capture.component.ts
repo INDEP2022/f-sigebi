@@ -527,9 +527,21 @@ export class EventCaptureComponent
       ...this.proceeding,
       numFile,
       keysProceedings,
-      captureDate,
+      captureDate: new Date(
+        format(captureDate, 'yyyy-MM-dd HH:mm:ss')
+      ).getTime(),
       responsible,
     };
+    delete data.elaborationDate;
+    delete data.datePhysicalReception;
+    delete data.dateElaborationReceipt;
+    delete data.dateDeliveryGood;
+    delete data.approvalDateXAdmon;
+    delete data.closeDate;
+    delete data.maxDate;
+    delete data.dateCaptureHc;
+    delete data.dateCloseHc;
+    delete data.dateMaxHc;
 
     return this.proceedingDeliveryReceptionService
       .update(this.proceeding.id, data as any)
@@ -537,26 +549,43 @@ export class EventCaptureComponent
   }
 
   excelExport() {
-    if (this.detail.length === 0) {
-      this.alert('warning', 'Advertencia', 'No hay datos para exportar');
+    if (this.detail.length == 0) {
+      this.alert('warning', 'No hay bienes agregados', '');
       return;
     }
-    const cve = this.registerControls.keysProceedings.value;
-    const dataToExport = this.detail.map((det: any) => {
-      return {
-        'CVE Acta': cve,
-        'Localidad Ent': det.locTrans,
-        'No Bien': det.goodnumber,
-        Estatus: det.status,
-        Proceso: det.proccessextdom,
-        Descripción: det.description,
-        'Tipo Bien': det.typegood,
-        Expediente: det.expedientnumber,
-        Inicio: det.dateapprovalxadmon,
-        Finalizacion: det.dateindicatesuserapproval,
-      };
-    });
-    this.excelService.export(dataToExport, { filename: cve });
+    this.fIndicaService
+      .generateExcel({
+        acta: Number(this.proceeding.id),
+        type: this.registerControls.typeEvent.value,
+        crtSus: this.blkProceeding.txtCrtSus1,
+      })
+      .subscribe({
+        next: data => {
+          const base64 = data?.file?.base64;
+          if (!base64) {
+            this.alert(
+              'error',
+              'Error',
+              'Ocurrio un error al generar el archivo'
+            );
+            return;
+          }
+          const mediaType =
+            'data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,';
+          const link = document.createElement('a');
+          link.href = mediaType + base64;
+          link.download = `${this.proceeding.keysProceedings}.xlsx`;
+          link.click();
+          link.remove();
+        },
+        error: () => {
+          this.alert(
+            'error',
+            'Error',
+            'Ocurrio un error al generar el archivo'
+          );
+        },
+      });
   }
 
   udpateProceedingExpedient() {
@@ -584,8 +613,12 @@ export class EventCaptureComponent
     const numDelegation1 = await this.getUserDelegation();
     const dataToSave = {
       keysProceedings,
-      elaborationDate: format(elaborationDate, 'yyyy-MM-dd HH:mm:ss'),
-      captureDate: format(captureDate, 'yyyy-MM-dd HH:mm:ss'),
+      elaborationDate: new Date(
+        format(elaborationDate, 'yyyy-MM-dd HH:mm:ss')
+      ).getTime(),
+      captureDate: new Date(
+        format(captureDate, 'yyyy-MM-dd HH:mm:ss')
+      ).getTime(),
       responsible,
       numFile: formValue.numFile,
       statusProceedings,
@@ -676,7 +709,9 @@ export class EventCaptureComponent
       .subscribe({
         next: data => {
           this.alert('success', 'Fechas actualizadas', '');
+          const _params = this.params.getValue();
           const params = new FilterParams();
+          params.limit = _params.limit;
           this.startDateCtrl.setValue(null, { emitEvent: false });
           this.endDateCtrl.setValue(null, { emitEvent: false });
           this.params.next(params);
@@ -960,6 +995,8 @@ export class EventCaptureComponent
             this.alert('warning', 'No se encontraron bienes para agregar', '');
           }
           const params = new FilterParams();
+          const _params = this.params.getValue();
+          params.limit = _params.limit;
           this.params.next(params);
         },
         error: () => {

@@ -47,9 +47,10 @@
               <div class="d-flex justify-content-center align-items-center">
                 <app-pagination
                   [params]="paramsActNavigate"
-                  [totalItems]="proceedingData.length"
+                  [totalItems]="totalItemsNavigate"
                   [limit]="newLimitparamsActNavigate"
                   [paginatorPageSize]="false"
+                  [pageSizeOptions]="[1]"
                   [paginatorRangeLabel]="false"
                   [maxSize]="1"></app-pagination>
                 <div class="col">
