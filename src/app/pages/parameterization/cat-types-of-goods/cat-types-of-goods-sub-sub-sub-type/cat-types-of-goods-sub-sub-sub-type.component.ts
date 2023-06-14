@@ -4,6 +4,7 @@ import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { GoodSssubtypeService } from 'src/app/core/services/catalogs/good-sssubtype.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-cat-types-of-goods-sub-sub-sub-type',
@@ -34,7 +35,7 @@ export class CatTypesOfGoodsSubSubSubTypeComponent
   }
   prepareForm() {
     this.typeGoodsForm = this.fb.group({
-      id: [null],
+      id: [null, [Validators.required], Validators.pattern(NUMBERS_PATTERN)],
       description: ['', Validators.compose([Validators.required])],
       // numClasifGoods: [null],
       numSsubType: [null],
@@ -59,6 +60,8 @@ export class CatTypesOfGoodsSubSubSubTypeComponent
       this.typeGoodsForm.controls['numSubType'].setValue(this.idSsTypeGood);
       this.typeGoodsForm.controls['numSsubType'].setValue(this.idSssTypeGood);
     }
+
+    console.log(this.typeGoodsForm.controls);
   }
   confirm() {
     this.edit ? this.update() : this.create();
