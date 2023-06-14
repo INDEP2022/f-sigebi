@@ -168,6 +168,7 @@ export class RelatedDocumentsComponent
   origin: string = '';
   valTiposAll: boolean;
   tiposData: any = [];
+  selectedAllImpro: boolean = false;
   tiposDatosSelect = new DefaultSelect();
   // userCopies1 = new DefaultSelect();
   // userCopies2 = new DefaultSelect();
@@ -244,6 +245,8 @@ export class RelatedDocumentsComponent
   disabledTypes: boolean = false;
   showDestinatario: boolean = false;
   showDestinatarioInput: boolean = false;
+  listSelected: any = [];
+  listImprocendents: any = [];
 
   settings3 = { ...this.settings, hideSubHeader: true };
   copyOficio: any[] = [];
@@ -419,11 +422,11 @@ export class RelatedDocumentsComponent
 
     RELATED_DOCUMENTS_COLUMNS_GOODS.seleccion = {
       ...RELATED_DOCUMENTS_COLUMNS_GOODS.seleccion,
-      onComponentInitFunction: this.onClickSelect,
+      onComponentInitFunction: this.onClickSelect.bind(this),
     };
     RELATED_DOCUMENTS_COLUMNS_GOODS.improcedente = {
       ...RELATED_DOCUMENTS_COLUMNS_GOODS.improcedente,
-      onComponentInitFunction: this.onClickImprocedente,
+      onComponentInitFunction: this.onClickImprocedente.bind(this),
     };
     const screen = this.route.snapshot.paramMap.get('id');
     if (screen === '2') {
@@ -467,16 +470,8 @@ export class RelatedDocumentsComponent
     this.managementForm.get('improcedente').setValue(true);
     this.managementForm.get('improcedente').disable();
 
-    const { managementNumber } = this.formJobManagement.value;
-    const { expedientNumber } = this.formNotification.value;
-    /*this.relatedDocumentDesahogo.PUP_CAMBIO_IMPRO(
-      true,
-      Number(managementNumber),
-      Number(expedientNumber)
-    );*/
-
-    //const values = (columnas[7]['dataSet']['rows'][0].isSelected = true);
-    //console.log(values);
+    this.selectedAllImpro = true;
+    this.refreshTableGoods();
 
     //onComponentInitFunction: true
     //this.relatedDocumentDesahogo.pup_cambio_impro(this.dataTableGoods);
@@ -513,6 +508,7 @@ export class RelatedDocumentsComponent
 
     this.managementForm.get('improcedente').setValue(false);
     this.managementForm.get('improcedente').enable();
+
     // const tabla = document.getElementById('goods');
     // const types = document.getElementById('typesFilters');
     // if (tabla && types) {
@@ -530,8 +526,15 @@ export class RelatedDocumentsComponent
 
   onClickSelect(event: any) {
     event.toggle.subscribe((data: any) => {
-      console.log(JSON.stringify(data));
+      //console.log(JSON.stringify(data));
       data.row.seleccion = data.toggle;
+
+      const index = this.listSelected.indexOf(data.row);
+      if (index == -1 && data.toggle == true) {
+        this.listSelected.push(data.row);
+      } else if (index != -1 && data.toggle == false) {
+        this.listSelected.splice(index, 1);
+      }
     });
   }
 
@@ -703,6 +706,13 @@ export class RelatedDocumentsComponent
     event.toggle.subscribe((data: any) => {
       // console.log(data);
       data.row.improcedente = data.toggle;
+
+      const index = this.listImprocendents.indexOf(data.row);
+      if (index == -1 && data.toggle == true) {
+        this.listImprocendents.push(data.row);
+      } else if (index != -1 && data.toggle == false) {
+        this.listImprocendents.splice(index, 1);
+      }
     });
   }
 
@@ -819,13 +829,13 @@ export class RelatedDocumentsComponent
       dictamen: '',
       b: '',
       d: '',
-      dictaminacion: '',
+      dictaminacion: 'PROCEDENCIA',
       clasif: '',
       clasif2: '',
-      delito: '',
-      todos: '',
-      doc_bien: '',
-      proc_doc_dic: '',
+      delito: 'S',
+      todos: 'N',
+      doc_bien: 'N',
+      proc_doc_dic: 'N',
     };
     this.notificationData = null;
   }
@@ -1100,7 +1110,6 @@ export class RelatedDocumentsComponent
             key: description.key,
           };
         });
-        // debugger;
         this.dataTableDocuments = await Promise.all(response);
         this.isLoadingDocuments = false;
         this.docTotalItems = res.count;
@@ -1480,19 +1489,27 @@ export class RelatedDocumentsComponent
   // }
 
   changeImprocedente(event: any) {
-    this.onLoadToast(
-      'info',
-      'se tiene que seleccionar todas las casillas improcedentes',
-      ''
-    );
-    this.dataGood.forEach(element => {
+    /* this.dataGood.forEach(element => {
       if (element.disponible) {
         element.improcedente = event.checked;
         element.seleccion = false;
       }
     });
     this.dataGoodTable.load(this.dataGood);
-    this.dataGoodTable.refresh();
+    this.dataGoodTable.refresh();*/
+    if (event.checked == true) {
+      this.selectedAllImpro = true;
+      const { managementNumber } = this.formJobManagement.value;
+      /* const { expedientNumber } = this.formNotification.value;
+        this.relatedDocumentDesahogo.PUP_CAMBIO_IMPRO(
+          true,
+          Number(managementNumber),
+          Number(expedientNumber)
+        ); */
+    } else {
+      this.selectedAllImpro = false;
+    }
+    this.refreshTableGoods();
   }
 
   async getAvailableGood(
@@ -1594,6 +1611,7 @@ export class RelatedDocumentsComponent
           next: async res => {
             console.log('prueba', res);
             this.notificationData = res.data[0];
+            this.variables.dictamen = this.notificationData.dictumKey; // Set dictamen
             this.statusOf = res.data[0].wheelStatus;
             this.setDataNotification();
 
@@ -1893,7 +1911,7 @@ export class RelatedDocumentsComponent
     //   this.alert('error', 'Debe especificar el tipo de Dictaminación', '');
     //   return;
     // }
-    // debugger;
+    //debugger;
     /* BIENES */
     //console.log(this.dataTableGoodsJobManagement);
     const bien = this.getQueryParams('bien');
@@ -1901,6 +1919,7 @@ export class RelatedDocumentsComponent
     const { managementNumber, cveManagement } = this.m_job_management;
     const { refersTo } = this.formJobManagement.controls;
     const goodJobs = this.dataTableGoodsJobManagement.values;
+    console.log(goodJobs);
     if (bien == 'S' && doc == 'S') {
       console.log('paso');
       if (!managementNumber && !cveManagement) {
@@ -1979,6 +1998,8 @@ export class RelatedDocumentsComponent
         return;
       } else {
         // DOCUMENTOS_PARA_DICTAMEN
+        //verificar si bienes oficio gestion classif no es nulo
+
         alert('go block');
       }
     }
@@ -2851,9 +2872,13 @@ export class RelatedDocumentsComponent
         this.formJobManagement.value.statusOf == 'ENVIADO' &&
         !this.formJobManagement.value.cveManagement.includes('?')
       ) {
+        console.log('PRIMER CONDICION');
+
         // Primer condicion al enviar
         this.firstConditionSend();
       } else {
+        console.log('SEGUNDA CONDICION');
+
         // Segunda condicion al enviar
         this.secondConditionSend();
       }
@@ -3489,7 +3514,7 @@ export class RelatedDocumentsComponent
       return;
     }
     if (
-      this.formJobManagement.value.statusOf == 'EN REVISION' &&
+      this.formJobManagement.value.statusOf == 'EN REVISION' ||
       !this.formJobManagement.value.statusOf
     ) {
       if (!this.variablesSend.V_JUSTIFICACION) {
@@ -3873,8 +3898,11 @@ export class RelatedDocumentsComponent
 
   async _end_firmProcess() {
     let LV_TRAMITE = await this._GESTION_TRAMITE_TIPO_TRAMITE();
-    if (LV_TRAMITE.typeManagement == 3) {
-      this._PGR_IMAGENES_LV_PGRIMAG();
+    console.log(LV_TRAMITE);
+    if (LV_TRAMITE) {
+      if (LV_TRAMITE.typeManagement == 3) {
+        this._PGR_IMAGENES_LV_PGRIMAG();
+      }
     }
   }
 

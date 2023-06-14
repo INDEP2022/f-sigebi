@@ -14,6 +14,7 @@ import { _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
 import { ICity } from 'src/app/core/models/catalogs/city.model';
 import { IDepartment } from 'src/app/core/models/catalogs/department.model';
+import { IPufGenerateKey } from 'src/app/core/models/ms-dictation/dictation-model';
 import { type INotification } from 'src/app/core/models/ms-notification/notification.model';
 import { IMJobManagement } from 'src/app/core/models/ms-officemanagement/m-job-management.model';
 import { IProceduremanagement } from 'src/app/core/models/ms-proceduremanagement/ms-proceduremanagement.interface';
@@ -132,6 +133,7 @@ export abstract class RelateDocumentsResponse extends BasePage {
   abstract dataTableGoods: IGoodAndAvailable[];
   abstract dataTableGoodsJobManagement: IGoodJobManagement[];
   abstract isDisabledBtnDocs: boolean;
+  abstract selectedAllImpro: boolean;
   abstract se_refiere_a_Disabled: {
     A: boolean;
     B: boolean;
@@ -148,8 +150,7 @@ export abstract class RelateDocumentsResponse extends BasePage {
     this.goodServices.getAll(params).subscribe({
       next: async data => {
         const goods = await data.data.map(async (item: any) => {
-          item['improcedente'] = item.unfair === 'true' ? true : false;
-          item['seleccion'] = item.clarification === 'true' ? true : false;
+          item['improcedente'] = this.selectedAllImpro == true ? true : false;
           const isAvailable = await this.getFactaDbOficioGestrel(
             this.formJobManagement.get('managementNumber').value,
             item.goodId
@@ -1069,5 +1070,8 @@ export abstract class RelateDocumentsResponse extends BasePage {
     return this.msOfficeManagementService
       .ObtainKeyOffice(params)
       .pipe(map(x => x.data));
+  }
+  sendFunction_pufGenerateKey(params: IPufGenerateKey): Observable<any> {
+    return this.dictationService.pufGenerateKey(params).pipe(map(x => x.data));
   }
 }

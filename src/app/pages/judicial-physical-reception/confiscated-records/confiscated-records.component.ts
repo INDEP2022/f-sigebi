@@ -196,6 +196,10 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   //DOBLE CLICK
   lastClick: number = 0;
 
+  //IDs PARA STATUS
+  idGood: number = null;
+  idGoodAct: number = null;
+
   constructor(
     private fb: FormBuilder,
     private serviceGood: GoodService,
@@ -247,10 +251,15 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         this.getGoodsFn();
       });
 
+    this.paramsDataGoodsAct
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(params => {
+        this.getGoodsActFn();
+      });
+
     this.paramsActNavigate
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(params => {
-
         this.loading = true;
         this.dataGoodAct.load([]);
         this.clearInputs();
@@ -273,7 +282,6 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
             this.loading = false;
           }
         );
-
       });
 
     if (localStorage.getItem('numberExpedient')) {
@@ -557,6 +565,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   verifyDateAndFill() {
     let fecElab = new Date(this.form.get('fecElab').value);
     console.log(fecElab);
+    console.log(new Date());
     if (this.form.get('fecElab').value != null) {
       this.form.get('fecReception').setValue(new Date(fecElab));
       this.showFecReception = true;
@@ -1092,7 +1101,8 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     console.log(paramsF.getParams());
     this.serviceGood
       .getAllFilterDetail(
-        `filter.fileNumber=$eq:${this.numberExpedient
+        `filter.fileNumber=$eq:${
+          this.numberExpedient
         }&filter.status=$not:ADM&filter.labelNumber=$not:6&${paramsF.getParams()}`
       )
       .subscribe({
@@ -1179,7 +1189,8 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     );
     this.serviceGood
       .getAllFilterDetail(
-        `filter.fileNumber=$eq:${this.numberExpedient
+        `filter.fileNumber=$eq:${
+          this.numberExpedient
         }&filter.status=$not:ADM&filter.labelNumber=$not:6&${paramsF.getParams()}`
       )
       .subscribe({
@@ -1274,11 +1285,10 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     this.paramsDataGoods.next(new ListParams());
     this.paramsDataGoodsAct.next(new ListParams());
 
-
+    this.idProceeding = null;
     const newParams = new ListParams();
     newParams.limit = 1;
     this.paramsActNavigate.next(newParams);
-
 
     this.unsubscribe$.next();
 
@@ -1409,7 +1419,8 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
       this.alert(
         'warning',
         'Fuera de fecha',
-        `'El Acta ${this.form.get('acta2').value
+        `'El Acta ${
+          this.form.get('acta2').value
         } fue capturada fuera de mes, no se puede generar la Carga Masiva`
       );
     } else {
@@ -1514,7 +1525,8 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
       );
       this.serviceGood
         .getAllFilterDetail(
-          `filter.fileNumber=$eq:${this.form.get('expediente').value
+          `filter.fileNumber=$eq:${
+            this.form.get('expediente').value
           }&filter.status=$not:ADM&filter.labelNumber=$not:6&${paramsF.getParams()}`
         )
         .subscribe({
@@ -1791,6 +1803,9 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     this.totalItemsDataGoods = 0;
     this.totalItemsDataGoodsAct = 0;
 
+    this.idProceeding = null;
+    this.numberExpedient = null;
+
     this.dataGoods.load([]);
     this.dataGoodAct.load([]);
 
@@ -1967,9 +1982,9 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
           console.log('Entró');
           this.proceedingData = res.data;
           this.totalItemsNavigate = res.count;
-          this.newLimitparamsActNavigate = new FormControl(1);
           console.log(this.proceedingData);
           const dataRes = JSON.parse(JSON.stringify(res.data[0]));
+          this.idProceeding = dataRes.id;
           console.log(dataRes);
           this.fillIncomeProceeding(dataRes, '');
           console.log(typeof dataRes);
@@ -2073,13 +2088,13 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                 this.form.get('fecElab').value
               ).getTime(),
               datePhysicalReception: new Date(
-                this.form.get('fecRecepFisica').value
+                this.form.get('fecReception').value
               ).getTime(),
               dateElaborationReceipt: new Date(
-                this.form.get('fecElabRecibo').value
+                this.form.get('fecElabRec').value
               ).getTime(),
               dateDeliveryGood: new Date(
-                this.form.get('fecEntregaBienes').value
+                this.form.get('fecEntBien').value
               ).getTime(),
             };
             const resData = JSON.parse(JSON.stringify(res.data[0]));
@@ -2127,7 +2142,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                   this.form.get('fecElab').value
                 ).getTime(),
                 datePhysicalReception: new Date(
-                  this.form.get('fecRecepFisica').value
+                  this.form.get('fecReception').value
                 ).getTime(),
                 address: this.form.get('direccion').value,
                 elaborate:
@@ -2143,10 +2158,10 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                   ? 'DECOMISO'
                   : 'ENTREGA',
                 dateElaborationReceipt: new Date(
-                  this.form.get('fecElabRecibo').value
+                  this.form.get('fecElabRec').value
                 ).getTime(),
                 dateDeliveryGood: new Date(
-                  this.form.get('fecEntregaBienes').value
+                  this.form.get('fecEntBien').value
                 ).getTime(),
                 responsible: null,
                 destructionMethod: null,
@@ -2273,7 +2288,8 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                               this.alert(
                                 'success',
                                 'Acta abierta',
-                                `El acta ${this.form.get('acta2').value
+                                `El acta ${
+                                  this.form.get('acta2').value
                                 } fue abierta`
                               );
                             },
@@ -2365,7 +2381,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                       if (
                         fec_elab != null &&
                         format(fec_elab, 'MM-yyyy') !=
-                        format(new Date(), 'MM-yyyy')
+                          format(new Date(), 'MM-yyyy')
                       ) {
                         this.alert(
                           'warning',
@@ -2388,15 +2404,15 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                           address: this.form.get('direccion').value,
                           elaborationDate: new Date(
                             this.form.get('fecElab').value
-                          ).getTime(),
+                          ).getDate(),
                           datePhysicalReception: new Date(
-                            this.form.get('fecRecepFisica').value
+                            this.form.get('fecReception').value
                           ).getTime(),
                           dateElaborationReceipt: new Date(
-                            this.form.get('fecElabRecibo').value
+                            this.form.get('fecElabRec').value
                           ).getTime(),
                           dateDeliveryGood: new Date(
-                            this.form.get('fecEntregaBienes').value
+                            this.form.get('fecEntBien').value
                           ).getTime(),
                           captureDate: new Date().getTime(),
                         };
@@ -2414,7 +2430,8 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                             this.alert(
                               'success',
                               'Acta abierta',
-                              `El acta ${this.form.get('acta2').value
+                              `El acta ${
+                                this.form.get('acta2').value
                               } fue abierta`
                             );
                           });
@@ -2477,7 +2494,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                       this.form.get('fecElab').value
                     ).getTime(),
                     datePhysicalReception: new Date(
-                      this.form.get('fecRecepFisica').value
+                      this.form.get('fecReception').value
                     ).getTime(),
                     address: this.form.get('direccion').value,
                     statusProceedings: 'ABIERTA',
@@ -2495,10 +2512,10 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                       ? 'DECOMISO'
                       : 'ENTREGA',
                     dateElaborationReceipt: new Date(
-                      this.form.get('fecElabRecibo').value
+                      this.form.get('fecElabRec').value
                     ).getTime(),
                     dateDeliveryGood: new Date(
-                      this.form.get('fecEntregaBienes').value
+                      this.form.get('fecEntBien').value
                     ).getTime(),
                     responsible: null,
                     destructionMethod: null,
@@ -2554,7 +2571,8 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                           this.alert(
                             'success',
                             'Acta abierta',
-                            `El acta ${this.form.get('acta2').value
+                            `El acta ${
+                              this.form.get('acta2').value
                             } fue abierta`
                           );
                           const btn =
@@ -2614,7 +2632,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
               resolve(true);
             }
           },
-          err => { }
+          err => {}
         );
       }
       resolve(false);
@@ -2715,7 +2733,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                         if (
                           fec_elab != null &&
                           format(fec_elab, 'MM-yyyy') !=
-                          format(new Date(), 'MM-yyyy')
+                            format(new Date(), 'MM-yyyy')
                         ) {
                           this.alert(
                             'warning',
@@ -2738,8 +2756,8 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                               localStorage.getItem('username') == 'sigebiadmon'
                                 ? localStorage.getItem('username')
                                 : localStorage
-                                  .getItem('username')
-                                  .toLocaleUpperCase(),
+                                    .getItem('username')
+                                    .toLocaleUpperCase(),
                           };
                           this.serviceProgrammingGood
                             .paChangeStatus(model)
@@ -2747,17 +2765,17 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                               res => {
                                 console.log(res);
                                 const modelEdit: IProccedingsDeliveryReception =
-                                {
-                                  comptrollerWitness:
-                                    this.form.get('testigo').value,
-                                  observations:
-                                    this.form.get('observaciones').value,
-                                  witness1: this.form.get('entrega').value,
-                                  witness2: this.form.get('recibe2').value,
-                                  address: this.form.get('direccion').value,
-                                  universalFolio:
-                                    this.form.get('folioEscaneo').value,
-                                };
+                                  {
+                                    comptrollerWitness:
+                                      this.form.get('testigo').value,
+                                    observations:
+                                      this.form.get('observaciones').value,
+                                    witness1: this.form.get('entrega').value,
+                                    witness2: this.form.get('recibe2').value,
+                                    address: this.form.get('direccion').value,
+                                    universalFolio:
+                                      this.form.get('folioEscaneo').value,
+                                  };
                                 this.serviceProcVal
                                   .editProceeding(idProcee, modelEdit)
                                   .subscribe(
@@ -3103,11 +3121,11 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                                 );
                               } else {
                                 const modelEdit: IProccedingsDeliveryReception =
-                                {
-                                  statusProceedings: 'CERRADA',
-                                  universalFolio:
-                                    this.form.get('folioEscaneo').value,
-                                };
+                                  {
+                                    statusProceedings: 'CERRADA',
+                                    universalFolio:
+                                      this.form.get('folioEscaneo').value,
+                                  };
                                 const splitActa = this.form
                                   .get('acta2')
                                   .value.split('/');
@@ -3124,11 +3142,11 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                                   P_TIPO_ACTA: tipo_acta,
                                   USUARIO:
                                     localStorage.getItem('username') ==
-                                      'sigebiadmon'
+                                    'sigebiadmon'
                                       ? localStorage.getItem('username')
                                       : localStorage
-                                        .getItem('username')
-                                        .toLocaleUpperCase(),
+                                          .getItem('username')
+                                          .toLocaleUpperCase(),
                                 };
                                 console.log(model);
                                 const found = this.dataGoodAct['data'].find(
@@ -3263,7 +3281,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
           } else if (
             this.form.get('fecElab').value != null &&
             format(this.form.get('fecElab').value, 'MM-yyyy') !=
-            format(new Date(), 'MM-yyyy')
+              format(new Date(), 'MM-yyyy')
           ) {
             console.log(2);
 
@@ -3481,6 +3499,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     this.statusGood('estatusPrueba', data);
     this.validateGood(data);
     console.log(e);
+    this.idGood = data.goodId;
 
     this.lastClick += 1;
     setTimeout(() => {
@@ -3500,13 +3519,19 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     this.form.get('estatusPrueba').reset();
   }
 
-  goToHistorico() {
+  goToHistorico(site: string) {
     localStorage.setItem('numberExpedient', this.numberExpedient);
-
-    this.router.navigate(
-      ['/pages/general-processes/historical-good-situation'],
-      { queryParams: { noBien: 73 } }
-    );
+    if (site == 'generalGood' && this.idGood != null) {
+      this.router.navigate(
+        ['/pages/general-processes/historical-good-situation'],
+        { queryParams: { noBien: this.idGood } }
+      );
+    } else if (site == 'goodActa' && this.idGoodAct != null) {
+      this.router.navigate(
+        ['/pages/general-processes/historical-good-situation'],
+        { queryParams: { noBien: this.idGoodAct } }
+      );
+    }
   }
 
   selectRowBovedaAlmacen(data: any) {
@@ -3556,6 +3581,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     console.log('Se activo');
     const { data } = e;
     console.log(this.saveDataAct);
+    this.idGoodAct = data.good.goodId;
 
     if (data != null) {
       const isSelect = e.isSelected;
@@ -3586,6 +3612,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
 
   deselectRowGoodActa() {
     this.selectActData = null;
+
     console.log(this.selectActData);
     this.isSelectGood = false;
     this.form.get('edoFisico').setValue(null);
@@ -3735,7 +3762,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
               } else if (
                 this.form.get('fecElab').value != null &&
                 format(this.form.get('fecElab').value, 'MM-yyyy') !=
-                format(new Date(), 'MM-yyyy')
+                  format(new Date(), 'MM-yyyy')
               ) {
                 this.alert(
                   'warning',
@@ -3751,7 +3778,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
               } else if (
                 this.form.get('fecElab').value != null &&
                 format(this.form.get('fecElab').value, 'dd-MM-yyyy') <
-                format(new Date(), 'dd-MM-yyyy')
+                  format(new Date(), 'dd-MM-yyyy')
               ) {
                 this.alert(
                   'warning',
@@ -3816,19 +3843,19 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                               );
                               this.idProceeding = data.id;
                               let newDetailProceeding: IDetailProceedingsDeliveryReception =
-                              {
-                                numberProceedings: data.id,
-                                numberGood: this.selectData.goodId,
-                                amount: this.selectData.quantity,
-                                exchangeValue: 1,
-                                approvedUserXAdmon:
-                                  localStorage.getItem('username') ==
+                                {
+                                  numberProceedings: data.id,
+                                  numberGood: this.selectData.goodId,
+                                  amount: this.selectData.quantity,
+                                  exchangeValue: 1,
+                                  approvedUserXAdmon:
+                                    localStorage.getItem('username') ==
                                     'sigebiadmon'
-                                    ? localStorage.getItem('username')
-                                    : localStorage
-                                      .getItem('username')
-                                      .toLocaleUpperCase(),
-                              };
+                                      ? localStorage.getItem('username')
+                                      : localStorage
+                                          .getItem('username')
+                                          .toLocaleUpperCase(),
+                                };
                               this.serviceDetailProc
                                 .addGoodToProceedings(newDetailProceeding)
                                 .subscribe(
@@ -3923,7 +3950,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
             } else if (
               this.form.get('fecElab').value != null &&
               format(this.form.get('fecElab').value, 'MM-yyyy') !=
-              format(new Date(), 'MM-yyyy')
+                format(new Date(), 'MM-yyyy')
             ) {
               this.alert(
                 'warning',
@@ -3939,7 +3966,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
             } else if (
               this.form.get('fecElab').value != null &&
               format(this.form.get('fecElab').value, 'dd-MM-yyyy') <
-              format(new Date(), 'dd-MM-yyyy')
+                format(new Date(), 'dd-MM-yyyy')
             ) {
               this.alert(
                 'warning',
@@ -4004,19 +4031,19 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                             );
                             this.idProceeding = data.id;
                             let newDetailProceeding: IDetailProceedingsDeliveryReception =
-                            {
-                              numberProceedings: data.id,
-                              numberGood: this.selectData.goodId,
-                              amount: this.selectData.quantity,
-                              exchangeValue: 1,
-                              approvedUserXAdmon:
-                                localStorage.getItem('username') ==
+                              {
+                                numberProceedings: data.id,
+                                numberGood: this.selectData.goodId,
+                                amount: this.selectData.quantity,
+                                exchangeValue: 1,
+                                approvedUserXAdmon:
+                                  localStorage.getItem('username') ==
                                   'sigebiadmon'
-                                  ? localStorage.getItem('username')
-                                  : localStorage
-                                    .getItem('username')
-                                    .toLocaleUpperCase(),
-                            };
+                                    ? localStorage.getItem('username')
+                                    : localStorage
+                                        .getItem('username')
+                                        .toLocaleUpperCase(),
+                              };
                             this.serviceDetailProc
                               .addGoodToProceedings(newDetailProceeding)
                               .subscribe(
@@ -4099,7 +4126,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     } else if (
       this.form.get('fecElab').value != null &&
       format(this.form.get('fecElab').value, 'MM-yyyy') !=
-      format(new Date(), 'MM-yyyy')
+        format(new Date(), 'MM-yyyy')
     ) {
       this.alert(
         'warning',

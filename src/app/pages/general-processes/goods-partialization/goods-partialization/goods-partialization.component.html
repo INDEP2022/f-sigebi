@@ -5,9 +5,11 @@
 
   <div body>
     <div class="row">
-      
-      <div class="col-6 btn-group">
-        <button class="btn btn-primary active btn-sm m-2" style="float: left" (click)="goBack()">
+      <div class="col-12 btn-group">
+        <button
+          class="btn btn-primary active btn-sm m-2"
+          style="float: right"
+          (click)="goBack()">
           <i class="fas fa-arrow-left"></i>
           Regresar
         </button>
@@ -66,14 +68,14 @@
               <div class="m-3">
                 <confirm-button [loading]="loading"></confirm-button>
               </div>
-              <div class="m-3">
+              <!-- <div class="m-3">
                 <button
                   type="button"
                   class="btn btn-danger active"
                   (click)="goBack()">
                   Regresar
                 </button>
-              </div>
+              </div> -->
             </div>
           </div>
         </form>
