@@ -251,6 +251,12 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         this.getGoodsFn();
       });
 
+    this.paramsDataGoodsAct
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(params => {
+        this.getGoodsActFn();
+      });
+
     this.paramsActNavigate
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(params => {
