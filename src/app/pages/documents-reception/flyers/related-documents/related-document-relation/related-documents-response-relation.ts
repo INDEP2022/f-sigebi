@@ -200,6 +200,7 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
     userDetail: any;
     userAndName?: string;
   };
+  abstract dataTableGoodsMap: Map<number, IGoodAndAvailable>;
   getGoods1(params: ListParams) {
     this.isLoadingGood = true;
     this.goodServices.getAll(params).subscribe({
@@ -215,6 +216,9 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
           };
         });
         this.dataTableGoods = await Promise.all(goods);
+        this.dataTableGoodsMap = new Map<number, IGoodAndAvailable>(
+          this.dataTableGoods.map(x => [x.goodId, x])
+        );
         this.totalItems = data.count;
         this.isLoadingGood = false;
       },
@@ -746,12 +750,13 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
     }
   }
 
+  abstract dataGoodsSelected: Map<number, IGoodAndAvailable>;
   pupAddGood() {
     console.log('pupAddGood');
-    const goodAvailables = this.dataTableGoods.filter(item => item.available);
     const newRows: IGoodJobManagement[] = [];
 
-    goodAvailables.forEach(item => {
+    // convert map to array
+    Array.from(this.dataGoodsSelected.values()).forEach(item => {
       const existRow = this.dataTableGoodsJobManagement.find(
         x => x.goodNumber == item.goodId
       );
@@ -764,19 +769,42 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
         good: item,
         goods: item.description,
       });
-      item.available = false;
-      if (!this.isCreate) {
-        this.postGoodsJobManagement({
-          goodNumber: item.goodId,
-          recordNumber: '',
-          managementNumber: this.formJobManagement.value.managementNumber,
-        }).subscribe();
-      }
     });
     this.dataTableGoodsJobManagement = [
       ...this.dataTableGoodsJobManagement,
       ...newRows,
     ];
+
+    // ------------ antiguo codigo
+    // const goodAvailables = this.dataTableGoods.filter(item => item.available);
+    // const newRows: IGoodJobManagement[] = [];
+
+    // goodAvailables.forEach(item => {
+    //   const existRow = this.dataTableGoodsJobManagement.find(
+    //     x => x.goodNumber == item.goodId
+    //   );
+    //   if (existRow) return;
+    //   newRows.push({
+    //     goodNumber: item.goodId,
+    //     recordNumber: '',
+    //     classify: item.goodClassNumber as any,
+    //     managementNumber: this.formJobManagement.value.managementNumber,
+    //     good: item,
+    //     goods: item.description,
+    //   });
+    //   item.available = false;
+    //   if (!this.isCreate) {
+    //     this.postGoodsJobManagement({
+    //       goodNumber: item.goodId,
+    //       recordNumber: '',
+    //       managementNumber: this.formJobManagement.value.managementNumber,
+    //     }).subscribe();
+    //   }
+    // });
+    // this.dataTableGoodsJobManagement = [
+    //   ...this.dataTableGoodsJobManagement,
+    //   ...newRows,
+    // ];
   }
 
   pupAddAnyGood() {

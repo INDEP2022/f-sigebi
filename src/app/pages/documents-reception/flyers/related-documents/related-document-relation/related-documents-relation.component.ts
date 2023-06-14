@@ -133,6 +133,8 @@ export class RelatedDocumentsRelationComponent
 {
   @ViewChild('tableGoods') tableGoods: Ng2SmartTableComponent;
 
+  dataTableGoodsMap = new Map<number, IGoodAndAvailable>();
+  dataGoodsSelected = new Map<number, IGoodAndAvailable>();
   // Send variables
   blockSend: boolean = false;
   variablesSend = {
@@ -420,6 +422,7 @@ export class RelatedDocumentsRelationComponent
   }
   selectedRadio: string;
 
+  changeSelection(event: any, id: number) {}
   disabledChecks() {
     console.log(this.tableGoods);
     const columnas = this.tableGoods.grid.getColumns();

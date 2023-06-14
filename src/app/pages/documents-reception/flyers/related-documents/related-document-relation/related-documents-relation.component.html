@@ -409,14 +409,74 @@
             <div class="row pt-2 mb-2" *ngIf="!formLoading">
               <div class="col-sm-12 col-12 col-md-12 pr-3">
                 <div [class]="isLoadingGood ? 'table-loading' : ''">
-                  <ng2-smart-table
+                  <!--  <ng2-smart-table
                     id="bienesJuridicos"
                     #tableGoods
                     (userRowSelect)="selectProceedings($event)"
                     [attr.class]="'table-responsive table-bordered'"
                     [settings]="settings"
                     [source]="dataTableGoods">
-                  </ng2-smart-table>
+                  </ng2-smart-table> -->
+
+                  <div class="row">
+                    <div class="overflow-auto col-md-12">
+                      <table class="table table-bordered mt-4">
+                        <thead>
+                          <tr>
+                            <th>No. Bien</th>
+                            <th>Descripción</th>
+                            <th>Cantidad</th>
+                            <th>Ident.</th>
+                            <th>Estatus</th>
+                            <th>
+                              Selección
+                              <span>{{ dataGoodsSelected.size }}</span>
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr
+                            [ngClass]="{
+                              'bg-dark text-white disabled-custom':
+                                !item.value.available ||
+                                dataGoodsSelected.has(item.value.goodId)
+                            }"
+                            *ngFor="let item of dataTableGoodsMap | keyvalue">
+                            <td>{{ item.value.goodId }}</td>
+                            <td>{{ item.value.description }}</td>
+                            <td>{{ item.value.quantity }}</td>
+                            <td>{{ item.value.identifier }}</td>
+                            <td>{{ item.value.status }}</td>
+                            <td>
+                              <!-- <ng-container
+                                *ngIf="
+                                  item.value.available ||
+                                  !dataGoodsSelected.has(item.value.goodId)
+                                "> -->
+                              <input
+                                #select
+                                type="checkbox"
+                                (change)="
+                                  select.checked
+                                    ? (improcedente.checked = false)
+                                    : ''
+                                " />
+                            </td>
+                            <td>
+                              <input
+                                #improcedente
+                                type="checkbox"
+                                (change)="
+                                  improcedente.checked
+                                    ? (select.checked = false)
+                                    : ''
+                                " />
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
                   <br />
                   <div>
                     <app-pagination
