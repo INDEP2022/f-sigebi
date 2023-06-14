@@ -554,6 +554,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   verifyDateAndFill() {
     let fecElab = new Date(this.form.get('fecElab').value);
     console.log(fecElab);
+    console.log(new Date())
     if (this.form.get('fecElab').value != null) {
       this.form.get('fecReception').setValue(new Date(fecElab));
       this.showFecReception = true;
@@ -1273,6 +1274,8 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     this.paramsDataGoods.next(new ListParams());
     this.paramsDataGoodsAct.next(new ListParams());
 
+    this.idProceeding = null
+
     const newParams = new ListParams();
     newParams.limit = 1;
     this.paramsActNavigate.next(newParams) 
@@ -1794,6 +1797,9 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     this.totalItemsDataGoods = 0;
     this.totalItemsDataGoodsAct = 0;
 
+    this.idProceeding = null
+    this.numberExpedient = null
+
     this.dataGoods.load([]);
     this.dataGoodAct.load([]);
 
@@ -1905,6 +1911,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
           this.proceedingData = res.data;
           this.totalItemsNavigate = res.count;
           const dataRes = JSON.parse(JSON.stringify(res.data[0]));
+          this.idProceeding = dataRes.id
           console.log(dataRes);
           this.fillIncomeProceeding(dataRes, '');
           console.log(typeof dataRes);
