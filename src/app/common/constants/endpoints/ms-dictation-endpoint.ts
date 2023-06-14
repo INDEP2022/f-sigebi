@@ -49,6 +49,7 @@ export enum DictationEndpoints {
   ApplicationUpdateManagerTransfer = 'application/updateManagerTransfer',
   ApplicationFindOffficeNu = 'application/findOffficeNu',
   GetSeqOfGestion = 'application/get-seq-of-gestion',
-  Count2 = 'application/getCount2'
+  Count2 = 'application/getCount2',
+  Count4 = 'application/getCount4'
 
 }

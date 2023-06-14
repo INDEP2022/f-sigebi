@@ -2890,44 +2890,48 @@ export class RelatedDocumentsComponent
       .subscribe({
         next: async data => {
           console.log('FIRMA ELECTRONICA', data);
-          this.svLegalOpinionsOfficeService
-            .getElectronicFirmData(params.getParams()) // CAMBIAR POR EL ENDPOIT QUE SE VA A DESPLEGAR CON FILTROS
-            .subscribe({
-              next: async dataM => {
-                console.log('M_OFICIO_GESTION_EXT_SSF3', dataM);
-                if (data.count > 0 && dataM.count > 0) {
-                  // Valida FOLIO_UNIVERSAL
-                  let _nUniversalFolio = await firstValueFrom(
-                    this.sendFunction_nUniversalFolio(params)
-                  );
-                  if (_nUniversalFolio) {
-                    if (_nUniversalFolio.n_folio_universal) {
-                      // Se llama PUP_CONSULTA_PDF_BD_SSF3
-                      this._PUP_CONSULTA_PDF_BD_SSF3();
-                      this._end_firmProcess(); // Termina el proceso
-                    } else {
-                      this.onLoadToast(
-                        'error',
-                        'No se encontró el folio universal',
-                        ''
-                      );
-                    }
+          let body = {
+            flyerNumber: this.formJobManagement.value.flyerNumber,
+            fileNumber: this.formNotification.value.expedientNumber,
+            jobType: this.formJobManagement.value.jobType,
+            managementNumber: this.formJobManagement.value.managementNumber
+          }
+          this.dictationService.getCount4(body).subscribe({
+            next: async dataM => {
+              console.log('M_OFICIO_GESTION_EXT_SSF3', dataM);
+              if (data.count > 0 && dataM.count > 0) {
+                // Valida FOLIO_UNIVERSAL
+                let _nUniversalFolio = await firstValueFrom(
+                  this.sendFunction_nUniversalFolio(params)
+                );
+                if (_nUniversalFolio) {
+                  if (_nUniversalFolio.n_folio_universal) {
+                    // Se llama PUP_CONSULTA_PDF_BD_SSF3
+                    this._PUP_CONSULTA_PDF_BD_SSF3();
+                    this._end_firmProcess(); // Termina el proceso
                   } else {
                     this.onLoadToast(
                       'error',
-                      'Error al buscar el folio universal del documento',
+                      'No se encontró el folio universal',
                       ''
                     );
                   }
-                }
-              }, error: async error => {
-                console.log(error);
-                if (error.status == 400) {
-                  // se llama PUP_GENERA_PDF
-                  this._PUP_GENERA_PDF();
+                } else {
+                  this.onLoadToast(
+                    'error',
+                    'Error al buscar el folio universal del documento',
+                    ''
+                  );
                 }
               }
-            })
+            }, error: async error => {
+              console.log(error);
+              if (error.status == 400) {
+                // se llama PUP_GENERA_PDF
+                this._PUP_GENERA_PDF();
+              }
+            }
+          })
 
         }, error: async error => {
           console.log(error);
@@ -3357,6 +3361,8 @@ export class RelatedDocumentsComponent
     this.modalService.show(DocumentsViewerByFolioComponent, config);
   }
   async secondConditionSendPrint() {
+    // variables let colocar aqui
+
     if (!this.formJobManagement.value.jobType) {
       this.alertInfo('warning', 'Debe especificar el TIPO OFICIO', '');
       return;
@@ -3377,7 +3383,7 @@ export class RelatedDocumentsComponent
       this.alertInfo('warning', 'Debe especificar la CIUDAD', '');
       return;
     }
-    if (this.variables.proc_doc_dic === 'N' && this.paramsGestionDictamen.doc === 'S' && this.paramsGestionDictamen.bien === 'S' && !this.formJobManagement.value.cveManagement) {
+    if (this.formVariables.get('proc_doc_dic').value === 'N' && this.paramsGestionDictamen.doc === 'S' && this.paramsGestionDictamen.bien === 'S' && !this.formJobManagement.value.cveManagement) {
       this.alertInfo('warning', 'Antes de Imprimir debe de Agregar Documentos', '');
       // PUP_BIEN_DOC;
       return;
@@ -3433,22 +3439,15 @@ export class RelatedDocumentsComponent
               }
               //UPDATE BIENES_EXTENSION_CAMPOS
               let data = {
-                oficio_gestion: n_COUNT,
-                no_bien: this.dataTableGoods[i].id
+                nCount: n_COUNT,
+                goodNumber: this.dataTableGoods[i].id
               }
               this.goodprocessService.updateJobManagement(data).subscribe({
                 next: resp => {
                   //mensaje o vacio cuando actualiza
                 },
                 error: error => {
-                  this.goodprocessService.postJobManagement(data).subscribe({
-                    next: resp => {
-                      //mensaje o vacio cuando lo crea
-                    },
-                    error: error => {
-
-                    },
-                  });
+                  //mensaje o vacio cuando error
                 },
               });
             }
@@ -3489,6 +3488,7 @@ export class RelatedDocumentsComponent
       let cuantos = 0;
       cuantos = await this.cuatos();
       if (cuantos !== 0) {
+        let lst_where = this.formJobManagement.value.managementNumber
 
       }
     }
@@ -3496,32 +3496,34 @@ export class RelatedDocumentsComponent
 
   }
   async cuatos() {
+    let count = 0
     this.dictationService.getCount2(this.notificationData.wheelNumber).subscribe({
       next: resp => {
-        //dato
+        count = resp.count;
       },
       error: error => {
       }
     });
-    return 0;
+    return count;
   }
   async conta() {
+    let count = 0;
     this.documentsService.getCount1(this.formJobManagement.value.managementNumber).subscribe({
       next: resp => {
-        //dato
+        count = resp.count
       },
       error: error => {
+        count = 0;
       }
     });
-    return 0;
+    return count;
   }
   async seqOfGestion() {
-    const params = new ListParams;
-    params['filter.no_of_gestion'] = this.formJobManagement.value.managementNumber;
-    this.dictationService.getSeqOfGestio(params).subscribe({
+    this.dictationService.getSeqOfGestio().subscribe({
       next: resp => {
         //mensaje
-        return resp;
+        let expent = resp.data[0].no_of_gestion
+
       },
       error: error => {
       }

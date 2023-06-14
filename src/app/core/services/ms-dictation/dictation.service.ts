@@ -72,7 +72,9 @@ export class DictationService extends HttpService {
   }): Observable<IDictation> {
     return this.post(this.route.FindByIds, body);
   }
-
+  getCount4(body: any) {
+    return this.post(this.route.Count4, body);
+  }
   create(body: IDictation) {
     return this.post(this.route.Dictation, body);
   }
