@@ -356,7 +356,7 @@ export class PerformProgrammingFormComponent
           Validators.pattern(STRING_PATTERN),
         ],
       ],
-      startDate: [null, [Validators.required, minDate(new Date(dateformat))]],
+      startDate: [null, [Validators.required]],
       endDate: [null, [Validators.required, minDate(new Date(dateformat))]],
       observation: [
         null,
@@ -2291,19 +2291,31 @@ export class PerformProgrammingFormComponent
 
   checkInfoDate(event: any) {
     const startDate = event;
-    const endDate = new Date(this.performForm.get('endDate').value);
-    const _startDateFormat = moment(startDate).format('DD-MM-YYYY');
-    const _endDateFormat = moment(endDate).format('DD-MM-YYYY');
-    if (_startDateFormat > _endDateFormat) {
-      this.performForm.get('endDate').clearValidators();
-      this.performForm
-        .get('endDate')
-        .addValidators([Validators.required, minDate(new Date(startDate))]);
-      this.performForm.get('endDate').updateValueAndValidity();
-      this.performForm
-        .get('endDate')
-        .setErrors({ minDate: { min: startDate } });
-      this.performForm.markAllAsTouched();
-    }
+    const _startDateFormat = moment(startDate).format('YYYY-MM-DD');
+    const date = moment(new Date()).format('YYYY-MM-DD');
+    this.programmingService.getDateProgramming(date, 5).subscribe({
+      next: (response: any) => {
+        const correctDate = moment(response).format('YYYY-MM-DD');
+        if (correctDate > _startDateFormat) {
+          this.performForm
+            .get('startDate')
+            .addValidators([Validators.required, minDate(new Date(response))]);
+          this.performForm
+            .get('startDate')
+            .setErrors({ minDate: { min: new Date(response) } });
+          this.performForm.markAllAsTouched();
+
+          this.performForm.get('endDate').clearValidators();
+          this.performForm
+            .get('endDate')
+            .addValidators([Validators.required, minDate(new Date(startDate))]);
+          this.performForm.get('endDate').updateValueAndValidity();
+          this.performForm
+            .get('endDate')
+            .setErrors({ minDate: { min: startDate } });
+          this.performForm.markAllAsTouched();
+        }
+      },
+    });
   }
 }

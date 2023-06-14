@@ -158,16 +158,10 @@
               [control]="performForm.get('startDate')"
               label="Fecha inicio operativo">
               <input
-                type="datetime"
                 class="form-control"
                 formControlName="startDate"
                 (ngModelChange)="checkInfoDate($event)"
                 [daysDisabled]="[6, 0]"
-                [bsConfig]="{
-                  withTimepicker: true,
-                  rangeInputFormat: 'DD/MMMM/YYYY, h:mm:ss a',
-                  dateInputFormat: 'DD/MMMM/YYYY, h:mm:ss a'
-                }"
                 bsDatepicker />
             </form-field>
           </div>
