@@ -456,6 +456,7 @@
             <input
               type="text"
               [readOnly]="true"
+              (dblclick)="goToHistorico('generalGood')"
               class="form-control"
               formControlName="estatusPrueba" />
           </form-field>
@@ -547,6 +548,7 @@
             <input
               type="text"
               [readOnly]="true"
+              (dblclick)="goToHistorico('goodActa')"
               class="form-control"
               formControlName="etiqueta" />
           </form-field>

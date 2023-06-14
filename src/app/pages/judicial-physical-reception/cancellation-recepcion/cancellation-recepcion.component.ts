@@ -219,6 +219,10 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
   cveScreen = 'FACTREFCANCELAR';
   nameReport = 'RGERGENSOLICDIGIT';
 
+  //IDs para Historico
+  idGood: number = null
+  idGoodAct: number = null
+
   act2Valid: boolean = false;
   adminSelect = new DefaultSelect();
   blockExpedient = false;
@@ -1488,10 +1492,19 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
     }
   }
 
-  goToHistorico() {
-    this.router.navigate([
-      '/pages/general-processes/historical-good-situation',
-    ]);
+  goToHistorico(site: string) {
+    localStorage.setItem('numberExpedient', this.numberExpedient);
+    if(site == 'generalGood' && this.idGood != null){
+      this.router.navigate(
+        ['/pages/general-processes/historical-good-situation'],
+        { queryParams: { noBien: this.idGood } }
+      );
+    }else if(site == 'goodActa' && this.idGoodAct != null){
+      this.router.navigate(
+        ['/pages/general-processes/historical-good-situation'],
+        { queryParams: { noBien: this.idGoodAct } }
+      );
+    } 
   }
 
   //Select Rows
@@ -1502,6 +1515,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
     const resp = this.validateGood(data);
     console.log(resp);
     this.selectData = data;
+    this.idGood = data.goodId
     this.statusGood('estatusPrueba', data);
     /* this.form.get('estatusPrueba').setValue(data.goodStatus); */
   }
@@ -1514,6 +1528,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
   selectRowGoodActa(e: any) {
     const { data } = e;
     console.log(data);
+    this.idGoodAct = data.good.goodId
     this.selectActData = data;
     this.statusGood('estatusBienActa', data);
     /* this.form.get('estatusBienActa').setValue(data.goodStatus); */
