@@ -3008,7 +3008,11 @@ export class RelatedDocumentsComponent
         formData.append('file', file);
         this.startFirmComponent({
           nameFileDictation: nameFile,
-          ...params,
+          natureDocumentDictation: this.formJobManagement.value.jobType,
+          numberDictation: this.formJobManagement.value.managementNumber,
+          typeDocumentDictation: this.formJobManagement.value.statusOf
+            ? this.formJobManagement.value.statusOf
+            : 'ENVIADO',
           fileDocumentDictation: formData.get('file'), // DOCUMENTO XML GENERADO
         });
       },
@@ -3037,9 +3041,18 @@ export class RelatedDocumentsComponent
             type: 'text/xml',
           });
           formData.append('file', file);
+          // this.startFirmComponent({
+          //   nameFileDictation: nameFile,
+          //   ...params,
+          //   fileDocumentDictation: formData.get('file'), // DOCUMENTO XML GENERADO
+          // });
           this.startFirmComponent({
             nameFileDictation: nameFile,
-            ...params,
+            natureDocumentDictation: this.formJobManagement.value.jobType,
+            numberDictation: this.formJobManagement.value.managementNumber,
+            typeDocumentDictation: this.formJobManagement.value.statusOf
+              ? this.formJobManagement.value.statusOf
+              : 'ENVIADO',
             fileDocumentDictation: formData.get('file'), // DOCUMENTO XML GENERADO
           });
         } else {
@@ -3438,8 +3451,14 @@ export class RelatedDocumentsComponent
       return;
     }
     if (this.formJobManagement.value.jobType == 'EXTERNO') {
-      this.alertInfo('warning', 'Debe especificar al DESTINATARIO EXTERNO', '');
-      return;
+      if (!this.formJobManagement.value.addressee) {
+        this.alertInfo(
+          'warning',
+          'Debe especificar al DESTINATARIO EXTERNO',
+          ''
+        );
+        return;
+      }
     }
     if (!this.formJobManagement.value.city) {
       this.alertInfo('warning', 'Debe especificar la CIUDAD', '');
@@ -3457,6 +3476,8 @@ export class RelatedDocumentsComponent
         );
         return;
       }
+      console.log('CONSULTAR ACTNOM');
+
       // CONSULTAR ACTNOM
       const _actnom = await firstValueFrom(
         this.sendFunction_pupLaunchReport(
@@ -3823,6 +3844,8 @@ export class RelatedDocumentsComponent
   }
 
   _PUP_ABANDONO() {}
+
+  _PUF_GENERA_CLAVE() {}
 
   async _end_firmProcess() {
     let LV_TRAMITE = await this._GESTION_TRAMITE_TIPO_TRAMITE();

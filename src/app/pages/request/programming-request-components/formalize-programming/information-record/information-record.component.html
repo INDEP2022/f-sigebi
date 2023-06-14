@@ -59,8 +59,14 @@
                 <option [value]="null">
                   Seleccione una identificaci&oacute;n
                 </option>
-                <option [value]="1">Identificaci&oacute;n</option>
-                <option [value]="2">Identificaci&oacute;n</option>
+                <option [value]="1">OTROS</option>
+                <option [value]="2">CREDENCIAL PGR</option>
+                <option [value]="3">CREDENCIAL DE ELECTOR</option>
+                <option [value]="4">PASAPORTE</option>
+                <option [value]="5">CARTILLA MILITAR</option>
+                <option [value]="6">CEDULA PROFESIONAL</option>
+                <option [value]="7">CREDENCIAL DEL SAT</option>
+                <option [value]="8">CREDENCIAL DEL SAE</option>
               </select>
             </form-field>
           </div>
@@ -138,8 +144,14 @@
                 <option [value]="null">
                   Seleccione una identificaci&oacute;n
                 </option>
-                <option [value]="1">Identificaci&oacute;n</option>
-                <option [value]="2">Identificaci&oacute;n</option>
+                <option [value]="1">OTROS</option>
+                <option [value]="2">CREDENCIAL PGR</option>
+                <option [value]="3">CREDENCIAL DE ELECTOR</option>
+                <option [value]="4">PASAPORTE</option>
+                <option [value]="5">CARTILLA MILITAR</option>
+                <option [value]="6">CEDULA PROFESIONAL</option>
+                <option [value]="7">CREDENCIAL DEL SAT</option>
+                <option [value]="8">CREDENCIAL DEL SAE</option>
               </select>
             </form-field>
           </div>
@@ -219,8 +231,14 @@
                 <option [value]="null">
                   Seleccione una identificaci&oacute;n
                 </option>
-                <option [value]="1">Identificaci&oacute;n</option>
-                <option [value]="2">Identificaci&oacute;n</option>
+                <option [value]="1">OTROS</option>
+                <option [value]="2">CREDENCIAL PGR</option>
+                <option [value]="3">CREDENCIAL DE ELECTOR</option>
+                <option [value]="4">PASAPORTE</option>
+                <option [value]="5">CARTILLA MILITAR</option>
+                <option [value]="6">CEDULA PROFESIONAL</option>
+                <option [value]="7">CREDENCIAL DEL SAT</option>
+                <option [value]="8">CREDENCIAL DEL SAE</option>
               </select>
             </form-field>
           </div>
@@ -297,8 +315,14 @@
                 <option [value]="null">
                   Seleccione una identificaci&oacute;n
                 </option>
-                <option [value]="1">Identificaci&oacute;n</option>
-                <option [value]="2">Identificaci&oacute;n</option>
+                <option [value]="1">OTROS</option>
+                <option [value]="2">CREDENCIAL PGR</option>
+                <option [value]="3">CREDENCIAL DE ELECTOR</option>
+                <option [value]="4">PASAPORTE</option>
+                <option [value]="5">CARTILLA MILITAR</option>
+                <option [value]="6">CEDULA PROFESIONAL</option>
+                <option [value]="7">CREDENCIAL DEL SAT</option>
+                <option [value]="8">CREDENCIAL DEL SAE</option>
               </select>
             </form-field>
           </div>
@@ -306,7 +330,7 @@
           <div class="row pt-4">
             <form-field
               [control]="witnessTwoForm.get('noIdentification')"
-              label="Numero de identificaci&oacute;n">
+              label="N&uacute;mero de identificaci&oacute;n">
               <input
                 type="text"
                 class="form-control"
@@ -336,14 +360,16 @@
       <div class="row">
         <div class="col-md-6">
           <h5 style="font-size: 15px">OIC</h5>
-          <form [formGroup]="deliveryForm" class="form-material pt-4">
+          <form [formGroup]="oicofficialForm" class="form-material pt-4">
             <form-field
-              [control]="deliveryForm.get('name')"
+              [control]="oicofficialForm.get('name')"
               label="Nº de evento OIC">
               <input type="text" class="form-control" formControlName="name" />
             </form-field>
             <div class="row pt-2">
-              <form-field [control]="deliveryForm.get('charge')" label="Nombre">
+              <form-field
+                [control]="oicofficialForm.get('charge')"
+                label="Nombre">
                 <input
                   type="text"
                   class="form-control"
@@ -360,7 +386,9 @@
             </div>
 
             <div class="row pt-2">
-              <form-field [control]="deliveryForm.get('charge')" label="Cargo">
+              <form-field
+                [control]="oicofficialForm.get('charge')"
+                label="Cargo">
                 <input
                   type="text"
                   class="form-control"
@@ -370,21 +398,27 @@
 
             <div class="row pt-4">
               <form-field
-                [control]="deliveryForm.get('identification')"
+                [control]="oicofficialForm.get('identification')"
                 label="Identificaci&oacute;n">
                 <select class="form-control" formControlName="identification">
                   <option [value]="null">
                     Seleccione una identificaci&oacute;n
                   </option>
-                  <option [value]="1">Identificaci&oacute;n</option>
-                  <option [value]="2">Identificaci&oacute;n</option>
+                  <option [value]="1">OTROS</option>
+                  <option [value]="2">CREDENCIAL PGR</option>
+                  <option [value]="3">CREDENCIAL DE ELECTOR</option>
+                  <option [value]="4">PASAPORTE</option>
+                  <option [value]="5">CARTILLA MILITAR</option>
+                  <option [value]="6">CEDULA PROFESIONAL</option>
+                  <option [value]="7">CREDENCIAL DEL SAT</option>
+                  <option [value]="8">CREDENCIAL DEL SAE</option>
                 </select>
               </form-field>
             </div>
 
             <div class="row pt-4">
               <form-field
-                [control]="deliveryForm.get('noIdentification')"
+                [control]="oicofficialForm.get('noIdentification')"
                 label="N&uacute;mero de identificaci&oacute;n">
                 <input
                   type="text"
@@ -395,7 +429,7 @@
 
             <div class="row pt-4">
               <form-field
-                [control]="deliveryForm.get('issuedBy')"
+                [control]="oicofficialForm.get('issuedBy')"
                 label="Expedida por">
                 <input
                   type="text"
@@ -405,7 +439,9 @@
             </div>
 
             <div class="row pt-4">
-              <form-field [control]="deliveryForm.get('email')" label="Email">
+              <form-field
+                [control]="oicofficialForm.get('email')"
+                label="Email">
                 <input
                   type="text"
                   class="form-control"
@@ -416,14 +452,14 @@
         </div>
         <div class="col-md-6">
           <h5 style="font-size: 15px">UVFV</h5>
-          <form [formGroup]="witnessTwoForm" class="form-material pt-4">
-            <form-field [control]="witnessTwoForm.get('name')" label="Nombre">
+          <form [formGroup]="uvfvofficialForm" class="form-material pt-4">
+            <form-field [control]="uvfvofficialForm.get('name')" label="Nombre">
               <input type="text" class="form-control" formControlName="name" />
             </form-field>
 
             <div class="row pt-2">
               <form-field
-                [control]="witnessTwoForm.get('charge')"
+                [control]="uvfvofficialForm.get('charge')"
                 label="Cargo">
                 <input
                   type="text"
@@ -433,7 +469,9 @@
             </div>
 
             <div class="row pt-4">
-              <form-field [control]="witnessTwoForm.get('email')" label="Email">
+              <form-field
+                [control]="uvfvofficialForm.get('email')"
+                label="Email">
                 <input
                   type="text"
                   class="form-control"
@@ -443,7 +481,7 @@
 
             <div class="row pt-4">
               <form-field
-                [control]="witnessTwoForm.get('resistance')"
+                [control]="uvfvofficialForm.get('resistance')"
                 label="Nombre  Funcionario SAT">
                 <input
                   type="text"
@@ -454,7 +492,7 @@
 
             <div class="row pt-4">
               <form-field
-                [control]="witnessTwoForm.get('noIdentification')"
+                [control]="uvfvofficialForm.get('noIdentification')"
                 label="Cargo Funcionario SAT">
                 <input
                   type="text"
@@ -465,7 +503,7 @@
 
             <div class="row pt-4">
               <form-field
-                [control]="witnessTwoForm.get('issuedBy')"
+                [control]="uvfvofficialForm.get('issuedBy')"
                 label="Nº Oficio de convocatiria UVFV">
                 <input
                   type="text"
@@ -475,7 +513,7 @@
             </div>
             <div class="row pt-4">
               <form-field
-                [control]="witnessTwoForm.get('issuedBy')"
+                [control]="uvfvofficialForm.get('issuedBy')"
                 label="Fecha oficio UVFV">
                 <input
                   type="date"

@@ -153,6 +153,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
 
   //NAVEGACION DE ACTAS
   paramsActNavigate = new BehaviorSubject<ListParams>(new ListParams());
+  totalItemsNavigate: number = 0;
   newLimitparamsActNavigate = new FormControl(1);
 
   //NAVEGACION DE TABLA DE BIENES
@@ -276,20 +277,24 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
     this.paramsActNavigate
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(params => {
-        console.log('Sís');
-        console.log(this.paramsActNavigate);
-        console.log(this.paramsActNavigate.getValue().page);
-        console.log(this.proceedingData.length);
+        this.loading = true;
         this.dataGoodAct.load([]);
-        if (this.proceedingData.length > 0) {
-          this.loading = true;
-          const dataRes = JSON.parse(
-            JSON.stringify(
-              this.proceedingData[this.paramsActNavigate.getValue().page - 1]
-            )
-          );
-          this.fillIncomeProceeding(dataRes);
-        }
+        this.clearInputs();
+        const paramsF = new FilterParams();
+        paramsF.page = params.page;
+        paramsF.limit = 1;
+        paramsF.addFilter('numFile', this.form.get('expediente').value);
+        paramsF.addFilter('typeProceedings', 'DXCVENT'); //!Un in
+        this.serviceProcVal.getByFilter(paramsF.getParams()).subscribe(
+          res => {
+            console.log(res);
+            const dataRes = JSON.parse(JSON.stringify(res.data[0]));
+            this.fillIncomeProceeding(dataRes);
+          },
+          err => {
+            this.loading = false;
+          }
+        );
       });
 
     this.getDataUser();
@@ -865,15 +870,13 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
         this.form.get('acta2').setValue(dataRes.keysProceedings);
         this.form.get('direccion').setValue(dataRes.address);
         this.form.get('entrega').setValue(dataRes.witness1);
-        this.form
-          .get('fecElab')
-          .setValue(
-            new Date(
-              new Date(dataRes.elaborationDate).toLocaleString('en-US', {
-                timeZone: 'GMT',
-              })
-            )
-          );
+        this.form.get('fecElab').setValue(
+          new Date(
+            new Date(dataRes.elaborationDate).toLocaleString('en-US', {
+              timeZone: 'GMT',
+            })
+          )
+        );
         this.form
           .get('fecRecepFisica')
           .setValue(addDays(new Date(dataRes.datePhysicalReception), 1));
@@ -910,15 +913,13 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
         this.form.get('acta2').setValue(dataRes.keysProceedings);
         this.form.get('direccion').setValue(dataRes.address);
         this.form.get('entrega').setValue(dataRes.witness1);
-        this.form
-          .get('fecElab')
-          .setValue(
-            new Date(
-              new Date(dataRes.elaborationDate).toLocaleString('en-US', {
-                timeZone: 'GMT',
-              })
-            )
-          );
+        this.form.get('fecElab').setValue(
+          new Date(
+            new Date(dataRes.elaborationDate).toLocaleString('en-US', {
+              timeZone: 'GMT',
+            })
+          )
+        );
         this.form
           .get('fecRecepFisica')
           .setValue(addDays(new Date(dataRes.datePhysicalReception), 1));
@@ -1064,19 +1065,16 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
               elaborationDate: new Date(
                 this.form.get('fecElab').value
               ).getTime(),
-              datePhysicalReception: format(
-                this.form.get('fecRecepFisica').value,
-                'yyyy-MM-dd HH:mm'
-              ),
-              dateElaborationReceipt: format(
-                this.form.get('fecElabRecibo').value,
-                'yyyy-MM-dd HH:mm'
-              ),
-              dateDeliveryGood: format(
-                this.form.get('fecEntregaBienes').value,
-                'yyyy-MM-dd HH:mm'
-              ),
-              captureDate: format(new Date(), 'yyyy-MM-dd HH:mm'),
+              datePhysicalReception: new Date(
+                this.form.get('fecRecepFisica').value
+              ).getTime(),
+              dateElaborationReceipt: new Date(
+                this.form.get('fecElabRecibo').value
+              ).getTime(),
+              dateDeliveryGood: new Date(
+                this.form.get('fecEntregaBienes').value
+              ).getTime(),
+              captureDate: new Date().getTime(),
               universalFolio: this.form.get('folioEscaneo').value,
             };
             const resData = JSON.parse(JSON.stringify(res.data[0]));
@@ -1112,22 +1110,18 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
             witness2: this.form.get('recibe2').value,
             address: this.form.get('direccion').value,
             elaborationDate: new Date(this.form.get('fecElab').value).getTime(),
-            datePhysicalReception: format(
-              this.form.get('fecRecepFisica').value,
-              'yyyy-MM-dd HH:mm'
-            ),
-            dateElaborationReceipt: format(
-              this.form.get('fecElabRecibo').value,
-              'yyyy-MM-dd HH:mm'
-            ),
-            dateDeliveryGood: format(
-              this.form.get('fecEntregaBienes').value,
-              'yyyy-MM-dd HH:mm'
-            ),
-            captureDate: format(new Date(), 'yyyy-MM-dd HH:mm'),
+            datePhysicalReception: new Date(
+              this.form.get('fecRecepFisica').value
+            ).getTime(),
+            dateElaborationReceipt: new Date(
+              this.form.get('fecElabRecibo').value
+            ).getTime(),
+            dateDeliveryGood: new Date(
+              this.form.get('fecEntregaBienes').value
+            ).getTime(),
+            captureDate: new Date().getTime(),
 
             keysProceedings: this.form.get('acta2').value,
-            /* elaborate: 'SERA', */
             elaborate: localStorage.getItem('username').toLocaleUpperCase(),
             numFile: parseInt(this.numberExpedient),
             typeProceedings: 'DXCVENT',
@@ -1272,6 +1266,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
   getGoodsByExpedient() {
     this.research = false;
     const paramsF = new FilterParams();
+    paramsF.limit = 1;
     paramsF.addFilter(
       'numFile',
       this.form.get('expediente').value,
@@ -1282,11 +1277,11 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
       res => {
         console.log(res);
         this.blockExpedient = false;
-
+        this.totalItemsDataGoods = res.count;
         if (res.data != null) {
           console.log('Entro');
           console.log(res.data);
-          this.proceedingData = res.data;
+          this.totalItemsNavigate = res.count;
           const dataRes = JSON.parse(JSON.stringify(res.data[0]));
           this.fillIncomeProceeding(dataRes);
           console.log(typeof dataRes);
@@ -1349,6 +1344,11 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
     this.form.get('statusProceeding').reset();
     this.numberExpedient = this.form.get('expediente').value;
     this.form.get('folioEscaneo').reset();
+
+    const newParams = new ListParams();
+    newParams.limit = 1;
+    this.paramsActNavigate.next(newParams);
+
     /*     this.labelActa = 'Abrir acta';
     this.btnCSSAct = 'btn-success'; */
 
@@ -1370,7 +1370,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
             if (res.data.length > 0) {
               this.form.get('ident').setValue('DEV');
               this.form.get('entrego').setValue('PART');
-              this.totalItemsDataGoods = res.count;
+
               this.dataGoods.load(res.data);
               console.log(res);
               const newData = await Promise.all(
@@ -2253,6 +2253,12 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
     this.totalItemsDataGoodsAct = 0;
     this.paramsDataGoods.next(new ListParams());
     this.paramsDataGoodsAct.next(new ListParams());
+
+    //Marcar en 1
+    const newParams = new ListParams();
+    newParams.limit = 1;
+    this.paramsActNavigate.next(newParams);
+
     this.limitDataGoods = new FormControl(10);
     this.limitDataGoodsAct = new FormControl(10);
 
@@ -2310,53 +2316,6 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
     this.goodData = [];
     /* this.saveDataAct = []; */
     this.dataGoodAct.load(this.goodData);
-  }
-
-  nextProceeding() {
-    if (this.numberProceeding <= this.proceedingData.length - 1) {
-      this.numberProceeding += 1;
-      console.log(this.numberProceeding);
-      if (this.numberProceeding <= this.proceedingData.length - 1) {
-        this.prevProce = true;
-        const dataRes = JSON.parse(
-          JSON.stringify(this.proceedingData[this.numberProceeding])
-        );
-        this.fillIncomeProceeding(dataRes);
-      } else {
-        this.checkChange();
-        this.minDateFecElab = new Date();
-        this.clearInputs();
-        this.form.get('statusProceeding').reset();
-        /* this.labelActa = 'Abrir acta';
-        this.btnCSSAct = 'btn-info'; */
-        this.act2Valid = false;
-        this.navigateProceedings = true;
-        this.nextProce = false;
-        this.initialBool = false;
-        this.goodData = [];
-        this.dataGoodAct.load(this.goodData);
-      }
-    }
-  }
-
-  prevProceeding() {
-    if (
-      this.numberProceeding <= this.proceedingData.length &&
-      this.numberProceeding > 0
-    ) {
-      this.numberProceeding -= 1;
-      console.log(this.numberProceeding);
-      if (this.numberProceeding <= this.proceedingData.length - 1) {
-        this.nextProce = true;
-        const dataRes = JSON.parse(
-          JSON.stringify(this.proceedingData[this.numberProceeding])
-        );
-        this.fillIncomeProceeding(dataRes);
-        if (this.numberProceeding == 0) {
-          this.prevProce = false;
-        }
-      }
-    }
   }
 
   deleteProceeding() {
