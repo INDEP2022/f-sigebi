@@ -64,6 +64,8 @@ export class CatServicesFormComponent extends BasePage implements OnInit {
     if (this.catservice != null) {
       this.edit = true;
       this.catserviceForm.patchValue(this.catservice);
+      this.catserviceForm.controls['code'].setValue(this.catservice);
+      this.catserviceForm.get('code').disable();
     }
   }
   close() {
