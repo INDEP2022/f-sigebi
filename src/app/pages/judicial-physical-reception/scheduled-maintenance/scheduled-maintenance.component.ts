@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { Router } from '@angular/router';
+import { format } from 'date-fns';
 import { BehaviorSubject, firstValueFrom } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { FileSaverService } from 'src/app/common/services/file-saver.service';
@@ -195,6 +196,7 @@ export class ScheduledMaintenanceComponent
     documentType: string,
     base64String: string
   ): void {
+    console.log(this.form.value);
     let documentTypeAvailable = new Map();
     documentTypeAvailable.set(
       'excel',
@@ -234,13 +236,25 @@ export class ScheduledMaintenanceComponent
 
   async exportExcel2() {
     this.loadingExcel = true;
+
     this.onLoadToast(
       'info',
       'Reporte de Mantenimiento de Programaciones',
       'Consiguiendo datos'
     );
+    const v = this.form.getRawValue();
+    const body = {
+      statusProceedings: v.statusEvento,
+      typeProceedings: v.tipoEvento,
+      elaborate: v.usuario,
+      captureDate: v.rangeDate
+        ?.map((f: Date) => format(f, 'yyyy-MM-dd'))
+        .join(','),
+      description: v.coordRegional?.map((e: any) => `'${e}'`).join(','),
+    };
+    console.log(body);
     try {
-      const resp = await firstValueFrom(this.excelService.getExcel());
+      const resp = await firstValueFrom(this.excelService.getExcel(body));
       this.downloadDocument('Programación de Recepciones', 'excel', resp.file);
       this.loadingExcel = false;
     } catch (error) {
