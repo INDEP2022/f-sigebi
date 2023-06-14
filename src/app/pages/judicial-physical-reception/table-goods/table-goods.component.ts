@@ -30,7 +30,7 @@ export class TableGoodsComponent extends BasePage implements OnInit {
     this.updateSettingsGoods();
   }
   @Input() set page(value: number) {
-    console.log('Nueva Página', value);
+    // console.log('Nueva Página', value);
 
     this.params.value.page = value;
     // console.log(this.params.value);
@@ -93,7 +93,7 @@ export class TableGoodsComponent extends BasePage implements OnInit {
           // debugger;
           let filters = change.filter.filters;
           filters.map((filter: any, index: number) => {
-            console.log(filter, index);
+            // console.log(filter, index);
             if (index === 0) {
               this.data = [...this.dataOld];
             }
@@ -104,7 +104,7 @@ export class TableGoodsComponent extends BasePage implements OnInit {
             );
           });
           // this.totalItems = filterData.length;
-          console.log(this.data);
+          // console.log(this.data);
           this.totalItems = this.data.length;
           this.params.value.page = 1;
           this.getPaginated(this.params.getValue());
@@ -113,7 +113,7 @@ export class TableGoodsComponent extends BasePage implements OnInit {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    console.log(changes);
+    // console.log(changes);
     const data = changes['data'];
     if (data !== undefined) {
       this.dataOld = [...data.currentValue];
@@ -128,7 +128,7 @@ export class TableGoodsComponent extends BasePage implements OnInit {
 
   updateRow(event: any) {
     let { newData, confirm } = event;
-    console.log(event);
+    // console.log(event);
     this.updateGoodsRow.emit(event);
     confirm.resolve(newData);
   }
@@ -143,6 +143,8 @@ export class TableGoodsComponent extends BasePage implements OnInit {
         delete: this.haveDelete && value !== 'CERRADA',
       },
     };
-    this.data = [...this.data];
+    if (this.data) {
+      this.data = [...this.data];
+    }
   }
 }

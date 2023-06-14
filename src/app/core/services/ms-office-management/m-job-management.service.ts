@@ -167,12 +167,18 @@ export class MJobManagementService extends HttpService {
     return this.post('application/pup-serach-number', body);
   }
 
-  getRegSender(no_delegacion: string): Observable<IListResponse<IRSender>> {
-    return this.get(`application/regRemitente`, { no_delegacion });
+  getRegSender(params: ListParams): Observable<IListResponse<IRSender>> {
+    return this.get(`application/regRemitente`, params);
   }
 
+  getRegAddressee(params: ListParams): Observable<IListResponse<IRSender>> {
+    return this.get(`application/regDestinatario`, params);
+  }
 
-  getRegAddressee(remitente: string): Observable<IListResponse<IRSender>> {
-    return this.get(`application/regDestinatario`, { remitente });
+  deleteJobManagement(pCveOfManagement: number, pFlyerNumber: number) {
+    return this.post(`application/delete-job-gestion`, {
+      pCveOfManagement,
+      pFlyerNumber,
+    });
   }
 }

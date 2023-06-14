@@ -2,13 +2,16 @@ import { Component, OnInit } from '@angular/core';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 
-import { ListParams, SearchFilter } from 'src/app/common/repository/interfaces/list-params';
+import { LocalDataSource } from 'ng2-smart-table';
+import {
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { IStatusCode } from 'src/app/core/models/catalogs/status-code.model';
 import { StatusCodeService } from 'src/app/core/services/catalogs/status-code.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { StatusCodeFormComponent } from '../status-code-form/status-code-form.component';
 import { STATUSCODE_COLUMS } from './status-code-columns';
-import { LocalDataSource } from 'ng2-smart-table';
 
 @Component({
   selector: 'app-status-code-list',
@@ -31,7 +34,6 @@ export class StatusCodeListComponent extends BasePage implements OnInit {
     this.settings.actions.delete = true;
     this.settings.hideSubHeader = false;
     this.settings.actions.add = false;
-
   }
 
   ngOnInit(): void {

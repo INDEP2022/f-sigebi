@@ -15,9 +15,9 @@ export const EMAIL_COLUMNS = {
   usuario: {
     title: 'Delegación',
     sort: false,
-    valuePrepareFunction: (value: any) => {
-      return value.delegationNumber;
-    },
+    // // valuePrepareFunction: (value: any) => {
+    // //   return value.delegationNumber;
+    // },
   },
   email: {
     title: 'Email',

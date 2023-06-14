@@ -17,7 +17,6 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { IGoodSssubtype } from 'src/app/core/models/catalogs/good-sssubtype.model';
-import { IAttribGoodBad } from 'src/app/core/models/ms-good/good';
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
 import { ParameterCatService } from 'src/app/core/services/catalogs/parameter.service';
 import { AccountMovements } from 'src/app/core/services/ms-account-movements/account-movements.service';
@@ -60,7 +59,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
   count = 0;
   delegacion: number;
   subdelegacion: number;
-  selectedBad: IAttribGoodBad;
+  selectedBad: any;
   get data() {
     return this.service.data;
   }
@@ -268,7 +267,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     this.loading = true;
     this.params.value.limit = 1;
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(params => {
-      console.log(params);
+      // console.log(params);
       if (this.count > 0) this.searchGood(true);
       this.count++;
     });
@@ -314,19 +313,17 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
           this.origin3 = param['origin3'] ?? null;
           this.TIPO_PROC = param['TIPO_PROC'] ?? null;
           this.NO_INDICADOR = param['NO_INDICADOR'] ?? null;
-        } else {
-          const selectedBadString = localStorage.getItem('selectedBad');
-          if (selectedBadString) {
-            this.selectedBad = JSON.parse(selectedBadString);
-            console.log(this.selectedBad);
+        }
+        const selectedBadString = localStorage.getItem('selectedBad');
+        if (selectedBadString) {
+          this.selectedBad = JSON.parse(selectedBadString);
+          console.log(this.selectedBad);
+          if (!this.origin) this.origin = '1';
+          console.log(this.origin);
 
-            this.origin = '1';
-            console.log(this.origin);
-
-            // this.selectTab();
-            this.numberGood.setValue(this.selectedBad.id);
-            this.searchGood();
-          }
+          // this.selectTab();
+          this.numberGood.setValue(this.selectedBad.id);
+          this.searchGood();
         }
         // this.goodService.getById2(param['noBien']).subscribe({
         //   next: data => {
@@ -420,8 +417,11 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
       }
     }
     console.log(body);
-    await this.preUpdate();
-    if (this.selectedBad) {
+    const preUpdateValid = await this.preUpdate();
+    if (!preUpdateValid) {
+      return;
+    }
+    if (this.selectedBad && this.selectedBad.motive) {
       this.attribGoodBadService
         .remove(this.selectedBad)
         .pipe(takeUntil(this.$unSubscribe))

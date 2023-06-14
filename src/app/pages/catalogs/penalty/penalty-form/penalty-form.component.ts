@@ -6,11 +6,11 @@ import {
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
 
-import { BasePage } from 'src/app/core/shared/base-page';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { IPenalty } from 'src/app/core/models/catalogs/penalty.model';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
+import { IPenalty } from 'src/app/core/models/catalogs/penalty.model';
 import { PenaltyService } from 'src/app/core/services/catalogs/penalty.service';
+import { BasePage } from 'src/app/core/shared/base-page';
 
 @Component({
   selector: 'app-penalty-form',

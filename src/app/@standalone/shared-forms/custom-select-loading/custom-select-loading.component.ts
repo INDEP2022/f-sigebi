@@ -103,7 +103,7 @@ export class CustomSelectWidthLoading
     }
     if (this.form) {
       this.form.get(this.formControlName).valueChanges.subscribe(x => {
-        console.log(x);
+        // console.log(x);
         if (x && this.updateValues) {
           this.input$.next(x);
         }
@@ -143,7 +143,7 @@ export class CustomSelectWidthLoading
   }
 
   onSelectChange(event: any) {
-    console.log(event);
+    // console.log(event);
     if (!event) {
       this.input$.next('');
       this.valueChange.emit(null);
@@ -162,7 +162,7 @@ export class CustomSelectWidthLoading
   }
 
   clear(event: any) {
-    console.log(event);
+    // console.log(event);
   }
 
   getItemsObservable(text: string = '') {
@@ -197,12 +197,12 @@ export class CustomSelectWidthLoading
     for (let i = 0; i < path.length; i++) {
       result = result[path[i]];
     }
-    console.log(data);
+    // console.log(data);
     return result;
   }
 
   fetchMore(text: any) {
-    console.log(text);
+    // console.log(text);
     // if (!this.isLoading && this.items.length < this.totalItems) {
     this.page++;
     this.isLoading = true;
@@ -255,7 +255,7 @@ export class CustomSelectWidthLoading
       )
       .subscribe({
         next: (resp: any[]) => {
-          console.log(resp);
+          // console.log(resp);
           this.isLoading = false;
           if (resp) {
             this.items = resp;

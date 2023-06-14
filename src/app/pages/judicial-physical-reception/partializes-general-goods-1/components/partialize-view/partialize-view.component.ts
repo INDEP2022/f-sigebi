@@ -182,7 +182,7 @@ export class PartializeViewComponent extends BasePage implements OnInit {
             .slice(0, row.index)
             .concat(this.bienesPar[this.bienesPar.length - 1]);
         }
-        debugger;
+        // debugger;
         if (row.data.cantidad) {
           this.bienesPar[this.bienesPar.length - 1].cantidad -= +(
             row.data.cantidad + ''

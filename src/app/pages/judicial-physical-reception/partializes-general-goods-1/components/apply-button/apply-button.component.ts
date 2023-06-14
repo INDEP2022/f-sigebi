@@ -431,7 +431,7 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
     v_verif_des: number
   ) {
     // let vobservaciones: string;
-    debugger;
+    // debugger;
     if (vsumimp < v_importe) {
       // vfactor = (v_importe - vsumimp) / v_importe;
       // vfactornum = (v_importe - vsumimp) / (v_importe - vsumimp);

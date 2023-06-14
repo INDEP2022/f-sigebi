@@ -140,4 +140,9 @@ export class GoodProcessService extends HttpService {
       params
     );
   }
+
+  callPupChangeImpro(body: any): Observable<any> {
+    const route = GoodProcessPoints.pup_change_impro;
+    return this.post(`${route}`, body);
+  }
 }

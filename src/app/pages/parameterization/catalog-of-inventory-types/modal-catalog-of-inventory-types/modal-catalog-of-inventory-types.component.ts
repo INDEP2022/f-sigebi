@@ -37,7 +37,14 @@ export class ModalCatalogOfInventoryTypesComponent
 
   private prepareForm() {
     this.form = this.fb.group({
-      noTypeInventory: ['', Validators.pattern(NUMBERS_PATTERN)],
+      noTypeInventory: [
+        '',
+        [
+          Validators.required,
+          Validators.pattern(NUMBERS_PATTERN),
+          Validators.maxLength(3),
+        ],
+      ],
       attributeInventory: [
         '',
         [Validators.required, Validators.pattern(STRING_PATTERN)],
@@ -50,6 +57,7 @@ export class ModalCatalogOfInventoryTypesComponent
       this.edit = true;
       this.id = Number(this.allotment.noTypeInventory);
       this.form.patchValue(this.allotment);
+      this.form.controls['noTypeInventory'].disable();
     } else {
       this.form.get('cveTypeInventory').patchValue(this.data.cveTypeInventory);
     }
