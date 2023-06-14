@@ -1,20 +1,20 @@
-import { BehaviorSubject, takeUntil } from 'rxjs';
 import { Component, OnInit } from '@angular/core';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 
-import { BasePage } from 'src/app/core/shared/base-page';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { DinamicTablesService } from 'src/app/core/services/catalogs/dinamic-tables.service';
+import { BasePage } from 'src/app/core/shared/base-page';
 //models
 import { ITables } from 'src/app/core/models/catalogs/dinamic-tables.model';
 import { LOGICAL_TABLES_REGISTER_COLUMNS } from './logical-tables-register-columns';
 //service
 import { LocalDataSource } from 'ng2-smart-table';
-import { LogicalTablesRegisterModalComponent } from '../logical-tables-register-modal/logical-tables-register-modal.component';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
+import { LogicalTablesRegisterModalComponent } from '../logical-tables-register-modal/logical-tables-register-modal.component';
 
 @Component({
   selector: 'app-logical-tables-register',

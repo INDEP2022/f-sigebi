@@ -7,18 +7,17 @@
     <form [formGroup]="form" class="form-material">
       <!--Date Form-->
       <div class="row mt-5">
-        <div class="col-md-4 col-sm-12 col-xs-12">
+        <div class="col-md-3 col-sm-12 col-xs-12">
           <form-field
             [control]="form.get('idConversion')"
             label="Id Conversión">
             <input
               type="text"
               class="form-control"
-              formControlName="idConversion"
-              (change)="searchConversion()" />
+              formControlName="idConversion" />
           </form-field>
         </div>
-        <div class="col-md-4 col-sm-12 col-xs-12">
+        <div class="col-md-3 col-sm-12 col-xs-12">
           <form-field
             [control]="form.get('noBien')"
             label="No Bien a Convertir">
@@ -29,7 +28,7 @@
               (change)="onChangeGood()" />
           </form-field>
         </div>
-        <div class="col-md-4 col-sm-12 col-xs-12">
+        <div class="col-md-3 col-sm-12 col-xs-12">
           <form-field [control]="form.get('date')" label="Fecha de creación">
             <input
               type="text"
@@ -38,8 +37,6 @@
               bsDatepicker />
           </form-field>
         </div>
-      </div>
-      <div class="row mt-5 mb-5">
         <div class="col-md-3 col-sm-12 col-xs-12">
           <form-field [control]="form.get('tipo')" label="Tipo">
             <select class="form-control" formControlName="tipo">
@@ -49,6 +46,8 @@
             </select>
           </form-field>
         </div>
+      </div>
+      <div class="row mt-5 mb-5">
         <div class="col-md-3 col-sm-12 col-xs-12">
           <form-field
             [control]="form.get('noExpediente')"
@@ -68,6 +67,17 @@
               class="form-control"
               formControlName="actaConversion" />
           </form-field>
+        </div>
+        <div class="col-md-3 col-sm-12 col-xs-12">
+          <button
+            type="button"
+            class="btn btn-sm btn-primary active mr-3"
+            (click)="searchConversion()">
+            Buscar <i class="fas fa-search"></i>
+          </button>
+          <button class="btn btn-danger btn-sm active" (click)="clean()">
+            Limpiar
+          </button>
         </div>
       </div>
       <app-card>
@@ -120,13 +130,13 @@
           </div>
         </div>
       </app-card>
-      <div class="row mt-5">
-        <div class="col-md-6 col-sm-12 col-xs-12 mt-2">
+      <div class="row">
+        <div class="col-md-6 col-sm-12 col-xs-12 mt-1">
           <div class="d-flex justify-content-center">
             <div class="m-3">
               <button
                 type="button"
-                class="btn btn-primary active"
+                class="btn btn-sm btn-primary active"
                 (click)="generatePaswword()"
                 [disabled]="saved">
                 Generar PW
@@ -134,13 +144,12 @@
             </div>
           </div>
         </div>
-        <div class="col-md-6 col-sm-12 col-xs-12 mt-2">
+        <div class="col-md-6 col-sm-12 col-xs-12 mt-1">
           <div class="d-flex justify-content-center">
             <div class="m-3">
               <button
                 type="button"
-                class="btn btn-success active"
-                [disabled]="enableButton"
+                class="btn btn-sm btn-success active"
                 (click)="save()">
                 Guardar
               </button>
@@ -149,13 +158,13 @@
         </div>
       </div>
 
-      <div class="row mt-5" *ngIf="generarPass">
+      <!--       <div class="row mt-5" *ngIf="generarPass">
         <div class="d-flex justify-content-center">
           <p>
             Nueva contraseña: &nbsp; &nbsp; <strong>{{ password }}</strong>
           </p>
         </div>
-      </div>
+      </div> -->
     </form>
   </div>
 </app-card>

@@ -83,7 +83,6 @@ export class CatServicesFormComponent extends BasePage implements OnInit {
   }
 
   update() {
-    console.log('INGRESO');
     this.loading = true;
     this.catserviceService
       .update(this.catservice.code, this.catserviceForm.getRawValue())

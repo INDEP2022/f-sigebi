@@ -40,8 +40,8 @@ export class MunicipalityService
     );
   }
 
-  update(id: string | number, model: IMunicipality): Observable<Object> {
-    return this.municipalityRepository.update(this.route, id, model);
+  update(model: any): Observable<Object> {
+    return this.municipalityRepository.newUpdate(this.route, model);
   }
 
   remove(id: string | number): Observable<Object> {
