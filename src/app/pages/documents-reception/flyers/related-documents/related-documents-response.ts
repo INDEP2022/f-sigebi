@@ -136,6 +136,7 @@ export abstract class RelateDocumentsResponse extends BasePage {
   abstract dataTableGoods: IGoodAndAvailable[];
   abstract dataTableGoodsJobManagement: IGoodJobManagement[];
   abstract isDisabledBtnDocs: boolean;
+  abstract selectedAllImpro: boolean;
   abstract se_refiere_a_Disabled: {
     A: boolean;
     B: boolean;
@@ -152,8 +153,7 @@ export abstract class RelateDocumentsResponse extends BasePage {
     this.goodServices.getAll(params).subscribe({
       next: async data => {
         const goods = await data.data.map(async (item: any) => {
-          item['improcedente'] = item.unfair === 'true' ? true : false;
-          item['seleccion'] = item.clarification === 'true' ? true : false;
+          item['improcedente'] = this.selectedAllImpro == true ? true : false;
           const isAvailable = await this.getFactaDbOficioGestrel(
             this.formJobManagement.get('managementNumber').value,
             item.goodId
