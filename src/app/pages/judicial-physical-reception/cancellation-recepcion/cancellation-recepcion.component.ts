@@ -221,8 +221,8 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
   nameReport = 'RGERGENSOLICDIGIT';
 
   //IDs para Historico
-  idGood: number = null
-  idGoodAct: number = null
+  idGood: number = null;
+  idGoodAct: number = null;
 
   act2Valid: boolean = false;
   adminSelect = new DefaultSelect();
@@ -326,7 +326,6 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
     this.paramsActNavigate
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(params => {
-
         this.loading = true;
         this.dataGoodAct.load([]);
         this.clearInputs();
@@ -349,7 +348,6 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
             this.loading = false;
           }
         );
-
       });
 
     this.getDataUser();
@@ -796,7 +794,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
               JSON.stringify(res.data[0])
             ).numberDelegation2;
           },
-          err => { }
+          err => {}
         );
       });
   }
@@ -869,7 +867,8 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
     console.log(paramsF.getParams());
     this.serviceGood
       .getAllFilterDetail(
-        `filter.fileNumber=$eq:${this.numberExpedient
+        `filter.fileNumber=$eq:${
+          this.numberExpedient
         }&filter.status=$not:ADM&filter.labelNumber=$not:6&${paramsF.getParams()}`
       )
       .subscribe({
@@ -918,7 +917,6 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
     this.labelActa = 'Cerrar acta';
     this.btnCSSAct = 'btn-primary';
 
-
     //SETEAR EN UNO
     const newParams = new ListParams();
     newParams.limit = 1;
@@ -939,7 +937,8 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
       );
       this.serviceGood
         .getAllFilterDetail(
-          `filter.fileNumber=$eq:${this.form.get('expediente').value
+          `filter.fileNumber=$eq:${
+            this.form.get('expediente').value
           }&filter.status=$not:ADM&filter.labelNumber=$not:6&${paramsF.getParams()}`
         )
         .subscribe({
@@ -1145,7 +1144,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
             })
           );
         }
-        this.dataGoodAct.load(incomeData).then(res => { });
+        this.dataGoodAct.load(incomeData).then(res => {});
 
         this.form.get('acta2').setValue(dataRes.keysProceedings);
         this.form.get('direccion').setValue(dataRes.address);
@@ -1493,17 +1492,17 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
 
   goToHistorico(site: string) {
     localStorage.setItem('numberExpedient', this.numberExpedient);
-    if(site == 'generalGood' && this.idGood != null){
+    if (site == 'generalGood' && this.idGood != null) {
       this.router.navigate(
         ['/pages/general-processes/historical-good-situation'],
         { queryParams: { noBien: this.idGood } }
       );
-    }else if(site == 'goodActa' && this.idGoodAct != null){
+    } else if (site == 'goodActa' && this.idGoodAct != null) {
       this.router.navigate(
         ['/pages/general-processes/historical-good-situation'],
         { queryParams: { noBien: this.idGoodAct } }
       );
-    } 
+    }
   }
 
   //Select Rows
@@ -1514,7 +1513,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
     const resp = this.validateGood(data);
     console.log(resp);
     this.selectData = data;
-    this.idGood = data.goodId
+    this.idGood = data.goodId;
     this.statusGood('estatusPrueba', data);
     /* this.form.get('estatusPrueba').setValue(data.goodStatus); */
   }
@@ -1527,7 +1526,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
   selectRowGoodActa(e: any) {
     const { data } = e;
     console.log(data);
-    this.idGoodAct = data.good.goodId
+    this.idGoodAct = data.good.goodId;
     this.selectActData = data;
     this.statusGood('estatusBienActa', data);
     /* this.form.get('estatusBienActa').setValue(data.goodStatus); */
@@ -1584,7 +1583,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
             } else if (
               this.form.get('fecElab').value != null &&
               format(this.form.get('fecElab').value, 'MM-yyyy') !=
-              format(new Date(), 'MM-yyyy')
+                format(new Date(), 'MM-yyyy')
             ) {
               this.alert(
                 'error',
@@ -1633,20 +1632,20 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                               JSON.stringify(res.data[0])
                             );
                             let newDetailProceeding: IDetailProceedingsDeliveryReception =
-                            {
-                              numberProceedings: data.id,
-                              numberGood: this.selectData.id,
-                              amount: this.selectData.quantity,
-                              exchangeValue: 1,
-                              received: 'S',
-                              approvedUserXAdmon:
-                                localStorage.getItem('username') ==
+                              {
+                                numberProceedings: data.id,
+                                numberGood: this.selectData.id,
+                                amount: this.selectData.quantity,
+                                exchangeValue: 1,
+                                received: 'S',
+                                approvedUserXAdmon:
+                                  localStorage.getItem('username') ==
                                   'sigebiadmon'
-                                  ? localStorage.getItem('username')
-                                  : localStorage
-                                    .getItem('username')
-                                    .toLocaleUpperCase(),
-                            };
+                                    ? localStorage.getItem('username')
+                                    : localStorage
+                                        .getItem('username')
+                                        .toLocaleUpperCase(),
+                              };
 
                             const modelHistoryGood: IHistoryGood = {
                               propertyNum: this.selectData.goodId,
@@ -1654,11 +1653,11 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                               changeDate: new Date().toISOString(),
                               userChange:
                                 localStorage.getItem('username') ==
-                                  'sigebiadmon'
+                                'sigebiadmon'
                                   ? localStorage.getItem('username')
                                   : localStorage
-                                    .getItem('username')
-                                    .toLocaleUpperCase(),
+                                      .getItem('username')
+                                      .toLocaleUpperCase(),
                               statusChangeProgram: 'FACTREFACTAVENT',
                               reasonForChange:
                                 'Estatus actual al agregar a acta',
@@ -1800,7 +1799,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
               );
             }
           },
-          err => { }
+          err => {}
         );
       }
     } else {
@@ -1825,7 +1824,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
     } else if (
       this.form.get('fecElab').value != null &&
       format(this.form.get('fecElab').value, 'MM-yyyy') !=
-      format(new Date(), 'MM-yyyy')
+        format(new Date(), 'MM-yyyy')
     ) {
       this.alert(
         'warning',
@@ -2017,11 +2016,9 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                                 this.form.get('fecElab').value
                               ).getTime(),
                               datePhysicalReception: new Date(
-                                this.form.get('fecCierreActa').value,
+                                this.form.get('fecCierreActa').value
                               ).getTime(),
-                              captureDate: new Date(
-                                new Date(),
-                              ).getTime(),
+                              captureDate: new Date(new Date()).getTime(),
                             };
                             this.serviceProcVal
                               .editProceeding(resData.id, modelEdit)
@@ -2037,7 +2034,8 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                                   this.alert(
                                     'success',
                                     'Acta abierta',
-                                    `El acta ${this.form.get('acta2').value
+                                    `El acta ${
+                                      this.form.get('acta2').value
                                     } fue abierta con`
                                   );
                                 },
@@ -2075,8 +2073,8 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                             localStorage.getItem('username') == 'sigebiadmon'
                               ? localStorage.getItem('username')
                               : localStorage
-                                .getItem('username')
-                                .toLocaleUpperCase()
+                                  .getItem('username')
+                                  .toLocaleUpperCase()
                           );
                           paramsF.addFilter(
                             'valMinutesNumber',
@@ -2093,7 +2091,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                                 if (
                                   fec_elab != null &&
                                   format(fec_elab, 'MM-yyyy') !=
-                                  format(new Date(), 'MM-yyyy')
+                                    format(new Date(), 'MM-yyyy')
                                 ) {
                                   this.alert(
                                     'warning',
@@ -2110,73 +2108,73 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                                   );
                                 } else {
                                   let newProceeding: IProccedingsDeliveryReception =
-                                  {
-                                    keysProceedings:
-                                      this.form.get('acta2').value,
-                                    elaborationDate: new Date(
-                                      this.form.get('fecElab').value
-                                    ).getTime(),
-                                    datePhysicalReception: new Date(
-                                      this.form.get('fecCierreActa').value,
-                                    ).getTime(),
-                                    address: this.form.get('direccion').value,
-                                    statusProceedings: 'ABIERTA',
-                                    elaborate:
-                                      localStorage.getItem('username') ==
+                                    {
+                                      keysProceedings:
+                                        this.form.get('acta2').value,
+                                      elaborationDate: new Date(
+                                        this.form.get('fecElab').value
+                                      ).getTime(),
+                                      datePhysicalReception: new Date(
+                                        this.form.get('fecCierreActa').value
+                                      ).getTime(),
+                                      address: this.form.get('direccion').value,
+                                      statusProceedings: 'ABIERTA',
+                                      elaborate:
+                                        localStorage.getItem('username') ==
                                         'sigebiadmon'
-                                        ? localStorage.getItem('username')
-                                        : localStorage
-                                          .getItem('username')
-                                          .toLocaleUpperCase(),
-                                    numFile:
-                                      this.form.get('expediente').value,
-                                    witness1:
-                                      this.form.get('autoridadCancela').value,
-                                    witness2: this.form.get('elabora').value,
-                                    typeProceedings:
-                                      this.form
-                                        .get('acta')
-                                        .value.split('/')[0] == 'C'
-                                        ? 'RECEPCAN'
-                                        : 'SUSPENSION',
-                                    responsible: null,
-                                    destructionMethod: null,
-                                    observations:
-                                      this.form.get('observaciones').value,
-                                    approvalDateXAdmon: null,
-                                    approvalUserXAdmon: null,
-                                    numRegister: null,
-                                    captureDate: new Date().getTime(),
-                                    numDelegation1:
-                                      this.form.get('admin').value
-                                        .numberDelegation2,
-                                    numDelegation2:
-                                      parseInt(
+                                          ? localStorage.getItem('username')
+                                          : localStorage
+                                              .getItem('username')
+                                              .toLocaleUpperCase(),
+                                      numFile:
+                                        this.form.get('expediente').value,
+                                      witness1:
+                                        this.form.get('autoridadCancela').value,
+                                      witness2: this.form.get('elabora').value,
+                                      typeProceedings:
+                                        this.form
+                                          .get('acta')
+                                          .value.split('/')[0] == 'C'
+                                          ? 'RECEPCAN'
+                                          : 'SUSPENSION',
+                                      responsible: null,
+                                      destructionMethod: null,
+                                      observations:
+                                        this.form.get('observaciones').value,
+                                      approvalDateXAdmon: null,
+                                      approvalUserXAdmon: null,
+                                      numRegister: null,
+                                      captureDate: new Date().getTime(),
+                                      numDelegation1:
                                         this.form.get('admin').value
-                                          .numberDelegation2
-                                      ) == 11
-                                        ? '11'
-                                        : null,
-                                    identifier: null,
-                                    label: null,
-                                    universalFolio: null,
-                                    numeraryFolio: null,
-                                    numTransfer: null,
-                                    idTypeProceedings:
-                                      this.form.get('acta').value,
-                                    receiptKey: null,
-                                    comptrollerWitness:
-                                      this.form.get('testigo').value,
-                                    numRequest: null,
-                                    closeDate: null,
-                                    maxDate: null,
-                                    indFulfilled: null,
-                                    dateCaptureHc: null,
-                                    dateCloseHc: null,
-                                    dateMaxHc: null,
-                                    receiveBy: null,
-                                    affair: null,
-                                  };
+                                          .numberDelegation2,
+                                      numDelegation2:
+                                        parseInt(
+                                          this.form.get('admin').value
+                                            .numberDelegation2
+                                        ) == 11
+                                          ? '11'
+                                          : null,
+                                      identifier: null,
+                                      label: null,
+                                      universalFolio: null,
+                                      numeraryFolio: null,
+                                      numTransfer: null,
+                                      idTypeProceedings:
+                                        this.form.get('acta').value,
+                                      receiptKey: null,
+                                      comptrollerWitness:
+                                        this.form.get('testigo').value,
+                                      numRequest: null,
+                                      closeDate: null,
+                                      maxDate: null,
+                                      indFulfilled: null,
+                                      dateCaptureHc: null,
+                                      dateCloseHc: null,
+                                      dateMaxHc: null,
+                                      receiveBy: null,
+                                      affair: null,
+                                    };
                                   console.log(newProceeding);
                                   this.serviceProcVal
                                     .postProceeding(newProceeding)
@@ -2205,7 +2203,8 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                                             this.alert(
                                               'success',
                                               'Acta abierta',
-                                              `El acta ${this.form.get('acta2').value
+                                              `El acta ${
+                                                this.form.get('acta2').value
                                               } fue abierta con`
                                             );
                                             const btn =
@@ -2242,7 +2241,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
             }
           );
       },
-      err => { }
+      err => {}
     );
   }
 
@@ -2405,7 +2404,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
           }
         );
       },
-      err => { }
+      err => {}
     );
   }
 
@@ -2476,7 +2475,8 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                               this.alert(
                                 'success',
                                 'Acta abierta',
-                                `El acta ${this.form.get('acta2').value
+                                `El acta ${
+                                  this.form.get('acta2').value
                                 } fue abierta`
                               );
                               /* const btn = document.getElementById('expedient-number');
@@ -2591,8 +2591,8 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                         localStorage.getItem('username') == 'sigebiadmon'
                           ? localStorage.getItem('username')
                           : localStorage
-                            .getItem('username')
-                            .toLocaleUpperCase(),
+                              .getItem('username')
+                              .toLocaleUpperCase(),
                     };
                     console.log(model);
                     this.serviceProgrammingGood.paChangeStatus(model).subscribe(
@@ -2689,7 +2689,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
         } else if (
           this.form.get('fecElab').value != null &&
           format(this.form.get('fecElab').value, 'MM-yyyy') !=
-          format(new Date(), 'MM-yyyy')
+            format(new Date(), 'MM-yyyy')
         ) {
           this.alert(
             'error',
