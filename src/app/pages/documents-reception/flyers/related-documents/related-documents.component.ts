@@ -353,12 +353,14 @@ export class RelatedDocumentsComponent
   });
 
   formVariables = new FormGroup({
-    b: new FormControl(''),
+    b: new FormControl('N'), //todos
     d: new FormControl(''),
-    dictamen: new FormControl(''),
+    dictamen: new FormControl('PROCEDENCIA'),
     classify: new FormControl(''),
     classify2: new FormControl(''),
-    crime: new FormControl(''),
+    crime: new FormControl('S'),
+    proc_doc_dic: new FormControl('N'),
+    doc_bien: new FormControl('N'),
   });
 
   selectVariable: any;
@@ -465,7 +467,7 @@ export class RelatedDocumentsComponent
     columnaImprocedence.hide = true;
     // (this.settings.columns as any).seleccion['hide'] = false;
     this.managementForm.get('averiPrevia').disable();
-    this.formVariables.get('b').setValue('S');
+    this.formVariables.get('b').setValue('S'); //todos
 
     this.managementForm.get('improcedente').setValue(true);
     this.managementForm.get('improcedente').disable();
@@ -1140,6 +1142,7 @@ export class RelatedDocumentsComponent
           data['filter.managementNumber'] =
             this.formJobManagement.value.managementNumber;
           const goodManagementResult = await this.getGoodsJobManagement(data);
+          debugger;
           this.dataTableGoodsJobManagement = goodManagementResult.data;
           this.goodTotalItems = goodManagementResult.count;
         });
@@ -1879,7 +1882,8 @@ export class RelatedDocumentsComponent
       return;
     }
 
-    if (this.variables.proc_doc_dic == 'S') {
+    //this.variables.proc_doc_dic
+    if (this.formVariables.get('proc_doc_dic').value == 'S') {
       this.alert('info', 'Info', 'Los Documentos y Bienes ya fueron agregados');
       return;
     }
@@ -1910,15 +1914,18 @@ export class RelatedDocumentsComponent
     //   this.alert('error', 'Debe especificar el tipo de Dictaminación', '');
     //   return;
     // }
-    //debugger;
+
     /* BIENES */
-    //console.log(this.dataTableGoodsJobManagement);
+    console.log(this.dataTableGoodsJobManagement);
+    console.log(this.formJobManagement);
+
     const bien = this.getQueryParams('bien');
-    //console.log(this.formJobManagement);
     const { managementNumber, cveManagement } = this.m_job_management;
     const { refersTo } = this.formJobManagement.controls;
-    const goodJobs = this.dataTableGoodsJobManagement.values;
+    const goodJobs = this.dataTableGoodsJobManagement;
     console.log(goodJobs);
+
+    debugger;
     if (bien == 'S' && doc == 'S') {
       console.log('paso');
       if (!managementNumber && !cveManagement) {
@@ -1965,13 +1972,13 @@ export class RelatedDocumentsComponent
     }
 
     /* DOCUMENTOS */
-    this.variables.clasif = null;
-    const bienes_oficio = this.dataTableGoodsJobManagement.values;
+    this.formVariables.get('classify').setValue(null);
 
+    //this.variables.dictaminacion
     if (
       bien == 'S' &&
       doc == 'S' &&
-      this.variables.dictaminacion != 'DEVOLUCION'
+      this.formVariables.get('dictamen').value != 'DEVOLUCION'
     ) {
       if (refersTo.value == 'D' || refersTo.value == this.se_refiere_a.D) {
         this.alert(
@@ -1982,34 +1989,63 @@ export class RelatedDocumentsComponent
         return;
       } else {
         if (goodJobs.length > 0) {
+          //se llama al endpoint para insertar tmp_clasif_bien
+
           console.log(this.dataTableGoodsJobManagement);
+          //PUP_DIST_CLASIF;
+          //const body = { user: user, classify: this.variables.clasif };
+          //await this.relatedDocumentDesahogo.PUP_DIST_CLASIF(body);
         }
       }
     }
 
+    //this.variables.dictaminacion
     if (
       bien == 'S' &&
       doc == 'S' &&
-      this.variables.dictaminacion == 'DEVOLUCION'
+      this.formVariables.get('dictamen').value == 'DEVOLUCION'
     ) {
       if (refersTo.value == 'D' || this.se_refiere_a.D) {
         this.alert('error', 'Para este oficio es necesario tener bienes', '');
         return;
       } else {
-        // DOCUMENTOS_PARA_DICTAMEN
-        //verificar si bienes oficio gestion classif no es nulo
-
-        alert('go block');
+        //LIP_EXEQUERY
       }
     }
 
     if (bien == 'N' && doc == 'S') {
       // DOCUMENTOS_PARA_DICTAMEN
-      alert('go block');
+      //LIP_EXEQRY
+      //alert('go block');
     }
 
-    this.variables.d = 'N';
-    this.variables.proc_doc_dic = 'S';
+    this.formVariables.get('d').setValue('N');
+    this.formVariables.get('proc_doc_dic').setValue('S');
+    //this.variables.d = 'N';
+    //this.variables.proc_doc_dic = 'S';
+
+    this.goDocumentModal();
+  }
+
+  goDocumentModal() {
+    debugger;
+    console.log(this.variables);
+    console.log(this.formVariables.value);
+    let context: Partial<DocumentsFormComponent> = { queryParams: {} };
+    if (this.formVariables.get('dictamen').value == 'PROCEDENCIA') {
+      context.queryParams = {
+        crime: this.formVariables.get('crime').value,
+        typeDictation: this.formVariables.get('dictamen').value,
+        typeSteeringwheel: this.formNotification.get('wheelType').value,
+        numberClassifyGood: `$in:${this.formVariables.get('classify2').value}`,
+      };
+    } else if (this.formVariables.get('dictamen').value != 'PROCEDENCIA') {
+      context.queryParams = {
+        typeDictation: this.formVariables.get('dictamen').value,
+        typeSteeringwheel: this.formNotification.get('wheelType').value,
+        numberClassifyGood: `$in:${this.formVariables.get('classify2').value}`,
+      };
+    }
   }
 
   getGoodOMCount() {
