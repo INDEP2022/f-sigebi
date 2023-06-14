@@ -50,6 +50,6 @@ export enum DictationEndpoints {
   ApplicationFindOffficeNu = 'application/findOffficeNu',
   GetSeqOfGestion = 'application/get-seq-of-gestion',
   Count2 = 'application/getCount2',
-  Count4 = 'application/getCount4'
-
+  Count4 = 'application/getCount4',
+  ApplicationPupCambiaEstatus = 'application/pup-cambia-estatus',
 }

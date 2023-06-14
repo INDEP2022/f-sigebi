@@ -10,6 +10,7 @@ import {
   IDictationCopies,
   IInitFormLegalOpinionOfficeBody,
   IInitFormLegalOpinionOfficeResponse,
+  IPufGenerateKey,
   IPupLaunchReport,
   ITmpDictationCreate,
   ITmpExpDesahogoB,
@@ -348,6 +349,12 @@ export class DictationService extends HttpService {
     return this.post<IListResponse<any>>(
       DictationEndpoints.ApplicationFindOffficeNu,
       data
+    );
+  }
+  pufGenerateKey(params: IPufGenerateKey) {
+    return this.post<IListResponse<any>>(
+      DictationEndpoints.ApplicationPupCambiaEstatus,
+      params
     );
   }
 }

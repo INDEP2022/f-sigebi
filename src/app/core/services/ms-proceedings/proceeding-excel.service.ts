@@ -11,7 +11,7 @@ export class ProceedingsExcelService extends HttpService {
     this.microservice = 'exportproceedings';
   }
 
-  getExcel() {
-    return this.get('export-excel/proceeding');
+  getExcel(body: any) {
+    return this.post('export-excel/proceeding', body);
   }
 }
