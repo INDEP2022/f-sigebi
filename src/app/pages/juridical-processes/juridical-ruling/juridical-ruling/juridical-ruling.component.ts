@@ -2554,7 +2554,7 @@ export class JuridicalRulingComponent
             () => {
               //Limpiar todo
               this.clearSearch();
-              this.getExp();
+              this.getExp(noExpediente);
             }
           );
         }
@@ -2609,7 +2609,7 @@ export class JuridicalRulingComponent
           Swal.fire('Dictamen ha eliminado correctamente', '', 'success').then(
             () => {
               this.clearSearch();
-              this.getExp();
+              this.getExp(noExpediente);
             }
           );
         }
@@ -2617,16 +2617,13 @@ export class JuridicalRulingComponent
     }
   }
 
-  getExp() {
+  getExp(exp: number) {
     const { NO_EXP } = this.activatedRoute.snapshot.queryParams;
-
-    console.log(this.activatedRoute.snapshot.queryParams);
-
-    this.expedientServices.getById(NO_EXP).subscribe({
+    this.expedientServices.getById(exp ?? NO_EXP).subscribe({
       next: response => {
         // ..Datos del expediente
         this.isDisabledExp = true;
-        this.legalForm.get('noExpediente').patchValue(NO_EXP);
+        this.legalForm.get('noExpediente').patchValue(exp ?? NO_EXP);
         this.legalForm.get('criminalCase').setValue(response.criminalCase);
         this.legalForm
           .get('preliminaryInquiry')
