@@ -1,58 +1,119 @@
-<form [formGroup]="searchTabForm" class="form-material">
+<div class="container-fluid">
   <div class="row">
-    <div class="col-md-6">
-      <app-goods-types-shared
-        [form]="searchTabForm"
-        typeField="tipo"
-        subtypeField="subtipo"
-        ssubtypeField="ssubtipo"
-        sssubtypeField="sssubtipo"
-        (goodSssubtypeChange)="getGoods($event)"></app-goods-types-shared>
-      <div class="form-group row">
-        <goods-filter-shared
-          [form]="searchTabForm"
-          goodField="noBien"
-          [classifGood]="classifGood"></goods-filter-shared>
-      </div>
-      <div class="form-group row">
-        <form-field [control]="searchTabForm.get('estatus')" label="Estatus">
-          <input
-            class="form-control"
-            type="text"
-            name="estatus"
-            formControlName="estatus" />
-        </form-field>
-      </div>
-      <div class="form-group row">
+    <div class="col-md-12">
+      <div class="row">
         <div class="col-md-6">
-          <form-field
-            [control]="searchTabForm.get('situacion')"
-            label="Situacion">
-            <input
-              class="form-control"
-              type="text"
-              name="situacion"
-              formControlName="situacion" />
-          </form-field>
+          <form [formGroup]="searchTabForm" class="form-material">
+            <div class="row">
+              <div class="col-md-12">
+                <app-goods-types-shared
+                  [form]="searchTabForm"
+                  typeField="tipo"
+                  subtypeField="subtipo"
+                  ssubtypeField="ssubtipo"
+                  sssubtypeField="sssubtipo"
+                  (goodSssubtypeChange)="
+                    getGoods($event)
+                  "></app-goods-types-shared>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12">
+                <div class="form-group">
+                  <goods-filter-shared
+                    [form]="searchTabForm"
+                    goodField="noBien"
+                    [classifGood]="classifGood"></goods-filter-shared>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <form-field
+                    [control]="searchTabForm.get('estatus')"
+                    label="Estatus">
+                    <input
+                      class="form-control"
+                      type="text"
+                      name="estatus"
+                      formControlName="estatus" />
+                  </form-field>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <form-field
+                    [control]="searchTabForm.get('situacion')"
+                    label="Situación">
+                    <input
+                      class="form-control"
+                      type="text"
+                      name="situacion"
+                      formControlName="situacion" />
+                  </form-field>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <form-field
+                    [control]="searchTabForm.get('destino')"
+                    label="Destino">
+                    <input
+                      class="form-control"
+                      type="text"
+                      name="destino"
+                      formControlName="destino" />
+                  </form-field>
+                </div>
+              </div>
+            </div>
+          </form>
         </div>
+
         <div class="col-md-6">
-          <form-field [control]="searchTabForm.get('destino')" label="Destino">
-            <input
-              class="form-control"
-              type="text"
-              name="destino"
-              formControlName="destino" />
-          </form-field>
+          <div class="row">
+            <div class="col-md-12">
+              <div class="image-container d-flex justify-content-center">
+                <!-- Imagen de muestra -->
+                <img
+                  src="https://cloudfront-us-east-1.images.arcpublishing.com/infobae/QL4GXR7XDJGO5KOVMF6QDIH52M.jpg"
+                  alt="Imagen"
+                  class="img-fluid h-auto"
+                  style="border: 1px solid #6c757d; max-height: 500px" />
+              </div>
+            </div>
+            <div class="col-md-12 mt-2">
+              <div class="text-center">
+                <button
+                  class="image-control mx-4"
+                  (click)="previousImage()"
+                  style="border: 1px solid #6c757d">
+                  &lt;
+                </button>
+                <button
+                  class="image-control mx-4"
+                  (click)="nextImage()"
+                  style="border: 1px solid #6c757d">
+                  &gt;
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
+      </div>
+      <div>
+        <div class="mt-2">
+          <app-columns-select [(settings)]="settings"></app-columns-select>
+        </div>
+        <br />
+        <ng-scrollbar [track]="'all'" style="min-height: 400px">
+          <ng2-smart-table [settings]="settings" [source]="list">
+          </ng2-smart-table>
+        </ng-scrollbar>
       </div>
     </div>
-    <div class="col-md-6"></div>
   </div>
-  <div>
-    <app-columns-select [(settings)]="settings"></app-columns-select>
-    <br />
-    <ng-scrollbar [track]="'all'" style="min-height: 120px">
-      <ng2-smart-table [settings]="settings" [source]="list"> </ng2-smart-table>
-    </ng-scrollbar>
-  </div>
-</form>
+</div>
