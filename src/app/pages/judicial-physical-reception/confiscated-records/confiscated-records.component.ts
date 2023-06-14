@@ -235,7 +235,6 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     }
 
     /* this.paramsActNavigate.valueasas98DAS41D65AS0D61AS98r4891♠74×549 */
-
     
 
     this.serviceRNomencla
@@ -256,6 +255,21 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
       .subscribe(params => {
         console.log(params)
         this.dataGoodAct.load([]);
+        this.dataGoods.load([])
+        const paramsF = new FilterParams()
+        paramsF.page = params.page
+        paramsF.addFilter('numFile', this.form.get('expediente').value);
+        paramsF.addFilter('typeProceedings', 'ENTREGA,DECOMISO', SearchFilter.IN); //!Un in
+        this.serviceProcVal.getByFilter(paramsF.getParams()).subscribe(
+          res => {
+            const dataRes = JSON.parse(JSON.stringify(res.data[0]));
+            this.fillIncomeProceeding(dataRes, '');
+          },
+          err => {
+
+          }
+        )
+
       });
 
     if (localStorage.getItem('numberExpedient')) {
@@ -1257,6 +1271,11 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     this.paramsActNavigate.next(new ListParams());
     this.paramsDataGoods.next(new ListParams());
     this.paramsDataGoodsAct.next(new ListParams());
+
+    const newParams = new ListParams();
+    newParams.limit = 1;
+    this.paramsActNavigate.next(newParams) 
+
     this.unsubscribe$.next();
 
     if (this.form.get('expediente').value != null) {
@@ -1855,11 +1874,8 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         console.log(res);
         console.log(res.data);
         if (res.data.length > 0) {
-          console.log('Entró');
           this.proceedingData = res.data;
           this.totalItemsNavigate = res.count;
-          this.newLimitparamsActNavigate = new FormControl(1)
-          console.log(this.proceedingData);
           const dataRes = JSON.parse(JSON.stringify(res.data[0]));
           console.log(dataRes);
           this.fillIncomeProceeding(dataRes, '');
