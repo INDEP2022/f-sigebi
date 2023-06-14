@@ -1626,6 +1626,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   fillIncomeProceeding(dataRes: any, action: string) {
     console.log(dataRes.id);
     console.log(dataRes.keysProceedings);
+
     console.log({ msg: 'Respuesta fill', data: dataRes });
     this.initialdisabled = true;
     this.noRequireAct1();

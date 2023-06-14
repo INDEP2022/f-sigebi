@@ -155,8 +155,9 @@ export class JuridicalRulingComponent
         valuePrepareFunction: (isSelected: boolean, row: IGood) =>
           this.isGoodSelected(row),
         renderComponent: CheckboxElementComponent,
-        onComponentInitFunction: (instance: CheckboxElementComponent) =>
-          this.onGoodSelect(instance),
+        onComponentInitFunction: (instance: CheckboxElementComponent) => (
+          console.log((instance.checked = false)), this.onGoodSelect(instance)
+        ),
       },
       id: {
         title: 'No. Bien',
@@ -344,6 +345,8 @@ export class JuridicalRulingComponent
   user_dicta: string;
   isExp: boolean = true;
   oficioDictamen: any;
+  goodSelect: any;
+
   constructor(
     private fb: FormBuilder,
     private activatedRoute: ActivatedRoute,
@@ -509,6 +512,7 @@ export class JuridicalRulingComponent
     this.isIdent = true;
     this.isDisabledExp = false;
     this.statusDict = '';
+    this.dictNumber = null;
 
     this.onTypeDictChange({ id: 'DESTRUCCION' });
   }
@@ -981,6 +985,7 @@ export class JuridicalRulingComponent
       this.filter1
         .getValue()
         .addFilter('fileNumber', noExpediente, SearchFilter.EQ);
+      this.filter1.getValue().addFilter('status', 'ADM', SearchFilter.EQ);
       this.filter1.getValue().page = 1;
       this.goodServices
         .getAllFilter(this.filter1.getValue().getParams())
@@ -1226,6 +1231,7 @@ export class JuridicalRulingComponent
   }
 
   isGoodSelected(_good: IGood) {
+    this.goodSelect = _good;
     const exists = this.selectedGooods.find(good => good.id == _good.id);
     return !exists ? false : true;
   }
@@ -1235,6 +1241,7 @@ export class JuridicalRulingComponent
     });
   }
   goodSelectedChange(good: IGood | any, selected: boolean) {
+    this.goodSelect = good;
     this.di_desc_est = good.estatus
       ? good.estatus.descriptionStatus
       : good.statusDetails.descriptionStatus;
@@ -1529,8 +1536,10 @@ export class JuridicalRulingComponent
                 numberClassifyGood,
                 dateValid,
                 callback: (next: any[]) => {
-                  this.buttonAprove = true;
-                  this.buttonRefuse = false;
+                  if (!this.dictNumber) {
+                    this.buttonAprove = true;
+                    this.buttonRefuse = false;
+                  }
                   this.documents = next;
                 },
               },
@@ -2373,7 +2382,7 @@ export class JuridicalRulingComponent
         //Manda a llamar a FACTGENPARCIALIZA
         this.router.navigate(['pages/general-processes/goods-partialization'], {
           queryParams: {
-            good: this.idGoodSelected.id,
+            good: this.goodSelect.id,
             screen: 'FACTJURDICTAMAS',
             NO_EXP: this.legalForm.get('noExpediente').value,
           },
@@ -2417,19 +2426,25 @@ export class JuridicalRulingComponent
       return;
     }
 
-    if (cveOficio.includes('?')) {
+    const cadena = cveOficio ? cveOficio.indexOf('?') : 0;
+
+    if (cadena == 0) {
       v_ban = true;
     }
 
-    if (v_ban) {
-      v_elimina = await this.getVDelete();
+    // if (cadena != 0 && this.user_dicta == user.username.toUpperCase()) {}
 
-      if (
-        !cveOficio.includes('?') &&
-        this.user_dicta == user.username.toUpperCase()
-      ) {
-        null;
-      } else {
+    v_elimina = await this.getVDelete();
+
+    if (
+      cadena != 0 &&
+      this.user_dicta == user.username.toUpperCase()
+      // !cveOficio.includes('?') &&
+      // this.user_dicta == user.username.toUpperCase()
+    ) {
+      null;
+    } else {
+      if (v_ban) {
         if (v_elimina == 'X') {
           this.onLoadToast(
             'error',
@@ -2795,6 +2810,7 @@ export class JuridicalRulingComponent
     this.di_desc_est = good.estatus
       ? good.estatus.descriptionStatus
       : good.statusDetails.descriptionStatus;
+    this.goodSelect = good;
   }
 
   btnCloseDocs() {

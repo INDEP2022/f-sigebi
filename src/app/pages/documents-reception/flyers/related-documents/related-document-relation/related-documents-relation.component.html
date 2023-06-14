@@ -27,6 +27,7 @@
         {{ formJobManagement.get('statusOf')?.value || '-----' }}
       </span>
 
+
       <div class="d-inline mr-2">
         <button
           (click)="openDialogSelectedManagement()"
@@ -425,6 +426,7 @@
               </div>
 
               <div class="col-12">
+
                 <!-- (fetchItems)="searchDocumentForDictation($event)" -->
                 <!-- [searchOnInit]="true" -->
                 <ngx-select
@@ -514,7 +516,6 @@
                 class="btn btn-danger active btn-sm m-1">
                 <i class="bx bxs-trash"></i>
               </button>
-
               <button
                 type="submit"
                 [disabled]="blockSend"

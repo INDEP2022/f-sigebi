@@ -20,6 +20,7 @@
               bindLabel="description"
               label="Delegacion Regional"
               (fetchItems)="getRegionalDelegation($event)"
+              (change)="stateRegional($event)"
               [readonly]="false"></ngx-select>
           </form-field>
         </div>

@@ -21,7 +21,7 @@ import { DefaultSelect } from '../../../../shared/components/select/default-sele
 export class RegulatoyFormComponent extends BasePage implements OnInit {
   //form: ModelForm<IRegulatory>;
   form: FormGroup = new FormGroup({});
-  title: string = 'Regulacion';
+  title: string = 'Regulación';
   edit: boolean = false;
   regulatory: IRegulatory;
   racks = new DefaultSelect<IRegulatory>();

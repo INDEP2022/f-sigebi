@@ -12,7 +12,7 @@ export const MANAGEMENT_COLUMNS = {
   },
 
   transactId: {
-    title: 'Tramite',
+    title: 'Trámite',
     type: 'string',
     sort: false,
   },

@@ -435,6 +435,7 @@ export class JuridicalRulingGComponent
       )
       .subscribe();
 
+
     this.params2
       .pipe(
         takeUntil(this.$unSubscribe),
@@ -1103,6 +1104,7 @@ export class JuridicalRulingGComponent
     const cadena = this.dictamen.passOfficeArmy
       ? this.dictamen.passOfficeArmy.indexOf('?')
       : 0;
+    console.log('cadena', cadena);
     if (cadena == 0) {
       V_BAN = true;
     }
@@ -1276,6 +1278,7 @@ export class JuridicalRulingGComponent
           await this.deleteOficioDictamen(V_NO_OF_DICTA, V_TIPO_DICTA);
           // DELETE DICTAMINACIONES
           await this.deleteDictamen(V_NO_OF_DICTA, V_TIPO_DICTA);
+
 
           this.dictationService.deletePupDeleteDictum(object).subscribe({
             next: (value: any) => {},
@@ -1651,7 +1654,9 @@ export class JuridicalRulingGComponent
     return new Promise((resolve, reject) => {
       this.DictationXGood1Service.getAll(params).subscribe({
         next: (resp: any) => {
+
           console.log('respresprespresp', resp);
+
           const data = resp.data;
           this.loading = false;
           resolve(data);
@@ -2003,11 +2008,11 @@ export class JuridicalRulingGComponent
 
   async getRTdictaAarusr(toolbar_user: any) {
     return new Promise((resolve, reject) => {
-      const params = new ListParams();
-      params['filter.user'] = `$eq:${toolbar_user}`;
-      params['filter.reading'] = `$eq:S`;
-      params['filter.writing'] = `$eq:S`;
-      this.dictationService.getRTdictaAarusr(params).subscribe({
+      // const params = new ListParams();
+      // params['filter.user'] = `$eq:${toolbar_user}`;
+      // params['filter.reading'] = `$eq:S`;
+      // params['filter.writing'] = `$eq:S`;
+      this.dictationService.getVElimina(toolbar_user).subscribe({
         next: async (resp: any) => {
           console.log('USER', resp);
           resolve('S');
