@@ -171,40 +171,38 @@ export class AssignReceiptFormComponent extends BasePage implements OnInit {
   }
 
   createReceipt() {
-    const form: Object = {
-      minutesId: '1',
-      idPrograming: this.programming.id,
-    };
-
-    this.proceedingService.createProceedings(form).subscribe({
-      next: response => {
-        const receiptForm: Object = {
-          id: 1,
-          actId: response.id,
-          programmingId: this.programming.id,
-          statusReceipt: 'ABIERTO',
-        };
-        this.receptionGoodService.createReceipt(receiptForm).subscribe({
-          next: response => {
-            this.getReceipts();
-          },
-          error: error => {
-            console.log(error);
-          },
-        });
-      },
-      error: error => {
-        console.log(error);
-      },
-    });
-    /*if (this.receipts) {
-      
-    } else {
+    if (this.receipts[0]?.statusReceipt == 'ABIERTO') {
       this.onLoadToast(
         'info',
-        'Acción Invalida',
-        'El acta tiene recibos que aun no se encuentran cerrados, cierre todos los recibos asociados al acta antes de cerrar el acta.'
+        'Acción invalida',
+        'Aun se encuentran recibos abiertos'
       );
-    } */
+    } else {
+      const form: Object = {
+        minutesId: '1',
+        idPrograming: this.programming.id,
+      };
+      this.proceedingService.createProceedings(form).subscribe({
+        next: response => {
+          const receiptForm: Object = {
+            id: 1,
+            actId: response.id,
+            programmingId: this.programming.id,
+            statusReceipt: 'ABIERTO',
+          };
+          this.receptionGoodService.createReceipt(receiptForm).subscribe({
+            next: response => {
+              this.getReceipts();
+            },
+            error: error => {
+              console.log(error);
+            },
+          });
+        },
+        error: error => {
+          console.log(error);
+        },
+      });
+    }
   }
 }

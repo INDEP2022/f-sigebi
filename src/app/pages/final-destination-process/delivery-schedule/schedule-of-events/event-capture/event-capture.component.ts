@@ -526,9 +526,12 @@ export class EventCaptureComponent
       ...this.proceeding,
       numFile,
       keysProceedings,
-      captureDate,
+      captureDate: new Date(
+        format(captureDate, 'yyyy-MM-dd HH:mm:ss')
+      ).getTime(),
       responsible,
     };
+    delete data.elaborationDate;
 
     return this.proceedingDeliveryReceptionService
       .update(this.proceeding.id, data as any)
@@ -600,8 +603,12 @@ export class EventCaptureComponent
     const numDelegation1 = await this.getUserDelegation();
     const dataToSave = {
       keysProceedings,
-      elaborationDate: format(elaborationDate, 'yyyy-MM-dd HH:mm:ss'),
-      captureDate: format(captureDate, 'yyyy-MM-dd HH:mm:ss'),
+      elaborationDate: new Date(
+        format(elaborationDate, 'yyyy-MM-dd HH:mm:ss')
+      ).getTime(),
+      captureDate: new Date(
+        format(captureDate, 'yyyy-MM-dd HH:mm:ss')
+      ).getTime(),
       responsible,
       numFile: formValue.numFile,
       statusProceedings,

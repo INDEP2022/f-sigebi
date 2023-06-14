@@ -831,7 +831,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
   fillIncomeProceeding(dataRes: any) {
     console.log(dataRes);
     this.initialBool = true;
-    this.minDateFecElab = addDays(new Date(dataRes.elaborationDate), 1);
+    this.minDateFecElab = new Date(dataRes.elaborationDate);
 
     const modelDetail: IDetailWithIndEdo = {
       no_acta: dataRes.id,
@@ -845,12 +845,6 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
         const incomeData = res.data;
         for (let i = 0; i < incomeData.length; i++) {
           const element = JSON.parse(JSON.stringify(incomeData[i]));
-          /* const edoFis: any = await this.getIndEdoFisAndVColumna(element.good);
-          this.goodData.push({
-            ...element.good,
-            exchangeValue: element.exchangeValue === '1' ? 1 : null,
-            indEdoFisico: edoFis.V_IND_EDO_FISICO === 1 ? true : false,
-          }); */
           this.dataGoods.load(
             this.dataGoods['data'].map((e: any) => {
               if (e.id == element.good.id) {
@@ -864,34 +858,6 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
               }
             })
           );
-          /* .then(res => {
-              for (let item of this.goodData) {
-                const goodClass = item.goodClassNumber;
-
-                const newParams = `filter.numClasifGoods=$eq:${goodClass}`;
-                this.serviceSssubtypeGood
-                  .getFilter(newParams)
-                  .subscribe(res => {
-                    const type = JSON.parse(
-                      JSON.stringify(res.data[0]['numType'])
-                    );
-                    const subtype = JSON.parse(
-                      JSON.stringify(res.data[0]['numSubType'])
-                    );
-
-                    const no_type = parseInt(type.id);
-                    const no_subtype = parseInt(subtype.id);
-                    //Validar Admin y tipo
-
-                    if (no_type === 7 || (no_type === 5 && no_subtype === 16)) {
-                      this.isBoveda = true;
-                    }
-                    if (no_type === 5) {
-                      this.isAlmacen = true;
-                    }
-                  });
-              }
-            }); */
         }
         this.dataGoodAct.load(incomeData);
         this.validateWarehouseAndVault(incomeData);
@@ -901,7 +867,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
         this.form.get('entrega').setValue(dataRes.witness1);
         this.form
           .get('fecElab')
-          .setValue(addDays(new Date(dataRes.elaborationDate), 1));
+          .setValue(new Date(new Date(dataRes.elaborationDate).toLocaleString("en-US", { timeZone: "GMT" })));
         this.form
           .get('fecRecepFisica')
           .setValue(addDays(new Date(dataRes.datePhysicalReception), 1));
@@ -940,7 +906,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
         this.form.get('entrega').setValue(dataRes.witness1);
         this.form
           .get('fecElab')
-          .setValue(addDays(new Date(dataRes.elaborationDate), 1));
+          .setValue(new Date(new Date(dataRes.elaborationDate).toLocaleString("en-US", { timeZone: "GMT" })));
         this.form
           .get('fecRecepFisica')
           .setValue(addDays(new Date(dataRes.datePhysicalReception), 1));
@@ -1083,23 +1049,11 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
               witness1: this.form.get('entrega').value,
               witness2: this.form.get('recibe2').value,
               address: this.form.get('direccion').value,
-              elaborationDate: format(
-                this.form.get('fecElab').value,
-                'yyyy-MM-dd HH:mm'
-              ),
-              datePhysicalReception: format(
-                this.form.get('fecRecepFisica').value,
-                'yyyy-MM-dd HH:mm'
-              ),
-              dateElaborationReceipt: format(
-                this.form.get('fecElabRecibo').value,
-                'yyyy-MM-dd HH:mm'
-              ),
-              dateDeliveryGood: format(
-                this.form.get('fecEntregaBienes').value,
-                'yyyy-MM-dd HH:mm'
-              ),
-              captureDate: format(new Date(), 'yyyy-MM-dd HH:mm'),
+              elaborationDate: new Date(this.form.get('fecElab').value).getTime(),
+              datePhysicalReception: new Date(this.form.get('fecRecepFisica').value).getTime(),
+              dateElaborationReceipt: new Date(this.form.get('fecElabRecibo').value).getTime(),
+              dateDeliveryGood: new Date(this.form.get('fecEntregaBienes').value).getTime(),
+              captureDate: new Date().getTime(),
               universalFolio: this.form.get('folioEscaneo').value,
             };
             const resData = JSON.parse(JSON.stringify(res.data[0]));
@@ -1134,26 +1088,13 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
             witness1: this.form.get('entrega').value,
             witness2: this.form.get('recibe2').value,
             address: this.form.get('direccion').value,
-            elaborationDate: format(
-              this.form.get('fecElab').value,
-              'yyyy-MM-dd HH:mm'
-            ),
-            datePhysicalReception: format(
-              this.form.get('fecRecepFisica').value,
-              'yyyy-MM-dd HH:mm'
-            ),
-            dateElaborationReceipt: format(
-              this.form.get('fecElabRecibo').value,
-              'yyyy-MM-dd HH:mm'
-            ),
-            dateDeliveryGood: format(
-              this.form.get('fecEntregaBienes').value,
-              'yyyy-MM-dd HH:mm'
-            ),
-            captureDate: format(new Date(), 'yyyy-MM-dd HH:mm'),
+            elaborationDate: new Date(this.form.get('fecElab').value).getTime(),
+            datePhysicalReception: new Date(this.form.get('fecRecepFisica').value).getTime(),
+            dateElaborationReceipt: new Date(this.form.get('fecElabRecibo').value).getTime(),
+            dateDeliveryGood: new Date(this.form.get('fecEntregaBienes').value).getTime(),
+            captureDate: new Date().getTime(),
 
             keysProceedings: this.form.get('acta2').value,
-            /* elaborate: 'SERA', */
             elaborate: localStorage.getItem('username').toLocaleUpperCase(),
             numFile: parseInt(this.numberExpedient),
             typeProceedings: 'DXCVENT',
