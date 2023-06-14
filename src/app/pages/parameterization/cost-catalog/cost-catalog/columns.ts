@@ -1,12 +1,12 @@
 export const COLUMNS = {
   keyServices: {
-    title: 'Cve. Servicio',
+    title: 'Código',
     type: 'string',
     sort: false,
   },
 
   descriptionServices: {
-    title: 'Descripción de Servicios',
+    title: 'Descripción',
     type: 'string',
     sort: false,
   },
