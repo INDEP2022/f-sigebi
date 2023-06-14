@@ -110,7 +110,6 @@ export class RelatedDocumentDesahogo extends BasePage {
       managementOfNumber: managementNumber,
       proceedingNumber: proceedingNumber,
     };
-    debugger;
     this.goodprocess.callPupChangeImpro(body).subscribe({
       next: resp => {
         console.log(resp);

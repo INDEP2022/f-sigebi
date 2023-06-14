@@ -46,7 +46,7 @@
               <div class="d-flex justify-content-center align-items-center">
                 <app-pagination
                   [params]="paramsActNavigate"
-                  [totalItems]="totalItemsNavigate"
+                  [totalItems]="proceedingData.length"
                   [limit]="newLimitparamsActNavigate"
                   [paginatorPageSize]="false"
                   [paginatorRangeLabel]="false"
@@ -448,7 +448,7 @@
             label="Estatus ">
             <input
               type="text"
-              (dblclick)="goToHistorico()"
+              (dblclick)="goToHistorico('generalGood')"
               class="form-control"
               [readOnly]="true"
               formControlName="estatusPrueba" />
@@ -516,7 +516,7 @@
             class="form-control"
             ngbTooltip="Prueba"
             triggers="hover focus"
-            (dblclick)="goToHistorico()"
+            (dblclick)="goToHistorico('goodActa')"
             [readOnly]="true"
             formControlName="estatusBienActa" />
         </form-field>
