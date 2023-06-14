@@ -721,6 +721,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
     const { data } = e;
     console.log(data);
     this.selectData = data;
+    this.idGood = data.goodId
     this.statusGood('estatusPrueba', data);
   }
 
@@ -771,6 +772,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
     const { data } = e;
     console.log(data);
     this.selectActData = data;
+    this.idGoodAct = data.good.goodId
     this.statusGood('etiqueta', data);
 
     if (data != null) {
