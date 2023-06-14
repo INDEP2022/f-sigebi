@@ -233,4 +233,8 @@ export class ScheduleReceptionFormComponent extends BasePage implements OnInit {
       }
     });
   }
+
+  close() {
+    this.router.navigate(['/pages/siab-web/sami/consult-tasks']);
+  }
 }
