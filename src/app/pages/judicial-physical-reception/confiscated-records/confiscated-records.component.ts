@@ -235,10 +235,6 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     }
 
     /* this.paramsActNavigate.valueasas98DAS41D65AS0D61AS98r4891♠74×549 */
-<<<<<<< HEAD
-    
-=======
->>>>>>> fafe87ff3a3f4c9ae7250e1eea7706ec120ede4c
 
     this.serviceRNomencla
       .getPhaseEdo(`date=${format(new Date(), 'yyyy-MM-dd')}`)
