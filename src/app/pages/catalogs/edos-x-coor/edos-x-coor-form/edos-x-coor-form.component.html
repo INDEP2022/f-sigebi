@@ -1,13 +1,13 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nuevo' }} {{ title }}</h5>
+    <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nueva' }} {{ title }}</h5>
   </div>
   <div body>
     <form [formGroup]="edosXCoorForm" class="form-material">
       <div class="row">
         <div class="col-md-4">
           <form-field [control]="edosXCoorForm.get('id')" label="Id">
-            <input type="number" class="form-control" formControlName="id" />
+            <input type="tel" class="form-control" formControlName="id" />
           </form-field>
         </div>
         <div class="col-md-8">
@@ -25,7 +25,7 @@
         <div class="col-md-4">
           <form-field
             [control]="edosXCoorForm.get('noState')"
-            label="No estado">
+            label="No. Estado">
             <input type="text" class="form-control" formControlName="noState" />
           </form-field>
         </div>
@@ -43,7 +43,7 @@
     </form>
   </div>
   <div footer>
-    <div class="d-flex justify-content-center">
+    <div class="d-flex justify-content-center" 567>
       <div class="m-3">
         <confirm-button
           [disabled]="edosXCoorForm.invalid"

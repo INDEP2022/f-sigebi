@@ -16,6 +16,14 @@ export class AttribGoodBadService extends HttpService {
     this.microservice = GoodEndpoints.Good;
   }
 
+  update(model: IAttribGoodBad) {
+    return this.put(GoodEndpoints.AttribGoodBad, model);
+  }
+
+  remove(model: IAttribGoodBad) {
+    return this.delete(GoodEndpoints.AttribGoodBad, model);
+  }
+
   getAll(params?: _Params): Observable<IListResponseMessage<IAttribGoodBad>> {
     return this.get<IListResponseMessage<IAttribGoodBad>>(
       GoodEndpoints.AttribGoodBad,

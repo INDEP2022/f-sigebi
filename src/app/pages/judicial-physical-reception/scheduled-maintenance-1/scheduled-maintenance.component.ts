@@ -175,12 +175,11 @@ export class ScheduledMaintenanceComponent
             );
           },
           error: err => {
-            console.log(err);
-            let message = `No se pudo eliminar el Acta No. ${item.id}`;
+            let message = `No se pudo eliminar`;
             if (err.error.message.includes('detalle_acta_ent_recep')) {
               message = message + ` porque tiene detalles de acta`;
             }
-            this.onLoadToast('error', 'ERROR', message);
+            this.onLoadToast('error', `Acta No. ${item.id}`, message);
           },
         });
       }
@@ -222,9 +221,8 @@ export class ScheduledMaintenanceComponent
 
   selectGoodNull(good: any, self: ScheduledMaintenanceComponent) {
     console.log(good);
-    self.router.navigate(['pages/general-processes/goods-characteristics'], {
-      queryParams: { noBien: good.id },
-    });
+    localStorage.setItem('selectedBad', JSON.stringify(good));
+    self.router.navigate(['pages/general-processes/goods-characteristics']);
   }
 
   openModalActas() {

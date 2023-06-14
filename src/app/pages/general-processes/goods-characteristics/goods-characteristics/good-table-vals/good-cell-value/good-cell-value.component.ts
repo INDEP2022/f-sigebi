@@ -1,5 +1,10 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { DefaultEditor } from 'ng2-smart-table';
+import {
+  formatForIsoDate,
+  secondFormatDate,
+  secondFormatDateTofirstFormatDate,
+} from 'src/app/shared/utils/date';
 import { GoodsCharacteristicsService } from '../../../services/goods-characteristics.service';
 import { IVal } from '../good-table-vals.component';
 
@@ -10,9 +15,26 @@ import { IVal } from '../good-table-vals.component';
 })
 export class GoodCellValueComponent extends DefaultEditor implements OnInit {
   // form: FormGroup = new FormGroup({});
-  @Input() value: any;
+  private _value: IVal;
+  @Input()
+  get value(): IVal {
+    return this._value;
+  }
+  set value(value) {
+    if (value.dataType === 'D' || value.attribute.includes('FECHA')) {
+      this._value = {
+        ...value,
+        value: value.value
+          ? value.value.includes('T')
+            ? (formatForIsoDate(value.value, 'string') as string)
+            : secondFormatDateTofirstFormatDate(value.value)
+          : null,
+      };
+    } else {
+      this._value = value;
+    }
+  }
   today: Date = new Date();
-  pressed: boolean;
   constructor(private service: GoodsCharacteristicsService) {
     super();
   }
@@ -21,13 +43,25 @@ export class GoodCellValueComponent extends DefaultEditor implements OnInit {
     return this.service.disabledTable;
   }
 
-  updateCell(value: any) {
-    // console.log(value, this.value, this.isAddCat(value));
+  updateDate(value: any) {
+    console.log(value, secondFormatDate(value));
     this.service.data.forEach(x => {
       if (x.column === this.value.column) {
-        x.value = value;
+        x.value = secondFormatDate(value);
       }
     });
+  }
+
+  updateCell(value: any) {
+    // console.log(value, this.value, this.isAddCat(value));
+    if (!this.haveError(this.value)) {
+      console.log(value);
+      this.service.data.forEach(x => {
+        if (x.column === this.value.column) {
+          x.value = value;
+        }
+      });
+    }
   }
 
   getClassColour() {

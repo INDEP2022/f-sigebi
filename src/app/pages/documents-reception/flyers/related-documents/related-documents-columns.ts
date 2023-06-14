@@ -1,4 +1,5 @@
-import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
+import { CheckboxImprocedentElementComponent } from './checkbox-improcedent/checkbox-improcedent-element';
+import { CheckboxSelectElementComponent } from './checkbox-improcedent/checkbox-select-element';
 
 export const RELATED_DOCUMENTS_COLUMNS_GOODS = {
   goodId: {
@@ -35,7 +36,7 @@ export const RELATED_DOCUMENTS_COLUMNS_GOODS = {
   seleccion: {
     title: 'Selección',
     type: 'custom',
-    renderComponent: CheckboxElementComponent,
+    renderComponent: CheckboxSelectElementComponent, //CheckboxElementComponent,
     onComponentInitFunction(instance: any) {
       instance.toggle.subscribe((data: any) => {
         data.row.to = data.toggle;
@@ -47,12 +48,27 @@ export const RELATED_DOCUMENTS_COLUMNS_GOODS = {
   improcedente: {
     title: 'Improcedente',
     type: 'custom',
-    renderComponent: CheckboxElementComponent,
+    renderComponent: CheckboxImprocedentElementComponent,
     onComponentInitFunction(instance: any) {
       instance.toggle.subscribe((data: any) => {
         data.row.to = data.toggle;
       });
     },
+    sort: false,
+  },
+};
+// Columnas de la tabla de documentos relacionados al volante y folio universal
+export const RELATED_FOLIO_COLUMNS = {
+  id: {
+    title: 'Folio',
+    sort: false,
+  },
+  sheets: {
+    title: 'Documentos',
+    sort: false,
+  },
+  descriptionDocument: {
+    title: 'Descripción del documento',
     sort: false,
   },
 };

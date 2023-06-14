@@ -14,6 +14,8 @@ export class InformationRecordComponent extends BasePage implements OnInit {
   receiveForm: FormGroup = new FormGroup({});
   witnessOneForm: FormGroup = new FormGroup({});
   witnessTwoForm: FormGroup = new FormGroup({});
+  oicofficialForm: FormGroup = new FormGroup({});
+  uvfvofficialForm: FormGroup = new FormGroup({});
   horaActual: string;
   constructor(private modalRef: BsModalRef, private fb: FormBuilder) {
     super();
@@ -25,6 +27,8 @@ export class InformationRecordComponent extends BasePage implements OnInit {
     this.prepareReceiveForm();
     this.prepareWitnessOneForm();
     this.prepareWitnessTwoForm();
+    this.prepareoicofficialForm();
+    this.prepareuvfvofficialForm();
   }
   obtenerHoraActual() {
     const fechaActual = new Date();
@@ -75,6 +79,30 @@ export class InformationRecordComponent extends BasePage implements OnInit {
 
   prepareWitnessTwoForm() {
     this.witnessTwoForm = this.fb.group({
+      name: [null, [Validators.pattern(STRING_PATTERN)]],
+      electronicSignature: [null],
+      charge: [null, [Validators.pattern(STRING_PATTERN)]],
+      resistance: [null, [Validators.pattern(STRING_PATTERN)]],
+      identification: [null],
+      noIdentification: [null],
+      issuedBy: [null, [Validators.pattern(STRING_PATTERN)]],
+      email: [null, [Validators.pattern(EMAIL_PATTERN)]],
+    });
+  }
+  prepareoicofficialForm() {
+    this.oicofficialForm = this.fb.group({
+      name: [null, [Validators.pattern(STRING_PATTERN)]],
+      electronicSignature: [null],
+      charge: [null, [Validators.pattern(STRING_PATTERN)]],
+      resistance: [null, [Validators.pattern(STRING_PATTERN)]],
+      identification: [null],
+      noIdentification: [null],
+      issuedBy: [null, [Validators.pattern(STRING_PATTERN)]],
+      email: [null, [Validators.pattern(EMAIL_PATTERN)]],
+    });
+  }
+  prepareuvfvofficialForm() {
+    this.uvfvofficialForm = this.fb.group({
       name: [null, [Validators.pattern(STRING_PATTERN)]],
       electronicSignature: [null],
       charge: [null, [Validators.pattern(STRING_PATTERN)]],

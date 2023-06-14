@@ -105,6 +105,7 @@ export class LawyerDetailComponent extends BasePage implements OnInit {
       this.offices = new DefaultSelect([idOffice], 1);
       this.delegations = new DefaultSelect([delegation], 1);
     }*/
+    // debugger;
     if (this.lawyer != null) {
       this.edit = true;
       this.form.patchValue(this.lawyer);
@@ -136,7 +137,7 @@ export class LawyerDetailComponent extends BasePage implements OnInit {
 
   handleSuccess() {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.onLoadToast('success', 'ABOGADO', `${message} Correctamente`);
+    this.onLoadToast('success', 'Abogado', `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();

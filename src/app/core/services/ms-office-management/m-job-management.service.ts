@@ -3,7 +3,10 @@ import { Observable } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
-import { IMJobManagement } from '../../models/ms-officemanagement/m-job-management.model';
+import {
+  IMJobManagement,
+  IRSender,
+} from '../../models/ms-officemanagement/m-job-management.model';
 
 @Injectable({
   providedIn: 'root',
@@ -162,5 +165,20 @@ export class MJobManagementService extends HttpService {
     // };
   }> {
     return this.post('application/pup-serach-number', body);
+  }
+
+  getRegSender(params: ListParams): Observable<IListResponse<IRSender>> {
+    return this.get(`application/regRemitente`, params);
+  }
+
+  getRegAddressee(params: ListParams): Observable<IListResponse<IRSender>> {
+    return this.get(`application/regDestinatario`, params);
+  }
+
+  deleteJobManagement(pCveOfManagement: number, pFlyerNumber: number) {
+    return this.post(`application/delete-job-gestion`, {
+      pCveOfManagement,
+      pFlyerNumber,
+    });
   }
 }

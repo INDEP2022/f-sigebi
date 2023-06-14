@@ -1733,7 +1733,7 @@ export class JuridicalRecordUpdateComponent
     };
     this.router.navigate(
       [
-        '/pages/documents-reception/flyers-registration/related-document-management/2',
+        '/pages/documents-reception/flyers-registration/related-document-management-relation/2',
       ],
       {
         queryParams: {

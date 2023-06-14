@@ -970,15 +970,15 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
   }
 
   deleteTempDictation(onlydelete: boolean) {
-    let body: any = {};
-    this.svLegalOpinionsOfficeService.deleteTmpDictation(body).subscribe({
-      next: data => {
-        console.log('DELETE TMP_DICTAMINACIONES', data);
-      },
-      error: error => {
-        console.log(error);
-      },
-    });
+    // let body: any = {};
+    // this.svLegalOpinionsOfficeService.deleteTmpDictation(body).subscribe({
+    //   next: data => {
+    //     console.log('DELETE TMP_DICTAMINACIONES', data);
+    //   },
+    //   error: error => {
+    //     console.log(error);
+    //   },
+    // });
   }
 
   getOfficeDictationData() {
@@ -2457,7 +2457,7 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
   }
 
   getDocumentsByFlyer(flyerNum: string | number) {
-    const title = 'Folios relacionados al expediente';
+    const title = 'Folios relacionados al Volante';
     const modalRef = this.openDocumentsModal(flyerNum, title);
     modalRef.content.selected
       .pipe(takeUntil(this.$unSubscribe))

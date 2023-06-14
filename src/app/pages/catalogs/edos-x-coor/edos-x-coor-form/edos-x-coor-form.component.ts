@@ -5,7 +5,10 @@ import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IEdosXCoor } from 'src/app/core/models/catalogs/edos-x-coor.model';
 import { EdosXCoorService } from 'src/app/core/services/catalogs/edos-x-coor.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
+import {
+  POSITVE_NUMBERS_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-edos-x-coor-form',
@@ -14,7 +17,7 @@ import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 })
 export class EdosXCoorFormComponent extends BasePage implements OnInit {
   edosXCoorForm: ModelForm<IEdosXCoor>;
-  title: string = 'Edos X Coor';
+  title: string = 'Lista de Estados por Coordinación';
   edit: boolean = false;
   edosXCoor: IEdosXCoor;
   constructor(
@@ -31,7 +34,7 @@ export class EdosXCoorFormComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.edosXCoorForm = this.fb.group({
-      id: [null],
+      id: [null, [Validators.required, Validators.maxLength(2)]],
       description: [
         null,
         [
@@ -44,8 +47,8 @@ export class EdosXCoorFormComponent extends BasePage implements OnInit {
         null,
         [
           Validators.required,
-          Validators.pattern(NUMBERS_PATTERN),
-          Validators.maxLength(60),
+          Validators.pattern(POSITVE_NUMBERS_PATTERN),
+          Validators.maxLength(2),
         ],
       ],
       state: [
@@ -53,16 +56,12 @@ export class EdosXCoorFormComponent extends BasePage implements OnInit {
         [
           Validators.required,
           Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(10),
+          Validators.maxLength(80),
         ],
       ],
       stage: [
         null,
-        [
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(10),
-        ],
+        [Validators.required, Validators.pattern(POSITVE_NUMBERS_PATTERN)],
       ],
     });
     if (this.edosXCoor != null) {

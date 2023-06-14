@@ -178,7 +178,9 @@ export class EventCaptureComponent
   @ViewChildren(SmartDateInputHeaderDirective, { read: ElementRef })
   private itemsElements: QueryList<ElementRef>;
   _today = new Date();
+  _minDate: Date = null;
   saveLoading = false;
+
   eventTypes = new DefaultSelect([
     { area_tramite: 'OP', descripcion: 'Oficialía de partes' },
   ]);
@@ -342,18 +344,6 @@ export class EventCaptureComponent
             this.setEndDate(instance),
         },
         ...COLUMNS_CAPTURE_EVENTS_2,
-        // select: {
-        //   title: 'Seleccionar',
-        //   sort: false,
-        //   type: 'custom',
-        //   filter: false,
-        //   showAlways: true,
-        //   renderComponent: CheckboxElementComponent,
-        //   valuePrepareFunction: (departament: any, row: any) =>
-        //     this.isProceedingSelected(row),
-        //   onComponentInitFunction: (instance: CheckboxElementComponent) =>
-        //     this.proceedingSelectChange(instance),
-        // },
       },
     };
     this.activatedRoute.queryParams.subscribe(params => {
@@ -430,6 +420,8 @@ export class EventCaptureComponent
     } else {
       instance.disabled = false;
     }
+    const min = this.form.get('captureDate').value;
+    instance.minDate = this._minDate;
     instance.inputChange.subscribe(val => {
       const { row, value } = val;
       row.dateapprovalxadmon = value;
@@ -449,6 +441,8 @@ export class EventCaptureComponent
     } else {
       instance.disabled = false;
     }
+    const min = this.form.get('captureDate').value;
+    instance.minDate = this._minDate;
     instance.inputChange.subscribe(val => {
       if (!val) {
         return;
@@ -527,9 +521,21 @@ export class EventCaptureComponent
       ...this.proceeding,
       numFile,
       keysProceedings,
-      captureDate,
+      captureDate: new Date(
+        format(captureDate, 'yyyy-MM-dd HH:mm:ss')
+      ).getTime(),
       responsible,
     };
+    delete data.elaborationDate;
+    delete data.datePhysicalReception;
+    delete data.dateElaborationReceipt;
+    delete data.dateDeliveryGood;
+    delete data.approvalDateXAdmon;
+    delete data.closeDate;
+    delete data.maxDate;
+    delete data.dateCaptureHc;
+    delete data.dateCloseHc;
+    delete data.dateMaxHc;
 
     return this.proceedingDeliveryReceptionService
       .update(this.proceeding.id, data as any)
@@ -537,26 +543,43 @@ export class EventCaptureComponent
   }
 
   excelExport() {
-    if (this.detail.length === 0) {
-      this.alert('warning', 'Advertencia', 'No hay datos para exportar');
+    if (this.detail.length == 0) {
+      this.alert('warning', 'No hay bienes agregados', '');
       return;
     }
-    const cve = this.registerControls.keysProceedings.value;
-    const dataToExport = this.detail.map((det: any) => {
-      return {
-        'CVE Acta': cve,
-        'Localidad Ent': det.locTrans,
-        'No Bien': det.goodnumber,
-        Estatus: det.status,
-        Proceso: det.proccessextdom,
-        Descripción: det.description,
-        'Tipo Bien': det.typegood,
-        Expediente: det.expedientnumber,
-        Inicio: det.dateapprovalxadmon,
-        Finalizacion: det.dateindicatesuserapproval,
-      };
-    });
-    this.excelService.export(dataToExport, { filename: cve });
+    this.fIndicaService
+      .generateExcel({
+        acta: Number(this.proceeding.id),
+        type: this.registerControls.typeEvent.value,
+        crtSus: this.blkProceeding.txtCrtSus1,
+      })
+      .subscribe({
+        next: data => {
+          const base64 = data?.file?.base64;
+          if (!base64) {
+            this.alert(
+              'error',
+              'Error',
+              'Ocurrio un error al generar el archivo'
+            );
+            return;
+          }
+          const mediaType =
+            'data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,';
+          const link = document.createElement('a');
+          link.href = mediaType + base64;
+          link.download = `${this.proceeding.keysProceedings}.xlsx`;
+          link.click();
+          link.remove();
+        },
+        error: () => {
+          this.alert(
+            'error',
+            'Error',
+            'Ocurrio un error al generar el archivo'
+          );
+        },
+      });
   }
 
   udpateProceedingExpedient() {
@@ -584,8 +607,12 @@ export class EventCaptureComponent
     const numDelegation1 = await this.getUserDelegation();
     const dataToSave = {
       keysProceedings,
-      elaborationDate: format(elaborationDate, 'yyyy-MM-dd HH:mm:ss'),
-      captureDate: format(captureDate, 'yyyy-MM-dd HH:mm:ss'),
+      elaborationDate: new Date(
+        format(elaborationDate, 'yyyy-MM-dd HH:mm:ss')
+      ).getTime(),
+      captureDate: new Date(
+        format(captureDate, 'yyyy-MM-dd HH:mm:ss')
+      ).getTime(),
       responsible,
       numFile: formValue.numFile,
       statusProceedings,
@@ -676,7 +703,9 @@ export class EventCaptureComponent
       .subscribe({
         next: data => {
           this.alert('success', 'Fechas actualizadas', '');
+          const _params = this.params.getValue();
           const params = new FilterParams();
+          params.limit = _params.limit;
           this.startDateCtrl.setValue(null, { emitEvent: false });
           this.endDateCtrl.setValue(null, { emitEvent: false });
           this.params.next(params);
@@ -952,18 +981,19 @@ export class EventCaptureComponent
       .pupUpdate(typeEvent.value, expedient, this.proceeding.id)
       .subscribe({
         next: res => {
-          if (res.data?.registros > 0) {
+          this.loading = false;
+          if (res?.registros > 0) {
             this.alert('success', 'Bienes cargados correctamente', '');
-
             this.formSiab = this.fb.group(new CaptureEventSiabForm());
           } else {
             this.alert('warning', 'No se encontraron bienes para agregar', '');
           }
-          this.loading = false;
           const params = new FilterParams();
+          const _params = this.params.getValue();
+          params.limit = _params.limit;
           this.params.next(params);
         },
-        error: error => {
+        error: () => {
           this.loading = false;
         },
       });
@@ -1011,7 +1041,39 @@ export class EventCaptureComponent
     this.registerControls.prog.setValue(prog);
   }
 
+  private addUsingDates(date: Date, days: number) {
+    let nextDay = date;
+    let daysToAdd = 1;
+    while (days > 0) {
+      const _nextDay = new Date(
+        nextDay.getTime() + daysToAdd * 24 * 60 * 60 * 1000
+      );
+      if (_nextDay.getDay() > 0 && _nextDay.getDay() < 6) {
+        nextDay = _nextDay;
+        daysToAdd = 1;
+        days--;
+      } else {
+        daysToAdd++;
+      }
+    }
+    return nextDay;
+  }
+
   async ngOnInit() {
+    this.form
+      .get('captureDate')
+      .valueChanges.pipe(skip(1), takeUntil(this.$unSubscribe))
+      .subscribe(val => {
+        this.startDateCtrl.reset();
+        this.endDateCtrl.reset();
+        const detail = [...this.detail];
+        this.detail = [];
+        this.detail = detail;
+        if (!val) {
+          return;
+        }
+        this._minDate = val ? this.addUsingDates(val, 3) : null;
+      });
     this.params
       .pipe(
         takeUntil(this.$unSubscribe),
@@ -1565,16 +1627,25 @@ export class EventCaptureComponent
   updateTransfer() {
     const formValue = this.form.getRawValue();
     const { numFile, keysProceedings, captureDate, responsible } = formValue;
-    console.log({ keysProceedings });
-
     const data = {
       ...this.proceeding,
       numFile,
       keysProceedings,
-      captureDate,
+      captureDate: new Date(
+        format(captureDate, 'yyyy-MM-dd HH:mm:ss')
+      ).getTime(),
       responsible,
     };
-
+    delete data.elaborationDate;
+    delete data.datePhysicalReception;
+    delete data.dateElaborationReceipt;
+    delete data.dateDeliveryGood;
+    delete data.approvalDateXAdmon;
+    delete data.closeDate;
+    delete data.maxDate;
+    delete data.dateCaptureHc;
+    delete data.dateCloseHc;
+    delete data.dateMaxHc;
     return this.proceedingDeliveryReceptionService.update(
       this.proceeding.id,
       data as any
@@ -1827,15 +1898,20 @@ export class EventCaptureComponent
   }
 
   returPreviosStatus(model: IPAAbrirActasPrograma) {
-    this.progammingServ.paRegresaEstAnterior(model).subscribe({
-      next: resp => resp,
-      error: error => error,
+    return new Promise((res, _rej) => {
+      this.progammingServ.paRegresaEstAnterior(model).subscribe({
+        next: resp => res(resp),
+        error: error => res(error.error),
+      });
     });
   }
 
   async tmpProgValidacion() {
     const filter = new FilterParams();
-    const user = this.authService.decodeToken().username;
+    const user =
+      localStorage.getItem('username') == 'sigebiadmon'
+        ? localStorage.getItem('username')
+        : localStorage.getItem('username').toLocaleUpperCase();
     filter.addFilter('valUser', user, SearchFilter.EQ);
     filter.addFilter('valMinutesNumber', this.proceeding.id, SearchFilter.EQ);
     return new Promise<ITmpProgValidation[]>((resolve, reject) => {
@@ -1964,7 +2040,9 @@ export class EventCaptureComponent
       ///// y hace este update c_STR := 'UPDATE ACTAS_ENTREGA_RECEPCION SET FOLIO_UNIVERSAL = '||TO_CHAR(n_FOLIO_UNIVERSAL)||', TESTIGO1 ='''||:BLK_TOOLBAR.TOOLBAR_USUARIO||''' WHERE NO_ACTA = '||TO_CHAR(:ACTAS_ENTREGA_RECEPCION.NO_ACTA);
       await this.UPDATE_ACTAS_ENTREGA_RECEPCION(
         this.proceeding.universalFolio,
-        this.authUserName,
+        localStorage.getItem('username') == 'sigebiadmon'
+          ? localStorage.getItem('username')
+          : localStorage.getItem('username').toLocaleUpperCase(),
         this.proceeding.id
       );
     }
@@ -2206,7 +2284,7 @@ export class EventCaptureComponent
             ? localStorage.getItem('username')
             : localStorage.getItem('username').toLocaleUpperCase(),
       };
-      this.returPreviosStatus(model);
+      await this.returPreviosStatus(model);
       //////////////////////////////// aqui va el endpoint esperado por EDWIN
       await this.insertsAndUpdate(this.proceeding.id);
       ////////////////////////////////////////
@@ -2351,8 +2429,7 @@ export class EventCaptureComponent
         }
       }
     } catch (e_EXCEPPROC) {
-      c_MENSAJE =
-        'Favor de Informar a Informática. < ' || 'e_EXCEPPROC.MESSAGE' || ' >';
+      c_MENSAJE = 'Ocurrió un error inesperado';
       this.alert('error', 'Ha ocurrido un error', c_MENSAJE);
     }
   }

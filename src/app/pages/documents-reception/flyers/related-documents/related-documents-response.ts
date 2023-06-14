@@ -14,6 +14,7 @@ import { _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
 import { ICity } from 'src/app/core/models/catalogs/city.model';
 import { IDepartment } from 'src/app/core/models/catalogs/department.model';
+import { IPufGenerateKey } from 'src/app/core/models/ms-dictation/dictation-model';
 import { type INotification } from 'src/app/core/models/ms-notification/notification.model';
 import { IMJobManagement } from 'src/app/core/models/ms-officemanagement/m-job-management.model';
 import { IProceduremanagement } from 'src/app/core/models/ms-proceduremanagement/ms-proceduremanagement.interface';
@@ -34,12 +35,12 @@ import { MJobManagementService } from 'src/app/core/services/ms-office-managemen
 import { ParametersService } from 'src/app/core/services/ms-parametergood/parameters.service';
 import { SecurityService } from 'src/app/core/services/ms-security/security.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
+import { OfficeManagementService } from 'src/app/core/services/office-management/officeManagement.service';
 import { ProcedureManagementService } from 'src/app/core/services/proceduremanagement/proceduremanagement.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { LegalOpinionsOfficeService } from 'src/app/pages/juridical-processes/depositary/legal-opinions-office/legal-opinions-office/services/legal-opinions-office.service';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { FlyersService } from '../services/flyers.service';
-import { DocumentsFormComponent } from './documents-form/documents-form.component';
 import {
   IGoodAndAvailable,
   IGoodJobManagement,
@@ -128,6 +129,7 @@ export abstract class RelateDocumentsResponse extends BasePage {
   protected abstract usersService: UsersService;
   protected abstract goodprocessService: GoodprocessService;
   protected abstract dictationService: DictationService;
+  protected abstract msOfficeManagementService: OfficeManagementService;
   abstract dataTableGoods: IGoodAndAvailable[];
   abstract dataTableGoodsJobManagement: IGoodJobManagement[];
   abstract isDisabledBtnDocs: boolean;
@@ -140,12 +142,15 @@ export abstract class RelateDocumentsResponse extends BasePage {
   // abstract managementForm: FormGroup;
   isLoadingGood: boolean = false;
   abstract totalItems: number;
+
   isCreate = false;
   getGoods1(params: ListParams) {
     this.isLoadingGood = true;
     this.goodServices.getAll(params).subscribe({
       next: async data => {
-        const goods = await data.data.map(async item => {
+        const goods = await data.data.map(async (item: any) => {
+          item['improcedente'] = item.unfair === 'true' ? true : false;
+          item['seleccion'] = item.clarification === 'true' ? true : false;
           const isAvailable = await this.getFactaDbOficioGestrel(
             this.formJobManagement.get('managementNumber').value,
             item.goodId
@@ -276,7 +281,7 @@ export abstract class RelateDocumentsResponse extends BasePage {
 
   getDocJobManagementCount(params: ListParams) {
     params.limit = 1;
-    params.page = 1;
+
     return firstValueFrom(
       this.mJobManagementService.getDocOficioGestion(params).pipe(
         map(x => x.count),
@@ -292,6 +297,9 @@ export abstract class RelateDocumentsResponse extends BasePage {
   ): Promise<IListResponse<IGoodJobManagement>> {
     return firstValueFrom(
       this.serviceOficces.getGoodsJobManagement(params).pipe(
+        catchError(() => {
+          return of({ data: [], count: 0 });
+        }),
         map(x => {
           return {
             ...x,
@@ -845,10 +853,10 @@ export abstract class RelateDocumentsResponse extends BasePage {
         result[key] = (values as any)[key];
       }
     });
-    delete values.tipoTexto;
+    delete result.tipoTexto;
     if (values.addressee) {
       result.addressee =
-        values.jobType == 'EXTERNO' ? values.addressee : values.addressee?.name;
+        values.jobType == 'EXTERNO' ? values.addressee : values.addressee?.user;
     }
     if (values.sender) {
       result.sender = values.sender.id;
@@ -899,6 +907,26 @@ export abstract class RelateDocumentsResponse extends BasePage {
 
   selectedChecksC() {
     this.formVariables.get('b').setValue('N');
+  }
+
+  getGlobals(key: string): number {
+    return 2;
+  }
+
+  pupActManagement() {
+    let var1, var2;
+    if (
+      this.getParamsForName('P_GEST_OK') == '1' ||
+      this.getGlobals('gnu_activa_gestion') == 1
+    ) {
+      if (this.getParamsForName('PLLAMO') == 'ABANDONO') {
+        var1 = 'DJS';
+        var2 = 'DJ';
+      } else {
+        var1 = 'FNI';
+        var2 = 'AB';
+      }
+    }
   }
 
   async onClickBtnDocuments() {
@@ -999,14 +1027,51 @@ export abstract class RelateDocumentsResponse extends BasePage {
   }
 
   openRDictaminaDoc() {
-    const modalRef = this.modalService.show(DocumentsFormComponent, {
-      //initialState: context,
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
-    });
+    // const modalRef = this.modalService.show(DocumentsFormComponent, {
+    //   initialState: context,
+    //   class: 'modal-lg modal-dialog-centered',
+    //   ignoreBackdropClick: true,
+    // });
   }
 
-  sendFunction_pupLaunchReport(params: ListParams): Observable<any> {
+  sendFunction_pupLaunchReport(params: Object): Observable<any> {
     return this.dictationService.pupLaunchReport(params).pipe(map(x => x.data));
+  }
+
+  sendFunction_getVOficTrans(params: Object): Observable<any> {
+    return this.dictationService
+      .getVOficTrans(params)
+      .pipe(map(x => x.data[0]));
+  }
+  sendFunction_nUniversalFolio(params: Object): Observable<any> {
+    return this.dictationService
+      .nUniversalFolio(params)
+      .pipe(map(x => x.data[0]));
+  }
+  sendFunction_getActnom(managementNumber: number): Observable<any> {
+    return this.dictationService
+      .getActnom(managementNumber)
+      .pipe(map(x => x.data[0]));
+  }
+  sendFunction_pupValidExtDom(wheelNumber: number): Observable<any> {
+    return this.dictationService
+      .pupValidExtDom(wheelNumber)
+      .pipe(map(x => x.data));
+  }
+  sendFunction_findOffficeNu(params: Object): Observable<any> {
+    return this.dictationService.findOffficeNu(params).pipe(map(x => x.data));
+  }
+  sendFunction_updateManagerTransfer(params: Object): Observable<any> {
+    return this.dictationService
+      .updateManagerTransfer(params)
+      .pipe(map(x => x.data));
+  }
+  sendFunction_ObtainKeyOffice(params: Object): Observable<any> {
+    return this.msOfficeManagementService
+      .ObtainKeyOffice(params)
+      .pipe(map(x => x.data));
+  }
+  sendFunction_pufGenerateKey(params: IPufGenerateKey): Observable<any> {
+    return this.dictationService.pufGenerateKey(params).pipe(map(x => x.data));
   }
 }

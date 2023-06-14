@@ -101,7 +101,7 @@ export class DeductivesVerificationListComponent
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(deductive.id);
@@ -112,8 +112,7 @@ export class DeductivesVerificationListComponent
   delete(id: number) {
     this.deductiveVerificationService.remove(id).subscribe({
       next: () => {
-        this.getData(),
-          this.alert('success', 'Deductivas verificación', 'Borrado');
+        this.getData(), this.alert('success', 'Registro Eliminado', 'Borrado');
       },
     });
   }
