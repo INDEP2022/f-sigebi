@@ -3309,6 +3309,22 @@ export class RelatedDocumentsComponent
       });
   }
 
+  // createDocument(document: IDocuments) {
+  //   return this.documentsService.create(document).pipe(
+  //     tap(_document => {
+  //       // END PROCESS
+  //     }),
+  //     catchError(error => {
+  //       this.onLoadToast(
+  //         'error',
+  //         'Error',
+  //         'Ocurrió un error al generar el reporte PDF'
+  //       );
+  //       return throwError(() => error);
+  //     })
+  //   );
+  // }
+
   async _PUP_LANZA_REPORTE(params: any) {
     return await firstValueFrom(this.sendFunction_pupLaunchReport(params));
     // this.dictationService.sendFunction_pupLaunchReport();
