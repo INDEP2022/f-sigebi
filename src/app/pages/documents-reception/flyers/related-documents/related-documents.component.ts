@@ -2614,16 +2614,16 @@ export class RelatedDocumentsComponent
     } else if (this.pantallaActual == '1') {
       console.log(this.paramsGestionDictamen);
       console.log(this.dataTableGoods);
-      // if (
-      //   this.formJobManagement.value.statusOf == 'ENVIADO' &&
-      //   !this.formJobManagement.value.cveManagement.includes('?')
-      // ) {
-      //   // Primer condicion al imprimir
-      //   this.firstConditionSendPrint();
-      // } else {
-      //   // Segunda condicion al imprimir
-      //   this.secondConditionSendPrint();
-      // }
+      if (
+        this.formJobManagement.value.statusOf == 'ENVIADO' &&
+        !this.formJobManagement.value.cveManagement.includes('?')
+      ) {
+        // Primer condicion al imprimir
+        this.firstConditionSendPrint();
+      } else {
+        // Segunda condicion al imprimir
+        this.secondConditionSendPrint();
+      }
     }
   }
 
@@ -3379,9 +3379,11 @@ export class RelatedDocumentsComponent
     }
     if (this.variables.proc_doc_dic === 'N' && this.paramsGestionDictamen.doc === 'S' && this.paramsGestionDictamen.bien === 'S' && !this.formJobManagement.value.cveManagement) {
       this.alertInfo('warning', 'Antes de Imprimir debe de Agregar Documentos', '');
+      // PUP_BIEN_DOC;
       return;
     } else if (this.variables.proc_doc_dic === 'N' && this.paramsGestionDictamen.doc === 'N' && this.paramsGestionDictamen.bien === 'S' && !this.formJobManagement.value.cveManagement) {
       this.alertInfo('warning', 'Antes de Imprimir debe de Agregar Documentos', '');
+      // PUP_BIEN_DOC;
       return;
     } else {
       if (this.paramsGestionDictamen.bien == 'S' && this.paramsGestionDictamen.doc === 'S') {
@@ -3416,32 +3418,114 @@ export class RelatedDocumentsComponent
         if (this.variables.b === 'S') {
           this.formJobManagement.value.statusOf = 'EN REVISION'
           //GO_BLOCK('BIENES');
-        }
-        if (this.dataTableGoods.length > 0) {
-          let n_COUNT = 0;
-          for (let i = 0; i < this.dataTableGoods.length; i++) {
-            if (this.dataTableGoods[i].seleccion === true) {
-              if (this.dataTableGoods[i].improcedente === true) {
-                n_COUNT = 2;
+          //empiza el LOOP
+          if (this.dataTableGoods.length > 0) {
+            let n_COUNT = 0;
+            for (let i = 0; i < this.dataTableGoods.length; i++) {
+              if (this.dataTableGoods[i].seleccion === true) {
+                if (this.dataTableGoods[i].improcedente === true) {
+                  n_COUNT = 2;
+                } else {
+                  n_COUNT = 1
+                }
               } else {
-                n_COUNT = 1
+                n_COUNT = 0;
               }
-            } else {
-              n_COUNT = 0;
-            }
-            //UPDATE BIENES_EXTENSION_CAMPOS
+              //UPDATE BIENES_EXTENSION_CAMPOS
+              let data = {
+                oficio_gestion: n_COUNT,
+                no_bien: this.dataTableGoods[i].id
+              }
+              this.goodprocessService.updateJobManagement(data).subscribe({
+                next: resp => {
+                  //mensaje o vacio cuando actualiza
+                },
+                error: error => {
+                  this.goodprocessService.postJobManagement(data).subscribe({
+                    next: resp => {
+                      //mensaje o vacio cuando lo crea
+                    },
+                    error: error => {
 
-            this.dataTableGoods[i].id;
+                    },
+                  });
+                },
+              });
+            }
+            //TERMINA el LOOP
+          }
+        } else {
+          if (this.variables.b === 'N') {
+            this.alertInfo('warning', 'Este oficio requiere de bienes', '');
+            return;
           }
         }
+        if (!this.variables.b) {
+          this.formJobManagement.value.statusOf = 'EN REVISION';
+          this.formJobManagement.value.cveManagement = '' //PUF_GENERA_CLAVE
+        }
+      }
+      if (this.paramsGestionDictamen.doc === 'N') {
+        if (!this.formJobManagement.value.cveManagement && this.se_refiere_a.A === 'Se refiere a todos los bienes') {
+          this.se_refiere_a_Disabled.B = true;
+          this.se_refiere_a_Disabled.C = true;
+        }
+        if (!this.formJobManagement.value.cveManagement && this.se_refiere_a.A === 'Se refiere a algun(os) bien(es) del expediente') {
+          this.se_refiere_a_Disabled.A = true;
+          this.se_refiere_a_Disabled.C = true;
+        }
+      }
+      if (!this.formJobManagement.value.cveManagement) {
+        let conta = 0;
+        conta = await this.conta();
+        if (conta !== 0) {
+          this.isDisabledBtnDocs = true;
+        }
+      }
+      if (this.formJobManagement.value.sender === this.authUser.user) {
+        this.blockSend = false;
+      }
+      //PUP_LANZA_REPORTE;
+      let cuantos = 0;
+      cuantos = await this.cuatos();
+      if (cuantos !== 0) {
+
       }
     }
 
 
   }
+  async cuatos() {
+    this.dictationService.getCount2(this.notificationData.wheelNumber).subscribe({
+      next: resp => {
+        //dato
+      },
+      error: error => {
+      }
+    });
+    return 0;
+  }
+  async conta() {
+    this.documentsService.getCount1(this.formJobManagement.value.managementNumber).subscribe({
+      next: resp => {
+        //dato
+      },
+      error: error => {
+      }
+    });
+    return 0;
+  }
   async seqOfGestion() {
-    //edpoit para nextval 
-    this.formJobManagement.value.managementNumber //mandar valor a enpoit
+    const params = new ListParams;
+    params['filter.no_of_gestion'] = this.formJobManagement.value.managementNumber;
+    this.dictationService.getSeqOfGestio(params).subscribe({
+      next: resp => {
+        //mensaje
+        return resp;
+      },
+      error: error => {
+      }
+    });
   }
   async secondConditionSend() {
     this.variablesSend.ESTATUS_OF = this.formJobManagement.value.statusOf;

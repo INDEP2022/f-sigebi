@@ -50,12 +50,20 @@ export class DictationService extends HttpService {
   getAllWithFilters(params?: any): Observable<IListResponse<IDictation>> {
     return this.get<IListResponse<IDictation>>(this.route.Dictation, params);
   }
+  getSeqOfGestio(params?: any): Observable<IListResponse<any>> {
+    const route = `${DictationEndpoints.GetSeqOfGestion}`;
+    return this.get<IListResponse<any>>(route, params);
+  }
 
   getById(body: {
     id: string | number;
     typeDict?: string;
   }): Observable<IDictation> {
     return this.get(this.route.Dictation, body);
+  }
+  getCount2(id: string | number): Observable<any> {
+    const route = `${DictationEndpoints.Count2}/${id}`;
+    return this.get<any>(route);
   }
 
   findByIds(body: {
