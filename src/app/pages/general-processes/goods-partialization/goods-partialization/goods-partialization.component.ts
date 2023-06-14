@@ -348,12 +348,12 @@ export class GoodsPartializationComponent extends BasePage implements OnInit {
   }
 
   partializaGood() {
-    const { bien, en, y, isNume, originalQuantity, originalImport } =
+    const { bien, en, y, isNume, originalQuantity, original } =
       this.form.getRawValue();
     const body = {
       parGood: bien,
       tiValue1: en,
-      tiValueOrigin: originalImport,
+      tiValueOrigin: original,
       diEsNumerary: isNume ? 'S' : 'N',
       diAmountOriginal: originalQuantity,
       tiValue2: y,

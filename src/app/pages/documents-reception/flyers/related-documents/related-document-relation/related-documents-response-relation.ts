@@ -825,7 +825,7 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
   abstract initForm(): void;
 
   isLoadingBtnEraser = false;
-  async onClickBtnErase() {
+  async onClickBtnDelete() {
     console.log('onClickBtnErase');
     const values = this.formJobManagement.value;
     if (!values.managementNumber) {
@@ -868,42 +868,55 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
       return;
     }
 
-    const promises = [
-      firstValueFrom(
-        this.mJobManagementService.deleteGoodsJobManagement1(
-          values.managementNumber
-        )
-      ),
-      firstValueFrom(
-        this.mJobManagementService.deleteDocumentJobManagement2(
-          values.managementNumber
-        )
-      ),
-      firstValueFrom(
-        this.mJobManagementService.deleteMJobGestion({
-          managementNumber: values.managementNumber,
-          flyerNumber: values.flyerNumber,
-        })
-      ),
-      firstValueFrom(
-        this.mJobManagementService.deleteCopiesJobManagement4(
-          values.managementNumber
-        )
-      ),
-      firstValueFrom(
-        this.notificationService.update(values.flyerNumber, {
-          dictumKey: '',
-        })
-      ),
-    ];
-    //
-    for (const promise of promises) {
-      try {
-        await promise;
-      } catch (ex) {
-        console.log(ex);
-      }
-    }
+    // const promises = [
+    //   firstValueFrom(
+    //     this.mJobManagementService.deleteGoodsJobManagement1(
+    //       values.managementNumber
+    //     )
+    //   ),
+    //   firstValueFrom(
+    //     this.mJobManagementService.deleteDocumentJobManagement2(
+    //       values.managementNumber
+    //     )
+    //   ),
+    //   firstValueFrom(
+    //     this.mJobManagementService.deleteMJobGestion({
+    //       managementNumber: values.managementNumber,
+    //       flyerNumber: values.flyerNumber,
+    //     })
+    //   ),
+    //   firstValueFrom(
+    //     this.mJobManagementService.deleteCopiesJobManagement4(
+    //       values.managementNumber
+    //     )
+    //   ),
+    //   firstValueFrom(
+    //     this.notificationService.update(values.flyerNumber, {
+    //       dictumKey: '',
+    //     })
+    //   ),
+    // ];
+    // //
+    // for (const promise of promises) {
+    //   try {
+    //     await promise;
+    //   } catch (ex) {
+    //     console.log(ex);
+    //   }
+    // }
+    await firstValueFrom(
+      this.mJobManagementService.deleteJobManagement(
+        values.managementNumber,
+        this.formNotification.value.wheelNumber
+      )
+    );
+    this.formJobManagement.reset();
+    this.formVariables.reset();
+    this.dataTableDocuments = [];
+    this.dataTableGoodsJobManagement = [];
+    this.dataTableGoodsJobManagement;
+    // this.dataTableCopies = [];
+    this.initForm();
     this.formJobManagement.get('refersTo').setValue('D');
     this.se_refiere_a_Disabled.A = false;
     this.se_refiere_a_Disabled.B = false;
@@ -1019,10 +1032,12 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
             this.dataTableDocuments.forEach(item => {
               this.mJobManagementService
                 .createDocumentOficeManag({
-                  goodNumber: item.goodNumber,
-                  cveDocument: item.cveDocument,
                   managementNumber:
                     this.formJobManagement.value.managementNumber,
+                  cveDocument: item.cveDocument,
+                  rulingType: item.rulingType,
+                  goodNumber: item.goodNumber,
+                  recordNumber: '',
                 })
                 .subscribe();
             });

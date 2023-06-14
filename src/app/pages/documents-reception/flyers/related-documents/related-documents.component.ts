@@ -464,8 +464,19 @@ export class RelatedDocumentsComponent
     this.managementForm.get('averiPrevia').disable();
     this.formVariables.get('b').setValue('S');
 
-    const values = (columnas[7]['dataSet']['rows'][0].isSelected = true);
-    console.log(values);
+    this.managementForm.get('improcedente').setValue(true);
+    this.managementForm.get('improcedente').disable();
+
+    const { managementNumber } = this.formJobManagement.value;
+    const { expedientNumber } = this.formNotification.value;
+    /*this.relatedDocumentDesahogo.PUP_CAMBIO_IMPRO(
+      true,
+      Number(managementNumber),
+      Number(expedientNumber)
+    );*/
+
+    //const values = (columnas[7]['dataSet']['rows'][0].isSelected = true);
+    //console.log(values);
 
     //onComponentInitFunction: true
     //this.relatedDocumentDesahogo.pup_cambio_impro(this.dataTableGoods);
@@ -499,6 +510,9 @@ export class RelatedDocumentsComponent
     columnaImprocedent.hide = false;
     this.managementForm.get('averiPrevia').enable();
     this.formVariables.get('b').setValue('N');
+
+    this.managementForm.get('improcedente').setValue(false);
+    this.managementForm.get('improcedente').enable();
     // const tabla = document.getElementById('goods');
     // const types = document.getElementById('typesFilters');
     // if (tabla && types) {
@@ -1466,6 +1480,11 @@ export class RelatedDocumentsComponent
   // }
 
   changeImprocedente(event: any) {
+    this.onLoadToast(
+      'info',
+      'se tiene que seleccionar todas las casillas improcedentes',
+      ''
+    );
     this.dataGood.forEach(element => {
       if (element.disponible) {
         element.improcedente = event.checked;
@@ -1874,21 +1893,24 @@ export class RelatedDocumentsComponent
     //   this.alert('error', 'Debe especificar el tipo de Dictaminación', '');
     //   return;
     // }
+    debugger;
+    /* BIENES */
+    //console.log(this.dataTableGoodsJobManagement);
     const bien = this.getQueryParams('bien');
-    console.log(this.m_job_management);
+    //console.log(this.formJobManagement);
     const { managementNumber, cveManagement } = this.m_job_management;
     const { refersTo } = this.formJobManagement.controls;
+    const goodJobs = this.dataTableGoodsJobManagement.values;
     if (bien == 'S' && doc == 'S') {
       console.log('paso');
       if (!managementNumber && !cveManagement) {
-        console.log('cond 1');
         if (refersTo.value == this.se_refiere_a.A) {
           this.pupAddGood();
-          console.log('1');
+          console.log('Agrega bien');
         }
         if (refersTo.value == this.se_refiere_a.B) {
           this.pupAddAnyGood();
-          console.log('2');
+          console.log('Agrega algunos bienes');
         }
       }
 
@@ -1924,7 +1946,9 @@ export class RelatedDocumentsComponent
       }
     }
 
+    /* DOCUMENTOS */
     this.variables.clasif = null;
+    const bienes_oficio = this.dataTableGoodsJobManagement.values;
 
     if (
       bien == 'S' &&
@@ -1939,9 +1963,9 @@ export class RelatedDocumentsComponent
         );
         return;
       } else {
-        // if(){
-        console.log(this.dataTableGoodsJobManagement);
-        // }
+        if (goodJobs.length > 0) {
+          console.log(this.dataTableGoodsJobManagement);
+        }
       }
     }
 
