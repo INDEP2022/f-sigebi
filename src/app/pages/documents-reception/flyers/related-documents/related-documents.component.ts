@@ -819,13 +819,13 @@ export class RelatedDocumentsComponent
       dictamen: '',
       b: '',
       d: '',
-      dictaminacion: '',
+      dictaminacion: 'PROCEDENCIA',
       clasif: '',
       clasif2: '',
-      delito: '',
-      todos: '',
-      doc_bien: '',
-      proc_doc_dic: '',
+      delito: 'S',
+      todos: 'N',
+      doc_bien: 'N',
+      proc_doc_dic: 'N',
     };
     this.notificationData = null;
   }
@@ -1594,6 +1594,7 @@ export class RelatedDocumentsComponent
           next: async res => {
             console.log('prueba', res);
             this.notificationData = res.data[0];
+            this.variables.dictamen = this.notificationData.dictumKey; // Set dictamen
             this.statusOf = res.data[0].wheelStatus;
             this.setDataNotification();
 
