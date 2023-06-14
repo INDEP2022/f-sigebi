@@ -121,7 +121,9 @@ export class GenerateReceiptFormComponent extends BasePage implements OnInit {
         this.paragraphs.load(infoReceipt);
         this.loadingWitness = false;
       },
-      error: error => {},
+      error: error => {
+        this.loadingWitness = false;
+      },
     });
   }
 
