@@ -507,22 +507,25 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
   }
 
   pupShowReport() {
-    const params = {
-      // PARAMFORM: 'NO',
-      // P_FIRMA: 'S',
-      // PARAMFORM: 'NO',
-      NO_OF_GES: this.formJobManagement.value.managementNumber,
-      // TIPO_OF: this.formJobManagement.value.jobType,
-      // VOLANTE: this.formNotification.value.wheelNumber,
-      // EXP: this.formNotification.value.expedientNumber,
-    };
+    let params = {};
 
     let nameReport = 'RGEROFGESTION';
     const jobType = this.formJobManagement.value.jobType;
     const PLLAMO = this.getParamsForName('PLLAMO');
     if (jobType == 'INTERNO' && PLLAMO != 'ABANDONO') {
+      params = {
+        PARAMFORM: 'NO',
+        P_FIRMA: 'S',
+        NO_OF_GES: this.formJobManagement.value.managementNumber,
+        TIPO_OF: this.formJobManagement.value.jobType,
+        VOLANTE: this.formNotification.value.wheelNumber,
+        EXP: this.formNotification.value.expedientNumber,
+      };
       nameReport = 'RGEROFGESTION';
     } else if (jobType == 'EXTERNO' && PLLAMO != 'ABANDONO') {
+      params = {
+        no_of_ges: this.formJobManagement.value.managementNumber,
+      };
       nameReport = 'RGEROFGESTION_EXT';
     } else if (jobType == 'EXTERNO' && PLLAMO == 'ABANDONO') {
       nameReport = 'RGENABANSUB';
