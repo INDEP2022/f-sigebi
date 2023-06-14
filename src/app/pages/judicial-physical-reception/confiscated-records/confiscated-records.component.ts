@@ -1275,7 +1275,6 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     this.paramsDataGoodsAct.next(new ListParams());
 
     this.idProceeding = null
-
     const newParams = new ListParams();
     newParams.limit = 1;
     this.paramsActNavigate.next(newParams) 
