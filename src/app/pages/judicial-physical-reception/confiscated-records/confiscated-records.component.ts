@@ -253,20 +253,22 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     this.paramsActNavigate
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(params => {
-        console.log(params)
-        this.dataGoodAct.load([]);
-        this.dataGoods.load([])
+        this.loading = true
+        this.dataGoodAct.load([])
+        this.clearInputs()
         const paramsF = new FilterParams()
         paramsF.page = params.page
+        paramsF.limit = 1
         paramsF.addFilter('numFile', this.form.get('expediente').value);
         paramsF.addFilter('typeProceedings', 'ENTREGA,DECOMISO', SearchFilter.IN); //!Un in
         this.serviceProcVal.getByFilter(paramsF.getParams()).subscribe(
           res => {
+            console.log(res)
             const dataRes = JSON.parse(JSON.stringify(res.data[0]));
             this.fillIncomeProceeding(dataRes, '');
           },
           err => {
-
+            this.loading = false
           }
         )
 
