@@ -176,6 +176,10 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
   //VARIABLES GENERALES
   idProceeding: string;
 
+  //IDs para bienes
+  idGood: number = null;
+  idGoodAct: number = null;
+
   searchByOtherData = false;
   dataExpedients = new DefaultSelect();
   act2Valid: boolean = false;
@@ -324,6 +328,21 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
       this.subDelUser = resJson.usuario.subdelegationNumber;
       this.departmentUser = resJson.usuario.departamentNumber;
     });
+  }
+
+  goToHistorico(site: string) {
+    localStorage.setItem('numberExpedient', this.numberExpedient);
+    if (site == 'generalGood' && this.idGood != null) {
+      this.router.navigate(
+        ['/pages/general-processes/historical-good-situation'],
+        { queryParams: { noBien: this.idGood } }
+      );
+    } else if (site == 'goodActa' && this.idGoodAct != null) {
+      this.router.navigate(
+        ['/pages/general-processes/historical-good-situation'],
+        { queryParams: { noBien: this.idGoodAct } }
+      );
+    }
   }
 
   prepareForm() {
@@ -703,6 +722,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
     const { data } = e;
     console.log(data);
     this.selectData = data;
+    this.idGood = data.goodId;
     this.statusGood('estatusPrueba', data);
   }
 
@@ -753,6 +773,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
     const { data } = e;
     console.log(data);
     this.selectActData = data;
+    this.idGoodAct = data.good.goodId;
     this.statusGood('etiqueta', data);
 
     if (data != null) {

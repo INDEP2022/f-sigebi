@@ -196,6 +196,10 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   //DOBLE CLICK
   lastClick: number = 0;
 
+  //IDs PARA STATUS
+  idGood: number = null;
+  idGoodAct: number = null;
+
   constructor(
     private fb: FormBuilder,
     private serviceGood: GoodService,
@@ -555,6 +559,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   verifyDateAndFill() {
     let fecElab = new Date(this.form.get('fecElab').value);
     console.log(fecElab);
+    console.log(new Date());
     if (this.form.get('fecElab').value != null) {
       this.form.get('fecReception').setValue(new Date(fecElab));
       this.showFecReception = true;
@@ -1274,6 +1279,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     this.paramsDataGoods.next(new ListParams());
     this.paramsDataGoodsAct.next(new ListParams());
 
+    this.idProceeding = null;
     const newParams = new ListParams();
     newParams.limit = 1;
     this.paramsActNavigate.next(newParams);
@@ -1791,6 +1797,9 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     this.totalItemsDataGoods = 0;
     this.totalItemsDataGoodsAct = 0;
 
+    this.idProceeding = null;
+    this.numberExpedient = null;
+
     this.dataGoods.load([]);
     this.dataGoodAct.load([]);
 
@@ -1969,6 +1978,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
           this.totalItemsNavigate = res.count;
           console.log(this.proceedingData);
           const dataRes = JSON.parse(JSON.stringify(res.data[0]));
+          this.idProceeding = dataRes.id;
           console.log(dataRes);
           this.fillIncomeProceeding(dataRes, '');
           console.log(typeof dataRes);
@@ -3483,6 +3493,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     this.statusGood('estatusPrueba', data);
     this.validateGood(data);
     console.log(e);
+    this.idGood = data.goodId;
 
     this.lastClick += 1;
     setTimeout(() => {
@@ -3502,13 +3513,19 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     this.form.get('estatusPrueba').reset();
   }
 
-  goToHistorico() {
+  goToHistorico(site: string) {
     localStorage.setItem('numberExpedient', this.numberExpedient);
-
-    this.router.navigate(
-      ['/pages/general-processes/historical-good-situation'],
-      { queryParams: { noBien: 73 } }
-    );
+    if (site == 'generalGood' && this.idGood != null) {
+      this.router.navigate(
+        ['/pages/general-processes/historical-good-situation'],
+        { queryParams: { noBien: this.idGood } }
+      );
+    } else if (site == 'goodActa' && this.idGoodAct != null) {
+      this.router.navigate(
+        ['/pages/general-processes/historical-good-situation'],
+        { queryParams: { noBien: this.idGoodAct } }
+      );
+    }
   }
 
   selectRowBovedaAlmacen(data: any) {
@@ -3558,6 +3575,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     console.log('Se activo');
     const { data } = e;
     console.log(this.saveDataAct);
+    this.idGoodAct = data.good.goodId;
 
     if (data != null) {
       const isSelect = e.isSelected;
@@ -3588,6 +3606,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
 
   deselectRowGoodActa() {
     this.selectActData = null;
+
     console.log(this.selectActData);
     this.isSelectGood = false;
     this.form.get('edoFisico').setValue(null);
