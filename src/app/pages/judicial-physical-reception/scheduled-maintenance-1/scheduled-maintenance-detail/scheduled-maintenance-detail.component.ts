@@ -112,13 +112,14 @@ export class ScheduledMaintenanceDetailComponent
 
         detail.keysProceedings = this.form.get('claveActa').value;
         detail.statusProceedings = this.statusActaValue;
-        detail.closeDate = new Date().toISOString();
-        detail.closeDate = new Date().toISOString();
         // console.log(this.form.get('fechaCaptura').value);
         const newDate = this.form.get('fechaCaptura').value;
         detail.captureDate = (newDate + '').includes('/')
           ? firstFormatDateToSecondFormatDate(newDate)
           : newDate;
+        detail.closeDate = new Date().getTime();
+        detail.elaborationDate = new Date(detail.elaborationDate).getTime();
+        detail.captureDate = new Date(detail.captureDate).getTime();
         let message = '';
         this.proceedingService
           .update2(detail)
@@ -267,12 +268,15 @@ export class ScheduledMaintenanceDetailComponent
         // })
         detail.keysProceedings = this.form.get('claveActa').value;
         detail.statusProceedings = this.statusActaValue;
-        detail.closeDate = new Date().toISOString();
+        detail.closeDate = new Date().getTime();
+        detail.elaborationDate = new Date(detail.elaborationDate).getTime();
+
         // console.log(this.form.get('fechaCaptura').value);
         const newDate = this.form.get('fechaCaptura').value;
         detail.captureDate = (newDate + '').includes('/')
           ? firstFormatDateToSecondFormatDate(newDate)
           : newDate;
+        detail.captureDate = new Date(detail.captureDate).getTime();
         let message = '';
         this.proceedingService
           .update2(detail)

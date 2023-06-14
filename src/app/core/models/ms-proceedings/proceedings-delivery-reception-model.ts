@@ -16,7 +16,7 @@ export interface IProccedingsDeliveryReception {
   destructionMethod?: string;
   observations?: string;
   approvedXAdmon?: string;
-  approvalDateXAdmon?:  number;
+  approvalDateXAdmon?: number;
   approvalUserXAdmon?: string;
   numRegister?: number;
   captureDate?: number;
@@ -31,12 +31,12 @@ export interface IProccedingsDeliveryReception {
   receiptKey?: string;
   comptrollerWitness?: string;
   numRequest?: number;
-  closeDate?:  number;
-  maxDate?:  number;
+  closeDate?: number;
+  maxDate?: number;
   indFulfilled?: number;
-  dateCaptureHc?:  number;
-  dateCloseHc?:  number;
-  dateMaxHc?:  number;
+  dateCaptureHc?: number;
+  dateCloseHc?: number;
+  dateMaxHc?: number;
   receiveBy?: string;
   affair?: string;
 }

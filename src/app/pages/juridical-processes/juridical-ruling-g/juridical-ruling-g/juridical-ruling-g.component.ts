@@ -19,7 +19,14 @@ import {
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, catchError, takeUntil, tap, throwError } from 'rxjs';
+import {
+  BehaviorSubject,
+  catchError,
+  skip,
+  takeUntil,
+  tap,
+  throwError,
+} from 'rxjs';
 import { DEPOSITARY_ROUTES_2 } from 'src/app/common/constants/juridical-processes/depositary-routes-2';
 import {
   baseMenu,
@@ -427,23 +434,49 @@ export class JuridicalRulingGComponent
   ngOnInit(): void {
     this.prepareForm();
     this.loading = true;
-    // this.activatedRoute.queryParams.subscribe((params: any) => {
-    //   this.expedientesForm.get('noExpediente').setValue(params?.expediente);
-    //   this.expedientesForm.get('tipoDictaminacion').setValue(params?.tipoDic);
-    //   this.expedientesForm.get('noVolante').setValue(params?.volante);
-    //   this.dictaminacionesForm.get('wheelNumber').setValue(params?.volante);
-    // });
+    this.activatedRoute.queryParams.subscribe((params: any) => {
+      this.expedientesForm.get('noExpediente').setValue(params?.expediente);
+      this.expedientesForm.get('tipoDictaminacion').setValue(params?.tipoDic);
+      this.expedientesForm.get('noVolante').setValue(params?.volante);
+      this.dictaminacionesForm.get('wheelNumber').setValue(params?.volante);
+    });
     this.params
       .pipe(
+        skip(1),
+        tap(() => {
+          // aquí colocas la función que deseas ejecutar
+          this.onLoadGoodList(0, 'all');
+        }),
         takeUntil(this.$unSubscribe),
         tap(() => {
-          if (this.goods.length > 0) {
-            this.formLoading = true;
-            this.onLoadGoodList(0, 'all');
-          }
+          this.onLoadGoodList(0, 'all');
+          // if (this.goods.length > 0) {
+          //   // this.formLoading = true;
+
+          // }
         })
       )
       .subscribe();
+
+    this.filter1
+      .pipe(
+        skip(1),
+        tap(() => {
+          // aquí colocas la función que deseas ejecutar
+          this.onLoadWithClass();
+        }),
+        takeUntil(this.$unSubscribe)
+      )
+      .subscribe(() => {
+        if (this.goods.length > 0) {
+          this.onLoadWithClass();
+        }
+      });
+    // this.filter1.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+    //   if (this.goods.length > 0) {
+    //     this.onLoadWithClass();
+    //   }
+    // });
 
     this.params2
       .pipe(
@@ -2794,6 +2827,7 @@ export class JuridicalRulingGComponent
   }
 
   onLoadWithClass() {
+    this.formLoading = true;
     this.goodServices
       .getAllFilter(this.filter1.getValue().getParams())
       .subscribe({
@@ -2837,6 +2871,10 @@ export class JuridicalRulingGComponent
           });
 
           this.goods = data;
+          this.formLoading = false;
+        },
+        error: err => {
+          this.formLoading = false;
         },
       });
   }
@@ -2956,7 +2994,7 @@ export class JuridicalRulingGComponent
   async onLoadGoodList(id: any, filter: any) {
     this.formLoading = true;
     this.loading = true;
-    this.params.getValue().page = 1;
+    // this.params.getValue().page = 1;
     this.goodServices
       .getByExpedient(
         this.expedientesForm.get('noExpediente').value,
