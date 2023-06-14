@@ -200,7 +200,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
 
   //NAVEGACION DE ACTAS
   paramsActNavigate = new BehaviorSubject<ListParams>(new ListParams());
-  totalItemsNavigate: number = 0
+  totalItemsNavigate: number = 0;
   newLimitparamsActNavigate = new FormControl(1);
 
   //NAVEGACION EN TABLA DE BIENES
@@ -318,15 +318,15 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
         this.getGoodsActFn();
       });
 
-      this.paramsActNavigate
+    this.paramsActNavigate
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(params => {
-        this.loading = true
-        this.dataGoodAct.load([])
-        this.clearInputs()
-        const paramsF = new FilterParams()
-        paramsF.page = params.page
-        paramsF.limit = 1
+        this.loading = true;
+        this.dataGoodAct.load([]);
+        this.clearInputs();
+        const paramsF = new FilterParams();
+        paramsF.page = params.page;
+        paramsF.limit = 1;
         paramsF.addFilter('numFile', this.form.get('expediente').value);
         paramsF.addFilter(
           'typeProceedings',
@@ -335,15 +335,14 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
         );
         this.serviceProcVal.getByFilter(paramsF.getParams()).subscribe(
           res => {
-            console.log(res)
+            console.log(res);
             const dataRes = JSON.parse(JSON.stringify(res.data[0]));
             this.fillIncomeProceeding(dataRes, '');
           },
           err => {
-            this.loading = false
+            this.loading = false;
           }
-        )
-
+        );
       });
 
     this.getDataUser();
@@ -916,7 +915,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
     //SETEAR EN UNO
     const newParams = new ListParams();
     newParams.limit = 1;
-    this.paramsActNavigate.next(newParams) 
+    this.paramsActNavigate.next(newParams);
 
     const btn = document.getElementById('expedient-number');
 
@@ -1145,15 +1144,13 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
         this.form.get('acta2').setValue(dataRes.keysProceedings);
         this.form.get('direccion').setValue(dataRes.address);
         this.form.get('autoridadCancela').setValue(dataRes.witness1);
-        this.form
-          .get('fecElab')
-          .setValue(
-            new Date(
-              new Date(dataRes.elaborationDate).toLocaleString('en-US', {
-                timeZone: 'GMT',
-              })
-            )
-          );
+        this.form.get('fecElab').setValue(
+          new Date(
+            new Date(dataRes.elaborationDate).toLocaleString('en-US', {
+              timeZone: 'GMT',
+            })
+          )
+        );
         this.form
           .get('fecCierreActa')
           .setValue(addDays(new Date(dataRes.datePhysicalReception), 1));
@@ -1193,15 +1190,13 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
         this.form.get('acta2').setValue(dataRes.keysProceedings);
         this.form.get('direccion').setValue(dataRes.address);
         this.form.get('autoridadCancela').setValue(dataRes.witness1);
-        this.form
-          .get('fecElab')
-          .setValue(
-            new Date(
-              new Date(dataRes.elaborationDate).toLocaleString('en-US', {
-                timeZone: 'GMT',
-              })
-            )
-          );
+        this.form.get('fecElab').setValue(
+          new Date(
+            new Date(dataRes.elaborationDate).toLocaleString('en-US', {
+              timeZone: 'GMT',
+            })
+          )
+        );
         this.form
           .get('fecCierreActa')
           .setValue(addDays(new Date(dataRes.datePhysicalReception), 1));
@@ -1309,7 +1304,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
         console.log(res);
         if (res.data != null) {
           this.proceedingData = res.data;
-          this.totalItemsNavigate = res.count
+          this.totalItemsNavigate = res.count;
           const dataRes = JSON.parse(JSON.stringify(res.data[0]));
           this.fillIncomeProceeding(dataRes, '');
           console.log(typeof dataRes);
