@@ -13,7 +13,7 @@ import { STRING_PATTERN } from 'src/app/core/shared/patterns';
   styles: [],
 })
 export class ModalCatAppraisersComponent extends BasePage implements OnInit {
-  title: string = 'Catálogo de Peritos';
+  title: string = 'PERITO';
   edit: boolean = false;
   form: FormGroup = new FormGroup({});
   allotment: any;
