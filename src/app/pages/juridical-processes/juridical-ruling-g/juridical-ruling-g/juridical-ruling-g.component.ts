@@ -487,6 +487,11 @@ export class JuridicalRulingGComponent
 
     this.params3
       .pipe(
+        skip(1),
+        tap(() => {
+          // aquí colocas la función que deseas ejecutar
+          this.checkDictumXGood(this.dictamen);
+        }),
         takeUntil(this.$unSubscribe),
         tap(() => this.checkDictumXGood(this.dictamen))
       )
@@ -2385,6 +2390,7 @@ export class JuridicalRulingGComponent
           }
         }
 
+        this.totalItems3 = this.goodsValid.length;
         // if (_g.status !== 'STI') {
         //   // _g.status = 'STI';
         //   _g.est_disponible = 'N';
@@ -2494,6 +2500,7 @@ export class JuridicalRulingGComponent
           this.goods[indexGood].di_disponible = 'N';
           this.goodsValid.push(good);
           this.goodsValid = [...this.goodsValid];
+          this.totalItems3 = this.goodsValid.length;
         } else {
           if (good.di_disponible == 'N') {
             this.onLoadToast('warning', `El bien ${good.goodId} ya existe`);
@@ -2558,32 +2565,47 @@ export class JuridicalRulingGComponent
     }
 
     if (this.selectedGooodsValid.length > 0) {
-      console.log('this.selectedGooodsValid', this.selectedGooodsValid);
-
-      let arr: any = [];
-      let arr2: any = [];
-      for (let i = 0; i < this.goodsValid.length; i++) {
-        if (this.goodsValid[i].ofDictNumber == null) {
-          arr2.push(this.goodsValid[i]);
-        } else {
-          arr.push(this.goodsValid[i]);
-        }
-      }
-      // this.goodsValid = arr2;
-      this.goods = this.goods.concat(this.selectedGooodsValid);
+      // this.goods = this.goods.concat(this.selectedGooodsValid);
       this.selectedGooodsValid.forEach(good => {
         this.goodsValid = this.goodsValid.filter(_good => _good.id != good.id);
         let index = this.goods.findIndex(g => g === good);
         this.goods[index].est_disponible = 'S';
         this.goods[index].di_disponible = 'S';
-
-        //this.goods[index].status = 'ADM';
+        this.goods[index].status = 'ADM';
         this.goods[index].name = false;
         // this.selectedGooods = [];
       });
       this.selectedGooodsValid = [];
-      // this.goodsValid = arr;
+      this.totalItems3 = this.goodsValid.length;
     }
+
+    // if (this.selectedGooodsValid.length > 0) {
+    //   console.log('this.selectedGooodsValid', this.selectedGooodsValid);
+
+    //   // let arr: any = [];
+    //   // let arr2: any = [];
+    //   // for (let i = 0; i < this.goodsValid.length; i++) {
+    //   //   if (this.goodsValid[i].ofDictNumber == null) {
+    //   //     arr2.push(this.goodsValid[i]);
+    //   //   } else {
+    //   //     arr.push(this.goodsValid[i]);
+    //   //   }
+    //   // }
+    //   // this.goodsValid = arr2;
+    //   this.goods = this.goods.concat(this.selectedGooodsValid);
+    //   this.selectedGooodsValid.forEach(good => {
+    //     this.goodsValid = this.goodsValid.filter(_good => _good.id != good.id);
+    //     let index = this.goods.findIndex(g => g === good);
+    //     this.goods[index].est_disponible = 'S';
+    //     this.goods[index].di_disponible = 'S';
+
+    //     //this.goods[index].status = 'ADM';
+    //     this.goods[index].name = false;
+    //     // this.selectedGooods = [];
+    //   });
+    //   this.selectedGooodsValid = [];
+    //   // this.goodsValid = arr;
+    // }
   }
   removeAll() {
     if (this.statusDict == 'DICTAMINADO' || this.statusDict == 'IMPROCEDENTE') {
@@ -2607,30 +2629,12 @@ export class JuridicalRulingGComponent
 
     console.log('aaa', this.goodsValid);
     if (this.goodsValid.length > 0) {
-      let arr: any = [];
-      let arr2: any = [];
-      for (let i = 0; i < this.goodsValid.length; i++) {
-        if (this.goodsValid[i].ofDictNumber == null) {
-          arr2.push(this.goodsValid[i]);
-        } else {
-          arr.push(this.goodsValid[i]);
-        }
-      }
-
-      this.goodsValid = arr2;
-      // CAMBIAR COLOR A VERDE
-
-      // let index = this.goods.findIndex(g => g === arr2);
-      // this.goods[index].est_disponible = 'S';
-      // this.goods[index].di_disponible = 'S';
-      // this.goods[index].name = false;
-
-      // this.goodsValid = arr
-
-      this.goodsValid.forEach(async good => {
-        console.log('aaa1', this.goodsValid);
-
+      this.goodsValid.forEach(good => {
         this.goodsValid = this.goodsValid.filter(_good => _good.id != good.id);
+        // let index = this.goods.findIndex(g => g === good);
+        // this.goods[index].status = 'ADM';
+        // this.goods[index].name = false;
+        // this.goodsValid = this.goodsValid.filter(_good => _good.id != good.id);
         console.log('aaa2', this.goodsValid);
         let index = this.goods.findIndex(g => g === good);
 
@@ -2647,8 +2651,52 @@ export class JuridicalRulingGComponent
           this.goods[index].name = false;
         }
       });
-      this.goodsValid = arr;
+      this.goodsValid = [];
+      this.totalItems3 = this.goodsValid.length;
     }
+    // if (this.goodsValid.length > 0) {
+    //   // let arr: any = [];
+    //   // let arr2: any = [];
+    //   // for (let i = 0; i < this.goodsValid.length; i++) {
+    //   //   if (this.goodsValid[i].ofDictNumber == null) {
+    //   //     arr2.push(this.goodsValid[i]);
+    //   //   } else {
+    //   //     arr.push(this.goodsValid[i]);
+    //   //   }
+    //   // }
+
+    //   // this.goodsValid = arr2;
+    //   // CAMBIAR COLOR A VERDE
+
+    //   // let index = this.goods.findIndex(g => g === arr2);
+    //   // this.goods[index].est_disponible = 'S';
+    //   // this.goods[index].di_disponible = 'S';
+    //   // this.goods[index].name = false;
+
+    //   // this.goodsValid = arr
+
+    //   this.goodsValid.forEach(async good => {
+    //     console.log('aaa1', this.goodsValid);
+
+    //     this.goodsValid = this.goodsValid.filter(_good => _good.id != good.id);
+    //     console.log('aaa2', this.goodsValid);
+    //     let index = this.goods.findIndex(g => g === good);
+
+    //     if (this.goods[index].est_disponible) {
+    //       this.goods[index].est_disponible = 'S';
+    //     }
+
+    //     if (this.goods[index].di_disponible) {
+    //       this.goods[index].di_disponible = 'S';
+    //     }
+
+    //     //this.goods[index].status = 'ADM';
+    //     if (this.goods[index].name) {
+    //       this.goods[index].name = false;
+    //     }
+    //   });
+    //   this.goodsValid = [];
+    // }
   }
 
   onSelectedRow(event: any) {
@@ -4229,6 +4277,8 @@ export class JuridicalRulingGComponent
     this.dictaminacionesForm.get('autoriza_nombre').setValue('');
     this.buttonApr = true;
     this.buttonDeleteDisabled = false;
+    this.totalItems3 = 0;
+    this.totalItems2 = 0;
     this.onTypesChange(obj);
   }
 
