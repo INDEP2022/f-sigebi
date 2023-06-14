@@ -140,10 +140,13 @@
                 [control]="formJobManagement.get('addressee')"
                 class="col-md-4"
                 label="Nombre Destinatario">
-                <input
+                <textarea
                   type="text"
+                  rows="1"
+                  style="height: 42px !important"
                   class="form-control"
-                  formControlName="addressee" />
+                  formControlName="addressee">
+                </textarea>
               </form-field>
             </ng-template>
 
@@ -509,7 +512,7 @@
                 [disabled]="isLoadingBtnEraser"
                 tooltip="Borrar"
                 containerClass="tooltip-style"
-                (click)="showDeleteAlert($event)"
+                (click)="onClickBtnDelete()"
                 class="btn btn-danger active btn-sm m-1">
                 <i class="bx bxs-trash"></i>
               </button>
@@ -517,10 +520,20 @@
                 type="submit"
                 [disabled]="blockSend"
                 class="btn btn-primary btn-sm active"
-                tooltip="Enviar"
-                (click)="sendDictamen()"
+                [tooltip]="
+                  formJobManagement.value?.statusOf == 'ENVIADO'
+                    ? 'Ver reporte'
+                    : 'Enviar'
+                "
+                (click)="onClickBtnSend()"
                 containerClass="tooltip-style">
-                <i class="bx bx-send"></i>
+                <i
+                  [class]="
+                    formJobManagement.value?.statusOf == 'ENVIADO'
+                      ? 'bx-lock-alt'
+                      : 'bx-send'
+                  "
+                  class="bx"></i>
               </button>
             </div>
           </div>
@@ -673,7 +686,9 @@
             <div class="row pt-4">
               <div class="d-flex justify-content-end">
                 <button
-                  [disabled]="isCreate"
+                  [disabled]="
+                    isCreate || formJobManagement.value?.statusOf == 'ENVIADO'
+                  "
                   (click)="openModalCopy(false)"
                   class="btn btn-primary active btn-sm ml-3 mb-3 w-auto">
                   Agregar CCP

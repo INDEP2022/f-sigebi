@@ -50,6 +50,7 @@
                   [totalItems]="totalItemsNavigate"
                   [limit]="newLimitparamsActNavigate"
                   [paginatorPageSize]="false"
+                  [pageSizeOptions]="[1]"
                   [paginatorRangeLabel]="false"
                   [maxSize]="1"></app-pagination>
                 <div class="col">
@@ -483,6 +484,7 @@
             <input
               type="text"
               class="form-control"
+              (dblclick)="goToHistorico('generalGood')"
               style="overflow-y: scroll"
               [readOnly]="true"
               formControlName="estatusPrueba" />
@@ -573,7 +575,7 @@
             <input
               type="text"
               class="form-control"
-              (dblclick)="goToHistorico()"
+              (dblclick)="goToHistorico('goodActa')"
               [readOnly]="true"
               formControlName="estatusBienActa" />
           </form-field>

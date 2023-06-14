@@ -17,7 +17,6 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { IGoodSssubtype } from 'src/app/core/models/catalogs/good-sssubtype.model';
-import { IAttribGoodBad } from 'src/app/core/models/ms-good/good';
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
 import { ParameterCatService } from 'src/app/core/services/catalogs/parameter.service';
 import { AccountMovements } from 'src/app/core/services/ms-account-movements/account-movements.service';
@@ -60,7 +59,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
   count = 0;
   delegacion: number;
   subdelegacion: number;
-  selectedBad: IAttribGoodBad;
+  selectedBad: any;
   get data() {
     return this.service.data;
   }
@@ -422,7 +421,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     if (!preUpdateValid) {
       return;
     }
-    if (this.selectedBad) {
+    if (this.selectedBad && this.selectedBad.motive) {
       this.attribGoodBadService
         .remove(this.selectedBad)
         .pipe(takeUntil(this.$unSubscribe))

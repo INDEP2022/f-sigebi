@@ -143,6 +143,8 @@ export class TableGoodsComponent extends BasePage implements OnInit {
         delete: this.haveDelete && value !== 'CERRADA',
       },
     };
-    this.data = [...this.data];
+    if (this.data) {
+      this.data = [...this.data];
+    }
   }
 }
