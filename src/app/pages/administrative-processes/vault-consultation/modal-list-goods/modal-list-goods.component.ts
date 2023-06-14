@@ -54,23 +54,12 @@ export class ModalListGoodsComponent
     this.loading = true;
     const idSafe: any = this.opcion.initialState;
     const safe = Object.values(idSafe);
-    let saf = safe[0];
-    let sa = safe[1];
-    console.log(Number(saf));
-    console.log(Number(sa));
+    const go = safe[0].toString().concat(safe[1].toString());
+
     this.params
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getGoodBySafe(Number(saf)));
+      .subscribe(() => this.getGoodBySafe(Number(go)));
   }
-
-  // ngOnInit(): void {
-  //   this.loading = true;
-  //   const idSafe: any = this.opcion.initialState;
-  //   console.log(Number(idSafe));
-  //   this.params
-  //     .pipe(takeUntil(this.$unSubscribe))
-  //     .subscribe(() => this.getGoodBySafe(idSafe));
-  // }
 
   return() {
     this.bsModalRef.hide();
