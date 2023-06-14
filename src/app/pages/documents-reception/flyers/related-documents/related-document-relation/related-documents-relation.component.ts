@@ -575,6 +575,9 @@ export class RelatedDocumentsRelationComponent
 
   showDeleteAlertCcp(event: any) {
     console.log(event.id);
+    if (this.formJobManagement.value.statusOf == 'ENVIADO') {
+      return;
+    }
     this.alertQuestion('question', 'Se borra el remitente?', '').then(
       async question => {
         if (question.isConfirmed) {
@@ -878,7 +881,6 @@ export class RelatedDocumentsRelationComponent
       .setValue(formatDate(new Date(), 'yyyy-MM-dd', 'en-US'));
     this.getNotification(wheelNumber, expedient).subscribe({
       next: async res => {
-        // console.log(res);
         this.formJobManagement
           .get('flyerNumber')
           .setValue(res.wheelNumber as any);
@@ -895,7 +897,6 @@ export class RelatedDocumentsRelationComponent
           await firstValueFrom(this.getMJobManagement(res.wheelNumber));
         } catch (e) {
           this.isCreate = true;
-          console.log(e);
           if (this.formNotification.value.expedientNumber) {
             console.log('refreshTableGoods');
             this.refreshTableGoods();
@@ -910,12 +911,12 @@ export class RelatedDocumentsRelationComponent
     });
   }
 
+  isDisabledBtnCcp = false;
   async loadInfo(mJobManagement: IMJobManagement) {
     console.log('res', this.formNotification.value.expedientNumber);
     if (mJobManagement) {
       try {
         this.m_job_management = mJobManagement;
-        console.log('mjobmanagement ', mJobManagement);
         this.formJobManagement.patchValue({
           ...mJobManagement,
           city: {
@@ -937,6 +938,11 @@ export class RelatedDocumentsRelationComponent
                 }
               : mJobManagement.addressee,
         });
+        if (this.formJobManagement.value.statusOf === 'ENVIADO') {
+          console.log('ENVIADO');
+          this.isDisabledBtnCcp = true;
+          this.settings3.actions.delete = false;
+        }
         if (mJobManagement.city) {
           this.getCity(mJobManagement.city).subscribe({
             next: res => {
@@ -2842,35 +2848,35 @@ export class RelatedDocumentsRelationComponent
     return (await this.getDepartment(params, true)) as IDepartment;
   }
 
-  sendDictamen() {
-    // let config: ModalOptions = {
-    //   initialState: {
-    //     documento: {
-    //       urlDoc: '',
-    //       type: 'pdf',
-    //     },
-    //     callback: (data: any) => {},
-    //   }, //pasar datos por aca
-    //   class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
-    //   ignoreBackdropClick: true, //ignora el click fuera del modal
-    // };
-    // this.modalService.show(UploadDictamenFilesModalComponent, config);
-    if (this.pantallaActual == '1') {
-      // Gestion Send button
-      if (
-        this.formJobManagement.value.statusOf == 'ENVIADO' &&
-        !this.formJobManagement.value.cveManagement.includes('?')
-      ) {
-        // Primer condicion al enviar
-        this.firstConditionSend();
-      } else {
-        // Segunda condicion al enviar
-        this.secondConditionSend();
-      }
-    } else {
-      this.onClickBtnSend();
-    }
-  }
+  // sendDictamen() {
+  //   // let config: ModalOptions = {
+  //   //   initialState: {
+  //   //     documento: {
+  //   //       urlDoc: '',
+  //   //       type: 'pdf',
+  //   //     },
+  //   //     callback: (data: any) => {},
+  //   //   }, //pasar datos por aca
+  //   //   class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+  //   //   ignoreBackdropClick: true, //ignora el click fuera del modal
+  //   // };
+  //   // this.modalService.show(UploadDictamenFilesModalComponent, config);
+  //   if (this.pantallaActual == '1') {
+  //     // Gestion Send button
+  //     if (
+  //       this.formJobManagement.value.statusOf == 'ENVIADO' &&
+  //       !this.formJobManagement.value.cveManagement.includes('?')
+  //     ) {
+  //       // Primer condicion al enviar
+  //       this.firstConditionSend();
+  //     } else {
+  //       // Segunda condicion al enviar
+  //       this.secondConditionSend();
+  //     }
+  //   } else {
+  //     this.onClickBtnSend();
+  //   }
+  // }
 
   dictationCount(wheelNumber: string | number) {
     return new Promise((resolve, reject) => {
