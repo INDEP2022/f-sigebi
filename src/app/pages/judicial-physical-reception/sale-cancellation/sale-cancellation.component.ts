@@ -867,7 +867,13 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
         this.form.get('entrega').setValue(dataRes.witness1);
         this.form
           .get('fecElab')
-          .setValue(new Date(new Date(dataRes.elaborationDate).toLocaleString("en-US", { timeZone: "GMT" })));
+          .setValue(
+            new Date(
+              new Date(dataRes.elaborationDate).toLocaleString('en-US', {
+                timeZone: 'GMT',
+              })
+            )
+          );
         this.form
           .get('fecRecepFisica')
           .setValue(addDays(new Date(dataRes.datePhysicalReception), 1));
@@ -906,7 +912,13 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
         this.form.get('entrega').setValue(dataRes.witness1);
         this.form
           .get('fecElab')
-          .setValue(new Date(new Date(dataRes.elaborationDate).toLocaleString("en-US", { timeZone: "GMT" })));
+          .setValue(
+            new Date(
+              new Date(dataRes.elaborationDate).toLocaleString('en-US', {
+                timeZone: 'GMT',
+              })
+            )
+          );
         this.form
           .get('fecRecepFisica')
           .setValue(addDays(new Date(dataRes.datePhysicalReception), 1));
@@ -1049,20 +1061,19 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
               witness1: this.form.get('entrega').value,
               witness2: this.form.get('recibe2').value,
               address: this.form.get('direccion').value,
-              elaborationDate: new Date(this.form.get('fecElab').value).getTime(),
-              datePhysicalReception: format(
-                this.form.get('fecRecepFisica').value,
-                'yyyy-MM-dd HH:mm'
-              ),
-              dateElaborationReceipt: format(
-                this.form.get('fecElabRecibo').value,
-                'yyyy-MM-dd HH:mm'
-              ),
-              dateDeliveryGood: format(
-                this.form.get('fecEntregaBienes').value,
-                'yyyy-MM-dd HH:mm'
-              ),
-              captureDate: format(new Date(), 'yyyy-MM-dd HH:mm'),
+              elaborationDate: new Date(
+                this.form.get('fecElab').value
+              ).getTime(),
+              datePhysicalReception: new Date(
+                this.form.get('fecRecepFisica').value
+              ).getTime(),
+              dateElaborationReceipt: new Date(
+                this.form.get('fecElabRecibo').value
+              ).getTime(),
+              dateDeliveryGood: new Date(
+                this.form.get('fecEntregaBienes').value
+              ).getTime(),
+              captureDate: new Date().getTime(),
               universalFolio: this.form.get('folioEscaneo').value,
             };
             const resData = JSON.parse(JSON.stringify(res.data[0]));
@@ -1098,22 +1109,18 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
             witness2: this.form.get('recibe2').value,
             address: this.form.get('direccion').value,
             elaborationDate: new Date(this.form.get('fecElab').value).getTime(),
-            datePhysicalReception: format(
-              this.form.get('fecRecepFisica').value,
-              'yyyy-MM-dd HH:mm'
-            ),
-            dateElaborationReceipt: format(
-              this.form.get('fecElabRecibo').value,
-              'yyyy-MM-dd HH:mm'
-            ),
-            dateDeliveryGood: format(
-              this.form.get('fecEntregaBienes').value,
-              'yyyy-MM-dd HH:mm'
-            ),
-            captureDate: format(new Date(), 'yyyy-MM-dd HH:mm'),
+            datePhysicalReception: new Date(
+              this.form.get('fecRecepFisica').value
+            ).getTime(),
+            dateElaborationReceipt: new Date(
+              this.form.get('fecElabRecibo').value
+            ).getTime(),
+            dateDeliveryGood: new Date(
+              this.form.get('fecEntregaBienes').value
+            ).getTime(),
+            captureDate: new Date().getTime(),
 
             keysProceedings: this.form.get('acta2').value,
-            /* elaborate: 'SERA', */
             elaborate: localStorage.getItem('username').toLocaleUpperCase(),
             numFile: parseInt(this.numberExpedient),
             typeProceedings: 'DXCVENT',
