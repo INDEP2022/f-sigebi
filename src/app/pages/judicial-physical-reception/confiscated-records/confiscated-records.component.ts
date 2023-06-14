@@ -252,25 +252,28 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     this.paramsActNavigate
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(params => {
-        this.loading = true
-        this.dataGoodAct.load([])
-        this.clearInputs()
-        const paramsF = new FilterParams()
-        paramsF.page = params.page
-        paramsF.limit = 1
+        this.loading = true;
+        this.dataGoodAct.load([]);
+        this.clearInputs();
+        const paramsF = new FilterParams();
+        paramsF.page = params.page;
+        paramsF.limit = 1;
         paramsF.addFilter('numFile', this.form.get('expediente').value);
-        paramsF.addFilter('typeProceedings', 'ENTREGA,DECOMISO', SearchFilter.IN); //!Un in
+        paramsF.addFilter(
+          'typeProceedings',
+          'ENTREGA,DECOMISO',
+          SearchFilter.IN
+        ); //!Un in
         this.serviceProcVal.getByFilter(paramsF.getParams()).subscribe(
           res => {
-            console.log(res)
+            console.log(res);
             const dataRes = JSON.parse(JSON.stringify(res.data[0]));
             this.fillIncomeProceeding(dataRes, '');
           },
           err => {
-            this.loading = false
+            this.loading = false;
           }
-        )
-
+        );
       });
 
     if (localStorage.getItem('numberExpedient')) {
@@ -1275,7 +1278,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
 
     const newParams = new ListParams();
     newParams.limit = 1;
-    this.paramsActNavigate.next(newParams) 
+    this.paramsActNavigate.next(newParams);
 
     this.unsubscribe$.next();
 
@@ -1679,15 +1682,13 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         this.form
           .get('fecEntBien')
           .setValue(addDays(new Date(dataRes.dateDeliveryGood), 1));
-        this.form
-          .get('fecElab')
-          .setValue(
-            new Date(
-              new Date(dataRes.elaborationDate).toLocaleString('en-US', {
-                timeZone: 'GMT',
-              })
-            )
-          );
+        this.form.get('fecElab').setValue(
+          new Date(
+            new Date(dataRes.elaborationDate).toLocaleString('en-US', {
+              timeZone: 'GMT',
+            })
+          )
+        );
 
         console.log({
           msg: 'Fecha ya guardada',
@@ -1736,15 +1737,13 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         this.form
           .get('fecEntBien')
           .setValue(addDays(new Date(dataRes.dateDeliveryGood), 1));
-        this.form
-          .get('fecElab')
-          .setValue(
-            new Date(
-              new Date(dataRes.elaborationDate).toLocaleString('en-US', {
-                timeZone: 'GMT',
-              })
-            )
-          );
+        this.form.get('fecElab').setValue(
+          new Date(
+            new Date(dataRes.elaborationDate).toLocaleString('en-US', {
+              timeZone: 'GMT',
+            })
+          )
+        );
         console.log({
           msg: 'Fecha ya guardada',
           data: this.form.get('fecElab').value,

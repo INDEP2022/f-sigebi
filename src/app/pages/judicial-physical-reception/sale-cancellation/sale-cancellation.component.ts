@@ -153,7 +153,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
 
   //NAVEGACION DE ACTAS
   paramsActNavigate = new BehaviorSubject<ListParams>(new ListParams());
-  totalItemsNavigate: number = 0
+  totalItemsNavigate: number = 0;
   newLimitparamsActNavigate = new FormControl(1);
 
   //NAVEGACION DE TABLA DE BIENES
@@ -274,28 +274,27 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
         this.getGoodsFn();
       });
 
-      this.paramsActNavigate
+    this.paramsActNavigate
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(params => {
-        this.loading = true
-        this.dataGoodAct.load([])
-        this.clearInputs()
-        const paramsF = new FilterParams()
-        paramsF.page = params.page
-        paramsF.limit = 1
+        this.loading = true;
+        this.dataGoodAct.load([]);
+        this.clearInputs();
+        const paramsF = new FilterParams();
+        paramsF.page = params.page;
+        paramsF.limit = 1;
         paramsF.addFilter('numFile', this.form.get('expediente').value);
-        paramsF.addFilter('typeProceedings', 'DXCVENT');; //!Un in
+        paramsF.addFilter('typeProceedings', 'DXCVENT'); //!Un in
         this.serviceProcVal.getByFilter(paramsF.getParams()).subscribe(
           res => {
-            console.log(res)
+            console.log(res);
             const dataRes = JSON.parse(JSON.stringify(res.data[0]));
             this.fillIncomeProceeding(dataRes);
           },
           err => {
-            this.loading = false
+            this.loading = false;
           }
-        )
-
+        );
       });
 
     this.getDataUser();
@@ -871,15 +870,13 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
         this.form.get('acta2').setValue(dataRes.keysProceedings);
         this.form.get('direccion').setValue(dataRes.address);
         this.form.get('entrega').setValue(dataRes.witness1);
-        this.form
-          .get('fecElab')
-          .setValue(
-            new Date(
-              new Date(dataRes.elaborationDate).toLocaleString('en-US', {
-                timeZone: 'GMT',
-              })
-            )
-          );
+        this.form.get('fecElab').setValue(
+          new Date(
+            new Date(dataRes.elaborationDate).toLocaleString('en-US', {
+              timeZone: 'GMT',
+            })
+          )
+        );
         this.form
           .get('fecRecepFisica')
           .setValue(addDays(new Date(dataRes.datePhysicalReception), 1));
@@ -916,15 +913,13 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
         this.form.get('acta2').setValue(dataRes.keysProceedings);
         this.form.get('direccion').setValue(dataRes.address);
         this.form.get('entrega').setValue(dataRes.witness1);
-        this.form
-          .get('fecElab')
-          .setValue(
-            new Date(
-              new Date(dataRes.elaborationDate).toLocaleString('en-US', {
-                timeZone: 'GMT',
-              })
-            )
-          );
+        this.form.get('fecElab').setValue(
+          new Date(
+            new Date(dataRes.elaborationDate).toLocaleString('en-US', {
+              timeZone: 'GMT',
+            })
+          )
+        );
         this.form
           .get('fecRecepFisica')
           .setValue(addDays(new Date(dataRes.datePhysicalReception), 1));
@@ -1271,7 +1266,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
   getGoodsByExpedient() {
     this.research = false;
     const paramsF = new FilterParams();
-    paramsF.limit = 1
+    paramsF.limit = 1;
     paramsF.addFilter(
       'numFile',
       this.form.get('expediente').value,
@@ -1286,7 +1281,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
         if (res.data != null) {
           console.log('Entro');
           console.log(res.data);
-          this.totalItemsNavigate = res.count
+          this.totalItemsNavigate = res.count;
           const dataRes = JSON.parse(JSON.stringify(res.data[0]));
           this.fillIncomeProceeding(dataRes);
           console.log(typeof dataRes);
@@ -1352,7 +1347,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
 
     const newParams = new ListParams();
     newParams.limit = 1;
-    this.paramsActNavigate.next(newParams) 
+    this.paramsActNavigate.next(newParams);
 
     /*     this.labelActa = 'Abrir acta';
     this.btnCSSAct = 'btn-success'; */
@@ -1375,7 +1370,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
             if (res.data.length > 0) {
               this.form.get('ident').setValue('DEV');
               this.form.get('entrego').setValue('PART');
-              
+
               this.dataGoods.load(res.data);
               console.log(res);
               const newData = await Promise.all(
@@ -2262,7 +2257,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
     //Marcar en 1
     const newParams = new ListParams();
     newParams.limit = 1;
-    this.paramsActNavigate.next(newParams) 
+    this.paramsActNavigate.next(newParams);
 
     this.limitDataGoods = new FormControl(10);
     this.limitDataGoodsAct = new FormControl(10);
