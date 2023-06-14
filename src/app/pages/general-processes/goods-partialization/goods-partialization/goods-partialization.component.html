@@ -5,6 +5,15 @@
 
   <div body>
     <div class="row">
+      
+      <div class="col-6 btn-group">
+        <button class="btn btn-primary active btn-sm m-2" style="float: left" (click)="goBack()">
+          <i class="fas fa-arrow-left"></i>
+          Regresar
+        </button>
+      </div>
+    </div>
+    <div class="row pt-5">
       <div class="col-md-12 md-tabs">
         <form [formGroup]="form" class="form-material" (submit)="save()">
           <div class="row">

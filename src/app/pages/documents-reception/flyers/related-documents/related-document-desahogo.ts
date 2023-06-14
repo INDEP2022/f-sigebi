@@ -5,11 +5,13 @@ import {
   FilterParams,
   ListParams,
 } from 'src/app/common/repository/interfaces/list-params';
+import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
 import { InterfacefgrService } from 'src/app/core/services/ms-interfacefgr/ms-interfacefgr.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import { MJobManagementService } from 'src/app/core/services/ms-office-management/m-job-management.service';
 import { BasePage } from 'src/app/core/shared';
 import { IJuridicalDocumentManagementParams } from 'src/app/pages/juridical-processes/file-data-update/interfaces/file-data-update-parameters';
+
 @Injectable()
 export class RelatedDocumentDesahogo extends BasePage {
   paramsGestionDictamen: IJuridicalDocumentManagementParams;
@@ -22,6 +24,7 @@ export class RelatedDocumentDesahogo extends BasePage {
   private mJobManagementService = inject(MJobManagementService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
+  private goodprocess = inject(GoodProcessService);
 
   constructor() {
     super();
@@ -95,15 +98,26 @@ export class RelatedDocumentDesahogo extends BasePage {
     });
   }
 
-  async pupBienDoc(paramsGestionDictamen: any) {
-    const volante = paramsGestionDictamen.volante;
-    const params = new ListParams();
-    params[`filter.flyerNumber`] = `$eq:${volante}`;
-    const m_job_management = await this.getMJobManagement(params);
+  PUP_CAMBIO_IMPRO(
+    checked: boolean | string,
+    managementNumber: number,
+    proceedingNumber: number
+  ) {
+    const chk = checked == true || checked === 'true' ? 1 : 0;
 
-    if (paramsGestionDictamen.doc === 'N') {
-      this.onLoadToast('info', 'Este oficio no lleva Documentos', '');
-      return;
-    }
+    const body: any = {
+      chkSelect: chk,
+      managementOfNumber: managementNumber,
+      proceedingNumber: proceedingNumber,
+    };
+    debugger;
+    this.goodprocess.callPupChangeImpro(body).subscribe({
+      next: resp => {
+        console.log(resp);
+      },
+      error: error => {
+        console.log('error al llamar al pup cambio impro', error);
+      },
+    });
   }
 }

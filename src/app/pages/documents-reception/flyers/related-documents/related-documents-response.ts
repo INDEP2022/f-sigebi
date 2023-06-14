@@ -147,7 +147,9 @@ export abstract class RelateDocumentsResponse extends BasePage {
     this.isLoadingGood = true;
     this.goodServices.getAll(params).subscribe({
       next: async data => {
-        const goods = await data.data.map(async item => {
+        const goods = await data.data.map(async (item: any) => {
+          item['improcedente'] = item.unfair === 'true' ? true : false;
+          item['seleccion'] = item.clarification === 'true' ? true : false;
           const isAvailable = await this.getFactaDbOficioGestrel(
             this.formJobManagement.get('managementNumber').value,
             item.goodId
