@@ -82,60 +82,56 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
    */
   private buildForm() {
     this.form = this.fb.group({
-      idConversion: [
+      idConversion: [null, [Validators.required]],
+      noBien: [null, [Validators.required]],
+      date: [null, [Validators.required]],
+      tipo: [null, [Validators.required]],
+      noExpediente: [null, [Validators.required]],
+      actaConversion: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      noBien: [null, [Validators.pattern(STRING_PATTERN)]],
-      date: [null],
-      tipo: [null],
-      noExpediente: [null, [Validators.pattern(STRING_PATTERN)]],
-      actaConversion: [null, [Validators.pattern(STRING_PATTERN)]],
-      desStatus: [null, [Validators.pattern(STRING_PATTERN)]],
-      actaER: [null, [Validators.pattern(STRING_PATTERN)]],
-      actaERDate: [null, [Validators.pattern(STRING_PATTERN)]],
-      description: [null],
+      desStatus: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      actaER: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      actaERDate: [null, [Validators.required]],
+      description: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       //goods: this.fb.array([])
     });
   }
 
-  async save() {
-    if (this.conversion) {
-      const response: any = await this.updateConversion('');
-      this.date.setValue(new Date());
-      this.createObj();
-      this.saved = false;
-      this.conversiongoodServices
-        .createAssetConversions(this.assetConversion)
-        .subscribe({
-          next: response => {
-            console.log(response);
-            this.alert(
-              'success',
-              'Guardado',
-              'Se ha guardado correctamente la conversión'
-            );
-          },
-          error: err => {
-            this.onLoadToast(
-              'error',
-              'Ya existe una conversión de bienes con esta información'
-            );
-            console.log(err);
-          },
-        });
-    } else {
-      this.onLoadToast('info', 'Se debe cargar primero una conversión');
-    }
+  save() {
+    this.date.setValue(new Date());
+    this.createObj();
+    console.log(this.assetConversion);
+    this.saved = false;
+    this.conversiongoodServices
+      .createAssetConversions(this.assetConversion)
+      .subscribe({
+        next: response => {
+          console.log(response);
+          this.onLoadToast(
+            'success',
+            'Guardado',
+            'Se ha guardado correctamente'
+          );
+        },
+        error: err => {
+          console.log(err);
+        },
+      });
   }
 
   onChangeGood() {
     this.searchGoods(this.noBien.value);
   }
-
   searchGoods(idGood: number | string) {
     // buscar el bien
-    console.log(idGood);
     this.goodServices.getById(idGood).subscribe({
       next: (response: any) => {
         console.log(response.data[0]);
@@ -145,7 +141,7 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
         this.setGood(this.good);
       },
       error: err => {
-        this.onLoadToast('info', 'Información', 'Bien no existe');
+        this.onLoadToast('error', 'ERROR', 'Bien no existe');
         this.form.reset();
         console.log(err);
       },
@@ -165,7 +161,13 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
       },
       error: error => {
         this.desStatus.setValue('');
+        this.onLoadToast(
+          'info',
+          'Opss..',
+          'Este bien no tiene status asignado'
+        );
         this.loading = false;
+        console.log(error);
       },
     });
   }
@@ -181,7 +183,7 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
         this.actaERDate.setValue('');
         this.onLoadToast(
           'info',
-          'Información',
+          'Opss..',
           'Este bien no tiene Acta E/R asociada'
         );
         console.log(err);
@@ -189,85 +191,61 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
     });
   }
 
-  async generatePaswword() {
+  generatePaswword() {
     this.generarPass = true;
     let pass = '';
-    let str = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let str = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
     for (let i = 1; i <= 8; i++) {
       let char = Math.floor(Math.random() * str.length + 1);
       pass += str.charAt(char);
     }
     this.password = pass;
     console.log(this.password);
-    const response: any = await this.updateConversion(this.password, true);
-    if (response.statusCode === 200) {
-      this.alert(
-        'success',
-        `Password: ${this.password}`,
-        'Se ha generado y aplicado la contraseña a la Conversión'
-      );
-      this.form.reset();
-    } else {
-      this.onLoadToast('error', 'ERROR', 'Erorr al Generar la contraseña');
-    }
+    this.updateConversion(this.password);
   }
 
   searchConversion() {
-    console.log(this.idConversion.value);
-    if (this.idConversion.value === '' || this.idConversion.value === null) {
-      this.onLoadToast('info', 'Ingrese por favor un id de conversión');
-      this.form.markAllAsTouched();
-      return;
-    }
     this.conversiongoodServices.getById(this.idConversion.value).subscribe({
       next: response => {
         this.conversion = response;
-        if (this.conversion.goodFatherNumber) {
-          this.searchGoods(this.conversion.goodFatherNumber);
-        }
+        this.searchGoods(this.conversion.goodFatherNumber);
         this.tipo.setValue(this.conversion.typeConv);
         this.date.setValue(new Date());
         this.enableButton = false;
-        this.actaConversion.setValue(this.conversion.cveActaConv);
-        this.onLoadToast(
-          'success',
-          'Exitoso',
-          'Se ha cargado la conversión correctamente'
-        );
       },
       error: err => {
-        this.onLoadToast('error', 'ERROR', 'La conversión no existe');
+        this.onLoadToast('error', 'ERROR', 'Conversion no existe');
         this.form.reset();
         console.log(err);
       },
     });
   }
-  updateConversion(pwAccess: string, isPwAccess: boolean = false) {
-    return new Promise((res, rej) => {
-      this.conversion.id = Number(this.conversion.id);
-      this.conversion.fileNumber = Number(this.conversion.fileNumber);
-      this.conversion.goodFatherNumber = Number(this.good.id);
-      this.conversion.statusConv = Number(this.conversion.statusConv);
-      this.conversion.typeConv = Number(this.conversion.typeConv);
-      if (isPwAccess) {
-        this.conversion.pwAccess = pwAccess;
-      }
-      this.conversiongoodServices
-        .update(this.conversion.id, this.conversion)
-        .subscribe({
-          next: response => {
-            res(response);
-            console.log(response);
-          },
-          error: err => {
-            console.log(err);
-            res(err.error);
-          },
-        });
-    });
+  updateConversion(pwAccess: string) {
+    this.conversion.id = Number(this.conversion.id);
+    this.conversion.fileNumber = Number(this.conversion.fileNumber);
+    this.conversion.goodFatherNumber = Number(this.conversion.goodFatherNumber);
+    this.conversion.statusConv = Number(this.conversion.statusConv);
+    this.conversion.typeConv = Number(this.conversion.typeConv);
+    this.conversion.pwAccess = pwAccess;
+    this.conversiongoodServices
+      .update(this.conversion.id, this.conversion)
+      .subscribe({
+        next: response => {
+          console.log(response);
+          this.onLoadToast(
+            'success',
+            'Generación exitoza',
+            'Se ha generado y aplicado la contraseña a la Conversión'
+          );
+          this.form.reset();
+        },
+        error: err => {
+          console.log(err);
+          this.onLoadToast('error', 'ERROR', 'Erorr al Generar la contraseña');
+        },
+      });
   }
   createObj() {
-    console.log(this.good.id);
     this.assetConversion = {
       goodId: Number(this.good.id),
       conversionId: Number(this.conversion.id),
@@ -339,9 +317,4 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
   /*   showToast(status: NbComponentStatus) {
     this.toastrService.show(status, 'Guardado exitoso !!', { status });
   } */
-
-  clean() {
-    this.form.reset();
-    this.form.markAllAsTouched();
-  }
 }
