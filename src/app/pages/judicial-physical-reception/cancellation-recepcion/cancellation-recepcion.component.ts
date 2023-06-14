@@ -1147,7 +1147,13 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
         this.form.get('autoridadCancela').setValue(dataRes.witness1);
         this.form
           .get('fecElab')
-          .setValue(new Date(new Date(dataRes.elaborationDate).toLocaleString("en-US", { timeZone: "GMT" })));
+          .setValue(
+            new Date(
+              new Date(dataRes.elaborationDate).toLocaleString('en-US', {
+                timeZone: 'GMT',
+              })
+            )
+          );
         this.form
           .get('fecCierreActa')
           .setValue(addDays(new Date(dataRes.datePhysicalReception), 1));
@@ -1189,7 +1195,13 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
         this.form.get('autoridadCancela').setValue(dataRes.witness1);
         this.form
           .get('fecElab')
-          .setValue(new Date(new Date(dataRes.elaborationDate).toLocaleString("en-US", { timeZone: "GMT" })));
+          .setValue(
+            new Date(
+              new Date(dataRes.elaborationDate).toLocaleString('en-US', {
+                timeZone: 'GMT',
+              })
+            )
+          );
         this.form
           .get('fecCierreActa')
           .setValue(addDays(new Date(dataRes.datePhysicalReception), 1));
@@ -1987,9 +1999,13 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                               witness1: this.form.get('autoridadCancela').value,
                               witness2: this.form.get('elabora').value,
                               address: this.form.get('direccion').value,
-                              elaborationDate: new Date(this.form.get('fecElab').value).getTime(),
-                              datePhysicalReception: new Date(this.form.get('fecCierreActa').value).getTime(),
-                              captureDate: new Date().getTime()
+                              elaborationDate: new Date(
+                                this.form.get('fecElab').value
+                              ).getTime(),
+                              datePhysicalReception: new Date(
+                                this.form.get('fecCierreActa').value
+                              ).getTime(),
+                              captureDate: new Date().getTime(),
                             };
                             this.serviceProcVal
                               .editProceeding(resData.id, modelEdit)
@@ -2082,8 +2098,12 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                                     {
                                       keysProceedings:
                                         this.form.get('acta2').value,
-                                      elaborationDate: new Date(this.form.get('fecElab').value).getTime(),
-                                      datePhysicalReception: new Date(this.form.get('fecCierreActa').value).getTime(),
+                                      elaborationDate: new Date(
+                                        this.form.get('fecElab').value
+                                      ).getTime(),
+                                      datePhysicalReception: new Date(
+                                        this.form.get('fecCierreActa').value
+                                      ).getTime(),
                                       address: this.form.get('direccion').value,
                                       statusProceedings: 'ABIERTA',
                                       elaborate:
@@ -2274,7 +2294,9 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
           let newProceeding: IProccedingsDeliveryReception = {
             keysProceedings: this.form.get('acta2').value,
             elaborationDate: new Date(this.form.get('fecElab').value).getTime(),
-            datePhysicalReception: new Date(this.form.get('fecCierreActa').value).getTime(),
+            datePhysicalReception: new Date(
+              this.form.get('fecCierreActa').value
+            ).getTime(),
             address: this.form.get('direccion').value,
             elaborate:
               localStorage.getItem('username') == 'sigebiadmon'
