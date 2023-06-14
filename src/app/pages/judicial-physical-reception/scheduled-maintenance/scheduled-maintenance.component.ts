@@ -219,7 +219,8 @@ export class ScheduledMaintenanceComponent
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
-
+    this._toastrService.clear();
+    this.onLoadToast('success', 'Descarga Finalizada');
     URL.revokeObjectURL(objURL);
   }
 
@@ -255,6 +256,7 @@ export class ScheduledMaintenanceComponent
     console.log(body);
     try {
       const resp = await firstValueFrom(this.excelService.getExcel(body));
+      console.log(resp);
       this.downloadDocument('Programación de Recepciones', 'excel', resp.file);
       this.loadingExcel = false;
     } catch (error) {
@@ -279,7 +281,7 @@ export class ScheduledMaintenanceComponent
       'Reporte de Mantenimiento de Programaciones',
       'Consiguiendo datos'
     );
-    debugger;
+    // debugger;
     const data = await this.data.getAll();
     try {
       const array = await firstValueFrom(this.deliveryService.getExcel2(data));

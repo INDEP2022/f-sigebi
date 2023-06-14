@@ -14,6 +14,7 @@ import { _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
 import { ICity } from 'src/app/core/models/catalogs/city.model';
 import { IDepartment } from 'src/app/core/models/catalogs/department.model';
+import { IPufGenerateKey } from 'src/app/core/models/ms-dictation/dictation-model';
 import { type INotification } from 'src/app/core/models/ms-notification/notification.model';
 import { IMJobManagement } from 'src/app/core/models/ms-officemanagement/m-job-management.model';
 import { IProceduremanagement } from 'src/app/core/models/ms-proceduremanagement/ms-proceduremanagement.interface';
@@ -1069,5 +1070,8 @@ export abstract class RelateDocumentsResponse extends BasePage {
     return this.msOfficeManagementService
       .ObtainKeyOffice(params)
       .pipe(map(x => x.data));
+  }
+  sendFunction_pufGenerateKey(params: IPufGenerateKey): Observable<any> {
+    return this.dictationService.pufGenerateKey(params).pipe(map(x => x.data));
   }
 }

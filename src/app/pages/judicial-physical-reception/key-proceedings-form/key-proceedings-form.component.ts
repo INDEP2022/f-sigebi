@@ -250,7 +250,7 @@ export class KeyProceedingsFormComponent
 
   async updateRow(data: any) {
     // let newData = { ...data };
-    debugger;
+    // debugger;
     let { newData, confirm } = data;
     if (this.nullCells(newData)) {
       this.onLoadToast('error', 'Campos requeridos');
