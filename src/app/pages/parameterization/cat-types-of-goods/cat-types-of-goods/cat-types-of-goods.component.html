@@ -85,7 +85,6 @@
         </div>
       </div>
       <div class="col-md-6" *ngIf="rowsSssTypeGoods">
-        v>
         <div class="ch-content" header>
           <h5 class="title">Subsubsubtipo de bien</h5>
           <div class="col-md-5 buttons">
@@ -103,7 +102,8 @@
             [settings]="subsubsubTypeSettings"
             [source]="data3"
             (delete)="onDeleteConfirm($event)"
-            (edit)="onSaveConfirm3($event)"></ng2-smart-table>
+            (edit)="onSaveConfirm3($event)"
+            (rowSelect)="selectedTypeGoods($event)"></ng2-smart-table>
           <app-pagination
             [params]="params3"
             [totalItems]="totalItems3"></app-pagination>

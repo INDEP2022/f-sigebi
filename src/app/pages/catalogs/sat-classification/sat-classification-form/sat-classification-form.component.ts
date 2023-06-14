@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 
-import { BasePage } from 'src/app/core/shared/base-page';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { ISatClassification } from 'src/app/core/models/catalogs/sat-classification.model';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { ISatClassification } from 'src/app/core/models/catalogs/sat-classification.model';
 import { SatClassificationService } from 'src/app/core/services/catalogs/sat-classification.service';
+import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-sat-clasification-form',
@@ -29,7 +29,6 @@ export class SatClassificationFormComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.prepareForm();
     console.log(this.satclassification);
-
   }
 
   private prepareForm() {
@@ -64,10 +63,7 @@ export class SatClassificationFormComponent extends BasePage implements OnInit {
   update() {
     this.loading = true;
     this.satClassificationService
-      .update(
-        this.satclassification.id,
-        this.satClassificationForm.value
-      )
+      .update(this.satclassification.id, this.satClassificationForm.value)
       .subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),

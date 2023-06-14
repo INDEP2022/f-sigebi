@@ -1,15 +1,18 @@
-import { BehaviorSubject, takeUntil } from 'rxjs';
-import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { Component, OnInit } from '@angular/core';
-import { ListParams, SearchFilter } from 'src/app/common/repository/interfaces/list-params';
+import { BsModalService } from 'ngx-bootstrap/modal';
+import { BehaviorSubject, takeUntil } from 'rxjs';
+import {
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 
-import { BasePage } from 'src/app/core/shared/base-page';
-import { ISatSubclassification } from 'src/app/core/models/catalogs/sat-subclassification.model';
 import { LocalDataSource } from 'ng2-smart-table';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
+import { ISatSubclassification } from 'src/app/core/models/catalogs/sat-subclassification.model';
 import { SATSubclassificationService } from 'src/app/core/services/catalogs/sat-subclassification.service';
-import { SAT_SUBCLASSIFICATION_COLUMNS } from './sat-subclassification-columns';
+import { BasePage } from 'src/app/core/shared/base-page';
 import { SatSubclassificationFormComponent } from '../sat-subclassification-form/sat-subclassification-form.component';
+import { SAT_SUBCLASSIFICATION_COLUMNS } from './sat-subclassification-columns';
 
 @Component({
   selector: 'app-sat-subclassification-list',
@@ -18,7 +21,8 @@ import { SatSubclassificationFormComponent } from '../sat-subclassification-form
 })
 export class SatSubclassificationListComponent
   extends BasePage
-  implements OnInit {
+  implements OnInit
+{
   satSubClassification: ISatSubclassification[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -48,8 +52,8 @@ export class SatSubclassificationListComponent
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
             filter.field == 'id' ||
-              filter.field == 'idClasification' ||
-              filter.field == 'nameSubClasification'
+            filter.field == 'idClasification' ||
+            filter.field == 'nameSubClasification'
               ? (searchFilter = SearchFilter.EQ)
               : (searchFilter = SearchFilter.ILIKE);
             if (filter.search !== '') {
@@ -111,7 +115,8 @@ export class SatSubclassificationListComponent
   delete(id: number) {
     this.satSubclassificationService.remove(id).subscribe({
       next: () => {
-        this.getSatSubClassification(), this.alert('success', 'Sub Clasification', 'Borrado');
+        this.getSatSubClassification(),
+          this.alert('success', 'Sub Clasification', 'Borrado');
       },
       error: err => {
         this.alert(

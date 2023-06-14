@@ -47,6 +47,8 @@ export class CourtCityComponent extends BasePage implements OnInit {
       //delegation: [{ value: null, disabled: true }],
       //subDelegation: [{ value: null, disabled: true }],
     });
+
+    this.getCiities(new ListParams());
   }
 
   onValuesChange(cityChange: ICity) {
@@ -86,7 +88,12 @@ export class CourtCityComponent extends BasePage implements OnInit {
 
   getCiities(params: ListParams) {
     this.cityService.getAll(params).subscribe({
-      next: data => (this.cities = new DefaultSelect(data.data, data.count)),
+      next: data => {
+        this.cities = new DefaultSelect(data.data, data.count);
+      },
+      error: error => {
+        this.cities = new DefaultSelect();
+      },
     });
   }
 

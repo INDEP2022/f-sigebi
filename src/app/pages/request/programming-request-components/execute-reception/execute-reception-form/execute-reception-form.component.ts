@@ -509,59 +509,62 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   }
 
   filterStatusTrans(data: IGoodProgramming[]) {
-    this.formLoadingTrans = true;
     const _data: any[] = [];
     const filterData = data.filter(item => {
       return item.status == 'EN_TRANSPORTABLE';
     });
 
-    const formData = filterData.forEach(items => {
-      this.params.getValue()['filter.id'] = items.goodId;
-      this.goodService.getAll(this.params.getValue()).subscribe({
-        next: response => {
-          _data.push(response.data[0]);
+    if (filterData.length != 0) {
+      filterData.forEach(items => {
+        this.params.getValue()['filter.id'] = items.goodId;
+        this.goodService.getAll(this.params.getValue()).subscribe({
+          next: response => {
+            _data.push(response.data[0]);
 
-          this.goodsTransportable.clear();
-          _data.forEach(item => {
-            if (item.physicalStatus == 1) {
-              item.physicalStatusName = 'BUENO';
-            } else if (item.physicalStatus == 2) {
-              item.physicalStatusName = 'MALO';
-            }
-            if (item.stateConservation == 1) {
-              item.stateConservationName = 'BUENO';
-            } else if (item.stateConservation == 2) {
-              item.stateConservationName = 'MALO';
-            }
-            this.goodData = item;
-            const form = this.fb.group({
-              id: [item?.id],
-              goodId: [item?.goodId],
-              uniqueKey: [item?.uniqueKey],
-              fileNumber: [item?.fileNumber],
-              goodDescription: [item?.goodDescription],
-              quantity: [item?.quantity],
-              unitMeasure: [item?.unitMeasure],
-              descriptionGoodSae: [item?.descriptionGoodSae],
-              quantitySae: [item?.quantitySae],
-              saeMeasureUnit: [item?.saeMeasureUnit],
-              physicalStatus: [item?.physicalStatus],
-              physicalStatusName: [item?.physicalStatusName],
-              saePhysicalState: [item?.saePhysicalState],
-              stateConservation: [item?.stateConservation],
-              stateConservationName: [item?.stateConservationName],
-              stateConservationSae: [item?.stateConservationSae],
-              regionalDelegationNumber: [item?.regionalDelegationNumber],
+            this.goodsTransportable.clear();
+            _data.forEach(item => {
+              if (item.physicalStatus == 1) {
+                item.physicalStatusName = 'BUENO';
+              } else if (item.physicalStatus == 2) {
+                item.physicalStatusName = 'MALO';
+              }
+              if (item.stateConservation == 1) {
+                item.stateConservationName = 'BUENO';
+              } else if (item.stateConservation == 2) {
+                item.stateConservationName = 'MALO';
+              }
+              this.goodData = item;
+              const form = this.fb.group({
+                id: [item?.id],
+                goodId: [item?.goodId],
+                uniqueKey: [item?.uniqueKey],
+                fileNumber: [item?.fileNumber],
+                goodDescription: [item?.goodDescription],
+                quantity: [item?.quantity],
+                unitMeasure: [item?.unitMeasure],
+                descriptionGoodSae: [item?.descriptionGoodSae],
+                quantitySae: [item?.quantitySae],
+                saeMeasureUnit: [item?.saeMeasureUnit],
+                physicalStatus: [item?.physicalStatus],
+                physicalStatusName: [item?.physicalStatusName],
+                saePhysicalState: [item?.saePhysicalState],
+                stateConservation: [item?.stateConservation],
+                stateConservationName: [item?.stateConservationName],
+                stateConservationSae: [item?.stateConservationSae],
+                regionalDelegationNumber: [item?.regionalDelegationNumber],
+              });
+              this.goodsTransportable.push(form);
+              this.formLoadingTrans = false;
             });
-            this.goodsTransportable.push(form);
+          },
+          error: error => {
             this.formLoadingTrans = false;
-          });
-        },
-        error: error => {
-          this.formLoadingTrans = false;
-        },
+          },
+        });
       });
-    });
+    } else {
+      this.formLoadingTrans = false;
+    }
   }
 
   filterStatusReception(data: IGoodProgramming[]) {

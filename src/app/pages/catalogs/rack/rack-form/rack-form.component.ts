@@ -2,13 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
+import { BatchService } from 'src/app/core/services/catalogs/batch.service';
 import { RackService } from 'src/app/core/services/catalogs/rack.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { ListParams } from '../../../../common/repository/interfaces/list-params';
 import { IRack } from '../../../../core/models/catalogs/rack.model';
 import { DefaultSelect } from '../../../../shared/components/select/default-select';
-import { BatchService } from 'src/app/core/services/catalogs/batch.service';
 
 @Component({
   selector: 'app-rack-form',
@@ -53,14 +53,22 @@ export class RackFormComponent extends BasePage implements OnInit {
       console.log(this.rack);
       this.edit = true;
       this.form.patchValue(this.rack);
-      this.form.controls['idWarehouse'].setValue(this.rack.idWarehouse.idWarehouse);
+      this.form.controls['idWarehouse'].setValue(
+        this.rack.idWarehouse.idWarehouse
+      );
       this.form.controls['idBatch'].setValue(this.rack.idBatch.id);
-      this.getWarehouse(new ListParams, this.form.controls['idWarehouse'].value.toString());
-      this.getBatch(new ListParams, this.form.controls['idBatch'].value.toString());
+      this.getWarehouse(
+        new ListParams(),
+        this.form.controls['idWarehouse'].value.toString()
+      );
+      this.getBatch(
+        new ListParams(),
+        this.form.controls['idBatch'].value.toString()
+      );
       this.form.controls['id'].disable();
     }
     this.form.controls['idWarehouse'].disable();
-    this.getBatch(new ListParams);
+    this.getBatch(new ListParams());
   }
 
   getData(params: ListParams) {
@@ -102,7 +110,7 @@ export class RackFormComponent extends BasePage implements OnInit {
   public searchWarehouse(data: any) {
     console.log(data);
     // this.getWarehouse(new ListParams, data.numStore.idWarehouse);
-    const params = new ListParams;
+    const params = new ListParams();
     params['filter.idWarehouse'] = data.numStore.idWarehouse;
     this.rackService.getWarehouse(params).subscribe({
       next: (types: any) => {

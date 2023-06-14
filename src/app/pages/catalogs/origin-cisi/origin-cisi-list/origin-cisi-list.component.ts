@@ -1,18 +1,18 @@
-import { BehaviorSubject, takeUntil } from 'rxjs';
 import { Component, OnInit } from '@angular/core';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 
-import { BasePage } from 'src/app/core/shared/base-page';
-import { BsModalService } from 'ngx-bootstrap/modal';
-import { IOriginCisi } from 'src/app/core/models/catalogs/origin-cisi.model';
 import { LocalDataSource } from 'ng2-smart-table';
+import { BsModalService } from 'ngx-bootstrap/modal';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
-import { ORIGIN_CISI_COLUMNS } from './origin-cisi-columns';
+import { IOriginCisi } from 'src/app/core/models/catalogs/origin-cisi.model';
 import { OiriginCisiService } from 'src/app/core/services/catalogs/origin-cisi.service';
+import { BasePage } from 'src/app/core/shared/base-page';
 import { OrignCisiFormComponent } from '../orign-cisi-form/orign-cisi-form.component';
+import { ORIGIN_CISI_COLUMNS } from './origin-cisi-columns';
 
 @Component({
   selector: 'app-origin-cisi-list',
