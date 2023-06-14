@@ -324,6 +324,8 @@ export class RelatedDocumentsRelationComponent
     tipoTexto: new FormControl(''),
     /**@descripcion no_expediente */
     proceedingsNumber: new FormControl(''),
+    /**@description nom_pers_ext*/
+    nomPersExt: new FormControl(''),
   });
 
   formVariables = new FormGroup({
@@ -930,13 +932,13 @@ export class RelatedDocumentsRelationComponent
             userAndName: mJobManagement.sender,
           } as any,
           addressee:
-            mJobManagement.jobType == 'INTERNO'
-              ? {
-                  user: mJobManagement.addressee,
-                  name: null,
-                  userAndName: mJobManagement.addressee,
-                }
-              : mJobManagement.addressee,
+            mJobManagement.jobType == 'INTERNO' || mJobManagement?.addressee
+              ? ({
+                  usuario: mJobManagement.addressee,
+                  nombre: null,
+                  userAndName: mJobManagement.addressee as any,
+                } as any)
+              : null,
         });
         if (this.formJobManagement.value.statusOf === 'ENVIADO') {
           console.log('ENVIADO');
@@ -975,7 +977,16 @@ export class RelatedDocumentsRelationComponent
           const params = new ListParams();
           params.limit = 1;
           params['search'] = mJobManagement.addressee;
-          this.getSenderByDetail(params);
+          this.mJobManagementService.getRegAddressee(params).subscribe(
+            data => {
+              let res = data.data[0];
+              this.formJobManagement.get('addressee').setValue({
+                ...res,
+                userAndName: res.usuario + ' - ' + res.nombre,
+              } as any);
+            },
+            () => {}
+          );
         }
 
         if (mJobManagement.managementNumber) {
@@ -1863,7 +1874,7 @@ export class RelatedDocumentsRelationComponent
     params['remitente'] = senderUser;
     this.mJobManagementService.getRegAddressee(params).subscribe(
       data => {
-        console.log({ addressee: data });
+        // console.log({ addressee: data });
         let result = data.data.map(item => {
           return {
             ...item,
@@ -2695,7 +2706,7 @@ export class RelatedDocumentsRelationComponent
     }
 
     if (values.jobType == 'EXTERNO') {
-      if (!values.addressee) {
+      if (!values.nomPersExt) {
         this.alert('warning', '', 'Debe especificar el DESTINATARIO EXTERNO');
         return;
       }
@@ -2751,7 +2762,7 @@ export class RelatedDocumentsRelationComponent
         if (checkText == this.se_refiere_a.B) {
           this.pupAddAnyGood();
         }
-        this.commit();
+        await this.commit();
       }
 
       if (
@@ -2770,7 +2781,7 @@ export class RelatedDocumentsRelationComponent
         if (checkText == this.se_refiere_a.B && counter == 0) {
           this.pupAddAnyGood();
         }
-        this.commit();
+        await this.commit();
       }
 
       this.pupShowReport();
