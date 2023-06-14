@@ -68,6 +68,7 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
   protected abstract departmentService: DepartamentService;
   protected abstract svLegalOpinionsOfficeService: LegalOpinionsOfficeService;
   protected abstract authService: AuthService;
+  // abstract origin: string;
   abstract formVariables: FormGroup<{
     b: FormControl;
     d: FormControl;
@@ -509,11 +510,11 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
     const params = {
       // PARAMFORM: 'NO',
       // P_FIRMA: 'S',
-      PARAMFORM: 'NO',
+      // PARAMFORM: 'NO',
       NO_OF_GES: this.formJobManagement.value.managementNumber,
-      TIPO_OF: this.formJobManagement.value.jobType,
-      VOLANTE: this.formNotification.value.wheelNumber,
-      EXP: this.formNotification.value.expedientNumber,
+      // TIPO_OF: this.formJobManagement.value.jobType,
+      // VOLANTE: this.formNotification.value.wheelNumber,
+      // EXP: this.formNotification.value.expedientNumber,
     };
 
     let nameReport = 'RGEROFGESTION';
@@ -941,6 +942,7 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
   }
 
   async onClickBtnSend() {
+    console.log('onClickBtnSend');
     const values = this.formJobManagement.value;
     if (values.statusOf == 'ENVIADO') {
       //TODO: pup_act_gestion
@@ -972,12 +974,13 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
         this.formJobManagement.get('cveManagement').setValue(key);
       }
       const userInfo = await this.getUserInfo();
-      this.pupSearchNumber(userInfo.delegationNumber);
+      await this.pupSearchNumber(userInfo.delegationNumber);
       this.formJobManagement.get('statusOf').setValue('ENVIADO');
       //TODO: pup_act_gestion
       //TODO: Guardar m_job_gestion
       this.commit();
       this.pupShowReport();
+      this.formJobManagement.disable();
     }
   }
 

@@ -27,6 +27,7 @@ export class DateCellComponent
   @Input() rowData: any;
   @Input() label: string;
   @Input() disabled: boolean = false;
+  @Input() minDate: Date = null;
   @Output() inputChange = new EventEmitter<{
     row: any;
     value: Date;
