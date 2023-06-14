@@ -25,6 +25,10 @@ export class ReceptionGoodService extends HttpService {
     return this.get(this.receiptRoute, params);
   }
 
+  deleteReceipt(formData: Object) {
+    return this.delete(this.receiptRoute, formData);
+  }
+
   getReceptionGoods(params: ListParams) {
     return this.get(this.receiptGuardGoods, params);
   }
