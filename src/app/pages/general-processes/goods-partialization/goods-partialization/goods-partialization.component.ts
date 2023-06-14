@@ -284,7 +284,7 @@ export class GoodsPartializationComponent extends BasePage implements OnInit {
   handleErrorGoHome(error: string) {
     this.alertInfo('error', 'Error', error).then(() => {
       if (this.goodNum || this.screen) {
-        this.router.navigate([HOME_DEFAULT]);
+        //this.router.navigate([HOME_DEFAULT]);
       } else {
         this.controls.bien.reset();
         this.goodDescriptionCtrl.reset();
@@ -335,12 +335,12 @@ export class GoodsPartializationComponent extends BasePage implements OnInit {
   }
 
   partializaGood() {
-    const { bien, en, y, isNume, originalQuantity, originalImport } =
+    const { bien, en, y, isNume, originalQuantity, original } =
       this.form.getRawValue();
     const body = {
       parGood: bien,
       tiValue1: en,
-      tiValueOrigin: originalImport,
+      tiValueOrigin: original,
       diEsNumerary: isNume ? 'S' : 'N',
       diAmountOriginal: originalQuantity,
       tiValue2: y,
