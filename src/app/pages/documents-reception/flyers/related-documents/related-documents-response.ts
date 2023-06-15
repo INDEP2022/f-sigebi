@@ -61,6 +61,7 @@ export abstract class RelateDocumentsResponse extends BasePage {
   protected abstract svLegalOpinionsOfficeService: LegalOpinionsOfficeService;
   protected abstract authService: AuthService;
   abstract formVariables: FormGroup<{
+    dictaminacion: FormControl;
     b: FormControl;
     d: FormControl;
     dictamen: FormControl;
@@ -1078,12 +1079,12 @@ export abstract class RelateDocumentsResponse extends BasePage {
   sendFunction_ObtainKeyOffice(params: Object): Observable<any> {
     return this.msOfficeManagementService
       .ObtainKeyOffice(params)
-      .pipe(map(x => x.data));
+      .pipe(map(x => x));
   }
   sendFunction_pufGenerateKey(params: IPufGenerateKey): Observable<any> {
-    return this.dictationService.pufGenerateKey(params).pipe(map(x => x.data));
+    return this.dictationService.pufGenerateKey(params).pipe(map(x => x));
   }
   sendFunction_pupStatusChange(params: IStatusChange): Observable<any> {
-    return this.dictationService.pupStatusChange(params).pipe(map(x => x.data));
+    return this.dictationService.pupStatusChange(params).pipe(map(x => x));
   }
 }
