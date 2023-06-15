@@ -46,4 +46,8 @@ export class MenageService extends HttpService {
     const route = `${MenageEndpoints.MenageManagement}?filter.noGood=$eq:${id}`;
     return this.get<IListResponse<IMenageDescription>>(route, params);
   }
+  getMenaje(params?: ListParams) {
+    const route = `${MenageEndpoints.MenageManagement}`;
+    return this.get<IListResponse<IMenageDescription>>(route, params);
+  }
 }
