@@ -1308,13 +1308,11 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
         console.log(res);
         if (res.data != null) {
           this.proceedingData = res.data;
-
           this.totalItemsNavigate = res.count;
 
           const dataRes = JSON.parse(JSON.stringify(res.data[0]));
           this.fillIncomeProceeding(dataRes, '');
           console.log(typeof dataRes);
-        } else {
           this.initialBool = false;
           this.loading = false;
           this.requireAct1();

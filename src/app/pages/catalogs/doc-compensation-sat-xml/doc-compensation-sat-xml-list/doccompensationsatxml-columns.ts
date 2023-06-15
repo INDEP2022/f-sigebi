@@ -5,7 +5,7 @@ export const COMPENSATION_COLUMNS = {
     sort: false,
   },
   idOficioSat: {
-    title: 'Id oficio sat',
+    title: 'No. oficina',
     type: 'string',
     sort: false,
   },

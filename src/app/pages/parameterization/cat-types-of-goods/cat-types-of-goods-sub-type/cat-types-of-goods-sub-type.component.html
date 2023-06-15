@@ -4,7 +4,7 @@
   </div>
   <div body>
     <form class="form-material" [formGroup]="typeGoodsForm">
-      <div class="row mt-4">
+      <div class="row">
         <div class="col-md-12">
           <form-field
             [control]="typeGoodsForm.get('nameSubtypeGood')"
@@ -15,6 +15,8 @@
               formControlName="nameSubtypeGood" />
           </form-field>
         </div>
+      </div>
+      <div class="row mt-5">
         <div class="col-md-12">
           <form-field
             [control]="typeGoodsForm.get('descriptionPhotography')"

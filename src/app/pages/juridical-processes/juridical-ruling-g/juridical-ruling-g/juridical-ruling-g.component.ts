@@ -53,6 +53,7 @@ import { GoodSssubtypeService } from 'src/app/core/services/catalogs/good-sssubt
 import { GoodSsubtypeService } from 'src/app/core/services/catalogs/good-ssubtype.service';
 import { GoodSubtypeService } from 'src/app/core/services/catalogs/good-subtype.service';
 import { GoodTypeService } from 'src/app/core/services/catalogs/good-type.service';
+import { AccountMovements } from 'src/app/core/services/ms-account-movements/account-movements.service';
 import { DictationXGood1Service } from 'src/app/core/services/ms-dictation/dictation-x-good1.service';
 import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
 import { OficialDictationService } from 'src/app/core/services/ms-dictation/oficial-dictation.service';
@@ -80,7 +81,6 @@ import { TempGood } from './dataTemp';
 import { DOCUMENTS_COLUMNS } from './documents-columns';
 import { ListdictumsComponent } from './listdictums/listdictums.component';
 import { GoodSubtype } from './model/good.model';
-
 /** LIBRERÍAS EXTERNAS IMPORTS */
 
 /** SERVICE IMPORTS */
@@ -382,7 +382,8 @@ export class JuridicalRulingGComponent
     private statusGoodService: StatusGoodService,
     private abandonmentsService: AbandonmentsDeclarationTradesService,
     private detailProceedingsDevolutionService: DetailProceedingsDevolutionService,
-    private jobDictumTextsService: JobDictumTextsService
+    private jobDictumTextsService: JobDictumTextsService,
+    private AccountMovements: AccountMovements
   ) {
     super();
     this.dictamen = {
@@ -1064,6 +1065,7 @@ export class JuridicalRulingGComponent
       },
       error: (error: any) => {
         console.log('DICT', error);
+        this.totalItems3 = 0;
         this.loading = false;
       },
     });
@@ -2401,10 +2403,23 @@ export class JuridicalRulingGComponent
       this.onLoadToast('warning', `Debe capturar la ${this.label}`);
       return;
     }
-
+    let typeDict = this.expedientesForm.get('tipoDictaminacion').value;
     if (this.goods.length > 0) {
       this.goods.forEach(_g => {
         console.log(_g);
+
+        if (
+          _g.di_es_numerario == 'S' &&
+          _g.di_esta_conciliado == 'N' &&
+          typeDict
+        ) {
+          this.onLoadToast(
+            'warning',
+            `El numerario no está conciliado`,
+            `Nro. Bien: ${_g.id}`
+          );
+          return;
+        }
 
         if (_g.est_disponible == 'S' && _g.di_disponible == 'S') {
           _g.est_disponible = 'N';
@@ -2493,7 +2508,11 @@ export class JuridicalRulingGComponent
     //if (this.bienes.DI_ES_NUMERARIO == 'S' this.bienes.DI_ESTA_CONCILIADO == 'N' AND: this.expedientesForm.get('tipoDictaminacion').value == 'PROCEDENCIA')
     //   this.onLoadToast('error', 'El numerario no esta conciliado')
     //   return
-
+    console.log(
+      "== 'PROCEDENCIA'",
+      this.expedientesForm.get('tipoDictaminacion').value
+    );
+    let typeDict = this.expedientesForm.get('tipoDictaminacion').value;
     if (this.selectedGooods.length > 0) {
       this.selectedGooods.forEach((good: any) => {
         if (!this.goodsValid.some(v => v === good)) {
@@ -2514,12 +2533,15 @@ export class JuridicalRulingGComponent
           } else if (
             this.goods[indexGood].di_es_numerario == 'S' &&
             this.goods[indexGood].di_esta_conciliado == 'N' &&
-            this.dictaminacionesForm.get('tipoDictaminacion').value ==
-              'PROCEDENCIA'
+            typeDict
           ) {
             this.onLoadToast('warning', 'El numerario no está conciliado', '');
             return;
           }
+          // if (this.goods[indexGood].fa_concilia_bien == 'S') {
+          //   this.onLoadToast('warning', 'El numerario no está conciliado', '');
+          //   return;
+          // }
 
           // IF: bienes.DI_ES_NUMERARIO = 'S' AND: bienes.DI_ESTA_CONCILIADO = 'N' AND: VARIABLES.TIPO_DICTA = 'PROCEDENCIA' THEN
           // LIP_MENSAJE('El numerario no está conciliado', 'S');
@@ -2881,6 +2903,62 @@ export class JuridicalRulingGComponent
                   },
                 });
               });
+
+              if (
+                good.goodClassNumber == 62 ||
+                good.goodClassNumber == 1424 ||
+                good.goodClassNumber == 1426 ||
+                good.goodClassNumber == 1590
+              ) {
+                good.di_es_numerario = 'S';
+                good.di_esta_conciliado = 'N';
+
+                console.log('AQUI');
+                let vf_fecha: any = '';
+                const movimientoCuentas = await this.getMovimientoCuentas(
+                  good.id
+                );
+                console.log('movimientoCuentas', movimientoCuentas);
+                if (movimientoCuentas != null) {
+                  good.di_esta_conciliado = 'S';
+                }
+
+                if (good.di_esta_conciliado == 'N') {
+                  const cadena1 = good.val5 ? good.val5.indexOf('/') : 0;
+                  if (cadena1 > 0) {
+                    vf_fecha = this.datePipe.transform(good.val5, 'yyyy/MM/dd');
+                  } else {
+                    const cadena2 = good.val5 ? good.val5.indexOf('-') : 0;
+
+                    if (cadena2 > 0) {
+                      vf_fecha = this.datePipe.transform(
+                        good.val5,
+                        'yyyy-MM-dd'
+                      );
+                    } else {
+                      vf_fecha = good.val5;
+                    }
+                  }
+
+                  let obj = {
+                    goodNumber: good.id ? Number(good.id) : null,
+                    proceedingNumber: good.fileNumber,
+                    cveCurrency: good.val1 ? good.val1 : null,
+                    cveBank: good.val4 ? good.val4 : null,
+                    cveAccount: good.val6 ? good.val6 : null,
+                    deposit: good.val2 ? Number(good.val2) : null,
+                    dateMovement: vf_fecha,
+                    updates: 'S',
+                  };
+                  console.log('obj', obj);
+                  const faConciles: any = await this.getFaConciles(obj);
+                  console.log('faConciles', faConciles);
+                  good.di_esta_conciliado = faConciles;
+                }
+              } else {
+                good.di_es_numerario = 'N';
+                good.di_esta_conciliado = 'N';
+              }
             });
 
             this.goods = data;
@@ -2901,7 +2979,7 @@ export class JuridicalRulingGComponent
   }
 
   onLoadWithClass() {
-    this.formLoading = true;
+    // this.formLoading = true;
     this.goodServices
       .getAllFilter(this.filter1.getValue().getParams())
       .subscribe({
@@ -2912,7 +2990,7 @@ export class JuridicalRulingGComponent
             if (index == 0)
               this.desc_estatus_good = good.statusDetails.descriptionStatus;
             good.di_disponible = 'S';
-            const resp = await new Promise((resolve, reject) => {
+            const resp = await new Promise(async (resolve, reject) => {
               const body = {
                 pGoodNumber: good.id,
                 pClasifGoodNumber: good.goodClassNumber,
@@ -2941,6 +3019,56 @@ export class JuridicalRulingGComponent
                   console.log('fallo');
                 },
               });
+
+              // if (good.goodClassNumber == 62 || good.goodClassNumber == 1424 ||
+              //   good.goodClassNumber == 1426 || good.goodClassNumber == 1590) {
+              //   good.di_es_numerario = 'S';
+              //   good.di_esta_conciliado = 'N';
+
+              //   console.log("AQUI")
+              //   let vf_fecha: any = '';
+              //   const movimientoCuentas = await this.getMovimientoCuentas(good.id)
+              //   console.log("movimientoCuentas", movimientoCuentas)
+              //   if (movimientoCuentas != null) {
+              //     good.di_esta_conciliado = 'S';
+              //   }
+
+              //   if (good.di_esta_conciliado == 'N') {
+
+              //     const cadena1 = good.val5 ? good.val5.indexOf('/') : 0;
+              //     if (cadena1 > 0) {
+              //       vf_fecha = this.datePipe.transform(good.val5, 'yyyy/MM/dd');;
+              //     } else {
+
+              //       const cadena2 = good.val5 ? good.val5.indexOf('-') : 0;
+
+              //       if (cadena2 > 0) {
+              //         vf_fecha = this.datePipe.transform(good.val5, 'yyyy-MM-dd');
+              //       } else {
+              //         vf_fecha = good.val5;
+              //       }
+              //     }
+
+              //     let obj = {
+              //       goodNumber: (good.id) ? Number(good.id) : null,
+              //       proceedingNumber: good.fileNumber,
+              //       cveCurrency: good.val1 ? good.val1 : null,
+              //       cveBank: good.val4 ? good.val4 : null,
+              //       cveAccount: good.val6 ? good.val6 : null,
+              //       deposit: (good.val2) ? Number(good.val2) : null,
+              //       dateMovement: vf_fecha,
+              //       updates: 'S',
+              //     };
+              //     console.log("obj", obj)
+              //     const faConciles: any = await this.getFaConciles(obj);
+              //     console.log("faConciles", faConciles)
+              //     good.di_esta_conciliado = faConciles;
+              //   }
+
+              // } else {
+              //   good.di_es_numerario = 'N';
+              //   good.di_esta_conciliado = 'N';
+              // }
             });
           });
 
@@ -3093,11 +3221,6 @@ export class JuridicalRulingGComponent
 
             if (dictamenXGood1 == null) {
               good['goodDictaminado'] = false;
-
-              // if (dictamenXGood1.ofDictNumber == this.dictamen.id) {
-              //   // arr.push(good);
-              //   // arrD.push(dictamenXGood1);
-              // }
             } else {
               good['goodDictaminado'] = true;
             }
@@ -3112,7 +3235,9 @@ export class JuridicalRulingGComponent
                   this.expedientesForm.get('tipoDictaminacion').value,
                 pIdentity: good.identifier,
                 pVcScreem: 'FACTJURDICTAMASG',
-                pDiDescStatus: good.estatus.descriptionStatus ?? '',
+                pDiDescStatus: good.estatus
+                  ? good.estatus.descriptionStatus
+                  : '',
                 pProccessExtDom: good.extDomProcess,
               };
 
@@ -3132,36 +3257,130 @@ export class JuridicalRulingGComponent
               });
             });
 
-            if ([62, 1424, 1426, 1590].includes(good.goodClassNumber)) {
+            if (
+              good.goodClassNumber == 62 ||
+              good.goodClassNumber == 1424 ||
+              good.goodClassNumber == 1426 ||
+              good.goodClassNumber == 1590
+            ) {
               good.di_es_numerario = 'S';
               good.di_esta_conciliado = 'N';
 
-              await new Promise((resolve, reject) => {
-                const body = {
-                  pGoodNumber: good.id,
-                  pExpendientNumber: good.fileNumber,
-                  pVal1: good.val1 ?? '',
-                  pVal2: good.val2 ?? '',
-                  pVal4: good.val4 ?? '',
-                  pVal5: good.val5 ?? '',
-                  pVal6: good.val6 ?? '',
-                };
+              console.log('AQUI');
+              let vf_fecha: any = '';
+              const movimientoCuentas = await this.getMovimientoCuentas(
+                good.id
+              );
+              console.log('movimientoCuentas', movimientoCuentas);
+              if (movimientoCuentas != null) {
+                good.di_esta_conciliado = 'S';
+              }
 
-                this.serviceGood.dictationConcilation(body).subscribe({
-                  next: state => {
-                    good.di_esta_conciliado = 'S';
-                    resolve(state);
-                  },
-                  error: () => {
-                    good.di_esta_conciliado = 'N';
-                    resolve(null);
-                  },
-                });
-              });
+              if (good.di_esta_conciliado == 'N') {
+                const cadena1 = good.val5 ? good.val5.indexOf('/') : 0;
+                if (cadena1 > 0) {
+                  vf_fecha = this.datePipe.transform(good.val5, 'yyyy/MM/dd');
+                } else {
+                  const cadena2 = good.val5 ? good.val5.indexOf('-') : 0;
+
+                  if (cadena2 > 0) {
+                    vf_fecha = this.datePipe.transform(good.val5, 'yyyy-MM-dd');
+                  } else {
+                    vf_fecha = good.val5;
+                  }
+                }
+
+                let obj = {
+                  goodNumber: good.id ? Number(good.id) : null,
+                  proceedingNumber: good.fileNumber,
+                  cveCurrency: good.val1 ? good.val1 : null,
+                  cveBank: good.val4 ? good.val4 : null,
+                  cveAccount: good.val6 ? good.val6 : null,
+                  deposit: good.val2 ? Number(good.val2) : null,
+                  dateMovement: vf_fecha,
+                  updates: 'S',
+                };
+                console.log('obj', obj);
+                const faConciles: any = await this.getFaConciles(obj);
+                console.log('faConciles', faConciles);
+                good.di_esta_conciliado = faConciles;
+              }
             } else {
               good.di_es_numerario = 'N';
               good.di_esta_conciliado = 'N';
             }
+            // if ([62, 1424, 1426, 1590].includes(good.goodClassNumber)) {
+            //   // good.di_es_numerario = 'S';
+            //   // good.di_esta_conciliado = 'N';
+
+            //   // let vf_fecha: any = '';
+            //   // const movimientoCuentas = await this.getMovimientoCuentas(good.id)
+            //   // console.log("movimientoCuentas", movimientoCuentas)
+            //   // if (movimientoCuentas != null) {
+            //   //   good.di_esta_conciliado = 'S';
+            //   // }
+
+            //   // if (good.di_esta_conciliado == 'N') {
+
+            //   //   const cadena1 = good.val5 ? good.val5.indexOf('/') : 0;
+            //   //   if (cadena1 > 0) {
+            //   //     vf_fecha = this.datePipe.transform(good.val5, 'dd/MM/yyyy');;
+            //   //   } else {
+
+            //   //     const cadena2 = good.val5 ? good.val5.indexOf('-') : 0;
+
+            //   //     if (cadena2 > 0) {
+            //   //       vf_fecha = this.datePipe.transform(good.val5, 'dd-MM-yyyy');
+            //   //     } else {
+            //   //       vf_fecha = good.val5;
+            //   //     }
+            //   //   }
+
+            //   //   let obj = {
+            //   //     goodNumber: good.id,
+            //   //     proceedingNumber: good.fileNumber,
+            //   //     cveCurrency: good.val1 ? good.val1 : '',
+            //   //     cveBank: good.val4 ? good.val4 : '',
+            //   //     cveAccount: good.val6 ? good.val6 : '',
+            //   //     deposit: good.val2 ? good.val2 : '',
+            //   //     dateMovement: vf_fecha,
+            //   //     updates: 'S',
+            //   //   };
+            //   //   console.log("obj", obj)
+            //   //   const faConciles: any = await this.getFaConciles(obj);
+            //   //   good.di_esta_conciliado = faConciles;
+            //   // }
+
+            //   // good['fa_concilia_bien'] = faConciles;
+
+            //   // await new Promise((resolve, reject) => {
+            //   //   const body = {
+            //   //     pGoodNumber: good.id,
+            //   //     pExpendientNumber: good.fileNumber,
+            //   //     pVal1: good.val1 ?? '',
+            //   //     pVal2: good.val2 ?? '',
+            //   //     pVal4: good.val4 ?? '',
+            //   //     pVal5: good.val5 ?? '',
+            //   //     pVal6: good.val6 ?? '',
+            //   //   };
+
+            //   //   this.serviceGood.dictationConcilation(body).subscribe({
+            //   //     next: (state: any) => {
+            //   //       console.log('state', state);
+            //   //       good.di_esta_conciliado = state.EST_DISPONIBLE;
+            //   //       resolve(state);
+            //   //     },
+            //   //     error: (error: any) => {
+            //   //       console.log('errrorrr', error);
+            //   //       good.di_esta_conciliado = 'N';
+            //   //       resolve(null);
+            //   //     },
+            //   //   });
+            //   // });
+            // } else {
+            //   // good.di_es_numerario = 'N';
+            //   // good.di_esta_conciliado = 'N';
+            // }
             // if (this.goodsValid.length > 0) {
             //   good.est_disponible = await this.getDictXGood(good);
             // }
@@ -3186,6 +3405,25 @@ export class JuridicalRulingGComponent
       });
   }
 
+  getMovimientoCuentas(id: any) {
+    const params = new ListParams();
+    params['filter.numberGood'] = `$eq:${id}`;
+    return new Promise((resolve, reject) => {
+      this.AccountMovements.getAccountMovementsGood(params).subscribe({
+        next: (resp: any) => {
+          console.log('getMovimientoCuentas', resp);
+          const data = resp.data[0];
+          resolve(data);
+          this.loading = false;
+        },
+        error: error => {
+          resolve(null);
+          this.loading = false;
+        },
+      });
+    });
+  }
+
   private async getDictXGood(good: any) {
     for (let i = 0; i < this.goodsValid.length; i++) {
       if (good.id == this.goodsValid[i].id) {
@@ -3195,6 +3433,25 @@ export class JuridicalRulingGComponent
     return good.est_disponible;
   }
 
+  getFaConciles(data: any) {
+    return new Promise((resolve, reject) => {
+      this.AccountMovements.geFaReconcilesGood(data).subscribe({
+        next: (resp: any) => {
+          console.log('obj2222', resp);
+          // console.log('DICTAMINACION X BIEN', resp.data);
+          const data = resp.data[0];
+          resolve(data.fa_concilia_bien);
+          this.loading = false;
+        },
+        error: error => {
+          console.log('errorerrorerrorerror', error);
+          // console.log('ERROR DICTAMINACION X BIEN', error.error.message);
+          resolve('N');
+          this.loading = false;
+        },
+      });
+    });
+  }
   getDictaXGood(id: any) {
     const params = new ListParams();
     // if (filter == null) {
@@ -3283,6 +3540,7 @@ export class JuridicalRulingGComponent
         console.log('Documentos, ', resp);
       },
       error: error => {
+        this.totalItems2 = 0;
         this.documentsDictumXStateMList = [];
         console.log('No hay respuesta ', error);
       },
@@ -3841,6 +4099,7 @@ export class JuridicalRulingGComponent
           this.cveOficio.nativeElement.focus();
           this.buttonApr = false;
           for (let i = 0; i < this.documents.length; i++) {
+            console.log('DSADS', this.documents[i]);
             await this.createDocumentDictum(this.documents[i]);
           }
           Swal.fire('Dictamen creado correctamente', '', 'success').then(() => {
@@ -4157,16 +4416,16 @@ export class JuridicalRulingGComponent
           stateNumber: this.goodsValid[i].id,
           key: document.cveDocument,
           typeDictum: this.expedientesForm.get('tipoDictaminacion').value,
-          dateReceipt: document.date,
+          dateReceipt: this.datePipe.transform(document.date, 'yyyy-MM-dd'),
           userReceipt: '',
-          insertionDate: document.dae,
+          insertionDate: document.date,
           userInsertion: token.preferred_username,
           numRegister: null,
           officialNumber: this.dictamen.id,
           notificationDate: null,
           secureKey: null,
         };
-
+        console.log('OBJB', obj);
         this.documentsDictumStatetMService.create(obj).subscribe({
           next: resp => {
             console.log('CREADO DOC', resp);
@@ -4218,7 +4477,9 @@ export class JuridicalRulingGComponent
         console.log('CREADO', resp);
       },
       error: error => {
+        this.alert('error', 'Error al crear dictamenXbien1', '');
         console.log('ERROR', error.error);
+        return;
       },
     });
   }
@@ -4306,6 +4567,7 @@ export class JuridicalRulingGComponent
     this.buttonDeleteDisabled = false;
     this.totalItems3 = 0;
     this.totalItems2 = 0;
+    this.getDocumentDicXStateM(null);
     this.onTypesChange(obj);
   }
 
