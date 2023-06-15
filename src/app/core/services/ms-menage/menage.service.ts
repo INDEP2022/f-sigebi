@@ -3,6 +3,7 @@ import { Observable } from 'rxjs/internal/Observable';
 import { MenageEndpoints } from 'src/app/common/constants/endpoints/ms-menage';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
+
 import { IListResponse } from '../../interfaces/list-response.interface';
 import {
   IMenageDescription,
@@ -41,9 +42,9 @@ export class MenageService extends HttpService {
     const route = `${MenageEndpoints.MenageManagement}/${id}`;
     return this.delete(route);
   }
-  getByGood(id: string | number) {
+  getByGood(id: string | number, params?: ListParams) {
     const route = `${MenageEndpoints.MenageManagement}?filter.noGood=$eq:${id}`;
-    return this.get<IListResponse<IMenageDescription>>(route);
+    return this.get<IListResponse<IMenageDescription>>(route, params);
   }
   getMenaje(params?: ListParams) {
     const route = `${MenageEndpoints.MenageManagement}`;

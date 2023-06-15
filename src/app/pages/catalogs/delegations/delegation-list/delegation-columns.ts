@@ -10,7 +10,7 @@ export const DELEGATION_COLUMS = {
     sort: false,
   },
   noRegister: {
-    title: 'No Registro',
+    title: 'No. Registro',
     type: 'number',
     sort: false,
   },

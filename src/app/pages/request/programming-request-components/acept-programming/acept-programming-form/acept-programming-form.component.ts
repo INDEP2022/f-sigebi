@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import * as moment from 'moment';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
@@ -152,7 +153,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.getProgrammingId();
     const user: any = this.authService.decodeToken();
-    console.log('user', user);
+
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getUsersProgramming());
@@ -167,7 +168,8 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
     this.programmingService
       .getProgrammingId(this.programmingId)
       .subscribe(data => {
-        console.log('programming', data);
+        data.startDate = moment(data.startDate).format('DD/MM/YYYY, h:mm:ss ');
+        data.endDate = moment(data.endDate).format('DD/MM/YYYY, h:mm:ss a');
         this.programming = data;
         this.idTransferent = data.tranferId;
         this.idStation = data.stationId;
@@ -205,9 +207,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
       next: response => {
         this.nameStation = response.data[0].stationName;
       },
-      error: error => {
-        console.log(error);
-      },
+      error: error => {},
     });
   }
 
@@ -215,7 +215,6 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
     this.paramsAuthority.getValue()['filter.idAuthority'] =
       this.programming.autorityId;
     this.paramsAuthority.getValue()['filter.idTransferer'] = this.idTransferent;
-    this.paramsAuthority.getValue()['filter.idStation'] = this.idStation;
 
     this.authorityService.getAll(this.paramsAuthority.getValue()).subscribe({
       next: response => {
@@ -285,7 +284,6 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
     config.initialState = {
       callback: (userInfo: IUser) => {
         if (userInfo) {
-          console.log('user', userInfo);
           this.openReport(userInfo);
         }
       },
@@ -360,7 +358,6 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
     this.programmingService
       .getGoodsProgramming(this.params.getValue())
       .subscribe(data => {
-        console.log('goods', data);
         this.filterStatusTrans(data.data);
         this.filterStatusGuard(data.data);
         this.filterStatusWarehouse(data.data);
@@ -519,7 +516,6 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
       emailSend: this.emails,
     };
 
-    console.log('dataEm', dataEmail);
     this.emailService
       .createEmailProgramming(JSON.stringify(dataEmail))
       .subscribe({
@@ -533,9 +529,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
           this.createTaskExecuteProgramming();
           this.createTaskFormalize();
         },
-        error: error => {
-          console.log(error);
-        },
+        error: error => {},
       });
   }
 
@@ -641,10 +635,8 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
       this.taskService.createTaskWitOrderService(body).subscribe({
         next: resp => {
           resolve(resp);
-          console.log('task', resp);
         },
         error: error => {
-          console.log(error);
           this.onLoadToast('error', 'Error', 'No se pudo crear la tarea');
           reject(false);
         },
@@ -658,9 +650,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
         next: response => {
           return resolve(response.description);
         },
-        error: error => {
-          console.log(error);
-        },
+        error: error => {},
       });
     });
   }

@@ -1,7 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { BehaviorSubject } from 'rxjs';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { IExpedient } from 'src/app/core/models/ms-expedient/expedient';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { IMenageWrite } from 'src/app/core/models/ms-menage/menage.model';
@@ -9,6 +7,10 @@ import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.s
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { MenageService } from 'src/app/core/services/ms-menage/menage.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { LocalDataSource } from 'ng2-smart-table';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
@@ -18,32 +20,10 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
   styles: [],
 })
 export class PropertyRegistrationComponent extends BasePage implements OnInit {
-  totalItems: number = 0;
-  params = new BehaviorSubject<ListParams>(new ListParams());
-
-  //Data Table
-
-  //Data Table bien padre
-  settings1 = {
-    ...this.settings,
-    actions: false,
-    columns: {
-      id: {
-        title: 'No Bien',
-        width: '10%',
-        sort: false,
-      },
-      description: {
-        title: 'Descripcion',
-        width: '40%',
-        sort: false,
-      },
-    },
-  };
-
-  /* goods: IGood[] = []; */
-  goods = new DefaultSelect<IGood>();
   menajes: IGood[] = [];
+  params = new BehaviorSubject<ListParams>(new ListParams());
+  totalItems: number = 0;
+  goods = new DefaultSelect<IGood>();
   expedient: IExpedient;
   numberGoodSelect: number;
   // property to know if I am looking for
@@ -54,6 +34,9 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
   //Reactive Forms
   form: FormGroup;
   formGood: FormGroup;
+  columnFilters: any = [];
+  idGoodValue: number;
+  data: LocalDataSource = new LocalDataSource();
 
   get numberFile() {
     return this.form.get('numberFile');
@@ -96,13 +79,12 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
     this.form.disable();
     this.formGood.disable();
     this.numberFile.enable();
+    this.data.onChanged().pipe(takeUntil(this.$unSubscribe)).subscribe();
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.searchGoodMenage(this.idGoodValue));
+    console.log(this.idGoodValue);
   }
-
-  /**
-   * @method: metodo para iniciar el formulario
-   * @author:  Alexander Alvarez
-   * @since: 27/09/2022
-   */
 
   private buildForm() {
     this.form = this.fb.group({
@@ -122,15 +104,14 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
     });
   }
 
-  searchExpedient() {
-    const numberFile = Number(this.numberFile.value);
+  searchExpedient(event: any) {
+    const numberFile = Number(event);
     this.expedientServices.getById(numberFile).subscribe({
       next: response => {
         this.expedient = response;
         this.causePenal.setValue(this.expedient.criminalCase);
         this.preliminaryInquiry.setValue(this.expedient.preliminaryInquiry);
         this.searchGoods(this.expedient.id);
-        /* this.onLoadToast('success', 'Encontrado', 'Expediente encontrado'); */
       },
       error: err => {
         console.log(err);
@@ -148,10 +129,12 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
 
   searchGoods(idExpedient: number | string) {
     this.goods = new DefaultSelect([], 0);
+    console.log(this.goods);
     this.goodServices
       .getByExpedient(idExpedient, this.params.getValue())
       .subscribe({
         next: response => {
+          console.log(this.goodSelect);
           this.goodSelect.enable();
           this.goods = new DefaultSelect(response.data, response.count);
         },
@@ -161,21 +144,21 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
       });
   }
 
+  //Función que trae la información luego de enviar el No Expediente
   searchGoodMenage(idGood: number) {
-    this.menajes = [];
+    this.idGoodValue = idGood;
     this.loading = true;
-    this.menageServices.getByGood(idGood).subscribe({
+    this.menajes = [];
+    this.menageServices.getByGood(idGood, this.params.getValue()).subscribe({
       next: response => {
         this.menajes = response.data.map(menage => {
           return menage.menajeDescription;
         });
         this.totalItems = response.count;
-        console.log(this.menajes);
         this.loading = false;
       },
       error: err => {
         this.loading = false;
-        console.log(err);
         this.onLoadToast('info', 'Información', err.error.message);
       },
     });
@@ -189,7 +172,6 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
     };
     this.menageServices.create(menaje).subscribe({
       next: respose => {
-        console.log(respose);
         this.searchGoodMenage(this.numberGoodSelect);
         this.onLoadToast(
           'success',
@@ -203,8 +185,8 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
       },
     });
   }
+
   addMenage(good: IGood) {
-    console.log(good);
     this.createMenage(this.numberGoodSelect, good.id);
   }
 
@@ -219,10 +201,10 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
       }
     });
   }
+
   delete(idGood: string | number) {
     this.menageServices.remove(idGood).subscribe({
       next: responde => {
-        console.log(responde);
         this.searchGoodMenage(this.numberGoodSelect);
         this.onLoadToast(
           'success',
@@ -231,7 +213,6 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
         );
       },
       error: err => {
-        console.log(err);
         this.onLoadToast(
           'error',
           'ERROR',
@@ -240,14 +221,18 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
       },
     });
   }
+
   cleandInfo() {
     this.form.reset();
     this.form.disable();
     this.formGood.disable();
     this.numberFile.enable();
+    this.goodSelect.enable();
     this.goods = new DefaultSelect([], 0);
     this.menajes = [];
+    this.numberGoodSelect = null;
   }
+
   showGoods() {
     this.addGood = !this.addGood;
     this.addGood

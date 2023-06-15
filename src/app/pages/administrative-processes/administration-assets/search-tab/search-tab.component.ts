@@ -123,4 +123,17 @@ export class SearchTabComponent extends BasePage implements OnInit {
         },
       });
   }
+  previousImage(): void {
+    console.log('Imagen anterior');
+    // if (this.currentImageIndex > 0) {
+    //   this.currentImageIndex--;
+    // }
+  }
+
+  nextImage(): void {
+    console.log('Imagen siguiente');
+    // if (this.currentImageIndex < this.images.length - 1) {
+    //   this.currentImageIndex++;
+    // }
+  }
 }

@@ -33,7 +33,7 @@ export class CheckboxImprocedentElementComponent<T = any>
   disabled: boolean;
   @ViewChild('box', { static: true }) box: ElementRef<HTMLInputElement>;
   @Input() value: boolean;
-  @Input() rowData: T;
+  @Input() rowData: T | any;
 
   @Output() toggle: EventEmitter<{ row: T; toggle: boolean }> =
     new EventEmitter();

@@ -200,6 +200,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
 
   //NAVEGACION DE ACTAS
   paramsActNavigate = new BehaviorSubject<ListParams>(new ListParams());
+  totalItemsNavigate: number = 0;
   newLimitparamsActNavigate = new FormControl(1);
 
   //NAVEGACION EN TABLA DE BIENES
@@ -217,6 +218,10 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
   folioEscaneo = 'folioEscaneo';
   cveScreen = 'FACTREFCANCELAR';
   nameReport = 'RGERGENSOLICDIGIT';
+
+  //IDs para Historico
+  idGood: number = null;
+  idGoodAct: number = null;
 
   act2Valid: boolean = false;
   adminSelect = new DefaultSelect();
@@ -320,20 +325,28 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
     this.paramsActNavigate
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(params => {
-        console.log('Sís');
-        console.log(this.paramsActNavigate);
-        console.log(this.paramsActNavigate.getValue().page);
-        console.log(this.proceedingData.length);
+        this.loading = true;
         this.dataGoodAct.load([]);
-        if (this.proceedingData.length > 0) {
-          this.loading = true;
-          const dataRes = JSON.parse(
-            JSON.stringify(
-              this.proceedingData[this.paramsActNavigate.getValue().page - 1]
-            )
-          );
-          this.fillIncomeProceeding(dataRes, 'nextProceeding');
-        }
+        this.clearInputs();
+        const paramsF = new FilterParams();
+        paramsF.page = params.page;
+        paramsF.limit = 1;
+        paramsF.addFilter('numFile', this.form.get('expediente').value);
+        paramsF.addFilter(
+          'typeProceedings',
+          'SUSPENSION,RECEPCAN',
+          SearchFilter.IN
+        );
+        this.serviceProcVal.getByFilter(paramsF.getParams()).subscribe(
+          res => {
+            console.log(res);
+            const dataRes = JSON.parse(JSON.stringify(res.data[0]));
+            this.fillIncomeProceeding(dataRes, '');
+          },
+          err => {
+            this.loading = false;
+          }
+        );
       });
 
     this.getDataUser();
@@ -903,6 +916,11 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
     this.labelActa = 'Cerrar acta';
     this.btnCSSAct = 'btn-primary';
 
+    //SETEAR EN UNO
+    const newParams = new ListParams();
+    newParams.limit = 1;
+    this.paramsActNavigate.next(newParams);
+
     const btn = document.getElementById('expedient-number');
 
     this.render.removeClass(btn, 'enabled');
@@ -1130,15 +1148,13 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
         this.form.get('acta2').setValue(dataRes.keysProceedings);
         this.form.get('direccion').setValue(dataRes.address);
         this.form.get('autoridadCancela').setValue(dataRes.witness1);
-        this.form
-          .get('fecElab')
-          .setValue(
-            new Date(
-              new Date(dataRes.elaborationDate).toLocaleString('en-US', {
-                timeZone: 'GMT',
-              })
-            )
-          );
+        this.form.get('fecElab').setValue(
+          new Date(
+            new Date(dataRes.elaborationDate).toLocaleString('en-US', {
+              timeZone: 'GMT',
+            })
+          )
+        );
         this.form
           .get('fecCierreActa')
           .setValue(addDays(new Date(dataRes.datePhysicalReception), 1));
@@ -1178,15 +1194,13 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
         this.form.get('acta2').setValue(dataRes.keysProceedings);
         this.form.get('direccion').setValue(dataRes.address);
         this.form.get('autoridadCancela').setValue(dataRes.witness1);
-        this.form
-          .get('fecElab')
-          .setValue(
-            new Date(
-              new Date(dataRes.elaborationDate).toLocaleString('en-US', {
-                timeZone: 'GMT',
-              })
-            )
-          );
+        this.form.get('fecElab').setValue(
+          new Date(
+            new Date(dataRes.elaborationDate).toLocaleString('en-US', {
+              timeZone: 'GMT',
+            })
+          )
+        );
         this.form
           .get('fecCierreActa')
           .setValue(addDays(new Date(dataRes.datePhysicalReception), 1));
@@ -1294,6 +1308,9 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
         console.log(res);
         if (res.data != null) {
           this.proceedingData = res.data;
+
+          this.totalItemsNavigate = res.count;
+
           const dataRes = JSON.parse(JSON.stringify(res.data[0]));
           this.fillIncomeProceeding(dataRes, '');
           console.log(typeof dataRes);
@@ -1472,10 +1489,19 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
     }
   }
 
-  goToHistorico() {
-    this.router.navigate([
-      '/pages/general-processes/historical-good-situation',
-    ]);
+  goToHistorico(site: string) {
+    localStorage.setItem('numberExpedient', this.numberExpedient);
+    if (site == 'generalGood' && this.idGood != null) {
+      this.router.navigate(
+        ['/pages/general-processes/historical-good-situation'],
+        { queryParams: { noBien: this.idGood } }
+      );
+    } else if (site == 'goodActa' && this.idGoodAct != null) {
+      this.router.navigate(
+        ['/pages/general-processes/historical-good-situation'],
+        { queryParams: { noBien: this.idGoodAct } }
+      );
+    }
   }
 
   //Select Rows
@@ -1486,8 +1512,8 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
     const resp = this.validateGood(data);
     console.log(resp);
     this.selectData = data;
+    this.idGood = data.goodId;
     this.statusGood('estatusPrueba', data);
-    /* this.form.get('estatusPrueba').setValue(data.goodStatus); */
   }
 
   deselectRow() {
@@ -1498,6 +1524,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
   selectRowGoodActa(e: any) {
     const { data } = e;
     console.log(data);
+    this.idGoodAct = data.good.goodId;
     this.selectActData = data;
     this.statusGood('estatusBienActa', data);
     /* this.form.get('estatusBienActa').setValue(data.goodStatus); */
@@ -1989,7 +2016,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                               datePhysicalReception: new Date(
                                 this.form.get('fecCierreActa').value
                               ).getTime(),
-                              captureDate: new Date().getTime(),
+                              captureDate: new Date(new Date()).getTime(),
                             };
                             this.serviceProcVal
                               .editProceeding(resData.id, modelEdit)

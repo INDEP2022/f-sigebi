@@ -40,4 +40,15 @@ export class OfficeManagementService extends HttpService {
       data
     );
   }
+
+  customPostTmpClasifGood(body: any) {
+    const route = OfficeManagementEndpoint.TmpClasifBienCustomPost;
+    return this.post(`${route}`, body);
+  }
+
+  //Elimina tablas de Bien_Oficio_Gestion, Docum_Oficio_Gestion,M_Oficio_Gestion,Copias_Gestion,
+  deleteJobGestion(body: any): Observable<any> {
+    const route = OfficeManagementEndpoint.DeleteJobGestion;
+    return this.post(`${route}`, body);
+  }
 }

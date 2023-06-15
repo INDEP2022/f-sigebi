@@ -10,11 +10,14 @@ import {
   IDictationCopies,
   IInitFormLegalOpinionOfficeBody,
   IInitFormLegalOpinionOfficeResponse,
+  IPufGenerateKey,
   IPupLaunchReport,
+  IStatusChange,
   ITmpDictationCreate,
   ITmpExpDesahogoB,
 } from '../../models/ms-dictation/dictation-model';
 import { IRTdictaAarusr } from '../../models/ms-dictation/r-tdicta-aarusr.model';
+
 @Injectable({
   providedIn: 'root',
 })
@@ -50,12 +53,20 @@ export class DictationService extends HttpService {
   getAllWithFilters(params?: any): Observable<IListResponse<IDictation>> {
     return this.get<IListResponse<IDictation>>(this.route.Dictation, params);
   }
+  getSeqOfGestio(params?: any): Observable<IListResponse<any>> {
+    const route = `${DictationEndpoints.GetSeqOfGestion}`;
+    return this.get<IListResponse<any>>(route, params);
+  }
 
   getById(body: {
     id: string | number;
     typeDict?: string;
   }): Observable<IDictation> {
     return this.get(this.route.Dictation, body);
+  }
+  getCount2(id: string | number): Observable<any> {
+    const route = `${DictationEndpoints.Count2}/${id}`;
+    return this.get<any>(route);
   }
 
   findByIds(body: {
@@ -64,7 +75,9 @@ export class DictationService extends HttpService {
   }): Observable<IDictation> {
     return this.post(this.route.FindByIds, body);
   }
-
+  getCount4(body: any) {
+    return this.post(this.route.Count4, body);
+  }
   create(body: IDictation) {
     return this.post(this.route.Dictation, body);
   }
@@ -338,6 +351,18 @@ export class DictationService extends HttpService {
     return this.post<IListResponse<any>>(
       DictationEndpoints.ApplicationFindOffficeNu,
       data
+    );
+  }
+  pufGenerateKey(params: IPufGenerateKey) {
+    return this.post<IListResponse<any>>(
+      DictationEndpoints.ApplicationPufGenerateKey,
+      params
+    );
+  }
+  pupStatusChange(params: IStatusChange) {
+    return this.post<IListResponse<any>>(
+      DictationEndpoints.ApplicationPupCambiaEstatus,
+      params
     );
   }
 }

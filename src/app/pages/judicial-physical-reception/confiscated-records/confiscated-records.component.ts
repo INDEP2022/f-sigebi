@@ -196,6 +196,10 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   //DOBLE CLICK
   lastClick: number = 0;
 
+  //IDs PARA STATUS
+  idGood: number = null;
+  idGoodAct: number = null;
+
   constructor(
     private fb: FormBuilder,
     private serviceGood: GoodService,
@@ -234,8 +238,6 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
       this.form.get('transfer').setValidators([transferenteAndAct('A')]);
     }
 
-    /* this.paramsActNavigate.valueasas98DAS41D65AS0D61AS98r4891♠74×549 */
-
     this.serviceRNomencla
       .getPhaseEdo(`date=${format(new Date(), 'yyyy-MM-dd')}`)
       .subscribe(res => {
@@ -249,11 +251,37 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         this.getGoodsFn();
       });
 
+    this.paramsDataGoodsAct
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(params => {
+        this.getGoodsActFn();
+      });
+
     this.paramsActNavigate
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(params => {
-        console.log(params);
+        this.loading = true;
         this.dataGoodAct.load([]);
+        this.clearInputs();
+        const paramsF = new FilterParams();
+        paramsF.page = params.page;
+        paramsF.limit = 1;
+        paramsF.addFilter('numFile', this.form.get('expediente').value);
+        paramsF.addFilter(
+          'typeProceedings',
+          'ENTREGA,DECOMISO',
+          SearchFilter.IN
+        ); //!Un in
+        this.serviceProcVal.getByFilter(paramsF.getParams()).subscribe(
+          res => {
+            console.log(res);
+            const dataRes = JSON.parse(JSON.stringify(res.data[0]));
+            this.fillIncomeProceeding(dataRes, '');
+          },
+          err => {
+            this.loading = false;
+          }
+        );
       });
 
     if (localStorage.getItem('numberExpedient')) {
@@ -537,6 +565,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   verifyDateAndFill() {
     let fecElab = new Date(this.form.get('fecElab').value);
     console.log(fecElab);
+    console.log(new Date());
     if (this.form.get('fecElab').value != null) {
       this.form.get('fecReception').setValue(new Date(fecElab));
       this.showFecReception = true;
@@ -1255,6 +1284,12 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     this.paramsActNavigate.next(new ListParams());
     this.paramsDataGoods.next(new ListParams());
     this.paramsDataGoodsAct.next(new ListParams());
+
+    this.idProceeding = null;
+    const newParams = new ListParams();
+    newParams.limit = 1;
+    this.paramsActNavigate.next(newParams);
+
     this.unsubscribe$.next();
 
     if (this.form.get('expediente').value != null) {
@@ -1657,15 +1692,13 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         this.form
           .get('fecEntBien')
           .setValue(addDays(new Date(dataRes.dateDeliveryGood), 1));
-        this.form
-          .get('fecElab')
-          .setValue(
-            new Date(
-              new Date(dataRes.elaborationDate).toLocaleString('en-US', {
-                timeZone: 'GMT',
-              })
-            )
-          );
+        this.form.get('fecElab').setValue(
+          new Date(
+            new Date(dataRes.elaborationDate).toLocaleString('en-US', {
+              timeZone: 'GMT',
+            })
+          )
+        );
 
         console.log({
           msg: 'Fecha ya guardada',
@@ -1714,15 +1747,13 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         this.form
           .get('fecEntBien')
           .setValue(addDays(new Date(dataRes.dateDeliveryGood), 1));
-        this.form
-          .get('fecElab')
-          .setValue(
-            new Date(
-              new Date(dataRes.elaborationDate).toLocaleString('en-US', {
-                timeZone: 'GMT',
-              })
-            )
-          );
+        this.form.get('fecElab').setValue(
+          new Date(
+            new Date(dataRes.elaborationDate).toLocaleString('en-US', {
+              timeZone: 'GMT',
+            })
+          )
+        );
         console.log({
           msg: 'Fecha ya guardada',
           data: this.form.get('fecElab').value,
@@ -1772,6 +1803,9 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     this.totalItemsDataGoods = 0;
     this.totalItemsDataGoodsAct = 0;
 
+    this.idProceeding = null;
+    this.numberExpedient = null;
+
     this.dataGoods.load([]);
     this.dataGoodAct.load([]);
 
@@ -1814,6 +1848,72 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     this.dataGoodAct.load(this.goodData);
     this.saveDataAct = [];
     this.act2Valid = false;
+  }
+
+  nextProceeding() {
+    this.loading = true;
+    this.unsubscribe$.next();
+    if (this.numberProceeding <= this.proceedingData.length - 1) {
+      this.numberProceeding += 1;
+      console.log(this.numberProceeding);
+      if (this.numberProceeding <= this.proceedingData.length - 1) {
+        const dataRes = JSON.parse(
+          JSON.stringify(this.proceedingData[this.numberProceeding])
+        );
+        this.clearInputs();
+        this.fillIncomeProceeding(dataRes, 'nextProceeding');
+      } else {
+        this.numberProceeding = 0;
+        const dataRes = JSON.parse(
+          JSON.stringify(this.proceedingData[this.numberProceeding])
+        );
+        this.clearInputs();
+        this.fillIncomeProceeding(dataRes, 'nextProceeding');
+      }
+    } else {
+      this.numberProceeding = 0;
+      const dataRes = JSON.parse(
+        JSON.stringify(this.proceedingData[this.numberProceeding])
+      );
+      this.fillIncomeProceeding(dataRes, 'nextProceeding');
+    }
+  }
+
+  prevProceeding() {
+    console.log(this.numberProceeding);
+    console.log(this.proceedingData.length);
+    this.loading = true;
+    this.unsubscribe$.complete();
+
+    /* this.prevProce = false;
+    this.nextProce = false; */
+    if (
+      this.numberProceeding <= this.proceedingData.length &&
+      this.numberProceeding > 0
+    ) {
+      this.numberProceeding -= 1;
+      console.log(this.numberProceeding);
+      if (this.numberProceeding <= this.proceedingData.length - 1) {
+        this.act2Valid = false;
+        this.newAct = true;
+        const dataRes = JSON.parse(
+          JSON.stringify(this.proceedingData[this.numberProceeding])
+        );
+        this.clearInputs();
+        this.fillIncomeProceeding(dataRes, 'prevProceeding');
+        /*  if (this.numberProceeding == 0) {
+
+          /* this.prevProce = false;
+        } */
+      }
+    } else {
+      this.numberProceeding = this.proceedingData.length - 1;
+      const dataRes = JSON.parse(
+        JSON.stringify(this.proceedingData[this.numberProceeding])
+      );
+      this.fillIncomeProceeding(dataRes, 'prevProceeding');
+      this.act2Valid = false;
+    }
   }
 
   searchByOthersData() {
@@ -1872,7 +1972,6 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   getGoodsByExpedient() {
     //Validar si hay un acta abiert
     const paramsF = new FilterParams();
-
     paramsF.addFilter('numFile', this.form.get('expediente').value);
     paramsF.addFilter('typeProceedings', 'ENTREGA,DECOMISO', SearchFilter.IN); //!Un in
     this.serviceProcVal.getByFilter(paramsF.getParams()).subscribe(
@@ -1883,9 +1982,9 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
           console.log('Entró');
           this.proceedingData = res.data;
           this.totalItemsNavigate = res.count;
-          this.newLimitparamsActNavigate = new FormControl(1);
           console.log(this.proceedingData);
           const dataRes = JSON.parse(JSON.stringify(res.data[0]));
+          this.idProceeding = dataRes.id;
           console.log(dataRes);
           this.fillIncomeProceeding(dataRes, '');
           console.log(typeof dataRes);
@@ -3400,6 +3499,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     this.statusGood('estatusPrueba', data);
     this.validateGood(data);
     console.log(e);
+    this.idGood = data.goodId;
 
     this.lastClick += 1;
     setTimeout(() => {
@@ -3419,13 +3519,19 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     this.form.get('estatusPrueba').reset();
   }
 
-  goToHistorico() {
+  goToHistorico(site: string) {
     localStorage.setItem('numberExpedient', this.numberExpedient);
-
-    this.router.navigate(
-      ['/pages/general-processes/historical-good-situation'],
-      { queryParams: { noBien: 73 } }
-    );
+    if (site == 'generalGood' && this.idGood != null) {
+      this.router.navigate(
+        ['/pages/general-processes/historical-good-situation'],
+        { queryParams: { noBien: this.idGood } }
+      );
+    } else if (site == 'goodActa' && this.idGoodAct != null) {
+      this.router.navigate(
+        ['/pages/general-processes/historical-good-situation'],
+        { queryParams: { noBien: this.idGoodAct } }
+      );
+    }
   }
 
   selectRowBovedaAlmacen(data: any) {
@@ -3475,6 +3581,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     console.log('Se activo');
     const { data } = e;
     console.log(this.saveDataAct);
+    this.idGoodAct = data.good.goodId;
 
     if (data != null) {
       const isSelect = e.isSelected;
@@ -3505,6 +3612,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
 
   deselectRowGoodActa() {
     this.selectActData = null;
+
     console.log(this.selectActData);
     this.isSelectGood = false;
     this.form.get('edoFisico').setValue(null);

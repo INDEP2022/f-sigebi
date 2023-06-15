@@ -280,7 +280,7 @@
           [control]="startDateCtrl"
           label="Fecha de Inicio">
           <input
-            [minDate]="_today"
+            [minDate]="_minDate ?? _today"
             (bsValueChange)="changeStartDate($event)"
             class="form-control"
             bsDatepicker
@@ -291,7 +291,7 @@
           [control]="endDateCtrl"
           label="Fecha de Fin">
           <input
-            [minDate]="_today"
+            [minDate]="_minDate ?? _today"
             (bsValueChange)="changeEndDate($event)"
             class="form-control"
             bsDatepicker
