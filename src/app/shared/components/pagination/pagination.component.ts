@@ -23,20 +23,20 @@ export class PaginationComponent extends BasePage implements OnInit {
   @Input() totalItems: number = 0;
   @Input() maxSize: number = 5;
   @Input() pageSizeOptions: number[] = [10, 25, 50, 100];
-  @Input() limit: FormControl = new FormControl(10);
+  @Input() limit: FormControl = new FormControl(5);
   @Input() paginatorPageSize: boolean = true;
   @Input() paginatorRangeLabel: boolean = true;
   constructor() {
     super();
   }
   ngOnInit(): void {
-    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(params => {
+   /*  this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(params => {
       this.limit.setValue(params.limit || params.page);
     });
 
     this.filterParams.pipe(takeUntil(this.$unSubscribe)).subscribe(params => {
       this.limit.setValue(params.limit || params.page);
-    });
+    }); */
   }
   pageChanged(event: PageChangedEvent) {
     const params = this.params.getValue();
