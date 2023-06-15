@@ -4,4 +4,5 @@ export enum ClassifyGoodEndPoints {
   tagXClassif = `application/tagXClassif`,
   unitXVlassif = `unit-x-classif`,
   etiqXVlassif = `tag-x-classif`,
+  PupDistClasif = 'application/getPupDistClasif',
 }
