@@ -42,7 +42,7 @@ export class RegistryServicesComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.params
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.searchRegistryService(17817));
+      .subscribe(() => this.searchRegistryService(this.goodId));
   }
 
   searchRegistryService(idGood: number) {

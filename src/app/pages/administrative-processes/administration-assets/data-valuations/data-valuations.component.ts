@@ -89,7 +89,7 @@ export class DataValuationsComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.params
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.searchDataValuations(2409234));
+      .subscribe(() => this.searchDataValuations(this.goodId));
   }
 
   searchDataValuations(idGood: number) {

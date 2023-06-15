@@ -43,7 +43,7 @@ export class HouseholdComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.params
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.searchGoodMenage(3658206));
+      .subscribe(() => this.searchGoodMenage(this.goodId));
   }
 
   searchGoodMenage(idGood: number) {

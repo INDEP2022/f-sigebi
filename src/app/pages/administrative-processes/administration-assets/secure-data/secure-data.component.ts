@@ -59,7 +59,7 @@ export class SecureDataComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.params
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.searchDataValuations(1));
+      .subscribe(() => this.searchDataValuations(this.goodId));
   }
 
   searchDataValuations(idGood: number) {

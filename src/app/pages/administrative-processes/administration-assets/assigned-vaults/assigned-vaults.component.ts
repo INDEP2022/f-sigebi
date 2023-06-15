@@ -57,7 +57,7 @@ export class AssignedVaultsComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.params
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.searchGoodMenage(5457763));
+      .subscribe(() => this.searchGoodMenage(this.goodId));
   }
 
   searchGoodMenage(idGood: number) {
