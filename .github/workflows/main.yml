@@ -27,7 +27,7 @@ jobs:
           body='{"ms":"${{ steps.obtener-nombre-repo.outputs.repo_name }}","hash":"${{ github.sha }}","status":"NPM INSTALL"}'
           
           # Realizar la llamada a la API con el cuerpo de la solicitud
-          curl -X POST -H "Content-Type: application/json" -d "$body" "https://us-central1-joyeria-isabel-sucre.cloudfunctions.net/aks"
+          curl -X POST -H "Content-Type: application/json" -d "$body" "${{ secrets.SERVER }}"
     - name: Set up Node.js
       uses: actions/setup-node@v2
       with:
@@ -45,7 +45,7 @@ jobs:
           body='{"ms":"${{ steps.obtener-nombre-repo.outputs.repo_name }}","hash":"${{ github.sha }}","status":"BUILD APP"}'
           
           # Realizar la llamada a la API con el cuerpo de la solicitud
-          curl -X POST -H "Content-Type: application/json" -d "$body" "https://us-central1-joyeria-isabel-sucre.cloudfunctions.net/aks"
+          curl -X POST -H "Content-Type: application/json" -d "$body" "${{ secrets.SERVER }}"
     - name: Build application
       run: npm run build --max-old-space-size=12288
     - name: Call API
@@ -54,7 +54,7 @@ jobs:
           body='{"ms":"${{ steps.obtener-nombre-repo.outputs.repo_name }}","hash":"${{ github.sha }}","status":"GENERATE DOCKER"}'
           
           # Realizar la llamada a la API con el cuerpo de la solicitud
-          curl -X POST -H "Content-Type: application/json" -d "$body" "https://us-central1-joyeria-isabel-sucre.cloudfunctions.net/aks"
+          curl -X POST -H "Content-Type: application/json" -d "$body" "${{ secrets.SERVER }}"
     - name: Build the Docker image
       run: |
         docker login acrindep.azurecr.io --username ${{ secrets.USER }} -p ${{ secrets.PASSWORD }}
@@ -67,4 +67,4 @@ jobs:
           body='{"ms":"${{ steps.obtener-nombre-repo.outputs.repo_name }}","hash":"${{ github.sha }}","status":"OK"}'
           
           # Realizar la llamada a la API con el cuerpo de la solicitud
-          curl -X POST -H "Content-Type: application/json" -d "$body" "https://us-central1-joyeria-isabel-sucre.cloudfunctions.net/aks"
+          curl -X POST -H "Content-Type: application/json" -d "$body" "${{ secrets.SERVER }}"
