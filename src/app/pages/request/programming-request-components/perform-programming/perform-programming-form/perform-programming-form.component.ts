@@ -154,6 +154,7 @@ export class PerformProgrammingFormComponent
   keepDatepickerOpened: true;
   idNewWarehouse: number = 0;
   dateValidate: any;
+  infoTask: ITask;
   settingsTransportableGoods = { ...this.settings, ...settingTransGoods };
   settingUser = { ...this.settings, ...SettingUserTable };
   settingGuardGoods = {
@@ -238,25 +239,20 @@ export class PerformProgrammingFormComponent
     this.performSearchForm();
     this.obtainInfoWarehouse();
     this.prepareForm();
+    this.getInfoTask();
     this.task = JSON.parse(localStorage.getItem('Task'));
   }
 
-  addUsingDates(date: Date, days: number) {
-    let nextDay = date;
-    let daysToAdd = 1;
-    while (days > 0) {
-      const _nextDay = new Date(
-        nextDay.getTime() + daysToAdd * 24 * 60 * 60 * 1000
-      );
-      if (_nextDay.getDay() < 4) {
-        nextDay = _nextDay;
-        daysToAdd = 1;
-        days--;
-      } else {
-        daysToAdd++;
-      }
-    }
-    return nextDay;
+  getInfoTask() {
+    const params = new BehaviorSubject<ListParams>(new ListParams());
+    this.task = JSON.parse(localStorage.getItem('Task'));
+    params.getValue()['filter.id'] = this.task.id;
+    this.taskService.getAll(params.getValue()).subscribe({
+      next: response => {
+        this.infoTask = response.data[0];
+      },
+      error: error => {},
+    });
   }
 
   obtainInfoWarehouse() {
@@ -325,11 +321,7 @@ export class PerformProgrammingFormComponent
   }
 
   prepareForm() {
-    let now = moment();
     this.formLoading = true;
-    const daysToAdd = 5;
-    const date = new Date(now.format());
-    const dateformat = this.addUsingDates(date, daysToAdd);
 
     this.performForm = this.fb.group({
       emailTransfer: [
@@ -357,7 +349,7 @@ export class PerformProgrammingFormComponent
         ],
       ],
       startDate: [null, [Validators.required]],
-      endDate: [null, [Validators.required, minDate(new Date(dateformat))]],
+      endDate: [null, [Validators.required]],
       observation: [
         null,
         [Validators.maxLength(400), Validators.pattern(STRING_PATTERN)],
@@ -370,17 +362,6 @@ export class PerformProgrammingFormComponent
       typeRelevantId: [null, [Validators.required]],
       storeId: [null],
       folio: [null],
-    });
-  }
-
-  getDateValidate(date: string) {
-    return new Promise((resolve, reject) => {
-      this.goodProcessService.getDateRange(date, 5).subscribe({
-        next: data => {
-          resolve(data);
-        },
-        error: error => {},
-      });
     });
   }
 
@@ -1103,20 +1084,18 @@ export class PerformProgrammingFormComponent
       ).then(async question => {
         if (question.isConfirmed) {
           const createProgGood = await this.insertGoodsProgTrans();
-          console.log('createProgGood', createProgGood);
+
           if (createProgGood) {
             const updateGood: any = await this.changeStatusGoodTrans();
-            console.log('updateGood', updateGood);
+
             if (updateGood) {
               const showGoods: any = await this.getFilterGood(
                 'EN_TRANSPORTABLE'
               );
 
-              console.log('showGoods', showGoods);
               if (showGoods) {
                 const _showGoods = await this.showGoodsTransportable(showGoods);
 
-                console.log('_showGoods', _showGoods);
                 if (_showGoods) {
                   this.getProgGoods();
                   this.goodSelect = [];
@@ -1266,13 +1245,10 @@ export class PerformProgrammingFormComponent
             const menajes = 0;
             this.goodSelect.map(item => {
               params['filter.id'] = item.googId;
-              console.log('good', this.goodSelect);
-              this.goodService.getAll(params).subscribe(data => {
-                console.log('data', data);
-              });
+
+              this.goodService.getAll(params).subscribe(data => {});
             });
           } else {
-            console.log('this.programming', this.goodSelect);
             const data = this.goodSelect.map(item => {
               const data = {
                 idTransferent: item.transfereeId,
@@ -1281,8 +1257,6 @@ export class PerformProgrammingFormComponent
               };
               return data;
             });
-
-            console.log('filtros', data);
 
             let config = {
               ...MODAL_CONFIG,
@@ -1294,20 +1268,18 @@ export class PerformProgrammingFormComponent
               callback: async (data: any) => {
                 if (data) {
                   const createProgGood = await this.addGoodsGuards();
-                  console.log('createProgGood', createProgGood);
+
                   if (createProgGood) {
                     const updateGood: any = await this.changeStatusGoodGuard();
-                    console.log('updateGood', updateGood);
+
                     if (updateGood) {
                       const showGoods: any = await this.getFilterGood(
                         'EN_RESGUARDO_TMP'
                       );
 
-                      console.log('showGoods', showGoods);
                       if (showGoods) {
                         const _showGoods = await this.showGoodsGuard(showGoods);
 
-                        console.log('_showGoods', _showGoods);
                         if (_showGoods) {
                           this.getProgGoods();
                           this.goodSelect = [];
@@ -1321,14 +1293,6 @@ export class PerformProgrammingFormComponent
 
             this.modalService.show(WarehouseSelectFormComponent, config);
           }
-          /* if (this.idTypeRelevant == 1) {
-            
-            this.goodSelect.forEach(item => {
-              console.log('info', item);
-            });
-          } else {
-            
-          } */
         }
       });
     } else {
@@ -1431,23 +1395,21 @@ export class PerformProgrammingFormComponent
             callback: async (data: any) => {
               if (data) {
                 const createProgGood = await this.addGoodsWarehouse();
-                console.log('createProgGood', createProgGood);
+
                 if (createProgGood) {
                   const updateGood: any =
                     await this.changeStatusGoodWarehouse();
-                  console.log('updateGood', updateGood);
+
                   if (updateGood) {
                     const showGoods: any = await this.getFilterGood(
                       'EN_ALMACEN_TMP'
                     );
 
-                    console.log('showGoods', showGoods);
                     if (showGoods) {
                       const _showGoods = await this.showGoodsWarehouse(
                         showGoods
                       );
 
-                      console.log('_showGoods', _showGoods);
                       if (_showGoods) {
                         this.getProgGoods();
                         this.goodSelect = [];
@@ -1671,8 +1633,6 @@ export class PerformProgrammingFormComponent
 
   //Actualizar programación con información de la programación
   confirm() {
-    console.log(this.dataProg);
-
     if (this.performForm.get('startDate').value) {
       this.performForm
         .get('startDate')
@@ -1692,7 +1652,6 @@ export class PerformProgrammingFormComponent
       this.performForm.get('autorityId').setValue(this.autorityId);
     }
 
-    console.log('this.performForm.value', this.performForm.value);
     this.performForm
       .get('regionalDelegationNumber')
       .setValue(this.delegationId);
@@ -1726,9 +1685,7 @@ export class PerformProgrammingFormComponent
                 this.formLoading = false;
                 this.newTransferent = false;
               },
-              error: error => {
-                console.log('error', error);
-              },
+              error: error => {},
             });
         }
       }
@@ -1745,9 +1702,7 @@ export class PerformProgrammingFormComponent
         next: () => {
           resolve(true);
         },
-        error: error => {
-          console.log('error', error);
-        },
+        error: error => {},
       });
     });
   }
@@ -1878,9 +1833,7 @@ export class PerformProgrammingFormComponent
                   this.generateTaskAceptProgramming(folio);
                   this.loading = false;
                 },
-                error: error => {
-                  console.log('error', error);
-                },
+                error: error => {},
               });
           }
         }
@@ -1913,7 +1866,6 @@ export class PerformProgrammingFormComponent
   }
 
   generateFolio(programming: Iprogramming) {
-    console.log('programming', programming);
     return new Promise((resolve, reject) => {
       this.transferentService.getById(programming.tranferId).subscribe({
         next: response => {
@@ -1936,9 +1888,7 @@ export class PerformProgrammingFormComponent
             resolve(folio);
           }
         },
-        error: error => {
-          console.log('error generar folio', error);
-        },
+        error: error => {},
       });
     });
   }
@@ -1965,10 +1915,11 @@ export class PerformProgrammingFormComponent
     task['idDelegationRegional'] = this.delegationId;
     task['urlNb'] = 'pages/request/programming-request/acept-programming';
     task['processName'] = 'SolicitudProgramacion';
+    task['taskDefinitionId'] = _task.id;
     body['task'] = task;
 
     const taskResult = await this.createTaskOrderService(body);
-    console.log('task', taskResult);
+
     this.loading = false;
     if (taskResult) {
       this.msgGuardado(
@@ -2079,6 +2030,7 @@ export class PerformProgrammingFormComponent
   setDataProgramming() {
     if (this.dataProgramming.folio) {
       this.showForm = true;
+      console.log('startDate', this.dataProgramming.startDate);
       this.performForm.get('address').setValue(this.dataProgramming.address);
       this.performForm.get('city').setValue(this.dataProgramming.city);
       this.performForm.get('stateKey').setValue(this.dataProgramming.stateKey);
@@ -2109,13 +2061,10 @@ export class PerformProgrammingFormComponent
         );
 
       this.transferentId = this.dataProgramming.tranferId;
-      console.log(
-        'this.dataProgramming.tranferId;',
-        this.dataProgramming.tranferId
-      );
+
       this.stationId = this.dataProgramming.stationId;
       this.autorityId = this.dataProgramming.autorityId;
-      console.log('this.autorityId', this.autorityId);
+
       this.delegationId = this.dataProgramming.regionalDelegationNumber;
       this.dataProg = true;
       this.paramsTransportableGoods.getValue()['filter.programmingId'] =
@@ -2169,7 +2118,6 @@ export class PerformProgrammingFormComponent
         this.transferentId;
       this.authorityService.getAll(this.paramsAuthority.getValue()).subscribe({
         next: response => {
-          console.log('autoridad', response);
           const nameAndId = `${response.data[0].idAuthority} - ${response.data[0].authorityName}`;
           this.performForm.get('autorityId').setValue(nameAndId);
           this.idStation = this.dataProgramming.stationId;
@@ -2201,7 +2149,7 @@ export class PerformProgrammingFormComponent
               if (item.physicalStatus == 1) item['physicalStatus'] = 'BUENO';
               if (item.physicalStatus == 2) item['physicalStatus'] = 'MALO';
               showTransportable.push(item);
-              console.log('showTransportable', showTransportable);
+
               this.goodsTranportables.load(showTransportable);
               this.totalItemsTransportableGoods =
                 this.goodsTranportables.count();
@@ -2291,29 +2239,50 @@ export class PerformProgrammingFormComponent
 
   checkInfoDate(event: any) {
     const startDate = event;
-    const _startDateFormat = moment(startDate).format('YYYY-MM-DD');
+    const _startDateFormat = moment(startDate).format(
+      'DD/MMMM/YYYY, h:mm:ss a'
+    );
+
+    const _endDateFormat = moment(this.performForm.get('endDate').value).format(
+      'DD/MMMM/YYYY, h:mm:ss a'
+    );
     const date = moment(new Date()).format('YYYY-MM-DD');
     this.programmingService.getDateProgramming(date, 5).subscribe({
       next: (response: any) => {
-        const correctDate = moment(response).format('YYYY-MM-DD');
-        if (correctDate > _startDateFormat) {
+        const correctDate = moment(response).format('DD/MMMM/YYYY, h:mm:ss a');
+        if (correctDate > _startDateFormat || correctDate > _endDateFormat) {
           this.performForm
             .get('startDate')
             .addValidators([Validators.required, minDate(new Date(response))]);
           this.performForm
             .get('startDate')
             .setErrors({ minDate: { min: new Date(response) } });
+          this.performForm
+            .get('endDate')
+            .addValidators([Validators.required, minDate(new Date(response))]);
+          this.performForm
+            .get('endDate')
+            .setErrors({ minDate: { min: new Date(response) } });
           this.performForm.markAllAsTouched();
 
-          this.performForm.get('endDate').clearValidators();
-          this.performForm
-            .get('endDate')
-            .addValidators([Validators.required, minDate(new Date(startDate))]);
-          this.performForm.get('endDate').updateValueAndValidity();
-          this.performForm
-            .get('endDate')
-            .setErrors({ minDate: { min: startDate } });
-          this.performForm.markAllAsTouched();
+          /*const endDate = this.performForm.get('endDate').value;
+          const _endDateFormat = moment(endDate).format(
+            'DD/MMMM/YYYY, h:mm:ss a'
+          );
+          if (correctDate > _endDateFormat) {
+            this.performForm.get('endDate').clearValidators();
+            this.performForm
+              .get('endDate')
+              .addValidators([
+                Validators.required,
+                minDate(new Date(response)),
+              ]);
+            this.performForm.get('endDate').updateValueAndValidity();
+            this.performForm
+              .get('endDate')
+              .setErrors({ minDate: { min: response } });
+            this.performForm.markAllAsTouched();
+          } */
         }
       },
     });
