@@ -137,7 +137,7 @@
 
             <ng-template #templateInputAddressee>
               <form-field
-                [control]="formJobManagement.get('addressee')"
+                [control]="formJobManagement.get('nomPersExt')"
                 class="col-md-4"
                 label="Nombre Destinatario">
                 <textarea
@@ -145,7 +145,7 @@
                   rows="1"
                   style="height: 42px !important"
                   class="form-control"
-                  formControlName="addressee">
+                  formControlName="nomPersExt">
                 </textarea>
               </form-field>
             </ng-template>
@@ -486,7 +486,11 @@
               <button
                 type="button"
                 tooltip="Documentos"
-                [disabled]="isDisabledBtnDocs"
+                [disabled]="
+                  isDisabledBtnDocs ||
+                  formJobManagement.value?.statusOf == 'ENVIADO' ||
+                  formJobManagement.value?.statusOf == 'EN REVISION'
+                "
                 containerClass="tooltip-style"
                 class="btn btn-info active btn-sm m-1"
                 (click)="openModal()">

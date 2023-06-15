@@ -1,13 +1,13 @@
 <app-card [header]="true">
   <!-- <div class="ch-content" header> -->
   <div class="row" header>
-    <div class="col-12 col-md-6">
+    <div class="col-12 col-sm-12 col-md-4">
       <h5 class="title">
         Oficio Gesti&oacute;n
         {{ pantallaOption ? 'por Dictamen' : 'Relacionados' }}
       </h5>
     </div>
-    <div class="col-12 col-md-6 text-right">
+    <div class="col-12 col-sm-12 col-md-8 text-right">
       <!-- <button
         type="button"
         class="btn btn-primary btn-sm active m-2"
@@ -18,7 +18,7 @@
       Fec&#46; Captura:
       <span class="badge bg-info ml-3 mr-3" style="display: initial !important">
         {{
-          (formJobManagement.get('insertDate').value | date : 'M/d/yyyy') ||
+          (formJobManagement.get('insertDate').value | date: 'M/d/yyyy') ||
             '00/00/0000'
         }}
       </span>
@@ -29,6 +29,15 @@
       <button class="btn btn-primary active btn-sm m-2" (click)="goBack()">
         Regresar
         <i class="fas fa-arrow-circle-left"></i>
+      </button>
+      <button
+        [disabled]="
+          blockSend || formJobManagement.get('statusOf')?.value == 'ENVIADO'
+        "
+        type="button"
+        class="btn btn-primary btn-sm active"
+        (click)="_saveScreenManagement()">
+        <i aria-hidden="true" class="fa fa-save"></i>
       </button>
     </div>
   </div>
@@ -387,14 +396,20 @@
               </form-field>
             </div>
 
-            <!-- <div class = "row pt-4">
+            <div class="row pt-4">
               <div class="d-flex flex-row-reverse">
-                <form-check class="col-md-2 text-end" label="Improcedente(s) todo(s)" for="improcedente">
-                  <input id="improcedente" type="checkbox" (change)="changeImprocedente($event.target)"
+                <form-check
+                  class="col-md-2 text-end"
+                  label="Improcedente(s) todo(s)"
+                  for="improcedente">
+                  <input
+                    id="improcedente"
+                    type="checkbox"
+                    (change)="changeImprocedente($event.target)"
                     formControlName="improcedente" />
                 </form-check>
               </div>
-            </div> -->
+            </div>
 
             <form-loader *ngIf="formLoading"></form-loader>
 
@@ -674,6 +689,9 @@
               <div class="d-flex justify-content-end">
                 <div class="p-2">
                   <button
+                    [disabled]="
+                      !formJobManagement?.get('managementNumber').value
+                    "
                     (click)="openModalCopy(false)"
                     class="btn btn-primary active btn-sm ml-3 mb-3">
                     Agregar C.C.P
