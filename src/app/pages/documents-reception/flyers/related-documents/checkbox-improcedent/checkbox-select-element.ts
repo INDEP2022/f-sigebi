@@ -27,8 +27,7 @@ import { BasePage } from 'src/app/core/shared';
 })
 export class CheckboxSelectElementComponent<T = any>
   extends BasePage
-  implements OnInit, OnChanges
-{
+  implements OnInit, OnChanges {
   checked: boolean;
   disabled: boolean;
   @ViewChild('box', { static: true }) box: ElementRef<HTMLInputElement>;
@@ -53,6 +52,7 @@ export class CheckboxSelectElementComponent<T = any>
   onToggle($event: Event) {
     let row: any = this.rowData;
     let toggle = ($event.currentTarget as HTMLInputElement).checked;
+    console.log(row);
     if (row.improcedente == true && toggle == true) {
       this.box.nativeElement.checked = false;
       toggle = false;
