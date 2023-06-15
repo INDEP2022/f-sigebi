@@ -19,16 +19,19 @@ import { Component } from '@angular/core';
               <app-inventory-data></app-inventory-data>
             </tab>
             <tab heading="Datos avaluos" *ngIf="dataSearch">
-              <app-data-valuations></app-data-valuations>
+              <app-data-valuations [goodId]="data"></app-data-valuations>
             </tab>
             <tab heading="Datos seguro" *ngIf="dataSearch">
-              <app-secure-data></app-secure-data>
+              <app-secure-data [goodId]="data"></app-secure-data>
+            </tab>
+            <tab heading="Bóvedas asignadas" *ngIf="dataSearch">
+              <app-assigned-vaults [goodId]="data"></app-assigned-vaults>
             </tab>
             <tab heading="Registro servicios" *ngIf="dataSearch">
               <app-registry-services></app-registry-services>
             </tab>
             <tab heading="Menaje" *ngIf="dataSearch">
-              <app-household></app-household>
+              <app-household [goodId]="data"></app-household>
             </tab>
             <tab heading="Ingresos por bien" *ngIf="dataSearch">
               <app-income-per-asset></app-income-per-asset>

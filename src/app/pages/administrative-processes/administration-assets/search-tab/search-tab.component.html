@@ -44,14 +44,30 @@
               formControlName="destino" />
           </form-field>
         </div>
+        <div class="form-group row">
+          <div class="col-md-4 col-ms-4">
+            <button
+              class="btn btn-sm btn-primary active mr-3"
+              (click)="search()">
+              Buscar <i class="fas fa-search"></i>
+            </button>
+          </div>
+          <div class="col-md-4 col-ms-4">
+            <button class="btn btn-danger btn-sm active" (click)="clean()">
+              Limpiar
+            </button>
+          </div>
+          <div class="col-md-4 col-ms-4">
+            <app-columns-select [(settings)]="settings"></app-columns-select>
+          </div>
+        </div>
       </div>
     </div>
-    <div class="col-md-6"></div>
+    <div class="col-md-6">Aqui va la img</div>
   </div>
   <div>
-    <app-columns-select [(settings)]="settings"></app-columns-select>
-    <br />
-    <ng-scrollbar [track]="'all'" style="min-height: 120px">
+    <div class="row"></div>
+    <ng-scrollbar [track]="'all'" style="min-height: 220px">
       <ng2-smart-table [settings]="settings" [source]="list"> </ng2-smart-table>
     </ng-scrollbar>
   </div>
