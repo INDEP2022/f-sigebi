@@ -120,6 +120,7 @@ export class ChangeOfStatusStiComponent extends BasePage implements OnInit {
           next: response => {
             console.log(response);
             this.postHistoryGood(good);
+            this.form.get('description').reset();
           },
           error: error => (this.loading = false),
         });
@@ -141,6 +142,7 @@ export class ChangeOfStatusStiComponent extends BasePage implements OnInit {
   listGoods() {
     this.loading = true;
     this.busco = true;
+    this.form.get('description').reset();
     this.goodServices
       .getByExpedientAndStatus(
         this.numberFile.value,
