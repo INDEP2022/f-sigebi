@@ -155,7 +155,7 @@
                     <input
                       [readOnly]="true"
                       formControlName="fecDicta"
-                      class="form-control"
+                      class="form-control bg-gray"
                       bsDatepicker />
                   </form-field>
                 </div>
@@ -405,6 +405,7 @@
           [source]="goodsValid"
           (rowSelect)="rowSelected($event.data)"></ng2-smart-table>
         <app-pagination
+          *ngIf="dictNumber"
           [params]="params2"
           [totalItems]="totalItems2"></app-pagination>
       </div>

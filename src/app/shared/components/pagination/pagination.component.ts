@@ -31,11 +31,11 @@ export class PaginationComponent extends BasePage implements OnInit {
   }
   ngOnInit(): void {
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(params => {
-      this.limit.setValue(params.limit || params.page);
+      this.limit.setValue(params.limit || params.pageSize);
     });
 
     this.filterParams.pipe(takeUntil(this.$unSubscribe)).subscribe(params => {
-      this.limit.setValue(params.limit || params.page);
+      this.limit.setValue(params.limit);
     });
   }
   pageChanged(event: PageChangedEvent) {
