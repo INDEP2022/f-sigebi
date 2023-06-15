@@ -12,10 +12,12 @@ import {
   IInitFormLegalOpinionOfficeResponse,
   IPufGenerateKey,
   IPupLaunchReport,
+  IStatusChange,
   ITmpDictationCreate,
   ITmpExpDesahogoB,
 } from '../../models/ms-dictation/dictation-model';
 import { IRTdictaAarusr } from '../../models/ms-dictation/r-tdicta-aarusr.model';
+
 @Injectable({
   providedIn: 'root',
 })
@@ -342,6 +344,12 @@ export class DictationService extends HttpService {
     );
   }
   pufGenerateKey(params: IPufGenerateKey) {
+    return this.post<IListResponse<any>>(
+      DictationEndpoints.ApplicationPufGenerateKey,
+      params
+    );
+  }
+  pupStatusChange(params: IStatusChange) {
     return this.post<IListResponse<any>>(
       DictationEndpoints.ApplicationPupCambiaEstatus,
       params

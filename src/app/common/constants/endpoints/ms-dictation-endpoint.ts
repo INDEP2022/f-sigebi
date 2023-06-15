@@ -49,4 +49,5 @@ export enum DictationEndpoints {
   ApplicationUpdateManagerTransfer = 'application/updateManagerTransfer',
   ApplicationFindOffficeNu = 'application/findOffficeNu',
   ApplicationPupCambiaEstatus = 'application/pup-cambia-estatus',
+  ApplicationPufGenerateKey = 'application/puf-generate-key',
 }
