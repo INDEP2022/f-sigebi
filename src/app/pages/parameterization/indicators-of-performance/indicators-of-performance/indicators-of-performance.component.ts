@@ -172,8 +172,10 @@ export class IndicatorsOfPerformanceComponent
         console.log(response);
         this.indicatorsParamenter = response.data;
         console.log(this.indicatorsParamenter);
+
         this.data1.load(this.indicatorsParamenter);
         this.data1.refresh();
+
         this.totalItems = response.count;
         this.loading = false;
       },

@@ -15,6 +15,7 @@ export class SaveValueFormComponent extends BasePage implements OnInit {
   saveValue: ISaveValue;
   edit: boolean;
   saveValueForm: ModelForm<ISaveValue>;
+  title: string = 'Valores guardados';
 
   constructor(
     private fb: FormBuilder,
@@ -36,7 +37,6 @@ export class SaveValueFormComponent extends BasePage implements OnInit {
           Validators.minLength(0),
           Validators.maxLength(5),
           Validators.min(0),
-          Validators.max(5),
         ],
       ],
       description: [
@@ -56,7 +56,6 @@ export class SaveValueFormComponent extends BasePage implements OnInit {
         ],
       ],
       responsible: [null, [Validators.required]],
-      noRegistration: [null],
     });
 
     if (this.saveValue != null) {
@@ -74,7 +73,10 @@ export class SaveValueFormComponent extends BasePage implements OnInit {
     this.loading = true;
     this.saveValueService.create(this.saveValueForm.value).subscribe({
       next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
+      error: error => {
+        this.loading = false;
+        this.onLoadToast('error', 'ERROR', error.error.message);
+      },
     });
   }
 
@@ -83,7 +85,10 @@ export class SaveValueFormComponent extends BasePage implements OnInit {
       .update(this.saveValue.id, this.saveValueForm.value)
       .subscribe({
         next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
+        error: error => {
+          this.loading = false;
+          this.onLoadToast('error', 'ERROR', error.error.message);
+        },
       });
   }
 
@@ -92,6 +97,8 @@ export class SaveValueFormComponent extends BasePage implements OnInit {
   }
 
   handleSuccess() {
+    const message: string = this.edit ? 'Actualizado' : 'Guardado';
+    this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();

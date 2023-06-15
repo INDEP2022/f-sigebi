@@ -431,6 +431,12 @@ export class Repository<T> implements IRepository<T> {
     return this.httpClient.put(`${fullRoute}/id/${id}`, formData);
   }
 
+  updateTypeRelevant2(route: string, formData: Object) {
+    const fullRoute = this.buildRoute(route);
+
+    return this.httpClient.put(`${fullRoute}`, formData);
+  }
+
   updateCatalogPhotographMedia(
     route: string,
     id: number | string,
