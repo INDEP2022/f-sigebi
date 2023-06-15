@@ -488,11 +488,12 @@
               <app-pagination [params]="params" [totalItems]="totalItems"></app-pagination>
             </div>
           </div> -->
+            <!-- [disabled]="isDisabledBtnDocs" -->
             <div class="col-md-12 mt-3 text-right">
               <button
                 type="button"
                 tooltip="Documentos"
-                [disabled]="isDisabledBtnDocs"
+                [disabled]="!formJobManagement?.get('managementNumber').value"
                 containerClass="tooltip-style"
                 class="btn btn-info active btn-sm m-1"
                 (click)="openModal()">

@@ -2051,7 +2051,6 @@ export class RelatedDocumentsComponent
   }
 
   goDocumentModal() {
-    debugger;
     console.log(this.variables);
     console.log(this.formVariables.value);
     let context: Partial<DocumentsFormComponent> = { queryParams: {} };
@@ -2078,6 +2077,7 @@ export class RelatedDocumentsComponent
     modalRef.content.onClose.pipe(take(1)).subscribe(result => {
       console.log({ result });
       if (result && result?.length > 0) {
+        this.formVariables.get('b').setValue('S');
         result.forEach(item => {
           const doc = this.dataTableDocuments.find(
             x => x.cveDocument == item.cveDocument
@@ -2310,10 +2310,11 @@ export class RelatedDocumentsComponent
     const volante = noVolante;
     //se elimina bienes_officio_gestion
     const promises = [
-      this.mJobManagementService.deleteGoodsJobManagement1(management),
-      this.mJobManagementService.deleteDocumentJobManagement2(management),
-      this.officeManagementSerivice.removeMOfficeManagement(management),
-      this.mJobManagementService.deleteCopiesJobManagement4(management),
+      //this.mJobManagementService.deleteGoodsJobManagement1(management),
+      //this.mJobManagementService.deleteDocumentJobManagement2(management),
+      //this.officeManagementSerivice.removeMOfficeManagement(management),
+      //this.mJobManagementService.deleteCopiesJobManagement4(management),
+      this.relatedDocumentDesahogo.deleteJobManagement(management, volante),
       this.updateIfHaveDictamen(volante),
     ];
     await Promise.all(promises);
