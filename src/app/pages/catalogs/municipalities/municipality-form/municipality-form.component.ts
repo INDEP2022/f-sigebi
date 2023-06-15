@@ -1,7 +1,9 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
+import { IStateOfRepublic } from 'src/app/core/models/catalogs/state-of-republic.model';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import {
@@ -10,7 +12,6 @@ import {
 } from '../../../../core/shared/patterns';
 import { IMunicipality } from './../../../../core/models/catalogs/municipality.model';
 import { MunicipalityService } from './../../../../core/services/catalogs/municipality.service';
-
 @Component({
   selector: 'app-municipality-form',
   templateUrl: './municipality-form.component.html',
@@ -21,7 +22,7 @@ export class MunicipalityFormComponent extends BasePage implements OnInit {
   title: string = 'Municipio';
   edit: boolean = false;
   municipality: IMunicipality;
-  items = new DefaultSelect<IMunicipality>();
+  states = new DefaultSelect<IStateOfRepublic>();
   @Output() refresh = new EventEmitter<true>();
 
   constructor(
@@ -77,14 +78,18 @@ export class MunicipalityFormComponent extends BasePage implements OnInit {
     if (this.municipality != null) {
       this.edit = true;
       this.municipalityForm.patchValue(this.municipality);
-      let firstValue = this.municipality.stateKey;
-      let secondValue = this.municipality.idMunicipality;
-      //  this.municipalityForm.controls['stateKey'].setValue(firstValue);
       this.municipalityForm.get('stateKey').disable();
-      // this.municipalityForm.controls['idMunicipality'].setValue(secondValue);
       this.municipalityForm.get('idMunicipality').disable();
     }
   }
+
+  getStates(params: ListParams) {
+    this.municipalityService.getStates(params).subscribe(data => {
+      this.states = new DefaultSelect(data.data, data.count);
+    });
+  }
+
+  stateChange(state: IStateOfRepublic) {}
 
   close() {
     this.modalRef.hide();
