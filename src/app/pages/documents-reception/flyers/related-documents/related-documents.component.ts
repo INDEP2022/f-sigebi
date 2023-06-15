@@ -1150,7 +1150,7 @@ export class RelatedDocumentsComponent
           data['filter.managementNumber'] =
             this.formJobManagement.value.managementNumber;
           const goodManagementResult = await this.getGoodsJobManagement(data);
-          debugger;
+          // debugger;
           this.dataTableGoodsJobManagement = goodManagementResult.data;
           console.log('BIENES ', this.dataTableGoodsJobManagement);
           this.goodTotalItems = goodManagementResult.count;
@@ -2036,7 +2036,7 @@ export class RelatedDocumentsComponent
   }
 
   goDocumentModal() {
-    debugger;
+    // debugger;
     console.log(this.variables);
     console.log(this.formVariables.value);
     let context: Partial<DocumentsFormComponent> = { queryParams: {} };
