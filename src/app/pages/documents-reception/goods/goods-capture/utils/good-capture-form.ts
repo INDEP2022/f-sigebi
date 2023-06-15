@@ -206,6 +206,9 @@ export class GOOD_TO_SAVE {
   stateConservation: string;
   fileNumber: string;
   flyerNumber: string | number;
+  extDomProcess?: string;
+  subDelegationNumber?: string | number;
+  delegationNumber?: string | number;
   val1: string;
   val2: string;
   val3: string;

@@ -52,4 +52,5 @@ export enum DictationEndpoints {
   Count2 = 'application/getCount2',
   Count4 = 'application/getCount4',
   ApplicationPupCambiaEstatus = 'application/pup-cambia-estatus',
+  ApplicationPufGenerateKey = 'application/puf-generate-key',
 }
