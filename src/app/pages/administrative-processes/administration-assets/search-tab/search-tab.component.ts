@@ -98,4 +98,18 @@ export class SearchTabComponent extends BasePage implements OnInit {
   getGoods(ssssubType: IGoodSssubtype) {
     this.classifGood = ssssubType.numClasifGoods;
   }
+
+  previousImage(): void {
+    console.log('Imagen anterior');
+    // if (this.currentImageIndex > 0) {
+    //   this.currentImageIndex--;
+    // }
+  }
+
+  nextImage(): void {
+    console.log('Imagen siguiente');
+    // if (this.currentImageIndex < this.images.length - 1) {
+    //   this.currentImageIndex++;
+    // }
+  }
 }
