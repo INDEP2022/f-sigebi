@@ -26,7 +26,11 @@ export class TypeServicesService implements ICrudMethods<ITypeService> {
   }
 
   update(id: string | number, model: ITypeService): Observable<Object> {
-    return this.typeServicesRepository.update(this.route, id, model);
+    return this.typeServicesRepository.updateTypeServices(
+      this.route,
+      id,
+      model
+    );
   }
 
   remove(id: string | number): Observable<Object> {
