@@ -168,6 +168,7 @@ export abstract class RelateDocumentsResponse extends BasePage {
         this.dataTableGoods = await Promise.all(goods);
         this.totalItems = data.count;
         this.isLoadingGood = false;
+        console.log('GOODS ', this.dataTableGoods);
       },
       error: () => {
         this.isLoadingGood = false;

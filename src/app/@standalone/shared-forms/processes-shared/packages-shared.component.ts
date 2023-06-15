@@ -52,8 +52,12 @@ export class ProcessesSharedComponent extends BasePage implements OnInit {
         },
         error: error => {
           this.loading = false;
-          this.processes = new DefaultSelect()
-          this.alert('warning','No se encontró un proceso extDom para actualizar en este Bien','')
+          this.processes = new DefaultSelect();
+          this.alert(
+            'warning',
+            'No se encontró un proceso extDom para actualizar en este Bien',
+            ''
+          );
         },
       });
   }
