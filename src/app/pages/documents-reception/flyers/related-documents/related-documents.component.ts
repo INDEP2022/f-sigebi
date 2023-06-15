@@ -3879,7 +3879,7 @@ export class RelatedDocumentsComponent
           const _puf_genera_clave = await firstValueFrom(
             this.sendFunction_pufGenerateKey(_params_generate_key)
           );
-          this.formJobManagement.value.cveManagement = _puf_genera_clave //PUF_GENERA_CLAVE
+          this.formJobManagement.value.cveManagement = _puf_genera_clave.data.keyOfGestion; //PUF_GENERA_CLAVE
         }
       }
       if (this.paramsGestionDictamen.doc === 'N') {
