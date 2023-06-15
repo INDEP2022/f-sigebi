@@ -2053,7 +2053,7 @@ export class RelatedDocumentsComponent
   }
 
   goDocumentModal() {
-    debugger;
+    // debugger;
     console.log(this.variables);
     console.log(this.formVariables.value);
     let context: Partial<DocumentsFormComponent> = { queryParams: {} };
@@ -4165,12 +4165,12 @@ export class RelatedDocumentsComponent
           console.log(updateDataMJobManagement);
         }
         let _params_change_status = {
-          procDocId: this.variables.proc_doc_dic,
+          procDocId: this.formVariables.get('proc_doc_dic').value,
           doc: this.paramsGestionDictamen.doc,
           bien: this.paramsGestionDictamen.bien,
           cveOfGestion: this.formJobManagement.value.cveManagement,
-          b: this.variables.b,
-          d: this.variables.d,
+          b: this.formVariables.get('b').value,
+          d: this.formVariables.get('d').value,
           noOfGestion: this.formJobManagement.value.managementNumber,
           seRefiereA: this.formJobManagement.value.refersTo,
           // bienes: {
@@ -4178,7 +4178,7 @@ export class RelatedDocumentsComponent
           //   seleccion: false,
           // },
           bienes: this.dataTableGoods, // Bienes
-          todos: this.variables.todos == 'S' ? true : false,
+          todos: this.formVariables.get('todos').value == 'S' ? true : false,
           usuario: userInfo.user,
           pDictamen: this.paramsGestionDictamen.pDictamen,
           noVolante: this.notificationData.wheelNumber,
@@ -4267,12 +4267,12 @@ export class RelatedDocumentsComponent
                     ''
                   ).then(async () => {
                     let _params_change_status = {
-                      procDocId: this.variables.proc_doc_dic,
+                      procDocId: this.formVariables.get('proc_doc_dic').value,
                       doc: this.paramsGestionDictamen.doc,
                       bien: this.paramsGestionDictamen.bien,
                       cveOfGestion: this.formJobManagement.value.cveManagement,
-                      b: this.variables.b,
-                      d: this.variables.d,
+                      b: this.formVariables.get('b').value,
+                      d: this.formVariables.get('d').value,
                       noOfGestion:
                         this.formJobManagement.value.managementNumber,
                       seRefiereA: this.formJobManagement.value.refersTo,
@@ -4281,7 +4281,10 @@ export class RelatedDocumentsComponent
                       //   seleccion: false,
                       // },
                       bienes: this.dataTableGoods, // Bienes
-                      todos: this.variables.todos == 'S' ? true : false,
+                      todos:
+                        this.formVariables.get('todos').value == 'S'
+                          ? true
+                          : false,
                       usuario: userInfo.user,
                       pDictamen: this.paramsGestionDictamen.pDictamen,
                       noVolante: this.notificationData.wheelNumber,
