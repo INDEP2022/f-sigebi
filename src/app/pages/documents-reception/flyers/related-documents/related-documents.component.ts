@@ -2042,7 +2042,6 @@ export class RelatedDocumentsComponent
   }
 
   goDocumentModal() {
-    debugger;
     console.log(this.variables);
     console.log(this.formVariables.value);
     let context: Partial<DocumentsFormComponent> = { queryParams: {} };

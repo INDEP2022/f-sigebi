@@ -102,28 +102,6 @@ export class RelatedDocumentDesahogo extends BasePage {
     });
   }
 
-  /*PUP_CAMBIO_IMPRO(
-    checked: boolean | string,
-    managementNumber: number,
-    proceedingNumber: number
-  ) {
-    const chk = checked == true || checked === 'true' ? 1 : 0;
-
-    const body: any = {
-      chkSelect: chk,
-      managementOfNumber: managementNumber,
-      proceedingNumber: proceedingNumber,
-    };
-    this.goodprocess.callPupChangeImpro(body).subscribe({
-      next: resp => {
-        console.log(resp);
-      },
-      error: error => {
-        console.log('error al llamar al pup cambio impro', error);
-      },
-    });
-  }*/
-
   PUP_DIST_CLASIF(user: string) {
     return new Promise((resolve, reject) => {
       this.classifyGood.getPupDistClasif(user).subscribe({
