@@ -1,6 +1,6 @@
 export const SERVICES_COLUMS = {
   code: {
-    title: 'Codigo',
+    title: 'Código',
     type: 'string',
     sort: false,
   },

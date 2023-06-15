@@ -1,14 +1,12 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { ParameterGoodEndpoints } from 'src/app/common/constants/endpoints/ms-parametergood-endpoints';
+import { ENDPOINT_LINKS } from 'endpoints';
+import { Observable } from 'rxjs';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { Repository } from 'src/app/common/repository/repository';
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
 import { environment } from 'src/environments/environment';
-import { IDeductive } from '../../models/catalogs/deductive.model';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { Observable } from 'rxjs';
-import { Repository } from 'src/app/common/repository/repository';
 import { IRateCatalog } from '../../models/catalogs/rate-catalog.model';
-import { ENDPOINT_LINKS } from 'endpoints';
 
 @Injectable({
   providedIn: 'root',
