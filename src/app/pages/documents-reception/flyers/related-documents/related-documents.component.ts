@@ -1758,6 +1758,10 @@ export class RelatedDocumentsComponent
    * @returns
    */
   getCityByDetail(paramsData: ListParams) {
+    if (paramsData['search'] == undefined) {
+      paramsData['search'] = '';
+    }
+
     const params = new FilterParams();
     params.removeAllFilters();
     params.addFilter('nameCity', paramsData['search'], SearchFilter.LIKE);
@@ -1783,6 +1787,32 @@ export class RelatedDocumentsComponent
           subscription.unsubscribe();
         },
       });
+  }
+
+  changeSenderByDetail(event: any) {
+    console.log(event);
+
+    if (event) {
+      if (event.id) {
+        // this.formJobManagement
+        //   .get('areaUser')
+        //   .setValue(event.departamentNumber); // Area remitente
+        const params: any = new FilterParams();
+        params.removeAllFilters();
+        params.addFilter('user', event.id);
+        this.svLegalOpinionsOfficeService
+          .getAllUsersTracker(params.getParams())
+          .subscribe({
+            next: data => {
+              console.log(data);
+              this.formJobManagement
+                .get('cveChargeRem')
+                .setValue(data.data[0].postKey);
+            },
+            error: error => { },
+          });
+      }
+    }
   }
 
   /**
@@ -2055,7 +2085,6 @@ export class RelatedDocumentsComponent
   }
 
   goDocumentModal() {
-    debugger;
     console.log(this.variables);
     console.log(this.formVariables.value);
     let context: Partial<DocumentsFormComponent> = { queryParams: {} };
@@ -2082,6 +2111,7 @@ export class RelatedDocumentsComponent
     modalRef.content.onClose.pipe(take(1)).subscribe(result => {
       console.log({ result });
       if (result && result?.length > 0) {
+        this.formVariables.get('b').setValue('S');
         result.forEach(item => {
           const doc = this.dataTableDocuments.find(
             x => x.cveDocument == item.cveDocument
@@ -2314,10 +2344,11 @@ export class RelatedDocumentsComponent
     const volante = noVolante;
     //se elimina bienes_officio_gestion
     const promises = [
-      this.mJobManagementService.deleteGoodsJobManagement1(management),
-      this.mJobManagementService.deleteDocumentJobManagement2(management),
-      this.officeManagementSerivice.removeMOfficeManagement(management),
-      this.mJobManagementService.deleteCopiesJobManagement4(management),
+      //this.mJobManagementService.deleteGoodsJobManagement1(management),
+      //this.mJobManagementService.deleteDocumentJobManagement2(management),
+      //this.officeManagementSerivice.removeMOfficeManagement(management),
+      //this.mJobManagementService.deleteCopiesJobManagement4(management),
+      this.relatedDocumentDesahogo.deleteJobManagement(management, volante),
       this.updateIfHaveDictamen(volante),
     ];
     await Promise.all(promises);
@@ -3006,11 +3037,11 @@ export class RelatedDocumentsComponent
       addressee:
         this.formJobManagement.value.jobType == 'INTERNO'
           ? this.formJobManagement.value.addressee.user
-          : '', // Destinatario
+          : this.formJobManagement.value.addressee.user, // Destinatario
       nomPersExt:
         this.formJobManagement.value.jobType == 'EXTERNO'
           ? this.formJobManagement.value.addressee + ''
-          : '', // Destinatario
+          : null, // Destinatario
       city: this.formJobManagement.value.city.id.toString(), // Ciudad
       refersTo: this.formJobManagement.value.refersTo, // Se Refiere A
       text1: this.formJobManagement.value.text1, // Parrafo inicial
@@ -3018,19 +3049,19 @@ export class RelatedDocumentsComponent
       text3: this.formJobManagement.value.text3, // Parrafo final despues de final sin nombre
       desSenderpa: this.m_job_management.desSenderpa
         ? this.m_job_management.desSenderpa.length == 0
-          ? ' '
+          ? null
           : this.m_job_management.desSenderpa
-        : ' ',
+        : null,
       description: this.m_job_management.description
         ? this.m_job_management.description.length == 0
-          ? ' '
+          ? null
           : this.m_job_management.description
-        : ' ',
+        : null,
       problematiclegal: this.m_job_management.problematiclegal
         ? this.m_job_management.problematiclegal.length == 0
-          ? ' '
+          ? null
           : this.m_job_management.problematiclegal
-        : ' ',
+        : null,
       justification: this.managementForm.value.justificacion,
     };
     // const _mJobManagement_update = await firstValueFrom(
@@ -4756,11 +4787,11 @@ export class RelatedDocumentsComponent
           addressee:
             this.formJobManagement.value.jobType == 'INTERNO'
               ? this.formJobManagement.value.addressee.user
-              : '', // Destinatario
+              : this.formJobManagement.value.addressee.user, // Destinatario
           nomPersExt:
             this.formJobManagement.value.jobType == 'EXTERNO'
               ? this.formJobManagement.value.addressee + ''
-              : '', // Destinatario
+              : null, // Destinatario
           city: this.formJobManagement.value.city.id.toString(), // Ciudad
           refersTo: this.formJobManagement.value.refersTo, // Se Refiere A
           text1: this.formJobManagement.value.text1, // Parrafo inicial
@@ -4769,26 +4800,29 @@ export class RelatedDocumentsComponent
           desSenderpa: this.m_job_management
             ? this.m_job_management.desSenderpa
               ? this.m_job_management.desSenderpa.length == 0
-                ? ' '
+                ? null
                 : this.m_job_management.desSenderpa
-              : ' '
-            : ' ',
+              : null
+            : null,
           description: this.m_job_management
             ? this.m_job_management.description
               ? this.m_job_management.description.length == 0
-                ? ' '
+                ? null
                 : this.m_job_management.description
-              : ' '
-            : ' ',
+              : null
+            : null,
           problematiclegal: this.m_job_management
             ? this.m_job_management.problematiclegal
               ? this.m_job_management.problematiclegal.length == 0
-                ? ' '
+                ? null
                 : this.m_job_management.problematiclegal
-              : ' '
-            : ' ',
+              : null
+            : null,
           justification: this.managementForm.value.justificacion,
+          cveChargeRem: this.managementForm.value.cveChargeRem,
+          areaUser: null, // Area remitente
         };
+
         console.log('OBJETO A GUARDAR ', objUpdate_MJob);
 
         this.createMJobManagement(objUpdate_MJob).subscribe({
@@ -4807,7 +4841,7 @@ export class RelatedDocumentsComponent
               ''
             );
             // resolve(resp);
-            return
+            return;
           },
           error: error => {
             console.log(error);
