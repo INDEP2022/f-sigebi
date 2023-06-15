@@ -6,10 +6,12 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
+import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
+import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import {
@@ -20,7 +22,10 @@ import {
 import { IGoodProgramming } from 'src/app/core/models/good-programming/good-programming';
 import { Iprogramming } from 'src/app/core/models/good-programming/programming';
 import { IGood } from 'src/app/core/models/good/good.model';
-import { IReceipt } from 'src/app/core/models/receipt/receipt.model';
+import {
+  IReceipt,
+  IRecepitGuard,
+} from 'src/app/core/models/receipt/receipt.model';
 import { AuthorityService } from 'src/app/core/services/catalogs/authority.service';
 import { GenericService } from 'src/app/core/services/catalogs/generic.service';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
@@ -33,6 +38,7 @@ import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.
 import { ProceedingsService } from 'src/app/core/services/ms-proceedings';
 import { ProgrammingGoodService } from 'src/app/core/services/ms-programming-request/programming-good.service';
 import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-request/programming-request.service';
+import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { ReceptionGoodService } from 'src/app/core/services/reception/reception-good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
@@ -118,6 +124,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   formLoadingReprog: boolean = false;
   formLoadingTrans: boolean = false;
   formLoadingGuard: boolean = false;
+  receiptGuardGood: IRecepitGuard;
   goodData: IGood;
   settingsGuardGoods = {
     ...this.settings,
@@ -168,6 +175,28 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     columns: RECEIPT_GUARD_COLUMNS,
   };
 
+  settingsReceiptsGuardsClose = {
+    ...this.settings,
+    actions: {
+      delete: true,
+      edit: true,
+      columnTitle: 'Acciones',
+      position: 'right',
+    },
+
+    edit: {
+      editButtonContent:
+        '<i class="fa fa-eye text-primary mx-2" > Ver bienes</i>',
+    },
+
+    delete: {
+      deleteButtonContent:
+        '<i class="fa fa-file text-info mx-2"> Ver Recibo</i>',
+    },
+
+    columns: RECEIPT_GUARD_COLUMNS,
+  };
+
   settingsReceiptWarehouse = {
     ...this.settings,
     actions: {
@@ -185,6 +214,28 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     delete: {
       deleteButtonContent:
         '<i class="fa fa-file ml-4" text-primary aria-hidden="true"></i> Generar recibo',
+    },
+
+    columns: RECEIPT_GUARD_COLUMNS,
+  };
+
+  settingsReceiptWarehouseClose = {
+    ...this.settings,
+    actions: {
+      delete: true,
+      edit: true,
+      columnTitle: 'Acciones',
+      position: 'right',
+    },
+
+    edit: {
+      editButtonContent:
+        '<i class="fa fa-book" text-warning aria-hidden="true"></i> Ver bienes',
+    },
+
+    delete: {
+      deleteButtonContent:
+        '<i class="fa fa-file ml-4" text-primary aria-hidden="true"></i> Ver recibo',
     },
 
     columns: RECEIPT_GUARD_COLUMNS,
@@ -214,7 +265,9 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     private programmingGoodService: ProgrammingGoodService,
     private receptionGoodService: ReceptionGoodService,
     private proceedingService: ProceedingsService,
-    private programminGoodService: ProgrammingGoodService
+    private programminGoodService: ProgrammingGoodService,
+    private wcontentService: WContentService,
+    private sanitizer: DomSanitizer
   ) {
     super();
     this.settings = {
@@ -374,14 +427,26 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     params.getValue()['filter.programmingId'] = this.programmingId;
     this.receptionGoodService.getReceptions(params.getValue()).subscribe({
       next: response => {
+        this.receiptGuardGood = response.data[0];
+
         const filterWarehouse = response.data.map((item: any) => {
           if (item.typeReceipt == 'ALMACEN') return item;
         });
+
+        const infoWarehouse = filterWarehouse.filter((item: IRecepitGuard) => {
+          return item;
+        });
+
+        this.receiptWarehouse.load(infoWarehouse);
         const filterGuard = response.data.map((item: any) => {
           if (item.typeReceipt == 'RESGUARDO') return item;
         });
         if (filterGuard) {
-          this.receiptGuards.load(filterGuard);
+          const infoGuard = filterGuard.filter((item: IRecepitGuard) => {
+            return item;
+          });
+
+          this.receiptGuards.load(infoGuard);
         }
       },
       error: error => {},
@@ -1077,9 +1142,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           next: response => {
             //this.getInfoGoodsProgramming();
           },
-          error: error => {
-            console.log('error bien', error);
-          },
+          error: error => {},
         });
       }
     });
@@ -1104,7 +1167,11 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         }
       });
     } else {
-      this.onLoadToast('warning', 'Se necesita tener un bien seleccionado', '');
+      this.onLoadToast(
+        'warning',
+        'Acción invalida',
+        'Se necesita tener un bien seleccionado'
+      );
     }
   }
 
@@ -1121,7 +1188,11 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         }
       });
     } else {
-      this.onLoadToast('warning', 'Se necesita tener un bien seleccionado', '');
+      this.onLoadToast(
+        'warning',
+        'Acción invalida',
+        'Se necesita tener un bien seleccionado'
+      );
     }
   }
 
@@ -1171,6 +1242,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
 
               if (updateProgrammingGood) {
                 const updateGood = await this.updateGoodWarehouse();
+                this.goodsWarehouse.clear();
                 this.getReceiptsGuard();
                 this.getInfoGoodsProgramming();
               }
@@ -1230,9 +1302,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         next: response => {
           resolve(response);
         },
-        error: error => {
-          console.log('error', error);
-        },
+        error: error => {},
       });
     });
   }
@@ -1956,6 +2026,45 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       });
     });
   }
+
+  showReceipt(receipt: IReceipt) {
+    this.wcontentService.obtainFile(receipt.contentId).subscribe({
+      next: response => {
+        let blob = this.dataURItoBlob(response);
+        let file = new Blob([blob], { type: 'application/pdf' });
+        const fileURL = URL.createObjectURL(file);
+        this.openPrevPdf(fileURL);
+      },
+      error: error => {},
+    });
+  }
+
+  dataURItoBlob(dataURI: any) {
+    const byteString = window.atob(dataURI);
+    const arrayBuffer = new ArrayBuffer(byteString.length);
+    const int8Array = new Uint8Array(arrayBuffer);
+    for (let i = 0; i < byteString.length; i++) {
+      int8Array[i] = byteString.charCodeAt(i);
+    }
+    const blob = new Blob([int8Array], { type: 'image/png' });
+    return blob;
+  }
+
+  openPrevPdf(pdfUrl: string) {
+    let config: ModalOptions = {
+      initialState: {
+        documento: {
+          urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(pdfUrl),
+          type: 'pdf',
+        },
+        callback: (data: any) => {},
+      }, //pasar datos por aca
+      class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+      ignoreBackdropClick: true, //ignora el click fuera del modal
+    };
+    this.modalService.show(PreviewDocumentsComponent, config);
+  }
+
   cancelGood() {
     let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
 

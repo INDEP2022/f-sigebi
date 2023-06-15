@@ -14,7 +14,10 @@ import { _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
 import { ICity } from 'src/app/core/models/catalogs/city.model';
 import { IDepartment } from 'src/app/core/models/catalogs/department.model';
-import { IPufGenerateKey } from 'src/app/core/models/ms-dictation/dictation-model';
+import {
+  IPufGenerateKey,
+  IStatusChange,
+} from 'src/app/core/models/ms-dictation/dictation-model';
 import { type INotification } from 'src/app/core/models/ms-notification/notification.model';
 import { IMJobManagement } from 'src/app/core/models/ms-officemanagement/m-job-management.model';
 import { IProceduremanagement } from 'src/app/core/models/ms-proceduremanagement/ms-proceduremanagement.interface';
@@ -58,12 +61,16 @@ export abstract class RelateDocumentsResponse extends BasePage {
   protected abstract svLegalOpinionsOfficeService: LegalOpinionsOfficeService;
   protected abstract authService: AuthService;
   abstract formVariables: FormGroup<{
+    dictaminacion: FormControl;
     b: FormControl;
     d: FormControl;
     dictamen: FormControl;
     classify: FormControl;
     classify2: FormControl;
     crime: FormControl;
+    proc_doc_dic: FormControl;
+    doc_bien: FormControl;
+    todos: FormControl;
   }>;
   protected abstract formJobManagement: FormGroup<{
     /** @description no_volante */
@@ -163,6 +170,7 @@ export abstract class RelateDocumentsResponse extends BasePage {
         this.dataTableGoods = await Promise.all(goods);
         this.totalItems = data.count;
         this.isLoadingGood = false;
+        console.log('GOODS ', this.dataTableGoods);
       },
       error: () => {
         this.isLoadingGood = false;
@@ -208,7 +216,14 @@ export abstract class RelateDocumentsResponse extends BasePage {
     params.page = 1;
     params.limit = 1;
     params['filter.flyerNumber'] = wheelNumber;
+    params['filter.jobBy'] = 'POR DICTAMEN';
     return this.mJobManagementService.getAll(params).pipe(map(x => x.data[0]));
+  }
+  updateMJobManagement(params: Partial<IMJobManagement>): Observable<any> {
+    return this.mJobManagementService.update(params).pipe(map(x => x.data));
+  }
+  createMJobManagement(params: Partial<IMJobManagement>): Observable<any> {
+    return this.mJobManagementService.create(params).pipe(map(x => x.data));
   }
 
   getJobManagement(params: ListParams): Observable<IProceduremanagement> {
@@ -1054,9 +1069,7 @@ export abstract class RelateDocumentsResponse extends BasePage {
       .pipe(map(x => x.data[0]));
   }
   sendFunction_pupValidExtDom(wheelNumber: number): Observable<any> {
-    return this.dictationService
-      .pupValidExtDom(wheelNumber)
-      .pipe(map(x => x.data));
+    return this.dictationService.pupValidExtDom(wheelNumber).pipe(map(x => x));
   }
   sendFunction_findOffficeNu(params: Object): Observable<any> {
     return this.dictationService.findOffficeNu(params).pipe(map(x => x.data));
@@ -1069,9 +1082,12 @@ export abstract class RelateDocumentsResponse extends BasePage {
   sendFunction_ObtainKeyOffice(params: Object): Observable<any> {
     return this.msOfficeManagementService
       .ObtainKeyOffice(params)
-      .pipe(map(x => x.data));
+      .pipe(map(x => x));
   }
   sendFunction_pufGenerateKey(params: IPufGenerateKey): Observable<any> {
-    return this.dictationService.pufGenerateKey(params).pipe(map(x => x.data));
+    return this.dictationService.pufGenerateKey(params).pipe(map(x => x));
+  }
+  sendFunction_pupStatusChange(params: IStatusChange): Observable<any> {
+    return this.dictationService.pupStatusChange(params).pipe(map(x => x));
   }
 }
