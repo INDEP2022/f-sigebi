@@ -61,6 +61,7 @@ export abstract class RelateDocumentsResponse extends BasePage {
   protected abstract svLegalOpinionsOfficeService: LegalOpinionsOfficeService;
   protected abstract authService: AuthService;
   abstract formVariables: FormGroup<{
+    dictaminacion: FormControl;
     b: FormControl;
     d: FormControl;
     dictamen: FormControl;

@@ -361,6 +361,7 @@ export class RelatedDocumentsComponent
   });
 
   formVariables = new FormGroup({
+    dictaminacion: new FormControl('PROCEDENCIA'),
     b: new FormControl('N'), //todos
     d: new FormControl(''),
     dictamen: new FormControl('PROCEDENCIA'),
@@ -1634,7 +1635,6 @@ export class RelatedDocumentsComponent
           next: async res => {
             console.log('prueba', res);
             this.notificationData = res.data[0];
-            //this.variables.dictamen = this.notificationData.dictumKey;
             this.formVariables
               .get('dictamen')
               .setValue(this.notificationData.dictumKey);
@@ -1935,18 +1935,16 @@ export class RelatedDocumentsComponent
       return;
     }
 
-    // ! NO ESTA PASANDO ESTA VALIDACION
-    // if (!this.variables.dictaminacion) {
-    //   this.alert('error', 'Debe especificar el tipo de Dictaminación', '');
-    //   return;
-    // }
+    if (!this.formVariables.get('dictaminacion').value) {
+      this.alert('error', 'Debe especificar el tipo de Dictaminación', '');
+      return;
+    }
 
     /* BIENES */
     const bien = this.getQueryParams('bien');
     const { managementNumber, cveManagement } = this.m_job_management;
     const { refersTo } = this.formJobManagement.controls;
     const goodJobs = this.dataTableGoodsJobManagement;
-    //console.log('BIENES ', goodJobs);
     if (bien == 'S' && doc == 'S') {
       console.log('paso');
       if (!managementNumber && !cveManagement) {
@@ -1999,7 +1997,7 @@ export class RelatedDocumentsComponent
     if (
       bien == 'S' &&
       doc == 'S' &&
-      this.formVariables.get('dictamen').value != 'DEVOLUCION'
+      this.formVariables.get('dictaminacion').value != 'DEVOLUCION'
     ) {
       if (refersTo.value == 'D' || refersTo.value == this.se_refiere_a.D) {
         this.alert(
@@ -2036,7 +2034,7 @@ export class RelatedDocumentsComponent
     if (
       bien == 'S' &&
       doc == 'S' &&
-      this.formVariables.get('dictamen').value == 'DEVOLUCION'
+      this.formVariables.get('dictaminacion').value == 'DEVOLUCION'
     ) {
       if (refersTo.value == 'D' || this.se_refiere_a.D) {
         this.alert('error', 'Para este oficio es necesario tener bienes', '');
@@ -2059,20 +2057,20 @@ export class RelatedDocumentsComponent
   }
 
   goDocumentModal() {
-    // debugger;
+    debugger;
     console.log(this.variables);
     console.log(this.formVariables.value);
     let context: Partial<DocumentsFormComponent> = { queryParams: {} };
-    if (this.formVariables.get('dictamen').value == 'PROCEDENCIA') {
+    if (this.formVariables.get('dictaminacion').value == 'PROCEDENCIA') {
       context.queryParams = {
         crime: this.formVariables.get('crime').value,
-        typeDictation: this.formVariables.get('dictamen').value,
+        typeDictation: this.formVariables.get('dictaminacion').value,
         typeSteeringwheel: this.formNotification.get('wheelType').value,
         numberClassifyGood: `$in:${this.formVariables.get('classify2').value}`,
       };
-    } else if (this.formVariables.get('dictamen').value != 'PROCEDENCIA') {
+    } else if (this.formVariables.get('dictaminacion').value != 'PROCEDENCIA') {
       context.queryParams = {
-        typeDictation: this.formVariables.get('dictamen').value,
+        typeDictation: this.formVariables.get('dictaminacion').value,
         typeSteeringwheel: this.formNotification.get('wheelType').value,
         numberClassifyGood: `$in:${this.formVariables.get('classify2').value}`,
       };
@@ -2099,7 +2097,7 @@ export class RelatedDocumentsComponent
                 goodNumber: '',
                 managementNumber: this.formJobManagement.value.managementNumber,
                 recordNumber: '',
-                rulingType: this.formVariables.value.dictamen,
+                rulingType: this.formVariables.value.dictaminacion,
               },
             ];
           }
@@ -2250,7 +2248,7 @@ export class RelatedDocumentsComponent
         return;
       }
 
-      /*if (cveManagement.includes('?') == false) {
+      if (cveManagement.includes('?') == false) {
         this.onLoadToast(
           'info',
           'La clave está armada, no puede borrar oficio',
@@ -2280,7 +2278,7 @@ export class RelatedDocumentsComponent
           'Usuario inválido para borrar oficio'
         );
         return;
-      }*/
+      }
 
       this.alertQuestion(
         'warning',
@@ -2306,7 +2304,7 @@ export class RelatedDocumentsComponent
   ) {
     //console.log(this.dataTableGoodsJobManagement);
     //LOOP BIENES_OFICIO_ESTATUS
-
+    debugger;
     const body: any = {
       managementNumber: managementNumber,
       insertDate: insertDate,
@@ -2314,7 +2312,6 @@ export class RelatedDocumentsComponent
       dictum: managementNumber,
     };
 
-    return;
     const management = managementNumber;
     const volante = noVolante;
     //se elimina bienes_officio_gestion
