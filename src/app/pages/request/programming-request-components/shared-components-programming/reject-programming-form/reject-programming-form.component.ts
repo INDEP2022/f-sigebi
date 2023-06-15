@@ -3,7 +3,10 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { addDays } from 'date-fns';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { BehaviorSubject } from 'rxjs';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { minDate } from 'src/app/common/validations/date.validators';
+import { ITask } from 'src/app/core/models/ms-task/task-model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-request/programming-request.service';
 import { TaskService } from 'src/app/core/services/ms-task/task.service';
@@ -64,9 +67,12 @@ export class RejectProgrammingFormComponent extends BasePage implements OnInit {
           body['ssubtype'] = 'REJECT';
 
           this.taskService.createTaskWitOrderService(body).subscribe({
-            next: resp => {
-              this.router.navigate(['/pages/siab-web/sami/consult-tasks']);
-              this.close();
+            next: async resp => {
+              const openTaskPerfomProg = await this.openTaskPerfomProg();
+              if (openTaskPerfomProg == true) {
+                this.router.navigate(['/pages/siab-web/sami/consult-tasks']);
+                this.close();
+              }
             },
             error: error => {
               console.log(error);
@@ -78,6 +84,24 @@ export class RejectProgrammingFormComponent extends BasePage implements OnInit {
           console.log(error);
         },
       });
+  }
+
+  openTaskPerfomProg() {
+    return new Promise((resolve, reject) => {
+      const task = JSON.parse(localStorage.getItem('Task'));
+      const params = new BehaviorSubject<ListParams>(new ListParams());
+      const taskForm: ITask = {
+        State: null,
+      };
+      this.taskService.update(task.id, taskForm).subscribe({
+        next: response => {
+          resolve(true);
+        },
+        error: error => {
+          resolve(false);
+        },
+      });
+    });
   }
 
   close() {

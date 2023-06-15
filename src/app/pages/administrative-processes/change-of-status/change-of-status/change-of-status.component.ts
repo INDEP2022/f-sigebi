@@ -107,12 +107,12 @@ export class ChangeOfStatusComponent extends BasePage implements OnInit {
     this.formNew = this.fb.group({
       goodStatus: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [],
       ],
       dateStatus: [null],
       extDomProcess: [null, [Validators.pattern(STRING_PATTERN)]],
       issuingUser: [null, [Validators.pattern(STRING_PATTERN)]],
-      description: [null, [Validators.required]],
+      description: [null, []],
     });
   }
 
@@ -159,7 +159,7 @@ export class ChangeOfStatusComponent extends BasePage implements OnInit {
       status:
         this.goodStatus.value === null
           ? this.good.status
-          : this.goodStatus.value,
+          : this.goodStatus.value.status,
       extDomProcess:
         this.extDomProcess.value === null
           ? this.good.extDomProcess
