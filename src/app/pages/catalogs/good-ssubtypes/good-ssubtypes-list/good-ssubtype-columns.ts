@@ -8,7 +8,7 @@ export const GOOD_SSUBTYPES_COLUMNS = {
     sort: false,
   },
   description: {
-    title: 'Descripcion',
+    title: 'Descripción',
     type: 'string',
     sort: false,
   },
