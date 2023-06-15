@@ -91,7 +91,7 @@ export interface IPupLaunchReport {
   correo: string;
   oficios: string;
 }
-export interface IPufGenerateKey {
+export interface IStatusChange {
   procDocId: string;
   doc: string;
   bien: string;
@@ -108,4 +108,13 @@ export interface IPufGenerateKey {
   usuario: string;
   pDictamen: number;
   noVolante: number;
+}
+
+export interface IPufGenerateKey {
+  remit: string;
+  pllamo: string;
+}
+
+export interface IPufGenerateKey_response {
+  keyOfGestion: string;
 }

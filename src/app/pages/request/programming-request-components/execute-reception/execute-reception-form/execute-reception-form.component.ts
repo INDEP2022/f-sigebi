@@ -6,10 +6,12 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
+import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
+import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import {
@@ -20,7 +22,10 @@ import {
 import { IGoodProgramming } from 'src/app/core/models/good-programming/good-programming';
 import { Iprogramming } from 'src/app/core/models/good-programming/programming';
 import { IGood } from 'src/app/core/models/good/good.model';
-import { IReceipt } from 'src/app/core/models/receipt/receipt.model';
+import {
+  IReceipt,
+  IRecepitGuard,
+} from 'src/app/core/models/receipt/receipt.model';
 import { AuthorityService } from 'src/app/core/services/catalogs/authority.service';
 import { GenericService } from 'src/app/core/services/catalogs/generic.service';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
@@ -33,6 +38,7 @@ import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.
 import { ProceedingsService } from 'src/app/core/services/ms-proceedings';
 import { ProgrammingGoodService } from 'src/app/core/services/ms-programming-request/programming-good.service';
 import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-request/programming-request.service';
+import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { ReceptionGoodService } from 'src/app/core/services/reception/reception-good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
@@ -118,6 +124,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   formLoadingReprog: boolean = false;
   formLoadingTrans: boolean = false;
   formLoadingGuard: boolean = false;
+  receiptGuardGood: IRecepitGuard;
   goodData: IGood;
   settingsGuardGoods = {
     ...this.settings,
@@ -163,6 +170,28 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     delete: {
       deleteButtonContent:
         '<i class="fa fa-file text-info mx-2"> Generar recibo</i>',
+    },
+
+    columns: RECEIPT_GUARD_COLUMNS,
+  };
+
+  settingsReceiptsGuardsClose = {
+    ...this.settings,
+    actions: {
+      delete: true,
+      edit: true,
+      columnTitle: 'Acciones',
+      position: 'right',
+    },
+
+    edit: {
+      editButtonContent:
+        '<i class="fa fa-eye text-primary mx-2" > Ver bienes</i>',
+    },
+
+    delete: {
+      deleteButtonContent:
+        '<i class="fa fa-file text-info mx-2"> Ver Recibo</i>',
     },
 
     columns: RECEIPT_GUARD_COLUMNS,
@@ -214,7 +243,9 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     private programmingGoodService: ProgrammingGoodService,
     private receptionGoodService: ReceptionGoodService,
     private proceedingService: ProceedingsService,
-    private programminGoodService: ProgrammingGoodService
+    private programminGoodService: ProgrammingGoodService,
+    private wcontentService: WContentService,
+    private sanitizer: DomSanitizer
   ) {
     super();
     this.settings = {
@@ -374,6 +405,8 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     params.getValue()['filter.programmingId'] = this.programmingId;
     this.receptionGoodService.getReceptions(params.getValue()).subscribe({
       next: response => {
+        this.receiptGuardGood = response.data[0];
+
         const filterWarehouse = response.data.map((item: any) => {
           if (item.typeReceipt == 'ALMACEN') return item;
         });
@@ -509,59 +542,62 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   }
 
   filterStatusTrans(data: IGoodProgramming[]) {
-    this.formLoadingTrans = true;
     const _data: any[] = [];
     const filterData = data.filter(item => {
       return item.status == 'EN_TRANSPORTABLE';
     });
 
-    const formData = filterData.forEach(items => {
-      this.params.getValue()['filter.id'] = items.goodId;
-      this.goodService.getAll(this.params.getValue()).subscribe({
-        next: response => {
-          _data.push(response.data[0]);
+    if (filterData.length != 0) {
+      filterData.forEach(items => {
+        this.params.getValue()['filter.id'] = items.goodId;
+        this.goodService.getAll(this.params.getValue()).subscribe({
+          next: response => {
+            _data.push(response.data[0]);
 
-          this.goodsTransportable.clear();
-          _data.forEach(item => {
-            if (item.physicalStatus == 1) {
-              item.physicalStatusName = 'BUENO';
-            } else if (item.physicalStatus == 2) {
-              item.physicalStatusName = 'MALO';
-            }
-            if (item.stateConservation == 1) {
-              item.stateConservationName = 'BUENO';
-            } else if (item.stateConservation == 2) {
-              item.stateConservationName = 'MALO';
-            }
-            this.goodData = item;
-            const form = this.fb.group({
-              id: [item?.id],
-              goodId: [item?.goodId],
-              uniqueKey: [item?.uniqueKey],
-              fileNumber: [item?.fileNumber],
-              goodDescription: [item?.goodDescription],
-              quantity: [item?.quantity],
-              unitMeasure: [item?.unitMeasure],
-              descriptionGoodSae: [item?.descriptionGoodSae],
-              quantitySae: [item?.quantitySae],
-              saeMeasureUnit: [item?.saeMeasureUnit],
-              physicalStatus: [item?.physicalStatus],
-              physicalStatusName: [item?.physicalStatusName],
-              saePhysicalState: [item?.saePhysicalState],
-              stateConservation: [item?.stateConservation],
-              stateConservationName: [item?.stateConservationName],
-              stateConservationSae: [item?.stateConservationSae],
-              regionalDelegationNumber: [item?.regionalDelegationNumber],
+            this.goodsTransportable.clear();
+            _data.forEach(item => {
+              if (item.physicalStatus == 1) {
+                item.physicalStatusName = 'BUENO';
+              } else if (item.physicalStatus == 2) {
+                item.physicalStatusName = 'MALO';
+              }
+              if (item.stateConservation == 1) {
+                item.stateConservationName = 'BUENO';
+              } else if (item.stateConservation == 2) {
+                item.stateConservationName = 'MALO';
+              }
+              this.goodData = item;
+              const form = this.fb.group({
+                id: [item?.id],
+                goodId: [item?.goodId],
+                uniqueKey: [item?.uniqueKey],
+                fileNumber: [item?.fileNumber],
+                goodDescription: [item?.goodDescription],
+                quantity: [item?.quantity],
+                unitMeasure: [item?.unitMeasure],
+                descriptionGoodSae: [item?.descriptionGoodSae],
+                quantitySae: [item?.quantitySae],
+                saeMeasureUnit: [item?.saeMeasureUnit],
+                physicalStatus: [item?.physicalStatus],
+                physicalStatusName: [item?.physicalStatusName],
+                saePhysicalState: [item?.saePhysicalState],
+                stateConservation: [item?.stateConservation],
+                stateConservationName: [item?.stateConservationName],
+                stateConservationSae: [item?.stateConservationSae],
+                regionalDelegationNumber: [item?.regionalDelegationNumber],
+              });
+              this.goodsTransportable.push(form);
+              this.formLoadingTrans = false;
             });
-            this.goodsTransportable.push(form);
+          },
+          error: error => {
             this.formLoadingTrans = false;
-          });
-        },
-        error: error => {
-          this.formLoadingTrans = false;
-        },
+          },
+        });
       });
-    });
+    } else {
+      this.formLoadingTrans = false;
+    }
   }
 
   filterStatusReception(data: IGoodProgramming[]) {
@@ -1074,9 +1110,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           next: response => {
             //this.getInfoGoodsProgramming();
           },
-          error: error => {
-            console.log('error bien', error);
-          },
+          error: error => {},
         });
       }
     });
@@ -1227,9 +1261,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         next: response => {
           resolve(response);
         },
-        error: error => {
-          console.log('error', error);
-        },
+        error: error => {},
       });
     });
   }
@@ -1953,6 +1985,45 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       });
     });
   }
+
+  showReceipt(receipt: IReceipt) {
+    this.wcontentService.obtainFile(receipt.contentId).subscribe({
+      next: response => {
+        let blob = this.dataURItoBlob(response);
+        let file = new Blob([blob], { type: 'application/pdf' });
+        const fileURL = URL.createObjectURL(file);
+        this.openPrevPdf(fileURL);
+      },
+      error: error => {},
+    });
+  }
+
+  dataURItoBlob(dataURI: any) {
+    const byteString = window.atob(dataURI);
+    const arrayBuffer = new ArrayBuffer(byteString.length);
+    const int8Array = new Uint8Array(arrayBuffer);
+    for (let i = 0; i < byteString.length; i++) {
+      int8Array[i] = byteString.charCodeAt(i);
+    }
+    const blob = new Blob([int8Array], { type: 'image/png' });
+    return blob;
+  }
+
+  openPrevPdf(pdfUrl: string) {
+    let config: ModalOptions = {
+      initialState: {
+        documento: {
+          urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(pdfUrl),
+          type: 'pdf',
+        },
+        callback: (data: any) => {},
+      }, //pasar datos por aca
+      class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+      ignoreBackdropClick: true, //ignora el click fuera del modal
+    };
+    this.modalService.show(PreviewDocumentsComponent, config);
+  }
+
   cancelGood() {
     let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
 

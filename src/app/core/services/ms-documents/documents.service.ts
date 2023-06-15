@@ -35,6 +35,10 @@ export class DocumentsService extends HttpService {
     const route = `${DocumentsEndpoints.Documents}/${id}`;
     return this.get<IDocuments>(route);
   }
+  getCount1(id: string | number) {
+    const route = `${DocumentsEndpoints.Count1}/${id}`;
+    return this.get<any>(route);
+  }
 
   getByFolio(folio: string | number) {
     const route = `${DocumentsEndpoints.Documents}/folio/${folio}`;

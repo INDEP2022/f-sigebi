@@ -13,4 +13,5 @@ export enum GoodprocessEndpoints {
   ApplicationPupGenMasiv = 'application/pup-gen-masiv',
   GetGoodScreenSend = '/application/get-good-status-screen',
   GetDistinctTypes = 'application/get-distinct-types',
+  UpdateGoodStatus = 'update-good-status/updateManagementJob',
 }

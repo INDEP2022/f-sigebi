@@ -40,4 +40,9 @@ export class OfficeManagementService extends HttpService {
       data
     );
   }
+
+  customPostTmpClasifGood(body: any) {
+    const route = OfficeManagementEndpoint.TmpClasifBienCustomPost;
+    return this.post(`${route}`, body);
+  }
 }

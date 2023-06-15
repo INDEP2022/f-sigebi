@@ -22,7 +22,7 @@
         <h5 class="title">Informaci&oacute;n</h5>
         <div class="form-group">
           <label class="text-right"
-            >Usuario creaci&oacute;n de programaci&oacute;n&#58;</label
+            >Usuario de creaci&oacute;n de la programaci&oacute;n&#58;</label
           >
           <span> {{ programming?.creationUser }} </span>
         </div>
@@ -681,16 +681,240 @@
                     </form>
                   </div>
                 </div>
+              </div>
+            </tab>
 
-                <div class="row pt-5">
-                  <ng2-smart-table
-                    [attr.class]="'table-bordered'"
-                    [settings]="settingsReceiptsGuards"
-                    [source]="receiptGuards"
-                    (edit)="showGoodsReceipt($event.data)"
-                    (delete)="generateReceiptGuard($event.data)">
-                  </ng2-smart-table>
-                </div>
+            <tab [heading]="headingGuard">
+              <div class="justify-content-start">
+                <app-columns-select
+                  [(settings)]="settingsGuardGoods"></app-columns-select>
+
+                <button
+                  (click)="assingMinute()"
+                  class="btn btn-primary btn-sm active ml-2">
+                  Asignar Acta
+                </button>
+
+                <button
+                  (click)="deleteGoodGuard()"
+                  class="btn btn-danger btn-sm active ml-2">
+                  <i class="fa fa-trash"></i> Eliminar selección
+                </button>
+
+                <button
+                  (click)="uploadDocuments()"
+                  class="btn btn-primary btn-sm active ml-2">
+                  <i class="fa fa-file-archive"></i> Adjuntar documentos
+                </button>
+                <button
+                  (click)="uploadPicture()"
+                  class="btn btn-info btn-sm active ml-2">
+                  <i class="fa fa-camera"></i> Adjuntar fotografias
+                </button>
+              </div>
+              <div>
+                <form [formGroup]="goodsGuardForm">
+                  <div class="table-responsive text-nowrap">
+                    <table class="table table-bordered">
+                      <col style="width: 60%" />
+                      <col style="width: 80%" />
+                      <col style="width: 60%" />
+                      <thead>
+                        <tr>
+                          <th scope="col" class="text-center">
+                            <input
+                              type="checkbox"
+                              class="form-control ng-pristine ng-valid ng-touched"
+                              ng-reflect-model="true" />
+                          </th>
+                          <th scope="col">N. gesti&oacute;n</th>
+                          <th scope="col">Clave &uacute;nica</th>
+                          <th scope="col">Expediente</th>
+                          <th scope="col">Descripci&oacute;n transferente</th>
+                          <th scope="col">Descripci&oacute;n INDEP</th>
+                          <th scope="col">Cantidad transferente</th>
+                          <th scope="col">Cantidad INDEP</th>
+                          <th scope="col">Unidad Medida transferente</th>
+                          <th scope="col">Unidad Medida INDEP</th>
+                          <th scope="col">Estado f&iacute;sico transferente</th>
+                          <th scope="col">Estado f&iacute;sico INDEP</th>
+                          <th scope="col">Conservaci&oacute;n transferente</th>
+                          <th scope="col">Estado conservaci&oacute;n INDEP</th>
+                          <th scope="col">Acciones</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <ng-container formArrayName="goodsGuard">
+                          <tr
+                            *ngFor="
+                              let good of goodsGuards.controls;
+                              let i = index
+                            ">
+                            <ng-container [formGroupName]="i">
+                              <th scope="row" class="align-baseline">
+                                <input
+                                  type="checkbox"
+                                  (click)="goodSelect(good.value)"
+                                  class="form-control ng-pristine ng-valid ng-touched"
+                                  ng-reflect-model="true" />
+                              </th>
+                              <td scope="row" class="align-baseline">
+                                {{ good.get('goodId')?.value }}
+                              </td>
+                              <td class="align-baseline">
+                                {{ good.get('uniqueKey')?.value }}
+                              </td>
+                              <td class="align-baseline">
+                                {{ good.get('fileNumber')?.value }}
+                              </td>
+                              <td class="align-baseline">
+                                {{ good.get('goodDescription')?.value }}
+                              </td>
+                              <td>
+                                <form-field
+                                  [control]="
+                                    executeForm.get('descriptionGoodSae')
+                                  ">
+                                  <input
+                                    type="text"
+                                    class="form-control"
+                                    maxlength="100"
+                                    formControlName="descriptionGoodSae" />
+                                </form-field>
+                              </td>
+                              <td class="text-left align-baseline">
+                                <div class="align-items">
+                                  {{ good.get('quantity').value }}
+                                </div>
+                              </td>
+                              <td>
+                                <form-field
+                                  [control]="executeForm.get('quantitySae')">
+                                  <input
+                                    type="number"
+                                    class="form-control"
+                                    maxlength="50"
+                                    formControlName="quantitySae" />
+                                </form-field>
+                              </td>
+                              <td class="text-left align-baseline">
+                                {{ good.get('unitMeasure')?.value }}
+                              </td>
+                              <td>
+                                <select
+                                  [value]="
+                                    executeForm.get('saeMeasureUnit').value
+                                  "
+                                  class="form-select"
+                                  style="
+                                    width: 150px;
+                                    height: 40px;
+                                    font-size: 13px !important;
+                                  "
+                                  formControlName="saeMeasureUnit">
+                                  <option
+                                    *ngFor="let measureUnit of measureUnits"
+                                    [value]="measureUnit.uomCode">
+                                    {{ measureUnit.measureTlUnit }}
+                                  </option>
+                                </select>
+                              </td>
+                              <td class="text-left align-baseline">
+                                {{ good.get('physicalStatusName')?.value }}
+                              </td>
+                              <td>
+                                <select
+                                  [value]="
+                                    executeForm.get('saePhysicalState').value
+                                  "
+                                  class="form-select"
+                                  style="
+                                    width: 150px;
+                                    height: 40px;
+                                    font-size: 13px !important;
+                                  "
+                                  formControlName="saePhysicalState">
+                                  <option
+                                    *ngFor="let statusPhys of statusPhysical"
+                                    [value]="statusPhys.keyId">
+                                    {{ statusPhys.description }}
+                                  </option>
+                                </select>
+                              </td>
+
+                              <td class="text-left align-baseline">
+                                {{ good.get('stateConservationName')?.value }}
+                              </td>
+                              <td class="text-center align-baseline">
+                                <select
+                                  [value]="
+                                    executeForm.get('stateConservationSae')
+                                      .value
+                                  "
+                                  class="form-select"
+                                  style="
+                                    height: 40px;
+                                    font-size: 13px !important;
+                                  "
+                                  formControlName="stateConservationSae">
+                                  <option
+                                    *ngFor="let stateCon of stateConservation"
+                                    [value]="stateCon.keyId">
+                                    {{ stateCon.description }}
+                                  </option>
+                                </select>
+                              </td>
+                              <td class="text-center align-baseline">
+                                <a class="text-center">
+                                  <i
+                                    (click)="showGood(good.value)"
+                                    class="fa fa-file mr-2"
+                                    style="cursor: pointer"></i
+                                ></a>
+
+                                <a class="text-center">
+                                  <i
+                                    (click)="editGood(good.value)"
+                                    class="fa fa-pencil-alt mr-2"
+                                    style="cursor: pointer"></i
+                                ></a>
+
+                                <a class="text-center">
+                                  <i
+                                    (click)="updateInfo(good.value)"
+                                    class="fa fa-retweet mr-2"
+                                    style="cursor: pointer"></i
+                                ></a>
+                              </td>
+                            </ng-container>
+                          </tr>
+                        </ng-container>
+                      </tbody>
+                    </table>
+                  </div>
+                </form>
+              </div>
+              <div
+                class="row pt-5"
+                *ngIf="receiptGuardGood?.statusReceiptGuard == 'ABIERTO'">
+                <ng2-smart-table
+                  [attr.class]="'table-bordered'"
+                  [settings]="settingsReceiptsGuards"
+                  [source]="receiptGuards"
+                  (edit)="showGoodsReceipt($event.data)"
+                  (delete)="generateReceiptGuard($event.data)">
+                </ng2-smart-table>
+              </div>
+              <div
+                class="row pt-5"
+                *ngIf="receiptGuardGood?.statusReceiptGuard == 'CERRADO'">
+                <ng2-smart-table
+                  [attr.class]="'table-bordered'"
+                  [settings]="settingsReceiptsGuardsClose"
+                  [source]="receiptGuards"
+                  (edit)="showGoodsReceipt($event.data)"
+                  (delete)="showReceipt($event.data)">
+                </ng2-smart-table>
               </div>
             </tab>
 
