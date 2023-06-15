@@ -67,7 +67,7 @@ export const COLUMNSLIST = {
     sort: false,
   },
   zipCode: {
-    title: 'Codigo Postal',
+    title: 'Codigo postal',
     sort: false,
   },
   numPhone: {

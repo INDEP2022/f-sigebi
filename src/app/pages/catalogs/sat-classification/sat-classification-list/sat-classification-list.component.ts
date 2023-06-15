@@ -85,6 +85,7 @@ export class SatClassificationListComponent extends BasePage implements OnInit {
 
   openForm(satclasification?: ISatClassification) {
     const modalConfig = MODAL_CONFIG;
+    console.log(satclasification);
     modalConfig.initialState = {
       satclasification,
       callback: (next: boolean) => {
@@ -110,7 +111,7 @@ export class SatClassificationListComponent extends BasePage implements OnInit {
     this.satClassificationService.remove(id).subscribe({
       next: () => {
         this.getSatClasifications(),
-          this.alert('success', 'Sat Clasification', 'Borrado');
+          this.alert('success', 'Sat clasificación', 'Borrado');
       },
       error: err => {
         this.alert(

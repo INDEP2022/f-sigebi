@@ -5,11 +5,14 @@ export const REGULATORY_COLUMNS = {
     sort: false,
   },
   fractionId: {
-    title: 'No.Fracción',
+    title: 'No. Fracción',
     type: 'number',
     sort: false,
     valuePrepareFunction: (value: any) => {
       return value.id;
+    },
+    filterFunction: (value?: any, search?: string) => {
+      return search != null ? search : '';
     },
   },
   number: {
