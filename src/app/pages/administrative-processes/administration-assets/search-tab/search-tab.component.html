@@ -28,7 +28,7 @@
               </div>
             </div>
             <div class="row">
-              <div class="col-md-6">
+              <div class="col-md-12">
                 <div class="form-group">
                   <form-field
                     [control]="searchTabForm.get('estatus')"
@@ -38,19 +38,6 @@
                       type="text"
                       name="estatus"
                       formControlName="estatus" />
-                  </form-field>
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="form-group">
-                  <form-field
-                    [control]="searchTabForm.get('situacion')"
-                    label="Situación">
-                    <input
-                      class="form-control"
-                      type="text"
-                      name="situacion"
-                      formControlName="situacion" />
                   </form-field>
                 </div>
               </div>
@@ -66,6 +53,19 @@
                       type="text"
                       name="destino"
                       formControlName="destino" />
+                  </form-field>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <form-field
+                    [control]="searchTabForm.get('situacion')"
+                    label="Situación">
+                    <input
+                      class="form-control"
+                      type="text"
+                      name="situacion"
+                      formControlName="situacion" />
                   </form-field>
                 </div>
               </div>
