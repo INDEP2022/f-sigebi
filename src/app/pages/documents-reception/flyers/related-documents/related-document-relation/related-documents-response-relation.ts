@@ -51,11 +51,11 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { FlyersService } from '../../services/flyers.service';
 import { DialogSelectedManagementsComponent } from '../dialog-selected-managements/dialog-selected-managements.component';
 import { DocumentsFormComponent } from '../documents-form/documents-form.component';
+import { IGoodJobManagement } from '../related-documents.component';
 import {
+  IDocumentJobManagement,
   IGoodAndAvailable,
-  IGoodJobManagement,
-} from '../related-documents.component';
-import { IDocumentJobManagement } from './related-documents-relation.component';
+} from './related-documents-relation.component';
 
 export abstract class RelateDocumentsResponseRelation extends BasePage {
   protected abstract goodServices: GoodService;
@@ -63,6 +63,7 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
   protected abstract notificationService: NotificationService;
   protected abstract mJobManagementService: MJobManagementService;
   protected abstract msProcedureManagementService: ProcedureManagementService;
+  // protected abstract goodprocessService: GoodprocessService;
   protected abstract flyerService: FlyersService;
   protected abstract parametersService: ParametersService;
   protected abstract departmentService: DepartamentService;
@@ -201,21 +202,46 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
     userAndName?: string;
   };
   abstract dataTableGoodsMap: Map<number, IGoodAndAvailable>;
+
+  /**NO_BIEN, DESCRIPCION, CANTIDAD, IDENTIFICADOR,NO_EXPEDIENTE, NO_CLASIF_BIEN, ESTATUS, NO_REGISTRO */
+  convertDataGoods(data: { data: any[] }) {
+    const _data = data.data.map((data: any) => {
+      return {
+        goodId: data.no_bien,
+        description: data.descripcion,
+        quantity: data.cantidad,
+        identifier: data.identificador,
+        status: data.estatus,
+        proceedingsNumber: data.no_expediente,
+        goodClassNumber: data.no_clasif_bien,
+        registerNumber: data.no_registro,
+        available: data.disponible == 'N' ? true : false,
+        selected: this.dataGoodsSelected.has(data.no_bien),
+      };
+    });
+    return _data;
+  }
+
+  convertDataGoodsAvailable(data: any) {
+    const _data = data.data.map((data: any) => {
+      return {
+        goodNumber: data.no_bien,
+        goods: data.descripcion,
+        classify: data.no_clasif_bien,
+        registerNumber: data.no_registro,
+        available: data.disponible == 'N' ? true : false,
+        managementNumber: this.formJobManagement.value.managementNumber,
+      };
+    });
+    return _data;
+  }
   getGoods1(params: ListParams) {
     this.isLoadingGood = true;
-    this.goodServices.getAll(params).subscribe({
-      next: async data => {
-        const goods = await data.data.map(async item => {
-          const isAvailable = await this.getFactaDbOficioGestrel(
-            this.formJobManagement.get('managementNumber').value,
-            item.goodId
-          );
-          return {
-            ...item,
-            available: isAvailable,
-          };
-        });
-        this.dataTableGoods = await Promise.all(goods);
+    params['proceedingsNumber'] = this.formNotification.value.expedientNumber;
+    this.goodprocessService.getGoodAvailable(params).subscribe({
+      next: async (data: { data: any[]; count: number }) => {
+        this.dataTableGoods = this.convertDataGoods(data);
+        console.log(`this.dataTableGoods`, this.dataTableGoods);
         this.dataTableGoodsMap = new Map<number, IGoodAndAvailable>(
           this.dataTableGoods.map(x => [x.goodId, x])
         );
@@ -226,6 +252,32 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
         this.isLoadingGood = false;
       },
     });
+  }
+
+  async getGoodsOnlyAvailable(params: ListParams = new ListParams()) {
+    this.isLoadingGood = true;
+    params.limit = this.totalItems;
+    this.dataTableGoodsJobManagement = [];
+    params['proceedingsNumber'] = this.formNotification.value.expedientNumber;
+    try {
+      const data = await firstValueFrom(
+        this.goodprocessService.getGoodAvailable(params)
+      );
+
+      this.dataTableGoodsJobManagement = this.convertDataGoodsAvailable(
+        data
+      ).filter((x: { available: any }) => x.available);
+
+      this.isLoadingGood = false;
+    } catch (ex) {
+      this.isLoadingGood = false;
+      this.alert(
+        'error',
+        'Error',
+        'Error al obtener los bienes disponibles',
+        'error'
+      );
+    }
   }
 
   getFactaDbOficioGestrel(
@@ -751,29 +803,32 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
   }
 
   abstract dataGoodsSelected: Map<number, IGoodAndAvailable>;
-  pupAddGood() {
+  async pupAddGood() {
     console.log('pupAddGood');
-    const newRows: IGoodJobManagement[] = [];
-
+    // const newRows: IGoodJobManagement[] = [];
+    if (this.totalItems < 1000) {
+      await this.getGoodsOnlyAvailable();
+    }
+    // if(this.totalItems == ) {}
     // convert map to array
-    Array.from(this.dataGoodsSelected.values()).forEach(item => {
-      const existRow = this.dataTableGoodsJobManagement.find(
-        x => x.goodNumber == item.goodId
-      );
-      if (existRow) return;
-      newRows.push({
-        goodNumber: item.goodId,
-        recordNumber: '',
-        classify: item.goodClassNumber as any,
-        managementNumber: this.formJobManagement.value.managementNumber,
-        good: item,
-        goods: item.description,
-      });
-    });
-    this.dataTableGoodsJobManagement = [
-      ...this.dataTableGoodsJobManagement,
-      ...newRows,
-    ];
+    // Array.from(this.dataGoodsSelected.values()).forEach(item => {
+    //   const existRow = this.dataTableGoodsJobManagement.find(
+    //     x => x.goodNumber == item.goodId
+    //   );
+    //   if (existRow) return;
+    //   newRows.push({
+    //     goodNumber: item.goodId,
+    //     recordNumber: '',
+    //     classify: item.goodClassNumber as any,
+    //     managementNumber: this.formJobManagement.value.managementNumber,
+    //     good: item,
+    //     goods: item.description,
+    //   });
+    // });
+    // this.dataTableGoodsJobManagement = [
+    //   ...this.dataTableGoodsJobManagement,
+    //   ...newRows,
+    // ];
 
     // ------------ antiguo codigo
     // const goodAvailables = this.dataTableGoods.filter(item => item.available);
@@ -808,11 +863,11 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
   }
 
   pupAddAnyGood() {
-    const goodAvailables = this.dataTableGoods.filter(
-      item => item.available && (item as any)?.['seleccion']
-    );
     const newRows: IGoodJobManagement[] = [];
-    goodAvailables.forEach(item => {
+    this.dataTableGoodsJobManagement = [];
+    this.dataTableDocuments = [];
+    // convert map to array
+    Array.from(this.dataGoodsSelected.values()).forEach(item => {
       const existRow = this.dataTableGoodsJobManagement.find(
         x => x.goodNumber == item.goodId
       );
@@ -825,19 +880,53 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
         good: item,
         goods: item.description,
       });
-      if (!this.isCreate) {
-        this.postGoodsJobManagement({
-          goodNumber: item.goodId,
-          recordNumber: '',
-          managementNumber: this.formJobManagement.value.managementNumber,
-        }).subscribe();
-        item.available = false;
-      }
+      this.dataTableGoodsMap.get(item.goodId).available = false;
     });
     this.dataTableGoodsJobManagement = [
       ...this.dataTableGoodsJobManagement,
       ...newRows,
     ];
+    // const goodAvailables = this.dataTableGoods.filter(
+    //   item => item.available && (item as any)?.['seleccion']
+    // );
+    // const newRows: IGoodJobManagement[] = [];
+    // goodAvailables.forEach(item => {
+    //   const existRow = this.dataTableGoodsJobManagement.find(
+    //     x => x.goodNumber == item.goodId
+    //   );
+    //   if (existRow) return;
+    //   newRows.push({
+    //     goodNumber: item.goodId,
+    //     recordNumber: '',
+    //     classify: item.goodClassNumber as any,
+    //     managementNumber: this.formJobManagement.value.managementNumber,
+    //     good: item,
+    //     goods: item.description,
+    //   });
+    //   if (!this.isCreate) {
+    //     this.postGoodsJobManagement({
+    //       goodNumber: item.goodId,
+    //       recordNumber: '',
+    //       managementNumber: this.formJobManagement.value.managementNumber,
+    //     }).subscribe();
+    //     item.available = false;
+    //   }
+    // });
+    // this.dataTableGoodsJobManagement = [
+    //   ...this.dataTableGoodsJobManagement,
+    //   ...newRows,
+    // ];
+  }
+
+  deleteGoodJobManagement(_good: number) {
+    const index = this.dataTableGoodsJobManagement.findIndex(
+      x => x.goodNumber == _good
+    );
+    if (index < 0) return;
+    const good = this.dataTableGoodsJobManagement[index].good;
+    this.dataTableGoodsJobManagement.splice(index, 1);
+    this.dataTableGoodsMap.get(_good).available = true;
+    this.dataTableGoodsMap.get(_good).selected = false;
   }
 
   dataSelectDictation = new DefaultSelect([
@@ -1190,7 +1279,7 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
           .setValue(sequencialOfManagement);
         if (valuesJobManagement.refersTo == 'Se refiere a todos los bienes') {
           //TODO: await this.commit();
-          this.pupAddGood();
+          await this.pupAddGood();
         }
         if (
           valuesJobManagement.refersTo ==
@@ -1225,7 +1314,7 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
           valuesJobManagement.refersTo == 'Se refiere a todos los bienes' &&
           counter == 0
         ) {
-          this.pupAddGood();
+          await this.pupAddGood();
         }
         if (
           valuesJobManagement.refersTo ==

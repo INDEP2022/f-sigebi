@@ -98,4 +98,21 @@ export class GoodprocessService extends HttpService {
   getNextValManagement() {
     return this.get('application/get-nextval-gestion');
   }
+
+  getGoodAvailable(params: ListParams) {
+    const page = params.page || 1;
+    const limit = params.limit || 10;
+    return this.post(
+      `application/getAssetsOfficeManagement?page=${page}&limit=${limit}`,
+      params
+    );
+  }
+
+  postTransferGoodsTradeManagement(body: {
+    ofManagementNumber: any;
+    proceedingsNumber: any;
+    goodNumber: any;
+  }) {
+    this.post('application/transferGoodsTradeManagement', body);
+  }
 }
