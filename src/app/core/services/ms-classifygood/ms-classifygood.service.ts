@@ -37,7 +37,8 @@ export class ClassifyGoodService extends HttpService {
     return this.get<IListResponse>(`change-classification-goods?${params}`);
   }
 
-  getPupDistClasif(body: any) {
-    return this.get(ClassifyGoodEndPoints.PupDistClasif, body);
+  getPupDistClasif(user: string) {
+    const route = ClassifyGoodEndPoints.PupDistClasif;
+    return this.get(`${route}/${user}`);
   }
 }

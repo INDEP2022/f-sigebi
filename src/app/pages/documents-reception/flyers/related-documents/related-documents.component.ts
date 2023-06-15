@@ -19,6 +19,7 @@ import {
   of,
   skip,
   switchMap,
+  take,
   takeUntil,
   tap,
   throwError,
@@ -361,6 +362,7 @@ export class RelatedDocumentsComponent
     crime: new FormControl('S'),
     proc_doc_dic: new FormControl('N'),
     doc_bien: new FormControl('N'),
+    todos: new FormControl('N'),
   });
 
   selectVariable: any;
@@ -468,6 +470,7 @@ export class RelatedDocumentsComponent
     // (this.settings.columns as any).seleccion['hide'] = false;
     this.managementForm.get('averiPrevia').disable();
     this.formVariables.get('b').setValue('S'); //todos
+    this.formVariables.get('todos').setValue('S'); //todos
 
     this.managementForm.get('improcedente').setValue(true);
     this.managementForm.get('improcedente').disable();
@@ -507,6 +510,7 @@ export class RelatedDocumentsComponent
     columnaImprocedent.hide = false;
     this.managementForm.get('averiPrevia').enable();
     this.formVariables.get('b').setValue('N');
+    this.formVariables.get('todos').setValue('N');
 
     this.managementForm.get('improcedente').setValue(false);
     this.managementForm.get('improcedente').enable();
@@ -1077,6 +1081,7 @@ export class RelatedDocumentsComponent
           }
           if (mJobManagement.refersTo == this.se_refiere_a.C) {
             this.formVariables.get('b').setValue('N');
+            this.formVariables.get('todos').setValue('N');
           }
 
           if (this.formJobManagement.value.managementNumber) {
@@ -1142,7 +1147,6 @@ export class RelatedDocumentsComponent
           data['filter.managementNumber'] =
             this.formJobManagement.value.managementNumber;
           const goodManagementResult = await this.getGoodsJobManagement(data);
-          debugger;
           this.dataTableGoodsJobManagement = goodManagementResult.data;
           this.goodTotalItems = goodManagementResult.count;
         });
@@ -1614,7 +1618,10 @@ export class RelatedDocumentsComponent
           next: async res => {
             console.log('prueba', res);
             this.notificationData = res.data[0];
-            this.variables.dictamen = this.notificationData.dictumKey; // Set dictamen
+            //this.variables.dictamen = this.notificationData.dictumKey;
+            this.formVariables
+              .get('dictamen')
+              .setValue(this.notificationData.dictumKey);
             this.statusOf = res.data[0].wheelStatus;
             this.setDataNotification();
 
@@ -1890,6 +1897,8 @@ export class RelatedDocumentsComponent
     }
 
     await this.pupGoodDoc();
+
+    this.goDocumentModal();
   }
 
   async pupGoodDoc() {
@@ -1917,16 +1926,10 @@ export class RelatedDocumentsComponent
     // }
 
     /* BIENES */
-    console.log(this.dataTableGoodsJobManagement);
-    console.log(this.formJobManagement);
-
     const bien = this.getQueryParams('bien');
     const { managementNumber, cveManagement } = this.m_job_management;
     const { refersTo } = this.formJobManagement.controls;
-
     const goodJobs = this.dataTableGoodsJobManagement;
-    console.log(goodJobs);
-
     if (bien == 'S' && doc == 'S') {
       console.log('paso');
       if (!managementNumber && !cveManagement) {
@@ -1991,11 +1994,23 @@ export class RelatedDocumentsComponent
       } else {
         if (goodJobs.length > 0) {
           //se llama al endpoint para insertar tmp_clasif_bien
+          const body = {
+            managementNum: Number(managementNumber),
+            user: user,
+          };
+          const tmpClasifiGood =
+            await this.relatedDocumentDesahogo.callTmpClasifBien(body);
 
-          console.log(this.dataTableGoodsJobManagement);
           //PUP_DIST_CLASIF;
-          //const body = { user: user, classify: this.variables.clasif };
-          //await this.relatedDocumentDesahogo.PUP_DIST_CLASIF(body);
+          const classifies: any =
+            await this.relatedDocumentDesahogo.PUP_DIST_CLASIF(user);
+          console.log(classifies);
+          this.formVariables
+            .get('classify')
+            .setValue(classifies.data[0].clasif1);
+          this.formVariables
+            .get('classify2')
+            .setValue(classifies.data[0].clasif2);
         }
       }
     }
@@ -2024,8 +2039,6 @@ export class RelatedDocumentsComponent
     this.formVariables.get('proc_doc_dic').setValue('S');
     //this.variables.d = 'N';
     //this.variables.proc_doc_dic = 'S';
-
-    this.goDocumentModal();
   }
 
   goDocumentModal() {
@@ -2047,6 +2060,35 @@ export class RelatedDocumentsComponent
         numberClassifyGood: `$in:${this.formVariables.get('classify2').value}`,
       };
     }
+
+    const modalRef = this.modalService.show(DocumentsFormComponent, {
+      initialState: context,
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    });
+    modalRef.content.onClose.pipe(take(1)).subscribe(result => {
+      console.log({ result });
+      if (result && result?.length > 0) {
+        result.forEach(item => {
+          const doc = this.dataTableDocuments.find(
+            x => x.cveDocument == item.cveDocument
+          );
+          if (!doc) {
+            this.dataTableDocuments = [
+              ...this.dataTableDocuments,
+              {
+                cveDocument: item.cveDocument,
+                description: item.descripcion,
+                goodNumber: '',
+                managementNumber: this.formJobManagement.value.managementNumber,
+                recordNumber: '',
+                rulingType: this.formVariables.value.dictamen,
+              },
+            ];
+          }
+        });
+      }
+    });
   }
 
   getGoodOMCount() {
