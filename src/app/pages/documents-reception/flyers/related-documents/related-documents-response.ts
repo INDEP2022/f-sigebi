@@ -222,6 +222,9 @@ export abstract class RelateDocumentsResponse extends BasePage {
   updateMJobManagement(params: Partial<IMJobManagement>): Observable<any> {
     return this.mJobManagementService.update(params).pipe(map(x => x.data));
   }
+  createMJobManagement(params: Partial<IMJobManagement>): Observable<any> {
+    return this.mJobManagementService.create(params).pipe(map(x => x.data));
+  }
 
   getJobManagement(params: ListParams): Observable<IProceduremanagement> {
     // const params = new ListParams();
