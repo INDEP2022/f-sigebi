@@ -3801,8 +3801,15 @@ export class RelatedDocumentsComponent
       return;
     }
     if (this.formJobManagement.value.jobType == 'INTERNO') {
-      this.alertInfo('warning', 'Debe especificar el DESTINATARIO', '');
-      return;
+      // this.alertInfo('warning', 'Debe especificar el DESTINATARIO', '');
+      if (!this.formJobManagement.value.addressee.user) {
+        this.alertInfo(
+          'warning',
+          'Debe especificar al DESTINATARIO EXTERNO',
+          ''
+        );
+        return;
+      }
     }
     if (this.formJobManagement.value.jobType == 'EXTERNO') {
       if (!this.formJobManagement.value.addressee) {
@@ -4077,8 +4084,15 @@ export class RelatedDocumentsComponent
       return;
     }
     if (this.formJobManagement.value.jobType == 'INTERNO') {
-      this.alertInfo('warning', 'Debe especificar el DESTINATARIO', '');
-      return;
+      // this.alertInfo('warning', 'Debe especificar el DESTINATARIO', '');
+      if (!this.formJobManagement.value.addressee.user) {
+        this.alertInfo(
+          'warning',
+          'Debe especificar al DESTINATARIO EXTERNO',
+          ''
+        );
+        return;
+      }
     }
     if (this.formJobManagement.value.jobType == 'EXTERNO') {
       if (!this.formJobManagement.value.addressee) {
@@ -4682,8 +4696,15 @@ export class RelatedDocumentsComponent
       return;
     }
     if (this.formJobManagement.value.jobType == 'INTERNO') {
-      this.alertInfo('warning', 'Debe especificar el DESTINATARIO', '');
-      return;
+      // this.alertInfo('warning', 'Debe especificar el DESTINATARIO', '');
+      if (!this.formJobManagement.value.addressee.user) {
+        this.alertInfo(
+          'warning',
+          'Debe especificar al DESTINATARIO EXTERNO',
+          ''
+        );
+        return;
+      }
     }
     if (this.formJobManagement.value.jobType == 'EXTERNO') {
       if (!this.formJobManagement.value.addressee) {
