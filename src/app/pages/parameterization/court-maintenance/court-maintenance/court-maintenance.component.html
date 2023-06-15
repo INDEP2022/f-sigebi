@@ -21,8 +21,17 @@
             <input type="text" class="form-control" formControlName="id" />
           </form-field>
         </div>
-        <div class="col-md-6">
-          <app-circuit-shared [form]="form"></app-circuit-shared>
+        <div class="col-md-6 mt-3">
+          <ngx-select
+            [form]="form"
+            (fetchItems)="getCircuit($event)"
+            [data]="circuit"
+            value="otKey"
+            bindLabel="value"
+            label="Circuito"
+            control="circuitCVE">
+          </ngx-select>
+          <!--<app-circuit-shared [form]="form"></app-circuit-shared>-->
         </div>
         <div class="col-md-4 mt-3">
           <form-field

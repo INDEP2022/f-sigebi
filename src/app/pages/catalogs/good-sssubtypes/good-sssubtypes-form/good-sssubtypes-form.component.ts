@@ -94,6 +94,8 @@ export class GoodSssubtypesFormComponent extends BasePage implements OnInit {
         numSsubType: goodSsubtype.id,
       });
       this.goodSssubtypeForm.get('id').disable();
+      this.goodSssubtypeForm.get('numClasifAlterna').disable();
+      this.goodSssubtypeForm.get('numClasifGoods').disable();
       this.goodSssubtypeForm.get('numType').disable();
       this.goodSssubtypeForm.get('numSubType').disable();
       this.goodSssubtypeForm.get('numSsubType').disable();
@@ -145,7 +147,9 @@ export class GoodSssubtypesFormComponent extends BasePage implements OnInit {
 
   update() {
     this.loading = true;
+    console.log(this.goodSssubtype.numClasifGoods);
     const ids = {
+      numClasifGoods: this.goodSssubtype.numClasifGoods,
       id: this.goodSssubtype.id,
       numSsubType: (this.goodSssubtype.numSsubType as IGoodSsubType).id,
       numSubType: (this.goodSssubtype.numSubType as IGoodSubType).id,

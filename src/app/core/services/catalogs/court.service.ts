@@ -34,7 +34,8 @@ export class CourtService extends HttpService implements ICrudMethods<ICourt> {
   }
 
   update(id: string | number, model: ICourt): Observable<Object> {
-    return this.courtRepository.update(this.route, id, model);
+    const route2 = `${this.route}/id/`;
+    return this.courtRepository.update(route2, id, model);
   }
 
   updateCourt(model: ICourt) {

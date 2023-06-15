@@ -125,6 +125,8 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
     tipoTexto: FormControl;
     /**@descripcion no_expediente */
     proceedingsNumber: FormControl;
+    /**@descripcion nom_pers_ext */
+    nomPersExt: FormControl;
   }>;
   protected abstract formNotification: FormGroup;
   protected abstract route: ActivatedRoute;
@@ -508,22 +510,25 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
   }
 
   pupShowReport() {
-    const params = {
-      // PARAMFORM: 'NO',
-      // P_FIRMA: 'S',
-      // PARAMFORM: 'NO',
-      NO_OF_GES: this.formJobManagement.value.managementNumber,
-      // TIPO_OF: this.formJobManagement.value.jobType,
-      // VOLANTE: this.formNotification.value.wheelNumber,
-      // EXP: this.formNotification.value.expedientNumber,
-    };
+    let params = {};
 
     let nameReport = 'RGEROFGESTION';
     const jobType = this.formJobManagement.value.jobType;
     const PLLAMO = this.getParamsForName('PLLAMO');
     if (jobType == 'INTERNO' && PLLAMO != 'ABANDONO') {
+      params = {
+        PARAMFORM: 'NO',
+        // P_FIRMA: 'S',
+        NO_OF_GES: this.formJobManagement.value.managementNumber,
+        TIPO_OF: this.formJobManagement.value.jobType,
+        VOLANTE: this.formNotification.value.wheelNumber,
+        EXP: this.formNotification.value.expedientNumber,
+      };
       nameReport = 'RGEROFGESTION';
     } else if (jobType == 'EXTERNO' && PLLAMO != 'ABANDONO') {
+      params = {
+        no_of_ges: this.formJobManagement.value.managementNumber,
+      };
       nameReport = 'RGEROFGESTION_EXT';
     } else if (jobType == 'EXTERNO' && PLLAMO == 'ABANDONO') {
       nameReport = 'RGENABANSUB';
@@ -715,9 +720,29 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
         !isNaN(department.level as any) &&
         Number(department.level) + 1 == 5
       ) {
+        if (!level5) {
+          this.alert(
+            'error',
+            'Error',
+            'No se localizó el puesto de la persona que autoriza.'
+          );
+          throw new Error(
+            'No se localizó el puesto de la persona que autoriza.'
+          );
+        }
         joyKey += `/${level5}`;
       }
       joyKey += `/?/${year}`.trim();
+      if (!level2 || !level3 || !level4) {
+        this.alert(
+          'error',
+          'Error',
+          'No se localizó la dependencia de la persona que autoriza.'
+        );
+        throw new Error(
+          'No se localizó la dependencia de la persona que autoriza.'
+        );
+      }
       return joyKey;
     }
   }
@@ -924,6 +949,7 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
     this.formJobManagement.get('refersTo').setValue('D');
     this.se_refiere_a_Disabled.A = false;
     this.se_refiere_a_Disabled.B = false;
+    this.isDisabledBtnDocs = false;
 
     this.initForm();
   }
@@ -981,7 +1007,7 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
       this.formJobManagement.get('statusOf').setValue('ENVIADO');
       //TODO: pup_act_gestion
       //TODO: Guardar m_job_gestion
-      this.commit();
+      await this.commit();
       this.pupShowReport();
       this.formJobManagement.disable();
     }
@@ -998,10 +1024,20 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
     });
     delete result.tipoTexto;
     if (values.addressee) {
-      result.addressee =
-        values.jobType == 'EXTERNO'
-          ? values.addressee
-          : values.addressee?.usuario;
+      if (values.jobType == 'INTERNO') {
+        result.addressee = values.addressee?.usuario;
+      } else {
+        delete result.addressee;
+        // result.addressee = '';
+      }
+    }
+    if (values.nomPersExt) {
+      if (values.jobType == 'EXTERNO') {
+        result.nomPersExt = values.nomPersExt;
+      } else {
+        delete result.nomPersExt;
+        // result.nomPersExt = '';
+      }
     }
     if (values.sender) {
       result.sender = values.sender.usuario;
