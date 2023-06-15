@@ -6,4 +6,5 @@ export enum DocumentsEndpoints {
   ClarificationDocumentsImpro = 'clarification-documents-impro',
   DocumentRequestPerGood = 'documents-request-per-good',
   DocumentsForDictum = 'documents-for-dictum',
+  Count1 = 'application/getCount1',
 }

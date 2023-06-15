@@ -5,4 +5,6 @@ export enum OfficeManagementEndpoint {
   DeleteMOffice = 'application/delete3',
   DeleteCopiesOffice = 'application/delete4',
   ObtainKeyOffice = 'factadboficiogestrel3/obtain-key-office',
+  TmpClasifBienCustomPost = 'application/facta-db-oficio-gest',
+  DeleteJobGestion = 'application/delete-job-gestion',
 }

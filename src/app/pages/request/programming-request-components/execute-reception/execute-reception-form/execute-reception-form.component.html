@@ -894,13 +894,29 @@
                   </div>
                 </form>
               </div>
-              <div class="row pt-5">
+              <div
+                class="row pt-5"
+                *ngIf="
+                  receiptGuardGood?.statusReceiptGuard == 'ABIERTO' ||
+                  receiptGuardGood?.statusReceiptGuard == null
+                ">
                 <ng2-smart-table
                   [attr.class]="'table-bordered'"
                   [settings]="settingsReceiptsGuards"
                   [source]="receiptGuards"
                   (edit)="showGoodsReceipt($event.data)"
                   (delete)="generateReceiptGuard($event.data)">
+                </ng2-smart-table>
+              </div>
+              <div
+                class="row pt-5"
+                *ngIf="receiptGuardGood?.statusReceiptGuard == 'CERRADO'">
+                <ng2-smart-table
+                  [attr.class]="'table-bordered'"
+                  [settings]="settingsReceiptsGuardsClose"
+                  [source]="receiptGuards"
+                  (edit)="showGoodsReceipt($event.data)"
+                  (delete)="showReceipt($event.data)">
                 </ng2-smart-table>
               </div>
             </tab>
@@ -1123,10 +1139,27 @@
                 </form>
               </div>
 
-              <div class="row pt-5">
+              <div
+                class="row pt-5"
+                *ngIf="
+                  receiptGuardGood?.statusReceiptGuard == 'ABIERTO' ||
+                  receiptGuardGood?.statusReceiptGuard == null
+                ">
                 <ng2-smart-table
                   [attr.class]="'table-bordered'"
                   [settings]="settingsReceiptWarehouse"
+                  [source]="receiptWarehouse"
+                  (edit)="showGoodsReceipt($event.data)"
+                  (delete)="generateReceiptWarehouse($event.data)">
+                </ng2-smart-table>
+              </div>
+
+              <div
+                class="row pt-5"
+                *ngIf="receiptGuardGood?.statusReceiptGuard == 'CERRADO'">
+                <ng2-smart-table
+                  [attr.class]="'table-bordered'"
+                  [settings]="settingsReceiptWarehouseClose"
                   [source]="receiptWarehouse"
                   (edit)="showGoodsReceipt($event.data)"
                   (delete)="generateReceiptWarehouse($event.data)">

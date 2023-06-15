@@ -12,6 +12,11 @@
             <input
               bsDatepicker
               class="form-control"
+              [bsConfig]="{
+                withTimepicker: true,
+                rangeInputFormat: 'DD/MMMM/YYYY, h:mm:ss a',
+                dateInputFormat: 'DD/MMMM/YYYY, h:mm:ss a'
+              }"
               formControlName="startDate" />
           </form-field>
         </div>
@@ -22,6 +27,11 @@
             <input
               bsDatepicker
               class="form-control"
+              [bsConfig]="{
+                withTimepicker: true,
+                rangeInputFormat: 'DD/MMMM/YYYY, h:mm:ss a',
+                dateInputFormat: 'DD/MMMM/YYYY, h:mm:ss a'
+              }"
               formControlName="endDate" />
           </form-field>
         </div>
