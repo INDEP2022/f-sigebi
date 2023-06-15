@@ -10,6 +10,7 @@ import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.s
 import { InterfacefgrService } from 'src/app/core/services/ms-interfacefgr/ms-interfacefgr.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import { MJobManagementService } from 'src/app/core/services/ms-office-management/m-job-management.service';
+import { OfficeManagementService } from 'src/app/core/services/office-management/officeManagement.service';
 import { BasePage } from 'src/app/core/shared';
 import { IJuridicalDocumentManagementParams } from 'src/app/pages/juridical-processes/file-data-update/interfaces/file-data-update-parameters';
 
@@ -27,6 +28,7 @@ export class RelatedDocumentDesahogo extends BasePage {
   private route = inject(ActivatedRoute);
   private goodprocess = inject(GoodProcessService);
   private classifyGood = inject(ClassifyGoodService);
+  private officeManagement = inject(OfficeManagementService);
 
   constructor() {
     super();
@@ -100,41 +102,41 @@ export class RelatedDocumentDesahogo extends BasePage {
     });
   }
 
-  /*PUP_CAMBIO_IMPRO(
-    checked: boolean | string,
-    managementNumber: number,
-    proceedingNumber: number
-  ) {
-    const chk = checked == true || checked === 'true' ? 1 : 0;
-
-    const body: any = {
-      chkSelect: chk,
-      managementOfNumber: managementNumber,
-      proceedingNumber: proceedingNumber,
-    };
-    this.goodprocess.callPupChangeImpro(body).subscribe({
-      next: resp => {
-        console.log(resp);
-      },
-      error: error => {
-        console.log('error al llamar al pup cambio impro', error);
-      },
-    });
-  }*/
-
-  PUP_DIST_CLASIF(params: any) {
+  PUP_DIST_CLASIF(user: string) {
     return new Promise((resolve, reject) => {
-      const body: any = {
-        usuario: params.user,
-        clasif1: params.classify,
-      };
-      this.classifyGood.getPupDistClasif(body).subscribe({
+      this.classifyGood.getPupDistClasif(user).subscribe({
         next: resp => {
           console.log(resp);
+          resolve(resp);
+        },
+        error: error => {
+          console.log('Error al ejecutarse la funcion PUP_DIST_CLASIF', error);
+          reject('error al ejecutar el PUP DIST CLASIF');
+          this.onLoadToast(
+            'error',
+            'Error al ejecutarse la funcion PUP_DIST_CLASIF'
+          );
         },
       });
     });
   }
 
-  callTmpClasifBien() {}
+  callTmpClasifBien(body: any) {
+    return new Promise((resolve, reject) => {
+      this.officeManagement.customPostTmpClasifGood(body).subscribe({
+        next: resp => {
+          resolve(resp);
+        },
+        error: error => {
+          console.log(error);
+          reject('error al insertar en la tabla tmp_clasif_bien');
+          this.onLoadToast(
+            'error',
+            'Error al insertar en la tabla TMP_CLASIF_BIEN',
+            ''
+          );
+        },
+      });
+    });
+  }
 }

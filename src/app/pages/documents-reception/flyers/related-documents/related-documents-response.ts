@@ -69,6 +69,7 @@ export abstract class RelateDocumentsResponse extends BasePage {
     crime: FormControl;
     proc_doc_dic: FormControl;
     doc_bien: FormControl;
+    todos: FormControl;
   }>;
   protected abstract formJobManagement: FormGroup<{
     /** @description no_volante */
@@ -168,6 +169,7 @@ export abstract class RelateDocumentsResponse extends BasePage {
         this.dataTableGoods = await Promise.all(goods);
         this.totalItems = data.count;
         this.isLoadingGood = false;
+        console.log('GOODS ', this.dataTableGoods);
       },
       error: () => {
         this.isLoadingGood = false;
