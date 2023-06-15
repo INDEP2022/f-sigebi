@@ -63,7 +63,6 @@ export class WarehouseShowComponent extends BasePage implements OnInit {
     this.params.getValue()['filter.idProgramming'] = this.programmingId;
     this.storeService.getAllWarehouses(this.params.getValue()).subscribe({
       next: response => {
-        console.log('response', response);
         this.store = response.data[0];
         const idDelegationReg = response.data[0].wildebeestDelegationregion;
         const idStateOfRep = response.data[0].idState;
@@ -85,9 +84,7 @@ export class WarehouseShowComponent extends BasePage implements OnInit {
         this.startDate = moment(startDate).format('DD-MM-YYYY');
         this.endDate = moment(endDate).format('DD-MM-YYYY');
       },
-      error: error => {
-        console.log(error);
-      },
+      error: error => {},
     });
   }
 
@@ -96,9 +93,7 @@ export class WarehouseShowComponent extends BasePage implements OnInit {
       next: response => {
         this.regionalDelegation = response.description;
       },
-      error: error => {
-        console.log(error);
-      },
+      error: error => {},
     });
   }
 
@@ -107,9 +102,7 @@ export class WarehouseShowComponent extends BasePage implements OnInit {
       next: response => {
         this.stateOfRepublicName = response.descCondition;
       },
-      error: error => {
-        console.log(error);
-      },
+      error: error => {},
     });
   }
 
@@ -123,9 +116,7 @@ export class WarehouseShowComponent extends BasePage implements OnInit {
       next: response => {
         this.municipalityName = response.nameMunicipality;
       },
-      error: error => {
-        console.log(error);
-      },
+      error: error => {},
     });
   }
 
@@ -135,9 +126,7 @@ export class WarehouseShowComponent extends BasePage implements OnInit {
       next: response => {
         this.cityName = response.data[0].nameCity;
       },
-      error: error => {
-        console.log(error);
-      },
+      error: error => {},
     });
   }
 
@@ -149,9 +138,7 @@ export class WarehouseShowComponent extends BasePage implements OnInit {
       next: response => {
         this.localityName = response.data[0].nameLocation;
       },
-      error: error => {
-        console.log(error);
-      },
+      error: error => {},
     });
   }
 
@@ -160,9 +147,7 @@ export class WarehouseShowComponent extends BasePage implements OnInit {
       next: response => {
         this.typeWarehouseName = response.description;
       },
-      error: error => {
-        console.log(error);
-      },
+      error: error => {},
     });
   }
 

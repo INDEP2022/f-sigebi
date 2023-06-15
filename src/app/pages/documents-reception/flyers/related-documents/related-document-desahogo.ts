@@ -5,6 +5,7 @@ import {
   FilterParams,
   ListParams,
 } from 'src/app/common/repository/interfaces/list-params';
+import { ClassifyGoodService } from 'src/app/core/services/ms-classifygood/ms-classifygood.service';
 import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
 import { InterfacefgrService } from 'src/app/core/services/ms-interfacefgr/ms-interfacefgr.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
@@ -25,6 +26,7 @@ export class RelatedDocumentDesahogo extends BasePage {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private goodprocess = inject(GoodProcessService);
+  private classifyGood = inject(ClassifyGoodService);
 
   constructor() {
     super();
@@ -98,7 +100,7 @@ export class RelatedDocumentDesahogo extends BasePage {
     });
   }
 
-  PUP_CAMBIO_IMPRO(
+  /*PUP_CAMBIO_IMPRO(
     checked: boolean | string,
     managementNumber: number,
     proceedingNumber: number
@@ -118,5 +120,21 @@ export class RelatedDocumentDesahogo extends BasePage {
         console.log('error al llamar al pup cambio impro', error);
       },
     });
+  }*/
+
+  PUP_DIST_CLASIF(params: any) {
+    return new Promise((resolve, reject) => {
+      const body: any = {
+        usuario: params.user,
+        clasif1: params.classify,
+      };
+      this.classifyGood.getPupDistClasif(body).subscribe({
+        next: resp => {
+          console.log(resp);
+        },
+      });
+    });
   }
+
+  callTmpClasifBien() {}
 }
