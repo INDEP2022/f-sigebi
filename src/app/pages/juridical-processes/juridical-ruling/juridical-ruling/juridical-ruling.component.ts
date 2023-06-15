@@ -513,6 +513,7 @@ export class JuridicalRulingComponent
     this.isDisabledExp = false;
     this.statusDict = '';
     this.dictNumber = null;
+    this.totalItems2 = 0;
 
     this.onTypeDictChange({ id: 'DESTRUCCION' });
   }

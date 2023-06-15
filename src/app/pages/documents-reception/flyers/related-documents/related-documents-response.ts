@@ -67,6 +67,8 @@ export abstract class RelateDocumentsResponse extends BasePage {
     classify: FormControl;
     classify2: FormControl;
     crime: FormControl;
+    proc_doc_dic: FormControl;
+    doc_bien: FormControl;
   }>;
   protected abstract formJobManagement: FormGroup<{
     /** @description no_volante */
