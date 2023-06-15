@@ -3162,8 +3162,8 @@ export class RelatedDocumentsComponent
                     this.formJobManagement.value.statusOf != 'EN REVISION' &&
                     !this.formJobManagement.value.cveManagement.includes('?')
                   ) {
-                    // EN REVISION POR RUBEN
                     // Subir el PDF a la ruta de documentos y reemplazarlo por el anterior
+                    this._PUP_GENERA_PDF();
                   }
                 }
               }
@@ -3767,7 +3767,7 @@ export class RelatedDocumentsComponent
     this.modalService.show(DocumentsViewerByFolioComponent, config);
   }
   async secondConditionSendPrint() {
-    // variables let colocar aqui
+
     let n_COUNT = 0;
     let cuantos = 0;
     let conta = 0;
@@ -3791,29 +3791,31 @@ export class RelatedDocumentsComponent
       this.alertInfo('warning', 'Debe especificar la CIUDAD', '');
       return;
     }
-    if (this.variables.proc_doc_dic === 'N' && this.paramsGestionDictamen.doc === 'S' && this.paramsGestionDictamen.bien === 'S' && !this.formJobManagement.value.cveManagement) {
+    if (this.formVariables.get('proc_doc_dic').value === 'N' && this.paramsGestionDictamen.doc === 'S' && this.paramsGestionDictamen.bien === 'S' && !this.formJobManagement.value.cveManagement) {
       this.alertInfo('warning', 'Antes de Imprimir debe de Agregar Documentos', '');
       // PUP_BIEN_DOC;
+      await this.pupGoodDoc();
       return;
-    } else if (this.variables.proc_doc_dic === 'N' && this.paramsGestionDictamen.doc === 'N' && this.paramsGestionDictamen.bien === 'S' && !this.formJobManagement.value.cveManagement) {
+    } else if (this.formVariables.get('proc_doc_dic').value === 'N' && this.paramsGestionDictamen.doc === 'N' && this.paramsGestionDictamen.bien === 'S' && !this.formJobManagement.value.cveManagement) {
       this.alertInfo('warning', 'Antes de Imprimir debe de Agregar Documentos', '');
       // PUP_BIEN_DOC;
+      await this.pupGoodDoc();
       return;
     } else {
       if (this.paramsGestionDictamen.bien == 'S' && this.paramsGestionDictamen.doc === 'S') {
-        if (this.variables.b === 'N' || !this.variables.b) {
+        if (this.formVariables.get('b').value === 'N' || !this.formVariables.get('b')) {
           this.alertInfo('warning', 'Este oficio requiere de BIENES y DOCUMENTOS', '');
           return;
         }
       }
       if (this.paramsGestionDictamen.bien == 'S' && this.paramsGestionDictamen.doc === 'S') {
-        if (this.variables.d === 'N' || !this.variables.d) {
+        if (this.formVariables.get('d').value === 'N' || !this.formVariables.get('d').value) {
           this.alertInfo('warning', 'Este oficio requiere de DOCUMENTOS y BIENES', '');
           return;
         }
       }
       if (this.paramsGestionDictamen.doc === 'S') {
-        if (this.variables.d === 'N' || !this.variables.d) {
+        if (this.formVariables.get('d').value === 'N' || !this.formVariables.get('d').value) {
           this.alertInfo('warning', 'Este oficio requiere de DOCUMENTOS', '');
           return;
         }
@@ -3823,13 +3825,15 @@ export class RelatedDocumentsComponent
         if (this.paramsGestionDictamen.doc === 'N' && this.paramsGestionDictamen.bien === 'S') {
           if (this.se_refiere_a.A === 'Se refiere a todos los bienes') {
             //PUP_AGREGA_BIENES;
+            await this.pupAddGood();
           }
           if (this.se_refiere_a.B === 'Se refiere a algun(os) bien(es) del expediente') {
             //PUP_AGREGA_ALGUNOS_BIENES;
+            await this.pupAddAnyGood();
           }
         }
         this.formJobManagement.value.cveManagement = '' //PUF_GENERA_CLAVE
-        if (this.variables.b === 'S') {
+        if (this.formVariables.get('b').value === 'S') {
           this.formJobManagement.value.statusOf = 'EN REVISION'
           //GO_BLOCK('BIENES');
           //empiza el LOOP
@@ -3861,14 +3865,21 @@ export class RelatedDocumentsComponent
             //TERMINA el LOOP
           }
         } else {
-          if (this.variables.b === 'N') {
+          if (this.formVariables.get('b').value === 'N') {
             this.alertInfo('warning', 'Este oficio requiere de bienes', '');
             return;
           }
         }
-        if (!this.variables.b) {
+        if (!this.formVariables.get('b').value) {
           this.formJobManagement.value.statusOf = 'EN REVISION';
-          this.formJobManagement.value.cveManagement = '' //PUF_GENERA_CLAVE
+          let _params_generate_key = {
+            remit: this.formJobManagement.value.sender.id.toString(),
+            pllamo: this.paramsGestionDictamen.pllamo,
+          };
+          const _puf_genera_clave = await firstValueFrom(
+            this.sendFunction_pufGenerateKey(_params_generate_key)
+          );
+          this.formJobManagement.value.cveManagement = _puf_genera_clave //PUF_GENERA_CLAVE
         }
       }
       if (this.paramsGestionDictamen.doc === 'N') {
@@ -3914,8 +3925,8 @@ export class RelatedDocumentsComponent
               this.formJobManagement.value.statusOf != 'EN REVISION' &&
               !this.formJobManagement.value.cveManagement.includes('?')
             ) {
-              // EN REVISION POR RUBEN
               // Subir el PDF a la ruta de documentos y reemplazarlo por el anterior
+              this._PUP_GENERA_PDF();
             }
           }
         }
@@ -3923,7 +3934,7 @@ export class RelatedDocumentsComponent
       cuantos = await this.cuatos();
       if (cuantos !== 0) {
         //funcion q actualiza vista
-
+        this._updateMJobManagement();
       }
     }
 
