@@ -3046,6 +3046,56 @@ export class JuridicalRulingGComponent
                   console.log('fallo');
                 },
               });
+
+              // if (good.goodClassNumber == 62 || good.goodClassNumber == 1424 ||
+              //   good.goodClassNumber == 1426 || good.goodClassNumber == 1590) {
+              //   good.di_es_numerario = 'S';
+              //   good.di_esta_conciliado = 'N';
+
+              //   console.log("AQUI")
+              //   let vf_fecha: any = '';
+              //   const movimientoCuentas = await this.getMovimientoCuentas(good.id)
+              //   console.log("movimientoCuentas", movimientoCuentas)
+              //   if (movimientoCuentas != null) {
+              //     good.di_esta_conciliado = 'S';
+              //   }
+
+              //   if (good.di_esta_conciliado == 'N') {
+
+              //     const cadena1 = good.val5 ? good.val5.indexOf('/') : 0;
+              //     if (cadena1 > 0) {
+              //       vf_fecha = this.datePipe.transform(good.val5, 'yyyy/MM/dd');;
+              //     } else {
+
+              //       const cadena2 = good.val5 ? good.val5.indexOf('-') : 0;
+
+              //       if (cadena2 > 0) {
+              //         vf_fecha = this.datePipe.transform(good.val5, 'yyyy-MM-dd');
+              //       } else {
+              //         vf_fecha = good.val5;
+              //       }
+              //     }
+
+              //     let obj = {
+              //       goodNumber: (good.id) ? Number(good.id) : null,
+              //       proceedingNumber: good.fileNumber,
+              //       cveCurrency: good.val1 ? good.val1 : null,
+              //       cveBank: good.val4 ? good.val4 : null,
+              //       cveAccount: good.val6 ? good.val6 : null,
+              //       deposit: (good.val2) ? Number(good.val2) : null,
+              //       dateMovement: vf_fecha,
+              //       updates: 'S',
+              //     };
+              //     console.log("obj", obj)
+              //     const faConciles: any = await this.getFaConciles(obj);
+              //     console.log("faConciles", faConciles)
+              //     good.di_esta_conciliado = faConciles;
+              //   }
+
+              // } else {
+              //   good.di_es_numerario = 'N';
+              //   good.di_esta_conciliado = 'N';
+              // }
             });
 
             if (

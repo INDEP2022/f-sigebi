@@ -3164,8 +3164,8 @@ export class RelatedDocumentsComponent
                     this.formJobManagement.value.statusOf != 'EN REVISION' &&
                     !this.formJobManagement.value.cveManagement.includes('?')
                   ) {
-                    // EN REVISION POR RUBEN
                     // Subir el PDF a la ruta de documentos y reemplazarlo por el anterior
+                    this._PUP_GENERA_PDF();
                   }
                 }
               }
@@ -3267,7 +3267,6 @@ export class RelatedDocumentsComponent
         },
       });
   }
-
   enabledPrintAndBlockSend() {
     this.blockSend = true;
   }
@@ -3410,14 +3409,15 @@ export class RelatedDocumentsComponent
                   pNoProcess: this.paramsGestionDictamen.pNoTramite,
                   noFlyer: this.notificationData.wheelNumber,
                 };
-                const _act_gestion = await this._PUP_ACT_GESTION(
-                  paramsActGestion
-                );
+                // const _act_gestion = await this._PUP_ACT_GESTION(
+                //   paramsActGestion
+                // );
+                // console.log('ACT_GESTION ', _act_gestion);
 
-                if (_act_gestion.status != 200) {
-                  this.onLoadToast('error', _act_gestion.message, '');
-                  return;
-                }
+                // if (_act_gestion.status != 200) {
+                //   this.onLoadToast('error', _act_gestion.message, '');
+                //   return;
+                // }
                 this.formJobManagement.value.statusOf = 'ENVIADO';
                 // se llama PUP_GENERA_PDF
                 this._PUP_GENERA_PDF();
@@ -3657,20 +3657,21 @@ export class RelatedDocumentsComponent
         complete: async () => {
           console.log('COMPLETADO SUBIR PDF');
           // ACTUALIZAR REGISTRO PARA EL DOCUMENTO
-          this.createDocument(document)
-            .pipe(
-              tap(_document => {
-                // this.formScan.get('scanningFoli').setValue(_document.id);
-              }),
-              switchMap(async _document =>
-                this.uploadPdfEmitter(
-                  blob,
-                  nameAndExtension + '.pdf',
-                  _document.id
-                )
-              )
-            )
-            .subscribe();
+          // this.createDocument(document)
+          //   .pipe(
+          //     tap(_document => {
+          //       // this.formScan.get('scanningFoli').setValue(_document.id);
+          //     }),
+          //     switchMap(async _document =>
+          this.uploadPdfEmitter(
+            blob,
+            nameAndExtension + '.pdf',
+            folioUniversal
+          );
+          //   )
+          // )
+          // .subscribe();
+          this._PUP_CONSULTA_PDF_BD_SSF3();
         },
       });
   }
@@ -3770,7 +3771,6 @@ export class RelatedDocumentsComponent
     this.modalService.show(DocumentsViewerByFolioComponent, config);
   }
   async secondConditionSendPrint() {
-    // variables let colocar aqui
     let n_COUNT = 0;
     let cuantos = 0;
     let conta = 0;
@@ -3795,7 +3795,7 @@ export class RelatedDocumentsComponent
       return;
     }
     if (
-      this.variables.proc_doc_dic === 'N' &&
+      this.formVariables.get('proc_doc_dic').value === 'N' &&
       this.paramsGestionDictamen.doc === 'S' &&
       this.paramsGestionDictamen.bien === 'S' &&
       !this.formJobManagement.value.cveManagement
@@ -3806,9 +3806,10 @@ export class RelatedDocumentsComponent
         ''
       );
       // PUP_BIEN_DOC;
+      await this.pupGoodDoc();
       return;
     } else if (
-      this.variables.proc_doc_dic === 'N' &&
+      this.formVariables.get('proc_doc_dic').value === 'N' &&
       this.paramsGestionDictamen.doc === 'N' &&
       this.paramsGestionDictamen.bien === 'S' &&
       !this.formJobManagement.value.cveManagement
@@ -3819,13 +3820,17 @@ export class RelatedDocumentsComponent
         ''
       );
       // PUP_BIEN_DOC;
+      await this.pupGoodDoc();
       return;
     } else {
       if (
         this.paramsGestionDictamen.bien == 'S' &&
         this.paramsGestionDictamen.doc === 'S'
       ) {
-        if (this.variables.b === 'N' || !this.variables.b) {
+        if (
+          this.formVariables.get('b').value === 'N' ||
+          !this.formVariables.get('b')
+        ) {
           this.alertInfo(
             'warning',
             'Este oficio requiere de BIENES y DOCUMENTOS',
@@ -3838,7 +3843,10 @@ export class RelatedDocumentsComponent
         this.paramsGestionDictamen.bien == 'S' &&
         this.paramsGestionDictamen.doc === 'S'
       ) {
-        if (this.variables.d === 'N' || !this.variables.d) {
+        if (
+          this.formVariables.get('d').value === 'N' ||
+          !this.formVariables.get('d').value
+        ) {
           this.alertInfo(
             'warning',
             'Este oficio requiere de DOCUMENTOS y BIENES',
@@ -3848,7 +3856,10 @@ export class RelatedDocumentsComponent
         }
       }
       if (this.paramsGestionDictamen.doc === 'S') {
-        if (this.variables.d === 'N' || !this.variables.d) {
+        if (
+          this.formVariables.get('d').value === 'N' ||
+          !this.formVariables.get('d').value
+        ) {
           this.alertInfo('warning', 'Este oficio requiere de DOCUMENTOS', '');
           return;
         }
@@ -3864,16 +3875,18 @@ export class RelatedDocumentsComponent
         ) {
           if (this.se_refiere_a.A === 'Se refiere a todos los bienes') {
             //PUP_AGREGA_BIENES;
+            await this.pupAddGood();
           }
           if (
             this.se_refiere_a.B ===
             'Se refiere a algun(os) bien(es) del expediente'
           ) {
             //PUP_AGREGA_ALGUNOS_BIENES;
+            await this.pupAddAnyGood();
           }
         }
         this.formJobManagement.value.cveManagement = ''; //PUF_GENERA_CLAVE
-        if (this.variables.b === 'S') {
+        if (this.formVariables.get('b').value === 'S') {
           this.formJobManagement.value.statusOf = 'EN REVISION';
           //GO_BLOCK('BIENES');
           //empiza el LOOP
@@ -3904,14 +3917,22 @@ export class RelatedDocumentsComponent
             //TERMINA el LOOP
           }
         } else {
-          if (this.variables.b === 'N') {
+          if (this.formVariables.get('b').value === 'N') {
             this.alertInfo('warning', 'Este oficio requiere de bienes', '');
             return;
           }
         }
-        if (!this.variables.b) {
+        if (!this.formVariables.get('b').value) {
           this.formJobManagement.value.statusOf = 'EN REVISION';
-          this.formJobManagement.value.cveManagement = ''; //PUF_GENERA_CLAVE
+          let _params_generate_key = {
+            remit: this.formJobManagement.value.sender.id.toString(),
+            pllamo: this.paramsGestionDictamen.pllamo,
+          };
+          const _puf_genera_clave = await firstValueFrom(
+            this.sendFunction_pufGenerateKey(_params_generate_key)
+          );
+          this.formJobManagement.value.cveManagement =
+            _puf_genera_clave.data.keyOfGestion; //PUF_GENERA_CLAVE
         }
       }
       if (this.paramsGestionDictamen.doc === 'N') {
@@ -3966,8 +3987,8 @@ export class RelatedDocumentsComponent
               this.formJobManagement.value.statusOf != 'EN REVISION' &&
               !this.formJobManagement.value.cveManagement.includes('?')
             ) {
-              // EN REVISION POR RUBEN
               // Subir el PDF a la ruta de documentos y reemplazarlo por el anterior
+              this._PUP_GENERA_PDF();
             }
           }
         }
@@ -3975,6 +3996,7 @@ export class RelatedDocumentsComponent
       cuantos = await this.cuatos();
       if (cuantos !== 0) {
         //funcion q actualiza vista
+        this._updateMJobManagement();
       }
     }
   }
@@ -4092,6 +4114,8 @@ export class RelatedDocumentsComponent
         );
         // Probar
         console.log('RESP ', _puf_genera_clave);
+        this.formJobManagement.value.cveManagement =
+          _puf_genera_clave.data.keyOfGestion; //PUF_GENERA_CLAVE
       }
 
       const _valida_ext_dom = await this._PUP_VALIDA_EXT_DOM();
@@ -4182,6 +4206,7 @@ export class RelatedDocumentsComponent
           usuario: userInfo.user,
           pDictamen: this.paramsGestionDictamen.pDictamen,
           noVolante: this.notificationData.wheelNumber,
+          vcPantalla: this.screenKeyManagement,
         };
         const _cambia_estatus = await this._PUP_CAMBIA_ESTATUS(
           _params_change_status
@@ -4207,11 +4232,13 @@ export class RelatedDocumentsComponent
           pNoProcess: this.paramsGestionDictamen.pNoTramite,
           noFlyer: this.notificationData.wheelNumber,
         };
-        const _act_gestion = await this._PUP_ACT_GESTION(paramsActGestion);
-        if (_act_gestion.status != 200) {
-          this.onLoadToast('error', _act_gestion.message, '');
-          return;
-        }
+        // const _act_gestion = await this._PUP_ACT_GESTION(paramsActGestion);
+        // // if (_act_gestion.status != 200) {
+        // //   this.onLoadToast('error', _act_gestion.message, '');
+        // //   return;
+        // // }
+        // console.log('ACT_GESTION ', _act_gestion);
+
         if (this.paramsGestionDictamen.pllamo == 'ABANDONO') {
           let reportCondition = this._conditions_Report();
           this.variablesSend.ESTATUS_OF = this.formJobManagement.value.statusOf;
@@ -4288,10 +4315,12 @@ export class RelatedDocumentsComponent
                       usuario: userInfo.user,
                       pDictamen: this.paramsGestionDictamen.pDictamen,
                       noVolante: this.notificationData.wheelNumber,
+                      vcPantalla: this.screenKeyManagement,
                     };
                     const _cambia_estatus = await this._PUP_CAMBIA_ESTATUS(
                       _params_change_status
                     );
+                    console.log(_cambia_estatus);
                     // Llamar las globales y obtener gnu_activa_gestion
                     let paramsActGestion = {
                       pGestOk: this.paramsGestionDictamen.pGestOk,
@@ -4300,14 +4329,16 @@ export class RelatedDocumentsComponent
                       pNoProcess: this.paramsGestionDictamen.pNoTramite,
                       noFlyer: this.notificationData.wheelNumber,
                     };
-                    const _act_gestion = await this._PUP_ACT_GESTION(
-                      paramsActGestion
-                    );
+                    // const _act_gestion = await this._PUP_ACT_GESTION(
+                    //   paramsActGestion
+                    // );
 
-                    if (_act_gestion.status != 200) {
-                      this.onLoadToast('error', _act_gestion.message, '');
-                      return;
-                    }
+                    // if (_act_gestion.status != 200) {
+                    //   this.onLoadToast('error', _act_gestion.message, '');
+                    //   return;
+                    // }
+                    // console.log('ACT_GESTION ', _act_gestion);
+
                     this.formJobManagement.value.statusOf = 'ENVIADO';
 
                     const updateDataMJobManagement: any =
@@ -4529,7 +4560,8 @@ export class RelatedDocumentsComponent
   }
 
   async _PUP_CAMBIA_ESTATUS(obj: any) {
-    return await firstValueFrom(this.sendFunction_pupStatusChange(obj));
+    // return await firstValueFrom(this.sendFunction_pupStatusChange(obj));
+    return await this.sendFunction_pupStatusChange(obj);
   }
 
   async _PUP_ACT_GESTION(obj: any) {
