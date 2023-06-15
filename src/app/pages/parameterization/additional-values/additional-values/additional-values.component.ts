@@ -132,12 +132,17 @@ export class AdditionalValuesComponent extends BasePage implements OnInit {
               delete this.columnFilters1[field];
             }
           });
+          console.log('this.params ad:', this.params);
+
+          this.params = this.pageFilter(this.params);
+          this.params2 = this.pageFilter(this.params2);
+
           this.gettvalTable(this.values);
         }
       });
     this.params2
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.gettvalTable(this.values));
+      .subscribe(() => this.gettvalTable2(this.values));
   }
   gettvalTable(values: ITablesType) {
     this.loading = true;
@@ -146,6 +151,25 @@ export class AdditionalValuesComponent extends BasePage implements OnInit {
       ...this.columnFilters,
     };
     this.tvalTableService.getById4(values.nmtabla, params).subscribe({
+      next: response => {
+        console.log(response);
+        this.tvalTableList = response.data;
+        this.data1.load(this.tvalTableList);
+        this.data1.refresh();
+        this.totalItems2 = response.count;
+        this.loading = false;
+      },
+      error: error => (this.loading = false),
+    });
+  }
+
+  gettvalTable2(values: ITablesType) {
+    this.loading = true;
+    let params2 = {
+      ...this.params2.getValue(),
+      ...this.columnFilters,
+    };
+    this.tvalTableService.getById4(values.nmtabla, params2).subscribe({
       next: response => {
         console.log(response);
         this.tvalTableList = response.data;
