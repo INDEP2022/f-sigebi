@@ -29,26 +29,6 @@ export const INDICATOR_REPORT_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  userCreation: {
-    title: 'Usuario Creación',
-    type: 'string',
-    sort: false,
-  },
-  creationDate: {
-    title: 'Fecha Creación',
-    type: 'Date',
-    sort: false,
-  },
-  userModification: {
-    title: 'Usuario Modificación ',
-    type: 'string',
-    sort: false,
-  },
-  modificationDate: {
-    title: 'Fecha Modificación',
-    type: 'Date',
-    sort: false,
-  },
   status: {
     title: 'Estado',
     type: 'string',

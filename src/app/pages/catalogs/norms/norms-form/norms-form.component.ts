@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { IGeneric } from 'src/app/core/models/catalogs/generic.model';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { NormsDestinationComponent } from '../norms-destination/norms-destination.component';
 import { INorm } from './../../../../core/models/catalogs/norm.model';
@@ -43,15 +44,33 @@ export class NormsFormComponent extends BasePage implements OnInit {
 
   private prepareForm(): void {
     this.normForm = this.fb.group({
-      norm: [null],
-      article: [null],
+      norm: [
+        null,
+        [Validators.maxLength(30), Validators.pattern(STRING_PATTERN)],
+      ],
+      article: [
+        null,
+        [Validators.maxLength(30), Validators.pattern(STRING_PATTERN)],
+      ],
       type: [null],
       destination: [null],
       name: [null],
-      characteristics: [null],
-      merchandise: [null],
-      fundament: [null],
-      objective: [null],
+      characteristics: [
+        null,
+        [Validators.maxLength(4000), Validators.pattern(STRING_PATTERN)],
+      ],
+      merchandise: [
+        null,
+        [Validators.maxLength(500), Validators.pattern(STRING_PATTERN)],
+      ],
+      fundament: [
+        null,
+        [Validators.maxLength(500), Validators.pattern(STRING_PATTERN)],
+      ],
+      objective: [
+        null,
+        [Validators.maxLength(4000), Validators.pattern(STRING_PATTERN)],
+      ],
       condition: [null],
       version: [null],
       status: [null, [Validators.required]],
