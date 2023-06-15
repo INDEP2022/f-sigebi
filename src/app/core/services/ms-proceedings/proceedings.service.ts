@@ -123,7 +123,7 @@ export class ProceedingsService extends HttpService {
     no_Acta: string | number
   ) {
     return this.put<IListResponse<any>>(
-      `${this.route}/aplication/update-actasEntregaRecepcion/${no_Acta}`,
+      `aplication/update-actasEntregaRecepcion/${no_Acta}`,
       model
     );
   }

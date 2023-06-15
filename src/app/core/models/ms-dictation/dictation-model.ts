@@ -114,3 +114,7 @@ export interface IPufGenerateKey {
   remit: string;
   pllamo: string;
 }
+
+export interface IPufGenerateKey_response {
+  keyOfGestion: string;
+}
