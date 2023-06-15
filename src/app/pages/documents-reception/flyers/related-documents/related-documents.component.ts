@@ -3409,14 +3409,15 @@ export class RelatedDocumentsComponent
                   pNoProcess: this.paramsGestionDictamen.pNoTramite,
                   noFlyer: this.notificationData.wheelNumber,
                 };
-                const _act_gestion = await this._PUP_ACT_GESTION(
-                  paramsActGestion
-                );
+                // const _act_gestion = await this._PUP_ACT_GESTION(
+                //   paramsActGestion
+                // );
+                // console.log('ACT_GESTION ', _act_gestion);
 
-                if (_act_gestion.status != 200) {
-                  this.onLoadToast('error', _act_gestion.message, '');
-                  return;
-                }
+                // if (_act_gestion.status != 200) {
+                //   this.onLoadToast('error', _act_gestion.message, '');
+                //   return;
+                // }
                 this.formJobManagement.value.statusOf = 'ENVIADO';
                 // se llama PUP_GENERA_PDF
                 this._PUP_GENERA_PDF();
@@ -3656,20 +3657,21 @@ export class RelatedDocumentsComponent
         complete: async () => {
           console.log('COMPLETADO SUBIR PDF');
           // ACTUALIZAR REGISTRO PARA EL DOCUMENTO
-          this.createDocument(document)
-            .pipe(
-              tap(_document => {
-                // this.formScan.get('scanningFoli').setValue(_document.id);
-              }),
-              switchMap(async _document =>
-                this.uploadPdfEmitter(
-                  blob,
-                  nameAndExtension + '.pdf',
-                  _document.id
-                )
-              )
-            )
-            .subscribe();
+          // this.createDocument(document)
+          //   .pipe(
+          //     tap(_document => {
+          //       // this.formScan.get('scanningFoli').setValue(_document.id);
+          //     }),
+          //     switchMap(async _document =>
+          this.uploadPdfEmitter(
+            blob,
+            nameAndExtension + '.pdf',
+            folioUniversal
+          );
+          //   )
+          // )
+          // .subscribe();
+          this._PUP_CONSULTA_PDF_BD_SSF3();
         },
       });
   }
@@ -4112,6 +4114,8 @@ export class RelatedDocumentsComponent
         );
         // Probar
         console.log('RESP ', _puf_genera_clave);
+        this.formJobManagement.value.cveManagement =
+          _puf_genera_clave.data.keyOfGestion; //PUF_GENERA_CLAVE
       }
 
       const _valida_ext_dom = await this._PUP_VALIDA_EXT_DOM();
@@ -4202,6 +4206,7 @@ export class RelatedDocumentsComponent
           usuario: userInfo.user,
           pDictamen: this.paramsGestionDictamen.pDictamen,
           noVolante: this.notificationData.wheelNumber,
+          vcPantalla: this.screenKeyManagement,
         };
         const _cambia_estatus = await this._PUP_CAMBIA_ESTATUS(
           _params_change_status
@@ -4227,11 +4232,13 @@ export class RelatedDocumentsComponent
           pNoProcess: this.paramsGestionDictamen.pNoTramite,
           noFlyer: this.notificationData.wheelNumber,
         };
-        const _act_gestion = await this._PUP_ACT_GESTION(paramsActGestion);
-        if (_act_gestion.status != 200) {
-          this.onLoadToast('error', _act_gestion.message, '');
-          return;
-        }
+        // const _act_gestion = await this._PUP_ACT_GESTION(paramsActGestion);
+        // // if (_act_gestion.status != 200) {
+        // //   this.onLoadToast('error', _act_gestion.message, '');
+        // //   return;
+        // // }
+        // console.log('ACT_GESTION ', _act_gestion);
+
         if (this.paramsGestionDictamen.pllamo == 'ABANDONO') {
           let reportCondition = this._conditions_Report();
           this.variablesSend.ESTATUS_OF = this.formJobManagement.value.statusOf;
@@ -4308,10 +4315,12 @@ export class RelatedDocumentsComponent
                       usuario: userInfo.user,
                       pDictamen: this.paramsGestionDictamen.pDictamen,
                       noVolante: this.notificationData.wheelNumber,
+                      vcPantalla: this.screenKeyManagement,
                     };
                     const _cambia_estatus = await this._PUP_CAMBIA_ESTATUS(
                       _params_change_status
                     );
+                    console.log(_cambia_estatus);
                     // Llamar las globales y obtener gnu_activa_gestion
                     let paramsActGestion = {
                       pGestOk: this.paramsGestionDictamen.pGestOk,
@@ -4320,14 +4329,16 @@ export class RelatedDocumentsComponent
                       pNoProcess: this.paramsGestionDictamen.pNoTramite,
                       noFlyer: this.notificationData.wheelNumber,
                     };
-                    const _act_gestion = await this._PUP_ACT_GESTION(
-                      paramsActGestion
-                    );
+                    // const _act_gestion = await this._PUP_ACT_GESTION(
+                    //   paramsActGestion
+                    // );
 
-                    if (_act_gestion.status != 200) {
-                      this.onLoadToast('error', _act_gestion.message, '');
-                      return;
-                    }
+                    // if (_act_gestion.status != 200) {
+                    //   this.onLoadToast('error', _act_gestion.message, '');
+                    //   return;
+                    // }
+                    // console.log('ACT_GESTION ', _act_gestion);
+
                     this.formJobManagement.value.statusOf = 'ENVIADO';
 
                     const updateDataMJobManagement: any =
@@ -4549,7 +4560,8 @@ export class RelatedDocumentsComponent
   }
 
   async _PUP_CAMBIA_ESTATUS(obj: any) {
-    return await firstValueFrom(this.sendFunction_pupStatusChange(obj));
+    // return await firstValueFrom(this.sendFunction_pupStatusChange(obj));
+    return await this.sendFunction_pupStatusChange(obj);
   }
 
   async _PUP_ACT_GESTION(obj: any) {
