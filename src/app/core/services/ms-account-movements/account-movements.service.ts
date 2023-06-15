@@ -45,4 +45,11 @@ export class AccountMovements extends HttpService {
       params
     );
   }
+
+  geFaReconcilesGood(filters: any) {
+    return this.post<IListResponse<any>>(
+      AccountMvmntEndpoints.FaReconcilesGood,
+      filters
+    );
+  }
 }

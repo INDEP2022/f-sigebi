@@ -53,6 +53,7 @@ import { GoodSssubtypeService } from 'src/app/core/services/catalogs/good-sssubt
 import { GoodSsubtypeService } from 'src/app/core/services/catalogs/good-ssubtype.service';
 import { GoodSubtypeService } from 'src/app/core/services/catalogs/good-subtype.service';
 import { GoodTypeService } from 'src/app/core/services/catalogs/good-type.service';
+import { AccountMovements } from 'src/app/core/services/ms-account-movements/account-movements.service';
 import { DictationXGood1Service } from 'src/app/core/services/ms-dictation/dictation-x-good1.service';
 import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
 import { OficialDictationService } from 'src/app/core/services/ms-dictation/oficial-dictation.service';
@@ -80,7 +81,6 @@ import { TempGood } from './dataTemp';
 import { DOCUMENTS_COLUMNS } from './documents-columns';
 import { ListdictumsComponent } from './listdictums/listdictums.component';
 import { GoodSubtype } from './model/good.model';
-
 /** LIBRERÍAS EXTERNAS IMPORTS */
 
 /** SERVICE IMPORTS */
@@ -382,7 +382,8 @@ export class JuridicalRulingGComponent
     private statusGoodService: StatusGoodService,
     private abandonmentsService: AbandonmentsDeclarationTradesService,
     private detailProceedingsDevolutionService: DetailProceedingsDevolutionService,
-    private jobDictumTextsService: JobDictumTextsService
+    private jobDictumTextsService: JobDictumTextsService,
+    private AccountMovements: AccountMovements
   ) {
     super();
     this.dictamen = {
@@ -1064,6 +1065,7 @@ export class JuridicalRulingGComponent
       },
       error: (error: any) => {
         console.log('DICT', error);
+        this.totalItems3 = 0;
         this.loading = false;
       },
     });
@@ -2519,6 +2521,10 @@ export class JuridicalRulingGComponent
             this.onLoadToast('warning', 'El numerario no está conciliado', '');
             return;
           }
+          // if (this.goods[indexGood].fa_concilia_bien == 'S') {
+          //   this.onLoadToast('warning', 'El numerario no está conciliado', '');
+          //   return;
+          // }
 
           // IF: bienes.DI_ES_NUMERARIO = 'S' AND: bienes.DI_ESTA_CONCILIADO = 'N' AND: VARIABLES.TIPO_DICTA = 'PROCEDENCIA' THEN
           // LIP_MENSAJE('El numerario no está conciliado', 'S');
@@ -2848,6 +2854,19 @@ export class JuridicalRulingGComponent
               } else {
                 good['goodDictaminado'] = true;
               }
+              let obj = {
+                goodNumber: good.id,
+                proceedingNumber: good.fileNumber,
+                cveCurrency: good.val1 ? good.val1 : '',
+                cveBank: good.val4 ? good.val4 : '',
+                cveAccount: good.val6 ? good.val6 : '',
+                deposit: good.val2 ? good.val2 : '',
+                dateMovement: good.val5 ? good.val5 : '',
+                updates: 'S',
+              };
+              const faConciles: any = await this.getFaConciles(obj);
+
+              good['fa_concilia_bien'] = faConciles;
 
               const resp = await new Promise((resolve, reject) => {
                 const body = {
@@ -2900,7 +2919,7 @@ export class JuridicalRulingGComponent
   }
 
   onLoadWithClass() {
-    this.formLoading = true;
+    // this.formLoading = true;
     this.goodServices
       .getAllFilter(this.filter1.getValue().getParams())
       .subscribe({
@@ -3092,15 +3111,22 @@ export class JuridicalRulingGComponent
 
             if (dictamenXGood1 == null) {
               good['goodDictaminado'] = false;
-
-              // if (dictamenXGood1.ofDictNumber == this.dictamen.id) {
-              //   // arr.push(good);
-              //   // arrD.push(dictamenXGood1);
-              // }
             } else {
               good['goodDictaminado'] = true;
             }
 
+            let obj = {
+              goodNumber: good.id,
+              proceedingNumber: good.fileNumber,
+              cveCurrency: good.val1 ? good.val1 : '',
+              cveBank: good.val4 ? good.val4 : '',
+              cveAccount: good.val6 ? good.val6 : '',
+              deposit: good.val2 ? good.val2 : '',
+              dateMovement: good.val5 ? good.val5 : '',
+              updates: 'S',
+            };
+            const faConciles: any = await this.getFaConciles(obj);
+            good['fa_concilia_bien'] = faConciles;
             await new Promise((resolve, reject) => {
               const body = {
                 pGoodNumber: good.id,
@@ -3111,7 +3137,9 @@ export class JuridicalRulingGComponent
                   this.expedientesForm.get('tipoDictaminacion').value,
                 pIdentity: good.identifier,
                 pVcScreem: 'FACTJURDICTAMASG',
-                pDiDescStatus: good.estatus.descriptionStatus ?? '',
+                pDiDescStatus: good.estatus
+                  ? good.estatus.descriptionStatus
+                  : '',
                 pProccessExtDom: good.extDomProcess,
               };
 
@@ -3147,11 +3175,13 @@ export class JuridicalRulingGComponent
                 };
 
                 this.serviceGood.dictationConcilation(body).subscribe({
-                  next: state => {
-                    good.di_esta_conciliado = 'S';
+                  next: (state: any) => {
+                    console.log('state', state);
+                    good.di_esta_conciliado = state.EST_DISPONIBLE;
                     resolve(state);
                   },
-                  error: () => {
+                  error: (error: any) => {
+                    console.log('errrorrr', error);
                     good.di_esta_conciliado = 'N';
                     resolve(null);
                   },
@@ -3194,6 +3224,23 @@ export class JuridicalRulingGComponent
     return good.est_disponible;
   }
 
+  getFaConciles(data: any) {
+    return new Promise((resolve, reject) => {
+      this.AccountMovements.geFaReconcilesGood(data).subscribe({
+        next: (resp: any) => {
+          // console.log('DICTAMINACION X BIEN', resp.data);
+          const data = resp.data[0];
+          resolve(data.fa_concilia_bien);
+          this.loading = false;
+        },
+        error: error => {
+          // console.log('ERROR DICTAMINACION X BIEN', error.error.message);
+          resolve('N');
+          this.loading = false;
+        },
+      });
+    });
+  }
   getDictaXGood(id: any) {
     const params = new ListParams();
     // if (filter == null) {
@@ -3282,6 +3329,7 @@ export class JuridicalRulingGComponent
         console.log('Documentos, ', resp);
       },
       error: error => {
+        this.totalItems2 = 0;
         this.documentsDictumXStateMList = [];
         console.log('No hay respuesta ', error);
       },
@@ -4217,7 +4265,9 @@ export class JuridicalRulingGComponent
         console.log('CREADO', resp);
       },
       error: error => {
+        this.alert('error', 'Error al crear dictamenXbien1', '');
         console.log('ERROR', error.error);
+        return;
       },
     });
   }
