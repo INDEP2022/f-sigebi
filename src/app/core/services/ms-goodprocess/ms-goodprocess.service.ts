@@ -8,6 +8,7 @@ import {
 } from '../../interfaces/list-response.interface';
 import { ICharacteristicsGoodDTO } from '../../models/ms-good/good';
 import { IGoodDistinctTypes } from '../../models/ms-good/good-distinct-types';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -97,5 +98,15 @@ export class GoodprocessService extends HttpService {
 
   getNextValManagement() {
     return this.get('application/get-nextval-gestion');
+  }
+  updateJobManagement(
+    model: any
+  ): Observable<IListResponse<any>> {
+    return this.put(`${GoodprocessEndpoints.UpdateGoodStatus}`, model);
+  }
+  postJobManagement(
+    model: any
+  ): Observable<IListResponse<any>> {
+    return this.post(`${GoodprocessEndpoints.UpdateGoodStatus}`, model);
   }
 }
