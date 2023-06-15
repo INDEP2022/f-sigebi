@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { AccountMvmntEndpoints } from 'src/app/common/constants/endpoints/ms-accountmvmnt-endpoint';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
 import { IAccountMovements } from '../../models/ms-account-movements/account-movements.model';
@@ -50,6 +51,13 @@ export class AccountMovements extends HttpService {
     return this.post<IListResponse<any>>(
       AccountMvmntEndpoints.FaReconcilesGood,
       filters
+    );
+  }
+
+  getAccountMovementsGood(params: ListParams) {
+    return this.get<IListResponse<any>>(
+      AccountMvmntEndpoints.AccountMovements,
+      params
     );
   }
 }
