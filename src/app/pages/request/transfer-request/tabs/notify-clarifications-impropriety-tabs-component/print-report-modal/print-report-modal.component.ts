@@ -4,6 +4,7 @@ import { PDFDocumentProxy } from 'ng2-pdf-viewer';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IChatClarifications } from 'src/app/core/models/ms-chat-clarifications/chat-clarifications-model';
 import { ISignatories } from 'src/app/core/models/ms-electronicfirm/signatories-model';
@@ -15,6 +16,7 @@ import { GelectronicFirmService } from 'src/app/core/services/ms-gelectronicfirm
 import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { UploadReportReceiptComponent } from 'src/app/pages/request/programming-request-components/execute-reception/upload-report-receipt/upload-report-receipt.component';
 import { environment } from 'src/environments/environment';
 import { UploadFielsModalComponent } from '../upload-fiels-modal/upload-fiels-modal.component';
 import { LIST_REPORTS_COLUMN } from './list-reports-column';
@@ -33,9 +35,11 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
   signatories: ISignatories[] = [];
   valuesSign: ISignatories;
   requestInfo: IRequest;
+  process: string = '';
   dataClarifications2: IChatClarifications;
   idProg: number = 0;
   receiptId: number = 0;
+  receiptGuards: any;
   src = '';
   isPdfLoaded = false;
   private pdf: PDFDocumentProxy;
@@ -106,9 +110,8 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
   userName: any[] = [];
 
   ngOnInit(): void {
-    console.log('this.typeDoc', this.idTypeDoc);
-    console.log('programming', this.idProg);
-    console.log('this.receiptId', this.receiptId);
+    console.log('process', this.process);
+
     if (this.idTypeDoc == 185) {
       let linkDoc: string = `${this.urlBaseReport}Recibo_Resguardo.jasper&ID_RECIBO_RESGUARDO=${this.idReportAclara}`;
       this.src = linkDoc;
@@ -234,32 +237,34 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
   }
 
   registerSign() {
-    if (this.idTypeDoc && this.idReportAclara) {
-      this.signatoriesService
-        .getSignatoriesName(this.idTypeDoc, this.idReportAclara)
-        .subscribe({
-          next: response => {
-            console.log('Existe firmante, ya no crear');
-          },
-          error: error => {
-            console.log('Si no hay firmantes, entonces crear nuevo');
-            let token = this.authService.decodeToken();
-            const formData: Object = {
-              name: token.name,
-              post: token.cargonivel1,
-              learnedType: this.idTypeDoc,
-              learnedId: this.idReportAclara, // Para los demás reportes
-            };
+    if (this.process != 'guard') {
+      if (this.idTypeDoc && this.idReportAclara) {
+        this.signatoriesService
+          .getSignatoriesName(this.idTypeDoc, this.idReportAclara)
+          .subscribe({
+            next: response => {
+              console.log('Existe firmante, ya no crear');
+            },
+            error: error => {
+              console.log('Si no hay firmantes, entonces crear nuevo');
+              let token = this.authService.decodeToken();
+              const formData: Object = {
+                name: token.name,
+                post: token.cargonivel1,
+                learnedType: this.idTypeDoc,
+                learnedId: this.idReportAclara, // Para los demás reportes
+              };
 
-            //Asigna un firmante según el usuario logeado
-            this.signatoriesService.create(formData).subscribe({
-              next: response => {
-                this.signParams(), console.log('Firmante creado: ', response);
-              },
-              error: error => console.log('No se puede crear: ', error),
-            });
-          },
-        });
+              //Asigna un firmante según el usuario logeado
+              this.signatoriesService.create(formData).subscribe({
+                next: response => {
+                  this.signParams(), console.log('Firmante creado: ', response);
+                },
+                error: error => console.log('No se puede crear: ', error),
+              });
+            },
+          });
+      }
     }
   }
 
@@ -709,6 +714,20 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
           this.onLoadToast('error', 'No se pudo guardar', '');
         },
       });
+  }
+
+  uploadReport() {
+    let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+    config.initialState = {
+      receiptGuards: this.receiptGuards,
+      callback: (data: boolean) => {
+        if (data) {
+        }
+      },
+    };
+
+    this.modalService.show(UploadReportReceiptComponent, config);
+    console.log('componente para adjuntar doc');
   }
 
   updateStatusSigned() {

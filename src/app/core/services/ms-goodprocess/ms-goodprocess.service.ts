@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 import { GoodprocessEndpoints } from 'src/app/common/constants/endpoints/ms-goodprocess-endpoint';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
@@ -97,5 +98,11 @@ export class GoodprocessService extends HttpService {
 
   getNextValManagement() {
     return this.get('application/get-nextval-gestion');
+  }
+  updateJobManagement(model: any): Observable<IListResponse<any>> {
+    return this.put(`${GoodprocessEndpoints.UpdateGoodStatus}`, model);
+  }
+  postJobManagement(model: any): Observable<IListResponse<any>> {
+    return this.post(`${GoodprocessEndpoints.UpdateGoodStatus}`, model);
   }
 }

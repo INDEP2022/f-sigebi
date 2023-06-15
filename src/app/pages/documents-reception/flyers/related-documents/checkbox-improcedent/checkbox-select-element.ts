@@ -53,6 +53,7 @@ export class CheckboxSelectElementComponent<T = any>
   onToggle($event: Event) {
     let row: any = this.rowData;
     let toggle = ($event.currentTarget as HTMLInputElement).checked;
+    console.log(row);
     if (row.improcedente == true && toggle == true) {
       this.box.nativeElement.checked = false;
       toggle = false;
