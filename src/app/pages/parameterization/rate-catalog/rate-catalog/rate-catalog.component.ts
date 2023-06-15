@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import {
@@ -9,7 +10,6 @@ import { ParameterBaseCatService } from 'src/app/core/services/catalogs/rate-cat
 import { BasePage } from 'src/app/core/shared/base-page';
 import { ModalRatesCatalogComponent } from '../modal-rates-catalog/modal-rates-catalog.component';
 import { RATECATALOG_COLUMS } from './rate-catalog-columns';
-import { LocalDataSource } from 'ng2-smart-table';
 
 @Component({
   selector: 'app-rate-catalog',

@@ -58,7 +58,11 @@ export class RegulatoyFormComponent extends BasePage implements OnInit {
       ],
       number: [
         null,
-        [Validators.required, Validators.pattern(POSITVE_NUMBERS_PATTERN)],
+        [
+          Validators.required,
+          Validators.maxLength(5),
+          Validators.pattern(POSITVE_NUMBERS_PATTERN),
+        ],
       ],
       description: [
         null,
@@ -88,7 +92,7 @@ export class RegulatoyFormComponent extends BasePage implements OnInit {
       createDate: [null],
       userModification: [null],
       modificationDate: [null],
-      version: [null],
+      version: [null, [Validators.maxLength(5)]],
     });
     if (this.regulatory != null) {
       this.edit = true;

@@ -11,18 +11,36 @@
           </form-field>
         </div>
         <div class="col-md-12 pt-3">
-          <ngx-select [form]="form" control="idBatch" (fetchItems)="getBatch($event)" [data]="batch"
-            bindLabel="description" value="id" label="Lotes" (change)="searchWarehouse($event)">
+          <ngx-select
+            [form]="form"
+            control="idBatch"
+            (fetchItems)="getBatch($event)"
+            [data]="batch"
+            bindLabel="description"
+            value="id"
+            label="Lotes"
+            (change)="searchWarehouse($event)">
           </ngx-select>
         </div>
         <div class="col-md-12 pt-3">
-          <form-field [control]="form.get('description')" label="Descripci&oacute;n">
-            <input type="text" class="form-control" formControlName="description" />
+          <form-field
+            [control]="form.get('description')"
+            label="Descripci&oacute;n">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="description" />
           </form-field>
         </div>
         <div class="col-md-12 pt-3">
-          <ngx-select [form]="form" control="idWarehouse" (fetchItems)="getWarehouse($event)" [data]="warehouse"
-            bindLabel="description" value="idWarehouse" label="Almac&eacute;n">
+          <ngx-select
+            [form]="form"
+            control="idWarehouse"
+            (fetchItems)="getWarehouse($event)"
+            [data]="warehouse"
+            bindLabel="description"
+            value="idWarehouse"
+            label="Almac&eacute;n">
           </ngx-select>
         </div>
         <div class="col-md-12">
@@ -36,7 +54,10 @@
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <confirm-button [disabled]="form.invalid" [loading]="loading" (confirm)="confirm()">
+        <confirm-button
+          [disabled]="form.invalid"
+          [loading]="loading"
+          (confirm)="confirm()">
         </confirm-button>
       </div>
       <div class="m-3">

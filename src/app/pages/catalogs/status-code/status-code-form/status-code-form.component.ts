@@ -32,7 +32,8 @@ export class StatusCodeFormComponent extends BasePage implements OnInit {
   private prepareForm() {
     this.statusCodeForm = this.fb.group({
       id: [
-        null, [
+        null,
+        [
           Validators.required,
           Validators.minLength(1),
           Validators.maxLength(5),
@@ -40,18 +41,20 @@ export class StatusCodeFormComponent extends BasePage implements OnInit {
         ],
       ],
       descCode: [
-        null, [
+        null,
+        [
           Validators.minLength(1),
           Validators.maxLength(50),
           Validators.pattern(STRING_PATTERN),
         ],
       ],
       order: [
-        null, [
+        null,
+        [
           Validators.minLength(1),
           Validators.maxLength(3),
           Validators.pattern(NUMBERS_PATTERN),
-        ]
+        ],
       ],
     });
     if (this.statusCode != null) {
