@@ -2998,7 +2998,11 @@ export class RelatedDocumentsComponent
       addressee:
         this.formJobManagement.value.jobType == 'INTERNO'
           ? this.formJobManagement.value.addressee.user
-          : this.formJobManagement.value.addressee, // Destinatario
+          : '', // Destinatario
+      nomPersExt:
+        this.formJobManagement.value.jobType == 'EXTERNO'
+          ? this.formJobManagement.value.addressee
+          : '', // Destinatario
       city: this.formJobManagement.value.city.id, // Ciudad
       refersTo: this.formJobManagement.value.refersTo, // Se Refiere A
       text1: this.formJobManagement.value.text1, // Parrafo inicial
@@ -3019,6 +3023,7 @@ export class RelatedDocumentsComponent
           ? ' '
           : this.m_job_management.problematiclegal
         : ' ',
+      justification: this.managementForm.value.justificacion,
     };
     // const _mJobManagement_update = await firstValueFrom(
     //   this.updateMJobManagement(objUpdate_MJob)
@@ -4043,6 +4048,8 @@ export class RelatedDocumentsComponent
     this.variablesSend.NO_OF_GESTION =
       this.formJobManagement.value.managementNumber;
     this.variablesSend.FECHA_INSERTO = this.formJobManagement.value.insertDate;
+    this.variablesSend.V_JUSTIFICACION =
+      this.managementForm.value.justificacion;
     if (!this.formJobManagement.value.jobType) {
       this.alertInfo('warning', 'Debe especificar el TIPO OFICIO', '');
       return;
@@ -4642,5 +4649,49 @@ export class RelatedDocumentsComponent
         this.alert('warning', ERROR_REPORT, '');
       }
     });
+  }
+
+  async _saveScreenManagement() {
+    if (this.formJobManagement.value.statusOf == 'ENVIADO') {
+      return;
+    }
+    if (!this.formJobManagement.value.jobType) {
+      this.alertInfo('warning', 'Debe especificar el TIPO OFICIO', '');
+      return;
+    }
+    if (!this.formJobManagement.value.sender) {
+      this.alertInfo('warning', 'Debe especificar el REMITENTE', '');
+      return;
+    }
+    if (this.formJobManagement.value.jobType == 'INTERNO') {
+      this.alertInfo('warning', 'Debe especificar el DESTINATARIO', '');
+      return;
+    }
+    if (this.formJobManagement.value.jobType == 'EXTERNO') {
+      if (!this.formJobManagement.value.addressee) {
+        this.alertInfo(
+          'warning',
+          'Debe especificar al DESTINATARIO EXTERNO',
+          ''
+        );
+        return;
+      }
+    }
+    if (!this.formJobManagement.value.city) {
+      this.alertInfo('warning', 'Debe especificar la CIUDAD', '');
+      return;
+    }
+    if (this.isPGR) {
+      if (!this.variablesSend.V_JUSTIFICACION) {
+        this.alertInfo(
+          'warning',
+          'Es necesario contar con una justificación para poder cerrar el oficio',
+          ''
+        );
+        return;
+      }
+    }
+    const updateDataMJobManagement: any = await this._updateMJobManagement(); // Actualizar datos
+    console.log(updateDataMJobManagement);
   }
 }

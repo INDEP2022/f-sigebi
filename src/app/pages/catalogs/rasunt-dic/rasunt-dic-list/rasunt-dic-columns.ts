@@ -19,103 +19,28 @@ export const R_ASUNT_DIC_COLUMNS = {
   },
   doc: {
     title: 'Documento',
-    type: 'html',
+    type: 'string',
     sort: false,
-    valuePrepareFunction: (value: string) => {
-      if (value == 'S') return 'Si';
-      if (value == 'N') return 'No';
-      return value;
-    },
-    filter: {
-      type: 'list',
-      config: {
-        selectText: 'Seleccionar',
-        list: [
-          { value: 'S', title: 'Si' },
-          { value: 'N', title: 'No' },
-        ],
-      },
-    },
   },
   property: {
     title: 'Propiedad',
-    type: 'html',
+    type: 'string',
     sort: false,
-    valuePrepareFunction: (value: string) => {
-      if (value == 'S') return 'Si';
-      if (value == 'N') return 'No';
-      return value;
-    },
-    filter: {
-      type: 'list',
-      config: {
-        selectText: 'Seleccionar',
-        list: [
-          { value: 'S', title: 'Si' },
-          { value: 'N', title: 'No' },
-        ],
-      },
-    },
   },
   g_of: {
     title: 'G_of',
-    type: 'html',
+    type: 'string',
     sort: false,
-    valuePrepareFunction: (value: string) => {
-      if (value == 'S') return 'Si';
-      if (value == 'N') return 'No';
-      return value;
-    },
-    filter: {
-      type: 'list',
-      config: {
-        selectText: 'Seleccionar',
-        list: [
-          { value: 'S', title: 'Si' },
-          { value: 'N', title: 'No' },
-        ],
-      },
-    },
   },
   i: {
     title: 'I',
-    type: 'html',
+    type: 'string',
     sort: false,
-    valuePrepareFunction: (value: string) => {
-      if (value == 'S') return 'Si';
-      if (value == 'N') return 'No';
-      return value;
-    },
-    filter: {
-      type: 'list',
-      config: {
-        selectText: 'Seleccionar',
-        list: [
-          { value: 'S', title: 'Si' },
-          { value: 'N', title: 'No' },
-        ],
-      },
-    },
   },
   e: {
     title: 'E',
     type: 'html',
     sort: false,
-    valuePrepareFunction: (value: string) => {
-      if (value == 'S') return 'Si';
-      if (value == 'N') return 'No';
-      return value;
-    },
-    filter: {
-      type: 'list',
-      config: {
-        selectText: 'Seleccionar',
-        list: [
-          { value: 'S', title: 'Si' },
-          { value: 'N', title: 'No' },
-        ],
-      },
-    },
   },
   // registryNumber: {
   //   title: 'Numero Registro',
