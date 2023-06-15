@@ -90,6 +90,9 @@ export class GoodsCaptureComponent
   }
 
   ngOnInit(): void {
+    this.assetsForm.get('identifica').valueChanges.subscribe(val => {
+      this.identChange();
+    });
     const identifica = this.params.iden ?? 'ASEG';
     this.setIdentifier(identifica);
     this.formControls.identifica.setValue(identifica);
