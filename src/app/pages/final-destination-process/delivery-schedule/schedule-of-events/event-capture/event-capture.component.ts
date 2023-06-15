@@ -173,11 +173,14 @@ interface IBlkProceeding {
 })
 export class EventCaptureComponent
   extends BasePage
-  implements OnInit, AfterViewInit, AfterContentInit {
+  implements OnInit, AfterViewInit, AfterContentInit
+{
   @ViewChildren(SmartDateInputHeaderDirective, { read: ElementRef })
   private itemsElements: QueryList<ElementRef>;
   _today = new Date();
+  _minDate: Date = null;
   saveLoading = false;
+
   eventTypes = new DefaultSelect([
     { area_tramite: 'OP', descripcion: 'Oficialía de partes' },
   ]);
@@ -341,18 +344,6 @@ export class EventCaptureComponent
             this.setEndDate(instance),
         },
         ...COLUMNS_CAPTURE_EVENTS_2,
-        // select: {
-        //   title: 'Seleccionar',
-        //   sort: false,
-        //   type: 'custom',
-        //   filter: false,
-        //   showAlways: true,
-        //   renderComponent: CheckboxElementComponent,
-        //   valuePrepareFunction: (departament: any, row: any) =>
-        //     this.isProceedingSelected(row),
-        //   onComponentInitFunction: (instance: CheckboxElementComponent) =>
-        //     this.proceedingSelectChange(instance),
-        // },
       },
     };
     this.activatedRoute.queryParams.subscribe(params => {
@@ -429,6 +420,8 @@ export class EventCaptureComponent
     } else {
       instance.disabled = false;
     }
+    const min = this.form.get('captureDate').value;
+    instance.minDate = this._minDate;
     instance.inputChange.subscribe(val => {
       const { row, value } = val;
       row.dateapprovalxadmon = value;
@@ -448,6 +441,8 @@ export class EventCaptureComponent
     } else {
       instance.disabled = false;
     }
+    const min = this.form.get('captureDate').value;
+    instance.minDate = this._minDate;
     instance.inputChange.subscribe(val => {
       if (!val) {
         return;
@@ -526,9 +521,21 @@ export class EventCaptureComponent
       ...this.proceeding,
       numFile,
       keysProceedings,
-      captureDate,
+      captureDate: new Date(
+        format(captureDate, 'yyyy-MM-dd HH:mm:ss')
+      ).getTime(),
       responsible,
     };
+    delete data.elaborationDate;
+    delete data.datePhysicalReception;
+    delete data.dateElaborationReceipt;
+    delete data.dateDeliveryGood;
+    delete data.approvalDateXAdmon;
+    delete data.closeDate;
+    delete data.maxDate;
+    delete data.dateCaptureHc;
+    delete data.dateCloseHc;
+    delete data.dateMaxHc;
 
     return this.proceedingDeliveryReceptionService
       .update(this.proceeding.id, data as any)
@@ -600,8 +607,12 @@ export class EventCaptureComponent
     const numDelegation1 = await this.getUserDelegation();
     const dataToSave = {
       keysProceedings,
-      elaborationDate: format(elaborationDate, 'yyyy-MM-dd HH:mm:ss'),
-      captureDate: format(captureDate, 'yyyy-MM-dd HH:mm:ss'),
+      elaborationDate: new Date(
+        format(elaborationDate, 'yyyy-MM-dd HH:mm:ss')
+      ).getTime(),
+      captureDate: new Date(
+        format(captureDate, 'yyyy-MM-dd HH:mm:ss')
+      ).getTime(),
       responsible,
       numFile: formValue.numFile,
       statusProceedings,
@@ -723,8 +734,8 @@ export class EventCaptureComponent
     this.alert('error', 'Error', message);
   }
 
-  ngAfterContentInit(): void { }
-  ngAfterViewInit(): void { }
+  ngAfterContentInit(): void {}
+  ngAfterViewInit(): void {}
 
   async transferClick() {
     const firstDetail = this.detail[0];
@@ -907,7 +918,7 @@ export class EventCaptureComponent
   }
 
   // PUP_TOTALES_PROG
-  progTotal() { }
+  progTotal() {}
 
   // PUP_GENERA_WHERE
   createFilters() {
@@ -1030,7 +1041,39 @@ export class EventCaptureComponent
     this.registerControls.prog.setValue(prog);
   }
 
+  private addUsingDates(date: Date, days: number) {
+    let nextDay = date;
+    let daysToAdd = 1;
+    while (days > 0) {
+      const _nextDay = new Date(
+        nextDay.getTime() + daysToAdd * 24 * 60 * 60 * 1000
+      );
+      if (_nextDay.getDay() > 0 && _nextDay.getDay() < 6) {
+        nextDay = _nextDay;
+        daysToAdd = 1;
+        days--;
+      } else {
+        daysToAdd++;
+      }
+    }
+    return nextDay;
+  }
+
   async ngOnInit() {
+    this.form
+      .get('captureDate')
+      .valueChanges.pipe(skip(1), takeUntil(this.$unSubscribe))
+      .subscribe(val => {
+        this.startDateCtrl.reset();
+        this.endDateCtrl.reset();
+        const detail = [...this.detail];
+        this.detail = [];
+        this.detail = detail;
+        if (!val) {
+          return;
+        }
+        this._minDate = val ? this.addUsingDates(val, 3) : null;
+      });
     this.params
       .pipe(
         takeUntil(this.$unSubscribe),
@@ -1122,9 +1165,11 @@ export class EventCaptureComponent
       this.global.type = 'RT';
     }
     folio.setValue(this.global.cons);
-    const cve = `${this.global.type ?? ''}/${prog.value ?? ''}/${this.global.tran ?? ''
-      }/${this.global.regi ?? ''}/${user.value ?? ''}/${this.global.cons ?? ''}/${year.value ?? ''
-      }/${month.value ?? ''}`;
+    const cve = `${this.global.type ?? ''}/${prog.value ?? ''}/${
+      this.global.tran ?? ''
+    }/${this.global.regi ?? ''}/${user.value ?? ''}/${this.global.cons ?? ''}/${
+      year.value ?? ''
+    }/${month.value ?? ''}`;
     // .slice(-2)
     if (!area.value && this.global.regi) {
       area.setValue(this.global.regi);
@@ -1279,7 +1324,7 @@ export class EventCaptureComponent
   }
 
   // CU_AREA_E
-  async getAreasE() { }
+  async getAreasE() {}
   // CU_AREA_R;
   async getAreasR() {
     return await lastValueFrom(
@@ -1582,16 +1627,25 @@ export class EventCaptureComponent
   updateTransfer() {
     const formValue = this.form.getRawValue();
     const { numFile, keysProceedings, captureDate, responsible } = formValue;
-    console.log({ keysProceedings });
-
     const data = {
       ...this.proceeding,
       numFile,
       keysProceedings,
-      captureDate,
+      captureDate: new Date(
+        format(captureDate, 'yyyy-MM-dd HH:mm:ss')
+      ).getTime(),
       responsible,
     };
-
+    delete data.elaborationDate;
+    delete data.datePhysicalReception;
+    delete data.dateElaborationReceipt;
+    delete data.dateDeliveryGood;
+    delete data.approvalDateXAdmon;
+    delete data.closeDate;
+    delete data.maxDate;
+    delete data.dateCaptureHc;
+    delete data.dateCloseHc;
+    delete data.dateMaxHc;
     return this.proceedingDeliveryReceptionService.update(
       this.proceeding.id,
       data as any
@@ -1682,7 +1736,7 @@ export class EventCaptureComponent
     );
   }
 
-  patchProceedingValue(proceeding: IProceedings) { }
+  patchProceedingValue(proceeding: IProceedings) {}
 
   async getProceedingType() {
     const { typeEvent } = this.registerControls;
@@ -1712,11 +1766,11 @@ export class EventCaptureComponent
     );
   }
 
-  onSubmit() { }
+  onSubmit() {}
 
-  onSubmit2() { }
+  onSubmit2() {}
 
-  search() { }
+  search() {}
 
   errorForm(message?: string) {
     if (message) {
@@ -2094,9 +2148,9 @@ export class EventCaptureComponent
     });
   }
 
-  PUP_ELIMINA_PDF_BD_SSF3(p_LLAVE: string, p_NO_ARCHO: number) { }
+  PUP_ELIMINA_PDF_BD_SSF3(p_LLAVE: string, p_NO_ARCHO: number) {}
 
-  PUP_CARGA_PDF_BD_SSF3(p_LLAVE: string, p_NO_ARCHO: number, p_RUTA: string) { }
+  PUP_CARGA_PDF_BD_SSF3(p_LLAVE: string, p_NO_ARCHO: number, p_RUTA: string) {}
 
   async PUP_ING_REG_FOLIO_UNIV_SSF3(
     p_NO_EXPEDIENTE: number,
@@ -2675,6 +2729,6 @@ export class EventCaptureComponent
     }
   }
 
-  PUP_ING_CORREO_SAE() { }
-  PUP_GENERA_XML() { }
+  PUP_ING_CORREO_SAE() {}
+  PUP_GENERA_XML() {}
 }

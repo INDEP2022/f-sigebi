@@ -17,6 +17,7 @@ export class GoodSituationFormComponent extends BasePage implements OnInit {
   title = 'Situación Bien';
   edit: boolean = false;
   situation: any;
+  id: string;
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
@@ -40,6 +41,7 @@ export class GoodSituationFormComponent extends BasePage implements OnInit {
     });
     if (this.situation != null) {
       this.edit = true;
+      this.goodSituationForm.controls['situation'].disable();
       this.goodSituationForm.patchValue(this.situation);
     }
   }
@@ -64,12 +66,11 @@ export class GoodSituationFormComponent extends BasePage implements OnInit {
 
   update() {
     this.loading = true;
-    console.log('Update ', this.situation);
+    this.id = this.goodSituationForm.get('situation').value;
+    let numero: number = parseInt(this.id);
+    this.goodSituationForm.controls['situation'].setValue(numero);
     this.goodSituationService
-      .updateCatalogGoodSituation(
-        this.situation.situation,
-        this.goodSituationForm.getRawValue()
-      )
+      .updateCatalogGoodSituation(numero, this.goodSituationForm.getRawValue())
       .subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),

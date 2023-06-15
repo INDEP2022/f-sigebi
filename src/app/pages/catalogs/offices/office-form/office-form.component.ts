@@ -6,11 +6,11 @@ import {
   STRING_PATTERN,
 } from '../../../../core/shared/patterns';
 
-import { BasePage } from 'src/app/core/shared/base-page';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { IOffice } from 'src/app/core/models/catalogs/office.model';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
+import { IOffice } from 'src/app/core/models/catalogs/office.model';
 import { OfficeService } from 'src/app/core/services/catalogs/office.service';
+import { BasePage } from 'src/app/core/shared/base-page';
 
 @Component({
   selector: 'app-office-form',

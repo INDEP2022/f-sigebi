@@ -1,15 +1,18 @@
-import { BehaviorSubject, takeUntil } from 'rxjs';
 import { Component, OnInit } from '@angular/core';
-import { ListParams, SearchFilter } from 'src/app/common/repository/interfaces/list-params';
+import { BehaviorSubject, takeUntil } from 'rxjs';
+import {
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 
-import { BasePage } from 'src/app/core/shared/base-page';
-import { BsModalService } from 'ngx-bootstrap/modal';
-import { ISatClassification } from 'src/app/core/models/catalogs/sat-classification.model';
 import { LocalDataSource } from 'ng2-smart-table';
+import { BsModalService } from 'ngx-bootstrap/modal';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
-import { SAT_CLASSIFICATION_COLUMNS } from './sat-classification-columns';
-import { SatClassificationFormComponent } from '../sat-classification-form/sat-classification-form.component';
+import { ISatClassification } from 'src/app/core/models/catalogs/sat-classification.model';
 import { SatClassificationService } from 'src/app/core/services/catalogs/sat-classification.service';
+import { BasePage } from 'src/app/core/shared/base-page';
+import { SatClassificationFormComponent } from '../sat-classification-form/sat-classification-form.component';
+import { SAT_CLASSIFICATION_COLUMNS } from './sat-classification-columns';
 
 @Component({
   selector: 'app-sat-classification-list',
@@ -44,8 +47,7 @@ export class SatClassificationListComponent extends BasePage implements OnInit {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
-            filter.field == 'id' ||
-              filter.field == 'nombre_clasificacion'
+            filter.field == 'id' || filter.field == 'nombre_clasificacion'
               ? (searchFilter = SearchFilter.EQ)
               : (searchFilter = SearchFilter.ILIKE);
             if (filter.search !== '') {
@@ -83,6 +85,7 @@ export class SatClassificationListComponent extends BasePage implements OnInit {
 
   openForm(satclasification?: ISatClassification) {
     const modalConfig = MODAL_CONFIG;
+    console.log(satclasification);
     modalConfig.initialState = {
       satclasification,
       callback: (next: boolean) => {
@@ -107,7 +110,8 @@ export class SatClassificationListComponent extends BasePage implements OnInit {
   delete(id: number) {
     this.satClassificationService.remove(id).subscribe({
       next: () => {
-        this.getSatClasifications(), this.alert('success', 'Sat Clasification', 'Borrado');
+        this.getSatClasifications(),
+          this.alert('success', 'Sat clasificación', 'Borrado');
       },
       error: err => {
         this.alert(

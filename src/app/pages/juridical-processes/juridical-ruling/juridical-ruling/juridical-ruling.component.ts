@@ -71,8 +71,8 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { IGlobalVars } from 'src/app/shared/global-vars/models/IGlobalVars.model';
 import { environment } from 'src/environments/environment';
 import Swal from 'sweetalert2';
-import { ListdictumsComponent } from '../../juridical-ruling-g/juridical-ruling-g/listdictums/listdictums.component';
 import { GoodSubtype } from '../../juridical-ruling-g/juridical-ruling-g/model/good.model';
+import { ListdictumsComponent } from '../listdictums/listdictums.component';
 import { RDictaminaDocModalComponent } from '../r-dictamina-doc-modal/r-dictamina-doc-modal.component';
 /** ROUTING MODULE */
 
@@ -155,9 +155,8 @@ export class JuridicalRulingComponent
         valuePrepareFunction: (isSelected: boolean, row: IGood) =>
           this.isGoodSelected(row),
         renderComponent: CheckboxElementComponent,
-        onComponentInitFunction: (instance: CheckboxElementComponent) => (
-          console.log((instance.checked = false)), this.onGoodSelect(instance)
-        ),
+        onComponentInitFunction: (instance: CheckboxElementComponent) =>
+          this.onGoodSelect(instance),
       },
       id: {
         title: 'No. Bien',
@@ -346,6 +345,7 @@ export class JuridicalRulingComponent
   isExp: boolean = true;
   oficioDictamen: any;
   goodSelect: any;
+  formLoading: boolean;
 
   constructor(
     private fb: FormBuilder,
@@ -513,18 +513,20 @@ export class JuridicalRulingComponent
     this.isDisabledExp = false;
     this.statusDict = '';
     this.dictNumber = null;
+    this.totalItems2 = 0;
 
     this.onTypeDictChange({ id: 'DESTRUCCION' });
   }
 
   loadGoodsPipe() {
+    this.formLoading = true;
     const { noExpediente } = this.legalForm.value;
     this.goodServices
       .getByExpedient(noExpediente, this.params.getValue())
       .subscribe({
         next: resp => {
           const data = resp.data;
-
+          this.formLoading = false;
           data.map(async (good: any, index) => {
             if (index == 0) this.di_desc_est = good.estatus.descriptionStatus;
             good.di_disponible = 'S';
@@ -559,6 +561,7 @@ export class JuridicalRulingComponent
           //this.onLoadDictationInfo();
         },
         error: err => {
+          this.formLoading = false;
           console.log(err);
         },
       });
@@ -578,12 +581,14 @@ export class JuridicalRulingComponent
 
     this.params.getValue().page = 1;
 
+    this.formLoading = true;
     this.goodServices
       .getByExpedient(noExpediente, this.params.getValue())
       .subscribe({
         next: resp => {
           const data = resp.data;
 
+          this.formLoading = false;
           data.map(async (good: any, index) => {
             if (index == 0) this.di_desc_est = good.estatus.descriptionStatus;
             good.di_disponible = 'S';
@@ -606,6 +611,7 @@ export class JuridicalRulingComponent
                   this.desc_estatus_good = state.pDiDescStatus ?? '';
                 },
                 error: () => {
+                  this.formLoading = false;
                   resolve(null);
                 },
               });
@@ -847,8 +853,11 @@ export class JuridicalRulingComponent
   }
 
   onLoadGoodList() {
+    this.formLoading = true;
     let noExpediente = this.legalForm.get('noExpediente').value || '';
     this.params.getValue().page = 1;
+    this.params.getValue().limit = 10;
+    this.formLoading = true;
     if (noExpediente !== '') {
       this.goodServices
         .getByExpedient(noExpediente, this.params.getValue())
@@ -856,6 +865,7 @@ export class JuridicalRulingComponent
           next: response => {
             const data = response.data;
 
+            this.formLoading = false;
             data.map(async (good: any, index) => {
               if (index == 0) this.di_desc_est = good.estatus.descriptionStatus;
               good.di_disponible = 'S';
@@ -878,6 +888,7 @@ export class JuridicalRulingComponent
                     this.desc_estatus_good = state.pDiDescStatus ?? '';
                   },
                   error: () => {
+                    this.formLoading = false;
                     resolve(null);
                   },
                 });
@@ -979,6 +990,7 @@ export class JuridicalRulingComponent
       this.isExp = false;
       const { noExpediente } = this.legalForm.value;
       this.filter1.getValue().removeAllFilters();
+      this.filter1.getValue().limit = 10;
       this.filter1
         .getValue()
         .addFilter('goodClassNumber', type.no_clasif_bien, SearchFilter.EQ);
@@ -987,10 +999,12 @@ export class JuridicalRulingComponent
         .addFilter('fileNumber', noExpediente, SearchFilter.EQ);
       this.filter1.getValue().addFilter('status', 'ADM', SearchFilter.EQ);
       this.filter1.getValue().page = 1;
+      this.formLoading = true;
       this.goodServices
         .getAllFilter(this.filter1.getValue().getParams())
         .subscribe({
           next: response => {
+            this.formLoading = false;
             const data = response.data;
             this.totalItems = response.count;
             data.map(async (good: any, index) => {
@@ -1024,15 +1038,20 @@ export class JuridicalRulingComponent
 
             this.goods = data;
           },
+          error: () => {
+            this.formLoading = false;
+          },
         });
     }
   }
 
   onLoadWithClass() {
+    this.formLoading = true;
     this.goodServices
       .getAllFilter(this.filter1.getValue().getParams())
       .subscribe({
         next: response => {
+          this.formLoading = false;
           const data = response.data;
           this.totalItems = response.count;
           data.map(async (good: any, index) => {
@@ -1065,6 +1084,9 @@ export class JuridicalRulingComponent
           });
 
           this.goods = data;
+        },
+        error: () => {
+          this.formLoading = false;
         },
       });
   }
@@ -1738,6 +1760,8 @@ export class JuridicalRulingComponent
             vniveld3 = SIGLA;
           }
 
+          // console.log((vniveld4 = SIGLA), (vniveld5 = vCVE_CARGO));
+
           // SIGUIENTE CONSULTA
           let obj2 = {
             vDepend: vdepend,
@@ -1786,7 +1810,7 @@ export class JuridicalRulingComponent
               }/${vniveld4}`
             );
 
-          const level = vnivel + 1;
+          const level = Number(vnivel) + 1;
 
           if (level == 5) {
             const cv = this.legalForm.get('cveOficio').value;
@@ -1867,7 +1891,7 @@ export class JuridicalRulingComponent
     const day = String(today.getDate()).padStart(2, '0');
     const year = today.getFullYear();
     const user = this.authService.decodeToken();
-    return new Promise((resolver, reject) => {
+    return new Promise((resolve, reject) => {
       const {
         tipoDictaminacion,
         fechaPPFF,
@@ -1925,10 +1949,10 @@ export class JuridicalRulingComponent
             await this.createDocumentDictum(this.documents[i]);
           }
 
-          resolver(true);
+          resolve(true);
         },
         error: () => {
-          resolver(true);
+          resolve(true);
         },
       });
     });
@@ -2215,28 +2239,28 @@ export class JuridicalRulingComponent
   }
 
   async getMaxVolan(exp: number) {
-    return new Promise<number>((resolver, reject) => {
+    return new Promise<number>((resolve, reject) => {
       this.notServ.getMaxFlyer(exp).subscribe({
         next: resp => {
-          resolver(resp.data[0].max);
+          resolve(resp.data[0].max);
         },
         error: () => {
-          resolver(null);
+          resolve(null);
         },
       });
     });
   }
 
   async getTypeVolan(volant: number) {
-    return new Promise((resolver, reject) => {
+    return new Promise((resolve, reject) => {
       const params = new FilterParams();
       params.addFilter('wheelNumber', volant, SearchFilter.EQ);
       this.notServ.getAllWithFilter(params.getParams()).subscribe({
         next: resp => {
-          resolver(resp.data[0].wheelType);
+          resolve(resp.data[0].wheelType);
         },
         error: () => {
-          resolver(null);
+          resolve(null);
         },
       });
     });
@@ -2420,24 +2444,24 @@ export class JuridicalRulingComponent
     v_no_of_dicta = this.dictNumber;
     v_no_volante = this.wheelNumber;
     v_ban = false;
+    let stop = false;
 
     if (!v_no_of_dicta) {
       this.onLoadToast('error', 'No existe dictamen a eliminar');
       return;
     }
 
-    const cadena = cveOficio ? cveOficio.indexOf('?') : 0;
+    const cadena = cveOficio.indexOf('?');
 
-    if (cadena == 0) {
+    if (cadena == -1) {
       v_ban = true;
     }
-
     // if (cadena != 0 && this.user_dicta == user.username.toUpperCase()) {}
 
     v_elimina = await this.getVDelete();
 
     if (
-      cadena != 0 &&
+      cadena != -1 &&
       this.user_dicta == user.username.toUpperCase()
       // !cveOficio.includes('?') &&
       // this.user_dicta == user.username.toUpperCase()
@@ -2482,12 +2506,12 @@ export class JuridicalRulingComponent
         `(Exp.: ${v_no_expediente} Tipo: ${v_tipo_dicta} No. Dict.: ${v_no_of_dicta} )`
       ).then(async resp => {
         if (resp.isConfirmed) {
-          let stop = false;
+          stop = false;
           cursorDoc.forEach(async good => {
             if (tipoDictaminacion == 'DESTRUCCION') {
               v_exist = await this.getVExist(
                 Number(good.no_bien),
-                good.identificador
+                'DESTRUCCION'
               );
             } else {
               v_exist = await this.getVExist(
@@ -2523,14 +2547,15 @@ export class JuridicalRulingComponent
             vOfNumberDicta: v_no_of_dicta,
           };
 
-          if (!stop) return;
+          const success = await this.deteleDictation(body);
 
-          await this.deteleDictation(body);
+          if (!success) return;
 
           Swal.fire('Dictamen ha eliminado correctamente', '', 'success').then(
             () => {
               //Limpiar todo
               this.clearSearch();
+              this.getExp(v_no_expediente);
             }
           );
         }
@@ -2542,7 +2567,7 @@ export class JuridicalRulingComponent
         `(Exp.: ${v_no_expediente} Tipo: ${v_tipo_dicta} No. Dict.: ${v_no_of_dicta} )`
       ).then(async resp => {
         if (resp.isConfirmed) {
-          let stop = false;
+          stop = false;
           cursorDoc.forEach(async good => {
             v_estatus = await this.getVStatus(
               Number(good.no_bien),
@@ -2569,6 +2594,7 @@ export class JuridicalRulingComponent
           });
 
           //Aqui se elimina el dictamen
+          if (stop) return;
 
           const body: any = {
             vProceedingsNumber: v_no_expediente,
@@ -2577,13 +2603,14 @@ export class JuridicalRulingComponent
             vOfNumberDicta: v_no_of_dicta,
           };
 
-          if (!stop) return;
+          const sucess = await this.deteleDictation(body);
 
-          await this.deteleDictation(body);
+          if (!sucess) return;
 
           Swal.fire('Dictamen ha eliminado correctamente', '', 'success').then(
             () => {
               this.clearSearch();
+              this.getExp(v_no_expediente);
             }
           );
         }
@@ -2591,8 +2618,23 @@ export class JuridicalRulingComponent
     }
   }
 
+  getExp(exp: number) {
+    const { NO_EXP } = this.activatedRoute.snapshot.queryParams;
+    this.expedientServices.getById(exp ?? NO_EXP).subscribe({
+      next: response => {
+        // ..Datos del expediente
+        this.isDisabledExp = true;
+        this.legalForm.get('noExpediente').patchValue(exp ?? NO_EXP);
+        this.legalForm.get('criminalCase').setValue(response.criminalCase);
+        this.legalForm
+          .get('preliminaryInquiry')
+          .setValue(response.preliminaryInquiry);
+      },
+    });
+  }
+
   async getUpdateAndDeleteHisto(goodId: number, estatus: string) {
-    return new Promise<boolean>((resolver, reject) => {
+    return new Promise<boolean>((resolve, reject) => {
       const body = {
         noBien: goodId,
         vEstatus: estatus,
@@ -2600,10 +2642,10 @@ export class JuridicalRulingComponent
 
       this.dictationServ.getUpdateAndDelete(body).subscribe({
         next: resp => {
-          resolver(true);
+          resolve(true);
         },
         error: () => {
-          resolver(false);
+          resolve(false);
         },
       });
     });
@@ -2615,7 +2657,7 @@ export class JuridicalRulingComponent
     identificador: string,
     estatus: string
   ) {
-    return new Promise<string>((resolver, reject) => {
+    return new Promise<string>((resolve, reject) => {
       const body = {
         noBien: goodId,
         identificador,
@@ -2625,31 +2667,33 @@ export class JuridicalRulingComponent
 
       this.dictationServ.getVEstatus(body).subscribe({
         next: resp => {
-          resolver(resp.V_ESTATUS);
+          resolve(resp.V_ESTATUS);
         },
         error: () => {
-          resolver('XXX');
+          console.log('aqui nop hay datos');
+
+          resolve('XXX');
         },
       });
     });
   }
 
   async deteleDictation(body: any) {
-    return new Promise<boolean>((resolver, reject) => {
+    return new Promise<boolean>((resolve, reject) => {
       this.dictationServ.deletePupDeleteDictum(body).subscribe({
         next: resp => {
           console.log(resp);
-          resolver(true);
+          resolve(true);
         },
         error: () => {
-          resolver(false);
+          resolve(false);
         },
       });
     });
   }
 
   async getUpdateStatus(goodId: number, estatus: string) {
-    return new Promise<boolean>((resolver, reject) => {
+    return new Promise<boolean>((resolve, reject) => {
       const body = {
         noBien: goodId,
         estatus,
@@ -2657,30 +2701,30 @@ export class JuridicalRulingComponent
 
       this.dictationServ.updateVEstatus(body).subscribe({
         next: resp => {
-          resolver(true);
+          resolve(true);
         },
         error: () => {
-          resolver(false);
+          resolve(false);
         },
       });
     });
   }
 
   async getStausIn(goodId: number) {
-    return new Promise<string>((resolver, reject) => {
+    return new Promise<string>((resolve, reject) => {
       this.dictationServ.getStatusIni(goodId).subscribe({
         next: resp => {
-          resolver(resp.V_ESTATUS_INI);
+          resolve(resp.V_ESTATUS_INI);
         },
         error: () => {
-          resolver(null);
+          resolve(null);
         },
       });
     });
   }
 
   async getVExist(goodId: number, tipoDic: string) {
-    return new Promise<string>((resolver, reject) => {
+    return new Promise<string>((resolve, reject) => {
       const body = {
         noBien: goodId,
         tipoDicta: tipoDic,
@@ -2688,17 +2732,17 @@ export class JuridicalRulingComponent
 
       this.dictationServ.getVExist(body).subscribe({
         next: resp => {
-          resolver(resp.V_EXIST);
+          resolve(resp.V_EXIST);
         },
         error: () => {
-          resolver('XX');
+          resolve('XX');
         },
       });
     });
   }
 
   async getValid() {
-    return new Promise<number>((resolver, reject) => {
+    return new Promise<number>((resolve, reject) => {
       const user = this.authService.decodeToken();
 
       const body = {
@@ -2708,25 +2752,25 @@ export class JuridicalRulingComponent
 
       this.dictationServ.getValid(body).subscribe({
         next: resp => {
-          resolver(resp.V_VALID);
+          resolve(resp.V_VALID);
         },
         error: () => {
-          resolver(0);
+          resolve(0);
         },
       });
     });
   }
 
   async getVDelete() {
-    return new Promise<string>((resolver, reject) => {
+    return new Promise<string>((resolve, reject) => {
       const user = this.authService.decodeToken();
 
       this.dictationServ.getVElimina(user.username.toUpperCase()).subscribe({
         next: resp => {
-          resolver(resp.resultado);
+          resolve(resp.resultado);
         },
         error: () => {
-          resolver('X');
+          resolve('X');
         },
       });
     });
@@ -2735,7 +2779,7 @@ export class JuridicalRulingComponent
   async getDicGood() {
     return new Promise<
       { estatus: string; identificador: string; no_bien: string }[]
-    >((resolver, reject) => {
+    >((resolve, reject) => {
       const { noExpediente } = this.legalForm.value;
 
       const body = {
@@ -2746,10 +2790,10 @@ export class JuridicalRulingComponent
 
       this.serviceGood.getDicGood(body).subscribe({
         next: resp => {
-          resolver(resp.data);
+          resolve(resp.data);
         },
         error: () => {
-          resolver([]);
+          resolve([]);
         },
       });
     });

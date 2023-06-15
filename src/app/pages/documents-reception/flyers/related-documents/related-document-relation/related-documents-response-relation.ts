@@ -69,6 +69,7 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
   protected abstract departmentService: DepartamentService;
   protected abstract svLegalOpinionsOfficeService: LegalOpinionsOfficeService;
   protected abstract authService: AuthService;
+  // abstract origin: string;
   abstract formVariables: FormGroup<{
     b: FormControl;
     d: FormControl;
@@ -124,6 +125,8 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
     tipoTexto: FormControl;
     /**@descripcion no_expediente */
     proceedingsNumber: FormControl;
+    /**@descripcion nom_pers_ext */
+    nomPersExt: FormControl;
   }>;
   protected abstract formNotification: FormGroup;
   protected abstract route: ActivatedRoute;
@@ -255,7 +258,6 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
     return this.notificationService.getAll(params).pipe(map(x => x.data[0]));
   }
 
-
   countManagements = 0;
   getMJobManagement(wheelNumber: string | number): Observable<IMJobManagement> {
     const params = new ListParams();
@@ -264,6 +266,9 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
     return this.mJobManagementService.getAll(params).pipe(
       map(x => {
         this.countManagements = x.count;
+        if (this.countManagements === 1) {
+          this.loadInfo(x.data[0]);
+        }
         if (this.countManagements > 1) {
           this.openDialogSelectedManagement(x);
         }
@@ -317,7 +322,7 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
    * @returns
    */
   getFaStageCreda(date: Date): Promise<number> {
-    const _date = formatDate(date, 'dd-MM-yyyy', 'en-US');
+    const _date = formatDate(date, 'MM-dd-yyyy', 'en-US');
     return firstValueFrom(
       this.parametersService.getFaStageCreda(_date).pipe(
         map(response => {
@@ -505,22 +510,25 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
   }
 
   pupShowReport() {
-    const params = {
-      // PARAMFORM: 'NO',
-      // P_FIRMA: 'S',
-      PARAMFORM: 'NO',
-      NO_OF_GES: this.formJobManagement.value.managementNumber,
-      TIPO_OF: this.formJobManagement.value.jobType,
-      VOLANTE: this.formNotification.value.wheelNumber,
-      EXP: this.formNotification.value.expedientNumber,
-    };
+    let params = {};
 
     let nameReport = 'RGEROFGESTION';
     const jobType = this.formJobManagement.value.jobType;
     const PLLAMO = this.getParamsForName('PLLAMO');
     if (jobType == 'INTERNO' && PLLAMO != 'ABANDONO') {
+      params = {
+        PARAMFORM: 'NO',
+        // P_FIRMA: 'S',
+        NO_OF_GES: this.formJobManagement.value.managementNumber,
+        TIPO_OF: this.formJobManagement.value.jobType,
+        VOLANTE: this.formNotification.value.wheelNumber,
+        EXP: this.formNotification.value.expedientNumber,
+      };
       nameReport = 'RGEROFGESTION';
     } else if (jobType == 'EXTERNO' && PLLAMO != 'ABANDONO') {
+      params = {
+        no_of_ges: this.formJobManagement.value.managementNumber,
+      };
       nameReport = 'RGEROFGESTION_EXT';
     } else if (jobType == 'EXTERNO' && PLLAMO == 'ABANDONO') {
       nameReport = 'RGENABANSUB';
@@ -712,9 +720,29 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
         !isNaN(department.level as any) &&
         Number(department.level) + 1 == 5
       ) {
+        if (!level5) {
+          this.alert(
+            'error',
+            'Error',
+            'No se localizó el puesto de la persona que autoriza.'
+          );
+          throw new Error(
+            'No se localizó el puesto de la persona que autoriza.'
+          );
+        }
         joyKey += `/${level5}`;
       }
       joyKey += `/?/${year}`.trim();
+      if (!level2 || !level3 || !level4) {
+        this.alert(
+          'error',
+          'Error',
+          'No se localizó la dependencia de la persona que autoriza.'
+        );
+        throw new Error(
+          'No se localizó la dependencia de la persona que autoriza.'
+        );
+      }
       return joyKey;
     }
   }
@@ -785,7 +813,6 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
     ];
   }
 
-
   dataSelectDictation = new DefaultSelect([
     { key: 'PROCEDENCIA' },
     { key: 'DECOMISO' },
@@ -827,7 +854,7 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
   abstract initForm(): void;
 
   isLoadingBtnEraser = false;
-  async onClickBtnErase() {
+  async onClickBtnDelete() {
     console.log('onClickBtnErase');
     const values = this.formJobManagement.value;
     if (!values.managementNumber) {
@@ -870,45 +897,59 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
       return;
     }
 
-    const promises = [
-      firstValueFrom(
-        this.mJobManagementService.deleteGoodsJobManagement1(
-          values.managementNumber
-        )
-      ),
-      firstValueFrom(
-        this.mJobManagementService.deleteDocumentJobManagement2(
-          values.managementNumber
-        )
-      ),
-      firstValueFrom(
-        this.mJobManagementService.deleteMJobGestion({
-          managementNumber: values.managementNumber,
-          flyerNumber: values.flyerNumber,
-        })
-      ),
-      firstValueFrom(
-        this.mJobManagementService.deleteCopiesJobManagement4(
-          values.managementNumber
-        )
-      ),
-      firstValueFrom(
-        this.notificationService.update(values.flyerNumber, {
-          dictumKey: '',
-        })
-      ),
-    ];
-    //
-    for (const promise of promises) {
-      try {
-        await promise;
-      } catch (ex) {
-        console.log(ex);
-      }
-    }
+    // const promises = [
+    //   firstValueFrom(
+    //     this.mJobManagementService.deleteGoodsJobManagement1(
+    //       values.managementNumber
+    //     )
+    //   ),
+    //   firstValueFrom(
+    //     this.mJobManagementService.deleteDocumentJobManagement2(
+    //       values.managementNumber
+    //     )
+    //   ),
+    //   firstValueFrom(
+    //     this.mJobManagementService.deleteMJobGestion({
+    //       managementNumber: values.managementNumber,
+    //       flyerNumber: values.flyerNumber,
+    //     })
+    //   ),
+    //   firstValueFrom(
+    //     this.mJobManagementService.deleteCopiesJobManagement4(
+    //       values.managementNumber
+    //     )
+    //   ),
+    //   firstValueFrom(
+    //     this.notificationService.update(values.flyerNumber, {
+    //       dictumKey: '',
+    //     })
+    //   ),
+    // ];
+    // //
+    // for (const promise of promises) {
+    //   try {
+    //     await promise;
+    //   } catch (ex) {
+    //     console.log(ex);
+    //   }
+    // }
+    await firstValueFrom(
+      this.mJobManagementService.deleteJobManagement(
+        values.managementNumber,
+        this.formNotification.value.wheelNumber
+      )
+    );
+    this.formJobManagement.reset();
+    this.formVariables.reset();
+    this.dataTableDocuments = [];
+    this.dataTableGoodsJobManagement = [];
+    this.dataTableGoodsJobManagement;
+    // this.dataTableCopies = [];
+    this.initForm();
     this.formJobManagement.get('refersTo').setValue('D');
     this.se_refiere_a_Disabled.A = false;
     this.se_refiere_a_Disabled.B = false;
+    this.isDisabledBtnDocs = false;
 
     this.initForm();
   }
@@ -930,6 +971,7 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
   }
 
   async onClickBtnSend() {
+    console.log('onClickBtnSend');
     const values = this.formJobManagement.value;
     if (values.statusOf == 'ENVIADO') {
       //TODO: pup_act_gestion
@@ -961,12 +1003,13 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
         this.formJobManagement.get('cveManagement').setValue(key);
       }
       const userInfo = await this.getUserInfo();
-      this.pupSearchNumber(userInfo.delegationNumber);
+      await this.pupSearchNumber(userInfo.delegationNumber);
       this.formJobManagement.get('statusOf').setValue('ENVIADO');
       //TODO: pup_act_gestion
       //TODO: Guardar m_job_gestion
-      this.commit();
+      await this.commit();
       this.pupShowReport();
+      this.formJobManagement.disable();
     }
   }
 
@@ -975,16 +1018,26 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
     const keys = Object.keys(values);
     const result: any = {};
     keys.forEach(key => {
-      if ((values as any)[key] != null) {
+      if ((values as any)[key]) {
         result[key] = (values as any)[key];
       }
     });
     delete result.tipoTexto;
     if (values.addressee) {
-      result.addressee =
-        values.jobType == 'EXTERNO'
-          ? values.addressee
-          : values.addressee?.usuario;
+      if (values.jobType == 'INTERNO') {
+        result.addressee = values.addressee?.usuario;
+      } else {
+        delete result.addressee;
+        // result.addressee = '';
+      }
+    }
+    if (values.nomPersExt) {
+      if (values.jobType == 'EXTERNO') {
+        result.nomPersExt = values.nomPersExt;
+      } else {
+        delete result.nomPersExt;
+        // result.nomPersExt = '';
+      }
     }
     if (values.sender) {
       result.sender = values.sender.usuario;
@@ -992,6 +1045,7 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
     if (values.city) {
       result.city = values.city.id;
     }
+    result.insertDate = '06-13-2023';
     return result;
   }
 
@@ -1020,10 +1074,12 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
             this.dataTableDocuments.forEach(item => {
               this.mJobManagementService
                 .createDocumentOficeManag({
-                  goodNumber: item.goodNumber,
-                  cveDocument: item.cveDocument,
                   managementNumber:
                     this.formJobManagement.value.managementNumber,
+                  cveDocument: item.cveDocument,
+                  rulingType: item.rulingType,
+                  goodNumber: item.goodNumber,
+                  recordNumber: '',
                 })
                 .subscribe();
             });
@@ -1053,6 +1109,17 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
             })
           )
         );
+        this.dataTableDocuments.forEach(item => {
+          this.mJobManagementService
+            .createDocumentOficeManag({
+              managementNumber: this.formJobManagement.value.managementNumber,
+              cveDocument: item.cveDocument,
+              rulingType: item.rulingType,
+              goodNumber: item.goodNumber,
+              recordNumber: '',
+            })
+            .subscribe();
+        });
       }
     }
   }
@@ -1149,7 +1216,6 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
           const auxArr: string[] = [];
           this.dataTableGoodsJobManagement.forEach(x => {
             if (x.classify) {
-
               auxArr.push(x.classify as string);
             }
           });
@@ -1228,7 +1294,6 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
             ];
           }
         });
-
       }
     });
   }

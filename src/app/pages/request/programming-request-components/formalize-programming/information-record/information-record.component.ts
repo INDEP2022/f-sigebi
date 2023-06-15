@@ -10,10 +10,7 @@ import { EMAIL_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
   styles: [],
 })
 export class InformationRecordComponent extends BasePage implements OnInit {
-  deliveryForm: FormGroup = new FormGroup({});
-  receiveForm: FormGroup = new FormGroup({});
-  witnessOneForm: FormGroup = new FormGroup({});
-  witnessTwoForm: FormGroup = new FormGroup({});
+  infoForm: FormGroup = new FormGroup({});
   horaActual: string;
   constructor(private modalRef: BsModalRef, private fb: FormBuilder) {
     super();
@@ -22,9 +19,6 @@ export class InformationRecordComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareDevileryForm();
-    this.prepareReceiveForm();
-    this.prepareWitnessOneForm();
-    this.prepareWitnessTwoForm();
   }
   obtenerHoraActual() {
     const fechaActual = new Date();
@@ -35,54 +29,54 @@ export class InformationRecordComponent extends BasePage implements OnInit {
     this.horaActual = fechaActual.toLocaleTimeString([], opcionesHora);
   }
   prepareDevileryForm() {
-    this.deliveryForm = this.fb.group({
-      name: [null, [Validators.pattern(STRING_PATTERN)]],
-      electronicSignature: [null],
-      charge: [null, [Validators.pattern(STRING_PATTERN)]],
-      resistance: [null, [Validators.pattern(STRING_PATTERN)]],
-      identification: [null],
-      noIdentification: [null],
-      issuedBy: [null, [Validators.pattern(STRING_PATTERN)]],
-      email: [null, [Validators.pattern(EMAIL_PATTERN)]],
-    });
-  }
-
-  prepareReceiveForm() {
-    this.receiveForm = this.fb.group({
-      name: [null, [Validators.pattern(STRING_PATTERN)]],
-      ng: [null],
-      charge: [null, [Validators.pattern(STRING_PATTERN)]],
-      resistance: [null, [Validators.pattern(STRING_PATTERN)]],
-      identification: [null],
-      noIdentification: [null],
-      issuedBy: [null, [Validators.pattern(STRING_PATTERN)]],
-      email: [null, [Validators.pattern(EMAIL_PATTERN)]],
-    });
-  }
-
-  prepareWitnessOneForm() {
-    this.witnessOneForm = this.fb.group({
-      name: [null, [Validators.pattern(STRING_PATTERN)]],
-      electronicSignature: [null],
-      charge: [null, [Validators.pattern(STRING_PATTERN)]],
-      resistance: [null, [Validators.pattern(STRING_PATTERN)]],
-      identification: [null],
-      noIdentification: [null],
-      issuedBy: [null, [Validators.pattern(STRING_PATTERN)]],
-      email: [null, [Validators.pattern(EMAIL_PATTERN)]],
-    });
-  }
-
-  prepareWitnessTwoForm() {
-    this.witnessTwoForm = this.fb.group({
-      name: [null, [Validators.pattern(STRING_PATTERN)]],
-      electronicSignature: [null],
-      charge: [null, [Validators.pattern(STRING_PATTERN)]],
-      resistance: [null, [Validators.pattern(STRING_PATTERN)]],
-      identification: [null],
-      noIdentification: [null],
-      issuedBy: [null, [Validators.pattern(STRING_PATTERN)]],
-      email: [null, [Validators.pattern(EMAIL_PATTERN)]],
+    this.infoForm = this.fb.group({
+      nom_funcionario_1: [null, [Validators.pattern(STRING_PATTERN)]],
+      electronicSignature_1: [null],
+      cargo_funcionario_1: [null, [Validators.pattern(STRING_PATTERN)]],
+      resi_funcionario_1: [null, [Validators.pattern(STRING_PATTERN)]],
+      cat_id_funcionario_1: [null],
+      no_id_funcionario_1: [null],
+      exp_id_funcionario_1: [null, [Validators.pattern(STRING_PATTERN)]],
+      email_1: [null, [Validators.pattern(EMAIL_PATTERN)]],
+      //---------------------------------
+      nom_funcionario_2: [null, [Validators.pattern(STRING_PATTERN)]],
+      electronicSignature_2: [null],
+      cargo_funcionario_2: [null, [Validators.pattern(STRING_PATTERN)]],
+      cat_id_funcionario_2: [null],
+      no_id_funcionario_2: [null],
+      exp_id_funcionario_2: [null, [Validators.pattern(STRING_PATTERN)]],
+      email_2: [null, [Validators.pattern(EMAIL_PATTERN)]],
+      //-----------------------------------------
+      nom_testigo_1: [null, [Validators.pattern(STRING_PATTERN)]],
+      electronicSignature_3: [null],
+      cat_id_testigo_1: [null],
+      no_id_testigo_1: [null],
+      email_3: [null, [Validators.pattern(EMAIL_PATTERN)]],
+      //------------------------------------------
+      nom_testigo_2: [null, [Validators.pattern(STRING_PATTERN)]],
+      electronicSignature_4: [null],
+      cat_id_testigo_2: [null],
+      no_id_testigo_2: [null],
+      email_4: [null, [Validators.pattern(EMAIL_PATTERN)]],
+      //-----------------------------------
+      no_funcionario_3: [null, [Validators.pattern(STRING_PATTERN)]],
+      nom_funcionario_oic: [null, [Validators.pattern(STRING_PATTERN)]],
+      electronicSignature_5: [null],
+      cargo_funcionario_oic: [null, [Validators.pattern(STRING_PATTERN)]],
+      cat_id_funcionario_oic: [null],
+      no_id_funcionario_oic: [null],
+      exp_id_funcionario_oic: [null, [Validators.pattern(STRING_PATTERN)]],
+      email_5: [null, [Validators.pattern(EMAIL_PATTERN)]],
+      //------------------------------------
+      nom_funcionario_uvfv: [null, [Validators.pattern(STRING_PATTERN)]],
+      // electronicSignature: [null],
+      cargo_funcionario_uvfv: [null, [Validators.pattern(STRING_PATTERN)]],
+      nom_funcionario_4SAT: [null, [Validators.pattern(STRING_PATTERN)]],
+      // identification: [null],
+      cargo_funcionario_4: [null],
+      nocargo_funcionario_uvfv: [null, [Validators.pattern(STRING_PATTERN)]],
+      data_oficio_UVFV: [null, [Validators.pattern(STRING_PATTERN)]],
+      email_6: [null, [Validators.pattern(EMAIL_PATTERN)]],
     });
   }
   confirm() {}

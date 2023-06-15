@@ -17,11 +17,10 @@ import { COLUMNS } from './columns';
   styles: [],
 })
 export class CostCatalogComponent extends BasePage implements OnInit {
-  columns: any[] = [];
-  dataTable: LocalDataSource = new LocalDataSource();
-  data1: LocalDataSource = new LocalDataSource();
+  cost: any[] = [];
+  data: LocalDataSource = new LocalDataSource();
   columnFilters: any = [];
-  data: any[] = [];
+  data1: any[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
 
@@ -40,7 +39,7 @@ export class CostCatalogComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.data1
+    this.data
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(change => {
@@ -59,6 +58,7 @@ export class CostCatalogComponent extends BasePage implements OnInit {
               delete this.columnFilters[field];
             }
           });
+          this.params = this.pageFilter(this.params);
           this.getCostCatalog();
         }
       });
@@ -68,7 +68,6 @@ export class CostCatalogComponent extends BasePage implements OnInit {
   }
 
   getCostCatalog() {
-    this.data = [];
     this.loading = true;
     let params = {
       ...this.params.getValue(),
@@ -78,7 +77,7 @@ export class CostCatalogComponent extends BasePage implements OnInit {
       next: (resp: any) => {
         if (resp.data) {
           resp.data.forEach((item: any) => {
-            this.data.push({
+            this.data1.push({
               keyServices: item.code,
               descriptionServices: item.description,
               typeExpenditure: item.subaccount,
@@ -88,7 +87,7 @@ export class CostCatalogComponent extends BasePage implements OnInit {
           });
           this.totalItems = resp.count;
         }
-        this.columns = this.data;
+        this.cost = this.data1;
         this.loading = false;
       },
       error: error => {
