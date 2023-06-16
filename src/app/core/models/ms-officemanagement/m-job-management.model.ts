@@ -16,7 +16,7 @@ export interface IMJobManagement {
   deleUser: string;
   insertDate: string;
   jobType: string;
-  nomPersExt: string;
+  nomPersExt: any;
   refersTo: string;
   jobBy: string;
   recordNumber: string;

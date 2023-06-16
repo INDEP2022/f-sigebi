@@ -1072,7 +1072,7 @@ export abstract class RelateDocumentsResponse extends BasePage {
     return this.dictationService.pupValidExtDom(wheelNumber).pipe(map(x => x));
   }
   sendFunction_findOffficeNu(params: Object): Observable<any> {
-    return this.dictationService.findOffficeNu(params).pipe(map(x => x.data));
+    return this.dictationService.findOffficeNu(params).pipe(map(x => x));
   }
   sendFunction_updateManagerTransfer(params: Object): Observable<any> {
     return this.dictationService
