@@ -278,11 +278,11 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
         this.getGoodsFn();
       });
 
-      this.paramsDataGoodsAct
+    this.paramsDataGoodsAct
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(params => {
-        console.log(params)
-        this.limitDataGoodsAct = new FormControl(params.limit)
+        console.log(params);
+        this.limitDataGoodsAct = new FormControl(params.limit);
         this.getGoodsActFn();
       });
 
@@ -870,7 +870,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
     const modelDetail: IDetailWithIndEdo = {
       no_acta: dataRes.id,
       page: this.paramsDataGoodsAct.getValue().page,
-      perPage: this.paramsDataGoodsAct.getValue().limit
+      perPage: this.paramsDataGoodsAct.getValue().limit,
     };
 
     this.serviceDetailProc.getAllwithEndFisico(modelDetail).subscribe(
@@ -1273,7 +1273,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
     const model: IDetailWithIndEdo = {
       no_acta: parseInt(this.idProceeding),
       page: this.paramsDataGoodsAct.getValue().page,
-      perPage: this.paramsDataGoodsAct.getValue().limit
+      perPage: this.paramsDataGoodsAct.getValue().limit,
     };
 
     this.serviceDetailProc.getAllwithEndFisico(model).subscribe(

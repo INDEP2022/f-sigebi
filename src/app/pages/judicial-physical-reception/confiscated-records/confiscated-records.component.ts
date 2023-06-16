@@ -248,16 +248,16 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     this.paramsDataGoods
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(params => {
-        console.log(params)
-        this.limitDataGoods = new FormControl(params.limit)
+        console.log(params);
+        this.limitDataGoods = new FormControl(params.limit);
         this.getGoodsFn();
       });
 
     this.paramsDataGoodsAct
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(params => {
-        console.log(params)
-        this.limitDataGoodsAct = new FormControl(params.limit)
+        console.log(params);
+        this.limitDataGoodsAct = new FormControl(params.limit);
         this.getGoodsActFn();
       });
 
@@ -1149,11 +1149,10 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     paramsF.page = this.paramsDataGoodsAct.getValue().page;
     paramsF.limit = this.paramsDataGoodsAct.getValue().limit;
 
-
     const model: IDetailWithIndEdo = {
       no_acta: parseInt(this.idProceeding),
       page: this.paramsDataGoodsAct.getValue().page,
-      perPage: this.paramsDataGoodsAct.getValue().limit
+      perPage: this.paramsDataGoodsAct.getValue().limit,
     };
 
     this.serviceDetailProc.getAllwithEndFisico(model).subscribe(
@@ -1519,7 +1518,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
       const paramsF = new FilterParams();
       paramsF.page = this.paramsDataGoods.getValue().page;
       paramsF.limit = this.paramsDataGoods.getValue().limit;
-    
+
       this.serviceGood
         .getAllFilterDetail(
           `filter.fileNumber=$eq:${
@@ -1669,7 +1668,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     const modelDetail: IDetailWithIndEdo = {
       no_acta: dataRes.id,
       page: this.paramsDataGoodsAct.getValue().page,
-      perPage: this.paramsDataGoodsAct.getValue().limit
+      perPage: this.paramsDataGoodsAct.getValue().limit,
     };
 
     this.serviceDetailProc.getAllwithEndFisico(modelDetail).subscribe(
@@ -1971,7 +1970,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   getGoodsByExpedient() {
     //Validar si hay un acta abiert
     const paramsF = new FilterParams();
-    paramsF.limit = 1
+    paramsF.limit = 1;
     paramsF.addFilter('numFile', this.form.get('expediente').value);
     paramsF.addFilter('typeProceedings', 'ENTREGA,DECOMISO', SearchFilter.IN); //!Un in
     this.serviceProcVal.getByFilter(paramsF.getParams()).subscribe(

@@ -84,7 +84,7 @@ export class DerivationGoodsComponent implements OnInit {
       numberGoodFather: [null, []], //Se quita la validación, en el forms no es requerido
       tipo: [null, [Validators.required]],
       numberDossier: [null, []], //Se quita la validación, en el forms no es requerido
-      status: [null, [ Validators.pattern(STRING_PATTERN)]], //Se quita la validación, en el forms no es requerido
+      status: [null, [Validators.pattern(STRING_PATTERN)]], //Se quita la validación, en el forms no es requerido
       situation: [
         null,
         [Validators.pattern(STRING_PATTERN)], //Se quita la validación, en el forms no es requerido

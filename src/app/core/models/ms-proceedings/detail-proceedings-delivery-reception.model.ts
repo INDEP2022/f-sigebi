@@ -33,5 +33,5 @@ export interface IDetailWithIndEdo {
   vIndEdoFisicod?: boolean;
   vNoColumna?: number;
   page?: number;
-  perPage?: number
+  perPage?: number;
 }
