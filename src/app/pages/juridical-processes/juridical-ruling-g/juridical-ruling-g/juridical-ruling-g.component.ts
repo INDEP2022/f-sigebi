@@ -4052,6 +4052,14 @@ export class JuridicalRulingGComponent
   oficioDictamen: any;
   buttonApr: boolean = true;
   async btnApprove() {
+    if (this.goodsValid.length == 0) {
+      this.alert(
+        'warning',
+        'Debe seleccionar al menos un bien para dictaminar',
+        ''
+      );
+      return;
+    }
     let OFICIO: any = null;
     let vCVE_CARGO: any = null;
     let vNO_DELEGACION: any = null;
