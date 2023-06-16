@@ -443,6 +443,8 @@ export class RelatedDocumentsRelationComponent
     // this.managementForm.get('averiPrevia').disable();
     this.isHideSelection = true;
     this.formVariables.get('b').setValue('S');
+    this.formVariables.get('classify').setValue(null);
+    this.formVariables.get('classify2').setValue(null);
     this.dataTableGoodsJobManagement = [];
     this.dataTableDocuments = [];
   }
@@ -456,6 +458,8 @@ export class RelatedDocumentsRelationComponent
     // this.managementForm.get('averiPrevia').enable();
     this.isHideSelection = false;
     this.formVariables.get('b').setValue('S');
+    this.formVariables.get('classify').setValue(null);
+    this.formVariables.get('classify2').setValue(null);
     this.dataTableGoodsJobManagement = [];
     this.dataTableDocuments = [];
   }
@@ -1028,6 +1032,8 @@ export class RelatedDocumentsRelationComponent
         }
         if (mJobManagement.refersTo == this.se_refiere_a.C) {
           this.formVariables.get('b').setValue('N');
+          this.se_refiere_a_Disabled.A = true;
+          this.se_refiere_a_Disabled.B = true;
         }
       } catch (e) {
         this.isCreate = true;
@@ -1045,6 +1051,7 @@ export class RelatedDocumentsRelationComponent
     this.isLoadingDocuments = true;
     this.getDocJobManagement().subscribe({
       next: async res => {
+        console.log('getDocJobManagement', res);
         const response = await res.data.map(async item => {
           const params = new ListParams();
           params['filter.id'] = item.cveDocument;
@@ -1093,6 +1100,7 @@ export class RelatedDocumentsRelationComponent
     const params = new ListParams();
     params['filter.managementNumber'] =
       this.formJobManagement.value.managementNumber;
+    params.limit = 100000000;
     try {
       this.dataTableGoodsJobManagement = (
         await this.getGoodsJobManagement(params)

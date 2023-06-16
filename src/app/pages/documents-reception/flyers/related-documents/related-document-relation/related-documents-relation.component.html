@@ -347,7 +347,6 @@
                       </table>
                     </div>
                   </div>
-                  <br />
                   <div>
                     <app-pagination
                       [params]="params"
@@ -356,7 +355,7 @@
                 </div>
               </div>
 
-              <div class="col-12">
+              <div class="col-md-6">
                 <ngx-select
                   [form]="formVariables"
                   bindLabel="key"
@@ -364,7 +363,7 @@
                   value="key"
                   [showTooltip]="true"
                   [data]="dataSelectDictation"
-                  label="Dictaminación"
+                  label="Ind. p/doctos"
                   [searchable]="false"
                   id="typesFilters"
                   (change)="selectDictation($event)">
@@ -388,62 +387,69 @@
                        [params]="params"
                        [totalItems]="totalItems"></app-pagination>
                    </div> -->
-
-                    <table class="border-top table table-bordered">
-                      <thead>
-                        <tr class="font-weight-bold">
-                          <th>No. Bien</th>
-                          <th>Bienes</th>
-                          <th
-                            [hidden]="
-                              !isCreate ||
-                              formJobManagement.value.refersTo == se_refiere_a.A
-                            ">
-                            Remover
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr
-                          [hidden]="dataTableGoodsJobManagement.length > 0"
-                          class="px-2">
-                          <td colspan="3">No se encontraron registros</td>
-                        </tr>
-                        <tr *ngFor="let item of dataTableGoodsJobManagement">
-                          <td>{{ item.goodNumber }}</td>
-                          <td>{{ item.goods }}</td>
-                          <td
-                            [hidden]="
-                              !isCreate ||
-                              formJobManagement.value.refersTo == se_refiere_a.A
-                            ">
-                            <button
-                              (click)="deleteGoodJobManagement(item.goodNumber)"
-                              class="btn btn-sm text-danger">
-                              <i class="fas fa-trash"></i>
-                            </button>
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
+                    <div style="max-height: 500px" class="overflow-auto">
+                      <table class="border-top table table-bordered">
+                        <thead class="sticky-top bg-white">
+                          <tr class="font-weight-bold">
+                            <th>No. Bien</th>
+                            <th>Bienes</th>
+                            <th
+                              [hidden]="
+                                !isCreate ||
+                                formJobManagement.value.refersTo ==
+                                  se_refiere_a.A
+                              ">
+                              Remover
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr
+                            [hidden]="dataTableGoodsJobManagement.length > 0"
+                            class="px-2">
+                            <td colspan="3">No se encontraron registros</td>
+                          </tr>
+                          <tr *ngFor="let item of dataTableGoodsJobManagement">
+                            <td>{{ item.goodNumber }}</td>
+                            <td>{{ item.goods }}</td>
+                            <td
+                              [hidden]="
+                                !isCreate ||
+                                formJobManagement.value.refersTo ==
+                                  se_refiere_a.A
+                              ">
+                              <button
+                                (click)="
+                                  deleteGoodJobManagement(item.goodNumber)
+                                "
+                                class="btn btn-sm text-danger">
+                                <i class="fas fa-trash"></i>
+                              </button>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
                   </div>
                 </div>
                 <div class="col-md-6">
                   <div class="col-12">Documento(s)</div>
-                  <div [class]="isLoadingDocuments ? 'table-loading' : ''">
-                    <!-- (userRowSelect)="selectProceedings($event)" -->
-                    <ng2-smart-table
-                      id="goodsJobManagement"
-                      [attr.class]="'table-responsive table-bordered'"
-                      [settings]="settingsTableDocuments"
-                      [source]="dataTableDocuments">
-                    </ng2-smart-table>
-                    <br />
-                    <!-- <div>
-                      <app-pagination
-                        [params]="params"
-                        [totalItems]="totalItems"></app-pagination>
-                    </div> -->
+                  <div style="max-height: 500px" class="overflow-auto">
+                    <div [class]="isLoadingDocuments ? 'table-loading' : ''">
+                      <!-- (userRowSelect)="selectProceedings($event)" -->
+                      <ng2-smart-table
+                        id="goodsJobManagement"
+                        [attr.class]="'table-responsive table-bordered'"
+                        [settings]="settingsTableDocuments"
+                        [source]="dataTableDocuments">
+                      </ng2-smart-table>
+                      <br />
+                      <!-- <div>
+                        <app-pagination
+                          [params]="params"
+                          [totalItems]="totalItems"></app-pagination>
+                      </div> -->
+                    </div>
                   </div>
                 </div>
               </div>

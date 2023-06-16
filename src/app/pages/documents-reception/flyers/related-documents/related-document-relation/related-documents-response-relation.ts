@@ -424,6 +424,7 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
       params['filter.managementNumber'] =
         this.formJobManagement.value.managementNumber;
     }
+    params.limit = 10000000000000000000;
     return this.mJobManagementService.getDocOficioGestion(params);
   }
 
@@ -586,6 +587,11 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
       };
       nameReport = 'RGEROFGESTION_EXT';
     } else if (jobType == 'EXTERNO' && PLLAMO == 'ABANDONO') {
+      params = {
+        PVOLANTE: this.formNotification.value.wheelNumber,
+        PNOOFGESTION: this.formJobManagement.value.managementNumber,
+        PEXPEDIENTE: this.formNotification.value.expedientNumber,
+      };
       nameReport = 'RGENABANSUB';
     } else {
       this.alert(
@@ -806,9 +812,9 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
   async pupAddGood() {
     console.log('pupAddGood');
     // const newRows: IGoodJobManagement[] = [];
-    if (this.totalItems < 1000) {
-      await this.getGoodsOnlyAvailable();
-    }
+    // if (this.totalItems < 1000) {
+    await this.getGoodsOnlyAvailable();
+    // }
     // if(this.totalItems == ) {}
     // convert map to array
     // Array.from(this.dataGoodsSelected.values()).forEach(item => {
@@ -865,7 +871,7 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
   pupAddAnyGood() {
     const newRows: IGoodJobManagement[] = [];
     this.dataTableGoodsJobManagement = [];
-    this.dataTableDocuments = [];
+    // this.dataTableDocuments = [];
     // convert map to array
     Array.from(this.dataGoodsSelected.values()).forEach(item => {
       const existRow = this.dataTableGoodsJobManagement.find(
@@ -919,6 +925,7 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
   }
 
   deleteGoodJobManagement(_good: number) {
+    this.dataTableDocuments = [];
     const index = this.dataTableGoodsJobManagement.findIndex(
       x => x.goodNumber == _good
     );
@@ -927,6 +934,7 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
     this.dataTableGoodsJobManagement.splice(index, 1);
     this.dataTableGoodsMap.get(_good).available = true;
     this.dataTableGoodsMap.get(_good).selected = false;
+    this.dataGoodsSelected.delete(_good);
   }
 
   dataSelectDictation = new DefaultSelect([
@@ -1162,6 +1170,12 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
     result.insertDate = '06-13-2023';
     return result;
   }
+  abstract se_refiere_a: {
+    A: string;
+    B: string;
+    C: string;
+    D: string;
+  };
 
   async commit() {
     if (this.isCreate) {
@@ -1174,10 +1188,18 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
 
       await firstValueFrom(
         this.mJobManagementService.create(values).pipe(
-          tap(e => {
+          tap((e: any) => {
             this.isCreate = false;
             console.log({ values: e });
-            this.formJobManagement.patchValue(e as any);
+            e['addressee'] = this.formJobManagement.value.addressee;
+            this.formJobManagement.patchValue(e);
+            // if (this.formJobManagement.value.refersTo == this.se_refiere_a.A) {
+            //   this.goodprocessService.postTransferGoodsTradeManagement({
+            //     ofManagementNumber: this.formJobManagement.value.managementNumber,
+            //     proceedingsNumber: this.formNotification.value.wheelNumber,
+            //     goodNumber: item.goodNumber,
+            //   })
+            // } else {
             this.dataTableGoodsJobManagement.forEach(item => {
               this.postGoodsJobManagement({
                 goodNumber: item.goodNumber,
@@ -1185,6 +1207,7 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
                 managementNumber: this.formJobManagement.value.managementNumber,
               }).subscribe();
             });
+            // }
             this.dataTableDocuments.forEach(item => {
               this.mJobManagementService
                 .createDocumentOficeManag({
@@ -1197,15 +1220,15 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
                 })
                 .subscribe();
             });
-          }),
-          catchError(() => {
-            showToast({
-              icon: 'error',
-              title: 'Error',
-              text: 'Error al guardar los datos',
-            });
-            throw new Error('Error al guardar los datos');
           })
+          // catchError(() => {
+          //   showToast({
+          //     icon: 'error',
+          //     title: 'Error',
+          //     text: 'Error al guardar los datos',
+          //   });
+          //   throw new Error('Error al guardar los datos');
+          // })
         )
       );
     } else {
@@ -1223,17 +1246,17 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
             })
           )
         );
-        this.dataTableDocuments.forEach(item => {
-          this.mJobManagementService
-            .createDocumentOficeManag({
-              managementNumber: this.formJobManagement.value.managementNumber,
-              cveDocument: item.cveDocument,
-              rulingType: item.rulingType,
-              goodNumber: item.goodNumber,
-              recordNumber: '',
-            })
-            .subscribe();
-        });
+        // this.dataTableDocuments.forEach(item => {
+        //   this.mJobManagementService
+        //     .createDocumentOficeManag({
+        //       managementNumber: this.formJobManagement.value.managementNumber,
+        //       cveDocument: item.cveDocument,
+        //       rulingType: item.rulingType,
+        //       goodNumber: item.goodNumber,
+        //       recordNumber: '',
+        //     })
+        //     .subscribe();
+        // });
       }
     }
   }
@@ -1321,6 +1344,7 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
             'Se refiere a algun (os) bien (es) del expediente' &&
           counter == 0
         ) {
+          this.dataTableDocuments = [];
           this.pupAddAnyGood();
         }
 
@@ -1387,7 +1411,7 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
       ignoreBackdropClick: true,
     });
     modalRef.content.onClose.pipe(take(1)).subscribe(result => {
-      console.log({ result });
+      console.log({ onclose: result });
       if (result && result?.length > 0) {
         result.forEach(item => {
           const doc = this.dataTableDocuments.find(
