@@ -5,7 +5,10 @@ import { HttpService } from 'src/app/common/services/http.service';
 import { ListParams } from '../../../common/repository/interfaces/list-params';
 import { Repository } from '../../../common/repository/repository';
 import { IListResponse } from '../../interfaces/list-response.interface';
-import { IAppraisers } from '../../models/catalogs/appraisers.model';
+import {
+  IAppraisers,
+  IAppraisersXGood,
+} from '../../models/catalogs/appraisers.model';
 import { IViewComerAvaluo } from '../../models/ms-appraise/appraise-model';
 
 @Injectable({
@@ -29,6 +32,15 @@ export class AppraiseService extends HttpService {
   getAll(params?: ListParams | string): Observable<IListResponse<IAppraisers>> {
     return this.appraiseRepository.getAllPaginated(
       'request-x-appraisal',
+      params
+    );
+  }
+
+  getAllAvaluoXGood(
+    params?: ListParams | string
+  ): Observable<IListResponse<IAppraisersXGood>> {
+    return this.get<IListResponse<IAppraisersXGood>>(
+      'appraisal-x-good',
       params
     );
   }

@@ -28,7 +28,7 @@
               </div>
             </div>
             <div class="row">
-              <div class="col-md-6">
+              <div class="col-md-12">
                 <div class="form-group">
                   <form-field
                     [control]="searchTabForm.get('estatus')"
@@ -38,19 +38,6 @@
                       type="text"
                       name="estatus"
                       formControlName="estatus" />
-                  </form-field>
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="form-group">
-                  <form-field
-                    [control]="searchTabForm.get('situacion')"
-                    label="Situación">
-                    <input
-                      class="form-control"
-                      type="text"
-                      name="situacion"
-                      formControlName="situacion" />
                   </form-field>
                 </div>
               </div>
@@ -66,6 +53,19 @@
                       type="text"
                       name="destino"
                       formControlName="destino" />
+                  </form-field>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <form-field
+                    [control]="searchTabForm.get('situacion')"
+                    label="Situación">
+                    <input
+                      class="form-control"
+                      type="text"
+                      name="situacion"
+                      formControlName="situacion" />
                   </form-field>
                 </div>
               </div>
@@ -104,12 +104,25 @@
             </div>
           </div>
         </div>
+        <div class="form-group row">
+          <div class="col-md-4 col-ms-4">
+            <button
+              class="btn btn-sm btn-primary active mr-3"
+              (click)="search()">
+              Buscar <i class="fas fa-search"></i>
+            </button>
+          </div>
+          <div class="col-md-4 col-ms-4">
+            <button class="btn btn-danger btn-sm active" (click)="clean()">
+              Limpiar
+            </button>
+          </div>
+          <div class="col-md-4 col-ms-4">
+            <app-columns-select [(settings)]="settings"></app-columns-select>
+          </div>
+        </div>
       </div>
       <div>
-        <div class="mt-2">
-          <app-columns-select [(settings)]="settings"></app-columns-select>
-        </div>
-        <br />
         <ng-scrollbar [track]="'all'" style="min-height: 400px">
           <ng2-smart-table [settings]="settings" [source]="list">
           </ng2-smart-table>

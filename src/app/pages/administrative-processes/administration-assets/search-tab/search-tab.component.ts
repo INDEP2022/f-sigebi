@@ -99,6 +99,30 @@ export class SearchTabComponent extends BasePage implements OnInit {
     this.classifGood = ssssubType.numClasifGoods;
   }
 
+  clean() {
+    this.searchTabForm.reset();
+    this.list = [];
+  }
+  search() {
+    this.goodService
+      .getStatusByGood(this.searchTabForm.get('noBien').value)
+      .subscribe({
+        next: data => {
+          this.searchTabForm.get('estatus').patchValue(data.status_descripcion);
+          let dataParam = this.params.getValue();
+          dataParam.addFilter('expedientNumber', data.expedientNumber);
+          this.notifyService.getAllFilter(dataParam.getParams()).subscribe({
+            next: data => {
+              this.list = data.data;
+              this.dataSearch.emit({
+                data: this.searchTabForm.get('noBien').value,
+                exist: true,
+              });
+            },
+          });
+        },
+      });
+  }
   previousImage(): void {
     console.log('Imagen anterior');
     // if (this.currentImageIndex > 0) {
