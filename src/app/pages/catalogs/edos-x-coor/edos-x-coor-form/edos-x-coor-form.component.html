@@ -6,8 +6,17 @@
     <form [formGroup]="edosXCoorForm" class="form-material">
       <div class="row">
         <div class="col-md-4">
-          <form-field [control]="edosXCoorForm.get('id')" label="Id">
-            <input type="tel" class="form-control" formControlName="id" />
+          <form-field [control]="edosXCoorForm.get('id')">
+            <ngx-select
+              [form]="edosXCoorForm"
+              [data]="delegationsSelected"
+              bindLabel="description"
+              label="No. Delegación"
+              value="id"
+              (fetchItems)="getDelegations($event)"
+              (change)="getChange($event)"
+              control="id"
+              [readonly]="false"></ngx-select>
           </form-field>
         </div>
         <div class="col-md-8">
@@ -18,15 +27,21 @@
               class="form-control"
               type="text"
               rows="2"
-              formControlName="description"
-              placeholder="Descripción"></textarea>
+              formControlName="description"></textarea>
           </form-field>
         </div>
         <div class="col-md-4">
-          <form-field
-            [control]="edosXCoorForm.get('noState')"
-            label="No. Estado">
-            <input type="text" class="form-control" formControlName="noState" />
+          <form-field [control]="edosXCoorForm.get('noState')">
+            <ngx-select
+              [form]="edosXCoorForm"
+              [data]="stateSelected"
+              bindLabel="descCondition"
+              label="No. Estado"
+              value="id"
+              (fetchItems)="getState($event)"
+              (change)="getChangeState($event)"
+              control="noState"
+              [readonly]="false"></ngx-select>
           </form-field>
         </div>
         <div class="col-md-4">
@@ -35,15 +50,15 @@
           </form-field>
         </div>
         <div class="col-md-4">
-          <form-field [control]="edosXCoorForm.get('stage')" label="Etapa">
-            <input type="number" class="form-control" formControlName="stage" />
-          </form-field>
+          <!--<form-field [control]="edosXCoorForm.get('stage')" label="Etapa">
+            <input type="text" class="form-control" formControlName="stage" />
+          </form-field>-->
         </div>
       </div>
     </form>
   </div>
   <div footer>
-    <div class="d-flex justify-content-center" 567>
+    <div class="d-flex justify-content-center">
       <div class="m-3">
         <confirm-button
           [disabled]="edosXCoorForm.invalid"

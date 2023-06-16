@@ -219,6 +219,28 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     columns: RECEIPT_GUARD_COLUMNS,
   };
 
+  settingsReceiptWarehouseClose = {
+    ...this.settings,
+    actions: {
+      delete: true,
+      edit: true,
+      columnTitle: 'Acciones',
+      position: 'right',
+    },
+
+    edit: {
+      editButtonContent:
+        '<i class="fa fa-book" text-warning aria-hidden="true"></i> Ver bienes',
+    },
+
+    delete: {
+      deleteButtonContent:
+        '<i class="fa fa-file ml-4" text-primary aria-hidden="true"></i> Ver recibo',
+    },
+
+    columns: RECEIPT_GUARD_COLUMNS,
+  };
+
   usersData: LocalDataSource = new LocalDataSource();
   //Cambiar a modelos//
   guardGoods: LocalDataSource = new LocalDataSource();
@@ -410,11 +432,21 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         const filterWarehouse = response.data.map((item: any) => {
           if (item.typeReceipt == 'ALMACEN') return item;
         });
+
+        const infoWarehouse = filterWarehouse.filter((item: IRecepitGuard) => {
+          return item;
+        });
+
+        this.receiptWarehouse.load(infoWarehouse);
         const filterGuard = response.data.map((item: any) => {
           if (item.typeReceipt == 'RESGUARDO') return item;
         });
         if (filterGuard) {
-          this.receiptGuards.load(filterGuard);
+          const infoGuard = filterGuard.filter((item: IRecepitGuard) => {
+            return item;
+          });
+
+          this.receiptGuards.load(infoGuard);
         }
       },
       error: error => {},
@@ -1135,16 +1167,83 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         }
       });
     } else {
-      this.onLoadToast('warning', 'Se necesita tener un bien seleccionado', '');
+      this.onLoadToast(
+        'warning',
+        'Acción invalida',
+        'Se necesita tener un bien seleccionado'
+      );
     }
+  }
+
+  assingMinuteReprogramation() {
+    if (this.selectGood.length > 0) {
+      this.alertQuestion(
+        'warning',
+        'Confirmación',
+        '¿Seguro que quiere asignar los bienes  a una acta (cambio irreversible)?',
+        'Aceptar'
+      ).then(async question => {
+        if (question.isConfirmed) {
+          const updateGood = await this.updateGoodProgramming();
+        }
+      });
+    } else {
+      this.onLoadToast(
+        'warning',
+        'Acción invalida',
+        'Se necesita tener un bien seleccionado'
+      );
+    }
+  }
+
+  updateGoodProgramming() {
+    this.receipts.getElements().then(item => {
+      console.log('acta', item[0].actaId);
+      console.log('acta');
+      const actId = item[0].actaId;
+      this.selectGood.map(item => {
+        const formData: Object = {
+          id: item.id,
+          goodId: item.goodId,
+          goodStatus: 'EN_PROGRAMACION',
+          programmationStatus: 'EN_PROGRAMACION',
+          executionStatus: 'EN_PROGRAMACION',
+        };
+
+        this.goodService.updateByBody(formData).subscribe({
+          next: response => {
+            console.log('response', response);
+            const formData: Object = {
+              programmingId: this.programming.id,
+              goodId: item.id,
+              status: 'EN_PROGRAMACION',
+              actaId: actId,
+            };
+            this.programmingGoodService
+              .updateGoodProgramming(formData)
+              .subscribe({
+                next: response => {
+                  console.log('updeado', response);
+                  this.goodsCancelation.clear();
+                  this.getInfoGoodsProgramming();
+                },
+                error: error => {},
+              });
+          },
+          error: error => {
+            console.log('update good error', error);
+          },
+        });
+      });
+    });
   }
 
   assingMinuteWarehouse() {
     if (this.selectGood.length > 0) {
       this.alertQuestion(
         'warning',
+        'Confirmación',
         '¿Seguro que quiere asignar los bienes  a una acta (cambio irreversible)?',
-        '',
         'Aceptar'
       ).then(question => {
         if (question.isConfirmed) {
@@ -1152,7 +1251,11 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         }
       });
     } else {
-      this.onLoadToast('warning', 'Se necesita tener un bien seleccionado', '');
+      this.onLoadToast(
+        'warning',
+        'Acción invalida',
+        'Se necesita tener un bien seleccionado'
+      );
     }
   }
 
@@ -1202,6 +1305,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
 
               if (updateProgrammingGood) {
                 const updateGood = await this.updateGoodWarehouse();
+                this.goodsWarehouse.clear();
                 this.getReceiptsGuard();
                 this.getInfoGoodsProgramming();
               }

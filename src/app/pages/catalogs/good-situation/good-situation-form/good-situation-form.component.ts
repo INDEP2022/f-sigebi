@@ -32,15 +32,20 @@ export class GoodSituationFormComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.goodSituationForm = this.fb.group({
-      situation: [null],
+      situation: [null, [Validators.required]],
       descSituation: [
         null,
-        [Validators.maxLength(300), Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.maxLength(300),
+          Validators.pattern(STRING_PATTERN),
+        ],
       ],
-      status: [null, [Validators.maxLength(3)]],
+      status: [null, [Validators.required, Validators.maxLength(3)]],
     });
     if (this.situation != null) {
       this.edit = true;
+      this.goodSituationForm.controls['status'].disable();
       this.goodSituationForm.controls['situation'].disable();
       this.goodSituationForm.patchValue(this.situation);
     }

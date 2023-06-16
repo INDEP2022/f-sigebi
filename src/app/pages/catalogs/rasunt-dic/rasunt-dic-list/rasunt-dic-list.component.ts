@@ -101,15 +101,34 @@ export class RAsuntDicListComponent extends BasePage implements OnInit {
     this.BsModalService.show(RAsuntDicFormComponent, modalConfig);
   }
 
-  delete(rAsuntDic?: IRAsuntDic) {
+  deleteAlert(rAsuntDic?: IRAsuntDic) {
     this.alertQuestion(
       'warning',
       'Eliminar',
       'Desea eliminar este registro?'
     ).then(question => {
+      console.log('question', question);
+      alert(question);
       if (question.isConfirmed) {
-        //this.rAsuntDicService.remove(rAsuntDic.code);
+        console.log('rAsuntDic.code', rAsuntDic);
+
+        this.delete(rAsuntDic);
       }
+    });
+  }
+
+  delete(asunto: IRAsuntDic) {
+    this.rAsuntDicService.remove2(asunto).subscribe({
+      next: () => {
+        this.getExample(), this.alert('success', 'R Asunt Dic', 'Borrado');
+      },
+      error: error => {
+        this.alert(
+          'warning',
+          'R Asunt Dic',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      },
     });
   }
 }

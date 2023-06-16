@@ -1,8 +1,8 @@
 import { ISafe } from './safe.model';
 
 export interface IDrawer {
-  noBobeda?: number | ISafe;
-  noDrawer?: number;
+  noDrawer?: number | ISafe;
+  id?: number;
   status?: string;
   noRegistration: number;
 }

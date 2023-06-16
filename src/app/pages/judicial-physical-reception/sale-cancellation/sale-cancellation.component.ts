@@ -153,9 +153,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
 
   //NAVEGACION DE ACTAS
   paramsActNavigate = new BehaviorSubject<ListParams>(new ListParams());
-
   totalItemsNavigate: number = 0;
-
   newLimitparamsActNavigate = new FormControl(1);
 
   //NAVEGACION DE TABLA DE BIENES
@@ -278,6 +276,14 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(params => {
         this.getGoodsFn();
+      });
+
+    this.paramsDataGoodsAct
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(params => {
+        console.log(params);
+        this.limitDataGoodsAct = new FormControl(params.limit);
+        this.getGoodsActFn();
       });
 
     this.paramsActNavigate
@@ -863,6 +869,8 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
 
     const modelDetail: IDetailWithIndEdo = {
       no_acta: dataRes.id,
+      page: this.paramsDataGoodsAct.getValue().page,
+      perPage: this.paramsDataGoodsAct.getValue().limit,
     };
 
     this.serviceDetailProc.getAllwithEndFisico(modelDetail).subscribe(
@@ -1264,6 +1272,8 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
 
     const model: IDetailWithIndEdo = {
       no_acta: parseInt(this.idProceeding),
+      page: this.paramsDataGoodsAct.getValue().page,
+      perPage: this.paramsDataGoodsAct.getValue().limit,
     };
 
     this.serviceDetailProc.getAllwithEndFisico(model).subscribe(

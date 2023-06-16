@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 
 import { LocalDataSource } from 'ng2-smart-table';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import {
   ListParams,
   SearchFilter,
@@ -88,17 +89,14 @@ export class EdosXCoorListComponent extends BasePage implements OnInit {
   }
 
   openForm(edosXCoor?: IEdosXCoor) {
-    let config: ModalOptions = {
-      initialState: {
-        edosXCoor,
-        callback: (next: boolean) => {
-          if (next) this.getExample();
-        },
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      edosXCoor,
+      callback: (next: boolean) => {
+        if (next) this.getExample();
       },
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
     };
-    this.modalService.show(EdosXCoorFormComponent, config);
+    this.modalService.show(EdosXCoorFormComponent, modalConfig);
   }
 
   delete(edosXCoor: IEdosXCoor) {
