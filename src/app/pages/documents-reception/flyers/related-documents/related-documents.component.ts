@@ -2263,82 +2263,77 @@ export class RelatedDocumentsComponent
   async showDeleteAlert(legend?: any) {
     //ILegend
     //Desea eliminar el oficio con el expediente ${proceedingsNumber} y No. Oficio ${managementNumber}
-    if (this.pantallaActual == '1') {
-      const {
-        noVolante, //no_volante
-        wheelStatus, //status
-      } = this.managementForm.value;
-      const {
-        managementNumber, //no_of_gestion
-        flyerNumber, //no_volante
-        statusOf, //status_of
-        cveManagement, //cve_of_gestion
-        proceedingsNumber, //no_expediente
-        insertUser, //usuario insert
-        insertDate, //fecha inserto
-      } = this.formJobManagement.value;
+    const {
+      noVolante, //no_volante
+      wheelStatus, //status
+    } = this.managementForm.value;
+    const {
+      managementNumber, //no_of_gestion
+      flyerNumber, //no_volante
+      statusOf, //status_of
+      cveManagement, //cve_of_gestion
+      proceedingsNumber, //no_expediente
+      insertUser, //usuario insert
+      insertDate, //fecha inserto
+    } = this.formJobManagement.value;
 
-      if (managementNumber == null) {
-        this.onLoadToast('info', 'No se tiene oficio', '');
-        return;
-      }
+    if (managementNumber == null) {
+      this.onLoadToast('info', 'No se tiene oficio', '');
+      return;
+    }
 
-      if (wheelStatus == 'ENVIADO') {
-        this.onLoadToast(
-          'info',
-          'El oficio ya esta enviado no puede borrar',
-          ''
-        );
-        return;
-      }
+    if (wheelStatus == 'ENVIADO') {
+      this.onLoadToast('info', 'El oficio ya esta enviado no puede borrar', '');
+      return;
+    }
 
-      if (cveManagement.includes('?') == false) {
-        this.onLoadToast(
-          'info',
-          'La clave está armada, no puede borrar oficio',
-          ''
-        );
-        return;
-      }
-      //username
-      if (
-        insertUser?.toLowerCase() !==
-        this.authUser.preferred_username.toLowerCase()
-      ) {
-        const ATJR: any = await this.userHavePermission();
-        console.log(ATJR);
-        if (Number(ATJR[0]) == 0) {
-          this.onLoadToast(
-            'error',
-            'Error',
-            'El Usuario no está autorizado para eliminar el Oficio'
-          );
-          return;
-        }
-      } else {
+    if (cveManagement.includes('?') == false) {
+      this.onLoadToast(
+        'info',
+        'La clave está armada, no puede borrar oficio',
+        ''
+      );
+      return;
+    }
+    //username
+    debugger;
+    console.log(insertUser);
+    if (
+      insertUser?.toLowerCase() !==
+      this.authUser.preferred_username.toLowerCase()
+    ) {
+      const ATJR: any = await this.userHavePermission();
+      console.log(ATJR);
+      if (Number(ATJR[0]) == 0) {
         this.onLoadToast(
           'error',
           'Error',
-          'Usuario inválido para borrar oficio'
+          'El Usuario no está autorizado para eliminar el Oficio'
         );
         return;
       }
-
-      this.alertQuestion(
-        'warning',
-        'Eliminar',
-        `Desea eliminar el oficio con el expediente ${proceedingsNumber} y No. Oficio ${managementNumber}`
-      ).then(question => {
-        if (question.isConfirmed) {
-          if (this.pantallaActual == '1') {
-            this.deleteOfficeDesahogo(managementNumber, noVolante, insertDate);
-            //Swal.fire('Borrado', '', 'success');
-          }
-        }
-      });
-    } else {
-      this.onClickBtnErase();
     }
+    // else {
+    //   this.onLoadToast(
+    //     'error',
+    //     'Error',
+    //     'Usuario inválido para borrar oficio'
+    //   );
+    //   return;
+    // }
+
+    this.alertQuestion(
+      'warning',
+      'Eliminar',
+      `Desea eliminar el oficio con el expediente ${proceedingsNumber} y No. Oficio ${managementNumber}`
+    ).then(question => {
+      if (question.isConfirmed) {
+        if (this.pantallaActual == '1') {
+          this.deleteOfficeDesahogo(managementNumber, noVolante, insertDate);
+          //Swal.fire('Borrado', '', 'success');
+        }
+      }
+    });
   }
 
   async deleteOfficeDesahogo(
@@ -2359,17 +2354,21 @@ export class RelatedDocumentsComponent
     const management = managementNumber;
     const volante = noVolante;
     //se elimina bienes_officio_gestion
-    const promises = [
-      //this.mJobManagementService.deleteGoodsJobManagement1(management),
-      //this.mJobManagementService.deleteDocumentJobManagement2(management),
-      //this.officeManagementSerivice.removeMOfficeManagement(management),
-      //this.mJobManagementService.deleteCopiesJobManagement4(management),
-      this.relatedDocumentDesahogo.deleteJobManagement(management, volante),
-      this.updateIfHaveDictamen(volante),
-    ];
-    await Promise.all(promises);
+    // const promises = [
+    //   //this.mJobManagementService.deleteGoodsJobManagement1(management),
+    //   //this.mJobManagementService.deleteDocumentJobManagement2(management),
+    //   //this.officeManagementSerivice.removeMOfficeManagement(management),
+    //   //this.mJobManagementService.deleteCopiesJobManagement4(management),
+    //   this.relatedDocumentDesahogo.deleteJobManagement(management, volante),
+    //   this.updateIfHaveDictamen(volante),
+    // ];
+    // await Promise.all(promises);
 
-    this.se_refiere_a_Disabled.A = true;
+    await firstValueFrom(
+      this.relatedDocumentDesahogo.deleteJobManagement(management, volante)
+    ),
+      await this.updateIfHaveDictamen(volante),
+      (this.se_refiere_a_Disabled.A = true);
     this.se_refiere_a_Disabled.B = true;
 
     if (this.paramsGestionDictamen.sale == 'D') {
