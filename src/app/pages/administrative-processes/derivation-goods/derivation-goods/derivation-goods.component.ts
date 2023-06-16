@@ -81,21 +81,21 @@ export class DerivationGoodsComponent implements OnInit {
   private buildForm() {
     this.form = this.fb.group({
       idConversion: [null, [Validators.required]],
-      numberGoodFather: [null, [Validators.required]],
+      numberGoodFather: [null, []], //Se quita la validación, en el forms no es requerido
       tipo: [null, [Validators.required]],
-      numberDossier: [null, [Validators.required]],
-      status: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      numberDossier: [null, []], //Se quita la validación, en el forms no es requerido
+      status: [null, [ Validators.pattern(STRING_PATTERN)]], //Se quita la validación, en el forms no es requerido
       situation: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [Validators.pattern(STRING_PATTERN)], //Se quita la validación, en el forms no es requerido
       ],
       actConvertion: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [Validators.pattern(STRING_PATTERN)], //Se quita la validación, en el forms no es requerido
       ],
       description: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [Validators.pattern(STRING_PATTERN)], //Se quita la validación, en el forms no es requerido
       ],
       numberGoodSon: [null, [Validators.required]],
       observation: [
