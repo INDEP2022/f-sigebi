@@ -567,12 +567,23 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   //Conditional functions
 
   verifyDateAndFill() {
+    console.log(this.form.get('fecElab').value);
     let fecElab = new Date(this.form.get('fecElab').value);
-    console.log(fecElab);
-    console.log(new Date());
     if (this.form.get('fecElab').value != null) {
+      //SETEAR FECHA DE RECEPCIÓN Y ACTIVARLA
       this.form.get('fecReception').setValue(new Date(fecElab));
       this.showFecReception = true;
+      //SETEAR NUEVOS VALORES
+      const year = fecElab.getFullYear();
+      const month = fecElab.getMonth() + 1;
+      const day = fecElab.getDate();
+      const hour = new Date().getHours();
+      const minute = new Date().getMinutes();
+      if(fecElab.getHours() != hour || fecElab.getMinutes() != minute){
+        this.form
+          .get('fecElab')
+          .setValue(new Date(`${year}-${month}-${day} ${hour}:${minute}`));
+      }      
     } else {
       {
         this.form.get('fecReception').setValue('');
