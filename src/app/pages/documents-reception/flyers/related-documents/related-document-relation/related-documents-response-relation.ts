@@ -1200,6 +1200,7 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
             //     goodNumber: item.goodNumber,
             //   })
             // } else {
+            // this.dataTableGoodsJobManagement
             this.dataTableGoodsJobManagement.forEach(item => {
               this.postGoodsJobManagement({
                 goodNumber: item.goodNumber,
