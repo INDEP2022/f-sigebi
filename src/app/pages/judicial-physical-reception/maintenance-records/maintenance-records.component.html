@@ -11,6 +11,7 @@
         (filterEvent)="getData($event)">
         <app-pagination
           [params]="params"
+          [pageSizeOptions]="pageSizeOptions"
           [totalItems]="totalProceedings"
           [limit]="newLimit"
           [maxSize]="1"></app-pagination
