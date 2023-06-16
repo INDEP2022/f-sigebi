@@ -19,7 +19,10 @@ import {
   IStatusChange,
 } from 'src/app/core/models/ms-dictation/dictation-model';
 import { type INotification } from 'src/app/core/models/ms-notification/notification.model';
-import { IMJobManagement } from 'src/app/core/models/ms-officemanagement/m-job-management.model';
+import {
+  IMJobManagement,
+  IMJobManagementExtSSF3,
+} from 'src/app/core/models/ms-officemanagement/m-job-management.model';
 import { IProceduremanagement } from 'src/app/core/models/ms-proceduremanagement/ms-proceduremanagement.interface';
 import {
   IAccesTrackingXArea,
@@ -1058,9 +1061,9 @@ export abstract class RelateDocumentsResponse extends BasePage {
       .getVOficTrans(params)
       .pipe(map(x => x.data[0]));
   }
-  sendFunction_nUniversalFolio(params: Object): Observable<any> {
+  sendFunction_nUniversalFolio(managementNumber: number): Observable<any> {
     return this.dictationService
-      .nUniversalFolio(params)
+      .nUniversalFolio(managementNumber)
       .pipe(map(x => x.data[0]));
   }
   sendFunction_getActnom(managementNumber: number): Observable<any> {
@@ -1089,5 +1092,12 @@ export abstract class RelateDocumentsResponse extends BasePage {
   }
   sendFunction_pupStatusChange(params: IStatusChange): Observable<any> {
     return this.dictationService.pupStatusChange(params).pipe(map(x => x));
+  }
+  sendFunction_createMJobManagementExtSSF3(
+    params: IMJobManagementExtSSF3
+  ): Observable<any> {
+    return this.msOfficeManagementService
+      .createMJobManagementExtSSF3(params)
+      .pipe(map(x => x));
   }
 }
