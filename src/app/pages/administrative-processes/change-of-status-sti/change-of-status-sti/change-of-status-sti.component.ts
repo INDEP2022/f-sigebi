@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IHistoryGood } from 'src/app/core/models/administrative-processes/history-good.model';
@@ -8,7 +8,7 @@ import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { HistoryGoodService } from 'src/app/core/services/ms-history-good/history-good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { NUMBERS_PATTERN, POSITVE_NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 import { COLUMNS, goodCheck } from './columns';
 
@@ -38,6 +38,7 @@ export class ChangeOfStatusStiComponent extends BasePage implements OnInit {
 
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
+  limit: FormControl = new FormControl(10)
   goodSelect: any[] = [];
   goods: IGood[] = [];
   constructor(
@@ -72,7 +73,7 @@ export class ChangeOfStatusStiComponent extends BasePage implements OnInit {
     this.form = this.fb.group({
       numberFile: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [Validators.required, Validators.pattern(POSITVE_NUMBERS_PATTERN)],
       ],
       goodStatus: ['ROP'],
       descriptionStatus: ['Notificado en Oficialia de Partes'],
@@ -140,9 +141,19 @@ export class ChangeOfStatusStiComponent extends BasePage implements OnInit {
     }
   }
 
+  clearAll(){
+    this.form.get('numberFile').reset()
+    this.form.get('description').reset()
+    this.goods = []
+    this.limit = new FormControl(10)
+    this.params.next(new ListParams())
+    this.totalItems = 0
+  }
+
   listGoods() {
     this.loading = true;
     this.busco = true;
+    console.log(this.numberFile)
     this.form.get('description').reset()
     this.goodServices
       .getByExpedientAndStatus(
