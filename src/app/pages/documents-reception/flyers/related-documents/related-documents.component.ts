@@ -3949,7 +3949,7 @@ export class RelatedDocumentsComponent
           return;
         }
       }
-      if (this.paramsGestionDictamen.doc === 'S') {
+      if (this.paramsGestionDictamen.doc === 'N') {
         if (
           this.formVariables.get('d').value === 'N' ||
           this.formVariables.get('d').value === null
