@@ -100,7 +100,7 @@ export class GoodprocessService extends HttpService {
     return this.get('application/get-nextval-gestion');
   }
   updateJobManagement(model: any): Observable<IListResponse<any>> {
-    return this.put(`${GoodprocessEndpoints.UpdateGoodStatus}`, model);
+    return this.post(`${GoodprocessEndpoints.UpdateGoodStatus}`, model);
   }
   postJobManagement(model: any): Observable<IListResponse<any>> {
     return this.post(`${GoodprocessEndpoints.UpdateGoodStatus}`, model);
