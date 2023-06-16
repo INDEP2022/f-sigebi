@@ -309,7 +309,7 @@ export class RelatedDocumentsComponent
     /** @description tipo_oficio */
     jobType: new FormControl(''),
     /** @description no_of_gestion */
-    managementNumber: new FormControl(''),
+    managementNumber: new FormControl(null),
     /** @description  destinatario*/
     addressee: new FormControl<{
       user: number | string;
@@ -335,7 +335,7 @@ export class RelatedDocumentsComponent
     /** @description oficio_por */
     jobBy: new FormControl(''),
     /** @description cve_of_gestion */
-    cveManagement: new FormControl(''),
+    cveManagement: new FormControl(null),
     city: new FormControl<{
       id: number | string;
       legendOffice: string;
@@ -1970,9 +1970,15 @@ export class RelatedDocumentsComponent
       return;
     }
 
+    if (!this.formJobManagement.get('refersTo').value) {
+      this.alert('error', 'El campo Se Refiere A: es un campo obligatorio', '');
+      return;
+    }
     /* BIENES */
+    //const { managementNumber, cveManagement } = this.m_job_management;
+    const managementNumber = this.formJobManagement.value.managementNumber;
+    const cveManagement = this.formJobManagement.value.cveManagement;
     const bien = this.getQueryParams('bien');
-    const { managementNumber, cveManagement } = this.m_job_management;
     const { refersTo } = this.formJobManagement.controls;
     const goodJobs = this.dataTableGoodsJobManagement;
     if (bien == 'S' && doc == 'S') {
@@ -2037,7 +2043,8 @@ export class RelatedDocumentsComponent
         );
         return;
       } else {
-        if (goodJobs.length > 0) {
+        console.log(this.dataTableGoodsJobManagement);
+        if (goodJobs) {
           //se llama al endpoint para insertar tmp_clasif_bien
           const body = {
             managementNum: Number(managementNumber),
