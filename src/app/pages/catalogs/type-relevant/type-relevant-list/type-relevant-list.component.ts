@@ -32,7 +32,7 @@ export class TypeRelevantListComponent extends BasePage implements OnInit {
   ) {
     super();
     this.settings.columns = TYPERELEVANT_COLUMS;
-    this.settings.actions.delete = true;
+    this.settings.actions.delete = false;
     this.settings.actions.add = false;
     this.settings.hideSubHeader = false;
   }

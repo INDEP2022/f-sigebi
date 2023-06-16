@@ -61,7 +61,10 @@ export class ValuesModalComponent extends BasePage implements OnInit {
       .create2(this.value.ottipotb, this.valuesForm.value)
       .subscribe({
         next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
+        error: error => {
+          this.loading = false;
+          this.onLoadToast('error', 'ERROR', error.error.message);
+        },
       });
   }
   update() {
