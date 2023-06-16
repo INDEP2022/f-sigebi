@@ -8,7 +8,7 @@ export const COLUMNS = {
     sort: false,
   },
   description: {
-    title: 'Descripcion del Bien',
+    title: 'Descripción del Bien',
     sort: false,
   },
   status: {
