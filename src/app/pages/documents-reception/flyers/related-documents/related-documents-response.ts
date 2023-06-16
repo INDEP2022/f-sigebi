@@ -475,7 +475,7 @@ export abstract class RelateDocumentsResponse extends BasePage {
               urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
               type: 'pdf',
             },
-            callback: (data: any) => {},
+            callback: (data: any) => { },
           }, //pasar datos por aca
           class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
           ignoreBackdropClick: true, //ignora el click fuera del modal
@@ -490,7 +490,7 @@ export abstract class RelateDocumentsResponse extends BasePage {
               urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
               type: 'pdf',
             },
-            callback: (data: any) => {},
+            callback: (data: any) => { },
           }, //pasar datos por aca
           class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
           ignoreBackdropClick: true, //ignora el click fuera del modal
@@ -679,6 +679,7 @@ export abstract class RelateDocumentsResponse extends BasePage {
       ...this.dataTableGoodsJobManagement,
       ...newRows,
     ];
+    this.formVariables.get('b').setValue('S');
   }
 
   pupAddAnyGood() {
@@ -707,6 +708,7 @@ export abstract class RelateDocumentsResponse extends BasePage {
       ...this.dataTableGoodsJobManagement,
       ...newRows,
     ];
+    this.formVariables.get('b').setValue('S');
   }
 
   dataSelectDictation = new DefaultSelect([]);
@@ -1001,7 +1003,7 @@ export abstract class RelateDocumentsResponse extends BasePage {
         }
         if (
           valuesJobManagement.refersTo ==
-            'Se refiere a algun (os) bien (es) del expediente' &&
+          'Se refiere a algun (os) bien (es) del expediente' &&
           counter == 0
         ) {
           this.pupAddAnyGood();
@@ -1034,7 +1036,7 @@ export abstract class RelateDocumentsResponse extends BasePage {
       if (
         valuesJobManagement.cveManagement &&
         valuesJobManagement.refersTo ==
-          'Se refiere a algun (os) bien (es) del expediente'
+        'Se refiere a algun (os) bien (es) del expediente'
       ) {
         this.se_refiere_a_Disabled.A = true;
         this.se_refiere_a_Disabled.C = true;
