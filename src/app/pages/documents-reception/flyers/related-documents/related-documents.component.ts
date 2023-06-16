@@ -3887,12 +3887,12 @@ export class RelatedDocumentsComponent
       return;
     } else {
       if (
-        this.paramsGestionDictamen.bien == 'S' &&
+        this.paramsGestionDictamen.bien === 'S' &&
         this.paramsGestionDictamen.doc === 'S'
       ) {
         if (
           this.formVariables.get('b').value === 'N' ||
-          !this.formVariables.get('b')
+          this.formVariables.get('b') === null
         ) {
           this.alertInfo(
             'warning',
@@ -3903,12 +3903,12 @@ export class RelatedDocumentsComponent
         }
       }
       if (
-        this.paramsGestionDictamen.bien == 'S' &&
+        this.paramsGestionDictamen.bien === 'S' &&
         this.paramsGestionDictamen.doc === 'S'
       ) {
         if (
           this.formVariables.get('d').value === 'N' ||
-          !this.formVariables.get('d').value
+          this.formVariables.get('d').value === null
         ) {
           this.alertInfo(
             'warning',
@@ -3921,7 +3921,7 @@ export class RelatedDocumentsComponent
       if (this.paramsGestionDictamen.doc === 'S') {
         if (
           this.formVariables.get('d').value === 'N' ||
-          !this.formVariables.get('d').value
+          this.formVariables.get('d').value === null
         ) {
           this.alertInfo('warning', 'Este oficio requiere de DOCUMENTOS', '');
           return;
