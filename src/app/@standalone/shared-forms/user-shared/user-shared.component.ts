@@ -11,7 +11,6 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { BasePage } from 'src/app/core/shared/base-page';
 //Models
 import { IUser } from 'src/app/core/models/administrative-processes/siab-sami-interaction/user.model';
-import { usersData } from './data';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
 
 @Component({
@@ -31,19 +30,17 @@ export class UsersSharedComponent extends BasePage implements OnInit {
 
   users = new DefaultSelect<IUser>();
 
-  constructor(private serviceUser: UsersService,) {
+  constructor(private serviceUser: UsersService) {
     super();
   }
 
   ngOnInit(): void {}
 
   getUsers(params: ListParams) {
-  
     const routeUser = `?filter.name=$ilike:${params.text}`;
     this.serviceUser.getAllSegUsers(routeUser).subscribe(res => {
       this.users = new DefaultSelect(res.data, res.count);
     });
-
 
     /*this.service.getAll(params).subscribe(data => {
         this.status = new DefaultSelect(data.data,data.count);
