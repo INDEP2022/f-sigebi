@@ -134,13 +134,6 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
 
     //Condición para saber que ID tipo de documento lelga
     switch (this.idTypeDoc) {
-      case 103: {
-        console.log('Tipo 103, 103');
-        let linkDoc: string = `${this.urlBaseReport}Recibo_Entrega.jasper&ID_PROG=${this.idProg}&ID_RECIBO=${this.receiptId}`;
-        this.src = linkDoc;
-        console.log('URL reporte ', linkDoc);
-        break;
-      }
       case 50: {
         console.log('Tipo 50, Aclaración');
         let linkDoc: string = `${this.urlBaseReport}Dictamen_Procedencia.jasper&ID_SOLICITUD=${this.idReportAclara}&ID_TIPO_DOCTO=${this.idTypeDoc}`;
@@ -237,34 +230,32 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
   }
 
   registerSign() {
-    if (this.process != 'guard') {
-      if (this.idTypeDoc && this.idReportAclara) {
-        this.signatoriesService
-          .getSignatoriesName(this.idTypeDoc, this.idReportAclara)
-          .subscribe({
-            next: response => {
-              console.log('Existe firmante, ya no crear');
-            },
-            error: error => {
-              console.log('Si no hay firmantes, entonces crear nuevo');
-              let token = this.authService.decodeToken();
-              const formData: Object = {
-                name: token.name,
-                post: token.cargonivel1,
-                learnedType: this.idTypeDoc,
-                learnedId: this.idReportAclara, // Para los demás reportes
-              };
+    if (process == null) {
+      this.signatoriesService
+        .getSignatoriesName(this.idTypeDoc, this.idReportAclara)
+        .subscribe({
+          next: response => {
+            console.log('Existe firmante, ya no crear');
+          },
+          error: error => {
+            console.log('Si no hay firmantes, entonces crear nuevo');
+            let token = this.authService.decodeToken();
+            const formData: Object = {
+              name: token.name,
+              post: token.cargonivel1,
+              learnedType: this.idTypeDoc,
+              learnedId: this.idReportAclara, // Para los demás reportes
+            };
 
-              //Asigna un firmante según el usuario logeado
-              this.signatoriesService.create(formData).subscribe({
-                next: response => {
-                  this.signParams(), console.log('Firmante creado: ', response);
-                },
-                error: error => console.log('No se puede crear: ', error),
-              });
-            },
-          });
-      }
+            //Asigna un firmante según el usuario logeado
+            this.signatoriesService.create(formData).subscribe({
+              next: response => {
+                this.signParams(), console.log('Firmante creado: ', response);
+              },
+              error: error => console.log('No se puede crear: ', error),
+            });
+          },
+        });
     }
   }
 
@@ -720,6 +711,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
     let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
     config.initialState = {
       receiptGuards: this.receiptGuards,
+      typeDoc: this.idTypeDoc,
       callback: (data: boolean) => {
         if (data) {
         }
