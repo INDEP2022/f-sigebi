@@ -113,8 +113,23 @@ export class ChangeOfStatusComponent extends BasePage implements OnInit {
     });
   }
 
+  clearAll() {
+    this.endProcess = false;
+    this.form.get('numberGood').reset();
+    this.form.get('descriptionGood').reset();
+    this.form.get('currentStatus').reset();
+    this.form.get('descriptionStatus').reset();
+    this.form.get('processesGood').reset();
+    this.formNew.get('goodStatus').reset();
+    this.formNew.get('dateStatus').reset();
+    this.formNew.get('extDomProcess').reset();
+    this.formNew.get('issuingUser').reset();
+    this.formNew.get('description').reset();
+  }
+
   loadGood() {
     this.loading = true;
+    this.dateStatus.setValue(new Date());
     this.goodServices.getById(this.numberGood.value).subscribe({
       next: (response: any) => {
         this.good = response.data[0];

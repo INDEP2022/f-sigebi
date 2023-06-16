@@ -35,6 +35,7 @@ import { DictationService } from 'src/app/core/services/ms-dictation/dictation.s
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
+import { HistoryGoodService } from 'src/app/core/services/ms-history-good/history-good.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import { GoodsJobManagementService } from 'src/app/core/services/ms-office-management/goods-job-management.service';
 import { MJobManagementService } from 'src/app/core/services/ms-office-management/m-job-management.service';
@@ -63,6 +64,8 @@ export abstract class RelateDocumentsResponse extends BasePage {
   protected abstract departmentService: DepartamentService;
   protected abstract svLegalOpinionsOfficeService: LegalOpinionsOfficeService;
   protected abstract authService: AuthService;
+  protected abstract goodHistoryService: HistoryGoodService; // protected abstract svLegalOpinionsOfficeService: LegalOpinionsOfficeService;
+
   abstract formVariables: FormGroup<{
     dictaminacion: FormControl;
     b: FormControl;
@@ -128,6 +131,8 @@ export abstract class RelateDocumentsResponse extends BasePage {
     /**@description num_clave_armada */
     armedKeyNumber: FormControl;
     tipoTexto: FormControl;
+    /** @description  no_expediente*/
+    proceedingsNumber: FormControl;
   }>;
   protected abstract formNotification: FormGroup;
   protected abstract route: ActivatedRoute;

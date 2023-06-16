@@ -35,6 +35,7 @@ import {
 } from 'src/app/common/repository/interfaces/list-params';
 import { _Params } from 'src/app/common/services/http.service';
 import { IUserRowSelectEvent } from 'src/app/core/interfaces/ng2-smart-table.interface';
+import { TokenInfoModel } from 'src/app/core/models/authentication/token-info.model';
 import { IDepartment } from 'src/app/core/models/catalogs/department.model';
 import { ILegend } from 'src/app/core/models/catalogs/legend.model';
 import { IDocuments } from 'src/app/core/models/ms-documents/documents';
@@ -181,7 +182,7 @@ export class RelatedDocumentsComponent
   // userCopies2 = new DefaultSelect();
   dataGoodTable: LocalDataSource = new LocalDataSource();
   m_job_management: IMJobManagement = null;
-  authUser: any = null;
+  authUser: TokenInfoModel = null;
   isPGR: boolean = false;
 
   pantalla = (option: boolean) =>
@@ -356,6 +357,8 @@ export class RelatedDocumentsComponent
     /**@description num_clave_armada */
     armedKeyNumber: new FormControl(''),
     tipoTexto: new FormControl(''),
+    /** @description  no_expediente*/
+    proceedingsNumber: new FormControl(''),
   });
 
   formVariables = new FormGroup({
@@ -408,7 +411,7 @@ export class RelatedDocumentsComponent
     protected departmentService: DepartamentService,
     private segAccessAreasService: SegAcessXAreasService,
     private officeManagementSerivice: OfficeManagementService,
-    private goodHistoryService: HistoryGoodService, // protected abstract svLegalOpinionsOfficeService: LegalOpinionsOfficeService;
+    protected goodHistoryService: HistoryGoodService, // protected abstract svLegalOpinionsOfficeService: LegalOpinionsOfficeService;
     protected documentsService: DocumentsService,
     protected usersService: UsersService, // protected goodProcessService: GoodprocessService,
     private expedientService: ExpedientService,
@@ -419,6 +422,9 @@ export class RelatedDocumentsComponent
     super();
     // console.log(authService.decodeToken());
     this.authUser = authService.decodeToken();
+    this.formJobManagement.controls['insertUser'].setValue(
+      this.authUser.preferred_username
+    );
     console.log('USER DATA', this.authUser);
     this.settings3 = {
       ...this.settings,
@@ -2257,82 +2263,77 @@ export class RelatedDocumentsComponent
   async showDeleteAlert(legend?: any) {
     //ILegend
     //Desea eliminar el oficio con el expediente ${proceedingsNumber} y No. Oficio ${managementNumber}
-    if (this.pantallaActual == '1') {
-      const {
-        noVolante, //no_volante
-        wheelStatus, //status
-      } = this.managementForm.value;
-      const {
-        managementNumber, //no_of_gestion
-        flyerNumber, //no_volante
-        statusOf, //status_of
-        cveManagement, //cve_of_gestion
-        proceedingsNumber, //no_expediente
-        insertUser, //usuario insert
-        insertDate, //fecha inserto
-      } = this.m_job_management;
+    const {
+      noVolante, //no_volante
+      wheelStatus, //status
+    } = this.managementForm.value;
+    const {
+      managementNumber, //no_of_gestion
+      flyerNumber, //no_volante
+      statusOf, //status_of
+      cveManagement, //cve_of_gestion
+      proceedingsNumber, //no_expediente
+      insertUser, //usuario insert
+      insertDate, //fecha inserto
+    } = this.formJobManagement.value;
 
-      if (managementNumber == null) {
-        this.onLoadToast('info', 'No se tiene oficio', '');
-        return;
-      }
+    if (managementNumber == null) {
+      this.onLoadToast('info', 'No se tiene oficio', '');
+      return;
+    }
 
-      if (wheelStatus == 'ENVIADO') {
-        this.onLoadToast(
-          'info',
-          'El oficio ya esta enviado no puede borrar',
-          ''
-        );
-        return;
-      }
+    if (wheelStatus == 'ENVIADO') {
+      this.onLoadToast('info', 'El oficio ya esta enviado no puede borrar', '');
+      return;
+    }
 
-      if (cveManagement.includes('?') == false) {
-        this.onLoadToast(
-          'info',
-          'La clave está armada, no puede borrar oficio',
-          ''
-        );
-        return;
-      }
-      //username
-      if (
-        insertUser.toLowerCase() !==
-        this.authUser.preferred_username.toLowerCase()
-      ) {
-        const ATJR: any = await this.userHavePermission();
-        console.log(ATJR);
-        if (Number(ATJR[0]) == 0) {
-          this.onLoadToast(
-            'error',
-            'Error',
-            'El Usuario no está autorizado para eliminar el Oficio'
-          );
-          return;
-        }
-      } else {
+    if (cveManagement.includes('?') == false) {
+      this.onLoadToast(
+        'info',
+        'La clave está armada, no puede borrar oficio',
+        ''
+      );
+      return;
+    }
+    //username
+    // debugger;
+    console.log(insertUser);
+    if (
+      insertUser?.toLowerCase() !==
+      this.authUser.preferred_username.toLowerCase()
+    ) {
+      const ATJR: any = await this.userHavePermission();
+      console.log(ATJR);
+      if (Number(ATJR[0]) == 0) {
         this.onLoadToast(
           'error',
           'Error',
-          'Usuario inválido para borrar oficio'
+          'El Usuario no está autorizado para eliminar el Oficio'
         );
         return;
       }
-
-      this.alertQuestion(
-        'warning',
-        'Eliminar',
-        `Desea eliminar el oficio con el expediente ${proceedingsNumber} y No. Oficio ${managementNumber}`
-      ).then(question => {
-        if (question.isConfirmed) {
-          if (this.pantallaActual == '1') {
-            this.deleteOfficeDesahogo(managementNumber, noVolante, insertDate);
-            //Swal.fire('Borrado', '', 'success');
-          }
-        }
-      });
-    } else {
-      this.onClickBtnErase();
     }
+    // else {
+    //   this.onLoadToast(
+    //     'error',
+    //     'Error',
+    //     'Usuario inválido para borrar oficio'
+    //   );
+    //   return;
+    // }
+
+    this.alertQuestion(
+      'warning',
+      'Eliminar',
+      `Desea eliminar el oficio con el expediente ${proceedingsNumber} y No. Oficio ${managementNumber}`
+    ).then(question => {
+      if (question.isConfirmed) {
+        if (this.pantallaActual == '1') {
+          this.deleteOfficeDesahogo(managementNumber, noVolante, insertDate);
+          //Swal.fire('Borrado', '', 'success');
+        }
+      }
+    });
   }
 
   async deleteOfficeDesahogo(
@@ -2342,7 +2343,7 @@ export class RelatedDocumentsComponent
   ) {
     //console.log(this.dataTableGoodsJobManagement);
     //LOOP BIENES_OFICIO_ESTATUS
-    debugger;
+    // debugger;
     const body: any = {
       managementNumber: managementNumber,
       insertDate: insertDate,
@@ -2353,17 +2354,21 @@ export class RelatedDocumentsComponent
     const management = managementNumber;
     const volante = noVolante;
     //se elimina bienes_officio_gestion
-    const promises = [
-      //this.mJobManagementService.deleteGoodsJobManagement1(management),
-      //this.mJobManagementService.deleteDocumentJobManagement2(management),
-      //this.officeManagementSerivice.removeMOfficeManagement(management),
-      //this.mJobManagementService.deleteCopiesJobManagement4(management),
-      this.relatedDocumentDesahogo.deleteJobManagement(management, volante),
-      this.updateIfHaveDictamen(volante),
-    ];
-    await Promise.all(promises);
+    // const promises = [
+    //   //this.mJobManagementService.deleteGoodsJobManagement1(management),
+    //   //this.mJobManagementService.deleteDocumentJobManagement2(management),
+    //   //this.officeManagementSerivice.removeMOfficeManagement(management),
+    //   //this.mJobManagementService.deleteCopiesJobManagement4(management),
+    //   this.relatedDocumentDesahogo.deleteJobManagement(management, volante),
+    //   this.updateIfHaveDictamen(volante),
+    // ];
+    // await Promise.all(promises);
 
-    this.se_refiere_a_Disabled.A = true;
+    await firstValueFrom(
+      this.relatedDocumentDesahogo.deleteJobManagement(management, volante)
+    ),
+      await this.updateIfHaveDictamen(volante),
+      (this.se_refiere_a_Disabled.A = true);
     this.se_refiere_a_Disabled.B = true;
 
     if (this.paramsGestionDictamen.sale == 'D') {
@@ -2374,6 +2379,10 @@ export class RelatedDocumentsComponent
 
     Swal.fire('Borrado', '', 'success');
     this.refreshTabla();
+    this.formJobManagement.reset();
+    this.dataTableDocuments = [];
+    this.dataTableGoodsJobManagement = [];
+    this.copyOficio = [];
   }
 
   changeCopiesType(event: any, ccp: number) {
@@ -3477,21 +3486,26 @@ export class RelatedDocumentsComponent
               ).then(async () => {
                 // Llamar las globales y obtener gnu_activa_gestion
                 let paramsActGestion = {
-                  pGestOk: this.paramsGestionDictamen.pGestOk,
-                  gnuActivaManagement: this.globalVars.gnuActivaGestion, // Variable Global
-                  pCall: this.paramsGestionDictamen.pllamo,
-                  pNoProcess: this.paramsGestionDictamen.pNoTramite,
+                  pGestOk: this.paramsGestionDictamen.pGestOk
+                    ? this.paramsGestionDictamen.pGestOk
+                    : 0,
+                  gnuActivaManagement: this.globalVars.gnuActivaGestion
+                    ? this.globalVars.gnuActivaGestion
+                    : 0, // Variable Global
+                  pCall: this.paramsGestionDictamen.pllamo
+                    ? this.paramsGestionDictamen.pllamo
+                    : '',
+                  pNoProcess: this.paramsGestionDictamen.pNoTramite
+                    ? this.paramsGestionDictamen.pNoTramite
+                    : 0,
                   noFlyer: this.notificationData.wheelNumber,
                 };
-                // const _act_gestion = await this._PUP_ACT_GESTION(
-                //   paramsActGestion
-                // );
-                // console.log('ACT_GESTION ', _act_gestion);
-
-                // if (_act_gestion.status != 200) {
-                //   this.onLoadToast('error', _act_gestion.message, '');
-                //   return;
-                // }
+                const _act_gestion = await this._PUP_ACT_GESTION(
+                  paramsActGestion
+                );
+                if (_act_gestion.status != 200) {
+                  this.onLoadToast('error', _act_gestion.message, '');
+                }
                 this.formJobManagement.value.statusOf = 'ENVIADO';
                 const updateDataMJobManagement: any =
                   await this._updateMJobManagement(); // Actualizar datos
@@ -4099,7 +4113,10 @@ export class RelatedDocumentsComponent
           this.isDisabledBtnDocs = true;
         }
       }
-      if (this.formJobManagement.value.sender === this.authUser.user) {
+      if (
+        this.formJobManagement.value.sender?.name ===
+        this.authUser.preferred_username
+      ) {
         this.blockSend = false;
       }
       this.reportUpdateUI();
@@ -4325,7 +4342,7 @@ export class RelatedDocumentsComponent
         if (_busca_numero.InsertDate) {
           this.formJobManagement.value.insertDate = format(
             new Date(_busca_numero.InsertDate),
-            'yyyy/MM/dd'
+            'yyyy-MM-dd'
           ); // InsertDate
         }
         const updateDataMJobManagement_searchNumber: any =
@@ -4369,18 +4386,24 @@ export class RelatedDocumentsComponent
         // :TEXTO3 := :TEX3;
         // Llamar las globales y obtener gnu_activa_gestion
         let paramsActGestion = {
-          pGestOk: this.paramsGestionDictamen.pGestOk,
-          gnuActivaManagement: 1,
-          pCall: this.paramsGestionDictamen.pllamo,
-          pNoProcess: this.paramsGestionDictamen.pNoTramite,
+          pGestOk: this.paramsGestionDictamen.pGestOk
+            ? this.paramsGestionDictamen.pGestOk
+            : 0,
+          gnuActivaManagement: this.globalVars.gnuActivaGestion
+            ? this.globalVars.gnuActivaGestion
+            : 0, // Variable Global
+          pCall: this.paramsGestionDictamen.pllamo
+            ? this.paramsGestionDictamen.pllamo
+            : '',
+          pNoProcess: this.paramsGestionDictamen.pNoTramite
+            ? this.paramsGestionDictamen.pNoTramite
+            : 0,
           noFlyer: this.notificationData.wheelNumber,
         };
-        // const _act_gestion = await this._PUP_ACT_GESTION(paramsActGestion);
-        // // if (_act_gestion.status != 200) {
-        // //   this.onLoadToast('error', _act_gestion.message, '');
-        // //   return;
-        // // }
-        // console.log('ACT_GESTION ', _act_gestion);
+        const _act_gestion = await this._PUP_ACT_GESTION(paramsActGestion);
+        if (_act_gestion.status != 200) {
+          this.onLoadToast('error', _act_gestion.message, '');
+        }
 
         if (this.paramsGestionDictamen.pllamo == 'ABANDONO') {
           let reportCondition = this._conditions_Report();
@@ -4454,7 +4477,7 @@ export class RelatedDocumentsComponent
                     if (_busca_numero.InsertDate) {
                       this.formJobManagement.value.insertDate = format(
                         new Date(_busca_numero.InsertDate),
-                        'yyyy/MM/dd'
+                        'yyyy-MM-dd'
                       ); // InsertDate
                     }
                     const updateDataMJobManagement: any =
@@ -4497,21 +4520,28 @@ export class RelatedDocumentsComponent
                     console.log(_cambia_estatus);
                     // Llamar las globales y obtener gnu_activa_gestion
                     let paramsActGestion = {
-                      pGestOk: this.paramsGestionDictamen.pGestOk,
-                      gnuActivaManagement: this.globalVars.gnuActivaGestion, // Variable Global
-                      pCall: this.paramsGestionDictamen.pllamo,
-                      pNoProcess: this.paramsGestionDictamen.pNoTramite,
+                      pGestOk: this.paramsGestionDictamen.pGestOk
+                        ? this.paramsGestionDictamen.pGestOk
+                        : 0,
+                      gnuActivaManagement: this.globalVars.gnuActivaGestion
+                        ? this.globalVars.gnuActivaGestion
+                        : 0, // Variable Global
+                      pCall: this.paramsGestionDictamen.pllamo
+                        ? this.paramsGestionDictamen.pllamo
+                        : '',
+                      pNoProcess: this.paramsGestionDictamen.pNoTramite
+                        ? this.paramsGestionDictamen.pNoTramite
+                        : 0,
                       noFlyer: this.notificationData.wheelNumber,
                     };
-                    // const _act_gestion = await this._PUP_ACT_GESTION(
-                    //   paramsActGestion
-                    // );
+                    const _act_gestion = await this._PUP_ACT_GESTION(
+                      paramsActGestion
+                    );
 
-                    // if (_act_gestion.status != 200) {
-                    //   this.onLoadToast('error', _act_gestion.message, '');
-                    //   return;
-                    // }
-                    // console.log('ACT_GESTION ', _act_gestion);
+                    if (_act_gestion.status != 200) {
+                      this.onLoadToast('error', _act_gestion.message, '');
+                    }
+                    console.log('ACT_GESTION ', _act_gestion);
 
                     this.formJobManagement.value.statusOf = 'ENVIADO';
 
@@ -4552,7 +4582,7 @@ export class RelatedDocumentsComponent
                     if (_busca_numero.InsertDate) {
                       this.formJobManagement.value.insertDate = format(
                         new Date(_busca_numero.InsertDate),
-                        'yyyy/MM/dd'
+                        'yyyy-MM-dd'
                       ); // InsertDate
                     }
                     const updateDataMJobManagement: any =
@@ -4962,7 +4992,7 @@ export class RelatedDocumentsComponent
           justification: this.managementForm.value.justificacion,
           cveChargeRem: this.managementForm.value.cveChargeRem,
           areaUser: null, // Area remitente
-          insertDate: format(new Date(), 'yyyy/MM/dd'),
+          insertDate: format(new Date(), 'yyyy-MM-dd'),
           insertUser: this.authUser.preferred_username,
         };
 
