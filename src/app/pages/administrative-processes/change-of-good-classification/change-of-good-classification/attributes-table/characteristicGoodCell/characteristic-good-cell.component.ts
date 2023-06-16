@@ -1,25 +1,18 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { CharacteristicEditorCell } from 'src/app/core/models/good/good-characteristic';
 import { secondFormatDate } from 'src/app/shared/utils/date';
-import { GoodsCharacteristicsService } from '../../../services/goods-characteristics.service';
+import { ChangeOfGoodCharacteristicService } from '../../../services/change-of-good-classification.service';
 
 @Component({
-  selector: 'app-good-cell-value',
-  templateUrl: './good-cell-value.component.html',
-  styleUrls: ['./good-cell-value.component.scss'],
+  selector: 'app-characteristic-good-cell',
+  templateUrl: './characteristic-good-cell.component.html',
+  styleUrls: ['./characteristic-good-cell.component.scss'],
 })
-export class GoodCharacteristicCellValueComponent
-  extends CharacteristicEditorCell
-  implements OnInit
-{
-  constructor(private service: GoodsCharacteristicsService) {
+export class CharacteristicGoodCellComponent extends CharacteristicEditorCell {
+  // disabledTable = false;
+  constructor(private service: ChangeOfGoodCharacteristicService) {
     super();
   }
-
-  get disabledTable() {
-    return this.service.disabledTable;
-  }
-
   updateDate(value: any) {
     console.log(value, secondFormatDate(value));
     this.service.data.forEach(x => {
@@ -39,9 +32,5 @@ export class GoodCharacteristicCellValueComponent
         }
       });
     }
-  }
-
-  ngOnInit() {
-    // console.log(this.value);
   }
 }

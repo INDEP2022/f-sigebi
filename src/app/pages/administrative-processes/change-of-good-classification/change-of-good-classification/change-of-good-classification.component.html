@@ -20,11 +20,11 @@
           <form-field
             [control]="form.get('descriptionGood')"
             label="Descripcion del bien">
-            <input
-              type="text"
-              class="form-control"
+            <textarea
               formControlName="descriptionGood"
-              [disabled]="true" />
+              class="form-control"
+              maxlength="600"
+              [readonly]="true"></textarea>
           </form-field>
         </div>
       </div>
@@ -73,12 +73,12 @@
         </div>
         <div class="col-md-3 col-sm-12 col-xs-12 mt-3">
           <form-field [control]="formNew.get('unitXClassif')" label="Unidad">
-            <select class="form-control" formControlName="unitXClassif">
-              <option [value]="null">Seleccione un valor</option>
-              <option *ngFor="let unit of units" [value]="unit.unit">
+            <ng-select class="form-control" formControlName="unitXClassif">
+              <ng-option [value]="null">Seleccione un valor</ng-option>
+              <ng-option *ngFor="let unit of units" [value]="unit.unit">
                 {{ unit.unit }}
-              </option>
-            </select>
+              </ng-option>
+            </ng-select>
           </form-field>
         </div>
         <div class="col-md-3 col-sm-12 col-xs-12 mt-3">
@@ -95,12 +95,12 @@
       <div class="row mt-5">
         <div class="col-md-6 col-sm-12 col-xs-12">
           <form-field [control]="formNew.get('destination')" label="Destino">
-            <select class="form-control" formControlName="destination">
-              <option [value]="null">Seleccione un valor</option>
-              <option *ngFor="let dest of destinations" [value]="dest.id">
+            <ng-select class="form-control" formControlName="destination">
+              <ng-option [value]="null">Seleccione un valor</ng-option>
+              <ng-option *ngFor="let dest of destinations" [value]="dest.id">
                 {{ dest.description }}
-              </option>
-            </select>
+              </ng-option>
+            </ng-select>
           </form-field>
         </div>
         <div class="col-md-4 col-sm-12 col-xs-12">
@@ -109,6 +109,7 @@
               <button
                 type="button"
                 class="btn btn-success btn-sm active"
+                [disabled]="formNew.invalid"
                 (click)="showAlert()">
                 Cambiar Clasificación
               </button>
@@ -122,7 +123,7 @@
 <app-card [header]="true">
   <div class="ch-content" header>
     <h5 class="title">Atributos del Bien</h5>
-    <div class="col-md-5 buttons">
+    <!-- <div class="col-md-5 buttons">
       <div class="mt-2">
         <button
           [disabled]="btnNewAtribut"
@@ -132,14 +133,29 @@
           Nuevos valores
         </button>
       </div>
-    </div>
+    </div> -->
   </div>
   <div body>
     <div class="row">
       <div class="col-md-6 col-sm-12 col-xs-12">
-        <h6>° Atributos actuales</h6>
-        <div class="row"></div>
-        <div class="row">
+        <h6>ACTUALES</h6>
+        <app-good-characteristics-table
+          [goodChange]="goodChange"
+          [clasification]="currentClasification.value"
+          [settings]="atributActSettings"
+          [avaluo]="false"
+          [good]="good"
+          [disabled]="true"
+          [service]="service"></app-good-characteristics-table>
+
+        <!-- <app-attributes-table
+          title="Actuales"
+          [clasification]="currentClasification.value"
+          [readOnly]="true"></app-attributes-table> -->
+
+        <!-- <h6>° Atributos actuales</h6>
+        <div class="row"></div> -->
+        <!-- <div class="row">
           <div class="row pt-4">
             <div class="col-md-12">
               <div [class]="loading ? 'table-loading' : ''">
@@ -151,11 +167,31 @@
               </div>
             </div>
           </div>
-        </div>
+          <app-pagination
+            [params]="params"
+            [pageSizeOptions]="pageSizeOptions"
+            [limit]="limit"
+            [totalItems]="totalItems"></app-pagination>
+        </div> -->
       </div>
       <div class="col-md-6 col-sm-12 col-xs-12">
-        <h6>° Nuevos atributos</h6>
-        <div class="row">
+        <h6>NUEVOS</h6>
+        <app-good-characteristics-table
+          [goodChange]="goodChange2"
+          [initValue]="false"
+          [clasification]="classificationOfGoods.value"
+          [settings]="atributNewSettings"
+          [avaluo]="false"
+          [good]="good"
+          [disabled]="false"
+          [service]="service"></app-good-characteristics-table>
+
+        <!-- <app-attributes-table
+          title="Nuevos"
+          [readOnly]="false"
+          [clasification]="classificationOfGoods.value"></app-attributes-table> -->
+        <!-- <h6>° Nuevos atributos</h6> -->
+        <!-- <div class="row">
           <div class="row pt-4">
             <div class="col-md-12">
               <div [class]="loading ? 'table-loading' : ''">
@@ -169,7 +205,7 @@
               </div>
             </div>
           </div>
-        </div>
+        </div> -->
       </div>
     </div>
   </div>
