@@ -2297,7 +2297,7 @@ export class RelatedDocumentsComponent
       return;
     }
     //username
-    debugger;
+    // debugger;
     console.log(insertUser);
     if (
       insertUser?.toLowerCase() !==
@@ -2344,7 +2344,7 @@ export class RelatedDocumentsComponent
   ) {
     //console.log(this.dataTableGoodsJobManagement);
     //LOOP BIENES_OFICIO_ESTATUS
-    debugger;
+    // debugger;
     const body: any = {
       managementNumber: managementNumber,
       insertDate: insertDate,
