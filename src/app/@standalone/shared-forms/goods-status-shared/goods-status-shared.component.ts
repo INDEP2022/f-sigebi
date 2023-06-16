@@ -77,6 +77,7 @@ export class GoodsStatusSharedComponent extends BasePage implements OnInit {
   }
 
   onGoodStatusChange(type: any) {
+    console.log(type);
     this.form.updateValueAndValidity();
   }
 

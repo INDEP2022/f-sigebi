@@ -1,9 +1,9 @@
-<div *ngIf="disabledTable || row.tableCd" style="padding: 0 10px">
-  {{ row?.value }}
+<div *ngIf="row.tableCd" style="padding: 0 10px">
+  {{ row.value }}
 </div>
 <div
   class="goodCellContainer"
-  *ngIf="!disabledTable && !row.tableCd"
+  *ngIf="!row.tableCd"
   [class]="haveError(row) ? 'error' : ''">
   <input
     *ngIf="row.dataType !== 'D' && !row.attribute.includes('FECHA')"
@@ -44,7 +44,3 @@
     </div>
   </ng-container>
 </div>
-
-<!-- <div [class]="getClassColour()">
-  {{ value?.value }}
-</div> -->
