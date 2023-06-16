@@ -29,6 +29,7 @@ export class MassiveReclassificationGoodsComponent
   origin: string = null;
   changeDescription: string;
   changeDescriptionAlterning: string;
+  contador = 0;
   get mode() {
     return this.form.get('mode');
   }
@@ -102,7 +103,10 @@ export class MassiveReclassificationGoodsComponent
     this.mode.enable();
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
       console.log('Entro', this.params.getValue());
-      this.loadGoods();
+      if (this.contador > 0) {
+        this.loadGoods();
+      }
+      this.contador++;
     });
     console.log(this.mode.value);
   }
