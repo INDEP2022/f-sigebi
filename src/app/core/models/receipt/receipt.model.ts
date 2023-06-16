@@ -9,7 +9,7 @@ export interface IReceipt {
   closingDate?: string;
   companySeg?: string;
   statusReceipt?: string;
-  contentId?: number;
+  contentId?: string;
   contractNumber?: string;
   expIdFuncSeg?: number;
   expIdWitnessIne?: number;
@@ -38,6 +38,7 @@ export interface IRecepitGuard {
   idGood: number;
   receiptGuardId: number;
   version: number;
+  statusReceiptGuard: string;
 }
 
 export interface IReceipyGuardDocument {

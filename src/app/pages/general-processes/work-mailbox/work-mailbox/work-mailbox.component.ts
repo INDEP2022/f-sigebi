@@ -1091,7 +1091,9 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
                 };
 
                 this.globalVarsService.updateGlobalVars(this.globalVars);
-                this.router.navigateByUrl('/pages/juridical/juridical-ruling/');
+                this.router.navigateByUrl(
+                  '/pages/juridical/juridical-ruling-g/'
+                );
               } else {
                 this.alert(
                   'info',

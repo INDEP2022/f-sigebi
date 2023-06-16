@@ -7,6 +7,7 @@ import { GoodsTypesSharedComponent } from 'src/app/@standalone/shared-forms/good
 import { SharedModule } from 'src/app/shared/shared.module';
 import { AdministrationAssetsRoutingModule } from './administration-assets-routing.module';
 import { AdministrationAssetsComponent } from './administration-assets.component';
+import { AssignedVaultsComponent } from './assigned-vaults/assigned-vaults.component';
 import { DataValuationsComponent } from './data-valuations/data-valuations.component';
 import { DepositaryReportComponent } from './depositary-report/depositary-report.component';
 import { GeneralDataGoodsComponent } from './general-data-goods/general-data-goods.component';
@@ -29,6 +30,7 @@ import { SecureDataComponent } from './secure-data/secure-data.component';
     IncomePerAssetComponent,
     RegistryServicesComponent,
     SecureDataComponent,
+    AssignedVaultsComponent,
   ],
   imports: [
     CommonModule,

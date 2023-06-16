@@ -32,4 +32,6 @@ export interface IDetailWithIndEdo {
   no_acta: number;
   vIndEdoFisicod?: boolean;
   vNoColumna?: number;
+  page?: number;
+  perPage?: number;
 }

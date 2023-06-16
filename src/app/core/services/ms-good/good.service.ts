@@ -236,6 +236,14 @@ export class GoodService extends HttpService {
     return this.get<IListResponse<IGood>>(route, params);
   }
 
+  getByExpedient1(
+    idExpedient: number | string
+  ): Observable<IListResponse<IGood>> {
+    console.log('idExpedient ', idExpedient);
+    const route = GoodEndpoints.SearchByExpedient;
+    return this.get<IListResponse<IGood>>(route);
+  }
+
   getGoodAndDesc(goodId: number | string) {
     const route = `${GoodEndpoints.GoodAndDesc}/${goodId}`;
     return this.get<IGoodDesc>(route);

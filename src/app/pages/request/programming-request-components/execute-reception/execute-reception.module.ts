@@ -13,6 +13,7 @@ import { ExecuteReceptionFormComponent } from './execute-reception-form/execute-
 import { ExecuteReceptionRoutingModule } from './execute-reception-routing.module';
 import { ReschedulingFormComponent } from './rescheduling-form/rescheduling-form.component';
 import { ShowReportComponentComponent } from './show-report-component/show-report-component.component';
+import { UploadReportReceiptComponent } from './upload-report-receipt/upload-report-receipt.component';
 
 @NgModule({
   declarations: [
@@ -22,6 +23,7 @@ import { ShowReportComponentComponent } from './show-report-component/show-repor
     EditGoodFormComponent,
     CancelationGoodFormComponent,
     ShowReportComponentComponent,
+    UploadReportReceiptComponent,
   ],
   imports: [
     CommonModule,

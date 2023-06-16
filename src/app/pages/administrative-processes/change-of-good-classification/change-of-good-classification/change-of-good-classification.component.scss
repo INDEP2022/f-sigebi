@@ -1,0 +1,12 @@
+:host ::ng-deep app-good-characteristics-table {
+  .table-container > div {
+    margin-left: 13px;
+  }
+  ng2-smart-table table tr {
+    td {
+      &:nth-child(2) {
+        padding: 0.5em 1em;
+      }
+    }
+  }
+}
