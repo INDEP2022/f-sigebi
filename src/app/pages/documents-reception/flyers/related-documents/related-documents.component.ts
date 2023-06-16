@@ -3095,6 +3095,7 @@ export class RelatedDocumentsComponent
         },
       });
     });
+
   }
 
   dictationCount(wheelNumber: string | number) {
@@ -3831,8 +3832,15 @@ export class RelatedDocumentsComponent
   }
   async secondConditionSendPrint() {
     let n_COUNT = 0;
-    let cuantos = 0;
     let conta = 0;
+    if (!this.formJobManagement.value.managementNumber) {
+      this.onLoadToast(
+        'warning',
+        'Da clic primero en el botón de guardar para guardar la información',
+        ''
+      );
+      return;
+    }
     if (!this.formJobManagement.value.jobType) {
       this.alertInfo('warning', 'Debe especificar el TIPO OFICIO', '');
       return;
@@ -3946,16 +3954,10 @@ export class RelatedDocumentsComponent
         !this.formJobManagement.value.cveManagement &&
         !this.formJobManagement.value.managementNumber
       ) {
-        this.seqOfGestion()
-          .then((resp: any) => {
-            // Se ejecuta cuando la promesa se resuelve exitosamente
-            this.formJobManagement.value.managementNumber = resp.data[0].no_of_gestion;
-            this.generateKey();
-          })
-          .catch(error => {
-            // Se ejecuta cuando la promesa es rechazada
-            console.error(error);
-          });
+        // Se ejecuta cuando la promesa se resuelve exitosamente
+        // this.formJobManagement.value.managementNumber = resp.data[0].no_of_gestion;
+
+
         if (
           doc === 'N' &&
           bien === 'S'
@@ -4048,44 +4050,47 @@ export class RelatedDocumentsComponent
       if (this.formJobManagement.value.sender === this.authUser.user) {
         this.blockSend = false;
       }
-      const params = new FilterParams();
-      params.removeAllFilters();
-      params.addFilter(
-        'externalOfficeNumber',
-        this.formNotification.value.officeExternalKey
-      );
-      let paramsReport = {
-        proceedingsNumber: this.notificationData.expedientNumber,
-        steeringWheelNumber: this.notificationData.wheelNumber,
-        ofManagementKey: this.formJobManagement.value.cveManagement,
-      };
-      const _launchReport = await this._PUP_LANZA_REPORTE(paramsReport);
-      console.log(_launchReport);
-      let reportCondition = this._conditions_Report();
-      this.runReport(reportCondition.nameReport, reportCondition.params);
-      if (_launchReport.no_exp > 0) {
-        let _getVOficTrans = await firstValueFrom(
-          this.sendFunction_getVOficTrans(params)
-        );
-        if (_getVOficTrans) {
-          // _getVOficTrans.v_ofic_trans RESPUESTA
-          if (_getVOficTrans.v_ofic_trans) {
-            if (
-              this.formJobManagement.value.statusOf != 'EN REVISION' &&
-              !this.formJobManagement.value.cveManagement.includes('?')
-            ) {
-              // Subir el PDF a la ruta de documentos y reemplazarlo por el anterior
-              this._PUP_GENERA_PDF();
-            }
-          }
-        }
-      }
-
-      cuantos = await this.cuatos();
-      if (cuantos !== 0) {
-        //funcion q actualiza vista
-        this._updateMJobManagement();
-      }
+      this.reportUpdateUI();
+    }
+  }
+  async reportUpdateUI() {
+    let cuantos = 0;
+    const params = new FilterParams();
+    params.removeAllFilters();
+    params.addFilter(
+      'externalOfficeNumber',
+      this.formNotification.value.officeExternalKey
+    );
+    let paramsReport = {
+      proceedingsNumber: this.notificationData.expedientNumber,
+      steeringWheelNumber: this.notificationData.wheelNumber,
+      ofManagementKey: this.formJobManagement.value.cveManagement,
+    };
+    const _launchReport = await this._PUP_LANZA_REPORTE(paramsReport);
+    console.log(_launchReport);
+    let reportCondition = this._conditions_Report();
+    this.runReport(reportCondition.nameReport, reportCondition.params);
+    // if (_launchReport.no_exp > 0) {
+    //   let _getVOficTrans = await firstValueFrom(
+    //     this.sendFunction_getVOficTrans(params)
+    //   );
+    //   if (_getVOficTrans) {
+    //     // _getVOficTrans.v_ofic_trans RESPUESTA
+    //     if (_getVOficTrans.v_ofic_trans) {
+    //       if (
+    //         this.formJobManagement.value.statusOf != 'EN REVISION' &&
+    //         !this.formJobManagement.value.cveManagement.includes('?')
+    //       ) {
+    //         // Subir el PDF a la ruta de documentos y reemplazarlo por el anterior
+    //         this._PUP_GENERA_PDF();
+    //       }
+    //     }
+    //   }
+    // }
+    cuantos = await this.cuatos();
+    if (cuantos !== 0) {
+      //funcion q actualiza vista
+      this._updateMJobManagement();
     }
   }
   async cuatos() {
@@ -4121,6 +4126,7 @@ export class RelatedDocumentsComponent
         next: resp => {
 
           resolve(resp);
+          console.log(resp);
           //PUF_GENERA_CLAVE
 
         },
@@ -4806,7 +4812,8 @@ export class RelatedDocumentsComponent
         return;
       }
     }
-    this._saveMJobManagement();
+    this.generateKey();
+
   }
 
   async _saveMJobManagement() {
@@ -4815,7 +4822,7 @@ export class RelatedDocumentsComponent
       console.log(updateDataMJobManagement);
     } else {
       console.log(this.formJobManagement)
-      if (!this.formJobManagement.value.managementNumber) {
+      if (!this.formJobManagement.value.cveManagement) {
         this.onLoadToast(
           'warning',
           'Da clic primero en el botón de imprimir para guardar la información',
@@ -4880,6 +4887,7 @@ export class RelatedDocumentsComponent
 
         this.createMJobManagement(objUpdate_MJob).subscribe({
           next: async resp => {
+            console.log(resp);
             this._save_management_office = false;
             const mJobManagement = await firstValueFrom(
               this.getMJobManagement(this.notificationData.wheelNumber)
@@ -4985,6 +4993,7 @@ export class RelatedDocumentsComponent
 
     if (mJobManagement.statusOf == 'ENVIADO') {
       this.formJobManagement.disable();
+
     }
     if (mJobManagement.refersTo == this.se_refiere_a.A) {
       this.se_refiere_a_Disabled.B = true;
