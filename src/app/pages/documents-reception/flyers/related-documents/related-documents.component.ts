@@ -3457,7 +3457,9 @@ export class RelatedDocumentsComponent
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     });
-    modalRef.content.responseFirm.subscribe((next: any) => {
+    modalRef.content.responseFirm.subscribe(async (next: any) => {
+      const userInfo = await this.getUserInfo();
+      console.log('USER Y PARAMS ', this.paramsGestionDictamen, userInfo);
       console.log('next', next);
       // CONTINUAR DESPUÉS DE FIRMADO
       const params = new FilterParams();
@@ -3484,6 +3486,39 @@ export class RelatedDocumentsComponent
                 'Se realizó la firma del dictamen',
                 ''
               ).then(async () => {
+                // this.alertInfo(
+                //     'info',
+                //     'Se realizó la firma del dictamen',
+                //     ''
+                //   ).then(async () => {
+                let _params_change_status = {
+                  procDocId: this.formVariables.get('proc_doc_dic').value,
+                  doc: this.paramsGestionDictamen.doc,
+                  bien: this.paramsGestionDictamen.bien,
+                  cveOfGestion: this.formJobManagement.value.cveManagement,
+                  b: this.formVariables.get('b').value,
+                  d: this.formVariables.get('d').value,
+                  noOfGestion: this.formJobManagement.value.managementNumber,
+                  seRefiereA: this.formJobManagement.value.refersTo,
+                  // bienes: {
+                  //   no_bien: 0,
+                  //   seleccion: false,
+                  // },
+                  bienes: this.dataTableGoods, // Bienes
+                  todos:
+                    this.formVariables.get('todos').value == 'S' ? true : false,
+                  usuario: userInfo.user,
+                  pDictamen: this.paramsGestionDictamen.pDictamen,
+                  noVolante: this.notificationData.wheelNumber,
+                  vcPantalla: this.screenKeyManagement,
+                };
+                const _cambia_estatus = await this._PUP_CAMBIA_ESTATUS(
+                  _params_change_status
+                );
+                console.log(
+                  'PUP_CAMBIA_ESTATUS CON FIRMA ELECTRONICA ',
+                  _cambia_estatus
+                );
                 // Llamar las globales y obtener gnu_activa_gestion
                 let paramsActGestion = {
                   pGestOk: this.paramsGestionDictamen.pGestOk
@@ -3503,10 +3538,14 @@ export class RelatedDocumentsComponent
                 const _act_gestion = await this._PUP_ACT_GESTION(
                   paramsActGestion
                 );
+
                 if (_act_gestion.status != 200) {
                   this.onLoadToast('error', _act_gestion.message, '');
                 }
+                console.log('ACT_GESTION ', _act_gestion);
+
                 this.formJobManagement.value.statusOf = 'ENVIADO';
+
                 const updateDataMJobManagement: any =
                   await this._updateMJobManagement(); // Actualizar datos
                 console.log(updateDataMJobManagement);
@@ -3515,10 +3554,42 @@ export class RelatedDocumentsComponent
                 this.enabledPrintAndBlockSend();
                 // Save M_OFICIO_GESTION
                 this._end_firmProcess(); // Termina el proceso
+                // });
+                //   // Llamar las globales y obtener gnu_activa_gestion
+                //   let paramsActGestion = {
+                //     pGestOk: this.paramsGestionDictamen.pGestOk
+                //       ? this.paramsGestionDictamen.pGestOk
+                //       : 0,
+                //     gnuActivaManagement: this.globalVars.gnuActivaGestion
+                //       ? this.globalVars.gnuActivaGestion
+                //       : 0, // Variable Global
+                //     pCall: this.paramsGestionDictamen.pllamo
+                //       ? this.paramsGestionDictamen.pllamo
+                //       : '',
+                //     pNoProcess: this.paramsGestionDictamen.pNoTramite
+                //       ? this.paramsGestionDictamen.pNoTramite
+                //       : 0,
+                //     noFlyer: this.notificationData.wheelNumber,
+                //   };
+                //   const _act_gestion = await this._PUP_ACT_GESTION(
+                //     paramsActGestion
+                //   );
+                //   if (_act_gestion.status != 200) {
+                //     this.onLoadToast('error', _act_gestion.message, '');
+                //   }
+                //   this.formJobManagement.value.statusOf = 'ENVIADO';
+                //   const updateDataMJobManagement: any =
+                //     await this._updateMJobManagement(); // Actualizar datos
+                //   console.log(updateDataMJobManagement);
+                //   // se llama PUP_GENERA_PDF
+                //   this._PUP_GENERA_PDF();
+                //   this.enabledPrintAndBlockSend();
+                //   // Save M_OFICIO_GESTION
+                //   this._end_firmProcess(); // Termina el proceso
+                // this.blockSend = true;
+                // Update M_OFICIO_DICTAMEN
+                // this._end_firmProcess();
               });
-              this.blockSend = true;
-              // Update M_OFICIO_DICTAMEN
-              // this._end_firmProcess();
             }
           },
           error: error => {
@@ -4517,7 +4588,10 @@ export class RelatedDocumentsComponent
                     const _cambia_estatus = await this._PUP_CAMBIA_ESTATUS(
                       _params_change_status
                     );
-                    console.log(_cambia_estatus);
+                    console.log(
+                      'PUP_CAMBIA_ESTATUS CON FIRMA ELECTRONICA ',
+                      _cambia_estatus
+                    );
                     // Llamar las globales y obtener gnu_activa_gestion
                     let paramsActGestion = {
                       pGestOk: this.paramsGestionDictamen.pGestOk
