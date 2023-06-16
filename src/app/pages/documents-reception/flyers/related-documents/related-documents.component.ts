@@ -3767,6 +3767,12 @@ export class RelatedDocumentsComponent
       this.formJobManagement.value.jobType == 'INTERNO' &&
       this.paramsGestionDictamen.pllamo != 'ABANDONO'
     ) {
+      params = {
+        NO_OF_GES: this.formJobManagement.value.managementNumber,
+        TIPO_OF: this.formJobManagement.value.jobType,
+        VOLANTE: this.notificationData.wheelNumber,
+        EXP: this.notificationData.expedientNumber,
+      };
       nameReport = 'RGEROFGESTION';
     }
     if (
