@@ -2254,7 +2254,7 @@ export class JuridicalRulingGComponent
           EXPEDIENTE: this.expedientesForm.get('noExpediente').value,
           P_GEST_OK: this.P_GEST_OK,
           P_NO_TRAMITE: this.P_NO_TRAMITE,
-          PLLAMO: 'PROCEDENCIA',
+          PLLAMO: 'ABANDONO',
         },
       }
     );
