@@ -6,7 +6,7 @@ export const GOOD_SITUATION_COLUMS = {
     width: '15%',
   },
   descSituation: {
-    title: 'Descripcion',
+    title: 'Descripción',
     type: 'string',
     sort: false,
     width: '60%',
