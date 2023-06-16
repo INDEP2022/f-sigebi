@@ -129,7 +129,7 @@ export class ChangeOfStatusStiComponent extends BasePage implements OnInit {
       this.alert(
         'success',
         'Actualizado',
-        'Se ha cambiado el estatus de los bienes seleccionados'
+        'Se ha cambiado el Estatus de los bienes seleccionados'
       );
     } catch (error) {
       this.alert(
