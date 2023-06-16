@@ -4168,22 +4168,6 @@ export class RelatedDocumentsComponent
     this.formJobManagement.value.cveManagement = _puf_genera_clave.keyOfGestion;
     this._saveMJobManagement();
   }
-  async generateKey() {
-    let _params_generate_key = {
-      remit: this.formJobManagement.value.sender.id.toString(),
-      pllamo:
-        this.paramsGestionDictamen.pllamo != null
-          ? this.paramsGestionDictamen.pllamo
-          : ' ',
-    };
-    const _puf_genera_clave = await firstValueFrom(
-      this.sendFunction_pufGenerateKey(_params_generate_key)
-    );
-    // Probar
-    console.log('RESP ', _puf_genera_clave);
-    this.formJobManagement.value.cveManagement = _puf_genera_clave.keyOfGestion;
-    this._saveMJobManagement();
-  }
   async secondConditionSend() {
     this.variablesSend.ESTATUS_OF = this.formJobManagement.value.statusOf;
     this.variablesSend.CVE_OF_GESTION =
