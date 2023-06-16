@@ -22,7 +22,7 @@ export class PaginationComponent extends BasePage implements OnInit {
   );
   @Input() totalItems: number = 0;
   @Input() maxSize: number = 5;
-  @Input() pageSizeOptions: number[] = [10, 20, 50, 100];
+  @Input() pageSizeOptions: number[] = [10, 25, 50, 100];
   @Input() limit: FormControl = new FormControl(10);
   @Input() paginatorPageSize: boolean = true;
   @Input() paginatorRangeLabel: boolean = true;
