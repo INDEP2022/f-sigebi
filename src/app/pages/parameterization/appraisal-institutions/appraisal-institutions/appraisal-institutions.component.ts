@@ -74,7 +74,6 @@ export class AppraisalInstitutionsComponent extends BasePage implements OnInit {
     };
     this.appraisersService.getAll(params).subscribe({
       next: response => {
-        console.log('RESPONSE', response);
         this.appraisersList = response.data;
         this.data.load(this.appraisersList);
         this.data.refresh();
