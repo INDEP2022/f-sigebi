@@ -1,7 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -25,6 +29,7 @@ export class MassiveReclassificationGoodsComponent
   origin: string = null;
   changeDescription: string;
   changeDescriptionAlterning: string;
+  contador = 0;
   get mode() {
     return this.form.get('mode');
   }
@@ -96,6 +101,13 @@ export class MassiveReclassificationGoodsComponent
     this.buildForm();
     this.form.disable();
     this.mode.enable();
+    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+      console.log('Entro', this.params.getValue());
+      if (this.contador > 0) {
+        this.loadGoods();
+      }
+      this.contador++;
+    });
     console.log(this.mode.value);
   }
 
@@ -112,10 +124,7 @@ export class MassiveReclassificationGoodsComponent
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      goodStatus: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
+      goodStatus: [null, [Validators.required]],
       classificationGoodAlterning: [null, [Validators.required]],
       descriptionAlternating: [
         null,
@@ -182,18 +191,35 @@ export class MassiveReclassificationGoodsComponent
 
   loadGoods() {
     console.log(this.classificationOfGoods.value);
-    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
-      console.log('Entro', this.params.getValue());
-      this.goodServices.getAll(this.params.getValue()).subscribe({
-        next: response => {
-          console.log(response);
-          this.listGood = response.data;
-          this.totalItems = response.count;
-        },
-        error: err => {
-          console.log(err);
-        },
-      });
+    const filterParams = new FilterParams();
+    if (this.classificationOfGoods.value) {
+      filterParams.addFilter(
+        'goodClassNumber',
+        this.classificationOfGoods.value,
+        this.mode.value === 'E' ? SearchFilter.NOTIN : SearchFilter.EQ
+      );
+    }
+    if (this.goodStatus.value) {
+      filterParams.addFilter(
+        'status',
+        String(this.goodStatus.value.map((item: any) => item.status)),
+        SearchFilter.IN
+      );
+    }
+    const params = this.params.getValue();
+    filterParams.limit = params.limit;
+    filterParams.page = params.page;
+    console.log(this.goodStatus.value);
+
+    this.goodServices.getAll(filterParams.getParams()).subscribe({
+      next: response => {
+        console.log(response);
+        this.listGood = response.data;
+        this.totalItems = response.count;
+      },
+      error: err => {
+        console.log(err);
+      },
     });
   }
   onChage(event: string) {
