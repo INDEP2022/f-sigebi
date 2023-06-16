@@ -382,6 +382,7 @@ export class RelatedDocumentsComponent
 
   globalVars: IGlobalVars;
   _save_management_office: boolean = false;
+  folioUniversalForSend: string | number = null;
 
   constructor(
     private fb: FormBuilder,
@@ -3052,6 +3053,7 @@ export class RelatedDocumentsComponent
   async _updateMJobManagement() {
     let objUpdate_MJob: IMJobManagement = {
       ...this.m_job_management,
+      statusOf: this.formJobManagement.value.statusOf,
       cveManagement: this.formJobManagement.value.cveManagement,
       managementNumber: this.formJobManagement.value.managementNumber,
       insertDate: this.formJobManagement.value.insertDate,
@@ -3100,6 +3102,7 @@ export class RelatedDocumentsComponent
           );
           // Update info
           this.m_job_management = mJobManagement;
+          this.initForm();
           resolve(resp);
         },
         error: error => {
@@ -3177,7 +3180,9 @@ export class RelatedDocumentsComponent
               if (data.count > 0 && dataM.count > 0) {
                 // Valida FOLIO_UNIVERSAL
                 let _nUniversalFolio = await firstValueFrom(
-                  this.sendFunction_nUniversalFolio(params)
+                  this.sendFunction_nUniversalFolio(
+                    this.formJobManagement.value.managementNumber
+                  )
                 );
                 if (_nUniversalFolio) {
                   if (_nUniversalFolio.n_folio_universal) {
@@ -3245,8 +3250,8 @@ export class RelatedDocumentsComponent
       });
   }
   async firstConditionSend() {
-    const updateDataMJobManagement: any = await this._updateMJobManagement(); // Actualizar datos
-    console.log(updateDataMJobManagement);
+    // const updateDataMJobManagement: any = await this._updateMJobManagement(); // Actualizar datos
+    // console.log(updateDataMJobManagement);
     const params = new FilterParams();
     params.removeAllFilters();
     params.addFilter('natureDocument', this.formJobManagement.value.jobType);
@@ -3263,7 +3268,9 @@ export class RelatedDocumentsComponent
           if (data.count > 0) {
             // Valida FOLIO_UNIVERSAL
             let _nUniversalFolio = await firstValueFrom(
-              this.sendFunction_nUniversalFolio(params)
+              this.sendFunction_nUniversalFolio(
+                this.formJobManagement.value.managementNumber
+              )
             );
             if (_nUniversalFolio) {
               if (_nUniversalFolio.n_folio_universal) {
@@ -3579,6 +3586,7 @@ export class RelatedDocumentsComponent
             numberDepartmentRequest: userInfo.departamentNumber,
             flyerNumber: this.notificationData.wheelNumber,
           };
+          console.log('DATA DOCUEMNTO ', document);
 
           this.getDocumentsCount().subscribe(count => {
             if (count == 0) {
@@ -3586,7 +3594,20 @@ export class RelatedDocumentsComponent
               this.createDocument(document)
                 .pipe(
                   tap(_document => {
+                    let params_ssf3 = {
+                      managementNumber:
+                        this.formJobManagement.value.managementNumber,
+                      invoiceUniversal: Number(_document.id),
+                      recordNumber: Number(this.m_job_management.recordNumber),
+                    };
+                    const createSSF3 =
+                      this.sendFunction_createMJobManagementExtSSF3(
+                        params_ssf3
+                      );
+                    console.log('CREATESSF3', createSSF3);
+
                     // this.formScan.get('scanningFoli').setValue(_document.id);
+                    this.folioUniversalForSend = _document.id;
                   }),
                   switchMap(async _document =>
                     this.uploadPdfEmitter(blob, nameFile + '.pdf', _document.id)
@@ -3598,11 +3619,11 @@ export class RelatedDocumentsComponent
               params.addFilter('scanStatus', 'ESCANEADO');
               params.addFilter(
                 'flyerNumber',
-                this.formJobManagement.value.flyerNumber
+                this.notificationData.wheelNumber
               );
               params.addFilter(
                 'numberProceedings',
-                this.paramsGestionDictamen.expediente
+                this.notificationData.expedientNumber
               );
               console.log(params);
               this.hideError();
@@ -3611,7 +3632,7 @@ export class RelatedDocumentsComponent
                   console.log('DOCUMENTOS', data);
                   this.deletePDF(
                     nameFile + '.pdf',
-                    data.data[0].file.universalFolio,
+                    data.data[0].id,
                     document,
                     blob
                   );
@@ -3736,6 +3757,7 @@ export class RelatedDocumentsComponent
           // this._PUP_CONSULTA_PDF_BD_SSF3();
         },
         error: error => {
+          console.log(error);
           // if (error.status < 500) {
 
           // } else {
@@ -3745,6 +3767,7 @@ export class RelatedDocumentsComponent
           //     'Ocurrió un error al eliminar el reporte anterior'
           //   );
           // }
+          this.uploadPdfEmitter(blob, nameAndExtension, folioUniversal);
           this._PUP_CONSULTA_PDF_BD_SSF3();
         },
         complete: async () => {
@@ -4944,6 +4967,8 @@ export class RelatedDocumentsComponent
           justification: this.managementForm.value.justificacion,
           cveChargeRem: this.managementForm.value.cveChargeRem,
           areaUser: null, // Area remitente
+          insertDate: format(new Date(), 'yyyy/MM/dd'),
+          insertUser: this.authUser.preferred_username,
         };
 
         console.log('OBJETO A GUARDAR ', objUpdate_MJob);
