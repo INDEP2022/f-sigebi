@@ -15,9 +15,14 @@ export const EMAIL_COLUMNS = {
   usuario: {
     title: 'Delegación',
     sort: false,
-    // // valuePrepareFunction: (value: any) => {
-    // //   return value.delegationNumber;
-    // },
+    valuePrepareFunction: (value: any) => {
+      console.log(value);
+      if (value === null) {
+        return (value = '');
+      } else {
+        return value.delegationNumber;
+      }
+    },
   },
   email: {
     title: 'Email',

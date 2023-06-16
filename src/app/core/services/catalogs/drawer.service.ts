@@ -25,8 +25,8 @@ export class DrawerService implements ICrudMethods<IDrawer> {
     return this.drawerRepository.create(this.route, model);
   }
 
-  updateByIds(ids: Partial<IDrawer>, model: IDrawer): Observable<Object> {
-    return this.drawerRepository.updateByIds(this.route, ids, model);
+  updateById(id: number, model: IDrawer): Observable<Object> {
+    return this.drawerRepository.newUpdateId(this.route, id, model);
   }
 
   removeByIds(ids: Partial<IDrawer>): Observable<Object> {

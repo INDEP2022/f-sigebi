@@ -5,7 +5,7 @@
   <div body>
     <form class="form-material" [formGroup]="form">
       <div class="row mb-3 mt-3">
-        <div class="col-lg-6 col-md-6 col-sm-12 col-12 mb-3 mt-3">
+        <div class="col-md-12">
           <form-field [control]="form.get('description')" label="Descripción">
             <input
               type="text"
@@ -13,7 +13,7 @@
               formControlName="description" />
           </form-field>
         </div>
-        <div class="col-lg-6 col-md-6 col-sm-12 col-12 mb-3 mt-3">
+        <div class="col-md-12">
           <form-field
             [control]="form.get('descReceipt')"
             label="Descripción Reporte">
@@ -23,6 +23,7 @@
               formControlName="descReceipt" />
           </form-field>
         </div>
+
         <div class="col-lg-3 col-md-3 col-sm-6 col-6 mb-3 mt-3">
           <form-field
             [control]="form.get('typeDispId')"

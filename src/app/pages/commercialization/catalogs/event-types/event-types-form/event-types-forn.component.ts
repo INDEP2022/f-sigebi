@@ -15,8 +15,9 @@ export class EventTypesFornComponent extends BasePage implements OnInit {
   status: string = 'Nuevo';
   title: string = 'TIPO DE EVENTO';
   edit: boolean = false;
-  newId: number = 1;
-
+  newId: number = 15;
+  use: string = 'Prueba';
+  comerTpEvent: IComerTpEvent;
   form: FormGroup = new FormGroup({});
   eventType: IComerTpEvent;
 
@@ -37,23 +38,42 @@ export class EventTypesFornComponent extends BasePage implements OnInit {
 
   prepareForm(): void {
     this.form = this.fb.group({
-      id: [this.newId, [Validators.required, Validators.max(99)]],
+      id: [null, [Validators.required, Validators.maxLength(2)]],
       description: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.maxLength(30),
+          Validators.pattern(STRING_PATTERN),
+        ],
       ],
       descReceipt: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.maxLength(30),
+          Validators.pattern(STRING_PATTERN),
+        ],
       ],
-      typeDispId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      typeFailedpId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      typeDispId: [
+        null,
+        [Validators.maxLength(2), Validators.pattern(NUMBERS_PATTERN)],
+      ],
+      typeFailedpId: [
+        null,
+        [Validators.maxLength(2), Validators.pattern(NUMBERS_PATTERN)],
+      ],
+      use: [
+        null,
+        [Validators.maxLength(240), Validators.pattern(NUMBERS_PATTERN)],
+      ],
     });
 
-    if (this.edit) {
+    if (this.comerTpEvent != null) {
       //console.log(this.brand)
-      this.status = 'Actualizar';
-      this.form.patchValue(this.eventType);
+      this.edit = true;
+      this.form.patchValue(this.comerTpEvent);
+      this.form.get('id').disable();
     }
   }
 
@@ -67,7 +87,7 @@ export class EventTypesFornComponent extends BasePage implements OnInit {
 
   create(): void {
     this.loading = true;
-    this.tpEventService.create(this.form.value).subscribe({
+    this.tpEventService.createTevents(this.form.getRawValue()).subscribe({
       next: data => this.handleSuccess(),
       error: error => {
         this.showError(error);
@@ -86,13 +106,15 @@ export class EventTypesFornComponent extends BasePage implements OnInit {
 
   update(): void {
     this.loading = true;
-    this.tpEventService.update(this.eventType.id, this.form.value).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => {
-        this.showError(error);
-        this.loading = false;
-      },
-    });
+    this.tpEventService
+      .updateTevents(this.comerTpEvent.id, this.form.getRawValue())
+      .subscribe({
+        next: data => this.handleSuccess(),
+        error: error => {
+          this.showError(error);
+          this.loading = false;
+        },
+      });
   }
 
   showError(error?: any): void {
