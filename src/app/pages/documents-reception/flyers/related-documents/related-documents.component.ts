@@ -4122,23 +4122,23 @@ export class RelatedDocumentsComponent
     console.log(_launchReport);
     let reportCondition = this._conditions_Report();
     this.runReport(reportCondition.nameReport, reportCondition.params);
-    // if (_launchReport.no_exp > 0) {
-    //   let _getVOficTrans = await firstValueFrom(
-    //     this.sendFunction_getVOficTrans(params)
-    //   );
-    //   if (_getVOficTrans) {
-    //     // _getVOficTrans.v_ofic_trans RESPUESTA
-    //     if (_getVOficTrans.v_ofic_trans) {
-    //       if (
-    //         this.formJobManagement.value.statusOf != 'EN REVISION' &&
-    //         !this.formJobManagement.value.cveManagement.includes('?')
-    //       ) {
-    //         // Subir el PDF a la ruta de documentos y reemplazarlo por el anterior
-    //         this._PUP_GENERA_PDF();
-    //       }
-    //     }
-    //   }
-    // }
+    if (_launchReport.no_exp > 0) {
+      let _getVOficTrans = await firstValueFrom(
+        this.sendFunction_getVOficTrans(params)
+      );
+      if (_getVOficTrans) {
+        // _getVOficTrans.v_ofic_trans RESPUESTA
+        if (_getVOficTrans.v_ofic_trans) {
+          if (
+            this.formJobManagement.value.statusOf != 'EN REVISION' &&
+            !this.formJobManagement.value.cveManagement.includes('?')
+          ) {
+            // Subir el PDF a la ruta de documentos y reemplazarlo por el anterior
+            this._PUP_GENERA_PDF();
+          }
+        }
+      }
+    }
     cuantos = await this.cuatos();
     if (cuantos !== 0) {
       //funcion q actualiza vista
@@ -4518,7 +4518,7 @@ export class RelatedDocumentsComponent
                     const updateDataMJobManagement: any =
                       await this._updateMJobManagement(); // Actualizar datos
                     console.log(updateDataMJobManagement);
-                    // se llama PUP_GENERA_PDF
+                    // se llama PUP_GENERA_PDF 
                     this._PUP_GENERA_PDF();
                     this.enabledPrintAndBlockSend();
                     // Save M_OFICIO_GESTION
