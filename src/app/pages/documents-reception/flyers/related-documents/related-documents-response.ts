@@ -684,6 +684,7 @@ export abstract class RelateDocumentsResponse extends BasePage {
       ...this.dataTableGoodsJobManagement,
       ...newRows,
     ];
+    this.formVariables.get('b').setValue('S');
   }
 
   pupAddAnyGood() {
@@ -712,6 +713,7 @@ export abstract class RelateDocumentsResponse extends BasePage {
       ...this.dataTableGoodsJobManagement,
       ...newRows,
     ];
+    this.formVariables.get('b').setValue('S');
   }
 
   dataSelectDictation = new DefaultSelect([]);
