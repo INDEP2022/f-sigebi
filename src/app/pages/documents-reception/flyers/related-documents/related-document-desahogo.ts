@@ -139,4 +139,12 @@ export class RelatedDocumentDesahogo extends BasePage {
       });
     });
   }
+
+  deleteJobManagement(management: string | number, volante: string | number) {
+    const body = {
+      pCveOfManagement: Number(management),
+      pFlyerNumber: Number(volante),
+    };
+    this.officeManagement.deleteJobGestion(body);
+  }
 }
