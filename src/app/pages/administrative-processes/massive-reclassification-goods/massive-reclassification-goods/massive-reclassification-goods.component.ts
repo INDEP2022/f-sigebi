@@ -73,10 +73,6 @@ export class MassiveReclassificationGoodsComponent
         ...COLUMNS,
       },
     };
-    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
-      console.log('Entro', this.params.getValue());
-      this.loadGoods();
-    });
   }
 
   onGoodSelect(instance: CheckboxElementComponent) {
@@ -104,6 +100,10 @@ export class MassiveReclassificationGoodsComponent
     this.buildForm();
     this.form.disable();
     this.mode.enable();
+    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+      console.log('Entro', this.params.getValue());
+      this.loadGoods();
+    });
     console.log(this.mode.value);
   }
 
