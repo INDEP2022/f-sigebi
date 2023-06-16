@@ -1024,7 +1024,7 @@ export class RelatedDocumentsComponent
                   name: null,
                   userAndName: mJobManagement.addressee,
                 }
-                : mJobManagement.addressee,
+                : mJobManagement.nomPersExt,
           });
           console.log(this.formJobManagement.value);
           if (mJobManagement.city) {
@@ -1758,6 +1758,10 @@ export class RelatedDocumentsComponent
    * @returns
    */
   getCityByDetail(paramsData: ListParams) {
+    if (paramsData['search'] == undefined) {
+      paramsData['search'] = '';
+    }
+
     const params = new FilterParams();
     params.removeAllFilters();
     params.addFilter('nameCity', paramsData['search'], SearchFilter.LIKE);
@@ -1783,6 +1787,32 @@ export class RelatedDocumentsComponent
           subscription.unsubscribe();
         },
       });
+  }
+
+  changeSenderByDetail(event: any) {
+    console.log(event);
+
+    if (event) {
+      if (event.id) {
+        // this.formJobManagement
+        //   .get('areaUser')
+        //   .setValue(event.departamentNumber); // Area remitente
+        const params: any = new FilterParams();
+        params.removeAllFilters();
+        params.addFilter('user', event.id);
+        this.svLegalOpinionsOfficeService
+          .getAllUsersTracker(params.getParams())
+          .subscribe({
+            next: data => {
+              console.log(data);
+              this.formJobManagement
+                .get('cveChargeRem')
+                .setValue(data.data[0].postKey);
+            },
+            error: error => { },
+          });
+      }
+    }
   }
 
   /**
@@ -3007,11 +3037,11 @@ export class RelatedDocumentsComponent
       addressee:
         this.formJobManagement.value.jobType == 'INTERNO'
           ? this.formJobManagement.value.addressee.user
-          : '', // Destinatario
+          : this.formJobManagement.value.addressee.user, // Destinatario
       nomPersExt:
         this.formJobManagement.value.jobType == 'EXTERNO'
           ? this.formJobManagement.value.addressee + ''
-          : '', // Destinatario
+          : null, // Destinatario
       city: this.formJobManagement.value.city.id.toString(), // Ciudad
       refersTo: this.formJobManagement.value.refersTo, // Se Refiere A
       text1: this.formJobManagement.value.text1, // Parrafo inicial
@@ -3019,19 +3049,19 @@ export class RelatedDocumentsComponent
       text3: this.formJobManagement.value.text3, // Parrafo final despues de final sin nombre
       desSenderpa: this.m_job_management.desSenderpa
         ? this.m_job_management.desSenderpa.length == 0
-          ? ' '
+          ? null
           : this.m_job_management.desSenderpa
-        : ' ',
+        : null,
       description: this.m_job_management.description
         ? this.m_job_management.description.length == 0
-          ? ' '
+          ? null
           : this.m_job_management.description
-        : ' ',
+        : null,
       problematiclegal: this.m_job_management.problematiclegal
         ? this.m_job_management.problematiclegal.length == 0
-          ? ' '
+          ? null
           : this.m_job_management.problematiclegal
-        : ' ',
+        : null,
       justification: this.managementForm.value.justificacion,
     };
     // const _mJobManagement_update = await firstValueFrom(
@@ -3700,32 +3730,35 @@ export class RelatedDocumentsComponent
 
   _conditions_Report() {
     let nameReport: string = '';
+    let params: any;
     if (
       this.formJobManagement.value.jobType == 'INTERNO' &&
       this.paramsGestionDictamen.pllamo != 'ABANDONO'
     ) {
       nameReport = 'RGEROFGESTION';
+
     }
     if (
       this.formJobManagement.value.jobType == 'EXTERNO' &&
       this.paramsGestionDictamen.pllamo != 'ABANDONO'
     ) {
       nameReport = 'RGEROFGESTION_EXT';
+      params = {
+        no_of_ges: this.formJobManagement.value.managementNumber, // NO_OF_GES // ESTATUS DEL OFICIO
+      };
     }
     if (
       this.formJobManagement.value.jobType == 'EXTERNO' &&
       this.paramsGestionDictamen.pllamo == 'ABANDONO'
     ) {
       nameReport = 'RGENABANSUB';
+      params = {
+        PVOLANTE: this.formJobManagement.value.flyerNumber,
+        PNOOFGESTION: this.formJobManagement.value.managementNumber,
+        PEXPEDIENTE: this.formNotification.value.expedientNumber
+      };
     }
-    // Parametros de la forma
-    let params: any = {
-      NO_OF_GES: this.formJobManagement.value.managementNumber, // NO_OF_GES
-      TIPO_OF: this.formJobManagement.value.jobType, // TIPO_OF
-      VOLANTE: this.notificationData.wheelNumber, // VOLANTE
-      EXP: this.notificationData.expedientNumber, // EXPEDIENTE
-      ESTAT_DIC: this.formJobManagement.value.statusOf, // ESTATUS DEL OFICIO
-    };
+
     return { nameReport: nameReport, params: params };
     // this.runReport(nameReport, params);
   }
@@ -3898,7 +3931,16 @@ export class RelatedDocumentsComponent
         !this.formJobManagement.value.cveManagement &&
         !this.formJobManagement.value.managementNumber
       ) {
-        this.seqOfGestion();
+        this.seqOfGestion()
+          .then((resp: any) => {
+            // Se ejecuta cuando la promesa se resuelve exitosamente
+            this.formJobManagement.value.managementNumber = resp.data[0].no_of_gestion;
+            this.generateKey();
+          })
+          .catch(error => {
+            // Se ejecuta cuando la promesa es rechazada
+            console.error(error);
+          });
         if (
           this.paramsGestionDictamen.doc === 'N' &&
           this.paramsGestionDictamen.bien === 'S'
@@ -3915,7 +3957,7 @@ export class RelatedDocumentsComponent
             await this.pupAddAnyGood();
           }
         }
-        this.formJobManagement.value.cveManagement = ''; //PUF_GENERA_CLAVE
+
         if (this.formVariables.get('b').value === 'S') {
           this.formJobManagement.value.statusOf = 'EN REVISION';
           //GO_BLOCK('BIENES');
@@ -3956,13 +3998,13 @@ export class RelatedDocumentsComponent
           this.formJobManagement.value.statusOf = 'EN REVISION';
           let _params_generate_key = {
             remit: this.formJobManagement.value.sender.id.toString(),
-            pllamo: this.paramsGestionDictamen.pllamo,
+            pllamo: this.paramsGestionDictamen.pllamo != null ? this.paramsGestionDictamen.pllamo : ' ',
           };
           const _puf_genera_clave = await firstValueFrom(
             this.sendFunction_pufGenerateKey(_params_generate_key)
           );
           this.formJobManagement.value.cveManagement =
-            _puf_genera_clave.data.keyOfGestion; //PUF_GENERA_CLAVE
+            _puf_genera_clave.keyOfGestion; //PUF_GENERA_CLAVE
         }
       }
       if (this.paramsGestionDictamen.doc === 'N') {
@@ -4057,12 +4099,32 @@ export class RelatedDocumentsComponent
     return count;
   }
   async seqOfGestion() {
-    this.dictationService.getSeqOfGestio().subscribe({
-      next: resp => {
-        this.formJobManagement.value.managementNumber = resp.data[0].no_of_gestion;
-      },
-      error: error => { },
+    return new Promise((resolve, reject) => {
+      // Aquí se realiza la lógica de la función
+      this.dictationService.getSeqOfGestio().subscribe({
+        next: resp => {
+
+          resolve(resp);
+          //PUF_GENERA_CLAVE
+
+        },
+        error: error => { },
+      });
     });
+  }
+  async generateKey() {
+    let _params_generate_key = {
+      remit: this.formJobManagement.value.sender.id.toString(),
+      pllamo: this.paramsGestionDictamen.pllamo != null ? this.paramsGestionDictamen.pllamo : ' ',
+    };
+    const _puf_genera_clave = await firstValueFrom(
+      this.sendFunction_pufGenerateKey(_params_generate_key)
+    );
+    // Probar
+    console.log('RESP ', _puf_genera_clave);
+    this.formJobManagement.value.cveManagement =
+      _puf_genera_clave.keyOfGestion;
+    this._saveMJobManagement();
   }
   async secondConditionSend() {
     this.variablesSend.ESTATUS_OF = this.formJobManagement.value.statusOf;
@@ -4145,7 +4207,7 @@ export class RelatedDocumentsComponent
         // this.formJobManagement.get('cveManagemen').setValue();
         let _params_generate_key = {
           remit: this.formJobManagement.value.sender.id.toString(),
-          pllamo: this.paramsGestionDictamen.pllamo,
+          pllamo: this.paramsGestionDictamen.pllamo != null ? this.paramsGestionDictamen.pllamo : ' ',
         };
         const _puf_genera_clave = await firstValueFrom(
           this.sendFunction_pufGenerateKey(_params_generate_key)
@@ -4153,7 +4215,7 @@ export class RelatedDocumentsComponent
         // Probar
         console.log('RESP ', _puf_genera_clave);
         this.formJobManagement.value.cveManagement =
-          _puf_genera_clave.data.keyOfGestion; //PUF_GENERA_CLAVE
+          _puf_genera_clave.keyOfGestion; //PUF_GENERA_CLAVE
       }
 
       const _valida_ext_dom = await this._PUP_VALIDA_EXT_DOM();
@@ -4736,6 +4798,7 @@ export class RelatedDocumentsComponent
       const updateDataMJobManagement: any = await this._updateMJobManagement(); // Actualizar datos
       console.log(updateDataMJobManagement);
     } else {
+      console.log(this.formJobManagement)
       if (!this.formJobManagement.value.managementNumber) {
         this.onLoadToast(
           'warning',
@@ -4746,6 +4809,7 @@ export class RelatedDocumentsComponent
         let objUpdate_MJob: IMJobManagement = {
           ...this.m_job_management,
           // managementNumber:
+          cveManagement: this.formJobManagement.value.cveManagement,
           managementNumber: this.formJobManagement.value.managementNumber,
           proceedingsNumber: this.notificationData.expedientNumber.toString(),
           flyerNumber: this.notificationData.wheelNumber.toString(),
@@ -4757,11 +4821,12 @@ export class RelatedDocumentsComponent
           addressee:
             this.formJobManagement.value.jobType == 'INTERNO'
               ? this.formJobManagement.value.addressee.user
-              : '', // Destinatario
+              : this.formJobManagement.value.addressee.user, // Destinatario
           nomPersExt:
             this.formJobManagement.value.jobType == 'EXTERNO'
               ? this.formJobManagement.value.addressee + ''
-              : '', // Destinatario
+              : null, // Destinatario
+          jobType: this.formJobManagement.value.jobType,
           city: this.formJobManagement.value.city.id.toString(), // Ciudad
           refersTo: this.formJobManagement.value.refersTo, // Se Refiere A
           text1: this.formJobManagement.value.text1, // Parrafo inicial
@@ -4770,26 +4835,29 @@ export class RelatedDocumentsComponent
           desSenderpa: this.m_job_management
             ? this.m_job_management.desSenderpa
               ? this.m_job_management.desSenderpa.length == 0
-                ? ' '
+                ? null
                 : this.m_job_management.desSenderpa
-              : ' '
-            : ' ',
+              : null
+            : null,
           description: this.m_job_management
             ? this.m_job_management.description
               ? this.m_job_management.description.length == 0
-                ? ' '
+                ? null
                 : this.m_job_management.description
-              : ' '
-            : ' ',
+              : null
+            : null,
           problematiclegal: this.m_job_management
             ? this.m_job_management.problematiclegal
               ? this.m_job_management.problematiclegal.length == 0
-                ? ' '
+                ? null
                 : this.m_job_management.problematiclegal
-              : ' '
-            : ' ',
+              : null
+            : null,
           justification: this.managementForm.value.justificacion,
+          cveChargeRem: this.managementForm.value.cveChargeRem,
+          areaUser: null, // Area remitente
         };
+
         console.log('OBJETO A GUARDAR ', objUpdate_MJob);
 
         this.createMJobManagement(objUpdate_MJob).subscribe({
@@ -4808,7 +4876,7 @@ export class RelatedDocumentsComponent
               ''
             );
             // resolve(resp);
-            return
+            return;
           },
           error: error => {
             console.log(error);

@@ -18,7 +18,7 @@
       Fec&#46; Captura:
       <span class="badge bg-info ml-3 mr-3" style="display: initial !important">
         {{
-          (formJobManagement.get('insertDate').value | date : 'M/d/yyyy') ||
+          (formJobManagement.get('insertDate').value | date: 'M/d/yyyy') ||
             '00/00/0000'
         }}
       </span>
@@ -111,6 +111,7 @@
               <ngx-select
                 [searchOnInit]="true"
                 (fetchItems)="getSenderByDetail($event)"
+                (change)="changeSenderByDetail($event)"
                 bindLabel="idName"
                 [data]="senders"
                 [form]="formJobManagement"
@@ -501,10 +502,10 @@
           </div> -->
             <!-- [disabled]="isDisabledBtnDocs" -->
             <div class="col-md-12 mt-3 text-right">
+              <!-- [disabled]="!formJobManagement?.get('managementNumber').value" -->
               <button
                 type="button"
                 tooltip="Documentos"
-                [disabled]="!formJobManagement?.get('managementNumber').value"
                 containerClass="tooltip-style"
                 class="btn btn-info active btn-sm m-1"
                 (click)="openModal()">

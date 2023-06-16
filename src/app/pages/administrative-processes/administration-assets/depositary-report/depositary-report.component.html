@@ -1,14 +1,32 @@
 <form class="form-material" [formGroup]="depositaryDataForm">
   <div class="row">
-    <div class="col-12">
+    <div class="col-md-4 col-sm-12 col-xs-12">
       <form-field
         [control]="depositaryDataForm.get('reportDate')"
         label="Fecha Informe">
-        <input type="text" class="form-control" formControlName="reportDate" />
+        <input
+          type="text"
+          class="form-control"
+          formControlName="reportDate"
+          bsDatepicker />
       </form-field>
     </div>
-    <div class="col">
-      <label>Informe</label>
+    <div class="col-md-8 col-sm-12 col-xs-12">
+      <form-field [control]="depositaryDataForm.get('person')">
+        <ngx-select
+          (fetchItems)="getPerson($event)"
+          [data]="persons"
+          [form]="depositaryDataForm"
+          value="bankCode"
+          bindLabel="name"
+          [label]="'Persona'"
+          [control]="'person'"
+          (change)="onPersonChange($event)">
+        </ngx-select>
+      </form-field>
     </div>
+  </div>
+  <div class="row">
+    <label>Informe</label>
   </div>
 </form>
