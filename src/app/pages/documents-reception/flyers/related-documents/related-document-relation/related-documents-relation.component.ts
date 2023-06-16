@@ -20,7 +20,6 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { _Params } from 'src/app/common/services/http.service';
-import { IUserRowSelectEvent } from 'src/app/core/interfaces/ng2-smart-table.interface';
 import { IDepartment } from 'src/app/core/models/catalogs/department.model';
 import { ILegend } from 'src/app/core/models/catalogs/legend.model';
 import { IGood } from 'src/app/core/models/ms-good/good';
@@ -36,7 +35,6 @@ import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { DictationXGood1Service } from 'src/app/core/services/ms-dictation/dictation-x-good1.service';
 import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
-import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { StatusGoodService } from 'src/app/core/services/ms-good/status-good.service';
 import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
@@ -85,7 +83,10 @@ import { RelatedDocumentsService } from '../services/related-documents.service';
 import { ERROR_REPORT } from '../utils/related-documents.message';
 import { RelateDocumentsResponseRelation } from './related-documents-response-relation';
 
-export type IGoodAndAvailable = IGood & { available: boolean };
+export type IGoodAndAvailable = IGood & {
+  available: boolean;
+  selected: boolean;
+};
 
 export type IDocumentJobManagement = {
   cveDocument: string;
@@ -133,6 +134,8 @@ export class RelatedDocumentsRelationComponent
 {
   @ViewChild('tableGoods') tableGoods: Ng2SmartTableComponent;
 
+  dataTableGoodsMap = new Map<number, IGoodAndAvailable>();
+  dataGoodsSelected = new Map<number, IGoodAndAvailable>();
   // Send variables
   blockSend: boolean = false;
   variablesSend = {
@@ -217,7 +220,7 @@ export class RelatedDocumentsRelationComponent
   screenKeyManagement: string = 'FACTADBOFICIOGEST';
   screenKeyRelated: string = '';
   screenKey: string = '';
-  selectedGood: IGood[] = [];
+  selectedGood: IGoodAndAvailable;
   notificationData: INotification;
   loadingGoods: boolean = false;
   ReadOnly: boolean;
@@ -371,8 +374,7 @@ export class RelatedDocumentsRelationComponent
     private officeManagementSerivice: OfficeManagementService,
     private goodHistoryService: HistoryGoodService, // protected abstract svLegalOpinionsOfficeService: LegalOpinionsOfficeService;
     protected documentsService: DocumentsService,
-    protected usersService: UsersService, // protected goodProcessService: GoodprocessService,
-    private expedientService: ExpedientService
+    protected usersService: UsersService // protected goodProcessService: GoodprocessService, // private expedientService: ExpedientService
   ) {
     super();
     // console.log(authService.decodeToken());
@@ -399,47 +401,67 @@ export class RelatedDocumentsRelationComponent
       onComponentInitFunction: this.onClickImprocedente,
     };
     const screen = this.route.snapshot.paramMap.get('id');
-    if (screen === '2') {
-      const columns = RELATED_DOCUMENTS_COLUMNS_GOODS;
-      delete columns.improcedente;
-    }
+    // if (screen === '2') {
+    //   const columns = RELATED_DOCUMENTS_COLUMNS_GOODS;
+    //   delete columns.improcedente;
+    // }
 
-    this.settings = {
-      ...this.settings,
-      actions: false,
-      // selectMode: 'multi',
-      columns: { ...RELATED_DOCUMENTS_COLUMNS_GOODS },
-      rowClassFunction: (row: any) => {
-        if (!row.data.available) {
-          return 'bg-dark text-white disabled-custom';
-        } else {
-          return 'bg-success text-white';
-        }
-      },
-    };
+    // this.settings = {
+    //   ...this.settings,
+    //   actions: false,
+    //   // selectMode: 'multi',
+    //   columns: { ...RELATED_DOCUMENTS_COLUMNS_GOODS },
+    //   rowClassFunction: (row: any) => {
+    //     if (!row.data.available) {
+    //       return 'bg-dark text-white disabled-custom';
+    //     } else {
+    //       return 'bg-success text-white';
+    //     }
+    //   },
+    // };
   }
   selectedRadio: string;
 
+  changeSelection(event: any, id: number) {
+    const good = this.dataTableGoodsMap.get(id);
+    if (event.target.checked) {
+      this.dataGoodsSelected.set(id, good);
+    } else {
+      this.dataGoodsSelected.delete(id);
+    }
+  }
+
+  isHideSelection = true;
   disabledChecks() {
-    console.log(this.tableGoods);
-    const columnas = this.tableGoods.grid.getColumns();
-    const columnaOpciones = columnas.find(
-      columna => columna.id === 'seleccion'
-    );
-    columnaOpciones.hide = true;
-    console.log(this.settings);
-    this.managementForm.get('averiPrevia').disable();
+    // console.log(this.tableGoods);
+    // const columnas = this.tableGoods.grid.getColumns();
+    // const columnaOpciones = columnas.find(
+    //   columna => columna.id === 'seleccion'
+    // );
+    // columnaOpciones.hide = true;
+    // console.log(this.settings);
+    // this.managementForm.get('averiPrevia').disable();
+    this.isHideSelection = true;
     this.formVariables.get('b').setValue('S');
+    this.formVariables.get('classify').setValue(null);
+    this.formVariables.get('classify2').setValue(null);
+    this.dataTableGoodsJobManagement = [];
+    this.dataTableDocuments = [];
   }
 
   enableChecks() {
-    const columnas = this.tableGoods.grid.getColumns();
-    const columnaOpciones = columnas.find(
-      columna => columna.id === 'seleccion'
-    );
-    columnaOpciones.hide = false;
-    this.managementForm.get('averiPrevia').enable();
+    // const columnas = this.tableGoods.grid.getColumns();
+    // const columnaOpciones = columnas.find(
+    //   columna => columna.id === 'seleccion'
+    // );
+    // columnaOpciones.hide = false;
+    // this.managementForm.get('averiPrevia').enable();
+    this.isHideSelection = false;
     this.formVariables.get('b').setValue('S');
+    this.formVariables.get('classify').setValue(null);
+    this.formVariables.get('classify2').setValue(null);
+    this.dataTableGoodsJobManagement = [];
+    this.dataTableDocuments = [];
   }
 
   onClickSelect(event: any) {
@@ -463,7 +485,7 @@ export class RelatedDocumentsRelationComponent
       ignoreBackdropClick: true,
     });
     modalRef.content.dataCopy.subscribe((next: any) => {
-      console.log('next', next);
+      // console.log('next', next);
 
       if (next.typePerson_I == 'I') {
         let array = this.copyOficio;
@@ -1010,6 +1032,8 @@ export class RelatedDocumentsRelationComponent
         }
         if (mJobManagement.refersTo == this.se_refiere_a.C) {
           this.formVariables.get('b').setValue('N');
+          this.se_refiere_a_Disabled.A = true;
+          this.se_refiere_a_Disabled.B = true;
         }
       } catch (e) {
         this.isCreate = true;
@@ -1027,6 +1051,7 @@ export class RelatedDocumentsRelationComponent
     this.isLoadingDocuments = true;
     this.getDocJobManagement().subscribe({
       next: async res => {
+        console.log('getDocJobManagement', res);
         const response = await res.data.map(async item => {
           const params = new ListParams();
           params['filter.id'] = item.cveDocument;
@@ -1075,6 +1100,7 @@ export class RelatedDocumentsRelationComponent
     const params = new ListParams();
     params['filter.managementNumber'] =
       this.formJobManagement.value.managementNumber;
+    params.limit = 100000000;
     try {
       this.dataTableGoodsJobManagement = (
         await this.getGoodsJobManagement(params)
@@ -2668,10 +2694,10 @@ export class RelatedDocumentsRelationComponent
     });
   }
 
-  selectProceedings(event: IUserRowSelectEvent<IGood>) {
-    this.getStatusGood(event.data.status);
-    this.selectedGood = event.selected;
-    this.dictationService.goodNumber = event.data.id;
+  selectProceedings(event: IGoodAndAvailable) {
+    this.getStatusGood(event.status);
+    this.selectedGood = event;
+    this.dictationService.goodNumber = event.id;
   }
 
   isDisabledBtnDocs = false;
@@ -2732,8 +2758,6 @@ export class RelatedDocumentsRelationComponent
           etapaCreda
         )) as IDepartment;
 
-        // const year = new Date().getFullYear();
-        // const month = new Date().getMonth() + 1;
         const key = await this.pupGeneratorKey();
 
         this.formJobManagement.get('cveManagement').setValue(key);
