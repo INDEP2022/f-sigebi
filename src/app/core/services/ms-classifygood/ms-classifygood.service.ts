@@ -39,6 +39,6 @@ export class ClassifyGoodService extends HttpService {
 
   getPupDistClasif(user: string) {
     const route = ClassifyGoodEndPoints.PupDistClasif;
-    return this.get(`${route}/${user}`);
+    return this.get(`${route}?username=${user}`);
   }
 }
