@@ -3476,21 +3476,26 @@ export class RelatedDocumentsComponent
               ).then(async () => {
                 // Llamar las globales y obtener gnu_activa_gestion
                 let paramsActGestion = {
-                  pGestOk: this.paramsGestionDictamen.pGestOk,
-                  gnuActivaManagement: this.globalVars.gnuActivaGestion, // Variable Global
-                  pCall: this.paramsGestionDictamen.pllamo,
-                  pNoProcess: this.paramsGestionDictamen.pNoTramite,
+                  pGestOk: this.paramsGestionDictamen.pGestOk
+                    ? this.paramsGestionDictamen.pGestOk
+                    : 0,
+                  gnuActivaManagement: this.globalVars.gnuActivaGestion
+                    ? this.globalVars.gnuActivaGestion
+                    : 0, // Variable Global
+                  pCall: this.paramsGestionDictamen.pllamo
+                    ? this.paramsGestionDictamen.pllamo
+                    : '',
+                  pNoProcess: this.paramsGestionDictamen.pNoTramite
+                    ? this.paramsGestionDictamen.pNoTramite
+                    : 0,
                   noFlyer: this.notificationData.wheelNumber,
                 };
-                // const _act_gestion = await this._PUP_ACT_GESTION(
-                //   paramsActGestion
-                // );
-                // console.log('ACT_GESTION ', _act_gestion);
-
-                // if (_act_gestion.status != 200) {
-                //   this.onLoadToast('error', _act_gestion.message, '');
-                //   return;
-                // }
+                const _act_gestion = await this._PUP_ACT_GESTION(
+                  paramsActGestion
+                );
+                if (_act_gestion.status != 200) {
+                  this.onLoadToast('error', _act_gestion.message, '');
+                }
                 this.formJobManagement.value.statusOf = 'ENVIADO';
                 const updateDataMJobManagement: any =
                   await this._updateMJobManagement(); // Actualizar datos
@@ -4318,7 +4323,7 @@ export class RelatedDocumentsComponent
         if (_busca_numero.InsertDate) {
           this.formJobManagement.value.insertDate = format(
             new Date(_busca_numero.InsertDate),
-            'yyyy/MM/dd'
+            'yyyy-MM-dd'
           ); // InsertDate
         }
         const updateDataMJobManagement_searchNumber: any =
@@ -4362,18 +4367,24 @@ export class RelatedDocumentsComponent
         // :TEXTO3 := :TEX3;
         // Llamar las globales y obtener gnu_activa_gestion
         let paramsActGestion = {
-          pGestOk: this.paramsGestionDictamen.pGestOk,
-          gnuActivaManagement: 1,
-          pCall: this.paramsGestionDictamen.pllamo,
-          pNoProcess: this.paramsGestionDictamen.pNoTramite,
+          pGestOk: this.paramsGestionDictamen.pGestOk
+            ? this.paramsGestionDictamen.pGestOk
+            : 0,
+          gnuActivaManagement: this.globalVars.gnuActivaGestion
+            ? this.globalVars.gnuActivaGestion
+            : 0, // Variable Global
+          pCall: this.paramsGestionDictamen.pllamo
+            ? this.paramsGestionDictamen.pllamo
+            : '',
+          pNoProcess: this.paramsGestionDictamen.pNoTramite
+            ? this.paramsGestionDictamen.pNoTramite
+            : 0,
           noFlyer: this.notificationData.wheelNumber,
         };
-        // const _act_gestion = await this._PUP_ACT_GESTION(paramsActGestion);
-        // // if (_act_gestion.status != 200) {
-        // //   this.onLoadToast('error', _act_gestion.message, '');
-        // //   return;
-        // // }
-        // console.log('ACT_GESTION ', _act_gestion);
+        const _act_gestion = await this._PUP_ACT_GESTION(paramsActGestion);
+        if (_act_gestion.status != 200) {
+          this.onLoadToast('error', _act_gestion.message, '');
+        }
 
         if (this.paramsGestionDictamen.pllamo == 'ABANDONO') {
           let reportCondition = this._conditions_Report();
@@ -4447,7 +4458,7 @@ export class RelatedDocumentsComponent
                     if (_busca_numero.InsertDate) {
                       this.formJobManagement.value.insertDate = format(
                         new Date(_busca_numero.InsertDate),
-                        'yyyy/MM/dd'
+                        'yyyy-MM-dd'
                       ); // InsertDate
                     }
                     const updateDataMJobManagement: any =
@@ -4490,21 +4501,28 @@ export class RelatedDocumentsComponent
                     console.log(_cambia_estatus);
                     // Llamar las globales y obtener gnu_activa_gestion
                     let paramsActGestion = {
-                      pGestOk: this.paramsGestionDictamen.pGestOk,
-                      gnuActivaManagement: this.globalVars.gnuActivaGestion, // Variable Global
-                      pCall: this.paramsGestionDictamen.pllamo,
-                      pNoProcess: this.paramsGestionDictamen.pNoTramite,
+                      pGestOk: this.paramsGestionDictamen.pGestOk
+                        ? this.paramsGestionDictamen.pGestOk
+                        : 0,
+                      gnuActivaManagement: this.globalVars.gnuActivaGestion
+                        ? this.globalVars.gnuActivaGestion
+                        : 0, // Variable Global
+                      pCall: this.paramsGestionDictamen.pllamo
+                        ? this.paramsGestionDictamen.pllamo
+                        : '',
+                      pNoProcess: this.paramsGestionDictamen.pNoTramite
+                        ? this.paramsGestionDictamen.pNoTramite
+                        : 0,
                       noFlyer: this.notificationData.wheelNumber,
                     };
-                    // const _act_gestion = await this._PUP_ACT_GESTION(
-                    //   paramsActGestion
-                    // );
+                    const _act_gestion = await this._PUP_ACT_GESTION(
+                      paramsActGestion
+                    );
 
-                    // if (_act_gestion.status != 200) {
-                    //   this.onLoadToast('error', _act_gestion.message, '');
-                    //   return;
-                    // }
-                    // console.log('ACT_GESTION ', _act_gestion);
+                    if (_act_gestion.status != 200) {
+                      this.onLoadToast('error', _act_gestion.message, '');
+                    }
+                    console.log('ACT_GESTION ', _act_gestion);
 
                     this.formJobManagement.value.statusOf = 'ENVIADO';
 
@@ -4545,7 +4563,7 @@ export class RelatedDocumentsComponent
                     if (_busca_numero.InsertDate) {
                       this.formJobManagement.value.insertDate = format(
                         new Date(_busca_numero.InsertDate),
-                        'yyyy/MM/dd'
+                        'yyyy-MM-dd'
                       ); // InsertDate
                     }
                     const updateDataMJobManagement: any =
@@ -4954,7 +4972,7 @@ export class RelatedDocumentsComponent
           justification: this.managementForm.value.justificacion,
           cveChargeRem: this.managementForm.value.cveChargeRem,
           areaUser: null, // Area remitente
-          insertDate: format(new Date(), 'yyyy/MM/dd'),
+          insertDate: format(new Date(), 'yyyy-MM-dd'),
           insertUser: this.authUser.preferred_username,
         };
 
