@@ -2083,10 +2083,12 @@ export class RelatedDocumentsComponent
       // DOCUMENTOS_PARA_DICTAMEN
       //LIP_EXEQRY
       //alert('go block');
+    } else {
+      this.formVariables.get('d').setValue('N');
+      this.formVariables.get('proc_doc_dic').setValue('S');
     }
 
-    this.formVariables.get('d').setValue('N');
-    this.formVariables.get('proc_doc_dic').setValue('S');
+
     //this.variables.d = 'N';
     //this.variables.proc_doc_dic = 'S';
   }
@@ -2118,7 +2120,7 @@ export class RelatedDocumentsComponent
     modalRef.content.onClose.pipe(take(1)).subscribe(result => {
       console.log({ result });
       if (result && result?.length > 0) {
-        this.formVariables.get('b').setValue('S');
+        this.formVariables.get('d').setValue('S');
         result.forEach(item => {
           const doc = this.dataTableDocuments.find(
             x => x.cveDocument == item.cveDocument
@@ -3864,10 +3866,12 @@ export class RelatedDocumentsComponent
       this.alertInfo('warning', 'Debe especificar la CIUDAD', '');
       return;
     }
+    const doc = this.getQueryParams('doc');
+    const bien = this.getQueryParams('bien');
     if (
       this.formVariables.get('proc_doc_dic').value === 'N' &&
-      this.paramsGestionDictamen.doc === 'S' &&
-      this.paramsGestionDictamen.bien === 'S' &&
+      doc === 'S' &&
+      bien === 'S' &&
       !this.formJobManagement.value.cveManagement
     ) {
       this.alertInfo(
@@ -3877,11 +3881,13 @@ export class RelatedDocumentsComponent
       );
       // PUP_BIEN_DOC;
       await this.pupGoodDoc();
+
+      this.goDocumentModal();
       return;
     } else if (
       this.formVariables.get('proc_doc_dic').value === 'N' &&
-      this.paramsGestionDictamen.doc === 'N' &&
-      this.paramsGestionDictamen.bien === 'S' &&
+      doc === 'N' &&
+      bien === 'S' &&
       !this.formJobManagement.value.cveManagement
     ) {
       this.alertInfo(
@@ -3891,11 +3897,13 @@ export class RelatedDocumentsComponent
       );
       // PUP_BIEN_DOC;
       await this.pupGoodDoc();
+
+      this.goDocumentModal();
       return;
     } else {
       if (
-        this.paramsGestionDictamen.bien === 'S' &&
-        this.paramsGestionDictamen.doc === 'S'
+        doc === 'S' &&
+        bien === 'S'
       ) {
         if (
           this.formVariables.get('b').value === 'N' ||
@@ -3910,8 +3918,8 @@ export class RelatedDocumentsComponent
         }
       }
       if (
-        this.paramsGestionDictamen.bien === 'S' &&
-        this.paramsGestionDictamen.doc === 'S'
+        bien === 'S' &&
+        doc === 'S'
       ) {
         if (
           this.formVariables.get('d').value === 'N' ||
@@ -3925,7 +3933,7 @@ export class RelatedDocumentsComponent
           return;
         }
       }
-      if (this.paramsGestionDictamen.doc === 'S') {
+      if (doc === 'S') {
         if (
           this.formVariables.get('d').value === 'N' ||
           this.formVariables.get('d').value === null
@@ -3949,8 +3957,8 @@ export class RelatedDocumentsComponent
             console.error(error);
           });
         if (
-          this.paramsGestionDictamen.doc === 'N' &&
-          this.paramsGestionDictamen.bien === 'S'
+          doc === 'N' &&
+          bien === 'S'
         ) {
           if (this.se_refiere_a.A === 'Se refiere a todos los bienes') {
             //PUP_AGREGA_BIENES;
@@ -4014,7 +4022,7 @@ export class RelatedDocumentsComponent
             _puf_genera_clave.keyOfGestion; //PUF_GENERA_CLAVE
         }
       }
-      if (this.paramsGestionDictamen.doc === 'N') {
+      if (doc === 'N') {
         if (
           !this.formJobManagement.value.cveManagement &&
           this.se_refiere_a.A === 'Se refiere a todos los bienes'
@@ -4032,7 +4040,7 @@ export class RelatedDocumentsComponent
         }
       }
       if (!this.formJobManagement.value.cveManagement) {
-        conta = await this.conta();
+        // conta = await this.conta();
         if (conta !== 0) {
           this.isDisabledBtnDocs = true;
         }
@@ -4072,6 +4080,7 @@ export class RelatedDocumentsComponent
           }
         }
       }
+
       cuantos = await this.cuatos();
       if (cuantos !== 0) {
         //funcion q actualiza vista
@@ -4863,6 +4872,8 @@ export class RelatedDocumentsComponent
           justification: this.managementForm.value.justificacion,
           cveChargeRem: this.managementForm.value.cveChargeRem,
           areaUser: null, // Area remitente
+          insertDate: format(new Date(), 'yyyy/MM/dd'),
+          insertUser: this.authUser.preferred_username,
         };
 
         console.log('OBJETO A GUARDAR ', objUpdate_MJob);
