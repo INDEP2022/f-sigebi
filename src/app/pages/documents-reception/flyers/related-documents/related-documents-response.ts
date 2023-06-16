@@ -61,6 +61,7 @@ export abstract class RelateDocumentsResponse extends BasePage {
   protected abstract svLegalOpinionsOfficeService: LegalOpinionsOfficeService;
   protected abstract authService: AuthService;
   abstract formVariables: FormGroup<{
+    dictaminacion: FormControl;
     b: FormControl;
     d: FormControl;
     dictamen: FormControl;
@@ -220,6 +221,9 @@ export abstract class RelateDocumentsResponse extends BasePage {
   }
   updateMJobManagement(params: Partial<IMJobManagement>): Observable<any> {
     return this.mJobManagementService.update(params).pipe(map(x => x.data));
+  }
+  createMJobManagement(params: Partial<IMJobManagement>): Observable<any> {
+    return this.mJobManagementService.create(params).pipe(map(x => x.data));
   }
 
   getJobManagement(params: ListParams): Observable<IProceduremanagement> {
@@ -1068,7 +1072,7 @@ export abstract class RelateDocumentsResponse extends BasePage {
     return this.dictationService.pupValidExtDom(wheelNumber).pipe(map(x => x));
   }
   sendFunction_findOffficeNu(params: Object): Observable<any> {
-    return this.dictationService.findOffficeNu(params).pipe(map(x => x.data));
+    return this.dictationService.findOffficeNu(params).pipe(map(x => x));
   }
   sendFunction_updateManagerTransfer(params: Object): Observable<any> {
     return this.dictationService

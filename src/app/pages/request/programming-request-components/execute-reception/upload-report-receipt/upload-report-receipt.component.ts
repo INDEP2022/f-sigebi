@@ -21,6 +21,7 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
   validateSizePDF: boolean = false;
   receiptGuards: any;
   goodId: string = '';
+  typeDoc: number = 0;
   programming: Iprogramming;
   constructor(
     private modalRef: BsModalRef,
@@ -94,50 +95,99 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
       console.log('document', this.form.value);
       console.log('goodsId', this.goodId);
       console.log('programming', this.programming);
+      console.log('typeDoc', this.typeDoc);
 
-      const formData = {
-        keyDoc: this.receiptGuards.id,
-        autografos: true,
-        electronicos: false,
-        dDocTitle: 'ReciboResguardo',
-        dSecurityGroup: 'Public',
-        xidTransferente: this.programming.tranferId,
-        xidBien: this.goodId,
-        xNivelRegistroNSBDB: 'Bien',
-        xTipoDocumento: 185,
-        xNoProgramacion: this.programming.id,
-        xNombreProceso: 'Ejecutar Recepción',
-        xDelegacionRegional: this.programming.regionalDelegationNumber,
-        xFolioProgramacion: this.programming.folio,
-      };
+      if (this.typeDoc == 185) {
+        const formData = {
+          keyDoc: this.receiptGuards.id,
+          autografos: true,
+          electronicos: false,
+          dDocTitle: 'ReciboResguardo',
+          dSecurityGroup: 'Public',
+          xidTransferente: this.programming.tranferId,
+          xidBien: this.goodId,
+          xNivelRegistroNSBDB: 'Bien',
+          xTipoDocumento: this.typeDoc,
+          xNoProgramacion: this.programming.id,
+          xNombreProceso: 'Ejecutar Recepción',
+          xDelegacionRegional: this.programming.regionalDelegationNumber,
+          xFolioProgramacion: this.programming.folio,
+        };
 
-      const extension = '.pdf';
-      const docName = 'Recibo Resguardo';
+        const extension = '.pdf';
+        const docName = 'Recibo Resguardo';
 
-      this.wContentService
-        .addDocumentToContent(
-          docName,
-          extension,
-          JSON.stringify(formData),
-          this.selectedFile,
-          extension
-        )
-        .subscribe({
-          next: async response => {
-            console.log('doc guardado', response);
-            const updateReceiptGuard = this.updateReceiptGuard(
-              response.dDocName
-            );
-            if (updateReceiptGuard) {
-              this.onLoadToast(
-                'success',
-                'Acción correcta',
-                'Documento Adjuntado correctamente'
+        this.wContentService
+          .addDocumentToContent(
+            docName,
+            extension,
+            JSON.stringify(formData),
+            this.selectedFile,
+            extension
+          )
+          .subscribe({
+            next: async response => {
+              console.log('doc guardado', response);
+              const updateReceiptGuard = this.updateReceiptGuard(
+                response.dDocName
               );
-              this.close();
-            }
-          },
-        });
+              if (updateReceiptGuard) {
+                this.onLoadToast(
+                  'success',
+                  'Acción correcta',
+                  'Documento Adjuntado correctamente'
+                );
+                this.close();
+              }
+            },
+          });
+      }
+
+      if (this.typeDoc == 185) {
+        const formData = {
+          keyDoc: this.receiptGuards.id,
+          autografos: true,
+          electronicos: false,
+          dDocTitle: 'ReciboAlmacen',
+          dSecurityGroup: 'Public',
+          xidTransferente: this.programming.tranferId,
+          xidBien: this.goodId,
+          xNivelRegistroNSBDB: 'Bien',
+          xTipoDocumento: this.typeDoc,
+          xNoProgramacion: this.programming.id,
+          xNombreProceso: 'Ejecutar Recepción',
+          xDelegacionRegional: this.programming.regionalDelegationNumber,
+          xFolioProgramacion: this.programming.folio,
+        };
+
+        const extension = '.pdf';
+        const docName = 'Recibo Resguardo';
+
+        this.wContentService
+          .addDocumentToContent(
+            docName,
+            extension,
+            JSON.stringify(formData),
+            this.selectedFile,
+            extension
+          )
+          .subscribe({
+            next: async response => {
+              console.log('doc guardado', response);
+              const updateReceiptGuard = this.updateReceiptGuard(
+                response.dDocName
+              );
+              if (updateReceiptGuard) {
+                this.onLoadToast(
+                  'success',
+                  'Acción correcta',
+                  'Documento Adjuntado correctamente'
+                );
+                this.close();
+              }
+            },
+          });
+      }
     }
   }
 

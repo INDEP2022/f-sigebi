@@ -33,25 +33,27 @@ export class MailComponent extends BasePage implements OnInit {
   ) {
     super();
 
-    this.settings.columns = EMAIL_COLUMNS;
+    /*this.settings.columns = EMAIL_COLUMNS;
     this.settings.actions.delete = true;
     this.settings.actions.add = false;
-    this.settings.hideSubHeader = false;
-    // this.settings = {
-    //   ...this.settings,
-    //   actions: {
-    //     columnTitle: 'Acciones',
-    //     edit: true,
-    //     delete: false,
-    //     position: 'right',
-    //   },
-    //   columns: { ...EMAIL_COLUMNS },
-    // };
-    // this.settings.actions.add = false;
-    // this.settings = {
-    //   ...this.settings,
-    //   hideSubHeader: false,
-    // };
+    this.settings.hideSubHeader = false;*/
+    this.settings = {
+      ...this.settings,
+      hideSubHeader: false,
+      actions: {
+        columnTitle: 'Acciones',
+        edit: true,
+        delete: false,
+        add: false,
+        position: 'right',
+      },
+      columns: { ...EMAIL_COLUMNS },
+    };
+    /*this.settings.actions.add = false;
+    this.settings = {
+      ...this.settings,
+      hideSubHeader: false,
+    };*/
   }
 
   ngOnInit(): void {
@@ -95,6 +97,7 @@ export class MailComponent extends BasePage implements OnInit {
     };
     this.usersService.getAllSegUsers(params).subscribe({
       next: response => {
+        console.log(response.data);
         this.segUsers = response.data;
         this.totalItems = response.count || 0;
         this.data.load(response.data);

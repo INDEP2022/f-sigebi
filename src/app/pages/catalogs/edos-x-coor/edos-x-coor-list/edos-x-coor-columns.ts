@@ -10,7 +10,7 @@ export const EDOSXCOOR_COLUMS = {
     sort: false,
   },
   noState: {
-    title: 'Número estado',
+    title: 'No. Estado',
     type: 'string',
     sort: false,
   },
