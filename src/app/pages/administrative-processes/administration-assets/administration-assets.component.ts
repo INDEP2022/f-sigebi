@@ -24,6 +24,13 @@ import { Component } from '@angular/core';
             <tab heading="Datos seguro" *ngIf="dataSearch">
               <app-secure-data [goodId]="data"></app-secure-data>
             </tab>
+            <tab heading="Datos nombramientos" *ngIf="dataSearch">
+              <app-appointment-data [goodId]="data"></app-appointment-data>
+            </tab>
+            <tab heading="Almacenes asignados" *ngIf="dataSearch">
+              <app-warehouses-assigned
+                [goodId]="data"></app-warehouses-assigned>
+            </tab>
             <tab heading="Bóvedas asignadas" *ngIf="dataSearch">
               <app-assigned-vaults [goodId]="data"></app-assigned-vaults>
             </tab>

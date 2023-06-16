@@ -39,7 +39,7 @@ import { GoodService } from 'src/app/core/services/ms-good/good.service';
               [form]="form"
               value="id"
               bindLabel="description"
-              label="Bienes"
+              label="Biene"
               [control]="goodField"
               (change)="onGoodsChange($event)">
             </ngx-select>

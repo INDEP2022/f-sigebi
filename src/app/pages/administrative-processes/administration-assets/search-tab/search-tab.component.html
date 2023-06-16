@@ -2,7 +2,7 @@
   <div class="row">
     <div class="col-md-12">
       <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-12">
           <form [formGroup]="searchTabForm" class="form-material">
             <div class="row">
               <div class="col-md-12">
@@ -72,61 +72,61 @@
             </div>
           </form>
         </div>
-
-        <div class="col-md-6">
-          <div class="row">
-            <div class="col-md-12">
-              <div class="image-container d-flex justify-content-center">
-                <!-- Imagen de muestra -->
-                <!-- src="https://cloudfront-us-east-1.images.arcpublishing.com/infobae/QL4GXR7XDJGO5KOVMF6QDIH52M.jpg" -->
-                <img
-                  alt="Imagen"
-                  src=""
-                  class="img-fluid h-auto"
-                  style="border: 1px solid #6c757d; max-height: 500px" />
-              </div>
-            </div>
-            <div class="col-md-12 mt-2">
-              <div class="text-center">
-                <button
-                  class="image-control mx-4"
-                  (click)="previousImage()"
-                  style="border: 1px solid #6c757d">
-                  &lt;
-                </button>
-                <button
-                  class="image-control mx-4"
-                  (click)="nextImage()"
-                  style="border: 1px solid #6c757d">
-                  &gt;
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
         <div class="form-group row">
-          <div class="col-md-4 col-ms-4">
-            <button
-              class="btn btn-sm btn-primary active mr-3"
-              (click)="search()">
-              Buscar <i class="fas fa-search"></i>
-            </button>
+          <div class="col-md-3 col-ms-3 col-xs-6">
+            <div class="d-flex justify-content-center">
+              <div class="m-3">
+                <button
+                  class="btn btn-sm btn-primary active"
+                  (click)="search()">
+                  Buscar <i class="fas fa-search"></i>
+                </button>
+              </div>
+            </div>
           </div>
-          <div class="col-md-4 col-ms-4">
-            <button class="btn btn-danger btn-sm active" (click)="clean()">
-              Limpiar
-            </button>
+          <div class="col-md-3 col-ms-3 col-xs-6">
+            <div class="d-flex justify-content-center">
+              <div class="m-3">
+                <button class="btn btn-danger btn-sm active" (click)="clean()">
+                  Limpiar
+                </button>
+              </div>
+            </div>
           </div>
-          <div class="col-md-4 col-ms-4">
-            <app-columns-select [(settings)]="settings"></app-columns-select>
+          <div class="col-md-3 col-ms-3 col-xs-6">
+            <div class="d-flex justify-content-center">
+              <div class="m-3">
+                <app-columns-select
+                  [(settings)]="settings"
+                  [defaultColumns]="5"></app-columns-select>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3 col-ms-3 col-xs-6">
+            <div class="d-flex justify-content-center">
+              <div class="m-3">
+                <button
+                  class="btn btn-sm btn-primary active"
+                  (click)="openPhotos()">
+                  Ver fotos <i class="fas fa-eye"></i>
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-      <div>
-        <ng-scrollbar [track]="'all'" style="min-height: 400px">
-          <ng2-smart-table [settings]="settings" [source]="list">
-          </ng2-smart-table>
-        </ng-scrollbar>
+      <div class="row">
+        <div class="col-md-12">
+          <div [class]="loading ? 'table-loading' : ''">
+            <ng2-smart-table [settings]="settings" [source]="list">
+            </ng2-smart-table>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <app-pagination
+          [params]="params1"
+          [totalItems]="totalItems"></app-pagination>
       </div>
     </div>
   </div>
