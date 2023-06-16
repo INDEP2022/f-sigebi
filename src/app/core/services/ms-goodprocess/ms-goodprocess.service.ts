@@ -105,4 +105,21 @@ export class GoodprocessService extends HttpService {
   postJobManagement(model: any): Observable<IListResponse<any>> {
     return this.post(`${GoodprocessEndpoints.UpdateGoodStatus}`, model);
   }
+
+  getGoodAvailable(params: ListParams) {
+    const page = params.page || 1;
+    const limit = params.limit || 10;
+    return this.post(
+      `application/getAssetsOfficeManagement?page=${page}&limit=${limit}`,
+      params
+    );
+  }
+
+  postTransferGoodsTradeManagement(body: {
+    ofManagementNumber: any;
+    proceedingsNumber: any;
+    goodNumber: any;
+  }) {
+    this.post('application/transferGoodsTradeManagement', body);
+  }
 }

@@ -190,4 +190,13 @@ export class DocumentsService extends HttpService {
   //   const route = `clarification-documents-impro/${id}`;
   //   return this.post<Inappropriateness>(route, data);
   // }
+
+  getDocumentsByGood2(
+    id: string | number,
+    typeDict: any,
+    params?: ListParams | string
+  ) {
+    const route = `${DocumentsEndpoints.DocumentsDictuXStateM}?filter.stateNumber=${id}&filter.typeDictum=${typeDict}`;
+    return this.get(route, params);
+  }
 }

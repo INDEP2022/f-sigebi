@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef, ModalOptions } from 'ngx-bootstrap/modal';
 import { takeUntil } from 'rxjs';
 import { IGood } from 'src/app/core/models/ms-good/good';
@@ -17,6 +18,9 @@ export class ModalListGoodsComponent
   // params = new BehaviorSubject<ListParams>(new ListParams());
   //Data Table
   goods: IGood[] = [];
+  totalItems2: number;
+  go: any;
+  dataFactGood: LocalDataSource = new LocalDataSource();
   @Input() idSafe: number;
   @Output() onConfirm = new EventEmitter<any>();
   constructor(
@@ -54,11 +58,11 @@ export class ModalListGoodsComponent
     this.loading = true;
     const idSafe: any = this.opcion.initialState;
     const safe = Object.values(idSafe);
-    const go = safe[0].toString().concat(safe[1].toString());
+    this.go = safe[0].toString().concat(safe[1].toString());
 
     this.params
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getGoodBySafe(Number(go)));
+      .subscribe(() => this.getGoodBySafe(Number(this.go)));
   }
 
   return() {
@@ -71,7 +75,9 @@ export class ModalListGoodsComponent
       next: response => {
         console.log(response);
         this.goods = response.data;
-        this.totalItems = response.count;
+        this.totalItems2 = response.count | 0;
+        this.dataFactGood.load(response.data);
+        this.dataFactGood.refresh();
         this.loading = false;
       },
       error: error => (this.loading = false),

@@ -1,5 +1,6 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { takeUntil } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
@@ -17,8 +18,10 @@ export class VaultConsultationComponent
   extends BasePageWidhtDinamicFilters
   implements OnInit
 {
+  override totalItems: number;
   form: FormGroup;
   vaults: ISafe[] = [];
+  dataFactGen: LocalDataSource = new LocalDataSource();
   @Output() idSafe: EventEmitter<number> = new EventEmitter<number>();
   constructor(
     private fb: FormBuilder,
@@ -31,6 +34,7 @@ export class VaultConsultationComponent
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.search());
+
     this.service = this.safeService;
     this.settings = {
       ...this.settings,
@@ -66,10 +70,12 @@ export class VaultConsultationComponent
   }
 
   search() {
-    this.safeService.getAll(this.params.getValue()).subscribe({
+    this.safeService.getAllFilter(this.params.getValue()).subscribe({
       next: (data: any) => {
         this.totalItems = data.count;
         this.vaults = data.data;
+        this.dataFactGen.load(data.data);
+        this.dataFactGen.refresh();
         this.loading = false;
         console.log(this.vaults);
       },
