@@ -28,6 +28,7 @@ import {
   IProceedingInfo,
 } from './components/proceeding-info/models/proceeding-info';
 import { MaintenanceRecordsService } from './services/maintenance-records.service';
+
 @Component({
   selector: 'app-maintenance-records',
   templateUrl: './maintenance-records.component.html',
@@ -47,6 +48,7 @@ export class MaintenanceRecordsComponent extends BasePage implements OnInit {
   // rowsSelected: any[] = [];
   rowsSelectedLocal: any[] = [];
   rowsSelectedNotLocal: any[] = [];
+  pageSizeOptions: number[] = [1];
 
   constructor(
     private fb: FormBuilder,
@@ -59,6 +61,8 @@ export class MaintenanceRecordsComponent extends BasePage implements OnInit {
   ) {
     super();
     this.params.value.limit = 1;
+
+    this.params.next({ ...this.params.getValue(), limit: 1 });
     this.service.updateWarehouseVault.subscribe(x => {
       this.getGoods();
     });
