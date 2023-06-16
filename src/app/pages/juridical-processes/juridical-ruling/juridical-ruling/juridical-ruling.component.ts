@@ -155,9 +155,8 @@ export class JuridicalRulingComponent
         valuePrepareFunction: (isSelected: boolean, row: IGood) =>
           this.isGoodSelected(row),
         renderComponent: CheckboxElementComponent,
-        onComponentInitFunction: (instance: CheckboxElementComponent) => (
-          console.log((instance.checked = false)), this.onGoodSelect(instance)
-        ),
+        onComponentInitFunction: (instance: CheckboxElementComponent) =>
+          this.onGoodSelect(instance),
       },
       id: {
         title: 'No. Bien',
@@ -278,7 +277,7 @@ export class JuridicalRulingComponent
     },
 
     rowClassFunction: (row: any) => {
-      return 'bg-primary text-white';
+      return 'bg-info text-white';
     },
     noDataMessage: 'No se encontrarón registros',
   };
@@ -514,6 +513,7 @@ export class JuridicalRulingComponent
     this.isDisabledExp = false;
     this.statusDict = '';
     this.dictNumber = null;
+    this.totalItems2 = 0;
 
     this.onTypeDictChange({ id: 'DESTRUCCION' });
   }
@@ -817,7 +817,11 @@ export class JuridicalRulingComponent
         await this.getDictaionXGoo1();
 
         //this.goods.forEach(async good => {
-        await this.getDictaDoc(res.data[0].id, res.data[0].typeDict, 0);
+        await this.getDictaDoc(
+          res.data[0].id,
+          res.data[0].typeDict,
+          this.goodsValid[0].id
+        );
         //});
 
         return;
@@ -831,7 +835,7 @@ export class JuridicalRulingComponent
       const params = new FilterParams();
       params.addFilter('officialNumber', dica, SearchFilter.EQ);
       params.addFilter('typeDictum', type, SearchFilter.EQ);
-      //params.addFilter('stateNumber', good, SearchFilter.EQ);
+      params.addFilter('stateNumber', good, SearchFilter.EQ);
       this.documentsMServ.getAllDictum(params.getParams()).subscribe({
         next: resp => {
           resp.data.map((doc: any) => {
@@ -1562,7 +1566,8 @@ export class JuridicalRulingComponent
                     this.buttonAprove = true;
                     this.buttonRefuse = false;
                   }
-                  this.documents = next;
+                  const concatenatedArray = this.documents.concat(next);
+                  this.documents = concatenatedArray;
                 },
               },
               class: 'modal-lg modal-dialog-centered',
@@ -1752,8 +1757,6 @@ export class JuridicalRulingComponent
           vdepend = CAT_DEPARTAMENTOS.depend;
           vdep_deleg = CAT_DEPARTAMENTOS.depDelegation;
 
-          console.log(CAT_DEPARTAMENTOS);
-
           if (vnivel == 4) {
             vniveld4 = SIGLA;
             vniveld5 = vCVE_CARGO;
@@ -1762,7 +1765,7 @@ export class JuridicalRulingComponent
             vniveld3 = SIGLA;
           }
 
-          console.log((vniveld4 = SIGLA), (vniveld5 = vCVE_CARGO));
+          // console.log((vniveld4 = SIGLA), (vniveld5 = vCVE_CARGO));
 
           // SIGUIENTE CONSULTA
           let obj2 = {
@@ -1793,8 +1796,6 @@ export class JuridicalRulingComponent
           vnivelp = CAT_DEPARTAMENTOS2.nivel;
           vdependp = CAT_DEPARTAMENTOS2.depend;
           vdep_delegP = CAT_DEPARTAMENTOS2.dep_delegacion;
-
-          console.log(CAT_DEPARTAMENTOS2);
 
           await this.PUP_DICTA_LOG(
             LST_ID + `ANTES DE SELECT DSAREA: *${user.department}`
@@ -1965,31 +1966,77 @@ export class JuridicalRulingComponent
   async createDocumentDictum(document: any) {
     const token = this.authService.decodeToken();
     for (let i = 0; i < this.goodsValid.length; i++) {
-      let obj: any = {
-        expedientNumber: this.legalForm.get('noExpediente').value,
-        stateNumber: this.goodsValid[i].id,
-        key: document.cveDocument,
-        typeDictum: this.legalForm.get('tipoDictaminacion').value,
-        dateReceipt: document.date,
-        userReceipt: '',
-        insertionDate: document.dae,
-        userInsertion: token.username.toUpperCase(),
-        numRegister: null,
-        officialNumber: this.dictantion.id,
-        notificationDate: null,
-        secureKey: null,
-      };
+      if (this.goodsValid[i].goodClassNumber == document.numberClassifyGood) {
+        const today = new Date();
+        const month = String(today.getMonth() + 1).padStart(2, '0');
+        const day = String(today.getDate()).padStart(2, '0');
+        const year = today.getFullYear();
+        const SYSDATE5 = `${year}-${month}-${day}`;
 
-      this.documentsMServ.create(obj).subscribe({
-        next: resp => {
-          console.log('CREADO DOC', resp);
-        },
-        error: error => {
-          console.log('ERROR DOC', error.error);
-        },
-      });
+        // Definir el string original
+        let cadena = document.date;
+
+        // Utilizar el método split() para separar la cadena en un array de elementos
+        let arrayCadena = cadena.split('/');
+
+        // Obtener el segundo elemento del array, que es "06"
+        let elemento2 = `${arrayCadena[2]}/${arrayCadena[1]}/${arrayCadena[0]}`;
+
+        let obj: any = {
+          expedientNumber: this.legalForm.get('noExpediente').value,
+          stateNumber: this.goodsValid[i].id,
+          key: document.cveDocument,
+          typeDictum: this.legalForm.get('tipoDictaminacion').value,
+          dateReceipt: elemento2,
+          userReceipt: '',
+          insertionDate: new Date(SYSDATE5),
+          userInsertion: token.username.toUpperCase(),
+          numRegister: null,
+          officialNumber: this.dictantion.id,
+          notificationDate: null,
+          secureKey: null,
+        };
+        console.log('OBJB', obj);
+        this.documentsMServ.create(obj).subscribe({
+          next: resp => {
+            console.log('CREADO DOC', resp);
+          },
+          error: error => {
+            console.log('ERROR DOC', error.error);
+          },
+        });
+      }
     }
   }
+
+  // async createDocumentDictum(document: any) {
+  //   const token = this.authService.decodeToken();
+  //   for (let i = 0; i < this.goodsValid.length; i++) {
+  //     let obj: any = {
+  //       expedientNumber: this.legalForm.get('noExpediente').value,
+  //       stateNumber: this.goodsValid[i].id,
+  //       key: document.cveDocument,
+  //       typeDictum: this.legalForm.get('tipoDictaminacion').value,
+  //       dateReceipt: document.date,
+  //       userReceipt: '',
+  //       insertionDate: document.dae,
+  //       userInsertion: token.username.toUpperCase(),
+  //       numRegister: null,
+  //       officialNumber: this.dictantion.id,
+  //       notificationDate: null,
+  //       secureKey: null,
+  //     };
+
+  //     this.documentsMServ.create(obj).subscribe({
+  //       next: resp => {
+  //         console.log('CREADO DOC', resp);
+  //       },
+  //       error: error => {
+  //         console.log('ERROR DOC', error.error);
+  //       },
+  //     });
+  //   }
+  // }
 
   // async generateCveOficio(noDictamen: string) {
   //   let token = this.authService.decodeToken();
@@ -2045,6 +2092,7 @@ export class JuridicalRulingComponent
     this.filter2
       .getValue()
       .addFilter('ofDictNumber', this.dictNumber, SearchFilter.EQ);
+
     // params.addFilter('')
     return new Promise((resolve, reject) => {
       this.DictationXGood1Service.getAll(
@@ -2559,7 +2607,7 @@ export class JuridicalRulingComponent
             () => {
               //Limpiar todo
               this.clearSearch();
-              this.getExp();
+              this.getExp(v_no_expediente);
             }
           );
         }
@@ -2614,7 +2662,7 @@ export class JuridicalRulingComponent
           Swal.fire('Dictamen ha eliminado correctamente', '', 'success').then(
             () => {
               this.clearSearch();
-              this.getExp();
+              this.getExp(v_no_expediente);
             }
           );
         }
@@ -2622,22 +2670,21 @@ export class JuridicalRulingComponent
     }
   }
 
-  getExp() {
+  getExp(exp: number) {
     const { NO_EXP } = this.activatedRoute.snapshot.queryParams;
-
-    console.log(this.activatedRoute.snapshot.queryParams);
-
-    this.expedientServices.getById(NO_EXP).subscribe({
+    this.expedientServices.getById(exp ?? NO_EXP).subscribe({
       next: response => {
         // ..Datos del expediente
         this.isDisabledExp = true;
-        this.legalForm.get('noExpediente').patchValue(NO_EXP);
+        this.legalForm.get('noExpediente').patchValue(exp ?? NO_EXP);
         this.legalForm.get('criminalCase').setValue(response.criminalCase);
         this.legalForm
           .get('preliminaryInquiry')
           .setValue(response.preliminaryInquiry);
       },
     });
+
+    this.onLoadGoodList();
   }
 
   async getUpdateAndDeleteHisto(goodId: number, estatus: string) {

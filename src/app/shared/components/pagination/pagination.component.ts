@@ -29,7 +29,15 @@ export class PaginationComponent extends BasePage implements OnInit {
   constructor() {
     super();
   }
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    /*  this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(params => {
+      this.limit.setValue(params.limit || params.page);
+    });
+
+    this.filterParams.pipe(takeUntil(this.$unSubscribe)).subscribe(params => {
+      this.limit.setValue(params.limit || params.page);
+    }); */
+  }
   pageChanged(event: PageChangedEvent) {
     const params = this.params.getValue();
     this.emitEvent({ ...params, page: event.page });

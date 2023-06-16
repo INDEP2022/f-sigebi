@@ -35,6 +35,10 @@ export class DocumentsService extends HttpService {
     const route = `${DocumentsEndpoints.Documents}/${id}`;
     return this.get<IDocuments>(route);
   }
+  getCount1(id: string | number) {
+    const route = `${DocumentsEndpoints.Count1}/${id}`;
+    return this.get<any>(route);
+  }
 
   getByFolio(folio: string | number) {
     const route = `${DocumentsEndpoints.Documents}/folio/${folio}`;
@@ -186,4 +190,13 @@ export class DocumentsService extends HttpService {
   //   const route = `clarification-documents-impro/${id}`;
   //   return this.post<Inappropriateness>(route, data);
   // }
+
+  getDocumentsByGood2(
+    id: string | number,
+    typeDict: any,
+    params?: ListParams | string
+  ) {
+    const route = `${DocumentsEndpoints.DocumentsDictuXStateM}?filter.stateNumber=${id}&filter.typeDictum=${typeDict}`;
+    return this.get(route, params);
+  }
 }

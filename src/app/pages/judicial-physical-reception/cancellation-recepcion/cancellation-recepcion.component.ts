@@ -200,7 +200,6 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
 
   //NAVEGACION DE ACTAS
   paramsActNavigate = new BehaviorSubject<ListParams>(new ListParams());
-
   totalItemsNavigate: number = 0;
   newLimitparamsActNavigate = new FormControl(1);
 

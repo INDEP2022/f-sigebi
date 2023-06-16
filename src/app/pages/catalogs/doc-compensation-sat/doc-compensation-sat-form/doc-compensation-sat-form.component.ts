@@ -20,7 +20,7 @@ export class DocCompensationSatFormComponent
   implements OnInit
 {
   docCompesationSatForm: ModelForm<IDocCompesationSat>;
-  title: string = 'Tipo de Almacenes';
+  title: string = 'DOCUMENTOS RESARCIMIENTO SAT';
   edit: boolean = false;
   docCompesationSat: IDocCompesationSat;
   constructor(
