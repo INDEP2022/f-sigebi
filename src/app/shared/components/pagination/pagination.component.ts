@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { PageChangedEvent } from 'ngx-bootstrap/pagination';
-import { BehaviorSubject, takeUntil } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import {
   FilterParams,
   ListParams,
@@ -22,22 +22,14 @@ export class PaginationComponent extends BasePage implements OnInit {
   );
   @Input() totalItems: number = 0;
   @Input() maxSize: number = 5;
-  @Input() pageSizeOptions: number[] = [10, 25, 50, 100];
+  @Input() pageSizeOptions: number[] = [10, 20, 50, 100];
   @Input() limit: FormControl = new FormControl(10);
   @Input() paginatorPageSize: boolean = true;
   @Input() paginatorRangeLabel: boolean = true;
   constructor() {
     super();
   }
-  ngOnInit(): void {
-    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(params => {
-      this.limit.setValue(params.limit || params.page);
-    });
-
-    this.filterParams.pipe(takeUntil(this.$unSubscribe)).subscribe(params => {
-      this.limit.setValue(params.limit || params.page);
-    });
-  }
+  ngOnInit(): void {}
   pageChanged(event: PageChangedEvent) {
     const params = this.params.getValue();
     this.emitEvent({ ...params, page: event.page });

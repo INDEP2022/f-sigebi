@@ -16,4 +16,11 @@ export class MenuDynamicComponent implements OnInit {
   hasItems(item: IMenuItem) {
     return item.subItems !== undefined ? item.subItems.length > 0 : false;
   }
+
+  updateStorage(item: IMenuItem) {
+    console.log(item);
+    if (item.label === 'Características del Bien') {
+      localStorage.removeItem('selectedBad');
+    }
+  }
 }
