@@ -1175,12 +1175,75 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     }
   }
 
+  assingMinuteReprogramation() {
+    if (this.selectGood.length > 0) {
+      this.alertQuestion(
+        'warning',
+        'Confirmación',
+        '¿Seguro que quiere asignar los bienes  a una acta (cambio irreversible)?',
+        'Aceptar'
+      ).then(async question => {
+        if (question.isConfirmed) {
+          const updateGood = await this.updateGoodProgramming();
+        }
+      });
+    } else {
+      this.onLoadToast(
+        'warning',
+        'Acción invalida',
+        'Se necesita tener un bien seleccionado'
+      );
+    }
+  }
+
+  updateGoodProgramming() {
+    this.receipts.getElements().then(item => {
+      console.log('acta', item[0].actaId);
+      console.log('acta');
+      const actId = item[0].actaId;
+      this.selectGood.map(item => {
+        const formData: Object = {
+          id: item.id,
+          goodId: item.goodId,
+          goodStatus: 'EN_PROGRAMACION',
+          programmationStatus: 'EN_PROGRAMACION',
+          executionStatus: 'EN_PROGRAMACION',
+        };
+
+        this.goodService.updateByBody(formData).subscribe({
+          next: response => {
+            console.log('response', response);
+            const formData: Object = {
+              programmingId: this.programming.id,
+              goodId: item.id,
+              status: 'EN_PROGRAMACION',
+              actaId: actId,
+            };
+            this.programmingGoodService
+              .updateGoodProgramming(formData)
+              .subscribe({
+                next: response => {
+                  console.log('updeado', response);
+                  this.goodsCancelation.clear();
+                  this.getInfoGoodsProgramming();
+                },
+                error: error => {},
+              });
+          },
+          error: error => {
+            console.log('update good error', error);
+          },
+        });
+      });
+    });
+  }
+
   assingMinuteWarehouse() {
     if (this.selectGood.length > 0) {
       this.alertQuestion(
         'warning',
+        'Confirmación',
         '¿Seguro que quiere asignar los bienes  a una acta (cambio irreversible)?',
-        '',
         'Aceptar'
       ).then(question => {
         if (question.isConfirmed) {
