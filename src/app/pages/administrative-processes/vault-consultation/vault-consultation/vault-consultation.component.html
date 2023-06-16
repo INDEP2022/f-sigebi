@@ -19,13 +19,19 @@
         </div>
       </div>
     </div>
-    <br /><br />
+    <div class="table-padding"></div>
+    <div class="row w-100">
+      <div class="col-sm-12 col-12 col-md-12 p-2 alert alert-info">
+        <span> SELECCIONA PARA VISUALIZAR LOS BIENES EN LA BÓVEDA</span>
+      </div>
+    </div>
     <ng-scrollbar track="horizontal" [autoHeightDisabled]="false">
       <div [class]="loading ? 'table-loading' : ''">
         <ng2-smart-table
-          [attr.class]="'table-bordered'"
+          class="table-responsive"
+          [attr.class]="'table-responsive table-bordered'"
           [settings]="settings"
-          [source]="vaults"
+          [source]="dataFactGen"
           (userRowSelect)="select($event)">
         </ng2-smart-table>
         <app-pagination [params]="params" [totalItems]="totalItems">
