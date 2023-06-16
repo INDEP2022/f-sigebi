@@ -35,6 +35,7 @@ import {
 } from 'src/app/common/repository/interfaces/list-params';
 import { _Params } from 'src/app/common/services/http.service';
 import { IUserRowSelectEvent } from 'src/app/core/interfaces/ng2-smart-table.interface';
+import { TokenInfoModel } from 'src/app/core/models/authentication/token-info.model';
 import { IDepartment } from 'src/app/core/models/catalogs/department.model';
 import { ILegend } from 'src/app/core/models/catalogs/legend.model';
 import { IDocuments } from 'src/app/core/models/ms-documents/documents';
@@ -182,7 +183,7 @@ export class RelatedDocumentsComponent
   // userCopies2 = new DefaultSelect();
   dataGoodTable: LocalDataSource = new LocalDataSource();
   m_job_management: IMJobManagement = null;
-  authUser: any = null;
+  authUser: TokenInfoModel = null;
   isPGR: boolean = false;
 
   pantalla = (option: boolean) =>
@@ -358,6 +359,8 @@ export class RelatedDocumentsComponent
     /**@description num_clave_armada */
     armedKeyNumber: new FormControl(''),
     tipoTexto: new FormControl(''),
+    /** @description  no_expediente*/
+    proceedingsNumber: new FormControl(''),
   });
 
   formVariables = new FormGroup({
@@ -409,7 +412,7 @@ export class RelatedDocumentsComponent
     protected departmentService: DepartamentService,
     private segAccessAreasService: SegAcessXAreasService,
     private officeManagementSerivice: OfficeManagementService,
-    private goodHistoryService: HistoryGoodService, // protected abstract svLegalOpinionsOfficeService: LegalOpinionsOfficeService;
+    protected goodHistoryService: HistoryGoodService, // protected abstract svLegalOpinionsOfficeService: LegalOpinionsOfficeService;
     protected documentsService: DocumentsService,
     protected usersService: UsersService, // protected goodProcessService: GoodprocessService,
     private expedientService: ExpedientService,
@@ -420,6 +423,9 @@ export class RelatedDocumentsComponent
     super();
     // console.log(authService.decodeToken());
     this.authUser = authService.decodeToken();
+    this.formJobManagement.controls['insertUser'].setValue(
+      this.authUser.preferred_username
+    );
     console.log('USER DATA', this.authUser);
     this.settings3 = {
       ...this.settings,
@@ -2269,7 +2275,7 @@ export class RelatedDocumentsComponent
         proceedingsNumber, //no_expediente
         insertUser, //usuario insert
         insertDate, //fecha inserto
-      } = this.m_job_management;
+      } = this.formJobManagement.value;
 
       if (managementNumber == null) {
         this.onLoadToast('info', 'No se tiene oficio', '');
@@ -2295,7 +2301,7 @@ export class RelatedDocumentsComponent
       }
       //username
       if (
-        insertUser.toLowerCase() !==
+        insertUser?.toLowerCase() !==
         this.authUser.preferred_username.toLowerCase()
       ) {
         const ATJR: any = await this.userHavePermission();
@@ -2373,6 +2379,10 @@ export class RelatedDocumentsComponent
 
     Swal.fire('Borrado', '', 'success');
     this.refreshTabla();
+    this.formJobManagement.reset();
+    this.dataTableDocuments = [];
+    this.dataTableGoodsJobManagement = [];
+    this.copyOficio = [];
   }
 
   changeCopiesType(event: any, ccp: number) {
@@ -4071,7 +4081,10 @@ export class RelatedDocumentsComponent
           this.isDisabledBtnDocs = true;
         }
       }
-      if (this.formJobManagement.value.sender === this.authUser.user) {
+      if (
+        this.formJobManagement.value.sender?.name ===
+        this.authUser.preferred_username
+      ) {
         this.blockSend = false;
       }
       const params = new FilterParams();
