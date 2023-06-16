@@ -14,16 +14,6 @@ export const CLARIFICATION_COLUMNS = {
     type: 'number',
     sort: false,
   },
-  userCreation: {
-    title: 'Creado por',
-    type: 'string',
-    sort: false,
-  },
-  userModification: {
-    title: 'Modificado por',
-    type: 'string',
-    sort: false,
-  },
   version: {
     title: 'Versión',
     type: 'number',

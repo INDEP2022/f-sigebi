@@ -8,6 +8,15 @@
   // }
 }
 
+// .buttons {
+//   @media screen and (max-width: 576px) {
+//     button {
+//       width: 100%;
+//       margin-bottom: 10px;
+//     }
+//   }
+// }
+
 :host::ng-deep .paginator app-pagination {
   .pagination {
     display: flex;
