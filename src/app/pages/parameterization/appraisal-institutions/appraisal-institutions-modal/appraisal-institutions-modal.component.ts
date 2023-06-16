@@ -80,7 +80,8 @@ export class AppraisalInstitutionsModalComponent
       ],
       observations: [
         null,
-        [Validators.maxLength(60), Validators.pattern(STRING_PATTERN)],
+        Validators.maxLength(60),
+        Validators.pattern(STRING_PATTERN),
       ],
       noRegistro: [null],
     });

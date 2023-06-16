@@ -45,6 +45,7 @@ export class UsersEventTypesComponent extends BasePage implements OnInit {
       event: [null, [Validators.required]],
     });
   }
+
   getValuesAll(params?: ListParams, id?: number) {
     this.loading = true;
     this.userEventTypesService.getAll(params).subscribe({
