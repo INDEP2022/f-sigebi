@@ -188,7 +188,6 @@ export class CityDetailComponent extends BasePage implements OnInit {
         value: newCity.noSubDelegation.id,
       },
     });
-    console.log('ENVIADO' + newCity);
     this.edit ? this.update(newCity) : this.create(newCity);
   }
 
