@@ -8,33 +8,33 @@ import {
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IGood } from 'src/app/core/models/ms-good/good';
-import { SafeService } from 'src/app/core/services/catalogs/safe.service';
+import { WarehouseService } from 'src/app/core/services/catalogs/warehouse.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { BasePage } from 'src/app/core/shared';
+
 @Component({
-  selector: 'app-assigned-vaults',
-  templateUrl: './assigned-vaults.component.html',
+  selector: 'app-warehouses-assigned',
+  templateUrl: './warehouses-assigned.component.html',
   styles: [],
 })
-export class AssignedVaultsComponent
+export class WarehousesAssignedComponent
   extends BasePage
   implements OnInit, OnChanges
 {
   list: any[] = [];
-  good: IGood;
   @Input() goodId: number;
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
-
+  good: IGood;
   constructor(
     private readonly goodServices: GoodService,
-    private readonly vaultService: SafeService
+    private readonly warehouseService: WarehouseService
   ) {
     super();
     this.settings.actions = false;
     this.settings.columns = {
       id: {
-        title: 'Bóveda',
+        title: 'Almacen',
         width: '20%',
         sort: false,
       },
@@ -43,8 +43,13 @@ export class AssignedVaultsComponent
         width: '70%',
         sort: false,
       },
-      drawerNumber: {
-        title: 'Gaveta',
+      lot: {
+        title: 'Lote',
+        width: '70%',
+        sort: false,
+      },
+      rack: {
+        title: 'Rack',
         width: '70%',
         sort: false,
       },
@@ -63,29 +68,29 @@ export class AssignedVaultsComponent
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes) {
-      this.searchGoodMenage(this.goodId);
+      this.search(this.goodId);
     }
   }
 
   ngOnInit(): void {
     this.params
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.searchGoodMenage(this.goodId));
+      .subscribe(() => this.search(this.goodId));
   }
 
-  searchGoodMenage(idGood: number) {
+  search(idGood: number) {
     this.loading = true;
     this.goodServices.getById(idGood).subscribe({
       next: (response: any) => {
         this.good = response.data[0];
-        this.vaultService.getById(this.good.vaultNumber).subscribe({
+        this.warehouseService.getById(this.good.storeNumber).subscribe({
           next: (respo: any) => {
-            console.log(respo);
             this.list = response.data.map((good: IGood) => {
               return {
-                id: good.vaultNumber,
+                id: good.storeNumber,
                 address: respo.ubication,
-                drawerNumber: good.drawerNumber,
+                lot: good.lotNumber,
+                rack: good.rackNumber,
                 entryDate: good.dateIn,
                 outDate: good.dateOut,
               };
@@ -98,7 +103,6 @@ export class AssignedVaultsComponent
       },
       error: err => {
         this.loading = false;
-        console.log(err);
       },
     });
   }
