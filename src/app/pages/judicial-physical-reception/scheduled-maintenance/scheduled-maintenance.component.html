@@ -6,16 +6,20 @@
     <form class="form-material" [formGroup]="form">
       <div class="row">
         <div class="col-md-6">
-          <!-- <form-field [control]="form.get('tipoEvento')" label="Tipo de Evento">
-            <select class="form-control" formControlName="tipoEvento">
-              <option value="TODOS">TODOS</option>
-              <option value="EVENTREC">RECEPCIÓN FÍSICA</option>
-            </select>
-          </form-field> -->
+          <form-field
+            [control]="form.get('tipoEvento')"
+            label="Tipos de evento">
+            <ng-select class="form-control" formControlName="tipoEvento">
+              <ng-option [value]="null">Seleccione un tipo de evento</ng-option>
+              <ng-option
+                *ngFor="let event of typeEvents1"
+                [value]="event.tipo_acta">
+                {{ event.descripcion }}
+              </ng-option>
+            </ng-select>
+          </form-field>
 
-          <!-- <app-proceeding-types-shared
-            [form]="form"></app-proceeding-types-shared> -->
-          <ng-custom-select-loading
+          <!-- <ng-custom-select-loading
             [form]="form"
             formControlName="tipoEvento"
             label="Tipo de Evento"
@@ -24,9 +28,7 @@
             [searchable]="false"
             loadingText="Cargando tipos de evento..."
             [path]="path">
-          </ng-custom-select-loading>
-          <!-- <app-select-form [form]="form" formField="tipoEvento" label="Tipo de Evento" [list]="tiposEvento"
-            [(params)]="paramsTypes" [haveTodos]="false"></app-select-form> -->
+          </ng-custom-select-loading> -->
         </div>
         <div class="col-md-4 rangeDate">
           <form-field [control]="form.get('rangeDate')" label="Rango de Fechas">
@@ -175,8 +177,8 @@
             type="submit"
             size="small"
             (click)="getData()">
-            <i class="fa fa-search"></i>
             Buscar
+            <i class="bx bx-search text-light float-icon"></i>
           </button>
         </div>
         <div class="col-md-4" [class]="loading ? 'disabled' : ''">

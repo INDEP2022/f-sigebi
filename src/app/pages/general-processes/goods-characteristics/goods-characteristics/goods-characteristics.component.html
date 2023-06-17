@@ -33,7 +33,7 @@
             <tab heading="Datos de B&uacute;squeda">
               <div class="row">
                 <div class="col-md-6">
-                  <ng-template #typeLabel let-item="item">
+                  <!-- <ng-template #typeLabel let-item="item">
                     {{ item.id }} - {{ item.nameGoodType }}
                   </ng-template>
                   <ng-template #typeOption let-item="item">
@@ -108,8 +108,8 @@
                     <div [title]="item.id + '-' + item.description">
                       {{ item.id }} - {{ item.description }}
                     </div>
-                  </ng-template>
-                  <!-- <app-goods-types-shared
+                  </ng-template> -->
+                  <app-goods-types-shared
                     [form]="form"
                     typeField="type"
                     subtypeField="subtype"
@@ -117,7 +117,7 @@
                     sssubtypeField="sssubtype"
                     (goodSssubtypeChange)="
                       getGoods($event)
-                    "></app-goods-types-shared> -->
+                    "></app-goods-types-shared>
                 </div>
                 <div class="col-md-6">
                   <div class="row pt-3">
@@ -158,22 +158,26 @@
                         formControlName="status" />
                     </form-field>
                   </div>
-                  <!-- <div class="row pt-3" style="margin: auto">
-                    <button
-                      [disabled]="formLoading"
-                      class="btn btn-primary btn-sm active"
-                      type="button"
-                      (click)="clearFilter()">
-                      Limpiar Filtros
-                    </button>
-                    <button
-                      [disabled]="formLoading"
-                      class="btn btn-primary btn-sm active"
-                      type="button"
-                      (click)="searchGood()">
-                      Buscar
-                    </button>
-                  </div> -->
+                  <div class="row pt-3" style="margin: auto">
+                    <div class="col-6 p-0">
+                      <button
+                        [disabled]="formLoading"
+                        class="btn btn-danger btn-sm active"
+                        type="button"
+                        (click)="clearFilter()">
+                        Limpiar
+                      </button>
+                    </div>
+                    <div class="col-6 p-0" style="text-align: right">
+                      <button
+                        [disabled]="formLoading"
+                        class="btn btn-primary btn-sm active"
+                        type="button"
+                        (click)="searchGood()">
+                        <i class="fa fa-search"></i>
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </div>
             </tab>
@@ -188,9 +192,10 @@
                 <button
                   *ngIf="!disabledBienes"
                   type="button"
-                  class="btn btn-sm btn-success active"
+                  class="btn btn-sm btn-primary active"
                   (click)="save()">
                   Guardar
+                  <i class="bx bx-save text-light float-icon"></i>
                 </button>
                 <h5
                   class="text-danger"
@@ -394,7 +399,18 @@
                 </div>
               </div>
               <div class="row" *ngIf="loading === false">
-                <app-good-table-vals></app-good-table-vals>
+                <app-good-table-vals
+                  *ngIf="good"
+                  [goodChange]="goodChange"
+                  [disabled]="disabledBienes"
+                  [good]="good"
+                  [clasification]="
+                    numberClassification ? numberClassification.value : null
+                  "
+                  [avaluo]="goodAppraisal2 ? goodAppraisal2.value : null"
+                  [di_numerario_conciliado]="
+                    di_numerario_conciliado
+                  "></app-good-table-vals>
               </div>
             </tab>
           </tabset>

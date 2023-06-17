@@ -41,6 +41,14 @@ export class NotificationService extends HttpService {
       `${this.route.Notification}?${params}`
     );
   }
+  getAllListParams(
+    params: ListParams
+  ): Observable<IListResponse<INotification>> {
+    return this.get<IListResponse<INotification>>(
+      this.route.Notification,
+      params
+    );
+  }
 
   getAllFilterExpedient(params: any) {
     return this.get<IListResponse<any>>(`${this.route.Notification}`, params);
