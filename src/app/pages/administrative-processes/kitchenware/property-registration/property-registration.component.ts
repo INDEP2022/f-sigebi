@@ -67,7 +67,7 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
         sort: false,
       },
       description: {
-        title: 'Descripcion',
+        title: 'Descripción',
         width: '70%',
         sort: false,
       },
@@ -83,7 +83,6 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.searchGoodMenage(this.idGoodValue));
-    console.log(this.idGoodValue);
   }
 
   private buildForm() {
@@ -115,7 +114,7 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
       },
       error: err => {
         console.log(err);
-        this.onLoadToast('error', 'ERROR', 'No existe el Registro');
+        this.onLoadToast('error', 'ERROR', 'No existe el registro');
       },
     });
   }
@@ -129,12 +128,10 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
 
   searchGoods(idExpedient: number | string) {
     this.goods = new DefaultSelect([], 0);
-    console.log(this.goods);
     this.goodServices
       .getByExpedient(idExpedient, this.params.getValue())
       .subscribe({
         next: response => {
-          console.log(this.goodSelect);
           this.goodSelect.enable();
           this.goods = new DefaultSelect(response.data, response.count);
         },
@@ -159,7 +156,7 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
       },
       error: err => {
         this.loading = false;
-        this.onLoadToast('info', 'Información', err.error.message);
+        // this.onLoadToast('info', 'Información', err.error.message);
       },
     });
   }
@@ -194,7 +191,7 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(good.id);
