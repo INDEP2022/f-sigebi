@@ -12,9 +12,10 @@
             [control]="form.get('idConversion')"
             label="Id Conversión">
             <input
-              type="text"
+              type="number"
               class="form-control"
-              formControlName="idConversion" />
+              formControlName="idConversion"
+              [max-length]="10" />
           </form-field>
         </div>
         <div class="col-md-3 col-sm-12 col-xs-12">
@@ -22,10 +23,11 @@
             [control]="form.get('noBien')"
             label="No Bien a Convertir">
             <input
-              type="text"
+              type="number"
               class="form-control"
               formControlName="noBien"
-              (change)="onChangeGood()" />
+              (change)="onChangeGood()"
+              [max-length]="10" />
           </form-field>
         </div>
         <div class="col-md-3 col-sm-12 col-xs-12">
@@ -53,9 +55,10 @@
             [control]="form.get('noExpediente')"
             label="No Expediente">
             <input
-              type="text"
+              type="number"
               class="form-control"
-              formControlName="noExpediente" />
+              formControlName="noExpediente"
+              [max-length]="10" />
           </form-field>
         </div>
         <div class="col-md-6 col-sm-12 col-xs-12">
@@ -65,7 +68,8 @@
             <input
               type="text"
               class="form-control"
-              formControlName="actaConversion" />
+              formControlName="actaConversion"
+              [max-length]="200" />
           </form-field>
         </div>
         <div class="col-md-3 col-sm-12 col-xs-12">
@@ -93,7 +97,8 @@
                 <input
                   type="text"
                   class="form-control"
-                  formControlName="desStatus" />
+                  formControlName="desStatus"
+                  [max-length]="100" />
               </form-field>
             </div>
             <div class="col-md-4 col-sm-12 col-xs-12">
@@ -101,7 +106,8 @@
                 <input
                   type="text"
                   class="form-control"
-                  formControlName="actaER" />
+                  formControlName="actaER"
+                  [max-length]="200" />
               </form-field>
             </div>
             <div class="col-md-3 col-sm-12 col-xs-12">
@@ -124,7 +130,8 @@
                 <textarea
                   type="text"
                   class="form-control"
-                  formControlName="description"></textarea>
+                  formControlName="description"
+                  [max-length]="1250"></textarea>
               </form-field>
             </div>
           </div>
