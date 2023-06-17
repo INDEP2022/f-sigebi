@@ -48,7 +48,7 @@ export class ComerTpEventosService extends HttpService {
   }
 
   updateTevents(id: string | number, tpenalty: IComerTpEvent) {
-    const route = `${this.endpoint}/${id}`;
+    const route = `${this.endpointTevents}/${id}`;
     return this.put(route, tpenalty);
   }
 
