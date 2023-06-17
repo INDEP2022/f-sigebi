@@ -15,6 +15,7 @@
             <ng2-smart-table
               [attr.class]="'table-bordered'"
               [settings]="settings"
+              (userRowSelect)="select($event)"
               [source]="dataFactGen">
             </ng2-smart-table>
           </div>
