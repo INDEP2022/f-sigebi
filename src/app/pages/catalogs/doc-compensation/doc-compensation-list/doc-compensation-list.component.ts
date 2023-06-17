@@ -108,14 +108,23 @@ export class DocCompensationListComponent extends BasePage implements OnInit {
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(docCompensation.id);
-        Swal.fire('Borrado', '', 'success');
       }
     });
   }
 
   delete(id: number) {
     this.docCompensationService.removeCatalogDocCompensation(id).subscribe({
-      next: () => this.getDocCompensation(),
+      next: response => {
+        this.alert('success', 'Documento Resarcimiento', 'Borrado'),
+          this.getDocCompensation();
+      },
+      error: err => {
+        this.alert(
+          'warning',
+          'Documento Resarcimiento',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      },
     });
   }
 }

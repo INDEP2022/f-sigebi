@@ -47,6 +47,7 @@ export class RAsuntDicService
   }
 
   remove(id: string | number): Observable<Object> {
+    console.log(this.route, id);
     return this.rAsuntDicRepository.remove(this.route, id);
   }
 

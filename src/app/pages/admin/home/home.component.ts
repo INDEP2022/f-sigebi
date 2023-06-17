@@ -19,8 +19,14 @@ import { JSON_TO_CSV } from './constants/json-to-csv';
 import { ExampleModalComponent } from './example-modal.component';
 import { HomeService } from './home.service';
 /*Redux NgRX Global Vars Service*/
+import { BehaviorSubject } from 'rxjs';
+import {
+  FilterParams,
+  ListParams,
+} from 'src/app/common/repository/interfaces/list-params';
 import { IGlobalVars } from '../../../shared/global-vars/models/IGlobalVars.model';
 import { GlobalVarsService } from '../../../shared/global-vars/services/global-vars.service';
+import { BASIC_BUTTONS } from './utils/basic-buttons';
 
 interface IExcelToJson {
   id: number;
@@ -63,6 +69,15 @@ export class HomeComponent extends BasePage implements OnInit {
   parentModal: BsModalRef;
   /*Redux NgRX Global Vars Model*/
   globalVars: IGlobalVars;
+  buttons = BASIC_BUTTONS;
+
+  // ----------- PAGINACION
+  /** @deprecated procurar usar filterparams  */
+  params = new BehaviorSubject(new ListParams());
+
+  filterParams = new BehaviorSubject(new FilterParams());
+
+  totalItems = 0;
 
   constructor(
     private modalService: BsModalService,
@@ -71,7 +86,8 @@ export class HomeComponent extends BasePage implements OnInit {
     private excelService: ExcelService,
     private store: Store<AppState>,
     private homeService: HomeService,
-    private globalVarsService: GlobalVarsService
+    private globalVarsService: GlobalVarsService,
+    private sanitized: DomSanitizer
   ) {
     super();
     this.settings = {
@@ -79,6 +95,10 @@ export class HomeComponent extends BasePage implements OnInit {
       actions: false,
       columns: EXCEL_TO_JSON_COLUMNS,
     };
+  }
+
+  getElement(html: string) {
+    return this.sanitized.bypassSecurityTrustHtml(html);
   }
 
   testFiles(uploadEvent: IUploadEvent) {
@@ -182,6 +202,24 @@ export class HomeComponent extends BasePage implements OnInit {
     this.user = this.userExample.getRawValue();
   }
 
+  deleteAlert() {
+    this.alertQuestion('warning', 'Eliminar', '¿Desea eliminar este registro?');
+  }
+
+  questionAlert() {
+    this.alertQuestion('question', '¿Quiere continuar con el proceso?', '');
+  }
+  errorAlert() {
+    this.alert('error', 'Error', 'Descripción del error');
+  }
+
+  warningAlert() {
+    this.alert('warning', 'No se encontraron bienes', '');
+  }
+
+  successAlert() {
+    this.alert('success', 'Registro guardado', '');
+  }
   openModal() {
     let config: ModalOptions = {
       initialState: {

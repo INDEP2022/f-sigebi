@@ -7,9 +7,8 @@ import { GoodsTypesSharedComponent } from 'src/app/@standalone/shared-forms/good
 import { SharedModule } from 'src/app/shared/shared.module';
 import { GoodsFilterSharedComponent } from '../../../@standalone/shared-forms/goods-shared/goods-filter-shared';
 import { GoodsCharacteristicsRoutingModule } from './goods-characteristics-routing.module';
-import { GoodCellValueComponent } from './goods-characteristics/good-table-vals/good-cell-value/good-cell-value.component';
-import { GoodCharacteristicModalComponent } from './goods-characteristics/good-table-vals/good-characteristic-modal/good-characteristic-modal.component';
-import { GoodSituationsModalComponent } from './goods-characteristics/good-table-vals/good-situations-modal/good-situations-modal.component';
+import { GoodCharacteristicCellValueComponent } from './goods-characteristics/good-table-vals/good-cell-value/good-cell-value.component';
+import { GoodCharacteristicsTable } from './goods-characteristics/good-table-vals/good-characteristics-table/good-characteristics-table.component';
 import { GoodTableDetailButtonComponent } from './goods-characteristics/good-table-vals/good-table-detail-button/good-table-detail-button.component';
 import { GoodValueEditWebCarCellComponent } from './goods-characteristics/good-table-vals/good-table-detail-button/good-value-edit-web-car-cell/good-value-edit-web-car-cell.component';
 import { GoodValueEditWebCar } from './goods-characteristics/good-table-vals/good-table-detail-button/good-value-edit-web-car/good-value-edit-web-car.component';
@@ -21,11 +20,10 @@ import { GoodsCharacteristicsComponent } from './goods-characteristics/goods-cha
     GoodsCharacteristicsComponent,
     GoodTableValsComponent,
     GoodTableDetailButtonComponent,
-    GoodCellValueComponent,
-    GoodCharacteristicModalComponent,
-    GoodSituationsModalComponent,
     GoodValueEditWebCar,
     GoodValueEditWebCarCellComponent,
+    GoodCharacteristicCellValueComponent,
+    GoodCharacteristicsTable,
   ],
   imports: [
     CommonModule,
@@ -36,5 +34,6 @@ import { GoodsCharacteristicsComponent } from './goods-characteristics/goods-cha
     DelegationSharedComponent,
     GoodsFilterSharedComponent,
   ],
+  exports: [GoodCharacteristicsTable],
 })
 export class GoodsCharacteristicsModule {}
