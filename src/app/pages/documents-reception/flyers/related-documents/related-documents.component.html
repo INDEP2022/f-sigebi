@@ -41,6 +41,14 @@
         (click)="_saveScreenManagement()">
         <i aria-hidden="true" class="fa fa-save"></i>
       </button>
+      <!-- <button
+        type="button"
+        tooltip="TEST"
+        containerClass="tooltip-style"
+        class="btn btn-primary btn-sm active"
+        (click)="testCambiaStatus()">
+        <i aria-hidden="true" class="fa fa-check"></i>
+      </button> -->
     </div>
   </div>
   <!-- </div> -->
@@ -209,6 +217,10 @@
           <div class="col-md-1 text-right">
             <button
               *ngIf="pantallaOption"
+              [disabled]="
+                blockSend ||
+                formJobManagement.get('statusOf')?.value == 'ENVIADO'
+              "
               type="button"
               tooltip="Cambio"
               containerClass="tooltip-style"
