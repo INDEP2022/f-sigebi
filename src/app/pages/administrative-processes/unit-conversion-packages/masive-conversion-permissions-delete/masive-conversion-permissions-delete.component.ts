@@ -14,6 +14,7 @@ export class MasiveConversionPermissionsDeleteComponent
   extends BasePage
   implements OnInit
 {
+  data: any;
   data1: any[] = [];
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
@@ -26,7 +27,10 @@ export class MasiveConversionPermissionsDeleteComponent
     };
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    console.log(this.data);
+  }
+
   close() {
     this.modalRef.hide();
   }
