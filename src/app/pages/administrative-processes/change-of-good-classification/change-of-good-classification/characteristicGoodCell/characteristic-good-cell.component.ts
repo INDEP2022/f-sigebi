@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { CharacteristicEditorCell } from 'src/app/core/models/good/good-characteristic';
 import { secondFormatDate } from 'src/app/shared/utils/date';
-import { ChangeOfGoodCharacteristicService } from '../../../services/change-of-good-classification.service';
+import { ChangeOfGoodCharacteristicService } from '../../services/change-of-good-classification.service';
 
 @Component({
   selector: 'app-characteristic-good-cell',
