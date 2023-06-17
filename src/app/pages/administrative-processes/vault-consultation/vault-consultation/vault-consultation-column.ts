@@ -1,16 +1,16 @@
 export const COUNT_SAFE_COLUMNS = {
   idSafe: {
-    title: 'No',
+    title: 'No. Bien',
     width: '10%',
     sort: false,
   },
   description: {
-    title: 'Descripcion',
+    title: 'Descripción',
     width: '20%',
     sort: false,
   },
   ubication: {
-    title: 'Ubicacion',
+    title: 'Ubicación',
     width: '10%',
     sort: false,
   },
@@ -37,6 +37,25 @@ export const COUNT_SAFE_COLUMNS = {
   localityCode: {
     title: 'Localidad',
     width: '10%',
+    sort: false,
+  },
+};
+
+export const COUNT_GOOD_COLUMNS = {
+  id: {
+    title: 'No. Bien',
+    sort: false,
+  },
+  description: {
+    title: 'Descripción',
+    sort: false,
+  },
+  quantity: {
+    title: 'Cantidad',
+    sort: false,
+  },
+  fileNumber: {
+    title: 'Expediente',
     sort: false,
   },
 };
