@@ -9,6 +9,7 @@ import {
   KEYGENERATION_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
+import Swal from 'sweetalert2';
 import { MassiveConversionPermissionsComponent } from '../massive-conversion-permissions/massive-conversion-permissions.component';
 import { COLUMNS } from './columns';
 
@@ -43,35 +44,43 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
 
   private prepareForm(): void {
     this.form = this.fb.group({
+      //Primer form
       package: [null, [Validators.required]],
       packageType: [null, [Validators.required]],
       amountKg: [null, [Validators.required]],
       status: [null, [Validators.required]],
+
+      //Segundo form
       delegation: [null, [Validators.required]],
-      goodStatus: [null, [Validators.required]],
-      transferent: [null, [Validators.required]],
-      measurementUnit: [null, [Validators.required]],
       goodClassification: [null, [Validators.required]],
       targetTag: [null, [Validators.required]],
+      goodStatus: [null, [Validators.required]],
+      measurementUnit: [null, [Validators.required]],
+      transferent: [null, [Validators.required]],
       warehouse: [null, [Validators.required]],
+
+      //Pestaña de "ESCANEO"
       scanFolio: [
         null,
         [Validators.required, Validators.pattern(KEYGENERATION_PATTERN)],
       ],
-      paragraphF: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
+
+      //Pestaña de "PÁRRAFOS"
       paragraphS: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
+      paragraphF: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ], //Párrrafo inicial
       paragraphL: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
+      ], //Párrrafo final
     });
 
+    //Formulario "NUEVO BIEN"
     this.form2 = this.fb.group({
       numberGood: [null, [Validators.required]],
       record: [null, [Validators.required]],
@@ -87,12 +96,29 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
   }
 
   add() {
+    console.log(this.form.value);
     //this.openModal();
   }
 
   edit(data: any) {
     //console.log(data)
     //this.openModal({ edit: true, paragraph });
+  }
+
+  showConfirmAlert() {
+    this.alertQuestion(
+      'info',
+      'Confirmación',
+      '¿Está seguro de que el Paquete ya ha sido validado?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        console.log('Hola', question.isConfirmed);
+        // Lógica a ejecutar si se confirma la acción
+        // ...
+        // Ejemplo: mostrar un mensaje de éxito
+        Swal.fire('Validado', '', 'success');
+      }
+    });
   }
 
   delete(data: any) {
@@ -111,6 +137,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
   settingsChange($event: any): void {
     this.settings = $event;
   }
+
   openPermissions(data: any) {
     // let config: ModalOptions = {
     //   initialState: {
