@@ -273,6 +273,10 @@ export class JuridicalRulingComponent
       date: {
         title: 'Fecha. Recibido',
         sort: false,
+        type: 'string',
+        valuePrepareFunction: (row: any) => {
+          return row.split('-').reverse().join('/');
+        },
       },
     },
 

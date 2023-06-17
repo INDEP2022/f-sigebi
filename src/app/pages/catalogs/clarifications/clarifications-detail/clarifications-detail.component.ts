@@ -82,7 +82,10 @@ export class ClarificationsDetailComponent extends BasePage implements OnInit {
     this.loading = true;
     this.clarificationService.create(this.clarificationForm.value).subscribe(
       data => this.handleSuccess(),
-      error => (this.loading = false)
+      error => {
+        this.loading = false;
+        this.onLoadToast('error', 'ERROR', error.error.message);
+      }
     );
   }
 

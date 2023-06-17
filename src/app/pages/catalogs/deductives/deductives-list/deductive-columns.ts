@@ -24,16 +24,6 @@ export const DEDUCTIVE_COLUMNS = {
     type: 'number',
     sort: false,
   },
-  creationUser: {
-    title: 'Creado por',
-    type: 'string',
-    sort: false,
-  },
-  editionUser: {
-    title: 'Modificado por',
-    type: 'string',
-    sort: false,
-  },
   version: {
     title: 'Versión',
     type: 'number',
