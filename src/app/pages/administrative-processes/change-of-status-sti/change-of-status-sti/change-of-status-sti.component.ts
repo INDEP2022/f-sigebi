@@ -134,13 +134,13 @@ export class ChangeOfStatusStiComponent extends BasePage implements OnInit {
           error: error => (this.loading = false),
         });
       });
-      this.onLoadToast(
+      this.alert(
         'success',
         'Actualizado',
-        'Se ha cambiado el status de los bienes seleccionados'
+        'Se ha cambiado el Estatus de los bienes seleccionados'
       );
     } catch (error) {
-      this.onLoadToast(
+      this.alert(
         'error',
         'ERROR',
         'Ha ocurrido un error en el proceso de cambio'

@@ -1,113 +1,89 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { BehaviorSubject, takeUntil } from 'rxjs';
-import {
-  FilterParams,
-  ListParams,
-  SearchFilter,
-} from 'src/app/common/repository/interfaces/list-params';
+import { Validators } from '@angular/forms';
+import { debounceTime, takeUntil } from 'rxjs';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
-import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
-import { COLUMNS } from './columns';
+import { MassiveReclassificationGoodsService } from '../services/massive-reclassification-goods.service';
 
 @Component({
   selector: 'app-massive-reclassification-goods',
   templateUrl: './massive-reclassification-goods.component.html',
-  styles: [],
+  styleUrls: ['./massive-reclassification-goods.component.scss'],
 })
 export class MassiveReclassificationGoodsComponent
   extends BasePage
   implements OnInit
 {
-  listGood: IGood[] = [];
-  form: FormGroup;
-  selectedGooods: IGood[] = [];
+  // listGood: IGood[] = [];
   goodNotValid: IGood[] = [];
   origin: string = null;
   changeDescription: string;
   changeDescriptionAlterning: string;
   contador = 0;
+
+  get selectedGooods() {
+    return this.service.selectedGooods;
+  }
+
+  get form() {
+    return this.service.form;
+  }
+
   get mode() {
     return this.form.get('mode');
   }
   get classificationOfGoods() {
     return this.form.get('classificationOfGoods');
   }
-  get description() {
-    return this.form.get('description');
-  }
-  get goodStatus() {
-    return this.form.get('goodStatus');
-  }
+
   get classificationGoodAlterning() {
     return this.form.get('classificationGoodAlterning');
   }
-  get descriptionAlternating() {
-    return this.form.get('descriptionAlternating');
-  }
-  totalItems: number = 0;
-  params = new BehaviorSubject<ListParams>(new ListParams());
 
   constructor(
-    private fb: FormBuilder,
+    private service: MassiveReclassificationGoodsService,
     private readonly goodServices: GoodService
   ) {
     super();
-    this.settings = {
-      ...this.settings,
-      actions: false,
-      columns: {
-        name: {
-          title: 'Reclasificar',
-          sort: false,
-          type: 'custom',
-          showAlways: true,
-          valuePrepareFunction: (isSelected: boolean, row: IGood) =>
-            this.isGoodSelected(row),
-          renderComponent: CheckboxElementComponent,
-          onComponentInitFunction: (instance: CheckboxElementComponent) =>
-            this.onGoodSelect(instance),
-        },
-        ...COLUMNS,
-      },
-    };
   }
 
-  onGoodSelect(instance: CheckboxElementComponent) {
-    instance.toggle.pipe(takeUntil(this.$unSubscribe)).subscribe({
-      next: data => this.goodSelectedChange(data.row, data.toggle),
-    });
-  }
-
-  isGoodSelected(_good: IGood) {
-    const exists = this.selectedGooods.find(good => good.id == _good.id);
-    return !exists ? false : true;
-  }
-
-  goodSelectedChange(good: IGood, selected: boolean) {
-    if (selected) {
-      this.selectedGooods.push(good);
-    } else {
-      this.selectedGooods = this.selectedGooods.filter(
-        _good => _good.id != good.id
-      );
-    }
+  loadGoods() {
+    this.service.loadGoods.next(true);
   }
 
   ngOnInit(): void {
-    this.buildForm();
+    this.service.buildForm();
     this.form.disable();
     this.mode.enable();
-    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
-      console.log('Entro', this.params.getValue());
-      if (this.contador > 0) {
-        this.loadGoods();
-      }
-      this.contador++;
-    });
+    this.mode.valueChanges
+      .pipe(debounceTime(500), takeUntil(this.$unSubscribe))
+      .subscribe(x => {
+        console.log(x);
+        if (x === 'I') {
+          this.classificationGoodAlterning.addValidators(Validators.required);
+        } else {
+          this.classificationGoodAlterning.setValue(null);
+          this.classificationGoodAlterning.removeValidators(
+            Validators.required
+          );
+        }
+        this.form.updateValueAndValidity();
+      });
+
+    // this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+    //   console.log('Entro', this.params.getValue());
+    //   if (this.contador > 0) {
+    //     this.loadGoods();
+    //   }
+    //   this.contador++;
+    // });
+    // this.form.valueChanges.subscribe(x => {
+    //   if (this.listGood.length > 0) {
+    //     console.log(x);
+    //   }
+    // });
+
     console.log(this.mode.value);
   }
 
@@ -116,26 +92,6 @@ export class MassiveReclassificationGoodsComponent
    * @author:  Alexander Alvarez
    * @since: 27/09/2022
    */
-  private buildForm() {
-    this.form = this.fb.group({
-      mode: [null, [Validators.required]],
-      classificationOfGoods: [null, [Validators.required]],
-      description: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      goodStatus: [null, [Validators.required]],
-      classificationGoodAlterning: [null, [Validators.required]],
-      descriptionAlternating: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-    });
-  }
-
-  settingsChange($event: any): void {
-    this.settings = $event;
-  }
 
   openQuestion() {
     this.alertQuestion(
@@ -152,22 +108,47 @@ export class MassiveReclassificationGoodsComponent
 
   changeClassification() {
     console.log('Se cambiaron los datos de forma masiva');
+    // console.log(this.selectedGooods);
+    let newClassNumber: any;
+    if (this.mode.value === 'I') {
+      newClassNumber = this.classificationGoodAlterning.value;
+    } else {
+      newClassNumber = this.classificationOfGoods.value;
+    }
     console.log(this.selectedGooods);
     this.selectedGooods.forEach(good => {
-      if (good.goodClassNumber === 1575) {
-        this.goodNotValid.push(good);
-      } else {
-        this.mode.value === 'E'
-          ? this.updateMode(good, this.classificationOfGoods.value)
-          : this.updateMode(good, this.classificationGoodAlterning.value);
-      }
+      this.updateMode(good, newClassNumber);
     });
-    this.onLoadToast(
+
+    // forkJoin(this.selectedGooods.map(good => {
+    //         const filterParams = new FilterParams();
+    //         filterParams.addFilter('typeManagement', 2);
+    //         filterParams.addFilter2(
+    //           'filter.expedient=' +
+    //             (good.fileNumber ? '$eq:' + good.fileNumber : '$null')
+    //         );
+    //         filterParams.addFilter2(
+    //           'filter.flierNumber=' +
+    //             (good.flierNumber ? '$eq:' + good.flyerNumber : '$null')
+    //         );
+    // }))
+    this.alert(
       'success',
-      'Exitoso',
-      'Se ha reclasificado los bienes seleccionados.'
+      'Reclasificación Masiva',
+      'Se han reclasificado los bienes seleccionados.'
     );
   }
+
+  goGoodRastrer() {}
+
+  // get disabled() {
+  //   return (
+  //     this.selectedGooods.length === 0 ||
+  //     !this.form ||
+  //     this.form.invalid ||
+  //     (this.mode.value === 'I' && !this.classificationGoodAlterning.value)
+  //   );
+  // }
 
   updateMode(good: IGood, newClassNumber: string) {
     console.log(Number(newClassNumber), this.classificationOfGoods.value);
@@ -185,43 +166,11 @@ export class MassiveReclassificationGoodsComponent
       },
     });
   }
+
   formEnable() {
     this.form.enable();
   }
 
-  loadGoods() {
-    console.log(this.classificationOfGoods.value);
-    const filterParams = new FilterParams();
-    if (this.classificationOfGoods.value) {
-      filterParams.addFilter(
-        'goodClassNumber',
-        this.classificationOfGoods.value,
-        this.mode.value === 'E' ? SearchFilter.NOTIN : SearchFilter.EQ
-      );
-    }
-    if (this.goodStatus.value) {
-      filterParams.addFilter(
-        'status',
-        String(this.goodStatus.value.map((item: any) => item.status)),
-        SearchFilter.IN
-      );
-    }
-    const params = this.params.getValue();
-    filterParams.limit = params.limit;
-    filterParams.page = params.page;
-    console.log(this.goodStatus.value);
-
-    this.goodServices.getAll(filterParams.getParams()).subscribe({
-      next: response => {
-        console.log(response);
-        this.listGood = response.data;
-        this.totalItems = response.count;
-      },
-      error: err => {
-        console.log(err);
-      },
-    });
-  }
   onChage(event: string) {
     this.changeDescription = event;
   }
