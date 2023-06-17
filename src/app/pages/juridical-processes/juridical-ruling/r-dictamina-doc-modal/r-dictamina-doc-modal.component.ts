@@ -28,6 +28,7 @@ export class RDictaminaDocModalComponent extends BasePage implements OnInit {
   dataDocuments: any[] = [];
   selectedDocs: any;
   dateValid: any;
+  documenst: any[] = [];
   @ViewChild('tabla') tabla: Ng2SmartTableComponent;
   constructor(
     private modalRef: BsModalRef,
@@ -80,7 +81,13 @@ export class RDictaminaDocModalComponent extends BasePage implements OnInit {
           item['date'] = '';
         });
         this.dataDocuments = resp.data;
-        console.log('Respuesta: ', resp.data);
+        console.log(this.documenst, 'trajo algo??', this.dataDocuments);
+
+        if (this.documenst.length > 0) {
+          this.dataDocuments.forEach((doc, i) => {
+            doc.date = this.documenst[i].date;
+          });
+        }
       },
       error: error => {
         this.onLoadToast('warning', 'No hay documentos relacionados', '');
