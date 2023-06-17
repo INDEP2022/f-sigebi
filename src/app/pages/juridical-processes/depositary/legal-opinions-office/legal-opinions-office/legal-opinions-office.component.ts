@@ -2865,7 +2865,22 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
           // this.execute_PUP_GENERA_PDF();
           //         this.sendElectronicFirmData();
           console.log('REPORT PARAMS', nameReport, params);
-          this.openFirmModal(nameReport, params);
+          const paramsDictation = new FilterParams();
+          paramsDictation.removeAllFilters();
+          paramsDictation.addFilter('typeDict', this.paramsScreen.TIPO);
+          paramsDictation.addFilter('id', this.paramsScreen.P_VALOR);
+          this.svLegalOpinionsOfficeService
+            .getDictations(paramsDictation.getParams())
+            .subscribe({
+              next: data => {
+                console.log('DICTAMEN', data);
+                this.dictationData = data.data[0];
+                this.openFirmModal(nameReport, params);
+              },
+              error: error => {
+                console.log(error);
+              },
+            });
         } else {
           const blob = new Blob([response], { type: 'application/pdf' });
           const url = URL.createObjectURL(blob);
@@ -4056,11 +4071,12 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
         });
     });
     modalRef.content.errorFirm.subscribe((next: any) => {
+      console.log(next);
       if (next) {
         // Run error
         // this.sendElectronicFirmData();
-        this.errorFirmOnGetXml(); // Error y regresa los datos a como estaban
       }
+      this.errorFirmOnGetXml(); // Error y regresa los datos a como estaban
     });
   }
   errorFirm() {

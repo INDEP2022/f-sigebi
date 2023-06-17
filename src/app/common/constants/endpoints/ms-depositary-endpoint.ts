@@ -1,6 +1,7 @@
 export enum DepositaryEndPoints {
   Depositary = `depositary`,
   DepositaryAppointment = `depositary-appointment`,
+  DepositaryAppointments = `depositary-appointments`,
   DepositaryRequest = `legal-destination-for-property`,
   PersonsModDepositary = `persons-mod-depositary`,
   PaymentRefParamsDep = `payment-ref/params-dep`,

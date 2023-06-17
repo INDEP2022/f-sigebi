@@ -1147,9 +1147,11 @@ export class JuridicalRulingGComponent
     const numberClassifyGood = this.goodClassNumber;
     const stateNumber = this.stateNumber;
     const dateValid = this.dictaminacionesForm.get('fechaPPFF').value;
+    const documentsCreate = this.documents;
     let config: ModalOptions = {
       initialState: {
         // numberClassifyGood,
+        documentsCreate,
         typeDictation,
         crime,
         typeSteeringwheel,
@@ -1157,8 +1159,20 @@ export class JuridicalRulingGComponent
         stateNumber,
         dateValid,
         callback: (next: any) => {
-          const concatenatedArray = this.documents.concat(next);
-          this.documents = concatenatedArray;
+          console.log('next', next);
+          let arr = [];
+          if (this.documents.length > 0) {
+            for (let i = 0; i < this.documents.length; i++) {
+              if (numberClassifyGood != this.documents[i].numberClassifyGood) {
+                arr.push(this.documents[i]);
+              }
+            }
+            this.documents = arr;
+            const concatenatedArray = this.documents.concat(next);
+            this.documents = concatenatedArray;
+          } else {
+            this.documents = next;
+          }
           console.log('NEXT', this.documents);
         },
       },
@@ -4735,8 +4749,7 @@ export class JuridicalRulingGComponent
           },
           error: error => {
             console.log('ERROR DOC', error.error);
-            this.alert('error', 'Error al crear el documento', '');
-            return;
+            this.alert('warning', 'DOCUMENTOS', error.error.message);
           },
         });
       }
