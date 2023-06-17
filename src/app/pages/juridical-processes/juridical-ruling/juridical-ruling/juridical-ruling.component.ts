@@ -273,6 +273,10 @@ export class JuridicalRulingComponent
       date: {
         title: 'Fecha. Recibido',
         sort: false,
+        type: 'string',
+        valuePrepareFunction: (row: any) => {
+          return row.split('-').reverse().join('/');
+        },
       },
     },
 
@@ -1555,19 +1559,22 @@ export class JuridicalRulingComponent
             const typeSteeringwheel = this.variablesForm.get('tipo_vol').value;
             const numberClassifyGood = this.variablesForm.get('clasif2').value;
             const dateValid = this.legalForm.get('fechaPPFF').value;
+            const documenst = this.documents;
             let config: ModalOptions = {
               initialState: {
                 typeDictation,
                 typeSteeringwheel,
                 numberClassifyGood,
                 dateValid,
+                documenst,
                 callback: (next: any[]) => {
                   if (!this.dictNumber) {
                     this.buttonAprove = true;
                     this.buttonRefuse = false;
                   }
-                  const concatenatedArray = this.documents.concat(next);
-                  this.documents = concatenatedArray;
+                  //const concatenatedArray = this.documents.concat(next);
+                  this.documents = next;
+                  console.log(this.documents);
                 },
               },
               class: 'modal-lg modal-dialog-centered',
@@ -2681,10 +2688,10 @@ export class JuridicalRulingComponent
         this.legalForm
           .get('preliminaryInquiry')
           .setValue(response.preliminaryInquiry);
+
+        this.onLoadGoodList();
       },
     });
-
-    this.onLoadGoodList();
   }
 
   async getUpdateAndDeleteHisto(goodId: number, estatus: string) {
