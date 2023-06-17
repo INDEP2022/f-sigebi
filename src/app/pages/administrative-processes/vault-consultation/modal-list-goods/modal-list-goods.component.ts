@@ -47,6 +47,7 @@ export class ModalListGoodsComponent extends BasePage implements OnInit {
     super();
     this.settings = {
       ...this.settings,
+      hideSubHeader: false,
       actions: false,
       columns: {
         ...COUNT_GOOD_COLUMNS,
@@ -77,14 +78,6 @@ export class ModalListGoodsComponent extends BasePage implements OnInit {
               delete this.columnFilters[field];
             }
           });
-          // this.loading = true;
-          // const idSafe: any = this.opcion.initialState;
-          // const safe = Object.values(idSafe);
-          // this.go = safe[0].toString().concat(safe[1].toString());
-
-          // this.params
-          //   .pipe(takeUntil(this.$unSubscribe))
-          //   .subscribe(() => this.getGoodBySafe(Number(this.go)));
           this.params = this.pageFilter(this.params);
           this.getGoodBySafe(this.provider.idSafe);
         }
