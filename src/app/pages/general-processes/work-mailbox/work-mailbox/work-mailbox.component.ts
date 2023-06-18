@@ -621,12 +621,14 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
   }
 
   /*BUILD FILTERS*/
-  buildFilters(): void {
+  buildFilters(keepPage?: boolean): void {
     //console.log(this.managementAreaF.value);
     //console.log(this.user.value);
     this.filterParams.getValue().removeAllFilters();
     this.filterForm.controls['priority'].setValue(this.priority$);
-    this.params.value.page = 1;
+    if (!keepPage) {
+      this.params.value.page = 1;
+    }
     this.params.value.limit = 10;
 
     let {
@@ -1244,7 +1246,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
             area => area.id == predeterminedA[0].managementArea
           );
           this.filterForm.controls['managementArea'].setValue(defaultArea[0]);
-          this.buildFilters();
+          this.buildFilters(true);
         } else {
           this.buildFilters();
           this.onLoadToast(

@@ -377,7 +377,8 @@ export class JuridicalRulingComponent
     private oficialDictationService: OficialDictationService,
     private documentsMServ: DocumentsDictumStatetMService,
     private DictationXGood1Service: DictationXGood1Service,
-    private datePipe: DatePipe
+    private datePipe: DatePipe,
+    private userDetail: UsersService
   ) {
     super();
     this.oficioDictamen = {
@@ -1903,6 +1904,8 @@ export class JuridicalRulingComponent
     const day = String(today.getDate()).padStart(2, '0');
     const year = today.getFullYear();
     const user = this.authService.decodeToken();
+    const details = await this.getDetailsUser(user.username.toUpperCase());
+
     return new Promise((resolve, reject) => {
       const {
         tipoDictaminacion,
@@ -1925,8 +1928,8 @@ export class JuridicalRulingComponent
         dictDate: new Date(),
         userDict: user.username.toUpperCase(),
         observations: observations,
-        delegationDictNumber: Number(user.department),
-        areaDict: '',
+        delegationDictNumber: Number(details.delegationNumber),
+        areaDict: details.departamentNumber,
         instructorDate: fechaPPFF,
         registerNumber: '',
         esDelit: esPropiedad ? 'S' : 'N',
@@ -1965,6 +1968,25 @@ export class JuridicalRulingComponent
         },
         error: () => {
           resolve(true);
+        },
+      });
+    });
+  }
+
+  async getDetailsUser(userId: string) {
+    return new Promise<any>((resolve, reject) => {
+      const params = new FilterParams();
+      params.removeAllFilters();
+      params.addFilter(
+        'user',
+        userId == 'SIGEBIADMON' ? userId.toLocaleLowerCase() : userId
+      );
+      this.userDetail.getInfoUserLogued(params.getParams()).subscribe({
+        next: resp => {
+          resolve(resp.data[0]);
+        },
+        error: () => {
+          resolve(null);
         },
       });
     });

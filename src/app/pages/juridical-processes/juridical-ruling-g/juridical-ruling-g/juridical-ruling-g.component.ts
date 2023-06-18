@@ -1147,9 +1147,11 @@ export class JuridicalRulingGComponent
     const numberClassifyGood = this.goodClassNumber;
     const stateNumber = this.stateNumber;
     const dateValid = this.dictaminacionesForm.get('fechaPPFF').value;
+    const documentsCreate = this.documents;
     let config: ModalOptions = {
       initialState: {
         // numberClassifyGood,
+        documentsCreate,
         typeDictation,
         crime,
         typeSteeringwheel,
@@ -1157,8 +1159,20 @@ export class JuridicalRulingGComponent
         stateNumber,
         dateValid,
         callback: (next: any) => {
-          const concatenatedArray = this.documents.concat(next);
-          this.documents = concatenatedArray;
+          console.log('next', next);
+          let arr = [];
+          if (this.documents.length > 0) {
+            for (let i = 0; i < this.documents.length; i++) {
+              if (numberClassifyGood != this.documents[i].numberClassifyGood) {
+                arr.push(this.documents[i]);
+              }
+            }
+            this.documents = arr;
+            const concatenatedArray = this.documents.concat(next);
+            this.documents = concatenatedArray;
+          } else {
+            this.documents = next;
+          }
           console.log('NEXT', this.documents);
         },
       },
@@ -3038,7 +3052,7 @@ export class JuridicalRulingGComponent
     this.filter1.getValue().removeAllFilters();
     this.filter1
       .getValue()
-      .addFilter('goodClassNumber', type.no_clasif_bien, SearchFilter.EQ);
+      .addFilter('goodClassNumber', this.numberClassifyGood, SearchFilter.EQ);
     this.filter1
       .getValue()
       .addFilter('fileNumber', noExpediente, SearchFilter.EQ);
@@ -3059,7 +3073,6 @@ export class JuridicalRulingGComponent
         .getValue()
         .addFilter('status', 'ADM,ROP,STA,VXR', SearchFilter.IN);
     }
-    this.filter1.getValue().page = 1;
     this.goodServices
       .getAllFilter(this.filter1.getValue().getParams())
       .subscribe({
@@ -4350,7 +4363,9 @@ export class JuridicalRulingGComponent
       //     console.log('resss', response);
       //   },
       // });
+
       const SYSDATE3 = `${year}/${month}/${day}`;
+      const isDelit = this.expedientesForm.get('delito').value;
       this.dictamen.statusDict = 'DICTAMINADO';
       this.dictamen.expedientNumber =
         this.expedientesForm.get('noExpediente').value;
@@ -4358,14 +4373,14 @@ export class JuridicalRulingGComponent
         this.dictaminacionesForm.get('wheelNumber').value;
       this.dictamen.userDict = token.preferred_username;
       this.dictamen.delegationDictNumber = this.delegation;
-      this.dictamen.areaDict = null;
+      this.dictamen.areaDict = this.areaDict;
       this.dictamen.dictDate = new Date(SYSDATE3);
       this.dictamen.notifyAssuranceDate = new Date(SYSDATE);
       this.dictamen.resolutionDate = new Date(SYSDATE);
       this.dictamen.notifyResolutionDate = new Date(SYSDATE);
       this.dictamen.typeDict =
         this.expedientesForm.get('tipoDictaminacion').value;
-
+      this.dictamen.esDelit = isDelit == null ? 'N' : 'S';
       this.dictamen.instructorDate =
         this.dictaminacionesForm.get('fechaPPFF').value;
 
@@ -4734,8 +4749,7 @@ export class JuridicalRulingGComponent
           },
           error: error => {
             console.log('ERROR DOC', error.error);
-            this.alert('error', 'Error al crear el documento', '');
-            return;
+            this.alert('warning', 'DOCUMENTOS', error.error.message);
           },
         });
       }
@@ -4965,6 +4979,7 @@ export class JuridicalRulingGComponent
 
   delegation: any;
   subdelegation: any;
+  areaDict: any;
   async get___Senders(lparams: ListParams) {
     const params = new FilterParams();
     params.page = lparams.page;
@@ -4978,6 +4993,7 @@ export class JuridicalRulingGComponent
         console.log('DATA DDELE', data);
         this.delegation = data.data[0].delegationNumber;
         this.subdelegation = data.data[0].subdelegationNumber;
+        this.areaDict = data.data[0].departamentNumber;
       },
       error: () => {},
     });
