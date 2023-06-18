@@ -12,9 +12,10 @@
               control="typeId"
               (fetchItems)="getTypes($event)"
               [data]="types"
+              value="id"
               label="Tipo"
               bindLabel="nameGoodType"
-              value="id">
+              (change)="getChangeSutype($event)">
             </ngx-select>
           </form-field>
         </div>
@@ -37,9 +38,10 @@
               control="subtypeId"
               (fetchItems)="getSubtypes($event)"
               [data]="subTypes"
+              value="id"
               label="SubTipo"
               bindLabel="nameSubtypeGood"
-              value="id">
+              (change)="getChangeSsutype($event)">
             </ngx-select>
           </form-field>
         </div>
@@ -62,9 +64,10 @@
               control="ssubtypeId"
               (fetchItems)="getSsubtypes($event)"
               [data]="ssubTypes"
+              value="id"
               label="SsubTipo"
               bindLabel="description"
-              value="id">
+              (change)="getChangeSssutype($event)">
             </ngx-select>
           </form-field>
         </div>
