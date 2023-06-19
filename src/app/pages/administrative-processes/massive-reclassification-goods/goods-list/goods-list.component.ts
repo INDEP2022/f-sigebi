@@ -31,8 +31,7 @@ import { MassiveReclassificationGoodsService } from '../services/massive-reclass
 })
 export class GoodsListComponent
   extends BasePageWidhtDinamicFiltersExtra<IGood>
-  implements OnInit
-{
+  implements OnInit {
   constructor(
     private massiveService: MassiveReclassificationGoodsService,
     private procedureManagement: ProcedureManagementService,
@@ -203,11 +202,11 @@ export class GoodsListComponent
               filterParams.addFilter('typeManagement', 2);
               filterParams.addFilter2(
                 'filter.expedient=' +
-                  (good.fileNumber ? '$eq:' + good.fileNumber : '$null')
+                (good.fileNumber ? '$eq:' + good.fileNumber : '$null')
               );
               filterParams.addFilter2(
                 'filter.flierNumber=' +
-                  (good.flyerNumber ? '$eq:' + good.flyerNumber : '$null')
+                (good.flyerNumber ? '$eq:' + good.flyerNumber : '$null')
               );
               return this.procedureManagement
                 .getAllFiltered(filterParams.getParams())
