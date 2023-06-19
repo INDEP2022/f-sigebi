@@ -1170,6 +1170,7 @@ export class RelatedDocumentsComponent
           // debugger;
           this.dataTableGoodsJobManagement = goodManagementResult.data;
           console.log('BIENES ', this.dataTableGoodsJobManagement);
+          this.formVariables.get('b').setValue('S');
           this.goodTotalItems = goodManagementResult.count;
         });
     } catch (ex) {
@@ -1331,6 +1332,9 @@ export class RelatedDocumentsComponent
   }
 
   changeOffice() {
+    if (this.formJobManagement.value.statusOf == 'ENVIADO') {
+      return;
+    }
     const elemC = document.getElementById('se_refiere_a_C') as HTMLInputElement;
     elemC.checked = true;
     const elemB = document.getElementById('se_refiere_a_B') as HTMLInputElement;
@@ -3203,6 +3207,12 @@ export class RelatedDocumentsComponent
                     ''
                   );
                 }
+              } else {
+                this.onLoadToast(
+                  'error',
+                  'Error al buscar el folio universal del documento',
+                  ''
+                );
               }
             },
             error: async error => {
@@ -3227,19 +3237,21 @@ export class RelatedDocumentsComponent
             console.log(_launchReport);
             let reportCondition = this._conditions_Report();
             this.runReport(reportCondition.nameReport, reportCondition.params);
-            if (_launchReport.no_exp > 0) {
-              let _getVOficTrans = await firstValueFrom(
-                this.sendFunction_getVOficTrans(params)
-              );
-              if (_getVOficTrans) {
-                // _getVOficTrans.v_ofic_trans RESPUESTA
-                if (_getVOficTrans.v_ofic_trans) {
-                  if (
-                    this.formJobManagement.value.statusOf != 'EN REVISION' &&
-                    !this.formJobManagement.value.cveManagement.includes('?')
-                  ) {
-                    // Subir el PDF a la ruta de documentos y reemplazarlo por el anterior
-                    this._PUP_GENERA_PDF();
+            if (_launchReport) {
+              if (_launchReport.no_exp > 0) {
+                let _getVOficTrans = await firstValueFrom(
+                  this.sendFunction_getVOficTrans(params)
+                );
+                if (_getVOficTrans) {
+                  // _getVOficTrans.v_ofic_trans RESPUESTA
+                  if (_getVOficTrans.v_ofic_trans) {
+                    if (
+                      this.formJobManagement.value.statusOf != 'EN REVISION' &&
+                      !this.formJobManagement.value.cveManagement.includes('?')
+                    ) {
+                      // Subir el PDF a la ruta de documentos y reemplazarlo por el anterior
+                      this._PUP_GENERA_PDF();
+                    }
                   }
                 }
               }
@@ -3319,21 +3331,24 @@ export class RelatedDocumentsComponent
             console.log(_launchReport);
             let reportCondition = this._conditions_Report();
             this.runReport(reportCondition.nameReport, reportCondition.params);
-            if (_launchReport.no_exp > 0) {
-              let _getVOficTrans = await firstValueFrom(
-                this.sendFunction_getVOficTrans({
-                  externalOfficeNumber: this.notificationData.officeExternalKey,
-                })
-              );
-              if (_getVOficTrans) {
-                // _getVOficTrans.v_ofic_trans RESPUESTA
-                if (_getVOficTrans.v_ofic_trans) {
-                  if (
-                    this.formJobManagement.value.statusOf != 'EN REVISION' &&
-                    !this.formJobManagement.value.cveManagement.includes('?')
-                  ) {
-                    // Subir el PDF a la ruta de documentos y reemplazarlo por el anterior
-                    this._PUP_GENERA_PDF();
+            if (_launchReport) {
+              if (_launchReport.no_exp > 0) {
+                let _getVOficTrans = await firstValueFrom(
+                  this.sendFunction_getVOficTrans({
+                    externalOfficeNumber:
+                      this.notificationData.officeExternalKey,
+                  })
+                );
+                if (_getVOficTrans) {
+                  // _getVOficTrans.v_ofic_trans RESPUESTA
+                  if (_getVOficTrans.v_ofic_trans) {
+                    if (
+                      this.formJobManagement.value.statusOf != 'EN REVISION' &&
+                      !this.formJobManagement.value.cveManagement.includes('?')
+                    ) {
+                      // Subir el PDF a la ruta de documentos y reemplazarlo por el anterior
+                      this._PUP_GENERA_PDF();
+                    }
                   }
                 }
               }
@@ -3519,6 +3534,51 @@ export class RelatedDocumentsComponent
                   'PUP_CAMBIA_ESTATUS CON FIRMA ELECTRONICA ',
                   _cambia_estatus
                 );
+                if (_cambia_estatus) {
+                  if (_cambia_estatus.procedimiento == 'PUP_BIEN_DOC') {
+                    this.pupGoodDoc();
+                    return;
+                  }
+                  if (_cambia_estatus.procedimiento == 'PUP_AGREGA_BIENES') {
+                    this.pupAddGood();
+                    return;
+                  }
+                  if (
+                    _cambia_estatus.procedimiento == 'PUP_AGREGA_ALGUNOS_BIENES'
+                  ) {
+                    this.pupAddAnyGood();
+                    return;
+                  }
+                  if (_cambia_estatus.procedimiento == 'MENSAJE_ERROR') {
+                    this.onLoadToast('warning', _cambia_estatus.message, '');
+                    return;
+                  }
+                  if (_cambia_estatus.bienes) {
+                    this.dataTableGoods = _cambia_estatus.bienes;
+                  }
+                  if (_cambia_estatus.a == this.se_refiere_a.A) {
+                    this.se_refiere_a_Disabled.B = true;
+                    this.se_refiere_a_Disabled.C = true;
+                    this.disabledChecks();
+                  }
+                  if (_cambia_estatus.b == this.se_refiere_a.B) {
+                    this.se_refiere_a_Disabled.A = true;
+                    this.se_refiere_a_Disabled.C = true;
+                    this.enableChecks();
+                  }
+                  if (_cambia_estatus.c == this.se_refiere_a.C) {
+                    this.formVariables.get('b').setValue('N');
+                    this.formVariables.get('todos').setValue('N');
+                  }
+                  if (_cambia_estatus.cuantos) {
+                    // this.onLoadToast('warning', _cambia_estatus, '');
+                    this.initForm();
+                  }
+                  //  else {
+                  //   this.onLoadToast('warning', _cambia_estatus, '');
+                  //   return
+                  // }
+                }
                 // Llamar las globales y obtener gnu_activa_gestion
                 let paramsActGestion = {
                   pGestOk: this.paramsGestionDictamen.pGestOk
@@ -3843,7 +3903,7 @@ export class RelatedDocumentsComponent
           //     'Ocurrió un error al eliminar el reporte anterior'
           //   );
           // }
-          this.uploadPdfEmitter(blob, nameAndExtension, folioUniversal);
+          // this.uploadPdfEmitter(blob, nameAndExtension, folioUniversal);
           this._PUP_CONSULTA_PDF_BD_SSF3();
         },
         complete: async () => {
@@ -4210,19 +4270,21 @@ export class RelatedDocumentsComponent
     console.log(_launchReport);
     let reportCondition = this._conditions_Report();
     this.runReport(reportCondition.nameReport, reportCondition.params);
-    if (_launchReport.no_exp > 0) {
-      let _getVOficTrans = await firstValueFrom(
-        this.sendFunction_getVOficTrans(params)
-      );
-      if (_getVOficTrans) {
-        // _getVOficTrans.v_ofic_trans RESPUESTA
-        if (_getVOficTrans.v_ofic_trans) {
-          if (
-            this.formJobManagement.value.statusOf != 'EN REVISION' &&
-            !this.formJobManagement.value.cveManagement.includes('?')
-          ) {
-            // Subir el PDF a la ruta de documentos y reemplazarlo por el anterior
-            this._PUP_GENERA_PDF();
+    if (_launchReport) {
+      if (_launchReport.no_exp > 0) {
+        let _getVOficTrans = await firstValueFrom(
+          this.sendFunction_getVOficTrans(params)
+        );
+        if (_getVOficTrans) {
+          // _getVOficTrans.v_ofic_trans RESPUESTA
+          if (_getVOficTrans.v_ofic_trans) {
+            if (
+              this.formJobManagement.value.statusOf != 'EN REVISION' &&
+              !this.formJobManagement.value.cveManagement.includes('?')
+            ) {
+              // Subir el PDF a la ruta de documentos y reemplazarlo por el anterior
+              this._PUP_GENERA_PDF();
+            }
           }
         }
       }
@@ -4275,18 +4337,25 @@ export class RelatedDocumentsComponent
     });
   }
   async generateKey() {
-    let _params_generate_key = {
-      remit: this.formJobManagement.value.sender.id.toString(),
-      pllamo: this.paramsGestionDictamen.pllamo != null ? this.paramsGestionDictamen.pllamo : ' ',
-    };
-    const _puf_genera_clave = await firstValueFrom(
-      this.sendFunction_pufGenerateKey(_params_generate_key)
-    );
-    // Probar
-    console.log('RESP ', _puf_genera_clave);
-    this.formJobManagement.value.cveManagement =
-      _puf_genera_clave.keyOfGestion;
-    this._saveMJobManagement();
+    if (this.formJobManagement.value.cveManagement) {
+      this._saveMJobManagement();
+    } else {
+      let _params_generate_key = {
+        remit: this.formJobManagement.value.sender.id.toString(),
+        pllamo:
+          this.paramsGestionDictamen.pllamo != null
+            ? this.paramsGestionDictamen.pllamo
+            : ' ',
+      };
+      const _puf_genera_clave = await firstValueFrom(
+        this.sendFunction_pufGenerateKey(_params_generate_key)
+      );
+      // Probar
+      console.log('RESP ', _puf_genera_clave);
+      this.formJobManagement.value.cveManagement =
+        _puf_genera_clave.keyOfGestion;
+      this._saveMJobManagement();
+    }
   }
   async secondConditionSend() {
     this.variablesSend.ESTATUS_OF = this.formJobManagement.value.statusOf;
@@ -4450,7 +4519,53 @@ export class RelatedDocumentsComponent
         //   status: '',
         //   seleccion: false,
         // };
-        console.log(_cambia_estatus);
+        console.log(
+          'PUP_CAMBIA_ESTATUS CON FIRMA ELECTRONICA ',
+          _cambia_estatus
+        );
+        if (_cambia_estatus) {
+          if (_cambia_estatus.procedimiento == 'PUP_BIEN_DOC') {
+            this.pupGoodDoc();
+            return;
+          }
+          if (_cambia_estatus.procedimiento == 'PUP_AGREGA_BIENES') {
+            this.pupAddGood();
+            return;
+          }
+          if (_cambia_estatus.procedimiento == 'PUP_AGREGA_ALGUNOS_BIENES') {
+            this.pupAddAnyGood();
+            return;
+          }
+          if (_cambia_estatus.procedimiento == 'MENSAJE_ERROR') {
+            this.onLoadToast('warning', _cambia_estatus.message, '');
+            return;
+          }
+          if (_cambia_estatus.bienes) {
+            this.dataTableGoods = _cambia_estatus.bienes;
+          }
+          if (_cambia_estatus.a == this.se_refiere_a.A) {
+            this.se_refiere_a_Disabled.B = true;
+            this.se_refiere_a_Disabled.C = true;
+            this.disabledChecks();
+          }
+          if (_cambia_estatus.b == this.se_refiere_a.B) {
+            this.se_refiere_a_Disabled.A = true;
+            this.se_refiere_a_Disabled.C = true;
+            this.enableChecks();
+          }
+          if (_cambia_estatus.c == this.se_refiere_a.C) {
+            this.formVariables.get('b').setValue('N');
+            this.formVariables.get('todos').setValue('N');
+          }
+          if (_cambia_estatus.cuantos) {
+            // this.onLoadToast('warning', _cambia_estatus, '');
+            this.initForm();
+          }
+          //  else {
+          //   this.onLoadToast('warning', _cambia_estatus, '');
+          //   return
+          // }
+        }
         // Agregar los valores de los textos en variables
         // :TEXTO1 := :TEX1;
         // :TEXTO2 := :TEX2;
@@ -4592,6 +4707,58 @@ export class RelatedDocumentsComponent
                       'PUP_CAMBIA_ESTATUS CON FIRMA ELECTRONICA ',
                       _cambia_estatus
                     );
+                    if (_cambia_estatus) {
+                      if (_cambia_estatus.procedimiento == 'PUP_BIEN_DOC') {
+                        this.pupGoodDoc();
+                        return;
+                      }
+                      if (
+                        _cambia_estatus.procedimiento == 'PUP_AGREGA_BIENES'
+                      ) {
+                        this.pupAddGood();
+                        return;
+                      }
+                      if (
+                        _cambia_estatus.procedimiento ==
+                        'PUP_AGREGA_ALGUNOS_BIENES'
+                      ) {
+                        this.pupAddAnyGood();
+                        return;
+                      }
+                      if (_cambia_estatus.procedimiento == 'MENSAJE_ERROR') {
+                        this.onLoadToast(
+                          'warning',
+                          _cambia_estatus.message,
+                          ''
+                        );
+                        return;
+                      }
+                      if (_cambia_estatus.bienes) {
+                        this.dataTableGoods = _cambia_estatus.bienes;
+                      }
+                      if (_cambia_estatus.a == this.se_refiere_a.A) {
+                        this.se_refiere_a_Disabled.B = true;
+                        this.se_refiere_a_Disabled.C = true;
+                        this.disabledChecks();
+                      }
+                      if (_cambia_estatus.b == this.se_refiere_a.B) {
+                        this.se_refiere_a_Disabled.A = true;
+                        this.se_refiere_a_Disabled.C = true;
+                        this.enableChecks();
+                      }
+                      if (_cambia_estatus.c == this.se_refiere_a.C) {
+                        this.formVariables.get('b').setValue('N');
+                        this.formVariables.get('todos').setValue('N');
+                      }
+                      if (_cambia_estatus.cuantos) {
+                        // this.onLoadToast('warning', _cambia_estatus, '');
+                        this.initForm();
+                      }
+                      //  else {
+                      //   this.onLoadToast('warning', _cambia_estatus, '');
+                      //   return
+                      // }
+                    }
                     // Llamar las globales y obtener gnu_activa_gestion
                     let paramsActGestion = {
                       pGestOk: this.paramsGestionDictamen.pGestOk
@@ -4869,8 +5036,8 @@ export class RelatedDocumentsComponent
   }
 
   async _PUP_CAMBIA_ESTATUS(obj: any) {
-    // return await firstValueFrom(this.sendFunction_pupStatusChange(obj));
-    return await this.sendFunction_pupStatusChange(obj);
+    return await firstValueFrom(this.sendFunction_pupStatusChange(obj));
+    // return await this.sendFunction_pupStatusChange(obj);
   }
 
   async _PUP_ACT_GESTION(obj: any) {
@@ -5016,6 +5183,7 @@ export class RelatedDocumentsComponent
           ''
         );
       } else {
+        const userInfo = await this.getUserInfo();
         let objUpdate_MJob: IMJobManagement = {
           ...this.m_job_management,
           // managementNumber:
@@ -5065,7 +5233,7 @@ export class RelatedDocumentsComponent
             : null,
           justification: this.managementForm.value.justificacion,
           cveChargeRem: this.managementForm.value.cveChargeRem,
-          areaUser: null, // Area remitente
+          areaUser: userInfo.departamentNumber.toString(), // Area remitente
           insertDate: format(new Date(), 'yyyy-MM-dd'),
           insertUser: this.authUser.preferred_username,
         };
@@ -5201,6 +5369,79 @@ export class RelatedDocumentsComponent
       this.getCopyOficioGestion__(
         this.formJobManagement.value.managementNumber
       );
+    }
+  }
+
+  async testCambiaStatus() {
+    const userInfo = await this.getUserInfo();
+    // const doc = this.getQueryParams('doc');
+    // const bien = this.getQueryParams('bien');
+    let _params_change_status = {
+      procDocId: this.formVariables.get('proc_doc_dic').value,
+      doc: this.getQueryParams('doc'), //this.paramsGestionDictamen.doc,
+      bien: this.getQueryParams('bien'), //this.paramsGestionDictamen.bien,
+      cveOfGestion: this.formJobManagement.value.cveManagement,
+      b: this.formVariables.get('b').value,
+      d: this.formVariables.get('d').value,
+      noOfGestion: this.formJobManagement.value.managementNumber,
+      seRefiereA: this.formJobManagement.value.refersTo,
+      // bienes: {
+      //   no_bien: 0,
+      //   seleccion: false,
+      // },
+      bienes: this.dataTableGoods, // Bienes
+      todos: this.formVariables.get('todos').value == 'S' ? true : false,
+      usuario: userInfo.user,
+      pDictamen: this.paramsGestionDictamen.pDictamen,
+      noVolante: this.notificationData.wheelNumber,
+      vcPantalla: this.screenKeyManagement,
+    };
+    console.log('DATA ESATUS', _params_change_status);
+
+    const _cambia_estatus = await this._PUP_CAMBIA_ESTATUS(
+      _params_change_status
+    );
+    console.log('PUP_CAMBIA_ESTATUS CON FIRMA ELECTRONICA ', _cambia_estatus);
+    if (_cambia_estatus) {
+      if (_cambia_estatus.procedimiento == 'PUP_BIEN_DOC') {
+        this.pupGoodDoc();
+        return;
+      }
+      if (_cambia_estatus.procedimiento == 'PUP_AGREGA_BIENES') {
+        this.pupAddGood();
+        return;
+      }
+      if (_cambia_estatus.procedimiento == 'PUP_AGREGA_ALGUNOS_BIENES') {
+        this.pupAddAnyGood();
+        return;
+      }
+      if (_cambia_estatus.procedimiento == 'MENSAJE_ERROR') {
+        this.onLoadToast('warning', _cambia_estatus.message, '');
+        return;
+      }
+      if (_cambia_estatus.bienes) {
+        this.dataTableGoods = _cambia_estatus.bienes;
+      }
+      if (_cambia_estatus.a == this.se_refiere_a.A) {
+        this.se_refiere_a_Disabled.B = true;
+        this.se_refiere_a_Disabled.C = true;
+        this.disabledChecks();
+      }
+      if (_cambia_estatus.b == this.se_refiere_a.B) {
+        this.se_refiere_a_Disabled.A = true;
+        this.se_refiere_a_Disabled.C = true;
+        this.enableChecks();
+      }
+      if (_cambia_estatus.c == this.se_refiere_a.C) {
+        this.formVariables.get('b').setValue('N');
+        this.formVariables.get('todos').setValue('N');
+      }
+      if (_cambia_estatus.cuantos) {
+        // this.onLoadToast('warning', _cambia_estatus, '');
+        this.initForm();
+      } else {
+        this.onLoadToast('warning', _cambia_estatus, '');
+      }
     }
   }
 }
