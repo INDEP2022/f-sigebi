@@ -1,113 +1,112 @@
-DECLARE
-	SIGLA   			VARCHAR2(30);
-	ANIO    			VARCHAR2(4);
-  AR_REMITENTE	VARCHAR2(30);
-  OFICIO  			NUMBER;
-	DATO 					VARCHAR2(1);
---CONTADOR NUMBER;
-	CONTA 				NUMBER;
-	contador 			NUMBER;
-	
+PROCEDURE PUP_LANZA_DICTAMEN IS
+   pl_id        ParamList; 
+   pl_name      VARCHAR2(15) := 'Params_Forma';
+   TIPO_DIC     VARCHAR2(30);
+   v_no_volante NOTIFICACIONES.NO_VOLANTE%type;
+   VVAL         NUMBER;
+   VVAL1        NUMBER;
 BEGIN
-	go_block('DOCUM_OFICIO_GESTION');
-	Clear_Block(No_Validate);
-
-	IF :VARIABLES.DICTAMINACION IS NULL THEN 
-		 	LIP_MENSAJE('Especifique el tipo de Dictaminación','S');
-   		RAISE Form_Trigger_Failure;
+	IF :DICTAMEN = 1 OR :DICTAMEN = 16 OR :DICTAMEN = 23 THEN 
+		  TIPO_DIC := 'PROCEDENCIA';
+	END IF;
+	
+	IF :DICTAMEN = 15 THEN 
+		  TIPO_DIC := 'DESTRUCCION';
+	END IF;
+	
+	IF :DICTAMEN = 2 THEN 
+		  TIPO_DIC := 'DECOMISO';
+	END IF;
+	
+	IF :DICTAMEN = 22 THEN 
+		  TIPO_DIC := 'EXT_DOM';
+	END IF;
+	
+	IF :DICTAMEN = 3 OR :DICTAMEN = 19 THEN 
+		  TIPO_DIC := 'DEVOLUCION';
+	END IF;
+	
+	IF  :DICTAMEN = 17 THEN 
+		  TIPO_DIC := 'TRANSFERENTE';
 	END IF;
 
-	IF :VARIABLES.B = 'S' THEN
-	   IF :CVE_OF_GESTION IS NULL THEN 
-	 	   SELECT SEQ_OF_GESTION.nextval
-         INTO :M_OFICIO_GESTION.NO_OF_GESTION
-         FROM dual;
-         -- LIP_COMMIT_SILENCIOSO;
-      
-         IF :SE_REFIERE_A = 'Se refiere a todos los bienes' THEN 
-            PUP_AGREGA_BIENES;  
-            LIP_COMMIT_SILENCIOSO;        
-         END IF;
+	IF  :DICTAMEN = 18 THEN 
+		  TIPO_DIC := 'RESARCIMIENTO';
+	END IF;
 
-         IF :SE_REFIERE_A = 'Se refiere a algun (os) bien (es) del expediente' THEN
-   	        PUP_AGREGA_ALGUNOS_BIENES;
-   	        LIP_COMMIT_SILENCIOSO;
-         END IF;     
-         --   go_block('BIENES_OFICIO_GESTION');
-         --   LIP_EXEQRY;   
-         :variables.clasif := null;
-         if :BIENES_OFICIO_GESTION.clasif is not null then
-	          GO_BLOCK('BIENES_OFICIO_GESTION');
-            FIRST_RECORD;
-            LOOP
-              IF :BIENES_OFICIO_GESTION.CLASIF IS NOT NULL THEN 
-                 :VARIABLES.CLASIF := :VARIABLES.CLASIF||TO_CHAR(:BIENES_OFICIO_GESTION.CLASIF);    
-              end if;
-              GO_BLOCK('BIENES_OFICIO_GESTION');
-              EXIT WHEN :system.last_record = 'TRUE';
-              IF :BIENES_OFICIO_GESTION.CLASIF IS NOT NULL THEN 
-    	           :VARIABLES.CLASIF := :VARIABLES.CLASIF||',';
-              END IF;
-              NEXT_RECORD;
-            END LOOP;
- 	          :VARIABLES.CLASIF2 := :VARIABLES.CLASIF;--,2,500);       
-            GO_BLOCK('R_DICTAMINA_DOC');
-         LIP_EXEQRY; 
-         END IF;
-	   END IF;
-	 
-      IF :CVE_OF_GESTION IS NOT NULL THEN 
-	      SELECT COUNT(0) into contador
-	      from BIENES_OFICIO_GESTION
-	      where no_of_gestion = :M_OFICIO_GESTION.no_of_gestion;
+	IF  :DICTAMEN = 20 THEN 				--JAMM 250707
+		  TIPO_DIC := 'ABANDONO';
+	END IF;
+	
+		IF  :DICTAMEN = 24 THEN 				--JAMM 250707
+		  TIPO_DIC := 'ACLARA';
+	END IF;
+
+  pl_id := Get_Parameter_List(pl_name); 
+  
+  IF Id_Null(pl_id) THEN 
+   	  pl_id := Create_Parameter_List(pl_name); 
+   	  IF Id_Null(pl_id) THEN 
+  	  	    LIP_MENSAJE('Error al crear lista de parámetros. '||pl_name,'N'); 
+   	  	    RAISE Form_Trigger_Failure; 
+   	  END IF; 
+  ELSE 
+       Destroy_Parameter_List(pl_id); 
+       pl_id := Create_Parameter_List(pl_name); 
+  END IF; 
+  
+  pl_id := Get_Parameter_List(pl_name);
+  
+  IF NOT Id_Null(pl_id) THEN 
+    Add_Parameter(pl_id, 'EXPEDIENTE',TEXT_PARAMETER,TO_CHAR(:BLK_NOT.NO_EXPEDIENTE));
+    Add_Parameter(pl_id, 'TIPO_DIC',TEXT_PARAMETER,TIPO_DIC);
+    Add_Parameter(pl_id, 'VOLANTE',TEXT_PARAMETER,TO_CHAR(:BLK_NOT.NO_VOLANTE));
+    Add_Parameter(pl_id, 'CONSULTA',TEXT_PARAMETER,:VARIABLES.CONSULTA);
+    Add_Parameter(pl_id, 'TIPO_VO',TEXT_PARAMETER,:BLK_NOT.CONDICION);
+	 Add_Parameter(pl_id, 'P_GEST_OK',TEXT_PARAMETER, :PARAMETER.P_GEST_OK);
+	 Add_Parameter(pl_id, 'P_NO_TRAMITE',TEXT_PARAMETER, :PARAMETER.P_NO_TRAMITE);
+
+  END IF;
+   CALL_FORM('FACTJURDICTAMASG',hide,do_replace,no_query_only,pl_id); 	
+ 	 --**** aqui la validación y eliminación de la clave de dictamen --
+   v_no_volante := :BLK_NOT.NO_VOLANTE;
    
-	      IF :SE_REFIERE_A = 'Se refiere a todos los bienes' AND CONTADOR = 0 THEN 
-	    	    PUP_AGREGA_BIENES;
-	    	    LIP_COMMIT_SILENCIOSO;
-	      END IF;
-   
-         IF :SE_REFIERE_A = 'Se refiere a algun (os) bien (es) del expediente' AND CONTADOR = 0 THEN 
-         	  PUP_AGREGA_ALGUNOS_BIENES;
-         	  LIP_COMMIT_SILENCIOSO;
+  BEGIN
+
+         SELECT COUNT(0)
+           INTO VVAL
+           FROM DICTAMINACIONES
+          WHERE NO_VOLANTE = v_no_volante;
+          
+         SELECT COUNT(0)
+           INTO VVAL1
+           FROM M_OFICIO_GESTION
+          WHERE NO_VOLANTE = v_no_volante;
+            
+         IF VVAL = 0 AND  VVAL1=0 THEN
+            UPDATE NOTIFICACIONES
+               SET CVE_DICTAMEN = NULL
+             WHERE NO_VOLANTE = v_no_volante;
+            LIP_COMMIT_SILENCIOSO;
+         ELSIF VVAL = 0 AND  VVAL1 >0 AND :GLOBAL.VARDIC IS NOT NULL  THEN
+         	  UPDATE NOTIFICACIONES
+               SET CVE_DICTAMEN =  :GLOBAL.VARDIC
+             WHERE NO_VOLANTE = v_no_volante;
+            LIP_COMMIT_SILENCIOSO;
+            
          END IF;
-         go_block('BIENES_OFICIO_GESTION');
-         LIP_EXEQRY;
-         
-         :variables.clasif := null;
-         -- :variables.clasif2 := null;
-         if :BIENES_OFICIO_GESTION.clasif is not null then
-	         GO_BLOCK('BIENES_OFICIO_GESTION');
-            FIRST_RECORD;
-            LOOP
-              IF :BIENES_OFICIO_GESTION.CLASIF IS NOT NULL THEN 
-                 :VARIABLES.CLASIF := :VARIABLES.CLASIF||TO_CHAR(:BIENES_OFICIO_GESTION.CLASIF);    
-              end if;
-              GO_BLOCK('BIENES_OFICIO_GESTION');
-              EXIT WHEN :system.last_record = 'TRUE';
-              IF :BIENES_OFICIO_GESTION.CLASIF IS NOT NULL THEN 
-    	           :VARIABLES.CLASIF := :VARIABLES.CLASIF||',';
-              END IF;
-              NEXT_RECORD;
-            END LOOP;
- 	         :VARIABLES.CLASIF2 := :VARIABLES.CLASIF;--,2,500);
-            GO_BLOCK('R_DICTAMINA_DOC');
-            LIP_EXEQRY; 
-         end if;
-      END IF;
-
-      IF :M_OFICIO_GESTION.CVE_OF_GESTION IS NOT NULL AND :SE_REFIERE_A = 'Se refiere a todos los bienes' THEN
-	       Set_Radio_Button_Property('se_refiere_a','b',enabled,property_false);
-	       Set_Radio_Button_Property('se_refiere_a','c',ENABLED,PROPERTY_FALSE);
-      END IF;
-
-      if :M_OFICIO_GESTION.CVE_OF_GESTION IS NOT NULL AND :SE_REFIERE_A = 'Se refiere a algun (os) bien (es) del expediente' THEN
-          Set_Radio_Button_Property('se_refiere_a','a',enabled,property_false);
-          Set_Radio_Button_Property('se_refiere_a','c',ENABLED,PROPERTY_FALSE);
-      END IF;
-      go_block('R_DICTAMINA_DOC');
-      LIP_EXEQRY; 
-   else
-	go_block('DOCUMENTOS_PARA_DICTAMEN');
-   LIP_EXEQRY; 
-   end if;
-end;
+       
+      EXCEPTION
+         WHEN OTHERS THEN
+            NULL;
+      END;
+      GO_BLOCK('BLK_NOT');
+      CLEAR_BLOCK(NO_VALIDATE);
+      SET_BLOCK_PROPERTY('BLK_NOT',DEFAULT_WHERE,'NO_VOLANTE = '||TO_CHAR(v_no_volante));
+      EXECUTE_QUERY;
+      SET_BLOCK_PROPERTY('BLK_NOT',DEFAULT_WHERE,'');
+       -- :GLOBAL.VARDIC  := NULL;
+EXCEPTION
+   when no_data_found then
+   lip_mensaje('No se REALIZO LA CONSULTA','C');  	
+END;

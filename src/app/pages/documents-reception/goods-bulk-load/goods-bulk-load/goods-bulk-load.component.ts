@@ -745,9 +745,10 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
           for (let index = 0; index < res.data.length; index++) {
             const element = res.data[index];
             if (element) {
-              if (element.pgrTypeGoodNum || element.pgrTypeGoodNum == 0) {
-                this.pgrData.push(element);
-              }
+              // if (element.pgrTypeGoodNum || element.pgrTypeGoodNum == 0) {
+              //   this.pgrData.push(element);
+              // }
+              this.pgrData.push(element);
             }
           }
           if (this.pgrData.length > 0) {
@@ -3513,6 +3514,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
         labelNumber: infoData.objInsertResponse['vno_etiqueta'], // Numero de etiqueta
         flyerNumber: this.paramsGeneral.p_no_volante, // No volante
         observations: infoData.dataRow.observaciones, // Observaciones
+        extDomProcess: 'ASEGURADO', // Va como NULL
       };
       // Lenar la data de los valores para el bien
       let contadorCol = 10;
