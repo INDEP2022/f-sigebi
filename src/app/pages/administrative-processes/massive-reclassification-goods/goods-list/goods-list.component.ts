@@ -98,6 +98,11 @@ export class GoodsListComponent
   goodSelectedChange(good: IGood, selected: boolean) {
     if (selected) {
       this.selectedGooods.push(good);
+      console.log(
+        this.selectedGooods.length === 0,
+        this.form.valid,
+        this.selectedGooods.length === 0 || this.form.invalid
+      );
     } else {
       this.selectedGooods = this.selectedGooods.filter(
         _good => _good.id != good.id
@@ -134,7 +139,8 @@ export class GoodsListComponent
         takeUntil(this.$unSubscribe)
       )
       .subscribe(x => {
-        if (this.totalItems > 0) {
+        console.log(x);
+        if (this.totalItems > 0 && x !== null && x + ''.trim() !== '') {
           this.getData();
         }
       });
@@ -149,14 +155,17 @@ export class GoodsListComponent
     this.loading = true;
     console.log(this.classificationOfGoods.value);
     const filterParams = new FilterParams();
-    if (this.classificationOfGoods.value) {
+    if (
+      this.classificationOfGoods.value &&
+      (this.classificationOfGoods.value + '').trim() !== ''
+    ) {
       filterParams.addFilter(
         'goodClassNumber',
         this.classificationOfGoods.value,
         this.mode.value === 'E' ? SearchFilter.NOTIN : SearchFilter.EQ
       );
     }
-    if (this.goodStatus.value) {
+    if (this.goodStatus.value && (this.goodStatus.value + '').trim() !== '') {
       filterParams.addFilter(
         'status',
         String(this.goodStatus.value.map((item: any) => item.status)),
