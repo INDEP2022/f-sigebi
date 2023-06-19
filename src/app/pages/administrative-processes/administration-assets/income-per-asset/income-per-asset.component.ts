@@ -7,6 +7,7 @@ import {
 } from '@angular/core';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { ConceptMovisBankService } from 'src/app/core/services/catalogs/concept-movis-bank.service';
 import { AccountMovementService } from 'src/app/core/services/ms-account-movements/account-movement.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 
@@ -31,7 +32,10 @@ export class IncomePerAssetComponent
   assetLoading: boolean = this.loading;
   depositLoading: boolean = this.loading;
 
-  constructor(private readonly accountmvmntServices: AccountMovementService) {
+  constructor(
+    private readonly accountmvmntServices: AccountMovementService,
+    private readonly conceptMovisBankService: ConceptMovisBankService
+  ) {
     super();
     this.assetSettings.actions = false;
     this.assetSettings.columns = {
@@ -191,7 +195,7 @@ export class IncomePerAssetComponent
   }
 
   searchIncomeFromTheAsset(goodId: number) {
-    this.incomeFromTheAsset()
+    this.incomeFromTheAsset(goodId)
       .then(async (response: any) => {
         this.assetList = await Promise.all(
           response.map(async (deposit: any) => {
@@ -222,11 +226,11 @@ export class IncomePerAssetComponent
       });
   }
 
-  incomeFromTheAsset() {
+  incomeFromTheAsset(goodId: number | string) {
     return new Promise((res, _rej) => {
       this.assetLoading = true;
       this.accountmvmntServices
-        .getAccountAovements(this.assetParams.getValue())
+        .getAccountAovements(goodId, this.assetParams.getValue())
         .subscribe({
           next: response => {
             this.assetTotalItems = response.count;
@@ -247,5 +251,14 @@ export class IncomePerAssetComponent
     mes = mes < 10 ? '0' + mes : mes;
     let fechaFormateada = dia + '/' + mes + '/' + anio;
     return fechaFormateada;
+  }
+
+  getConceptMovisBank(key: string) {
+    const params: ListParams = {};
+    params['filter.key'] = `$eq:${key}`;
+    this.conceptMovisBankService.getByKey(params).subscribe({
+      next: response => {},
+      error: err => {},
+    });
   }
 }
