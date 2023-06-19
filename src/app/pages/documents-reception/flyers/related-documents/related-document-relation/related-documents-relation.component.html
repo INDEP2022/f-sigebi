@@ -129,6 +129,7 @@
                 [data]="select"
                 [form]="formJobManagement"
                 control="addressee"
+                [readonly]="!formJobManagement.get('sender').value"
                 [showTooltip]="true"
                 label="Destinatario"
                 (fetchItems)="getFromSelect($event)"
@@ -299,7 +300,12 @@
                             <th>Cantidad</th>
                             <th>Ident.</th>
                             <th>Estatus</th>
-                            <th [hidden]="isHideSelection || !isCreate">
+                            <th
+                              [hidden]="
+                                isHideSelection ||
+                                (!isCreate &&
+                                  dataTableGoodsJobManagement.length > 0)
+                              ">
                               Selección
                               <span
                                 class="badge"
@@ -330,7 +336,11 @@
                             </td>
                             <td class="text-white">{{ item.value.status }}</td>
                             <td
-                              [hidden]="isHideSelection || !isCreate"
+                              [hidden]="
+                                isHideSelection ||
+                                (!isCreate &&
+                                  dataTableGoodsJobManagement.length > 0)
+                              "
                               class="text-white">
                               <!-- <ng-container
                                 *ngIf="
@@ -438,10 +448,12 @@
                     <div [class]="isLoadingDocuments ? 'table-loading' : ''">
                       <!-- (userRowSelect)="selectProceedings($event)" -->
                       <ng2-smart-table
+                        #tableDocs
                         id="goodsJobManagement"
                         [attr.class]="'table-responsive table-bordered'"
                         [settings]="settingsTableDocuments"
-                        [source]="dataTableDocuments">
+                        [source]="dataTableDocuments"
+                        (delete)="deleteDocument($event.data)">
                       </ng2-smart-table>
                       <br />
                       <!-- <div>
@@ -461,16 +473,13 @@
                 tooltip="Documentos"
                 [disabled]="
                   isDisabledBtnDocs ||
-                  formJobManagement.value?.statusOf == 'ENVIADO' ||
-                  formJobManagement.value?.statusOf == 'EN REVISION'
+                  (!isCreate && dataTableDocuments.length > 0) ||
+                  formJobManagement.value.statusOf == 'ENVIADO'
                 "
                 containerClass="tooltip-style"
                 class="btn btn-info active btn-sm m-1"
-                (click)="openModal()">
+                (click)="onClickBtnDocuments()">
                 <i class="bx bxs-file"></i>
-                <!-- <ng-container *ngIf="isDisabledBtnDocs"
-                  ><span class="spinner-border ml-2"></span
-                ></ng-container> -->
               </button>
               <button
                 type="button"
