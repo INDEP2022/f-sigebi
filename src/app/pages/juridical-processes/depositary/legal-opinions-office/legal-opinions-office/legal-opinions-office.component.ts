@@ -4071,11 +4071,12 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
         });
     });
     modalRef.content.errorFirm.subscribe((next: any) => {
+      console.log(next);
       if (next) {
         // Run error
         // this.sendElectronicFirmData();
-        this.errorFirmOnGetXml(); // Error y regresa los datos a como estaban
       }
+      this.errorFirmOnGetXml(); // Error y regresa los datos a como estaban
     });
   }
   errorFirm() {
