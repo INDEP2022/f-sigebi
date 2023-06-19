@@ -72,6 +72,9 @@ export class DelegationStateFormComponent extends BasePage implements OnInit {
         this.delegationSate.stateCode.codeCondition
       );
 
+      this.delegationStateForm.controls['regionalDelegation'].disable();
+      this.delegationStateForm.controls['stateCode'].disable();
+
       this.getStates(
         new ListParams(),
         this.delegationStateForm.controls['keyState'].value
