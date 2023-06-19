@@ -178,6 +178,7 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
     this.conversiongoodServices.getActsByGood(idGood).subscribe({
       next: response => {
         this.actaER.setValue(response.cve_acta);
+        console.log(new Date(response.fec_elaboracion));
         this.actaERDate.setValue(new Date(response.fec_elaboracion));
       },
       error: err => {
@@ -211,6 +212,7 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
         'Se ha generado y aplicado la contraseña a la Conversión'
       );
       this.form.reset();
+      this.saved = true;
     } else {
       this.onLoadToast('error', 'ERROR', 'Erorr al Generar la contraseña');
     }
