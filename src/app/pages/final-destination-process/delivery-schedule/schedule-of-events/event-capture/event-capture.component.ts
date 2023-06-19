@@ -1510,11 +1510,15 @@ export class EventCaptureComponent
     const { typeEvent } = this.registerControls;
     if (typeEvent.value == 'RF') {
       const count = (await this.getExpedientsCount()) ?? 0;
+      console.log({ count });
       const options = ['CERRADA', 'CERRADO'];
       if (options.find(opt => opt == this.proceeding.statusProceedings)) {
+        console.log('PROGRAMACION CERRADA');
+
         this.ctrlButtons.closeProg.show();
         this.ctrlButtons.closeProg.label = 'Abrir Programación';
         if (count > 0) {
+          console.log(this.proceeding.receiveBy);
           if (this.proceeding.receiveBy != '1') {
             this.ctrlButtons.sendSise.show();
           } else {

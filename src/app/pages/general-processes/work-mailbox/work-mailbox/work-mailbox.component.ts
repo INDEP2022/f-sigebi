@@ -1122,11 +1122,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
               this.router.navigateByUrl(
                 `/pages/juridical/file-data-update?wheelNumber=${this.selectedRow.flierNumber}`
               );
-            } 
-            
-            
-            
-            else {
+            } else {
               resp.data[0].screenKey !== null
                 ? this.alert(
                     'info',

@@ -165,7 +165,7 @@ export class ChangeOfGoodClassificationComponent
       },
       rowClassFunction: (row: any) => {
         return (
-          getClassColour(row.data) +
+          getClassColour(row.data, false) +
           ' ' +
           (row.data.tableCd ? '' : 'notTableCd')
         );
