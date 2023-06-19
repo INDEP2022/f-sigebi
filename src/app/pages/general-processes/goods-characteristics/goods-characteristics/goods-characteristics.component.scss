@@ -8,6 +8,19 @@
   // }
 }
 
+:host ::ng-deep app-goods-types-shared {
+  .row {
+    flex-direction: column;
+    > div {
+      width: 100%;
+      max-width: 100%;
+      &:last-child {
+        margin-top: 17px;
+      }
+    }
+  }
+}
+
 // .buttons {
 //   @media screen and (max-width: 576px) {
 //     button {
