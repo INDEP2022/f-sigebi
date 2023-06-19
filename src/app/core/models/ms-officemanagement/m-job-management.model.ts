@@ -38,3 +38,9 @@ export interface IRSender {
   nombre: string;
   usuario: string;
 }
+
+export interface IMJobManagementExtSSF3 {
+  managementNumber: number;
+  invoiceUniversal: number;
+  recordNumber: number;
+}

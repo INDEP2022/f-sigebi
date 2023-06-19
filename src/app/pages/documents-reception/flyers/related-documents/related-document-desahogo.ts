@@ -145,6 +145,6 @@ export class RelatedDocumentDesahogo extends BasePage {
       pCveOfManagement: Number(management),
       pFlyerNumber: Number(volante),
     };
-    this.officeManagement.deleteJobGestion(body);
+    return this.officeManagement.deleteJobGestion(body);
   }
 }

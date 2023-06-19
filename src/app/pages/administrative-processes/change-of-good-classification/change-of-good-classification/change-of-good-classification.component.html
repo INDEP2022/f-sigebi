@@ -3,7 +3,8 @@
     <h5 class="title">Cambio de Clasificación del Bien</h5>
   </div>
   <div body>
-    <h6>° Actual Clasificación</h6>
+    <form-loader *ngIf="loading"></form-loader>
+    <h6>Actual Clasificación</h6>
     <br />
     <form [formGroup]="form" class="form-material">
       <div class="row">
@@ -12,8 +13,7 @@
             <input
               type="text"
               class="form-control"
-              formControlName="numberGood"
-              (change)="loadGood()" />
+              formControlName="numberGood" />
           </form-field>
         </div>
         <div class="col-md-10 col-sm-12 col-xs-12">
@@ -60,7 +60,7 @@
       </div>
     </form>
     <hr />
-    <h6>° Nueva Clasificación</h6>
+    <h6>Nueva Clasificación</h6>
     <form [formGroup]="formNew" class="form-material">
       <div class="row mt-5">
         <div class="col-md-6 col-sm-12 col-xs-12">
@@ -104,11 +104,11 @@
           </form-field>
         </div>
         <div class="col-md-4 col-sm-12 col-xs-12">
-          <div class="d-flex justify-content-center">
-            <div class="m-3">
+          <div class="d-flex">
+            <div>
               <button
                 type="button"
-                class="btn btn-success btn-sm active"
+                class="btn btn-primary btn-sm active"
                 [disabled]="formNew.invalid"
                 (click)="showAlert()">
                 Cambiar Clasificación
@@ -123,19 +123,9 @@
 <app-card [header]="true">
   <div class="ch-content" header>
     <h5 class="title">Atributos del Bien</h5>
-    <!-- <div class="col-md-5 buttons">
-      <div class="mt-2">
-        <button
-          [disabled]="btnNewAtribut"
-          type="button"
-          class="btn btn-primary btn-sm active"
-          (click)="newAtribut()">
-          Nuevos valores
-        </button>
-      </div>
-    </div> -->
   </div>
   <div body>
+    <app-characteristics-legend></app-characteristics-legend>
     <div class="row">
       <div class="col-md-6 col-sm-12 col-xs-12">
         <h6>ACTUALES</h6>
@@ -147,32 +137,6 @@
           [good]="good"
           [disabled]="true"
           [service]="service"></app-good-characteristics-table>
-
-        <!-- <app-attributes-table
-          title="Actuales"
-          [clasification]="currentClasification.value"
-          [readOnly]="true"></app-attributes-table> -->
-
-        <!-- <h6>° Atributos actuales</h6>
-        <div class="row"></div> -->
-        <!-- <div class="row">
-          <div class="row pt-4">
-            <div class="col-md-12">
-              <div [class]="loading ? 'table-loading' : ''">
-                <ng2-smart-table
-                  [attr.class]="'table-bordered'"
-                  [settings]="atributActSettings"
-                  [source]="dataAct">
-                </ng2-smart-table>
-              </div>
-            </div>
-          </div>
-          <app-pagination
-            [params]="params"
-            [pageSizeOptions]="pageSizeOptions"
-            [limit]="limit"
-            [totalItems]="totalItems"></app-pagination>
-        </div> -->
       </div>
       <div class="col-md-6 col-sm-12 col-xs-12">
         <h6>NUEVOS</h6>
@@ -185,27 +149,6 @@
           [good]="good"
           [disabled]="false"
           [service]="service"></app-good-characteristics-table>
-
-        <!-- <app-attributes-table
-          title="Nuevos"
-          [readOnly]="false"
-          [clasification]="classificationOfGoods.value"></app-attributes-table> -->
-        <!-- <h6>° Nuevos atributos</h6> -->
-        <!-- <div class="row">
-          <div class="row pt-4">
-            <div class="col-md-12">
-              <div [class]="loading ? 'table-loading' : ''">
-                <ng2-smart-table
-                  [attr.class]="'table-bordered'"
-                  [settings]="atributNewSettings"
-                  [source]="listAtributNew"
-                  (edit)="onChangeValid($event.data)"
-                  (editConfirm)="onSaveConfirm($event)">
-                </ng2-smart-table>
-              </div>
-            </div>
-          </div>
-        </div> -->
       </div>
     </div>
   </div>
