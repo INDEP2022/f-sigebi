@@ -130,6 +130,7 @@ export class SiabClasificationDetailComponent
     setTimeout(() => {
       this.getTypes(new ListParams());
     }, 1000);
+
     //this.getSubtypes(new ListParams());
     //this.getSsubtypes(new ListParams());
     //this.getSssubtypes(new ListParams());
@@ -180,6 +181,7 @@ export class SiabClasificationDetailComponent
         this.siabClasificationform.controls['sssubtypeId'].setValue(null);
       }
     }
+
     //console.log(data.id);
   }
 
@@ -198,7 +200,6 @@ export class SiabClasificationDetailComponent
       },
     });
   }
-
   getSubtypesUpdate(params: ListParams, value: string, valueType: string) {
     if (value && valueType) {
       console.log(value);

@@ -1,9 +1,9 @@
 export interface IParameter {
-  idParam: string;
-  idValue: string;
+  parameter: string;
+  value: string;
   description: string;
-  idDirection: string;
-  eventTypeId: null;
+  address: string;
+  typeEventId: number | null;
 }
 
 export interface IBrand {

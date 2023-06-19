@@ -60,7 +60,6 @@ export class ParametersListComponent extends BasePage implements OnInit {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
-            filter.field == 'parameter' ||
             filter.field == 'description' ||
             filter.field == 'value' ||
             filter.field == 'address' ||
