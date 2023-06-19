@@ -3,7 +3,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { SharedModule } from 'src/app/shared/shared.module';
 //Rxjs
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, debounceTime, takeUntil } from 'rxjs';
 //Params
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -76,6 +76,18 @@ export class GoodsTypesSharedComponent extends BasePage implements OnInit {
     this.rowClass = this.inlineForm
       ? `col-md-${this.columns} mt-3`
       : `col-md-12 mt-3`;
+    if (this.form) {
+      // this.form.valueChanges
+      //   .pipe(debounceTime(500), takeUntil(this.$unSubscribe))
+      //   .subscribe(x => {
+      //     console.log(x);
+      //   });
+      this.sssubtype.valueChanges
+        .pipe(debounceTime(500), takeUntil(this.$unSubscribe))
+        .subscribe(x => {
+          console.log(x);
+        });
+    }
   }
 
   getTypes(params: ListParams) {
