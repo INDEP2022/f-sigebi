@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
@@ -23,7 +23,6 @@ export class MunicipalityFormComponent extends BasePage implements OnInit {
   edit: boolean = false;
   municipality: IMunicipality;
   states = new DefaultSelect<IStateOfRepublic>();
-  @Output() refresh = new EventEmitter<true>();
 
   constructor(
     private modalRef: BsModalRef,
