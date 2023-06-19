@@ -5,7 +5,7 @@ import {
   OnInit,
   SimpleChanges,
 } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { AccountMovementService } from 'src/app/core/services/ms-account-movements/account-movement.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -28,6 +28,8 @@ export class IncomePerAssetComponent
   assetTotalItems: number = 0;
   depositTotalItems: number = 0;
   @Input() goodId: number;
+  assetLoading: boolean = this.loading;
+  depositLoading: boolean = this.loading;
 
   constructor(private readonly accountmvmntServices: AccountMovementService) {
     super();
@@ -79,6 +81,7 @@ export class IncomePerAssetComponent
         sort: false,
       },
     };
+    this.depositSettings.actions = false;
     this.depositSettings.columns = {
       bank: {
         title: 'Banco',
@@ -116,20 +119,133 @@ export class IncomePerAssetComponent
   ngOnChanges(changes: SimpleChanges): void {
     if (changes) {
       this.searchDepositary(this.goodId);
+      this.searchIncomeFromTheAsset(this.goodId);
     }
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.depositParams
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.searchDepositary(this.goodId));
+
+    this.assetParams
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.searchIncomeFromTheAsset(this.goodId));
+  }
 
   searchDepositary(goodId: number) {
-    this.accountmvmntServices
-      .getAccountAovementsIsNull(this.depositParams.getValue())
-      .subscribe({
-        next: response => {
-          /* this.depositList = response.data;
-        this.depositTotalItems = response.count; */
-        },
-        error: err => {},
+    this.searchDepositaryIsNull()
+      .then(async (response: any) => {
+        this.depositList = await Promise.all(
+          response.map(async (deposit: any) => {
+            const responseAccount: any = await this.searchAccount(
+              deposit.no_cuenta
+            );
+            return {
+              bank: responseAccount.data[0].cve_banco,
+              account: responseAccount.data[0].cve_cuenta,
+              depositDate: this.formatearFecha(
+                new Date(deposit.fec_movimiento)
+              ),
+              fol: deposit.folio_ficha,
+              currency: responseAccount.data[0].cve_moneda,
+              amount: deposit.deposito,
+            };
+          })
+        );
+        this.depositLoading = false;
+      })
+      .catch(err => {
+        this.depositLoading = false;
       });
+  }
+
+  searchDepositaryIsNull() {
+    return new Promise((res, _rej) => {
+      this.depositLoading = true;
+      this.accountmvmntServices
+        .getAccountAovementsIsNull(this.depositParams.getValue())
+        .subscribe({
+          next: response => {
+            this.depositTotalItems = response.count;
+            res(response.data);
+          },
+          error: err => {
+            res('Error');
+          },
+        });
+    });
+  }
+
+  searchAccount(numberAccount: string | number) {
+    return new Promise((res, rej) => {
+      this.accountmvmntServices.getAccountById(numberAccount).subscribe({
+        next: response => {
+          res(response);
+        },
+        error: err => {
+          res('');
+        },
+      });
+    });
+  }
+
+  searchIncomeFromTheAsset(goodId: number) {
+    this.incomeFromTheAsset()
+      .then(async (response: any) => {
+        this.assetList = await Promise.all(
+          response.map(async (deposit: any) => {
+            const responseAccount: any = await this.searchAccount(
+              deposit.no_cuenta
+            );
+            return {
+              bank: responseAccount.data[0].cve_banco,
+              account: responseAccount.data[0].cve_cuenta,
+              depositDate: this.formatearFecha(
+                new Date(deposit.fec_movimiento)
+              ),
+              fol: deposit.folio_ficha,
+              currency: responseAccount.data[0].cve_moneda,
+              amount: deposit.deposito,
+              concept: deposit.cve_concepto,
+              description: 'TRASPASO COBRO DE CHEQUE',
+              transferDate: this.formatearFecha(
+                new Date(deposit.fec_calculo_intereses)
+              ),
+            };
+          })
+        );
+        this.assetLoading = false;
+      })
+      .catch(err => {
+        this.assetLoading = false;
+      });
+  }
+
+  incomeFromTheAsset() {
+    return new Promise((res, _rej) => {
+      this.assetLoading = true;
+      this.accountmvmntServices
+        .getAccountAovements(this.assetParams.getValue())
+        .subscribe({
+          next: response => {
+            this.assetTotalItems = response.count;
+            res(response.data);
+          },
+          error: err => {
+            res('Error');
+          },
+        });
+    });
+  }
+
+  formatearFecha(fecha: Date) {
+    let dia: any = fecha.getDate();
+    let mes: any = fecha.getMonth() + 1;
+    let anio: any = fecha.getFullYear();
+    dia = dia < 10 ? '0' + dia : dia;
+    mes = mes < 10 ? '0' + mes : mes;
+    let fechaFormateada = dia + '/' + mes + '/' + anio;
+    return fechaFormateada;
   }
 }

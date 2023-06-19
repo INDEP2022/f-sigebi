@@ -170,4 +170,15 @@ export class SearchTabComponent extends BasePage implements OnInit {
     };
     this.modalService.show(component, config);
   }
+
+  formatearFecha(fecha: Date) {
+    let dia: any = fecha.getDate();
+    let mes: any = fecha.getMonth() + 1;
+    let anio: any = fecha.getFullYear();
+    dia = dia < 10 ? '0' + dia : dia;
+    mes = mes < 10 ? '0' + mes : mes;
+    let fechaFormateada = dia + '/' + mes + '/' + anio;
+    console.log(fechaFormateada);
+    return fechaFormateada;
+  }
 }
