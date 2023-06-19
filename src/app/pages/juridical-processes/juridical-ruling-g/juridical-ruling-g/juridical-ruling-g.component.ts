@@ -2308,7 +2308,7 @@ export class JuridicalRulingGComponent
           EXPEDIENTE: this.expedientesForm.get('noExpediente').value,
           P_GEST_OK: this.P_GEST_OK,
           P_NO_TRAMITE: this.P_NO_TRAMITE,
-          PLLAMO: 'PROCEDENCIA',
+          PLLAMO: 'ABANDONO',
         },
       }
     );
@@ -4810,7 +4810,7 @@ export class JuridicalRulingGComponent
   async createDictamenXGood1(body: any) {
     this.DictationXGood1Service.createDictaXGood1(body).subscribe({
       next: resp => {
-        console.log('CREADO', resp);
+        console.log('SE GUARDARON LOS BIENES ', resp);
       },
       error: error => {
         this.alert('error', 'Error al crear dictamenXbien1', '');
