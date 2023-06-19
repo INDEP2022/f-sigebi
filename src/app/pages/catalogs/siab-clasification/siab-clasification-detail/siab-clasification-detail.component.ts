@@ -34,6 +34,10 @@ export class SiabClasificationDetailComponent
   subTypes = new DefaultSelect<IGoodSubType>();
   ssubTypes = new DefaultSelect<IGoodSsubType>();
   sssubTypes = new DefaultSelect<IGoodSssubtype>();
+  idType: string = '';
+  idSubType: string = '';
+  idSsubType: string = '';
+  idSssbType: string = '';
 
   @Output() refresh = new EventEmitter<true>();
 
@@ -75,12 +79,20 @@ export class SiabClasificationDetailComponent
 
     if (this.clasification != null) {
       this.edit = true;
+      console.log(this.clasification);
       this.siabClasificationform.patchValue(this.clasification);
+      this.getTypesUpdate(new ListParams(), this.clasification.typeId);
+      this.getSubtypesUpdate(new ListParams(), this.clasification.subtypeId);
+      this.getSsubtypesUpdate(new ListParams(), this.clasification.ssubtypeId);
+      this.getSssubtypesUpdate(
+        new ListParams(),
+        this.clasification.sssubtypeId
+      );
     }
     this.getTypes(new ListParams());
-    this.getSubtypes(new ListParams());
-    this.getSsubtypes(new ListParams());
-    this.getSssubtypes(new ListParams());
+    //this.getSubtypes(new ListParams());
+    //this.getSsubtypes(new ListParams());
+    //this.getSssubtypes(new ListParams());
   }
 
   getTypes(params: ListParams) {
@@ -96,7 +108,37 @@ export class SiabClasificationDetailComponent
     });
   }
 
+  getTypesUpdate(params: ListParams, value: string) {
+    if (value) {
+      params['filter.id'] = `$eq:${value}`;
+    }
+    this.goodTypeService.getAll(params).subscribe({
+      next: data => {
+        this.types = new DefaultSelect(data.data, data.count);
+      },
+      error: error => {
+        console.log(error);
+        this.types = new DefaultSelect();
+        this.loading = false;
+      },
+    });
+  }
+
+  getChangeSutype(data: any) {
+    this.idType = data.id;
+    console.log(data);
+    if (this.idType != null) {
+      this.getSubtypes(new ListParams());
+    } else {
+    }
+
+    //console.log(data.id);
+  }
+
   getSubtypes(params: ListParams) {
+    if (this.idType) {
+      params['filter.idTypeGood'] = `$eq:${this.idType}`;
+    }
     this.goodSubtypeService.getAll(params).subscribe({
       next: data => {
         this.subTypes = new DefaultSelect(data.data, data.count);
@@ -109,7 +151,34 @@ export class SiabClasificationDetailComponent
     });
   }
 
+  getSubtypesUpdate(params: ListParams, value: string) {
+    if (value) {
+      params['filter.id'] = `$eq:${value}`;
+    }
+    this.goodSubtypeService.getAll(params).subscribe({
+      next: data => {
+        this.subTypes = new DefaultSelect(data.data, data.count);
+      },
+      error: error => {
+        console.log(error);
+        this.subTypes = new DefaultSelect();
+        this.loading = false;
+      },
+    });
+  }
+
+  getChangeSsutype(data: any) {
+    this.idSubType = data.id;
+    console.log(data);
+    if (this.idSubType != null) {
+      this.getSsubtypes(new ListParams());
+    }
+  }
+
   getSsubtypes(params: ListParams) {
+    if (this.idSubType) {
+      params['filter.noSubType'] = `$eq:${this.idSubType}`;
+    }
     this.goodSsubtypeService.getAll(params).subscribe({
       next: data => {
         this.ssubTypes = new DefaultSelect(data.data, data.count);
@@ -122,7 +191,50 @@ export class SiabClasificationDetailComponent
     });
   }
 
+  getSsubtypesUpdate(params: ListParams, value: string) {
+    if (value) {
+      params['filter.id'] = `$eq:${value}`;
+    }
+    this.goodSsubtypeService.getAll(params).subscribe({
+      next: data => {
+        this.ssubTypes = new DefaultSelect(data.data, data.count);
+      },
+      error: error => {
+        console.log(error);
+        this.ssubTypes = new DefaultSelect();
+        this.loading = false;
+      },
+    });
+  }
+
+  getChangeSssutype(data: any) {
+    this.idSsubType = data.id;
+    console.log(data);
+    if (this.idSsubType != null) {
+      this.getSssubtypes(new ListParams());
+    }
+  }
+
   getSssubtypes(params: ListParams) {
+    if (this.idSsubType) {
+      params['filter.numSsubType'] = `$eq:${this.idSsubType}`;
+    }
+    this.goodSssubtypeService.getAll(params).subscribe({
+      next: data => {
+        this.sssubTypes = new DefaultSelect(data.data, data.count);
+      },
+      error: error => {
+        console.log(error);
+        this.sssubTypes = new DefaultSelect();
+        this.loading = false;
+      },
+    });
+  }
+
+  getSssubtypesUpdate(params: ListParams, value: string) {
+    if (value) {
+      params['filter.id'] = `$eq:${value}`;
+    }
     this.goodSssubtypeService.getAll(params).subscribe({
       next: data => {
         this.sssubTypes = new DefaultSelect(data.data, data.count);
