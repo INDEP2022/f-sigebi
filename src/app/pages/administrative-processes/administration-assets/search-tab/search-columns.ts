@@ -5,7 +5,7 @@ export const SEARCH_COLUMNS = {
     sort: false,
   },
   receiptDate: {
-    title: 'Fecha Recepcion',
+    title: 'Fecha Recepción',
     type: 'string',
     sort: false,
   },
@@ -30,7 +30,7 @@ export const SEARCH_COLUMNS = {
     sort: false,
   },
   preliminaryInquiry: {
-    title: 'Averiguacion Previa',
+    title: 'Averiguación Previa',
     type: 'string',
     sort: false,
   },
@@ -53,7 +53,7 @@ export const SEARCH_COLUMNS = {
     sort: false,
   },
   affair: {
-    title: 'Descripcion del Asunto ',
+    title: 'Descripción del Asunto ',
     type: 'string',
     sort: false,
     valuePrepareFunction: (value: any) => {

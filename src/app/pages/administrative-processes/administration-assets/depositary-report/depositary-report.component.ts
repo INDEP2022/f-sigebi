@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IPerson } from 'src/app/core/models/catalogs/person.model';
@@ -14,6 +14,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 export class DepositaryReportComponent extends BasePage implements OnInit {
   depositaryDataForm: FormGroup;
   persons = new DefaultSelect<IPerson>();
+  @Input() goodId: number;
   ngOnInit(): void {
     this.prepareForm();
   }
