@@ -2308,7 +2308,7 @@ export class JuridicalRulingGComponent
           EXPEDIENTE: this.expedientesForm.get('noExpediente').value,
           P_GEST_OK: this.P_GEST_OK,
           P_NO_TRAMITE: this.P_NO_TRAMITE,
-          PLLAMO: 'PROCEDENCIA',
+          PLLAMO: 'ABANDONO',
         },
       }
     );
@@ -2579,40 +2579,49 @@ export class JuridicalRulingGComponent
       this.expedientesForm.get('tipoDictaminacion').value
     );
     let typeDict = this.expedientesForm.get('tipoDictaminacion').value;
+    console.log('this.selectedGooods', this.selectedGooods);
     if (this.selectedGooods.length > 0) {
       this.selectedGooods.forEach((good: any) => {
         if (!this.goodsValid.some(v => v === good)) {
-          let indexGood = this.goods.findIndex(_good => _good == good);
-          console.log('aaa', this.goods[indexGood]);
-          if (this.goods[indexGood].goodDictaminado == true) {
-            this.onLoadToast(
-              'warning',
-              `El bien ${this.goods[indexGood].id} ya se encuentra dictaminado`,
-              ''
-            );
-            return;
-          } else if (
-            this.goods[indexGood].est_disponible == 'N' ||
-            this.goods[indexGood].di_disponible == 'N'
-          ) {
-            return;
-          } else if (
-            this.goods[indexGood].di_es_numerario == 'S' &&
-            this.goods[indexGood].di_esta_conciliado == 'N' &&
-            typeDict
-          ) {
-            this.onLoadToast('warning', 'El numerario no está conciliado', '');
-            return;
-          }
-          // if (this.goods[indexGood].fa_concilia_bien == 'S') {
-          //   this.onLoadToast('warning', 'El numerario no está conciliado', '');
-          //   return;
-          // }
+          let indexGood = this.goods.findIndex(_good => _good.id == good.id);
+          console.log('aaa', this.goods);
+          console.log('indexGood', indexGood);
+          if (indexGood != -1) {
+            if (this.goods[indexGood].goodDictaminado == true) {
+              this.onLoadToast(
+                'warning',
+                `El bien ${this.goods[indexGood].id} ya se encuentra dictaminado`,
+                ''
+              );
+              return;
+            } else if (
+              this.goods[indexGood].est_disponible == 'N' ||
+              this.goods[indexGood].di_disponible == 'N'
+            ) {
+              return;
+            } else if (
+              this.goods[indexGood].di_es_numerario == 'S' &&
+              this.goods[indexGood].di_esta_conciliado == 'N' &&
+              typeDict
+            ) {
+              this.onLoadToast(
+                'warning',
+                'El numerario no está conciliado',
+                ''
+              );
+              return;
+            }
+            // if (this.goods[indexGood].fa_concilia_bien == 'S') {
+            //   this.onLoadToast('warning', 'El numerario no está conciliado', '');
+            //   return;
+            // }
 
-          // IF: bienes.DI_ES_NUMERARIO = 'S' AND: bienes.DI_ESTA_CONCILIADO = 'N' AND: VARIABLES.TIPO_DICTA = 'PROCEDENCIA' THEN
-          // LIP_MENSAJE('El numerario no está conciliado', 'S');
-          this.goods[indexGood].est_disponible = 'N';
-          this.goods[indexGood].di_disponible = 'N';
+            // IF: bienes.DI_ES_NUMERARIO = 'S' AND: bienes.DI_ESTA_CONCILIADO = 'N' AND: VARIABLES.TIPO_DICTA = 'PROCEDENCIA' THEN
+            // LIP_MENSAJE('El numerario no está conciliado', 'S');
+            this.goods[indexGood].est_disponible = 'N';
+            this.goods[indexGood].di_disponible = 'N';
+          }
+
           this.goodsValid.push(good);
           this.goodsValid = [...this.goodsValid];
           this.totalItems3 = this.goodsValid.length;
@@ -2682,12 +2691,16 @@ export class JuridicalRulingGComponent
     if (this.selectedGooodsValid.length > 0) {
       // this.goods = this.goods.concat(this.selectedGooodsValid);
       this.selectedGooodsValid.forEach(good => {
+        console.log('good', good);
         this.goodsValid = this.goodsValid.filter(_good => _good.id != good.id);
-        let index = this.goods.findIndex(g => g === good);
-        this.goods[index].est_disponible = 'S';
-        this.goods[index].di_disponible = 'S';
-        this.goods[index].status = 'ADM';
-        this.goods[index].name = false;
+        let index = this.goods.findIndex(g => g.id === good.id);
+        if (index != -1) {
+          this.goods[index].est_disponible = 'S';
+          this.goods[index].di_disponible = 'S';
+          // this.goods[index].status = 'ADM';
+          this.goods[index].name = false;
+        }
+
         // this.selectedGooods = [];
       });
       this.selectedGooodsValid = [];
@@ -2751,19 +2764,20 @@ export class JuridicalRulingGComponent
         // this.goods[index].name = false;
         // this.goodsValid = this.goodsValid.filter(_good => _good.id != good.id);
         console.log('aaa2', this.goodsValid);
-        let index = this.goods.findIndex(g => g === good);
+        let index = this.goods.findIndex(g => g.id === good.id);
+        if (index != -1) {
+          if (this.goods[index].est_disponible) {
+            this.goods[index].est_disponible = 'S';
+          }
 
-        if (this.goods[index].est_disponible) {
-          this.goods[index].est_disponible = 'S';
-        }
+          if (this.goods[index].di_disponible) {
+            this.goods[index].di_disponible = 'S';
+          }
 
-        if (this.goods[index].di_disponible) {
-          this.goods[index].di_disponible = 'S';
-        }
-
-        //this.goods[index].status = 'ADM';
-        if (this.goods[index].name) {
-          this.goods[index].name = false;
+          //this.goods[index].status = 'ADM';
+          if (this.goods[index].name) {
+            this.goods[index].name = false;
+          }
         }
       });
       this.goodsValid = [];
@@ -2820,6 +2834,10 @@ export class JuridicalRulingGComponent
     let obj: IGood = this.goods.find(element => element.id === event.data.id);
     let index: number = this.goods.findIndex(elm => elm === obj);
     console.log(index);
+  }
+
+  onSelectedRow2(event: any) {
+    console.log('EVENT2', event);
   }
   // getStatusGood(data: any) {
   //   const params = new ListParams();
@@ -4792,7 +4810,7 @@ export class JuridicalRulingGComponent
   async createDictamenXGood1(body: any) {
     this.DictationXGood1Service.createDictaXGood1(body).subscribe({
       next: resp => {
-        console.log('CREADO', resp);
+        console.log('SE GUARDARON LOS BIENES ', resp);
       },
       error: error => {
         this.alert('error', 'Error al crear dictamenXbien1', '');

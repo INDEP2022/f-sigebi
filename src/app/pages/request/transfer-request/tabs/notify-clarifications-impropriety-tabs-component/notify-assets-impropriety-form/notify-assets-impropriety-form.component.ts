@@ -154,6 +154,7 @@ export class NotifyAssetsImproprietyFormComponent
   }
 
   async confirm() {
+    console.log('Botón de continuar');
     const typeTransference = this.infoRequest.typeOfTransfer;
     let generaXML: boolean = false;
     if (
