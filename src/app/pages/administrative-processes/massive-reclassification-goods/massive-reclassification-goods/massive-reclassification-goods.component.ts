@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Validators } from '@angular/forms';
-import { debounceTime, takeUntil } from 'rxjs';
+import { debounceTime, forkJoin, takeUntil } from 'rxjs';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -13,8 +13,7 @@ import { MassiveReclassificationGoodsService } from '../services/massive-reclass
 })
 export class MassiveReclassificationGoodsComponent
   extends BasePage
-  implements OnInit
-{
+  implements OnInit {
   // listGood: IGood[] = [];
   goodNotValid: IGood[] = [];
   origin: string = null;
@@ -52,6 +51,15 @@ export class MassiveReclassificationGoodsComponent
     this.service.loadGoods.next(true);
   }
 
+  disabledReclas() {
+    let validacion = this.selectedGooods.length === 0 || this.form.invalid;
+    if (this.mode.value && this.mode.value === 'I') {
+      validacion =
+        validacion || this.classificationGoodAlterning.value === null;
+    }
+    return validacion;
+  }
+
   ngOnInit(): void {
     this.service.buildForm();
     this.form.disable();
@@ -61,6 +69,7 @@ export class MassiveReclassificationGoodsComponent
       .subscribe(x => {
         console.log(x);
         if (x === 'I') {
+          this.classificationGoodAlterning.setValue(null);
           this.classificationGoodAlterning.addValidators(Validators.required);
         } else {
           this.classificationGoodAlterning.setValue(null);
@@ -69,6 +78,7 @@ export class MassiveReclassificationGoodsComponent
           );
         }
         this.form.updateValueAndValidity();
+        console.log(this.form.valid);
       });
 
     // this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
@@ -85,6 +95,12 @@ export class MassiveReclassificationGoodsComponent
     // });
 
     console.log(this.mode.value);
+  }
+
+  clearFilter() {
+    this.form.reset();
+    this.service.selectedGooods = [];
+    this.service.loadGoods.next(false);
   }
 
   /**
@@ -116,9 +132,20 @@ export class MassiveReclassificationGoodsComponent
       newClassNumber = this.classificationOfGoods.value;
     }
     console.log(this.selectedGooods);
-    this.selectedGooods.forEach(good => {
-      this.updateMode(good, newClassNumber);
-    });
+    forkJoin(
+      this.selectedGooods.map(good => {
+        return this.updateMode(good, newClassNumber);
+      })
+    )
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(x => {
+        this.alert(
+          'success',
+          'Reclasificación Masiva',
+          'Se han reclasificado los bienes seleccionados.'
+        );
+        this.loadGoods();
+      });
 
     // forkJoin(this.selectedGooods.map(good => {
     //         const filterParams = new FilterParams();
@@ -132,14 +159,9 @@ export class MassiveReclassificationGoodsComponent
     //             (good.flierNumber ? '$eq:' + good.flyerNumber : '$null')
     //         );
     // }))
-    this.alert(
-      'success',
-      'Reclasificación Masiva',
-      'Se han reclasificado los bienes seleccionados.'
-    );
   }
 
-  goGoodRastrer() {}
+  goGoodRastrer() { }
 
   // get disabled() {
   //   return (
@@ -152,19 +174,15 @@ export class MassiveReclassificationGoodsComponent
 
   updateMode(good: IGood, newClassNumber: string) {
     console.log(Number(newClassNumber), this.classificationOfGoods.value);
-    good.goodClassNumber = Number(newClassNumber);
-    good.requestId = Number(good.requestId);
-    good.fractionId = Number(good.fractionId);
-    good.addressId = Number(good.addressId);
-    console.log(good);
-    this.goodServices.update(good).subscribe({
-      next: response => {
-        console.log(response);
-      },
-      error: err => {
-        console.log(err);
-      },
-    });
+    let body: any = {};
+    body.id = good.id;
+    body.goodId = good.goodId;
+    body.goodClassNumber = Number(newClassNumber);
+    body.requestId = Number(good.requestId);
+    body.fractionId = Number(good.fractionId);
+    body.addressId = Number(good.addressId);
+    console.log(body);
+    return this.goodServices.update(body).pipe(takeUntil(this.$unSubscribe));
   }
 
   formEnable() {
