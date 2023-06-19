@@ -1,6 +1,14 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { catchError, firstValueFrom, map, of, takeUntil } from 'rxjs';
+import {
+  catchError,
+  debounceTime,
+  distinctUntilChanged,
+  firstValueFrom,
+  map,
+  of,
+  takeUntil,
+} from 'rxjs';
 import {
   FilterParams,
   SearchFilter,
@@ -23,7 +31,7 @@ import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { getClassColour } from 'src/app/pages/general-processes/goods-characteristics/goods-characteristics/good-table-vals/good-table-vals.component';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { ChangeOfGoodCharacteristicService } from '../services/change-of-good-classification.service';
-import { CharacteristicGoodCellComponent } from './attributes-table/characteristicGoodCell/characteristic-good-cell.component';
+import { CharacteristicGoodCellComponent } from './characteristicGoodCell/characteristic-good-cell.component';
 import { ATRIBUT_ACT_COLUMNS } from './columns';
 
 @Component({
@@ -188,6 +196,18 @@ export class ChangeOfGoodClassificationComponent
   ngOnInit(): void {
     this.buildForm();
     this.buildFormNew();
+    this.numberGood.valueChanges
+      .pipe(
+        distinctUntilChanged(),
+        debounceTime(1000),
+        takeUntil(this.$unSubscribe)
+      )
+      .subscribe(x => {
+        console.log(x);
+        if (x) {
+          this.loadGood();
+        }
+      });
     this.classificationOfGoods.valueChanges.subscribe({
       next: response => {
         console.log(response);
@@ -285,11 +305,14 @@ export class ChangeOfGoodClassificationComponent
         return;
       } else {
         this.loadClassifDescription(this.good.goodClassNumber);
-        this.loading = false;
+
         this.classificationOfGoods.enable();
 
         // this.getAtributos(this.good.goodClassNumber);
       }
+    } else {
+      this.loading = false;
+      this.alert('error', 'Error', 'Bien no encontrado');
     }
   }
 
@@ -299,14 +322,24 @@ export class ChangeOfGoodClassificationComponent
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: response => {
-          this.setGood(this.good, response.data[0]);
+          if (response.data && response.data.length > 0) {
+            this.setGood(this.good, response.data[0]);
+          } else {
+            this.alert(
+              'error',
+              'Error',
+              'No se puedo cargar la descripción del clasificador'
+            );
+          }
+          this.loading = false;
         },
         error: err => {
-          this.onLoadToast(
+          this.alert(
             'error',
-            'ERROR',
-            'Error al cargar la descripción del clasificador'
+            'Error',
+            'No se puedo cargar la descripción del clasificador'
           );
+          this.loading = false;
         },
       });
   }

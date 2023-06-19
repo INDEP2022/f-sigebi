@@ -10,3 +10,11 @@
     }
   }
 }
+
+form-loader {
+  position: absolute;
+  width: 100%;
+  left: 0px;
+  z-index: 2;
+  background: #00000005;
+}

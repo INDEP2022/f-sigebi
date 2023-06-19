@@ -13,6 +13,8 @@ import Swal from 'sweetalert2';
 import { MassiveConversionPermissionsComponent } from '../massive-conversion-permissions/massive-conversion-permissions.component';
 import { COLUMNS } from './columns';
 
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
+
 @Component({
   selector: 'app-massive-conversion',
   templateUrl: './massive-conversion.component.html',
@@ -106,19 +108,67 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
   }
 
   showConfirmAlert() {
-    this.alertQuestion(
-      'info',
-      'Confirmación',
-      '¿Está seguro de que el Paquete ya ha sido validado?'
-    ).then(question => {
-      if (question.isConfirmed) {
-        console.log('Hola', question.isConfirmed);
-        // Lógica a ejecutar si se confirma la acción
-        // ...
-        // Ejemplo: mostrar un mensaje de éxito
-        Swal.fire('Validado', '', 'success');
-      }
-    });
+    // Validar que todos los campos estén diligenciados
+    if (this.form.valid) {
+      this.alertQuestion(
+        'info',
+        'Confirmación',
+        '¿Está seguro de que el Paquete ya ha sido validado?'
+      ).then(question => {
+        if (question.isConfirmed) {
+          console.log('Hola', question.isConfirmed);
+          // Lógica a ejecutar si se confirma la acción
+          // ...
+          // Ejemplo: mostrar un mensaje de éxito
+          Swal.fire('Validado', '', 'success');
+        }
+      });
+    } else {
+      // Mostrar mensaje de error
+      Swal.fire(`Faltan datos necesarios para validar ${this.form}`);
+    }
+  }
+
+  showAutorizateAlert() {
+    // Validar que todos los campos estén diligenciados
+    if (this.form.valid) {
+      this.alertQuestion(
+        'info',
+        'Confirmación',
+        '¿Está seguro de que el Paquete ya ha sido autorizado?'
+      ).then(question => {
+        if (question.isConfirmed) {
+          // Lógica a ejecutar si se confirma la acción
+          // ...
+          // Ejemplo: mostrar un mensaje de éxito
+          Swal.fire('Autorizado', '', 'success');
+        }
+      });
+    } else {
+      // Mostrar mensaje de error
+      Swal.fire(`Existe inconsistencia en los bienes ${this.form}`);
+    }
+  }
+
+  showCloseAlert() {
+    // Validar que todos los campos estén diligenciados
+    if (this.form.valid) {
+      this.alertQuestion(
+        'info',
+        'Confirmación',
+        '¿Está seguro en cerrar el Paquete?'
+      ).then(question => {
+        if (question.isConfirmed) {
+          // Lógica a ejecutar si se confirma la acción
+          // ...
+          // Ejemplo: mostrar un mensaje de éxito
+          Swal.fire('Autorizado', '', 'success');
+        }
+      });
+    } else {
+      // Mostrar mensaje de error
+      Swal.fire(`Existe inconsistencia en los bienes... ${this.form} `);
+    }
   }
 
   delete(data: any) {
@@ -126,7 +176,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
@@ -139,21 +189,12 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
   }
 
   openPermissions(data: any) {
-    // let config: ModalOptions = {
-    //   initialState: {
-    //     data,
-    //     callback: (next: boolean) => { },
-    //   },
-    //   class: 'modal-xl modal-dialog-centered',
-    //   ignoreBackdropClick: true,
-    // };
-    // this.modalService.show(MassiveConversionPermissionsComponent, config);
-    const modalRef = this.modalService.show(
-      MassiveConversionPermissionsComponent,
-      {
-        class: 'modal-lg modal-dialog-centered',
-        ignoreBackdropClick: true,
-      }
-    );
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      data,
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: false,
+    };
+    this.modalService.show(MassiveConversionPermissionsComponent, modalConfig);
   }
 }
