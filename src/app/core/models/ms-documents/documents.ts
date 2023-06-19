@@ -1,3 +1,10 @@
+interface TypeDocument {
+  documentTypeKey: string;
+  description: string;
+  registerNumber: string;
+  generateArea: string;
+}
+
 export interface IDocuments {
   id?: string | number;
   natureDocument: string;

@@ -5,7 +5,9 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IClarificationDocumentsImpro } from '../../models/ms-documents/clarification-documents-impro-model';
+import { SeparatorsDocuments } from '../../models/ms-documents/document-separators';
 import { IDocuments } from '../../models/ms-documents/documents';
+import { TypesDocuments } from '../../models/ms-documents/documents-type';
 
 @Injectable({
   providedIn: 'root',
@@ -106,4 +108,14 @@ export class DocumentsService extends HttpService {
   //   const route = `clarification-documents-impro/${id}`;
   //   return this.post<Inappropriateness>(route, data);
   // }
+
+  getDocumentsType($params?: any): Observable<IListResponse<TypesDocuments>> {
+    const route = `/${DocumentsEndpoints.DocumentsType}`;
+    return this.get(route, $params);
+  }
+
+  getDocumentsSeparator(): Observable<IListResponse<SeparatorsDocuments>> {
+    const route = `/${DocumentsEndpoints.DocumentsSeparator}`;
+    return this.get(route);
+  }
 }
