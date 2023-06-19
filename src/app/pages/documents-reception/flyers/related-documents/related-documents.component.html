@@ -18,7 +18,7 @@
       Fec&#46; Captura:
       <span class="badge bg-info ml-3 mr-3" style="display: initial !important">
         {{
-          (formJobManagement.get('insertDate').value | date: 'M/d/yyyy') ||
+          (formJobManagement.get('insertDate').value | date : 'M/d/yyyy') ||
             '00/00/0000'
         }}
       </span>
@@ -41,6 +41,14 @@
         (click)="_saveScreenManagement()">
         <i aria-hidden="true" class="fa fa-save"></i>
       </button>
+      <!-- <button
+        type="button"
+        tooltip="TEST"
+        containerClass="tooltip-style"
+        class="btn btn-primary btn-sm active"
+        (click)="testCambiaStatus()">
+        <i aria-hidden="true" class="fa fa-check"></i>
+      </button> -->
     </div>
   </div>
   <!-- </div> -->
@@ -141,11 +149,12 @@
               <form-field
                 [control]="formJobManagement.get('addressee')"
                 class="col-md-4"
-                label="Nombre Destinatario">
-                <input
+                label="Nombre Destinatario"> 
+                <textarea
+                  rows="3"
                   type="text"
                   class="form-control"
-                  formControlName="addressee" />
+                  formControlName="addressee"></textarea>
               </form-field>
             </ng-template>
 
@@ -208,6 +217,10 @@
           <div class="col-md-1 text-right">
             <button
               *ngIf="pantallaOption"
+              [disabled]="
+                blockSend ||
+                formJobManagement.get('statusOf')?.value == 'ENVIADO'
+              "
               type="button"
               tooltip="Cambio"
               containerClass="tooltip-style"
