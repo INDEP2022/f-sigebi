@@ -1108,6 +1108,11 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
           this.disabledNoClasifBien = true;
         }
       }
+    } else {
+      this.disabledBienes = true;
+      this.disabledDescripcion = true;
+      this.disabledTable = true;
+      this.disabledNoClasifBien = true;
     }
   }
 
