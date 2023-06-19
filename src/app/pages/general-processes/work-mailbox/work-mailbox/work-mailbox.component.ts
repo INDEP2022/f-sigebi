@@ -1118,7 +1118,15 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
               this.router.navigateByUrl(
                 '/pages/documents-reception/flyers-registration'
               );
-            } else {
+            } else if (resp.data[0].screenKey === 'FACTGENACTDATEX') {
+              this.router.navigateByUrl(
+                `/pages/juridical/file-data-update?wheelNumber=${this.selectedRow.flierNumber}`
+              );
+            } 
+            
+            
+            
+            else {
               resp.data[0].screenKey !== null
                 ? this.alert(
                     'info',
