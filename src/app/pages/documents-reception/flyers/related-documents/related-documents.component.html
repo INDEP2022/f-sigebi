@@ -315,6 +315,7 @@
               <ngx-select
                 (fetchItems)="getJustification($event)"
                 value="id"
+                [searchOnInit]="true"
                 bindLabel="clarifications"
                 [form]="managementForm"
                 control="justificacion"

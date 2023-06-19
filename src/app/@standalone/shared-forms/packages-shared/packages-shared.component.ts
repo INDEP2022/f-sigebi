@@ -41,6 +41,7 @@ export class PackagesSharedComponent extends BasePage implements OnInit {
   getPackages(params: ListParams) {
     //Provisional data
     let data = packagesData;
+    console.log(data);
     let count = data.length;
     this.packages = new DefaultSelect(data, count);
     /*this.service.getAll(params).subscribe(data => {
