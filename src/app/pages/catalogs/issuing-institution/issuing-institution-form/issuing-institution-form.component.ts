@@ -6,8 +6,14 @@ import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IInstitutionClassification } from 'src/app/core/models/catalogs/institution-classification.model';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
-import { IIssuingInstitution } from '../../../../core/models/catalogs/issuing-institution.model';
-import { STRING_PATTERN } from '../../../../core/shared/patterns';
+import {
+  ICitys,
+  IIssuingInstitution,
+} from '../../../../core/models/catalogs/issuing-institution.model';
+import {
+  POSITVE_NUMBERS_PATTERN,
+  STRING_PATTERN,
+} from '../../../../core/shared/patterns';
 import { IssuingInstitutionService } from './../../../../core/services/catalogs/issuing-institution.service';
 
 @Component({
@@ -50,51 +56,82 @@ export class IssuingInstitutionFormComponent
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
       manager: [null, [Validators.required]],
-      street: [null, [Validators.pattern(STRING_PATTERN)]],
+      street: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       calle: [null, [Validators.pattern(STRING_PATTERN)]],
-      numInside: [null, []],
-      numExterior: [null, []],
-      cologne: [null, []],
-      zipCode: [null, []],
+      numInside: [null, [Validators.pattern(POSITVE_NUMBERS_PATTERN)]],
+      numExterior: [
+        null,
+        [Validators.required, Validators.pattern(POSITVE_NUMBERS_PATTERN)],
+      ],
+      cologne: [null, [Validators.required]],
+      zipCode: [
+        null,
+        [Validators.required, Validators.pattern(POSITVE_NUMBERS_PATTERN)],
+      ],
       delegMunic: [null, []],
-      phone: [null, []],
+      phone: [null, [Validators.required]],
       numClasif: [null, [Validators.required]],
-      numCity: [null, []],
+      numCity: [null, [Validators.required]],
       numRegister: [null, []],
       numTransference: [null, []],
     });
     if (this.issuingInstitution != null) {
       this.edit = true;
       this.issuingInstitutionForm.patchValue(this.issuingInstitution);
+      if (this.issuingInstitution.numCity) {
+        let city = this.issuingInstitution.numCity as ICitys;
+        console.log(city);
+        this.issuingInstitution.numCity = city.numberCity;
+        this.issuingInstitutionForm.controls['numCity'].setValue(
+          (this.issuingInstitution.numCity = city.numberCity)
+        );
+      }
+      console.log(this.issuingInstitutionForm.value);
+      console.log(this.issuingInstitution);
+
       this.issuingInstitutionForm.controls['numClasif'].setValue(
         this.idInstitute.id
       );
+      this.issuingInstitution.numCity
+        ? this.getFromSelectCity(
+            new ListParams(),
+            this.issuingInstitution.numCity.toString()
+          )
+        : this.getFromSelectCity(new ListParams());
+      this.issuingInstitution.numTransference
+        ? this.getFromSelectTransfer(
+            new ListParams(),
+            this.issuingInstitution.numTransference.toString()
+          )
+        : this.getFromSelectTransfer(new ListParams());
     } else {
       this.issuingInstitutionForm.controls['numClasif'].setValue(
         this.idInstitute.id
       );
       console.log(this.idInstitute.id);
     }
-    /*if (this.issuingInstitution != null) {
-      this.edit = true;
-      let city: ICity = this.issuingInstitution.numCity as ICity;
-      let numTransfer: ITransferente = this.issuingInstitution
-        .numTransference as ITransferente;
-      this.issuingInstitutionForm.patchValue({
-        ...this.issuingInstitution,
-        numCity: city?.idCity,
-        numTransference: numTransfer?.id,
-      });
-      this.issuingInstitution.numCity
-        ? (this.itemsCity = new DefaultSelect([city], 1))
-        : this.getFromSelectCity({ page: 1, text: '' });
-      this.issuingInstitution.numTransference
-        ? (this.itemsTransfer = new DefaultSelect([numTransfer], 1))
-        : this.getFromSelectTransfer({ page: 1, text: '' });
-    } else {
-      this.getFromSelectCity({ page: 1, text: '' });
-      this.getFromSelectTransfer({ page: 1, text: '' });
-    }*/
+    this.getFromSelectCity(new ListParams());
+    this.getFromSelectTransfer(new ListParams());
+    // if (this.issuingInstitution != null) {
+    //   this.edit = true;
+    //   let city: ICity = this.issuingInstitution.numCity as ICity;
+    //   let numTransfer: ITransferente = this.issuingInstitution
+    //     .numTransference as ITransferente;
+    //   this.issuingInstitutionForm.patchValue({
+    //     ...this.issuingInstitution,
+    //     numCity: city?.idCity,
+    //     numTransference: numTransfer?.id,
+    //   });
+    //   this.issuingInstitution.numCity
+    //     ? (this.itemsCity = new DefaultSelect([city], 1))
+    //     : this.getFromSelectCity({ page: 1, text: '' });
+    //   this.issuingInstitution.numTransference
+    //     ? (this.itemsTransfer = new DefaultSelect([numTransfer], 1))
+    //     : this.getFromSelectTransfer({ page: 1, text: '' });
+    // } else {
+    //   this.getFromSelectCity({ page: 1, text: '' });
+    //   this.getFromSelectTransfer({ page: 1, text: '' });
+    // }
   }
 
   close() {
@@ -129,18 +166,24 @@ export class IssuingInstitutionFormComponent
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
     this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
-    this.refresh.emit(true);
+    this.modalRef.content.callback(true);
     this.modalRef.hide();
   }
 
-  getFromSelectCity(params: ListParams) {
+  getFromSelectCity(params: ListParams, id?: string) {
+    if (id) {
+      params['filter.idCity'] = `$eq:${id}`;
+    }
     this.issuingInstitutionService.getCities(params).subscribe((data: any) => {
       console.log(data);
       this.itemsCity = new DefaultSelect(data.data, data.count);
     });
   }
 
-  getFromSelectTransfer(params: ListParams) {
+  getFromSelectTransfer(params: ListParams, id?: string) {
+    if (id) {
+      params['filter.id'] = `$eq:${id}`;
+    }
     this.issuingInstitutionService
       .getTransfers(params)
       .subscribe((data: any) => {

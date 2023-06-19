@@ -13,14 +13,15 @@
       </div>
 
       <div class="p-2">
-        <!-- <confirm-button
+        <confirm-button
           [btnSmall]="true"
           [disabled]="requestForm.invalid"
           (confirm)="save()">
-        </confirm-button> -->
+        </confirm-button>
       </div>
       <div class="p-2">
         <button
+          [disabled]="requestForm.invalid"
           type="button"
           class="btn btn-secondary btn-sm active"
           (click)="turnRequest()">
@@ -100,7 +101,7 @@
                   [data]="selectEntity"
                   bindLabel="descCondition"
                   [searchable]="false"
-                  label="Entidad"
+                  label="{{ keyStateName }}"
                   value="id"></ngx-select>
               </div>
             </div>
@@ -138,17 +139,6 @@
                   label="Autoridad"
                   value="idAuthority"></ngx-select>
               </div>
-
-              <div *ngIf="op == 2" class="col-md-3">
-                <ngx-select
-                  [form]="requestForm"
-                  control="keyStateOfRepublic"
-                  (fetchItems)="getState($event)"
-                  [data]="selectState"
-                  bindLabel="descCondition"
-                  label="Estado"
-                  value="id"></ngx-select>
-              </div>
             </div>
           </div>
         </div>
@@ -174,9 +164,10 @@
                     [data]="issues"
                     [form]="requestForm"
                     value="id"
-                    bindLabel="issue"
+                    bindLabel="description"
                     label="Asunto"
-                    [control]="'affair'">
+                    [control]="'affair'"
+                    (change)="getIssue($event)">
                   </ngx-select>
                 </form-field>
               </div>

@@ -3,7 +3,11 @@ import { ProceedingsEndpoints } from 'src/app/common/constants/endpoints/ms-proc
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
-import { IDetailProceedingsDeliveryReception } from '../../models/ms-proceedings/detail-proceedings-delivery-reception.model';
+import {
+  IDeleteDetailProceeding,
+  IDetailProceedingsDeliveryReception,
+  IDetailWithIndEdo,
+} from '../../models/ms-proceedings/detail-proceedings-delivery-reception.model';
 @Injectable({
   providedIn: 'root',
 })
@@ -18,8 +22,26 @@ export class DetailProceeDelRecService extends HttpService {
     return this.get(route, params);
   }
 
-  addGoodToProceedings(model: IDetailProceedingsDeliveryReception) {
+  PADelActaEntrega(actNumber: string | number) {
+    return this.delete(`${ProceedingsEndpoints.PADelActaEntrega}/${actNumber}`);
+  }
+
+  editDetailProcee(model: IDetailProceedingsDeliveryReception) {
+    return this.put(
+      ProceedingsEndpoints.DetailProceedingsDeliveryReception,
+      model
+    );
+  }
+
+  addGoodToProceedings(model: Partial<IDetailProceedingsDeliveryReception>) {
     return this.post(
+      ProceedingsEndpoints.DetailProceedingsDeliveryReception,
+      model
+    );
+  }
+
+  deleteDetailProcee(model: IDeleteDetailProceeding) {
+    return this.delete(
       ProceedingsEndpoints.DetailProceedingsDeliveryReception,
       model
     );
@@ -30,5 +52,19 @@ export class DetailProceeDelRecService extends HttpService {
       'detail-proceedings-delivery-reception',
       params
     );
+  }
+
+  getAllwithEndFisico(model: IDetailWithIndEdo) {
+    return this.post(
+      'detail-proceedings-delivery-reception/get-detalle-acta-recepcion',
+      model
+    );
+  }
+
+  remove(numberGood: string | number, numberProceedings: string | number) {
+    return this.delete('detail-proceedings-delivery-reception', {
+      numberGood,
+      numberProceedings,
+    });
   }
 }

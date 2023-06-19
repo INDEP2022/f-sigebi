@@ -1,10 +1,14 @@
 <div class="container">
-  <div class="row">
+  <!-- <div class="row">
     <div class="col-md-2 col-sm-12 col-xs-12">
       <div class="d-flex justify-content-center">
         <div class="m-3">
-          <button type="button" class="btn btn-primary btn-sm active">
-            scanner
+          <button
+            [disabled]="disabled"
+            (click)="createScannerFoil()"
+            type="button"
+            class="btn btn-primary btn-sm active">
+            Solicitud Escaneo
           </button>
         </div>
       </div>
@@ -12,8 +16,13 @@
     <div class="col-md-2 col-sm-12 col-xs-12">
       <div class="d-flex justify-content-center">
         <div class="m-3">
-          <button type="button" class="btn btn-info btn-sm active">
-            Folio scaneo
+          <button
+            [disabled]="disabled"
+            (click)="openScannerPage()"
+            [disabled]="!officeDictationData && !dictationData"
+            type="button"
+            class="btn btn-info btn-sm active">
+            Escaneo
           </button>
         </div>
       </div>
@@ -30,13 +39,30 @@
               formControlName="scanningFoli" />
           </form-field>
         </div>
+        <div class="col-md-12 col-sm-12 col-12">
+          <div class="d-flex justify-content-center">
+            <div class="m-3">
+              <button
+                [disabled]="disabled"
+                (click)="replicate()"
+                type="button"
+                class="btn btn-warning btn-sm active">
+                Replicar Folio
+              </button>
+            </div>
+          </div>
+        </div>
       </form>
     </div>
     <div class="col-md-2 col-sm-12 col-xs-12">
       <div class="d-flex justify-content-center">
         <div class="m-3">
-          <button type="button" class="btn btn-info btn-sm active">
-            Folio scaneo
+          <button
+            [disabled]="disabled"
+            (click)="showMessageDigitalization()"
+            type="button"
+            class="btn btn-info btn-sm active">
+            Solicitud Digitalizaci&oacute;n
           </button>
         </div>
       </div>
@@ -44,11 +70,123 @@
     <div class="col-md-2 col-sm-12 col-xs-12">
       <div class="d-flex justify-content-center">
         <div class="m-3">
-          <button type="button" class="btn btn-primary btn-sm active">
-            Folio scaneo
+          <button
+            [disabled]="disabled"
+            (click)="showScannerFoil()"
+            type="button"
+            class="btn btn-primary btn-sm active">
+            Ver Im&aacute;genes
           </button>
         </div>
       </div>
     </div>
+  </div> -->
+
+  <!-- Apartado folio de escaneo -->
+  <div class="row">
+    <div class="col-sm-12 col-12 col-md-12">
+      <div class="row">
+        <div class="col-sm-12 col-12 col-md-3 text-center">
+          <button
+            [disabled]="disabled"
+            (click)="createScannerFoil()"
+            tooltip="Generar Folio de Escaneo y Solicitud"
+            containerClass="tooltip-style"
+            class="btn btn-secondary btn-sm active m-1">
+            <i class="bx bxs-file-find"></i>
+          </button>
+          <button
+            [disabled]="disabled"
+            (click)="openScannerPage()"
+            tooltip="Escanear"
+            containerClass="tooltip-style"
+            class="btn btn-secondary btn-sm active m-1">
+            <i class="bx bxs-file"></i>
+          </button>
+        </div>
+        <div class="col-sm-12 col-12 col-md-6 w-100">
+          <form [formGroup]="form" class="form-material">
+            <div class="col-md-full col-sm-12 col-xs-12">
+              <form-field
+                label="Folio de Escaneo"
+                [control]="form.get('scanningFoli')">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="scanningFoli" />
+              </form-field>
+            </div>
+            <div class="col-md-12 col-sm-12 col-12">
+              <div class="d-flex justify-content-center">
+                <div class="m-3">
+                  <button
+                    [disabled]="disabled"
+                    (click)="replicate()"
+                    type="button"
+                    class="btn btn-warning btn-sm active">
+                    Replicar Folio
+                  </button>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="col-sm-12 col-12 col-md-3 text-center">
+          <button
+            [disabled]="disabled"
+            (click)="showMessageDigitalization()"
+            tooltip="imprimir Solicitud de Escaneo"
+            containerClass="tooltip-style"
+            class="btn btn-secondary btn-sm active m-1">
+            <i class="bx bxs-file-find"></i>
+          </button>
+          <button
+            [disabled]="disabled"
+            (click)="showScannerFoil()"
+            tooltip="Consulta de imágenes escaneadas"
+            containerClass="tooltip-style"
+            class="btn btn-secondary btn-sm active m-1">
+            <i class="bx bxs-file"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+    <!-- <div class="col-sm-12 col-12 col-md-4">
+              <div class="row">
+                <div class="col-sm-12 col-12 col-md-6 text-center">
+                  <button
+                    (click)="aprobar()"
+                    type="button"
+                    class="btn btn-primary btn-sm active ml-2 mr-2">
+                    Aprobar
+                  </button>
+                  <button
+                    (click)="eliminar()"
+                    type="button"
+                    class="btn btn-danger btn-sm active ml-2 mr-2">
+                    Eliminar
+                  </button>
+                </div>
+                <div class="col-sm-12 col-12 col-md-6 text-center">
+                  <label for="imp">Imp.</label>
+                  <button
+                    name="imp"
+                    (click)="imprimir()"
+                    [disabled]="!disabledIMPRIMIR"
+                    class="btn btn-secondary btn-sm active ml-2 mr-2">
+                    <i class="bx bxs-printer"></i>
+                  </button>
+
+                  <label for="env">Envia</label>
+                  <button
+                    name="env"
+                    (click)="enviarD()"
+                    [disabled]="!disabledENVIAR"
+                    class="btn btn-danger btn-sm active ml-2 mr-2">
+                    <i class="bx bx-send"></i>
+                  </button>
+                </div>
+              </div>
+            </div> -->
   </div>
 </div>

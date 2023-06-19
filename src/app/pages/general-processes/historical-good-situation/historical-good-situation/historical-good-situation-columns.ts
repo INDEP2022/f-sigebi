@@ -1,60 +1,27 @@
+import { format } from 'date-fns';
+
 export const HISTORICAL_GOOD_SITUATION_COLUMNS = {
-  situacion: {
+  descripcion: {
     title: 'Situación',
     sort: false,
+    valuePrepareFunction: (value: string) => value ?? 'Estatus no habilitado',
   },
-  fec: {
+  fec_cambio: {
     title: 'Fecha Cambio',
     sort: false,
+    valuePrepareFunction: (value: string) =>
+      value ? format(new Date(value), 'dd/MM/yyyy H:mm:ss') : '',
   },
-  usuario: {
+  usuario_cambio: {
     title: 'Usuario',
     sort: false,
   },
-  motivo: {
+  motivo_cambio: {
     title: 'Motivo Cambio',
     sort: false,
   },
-  proceso: {
+  proceso_ext_dom: {
     title: 'Proceso',
     sort: false,
   },
 };
-
-export const HISTORICAL_GOOD_SITUATION_EXAMPLE_DATA = [
-  {
-    situacion: 'DI_DESC-ESTAT',
-    fec: new Date().toISOString(),
-    usuario: 'USUARIO',
-    motivo: 'MOTIVO_CAMBIO',
-    proceso: 'PROCESO_EXTERNO',
-  },
-  {
-    situacion: 'DI_DESC-ESTAT',
-    fec: new Date().toISOString(),
-    usuario: 'USUARIO',
-    motivo: 'MOTIVO_CAMBIO',
-    proceso: 'PROCESO_EXTERNO',
-  },
-  {
-    situacion: 'DI_DESC-ESTAT',
-    fec: new Date().toISOString(),
-    usuario: 'USUARIO',
-    motivo: 'MOTIVO_CAMBIO',
-    proceso: 'PROCESO_EXTERNO',
-  },
-  {
-    situacion: 'DI_DESC-ESTAT',
-    fec: new Date().toISOString(),
-    usuario: 'USUARIO',
-    motivo: 'MOTIVO_CAMBIO',
-    proceso: 'PROCESO_EXTERNO',
-  },
-  {
-    situacion: 'DI_DESC-ESTAT',
-    fec: new Date().toISOString(),
-    usuario: 'USUARIO',
-    motivo: 'MOTIVO_CAMBIO',
-    proceso: 'PROCESO_EXTERNO',
-  },
-];

@@ -1,79 +1,99 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">
+    <h5 class="title" *ngIf="!formLoading">
       Formalizar entrega con folio&#58;
-      R&#45;METROPOLITANA&#45;SAT&#45;3468&#45;OS
+      {{ programming?.folio }}
     </h5>
   </div>
   <div body>
-    <div class="row">
-      <div class="col-md-4">
-        <form class="form-horizontal" style="margin: 0 auto">
+    <div class="row" *ngIf="formLoading" style="margin-bottom: 5rem">
+      <form-loader *ngIf="formLoading"></form-loader>
+    </div>
+    <div *ngIf="!formLoading">
+      <h5 class="title">Programaci&oacute;n</h5>
+      <div class="row pt-2">
+        <div class="col-md-4">
           <div class="form-group">
-            <label class="col-lg-5 text-right"
+            <label class="text-right mr-2"
               >Delegaci&oacute;n regional&#58;</label
             >
-            <span> NOROESTE </span>
+            <span class="fs-4">
+              {{ programming?.regionalDelegationNumber }}
+            </span>
           </div>
-
+        </div>
+        <div class="col-md-4">
           <div class="form-group">
-            <label class="col-lg-5 text-right">Transferente&#58;</label>
-            <span> SAT - comercio exterior </span>
+            <label class="text-right mr-2">Correo transferente&#58;</label>
+            <span class="fs-4">{{ programming?.emailTransfer }}</span>
           </div>
-
+        </div>
+        <div class="col-md-4">
           <div class="form-group">
-            <label class="col-lg-5 text-right">Emisora&#58;</label>
-            <span> AGA </span>
+            <label class="text-right mr-2">Ciudad&#58;</label>
+            <span class="fs-4"> {{ programming?.city }} </span>
           </div>
-
-          <div class="form-group">
-            <label class="col-lg-5 text-right">Autoridad&#58;</label>
-            <span> Administración de la aduana de Nuevo Laredo </span>
-          </div>
-        </form>
+        </div>
       </div>
 
-      <div class="col-md-4">
-        <form class="form-horizontal" style="margin: 0 auto">
+      <div class="row pt-3">
+        <div class="col-md-4">
           <div class="form-group">
-            <label class="col-lg-5 text-right">Correo transferente&#58;</label>
-            <span> OST12363@SAE.GOB.MX </span>
+            <label class="text-right mr-2">Transferente&#58;</label>
+            <span class="fs-4"> {{ nameTransferent }} </span>
           </div>
-
+        </div>
+        <div class="col-md-4">
           <div class="form-group">
-            <label class="col-lg-5 text-right">Fecha page operativo&#58;</label>
-            <span> 11-oct-2022 00:00 </span>
+            <label class="text-right mr-2">Fecha inicio operativo&#58;</label>
+            <span class="fs-4"> {{ programming?.startDate }} </span>
           </div>
-
+        </div>
+        <div class="col-md-4">
           <div class="form-group">
-            <label class="col-lg-5 text-right">Fecha fin operativo&#58;</label>
-            <span> 12-oct-2022 00:00 </span>
+            <label class="text-right mr-2">Fecha fin operativo&#58;</label>
+            <span class="fs-4"> {{ programming?.endDate }}</span>
           </div>
-
-          <div class="form-group">
-            <label class="col-lg-5 text-right">Direcci&oacute;n&#58;</label>
-            <span> Domicilio desconocido </span>
-          </div>
-        </form>
+        </div>
       </div>
 
-      <div class="col-md-4">
-        <form class="form-horizontal" style="margin: 0 auto">
+      <div class="row pt-3">
+        <div class="col-md-4">
           <div class="form-group">
-            <label class="col-lg-5 text-right">Tipo relevante&#58;</label>
-            <span> Diverso </span>
+            <label class="text-right mr-2">Emisora&#58;</label>
+            <span class="fs-4"> {{ nameStation }} </span>
           </div>
+        </div>
+        <div class="col-md-8">
+          <div class="form-group">
+            <label class="text-right mr-2">Dirección&#58;</label>
+            <span class="fs-4"> {{ programming?.address }} </span>
+          </div>
+        </div>
+      </div>
 
+      <div class="row pt-3">
+        <div class="col-md-4">
           <div class="form-group">
-            <label class="col-lg-5 text-right">Ciudad&#58;</label>
-            <span> Nuevo Laredo </span>
+            <label class="text-right mr-2">Autoridad&#58;</label>
+            <span class="fs-4"> {{ authorityName }} </span>
           </div>
+        </div>
+        <div class="col-md-8">
+          <div class="form-group">
+            <label class="text-right mr-2">Observación&#58;</label>
+            <span class="fs-4"> {{ programming?.observation }} </span>
+          </div>
+        </div>
+      </div>
 
+      <div class="row pt-3">
+        <div class="col-md-4">
           <div class="form-group">
-            <label class="col-lg-5 text-right">Observaci&oacute;n&#58;</label>
-            <span> Ninguna </span>
+            <label class="text-right mr-2">Tipo relevante&#58;</label>
+            <span class="fs-3"> {{ typeRelevantName }} </span>
           </div>
-        </form>
+        </div>
       </div>
     </div>
 
@@ -82,15 +102,14 @@
       <div class="col-lg-6">
         <div class="form-group">
           <label class="text-right">Almac&eacute;n&#58;</label>
-          <span> Nombre de Almacén test </span>
+          <span> {{ nameWarehouse }} </span>
         </div>
       </div>
       <div class="col-lg-6">
         <div class="form-group">
           <label class="text-right">Direcci&oacute;n almac&eacute;n&#58;</label>
           <span>
-            Boulevard José López Portillo No 200, Apodaca, Nuevo León, C.P.
-            66613
+            {{ ubicationWarehouse }}
           </span>
         </div>
       </div>
@@ -113,7 +132,6 @@
           <i class="fa fa-retweet"></i> Actualizar
         </button>
       </div>
-
       <ng2-smart-table
         [attr.class]="'table-bordered'"
         [settings]="settingsMinutes"
@@ -126,7 +144,7 @@
       <h5 class="title">Bienes</h5>
       <div class="md-tabs">
         <tabset>
-          <tab heading="Recibos(0)" id="tab1">
+          <tab heading="Recibos" id="tab1">
             <div class="row">
               <ng2-smart-table
                 [attr.class]="'table-bordered'"
@@ -136,98 +154,142 @@
             </div>
 
             <div class="row pt-4">
-              <div class="d-flex">
+              <div class="justify-content-start">
                 <app-columns-select
                   [(settings)]="settingsTranGoods"></app-columns-select>
               </div>
-              <ng2-smart-table
-                [attr.class]="'table-bordered'"
-                [settings]="settingsTranGoods"
-                [source]="tranGoods">
-              </ng2-smart-table>
+              <div class="row pt-4 table-container">
+                <div class="col-md-12 table-responsive">
+                  <div [class]="loading ? 'table-loading' : ''">
+                    <ng2-smart-table
+                      [attr.class]="'table-bordered'"
+                      [settings]="settingsTranGoods"
+                      [source]="receiptGuards">
+                    </ng2-smart-table>
+                  </div>
+                </div>
+              </div>
               <app-pagination
                 [params]="params"
                 [totalItems]="totalItems"></app-pagination>
             </div>
           </tab>
+          <!-- RESGUARDO -->
+          <tab [heading]="headingGuard">
+            <div class="row pt-4">
+              <div class="d-flex">
+                <app-columns-select
+                  [(settings)]="settingsGuardGoods"></app-columns-select>
+              </div>
 
-          <tab heading="Resguardo(0)">
+              <div class="row pt-4 table-container">
+                <div class="col-md-12 table-responsive">
+                  <div [class]="loading ? 'table-loading' : ''">
+                    <ng2-smart-table
+                      [attr.class]="'table-bordered'"
+                      [settings]="settingsTranGoods"
+                      [source]="goodsGuard">
+                    </ng2-smart-table>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row pt-5">
+                <ng2-smart-table
+                  [attr.class]="'table-bordered'"
+                  [settings]="settingsReceiptsGuards"
+                  [source]="receiptGuards"
+                  (edit)="showGoodsReceipt($event.data)"
+                  (delete)="generateReceiptGuard($event.data)">
+                </ng2-smart-table>
+              </div>
+              <!-- <app-pagination
+                [params]="params"
+                [totalItems]="totalItems"></app-pagination> -->
+            </div>
+          </tab>
+          <!-- ALMACEN -->
+          <tab [heading]="headingWarehouse">
             <div class="row pt-4">
               <div class="d-flex">
                 <app-columns-select
-                  [(settings)]="settingsTranGoods"></app-columns-select>
+                  [(settings)]="settingsGuardGoods"></app-columns-select>
               </div>
-              <ng2-smart-table
-                [attr.class]="'table-bordered'"
-                [settings]="settingsTranGoods"
-                [source]="tranGoods">
-              </ng2-smart-table>
+              <div class="row pt-4 table-container">
+                <div class="col-md-12 table-responsive">
+                  <div [class]="loading ? 'table-loading' : ''">
+                    <ng2-smart-table
+                      [attr.class]="'table-bordered'"
+                      [settings]="settingsTranGoods"
+                      [source]="goodsWareh">
+                    </ng2-smart-table>
+                  </div>
+                </div>
+              </div>
               <app-pagination
                 [params]="params"
                 [totalItems]="totalItems"></app-pagination>
             </div>
           </tab>
-          <tab heading="Almacén INDEP(0)">
+          <!-- REPROGRAMACION -->
+          <tab [heading]="headingReprogramation">
             <div class="row pt-4">
               <div class="d-flex">
                 <app-columns-select
                   [(settings)]="settingsTranGoods"></app-columns-select>
               </div>
-              <ng2-smart-table
-                [attr.class]="'table-bordered'"
-                [settings]="settingsTranGoods"
-                [source]="tranGoods">
-              </ng2-smart-table>
+              <div class="row pt-4 table-container">
+                <div class="col-md-12 table-responsive">
+                  <ng2-smart-table
+                    [attr.class]="'table-bordered'"
+                    [settings]="settingsTranGoods"
+                    [source]="goodsRepro">
+                  </ng2-smart-table>
+                </div>
+              </div>
               <app-pagination
                 [params]="params"
                 [totalItems]="totalItems"></app-pagination>
             </div>
           </tab>
-          <tab heading="Reprogramación(0)">
-            <div class="row pt-4">
-              <div class="d-flex">
-                <app-columns-select
-                  [(settings)]="settingsTranGoods"></app-columns-select>
-              </div>
-              <ng2-smart-table
-                [attr.class]="'table-bordered'"
-                [settings]="settingsTranGoods"
-                [source]="tranGoods">
-              </ng2-smart-table>
-              <app-pagination
-                [params]="params"
-                [totalItems]="totalItems"></app-pagination>
+          <!-- CANCELACION -->
+          <tab [heading]="headingCancelation">
+            <div class="justify-content-start">
+              <app-columns-select
+                [(settings)]="settingsGuardGoods"></app-columns-select>
             </div>
-          </tab>
-          <tab heading="Cancelación(0)">
-            <div class="row pt-4">
-              <div class="d-flex">
-                <app-columns-select
-                  [(settings)]="settingsTranGoods"></app-columns-select>
+            <div class="row pt-4 table-container">
+              <div class="col-md-12 table-responsive">
+                <div [class]="loading ? 'table-loading' : ''">
+                  <ng2-smart-table
+                    [attr.class]="'table-bordered'"
+                    [settings]="settingsTranGoods"
+                    [source]="goodsSelect">
+                  </ng2-smart-table>
+                </div>
               </div>
+            </div>
+            <div class="row pt-5">
               <ng2-smart-table
                 [attr.class]="'table-bordered'"
-                [settings]="settingsTranGoods"
-                [source]="tranGoods">
+                [settings]="settingsReceiptsGuards"
+                [source]="receiptGuards">
               </ng2-smart-table>
-              <app-pagination
-                [params]="params"
-                [totalItems]="totalItems"></app-pagination>
             </div>
           </tab>
         </tabset>
       </div>
-    </div>
-    <div class="d-flex justify-content-center">
-      <div class="m-3">
-        <confirm-button
-          [loading]="loading"
-          (confirm)="confirm()"></confirm-button>
-      </div>
-      <div class="m-3">
-        <button type="button" class="btn btn-danger active" (click)="close()">
-          Cancelar
-        </button>
+      <div class="d-flex justify-content-center">
+        <div class="m-3">
+          <confirm-button
+            [loading]="loading"
+            (confirm)="confirm()"></confirm-button>
+        </div>
+        <div class="m-3">
+          <button type="button" class="btn btn-danger active" (click)="close()">
+            Cancelar
+          </button>
+        </div>
       </div>
     </div>
   </div>

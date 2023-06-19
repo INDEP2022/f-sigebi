@@ -1,0 +1,120 @@
+#proceeding-info {
+  .buttons {
+    grid-area: buttons;
+    margin: 0px auto 15px;
+
+    @media screen and (max-width: 576px) {
+      margin: auto 0;
+
+      > * {
+        width: 100%;
+        margin-bottom: 10px;
+      }
+
+      app-clean-filters-shared::ng-deep {
+        button {
+          width: 100%;
+        }
+      }
+    }
+
+    button {
+      margin-right: 10px;
+    }
+  }
+
+  .header-proceeding-info {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas: 'title paginator';
+
+    // @media screen and (max-width: 796px) {
+    //   grid-template-columns: 1fr 1fr;
+    //   grid-template-areas:
+    //     'title title'
+    //     'buttons paginator';
+    // }
+
+    @media screen and (max-width: 576px) {
+      grid-template-columns: 1fr;
+      grid-template-areas:
+        'paginator'
+        'title ';
+    }
+
+    .title {
+      grid-area: title;
+      margin: auto 0px;
+    }
+
+    .paginator {
+      grid-area: paginator;
+    }
+  }
+
+  .secondColumn {
+    margin-top: 3rem;
+
+    @media screen and (max-width: 576px) {
+      margin-top: 0rem;
+    }
+  }
+
+  .notInputs {
+    .form-material .form-bar {
+      display: none;
+    }
+
+    @media screen and (max-width: 576px) {
+      margin-top: 1rem;
+    }
+  }
+
+  // .buttons {
+  //   display: flex;
+  //   justify-content: flex-end;
+  //   padding: 0px;
+  //   column-gap: 10px;
+
+  //   >div {
+  //     text-align: right;
+  //     padding: 0px;
+
+  //     @media screen and (max-width: 576px) {
+  //       margin-top: 10px;
+  //     }
+
+  //     button {
+  //       width: 100%;
+  //     }
+  //   }
+
+  //   app-clean-filters-shared ::ng-deep button {
+  //     width: 100%;
+  //   }
+
+  //   @media screen and (max-width: 576px) {
+  //     flex-direction: column;
+  //     padding: 0 10px;
+  //     margin: auto;
+  //   }
+  // }
+
+  app-recibe-form {
+    padding-right: 0px;
+    margin-bottom: 22px;
+  }
+
+  app-justification {
+    margin: 0;
+    padding: 0;
+
+    // @media screen and (max-width: 576px) {
+    //   padding-right: 0px;
+    // }
+  }
+
+  .notInputDatePicker {
+    background-color: white !important;
+  }
+}

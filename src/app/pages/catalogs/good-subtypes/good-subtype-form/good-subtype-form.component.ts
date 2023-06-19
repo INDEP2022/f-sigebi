@@ -7,7 +7,10 @@ import { IGoodSubType } from 'src/app/core/models/catalogs/good-subtype.model';
 import { IGoodType } from 'src/app/core/models/catalogs/good-type.model';
 import { GoodSubtypeService } from 'src/app/core/services/catalogs/good-subtype.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
+import {
+  POSITVE_NUMBERS_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -35,10 +38,10 @@ export class GoodSubtypeFormComponent extends BasePage implements OnInit {
 
   private prepareForm(): void {
     this.goodSubtypeForm = this.fb.group({
-      id: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
+      id: [null],
       idTypeGood: [
         null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+        [Validators.required, Validators.pattern(POSITVE_NUMBERS_PATTERN)],
       ],
       nameSubtypeGood: [
         null,
@@ -58,16 +61,10 @@ export class GoodSubtypeFormComponent extends BasePage implements OnInit {
       ],
       noPhotography: [
         null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+        [Validators.required, Validators.pattern(POSITVE_NUMBERS_PATTERN)],
       ],
-      noRegister: [
-        null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
-      ],
-      version: [
-        null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
-      ],
+      noRegister: [null],
+      version: [null],
     });
     if (this.goodSubtype != null) {
       this.edit = true;
@@ -106,11 +103,16 @@ export class GoodSubtypeFormComponent extends BasePage implements OnInit {
 
   update() {
     this.loading = true;
-    console.log(this.goodSubtypeForm.value);
-    this.goodSubtypeService.newUpdate(this.goodSubtypeForm.value).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
-    });
+    const ids = {
+      id: this.goodSubtypeForm.controls['id'].value,
+      idTypeGood: this.goodSubtypeForm.controls['idTypeGood'].value,
+    };
+    this.goodSubtypeService
+      .updateByIds(ids, this.goodSubtypeForm.value)
+      .subscribe({
+        next: data => this.handleSuccess(),
+        error: error => (this.loading = false),
+      });
   }
 
   handleSuccess() {

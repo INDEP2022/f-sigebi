@@ -1,3 +1,5 @@
+import { InputCellComponent } from 'src/app/@standalone/smart-table/input-cell/input-cell.component';
+
 export const MINUTES_COLUMNS = {
   idMinute: {
     title: 'id acta',
@@ -10,10 +12,11 @@ export const MINUTES_COLUMNS = {
     type: 'string',
     sort: false,
   },
-
   observation: {
     title: 'Observación',
-    type: 'string',
     sort: false,
+    type: 'custom',
+    showAlways: true,
+    renderComponent: InputCellComponent,
   },
 };

@@ -25,6 +25,7 @@ import { GoodTypeService } from 'src/app/core/services/catalogs/good-type.servic
 import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
 import { GoodDomiciliesService } from 'src/app/core/services/good/good-domicilies.service';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
+import { GoodFinderService } from 'src/app/core/services/ms-good/good-finder.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
@@ -90,13 +91,15 @@ export class ClassificationAssetsTabComponent
     private typeRelevantSevice: TypeRelevantService,
     private genericService: GenericService,
     private goodDomicilieService: GoodDomiciliesService,
-    private goodsQueryService: GoodsQueryService
+    private goodsQueryService: GoodsQueryService,
+    private goodFinderService: GoodFinderService
   ) {
     super();
     this.idRequest = Number(this.activatedRoute.snapshot.paramMap.get('id'));
   }
 
   ngOnInit(): void {
+    console.log('Activando tab: classification-assets-tab');
     this.showHideErrorInterceptorService.showHideError(false);
     this.prepareForm();
     this.tablePaginator();
@@ -139,52 +142,16 @@ export class ClassificationAssetsTabComponent
       SearchFilter.IN
     );
     const filter = this.params.getValue().getParams();
-    this.goodService.getAll(filter).subscribe({
-      next: resp => {
-        var result = resp.data.map(async (item: any) => {
-          item['quantity'] = Number(item.quantity);
-          const goodTypeName = await this.getTypeGood(item.goodTypeId);
-          item['goodTypeName'] = goodTypeName;
-
-          const physicalStatus = await this.getByTheirStatus(
-            item.physicalStatus,
-            'Estado Fisico'
-          );
-          item['physicstateName'] = physicalStatus;
-
-          const stateConservation = await this.getByTheirStatus(
-            item.stateConservation,
-            'Estado Conservacion'
-          );
-          item['stateConservationName'] = stateConservation;
-
-          const transferentDestiny = await this.getByTheirStatus(
-            item.transferentDestiny,
-            'Destino'
-          );
-          item['transferentDestinyName'] = transferentDestiny;
-
-          const destiny = await this.getByTheirStatus(item.destiny, 'Destino');
-          item['destinyName'] = destiny;
-
-          if (item.fraccion) {
-            item['fractionCode'] = item.fraccion.code;
-          } else {
-            item['fractionCode'] = '';
-          }
-
-          item['unitMeasureName'] = await this.getLigieUnit(item.unitMeasure);
-          item['ligieUnitName'] = await this.getLigieUnit(item.ligieUnit);
-        });
-
-        Promise.all(result).then(data => {
-          this.paragraphs.load(resp.data);
-          this.totalItems = resp.count;
-          this.loading = false;
-        });
+    this.goodFinderService.goodFinder(filter).subscribe({
+      next: async (resp: any) => {
+        this.totalItems = resp.count;
+        this.paragraphs = resp.data;
+        this.loading = false;
       },
       error: error => {
+        console.log(error);
         this.loading = false;
+        this.onLoadToast('error', 'No se encontraron registros', '');
       },
     });
   }
@@ -203,59 +170,11 @@ export class ClassificationAssetsTabComponent
     });
   }
 
-  getByTheirStatus(id: number | string, typeName: string) {
-    return new Promise((resolve, reject) => {
-      if (id) {
-        var params = new ListParams();
-        params['filter.name'] = `$eq:${typeName}`;
-        params['filter.keyId'] = `$eq:${id}`;
-        this.genericService.getAll(params).subscribe({
-          next: resp => {
-            resolve(resp.data.length > 0 ? resp.data[0].description : '');
-          },
-        });
-      } else {
-        resolve(null);
-      }
-    });
-  }
-
-  getLigieUnit(id?: string) {
-    return new Promise((resolve, reject) => {
-      let params = new ListParams();
-      params['filter.uomCode'] = `$eq:${id}`;
-      params.limit = 20;
-
-      this.goodsQueryService
-        .getCatMeasureUnitView(params)
-        .pipe(takeUntil(this.$unSubscribe))
-        .subscribe({
-          next: resp => {
-            const ligieUnit = resp.data[0].measureTlUnit;
-            resolve(ligieUnit);
-          },
-          error: error => {
-            resolve('');
-          },
-        });
-    });
-  }
-
-  getGoodType(goodTypeId: string | number) {
-    this.showHideErrorInterceptorService.showHideError(false);
-    return new Promise((resolve, reject) => {
-      this.typeRelevantSevice.getById(goodTypeId).subscribe(data => {
-        resolve(data.description);
-      });
-    });
-  }
-
   updateTableInfo(event: any) {
     this.paragraphs.getElements().then(data => {
       data.map((item: any) => {
         if (item.id === event.id) {
           for (const key in event) {
-            console.log(key);
             if (key != 'id') {
               item[key] = event[key];
             }
@@ -264,22 +183,20 @@ export class ClassificationAssetsTabComponent
         this.paragraphs.load(data);
       });
     });
+    this.goodObject = null;
   }
 
   selectGood(event: any) {
     this.formLoading = true;
-    //console.log("info del goodSELECTED v1", this.detailArray.value); //henry|
     this.detailArray.reset();
     this.goodSelect = event.selected;
     this.goodObject = event.selected[0];
     this.assetsId = this.goodSelect[0] ? this.goodSelect[0].id : null;
     if (this.goodSelect.length === 1) {
       setTimeout(() => {
-        //console.log("info del goodSELECTED v1", this.goodSelect[0]); //henry|
         this.goodSelect[0].quantity = Number(this.goodSelect[0].quantity);
         this.detailArray.patchValue(this.goodSelect[0] as IGood);
         this.getDomicilieGood(this.goodSelect[0].addressId);
-        console.log('infor del good v1', this.goodSelect[0] as IGood); //henry
         if (this.detailArray.controls['id'].value !== null) {
           this.isGoodSelected = true;
         }
@@ -317,6 +234,18 @@ export class ClassificationAssetsTabComponent
           item.goodClassNumber = event.goodClassNumber;
           const goodTypeName = await this.getTypeGood(item.goodTypeId);
           item['goodTypeName'] = goodTypeName;
+        }
+      });
+      this.paragraphs.load(data);
+    });
+  }
+
+  updateStatusGood(event: any) {
+    this.paragraphs.getElements().then((data: any) => {
+      data.map(async (item: any) => {
+        if (item.id === this.goodObject.id) {
+          item.processStatus = event.processStatus;
+          item.goodStatus = event.goodStatus;
         }
       });
       this.paragraphs.load(data);

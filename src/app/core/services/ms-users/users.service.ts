@@ -23,6 +23,7 @@ export class UsersService extends HttpService {
     this.microservice = UserEndpoints.BasePath;
   }
 
+  //http://sigebimsqa.indep.gob.mx/users/api/v1/seg-users
   getAllSegUsers(_params: _Params) {
     return this.get<IListResponse<any>>(UserEndpoints.SegUsers, _params);
   }
@@ -93,4 +94,25 @@ export class UsersService extends HttpService {
       _params
     );
   }
+
+  getUsersJob() {
+    return this.get(UserEndpoints.SegUsers);
+  }
+
+  getAllUsersAsigne(_params: _Params) {
+    return this.get<IListResponse<any>>(UserEndpoints.UserAsigne, _params);
+  }
+
+  postSegAccessXAreasTvalTabla1(body: {
+    delegacionNo: string | number;
+    user: string;
+  }) {
+    return this.post(`factadboficiogestrel/delete-when-button-pressed`, body);
+  }
+
+  /*
+ getUsersJob() {
+    return this.get<IListResponse<ISegUsers>>(UserEndpoints.SegUsers);
+  }
+*/
 }

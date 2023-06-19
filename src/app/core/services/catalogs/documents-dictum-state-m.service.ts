@@ -22,6 +22,15 @@ export class DocumentsDictumStatetMService extends HttpService {
     );
   }
 
+  getAllDictum(
+    params?: _Params
+  ): Observable<IListResponse<IDocumentsDictumXStateM>> {
+    return this.get<IListResponse<IDocumentsDictumXStateM>>(
+      this.route.DocumentsDictuXStateM,
+      params
+    );
+  }
+
   create(body: IDocumentsDictumXStateM) {
     return this.post(this.route.DocumentsDictuXStateM, body);
   }

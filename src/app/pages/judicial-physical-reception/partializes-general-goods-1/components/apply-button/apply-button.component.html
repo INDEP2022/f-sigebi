@@ -1,7 +1,13 @@
-<button
+<div
   class="mx-1 my-1"
+  [class]="
+    !good || loading || bienesPar.length === 0 || saldoValue === 0
+      ? 'disabled'
+      : ''
+  "
   size="small"
-  (click)="apply()"
-  [disabled]="formGood.invalid || loading || bienesPar.length === 0">
+  (click)="apply()">
   Aplica
-</button>
+</div>
+
+<!-- [disabled]="formGood.invalid || loading || bienesPar.length === 0" -->

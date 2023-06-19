@@ -6,4 +6,7 @@ export enum MassiveGoodEndpoints {
   DeleteMassiveGood = `massive-charge-goods/deleteMasiveGood`,
   MassivePropertyExcel = `massive-property-excel`,
   GetFlierNumberMassiveGood = `massive-charge-goods/get-flier-number`,
+  GetFileCSV = `application/pupPreviewDatosCSV`,
+
+  chargeGoodByExpedient = 'massive-charge-goods/bRealStateOutputs',
 }

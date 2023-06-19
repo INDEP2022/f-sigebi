@@ -3,6 +3,10 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import {
+  NUMBERS_PATTERN,
+  STRING_PATTERN,
+} from '../../../../core/shared/patterns';
 import { IMunicipality } from './../../../../core/models/catalogs/municipality.model';
 import { MunicipalityService } from './../../../../core/services/catalogs/municipality.service';
 
@@ -33,16 +37,47 @@ export class MunicipalityFormComponent extends BasePage implements OnInit {
 
   private prepareForm(): void {
     this.municipalityForm = this.fb.group({
-      key: [null, [Validators.required]],
-      entity: [null, [Validators.required]],
-      userCreation: [null, [Validators.required]],
-      municipalityName: [null, [Validators.required]],
-      userModification: [null, [Validators.required]],
-      version: [null, [Validators.required]],
+      idMunicipality: [
+        null,
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+      ],
+      stateKey: [
+        null,
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+      ],
+      nameMunicipality: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      description: [null, [Validators.required]],
+      codMarginality: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(NUMBERS_PATTERN),
+          Validators.maxLength(2),
+          Validators.pattern('^([0-9]|[1-9][0-9])$'),
+        ],
+      ],
+      noRegister: [
+        null,
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+      ],
+      risk: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(2),
+        ],
+      ],
+      version: [
+        null,
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+      ],
     });
     if (this.municipality != null) {
       this.edit = true;
-      console.log(this.municipality);
       this.municipalityForm.patchValue(this.municipality);
     }
   }
@@ -57,6 +92,7 @@ export class MunicipalityFormComponent extends BasePage implements OnInit {
 
   create() {
     this.loading = true;
+    console.log(this.municipalityForm.value);
     this.municipalityService.create(this.municipalityForm.value).subscribe({
       next: data => this.handleSuccess(),
       error: error => (this.loading = false),

@@ -20,7 +20,7 @@ import { NUMBERS_PATTERN } from '../../../core/shared/patterns';
   selector: 'search-bar',
   template: `
     <div class="form-group form-secondary d-flex">
-      <label class="search-label">{{ label }}</label>
+      <label *ngIf="label" class="search-label">{{ label }}</label>
       <div class="text-search ">
         <input
           type="text"
@@ -75,7 +75,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     if (this.params) {
       const params = this.params.getValue();
       params.page = 1;
-      this.params.next({ ...params, text });
+      this.params.next({ ...params, search: text, text });
     } else if (this.filterParams) {
       const filterParams = this.filterParams.getValue();
       filterParams.page = 1;

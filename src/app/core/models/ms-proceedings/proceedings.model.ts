@@ -5,6 +5,8 @@ import { ITransferNumber } from './transfer-number.model';
 
 export interface IProceedings {
   id: number;
+  actId: number;
+  programmingId: number;
   proceedingsType: string;
   proceedingsCve: string;
   elaborationDate: Date;
@@ -36,4 +38,14 @@ export interface IProceedings {
   closingDate: Date;
   hcClosingDate: Date;
   delegationNumber: IDelegationNumber;
+}
+
+export interface IUpdateActasEntregaRecepcion {
+  universalFolio: string;
+  userToolbar: string;
+}
+
+export interface IUpdateActasEntregaRecepcionDelegation {
+  minutesNumber: [];
+  delegation2Number: [];
 }

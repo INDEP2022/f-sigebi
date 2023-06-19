@@ -1,8 +1,12 @@
 import { Component, OnInit } from '@angular/core';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { IServiceCat } from 'src/app/core/models/catalogs/service-cat.model';
 import { ServiceCatService } from 'src/app/core/services/catalogs/service-cat.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -15,7 +19,9 @@ import { SERVICES_COLUMS } from './cat-service-columns';
   styles: [],
 })
 export class CatServicesListComponent extends BasePage implements OnInit {
+  attribGoodBad: LocalDataSource = new LocalDataSource();
   paragraphs: IServiceCat[] = [];
+  columnFilters: any = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
 
@@ -24,11 +30,45 @@ export class CatServicesListComponent extends BasePage implements OnInit {
     private modalService: BsModalService
   ) {
     super();
-    this.settings.columns = SERVICES_COLUMS;
+    //this.settings.columns = SERVICES_COLUMS;
     this.settings.actions.delete = true;
+    this.settings = {
+      ...this.settings,
+      hideSubHeader: false,
+      actions: {
+        columnTitle: 'Acciones',
+        edit: true,
+        delete: true,
+        add: false,
+        position: 'right',
+      },
+      columns: { ...SERVICES_COLUMS },
+    };
   }
 
   ngOnInit(): void {
+    this.attribGoodBad
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = ``;
+            let searchFilter = SearchFilter.ILIKE;
+            filter.field == 'id'
+              ? (searchFilter = SearchFilter.EQ)
+              : (searchFilter = SearchFilter.ILIKE);
+            if (filter.search !== '') {
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.getExample();
+        }
+      });
+
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getExample());
@@ -36,10 +76,18 @@ export class CatServicesListComponent extends BasePage implements OnInit {
 
   getExample() {
     this.loading = true;
-    this.catserviceService.getAll(this.params.getValue()).subscribe({
+    let params = {
+      ...this.params.getValue(),
+      ...this.columnFilters,
+    };
+    this.catserviceService.getAll(params).subscribe({
       next: response => {
-        this.paragraphs = response.data;
-        this.totalItems = response.count;
+        this.totalItems = response.count || 0;
+        this.attribGoodBad.load(response.data);
+        this.attribGoodBad.refresh();
+
+        /*this.paragraphs = response.data;
+        this.totalItems = response.count;*/
         this.loading = false;
       },
       error: error => (this.loading = false),
@@ -64,11 +112,27 @@ export class CatServicesListComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
+        this.deleteReg(catservice.code);
       }
+    });
+  }
+
+  deleteReg(id: string | number) {
+    this.catserviceService.delete(id).subscribe({
+      next: response => {
+        this.alert('success', 'Servicio', 'Borrado'), this.getExample();
+      },
+      error: err => {
+        this.alert(
+          'warning',
+          'Servicio',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      },
     });
   }
 }

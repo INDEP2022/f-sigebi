@@ -25,7 +25,7 @@ export class StatusCodeListComponent extends BasePage implements OnInit {
   ) {
     super();
     this.settings.columns = STATUSCODE_COLUMS;
-    this.settings.actions.delete = true;
+    this.settings.actions.delete = false;
   }
 
   ngOnInit(): void {
@@ -60,7 +60,7 @@ export class StatusCodeListComponent extends BasePage implements OnInit {
     this.modalService.show(StatusCodeFormComponent, config);
   }
 
-  delete(statusCode: IStatusCode) {
+  AlertQuestion(statusCode: IStatusCode) {
     this.alertQuestion(
       'warning',
       'Eliminar',
@@ -68,7 +68,27 @@ export class StatusCodeListComponent extends BasePage implements OnInit {
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
+        this.remove(statusCode.id);
       }
     });
+  }
+
+  remove(id: string) {
+    const data = {
+      id: id,
+    };
+    this.statusCodeService.remove2(data).subscribe(
+      res => {
+        this.alert('success', 'Código de Estado', 'Borrado.');
+        this.getExample();
+      },
+      err => {
+        this.alert(
+          'warning',
+          'Código de Estado',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      }
+    );
   }
 }

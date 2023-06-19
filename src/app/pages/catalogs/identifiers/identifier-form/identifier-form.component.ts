@@ -35,13 +35,13 @@ export class IdentifierFormComponent extends BasePage implements OnInit {
       id: [null, [Validators.required]],
       description: [null, [Validators.required]],
       keyview: [null, [Validators.required, Validators.maxLength(1)]],
-      noRegistration: [null, []],
+      noRegistration: [null],
     });
 
     if (this.identifier != null) {
       this.edit = true;
       this.identifierForm.patchValue(this.identifier);
-      this.identifierForm.get('code').disable();
+      this.identifierForm.get('id').disable();
     }
   }
 
@@ -59,12 +59,17 @@ export class IdentifierFormComponent extends BasePage implements OnInit {
 
   update() {
     this.loading = true;
-    this.identifierService
-      .update(this.identifier.id, this.identifierForm.value)
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
+    let data = {
+      id: this.identifierForm.controls['id'].value,
+      description: this.identifierForm.controls['description'].value,
+      keyview: this.identifierForm.controls['keyview'].value,
+      noRegistration: this.identifierForm.controls['noRegistration'].value,
+    };
+    console.log(data);
+    this.identifierService.update(this.identifier.id, data).subscribe({
+      next: data => this.handleSuccess(),
+      error: error => (this.loading = false),
+    });
   }
 
   close() {

@@ -29,9 +29,9 @@ export const RACK_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  registerNumber: {
-    title: 'Numero Registro',
-    type: 'number',
-    sort: false,
-  },
+  // registerNumber: {
+  //   title: 'Numero Registro',
+  //   type: 'number',
+  //   sort: false,
+  // },
 };

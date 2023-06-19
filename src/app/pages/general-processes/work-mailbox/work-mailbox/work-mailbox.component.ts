@@ -324,7 +324,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
   /**
    * Validar si se requiere agregar el mensaje en el campos
    * @param valueField Respuesta del validador de campo
-   * @param filterField Nombre de la clase a buscar
+   * @param filterField se de la clase a buscar
    * @param nodeName Nombre del nodo a buscar dentro del nodo de la clase que se pasa como parametro
    */
   validChildNode(valueField: any, filterField: string, nodeName: string) {
@@ -621,12 +621,14 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
   }
 
   /*BUILD FILTERS*/
-  buildFilters(): void {
+  buildFilters(keepPage?: boolean): void {
     //console.log(this.managementAreaF.value);
     //console.log(this.user.value);
     this.filterParams.getValue().removeAllFilters();
     this.filterForm.controls['priority'].setValue(this.priority$);
-    this.params.value.page = 1;
+    if (!keepPage) {
+      this.params.value.page = 1;
+    }
     this.params.value.limit = 10;
 
     let {
@@ -1092,7 +1094,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
 
                 this.globalVarsService.updateGlobalVars(this.globalVars);
                 this.router.navigateByUrl(
-                  '/pages/juridical/juridical-ruling/12345'
+                  '/pages/juridical/juridical-ruling-g/'
                 );
               } else {
                 this.alert(
@@ -1115,6 +1117,10 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
               //console.log(this.docsDataService.flyersRegistrationParams);
               this.router.navigateByUrl(
                 '/pages/documents-reception/flyers-registration'
+              );
+            } else if (resp.data[0].screenKey === 'FACTGENACTDATEX') {
+              this.router.navigateByUrl(
+                `/pages/juridical/file-data-update?wheelNumber=${this.selectedRow.flierNumber}`
               );
             } else {
               resp.data[0].screenKey !== null
@@ -1244,7 +1250,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
             area => area.id == predeterminedA[0].managementArea
           );
           this.filterForm.controls['managementArea'].setValue(defaultArea[0]);
-          this.buildFilters();
+          this.buildFilters(true);
         } else {
           this.buildFilters();
           this.onLoadToast(

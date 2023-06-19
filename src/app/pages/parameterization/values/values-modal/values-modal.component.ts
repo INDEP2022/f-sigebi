@@ -53,7 +53,7 @@ export class ValuesModalComponent extends BasePage implements OnInit {
   confirm() {
     this.edit ? this.update() : this.create();
   }
-  create() {
+  create(): void {
     this.loading = true;
     this.valuesForm.controls['table'].setValue(this.value.nmtabla);
     this.tvalTableService
@@ -74,13 +74,13 @@ export class ValuesModalComponent extends BasePage implements OnInit {
     };
     this.tvalTableService.update(this.value.ottipotb, form).subscribe({
       next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
+      error: error => (this.loading = true),
     });
   }
   handleSuccess() {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
     this.onLoadToast('success', this.title, `${message} Correctamente`);
-    this.loading = false;
+    this.loading = true;
     this.modalRef.content.callback(true);
     this.modalRef.hide();
   }

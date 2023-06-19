@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder } from '@angular/forms';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ParameterIndicatorsService } from 'src/app/core/services/catalogs/parameters-indicators.service';
 import { MsIndicatorGoodsService } from 'src/app/core/services/ms-indicator-goods/ms-indicator-goods.service';
@@ -9,15 +9,21 @@ import { IParametersIndicators } from './../../../../../../core/models/catalogs/
 @Component({
   selector: 'app-cants',
   templateUrl: './cants.component.html',
-  styles: [],
+  styleUrls: ['./cants.component.scss'],
 })
 export class CantsComponent implements OnInit {
   @Input() id: string;
   @Input() typeProceeding: string;
+  @Input() goodsCant: number;
   @Input() set updateData(value: any) {
     this.getData();
   }
-  form: FormGroup;
+  @Input() bienesRas: number = 0;
+  @Input() expedientesRas: number = 0;
+  @Input() dictamenesRas: number = 0;
+  // form: FormGroup;
+  files: number = 0;
+  dictamenes: number = 0;
   proceedingIndicators: IParametersIndicators[];
   constructor(
     private fb: FormBuilder,
@@ -25,11 +31,11 @@ export class CantsComponent implements OnInit {
     private indicatorGoodService: MsIndicatorGoodsService,
     private indicatorService: ParameterIndicatorsService
   ) {
-    this.form = this.fb.group({
-      goods: [0],
-      files: [0],
-      dictamenes: [0],
-    });
+    // this.form = this.fb.group({
+    //   goods: [0],
+    //   files: [0],
+    //   dictamenes: [0],
+    // });
   }
 
   ngOnInit(): void {
@@ -37,31 +43,35 @@ export class CantsComponent implements OnInit {
   }
 
   private getData() {
-    const params = new ListParams();
-    params.limit = 100;
-    this.indicatorService.getAll(params).subscribe({
-      next: response => {
-        this.proceedingIndicators = response.data.filter(
-          indicator => indicator.description === 'ENTREGA FISICA'
-        );
-        const indicator =
-          this.proceedingIndicators.find(
-            x => x.typeActa === this.typeProceeding
-          ) ?? null;
-        if (indicator)
-          this.indicatorGoodService
-            .getCountDictationByAct(indicator.areaProcess, this.id)
-            .subscribe({
-              next: response => {
-                this.form.get('dictamenes').setValue(response);
-              },
-            });
-      },
-    });
     if (this.id) {
-      this.detailService.getExpedients(this.id).subscribe({
+      this.detailService.getExpedients(this.id, this.typeProceeding).subscribe({
         next: response => {
-          this.form.get('files').setValue(response);
+          this.files = +response;
+          // this.form.get('files').setValue(response);
+        },
+      });
+      const params = new ListParams();
+      params.limit = 0;
+      params['filter.typeActa'] = this.typeProceeding;
+      this.indicatorService.getAll(params).subscribe({
+        next: response => {
+          // this.proceedingIndicators = response.data.filter(
+          //   indicator => indicator.description === 'ENTREGA FISICA'
+          // );
+          // const indicator =
+          //   this.proceedingIndicators.find(
+          //     x => x.typeActa === this.typeProceeding
+          //   ) ?? null;
+          if (response.data && response.data.length > 0)
+            this.indicatorGoodService
+              .getCountDictationByAct(response.data[0].areaProcess, this.id)
+              .subscribe({
+                next: response => {
+                  // console.log(response);
+                  this.dictamenes = +response;
+                  // this.form.get('dictamenes').setValue(response);
+                },
+              });
         },
       });
     }

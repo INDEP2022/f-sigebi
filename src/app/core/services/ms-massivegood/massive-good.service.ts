@@ -4,6 +4,7 @@ import { MassiveGoodEndpoints } from '../../../common/constants/endpoints/ms-mas
 import { ListParams } from '../../../common/repository/interfaces/list-params';
 import { HttpService } from '../../../common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
+import { IMassiveGoodTracker } from '../../models/ms-massivegood/massive-good-goods-tracker.model';
 import { IMassiveGood } from '../../models/ms-massivegood/massivegood.model';
 
 @Injectable({
@@ -70,5 +71,28 @@ export class MassiveGoodService extends HttpService {
   getWheelNotificationsByExpedientNumber(goodNumber: string) {
     const route = `${this.route.GetFlierNumberMassiveGood}/${goodNumber}`;
     return this.get(route);
+  }
+
+  getDatosCSV() {
+    return this.post(this.route.GetFileCSV, '');
+  }
+  updateMassiveGoods(body: {}) {
+    const route = `${this.route.MassiveChargeGoods}/update-massive-goods`;
+    return this.put(route, body);
+  }
+
+  goodTracker(body: any) {
+    const route = `application/goodTracker`;
+    return this.post<IMassiveGoodTracker>(route, body);
+  }
+
+  chargeGoodsByExpedient(expedient: number | string) {
+    const route = MassiveGoodEndpoints.chargeGoodByExpedient;
+    return this.get(`${route}/${expedient}`);
+  }
+
+  pufVerificaComers(body: any) {
+    const route = `findica/pup-verif-comer`;
+    return this.post<IMassiveGoodTracker>(route, body);
   }
 }

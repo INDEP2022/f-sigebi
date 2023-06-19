@@ -9,6 +9,7 @@ import { IClarificationDocumentsImpro } from 'src/app/core/models/ms-documents/c
 import { IDictamenSeq } from 'src/app/core/models/ms-goods-query/opinionDelRegSeq-model';
 import { IRequest } from 'src/app/core/models/requests/request.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
 import { ChatClarificationsService } from 'src/app/core/services/ms-chat-clarifications/chat-clarifications.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { ApplicationGoodsQueryService } from 'src/app/core/services/ms-goodsquery/application.service';
@@ -36,6 +37,8 @@ export class InappropriatenessFormComponent extends BasePage implements OnInit {
   paramsRequest = new BehaviorSubject<ListParams>(new ListParams());
   dataChatClarifications: IChatClarifications[];
   idSolicitud: any;
+  delegationUser: any;
+
   constructor(
     private modalRef: BsModalRef,
     private modalService: BsModalService,
@@ -44,30 +47,41 @@ export class InappropriatenessFormComponent extends BasePage implements OnInit {
     private documentService: DocumentsService,
     private chatService: ChatClarificationsService,
     private applicationGoodsQueryService: ApplicationGoodsQueryService,
-    private rejectedGoodService: RejectedGoodService
+    private rejectedGoodService: RejectedGoodService,
+    private regionalDelegationService: RegionalDelegationService
   ) {
     super();
     this.today = new Date();
   }
 
   ngOnInit(): void {
-    if (this.folioReporte === null) {
-      console.log('Crear folio');
-      this.dictamenSeq();
-    }
+    console.log('Delegación de la solicitud', this.delegationUser);
+    this.dictamenSeq();
     this.prepareForm();
+
+    /*this.regionalDelegationService.getById(this.delegationUser).subscribe({
+      next: resp => {
+        console.log('Respuesta de la delegación', resp.regionalDelegate, 'Cargo', resp.officeAddress);
+      },
+      error: error => {
+        console.log('Respuesta de la delegación', error.regionalDelegate);
+      },
+    })*/
   }
 
   prepareForm() {
     this.form = this.fb.group({
-      addresseeName: [null, [Validators.required, Validators.maxLength(50)]],
-      positionAddressee: [
-        null,
-        [Validators.required, Validators.maxLength(50)],
+      addresseeName: [
+        this.request?.nameOfOwner || null,
+        [Validators.maxLength(50)],
       ],
-      senderName: [null, [Validators.required, Validators.maxLength(50)]],
-      senderCharge: [null, [Validators.required, Validators.maxLength(50)]],
-      clarification: [null, [Validators.required, Validators.maxLength(800)]],
+      positionAddressee: [
+        this.request?.holderCharge || null,
+        [Validators.maxLength(50)],
+      ],
+      senderName: [null, [Validators.maxLength(50)]],
+      senderCharge: [null, [Validators.maxLength(50)]],
+      clarification: [null, [Validators.maxLength(800)]],
       paragraphInitial: [null, [Validators.maxLength(1000)]],
       paragraphFinal: [null, [Validators.maxLength(1000)]],
       observations: [null, [Validators.maxLength(1000)]],
@@ -80,11 +94,7 @@ export class InappropriatenessFormComponent extends BasePage implements OnInit {
       ], */
       consistentIn: [
         null,
-        [
-          Validators.pattern(STRING_PATTERN),
-          Validators.required,
-          Validators.maxLength(1000),
-        ],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(1000)],
       ],
     });
   }
@@ -96,7 +106,7 @@ export class InappropriatenessFormComponent extends BasePage implements OnInit {
 
     //Crear objeto para generar el reporte
     const modelReport: IClarificationDocumentsImpro = {
-      clarification: this.notification.clarificationType,
+      clarification: this.form.controls['clarification'].value,
       sender: this.form.controls['senderName'].value,
       //foundation: this.form.controls['foundation'].value,
       //id: 1, //ID primaria
@@ -185,6 +195,7 @@ export class InappropriatenessFormComponent extends BasePage implements OnInit {
     goodId?: number,
     observations?: string
   ) {
+    console.log('actualizando... 1');
     const data: ClarificationGoodRejectNotification = {
       rejectionDate: new Date(),
       rejectNotificationId: id,

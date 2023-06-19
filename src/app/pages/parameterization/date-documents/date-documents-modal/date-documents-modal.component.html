@@ -1,6 +1,6 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nueva' }} {{ title }}</h5>
   </div>
   <div body>
     <form [formGroup]="dateDocumentsModalForm" class="form-material">
@@ -47,11 +47,11 @@
         </div>
         <div class="col-md-4">
           <form-field
-            [control]="dateDocumentsModalForm.get('dateReceipt')"
+            [control]="dateDocumentsModalForm.get('insertionDate')"
             label="Fecha insercion">
             <input
               type="text"
-              formControlName="dateReceipt"
+              formControlName="insertionDate"
               class="form-control"
               bsDatepicker />
           </form-field>

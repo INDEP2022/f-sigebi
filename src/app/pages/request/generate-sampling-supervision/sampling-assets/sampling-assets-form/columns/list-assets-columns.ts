@@ -9,13 +9,13 @@ export const LIST_ASSETS_COLUMN = {
     type: 'string',
     sort: false,
   },
-  address: {
-    title: 'Address',
+  siabiInventoryId: {
+    title: 'Número Siab',
     type: 'string',
     sort: false,
   },
-  transferente: {
-    title: 'Transferente',
+  description: {
+    title: 'Descripción',
     type: 'string',
     sort: false,
   },

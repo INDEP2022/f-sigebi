@@ -166,6 +166,10 @@ export class DetailAssetsTabComponentComponent
   ligieUnit: string = '';
   typeOfRequest: string = '';
   detailAssetsInfo: any;
+  subBrand: string = null;
+  @Output() saveDetailInfo: EventEmitter<any> = new EventEmitter();
+
+  dataToSend: any = {};
 
   constructor(
     private fb: FormBuilder,
@@ -217,7 +221,6 @@ export class DetailAssetsTabComponentComponent
 
         this.brandId = brand;
         this.getSubBrand(new ListParams(), brand);
-        console.log('inicia<>>>><<<<<>>>>>');
       }
       this.isGoodTypeReadOnly = true;
     }
@@ -226,7 +229,6 @@ export class DetailAssetsTabComponentComponent
       if (this.detailAssets.controls['subBrand'].value) {
         const brand = this.detailAssets.controls['brand'].value;
         this.brandId = brand;
-        console.log('inicia<>>>><<<<<>>>>>');
         this.getSubBrand(new ListParams(), brand);
       }
     }
@@ -262,16 +264,16 @@ export class DetailAssetsTabComponentComponent
         this.disableDuplicity = true;
       }
 
-      if (this.detailAssets.controls['subBrand'].value) {
+      /*if (this.detailAssets.controls['subBrand'].value) {
         const brand = this.detailAssets.controls['brand'].value;
         this.brandId = brand;
-        console.log('inicia<>>>><<<<<>>>>>');
+        this.subBrand = this.detailAssets.controls['subBrand'].value;
         this.getSubBrand(
           new ListParams(),
           brand,
-          this.detailAssets.controls['subBrand'].value
+          this.subBrand
         );
-      }
+      }*/
     }
     if (this.detailAssets.controls['brand'].value) {
       this.getBrand(
@@ -310,11 +312,11 @@ export class DetailAssetsTabComponentComponent
       this.displayTypeTapInformation(Number(data));
     }
 
-    if (this.detailAssets.controls['subBrand'].value) {
+    /*if (this.detailAssets.controls['subBrand'].value) {
       const brand = this.detailAssets.controls['brand'].value;
       this.brandId = brand;
       this.getSubBrand(new ListParams(), brand);
-    }
+    }*/
 
     if (this.detailAssets.controls['destiny'].value) {
       var destiny = this.detailAssets.controls['destiny'].value;
@@ -355,7 +357,7 @@ export class DetailAssetsTabComponentComponent
   ngOnInit(): void {
     this.detailAssetsInfo = this.detailAssets.value;
     this.initForm();
-    this.getDestinyTransfer(new ListParams());
+    this.getDestinyTransfer(new ListParams(), this.detailAssetsInfo.requestId);
     this.getPhysicalState(new ListParams());
     this.getConcervationState(new ListParams());
     this.getTransferentUnit(new ListParams());
@@ -367,7 +369,10 @@ export class DetailAssetsTabComponentComponent
     ) {
       this.domicileForm.controls['requestId'].setValue(this.requestObject.id);
     }
-    this.getBrand(new ListParams(), this.detailAssets.controls['brand'].value);
+
+    if (this.detailAssets.controls['brand'].value == null) {
+      this.getBrand(new ListParams());
+    }
   }
 
   initForm() {
@@ -551,7 +556,7 @@ export class DetailAssetsTabComponentComponent
         [
           Validators.required,
           Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(40),
+          Validators.maxLength(30),
         ],
       ],
       certLibLienDate: [null],
@@ -629,7 +634,7 @@ export class DetailAssetsTabComponentComponent
         [
           Validators.required,
           Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(40),
+          Validators.maxLength(30),
         ],
       ],
       photosAttached: [
@@ -686,7 +691,25 @@ export class DetailAssetsTabComponentComponent
       });
   }
 
-  getDestinyTransfer(params: ListParams) {
+  getDestinyTransfer(params: ListParams, idSolicitud?: string | number) {
+    let params2 = new ListParams();
+    params['filter.requestId'] = `$eq:${idSolicitud}`;
+
+    this.goodService.getAll(params2).subscribe({
+      next: (resp: any) => {
+        this.dataToSend.id = resp.id;
+        this.saveDetailInfo.emit(this.dataToSend);
+        this.onLoadToast('success', 'Actualizado', 'Formulario actualizado');
+      },
+      error: error => {
+        this.onLoadToast(
+          'error',
+          'Error',
+          `El formulario no se puede actualizar ${error.error.message}`
+        );
+      },
+    });
+
     params['filter.name'] = '$eq:Destino';
     this.genericService
       .getAll(params)
@@ -695,17 +718,93 @@ export class DetailAssetsTabComponentComponent
         next: (data: any) => {
           this.selectDestinyTransfer = new DefaultSelect(data.data, data.count);
 
-          if (this.detailAssets.controls['transferentDestiny'].value === null) {
-            this.detailAssets.controls['transferentDestiny'].setValue('1');
-          } else {
-            const destinyTransf =
-              this.detailAssets.controls['transferentDestiny'].value;
-            this.detailAssets.controls['transferentDestiny'].setValue(
-              destinyTransf
-            );
-          }
+          //OBTENER TIPO DE SOLICITUD
+          this.requestService.getById(idSolicitud).subscribe({
+            next: res => {
+              const transferente = res.typeOfTransfer;
+              console.log(
+                'info de la solicitud',
+                res,
+                'Transferente, ',
+                res.typeOfTransfer
+              );
+
+              switch (transferente) {
+                case 'SAT_SAE':
+                  console.log('SAT_SAE');
+
+                  if (
+                    this.detailAssets.controls['transferentDestiny'].value ===
+                    null
+                  ) {
+                    this.detailAssets.controls['transferentDestiny'].setValue(
+                      '1'
+                    );
+                  } else {
+                    const destinyTransf =
+                      this.detailAssets.controls['transferentDestiny'].value;
+                    this.detailAssets.controls['transferentDestiny'].setValue(
+                      destinyTransf
+                    );
+                  }
+
+                  break;
+                case 'PGR_SAE':
+                  console.log('PGR_SAE');
+
+                  if (
+                    this.detailAssets.controls['transferentDestiny'].value ===
+                    null
+                  ) {
+                    this.detailAssets.controls['transferentDestiny'].setValue(
+                      '4'
+                    );
+                  } else {
+                    const destinyTransf =
+                      this.detailAssets.controls['transferentDestiny'].value;
+                    this.detailAssets.controls['transferentDestiny'].setValue(
+                      destinyTransf
+                    );
+                  }
+
+                  break;
+                case 'MANUAL':
+                  console.log('MANUAL');
+
+                  if (
+                    this.detailAssets.controls['transferentDestiny'].value ===
+                    null
+                  ) {
+                    this.detailAssets.controls['transferentDestiny'].setValue(
+                      '1'
+                    );
+                  } else {
+                    const destinyTransf =
+                      this.detailAssets.controls['transferentDestiny'].value;
+                    this.detailAssets.controls['transferentDestiny'].setValue(
+                      destinyTransf
+                    );
+                  }
+
+                  break;
+              }
+            },
+            // error: error => {
+            //   this.typeTransferent = '';
+            //   console.log(
+            //     'Error al consultar solicitud',
+            //     error,
+            //     'Transferente, ',
+            //     this.typeTransferent
+            //   );
+            // },
+          });
         },
       });
+  }
+
+  destinySae(event: any) {
+    this.dataToSend.saeDestiny = event.keyId;
   }
 
   getDestiny(id: number | string) {
@@ -955,6 +1054,12 @@ export class DetailAssetsTabComponentComponent
             resp.data,
             resp.count
           );
+
+          if (this.detailAssets.controls['unitMeasure'].value) {
+            this.detailAssets.controls['unitMeasure'].setValue(
+              this.detailAssets.controls['unitMeasure'].value
+            );
+          }
         },
       });
   }
@@ -1011,13 +1116,23 @@ export class DetailAssetsTabComponentComponent
       this.getBrand(new ListParams());
     }
   }
+
+  onSubBranchChange(event: any) {
+    if (this.brandId) {
+      this.getSubBrand(new ListParams(), this.brandId);
+    }
+  }
+
   getBrand(params: ListParams, brandId?: string) {
     const filter = new FilterParams();
     filter.page = params.page;
     filter.limit = params.limit;
     filter.addFilter('flexValueMeaning', params.text, SearchFilter.ILIKE);
     if (brandId) {
+      brandId = brandId.toLowerCase();
+      brandId = brandId[0].toUpperCase() + brandId.substring(1);
       filter.addFilter('flexValue', brandId);
+      //filter.search = brandId
     }
 
     this.goodsInvService
@@ -1026,6 +1141,9 @@ export class DetailAssetsTabComponentComponent
       .subscribe({
         next: resp => {
           this.selectBrand = new DefaultSelect(resp.data, resp.count);
+          if (brandId) {
+            this.detailAssets.controls['brand'].setValue(brandId);
+          }
         },
         error: () => {
           this.selectBrand = new DefaultSelect();
@@ -1034,14 +1152,22 @@ export class DetailAssetsTabComponentComponent
   }
 
   getSubBrand(params: ListParams, brandId?: string, description?: string) {
-    const idBrand = brandId ? brandId : this.brandId;
     const filter = new ListParams();
     filter.page = params.page;
     filter.limit = params.limit;
-    filter['filter.carBrand'] = `$eq:${idBrand}`;
+    this.brandId = this.brandId
+      ? this.brandId.toLowerCase()
+      : brandId.toLowerCase();
+    this.brandId = this.brandId
+      ? this.brandId[0].toUpperCase() + this.brandId.substring(1)
+      : brandId[0].toUpperCase() + brandId.substring(1);
+    filter['filter.carBrand'] = `$eq:${this.brandId}`;
     if (description != null) {
-      filter['filter.flexValueMeaningDependent'] = `$ilike:${description}`;
-    } else {
+      description = description.toLowerCase();
+      description = description[0].toUpperCase() + description.substring(1);
+      filter['filter.flexValueMeaningDependent'] = `$eq:${description}`;
+    }
+    if (params.text) {
       filter['filter.flexValueMeaningDependent'] = `$ilike:${params.text}`;
     }
 
@@ -1051,6 +1177,9 @@ export class DetailAssetsTabComponentComponent
       .subscribe({
         next: resp => {
           this.selectSubBrand = new DefaultSelect(resp.data, resp.count);
+          if (description) {
+            this.detailAssets.controls['subBrand'].setValue(description);
+          }
         },
       });
   }
@@ -1461,7 +1590,10 @@ export class DetailAssetsTabComponentComponent
     this.detailAssets.controls['brand'].valueChanges.subscribe((data: any) => {
       if (data) {
         this.brandId = data;
-        this.getSubBrand(new ListParams(), data);
+        if (this.detailAssets.controls['subBrand'].value) {
+          const subBrand = this.detailAssets.controls['subBrand'].value;
+          this.getSubBrand(new ListParams(), data, subBrand);
+        }
       }
     });
 

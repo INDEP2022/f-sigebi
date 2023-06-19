@@ -8,6 +8,7 @@ import { IClarificationDocumentsImpro } from '../../models/ms-documents/clarific
 import { SeparatorsDocuments } from '../../models/ms-documents/document-separators';
 import { IDocuments } from '../../models/ms-documents/documents';
 import { TypesDocuments } from '../../models/ms-documents/documents-type';
+import { IReceipyGuardDocument } from '../../models/receipt/receipt.model';
 
 @Injectable({
   providedIn: 'root',
@@ -35,6 +36,10 @@ export class DocumentsService extends HttpService {
   getById(id: string | number) {
     const route = `${DocumentsEndpoints.Documents}/${id}`;
     return this.get<IDocuments>(route);
+  }
+  getCount1(id: string | number) {
+    const route = `${DocumentsEndpoints.Count1}/${id}`;
+    return this.get<any>(route);
   }
 
   getByFolio(folio: string | number) {
@@ -86,6 +91,11 @@ export class DocumentsService extends HttpService {
     return this.post<IClarificationDocumentsImpro>(route, model);
   }
 
+  createDocReceipt(model: IReceipyGuardDocument) {
+    const route = DocumentsEndpoints.ClarificationDocumentsImpro;
+    return this.post<IClarificationDocumentsImpro>(route, model);
+  }
+
   getAllClarificationDocImpro(
     params?: ListParams | string
   ): Observable<IListResponse<IClarificationDocumentsImpro>> {
@@ -104,6 +114,80 @@ export class DocumentsService extends HttpService {
     return this.get<IListResponse<IClarificationDocumentsImpro>>(route, params);
   }
 
+  /**
+   *
+   * @param armyOfficeKey
+   * @description: `SELECT count(*)
+     INTO  vTotal
+     FROM DOCUMENTOS_DICTAMEN_X_BIEN_M
+    WHERE TIPO_DICTAMINACION = 'PROCEDENCIA'
+      AND NO_OF_DICTA IN (SELECT NO_OF_DICTA
+                            FROM DICTAMINACIONES
+                           WHERE CLAVE_OFICIO_ARMADA = :DICTAMINACIONES.CLAVE_OFICIO_ARMADA
+                             AND TIPO_DICTAMINACION = 'PROCEDENCIA'`
+   */
+
+  postCountDictationGoodFile(
+    armyOfficeKey: string
+  ): Observable<IListResponse<{ count: number }>> {
+    const route = `${DocumentsEndpoints.DocumentsDictuXStateM}/dictationGoodFile`;
+    return this.post(route, { armyOfficeKey });
+  }
+
+  getDocParaDictum(params?: _Params): Observable<IListResponse<any>> {
+    return this.get<IListResponse<any>>(
+      `${DocumentsEndpoints.DocumentsForDictum}`,
+      params
+    );
+  }
+
+  deleteDocumentsDictuXStateM(params: any): Observable<{ count: number }> {
+    const route = `${DocumentsEndpoints.DocumentsDictuXStateM}`;
+    return this.delete(route, params);
+  }
+
+  getDeleteDocumentsDictuXStateM(params: any) {
+    const route = `${DocumentsEndpoints.DocumentsDictuXStateM}`;
+    return this.get(route, params);
+  }
+
+  getDocumentsByGood(id: string | number, params?: ListParams | string) {
+    const route = `${DocumentsEndpoints.DocumentsDictuXStateM}?filter.stateNumber=${id}`;
+    return this.get(route, params);
+  }
+
+  getByGoodId(id: string | number, params?: any) {
+    const route = `${DocumentsEndpoints.DocumentsForDictum}/getDescriptionByGood/${id}`;
+    return this.get(route, params);
+  }
+
+  getDocumentForDictation(params?: ListParams): Observable<
+    IListResponse<{
+      key: string;
+      description: string;
+      typeDictum: string;
+      numRegister: string;
+      nbOrigin: string;
+      keyDocument: any;
+    }>
+  > {
+    const route = `documents-for-dictum`;
+    return this.get(route, params);
+  }
+
+  getDocumentForDictationSearch(params?: _Params): Observable<
+    IListResponse<{
+      key: string;
+      description: string;
+      typeDictum: string;
+      numRegister: string;
+      nbOrigin: string;
+      keyDocument: any;
+    }>
+  > {
+    const route = `documents-for-dictum/search`;
+    return this.get(route, params);
+  }
   // updateClarDocImp(id: string | number, data: Object) {
   //   const route = `clarification-documents-impro/${id}`;
   //   return this.post<Inappropriateness>(route, data);
@@ -117,5 +201,13 @@ export class DocumentsService extends HttpService {
   getDocumentsSeparator(): Observable<IListResponse<SeparatorsDocuments>> {
     const route = `/${DocumentsEndpoints.DocumentsSeparator}`;
     return this.get(route);
+  }
+  getDocumentsByGood2(
+    id: string | number,
+    typeDict: any,
+    params?: ListParams | string
+  ) {
+    const route = `${DocumentsEndpoints.DocumentsDictuXStateM}?filter.stateNumber=${id}&filter.typeDictum=${typeDict}`;
+    return this.get(route, params);
   }
 }

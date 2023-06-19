@@ -7,6 +7,14 @@ export interface IVigProcessPercentages {
   delegationView: any;
 }
 
+export interface IGeoreferencieObject {
+  georefLatitude: string;
+  georefLongituded: string;
+  georeferenceId: string;
+  id: string;
+  typeId: string;
+}
+
 export interface IVigBinnacle {
   binnacleId: number;
   requestDate: Date;

@@ -1,10 +1,13 @@
 <app-table-goods
+  [page]="page"
   [settingsTable]="settings"
-  [haveDelete]="false"
+  [haveServerPagination]="true"
+  [loading]="loading"
   [statusActaValue]="statusActa"
   [data]="data"
   [totalItems]="totalItems"
   (updateGoodsRow)="updateRow($event)"
   (updateData)="updateData.emit($event)"
+  (showDeleteAlert)="showDeleteAlert.emit($event)"
   (rowsSelected)="rowsSelected.emit($event)">
 </app-table-goods>

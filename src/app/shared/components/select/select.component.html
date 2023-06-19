@@ -1,5 +1,5 @@
 <ng-container [formGroup]="form">
-  <div class="form-group form-secondary form-static-label">
+  <div class="form-group form-secondary form-static-label pt-2">
     <ng-select
       #select
       [clearable]="clearable"
@@ -14,13 +14,14 @@
       [minTermLength]="1"
       [loading]="loading"
       [addTag]="addTag"
-      typeToSearchText="Escriba 3 o mas caracteres"
+      [typeToSearchText]="typeToSearchText"
       [typeahead]="input$"
       notFoundText="No se encontraron elementos"
       [virtualScroll]="true"
       [formControlName]="control"
       (scrollToEnd)="fetchMore(select.searchTerm)"
       (change)="onChange($event)"
+      (clear)="clear.emit()"
       [searchable]="searchable"
       [placeholder]="placeholder"
       [readonly]="readonly"

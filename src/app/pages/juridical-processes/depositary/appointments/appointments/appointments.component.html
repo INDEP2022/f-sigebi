@@ -5,7 +5,7 @@
 
   <div body>
     <form [formGroup]="form" class="container-fluid form-material">
-      <div class="row w-100">
+      <div class="row">
         <div class="col-sm-12 col-12 col-md-12 P-2">
           <div class="row">
             <div class="col-sm-12 col-12 col-md-8 p-2">
@@ -86,17 +86,18 @@
               bsDatepicker />
           </form-field>
         </div>
-        <div class="col-sm-12 col-12 col-md-4 p-2">
+        <div class="col-sm-12 col-12 col-md-12 p-2">
           <form-field
             [control]="form.get('estatusBien')"
             label="Estatus del Bien">
             <textarea
               [readonly]="true"
               class="form-control"
+              rows="2"
               formControlName="estatusBien"></textarea>
           </form-field>
         </div>
-        <div class="col-sm-12 col-12 col-md-4 p-2">
+        <div class="col-sm-12 col-12 col-md-6 p-2">
           <form-field [control]="form.get('causaPenal')" label="Causa Penal">
             <input
               [readonly]="true"
@@ -104,7 +105,7 @@
               formControlName="causaPenal" />
           </form-field>
         </div>
-        <div class="col-sm-12 col-12 col-md-4 p-2">
+        <div class="col-sm-12 col-12 col-md-6 p-2">
           <form-field
             [control]="form.get('averiguacionPrevia')"
             label="Averiguaci&oacute;n Previa">
@@ -128,7 +129,7 @@
         <div class="col-sm-12 col-12 col-md-12 p-2 mt-3 mb-3">
           <hr class="row" />
         </div>
-        <div class="col-sm-12 col-12 col-md-12 p-2 text-right">
+        <!-- <div class="col-sm-12 col-12 col-md-12 p-2 text-right">
           <div class="form-group">
             <button
               type="button"
@@ -138,7 +139,7 @@
               Bienes
             </button>
           </div>
-        </div>
+        </div> -->
         <div class="col-sm-12 col-12 col-md-3 p-2">
           <form-field
             [control]="form.get('tipoNombramiento')"
@@ -185,8 +186,8 @@
         </div>
         <div class="col-sm-12 col-12 col-md-6 p-2">
           <div class="row w-100 pl-4">
-            <label class="form-control-label">Tipo Volante</label>
-            <div class="col-sm-12 col-12 col-md-6 col-lg-6 p-2 text-center">
+            <!-- <label class="form-control-label">Tipo Volante</label> -->
+            <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2 text-center">
               <form-radio label="Sin Menaje" for="sinMenaje">
                 <input
                   id="sinMenaje"
@@ -195,7 +196,7 @@
                   value="N" />
               </form-radio>
             </div>
-            <div class="col-sm-12 col-12 col-md-6 col-lg-6 p-2 text-center">
+            <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2 text-center">
               <form-radio
                 label="Con Menaje"
                 for="conMenaje"
@@ -207,12 +208,23 @@
                   value="S" />
               </form-radio>
             </div>
+            <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2 text-right">
+              <button
+                type="button"
+                [disabled]="form.get('bienesMenaje').value == 1"
+                tooltip="Bienes Asociados"
+                containerClass="tooltip-style"
+                class="btn btn-primary btn-sm active m-1"
+                (click)="btnBienes()">
+                <i class="bx bx-list-check"></i>
+              </button>
+            </div>
           </div>
         </div>
         <div class="col-sm-12 col-12 col-md-12 p-2 mt-3 mb-3">
           <hr class="row" />
         </div>
-        <div class="col-sm-12 col-12 col-md-12 P-2">
+        <!-- <div class="col-sm-12 col-12 col-md-12 P-2">
           <div class="row">
             <div class="col-sm-12 col-12 col-md-6 p-2">
               <div class="form-group">
@@ -225,7 +237,7 @@
               </div>
             </div>
           </div>
-        </div>
+        </div> -->
         <div class="col-sm-12 col-12 col-md-6 p-2">
           <form-field
             [control]="form.get('depositaria')"
@@ -236,7 +248,7 @@
               [readonly]="true" />
           </form-field>
         </div>
-        <div class="col-sm-12 col-12 col-md-6 p-2">
+        <div class="col-sm-10 col-10 col-md-4 p-2">
           <form-field
             [control]="form.get('representante')"
             label="Representante">
@@ -245,6 +257,16 @@
               formControlName="representante"
               [readonly]="true" />
           </form-field>
+        </div>
+        <div class="col-sm-2 col-2 col-md-2 p-2 text-center">
+          <button
+            type="button"
+            tooltip="Cat&aacute;logo Depositar&iacute;as"
+            containerClass="tooltip-style"
+            class="btn btn-primary btn-sm active m-1"
+            (click)="btnCatalogoDepositarias()">
+            <i class="bx bx-list-check"></i>
+          </button>
         </div>
         <div class="col-sm-12 col-12 col-md-3 p-2">
           <form-field
@@ -407,7 +429,10 @@
                   <form-field
                     [control]="form.get('noOficio')"
                     label="No&#46; Oficio">
-                    <input class="form-control" [readonly]="true" />
+                    <input
+                      class="form-control"
+                      formControlName="noOficio"
+                      [readonly]="true" />
                   </form-field>
                 </div>
               </div>
@@ -453,6 +478,7 @@
                     <input
                       class="form-control"
                       formControlName="fechaInicio"
+                      bsDatapicker
                       [readonly]="true" />
                   </form-field>
                 </div>
@@ -500,7 +526,7 @@
         <div class="col-sm-12 col-12 col-md-12 p-2 mt-3 mb-3">
           <hr class="row" />
         </div>
-        <div class="col-sm-12 col-12 col-md-3 p-2">
+        <div class="col-sm-12 col-12 col-md-12 p-2">
           <form-field [control]="form.get('anexo')" label="Anexo">
             <textarea
               class="form-control"
@@ -509,7 +535,7 @@
               [readonly]="true"></textarea>
           </form-field>
         </div>
-        <div class="col-sm-12 col-12 col-md-9 p-2">
+        <div class="col-sm-12 col-12 col-md-12 p-2 mb-4">
           <form-field
             [control]="form.get('observaciones')"
             label="Observaciones">
@@ -520,7 +546,7 @@
               [readonly]="true"></textarea>
           </form-field>
         </div>
-        <div class="col-sm-12 col-12 col-md-12 P-2">
+        <!-- <div class="col-sm-12 col-12 col-md-12 P-2">
           <div class="row">
             <div class="col-sm-12 col-12 col-md-5 p-2">
               <form-field
@@ -551,8 +577,64 @@
               </button>
             </div>
           </div>
+        </div> -->
+        <!-- BOTONES PANTALLA -->
+        <div class="col-md-4 col-12 col-sm-12 text-center p-1">
+          <button
+            (click)="btnPaysDetails()"
+            name="payDetail"
+            tooltip="Detallle de Pagos"
+            containerClass="tooltip-style"
+            class="btn btn-info btn-sm active m-1">
+            <i class="bx bxs-detail"></i>
+          </button>
+          <button
+            (click)="btnJuridicalReport()"
+            name="juridicalReport"
+            tooltip="Reportes Jur&iacute;dicos"
+            containerClass="tooltip-style"
+            class="btn btn-info btn-sm active m-1">
+            <i class="bx bxs-detail"></i>
+          </button>
+          <button
+            (click)="btnReportesAdministrativos()"
+            name="administrativeReport"
+            tooltip="Reportes Administrativos"
+            containerClass="tooltip-style"
+            class="btn btn-info btn-sm active m-1">
+            <i class="bx bxs-detail"></i>
+          </button>
+          <button
+            (click)="btnMasivIncomePays()"
+            name="masivIncomePays"
+            tooltip="Ingreso Masivo de Pagos"
+            containerClass="tooltip-style"
+            class="btn btn-warning btn-sm active m-1">
+            <i class="bx bx-window-open"></i>
+          </button>
+          <button
+            (click)="btnConceptsPaysCatalogs()"
+            name="conceptsPaysCatalogs"
+            tooltip="Cat&aacute;logo de Conceptos de Pago"
+            containerClass="tooltip-style"
+            class="btn btn-warning btn-sm active m-1">
+            <i class="bx bx-window-open"></i>
+          </button>
+          <button
+            (click)="btnDepositaryCatalog()"
+            name="conceptsCatalogsPays"
+            tooltip="Cat&aacute;logo Depositar&iacute;as"
+            containerClass="tooltip-style"
+            class="btn btn-warning btn-sm active m-1">
+            <i class="bx bx-window-open"></i>
+          </button>
         </div>
-        <div class="col-sm-12 col-12 col-md-8 P-2">
+        <!-- PARTE DE ESCANEO -->
+        <div class="col-md-8 col-12 col-sm-12" *ngIf="showScanForm">
+          <app-scanning-foil-appointment
+            [formScan]="formScan"></app-scanning-foil-appointment>
+        </div>
+        <!-- <div class="col-sm-12 col-12 col-md-8 P-2">
           <div class="row">
             <div class="col-sm-12 col-12 col-md-12 p-2 text-center">
               <h6>CONSULTAS</h6>
@@ -588,8 +670,8 @@
               </div>
             </div>
           </div>
-        </div>
-        <div class="col-sm-12 col-12 col-md-4 P-2">
+        </div> -->
+        <!-- <div class="col-sm-12 col-12 col-md-4 P-2">
           <div class="row">
             <div class="col-sm-12 col-12 col-md-12 p-2 text-center">
               <h6>REPORTES</h6>
@@ -615,8 +697,8 @@
               </div>
             </div>
           </div>
-        </div>
-        <div class="col-sm-12 col-12 col-md-8 p-2">
+        </div> -->
+        <!-- <div class="col-sm-12 col-12 col-md-8 p-2">
           <div class="row">
             <div class="col-sm-12 col-12 col-md-12 p-2 text-center">
               <h6>ESCANEOS</h6>
@@ -642,8 +724,8 @@
               </div>
             </div>
           </div>
-        </div>
-        <div class="col-sm-12 col-12 col-md-4 p-2">
+        </div> -->
+        <!-- <div class="col-sm-12 col-12 col-md-4 p-2">
           <div class="row">
             <div class="col-sm-12 col-12 col-md-12 p-2 text-center">
               <h6>PAGOS</h6>
@@ -669,7 +751,7 @@
               </div>
             </div>
           </div>
-        </div>
+        </div> -->
       </div>
     </form>
   </div>

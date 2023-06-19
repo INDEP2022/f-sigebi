@@ -11,21 +11,9 @@ export const INDICATED_COLUMNS = {
     sort: false,
   },
 
-  noRegistration: {
-    title: 'Número de registro',
-    type: 'number',
-    sort: false,
-  },
-
   curp: {
-    title: 'Curp',
+    title: 'CURP',
     type: 'string',
-    sort: false,
-  },
-
-  consecutive: {
-    title: 'Consecutivo',
-    type: 'number',
     sort: false,
   },
 };

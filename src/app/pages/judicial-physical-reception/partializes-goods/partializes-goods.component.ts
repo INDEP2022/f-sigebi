@@ -1,38 +1,45 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { takeUntil } from 'rxjs';
+import { BehaviorSubject, takeUntil } from 'rxjs';
+import { TreeViewService } from 'src/app/@standalone/tree-view/tree-view.service';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ITreeItem } from 'src/app/core/interfaces/menu.interface';
 import { IPartializedGoodList } from 'src/app/core/models/ms-partialize-goods/partialize-good.model';
 import { GoodPartializeService } from 'src/app/core/services/ms-partialize/partialize.service';
-import { BasePageWidhtDinamicFiltersExtra } from 'src/app/core/shared/base-page-dinamic-filters-extra';
+import { BasePage } from 'src/app/core/shared/base-page';
+import {
+  POSITVE_NUMBERS_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-partializes-goods',
   templateUrl: './partializes-goods.component.html',
   styleUrls: ['partializes-goods.component.scss'],
 })
-export class PartializesGoodsComponent
-  extends BasePageWidhtDinamicFiltersExtra<IPartializedGoodList>
-  implements OnInit
-{
+export class PartializesGoodsComponent extends BasePage implements OnInit {
   elementToExport: any[];
   form: FormGroup;
   itemsTree: ITreeItem[] = [];
   loadingTree = false;
   loadingExcel = false;
   flagDownload = false;
+  params = new BehaviorSubject<ListParams>(new ListParams());
+  items: IPartializedGoodList[];
   @ViewChild('sideMenu') sideMenu: ElementRef;
+  totalItems: number;
   constructor(
     private fb: FormBuilder,
-
-    private goodPartializeService: GoodPartializeService
+    private treeViewService: TreeViewService,
+    private service: GoodPartializeService
   ) {
     super();
-    this.service = this.goodPartializeService;
+    // super();
+    // this.service = this.goodPartializeService;
     this.settings = {
       ...this.settings,
       actions: false,
-      hideSubHeader: false,
+      hideSubHeader: true,
       columns: {
         goodNumber: {
           title: 'No. Bien',
@@ -46,8 +53,15 @@ export class PartializesGoodsComponent
         },
       },
     };
-    this.ilikeFilters.push('goodNumber');
+    // this.ilikeFilters.push('goodNumber');
     this.prepareForm();
+  }
+
+  ngOnInit() {
+    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(x => {
+      // console.log(x);
+      this.getData();
+    });
   }
 
   exportExcel() {
@@ -71,54 +85,103 @@ export class PartializesGoodsComponent
     // console.log(this.table);
   }
 
-  override getData() {
+  getData(params?: ListParams) {
     this.loading = true;
-    let params = {
-      ...this.params.getValue(),
-      ...this.columnFilters,
-    };
+    // console.log(params);
+    if (!params) {
+      params = {
+        ...this.params.getValue(),
+      };
+    }
+    // console.log(params, this.columnFilters);
+    // debugger;
+    // if (
+    //   this.columnFilters['filter.goodNumber'] ||
+    //   this.columnFilters['filter.description']
+    // ) {
+    //   params.page = 1;
+    // }
     if (this.service) {
       this.service.getAll(params).subscribe({
         next: (response: any) => {
           if (response) {
-            if (
-              this.columnFilters['filter.goodNumber'] &&
-              response.data &&
-              response.data.length > 0
-            ) {
-              this.select(response.data[0].goodNumber);
-            }
             this.totalItems = response.count || 0;
             this.items = response.data;
-            this.data.load(response.data);
-            this.data.refresh();
+            // this.data.load(response.data);
+            // debugger;
+            // if (
+            //   (this.columnFilters['filter.goodNumber'] ||
+            //     this.columnFilters['filter.description']) &&
+            //   response.data &&
+            //   response.data.length > 0
+            // ) {
+            //   this.select(response.data[0].goodNumber);
+            //   this.data.setPage(1, true);
+            // }
+            // this.data.refresh();
+
             this.loading = false;
           }
         },
         error: err => {
           this.totalItems = 0;
-          this.data.load([]);
-          this.data.refresh();
+          this.items = [];
+          // this.data.load([]);
+          // this.data.refresh();
           this.loading = false;
         },
       });
     } else {
       this.totalItems = 0;
-      this.data.load([]);
-      this.data.refresh();
+      this.items = [];
       this.loading = false;
     }
+  }
+
+  searchGood() {
+    let params = {
+      ...this.params.getValue(),
+    };
+    if (this.form.get('noBien').value || this.form.get('description').value) {
+      if (this.form.get('noBien').value) {
+        params = {
+          ...params,
+          'filter.goodNumber': '$eq:' + this.form.get('noBien').value,
+        };
+      }
+      if (this.form.get('description').value) {
+        params = {
+          ...params,
+          'filter.description': '$ilike:' + this.form.get('description').value,
+        };
+      }
+      params = { ...params, page: 1 };
+    }
+    this.getData(params);
+    // if (this.form.get('noBien').value) {
+    //   this.getData()
+    // } else {
+    //   this.onLoadToast('error','No Bien','Debe escribir')
+    // }
   }
 
   select(goodNumber: number) {
     // console.log(row);
     this.loadingTree = true;
-    this.goodPartializeService
+    this.treeViewService.selected = null;
+    this.service
       .getTreePartialize(goodNumber)
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: response => {
           console.log(response);
+          if (response[0].subItems.length === 0) {
+            this.onLoadToast(
+              'error',
+              'Bien ' + goodNumber,
+              'No tiene bienes parcializados'
+            );
+          }
           this.itemsTree = response;
           this.loadingTree = false;
         },
@@ -130,8 +193,8 @@ export class PartializesGoodsComponent
 
   prepareForm() {
     this.form = this.fb.group({
-      noBien: [null, [Validators.required]],
-      descripcion: [null, [Validators.required]],
+      noBien: [null, [Validators.pattern(POSITVE_NUMBERS_PATTERN)]],
+      description: [null, [Validators.pattern(STRING_PATTERN)]],
     });
   }
 }

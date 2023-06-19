@@ -6,7 +6,7 @@
       </div>
       <div class="col-md-6 pt-2">
         <div class="d-flex justify-content-end">
-          <div class="">
+          <div>
             <app-form-search-handler
               [columnsType]="columnsType"
               [service]="fileUpdateService"
@@ -25,9 +25,9 @@
 
   <div body>
     <div class="md-tabs">
-      <tabset>
+      <tabset #myTabset>
         <!-- VOLANTE/EXPEDIENTE PANTALLA -->
-        <tab heading="VOLANTE/EXPEDIENTE">
+        <tab id="A" heading="VOLANTE/EXPEDIENTE">
           <!-- Forms VOLANTE EXPEDIENTE -->
           <!-- <ngx-form-volante-expediente
             [form]="form"
@@ -42,7 +42,8 @@
               [searchMode]="searchMode"
               [confirmSearch]="confirmSearch"
               [selectedNotification]="selectedRow"
-              (onSearch)="search($event)">
+              (onSearch)="search($event)"
+              (datosEnviados)="recibirDatos($event)">
             </app-juridical-record-update>
           </div>
           <!-- Forms VOLANTE EXPEDIENTE -->
@@ -50,7 +51,8 @@
         <!-- VOLANTE/EXPEDIENTE PANTALLA -->
 
         <!-- DECLARATORIA PANTALLA -->
-        <tab heading="DECLARATORIA" *ngIf="showTabs">
+
+        <tab heading="DECLARATORIA" [disabled]="!disabledTabs" *ngIf="showTabs">
           <!-- Forms DECLARATORIA -->
           <!-- <ngx-form-declaratoria
             [form]="formDeclaratoria"
@@ -60,10 +62,31 @@
           <form
             [formGroup]="declarationForm"
             class="container-fluid form-material">
-            <div class="row" *ngIf="dictDate != null">
+            <div class="row">
               <div class="d-flex justify-content-end">
                 <div>
-                  <h6>{{ dictDate }}</h6>
+                  <h6>{{ dictDate3 }}</h6>
+                </div>
+                <div class="d-inline mx-2">
+                  <div class="btn-group">
+                    <button
+                      type="button"
+                      (click)="newDictums()"
+                      tooltip="Agregar Dictamen"
+                      containerClass="tooltip-style"
+                      class="btn btn-info btn-sm active ml-2 mr-2">
+                      <i class="bx bx-plus bx-sm float-icon"></i>
+                    </button>
+                    <button
+                      type="button"
+                      [disabled]="!disabledListDictums"
+                      (click)="listDictums()"
+                      tooltip="Dictámenes Disponibles"
+                      containerClass="tooltip-style"
+                      class="btn btn-primary btn-sm active">
+                      <i class="bx bx-list-plus bx-sm float-icon"></i>
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -107,22 +130,28 @@
                     [control]="declarationForm.get('officeType')"
                     label="Tipo Oficio">
                     <ng-select
+                      [readonly]="!disabledTIPO_OFICIO"
+                      (change)="addText($event)"
                       formControlName="officeType"
                       [searchable]="false"
                       class="form-control"
                       [clearable]="false">
+                      <ng-option value="null">Seleccione una opción</ng-option>
+                      <!-- <ng-option *ngIf="tipoBien == 7" value="DAN">DAN - DECLARATORIA ABANDONO NUMERARIO</ng-option>
+                      <ng-option *ngIf="tipoBien != 7" value="DAB">DAB - DECLARATORIA ABANDONO BIENES</ng-option> -->
                       <ng-option value="DAN"
-                        >DECLARATORIA ABANDONO NUMERARIO</ng-option
+                        >DAN - DECLARATORIA ABANDONO NUMERARIO</ng-option
                       >
                       <ng-option value="DAB"
-                        >DECLARATORIA ABANDONO BIENES</ng-option
+                        >DAB - DECLARATORIA ABANDONO BIENES</ng-option
                       >
                       <ng-option value="FGR"
-                        >DECLARATORIA ABANDONO FGR</ng-option
+                        >FGR - DECLARATORIA ABANDONO FGR</ng-option
                       >
                       <ng-option value="PJF"
-                        >DECLARATORIA ABANDONO PJF</ng-option
+                        >PJF - DECLARATORIA ABANDONO PJF</ng-option
                       >
+                      <!-- <ng-option value="DAE">DAE - DECLARATORIA ABANDONO EMPRESAS</ng-option> -->
                     </ng-select>
                   </form-field>
                 </div>
@@ -133,6 +162,7 @@
                     class=""
                     [control]="declarationForm.get('sender')">
                     <ngx-select
+                      [readonly]="!disabledDictum"
                       [form]="declarationForm"
                       [data]="senders"
                       (fetchItems)="getSenders($event)"
@@ -150,6 +180,7 @@
                     class=""
                     [control]="declarationForm.get('recipient')">
                     <ngx-select
+                      [readonly]="!disabledDictum"
                       [form]="declarationForm"
                       [data]="recipients"
                       (fetchItems)="getRecipients($event)"
@@ -164,6 +195,7 @@
                 </div>
                 <div class="row mt-5">
                   <form-field
+                    class=""
                     [control]="declarationForm.get('passOfficeArmy')"
                     label="Cve. Oficio">
                     <input
@@ -176,13 +208,14 @@
                 <div class="row mt-5">
                   <form-field class="" [control]="declarationForm.get('city')">
                     <ngx-select
+                      [readonly]="!disabledDictum"
                       [form]="declarationForm"
                       [data]="cities"
                       (fetchItems)="getCities($event)"
                       bindLabel="nameAndId"
                       control="city"
                       label="Ciudad"
-                      [searchOnInit]="true"
+                      [searchOnInit]="false"
                       [showTooltip]="true"
                       termMaxLength="30">
                     </ngx-select>
@@ -203,55 +236,84 @@
                 <h6 class="title">BIENES</h6>
                 <hr class="row" />
               </div>
-              <div class="col-sm-12 col-12 col-md-2">
-                <form-field
-                  [control]="formDeclaratoriaTabla.get('noExpediente')"
-                  label="No&#46; Expediente">
-                  <input
-                    type="text"
-                    formControlName="noExpediente"
-                    (blur)="onLoadGoodList()"
-                    class="form-control" />
-                  <!-- <select class="form-control" formControlName="noExpediente">
-                    <option [value]="null">Seleccione un valor</option>
-                    <option [value]="'3767'">3767</option>
-                    <option [value]="'3921'">3921</option>
-                  </select> -->
+              <!-- <div class="col-sm-12 col-12 col-md-2">
+                <form-field [control]="formDeclaratoriaTabla.get('noExpediente')" label="No&#46; Expediente">
+                  <input type="text" formControlName="noExpediente" (blur)="onLoadGoodList()" class="form-control" />
                 </form-field>
-              </div>
+              </div> -->
 
-              <div class="col-sm-12 col-12 col-md-10">
+              <div class="col-sm-12 col-12 col-md-12">
                 <form-field
                   [control]="formDeclaratoriaTabla.get('averiPrevia')"
                   label="Tipo &#45; Subtipo &#45; Descripci&oacute;n">
-                  <select class="form-control" formControlName="averiPrevia">
+                  <!-- <ng-select [form]="formDeclaratoriaTabla" [data]="tiposData" (fetchItems)="filtroTipos($event)"
+                    bindLabel="tipoSupbtipoDescription" control="averiPrevia"
+                    label="Tipo &#45; Subtipo &#45; Descripci&oacute;n" [searchOnInit]="false" [showTooltip]="true">
+                    <option value="1">OPTION</option>
+                  </ng-select> -->
+                  <ng-select
+                    [readonly]="!disabledDictum"
+                    (change)="onLoadGoodList($event)"
+                    formControlName="averiPrevia"
+                    class="form-control">
+                    <ng-option *ngIf="valTiposAll" value="all"
+                      >Todos - 0 - TODOS - 0</ng-option
+                    >
+                    <ng-option
+                      *ngFor="let item of tiposData; index as i"
+                      value="{{ item.no_clasif_bien }}">
+                      {{ item.tipoSupbtipoDescription }}
+                    </ng-option>
+                  </ng-select>
+
+                  <!-- <select class="form-control" formControlName="averiPrevia">
                     <option [value]="null">Seleccione un valor</option>
-                    <option
-                      [value]="'TELAS Y PRENDAS DE VESTIR - BLANCOS -TOALLAS'">
+                    <option [value]="'TELAS Y PRENDAS DE VESTIR - BLANCOS -TOALLAS'">
                       TELAS Y PRENDAS DE VESTIR - BLANCOS -TOALLAS
                     </option>
-                  </select>
+                  </select> -->
                 </form-field>
               </div>
             </div>
           </form>
 
-          <div class="row pt-2 mb-2">
+          <form-loader *ngIf="formLoading"></form-loader>
+
+          <div class="row pt-2 mb-2" *ngIf="!formLoading">
             <div class="col-sm-12 col-12 col-md-12 pr-3">
-              <ng2-smart-table
-                [attr.class]="'table-bordered'"
-                [settings]="settings1"
-                [source]="data1">
-              </ng2-smart-table>
+              <div [class]="loading ? 'table-loading' : ''">
+                <ng2-smart-table
+                  class="table-responsive"
+                  id="monitorABN"
+                  (userRowSelect)="selectProceedings($event)"
+                  [attr.class]="'table-responsive table-bordered'"
+                  [settings]="settings1"
+                  [source]="data1">
+                </ng2-smart-table>
+                <br />
+                <div>
+                  <app-pagination
+                    [params]="params"
+                    [totalItems]="totalItems"></app-pagination>
+                </div>
+              </div>
             </div>
           </div>
-          <div class="row">
-            <div class="col-sm-12 col-12 col-md-6">
-              <span class="badge bagde-danger">
-                Bien entregado en administraci&oacute;n
-              </span>
+
+          <form [formGroup]="di_status" class="container-fluid form-material">
+            <div class="row">
+              <div class="col-sm-12 col-12 col-md-6 mt-5">
+                <form-field [control]="di_status.get('di_desc_estatus')">
+                  <input
+                    type="text"
+                    formControlName="di_desc_estatus"
+                    class="form-control"
+                    readonly />
+                </form-field>
+              </div>
             </div>
-          </div>
+          </form>
+
           <br />
           <!-- Tabla de bienes DECLARATORIA -->
 
@@ -261,22 +323,30 @@
             class="container-fluid form-material">
             <div class="row w-100">
               <hr class="row" />
-              <div class="col-sm-12 col-12 col-md-6 pr-3">
+              <div class="col-sm-12 col-12 col-md-12 mt-2 mb-2">
                 <form-field
                   [control]="formDeclaratoriapageFin.get('page')"
-                  label="page">
+                  label="Inicio">
                   <!-- <label class="label w-100">page</label> -->
                   <textarea
+                    maxlength="2000"
+                    [readonly]="!lockStatus"
+                    (dblclick)="editText($event, 'declaratoriaInicio')"
+                    rows="5"
                     class="form-control w-100"
                     formControlName="page"></textarea>
                 </form-field>
               </div>
-              <div class="col-sm-12 col-12 col-md-6 pr-3">
+              <div class="col-sm-12 col-12 col-md-12 mt-2 mb-2">
                 <form-field
                   [control]="formDeclaratoriapageFin.get('fin')"
                   label="Fin">
                   <!-- <label class="label w-100">Fin</label> -->
                   <textarea
+                    maxlength="12000"
+                    [readonly]="!lockStatus"
+                    (dblclick)="editText($event, 'declaratoriaFin')"
+                    rows="7"
                     class="form-control w-100"
                     formControlName="fin"></textarea>
                 </form-field>
@@ -290,10 +360,18 @@
             <div class="col-sm-12 col-12 col-md-8">
               <div class="row">
                 <div class="col-sm-12 col-12 col-md-3 text-center">
-                  <button class="btn btn-secondary btn-sm active m-1">
+                  <button
+                    (click)="imgSolicitud()"
+                    tooltip="Generar Folio de Escaneo y Solicitud"
+                    containerClass="tooltip-style"
+                    class="btn btn-secondary btn-sm active m-1">
                     <i class="bx bxs-file-find"></i>
                   </button>
-                  <button class="btn btn-secondary btn-sm active m-1">
+                  <button
+                    (click)="escanearFolioEscaneo()"
+                    tooltip="Escanear"
+                    containerClass="tooltip-style"
+                    class="btn btn-secondary btn-sm active m-1">
                     <i class="bx bxs-file"></i>
                   </button>
                 </div>
@@ -301,15 +379,27 @@
                   <form-field
                     [control]="formFolioEscaneo.get('folioEscaneo')"
                     label="Folio Escaneo">
-                    <input nbInput fullWidth type="number" class="w-100" />
+                    <input
+                      readonly
+                      [(ngModel)]="folioEscaneoNg"
+                      type="number"
+                      class="form-control" />
                   </form-field>
                 </div>
                 <div class="col-sm-12 col-12 col-md-3 text-center">
-                  <button class="btn btn-secondary btn-sm active m-1">
-                    <i class="bx bxs-file"></i>
-                  </button>
-                  <button class="btn btn-secondary btn-sm active m-1">
+                  <button
+                    (click)="imprimirFolioEscaneo()"
+                    tooltip="imprimir Solicitud de Escaneo"
+                    containerClass="tooltip-style"
+                    class="btn btn-secondary btn-sm active m-1">
                     <i class="bx bxs-file-find"></i>
+                  </button>
+                  <button
+                    (click)="visualizacionFolioEscaneo()"
+                    tooltip="Consulta de imágenes escaneadas"
+                    containerClass="tooltip-style"
+                    class="btn btn-secondary btn-sm active m-1">
+                    <i class="bx bxs-file"></i>
                   </button>
                 </div>
               </div>
@@ -318,22 +408,37 @@
               <div class="row">
                 <div class="col-sm-12 col-12 col-md-6 text-center">
                   <button
+                    (click)="aprobar()"
                     type="button"
                     class="btn btn-primary btn-sm active ml-2 mr-2">
                     Aprobar
                   </button>
                   <button
+                    (click)="eliminar()"
                     type="button"
                     class="btn btn-danger btn-sm active ml-2 mr-2">
                     Eliminar
                   </button>
                 </div>
                 <div class="col-sm-12 col-12 col-md-6 text-center">
-                  <button class="btn btn-secondary btn-sm active ml-2 mr-2">
+                  <label for="imp">Imp.</label>
+                  <button
+                    name="imp"
+                    (click)="imprimir()"
+                    [disabled]="!disabledIMPRIMIR"
+                    class="btn btn-secondary btn-sm active ml-2 mr-2">
                     <i class="bx bxs-printer"></i>
                   </button>
-                  <button class="btn btn-secondary btn-sm active ml-2 mr-2">
+
+                  <label for="env">Envia</label>
+                  <button
+                    name="env"
+                    (click)="enviarD()"
+                    [disabled]="!disabledENVIAR"
+                    class="btn btn-danger btn-sm active ml-2 mr-2">
                     <i class="bx bx-send"></i>
+                    <!-- <i class="bx bx-lock"></i>
+                    <i class="bx bx-lock-open"></i> -->
                   </button>
                 </div>
               </div>
@@ -344,14 +449,407 @@
         </tab>
         <!-- DECLARATORIA PANTALLA page FIN -->
 
-        <tab heading="OFICIO" *ngIf="showTabs">
-          <!-- FORM OFICIO -->
-          <ngx-fact-abandonos-oficio
-            [formOficio]="formOficio"
-            [formCcpOficio]="formCcpOficio"
-            [formOficiopageFin]="formOficiopageFin"
-            (formValues)="mostrarInfoOficio($event)">
-          </ngx-fact-abandonos-oficio>
+        <!-- FORM OFICIO -->
+        <tab heading="OFICIO" [disabled]="!disabledTabs" *ngIf="showTabs">
+          <!-- Forms OFICIO -->
+          <form [formGroup]="formOficio" class="container-fluid form-material">
+            <div class="row">
+              <div class="d-flex justify-content-end">
+                <div class="d-inline mx-2">
+                  <div class="btn-group">
+                    <button
+                      type="button"
+                      (click)="newMOficioG()"
+                      tooltip="Agregar Oficio"
+                      containerClass="tooltip-style"
+                      class="btn btn-info btn-sm active ml-2 mr-2">
+                      <i class="bx bx-plus bx-sm float-icon"></i>
+                    </button>
+                    <button
+                      type="button"
+                      (click)="listMOficiosG()"
+                      tooltip="Oficios Disponibles"
+                      containerClass="tooltip-style"
+                      class="btn btn-primary btn-sm active">
+                      <i class="bx bx-list-plus bx-sm float-icon"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row w-100 justify-content-center">
+              <div class="col-12">
+                <div class="row mt-5">
+                  <div class="col-6">
+                    <div class="row">
+                      <div class="col-sm-12 col-12 mt-5">
+                        <div class="row">
+                          <div class="col-md-4">
+                            <form-field
+                              [control]="formOficio.get('tipoOficio')"
+                              label="Tipo Oficio">
+                              <input
+                                readonly
+                                [(ngModel)]="EXTERNO"
+                                type="text"
+                                class="form-control"
+                                formControlName="tipoOficio" />
+                            </form-field>
+                          </div>
+                          <div class="col-md-4">
+                            <form-field
+                              [control]="formOficio.get('oficioPor')"
+                              label="Oficio Por">
+                              <input
+                                [(ngModel)]="ABANDONO"
+                                readonly
+                                type="text"
+                                class="form-control"
+                                formControlName="oficioPor" />
+                            </form-field>
+                          </div>
+                          <div class="col-md-4">
+                            <form-field
+                              [control]="formOficio.get('oficio')"
+                              label="No. Gesti&oacute;n">
+                              <input
+                                readonly
+                                [(ngModel)]="no_OficioGestion"
+                                type="number"
+                                class="form-control"
+                                formControlName="oficio" />
+                            </form-field>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-sm-12 col-12 mt-5">
+                        <form-field [control]="formOficio.get('remitente')">
+                          <ngx-select
+                            [readonly]="!disabledMOficGest"
+                            [form]="formOficio"
+                            [data]="senders"
+                            (fetchItems)="getSenders($event)"
+                            bindLabel="userAndName"
+                            control="remitente"
+                            label="Remitente"
+                            [searchOnInit]="true"
+                            [showTooltip]="true"
+                            termMaxLength="30">
+                          </ngx-select>
+                          <!-- <input [readonly]="!disabledBTNs" class="form-control" formControlName="remitente" /> -->
+                        </form-field>
+                      </div>
+                      <div class="col-sm-12 col-12 mt-5">
+                        <form-field
+                          *ngIf="!externoVal"
+                          [control]="formOficio.get('destinatario')">
+                          <ngx-select
+                            [readonly]="!disabledMOficGest"
+                            [form]="formOficio"
+                            [data]="recipients"
+                            (fetchItems)="getRecipients($event)"
+                            bindLabel="userAndName"
+                            control="destinatario"
+                            label="Destinatario"
+                            [searchOnInit]="true"
+                            [showTooltip]="true"
+                            termMaxLength="30">
+                          </ngx-select>
+                          <!-- <input [readonly]="!disabledBTNs" class="form-control" formControlName="destinatario" /> -->
+                        </form-field>
+
+                        <form-field
+                          *ngIf="externoVal"
+                          [control]="formOficio.get('destinatario')"
+                          label="Destinatario">
+                          <textarea
+                            [readonly]="!disabledMOficGest"
+                            class="form-control"
+                            formControlName="destinatario"></textarea>
+                        </form-field>
+                      </div>
+                      <div class="col-sm-12 col-12 mt-5">
+                        <form-field [control]="formOficio.get('ciudad')">
+                          <ngx-select
+                            [readonly]="!disabledMOficGest"
+                            [form]="formOficio"
+                            [data]="cities2"
+                            (fetchItems)="getCities2($event)"
+                            bindLabel="nameAndId"
+                            control="ciudad"
+                            label="Ciudad"
+                            [searchOnInit]="false"
+                            [showTooltip]="true"
+                            termMaxLength="30">
+                          </ngx-select>
+
+                          <!-- <input [readonly]="!disabledBTNs" class="form-control" formControlName="ciudad" /> -->
+                        </form-field>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="row">
+                      <div class="col-sm-6 col-6 mt-5">
+                        <form-field
+                          [control]="formOficio.get('noVolante')"
+                          label="No&#46; Volante">
+                          <input
+                            readonly
+                            type="number"
+                            class="form-control"
+                            formControlName="noVolante" />
+                        </form-field>
+                      </div>
+                      <div class="col-sm-6 col-6 mt-5">
+                        <form-field
+                          [control]="formOficio.get('noExpediente')"
+                          label="No&#46; Expediente">
+                          <input
+                            readonly
+                            type="number"
+                            class="form-control"
+                            formControlName="noExpediente" />
+                        </form-field>
+                      </div>
+                      <div class="col-sm-12 col-12 mt-3">
+                        <div class="form-group">
+                          <label
+                            class="form-control-label w-100"
+                            style="font-size: 11px"
+                            >CLAVE OFICIO</label
+                          >
+                          <label
+                            class="form-control-label w-100"
+                            style="font-size: 14px"
+                            >{{ cveManagement }}</label
+                          >
+                        </div>
+                      </div>
+                      <div class="col-sm-12 col-12 mt-5">
+                        <div class="form-group">
+                          <label
+                            class="form-control-label w-100"
+                            style="font-size: 11px"
+                            >FECHA DE CAPTURA</label
+                          >
+                          <label
+                            class="form-control-label w-100"
+                            style="font-size: 14px"
+                            >{{ dateCapture2 }}</label
+                          >
+                        </div>
+                      </div>
+                      <div class="col-sm-12 col-12 mt-5">
+                        <div class="form-group">
+                          <label
+                            class="form-control-label w-100"
+                            style="font-size: 11px"
+                            >ESTATUS</label
+                          >
+                          <label
+                            class="form-control-label w-100"
+                            style="font-size: 14px"
+                            >{{ statusOfMOficioGestion }}</label
+                          >
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </form>
+          <!-- Forms OFICIO -->
+
+          <!-- Forms OFICIO page FIN -->
+          <form
+            [formGroup]="formOficiopageFin"
+            class="container-fluid form-material">
+            <div class="row w-100">
+              <div class="col-sm-12 col-12 col-md-12 pr-3">
+                <form-field
+                  [control]="formOficiopageFin.get('page')"
+                  label="Inicio">
+                  <textarea
+                    maxlength="4000"
+                    rows="7"
+                    [readonly]="!disabledMOficGest"
+                    (change)="disabledText()"
+                    (dblclick)="editText($event, 'OficioInicio')"
+                    class="form-control"
+                    formControlName="page"></textarea>
+                </form-field>
+              </div>
+              <div class="col-sm-12 col-12 col-md-12 pr-3">
+                <form-field
+                  [control]="formOficiopageFin.get('fin')"
+                  label="Fin">
+                  <textarea
+                    maxlength="8000"
+                    rows="7"
+                    [readonly]="!disabledMOficGest"
+                    (change)="disabledText()"
+                    (dblclick)="editText($event, 'OficioFin')"
+                    class="form-control"
+                    formControlName="fin"></textarea>
+                </form-field>
+              </div>
+            </div>
+          </form>
+          <!-- Forms OFICIO page FIN -->
+
+          <hr class="row" />
+          <div class="row">
+            <div class="col-sm-12 col-12 col-md-6">
+              <h6>Documentos</h6>
+            </div>
+          </div>
+          <div class="row pt-2 mb-2">
+            <div class="col-sm-11 col-11 col-md-11">
+              <ng2-smart-table
+                [attr.class]="'table-bordered'"
+                [settings]="settings2"
+                [source]="data2"></ng2-smart-table>
+            </div>
+            <div class="col-1">
+              <button
+                [disabled]="!disabledDocs || !disabledMOficGest"
+                (click)="docAct()"
+                class="btn btn-secondary btn-sm active">
+                Doc.
+              </button>
+            </div>
+          </div>
+
+          <!-- C.C.P. -->
+          <!-- <hr class="row" />
+          <div class="row">
+            <div class="col-sm-12 col-12 col-md-6">
+              <h6>C&#46;C&#46;P&#46;</h6>
+            </div>
+          </div> -->
+          <br />
+          <!-- Form CON COPIA PARA -->
+          <div class="ch-content" header>
+            <h5 class="title">C&#46;C&#46;P&#46;</h5>
+            <div class="col-md-5 buttons">
+              <!--app-columns-select [(settings)]="settings"></app-columns-select-->
+              <div>
+                <button
+                  (click)="openModalCopy(false)"
+                  [disabled]="!disabledMOficGest"
+                  class="btn btn-primary active btn-sm ml-3">
+                  Nuevo
+                </button>
+              </div>
+            </div>
+          </div>
+          <div body>
+            <div class="row pt-4">
+              <div class="col-md-12">
+                <div class="table-responsive">
+                  <div [class]="loading ? 'table-loading' : ''">
+                    <ng2-smart-table
+                      [attr.class]="'table-bordered'"
+                      [settings]="settings3"
+                      [source]="copyOficio"
+                      (delete)="showDeleteAlert($event.data)">
+                    </ng2-smart-table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <form
+            [formGroup]="formCcpOficio"
+            class="container-fluid form-material mt-2">
+            <!-- <div class="row tp-2 mb-2">
+              <div class="col-12">
+                <div class="row">
+                  <div class="col-sm-12 col-12 col-md-2 p-1 pt-0 pb-0">
+                    <form-field [control]="formCcpOficio.get('ccp')" label="C&#46;P&#46;P">
+                      <ng-select [readonly]="!disabledMOficGest" (change)="ccpChange($event)" class="form-control"
+                        formControlName="ccp">
+                        <option [value]="null">Seleccione un valor</option>
+                        <ng-option [value]="'INTERNO'">INTERNO</ng-option>
+                        <ng-option [value]="'EXTERNO'">EXTERNO</ng-option>
+                      </ng-select>
+                    </form-field>
+                  </div>
+                  <div class="col-sm-12 col-12 col-md-10 p-1 pt-0 pb-0">
+                    <form-field *ngIf="!valInterno" [control]="formCcpOficio.get('nombreUsuario')"
+                      label="Nombre Usuario">
+                      <input [readonly]="!disabledMOficGest" class="form-control" formControlName="nombreUsuario"
+                        type="text" />
+                    </form-field>
+
+                    <ngx-select [readonly]="!disabledMOficGest" id="selectAbandono" *ngIf="valInterno" [data]="items"
+                      bindLabel="userAndName" label="Nombre Usuario" value="user" (fetchItems)="getFromSelect($event)"
+                      [form]="formCcpOficio" control="nombreUsuario"></ngx-select>
+                  </div>
+                </div>
+              </div>
+              <div class="col-12">
+                <div class="row">
+                  <div class="col-sm-12 col-12 col-md-2 p-1 pt-0 pb-0">
+                    <form-field [control]="formCcpOficio.get('ccp2')" label="C&#46;P&#46;P">
+                      <ng-select [readonly]="!disabledMOficGest" (change)="ccpChange2($event)" class="form-control"
+                        formControlName="ccp2">
+                        <ng-option [value]="null">Seleccione un valor</ng-option>
+                        <option [value]="null">Seleccione un valor</option>
+                        <ng-option [value]="'INTERNO'">INTERNO</ng-option>
+                        <ng-option [value]="'EXTERNO'">EXTERNO</ng-option>
+                      </ng-select>
+                    </form-field>
+                  </div>
+                  <div class="col-sm-12 col-12 col-md-10 p-1 pt-0 pb-0">
+                    <form-field *ngIf="!valInterno2" [control]="formCcpOficio.get('nombreUsuario2')">
+                      <input [readonly]="!disabledMOficGest" class="form-control" formControlName="nombreUsuario2"
+                        type="text" name="cpp2" id="cpp2" />
+                    </form-field>
+                    <ngx-select [readonly]="!disabledMOficGest" id="selectAbandono" *ngIf="valInterno2" [data]="items2"
+                      bindLabel="userAndName" value="user" (fetchItems)="getFromSelect2($event)" [form]="formCcpOficio"
+                      control="nombreUsuario2"></ngx-select>
+                  </div>
+                </div>
+              </div>
+            </div> -->
+            <div class="col-sm-12 col-12 col-md-12">
+              <div class="row justify-content-center">
+                <div class="col-sm-12 col-12 col-md-6 text-center">
+                  <button
+                    [disabled]="!btnOficion"
+                    (click)="oficio()"
+                    type="button"
+                    class="btn btn-primary btn-sm active ml-2 mr-2">
+                    Imp.
+                  </button>
+                  <button
+                    (click)="envofi()"
+                    [disabled]="!disabledMOficGest"
+                    class="btn btn-secondary btn-sm active ml-2 mr-2">
+                    <i *ngIf="iconLock" class="bx bx-lock-open-alt"></i>
+                    <i *ngIf="!iconLock" class="bx bx-lock-alt"></i>
+                  </button>
+                  <!-- <button *ngIf="!lockStatus" class="btn btn-secondary btn-sm active ml-2 mr-2">
+                    <i class="bx bx-lock"></i>
+                  </button>
+                  <button *ngIf="lockStatus" class="btn btn-primary btn-sm active ml-2 mr-2">
+                    <i class="bx bx-lock-open"></i>
+                  </button> -->
+                  <button
+                    (click)="borrar()"
+                    [disabled]="!disabledBtnDelete"
+                    type="button"
+                    class="btn btn-danger btn-sm active ml-2 mr-2">
+                    Borra
+                  </button>
+                </div>
+              </div>
+            </div>
+          </form>
+          <!-- Form CON COPIA PARA -->
           <!-- FORM OFICIO -->
         </tab>
       </tabset>

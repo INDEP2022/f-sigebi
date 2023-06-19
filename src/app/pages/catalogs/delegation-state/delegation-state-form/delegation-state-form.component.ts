@@ -6,6 +6,7 @@ import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IDelegationState } from 'src/app/core/models/catalogs/delegation-state.model';
 import { IStateOfRepublic } from 'src/app/core/models/catalogs/state-of-republic.model';
 import { DelegationStateService } from 'src/app/core/services/catalogs/delegation-state.service';
+import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
 import { StateOfRepublicService } from 'src/app/core/services/catalogs/state-of-republic.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
@@ -20,13 +21,15 @@ export class DelegationStateFormComponent extends BasePage implements OnInit {
   delegationStateForm: ModelForm<IDelegationState>;
   title: string = 'Delegación Estado';
   edit: boolean = false;
-  delegationSate: IDelegationState;
+  delegationSate: any;
   states = new DefaultSelect<IStateOfRepublic>();
+  regionalDelegation = new DefaultSelect<IStateOfRepublic>();
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
     private delegationStateService: DelegationStateService,
-    private stateOfRepublicService: StateOfRepublicService
+    private stateOfRepublicService: StateOfRepublicService,
+    private regionalDelegationService: RegionalDelegationService
   ) {
     super();
   }
@@ -43,40 +46,71 @@ export class DelegationStateFormComponent extends BasePage implements OnInit {
       ],
       stateCode: [
         null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
       keyState: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
       ],
-      status: [null, [Validators.pattern(STRING_PATTERN)]],
+      status: [
+        null,
+        [Validators.pattern(NUMBERS_PATTERN), Validators.maxLength(20)],
+      ],
       version: [
         null,
         [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
       ],
     });
     if (this.delegationSate) {
-      this.fillForm();
+      this.edit = true;
+      this.delegationStateForm.patchValue(this.delegationSate);
+      this.delegationStateForm.controls['regionalDelegation'].setValue(
+        this.delegationSate.regionalDelegation.id
+      );
+      this.delegationStateForm.controls['stateCode'].setValue(
+        this.delegationSate.stateCode.codeCondition
+      );
+      this.getStates(
+        new ListParams(),
+        this.delegationStateForm.controls['keyState'].value
+      );
+      this.getRegionalDelegation(
+        new ListParams(),
+        this.delegationStateForm.controls['regionalDelegation'].value
+      );
     }
+    this.getStates(new ListParams());
+    this.getRegionalDelegation(new ListParams());
   }
-
-  fillForm() {
-    this.edit = true;
-    this.delegationStateForm.patchValue(this.delegationSate);
-    /**
-     * !Agregar funcionalidad para llenar el select
-     * !cuando lo traiga del backend
-     */
-    // const state = this.delegationSate.keyState
-  }
-
-  getStates(params: ListParams) {
+  getStates(params: ListParams, id?: string) {
+    if (id) {
+      params['filter.id'] = id;
+    }
     this.stateOfRepublicService.getAll(params).subscribe({
-      next: data => (this.states = new DefaultSelect(data.data, data.count)),
+      next: data => {
+        this.states = new DefaultSelect(data.data, data.count);
+      },
+      error: () => {
+        this.states = new DefaultSelect();
+      },
     });
   }
-
+  getRegionalDelegation(params: ListParams, id?: string) {
+    if (id) {
+      params['filter.id'] = id;
+    }
+    this.regionalDelegationService.getAll(params).subscribe({
+      next: data => {
+        console.log(data);
+        this.regionalDelegation = new DefaultSelect(data.data, data.count);
+      },
+      error: () => {
+        this.regionalDelegation = new DefaultSelect();
+      },
+    });
+  }
   stateChange(state: IStateOfRepublic) {
+    console.log(state);
     this.delegationStateForm.controls.keyState.setValue(state.id);
   }
 
@@ -91,7 +125,7 @@ export class DelegationStateFormComponent extends BasePage implements OnInit {
   create() {
     this.loading = true;
     this.delegationStateService
-      .create(this.delegationStateForm.value)
+      .create(this.delegationStateForm.getRawValue())
       .subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),
@@ -101,9 +135,9 @@ export class DelegationStateFormComponent extends BasePage implements OnInit {
   update() {
     this.loading = true;
     this.delegationStateService
-      .update(
-        this.delegationSate.regionalDelegation,
-        this.delegationStateForm.value
+      .newUpdate(
+        // this.delegationSate.regionalDelegation,
+        this.delegationStateForm.getRawValue()
       )
       .subscribe({
         next: data => this.handleSuccess(),

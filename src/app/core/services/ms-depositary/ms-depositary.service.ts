@@ -6,6 +6,7 @@ import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import {
   IAppointmentDepositary,
+  IDepositaryAppointments,
   IPaymendtDepParamsDep,
   IPersonsModDepositary,
   IRequestDepositary,
@@ -47,6 +48,15 @@ export class MsDepositaryService extends HttpService {
     );
   }
 
+  getAppointments(
+    params?: ListParams
+  ): Observable<IListResponse<IDepositaryAppointments>> {
+    return this.get<IListResponse<IDepositaryAppointments>>(
+      DepositaryEndPoints.DepositaryAppointments,
+      params
+    );
+  }
+
   getPersonsModDepositary(
     params?: _Params
   ): Observable<IListResponse<IPersonsModDepositary>> {
@@ -68,6 +78,37 @@ export class MsDepositaryService extends HttpService {
     return this.post<IListResponse<any>>(
       DepositaryEndPoints.PaymentRefValidDep,
       params
+    );
+  }
+  deletePaymentRefRemove(params: any): Observable<IListResponse<any>> {
+    return this.delete<IListResponse<any>>(
+      DepositaryEndPoints.RemovePaymentRefRemove,
+      params
+    );
+  }
+  getPaymentRefPrepOI(params: any): Observable<IListResponse<any>> {
+    return this.post<IListResponse<any>>(
+      DepositaryEndPoints.PaymentRefPrepOI,
+      params
+    );
+  }
+  getValidBlackListAppointment(id?: number): Observable<IListResponse<any>> {
+    return this.get<IListResponse<any>>(
+      `${DepositaryEndPoints.ValidBlackListAppointment}/${id}`
+    );
+  }
+  getAplicationcargaCliente1(
+    no_appointment?: number
+  ): Observable<IListResponse<any>> {
+    return this.get<IListResponse<any>>(
+      `${DepositaryEndPoints.AplicationcargaCliente1}?no_nombramiento=${no_appointment}`
+    );
+  }
+  getAplicationcargaCliente2(
+    no_appointment?: number
+  ): Observable<IListResponse<any>> {
+    return this.get<IListResponse<any>>(
+      `${DepositaryEndPoints.AplicationcargaCliente2}?no_nombramiento=${no_appointment}`
     );
   }
 }

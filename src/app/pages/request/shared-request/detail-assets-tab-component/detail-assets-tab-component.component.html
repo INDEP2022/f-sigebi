@@ -233,7 +233,8 @@
                 [searchable]="false"
                 bindLabel="description"
                 value="keyId"
-                [readonly]="isGoodInfReadOnly"></ngx-select>
+                [readonly]="isGoodInfReadOnly"
+                (change)="destinySae($event)"></ngx-select>
             </div>
           </div>
           <div class="row pt-4">
@@ -551,7 +552,7 @@
       <i class="bx bxs-car"></i> Informaci&oacute;n de Veh&iacute;culo
     </ng-template>
     <ng-template tabHeading *ngIf="process == 'classify-assets'">
-      <i class="bx bxs-car"></i> Ficha t&eacute;cnica vehiculos
+      <i class="bx bxs-car"></i> Ficha T&eacute;cnica Vehículos
     </ng-template>
     <form [formGroup]="detailAssets" class="form-material">
       <div *ngIf="process == 'registration-request'" class="vehicleDateSheet">
@@ -600,7 +601,8 @@
               label="Sub Marca"
               value="flexValueDependent"
               bindLabel="flexValueMeaningDependent"
-              [readonly]="isGoodTypeReadOnly"></ngx-select>
+              [readonly]="isGoodTypeReadOnly"
+              (change)="onSubBranchChange($event)"></ngx-select>
             <!-- <ngx-select *ngIf="process == 'classify-assets'" [form]="detailAssets" control="subBrand"
               (fetchItems)="getSubBrand($event)" [data]="selectSubBrand" label="Sub Marca" value="flexValueDependent"
               [readonly]="isDisabled" bindLabel="flexValueMeaningDependent"></ngx-select> -->
@@ -1356,7 +1358,7 @@
       <i class="bx bx-flag"></i> Informaci&oacute;n de Aeronave
     </ng-template>
     <ng-template tabHeading *ngIf="process == 'classify-assets'">
-      <i class="bx bx-flag"></i> Ficha t&eacute;cnica aeronaves
+      <i class="bx bx-flag"></i> Ficha t&eacute;cnica Aeronaves
     </ng-template>
     <form [formGroup]="detailAssets" class="form-material">
       <div class="aircraftInformation">

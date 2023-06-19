@@ -5,7 +5,10 @@ import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IStatusTransfer } from 'src/app/core/models/catalogs/status-transfer.model';
 import { StatusTransferService } from 'src/app/core/services/catalogs/status-transfer.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import {
+  POSITVE_NUMBERS_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-status-transfer-form',
@@ -14,7 +17,7 @@ import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 })
 export class StatusTransferFormComponent extends BasePage implements OnInit {
   statusTransferForm: ModelForm<IStatusTransfer>;
-  title: string = 'EMPRESAS DE TERCEROS';
+  title: string = 'Estado Transferencia';
   edit: boolean = false;
   statusTransfer: IStatusTransfer;
   constructor(
@@ -40,14 +43,17 @@ export class StatusTransferFormComponent extends BasePage implements OnInit {
           Validators.pattern(STRING_PATTERN),
         ],
       ],
-      code: [null, [Validators.required, Validators.maxLength(20)]],
-      description: [
+      code: [
         null,
         [
           Validators.required,
-          Validators.maxLength(300),
-          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(20),
+          Validators.pattern(POSITVE_NUMBERS_PATTERN),
         ],
+      ],
+      description: [
+        null,
+        [Validators.maxLength(300), Validators.pattern(STRING_PATTERN)],
       ],
     });
     if (this.statusTransfer != null) {

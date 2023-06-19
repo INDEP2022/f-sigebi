@@ -1,13 +1,15 @@
-import { IUserAccessAreas } from 'src/app/core/models/ms-users/users-access-areas-model';
-
 export const PERMISSIONSUSER_COLUMNS = {
-  usuario: {
+  id: {
     title: 'Usuario',
-    valuePrepareFunction: (value: IUserAccessAreas) => {
-      return value.user;
-    },
     sort: false,
   },
+  // usuario: {
+  //   title: 'Usuario',
+  //   valuePrepareFunction: (value: IUserAccessAreas) => {
+  //     return value.user;
+  //   },
+  //   sort: false,
+  // },
   name: {
     title: 'Nombre',
     sort: false,

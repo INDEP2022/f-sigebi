@@ -26,6 +26,8 @@ export class GoodSssubtypesListComponent extends BasePage implements OnInit {
     super();
     this.settings.columns = GOOD_SSSUBTYPE_COLUMNS;
     this.settings.actions.delete = true;
+    this.settings.actions.add = false;
+    this.settings.hideSubHeader = false;
   }
 
   ngOnInit(): void {
@@ -64,11 +66,37 @@ export class GoodSssubtypesListComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
+        this.remove(goodSssubtype);
       }
+    });
+  }
+
+  remove(data: any) {
+    console.log('data:', data);
+
+    const ids = {
+      id: data.id,
+      idSsubtypeGood: data.numSsubType?.id,
+      idSubtypeGood: data.numSubType?.id,
+      idTypeGood: data.numType?.id,
+    };
+
+    this.goodSssubtypeService.removeByIds(ids).subscribe({
+      next: () => {
+        this.getGoodSssubtypes(),
+          this.alert('success', 'Sssubtipo Bienes', 'Borrado');
+      },
+      error: error => {
+        this.alert(
+          'warning',
+          'Sssubtipo Bienes',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      },
     });
   }
 }

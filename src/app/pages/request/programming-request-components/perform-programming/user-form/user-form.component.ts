@@ -35,8 +35,22 @@ export class UserFormComponent extends BasePage implements OnInit {
   }
   prepareForm() {
     this.userForm = this.fb.group({
-      user: [null, [Validators.required, Validators.pattern(NAME_PATTERN)]],
-      email: [null, [Validators.required, Validators.pattern(EMAIL_PATTERN)]],
+      user: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(70),
+          Validators.pattern(NAME_PATTERN),
+        ],
+      ],
+      email: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(40),
+          Validators.pattern(EMAIL_PATTERN),
+        ],
+      ],
       userCharge: [null, [Validators.required]],
     });
 
@@ -44,6 +58,7 @@ export class UserFormComponent extends BasePage implements OnInit {
       this.edit = true;
       if (this.userData.userCharge)
         this.userData.userCharge = this.userData.charge.keyId;
+      console.log('this.userData', this.userData);
       this.userForm.patchValue(this.userData);
     }
   }
@@ -83,6 +98,14 @@ export class UserFormComponent extends BasePage implements OnInit {
             const create: boolean = true;
             this.modalService.content.callback(true, create);
             this.close();
+          },
+          error: error => {
+            this.onLoadToast(
+              'info',
+              'Advertencia',
+              'Correo electrónico ya registrado verifica'
+            );
+            this.loading = false;
           },
         });
       }

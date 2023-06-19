@@ -34,7 +34,6 @@ export class CatServicesFormComponent extends BasePage implements OnInit {
       code: [
         null,
         [
-          Validators.required,
           Validators.pattern(STRING_PATTERN),
           Validators.maxLength(30),
           Validators.minLength(1),
@@ -49,14 +48,7 @@ export class CatServicesFormComponent extends BasePage implements OnInit {
           Validators.minLength(1),
         ],
       ],
-      unaffordabilityCriterion: [
-        null,
-        [
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(30),
-          Validators.minLength(1),
-        ],
-      ],
+      unaffordabilityCriterion: [null],
       subaccount: [
         null,
         [
@@ -67,14 +59,7 @@ export class CatServicesFormComponent extends BasePage implements OnInit {
         ],
       ],
       registryNumber: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      cost: [
-        null,
-        [
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(5),
-          Validators.minLength(1),
-        ],
-      ],
+      cost: [null],
     });
     if (this.catservice != null) {
       this.edit = true;
@@ -98,6 +83,7 @@ export class CatServicesFormComponent extends BasePage implements OnInit {
   }
 
   update() {
+    console.log('INGRESO');
     this.loading = true;
     this.catserviceService
       .update(this.catservice.code, this.catserviceForm.getRawValue())

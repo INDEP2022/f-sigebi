@@ -21,9 +21,16 @@ export class CityService extends HttpService implements ICrudMethods<ICity> {
   getAll(params?: ListParams): Observable<IListResponse<ICity>> {
     return this.cityRepository.getAllPaginated(this.route, params);
   }
+  getAllCitys(params?: ListParams): Observable<IListResponse<ICity>> {
+    return this.cityRepository.getAllPaginated(this.route + '/get-all', params);
+  }
 
   getById(id: string | number): Observable<ICity> {
-    return this.cityRepository.getById(this.route, id);
+    return this.cityRepository.getById(this.route + '/id/', id);
+  }
+
+  newGetById(id: string | number): Observable<ICity> {
+    return this.cityRepository.getById(this.route + '/id', id);
   }
 
   create(model: ICity): Observable<ICity> {

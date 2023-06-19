@@ -7,6 +7,7 @@ export enum GoodEndpoints {
   SearchByExpedient = `good/expedient/search`,
   GoodAndDesc = `good/getGoodAndDesc`,
   StatusAndDesc = `good/getDescAndStatus`,
+  OnlyStatus = `status-good`,
   GoodsTransAva = 'goods-trans-ava',
   DeleteByExpedient = `good/deleteByExpendient`,
   DiStatusGood = 'status-good/diStatusGood',
@@ -23,4 +24,47 @@ export enum GoodEndpoints {
   GoodByDepositaryGood = 'good/searchByDepositaryGood',
   CreateGoodNumerary = 'good/createGood',
   Vban = 'good/getBan',
+  AttribGoodBad = 'attrib-good-bad',
+  GetAllGoodQuery = 'good/getAllGoodQuery',
+  PAValidaCambioEstatus = 'good/testValid',
+  GetMassiveSearch = 'good/getMassiveSearch',
+}
+
+export enum GoodProcessPoints {
+  basepath = `goodprocess`,
+  cuValNume = `application/cuValNume`,
+  cuValOtro = `application/cuValotro`,
+  vnNumerario = `application/getVnNumerario`,
+  lvlPrograma = `application/getLvlPrograma`,
+  goodAndDetail = `application/getBienAndDetailActa`,
+  acceptGoodActa = `application/acceptGoodActa`,
+  acceptGoodStatus = `application/acceptGoodStatus`,
+  acceptGoodStatusScreen = `application/acceptGoodStatusScreen`,
+  dateRange = `util-pkg/getDate`,
+  getFact = 'application/get-fact-juridict-amasg',
+  getIdent = 'application/get-fact-juridict-amasg-2',
+  dicta = 'application/dictation-good-conciliation',
+  getDocGod = 'application/getDictGood',
+  GetVexist = 'application/getVexist',
+  GetVstatusIniVproextdomIni = 'application/getVstatusIniVproextdomIni',
+  GetVstatusIniVproextdomIni2 = 'application/getVstatusIniVproextdomIni2',
+  GetVstatusIniVnoRegisterVproextdomIni = 'getVstatusIniVnoRegisterVproextdomIni',
+  UpdateGoodXGoodNumber = 'application/updateGoodXGoodNumber',
+  GetVstatusIni2 = 'application/getVstatusIni2',
+  deleteHistoricalStatusGoodXrecord = 'application/deleteHistoricalStatusGoodXrecord',
+  getVstatusIniVnoRegister = 'application/getVstatusIniVnoRegister',
+  pup_change_impro = 'application/pup-change-impro',
+}
+
+export enum GoodFinderEndpoint {
+  GoodFinderBase = 'goodfinder',
+  GoodQuery = 'good-query',
+  UpdateRecords = 'good-query/update-good',
+  MasiveClassification = 'good-query/classification-massive',
+  AssignDomicilie = 'good-query/update-domicile',
+  UpdateGoodStatus = 'good-query/update-status',
+  AbleToSignDistamen = 'good-query/count-request',
+
+  /* Good Data Aset */
+  GoodDataAsetBase = 'gooddataset',
 }

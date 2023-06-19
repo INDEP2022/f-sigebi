@@ -4,8 +4,8 @@ import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import {
-  EMAIL_PATTERN,
   PHONE_PATTERN,
+  POSITVE_NUMBERS_PATTERN,
   STRING_PATTERN,
 } from '../../../../core/shared/patterns';
 import { INotary } from './../../../../core/models/catalogs/notary.model';
@@ -38,10 +38,13 @@ export class NotaryFormComponent extends BasePage implements OnInit {
 
   private prepareForm(): void {
     this.notaryForm = this.fb.group({
-      id: [null, [Validators.required]],
+      id: [null],
       name: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       valid: [null, [Validators.required]],
-      notaryNumber: [null, [Validators.required]],
+      notaryNumber: [
+        null,
+        [Validators.required, Validators.pattern(POSITVE_NUMBERS_PATTERN)],
+      ],
       ubication: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
@@ -50,16 +53,9 @@ export class NotaryFormComponent extends BasePage implements OnInit {
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      phone: [
-        null,
-        [
-          Validators.required,
-          Validators.maxLength(3),
-          Validators.pattern(PHONE_PATTERN),
-        ],
-      ],
-      email: [null, [Validators.required, Validators.pattern(EMAIL_PATTERN)]],
-      registryNumber: [null, [Validators.required]],
+      phone: [null, [Validators.required, Validators.pattern(PHONE_PATTERN)]],
+      email: [null, [Validators.required, Validators.email]],
+      registryNumber: [null],
     });
     if (this.notary != null) {
       this.edit = true;

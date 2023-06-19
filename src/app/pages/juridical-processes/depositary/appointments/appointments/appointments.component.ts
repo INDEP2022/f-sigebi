@@ -17,18 +17,22 @@ import { ExampleService } from 'src/app/core/services/catalogs/example.service';
 
 /** COMPONENTS IMPORTS */
 import { DatePipe } from '@angular/common';
+import { ActivatedRoute, Router } from '@angular/router';
+import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { IDescriptionByNoGoodBody } from 'src/app/core/models/good/good.model';
 import { IAppointmentDepositary } from 'src/app/core/models/ms-depositary/ms-depositary.interface';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import {
   CURP_PATTERN,
-  KEYGENERATION_PATTERN,
+  NUM_POSITIVE,
   PHONE_PATTERN,
   RFC_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { AppointmentsJuridicalReportComponent } from '../appointments-juridical-report/appointments-juridical-report.component';
+import { AppointmentsRelationsPaysComponent } from '../appointments-relations-pays/appointments-relations-pays.component';
 import { AppointmentsService } from '../services/appointments.service';
 
 @Component({
@@ -43,6 +47,8 @@ export class AppointmentsComponent
   items = new DefaultSelect<Example>();
   params = new BehaviorSubject<FilterParams>(new FilterParams());
   public form: FormGroup;
+  formScan: FormGroup;
+  public noBienReadOnly: number = null;
   public checked = false;
   globalVars: any = {
     noExiste: 0,
@@ -59,6 +65,7 @@ export class AppointmentsComponent
   // Loadings
   loadingGood: boolean = false;
   loadingAppointment: boolean = false;
+  showScanForm: boolean = false;
   // Selects
   delegations = new DefaultSelect();
   delegationSelectValue: string = '';
@@ -68,43 +75,101 @@ export class AppointmentsComponent
   stateSelectValue: string = '';
   postalCode = new DefaultSelect();
   postalCodeSelectValue: string = '';
+  dateFormat: string = 'dd/MM/yyyy';
 
   constructor(
     private fb: FormBuilder,
     private datePipe: DatePipe,
     private exampleService: ExampleService,
-    private appointmentsService: AppointmentsService
+    private appointmentsService: AppointmentsService,
+    private modalService: BsModalService,
+    private router: Router,
+    private activatedRoute: ActivatedRoute
   ) {
     super();
   }
 
   ngOnInit(): void {
     this.prepareForm();
-    this.loading = true;
-    this.validGoodNumberInDepositaryAppointment(); // Buscar Bien
+    this.showScanForm = true;
+    console.log(this.showScanForm);
+
+    const id = this.activatedRoute.snapshot.paramMap.get('id');
+    if (id) {
+      if (!isNaN(Number(id))) {
+        this.noBienReadOnly = Number(id);
+        this.form.get('noBien').setValue(this.noBienReadOnly);
+        this.validGoodNumberInDepositaryAppointment();
+      } else {
+        this.alert(
+          'warning',
+          'Número de Bien',
+          'El número de Bien ingresado como parámetro no es un número'
+        );
+      }
+    }
+    // this.validGoodNumberInDepositaryAppointment(); // Buscar Bien
   }
   private prepareForm() {
     this.form = this.fb.group({
-      noBien: ['3003674', Validators.required], //*
-      descriptionGood: { value: '', disabled: true }, //*
-      noExpedient: { value: '', disabled: true }, //*
-      averiguacionPrevia: [{ value: '', disabled: true }], //*
-      causaPenal: [{ value: '', disabled: true }],
-      estatusBien: [{ value: '', disabled: true }], //*
-      fechaAcuerdoAsegurado: { value: '', disabled: true }, //*
-      fechaRecepcion: { value: '', disabled: true }, //*
-      fechaDecomiso: { value: '', disabled: true }, //*
+      noBien: [
+        { value: '', disabled: false },
+        [
+          Validators.required,
+          Validators.maxLength(11),
+          Validators.pattern(NUM_POSITIVE),
+        ],
+      ], //*
+      descriptionGood: [
+        { value: '', disabled: true },
+        [Validators.maxLength(1250), Validators.pattern(STRING_PATTERN)],
+      ], //*
+      noExpedient: [
+        { value: '', disabled: true },
+        [Validators.maxLength(30), Validators.pattern(NUM_POSITIVE)],
+      ], //*
+      averiguacionPrevia: [
+        { value: '', disabled: true },
+        [Validators.maxLength(200), Validators.pattern(STRING_PATTERN)],
+      ], //*
+      causaPenal: [
+        { value: '', disabled: true },
+        [Validators.maxLength(40), Validators.pattern(STRING_PATTERN)],
+      ], //*
 
-      tipoNombramiento: [{ value: '', disabled: true }], //*
+      fechaAcuerdoAsegurado: [
+        { value: '', disabled: true },
+        [Validators.maxLength(11)],
+      ], //* ACUERDO ASEGURADO
+      fechaRecepcion: [
+        { value: '', disabled: true },
+        [Validators.maxLength(11)],
+      ], //* Recepcion SERA
+      estatusBien: [
+        { value: '', disabled: true },
+        [Validators.maxLength(500), Validators.pattern(STRING_PATTERN)],
+      ], //*
+      fechaDecomiso: [
+        { value: '', disabled: true },
+        [Validators.maxLength(11)],
+      ], //* DECOMISO
+
+      tipoNombramiento: [
+        { value: 'D', disabled: true },
+        [Validators.maxLength(1), Validators.pattern(STRING_PATTERN)],
+      ], //*
       ///*"Administrador, Depositaría, Interventor, Comodatarío,Bien en uso del SAE"
       tipoDepositaria: [
         { value: '', disabled: true },
-        [Validators.pattern(STRING_PATTERN)],
+        [Validators.maxLength(40), Validators.pattern(STRING_PATTERN)],
       ], //*
-      estatus: [{ value: '', disabled: true }], //* Provisional, Definitiva
+      estatus: [
+        { value: 'P', disabled: true },
+        [Validators.maxLength(1), Validators.pattern(STRING_PATTERN)],
+      ], //* Provisional, Definitiva
       representanteSAE: [
         { value: '', disabled: true },
-        [Validators.pattern(STRING_PATTERN)],
+        [Validators.maxLength(100), Validators.pattern(STRING_PATTERN)],
       ], //*
       nombre: [
         { value: '', disabled: true },
@@ -114,84 +179,136 @@ export class AppointmentsComponent
 
       depositaria: [
         { value: '', disabled: true },
-        [Validators.pattern(STRING_PATTERN)],
+        [Validators.maxLength(40), Validators.pattern(STRING_PATTERN)],
       ], //*
       representante: [
         { value: '', disabled: true },
-        [Validators.pattern(STRING_PATTERN)],
+        [Validators.maxLength(120), Validators.pattern(STRING_PATTERN)],
       ], //*
+
       calle: [
         { value: '', disabled: true },
-        [Validators.pattern(STRING_PATTERN)],
+        [Validators.maxLength(200), Validators.pattern(STRING_PATTERN)],
       ], //*
       noExterno: [
         { value: '', disabled: true },
-        [Validators.pattern(STRING_PATTERN)],
+        [Validators.maxLength(10), Validators.pattern(STRING_PATTERN)],
       ], //*
       noInterno: [
         { value: '', disabled: true },
-        [Validators.pattern(STRING_PATTERN)],
+        [Validators.maxLength(10), Validators.pattern(STRING_PATTERN)],
       ], //*
-      colonia: { value: null, disabled: true }, //*
-      delegacionMunicipio: { value: null, disabled: true }, //*
-      codigoPostal: { value: null, disabled: true }, //*
-      entidadFederativa: { value: null, disabled: true }, //*
+      colonia: [
+        { value: '', disabled: true },
+        [Validators.maxLength(100), Validators.pattern(STRING_PATTERN)],
+      ], //*
+      delegacionMunicipio: [
+        { value: '', disabled: true },
+        [Validators.maxLength(60), Validators.pattern(STRING_PATTERN)],
+      ], //*
+      codigoPostal: [
+        { value: '', disabled: true },
+        [Validators.maxLength(6), Validators.pattern(NUM_POSITIVE)],
+      ], //*
+      entidadFederativa: [
+        { value: '', disabled: true },
+        [Validators.maxLength(45), Validators.pattern(STRING_PATTERN)],
+      ], //*
       telefono: [
         { value: '', disabled: true },
-        [Validators.pattern(PHONE_PATTERN)],
+        [Validators.maxLength(20), Validators.pattern(PHONE_PATTERN)],
       ], //*
-      rfc: [{ value: '', disabled: true }, [Validators.pattern(RFC_PATTERN)]], //*
-      curp: [{ value: '', disabled: true }, [Validators.pattern(CURP_PATTERN)]], //*
+      rfc: [
+        { value: '', disabled: true },
+        [Validators.maxLength(20), Validators.pattern(RFC_PATTERN)],
+      ], //*
+      curp: [
+        { value: '', disabled: true },
+        [Validators.maxLength(20), Validators.pattern(CURP_PATTERN)],
+      ], //*
+
       tipoPersona: [
         { value: '', disabled: true },
-        [Validators.pattern(STRING_PATTERN)],
-      ], //*
+        [Validators.maxLength(20), Validators.pattern(STRING_PATTERN)],
+      ], //* TIPO PERSONA
       tipoPersona2: [
         { value: '', disabled: true },
-        [Validators.pattern(STRING_PATTERN)],
-      ], //*
+        [Validators.maxLength(30), Validators.pattern(STRING_PATTERN)],
+      ], //* TIPO RESPONSABLE
       giro: [
         { value: '', disabled: true },
-        [Validators.pattern(STRING_PATTERN)],
+        [Validators.maxLength(45), Validators.pattern(STRING_PATTERN)],
       ],
       referencia: [
         { value: '', disabled: true },
-        [Validators.pattern(STRING_PATTERN)],
+        [Validators.maxLength(35), Validators.pattern(STRING_PATTERN)],
       ],
 
-      remocion: [{ value: '', disabled: true }],
-      fecha: [{ value: '', disabled: true }],
-      noOficio: [{ value: '', disabled: true }],
+      remocion: [
+        { value: 'N', disabled: true },
+        [Validators.maxLength(1), Validators.pattern(STRING_PATTERN)],
+      ],
+      fecha: [{ value: '', disabled: true }, [Validators.maxLength(11)]],
+      noOficio: [
+        { value: '', disabled: true },
+        [Validators.maxLength(20), Validators.pattern(STRING_PATTERN)],
+      ],
 
       // Acuerdo Junta de Gobierno
-      fechaAcuerdo: [{ value: '', disabled: true }],
-      noAcuerdo: [{ value: '', disabled: true }],
+      fechaAcuerdo: [{ value: '', disabled: true }, [Validators.maxLength(11)]],
+      noAcuerdo: [
+        { value: '', disabled: true },
+        [Validators.maxLength(20), Validators.pattern(STRING_PATTERN)],
+      ],
 
-      contraprestacion: [{ value: '', disabled: true }],
+      contraprestacion: [
+        { value: '0.00', disabled: true },
+        [Validators.maxLength(17), Validators.pattern(STRING_PATTERN)],
+      ],
       honorarios: [
         { value: '', disabled: true },
-        [Validators.pattern(STRING_PATTERN)],
+        [Validators.maxLength(17), Validators.pattern(STRING_PATTERN)],
       ],
-      iva: [{ value: '', disabled: true }],
-      noNombramiento: [{ value: '', disabled: true }],
-      fechaInicio: [{ value: '', disabled: true }],
+      iva: [
+        { value: '', disabled: true },
+        [Validators.maxLength(5), Validators.pattern(STRING_PATTERN)],
+      ],
+      noNombramiento: [
+        { value: '', disabled: true },
+        [Validators.maxLength(60), Validators.pattern(STRING_PATTERN)],
+      ], // CLAVE CONTRATO
+      fechaInicio: [
+        { value: '', disabled: true },
+        ,
+        [Validators.maxLength(11)],
+      ],
 
       anexo: [
         { value: '', disabled: true },
-        [Validators.pattern(STRING_PATTERN)],
+        [Validators.maxLength(20), Validators.pattern(STRING_PATTERN)],
       ],
       observaciones: [
         { value: '', disabled: true },
-        [Validators.pattern(STRING_PATTERN)],
+        [Validators.maxLength(1000), Validators.pattern(STRING_PATTERN)],
       ],
 
-      folioRemocion: [
-        { value: '', disabled: true },
-        [Validators.pattern(KEYGENERATION_PATTERN)],
+      // folioRemocion: [
+      //   { value: '', disabled: true },
+      //   [Validators.maxLength(15), Validators.pattern(NUM_POSITIVE)],
+      // ],
+      // folioActaDepositaria: [
+      //   { value: '', disabled: true },
+      //   [Validators.maxLength(15), Validators.pattern(NUM_POSITIVE)],
+      // ],
+    });
+    this.formScan = this.fb.group({
+      scanningFoli: [
+        { value: '', disabled: false },
+        [Validators.pattern(NUM_POSITIVE), Validators.maxLength(15)],
       ],
-      folioActaDepositaria: [
-        { value: '', disabled: true },
-        [Validators.pattern(KEYGENERATION_PATTERN)],
+      returnFoli: [
+        { value: '', disabled: false },
+        [Validators.pattern(NUM_POSITIVE), Validators.maxLength(15)],
       ],
     });
   }
@@ -212,28 +329,75 @@ export class AppointmentsComponent
     console.log('Depositarias');
   }
 
-  btnDetallesPago() {
+  btnPaysDetails() {
     console.log('Detalle Pagos');
+    this.openModalPaysDetails({});
   }
 
-  btnReportesJuridicos() {
+  openModalPaysDetails(context?: Partial<AppointmentsRelationsPaysComponent>) {
+    const modalRef = this.modalService.show(
+      AppointmentsRelationsPaysComponent,
+      {
+        initialState: context,
+        class: 'modal-lg modal-dialog-centered',
+        ignoreBackdropClick: true,
+      }
+    );
+  }
+
+  btnJuridicalReport() {
     console.log('Reportes Juridicos');
+    this.openModalJuridicalReport({});
+  }
+
+  openModalJuridicalReport(
+    context?: Partial<AppointmentsJuridicalReportComponent>
+  ) {
+    const modalRef = this.modalService.show(
+      AppointmentsJuridicalReportComponent,
+      {
+        initialState: context,
+        class: 'modal-lg modal-dialog-centered',
+        ignoreBackdropClick: true,
+      }
+    );
   }
 
   btnReportesAdministrativos() {
     console.log('Reportes Administrativos');
   }
 
-  btnIngresoMasivoPagos() {
+  btnMasivIncomePays() {
     console.log('Ingresos Masivos Pagos');
+    // Llama pantalla FMASINSPAGDEPOSITARIAS
+    this.router.navigate(
+      ['/pages/juridical/depositary/bulk-loading-depository-cargo'],
+      {}
+    );
   }
 
-  btnCatalogoConceptosPagos() {
+  btnConceptsPaysCatalogs() {
     console.log('Conceptos de Pagos');
+    // Llama pantalla FCATCATCONCEPPAGO
+    // this.router.navigate(
+    //   ['/pages/juridical/depositary/bulk-loading-depository-cargo'],
+    //   {
+    //     // queryParams: {
+    //     //   origin: this.origin3,
+    //     //   P_GEST_OK: this.paramsScreen.P_GEST_OK,
+    //     //   P_NO_TRAMITE: this.paramsScreen.P_NO_TRAMITE,
+    //     // },
+    //   }
+    // );
   }
 
-  btnCatalogoDepositariasPersona() {
+  btnDepositaryCatalog() {
     console.log('Cátalogo Depositarias');
+    // Llama pantalla FCATCATMTOPERSONA
+    this.router.navigate(
+      ['/pages/parameterization/maintenance-individuals-and-companies'],
+      {}
+    );
   }
 
   btnFolioEscaneoSolicitud() {
@@ -458,6 +622,31 @@ export class AppointmentsComponent
       this.postalCodeSelectValue =
         this.depositaryAppointment.personNumber.codigo_postal;
       this.getPostalCodeByDetail(new ListParams(), true);
+    } else {
+      if (this.depositaryAppointment.personNumber.cve_entfed) {
+        this.stateSelectValue =
+          this.depositaryAppointment.personNumber.cve_entfed;
+      }
+      if (this.depositaryAppointment.personNumber.deleg_munic) {
+        this.delegationSelectValue =
+          this.depositaryAppointment.personNumber.deleg_munic;
+      }
+      if (this.depositaryAppointment.personNumber.colonia) {
+        this.localitySelectValue =
+          this.depositaryAppointment.personNumber.colonia;
+      }
+      if (this.stateSelectValue) {
+        // call function
+        this.getStateByDetail(new ListParams());
+      }
+      if (this.delegationSelectValue) {
+        // CALL FUNCTION
+        this.getDelegationByDetail(new ListParams());
+      }
+      if (this.localitySelectValue) {
+        // call function
+        this.getLocalityByDetail(new ListParams());
+      }
     }
     // if (
     //   this.depositaryAppointment.personNumber.cve_entfed ||
@@ -522,14 +711,15 @@ export class AppointmentsComponent
         if (this.good.expediente.dateAgreementAssurance) {
           dateAgree = this.datePipe.transform(
             this.good.expediente.dateAgreementAssurance,
-            'dd-MM-yyyy'
+            this.dateFormat
           );
         }
+        this.form.get('fechaAcuerdoAsegurado').setValue(dateAgree);
         let dateReception: any;
         if (this.good.expediente.receptionDate) {
           dateReception = this.datePipe.transform(
             this.good.expediente.receptionDate,
-            'dd-MM-yyyy'
+            this.dateFormat
           );
         }
         this.form.get('fechaRecepcion').setValue(dateReception);
@@ -537,7 +727,7 @@ export class AppointmentsComponent
         if (this.good.expediente.confiscateDictamineDate) {
           dateConfiscate = this.datePipe.transform(
             this.good.expediente.confiscateDictamineDate,
-            'dd-MM-yyyy'
+            this.dateFormat
           );
         }
         this.form.get('fechaDecomiso').setValue(dateConfiscate);
@@ -558,16 +748,21 @@ export class AppointmentsComponent
       .setValue(this.depositaryAppointment.governmentMeetingOfficialDate);
     this.form
       .get('noAcuerdo')
-      .setValue(this.depositaryAppointment.governmentMeetingOfficialDate);
+      .setValue(this.depositaryAppointment.governmentMeetingOfficialNumber);
     // Honorarios y Contraprestaciones
     this.form
       .get('contraprestacion')
       .setValue(this.depositaryAppointment.importConsideration);
     this.form.get('honorarios').setValue(this.depositaryAppointment.feeAmount);
     this.form.get('iva').setValue(this.depositaryAppointment.iva);
-    this.form
-      .get('fechaInicio')
-      .setValue(this.depositaryAppointment.contractStartDate);
+    let startDate: any;
+    if (this.depositaryAppointment) {
+      startDate = this.datePipe.transform(
+        this.depositaryAppointment.contractStartDate,
+        this.dateFormat
+      );
+    }
+    this.form.get('fechaInicio').setValue(startDate);
     this.form
       .get('noNombramiento')
       .setValue(this.depositaryAppointment.appointmentNumber);
@@ -723,7 +918,7 @@ export class AppointmentsComponent
             } else {
               this.postalCode = new DefaultSelect(
                 data.data.map((i: any) => {
-                  i.township = '#' + i.postalCode + ' -- ' + i.township;
+                  i.township = i.postalCode + ' -- ' + i.township;
                   return i;
                 }),
                 data.count
@@ -752,7 +947,7 @@ export class AppointmentsComponent
       }
       this.postalCode = new DefaultSelect(
         [dataSet].map((i: any) => {
-          i.township = '#' + i.postalCode + ' -- ' + i.township;
+          i.township = i.postalCode + ' -- ' + i.township;
           return i;
         }),
         data.count
@@ -795,14 +990,22 @@ export class AppointmentsComponent
     const params: any = new FilterParams();
     params.removeAllFilters();
     params['sortBy'] = 'townshipKey:DESC';
-    if (this.delegationSelectValue) {
+    if (
+      this.delegationSelectValue &&
+      !isNaN(Number(this.localitySelectValue))
+    ) {
       params.addFilter('municipalityKey', this.delegationSelectValue);
     }
     if (this.stateSelectValue) {
       params.addFilter('stateKey', this.stateSelectValue);
     }
+    console.log(this.localitySelectValue);
     if (this.localitySelectValue && !paramsData['search']) {
-      params.addFilter('townshipKey', this.localitySelectValue);
+      // params.addFilter('townshipKey', this.localitySelectValue);
+      params.addFilter(
+        isNaN(Number(this.localitySelectValue)) ? 'township' : 'townshipKey',
+        this.localitySelectValue
+      );
     } else {
       if (paramsData['search'] || paramsData['search'] == '0') {
         params.addFilter('township', paramsData['search'], SearchFilter.LIKE);
@@ -823,7 +1026,7 @@ export class AppointmentsComponent
                 this.localitySelectValue = dataSet.townshipKey.toString();
                 this.locality = new DefaultSelect(
                   [dataSet].map((i: any) => {
-                    i.township = '#' + i.townshipKey + ' -- ' + i.township;
+                    i.township = i.townshipKey + ' -- ' + i.township;
                     return i;
                   }),
                   1
@@ -836,7 +1039,7 @@ export class AppointmentsComponent
           } else {
             this.locality = new DefaultSelect(
               data.data.map((i: any) => {
-                i.township = '#' + i.townshipKey + ' -- ' + i.township;
+                i.township = i.townshipKey + ' -- ' + i.township;
                 return i;
               }),
               data.count
@@ -878,9 +1081,16 @@ export class AppointmentsComponent
     if (this.stateSelectValue) {
       params.addFilter('stateKey', this.stateSelectValue);
     }
+    console.log(
+      this.delegationSelectValue,
+      Number(this.delegationSelectValue),
+      isNaN(Number(this.delegationSelectValue))
+    );
     if (this.delegationSelectValue && !paramsData['search']) {
       params.addFilter(
-        'municipalityKey',
+        isNaN(Number(this.delegationSelectValue))
+          ? 'municipality'
+          : 'municipalityKey',
         this.delegationSelectValue,
         SearchFilter.LIKE
       );
@@ -911,7 +1121,7 @@ export class AppointmentsComponent
                 this.delegations = new DefaultSelect(
                   [dataSet].map((i: any) => {
                     i.municipality =
-                      '#' + i.municipalityKey + ' -- ' + i.municipality;
+                      i.municipalityKey + ' -- ' + i.municipality;
                     return i;
                   }),
                   1
@@ -924,8 +1134,7 @@ export class AppointmentsComponent
           } else {
             this.delegations = new DefaultSelect(
               data.data.map((i: any) => {
-                i.municipality =
-                  '#' + i.municipalityKey + ' -- ' + i.municipality;
+                i.municipality = i.municipalityKey + ' -- ' + i.municipality;
                 return i;
               }),
               1
@@ -961,7 +1170,7 @@ export class AppointmentsComponent
             if (data) {
               this.state = new DefaultSelect(
                 [data].map(i => {
-                  i.descCondition = '#' + i.id + ' -- ' + i.descCondition;
+                  i.descCondition = i.id + ' -- ' + i.descCondition;
                   return i;
                 }),
                 1
@@ -988,7 +1197,7 @@ export class AppointmentsComponent
           next: data => {
             this.state = new DefaultSelect(
               data.data.map(i => {
-                i.descCondition = '#' + i.id + ' -- ' + i.descCondition;
+                i.descCondition = i.id + ' -- ' + i.descCondition;
                 return i;
               }),
               data.count

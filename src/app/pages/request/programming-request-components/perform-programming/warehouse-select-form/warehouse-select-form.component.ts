@@ -15,9 +15,10 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 })
 export class WarehouseSelectFormComponent extends BasePage implements OnInit {
   form: FormGroup = new FormGroup({});
-  idTransferent: number = 0;
+  data: any[] = [];
   warehouses = new DefaultSelect<IWarehouse>();
   warehouse: IWarehouse;
+  typeTransportable: string = '';
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
@@ -30,6 +31,7 @@ export class WarehouseSelectFormComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.prepareForm();
     this.getWarehouses(new ListParams());
+    console.log('data', this.data);
   }
 
   prepareForm() {
@@ -46,19 +48,35 @@ export class WarehouseSelectFormComponent extends BasePage implements OnInit {
   }
 
   confirm() {
-    this.alertQuestion(
-      'warning',
-      'Advertencía',
-      '¿Desea asignar el almacén para bienes de resguardo?'
-    ).then(question => {
-      if (question.isConfirmed) {
-        this.loading = true;
-        this.modalRef.content.callback(this.form.value);
-        this.close();
-      } else {
-        this.close();
-      }
-    });
+    if (this.typeTransportable == 'guard') {
+      this.alertQuestion(
+        'warning',
+        'Advertencia',
+        '¿Desea asignar el almacén para bienes de resguardo?'
+      ).then(question => {
+        if (question.isConfirmed) {
+          this.loading = true;
+          this.modalRef.content.callback(this.form.value);
+          this.close();
+        } else {
+          this.close();
+        }
+      });
+    } else if (this.typeTransportable == 'warehouse') {
+      this.alertQuestion(
+        'warning',
+        'Advertencia',
+        '¿Desea asignar el almacén para bienes de almacén?'
+      ).then(question => {
+        if (question.isConfirmed) {
+          this.loading = true;
+          this.modalRef.content.callback(this.form.value);
+          this.close();
+        } else {
+          this.close();
+        }
+      });
+    }
   }
 
   close() {

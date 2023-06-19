@@ -26,6 +26,8 @@ export class SaveValuesListComponent extends BasePage implements OnInit {
     super();
     this.settings.columns = SAVE_VALUES_COLUMNS;
     this.settings.actions.delete = true;
+    this.settings.actions.add = false;
+    this.settings.hideSubHeader = false;
   }
 
   ngOnInit(): void {
@@ -60,18 +62,35 @@ export class SaveValuesListComponent extends BasePage implements OnInit {
     this.modalService.show(SaveValueFormComponent, config);
   }
 
-  delete(saveValue: ISaveValue) {
+  AlertQuestion(saveValue: ISaveValue) {
     this.alertQuestion(
       'warning',
       'Eliminar',
       '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        this.saveValueService.remove(saveValue.id).subscribe({
-          next: data => this.getSaveValues(),
-          error: error => (this.loading = false),
-        });
+        this.remove(saveValue.id);
       }
     });
+  }
+
+  remove(id: string) {
+    const data = {
+      id: id,
+    };
+
+    this.saveValueService.remove2(data).subscribe(
+      res => {
+        this.alert('success', 'Valores Guardado', 'Borrado.');
+        this.getSaveValues();
+      },
+      err => {
+        this.alert(
+          'warning',
+          'Valores Guardado',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      }
+    );
   }
 }

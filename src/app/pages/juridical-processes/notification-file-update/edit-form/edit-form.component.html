@@ -1,0 +1,72 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nueva' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form [formGroup]="deductiveForm" class="form-material">
+      <div class="row">
+        <div class="col-md-3">
+          <form-field
+            [control]="deductiveForm.get('expedientNumber')"
+            label="No. Expediente">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="expedientNumber" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+
+    <div class="row pt-3">
+      <div class="col-md-4">
+        <label>No. Volante:&nbsp;</label>
+        <span class="fs-4">{{ dict.wheelNumber }}</span>
+      </div>
+      <div class="col-md-8">
+        <label>Asunto:&nbsp;</label>
+        <span class="fs-4">{{ dict.affairKey }}</span>
+      </div>
+    </div>
+    <div class="row pt-3">
+      <div class="col-md-12">
+        <label>Descripción:&nbsp;</label>
+        <span class="fs-4">{{ dict.observations }}</span>
+      </div>
+    </div>
+    <div class="row pt-3">
+      <div class="col-md-6">
+        <label>Fecha captura:&nbsp;</label>
+        <span class="fs-4">{{ dict.captureDate }}</span>
+      </div>
+      <div class="col-md-6">
+        <label>Clave Amparo:&nbsp;</label>
+        <span class="fs-4">{{ dict.protectionKey }}</span>
+      </div>
+    </div>
+    <div class="row pt-3">
+      <div class="col-md-6">
+        <label>Averiguación Previa:&nbsp;</label>
+        <span class="fs-4">{{ dict.preliminaryInquiry }}</span>
+      </div>
+      <div class="col-md-6">
+        <label>Causa Penal:&nbsp;</label>
+        <span class="fs-4">{{ dict.criminalCase }}</span>
+      </div>
+    </div>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <!-- [disabled]="deductiveForm.invalid" -->
+        <confirm-button [loading]="loading" (confirm)="confirm()">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

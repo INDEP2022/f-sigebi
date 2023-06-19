@@ -1,38 +1,46 @@
+import { IStateOfRepublic } from 'src/app/core/models/catalogs/state-of-republic.model';
+
 export const DELEGATION_STATE_COLUMNS = {
-  regionalDelegation: {
-    title: 'Registro',
-    type: 'number',
+  keyDelegation: {
+    title: 'Clave Delegación',
+    type: 'string',
     sort: false,
-    valuePrepareFunction: (value: any) => {
-      return value.id;
-    },
   },
-  stateCode: {
-    title: 'Código de estado',
+  regionalDelegation: {
+    title: 'Delegación regional',
     type: 'string',
     sort: false,
     valuePrepareFunction: (value: any) => {
-      return value.codeCondition;
+      return value != null ? value.description : '';
     },
-  },
-  version: {
-    title: 'Versión',
-    type: 'number',
-    sort: false,
   },
   keyState: {
     title: 'Clave de estado',
     type: 'number',
     sort: false,
   },
+  stateCode: {
+    title: 'Estado',
+    type: 'string',
+    sort: false,
+    valuePrepareFunction: (value: IStateOfRepublic) => {
+      return value != null ? value.descCondition : '';
+    },
+  },
+  // version: {
+  //   title: 'Versión',
+  //   type: 'number',
+  //   sort: false,
+  // },
+
   status: {
-    title: 'Estatus',
-    type: 'string',
+    title: 'Número de contrato',
+    type: 'number',
     sort: false,
   },
-  editionUser: {
-    title: 'Modificado por',
-    type: 'string',
-    sort: false,
-  },
+  // editionUser: {
+  //   title: 'Modificado por',
+  //   type: 'string',
+  //   sort: false,
+  // },
 };

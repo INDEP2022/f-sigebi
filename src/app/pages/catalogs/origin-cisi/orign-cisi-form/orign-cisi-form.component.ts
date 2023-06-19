@@ -14,11 +14,12 @@ import { ModelForm } from '../../../../core/interfaces/model-form';
   styles: [],
 })
 export class OrignCisiFormComponent extends BasePage implements OnInit {
-  form: ModelForm<IOriginCisi>;
+  orignCisiForm: ModelForm<IOriginCisi>;
   title: string = 'Procedencia Cisi';
   edit: boolean = false;
   originCisi: IOriginCisi;
   originCisis = new DefaultSelect<IOriginCisi>();
+
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
@@ -32,14 +33,24 @@ export class OrignCisiFormComponent extends BasePage implements OnInit {
   }
 
   private prepareForm() {
-    this.form = this.fb.group({
+    this.orignCisiForm = this.fb.group({
       id: [null],
-      detail: [null, [Validators.required]],
+      detail: [
+        null,
+        [
+          Validators.required,
+          Validators.minLength(1),
+          Validators.maxLength(40),
+        ],
+      ],
     });
+
     if (this.originCisi != null) {
-      console.log(this.form);
       this.edit = true;
-      this.form.patchValue(this.originCisi);
+      this.orignCisiForm.setValue({
+        id: this.originCisi.id,
+        detail: this.originCisi.detail,
+      });
     }
   }
 
@@ -48,17 +59,24 @@ export class OrignCisiFormComponent extends BasePage implements OnInit {
       this.originCisis = new DefaultSelect(data.data, data.count);
     });
   }
+
   close() {
     this.modalRef.hide();
   }
 
   confirm() {
-    this.edit ? this.update() : this.create();
+    if (this.orignCisiForm.valid) {
+      if (this.edit) {
+        this.update();
+      } else {
+        this.create();
+      }
+    }
   }
 
   create() {
     this.loading = true;
-    this.originCisiService.create(this.form.getRawValue()).subscribe({
+    this.originCisiService.create(this.orignCisiForm.value).subscribe({
       next: data => this.handleSuccess(),
       error: error => (this.loading = false),
     });
@@ -67,7 +85,7 @@ export class OrignCisiFormComponent extends BasePage implements OnInit {
   update() {
     this.loading = true;
     this.originCisiService
-      .update(this.originCisi.id, this.form.getRawValue())
+      .update(this.originCisi.id, this.orignCisiForm.value)
       .subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),

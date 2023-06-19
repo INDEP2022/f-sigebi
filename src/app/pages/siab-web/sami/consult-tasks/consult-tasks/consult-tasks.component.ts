@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject, takeUntil, tap } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import {
@@ -9,8 +10,8 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
-import { IRequestTask } from 'src/app/core/models/requests/request-task.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
 import { TaskService } from 'src/app/core/services/ms-task/task.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
@@ -25,19 +26,22 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
   filterParams = new BehaviorSubject<FilterParams>(new FilterParams());
 
   totalItems: number = 0;
-  tasks: IRequestTask[] = [];
+  //tasks: IRequestTask[] = [];
+  tasks = new LocalDataSource();
 
   loadingText = '';
   userName = '';
   consultTasksForm: FormGroup;
   department = '';
+  delegation: string = null;
 
   constructor(
     private taskService: TaskService,
     private authService: AuthService,
     private excelService: ExcelService,
     public router: Router,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private regionalDelegacionService: RegionalDelegationService
   ) {
     super();
     this.settings = { ...TABLE_SETTINGS, actions: false, selectMode: '' };
@@ -46,6 +50,14 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
+    /*this.tasks.onChanged()
+    .subscribe( change => {
+      if (change.action === 'filter') {
+        let filters = change.filter.filters;
+        console.log(filters)
+        filters.map((filter: any) => {})
+      }
+    })*/
   }
 
   private prepareForm() {
@@ -122,7 +134,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
   exportToExcel() {
     const filename: string = this.userName + '-Tasks';
     // El type no es necesario ya que por defecto toma 'xlsx'
-    this.excelService.export(this.tasks, { filename });
+    this.excelService.export(this.tasks['data'], { filename });
   }
 
   private getTasks() {
@@ -147,12 +159,15 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
       isfilterUsed = true;
       if (filterStatus === 'null') {
         this.filterParams.getValue().addFilter('State', '', SearchFilter.NULL);
+        this.getDelegationRegional(user.department);
       } else if (filterStatus === 'FINALIZADA') {
         this.filterParams.getValue().addFilter('FINALIZADA', filterStatus);
+        this.getDelegationRegional(user.department);
       }
       if (filterStatus === 'TODOS') {
         console.log('todos');
         this.consultTasksForm.controls['txtNoDelegacionRegional'].setValue('');
+        this.delegation = '';
       }
     }
 
@@ -318,13 +333,12 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
       typeof this.consultTasksForm.value.txtNoDelegacionRegional == 'number'
     ) {
       isfilterUsed = true;
-      this.filterParams
-        .getValue()
-        .addFilter(
-          'request.regionalDelegationId',
-          this.consultTasksForm.value.txtNoDelegacionRegional,
-          SearchFilter.EQ
-        );
+      this.filterParams.getValue().addFilter(
+        'idDelegationRegional',
+        // request.regionalDelegationNumber
+        this.consultTasksForm.value.txtNoDelegacionRegional,
+        SearchFilter.EQ
+      );
     }
     if (this.consultTasksForm.value.txtNoSolicitud) {
       isfilterUsed = true;
@@ -368,21 +382,23 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
     params.text = this.consultTasksForm.value.txtSearch;
     params['others'] = this.userName;
 
-    this.tasks = [];
+    //this.tasks = [];
+    this.tasks = new LocalDataSource();
     this.totalItems = 0;
     // if (!isfilterUsed) {
     //   this.filterParams.getValue().addFilter('State', '', SearchFilter.NULL);
     // }
-    this.taskService
-      .getTasksByUser(
-        this.filterParams.getValue().getParams().concat('&sortBy=id:DESC')
-      )
-      .subscribe({
-        next: response => {
-          console.log('Response: ', response);
-          this.loading = false;
-          console.log('Hay un filtro activo? ', isfilterUsed);
-          /*  if (isfilterUsed) {
+    let filter = this.filterParams
+      .getValue()
+      .getParams()
+      .concat('&sortBy=id:DESC');
+    console.log(filter);
+    this.taskService.getTasksByUser(filter).subscribe({
+      next: response => {
+        console.log('Response: ', response);
+        this.loading = false;
+        console.log('Hay un filtro activo? ', isfilterUsed);
+        /*  if (isfilterUsed) {
             this.tasks = response.data.filter(
               (record: { State: string }) => record.State != 'FINALIZADA'
             );
@@ -391,15 +407,20 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
             this.tasks = response.data;
             this.totalItems = response.count;
           } */
-          response.data.map((item: any) => {
-            item.taskNumber = item.id;
-          });
+        response.data.map((item: any) => {
+          item.taskNumber = item.id;
+          item.requestId =
+            item.requestId != null ? item.requestId : item.programmingId;
+        });
 
-          this.tasks = response.data;
-          this.totalItems = response.count;
-        },
-        error: () => ((this.tasks = []), (this.loading = false)),
-      });
+        //this.tasks = response.data;
+        this.tasks.load(response.data);
+        this.totalItems = response.count;
+      },
+      error: () => (
+        (this.tasks = new LocalDataSource()), (this.loading = false)
+      ),
+    });
   }
 
   cleanFilter() {
@@ -412,6 +433,19 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
   onKeydown(event: any) {
     console.log('Apreto enter event', event);
     this.searchTasks();
+  }
+
+  getDelegationRegional(id: number | string) {
+    const params = new ListParams();
+    params['filter.id'] = `$eq:${id}`;
+    this.regionalDelegacionService.getAll(params).subscribe({
+      next: resp => {
+        this.delegation = resp.data[0].id + ' - ' + resp.data[0].description;
+      },
+      error: error => {
+        console.log(error);
+      },
+    });
   }
 
   openTask(selected: any): void {

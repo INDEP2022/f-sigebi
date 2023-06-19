@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
@@ -22,16 +22,10 @@ export class StorehouseDetailComponent extends BasePage implements OnInit {
   storeHouse: IStorehouse;
   title: string = 'Catálogos de Bodegas';
   edit: boolean = false;
+  states = new DefaultSelect();
+  municipalities = new DefaultSelect();
+  localities = new DefaultSelect();
 
-  public states = new DefaultSelect();
-  public municipalities = new DefaultSelect();
-  public localities = new DefaultSelect();
-
-  @Output() refresh = new EventEmitter<true>();
-
-  public get id() {
-    return this.storeHouseForm.get('idStorehouse');
-  }
   constructor(
     private fb: FormBuilder,
     private modalRef: BsModalRef,
@@ -45,63 +39,44 @@ export class StorehouseDetailComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
+    /*this.getMunicipalities(new ListParams());
+    this.getLocalities(new ListParams());*/
   }
 
-  prepareForm() {
+  private prepareForm() {
     this.storeHouseForm = this.fb.group({
-      idStorehouse: [
-        null,
-        Validators.compose([Validators.required, Validators.maxLength(255)]),
-      ],
+      id: [null],
       manager: [
         null,
-        Validators.compose([
-          Validators.pattern(''),
-          Validators.maxLength(255),
-          Validators.pattern(STRING_PATTERN),
-        ]),
+        [Validators.pattern(STRING_PATTERN), Validators.required],
       ],
       description: [
         null,
-        Validators.compose([
-          Validators.pattern(''),
-          Validators.maxLength(255),
-          Validators.pattern(STRING_PATTERN),
-        ]),
+        [Validators.pattern(STRING_PATTERN), Validators.required],
       ],
+      municipalityCodeID: [null],
       municipality: [
         null,
-        Validators.compose([Validators.pattern(''), Validators.maxLength(255)]),
+        [Validators.pattern(STRING_PATTERN), Validators.required],
       ],
+      localityCodeID: [null],
       locality: [
         null,
-        Validators.compose([Validators.pattern(''), Validators.maxLength(255)]),
+        [Validators.pattern(STRING_PATTERN), Validators.required],
       ],
       ubication: [
         null,
-        Validators.compose([
-          Validators.pattern(''),
-          Validators.maxLength(255),
-          Validators.pattern(STRING_PATTERN),
-        ]),
+        [Validators.pattern(STRING_PATTERN), Validators.required],
       ],
-      idEntity: [null, Validators.compose([Validators.maxLength(255)])],
+      idEntity: [null],
     });
+
     if (this.storeHouse != null) {
       this.edit = true;
-      console.log(this.storeHouse);
       this.storeHouseForm.patchValue(this.storeHouse);
-      // console.log(this.warehouse);
-      // const { descCondition, nameCity, description, localityName } =
-      //   this.warehouse;
-      // this.warehouseForm.patchValue(this.warehouse);
-      // this.idWarehouse.disable();
-      // //TODO: Revisar con backend que regrese el objeto de bodega completo para poder pintar la informacion en los select
-      // this.states = new DefaultSelect([descCondition], 1);
-      // this.cities = new DefaultSelect([nameCity], 1);
-      // this.municipalities = new DefaultSelect([description], 1);
-      // this.localities = new DefaultSelect([localityName], 1);
     }
+    this.getMunicipalities(new ListParams());
+    this.getLocalities(new ListParams());
   }
 
   confirm() {
@@ -114,16 +89,16 @@ export class StorehouseDetailComponent extends BasePage implements OnInit {
 
   create() {
     this.loading = true;
-    this.storehouseService.create(this.storeHouseForm.value).subscribe(
-      data => this.handleSuccess(),
-      error => (this.loading = false)
-    );
+    this.storehouseService.create(this.storeHouseForm.getRawValue()).subscribe({
+      next: data => this.handleSuccess(),
+      error: error => (this.loading = false),
+    });
   }
 
   update() {
     this.loading = true;
     this.storehouseService
-      .update(this.storeHouse.idStorehouse, this.storeHouseForm.value)
+      .update(this.storeHouse.id, this.storeHouseForm.getRawValue())
       .subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),
@@ -138,21 +113,40 @@ export class StorehouseDetailComponent extends BasePage implements OnInit {
     this.modalRef.hide();
   }
 
-  getStates(params: ListParams) {
-    this.stateService.getAll(params).subscribe(data => {
-      this.states = new DefaultSelect(data.data, data.count);
+  /*
+  getMunicipalitie(data: any) {
+    this.localities = new DefaultSelect([], 0, true);
+    this.storeHouseForm.controls['locality'].setValue(null);
+    this.getMunicipalities(new ListParams(), data.state);
+  }*/
+
+  getMunicipalities(params: ListParams, id?: string) {
+    this.municipalityService.getAll(params).subscribe({
+      next: data => {
+        this.municipalities = new DefaultSelect(data.data, data.count);
+      },
+      error: error => (this.municipalities = new DefaultSelect()),
     });
   }
 
-  getMunicipalities(params: ListParams) {
-    this.municipalityService.getAll(params).subscribe(data => {
-      this.municipalities = new DefaultSelect(data.data, data.count);
-    });
+  getLocalitie(data: any) {
+    console.log('localitieee', data.stateKey);
+    this.storeHouseForm.controls['locality'].setValue(null);
+    this.getLocalities(new ListParams(), data.stateKey);
   }
 
-  getLocalities(params: ListParams) {
-    this.localityService.getAll(params).subscribe(data => {
-      this.localities = new DefaultSelect(data.data, data.count);
+  getLocalities(params: ListParams, id?: string) {
+    if (id) {
+      params['filter.municipalityId'] = `$eq:${id}`;
+    }
+    this.localityService.getAll(params).subscribe({
+      next: data => {
+        this.localities = new DefaultSelect(data.data, data.count);
+      },
+      error: error => {
+        this.localities = new DefaultSelect();
+        this.loading = false;
+      },
     });
   }
 }

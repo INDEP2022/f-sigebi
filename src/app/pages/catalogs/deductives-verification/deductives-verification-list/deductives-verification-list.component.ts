@@ -11,7 +11,6 @@ import {
 import { IDeductiveVerification } from 'src/app/core/models/catalogs/deductive-verification.model';
 import { DeductiveVerificationService } from 'src/app/core/services/catalogs/deductive-verification.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import Swal from 'sweetalert2';
 import { DeductivesVerificationFormComponent } from '../deductives-verification-form/deductives-verification-form.component';
 import { DEDUCTIVE_VERIFICATION_COLUMNS } from './deductives-verification-columns';
 
@@ -60,6 +59,7 @@ export class DeductivesVerificationListComponent
               delete this.columnFilters[field];
             }
           });
+          this.params = this.pageFilter(this.params);
           this.getData();
         }
       });
@@ -105,14 +105,16 @@ export class DeductivesVerificationListComponent
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(deductive.id);
-        Swal.fire('Borrado', '', 'success');
       }
     });
   }
 
   delete(id: number) {
     this.deductiveVerificationService.remove(id).subscribe({
-      next: () => this.getData(),
+      next: () => {
+        this.getData(),
+          this.alert('success', 'Deductivas verificación', 'Borrado');
+      },
     });
   }
 }

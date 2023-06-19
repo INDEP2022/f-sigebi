@@ -23,7 +23,7 @@
           <ng2-smart-table
             [attr.class]="'table-bordered table-responsive'"
             [settings]="settings"
-            [source]="institutionClassificationList"
+            [source]="data"
             (edit)="openForm2($event.data)"
             (delete)="showDeleteAlert2($event.data)"
             (userRowSelect)="rowsSelected($event)"
@@ -35,10 +35,10 @@
     <app-pagination [params]="params" [totalItems]="totalItems">
     </app-pagination>
 
-    <div class="row pt-4" *ngIf="totalItems2 > 0">
+    <div class="row pt-4">
       <div class="ch-content">
-        <h5 class="title">Autoridades Emisoraas</h5>
-        <div class="col-md-5 buttons">
+        <h5 class="title">Autoridades Emisoras</h5>
+        <div class="col-md-5 buttons" *ngIf="totalItems2 > 0">
           <div>
             <app-columns-select [(settings)]="settings2"></app-columns-select>
             <button
@@ -49,12 +49,12 @@
           </div>
         </div>
       </div>
-      <div class="pt-4 col-md-12">
+      <div class="pt-4 col-md-12" *ngIf="totalItems2 > 0">
         <div [class]="loading ? 'table-loading' : ''">
           <ng2-smart-table
             [attr.class]="'table-bordered table-responsive'"
             [settings]="settings2"
-            [source]="issuingInstitutionList"
+            [source]="data1"
             (edit)="openForm($event.data)"
             (delete)="showDeleteAlert($event.data)">
           </ng2-smart-table>

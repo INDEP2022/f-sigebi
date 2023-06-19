@@ -20,9 +20,11 @@ import {
   GoodGetData,
   IGood,
   IGoodSami,
+  IValidaCambioEstatus,
   IVban,
 } from '../../models/ms-good/good';
 
+import { IListResponseMessage } from '../../interfaces/list-response.interface';
 import { IGoodDesc } from '../../models/ms-good/good-and-desc.model';
 import {
   IGoodScreenACtionStatusProcess,
@@ -58,20 +60,25 @@ export class GoodService extends HttpService {
     return this.post<IResponse>(GoodEndpoints.Vban, array);
   }
 
+  PAValidaCambio(model: IValidaCambioEstatus) {
+    return this.post<IResponse>(GoodEndpoints.PAValidaCambioEstatus, model);
+  }
+
   getActAccount(model: IGoodStatusProcess) {
-    return this.post<IResponse>(GoodEndpoints.GoodGetActAccount, model).pipe(
-      map(x => x.count)
-    );
+    return this.post<IResponse<{ actNumber: number }>>(
+      GoodEndpoints.GoodGetActAccount,
+      model
+    ).pipe(map(x => (x.count === 0 ? 0 : x.data ? x.data.actNumber : 0)));
   }
 
   getStatusAndProcess(model: IGoodScreenACtionStatusProcess) {
-    return this.post<IResponse<IGoodStatusFinalProcess>>(
+    return this.post<IGoodStatusFinalProcess>(
       GoodEndpoints.GoodGetStatusAndProcess,
       model
     ).pipe(
       map(x => {
         console.log(x);
-        return { status: x.data.statusFinal, process: x.data.process };
+        return { status: x.statusFinal, process: x.process };
       })
     );
   }
@@ -150,6 +157,13 @@ export class GoodService extends HttpService {
     return this.get<IGood>(`${route}?filter.id=$eq:${id}`);
   }
 
+  getByGoodNumber(goodId: string | number) {
+    const route = `${GoodEndpoints.Good}`;
+    return this.get<IListResponseMessage<IGood>>(
+      `${route}?filter.goodId=$eq:${goodId}`
+    );
+  }
+
   getByIdAndGoodId(id: string | number, goodId: string | number) {
     const route = `${GoodEndpoints.GetGoodById}/${id}/${goodId}`;
     return this.get<IGood>(route);
@@ -159,8 +173,19 @@ export class GoodService extends HttpService {
     return this.post(GoodEndpoints.Good, good);
   }
 
+  updateCustom(good: IGood) {
+    return this.put(GoodEndpoints.Good + '/update-custom/' + good.goodId, {
+      extDomProcess: good.extDomProcess,
+      description: good.description,
+      observations: good.observations,
+      status: good.status,
+    });
+  }
+
   //
   update(good: IGood) {
+    console.log('Se metio a update');
+
     const route = `${GoodEndpoints.Good}`;
     return this.put(route, good);
   }
@@ -183,13 +208,20 @@ export class GoodService extends HttpService {
     return this.put(route);
   }
 
+  updateGoodStatusAndDate(goodNumber: number | string, status: string) {
+    const route = `${GoodEndpoints.Good}/update-status-and-date-reception`;
+    return this.put(route, { goodNumber, status });
+  }
+
   remove(id: string | number) {
     const route = `${GoodEndpoints.Good}/${id}`;
     return this.delete(route);
   }
 
   removeGood(body: Object) {
+    console.log('Object ', body);
     const route = `${GoodEndpoints.Good}`;
+    console.log(route);
     return this.delete(route, body);
   }
 
@@ -204,6 +236,14 @@ export class GoodService extends HttpService {
     return this.get<IListResponse<IGood>>(route, params);
   }
 
+  getByExpedient1(
+    idExpedient: number | string
+  ): Observable<IListResponse<IGood>> {
+    console.log('idExpedient ', idExpedient);
+    const route = GoodEndpoints.SearchByExpedient;
+    return this.get<IListResponse<IGood>>(route);
+  }
+
   getGoodAndDesc(goodId: number | string) {
     const route = `${GoodEndpoints.GoodAndDesc}/${goodId}`;
     return this.get<IGoodDesc>(route);
@@ -213,8 +253,8 @@ export class GoodService extends HttpService {
     body: Object,
     params?: ListParams
   ): Observable<IListResponse<IGood>> {
-    const route = `${GoodEndpoints.Good}/getGoodByWarehouse`;
-
+    console.log(params);
+    const route = `${GoodEndpoints.Good}/getGoodByWarehouse?search=${params.text}`;
     return this.post<IListResponse<IGood>>(route, body);
   }
   getByExpedientAndStatus(
@@ -228,6 +268,10 @@ export class GoodService extends HttpService {
   getStatusByGood(idGood: string | number): Observable<any> {
     const route = `${GoodEndpoints.StatusAndDesc}/${idGood}`;
     return this.get<any>(route);
+  }
+
+  getStatusGood(params?: string) {
+    return this.get<IListResponse>(`${GoodEndpoints.OnlyStatus}?${params}`);
   }
 
   getBySafe(
@@ -311,6 +355,33 @@ export class GoodService extends HttpService {
 
   getGoodById(id: string | number) {
     const route = `${GoodEndpoints.GetGoodById}/${id}/${id}`;
-    return this.get<IGood>(route);
+    return this.get<any>(route);
+  }
+
+  getByExpedientAndParams(
+    params?: ListParams
+  ): Observable<IListResponse<IGood>> {
+    console.log('GET GOODS EXPEDIENTE', params);
+    const route = GoodEndpoints.GetAllGoodQuery;
+    return this.get<IListResponse<IGood>>(route, params);
+  }
+
+  getMassiveSearch(body: any) {
+    return this.post(GoodEndpoints.GetMassiveSearch, body);
+  }
+
+  getByExpedientAndParams__(
+    params?: ListParams
+  ): Observable<IListResponse<IGood>> {
+    console.log('GET GOODS EXPEDIENTE', params);
+    const route = GoodEndpoints.Good;
+    return this.get<IListResponse<IGood>>(route, params);
+  }
+
+  getFactaDbOficioGestrel(body: {
+    no_of_gestion: string | number;
+    no_bien: string | number;
+  }) {
+    return this.get('good/get-facta-dbo-ficio-gestrel', body);
   }
 }

@@ -1,4 +1,28 @@
 <form [formGroup]="form" class="form-material">
+  <div class="row justify-content-end mb-5">
+    <div
+      class="col-md-3 col-sm-12 col-xs-12 justify-content-end"
+      *ngIf="!verBoton">
+      <button
+        class="btn btn-primary btn-sm active"
+        style="float: right"
+        (click)="buscarOficio()">
+        Buscar <i class="fa fa-search ml-2"></i>
+      </button>
+    </div>
+    <div
+      class="col-md-3 col-sm-12 col-xs-12 justify-content-end"
+      *ngIf="verBoton">
+      <button
+        type="button"
+        class="btn btn-primary btn-sm active"
+        style="float: right"
+        (click)="nuevaBusquedaOficio()">
+        Nueva B&uacute;squeda <i class="fa fa-search ml-2"></i>
+      </button>
+    </div>
+  </div>
+
   <div class="row">
     <div class="col-md-3 col-sm-12 col-xs-12">
       <form-field [control]="form.get('proceedingsNumber')" label="Expediente">
@@ -6,27 +30,27 @@
           type="text"
           class="form-control"
           formControlName="proceedingsNumber"
-          (keyup.enter)="onNumberGoodEnter()" />
+          [readOnly]="verBoton" />
       </form-field>
     </div>
     <div class="col-md-3 col-sm-12 col-xs-12">
       <form-field
-        [control]="form.get('numberGestion')"
-        label="No de Gesti&oacute;n">
+        [control]="form.get('managementNumber')"
+        label="No_Of_Gestión">
         <input
           type="text"
           class="form-control"
-          formControlName="numberGestion"
-          (keyup.enter)="onNumberGestionEnter()" />
+          formControlName="managementNumber"
+          [readOnly]="verBoton" />
       </form-field>
     </div>
     <div class="col-md-3 col-sm-12 col-xs-12">
-      <form-field [control]="form.get('flywheel')" label="Volante">
+      <form-field [control]="form.get('flyerNumber')" label="Volante">
         <input
           type="text"
           class="form-control"
-          formControlName="flywheel"
-          (keyup.enter)="onFlywheelEnter()" />
+          formControlName="flyerNumber"
+          [readOnly]="verBoton" />
       </form-field>
     </div>
     <div class="col-md-3 col-sm-12 col-xs-12">
@@ -35,30 +59,71 @@
           type="text"
           class="form-control"
           formControlName="officio"
-          (keyup.enter)="onOfficioEnter()" />
+          [readOnly]="verBoton" />
       </form-field>
     </div>
   </div>
+
   <hr />
   <div class="row">
-    <div class="col-md-4 col-sm-12 col-xs-12">
-      <form-field [control]="form.get('senderUser')" label="Remitente">
-        <input type="text" class="form-control" formControlName="senderUser" />
-        <!--app-user-shared
-        [form]="form"
-        [userField]="'senderUser'"
-        [label]="'Remitente'">
-      </app-user-shared-->
+    <div class="col-md-4 col-sm-12 col-xs-12 mt-3">
+      <form-field [control]="form.get('RemitenteSenderUser')">
+        <ngx-select
+          [readonly]="!managementNumber_"
+          [form]="form"
+          [data]="users$$"
+          (change)="getDescUserPuesto($event)"
+          (fetchItems)="getUsers$($event)"
+          bindLabel="userAndName"
+          value="id"
+          control="RemitenteSenderUser"
+          label="Remitente"
+          [searchOnInit]="false"
+          [showTooltip]="true"
+          termMaxLength="30"
+          [labelTemplate]="userLabel"
+          [optionTemplate]="userOption">
+        </ngx-select>
+        <ng-template #userLabel let-item="item">
+          {{ item.id }} - {{ item.name }}
+        </ng-template>
+        <ng-template #userOption let-item="item">
+          <div [title]="item.id + '-' + item.name">
+            {{ item.id }} - {{ item.name }}
+          </div>
+        </ng-template>
       </form-field>
     </div>
     <div class="col-md-4 col-sm-12 col-xs-12 mt-3">
       <form-field [control]="form.get('charge')" label="Cargo">
-        <input type="text" class="form-control" formControlName="charge" />
+        <input
+          [readonly]="!managementNumber_"
+          type="text"
+          class="form-control"
+          formControlName="charge" />
       </form-field>
     </div>
+    <!--$%#$%#$%#$%345345345-->
     <div class="col-md-4 col-sm-12 col-xs-12 mt-3">
       <form-field [control]="form.get('addressee')" label="Destinatario">
-        <input type="text" class="form-control" formControlName="addressee" />
+        <textarea
+          [readonly]="!managementNumber_"
+          type="text"
+          class="form-control"
+          formControlName="addressee">
+        </textarea>
+        <!-- <ngx-select [readonly]="!managementNumber_" [form]="form" [data]="users_1" (fetchItems)="getUsers_1($event)"
+          bindLabel="userAndName" value="id" control="addressee" label="Destinatario" [searchOnInit]="true"
+          [showTooltip]="true" termMaxLength="30" [labelTemplate]="userLabel" [optionTemplate]="userOption">
+        </ngx-select>
+        <ng-template #userLabel let-item="item">
+          {{ item.id }} - {{ item.name }}
+        </ng-template>
+        <ng-template #userOption let-item="item">
+          <div [title]="item.id + '-' + item.name">
+            {{ item.id }} - {{ item.name }}
+          </div>
+        </ng-template> -->
       </form-field>
     </div>
   </div>
@@ -68,9 +133,13 @@
         [control]="form.get('paragraphInitial')"
         label="P&aacute;rrafo Inicial">
         <textarea
+          maxlength="4000"
           type="text"
+          rows="4"
+          [readonly]="!managementNumber_"
           class="form-control"
-          formControlName="paragraphInitial"></textarea>
+          formControlName="paragraphInitial">
+        </textarea>
       </form-field>
     </div>
   </div>
@@ -80,7 +149,9 @@
         [control]="form.get('paragraphFinish')"
         label="P&aacute;rrafo Final">
         <textarea
+          maxlength="4000"
           type="text"
+          [readonly]="!managementNumber_"
           class="form-control"
           formControlName="paragraphFinish"></textarea>
       </form-field>
@@ -88,11 +159,11 @@
   </div>
   <div class="row mt-5">
     <div class="col-md-12 col-sm-12 col-xs-12">
-      <form-field
-        [control]="form.get('paragraphOptional')"
-        label="P&aacute;rrafo Opcional">
+      <form-field [control]="form.get('paragraphOptional')" label="">
         <textarea
+          maxlength="4000"
           type="text"
+          [readonly]="!managementNumber_"
           class="form-control"
           formControlName="paragraphOptional"></textarea>
       </form-field>
@@ -100,95 +171,108 @@
   </div>
   <div class="row mt-5">
     <div class="col-md-12 col-sm-12 col-xs-12">
-      <form-field
-        [control]="form.get('descriptionSender')"
-        label="Descripci&oacute;n Remitente">
+      <form-field [control]="form.get('descriptionSender')" label="">
         <textarea
+          maxlength="500"
           type="text"
+          [readonly]="!managementNumber_"
           class="form-control"
           formControlName="descriptionSender"></textarea>
       </form-field>
     </div>
   </div>
-  <div class="row pl-3">C&#46;C&#46;P&#46;</div>
-  <div class="row mt-5">
-    <div class="col-md-5 col-sm-12 col-xs-12 mt-3">
-      <form-field [control]="form.get('typePerson')" label="Tipo Persona">
-        <select class="form-control" formControlName="typePerson">
-          <option [value]="null">Seleccione un valor</option>
-          <option [value]="1">PERSONA EXTERNA</option>
-          <option [value]="2">PERSONA INTERNA</option>
-        </select>
-      </form-field>
-    </div>
-    <div class="col-md-7 col-sm-12 col-xs-12">
-      <app-user-shared
-        [form]="form"
-        [userField]="'senderUser'"
-        [label]="'Detinatario Copia'">
-      </app-user-shared>
+  <!--div class="row pl-3"></div-->
+  <hr />
+  <div class="ch-content" header>
+    <h5 class="title">C&#46;C&#46;P&#46;</h5>
+    <div class="col-md-5 buttons">
+      <!--app-columns-select [(settings)]="settings"></app-columns-select-->
+      <div>
+        <button
+          [disabled]="!managementNumber_"
+          (click)="openForm()"
+          class="btn btn-primary active btn-sm ml-3">
+          Nuevo
+        </button>
+      </div>
     </div>
   </div>
-  <div class="row mt-3">
-    <div class="col-md-5 col-sm-12 col-xs-12 mt-3">
-      <form-field [control]="form.get('typePerson_I')" label="Tipo Persona">
-        <select class="form-control" formControlName="typePerson_I">
-          <option [value]="null">Seleccione un valor</option>
-          <option [value]="1">PERSONA EXTERNA</option>
-          <option [value]="2">PERSONA INTERNA</option>
-        </select>
-      </form-field>
-    </div>
-    <div class="col-md-7 col-sm-12 col-xs-12">
-      <app-user-shared
-        [form]="form"
-        [userField]="'senderUser_I'"
-        [label]="'Detinatario Copia'"></app-user-shared>
+  <div body>
+    <div class="row pt-4">
+      <div class="col-md-12">
+        <div class="table-responsive">
+          <div [class]="loading ? 'table-loading' : ''">
+            <ng2-smart-table
+              [attr.class]="'table-bordered'"
+              [settings]="settings"
+              [source]="filtroPersonaExt"
+              (delete)="showDeleteAlert($event.data)">
+            </ng2-smart-table>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
   <hr />
-  <div class="row mb-5">
-    <div class="col-md-8 col-sm-12 col-xs-12">
-      <div class="row">
-        <div class="col-md-4 col-sm-12 col-xs-12">
-          <form-field [control]="form.get('key')" label="Clave">
-            <input type="text" class="form-control" formControlName="key" />
-          </form-field>
-        </div>
-        <div class="col-md-8 col-sm-12 col-xs-12">
-          <form-field [control]="form.get('document')" label="Documento">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="document" />
-          </form-field>
-        </div>
-      </div>
-      <div class="row mt-3">
-        <div class="col-md-4 col-sm-12 col-xs-12">
-          <form-field [control]="form.get('key_I')" label="Clave">
-            <input type="text" class="form-control" formControlName="key_I" />
-          </form-field>
-        </div>
-        <div class="col-md-8 col-sm-12 col-xs-12">
-          <form-field [control]="form.get('document_I')" label="Documento">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="document_I" />
-          </form-field>
-        </div>
-      </div>
+  <div class="row">
+    <div class="col-sm-12 col-12 col-md-6">
+      <h6>Documentos</h6>
     </div>
+  </div>
+  <div class="row pt-2 mb-2">
+    <div class="col-sm-11 col-11 col-md-11">
+      <ng2-smart-table
+        (delete)="preDeleteDocOficioGest($event.data)"
+        [attr.class]="'table-bordered'"
+        [settings]="settings2"
+        [source]="IAttDocument"></ng2-smart-table>
+    </div>
+    <div class="col-1">
+      <button
+        [disabled]="!managementNumber_"
+        (click)="docAct()"
+        class="btn btn-secondary btn-sm active">
+        Doc.
+      </button>
+    </div>
+  </div>
+  <div class="row mt-5 mb-5 justify-content-center">
+    <!-- <div class="col-md-8 col-sm-12 col-xs-12">
+      <table class="table table-bordered" style="width: 100%">
+        <thead>
+          <tr>
+            <th>Clave</th>
+            <th>Descripci&oacute;n documento</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of IAttDocument; let i = index">
+            <td>{{ item.cveDocument }}</td>
+            <td>{{ item.description }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div> -->
     <div class="col-md-4 col-sm-12 col-xs-12">
       <div class="d-flex justify-content-center">
         <div class="m-3">
-          <confirm-button
+          <button
+            type="button"
+            class="btn btn-info active"
+            [disabled]="!form.valid"
+            (click)="updateOficio()">
+            Actualizar
+          </button>
+        </div>
+        <div class="m-3">
+          <button
+            type="button"
             text="Imprimir"
-            [disabled]="form.invalid"
-            [loading]="loading"
-            (confirm)="confirm()">
-          </confirm-button>
+            [disabled]="!form.valid"
+            class="btn btn-primary active"
+            (click)="confirm()">
+            Imprimir
+          </button>
         </div>
       </div>
     </div>

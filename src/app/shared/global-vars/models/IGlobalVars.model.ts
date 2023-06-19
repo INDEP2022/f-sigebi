@@ -32,4 +32,6 @@ export interface IGlobalVars {
   TIPO_VO?: string | number;
   P_GEST_OK?: string | number;
   P_NO_TRAMITE?: string | number;
+  REL_BIENES?: number;
+  IMP_OF?: any;
 }

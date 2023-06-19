@@ -5,14 +5,14 @@
   <div body>
     <form class="form-material" [formGroup]="goodSubtypeForm">
       <div class="row">
-        <div class="col-md-3">
+        <!-- <div class="col-md-3">
           <form-field
             [control]="goodSubtypeForm.get('id')"
             label="Identificador">
             <input type="number" class="form-control" formControlName="id" />
           </form-field>
-        </div>
-        <div class="col-md-6 col-md-offset-3">
+        </div> -->
+        <div class="col-md-8">
           <form-field [control]="goodSubtypeForm.get('idTypeGood')">
             <ngx-select
               label="Tipo Bienes"
@@ -38,26 +38,26 @@
               formControlName="nameSubtypeGood" />
           </form-field>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-6">
           <form-field
             [control]="goodSubtypeForm.get('noPhotography')"
-            label="No Fotograf&iacute;a">
+            label="Nº Fotograf&iacute;a">
             <input
-              type="number"
+              type="text"
               class="form-control"
               formControlName="noPhotography" />
           </form-field>
         </div>
-        <div class="col-md-3">
+        <!-- <div class="col-md-3">
           <form-field
             [control]="goodSubtypeForm.get('noRegister')"
-            label="No. Registro">
+            label="Nº Registro">
             <input
-              type="number"
+              type="text"
               class="form-control"
               formControlName="noRegister" />
           </form-field>
-        </div>
+        </div> -->
       </div>
       <div class="row pt-5">
         <div class="col-md-12">
@@ -71,18 +71,15 @@
           </form-field>
         </div>
       </div>
-      <div class="row pt-5">
+      <!-- <div class="row pt-5">
         <div class="col-md-3">
           <form-field
             [control]="goodSubtypeForm.get('version')"
             label="Versi&oacute;n">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="version" />
+            <input type="text" class="form-control" formControlName="version" />
           </form-field>
         </div>
-      </div>
+      </div> -->
     </form>
   </div>
   <div footer>

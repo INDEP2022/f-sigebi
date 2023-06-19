@@ -27,8 +27,8 @@ import { FlyerSubjectCatalogModelComponent } from '../flyer-subject-catalog-mode
 })
 export class FlyerSubjectCatalogComponent extends BasePage implements OnInit {
   data: LocalDataSource = new LocalDataSource();
-  columns: IAffair[] = [];
   columnFilters: any = [];
+  columns: IAffair[] = [];
 
   affairList: IAffair[] = [];
   affairTypeList: IAffairType[] = [];
@@ -147,7 +147,7 @@ export class FlyerSubjectCatalogComponent extends BasePage implements OnInit {
     this.params2.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
       this.getAffairType(this.affairs);
       const btn = document.getElementById('btn-new');
-      this.r2.removeClass(btn, 'disabled');
+      // this.r2.removeClass(btn, 'disabled');
       this.id = this.affairs;
       console.log(this.id);
     });
@@ -210,18 +210,22 @@ export class FlyerSubjectCatalogComponent extends BasePage implements OnInit {
       '¿Desea borrar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        this.delete(affair.id);
+        this.delete(affair.id, affair.nbOrigen);
       }
     });
   }
 
   //método para borrar registro de asunto
-  delete(id: number) {
-    this.affairService.remove2(id).subscribe({
-      next: () => (Swal.fire('Borrado', '', 'success'), this.getAffairAll()),
+  delete(id: number, nb: string) {
+    this.affairService.remove2(id, nb).subscribe({
+      next: () => {
+        this.getAffairAll();
+        this.alert('success', 'Borrado', '');
+        this.rowSelected = false;
+      },
       error: err => {
-        this.alertQuestion(
-          'error',
+        this.alert(
+          'warning',
           'No se puede eliminar Asunto',
           'Primero elimine sus tipos de asuntos'
         );
@@ -246,9 +250,10 @@ export class FlyerSubjectCatalogComponent extends BasePage implements OnInit {
   delete2(affairType?: IAffairType) {
     let affair = this.affairs;
     this.affairTypeService.remove(affairType).subscribe({
-      next: () => (
-        Swal.fire('Borrado', '', 'success'), this.getAffairType(affair)
-      ),
+      next: () => {
+        Swal.fire('Borrado', '', 'success');
+        this.getAffairType(affair);
+      },
     });
   }
 

@@ -29,7 +29,10 @@ export class ServiceCatService implements ICrudMethods<IServiceCat> {
     return this.serviceCatRepository.update(this.route, id, model);
   }
 
-  remove(id: string | number): Observable<Object> {
-    return this.serviceCatRepository.remove(this.route, id);
+  delete(id: string | number): Observable<Object> {
+    /*const route = `${this.route}/id/${id}`;
+    console.log(route);
+    return this.delete(route);*/
+    return this.serviceCatRepository.remove(`${this.route}/id/`, id);
   }
 }

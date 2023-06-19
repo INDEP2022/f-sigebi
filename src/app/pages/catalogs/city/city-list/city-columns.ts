@@ -27,19 +27,25 @@ export const CITY_COLUMNS = {
       }
     },
   },
-  noDelegation: {
+  delegation: {
     title: 'Delegación',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (value: any) => {
+      return value?.description;
+    },
   },
   legendOffice: {
     title: 'Leyenda Oficio',
     type: 'string',
     sort: false,
   },
-  noSubDelegation: {
+  subDelegation: {
     title: 'Subdelegación',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (value: any) => {
+      return value?.description;
+    },
   },
 };

@@ -1,6 +1,6 @@
 export const ESTATE_COLUMNS = {
   googId: {
-    title: 'No gestión',
+    title: 'Número gestión',
     type: 'string',
     sort: false,
   },
@@ -23,7 +23,7 @@ export const ESTATE_COLUMNS = {
   },
 
   decriptionGoodSae: {
-    title: 'Descripción INDEP',
+    title: 'Descripción Bien SAE',
     type: 'string',
     sort: false,
   },
@@ -47,7 +47,7 @@ export const ESTATE_COLUMNS = {
   },
 
   esReprogramming: {
-    title: 'No. reprogramación',
+    title: 'Número reprogramación',
     type: 'string',
     sort: false,
   },
@@ -57,11 +57,29 @@ export const ESTATE_COLUMNS = {
     type: 'string',
     sort: false,
   },
+
+  townshipKey: {
+    title: 'Municipio',
+    type: 'string',
+    sort: false,
+  },
+
+  settlementKey: {
+    title: 'Localidad',
+    type: 'string',
+    sort: false,
+  },
+
+  code: {
+    title: 'Codigo Postal',
+    type: 'string',
+    sort: false,
+  },
 };
 
 export const ESTATE_COLUMNS_VIEW = {
   goodId: {
-    title: 'No gestión',
+    title: 'Número gestión',
     type: 'string',
     sort: false,
   },
@@ -78,12 +96,12 @@ export const ESTATE_COLUMNS_VIEW = {
     sort: false,
   },
 
-  description: {
+  goodDescription: {
     title: 'Descripción',
     sort: false,
   },
 
-  decriptionGoodSae: {
+  descriptionGoodSae: {
     title: 'Descripción INDEP',
     type: 'string',
     sort: false,
@@ -95,20 +113,55 @@ export const ESTATE_COLUMNS_VIEW = {
     sort: false,
   },
 
-  unitMeasure: {
-    title: 'Unidad transferente',
+  quantitySae: {
+    title: 'Cantidad INDEP',
     type: 'string',
     sort: false,
+  },
+
+  unitMeasure: {
+    title: 'Unidad de medida transferente',
+    type: 'string',
+    sort: false,
+  },
+
+  saeMeasureUnit: {
+    title: 'Unidad de medida INDEP',
+    type: 'string',
+    sort: false,
+  },
+
+  physicalStatusName: {
+    title: 'Estado físico transferente',
+    type: 'html',
+    sort: false,
+    valuePrepareFunction: (value: string) => {
+      if (value == '1') return 'BUENO';
+      if (value == '0') return 'MALO';
+      return value;
+    },
   },
 
   saePhysicalState: {
-    title: 'Estado físico transferente',
+    title: 'Estado físico INDEP',
     type: 'string',
     sort: false,
   },
 
-  warehouseCode: {
-    title: 'Alias almacén',
+  stateConservationName: {
+    title: 'Estado de conservación',
+    type: 'string',
+    sort: false,
+  },
+
+  stateConservationSae: {
+    title: 'Estado de conservación INDEP',
+    type: 'string',
+    sort: false,
+  },
+
+  observations: {
+    title: 'Observación',
     type: 'string',
     sort: false,
   },
@@ -116,7 +169,7 @@ export const ESTATE_COLUMNS_VIEW = {
 
 export const ESTATE_COLUMNS_NOTIFY = {
   gestionNumber: {
-    title: 'No gestión',
+    title: 'Número gestión',
     type: 'string',
     sort: false,
   },

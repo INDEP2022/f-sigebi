@@ -23,7 +23,7 @@ import { DateDocumentsDictumComponent } from '../date-documents-dictum/date-docu
   styles: [],
 })
 export class DateDocumentsModalComponent extends BasePage implements OnInit {
-  title: string = 'DOCUMENTOS POR EXPEDIENTE';
+  title: string = 'Fecha para Documento';
   edit: boolean = false;
   event: IDocumentsForDictum = null;
   dateDocuments: IDateDocuments;
@@ -132,25 +132,36 @@ export class DateDocumentsModalComponent extends BasePage implements OnInit {
   }
   create() {
     this.loading = true;
-    this.dateDocumentsModalForm.controls['insertionDate'].setValue(
-      this.datePipe.transform(
-        this.dateDocumentsModalForm.controls['insertionDate'].value,
-        'yyyy-MM-dd'
-      )
-    );
-    this.dateDocumentsModalForm.controls['notificationDate'].setValue(
-      this.datePipe.transform(
-        this.dateDocumentsModalForm.controls['notificationDate'].value,
-        'yyyy-MM-dd'
-      )
-    );
-    console.log(this.dateDocumentsModalForm.value);
-    this.dateDocumentsService
-      .create(this.dateDocumentsModalForm.value)
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
+
+    const newDateDocument = this.dateDocumentsModalForm.value;
+
+    Object.defineProperties(newDateDocument, {
+      insertionDate: {
+        value: this.datePipe.transform(
+          newDateDocument.insertionDate,
+          'yyyy-MM-dd'
+        ),
+      },
+      notificationDate: {
+        value: this.datePipe.transform(
+          newDateDocument.notificationDate,
+          'yyyy-MM-dd'
+        ),
+      },
+    });
+
+    console.log('PAYLOAD', newDateDocument);
+
+    this.dateDocumentsService.create(newDateDocument).subscribe({
+      next: data => {
+        console.log('success', data);
+        this.handleSuccess();
+      },
+      error: error => {
+        console.log('success', error);
+        this.loading = false;
+      },
+    });
   }
   update() {
     this.loading = true;

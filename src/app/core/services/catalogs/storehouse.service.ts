@@ -21,7 +21,7 @@ export class StorehouseService implements ICrudMethods<IStorehouse> {
     return this.storehouseRepository.getById(this.route, id);
   }
 
-  create(model: IStorehouse): Observable<IStorehouse> {
+  create(model: any): Observable<IStorehouse> {
     return this.storehouseRepository.create(this.route, model);
   }
 
@@ -29,7 +29,10 @@ export class StorehouseService implements ICrudMethods<IStorehouse> {
     return this.storehouseRepository.update(this.route, id, model);
   }
 
-  remove(id: string | number): Observable<Object> {
-    return this.storehouseRepository.remove(this.route, id);
+  // remove(id: string | number): Observable<Object> {
+  //   return this.storehouseRepository.remove(this.route, id);
+  // }
+  remove(obj: Object): Observable<Object> {
+    return this.storehouseRepository.remove3(this.route, obj);
   }
 }

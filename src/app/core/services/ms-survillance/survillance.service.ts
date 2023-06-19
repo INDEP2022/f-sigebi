@@ -3,6 +3,7 @@ import { SurvillanceEndpoints } from 'src/app/common/constants/endpoints/ms-surv
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import {
+  IGeoreferencieObject,
   IViewVigDelegations,
   IVigBinnacle,
   IVigProcessPercentages,
@@ -25,11 +26,30 @@ export class SurvillanceService extends HttpService {
     );
   }
 
+  getGeoreferencieObject(params?: _Params) {
+    return this.get<IListResponse<IGeoreferencieObject>>(
+      this.route.Georeferencie,
+      params
+    );
+  }
+
+  getGeoreferencieObjectById(id: number) {
+    return this.get<IGeoreferencieObject>(this.route.Georeferencie + '/' + id);
+  }
+
   getViewVigDelegations(params?: _Params) {
     return this.get<IListResponse<IViewVigDelegations>>(
       this.route.View_VigDelegations,
       params
     );
+  }
+
+  postGeoreferencieObject(model: IGeoreferencieObject) {
+    return this.post(this.route.Georeferencie, model);
+  }
+
+  putGeoreferencieObject(model: IGeoreferencieObject) {
+    return this.put(this.route.Georeferencie, model);
   }
 
   postVigProcessPercentages(data: IVigProcessPercentages) {

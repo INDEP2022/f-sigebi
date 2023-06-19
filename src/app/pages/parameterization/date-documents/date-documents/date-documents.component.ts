@@ -39,6 +39,7 @@ export class DateDocumentsComponent extends BasePage implements OnInit {
       columns: DATEDOCUMENTS_COLUMNS,
     };
     this.settings.actions.add = false;
+    this.settings.actions.delet = false;
     this.settings = {
       ...this.settings,
       hideSubHeader: false,
@@ -55,16 +56,22 @@ export class DateDocumentsComponent extends BasePage implements OnInit {
           filters.map((filter: any) => {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
-            /*SPECIFIC CASES*/
-            filter.field == 'id'
-              ? (searchFilter = SearchFilter.EQ)
-              : (searchFilter = SearchFilter.ILIKE);
+            field = `filter.${filter.field}`;
+            switch (filter.field) {
+              case 'expedientNumber':
+                searchFilter = SearchFilter.EQ;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
               delete this.columnFilters[field];
             }
           });
+          this.params = this.pageFilter(this.params);
           this.getAllDateDocuments();
         }
       });

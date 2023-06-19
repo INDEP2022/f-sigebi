@@ -32,7 +32,13 @@ export class DelegationService
   }
 
   getAll(params?: ListParams): Observable<IListResponse<IDelegation>> {
-    return this.delegationRepository.getAllPaginated(this.route, params);
+    return this.delegationRepository.getAll(this.route, params);
+  }
+
+  getAppsAll(): Observable<IListResponse<IDelegation>> {
+    return this.get<
+      IListResponse<{ delegationId: string; description: string }>
+    >('apps/getDelegations');
   }
 
   getAllModal(self?: DelegationService, params?: ListParams) {
@@ -44,7 +50,7 @@ export class DelegationService
   }
 
   getById(id: string | number): Observable<IDelegation> {
-    return this.delegationRepository.getById(this.route, id);
+    return this.delegationRepository.newGetById(this.route, id);
   }
 
   create(model: IDelegation): Observable<IDelegation> {
@@ -52,7 +58,11 @@ export class DelegationService
   }
 
   update(id: string | number, model: IDelegation): Observable<Object> {
-    return this.delegationRepository.update(this.route, id, model);
+    return this.delegationRepository.updateCatagaloDelegations(
+      this.route,
+      id,
+      model
+    );
   }
 
   remove(id: string | number): Observable<Object> {
@@ -76,6 +86,14 @@ export class DelegationService
   ): Observable<IListResponse<IDelegation>> {
     return this.get<IListResponse<IDelegation>>(
       DelegationsEndpoints.Delegation,
+      params
+    );
+  }
+  getAll3(
+    params?: ListParams | string
+  ): Observable<IListResponse<IDelegation>> {
+    return this.get<IListResponse<IDelegation>>(
+      DelegationsEndpoints.DelegationAll,
       params
     );
   }

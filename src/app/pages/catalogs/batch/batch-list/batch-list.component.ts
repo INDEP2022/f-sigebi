@@ -65,11 +65,27 @@ export class BatchListComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
+        this.remove(batch.id);
       }
+    });
+  }
+
+  remove(id: number) {
+    this.batchService.remove(id).subscribe({
+      next: () => {
+        this.getExample(), this.alert('success', 'Lotes', 'Borrado');
+      },
+      error: error => {
+        this.alert(
+          'warning',
+          'Lotes',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      },
     });
   }
 }

@@ -7,6 +7,8 @@ import { GoodsTypesSharedComponent } from 'src/app/@standalone/shared-forms/good
 import { SharedModule } from 'src/app/shared/shared.module';
 import { AdministrationAssetsRoutingModule } from './administration-assets-routing.module';
 import { AdministrationAssetsComponent } from './administration-assets.component';
+import { AppointmentDataComponent } from './appointment-data/appointment-data.component';
+import { AssignedVaultsComponent } from './assigned-vaults/assigned-vaults.component';
 import { DataValuationsComponent } from './data-valuations/data-valuations.component';
 import { DepositaryReportComponent } from './depositary-report/depositary-report.component';
 import { GeneralDataGoodsComponent } from './general-data-goods/general-data-goods.component';
@@ -16,6 +18,7 @@ import { InventoryDataComponent } from './inventory-data/inventory-data.componen
 import { RegistryServicesComponent } from './registry-services/registry-services.component';
 import { SearchTabComponent } from './search-tab/search-tab.component';
 import { SecureDataComponent } from './secure-data/secure-data.component';
+import { WarehousesAssignedComponent } from './warehouses-assigned/warehouses-assigned.component';
 
 @NgModule({
   declarations: [
@@ -29,6 +32,9 @@ import { SecureDataComponent } from './secure-data/secure-data.component';
     IncomePerAssetComponent,
     RegistryServicesComponent,
     SecureDataComponent,
+    AssignedVaultsComponent,
+    AppointmentDataComponent,
+    WarehousesAssignedComponent,
   ],
   imports: [
     CommonModule,

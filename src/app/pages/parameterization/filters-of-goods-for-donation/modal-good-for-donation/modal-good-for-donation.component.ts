@@ -4,7 +4,6 @@ import { BsModalRef } from 'ngx-bootstrap/modal';
 import { IFilterDonation } from 'src/app/core/models/ms-donation/donation.model';
 import { DonationService } from 'src/app/core/services/ms-donationgood/donation.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-modal-good-for-donation',
@@ -12,7 +11,7 @@ import { STRING_PATTERN } from 'src/app/core/shared/patterns';
   styles: [],
 })
 export class ModalGoodForDonationComponent extends BasePage implements OnInit {
-  title: string = '';
+  title: string = 'Filtro de Bienes para Donación';
   edit: boolean = false;
   form: FormGroup = new FormGroup({});
   allotment: any;
@@ -33,16 +32,11 @@ export class ModalGoodForDonationComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.form = this.fb.group({
-      goodStatus: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      targetIndicator: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
+      goodStatus: [null, [Validators.required]],
+      targetIndicator: [null, [Validators.required]],
     });
     if (this.allotment != null) {
+      console.log(this.allotment);
       this.edit = true;
       this.form.controls['goodStatus'].patchValue(this.allotment.statusId);
       this.form.controls['targetIndicator'].patchValue(this.allotment.tagId);

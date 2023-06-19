@@ -3,14 +3,24 @@
     <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nueva' }} {{ title }}</h5>
   </div>
   <div body>
-    <form class="form-material" [formGroup]="form">
+    <form class="form-material -" [formGroup]="form">
       <div class="row">
+        <div class="col-md-12">
+          <form-field [control]="form.get('code')" label="codigo">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="code"
+              id="inputCode" />
+          </form-field>
+        </div>
         <div class="col-md-12">
           <form-field [control]="form.get('dictum')" label="Dictum">
             <input
               type="number"
               class="form-control"
-              formControlName="dictum" />
+              formControlName="dictum"
+              id="inputDictum" />
           </form-field>
         </div>
         <div class="col-md-12">
@@ -18,7 +28,8 @@
             <input
               type="text"
               class="form-control"
-              formControlName="flyerType" />
+              formControlName="flyerType"
+              id="inputFlyerType" />
           </form-field>
         </div>
 
@@ -50,7 +61,7 @@
             <input type="text" class="form-control" formControlName="e" />
           </form-field>
         </div>
-        <div class="col-md-12">
+        <!-- <div class="col-md-12">
           <form-field
             [control]="form.get('registryNumber')"
             label="N&uacute;mero Registro">
@@ -59,7 +70,7 @@
               class="form-control"
               formControlName="registryNumber" />
           </form-field>
-        </div>
+        </div> -->
       </div>
     </form>
   </div>

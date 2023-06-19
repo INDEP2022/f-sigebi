@@ -13,7 +13,7 @@ export const DEPARTMENT_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  numDelegation: {
+  delegation: {
     title: 'Delegación',
     type: 'string',
     valuePrepareFunction: (value: IDelegation) => {
@@ -30,12 +30,12 @@ export const DEPARTMENT_COLUMNS = {
     sort: false,
   },
   description: {
-    title: 'Descripcion',
+    title: 'Descripción',
     type: 'string',
     sort: false,
   },
   numRegister: {
-    title: 'N registro',
+    title: 'Nº registro',
     type: 'number',
     sort: false,
   },

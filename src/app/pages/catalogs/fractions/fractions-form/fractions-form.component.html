@@ -8,7 +8,7 @@
     <form [formGroup]="fractionForm" class="form-material">
       <div class="row">
         <div class="col-md-6">
-          <form-field [control]="fractionForm.get('code')" label="Codigo">
+          <form-field [control]="fractionForm.get('code')" label="Código">
             <input
               type="text"
               class="form-control"
@@ -19,10 +19,7 @@
 
         <div class="col-md-6">
           <form-field [control]="fractionForm.get('level')" label="Nivel">
-            <input
-              type="text"
-              class="form-control disabled"
-              formControlName="level" />
+            <input type="text" class="form-control" formControlName="level" />
           </form-field>
         </div>
 
@@ -37,6 +34,7 @@
             </textarea>
           </form-field>
         </div>
+
         <div class="col-md-6">
           <form-field [control]="fractionForm.get('normId')">
             <ngx-select
@@ -84,14 +82,15 @@
             <input
               type="number"
               class="form-control"
-              formControlName="relevantTypeId" />
+              formControlName="relevantTypeId"
+              min="0" />
           </form-field>
         </div>
 
         <div class="col-md-4">
           <form-field
             [control]="fractionForm.get('codeErp1')"
-            label="Codigo ERP1">
+            label="Código ERP1">
             <input
               type="text"
               class="form-control"
@@ -102,7 +101,7 @@
         <div class="col-md-4">
           <form-field
             [control]="fractionForm.get('codeErp2')"
-            label="Codigo ERP2">
+            label="Código ERP2">
             <input
               type="text"
               class="form-control"
@@ -113,7 +112,7 @@
         <div class="col-md-4">
           <form-field
             [control]="fractionForm.get('codeErp3')"
-            label="Codigo ERP3">
+            label="Código ERP3">
             <input
               type="text"
               class="form-control"
@@ -141,7 +140,7 @@
         <div class="col-md-4">
           <form-field
             [control]="fractionForm.get('fractionCode')"
-            label="Codigo Fracci&oacute;n">
+            label="Código Fracción">
             <input
               type="text"
               class="form-control disabled"
@@ -155,7 +154,7 @@
     <div class="d-flex justify-content-center">
       <div class="m-3">
         <confirm-button
-          [disabled]="fractionForm.valid"
+          [disabled]="fractionForm.invalid"
           [loading]="loading"
           (confirm)="confirm()"></confirm-button>
       </div>

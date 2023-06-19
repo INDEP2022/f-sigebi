@@ -62,6 +62,7 @@ export class DeductivesListComponent extends BasePage implements OnInit {
               delete this.columnFilters[field];
             }
           });
+          this.params = this.pageFilter(this.params);
           this.getDeductives();
         }
       });
@@ -103,7 +104,7 @@ export class DeductivesListComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(deductive.id);
@@ -113,7 +114,16 @@ export class DeductivesListComponent extends BasePage implements OnInit {
 
   delete(id: number) {
     this.deductiveService.remove(id).subscribe({
-      next: () => this.getDeductives(),
+      next: () => {
+        this.getDeductives(), this.alert('success', 'Deductiva', 'Borrado');
+      },
+      error: err => {
+        this.alert(
+          'warning',
+          'Sub-tipo',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      },
     });
   }
 }

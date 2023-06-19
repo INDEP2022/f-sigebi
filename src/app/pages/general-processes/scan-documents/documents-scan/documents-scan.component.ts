@@ -23,9 +23,11 @@ import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { FileBrowserService } from 'src/app/core/services/ms-ldocuments/file-browser.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { IParamsLegalOpinionsOffice } from 'src/app/pages/juridical-processes/depositary/legal-opinions-office/legal-opinions-office/legal-opinions-office.component';
 import { DOCUMENTS_SCAN_COLUMNS } from '../utils/documents-scan-columns';
 import { DocumentsScanForm } from '../utils/documents-scan-form';
 import { DOCUMENTS_SCAN_MESSAGES } from '../utils/documents-scan-messages';
+
 const INVALID_USER = 'INVALIDO';
 const SERA_USER = 'SERA';
 const DEVELOP_USER = 'DESARROLLO';
@@ -53,6 +55,20 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
   get controls() {
     return this.form.controls;
   }
+  paramsScreen: IParamsLegalOpinionsOffice = {
+    PAQUETE: '',
+    P_GEST_OK: '',
+    CLAVE_OFICIO_ARMADA: '',
+    P_NO_TRAMITE: '',
+    TIPO: '',
+    P_VALOR: '',
+    TIPO_VO: '',
+    NO_EXP: '',
+    CONSULTA: '',
+  };
+  origin2: string = ''; // Pantalla para regresar a la anterior de la que se llamo
+  origin3: string = ''; // Pantalla para regresar a la anterior de la que se llamo desde la origin2
+
   constructor(
     private fb: FormBuilder,
     private activatedRoute: ActivatedRoute,
@@ -72,6 +88,16 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
         this.origin = params['origin'] ?? null;
         this.requestOrigin = params['requestOrigin'] ?? null;
         console.log(params);
+        if (this.origin == 'FACTJURDICTAMOFICIO') {
+          for (const key in this.paramsScreen) {
+            if (Object.prototype.hasOwnProperty.call(params, key)) {
+              this.paramsScreen[key as keyof typeof this.paramsScreen] =
+                params[key] ?? null;
+            }
+          }
+          this.origin2 = params['origin2'] ?? null;
+          this.origin3 = params['origin3'] ?? null;
+        }
       });
     this.settings = {
       ...this.settings,
@@ -392,7 +418,30 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
     if (this.origin == 'FGESTBUZONTRAMITE') {
       this.router.navigate(['/pages/general-processes/work-mailbox']);
     }
-    console.log(this.requestOrigin);
+
+    if (this.origin == 'FACTREFACTAENTREC') {
+      this.router.navigate([
+        '/pages/judicial-physical-reception/confiscated-records',
+      ]);
+    }
+
+    if (this.origin == 'FACTREFCANCELAR') {
+      this.router.navigate([
+        '/pages/judicial-physical-reception/cancellation-recepcion',
+      ]);
+    }
+
+    if (this.origin == 'FACTREFACTAVENT') {
+      this.router.navigate([
+        '/pages/judicial-physical-reception/cancellation-sale',
+      ]);
+    }
+
+    if (this.origin == 'FESTATUSRGA') {
+      this.router.navigate([
+        '/pages/executive-processes/destruction-authorization-management',
+      ]);
+    }
     if (this.origin == 'FACTGENSOLICDIGIT') {
       this.router.navigate(
         [
@@ -400,6 +449,23 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
         ],
         { queryParams: { origin: this.requestOrigin } }
       );
+    }
+    if (this.origin == 'FACTJURDICTAMOFICIO') {
+      this.router.navigate(
+        [`/pages/juridical/depositary/legal-opinions-office`],
+        {
+          queryParams: {
+            ...this.paramsScreen,
+            origin: this.origin2,
+            origin3: this.origin3,
+          },
+        }
+      );
+    }
+    if (this.origin == 'FACTJURABANDONOS') {
+      this.router.navigate([
+        `/pages/juridical/abandonments-declaration-trades`,
+      ]);
     }
   }
 }

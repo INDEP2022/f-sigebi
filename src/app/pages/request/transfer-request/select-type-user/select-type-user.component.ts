@@ -100,7 +100,7 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
     this.loading = true;
     const typeEmployee = this.userForm.controls['typeUser'].value;
     this.params.value.addFilter('employeeType', typeEmployee);
-    //this.params.value.addFilter('regionalDelegation', this.deleRegionalUserId);
+    this.params.value.addFilter('regionalDelegation', this.deleRegionalUserId);
     const filter = this.params.getValue().getParams();
     this.userProcessService.getAll(filter).subscribe({
       next: resp => {
@@ -422,13 +422,15 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
       task['requestId'] = request.id;
       task['expedientId'] = 0;
       task['urlNb'] = url;
+      task['processName'] = 'SolicitudTransferencia';
+      task['idDelegationRegional'] = user.department;
       body['task'] = task;
 
       let orderservice: any = {};
       orderservice['pActualStatus'] = from;
       orderservice['pNewStatus'] = to;
       orderservice['pIdApplication'] = request.id;
-      orderservice['pCurrentDate'] = new Date().toISOString();
+      orderservice['pCurrentDate'] = this.generateDateFormat();
       orderservice['pOrderServiceIn'] = '';
 
       body['orderservice'] = orderservice;
@@ -482,5 +484,40 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
 
   message(header: any, title: string, body: string) {
     this.onLoadToast(header, title, body);
+  }
+
+  generateDateFormat() {
+    let date = new Date();
+    let day = this.setMonthsAndDay(date.getDate());
+    const month = new Intl.DateTimeFormat('en-US', { month: 'short' }).format(
+      new Date()
+    );
+    const year = date.getFullYear().toString().substring(2, 4);
+    return day + '-' + month.toUpperCase() + '-' + year;
+  }
+
+  setMonthsAndDay(month: number) {
+    let result = month.toString();
+    if (month === 1) {
+      result = '01';
+    } else if (month === 2) {
+      result = '02';
+    } else if (month === 3) {
+      result = '03';
+    } else if (month === 4) {
+      result = '04';
+    } else if (month === 5) {
+      result = '05';
+    } else if (month === 6) {
+      result = '06';
+    } else if (month === 7) {
+      result = '07';
+    } else if (month === 8) {
+      result = '08';
+    } else if (month === 9) {
+      result = '09';
+    }
+
+    return result;
   }
 }

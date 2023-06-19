@@ -32,4 +32,13 @@ export class ClassifyGoodService extends HttpService {
       _params
     );
   }
+
+  getChangeClass(params?: string) {
+    return this.get<IListResponse>(`change-classification-goods?${params}`);
+  }
+
+  getPupDistClasif(user: string) {
+    const route = ClassifyGoodEndPoints.PupDistClasif;
+    return this.get(`${route}?username=${user}`);
+  }
 }

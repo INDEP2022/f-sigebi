@@ -21,7 +21,10 @@
         [params]="params"
         [totalItems]="totalItems"></app-pagination>
     </div>
-    <form [formGroup]="indicatorsOfPerformanceForm" class="form-material">
+    <form
+      [formGroup]="indicatorsOfPerformanceForm"
+      class="form-material"
+      *ngIf="rowSelecct">
       <div class="row margin-input">
         <div class="col-md-2">
           <form-field
@@ -98,7 +101,7 @@
         </div>
       </div>
     </form>
-    <div class="row pt-4">
+    <div class="row pt-4" *ngIf="rowSelecct">
       <div class="margin-input buttons">
         <app-columns-select [(settings)]="settings2"></app-columns-select>
       </div>

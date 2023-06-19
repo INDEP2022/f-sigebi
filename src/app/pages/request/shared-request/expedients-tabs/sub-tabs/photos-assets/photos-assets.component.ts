@@ -1,22 +1,22 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { showHideErrorInterceptorService } from 'src/app/common/services/show-hide-error-interceptor.service';
 import { IWarehouse } from 'src/app/core/models/catalogs/warehouse.model';
 import { IGood } from 'src/app/core/models/good/good.model';
 import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
 import { GoodService } from 'src/app/core/services/good/good.service';
+import { GoodFinderService } from 'src/app/core/services/ms-good/good-finder.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { TABLE_SETTINGS } from '../../../../../../common/constants/table-settings';
 import { ListParams } from '../../../../../../common/repository/interfaces/list-params';
-import { ModelForm } from '../../../../../../core/interfaces/model-form';
 import { BasePage } from '../../../../../../core/shared/base-page';
 import { DefaultSelect } from '../../../../../../shared/components/select/default-select';
-import { LIST_ASSETS_COLUMNS } from './columns/list-assets-columns';
+import { LIST_ASSETS_COLUMNS_GOODFINDER } from './columns/list-assets-columns';
 import { OpenPhotosComponent } from './open-photos/open-photos.component';
 import { UploadFileComponent } from './upload-file/upload-file.component';
 
@@ -28,7 +28,7 @@ import { UploadFileComponent } from './upload-file/upload-file.component';
 export class PhotosAssetsComponent extends BasePage implements OnInit {
   parentRef: BsModalRef;
   showSearchFilter: boolean = true;
-  filterForm: ModelForm<any>;
+  filterForm: FormGroup = new FormGroup({});
   typeGoods = new DefaultSelect<IWarehouse>();
 
   paragraphs: any[] = [];
@@ -38,7 +38,7 @@ export class PhotosAssetsComponent extends BasePage implements OnInit {
   idRequest: number = 0;
   idGood: number = 0;
   idWarehouse: number = 0;
-  columns = LIST_ASSETS_COLUMNS;
+  columns = LIST_ASSETS_COLUMNS_GOODFINDER;
   formLoading: boolean = false;
   allDataGood: IGood[] = [];
   task: any;
@@ -50,7 +50,8 @@ export class PhotosAssetsComponent extends BasePage implements OnInit {
     private activatedRoute: ActivatedRoute,
     private typeRelevantService: TypeRelevantService,
     private requestservice: RequestService,
-    private showHideErrorInterceptorService: showHideErrorInterceptorService
+    private showHideErrorInterceptorService: showHideErrorInterceptorService,
+    private readonly goodFinderService: GoodFinderService
   ) {
     super();
     this.idRequest = this.activatedRoute.snapshot.paramMap.get(
@@ -84,12 +85,15 @@ export class PhotosAssetsComponent extends BasePage implements OnInit {
       },
 
       selectMode: '',
-      columns: LIST_ASSETS_COLUMNS,
+      columns: LIST_ASSETS_COLUMNS_GOODFINDER,
     };
     this.getInfoRequest();
     this.initFilterForm();
-    this.getTypeRelevant(new ListParams());
-    this.getGoodsRequest();
+    //this.getTypeRelevant(new ListParams());
+
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getGoodsRequest());
   }
 
   getInfoRequest() {
@@ -101,16 +105,18 @@ export class PhotosAssetsComponent extends BasePage implements OnInit {
   }
 
   getGoodsRequest() {
+    this.loading = true;
     if (this.idRequest) {
       this.params.getValue()['filter.requestId'] = this.idRequest;
-      this.goodService.getAll(this.params.getValue()).subscribe({
+      this.goodFinderService.goodFinder(this.params.getValue()).subscribe({
         next: async (data: any) => {
+          console.log('Fotos de bienes, data: ', data);
           const filterGoodType = data.data.map(async (item: any) => {
-            const goodType = await this.getGoodType(item.goodTypeId);
-            item['goodTypeId'] = goodType;
+            //const goodType = await this.getGoodType(item.goodTypeId);
+            //item['goodTypeId'] = goodType;
             item['requestId'] = this.idRequest;
 
-            if (item['physicalStatus'] == 1) item['physicalStatus'] = 'BUENO';
+            /*if (item['physicalStatus'] == 1) item['physicalStatus'] = 'BUENO';
             if (item['physicalStatus'] == 2) item['physicalStatus'] = 'MALO';
             if (item['stateConservation'] == 1)
               item['stateConservation'] = 'BUENO';
@@ -119,16 +125,19 @@ export class PhotosAssetsComponent extends BasePage implements OnInit {
             if (item['destiny'] == 1) item['destiny'] = 'VENTA';
 
             const fraction = item['fractionId'];
-            item['fractionId'] = fraction?.description;
+            item['fractionId'] = fraction?.description;*/
           });
 
           Promise.all(filterGoodType).then(x => {
             this.paragraphs = data.data;
             this.allDataGood = this.paragraphs;
             this.totalItems = data.count;
+            this.loading = false;
           });
         },
-        error: error => {},
+        error: error => {
+          this.loading = false;
+        },
       });
     } else {
     }

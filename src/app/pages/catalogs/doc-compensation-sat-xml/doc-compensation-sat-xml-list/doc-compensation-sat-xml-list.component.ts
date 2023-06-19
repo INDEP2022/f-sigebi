@@ -29,6 +29,8 @@ export class DocCompensationSatXmlListComponent
     super();
     this.settings.columns = COMPENSATION_COLUMNS;
     this.settings.actions.delete = true;
+    this.settings.actions.add = false;
+    this.settings.hideSubHeader = false;
   }
 
   ngOnInit(): void {
@@ -63,15 +65,32 @@ export class DocCompensationSatXmlListComponent
     this.modalService.show(DocCompensationSatXmlFormComponent, config);
   }
 
-  delete(compensationSatXml: IDocCompensationSatXml) {
+  showDeleteAlert(compensationSatXml: IDocCompensationSatXml) {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
+        this.delete(compensationSatXml.id);
       }
+    });
+  }
+
+  delete(id: number) {
+    this.docConpensation.remove(id).subscribe({
+      next: response => {
+        this.alert('success', 'Documento Resarcimiento Xml', 'Borrado'),
+          this.getExample();
+      },
+      error: err => {
+        this.alert(
+          'warning',
+          'Documento Resarcimiento Xml',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      },
     });
   }
 }
