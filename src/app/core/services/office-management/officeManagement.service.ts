@@ -4,6 +4,7 @@ import { HttpService } from 'src/app/common/services/http.service';
 import { Observable } from 'rxjs';
 import { OfficeManagementEndpoint } from 'src/app/common/constants/endpoints/office-management-endpoint';
 import { IListResponse } from '../../interfaces/list-response.interface';
+import { IMJobManagementExtSSF3 } from '../../models/ms-officemanagement/m-job-management.model';
 
 @Injectable({
   providedIn: 'root',
@@ -50,5 +51,9 @@ export class OfficeManagementService extends HttpService {
   deleteJobGestion(body: any): Observable<any> {
     const route = OfficeManagementEndpoint.DeleteJobGestion;
     return this.post(`${route}`, body);
+  }
+
+  createMJobManagementExtSSF3(body: IMJobManagementExtSSF3) {
+    return this.post(OfficeManagementEndpoint.MJobManagementExtSSF3, body);
   }
 }

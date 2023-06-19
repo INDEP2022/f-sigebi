@@ -14,7 +14,7 @@ import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 })
 export class TypeDoctoFormComponent extends BasePage implements OnInit {
   typeDoctoForm: ModelForm<ITypeDocto>;
-  title: string = 'Tipo Docto';
+  title: string = 'Siniestro';
   edit: boolean = false;
   typeDocto: ITypeDocto;
   constructor(
