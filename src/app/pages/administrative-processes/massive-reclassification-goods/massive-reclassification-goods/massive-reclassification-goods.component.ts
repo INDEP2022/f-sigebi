@@ -161,8 +161,8 @@ export class MassiveReclassificationGoodsComponent
     // }))
   }
 
-  goGoodRastrer() { }
 
+  goGoodRastrer() { }
   // get disabled() {
   //   return (
   //     this.selectedGooods.length === 0 ||

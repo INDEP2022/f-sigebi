@@ -32,6 +32,7 @@ import { MassiveReclassificationGoodsService } from '../services/massive-reclass
 export class GoodsListComponent
   extends BasePageWidhtDinamicFiltersExtra<IGood>
   implements OnInit {
+
   constructor(
     private massiveService: MassiveReclassificationGoodsService,
     private procedureManagement: ProcedureManagementService,
