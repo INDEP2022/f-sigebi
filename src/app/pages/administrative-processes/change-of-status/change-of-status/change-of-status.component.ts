@@ -105,7 +105,7 @@ export class ChangeOfStatusComponent extends BasePage implements OnInit {
   }
   private buildFormNew() {
     this.formNew = this.fb.group({
-      goodStatus: [null, [Validators.required]],
+      goodStatus: [null],
       dateStatus: [null],
       extDomProcess: [null, [Validators.pattern(STRING_PATTERN)]],
       issuingUser: [null, [Validators.pattern(STRING_PATTERN)]],
