@@ -7,20 +7,22 @@
       <div class="row">
         <div class="col-md-2 col-sm-12 col-xs-12">
           <div class="col-md-full col-sm-12 col-xs-12">
-            Modo
+            Modo <span class="txt-primary">*</span>
             <form-radio label="Excluir">
               <input
                 type="radio"
                 formControlName="mode"
                 value="E"
-                (click)="formEnable()" />
+                (click)="formEnable()"
+                required />
             </form-radio>
             <form-radio label="Incluir">
               <input
                 type="radio"
                 formControlName="mode"
                 value="I"
-                (click)="formEnable()" />
+                (click)="formEnable()"
+                required />
             </form-radio>
           </div>
         </div>
@@ -59,12 +61,18 @@
               <div class="d-flex justify-content-center">
                 <div class="m-3">
                   <button
+                    type="button"
+                    class="btn btn-danger btn-sm active"
+                    (click)="clearFilter()">
+                    Limpiar
+                  </button>
+                  <!-- <button
                     [disabled]="true"
                     type="button"
                     class="btn btn-primary btn-sm active"
                     (click)="goGoodRastrer()">
                     Rastrear bienes
-                  </button>
+                  </button> -->
                 </div>
               </div>
             </div>
@@ -103,7 +111,7 @@
           <div class="d-flex justify-content-center">
             <div class="m-3">
               <button
-                [disabled]="selectedGooods.length === 0 || form.invalid"
+                [disabled]="disabledReclas()"
                 type="button"
                 class="btn btn-primary active"
                 (click)="openQuestion()">
