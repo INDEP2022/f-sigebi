@@ -8,11 +8,6 @@ export const GOOD_SSSUBTYPE_COLUMNS = {
     type: 'number',
     sort: false,
   },
-  description: {
-    title: 'Descripción',
-    type: 'string',
-    sort: false,
-  },
   numType: {
     title: 'Tipo bien',
     type: 'string',
@@ -20,6 +15,11 @@ export const GOOD_SSSUBTYPE_COLUMNS = {
     valuePrepareFunction: (value: IGoodType) => {
       return value.nameGoodType;
     },
+  },
+  description: {
+    title: 'Descripción',
+    type: 'string',
+    sort: false,
   },
   numSubType: {
     title: 'Subtipo bien',
@@ -38,17 +38,17 @@ export const GOOD_SSSUBTYPE_COLUMNS = {
     },
   },
   numClasifGoods: {
-    title: 'N. Clasif Bien',
+    title: 'No. Clasif Bien',
     type: 'number',
     sort: false,
   },
   numClasifAlterna: {
-    title: 'N. Clasif alterna',
+    title: 'No. Clasif alterna',
     type: 'number',
     sort: false,
   },
   numRegister: {
-    title: 'N. registro',
+    title: 'No. Registro',
     type: 'number',
     sort: false,
   },
