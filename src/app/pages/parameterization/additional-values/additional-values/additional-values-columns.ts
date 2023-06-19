@@ -18,15 +18,15 @@ export const TVALTABLA5_COLUMNS = {
     sort: false,
   },
   otKey3: {
-    title: 'Clave',
+    title: 'Clave 3',
     sort: false,
   },
   otKey4: {
-    title: 'Clave',
+    title: 'Clave 4',
     sort: false,
   },
   otKey5: {
-    title: 'Clave',
+    title: 'Clave 5',
     sort: false,
   },
   otValue01: {
@@ -65,8 +65,8 @@ export const TVALTABLA5_COLUMNS = {
     title: 'Atributo 9',
     sort: false,
   },
-  e10: {
-    title: 'Atributo',
+  otValue10: {
+    title: 'Atributo 10',
     sort: false,
   },
   otValue11: {

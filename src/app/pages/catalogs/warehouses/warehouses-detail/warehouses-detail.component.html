@@ -51,7 +51,7 @@
               bindLabel="nameCity"
               label="Ciudad"
               value="idCity"
-              (fetchItems)="getCities($event)"
+              (fetchItems)="getCitiesParams($event)"
               (change)="getMunicipalitie($event)"
               control="cityCode"></ngx-select>
           </form-field>
@@ -64,7 +64,7 @@
               bindLabel="description"
               label="Municipio"
               value="idMunicipality"
-              (fetchItems)="getMunicipalities($event)"
+              (fetchItems)="getMunicipalitiesParams($event)"
               (change)="getLocalitie($event)"
               control="municipalityCode"></ngx-select>
           </form-field>
