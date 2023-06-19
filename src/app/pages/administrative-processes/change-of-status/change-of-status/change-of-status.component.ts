@@ -208,9 +208,7 @@ export class ChangeOfStatusComponent extends BasePage implements OnInit {
         }
       }
     )
-    
-
-    
+  
   }
 
   postHistoryGood() {

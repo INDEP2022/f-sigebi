@@ -6,8 +6,12 @@ import {
 } from 'src/app/common/constants/endpoints/ms-proceduremanagement-endpoints';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
-import { IListResponse } from '../../interfaces/list-response.interface';
 import {
+  IListResponse,
+  IListResponseMessage,
+} from '../../interfaces/list-response.interface';
+import {
+  IAreaTramite,
   IManagamentProcessPgr,
   IManagamentProcessSat,
   IManagementArea,
@@ -27,6 +31,13 @@ export class ProcedureManagementService extends HttpService {
   getAll(params?: ListParams): Observable<IListResponse<IProceduremanagement>> {
     return this.get<IListResponse<IProceduremanagement>>(
       ProcedureManagementEndPoints.ProcedureManagement,
+      params
+    );
+  }
+
+  getAreaTramite(params: string | ListParams = new ListParams()) {
+    return this.get<IListResponseMessage<IAreaTramite>>(
+      ProcedureManagementEndPoints.AreaTramite,
       params
     );
   }
