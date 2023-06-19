@@ -458,6 +458,7 @@
               <ng2-smart-table
                 id="bienesJuridicos"
                 (rowSelect)="onSelectedRow($event)"
+                (userRowSelect)="onSelectedRow2($event)"
                 [attr.class]="'table-bordered table-responsive'"
                 [settings]="settings1"
                 [source]="goods"></ng2-smart-table>

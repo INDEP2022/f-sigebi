@@ -113,7 +113,6 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
         this.searchGoods(this.expedient.id);
       },
       error: err => {
-        console.log(err);
         this.onLoadToast('error', 'ERROR', 'No existe el registro');
       },
     });
