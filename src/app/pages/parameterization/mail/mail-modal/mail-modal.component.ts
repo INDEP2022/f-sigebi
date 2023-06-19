@@ -23,7 +23,7 @@ export class MailModalComponent extends BasePage implements OnInit {
   segUsers: ISegUsers;
   delegationNumber: IUserAccessAreas;
 
-  title: string = 'Mtto. Correo';
+  title: string = 'Mantenimiento de correo';
   edit: boolean = false;
 
   constructor(
@@ -40,42 +40,127 @@ export class MailModalComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.form = this.fb.group({
-      id: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      name: [null, [Validators.pattern(STRING_PATTERN)]],
-      rfc: [null, [Validators.pattern(STRING_PATTERN)]],
-      curp: [null, [Validators.pattern(STRING_PATTERN)]],
-      street: [null, [Validators.pattern(STRING_PATTERN)]],
-      insideNumber: [null, [Validators.pattern(STRING_PATTERN)]],
-      suburb: [null, [Validators.pattern(STRING_PATTERN)]],
-      zipCode: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      phone: [null, [Validators.pattern(STRING_PATTERN)]],
-      profession: [null, [Validators.pattern(STRING_PATTERN)]],
-      positionKey: [null, [Validators.pattern(STRING_PATTERN)]],
+      id: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(30),
+          Validators.pattern(STRING_PATTERN),
+        ],
+      ],
+      name: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(100),
+          Validators.pattern(STRING_PATTERN),
+        ],
+      ],
+      rfc: [
+        null,
+        [Validators.maxLength(13), Validators.pattern(STRING_PATTERN)],
+      ],
+      curp: [
+        null,
+        [Validators.maxLength(20), Validators.pattern(STRING_PATTERN)],
+      ],
+      street: [
+        null,
+        [Validators.maxLength(30), Validators.pattern(STRING_PATTERN)],
+      ],
+      insideNumber: [
+        null,
+        [Validators.maxLength(10), Validators.pattern(STRING_PATTERN)],
+      ],
+      suburb: [
+        null,
+        [Validators.maxLength(60), Validators.pattern(STRING_PATTERN)],
+      ],
+      zipCode: [
+        null,
+        [Validators.maxLength(5), Validators.pattern(NUMBERS_PATTERN)],
+      ],
+      phone: [
+        null,
+        [Validators.maxLength(20), Validators.pattern(STRING_PATTERN)],
+      ],
+      profession: [
+        null,
+        [Validators.maxLength(60), Validators.pattern(STRING_PATTERN)],
+      ],
+      positionKey: [
+        null,
+        [Validators.maxLength(15), Validators.pattern(STRING_PATTERN)],
+      ],
       firstTimeLoginDate: [null, [Validators.pattern(STRING_PATTERN)]],
-      daysValidityPass: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      daysValidityPass: [
+        null,
+        [Validators.maxLength(4), Validators.pattern(NUMBERS_PATTERN)],
+      ],
       passLastChangeDate: [null, [Validators.pattern(STRING_PATTERN)]],
-      passUpdate: [null, [Validators.pattern(STRING_PATTERN)]],
+      passUpdate: [
+        null,
+        [Validators.maxLength(1), Validators.pattern(STRING_PATTERN)],
+      ],
       // registryNumber: [null, []],
-      email: [null, [Validators.pattern(EMAIL_PATTERN)]],
-      userSirsae: [null, [Validators.pattern(STRING_PATTERN)]],
-      sendEmail: [null, [Validators.pattern(STRING_PATTERN)]],
-      attribAsign: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      clkdetSirsae: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      exchangeAlias: [null, [Validators.pattern(STRING_PATTERN)]],
-      clkdet: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      clkid: [null, [Validators.pattern(STRING_PATTERN)]],
-      profileMimKey: [null, [Validators.pattern(STRING_PATTERN)]],
-      nameAd: [null, [Validators.pattern(STRING_PATTERN)]],
-      posPrevKey: [null, [Validators.pattern(STRING_PATTERN)]],
+      email: [
+        null,
+        [Validators.maxLength(50), Validators.pattern(EMAIL_PATTERN)],
+      ],
+      userSirsae: [
+        null,
+        [
+          Validators.maxLength(30),
+          Validators.required,
+          Validators.maxLength(30),
+          Validators.pattern(STRING_PATTERN),
+        ],
+      ],
+      sendEmail: [
+        null,
+        [Validators.maxLength(10), Validators.pattern(NUMBERS_PATTERN)],
+      ],
+      attribAsign: [
+        null,
+        [Validators.maxLength(10), Validators.pattern(NUMBERS_PATTERN)],
+      ],
+      clkdetSirsae: [
+        null,
+        [Validators.maxLength(10), Validators.pattern(NUMBERS_PATTERN)],
+      ],
+      exchangeAlias: [
+        null,
+        [Validators.maxLength(100), Validators.pattern(STRING_PATTERN)],
+      ],
+      clkdet: [
+        null,
+        [Validators.maxLength(10), Validators.pattern(NUMBERS_PATTERN)],
+      ],
+      clkid: [
+        null,
+        [Validators.maxLength(20), Validators.pattern(STRING_PATTERN)],
+      ],
+      profileMimKey: [
+        null,
+        [Validators.maxLength(30), Validators.pattern(STRING_PATTERN)],
+      ],
+      nameAd: [
+        null,
+        [Validators.maxLength(100), Validators.pattern(STRING_PATTERN)],
+      ],
+      posPrevKey: [
+        null,
+        [Validators.maxLength(15), Validators.pattern(STRING_PATTERN)],
+      ],
     });
     if (this.segUsers != null) {
       this.delegationNumber = this.segUsers.usuario as IUserAccessAreas;
       this.edit = true;
       console.log(this.segUsers);
       this.form.patchValue(this.segUsers);
-      this.form.controls['usuario'].setValue(
+      /*this.form.controls['usuario'].setValue(
         this.delegationNumber.delegationNumber
-      );
+      );*/
     }
   }
 
@@ -107,7 +192,7 @@ export class MailModalComponent extends BasePage implements OnInit {
     const message: string = this.edit ? 'Actualizada' : 'Guardada';
     this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
-    // this.modalRef.content.callback(true);
+    this.modalRef.content.callback(true);
     this.modalRef.hide();
   }
 }

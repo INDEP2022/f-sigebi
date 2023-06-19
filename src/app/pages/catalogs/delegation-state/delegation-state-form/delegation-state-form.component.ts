@@ -72,6 +72,9 @@ export class DelegationStateFormComponent extends BasePage implements OnInit {
         this.delegationSate.stateCode.codeCondition
       );
 
+      this.delegationStateForm.controls['regionalDelegation'].disable();
+      this.delegationStateForm.controls['stateCode'].disable();
+
       this.getStates(
         new ListParams(),
         this.delegationStateForm.controls['keyState'].value
@@ -157,6 +160,14 @@ export class DelegationStateFormComponent extends BasePage implements OnInit {
 
   update() {
     this.loading = true;
+    const regId = this.delegationStateForm.controls['regionalDelegation'].value;
+    const version = this.delegationStateForm.controls['version'].value;
+    const keyState = this.delegationStateForm.controls['keyState'].value;
+    this.delegationStateForm.controls['regionalDelegation'].setValue(
+      parseInt(regId)
+    );
+    this.delegationStateForm.controls['version'].setValue(parseInt(version));
+    this.delegationStateForm.controls['keyState'].setValue(parseInt(keyState));
     this.delegationStateService
       .newUpdate(
         // this.delegationSate.regionalDelegation,

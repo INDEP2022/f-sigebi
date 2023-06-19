@@ -18,6 +18,7 @@ import { PHOTOS_TABLE_COLUMNS } from '../columns/photos-table-columns';
 export class OpenPhotosComponent extends BasePage implements OnInit {
   paragraphs: LocalDataSource = new LocalDataSource();
   information: any;
+  request: boolean = true;
   columns = PHOTOS_TABLE_COLUMNS;
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
@@ -36,9 +37,11 @@ export class OpenPhotosComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     // DISABLED BUTTON - FINALIZED //
-    this.task = JSON.parse(localStorage.getItem('Task'));
-    this.statusTask = this.task.status;
-    console.log('statustask', this.statusTask);
+    if (this.request) {
+      this.task = JSON.parse(localStorage.getItem('Task'));
+      this.statusTask = this.task.status;
+      console.log('statustask', this.statusTask);
+    }
 
     this.settings = {
       ...TABLE_SETTINGS,

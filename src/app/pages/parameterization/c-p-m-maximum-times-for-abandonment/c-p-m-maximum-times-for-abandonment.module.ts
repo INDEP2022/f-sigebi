@@ -10,10 +10,12 @@ import { GetpickFormComponent } from './components/getpick-form/getpick-form.com
 import { ManifestFormComponent } from './components/manifest-form/manifest-form.component';
 import { FielSetUncollectedComponent } from './fiel-set-uncollected/fiel-set-uncollected.component';
 import { FielSetUnstatedComponent } from './fiel-set-unstated/fiel-set-unstated.component';
+import { ModalCPMtaCMaximumTimesForAbandonmentComponent } from './c-p-mta-c-maximum-times-for-abandonment/modal-c-p-mta-c-maximum-times-for-abandonment/modal-c-p-mta-c-maximum-times-for-abandonment';
 
 @NgModule({
   declarations: [
     CPMtaCMaximumTimesForAbandonmentComponent,
+    ModalCPMtaCMaximumTimesForAbandonmentComponent,
     FielSetUnstatedComponent,
     FielSetUncollectedComponent,
     ManifestFormComponent,

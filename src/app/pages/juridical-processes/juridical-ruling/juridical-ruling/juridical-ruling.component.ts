@@ -377,7 +377,8 @@ export class JuridicalRulingComponent
     private oficialDictationService: OficialDictationService,
     private documentsMServ: DocumentsDictumStatetMService,
     private DictationXGood1Service: DictationXGood1Service,
-    private datePipe: DatePipe
+    private datePipe: DatePipe,
+    private userDetail: UsersService
   ) {
     super();
     this.oficioDictamen = {
@@ -1559,19 +1560,22 @@ export class JuridicalRulingComponent
             const typeSteeringwheel = this.variablesForm.get('tipo_vol').value;
             const numberClassifyGood = this.variablesForm.get('clasif2').value;
             const dateValid = this.legalForm.get('fechaPPFF').value;
+            const documenst = this.documents;
             let config: ModalOptions = {
               initialState: {
                 typeDictation,
                 typeSteeringwheel,
                 numberClassifyGood,
                 dateValid,
+                documenst,
                 callback: (next: any[]) => {
                   if (!this.dictNumber) {
                     this.buttonAprove = true;
                     this.buttonRefuse = false;
                   }
-                  const concatenatedArray = this.documents.concat(next);
-                  this.documents = concatenatedArray;
+                  //const concatenatedArray = this.documents.concat(next);
+                  this.documents = next;
+                  console.log(this.documents);
                 },
               },
               class: 'modal-lg modal-dialog-centered',
@@ -1900,6 +1904,8 @@ export class JuridicalRulingComponent
     const day = String(today.getDate()).padStart(2, '0');
     const year = today.getFullYear();
     const user = this.authService.decodeToken();
+    const details = await this.getDetailsUser(user.username.toUpperCase());
+
     return new Promise((resolve, reject) => {
       const {
         tipoDictaminacion,
@@ -1922,8 +1928,8 @@ export class JuridicalRulingComponent
         dictDate: new Date(),
         userDict: user.username.toUpperCase(),
         observations: observations,
-        delegationDictNumber: Number(user.department),
-        areaDict: '',
+        delegationDictNumber: Number(details.delegationNumber),
+        areaDict: details.departamentNumber,
         instructorDate: fechaPPFF,
         registerNumber: '',
         esDelit: esPropiedad ? 'S' : 'N',
@@ -1962,6 +1968,25 @@ export class JuridicalRulingComponent
         },
         error: () => {
           resolve(true);
+        },
+      });
+    });
+  }
+
+  async getDetailsUser(userId: string) {
+    return new Promise<any>((resolve, reject) => {
+      const params = new FilterParams();
+      params.removeAllFilters();
+      params.addFilter(
+        'user',
+        userId == 'SIGEBIADMON' ? userId.toLocaleLowerCase() : userId
+      );
+      this.userDetail.getInfoUserLogued(params.getParams()).subscribe({
+        next: resp => {
+          resolve(resp.data[0]);
+        },
+        error: () => {
+          resolve(null);
         },
       });
     });
@@ -2685,10 +2710,10 @@ export class JuridicalRulingComponent
         this.legalForm
           .get('preliminaryInquiry')
           .setValue(response.preliminaryInquiry);
+
+        this.onLoadGoodList();
       },
     });
-
-    this.onLoadGoodList();
   }
 
   async getUpdateAndDeleteHisto(goodId: number, estatus: string) {

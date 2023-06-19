@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { AccountMovementService } from 'src/app/core/services/ms-account-movements/account-movement.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 
 @Component({
@@ -11,7 +14,12 @@ export class IncomePerAssetComponent extends BasePage implements OnInit {
   depositList: any[] = [];
   assetSettings = { ...this.settings };
   depositSettings = { ...this.settings };
-  constructor() {
+  assetParams = new BehaviorSubject<ListParams>(new ListParams());
+  depositParams = new BehaviorSubject<ListParams>(new ListParams());
+  assetTotalItems: number = 0;
+  depositTotalItems: number = 0;
+
+  constructor(private readonly accountmvmntServices: AccountMovementService) {
     super();
     this.assetSettings.columns = {
       bank: {

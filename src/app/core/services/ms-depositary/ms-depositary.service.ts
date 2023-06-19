@@ -6,6 +6,7 @@ import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import {
   IAppointmentDepositary,
+  IDepositaryAppointments,
   IPaymendtDepParamsDep,
   IPersonsModDepositary,
   IRequestDepositary,
@@ -43,6 +44,15 @@ export class MsDepositaryService extends HttpService {
   ): Observable<IListResponse<IRequestDepositary>> {
     return this.get<IListResponse<IRequestDepositary>>(
       DepositaryEndPoints.DepositaryRequest,
+      params
+    );
+  }
+
+  getAppointments(
+    params?: ListParams
+  ): Observable<IListResponse<IDepositaryAppointments>> {
+    return this.get<IListResponse<IDepositaryAppointments>>(
+      DepositaryEndPoints.DepositaryAppointments,
       params
     );
   }
