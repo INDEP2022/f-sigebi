@@ -170,7 +170,7 @@ export class CityDetailComponent extends BasePage implements OnInit {
       this.edit = true;
       this.idState = this.city.state as IState;
       this.cityForm.patchValue(formCity);
-      this.getSubDelegations(new ListParams(), formCity.subDelegation.id);
+      //this.getSubDelegations(new ListParams(), formCity.subDelegation.id);
     }
   }
 
@@ -188,7 +188,6 @@ export class CityDetailComponent extends BasePage implements OnInit {
         value: newCity.noSubDelegation.id,
       },
     });
-
     this.edit ? this.update(newCity) : this.create(newCity);
   }
 

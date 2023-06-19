@@ -31,8 +31,8 @@ import { MassiveReclassificationGoodsService } from '../services/massive-reclass
 })
 export class GoodsListComponent
   extends BasePageWidhtDinamicFiltersExtra<IGood>
-  implements OnInit
-{
+  implements OnInit {
+
   constructor(
     private massiveService: MassiveReclassificationGoodsService,
     private procedureManagement: ProcedureManagementService,
@@ -98,11 +98,6 @@ export class GoodsListComponent
   goodSelectedChange(good: IGood, selected: boolean) {
     if (selected) {
       this.selectedGooods.push(good);
-      console.log(
-        this.selectedGooods.length === 0,
-        this.form.valid,
-        this.selectedGooods.length === 0 || this.form.invalid
-      );
     } else {
       this.selectedGooods = this.selectedGooods.filter(
         _good => _good.id != good.id
@@ -139,8 +134,7 @@ export class GoodsListComponent
         takeUntil(this.$unSubscribe)
       )
       .subscribe(x => {
-        console.log(x);
-        if (this.totalItems > 0 && x !== null && x + ''.trim() !== '') {
+        if (this.totalItems > 0) {
           this.getData();
         }
       });
@@ -155,17 +149,14 @@ export class GoodsListComponent
     this.loading = true;
     console.log(this.classificationOfGoods.value);
     const filterParams = new FilterParams();
-    if (
-      this.classificationOfGoods.value &&
-      (this.classificationOfGoods.value + '').trim() !== ''
-    ) {
+    if (this.classificationOfGoods.value) {
       filterParams.addFilter(
         'goodClassNumber',
         this.classificationOfGoods.value,
         this.mode.value === 'E' ? SearchFilter.NOTIN : SearchFilter.EQ
       );
     }
-    if (this.goodStatus.value && (this.goodStatus.value + '').trim() !== '') {
+    if (this.goodStatus.value) {
       filterParams.addFilter(
         'status',
         String(this.goodStatus.value.map((item: any) => item.status)),
@@ -203,11 +194,11 @@ export class GoodsListComponent
               filterParams.addFilter('typeManagement', 2);
               filterParams.addFilter2(
                 'filter.expedient=' +
-                  (good.fileNumber ? '$eq:' + good.fileNumber : '$null')
+                (good.fileNumber ? '$eq:' + good.fileNumber : '$null')
               );
               filterParams.addFilter2(
                 'filter.flierNumber=' +
-                  (good.flyerNumber ? '$eq:' + good.flyerNumber : '$null')
+                (good.flyerNumber ? '$eq:' + good.flyerNumber : '$null')
               );
               return this.procedureManagement
                 .getAllFiltered(filterParams.getParams())

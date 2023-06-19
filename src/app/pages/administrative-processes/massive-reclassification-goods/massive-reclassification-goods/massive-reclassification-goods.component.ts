@@ -13,8 +13,7 @@ import { MassiveReclassificationGoodsService } from '../services/massive-reclass
 })
 export class MassiveReclassificationGoodsComponent
   extends BasePage
-  implements OnInit
-{
+  implements OnInit {
   // listGood: IGood[] = [];
   goodNotValid: IGood[] = [];
   origin: string = null;
@@ -162,8 +161,8 @@ export class MassiveReclassificationGoodsComponent
     // }))
   }
 
-  goGoodRastrer() {}
 
+  goGoodRastrer() { }
   // get disabled() {
   //   return (
   //     this.selectedGooods.length === 0 ||

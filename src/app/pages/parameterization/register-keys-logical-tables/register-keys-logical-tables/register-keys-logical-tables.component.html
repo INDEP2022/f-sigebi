@@ -75,7 +75,7 @@
             <button
               (click)="openForm2()"
               class="btn btn-primary active btn-sm ml-3"
-              *ngIf="form.get('tableType').value == 1">
+              *ngIf="form.get('tableType').value == 1 && countTable == 0">
               Nuevo
             </button>
           </div>
@@ -103,7 +103,7 @@
               <button
                 (click)="openForm()"
                 class="btn btn-primary active btn-sm ml-3"
-                *ngIf="form.get('tableType').value == 5">
+                *ngIf="form.get('tableType').value == 5 && countTable == 0">
                 Nuevo
               </button>
             </div>

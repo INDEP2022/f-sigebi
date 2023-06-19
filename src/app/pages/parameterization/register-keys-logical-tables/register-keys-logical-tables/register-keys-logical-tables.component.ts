@@ -74,6 +74,10 @@ export class RegisterKeysLogicalTablesComponent
 
   showTables: boolean = true;
 
+  idSelectTable: string;
+
+  countTable: number = 0;
+
   constructor(
     private modalService: BsModalService,
     private fb: FormBuilder,
@@ -220,6 +224,7 @@ export class RegisterKeysLogicalTablesComponent
 
   //Evento cuando se selecciona un item del select
   onValuesChange(tablesChange: ITable) {
+    this.idSelectTable = tablesChange.table;
     this.form.controls['description'].setValue(tablesChange.description);
     this.form.controls['tableType'].setValue(tablesChange.tableType);
     this.form.controls['table'].setValue(tablesChange.table);
@@ -260,6 +265,8 @@ export class RegisterKeysLogicalTablesComponent
 
   //Trae descripción de claves por tabla seleccionada
   getKeys(id?: string | number): void {
+    this.tdescCve = [];
+    this.countTable = 0;
     let _id = this.form.controls['table'].value;
     this.loading2 = true;
     this.tdescCveService
@@ -275,6 +282,7 @@ export class RegisterKeysLogicalTablesComponent
       .subscribe({
         next: response => {
           this.tdescCve = response.data;
+          this.countTable = response.count;
           this.totalItems2 = response.count;
           this.loading2 = false;
         },
@@ -285,10 +293,12 @@ export class RegisterKeysLogicalTablesComponent
   //Para editar la descripción de atributos con 5 clave
   openForm(tdescCve?: ITdescCve) {
     const idCve = { ...this.descriptionCve };
+    const selectTabla = this.idSelectTable;
     const modalConfig = MODAL_CONFIG;
     modalConfig.initialState = {
       tdescCve,
       idCve,
+      selectTabla,
       callback: (next: boolean) => {
         if (next) this.getKeys(idCve.table);
       },
@@ -302,10 +312,12 @@ export class RegisterKeysLogicalTablesComponent
   //Para editar la descripción de atributos con 1 clave
   openForm2(tdescCve?: ITdescCve) {
     const idCve = { ...this.descriptionCve };
+    const selectTabla = this.idSelectTable;
     const modalConfig = MODAL_CONFIG;
     modalConfig.initialState = {
       tdescCve,
       idCve,
+      selectTabla,
       callback: (next: boolean) => {
         if (next) this.getKeys(idCve.table);
       },
