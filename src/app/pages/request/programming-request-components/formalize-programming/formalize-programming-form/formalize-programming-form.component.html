@@ -18,7 +18,7 @@
               >Delegaci&oacute;n regional&#58;</label
             >
             <span class="fs-4">
-              {{ programming?.regionalDelegationNumber }}
+              {{ programming?.regionalDelegationName }}
             </span>
           </div>
         </div>
@@ -40,7 +40,7 @@
         <div class="col-md-4">
           <div class="form-group">
             <label class="text-right mr-2">Transferente&#58;</label>
-            <span class="fs-4"> {{ nameTransferent }} </span>
+            <span class="fs-4"> {{ transferentName }} </span>
           </div>
         </div>
         <div class="col-md-4">
@@ -61,7 +61,7 @@
         <div class="col-md-4">
           <div class="form-group">
             <label class="text-right mr-2">Emisora&#58;</label>
-            <span class="fs-4"> {{ nameStation }} </span>
+            <span class="fs-4"> {{ stationName }} </span>
           </div>
         </div>
         <div class="col-md-8">
@@ -135,7 +135,7 @@
       <ng2-smart-table
         [attr.class]="'table-bordered'"
         [settings]="settingsMinutes"
-        [source]="minutes"
+        [source]="receipts"
         (edit)="generateMinute()">
       </ng2-smart-table>
     </div>
@@ -164,7 +164,7 @@
                     <ng2-smart-table
                       [attr.class]="'table-bordered'"
                       [settings]="settingsTranGoods"
-                      [source]="receiptGuards">
+                      [source]="">
                     </ng2-smart-table>
                   </div>
                 </div>
@@ -188,7 +188,7 @@
                     <ng2-smart-table
                       [attr.class]="'table-bordered'"
                       [settings]="settingsTranGoods"
-                      [source]="goodsGuard">
+                      [source]="">
                     </ng2-smart-table>
                   </div>
                 </div>
@@ -198,7 +198,7 @@
                 <ng2-smart-table
                   [attr.class]="'table-bordered'"
                   [settings]="settingsReceiptsGuards"
-                  [source]="receiptGuards"
+                  [source]=""
                   (edit)="showGoodsReceipt($event.data)"
                   (delete)="generateReceiptGuard($event.data)">
                 </ng2-smart-table>
@@ -221,7 +221,7 @@
                     <ng2-smart-table
                       [attr.class]="'table-bordered'"
                       [settings]="settingsTranGoods"
-                      [source]="goodsWareh">
+                      [source]="">
                     </ng2-smart-table>
                   </div>
                 </div>
@@ -243,7 +243,7 @@
                   <ng2-smart-table
                     [attr.class]="'table-bordered'"
                     [settings]="settingsTranGoods"
-                    [source]="goodsRepro">
+                    [source]="">
                   </ng2-smart-table>
                 </div>
               </div>
@@ -264,7 +264,7 @@
                   <ng2-smart-table
                     [attr.class]="'table-bordered'"
                     [settings]="settingsTranGoods"
-                    [source]="goodsSelect">
+                    [source]="">
                   </ng2-smart-table>
                 </div>
               </div>
@@ -273,7 +273,7 @@
               <ng2-smart-table
                 [attr.class]="'table-bordered'"
                 [settings]="settingsReceiptsGuards"
-                [source]="receiptGuards">
+                [source]="">
               </ng2-smart-table>
             </div>
           </tab>
