@@ -111,6 +111,7 @@
                   </ng-template> -->
                   <app-goods-types-shared
                     [form]="form"
+                    [(loadTypes)]="loadTypes"
                     typeField="type"
                     subtypeField="subtype"
                     ssubtypeField="ssubtype"
@@ -158,8 +159,25 @@
                         formControlName="status" />
                     </form-field>
                   </div>
-                  <div class="row pt-3" style="margin: auto">
-                    <div class="col-6 p-0">
+                  <div class="row pt-3 buttons" style="margin: auto">
+                    <button
+                      [disabled]="formLoading"
+                      class="btn btn-primary btn-sm active"
+                      type="button"
+                      (click)="searchGood()">
+                      Buscar
+                      <i class="bx bx-search-alt bx-sm float-icon"></i>
+                    </button>
+                    <button
+                      [disabled]="formLoading"
+                      class="btn btn-danger btn-sm active"
+                      type="button"
+                      (click)="clearFilter()">
+                      Limpiar
+                      <i class="fa fa-eraser"></i>
+                    </button>
+
+                    <!-- <div class="col-6 p-0">
                       <button
                         [disabled]="formLoading"
                         class="btn btn-danger btn-sm active"
@@ -169,15 +187,8 @@
                       </button>
                     </div>
                     <div class="col-6 p-0" style="text-align: right">
-                      <button
-                        [disabled]="formLoading"
-                        class="btn btn-primary btn-sm active"
-                        type="button"
-                        (click)="searchGood()">
-                        Buscar
-                        <!-- <i class="bx bx-search-alt-2"></i> -->
-                      </button>
-                    </div>
+
+                    </div> -->
                   </div>
                 </div>
               </div>
