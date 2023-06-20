@@ -1,3 +1,5 @@
+import { DatePipe } from '@angular/common';
+
 export const EMAIL_COLUMNS = {
   // cveScreen: {
   //   title: 'cve Pantalla',
@@ -67,6 +69,11 @@ export const EMAIL_COLUMNS = {
   firstTimeLoginDate: {
     title: 'Fecha inicio',
     sort: false,
+    valuePrepareFunction: (date: Date) => {
+      var raw = new Date(date);
+      var formatted = new DatePipe('en-EN').transform(raw, 'dd/MM/yyyy');
+      return formatted;
+    },
   },
   daysValidityPass: {
     title: 'Vig. Pass.',

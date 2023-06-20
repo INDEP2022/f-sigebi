@@ -2,12 +2,13 @@ export const SISI_PROCESS_COLUMNS = {
   id: {
     title: 'Id',
     type: 'number',
-    width: '10%',
+    width: '15%',
     sort: false,
   },
   description: {
-    title: 'Descripcion',
+    title: 'Descripción',
     type: 'string',
+    width: '70%',
     sort: false,
   },
 };

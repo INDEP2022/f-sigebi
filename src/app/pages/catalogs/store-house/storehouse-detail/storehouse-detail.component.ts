@@ -52,7 +52,10 @@ export class StorehouseDetailComponent extends BasePage implements OnInit {
 
   prepareForm() {
     this.storeHouseForm = this.fb.group({
-      id: [null],
+      id: [
+        null,
+        [Validators.required, Validators.pattern(POSITVE_NUMBERS_PATTERN)],
+      ],
       manager: [
         null,
         [Validators.pattern(STRING_PATTERN), Validators.required],

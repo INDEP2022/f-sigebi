@@ -45,7 +45,10 @@ export class DocCompensationSatXmlFormComponent
           Validators.pattern(NUMBERS_PATTERN),
         ],
       ],
-      typeDocSatXml: [null, [Validators.pattern(STRING_PATTERN)]],
+      typeDocSatXml: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(250)],
+      ],
     });
 
     if (this.compensationSatXml != null) {

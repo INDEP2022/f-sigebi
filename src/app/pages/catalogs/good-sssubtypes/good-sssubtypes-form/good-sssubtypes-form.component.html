@@ -50,37 +50,43 @@
           </ngx-select>
         </div>
 
-        <div class="col-md-4">
+        <!--<div class="col-md-4">
           <form-field
             [control]="goodSssubtypeForm.get('numRegister')"
-            label="Estado">
+            label="No. Registro">
             <input
-              type="number"
+              type="text"
               class="form-control"
               formControlName="numRegister" />
           </form-field>
-        </div>
+        </div>-->
 
         <div class="col-md-4">
           <form-field
             [control]="goodSssubtypeForm.get('numClasifAlterna')"
             label="ID Clasificaci&oacute;n alterna">
             <input
-              type="number"
+              type="text"
               class="form-control"
               formControlName="numClasifAlterna" />
           </form-field>
         </div>
-        <div class="col-md-4">
-          <form-field
-            [control]="goodSssubtypeForm.get('numClasifGoods')"
-            label="ID Clasificaci&oacute;n bien">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="numClasifGoods" />
+        <!--<div class="col-md-4">
+          <form-field [control]="goodSssubtypeForm.get('numClasifGoods')">
+            <ngx-select
+              [form]="goodSssubtypeForm"
+              control="numClasifGoods"
+              (fetchItems)="getClasGood($event)"
+              [data]="clasGood"
+              label="Clasificaci&oacute;n bien"
+              bindLabel="description"
+              value="classifGoodNumber"
+              (change)="getChangeGood($event)">
+            </ngx-select>
+            <input type="text" class="form-control" formControlName="numClasifGoods" />
+
           </form-field>
-        </div>
+        </div>-->
       </div>
 
       <div class="row">
@@ -88,7 +94,7 @@
           <form-field
             [control]="goodSssubtypeForm.get('id')"
             label="ID SssubTipo">
-            <input type="number" class="form-control" formControlName="id" />
+            <input type="text" class="form-control" formControlName="id" />
           </form-field>
         </div>
       </div>
