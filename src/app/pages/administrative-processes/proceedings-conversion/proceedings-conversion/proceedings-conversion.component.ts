@@ -14,7 +14,7 @@ import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
 import { ConvertiongoodService } from 'src/app/core/services/ms-convertiongood/convertiongood.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import {
   PROCEEDINGSCONVERSIONS_COLUMNS,
   PROCEEDINGSCONVERSION_COLUMNS,
@@ -74,6 +74,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
+    this.prepareFormDetail();
   }
   private prepareForm() {
     this.userName = this.authService.decodeToken().preferred_username;
@@ -83,9 +84,13 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
       goodFatherNumber: [null, Validators.required],
       noExpedient: [null, Validators.required],
       acta: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      preliminaryInquiry: [
+        null,
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+      ],
       criminalCase: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
       ],
       cveActaConv: [null, Validators.required],
       statusConv: [null, Validators.required],
@@ -269,6 +274,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
   //   };
   //   this.modalService.show(ProceedingsConversionDetailComponent, config);
   // }
+
   exportToExcel() {
     const filename: string = this.userName + '-Actas';
     // El type no es necesario ya que por defecto toma 'xlsx'
