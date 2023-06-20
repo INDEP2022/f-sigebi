@@ -4,40 +4,38 @@
   </div>
   <div body>
     <form [formGroup]="form" class="form-material">
-      <div class="row">
         <div class="row">
-          <form-field [control]="form.get('idConversion')">
-            <ngx-select
-              (fetchItems)="serachIdConversion($event)"
-              control="idConversion"
-              label="Id Conversión"
-              bindLabel="id"
-              [data]="conversiones"
-              [form]="form"></ngx-select>
-          </form-field>
+            <div class="row">
+                <form-field
+                [control]="form.get('idConversion')"
+                >
+                <ngx-select
+                (fetchItems)="serachIdConversion($event)"
+                control="idConversion"
+                label="Id Conversión"
+                bindLabel="id"
+                [data]="conversiones"
+                [form]="form"
+                ></ngx-select>
+              </form-field>
+            </div>
+            <div class="row mt-3">
+                <form-field
+                [control]="form.get('password')"
+                label="Password">
+                <input
+                  type="password"
+                  class="form-control"
+                  formControlName="password" />
+              </form-field>
+            </div>
         </div>
-        <div class="row mt-3">
-          <form-field [control]="form.get('password')" label="Password">
-            <input
-              type="password"
-              class="form-control"
-              formControlName="password" />
-          </form-field>
+        <div class="row text-center mt-5">
+            <div class="col">
+                <button class="btn btn-primary btn-sm active mr-5" [disabled]="!form.valid" (click)="sigin()">Ingresar</button>
+                <button class="btn btn-secondary btn-sm active" (click)="close()">Cancelar</button>
+            </div>
         </div>
-      </div>
-      <div class="row text-center mt-5">
-        <div class="col">
-          <button
-            class="btn btn-primary btn-sm active mr-5"
-            [disabled]="!form.valid"
-            (click)="sigin()">
-            Ingresar
-          </button>
-          <button class="btn btn-secondary btn-sm active" (click)="close()">
-            Cancelar
-          </button>
-        </div>
-      </div>
     </form>
   </div>
 </app-modal>

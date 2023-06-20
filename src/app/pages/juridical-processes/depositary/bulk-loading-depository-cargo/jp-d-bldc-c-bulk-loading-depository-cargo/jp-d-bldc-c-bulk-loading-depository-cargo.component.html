@@ -1,6 +1,14 @@
 <app-card [header]="true" [footer]="true">
   <div class="ch-content" header>
-    <h5 class="title">Carga masiva de carga de depositarias</h5>
+    <div class="col-12 col-sm-12 col-md-6">
+      <h5 class="title">Carga masiva de carga de depositarias</h5>
+    </div>
+    <div *ngIf="origin" class="col-12 col-sm-12 col-md-6 text-end">
+      <button class="btn btn-primary active btn-sm m-2" (click)="goBack()">
+        Regresar
+        <i class="fas fa-arrow-circle-left"></i>
+      </button>
+    </div>
   </div>
   <div body>
     <div class="row pl-4">Proceso de Carga Masiva de pagos de Depositarías</div>

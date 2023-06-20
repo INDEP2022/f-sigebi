@@ -113,11 +113,19 @@ export class MsDepositaryService extends HttpService {
     );
   }
 
-  getAllFilteredDepositaryPaymentDet(
+  getAllFilteredDedPay(
     params?: _Params
   ): Observable<IListResponse<IDepositaryPaymentDet>> {
     return this.get<IListResponse<IDepositaryPaymentDet>>(
-      DepositaryEndPoints.DepositaryPaymentDetail,
+      DepositaryEndPoints.DepositaryDedPay,
+      params
+    );
+  }
+  getAllFilteredDepositaryDetrepo(
+    params?: _Params
+  ): Observable<IListResponse<IDepositaryPaymentDet>> {
+    return this.get<IListResponse<IDepositaryPaymentDet>>(
+      DepositaryEndPoints.DepositaryDetrepo,
       params
     );
   }

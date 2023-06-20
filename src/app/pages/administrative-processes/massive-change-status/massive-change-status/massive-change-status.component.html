@@ -5,7 +5,7 @@
     </div>
     <div body>
       <div class="row">
-        <div class="col-md-7 col-sm-12 col-xs-12">
+        <div class="col-md-12 col-sm-12 col-xs-12">
           <div class="row">
             <div class="col-md-full col-sm-12 col-xs-12">
               <app-goods-status-shared [form]="form"></app-goods-status-shared>
@@ -24,52 +24,33 @@
             </div>
           </div>
         </div>
-        <div class="col-md-5 col-sm-12 col-xs-12">
-          <div class="col-md-full col-sm-12 col-xs-12">
-            <div class="d-flex justify-content-center">
-              <div class="m-3">
-                <button
-                  (click)="goToGoodTracker()"
-                  class="btn btn-primary active">
-                  Rastreador de bienes
-                </button>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-full col-sm-12 col-xs-12 mt-4">
-            <div class="d-flex justify-content-center">
-              <div class="m-3">
-                <button
-                  class="btn btn-success btn-sm ml-2"
-                  type="button"
-                  (click)="file.click()">
-                  Abrir archivo Excel / CSV
-                </button>
-                <input
-                  type="file"
-                  name="file"
-                  #file
-                  class="d-none"
-                  accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
-                  (change)="onFileChange($event)" />
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
       <div class="row">
-        <div class="col-md-12 col-sm-12 col-xs-12">
-          <div class="d-flex justify-content-center">
-            <div class="m-3">
-              <button
-                type="button"
-                class="btn btn-success active"
-                [disabled]="form.invalid"
-                (click)="changeStatusGood()">
-                Asignar y Aplicar Estatus
-              </button>
-            </div>
-          </div>
+        <div class="col-md-12 col-sm-12 col-xs-12 text-center">
+          <button type="button" class="btn btn-primary btn-sm active mr-3">
+            Cargar Rastreador
+            <i aria-hidden="true" class="fa fa-upload"></i>
+          </button>
+          <button type="button" class="btn btn-primary btn-sm active mr-5" (click)="file.click()">
+            Cargar Excel/CSV
+            <i aria-hidden="true" class="fa fa-upload"></i>
+          </button>
+          <input
+          type="file"
+          name="file"
+          #file
+          class="d-none"
+          accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+          (change)="onFileChange($event)" />
+
+          <button type="button" class="btn btn-primary btn-sm active mr-3">
+            Asinga Estatus
+            <i aria-hidden="true" class="fa fa-save"></i>
+          </button>
+          <button type="button" class="btn btn-primary btn-sm active mr-3">
+            Aplica Estatus
+            <i aria-hidden="true" class="fa fa-save"></i>
+          </button>
         </div>
       </div>
       <hr />
