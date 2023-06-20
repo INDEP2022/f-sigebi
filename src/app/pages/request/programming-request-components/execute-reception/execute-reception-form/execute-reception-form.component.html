@@ -7,8 +7,14 @@
 
     <div class="justify-content-end" *ngIf="!formLoading">
       <div class="m-3 btn-toolbar">
-        <button class="btn btn-primary btn-sm active">Aprobar</button>
-        <button class="btn btn-danger btn-sm active">Cancelar</button>
+        <button
+          (click)="aprobateReception()"
+          class="btn btn-primary btn-sm active">
+          Aprobar
+        </button>
+        <button (click)="close()" class="btn btn-danger btn-sm active">
+          Cancelar
+        </button>
       </div>
     </div>
   </div>
@@ -1407,7 +1413,7 @@
                   [(settings)]="settingsGuardGoods"></app-columns-select>
 
                 <button
-                  (click)="assingMinute()"
+                  (click)="assingMinuteCancelation()"
                   class="btn btn-primary btn-sm active ml-2">
                   Asignar Acta
                 </button>

@@ -5,8 +5,11 @@ import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { IProceedings } from 'src/app/core/models/ms-proceedings/proceedings.model';
-import { IReceiptwitness } from 'src/app/core/models/receipt/receipt.model';
+import {
+  IReceipt,
+  IReceiptwitness,
+} from 'src/app/core/models/receipt/receipt.model';
+import { SignatoriesService } from 'src/app/core/services/ms-electronicfirm/signatories.service';
 import { ReceptionGoodService } from 'src/app/core/services/reception/reception-good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { WitnessFormComponent } from '../witness-form/witness-form.component';
@@ -21,14 +24,17 @@ export class GenerateReceiptFormComponent extends BasePage implements OnInit {
   generateReceiptForm: FormGroup = new FormGroup({});
   params = new BehaviorSubject<ListParams>(new ListParams());
   paragraphs: LocalDataSource = new LocalDataSource();
-  proceeding: IProceedings;
+  proceeding: IReceipt;
   idProgramming: number = 0;
   loadingWitness: boolean = false;
+  keyDoc: string = '';
+  closeModal: boolean = false;
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
     private modalService: BsModalService,
-    private receptionGoodService: ReceptionGoodService
+    private receptionGoodService: ReceptionGoodService,
+    private signatoriesService: SignatoriesService
   ) {
     super();
     this.settings = {
@@ -45,7 +51,6 @@ export class GenerateReceiptFormComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.prepareForm();
     this.showReceiptWitness();
-    console.log('proceeding', this.proceeding);
   }
 
   prepareForm() {
@@ -61,8 +66,8 @@ export class GenerateReceiptFormComponent extends BasePage implements OnInit {
       nameReceipt: [null],
       observation: [null],
       chargeReceipt: [null],
-      electronicSignatureEnt: [null],
-      electronicSignatureReceipt: [null],
+      electronicSignatureEnt: ['N'],
+      electronicSignatureReceipt: ['N'],
     });
 
     this.params.getValue()['filter.id'] = this.proceeding.id;
@@ -70,7 +75,6 @@ export class GenerateReceiptFormComponent extends BasePage implements OnInit {
       this.proceeding.programmingId;
     this.receptionGoodService.getReceipt(this.params.getValue()).subscribe({
       next: response => {
-        console.log('recibo data', response);
         this.generateReceiptForm.patchValue(response.data[0]);
       },
       error: error => {
@@ -117,12 +121,12 @@ export class GenerateReceiptFormComponent extends BasePage implements OnInit {
           return item;
         });
 
-        console.log('response witness', infoReceipt);
         this.paragraphs.load(infoReceipt);
         this.loadingWitness = false;
       },
       error: error => {
         this.loadingWitness = false;
+        this.paragraphs = new LocalDataSource();
       },
     });
   }
@@ -131,44 +135,232 @@ export class GenerateReceiptFormComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Confirmación',
-      '¿Estás seguro que desea crear un nuevo recibo?'
+      '¿Estás seguro que desea crear Los firmantes?'
     ).then(question => {
       if (question.isConfirmed) {
         const electronicSignatureEnt = this.generateReceiptForm.get(
           'electronicSignatureEnt'
-        );
+        ).value;
         const electronicSignatureReceipt = this.generateReceiptForm.get(
           'electronicSignatureReceipt'
-        );
+        ).value;
 
-        if (electronicSignatureEnt) {
+        if (electronicSignatureEnt == true) {
           this.generateReceiptForm.get('electronicSignatureEnt').setValue(1);
-        } else {
+        } else if (electronicSignatureEnt == false) {
           this.generateReceiptForm.get('electronicSignatureEnt').setValue(0);
         }
 
-        if (electronicSignatureReceipt) {
+        if (electronicSignatureReceipt == true) {
           this.generateReceiptForm
             .get('electronicSignatureReceipt')
             .setValue(1);
-        } else {
+        } else if (electronicSignatureReceipt == false) {
           this.generateReceiptForm
             .get('electronicSignatureReceipt')
             .setValue(0);
         }
 
-        console.log('actualizar', this.generateReceiptForm.value);
         this.receptionGoodService
           .updateReceipt(this.generateReceiptForm.value)
           .subscribe({
             next: response => {
-              this.modalRef.content.callback(this.proceeding.id);
-              this.close();
-              console.log('SE ACTUALIZO ACTA', response);
+              this.checkSign();
             },
             error: error => {},
           });
       }
+    });
+  }
+
+  checkSign() {
+    this.loading = true;
+    let no_autograf: number = 0;
+    let no_electronicSig: number = 0;
+    let electronicSig: boolean = false;
+    let autograf: boolean = false;
+    const params = new BehaviorSubject<ListParams>(new ListParams());
+    params.getValue()['filter.id'] = this.proceeding.id;
+    params.getValue()['filter.programmingId'] = this.idProgramming;
+    this.receptionGoodService.getReceipt(params.getValue()).subscribe({
+      next: response => {
+        const firmEnt = response.data[0].electronicSignatureEnt;
+        const firmReceip = response.data[0].electronicSignatureReceipt;
+        this.keyDoc =
+          this.idProgramming +
+          '-' +
+          this.proceeding.actId +
+          '-' +
+          this.proceeding.id;
+
+        if (firmEnt == 1) {
+          no_electronicSig++;
+        } else if (firmEnt == 0) {
+          no_autograf++;
+        }
+
+        if (firmReceip == 1) {
+          no_electronicSig++;
+        } else if (firmReceip == 0) {
+          no_autograf++;
+        }
+
+        if (this.paragraphs.count() > 0) {
+          this.paragraphs.getElements().then(item => {
+            item.map((data: IReceiptwitness) => {
+              if (data.electronicSignature) {
+                no_electronicSig++;
+              } else {
+                no_autograf++;
+              }
+            });
+          });
+        }
+        if (no_electronicSig > 0) electronicSig = true;
+        if (no_autograf > 0) autograf = true;
+
+        const learnedType = 103;
+        const learnedId = this.idProgramming;
+        this.signatoriesService
+          .getSignatoriesFilter(learnedType, learnedId)
+          .subscribe({
+            next: async response => {
+              response.data.map(item => {
+                this.signatoriesService
+                  .deleteFirmante(Number(item.signatoryId))
+                  .subscribe({
+                    next: () => {},
+                    error: error => {},
+                  });
+              });
+
+              console.log('firmEntF', firmEnt);
+              if (firmEnt == 1) {
+                await this.createSign(
+                  this.idProgramming,
+                  103,
+                  'RECIBOS',
+                  'FIRMA_ELECTRONICA_ENT',
+                  this.proceeding.nameDelivery,
+                  this.proceeding.chargeDelivery
+                );
+              }
+
+              console.log('firmReceip', firmReceip);
+              if (firmReceip == 1) {
+                const createReceipt = await this.createSign(
+                  this.idProgramming,
+                  103,
+                  'RECIBOS',
+                  'FIRMA_ELECTRONICA_REC',
+                  this.proceeding.nameReceipt,
+                  this.proceeding.chargeReceipt
+                );
+                if (createReceipt) {
+                  console.log('firmantes creados');
+                  this.modalRef.content.callback(
+                    this.proceeding,
+                    this.idProgramming
+                  );
+                  this.close();
+                  this.loading = false;
+                }
+              }
+
+              /*
+              if (this.paragraphs.count() != 0) {
+              }
+
+              else {
+                this.paragraphs.getElements().then(item => {
+                  item.map(async (data: IReceiptwitness) => {
+                    const createReceipt = await this.createSign(
+                      this.idProgramming,
+                      103,
+                      'RECIBOS_TESTIGOS',
+                      'FIRMA_ELECTRONICA',
+                      data.nameWitness,
+                      data.chargeWitness
+                    );
+                    if (createReceipt) {
+                      this.modalRef.content.callback(
+                        this.proceeding,
+                        this.idProgramming
+                      );
+                      this.close();
+                      this.loading = false;
+                    }
+                  });
+                });
+              } */
+            },
+            error: async error => {
+              console.log('NO HAU FIRMANTES');
+              console.log('firmEntF', firmEnt);
+              if (firmEnt == 1) {
+                await this.createSign(
+                  this.idProgramming,
+                  103,
+                  'RECIBOS',
+                  'FIRMA_ELECTRONICA_ENT',
+                  this.proceeding.nameDelivery,
+                  this.proceeding.chargeDelivery
+                );
+              }
+
+              console.log('firmReceip', firmReceip);
+              if (firmReceip == 1) {
+                const createReceipt = await this.createSign(
+                  this.idProgramming,
+                  103,
+                  'RECIBOS',
+                  'FIRMA_ELECTRONICA_REC',
+                  this.proceeding.nameReceipt,
+                  this.proceeding.chargeReceipt
+                );
+                if (createReceipt) {
+                  console.log('firmantes creados');
+                  this.modalRef.content.callback(
+                    this.proceeding,
+                    this.idProgramming
+                  );
+                  this.close();
+                  this.loading = false;
+                }
+              }
+            },
+          });
+      },
+    });
+  }
+
+  createSign(
+    keyDoc: number,
+    docId: number,
+    boardSig: string,
+    columnSig: string,
+    name: string,
+    position: string
+  ) {
+    return new Promise((resolve, reject) => {
+      const formData: Object = {
+        learnedId: keyDoc,
+        learnedType: docId,
+        boardSignatory: boardSig,
+        columnSignatory: columnSig,
+        name: name,
+        post: position,
+      };
+
+      this.signatoriesService.create(formData).subscribe({
+        next: response => {
+          console.log('firmantes creados');
+          resolve(true);
+        },
+        error: error => {
+          console.log('error', error);
+        },
+      });
     });
   }
 
@@ -188,7 +380,6 @@ export class GenerateReceiptFormComponent extends BasePage implements OnInit {
 
         this.receptionGoodService.deleteReceiptWitness(formData).subscribe({
           next: response => {
-            console.log('response delete', response);
             this.showReceiptWitness();
           },
           error: error => {

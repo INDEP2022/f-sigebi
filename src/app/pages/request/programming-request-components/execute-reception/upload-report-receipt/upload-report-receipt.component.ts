@@ -37,7 +37,9 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
-    this.getGoodsRelReceipt();
+    if (this.typeDoc == 185) {
+      this.getGoodsRelReceipt();
+    }
     this.getProgramming();
   }
 
@@ -61,14 +63,12 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
   }
 
   getProgramming() {
-    this.programmingService
-      .getProgrammingId(this.receiptGuards.programmingId)
-      .subscribe({
-        next: response => {
-          this.programming = response;
-        },
-        error: error => {},
-      });
+    this.programmingService.getProgrammingId(this.programming.id).subscribe({
+      next: response => {
+        this.programming = response;
+      },
+      error: error => {},
+    });
   }
 
   selectFile(event?: any) {
@@ -91,13 +91,13 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
   }
 
   saveDocument() {
-    if (this.receiptGuards.statusReceiptGuard == 'ABIERTO') {
-      console.log('document', this.form.value);
-      console.log('goodsId', this.goodId);
-      console.log('programming', this.programming);
-      console.log('typeDoc', this.typeDoc);
+    if (this.typeDoc == 185) {
+      if (this.receiptGuards.statusReceiptGuard == 'ABIERTO') {
+        console.log('document', this.form.value);
+        console.log('goodsId', this.goodId);
+        console.log('programming', this.programming);
+        console.log('typeDoc', this.typeDoc);
 
-      if (this.typeDoc == 185) {
         const formData = {
           keyDoc: this.receiptGuards.id,
           autografos: true,
@@ -141,52 +141,52 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
               }
             },
           });
-      }
 
-      if (this.typeDoc == 185) {
-        const formData = {
-          keyDoc: this.receiptGuards.id,
-          autografos: true,
-          electronicos: false,
-          dDocTitle: 'ReciboAlmacen',
-          dSecurityGroup: 'Public',
-          xidTransferente: this.programming.tranferId,
-          xidBien: this.goodId,
-          xNivelRegistroNSBDB: 'Bien',
-          xTipoDocumento: this.typeDoc,
-          xNoProgramacion: this.programming.id,
-          xNombreProceso: 'Ejecutar Recepción',
-          xDelegacionRegional: this.programming.regionalDelegationNumber,
-          xFolioProgramacion: this.programming.folio,
-        };
+        if (this.typeDoc == 185) {
+          const formData = {
+            keyDoc: this.receiptGuards.id,
+            autografos: true,
+            electronicos: false,
+            dDocTitle: 'ReciboAlmacen',
+            dSecurityGroup: 'Public',
+            xidTransferente: this.programming.tranferId,
+            xidBien: this.goodId,
+            xNivelRegistroNSBDB: 'Bien',
+            xTipoDocumento: this.typeDoc,
+            xNoProgramacion: this.programming.id,
+            xNombreProceso: 'Ejecutar Recepción',
+            xDelegacionRegional: this.programming.regionalDelegationNumber,
+            xFolioProgramacion: this.programming.folio,
+          };
 
-        const extension = '.pdf';
-        const docName = 'Recibo Resguardo';
+          const extension = '.pdf';
+          const docName = 'Recibo Resguardo';
 
-        this.wContentService
-          .addDocumentToContent(
-            docName,
-            extension,
-            JSON.stringify(formData),
-            this.selectedFile,
-            extension
-          )
-          .subscribe({
-            next: async response => {
-              console.log('doc guardado', response);
-              const updateReceiptGuard = this.updateReceiptGuard(
-                response.dDocName
-              );
-              if (updateReceiptGuard) {
-                this.onLoadToast(
-                  'success',
-                  'Acción correcta',
-                  'Documento Adjuntado correctamente'
+          this.wContentService
+            .addDocumentToContent(
+              docName,
+              extension,
+              JSON.stringify(formData),
+              this.selectedFile,
+              extension
+            )
+            .subscribe({
+              next: async response => {
+                console.log('doc guardado', response);
+                const updateReceiptGuard = this.updateReceiptGuard(
+                  response.dDocName
                 );
-                this.close();
-              }
-            },
-          });
+                if (updateReceiptGuard) {
+                  this.onLoadToast(
+                    'success',
+                    'Acción correcta',
+                    'Documento Adjuntado correctamente'
+                  );
+                  this.close();
+                }
+              },
+            });
+        }
       }
     }
   }

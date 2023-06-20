@@ -31,6 +31,8 @@ export interface IReceipt {
   chargeReceipt?: string;
   nameDelivery?: string;
   chargeDelivery?: string;
+  electronicSignatureEnt?: boolean;
+  electronicSignatureReceipt?: boolean;
 }
 
 export interface IRecepitGuard {
@@ -59,8 +61,8 @@ export interface IReceipyGuardDocument {
 }
 
 export interface IReceiptwitness {
-  nameWitness: string;
-  chargeWitness: string;
-  electronicSignature: String;
-  electronicSignatureName: String;
+  nameWitness?: string;
+  chargeWitness?: string;
+  electronicSignature?: String;
+  electronicSignatureName?: String;
 }

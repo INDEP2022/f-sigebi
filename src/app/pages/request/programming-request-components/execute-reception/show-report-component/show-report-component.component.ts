@@ -1,20 +1,23 @@
 import { Component, OnInit } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { PDFDocumentProxy } from 'ng2-pdf-viewer';
-import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
+import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { Iprogramming } from 'src/app/core/models/good-programming/programming';
 import { ISignatories } from 'src/app/core/models/ms-electronicfirm/signatories-model';
-import {
-  IReceipt,
-  IReceiptwitness,
-} from 'src/app/core/models/receipt/receipt.model';
+import { IReceipt } from 'src/app/core/models/receipt/receipt.model';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { SignatoriesService } from 'src/app/core/services/ms-electronicfirm/signatories.service';
+import { GelectronicFirmService } from 'src/app/core/services/ms-gelectronicfirm/gelectronicfirm.service';
+import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-request/programming-request.service';
+import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { ReceptionGoodService } from 'src/app/core/services/reception/reception-good.service';
 import { BasePage } from 'src/app/core/shared';
 import { environment } from 'src/environments/environment';
 import { LIST_REPORTS_COLUMN } from '../../../transfer-request/tabs/notify-clarifications-impropriety-tabs-component/print-report-modal/list-reports-column';
+import { UploadFielsModalComponent } from '../../../transfer-request/tabs/notify-clarifications-impropriety-tabs-component/upload-fiels-modal/upload-fiels-modal.component';
 
 @Component({
   selector: 'app-show-report-component',
@@ -32,21 +35,31 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
   printReport: boolean = true;
   listSigns: boolean = false;
   msjCheck: boolean = false;
+  showButtonFirm: boolean = false;
   infoFirmantes: any[] = [];
   btnSubTitle: string = 'Vista Previa Reporte';
   signatories: ISignatories[] = [];
   selectedRow: any = null;
   urlBaseReport = `${environment.API_URL}processgoodreport/report/showReport?nombreReporte=`;
   src: string = '';
+  keyDoc: string = '';
   isAttachDoc: boolean = false;
+  rowSelected: boolean = false;
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
+  receipt: IReceipt;
+  signatore: ISignatories;
+  programming: Iprogramming;
   constructor(
     private sanitizer: DomSanitizer,
     private modalService: BsModalService,
     public modalRef: BsModalRef,
     private receptionGoodService: ReceptionGoodService,
-    private signatoriesService: SignatoriesService
+    private signatoriesService: SignatoriesService,
+    private gelectronicFirmService: GelectronicFirmService,
+    private authService: AuthService,
+    private wContentService: WContentService,
+    private programmingService: ProgrammingRequestService
   ) {
     super();
     this.settings = {
@@ -69,16 +82,24 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.showReportByTypeDoc();
     this.getReceipt();
-    this.getWitness();
-    this.signParams();
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getSignatories());
+
+    if (this.signatore) {
+      this.registerSign();
+    }
   }
 
   showReportByTypeDoc() {
-    console.log('idTypeDoc', this.idTypeDoc);
     if (this.idTypeDoc == 103) {
-      let linkDoc: string = `${this.urlBaseReport}Recibo_Entrega.jasper&ID_PROG=${this.idProg}&ID_RECIBO=${this.receiptId}`;
+      let linkDoc: string = `${this.urlBaseReport}Recibo_Entrega.jasper&ID_PROG=${this.idProg}&ID_RECIBO=${this.receipt.id}&ID_ACTA=${this.receipt.actId}`;
       this.src = linkDoc;
-      console.log('URL reporte ', linkDoc);
+    }
+
+    if (this.idTypeDoc == 221) {
+      let linkDoc: string = `${this.urlBaseReport}oficio_programacion_recepcion.jasper&ID_PROGRAMACION=${this.idProg}`;
+      this.src = linkDoc;
     }
   }
 
@@ -87,86 +108,34 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
     params.getValue()['filter.programmingId'] = this.idProg;
     this.receptionGoodService.getReceipt(params.getValue()).subscribe({
       next: response => {
-        this.createPersonsSing(response.data[0]);
+        //this.createPersonsSing(response.data[0]);
       },
       error: error => {},
     });
-  }
-
-  getWitness() {
-    const params = new BehaviorSubject<ListParams>(new ListParams());
-    params.getValue()['filter.programmingId'] = this.idProg;
-    this.receptionGoodService.getReceiptsWitness(params.getValue()).subscribe({
-      next: response => {
-        const infoWitness = response.data.map((item: IReceiptwitness) => {
-          const info = {
-            name: item.nameWitness,
-            post: item.chargeWitness,
-            learnedType: this.idTypeDoc,
-            learnedId: this.idProg,
-          };
-          this.infoFirmantes.push(info);
-        });
-      },
-      error: error => {},
-    });
-  }
-
-  createPersonsSing(receipt: IReceipt) {
-    const nameReceipt = receipt.nameReceipt;
-    const chargeReceip = receipt.chargeReceipt;
-
-    const infoReceipt = {
-      name: nameReceipt,
-      post: chargeReceip,
-      learnedType: this.idTypeDoc,
-      learnedId: this.idProg,
-    };
-    this.infoFirmantes.push(infoReceipt);
-
-    const nameDelivery = receipt.nameDelivery;
-    const chargeDelivery = receipt.chargeDelivery;
-
-    const infoDelivery = {
-      name: nameDelivery,
-      post: chargeDelivery,
-      learnedType: this.idTypeDoc,
-      learnedId: this.idProg,
-    };
-    this.infoFirmantes.push(infoDelivery);
-
-    console.log('name witness', this.infoFirmantes);
-
-    this.infoFirmantes.map(formData => {
-      this.signatoriesService.create(formData).subscribe({
-        next: async response => {
-          console.log('firmantes', response);
-          //this.signParams(), console.log('Firmante creado: ', response);
-        },
-        error: error => console.log('No se puede crear: ', error),
-      });
-    });
-  }
-
-  signParams() {
-    this.params
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getSignatories());
   }
 
   getSignatories() {
     const learnedType = this.idTypeDoc;
     const learnedId = this.idProg;
     this.loading = true;
+
     this.signatoriesService
       .getSignatoriesFilter(learnedType, learnedId)
       .subscribe({
         next: response => {
-          console.log('Traer firmantes', response);
           this.signatories = response.data;
           this.totalItems = response.count;
           this.loading = false;
+
+          const filter = this.signatories.filter(userSign => {
+            return userSign.validationocsp;
+          });
+
+          if (filter.length == this.signatories.length) {
+            this.showButtonFirm = true;
+          }
         },
+
         error: error => (this.loading = false),
       });
   }
@@ -207,7 +176,6 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
       //   console.log('Soy un dictamen, es necesario validar firmante para evitar duplicidad');
       //   this.verificateFirm();
       // }
-      this.registerSign();
       this.printReport = false;
       this.listSigns = true;
       this.title = 'Firma electrónica';
@@ -218,7 +186,78 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
     }
   }
 
-  registerSign() {}
+  registerSign() {
+    console.log('Firmante', this.signatore);
+    const learnedType = 221;
+    const learndedId = this.idProg;
+    this.signatoriesService
+      .getSignatoriesFilter(learnedType, learndedId)
+      .subscribe({
+        next: response => {
+          this.signatoriesService
+            .deleteFirmante(Number(response.data[0].signatoryId))
+            .subscribe({
+              next: async () => {
+                const createSignatore = await this.createSign(
+                  this.idProg,
+                  221,
+                  'PROGRAMACIONES',
+                  'TIPO_FIRMA',
+                  this.signatore.nameSignatore,
+                  this.signatore.chargeSignatore
+                );
+                console.log('Firmante', createSignatore);
+                if (createSignatore) this.getSignatories();
+              },
+              error: error => {
+                console.log('error', error);
+              },
+            });
+        },
+        error: async error => {
+          const createSignatore = await this.createSign(
+            this.idProg,
+            221,
+            'PROGRAMACIONES',
+            'TIPO_FIRMA',
+            this.signatore.nameSignatore,
+            this.signatore.chargeSignatore
+          );
+          console.log('Firmante', createSignatore);
+          if (createSignatore) this.getSignatories();
+        },
+      });
+  }
+
+  createSign(
+    keyDoc: number,
+    docId: number,
+    boardSig: string,
+    columnSig: string,
+    name: string,
+    position: string
+  ) {
+    return new Promise((resolve, reject) => {
+      const formData: Object = {
+        learnedId: keyDoc,
+        learnedType: docId,
+        boardSignatory: boardSig,
+        columnSignatory: columnSig,
+        name: name,
+        post: position,
+      };
+
+      this.signatoriesService.create(formData).subscribe({
+        next: response => {
+          console.log('firmantes creados');
+          resolve(true);
+        },
+        error: error => {
+          console.log('error', error);
+        },
+      });
+    });
+  }
 
   sendSign() {
     //verificar que el estado de registro este como "datos completo" y enviarlo!
@@ -227,11 +266,43 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
   }
 
   openMessage(message: string): void {
-    this.alertQuestion(undefined, 'Confirmación', message, 'Aceptar').then(
+    this.alertQuestion('question', 'Confirmación', `${message}`).then(
       question => {
         if (question.isConfirmed) {
-          //this.firm();
-          console.log('enviar a firmar');
+          console.log('Genera Firma');
+
+          this.gelectronicFirmService
+            .firmDocument(this.idProg, 'ProgramacionRecibo', {})
+            .subscribe({
+              next: response => {
+                console.log('Firmado', response);
+                this.msjCheck = true;
+              },
+              error: error => {
+                console.log('Firmado');
+                this.msjCheck = true;
+              },
+            });
+
+          /*if (this.idTypeDoc == 103) {
+            const idKeyDoc =
+              this.idProg + '-' + this.receipt.actId + '-' + this.receipt.id;
+
+            this.signatories.map(item => {
+              this.gelectronicFirmService
+                .firmDocument(
+                  idKeyDoc,
+                  'reciboEntregaFisicaDeBienesPropiedadDelFiscoFederal',
+                  {}
+                )
+                .subscribe({
+                  next: response => {
+                    console.log('Firmado', response);
+                  },
+                  error: error => {},
+                });
+            });
+          } */
         }
       }
     );
@@ -248,21 +319,28 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
     }
   }
 
-  backStep() {
-    /*if (this.notificationValidate == 'Y') {
-      console.log(
-        'Soy una notificación, no es necesario validar firmante creado'
-      );
-    } else {
-      console.log(
-        'Soy un dictamen, es necesario validar firmante para evitar duplicidad'
-      );
-      this.verificateFirm();
-    }
-    this.listSigns = false;
-    this.isAttachDoc = false;
-    this.printReport = true;
-    this.paragraphs = []; */
+  uploadData(signatories: ISignatories): void {
+    const idReportAclara = this.receiptId;
+    let config: ModalOptions = {
+      initialState: {
+        idReportAclara,
+        signatories,
+        typeReport: this.receiptId,
+        callback: (next: boolean) => {
+          if (next) {
+            this.getSignatories();
+          }
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(UploadFielsModalComponent, config);
+  }
+
+  selectRow(row?: any) {
+    this.selectedRow = row;
+    this.rowSelected = true;
   }
 
   close() {
@@ -273,13 +351,84 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
     this.alertQuestion(undefined, 'Confirmación', message, 'Aceptar').then(
       question => {
         if (question.isConfirmed) {
+          //this.modalRef.content.callback(true);
+          //this.modalRef.hide();
           this.validAttachDoc();
-          //this. attachDoc();
-          console.log('Adjuntar documento:');
         }
       }
     );
   }
 
-  validAttachDoc() {}
+  validAttachDoc() {
+    let token = this.authService.decodeToken();
+    const extension = '.pdf';
+    const nombreDoc = `Oficio Programación Recepción${extension}`;
+    const contentType: string = '.pdf';
+
+    const formData = {
+      keyDoc: this.programming.id,
+      xDelegacionRegional: this.programming.regionalDelegationNumber,
+      dDocTitle: nombreDoc,
+      xNombreProceso: 'Aceptar Solicitud Programación',
+      xTipoDocumento: 221,
+      xNivelRegistroNSBDB: 'Bien',
+      dDocType: contentType,
+      dDocAuthor: token.name,
+      dInDate: new Date(),
+      xidProgramacion: this.programming.id,
+    };
+
+    this.pdf.getData().then(u8 => {
+      let blob = new Blob([u8.buffer], {
+        type: 'application/pdf',
+      });
+      this.wContentService
+        .addDocumentToContent(
+          nombreDoc,
+          contentType,
+          JSON.stringify(formData),
+          blob,
+          extension
+        )
+        .subscribe({
+          next: async resp => {
+            const updateProgramming = await this.updateProgramming(
+              resp.dDocName
+            );
+
+            if (updateProgramming) {
+              this.onLoadToast(
+                'success',
+                'Documento Guardado',
+                'El documento se guardó correctamente'
+              );
+              this.modalRef.content.callback(true);
+              this.close();
+            }
+          },
+          error: error => {
+            console.log('Error', error);
+          },
+        });
+    });
+  }
+
+  updateProgramming(dDocName: string) {
+    return new Promise((resolve, reject) => {
+      const formData: Object = {
+        contentId: dDocName,
+      };
+
+      this.programmingService
+        .updateProgramming(this.programming.id, formData)
+        .subscribe({
+          next: () => {
+            resolve(true);
+          },
+          error: () => {
+            resolve(false);
+          },
+        });
+    });
+  }
 }

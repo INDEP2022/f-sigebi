@@ -135,4 +135,8 @@ export class ProceedingsService extends HttpService {
   insertsAndUpdatesValmotosOne(model: Object) {
     return this.post<IListResponse>('aplication/get-detail-acta-types', model);
   }
+
+  updateProceeding(model: Object) {
+    return this.put(this.route, model);
+  }
 }
