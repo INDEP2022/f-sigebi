@@ -1,4 +1,4 @@
-export interface ITypeSiniester {
+export interface ITypeSiniesters {
   id: number;
   description: string;
   flag: number;

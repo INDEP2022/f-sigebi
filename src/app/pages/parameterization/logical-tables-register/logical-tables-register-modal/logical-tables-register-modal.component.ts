@@ -16,8 +16,7 @@ import { DinamicTablesService } from 'src/app/core/services/catalogs/dinamic-tab
 })
 export class LogicalTablesRegisterModalComponent
   extends BasePage
-  implements OnInit
-{
+  implements OnInit {
   tablesForm: ModelForm<ITables>;
   dinamicTables: ITables;
   title: string = 'Catálogo de tablas lógicas';
@@ -83,7 +82,7 @@ export class LogicalTablesRegisterModalComponent
   }
 
   handleSuccess() {
-    const message: string = this.edit ? 'Actualizada' : 'Guardada';
+    const message: string = this.edit ? 'Actualizado' : 'Guardado';
     this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);

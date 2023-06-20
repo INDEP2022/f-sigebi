@@ -220,14 +220,14 @@ export class FlyerSubjectCatalogComponent extends BasePage implements OnInit {
     this.affairService.remove2(id, nb).subscribe({
       next: () => {
         this.getAffairAll();
-        this.alert('success', 'Borrado', '');
+        this.alert('success', 'Asunto para volante', 'Borrado');
         this.rowSelected = false;
       },
       error: err => {
         this.alert(
           'warning',
-          'No se puede eliminar Asunto',
-          'Primero elimine sus tipos de asuntos'
+          'Asunto para volante',
+          'Primero elimine sus tipos de volante'
         );
       },
     });
@@ -251,8 +251,14 @@ export class FlyerSubjectCatalogComponent extends BasePage implements OnInit {
     let affair = this.affairs;
     this.affairTypeService.remove(affairType).subscribe({
       next: () => {
-        Swal.fire('Borrado', '', 'success');
         this.getAffairType(affair);
+        this.alert('success', 'Tipo Volante', 'Borrado');
+      }, error: erro => {
+        this.alert(
+          'warning',
+          'Tipo Volante',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
       },
     });
   }

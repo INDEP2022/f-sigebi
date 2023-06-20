@@ -104,13 +104,6 @@ export class GoodsListComponent
       );
     }
   }
-  private addGood(item: IGood) {
-    const good = this.selectedGooods.find(x => x.id === item.id);
-    if (!good) {
-      this.selectedGooods.push(item);
-    }
-  }
-
   selectGood(event: { selected: IGood[]; isSelected: boolean; data: IGood }) {
     console.log(event);
     const selecteds = event.selected;
@@ -133,7 +126,7 @@ export class GoodsListComponent
           }
         });
       } else if (event.isSelected === true) {
-        this.addGood(event.data);
+        // this.addGood(event.data);
       } else {
         this.removeGood(event.data);
       }
@@ -236,7 +229,7 @@ export class GoodsListComponent
           return of({ data: [], count: 0 });
         }),
         tap(response => {
-          this.totalItems = response.count;
+          this.totalItems = response.count > 100 ? 100 : response.count;
         }),
         map(response =>
           response.data.map(good => {

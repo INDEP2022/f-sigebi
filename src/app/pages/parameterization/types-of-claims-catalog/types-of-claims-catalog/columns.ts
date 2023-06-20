@@ -1,13 +1,12 @@
-export const TYPESINISTER_COLUMS = {
+export const SINIESTER_COLUMNS = {
   id: {
-    title: 'Registro',
+    title: 'ID',
     type: 'number',
     sort: false,
   },
   description: {
     title: 'Descripción',
     type: 'string',
-    editable: true,
     sort: false,
   },
   flag: {

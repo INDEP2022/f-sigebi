@@ -116,6 +116,8 @@ export enum ENDPOINT_LINKS {
   TypeRelevant = 'catalog/type-relevant',
   TypeSettelement = 'catalog/type-settlement',
   TypeSiniester = 'catalog/type-sinister',
+  TypeSiniesters = 'catalog/type-sinisters',
+  // TypeSiniester = 'catalog/type-sinisters',
   TypeWarehouse = 'catalog/type-warehouses',
   TypeOrderServices = 'catalog/type-order-service',
   TypeServices = 'catalog/type-services',
