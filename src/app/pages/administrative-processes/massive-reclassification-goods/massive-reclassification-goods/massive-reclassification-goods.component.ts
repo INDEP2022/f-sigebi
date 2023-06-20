@@ -53,10 +53,17 @@ export class MassiveReclassificationGoodsComponent
   }
 
   disabledReclas() {
-    let validacion = this.selectedGooods.length === 0 || this.form.invalid;
+    let validacion = this.selectedGooods.length === 0;
     if (this.mode.value && this.mode.value === 'I') {
       validacion =
-        validacion || this.classificationGoodAlterning.value === null;
+        validacion ||
+        this.form.invalid ||
+        this.classificationGoodAlterning.value === null;
+    } else {
+      validacion =
+        validacion ||
+        this.mode.value === null ||
+        this.classificationOfGoods.value === null;
     }
     return validacion;
   }
@@ -114,8 +121,7 @@ export class MassiveReclassificationGoodsComponent
     this.alertQuestion(
       'question',
       '¿Desea reclasificar los bienes seleccionados?',
-      '',
-      'Cambiar'
+      ''
     ).then(resp => {
       if (resp.isConfirmed) {
         this.changeClassification();
