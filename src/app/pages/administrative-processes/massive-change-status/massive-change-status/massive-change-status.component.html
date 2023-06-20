@@ -31,17 +31,20 @@
             Cargar Rastreador
             <i aria-hidden="true" class="fa fa-upload"></i>
           </button>
-          <button type="button" class="btn btn-primary btn-sm active mr-5" (click)="file.click()">
+          <button
+            type="button"
+            class="btn btn-primary btn-sm active mr-5"
+            (click)="file.click()">
             Cargar Excel/CSV
             <i aria-hidden="true" class="fa fa-upload"></i>
           </button>
           <input
-          type="file"
-          name="file"
-          #file
-          class="d-none"
-          accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
-          (change)="onFileChange($event)" />
+            type="file"
+            name="file"
+            #file
+            class="d-none"
+            accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+            (change)="onFileChange($event)" />
 
           <button type="button" class="btn btn-primary btn-sm active mr-3">
             Asinga Estatus

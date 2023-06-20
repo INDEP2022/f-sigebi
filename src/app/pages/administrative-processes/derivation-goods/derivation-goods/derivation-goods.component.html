@@ -207,29 +207,28 @@
           <div class="row text-center mb-3">
             <div class="col">
               <button
-              type="button"
-              data-toggle="tooltop"
-              title="Agregar Bien"
-              class="btn btn-info btn-sm active ml-2 mr-2">
-              <i class="bx bx-plus bx-sm float-icon"></i>
-            </button>
-            &nbsp;
-            <button
-              type="button"
-              data-toggle="tooltop"
-              title="Eliminar Bien"
-              class="btn btn-danger btn-sm active ml-2 mr-2">
-              <i class="bx bx-minus bx-sm float-icon"></i>
-            </button>
+                type="button"
+                data-toggle="tooltop"
+                title="Agregar Bien"
+                class="btn btn-info btn-sm active ml-2 mr-2">
+                <i class="bx bx-plus bx-sm float-icon"></i>
+              </button>
+              &nbsp;
+              <button
+                type="button"
+                data-toggle="tooltop"
+                title="Eliminar Bien"
+                class="btn btn-danger btn-sm active ml-2 mr-2">
+                <i class="bx bx-minus bx-sm float-icon"></i>
+              </button>
             </div>
           </div>
           <div class="table-responsive">
             <ng2-smart-table
-            class="col"
-            [settings]="settingsGood"
-            [source]="dataGoods"
-          >
-          </ng2-smart-table>
+              class="col"
+              [settings]="settingsGood"
+              [source]="dataGoods">
+            </ng2-smart-table>
           </div>
         </div>
       </app-card>

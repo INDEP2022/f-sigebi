@@ -24,7 +24,7 @@ import { PwComponent } from './pw/pw.component';
     BulkUploadComponent,
     ActsComponent,
     GoodsComponent,
-    PwComponent
+    PwComponent,
   ],
   imports: [
     CommonModule,
