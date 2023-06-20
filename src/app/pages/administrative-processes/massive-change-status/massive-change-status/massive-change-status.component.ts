@@ -20,7 +20,7 @@ interface NotData {
   reason: string;
 }
 interface IDs {
-  goodNumber: number;
+  No_bien: number;
 }
 @Component({
   selector: 'app-massive-change-status',
@@ -90,7 +90,8 @@ export class MassiveChangeStatusComponent extends BasePage implements OnInit {
       ],
     });
   }
-
+  
+  //Llenado de excel
   onFileChange(event: Event) {
     const files = (event.target as HTMLInputElement).files;
     if (files.length != 1) throw 'No files selected, or more than of allowed';
@@ -98,41 +99,50 @@ export class MassiveChangeStatusComponent extends BasePage implements OnInit {
     fileReader.readAsBinaryString(files[0]);
     fileReader.onload = () => this.readExcel(fileReader.result);
   }
+
   readExcel(binaryExcel: string | ArrayBuffer) {
     try {
+      this.data.load([]);
+      this.goods = [];
+      this.idsNotExist = [];
+      this.showError = false;
+      this.showStatus = false;
+
       this.ids = this.excelService.getData(binaryExcel);
-      if (this.ids[0].goodNumber === undefined) {
+      if (this.ids[0].No_bien === undefined) {
         this.onLoadToast(
           'error',
           'Ocurrio un error al leer el archivo',
           'El archivo no cuenta con la estructura requerida'
         );
         return;
+      }else{
+        this.loadGood(this.ids)
+      this.alert('success', 'Archivo subido', '');
       }
-      this.data.load([]);
-      this.goods = [];
-      this.idsNotExist = [];
-      this.showError = false;
-      this.showStatus = false;
-      this.loadGood(this.ids);
-      this.onLoadToast('success', 'Archivo subido con Exito', 'Exitoso');
+      
     } catch (error) {
-      this.onLoadToast('error', 'Ocurrio un error al leer el archivo', 'Error');
+      this.alert('error', 'Ocurrio un error al leer el archivo', '');
     }
   }
+
+
+
   loadDescription() {
     console.log(this.goodStatus.value);
   }
+
   loadGood(data: any[]) {
     this.loading = true;
     let count = 0;
     data.forEach(good => {
       count = count + 1;
-      this.goodServices.getById(good.goodNumber).subscribe({
+      this.goodServices.getById(good.No_bien).subscribe({
         next: response => {
-          this.goods.push(response);
+          this.goods.push(JSON.parse(JSON.stringify(response)).data[0]);
+          console.log(this.goods)
           this.addStatus();
-          this.validGood(response);
+          /* this.validGood(JSON.parse(JSON.stringify(response)).data[0]); */ //!SE TIENE QUE REVISAR
         },
         error: err => {
           if (err.error.message === 'No se encontrarón registros')
@@ -148,14 +158,20 @@ export class MassiveChangeStatusComponent extends BasePage implements OnInit {
       }
     });
   }
+
   addStatus() {
     this.data.load(this.goods);
     this.data.refresh();
   }
+  
+  //Asigna estatus
+  assignsStatus(){
+    
+  }
 
   changeStatusGood() {
     if (this.goods.length === 0) {
-      this.onLoadToast('error', 'ERROR', 'Debe cargar la lista de bienes');
+      this.alert('error', 'ERROR', 'Debe cargar la lista de bienes');
       return;
     }
     this.goods.forEach(good => {
@@ -181,7 +197,9 @@ export class MassiveChangeStatusComponent extends BasePage implements OnInit {
     this.addStatus();
     this.showStatus = true;
   }
-  validGood(good: IGood) {
+
+  /* validGood(good: IGood) {
+    console.log(good.status)
     this.goodMassiveServices.checkStatusMasiv(good.status).subscribe({
       next: response => {
         console.log(response);
@@ -197,10 +215,11 @@ export class MassiveChangeStatusComponent extends BasePage implements OnInit {
         this.addStatus();
       },
     });
-  }
-  goToGoodTracker() {
+  } */
+
+  /* goToGoodTracker() {
     this.router.navigate(['/pages/general-processes/goods-tracker'], {
       queryParams: { origin: 'FACTADBUBICABIEN' },
     });
-  }
+  } */
 }

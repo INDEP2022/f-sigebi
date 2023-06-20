@@ -20,12 +20,12 @@ export const COLUMNS = {
     type: 'custom',
     renderComponent: CheckboxElementComponent,
     valuePrepareFunction: (isSelected: any, row: any) => {
-      return goodCheck.find((e: any) => e.row.id == row.id) ? true : false;
+      return goodCheck.find((e:any) => e.row.id == row.id) ? true: false
     },
     onComponentInitFunction(instance: any) {
       instance.toggle.subscribe((data: any) => {
         if (data.toggle) {
-          console.log(goodCheck);
+          console.log(goodCheck)
           goodCheck.push(data);
         } else {
           goodCheck = goodCheck.filter(valor => valor.row.id != data.row.id);
