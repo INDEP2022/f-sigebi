@@ -8,7 +8,7 @@
         <div class="col-md-4">
           <form-field
             [control]="validatorsProceedingsForm.get('proceedingsType')"
-            label="Tipo&#58;">
+            label="Tipo de Acta">
             <select class="form-control" formControlName="proceedingsType">
               <option [value]="0">Seleccione un tipo acta</option>
               <option *ngFor="let item of typeItem" [value]="item.value">
@@ -31,7 +31,7 @@
         <div class="col-md-4">
           <form-field
             [control]="validatorsProceedingsForm.get('descVal')"
-            label="Validacion">
+            label="Descripción">
             <input
               class="form-control"
               formControlName="descVal"

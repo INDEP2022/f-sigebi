@@ -7,6 +7,10 @@ export const MAINTANANCE_DOCUMENT_VALIDATORS_COLUMNS = {
     title: 'Descripción',
     sort: false,
   },
+  secVal: {
+    title: 'Secuencia',
+    sort: false,
+  },
   numRegister: {
     title: 'Registro Número',
     sort: false,
