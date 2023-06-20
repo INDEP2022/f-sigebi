@@ -82,7 +82,9 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   settings1 = {
     ...TABLE_SETTINGS,
     rowClassFunction: (row: { data: { avalaible: any } }) =>
-      row.data.avalaible ? 'available' : 'not-available',
+      row.data.avalaible
+        ? 'bg-success text-white'
+        : 'bg-dark text-white disabled-custom',
     actions: false,
     columns: columnsGood,
     noDataMessage: 'No se encontrarón registros',

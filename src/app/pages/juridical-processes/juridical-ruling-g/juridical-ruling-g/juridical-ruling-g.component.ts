@@ -3216,12 +3216,41 @@ export class JuridicalRulingGComponent
               if (good.di_esta_conciliado == 'N') {
                 const cadena1 = good.val5 ? good.val5.indexOf('/') : 0;
                 if (cadena1 > 0) {
-                  vf_fecha = this.datePipe.transform(good.val5, 'yyyy/MM/dd');
+                  let cadena = good.val5;
+
+                  // Utilizar el método split() para separar la cadena en un array de elementos
+                  let arrayCadena = cadena.split('/');
+
+                  // Obtener el segundo elemento del array, que es "06"
+                  let elemento2 = `${arrayCadena[2]}/${arrayCadena[1]}/${arrayCadena[0]}`;
+                  vf_fecha = elemento2;
                 } else {
                   const cadena2 = good.val5 ? good.val5.indexOf('-') : 0;
 
                   if (cadena2 > 0) {
-                    vf_fecha = this.datePipe.transform(good.val5, 'yyyy-MM-dd');
+                    let cadena = good.val5;
+                    console.log('cadena2', cadena2);
+                    const valCad = cadena;
+                    const elemento = 'T';
+                    const contieneElemento = cadena.includes(elemento);
+                    let arrayCadena;
+                    let elemento2;
+
+                    if (contieneElemento) {
+                      arrayCadena = cadena.split('T');
+                      let arrayCadena2 = arrayCadena[0].split('-');
+
+                      elemento2 = `${arrayCadena2[0]}-${arrayCadena2[1]}-${arrayCadena2[2]}`;
+                      vf_fecha = elemento2;
+                    } else {
+                      // Utilizar el método split() para separar la cadena en un array de elementos
+                      console.log('arrayCadena', arrayCadena);
+                      let arrayCadena2 = cadena.split('-');
+                      elemento2 = `${arrayCadena2[2]}-${arrayCadena2[1]}-${arrayCadena2[0]}`;
+
+                      // Obtener el segundo elemento del array, que es "06"
+                      vf_fecha = elemento2;
+                    }
                   } else {
                     vf_fecha = good.val5;
                   }
@@ -3586,12 +3615,27 @@ export class JuridicalRulingGComponent
                   if (cadena2 > 0) {
                     let cadena = good.val5;
                     console.log('cadena2', cadena2);
-                    // Utilizar el método split() para separar la cadena en un array de elementos
-                    let arrayCadena = cadena.split('-');
+                    const valCad = cadena;
+                    const elemento = 'T';
+                    const contieneElemento = cadena.includes(elemento);
+                    let arrayCadena;
+                    let elemento2;
 
-                    // Obtener el segundo elemento del array, que es "06"
-                    let elemento2 = `${arrayCadena[2]}-${arrayCadena[1]}-${arrayCadena[0]}`;
-                    vf_fecha = elemento2;
+                    if (contieneElemento) {
+                      arrayCadena = cadena.split('T');
+                      let arrayCadena2 = arrayCadena[0].split('-');
+
+                      elemento2 = `${arrayCadena2[0]}-${arrayCadena2[1]}-${arrayCadena2[2]}`;
+                      vf_fecha = elemento2;
+                    } else {
+                      // Utilizar el método split() para separar la cadena en un array de elementos
+                      console.log('arrayCadena', arrayCadena);
+                      let arrayCadena2 = cadena.split('-');
+                      elemento2 = `${arrayCadena2[2]}-${arrayCadena2[1]}-${arrayCadena2[0]}`;
+
+                      // Obtener el segundo elemento del array, que es "06"
+                      vf_fecha = elemento2;
+                    }
                   } else {
                     vf_fecha = good.val5;
                   }
