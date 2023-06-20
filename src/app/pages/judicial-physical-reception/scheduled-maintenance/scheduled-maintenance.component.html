@@ -178,7 +178,7 @@
             size="small"
             (click)="getData()">
             Buscar
-            <i class="bx bx-search text-light float-icon"></i>
+            <i class="bx bx-search-alt bx-sm float-icon"></i>
           </button>
         </div>
         <div class="col-md-4" [class]="loading ? 'disabled' : ''">
@@ -199,7 +199,7 @@
               [defaultColumns]="5"></app-columns-select>
           </div>
           <button
-            class="btn btn-info btn-sm active"
+            class="btn btn-success btn-sm active"
             type="submit"
             size="small"
             [disabled]="loading || loadingExcel || items.length === 0"

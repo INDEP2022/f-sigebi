@@ -23,6 +23,15 @@ export const BASIC_BUTTONS = [
         </button>`,
   },
   {
+    name: 'Buscar 2',
+    code: `<button
+          type="button"
+          class="btn btn-primary active btn-sm">
+          Buscar
+          <i class="bx bx-search-alt bx-sm float-icon"></i>
+        </button>`,
+  },
+  {
     name: 'Filtrar',
     code: `<button
             type="button"
@@ -63,7 +72,7 @@ export const BASIC_BUTTONS = [
   {
     name: 'Eliminar',
     code: `<button
-              class="btn btn-danger btn-sm active m-3">
+              class="btn btn-red btn-sm active m-3">
               Eliminar <i class="fa fa-trash" aria-hidden="true"></i>
 
             </button>`,
@@ -129,5 +138,13 @@ export const BASIC_BUTTONS = [
               class="btn btn-primary active btn-sm">
               Imprimir <i class="bx bx-printer bx-sm float-icon"></i>
             </button>`,
+  },
+  {
+    name: 'Exportar a Excel',
+    code: `<button
+            class="btn btn-sm btn-success active">
+            Exportar a Excel
+            <i class="bx bx-download float-icon"></i>
+          </button>`,
   },
 ];
