@@ -11,7 +11,7 @@ import { ILegend } from '../../models/catalogs/legend.model';
 })
 export class LegendService implements ICrudMethods<ILegend> {
   private readonly route: string = ENDPOINT_LINKS.Legend;
-  constructor(private legendRepository: Repository<ILegend>) {}
+  constructor(private legendRepository: Repository<ILegend>) { }
 
   getAll(params?: ListParams): Observable<IListResponse<ILegend>> {
     return this.legendRepository.getAllPaginated(this.route, params);
@@ -21,11 +21,11 @@ export class LegendService implements ICrudMethods<ILegend> {
     return this.legendRepository.getById(this.route, id);
   }
 
-  create(model: ILegend): Observable<ILegend> {
+  create1(model: ILegend): Observable<ILegend> {
     return this.legendRepository.create(this.route, model);
   }
 
-  update(id: string | number, model: ILegend): Observable<Object> {
+  update1(id: string | number, model: ILegend): Observable<Object> {
     return this.legendRepository.update(this.route, id, model);
   }
 

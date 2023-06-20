@@ -16,10 +16,13 @@ export class RackService implements ICrudMethods<IRack> {
   constructor(
     private rackRepository: Repository<IRack>,
     private warehouseRepository: Repository<IWarehouse>
-  ) {}
+  ) { }
 
   getAll(params?: ListParams): Observable<IListResponse<IRack>> {
     return this.rackRepository.getAllPaginated(this.route, params);
+  }
+  getAllFilter(params?: ListParams): Observable<IListResponse<IRack>> {
+    return this.rackRepository.getAllPaginated(this.route + '/get-all', params);
   }
 
   getById(id: string | number): Observable<IRack> {

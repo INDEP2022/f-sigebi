@@ -139,16 +139,21 @@ export class MaintenanceOfAreasComponent extends BasePage implements OnInit {
         }
         this.onLoadToast('error', 'Error', error);
       },
-      () => {}
+      () => { }
     );
   }
 
   onDelegationsChange(element: any) {
     this.resetFields([this.delegation]);
-    this.subdelegations = new DefaultSelect();
+    this.subdelegations = new DefaultSelect([], 0, true);
+    this.form.controls['subdelegation'].setValue('');
     // console.log(this.PN_NODELEGACION.value);
-    if (this.delegation.value)
+    if (this.delegation.value) {
       this.getSubDelegations({ page: 1, limit: 10, text: '' });
+    } else {
+      this.data = new LocalDataSource();
+      this.data.refresh();
+    }
   }
 
   getSubDelegations(lparams: ListParams) {

@@ -49,14 +49,14 @@ export class OriginListComponent extends BasePage implements OnInit {
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
             filter.field == 'id' ||
-            filter.field == 'idTransferer' ||
-            filter.field == 'keyTransferer' ||
-            filter.field == 'description' ||
-            filter.field == 'type' ||
-            filter.field == 'address' ||
-            filter.field == 'idCity' ||
-            filter.field == 'city' ||
-            filter.field == 'keyEntityFederative'
+              filter.field == 'idTransferer' ||
+              filter.field == 'keyTransferer' ||
+              filter.field == 'description' ||
+              filter.field == 'type' ||
+              filter.field == 'address' ||
+              filter.field == 'idCity' ||
+              filter.field == 'city' ||
+              filter.field == 'keyEntityFederative'
               ? (searchFilter = SearchFilter.EQ)
               : (searchFilter = SearchFilter.ILIKE);
             if (filter.search !== '') {
@@ -65,6 +65,7 @@ export class OriginListComponent extends BasePage implements OnInit {
               delete this.columnFilters[field];
             }
           });
+          this.params = this.pageFilter(this.params);
           this.getExample();
         }
       });
@@ -79,13 +80,21 @@ export class OriginListComponent extends BasePage implements OnInit {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-    this.originService.getAll(params).subscribe({
+    this.originService.getAllFilter(params).subscribe({
       next: response => {
-        this.origins = response.data;
-        this.data.load(this.origins);
-        this.data.refresh();
-        this.totalItems = response.count;
-        this.loading = false;
+        if (response.count > 0) {
+          this.origins = response.data;
+          this.data.load(this.origins);
+          this.data.refresh();
+          this.totalItems = response.count;
+          this.loading = false;
+        } else {
+          this.data.load([]);
+          this.data.refresh();
+          this.totalItems = 0;
+          this.loading = false;
+        }
+
       },
       error: error => (this.loading = false),
     });
