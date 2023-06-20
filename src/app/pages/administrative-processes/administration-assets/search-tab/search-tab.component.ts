@@ -8,6 +8,7 @@ import {
 } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IGoodSssubtype } from 'src/app/core/models/catalogs/good-sssubtype.model';
+import { IGood } from 'src/app/core/models/ms-good/good';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -29,6 +30,7 @@ export class SearchTabComponent extends BasePage implements OnInit {
   list: any[] = [];
   classifGood: number;
   expedientNumber: string | number;
+  goodSelect: IGood;
   constructor(
     private fb: FormBuilder,
     private readonly goodService: GoodService,
@@ -61,8 +63,8 @@ export class SearchTabComponent extends BasePage implements OnInit {
       subtipo: [null, [Validators.required]],
       noSsubtipo: [null, [Validators.required]],
       ssubtipo: [null, [Validators.required]],
-      noSssubtipo: [null],
-      sssubtipo: [null],
+      noSssubtipo: [null, [Validators.required]],
+      sssubtipo: [null, [Validators.required]],
       estatus: [null, [Validators.pattern(STRING_PATTERN)]],
       unidadMedida: [null],
       cantidad: [null],
@@ -88,6 +90,27 @@ export class SearchTabComponent extends BasePage implements OnInit {
 
   async search() {
     if (
+      this.searchTabForm.get('subtipo').value === '' ||
+      this.searchTabForm.get('subtipo').value === null
+    ) {
+      this.onLoadToast('info', 'Debe seleccionar un subtipo');
+      return;
+    }
+    if (
+      this.searchTabForm.get('ssubtipo').value === '' ||
+      this.searchTabForm.get('ssubtipo').value === null
+    ) {
+      this.onLoadToast('info', 'Debe seleccionar un ssubtipo');
+      return;
+    }
+    if (
+      this.searchTabForm.get('sssubtipo').value === '' ||
+      this.searchTabForm.get('sssubtipo').value === null
+    ) {
+      this.onLoadToast('info', 'Debe seleccionar un sssubtipo');
+      return;
+    }
+    if (
       this.searchTabForm.get('noBien').value === '' ||
       this.searchTabForm.get('noBien').value === null
     ) {
@@ -99,6 +122,8 @@ export class SearchTabComponent extends BasePage implements OnInit {
       exist: true,
     });
     const respStatus = await this.searchStatus();
+    this.searchTabForm.get('situacion').patchValue(this.goodSelect.situation);
+    this.searchTabForm.get('destino').patchValue(this.goodSelect.destiny);
     const respNotification = await this.searchNotifications();
   }
 
@@ -180,5 +205,10 @@ export class SearchTabComponent extends BasePage implements OnInit {
     let fechaFormateada = dia + '/' + mes + '/' + anio;
     console.log(fechaFormateada);
     return fechaFormateada;
+  }
+
+  onChangeGood(event: IGood) {
+    console.log(event);
+    this.goodSelect = event;
   }
 }
