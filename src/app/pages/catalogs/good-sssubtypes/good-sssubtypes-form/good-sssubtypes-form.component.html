@@ -5,6 +5,13 @@
   <div body>
     <form class="form-material" [formGroup]="goodSssubtypeForm">
       <div class="row">
+        <div class="col-md-8">
+          <form-field
+            [control]="goodSssubtypeForm.get('id')"
+            label="C&oacute;digo SssubTipo">
+            <input type="number" class="form-control" formControlName="id" />
+          </form-field>
+        </div>
         <div class="col-md-12">
           <form-field
             [control]="goodSssubtypeForm.get('description')"
@@ -21,8 +28,7 @@
             [data]="types"
             label="Tipo"
             bindLabel="nameGoodType"
-            value="id"
-            (change)="getChangeSutype($event)">
+            value="id">
           </ngx-select>
         </div>
         <div class="col-md-12">
@@ -50,7 +56,7 @@
           </ngx-select>
         </div>
 
-        <!--<div class="col-md-4">
+        <!-- <div class="col-md-4">
           <form-field
             [control]="goodSssubtypeForm.get('numRegister')"
             label="No. Registro">
@@ -59,42 +65,30 @@
               class="form-control"
               formControlName="numRegister" />
           </form-field>
-        </div>-->
+        </div> -->
 
         <div class="col-md-4">
           <form-field
             [control]="goodSssubtypeForm.get('numClasifAlterna')"
-            label="ID Clasificaci&oacute;n alterna">
+            label="Clasificaci&oacute;n alterna">
             <input
-              type="text"
+              type="number"
               class="form-control"
-              formControlName="numClasifAlterna" />
+              formControlName="numClasifAlterna"
+              maxlength="2"
+              oninput="if(this.value.length > 2) this.value = this.value.slice(0, 2);" />
           </form-field>
         </div>
-        <!--<div class="col-md-4">
-          <form-field [control]="goodSssubtypeForm.get('numClasifGoods')">
-            <ngx-select
-              [form]="goodSssubtypeForm"
-              control="numClasifGoods"
-              (fetchItems)="getClasGood($event)"
-              [data]="clasGood"
-              label="Clasificaci&oacute;n bien"
-              bindLabel="description"
-              value="classifGoodNumber"
-              (change)="getChangeGood($event)">
-            </ngx-select>
-            <input type="text" class="form-control" formControlName="numClasifGoods" />
-
-          </form-field>
-        </div>-->
-      </div>
-
-      <div class="row">
         <div class="col-md-4">
           <form-field
-            [control]="goodSssubtypeForm.get('id')"
-            label="ID SssubTipo">
-            <input type="text" class="form-control" formControlName="id" />
+            [control]="goodSssubtypeForm.get('numClasifGoods')"
+            label="Clasificaci&oacute;n bien">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="numClasifGoods"
+              maxlength="5"
+              oninput="if(this.value.length > 5) this.value = this.value.slice(0, 5);" />
           </form-field>
         </div>
       </div>

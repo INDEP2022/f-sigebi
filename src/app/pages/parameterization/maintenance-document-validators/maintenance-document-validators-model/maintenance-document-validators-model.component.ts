@@ -5,7 +5,7 @@ import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IValidatorsProceedings } from 'src/app/core/models/catalogs/validators-proceedings-model';
 import { ValidatorsProceedingsService } from 'src/app/core/services/catalogs/validators-proceedings.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
+import { POSITVE_NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-maintenance-document-validators-model',
@@ -47,7 +47,11 @@ export class MaintenanceDocumentValidatorsModalComponent
       proceedingsType: [null, [Validators.required]],
       secVal: [
         null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(POSITVE_NUMBERS_PATTERN),
+          Validators.maxLength(2),
+        ],
       ],
       descVal: [null, [Validators.required]],
       scriptVal: [null, [Validators.required]],
@@ -56,9 +60,11 @@ export class MaintenanceDocumentValidatorsModalComponent
     if (this.validatorsProceedings != null) {
       console.log('editar');
       this.edit = true;
+      console.log('validatorsProceedings:', this.validatorsProceedings);
       this.validatorsProceedingsForm.patchValue(this.validatorsProceedings);
+    } else {
+      this.validatorsProceedingsForm.controls['proceedingsType'].setValue('0');
     }
-    this.validatorsProceedingsForm.controls['proceedingsType'].setValue('0');
   }
   close() {
     this.modalRef.hide();

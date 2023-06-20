@@ -21,11 +21,11 @@ export class LegendService implements ICrudMethods<ILegend> {
     return this.legendRepository.getById(this.route, id);
   }
 
-  create(model: ILegend): Observable<ILegend> {
+  create1(model: ILegend): Observable<ILegend> {
     return this.legendRepository.create(this.route, model);
   }
 
-  update(id: string | number, model: ILegend): Observable<Object> {
+  update1(id: string | number, model: ILegend): Observable<Object> {
     return this.legendRepository.update(this.route, id, model);
   }
 

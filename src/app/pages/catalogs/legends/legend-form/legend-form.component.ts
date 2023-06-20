@@ -60,7 +60,7 @@ export class LegendFormComponent extends BasePage implements OnInit {
 
   create() {
     this.loading = true;
-    this.legendService.create(this.legendForm.value).subscribe({
+    this.legendService.create1(this.legendForm.value).subscribe({
       next: data => this.handleSuccess(),
       error: error => (this.loading = false),
     });
@@ -68,10 +68,12 @@ export class LegendFormComponent extends BasePage implements OnInit {
 
   update() {
     this.loading = true;
-    this.legendService.update(this.legend.id, this.legendForm.value).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
-    });
+    this.legendService
+      .update1(this.legend.id, this.legendForm.value)
+      .subscribe({
+        next: data => this.handleSuccess(),
+        error: error => (this.loading = false),
+      });
   }
 
   handleSuccess() {

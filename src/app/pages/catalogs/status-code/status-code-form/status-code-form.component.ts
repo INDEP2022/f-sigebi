@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IStatusCode } from 'src/app/core/models/catalogs/status-code.model';
 import { StatusCodeService } from 'src/app/core/services/catalogs/status-code.service';
@@ -72,9 +73,38 @@ export class StatusCodeFormComponent extends BasePage implements OnInit {
 
   create() {
     this.loading = true;
-    this.statusCodeService.create(this.statusCodeForm.getRawValue()).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
+    const params: ListParams = new ListParams();
+    let count: number;
+    params['filter.status'] = this.statusCodeForm.controls['id'].value;
+    this.statusCodeService.getAll(params).subscribe({
+      next: response => {
+        count = response.count;
+        if (response.count > 0) {
+          this.alert('warning', 'Código estado', 'La clave ya existe.');
+        } else {
+          this.statusCodeService
+            .create(this.statusCodeForm.getRawValue())
+            .subscribe({
+              next: data => this.handleSuccess(),
+              error: error => (this.loading = false),
+            });
+        }
+        this.loading = false;
+      },
+      error: error => {
+        if (count > 0) {
+          this.alert('warning', 'Código estado', 'La clave ya existe.');
+        } else {
+          this.statusCodeService
+            .create(this.statusCodeForm.getRawValue())
+            .subscribe({
+              next: data => this.handleSuccess(),
+              error: error => (this.loading = false),
+            });
+        }
+
+        this.loading = false;
+      },
     });
   }
 
@@ -90,7 +120,7 @@ export class StatusCodeFormComponent extends BasePage implements OnInit {
 
   handleSuccess() {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.onLoadToast('success', this.title, `${message} Correctamente`);
+    this.alert('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();

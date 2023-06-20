@@ -163,7 +163,6 @@ export class MassiveReclassificationGoodsComponent
   }
 
   goGoodRastrer() {}
-
   // get disabled() {
   //   return (
   //     this.selectedGooods.length === 0 ||
