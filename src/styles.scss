@@ -567,3 +567,22 @@ ng-scrollbar.table-scrollbar {
   font-weight: bold;
   // background: default !important;
 }
+
+.hover-c:hover {
+  color: black !important;
+}
+
+tr.bg-dark:hover {
+  color: black !important;
+}
+tr.bg-dark.selected {
+  color: black !important;
+}
+
+tr.bg-success:hover {
+  color: black !important;
+}
+
+tr.bg-success.selected {
+  color: black !important;
+}

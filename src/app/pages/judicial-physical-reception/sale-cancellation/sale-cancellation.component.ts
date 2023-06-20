@@ -77,7 +77,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
     rowClassFunction: (row: { data: { avalaible: any } }) =>
       row.data.avalaible
         ? 'bg-success text-white'
-        : 'bg-dark text-white disabled-custom',
+        : 'bg-dark text-white hover-c',
     pager: {
       display: false,
     },
