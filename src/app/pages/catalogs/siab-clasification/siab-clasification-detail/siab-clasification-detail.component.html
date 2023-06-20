@@ -5,7 +5,7 @@
   <div body>
     <form [formGroup]="siabClasificationform" class="form-material">
       <div class="row">
-        <div class="col-md-3">
+        <div class="col-md-6">
           <form-field [control]="siabClasificationform.get('typeId')">
             <ngx-select
               [form]="siabClasificationform"
@@ -19,19 +19,21 @@
             </ngx-select>
           </form-field>
         </div>
-        <div class="col-md-9">
+        <div class="col-md-6">
           <form-field
             [control]="siabClasificationform.get('typeDescription')"
             label="Descripción tipo">
-            <input
+            <textarea
               type="text"
               class="form-control"
-              formControlName="typeDescription" />
+              formControlName="typeDescription"
+              [rows]="3">
+            </textarea>
           </form-field>
         </div>
       </div>
       <div class="row pt-3">
-        <div class="col-md-3">
+        <div class="col-md-6">
           <form-field [control]="siabClasificationform.get('subtypeId')">
             <ngx-select
               [form]="siabClasificationform"
@@ -45,19 +47,21 @@
             </ngx-select>
           </form-field>
         </div>
-        <div class="col-md-9">
+        <div class="col-md-6">
           <form-field
             [control]="siabClasificationform.get('subtypeDescription')"
             label="Descripción subtipo">
-            <input
+            <textarea
               type="text"
               class="form-control"
-              formControlName="subtypeDescription" />
+              formControlName="subtypeDescription"
+              [rows]="3">
+            </textarea>
           </form-field>
         </div>
       </div>
       <div class="row pt-3">
-        <div class="col-md-3">
+        <div class="col-md-6">
           <form-field [control]="siabClasificationform.get('ssubtypeId')">
             <ngx-select
               [form]="siabClasificationform"
@@ -71,19 +75,21 @@
             </ngx-select>
           </form-field>
         </div>
-        <div class="col-md-9">
+        <div class="col-md-6">
           <form-field
             [control]="siabClasificationform.get('ssubtypeDescription')"
             label="Descripción ssubtipo">
-            <input
+            <textarea
               type="text"
               class="form-control"
-              formControlName="ssubtypeDescription" />
+              formControlName="ssubtypeDescription"
+              [rows]="3">
+            </textarea>
           </form-field>
         </div>
       </div>
       <div class="row pt-3">
-        <div class="col-md-3">
+        <div class="col-md-6">
           <form-field [control]="siabClasificationform.get('sssubtypeId')">
             <ngx-select
               [form]="siabClasificationform"
@@ -96,14 +102,16 @@
             </ngx-select>
           </form-field>
         </div>
-        <div class="col-md-9">
+        <div class="col-md-6">
           <form-field
             [control]="siabClasificationform.get('sssubtypeDescription')"
             label="Descripción sssubtipo">
-            <input
+            <textarea
               type="text"
               class="form-control"
-              formControlName="sssubtypeDescription" />
+              formControlName="sssubtypeDescription"
+              [rows]="3">
+            </textarea>
           </form-field>
         </div>
       </div>

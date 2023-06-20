@@ -6,6 +6,7 @@ import { IDocCompesationSat } from 'src/app/core/models/catalogs/doc-compesation
 import { DocCompensationSATService } from 'src/app/core/services/catalogs/doc-compesation-sat.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
+  NUMBERS_PATTERN,
   POSITVE_NUMBERS_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
@@ -20,7 +21,7 @@ export class DocCompensationSatFormComponent
   implements OnInit
 {
   docCompesationSatForm: ModelForm<IDocCompesationSat>;
-  title: string = 'DOCUMENTOS RESARCIMIENTO SAT';
+  title: string = 'Documento resarcimiento SAT';
   edit: boolean = false;
   docCompesationSat: IDocCompesationSat;
   constructor(
@@ -41,9 +42,9 @@ export class DocCompensationSatFormComponent
       officeSatId: [
         null,
         [
+          Validators.required,
           Validators.pattern(POSITVE_NUMBERS_PATTERN),
           Validators.maxLength(3),
-          Validators.max(999),
         ],
       ],
       typeDocSat: [
@@ -56,7 +57,11 @@ export class DocCompensationSatFormComponent
       ],
       subjectCode: [
         null,
-        [Validators.required, Validators.required, Validators.maxLength(10)],
+        [
+          Validators.required,
+          Validators.pattern(NUMBERS_PATTERN),
+          Validators.maxLength(10),
+        ],
       ],
     });
     if (this.docCompesationSat != null) {

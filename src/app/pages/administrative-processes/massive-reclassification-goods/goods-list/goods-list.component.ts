@@ -99,9 +99,9 @@ export class GoodsListComponent
   private removeGood(item: IGood) {
     const good = this.selectedGooods.find(x => x.id === item.id);
     if (good) {
-      if (!good) {
-        this.selectedGooods.push(item);
-      }
+      this.selectedGooods = this.selectedGooods.filter(
+        _good => _good.id != good.id
+      );
     }
   }
   selectGood(event: { selected: IGood[]; isSelected: boolean; data: IGood }) {
@@ -126,7 +126,7 @@ export class GoodsListComponent
           }
         });
       } else if (event.isSelected === true) {
-        this.addGood(event.data);
+        // this.addGood(event.data);
       } else {
         this.removeGood(event.data);
       }
@@ -192,14 +192,17 @@ export class GoodsListComponent
     this.loading = true;
     console.log(this.classificationOfGoods.value);
     const filterParams = new FilterParams();
-    if (this.classificationOfGoods.value) {
+    if (
+      this.classificationOfGoods.value &&
+      (this.classificationOfGoods.value + '').trim() !== ''
+    ) {
       filterParams.addFilter(
         'goodClassNumber',
         this.classificationOfGoods.value,
         this.mode.value === 'E' ? SearchFilter.NOTIN : SearchFilter.EQ
       );
     }
-    if (this.goodStatus.value) {
+    if (this.goodStatus.value && (this.goodStatus.value + '').trim() !== '') {
       filterParams.addFilter(
         'status',
         String(this.goodStatus.value.map((item: any) => item.status)),

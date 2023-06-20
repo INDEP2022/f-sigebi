@@ -1,6 +1,6 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nueva' }} {{ title }}</h5>
+    <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nuevo' }} {{ title }}</h5>
   </div>
   <div body>
     <form [formGroup]="docCompesationSatForm" class="form-material">
@@ -8,15 +8,26 @@
         <div class="col-md-4">
           <form-field
             [control]="docCompesationSatForm.get('officeSatId')"
-            label="Identificador del oficio sat">
+            label="Id oficio SAT">
             <input
-              type="number"
+              type="text"
               class="form-control"
-              formControlName="officeSatId"
-              min="0" />
+              formControlName="officeSatId" />
           </form-field>
         </div>
-        <div class="col-md-9">
+        <div class="col-md-4">
+          <form-field
+            [control]="docCompesationSatForm.get('subjectCode')"
+            label="Asunto c&oacute;digo">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="subjectCode" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-3">
+        <div class="col-md-12">
           <form-field
             [control]="docCompesationSatForm.get('typeDocSat')"
             label="Tipo documento">
@@ -26,20 +37,9 @@
               formControlName="typeDocSat" />
           </form-field>
         </div>
-        <div class="col-md-3">
-          <form-field
-            [control]="docCompesationSatForm.get('subjectCode')"
-            label="Asunto c&oacute;digo">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="subjectCode"
-              min="0" />
-          </form-field>
-        </div>
       </div>
 
-      <div class="row">
+      <div class="row pt-3">
         <div class="col-md-12">
           <form-field
             [control]="docCompesationSatForm.get('addressee')"

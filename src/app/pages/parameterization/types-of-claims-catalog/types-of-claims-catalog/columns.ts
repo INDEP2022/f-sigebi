@@ -1,14 +1,17 @@
-export const SISI_PROCESS_COLUMNS = {
+export const SINIESTER_COLUMNS = {
   id: {
-    title: 'Id',
+    title: 'ID',
     type: 'number',
-    width: '15%',
     sort: false,
   },
   description: {
     title: 'Descripción',
     type: 'string',
-    width: '70%',
+    sort: false,
+  },
+  flag: {
+    title: 'Bandera',
+    type: 'number',
     sort: false,
   },
 };

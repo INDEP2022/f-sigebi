@@ -72,10 +72,10 @@ export class DepartmentsListComponent extends BasePage implements OnInit {
                 searchFilter = SearchFilter.ILIKE;
                 break;
               case 'numRegister':
-                searchFilter = SearchFilter.EQ;
+                searchFilter = SearchFilter.ILIKE;
                 break;
               case 'lastOffice':
-                searchFilter = SearchFilter.ILIKE;
+                searchFilter = SearchFilter.EQ;
                 break;
               case 'level':
                 searchFilter = SearchFilter.EQ;

@@ -13,7 +13,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 })
 export class SaveValueFormComponent extends BasePage implements OnInit {
   saveValue: ISaveValue;
-  edit: boolean;
+  edit: boolean = false;
   saveValueForm: ModelForm<ISaveValue>;
   title: string = 'Valores guardados';
 
@@ -32,12 +32,7 @@ export class SaveValueFormComponent extends BasePage implements OnInit {
     this.saveValueForm = this.fb.group({
       id: [
         null,
-        [
-          Validators.required,
-          Validators.minLength(0),
-          Validators.maxLength(5),
-          Validators.min(0),
-        ],
+        [Validators.required, Validators.minLength(0), Validators.maxLength(5)],
       ],
       description: [
         null,
@@ -56,6 +51,7 @@ export class SaveValueFormComponent extends BasePage implements OnInit {
         ],
       ],
       responsible: [null, [Validators.required]],
+      noRegistration: [null],
     });
 
     if (this.saveValue != null) {
@@ -73,10 +69,7 @@ export class SaveValueFormComponent extends BasePage implements OnInit {
     this.loading = true;
     this.saveValueService.create(this.saveValueForm.value).subscribe({
       next: data => this.handleSuccess(),
-      error: error => {
-        this.loading = false;
-        this.onLoadToast('error', 'ERROR', error.error.message);
-      },
+      error: error => (this.loading = false),
     });
   }
 
@@ -85,10 +78,7 @@ export class SaveValueFormComponent extends BasePage implements OnInit {
       .update(this.saveValue.id, this.saveValueForm.value)
       .subscribe({
         next: data => this.handleSuccess(),
-        error: error => {
-          this.loading = false;
-          this.onLoadToast('error', 'ERROR', error.error.message);
-        },
+        error: error => (this.loading = false),
       });
   }
 

@@ -35,7 +35,7 @@ export const DEPARTMENT_COLUMNS = {
     sort: false,
   },
   numRegister: {
-    title: 'Nº registro',
+    title: 'No. Registro',
     type: 'number',
     sort: false,
   },

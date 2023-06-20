@@ -4,7 +4,7 @@ import { IGoodType } from 'src/app/core/models/catalogs/good-type.model';
 
 export const GOOD_SSSUBTYPE_COLUMNS = {
   id: {
-    title: 'Id',
+    title: 'Código SssubTipo',
     type: 'number',
     sort: false,
   },
@@ -36,7 +36,7 @@ export const GOOD_SSSUBTYPE_COLUMNS = {
     },
   },
   numSsubType: {
-    title: 'Descripción',
+    title: 'Ssubtipo bien',
     type: 'string',
     sort: false,
     valuePrepareFunction: (value: IGoodSsubType) => {
@@ -47,18 +47,18 @@ export const GOOD_SSSUBTYPE_COLUMNS = {
     },
   },
   numClasifGoods: {
-    title: 'N. Clasif Bien',
+    title: 'No. Clasif Bien',
     type: 'number',
     sort: false,
   },
   numClasifAlterna: {
-    title: 'N. Clasif alterna',
+    title: 'No. Clasif alterna',
     type: 'number',
     sort: false,
   },
-  numRegister: {
-    title: 'N. registro',
-    type: 'number',
-    sort: false,
-  },
+  // numRegister: {
+  //   title: 'No. Registro',
+  //   type: 'number',
+  //   sort: false,
+  // },
 };

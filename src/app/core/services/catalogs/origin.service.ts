@@ -16,7 +16,12 @@ export class OriginService implements ICrudMethods<IOrigin> {
   getAll(params?: ListParams): Observable<IListResponse<IOrigin>> {
     return this.originRepository.getAllPaginated(this.route, params);
   }
-
+  getAllFilter(params?: ListParams): Observable<IListResponse<IOrigin>> {
+    return this.originRepository.getAllPaginated(
+      this.route + '/get-all',
+      params
+    );
+  }
   getById(id: string | number): Observable<IOrigin> {
     return this.originRepository.getById(this.route, id);
   }

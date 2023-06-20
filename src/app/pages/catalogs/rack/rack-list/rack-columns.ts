@@ -7,7 +7,7 @@ export const RACK_COLUMNS = {
     type: 'number',
     sort: false,
   },
-  idWarehouse: {
+  warehuseDetails: {
     title: 'Deposito',
     type: 'number',
     valuePrepareFunction: (value: IWarehouse) => {
@@ -15,7 +15,7 @@ export const RACK_COLUMNS = {
     },
     sort: false,
   },
-  idBatch: {
+  batchDetails: {
     title: 'Lote',
     valuePrepareFunction: (value: IBatch) => {
       return value.description;

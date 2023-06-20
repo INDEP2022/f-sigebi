@@ -9,7 +9,11 @@
           <form-field
             [control]="ifaiSerieForm.get('code')"
             label="C&oacute;digo">
-            <input type="text" class="form-control" formControlName="code" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="code"
+              maxlength="8" />
           </form-field>
         </div>
 
