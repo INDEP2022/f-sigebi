@@ -1,6 +1,6 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">ADMINISTRACION DE CONVERSION DE BIENES</h5>
+    <h5 class="title">ADMINISTRACIÓN DE CONVERSIÓN DE BIENES</h5>
   </div>
 
   <div body>
@@ -12,24 +12,26 @@
             [control]="form.get('idConversion')"
             label="Id Conversión">
             <input
-              type="text"
+              type="number"
               class="form-control"
-              formControlName="idConversion" />
+              formControlName="idConversion"
+              [max-length]="10" />
           </form-field>
         </div>
         <div class="col-md-3 col-sm-12 col-xs-12">
           <form-field
             [control]="form.get('noBien')"
-            label="No Bien a Convertir">
+            label="No. Bien a Convertir">
             <input
-              type="text"
+              type="number"
               class="form-control"
               formControlName="noBien"
-              (change)="onChangeGood()" />
+              (change)="onChangeGood()"
+              [max-length]="10" />
           </form-field>
         </div>
         <div class="col-md-3 col-sm-12 col-xs-12">
-          <form-field [control]="form.get('date')" label="Fecha de creación">
+          <form-field [control]="form.get('date')" label="Fecha Creación">
             <input
               type="text"
               class="form-control"
@@ -51,11 +53,12 @@
         <div class="col-md-3 col-sm-12 col-xs-12">
           <form-field
             [control]="form.get('noExpediente')"
-            label="No Expediente">
+            label="No. Expediente">
             <input
-              type="text"
+              type="number"
               class="form-control"
-              formControlName="noExpediente" />
+              formControlName="noExpediente"
+              [max-length]="10" />
           </form-field>
         </div>
         <div class="col-md-6 col-sm-12 col-xs-12">
@@ -65,7 +68,8 @@
             <input
               type="text"
               class="form-control"
-              formControlName="actaConversion" />
+              formControlName="actaConversion"
+              [max-length]="200" />
           </form-field>
         </div>
         <div class="col-md-3 col-sm-12 col-xs-12">
@@ -83,7 +87,7 @@
       <app-card>
         <div body>
           <div class="row">
-            <h5 class="title mt-0">Datos del bien</h5>
+            <h5 class="title mt-0">Datos del Bien</h5>
           </div>
           <div class="row mt-3">
             <div class="col-md-5 col-sm-12 col-xs-12">
@@ -93,7 +97,8 @@
                 <input
                   type="text"
                   class="form-control"
-                  formControlName="desStatus" />
+                  formControlName="desStatus"
+                  [max-length]="100" />
               </form-field>
             </div>
             <div class="col-md-4 col-sm-12 col-xs-12">
@@ -101,13 +106,14 @@
                 <input
                   type="text"
                   class="form-control"
-                  formControlName="actaER" />
+                  formControlName="actaER"
+                  [max-length]="200" />
               </form-field>
             </div>
             <div class="col-md-3 col-sm-12 col-xs-12">
               <form-field
                 [control]="form.get('actaERDate')"
-                label="Fecha acta E/R">
+                label="Fecha Acta E/R">
                 <input
                   type="text"
                   class="form-control"
@@ -124,7 +130,8 @@
                 <textarea
                   type="text"
                   class="form-control"
-                  formControlName="description"></textarea>
+                  formControlName="description"
+                  [max-length]="1250"></textarea>
               </form-field>
             </div>
           </div>

@@ -12,3 +12,16 @@ export const COLUMNS = {
     sort: false,
   },
 };
+
+export const ATRIBUT_ACT_COLUMNS = {
+  attribute: {
+    title: 'ATRIBUTOS',
+    sort: false,
+    filter: true,
+  },
+  value: {
+    title: 'VALORES',
+    sort: false,
+    filter: true,
+  },
+};

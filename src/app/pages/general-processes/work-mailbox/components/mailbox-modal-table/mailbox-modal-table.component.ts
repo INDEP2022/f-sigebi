@@ -1,18 +1,11 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import {
-  BehaviorSubject,
-  catchError,
-  Observable,
-  switchMap,
-  takeUntil,
-  tap,
-  throwError,
-} from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
+import { GoodFinderService } from 'src/app/core/services/ms-good/good-finder.service';
 import { HistoryIndicatorService } from 'src/app/core/services/ms-history-indicator/history-indicator.service';
 import { HistoricalProcedureManagementService } from 'src/app/core/services/ms-procedure-management/historical-procedure-management.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -41,45 +34,42 @@ export class MailboxModalTableComponent<T = any>
   body: any = {};
   showConfirmButton: boolean = false;
   selectedRow: T = null;
+  proceedingsNumber: any;
   @Output() selected = new EventEmitter<T>();
-  constructor(private modalRef: BsModalRef) {
+  constructor(
+    private modalRef: BsModalRef,
+    private goodFinderService: GoodFinderService
+  ) {
     super();
     this.settings = { ...this.settings, actions: false };
   }
 
   ngOnInit(): void {
     this.settings = { ...this.settings, columns: this.columns };
-    this.$params
-      .pipe(
-        takeUntil(this.$unSubscribe),
-        switchMap(params => this.getData(params))
-      )
-      .subscribe();
+
+    this.getData();
   }
 
-  getData(params: FilterParams) {
-    this.hideError();
+  getData() {
+    const params = new FilterParams();
+    params.addFilter('fileNumber', this.proceedingsNumber);
     this.loading = true;
-    const obs = this.$obs.call(this.service, params.getParams(), this.body);
-    return obs.pipe(
-      catchError(error => {
+    this.goodFinderService.goodFinder(params.getParams()).subscribe({
+      next: resp => {
         this.loading = false;
-        if (error.status >= 500) {
-          this.onLoadToast(
-            'error',
-            'Error',
-            'Ocurrió un error al obtener los datos'
-          );
-        }
-        return throwError(() => error);
-      }),
-      tap(response => {
-        this.loading = false;
-        this.rows = response.data;
+        this.rows = resp.data;
         console.log(this.rows);
-        this.totalItems = response.count;
-      })
-    );
+        this.totalItems = resp.count;
+      },
+      error: error => {
+        this.loading = false;
+        this.onLoadToast(
+          'warning',
+          'Atención',
+          'Aún no existen bienes para este oficio'
+        );
+      },
+    });
   }
 
   close() {

@@ -325,10 +325,9 @@ export class DictationService extends HttpService {
       data
     );
   }
-  nUniversalFolio(data: Object) {
-    return this.post<IListResponse<any>>(
-      DictationEndpoints.ApplicationNUniversalFolio,
-      data
+  nUniversalFolio(managementNumber: number) {
+    return this.get<IListResponse<any>>(
+      DictationEndpoints.ApplicationNUniversalFolio + '/' + managementNumber
     );
   }
   getActnom(managementNumber: number) {

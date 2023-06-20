@@ -19,7 +19,10 @@ import {
   IStatusChange,
 } from 'src/app/core/models/ms-dictation/dictation-model';
 import { type INotification } from 'src/app/core/models/ms-notification/notification.model';
-import { IMJobManagement } from 'src/app/core/models/ms-officemanagement/m-job-management.model';
+import {
+  IMJobManagement,
+  IMJobManagementExtSSF3,
+} from 'src/app/core/models/ms-officemanagement/m-job-management.model';
 import { IProceduremanagement } from 'src/app/core/models/ms-proceduremanagement/ms-proceduremanagement.interface';
 import {
   IAccesTrackingXArea,
@@ -32,6 +35,7 @@ import { DictationService } from 'src/app/core/services/ms-dictation/dictation.s
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
+import { HistoryGoodService } from 'src/app/core/services/ms-history-good/history-good.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import { GoodsJobManagementService } from 'src/app/core/services/ms-office-management/goods-job-management.service';
 import { MJobManagementService } from 'src/app/core/services/ms-office-management/m-job-management.service';
@@ -60,6 +64,8 @@ export abstract class RelateDocumentsResponse extends BasePage {
   protected abstract departmentService: DepartamentService;
   protected abstract svLegalOpinionsOfficeService: LegalOpinionsOfficeService;
   protected abstract authService: AuthService;
+  protected abstract goodHistoryService: HistoryGoodService; // protected abstract svLegalOpinionsOfficeService: LegalOpinionsOfficeService;
+
   abstract formVariables: FormGroup<{
     dictaminacion: FormControl;
     b: FormControl;
@@ -125,6 +131,8 @@ export abstract class RelateDocumentsResponse extends BasePage {
     /**@description num_clave_armada */
     armedKeyNumber: FormControl;
     tipoTexto: FormControl;
+    /** @description  no_expediente*/
+    proceedingsNumber: FormControl;
   }>;
   protected abstract formNotification: FormGroup;
   protected abstract route: ActivatedRoute;
@@ -676,6 +684,7 @@ export abstract class RelateDocumentsResponse extends BasePage {
       ...this.dataTableGoodsJobManagement,
       ...newRows,
     ];
+    this.formVariables.get('b').setValue('S');
   }
 
   pupAddAnyGood() {
@@ -704,6 +713,7 @@ export abstract class RelateDocumentsResponse extends BasePage {
       ...this.dataTableGoodsJobManagement,
       ...newRows,
     ];
+    this.formVariables.get('b').setValue('S');
   }
 
   dataSelectDictation = new DefaultSelect([]);
@@ -1058,9 +1068,9 @@ export abstract class RelateDocumentsResponse extends BasePage {
       .getVOficTrans(params)
       .pipe(map(x => x.data[0]));
   }
-  sendFunction_nUniversalFolio(params: Object): Observable<any> {
+  sendFunction_nUniversalFolio(managementNumber: number): Observable<any> {
     return this.dictationService
-      .nUniversalFolio(params)
+      .nUniversalFolio(managementNumber)
       .pipe(map(x => x.data[0]));
   }
   sendFunction_getActnom(managementNumber: number): Observable<any> {
@@ -1072,7 +1082,7 @@ export abstract class RelateDocumentsResponse extends BasePage {
     return this.dictationService.pupValidExtDom(wheelNumber).pipe(map(x => x));
   }
   sendFunction_findOffficeNu(params: Object): Observable<any> {
-    return this.dictationService.findOffficeNu(params).pipe(map(x => x.data));
+    return this.dictationService.findOffficeNu(params).pipe(map(x => x));
   }
   sendFunction_updateManagerTransfer(params: Object): Observable<any> {
     return this.dictationService
@@ -1085,9 +1095,28 @@ export abstract class RelateDocumentsResponse extends BasePage {
       .pipe(map(x => x));
   }
   sendFunction_pufGenerateKey(params: IPufGenerateKey): Observable<any> {
-    return this.dictationService.pufGenerateKey(params).pipe(map(x => x));
+    return (
+      this.dictationService.pufGenerateKey(params).subscribe({
+        error: error => {
+          this.alertInfo(
+            'warning',
+            'No se puede guardar por la siguiente razón:',
+            error.error.message
+          );
+          console.log('Error', error);
+        },
+      }),
+      this.dictationService.pufGenerateKey(params).pipe(map(x => x))
+    );
   }
   sendFunction_pupStatusChange(params: IStatusChange): Observable<any> {
     return this.dictationService.pupStatusChange(params).pipe(map(x => x));
+  }
+  sendFunction_createMJobManagementExtSSF3(
+    params: IMJobManagementExtSSF3
+  ): Observable<any> {
+    return this.msOfficeManagementService
+      .createMJobManagementExtSSF3(params)
+      .pipe(map(x => x));
   }
 }

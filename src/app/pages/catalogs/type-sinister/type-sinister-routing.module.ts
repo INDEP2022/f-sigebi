@@ -1,11 +1,11 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { TypeDoctoListComponent } from '../type-docto/type-docto-list/type-docto-list.component';
+import { TypeSinisterListComponent } from '../type-sinister/type-sinister-list/type-sinister-list.component';
 
 const routes: Routes = [
   {
     path: '',
-    component: TypeDoctoListComponent,
+    component: TypeSinisterListComponent,
   },
 ];
 

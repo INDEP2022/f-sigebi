@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Ng2SmartTableComponent } from 'ng2-smart-table';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
@@ -27,11 +28,13 @@ export class RDictaminaDocModalComponent extends BasePage implements OnInit {
   dataDocuments: any[] = [];
   selectedDocs: any;
   dateValid: any;
+  documenst: any[] = [];
   @ViewChild('tabla') tabla: Ng2SmartTableComponent;
   constructor(
     private modalRef: BsModalRef,
     private dictationXGood1Service: DictationXGood1Service,
-    private modalService: BsModalService
+    private modalService: BsModalService,
+    private datePipe: DatePipe
   ) {
     super();
 
@@ -78,7 +81,13 @@ export class RDictaminaDocModalComponent extends BasePage implements OnInit {
           item['date'] = '';
         });
         this.dataDocuments = resp.data;
-        console.log('Respuesta: ', resp.data);
+        console.log(this.documenst, 'trajo algo??', this.dataDocuments);
+
+        if (this.documenst.length > 0) {
+          this.dataDocuments.forEach((doc, i) => {
+            doc.date = this.documenst[i].date;
+          });
+        }
       },
       error: error => {
         this.onLoadToast('warning', 'No hay documentos relacionados', '');
@@ -126,13 +135,16 @@ export class RDictaminaDocModalComponent extends BasePage implements OnInit {
       let filaAEditar = this.dataDocuments.find(
         item => item.cveDocument === next.cve
       );
-      filaAEditar.date = next.date;
+      filaAEditar.date = this.datePipe.transform(next.date, 'dd/MM/yyyy');
       this.actualizarTabla();
       // filaAEditar.email = 'maria.fernanda@gmail.com';
       for (let i = 0; i < this.dataDocuments.length; i++) {
         console.log('this.dataDocuments[i]', this.dataDocuments[i]);
         if (next.cve === this.dataDocuments[i].cveDocument) {
-          this.dataDocuments[i].date = next.date;
+          this.dataDocuments[i].date = this.datePipe.transform(
+            next.date,
+            'dd/MM/yyyy'
+          );
         }
       }
     });

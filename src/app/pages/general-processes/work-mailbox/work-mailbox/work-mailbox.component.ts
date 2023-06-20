@@ -621,12 +621,14 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
   }
 
   /*BUILD FILTERS*/
-  buildFilters(): void {
+  buildFilters(keepPage?: boolean): void {
     //console.log(this.managementAreaF.value);
     //console.log(this.user.value);
     this.filterParams.getValue().removeAllFilters();
     this.filterForm.controls['priority'].setValue(this.priority$);
-    this.params.value.page = 1;
+    if (!keepPage) {
+      this.params.value.page = 1;
+    }
     this.params.value.limit = 10;
 
     let {
@@ -1116,6 +1118,10 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
               this.router.navigateByUrl(
                 '/pages/documents-reception/flyers-registration'
               );
+            } else if (resp.data[0].screenKey === 'FACTGENACTDATEX') {
+              this.router.navigateByUrl(
+                `/pages/juridical/file-data-update?wheelNumber=${this.selectedRow.flierNumber}`
+              );
             } else {
               resp.data[0].screenKey !== null
                 ? this.alert(
@@ -1244,7 +1250,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
             area => area.id == predeterminedA[0].managementArea
           );
           this.filterForm.controls['managementArea'].setValue(defaultArea[0]);
-          this.buildFilters();
+          this.buildFilters(true);
         } else {
           this.buildFilters();
           this.onLoadToast(
@@ -2238,22 +2244,27 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     //     //console.log(resp);
     //   }
     // })
-    const $obs = this.workService.getViewBienes;
-    const service = this.workService;
+    //const $obs = this.workService.getViewBienes;
+    //const service = this.workService;
     const columns = WORK_BIENES_COLUMNS;
     const title = BIENES_TITLE;
     const params = new FilterParams();
     params.addFilter('fileNumber', this.selectedRow.proceedingsNumber);
     const $params = new BehaviorSubject(params);
+
+    console.log('Expediente', this.selectedRow.proceedingsNumber);
+    const proceedingsNumber = this.selectedRow.proceedingsNumber;
     const config = {
       ...MODAL_CONFIG,
       initialState: {
-        $obs,
-        service,
+        //$obs,
+        // service,
         columns,
         title,
         $params,
+        proceedingsNumber,
       },
+      class: 'modal-lg modal-dialog-centered modal-not-top-padding',
     };
     const modalRef = this.modalService.show(MailboxModalTableComponent, config);
   }

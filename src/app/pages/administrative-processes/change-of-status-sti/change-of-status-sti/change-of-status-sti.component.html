@@ -6,14 +6,33 @@
     <form [formGroup]="form" class="form-material">
       <div class="row">
         <div class="col-md-6 col-sm-12 col-xs-12">
-          <form-field [control]="form.get('numberFile')" label="No Expediente">
+          <form-field [control]="form.get('numberFile')" label="No. Expediente">
             <input
               type="text"
               class="form-control"
               formControlName="numberFile"
-              maxlength="10"
-              (change)="listGoods()" />
+              maxlength="10" />
           </form-field>
+        </div>
+        <div class="col">
+          <div class="row">
+            <div class="col">
+              <button
+                [disabled]="
+                  !form.get('numberFile').valid ||
+                  form.get('numberFile').value == null
+                "
+                type="button"
+                class="btn btn-primary active btn-sm mr-3"
+                (click)="listGoods()">
+                Buscar <i class="bx bx-search-alt bx-sm float-icon"></i>
+              </button>
+
+              <button class="btn btn-danger btn-sm active" (click)="clearAll()">
+                Limpiar <i class="fa fa-eraser" aria-hidden="true"></i>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
       <div class="row">
@@ -28,12 +47,15 @@
             </div>
           </div>
         </div>
-        <app-pagination [params]="params" [totalItems]="totalItems">
+        <app-pagination
+          [params]="params"
+          [limit]="limit"
+          [totalItems]="totalItems">
         </app-pagination>
       </div>
       <div class="row">
         <div class="col-md-2 col-sm-12 col-xs-12">
-          <form-field [control]="form.get('goodStatus')" label="Status">
+          <form-field [control]="form.get('goodStatus')" label="Nuevo Estatus">
             <input
               type="text"
               class="form-control"
@@ -43,7 +65,7 @@
         <div class="col-md-7 col-sm-12 col-xs-12">
           <form-field
             [control]="form.get('descriptionStatus')"
-            label="Descripcion del status">
+            label="Descripción del Estatus">
             <input
               type="text"
               maxlength="1235"
@@ -67,6 +89,7 @@
             <textarea
               type="text"
               class="form-control"
+              maxlength="600"
               formControlName="description"></textarea>
           </form-field>
         </div>
@@ -77,10 +100,11 @@
             <div class="m-3">
               <button
                 [disabled]="goods.length == 0"
+                (click)="accept()"
                 type="button"
-                class="btn btn-primary active"
-                (click)="accept()">
-                Aceptar
+                class="btn btn-primary btn-sm active">
+                Guardar
+                <i aria-hidden="true" class="fa fa-save"></i>
               </button>
             </div>
           </div>

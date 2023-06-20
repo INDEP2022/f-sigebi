@@ -25,10 +25,11 @@ export class GoodprocessService extends HttpService {
     );
   }
 
-  getDistinctTypes(model: ICharacteristicsGoodDTO) {
+  getDistinctTypes(model: ICharacteristicsGoodDTO, listParams: ListParams) {
     return this.post<IListResponseMessage<any>>(
       GoodprocessEndpoints.GetDistinctTypes,
-      model
+      model,
+      listParams
     );
   }
 
@@ -100,9 +101,26 @@ export class GoodprocessService extends HttpService {
     return this.get('application/get-nextval-gestion');
   }
   updateJobManagement(model: any): Observable<IListResponse<any>> {
-    return this.put(`${GoodprocessEndpoints.UpdateGoodStatus}`, model);
+    return this.post(`${GoodprocessEndpoints.UpdateGoodStatus}`, model);
   }
   postJobManagement(model: any): Observable<IListResponse<any>> {
     return this.post(`${GoodprocessEndpoints.UpdateGoodStatus}`, model);
+  }
+
+  getGoodAvailable(params: ListParams) {
+    const page = params.page || 1;
+    const limit = params.limit || 10;
+    return this.post(
+      `application/getAssetsOfficeManagement?page=${page}&limit=${limit}`,
+      params
+    );
+  }
+
+  postTransferGoodsTradeManagement(body: {
+    ofManagementNumber: any;
+    proceedingsNumber: any;
+    goodNumber: any;
+  }) {
+    this.post('application/transferGoodsTradeManagement', body);
   }
 }

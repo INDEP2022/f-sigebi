@@ -7,4 +7,5 @@ export enum OfficeManagementEndpoint {
   ObtainKeyOffice = 'factadboficiogestrel3/obtain-key-office',
   TmpClasifBienCustomPost = 'application/facta-db-oficio-gest',
   DeleteJobGestion = 'application/delete-job-gestion',
+  MJobManagementExtSSF3 = 'm-job-management-ext-ssf3',
 }

@@ -358,6 +358,7 @@ export interface IGood {
   id?: number;
   inventoryNumber?: number;
   goodId?: number;
+  notSelect?: boolean;
   description?: string;
   quantity?: number;
   dateIn?: Date;

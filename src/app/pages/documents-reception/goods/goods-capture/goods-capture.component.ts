@@ -548,9 +548,62 @@ export class GoodsCaptureComponent
 
   createWithTmpExp() {
     this.tmpExpedientService.getById(this.goodToSave.fileNumber).subscribe({
-      next: expedient => {
+      next: (expedient: any) => {
         this.paperworkType = expedient.procedureType;
-        this._expedienService.create(expedient as any).subscribe({
+        const expToSave = {
+          id: expedient?.id ?? null,
+          dateAgreementAssurance: expedient?.agreementSecureDate ?? null,
+          foresight: expedient?.forecast ?? null,
+          dateForesight: expedient?.forecastDate ?? null,
+          articleValidated: expedient?.articleValidated ?? null,
+          ministerialDate: expedient?.faithMinisterialDate ?? null,
+          ministerialActOfFaith: expedient?.recordFaithMinisterial ?? null,
+          date_Dictamines: expedient?.dictamineDate ?? null,
+          batteryNumber: expedient?.batteryNumber ?? null,
+          lockerNumber: expedient?.lockerNumber ?? null,
+          shelfNumber: expedient?.shelfNumber ?? null,
+          courtNumber: expedient?.courtNumber ?? null,
+          observationsForecast: expedient?.observationsForecast ?? null,
+          insertedBy: expedient?.insertedBy ?? null,
+          observations: expedient?.observations ?? null,
+          insertMethod: expedient?.methodInsertion ?? null,
+          insertDate: expedient?.insertionDate ?? null,
+          receptionDate: expedient?.receptionSeraDate ?? null,
+          criminalCase: expedient?.causePenal ?? null,
+          preliminaryInquiry: expedient?.ascertainmentPrevious ?? null,
+          protectionKey: expedient?.cveProtection ?? null,
+          crimeKey: expedient?.cveCrime ?? null,
+          circumstantialRecord: expedient?.recordCircumstanced ?? null,
+          keyPenalty: expedient?.cvetouchPenal ?? null,
+          nameInstitution: expedient?.institutionName ?? null,
+          courtName: expedient?.courtName ?? null,
+          mpName: expedient?.nameMp ?? null,
+          keySaveValue: expedient?.cveguardavalor ?? null,
+          indicatedName: expedient?.nameindexed ?? null,
+          authorityOrdersDictum: expedient?.authorityOrderOpinion ?? null,
+          notificationDate: expedient?.notificationDate ?? null,
+          notifiedTo: expedient?.notifiedTo ?? null,
+          placeNotification: expedient?.placeNotification ?? null,
+          confiscateDictamineDate: expedient?.forfeitureRulingDate ?? null,
+          dictaminationReturnDate: expedient?.returnRulingDate ?? null,
+          alienationDate: expedient?.alienationDate ?? null,
+          federalEntityKey: expedient?.cveEntfed ?? null,
+          dictaminationDate: expedient?.recrevRulingDate ?? null,
+          destructionDate: expedient?.destructionDate ?? null,
+          donationDate: expedient?.donationDate ?? null,
+          initialAgreementDate: expedient?.agreementInitialDate ?? null,
+          initialAgreement: expedient?.agreementInitial ?? null,
+          expedientStatus: expedient?.statusProceedings ?? null,
+          identifier: expedient?.identifier ?? null,
+          crimeStatus: expedient?.isCrime ?? null,
+          transferNumber: expedient?.transfereeNumber ?? null,
+          expTransferNumber: expedient?.expTransferorsNumber ?? null,
+          expedientType: expedient?.proceedingsType ?? null,
+          stationNumber: expedient?.stationNumber ?? null,
+          authorityNumber: expedient?.authorityNumber ?? null,
+          insertionDatehc: expedient?.insertionHcDate ?? null,
+        };
+        this._expedienService.create(expToSave).subscribe({
           next: expedient => {
             this.goodToSave.fileNumber = `${expedient.id}`;
             this.updateNotifications(expedient).subscribe({

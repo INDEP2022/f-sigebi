@@ -29,6 +29,8 @@ export class RDictaminaDocModalComponent extends BasePage implements OnInit {
   stateNumber: any;
   selectedDocs: any;
   dateValid: any;
+  documentsCreate: any;
+  documentsCreates2: any[] = [];
   @ViewChild('tabla') tabla: Ng2SmartTableComponent;
   constructor(
     private modalRef: BsModalRef,
@@ -88,20 +90,36 @@ export class RDictaminaDocModalComponent extends BasePage implements OnInit {
     params.addFilter('typeDictation', 'PROCEDENCIA', SearchFilter.EQ);
     params.addFilter('crime', 'N', SearchFilter.EQ);
     params.addFilter('typeSteeringwheel', 'T', SearchFilter.EQ);*/
+    console.log('this.documentsCreate', this.documentsCreate);
 
-    this.dictationXGood1Service.getAll(params.getParams()).subscribe({
-      next: resp => {
-        let result = resp.data.map(async (item: any) => {
-          item['date'] = '';
-        });
-        this.dataDocuments = resp.data;
-        console.log('Respuesta: ', resp.data);
-      },
-      error: error => {
-        this.onLoadToast('warning', 'No hay documentos relacionados', '');
-        console.log('Respuesta: ', error);
-      },
-    });
+    let arr = [];
+    if (this.documentsCreate.length > 0) {
+      for (let i = 0; i < this.documentsCreate.length; i++) {
+        if (
+          this.documentsCreate[i].numberClassifyGood == this.numberClassifyGood
+        ) {
+          arr.push(this.documentsCreate[i]);
+        }
+      }
+    }
+
+    if (arr.length > 0) {
+      this.dataDocuments = arr;
+    } else {
+      this.dictationXGood1Service.getAll(params.getParams()).subscribe({
+        next: resp => {
+          let result = resp.data.map(async (item: any) => {
+            item['date'] = '';
+          });
+          this.dataDocuments = resp.data;
+          console.log('Respuesta: ', resp.data);
+        },
+        error: error => {
+          this.onLoadToast('warning', 'No hay documentos relacionados', '');
+          console.log('Respuesta: ', error);
+        },
+      });
+    }
   }
 
   selectProceedings(event: any) {
@@ -167,6 +185,7 @@ export class RDictaminaDocModalComponent extends BasePage implements OnInit {
       this.modalRef.content.callback([]);
       this.modalRef.hide();
     } else {
+      // VALIDAMOS LAS FECHAS //
       for (let i = 0; i < this.dataDocuments.length; i++) {
         if (this.dataDocuments[i].date == '') {
           this.onLoadToast(
@@ -177,6 +196,7 @@ export class RDictaminaDocModalComponent extends BasePage implements OnInit {
           return;
         }
       }
+
       this.modalRef.content.callback(this.dataDocuments);
       this.modalRef.hide();
     }

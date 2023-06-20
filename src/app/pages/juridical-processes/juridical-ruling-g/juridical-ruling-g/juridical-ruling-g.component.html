@@ -124,7 +124,10 @@
               <form-field
                 [control]="expedientesForm.get('criminalCase')"
                 label="Causa Penal">
-                <input class="form-control" formControlName="criminalCase" />
+                <input
+                  readonly
+                  class="form-control"
+                  formControlName="criminalCase" />
               </form-field>
 
               <!-- <form-field
@@ -455,6 +458,7 @@
               <ng2-smart-table
                 id="bienesJuridicos"
                 (rowSelect)="onSelectedRow($event)"
+                (userRowSelect)="onSelectedRow2($event)"
                 [attr.class]="'table-bordered table-responsive'"
                 [settings]="settings1"
                 [source]="goods"></ng2-smart-table>
@@ -464,7 +468,7 @@
                   <strong>{{ desc_estatus_good }}</strong>
                 </p>
                 <p class="text-primary mt-2 ml-3">
-                  <strong>{{ consult }}</strong>
+                  <!-- <strong>{{ consult }}</strong> -->
                 </p>
               </div>
             </div>
@@ -537,16 +541,19 @@
         </button>
       </div>
     </div>
-    <div class="row pt-2">
-      <div class="col-md-12 mt-4 mb-4">
-        <ng2-smart-table
-          [attr.class]="'table-bordered table-responsive'"
-          [settings]="settings2"
-          (userRowSelect)="rowsSelected($event)"
-          [source]="goodsValid"></ng2-smart-table>
+    <div class="col-12">
+      <!-- <form-loader *ngIf="formLoading2"></form-loader> -->
+      <div class="row pt-2">
+        <div class="col-md-12 mt-4 mb-4" *ngIf="!formLoading2">
+          <ng2-smart-table
+            [attr.class]="'table-bordered table-responsive'"
+            [settings]="settings2"
+            (userRowSelect)="rowsSelected($event)"
+            [source]="goodsValid"></ng2-smart-table>
+        </div>
         <div>
           <app-pagination
-            [params]="params3"
+            [filterParams]="filter3"
             [totalItems]="totalItems3"></app-pagination>
         </div>
       </div>

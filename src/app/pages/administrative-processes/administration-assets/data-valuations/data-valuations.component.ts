@@ -1,4 +1,10 @@
-import { Component, Input, OnInit } from '@angular/core';
+import {
+  Component,
+  Input,
+  OnChanges,
+  OnInit,
+  SimpleChanges,
+} from '@angular/core';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { AppraiseService } from 'src/app/core/services/ms-appraise/appraise.service';
@@ -9,7 +15,10 @@ import { BasePage } from 'src/app/core/shared/base-page';
   templateUrl: './data-valuations.component.html',
   styles: [],
 })
-export class DataValuationsComponent extends BasePage implements OnInit {
+export class DataValuationsComponent
+  extends BasePage
+  implements OnInit, OnChanges
+{
   @Input() goodId: number;
   list: any[] = [];
   totalItems: number = 0;
@@ -17,6 +26,7 @@ export class DataValuationsComponent extends BasePage implements OnInit {
 
   constructor(private readonly appraiseService: AppraiseService) {
     super();
+    this.settings.actions = false;
     this.settings.columns = {
       noRequest: {
         title: 'No. Solicitud',
@@ -24,7 +34,7 @@ export class DataValuationsComponent extends BasePage implements OnInit {
         sort: false,
       },
       valuationDate: {
-        title: 'Fecha Avaluo',
+        title: 'Fecha Avalúo',
         type: 'string',
         sort: false,
       },
@@ -39,7 +49,7 @@ export class DataValuationsComponent extends BasePage implements OnInit {
         sort: false,
       },
       valuationValue: {
-        title: 'Valor Avaluo',
+        title: 'Valor Avalúo',
         type: 'string',
         sort: false,
       },
@@ -49,7 +59,7 @@ export class DataValuationsComponent extends BasePage implements OnInit {
         sort: false,
       },
       comercializationValue: {
-        title: 'Valor Comercializacion',
+        title: 'Valor Comercialización',
         type: 'string',
         sort: false,
       },
@@ -84,6 +94,12 @@ export class DataValuationsComponent extends BasePage implements OnInit {
         sort: false,
       },
     };
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes) {
+      this.searchDataValuations(this.goodId);
+    }
   }
 
   ngOnInit(): void {

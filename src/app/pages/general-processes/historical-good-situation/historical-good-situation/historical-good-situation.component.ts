@@ -1,7 +1,6 @@
-import { Location } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import {
   BehaviorSubject,
   catchError,
@@ -76,9 +75,7 @@ export class HistoricalGoodSituationComponent
     private fb: FormBuilder,
     private activatedRoute: ActivatedRoute,
     private historyGoodServie: HistoryGoodService,
-    private goodService: GoodService,
-    private location: Location,
-    private router: Router
+    private goodService: GoodService
   ) {
     super();
     this.activatedRoute.queryParams
@@ -131,7 +128,6 @@ export class HistoricalGoodSituationComponent
         })
       )
       .subscribe();
-
     this.global.estHist = null;
     this.global.fecCam = null;
   }
@@ -139,6 +135,7 @@ export class HistoricalGoodSituationComponent
   getHistory(_params?: FilterParams) {
     const params = _params ?? new FilterParams();
     this.loading = true;
+    console.log(this.goodId);
     return this.historyGoodServie
       .getHistoryGoodStatus(this.goodId, params.getParams())
       .pipe(
@@ -180,18 +177,5 @@ export class HistoricalGoodSituationComponent
         this.params.next(params);
       })
     );
-  }
-
-  goBack() {
-    // if (this._params.origin == 'FACTREFACTAENTREC') {
-    //   this.router.navigate([HOME_DEFAULT])
-    //   return
-    // }
-
-    // if (this._params.origin == 'FCONGENRASTREADOR') {
-    //   this.router.navigate([HOME_DEFAULT]);
-    //   return;
-    // }
-    this.location.back();
   }
 }

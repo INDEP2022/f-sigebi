@@ -1,19 +1,26 @@
+import { DatePipe } from '@angular/common';
 import { SeeMoreComponent } from 'src/app/shared/components/see-more/see-more.component';
 
 export const COLUMNS_APPOINTMENT_RELATIONS_PAYS = {
-  id: {
+  datePay: {
     title: 'Fecha Pago', // FECHA PAGO Y CONCEPTO
     sort: false,
+    valuePrepareFunction: (value: string) => {
+      if (!value) {
+        return '';
+      }
+      return new DatePipe('en-US').transform(value, 'dd-MM-yyyy');
+    },
   },
-  typeDict: {
+  payConcept: {
     title: 'Concepto Pago', // DESCRIPCION PAGO
     sort: false,
   },
-  passOfficeArmy: {
+  amount: {
     title: 'Importe', // IMPORTE
     sort: false,
   },
-  observations: {
+  observation: {
     title: 'Observaciones', // OBSERVACIONES
     sort: false,
     type: 'custom',

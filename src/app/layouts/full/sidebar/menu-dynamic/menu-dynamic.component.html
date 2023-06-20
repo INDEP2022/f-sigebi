@@ -2,6 +2,7 @@
   <li *ngFor="let subitem of menuChild">
     <a
       [routerLink]="subitem.link"
+      (click)="updateStorage(subitem)"
       *ngIf="!hasItems(subitem)"
       class="side-nav-link-ref"
       [attr.data-parent]="subitem.parentId"

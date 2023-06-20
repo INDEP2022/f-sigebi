@@ -13,7 +13,19 @@
     <form class="form-material" [formGroup]="form">
       <div class="row">
         <div class="col-md-6">
-          <ng-custom-select-loading
+          <form-field
+            [control]="form.get('tipoEvento')"
+            label="Tipos de evento">
+            <ng-select class="form-control" formControlName="tipoEvento">
+              <ng-option [value]="null">Seleccione un tipo de evento</ng-option>
+              <ng-option
+                *ngFor="let event of typeEvents"
+                [value]="event.tipo_acta">
+                {{ event.descripcion }}
+              </ng-option>
+            </ng-select>
+          </form-field>
+          <!-- <ng-custom-select-loading
             [form]="form"
             formControlName="tipoEvento"
             label="Tipo de Evento"
@@ -22,7 +34,7 @@
             [searchable]="false"
             loadingText="Cargando tipos de evento..."
             path="proceeding/api/v1/proceedings-delivery-reception/get-types">
-          </ng-custom-select-loading>
+          </ng-custom-select-loading> -->
           <!-- <app-proceeding-types-shared
             [form]="form"></app-proceeding-types-shared> -->
         </div>
@@ -169,8 +181,8 @@
             type="submit"
             size="small"
             (click)="getData()">
-            <i class="fa fa-search"></i>
             Buscar
+            <i class="bx bx-search-alt bx-sm float-icon"></i>
           </button>
           <!-- <button
             class="btn btn-primary btn-sm active"

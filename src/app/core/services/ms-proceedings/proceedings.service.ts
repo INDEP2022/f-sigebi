@@ -98,7 +98,7 @@ export class ProceedingsService extends HttpService {
     return this.get<IListResponse<IProceedings>>(`${this.route}`, params);
   }
 
-  createProceedings(formData: Object) {
+  createProceedings(formData: any) {
     return this.post(this.route, formData);
   }
 

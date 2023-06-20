@@ -1,6 +1,7 @@
 export enum DepositaryEndPoints {
   Depositary = `depositary`,
   DepositaryAppointment = `depositary-appointment`,
+  DepositaryAppointments = `depositary-appointments`,
   DepositaryRequest = `legal-destination-for-property`,
   PersonsModDepositary = `persons-mod-depositary`,
   PaymentRefParamsDep = `payment-ref/params-dep`,
@@ -10,4 +11,5 @@ export enum DepositaryEndPoints {
   ValidBlackListAppointment = `valid-black-list/appointment`,
   AplicationcargaCliente1 = 'application/cargaCliente1',
   AplicationcargaCliente2 = 'application/cargaCliente2',
+  DepositaryPaymentDetail = 'ded-pay-depositary',
 }

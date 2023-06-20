@@ -6,7 +6,6 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { SearchBarFilter } from 'src/app/common/repository/interfaces/search-bar-filters';
 import { DynamicTablesService } from 'src/app/core/services/dynamic-catalogs/dynamic-tables.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { GoodsCharacteristicsService } from '../../../services/goods-characteristics.service';
 import { COLUMNS_GOOD } from './columns-good';
 import { GoodValueEditWebCar } from './good-value-edit-web-car/good-value-edit-web-car.component';
 
@@ -27,11 +26,11 @@ export class GoodTableDetailButtonComponent extends BasePage implements OnInit {
   pageSizeOptions = [5, 10, 15];
   limit: FormControl = new FormControl(5);
   searchFilter: SearchBarFilter; // Input requerido al llamar el modal
+  service: any;
   constructor(
     private modalRef: BsModalRef,
     private modalService: BsModalService,
-    private dynamicTablesService: DynamicTablesService,
-    private goodsCharacteristicsService: GoodsCharacteristicsService
+    private dynamicTablesService: DynamicTablesService
   ) {
     super();
     this.settings = {
@@ -50,12 +49,12 @@ export class GoodTableDetailButtonComponent extends BasePage implements OnInit {
     this.params.value.limit = 5;
   }
 
-  get data() {
-    return this.goodsCharacteristicsService.dataDetails;
+  get data(): any[] {
+    return this.service.dataDetails;
   }
 
-  set data(value) {
-    this.goodsCharacteristicsService.dataDetails = value;
+  set data(value: any[]) {
+    this.service.dataDetails = value;
   }
 
   private pupValidaNumero(indexRow: number) {

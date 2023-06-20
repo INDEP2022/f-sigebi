@@ -1,11 +1,6 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">
-      <button class="btn btn-sm btn-return" (click)="goBack()">
-        <i class="bx bx-chevron-left float-icon"></i>
-        <span class="title">Situación histórica del bien</span>
-      </button>
-    </h5>
+    <h5 class="title">Situación histórica del bien</h5>
   </div>
 
   <div body>
@@ -18,7 +13,8 @@
           <input
             type="number"
             formControlName="goodNumber"
-            class="form-control" />
+            class="form-control"
+            oninput="if(this.value.length > 11) this.value = this.value.slice(0, 11);" />
         </form-field>
         <form-field
           [control]="form.get('description')"
@@ -28,7 +24,8 @@
             type="text"
             readonly
             formControlName="description"
-            class="form-control" />
+            class="form-control"
+            maxlength="600" />
         </form-field>
         <form-field
           [control]="form.get('inventoryNumber')"
@@ -57,7 +54,7 @@
         <div class="col-md-12">
           <div [class]="loading ? 'table-loading' : ''">
             <ng2-smart-table
-              [attr.class]="'table-bordered'"
+              [attr.class]="'table-responsive table-borderless'"
               [settings]="settings"
               [source]="history">
             </ng2-smart-table>

@@ -41,6 +41,14 @@
         (click)="_saveScreenManagement()">
         <i aria-hidden="true" class="fa fa-save"></i>
       </button>
+      <!-- <button
+        type="button"
+        tooltip="TEST"
+        containerClass="tooltip-style"
+        class="btn btn-primary btn-sm active"
+        (click)="testCambiaStatus()">
+        <i aria-hidden="true" class="fa fa-check"></i>
+      </button> -->
     </div>
   </div>
   <!-- </div> -->
@@ -111,7 +119,6 @@
               <ngx-select
                 [searchOnInit]="true"
                 (fetchItems)="getSenderByDetail($event)"
-                (change)="changeSenderByDetail($event)"
                 bindLabel="idName"
                 [data]="senders"
                 [form]="formJobManagement"
@@ -143,10 +150,11 @@
                 [control]="formJobManagement.get('addressee')"
                 class="col-md-4"
                 label="Nombre Destinatario">
-                <input
+                <textarea
+                  rows="3"
                   type="text"
                   class="form-control"
-                  formControlName="addressee" />
+                  formControlName="addressee"></textarea>
               </form-field>
             </ng-template>
 
@@ -209,6 +217,10 @@
           <div class="col-md-1 text-right">
             <button
               *ngIf="pantallaOption"
+              [disabled]="
+                blockSend ||
+                formJobManagement.get('statusOf')?.value == 'ENVIADO'
+              "
               type="button"
               tooltip="Cambio"
               containerClass="tooltip-style"
@@ -303,6 +315,7 @@
               <ngx-select
                 (fetchItems)="getJustification($event)"
                 value="id"
+                [searchOnInit]="true"
                 bindLabel="clarifications"
                 [form]="managementForm"
                 control="justificacion"
@@ -502,10 +515,10 @@
           </div> -->
             <!-- [disabled]="isDisabledBtnDocs" -->
             <div class="col-md-12 mt-3 text-right">
-              <!-- [disabled]="!formJobManagement?.get('managementNumber').value" -->
               <button
                 type="button"
                 tooltip="Documentos"
+                [disabled]="!formJobManagement?.get('managementNumber').value"
                 containerClass="tooltip-style"
                 class="btn btn-info active btn-sm m-1"
                 (click)="openModal()">

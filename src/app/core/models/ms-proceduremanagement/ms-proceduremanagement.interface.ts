@@ -73,3 +73,9 @@ export interface IManagementGroupWork {
   managementArea: string | null;
   predetermined: string | null;
 }
+
+export interface IAreaTramite {
+  area_tramite: string;
+  descripcion: string;
+  tipo_acta: string;
+}

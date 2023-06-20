@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { LocalDataSource } from 'ng2-smart-table';
+import { distinctUntilChanged, throttleTime } from 'rxjs';
 import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
 import { Observable } from 'rxjs/internal/Observable';
 import { takeUntil } from 'rxjs/operators';
@@ -22,6 +23,8 @@ export abstract class BasePageWidhtDinamicFilters<T = any> extends BasePage {
   columnFilters: any = [];
   // equalFilters: string[] = ['id'];
   ilikeFilters: string[] = ['description'];
+  haveInitialCharge = true;
+  contador = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
   service: ServiceGetAll<T>;
   constructor() {
@@ -47,7 +50,11 @@ export abstract class BasePageWidhtDinamicFilters<T = any> extends BasePage {
   protected dinamicFilterUpdate() {
     this.data
       .onChanged()
-      .pipe(takeUntil(this.$unSubscribe))
+      .pipe(
+        distinctUntilChanged(),
+        throttleTime(500),
+        takeUntil(this.$unSubscribe)
+      )
       .subscribe(change => {
         if (change.action === 'filter') {
           let filters = change.filter.filters;
@@ -78,7 +85,10 @@ export abstract class BasePageWidhtDinamicFilters<T = any> extends BasePage {
   searchParams() {
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe({
       next: resp => {
-        this.getData();
+        if (this.haveInitialCharge || this.contador > 0) {
+          this.getData();
+        }
+        this.contador++;
       },
     });
   }
@@ -90,22 +100,25 @@ export abstract class BasePageWidhtDinamicFilters<T = any> extends BasePage {
       ...this.columnFilters,
     };
     if (this.service) {
-      this.service.getAll(params).subscribe({
-        next: (response: any) => {
-          if (response) {
-            this.totalItems = response.count || 0;
-            this.data.load(response.data);
+      this.service
+        .getAll(params)
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe({
+          next: (response: any) => {
+            if (response) {
+              this.totalItems = response.count || 0;
+              this.data.load(response.data);
+              this.data.refresh();
+              this.loading = false;
+            }
+          },
+          error: err => {
+            this.totalItems = 0;
+            this.data.load([]);
             this.data.refresh();
             this.loading = false;
-          }
-        },
-        error: err => {
-          this.totalItems = 0;
-          this.data.load([]);
-          this.data.refresh();
-          this.loading = false;
-        },
-      });
+          },
+        });
     } else {
       this.totalItems = 0;
       this.data.load([]);
