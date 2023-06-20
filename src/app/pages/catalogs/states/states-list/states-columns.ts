@@ -24,7 +24,7 @@ export const STATES_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  userCreation: {
+  /*userCreation: {
     title: 'Creado por',
     type: 'string',
     sort: false,
@@ -33,7 +33,7 @@ export const STATES_COLUMNS = {
     title: 'Modificado por',
     type: 'string',
     sort: false,
-  },
+  },*/
   version: {
     title: 'Versión',
     type: 'number',

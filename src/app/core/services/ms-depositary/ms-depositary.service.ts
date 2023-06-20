@@ -7,6 +7,7 @@ import { IListResponse } from '../../interfaces/list-response.interface';
 import {
   IAppointmentDepositary,
   IDepositaryAppointments,
+  IDepositaryPaymentDet,
   IPaymendtDepParamsDep,
   IPersonsModDepositary,
   IRequestDepositary,
@@ -109,6 +110,23 @@ export class MsDepositaryService extends HttpService {
   ): Observable<IListResponse<any>> {
     return this.get<IListResponse<any>>(
       `${DepositaryEndPoints.AplicationcargaCliente2}?no_nombramiento=${no_appointment}`
+    );
+  }
+
+  getAllFilteredDedPay(
+    params?: _Params
+  ): Observable<IListResponse<IDepositaryPaymentDet>> {
+    return this.get<IListResponse<IDepositaryPaymentDet>>(
+      DepositaryEndPoints.DepositaryDedPay,
+      params
+    );
+  }
+  getAllFilteredDepositaryDetrepo(
+    params?: _Params
+  ): Observable<IListResponse<IDepositaryPaymentDet>> {
+    return this.get<IListResponse<IDepositaryPaymentDet>>(
+      DepositaryEndPoints.DepositaryDetrepo,
+      params
     );
   }
 }

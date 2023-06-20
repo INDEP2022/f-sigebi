@@ -11,15 +11,15 @@ import {
 } from 'src/app/common/repository/interfaces/list-params';
 import { MsDepositaryService } from 'src/app/core/services/ms-depositary/ms-depositary.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { NUM_POSITIVE, STRING_PATTERN } from 'src/app/core/shared/patterns';
-import { COLUMNS_APPOINTMENT_RELATIONS_PAYS } from './appointments-relations-pays.columns';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { COLUMNS_APPOINTMENT_ADMINISTRATIVE_REPORT } from './appointments-administrative-report.columns';
 
 @Component({
-  selector: 'app-appointments-relations-pays',
-  templateUrl: './appointments-relations-pays.component.html',
+  selector: 'app-appointments-administrative-report',
+  templateUrl: './appointments-administrative-report.component.html',
   styles: [],
 })
-export class AppointmentsRelationsPaysComponent
+export class AppointmentsAdministrativeReportComponent
   extends BasePage
   implements OnInit
 {
@@ -46,18 +46,14 @@ export class AppointmentsRelationsPaysComponent
         delete: false,
       },
       hideSubHeader: true,
-      columns: { ...COLUMNS_APPOINTMENT_RELATIONS_PAYS },
+      columns: { ...COLUMNS_APPOINTMENT_ADMINISTRATIVE_REPORT },
     };
   }
 
   ngOnInit(): void {
     this.formGroup = this.fb.group({
-      datePay: [{ value: null, disabled: false }, [Validators.maxLength(11)]], //*
-      conceptPayKey: [
-        { value: null, disabled: false },
-        [Validators.maxLength(11), Validators.pattern(NUM_POSITIVE)],
-      ], //*
-      description: [
+      dateRepo: [{ value: null, disabled: false }, [Validators.maxLength(11)]], //*
+      report: [
         { value: null, disabled: false },
         [Validators.maxLength(100), Validators.pattern(STRING_PATTERN)],
       ], //*
@@ -72,19 +68,16 @@ export class AppointmentsRelationsPaysComponent
   }
 
   cleanDate() {
-    this.formGroup.get('datePay').reset();
+    this.formGroup.get('dateRepo').reset();
   }
 
   searchWithFilters() {
     console.log('FORMA VALUES ', this.formGroup.value);
     let fieldFull: number = 0;
-    if (this.formGroup.get('datePay').value) {
+    if (this.formGroup.get('dateRepo').value) {
       fieldFull++;
     }
-    if (this.formGroup.get('conceptPayKey').value) {
-      fieldFull++;
-    }
-    if (this.formGroup.get('description').value) {
+    if (this.formGroup.get('report').value) {
       fieldFull++;
     }
     console.log(fieldFull);
@@ -101,55 +94,40 @@ export class AppointmentsRelationsPaysComponent
     const params = new FilterParams();
     params.removeAllFilters();
     params.addFilter('appointmentNum', this.depositaryNumber);
-    console.log(this.formGroup.get('datePay'));
+    console.log(this.formGroup.get('dateRepo'));
 
     if (
-      this.formGroup.get('datePay').valid &&
-      this.formGroup.get('datePay').value
+      this.formGroup.get('dateRepo').valid &&
+      this.formGroup.get('dateRepo').value
     ) {
-      let datePay = this.datePipe.transform(
-        this.formGroup.get('datePay').value,
+      let dateRepo = this.datePipe.transform(
+        this.formGroup.get('dateRepo').value,
         'yyyy-MM-dd'
       );
-      console.log(datePay);
-      params.addFilter('datePay', datePay);
+      console.log(dateRepo);
+      params.addFilter('dateRepo', dateRepo);
     }
+    params.addFilter('reportKey', 2);
     if (
-      this.formGroup.get('conceptPayKey').valid &&
-      this.formGroup.get('conceptPayKey').value
+      this.formGroup.get('report').valid &&
+      this.formGroup.get('report').value
     ) {
       params.addFilter(
-        'conceptPayKey',
-        this.formGroup.get('conceptPayKey').value
-      );
-    }
-    if (
-      this.formGroup.get('description').valid &&
-      this.formGroup.get('description').value
-    ) {
-      params.addFilter(
-        'conceptPay.description',
-        this.formGroup.get('description').value,
+        'report',
+        this.formGroup.get('report').value,
         SearchFilter.ILIKE
       );
     }
     params.limit = this.tableParams.value.limit;
     params.page = this.tableParams.value.page;
-    params['sortBy'] = 'datePay:DESC';
+    params['sortBy'] = 'dateRepo:DESC';
     this.msDepositaryService
-      .getAllFilteredDedPay(params.getParams())
+      .getAllFilteredDepositaryDetrepo(params.getParams())
       .subscribe({
         next: res => {
           console.log('DATA ', res);
-          let dataResponse = res.data.map((i: any) => {
-            i['payConcept'] =
-              i.conceptPayKey +
-              '--' +
-              (i.conceptPay ? i.conceptPay.description : '');
-            return i;
-          });
           this.totalItems = res.count;
-          this.dataTable.load(dataResponse);
+          this.dataTable.load(res.data);
           this.dataTable.refresh();
           this.loadingTable = false;
         },

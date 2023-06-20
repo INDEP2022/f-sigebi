@@ -1,9 +1,9 @@
 import { DatePipe } from '@angular/common';
 import { SeeMoreComponent } from 'src/app/shared/components/see-more/see-more.component';
 
-export const COLUMNS_APPOINTMENT_RELATIONS_PAYS = {
-  datePay: {
-    title: 'Fecha Pago', // FECHA PAGO Y CONCEPTO
+export const COLUMNS_APPOINTMENT_ADMINISTRATIVE_REPORT = {
+  dateRepo: {
+    title: 'Fecha', // FECHA REPORTE
     sort: false,
     valuePrepareFunction: (value: string) => {
       if (!value) {
@@ -12,16 +12,8 @@ export const COLUMNS_APPOINTMENT_RELATIONS_PAYS = {
       return new DatePipe('en-US').transform(value, 'dd-MM-yyyy');
     },
   },
-  payConcept: {
-    title: 'Concepto Pago', // DESCRIPCION PAGO
-    sort: false,
-  },
-  amount: {
-    title: 'Importe', // IMPORTE
-    sort: false,
-  },
-  observation: {
-    title: 'Observaciones', // OBSERVACIONES
+  report: {
+    title: 'Reporte', // REPORTE
     sort: false,
     type: 'custom',
     renderComponent: SeeMoreComponent,

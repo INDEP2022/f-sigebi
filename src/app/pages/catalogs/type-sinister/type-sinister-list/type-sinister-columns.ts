@@ -10,8 +10,8 @@ export const TYPESINISTER_COLUMS = {
     editable: true,
     sort: false,
   },
-  noRegistre: {
-    title: 'Numero de registro',
+  flag: {
+    title: 'Bandera',
     type: 'number',
     sort: false,
   },
