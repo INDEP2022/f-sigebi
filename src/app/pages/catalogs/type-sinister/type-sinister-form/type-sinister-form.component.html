@@ -1,15 +1,19 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nueva' }} {{ title }}</h5>
+    <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nuevo' }} {{ title }}</h5>
   </div>
   <div body>
-    <form [formGroup]="typeSinisterForm">
+    <form [formGroup]="typeSinisterForm" class="form-material">
       <div class="row">
         <div class="col-md-12">
           <form-field
             [control]="typeSinisterForm.get('id')"
             label="Identificador">
-            <input type="number" class="form-control" formControlName="id" />
+            <input
+              type="number"
+              class="form-control"
+              formControlName="id"
+              min="0" />
           </form-field>
         </div>
         <div class="col-md-12">
@@ -19,25 +23,20 @@
             <textarea
               class="form-control"
               type="text"
-              rows="2"
+              rows="1"
               formControlName="description"></textarea>
           </form-field>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-12">
           <form-field [control]="typeSinisterForm.get('flag')" label="Bandera">
             <input type="text" class="form-control" formControlName="flag" />
           </form-field>
         </div>
-        <div class="col-md-6">
-          <form-field
-            [control]="typeSinisterForm.get('noRegistre')"
-            label="No&#46; Registro">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="noRegistre" />
+        <!--<div class="col-md-12">
+          <form-field [control]="typeSinisterForm.get('noRegistre')" label="No&#46; Registro">
+            <input type="number" class="form-control" formControlName="noRegistre" />
           </form-field>
-        </div>
+        </div>-->
       </div>
     </form>
   </div>
