@@ -21,8 +21,9 @@ export class RegisterKeyOneModalComponent extends BasePage implements OnInit {
   tdescCveForm: ModelForm<ITdescCve>;
   tdescCve: ITdescCve;
   idCve: ITable;
+  selectTabla: string;
 
-  title: string = 'Registro de claves para tablas logicas con una clave';
+  title: string = 'Registro de claves para tablas logicas con una clavee';
   edit: boolean = false;
 
   _id: any;
@@ -54,8 +55,8 @@ export class RegisterKeyOneModalComponent extends BasePage implements OnInit {
       this.edit = true;
       this.tdescCveForm.patchValue(this.tdescCve);
     } else {
-      (this.edit = false),
-        this.tdescCveForm.controls['id'].setValue(this.idCve.table);
+      this.edit = false;
+      this.tdescCveForm.controls['id'].setValue(this.selectTabla);
     }
   }
 

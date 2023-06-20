@@ -4,44 +4,62 @@
   </div>
   <div body>
     <form class="form-material" [formGroup]="form">
-      <div class="row mb-3 mt-3">
-        <div class="col-md-12">
-          <form-field [control]="form.get('description')" label="Descripción">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="description" />
+      <div class="row">
+        <div class="col-md-4">
+          <form-field [control]="form.get('id')" label="No. Tipo evento">
+            <input type="text" class="form-control" formControlName="id" />
           </form-field>
         </div>
-        <div class="col-md-12">
-          <form-field
-            [control]="form.get('descReceipt')"
-            label="Descripción Reporte">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="descReceipt" />
-          </form-field>
-        </div>
-
-        <div class="col-lg-3 col-md-3 col-sm-6 col-6 mb-3 mt-3">
-          <form-field
-            [control]="form.get('typeDispId')"
-            label="Tipo de Dispersión">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="typeDispId" />
-          </form-field>
-        </div>
-        <div class="col-lg-3 col-md-3 col-sm-6 col-6 mb-3 mt-3">
+        <div class="col-md-4">
           <form-field
             [control]="form.get('typeFailedpId')"
             label="Tipo de Fallo">
             <input
-              type="number"
+              type="text"
               class="form-control"
               formControlName="typeFailedpId" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="form.get('typeDispId')"
+            label="Tipo de Dispersión">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="typeDispId" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-3">
+        <div class="col-md-12">
+          <form-field [control]="form.get('description')" label="Descripción">
+            <textarea
+              rows="2"
+              class="form-control"
+              formControlName="description"></textarea>
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-3">
+        <div class="col-md-12">
+          <form-field
+            [control]="form.get('descReceipt')"
+            label="Descripción Reporte">
+            <textarea
+              rows="2"
+              class="form-control"
+              formControlName="descReceipt"></textarea>
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-3">
+        <div class="col-md-12">
+          <form-field [control]="form.get('use')" label="Uso">
+            <textarea
+              rows="3"
+              class="form-control"
+              formControlName="use"></textarea>
           </form-field>
         </div>
       </div>

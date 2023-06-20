@@ -47,15 +47,33 @@ export class RegulatoryListComponent extends BasePage implements OnInit {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
-            filter.field == 'id' ||
-            filter.field == 'number' ||
-            filter.field == 'description' ||
-            filter.field == 'validateEf' ||
-            filter.field == 'validateEc' ||
-            filter.field == 'version'
-              ? (searchFilter = SearchFilter.ILIKE)
-              : (searchFilter = SearchFilter.EQ);
+            switch (filter.field) {
+              case 'id':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'number':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'description':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'validateEf':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'validateEc':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'version':
+                searchFilter = SearchFilter.EQ;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
             if (filter.search !== '') {
+              console.log(
+                (this.columnFilters[field] = `${searchFilter}:${filter.search}`)
+              );
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
               delete this.columnFilters[field];

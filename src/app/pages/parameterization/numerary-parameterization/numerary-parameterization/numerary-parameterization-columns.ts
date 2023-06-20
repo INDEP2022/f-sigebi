@@ -5,7 +5,7 @@ export const NUMERARY_PARAMETERIZATION_COLUMNS = {
     sort: false,
   },
   initialCategory: {
-    title: 'Categoria Inicial',
+    title: 'Categoría Inicial',
     type: 'string',
     sort: false,
   },
@@ -18,7 +18,7 @@ export const NUMERARY_PARAMETERIZATION_COLUMNS = {
     sort: false,
   },
   finalCategory: {
-    title: 'Categoria Final',
+    title: 'Categoría Final',
     type: 'string',
     sort: false,
   },

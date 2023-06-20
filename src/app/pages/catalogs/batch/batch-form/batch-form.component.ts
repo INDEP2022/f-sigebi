@@ -1,6 +1,7 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -19,6 +20,7 @@ export class BatchFormComponent extends BasePage implements OnInit {
   batch: IBatch;
   items = new DefaultSelect<IBatch>();
   @Output() refresh = new EventEmitter<true>();
+  itemsAlmacen = new DefaultSelect();
 
   constructor(
     private modalRef: BsModalRef,
@@ -43,14 +45,7 @@ export class BatchFormComponent extends BasePage implements OnInit {
         ],
       ],
 
-      numStore: [
-        null,
-        [
-          Validators.required,
-          Validators.maxLength(5),
-          Validators.pattern(NUMBERS_PATTERN),
-        ],
-      ],
+      numStore: [null, [Validators.required]],
       numRegister: [
         null,
         [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
@@ -68,8 +63,24 @@ export class BatchFormComponent extends BasePage implements OnInit {
     if (this.batch != null) {
       this.edit = true;
       console.log(this.batch);
+      console.log(this.batch.numStore.idWarehouse);
       this.batchForm.patchValue(this.batch);
+      this.batchForm
+        .get('numStore')
+        .patchValue(this.batch.numStore.idWarehouse);
+
+      console.log(this.batchForm.get('numStore'));
     }
+    this.getAlmacen(new ListParams());
+  }
+
+  getAlmacen(params: ListParams, id?: string) {
+    if (id) {
+      params['filter.id'] = `$eq:${id}`;
+    }
+    this.batchService.getAlmacen(params).subscribe((data: any) => {
+      this.itemsAlmacen = new DefaultSelect(data.data, data.count);
+    });
   }
 
   close() {

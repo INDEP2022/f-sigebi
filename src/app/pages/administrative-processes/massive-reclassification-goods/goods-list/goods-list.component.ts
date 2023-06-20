@@ -99,18 +99,11 @@ export class GoodsListComponent
   private removeGood(item: IGood) {
     const good = this.selectedGooods.find(x => x.id === item.id);
     if (good) {
-      this.selectedGooods = this.selectedGooods.filter(
-        _good => _good.id != good.id
-      );
+      if (!good) {
+        this.selectedGooods.push(item);
+      }
     }
   }
-  private addGood(item: IGood) {
-    const good = this.selectedGooods.find(x => x.id === item.id);
-    if (!good) {
-      this.selectedGooods.push(item);
-    }
-  }
-
   selectGood(event: { selected: IGood[]; isSelected: boolean; data: IGood }) {
     console.log(event);
     const selecteds = event.selected;
@@ -199,17 +192,14 @@ export class GoodsListComponent
     this.loading = true;
     console.log(this.classificationOfGoods.value);
     const filterParams = new FilterParams();
-    if (
-      this.classificationOfGoods.value &&
-      (this.classificationOfGoods.value + '').trim() !== ''
-    ) {
+    if (this.classificationOfGoods.value) {
       filterParams.addFilter(
         'goodClassNumber',
         this.classificationOfGoods.value,
         this.mode.value === 'E' ? SearchFilter.NOTIN : SearchFilter.EQ
       );
     }
-    if (this.goodStatus.value && (this.goodStatus.value + '').trim() !== '') {
+    if (this.goodStatus.value) {
       filterParams.addFilter(
         'status',
         String(this.goodStatus.value.map((item: any) => item.status)),

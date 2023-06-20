@@ -55,18 +55,42 @@ export class DepartmentsListComponent extends BasePage implements OnInit {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
-            filter.field == 'id' ||
-            filter.field == 'dsarea' ||
-            filter.field == 'delegation' ||
-            filter.field == 'numSubDelegation' ||
-            filter.field == 'description' ||
-            filter.field == 'numRegister' ||
-            filter.field == 'lastOffice' ||
-            filter.field == 'level' ||
-            filter.field == 'phaseEdo'
-              ? (searchFilter = SearchFilter.EQ)
-              : (searchFilter = SearchFilter.ILIKE);
+            switch (filter.field) {
+              case 'id':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'dsarea':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'delegation':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'numSubDelegation':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'description':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'numRegister':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'lastOffice':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'level':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'phaseEdo':
+                searchFilter = SearchFilter.EQ;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
             if (filter.search !== '') {
+              console.log(
+                (this.columnFilters[field] = `${searchFilter}:${filter.search}`)
+              );
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
               delete this.columnFilters[field];

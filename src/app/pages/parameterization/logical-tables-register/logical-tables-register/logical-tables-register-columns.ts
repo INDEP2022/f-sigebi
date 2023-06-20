@@ -5,7 +5,7 @@ export const LOGICAL_TABLES_REGISTER_COLUMNS = {
   // },
   name: {
     title: 'Nombre',
-    sort: false,
+    sort: true,
   },
   description: {
     title: 'Descripción',

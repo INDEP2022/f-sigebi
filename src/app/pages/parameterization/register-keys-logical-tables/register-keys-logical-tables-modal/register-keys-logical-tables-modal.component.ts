@@ -24,6 +24,7 @@ export class RegisterKeysLogicalTablesModalComponent
   tdescCveForm: ModelForm<ITdescCve>;
   tdescCve: ITdescCve;
   idCve: ITable;
+  selectTabla: string;
 
   title: string = 'Registro de claves para tablas logicas con 5 claves';
   edit: boolean = false;
@@ -91,7 +92,7 @@ export class RegisterKeysLogicalTablesModalComponent
       this.tdescCveForm.patchValue(this.tdescCve);
     } else {
       (this.edit = false),
-        this.tdescCveForm.controls['id'].setValue(this.idCve.table);
+        this.tdescCveForm.controls['id'].setValue(this.selectTabla);
     }
   }
 

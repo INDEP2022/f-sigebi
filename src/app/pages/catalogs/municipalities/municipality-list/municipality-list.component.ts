@@ -4,6 +4,7 @@ import { BehaviorSubject, takeUntil } from 'rxjs';
 import { BasePage } from 'src/app/core/shared/base-page';
 
 import { LocalDataSource } from 'ng2-smart-table';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import {
   ListParams,
   SearchFilter,
@@ -87,19 +88,15 @@ export class MunicipalityListComponent extends BasePage implements OnInit {
     });
   }
 
-  openModal(context?: Partial<MunicipalityFormComponent>) {
-    const modalRef = this.modalService.show(MunicipalityFormComponent, {
-      initialState: { ...context },
-      class: 'modal-md modal-dialog-centered',
-      ignoreBackdropClick: true,
-    });
-    modalRef.content.refresh.subscribe(next => {
-      if (next) this.getExample();
-    });
-  }
-
   openForm(municipality?: IMunicipality) {
-    this.openModal({ municipality });
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      municipality,
+      callback: (next: boolean) => {
+        if (next) this.getExample();
+      },
+    };
+    this.modalService.show(MunicipalityFormComponent, modalConfig);
   }
 
   delete(batch: IMunicipality) {

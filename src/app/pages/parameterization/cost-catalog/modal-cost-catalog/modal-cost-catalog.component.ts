@@ -14,7 +14,7 @@ import { CostCatalogService } from '../cost-catalog.service';
   styles: [],
 })
 export class ModalCostCatalogComponent extends BasePage implements OnInit {
-  title: string = 'Catalogo de Costos';
+  title: string = 'Costo';
   edit: boolean = false;
   form: FormGroup = new FormGroup({});
   allotment: any;

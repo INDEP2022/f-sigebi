@@ -11,6 +11,14 @@ export const DRAWERS_COLUMNS = {
     sort: false,
   },
 
+  safeDetails: {
+    title: 'Desc. Bóveda',
+    type: 'string',
+    valuePrepareFunction: (value: any): string => {
+      return value.description;
+    },
+  },
+
   status: {
     title: 'Estado',
     type: 'string',
