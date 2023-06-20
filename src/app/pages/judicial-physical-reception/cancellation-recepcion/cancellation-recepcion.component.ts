@@ -59,9 +59,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
   settings1 = {
     ...TABLE_SETTINGS,
     rowClassFunction: (row: { data: { avalaible: any } }) =>
-      row.data.avalaible
-        ? 'bg-success text-white'
-        : 'bg-dark text-white disabled-custom',
+      row.data.avalaible ? 'bg-success text-white' : 'bg-dark text-white',
     pager: {
       display: false,
     },
