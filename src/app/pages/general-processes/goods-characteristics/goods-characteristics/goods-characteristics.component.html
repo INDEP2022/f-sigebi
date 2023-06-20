@@ -165,7 +165,7 @@
                         class="btn btn-danger btn-sm active"
                         type="button"
                         (click)="clearFilter()">
-                        Borrar Filtros
+                        Limpiar
                       </button>
                     </div>
                     <div class="col-6 p-0" style="text-align: right">
@@ -174,7 +174,8 @@
                         class="btn btn-primary btn-sm active"
                         type="button"
                         (click)="searchGood()">
-                        <i class="fa fa-search"></i>
+                        Buscar
+                        <!-- <i class="bx bx-search-alt-2"></i> -->
                       </button>
                     </div>
                   </div>
@@ -256,6 +257,14 @@
               </div>
               <div class="row mt-3">
                 <!-- <app-delegation-shared [form]="form"></app-delegation-shared> -->
+                <ng-template #coordinationLabel let-item="item">
+                  {{ item.id }} - {{ item.description }}
+                </ng-template>
+                <ng-template #coordinationOption let-item="item">
+                  <div [title]="item.id + '-' + item.description">
+                    {{ item.id }} - {{ item.description }}
+                  </div>
+                </ng-template>
                 <div class="col-md-6">
                   <div class="form-group row">
                     <ng-custom-select-loading
@@ -264,9 +273,12 @@
                       formControlName="delegation"
                       label="Delegación"
                       path="catalog/api/v1/delegation/get-all"
-                      value="description"
+                      value="id"
                       bindLabel="description"
-                      paramSearch="search"
+                      paramSearch="filter.id"
+                      [limit]="1000"
+                      [labelTemplate]="coordinationLabel"
+                      [optionTemplate]="coordinationOption"
                       (valueChange)="updateDelegation($event)">
                     </ng-custom-select-loading>
                     <!-- <form-field
@@ -285,12 +297,15 @@
                     <ng-custom-select-loading
                       [form]="form"
                       [readonly]="disabledBienes"
+                      [limit]="1000"
+                      [labelTemplate]="coordinationLabel"
+                      [optionTemplate]="coordinationOption"
                       formControlName="subdelegation"
                       label="Delegación"
                       path="catalog/api/v1/subdelegation/get-all"
-                      value="description"
+                      value="id"
                       bindLabel="description"
-                      paramSearch="search"
+                      paramSearch="filter.id"
                       (valueChange)="updateSubdelegation($event)">
                     </ng-custom-select-loading>
 

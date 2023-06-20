@@ -22,6 +22,7 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { IGoodSssubtype } from 'src/app/core/models/catalogs/good-sssubtype.model';
+import { ICharacteristicsGoodDTO } from 'src/app/core/models/ms-good/good';
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
 import { ParameterCatService } from 'src/app/core/services/catalogs/parameter.service';
 import { AccountMovements } from 'src/app/core/services/ms-account-movements/account-movements.service';
@@ -73,6 +74,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
   form: FormGroup;
   disabledBienes: boolean = true;
   goodChange: number = 0;
+  bodyGoodCharacteristics: ICharacteristicsGoodDTO = {};
   get data() {
     return this.service.data;
   }
@@ -508,7 +510,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
       clasificators.includes(this.numberClassification.value + '')
     ) {
       const filterParams = new FilterParams();
-      filterParams.addFilter('numberGood', this.good.goodId);
+      filterParams.addFilter('numberGood', this.good.goodid);
       const accounts = await firstValueFrom(
         this.accountMovementsService
           .getAll(filterParams.getParams())
@@ -856,19 +858,24 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     this.filterParams.page = this.params.getValue().page;
     if (this.numberGood && this.numberGood.value) {
       this.filterParams.addFilter('id', this.numberGood.value);
+      this.bodyGoodCharacteristics.noGood = this.numberGood.value;
       return true;
     }
     if (this.type && this.type.value) {
       this.filterParams.addFilter('goodTypeId', this.type.value);
+      this.bodyGoodCharacteristics.noType = this.type.value;
     }
     if (this.subtype && this.subtype.value) {
       this.filterParams.addFilter('subTypeId', this.subtype.value);
+      this.bodyGoodCharacteristics.noSubType = this.subtype.value;
     }
     if (this.ssubtype && this.ssubtype.value) {
       this.filterParams.addFilter('ssubTypeId', this.ssubtype.value);
+      this.bodyGoodCharacteristics.noSsubType = this.ssubtype.value;
     }
     if (this.sssubtype && this.sssubtype.value) {
       this.filterParams.addFilter('sssubTypeId', this.sssubtype.value);
+      this.bodyGoodCharacteristics.noSssubType = this.sssubtype.value;
     }
     if (this.filterParams.getFilterParams()) {
       return true;
@@ -895,10 +902,19 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     this.loading = true;
 
     if (this.fillParams(byPage)) {
+      // const response = await firstValueFrom(
+      //   this.goodService
+      //     .getAll(this.filterParams.getParams())
+      //     .pipe(catchError(x => of({ data: [], count: 0 })))
+      // );
+      const newListParams = new ListParams();
+      newListParams.limit = this.filterParams.limit;
+      newListParams.page = this.filterParams.page;
       const response = await firstValueFrom(
-        this.goodService
-          .getAll(this.filterParams.getParams())
-          .pipe(catchError(x => of({ data: [], count: 0 })))
+        this.goodProcessService.getDistinctTypes(
+          this.bodyGoodCharacteristics,
+          newListParams
+        )
       );
       if (response.data && response.data.length > 0) {
         this.staticTabs.tabs[1].disabled = false;
@@ -915,33 +931,37 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
           // };
           // this.excepNumerario();
           this.numberGood.setValue(item.id);
-          this.type.setValue(item.goodTypeId);
-          this.subtype.setValue(item.subTypeId);
-          // this.form.get('ssubtype').setValue(item.goodTypeId);
-          // this.form.get('sssubtype').setValue(item.goodTypeId);
+          this.type.setValue(item.no_tipo);
+          this.subtype.setValue(item.no_subtipo);
+          this.form.get('ssubtype').setValue(item.no_ssubtipo);
+          this.form.get('sssubtype').setValue(item.no_sssubtipo);
           // this.getDelegation(item.delegationNumber);
           // this.getSubdelegation(item.subDelegationNumber);
-          const delegacion = item.delegationNumber;
+          const delegacion = item.delegationnumber;
           if (delegacion) {
-            this.delegacion = item.delegationNumber.id ?? null;
-            this.delegation.setValue(item.delegationNumber.description);
+            // this.delegacion = item.delegationNumber.id ?? null;
+            // this.delegation.setValue(item.delegationNumber.description);
+            this.delegacion = delegacion;
+            this.delegation.setValue(delegacion);
           }
-          const subdelegacion = item.subDelegationNumber;
+          const subdelegacion = item.subdelegationnumber;
           if (subdelegacion) {
-            this.subdelegacion = item.subDelegationNumber.id ?? null;
-            this.subdelegation.setValue(item.subDelegationNumber.description);
+            // this.subdelegacion = item.subDelegationNumber.id ?? null;
+            // this.subdelegation.setValue(item.subDelegationNumber.description);
+            this.subdelegacion = subdelegacion;
+            this.subdelegation.setValue(subdelegacion);
           }
-          this.getLatitudLongitud(item.goodId);
+          this.getLatitudLongitud(item.goodid);
           // this.getDelegation(item.)
-          this.numberClassification.setValue(item.goodClassNumber);
+          this.numberClassification.setValue(item.goodclassnumber);
           this.goodStatus.setValue(item.status);
           this.descripcion.setValue(item.description);
           this.goodUnit.setValue(item.unit);
           this.goodQuantity.setValue(item.quantity);
-          this.goodReference.setValue(item.referenceValue);
-          this.goodAppraisal.setValue(item.appraisedValue);
+          this.goodReference.setValue(item.referencevalue);
+          this.goodAppraisal.setValue(item.appraisedvalue);
           this.goodDateVigency.setValue(
-            formatForIsoDate(item.appraisalVigDate, 'string')
+            formatForIsoDate(item.appraisalvigdate, 'string')
           );
           // this.goodLatitude.setValue(item.latitude);
           // this.goodLongitude.setValue(item.longitud);
@@ -999,11 +1019,11 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
   private async postRecord(isPostQuery = false) {
     const filterParams = new FilterParams();
     filterParams.addFilter('typeNumber', 'CARBIEN');
-    filterParams.addFilter('user', 'DR_SIGEBI');
-    // filterParams.addFilter(
-    //   'user',
-    //   localStorage.getItem('username').toUpperCase()
-    // );
+    // filterParams.addFilter('user', 'DR_SIGEBI');
+    filterParams.addFilter(
+      'user',
+      localStorage.getItem('username').toUpperCase()
+    );
     filterParams.addFilter('reading', 'S');
     // filterParams.addFilter()
     const rdicta = await firstValueFrom(
@@ -1088,6 +1108,11 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
           this.disabledNoClasifBien = true;
         }
       }
+    } else {
+      this.disabledBienes = true;
+      this.disabledDescripcion = true;
+      this.disabledTable = true;
+      this.disabledNoClasifBien = true;
     }
   }
 

@@ -112,3 +112,60 @@ export interface IPaymendtDepParamsDep {
   name: number;
   address: string;
 }
+
+export interface IDepositaryAppointments {
+  appointmentNum: string | number;
+  nameProvDete: string | number;
+  revocationDate: Date;
+  revocation: string;
+  contractKey: string;
+  startContractDate: Date;
+  endContractDate: Date;
+  amount: number | string;
+  nameTypeKey: string;
+  administratorTypeKey: string;
+  assignmentDate: Date;
+  appointmentDate: Date;
+  cardAppointmentId: number;
+  typeDepositary: string;
+  observations: string;
+  jobRevocationNum: string;
+  amountConsideration: string;
+  amountFee: string;
+  jobProvisionalNum: number;
+  exhibit: string;
+  jobBoardgovtDate: Date;
+  jobBoardgovtNum: number;
+  shipmentDirgralDate: Date;
+  replyDirgralDate: Date;
+  jobShiftNum: number;
+  shiftDate: Date;
+  returnDate: Date;
+  jobReplyNum: number;
+  agreementAppointment: string;
+  cardAppointmentIdBoardgovt: string;
+  jobAnswerDirgralNum: number | string;
+  authorityorderAssignment: string;
+  responsible: string;
+  representativeSera: string;
+  goodNum: string | number;
+  registryNum: string | number;
+  validity: string;
+  amountVat: string;
+  folioUniversal: string;
+  folioReturn: string;
+  personNum: string | number;
+  reference: string;
+  vat: string;
+  withHousehold: string;
+  nbOrigin: string;
+}
+
+export interface IDepositaryPaymentDet {
+  appointmentNumber: number;
+  paymentDate: Date;
+  paymentConceptKey: number;
+  amount: number;
+  observation: string;
+  registerNumber: number;
+}

@@ -12,7 +12,7 @@ import { IGood } from 'src/app/core/models/ms-good/good';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { BasePage } from 'src/app/core/shared';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { ModelForm } from './../../../../core/interfaces/model-form';
 
 @Component({
@@ -60,21 +60,18 @@ export class GeneralDataGoodsComponent
       observations: this.good.observations,
       description: this.good.description,
     };
-    console.log('*********** Bien', good);
-    console.log('*********** Data', this.list);
     this.goodService.update(good).subscribe({
       next: resp => {
-        this.onLoadToast('success', 'Datos del bien Actualizado');
+        this.onLoadToast('success', 'Datos del bien actualizados');
       },
       error: err => {
-        this.onLoadToast('error', 'Error al Actualizar el bien');
+        this.onLoadToast('error', 'Error al actualizar el bien');
       },
     });
   }
   private getGood() {
     this.goodService.getById(this.goodId).subscribe({
       next: (response: any) => {
-        console.log('Llego hasta el cargar bienes', response.data[0]);
         this.good = response.data[0];
         let val: any = response.data[0];
         this.generalDataForm.get('cantidad').patchValue(this.good.quantitySae);
@@ -120,7 +117,7 @@ export class GeneralDataGoodsComponent
   private prepareForm() {
     this.generalDataForm = this.fb.group({
       descripcion: [null, [Validators.pattern(STRING_PATTERN)]],
-      cantidad: [null],
+      cantidad: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       fechaFe: [null],
       observacion: [null, [Validators.pattern(STRING_PATTERN)]],
     });

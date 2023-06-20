@@ -1,16 +1,21 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { DomSanitizer } from '@angular/platform-browser';
+import { Router } from '@angular/router';
+import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
+import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IDocuments } from 'src/app/core/models/ms-documents/documents';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { ISegUsers } from 'src/app/core/models/ms-users/seg-users-model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-scanning-foil',
@@ -28,22 +33,31 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
   @Input() goods: IGood[] = [];
   @Output() documentEmmit = new EventEmitter<IDocuments>();
   @Output() firstGood = new EventEmitter<IGood>();
-  get scanningFoli() {
-    return this.form.get('scanningFoli');
-  }
+  // get scanningFoli() {
+  //   return this.form.get('scanningFoli');
+  // }
+  @Input() emitirFolio: string;
+  @Input() cambiarFolioUniversal: Function;
+
+  folioEscaneoNg: any = '';
   constructor(
     private fb: FormBuilder,
     private readonly documnetServices: DocumentsService,
     private token: AuthService,
     private readonly userServices: UsersService,
-    private readonly goodServices: GoodService
+    private readonly goodServices: GoodService,
+    private router: Router,
+    private siabService: SiabService,
+    private sanitizer: DomSanitizer,
+    private modalService: BsModalService
   ) {
     super();
   }
 
   ngOnInit(): void {
+    console.log('emitirFolio', this.emitirFolio);
     this.buildForm();
-    this.scanningFoli.setValue(this.numberFoli);
+    // this.form.get('scanningFoli').setValue(this.numberFoli);
     this.form.disable();
     this.getDataUser();
   }
@@ -57,8 +71,8 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
   private buildForm() {
     this.form = this.fb.group({
       scanningFoli: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        this.folioEscaneoNg,
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
       ],
     });
   }
@@ -126,22 +140,23 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
   }
 
   question() {
-    if (this.scanningFoli.value !== '') {
+    console.log('this.folioEscaneoNg', this.folioEscaneoNg);
+    if (this.folioEscaneoNg != '') {
       this.onLoadToast(
-        'error',
-        'ERROR',
-        'El folio de escaneo ya ha sido generado.'
+        'warning',
+        'El folio de escaneo ya ha sido generado.',
+        ''
       );
       return;
     }
     if (this.goods.length === 0) {
-      this.onLoadToast('error', 'ERROR', 'Debe cargar al menos un Bien');
+      this.onLoadToast('warning', 'Debe cargar al menos un Bien', '');
       return;
     }
     this.alertQuestion(
       'info',
-      'Confirmación',
-      '¿Se generara un folio de escaneo para los bienes,¿Desea continuar?'
+      'Se generará un folio de escaneo para los bienes',
+      '¿Desea continuar?'
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
@@ -149,6 +164,7 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
       }
     });
   }
+
   document1(good: IGood) {
     this.firstGood.emit(good);
     const documents: IDocuments = {
@@ -171,16 +187,16 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
     this.documnetServices.create(documents).subscribe({
       next: response => {
         console.log(response);
-        this.scanningFoli.setValue(response.id);
+        this.folioEscaneoNg = response.id;
         this.documentEmmit.emit(response);
         this.document = response;
-        this.onLoadToast(
+        this.alert(
           'success',
-          'Generado correctamente',
-          `Se generó el Folio No ${response.id}`
+          `Folio de escaneo generado correctamente`,
+          `Nro. ${response.id}`
         );
         this.generateFo = false;
-        this.generate();
+        // this.generate();
         this.generateFoli();
       },
       error: err => {
@@ -188,5 +204,59 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
         this.onLoadToast('error', 'ERROR', err.error.message);
       },
     });
+  }
+  toNextForm() {
+    this.goNextForm();
+  }
+  goNextForm() {
+    this.router.navigate([`/pages/general-processes/scan-documents`], {
+      queryParams: { origin: 'FPROCRECPAG', folio: this.folioEscaneoNg },
+    });
+  }
+
+  imprimirFolioEscaneo() {
+    // if (this.dictamen) {
+    if (this.folioEscaneoNg.folioUniversal == '') {
+      this.alert('warning', 'No tiene folio de escaneo para imprimir.', '');
+      return;
+    } else {
+      let params = {
+        pn_folio: this.folioEscaneoNg,
+      };
+      this.siabService
+        .fetchReport('RGERGENSOLICDIGIT', params)
+        .subscribe(response => {
+          if (response !== null) {
+            const blob = new Blob([response], { type: 'application/pdf' });
+            const url = URL.createObjectURL(blob);
+            let config = {
+              initialState: {
+                documento: {
+                  urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                  type: 'pdf',
+                },
+                callback: (data: any) => {},
+              }, //pasar datos por aca
+              class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+              ignoreBackdropClick: true, //ignora el click fuera del modal
+            };
+            this.onLoadToast('success', '', 'Reporte generado');
+            this.modalService.show(PreviewDocumentsComponent, config);
+          }
+        });
+    }
+  }
+
+  visualizacionFolioEscaneo() {
+    if (this.folioEscaneoNg == '') {
+      this.alert('warning', 'No tiene folio de escaneo para visualizar.', '');
+      return;
+    } else {
+      this.goNextForm();
+    }
+  }
+  actualizarVariable(val: boolean, folioEscaneoNg: string) {
+    this.folioEscaneoNg = folioEscaneoNg;
+    this.generateFo = val;
   }
 }

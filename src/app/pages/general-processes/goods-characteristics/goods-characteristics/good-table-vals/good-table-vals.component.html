@@ -1,17 +1,5 @@
-<div class="legend mb-4">
-  <div>
-    <div class="rectangle update"></div>
-    Actualizable
-  </div>
-  <div>
-    <div class="rectangle required"></div>
-    Requerido
-  </div>
-  <div>
-    <div class="rectangle requiredAva"></div>
-    Requerido AVA
-  </div>
-</div>
+<app-characteristics-legend
+  *ngIf="disabled === false"></app-characteristics-legend>
 <app-good-characteristics-table
   *ngIf="good && clasification && settings"
   [goodChange]="goodChange"

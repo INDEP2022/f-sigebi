@@ -328,6 +328,19 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
           this.openDialogSelectedManagement(x);
         }
         return x.data[0];
+      }),
+      catchError((error, _a) => {
+        if (error.status >= 400 && error.status < 500) {
+          // return of(null);
+          throw error;
+        }
+        console.log({ error });
+        this.alert(
+          'error',
+          'Error',
+          'Error al obtener la gestión por favor recarga la página'
+        );
+        throw error;
       })
     );
   }
@@ -425,7 +438,21 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
         this.formJobManagement.value.managementNumber;
     }
     params.limit = 10000000000000000000;
-    return this.mJobManagementService.getDocOficioGestion(params);
+    return this.mJobManagementService.getDocOficioGestion(params).pipe(
+      catchError((error, _a) => {
+        if (error.status >= 400 && error.status < 500) {
+          // return of(null);
+          throw error;
+        }
+        console.log({ error });
+        this.alert(
+          'error',
+          'Error',
+          'Error al obtener los documentos de gestión por favor recarga la página'
+        );
+        throw error;
+      })
+    );
   }
 
   getDocJobManagementCount(params: ListParams) {
@@ -459,6 +486,19 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
               };
             }),
           } as any;
+        }),
+        catchError((error, _a) => {
+          if (error.status >= 400 && error.status < 500) {
+            // return of(null);
+            throw error;
+          }
+          console.log({ error });
+          this.alert(
+            'error',
+            'Error',
+            'Error al obtener los bienes de la gestión por favor recarga la página'
+          );
+          throw error;
         })
       )
     );
@@ -976,6 +1016,7 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
   abstract initForm(): void;
 
   isLoadingBtnEraser = false;
+  abstract copyOficio: any[];
   async onClickBtnDelete() {
     console.log('onClickBtnErase');
     const values = this.formJobManagement.value;
@@ -1018,43 +1059,6 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
     if (!question.isConfirmed) {
       return;
     }
-
-    // const promises = [
-    //   firstValueFrom(
-    //     this.mJobManagementService.deleteGoodsJobManagement1(
-    //       values.managementNumber
-    //     )
-    //   ),
-    //   firstValueFrom(
-    //     this.mJobManagementService.deleteDocumentJobManagement2(
-    //       values.managementNumber
-    //     )
-    //   ),
-    //   firstValueFrom(
-    //     this.mJobManagementService.deleteMJobGestion({
-    //       managementNumber: values.managementNumber,
-    //       flyerNumber: values.flyerNumber,
-    //     })
-    //   ),
-    //   firstValueFrom(
-    //     this.mJobManagementService.deleteCopiesJobManagement4(
-    //       values.managementNumber
-    //     )
-    //   ),
-    //   firstValueFrom(
-    //     this.notificationService.update(values.flyerNumber, {
-    //       dictumKey: '',
-    //     })
-    //   ),
-    // ];
-    // //
-    // for (const promise of promises) {
-    //   try {
-    //     await promise;
-    //   } catch (ex) {
-    //     console.log(ex);
-    //   }
-    // }
     await firstValueFrom(
       this.mJobManagementService.deleteJobManagement(
         values.managementNumber,
@@ -1066,12 +1070,18 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
     this.dataTableDocuments = [];
     this.dataTableGoodsJobManagement = [];
     this.dataTableGoodsJobManagement;
-    // this.dataTableCopies = [];
+    this.copyOficio = [];
     this.initForm();
     this.formJobManagement.get('refersTo').setValue('D');
     this.se_refiere_a_Disabled.A = false;
     this.se_refiere_a_Disabled.B = false;
     this.isDisabledBtnDocs = false;
+    this.settingsTableDocuments.actions = {
+      edit: false,
+      add: false,
+      delete: true,
+    };
+    this.tableDocs.initGrid();
 
     this.initForm();
   }
@@ -1177,6 +1187,8 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
     D: string;
   };
 
+  abstract settingsTableDocuments: any;
+  abstract tableDocs: any;
   async commit() {
     if (this.isCreate) {
       this.formJobManagement.get('jobBy').setValue('RELACIONADO');
@@ -1200,6 +1212,7 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
             //     goodNumber: item.goodNumber,
             //   })
             // } else {
+            // this.dataTableGoodsJobManagement
             this.dataTableGoodsJobManagement.forEach(item => {
               this.postGoodsJobManagement({
                 goodNumber: item.goodNumber,
@@ -1220,15 +1233,23 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
                 })
                 .subscribe();
             });
+            if (this.dataTableDocuments.length > 0) {
+              this.settingsTableDocuments.actions = {
+                edit: false,
+                add: false,
+                delete: false,
+              };
+              this.tableDocs.initGrid();
+            }
+          }),
+          catchError(() => {
+            showToast({
+              icon: 'error',
+              title: 'Error',
+              text: 'Error al guardar los datos',
+            });
+            throw new Error('Error al guardar los datos');
           })
-          // catchError(() => {
-          //   showToast({
-          //     icon: 'error',
-          //     title: 'Error',
-          //     text: 'Error al guardar los datos',
-          //   });
-          //   throw new Error('Error al guardar los datos');
-          // })
         )
       );
     } else {
@@ -1246,6 +1267,47 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
             })
           )
         );
+        try {
+          const params = new ListParams();
+          params['filter.managementNumber'] =
+            this.formJobManagement.value.managementNumber;
+          const counter = await this.getGoodsJobManagementCount(params);
+          if (counter == 0) {
+            this.dataTableGoodsJobManagement.forEach(item => {
+              this.postGoodsJobManagement({
+                goodNumber: item.goodNumber,
+                recordNumber: '',
+                managementNumber: this.formJobManagement.value.managementNumber,
+              }).subscribe();
+            });
+          }
+          const params1 = new ListParams();
+          params1['filter.managementNumber'] =
+            this.formJobManagement.value.managementNumber;
+          const counter1 = await this.getDocJobManagementCount(params1);
+          if (counter1 == 0) {
+            this.dataTableDocuments.forEach(item => {
+              this.mJobManagementService
+                .createDocumentOficeManag({
+                  managementNumber:
+                    this.formJobManagement.value.managementNumber,
+                  cveDocument: item.cveDocument,
+                  rulingType: item.rulingType,
+                  goodNumber: item.goodNumber,
+                  recordNumber: '',
+                })
+                .subscribe();
+            });
+          }
+          if (this.dataTableDocuments.length > 0) {
+            this.settingsTableDocuments.actions = {
+              edit: false,
+              add: false,
+              delete: false,
+            };
+            this.tableDocs.initGrid();
+          }
+        } catch (ex) {}
         // this.dataTableDocuments.forEach(item => {
         //   this.mJobManagementService
         //     .createDocumentOficeManag({
@@ -1316,7 +1378,6 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
           const auxArr: string[] = [];
           this.dataTableGoodsJobManagement.forEach(x => {
             if (x.classify) {
-              // this.formVariables.get('classify').setValue(`${valuesVariables.classify || ''}${x.classify || ''}`);
               auxArr.push(x.classify as string);
             }
           });
