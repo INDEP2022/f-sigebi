@@ -28,6 +28,8 @@ import { GoodSubtypeService } from 'src/app/core/services/catalogs/good-subtype.
 })
 export class GoodsTypesSharedComponent extends BasePage implements OnInit {
   @Input() form: FormGroup;
+  @Input() loadTypes = false;
+  @Output() loadTypesChange = new EventEmitter<boolean>();
   @Input() typeField: string = 'type';
   @Input() subtypeField: string = 'subtype';
   @Input() ssubtypeField: string = 'ssubtype';
@@ -81,19 +83,23 @@ export class GoodsTypesSharedComponent extends BasePage implements OnInit {
         .pipe(debounceTime(500), takeUntil(this.$unSubscribe))
         .subscribe(x => {
           console.log(x);
-          const params = new ListParams();
-          if (x[this.sssubtypeField]) {
-            this.getSssubtypes(params, x[this.sssubtypeField]);
+          if (this.loadTypes) {
+            const params = new ListParams();
+            if (x[this.sssubtypeField]) {
+              this.getSssubtypes(params, x[this.sssubtypeField]);
+            }
+            if (x[this.ssubtypeField]) {
+              this.getSsubtypes(params, x[this.ssubtypeField]);
+            }
+            if (x[this.subtypeField]) {
+              this.getSubtypes(params, x[this.subtypeField]);
+            }
+            if (x[this.typeField]) {
+              this.getTypes(params, x[this.typeField]);
+            }
           }
-          if (x[this.ssubtypeField]) {
-            this.getSsubtypes(params, x[this.ssubtypeField]);
-          }
-          if (x[this.subtypeField]) {
-            this.getSubtypes(params, x[this.subtypeField]);
-          }
-          if (x[this.typeField]) {
-            this.getTypes(params, x[this.typeField]);
-          }
+          this.loadTypes = false;
+          this.loadTypesChange.emit(false);
         });
       // this.sssubtype.valueChanges
       //   .pipe(debounceTime(500), takeUntil(this.$unSubscribe))
@@ -139,7 +145,7 @@ export class GoodsTypesSharedComponent extends BasePage implements OnInit {
     delete _params.search;
     delete _params.text;
     if (this.type.value) {
-      _params['type'] = this.type.value;
+      _params['filter.idTypeGood'] = this.type.value;
     }
     this.goodSubtypesService.getAll(_params).subscribe({
       next: data => {
@@ -161,10 +167,10 @@ export class GoodsTypesSharedComponent extends BasePage implements OnInit {
     delete _params.search;
     delete _params.text;
     if (this.type.value) {
-      _params['type'] = this.type.value;
+      _params['filter.noType'] = this.type.value;
     }
     if (this.type.value) {
-      _params['subtype'] = this.subtype.value;
+      _params['filter.noSubType'] = this.subtype.value;
     }
     this.goodSsubtypeService.getAll(_params).subscribe({
       next: data => {
@@ -186,13 +192,13 @@ export class GoodsTypesSharedComponent extends BasePage implements OnInit {
     delete _params.search;
     delete _params.text;
     if (this.type.value) {
-      _params['type'] = this.type.value;
+      _params['filter.numType'] = this.type.value;
     }
     if (this.type.value) {
-      _params['subtype'] = this.subtype.value;
+      _params['filter.numSubType'] = this.subtype.value;
     }
     if (this.ssubtype.value) {
-      _params['ssubtype'] = this.ssubtype.value;
+      _params['filter.numSsubType'] = this.ssubtype.value;
     }
     this.goodSssubtypeService.getAll(_params).subscribe({
       next: data => {
