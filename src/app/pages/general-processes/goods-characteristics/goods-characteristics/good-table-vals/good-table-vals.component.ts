@@ -6,9 +6,9 @@ import { IGood } from 'src/app/core/models/good/good.model';
 import { GoodsCharacteristicsService } from '../../services/goods-characteristics.service';
 import { GoodCharacteristicCellValueComponent } from './good-cell-value/good-cell-value.component';
 
-export function getClassColour(row: ICharacteristicValue) {
+export function getClassColour(row: ICharacteristicValue, disabled: boolean) {
   // console.log(row);
-  return row
+  return row && !disabled
     ? row.requiredAva
       ? 'requiredAva'
       : row.required
@@ -69,7 +69,7 @@ export class GoodTableValsComponent extends BasePage {
       },
       rowClassFunction: (row: any) => {
         return (
-          getClassColour(row.data) +
+          getClassColour(row.data, this.disabled) +
           ' ' +
           (row.data.tableCd ? '' : 'notTableCd')
         );

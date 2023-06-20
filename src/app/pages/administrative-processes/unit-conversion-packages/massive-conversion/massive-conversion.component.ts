@@ -30,6 +30,8 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
 
   constructor(private fb: FormBuilder, private modalService: BsModalService) {
     super();
+
+    //Tabla de PREVISUALIZACIÓN DE DATOS
     this.settings = {
       ...this.settings,
       actions: { add: false, delete: true, edit: true },

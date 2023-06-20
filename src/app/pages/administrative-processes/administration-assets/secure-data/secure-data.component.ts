@@ -31,7 +31,7 @@ export class SecureDataComponent extends BasePage implements OnInit, OnChanges {
         sort: false,
       },
       policyDescription: {
-        title: 'Descripion de Póliza',
+        title: 'Descripión de Póliza',
         type: 'string',
         sort: false,
       },

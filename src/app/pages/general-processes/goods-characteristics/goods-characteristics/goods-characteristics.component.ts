@@ -1019,11 +1019,11 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
   private async postRecord(isPostQuery = false) {
     const filterParams = new FilterParams();
     filterParams.addFilter('typeNumber', 'CARBIEN');
-    filterParams.addFilter('user', 'DR_SIGEBI');
-    // filterParams.addFilter(
-    //   'user',
-    //   localStorage.getItem('username').toUpperCase()
-    // );
+    // filterParams.addFilter('user', 'DR_SIGEBI');
+    filterParams.addFilter(
+      'user',
+      localStorage.getItem('username').toUpperCase()
+    );
     filterParams.addFilter('reading', 'S');
     // filterParams.addFilter()
     const rdicta = await firstValueFrom(
@@ -1108,6 +1108,11 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
           this.disabledNoClasifBien = true;
         }
       }
+    } else {
+      this.disabledBienes = true;
+      this.disabledDescripcion = true;
+      this.disabledTable = true;
+      this.disabledNoClasifBien = true;
     }
   }
 

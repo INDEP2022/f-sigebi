@@ -1,21 +1,31 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
+import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
+import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { BasePage } from 'src/app/core/shared';
+import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { GoodsComponent } from '../goods/goods.component';
+import { PwComponent } from '../pw/pw.component';
 
 @Component({
   selector: 'app-derivation-goods',
   templateUrl: './derivation-goods.component.html',
   styles: [],
 })
-export class DerivationGoodsComponent implements OnInit {
+export class DerivationGoodsComponent extends BasePage implements OnInit {
   //Reactive Forms
   form: FormGroup;
 
   // Variable para la contraseña
   private _password: string;
+
+  //Deshabilitar el formulario
+  wrongModal = true;
 
   get idConversion() {
     return this.form.get('idConversion');
@@ -63,14 +73,61 @@ export class DerivationGoodsComponent implements OnInit {
     return this.form.get('destinationLabel');
   }
 
+  //Settings para la tabla
+  settingsGood = {
+    ...TABLE_SETTINGS,
+    actions: false,
+    columns: {
+      goodId: {
+        title: 'No. Bien Hijo',
+        type: 'Number',
+        filter: false,
+        sort: false,
+      },
+    },
+    noDataMessage: 'No se encontrarón registros',
+  };
+
+  dataGoods = new LocalDataSource();
+
   constructor(
     private fb: FormBuilder,
     private router: Router,
-    private modalService: BsModalService
-  ) {}
+    private modalService: BsModalService,
+    private serviceGood: GoodService
+  ) {
+    super();
+  }
 
   ngOnInit(): void {
     this.buildForm();
+
+    //Inicializando el modal
+    let config = MODAL_CONFIG;
+    config = {
+      initialState: {
+        ...MODAL_CONFIG,
+        callback: (data: any) => {
+          if (data != null) {
+            console.log(data);
+            this.wrongModal = false;
+            this.idConversion.setValue(data.id);
+            this.numberGoodFather.setValue(data.goodFatherNumber);
+            this.tipo.setValue(data.typeConv);
+            this.numberDossier.setValue(data.fileNumber.id);
+            this.actConvertion.setValue(data.cveActaConv);
+            this.numberGoodSon.setValue(data.goodFatherNumber);
+            this.searchGoods(data.goodFatherNumber);
+            this.searchGoodSon(data.goodFatherNumber);
+            this.dataGoods.load([data]);
+          }
+        },
+      }, //pasar datos por aca
+      class: 'modal-dialog-centered', //asignar clase de bootstrap o personalizado
+      ignoreBackdropClick: true, //ignora el click fuera del modal
+    };
+
+    const modalRef = this.modalService.show(PwComponent, config);
   }
 
   /**
@@ -81,9 +138,9 @@ export class DerivationGoodsComponent implements OnInit {
   private buildForm() {
     this.form = this.fb.group({
       idConversion: [null, [Validators.required]],
-      numberGoodFather: [null, []], //Se quita la validación, en el forms no es requerido
+      numberGoodFather: [null, [Validators.pattern(NUMBERS_PATTERN)]], //Se quita la validación, en el forms no es requerido
       tipo: [null, [Validators.required]],
-      numberDossier: [null, []], //Se quita la validación, en el forms no es requerido
+      numberDossier: [null, [Validators.pattern(NUMBERS_PATTERN)]], //Se quita la validación, en el forms no es requerido
       status: [null, [Validators.pattern(STRING_PATTERN)]], //Se quita la validación, en el forms no es requerido
       situation: [
         null,
@@ -97,7 +154,10 @@ export class DerivationGoodsComponent implements OnInit {
         null,
         [Validators.pattern(STRING_PATTERN)], //Se quita la validación, en el forms no es requerido
       ],
-      numberGoodSon: [null, [Validators.required]],
+      numberGoodSon: [
+        null,
+        [Validators.pattern(NUMBERS_PATTERN), Validators.required],
+      ],
       observation: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
@@ -122,10 +182,81 @@ export class DerivationGoodsComponent implements OnInit {
     });
   }
 
-  searchGoods() {}
+  searchGoods(e: any) {
+    const paramsF = new FilterParams();
+    paramsF.addFilter('goodId', e);
+    this.serviceGood.getAllFilter(paramsF.getParams()).subscribe(
+      res => {
+        console.log(res);
+        this.description.setValue(res.data[0]['description']);
+        this.searchStatus(res.data[0]['status']);
+      },
+      err => {
+        console.log(err);
+      }
+    );
+  }
+
+  searchGoodSon(e: any) {
+    const paramsF = new FilterParams();
+    paramsF.addFilter('goodId', e);
+    this.serviceGood.getAllFilter(paramsF.getParams()).subscribe(
+      res => {
+        console.log(res);
+        this.observation.setValue(res.data[0]['observations']);
+        this.descriptionSon.setValue(res.data[0]['description']);
+        this.quantity.setValue(res.data[0]['quantity']);
+        this.classifier.setValue(res.data[0]['goodClassNumber']);
+        this.unitOfMeasure.setValue(res.data[0]['unit']);
+        this.destinationLabel.setValue(res.data[0]['labelNumber']);
+        this.searchStatus(res.data[0]['status']);
+      },
+      err => {
+        console.log(err);
+      }
+    );
+  }
+
+  searchStatus(data: any) {
+    const paramsF = new FilterParams();
+    paramsF.addFilter('status', data);
+    this.serviceGood.getStatusGood(paramsF.getParams()).subscribe(
+      res => {
+        this.status.setValue(res.data[0]['description']);
+      },
+      err => {
+        console.log(err);
+      }
+    );
+  }
 
   updateStatus() {
-    //this.showToast('success')
+    this.alertQuestion(
+      'question',
+      `¿Desea cambiar el estatus al bien ${this.numberGoodFather.value}?`,
+      ''
+    ).then(q => {
+      if (q.isConfirmed) {
+        this.serviceGood
+          .updateGoodStatus(this.numberGoodFather.value, 'CAN')
+          .subscribe(
+            res => {
+              this.alert(
+                'success',
+                'Se cambio el estatus del Bien',
+                `El Bien estatus del bien con id: ${this.numberGoodFather.value}, fue cambiado a CAN`
+              );
+            },
+            err => {
+              this.alert(
+                'error',
+                'No se pudo cambiar el estatus del bien',
+                'Se presentó un error inesperado que no permitió el cambio de estatus del bien, por favor intentelo nuevamente'
+              );
+            }
+          );
+      }
+    });
   }
 
   actConversionBtn() {}

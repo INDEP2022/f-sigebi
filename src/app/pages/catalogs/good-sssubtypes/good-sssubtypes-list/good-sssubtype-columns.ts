@@ -4,8 +4,13 @@ import { IGoodType } from 'src/app/core/models/catalogs/good-type.model';
 
 export const GOOD_SSSUBTYPE_COLUMNS = {
   id: {
-    title: 'Id',
+    title: 'Código SssubTipo',
     type: 'number',
+    sort: false,
+  },
+  description: {
+    title: 'Descripción',
+    type: 'string',
     sort: false,
   },
   numType: {
@@ -15,11 +20,9 @@ export const GOOD_SSSUBTYPE_COLUMNS = {
     valuePrepareFunction: (value: IGoodType) => {
       return value.nameGoodType;
     },
-  },
-  description: {
-    title: 'Descripción',
-    type: 'string',
-    sort: false,
+    filterFunction: (cell?: any, search?: string) => {
+      return search != null ? search : '';
+    },
   },
   numSubType: {
     title: 'Subtipo bien',
@@ -28,13 +31,19 @@ export const GOOD_SSSUBTYPE_COLUMNS = {
     valuePrepareFunction: (value: IGoodSubType) => {
       return value.nameSubtypeGood;
     },
+    filterFunction: (cell?: any, search?: string) => {
+      return search != null ? search : '';
+    },
   },
   numSsubType: {
-    title: 'Descripción',
+    title: 'Ssubtipo bien',
     type: 'string',
     sort: false,
     valuePrepareFunction: (value: IGoodSsubType) => {
       return value.description;
+    },
+    filterFunction: (cell?: any, search?: string) => {
+      return search != null ? search : '';
     },
   },
   numClasifGoods: {
@@ -47,9 +56,9 @@ export const GOOD_SSSUBTYPE_COLUMNS = {
     type: 'number',
     sort: false,
   },
-  numRegister: {
-    title: 'No. Registro',
-    type: 'number',
-    sort: false,
-  },
+  // numRegister: {
+  //   title: 'No. Registro',
+  //   type: 'number',
+  //   sort: false,
+  // },
 };

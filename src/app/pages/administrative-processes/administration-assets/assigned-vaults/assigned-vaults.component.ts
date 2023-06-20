@@ -78,22 +78,24 @@ export class AssignedVaultsComponent
     this.goodServices.getById(idGood).subscribe({
       next: (response: any) => {
         this.good = response.data[0];
-        this.vaultService.getById(this.good.vaultNumber).subscribe({
-          next: (respo: any) => {
-            console.log(respo);
-            this.list = response.data.map((good: IGood) => {
-              return {
-                id: good.vaultNumber,
-                address: respo.ubication,
-                drawerNumber: good.drawerNumber,
-                entryDate: good.dateIn,
-                outDate: good.dateOut,
-              };
-            });
-          },
-          error: err => console.log(err),
-        });
-        this.totalItems = response.count;
+        if (this.good.vaultNumber !== null) {
+          this.vaultService.getById(this.good.vaultNumber).subscribe({
+            next: (respo: any) => {
+              console.log(respo);
+              this.list = response.data.map((good: IGood) => {
+                return {
+                  id: good.vaultNumber,
+                  address: respo.ubication,
+                  drawerNumber: good.drawerNumber,
+                  entryDate: good.dateIn,
+                  outDate: good.dateOut,
+                };
+              });
+            },
+            error: err => console.log(err),
+          });
+          this.totalItems = response.count;
+        }
         this.loading = false;
       },
       error: err => {

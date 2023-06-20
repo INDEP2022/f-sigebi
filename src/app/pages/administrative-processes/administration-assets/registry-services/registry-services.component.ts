@@ -33,7 +33,7 @@ export class RegistryServicesComponent
         sort: false,
       },
       serviceDescription: {
-        title: 'Descripion del Servicio',
+        title: 'Descripión del Servicio',
         type: 'string',
         sort: false,
       },

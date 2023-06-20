@@ -34,7 +34,7 @@ export class DataValuationsComponent
         sort: false,
       },
       valuationDate: {
-        title: 'Fecha Avaluo',
+        title: 'Fecha Avalúo',
         type: 'string',
         sort: false,
       },
@@ -49,7 +49,7 @@ export class DataValuationsComponent
         sort: false,
       },
       valuationValue: {
-        title: 'Valor Avaluo',
+        title: 'Valor Avalúo',
         type: 'string',
         sort: false,
       },
@@ -59,7 +59,7 @@ export class DataValuationsComponent
         sort: false,
       },
       comercializationValue: {
-        title: 'Valor Comercializacion',
+        title: 'Valor Comercialización',
         type: 'string',
         sort: false,
       },

@@ -61,11 +61,7 @@ export class CourtFormComponent extends BasePage implements OnInit {
       street: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       numInterior: [
         null,
-        [
-          Validators.required,
-          Validators.maxLength(3),
-          Validators.pattern(NUMBERS_PATTERN),
-        ],
+        [Validators.maxLength(3), Validators.pattern(NUMBERS_PATTERN)],
       ],
       numExterior: [
         null,

@@ -54,41 +54,26 @@ export class SearchTabComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.searchTabForm = this.fb.group({
-      noClasifBien: [null, [Validators.required]],
-      noTipo: [null, [Validators.required]],
-      tipo: [null, [Validators.required]],
+      noClasifBien: [null],
+      noTipo: [null],
+      tipo: [null],
       noSubtipo: [null, [Validators.required]],
       subtipo: [null, [Validators.required]],
       noSsubtipo: [null, [Validators.required]],
       ssubtipo: [null, [Validators.required]],
-      noSssubtipo: [null, [Validators.required]],
-      sssubtipo: [null, [Validators.required]],
-      estatus: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      unidadMedida: [null, [Validators.required]],
-      cantidad: [null, [Validators.required]],
-      noDestino: [null, [Validators.required]],
-      situacion: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      destino: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
+      noSssubtipo: [null],
+      sssubtipo: [null],
+      estatus: [null, [Validators.pattern(STRING_PATTERN)]],
+      unidadMedida: [null],
+      cantidad: [null],
+      noDestino: [null],
+      situacion: [null, [Validators.pattern(STRING_PATTERN)]],
+      destino: [null, [Validators.pattern(STRING_PATTERN)]],
       noBien: [null, [Validators.required]],
       goodDescription: [null],
-      valRef: [null, [Validators.required]],
-      identifica: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      descripcion: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
+      valRef: [null],
+      identifica: [null, [Validators.pattern(STRING_PATTERN)]],
+      descripcion: [null, [Validators.pattern(STRING_PATTERN)]],
     });
   }
 
@@ -102,6 +87,13 @@ export class SearchTabComponent extends BasePage implements OnInit {
   }
 
   async search() {
+    if (
+      this.searchTabForm.get('noBien').value === '' ||
+      this.searchTabForm.get('noBien').value === null
+    ) {
+      this.onLoadToast('info', 'Debe seleccionar un bien');
+      return;
+    }
     this.dataSearch.emit({
       data: this.searchTabForm.get('noBien').value,
       exist: true,
@@ -148,6 +140,13 @@ export class SearchTabComponent extends BasePage implements OnInit {
   }
 
   openPhotos() {
+    if (
+      this.searchTabForm.get('noBien').value === '' ||
+      this.searchTabForm.get('noBien').value === null
+    ) {
+      this.onLoadToast('info', 'Debe seleccionar un bien');
+      return;
+    }
     const data = {
       id: this.searchTabForm.get('noBien').value,
     };
@@ -170,5 +169,16 @@ export class SearchTabComponent extends BasePage implements OnInit {
       ignoreBackdropClick: true,
     };
     this.modalService.show(component, config);
+  }
+
+  formatearFecha(fecha: Date) {
+    let dia: any = fecha.getDate();
+    let mes: any = fecha.getMonth() + 1;
+    let anio: any = fecha.getFullYear();
+    dia = dia < 10 ? '0' + dia : dia;
+    mes = mes < 10 ? '0' + mes : mes;
+    let fechaFormateada = dia + '/' + mes + '/' + anio;
+    console.log(fechaFormateada);
+    return fechaFormateada;
   }
 }

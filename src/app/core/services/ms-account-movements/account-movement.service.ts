@@ -40,9 +40,9 @@ export class AccountMovementService extends HttpService {
   getAllAccountMovement(params: ListParams) {
     return this.get<IListResponse<any>>('aplication/accountmvmnt', params);
   }
-  getAccountAovements(params: ListParams) {
+  getAccountAovements(numberGood: number | string, params: ListParams) {
     return this.get<IListResponse<any>>(
-      'aplication/get-account-movements',
+      `aplication/get-account-movements/${numberGood}`,
       params
     );
   }

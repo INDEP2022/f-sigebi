@@ -64,6 +64,6 @@ export const COLUMNS = {
         ],
       },
     },
+    sort: false,
   },
-  sort: false,
 };
