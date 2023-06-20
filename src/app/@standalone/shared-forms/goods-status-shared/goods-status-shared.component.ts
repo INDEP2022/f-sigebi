@@ -61,8 +61,14 @@ export class GoodsStatusSharedComponent extends BasePage implements OnInit {
     //Provisional data
     this.service.getStatusAll(params).subscribe({
       next: data => {
+        const newData = data.data.map(status => {
+          return {
+            ...status,
+            newLabel: `${status.status} - ${status.description}`,
+          };
+        });
         console.log(data);
-        this.status = new DefaultSelect(data.data, data.count);
+        this.status = new DefaultSelect(newData, data.count);
       },
       error: err => {
         this.alert(
