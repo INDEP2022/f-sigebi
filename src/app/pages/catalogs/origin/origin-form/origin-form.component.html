@@ -18,40 +18,78 @@
           </div>
         </div> -->
         <div class="col-md-12">
-          <form-field [control]="form.get('keyTransferer')" label="Clave Transferencia">
-            <input type="text" class="form-control" id="keyTransferer" formControlName="keyTransferer"
+          <form-field
+            [control]="form.get('keyTransferer')"
+            label="Clave Transferencia">
+            <input
+              type="text"
+              class="form-control"
+              id="keyTransferer"
+              formControlName="keyTransferer"
               maxlength="255" />
           </form-field>
         </div>
         <div class="col-md-12 pt-3">
-          <form-field [control]="form.get('description')" label="Descripci&oacute;n">
-            <input type="text" class="form-control" id="description" formControlName="description" maxlength="255" />
+          <form-field
+            [control]="form.get('description')"
+            label="Descripci&oacute;n">
+            <input
+              type="text"
+              class="form-control"
+              id="description"
+              formControlName="description"
+              maxlength="255" />
           </form-field>
         </div>
         <div class="col-md-12 pt-3">
           <form-field [control]="form.get('type')" label="Tipo">
-            <input type="text" class="form-control" id="type" formControlName="type" maxlength="255" />
+            <input
+              type="text"
+              class="form-control"
+              id="type"
+              formControlName="type"
+              maxlength="255" />
           </form-field>
         </div>
         <div class="col-md-12 pt-3">
           <form-field [control]="form.get('address')" label="Direcci&oacute;n">
-            <textarea class="form-control" type="text" rows="3" formControlName="address" maxlength="255"></textarea>
+            <textarea
+              class="form-control"
+              type="text"
+              rows="3"
+              formControlName="address"
+              maxlength="255"></textarea>
           </form-field>
         </div>
         <div class="col-md-12 pt-3">
           <form-field [control]="form.get('idCity')" label="No.Ciudad">
-            <input type="number" class="form-control" id="idCity" formControlName="idCity" min="0"
+            <input
+              type="number"
+              class="form-control"
+              id="idCity"
+              formControlName="idCity"
+              min="0"
               oninput="if(this.value.length > 15) this.value = this.value.slice(0, 15);" />
           </form-field>
         </div>
         <div class="col-md-12 pt-3">
           <form-field [control]="form.get('city')" label="Ciudad">
-            <input type="text" class="form-control" id="city" formControlName="city" />
+            <input
+              type="text"
+              class="form-control"
+              id="city"
+              formControlName="city" />
           </form-field>
         </div>
         <div class="col-md-12 pt-3">
-          <form-field [control]="form.get('keyEntityFederative')" label="Clave Federativa">
-            <input type="text" class="form-control" id="keyEntityFederative" formControlName="keyEntityFederative"
+          <form-field
+            [control]="form.get('keyEntityFederative')"
+            label="Clave Federativa">
+            <input
+              type="text"
+              class="form-control"
+              id="keyEntityFederative"
+              formControlName="keyEntityFederative"
               maxlength="15" />
           </form-field>
         </div>
@@ -61,7 +99,10 @@
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <confirm-button [disabled]="form.invalid" [loading]="loading" (confirm)="confirm()">
+        <confirm-button
+          [disabled]="form.invalid"
+          [loading]="loading"
+          (confirm)="confirm()">
         </confirm-button>
       </div>
       <div class="m-3">

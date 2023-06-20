@@ -22,18 +22,18 @@
                 </div>
                 <div class="col-12 col-sm-4 col-md-4 p-2">
                   <button
-                    type="button"
-                    class="btn btn-primary btn-sm active"
+                    type="submit"
+                    class="btn btn-primary active btn-sm"
                     (click)="validGoodNumberInDepositaryAppointment()">
                     Buscar
-                    <i aria-hidden="true" class="fa fa-search text-pink"></i>
+                    <i class="bx bx-search-alt bx-sm float-icon"></i>
                   </button>
                 </div>
               </div>
             </div>
           </div>
         </div>
-        <div
+        <!-- <div
           class="col-sm-12 col-12 col-md-12 p-2"
           *ngIf="loadingGood || loadingAppointment">
           <div class="alert alert-info">
@@ -42,14 +42,26 @@
               <span class="sr-only">Loading...</span>
             </div>
           </div>
+        </div> -->
+        <div
+          class="col-sm-12 col-12 col-md-12 col-lg-12 p-2 mb-5 p-5"
+          *ngIf="loadingGood || loadingAppointment">
+          <div class="d-flex justify-content-center">
+            <div class="d-flex justify-content-center">
+              <div class="loader"></div>
+              <h6 class="loader-msg pt-3">Cargando... por favor espere...</h6>
+            </div>
+          </div>
         </div>
         <div class="col-sm-12 col-12 col-md-3 p-2">
           <form-field
             [control]="form.get('noExpedient')"
             label="N&uacute;mero de Expediente">
             <input
+              type="number"
               [readonly]="true"
               class="form-control"
+              maxLength="30"
               formControlName="noExpedient" />
           </form-field>
         </div>
@@ -58,9 +70,10 @@
             [control]="form.get('fechaAcuerdoAsegurado')"
             label="Fecha de Acuerdo Asegurado">
             <input
-              [readonly]="true"
               class="form-control"
               formControlName="fechaAcuerdoAsegurado"
+              [readonly]="true"
+              maxLength="11"
               bsDatepicker />
           </form-field>
         </div>
@@ -69,9 +82,10 @@
             [control]="form.get('fechaRecepcion')"
             label="Fecha de Recepci&oacute;n">
             <input
-              [readonly]="true"
               class="form-control"
               formControlName="fechaRecepcion"
+              [readonly]="true"
+              maxLength="11"
               bsDatepicker />
           </form-field>
         </div>
@@ -83,6 +97,7 @@
               [readonly]="true"
               class="form-control"
               formControlName="fechaDecomiso"
+              maxLength="11"
               bsDatepicker />
           </form-field>
         </div>
@@ -94,6 +109,7 @@
               [readonly]="true"
               class="form-control"
               rows="2"
+              maxLength="500"
               formControlName="estatusBien"></textarea>
           </form-field>
         </div>
@@ -102,6 +118,7 @@
             <input
               [readonly]="true"
               class="form-control"
+              maxLength="40"
               formControlName="causaPenal" />
           </form-field>
         </div>
@@ -112,6 +129,7 @@
             <input
               [readonly]="true"
               class="form-control"
+              maxLength="200"
               formControlName="averiguacionPrevia" />
           </form-field>
         </div>
@@ -123,6 +141,7 @@
               [readonly]="true"
               class="form-control"
               rows="4"
+              maxLength="1250"
               formControlName="descriptionGood"></textarea>
           </form-field>
         </div>
@@ -169,19 +188,28 @@
           <form-field
             [control]="form.get('tipoDepositaria')"
             label="Tipo de Depositar&iacute;a">
-            <input class="form-control" formControlName="tipoDepositaria" />
+            <input
+              class="form-control"
+              formControlName="tipoDepositaria"
+              maxLength="40" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-3 p-2">
           <form-field
             [control]="form.get('representanteSAE')"
             label="Representante INDEP">
-            <input class="form-control" formControlName="representanteSAE" />
+            <input
+              class="form-control"
+              formControlName="representanteSAE"
+              maxLength="100" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-6 p-2">
           <form-field [control]="form.get('nombre')" label="Nombre">
-            <input class="form-control" formControlName="nombre" />
+            <input
+              class="form-control"
+              formControlName="nombre"
+              maxLength="100" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-6 p-2">
@@ -244,6 +272,7 @@
             label="Depositar&iacute;ia">
             <input
               class="form-control"
+              maxLength="40"
               formControlName="depositaria"
               [readonly]="true" />
           </form-field>
@@ -254,6 +283,7 @@
             label="Representante">
             <input
               class="form-control"
+              maxLength="120"
               formControlName="representante"
               [readonly]="true" />
           </form-field>
@@ -275,6 +305,7 @@
             <input
               class="form-control"
               formControlName="tipoPersona"
+              maxLength="20"
               [readonly]="true" />
           </form-field>
         </div>
@@ -285,6 +316,7 @@
             <input
               class="form-control"
               formControlName="tipoPersona2"
+              maxLength="30"
               [readonly]="true" />
           </form-field>
         </div>
@@ -293,6 +325,7 @@
             <input
               class="form-control"
               formControlName="rfc"
+              maxLength="20"
               [readonly]="true" />
           </form-field>
         </div>
@@ -301,6 +334,7 @@
             <input
               class="form-control"
               formControlName="curp"
+              maxLength="20"
               [readonly]="true" />
           </form-field>
         </div>
@@ -309,6 +343,7 @@
             <input
               class="form-control"
               formControlName="telefono"
+              maxLength="20"
               [readonly]="true" />
           </form-field>
         </div>
@@ -317,6 +352,7 @@
             <input
               class="form-control"
               formControlName="calle"
+              maxLength="200"
               [readonly]="true" />
           </form-field>
         </div>
@@ -325,6 +361,7 @@
             <input
               class="form-control"
               formControlName="noExterno"
+              maxLength="10"
               [readonly]="true" />
           </form-field>
         </div>
@@ -333,6 +370,7 @@
             <input
               class="form-control"
               formControlName="noInterno"
+              maxLength="10"
               [readonly]="true" />
           </form-field>
         </div>
@@ -346,6 +384,7 @@
             (change)="changePostalCodeDetail($event)"
             [form]="form"
             [showTooltip]="true"
+            termMaxLength="6"
             control="codigoPostal"></ngx-select>
         </div>
         <div class="col-sm-12 col-12 col-md-6 p-2">
@@ -358,6 +397,7 @@
             (change)="changeLocalityDetail($event)"
             [form]="form"
             [showTooltip]="true"
+            termMaxLength="100"
             control="colonia"></ngx-select>
         </div>
         <div class="col-sm-12 col-12 col-md-6 p-2">
@@ -370,6 +410,7 @@
             (change)="changeDelegationDetail($event)"
             [form]="form"
             [showTooltip]="true"
+            termMaxLength="60"
             control="delegacionMunicipio"></ngx-select>
         </div>
         <div class="col-sm-12 col-12 col-md-6 p-2">
@@ -382,6 +423,7 @@
             (change)="changeStateDetail($event)"
             [form]="form"
             [showTooltip]="true"
+            termMaxLength="45"
             control="entidadFederativa"></ngx-select>
         </div>
         <div class="col-sm-12 col-12 col-md-6 p-2">
@@ -389,6 +431,7 @@
             <input
               class="form-control"
               formControlName="giro"
+              maxLength="45"
               [readonly]="true" />
           </form-field>
         </div>
@@ -397,6 +440,7 @@
             <input
               class="form-control"
               formControlName="referencia"
+              maxLength="35"
               [readonly]="true" />
           </form-field>
         </div>
@@ -421,6 +465,7 @@
                     <input
                       class="form-control"
                       formControlName="fecha"
+                      maxLength="11"
                       bsDatepicker
                       [readonly]="true" />
                   </form-field>
@@ -432,6 +477,7 @@
                     <input
                       class="form-control"
                       formControlName="noOficio"
+                      maxLength="20"
                       [readonly]="true" />
                   </form-field>
                 </div>
@@ -450,6 +496,7 @@
                     <input
                       class="form-control"
                       formControlName="contraprestacion"
+                      maxLength="17"
                       [readonly]="true" />
                   </form-field>
                 </div>
@@ -460,6 +507,7 @@
                     <input
                       class="form-control"
                       formControlName="honorarios"
+                      maxLength="17"
                       [readonly]="true" />
                   </form-field>
                 </div>
@@ -468,6 +516,7 @@
                     <input
                       class="form-control"
                       formControlName="iva"
+                      maxLength="5"
                       [readonly]="true" />
                   </form-field>
                 </div>
@@ -478,7 +527,8 @@
                     <input
                       class="form-control"
                       formControlName="fechaInicio"
-                      bsDatapicker
+                      maxLength="11"
+                      bsDatepicker
                       [readonly]="true" />
                   </form-field>
                 </div>
@@ -489,6 +539,7 @@
                     <input
                       class="form-control"
                       formControlName="noNombramiento"
+                      maxLength="60"
                       [readonly]="true" />
                   </form-field>
                 </div>
@@ -509,7 +560,8 @@
             <input
               class="form-control"
               formControlName="fechaAcuerdo"
-              bsDatapicker
+              maxLength="11"
+              bsDatepicker
               [readonly]="true" />
           </form-field>
         </div>
@@ -520,28 +572,31 @@
             <input
               class="form-control"
               formControlName="noAcuerdo"
+              maxLength="20"
               [readonly]="true" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-12 p-2 mt-3 mb-3">
           <hr class="row" />
         </div>
-        <div class="col-sm-12 col-12 col-md-12 p-2">
+        <div class="col-sm-12 col-12 col-md-4 p-2">
           <form-field [control]="form.get('anexo')" label="Anexo">
             <textarea
               class="form-control"
               formControlName="anexo"
+              maxLength="20"
               rows="3"
               [readonly]="true"></textarea>
           </form-field>
         </div>
-        <div class="col-sm-12 col-12 col-md-12 p-2 mb-4">
+        <div class="col-sm-12 col-12 col-md-8 p-2 mb-4">
           <form-field
             [control]="form.get('observaciones')"
             label="Observaciones">
             <textarea
               class="form-control"
               formControlName="observaciones"
+              maxLength="1000"
               rows="3"
               [readonly]="true"></textarea>
           </form-field>
@@ -585,6 +640,7 @@
             name="payDetail"
             tooltip="Detallle de Pagos"
             containerClass="tooltip-style"
+            type="button"
             class="btn btn-info btn-sm active m-1">
             <i class="bx bxs-detail"></i>
           </button>
@@ -593,6 +649,7 @@
             name="juridicalReport"
             tooltip="Reportes Jur&iacute;dicos"
             containerClass="tooltip-style"
+            type="button"
             class="btn btn-info btn-sm active m-1">
             <i class="bx bxs-detail"></i>
           </button>
@@ -601,6 +658,7 @@
             name="administrativeReport"
             tooltip="Reportes Administrativos"
             containerClass="tooltip-style"
+            type="button"
             class="btn btn-info btn-sm active m-1">
             <i class="bx bxs-detail"></i>
           </button>
@@ -609,6 +667,7 @@
             name="masivIncomePays"
             tooltip="Ingreso Masivo de Pagos"
             containerClass="tooltip-style"
+            type="button"
             class="btn btn-warning btn-sm active m-1">
             <i class="bx bx-window-open"></i>
           </button>
@@ -617,6 +676,7 @@
             name="conceptsPaysCatalogs"
             tooltip="Cat&aacute;logo de Conceptos de Pago"
             containerClass="tooltip-style"
+            type="button"
             class="btn btn-warning btn-sm active m-1">
             <i class="bx bx-window-open"></i>
           </button>
@@ -625,6 +685,7 @@
             name="conceptsCatalogsPays"
             tooltip="Cat&aacute;logo Depositar&iacute;as"
             containerClass="tooltip-style"
+            type="button"
             class="btn btn-warning btn-sm active m-1">
             <i class="bx bx-window-open"></i>
           </button>

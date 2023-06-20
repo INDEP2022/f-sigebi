@@ -149,7 +149,7 @@
               <form-field
                 [control]="formJobManagement.get('addressee')"
                 class="col-md-4"
-                label="Nombre Destinatario"> 
+                label="Nombre Destinatario">
                 <textarea
                   rows="3"
                   type="text"
@@ -315,6 +315,7 @@
               <ngx-select
                 (fetchItems)="getJustification($event)"
                 value="id"
+                [searchOnInit]="true"
                 bindLabel="clarifications"
                 [form]="managementForm"
                 control="justificacion"

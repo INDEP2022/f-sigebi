@@ -48,10 +48,10 @@ export class RackListComponent extends BasePage implements OnInit {
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
             filter.field == 'id' ||
-              filter.field == 'idWarehouse' ||
-              filter.field == 'idBatch' ||
-              filter.field == 'description' ||
-              filter.field == 'status'
+            filter.field == 'idWarehouse' ||
+            filter.field == 'idBatch' ||
+            filter.field == 'description' ||
+            filter.field == 'status'
               ? (searchFilter = SearchFilter.EQ)
               : (searchFilter = SearchFilter.ILIKE);
             if (filter.search !== '') {

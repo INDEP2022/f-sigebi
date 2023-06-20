@@ -5,15 +5,17 @@
   <div body>
     <form [formGroup]="goodSituationForm" class="form-material">
       <div class="row">
-        <div class="col-md-4">
-          <form-field
-            [control]="goodSituationForm.get('status')"
-            label="Estado">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="status"
-              maxlength="3" />
+        <div class="col-md-8">
+          <form-field [control]="goodSituationForm.get('status')">
+            <ngx-select
+              [form]="goodSituationForm"
+              control="status"
+              (fetchItems)="getStates($event)"
+              [data]="statusSelect"
+              label="Estado"
+              bindLabel="description"
+              value="status">
+            </ngx-select>
           </form-field>
         </div>
         <div class="col-md-4">
@@ -23,19 +25,19 @@
             <input
               type="text"
               class="form-control"
-              formControlName="situation"
-              min="0" />
+              formControlName="situation" />
           </form-field>
         </div>
-        <div class="col-md-12 mt-5">
+      </div>
+      <div class="row pt-3">
+        <div class="col-md-12">
           <form-field
             [control]="goodSituationForm.get('descSituation')"
             label="Descripci&oacute;n">
             <input
               type="text"
               class="form-control"
-              formControlName="descSituation"
-              maxlength="300" />
+              formControlName="descSituation" />
           </form-field>
         </div>
       </div>

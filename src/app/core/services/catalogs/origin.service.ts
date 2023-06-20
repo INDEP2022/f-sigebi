@@ -11,13 +11,16 @@ import { IOrigin } from '../../models/catalogs/origin.model';
 })
 export class OriginService implements ICrudMethods<IOrigin> {
   private readonly route: string = ENDPOINT_LINKS.Origin;
-  constructor(private originRepository: Repository<IOrigin>) { }
+  constructor(private originRepository: Repository<IOrigin>) {}
 
   getAll(params?: ListParams): Observable<IListResponse<IOrigin>> {
     return this.originRepository.getAllPaginated(this.route, params);
   }
   getAllFilter(params?: ListParams): Observable<IListResponse<IOrigin>> {
-    return this.originRepository.getAllPaginated(this.route + '/get-all', params);
+    return this.originRepository.getAllPaginated(
+      this.route + '/get-all',
+      params
+    );
   }
   getById(id: string | number): Observable<IOrigin> {
     return this.originRepository.getById(this.route, id);

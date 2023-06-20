@@ -58,10 +58,7 @@ export class IfaiSeriesFormComponent extends BasePage implements OnInit {
           Validators.pattern(STRING_PATTERN),
         ],
       ],
-      registryNumber: [
-        null,
-        [Validators.pattern(NUMBERS_PATTERN)],
-      ],
+      registryNumber: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       status: [
         null,
         [
@@ -93,39 +90,34 @@ export class IfaiSeriesFormComponent extends BasePage implements OnInit {
     params['filter.status'] = this.ifaiSerieForm.controls['status'].value;
     this.ifaiSeriService.getAll(params).subscribe({
       next: response => {
-        count = response.count
+        count = response.count;
         if (response.count > 0) {
-          this.alert(
-            'warning',
-            'Series Ifai',
-            'El estatus esta ya existe.'
-          );
+          this.alert('warning', 'Series Ifai', 'El estatus esta ya existe.');
         } else {
-          this.ifaiSeriService.create(this.ifaiSerieForm.getRawValue()).subscribe({
-            next: data => this.handleSuccess(),
-            error: error => (this.loading = false),
-          });
+          this.ifaiSeriService
+            .create(this.ifaiSerieForm.getRawValue())
+            .subscribe({
+              next: data => this.handleSuccess(),
+              error: error => (this.loading = false),
+            });
         }
         this.loading = false;
       },
       error: error => {
         if (count > 0) {
-          this.alert(
-            'warning',
-            'Series Ifai',
-            'El estatus esta ya existe.'
-          );
+          this.alert('warning', 'Series Ifai', 'El estatus esta ya existe.');
         } else {
-          this.ifaiSeriService.create(this.ifaiSerieForm.getRawValue()).subscribe({
-            next: data => this.handleSuccess(),
-            error: error => (this.loading = false),
-          });
+          this.ifaiSeriService
+            .create(this.ifaiSerieForm.getRawValue())
+            .subscribe({
+              next: data => this.handleSuccess(),
+              error: error => (this.loading = false),
+            });
         }
 
-        this.loading = false
+        this.loading = false;
       },
     });
-
   }
 
   update() {

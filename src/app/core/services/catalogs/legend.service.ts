@@ -11,7 +11,7 @@ import { ILegend } from '../../models/catalogs/legend.model';
 })
 export class LegendService implements ICrudMethods<ILegend> {
   private readonly route: string = ENDPOINT_LINKS.Legend;
-  constructor(private legendRepository: Repository<ILegend>) { }
+  constructor(private legendRepository: Repository<ILegend>) {}
 
   getAll(params?: ListParams): Observable<IListResponse<ILegend>> {
     return this.legendRepository.getAllPaginated(this.route, params);

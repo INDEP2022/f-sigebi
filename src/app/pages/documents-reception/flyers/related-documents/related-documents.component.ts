@@ -1735,6 +1735,9 @@ export class RelatedDocumentsComponent
    * @returns
    */
   getJustification(paramsData: ListParams) {
+    if (paramsData['search'] == undefined || paramsData['search'] == null) {
+      paramsData['search'] = '';
+    }
     const params = new FilterParams();
     params.removeAllFilters();
     params.addFilter('type', 3, SearchFilter.NOT);
@@ -4071,6 +4074,14 @@ export class RelatedDocumentsComponent
       this.alertInfo('warning', 'Debe especificar la CIUDAD', '');
       return;
     }
+    if (!this.formJobManagement.value.refersTo) {
+      this.alertInfo(
+        'warning',
+        'Debe especificar la OPCIÓN de "Se Refiere A:"',
+        ''
+      );
+      return;
+    }
     const doc = this.getQueryParams('doc');
     const bien = this.getQueryParams('bien');
     if (
@@ -4390,12 +4401,20 @@ export class RelatedDocumentsComponent
       this.alertInfo('warning', 'Debe especificar la CIUDAD', '');
       return;
     }
+    if (!this.formJobManagement.value.refersTo) {
+      this.alertInfo(
+        'warning',
+        'Debe especificar la OPCIÓN de "Se Refiere A:"',
+        ''
+      );
+      return;
+    }
     if (
       this.formJobManagement.value.statusOf == 'EN REVISION' ||
       !this.formJobManagement.value.statusOf
     ) {
       if (this.isPGR) {
-        if (!this.variablesSend.V_JUSTIFICACION) {
+        if (!this.managementForm.value.justificacion) {
           this.alertInfo(
             'warning',
             'Es necesario contar con una justificación para poder cerrar el oficio',
@@ -5150,8 +5169,16 @@ export class RelatedDocumentsComponent
       this.alertInfo('warning', 'Debe especificar la CIUDAD', '');
       return;
     }
+    if (!this.formJobManagement.value.refersTo) {
+      this.alertInfo(
+        'warning',
+        'Debe especificar la OPCIÓN de "Se Refiere A:"',
+        ''
+      );
+      return;
+    }
     if (this.isPGR) {
-      if (!this.variablesSend.V_JUSTIFICACION) {
+      if (!this.managementForm.value.justificacion) {
         this.alertInfo(
           'warning',
           'Es necesario contar con una justificación para poder cerrar el oficio',

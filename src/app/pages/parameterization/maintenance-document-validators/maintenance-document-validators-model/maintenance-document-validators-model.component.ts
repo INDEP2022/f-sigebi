@@ -5,10 +5,7 @@ import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IValidatorsProceedings } from 'src/app/core/models/catalogs/validators-proceedings-model';
 import { ValidatorsProceedingsService } from 'src/app/core/services/catalogs/validators-proceedings.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import {
-  NUMBERS_PATTERN,
-  POSITVE_NUMBERS_PATTERN,
-} from 'src/app/core/shared/patterns';
+import { POSITVE_NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-maintenance-document-validators-model',

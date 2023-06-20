@@ -58,6 +58,7 @@ export class MassiveConversionPermissionsComponent
 
   getValuesAll() {
     this.loading = true;
+    console.log(this.params);
     this.usersService.getAllSegUsers(this.params.getValue()).subscribe({
       next: response => {
         this.data1 = response.data;

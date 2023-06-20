@@ -78,40 +78,34 @@ export class StatusCodeFormComponent extends BasePage implements OnInit {
     params['filter.status'] = this.statusCodeForm.controls['id'].value;
     this.statusCodeService.getAll(params).subscribe({
       next: response => {
-        count = response.count
+        count = response.count;
         if (response.count > 0) {
-          this.alert(
-            'warning',
-            'Código estado',
-            'La clave ya existe.'
-          );
+          this.alert('warning', 'Código estado', 'La clave ya existe.');
         } else {
-          this.statusCodeService.create(this.statusCodeForm.getRawValue()).subscribe({
-            next: data => this.handleSuccess(),
-            error: error => (this.loading = false),
-          });
+          this.statusCodeService
+            .create(this.statusCodeForm.getRawValue())
+            .subscribe({
+              next: data => this.handleSuccess(),
+              error: error => (this.loading = false),
+            });
         }
         this.loading = false;
       },
       error: error => {
         if (count > 0) {
-          this.alert(
-            'warning',
-            'Código estado',
-            'La clave ya existe.'
-          );
+          this.alert('warning', 'Código estado', 'La clave ya existe.');
         } else {
-          this.statusCodeService.create(this.statusCodeForm.getRawValue()).subscribe({
-            next: data => this.handleSuccess(),
-            error: error => (this.loading = false),
-          });
+          this.statusCodeService
+            .create(this.statusCodeForm.getRawValue())
+            .subscribe({
+              next: data => this.handleSuccess(),
+              error: error => (this.loading = false),
+            });
         }
 
-        this.loading = false
+        this.loading = false;
       },
     });
-
-
   }
 
   update() {

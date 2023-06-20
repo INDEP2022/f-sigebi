@@ -113,6 +113,22 @@ export class GoodsQueryService extends HttpService {
     );
   }
 
+  getAll(params?: ListParams): Observable<IListResponse<IAttribClassifGoods>> {
+    return this.attribClassifGoodMethodsRepository.getAllPaginated(
+      this.attribClassifGoodRoute,
+      params
+    );
+  }
+
+  getFilterAllGood(
+    params?: ListParams
+  ): Observable<IListResponse<IAttribClassifGoods>> {
+    return this.goodQueryRepository.getAllPaginated(
+      this.attribClassifGoodRoute,
+      params
+    );
+  }
+
   getAllFilter(
     params?: string
   ): Observable<IListResponse<IAttribClassifGoods>> {

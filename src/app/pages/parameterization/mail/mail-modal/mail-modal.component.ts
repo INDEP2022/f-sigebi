@@ -4,6 +4,7 @@ import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { BasePage } from 'src/app/core/shared/base-page';
 //Models
+import { DatePipe } from '@angular/common';
 import { ISegUsers } from 'src/app/core/models/ms-users/seg-users-model';
 import { IUserAccessAreas } from 'src/app/core/models/ms-users/users-access-areas-model';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
@@ -29,7 +30,8 @@ export class MailModalComponent extends BasePage implements OnInit {
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
-    private usersService: UsersService
+    private usersService: UsersService,
+    private datePipe: DatePipe
   ) {
     super();
   }
@@ -156,8 +158,11 @@ export class MailModalComponent extends BasePage implements OnInit {
     if (this.segUsers != null) {
       this.delegationNumber = this.segUsers.usuario as IUserAccessAreas;
       this.edit = true;
-      console.log(this.segUsers);
+      const formatFec = this.segUsers.firstTimeLoginDate;
+      const fechaObjeto = new Date(formatFec);
+      const format = this.datePipe.transform(formatFec, 'yyyy-MM-dd');
       this.form.patchValue(this.segUsers);
+      this.form.controls['firstTimeLoginDate'].setValue(format);
       /*this.form.controls['usuario'].setValue(
         this.delegationNumber.delegationNumber
       );*/
@@ -182,6 +187,7 @@ export class MailModalComponent extends BasePage implements OnInit {
 
   update() {
     this.loading = true;
+    console.log(this.form.controls['firstTimeLoginDate'].value);
     this.usersService.update(this.form.value).subscribe({
       next: data => this.handleSuccess(),
       error: error => (this.loading = false),

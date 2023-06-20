@@ -1095,19 +1095,19 @@ export abstract class RelateDocumentsResponse extends BasePage {
       .pipe(map(x => x));
   }
   sendFunction_pufGenerateKey(params: IPufGenerateKey): Observable<any> {
-    
     return (
-
       this.dictationService.pufGenerateKey(params).subscribe({
-      
-      error: error => {
-
-        this.alertInfo('warning','No se puede guardar por la siguiente razón:' , error.error.message);
-        console.log('Error', error)}
-    }),
-
+        error: error => {
+          this.alertInfo(
+            'warning',
+            'No se puede guardar por la siguiente razón:',
+            error.error.message
+          );
+          console.log('Error', error);
+        },
+      }),
       this.dictationService.pufGenerateKey(params).pipe(map(x => x))
-      );
+    );
   }
   sendFunction_pupStatusChange(params: IStatusChange): Observable<any> {
     return this.dictationService.pupStatusChange(params).pipe(map(x => x));

@@ -49,14 +49,14 @@ export class OriginListComponent extends BasePage implements OnInit {
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
             filter.field == 'id' ||
-              filter.field == 'idTransferer' ||
-              filter.field == 'keyTransferer' ||
-              filter.field == 'description' ||
-              filter.field == 'type' ||
-              filter.field == 'address' ||
-              filter.field == 'idCity' ||
-              filter.field == 'city' ||
-              filter.field == 'keyEntityFederative'
+            filter.field == 'idTransferer' ||
+            filter.field == 'keyTransferer' ||
+            filter.field == 'description' ||
+            filter.field == 'type' ||
+            filter.field == 'address' ||
+            filter.field == 'idCity' ||
+            filter.field == 'city' ||
+            filter.field == 'keyEntityFederative'
               ? (searchFilter = SearchFilter.EQ)
               : (searchFilter = SearchFilter.ILIKE);
             if (filter.search !== '') {
@@ -94,7 +94,6 @@ export class OriginListComponent extends BasePage implements OnInit {
           this.totalItems = 0;
           this.loading = false;
         }
-
       },
       error: error => (this.loading = false),
     });

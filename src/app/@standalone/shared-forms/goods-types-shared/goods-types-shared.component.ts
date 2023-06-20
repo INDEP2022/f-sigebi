@@ -3,7 +3,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { SharedModule } from 'src/app/shared/shared.module';
 //Rxjs
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, debounceTime, takeUntil } from 'rxjs';
 //Params
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -76,11 +76,40 @@ export class GoodsTypesSharedComponent extends BasePage implements OnInit {
     this.rowClass = this.inlineForm
       ? `col-md-${this.columns} mt-3`
       : `col-md-12 mt-3`;
+    if (this.form) {
+      this.form.valueChanges
+        .pipe(debounceTime(500), takeUntil(this.$unSubscribe))
+        .subscribe(x => {
+          console.log(x);
+          const params = new ListParams();
+          if (x[this.sssubtypeField]) {
+            this.getSssubtypes(params, x[this.sssubtypeField]);
+          }
+          if (x[this.ssubtypeField]) {
+            this.getSsubtypes(params, x[this.ssubtypeField]);
+          }
+          if (x[this.subtypeField]) {
+            this.getSubtypes(params, x[this.subtypeField]);
+          }
+          if (x[this.typeField]) {
+            this.getTypes(params, x[this.typeField]);
+          }
+        });
+      // this.sssubtype.valueChanges
+      //   .pipe(debounceTime(500), takeUntil(this.$unSubscribe))
+      //   .subscribe(x => {
+      //     console.log(x);
+      //   });
+    }
   }
 
-  getTypes(params: ListParams) {
+  getTypes(params: ListParams, id: any = null) {
     const _params: any = params;
-    _params['filter.nameGoodType'] = `$ilike:${params.text}`;
+    if (id) {
+      params['filter.id'] = id;
+    } else {
+      _params['filter.nameGoodType'] = `$ilike:${params.text}`;
+    }
     delete _params.search;
     delete _params.text;
     this.service.search(_params).subscribe({
@@ -100,9 +129,13 @@ export class GoodsTypesSharedComponent extends BasePage implements OnInit {
     });
   }
 
-  getSubtypes(params: ListParams) {
+  getSubtypes(params: ListParams, id: any = null) {
     const _params: any = params;
-    _params['filter.nameSubtypeGood'] = `$ilike:${params.text}`;
+    if (id) {
+      params['filter.id'] = id;
+    } else {
+      _params['filter.nameSubtypeGood'] = `$ilike:${params.text}`;
+    }
     delete _params.search;
     delete _params.text;
     if (this.type.value) {
@@ -118,9 +151,13 @@ export class GoodsTypesSharedComponent extends BasePage implements OnInit {
     });
   }
 
-  getSsubtypes(params: ListParams) {
+  getSsubtypes(params: ListParams, id: any = null) {
     const _params: any = params;
-    _params['filter.description'] = `$ilike:${params.text}`;
+    if (id) {
+      params['filter.id'] = id;
+    } else {
+      _params['filter.description'] = `$ilike:${params.text}`;
+    }
     delete _params.search;
     delete _params.text;
     if (this.type.value) {
@@ -139,9 +176,13 @@ export class GoodsTypesSharedComponent extends BasePage implements OnInit {
     });
   }
 
-  getSssubtypes(params: ListParams) {
+  getSssubtypes(params: ListParams, id: any = null) {
     const _params: any = params;
-    _params['filter.description'] = `$ilike:${params.text}`;
+    if (id) {
+      params['filter.id'] = id;
+    } else {
+      _params['filter.description'] = `$ilike:${params.text}`;
+    }
     delete _params.search;
     delete _params.text;
     if (this.type.value) {

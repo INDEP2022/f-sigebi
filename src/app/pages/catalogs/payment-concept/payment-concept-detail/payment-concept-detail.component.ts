@@ -16,7 +16,7 @@ export class PaymentConceptDetailComponent extends BasePage implements OnInit {
   paymentConceptForm: ModelForm<IPaymentConcept>;
   paymentconcept: IPaymentConcept;
 
-  title: string = 'Catálogo concepto de pagos';
+  title: string = 'Concepto de Pago';
   edit: boolean = false;
 
   constructor(

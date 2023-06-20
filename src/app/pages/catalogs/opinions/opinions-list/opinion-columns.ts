@@ -10,7 +10,7 @@ export const OPINION_COLUMNS = {
     sort: false,
   },
   dict_ofi: {
-    title: 'Dictámen_oficio',
+    title: 'Dictamen_oficio',
     type: 'string',
     sort: false,
   },
