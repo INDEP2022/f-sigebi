@@ -5,52 +5,36 @@
   <div body>
     <form class="form-material" [formGroup]="goodSssubtypeForm">
       <div class="row">
+        <div class="col-md-8">
+          <form-field [control]="goodSssubtypeForm.get('id')" label="C&oacute;digo SssubTipo">
+            <input type="number" class="form-control" formControlName="id" />
+          </form-field>
+        </div>
         <div class="col-md-12">
-          <form-field
-            [control]="goodSssubtypeForm.get('description')"
-            label="Descripci&oacute;n">
+          <form-field [control]="goodSssubtypeForm.get('description')" label="Descripci&oacute;n">
             <textarea class="form-control" formControlName="description">
             </textarea>
           </form-field>
         </div>
         <div class="col-md-12">
-          <ngx-select
-            [form]="goodSssubtypeForm"
-            control="numType"
-            (fetchItems)="getTypes($event)"
-            [data]="types"
-            label="Tipo"
-            bindLabel="nameGoodType"
-            value="id"
-            (change)="getChangeSutype($event)">
+          <ngx-select [form]="goodSssubtypeForm" control="numType" (fetchItems)="getTypes($event)" [data]="types"
+            label="Tipo" bindLabel="nameGoodType" value="id" (change)="getChangeSutype($event)">
           </ngx-select>
         </div>
         <div class="col-md-12">
-          <ngx-select
-            [form]="goodSssubtypeForm"
-            control="numSubType"
-            (fetchItems)="getSubtypes($event)"
-            [data]="subTypes"
-            label="Subtipo"
-            bindLabel="nameSubtypeGood"
-            value="id"
+          <ngx-select [form]="goodSssubtypeForm" control="numSubType" (fetchItems)="getSubtypes($event)"
+            [data]="subTypes" label="Subtipo" bindLabel="nameSubtypeGood" value="id"
             (change)="getChangeSsutype($event)">
             <label class="label">Subtipo</label>
           </ngx-select>
         </div>
         <div class="col-md-12">
-          <ngx-select
-            [form]="goodSssubtypeForm"
-            control="numSsubType"
-            (fetchItems)="getSsubtypes($event)"
-            [data]="ssubTypes"
-            label="Ssubtipo"
-            bindLabel="description"
-            value="id">
+          <ngx-select [form]="goodSssubtypeForm" control="numSsubType" (fetchItems)="getSsubtypes($event)"
+            [data]="ssubTypes" label="Ssubtipo" bindLabel="description" value="id">
           </ngx-select>
         </div>
 
-        <div class="col-md-4">
+        <!-- <div class="col-md-4">
           <form-field
             [control]="goodSssubtypeForm.get('numRegister')"
             label="Estado">
@@ -59,48 +43,29 @@
               class="form-control"
               formControlName="numRegister" />
           </form-field>
-        </div>
+        </div> -->
 
         <div class="col-md-4">
-          <form-field
-            [control]="goodSssubtypeForm.get('numClasifAlterna')"
-            label="ID Clasificaci&oacute;n alterna">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="numClasifAlterna" />
+          <form-field [control]="goodSssubtypeForm.get('numClasifAlterna')" label="Clasificaci&oacute;n alterna">
+            <input type="number" class="form-control" formControlName="numClasifAlterna" maxlength="2"
+              oninput="if(this.value.length > 2) this.value = this.value.slice(0, 2);" />
           </form-field>
         </div>
         <div class="col-md-4">
-          <form-field
-            [control]="goodSssubtypeForm.get('numClasifGoods')"
-            label="ID Clasificaci&oacute;n bien">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="numClasifGoods" />
+          <form-field [control]="goodSssubtypeForm.get('numClasifGoods')" label="Clasificaci&oacute;n bien">
+            <input type="number" class="form-control" formControlName="numClasifGoods" maxlength="5"
+              oninput="if(this.value.length > 5) this.value = this.value.slice(0, 5);" />
           </form-field>
         </div>
       </div>
 
-      <div class="row">
-        <div class="col-md-4">
-          <form-field
-            [control]="goodSssubtypeForm.get('id')"
-            label="ID SssubTipo">
-            <input type="number" class="form-control" formControlName="id" />
-          </form-field>
-        </div>
-      </div>
+
     </form>
   </div>
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <confirm-button
-          [disabled]="goodSssubtypeForm.invalid"
-          [loading]="loading"
-          (confirm)="confirm()">
+        <confirm-button [disabled]="goodSssubtypeForm.invalid" [loading]="loading" (confirm)="confirm()">
         </confirm-button>
       </div>
       <div class="m-3">
