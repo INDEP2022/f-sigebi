@@ -34,6 +34,14 @@ export class VaultDetailComponent extends BasePage implements OnInit {
 
   title: string = 'Catálogo de Bóvedas';
   edit: boolean = false;
+  filterCity: string = '';
+  idStateFilter: string = '';
+  idFilter: string = '';
+  idSMinicipalityFilter: string = '';
+  validationstate: boolean = false;
+  validationcity: boolean = false;
+  validationmunicipality: boolean = false;
+  validationlocality: boolean = false;
 
   public states = new DefaultSelect<IStateOfRepublic>();
   public cities = new DefaultSelect<ICity>();
@@ -65,6 +73,9 @@ export class VaultDetailComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    this.getStates(new ListParams());
+    this.getUserTracking(new ListParams());
+    //this.getMunicipalities(new ListParams());
     this.prepareForm();
   }
 
@@ -77,6 +88,7 @@ export class VaultDetailComponent extends BasePage implements OnInit {
       municipalityCode: [null, []],
       localityCode: [null, []],
       stateCode: [null, []],
+      cityCodeID: [null],
       cityCode: [null, []],
       registerNumber: [null, []],
     });
@@ -88,6 +100,22 @@ export class VaultDetailComponent extends BasePage implements OnInit {
       this.valueLocality = this.vault.localityDetail as ILocality;
       this.vaultForm.patchValue(this.vault);
       console.log(this.vault);
+      let state = this.vault.stateDetail;
+      let city = this.vault.cityDetail;
+      let municipality = this.vault.municipalityDetail;
+      let locality = this.vault.localityDetail;
+      //console.log("VALOOR" + city.nameCity)
+
+      //this.vaultForm.controls['stateCodeID'].setValue(state.id);
+      const { stateDetail, cityDetail, municipalityDetail, localityDetail } =
+        this.vault;
+
+      //this.cities = new DefaultSelect([cityDetail.nameCity], 1);
+      //this.municipalities = new DefaultSelect([municipalityDetail.nameMunicipality], 1);
+      ///this.localities = new DefaultSelect([localityDetail.nameLocation], 1);
+
+      //this.vaultForm.controls['municipalityCode'].setValue(municipality.idMunicipality);
+      //this.vaultForm.controls['localityCode'].setValue(locality.id);
 
       // if (this.vaultForm.controls['municipalityDetail'].value) {
       //   this.vaultForm.controls['cityDetail'].setValue(this.valueCity.nameCity);
@@ -108,23 +136,54 @@ export class VaultDetailComponent extends BasePage implements OnInit {
       //   );
       // }
 
-      if (this.vaultForm.controls['stateCode'].value) {
-        this.getMunicipalities(
-          new ListParams(),
-          this.vaultForm.controls['stateCode'].value.toString()
-        );
+      if (
+        this.vaultForm.controls['stateCode'].value &&
+        this.vault.stateDetail != null
+      ) {
+        this.states = new DefaultSelect([state.descCondition], 1);
+        this.vaultForm.controls['stateCode'].setValue(state.descCondition);
+        this.idStateFilter = this.valueState.id.toString();
+        this.getMunicipalities(new ListParams(), this.valueState.id.toString());
+        this.getCities(new ListParams(), this.valueState.id.toString());
       }
-      if (this.vaultForm.controls['cityCode'].value) {
-        this.getCities(
-          new ListParams(),
-          this.vaultForm.controls['stateCode'].value.toString()
-        );
+      if (
+        this.vaultForm.controls['cityCode'].value &&
+        this.vault.cityDetail != null
+      ) {
+        this.cities = new DefaultSelect([city.nameCity], 1);
+        this.vaultForm.controls['cityCode'].setValue(city.nameCity);
       }
-      if (this.vaultForm.controls['municipalityCode'].value) {
-        this.getLocalities(
-          new ListParams(),
-          this.vaultForm.controls['municipalityCode'].value.toString()
-        );
+      if (this.vaultForm.controls['localityCode'].value) {
+      }
+      if (
+        this.vaultForm.controls['municipalityCode'].value &&
+        this.vault.municipalityDetail != null
+      ) {
+        if (this.vault.localityDetail != null) {
+          this.idSMinicipalityFilter =
+            this.valueMunicipality.idMunicipality.toString();
+          console.log('ssssss' + this.valueState.id.toString());
+          this.getLocalities(
+            new ListParams(),
+            this.valueMunicipality.idMunicipality.toString(),
+            this.valueState.id.toString()
+          );
+
+          this.localities = new DefaultSelect([locality.nameLocation], 1);
+          this.vaultForm.controls['localityCode'].setValue(
+            locality.nameLocation
+          );
+        } else {
+          this.municipalities = new DefaultSelect(
+            [municipality.description],
+            1
+          );
+          this.vaultForm.controls['municipalityCode'].setValue(
+            municipality.description
+          );
+        }
+      } else {
+        this.localities = new DefaultSelect([], 0);
       }
       if (this.vaultForm.controls['manager'].value) {
         this.getUserTracking(
@@ -133,11 +192,7 @@ export class VaultDetailComponent extends BasePage implements OnInit {
         );
       }
     }
-    setTimeout(() => {
-      this.getStates(new ListParams());
-      this.getUserTracking(new ListParams());
-      this.getMunicipalities(new ListParams());
-    }, 1000);
+    setTimeout(() => {}, 1000);
   }
 
   confirm() {
@@ -146,6 +201,26 @@ export class VaultDetailComponent extends BasePage implements OnInit {
 
   update() {
     this.loading = true;
+    if (!this.validationlocality && this.vault != null) {
+      this.vaultForm.controls['localityCode'].setValue(
+        this.valueLocality.id.toString()
+      );
+    }
+    if (!this.validationmunicipality && this.vault != null) {
+      this.vaultForm.controls['municipalityCode'].setValue(
+        this.valueMunicipality.idMunicipality.toString()
+      );
+    }
+    if (!this.validationcity && this.vault != null) {
+      this.vaultForm.controls['cityCode'].setValue(
+        this.valueCity.idCity.toString()
+      );
+    }
+    if (!this.validationstate && this.vault != null) {
+      this.vaultForm.controls['stateCode'].setValue(
+        this.valueState.id.toString()
+      );
+    }
     console.log(this.vaultForm.getRawValue());
     this.safeService.update(this.vault.idSafe, this.vaultForm.value).subscribe({
       next: data => this.handleSuccess(),
@@ -208,38 +283,92 @@ export class VaultDetailComponent extends BasePage implements OnInit {
   }
 
   getCities(params: ListParams, id?: string) {
+    this.cities = new DefaultSelect([], 0);
     if (id) {
       params['filter.state'] = `$eq:${id}`;
+    } else {
+      params['filter.state'] = `$eq:${this.idStateFilter}`;
     }
-    this.cityService.getAll(params).subscribe(data => {
-      console.log(data);
-      this.cities = new DefaultSelect(data.data, data.count);
-    });
+    this.cityService.getAll(params).subscribe(
+      data => {
+        console.log(data);
+        this.cities = new DefaultSelect(data.data, data.count);
+      },
+      err => {
+        this.cities = new DefaultSelect([], 0);
+        console.log('error', err);
+      }
+    );
   }
 
   getMunicipalities(params: ListParams, id?: string) {
+    this.municipalities = new DefaultSelect([], 0);
     if (id) {
       params['filter.stateKey'] = `$eq:${id}`;
+    } else {
+      params['filter.stateKey'] = `$eq:${this.idStateFilter}`;
     }
-    this.municipalityService.getAll(params).subscribe(data => {
-      console.log(data);
-      this.municipalities = new DefaultSelect(data.data, data.count);
-    });
+    this.municipalityService.getAll(params).subscribe(
+      data => {
+        console.log(data);
+        this.municipalities = new DefaultSelect(data.data, data.count);
+      },
+      err => {
+        this.municipalities = new DefaultSelect([], 0);
+        console.log('error', err);
+      }
+    );
   }
 
-  getLocalities(params: ListParams, id?: string) {
-    if (id) {
+  getLocalities(params: ListParams, id?: string, idstate?: string) {
+    this.localities = new DefaultSelect([], 0);
+    if (id && idstate) {
+      console.log(
+        'ENTRO AQUI1111111111111111111111111111111111111111111111111111111111'
+      );
+      params['filter.municipalityId'] = `$eq:${id}`;
+      params['filter.stateKey'] = `$eq:${idstate}`;
+    }
+    if (id && !idstate && this.idFilter == '') {
+      console.log(
+        'ENTRO AQUI22222222222222222222222222222222222222222222222222222222222'
+      );
       params['filter.municipalityId'] = `$eq:${id}`;
       params[
         'filter.stateKey'
       ] = `$eq:${this.vaultForm.controls['stateCode'].value}`;
     }
-    this.localityService.getAll(params).subscribe(data => {
-      this.localities = new DefaultSelect(data.data, data.count);
-    });
+    if (id && !idstate && this.idFilter != '') {
+      console.log(
+        'ENTRO 33333333333333333333333333333333333333333333333333333333333333'
+      );
+      params['filter.municipalityId'] = `$eq:${id}`;
+      params['filter.stateKey'] = `$eq:${this.idFilter}`;
+    }
+    if (!(id && idstate) && !(id && !idstate)) {
+      console.log(
+        'ENTRO 4444444444444444444444444444444444444444444444444444444444'
+      );
+      params['filter.municipalityId'] = `$eq:${this.idSMinicipalityFilter}`;
+      params['filter.stateKey'] = `$eq:${this.idStateFilter}`;
+    } else {
+      console.log(
+        'ENTRO 555555555555555555555555555555555555555555555555555555'
+      );
+    }
+    this.localityService.getAll(params).subscribe(
+      data => {
+        this.localities = new DefaultSelect(data.data, data.count);
+      },
+      err => {
+        this.localities = new DefaultSelect([], 0);
+        console.log('error', err);
+      }
+    );
   }
 
   onValuesChange1(safeChange1: ICity) {
+    this.validationcity = true;
     this.cityValue = safeChange1;
     // this.vaultForm.controls['cityDetail'].setValue(safeChange1);
     this.vaultForm.controls['municipalityCode'].setValue('');
@@ -250,6 +379,8 @@ export class VaultDetailComponent extends BasePage implements OnInit {
     this.safes1 = new DefaultSelect();
   }
   onValuesChange2(safeChange2: IMunicipality) {
+    this.idSMinicipalityFilter = safeChange2.idMunicipality;
+    this.validationmunicipality = true;
     this.valueMunicipality = safeChange2;
     // this.vaultForm.controls['municipalityDetail'].setValue(
     //   safeChange2
@@ -261,6 +392,7 @@ export class VaultDetailComponent extends BasePage implements OnInit {
     this.safes2 = new DefaultSelect();
   }
   onValuesChange3(safeChange3: ILocality) {
+    this.validationlocality = true;
     this.localityValue = safeChange3;
 
     // this.vaultForm.controls['localityDetail'].setValue(safeChange3);
@@ -277,6 +409,8 @@ export class VaultDetailComponent extends BasePage implements OnInit {
     this.vaultForm.controls['cityCode'].setValue('');
     this.vaultForm.controls['municipalityCode'].setValue('');
     this.vaultForm.controls['localityCode'].setValue('');
+    this.validationstate = true;
+    this.idStateFilter = safeChange4.id;
     // this.vaultForm.controls['cityDetail'].setValue('');
     // this.vaultForm.controls['municipalityDetail'].setValue('');
     // this.vaultForm.controls['localityDetail'].setValue('');

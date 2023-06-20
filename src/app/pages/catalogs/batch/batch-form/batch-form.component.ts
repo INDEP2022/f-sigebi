@@ -1,4 +1,10 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  OnInit,
+  Output,
+  Renderer2,
+} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
@@ -25,7 +31,8 @@ export class BatchFormComponent extends BasePage implements OnInit {
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
-    private batchService: BatchService
+    private batchService: BatchService,
+    private render: Renderer2
   ) {
     super();
   }
@@ -46,10 +53,6 @@ export class BatchFormComponent extends BasePage implements OnInit {
       ],
 
       numStore: [null, [Validators.required]],
-      numRegister: [
-        null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
-      ],
       description: [
         null,
         [
@@ -60,7 +63,11 @@ export class BatchFormComponent extends BasePage implements OnInit {
       ],
       status: [null, [Validators.required, Validators.maxLength(1)]],
     });
+    const id = document.getElementById('inputid');
+    const numStore = document.getElementById('inputnumStore');
     if (this.batch != null) {
+      this.render.addClass(id, 'disabled');
+      this.render.addClass(numStore, 'disabled');
       this.edit = true;
       console.log(this.batch);
       console.log(this.batch.numStore.idWarehouse);
@@ -70,6 +77,9 @@ export class BatchFormComponent extends BasePage implements OnInit {
         .patchValue(this.batch.numStore.idWarehouse);
 
       console.log(this.batchForm.get('numStore'));
+    } else {
+      this.render.removeClass(id, 'disabled');
+      this.render.removeClass(numStore, 'disabled');
     }
     this.getAlmacen(new ListParams());
   }

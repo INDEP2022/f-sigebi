@@ -136,7 +136,11 @@ export class CityDetailComponent extends BasePage implements OnInit {
       idCity: [null, []],
       nameCity: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.maxLength(60),
+          Validators.pattern(STRING_PATTERN),
+        ],
       ],
       state: [null, [Validators.required]],
       noDelegation: [
@@ -149,7 +153,11 @@ export class CityDetailComponent extends BasePage implements OnInit {
       ],
       legendOffice: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.maxLength(150),
+          Validators.pattern(STRING_PATTERN),
+        ],
       ],
     });
     if (this.city != null) {
