@@ -31,6 +31,7 @@ import {
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { AppointmentsAdministrativeReportComponent } from '../appointments-administrative-report/appointments-administrative-report.component';
 import { AppointmentsJuridicalReportComponent } from '../appointments-juridical-report/appointments-juridical-report.component';
 import { AppointmentsRelationsPaysComponent } from '../appointments-relations-pays/appointments-relations-pays.component';
 import { AppointmentsService } from '../services/appointments.service';
@@ -173,8 +174,8 @@ export class AppointmentsComponent
       ], //*
       nombre: [
         { value: '', disabled: true },
-        [Validators.pattern(STRING_PATTERN)],
-      ], //*
+        [Validators.maxLength(100), Validators.pattern(STRING_PATTERN)],
+      ], //* Representante SERA
       bienesMenaje: { value: '', disabled: true }, //* Sin Menaje, Con Menaje
 
       depositaria: [
@@ -331,7 +332,17 @@ export class AppointmentsComponent
 
   btnPaysDetails() {
     console.log('Detalle Pagos');
-    this.openModalPaysDetails({});
+    if (!this.depositaryAppointment.appointmentNumber) {
+      this.alert(
+        'warning',
+        'Se requiere de una búsqueda de Bien primero para poder ver está opción',
+        ''
+      );
+      return;
+    }
+    this.openModalPaysDetails({
+      depositaryNumber: Number(this.depositaryAppointment.appointmentNumber),
+    });
   }
 
   openModalPaysDetails(context?: Partial<AppointmentsRelationsPaysComponent>) {
@@ -365,6 +376,20 @@ export class AppointmentsComponent
 
   btnReportesAdministrativos() {
     console.log('Reportes Administrativos');
+    this.openModaladministrativeReport({});
+  }
+
+  openModaladministrativeReport(
+    context?: Partial<AppointmentsAdministrativeReportComponent>
+  ) {
+    const modalRef = this.modalService.show(
+      AppointmentsAdministrativeReportComponent,
+      {
+        initialState: context,
+        class: 'modal-lg modal-dialog-centered',
+        ignoreBackdropClick: true,
+      }
+    );
   }
 
   btnMasivIncomePays() {
