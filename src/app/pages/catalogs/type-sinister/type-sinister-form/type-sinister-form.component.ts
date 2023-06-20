@@ -40,8 +40,8 @@ export class TypeSinisterFormComponent extends BasePage implements OnInit {
           Validators.pattern(STRING_PATTERN),
         ],
       ],
-      flag: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      noRegistre: [null, [Validators.required]],
+      flag: [null, [Validators.required]],
+      //noRegistre: [null, [Validators.required]],
     });
     if (this.typeSiniester != null) {
       this.edit = true;
@@ -69,7 +69,7 @@ export class TypeSinisterFormComponent extends BasePage implements OnInit {
   update() {
     this.loading = true;
     this.typeSinisterService
-      .update(this.typeSiniester.id, this.typeSinisterForm.getRawValue())
+      .newUpdate(this.typeSinisterForm.getRawValue())
       .subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),
