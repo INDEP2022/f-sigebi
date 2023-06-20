@@ -10,7 +10,6 @@
             <form-field [control]="form.get('file')" label="Expediente">
               <input
                 type="number"
-                [min]="1"
                 formControlName="file"
                 class="form-control" />
             </form-field>
@@ -32,7 +31,7 @@
             <form-field [control]="form.get('depositDateTo')" label="Al:">
               <input
                 formControlName="depositDateTo"
-                [min]="this.depositD"
+                [maxDate]="maxDate"
                 class="form-control"
                 bsDatepicker />
             </form-field>
@@ -54,7 +53,7 @@
             <form-field [control]="form.get('transferenceDateTo')" label="Al:">
               <input
                 formControlName="transferenceDateTo"
-                [min]="this.transfD"
+                [maxDate]="maxDate"
                 class="form-control"
                 bsDatepicker />
             </form-field>
@@ -76,7 +75,7 @@
             <form-field [control]="form.get('receptionDateTo')" label="Al:">
               <input
                 formControlName="receptionDateTo"
-                [min]="this.transfD"
+                [maxDate]="maxDate"
                 class="form-control"
                 bsDatepicker />
             </form-field>

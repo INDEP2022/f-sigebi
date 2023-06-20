@@ -5,7 +5,6 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
-import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
 @Component({
   selector: 'app-print-massive-account',
   templateUrl: './print-massive-account.component.html',
@@ -19,6 +18,7 @@ export class PrintMassiveAccountComponent implements OnInit {
   transfT: string = '';
   recepctD: string = '';
   recepctT: string = '';
+  maxDate = new Date();
 
   constructor(
     private fb: FormBuilder,
@@ -34,12 +34,7 @@ export class PrintMassiveAccountComponent implements OnInit {
 
   prepareForm() {
     this.form = this.fb.group({
-      file: [
-        null,
-        Validators.required,
-        Validators.maxLength(11),
-        Validators.pattern(NUMBERS_PATTERN),
-      ],
+      file: [null, Validators.required],
 
       depositDate: [null, Validators.required],
       depositDateTo: [null, Validators.required],
@@ -56,6 +51,7 @@ export class PrintMassiveAccountComponent implements OnInit {
       this.form.controls['depositDate'].value,
       'dd/MM/yyyy'
     );
+
     this.depositT = this.datePipe.transform(
       this.form.controls['depositDateTo'].value,
       'dd/MM/yyyy'
@@ -89,7 +85,7 @@ export class PrintMassiveAccountComponent implements OnInit {
 
     this.siabService
       // .fetchReport('FGERADBIMPRMASIVA', params)
-      .fetchReport('blank', params)
+      .fetchReportBlank('blank')
       .subscribe(response => {
         if (response !== null) {
           const blob = new Blob([response], { type: 'application/pdf' });
@@ -124,6 +120,7 @@ export class PrintMassiveAccountComponent implements OnInit {
         }
       });
   }
+
   cleanForm() {
     this.form.reset();
   }
