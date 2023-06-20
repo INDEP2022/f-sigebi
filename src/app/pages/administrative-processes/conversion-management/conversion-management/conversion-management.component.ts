@@ -6,7 +6,7 @@ import { IGood } from 'src/app/core/models/ms-good/good';
 import { ConvertiongoodService } from 'src/app/core/services/ms-convertiongood/convertiongood.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-conversion-management',
@@ -73,6 +73,10 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.buildForm();
+    this.description.disable();
+    this.actaERDate.disable();
+    this.actaER.disable();
+    this.desStatus.disable();
   }
 
   /**
@@ -84,12 +88,12 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
     this.form = this.fb.group({
       idConversion: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
       ],
-      noBien: [null, [Validators.pattern(STRING_PATTERN)]],
+      noBien: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       date: [null],
       tipo: [null],
-      noExpediente: [null, [Validators.pattern(STRING_PATTERN)]],
+      noExpediente: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       actaConversion: [null, [Validators.pattern(STRING_PATTERN)]],
       desStatus: [null, [Validators.pattern(STRING_PATTERN)]],
       actaER: [null, [Validators.pattern(STRING_PATTERN)]],
@@ -174,6 +178,7 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
     this.conversiongoodServices.getActsByGood(idGood).subscribe({
       next: response => {
         this.actaER.setValue(response.cve_acta);
+        console.log(new Date(response.fec_elaboracion));
         this.actaERDate.setValue(new Date(response.fec_elaboracion));
       },
       error: err => {
@@ -207,6 +212,7 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
         'Se ha generado y aplicado la contraseña a la Conversión'
       );
       this.form.reset();
+      this.saved = true;
     } else {
       this.onLoadToast('error', 'ERROR', 'Erorr al Generar la contraseña');
     }

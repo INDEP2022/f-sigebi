@@ -1,93 +1,110 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef, ModalOptions } from 'ngx-bootstrap/modal';
-import { takeUntil } from 'rxjs';
+import { BehaviorSubject, takeUntil } from 'rxjs';
+import {
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
+import { ISafe } from 'src/app/core/models/catalogs/safe.model';
 import { IGood } from 'src/app/core/models/ms-good/good';
+import { SafeService } from 'src/app/core/services/catalogs/safe.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
-import { BasePageWidhtDinamicFilters } from 'src/app/core/shared/base-page-dinamic-filters';
+import { BasePage } from 'src/app/core/shared/base-page';
+import { COUNT_GOOD_COLUMNS } from '../vault-consultation/vault-consultation-column';
+
 @Component({
   selector: 'app-modal-list-goods',
   templateUrl: './modal-list-goods.component.html',
   styles: [],
 })
-export class ModalListGoodsComponent
-  extends BasePageWidhtDinamicFilters
-  implements OnInit
-{
+export class ModalListGoodsComponent extends BasePage implements OnInit {
   // totalItems: number = 0;
-  // params = new BehaviorSubject<ListParams>(new ListParams());
+  params = new BehaviorSubject<ListParams>(new ListParams());
   //Data Table
   goods: IGood[] = [];
+  columnFilters: any = [];
+  vault: ISafe;
+  edit = false;
+  vaultSelect: any;
+  totalItems2: number;
+  provider: any;
+  providerForm: FormGroup = new FormGroup({});
+  dataFactGood: LocalDataSource = new LocalDataSource();
   @Input() idSafe: number;
-  @Output() onConfirm = new EventEmitter<any>();
+
+  // @Output() onConfirm = new EventEmitter<any>();
   constructor(
     private bsModalRef: BsModalRef,
+    private activateRoute: ActivatedRoute,
+    private fb: FormBuilder,
     private opcion: ModalOptions,
-    private readonly goodServices: GoodService
+    private readonly goodServices: GoodService,
+    private readonly safeService: SafeService
   ) {
     super();
     this.settings = {
       ...this.settings,
+      hideSubHeader: false,
       actions: false,
       columns: {
-        id: {
-          title: 'No Bien',
-          width: '10%',
-          sort: false,
-        },
-        description: {
-          title: 'Descripcion',
-          width: '30%',
-          sort: false,
-        },
-        quantity: {
-          title: 'Cantidad',
-          width: '5%',
-          sort: false,
-        },
-        fileNumber: {
-          title: 'Expediente',
-          width: '5%',
-          sort: false,
-        },
+        ...COUNT_GOOD_COLUMNS,
       },
     };
-    this.loading = true;
-    const idSafe: any = this.opcion.initialState;
-    const safe = Object.values(idSafe);
-    const go = safe[0].toString().concat(safe[1].toString());
-
+  }
+  ngOnInit(): void {
+    console.log(this.provider);
+    this.dataFactGood
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = ``;
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+            filter.field == 'id' ||
+            filter.field == 'description' ||
+            filter.field == 'quantity' ||
+            filter.field == 'fileNumber'
+              ? (searchFilter = SearchFilter.EQ)
+              : (searchFilter = SearchFilter.ILIKE);
+            if (filter.search !== '') {
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.params = this.pageFilter(this.params);
+          this.getGoodBySafe(this.provider.idSafe);
+        }
+      });
     this.params
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getGoodBySafe(Number(go)));
+      .subscribe(() => this.getGoodBySafe(this.provider.idSafe));
   }
 
   return() {
     this.bsModalRef.hide();
   }
-  getGoodBySafe(idSafe: number | string): void {
-    this.loading = true;
-    this.params.getValue()['search'] = this.params.getValue().text;
-    this.goodServices.getBySafe(idSafe, this.params.getValue()).subscribe({
+  getGoodBySafe(id: string | number): void {
+    let para = {
+      ...this.params.getValue(),
+      ...this.columnFilters,
+    };
+    this.goodServices.getBySafe(id, para).subscribe({
       next: response => {
         console.log(response);
         this.goods = response.data;
-        this.totalItems = response.count;
+        this.totalItems2 = response.count | 0;
+        this.dataFactGood.load(response.data);
+        this.dataFactGood.refresh();
         this.loading = false;
       },
       error: error => (this.loading = false),
     });
-  }
-
-  getNumbersInString(cadena: string) {
-    var tmp = cadena.split('');
-    var map = tmp.map(function (current): any {
-      if (!isNaN(parseInt(current))) {
-        return current;
-      }
-    });
-    var numbers = map.filter(function (value) {
-      return value != undefined;
-    });
-    return numbers.join('');
   }
 }

@@ -207,6 +207,7 @@ export class EventCaptureComponent
   formSiab = this.fb.group(new CaptureEventSiabForm());
   totalItems: number = 0;
   params = new BehaviorSubject<FilterParams>(new FilterParams());
+  limit: FormControl = new FormControl(10);
   detail: IGoodIndicator[] = [];
   ctrlButtons = new EventCaptureButtons();
   blkCtrl: IBlkCtrl = {
@@ -708,6 +709,8 @@ export class EventCaptureComponent
           const _params = this.params.getValue();
           const params = new FilterParams();
           params.limit = _params.limit;
+          // this.params.value.limit = 10;
+          this.limit = new FormControl(_params.limit);
           this.startDateCtrl.setValue(null, { emitEvent: false });
           this.endDateCtrl.setValue(null, { emitEvent: false });
           this.params.next(params);
@@ -991,7 +994,9 @@ export class EventCaptureComponent
           }
           const params = new FilterParams();
           const _params = this.params.getValue();
+          // this.params.value.limit = 10;
           params.limit = _params.limit;
+          this.limit = new FormControl(_params.limit);
           this.params.next(params);
         },
         error: () => {
@@ -1506,11 +1511,15 @@ export class EventCaptureComponent
     const { typeEvent } = this.registerControls;
     if (typeEvent.value == 'RF') {
       const count = (await this.getExpedientsCount()) ?? 0;
+      console.log({ count });
       const options = ['CERRADA', 'CERRADO'];
       if (options.find(opt => opt == this.proceeding.statusProceedings)) {
+        console.log('PROGRAMACION CERRADA');
+
         this.ctrlButtons.closeProg.show();
         this.ctrlButtons.closeProg.label = 'Abrir Programación';
         if (count > 0) {
+          console.log(this.proceeding.receiveBy);
           if (this.proceeding.receiveBy != '1') {
             this.ctrlButtons.sendSise.show();
           } else {

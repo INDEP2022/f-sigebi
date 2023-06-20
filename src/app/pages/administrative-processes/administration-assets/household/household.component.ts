@@ -1,4 +1,10 @@
-import { Component, Input, OnInit } from '@angular/core';
+import {
+  Component,
+  Input,
+  OnChanges,
+  OnInit,
+  SimpleChanges,
+} from '@angular/core';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IGood } from 'src/app/core/models/ms-good/good';
@@ -11,7 +17,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
   templateUrl: './household.component.html',
   styles: [],
 })
-export class HouseholdComponent extends BasePage implements OnInit {
+export class HouseholdComponent extends BasePage implements OnInit, OnChanges {
   list: any[] = [];
   good: IGood;
   menajes: IGood[] = [];
@@ -24,8 +30,7 @@ export class HouseholdComponent extends BasePage implements OnInit {
     private readonly menageServices: MenageService
   ) {
     super();
-    this.settings.actions.delete = true;
-    this.settings.actions.edit = false;
+    this.settings.actions = false;
     this.settings.columns = {
       id: {
         title: 'Menaje',
@@ -33,11 +38,17 @@ export class HouseholdComponent extends BasePage implements OnInit {
         sort: false,
       },
       description: {
-        title: 'Descripcion',
+        title: 'Descripción',
         width: '70%',
         sort: false,
       },
     };
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes) {
+      this.searchGoodMenage(this.goodId);
+    }
   }
 
   ngOnInit(): void {

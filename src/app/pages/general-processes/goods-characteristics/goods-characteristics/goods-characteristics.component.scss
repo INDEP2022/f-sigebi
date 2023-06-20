@@ -8,6 +8,28 @@
   // }
 }
 
+:host ::ng-deep app-goods-types-shared {
+  .row {
+    flex-direction: column;
+    > div {
+      width: 100%;
+      max-width: 100%;
+      &:last-child {
+        margin-top: 17px;
+      }
+    }
+  }
+}
+
+// .buttons {
+//   @media screen and (max-width: 576px) {
+//     button {
+//       width: 100%;
+//       margin-bottom: 10px;
+//     }
+//   }
+// }
+
 :host::ng-deep .paginator app-pagination {
   .pagination {
     display: flex;
