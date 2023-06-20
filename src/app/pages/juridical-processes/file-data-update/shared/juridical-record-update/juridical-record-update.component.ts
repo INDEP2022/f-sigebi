@@ -1727,7 +1727,7 @@ export class JuridicalRecordUpdateComponent
       pGestOk: this.pageParams.pGestOk,
       pNoTramite: procedure,
     };
-    debugger;
+    // debugger;
     let path = '/pages/juridical/juridical-ruling-g';
     this.router.navigate([path], {
       queryParams: {

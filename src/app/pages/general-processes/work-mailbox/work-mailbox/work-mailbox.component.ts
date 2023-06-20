@@ -2244,22 +2244,27 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     //     //console.log(resp);
     //   }
     // })
-    const $obs = this.workService.getViewBienes;
-    const service = this.workService;
+    //const $obs = this.workService.getViewBienes;
+    //const service = this.workService;
     const columns = WORK_BIENES_COLUMNS;
     const title = BIENES_TITLE;
     const params = new FilterParams();
     params.addFilter('fileNumber', this.selectedRow.proceedingsNumber);
     const $params = new BehaviorSubject(params);
+
+    console.log('Expediente', this.selectedRow.proceedingsNumber);
+    const proceedingsNumber = this.selectedRow.proceedingsNumber;
     const config = {
       ...MODAL_CONFIG,
       initialState: {
-        $obs,
-        service,
+        //$obs,
+        // service,
         columns,
         title,
         $params,
+        proceedingsNumber,
       },
+      class: 'modal-lg modal-dialog-centered modal-not-top-padding',
     };
     const modalRef = this.modalService.show(MailboxModalTableComponent, config);
   }
