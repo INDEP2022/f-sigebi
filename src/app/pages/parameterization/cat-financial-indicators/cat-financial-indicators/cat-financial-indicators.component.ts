@@ -22,8 +22,7 @@ import { FinancialIndicatorsService } from 'src/app/core/services/catalogs/finan
 })
 export class CatFinancialIndicatorsComponent
   extends BasePage
-  implements OnInit
-{
+  implements OnInit {
   columns: IFinancialIndicators[] = [];
   data: LocalDataSource = new LocalDataSource();
   columnFilters: any = [];
@@ -143,12 +142,12 @@ export class CatFinancialIndicatorsComponent
     this.financialIndicatorsService.remove(id).subscribe({
       next: () => {
         this.getAttributesFinancialInfo();
-        this.alert('success', 'Borrado', '');
+        this.alert('success', 'Indicardor Financiero', 'Borrado');
       },
       error: erro => {
         this.alert(
           'warning',
-          'Atributos de Informaci&oacute;n Financiera',
+          'Indicardor Financiero',
           'No se puede eliminar el objeto debido a una relación con otra tabla.'
         );
       },

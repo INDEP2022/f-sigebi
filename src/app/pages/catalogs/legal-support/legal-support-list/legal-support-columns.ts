@@ -1,6 +1,6 @@
 export const LEGAL_SUPPORT_COLUMS = {
   id: {
-    title: 'Id',
+    title: 'Identificador',
     type: 'number',
     width: '15%',
     sort: false,

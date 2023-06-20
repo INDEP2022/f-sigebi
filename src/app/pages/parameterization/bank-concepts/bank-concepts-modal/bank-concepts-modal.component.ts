@@ -17,7 +17,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 export class BankConceptsModalComponent extends BasePage implements OnInit {
   bankConceptsForm: ModelForm<IBankConcepts>;
   bankConcepts: IBankConcepts;
-  title: string = 'Categoria para Conceptos bancarios';
+  title: string = 'Concepto bancario';
   edit: boolean = false;
 
   constructor(
@@ -34,7 +34,7 @@ export class BankConceptsModalComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.bankConceptsForm = this.fb.group({
-      key: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      key: [null, [Validators.required, Validators.pattern(STRING_PATTERN), Validators.maxLength(10)]],
       description: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
@@ -75,7 +75,7 @@ export class BankConceptsModalComponent extends BasePage implements OnInit {
   }
 
   handleSuccess() {
-    const message: string = this.edit ? 'Actualizada' : 'Guardada';
+    const message: string = this.edit ? 'Actualizado' : 'Guardado';
     this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);
