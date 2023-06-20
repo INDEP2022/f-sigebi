@@ -26,6 +26,7 @@ import {
 } from 'src/app/common/repository/interfaces/list-params';
 import { IGlobalVars } from '../../../shared/global-vars/models/IGlobalVars.model';
 import { GlobalVarsService } from '../../../shared/global-vars/services/global-vars.service';
+import { ListDataComponent } from './list-data/list-data.component';
 import { BASIC_BUTTONS } from './utils/basic-buttons';
 
 interface IExcelToJson {
@@ -72,7 +73,6 @@ export class HomeComponent extends BasePage implements OnInit {
   buttons = BASIC_BUTTONS;
 
   // ----------- PAGINACION
-  /** @deprecated procurar usar filterparams  */
   params = new BehaviorSubject(new ListParams());
 
   filterParams = new BehaviorSubject(new FilterParams());
@@ -345,5 +345,30 @@ export class HomeComponent extends BasePage implements OnInit {
         this.globalVarsService.updateGlobalVars(newState);
         break;
     }
+  }
+
+  showData() {
+    //descomentar si usan FilterParams ejemplo de consulta
+    //this.filterParams.getValue().addFilter('id', 3429640, SearchFilter.EQ)
+    //this.filterParams.getValue().addFilter('keyTypeDocument', 'ENTRE', SearchFilter.ILIKE)
+
+    //ejemplo de uso con ListParams
+    //this.params.getValue()['filter.id'] = '$eq:3429640'
+
+    let config: ModalOptions = {
+      initialState: {
+        //filtros
+        paramsList: this.params,
+        filterParams: this.filterParams, // en caso de no usar FilterParams no enviar
+        callback: (next: boolean, data: any /*Modelado de datos*/) => {
+          if (next) {
+            //mostrar datos de la búsqueda
+          }
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(ListDataComponent, config);
   }
 }

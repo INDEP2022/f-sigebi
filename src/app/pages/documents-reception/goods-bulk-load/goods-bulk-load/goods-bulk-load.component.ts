@@ -3514,6 +3514,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
         labelNumber: infoData.objInsertResponse['vno_etiqueta'], // Numero de etiqueta
         flyerNumber: this.paramsGeneral.p_no_volante, // No volante
         observations: infoData.dataRow.observaciones, // Observaciones
+        extDomProcess: 'ASEGURADO', // Va como NULL
       };
       // Lenar la data de los valores para el bien
       let contadorCol = 10;
@@ -3697,7 +3698,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
       statusChangeProgram: this.idPantalla, // Clave de la pantalla
       reasonForChange: 'Automatico masivo', // Razon del cambio
       registryNum: 1, // No se toma en el ms
-      extDomProcess: '', // No se toma en el ms
+      extDomProcess: 'ASEGURADO', // No se toma en el ms
     };
     let messageExtra = '';
     if (!goodHistory.propertyNum) {
