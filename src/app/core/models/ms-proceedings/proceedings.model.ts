@@ -4,7 +4,7 @@ import { IIdentifier } from './identifier.model';
 import { ITransferNumber } from './transfer-number.model';
 
 export interface IProceedings {
-  id: number;
+  id?: number;
   actId: number;
   programmingId: number;
   proceedingsType: string;
