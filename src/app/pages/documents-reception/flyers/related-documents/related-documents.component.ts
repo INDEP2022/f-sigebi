@@ -2303,8 +2303,7 @@ export class RelatedDocumentsComponent
       );
       return;
     }
-    //username
-    // debugger;
+
     console.log(insertUser);
     if (
       insertUser?.toLowerCase() !==
@@ -2321,14 +2320,6 @@ export class RelatedDocumentsComponent
         return;
       }
     }
-    // else {
-    //   this.onLoadToast(
-    //     'error',
-    //     'Error',
-    //     'Usuario inválido para borrar oficio'
-    //   );
-    //   return;
-    // }
 
     this.alertQuestion(
       'warning',
@@ -2358,20 +2349,11 @@ export class RelatedDocumentsComponent
       screen: 'FACTADBOFICIOGEST',
       dictum: managementNumber,
     };
-
+    const result = await this.relatedDocumentDesahogo.updateGoodStatus(body);
     const management = managementNumber;
     const volante = noVolante;
-    //se elimina bienes_officio_gestion
-    // const promises = [
-    //   //this.mJobManagementService.deleteGoodsJobManagement1(management),
-    //   //this.mJobManagementService.deleteDocumentJobManagement2(management),
-    //   //this.officeManagementSerivice.removeMOfficeManagement(management),
-    //   //this.mJobManagementService.deleteCopiesJobManagement4(management),
-    //   this.relatedDocumentDesahogo.deleteJobManagement(management, volante),
-    //   this.updateIfHaveDictamen(volante),
-    // ];
-    // await Promise.all(promises);
 
+    //se elimina bienes_officio_gestion
     await firstValueFrom(
       this.relatedDocumentDesahogo.deleteJobManagement(management, volante)
     ),

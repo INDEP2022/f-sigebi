@@ -6,9 +6,12 @@
     <div class="row mt-3 mb-3">
       <form action="" class="form-material" [formGroup]="form">
         <div class="row mt-4">
-          <div class="col-md-6">
+          <div class="col-md-3">
             <form-field [control]="form.get('file')" label="Expediente">
-              <input formControlName="file" class="form-control" />
+              <input
+                type="number"
+                formControlName="file"
+                class="form-control" />
             </form-field>
           </div>
         </div>
@@ -28,6 +31,7 @@
             <form-field [control]="form.get('depositDateTo')" label="Al:">
               <input
                 formControlName="depositDateTo"
+                [maxDate]="maxDate"
                 class="form-control"
                 bsDatepicker />
             </form-field>
@@ -49,6 +53,7 @@
             <form-field [control]="form.get('transferenceDateTo')" label="Al:">
               <input
                 formControlName="transferenceDateTo"
+                [maxDate]="maxDate"
                 class="form-control"
                 bsDatepicker />
             </form-field>
@@ -70,6 +75,7 @@
             <form-field [control]="form.get('receptionDateTo')" label="Al:">
               <input
                 formControlName="receptionDateTo"
+                [maxDate]="maxDate"
                 class="form-control"
                 bsDatepicker />
             </form-field>
@@ -77,11 +83,32 @@
         </div>
       </form>
 
-      <div class="d-flex justify-content-center">
+      <!-- <div class="d-flex justify-content-center">
         <div class="m-3">
           <div>
             <button type="button" class="btn btn-sm btn-primary active m-3">
               IMPRIMIR
+            </button>
+          </div>
+        </div>
+      </div> -->
+      <div footer>
+        <div class="d-flex justify-content-center">
+          <div class="m-3">
+            <button
+              type="button"
+              [disabled]="form.invalid"
+              class="btn btn-primary active btn-sm"
+              (click)="Generar()">
+              Imprimir <i class="bx bx-printer bx-sm float-icon"></i>
+            </button>
+          </div>
+          <div class="m-3">
+            <button
+              type="button"
+              class="btn btn-danger active btn-sm"
+              (click)="cleanForm()">
+              Limpiar <i class="fas fa-eraser bx-sm float-icon"></i>
             </button>
           </div>
         </div>

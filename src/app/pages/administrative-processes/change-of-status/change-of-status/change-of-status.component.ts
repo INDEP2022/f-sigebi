@@ -109,30 +109,27 @@ export class ChangeOfStatusComponent extends BasePage implements OnInit {
       dateStatus: [null],
       extDomProcess: [null, [Validators.pattern(STRING_PATTERN)]],
       issuingUser: [null, [Validators.pattern(STRING_PATTERN)]],
-      description: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
+      description: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
     });
   }
 
-  clearAll() {
-    this.endProcess = false;
-    this.form.get('numberGood').reset();
-    this.form.get('descriptionGood').reset();
-    this.form.get('currentStatus').reset();
-    this.form.get('descriptionStatus').reset();
-    this.form.get('processesGood').reset();
-    this.formNew.get('goodStatus').reset();
-    this.formNew.get('dateStatus').reset();
-    this.formNew.get('extDomProcess').reset();
-    this.formNew.get('issuingUser').reset();
-    this.formNew.get('description').reset();
+  clearAll(){
+    this.endProcess = false
+    this.form.get('numberGood').reset()
+    this.form.get('descriptionGood').reset()
+    this.form.get('currentStatus').reset()
+    this.form.get('descriptionStatus').reset()
+    this.form.get('processesGood').reset()
+    this.formNew.get('goodStatus').reset()
+    this.formNew.get('dateStatus').reset()
+    this.formNew.get('extDomProcess').reset()
+    this.formNew.get('issuingUser').reset()
+    this.formNew.get('description').reset()
   }
 
   loadGood() {
     this.loading = true;
-    this.dateStatus.setValue(new Date());
+    this.dateStatus.setValue(new Date())
     this.goodServices.getById(this.numberGood.value).subscribe({
       next: (response: any) => {
         this.good = response.data[0];
@@ -166,55 +163,52 @@ export class ChangeOfStatusComponent extends BasePage implements OnInit {
     });
   }
 
+
+
   accept() {
     //5457740
     //IF OBSERVACIÓN
-    const observations =
-      this.goodStatus.value != null && this.goodStatus.value.status == 'CAN'
-        ? `${this.good.observations}. ${this.description.value}`
-        : this.description.value != null
-        ? this.description.value
-        : null;
+    const observations = 
+    this.goodStatus.value != null && this.goodStatus.value.status == 'CAN' 
+    ? `${this.good.observations}. ${this.description.value}` 
+    : (this.description.value != null ? this.description.value : null)
     // MODEL PARA ACTUALIZAR EL GOOD
 
-    this.alertQuestion(
-      'question',
-      `¿Desea actualizar el estatus ${
-        this.extDomProcess.value != null ? 'y proceso' : ''
-      } ?`,
-      ''
-    ).then(q => {
-      if (q.isConfirmed) {
-        const putGood: IGood = {
-          id: Number(this.good.id),
-          goodId: Number(this.good.id),
-          status:
-            this.goodStatus.value === null
-              ? this.good.status
-              : this.goodStatus.value.status,
-          extDomProcess:
-            this.extDomProcess.value === null
-              ? this.good.extDomProcess
-              : this.extDomProcess.value,
-          userModification: this.token.decodeToken().preferred_username,
-          observations: observations,
-        };
-        this.goodServices.update(putGood).subscribe({
-          next: response => {
-            this.postHistoryGood();
-          },
-          error: error => {
-            this.loading = false;
-            console.error(error);
-            this.onLoadToast(
-              'error',
-              'Error',
-              'Error al cambiar el estatus del bien'
-            );
-          },
-        });
+    this.alertQuestion('question',`¿Desea actualizar el estatus ${this.extDomProcess.value != null ? 'y proceso' : ''} ?`,'').then(
+      q => {
+        if(q.isConfirmed){
+          const putGood: IGood = {
+            id: Number(this.good.id),
+            goodId: Number(this.good.id),
+            status:
+              this.goodStatus.value === null
+                ? this.good.status
+                : this.goodStatus.value.status,
+            extDomProcess:
+              this.extDomProcess.value === null
+                ? this.good.extDomProcess
+                : this.extDomProcess.value,
+            userModification: this.token.decodeToken().preferred_username,
+            observations: observations,
+          };
+          this.goodServices.update(putGood).subscribe({
+            next: response => {
+              this.postHistoryGood();
+            },
+            error: error => {
+              this.loading = false;
+              console.error(error);
+              this.onLoadToast(
+                'error',
+                'Error',
+                'Error al cambiar el estatus del bien'
+              );
+            },
+          });
+        }
       }
-    });
+    )
+  
   }
 
   postHistoryGood() {
@@ -233,19 +227,19 @@ export class ChangeOfStatusComponent extends BasePage implements OnInit {
     };
     this.historyGoodService.create(historyGood).subscribe({
       next: response => {
-        const id = this.good.id;
+        const id = this.good.id
 
         this.form.reset();
-        this.formNew.reset();
-        this.dateStatus.setValue(new Date());
-        this.alert(
-          'success',
-          'Actualizado',
-          'Se le ha cambiado el Estatus al bien'
-        );
-        this.numberGood.setValue(id);
-        this.loadGood();
-        this.endProcess = false;
+              this.formNew.reset();
+              this.dateStatus.setValue(new Date());
+              this.alert(
+                'success',
+                'Actualizado',
+                'Se le ha cambiado el Estatus al bien'
+              );
+              this.numberGood.setValue(id)
+              this.loadGood()
+              this.endProcess = false;
       },
       error: error => {
         this.loading = false;
