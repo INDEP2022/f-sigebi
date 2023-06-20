@@ -589,7 +589,7 @@ export class EventCaptureComponent
       .pipe();
   }
 
-  async createProceeding() {
+  async createProceeding(showMessage?: boolean) {
     await this.generateCve();
     const formValue = this.form.getRawValue();
     const { numFile, keysProceedings, captureDate, responsible } = formValue;
@@ -624,7 +624,9 @@ export class EventCaptureComponent
     this.proceedingDeliveryReceptionService.create(dataToSave).subscribe({
       next: async res => {
         this.saveLoading = false;
-        this.alert('success', 'Acta Generada Correctamente', '');
+        if (showMessage) {
+          this.alert('success', 'Acta Generada Correctamente', '');
+        }
         this.global.proceedingNum = res.id;
         this.global.paperworkArea = this.originalType;
         await this.initForm();
@@ -696,8 +698,8 @@ export class EventCaptureComponent
 
     this.detailDeliveryReceptionService
       .updateMassiveNew(
-        start.toLocaleDateString(),
-        end.toLocaleDateString(),
+        format(start, 'yyyy-MM-dd'),
+        format(end, 'yyyy-MM-dd'),
         Number(this.proceeding.id)
       )
       .subscribe({
@@ -845,8 +847,7 @@ export class EventCaptureComponent
 
   async loadGoods() {
     if (!this.proceeding.id) {
-      this.alert('error', 'Error', 'Primero debes guardar el acta');
-      return;
+      await this.createProceeding();
     }
     const { area, keysProceedings, typeEvent } = this.registerControls;
     const totalFilters = Object.values(this.formSiab.value);
