@@ -31,7 +31,7 @@ export class BatchService implements ICrudMethods<IBatch> {
   }
 
   update(id: string | number, model: IBatch): Observable<Object> {
-    return this.batchRepository.newUpdateId(this.route, id, model);
+    return this.batchRepository.newUpdate(this.route, model);
   }
 
   remove(id: string | number): Observable<Object> {

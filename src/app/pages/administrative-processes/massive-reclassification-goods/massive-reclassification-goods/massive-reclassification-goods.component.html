@@ -9,7 +9,6 @@
           <div class="col-md-full col-sm-12 col-xs-12">
             Modo <span class="txt-primary">*</span>
             <form-radio label="Excluir">
-
               <input type="radio" formControlName="mode" value="E" (click)="formEnable()" required />
             </form-radio>
             <form-radio label="Incluir">
@@ -33,10 +32,9 @@
             <div class="col-md-2 col-sm-6 col-xs-6">
               <div class="d-flex justify-content-center">
                 <div class="m-3">
-
                   <button [disabled]="classificationOfGoods.value === null" type="button"
                     class="btn btn-primary btn-sm active" (click)="loadGoods()">
-                    <i class="fa fa-search"></i>
+                    <i class="bx bx-search-alt bx-sm float-icon"></i>
                   </button>
                 </div>
               </div>
@@ -46,6 +44,7 @@
                 <div class="m-3">
                   <button type="button" class="btn btn-danger btn-sm active" (click)="clearFilter()">
                     Limpiar
+                    <i class="fa fa-eraser"></i>
                   </button>
                   <!-- <button
                     [disabled]="true"

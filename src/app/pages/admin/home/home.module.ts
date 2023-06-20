@@ -13,6 +13,7 @@ import { ChildComponent } from './child/child.component';
 import { ExampleModalComponent } from './example-modal.component';
 import { HomeRoutingModule } from './home-routing.module';
 import { HomeComponent } from './home.component';
+import { ListDataComponent } from './list-data/list-data.component';
 import { ModalNestedComponent } from './modal-nest.component';
 
 @NgModule({
@@ -21,6 +22,7 @@ import { ModalNestedComponent } from './modal-nest.component';
     ExampleModalComponent,
     ChildComponent,
     ModalNestedComponent,
+    ListDataComponent,
   ],
   imports: [
     CommonModule,

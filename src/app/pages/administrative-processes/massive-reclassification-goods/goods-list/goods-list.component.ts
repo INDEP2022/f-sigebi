@@ -20,7 +20,6 @@ import { IGood } from 'src/app/core/models/ms-good/good';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { ProcedureManagementService } from 'src/app/core/services/proceduremanagement/proceduremanagement.service';
 import { BasePageWidhtDinamicFiltersExtra } from 'src/app/core/shared/base-page-dinamic-filters-extra';
-import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { COLUMNS } from '../massive-reclassification-goods/columns';
 import { MassiveReclassificationGoodsService } from '../services/massive-reclassification-goods.service';
 
@@ -31,8 +30,9 @@ import { MassiveReclassificationGoodsService } from '../services/massive-reclass
 })
 export class GoodsListComponent
   extends BasePageWidhtDinamicFiltersExtra<IGood>
-  implements OnInit {
-
+  implements OnInit
+{
+  previousSelecteds: IGood[] = [];
   constructor(
     private massiveService: MassiveReclassificationGoodsService,
     private procedureManagement: ProcedureManagementService,
@@ -45,18 +45,19 @@ export class GoodsListComponent
       ...this.settings,
       hideSubHeader: false,
       actions: false,
+      selectMode: 'multi',
       columns: {
-        name: {
-          title: 'Reclasificar',
-          sort: false,
-          type: 'custom',
-          showAlways: true,
-          valuePrepareFunction: (isSelected: boolean, row: IGood) =>
-            this.isGoodSelected(row),
-          renderComponent: CheckboxElementComponent,
-          onComponentInitFunction: (instance: CheckboxElementComponent) =>
-            this.onGoodSelect(instance),
-        },
+        // name: {
+        //   title: 'Reclasificar',
+        //   sort: false,
+        //   type: 'custom',
+        //   showAlways: true,
+        //   valuePrepareFunction: (isSelected: boolean, row: IGood) =>
+        //     this.isGoodSelected(row),
+        //   renderComponent: CheckboxElementComponent,
+        //   onComponentInitFunction: (instance: CheckboxElementComponent) =>
+        //     this.onGoodSelect(instance),
+        // },
         ...COLUMNS,
       },
       rowClassFunction: (row: any) => {
@@ -89,26 +90,60 @@ export class GoodsListComponent
     return this.form.get('mode');
   }
 
-  onGoodSelect(instance: CheckboxElementComponent) {
-    instance.toggle.pipe(takeUntil(this.$unSubscribe)).subscribe({
-      next: data => this.goodSelectedChange(data.row, data.toggle),
-    });
-  }
+  // onGoodSelect(instance: CheckboxElementComponent) {
+  //   instance.toggle.pipe(takeUntil(this.$unSubscribe)).subscribe({
+  //     next: data => this.goodSelectedChange(data.row, data.toggle),
+  //   });
+  // }
 
-  goodSelectedChange(good: IGood, selected: boolean) {
-    if (selected) {
-      this.selectedGooods.push(good);
-      console.log(
-        this.selectedGooods.length === 0,
-        this.form.valid,
-        this.selectedGooods.length === 0 || this.form.invalid
-      );
-    } else {
+  private removeGood(item: IGood) {
+    const good = this.selectedGooods.find(x => x.id === item.id);
+    if (good) {
       this.selectedGooods = this.selectedGooods.filter(
         _good => _good.id != good.id
       );
     }
   }
+  selectGood(event: { selected: IGood[]; isSelected: boolean; data: IGood }) {
+    console.log(event);
+    const selecteds = event.selected;
+
+    if (selecteds.length === 0) {
+      if (this.previousSelecteds.length > 0 && event.isSelected === null) {
+        this.previousSelecteds.forEach(selected => {
+          this.removeGood(selected);
+        });
+      }
+      if (event.isSelected === false) {
+        this.removeGood(event.data);
+      }
+    } else {
+      if (event.isSelected === null) {
+        selecteds.forEach(selected => {
+          const item = this.selectedGooods.find(x => x.id === selected.id);
+          if (!item) {
+            this.selectedGooods.push(selected);
+          }
+        });
+      } else if (event.isSelected === true) {
+        // this.addGood(event.data);
+      } else {
+        this.removeGood(event.data);
+      }
+    }
+    console.log(this.selectedGooods);
+    this.previousSelecteds = [...selecteds];
+  }
+
+  // goodSelectedChange(good: IGood, selected: boolean) {
+  //   if (selected) {
+  //     this.selectedGooods.push(good);
+  //   } else {
+  //     this.selectedGooods = this.selectedGooods.filter(
+  //       _good => _good.id != good.id
+  //     );
+  //   }
+  // }
 
   isGoodSelected(_good: IGood) {
     const exists = this.selectedGooods.find(good => good.id == _good.id);
@@ -125,9 +160,11 @@ export class GoodsListComponent
     this.massiveService.loadGoods.subscribe({
       next: response => {
         if (response) {
+          this.selectedGooods = [];
           this.getData();
         } else {
           this.data.load([]);
+          this.selectedGooods = [];
           this.totalItems = 0;
         }
       },
@@ -141,6 +178,7 @@ export class GoodsListComponent
       .subscribe(x => {
         console.log(x);
         if (this.totalItems > 0 && x !== null && x + ''.trim() !== '') {
+          this.selectedGooods = [];
           this.getData();
         }
       });
@@ -151,7 +189,6 @@ export class GoodsListComponent
   }
 
   override getData() {
-    this.selectedGooods = [];
     this.loading = true;
     console.log(this.classificationOfGoods.value);
     const filterParams = new FilterParams();
@@ -192,7 +229,7 @@ export class GoodsListComponent
           return of({ data: [], count: 0 });
         }),
         tap(response => {
-          this.totalItems = response.count;
+          this.totalItems = response.count > 100 ? 100 : response.count;
         }),
         map(response =>
           response.data.map(good => {
@@ -203,11 +240,11 @@ export class GoodsListComponent
               filterParams.addFilter('typeManagement', 2);
               filterParams.addFilter2(
                 'filter.expedient=' +
-                (good.fileNumber ? '$eq:' + good.fileNumber : '$null')
+                  (good.fileNumber ? '$eq:' + good.fileNumber : '$null')
               );
               filterParams.addFilter2(
                 'filter.flierNumber=' +
-                (good.flyerNumber ? '$eq:' + good.flyerNumber : '$null')
+                  (good.flyerNumber ? '$eq:' + good.flyerNumber : '$null')
               );
               return this.procedureManagement
                 .getAllFiltered(filterParams.getParams())

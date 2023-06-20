@@ -6,8 +6,10 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { ISatClassification } from 'src/app/core/models/catalogs/sat-classification.model';
 import { ISatSubclassification } from 'src/app/core/models/catalogs/sat-subclassification.model';
+import { ISiabClasification } from 'src/app/core/models/catalogs/siab-clasification.model';
 import { SatClassificationService } from 'src/app/core/services/catalogs/sat-classification.service';
 import { SATSubclassificationService } from 'src/app/core/services/catalogs/sat-subclassification.service';
+import { SIABClasificationService } from 'src/app/core/services/catalogs/siab-clasification.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -25,12 +27,12 @@ export class SatSubclassificationFormComponent
   title: string = 'SAT Subclasificacion';
   edit: boolean = false;
   satSubclassification: ISatSubclassification;
-  classifications = new DefaultSelect<ISatClassification>();
+  classifications = new DefaultSelect<ISiabClasification>();
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
     private satSubclassificationService: SATSubclassificationService,
-    private satClassificationService: SatClassificationService
+    private satClassificationService: SIABClasificationService
   ) {
     super();
   }
@@ -56,12 +58,20 @@ export class SatSubclassificationFormComponent
         ...this.satSubclassification,
         idClasification: satClassification.id,
       });
+      this.satSubclassificationForm.controls['idClasification'].setValue(
+        this.satSubclassification.idClasification
+      );
+
       this.classifications = new DefaultSelect([satClassification], 1);
     } else {
-      this.getClassifications({ page: 1, text: '' });
+      this.getClassifications({ page: 1 });
     }
   }
+
   getClassifications(params: ListParams) {
+    console.log('params:', params);
+    var dddd = 'cat';
+    //params['filter.text'] = `$ilike:${dddd}`;
     this.satClassificationService.getAll(params).subscribe(data => {
       this.classifications = new DefaultSelect(data.data, data.count);
     });

@@ -21,6 +21,21 @@
   }
 }
 
+.buttons {
+  button {
+    width: 100px;
+    &:last-child {
+      margin-left: 10px;
+    }
+    @media screen and (max-width: 576px) {
+      width: 100%;
+      &:last-child {
+        margin-left: 0px;
+      }
+    }
+  }
+}
+
 // .buttons {
 //   @media screen and (max-width: 576px) {
 //     button {

@@ -467,5 +467,10 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
         `/pages/juridical/abandonments-declaration-trades`,
       ]);
     }
+    if (this.origin == 'FPROCRECPAG') {
+      this.router.navigate([
+        `/pages/administrative-processes/payment-claim-process`,
+      ]);
+    }
   }
 }

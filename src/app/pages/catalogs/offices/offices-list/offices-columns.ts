@@ -30,7 +30,7 @@ export const OFFICES_COLUMNS = {
     sort: false,
   },
   municipalDelegate: {
-    title: 'Delegado Municipal',
+    title: 'Delegación/Municipio',
     type: 'string',
     sort: false,
   },

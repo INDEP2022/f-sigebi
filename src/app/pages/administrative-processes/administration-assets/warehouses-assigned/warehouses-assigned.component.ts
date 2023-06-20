@@ -83,22 +83,24 @@ export class WarehousesAssignedComponent
     this.goodServices.getById(idGood).subscribe({
       next: (response: any) => {
         this.good = response.data[0];
-        this.warehouseService.getById(this.good.storeNumber).subscribe({
-          next: (respo: any) => {
-            this.list = response.data.map((good: IGood) => {
-              return {
-                id: good.storeNumber,
-                address: respo.ubication,
-                lot: good.lotNumber,
-                rack: good.rackNumber,
-                entryDate: good.dateIn,
-                outDate: good.dateOut,
-              };
-            });
-          },
-          error: err => console.log(err),
-        });
-        this.totalItems = response.count;
+        if (this.good.storeNumber !== null) {
+          this.warehouseService.getById(this.good.storeNumber).subscribe({
+            next: (respo: any) => {
+              this.list = response.data.map((good: IGood) => {
+                return {
+                  id: good.storeNumber,
+                  address: respo.ubication,
+                  lot: good.lotNumber,
+                  rack: good.rackNumber,
+                  entryDate: good.dateIn,
+                  outDate: good.dateOut,
+                };
+              });
+            },
+            error: err => console.log(err),
+          });
+          this.totalItems = response.count;
+        }
         this.loading = false;
       },
       error: err => {

@@ -16,6 +16,7 @@ import { TabsModule } from 'ngx-bootstrap/tabs';
 //Components
 import { GoodsTypesSharedComponent } from 'src/app/@standalone/shared-forms/goods-types-shared/goods-types-shared.component';
 import { GoodsComponent } from './goods/goods.component';
+import { PwComponent } from './pw/pw.component';
 
 @NgModule({
   declarations: [
@@ -23,6 +24,7 @@ import { GoodsComponent } from './goods/goods.component';
     BulkUploadComponent,
     ActsComponent,
     GoodsComponent,
+    PwComponent,
   ],
   imports: [
     CommonModule,

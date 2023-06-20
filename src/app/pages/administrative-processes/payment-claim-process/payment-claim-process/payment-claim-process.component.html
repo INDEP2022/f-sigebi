@@ -18,8 +18,8 @@
         </div>
       </div>
       <div class="row">
-        <div class="col-md-4 col-sm-12 col-xs-12">
-          <div class="d-flex justify-content-center">
+        <div class="col-md-8 col-sm-12 col-xs-12">
+          <div class="d-flex justify-content-beetwen">
             <div class="m-3">
               <button
                 class="btn btn-success btn-sm ml-2"
@@ -37,25 +37,25 @@
             </div>
           </div>
         </div>
-        <div class="col-md-4 col-sm-12 col-xs-12">
-          <div class="d-flex justify-content-center">
-            <div class="m-3">
+        <div class="col-md-3 col-sm-12 col-xs-12">
+          <div class="d-flex justify-content-end">
+            <div class="mt-3 mb-3">
               <button
-                [disabled]="form.invalid || document === undefined"
+                [disabled]="!document"
                 type="button"
                 class="btn btn-primary btn-sm active"
                 (click)="changeStatusGood()">
-                Actualizar status
+                Actualizar Estatus
               </button>
             </div>
           </div>
         </div>
-        <div class="col-md-4 col-sm-12 col-xs-12">
+        <div class="col-md-1 col-sm-12 col-xs-12">
           <div class="d-flex justify-content-center">
             <div class="m-3">
               <button
                 type="button"
-                class="btn btn-primary btn-sm active"
+                class="btn btn-danger btn-sm active"
                 (click)="clean((file.value = ''))">
                 Limpiar
               </button>
@@ -67,6 +67,7 @@
     <hr />
     <div class="row">
       <app-scanning-foil
+        #hijoRef
         [goods]="goods"
         (documentEmmit)="changeFoli($event)"
         (firstGood)="firstGood($event)"></app-scanning-foil>

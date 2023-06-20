@@ -160,3 +160,12 @@ export interface IDepositaryAppointments {
   withHousehold: string;
   nbOrigin: string;
 }
+
+export interface IDepositaryPaymentDet {
+  appointmentNumber: number;
+  paymentDate: Date;
+  paymentConceptKey: number;
+  amount: number;
+  observation: string;
+  registerNumber: number;
+}

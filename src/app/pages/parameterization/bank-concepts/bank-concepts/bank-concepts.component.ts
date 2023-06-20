@@ -78,14 +78,23 @@ export class BankConceptsComponent extends BasePage implements OnInit {
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(bankConcepts.key);
-        Swal.fire('Borrado', '', 'success');
+
       }
     });
   }
 
   delete(id: string) {
     this.bankConceptsService.remove(id).subscribe({
-      next: () => this.getBankConcepts(),
+      next: () => {
+        this.getBankConcepts();
+        this.alert('success', 'Concepto bancario', 'Borrado');
+      }, error: erro => {
+        this.alert(
+          'warning',
+          'Concepto bancario',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      },
     });
   }
 }

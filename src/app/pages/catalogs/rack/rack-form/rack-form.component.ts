@@ -54,9 +54,9 @@ export class RackFormComponent extends BasePage implements OnInit {
       this.edit = true;
       this.form.patchValue(this.rack);
       this.form.controls['idWarehouse'].setValue(
-        this.rack.idWarehouse.idWarehouse
+        this.rack.warehuseDetails.idWarehouse
       );
-      this.form.controls['idBatch'].setValue(this.rack.idBatch.id);
+      this.form.controls['idBatch'].setValue(this.rack.batchDetails.id);
       this.getWarehouse(
         new ListParams(),
         this.form.controls['idWarehouse'].value.toString()

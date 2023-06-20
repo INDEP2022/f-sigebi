@@ -167,21 +167,26 @@ export class SiabClasificationDetailComponent
   }
 
   getChangeSutype(data: any) {
-    this.idType = data.id;
-    console.log(data);
-    if (this.idType != null) {
-      this.siabClasificationform.controls['subtypeId'].enable();
-      this.getSubtypes(new ListParams());
-    }
-    if (this.createForm === false) {
-      if (this.idType != this.clasification.typeId) {
-        console.log(this.idType, this.clasification.typeId);
-        this.siabClasificationform.controls['subtypeId'].setValue(null);
-        this.siabClasificationform.controls['ssubtypeId'].setValue(null);
-        this.siabClasificationform.controls['sssubtypeId'].setValue(null);
+    if (data === null || data === undefined) {
+      this.siabClasificationform.controls['subtypeId'].setValue(null);
+      this.siabClasificationform.controls['ssubtypeId'].setValue(null);
+      this.siabClasificationform.controls['sssubtypeId'].setValue(null);
+    } else {
+      this.idType = data.id;
+      console.log(data);
+      if (this.idType != null) {
+        this.siabClasificationform.controls['subtypeId'].enable();
+        this.getSubtypes(new ListParams());
+      }
+      if (this.createForm === false) {
+        if (this.idType != this.clasification.typeId) {
+          console.log(this.idType, this.clasification.typeId);
+          this.siabClasificationform.controls['subtypeId'].setValue(null);
+          this.siabClasificationform.controls['ssubtypeId'].setValue(null);
+          this.siabClasificationform.controls['sssubtypeId'].setValue(null);
+        }
       }
     }
-
     //console.log(data.id);
   }
 
@@ -219,18 +224,24 @@ export class SiabClasificationDetailComponent
   }
 
   getChangeSsutype(data: any) {
-    this.idSubType = data.id;
-    console.log(data);
-    if (this.idSubType != null) {
-      this.siabClasificationform.controls['ssubtypeId'].enable();
-      this.getSsubtypes(new ListParams());
-    }
-    /*console.log(this.idSubType, this.clasification.subtypeId);
-    if (this.idSubType != this.clasification.subtypeId) {
-      
+    if (data === null || data === undefined) {
+      //this.siabClasificationform.controls['subtypeId'].setValue(null);
       this.siabClasificationform.controls['ssubtypeId'].setValue(null);
       this.siabClasificationform.controls['sssubtypeId'].setValue(null);
-    }*/
+    } else {
+      this.idSubType = data.id;
+      console.log(data);
+      if (this.idSubType != null) {
+        this.siabClasificationform.controls['ssubtypeId'].enable();
+        this.getSsubtypes(new ListParams());
+      }
+      /*console.log(this.idSubType, this.clasification.subtypeId);
+      if (this.idSubType != this.clasification.subtypeId) {
+        
+        this.siabClasificationform.controls['ssubtypeId'].setValue(null);
+        this.siabClasificationform.controls['sssubtypeId'].setValue(null);
+      }*/
+    }
   }
 
   getSsubtypes(params: ListParams) {
@@ -268,17 +279,23 @@ export class SiabClasificationDetailComponent
   }
 
   getChangeSssutype(data: any) {
-    this.idSsubType = data.id;
-    console.log(data);
-    if (this.idSsubType != null) {
-      this.siabClasificationform.controls['sssubtypeId'].enable();
-      this.getSssubtypes(new ListParams());
-    }
-    /*console.log(this.idSsubType, this.clasification.ssubtypeId);
-    if (this.idSsubType != this.clasification.ssubtypeId) {
-      
+    if (data === null || data === undefined) {
+      //this.siabClasificationform.controls['subtypeId'].setValue(null);
+      //this.siabClasificationform.controls['ssubtypeId'].setValue(null);
       this.siabClasificationform.controls['sssubtypeId'].setValue(null);
-    }*/
+    } else {
+      this.idSsubType = data.id;
+      console.log(data);
+      if (this.idSsubType != null) {
+        this.siabClasificationform.controls['sssubtypeId'].enable();
+        this.getSssubtypes(new ListParams());
+      }
+      /*console.log(this.idSsubType, this.clasification.ssubtypeId);
+      if (this.idSsubType != this.clasification.ssubtypeId) {
+        
+        this.siabClasificationform.controls['sssubtypeId'].setValue(null);
+      }*/
+    }
   }
 
   getSssubtypes(params: ListParams) {

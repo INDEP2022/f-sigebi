@@ -25,8 +25,7 @@ import { PrintReportModalComponent } from '../print-report-modal/print-report-mo
 })
 export class NotifyAssetsImproprietyFormComponent
   extends BasePage
-  implements OnInit
-{
+  implements OnInit {
   title: string = 'Aclaración';
   clarificationForm: FormGroup = new FormGroup({});
   clarification: any;
@@ -189,6 +188,13 @@ export class NotifyAssetsImproprietyFormComponent
             break;
           }
         }
+      }
+
+      if (
+        this.dataClarifications2.clarificationType === 'SOLICITAR_ACLARACION' &&
+        this.dataClarifications2.chatClarification.idClarificationType == '2'
+      ) {
+        this.aclaracionTransferentesVoluntarias(); //Aclaración  MANUAL tipo 1
       }
     }
 

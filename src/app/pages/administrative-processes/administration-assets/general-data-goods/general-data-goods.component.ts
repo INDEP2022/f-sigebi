@@ -62,10 +62,10 @@ export class GeneralDataGoodsComponent
     };
     this.goodService.update(good).subscribe({
       next: resp => {
-        this.onLoadToast('success', 'Datos del bien Actualizado');
+        this.onLoadToast('success', 'Datos del bien actualizados');
       },
       error: err => {
-        this.onLoadToast('error', 'Error al Actualizar el bien');
+        this.onLoadToast('error', 'Error al actualizar el bien');
       },
     });
   }

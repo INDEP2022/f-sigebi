@@ -38,7 +38,7 @@ export class HouseholdComponent extends BasePage implements OnInit, OnChanges {
         sort: false,
       },
       description: {
-        title: 'Descripcion',
+        title: 'Descripción',
         width: '70%',
         sort: false,
       },

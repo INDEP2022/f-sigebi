@@ -37,7 +37,7 @@ export class AdditionalValuesModalComponent extends BasePage implements OnInit {
   ) {
     super();
   }
- 
+
   ngOnInit(): void {
     this.prepareForm();
   }

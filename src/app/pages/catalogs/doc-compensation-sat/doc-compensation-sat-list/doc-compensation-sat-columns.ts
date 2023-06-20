@@ -20,7 +20,7 @@ export const DOCCOMPENSATIONSAT_COLUMS = {
     sort: false,
   },
   subjectCode: {
-    title: 'Asunto codigo',
+    title: 'Asunto código',
     type: 'number',
     sort: false,
   },

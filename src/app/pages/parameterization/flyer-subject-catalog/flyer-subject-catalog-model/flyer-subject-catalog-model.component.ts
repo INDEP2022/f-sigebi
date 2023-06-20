@@ -18,9 +18,8 @@ import { AffairService } from 'src/app/core/services/catalogs/affair.service';
 })
 export class FlyerSubjectCatalogModelComponent
   extends BasePage
-  implements OnInit
-{
-  title: string = 'Catálogo de asuntos para volantes';
+  implements OnInit {
+  title: string = 'Tipo de volantes';
   edit: boolean = false;
 
   affairTypeForm: ModelForm<IAffairType>;

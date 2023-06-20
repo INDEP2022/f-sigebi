@@ -121,7 +121,7 @@ export class ClarificationsListComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(clarification.id);
@@ -134,7 +134,7 @@ export class ClarificationsListComponent extends BasePage implements OnInit {
       next: () => {
         this.getClarifications(), this.alert('success', 'Estados', 'Borrado');
       },
-      error: error => {},
+      error: error => { },
     });
   }
 }
