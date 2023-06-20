@@ -17,6 +17,7 @@ import { HistoryIndicatorService } from 'src/app/core/services/ms-history-indica
 import { HistoricalProcedureManagementService } from 'src/app/core/services/ms-procedure-management/historical-procedure-management.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { WorkMailboxService } from '../../work-mailbox.service';
+import { GoodFinderService } from 'src/app/core/services/ms-good/good-finder.service';
 
 @Component({
   selector: 'app-mailbox-modal-table',
@@ -41,45 +42,44 @@ export class MailboxModalTableComponent<T = any>
   body: any = {};
   showConfirmButton: boolean = false;
   selectedRow: T = null;
+  proceedingsNumber:any;
   @Output() selected = new EventEmitter<T>();
-  constructor(private modalRef: BsModalRef) {
+  constructor(private modalRef: BsModalRef, private goodFinderService:GoodFinderService) {
     super();
     this.settings = { ...this.settings, actions: false };
   }
 
   ngOnInit(): void {
     this.settings = { ...this.settings, columns: this.columns };
-    this.$params
-      .pipe(
-        takeUntil(this.$unSubscribe),
-        switchMap(params => this.getData(params))
-      )
-      .subscribe();
+   
+
+      this.getData()
   }
 
-  getData(params: FilterParams) {
-    this.hideError();
+  getData() {
+    const params = new FilterParams();
+    params.addFilter('fileNumber', this.proceedingsNumber);
     this.loading = true;
-    const obs = this.$obs.call(this.service, params.getParams(), this.body);
-    return obs.pipe(
-      catchError(error => {
+    this.goodFinderService.goodFinder(params.getParams()).subscribe({
+      next: resp => {
         this.loading = false;
-        if (error.status >= 500) {
-          this.onLoadToast(
+        this.rows = resp.data;
+        console.log(this.rows);
+        this.totalItems = resp.count;
+      },
+      error: error => {
+        this.loading = false;
+        this.onLoadToast(
             'warning',
             'Atención',
             'Aún no existen bienes para este oficio'
           );
-        }
-        return throwError(() => error);
-      }),
-      tap(response => {
-        this.loading = false;
-        this.rows = response.data;
-        console.log(this.rows);
-        this.totalItems = response.count;
-      })
-    );
+      }
+    })
+
+
+    
+    
   }
 
   close() {

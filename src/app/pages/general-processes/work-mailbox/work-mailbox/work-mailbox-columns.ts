@@ -11,7 +11,7 @@ export const WORK_BIENES_COLUMNS = {
     title: 'Cantidad',
     sort: false,
   },
-  goodDescription: {
+  description: {
     title: 'Descripción',
     sort: false,
   },
