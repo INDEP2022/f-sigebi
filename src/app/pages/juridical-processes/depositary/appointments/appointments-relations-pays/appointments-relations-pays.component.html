@@ -8,7 +8,7 @@
         <div class="card-body">
           <div class="row">
             <form-field
-              class="col-sm-12 col-12 col-md-4 p-2"
+              class="col-sm-12 col-12 col-md-3 p-2"
               [control]="formGroup.get('datePay')"
               label="Fecha Pago">
               <input
@@ -17,6 +17,16 @@
                 maxLength="11"
                 bsDatepicker />
             </form-field>
+            <div class="col-sm-12 col-12 col-md-2 p-2 text-center">
+              <button
+                type="button"
+                tooltip="Limpiar Campo de Fecha"
+                containerClass="tooltip-style"
+                class="btn btn-danger active btn-sm"
+                (click)="cleanDate()">
+                <i class="fa fa-trash ml-1"></i>
+              </button>
+            </div>
             <form-field
               class="col-sm-12 col-12 col-md-4 p-2"
               [control]="formGroup.get('conceptPayKey')"
@@ -27,7 +37,7 @@
                 formControlName="conceptPayKey"
                 maxLength="4" />
             </form-field>
-            <div class="col-12 col-sm-4 col-md-4 p-2">
+            <div class="col-12 col-sm-4 col-md-3 p-2 text-center">
               <button
                 type="submit"
                 class="btn btn-primary active btn-sm"
@@ -38,8 +48,8 @@
             </div>
             <form-field
               class="col-sm-12 col-12 col-md-12 p-2 text-center"
-              [control]="formGroup.get('conceptPayKey')"
-              label="Descripci&oacute;n">
+              [control]="formGroup.get('description')"
+              label="Descripci&oacute;n Concepto">
               <textarea
                 type="text"
                 class="form-control"
