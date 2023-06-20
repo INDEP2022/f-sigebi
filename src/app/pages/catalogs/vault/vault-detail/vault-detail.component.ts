@@ -162,7 +162,7 @@ export class VaultDetailComponent extends BasePage implements OnInit {
         if (this.vault.localityDetail != null) {
           this.idSMinicipalityFilter =
             this.valueMunicipality.idMunicipality.toString();
-          console.log('ssssss' + this.valueState.id.toString());
+
           this.getLocalities(
             new ListParams(),
             this.valueMunicipality.idMunicipality.toString(),
@@ -323,38 +323,22 @@ export class VaultDetailComponent extends BasePage implements OnInit {
   getLocalities(params: ListParams, id?: string, idstate?: string) {
     this.localities = new DefaultSelect([], 0);
     if (id && idstate) {
-      console.log(
-        'ENTRO AQUI1111111111111111111111111111111111111111111111111111111111'
-      );
       params['filter.municipalityId'] = `$eq:${id}`;
       params['filter.stateKey'] = `$eq:${idstate}`;
     }
     if (id && !idstate && this.idFilter == '') {
-      console.log(
-        'ENTRO AQUI22222222222222222222222222222222222222222222222222222222222'
-      );
       params['filter.municipalityId'] = `$eq:${id}`;
       params[
         'filter.stateKey'
       ] = `$eq:${this.vaultForm.controls['stateCode'].value}`;
     }
     if (id && !idstate && this.idFilter != '') {
-      console.log(
-        'ENTRO 33333333333333333333333333333333333333333333333333333333333333'
-      );
       params['filter.municipalityId'] = `$eq:${id}`;
       params['filter.stateKey'] = `$eq:${this.idFilter}`;
     }
     if (!(id && idstate) && !(id && !idstate)) {
-      console.log(
-        'ENTRO 4444444444444444444444444444444444444444444444444444444444'
-      );
       params['filter.municipalityId'] = `$eq:${this.idSMinicipalityFilter}`;
       params['filter.stateKey'] = `$eq:${this.idStateFilter}`;
-    } else {
-      console.log(
-        'ENTRO 555555555555555555555555555555555555555555555555555555'
-      );
     }
     this.localityService.getAll(params).subscribe(
       data => {
@@ -379,6 +363,9 @@ export class VaultDetailComponent extends BasePage implements OnInit {
     this.safes1 = new DefaultSelect();
   }
   onValuesChange2(safeChange2: IMunicipality) {
+    if (!this.validationstate && this.vault != null) {
+      this.idFilter = this.valueState.id.toString();
+    }
     this.idSMinicipalityFilter = safeChange2.idMunicipality;
     this.validationmunicipality = true;
     this.valueMunicipality = safeChange2;
