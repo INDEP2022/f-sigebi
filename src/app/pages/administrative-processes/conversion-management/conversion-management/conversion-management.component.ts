@@ -104,7 +104,7 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
   }
 
   async save() {
-    if (this.conversion) {
+    if (this.idConversion.value !== null || this.idConversion.value !== '') {
       const response: any = await this.updateConversion('');
       this.date.setValue(new Date());
       this.createObj();

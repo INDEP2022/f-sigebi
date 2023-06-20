@@ -6,15 +6,21 @@
 
   <app-card [header]="true">
     <div class="ch-content returnMaintenance" header>
-      <h5 class="title">
-        <button class="btn btn-sm btn-return" (click)="back()">
-          <i class="bx bx-chevron-left float-icon"></i>
-          <span class="title">Mantenimiento de Programaciones</span>
-        </button>
-      </h5>
+      <h5 class="title">Mantenimiento de Programaciones</h5>
     </div>
     <div body>
       <form class="form-material" [formGroup]="form">
+        <div class="row pb-5">
+          <div>
+            <button
+              type="button"
+              class="btn btn-primary active btn-sm"
+              (click)="back()">
+              Regresar
+              <i class="fas fa-arrow-circle-left"></i>
+            </button>
+          </div>
+        </div>
         <div class="row mr-0">
           <div class="col-md-2 pr-0">
             <form-field [control]="form.get('statusActa')" label="Estatus Acta"

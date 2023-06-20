@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
@@ -6,26 +6,19 @@ import { _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { GoodFinderService } from 'src/app/core/services/ms-good/good-finder.service';
-import { HistoryIndicatorService } from 'src/app/core/services/ms-history-indicator/history-indicator.service';
-import { HistoricalProcedureManagementService } from 'src/app/core/services/ms-procedure-management/historical-procedure-management.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { WorkMailboxService } from '../../work-mailbox.service';
 
 @Component({
-  selector: 'app-mailbox-modal-table',
-  templateUrl: './mailbox-modal-table.component.html',
+  selector: 'app-modal-scanning-foil',
+  templateUrl: './modal-scanning-foil.component.html',
   styles: [],
 })
-export class MailboxModalTableComponent<T = any>
+export class ModalScanningFoilTableComponent<T = any>
   extends BasePage
   implements OnInit
 {
   $obs: (params?: _Params, body?: any) => Observable<IListResponse<any>>;
-  service:
-    | HistoricalProcedureManagementService
-    | HistoryIndicatorService
-    | WorkMailboxService
-    | DocumentsService;
+  service: DocumentsService;
   title: string = '';
   rows: any[] = [];
   totalItems = 0;
@@ -34,11 +27,13 @@ export class MailboxModalTableComponent<T = any>
   body: any = {};
   showConfirmButton: boolean = false;
   selectedRow: T = null;
-  proceedingsNumber: any;
+  @Input() proceedingsNumber: any;
+  @Input() wheelNumber: any;
   @Output() selected = new EventEmitter<T>();
   constructor(
     private modalRef: BsModalRef,
-    private goodFinderService: GoodFinderService
+    private goodFinderService: GoodFinderService,
+    private documentsService: DocumentsService
   ) {
     super();
     this.settings = { ...this.settings, actions: false };
@@ -52,9 +47,10 @@ export class MailboxModalTableComponent<T = any>
 
   getData() {
     const params = new FilterParams();
-    params.addFilter('fileNumber', this.proceedingsNumber);
+    // params.addFilter('fileNumber', this.proceedingsNumber);
+    params.addFilter('flyerNumber', this.wheelNumber);
     this.loading = true;
-    this.goodFinderService.goodFinder(params.getParams()).subscribe({
+    this.documentsService.getAllFilter(params.getParams()).subscribe({
       next: resp => {
         this.loading = false;
         this.rows = resp.data;
@@ -63,11 +59,7 @@ export class MailboxModalTableComponent<T = any>
       },
       error: error => {
         this.loading = false;
-        this.onLoadToast(
-          'warning',
-          'Atención',
-          'La información solicitada aún no esta disponible'
-        );
+        this.onLoadToast('warning', 'Atención', 'No se encontraron registros');
       },
     });
   }

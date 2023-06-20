@@ -7,6 +7,7 @@ import { BehaviorSubject, takeUntil } from 'rxjs';
 import {
   FilterParams,
   ListParams,
+  SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { MsDepositaryService } from 'src/app/core/services/ms-depositary/ms-depositary.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -70,17 +71,27 @@ export class AppointmentsRelationsPaysComponent
     this.modalRef.hide();
   }
 
+  cleanDate() {
+    this.formGroup.get('datePay').reset();
+  }
+
   searchWithFilters() {
     console.log('FORMA VALUES ', this.formGroup.value);
-
-    if (
-      this.formGroup.get('datePay').invalid ||
-      !this.formGroup.get('datePay').value
-      //  ||
-      // this.formGroup.get('description').value
-    ) {
-      this.alert('warning', 'Ingresa por lo menos un filtro de búsqueda', '');
-      return;
+    let fieldFull: number = 0;
+    if (this.formGroup.get('datePay').value) {
+      fieldFull++;
+    }
+    if (this.formGroup.get('conceptPayKey').value) {
+      fieldFull++;
+    }
+    if (this.formGroup.get('description').value) {
+      fieldFull++;
+    }
+    console.log(fieldFull);
+    if (fieldFull == 0) {
+      // this.alert('warning', 'Ingresa por lo menos un filtro de búsqueda', '');
+      this.formGroup.reset();
+      // return;
     }
     this.getDataTable();
   }
@@ -89,7 +100,7 @@ export class AppointmentsRelationsPaysComponent
     this.loadingTable = true;
     const params = new FilterParams();
     params.removeAllFilters();
-    params.addFilter('appointmentNumber', this.depositaryNumber);
+    params.addFilter('appointmentNum', this.depositaryNumber);
     console.log(this.formGroup.get('datePay'));
 
     if (
@@ -98,7 +109,7 @@ export class AppointmentsRelationsPaysComponent
     ) {
       let datePay = this.datePipe.transform(
         this.formGroup.get('datePay').value,
-        'yyyy-dd-MM'
+        'yyyy-MM-dd'
       );
       console.log(datePay);
       params.addFilter('datePay', datePay);
@@ -118,21 +129,23 @@ export class AppointmentsRelationsPaysComponent
     ) {
       params.addFilter(
         'conceptPay.description',
-        this.formGroup.get('description').value
+        this.formGroup.get('description').value,
+        SearchFilter.ILIKE
       );
     }
     params.limit = this.tableParams.value.limit;
     params.page = this.tableParams.value.page;
+    params['sortBy'] = 'datePay:DESC';
     this.msDepositaryService
-      .getAllFilteredDepositaryPaymentDet(params.getParams())
+      .getAllFilteredDedPay(params.getParams())
       .subscribe({
         next: res => {
           console.log('DATA ', res);
           let dataResponse = res.data.map((i: any) => {
-            i['payConcept'] = i.conceptPayKey + ' DESCRIPCION';
-            // i.i.menaje && i.good
-            //   ? (i.good['menaje'] = i.menaje['noGoodMenaje'])
-            //   : '';
+            i['payConcept'] =
+              i.conceptPayKey +
+              '--' +
+              (i.conceptPay ? i.conceptPay.description : '');
             return i;
           });
           this.totalItems = res.count;
