@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
-import { BehaviorSubject } from 'rxjs';
+import { ActivatedRoute, Router } from '@angular/router';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
 import { MassiveDepositaryService } from 'src/app/core/services/ms-massivedepositary/massivedepositary.service';
@@ -43,13 +43,16 @@ export class JpDBldcCBulkLoadingDepositoryCargoComponent
   errorsData: any[] = [];
   params = new BehaviorSubject<ListParams>(new ListParams());
   data: ExampleData[];
+  origin: string = '';
+  no_bien: number = null;
 
   form: FormGroup = new FormGroup({});
   constructor(
     private fb: FormBuilder,
     private excelService: ExcelService,
     private router: Router,
-    private massiveService: MassiveDepositaryService
+    private massiveService: MassiveDepositaryService,
+    private activatedRoute: ActivatedRoute
   ) {
     super();
     this.settings.columns = COLUMNS;
@@ -57,6 +60,16 @@ export class JpDBldcCBulkLoadingDepositoryCargoComponent
   }
 
   ngOnInit(): void {
+    this.activatedRoute.queryParams
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe((params: any) => {
+        console.log(params);
+        this.origin = params['origin'] ?? null;
+        if (this.origin == 'FACTJURREGDESTLEG') {
+          this.no_bien = params['no_bien'] ?? null;
+        }
+        console.log(params);
+      });
     this.buildForm();
   }
 
@@ -137,5 +150,18 @@ export class JpDBldcCBulkLoadingDepositoryCargoComponent
       JURIDICO: excelData.JURIDICO,
       ADMINISTRA: excelData.ADMINISTRA,
     };
+  }
+  goBack() {
+    if (this.origin == 'FACTJURREGDESTLEG') {
+      this.router.navigate([
+        '/pages/juridical/depositary/depositary-record/' + this.no_bien,
+      ]);
+    } else {
+      this.alert(
+        'warning',
+        'La página de origen no tiene opción para regresar a la pantalla anterior',
+        ''
+      );
+    }
   }
 }
