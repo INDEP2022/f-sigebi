@@ -132,7 +132,8 @@ export class ClarificationsListComponent extends BasePage implements OnInit {
   delete(id: number) {
     this.clarificationService.remove(id).subscribe({
       next: () => {
-        this.getClarifications(), this.alert('success', 'Estados', 'Borrado');
+        this.getClarifications(),
+          this.alert('success', 'Registro de lista de aclaración', 'Borrado');
       },
       error: error => {},
     });

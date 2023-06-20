@@ -110,11 +110,7 @@ export class CourtMaintenanceComponent extends BasePage implements OnInit {
       ],
       numInside: [
         null,
-        [
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(10),
-        ],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(10)],
       ],
       cologne: [
         null,
@@ -189,11 +185,11 @@ export class CourtMaintenanceComponent extends BasePage implements OnInit {
       if (question.isConfirmed) {
         this.courtCityServ.deleteCity(this.idCourt, city.idCity).subscribe({
           next: () => {
-            this.onLoadToast('success', 'Eliminado correctamente', '');
+            this.alert('success', 'Registro de ciudad', 'Borrado');
             this.getCourtByCity();
           },
           error: err => {
-            this.onLoadToast('error', err.error.message, '');
+            this.alert('error', err.error.message, '');
           },
         });
       }
@@ -242,6 +238,7 @@ export class CourtMaintenanceComponent extends BasePage implements OnInit {
             };
             this.dataCourtCity.data.push(descCity);
             const properties = city.city as ICity;
+            console.log(properties);
             this.getEntidad(properties.state as any, index);
             this.getDelegation(properties.noDelegation as any, index);
             this.getSubDelegation(properties.noSubDelegation as any, index);
@@ -269,9 +266,9 @@ export class CourtMaintenanceComponent extends BasePage implements OnInit {
   }
 
   private getDelegation(delegation: number, index: number) {
-    this.serviceDeleg.getById(delegation).subscribe({
+    this.serviceDeleg.getByIdEtapaEdo(delegation, '1').subscribe({
       next: data => {
-        this.dataCourtCity.data[index].cvDelDescripcion = data.description;
+        this.dataCourtCity.data[index].cvDelDescription = data.description;
         this.dataCourtCity.data = [...this.dataCourtCity.data];
       },
       error: error => this.onLoadToast('error', error.erro.message, ''),
@@ -281,7 +278,7 @@ export class CourtMaintenanceComponent extends BasePage implements OnInit {
   private getSubDelegation(subDelegation: number, index: number) {
     this.serviceSubDeleg.getById(subDelegation).subscribe({
       next: data => {
-        this.dataCourtCity.data[index].cvSubDelDescripcion = data.description;
+        this.dataCourtCity.data[index].cvSubDelDescription = data.description;
         this.dataCourtCity.data = [...this.dataCourtCity.data];
       },
       error: error => this.onLoadToast('error', error.erro.message, ''),

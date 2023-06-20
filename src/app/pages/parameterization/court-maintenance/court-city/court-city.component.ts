@@ -73,8 +73,16 @@ export class CourtCityComponent extends BasePage implements OnInit {
     this.modalRef.hide();
   }
 
-  handleSuccess() {
+  /*handleSuccess() {
     this.onLoadToast('success', 'Se ha guardado la ciudad', '');
+    this.modalRef.content.callback(true);
+    this.modalRef.hide();
+  }*/
+
+  handleSuccess() {
+    //const message: string = this.edit ? 'Actualizado' : 'Guardado';
+    this.onLoadToast('success', 'Registro de ciudad', `Guardado Correctamente`);
+    this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();
   }

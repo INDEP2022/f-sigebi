@@ -128,7 +128,7 @@ export class StatesListComponent extends BasePage implements OnInit {
   delete(id: string) {
     this.stateService.remove(id).subscribe({
       next: () => {
-        this.getStates(), this.alert('success', 'Estados', 'Borrado');
+        this.getStates(), this.alert('success', 'Estado', 'Borrado');
       },
       error: error => {
         this.alert(

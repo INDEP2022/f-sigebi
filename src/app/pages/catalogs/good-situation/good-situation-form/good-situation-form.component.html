@@ -5,6 +5,16 @@
   <div body>
     <form [formGroup]="goodSituationForm" class="form-material">
       <div class="row">
+        <div class="col-md-4">
+          <form-field
+            [control]="goodSituationForm.get('situation')"
+            label="Situación">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="situation" />
+          </form-field>
+        </div>
         <div class="col-md-8">
           <form-field [control]="goodSituationForm.get('status')">
             <ngx-select
@@ -16,16 +26,6 @@
               bindLabel="description"
               value="status">
             </ngx-select>
-          </form-field>
-        </div>
-        <div class="col-md-4">
-          <form-field
-            [control]="goodSituationForm.get('situation')"
-            label="Situación">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="situation" />
           </form-field>
         </div>
       </div>
