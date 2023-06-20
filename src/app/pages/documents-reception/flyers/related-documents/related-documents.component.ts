@@ -175,6 +175,7 @@ export class RelatedDocumentsComponent
   dataGoodFilter: IGood[] = [];
   dataGood: IDataGoodsTable[] = [];
   origin: string = '';
+  lastRoute: string = '';
   valTiposAll: boolean;
   tiposData: any = [];
   selectedAllImpro: boolean = false;
@@ -755,7 +756,7 @@ export class RelatedDocumentsComponent
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe((params: any) => {
         console.log(params);
-        this.origin = params['origin'] ?? null;
+        /*this.origin = params['origin'] ?? null;
         this.paramsGestionDictamen.volante = params['volante'] ?? null;
         this.paramsGestionDictamen.expediente = params['expediente'] ?? null;
         this.paramsGestionDictamen.tipoOf = params['tipoOf'] ?? null;
@@ -767,19 +768,24 @@ export class RelatedDocumentsComponent
         this.paramsGestionDictamen.sale = params['sale'] ?? null;
         this.paramsGestionDictamen.pGestOk = params['pGestOk'] ?? null;
         this.paramsGestionDictamen.pllamo = params['pllamo'] ?? null; // Se agrego
-        console.log('PARAMETROS VISTA ', this.paramsGestionDictamen);
+        console.log('PARAMETROS VISTA ', this.paramsGestionDictamen);*/
 
-        /*this.origin = params['origin'] ?? null; //no hay
+        this.lastRoute = params['LAST_ROUTE'] ?? null;
+        this.origin = params['ORIGIN'] ?? null;
         this.paramsGestionDictamen.volante = params['VOLANTE'] ?? null;
         this.paramsGestionDictamen.expediente = params['EXPEDIENTE'] ?? null;
         this.paramsGestionDictamen.tipoOf = params['TIPO_OF'] ?? null;
+        this.formJobManagement
+          .get('jobType')
+          .setValue(params['TIPO_OF'] ?? null);
         this.paramsGestionDictamen.doc = params['DOC'] ?? null;
-        this.paramsGestionDictamen.pDictamen = params['pDictamen'] ?? null;  //no hay
+        this.paramsGestionDictamen.pDictamen = params['P_DICTAMEN'] ?? null;
         this.paramsGestionDictamen.sale = params['SALE'] ?? null;
-        this.paramsGestionDictamen.pGestOk = params['BIEN'] ?? null;
-        this.paramsGestionDictamen.pGestOk = params['PLLAMO'] ?? null;
+        this.paramsGestionDictamen.bien = params['BIEN'] ?? null;
+        //this.paramsGestionDictamen.pllamo = params['PLLAMO'] ?? null;
         this.paramsGestionDictamen.pGestOk = params['P_GEST_OK'] ?? null;
-        this.paramsGestionDictamen.pGestOk = params['P_NO_TRAMITE'] ?? null;*/
+        this.paramsGestionDictamen.pNoTramite = params['P_NO_TRAMITE'] ?? null;
+        console.log('PARAMETROS VISTA ', this.paramsGestionDictamen);
       });
     this.pantallaActual = this.route.snapshot.paramMap.get('id');
     if (!this.pantallaActual) {
