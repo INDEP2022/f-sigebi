@@ -66,9 +66,9 @@ export class MailboxModalTableComponent<T = any>
         this.loading = false;
         if (error.status >= 500) {
           this.onLoadToast(
-            'error',
-            'Error',
-            'Ocurrió un error al obtener los datos'
+            'warning',
+            'Atención',
+            'Aún no existen bienes para este oficio'
           );
         }
         return throwError(() => error);

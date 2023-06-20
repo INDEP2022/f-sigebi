@@ -533,7 +533,7 @@ export class MassRulingComponent
       p_no_of_dicta: Number.parseInt(this.form.get('id').value),
       p_tipo_dictaminacion: this.form.get('typeDict').value,
     };
-    debugger;
+    // debugger;
     this.dictationService.postCargaMasDesahogob(body).subscribe({
       next: () => {
         this.isDisableCreateDictation = true;
