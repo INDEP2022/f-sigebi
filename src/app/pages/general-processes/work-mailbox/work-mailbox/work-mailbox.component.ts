@@ -2238,7 +2238,6 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     );
   }
 
-
   acptionBienes() {
     // this.workService.getViewBienes('598154').subscribe({
     //   next: (resp: any) => {
@@ -2252,14 +2251,14 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     const params = new FilterParams();
     params.addFilter('fileNumber', this.selectedRow.proceedingsNumber);
     const $params = new BehaviorSubject(params);
-    
-    console.log('Expediente',this.selectedRow.proceedingsNumber);
+
+    console.log('Expediente', this.selectedRow.proceedingsNumber);
     const proceedingsNumber = this.selectedRow.proceedingsNumber;
     const config = {
       ...MODAL_CONFIG,
       initialState: {
         //$obs,
-       // service,
+        // service,
         columns,
         title,
         $params,
