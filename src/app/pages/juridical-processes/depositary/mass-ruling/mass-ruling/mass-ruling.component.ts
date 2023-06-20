@@ -63,6 +63,7 @@ export class MassRulingComponent
   totalItems = 0;
   // Data table
   dataTable: any[] = [];
+  isFileLoad = false;
 
   params = new BehaviorSubject<ListParams>(new ListParams());
   tableSettings1 = {
@@ -373,6 +374,7 @@ export class MassRulingComponent
   }
 
   onClickLoadByIdentifier(listParams = new ListParams()) {
+    this.isFileLoad = false;
     const identificador = this.formCargaMasiva.get(
       'identificadorCargaMasiva'
     ).value;
@@ -402,6 +404,10 @@ export class MassRulingComponent
   }
 
   async onClickLoadFile(event: any) {
+    this.dataTableErrors = [];
+    this.dataTable = [];
+    this.isFileLoad = true;
+    this.totalItems = 0;
     const { id, typeDict } = this.form.value;
     if (!id && !typeDict) {
       showToast({
@@ -422,7 +428,7 @@ export class MassRulingComponent
       if (isNaN(item.NO_BIEN) || isNaN(item.NO_EXPEDIENTE)) {
         dataTableError.push({
           processId: 12345,
-          fileNumber: `REGISTRO: ${index + 1}, CONTENIDO NO_BIEN: ${
+          description: `REGISTRO: ${index + 1}, CONTENIDO NO_BIEN: ${
             item.NO_BIEN
           }, NO_EXPEDIENTE: ${item.NO_EXPEDIENTE} `,
         });
@@ -617,8 +623,8 @@ export class MassRulingComponent
     try {
       await this.getDictationForId();
     } catch (error) {
-      this.alert('warning', 'Error', 'No se encontró un Dictamen ');
-      return null;
+      this.alert('warning', 'Error', 'No se encontró un Dictamen');
+      throw 'No se encontró un Dictamen';
     }
 
     try {
@@ -626,7 +632,7 @@ export class MassRulingComponent
     } catch (error: any) {
       this.alertQuestion('warning', 'Error', error?.message);
       console.log({ error });
-      return null;
+      throw error;
     }
 
     try {
@@ -638,7 +644,7 @@ export class MassRulingComponent
         'Error',
         'No se encontró la Notificación del Dictamen.'
       );
-      return null;
+      throw 'No se encontró la Notificación del Dictamen.';
     }
 
     //ERROR: este codigo no implementado de oracle forms
