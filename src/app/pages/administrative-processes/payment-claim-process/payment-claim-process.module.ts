@@ -10,6 +10,7 @@ import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { TabsModule } from 'ngx-bootstrap/tabs';
 
+import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { GoodsTypesSharedComponent } from 'src/app/@standalone/shared-forms/goods-types-shared/goods-types-shared.component';
 import { JustificationSharedComponent } from 'src/app/@standalone/shared-forms/justification-shared/justification-shared.component';
 import { PaymentClaimProcessRoutingModule } from './payment-claim-process-routing.module';
@@ -37,6 +38,7 @@ import { ScanningFoilComponent } from './scanning-foil/scanning-foil.component';
     ModalModule.forChild(),
     GoodsTypesSharedComponent,
     JustificationSharedComponent,
+    TooltipModule.forRoot(),
   ],
 })
 export class PaymentClaimProcessModule {}

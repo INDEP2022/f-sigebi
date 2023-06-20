@@ -3698,7 +3698,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
       statusChangeProgram: this.idPantalla, // Clave de la pantalla
       reasonForChange: 'Automatico masivo', // Razon del cambio
       registryNum: 1, // No se toma en el ms
-      extDomProcess: '', // No se toma en el ms
+      extDomProcess: 'ASEGURADO', // No se toma en el ms
     };
     let messageExtra = '';
     if (!goodHistory.propertyNum) {

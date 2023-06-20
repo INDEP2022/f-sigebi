@@ -11,7 +11,7 @@ export const WORK_BIENES_COLUMNS = {
     title: 'Cantidad',
     sort: false,
   },
-  goodDescription: {
+  description: {
     title: 'Descripción',
     sort: false,
   },
@@ -20,7 +20,7 @@ export const WORK_BIENES_COLUMNS = {
     title: 'No. Bien Padre Menaje',
     sort: false,
   },
-  goodStatus: {
+  status: {
     title: 'Estatus',
     sort: false,
   },
