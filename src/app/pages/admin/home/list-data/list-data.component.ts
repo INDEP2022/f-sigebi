@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
@@ -18,6 +18,7 @@ import { COLUMNS } from './columns';
   styles: [],
 })
 export class ListDataComponent extends BasePage implements OnInit {
+  @Input() plain = false;
   dataDocs: IListResponse<any /*Modelado de datos*/> =
     {} as IListResponse<any /*Modelado de datos*/>;
 
