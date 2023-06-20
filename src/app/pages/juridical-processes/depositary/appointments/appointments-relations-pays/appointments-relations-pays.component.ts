@@ -129,10 +129,10 @@ export class AppointmentsRelationsPaysComponent
         next: res => {
           console.log('DATA ', res);
           let dataResponse = res.data.map((i: any) => {
-            i['payConcept'] = i.conceptPayKey + ' DESCRIPCION';
-            // i.i.menaje && i.good
-            //   ? (i.good['menaje'] = i.menaje['noGoodMenaje'])
-            //   : '';
+            i['payConcept'] =
+              i.conceptPayKey +
+              '--' +
+              (i.conceptPay ? i.conceptPay.description : '');
             return i;
           });
           this.totalItems = res.count;
