@@ -55,7 +55,7 @@ export class ChangeOfStatusStiComponent extends BasePage implements OnInit {
   goodSelect: any[] = [];
   goods: LocalDataSource = new LocalDataSource();
   columnFilters: any = [];
-  completeFilters: any[] = []
+  completeFilters: any[] = [];
 
   //Activar y desactivar botones
   enableToDelete = false;
@@ -80,14 +80,16 @@ export class ChangeOfStatusStiComponent extends BasePage implements OnInit {
         console.log(change);
         if (change.action === 'filter') {
           let filters = change.filter.filters;
-          this.completeFilters = filters
+          this.completeFilters = filters;
           filters.map((filter: any) => {
             let searchFilter = SearchFilter.ILIKE;
-            if(filter.search !== ''){
-              this.columnFilters[filter.field] = `${searchFilter}:${filter.search}`
+            if (filter.search !== '') {
+              this.columnFilters[
+                filter.field
+              ] = `${searchFilter}:${filter.search}`;
             }
           });
-          this.searchByFilter()
+          this.searchByFilter();
         }
       });
 
@@ -184,29 +186,29 @@ export class ChangeOfStatusStiComponent extends BasePage implements OnInit {
     this.enableToDelete = false;
   }
 
-  searchByFilter(){
-    this.loading = true
-    this.busco = true
-    const paramsF = new FilterParams()
-    paramsF.addFilter('status', 'STI')
-    paramsF.addFilter('fileNumber', this.numberFile.value)
-    paramsF.page = this.params.value.page
-    paramsF.limit = this.params.value.limit
-    for(let data of this.completeFilters){
-      paramsF.addFilter(data.field, data.search, SearchFilter.ILIKE)
+  searchByFilter() {
+    this.loading = true;
+    this.busco = true;
+    const paramsF = new FilterParams();
+    paramsF.addFilter('status', 'STI');
+    paramsF.addFilter('fileNumber', this.numberFile.value);
+    paramsF.page = this.params.value.page;
+    paramsF.limit = this.params.value.limit;
+    for (let data of this.completeFilters) {
+      paramsF.addFilter(data.field, data.search, SearchFilter.ILIKE);
     }
 
-    console.log(paramsF.getParams())
+    console.log(paramsF.getParams());
     this.goodServices.getAllFilter(paramsF.getParams()).subscribe(
       res => {
-        this.goods.load(res.data)
-        this.loading = false
+        this.goods.load(res.data);
+        this.loading = false;
       },
       err => {
-        console.log(err)
-        this.loading = false
+        console.log(err);
+        this.loading = false;
       }
-    )
+    );
   }
 
   listGoods() {
