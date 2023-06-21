@@ -54,6 +54,7 @@ export enum GoodProcessPoints {
   deleteHistoricalStatusGoodXrecord = 'application/deleteHistoricalStatusGoodXrecord',
   getVstatusIniVnoRegister = 'application/getVstatusIniVnoRegister',
   pup_change_impro = 'application/pup-change-impro',
+  GetDescDep = 'application/getDestDepBan',
 }
 
 export enum GoodFinderEndpoint {

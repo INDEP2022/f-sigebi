@@ -54,6 +54,7 @@ import { GoodSsubtypeService } from 'src/app/core/services/catalogs/good-ssubtyp
 import { GoodSubtypeService } from 'src/app/core/services/catalogs/good-subtype.service';
 import { GoodTypeService } from 'src/app/core/services/catalogs/good-type.service';
 import { AccountMovements } from 'src/app/core/services/ms-account-movements/account-movements.service';
+import { ComerDetailsService } from 'src/app/core/services/ms-coinciliation/comer-details.service';
 import { DictationXGood1Service } from 'src/app/core/services/ms-dictation/dictation-x-good1.service';
 import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
 import { OficialDictationService } from 'src/app/core/services/ms-dictation/oficial-dictation.service';
@@ -384,7 +385,8 @@ export class JuridicalRulingGComponent
     private abandonmentsService: AbandonmentsDeclarationTradesService,
     private detailProceedingsDevolutionService: DetailProceedingsDevolutionService,
     private jobDictumTextsService: JobDictumTextsService,
-    private AccountMovements: AccountMovements
+    private AccountMovements: AccountMovements,
+    private comerDetailsService: ComerDetailsService
   ) {
     super();
     this.dictamen = {
@@ -3092,7 +3094,7 @@ export class JuridicalRulingGComponent
         .addFilter('status', 'ADM,ROP,STA,VXR', SearchFilter.IN);
     }
     this.goodServices
-      .getAllFilter(this.filter1.getValue().getParams())
+      .getAllFilter(this.filter1.getValue().getParams()) 
       .subscribe({
         next: response => {
           console.log('GODDDDSS12312312', response);
@@ -3522,7 +3524,7 @@ export class JuridicalRulingGComponent
     this.goodServices
       .getByExpedient(
         this.expedientesForm.get('noExpediente').value,
-        this.params.getValue()
+        //this.params.getValue() //Se estaba enviado dos veces el expediente y marcaba error.
       )
       .subscribe({
         next: response => {

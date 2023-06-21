@@ -66,7 +66,7 @@ export class MailboxModalTableComponent<T = any>
         this.onLoadToast(
           'warning',
           'Atención',
-          'Aún no existen bienes para este oficio'
+          'La información solicitada aún no esta disponible'
         );
       },
     });

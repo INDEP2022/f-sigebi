@@ -191,12 +191,10 @@ export class NotifyAssetsImproprietyFormComponent
         }
       }
 
-      if (
-        this.dataClarifications2.clarificationType === 'SOLICITAR_ACLARACION' &&
-        this.dataClarifications2.chatClarification.idClarificationType == '2'
-      ) {
-        this.aclaracionTransferentesVoluntarias(); //Aclaración  MANUAL tipo 1
-      }
+      if(this.dataClarifications2.clarificationType === 'SOLICITAR_ACLARACION' && this.dataClarifications2.chatClarification.idClarificationType == '2'){
+                this.aclaracionTransferentesVoluntarias(); //Aclaración  MANUAL tipo 1
+            }
+
     }
 
     if (typeTransference == 'SAT_SAE' && this.typeClarifications == 2) {
