@@ -1569,7 +1569,7 @@ export class JuridicalRecordUpdateComponent
             this.alert(
               'warning',
               '',
-              'No tienes privilegios para entrar a los Dictamenes de Resarcimiento '
+              'No tienes privilegios para entrar a los Dictámenes de Resarcimiento '
             );
             this.isLoadingBtnDictationJudgment = false;
             return;
