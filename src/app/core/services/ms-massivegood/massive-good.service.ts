@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { map, Observable } from 'rxjs';
+import { NumDetGood } from 'src/app/pages/administrative-processes/numerary/numerary-request/models/goods-det';
 import { MassiveGoodEndpoints } from '../../../common/constants/endpoints/ms-massivegood-endpoints';
 import { ListParams } from '../../../common/repository/interfaces/list-params';
 import { HttpService } from '../../../common/services/http.service';
@@ -99,10 +100,18 @@ export class MassiveGoodService extends HttpService {
     return this.post<IMassiveGoodTracker>(route, body);
   }
 
+
+  getDataCSVFile(currency: string, file: any) {
+    const formData = new FormData();
+    formData.append('tCurrency', currency);
+    formData.append('file', file);
+    return this.post<IListResponse<NumDetGood>>(this.route.FileCSV, formData);
+
   getIdentifierCount(
     params: ListParams
   ): Observable<IListResponse<IIdentifierCount>> {
     const route = `application/getIdentifierCount`;
     return this.get(route, params);
+
   }
 }
