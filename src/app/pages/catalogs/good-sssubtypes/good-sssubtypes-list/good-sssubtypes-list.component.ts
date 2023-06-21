@@ -58,24 +58,46 @@ export class GoodSssubtypesListComponent extends BasePage implements OnInit {
                 filter.field == 'numType';
                 field = `filter.${filter.field}.nameGoodType`;
                 break;
+              case 'numSubType':
+                // searchFilter = SearchFilter.EQ;
+                filter.field == 'numSubType';
+                field = `filter.${filter.field}.nameSubtypeGood`;
+                break;
+              case 'numSsubType':
+                // searchFilter = SearchFilter.EQ;
+                filter.field == 'numSsubType';
+                searchFilter = SearchFilter.EQ;
+                field = `filter.${filter.field}.description`;
+                break;
+              case 'numClasifGoods':
+                // searchFilter = SearchFilter.EQ;
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'numClasifAlterna':
+                // searchFilter = SearchFilter.EQ;
+                searchFilter = SearchFilter.EQ;
+                break;
               default:
                 searchFilter = SearchFilter.ILIKE;
                 break;
             }
 
             if (filter.search !== '') {
-              console.log(
-                (this.columnFilters1[
-                  field
-                ] = `${searchFilter}:${filter.search}`)
-              );
-              this.columnFilters1[field] = `${searchFilter}:${filter.search}`;
+              if (
+                filter.field == 'numSubType' ||
+                filter.field == 'numType' ||
+                filter.field == 'numSsubType'
+              ) {
+                this.columnFilters1[field] = `${filter.search}`;
+              } else {
+                this.columnFilters1[field] = `${searchFilter}:${filter.search}`;
+              }
             } else {
               delete this.columnFilters1[field];
             }
           });
           this.params = this.pageFilter(this.params);
-          // this.getGoodSssubtypes();
+          this.getGoodSssubtypes();
         }
       });
 
@@ -90,8 +112,9 @@ export class GoodSssubtypesListComponent extends BasePage implements OnInit {
       ...this.params.getValue(),
       ...this.columnFilters1,
     };
-    this.goodSssubtypeService.getAll(this.params.getValue()).subscribe({
+    this.goodSssubtypeService.getAll(params).subscribe({
       next: response => {
+        console.log('response:', response);
         this.paragraphs = response.data;
         this.data1.load(this.paragraphs);
         this.data1.refresh();

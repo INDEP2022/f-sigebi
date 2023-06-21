@@ -24,7 +24,7 @@ export class SatSubclassificationFormComponent
   implements OnInit
 {
   satSubclassificationForm: ModelForm<ISatSubclassification>;
-  title: string = 'SAT Subclasificacion';
+  title: string = 'SUBCLASIFICACIÓN SAT';
   edit: boolean = false;
   satSubclassification: ISatSubclassification;
   classifications = new DefaultSelect<ISiabClasification>();
@@ -38,6 +38,7 @@ export class SatSubclassificationFormComponent
   }
 
   ngOnInit(): void {
+    this.getClassifications(new ListParams());
     this.prepareForm();
   }
 
@@ -49,29 +50,40 @@ export class SatSubclassificationFormComponent
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
       idClasification: [null, [Validators.required]],
+      idClasificationCode: [null, [Validators.required]],
+      clasificationDetails: [null],
     });
     if (this.satSubclassification != null) {
+      console.log('this.satSubclassification', this.satSubclassification);
       this.edit = true;
       let satClassification: ISatClassification = this.satSubclassification
         .idClasification as ISatClassification;
       this.satSubclassificationForm.patchValue({
         ...this.satSubclassification,
-        idClasification: satClassification.id,
       });
       this.satSubclassificationForm.controls['idClasification'].setValue(
-        this.satSubclassification.idClasification
+        this.satSubclassification.clasificationDetails.id
       );
 
-      this.classifications = new DefaultSelect([satClassification], 1);
+      this.satSubclassificationForm.controls['idClasificationCode'].setValue(
+        this.satSubclassification.clasificationDetails.id
+      );
+
+      console.log(
+        'this.satSubclassification.nameSubClasification',
+        this.satSubclassification.clasificationDetails.typeDescription
+      );
+
+      this.classifications = new DefaultSelect(
+        [this.satSubclassification.clasificationDetails.typeDescription],
+        1
+      );
     } else {
       this.getClassifications({ page: 1 });
     }
   }
 
   getClassifications(params: ListParams) {
-    console.log('params:', params);
-    var dddd = 'cat';
-    //params['filter.text'] = `$ilike:${dddd}`;
     this.satClassificationService.getAll(params).subscribe(data => {
       this.classifications = new DefaultSelect(data.data, data.count);
     });
@@ -95,6 +107,24 @@ export class SatSubclassificationFormComponent
   }
 
   update() {
+    console.log(
+      'idClasificationCode:',
+      this.satSubclassificationForm.get('idClasificationCode').value
+    );
+
+    console.log(
+      'idClasification:',
+      this.satSubclassificationForm.get('idClasification').value
+    );
+
+    let idClasi =
+      this.satSubclassification.clasificationDetails.idClasification !=
+      this.satSubclassificationForm.get('idClasification').value
+        ? this.satSubclassificationForm.get('idClasification').value
+        : this.satSubclassificationForm.get('idClasificationCode').value;
+    console.log('idClasi:', idClasi);
+    this.satSubclassificationForm.controls['idClasification'].setValue(idClasi);
+
     this.loading = true;
     this.satSubclassificationService
       .update(

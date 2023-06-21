@@ -98,6 +98,8 @@ export class WarehousesDetailComponent extends BasePage implements OnInit {
       let municipality = this.warehouse.municipalityCode;
       let locality = this.warehouse.localityCode;
       this.warehouseForm.patchValue(this.warehouse);
+      console.log('state.descCondition', state.descCondition);
+
       this.warehouseForm.controls['stateCode'].setValue(state.descCondition);
       this.warehouseForm.controls['stateCodeID'].setValue(state.id);
       this.warehouseForm.controls['cityCode'].setValue(city.nameCity);
@@ -123,6 +125,7 @@ export class WarehousesDetailComponent extends BasePage implements OnInit {
       } else {
         this.getMunicipalitie(city);
       }
+      console.log('stateCode.descCondition', stateCode.descCondition);
       this.states = new DefaultSelect([stateCode.descCondition], 1);
       this.cities = new DefaultSelect([cityCode.nameCity], 1);
 
