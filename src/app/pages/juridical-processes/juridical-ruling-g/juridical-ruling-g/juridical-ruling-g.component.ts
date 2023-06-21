@@ -3094,7 +3094,7 @@ export class JuridicalRulingGComponent
         .addFilter('status', 'ADM,ROP,STA,VXR', SearchFilter.IN);
     }
     this.goodServices
-      .getAllFilter(this.filter1.getValue().getParams())
+      .getAllFilter(this.filter1.getValue().getParams()) 
       .subscribe({
         next: response => {
           console.log('GODDDDSS12312312', response);
@@ -3524,7 +3524,7 @@ export class JuridicalRulingGComponent
     this.goodServices
       .getByExpedient(
         this.expedientesForm.get('noExpediente').value,
-        this.params.getValue()
+        //this.params.getValue() //Se estaba enviado dos veces el expediente y marcaba error.
       )
       .subscribe({
         next: response => {
