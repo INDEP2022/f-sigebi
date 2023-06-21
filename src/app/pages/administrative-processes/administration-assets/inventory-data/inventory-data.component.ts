@@ -27,7 +27,9 @@ export class InventoryDataComponent extends BasePage implements OnInit {
     private readonly router: Router
   ) {
     super();
-    this.settings.actions = false;
+    this.settings.actions.delete = true;
+    this.settings.actions.add = false;
+    this.settings.hideSubHeader = false;
     this.settings.columns = {
       no_inventario: {
         title: 'No. Inventario',

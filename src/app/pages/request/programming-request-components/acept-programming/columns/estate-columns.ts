@@ -1,12 +1,12 @@
 export const ESTATE_COLUMNS = {
   googId: {
-    title: 'Número gestión',
+    title: 'Nº gestión',
     type: 'string',
     sort: false,
   },
 
   keyUnique: {
-    title: 'Clave única',
+    title: 'Clave Única',
     type: 'string',
     sort: false,
   },
@@ -18,7 +18,7 @@ export const ESTATE_COLUMNS = {
   },
 
   descriptionGood: {
-    title: 'Descripción',
+    title: 'Descripción Transferente',
     sort: false,
   },
 
@@ -79,13 +79,13 @@ export const ESTATE_COLUMNS = {
 
 export const ESTATE_COLUMNS_VIEW = {
   goodId: {
-    title: 'Número gestión',
+    title: 'Nª Gestión',
     type: 'string',
     sort: false,
   },
 
   uniqueKey: {
-    title: 'Clave única',
+    title: 'Clave Única',
     type: 'string',
     sort: false,
   },
@@ -97,18 +97,18 @@ export const ESTATE_COLUMNS_VIEW = {
   },
 
   goodDescription: {
-    title: 'Descripción',
+    title: 'Descripción Transferente',
     sort: false,
   },
 
   descriptionGoodSae: {
-    title: 'Descripción INDEP',
+    title: 'Descripción Bien INDEP',
     type: 'string',
     sort: false,
   },
 
   quantity: {
-    title: 'Cantidad',
+    title: 'Cantidad Transferente',
     type: 'string',
     sort: false,
   },
@@ -120,7 +120,7 @@ export const ESTATE_COLUMNS_VIEW = {
   },
 
   unitMeasure: {
-    title: 'Unidad de medida transferente',
+    title: 'Unidad de Medida Transferente',
     type: 'string',
     sort: false,
   },
@@ -132,7 +132,7 @@ export const ESTATE_COLUMNS_VIEW = {
   },
 
   physicalStatusName: {
-    title: 'Estado físico transferente',
+    title: 'Estado Físico Transferente',
     type: 'html',
     sort: false,
     valuePrepareFunction: (value: string) => {
