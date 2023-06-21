@@ -1,0 +1,7 @@
+:host ::ng-deep ng2-smart-table {
+  tr th.officeProce {
+    ng2-smart-table-filter {
+      display: none;
+    }
+  }
+}
