@@ -1,27 +1,39 @@
+import { DateCellComponent } from 'src/app/@standalone/smart-table/date-cell/date-cell.component';
 export const REQUEST_NUMERARY_COLUMNS = {
-  good: {
+  goodNumber: {
     title: 'Bien',
     type: 'string',
     sort: false,
   },
   description: {
-    title: 'Descripcion',
+    title: 'Descripción',
     type: 'string',
     sort: false,
   },
-  amount: {
-    title: 'mONTO',
+  commission: {
+    title: 'Monto',
     type: 'string',
     sort: false,
   },
   bankDate: {
-    title: 'Fecha banco',
+    title: 'Fecha Banco',
     type: 'string',
     sort: false,
   },
-  tesofeDate: {
-    title: 'Fecha tesofe',
-    type: 'string',
+  dateCalculationInterests: {
+    title: 'Fecha Tesofe',
+    type: 'custom',
     sort: false,
+    valuePrepareFunction: (value: string) => {
+      return value ? value.split('-').join('/') : '';
+    },
+    renderComponent: DateCellComponent,
+    onComponentInitFunction(instance?: any) {
+      instance.inputChange.subscribe({
+        next: (data: any) => {
+          data.row.dateCalculationInterests = data.value;
+        },
+      });
+    },
   },
 };
