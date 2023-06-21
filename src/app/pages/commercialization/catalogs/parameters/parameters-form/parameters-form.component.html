@@ -42,8 +42,18 @@
         </div>
         <!--Event Types Component-->
         <div class="col-lg-6 col-md-6 col-sm-12 col-12 mb-3 mt-3">
-          <app-event-type-shared [form]="form" [eventField]="'typeEventId'">
-          </app-event-type-shared>
+          <form-field [control]="form.get('typeEventId')">
+            <ngx-select
+              [form]="form"
+              control="typeEventId"
+              value="id"
+              bindLabel="description"
+              [data]="typeEvents"
+              (fetchItems)="getTypeEvent($event)"
+              (change)="typeEventChange($event)"
+              label="Tipo de evento">
+            </ngx-select>
+          </form-field>
         </div>
       </div>
     </form>

@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { LocalDataSource } from 'ng2-smart-table';
-import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import {
   ListParams,
   SearchFilter,
@@ -97,19 +98,14 @@ export class CostCatalogComponent extends BasePage implements OnInit {
   }
 
   openForm(allotment?: any) {
-    let config: ModalOptions = {
-      initialState: {
-        allotment,
-        callback: (next: boolean) => {
-          this.params
-            .pipe(takeUntil(this.$unSubscribe))
-            .subscribe(() => this.getCostCatalog());
-        },
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      allotment,
+      callback: (next: boolean) => {
+        if (next) this.getCostCatalog();
       },
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
     };
-    this.modalService.show(ModalCostCatalogComponent, config);
+    this.modalService.show(ModalCostCatalogComponent, modalConfig);
   }
 
   delete(drawer: any) {
