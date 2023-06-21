@@ -32,6 +32,7 @@
               <input
                 formControlName="depositDateTo"
                 [maxDate]="maxDate"
+                [minDate]="this.form.value.depositDate"
                 class="form-control"
                 bsDatepicker />
             </form-field>
@@ -54,6 +55,7 @@
               <input
                 formControlName="transferenceDateTo"
                 [maxDate]="maxDate"
+                [minDate]="this.form.value.transferenceDate"
                 class="form-control"
                 bsDatepicker />
             </form-field>
@@ -76,6 +78,7 @@
               <input
                 formControlName="receptionDateTo"
                 [maxDate]="maxDate"
+                [minDate]="this.form.value.receptionDate"
                 class="form-control"
                 bsDatepicker />
             </form-field>
