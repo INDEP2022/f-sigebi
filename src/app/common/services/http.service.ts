@@ -32,14 +32,12 @@ export class HttpService {
   protected post<T = any>(route: string, body: {}, _params?: _Params) {
     const params = this.getParams(_params);
     const url = this.buildRoute(route);
-    console.log(url);
     return this.httpClient.post<T>(`${url}`, body, { params });
   }
 
   protected put<T = any>(route: string, body?: {}, _params?: _Params) {
     const params = this.getParams(_params);
     const url = this.buildRoute(route);
-    console.log(url);
     return this.httpClient.put<T>(`${url}`, body, { params });
   }
 

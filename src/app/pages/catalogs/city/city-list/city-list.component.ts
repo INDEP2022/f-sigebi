@@ -66,16 +66,20 @@ export class CityListComponent extends BasePage implements OnInit {
               case 'nameCity':
                 searchFilter = SearchFilter.ILIKE;
                 break;
-              case 'state':
-                filter.field == 'state';
+              case 'stateDetail':
+                filter.field == 'stateDetail';
                 field = `filter.${filter.field}.descCondition`;
                 searchFilter = SearchFilter.ILIKE;
                 break;
-              case 'delegation':
-                searchFilter = SearchFilter.EQ;
+              case 'delegationDetail':
+                filter.field == 'stateDetail';
+                field = `filter.${filter.field}.description`;
+                searchFilter = SearchFilter.ILIKE;
                 break;
-              case 'noSubDelegation':
-                searchFilter = SearchFilter.EQ;
+              case 'SubDelegationDetail':
+                filter.field == 'stateDetail';
+                field = `filter.${filter.field}.description`;
+                searchFilter = SearchFilter.ILIKE;
                 break;
               case 'legendOffice':
                 searchFilter = SearchFilter.ILIKE;
@@ -105,7 +109,7 @@ export class CityListComponent extends BasePage implements OnInit {
       ...this.columnFilters,
     };
 
-    this.cityService.getAll(params).subscribe({
+    this.cityService.getAllCitys(params).subscribe({
       next: response => {
         this.columns = response.data;
         this.totalItems = response.count || 0;

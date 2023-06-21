@@ -34,7 +34,14 @@ export class BankConceptsModalComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.bankConceptsForm = this.fb.group({
-      key: [null, [Validators.required, Validators.pattern(STRING_PATTERN), Validators.maxLength(10)]],
+      key: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(10),
+        ],
+      ],
       description: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],

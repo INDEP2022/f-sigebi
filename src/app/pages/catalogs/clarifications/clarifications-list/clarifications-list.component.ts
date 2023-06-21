@@ -135,7 +135,7 @@ export class ClarificationsListComponent extends BasePage implements OnInit {
         this.getClarifications(),
           this.alert('success', 'Registro de lista de aclaración', 'Borrado');
       },
-      error: error => { },
+      error: error => {},
     });
   }
 }
