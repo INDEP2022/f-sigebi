@@ -19,6 +19,9 @@ export const DEPARTMENT_COLUMNS = {
     valuePrepareFunction: (value: IDelegation) => {
       return value?.description;
     },
+    filterFunction: (cell?: any, search?: string) => {
+      return search != null ? search : '';
+    },
     sort: false,
   },
   numSubDelegation: {

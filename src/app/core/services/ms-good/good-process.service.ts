@@ -145,4 +145,9 @@ export class GoodProcessService extends HttpService {
     const route = GoodProcessPoints.pup_change_impro;
     return this.post(`${route}`, body);
   }
+
+  getDescDepBan(good: number) {
+    const route = GoodProcessPoints.GetDescDep;
+    return this.get(`${route}/${good}`);
+  }
 }

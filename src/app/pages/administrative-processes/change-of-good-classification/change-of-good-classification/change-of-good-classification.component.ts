@@ -59,6 +59,7 @@ export class ChangeOfGoodClassificationComponent
   btnNewAtribut: boolean = true;
   atributActSettings: any;
   atributNewSettings: any;
+  newDescription: string;
   service = inject(ChangeOfGoodCharacteristicService);
   // atributActSettings = { ...this.settings };
   // pageSizeOptions = [5, 10, 15, 20];
@@ -366,6 +367,8 @@ export class ChangeOfGoodClassificationComponent
   }
 
   onChange(event: any) {
+    console.log(event);
+    this.newDescription = event;
     this.getUnitiXClasif();
     this.getEtiqXClasif();
     this.formNew.enable();
@@ -481,37 +484,51 @@ export class ChangeOfGoodClassificationComponent
     this.copiarPropiedades(good, putGood);
     console.log(this.data);
     let contador = 0;
-    this.data.forEach(row => {
+    for (let index = 0; index < this.data.length; index++) {
+      const row = this.data[index];
       if (row.required && !row.value) {
-        this.onLoadToast(
+        this.alert(
           'error',
           'Bien ' + this.numberGood.value,
-          'Complete los atributos requeridos'
+          'Complete el atributo ' + row.attribute
         );
+        contador++;
+        index = this.data.length;
         return;
-        // contador++;
       }
       putGood[row.column] = row.value;
-    });
+    }
+    if (contador > 0) {
+      return;
+    }
     console.log(putGood, 'Atributos sin llenar:' + contador);
     this.goodServices
       .update(putGood)
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: response => {
-          this.onLoadToast(
+          this.alert(
             'success',
             'ÉXITO',
             `Se ha actualizado la clasificacion del bien ${this.good.id}`
           );
           this.listAtributNew = [];
+          this.currentClasification.setValue(this.classificationOfGoods.value);
+          this.descriptionClasification.setValue(this.newDescription);
+          setTimeout(() => {
+            this.goodChange++;
+          }, 100);
+
           // this.dataAct.load([]);
           // this.dataAct.refresh();
-          this.form.reset();
+          // this.form.reset();
           this.formNew.reset();
+          setTimeout(() => {
+            this.goodChange2++;
+          }, 100);
         },
         error: err => {
-          this.onLoadToast(
+          this.alert(
             'error',
             'ERROR',
             `Error al cambiar la clasificacion del bien ${this.good.id}`

@@ -19,7 +19,7 @@ export const COURT_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  numInterior: {
+  numInside: {
     title: 'No. Interior',
     type: 'string',
     sort: false,

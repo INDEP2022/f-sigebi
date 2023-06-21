@@ -79,7 +79,7 @@ export class DocCompensationSatXmlListComponent
   delete(id: number) {
     this.docConpensation.remove(id).subscribe({
       next: response => {
-        this.alert('success', 'Documento Resarcimiento Xml', 'Borrado'),
+        this.alert('success', 'Documento resarcimiento SAT XML', 'Borrado'),
           this.getExample();
       },
       error: err => {

@@ -5,7 +5,11 @@ import { Router } from '@angular/router';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { IDocuments } from 'src/app/core/models/ms-documents/documents';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { ISegUsers } from 'src/app/core/models/ms-users/seg-users-model';
@@ -40,6 +44,7 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
   @Input() cambiarFolioUniversal: Function;
 
   folioEscaneoNg: any = '';
+  filter1 = new BehaviorSubject<FilterParams>(new FilterParams());
   constructor(
     private fb: FormBuilder,
     private readonly documnetServices: DocumentsService,
@@ -209,6 +214,8 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
     this.goNextForm();
   }
   goNextForm() {
+    // localStorage.setItem('goodData', this.goods);
+
     this.router.navigate([`/pages/general-processes/scan-documents`], {
       queryParams: { origin: 'FPROCRECPAG', folio: this.folioEscaneoNg },
     });
@@ -258,5 +265,29 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
   actualizarVariable(val: boolean, folioEscaneoNg: string) {
     this.folioEscaneoNg = folioEscaneoNg;
     this.generateFo = val;
+  }
+
+  getDocument(good: any) {
+    this.firstGood.emit(good);
+    console.log('good', good);
+    this.filter1.getValue().removeAllFilters();
+    this.filter1.getValue().addFilter('goodNumber', good.id, SearchFilter.EQ);
+    // this.filter1.getValue().addFilter('scanStatus', 'ESCANEADO', SearchFilter.EQ)
+    this.documnetServices
+      .getAllFilter(this.filter1.getValue().getParams())
+      .subscribe({
+        next: response => {
+          console.log('DOCUMENT', response);
+          this.folioEscaneoNg = response.data[0].id;
+          this.documentEmmit.emit(response.data[0]);
+          this.document = response.data[0];
+          this.generateFo = false;
+          // this.generate();
+        },
+        error: err => {
+          console.log(err);
+          this.folioEscaneoNg = '';
+        },
+      });
   }
 }

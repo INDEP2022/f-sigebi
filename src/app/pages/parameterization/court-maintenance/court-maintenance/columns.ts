@@ -19,7 +19,7 @@ export const COLUMNS = {
     title: 'No. Delegación',
     sort: false,
   },
-  cvDelDescripcion: {
+  cvDelDescription: {
     title: 'Descripción',
     sort: false,
   },
