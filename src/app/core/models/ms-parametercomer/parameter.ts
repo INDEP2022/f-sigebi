@@ -6,6 +6,15 @@ export interface IParameter {
   typeEventId: number | null;
 }
 
+export interface ITypeEvent {
+  id: number;
+  description: string | null;
+  descReceipt: string | null;
+  use: string | null;
+  typeDispId: number | null;
+  typeFailedpId: number | null;
+}
+
 export interface IBrand {
   id: string;
   brandDescription: string;

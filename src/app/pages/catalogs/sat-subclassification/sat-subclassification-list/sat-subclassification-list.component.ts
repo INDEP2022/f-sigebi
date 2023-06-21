@@ -51,11 +51,25 @@ export class SatSubclassificationListComponent
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
-            filter.field == 'id' ||
-            filter.field == 'idClasification' ||
-            filter.field == 'nameSubClasification'
-              ? (searchFilter = SearchFilter.EQ)
-              : (searchFilter = SearchFilter.ILIKE);
+            switch (filter.field) {
+              case 'id':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'clasificationDetails':
+                // searchFilter = SearchFilter.EQ;
+                filter.field == 'clasificationDetails';
+                field = `filter.${filter.field}.typeDescription`;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
+            // filter.field == 'id' ||
+            // filter.field == 'idClasification' ||
+
+            // filter.field == 'nameSubClasification'
+            //   ? (searchFilter = SearchFilter.EQ)
+            //   : (searchFilter = SearchFilter.ILIKE);
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
