@@ -1,5 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IHistoryGood } from 'src/app/core/models/administrative-processes/history-good.model';
@@ -8,7 +13,10 @@ import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { HistoryGoodService } from 'src/app/core/services/ms-history-good/history-good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { NUMBERS_PATTERN, POSITVE_NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
+import {
+  POSITVE_NUMBERS_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 
 import { COLUMNS, goodCheck } from './columns';
 
@@ -38,12 +46,12 @@ export class ChangeOfStatusStiComponent extends BasePage implements OnInit {
 
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
-  limit: FormControl = new FormControl(10)
+  limit: FormControl = new FormControl(10);
   goodSelect: any[] = [];
   goods: IGood[] = [];
-  
+
   //Activar y desactivar botones
-  enableToDelete = false
+  enableToDelete = false;
 
   constructor(
     private fb: FormBuilder,
@@ -144,14 +152,14 @@ export class ChangeOfStatusStiComponent extends BasePage implements OnInit {
     }
   }
 
-  clearAll(){
-    this.form.get('numberFile').reset()
-    this.form.get('description').reset()
-    this.goods = []
-    this.limit = new FormControl(10)
-    this.params.next(new ListParams())
-    this.totalItems = 0
-    this.enableToDelete = false
+  clearAll() {
+    this.form.get('numberFile').reset();
+    this.form.get('description').reset();
+    this.goods = [];
+    this.limit = new FormControl(10);
+    this.params.next(new ListParams());
+    this.totalItems = 0;
+    this.enableToDelete = false;
   }
 
   listGoods() {
@@ -179,8 +187,8 @@ export class ChangeOfStatusStiComponent extends BasePage implements OnInit {
           }
           this.goods = response.data;
           this.totalItems = response.count;
-            this.enableToDelete = true
-            this.loading = false;
+          this.enableToDelete = true;
+          this.loading = false;
           this.currentDate.disable();
         },
         error: error => {
@@ -213,18 +221,21 @@ export class ChangeOfStatusStiComponent extends BasePage implements OnInit {
     });
   }
 
-  deleteExpedient(){
-      this.goodServices.getByExpedient(this.numberFile.value).subscribe(
-        res => {
-          if(res.count > 0){
-            this.alert('warning','No es posible suprimir el registro principal al existir registros detallados asociados','')
-          }else{
-            
-          }
-        },
-        err => {
-          console.log(err)
+  deleteExpedient() {
+    this.goodServices.getByExpedient(this.numberFile.value).subscribe(
+      res => {
+        if (res.count > 0) {
+          this.alert(
+            'warning',
+            'No es posible suprimir el registro principal al existir registros detallados asociados',
+            ''
+          );
+        } else {
         }
-      )
+      },
+      err => {
+        console.log(err);
+      }
+    );
   }
 }

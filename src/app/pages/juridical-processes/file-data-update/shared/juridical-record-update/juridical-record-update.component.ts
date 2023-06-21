@@ -1287,17 +1287,17 @@ export class JuridicalRecordUpdateComponent
         ],
         {
           queryParams: {
-            origin: '/pages/juridical/file-data-update',
-            form: 'FACTGENACTDATEX',
-            expediente: this.formControls.expedientNumber.value,
-            volante: this.formControls.wheelNumber.value,
-            pDictamen: this.formControls.dictumKey.value?.id,
-            pGestOk: this.pageParams.pGestOk,
-            pNoTramite: procedure,
-            tipoOf: officeType,
-            bien: property,
-            sale: sale,
-            doc,
+            LAST_ROUTE: '/pages/juridical/file-data-update',
+            ORIGIN: 'FACTGENACTDATEX',
+            VOLANTE: this.formControls.wheelNumber.value,
+            EXPEDIENTE: this.formControls.expedientNumber.value,
+            DOC: doc,
+            TIPO_OF: officeType,
+            SALE: sale,
+            BIEN: property,
+            P_GEST_OK: this.pageParams.pGestOk,
+            P_NO_TRAMITE: procedure,
+            P_DICTAMEN: this.formControls.dictumKey.value?.id,
           },
         }
       );
@@ -1727,7 +1727,6 @@ export class JuridicalRecordUpdateComponent
       pGestOk: this.pageParams.pGestOk,
       pNoTramite: procedure,
     };
-    // debugger;
     let path = '/pages/juridical/juridical-ruling-g';
     this.router.navigate([path], {
       queryParams: {
@@ -1842,12 +1841,12 @@ export class JuridicalRecordUpdateComponent
       ],
       {
         queryParams: {
-          origin: '/pages/juridical/file-data-update',
-          form: 'FACTGENACTDATEX',
-          expediente: this.formControls.expedientNumber.value,
-          volante: this.formControls.wheelNumber.value,
-          pGestOk: this.pageParams.pGestOk,
-          pNoTramite: procedure,
+          LAST_ROUTE: '/pages/juridical/file-data-update',
+          ORIGIN: 'FACTGENACTDATEX',
+          VOLANTE: this.formControls.wheelNumber.value,
+          EXPEDIENTE: this.formControls.expedientNumber.value,
+          P_GEST_OK: this.pageParams.pGestOk,
+          P_NO_TRAMITE: procedure,
         },
       }
     );

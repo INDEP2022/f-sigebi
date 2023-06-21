@@ -3,27 +3,27 @@ export const COLUMNS = {
     title: 'Proc. Gabin',
     sort: false,
   },
-  record: {
+  asociateExpNumber: {
     title: 'Expediente',
     sort: false,
   },
-  good: {
+  goodNumber: {
     title: 'Bien',
     sort: false,
   },
-  description: {
+  goodDescription: {
     title: 'Descripción',
     sort: false,
   },
-  status: {
+  goodStatus: {
     title: 'Estatus',
     sort: false,
   },
-  statusDes: {
+  statusDescription: {
     title: 'Desc Estatus',
     sort: false,
   },
-  destination: {
+  destiny: {
     title: 'Destino',
     sort: false,
   },
