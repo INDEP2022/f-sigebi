@@ -22,7 +22,8 @@ import { FinancialIndicatorsService } from 'src/app/core/services/catalogs/finan
 })
 export class CatFinancialIndicatorsComponent
   extends BasePage
-  implements OnInit {
+  implements OnInit
+{
   columns: IFinancialIndicators[] = [];
   data: LocalDataSource = new LocalDataSource();
   columnFilters: any = [];

@@ -10,7 +10,6 @@ import { BANK_CONCEPTS_COLUMNS } from './bank-concepts-columns';
 import { IBankConcepts } from 'src/app/core/models/catalogs/bank-concepts-model';
 //services
 import { BankConceptsService } from 'src/app/core/services/catalogs/bank-concepts-service';
-import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-bank-concepts',
@@ -78,7 +77,6 @@ export class BankConceptsComponent extends BasePage implements OnInit {
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(bankConcepts.key);
-
       }
     });
   }
@@ -88,7 +86,8 @@ export class BankConceptsComponent extends BasePage implements OnInit {
       next: () => {
         this.getBankConcepts();
         this.alert('success', 'Concepto bancario', 'Borrado');
-      }, error: erro => {
+      },
+      error: erro => {
         this.alert(
           'warning',
           'Concepto bancario',
