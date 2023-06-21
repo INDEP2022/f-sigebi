@@ -69,7 +69,13 @@
             <input
               type="text"
               class="form-control"
-              [value]="item.valor === null ? '' : item.valor"
+              [value]="
+                item.valor === null ||
+                item.valor === 'NULL' ||
+                item.valor === 'null'
+                  ? ''
+                  : item.valor
+              "
               style="background-color: #dff8f8" />
           </div>
         </div>
