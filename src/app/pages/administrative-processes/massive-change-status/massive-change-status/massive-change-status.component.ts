@@ -90,7 +90,7 @@ export class MassiveChangeStatusComponent extends BasePage implements OnInit {
       ],
     });
   }
-  
+
   //Llenado de excel
   onFileChange(event: Event) {
     const files = (event.target as HTMLInputElement).files;
@@ -125,8 +125,6 @@ export class MassiveChangeStatusComponent extends BasePage implements OnInit {
       this.alert('error', 'Ocurrio un error al leer el archivo', '');
     }
   }
-
-
 
   loadDescription() {
     console.log(this.goodStatus.value);

@@ -7,6 +7,7 @@ import {
 } from 'src/app/common/repository/interfaces/list-params';
 import { ClassifyGoodService } from 'src/app/core/services/ms-classifygood/ms-classifygood.service';
 import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
+import { HistoryGoodService } from 'src/app/core/services/ms-history-good/history-good.service';
 import { InterfacefgrService } from 'src/app/core/services/ms-interfacefgr/ms-interfacefgr.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import { MJobManagementService } from 'src/app/core/services/ms-office-management/m-job-management.service';
@@ -29,6 +30,7 @@ export class RelatedDocumentDesahogo extends BasePage {
   private goodprocess = inject(GoodProcessService);
   private classifyGood = inject(ClassifyGoodService);
   private officeManagement = inject(OfficeManagementService);
+  private historyGoodService = inject(HistoryGoodService);
 
   constructor() {
     super();
@@ -146,5 +148,19 @@ export class RelatedDocumentDesahogo extends BasePage {
       pFlyerNumber: Number(volante),
     };
     return this.officeManagement.deleteJobGestion(body);
+  }
+
+  updateGoodStatus(body: any) {
+    return new Promise((resolve, reject) => {
+      this.historyGoodService.updateGoodStatusWhenDelete(body).subscribe({
+        next: resp => {
+          resolve(resp);
+        },
+        error: error => {
+          console.log('Error al actualizar los estados de bienes', error);
+          reject('error');
+        },
+      });
+    });
   }
 }

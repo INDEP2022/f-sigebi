@@ -1,0 +1,15 @@
+.excuse {
+  margin-top: 20px;
+  @media screen and (max-width: 576px) {
+    margin-top: 0px;
+  }
+}
+
+// .buttons {
+//   button:last-child {
+//     margin-left: 10px;
+//     @media screen and (max-width: 576px) {
+//       margin-left: 0px;
+//     }
+//   }
+// }

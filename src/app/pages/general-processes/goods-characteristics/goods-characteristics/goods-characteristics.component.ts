@@ -430,7 +430,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     console.log(this.data);
     let body: any = {
       id: this.good.id,
-      goodId: this.good.goodId,
+      goodId: this.good.goodid,
     };
     let tableValid = true;
     this.data.forEach(row => {
