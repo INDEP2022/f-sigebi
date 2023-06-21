@@ -1,9 +1,26 @@
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { BehaviorSubject } from 'rxjs';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { DatePipe } from '@angular/common';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { BehaviorSubject, takeUntil } from 'rxjs';
+import {
+  FilterParams,
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
+import { IRequesNumeraryEnc } from 'src/app/core/models/ms-numerary/numerary.model';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
+import { GoodParametersService } from 'src/app/core/services/ms-good-parameters/good-parameters.service';
+import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
+import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive-good.service';
+import { RequestNumeraryDetService } from 'src/app/core/services/ms-numerary/request-numerary-det.service';
+import { RequestNumeraryEncService } from 'src/app/core/services/ms-numerary/request-numerary-enc.service';
+import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { ListNumeraryComponent } from '../list-data/list-numerary.component';
+import { NumDetGoodsDetail } from '../models/goods-det';
 import { REQUEST_NUMERARY_COLUMNS } from './numerary-request-columns';
 
 @Component({
@@ -13,36 +30,590 @@ import { REQUEST_NUMERARY_COLUMNS } from './numerary-request-columns';
 })
 export class NumeraryRequestComponent extends BasePage implements OnInit {
   form: FormGroup;
-  registers = 155;
+  registers: number = null;
   data1: any[] = [];
+  filterParams = new BehaviorSubject<FilterParams>(new FilterParams());
+  filterParams2 = new BehaviorSubject<FilterParams>(new FilterParams());
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
-  constructor(private fb: FormBuilder) {
+  isActions: boolean = true;
+  isNew: boolean = false;
+  totalItems2: number = 0;
+  @ViewChild('file', { static: false }) files: ElementRef<HTMLInputElement>;
+  isSearch: boolean = false;
+
+  constructor(
+    private fb: FormBuilder,
+    private readonly numEncServ: RequestNumeraryEncService,
+    private readonly datePipe: DatePipe,
+    private readonly userService: UsersService,
+    private modalService: BsModalService,
+    private readonly numDetService: RequestNumeraryDetService,
+    private readonly goodParameterServ: GoodParametersService,
+    private readonly delegationServ: DelegationService,
+    private readonly authServ: AuthService,
+    private readonly massiveGoodServ: MassiveGoodService,
+    private readonly goodProceesServ: GoodProcessService
+  ) {
     super();
     this.settings = {
       ...this.settings,
       actions: false,
       columns: REQUEST_NUMERARY_COLUMNS,
+      rowClassFunction: (row: any) => {
+        let cell = '';
+        if (row.data.valid) {
+          if (row.data.valid == 'N') {
+            cell = 'bg-dark text-white';
+          }
+        } else {
+          cell = '';
+        }
+
+        return cell;
+      },
     };
   }
 
+  status: DefaultSelect = new DefaultSelect(
+    [
+      {
+        id: 'SOLICITADA',
+        val: 'S',
+      },
+      {
+        id: 'PROCESADA',
+        val: 'P',
+      },
+      {
+        id: 'CANCELADA',
+        val: 'C',
+      },
+    ],
+    3
+  );
+
+  currencyList: DefaultSelect = new DefaultSelect(
+    [
+      {
+        id: 'PESOS',
+        val: 'MN',
+      },
+      {
+        id: 'DOLARES',
+        val: 'USD',
+      },
+      {
+        id: 'EUROS',
+        val: 'EUR',
+      },
+      {
+        id: 'CONV/PESOS',
+        val: 'CN',
+      },
+      {
+        id: 'CONV/DOLARES',
+        val: 'CD',
+      },
+    ],
+    5
+  );
+
   ngOnInit(): void {
     this.prepareForm();
+
+    this.filterParams2.pipe(takeUntil(this.$unSubscribe)).subscribe({
+      next: () => {
+        if (this.totalItems2 > 0) this.getNumDet();
+      },
+    });
   }
 
   prepareForm() {
     this.form = this.fb.group({
-      idProcess: [null, Validators.required],
-      date: [null, Validators.required],
+      solnumId: [null],
+      solnumDate: [null],
+      description: [null],
+      solnumType: [null],
+      delegationNumber: [null],
+      user: [null],
+      procnumId: [null],
+      solnumStatus: [null],
+      recordNumber: [null],
+      currency: [null],
+      name: [null],
+      desc_del: [null],
+    });
 
-      status: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      devolution: [null, Validators.required],
-      decomiso: [null, Validators.required],
-      abandono: [null, Validators.required],
-      currency: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
+    const { solnumStatus } = this.form.value;
+
+    this.isActions = ['P', 'C'].includes(solnumStatus) ? false : true;
+  }
+
+  searchNumeraryEnc() {
+    this.getNumEnc();
+  }
+
+  callExc() {
+    const { currency } = this.form.value;
+
+    if (!currency) {
+      this.onLoadToast('error', 'Debe seleccionar el tipo de moneda');
+      return;
+    }
+
+    this.files.nativeElement.click();
+  }
+
+  createFilter() {
+    const { solnumId, solnumDate, solnumStatus, description, solnumType } =
+      this.form.value;
+    let date = solnumDate;
+
+    this.filterParams.getValue().removeAllFilters();
+    this.filterParams.getValue().page = 1;
+
+    if (typeof solnumDate == 'object' && solnumDate) {
+      date = this.datePipe.transform(solnumDate, 'yyyy-MM-dd');
+    } else if (typeof solnumDate == 'string' && solnumDate) {
+      date = solnumDate.split('/').reverse().join('-');
+    }
+
+    if (solnumId)
+      this.filterParams
+        .getValue()
+        .addFilter('solnumId', solnumId, SearchFilter.EQ);
+    if (date)
+      this.filterParams
+        .getValue()
+        .addFilter('solnumDate', date, SearchFilter.EQ);
+    if (solnumStatus)
+      this.filterParams
+        .getValue()
+        .addFilter('solnumStatus', solnumStatus, SearchFilter.EQ);
+    if (description)
+      this.filterParams
+        .getValue()
+        .addFilter('description', description, SearchFilter.ILIKE);
+    if (solnumType)
+      this.filterParams
+        .getValue()
+        .addFilter('solnumType', solnumType, SearchFilter.EQ);
+  }
+
+  clearSearch() {
+    this.form.reset();
+    this.isNew = false;
+    this.totalItems = 0;
+    this.totalItems2 = 0;
+    this.data1 = [];
+    this.registers = null;
+    this.files.nativeElement.value = '';
+  }
+
+  getNumEnc() {
+    this.createFilter();
+    this.numEncServ
+      .getAllFilter(this.filterParams.getValue().getParams())
+      .subscribe({
+        next: async resp => {
+          this.totalItems = resp.count;
+          resp.data.map((num: any) => {
+            num.solnumDate = num.solnumDate
+              ? num.solnumDate.split('-').reverse().join('/')
+              : '';
+          });
+          const data = resp.data[0];
+          this.form.patchValue(data);
+          this.form.get('delegationNumber').patchValue(data.delegationNumber);
+          await this.postQuery(data);
+
+          this.filterParams2.getValue().removeAllFilters();
+          this.filterParams2.getValue().page = 1;
+          this.filterParams2
+            .getValue()
+            .addFilter('solnumId', data.solnumId, SearchFilter.EQ);
+
+          await this.getNumDet();
+        },
+        error: () => {
+          this.totalItems = 0;
+        },
+      });
+  }
+
+  async getNumDet() {
+    this.loading = true;
+    this.data1 = [];
+    return new Promise((resolve, reject) => {
+      this.numDetService
+        .getAllFilter(this.filterParams2.getValue().getParams())
+        .subscribe({
+          next: resp => {
+            const data = resp.data;
+
+            data.map(async good => {
+              const details = await this.getDescDep(good.goodNumber);
+              if (details) {
+                good.commission = details.deposito ?? '';
+                good.description = details.descripcion ?? '';
+                good.bankDate = details.fec_insercion_banco ?? '';
+              }
+              this.data1 = [...data];
+            });
+
+            // this.data1 = [...data]
+
+            this.totalItems2 = resp.count;
+            this.loading = false;
+            resolve(true);
+          },
+          error: () => {
+            this.loading = false;
+            this.data1 = [];
+            this.totalItems2 = 0;
+            resolve(false);
+          },
+        });
+    });
+  }
+
+  async postQuery(data: IRequesNumeraryEnc) {
+    let V_TMONEDA;
+
+    if (data.description) {
+      const etapa = await this.getEtapa();
+      const desc = await this.getDesDelegation(data.delegationNumber, etapa);
+      this.form.get('desc_del').patchValue(desc);
+    } else {
+      this.onLoadToast('error', 'Error en la descripción de la solicitud');
+    }
+
+    await this.getName(data.user);
+
+    if (data.solnumId) {
+      V_TMONEDA = await this.getCurrency(data.solnumId);
+
+      const values: any = {
+        P: () => 'MN',
+        D: () => 'USD',
+        E: () => 'EUR',
+        C: () => 'CN',
+        CD: () => 'CD',
+        X: () => 'X',
+      };
+
+      if (values[V_TMONEDA]() != 'X') {
+        this.form.get('currency').patchValue(values[V_TMONEDA]());
+      } else {
+        this.form.get('currency').patchValue(null);
+      }
+    }
+  }
+
+  async getCurrency(solnumId: number) {
+    return new Promise<string>((resolve, reject) => {
+      const filter = new FilterParams();
+      filter.addFilter('solnumId', solnumId, SearchFilter.EQ);
+      this.numDetService.getAllFilter(filter.getParams()).subscribe({
+        next: resp => {
+          resolve(resp.data[0].currencyId);
+        },
+        error: () => {
+          resolve('X');
+        },
+      });
+    });
+  }
+
+  async getDesDelegation(del: number, edo: number) {
+    return new Promise<string>((resolve, reject) => {
+      const params = new ListParams();
+      params['filter.id'] = `${SearchFilter.EQ}:${del}`;
+      params['filter.etapaEdo'] = `${SearchFilter.EQ}:${edo}`;
+      this.delegationServ.getAll(params).subscribe({
+        next: resp => {
+          resolve(resp.data[0].description);
+        },
+        error: () => {
+          resolve(null);
+        },
+      });
+    });
+  }
+
+  async getEtapa() {
+    return new Promise<number>((resolve, reject) => {
+      this.goodParameterServ.getPhaseEdo().subscribe({
+        next: resp => {
+          resolve(resp.stagecreated);
+        },
+        error: () => {
+          resolve(null);
+        },
+      });
+    });
+  }
+
+  async getDescDep(good: number) {
+    return new Promise<any>((resolve, reject) => {
+      this.goodProceesServ.getDescDepBan(good).subscribe({
+        next: resp => {
+          resolve(resp.data[0]);
+        },
+        error: () => {
+          resolve(null);
+        },
+      });
+    });
+  }
+
+  async getNameDetails(user: string) {
+    const params = new FilterParams();
+    params.addFilter('user', user, SearchFilter.EQ);
+    return new Promise((resolve, reject) => {
+      this.userService.getInfoUserLogued(params.getParams()).subscribe({
+        next: resp => {
+          resolve(resp.data[0]);
+        },
+        error: () => {
+          resolve(null);
+        },
+      });
+    });
+  }
+
+  async getName(user: string) {
+    const params = new FilterParams();
+    params.addFilter('id', user, SearchFilter.EQ);
+    return new Promise((resolve, reject) => {
+      this.userService
+        .getAllSegUsersModal(this.userService, params.getParams())
+        .subscribe({
+          next: resp => {
+            this.form.get('name').patchValue(resp.data[0].name);
+            resolve(true);
+          },
+          error: () => {
+            resolve(true);
+          },
+        });
+    });
+  }
+
+  showData() {
+    let config: ModalOptions = {
+      initialState: {
+        //filtros
+        paramsList: this.params,
+        filterParams: this.filterParams,
+        callback: async (next: boolean, data: IRequesNumeraryEnc) => {
+          if (next) {
+            data.solnumDate = data.solnumDate
+              ? data.solnumDate.split('-').reverse().join('/')
+              : '';
+            this.form.patchValue(data);
+            this.form.get('delegationNumber').patchValue(data.delegationNumber);
+            await this.postQuery(data);
+
+            this.filterParams2.getValue().removeAllFilters();
+            this.filterParams2.getValue().page = 1;
+            this.filterParams2
+              .getValue()
+              .addFilter('solnumId', data.solnumId, SearchFilter.EQ);
+
+            await this.getNumDet();
+          }
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(ListNumeraryComponent, config);
+  }
+
+  newData() {
+    this.form.reset();
+    this.isNew = true;
+    this.totalItems = 0;
+    this.totalItems2 = 0;
+    this.data1 = [];
+    this.registers = null;
+    this.files.nativeElement.value = '';
+  }
+
+  async saveData() {
+    const { solnumType, description } = this.form.value;
+
+    if (!solnumType) {
+      this.onLoadToast('error', 'Debe especificar el tipo de solicitud');
+      return;
+    }
+
+    if (!description) {
+      this.onLoadToast('error', 'Debe ingresar el concepto de la solicitud');
+      return;
+    }
+
+    if (this.data1.length > 0) {
+      const user = this.authServ.decodeToken();
+      const detailsUser: any = await this.getNameDetails(
+        user.username.toUpperCase()
+      );
+
+      //this.form.get('solnumId').patchValue()
+      this.form.get('solnumDate').patchValue(new Date());
+      this.form.get('solnumStatus').patchValue('S');
+      this.form
+        .get('delegationNumber')
+        .patchValue(detailsUser.delegationNumber);
+      this.form.get('user').patchValue(user.username.toUpperCase());
+      this.form.get('desc_del').patchValue(detailsUser.delegation.description);
+      this.form.get('name').patchValue(detailsUser.userDetail.name);
+    } else {
+      this.onLoadToast('error', 'Debe ingresar un bien para ser guardado.');
+      return;
+    }
+
+    for (let i = 0; i < this.data1.length; i++) {
+      const valid = this.data1[i].valid ?? '';
+      if (valid) {
+        if (valid == 'N') {
+          this.onLoadToast('error', 'Error hay bienes que no son validos');
+          return;
+        }
+      }
+    }
+    let body: IRequesNumeraryEnc = this.form.value;
+
+    if (this.isNew) {
+      this.createSolcEnc(body);
+    } else {
+      this.updateSolcEn(body);
+      //update
+    }
+  }
+
+  updateSolcEn(body: IRequesNumeraryEnc) {
+    delete body.currency;
+    delete body.name;
+    delete body.desc_del;
+    this.numEncServ.update(body).subscribe({
+      next: async resp => {
+        this.onLoadToast(
+          'success',
+          'Solicitud ha sido actualizada exitosamente'
+        );
+      },
+      error: () => {
+        this.onLoadToast(
+          'error',
+          'Ocurrio un error al actualizar la solicitud'
+        );
+      },
+    });
+  }
+
+  createSolcEnc(body: IRequesNumeraryEnc) {
+    this.numEncServ.create(body).subscribe({
+      next: async resp => {
+        this.form.get('solnumId').patchValue(resp.solnumId);
+        const { solnumId } = this.form.value;
+
+        this.onLoadToast('success', 'Solicitud ha sido creada exitosamente');
+
+        this.data1.map(async good => {
+          good.solnumId = solnumId;
+          await this.createGoodDet(good);
+        });
+
+        this.createFilter();
+        await this.getNumDet();
+      },
+      error: () => {
+        this.onLoadToast('error', 'Ocurrio un error al crear la solicitud');
+      },
+    });
+  }
+
+  async createGoodDet(body: NumDetGoodsDetail) {
+    return new Promise((resolve, reject) => {
+      this.numDetService.create(body).subscribe({
+        next: () => {
+          resolve(true);
+        },
+        error: () => {
+          resolve(false);
+        },
+      });
+    });
+  }
+
+  onFileChange(event: Event) {
+    const files = (event.target as HTMLInputElement).files;
+    if (files.length != 1) throw 'No files selected, or more than of allowed';
+    this.readExcel(files[0]);
+    //const fileReader = new FileReader();
+    //fileReader.readAsBinaryString(files[0]);
+    //fileReader.onload = () => this.readExcel(/*fileReader.result*/files[0]);
+  }
+
+  readExcel(binaryExcel: string | ArrayBuffer | any) {
+    this.data1 = [];
+    this.registers = null;
+    const { currency, solnumId } = this.form.value;
+    this.loading = true;
+    this.massiveGoodServ.getDataCSVFile(currency, binaryExcel).subscribe({
+      next: resp => {
+        this.files.nativeElement.value = '';
+        this.loading = false;
+        const data = resp.data;
+        this.registers = resp.data.length || 0;
+        data.map(good => {
+          let det: NumDetGoodsDetail = {
+            allInterest: null,
+            allNumerary: null,
+            allPayNumber: null,
+            allintPay: null,
+            commission: good.deposit,
+            currencyId: null,
+            dateCalculationInterests: null,
+            goodFatherpartializationNumber: null,
+            goodNumber: good.goodNumber,
+            recordNumber: null,
+            solnumId: Number(solnumId),
+            valid: good.valid,
+            bankDate: good.bankInsertionDate,
+            description: good.description,
+          };
+
+          const currencyId: any = {
+            MN: () => 'P',
+            USD: () => 'D',
+            EUR: () => 'E',
+            CN: () => 'C',
+            CD: () => 'CD',
+          };
+
+          det.currencyId = currencyId[currency]();
+
+          this.data1.push(det);
+        });
+
+        this.data1 = [...this.data1];
+      },
+      error: error => {
+        if (error.status == 400) {
+          if (error.error.message.includes('Conciliado')) {
+            this.onLoadToast('error', error.error.message);
+          }
+        }
+        this.loading = false;
+        this.data1 = [];
+        this.totalItems2 = 0;
+        this.registers = null;
+        this.files.nativeElement.value = '';
+      },
     });
   }
 }
