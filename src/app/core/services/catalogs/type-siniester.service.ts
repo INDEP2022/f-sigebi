@@ -25,8 +25,12 @@ export class TypeSiniesterService implements ICrudMethods<ITypeSiniester> {
     return this.typeSiniesterRepository.create(this.route, model);
   }
 
-  update(id: string | number, model: ITypeSiniester): Observable<Object> {
+  /*update(id: string | number, model: ITypeSiniester): Observable<Object> {
     return this.typeSiniesterRepository.update(this.route, id, model);
+  }*/
+
+  newUpdate(model: ITypeSiniester): Observable<Object> {
+    return this.typeSiniesterRepository.newUpdate(this.route, model);
   }
 
   remove(id: string | number): Observable<Object> {

@@ -1,23 +1,15 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import {
-  BehaviorSubject,
-  catchError,
-  Observable,
-  switchMap,
-  takeUntil,
-  tap,
-  throwError,
-} from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
+import { GoodFinderService } from 'src/app/core/services/ms-good/good-finder.service';
 import { HistoryIndicatorService } from 'src/app/core/services/ms-history-indicator/history-indicator.service';
 import { HistoricalProcedureManagementService } from 'src/app/core/services/ms-procedure-management/historical-procedure-management.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { WorkMailboxService } from '../../work-mailbox.service';
-import { GoodFinderService } from 'src/app/core/services/ms-good/good-finder.service';
 
 @Component({
   selector: 'app-mailbox-modal-table',
@@ -42,18 +34,20 @@ export class MailboxModalTableComponent<T = any>
   body: any = {};
   showConfirmButton: boolean = false;
   selectedRow: T = null;
-  proceedingsNumber:any;
+  proceedingsNumber: any;
   @Output() selected = new EventEmitter<T>();
-  constructor(private modalRef: BsModalRef, private goodFinderService:GoodFinderService) {
+  constructor(
+    private modalRef: BsModalRef,
+    private goodFinderService: GoodFinderService
+  ) {
     super();
     this.settings = { ...this.settings, actions: false };
   }
 
   ngOnInit(): void {
     this.settings = { ...this.settings, columns: this.columns };
-   
 
-      this.getData()
+    this.getData();
   }
 
   getData() {
@@ -70,16 +64,12 @@ export class MailboxModalTableComponent<T = any>
       error: error => {
         this.loading = false;
         this.onLoadToast(
-            'warning',
-            'Atención',
-            'Aún no existen bienes para este oficio'
-          );
-      }
-    })
-
-
-    
-    
+          'warning',
+          'Atención',
+          'La información solicitada aún no esta disponible'
+        );
+      },
+    });
   }
 
   close() {
