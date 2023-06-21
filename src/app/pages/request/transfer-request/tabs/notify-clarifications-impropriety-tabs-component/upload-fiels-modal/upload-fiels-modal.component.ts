@@ -184,9 +184,6 @@ export class UploadFielsModalComponent extends BasePage implements OnInit {
     let pass = this.fileForm.controls['pass'].value;
 
     if (pass.length <= 10) {
-      console.log(
-        'pass: ' + pass + ' Longitud de pass es correcto, proceder a encriptar'
-      );
       const obj: Object = {
         cadena: pass,
       };
@@ -195,11 +192,9 @@ export class UploadFielsModalComponent extends BasePage implements OnInit {
         response => {
           if (response !== null) {
             this.password = response;
-            console.log('Pass encriptada', this.password.encriptarResult); //Quitar
             this.fileForm.controls['pass'].setValue(
               this.password.encriptarResult
             );
-            console.log('Carga de archivos', this.fileForm.value);
             this.update();
           } else {
             //TODO: CHECK MESSAGE
@@ -236,16 +231,11 @@ export class UploadFielsModalComponent extends BasePage implements OnInit {
     formData.append('identifierSystem', '1');
     formData.append('identifierSignatory', '1');
     //formData.append('certificatebase64', this.base64Cer); La conversión ya lo hace el endpoint
-    console.log('FormData que se envia para guardar firmante', formData);
-
     this.signatoriesService
       .update(this.signatories.signatoryId, formData)
       .subscribe(
         data => this.handleSuccess(),
-        error => (
-          this.alert('info', 'No se pudo actualizar', error.error),
-          console.log('No se actualizó el firmante', error.error)
-        )
+        error => this.alert('info', 'No se pudo actualizar', error.error)
       );
   }
 

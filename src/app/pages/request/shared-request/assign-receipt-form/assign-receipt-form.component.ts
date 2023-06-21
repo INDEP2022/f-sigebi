@@ -1,12 +1,16 @@
 import { Component, OnInit } from '@angular/core';
+import * as moment from 'moment';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IGoodProgramming } from 'src/app/core/models/good-programming/good-programming';
 import { Iprogramming } from 'src/app/core/models/good-programming/programming';
+import { IProceedings } from 'src/app/core/models/ms-proceedings/proceedings.model';
 import { IReceipt } from 'src/app/core/models/receipt/receipt.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
+import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
 import { GoodService } from 'src/app/core/services/good/good.service';
 import { ProceedingsService } from 'src/app/core/services/ms-proceedings';
 import { ProgrammingGoodService } from 'src/app/core/services/ms-programming-request/programming-good.service';
@@ -29,6 +33,8 @@ export class AssignReceiptFormComponent extends BasePage implements OnInit {
   actId: number = 0;
   statusReceipt: string = '';
   loadingTable: boolean = false;
+  delegationDes: string = '';
+  keyTransferent: string = '';
   constructor(
     private modalRef: BsModalRef,
     private modalService: BsModalService,
@@ -36,7 +42,9 @@ export class AssignReceiptFormComponent extends BasePage implements OnInit {
     private receptionGoodService: ReceptionGoodService,
     private programminGoodService: ProgrammingGoodService,
     private goodService: GoodService,
-    private authService: AuthService
+    private authService: AuthService,
+    private regionalDelegationService: RegionalDelegationService,
+    private transferentService: TransferenteService
   ) {
     super();
     this.settingsReceipt.columns = RECEIPT_COLUMNS;
@@ -63,7 +71,6 @@ export class AssignReceiptFormComponent extends BasePage implements OnInit {
   }
 
   receiptSelect(receipt: IReceipt) {
-    console.log('receipt', receipt);
     this.receiptId = receipt.id;
     this.actId = receipt.actId;
     this.statusReceipt = receipt.statusReceipt;
@@ -72,13 +79,13 @@ export class AssignReceiptFormComponent extends BasePage implements OnInit {
   async confirm() {
     if (this.statusReceipt == 'ABIERTO') {
       const updateProgrammingGood = await this.updateProgGoood();
-      console.log('updateProgramming', updateProgrammingGood);
+
       if (updateProgrammingGood) {
         const updateGood = await this.updateGood();
-        console.log('updateGood', updateGood);
+
         if (updateGood) {
           const createReceipGood = await this.createReceiptGood();
-          console.log('createReceipGood', createReceipGood);
+
           if (createReceipGood) {
             this.modalRef.content.callback(true);
             this.close();
@@ -118,7 +125,6 @@ export class AssignReceiptFormComponent extends BasePage implements OnInit {
   updateGood() {
     return new Promise((resolve, reject) => {
       this.selectGoods.map(item => {
-        console.log('Actualizando programminggood', true);
         const formData: Object = {
           id: item.id,
           goodId: item.goodId,
@@ -152,14 +158,13 @@ export class AssignReceiptFormComponent extends BasePage implements OnInit {
           userModification: user.username,
           modificationDate: new Date(),
         };
-        console.log('formData', formData);
+
         this.receptionGoodService.createReceiptGood(formData).subscribe({
           next: response => {
             resolve(true);
           },
           error: error => {
             resolve(false);
-            console.log('error al crear el recibo', error);
           },
         });
       });
@@ -181,28 +186,123 @@ export class AssignReceiptFormComponent extends BasePage implements OnInit {
       const form: Object = {
         minutesId: '1',
         idPrograming: this.programming.id,
+        statusProceeedings: 'ABIERTO',
       };
       this.proceedingService.createProceedings(form).subscribe({
-        next: response => {
-          const receiptForm: Object = {
-            id: 1,
-            actId: response.id,
-            programmingId: this.programming.id,
-            statusReceipt: 'ABIERTO',
-          };
-          this.receptionGoodService.createReceipt(receiptForm).subscribe({
-            next: response => {
-              this.getReceipts();
-            },
-            error: error => {
-              console.log(error);
-            },
-          });
+        next: async response => {
+          const createKeyAct = await this.createKeyAct(response);
+          if (createKeyAct == true) {
+            const receiptForm: Object = {
+              id: 1,
+              actId: response.id,
+              programmingId: this.programming.id,
+              statusReceipt: 'ABIERTO',
+            };
+
+            this.receptionGoodService.createReceipt(receiptForm).subscribe({
+              next: async response => {
+                const folioReceipt = await this.createKeyReceipt(response);
+                if (folioReceipt) {
+                  this.getReceipts();
+                }
+              },
+              error: error => {
+                console.log(error);
+              },
+            });
+          }
         },
         error: error => {
           console.log(error);
         },
       });
     }
+  }
+
+  createKeyAct(act: IProceedings) {
+    return new Promise((resolve, reject) => {
+      this.regionalDelegationService
+        .getById(this.programming.regionalDelegationNumber)
+        .subscribe(data => {
+          this.delegationDes = data.description;
+
+          this.transferentService
+            .getById(this.programming.tranferId)
+            .subscribe(data => {
+              this.keyTransferent = data.keyTransferent;
+              const month = moment(new Date()).format('MM');
+              const year = moment(new Date()).format('YY');
+              const keyProceeding =
+                this.delegationDes +
+                '-' +
+                this.keyTransferent +
+                '-' +
+                this.programming.id +
+                '-' +
+                `A${act.id}` +
+                '-' +
+                year +
+                '-' +
+                month;
+
+              const receiptform = {
+                id: act.id,
+                idPrograming: this.programming.id,
+                folioProceedings: keyProceeding,
+              };
+
+              this.proceedingService.updateProceeding(receiptform).subscribe({
+                next: () => {
+                  resolve(true);
+                },
+              });
+            });
+        });
+    });
+  }
+
+  createKeyReceipt(receipt: IReceipt) {
+    return new Promise((resolve, reject) => {
+      this.regionalDelegationService
+        .getById(this.programming.regionalDelegationNumber)
+        .subscribe(data => {
+          this.delegationDes = data.description;
+
+          this.transferentService
+            .getById(this.programming.tranferId)
+            .subscribe(data => {
+              this.keyTransferent = data.keyTransferent;
+              const month = moment(new Date()).format('MM');
+              const year = moment(new Date()).format('YY');
+              const keyReceipt =
+                this.delegationDes +
+                '-' +
+                this.keyTransferent +
+                '-' +
+                this.programming.id +
+                '-' +
+                `A${receipt.actId}` +
+                '-' +
+                `R${receipt.id}` +
+                '-' +
+                year +
+                '-' +
+                month;
+
+              const receiptform = {
+                id: receipt.id,
+                actId: receipt.actId,
+                programmingId: receipt.programmingId,
+                folioReceipt: keyReceipt,
+              };
+
+              this.receptionGoodService.updateReceipt(receiptform).subscribe({
+                next: () => {
+                  resolve(true);
+                },
+              });
+            });
+        });
+    });
   }
 }

@@ -95,7 +95,10 @@ export class ProceedingsService extends HttpService {
   }
 
   getProceedings(params?: ListParams): Observable<IListResponse<IProceedings>> {
-    return this.get<IListResponse<IProceedings>>(`${this.route}`, params);
+    return this.get<IListResponse<IProceedings>>(
+      `${this.route}/getAll`,
+      params
+    );
   }
 
   createProceedings(formData: any) {
@@ -134,5 +137,9 @@ export class ProceedingsService extends HttpService {
 
   insertsAndUpdatesValmotosOne(model: Object) {
     return this.post<IListResponse>('aplication/get-detail-acta-types', model);
+  }
+
+  updateProceeding(model: Object) {
+    return this.put(this.route, model);
   }
 }
