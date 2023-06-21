@@ -9,6 +9,7 @@ import { LegalOpinionsOfficeFindAppointmentComponent } from './legal-opinions-of
 import { LegalOpinionsOfficeFirmModalComponent } from './legal-opinions-office-firm-modal/legal-opinions-office-firm-modal.component';
 import { LegalOpinionsOfficeRoutingModule } from './legal-opinions-office-routing.module';
 import { LegalOpinionsOfficeComponent } from './legal-opinions-office/legal-opinions-office.component';
+import { ModalScanningFoilTableComponent } from './modal-scanning-foil/modal-scanning-foil.component';
 import { ScanningFoilComponent } from './scanning-foil/scanning-foil.component';
 
 @NgModule({
@@ -17,6 +18,7 @@ import { ScanningFoilComponent } from './scanning-foil/scanning-foil.component';
     ScanningFoilComponent,
     LegalOpinionsOfficeFindAppointmentComponent,
     LegalOpinionsOfficeFirmModalComponent,
+    ModalScanningFoilTableComponent,
   ],
   imports: [
     CommonModule,

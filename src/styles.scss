@@ -42,6 +42,12 @@
   pointer-events: none;
 }
 
+.btn-red {
+  color: #fff !important;
+  background-color: #cb4335 !important;
+  border-color: #cb4335 !important;
+}
+
 * {
   font-size: 14px;
 }
@@ -560,4 +566,23 @@ ng-scrollbar.table-scrollbar {
   color: black !important;
   font-weight: bold;
   // background: default !important;
+}
+
+.hover-c:hover {
+  color: black !important;
+}
+
+tr.bg-dark:hover {
+  color: black !important;
+}
+tr.bg-dark.selected {
+  color: black !important;
+}
+
+tr.bg-success:hover {
+  color: black !important;
+}
+
+tr.bg-success.selected {
+  color: black !important;
 }
