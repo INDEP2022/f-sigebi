@@ -19,7 +19,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 })
 export class DelegationStateFormComponent extends BasePage implements OnInit {
   delegationStateForm: ModelForm<IDelegationState>;
-  title: string = 'Delegación Estado';
+  title: string = 'Delegación estado';
   edit: boolean = false;
   delegationSate: any;
   states = new DefaultSelect<IStateOfRepublic>();

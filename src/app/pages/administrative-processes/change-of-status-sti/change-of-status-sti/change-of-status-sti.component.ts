@@ -49,6 +49,10 @@ export class ChangeOfStatusStiComponent extends BasePage implements OnInit {
   limit: FormControl = new FormControl(10);
   goodSelect: any[] = [];
   goods: IGood[] = [];
+
+  //Activar y desactivar botones
+  enableToDelete = false;
+
   constructor(
     private fb: FormBuilder,
     private readonly goodServices: GoodService,
@@ -155,6 +159,7 @@ export class ChangeOfStatusStiComponent extends BasePage implements OnInit {
     this.limit = new FormControl(10);
     this.params.next(new ListParams());
     this.totalItems = 0;
+    this.enableToDelete = false;
   }
 
   listGoods() {
@@ -182,6 +187,7 @@ export class ChangeOfStatusStiComponent extends BasePage implements OnInit {
           }
           this.goods = response.data;
           this.totalItems = response.count;
+          this.enableToDelete = true;
           this.loading = false;
           this.currentDate.disable();
         },
@@ -213,5 +219,23 @@ export class ChangeOfStatusStiComponent extends BasePage implements OnInit {
         this.loading = false;
       },
     });
+  }
+
+  deleteExpedient() {
+    this.goodServices.getByExpedient(this.numberFile.value).subscribe(
+      res => {
+        if (res.count > 0) {
+          this.alert(
+            'warning',
+            'No es posible suprimir el registro principal al existir registros detallados asociados',
+            ''
+          );
+        } else {
+        }
+      },
+      err => {
+        console.log(err);
+      }
+    );
   }
 }

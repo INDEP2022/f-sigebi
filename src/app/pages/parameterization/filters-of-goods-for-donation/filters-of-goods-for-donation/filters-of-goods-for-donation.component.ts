@@ -130,13 +130,13 @@ export class FiltersOfGoodsForDonationComponent
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
         this.donationServ.remove(event).subscribe({
           next: () => {
-            this.alert('success', 'Borrado', '');
+            this.alert('success', 'Filtro de bienes para donación', 'Borrado');
             this.getPagination();
           },
           error: err => {

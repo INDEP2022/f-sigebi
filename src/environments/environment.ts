@@ -2,9 +2,6 @@
 // `ng build` replaces `environment.ts` with `environment.prod.ts`.
 // The list of file replacements can be found in `angular.json`.
 
-/*
- * Type window Object()
- */
 export const environment = {
   production: true,
   API_URL: 'http://sigebimsdev.indep.gob.mx/', //'http://localhost:3000/api/v1/',
@@ -13,7 +10,7 @@ export const environment = {
   URL_PREFIX: 'api/v1/',
   API_REPORTS_BASE: 'http://reports-qa.indep.gob.mx/jasperserver/',
   API_REPORTS:
-    'http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/',
+    'http://reports-qa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/',
   API_REPORTS_USR: 'sigebiadmon',
   API_REPORTS_PSW: '87654321',
   api_external_token:

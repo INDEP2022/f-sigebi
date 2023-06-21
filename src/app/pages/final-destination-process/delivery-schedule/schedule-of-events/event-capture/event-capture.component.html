@@ -1,27 +1,34 @@
 <app-card [header]="true">
   <div class="ch-content" header>
     <h5 class="title">
-      <button class="btn btn-sm btn-return" (click)="back()">
-        <i class="bx bx-chevron-left float-icon"></i>
-        <span class="title">Captura de Programaci&oacute;n de Eventos</span>
-      </button>
+      <span class="title">Captura de Programaci&oacute;n de Eventos</span>
     </h5>
   </div>
 
   <div body>
     <div class="row">
-      <div class="col-md-12 d-flex justify-content-end">
-        <div>
-          <confirm-button
-            [btnSmall]="true"
-            [loading]="saveLoading"
-            (confirm)="saveProceeding()"></confirm-button>
-        </div>
-      </div>
-    </div>
-    <div class="row pt-3">
       <form class="form-material" [formGroup]="form" (ngSubmit)="onSubmit()">
         <div class="row">
+          <div class="col-md-12 d-flex justify-content-between">
+            <div>
+              <button
+                type="button"
+                class="btn btn-primary active btn-sm"
+                (click)="back()">
+                Regresar
+                <i class="fas fa-arrow-circle-left"></i>
+              </button>
+            </div>
+            <div>
+              <confirm-button
+                icon="fa fa-save"
+                [btnSmall]="true"
+                [loading]="saveLoading"
+                (confirm)="saveProceeding()"></confirm-button>
+            </div>
+          </div>
+        </div>
+        <div class="row pt-3">
           <h6>Registro</h6>
         </div>
         <div class="row pt-3">
@@ -224,9 +231,10 @@
             </div>
             <div *ngIf="ctrlButtons.sendSise.visible">
               <button
-                class="btn btn-sm btn-secondary active"
+                class="btn btn-sm btn-primary active"
                 [disabled]="!ctrlButtons.sendSise.enabled">
                 {{ ctrlButtons.sendSise.label }}
+                <i class="bx bx-send"></i>
               </button>
             </div>
           </div>
@@ -303,6 +311,7 @@
             class="btn btn-primary btn-sm active"
             [disabled]="!ctrlButtons.apply.enabled">
             {{ ctrlButtons.apply.label }}
+            <i class="fa fa-save"></i>
           </button>
         </div>
       </form>

@@ -16,7 +16,7 @@ export class AffairModalComponent extends BasePage implements OnInit {
   affairForm: ModelForm<IAffair>;
   affair: IAffair;
 
-  title: string = 'Asunto';
+  title: string = 'Asunto para Volante';
   edit: boolean = false;
 
   constructor(
@@ -84,7 +84,7 @@ export class AffairModalComponent extends BasePage implements OnInit {
   }
 
   handleSuccess() {
-    const message: string = this.edit ? 'Actualizada' : 'Guardada';
+    const message: string = this.edit ? 'Actualizado' : 'Guardado';
     this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);
