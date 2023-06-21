@@ -5,43 +5,36 @@
     </div>
     <div body>
       <div class="row">
-        <div class="col-md-6 col-sm-12 col-xs-12">
-          <form-field [control]="form.get('numberFile')">
-            <div class="row">
-              <div class="col">
-                <label for="numberFile" class="d-block">No Expediente</label>
-                <div class="d-flex align-items-center">
-                  <input
-                    type="text"
-                    class="form-control"
-                    formControlName="numberFile"
-                    placeholder=" "
-                    style="width: 350px" />
-                  <button
-                    type="button"
-                    class="btn btn-primary btn-sm active ml-1 border-0"
-                    style="width: 40px"
-                    [ngStyle]="{
-                      'background-color': form.get('numberFile').value
-                        ? '#9D2449'
-                        : 'rgba(157, 36, 73, 1)'
-                    }"
-                    [disabled]="!form.get('numberFile').value"
-                    (click)="searchExpedient(form.get('numberFile').value)">
-                    <i class="fa fa-search"></i>
-                  </button>
-                </div>
-              </div>
+        <div class="col-12">
+          <div class="d-flex justify-content-between">
+            <div class="col-6 p-0">
+              <form-field
+                [control]="form.get('numberFile')"
+                label="No Expediente">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="numberFile" />
+              </form-field>
             </div>
-          </form-field>
-        </div>
-
-        <div class="col-md-6 col-sm-12 col-xs-12">
-          <div class="d-flex justify-content-end">
-            <div>
+            <div class="col-6 d-flex justify-content-between p-0">
+              <button
+                type="button"
+                class="btn btn-primary btn-sm active ml-1 border-0"
+                style="width: 40px"
+                [ngStyle]="{
+                  'background-color': form.get('numberFile').value
+                    ? '#9D2449'
+                    : 'rgba(157, 36, 73, 1)'
+                }"
+                [disabled]="!form.get('numberFile').value"
+                (click)="searchExpedient(form.get('numberFile').value)">
+                <i class="fa fa-search"></i>
+              </button>
               <button
                 type="button"
                 class="btn btn-sm btn-info active"
+                style="width: 70px"
                 (click)="cleandInfo()">
                 Limpiar
               </button>
@@ -90,17 +83,6 @@
       <div class="container">
         <div class="container">
           <div class="row justify-content-between">
-            <div class="col-md-6 col-sm-12 col-xs-12">
-              <div class="d-flex justify-content-start">
-                <div class="m-3">
-                  <span>
-                    Listado de menajes del bien No
-                    <strong>{{ numberGoodSelect }}</strong>
-                  </span>
-                </div>
-              </div>
-            </div>
-
             <div class="col-md-3 col-sm-12 col-xs-12">
               <div class="d-flex justify-content-end">
                 <div class="m-3">
@@ -120,6 +102,17 @@
             <app-goods-shared
               [form]="formGood"
               (good)="addMenage($event)"></app-goods-shared>
+          </div>
+
+          <div class="row">
+            <div class="col-md-12">
+              <div class="m-3">
+                <span
+                  >Listado de menajes del bien No
+                  <strong>{{ numberGoodSelect }}</strong></span
+                >
+              </div>
+            </div>
           </div>
 
           <div class="row">
