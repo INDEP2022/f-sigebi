@@ -123,7 +123,7 @@ export class DelegationStateListComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       console.log(delegationSate.regionalDelegation.id);
       console.log(delegationSate);
@@ -141,7 +141,7 @@ export class DelegationStateListComponent extends BasePage implements OnInit {
         this.params
           .pipe(takeUntil(this.$unSubscribe))
           .subscribe(() => this.getData());
-        this.alert('success', 'Delegacione Estado', 'Borrado');
+        this.alert('success', 'Delegacione estado', 'Borrado');
       },
       error: err => {
         this.alert(

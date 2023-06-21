@@ -9,7 +9,12 @@
           <form-field
             [control]="goodSssubtypeForm.get('id')"
             label="C&oacute;digo SssubTipo">
-            <input type="number" class="form-control" formControlName="id" />
+            <input
+              type="number"
+              class="form-control"
+              formControlName="id"
+              maxlength="4"
+              oninput="if(this.value.length > 4) this.value = this.value.slice(0, 4);" />
           </form-field>
         </div>
         <div class="col-md-12">
@@ -28,7 +33,8 @@
             [data]="types"
             label="Tipo"
             bindLabel="nameGoodType"
-            value="id">
+            value="id"
+            (change)="getChangeSutype($event)">
           </ngx-select>
         </div>
         <div class="col-md-12">
