@@ -579,11 +579,11 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
       const day = fecElab.getDate();
       const hour = new Date().getHours();
       const minute = new Date().getMinutes();
-      if (fecElab.getHours() != hour || fecElab.getMinutes() != minute) {
+      if(fecElab.getHours() != hour || fecElab.getMinutes() != minute){
         this.form
           .get('fecElab')
           .setValue(new Date(`${year}-${month}-${day} ${hour}:${minute}`));
-      }
+      }      
     } else {
       {
         this.form.get('fecReception').setValue('');
