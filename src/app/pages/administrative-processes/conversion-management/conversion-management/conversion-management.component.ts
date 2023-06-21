@@ -31,6 +31,8 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
   // Variable para la contraseña
   password: string;
 
+  isFormModified = false;
+
   get idConversion() {
     return this.form.get('idConversion');
   }
@@ -77,6 +79,13 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
     this.actaERDate.disable();
     this.actaER.disable();
     this.desStatus.disable();
+    this.actaConversion.disable();
+    this.form.valueChanges.subscribe(() => {
+      if (this.conversion !== undefined) {
+        this.isFormModified = true;
+        console.log('******* Entro *******');
+      }
+    });
   }
 
   /**
@@ -92,7 +101,7 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
       ],
       noBien: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       date: [null],
-      tipo: [null],
+      tipo: [null, [Validators.required]],
       noExpediente: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       actaConversion: [null, [Validators.pattern(STRING_PATTERN)]],
       desStatus: [null, [Validators.pattern(STRING_PATTERN)]],
@@ -104,7 +113,11 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
   }
 
   async save() {
-    if (this.conversion) {
+    if (this.tipo.value === null) {
+      this.alert('info', 'Información', 'El campo tipo es requerido');
+      return;
+    }
+    if (this.idConversion.value !== null || this.idConversion.value !== '') {
       const response: any = await this.updateConversion('');
       this.date.setValue(new Date());
       this.createObj();
@@ -178,8 +191,13 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
     this.conversiongoodServices.getActsByGood(idGood).subscribe({
       next: response => {
         this.actaER.setValue(response.cve_acta);
-        console.log(new Date(response.fec_elaboracion));
-        this.actaERDate.setValue(new Date(response.fec_elaboracion));
+        console.log(response);
+        console.log(this.formatDate(response.fec_elaboracion));
+        this.actaERDate.setValue(
+          response.fec_elaboracion === undefined
+            ? null
+            : this.formatDate(response.fec_elaboracion)
+        );
       },
       error: err => {
         this.actaER.setValue('');
@@ -213,6 +231,7 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
       );
       this.form.reset();
       this.saved = true;
+      this.conversion = null;
     } else {
       this.onLoadToast('error', 'ERROR', 'Erorr al Generar la contraseña');
     }
@@ -349,5 +368,15 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
   clean() {
     this.form.reset();
     this.form.markAllAsTouched();
+  }
+  formatDate(fecha: string) {
+    const fecha_original = new Date(fecha);
+    // Obtener los componentes de fecha (día, mes, año)
+    const dia = fecha_original.getUTCDate();
+    const mes = (fecha_original.getUTCMonth() + 1).toString().padStart(2, '0'); // Añade cero inicial si es necesario
+    const año = fecha_original.getUTCFullYear();
+    // Formatear la fecha en el nuevo formato DD/MM/YYYY
+    const nuevo_formato = `${dia}/${mes}/${año}`;
+    return nuevo_formato;
   }
 }

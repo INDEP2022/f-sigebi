@@ -23,7 +23,8 @@
                   <goods-filter-shared
                     [form]="searchTabForm"
                     goodField="noBien"
-                    [classifGood]="classifGood"></goods-filter-shared>
+                    [classifGood]="classifGood"
+                    (good)="onChangeGood($event)"></goods-filter-shared>
                 </div>
               </div>
             </div>
@@ -42,8 +43,8 @@
                 </div>
               </div>
             </div>
-            <div class="row">
-              <div class="col-md-6">
+            <div class="row mt-3">
+              <div class="col-md-3">
                 <div class="form-group">
                   <form-field
                     [control]="searchTabForm.get('destino')"
@@ -56,7 +57,7 @@
                   </form-field>
                 </div>
               </div>
-              <div class="col-md-6">
+              <div class="col-md-4">
                 <div class="form-group">
                   <form-field
                     [control]="searchTabForm.get('situacion')"
@@ -69,10 +70,29 @@
                   </form-field>
                 </div>
               </div>
+              <div class="col-md-5 d-flex justify-content-end">
+                <div class="m-3">
+                  <button
+                    class="btn btn-sm btn-primary active mr-3"
+                    (click)="search()">
+                    Buscar <i class="fas fa-search"></i>
+                  </button>
+                  <button
+                    class="btn btn-danger btn-sm active mr-3"
+                    (click)="clean()">
+                    Limpiar <i class="fas fa-eraser"></i>
+                  </button>
+                  <button
+                    class="btn btn-sm btn-primary active"
+                    (click)="openPhotos()">
+                    Ver fotos <i class="fas fa-eye"></i>
+                  </button>
+                </div>
+              </div>
             </div>
           </form>
         </div>
-        <div class="form-group row">
+        <!-- <div class="form-group row">
           <div class="col-md-3 col-ms-3 col-xs-6">
             <div class="d-flex justify-content-center">
               <div class="m-3">
@@ -96,15 +116,6 @@
           <div class="col-md-3 col-ms-3 col-xs-6">
             <div class="d-flex justify-content-center">
               <div class="m-3">
-                <app-columns-select
-                  [(settings)]="settings"
-                  [defaultColumns]="5"></app-columns-select>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-3 col-ms-3 col-xs-6">
-            <div class="d-flex justify-content-center">
-              <div class="m-3">
                 <button
                   class="btn btn-sm btn-primary active"
                   (click)="openPhotos()">
@@ -113,12 +124,22 @@
               </div>
             </div>
           </div>
-        </div>
+        </div> -->
       </div>
       <div class="row">
+        <div class="d-flex justify-content-end">
+          <app-columns-select
+            [(settings)]="settings"
+            [defaultColumns]="5"></app-columns-select>
+        </div>
+      </div>
+      <div class="row mt-3">
         <div class="col-md-12">
           <div [class]="loading ? 'table-loading' : ''">
-            <ng2-smart-table [settings]="settings" [source]="list">
+            <ng2-smart-table
+              [attr.class]="'table-bordered table-responsive'"
+              [settings]="settings"
+              [source]="list">
             </ng2-smart-table>
           </div>
         </div>
