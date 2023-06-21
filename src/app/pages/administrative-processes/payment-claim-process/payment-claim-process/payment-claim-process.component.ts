@@ -8,8 +8,11 @@ import {
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject } from 'rxjs';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { BehaviorSubject, skip, takeUntil, tap } from 'rxjs';
+import {
+  FilterParams,
+  ListParams,
+} from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
 import { IDocuments } from 'src/app/core/models/ms-documents/documents';
 import { IGood } from 'src/app/core/models/ms-good/good';
@@ -20,7 +23,7 @@ import { ScreenStatusService } from 'src/app/core/services/ms-screen-status/scre
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { ScanningFoilComponent } from '../scanning-foil/scanning-foil.component';
-
+import { TABLE_SETTINGS2 } from './newSettings';
 interface IDs {
   goodNumber: number;
 }
@@ -32,7 +35,41 @@ interface NotData {
 @Component({
   selector: 'app-payment-claim-process',
   templateUrl: './payment-claim-process.component.html',
-  styles: [],
+  styles: [
+    `
+      .custom-table-header {
+        height: 0;
+        overflow: hidden;
+      }
+      .table-container {
+        max-height: 345px; /* Cambia el valor según tus necesidades */
+        overflow-y: auto;
+      }
+    `,
+    // .table-container {
+    //   overflow-y: auto;
+    //   scrollbar-width: thin; /* Anchura del scroll */
+    //   scrollbar-color: #888888 #f4f4f4; /* Color del scroll */
+    // }
+
+    // .table-container::-webkit-scrollbar {
+    //   width: 6px; /* Anchura del scroll */
+    // }
+
+    // .table-container::-webkit-scrollbar-thumb {
+    //   background-color: #888888; /* Color del scroll */
+    //   border-radius: 3px;
+    // }
+
+    // .table-container::-webkit-scrollbar-thumb:hover {
+    //   background-color: #555555; /* Color del scroll al pasar el mouse */
+    // }
+
+    // .table-container::-webkit-scrollbar-track {
+    //   background-color: #f4f4f4; /* Color de fondo del scroll */
+    // }
+    // `
+  ],
 })
 export class PaymentClaimProcessComponent extends BasePage implements OnInit {
   totalItems: number = 0;
@@ -48,7 +85,7 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
   good: IGood;
   //Reactive Forms
   form: FormGroup;
-
+  disabledImport: boolean = true;
   get justification() {
     return this.form.get('justification');
   }
@@ -57,6 +94,11 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
   @Output() emitirFolio = new EventEmitter<string>();
   @Output() emitirFolioVal = new EventEmitter<boolean>();
   @ViewChild('hijoRef', { static: false }) hijoRef: ScanningFoilComponent;
+
+  filter1 = new BehaviorSubject<FilterParams>(new FilterParams());
+  settings2 = { ...TABLE_SETTINGS2 };
+
+  valDocument: boolean = false;
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
@@ -70,10 +112,35 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
     this.settings = {
       ...this.settings,
       actions: false,
+      hideSubHeader: false,
       columns: {
         id: {
           title: 'No Bien',
-          width: '10%',
+          width: '33%',
+          sort: false,
+        },
+        status: {
+          title: 'Estatus',
+          width: '33%',
+          sort: false,
+        },
+        description: {
+          title: 'Descripcion',
+          width: '33%',
+          sort: false,
+        },
+      },
+    };
+
+    this.settings2 = {
+      ...TABLE_SETTINGS2,
+      actions: false,
+      hideSubHeader: true,
+      hideHeader: true,
+      columns: {
+        id: {
+          title: 'No Bien',
+          width: '20%',
           sort: false,
         },
         status: {
@@ -83,7 +150,7 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
         },
         description: {
           title: 'Descripcion',
-          width: '40%',
+          width: '60%',
           sort: false,
         },
       },
@@ -93,6 +160,21 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.buildForm();
     this.form.disable();
+
+    this.filter1
+      .pipe(
+        skip(1),
+        tap(() => {
+          // aquí colocas la función que deseas ejecutar
+          this.addStatus();
+        }),
+        takeUntil(this.$unSubscribe)
+      )
+      .subscribe(() => {
+        // if (this.goods.length > 0) {
+        this.addStatus();
+        // }
+      });
   }
 
   /**
@@ -153,7 +235,12 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
   change() {
     this.goods.forEach(good => {
       good.status = good.status === 'PRP' ? 'ADM' : 'PRP';
-      this.goodServices.update(good).subscribe({
+      let obj = {
+        id: good.id,
+        goodId: good.goodId,
+        status: good.status,
+      };
+      this.goodServices.update(obj).subscribe({
         next: response => {
           console.log(response);
         },
@@ -176,7 +263,7 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
     this.data.refresh();
   }
 
-  loadGood(data: any[]) {
+  async loadGood(data: any[]) {
     console.log('data', data);
     this.loading = true;
     let count = 0;
@@ -190,14 +277,16 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
             response.data[0].status == 'PRP' ||
             response.data[0].status == 'ADM'
           ) {
-            console.log('SI');
+            // console.log('SI');
             if (
               this.goodClassNumber.includes(
                 `${response.data[0].goodClassNumber}`
               )
             ) {
-              console.log(response);
+              // console.log(response);
+              this.obtenerDocument(response.data[0]);
               this.goods.push(response.data[0]);
+              this.disabledImport = false;
               this.addStatus();
             } else {
               this.idsNotExist.push({
@@ -231,20 +320,23 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
   changeFoli(event: any) {
     console.log('EVENT', event);
     this.document = event;
+    this.valDocument = true;
   }
 
   clean(event: any) {
+    this.form.disable();
     this.goods = [];
     this.addStatus();
     this.form.reset();
     this.ids = [];
     this.document = null;
     this.showError = false;
+    this.disabledImport = true;
+    this.valDocument = false;
     this.cambiarValor();
   }
 
   validStatusXScreen(good: IGood) {
-    let V_ACCION = null;
     this.screenStatusService
       .getStatusXScreen({
         screen: 'FPROCRECPAG',
@@ -254,10 +346,10 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
         next: response => {
           console.log('response', response);
           console.log(response.data[0].action, good.status);
-          if (response.data[0].action === good.status) {
-            //   this.change();
-            // } else {
+          if (response.data[0].action == good.status && this.document) {
             this.question();
+          } else {
+            this.change();
           }
         },
         error: err => {
@@ -275,7 +367,7 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'info',
       'Confirmación',
-      'No realizó la actualización de estatus, el folio de escaneo generado se eliminara ¿Deceas segir?'
+      'No realizó la actualización de estatus, el folio de escaneo generado se eliminara ¿Deseas seguir?'
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
@@ -289,6 +381,7 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
     this.documnetServices.delete(this.document.id).subscribe({
       next: response => {
         this.cambiarValor();
+        this.document = undefined;
         this.alert(
           'success',
           'Elimiado',
@@ -316,5 +409,14 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
   }
   cambiarValor() {
     this.hijoRef.actualizarVariable(true, '');
+  }
+
+  obtenerDocument(good: any) {
+    console.log('this.document', this.document);
+    if (this.valDocument == true) {
+      return;
+    } else {
+      this.hijoRef.getDocument(good);
+    }
   }
 }
