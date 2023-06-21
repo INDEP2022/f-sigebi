@@ -568,21 +568,21 @@ ng-scrollbar.table-scrollbar {
   // background: default !important;
 }
 
-.hover-c:hover {
-  color: black !important;
-}
+// #idTableTestBody table thead {
+//   // display: none;
+//   visibility: hidden;
+//   height: 0;
+//   padding: 0;
+// }
 
-tr.bg-dark:hover {
-  color: black !important;
-}
-tr.bg-dark.selected {
-  color: black !important;
-}
+// #idTableTestHead table tbody {
+//   display: none;
+// }
 
-tr.bg-success:hover {
-  color: black !important;
-}
+// #idTableTestBody table tbody tr td {
+//   width: 33% !important;
+// }
 
-tr.bg-success.selected {
-  color: black !important;
-}
+// #idTableTestBody2 table tbody tr td {
+//   width: 33.5% !important;
+// }

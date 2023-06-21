@@ -63,8 +63,8 @@ export class SearchTabComponent extends BasePage implements OnInit {
       subtipo: [null, [Validators.required]],
       noSsubtipo: [null, [Validators.required]],
       ssubtipo: [null, [Validators.required]],
-      noSssubtipo: [null, [Validators.required]],
-      sssubtipo: [null, [Validators.required]],
+      noSssubtipo: [null],
+      sssubtipo: [null],
       estatus: [null, [Validators.pattern(STRING_PATTERN)]],
       unidadMedida: [null],
       cantidad: [null],
@@ -101,13 +101,6 @@ export class SearchTabComponent extends BasePage implements OnInit {
       this.searchTabForm.get('ssubtipo').value === null
     ) {
       this.onLoadToast('info', 'Debe seleccionar un ssubtipo');
-      return;
-    }
-    if (
-      this.searchTabForm.get('sssubtipo').value === '' ||
-      this.searchTabForm.get('sssubtipo').value === null
-    ) {
-      this.onLoadToast('info', 'Debe seleccionar un sssubtipo');
       return;
     }
     if (

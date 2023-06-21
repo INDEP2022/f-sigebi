@@ -58,12 +58,14 @@
     <app-pagination
       *ngIf="dataObservableFn"
       [filterParams]="filterParams"
+      [maxSize]="3"
       [totalItems]="totalItems">
     </app-pagination>
     <app-pagination
       *ngIf="dataObservableListParamsFn"
       [params]="params"
-      [totalItems]="totalItems">
+      [totalItems]="totalItems"
+      [maxSize]="3">
     </app-pagination>
   </div>
   <div footer>
