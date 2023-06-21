@@ -3522,7 +3522,7 @@ export class JuridicalRulingGComponent
     this.goodServices
       .getByExpedient(
         this.expedientesForm.get('noExpediente').value,
-        //this.params.getValue()
+        //this.params.getValue() //Se estaba enviado dos veces el expediente y marcaba error.
       )
       .subscribe({
         next: response => {
