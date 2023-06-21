@@ -27,7 +27,8 @@
               class="form-control"
               formControlName="noBien"
               (change)="onChangeGood()"
-              [max-length]="10" />
+              [max-length]="10"
+              (ngModelChange)="detectarCambios()" />
           </form-field>
         </div>
         <div class="col-md-3 col-sm-12 col-xs-12">
@@ -36,12 +37,16 @@
               type="text"
               class="form-control"
               formControlName="date"
-              bsDatepicker />
+              bsDatepicker
+              (ngModelChange)="detectarCambios()" />
           </form-field>
         </div>
         <div class="col-md-3 col-sm-12 col-xs-12">
           <form-field [control]="form.get('tipo')" label="Tipo">
-            <select class="form-control" formControlName="tipo">
+            <select
+              class="form-control"
+              formControlName="tipo"
+              (ngModelChange)="detectarCambios()">
               <option [value]="null">Seleccione un valor</option>
               <option value="1">Derivado</option>
               <option value="2">Conversión</option>
@@ -58,7 +63,8 @@
               type="number"
               class="form-control"
               formControlName="noExpediente"
-              [max-length]="10" />
+              [max-length]="10"
+              (ngModelChange)="detectarCambios()" />
           </form-field>
         </div>
         <div class="col-md-6 col-sm-12 col-xs-12">

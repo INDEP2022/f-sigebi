@@ -6,7 +6,11 @@ import {
   Validators,
 } from '@angular/forms';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { IHistoryGood } from 'src/app/core/models/administrative-processes/history-good.model';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
@@ -18,12 +22,13 @@ import {
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
 
+import { LocalDataSource } from 'ng2-smart-table';
 import { COLUMNS, goodCheck } from './columns';
 
 @Component({
   selector: 'app-change-of-status-sti',
   templateUrl: './change-of-status-sti.component.html',
-  styles: [],
+  styleUrls: ['./change-of-status-sti.component.scss'],
 })
 export class ChangeOfStatusStiComponent extends BasePage implements OnInit {
   form: FormGroup;
@@ -48,7 +53,9 @@ export class ChangeOfStatusStiComponent extends BasePage implements OnInit {
   params = new BehaviorSubject<ListParams>(new ListParams());
   limit: FormControl = new FormControl(10);
   goodSelect: any[] = [];
-  goods: IGood[] = [];
+  goods: LocalDataSource = new LocalDataSource();
+  columnFilters: any = [];
+  completeFilters: any[] = []
 
   //Activar y desactivar botones
   enableToDelete = false;
@@ -60,27 +67,42 @@ export class ChangeOfStatusStiComponent extends BasePage implements OnInit {
     private readonly historyGoodService: HistoryGoodService
   ) {
     super();
+    this.settings.hideSubHeader = false;
     this.settings.columns = COLUMNS;
     this.settings.actions = true;
   }
 
   ngOnInit(): void {
+    this.goods
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        console.log(change);
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          this.completeFilters = filters
+          filters.map((filter: any) => {
+            let searchFilter = SearchFilter.ILIKE;
+            if(filter.search !== ''){
+              this.columnFilters[filter.field] = `${searchFilter}:${filter.search}`
+            }
+          });
+          this.searchByFilter()
+        }
+      });
+
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
       if (this.busco) {
         this.listGoods();
       }
     });
+
     this.buildForm();
     this.form.disable();
     this.numberFile.enable();
     this.description.enable();
   }
 
-  /**
-   * @method: metodo para iniciar el formulario
-   * @author:  Alexander Alvarez
-   * @since: 27/09/2022
-   */
   private buildForm() {
     this.form = this.fb.group({
       numberFile: [
@@ -155,11 +177,36 @@ export class ChangeOfStatusStiComponent extends BasePage implements OnInit {
   clearAll() {
     this.form.get('numberFile').reset();
     this.form.get('description').reset();
-    this.goods = [];
+    this.goods.load([]);
     this.limit = new FormControl(10);
     this.params.next(new ListParams());
     this.totalItems = 0;
     this.enableToDelete = false;
+  }
+
+  searchByFilter(){
+    this.loading = true
+    this.busco = true
+    const paramsF = new FilterParams()
+    paramsF.addFilter('status', 'STI')
+    paramsF.addFilter('fileNumber', this.numberFile.value)
+    paramsF.page = this.params.value.page
+    paramsF.limit = this.params.value.limit
+    for(let data of this.completeFilters){
+      paramsF.addFilter(data.field, data.search, SearchFilter.ILIKE)
+    }
+
+    console.log(paramsF.getParams())
+    this.goodServices.getAllFilter(paramsF.getParams()).subscribe(
+      res => {
+        this.goods.load(res.data)
+        this.loading = false
+      },
+      err => {
+        console.log(err)
+        this.loading = false
+      }
+    )
   }
 
   listGoods() {
@@ -181,11 +228,11 @@ export class ChangeOfStatusStiComponent extends BasePage implements OnInit {
               'Información',
               'No hay bienes con status STI'
             );
-            this.goods = [];
+            this.goods.load([]);
             this.loading = false;
             return;
           }
-          this.goods = response.data;
+          this.goods.load(response.data);
           this.totalItems = response.count;
           this.enableToDelete = true;
           this.loading = false;
@@ -194,7 +241,7 @@ export class ChangeOfStatusStiComponent extends BasePage implements OnInit {
         error: error => {
           this.onLoadToast('info', 'Información', 'No existe este expediente');
           console.log(error);
-          this.goods = [];
+          this.goods.load([]);
           this.loading = false;
         },
       });

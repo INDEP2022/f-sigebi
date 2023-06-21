@@ -33,6 +33,8 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
 
   isFormModified = false;
 
+  enable: boolean = false;
+
   get idConversion() {
     return this.form.get('idConversion');
   }
@@ -80,12 +82,12 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
     this.actaER.disable();
     this.desStatus.disable();
     this.actaConversion.disable();
-    this.form.valueChanges.subscribe(() => {
+    /* this.form.valueChanges.subscribe(() => {
       if (this.conversion !== undefined) {
         this.isFormModified = true;
         console.log('******* Entro *******');
       }
-    });
+    }); */
   }
 
   /**
@@ -121,7 +123,6 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
       const response: any = await this.updateConversion('');
       this.date.setValue(new Date());
       this.createObj();
-      this.saved = false;
       this.conversiongoodServices
         .createAssetConversions(this.assetConversion)
         .subscribe({
@@ -132,6 +133,7 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
               'Guardado',
               'Se ha guardado correctamente la conversión'
             );
+            this.saved = false;
           },
           error: err => {
             this.onLoadToast(
@@ -179,10 +181,12 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
     this.goodServices.getStatusByGood(idGood).subscribe({
       next: response => {
         this.desStatus.setValue(response.status_descripcion);
+        this.enable = true;
       },
       error: error => {
         this.desStatus.setValue('');
         this.loading = false;
+        this.enable = true;
       },
     });
   }
@@ -232,12 +236,14 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
       this.form.reset();
       this.saved = true;
       this.conversion = null;
+      this.isFormModified = false;
     } else {
       this.onLoadToast('error', 'ERROR', 'Erorr al Generar la contraseña');
     }
   }
 
   searchConversion() {
+    this.enable = false;
     console.log(this.idConversion.value);
     if (this.idConversion.value === '' || this.idConversion.value === null) {
       this.onLoadToast('info', 'Ingrese por favor un id de conversión');
@@ -378,5 +384,10 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
     // Formatear la fecha en el nuevo formato DD/MM/YYYY
     const nuevo_formato = `${dia}/${mes}/${año}`;
     return nuevo_formato;
+  }
+  detectarCambios() {
+    if (this.enable) {
+      this.isFormModified = true;
+    }
   }
 }
