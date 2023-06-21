@@ -78,10 +78,10 @@ export class MaintenanceLegalRulingComponent
     this.getDocumentsDictumStateM(value.id, value.typeDict);
     this.getCopiesOfficialOpinion(value.id, value.typeDict);
     this.getDictationXGood1(value.id, value.typeDict);
-    this.getJobDictumTexts(value.id, value.typeDict);
     this.getOfficialDictation(value.id, value.typeDict);
   }
 
+  /**@description OFICIO_DICTAMEN_TEXTOS */
   getJobDictumTexts(dictationNumber: number | string, typeDict: string) {
     if (!dictationNumber && !typeDict) {
       return;
@@ -108,6 +108,7 @@ export class MaintenanceLegalRulingComponent
     });
   }
 
+  /**@description oficio_dictamen */
   getOfficialDictation(dictationNumber: number | string, typeDict: string) {
     if (!dictationNumber && !typeDict) {
       return;
@@ -127,6 +128,10 @@ export class MaintenanceLegalRulingComponent
     this.officialDictationService.getAll(data.getParams()).subscribe({
       next: data => {
         this.dataOfficialDictation = data.data[0];
+        this.getJobDictumTexts(
+          this.dataOfficialDictation.officialNumber,
+          this.dataOfficialDictation.typeDict
+        );
       },
       error: err => {
         this.dataOfficialDictation = null;
@@ -134,6 +139,7 @@ export class MaintenanceLegalRulingComponent
     });
   }
 
+  /**@description TABLE: documentos_dictamen_x_bien_m */
   getDocumentsDictumStateM(dictationNumber: number | string, typeDict: string) {
     if (!dictationNumber && !typeDict) {
       return;
@@ -156,13 +162,14 @@ export class MaintenanceLegalRulingComponent
       next: data => {
         this.dataDocumentDictumStateM = data.data;
       },
-      error: err => {
+      error: () => {
         this.dataDocumentDictumStateM = [];
         this.loading2 = false;
       },
     });
   }
 
+  /**@description TABLE: copias_oficio_dictamen */
   getCopiesOfficialOpinion(dictationNumber: number | string, typeDict: string) {
     if (!dictationNumber && !typeDict) {
       return;
@@ -192,6 +199,7 @@ export class MaintenanceLegalRulingComponent
     });
   }
 
+  /**@description TABLE: dictaminacion_x_bien1*/
   getDictationXGood1(dictationNumber: number | string, typeDict: string) {
     if (!dictationNumber && !typeDict) {
       return;

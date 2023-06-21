@@ -6,7 +6,12 @@ import {
   OnInit,
   Output,
 } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
@@ -29,8 +34,39 @@ export class RulingsComponent extends BasePage implements OnInit, OnDestroy {
   @Output() formValues = new EventEmitter<any>();
   params: any;
 
-  public form: FormGroup;
-  public searchForm: FormGroup;
+  form = new FormGroup({
+    id: new FormControl(null),
+    passOfficeArmy: new FormControl('', [
+      Validators.pattern(KEYGENERATION_PATTERN),
+    ]),
+    expedientNumber: new FormControl(null, [Validators.required]),
+    typeDict: new FormControl(''),
+    statusDict: new FormControl('', [Validators.pattern(STRING_PATTERN)]),
+    dictDate: new FormControl(null),
+    userDict: new FormControl('', [
+      Validators.pattern(STRING_PATTERN),
+      Validators.required,
+    ]),
+    observations: new FormControl('', [Validators.pattern(STRING_PATTERN)]),
+    delegationDictNumber: new FormControl(null),
+    areaDict: new FormControl(null, [Validators.pattern(STRING_PATTERN)]),
+    instructorDate: new FormControl(),
+    esDelit: new FormControl('', [Validators.pattern(STRING_PATTERN)]),
+    wheelNumber: new FormControl(null),
+    notifyAssuranceDate: new FormControl(null),
+    resolutionDate: new FormControl(null),
+    notifyResolutionDate: new FormControl(null),
+    folioUniversal: new FormControl(null, [
+      Validators.pattern(KEYGENERATION_PATTERN),
+    ]),
+    entryDate: new FormControl(null),
+    dictHcDAte: new FormControl(null),
+    entryHcDate: new FormControl(null),
+  });
+  searchForm = new FormGroup({
+    id: new FormControl('', Validators.required),
+    typeDict: new FormControl('', Validators.required),
+  });
 
   constructor(
     private fb: FormBuilder,
@@ -40,39 +76,16 @@ export class RulingsComponent extends BasePage implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.prepareForm();
+    // this.prepareForm();
     this.loading = true;
   }
 
-  private prepareForm() {
-    this.form = this.fb.group({
-      id: '',
-      passOfficeArmy: ['', [Validators.pattern(KEYGENERATION_PATTERN)]],
-      expedientNumber: ['', [Validators.required]],
-      typeDict: '',
-      statusDict: ['', [Validators.pattern(STRING_PATTERN)]],
-      dictDate: '',
-      userDict: ['', [Validators.pattern(STRING_PATTERN), Validators.required]],
-      observations: ['', [Validators.pattern(STRING_PATTERN)]],
-      delegationDictNumber: '',
-      areaDict: ['', [Validators.pattern(STRING_PATTERN)]],
-      instructorDate: '',
-      esDelit: ['', [Validators.pattern(STRING_PATTERN)]],
-      wheelNumber: '',
-      notifyAssuranceDate: '',
-      resolutionDate: '',
-      notifyResolutionDate: '',
-      folioUniversal: ['', [Validators.pattern(KEYGENERATION_PATTERN)]],
-      entryDate: '',
-      dictHcDAte: '',
-      entryHcDate: '',
-    });
-
-    this.searchForm = this.fb.group({
-      id: ['', Validators.required],
-      typeDict: '',
-    });
-  }
+  // private prepareForm() {
+  //   this.searchForm = this.fb.group({
+  //     id: ['', Validators.required],
+  //     typeDict: '',
+  //   });
+  // }
 
   setFormData() {
     const dictationNumber = this.searchForm.get('id').value;
