@@ -1,28 +1,26 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { BehaviorSubject } from 'rxjs';
+import { GoodTrackerService } from 'src/app/core/services/ms-good-tracker/good-tracker.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
-import { COLUMNS } from './columns';
+import { COLUMNS } from '../goods-management-social-table/columns';
 
 @Component({
   selector: 'app-goods-management-social-cabinet',
   templateUrl: './goods-management-social-cabinet.component.html',
-  styles: [],
+  styleUrls: ['./goods-management-social-cabinet.component.scss'],
 })
 export class GoodsManagementSocialCabinetComponent
   extends BasePage
   implements OnInit
 {
   form: FormGroup = new FormGroup({});
-
-  data: any[] = [];
-  totalItems: number = 0;
-  params = new BehaviorSubject<ListParams>(new ListParams());
-
-  constructor(private fb: FormBuilder) {
+  selectedGoodstxt: number[] = [];
+  clearFlag = 0;
+  constructor(
+    private fb: FormBuilder,
+    private goodTrackerService: GoodTrackerService
+  ) {
     super();
     this.settings.columns = COLUMNS;
   }
@@ -32,6 +30,14 @@ export class GoodsManagementSocialCabinetComponent
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getExample());*/
     this.prepareForm();
+  }
+
+  get option() {
+    return this.form
+      ? this.form.get('option')
+        ? this.form.get('option').value
+        : null
+      : null;
   }
 
   private prepareForm(): void {
@@ -45,6 +51,52 @@ export class GoodsManagementSocialCabinetComponent
 
   showInfo() {}
 
+  clear() {
+    this.form.reset();
+    this.clearFlag++;
+  }
+
+  async onFileChange(event: any) {
+    const file = event.target.files[0];
+    let fileReader = new FileReader();
+    fileReader.onload = async e => {
+      const result = fileReader.result as string;
+      const array = result.replace(',', '').split('\r\n'); // saltos de linea
+      const newArray: number[] = [];
+      console.log(array);
+      array.forEach(row => {
+        const array2 = row.split(' ');
+        console.log(array2);
+        array2.forEach(item => {
+          if (item.length > 0 && !isNaN(+item)) {
+            newArray.push(+item);
+          }
+        });
+      });
+      this.selectedGoodstxt = [...newArray];
+      // const filterParams = new FilterParams();
+      // filterParams.addFilter(
+      //   'goodNumber',
+      //   this.selectedGoodstxt.toString(),
+      //   SearchFilter.IN
+      // );
+      // const response = await firstValueFrom(
+      //   this.goodTrackerService
+      //     .getAll(filterParams.getParams())
+      //     .pipe(catchError(x => of({ count: 0, data: [] })))
+      // );
+      // if (response.data.length === 0) {
+      //   this.alert('error', 'Error', 'Bienes no encontrados');
+      // } else {
+      //   this.totalItems = response.count;
+      //   this.data = response.data;
+      // }
+      // console.log(this.selectedGoodstxt);
+      // console.log(response);
+    };
+    fileReader.readAsText(file);
+  }
+
   delete(data: any) {
     this.alertQuestion(
       'warning',
@@ -55,9 +107,5 @@ export class GoodsManagementSocialCabinetComponent
         //Ejecutar el servicio
       }
     });
-  }
-
-  settingsChange($event: any): void {
-    this.settings = $event;
   }
 }
