@@ -269,22 +269,22 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
     this.alertQuestion('question', 'Confirmación', `${message}`).then(
       question => {
         if (question.isConfirmed) {
-          console.log('Genera Firma');
+          if (this.idTypeDoc == 221) {
+            this.gelectronicFirmService
+              .firmDocument(this.idProg, 'ProgramacionRecibo', {})
+              .subscribe({
+                next: response => {
+                  console.log('Firmado', response);
+                  this.msjCheck = true;
+                },
+                error: error => {
+                  console.log('Firmado');
+                  this.msjCheck = true;
+                },
+              });
+          }
 
-          this.gelectronicFirmService
-            .firmDocument(this.idProg, 'ProgramacionRecibo', {})
-            .subscribe({
-              next: response => {
-                console.log('Firmado', response);
-                this.msjCheck = true;
-              },
-              error: error => {
-                console.log('Firmado');
-                this.msjCheck = true;
-              },
-            });
-
-          /*if (this.idTypeDoc == 103) {
+          if (this.idTypeDoc == 103) {
             const idKeyDoc =
               this.idProg + '-' + this.receipt.actId + '-' + this.receipt.id;
 
@@ -298,11 +298,15 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                 .subscribe({
                   next: response => {
                     console.log('Firmado', response);
+                    this.msjCheck = true;
                   },
-                  error: error => {},
+                  error: error => {
+                    console.log('Firmado');
+                    this.msjCheck = true;
+                  },
                 });
             });
-          } */
+          }
         }
       }
     );
@@ -351,9 +355,14 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
     this.alertQuestion(undefined, 'Confirmación', message, 'Aceptar').then(
       question => {
         if (question.isConfirmed) {
-          //this.modalRef.content.callback(true);
-          //this.modalRef.hide();
-          this.validAttachDoc();
+          if (this.idTypeDoc == 221) {
+            this.validAttachDoc();
+          }
+
+          if (this.idTypeDoc == 103) {
+            this.modalRef.content.callback(true);
+            this.modalRef.hide();
+          }
         }
       }
     );

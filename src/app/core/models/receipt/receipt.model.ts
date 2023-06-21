@@ -33,6 +33,7 @@ export interface IReceipt {
   chargeDelivery?: string;
   electronicSignatureEnt?: boolean;
   electronicSignatureReceipt?: boolean;
+  folioReceipt?: string;
 }
 
 export interface IRecepitGuard {

@@ -449,7 +449,7 @@
                 <form-loader *ngIf="formLoadingReceipt"></form-loader>
               </div>
               <div *ngIf="!formLoadingReceipt">
-                <div class="row">
+                <div class="row" *ngIf="receiptData.statusReceipt == 'ABIERTO'">
                   <div class="d-flex justify-content-end">
                     <app-columns-select
                       [(settings)]="settingsReceipt"></app-columns-select>
@@ -460,6 +460,21 @@
                     [source]="receipts"
                     (edit)="createReceipt($event.data)"
                     (delete)="delete($event.data)">
+                  </ng2-smart-table>
+                  <app-pagination
+                    [params]="paramsReceipts"
+                    [totalItems]="totalItemsReceipt"></app-pagination>
+                </div>
+                <div class="row" *ngIf="receiptData.statusReceipt == 'CERRADO'">
+                  <div class="d-flex justify-content-end">
+                    <app-columns-select
+                      [(settings)]="settingsReceiptClose"></app-columns-select>
+                  </div>
+                  <ng2-smart-table
+                    [attr.class]="'table-bordered'"
+                    [settings]="settingsReceiptClose"
+                    [source]="receipts"
+                    (edit)="showReceipt($event.data)">
                   </ng2-smart-table>
                   <app-pagination
                     [params]="paramsReceipts"

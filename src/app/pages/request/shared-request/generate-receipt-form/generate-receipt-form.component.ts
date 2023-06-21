@@ -160,14 +160,20 @@ export class GenerateReceiptFormComponent extends BasePage implements OnInit {
             .get('electronicSignatureReceipt')
             .setValue(0);
         }
-
+        console.log(
+          'this.generateReceiptForm.value',
+          this.generateReceiptForm.value
+        );
         this.receptionGoodService
           .updateReceipt(this.generateReceiptForm.value)
           .subscribe({
             next: response => {
+              console.log('recibo', response);
               this.checkSign();
             },
-            error: error => {},
+            error: error => {
+              console.log('error', error);
+            },
           });
       }
     });
@@ -295,7 +301,7 @@ export class GenerateReceiptFormComponent extends BasePage implements OnInit {
               } */
             },
             error: async error => {
-              console.log('NO HAU FIRMANTES');
+              console.log('NO HAY FIRMANTES');
               console.log('firmEntF', firmEnt);
               if (firmEnt == 1) {
                 await this.createSign(

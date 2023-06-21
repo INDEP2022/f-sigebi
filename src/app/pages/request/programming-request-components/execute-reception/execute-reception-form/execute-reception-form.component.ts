@@ -57,6 +57,7 @@ import { CancelationGoodFormComponent } from '../cancelation-good-form/cancelati
 import { EditGoodFormComponent } from '../edit-good-form/edit-good-form.component';
 import { ReschedulingFormComponent } from '../rescheduling-form/rescheduling-form.component';
 import { ShowReportComponentComponent } from '../show-report-component/show-report-component.component';
+import { UploadReportReceiptComponent } from '../upload-report-receipt/upload-report-receipt.component';
 import {
   RECEIPT_COLUMNS,
   RECEIPT_GUARD_COLUMNS,
@@ -129,6 +130,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   formLoadingTrans: boolean = false;
   formLoadingGuard: boolean = false;
   receiptGuardGood: IRecepitGuard;
+  receiptData: IReceipt;
   goodData: IGood;
   settingsGuardGoods = {
     ...this.settings,
@@ -154,6 +156,19 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     columns: RECEIPT_COLUMNS,
     edit: {
       editButtonContent: '<i class="fa fa-file text-primary mx-2"></i>',
+    },
+  };
+
+  settingsReceiptClose = {
+    ...this.settings,
+    actions: {
+      columnTitle: 'Visualizar',
+      position: 'right',
+      delete: false,
+    },
+    columns: RECEIPT_COLUMNS,
+    edit: {
+      editButtonContent: '<i class="fa fa-eye text-primary mx-2"></i>',
     },
   };
 
@@ -417,6 +432,8 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     params.getValue()['filter.programmingId'] = this.programmingId;
     this.receptionGoodService.getReceipt(params.getValue()).subscribe({
       next: response => {
+        this.receiptData = response.data[0];
+        console.log('response', this.receiptData);
         this.receipts.load(response.data);
         this.totalItemsReceipt = this.receipts.count();
         this.formLoadingReceipt = false;
@@ -1721,7 +1738,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         receipt: _receipt,
         callback: (next: boolean) => {
           if (next) {
-          } else {
+            this.uplodadReceiptDelivery();
           }
         },
       },
@@ -1729,6 +1746,23 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       ignoreBackdropClick: true,
     };
     this.modalService.show(ShowReportComponentComponent, config);
+  }
+
+  uplodadReceiptDelivery() {
+    let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+    config.initialState = {
+      receiptGuards: this.receiptGuards,
+      typeDoc: 103,
+      programming: this.programming,
+      callback: (data: boolean) => {
+        if (data) {
+          this.getReceipts();
+        }
+      },
+    };
+
+    this.modalService.show(UploadReportReceiptComponent, config);
+    console.log('componente para adjuntar doc');
   }
 
   assignReceipt() {
