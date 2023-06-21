@@ -184,8 +184,6 @@ export class GoodService extends HttpService {
 
   //
   update(good: IGood) {
-    console.log('Se metio a update');
-
     const route = `${GoodEndpoints.Good}`;
     return this.put(route, good);
   }
@@ -219,19 +217,19 @@ export class GoodService extends HttpService {
   }
 
   removeGood(body: Object) {
-    console.log('Object ', body);
     const route = `${GoodEndpoints.Good}`;
-    console.log(route);
     return this.delete(route, body);
   }
 
+  //http://sigebimsqa.indep.gob.mx/good/api/v1/good/expedient/search?expedient=13132
   getByExpedient(
     expedient: number | string,
     params?: ListParams
   ): Observable<IListResponse<IGood>> {
-    if (params) {
-      params['expedient'] = expedient;
-    }
+    // if (params) {
+    //   params['expedient'] = expedient;
+    // }
+
     const route = `${GoodEndpoints.SearchByExpedient}?expedient=${expedient}`;
     return this.get<IListResponse<IGood>>(route, params);
   }
@@ -239,7 +237,6 @@ export class GoodService extends HttpService {
   getByExpedient1(
     idExpedient: number | string
   ): Observable<IListResponse<IGood>> {
-    console.log('idExpedient ', idExpedient);
     const route = GoodEndpoints.SearchByExpedient;
     return this.get<IListResponse<IGood>>(route);
   }
@@ -253,7 +250,6 @@ export class GoodService extends HttpService {
     body: Object,
     params?: ListParams
   ): Observable<IListResponse<IGood>> {
-    console.log(params);
     const route = `${GoodEndpoints.Good}/getGoodByWarehouse?search=${params.text}`;
     return this.post<IListResponse<IGood>>(route, body);
   }
@@ -361,7 +357,6 @@ export class GoodService extends HttpService {
   getByExpedientAndParams(
     params?: ListParams
   ): Observable<IListResponse<IGood>> {
-    console.log('GET GOODS EXPEDIENTE', params);
     const route = GoodEndpoints.GetAllGoodQuery;
     return this.get<IListResponse<IGood>>(route, params);
   }
@@ -373,7 +368,6 @@ export class GoodService extends HttpService {
   getByExpedientAndParams__(
     params?: ListParams
   ): Observable<IListResponse<IGood>> {
-    console.log('GET GOODS EXPEDIENTE', params);
     const route = GoodEndpoints.Good;
     return this.get<IListResponse<IGood>>(route, params);
   }

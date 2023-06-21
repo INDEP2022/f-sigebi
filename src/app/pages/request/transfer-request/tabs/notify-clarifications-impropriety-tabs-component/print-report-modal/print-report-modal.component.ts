@@ -54,6 +54,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
   btnSubTitle: string = 'Vista Previa Reporte';
   printReport: boolean = true;
   listSigns: boolean = false;
+  rowSelected: boolean = false;
   isAttachDoc: boolean = false;
   columns = LIST_REPORTS_COLUMN;
   config = {
@@ -63,7 +64,6 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
   sizeMessage: boolean = false;
   pdfTemp: File;
 
-  rowSelected: boolean = false;
   selectedRow: any = null;
 
   msjCheck: boolean = false;

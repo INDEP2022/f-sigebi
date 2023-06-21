@@ -1546,7 +1546,9 @@ export class JuridicalRecordUpdateComponent
         }
         this.formControls.dictumKey.disable();
         const params = new ListParams();
-        params['filter.user'] = this.authService.decodeToken().username; //TODO:Descomentar'ERMARTINEZ';
+        params['filter.user'] = this.authService
+          .decodeToken()
+          .preferred_username?.toUpperCase(); //TODO:Descomentar'ERMARTINEZ';
         params['filter.typeNumber'] = 'RESARCIMIENTO';
         params['filter.writing'] = 'S';
         params['filter.reading'] = 'S';

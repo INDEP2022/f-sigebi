@@ -6,14 +6,22 @@
     <form [formGroup]="confirmForm" class="form-material">
       <div class="row">
         <form-field
-          [control]="confirmForm.get('name')"
+          [control]="confirmForm.get('nameSignatore')"
           label="Nombre del firmate">
-          <input type="text" class="form-control" formControlName="name" />
+          <input
+            type="text"
+            class="form-control"
+            formControlName="nameSignatore" />
         </form-field>
       </div>
       <div class="row pt-4">
-        <form-field [control]="confirmForm.get('charge')" label="Cargo">
-          <input type="text" class="form-control" formControlName="charge" />
+        <form-field
+          [control]="confirmForm.get('chargeSignatore')"
+          label="Cargo">
+          <input
+            type="text"
+            class="form-control"
+            formControlName="chargeSignatore" />
         </form-field>
       </div>
     </form>
