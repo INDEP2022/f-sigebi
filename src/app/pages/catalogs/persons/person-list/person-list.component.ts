@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
@@ -26,11 +27,15 @@ export class PersonListComponent extends BasePage implements OnInit {
   params = new BehaviorSubject<ListParams>(new ListParams());
   data: LocalDataSource = new LocalDataSource();
   columnFilters: any = [];
+  origin: string = '';
+  no_bien: number = null;
 
   constructor(
     private personService: PersonService,
     private modalService: BsModalService,
-    private tvalTable1Service: TvalTable1Service
+    private tvalTable1Service: TvalTable1Service,
+    private router: Router,
+    private activatedRoute: ActivatedRoute
   ) {
     super();
     this.settings.columns = PERSON_COLUMNS;
@@ -48,6 +53,16 @@ export class PersonListComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    this.activatedRoute.queryParams
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe((params: any) => {
+        console.log(params);
+        this.origin = params['origin'] ?? null;
+        if (this.origin == 'FACTJURREGDESTLEG') {
+          this.no_bien = params['no_bien'] ?? null;
+        }
+        console.log(params);
+      });
     this.data
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
@@ -225,5 +240,18 @@ export class PersonListComponent extends BasePage implements OnInit {
         );
       },
     });
+  }
+  goBack() {
+    if (this.origin == 'FACTJURREGDESTLEG') {
+      this.router.navigate([
+        '/pages/juridical/depositary/depositary-record/' + this.no_bien,
+      ]);
+    } else {
+      this.alert(
+        'warning',
+        'La página de origen no tiene opción para regresar a la pantalla anterior',
+        ''
+      );
+    }
   }
 }
