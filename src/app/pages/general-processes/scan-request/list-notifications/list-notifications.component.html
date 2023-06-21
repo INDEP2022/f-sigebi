@@ -14,7 +14,22 @@
   <div body>
     <div class="row pt-4">
       <div class="col-md-12">
-        <div [class]="loading ? 'table-loading' : ''">
+        <form-loader *ngIf="loading"></form-loader>
+        <ng-scrollbar
+          [track]="'all'"
+          [ngStyle]="{
+            height: loading ? '0px' : '300px',
+            width: loading ? '0px' : '100%'
+          }">
+          <ng2-smart-table
+            [attr.class]="'table-bordered table-responsive'"
+            [settings]="settings"
+            [source]="dataNotification.data"
+            (edit)="formDataNoti($event.data)">
+          </ng2-smart-table>
+        </ng-scrollbar>
+
+        <!-- <div [class]="loading ? 'table-loading' : ''">
           <ng-scrollbar [track]="'all'" style="min-height: 300px">
             <ng2-smart-table
               [attr.class]="'table-bordered table-responsive'"
@@ -24,7 +39,7 @@
               (edit)="formDataNoti($event.data)">
             </ng2-smart-table>
           </ng-scrollbar>
-        </div>
+        </div> -->
       </div>
     </div>
     <app-pagination
