@@ -10,8 +10,8 @@ import { ITypeSiniester } from '../../models/catalogs/type-siniester.model';
   providedIn: 'root',
 })
 export class TypeSiniesterService implements ICrudMethods<ITypeSiniester> {
-  private readonly route: string = ENDPOINT_LINKS.TypeSiniester;
-  constructor(private typeSiniesterRepository: Repository<ITypeSiniester>) {}
+  private readonly route: string = ENDPOINT_LINKS.TypeSiniesters;
+  constructor(private typeSiniesterRepository: Repository<ITypeSiniester>) { }
 
   getAll(params?: ListParams): Observable<IListResponse<ITypeSiniester>> {
     return this.typeSiniesterRepository.getAllPaginated(this.route, params);
@@ -25,8 +25,12 @@ export class TypeSiniesterService implements ICrudMethods<ITypeSiniester> {
     return this.typeSiniesterRepository.create(this.route, model);
   }
 
-  update(id: string | number, model: ITypeSiniester): Observable<Object> {
+  /*update(id: string | number, model: ITypeSiniester): Observable<Object> {
     return this.typeSiniesterRepository.update(this.route, id, model);
+  }*/
+
+  newUpdate(model: ITypeSiniester): Observable<Object> {
+    return this.typeSiniesterRepository.newUpdate(this.route, model);
   }
 
   remove(id: string | number): Observable<Object> {

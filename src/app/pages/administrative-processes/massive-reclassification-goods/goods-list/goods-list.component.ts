@@ -229,7 +229,7 @@ export class GoodsListComponent
           return of({ data: [], count: 0 });
         }),
         tap(response => {
-          this.totalItems = response.count;
+          this.totalItems = response.count ?? 0; //> 100 ? 100 : response.count;
         }),
         map(response =>
           response.data.map(good => {

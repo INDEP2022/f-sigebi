@@ -31,9 +31,17 @@ export class SatClassificationListComponent extends BasePage implements OnInit {
   ) {
     super();
     this.settings.columns = SAT_CLASSIFICATION_COLUMNS;
-    this.settings.actions.delete = true;
-    this.settings.actions.add = false;
-    this.settings.hideSubHeader = false;
+    this.settings = {
+      ...this.settings,
+      hideSubHeader: false,
+      actions: {
+        columnTitle: 'Acciones',
+        edit: true,
+        add: false,
+        delete: true,
+        position: 'right',
+      },
+    };
   }
 
   ngOnInit(): void {
@@ -47,10 +55,21 @@ export class SatClassificationListComponent extends BasePage implements OnInit {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
-            filter.field == 'id' || filter.field == 'nombre_clasificacion'
-              ? (searchFilter = SearchFilter.EQ)
-              : (searchFilter = SearchFilter.ILIKE);
+            switch (filter.field) {
+              case 'id':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'nombre_clasificacion':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
             if (filter.search !== '') {
+              console.log(
+                (this.columnFilters[field] = `${searchFilter}:${filter.search}`)
+              );
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
               delete this.columnFilters[field];
@@ -75,7 +94,7 @@ export class SatClassificationListComponent extends BasePage implements OnInit {
       next: response => {
         this.satClasification = response.data;
         this.totalItems = response.count || 0;
-        this.data.load(response.data);
+        this.data.load(this.satClasification);
         this.data.refresh();
         this.loading = false;
       },

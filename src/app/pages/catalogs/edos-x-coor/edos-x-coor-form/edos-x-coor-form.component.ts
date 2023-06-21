@@ -20,7 +20,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 export class EdosXCoorFormComponent extends BasePage implements OnInit {
   //edosXCoorForm: ModelForm<IEdosXCoor>;
   edosXCoorForm: FormGroup = new FormGroup({});
-  title: string = 'Lista de Estados por Coordinación';
+  title: string = 'Estado por coordinación';
   edit: boolean = false;
   edosXCoor: IEdosXCoor;
   delegations: IDelegation;
@@ -73,6 +73,7 @@ export class EdosXCoorFormComponent extends BasePage implements OnInit {
       this.getSelectState(new ListParams(), this.edosXCoor.noState);
       this.edosXCoorForm.controls['id'].disable();
       this.edosXCoorForm.controls['noState'].disable();
+      this.edosXCoorForm.controls['stage'].disable();
       this.edosXCoorForm.patchValue(this.edosXCoor);
     }
     this.getDelegations(new ListParams());

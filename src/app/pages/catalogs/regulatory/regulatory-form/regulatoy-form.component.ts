@@ -1,15 +1,13 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IRegulatory } from 'src/app/core/models/catalogs/regulatory.model';
 import { FractionService } from 'src/app/core/services/catalogs/fraction.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import {
-  POSITVE_NUMBERS_PATTERN,
-  STRING_PATTERN,
-} from 'src/app/core/shared/patterns';
+import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { RegulatoryService } from '../../../../core/services/catalogs/regulatory.service';
 import { DefaultSelect } from '../../../../shared/components/select/default-select';
 
@@ -19,8 +17,8 @@ import { DefaultSelect } from '../../../../shared/components/select/default-sele
   styles: [],
 })
 export class RegulatoyFormComponent extends BasePage implements OnInit {
-  //form: ModelForm<IRegulatory>;
-  form: FormGroup = new FormGroup({});
+  form: ModelForm<IRegulatory>;
+  //form: FormGroup = new FormGroup({});
   title: string = 'Regulación';
   edit: boolean = false;
   regulatory: IRegulatory;
@@ -54,14 +52,14 @@ export class RegulatoyFormComponent extends BasePage implements OnInit {
       id: [null],
       fractionId: [
         null,
-        [Validators.required, Validators.pattern(POSITVE_NUMBERS_PATTERN)],
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
       ],
       number: [
         null,
         [
           Validators.required,
           Validators.maxLength(5),
-          Validators.pattern(POSITVE_NUMBERS_PATTERN),
+          Validators.pattern(NUMBERS_PATTERN),
         ],
       ],
       description: [
@@ -88,11 +86,11 @@ export class RegulatoyFormComponent extends BasePage implements OnInit {
           Validators.pattern(STRING_PATTERN),
         ],
       ],
+      version: [null, [Validators.maxLength(5)]],
       userCreation: [null],
       createDate: [null],
       userModification: [null],
       modificationDate: [null],
-      version: [null, [Validators.maxLength(5)]],
     });
     if (this.regulatory != null) {
       this.edit = true;

@@ -107,7 +107,11 @@ export class LogicalTablesRegisterComponent extends BasePage implements OnInit {
     modalConfig.initialState = {
       dinamicTables,
       callback: (next: boolean) => {
-        if (next) this.getDinamicTables();
+        if (next) {
+          this.params
+            .pipe(takeUntil(this.$unSubscribe))
+            .subscribe(() => this.getDinamicTables());
+        }
       },
     };
     this.modalService.show(LogicalTablesRegisterModalComponent, modalConfig);
@@ -130,12 +134,12 @@ export class LogicalTablesRegisterComponent extends BasePage implements OnInit {
     this.dinamicTablesService.remove2(id).subscribe({
       next: () => {
         this.getDinamicTables();
-        this.alert('success', 'Borrado', '');
+        this.alert('success', 'Tablas Lógicas', 'Borrado');
       },
       error: erro => {
         this.alert(
           'warning',
-          'Atributos de Informaci&oacute;n Financiera',
+          'Tablas Lógicas',
           'No se puede eliminar el objeto debido a una relación con otra tabla.'
         );
       },

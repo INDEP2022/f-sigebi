@@ -84,6 +84,9 @@ export class SatSubclassificationFormComponent
   }
 
   getClassifications(params: ListParams) {
+    console.log('params:', params);
+    var dddd = 'cat';
+    //params['filter.text'] = `$ilike:${dddd}`;
     this.satClassificationService.getAll(params).subscribe(data => {
       this.classifications = new DefaultSelect(data.data, data.count);
     });

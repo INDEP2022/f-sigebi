@@ -1,6 +1,6 @@
 export const GOOD_SITUATION_COLUMS = {
   situation: {
-    title: 'Id',
+    title: 'Situación',
     type: 'string',
     sort: false,
     width: '15%',

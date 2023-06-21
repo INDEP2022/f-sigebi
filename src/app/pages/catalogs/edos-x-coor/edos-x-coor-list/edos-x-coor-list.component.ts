@@ -115,7 +115,7 @@ export class EdosXCoorListComponent extends BasePage implements OnInit {
   remove(edosXCoor: IEdosXCoor) {
     this.edosXCoorService.remove2(edosXCoor).subscribe({
       next: () => {
-        this.alert('success', 'Edos x coor', 'Borrado');
+        this.alert('success', 'Estado por coordinación', 'Borrado');
         this.getExample();
       },
       error: error => {

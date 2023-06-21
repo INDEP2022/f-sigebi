@@ -21,7 +21,11 @@
           <form-field
             [control]="clarificationForm.get('type')"
             label="Tipo de Aclaraci&oacute;n">
-            <input type="text" class="form-control" formControlName="type" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="type"
+              maxlength="3" />
           </form-field>
         </div>
 
