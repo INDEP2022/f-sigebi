@@ -127,6 +127,7 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
     downloadLink.target = '_blank';
     downloadLink.click();
   }
+
   getDataUser() {
     const params: ListParams = {
       'filter.id': this.token.decodeToken().preferred_username,
@@ -159,7 +160,7 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
       return;
     }
     this.alertQuestion(
-      'info',
+      'question',
       'Se generará un folio de escaneo para los bienes',
       '¿Desea continuar?'
     ).then(question => {
@@ -210,12 +211,13 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
       },
     });
   }
+
   toNextForm() {
     this.goNextForm();
   }
-  goNextForm() {
-    // localStorage.setItem('goodData', this.goods);
 
+  goNextForm() {
+    localStorage.setItem('goodData', JSON.stringify(this.idsGoods));
     this.router.navigate([`/pages/general-processes/scan-documents`], {
       queryParams: { origin: 'FPROCRECPAG', folio: this.folioEscaneoNg },
     });
@@ -262,6 +264,7 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
       this.goNextForm();
     }
   }
+
   actualizarVariable(val: boolean, folioEscaneoNg: string) {
     this.folioEscaneoNg = folioEscaneoNg;
     this.generateFo = val;
@@ -272,7 +275,9 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
     console.log('good', good);
     this.filter1.getValue().removeAllFilters();
     this.filter1.getValue().addFilter('goodNumber', good.id, SearchFilter.EQ);
-    // this.filter1.getValue().addFilter('scanStatus', 'ESCANEADO', SearchFilter.EQ)
+    this.filter1
+      .getValue()
+      .addFilter('scanStatus', 'ESCANEADO', SearchFilter.EQ);
     this.documnetServices
       .getAllFilter(this.filter1.getValue().getParams())
       .subscribe({
@@ -289,5 +294,10 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
           this.folioEscaneoNg = '';
         },
       });
+  }
+  idsGoods: any = null;
+  cargarData(ids: any) {
+    this.idsGoods = ids;
+    console.log('this.idsGoods', this.idsGoods);
   }
 }
