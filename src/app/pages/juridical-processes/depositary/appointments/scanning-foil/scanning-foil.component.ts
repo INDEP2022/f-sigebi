@@ -119,19 +119,15 @@ export class ScanningFoilAppointmentComponent
   }
 
   showScannerFoil() {
-    if (!this.officeDictationData && !this.dictationData) {
-      return;
-    }
-    if (this.formScan.get('scanningFoli').value) {
-      // Insertar imagenes
-      this.viewPicturesEmitter.emit(true);
-    } else {
-      this.alertInfo(
-        'warning',
-        'No tiene folio de Escaneo para visualizar',
-        ''
-      );
-    }
+    // if (this.formScan.get('scanningFoli').value) {
+    this.viewPicturesEmitter.emit(true);
+    // } else {
+    //   this.alertInfo(
+    //     'warning',
+    //     'No tiene folio de Escaneo para visualizar',
+    //     ''
+    //   );
+    // }
   }
 
   openScannerPage() {

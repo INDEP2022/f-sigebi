@@ -655,6 +655,7 @@ export class AppointmentsComponent
   validPostGetDepositary() {}
 
   setDataDepositary() {
+    this.showScanForm = false; // Ocultar parte de escaneo
     this.form
       .get('representanteSAE')
       .setValue(this.depositaryAppointment.seraRepresentative);
@@ -665,6 +666,18 @@ export class AppointmentsComponent
     this.form
       .get('tipoDepositaria')
       .setValue(this.depositaryAppointment.depositaryType);
+
+    setTimeout(() => {
+      this.formScan
+        .get('scanningFoli')
+        .setValue(this.depositaryAppointment.universalFolio);
+      this.formScan.get('scanningFoli').updateValueAndValidity();
+      this.formScan
+        .get('returnFoli')
+        .setValue(this.depositaryAppointment.folioReturn);
+      this.formScan.get('returnFoli').updateValueAndValidity();
+      this.showScanForm = true; // Mostrar parte de escaneo
+    }, 200);
   }
 
   setDataPerson() {
@@ -1292,6 +1305,30 @@ export class AppointmentsComponent
             subscription.unsubscribe();
           },
         });
+    }
+  }
+  viewPictures(event: any) {
+    console.log(event);
+    if (this.depositaryAppointment.revocation == 'N') {
+      if (this.formScan.get('scanningFoli').value) {
+        // Continuar proceso para cargar imágenes
+      } else {
+        this.alertInfo(
+          'warning',
+          'No tiene folio de Escaneo para visualizar',
+          ''
+        );
+      }
+    } else {
+      if (this.formScan.get('returnFoli').value) {
+        // Continuar proceso para cargar imágenes
+      } else {
+        this.alertInfo(
+          'warning',
+          'No tiene folio de Escaneo para visualizar',
+          ''
+        );
+      }
     }
   }
 }

@@ -700,7 +700,10 @@
         <!-- PARTE DE ESCANEO -->
         <div class="col-md-8 col-12 col-sm-12" *ngIf="showScanForm">
           <app-scanning-foil-appointment
-            [formScan]="formScan"></app-scanning-foil-appointment>
+            [formScan]="formScan"
+            (viewPicturesEmitter)="
+              viewPictures($event)
+            "></app-scanning-foil-appointment>
         </div>
         <!-- <div class="col-sm-12 col-12 col-md-8 P-2">
           <div class="row">
