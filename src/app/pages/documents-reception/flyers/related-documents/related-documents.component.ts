@@ -175,6 +175,7 @@ export class RelatedDocumentsComponent
   dataGoodFilter: IGood[] = [];
   dataGood: IDataGoodsTable[] = [];
   origin: string = '';
+  lastRoute: string = '';
   valTiposAll: boolean;
   tiposData: any = [];
   selectedAllImpro: boolean = false;
@@ -755,32 +756,23 @@ export class RelatedDocumentsComponent
     this.route.queryParams
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe((params: any) => {
-        console.log(params);
-        this.origin = params['origin'] ?? null;
-        this.paramsGestionDictamen.volante = params['volante'] ?? null;
-        this.paramsGestionDictamen.expediente = params['expediente'] ?? null;
-        this.paramsGestionDictamen.tipoOf = params['tipoOf'] ?? null;
-        this.formJobManagement
-          .get('jobType')
-          .setValue(params['tipoOf'] ?? null);
-        this.paramsGestionDictamen.doc = params['doc'] ?? null;
-        this.paramsGestionDictamen.pDictamen = params['pDictamen'] ?? null;
-        this.paramsGestionDictamen.sale = params['sale'] ?? null;
-        this.paramsGestionDictamen.pGestOk = params['pGestOk'] ?? null;
-        this.paramsGestionDictamen.pllamo = params['pllamo'] ?? null; // Se agrego
-        console.log('PARAMETROS VISTA ', this.paramsGestionDictamen);
-
-        /*this.origin = params['origin'] ?? null; //no hay
+        //console.log(params);
+        this.lastRoute = params['LAST_ROUTE'] ?? null;
+        this.origin = params['ORIGIN'] ?? null;
         this.paramsGestionDictamen.volante = params['VOLANTE'] ?? null;
         this.paramsGestionDictamen.expediente = params['EXPEDIENTE'] ?? null;
         this.paramsGestionDictamen.tipoOf = params['TIPO_OF'] ?? null;
+        this.formJobManagement
+          .get('jobType')
+          .setValue(params['TIPO_OF'] ?? null);
         this.paramsGestionDictamen.doc = params['DOC'] ?? null;
-        this.paramsGestionDictamen.pDictamen = params['pDictamen'] ?? null;  //no hay
+        this.paramsGestionDictamen.pDictamen = params['P_DICTAMEN'] ?? null;
         this.paramsGestionDictamen.sale = params['SALE'] ?? null;
-        this.paramsGestionDictamen.pGestOk = params['BIEN'] ?? null;
-        this.paramsGestionDictamen.pGestOk = params['PLLAMO'] ?? null;
+        this.paramsGestionDictamen.bien = params['BIEN'] ?? null;
+        //this.paramsGestionDictamen.pllamo = params['PLLAMO'] ?? null;
         this.paramsGestionDictamen.pGestOk = params['P_GEST_OK'] ?? null;
-        this.paramsGestionDictamen.pGestOk = params['P_NO_TRAMITE'] ?? null;*/
+        this.paramsGestionDictamen.pNoTramite = params['P_NO_TRAMITE'] ?? null;
+        console.log('PARAMETROS VISTA ', this.paramsGestionDictamen);
       });
     this.pantallaActual = this.route.snapshot.paramMap.get('id');
     if (!this.pantallaActual) {
@@ -994,8 +986,8 @@ export class RelatedDocumentsComponent
   }
 
   initForm() {
-    const wheelNumber = this.getQueryParams('volante');
-    const expedient = this.getQueryParams('expediente');
+    const wheelNumber = this.getQueryParams('VOLANTE');
+    const expedient = this.getQueryParams('EXPEDIENTE');
     this.getNotification(wheelNumber, expedient).subscribe({
       next: async res => {
         console.log(res);
@@ -1964,7 +1956,7 @@ export class RelatedDocumentsComponent
 
   async pupGoodDoc() {
     const user = this.authService.decodeToken().preferred_username;
-    const doc = this.getQueryParams('doc');
+    const doc = this.getQueryParams('DOC');
     if (doc == 'N') {
       this.alert('warning', 'Este oficio no lleva Documentos', '');
       return;
@@ -1993,7 +1985,7 @@ export class RelatedDocumentsComponent
     //const { managementNumber, cveManagement } = this.m_job_management;
     const managementNumber = this.formJobManagement.value.managementNumber;
     const cveManagement = this.formJobManagement.value.cveManagement;
-    const bien = this.getQueryParams('bien');
+    const bien = this.getQueryParams('BIEN');
     const { refersTo } = this.formJobManagement.controls;
     const goodJobs = this.dataTableGoodsJobManagement;
     if (bien == 'S' && doc == 'S') {
@@ -2304,8 +2296,7 @@ export class RelatedDocumentsComponent
       );
       return;
     }
-    //username
-    // debugger;
+
     console.log(insertUser);
     if (
       insertUser?.toLowerCase() !==
@@ -2322,14 +2313,6 @@ export class RelatedDocumentsComponent
         return;
       }
     }
-    // else {
-    //   this.onLoadToast(
-    //     'error',
-    //     'Error',
-    //     'Usuario inválido para borrar oficio'
-    //   );
-    //   return;
-    // }
 
     this.alertQuestion(
       'warning',
@@ -2359,20 +2342,11 @@ export class RelatedDocumentsComponent
       screen: 'FACTADBOFICIOGEST',
       dictum: managementNumber,
     };
-
+    const result = await this.relatedDocumentDesahogo.updateGoodStatus(body);
     const management = managementNumber;
     const volante = noVolante;
-    //se elimina bienes_officio_gestion
-    // const promises = [
-    //   //this.mJobManagementService.deleteGoodsJobManagement1(management),
-    //   //this.mJobManagementService.deleteDocumentJobManagement2(management),
-    //   //this.officeManagementSerivice.removeMOfficeManagement(management),
-    //   //this.mJobManagementService.deleteCopiesJobManagement4(management),
-    //   this.relatedDocumentDesahogo.deleteJobManagement(management, volante),
-    //   this.updateIfHaveDictamen(volante),
-    // ];
-    // await Promise.all(promises);
 
+    //se elimina bienes_officio_gestion
     await firstValueFrom(
       this.relatedDocumentDesahogo.deleteJobManagement(management, volante)
     ),
@@ -4082,8 +4056,8 @@ export class RelatedDocumentsComponent
       );
       return;
     }
-    const doc = this.getQueryParams('doc');
-    const bien = this.getQueryParams('bien');
+    const doc = this.getQueryParams('DOC');
+    const bien = this.getQueryParams('BIEN');
     if (
       this.formVariables.get('proc_doc_dic').value === 'N' &&
       doc === 'S' &&
@@ -5397,8 +5371,8 @@ export class RelatedDocumentsComponent
     // const bien = this.getQueryParams('bien');
     let _params_change_status = {
       procDocId: this.formVariables.get('proc_doc_dic').value,
-      doc: this.getQueryParams('doc'), //this.paramsGestionDictamen.doc,
-      bien: this.getQueryParams('bien'), //this.paramsGestionDictamen.bien,
+      doc: this.getQueryParams('DOC'), //this.paramsGestionDictamen.doc,
+      bien: this.getQueryParams('BIEN'), //this.paramsGestionDictamen.bien,
       cveOfGestion: this.formJobManagement.value.cveManagement,
       b: this.formVariables.get('b').value,
       d: this.formVariables.get('d').value,

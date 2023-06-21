@@ -1,6 +1,6 @@
 export const COUNT_SAFE_COLUMNS = {
   idSafe: {
-    title: 'No. Bien',
+    title: 'No. Bóveda',
     width: '10%',
     sort: false,
   },

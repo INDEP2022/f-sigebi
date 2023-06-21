@@ -77,6 +77,7 @@ export class AppointmentsComponent
   postalCode = new DefaultSelect();
   postalCodeSelectValue: string = '';
   dateFormat: string = 'dd/MM/yyyy';
+  screenKey: string = 'FACTJURREGDESTLEG';
 
   constructor(
     private fb: FormBuilder,
@@ -314,6 +315,12 @@ export class AppointmentsComponent
     });
   }
 
+  cleanScreenFields() {
+    this.formScan.reset();
+    this.form.reset();
+    this.noBienReadOnly = null;
+  }
+
   toggleRemocion(checked: any) {
     this.checked = checked;
   }
@@ -332,7 +339,7 @@ export class AppointmentsComponent
 
   btnPaysDetails() {
     console.log('Detalle Pagos');
-    if (!this.depositaryAppointment.appointmentNumber) {
+    if (!this.noBienReadOnly) {
       this.alert(
         'warning',
         'Se requiere de una búsqueda de Bien primero para poder ver está opción',
@@ -358,7 +365,17 @@ export class AppointmentsComponent
 
   btnJuridicalReport() {
     console.log('Reportes Juridicos');
-    this.openModalJuridicalReport({});
+    if (!this.noBienReadOnly) {
+      this.alert(
+        'warning',
+        'Se requiere de una búsqueda de Bien primero para poder ver está opción',
+        ''
+      );
+      return;
+    }
+    this.openModalJuridicalReport({
+      depositaryNumber: Number(this.depositaryAppointment.appointmentNumber),
+    });
   }
 
   openModalJuridicalReport(
@@ -376,7 +393,17 @@ export class AppointmentsComponent
 
   btnReportesAdministrativos() {
     console.log('Reportes Administrativos');
-    this.openModaladministrativeReport({});
+    if (!this.noBienReadOnly) {
+      this.alert(
+        'warning',
+        'Se requiere de una búsqueda de Bien primero para poder ver está opción',
+        ''
+      );
+      return;
+    }
+    this.openModaladministrativeReport({
+      depositaryNumber: Number(this.depositaryAppointment.appointmentNumber),
+    });
   }
 
   openModaladministrativeReport(
@@ -394,34 +421,64 @@ export class AppointmentsComponent
 
   btnMasivIncomePays() {
     console.log('Ingresos Masivos Pagos');
+    if (!this.noBienReadOnly) {
+      this.alert(
+        'warning',
+        'Se requiere de una búsqueda de Bien primero para poder ver está opción',
+        ''
+      );
+      return;
+    }
     // Llama pantalla FMASINSPAGDEPOSITARIAS
     this.router.navigate(
       ['/pages/juridical/depositary/bulk-loading-depository-cargo'],
-      {}
+      {
+        queryParams: {
+          origin: this.screenKey,
+          no_bien: this.noBienReadOnly,
+        },
+      }
     );
   }
 
   btnConceptsPaysCatalogs() {
     console.log('Conceptos de Pagos');
+    if (!this.noBienReadOnly) {
+      this.alert(
+        'warning',
+        'Se requiere de una búsqueda de Bien primero para poder ver está opción',
+        ''
+      );
+      return;
+    }
     // Llama pantalla FCATCATCONCEPPAGO
-    // this.router.navigate(
-    //   ['/pages/juridical/depositary/bulk-loading-depository-cargo'],
-    //   {
-    //     // queryParams: {
-    //     //   origin: this.origin3,
-    //     //   P_GEST_OK: this.paramsScreen.P_GEST_OK,
-    //     //   P_NO_TRAMITE: this.paramsScreen.P_NO_TRAMITE,
-    //     // },
-    //   }
-    // );
+    this.router.navigate(['/pages/catalogs/person'], {
+      queryParams: {
+        origin: this.screenKey,
+        no_bien: this.noBienReadOnly,
+      },
+    });
   }
 
   btnDepositaryCatalog() {
     console.log('Cátalogo Depositarias');
+    if (!this.noBienReadOnly) {
+      this.alert(
+        'warning',
+        'Se requiere de una búsqueda de Bien primero para poder ver está opción',
+        ''
+      );
+      return;
+    }
     // Llama pantalla FCATCATMTOPERSONA
     this.router.navigate(
       ['/pages/parameterization/maintenance-individuals-and-companies'],
-      {}
+      {
+        queryParams: {
+          origin: this.screenKey,
+          no_bien: this.noBienReadOnly,
+        },
+      }
     );
   }
 

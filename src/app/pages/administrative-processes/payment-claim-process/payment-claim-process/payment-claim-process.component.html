@@ -4,11 +4,30 @@
   </div>
   <div body>
     <div class="row">
-      <ng2-smart-table
-        [attr.class]="'table-bordered'"
-        [settings]="settings"
-        [source]="data">
-      </ng2-smart-table>
+      <!-- <div class="header"> -->
+      <!-- Contenido del encabezado de la tabla -->
+      <!-- <ng2-smart-table [settings]="settings2"></ng2-smart-table> -->
+      <!-- </div> -->
+      <div class="body">
+        <div>
+          <ng2-smart-table
+            id="idTableTestHead"
+            [attr.class]="'table-bordered'"
+            [settings]="settings"
+            [source]="data">
+          </ng2-smart-table>
+        </div>
+        <!-- <div class="table-container" style="width: 100%;">
+          <ng2-smart-table *ngIf="goods.length <= 10" id="idTableTestBody" [attr.class]="'table-bordered'"
+            [settings]="settings2" [source]="data">
+          </ng2-smart-table>
+
+          <ng2-smart-table *ngIf="goods.length > 10" id="idTableTestBody2" [attr.class]="'table-bordered'"
+            [settings]="settings2" [source]="data">
+          </ng2-smart-table>
+        </div> -->
+      </div>
+      <!-- <app-pagination [params]="params" [totalItems]="totalItems"></app-pagination> -->
     </div>
     <hr />
     <form [formGroup]="form" class="form-material">
@@ -22,6 +41,7 @@
           <div class="d-flex justify-content-beetwen">
             <div class="m-3">
               <button
+                [disabled]="!disabledImport"
                 class="btn btn-success btn-sm ml-2"
                 type="button"
                 (click)="file.click()">
