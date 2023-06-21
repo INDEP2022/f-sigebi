@@ -20,11 +20,12 @@
               bindLabel="description"
               label="Delegacion Regional"
               (fetchItems)="getRegionalDelegation($event)"
+              (change)="stateRegional($event)"
               [readonly]="false"></ngx-select>
           </form-field>
         </div>
       </div>
-      <div class="row pt-5">
+      <div class="row pt-3">
         <!-- <div class="col-md-6">
           <form-field [control]="delegationStateForm.get('keyState')" label="Clave de estado">
             <input type="string" class="form-control" formControlName="keyState" />
@@ -45,15 +46,12 @@
           </form-field>
         </div>
       </div>
-      <div class="row pt-5">
+      <div class="row pt-3">
         <div class="col-md-6">
           <form-field
             [control]="delegationStateForm.get('status')"
             label="Número de contrato">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="status" />
+            <input type="text" class="form-control" formControlName="status" />
           </form-field>
           <!-- <form-radio label="Activo">
             <input type="radio" formControlName="status" value="1" />

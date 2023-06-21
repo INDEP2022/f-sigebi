@@ -21,6 +21,9 @@ export class RackService implements ICrudMethods<IRack> {
   getAll(params?: ListParams): Observable<IListResponse<IRack>> {
     return this.rackRepository.getAllPaginated(this.route, params);
   }
+  getAllFilter(params?: ListParams): Observable<IListResponse<IRack>> {
+    return this.rackRepository.getAllPaginated(this.route + '/get-all', params);
+  }
 
   getById(id: string | number): Observable<IRack> {
     return this.rackRepository.getById(this.route, id);

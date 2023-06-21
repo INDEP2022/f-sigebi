@@ -28,6 +28,9 @@ export class GoodSssubtypesFormComponent extends BasePage implements OnInit {
   types = new DefaultSelect<IGoodType>();
   subTypes = new DefaultSelect<IGoodSubType>();
   ssubTypes = new DefaultSelect<IGoodSsubType>();
+  createForm: boolean = true;
+  idType: string = '';
+  idSubType: string = '';
 
   constructor(
     private modalRef: BsModalRef,
@@ -50,7 +53,7 @@ export class GoodSssubtypesFormComponent extends BasePage implements OnInit {
 
   private prepareForm(): void {
     this.goodSssubtypeForm = this.fb.group({
-      id: [null],
+      id: [null, [Validators.required]],
       description: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
@@ -67,21 +70,28 @@ export class GoodSssubtypesFormComponent extends BasePage implements OnInit {
         null,
         [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
       ],
-      numRegister: [
-        null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
-      ],
+      numRegister: [null],
       numClasifAlterna: [
         null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(NUMBERS_PATTERN),
+          Validators.maxLength(2),
+        ],
       ],
       numClasifGoods: [
         null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(NUMBERS_PATTERN),
+          Validators.maxLength(5),
+        ],
       ],
     });
     if (this.goodSssubtype != null) {
       this.edit = true;
+      this.createForm = false;
+      console.log(this.goodSssubtype);
       let goodType: IGoodType = this.goodSssubtype.numType as IGoodType;
       let goodSubtype: IGoodSubType = this.goodSssubtype
         .numSubType as IGoodSubType;
@@ -97,36 +107,159 @@ export class GoodSssubtypesFormComponent extends BasePage implements OnInit {
       this.goodSssubtypeForm.get('numType').disable();
       this.goodSssubtypeForm.get('numSubType').disable();
       this.goodSssubtypeForm.get('numSsubType').disable();
+
       this.types = new DefaultSelect([goodType], 1);
       this.subTypes = new DefaultSelect([goodSubtype], 1);
       this.ssubTypes = new DefaultSelect([goodSsubtype], 1);
-    } else {
-      this.getTypes({ inicio: 1, text: '' });
-      this.getSubtypes({ inicio: 1, text: '' });
-      this.getSsubtypes({ inicio: 1, text: '' });
+      this.idType = this.goodSssubtypeForm.controls['numType'].value.toString();
+      this.idSubType =
+        this.goodSssubtypeForm.controls['numSubType'].value.toString();
+      this.getSubtypes(new ListParams());
+      this.getSsubtypes(new ListParams());
     }
+    this.goodSssubtypeForm.get('numClasifGoods').disable();
+    setTimeout(() => {
+      this.getTypes(new ListParams());
+    }, 1000);
+    //this.getSubtypes({ inicio: 1, text: '' });
+    //this.getSsubtypes({ inicio: 1, text: '' });
   }
 
   getTypes(params: ListParams) {
-    this.goodTypeService.getAll(params).subscribe(data => {
-      this.types = new DefaultSelect(data.data, data.count);
+    this.goodTypeService.getAll(params).subscribe({
+      next: data => {
+        this.types = new DefaultSelect(data.data, data.count);
+      },
+      error: error => {
+        console.log(error);
+        this.types = new DefaultSelect();
+        this.loading = false;
+      },
     });
   }
+
+  getTypesUpdate(params: ListParams, value: string) {
+    if (value) {
+      console.log(value);
+      params['filter.id'] = `$eq:${value}`;
+    }
+    this.goodTypeService.getAll(params).subscribe({
+      next: data => {
+        this.types = new DefaultSelect(data.data, data.count);
+      },
+      error: error => {
+        console.log(error);
+        this.types = new DefaultSelect();
+        this.loading = false;
+      },
+    });
+  }
+
+  getChangeSutype(data: any) {
+    console.log(data);
+    this.idType = data.id;
+    console.log(data);
+    if (this.idType != null) {
+      // this.goodSssubtypeForm.controls['numSubType'].enable();
+      this.getSubtypes(new ListParams());
+    }
+    this.ssubTypes = new DefaultSelect([], 0, true);
+    this.goodSssubtypeForm.controls['numSubType'].setValue('');
+    this.goodSssubtypeForm.controls['numSsubType'].setValue('');
+    /*if (this.createForm === false) {
+      if (this.idType != this.goodSssubtype.typeId) {
+        console.log(this.idType, this.goodSssubtype.typeId);
+        this.goodSssubtypeForm.controls['subtypeId'].setValue(null);
+        this.goodSssubtypeForm.controls['ssubtypeId'].setValue(null);
+      }
+    }*/
+  }
+
   getSubtypes(params: ListParams) {
-    this.goodSubtypeService
-      .getAll({
-        ...params,
-        type: this.goodSssubtypeForm.controls.numType.value as any,
-      })
-      .subscribe(data => {
+    if (this.idType) {
+      params['filter.idTypeGood'] = `$eq:${this.idType}`;
+    }
+    this.goodSubtypeService.getAll(params).subscribe({
+      next: data => {
         this.subTypes = new DefaultSelect(data.data, data.count);
-      });
-  }
-  getSsubtypes(params: ListParams) {
-    this.goodSsubtypeService.getAll(params).subscribe(data => {
-      this.ssubTypes = new DefaultSelect(data.data, data.count);
+      },
+      error: error => {
+        console.log(error);
+        this.subTypes = new DefaultSelect();
+        this.loading = false;
+      },
     });
   }
+
+  getSubtypesUpdate(params: ListParams, value: string, valueType: string) {
+    if (value && valueType) {
+      console.log(value);
+      params['filter.id'] = `$eq:${value}`;
+      params['filter.idTypeGood'] = `$eq:${valueType}`;
+    }
+    this.goodSubtypeService.getAll(params).subscribe({
+      next: data => {
+        this.subTypes = new DefaultSelect(data.data, data.count);
+      },
+      error: error => {
+        console.log(error);
+        this.subTypes = new DefaultSelect();
+        this.loading = false;
+      },
+    });
+  }
+
+  getChangeSsutype(data: any) {
+    console.log(data);
+    this.idSubType = data.id;
+    console.log(data);
+    if (this.idSubType != null) {
+      this.getSsubtypes(new ListParams());
+    }
+    this.goodSssubtypeForm.controls['numSsubType'].setValue('');
+    /*console.log(this.idSubType, this.clasification.subtypeId);
+    if (this.idSubType != this.clasification.subtypeId) {
+      
+      this.siabClasificationform.controls['ssubtypeId'].setValue(null);
+      this.siabClasificationform.controls['sssubtypeId'].setValue(null);
+    }*/
+  }
+
+  getSsubtypes(params: ListParams) {
+    if (this.idSubType) {
+      params['filter.noType'] = `$eq:${this.idType}`;
+      params['filter.noSubType'] = `$eq:${this.idSubType}`;
+    }
+    this.goodSsubtypeService.getAll(params).subscribe({
+      next: data => {
+        this.ssubTypes = new DefaultSelect(data.data, data.count);
+      },
+      error: error => {
+        console.log(error);
+        this.ssubTypes = new DefaultSelect();
+        this.loading = false;
+      },
+    });
+  }
+
+  getSsubtypesUpdate(params: ListParams, value: string, valuesubType: string) {
+    if (value && valuesubType) {
+      console.log(value);
+      params['filter.id'] = `$eq:${value}`;
+      params['filter.noSubType'] = `$eq:${valuesubType}`;
+    }
+    this.goodSsubtypeService.getAll(params).subscribe({
+      next: data => {
+        this.ssubTypes = new DefaultSelect(data.data, data.count);
+      },
+      error: error => {
+        console.log(error);
+        this.ssubTypes = new DefaultSelect();
+        this.loading = false;
+      },
+    });
+  }
+
   close() {
     this.modalRef.hide();
   }
@@ -137,15 +270,19 @@ export class GoodSssubtypesFormComponent extends BasePage implements OnInit {
 
   create() {
     this.loading = true;
-    this.goodSssubtypeService.create(this.goodSssubtypeForm.value).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
-    });
+    this.goodSssubtypeService
+      .create(this.goodSssubtypeForm.getRawValue())
+      .subscribe({
+        next: data => this.handleSuccess(),
+        error: error => (this.loading = false),
+      });
   }
 
   update() {
     this.loading = true;
+    console.log(this.goodSssubtype.numClasifGoods);
     const ids = {
+      numClasifGoods: this.goodSssubtype.numClasifGoods,
       id: this.goodSssubtype.id,
       numSsubType: (this.goodSssubtype.numSsubType as IGoodSsubType).id,
       numSubType: (this.goodSssubtype.numSubType as IGoodSubType).id,
@@ -153,7 +290,7 @@ export class GoodSssubtypesFormComponent extends BasePage implements OnInit {
     };
 
     this.goodSssubtypeService
-      .updateByIds(ids, this.goodSssubtypeForm.value)
+      .updateByIds(ids, this.goodSssubtypeForm.getRawValue())
       .subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),

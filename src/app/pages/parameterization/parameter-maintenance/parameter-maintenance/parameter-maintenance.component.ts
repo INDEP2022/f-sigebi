@@ -64,7 +64,7 @@ export class ParameterMaintenanceComponent extends BasePage implements OnInit {
             /*SPECIFIC CASES*/
             switch (filter.field) {
               case 'id':
-                searchFilter = SearchFilter.EQ;
+                searchFilter = SearchFilter.ILIKE;
                 break;
               default:
                 searchFilter = SearchFilter.ILIKE;
@@ -72,10 +72,13 @@ export class ParameterMaintenanceComponent extends BasePage implements OnInit {
             }
 
             if (filter.search !== '') {
+              this.pageFilter;
               console.log(
                 (this.columnFilters[field] = `${searchFilter}:${filter.search}`)
               );
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+              console.log('this.param:', this.params);
+              this.params.value.page = 1;
             } else {
               delete this.columnFilters[field];
             }
@@ -100,7 +103,7 @@ export class ParameterMaintenanceComponent extends BasePage implements OnInit {
         this.parameterData = resp.data;
         this.data.load(this.parameterData);
         this.data.refresh();
-        this.totalItems = resp.count;
+        this.totalItems = resp.count || 0;
         this.loading = false;
       },
       error: err => {

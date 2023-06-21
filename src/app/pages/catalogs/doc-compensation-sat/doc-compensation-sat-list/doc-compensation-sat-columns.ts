@@ -4,11 +4,11 @@ export const DOCCOMPENSATIONSAT_COLUMS = {
     type: 'number',
     sort: false,
   },
-  officeSatId: {
+  /*officeSatId: {
     title: 'Identificador del oficio sat',
     type: 'number',
     sort: false,
-  },
+  },*/
   typeDocSat: {
     title: 'Tipo documento',
     type: 'string',
@@ -20,7 +20,7 @@ export const DOCCOMPENSATIONSAT_COLUMS = {
     sort: false,
   },
   subjectCode: {
-    title: 'Asunto codigo',
+    title: 'Asunto código',
     type: 'number',
     sort: false,
   },

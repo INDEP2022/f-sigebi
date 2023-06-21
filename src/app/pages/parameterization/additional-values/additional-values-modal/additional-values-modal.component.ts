@@ -2,6 +2,7 @@ import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
+import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { ITablesType } from 'src/app/core/models/catalogs/dinamic-tables.model';
@@ -23,6 +24,8 @@ export class AdditionalValuesModalComponent extends BasePage implements OnInit {
   value: ITablesType;
   values = new DefaultSelect<ITablesType>();
   edit: boolean = false;
+  params = new BehaviorSubject<ListParams>(new ListParams());
+  columnFilters: any = [];
 
   constructor(
     private fb: FormBuilder,
@@ -103,8 +106,13 @@ export class AdditionalValuesModalComponent extends BasePage implements OnInit {
       }
     }
   }
-  getAditionalValues(params: ListParams) {
-    this.valuesService.getAll(params).subscribe(
+  getAditionalValues(param: ListParams) {
+    let params = {
+      ...this.params.getValue(),
+      ...this.columnFilters,
+    };
+
+    this.valuesService.getAll2(params).subscribe(
       (data: any) => {
         this.values = new DefaultSelect(data.data, data.count);
       },
@@ -130,6 +138,8 @@ export class AdditionalValuesModalComponent extends BasePage implements OnInit {
     this.additionalValuesForm.controls['dstabla'].setValue(
       aditionalValues.description
     );
+    this.params = this.pageFilter(this.params);
+
     this.tvalTableForm.controls['table'].setValue(aditionalValues.table);
     this.values = new DefaultSelect();
   }

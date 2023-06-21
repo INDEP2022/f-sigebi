@@ -1801,6 +1801,7 @@ export class JuridicalRulingGComponent
       this.DictationXGood1Service.getAll(params).subscribe({
         next: (resp: any) => {
           console.log('respresprespresp', resp);
+
           const data = resp.data;
           this.loading = false;
           resolve(data);

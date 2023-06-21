@@ -5,13 +5,29 @@ export const NUMERARY_PARAMETERIZATION_COLUMNS = {
     sort: false,
   },
   initialCategory: {
-    title: 'Categoria Inicial',
+    title: 'Categoría Inicial',
     type: 'string',
     sort: false,
   },
-  finalCategory: {
-    title: 'Categoria Final',
+  initialCategoryDetails: {
+    title: 'Desc. Categoría Inicial',
     type: 'string',
+    valuePrepareFunction: (value: any) => {
+      return value.description;
+    },
+    sort: false,
+  },
+  finalCategory: {
+    title: 'Categoría Final',
+    type: 'string',
+    sort: false,
+  },
+  finalCategoryDetails: {
+    title: 'Desc. Categoría Final',
+    type: 'string',
+    valuePrepareFunction: (value: any) => {
+      return value.description;
+    },
     sort: false,
   },
 };

@@ -75,7 +75,7 @@ export class RackListComponent extends BasePage implements OnInit {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-    this.rackService.getAll(params).subscribe({
+    this.rackService.getAllFilter(params).subscribe({
       next: response => {
         this.racks = response.data;
         this.totalItems = response.count || 0;
@@ -94,6 +94,7 @@ export class RackListComponent extends BasePage implements OnInit {
       callback: (next: boolean) => {
         if (next) this.getExample();
       },
+      class: 'modal-lg modal-dialog-centered',
     };
     this.BsModalService.show(RackFormComponent, modalConfig);
   }

@@ -64,6 +64,8 @@ export class CatServicesFormComponent extends BasePage implements OnInit {
     if (this.catservice != null) {
       this.edit = true;
       this.catserviceForm.patchValue(this.catservice);
+      this.catserviceForm.controls['code'].setValue(this.catservice.code);
+      this.catserviceForm.get('code').disable();
     }
   }
   close() {
@@ -83,7 +85,6 @@ export class CatServicesFormComponent extends BasePage implements OnInit {
   }
 
   update() {
-    console.log('INGRESO');
     this.loading = true;
     this.catserviceService
       .update(this.catservice.code, this.catserviceForm.getRawValue())

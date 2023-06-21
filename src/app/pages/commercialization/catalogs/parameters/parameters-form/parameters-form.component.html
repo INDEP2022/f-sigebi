@@ -26,16 +26,13 @@
         </div>
         <div class="col-lg-3 col-md-3 col-sm-12 col-12 mb-3 mt-3">
           <form-field [control]="form.get('value')" label="Valor">
-            <input
-              type="text"
-              class="form-control disabled"
-              formControlName="value" />
+            <input type="text" class="form-control" formControlName="value" />
           </form-field>
         </div>
         <!--VALUE SELECT PROVISIONAL-->
         <div class="col-lg-6 col-md-6 col-sm-12 col-12 mb-3 mt-3">
           <form-field [control]="form.get('address')" label="Dirección">
-            <select class="form-contro disabled" formControlName="address">
+            <select class="form-control" formControlName="address">
               <option [value]="null">Selecciona un Valor</option>
               <option value="M">Muebles</option>
               <option value="C">Comercial</option>

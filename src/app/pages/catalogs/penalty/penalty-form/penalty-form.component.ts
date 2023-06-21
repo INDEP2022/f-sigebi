@@ -1,15 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { BsModalRef } from 'ngx-bootstrap/modal';
-import { ModelForm } from 'src/app/core/interfaces/model-form';
-import { IPenalty } from 'src/app/core/models/catalogs/penalty.model';
-import { PenaltyService } from 'src/app/core/services/catalogs/penalty.service';
-import { BasePage } from 'src/app/core/shared/base-page';
 import {
   PERCENTAGE_NUMBERS_PATTERN,
   POSITVE_NUMBERS_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
+
+import { BsModalRef } from 'ngx-bootstrap/modal';
+import { ModelForm } from 'src/app/core/interfaces/model-form';
+import { IPenalty } from 'src/app/core/models/catalogs/penalty.model';
+import { PenaltyService } from 'src/app/core/services/catalogs/penalty.service';
+import { BasePage } from 'src/app/core/shared/base-page';
 
 @Component({
   selector: 'app-penalty-form',
@@ -18,7 +19,7 @@ import {
 })
 export class PenaltyFormComponent extends BasePage implements OnInit {
   penaltyForm: ModelForm<IPenalty>;
-  title: string = 'Estatus Siniestros';
+  title: string = 'PENALIZACIÓN';
   edit: boolean = false;
   penalty: IPenalty;
   constructor(
@@ -50,7 +51,8 @@ export class PenaltyFormComponent extends BasePage implements OnInit {
       ],
       equivalentDays: [
         null,
-        [Validators.required, Validators.pattern(POSITVE_NUMBERS_PATTERN)],
+        Validators.maxLength(5),
+        // [Validators.required, Validators.pattern(POSITVE_NUMBERS_PATTERN)],
       ],
       version: [1],
       status: [1],
@@ -59,6 +61,7 @@ export class PenaltyFormComponent extends BasePage implements OnInit {
         [
           Validators.required,
           Validators.pattern(POSITVE_NUMBERS_PATTERN),
+          Validators.minLength(0),
           Validators.maxLength(50),
         ],
       ],

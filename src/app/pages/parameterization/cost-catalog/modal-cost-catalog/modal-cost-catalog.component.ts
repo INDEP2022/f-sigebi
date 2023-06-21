@@ -14,7 +14,7 @@ import { CostCatalogService } from '../cost-catalog.service';
   styles: [],
 })
 export class ModalCostCatalogComponent extends BasePage implements OnInit {
-  title: string = 'Catalogo de Costos';
+  title: string = 'Costo';
   edit: boolean = false;
   form: FormGroup = new FormGroup({});
   allotment: any;
@@ -36,20 +36,34 @@ export class ModalCostCatalogComponent extends BasePage implements OnInit {
     this.form = this.fb.group({
       keyServices: [
         null,
-        [Validators.required, Validators.pattern(KEYGENERATION_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(KEYGENERATION_PATTERN),
+          Validators.maxLength(30),
+        ],
       ],
       descriptionServices: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(200),
+        ],
       ],
-      typeExpenditure: [null, [Validators.required]],
-      unaffordable: [null],
-      cost: [null, [Validators.required]],
+      typeExpenditure: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(4),
+        ],
+      ],
+      unaffordable: [null, Validators.maxLength(1)],
+      cost: [null, [Validators.maxLength(5)]],
       expenditure: [null],
     });
     if (this.allotment != null) {
       this.edit = true;
-      console.log(this.allotment);
       this.form.patchValue(this.allotment);
       if (this.allotment.cost) {
         this.form.get('cost').setValue('cost');
@@ -62,20 +76,16 @@ export class ModalCostCatalogComponent extends BasePage implements OnInit {
 
   putCatalog() {
     this.loading = true;
+    const code = this.form.get('keyServices').value;
     const body = {
       cost: this.form.get('cost').value === 'cost' ? 'COSTO' : 'GASTO',
       description: this.form.get('descriptionServices').value,
-      code: this.form.get('keyServices').value,
       subaccount: this.form.get('typeExpenditure').value,
       unaffordabilityCriterion: this.form.get('unaffordable').value ? 'Y' : 'N',
-      // registryNumber: this.form.get('keyServices').value,
     };
-    this.catalogService.putCostCatalog(body.code, body).subscribe({
-      next: (resp: any) => {
-        if (resp) {
-          this.handleSuccess();
-        }
-      },
+    this.catalogService.putCostCatalog(code, body).subscribe({
+      next: data => this.handleSuccess(),
+      error: error => (this.loading = false),
     });
   }
 
@@ -87,15 +97,10 @@ export class ModalCostCatalogComponent extends BasePage implements OnInit {
       code: this.form.get('keyServices').value,
       subaccount: this.form.get('typeExpenditure').value,
       unaffordabilityCriterion: this.form.get('unaffordable').value ? 'Y' : 'N',
-      registryNumber: this.form.get('keyServices').value,
     };
     this.catalogService.postCostCatalog(body).subscribe({
-      next: (resp: any) => {
-        if (resp) {
-          this.loading = false;
-          this.handleSuccess();
-        }
-      },
+      next: data => this.handleSuccess(),
+      error: error => (this.loading = false),
     });
   }
 
@@ -103,9 +108,8 @@ export class ModalCostCatalogComponent extends BasePage implements OnInit {
     this.modalRef.hide();
   }
   handleSuccess() {
-    this.loading = false;
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.alert('success', this.title, `${message} Correctamente`);
+    this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();

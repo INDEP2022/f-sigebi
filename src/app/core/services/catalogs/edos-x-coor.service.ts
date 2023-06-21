@@ -33,8 +33,8 @@ export class EdosXCoorService
     return this.edosXCoorRepository.create(this.route, model);
   }
 
-  update(id: string | number, model: IEdosXCoor): Observable<Object> {
-    return this.edosXCoorRepository.update(this.route, id, model);
+  newUpdate(model: IEdosXCoor): Observable<Object> {
+    return this.edosXCoorRepository.newUpdate(this.route, model);
   }
 
   remove(id: string | number): Observable<Object> {

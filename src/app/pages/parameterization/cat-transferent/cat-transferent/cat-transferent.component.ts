@@ -91,11 +91,12 @@ export class CatTransferentComponent extends BasePage implements OnInit {
 
     this.settings2 = {
       ...this.settings,
-      hideSubHeader: true,
+      hideSubHeader: false,
       actions: {
         columnTitle: 'Acciones',
         edit: true,
         delete: true,
+        add: false,
         position: 'right',
       },
       columns: { ...STATION_COLUMNS },
@@ -103,10 +104,11 @@ export class CatTransferentComponent extends BasePage implements OnInit {
 
     this.settings3 = {
       ...this.settings,
-      hideSubHeader: true,
+      hideSubHeader: false,
       actions: {
         columnTitle: 'Acciones',
         edit: true,
+        add: false,
         delete: true,
         position: 'right',
       },
@@ -137,6 +139,7 @@ export class CatTransferentComponent extends BasePage implements OnInit {
               delete this.columnFilters[field];
             }
           });
+          this.params = this.pageFilter(this.params);
           this.getTransferents();
         }
       });
@@ -157,8 +160,7 @@ export class CatTransferentComponent extends BasePage implements OnInit {
       next: response => {
         this.columns = response.data;
         this.totalItems = response.count || 0;
-
-        this.data.load(this.columns);
+        this.data.load(response.data);
         this.data.refresh();
         this.loading1 = false;
       },

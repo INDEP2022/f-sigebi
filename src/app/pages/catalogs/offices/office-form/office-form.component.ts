@@ -1,15 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { BsModalRef } from 'ngx-bootstrap/modal';
-import { ModelForm } from 'src/app/core/interfaces/model-form';
-import { IOffice } from 'src/app/core/models/catalogs/office.model';
-import { OfficeService } from 'src/app/core/services/catalogs/office.service';
-import { BasePage } from 'src/app/core/shared/base-page';
 import {
   PHONE_PATTERN,
   RFC_PATTERN,
   STRING_PATTERN,
 } from '../../../../core/shared/patterns';
+
+import { BsModalRef } from 'ngx-bootstrap/modal';
+import { ModelForm } from 'src/app/core/interfaces/model-form';
+import { IOffice } from 'src/app/core/models/catalogs/office.model';
+import { OfficeService } from 'src/app/core/services/catalogs/office.service';
+import { BasePage } from 'src/app/core/shared/base-page';
 
 @Component({
   selector: 'app-office-form',
@@ -95,7 +96,7 @@ export class OfficeFormComponent extends BasePage implements OnInit {
   }
 
   handleSuccess() {
-    const message: string = this.edit ? 'Actualizada' : 'Guardada';
+    const message: string = this.edit ? 'Actualizado' : 'Guardado';
     this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);

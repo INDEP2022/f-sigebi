@@ -1,11 +1,14 @@
 import { IStateOfRepublic } from 'src/app/core/models/catalogs/state-of-republic.model';
 
 export const DELEGATION_STATE_COLUMNS = {
-  keyDelegation: {
+  /*regionalDelegationId: {
     title: 'Clave Delegación',
     type: 'string',
     sort: false,
-  },
+    valuePrepareFunction: (value: any) => {
+      return value != null ? value.id : '';
+    },
+  },*/
   regionalDelegation: {
     title: 'Delegación regional',
     type: 'string',

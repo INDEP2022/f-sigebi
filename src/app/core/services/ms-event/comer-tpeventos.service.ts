@@ -14,6 +14,7 @@ import {
 })
 export class ComerTpEventosService extends HttpService {
   private readonly endpoint: string = EventEndpoints.ComerTEvents;
+  private readonly endpointTevents: string = EventEndpoints.ComerTevents;
   constructor() {
     super();
     this.microservice = EventEndpoints.BasePath;
@@ -21,6 +22,12 @@ export class ComerTpEventosService extends HttpService {
 
   getAll(params?: ListParams): Observable<IListResponse<IComerTpEvent>> {
     return this.get<IListResponse<IComerTpEvent>>(this.endpoint, params);
+  }
+
+  getAllComerTpEvent(
+    params?: ListParams
+  ): Observable<IListResponse<IComerTpEvent>> {
+    return this.get<IListResponse<IComerTpEvent>>(this.endpointTevents, params);
   }
 
   getAllWithFilters(params?: string): Observable<IListResponse<IComerTpEvent>> {
@@ -32,8 +39,17 @@ export class ComerTpEventosService extends HttpService {
     return this.get(route);
   }
 
+  createTevents(tvent: IComerTpEvent) {
+    return this.post(this.endpointTevents, tvent);
+  }
+
   create(tpenalty: IComerTpEvent) {
     return this.post(this.endpoint, tpenalty);
+  }
+
+  updateTevents(id: string | number, tpenalty: IComerTpEvent) {
+    const route = `${this.endpointTevents}/${id}`;
+    return this.put(route, tpenalty);
   }
 
   update(id: string | number, tpenalty: IComerTpEvent) {
@@ -48,6 +64,11 @@ export class ComerTpEventosService extends HttpService {
 
   remove(id: string | number) {
     const route = `${this.endpoint}/${id}`;
+    return this.delete(route);
+  }
+
+  removeTevents(id: string | number) {
+    const route = `${this.endpointTevents}/${id}`;
     return this.delete(route);
   }
 

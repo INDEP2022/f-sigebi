@@ -19,6 +19,9 @@ export const DEPARTMENT_COLUMNS = {
     valuePrepareFunction: (value: IDelegation) => {
       return value?.description;
     },
+    filterFunction: (cell?: any, search?: string) => {
+      return search != null ? search : '';
+    },
     sort: false,
   },
   numSubDelegation: {
@@ -35,7 +38,7 @@ export const DEPARTMENT_COLUMNS = {
     sort: false,
   },
   numRegister: {
-    title: 'Nº registro',
+    title: 'No. Registro',
     type: 'number',
     sort: false,
   },

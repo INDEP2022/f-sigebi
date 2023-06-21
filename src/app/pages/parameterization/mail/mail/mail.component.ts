@@ -9,10 +9,10 @@ import {
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { MailModalComponent } from '../mail-modal/mail-modal.component';
-import { EMAIL_COLUMNS } from './email-columns';
 //Models
 import { LocalDataSource } from 'ng2-smart-table';
 import { ISegUsers } from 'src/app/core/models/ms-users/seg-users-model';
+import { EMAIL_COLUMNS } from './email-columns';
 //servicios
 
 @Component({
@@ -21,9 +21,9 @@ import { ISegUsers } from 'src/app/core/models/ms-users/seg-users-model';
   styles: [],
 })
 export class MailComponent extends BasePage implements OnInit {
+  segUsers: ISegUsers[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
-  segUsers: ISegUsers[] = [];
   data: LocalDataSource = new LocalDataSource();
   columnFilters: any = [];
 
@@ -32,21 +32,28 @@ export class MailComponent extends BasePage implements OnInit {
     private usersService: UsersService
   ) {
     super();
+
+    /*this.settings.columns = EMAIL_COLUMNS;
+    this.settings.actions.delete = true;
+    this.settings.actions.add = false;
+    this.settings.hideSubHeader = false;*/
     this.settings = {
       ...this.settings,
+      hideSubHeader: false,
       actions: {
         columnTitle: 'Acciones',
         edit: true,
         delete: false,
+        add: false,
         position: 'right',
       },
       columns: { ...EMAIL_COLUMNS },
     };
-    this.settings.actions.add = false;
+    /*this.settings.actions.add = false;
     this.settings = {
       ...this.settings,
       hideSubHeader: false,
-    };
+    };*/
   }
 
   ngOnInit(): void {
@@ -59,8 +66,12 @@ export class MailComponent extends BasePage implements OnInit {
           filters.map((filter: any) => {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
-            /*SPECIFIC CASES*/
-            filter.field == 'id'
+            field = `filter.${filter.field}`;
+            filter.field == 'id' ||
+            filter.field == 'name' ||
+            filter.field == 'usuario' ||
+            filter.field == 'email' ||
+            filter.field == 'registryNumber'
               ? (searchFilter = SearchFilter.EQ)
               : (searchFilter = SearchFilter.ILIKE);
             if (filter.search !== '') {
@@ -69,6 +80,7 @@ export class MailComponent extends BasePage implements OnInit {
               delete this.columnFilters[field];
             }
           });
+          this.params = this.pageFilter(this.params);
           this.getSegRelEmail();
         }
       });
@@ -85,10 +97,11 @@ export class MailComponent extends BasePage implements OnInit {
     };
     this.usersService.getAllSegUsers(params).subscribe({
       next: response => {
+        console.log(response.data);
         this.segUsers = response.data;
-        this.data.load(this.segUsers);
+        this.totalItems = response.count || 0;
+        this.data.load(response.data);
         this.data.refresh();
-        this.totalItems = response.count;
         this.loading = false;
       },
       error: error => (this.loading = false),

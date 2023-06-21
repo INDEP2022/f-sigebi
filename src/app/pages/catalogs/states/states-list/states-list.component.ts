@@ -33,9 +33,17 @@ export class StatesListComponent extends BasePage implements OnInit {
   ) {
     super();
     this.settings.columns = STATES_COLUMNS;
-    this.settings.actions.delete = true;
-    this.settings.actions.add = false;
-    this.settings.hideSubHeader = false;
+    this.settings = {
+      ...this.settings,
+      hideSubHeader: false,
+      actions: {
+        columnTitle: 'Acciones',
+        edit: true,
+        add: false,
+        delete: true,
+        position: 'right',
+      },
+    };
   }
 
   ngOnInit(): void {
@@ -84,6 +92,7 @@ export class StatesListComponent extends BasePage implements OnInit {
       next: response => {
         this.states = response.data;
         this.totalItems = response.count || 0;
+        //this.states.sort((a, b) => b. - a.id);
         this.data.load(response.data);
         this.data.refresh();
         this.loading = false;
@@ -119,7 +128,7 @@ export class StatesListComponent extends BasePage implements OnInit {
   delete(id: string) {
     this.stateService.remove(id).subscribe({
       next: () => {
-        this.getStates(), this.alert('success', 'Estados', 'Borrado');
+        this.getStates(), this.alert('success', 'Estado', 'Borrado');
       },
       error: error => {
         this.alert(

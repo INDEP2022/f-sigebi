@@ -35,6 +35,10 @@ export class DelegationService
     return this.delegationRepository.getAll(this.route, params);
   }
 
+  getAllPaginated(params?: ListParams): Observable<IListResponse<IDelegation>> {
+    return this.delegationRepository.getAllPaginated(this.route, params);
+  }
+
   getAppsAll(): Observable<IListResponse<IDelegation>> {
     return this.get<
       IListResponse<{ delegationId: string; description: string }>
@@ -51,6 +55,14 @@ export class DelegationService
 
   getById(id: string | number): Observable<IDelegation> {
     return this.delegationRepository.newGetById(this.route, id);
+  }
+
+  getByIdEtapaEdo(
+    id: string | number,
+    etapaEdo: string
+  ): Observable<IDelegation> {
+    const route = `${DelegationsEndpoints.Delegation}/id/${id}/etapaEdo/${etapaEdo}`;
+    return this.get(route);
   }
 
   create(model: IDelegation): Observable<IDelegation> {

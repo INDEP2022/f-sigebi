@@ -19,7 +19,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 })
 export class GoodSsubtypesFormComponent extends BasePage implements OnInit {
   goodSsubtypeForm: ModelForm<IGoodSsubType>;
-  title: string = 'Subtipo Bien';
+  title: string = 'Sub Sub tipo Bien';
   edit: boolean = false;
   goodSsubtype: IGoodSsubType;
   types = new DefaultSelect<IGoodType>();
@@ -41,7 +41,7 @@ export class GoodSsubtypesFormComponent extends BasePage implements OnInit {
   private prepareForm(): void {
     this.goodSsubtypeForm = this.fb.group({
       id: [null],
-      description: [null, [Validators.required]],
+      description: [null],
       noType: [null, [Validators.required]],
       noSubType: [null, [Validators.required]],
       noRegister: [null],
@@ -57,14 +57,11 @@ export class GoodSsubtypesFormComponent extends BasePage implements OnInit {
         noSubType: goodSubtype.id,
       });
       this.goodSsubtypeForm.get('id').disable();
-      this.goodSsubtypeForm.get('noType').disable();
-      this.goodSsubtypeForm.get('noSubType').disable();
       this.subTypes = new DefaultSelect([goodSubtype], 1);
       this.types = new DefaultSelect([goodType], 1);
-    } else {
-      this.getTypes({ page: 1, text: '' });
-      this.getSubtypes({ page: 1, text: '' });
     }
+    this.getTypes({ page: 1, text: '' });
+    this.getSubtypes({ page: 1, text: '' });
   }
 
   getTypes(params: ListParams) {

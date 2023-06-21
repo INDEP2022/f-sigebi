@@ -99,7 +99,7 @@ export const FRACTIONS_COLUMNS = {
   },
 
   fractionCode: {
-    title: 'Codigo de fracción',
+    title: 'Código de fracción',
     type: 'string',
     sort: false,
   },

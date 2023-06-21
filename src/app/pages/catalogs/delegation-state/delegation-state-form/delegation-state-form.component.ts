@@ -19,11 +19,14 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 })
 export class DelegationStateFormComponent extends BasePage implements OnInit {
   delegationStateForm: ModelForm<IDelegationState>;
-  title: string = 'Delegación Estado';
+  title: string = 'Delegación estado';
   edit: boolean = false;
   delegationSate: any;
   states = new DefaultSelect<IStateOfRepublic>();
   regionalDelegation = new DefaultSelect<IStateOfRepublic>();
+  idState: any;
+  idRegional: any;
+
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
@@ -54,15 +57,13 @@ export class DelegationStateFormComponent extends BasePage implements OnInit {
       ],
       status: [
         null,
-        [Validators.pattern(NUMBERS_PATTERN), Validators.maxLength(20)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(20)],
       ],
-      version: [
-        null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
-      ],
+      version: [null, [Validators.pattern(NUMBERS_PATTERN)]],
     });
     if (this.delegationSate) {
       this.edit = true;
+      console.log(this.delegationSate);
       this.delegationStateForm.patchValue(this.delegationSate);
       this.delegationStateForm.controls['regionalDelegation'].setValue(
         this.delegationSate.regionalDelegation.id
@@ -70,6 +71,10 @@ export class DelegationStateFormComponent extends BasePage implements OnInit {
       this.delegationStateForm.controls['stateCode'].setValue(
         this.delegationSate.stateCode.codeCondition
       );
+
+      this.delegationStateForm.controls['regionalDelegation'].disable();
+      this.delegationStateForm.controls['stateCode'].disable();
+
       this.getStates(
         new ListParams(),
         this.delegationStateForm.controls['keyState'].value
@@ -79,9 +84,25 @@ export class DelegationStateFormComponent extends BasePage implements OnInit {
         this.delegationStateForm.controls['regionalDelegation'].value
       );
     }
-    this.getStates(new ListParams());
-    this.getRegionalDelegation(new ListParams());
+
+    //this.getStates(new ListParams());
+    setTimeout(() => {
+      this.getRegionalDelegation(new ListParams());
+      this.getStates(new ListParams());
+    }, 1000);
   }
+
+  getStatesAll(params: ListParams) {
+    this.stateOfRepublicService.getAll(params).subscribe({
+      next: data => {
+        this.states = new DefaultSelect(data.data, data.count);
+      },
+      error: () => {
+        this.states = new DefaultSelect();
+      },
+    });
+  }
+
   getStates(params: ListParams, id?: string) {
     if (id) {
       params['filter.id'] = id;
@@ -109,6 +130,11 @@ export class DelegationStateFormComponent extends BasePage implements OnInit {
       },
     });
   }
+
+  stateRegional(data: any) {
+    console.log(data);
+  }
+
   stateChange(state: IStateOfRepublic) {
     console.log(state);
     this.delegationStateForm.controls.keyState.setValue(state.id);
@@ -134,6 +160,14 @@ export class DelegationStateFormComponent extends BasePage implements OnInit {
 
   update() {
     this.loading = true;
+    const regId = this.delegationStateForm.controls['regionalDelegation'].value;
+    const version = this.delegationStateForm.controls['version'].value;
+    const keyState = this.delegationStateForm.controls['keyState'].value;
+    this.delegationStateForm.controls['regionalDelegation'].setValue(
+      parseInt(regId)
+    );
+    this.delegationStateForm.controls['version'].setValue(parseInt(version));
+    this.delegationStateForm.controls['keyState'].setValue(parseInt(keyState));
     this.delegationStateService
       .newUpdate(
         // this.delegationSate.regionalDelegation,

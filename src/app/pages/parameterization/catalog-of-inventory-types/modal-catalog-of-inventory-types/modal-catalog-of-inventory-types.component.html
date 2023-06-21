@@ -7,6 +7,17 @@
       <div class="row">
         <div class="col-md-6">
           <form-field
+            [control]="form.get('noTypeInventory')"
+            label="Número Tipo Inventario">
+            <input
+              type="text"
+              class="form-control"
+              [maxlength]="3"
+              formControlName="noTypeInventory" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field
             [control]="form.get('attributeInventory')"
             label="Atributo Inventario">
             <input

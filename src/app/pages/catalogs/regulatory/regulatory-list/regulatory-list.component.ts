@@ -47,20 +47,33 @@ export class RegulatoryListComponent extends BasePage implements OnInit {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
-            filter.field == 'id' ||
-            filter.field == 'id_fraccion' ||
-            filter.field == 'numero' ||
-            filter.field == 'descripcion' ||
-            filter.field == 'validar_ef' ||
-            filter.field == 'validar_ec' ||
-            filter.field == 'usuario_creacion' ||
-            filter.field == 'fecha_creacion' ||
-            filter.field == 'usuario_modificacion' ||
-            filter.field == 'fecha_modificacion' ||
-            filter.field == 'version'
-              ? (searchFilter = SearchFilter.EQ)
-              : (searchFilter = SearchFilter.ILIKE);
+            switch (filter.field) {
+              case 'id':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'number':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'description':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'validateEf':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'validateEc':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'version':
+                searchFilter = SearchFilter.EQ;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
             if (filter.search !== '') {
+              console.log(
+                (this.columnFilters[field] = `${searchFilter}:${filter.search}`)
+              );
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
               delete this.columnFilters[field];
@@ -119,7 +132,7 @@ export class RegulatoryListComponent extends BasePage implements OnInit {
   remove(id: number) {
     this.regulatoryService.remove(id).subscribe({
       next: () => {
-        this.alert('success', 'Regulaciones', 'Borrado');
+        this.alert('success', 'Registro de regulación', 'Borrado');
         this.getExample();
       },
       error: error => {

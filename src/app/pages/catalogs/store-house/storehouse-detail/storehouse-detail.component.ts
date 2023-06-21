@@ -3,12 +3,16 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
+import { IMunicipality } from 'src/app/core/models/catalogs/municipality.model';
 import { IStorehouse } from 'src/app/core/models/catalogs/storehouse.model';
 import { LocalityService } from 'src/app/core/services/catalogs/locality.service';
 import { MunicipalityService } from 'src/app/core/services/catalogs/municipality.service';
 import { StateOfRepublicService } from 'src/app/core/services/catalogs/state-of-republic.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import {
+  POSITVE_NUMBERS_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { StorehouseService } from '../../../../core/services/catalogs/storehouse.service';
 
@@ -19,12 +23,13 @@ import { StorehouseService } from '../../../../core/services/catalogs/storehouse
 })
 export class StorehouseDetailComponent extends BasePage implements OnInit {
   storeHouseForm: ModelForm<IStorehouse>;
-  storeHouse: IStorehouse;
-  title: string = 'Catálogos de Bodegas';
+  storeHouse: any;
+  title: string = 'Catálogo de Bodega';
   edit: boolean = false;
   states = new DefaultSelect();
   municipalities = new DefaultSelect();
   localities = new DefaultSelect();
+  stateKey: string = '';
 
   constructor(
     private fb: FormBuilder,
@@ -39,13 +44,18 @@ export class StorehouseDetailComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
+    this.getMunicipalities(new ListParams());
+    //this.getLocalities(new ListParams());
     /*this.getMunicipalities(new ListParams());
     this.getLocalities(new ListParams());*/
   }
 
-  private prepareForm() {
+  prepareForm() {
     this.storeHouseForm = this.fb.group({
-      id: [null],
+      id: [
+        null,
+        [Validators.required, Validators.pattern(POSITVE_NUMBERS_PATTERN)],
+      ],
       manager: [
         null,
         [Validators.pattern(STRING_PATTERN), Validators.required],
@@ -68,15 +78,25 @@ export class StorehouseDetailComponent extends BasePage implements OnInit {
         null,
         [Validators.pattern(STRING_PATTERN), Validators.required],
       ],
-      idEntity: [null],
+      idEntity: [null, [Validators.pattern(POSITVE_NUMBERS_PATTERN)]],
     });
-
     if (this.storeHouse != null) {
+      console.log(this.storeHouse);
       this.edit = true;
       this.storeHouseForm.patchValue(this.storeHouse);
+      //this.storeHouseForm.controls['municipality'].setValue(this.storeHouse.municipality);
+      //this.storeHouseForm.controls['locality'].setValue(this.storeHouse.locality);
+      this.getUpdateMunicipalities(
+        new ListParams(),
+        this.storeHouse.municipality
+      );
+
+      this.getUpdateLocalities(new ListParams(), this.storeHouse.locality);
+
+      //this.getMunicipalities(new ListParams());
+      //this.getLocalities(new ListParams());
     }
     this.getMunicipalities(new ListParams());
-    this.getLocalities(new ListParams());
   }
 
   confirm() {
@@ -98,7 +118,7 @@ export class StorehouseDetailComponent extends BasePage implements OnInit {
   update() {
     this.loading = true;
     this.storehouseService
-      .update(this.storeHouse.id, this.storeHouseForm.getRawValue())
+      .newUpdate(this.storeHouseForm.getRawValue())
       .subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),
@@ -119,26 +139,58 @@ export class StorehouseDetailComponent extends BasePage implements OnInit {
     this.storeHouseForm.controls['locality'].setValue(null);
     this.getMunicipalities(new ListParams(), data.state);
   }*/
+  getUpdateMunicipalities(params: ListParams, value: string) {
+    console.log(this.storeHouseForm.controls['municipality'].value);
+    params['filter.nameMunicipality'] = `$ilike:${value}`;
+    this.municipalityService.getAll(params).subscribe({
+      next: data => {
+        this.municipalities = new DefaultSelect(data.data, data.count);
+        this.getLocalitie(data.data[0]);
+      },
+      error: error => {
+        this.municipalities = new DefaultSelect();
+        this.loading = false;
+      },
+    });
+  }
 
-  getMunicipalities(params: ListParams, id?: string) {
+  getMunicipalities(params: ListParams) {
+    console.log(this.storeHouseForm.controls['municipality'].value);
+    params['filter.description'] = `$ilike:${this.stateKey}`;
     this.municipalityService.getAll(params).subscribe({
       next: data => {
         this.municipalities = new DefaultSelect(data.data, data.count);
       },
-      error: error => (this.municipalities = new DefaultSelect()),
+      error: error => {
+        this.municipalities = new DefaultSelect();
+        this.loading = false;
+      },
     });
   }
 
-  getLocalitie(data: any) {
-    console.log('localitieee', data.stateKey);
-    this.storeHouseForm.controls['locality'].setValue(null);
-    this.getLocalities(new ListParams(), data.stateKey);
+  getLocalitie(data: IMunicipality) {
+    this.stateKey = data.idMunicipality;
+    console.log(this.stateKey);
+    if (this.stateKey != null) {
+      this.getLocalities(new ListParams());
+    }
   }
 
-  getLocalities(params: ListParams, id?: string) {
-    if (id) {
-      params['filter.municipalityId'] = `$eq:${id}`;
-    }
+  getUpdateLocalities(params: ListParams, value: string) {
+    params['filter.nameLocation'] = `$ilike:${value}`;
+    this.localityService.getAll(params).subscribe({
+      next: data => {
+        this.localities = new DefaultSelect(data.data, data.count);
+      },
+      error: error => {
+        this.localities = new DefaultSelect();
+        this.loading = false;
+      },
+    });
+  }
+
+  getLocalities(params: ListParams) {
+    params['filter.municipalityId'] = this.stateKey;
     this.localityService.getAll(params).subscribe({
       next: data => {
         this.localities = new DefaultSelect(data.data, data.count);

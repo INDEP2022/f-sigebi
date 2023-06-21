@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
-import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import {
   ListParams,
   SearchFilter,
@@ -74,7 +75,6 @@ export class AppraisalInstitutionsComponent extends BasePage implements OnInit {
     };
     this.appraisersService.getAll(params).subscribe({
       next: response => {
-        console.log('RESPONSE', response);
         this.appraisersList = response.data;
         this.data.load(this.appraisersList);
         this.data.refresh();
@@ -88,22 +88,16 @@ export class AppraisalInstitutionsComponent extends BasePage implements OnInit {
     });
   }
   openForm(appraisers?: IAppraisers) {
-    let config: ModalOptions = {
-      initialState: {
-        appraisers,
-        callback: (next: boolean) => {
-          this.params
-            .pipe(takeUntil(this.$unSubscribe))
-            .subscribe(() => this.getValuesAll());
-        },
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      appraisers,
+      callback: (next: boolean) => {
+        if (next) this.getValuesAll();
       },
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
     };
-    this.modalService.show(AppraisalInstitutionsModalComponent, config);
+    this.modalService.show(AppraisalInstitutionsModalComponent, modalConfig);
   }
   opendelete(appraisers: any) {
-    console.log(appraisers);
     this.alertQuestion(
       'warning',
       'Eliminar',

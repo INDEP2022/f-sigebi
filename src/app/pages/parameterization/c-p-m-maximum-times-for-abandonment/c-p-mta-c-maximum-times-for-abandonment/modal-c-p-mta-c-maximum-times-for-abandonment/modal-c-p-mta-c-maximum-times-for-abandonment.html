@@ -7,12 +7,20 @@
       <div class="row">
         <div class="col-md-6">
           <form-field [control]="form.get('keyClaims')" label="Cve Siniestro">
-            <input type="number" class="form-control" formControlName="keyClaims" />
+            <input
+              type="number"
+              class="form-control"
+              formControlName="keyClaims" />
           </form-field>
         </div>
         <div class="col-md-6">
-          <form-field [control]="form.get('description')" label="Descrici&oacute;n Estatus">
-            <input type="text" class="form-control" formControlName="description" />
+          <form-field
+            [control]="form.get('description')"
+            label="Descrici&oacute;n Estatus">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="description" />
           </form-field>
         </div>
       </div>
@@ -21,7 +29,9 @@
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <confirm-button [type]="'button'" [disabled]="!form.valid"
+        <confirm-button
+          [type]="'button'"
+          [disabled]="!form.valid"
           (click)="edit ? PutClaim() : postClaim()"></confirm-button>
       </div>
       <div class="m-3">

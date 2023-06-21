@@ -19,6 +19,8 @@ export class CPMtaCMaximumTimesForAbandonmentComponent
   extends BasePage
   implements OnInit
 {
+  totalItems: number = 0;
+
   contentData: IListResponse<IGoodType> = {} as IListResponse<IGoodType>;
   params = new BehaviorSubject<ListParams>(new ListParams());
   data: any = [];
@@ -80,6 +82,8 @@ export class CPMtaCMaximumTimesForAbandonmentComponent
             });
             this.dataTable.load(this.data);
             this.contentData = resp;
+            this.totalItems = resp.count || 0;
+
             console.log(resp);
           });
         }

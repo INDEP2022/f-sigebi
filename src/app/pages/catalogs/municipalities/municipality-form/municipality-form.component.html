@@ -7,19 +7,18 @@
       <div class="row">
         <div class="col-12 pt-4">
           <form-field
-            [control]="municipalityForm.get('stateKey')"
-            label="Clave">
+            [control]="municipalityForm.get('idMunicipality')"
+            label="ID De Municipio">
             <input
-              type="number"
+              type="text"
               class="form-control"
-              formControlName="stateKey"
-              min="0" />
+              formControlName="idMunicipality" />
           </form-field>
         </div>
         <div class="col-12 pt-4">
           <form-field
             [control]="municipalityForm.get('nameMunicipality')"
-            label="Nombre De Municipalidad">
+            label="Nombre De Municipio">
             <input
               type="text"
               class="form-control"
@@ -27,13 +26,17 @@
           </form-field>
         </div>
         <div class="col-12 pt-4">
-          <form-field
-            [control]="municipalityForm.get('idMunicipality')"
-            label="Id De Municipalidad">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="idMunicipality" />
+          <form-field [control]="municipalityForm.get('stateKey')">
+            <ngx-select
+              [form]="municipalityForm"
+              control="stateKey"
+              value="id"
+              bindLabel="descCondition"
+              [data]="states"
+              (fetchItems)="getStates($event)"
+              (change)="stateChange($event)"
+              label="CVE Estado">
+            </ngx-select>
           </form-field>
         </div>
         <div class="col-12 pt-4">
@@ -68,16 +71,6 @@
           </form-field>
         </div>
         <div class="col-12 pt-4">
-          <form-field
-            [control]="municipalityForm.get('noRegister')"
-            label="Numero De Registro">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="noRegister" />
-          </form-field>
-        </div>
-        <div class="col-12 pt-4">
           <form-field [control]="municipalityForm.get('risk')" label="Riesgo">
             <input type="text" class="form-control" formControlName="risk" />
           </form-field>
@@ -91,7 +84,7 @@
         <confirm-button
           [disabled]="!municipalityForm.valid"
           [loading]="loading"
-          (confirm)="confirm()">
+          (click)="edit ? update() : create()">
         </confirm-button>
       </div>
       <div class="m-3">

@@ -1,14 +1,18 @@
 export const MAINTANANCE_DOCUMENT_VALIDATORS_COLUMNS = {
   proceedingsType: {
-    title: 'Tipo de acta',
+    title: 'Tipo de Acta',
     sort: false,
   },
   descVal: {
-    title: 'Descripcion',
+    title: 'Descripción',
+    sort: false,
+  },
+  secVal: {
+    title: 'Secuencia',
     sort: false,
   },
   numRegister: {
-    title: 'Registro numero',
+    title: 'Registro Número',
     sort: false,
   },
 };

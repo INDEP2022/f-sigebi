@@ -36,26 +36,52 @@ export class AppraisalInstitutionsModalComponent
       id: [null],
       description: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(60),
+        ],
       ],
-      street: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      noExterior: [null, [Validators.required]],
-      noInterior: [null, [Validators.required]],
-      codepostal: [null, [Validators.required]],
-      colony: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      deleg: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      street: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(60)],
+      ],
+      noExterior: [
+        null,
+        [Validators.maxLength(10), Validators.pattern(STRING_PATTERN)],
+      ],
+      noInterior: [
+        null,
+        [Validators.maxLength(10), Validators.pattern(STRING_PATTERN)],
+      ],
+      codepostal: [null, [Validators.max(99999)]],
+      colony: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
+      ],
+      deleg: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
+      ],
       cveEntfed: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(10)],
       ],
-      rfc: [null, [Validators.required]],
-      curp: [null, [Validators.required]],
-      tel: [null, [Validators.required]],
+      rfc: [null, [Validators.maxLength(20)]],
+      curp: [null, [Validators.maxLength(20)]],
+      tel: [null, [Validators.maxLength(20)]],
       represent: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(60),
+        ],
       ],
-      observations: [null],
+      observations: [
+        null,
+        [Validators.maxLength(60), Validators.pattern(STRING_PATTERN)],
+      ],
       noRegistro: [null],
     });
     if (this.appraisers != null) {

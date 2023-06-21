@@ -152,6 +152,7 @@ export class IndicatorsOfPerformanceComponent
   private prepareForm() {
     this.indicatorsOfPerformanceForm = this.fb.group({
       initialDate: [null, Validators.required],
+      endDate: [null, Validators.required],
       daysLimNumber: [null, Validators.required],
       hoursLimNumber: [null, Validators.required],
       contractZoneKey: [null, Validators.required],
@@ -171,8 +172,10 @@ export class IndicatorsOfPerformanceComponent
         console.log(response);
         this.indicatorsParamenter = response.data;
         console.log(this.indicatorsParamenter);
+
         this.data1.load(this.indicatorsParamenter);
         this.data1.refresh();
+
         this.totalItems = response.count;
         this.loading = false;
       },
