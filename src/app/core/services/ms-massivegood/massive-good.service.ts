@@ -100,6 +100,16 @@ export class MassiveGoodService extends HttpService {
     return this.post<IMassiveGoodTracker>(route, body);
   }
 
+<<<<<<< HEAD
+=======
+  getIdentifierCount(
+    params: ListParams
+  ): Observable<IListResponse<IIdentifierCount>> {
+    const route = `application/getIdentifierCount`;
+    return this.get(route, params);
+  }
+
+>>>>>>> 2499e0ac75082a02a0b8d8271e509b6ebddd5219
   getDataCSVFile(currency: string, file: any) {
     const formData = new FormData();
     formData.append('tCurrency', currency);

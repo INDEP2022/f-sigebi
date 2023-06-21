@@ -53,12 +53,12 @@ export class DataValuationsComponent
         type: 'string',
         sort: false,
       },
-      phisicValue: {
-        title: 'Valor Fisico',
+      origin: {
+        title: 'Origen',
         type: 'string',
         sort: false,
       },
-      comercializationValue: {
+      /* comercializationValue: {
         title: 'Valor Comercialización',
         type: 'string',
         sort: false,
@@ -92,7 +92,7 @@ export class DataValuationsComponent
         title: 'Valor Maq. Equipo',
         type: 'string',
         sort: false,
-      },
+      }, */
     };
   }
 
@@ -131,6 +131,7 @@ export class DataValuationsComponent
             oportunityValue: apprise.vOpportunity,
             unitValue: apprise.vUnitaryM2,
             maqEquiValue: apprise.vMachEquip,
+            origin: '',
           };
         });
         this.totalItems = response.count;

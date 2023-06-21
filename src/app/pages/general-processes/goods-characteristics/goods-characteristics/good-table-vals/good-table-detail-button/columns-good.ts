@@ -2,15 +2,15 @@ import { GoodValueEditWebCarCellComponent } from './good-value-edit-web-car-cell
 
 export const COLUMNS_GOOD = {
   abreviatura: {
-    title: 'Abr.',
+    title: 'ABREVIATURA',
     sort: false,
   },
   otvalor: {
-    title: 'OTVALOR',
+    title: 'VALOR',
     sort: false,
   },
   info: {
-    title: 'INFO',
+    title: 'INFORMACIÓN',
     type: 'custom',
     sort: false,
     valuePrepareFunction: (cell: number, row: any) => row,
