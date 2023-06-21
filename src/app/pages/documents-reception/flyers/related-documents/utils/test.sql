@@ -58,5 +58,10 @@ BEGIN
    FIRST_RECORD;
 EXCEPTION
    WHEN OTHERS THEN
+<<<<<<< HEAD
+      LIP_MENSAJE('Error en proceso de inicialización.','S');
+END;
+=======
       LIP_MENSAJE('Error en proceso de inicialización.', 'S');
 END;
+>>>>>>> d2fcd4c474a2bca7214d377bd6f76417334fcc96

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 
+import { LocalDataSource } from 'ng2-smart-table';
 import {
   ListParams,
   SearchFilter,
@@ -11,7 +12,6 @@ import { GoodSssubtypeService } from 'src/app/core/services/catalogs/good-sssubt
 import { BasePage } from 'src/app/core/shared/base-page';
 import { GoodSssubtypesFormComponent } from '../good-sssubtypes-form/good-sssubtypes-form.component';
 import { GOOD_SSSUBTYPE_COLUMNS } from './good-sssubtype-columns';
-import { LocalDataSource } from 'ng2-smart-table';
 
 @Component({
   selector: 'app-good-sssubtypes-list',

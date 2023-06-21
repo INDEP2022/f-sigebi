@@ -73,11 +73,19 @@ export class GoodSssubtypesFormComponent extends BasePage implements OnInit {
       numRegister: [null],
       numClasifAlterna: [
         null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN), Validators.maxLength(2)],
+        [
+          Validators.required,
+          Validators.pattern(NUMBERS_PATTERN),
+          Validators.maxLength(2),
+        ],
       ],
       numClasifGoods: [
         null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN), Validators.maxLength(5)],
+        [
+          Validators.required,
+          Validators.pattern(NUMBERS_PATTERN),
+          Validators.maxLength(5),
+        ],
       ],
     });
     if (this.goodSssubtype != null) {
@@ -85,8 +93,10 @@ export class GoodSssubtypesFormComponent extends BasePage implements OnInit {
       this.createForm = false;
       console.log(this.goodSssubtype);
       let goodType: IGoodType = this.goodSssubtype.numType as IGoodType;
-      let goodSubtype: IGoodSubType = this.goodSssubtype.numSubType as IGoodSubType;
-      let goodSsubtype: IGoodSsubType = this.goodSssubtype.numSsubType as IGoodSsubType;
+      let goodSubtype: IGoodSubType = this.goodSssubtype
+        .numSubType as IGoodSubType;
+      let goodSsubtype: IGoodSsubType = this.goodSssubtype
+        .numSsubType as IGoodSsubType;
       this.goodSssubtypeForm.patchValue({
         ...this.goodSssubtype,
         numType: goodType.id,
@@ -102,7 +112,8 @@ export class GoodSssubtypesFormComponent extends BasePage implements OnInit {
       this.subTypes = new DefaultSelect([goodSubtype], 1);
       this.ssubTypes = new DefaultSelect([goodSsubtype], 1);
       this.idType = this.goodSssubtypeForm.controls['numType'].value.toString();
-      this.idSubType = this.goodSssubtypeForm.controls['numSubType'].value.toString();
+      this.idSubType =
+        this.goodSssubtypeForm.controls['numSubType'].value.toString();
       this.getSubtypes(new ListParams());
       this.getSsubtypes(new ListParams());
     }
@@ -212,17 +223,15 @@ export class GoodSssubtypesFormComponent extends BasePage implements OnInit {
       this.siabClasificationform.controls['ssubtypeId'].setValue(null);
       this.siabClasificationform.controls['sssubtypeId'].setValue(null);
     }*/
-
   }
 
   getSsubtypes(params: ListParams) {
     if (this.idSubType) {
-      params['filter.noType'] = `$eq:${this.idType}`
+      params['filter.noType'] = `$eq:${this.idType}`;
       params['filter.noSubType'] = `$eq:${this.idSubType}`;
     }
     this.goodSsubtypeService.getAll(params).subscribe({
       next: data => {
-
         this.ssubTypes = new DefaultSelect(data.data, data.count);
       },
       error: error => {
@@ -261,10 +270,12 @@ export class GoodSssubtypesFormComponent extends BasePage implements OnInit {
 
   create() {
     this.loading = true;
-    this.goodSssubtypeService.create(this.goodSssubtypeForm.getRawValue()).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
-    });
+    this.goodSssubtypeService
+      .create(this.goodSssubtypeForm.getRawValue())
+      .subscribe({
+        next: data => this.handleSuccess(),
+        error: error => (this.loading = false),
+      });
   }
 
   update() {
