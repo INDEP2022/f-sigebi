@@ -455,40 +455,44 @@ export class NumeraryRequestComponent extends BasePage implements OnInit {
       return;
     }
 
-    if (this.data1.length > 0) {
-      const user = this.authServ.decodeToken();
-      const detailsUser: any = await this.getNameDetails(
-        user.username.toUpperCase()
-      );
+    if (this.isNew) {
+      if (this.data1.length > 0) {
+        const user = this.authServ.decodeToken();
+        const detailsUser: any = await this.getNameDetails(
+          user.username.toUpperCase()
+        );
 
-      //this.form.get('solnumId').patchValue()
-      this.form.get('solnumDate').patchValue(new Date());
-      this.form.get('solnumStatus').patchValue('S');
-      this.form
-        .get('delegationNumber')
-        .patchValue(detailsUser.delegationNumber);
-      this.form.get('user').patchValue(user.username.toUpperCase());
-      this.form.get('desc_del').patchValue(detailsUser.delegation.description);
-      this.form.get('name').patchValue(detailsUser.userDetail.name);
-    } else {
-      this.onLoadToast('error', 'Debe ingresar un bien para ser guardado.');
-      return;
-    }
+        //this.form.get('solnumId').patchValue()
+        this.form.get('solnumDate').patchValue(new Date());
+        this.form.get('solnumStatus').patchValue('S');
+        this.form
+          .get('delegationNumber')
+          .patchValue(detailsUser.delegationNumber);
+        this.form.get('user').patchValue(user.username.toUpperCase());
+        this.form
+          .get('desc_del')
+          .patchValue(detailsUser.delegation.description);
+        this.form.get('name').patchValue(detailsUser.userDetail.name);
+      } else {
+        this.onLoadToast('error', 'Debe ingresar un bien para ser guardado.');
+        return;
+      }
 
-    for (let i = 0; i < this.data1.length; i++) {
-      const valid = this.data1[i].valid ?? '';
-      if (valid) {
-        if (valid == 'N') {
-          this.onLoadToast('error', 'Error hay bienes que no son validos');
-          return;
+      for (let i = 0; i < this.data1.length; i++) {
+        const valid = this.data1[i].valid ?? '';
+        if (valid) {
+          if (valid == 'N') {
+            this.onLoadToast('error', 'Error hay bienes que no son validos');
+            return;
+          }
         }
       }
-    }
-    let body: IRequesNumeraryEnc = this.form.value;
 
-    if (this.isNew) {
+      let body: IRequesNumeraryEnc = this.form.value;
+
       this.createSolcEnc(body);
     } else {
+      let body: IRequesNumeraryEnc = this.form.value;
       this.updateSolcEn(body);
       //update
     }
@@ -498,6 +502,11 @@ export class NumeraryRequestComponent extends BasePage implements OnInit {
     delete body.currency;
     delete body.name;
     delete body.desc_del;
+
+    if (typeof body.solnumDate == 'string') {
+      body.solnumDate = body.solnumDate.split('/').reverse().join('-');
+    }
+
     this.numEncServ.update(body).subscribe({
       next: async resp => {
         this.onLoadToast(

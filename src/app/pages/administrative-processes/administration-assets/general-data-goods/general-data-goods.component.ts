@@ -62,10 +62,10 @@ export class GeneralDataGoodsComponent
     };
     this.goodService.update(good).subscribe({
       next: resp => {
-        this.onLoadToast('success', 'Datos del bien actualizados');
+        this.alert('success', 'Datos del bien actualizados', '');
       },
       error: err => {
-        this.onLoadToast('error', 'Error al actualizar el bien');
+        this.alert('error', 'Error al actualizar el bien', '');
       },
     });
   }
@@ -75,7 +75,11 @@ export class GeneralDataGoodsComponent
         this.good = response.data[0];
         let val: any = response.data[0];
         this.generalDataForm.get('cantidad').patchValue(this.good.quantitySae);
-        this.generalDataForm.get('fechaFe').patchValue(this.good.judicialDate);
+        this.generalDataForm
+          .get('fechaFe')
+          .patchValue(
+            this.good.judicialDate === undefined ? null : this.good.judicialDate
+          );
         this.generalDataForm
           .get('observacion')
           .patchValue(this.good.observations);
