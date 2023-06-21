@@ -82,9 +82,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   settings1 = {
     ...TABLE_SETTINGS,
     rowClassFunction: (row: { data: { avalaible: any } }) =>
-      row.data.avalaible
-        ? 'bg-success text-white'
-        : 'bg-dark text-white disabled-custom',
+      row.data.avalaible ? 'bg-success text-white' : 'bg-dark text-white',
     actions: false,
     columns: columnsGood,
     noDataMessage: 'No se encontrarón registros',
@@ -581,11 +579,11 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
       const day = fecElab.getDate();
       const hour = new Date().getHours();
       const minute = new Date().getMinutes();
-      if(fecElab.getHours() != hour || fecElab.getMinutes() != minute){
+      if (fecElab.getHours() != hour || fecElab.getMinutes() != minute) {
         this.form
           .get('fecElab')
           .setValue(new Date(`${year}-${month}-${day} ${hour}:${minute}`));
-      }      
+      }
     } else {
       {
         this.form.get('fecReception').setValue('');

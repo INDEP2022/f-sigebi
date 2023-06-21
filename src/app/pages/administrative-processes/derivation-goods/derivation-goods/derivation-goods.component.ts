@@ -3,15 +3,14 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
+import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
+import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { BasePage } from 'src/app/core/shared';
 import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { GoodsComponent } from '../goods/goods.component';
 import { PwComponent } from '../pw/pw.component';
-import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
-import { GoodService } from 'src/app/core/services/ms-good/good.service';
-import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
-import { IGood } from 'src/app/core/models/ms-good/good';
-import { BasePage } from 'src/app/core/shared';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 
 @Component({
   selector: 'app-derivation-goods',
@@ -26,7 +25,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
   private _password: string;
 
   //Deshabilitar el formulario
-  wrongModal = true
+  wrongModal = true;
 
   get idConversion() {
     return this.form.get('idConversion');
@@ -79,17 +78,17 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
     ...TABLE_SETTINGS,
     actions: false,
     columns: {
-      goodId:{
+      goodId: {
         title: 'No. Bien Hijo',
         type: 'Number',
         filter: false,
-        sort: false
-      }
+        sort: false,
+      },
     },
-    noDataMessage: 'No se encontrarón registros'
-  }
+    noDataMessage: 'No se encontrarón registros',
+  };
 
-  dataGoods = new LocalDataSource()
+  dataGoods = new LocalDataSource();
 
   constructor(
     private fb: FormBuilder,
@@ -97,30 +96,30 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
     private modalService: BsModalService,
     private serviceGood: GoodService
   ) {
-    super()
+    super();
   }
 
   ngOnInit(): void {
     this.buildForm();
 
     //Inicializando el modal
-    let config = MODAL_CONFIG 
+    let config = MODAL_CONFIG;
     config = {
       initialState: {
         ...MODAL_CONFIG,
         callback: (data: any) => {
-          if(data != null){
-            console.log(data)
-            this.wrongModal = false
-            this.idConversion.setValue(data.id)
-            this.numberGoodFather.setValue(data.goodFatherNumber)
-            this.tipo.setValue(data.typeConv)
-            this.numberDossier.setValue(data.fileNumber.id)
-            this.actConvertion.setValue(data.cveActaConv)
-            this.numberGoodSon.setValue(data.goodFatherNumber)
-            this.searchGoods(data.goodFatherNumber)
-            this.searchGoodSon(data.goodFatherNumber)
-            this.dataGoods.load([data])
+          if (data != null) {
+            console.log(data);
+            this.wrongModal = false;
+            this.idConversion.setValue(data.id);
+            this.numberGoodFather.setValue(data.goodFatherNumber);
+            this.tipo.setValue(data.typeConv);
+            this.numberDossier.setValue(data.fileNumber.id);
+            this.actConvertion.setValue(data.cveActaConv);
+            this.numberGoodSon.setValue(data.goodFatherNumber);
+            this.searchGoods(data.goodFatherNumber);
+            this.searchGoodSon(data.goodFatherNumber);
+            this.dataGoods.load([data]);
           }
         },
       }, //pasar datos por aca
@@ -128,7 +127,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
       ignoreBackdropClick: true, //ignora el click fuera del modal
     };
 
-    const modalRef = this.modalService.show(PwComponent,config)
+    const modalRef = this.modalService.show(PwComponent, config);
   }
 
   /**
@@ -155,7 +154,10 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
         null,
         [Validators.pattern(STRING_PATTERN)], //Se quita la validación, en el forms no es requerido
       ],
-      numberGoodSon: [null, [Validators.pattern(NUMBERS_PATTERN), Validators.required]],
+      numberGoodSon: [
+        null,
+        [Validators.pattern(NUMBERS_PATTERN), Validators.required],
+      ],
       observation: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
@@ -180,69 +182,81 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
     });
   }
 
-  searchGoods(e:any) {
-    const paramsF = new FilterParams()
-    paramsF.addFilter('goodId', e)
-    this.serviceGood.getAllFilter(paramsF.getParams()).subscribe(
-      res => {
-        console.log(res)
-        this.description.setValue(res.data[0]['description'])
-        this.searchStatus(res.data[0]['status'])
-      },
-      err => {
-        console.log(err)
-      }
-    )
-  }
-
-  searchGoodSon(e:any){
-    const paramsF = new FilterParams()
-    paramsF.addFilter('goodId', e)
-    this.serviceGood.getAllFilter(paramsF.getParams()).subscribe(
-      res => {
-        console.log(res)
-        this.observation.setValue(res.data[0]['observations'])
-        this.descriptionSon.setValue(res.data[0]['description'])
-        this.quantity.setValue(res.data[0]['quantity'])
-        this.classifier.setValue(res.data[0]['goodClassNumber'])
-        this.unitOfMeasure.setValue(res.data[0]['unit'])
-        this.destinationLabel.setValue(res.data[0]['labelNumber'])
-        this.searchStatus(res.data[0]['status'])
-      },
-      err => {
-        console.log(err)
-      }
-    )
-  }
-
-  searchStatus(data: any){
+  searchGoods(e: any) {
     const paramsF = new FilterParams();
-    paramsF.addFilter('status', data)
+    paramsF.addFilter('goodId', e);
+    this.serviceGood.getAllFilter(paramsF.getParams()).subscribe(
+      res => {
+        console.log(res);
+        this.description.setValue(res.data[0]['description']);
+        this.searchStatus(res.data[0]['status']);
+      },
+      err => {
+        console.log(err);
+      }
+    );
+  }
+
+  searchGoodSon(e: any) {
+    const paramsF = new FilterParams();
+    paramsF.addFilter('goodId', e);
+    this.serviceGood.getAllFilter(paramsF.getParams()).subscribe(
+      res => {
+        console.log(res);
+        this.observation.setValue(res.data[0]['observations']);
+        this.descriptionSon.setValue(res.data[0]['description']);
+        this.quantity.setValue(res.data[0]['quantity']);
+        this.classifier.setValue(res.data[0]['goodClassNumber']);
+        this.unitOfMeasure.setValue(res.data[0]['unit']);
+        this.destinationLabel.setValue(res.data[0]['labelNumber']);
+        this.searchStatus(res.data[0]['status']);
+      },
+      err => {
+        console.log(err);
+      }
+    );
+  }
+
+  searchStatus(data: any) {
+    const paramsF = new FilterParams();
+    paramsF.addFilter('status', data);
     this.serviceGood.getStatusGood(paramsF.getParams()).subscribe(
       res => {
-        this.status.setValue(res.data[0]['description'])
+        this.status.setValue(res.data[0]['description']);
       },
       err => {
-        console.log(err)
+        console.log(err);
       }
-    )
+    );
   }
 
   updateStatus() {
-    this.alertQuestion('question',`¿Desea cambiar el estatus al bien ${this.numberGoodFather.value}?`,'').then(
-      q => {
-        if(q.isConfirmed){
-          this.serviceGood.updateGoodStatus(this.numberGoodFather.value, 'CAN').subscribe(
+    this.alertQuestion(
+      'question',
+      `¿Desea cambiar el estatus al bien ${this.numberGoodFather.value}?`,
+      ''
+    ).then(q => {
+      if (q.isConfirmed) {
+        this.serviceGood
+          .updateGoodStatus(this.numberGoodFather.value, 'CAN')
+          .subscribe(
             res => {
-              this.alert('success','Se cambio el estatus del Bien',`El Bien estatus del bien con id: ${this.numberGoodFather.value}, fue cambiado a CAN`)
+              this.alert(
+                'success',
+                'Se cambio el estatus del Bien',
+                `El Bien estatus del bien con id: ${this.numberGoodFather.value}, fue cambiado a CAN`
+              );
             },
             err => {
-              this.alert('error','No se pudo cambiar el estatus del bien','Se presentó un error inesperado que no permitió el cambio de estatus del bien, por favor intentelo nuevamente')
+              this.alert(
+                'error',
+                'No se pudo cambiar el estatus del bien',
+                'Se presentó un error inesperado que no permitió el cambio de estatus del bien, por favor intentelo nuevamente'
+              );
             }
-          )
-        }
+          );
       }
-    )
+    });
   }
 
   actConversionBtn() {}
