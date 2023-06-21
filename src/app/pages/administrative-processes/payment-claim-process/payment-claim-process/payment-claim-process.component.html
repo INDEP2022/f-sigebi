@@ -108,7 +108,7 @@
           class="row pt-3 pb-3"
           style="border-top: 1px solid rgba(0, 0, 0, 0.1)">
           <span
-            >Numero de registros NO cargados &nbsp;&nbsp;
+            >Número de registros NO cargados &nbsp;&nbsp;
             <strong style="color: crimson">{{
               idsNotExist.length
             }}</strong></span
@@ -119,7 +119,7 @@
           style="border-top: 1px solid rgba(0, 0, 0, 0.1)">
           <div class="col-md-full" *ngFor="let item of idsNotExist">
             <span style="color: crimson">
-              El Bien No <strong>{{ item.id }}</strong> {{ item.reason }}
+              El Bien No. <strong>{{ item.id }}</strong> {{ item.reason }}
             </span>
           </div>
         </div>
@@ -136,7 +136,7 @@
           class="row pt-3 pb-3"
           style="border-top: 1px solid rgba(0, 0, 0, 0.1)">
           <span
-            >Numero de registros cargados &nbsp;&nbsp;
+            >Número de registros cargados &nbsp;&nbsp;
             <strong style="color: #1e7e34">{{ goods.length }}</strong></span
           >
         </div>
@@ -145,7 +145,7 @@
           style="border-top: 1px solid rgba(0, 0, 0, 0.1)">
           <div class="col-md-full" *ngFor="let good of goods">
             <span
-              >Bien No
+              >El Bien No.
               <strong style="color: #1e7e34">{{ good.id }}</strong> cargado
               correctamente
             </span>
@@ -157,7 +157,7 @@
           *ngIf="showStatus">
           <div class="col-md-full" *ngFor="let good of goods">
             <span
-              >Status del bien No
+              >Estatus del Bien No.
               <strong style="color: #1e7e34">{{ good.id }}</strong>
               cambiado correctamente</span
             >

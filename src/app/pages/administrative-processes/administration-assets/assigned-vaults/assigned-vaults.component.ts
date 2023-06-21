@@ -31,7 +31,9 @@ export class AssignedVaultsComponent
     private readonly vaultService: SafeService
   ) {
     super();
-    this.settings.actions = false;
+    this.settings.actions.delete = true;
+    this.settings.actions.add = false;
+    this.settings.hideSubHeader = false;
     this.settings.columns = {
       id: {
         title: 'Bóveda',

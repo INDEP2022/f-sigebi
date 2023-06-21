@@ -79,7 +79,7 @@ export const TRANSPORTABLE_GOODS = {
 
 export const TRANSPORTABLE_GOODS_FORMALIZE = {
   goodId: {
-    title: 'Nº gestión',
+    title: 'Número gestión',
     type: 'string',
     sort: false,
   },
