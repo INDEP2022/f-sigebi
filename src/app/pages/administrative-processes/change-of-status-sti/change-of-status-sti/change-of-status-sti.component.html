@@ -101,7 +101,7 @@
           <div class="d-flex justify-content-center">
             <div class="m-3">
               <button
-                [disabled]="goods.length == 0"
+                [disabled]="!goods"
                 (click)="accept()"
                 type="button"
                 class="btn btn-primary btn-sm active">

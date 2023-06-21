@@ -174,7 +174,7 @@ export class ChangeOfStatusComponent extends BasePage implements OnInit {
     : (this.description.value != null ? this.description.value : null)
     // MODEL PARA ACTUALIZAR EL GOOD
 
-    this.alertQuestion('question',`¿Desea actualizar el estatus ${this.extDomProcess.value != null ? 'y proceso' : ''} ?`,'').then(
+    this.alertQuestion('question',`¿Desea actualizar?`,`Se va a actualizar el estatus ${this.extDomProcess.value != null ? 'y proceso' : ''}`).then(
       q => {
         if(q.isConfirmed){
           const putGood: IGood = {
