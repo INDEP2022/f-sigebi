@@ -109,7 +109,7 @@ export class GeneralDataGoodsComponent
               if (order) {
                 this.list.push({
                   atributo: order.attribute,
-                  valor: this.data[`val${index + 1}`],
+                  valor: this.data[`val${index + 1}`] ?? '',
                 });
               }
             });

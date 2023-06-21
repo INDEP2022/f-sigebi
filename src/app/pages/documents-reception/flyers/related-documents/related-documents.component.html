@@ -18,7 +18,7 @@
       Fec&#46; Captura:
       <span class="badge bg-info ml-3 mr-3" style="display: initial !important">
         {{
-          (formJobManagement.get('insertDate').value | date: 'M/d/yyyy') ||
+          (formJobManagement.get('insertDate').value | date : 'M/d/yyyy') ||
             '00/00/0000'
         }}
       </span>
@@ -29,6 +29,14 @@
       <button class="btn btn-primary active btn-sm m-2" (click)="goBack()">
         Regresar
         <i class="fas fa-arrow-circle-left"></i>
+      </button>
+      <button
+        type="button"
+        tooltip="Oficios"
+        containerClass="tooltip-style"
+        (click)="selectOtherOffices()"
+        class="btn btn-primary btn-sm active m-2">
+        <i class="bx bx-list-plus bx-sm float-icon"></i>
       </button>
       <button
         [disabled]="
