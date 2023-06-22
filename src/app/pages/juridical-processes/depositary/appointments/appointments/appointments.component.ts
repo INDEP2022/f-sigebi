@@ -1343,6 +1343,14 @@ export class AppointmentsComponent
   }
 
   messageDigitalization(event: any) {
+    if (!this.noBienReadOnly) {
+      this.alert(
+        'warning',
+        'Se requiere de una búsqueda de Bien primero para poder ver está opción',
+        ''
+      );
+      return;
+    }
     console.log(event);
     if (this.depositaryAppointment.revocation == 'N') {
       if (this.formScan.get('scanningFoli').value) {
@@ -1403,6 +1411,14 @@ export class AppointmentsComponent
   }
 
   scanRequest(event: any) {
+    if (!this.noBienReadOnly) {
+      this.alert(
+        'warning',
+        'Se requiere de una búsqueda de Bien primero para poder ver está opción',
+        ''
+      );
+      return;
+    }
     console.log(event);
     this.formRadioScan.get('scanningFolio').setValue('D');
     this.formRadioScan.get('scanningFolio').updateValueAndValidity();
@@ -1411,6 +1427,14 @@ export class AppointmentsComponent
   }
 
   showScanningPage(event: any) {
+    if (!this.noBienReadOnly) {
+      this.alert(
+        'warning',
+        'Se requiere de una búsqueda de Bien primero para poder ver está opción',
+        ''
+      );
+      return;
+    }
     console.log(event);
     this.showScanRadio = true;
     this.globalVars.procgenimg = 2;
@@ -1437,7 +1461,7 @@ export class AppointmentsComponent
                 const response = await this.alertQuestion(
                   'question',
                   'Aviso',
-                  '¿Quiere generar el folio de acta depositaria, aun que no cambiará el estatus?'
+                  '¿Quiere generar el folio de acta depositaria, aunque no cambiará el estatus?'
                 );
 
                 if (!response.isConfirmed) {
@@ -1577,21 +1601,24 @@ export class AppointmentsComponent
       next: async data => {
         console.log('DATA ', data);
         let wheeelNumber = null;
-        if (data[0].min) {
-          wheeelNumber = data[0].min;
+        if (data.data[0].min) {
+          wheeelNumber = data.data[0].min;
         } else {
           wheeelNumber = this.good.flyerNumber;
         }
         // http://localhost:4200/pages/general-processes/scan-request LLAMAR FORMA FACTGENSOLICDIGIT
-        this.router.navigate(['/pages/general-processes/scan-request'], {
-          queryParams: {
-            origin: this.screenKey,
-            P_NB: this.noBienReadOnly,
-            P_NO_VOLANTE: wheeelNumber,
-            FOL_ESCANEO: this.formRadioScan.get('scanningFolio').value,
-            P_ND: this.depositaryAppointment.appointmentNumber,
-          },
-        });
+        this.router.navigate(
+          ['/pages/general-processes/scan-request/' + wheeelNumber],
+          {
+            queryParams: {
+              origin: this.screenKey,
+              P_NB: this.noBienReadOnly,
+              // P_NO_VOLANTE: wheeelNumber,
+              P_FOLIO: this.formRadioScan.get('scanningFolio').value,
+              P_ND: this.depositaryAppointment.appointmentNumber,
+            },
+          }
+        );
         // To save appointment
         //         {
         //     "appointmentNumber": "378",
@@ -1609,6 +1636,14 @@ export class AppointmentsComponent
   }
 
   viewPictures(event: any) {
+    if (!this.noBienReadOnly) {
+      this.alert(
+        'warning',
+        'Se requiere de una búsqueda de Bien primero para poder ver está opción',
+        ''
+      );
+      return;
+    }
     console.log(event);
     if (this.depositaryAppointment.revocation == 'N') {
       if (this.formScan.get('scanningFoli').value) {

@@ -608,12 +608,14 @@
               [readonly]="true"></textarea>
           </form-field>
         </div>
-        <div *ngIf="showScanRadio" class="col-sm-12 col-12 col-md-12 p-2 mb-5">
+        <div
+          *ngIf="showScanRadio"
+          class="col-sm-12 col-12 col-md-12 p-2 mb-5 card">
           <form
             [formGroup]="formRadioScan"
             class="container-fluid form-material">
-            <div class="row w-100 pl-4">
-              <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2 text-center">
+            <div class="row w-100 pl-4 card-body">
+              <div class="col-sm-12 col-12 col-md-6 col-lg-6 p-2 text-center">
                 <form-radio
                   label="Folio Acta Depositaria"
                   for="depositaryFolio">
@@ -625,7 +627,7 @@
                     value="A" />
                 </form-radio>
               </div>
-              <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2 text-center">
+              <div class="col-sm-12 col-12 col-md-6 col-lg-6 p-2 text-center">
                 <form-radio label="Folio Remoci&oacute;n" for="removalFolio">
                   <input
                     id="removalFolio"
@@ -635,7 +637,7 @@
                     value="R" />
                 </form-radio>
               </div>
-              <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2 text-center">
+              <!-- <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2 text-center">
                 <form-radio label="Default" for="defaultFolio">
                   <input
                     id="defaultFolio"
@@ -644,11 +646,11 @@
                     (change)="changeRadioScan('D')"
                     value="D" />
                 </form-radio>
-              </div>
+              </div> -->
               <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2 text-center">
                 <button
                   type="button"
-                  class="btn btn-primary btn-sm active m-1"
+                  class="btn btn-danger btn-sm active m-1"
                   (click)="closeRadioScan()">
                   Cerrar opciones de Escaneo
                 </button>
@@ -749,7 +751,7 @@
         <div class="col-md-8 col-12 col-sm-12" *ngIf="showScanForm">
           <app-scanning-foil-appointment
             [formScan]="formScan"
-            (scanRequestEmitter)="showScanningPage($event)"
+            (scanRequestEmitter)="scanRequest($event)"
             (showScanningPageEmitter)="showScanningPage($event)"
             (messageDigitalizationEmitter)="messageDigitalization($event)"
             (viewPicturesEmitter)="
