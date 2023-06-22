@@ -68,11 +68,11 @@ export class DepositUnreconciliedFilesComponent implements OnInit {
     );
 
     let params = {
-      PC_BANCO: this.form.controls['bank'].value,
-      PC_MONEDA: this.form.controls['currency'].value,
-      PC_FEC_INI: this.fromF,
-      PC_FEC_FIN: this.toT,
-      PN_IMP: this.form.controls['import'].value,
+      BANCO: this.form.controls['bank'].value,
+      MONEDA: this.form.controls['currency'].value,
+      PF_FECINI: this.fromF,
+      PF_FECFIN: this.toT,
+      P_IMPORTE: this.form.controls['import'].value,
     };
 
     this.siabService
