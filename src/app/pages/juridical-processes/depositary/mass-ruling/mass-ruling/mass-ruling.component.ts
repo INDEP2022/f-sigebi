@@ -4,10 +4,12 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, firstValueFrom, skip } from 'rxjs';
+import { BehaviorSubject, firstValueFrom, skip, take } from 'rxjs';
+import { HasMoreResultsComponent } from 'src/app/@standalone/has-more-results/has-more-results.component';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { getDataFromExcel, showToast } from 'src/app/common/helpers/helpers';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
@@ -116,7 +118,6 @@ export class MassRulingComponent
   });
   public formCargaMasiva = new FormGroup({
     identificadorCargaMasiva: new FormControl('', [
-      Validators.required,
       Validators.pattern(KEYGENERATION_PATTERN),
     ]),
   });
@@ -144,7 +145,7 @@ export class MassRulingComponent
     //   this.getVolante();
     // });
     this.params.pipe(skip(1)).subscribe(params => {
-      this.onClickLoadByIdentifier(params);
+      this.loadDataByIdentifier(params);
     });
   }
 
@@ -168,24 +169,33 @@ export class MassRulingComponent
     //   data.limit = 1;
     let params = `?limit=1&page=1`;
 
-    if (id) {
-      params += `&filter.id=${id}`;
-    }
+    // if (id) {
+    //   params += `&filter.id=${id}`;
+    // }
 
-    if (wheelNumber) {
-      params += `&filter.wheelNumber=${wheelNumber}`;
-    }
+    // if (wheelNumber) {
+    //   params += `&filter.wheelNumber=${wheelNumber}`;
+    // }
+
+    const paramsSearch = this.generateParamsSearchDictation();
+    Object.keys(paramsSearch).forEach(key => {
+      params += `&${key}=${paramsSearch[key]}`;
+    });
 
     this.dictationService.getAllWithFilters(params).subscribe({
       next: data => {
-        console.log(data);
-        this.form.patchValue(data.data[0] as any);
-        this.form
-          .get('instructorDate')
-          .patchValue(new Date(data.data[0].instructorDate) as any);
-        this.form
-          .get('dictDate')
-          .patchValue(new Date(data.data[0].dictDate) as any);
+        // console.log(data);
+        if (data.count > 1) {
+          this.openMoreOneResults();
+        } else {
+          this.form.patchValue(data.data[0] as any);
+          this.form
+            .get('instructorDate')
+            .patchValue(new Date(data.data[0].instructorDate) as any);
+          this.form
+            .get('dictDate')
+            .patchValue(new Date(data.data[0].dictDate) as any);
+        }
       },
       error: err => {
         this.loading = false;
@@ -204,10 +214,20 @@ export class MassRulingComponent
     this.modalService.hide();
   }
 
-  uploadForFileGoodDictation() {}
+  // uploadForFileGoodDictation() {}
 
-  async uploadForIdentifier() {
-    if (!this.dataTable[0].hasOwnProperty('id')) {
+  // async uploadForIdentifier() {}
+
+  async onClickGoodDictation() {
+    if (this.dataTable.length < 1) {
+      this.onLoadToast(
+        'warning',
+        'No se tiene datos cargados en la tabla de carga masiva'
+      );
+      return;
+    }
+
+    if (this.dataTable.length < 1) {
       this.onLoadToast(
         'warning',
         'No se tiene datos cargados en la tabla de carga masiva'
@@ -223,9 +243,17 @@ export class MassRulingComponent
       return;
     }
 
-    const identifier = this.dataTable[0].id;
-    this.btnsEnabled.btnGoodDictation = true;
-    this.massiveDictationService.deleteGoodOpinion(identifier).subscribe({
+    let body: any = {};
+    if (this.isFileLoad) {
+      body['goodIds'] = this.dataTable.map(x => {
+        return { no_bien: x.goodNumber.id };
+      });
+    } else {
+      body['identifier'] = this.dataTable[0].id;
+      this.btnsEnabled.btnGoodDictation = true;
+      // this.uploadForIdentifier();
+    }
+    this.massiveDictationService.deleteGoodOpinion(body).subscribe({
       next: () => {
         this.onLoadToast('success', 'Proceso Terminado');
         this.dataTable = [];
@@ -244,22 +272,6 @@ export class MassRulingComponent
         this.btnsEnabled.btnGoodDictation = false;
       },
     });
-  }
-
-  onClickGoodDictation() {
-    if (this.dataTable.length < 1) {
-      this.onLoadToast(
-        'warning',
-        'No se tiene datos cargados en la tabla de carga masiva'
-      );
-      return;
-    }
-
-    if (this.file) {
-      this.uploadForFileGoodDictation();
-    } else {
-      this.uploadForIdentifier();
-    }
 
     // let identifier: number = null;
     // if (this.dataTable[0].hasOwnProperty('id')) {
@@ -373,7 +385,13 @@ export class MassRulingComponent
     });
   }
 
-  onClickLoadByIdentifier(listParams = new ListParams()) {
+  onClickLoadByIdentifier(): void {
+    this.isFileLoad = false;
+    this.dataTable = [];
+    this.params.next(new ListParams());
+  }
+
+  loadDataByIdentifier(listParams = new ListParams()) {
     this.isFileLoad = false;
     const identificador = this.formCargaMasiva.get(
       'identificadorCargaMasiva'
@@ -777,6 +795,55 @@ export class MassRulingComponent
           ignoreBackdropClick: true, //ignora el click fuera del modal
         };
         this.modalService.show(PreviewDocumentsComponent, config);
+      }
+    });
+  }
+
+  generateParamsSearchDictation() {
+    const { id, expedientNumber, wheelNumber } = this.form.value;
+    const params: any = {};
+    id && (params['filter.id'] = id);
+    expedientNumber && (params['filter.expedientNumber'] = expedientNumber);
+    wheelNumber && (params['filter.wheelNumber'] = wheelNumber);
+    return params;
+  }
+
+  openMoreOneResults(data?: IListResponse<any>) {
+    let context: Partial<HasMoreResultsComponent> = {
+      queryParams: this.generateParamsSearchDictation(),
+      columns: {
+        id: {
+          title: 'Identificador',
+        },
+        expedientNumber: {
+          title: 'Número de expediente',
+        },
+        wheelNumber: {
+          title: 'Número de volante',
+        },
+        typeDict: {
+          title: 'Tipo de dictamen',
+        },
+        status: {
+          title: 'Estatus',
+        },
+      },
+      totalItems: data ? data.count : 0,
+      ms: 'dictation',
+      path: 'dictation',
+    };
+
+    console.log({ context });
+
+    const modalRef = this.modalService.show(HasMoreResultsComponent, {
+      initialState: context,
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    });
+    modalRef.content.onClose.pipe(take(1)).subscribe(result => {
+      console.log({ result });
+      if (result) {
+        // this.loadInfo(result);
       }
     });
   }
