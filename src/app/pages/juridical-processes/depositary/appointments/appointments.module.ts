@@ -17,6 +17,7 @@ import { AppointmentsAdministrativeReportComponent } from './appointments-admini
 import { AppointmentsJuridicalReportComponent } from './appointments-juridical-report/appointments-juridical-report.component';
 import { AppointmentsRelationsPaysComponent } from './appointments-relations-pays/appointments-relations-pays.component';
 import { AppointmentsComponent } from './appointments/appointments.component';
+import { ModalScanningFoilAppointmentTableComponent } from './modal-scanning-foil/modal-scanning-foil.component';
 import { ScanningFoilAppointmentComponent } from './scanning-foil/scanning-foil.component';
 
 @NgModule({
@@ -26,6 +27,7 @@ import { ScanningFoilAppointmentComponent } from './scanning-foil/scanning-foil.
     AppointmentsRelationsPaysComponent,
     AppointmentsJuridicalReportComponent,
     AppointmentsAdministrativeReportComponent,
+    ModalScanningFoilAppointmentTableComponent,
   ],
   imports: [
     CommonModule,

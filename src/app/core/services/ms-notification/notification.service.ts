@@ -258,4 +258,7 @@ export class NotificationService extends HttpService {
   getMaxFlyer(fileNumber: number) {
     return this.get(`notification/maxCFlyer/${fileNumber}`);
   }
+  getCFlyer(fileNumber: number) {
+    return this.get(`notification/cFlyer/${fileNumber}`);
+  }
 }
