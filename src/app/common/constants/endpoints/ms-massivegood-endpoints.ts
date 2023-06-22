@@ -9,4 +9,5 @@ export enum MassiveGoodEndpoints {
   GetFileCSV = `application/pupPreviewDatosCSV`,
   FileCSV = 'application/pupPreviewDataCsv',
   chargeGoodByExpedient = 'massive-charge-goods/bRealStateOutputs',
+  GetFProRecPag2CSV = `application/get-f-proc-rec-pag2`,
 }
