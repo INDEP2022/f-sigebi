@@ -9,7 +9,7 @@
       <!-- <ng2-smart-table [settings]="settings2"></ng2-smart-table> -->
       <!-- </div> -->
       <div class="body">
-        <div>
+        <div [class]="loading ? 'table-loading' : ''">
           <ng2-smart-table
             id="idTableTestHead"
             [attr.class]="'table-bordered'"
@@ -28,7 +28,7 @@
         </div> -->
       </div>
       <app-pagination
-        [params]="params"
+        [filterParams]="filter1"
         [totalItems]="totalItems"></app-pagination>
     </div>
     <hr />
