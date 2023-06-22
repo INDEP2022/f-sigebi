@@ -4,10 +4,12 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IGoodProgramming } from 'src/app/core/models/good-programming/good-programming';
 import { Iprogramming } from 'src/app/core/models/good-programming/programming';
 import { IGood } from 'src/app/core/models/good/good.model';
+import { IProceedings } from 'src/app/core/models/ms-proceedings/proceedings.model';
 import { AuthorityService } from 'src/app/core/services/catalogs/authority.service';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
 import { StationService } from 'src/app/core/services/catalogs/station.service';
@@ -27,6 +29,7 @@ import {
 } from '../../execute-reception/execute-reception-form/columns/minute-columns';
 import { TRANSPORTABLE_GOODS_FORMALIZE } from '../../execute-reception/execute-reception-form/columns/transportable-goods-columns';
 import { MINUTES_COLUMNS } from '../columns/minutes-columns';
+import { InformationRecordComponent } from '../information-record/information-record.component';
 
 @Component({
   selector: 'app-formalize-programming-form',
@@ -520,6 +523,24 @@ export class FormalizeProgrammingFormComponent
         },
       });
     });
+  }
+
+  generateMinute(proceeding: IProceedings) {
+    let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+
+    config.initialState = {
+      proceeding,
+      programming: this.programming,
+      callback: (data: any) => {
+        if (data) {
+        }
+      },
+    };
+
+    const generateMinute = this.modalService.show(
+      InformationRecordComponent,
+      config
+    );
   }
 
   close() {}
