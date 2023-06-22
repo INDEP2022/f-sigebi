@@ -31,7 +31,6 @@ export class WarehouseSelectFormComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.prepareForm();
     this.getWarehouses(new ListParams());
-    console.log('data', this.data);
   }
 
   prepareForm() {
@@ -41,8 +40,8 @@ export class WarehouseSelectFormComponent extends BasePage implements OnInit {
   }
 
   getWarehouses(params: ListParams) {
+    params['filter.name'] = `$ilike:${params.text}`;
     this.goodsQueryService.getCatStoresView(params).subscribe(data => {
-      console.log('alamcenes relacionados con transferente', data);
       this.warehouses = new DefaultSelect(data.data, data.count);
     });
   }

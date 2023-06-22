@@ -54,6 +54,7 @@ import { GoodSsubtypeService } from 'src/app/core/services/catalogs/good-ssubtyp
 import { GoodSubtypeService } from 'src/app/core/services/catalogs/good-subtype.service';
 import { GoodTypeService } from 'src/app/core/services/catalogs/good-type.service';
 import { AccountMovements } from 'src/app/core/services/ms-account-movements/account-movements.service';
+import { ComerDetailsService } from 'src/app/core/services/ms-coinciliation/comer-details.service';
 import { DictationXGood1Service } from 'src/app/core/services/ms-dictation/dictation-x-good1.service';
 import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
 import { OficialDictationService } from 'src/app/core/services/ms-dictation/oficial-dictation.service';
@@ -384,7 +385,8 @@ export class JuridicalRulingGComponent
     private abandonmentsService: AbandonmentsDeclarationTradesService,
     private detailProceedingsDevolutionService: DetailProceedingsDevolutionService,
     private jobDictumTextsService: JobDictumTextsService,
-    private AccountMovements: AccountMovements
+    private AccountMovements: AccountMovements,
+    private comerDetailsService: ComerDetailsService
   ) {
     super();
     this.dictamen = {
@@ -3216,12 +3218,41 @@ export class JuridicalRulingGComponent
               if (good.di_esta_conciliado == 'N') {
                 const cadena1 = good.val5 ? good.val5.indexOf('/') : 0;
                 if (cadena1 > 0) {
-                  vf_fecha = this.datePipe.transform(good.val5, 'yyyy/MM/dd');
+                  let cadena = good.val5;
+
+                  // Utilizar el método split() para separar la cadena en un array de elementos
+                  let arrayCadena = cadena.split('/');
+
+                  // Obtener el segundo elemento del array, que es "06"
+                  let elemento2 = `${arrayCadena[2]}/${arrayCadena[1]}/${arrayCadena[0]}`;
+                  vf_fecha = elemento2;
                 } else {
                   const cadena2 = good.val5 ? good.val5.indexOf('-') : 0;
 
                   if (cadena2 > 0) {
-                    vf_fecha = this.datePipe.transform(good.val5, 'yyyy-MM-dd');
+                    let cadena = good.val5;
+                    console.log('cadena2', cadena2);
+                    const valCad = cadena;
+                    const elemento = 'T';
+                    const contieneElemento = cadena.includes(elemento);
+                    let arrayCadena;
+                    let elemento2;
+
+                    if (contieneElemento) {
+                      arrayCadena = cadena.split('T');
+                      let arrayCadena2 = arrayCadena[0].split('-');
+
+                      elemento2 = `${arrayCadena2[0]}-${arrayCadena2[1]}-${arrayCadena2[2]}`;
+                      vf_fecha = elemento2;
+                    } else {
+                      // Utilizar el método split() para separar la cadena en un array de elementos
+                      console.log('arrayCadena', arrayCadena);
+                      let arrayCadena2 = cadena.split('-');
+                      elemento2 = `${arrayCadena2[2]}-${arrayCadena2[1]}-${arrayCadena2[0]}`;
+
+                      // Obtener el segundo elemento del array, que es "06"
+                      vf_fecha = elemento2;
+                    }
                   } else {
                     vf_fecha = good.val5;
                   }
@@ -3492,8 +3523,8 @@ export class JuridicalRulingGComponent
     // this.params.getValue().page = 1;
     this.goodServices
       .getByExpedient(
-        this.expedientesForm.get('noExpediente').value,
-        this.params.getValue()
+        this.expedientesForm.get('noExpediente').value
+        //this.params.getValue() //Se estaba enviado dos veces el expediente y marcaba error.
       )
       .subscribe({
         next: response => {
@@ -3586,12 +3617,27 @@ export class JuridicalRulingGComponent
                   if (cadena2 > 0) {
                     let cadena = good.val5;
                     console.log('cadena2', cadena2);
-                    // Utilizar el método split() para separar la cadena en un array de elementos
-                    let arrayCadena = cadena.split('-');
+                    const valCad = cadena;
+                    const elemento = 'T';
+                    const contieneElemento = cadena.includes(elemento);
+                    let arrayCadena;
+                    let elemento2;
 
-                    // Obtener el segundo elemento del array, que es "06"
-                    let elemento2 = `${arrayCadena[2]}-${arrayCadena[1]}-${arrayCadena[0]}`;
-                    vf_fecha = elemento2;
+                    if (contieneElemento) {
+                      arrayCadena = cadena.split('T');
+                      let arrayCadena2 = arrayCadena[0].split('-');
+
+                      elemento2 = `${arrayCadena2[0]}-${arrayCadena2[1]}-${arrayCadena2[2]}`;
+                      vf_fecha = elemento2;
+                    } else {
+                      // Utilizar el método split() para separar la cadena en un array de elementos
+                      console.log('arrayCadena', arrayCadena);
+                      let arrayCadena2 = cadena.split('-');
+                      elemento2 = `${arrayCadena2[2]}-${arrayCadena2[1]}-${arrayCadena2[0]}`;
+
+                      // Obtener el segundo elemento del array, que es "06"
+                      vf_fecha = elemento2;
+                    }
                   } else {
                     vf_fecha = good.val5;
                   }

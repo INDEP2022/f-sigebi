@@ -2,8 +2,12 @@
   <div class="row">
     <div class="d-flex justify-content-end">
       <div class="m-3">
-        <button class="btn btn-sm btn-success active" (click)="updateGood()">
-          Actualizar datos
+        <button
+          type="button"
+          class="btn btn-primary btn-sm active"
+          (click)="updateGood()">
+          Guardar
+          <i aria-hidden="true" class="fa fa-save"></i>
         </button>
       </div>
     </div>
@@ -65,7 +69,13 @@
             <input
               type="text"
               class="form-control"
-              [value]="item.valor"
+              [value]="
+                item.valor === null ||
+                item.valor === 'NULL' ||
+                item.valor === 'null'
+                  ? ''
+                  : item.valor
+              "
               style="background-color: #dff8f8" />
           </div>
         </div>

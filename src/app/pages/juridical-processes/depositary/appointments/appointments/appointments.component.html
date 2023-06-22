@@ -7,31 +7,38 @@
     <form [formGroup]="form" class="container-fluid form-material">
       <div class="row">
         <div class="col-sm-12 col-12 col-md-12 P-2">
+          <!-- <div class="row">
+            <div class="col-sm-12 col-12 col-md-8 p-2"> -->
           <div class="row">
-            <div class="col-sm-12 col-12 col-md-8 p-2">
-              <div class="row">
-                <div class="col-12 col-sm-6 col-md-6 p-2">
-                  <form-field
-                    [control]="form.get('noBien')"
-                    label="No&#46; Bien">
-                    <input
-                      type="number"
-                      class="form-control"
-                      formControlName="noBien" />
-                  </form-field>
-                </div>
-                <div class="col-12 col-sm-4 col-md-4 p-2">
-                  <button
-                    type="submit"
-                    class="btn btn-primary active btn-sm"
-                    (click)="validGoodNumberInDepositaryAppointment()">
-                    Buscar
-                    <i class="bx bx-search-alt bx-sm float-icon"></i>
-                  </button>
-                </div>
-              </div>
+            <div class="col-12 col-sm-6 col-md-4 p-2">
+              <form-field [control]="form.get('noBien')" label="No&#46; Bien">
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="noBien" />
+              </form-field>
+            </div>
+            <div class="col-12 col-sm-4 col-md-8 p-2">
+              <button
+                type="submit"
+                class="btn btn-primary active btn-sm m-2"
+                (click)="validGoodNumberInDepositaryAppointment()">
+                Buscar
+                <i class="bx bx-search-alt bx-sm float-icon"></i>
+              </button>
+              <!-- </div>
+            <div class="col-12 col-sm-4 col-md-3 p-2"> -->
+              <button
+                type="button"
+                class="btn btn-danger active btn-sm m-2"
+                (click)="cleanScreenFields()">
+                Limpiar
+                <i class="fa fa-eraser ml-1"></i>
+              </button>
             </div>
           </div>
+          <!-- </div>
+          </div> -->
         </div>
         <!-- <div
           class="col-sm-12 col-12 col-md-12 p-2"
@@ -601,6 +608,56 @@
               [readonly]="true"></textarea>
           </form-field>
         </div>
+        <div
+          *ngIf="showScanRadio"
+          class="col-sm-12 col-12 col-md-12 p-2 mb-5 card">
+          <form
+            [formGroup]="formRadioScan"
+            class="container-fluid form-material">
+            <div class="row w-100 pl-4 card-body">
+              <div class="col-sm-12 col-12 col-md-6 col-lg-6 p-2 text-center">
+                <form-radio
+                  label="Folio Acta Depositaria"
+                  for="depositaryFolio">
+                  <input
+                    id="depositaryFolio"
+                    type="radio"
+                    formControlName="scanningFolio"
+                    (change)="changeRadioScan('A')"
+                    value="A" />
+                </form-radio>
+              </div>
+              <div class="col-sm-12 col-12 col-md-6 col-lg-6 p-2 text-center">
+                <form-radio label="Folio Remoci&oacute;n" for="removalFolio">
+                  <input
+                    id="removalFolio"
+                    type="radio"
+                    formControlName="scanningFolio"
+                    (change)="changeRadioScan('R')"
+                    value="R" />
+                </form-radio>
+              </div>
+              <!-- <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2 text-center">
+                <form-radio label="Default" for="defaultFolio">
+                  <input
+                    id="defaultFolio"
+                    type="radio"
+                    formControlName="scanningFolio"
+                    (change)="changeRadioScan('D')"
+                    value="D" />
+                </form-radio>
+              </div> -->
+              <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2 text-center">
+                <button
+                  type="button"
+                  class="btn btn-danger btn-sm active m-1"
+                  (click)="closeRadioScan()">
+                  Cerrar opciones de Escaneo
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
         <!-- <div class="col-sm-12 col-12 col-md-12 P-2">
           <div class="row">
             <div class="col-sm-12 col-12 col-md-5 p-2">
@@ -693,7 +750,13 @@
         <!-- PARTE DE ESCANEO -->
         <div class="col-md-8 col-12 col-sm-12" *ngIf="showScanForm">
           <app-scanning-foil-appointment
-            [formScan]="formScan"></app-scanning-foil-appointment>
+            [formScan]="formScan"
+            (scanRequestEmitter)="scanRequest($event)"
+            (showScanningPageEmitter)="showScanningPage($event)"
+            (messageDigitalizationEmitter)="messageDigitalization($event)"
+            (viewPicturesEmitter)="
+              viewPictures($event)
+            "></app-scanning-foil-appointment>
         </div>
         <!-- <div class="col-sm-12 col-12 col-md-8 P-2">
           <div class="row">

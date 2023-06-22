@@ -6,24 +6,29 @@
 
   <app-card [header]="true">
     <div class="ch-content returnMaintenance" header>
-      <h5 class="title">
-        <button class="btn btn-sm btn-return" (click)="back()">
-          <i class="bx bx-chevron-left float-icon"></i>
-          <span class="title">Mantenimiento de Programaciones</span>
-        </button>
-      </h5>
+      <h5 class="title">Mantenimiento de Programaciones</h5>
     </div>
     <div body>
-      <form class="form-material" [formGroup]="form">
+      <form class="form-material" [formGroup]="form" *ngIf="form">
+        <div class="row pb-5">
+          <div>
+            <button
+              type="button"
+              class="btn btn-primary active btn-sm"
+              (click)="back()">
+              Regresar
+              <i class="fas fa-arrow-circle-left"></i>
+            </button>
+          </div>
+        </div>
         <div class="row mr-0">
           <div class="col-md-2 pr-0">
-            <form-field [control]="form.get('statusActa')" label="Estatus Acta"
+            <form-field [control]="statusActa" label="Estatus Acta"
               ><ng-select
                 formControlName="statusActa"
                 [searchable]="false"
                 class="form-control"
                 [clearable]="false">
-                <ng-option value="TODOS">Todos</ng-option>
                 <ng-option value="ABIERTA">Abierto</ng-option>
                 <ng-option value="CERRADA">Cerrado</ng-option>
               </ng-select>
@@ -178,6 +183,7 @@
       </accordion> -->
 
       <app-table-goods
+        *ngIf="form"
         [haveServerPagination]="false"
         [settingsTable]="settingsGoods"
         [loading]="loading"

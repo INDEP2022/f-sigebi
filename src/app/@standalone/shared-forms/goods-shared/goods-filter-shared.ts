@@ -1,9 +1,11 @@
 import { CommonModule } from '@angular/common';
 import {
   Component,
+  EventEmitter,
   Input,
   OnChanges,
   OnInit,
+  Output,
   SimpleChanges,
 } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
@@ -39,7 +41,7 @@ import { GoodService } from 'src/app/core/services/ms-good/good.service';
               [form]="form"
               value="id"
               bindLabel="description"
-              label="Biene"
+              label="Bien"
               [control]="goodField"
               (change)="onGoodsChange($event)">
             </ngx-select>
@@ -61,6 +63,7 @@ export class GoodsFilterSharedComponent
   //If Form PatchValue
   @Input() patchValue: boolean = false;
   @Input() classifGood: number;
+  @Output() good = new EventEmitter<IGood>();
   params = new BehaviorSubject<FilterParams>(new FilterParams());
   goods = new DefaultSelect<IGood>();
 
@@ -110,6 +113,7 @@ export class GoodsFilterSharedComponent
       });
     }
     this.form.updateValueAndValidity();
+    this.good.emit(type);
     //this.resetFields([this.subgood]);
     //this.subgoods = new DefaultSelect();
   }

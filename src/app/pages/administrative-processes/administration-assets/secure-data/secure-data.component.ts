@@ -23,7 +23,9 @@ export class SecureDataComponent extends BasePage implements OnInit, OnChanges {
 
   constructor(private readonly policyServices: PolicyService) {
     super();
-    this.settings.actions = false;
+    this.settings.actions.delete = true;
+    this.settings.actions.add = false;
+    this.settings.hideSubHeader = false;
     this.settings.columns = {
       policy: {
         title: 'Póliza',
@@ -31,7 +33,7 @@ export class SecureDataComponent extends BasePage implements OnInit, OnChanges {
         sort: false,
       },
       policyDescription: {
-        title: 'Descripión de Póliza',
+        title: 'Descripción de Póliza',
         type: 'string',
         sort: false,
       },
