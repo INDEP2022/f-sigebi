@@ -587,6 +587,7 @@ ng-scrollbar.table-scrollbar {
 //   width: 33.5% !important;
 // }
 
-// #okosdsd1 table tbody tr td {
-//   text-align: center;
-// }
+#custom-table-table-cursor table tbody tr td {
+  cursor: default !important;
+  background-color: #fff;
+}
