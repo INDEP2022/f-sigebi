@@ -15,6 +15,7 @@ import { GeneralDataGoodsComponent } from './general-data-goods/general-data-goo
 import { HouseholdComponent } from './household/household.component';
 import { IncomePerAssetComponent } from './income-per-asset/income-per-asset.component';
 import { InventoryDataComponent } from './inventory-data/inventory-data.component';
+import { RegisterModalComponent } from './inventory-data/register-modal/register-modal.component';
 import { RegistryServicesComponent } from './registry-services/registry-services.component';
 import { SearchTabComponent } from './search-tab/search-tab.component';
 import { SecureDataComponent } from './secure-data/secure-data.component';
@@ -35,6 +36,7 @@ import { WarehousesAssignedComponent } from './warehouses-assigned/warehouses-as
     AssignedVaultsComponent,
     AppointmentDataComponent,
     WarehousesAssignedComponent,
+    RegisterModalComponent,
   ],
   imports: [
     CommonModule,

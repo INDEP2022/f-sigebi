@@ -16,7 +16,7 @@ import { Component } from '@angular/core';
               <app-general-data-goods [goodId]="data"></app-general-data-goods>
             </tab>
             <tab heading="Datos Inventario" *ngIf="dataSearch">
-              <app-inventory-data></app-inventory-data>
+              <app-inventory-data [goodId]="data"></app-inventory-data>
             </tab>
             <tab heading="Datos Avalúos" *ngIf="dataSearch">
               <app-data-valuations [goodId]="data"></app-data-valuations>
