@@ -6,6 +6,7 @@ import { GoodsTypesSharedComponent } from 'src/app/@standalone/shared-forms/good
 
 import { ServicesSharedComponent } from 'src/app/@standalone/shared-forms/services-shared/services-shared.component';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { GoodsCharacteristicsModule } from '../../general-processes/goods-characteristics/goods-characteristics.module';
 import { AdministrationAssetsRoutingModule } from './administration-assets-routing.module';
 import { AdministrationAssetsComponent } from './administration-assets.component';
 import { AppointmentDataComponent } from './appointment-data/appointment-data.component';
@@ -49,6 +50,7 @@ import { WarehousesAssignedComponent } from './warehouses-assigned/warehouses-as
     GoodsFilterSharedComponent,
     SharedModule,
     ServicesSharedComponent,
+    GoodsCharacteristicsModule,
   ],
 })
 export class AdministrationAssetsModule {}
