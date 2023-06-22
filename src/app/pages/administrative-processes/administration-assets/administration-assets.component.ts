@@ -35,7 +35,7 @@ import { Component } from '@angular/core';
               <app-assigned-vaults [goodId]="data"></app-assigned-vaults>
             </tab>
             <tab heading="Registro Servicios" *ngIf="dataSearch">
-              <app-registry-services></app-registry-services>
+              <app-registry-services [goodId]="data"></app-registry-services>
             </tab>
             <tab heading="Menaje" *ngIf="dataSearch">
               <app-household [goodId]="data"></app-household>

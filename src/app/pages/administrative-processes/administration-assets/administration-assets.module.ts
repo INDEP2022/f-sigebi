@@ -4,6 +4,7 @@ import { TabsModule } from 'ngx-bootstrap/tabs';
 import { GoodsFilterSharedComponent } from 'src/app/@standalone/shared-forms/goods-shared/goods-filter-shared';
 import { GoodsTypesSharedComponent } from 'src/app/@standalone/shared-forms/goods-types-shared/goods-types-shared.component';
 
+import { ServicesSharedComponent } from 'src/app/@standalone/shared-forms/services-shared/services-shared.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { AdministrationAssetsRoutingModule } from './administration-assets-routing.module';
 import { AdministrationAssetsComponent } from './administration-assets.component';
@@ -16,6 +17,7 @@ import { HouseholdComponent } from './household/household.component';
 import { IncomePerAssetComponent } from './income-per-asset/income-per-asset.component';
 import { InventoryDataComponent } from './inventory-data/inventory-data.component';
 import { RegisterModalComponent } from './inventory-data/register-modal/register-modal.component';
+import { RegisterServiceComponent } from './registry-services/register-service/register-service.component';
 import { RegistryServicesComponent } from './registry-services/registry-services.component';
 import { SearchTabComponent } from './search-tab/search-tab.component';
 import { SecureDataComponent } from './secure-data/secure-data.component';
@@ -37,6 +39,7 @@ import { WarehousesAssignedComponent } from './warehouses-assigned/warehouses-as
     AppointmentDataComponent,
     WarehousesAssignedComponent,
     RegisterModalComponent,
+    RegisterServiceComponent,
   ],
   imports: [
     CommonModule,
@@ -45,6 +48,7 @@ import { WarehousesAssignedComponent } from './warehouses-assigned/warehouses-as
     GoodsTypesSharedComponent,
     GoodsFilterSharedComponent,
     SharedModule,
+    ServicesSharedComponent,
   ],
 })
 export class AdministrationAssetsModule {}

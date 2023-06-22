@@ -1,5 +1,5 @@
 import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IPerson } from 'src/app/core/models/catalogs/person.model';
 import { IInfoDepositary } from 'src/app/core/models/ms-depositary/ms-depositary.interface';
@@ -37,10 +37,10 @@ export class DepositaryReportComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.depositaryDataForm = this.fb.group({
-      reportDate: [null],
-      personNum: [null],
+      reportDate: [null, [Validators.required]],
+      personNum: [null, [Validators.required]],
       noPerson: [null],
-      report: [null],
+      report: [null, [Validators.required]],
     });
   }
 
@@ -65,6 +65,13 @@ export class DepositaryReportComponent extends BasePage implements OnInit {
         'Información',
         'La fecha del informe debe ser menor a la fecha actual'
       );
+      return;
+    }
+    if (
+      this.depositaryDataForm.get('report').value === null ||
+      this.depositaryDataForm.get('report').value === ''
+    ) {
+      this.alert('info', 'Información', 'El informe es requerido');
       return;
     }
     const model: IInfoDepositary = {

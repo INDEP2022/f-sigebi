@@ -2,23 +2,25 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
-import { IInventoryGood } from 'src/app/core/models/ms-inventory-query/inventory-query.model';
-import { InventoryService } from 'src/app/core/services/ms-inventory-type/inventory.service';
+import { IServiceGood } from 'src/app/core/models/ms-good/good';
+import { ServiceCatService } from 'src/app/core/services/catalogs/service-cat.service';
+import { ServiceGoodService } from 'src/app/core/services/ms-serviceGood/servicegood.service';
 import { BasePage } from 'src/app/core/shared';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
-  selector: 'app-register-modal',
-  templateUrl: './register-modal.component.html',
+  selector: 'app-register-service',
+  templateUrl: './register-service.component.html',
   styles: [],
 })
-export class RegisterModalComponent extends BasePage implements OnInit {
-  inventoryDataForm: ModelForm<any>;
+export class RegisterServiceComponent extends BasePage implements OnInit {
+  form: ModelForm<any>;
   goodId: number;
   constructor(
     private fb: FormBuilder,
     private modalRef: BsModalRef,
-    private readonly inventoryService: InventoryService
+    private readonly serviceGoodService: ServiceGoodService,
+    private readonly catService: ServiceCatService
   ) {
     super();
   }
@@ -28,12 +30,15 @@ export class RegisterModalComponent extends BasePage implements OnInit {
   }
 
   private prepareForm() {
-    this.inventoryDataForm = this.fb.group({
-      noInventario: [null, [Validators.required]],
-      fechaInventario: [new Date(), [Validators.required]],
-      responsable: [
+    this.form = this.fb.group({
+      service: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      dateCourt: [null, [Validators.required]],
+      periodicity: [
+        null,
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
       ],
     });
   }
@@ -44,13 +49,14 @@ export class RegisterModalComponent extends BasePage implements OnInit {
 
   create() {
     this.loading = true;
-    const model: IInventoryGood = {
-      inventoryNumber: this.inventoryDataForm.get('noInventario').value,
+    const model: IServiceGood = {
+      cveService: this.form.get('service').value,
+      dateCourt: this.form.get('dateCourt').value,
       goodNumber: this.goodId,
-      dateInventory: this.inventoryDataForm.get('fechaInventario').value,
-      responsible: this.inventoryDataForm.get('responsable').value,
+      periodicity: this.form.get('periodicity').value,
     };
-    this.inventoryService.create(model).subscribe({
+    console.log(model);
+    this.serviceGoodService.create(model).subscribe({
       next: resp => {
         this.handleSuccess();
       },
