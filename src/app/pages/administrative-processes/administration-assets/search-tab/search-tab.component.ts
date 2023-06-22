@@ -42,6 +42,7 @@ export class SearchTabComponent extends BasePage implements OnInit {
     this.settings.actions.add = false;
     this.settings.hideSubHeader = false;
     this.settings.columns = SEARCH_COLUMNS;
+    this.settings.hideSubHeader = false;
   }
 
   ngOnInit(): void {
