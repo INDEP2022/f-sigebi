@@ -99,7 +99,7 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
           this.origin2 = params['origin2'] ?? null;
           this.origin3 = params['origin3'] ?? null;
         }
-        if ((this.origin = 'FACTJURREGDESTLEG')) {
+        if (this.origin == 'FACTJURREGDESTLEG') {
           this.no_bien = params['P_NB'] ?? null;
         }
       });
@@ -476,7 +476,7 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
         `/pages/administrative-processes/payment-claim-process`,
       ]);
     }
-    if ((this.origin = 'FACTJURREGDESTLEG')) {
+    if (this.origin == 'FACTJURREGDESTLEG') {
       this.router.navigate([
         `/pages/juridical/depositary/depositary-record/` + this.no_bien,
       ]);
