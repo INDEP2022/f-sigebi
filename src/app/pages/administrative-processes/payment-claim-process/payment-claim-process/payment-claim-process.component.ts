@@ -165,7 +165,7 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
     this.buildForm();
     this.form.disable();
 
-    this.filter1
+    this.params
       .pipe(
         skip(1),
         tap(() => {

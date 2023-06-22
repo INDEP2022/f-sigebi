@@ -179,3 +179,12 @@ export interface IDepositaryDetrepo {
   registryNum: number;
   nbOrigin: string;
 }
+
+export interface IInfoDepositary {
+  reportDate: Date | string;
+  report: string;
+  personNum: string;
+  goodNum?: string | number;
+  registryNum?: number;
+  nbOrigin?: null;
+}
