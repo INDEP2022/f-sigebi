@@ -5,20 +5,6 @@
   <div body>
     <div class="row mt-3 mb-3">
       <form action="" class="form-material" [formGroup]="form">
-        <!-- <div class="row mt-4">
-          <div class="col-md-6">
-            <form-field [control]="form.get('delegation')" label="Delegación">
-              <input formControlName="delegation" class="form-control" />
-            </form-field>
-          </div>
-          <div class="col-md-6">
-            <form-field
-              [control]="form.get('subdelegation')"
-              label="Subdelegación">
-              <input formControlName="subdelegation" class="form-control" />
-            </form-field>
-          </div>
-        </div>-->
         <app-delegation-shared [form]="form"></app-delegation-shared>
         <div class="row mt-4">
           <div class="col-md-6 pt-3">
@@ -27,22 +13,14 @@
                 (fetchItems)="getRegCurrency()"
                 [data]="currencies"
                 [form]="form"
-                value="nmtabla"
+                value="cve_moneda"
                 bindLabel="desc_moneda"
                 label="Moneda"
                 control="currency">
               </ngx-select>
             </form-field>
-            <!-- <app-currency-shared
-              [form]="form"
-              currencyField="currency"></app-currency-shared> -->
-            <!-- <ngx-select [form]="form" control="currency" (fetchItems)="getRegCurrency()" [showTooltip]="true"
-              [data]="currencies" bindLabel="cve_moneda" label="Moneda" value="nmtabla"></ngx-select> -->
           </div>
           <div class="col-md-6">
-            <!-- <form-field [control]="form.get('bank')" label="Banco:">
-              <input formControlName="bank" class="form-control" />
-            </form-field> -->
             <app-banks-shared [form]="form"></app-banks-shared>
           </div>
         </div>
@@ -50,12 +28,11 @@
           <div class="col-md-6">
             <form-field
               [control]="form.get('fileFrom')"
-              label="Del expediente:">
+              label="Del Expediente:">
               <input
                 type="number"
                 formControlName="fileFrom"
-                class="form-control"
-                maxLength="11" />
+                class="form-control" />
             </form-field>
           </div>
           <div class="col-md-6">
@@ -63,8 +40,7 @@
               <input
                 type="number"
                 formControlName="fileTo"
-                class="form-control"
-                maxLength="11" />
+                class="form-control" />
             </form-field>
           </div>
         </div>
@@ -86,6 +62,16 @@
                 class="form-control"
                 [minDate]="form.get('from').value"
                 bsDatepicker />
+            </form-field>
+          </div>
+        </div>
+        <div class="row mt-4">
+          <div class="col-md-6">
+            <form-field [control]="form.get('import')" label="Importe:">
+              <input
+                type="number"
+                formControlName="import"
+                class="form-control" />
             </form-field>
           </div>
         </div>
