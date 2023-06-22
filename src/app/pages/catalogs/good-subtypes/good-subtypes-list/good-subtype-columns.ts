@@ -11,13 +11,21 @@ export const GOOD_SUBTYPES_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  idTypeGood: {
+  typeGoodDetails: {
     title: 'Nombre Tipo',
     type: 'string',
+    sort: false,
     valuePrepareFunction: (goodType: IGoodType) => {
       return goodType.nameGoodType;
     },
-    sort: false,
+    filterFunction(cell?: any, search?: string): boolean {
+      let column = cell.nameGoodType;
+      if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
+        return true;
+      } else {
+        return false;
+      }
+    },
   },
   noPhotography: {
     title: 'No. Fotografías',
