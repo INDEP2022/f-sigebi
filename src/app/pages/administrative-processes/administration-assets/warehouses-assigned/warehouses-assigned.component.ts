@@ -32,6 +32,7 @@ export class WarehousesAssignedComponent
   ) {
     super();
     this.settings.actions = false;
+    this.settings.hideSubHeader = false;
     this.settings.columns = {
       id: {
         title: 'Almacen',

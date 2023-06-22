@@ -22,3 +22,10 @@ export interface NumDetGoodsDetail {
   description?: string;
   bankDate?: string;
 }
+
+export interface GoodsExcel {
+  paginated: Array<any>;
+  countA: Number;
+  countD: Number;
+  file: Object;
+}

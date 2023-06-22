@@ -26,6 +26,7 @@ export class TableGoodsComponent extends BasePage implements OnInit {
     return this._statusActaValue;
   }
   set statusActaValue(value: string) {
+    console.log(value);
     this._statusActaValue = value;
     this.updateSettingsGoods();
   }

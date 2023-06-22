@@ -14,10 +14,12 @@ export const COLUMNS = {
   status: {
     title: 'Estatus',
     sort: false,
+    filter: false,
   },
   check: {
     title: '',
     type: 'custom',
+    filter: false,
     renderComponent: CheckboxElementComponent,
     valuePrepareFunction: (isSelected: any, row: any) => {
       return goodCheck.find((e: any) => e.row.id == row.id) ? true : false;

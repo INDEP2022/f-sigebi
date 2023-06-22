@@ -55,7 +55,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
     actions: {
       delete: false,
       edit: true,
-      columnTitle: 'Acciones',
+      columnTitle: 'Detalle de la Dirección',
       position: 'right',
     },
     edit: {
@@ -69,7 +69,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
     actions: {
       delete: false,
       edit: true,
-      columnTitle: 'Acciones',
+      columnTitle: 'Detalle de la Dirección',
       position: 'right',
     },
     edit: {
@@ -83,7 +83,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
     actions: {
       delete: false,
       edit: true,
-      columnTitle: 'Acciones',
+      columnTitle: 'Detalle de la Dirección',
       position: 'right',
     },
     edit: {
@@ -489,7 +489,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
   }
 
   aprobateProgramming() {
-    if (!this.programming.contentId) {
+    if (this.programming.contentId) {
       this.alertQuestion(
         'question',
         'Aprobar Programación',

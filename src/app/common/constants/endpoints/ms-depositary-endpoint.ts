@@ -13,4 +13,5 @@ export enum DepositaryEndPoints {
   AplicationcargaCliente2 = 'application/cargaCliente2',
   DepositaryDedPay = 'ded-pay-depositary',
   DepositaryDetrepo = 'detrepo-depositary',
+  InfoDepositary = 'info-depositary',
 }

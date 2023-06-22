@@ -1,11 +1,19 @@
 import { Injectable } from '@angular/core';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { _Params } from 'src/app/common/services/http-wcontet.service';
 import { IDescriptionByNoGoodBody } from 'src/app/core/models/good/good.model';
+import {
+  IScreenStatusCValRevocation,
+  IScreenStatusCValUniversalFolio,
+} from 'src/app/core/models/ms-screen-status/seg-app-screen.model';
+import { PersonService } from 'src/app/core/services/catalogs/person.service';
 import { StateOfRepublicService } from 'src/app/core/services/catalogs/state-of-republic.service';
 import { MsDepositaryService } from 'src/app/core/services/ms-depositary/ms-depositary.service';
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { GoodsInvService } from 'src/app/core/services/ms-good/goodsinv.service';
+import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
+import { SegAppScreenService } from 'src/app/core/services/ms-screen-status/seg-app-screen.service';
 
 @Injectable({
   providedIn: 'root',
@@ -16,7 +24,10 @@ export class AppointmentsService {
     private msGoodService: GoodService,
     private msExpedientService: ExpedientService,
     private msGoodsInvService: GoodsInvService,
-    private msStateOfRepublicService: StateOfRepublicService
+    private msStateOfRepublicService: StateOfRepublicService,
+    private msSegAppScreenService: SegAppScreenService,
+    private msNotificationService: NotificationService,
+    private msPersonService: PersonService
   ) {}
 
   getGoodAppointmentDepositaryByNoGood(params: ListParams) {
@@ -60,6 +71,18 @@ export class AppointmentsService {
   }
   getStateOfRepublicById(idState: number | string = '') {
     return this.msStateOfRepublicService.getById(idState);
+  }
+  getCValFoUni(body: IScreenStatusCValUniversalFolio) {
+    return this.msSegAppScreenService.cValFolUni(body);
+  }
+  getCValFoRev(body: IScreenStatusCValRevocation) {
+    return this.msSegAppScreenService.cValFolRev(body);
+  }
+  getCFlyer(fileNumber: number) {
+    return this.msNotificationService.getCFlyer(fileNumber);
+  }
+  getPerson(params: _Params) {
+    return this.msPersonService.getAllFilters(params);
   }
   /**
    * HELP FUNCTIONS FOR COMPONENT

@@ -19,9 +19,11 @@ import { IGood } from 'src/app/core/models/ms-good/good';
 import { DocumentsService } from 'src/app/core/services/ms-documents-type/documents.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { HistoryGoodService } from 'src/app/core/services/ms-history-good/history-good.service';
+import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive-good.service';
 import { ScreenStatusService } from 'src/app/core/services/ms-screen-status/screen-status.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { AnalysisResultModule } from 'src/app/pages/request/economic-compensation/analysis-result/analysis-result.module';
 import { ScanningFoilComponent } from '../scanning-foil/scanning-foil.component';
 import { TABLE_SETTINGS2 } from './newSettings';
 interface IDs {
@@ -75,14 +77,14 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
   data: LocalDataSource = new LocalDataSource();
-  ids: IDs[];
-  goods: IGood[] = [];
+  ids: AnalysisResultModule[];
+  goods: any[] = [];
   idsNotExist: NotData[] = [];
   showError: boolean = false;
   showStatus: boolean = false;
   document: IDocuments;
   goodClassNumber: string[] = ['1424', '1426', '1427'];
-  good: IGood;
+  good: any;
   //Reactive Forms
   form: FormGroup;
   disabledImport: boolean = true;
@@ -99,6 +101,7 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
   settings2 = { ...TABLE_SETTINGS2 };
 
   valDocument: boolean = false;
+  public formLoading: boolean = false;
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
@@ -106,7 +109,8 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
     private readonly goodServices: GoodService,
     private readonly historyGoodService: HistoryGoodService,
     private readonly screenStatusService: ScreenStatusService,
-    private readonly documnetServices: DocumentsService
+    private readonly documnetServices: DocumentsService,
+    private massiveGoodService: MassiveGoodService
   ) {
     super();
     this.settings = {
@@ -115,7 +119,7 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
       hideSubHeader: false,
       columns: {
         id: {
-          title: 'No Bien',
+          title: 'No. Bien',
           width: '33%',
           sort: false,
         },
@@ -125,7 +129,7 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
           sort: false,
         },
         description: {
-          title: 'Descripcion',
+          title: 'Descripción',
           width: '33%',
           sort: false,
         },
@@ -139,7 +143,7 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
       hideHeader: true,
       columns: {
         id: {
-          title: 'No Bien',
+          title: 'No. Bien',
           width: '20%',
           sort: false,
         },
@@ -149,7 +153,7 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
           sort: false,
         },
         description: {
-          title: 'Descripcion',
+          title: 'Descripción',
           width: '60%',
           sort: false,
         },
@@ -161,20 +165,45 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
     this.buildForm();
     this.form.disable();
 
-    this.filter1
+    this.params
       .pipe(
         skip(1),
         tap(() => {
           // aquí colocas la función que deseas ejecutar
-          this.addStatus();
+          this.readExcel(this.test);
         }),
         takeUntil(this.$unSubscribe)
       )
       .subscribe(() => {
         // if (this.goods.length > 0) {
-        this.addStatus();
+        // this.readExcel(this.test);
         // }
       });
+
+    this.cargarDataStorage();
+  }
+  test: any;
+  async cargarDataStorage() {
+    const base64Data = localStorage.getItem('archivoBase64');
+    console.log('console.log(base64Data)', base64Data);
+    if (base64Data != null) {
+      // Decodifica el archivo Base64 a un array de bytes
+      const byteCharacters = atob(base64Data);
+
+      // Crea un array de bytes utilizando el tamaño del archivo decodificado
+      const byteNumbers = new Array(byteCharacters.length);
+      for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
+      }
+
+      // Crea un Uint8Array a partir del array de bytes
+      const byteArray = new Uint8Array(byteNumbers);
+
+      const blob = new Blob([byteArray], { type: 'text/csv' });
+      this.test = blob;
+      this.readExcel(blob);
+      this.removeItem('archivoBase64');
+    }
   }
 
   /**
@@ -192,36 +221,167 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
     });
   }
 
+  file: File | undefined;
+  fileUrl: any;
+  async getFile() {
+    const base64Data = localStorage.getItem('goodData');
+    const csvData = atob(base64Data);
+
+    return csvData ? csvData : null;
+    // Puedes utilizar el contenido del archivo CSV como desees
+    console.log(csvData);
+  }
+
+  // fileContent: string | undefined;
+  // converterBase64(event: any) {
+  //   const files = event;
+  //   const reader = new FileReader();
+  //   reader.readAsBinaryString(files);
+  //   reader.onloadend = () => {
+  //     // Convierte el contenido a Base64
+  //     const base64Data = btoa(reader.result as string);
+
+  //     // Guarda el archivo Base64 en el localStorage
+  //     this.cargarData(base64Data);
+  //     // localStorage.setItem('archivoCSV', base64Data);
+  //   };
+
+  //   // this.cargarData();
+  // }
+
   onFileChange(event: Event) {
     console.log('Entro');
     const files = (event.target as HTMLInputElement).files;
     if (files.length != 1) throw 'No files selected, or more than of allowed';
-    const fileReader = new FileReader();
-    fileReader.readAsBinaryString(files[0]);
-    fileReader.onload = () => this.readExcel(fileReader.result);
+    // this.converterBase64(files[0])
+    // const fileReader = new FileReader();
+    // fileReader.readAsBinaryString(files[0]);
+    // fileReader.onload = () => this.readExcel(fileReader.result);
+    this.readExcel(files[0]);
   }
-  readExcel(binaryExcel: string | ArrayBuffer) {
+
+  readExcel(binaryExcel: string | ArrayBuffer | any) {
     try {
+      this.loading = true;
+      this.idsNotExist = [];
+      this.showError = false;
+      this.showStatus = false;
+      this.data.load([]);
+      this.filter1.getValue().removeAllFilters();
+      this.massiveGoodService
+        .getFProRecPag2CSV(this.filter1.getValue().getParams(), binaryExcel)
+        .subscribe({
+          next: (response: any) => {
+            console.log('SI11', response);
+            let data: any = response.paginated;
+
+            let count = 0;
+            let arr: any = [];
+            let result = data.map(async (good: any) => {
+              count = count + 1;
+              console.log('SI11', good);
+              if (good.status == 'PRP' || good.status == 'ADM') {
+                console.log('SI', good);
+                if (this.goodClassNumber.includes(`${good.goodclassnumber}`)) {
+                  // console.log(response);
+                  arr.push(good);
+                  this.obtenerDocument(good);
+                  this.disabledImport = false;
+                  this.form
+                    .get('justification')
+                    .setValue(good.causenumberchange);
+                } else {
+                  this.idsNotExist.push({
+                    id: good.id,
+                    reason: `no cuenta con un número de clasificador válido`,
+                  });
+                }
+              } else {
+                console.log('good.status');
+                if (good.status) {
+                  this.idsNotExist.push({
+                    id: good.id,
+                    reason: `no cuenta con estatus válido, debe ser PRP o ADM`,
+                  });
+                } else {
+                  this.idsNotExist.push({
+                    id: good.id,
+                    reason: `no existe en la BD`,
+                  });
+                }
+              }
+            });
+
+            Promise.all(result).then((resp: any) => {
+              this.goods = arr;
+              this.addStatus();
+
+              this.test = binaryExcel;
+              console.log('this.test', this.test);
+              if (count === data.length) {
+                this.loading = false;
+                this.showError = true;
+              }
+              let file = response.file.base64File;
+              this.cargarData(file);
+
+              this.totalItems = response.countA;
+
+              this.form.enable();
+
+              console.log('BINARY EXCEL', response);
+              this.alert('success', 'Archivo subido exitosamente', '');
+
+              this.loading = false;
+            });
+          },
+          error: err => {
+            this.data.load([]);
+            this.loading = false;
+            this.alert('error', 'No hay datos disponibles', '');
+          },
+        });
+
+      return;
       this.ids = this.excelService.getData(binaryExcel);
       console.log('this.ids', this.ids);
-      if (this.ids[0].goodNumber === undefined) {
-        this.onLoadToast(
-          'error',
-          'Ocurrió un error al leer el archivo',
-          'El archivo no cuenta con la estructura requerida'
-        );
-        return;
-      }
+      // if (this.ids[0].goodNumber === undefined) {
+      //   this.onLoadToast(
+      //     'error',
+      //     'Ocurrió un error al leer el archivo',
+      //     'El archivo no cuenta con la estructura requerida'
+      //   );
+      //   return;
+      // }
       this.data.load([]);
       this.goods = [];
       this.idsNotExist = [];
       this.showError = false;
       this.showStatus = false;
       this.loadGood(this.ids);
-      this.onLoadToast('success', 'Archivo subido con Éxito', 'Exitoso');
+      // this.form.get('justification').setValue('HOLAAAA')
+      this.cargarData(this.ids);
+
+      this.alert('success', 'Archivo subido exitosamente', '');
     } catch (error) {
-      this.onLoadToast('error', 'Ocurrio un error al leer el archivo', 'Error');
+      this.data.load([]);
+      this.alert('error', 'Ocurrio un error al leer el archivo', '');
     }
+  }
+
+  getGoodsWithExcel() {
+    this.goods.forEach(async good => {
+      // good.status = good.status === 'PRP' ? 'ADM' : 'PRP';
+      // this.goodServices.update(this.ids).subscribe({
+      //   next: response => {
+      //     console.log(response);
+      //   },
+      //   error: err => {
+      //     this.loading = false;
+      //     this.idsNotExist.push({ id: good.id, reason: err.error.message });
+      //   },
+      // });
+    });
   }
 
   changeStatusGood() {
@@ -232,13 +392,14 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
     this.validStatusXScreen(this.good);
   }
 
-  change() {
-    this.goods.forEach(good => {
-      good.status = good.status === 'PRP' ? 'ADM' : 'PRP';
-      let obj = {
+  async change() {
+    this.goods.forEach(async good => {
+      // good.status = good.status === 'PRP' ? 'ADM' : 'PRP';
+      let obj: any = {
         id: good.id,
-        goodId: good.goodId,
+        goodId: good.id,
         status: good.status,
+        causeNumberChange: this.form.value.justification,
       };
       this.goodServices.update(obj).subscribe({
         next: response => {
@@ -258,6 +419,35 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
     this.addStatus();
     this.showStatus = true;
   }
+
+  async change2() {
+    this.goods.forEach(async good => {
+      // good.status = good.status === 'PRP' ? 'ADM' : 'PRP';
+      let obj: any = {
+        id: good.id,
+        goodId: good.id,
+        status: good.status,
+        causeNumberChange: this.form.value.justification,
+      };
+      this.goodServices.update(obj).subscribe({
+        next: response => {
+          console.log(response);
+        },
+        error: err => {
+          this.loading = false;
+          this.idsNotExist.push({ id: good.id, reason: err.error.message });
+        },
+      });
+    });
+    this.onLoadToast(
+      'success',
+      'Se ha actualizado el motivo de cambio de los bienes seleccionados',
+      ''
+    );
+    this.addStatus();
+    this.showStatus = true;
+  }
+
   addStatus() {
     this.data.load(this.goods);
     this.data.refresh();
@@ -336,7 +526,12 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
     this.cambiarValor();
   }
 
+  // CAMBIAR STATUS DEL BIEN Y ELIMINAR FOLIO DE ESCANEO //
   validStatusXScreen(good: IGood) {
+    if (this.form.value.justification == null) {
+      this.alert('info', 'El motivo de cambio se encuentra vacío', '');
+      return;
+    }
     this.screenStatusService
       .getStatusXScreen({
         screen: 'FPROCRECPAG',
@@ -365,9 +560,9 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
 
   question() {
     this.alertQuestion(
-      'info',
-      'Confirmación',
-      'No realizó la actualización de estatus, el folio de escaneo generado se eliminara ¿Deseas seguir?'
+      'question',
+      '¿Quiere continuar con el proceso?',
+      'No realizó la actualización de estatus, el folio de escaneo generado se eliminará'
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
@@ -376,21 +571,38 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
     });
   }
 
-  deleteFoli() {
+  // SE ELIMINA ESCANEO DE FOLIO UNIVERSAL TANTO EL SOLICITADO COMO EL ESCANEADO //
+  async deleteFoli() {
     console.log(this.document.id);
+    const folioUniversalesReplicados: any = await this.returnFoliosReplicados(
+      this.document.id
+    );
+
+    if (folioUniversalesReplicados != null) {
+      for (let i = 0; i < folioUniversalesReplicados.length; i++) {
+        this.documnetServices
+          .delete(folioUniversalesReplicados[i].id)
+          .subscribe({
+            next: response => {},
+            error: err => {
+              console.log(err);
+            },
+          });
+      }
+    }
+
     this.documnetServices.delete(this.document.id).subscribe({
       next: response => {
+        this.change2();
         this.cambiarValor();
-        this.document = undefined;
-        this.alert(
-          'success',
-          'Elimiado',
-          'Se ha eliminado correctamente el Folio'
-        );
+        this.document = null;
+        this.alert('success', 'Se ha eliminado correctamente el folio', '');
       },
       error: err => {
         if (err.error.message == 'Este registro no existe!') {
+          this.change2();
           this.cambiarValor();
+          this.document = null;
           this.alert(
             'error',
             'Elimiado',
@@ -407,16 +619,46 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
       },
     });
   }
+
+  async returnFoliosReplicados(id: any) {
+    const params = new ListParams();
+    params['filter.associateUniversalFolio'] = `$eq:${id}`;
+
+    return new Promise((resolve, reject) => {
+      this.documnetServices.getAll(params).subscribe({
+        next: response => {
+          resolve(response.data);
+        },
+        error: err => {
+          resolve(null);
+          console.log(err);
+        },
+      });
+    });
+  }
+  // LIMPIAMOS VALOR DEL FOLIO UNIVERSAL A PARTIR DEL COMPONENTE HIJO //
   cambiarValor() {
     this.hijoRef.actualizarVariable(true, '');
   }
 
   obtenerDocument(good: any) {
-    console.log('this.document', this.document);
     if (this.valDocument == true) {
       return;
     } else {
+      console.log('this.document', this.document);
       this.hijoRef.getDocument(good);
     }
+  }
+
+  // CARGAR DATA EN EL STORAGE PARA REGRESAR A LA PANTALLA CON DATOS CARGADOS //
+  cargarData(binaryExcel: any) {
+    this.hijoRef.cargarData(binaryExcel);
+  }
+  async removeItem(key: string) {
+    localStorage.removeItem(key);
+  }
+  async getItem(key: string) {
+    const value = localStorage.getItem(key);
+    return value ? JSON.parse(value) : null;
   }
 }

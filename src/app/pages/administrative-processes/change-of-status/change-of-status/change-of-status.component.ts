@@ -179,10 +179,10 @@ export class ChangeOfStatusComponent extends BasePage implements OnInit {
 
     this.alertQuestion(
       'question',
-      `¿Desea actualizar el estatus ${
+      `¿Desea actualizar?`,
+      `Se va a actualizar el estatus ${
         this.extDomProcess.value != null ? 'y proceso' : ''
-      } ?`,
-      ''
+      }`
     ).then(q => {
       if (q.isConfirmed) {
         const putGood: IGood = {
