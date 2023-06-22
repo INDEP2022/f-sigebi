@@ -489,7 +489,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
   }
 
   aprobateProgramming() {
-    if (!this.programming.contentId) {
+    if (this.programming.contentId) {
       this.alertQuestion(
         'question',
         'Aprobar Programación',

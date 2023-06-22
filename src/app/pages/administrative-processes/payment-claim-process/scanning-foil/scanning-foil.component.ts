@@ -217,7 +217,7 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
   }
 
   goNextForm() {
-    localStorage.setItem('goodData', JSON.stringify(this.idsGoods));
+    localStorage.setItem('archivoBase64', this.goodData);
     this.router.navigate([`/pages/general-processes/scan-documents`], {
       queryParams: { origin: 'FPROCRECPAG', folio: this.folioEscaneoNg },
     });
@@ -293,9 +293,9 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
         },
       });
   }
-  idsGoods: any = null;
+  goodData: any = null;
   cargarData(binaryExcel: any) {
-    this.idsGoods = binaryExcel;
-    console.log('this.idsGoods', this.idsGoods);
+    this.goodData = binaryExcel;
+    console.log('this.goodData', this.goodData);
   }
 }
