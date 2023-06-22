@@ -10,16 +10,17 @@
         <button
           (click)="signOffice()"
           class="btn btn-info btn-sm active"
-          *ngIf="programming?.concurrentMsg == null">
+          *ngIf="programming?.contentId == null">
           Firmar oficio
         </button>
+
         <button
-          (click)="signOffice()"
+          (click)="viewOffice()"
           class="btn btn-info btn-sm active"
-          *ngIf="programming?.concurrentMsg">
-          Firmar oficio
+          *ngIf="programming?.contentId">
+          Ver oficio
         </button>
-        <!--disabled-->
+
         <button
           (click)="aprobateProgramming()"
           class="btn btn-primary btn-sm active"
@@ -32,20 +33,18 @@
           *ngIf="programming?.concurrentMsg">
           Aprobar
         </button>
-        <!--disabled-->
         <button
           (click)="rejectProgramming()"
           class="btn btn-danger btn-sm active"
-          *ngIf="programming?.concurrentMsg == null">
+          *ngIf="programming?.contentId == null">
           Rechazar
         </button>
         <button
           (click)="rejectProgramming()"
-          class="btn btn-danger btn-sm active"
-          *ngIf="programming?.concurrentMsg">
+          class="btn btn-danger disabled btn-sm active"
+          *ngIf="programming?.contentId">
           Rechazar
         </button>
-        <!--disabled-->
       </div>
     </div>
   </div>
@@ -172,12 +171,14 @@
                     settingsTransportableGoods
                   "></app-columns-select>
               </div>
-              <ng2-smart-table
-                [attr.class]="'table-bordered'"
-                [settings]="settingsTransportableGoods"
-                [source]="goodsTranportables"
-                (edit)="showGood($event.data)">
-              </ng2-smart-table>
+              <div class="table-responsive">
+                <ng2-smart-table
+                  [attr.class]="'table-bordered'"
+                  [settings]="settingsTransportableGoods"
+                  [source]="goodsTranportables"
+                  (edit)="showGood($event.data)">
+                </ng2-smart-table>
+              </div>
               <app-pagination
                 [params]="params"
                 [totalItems]="totalItemsTransportable"></app-pagination>
@@ -187,24 +188,28 @@
                 <app-columns-select
                   [(settings)]="settingGuardGoods"></app-columns-select>
               </div>
-              <ng2-smart-table
-                [attr.class]="'table-bordered'"
-                [settings]="settingGuardGoods"
-                [source]="goodsGuards"
-                (edit)="showGood($event.data)">
-              </ng2-smart-table>
+              <div class="table-responsive">
+                <ng2-smart-table
+                  [attr.class]="'table-bordered'"
+                  [settings]="settingGuardGoods"
+                  [source]="goodsGuards"
+                  (edit)="showGood($event.data)">
+                </ng2-smart-table>
+              </div>
             </tab>
             <tab [heading]="headingWarehouse">
               <div class="d-flex justify-content-end">
                 <app-columns-select
                   [(settings)]="settingWarehouseGoods"></app-columns-select>
               </div>
-              <ng2-smart-table
-                [attr.class]="'table-bordered'"
-                [settings]="settingWarehouseGoods"
-                [source]="goodsWarehouse"
-                (edit)="showGood($event.data)">
-              </ng2-smart-table>
+              <div class="table-responsive">
+                <ng2-smart-table
+                  [attr.class]="'table-bordered'"
+                  [settings]="settingWarehouseGoods"
+                  [source]="goodsWarehouse"
+                  (edit)="showGood($event.data)">
+                </ng2-smart-table>
+              </div>
               <app-pagination
                 [params]="params"
                 [totalItems]="totalItemsWarehouse"></app-pagination>

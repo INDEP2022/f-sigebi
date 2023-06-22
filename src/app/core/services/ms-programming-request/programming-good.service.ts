@@ -26,7 +26,7 @@ export class ProgrammingGoodService implements ICrudMethods<IGoodProgramming> {
 
   getAll(params?: ListParams): Observable<IListResponse<IGoodProgramming>> {
     return this.httpClient.get<IListResponse<IGoodProgramming>>(
-      `${environment.API_URL}${this.route}/api/v1/programmingGoods`
+      `${environment.API_URL}${this.route}/programming-goods`
     );
   }
 
