@@ -185,7 +185,7 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
   async cargarDataStorage() {
     const getItem = await this.getItem('goodData');
     if (getItem != null) {
-      this.readExcel(getItem);
+      this.onFileChange(getItem);
       this.removeItem('goodData');
     }
   }
@@ -206,6 +206,7 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
   }
 
   onFileChange(event: Event) {
+    this.cargarData(event);
     console.log('Entro');
     const files = (event.target as HTMLInputElement).files;
     if (files.length != 1) throw 'No files selected, or more than of allowed';
@@ -282,7 +283,7 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
           this.alert('error', 'No hay datos disponibles', '');
         },
       });
-      this.cargarData(binaryExcel);
+      // this.cargarData(binaryExcel);
 
       return;
       this.ids = this.excelService.getData(binaryExcel);

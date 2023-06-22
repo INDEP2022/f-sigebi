@@ -217,7 +217,7 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
   }
 
   goNextForm() {
-    localStorage.setItem('goodData', JSON.stringify(this.idsGoods));
+    // localStorage.setItem('goodData', JSON.stringify(this.idsGoods));
     this.router.navigate([`/pages/general-processes/scan-documents`], {
       queryParams: { origin: 'FPROCRECPAG', folio: this.folioEscaneoNg },
     });
