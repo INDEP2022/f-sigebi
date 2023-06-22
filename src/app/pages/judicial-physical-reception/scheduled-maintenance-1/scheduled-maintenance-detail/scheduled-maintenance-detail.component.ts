@@ -4,7 +4,6 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import {
   BehaviorSubject,
-  catchError,
   filter,
   first,
   forkJoin,
@@ -307,18 +306,18 @@ export class ScheduledMaintenanceDetailComponent
 
   private getActa() {
     const actaId = localStorage.getItem('detailActa');
-    const params = new FilterParams();
-    params.addFilter('id', actaId);
-    return this.proceedingService.getAll(params.getParams()).pipe(
-      takeUntil(this.$unSubscribe),
-      catchError(x => of({ data: [] })),
-      map(x => {
-        return x.data ? (x.data.length > 0 ? x.data[0] : null) : null;
-      })
-    );
-    // return this.proceedingService
-    //   .getById(actaId)
-    //   .pipe(takeUntil(this.$unSubscribe));
+    // const params = new FilterParams();
+    // params.addFilter('id', actaId);
+    // return this.proceedingService.getAll(params.getParams()).pipe(
+    //   takeUntil(this.$unSubscribe),
+    //   catchError(x => of({ data: [] })),
+    //   map(x => {
+    //     return x.data ? (x.data.length > 0 ? x.data[0] : null) : null;
+    //   })
+    // );
+    return this.proceedingService
+      .getById(actaId)
+      .pipe(takeUntil(this.$unSubscribe));
   }
 
   get numFile() {

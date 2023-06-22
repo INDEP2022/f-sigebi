@@ -225,8 +225,8 @@ export class KeyProceedingsFormComponent
     //   this.form.get('keysProceedings').setValue(this.claveActa);
     // }
     console.log(this.claveActa);
-    await this.transferInit();
     this.updateTableKeysProceedings(this.claveActa);
+    await this.transferClick();
   }
 
   get claveActa() {
@@ -340,6 +340,7 @@ export class KeyProceedingsFormComponent
   }
 
   private async transferInit() {
+    // debugger;
     const expedientnumber = this.numFile;
     const { transference, type } = this.registerControls;
     if (!expedientnumber) {
@@ -365,8 +366,10 @@ export class KeyProceedingsFormComponent
     ]);
     if (['PGR', 'PJF'].includes(transference.value)) {
       type.setValue('A');
+      this.typeOtions = new DefaultSelect([{ value: 'A', label: 'A' }]);
     } else {
       type.setValue('RT');
+      this.typeOtions = new DefaultSelect([{ value: 'RT', label: 'RT' }]);
     }
   }
 
@@ -397,6 +400,13 @@ export class KeyProceedingsFormComponent
     const _year = splitedArea ? splitedArea[6] : null;
     if (existingTrans) {
       if (['PGR', 'PJF'].includes(existingTrans)) {
+        // if (type.value !== 'A') {
+        //   this.alert(
+        //     'error',
+        //     'Tipo',
+        //     'No permitido para transferente PGR y PJF'
+        //   );
+        // }
         type.setValue('A');
       } else {
         type.setValue('RT');
@@ -405,9 +415,11 @@ export class KeyProceedingsFormComponent
     this.setProg();
     const currentDate = new Date();
     const currentMonth = `${currentDate.getMonth() + 1}`.padStart(2, '0');
-    year.setValue(_year ?? currentDate.getFullYear().toString().slice(2, 4));
-    month.setValue(_month ?? currentMonth);
-    user.setValue(_user ?? this.authUser);
+    if (!year.value) {
+      year.setValue(_year ?? currentDate.getFullYear().toString().slice(2, 4));
+    }
+    if (!month.value) month.setValue(_month ?? currentMonth);
+    if (!user.value) user.setValue(_user ?? this.authUser);
     this.users = new DefaultSelect([
       {
         value: _user ?? this.authUser,
@@ -457,70 +469,6 @@ export class KeyProceedingsFormComponent
       ]);
     }
     keysProceedings.setValue(cve);
-    // let newData = { ...data };
-    // debugger;
-    // let { newData, confirm } = data;
-    // if (newData[0]) {
-    //   if (this.typeEvent === 'RF') {
-    //     newData[1] = 'R';
-    //   } else {
-    //     newData[1] = 'E';
-    //   }
-    // }
-
-    // const currentDate = new Date();
-    // const currentMonth = `${currentDate.getMonth() + 1}`.padStart(2, '0');
-
-    // if (!newData[4]) {
-    //   newData[4] =
-    //     this.authUser.length > 22
-    //       ? this.authUser.substring(0, 22)
-    //       : this.authUser;
-    // }
-    // if (!newData[6]) {
-    //   newData[6] = currentDate.getFullYear();
-    // }
-    // if (!newData[7]) {
-    //   newData[7] = currentMonth;
-    // }
-    // const existingTrans = this.rowOldValue[2];
-    // const oldType = newData[0];
-    // if (existingTrans == 'PGR' || existingTrans == 'PJF') {
-    //   newData[0] = 'A';
-    // } else {
-    //   newData[0] = 'RT';
-    // }
-    // if (oldType !== newData[0]) {
-    //   if (newData[0] === 'A') {
-    //     this.alert('info', 'Cambio de Tipo');
-    //   }
-    // }
-    // this.validateTransfer(newData[0] ?? 'RT', newData[2]);
-
-    // if (!newData[3]) {
-    //   if (!this.rowOldValue[3]) {
-    //     newData[5] = null;
-    //     newData[3] = null;
-    //   } else {
-    //     newData[5] = this.rowOldValue[5];
-    //     newData[3] = this.rowOldValue[3];
-    //   }
-    // } else {
-    //   if (!newData[5]) {
-    //     const indicator = await this.getProceedingType();
-    //     const _folio = await this.getFolio(indicator.certificateType);
-    //     if (!_folio) {
-    //       this.revert();
-    //       return;
-    //     }
-    //     newData[5] = `${_folio}`.padStart(5, '0');
-    //   }
-    // }
-    // if (!newData[0]) {
-    //   newData[0] = 'RT';
-    // }
-    // confirm.resolve(newData);
-    // this.fillActKey(newData);
   }
 
   invalidTransfer() {
@@ -587,124 +535,8 @@ export class KeyProceedingsFormComponent
         this.tempTrans = transfer;
         this.tempType = _type;
       }
-      // }
     }
   }
-
-  // private validateTransfer2(_type: string, transfer: string) {
-  //   // this.global.tran = transfer;
-  //   // const { keysProceedings } = this.registerControls;
-  //   // const splitedArea = keysProceedings?.value?.split('/');
-  //   const cveType = this.rowOldValue ? this.rowOldValue[0] : null;
-  //   const tran = this.rowOldValue ? this.rowOldValue[2] : null;
-  //   const area = this.rowOldValue ? this.rowOldValue[3] : null;
-  //   if (!transfer) {
-  //     if (!cveType) {
-  //       this.row[0] = _type;
-  //     } else {
-  //       this.row[0] = cveType == _type ? cveType : _type;
-  //     }
-
-  //     if (!tran) {
-  //       this.row[2] = null;
-  //     } else {
-  //       if (
-  //         (tran == 'PGR' || tran == 'PJF') &&
-  //         (_type == 'D' || _type == 'A')
-  //       ) {
-  //         this.row[2] = tran;
-  //         this.row[0] = _type;
-  //       } else if (
-  //         tran != 'PGR' &&
-  //         tran != 'PJF' &&
-  //         (_type == 'D' || _type == 'A')
-  //       ) {
-  //         console.log('1');
-  //         this.invalidTransfer();
-  //       } else if ((tran == 'PGR' || tran == 'PJF') && _type == 'RT') {
-  //         console.log('2');
-  //         this.invalidTransfer();
-  //       } else if (tran != 'PGR' && tran != 'PJF' && _type == 'RT') {
-  //         this.row[2] = tran;
-  //         this.row[0] = _type;
-  //       }
-  //     }
-  //   } else {
-  //     if (
-  //       (transfer == 'PGR' || transfer == 'PJF') &&
-  //       (_type == 'D' || _type == 'A')
-  //     ) {
-  //       this.row[2] = transfer;
-  //       this.row[0] = _type;
-  //     } else if (
-  //       transfer != 'PGR' &&
-  //       transfer != 'PJF' &&
-  //       (_type == 'D' || _type == 'A')
-  //     ) {
-  //       console.log('3');
-  //       this.invalidTransfer();
-  //     } else if ((transfer == 'PGR' || transfer == 'PJF') && _type == 'RT') {
-  //       console.log('4');
-  //       this.invalidTransfer();
-  //     } else if (transfer != 'PGR' && transfer != 'PJF' && _type == 'Rt') {
-  //       this.row[2] = transfer;
-  //       this.row[0] = _type;
-  //     }
-  //     // }
-  //   }
-  // }
-
-  // updateKeysProcedding(event: any) {
-  //   console.log(event);
-  //   let { newData, confirm } = event;
-  //   confirm.resolve(newData);
-  //   this.fillActKey(newData);
-  // }
-
-  private fillActKey(newData: any) {
-    this.form
-      .get(this.formField)
-      .setValue(
-        newData[0] +
-          '/' +
-          newData[1] +
-          '/' +
-          newData[2] +
-          '/' +
-          newData[3] +
-          '/' +
-          newData[4] +
-          '/' +
-          newData[5] +
-          '/' +
-          newData[6] +
-          '/' +
-          newData[7]
-      );
-  }
-
-  haveError(row: any) {
-    return this.haveErrorRequired(row) || this.haveNumericError(row);
-  }
-
-  haveErrorRequired(row: any) {
-    // console.log(row);
-    return !row || (row && (row + '').trim() == '');
-  }
-
-  haveNumericError(row: any) {
-    var RE = /^[0-9]+$/;
-    if (RE.test(row)) {
-      return false;
-    } else {
-      return true;
-    }
-  }
-
-  // revert() {
-  //   // console.log(this.row, this.rowOldValue);
-  //   this.row = { ...this.rowOldValue };
-  // }
 
   private updateTableKeysProceedings(keysProceedings: string) {
     if (!keysProceedings) return;
@@ -747,21 +579,5 @@ export class KeyProceedingsFormComponent
         this.registerControls.keysProceedings.setValue(keysProceedings);
       }
     });
-    // key = { ...key, editing: false };
-    // keys.push(key);
-    // this.row = { ...key };
-    // this.rowOldValue = { ...key };
-    // this.source = new LocalDataSource(keys);
-  }
-
-  private updateSettingsKeysProceedings(value: string) {
-    this.settingKeysProceedings = {
-      ...this.settingKeysProceedings,
-      actions: {
-        ...this.settingKeysProceedings.actions,
-        edit: value.toUpperCase().includes('ABIERT'),
-      },
-    };
-    // this.updateTableKeysProceedings(this.claveActa);
   }
 }
