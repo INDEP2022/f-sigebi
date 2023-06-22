@@ -27,7 +27,9 @@
           </ng2-smart-table>
         </div> -->
       </div>
-      <!-- <app-pagination [params]="params" [totalItems]="totalItems"></app-pagination> -->
+      <app-pagination
+        [params]="params"
+        [totalItems]="totalItems"></app-pagination>
     </div>
     <hr />
     <form [formGroup]="form" class="form-material">
@@ -118,9 +120,9 @@
         <div
           class="row pt-3 pb-3"
           style="border-top: 1px solid rgba(0, 0, 0, 0.1)">
-          <div class="col-md-full" *ngFor="let item of idsNotExist">
+          <div class="col-md-full" *ngFor="let item2 of idsNotExist">
             <span style="color: crimson">
-              El Bien No. <strong>{{ item.id }}</strong> {{ item.reason }}
+              El Bien No. <strong>{{ item2.id }}</strong> {{ item2.reason }}
             </span>
           </div>
         </div>

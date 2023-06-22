@@ -860,11 +860,11 @@ export interface IGoodSiab {
 }
 
 export interface IServiceGood {
-  goodNumber: string;
+  goodNumber: string | number;
   cveService: string;
   periodicity: string;
   dateCourt: string;
-  recordNumber: string;
-  good: IGood;
-  serviceCat: IServiceCat;
+  recordNumber?: string;
+  good?: IGood;
+  serviceCat?: IServiceCat;
 }

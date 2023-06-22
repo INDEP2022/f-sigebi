@@ -37,9 +37,8 @@ export class IncomePerAssetComponent
     private readonly conceptMovisBankService: ConceptMovisBankService
   ) {
     super();
-    this.settings.actions.delete = true;
-    this.settings.actions.add = false;
-    this.settings.hideSubHeader = false;
+    this.assetSettings.actions = false;
+    this.assetSettings.hideSubHeader = false;
     this.assetSettings.columns = {
       bank: {
         title: 'Banco',
@@ -88,6 +87,7 @@ export class IncomePerAssetComponent
       },
     };
     this.depositSettings.actions = false;
+    this.depositSettings.hideSubHeader = false;
     this.depositSettings.columns = {
       bank: {
         title: 'Banco',

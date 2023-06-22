@@ -75,7 +75,7 @@ export class ScanRequestComponent extends BasePage implements OnInit {
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(params => {
         this.origin = params['origin'] ?? null;
-        if ((this.origin = 'FACTJURREGDESTLEG')) {
+        if (this.origin == 'FACTJURREGDESTLEG') {
           this.paramsDepositaryAppointment.P_NB = params['P_NB'] ?? null;
           this.paramsDepositaryAppointment.P_FOLIO = params['P_FOLIO'] ?? null;
           this.paramsDepositaryAppointment.P_ND = params['P_ND'] ?? null;
@@ -118,7 +118,7 @@ export class ScanRequestComponent extends BasePage implements OnInit {
     }
   }
   back() {
-    if ((this.origin = 'FACTJURREGDESTLEG')) {
+    if (this.origin == 'FACTJURREGDESTLEG') {
       this.router.navigate([
         `/pages/juridical/depositary/depositary-record/` +
           this.paramsDepositaryAppointment.P_NB,

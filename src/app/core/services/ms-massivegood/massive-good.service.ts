@@ -113,4 +113,12 @@ export class MassiveGoodService extends HttpService {
     formData.append('file', file);
     return this.post<IListResponse<NumDetGood>>(this.route.FileCSV, formData);
   }
+  getFProRecPag2CSV(file: any) {
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.post<IListResponse<any>>(
+      this.route.GetFProRecPag2CSV,
+      formData
+    );
+  }
 }
