@@ -19,9 +19,11 @@ import { IGood } from 'src/app/core/models/ms-good/good';
 import { DocumentsService } from 'src/app/core/services/ms-documents-type/documents.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { HistoryGoodService } from 'src/app/core/services/ms-history-good/history-good.service';
+import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive-good.service';
 import { ScreenStatusService } from 'src/app/core/services/ms-screen-status/screen-status.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { AnalysisResultModule } from 'src/app/pages/request/economic-compensation/analysis-result/analysis-result.module';
 import { ScanningFoilComponent } from '../scanning-foil/scanning-foil.component';
 import { TABLE_SETTINGS2 } from './newSettings';
 interface IDs {
@@ -75,14 +77,14 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
   data: LocalDataSource = new LocalDataSource();
-  ids: IDs[];
-  goods: IGood[] = [];
+  ids: AnalysisResultModule[];
+  goods: any[] = [];
   idsNotExist: NotData[] = [];
   showError: boolean = false;
   showStatus: boolean = false;
   document: IDocuments;
   goodClassNumber: string[] = ['1424', '1426', '1427'];
-  good: IGood;
+  good: any;
   //Reactive Forms
   form: FormGroup;
   disabledImport: boolean = true;
@@ -106,7 +108,8 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
     private readonly goodServices: GoodService,
     private readonly historyGoodService: HistoryGoodService,
     private readonly screenStatusService: ScreenStatusService,
-    private readonly documnetServices: DocumentsService
+    private readonly documnetServices: DocumentsService,
+    private massiveGoodService: MassiveGoodService
   ) {
     super();
     this.settings = {
@@ -161,7 +164,7 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
     this.buildForm();
     this.form.disable();
 
-    this.filter1
+    this.params
       .pipe(
         skip(1),
         tap(() => {
@@ -182,7 +185,7 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
   async cargarDataStorage() {
     const getItem = await this.getItem('goodData');
     if (getItem != null) {
-      this.loadGood(getItem);
+      this.readExcel(getItem);
       this.removeItem('goodData');
     }
   }
@@ -206,23 +209,92 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
     console.log('Entro');
     const files = (event.target as HTMLInputElement).files;
     if (files.length != 1) throw 'No files selected, or more than of allowed';
-    const fileReader = new FileReader();
-    fileReader.readAsBinaryString(files[0]);
-    fileReader.onload = () => this.readExcel(fileReader.result);
+    // const fileReader = new FileReader();
+    // fileReader.readAsBinaryString(files[0]);
+    // fileReader.onload = () => this.readExcel(fileReader.result);
+    this.readExcel(files[0]);
   }
 
-  readExcel(binaryExcel: string | ArrayBuffer) {
+  readExcel(binaryExcel: string | ArrayBuffer | any) {
     try {
+      this.idsNotExist = [];
+      this.showError = false;
+      this.showStatus = false;
+      this.data.load([]);
+
+      this.massiveGoodService.getFProRecPag2CSV(binaryExcel).subscribe({
+        next: response => {
+          let data = response.data;
+          let arr: any = [];
+          let count = 0;
+          let result = data.map(async (good: any) => {
+            count = count + 1;
+            console.log('SI11', good);
+            if (good.status == 'PRP' || good.status == 'ADM') {
+              console.log('SI', good);
+              if (this.goodClassNumber.includes(`${good.goodclassnumber}`)) {
+                // console.log(response);
+                this.obtenerDocument(good);
+                this.goods.push(good);
+                this.disabledImport = false;
+                this.form.get('justification').setValue(good.causenumberchange);
+                this.addStatus();
+              } else {
+                this.idsNotExist.push({
+                  id: good.id,
+                  reason: `no cuenta con un número de clasificador válido`,
+                });
+              }
+            } else {
+              console.log('good.status');
+              if (good.status) {
+                this.idsNotExist.push({
+                  id: good.id,
+                  reason: `no cuenta con estatus válido, debe ser PRP o ADM`,
+                });
+              } else {
+                this.idsNotExist.push({
+                  id: good.id,
+                  reason: `no existe en la BD`,
+                });
+              }
+            }
+          });
+
+          Promise.all(result).then((resp: any) => {
+            if (count === data.length) {
+              this.loading = false;
+              this.showError = true;
+            }
+            this.totalItems = this.goods.length;
+
+            this.form.enable();
+
+            console.log('BINARY EXCEL', response);
+            this.alert('success', 'Archivo subido exitosamente', '');
+
+            this.loading = false;
+          });
+        },
+        error: err => {
+          this.data.load([]);
+          this.loading = false;
+          this.alert('error', 'No hay datos disponibles', '');
+        },
+      });
+      this.cargarData(binaryExcel);
+
+      return;
       this.ids = this.excelService.getData(binaryExcel);
       console.log('this.ids', this.ids);
-      if (this.ids[0].goodNumber === undefined) {
-        this.onLoadToast(
-          'error',
-          'Ocurrió un error al leer el archivo',
-          'El archivo no cuenta con la estructura requerida'
-        );
-        return;
-      }
+      // if (this.ids[0].goodNumber === undefined) {
+      //   this.onLoadToast(
+      //     'error',
+      //     'Ocurrió un error al leer el archivo',
+      //     'El archivo no cuenta con la estructura requerida'
+      //   );
+      //   return;
+      // }
       this.data.load([]);
       this.goods = [];
       this.idsNotExist = [];
@@ -234,8 +306,24 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
 
       this.alert('success', 'Archivo subido exitosamente', '');
     } catch (error) {
+      this.data.load([]);
       this.alert('error', 'Ocurrio un error al leer el archivo', '');
     }
+  }
+
+  getGoodsWithExcel() {
+    this.goods.forEach(async good => {
+      // good.status = good.status === 'PRP' ? 'ADM' : 'PRP';
+      // this.goodServices.update(this.ids).subscribe({
+      //   next: response => {
+      //     console.log(response);
+      //   },
+      //   error: err => {
+      //     this.loading = false;
+      //     this.idsNotExist.push({ id: good.id, reason: err.error.message });
+      //   },
+      // });
+    });
   }
 
   changeStatusGood() {
@@ -251,7 +339,7 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
       // good.status = good.status === 'PRP' ? 'ADM' : 'PRP';
       let obj: any = {
         id: good.id,
-        goodId: good.goodId,
+        goodId: good.id,
         status: good.status,
         causeNumberChange: this.form.value.justification,
       };
@@ -279,7 +367,7 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
       // good.status = good.status === 'PRP' ? 'ADM' : 'PRP';
       let obj: any = {
         id: good.id,
-        goodId: good.goodId,
+        goodId: good.id,
         status: good.status,
         causeNumberChange: this.form.value.justification,
       };
@@ -505,12 +593,14 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
   }
 
   // CARGAR DATA EN EL STORAGE PARA REGRESAR A LA PANTALLA CON DATOS CARGADOS //
-  cargarData(ids: any) {
-    this.hijoRef.cargarData(ids);
+  cargarData(binaryExcel: any) {
+    this.hijoRef.cargarData(binaryExcel);
   }
+
   async removeItem(key: string) {
     localStorage.removeItem(key);
   }
+
   async getItem(key: string) {
     const value = localStorage.getItem(key);
     return value ? JSON.parse(value) : null;
