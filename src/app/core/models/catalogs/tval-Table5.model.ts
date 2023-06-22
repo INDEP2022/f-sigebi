@@ -35,3 +35,9 @@ export interface ITvalTable5 {
   otValue25: string;
   numRegister: number;
 }
+
+export interface IMoneda {
+  nmtabla: number;
+  cve_moneda: string;
+  desc_moneda: string;
+}

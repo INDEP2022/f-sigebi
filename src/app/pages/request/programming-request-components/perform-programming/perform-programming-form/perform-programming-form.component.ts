@@ -1005,7 +1005,8 @@ export class PerformProgrammingFormComponent
     this.loadingGoods = true;
     const filterColumns: Object = {
       regionalDelegation: Number(this.regionalDelegationUser.id),
-      transferent: Number(this.transferentId),
+      //transferent: Number(this.transferentId),
+      transferent: Number(760),
       relevantType: Number(this.idTypeRelevant),
       statusGood: 'APROBADO',
     };
