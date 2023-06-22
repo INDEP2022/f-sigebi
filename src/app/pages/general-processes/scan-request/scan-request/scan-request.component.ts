@@ -51,6 +51,11 @@ export class ScanRequestComponent extends BasePage implements OnInit {
   today: Date = new Date();
   loadingDoc: boolean = false;
   isSearch: boolean = false;
+  paramsDepositaryAppointment: any = {
+    P_NB: null,
+    P_FOLIO: null,
+    P_ND: null,
+  };
 
   constructor(
     private fb: FormBuilder,
@@ -70,6 +75,11 @@ export class ScanRequestComponent extends BasePage implements OnInit {
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(params => {
         this.origin = params['origin'] ?? null;
+        if (this.origin == 'FACTJURREGDESTLEG') {
+          this.paramsDepositaryAppointment.P_NB = params['P_NB'] ?? null;
+          this.paramsDepositaryAppointment.P_FOLIO = params['P_FOLIO'] ?? null;
+          this.paramsDepositaryAppointment.P_ND = params['P_ND'] ?? null;
+        }
       });
     const params = new FilterParams();
     const token = this.authService.decodeToken();
@@ -108,11 +118,18 @@ export class ScanRequestComponent extends BasePage implements OnInit {
     }
   }
   back() {
-    const location: any = {
-      FGESTBUZONTRAMITE: () =>
-        this.router.navigate(['/pages/general-processes/work-mailbox']),
-    };
-    location[this.origin]();
+    if (this.origin == 'FACTJURREGDESTLEG') {
+      this.router.navigate([
+        `/pages/juridical/depositary/depositary-record/` +
+          this.paramsDepositaryAppointment.P_NB,
+      ]);
+    } else {
+      const location: any = {
+        FGESTBUZONTRAMITE: () =>
+          this.router.navigate(['/pages/general-processes/work-mailbox']),
+      };
+      location[this.origin]();
+    }
   }
 
   createFilter() {
@@ -328,6 +345,9 @@ export class ScanRequestComponent extends BasePage implements OnInit {
           this.form.get('id').disable();
           const time = setTimeout(() => {
             this.proccesReport();
+            if (this.origin == 'FACTJURREGDESTLEG') {
+              // Guardar nuevo folio universal en nombramientos depositarias
+            }
             clearTimeout(time);
           }, 1000);
         },

@@ -22,6 +22,7 @@ import { IServiceCat } from 'src/app/core/models/catalogs/service-cat.model';
 export class ServicesSharedComponent extends BasePage implements OnInit {
   @Input() form: FormGroup;
   @Input() serviceField: string = 'service';
+  @Input() label: string = 'Servicios';
 
   @Input() showServices: boolean = true;
 

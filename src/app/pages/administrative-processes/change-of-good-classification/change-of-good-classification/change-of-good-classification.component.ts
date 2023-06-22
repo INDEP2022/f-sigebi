@@ -212,11 +212,9 @@ export class ChangeOfGoodClassificationComponent
     this.classificationOfGoods.valueChanges.subscribe({
       next: response => {
         console.log(response);
-        if (response) {
-          setTimeout(() => {
-            this.goodChange2++;
-          }, 100);
-        }
+        setTimeout(() => {
+          this.goodChange2++;
+        }, 100);
       },
     });
     this.form.disable();
@@ -465,6 +463,31 @@ export class ChangeOfGoodClassificationComponent
     });
   }
 
+  private updateFirsTable() {
+    debugger;
+    const newLis: any = [...this.listAtributNew];
+    // this.listAtributNew = [];
+    this.currentClasification.setValue(this.classificationOfGoods.value);
+    this.descriptionClasification.setValue(this.newDescription);
+    newLis.forEach((atrib: any) => {
+      if (atrib.newVal !== undefined) {
+        this.good[`val${atrib.columnNumber}`] = atrib.newVal;
+      }
+    });
+    this.good = { ...this.good };
+    setTimeout(() => {
+      this.goodChange++;
+    }, 100);
+  }
+
+  updateSecondTable() {
+    this.formNew.reset();
+    this.fileNumberNew.setValue(this.numberFile.value);
+    setTimeout(() => {
+      this.goodChange2++;
+    }, 100);
+  }
+
   addAtribut() {
     const newLis: any = this.listAtributNew;
     const good: any = this.good;
@@ -512,20 +535,11 @@ export class ChangeOfGoodClassificationComponent
             'ÉXITO',
             `Se ha actualizado la clasificacion del bien ${this.good.id}`
           );
-          this.listAtributNew = [];
-          this.currentClasification.setValue(this.classificationOfGoods.value);
-          this.descriptionClasification.setValue(this.newDescription);
-          setTimeout(() => {
-            this.goodChange++;
-          }, 100);
-
+          this.updateFirsTable();
           // this.dataAct.load([]);
           // this.dataAct.refresh();
           // this.form.reset();
-          this.formNew.reset();
-          setTimeout(() => {
-            this.goodChange2++;
-          }, 100);
+          this.updateSecondTable();
         },
         error: err => {
           this.alert(

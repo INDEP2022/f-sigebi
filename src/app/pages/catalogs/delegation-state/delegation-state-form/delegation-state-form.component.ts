@@ -4,6 +4,7 @@ import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IDelegationState } from 'src/app/core/models/catalogs/delegation-state.model';
+import { IRegionalDelegation } from 'src/app/core/models/catalogs/regional-delegation.model';
 import { IStateOfRepublic } from 'src/app/core/models/catalogs/state-of-republic.model';
 import { DelegationStateService } from 'src/app/core/services/catalogs/delegation-state.service';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
@@ -23,7 +24,7 @@ export class DelegationStateFormComponent extends BasePage implements OnInit {
   edit: boolean = false;
   delegationSate: any;
   states = new DefaultSelect<IStateOfRepublic>();
-  regionalDelegation = new DefaultSelect<IStateOfRepublic>();
+  regionalDelegation = new DefaultSelect<IRegionalDelegation>();
   idState: any;
   idRegional: any;
 
@@ -64,31 +65,25 @@ export class DelegationStateFormComponent extends BasePage implements OnInit {
     if (this.delegationSate) {
       this.edit = true;
       console.log(this.delegationSate);
+
+      let statess: IStateOfRepublic = this.delegationSate.stateCodeDetail
+        .id as IStateOfRepublic;
+      let regional: IRegionalDelegation = this.delegationSate
+        .regionalDelegationDetails.id as IRegionalDelegation;
+
+      this.states = new DefaultSelect([statess], 1);
+      this.regionalDelegation = new DefaultSelect([regional], 1);
+
       this.delegationStateForm.patchValue(this.delegationSate);
-      this.delegationStateForm.controls['regionalDelegation'].setValue(
-        this.delegationSate.regionalDelegation.id
-      );
-      this.delegationStateForm.controls['stateCode'].setValue(
-        this.delegationSate.stateCode.codeCondition
-      );
 
       this.delegationStateForm.controls['regionalDelegation'].disable();
       this.delegationStateForm.controls['stateCode'].disable();
-
-      this.getStates(
-        new ListParams(),
-        this.delegationStateForm.controls['keyState'].value
-      );
-      this.getRegionalDelegation(
-        new ListParams(),
-        this.delegationStateForm.controls['regionalDelegation'].value
-      );
     }
 
     //this.getStates(new ListParams());
     setTimeout(() => {
       this.getRegionalDelegation(new ListParams());
-      this.getStates(new ListParams());
+      this.getStatesAll(new ListParams());
     }, 1000);
   }
 
@@ -103,7 +98,7 @@ export class DelegationStateFormComponent extends BasePage implements OnInit {
     });
   }
 
-  getStates(params: ListParams, id?: string) {
+  /*getStates(params: ListParams, id?: string) {
     if (id) {
       params['filter.id'] = id;
     }
@@ -115,11 +110,9 @@ export class DelegationStateFormComponent extends BasePage implements OnInit {
         this.states = new DefaultSelect();
       },
     });
-  }
-  getRegionalDelegation(params: ListParams, id?: string) {
-    if (id) {
-      params['filter.id'] = id;
-    }
+  }*/
+
+  getRegionalDelegation(params: ListParams) {
     this.regionalDelegationService.getAll(params).subscribe({
       next: data => {
         console.log(data);
@@ -154,7 +147,16 @@ export class DelegationStateFormComponent extends BasePage implements OnInit {
       .create(this.delegationStateForm.getRawValue())
       .subscribe({
         next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
+        error: error => {
+          this.loading = false;
+          this.onLoadToast(
+            'error',
+            'Ya existe un registro con los mismos identificadores!',
+            ``
+          );
+          this.modalRef.content.callback(true);
+          this.modalRef.hide();
+        },
       });
   }
 
@@ -169,10 +171,7 @@ export class DelegationStateFormComponent extends BasePage implements OnInit {
     this.delegationStateForm.controls['version'].setValue(parseInt(version));
     this.delegationStateForm.controls['keyState'].setValue(parseInt(keyState));
     this.delegationStateService
-      .newUpdate(
-        // this.delegationSate.regionalDelegation,
-        this.delegationStateForm.getRawValue()
-      )
+      .newUpdate(this.delegationStateForm.getRawValue())
       .subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),
