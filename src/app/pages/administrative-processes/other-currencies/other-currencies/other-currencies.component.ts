@@ -76,7 +76,7 @@ export class OtherCurrenciesComponent implements OnInit {
     };
 
     this.siabService
-      .fetchReport('RGERADBNUMVALORES', params)
+      .fetchReport('RGERADBNUMEOTRMON', params)
       // .fetchReportBlank('blank')
       .subscribe(response => {
         if (response !== null) {
