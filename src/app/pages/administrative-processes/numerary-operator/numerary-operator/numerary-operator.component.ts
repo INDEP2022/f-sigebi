@@ -70,7 +70,7 @@ export class NumeraryOperatorComponent implements OnInit {
     };
 
     this.siabService
-      .fetchReport('RGENADBNUMEFISICO', params)
+      .fetchReport('FGENADBNUMERARIOP', params)
       // .fetchReportBlank('blank')
       .subscribe(response => {
         if (response !== null) {
