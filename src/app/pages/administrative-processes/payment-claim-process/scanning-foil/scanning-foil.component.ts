@@ -275,9 +275,7 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
     console.log('good', good);
     this.filter1.getValue().removeAllFilters();
     this.filter1.getValue().addFilter('goodNumber', good.id, SearchFilter.EQ);
-    this.filter1
-      .getValue()
-      .addFilter('scanStatus', 'ESCANEADO', SearchFilter.EQ);
+    // this.filter1.getValue().addFilter('scanStatus', 'ESCANEADO', SearchFilter.EQ);
     this.documnetServices
       .getAllFilter(this.filter1.getValue().getParams())
       .subscribe({
@@ -291,7 +289,7 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
         },
         error: err => {
           console.log(err);
-          this.folioEscaneoNg = '';
+          // this.folioEscaneoNg = '';
         },
       });
   }
