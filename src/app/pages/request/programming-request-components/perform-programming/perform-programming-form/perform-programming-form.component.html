@@ -189,9 +189,8 @@
                 (ngModelChange)="checkInfoDate($event)"
                 [daysDisabled]="[6, 0]"
                 [bsConfig]="{
-                  withTimepicker: true,
-                  rangeInputFormat: 'DD/MMMM/YYYY, h:mm:ss a',
-                  dateInputFormat: 'DD/MMMM/YYYY, h:mm:ss a'
+                  rangeInputFormat: 'DD/MMMM/YYYY',
+                  dateInputFormat: 'DD/MMMM/YYYY'
                 }"
                 bsDatepicker />
             </form-field>
@@ -207,7 +206,6 @@
                 formControlName="endDate"
                 [daysDisabled]="[6, 0]"
                 [bsConfig]="{
-                  withTimepicker: true,
                   rangeInputFormat: 'DD/MMMM/YYYY, h:mm:ss a',
                   dateInputFormat: 'DD/MMMM/YYYY, h:mm:ss a'
                 }"
