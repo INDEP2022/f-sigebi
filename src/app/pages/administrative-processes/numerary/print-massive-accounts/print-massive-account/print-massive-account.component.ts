@@ -34,7 +34,7 @@ export class PrintMassiveAccountComponent implements OnInit {
 
   prepareForm() {
     this.form = this.fb.group({
-      file: [null, Validators.required],
+      file: [null, Validators.required, Validators.maxLength(11)],
 
       depositDate: [null, Validators.required],
       depositDateTo: [null, Validators.required],

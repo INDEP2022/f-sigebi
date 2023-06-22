@@ -50,6 +50,7 @@ export class ScanRequestComponent extends BasePage implements OnInit {
   origin: string = null;
   today: Date = new Date();
   loadingDoc: boolean = false;
+  isSearch: boolean = false;
 
   constructor(
     private fb: FormBuilder,

@@ -354,6 +354,7 @@ export interface IGoodSami {
 }
 
 export interface IGood {
+  [x: string]: any;
   protection?: string;
   id?: number;
   inventoryNumber?: number;
