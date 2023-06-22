@@ -1,18 +1,18 @@
 import { InputCellComponent } from 'src/app/@standalone/smart-table/input-cell/input-cell.component';
 
 export const MINUTES_COLUMNS = {
-  actId: {
+  id: {
     title: 'id acta',
     type: 'number',
     sort: false,
   },
 
-  statusReceipt: {
+  statusProceeedings: {
     title: 'Estatus acta',
     type: 'string',
     sort: false,
   },
-  observation: {
+  observationProceedings: {
     title: 'Observación',
     sort: false,
     type: 'custom',

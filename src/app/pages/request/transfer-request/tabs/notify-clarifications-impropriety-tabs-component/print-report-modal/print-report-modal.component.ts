@@ -110,24 +110,9 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
   userName: any[] = [];
 
   ngOnInit(): void {
-    console.log('process', this.process);
+    this.idSolicitud = this.requestInfo.id;
+    this.idRegionalDelegation = this.requestInfo.regionalDelegationId;
 
-    if (this.idTypeDoc == 185) {
-      let linkDoc: string = `${this.urlBaseReport}Recibo_Resguardo.jasper&ID_RECIBO_RESGUARDO=${this.idReportAclara}`;
-      this.src = linkDoc;
-      console.log('URL reporte ', linkDoc);
-    }
-
-    if (this.idTypeDoc == 186) {
-      let linkDoc: string = `${this.urlBaseReport}Recibo_Resguardo.jasper&ID_RECIBO_RESGUARDO=${this.idReportAclara}`;
-      this.src = linkDoc;
-      console.log('URL reporte ', linkDoc);
-    }
-
-    //this.idSolicitud = this.requestInfo.id;
-    if (this.requestInfo) {
-      this.idRegionalDelegation = this.requestInfo.regionalDelegationId;
-    }
     //Borrar firmantes existentes
     this.verificateFirm();
     this.signParams();
@@ -230,7 +215,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
   }
 
   registerSign() {
-    if (process == null) {
+    if (!this.process) {
       this.signatoriesService
         .getSignatoriesName(this.idTypeDoc, this.idReportAclara)
         .subscribe({

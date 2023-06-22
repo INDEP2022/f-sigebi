@@ -31,7 +31,9 @@ export class WarehousesAssignedComponent
     private readonly warehouseService: WarehouseService
   ) {
     super();
-    this.settings.actions = false;
+    this.settings.actions.delete = true;
+    this.settings.actions.add = false;
+    this.settings.hideSubHeader = false;
     this.settings.columns = {
       id: {
         title: 'Almacen',

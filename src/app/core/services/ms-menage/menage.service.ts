@@ -38,6 +38,7 @@ export class MenageService extends HttpService {
     return this.put(route, good);
   }
 
+  //http://sigebimsqa.indep.gob.mx/menage/api/v1/gestion-menaje/73096
   remove(id: string | number) {
     const route = `${MenageEndpoints.MenageManagement}/${id}`;
     return this.delete(route);

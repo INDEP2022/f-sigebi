@@ -172,7 +172,11 @@ export class TableGoodMaintenanceComponent extends BasePage implements OnInit {
       this.service.update(newData).subscribe({
         next: response => {
           this.updateRowEvent.emit();
-          this.onLoadToast('success', 'Bien actualizado', '');
+          this.alert(
+            'success',
+            'Bien ' + newData.numberGood,
+            'Actualizado correctamente'
+          );
         },
         error: err => {},
       });

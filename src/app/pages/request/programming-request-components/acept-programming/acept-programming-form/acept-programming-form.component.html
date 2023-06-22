@@ -171,12 +171,14 @@
                     settingsTransportableGoods
                   "></app-columns-select>
               </div>
-              <ng2-smart-table
-                [attr.class]="'table-bordered'"
-                [settings]="settingsTransportableGoods"
-                [source]="goodsTranportables"
-                (edit)="showGood($event.data)">
-              </ng2-smart-table>
+              <div class="table-responsive">
+                <ng2-smart-table
+                  [attr.class]="'table-bordered'"
+                  [settings]="settingsTransportableGoods"
+                  [source]="goodsTranportables"
+                  (edit)="showGood($event.data)">
+                </ng2-smart-table>
+              </div>
               <app-pagination
                 [params]="params"
                 [totalItems]="totalItemsTransportable"></app-pagination>
@@ -186,24 +188,28 @@
                 <app-columns-select
                   [(settings)]="settingGuardGoods"></app-columns-select>
               </div>
-              <ng2-smart-table
-                [attr.class]="'table-bordered'"
-                [settings]="settingGuardGoods"
-                [source]="goodsGuards"
-                (edit)="showGood($event.data)">
-              </ng2-smart-table>
+              <div class="table-responsive">
+                <ng2-smart-table
+                  [attr.class]="'table-bordered'"
+                  [settings]="settingGuardGoods"
+                  [source]="goodsGuards"
+                  (edit)="showGood($event.data)">
+                </ng2-smart-table>
+              </div>
             </tab>
             <tab [heading]="headingWarehouse">
               <div class="d-flex justify-content-end">
                 <app-columns-select
                   [(settings)]="settingWarehouseGoods"></app-columns-select>
               </div>
-              <ng2-smart-table
-                [attr.class]="'table-bordered'"
-                [settings]="settingWarehouseGoods"
-                [source]="goodsWarehouse"
-                (edit)="showGood($event.data)">
-              </ng2-smart-table>
+              <div class="table-responsive">
+                <ng2-smart-table
+                  [attr.class]="'table-bordered'"
+                  [settings]="settingWarehouseGoods"
+                  [source]="goodsWarehouse"
+                  (edit)="showGood($event.data)">
+                </ng2-smart-table>
+              </div>
               <app-pagination
                 [params]="params"
                 [totalItems]="totalItemsWarehouse"></app-pagination>
