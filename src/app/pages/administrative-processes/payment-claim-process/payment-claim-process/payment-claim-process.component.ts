@@ -115,7 +115,7 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
       hideSubHeader: false,
       columns: {
         id: {
-          title: 'No Bien',
+          title: 'No. Bien',
           width: '33%',
           sort: false,
         },
@@ -125,7 +125,7 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
           sort: false,
         },
         description: {
-          title: 'Descripcion',
+          title: 'Descripción',
           width: '33%',
           sort: false,
         },
@@ -139,7 +139,7 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
       hideHeader: true,
       columns: {
         id: {
-          title: 'No Bien',
+          title: 'No. Bien',
           width: '20%',
           sort: false,
         },
@@ -149,7 +149,7 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
           sort: false,
         },
         description: {
-          title: 'Descripcion',
+          title: 'Descripción',
           width: '60%',
           sort: false,
         },
@@ -175,6 +175,16 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
         this.addStatus();
         // }
       });
+
+    this.cargarDataStorage();
+  }
+
+  async cargarDataStorage() {
+    const getItem = await this.getItem('goodData');
+    if (getItem != null) {
+      this.loadGood(getItem);
+      this.removeItem('goodData');
+    }
   }
 
   /**
@@ -218,9 +228,12 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
       this.showError = false;
       this.showStatus = false;
       this.loadGood(this.ids);
-      this.onLoadToast('success', 'Archivo subido con Éxito', 'Exitoso');
+
+      this.cargarData(this.ids);
+
+      this.alert('success', 'Archivo subido exitosamente', '');
     } catch (error) {
-      this.onLoadToast('error', 'Ocurrio un error al leer el archivo', 'Error');
+      this.alert('error', 'Ocurrio un error al leer el archivo', '');
     }
   }
 
@@ -365,9 +378,9 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
 
   question() {
     this.alertQuestion(
-      'info',
-      'Confirmación',
-      'No realizó la actualización de estatus, el folio de escaneo generado se eliminara ¿Deseas seguir?'
+      'question',
+      '¿Quiere continuar con el proceso?',
+      'No realizó la actualización de estatus, el folio de escaneo generado se eliminará'
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
@@ -382,11 +395,7 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
       next: response => {
         this.cambiarValor();
         this.document = undefined;
-        this.alert(
-          'success',
-          'Elimiado',
-          'Se ha eliminado correctamente el Folio'
-        );
+        this.alert('success', 'Se ha eliminado correctamente el folio', '');
       },
       error: err => {
         if (err.error.message == 'Este registro no existe!') {
@@ -418,5 +427,18 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
     } else {
       this.hijoRef.getDocument(good);
     }
+  }
+
+  cargarData(ids: any) {
+    this.hijoRef.cargarData(ids);
+  }
+
+  async removeItem(key: string) {
+    localStorage.removeItem(key);
+  }
+
+  async getItem(key: string) {
+    const value = localStorage.getItem(key);
+    return value ? JSON.parse(value) : null;
   }
 }

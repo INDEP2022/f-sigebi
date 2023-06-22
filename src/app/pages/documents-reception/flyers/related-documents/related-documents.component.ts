@@ -1004,7 +1004,7 @@ export class RelatedDocumentsComponent
           );
           this.m_job_management = mJobManagement;
           console.log('mjobmanagement ', mJobManagement);
-          if (this.m_job_management) {
+          /*if (this.m_job_management) {
             this._save_management_office = false;
           }
           this.formJobManagement.patchValue({
@@ -1103,7 +1103,7 @@ export class RelatedDocumentsComponent
             this.getCopyOficioGestion__(
               this.formJobManagement.value.managementNumber
             );
-          }
+          }*/
         } catch (e) {
           this.isCreate = true;
           console.log(e);
@@ -5436,5 +5436,134 @@ export class RelatedDocumentsComponent
         this.onLoadToast('warning', _cambia_estatus, '');
       }
     }
+  }
+
+  isDisabledBtnCcp = false;
+  async loadInfo(mJobManagement: IMJobManagement) {
+    console.log('res', this.formNotification.value.expedientNumber);
+    if (mJobManagement) {
+      try {
+        this.m_job_management = mJobManagement;
+        if (this.m_job_management) {
+          this._save_management_office = false;
+        }
+        this.formJobManagement.patchValue({
+          ...mJobManagement,
+          city: {
+            id: mJobManagement.city,
+            legendOffice: null,
+            idName: mJobManagement.city,
+          },
+          sender: {
+            id: mJobManagement.sender,
+            name: null,
+            idName: mJobManagement.sender,
+          },
+          addressee:
+            mJobManagement.jobType == 'INTERNO'
+              ? {
+                  user: mJobManagement.addressee,
+                  name: null,
+                  userAndName: mJobManagement.addressee,
+                }
+              : mJobManagement.nomPersExt,
+        });
+
+        if (this.formJobManagement.value.statusOf === 'ENVIADO') {
+          console.log('ENVIADO');
+          this.isDisabledBtnCcp = true;
+          // this.settings3.actions.delete = false;
+          this.isDisabledBtnDocs = true;
+          this.formJobManagement.disable();
+        }
+        if (mJobManagement.city) {
+          this.getCity(mJobManagement.city).subscribe({
+            next: res => {
+              this.formJobManagement.get('city').setValue({
+                id: res.idCity,
+                legendOffice: res.legendOffice,
+                idName: res.idCity + ' - ' + res.legendOffice,
+              });
+            },
+          });
+        }
+
+        if (mJobManagement.sender) {
+          const params = new ListParams();
+          params.limit = 1;
+          params['search'] = mJobManagement.sender;
+          this.flyerService.getSenderUser(params).subscribe({
+            next: res => {
+              const i = res.data[0];
+              this.formJobManagement.get('sender').setValue({
+                id: i.userDetail.id,
+                idName: i.userDetail.id + ' - ' + i.userDetail.name,
+                name: i.userDetail.name,
+              } as any);
+            },
+          });
+        }
+
+        if (mJobManagement.addressee && mJobManagement.jobType == 'INTERNO') {
+          const params = new ListParams();
+          params.limit = 1;
+          params['search'] = mJobManagement.addressee;
+          this.securityService
+            .getAllUsersTracker(params)
+            .subscribe((data: any) => {
+              const item = data.data[0];
+              let result = {
+                user: item.user,
+                name: item.name,
+                userAndName: item.user + ' - ' + item.name,
+              };
+
+              this.formJobManagement.get('addressee').setValue(result);
+            });
+        }
+
+        if (mJobManagement.managementNumber) {
+          this.refreshTableGoodsJobManagement();
+          this.refreshTableDocuments();
+          //this.refreshTableCopies();
+        }
+
+        if (mJobManagement.statusOf == 'ENVIADO') {
+          this.formJobManagement.disable();
+        }
+        if (mJobManagement.refersTo == this.se_refiere_a.A) {
+          this.se_refiere_a_Disabled.B = true;
+          this.se_refiere_a_Disabled.C = true;
+          this.disabledChecks();
+        }
+        if (mJobManagement.refersTo == this.se_refiere_a.B) {
+          this.se_refiere_a_Disabled.A = true;
+          this.se_refiere_a_Disabled.C = true;
+          this.enableChecks();
+        }
+        if (mJobManagement.refersTo == this.se_refiere_a.C) {
+          this.formVariables.get('b').setValue('N');
+          this.formVariables.get('todos').setValue('N');
+        }
+
+        if (this.formJobManagement.value.managementNumber) {
+          this.getCopyOficioGestion__(
+            this.formJobManagement.value.managementNumber
+          );
+        }
+      } catch (e) {
+        this.isCreate = true;
+        console.log(e);
+      }
+    }
+    if (this.formNotification.value.expedientNumber) {
+      console.log('refreshTableGoods');
+      this.refreshTableGoods();
+    }
+  }
+
+  async selectOtherOffices() {
+    const wheelNumber = this.managementForm.get('noVolante').value;
+    await firstValueFrom(this.getMJobManagement(wheelNumber));
   }
 }

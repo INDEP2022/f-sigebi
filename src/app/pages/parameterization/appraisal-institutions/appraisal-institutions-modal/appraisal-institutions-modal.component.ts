@@ -18,7 +18,7 @@ export class AppraisalInstitutionsModalComponent
 {
   appraisers: IAppraisers;
   appraisersForm: ModelForm<IAppraisers>;
-  title: string = 'Instituciones Valuadoras';
+  title: string = 'Institución Valuadora';
   edit: boolean = false;
   constructor(
     private fb: FormBuilder,
