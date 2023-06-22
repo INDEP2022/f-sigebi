@@ -22,21 +22,22 @@
         <app-delegation-shared [form]="form"></app-delegation-shared>
         <div class="row mt-4">
           <div class="col-md-6 pt-3">
-            <!-- <form-field [control]="form.get('currency')">
+            <form-field [control]="form.get('currency')">
               <ngx-select
-                (fetchItems)="getCurrency($event)"
+                (fetchItems)="getRegCurrency()"
                 [data]="currencies"
                 [form]="form"
-                value="otKey1"
-                bindLabel="otValue01"
+                value="nmtabla"
+                bindLabel="desc_moneda"
                 label="Moneda"
-                control="currency"
-                (change)="onCurrencyChange($event)">
+                control="currency">
               </ngx-select>
-            </form-field> -->
-            <app-currency-shared
+            </form-field>
+            <!-- <app-currency-shared
               [form]="form"
-              currencyField="currency"></app-currency-shared>
+              currencyField="currency"></app-currency-shared> -->
+            <!-- <ngx-select [form]="form" control="currency" (fetchItems)="getRegCurrency()" [showTooltip]="true"
+              [data]="currencies" bindLabel="cve_moneda" label="Moneda" value="nmtabla"></ngx-select> -->
           </div>
           <div class="col-md-6">
             <!-- <form-field [control]="form.get('bank')" label="Banco:">
@@ -51,20 +52,19 @@
               [control]="form.get('fileFrom')"
               label="Del expediente:">
               <input
-                [maxDate]="maxDate"
+                type="number"
                 formControlName="fileFrom"
                 class="form-control"
-                bsDatepicker />
+                maxLength="11" />
             </form-field>
           </div>
           <div class="col-md-6">
             <form-field [control]="form.get('fileTo')" label="Al:">
               <input
-                [maxDate]="maxDate"
+                type="number"
                 formControlName="fileTo"
                 class="form-control"
-                [minDate]="form.get('fileFrom').value"
-                bsDatepicker />
+                maxLength="11" />
             </form-field>
           </div>
         </div>
@@ -90,14 +90,23 @@
           </div>
         </div>
       </form>
-      <div class="d-flex justify-content-center">
-        <div class="m-3">
-          <div>
+      <div footer>
+        <div class="d-flex justify-content-center">
+          <div class="m-3">
             <button
-              (click)="print()"
               type="button"
-              class="btn btn-sm btn-primary active m-3">
-              IMPRIMIR
+              [disabled]="form.invalid"
+              class="btn btn-primary active btn-sm"
+              (click)="Generar()">
+              Imprimir <i class="bx bx-printer bx-sm float-icon"></i>
+            </button>
+          </div>
+          <div class="m-3">
+            <button
+              type="button"
+              class="btn btn-danger active btn-sm"
+              (click)="cleanForm()">
+              Limpiar <i class="fas fa-eraser bx-sm float-icon"></i>
             </button>
           </div>
         </div>
