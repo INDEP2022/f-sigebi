@@ -27,7 +27,9 @@ export class AppointmentDataComponent
 
   constructor(private readonly depositaryService: MsDepositaryService) {
     super();
-    this.settings.actions = false;
+    this.settings.actions.delete = true;
+    this.settings.actions.add = false;
+    this.settings.hideSubHeader = false;
     this.settings.columns = {
       responsible: {
         title: 'Responsable',

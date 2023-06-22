@@ -205,8 +205,8 @@
             type="submit"
             size="small"
             (click)="openModalActas()">
-            <i class="bx bx-search float-icon"></i>
             Buscar Bien en Actas
+            <i class="bx bx-search-alt bx-sm float-icon"></i>
           </button>
         </div>
       </div>
@@ -225,13 +225,12 @@
           [(settings)]="settings1"
           [defaultColumns]="5"></app-columns-select>
         <button
-          class="btn btn-primary btn-sm active"
+          class="btn btn-red btn-sm active"
           type="submit"
           size="small"
           [disabled]="selecteds.length === 0"
           (click)="deleteProgramations()">
-          <i class="bx bx-trash float-icon"></i>
-          Borrar Programaciones
+          Borrar Programaciones <i class="fa fa-trash" aria-hidden="true"></i>
         </button>
       </div>
     </div>

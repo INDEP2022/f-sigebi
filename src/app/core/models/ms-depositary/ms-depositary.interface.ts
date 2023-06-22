@@ -162,10 +162,29 @@ export interface IDepositaryAppointments {
 }
 
 export interface IDepositaryPaymentDet {
-  appointmentNumber: number;
-  paymentDate: Date;
-  paymentConceptKey: number;
+  appointmentNum: number;
+  datePay: Date;
+  conceptPayKey: number;
   amount: number;
   observation: string;
-  registerNumber: number;
+  registryNum: number;
+  nbOrigin: string;
+}
+
+export interface IDepositaryDetrepo {
+  appointmentNum: number;
+  dateRepo: Date;
+  reportKey: number;
+  report: string;
+  registryNum: number;
+  nbOrigin: string;
+}
+
+export interface IInfoDepositary {
+  reportDate: Date | string;
+  report: string;
+  personNum: string;
+  goodNum?: string | number;
+  registryNum?: number;
+  nbOrigin?: null;
 }

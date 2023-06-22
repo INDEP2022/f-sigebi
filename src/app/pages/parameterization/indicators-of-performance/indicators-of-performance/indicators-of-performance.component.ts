@@ -169,7 +169,7 @@ export class IndicatorsOfPerformanceComponent
     };
     this.indicatorsParameterService.getAll(params).subscribe({
       next: response => {
-        console.log(response);
+        console.log('response:', response);
         this.indicatorsParamenter = response.data;
         console.log(this.indicatorsParamenter);
 

@@ -31,6 +31,7 @@ export class HouseholdComponent extends BasePage implements OnInit, OnChanges {
   ) {
     super();
     this.settings.actions = false;
+    this.settings.hideSubHeader = false;
     this.settings.columns = {
       id: {
         title: 'Menaje',

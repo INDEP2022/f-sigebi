@@ -149,7 +149,7 @@ export class ScheduledMaintenanceComponent
 
   redirectDetailMaintenance(item: IProceedingDeliveryReception) {
     console.log(item);
-    window.localStorage.setItem('detailActa', JSON.stringify(item));
+    window.localStorage.setItem('detailActa', item.id);
     this.saveForm();
     this.router.navigate([
       'pages/judicial-physical-reception/scheduled-maintenance-1/detail',

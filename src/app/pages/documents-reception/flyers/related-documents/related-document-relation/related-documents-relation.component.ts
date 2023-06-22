@@ -58,7 +58,6 @@ import {
   EXTERNOS_COLUMS_OFICIO,
 } from 'src/app/pages/juridical-processes/abandonments-declaration-trades/abandonments-declaration-trades/columns';
 import { LegalOpinionsOfficeService } from 'src/app/pages/juridical-processes/depositary/legal-opinions-office/legal-opinions-office/services/legal-opinions-office.service';
-import { IJuridicalDocumentManagementParams } from 'src/app/pages/juridical-processes/file-data-update/interfaces/file-data-update-parameters';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { FlyersService } from '../../services/flyers.service';
 import {
@@ -67,7 +66,6 @@ import {
 } from '../related-documents-columns';
 import {
   MANAGEMENTOFFICESTATUSSEND,
-  PARAMETERSALEC,
   TEXT1,
   TEXT1Abandono,
   TEXT2,
@@ -172,17 +170,17 @@ export class RelatedDocumentsRelationComponent
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
   idExpediente: any = null;
-  paramsGestionDictamen: IJuridicalDocumentManagementParams = {
-    volante: null,
-    expediente: null,
-    doc: null,
-    tipoOf: null,
-    sale: '',
-    bien: '',
-    pGestOk: null,
-    pNoTramite: null,
-    pDictamen: null,
-  };
+  // paramsGestionDictamen: IJuridicalDocumentManagementParams = {
+  //   volante: null,
+  //   expediente: null,
+  //   doc: null,
+  //   tipoOf: null,
+  //   sale: '',
+  //   bien: '',
+  //   pGestOk: null,
+  //   pNoTramite: null,
+  //   pDictamen: null,
+  // };
   se_refiere_a = {
     A: 'Se refiere a todos los bienes',
     B: 'Se refiere a algun(os) bien(es) del expediente',
@@ -647,35 +645,23 @@ export class RelatedDocumentsRelationComponent
     this.getUserInfo();
     this.setInitVariables();
     this.prepareForm();
-    this.route.queryParams
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe((params: any) => {
-        console.log(params);
-        this.origin = params['origin'] ?? null;
-        this.paramsGestionDictamen.volante = params['volante'] ?? null;
-        this.paramsGestionDictamen.expediente = params['expediente'] ?? null;
-        this.paramsGestionDictamen.tipoOf = params['tipoOf'] ?? null;
-        this.formJobManagement
-          .get('jobType')
-          .setValue(params['tipoOf'] ?? null);
-        this.paramsGestionDictamen.doc = params['doc'] ?? null;
-        this.paramsGestionDictamen.pDictamen = params['pDictamen'] ?? null;
-        this.paramsGestionDictamen.sale = params['sale'] ?? null;
-        this.paramsGestionDictamen.pGestOk = params['pGestOk'] ?? null;
-        this.paramsGestionDictamen.pllamo = params['pllamo'] ?? null; // Se agrego
-
-        /*this.origin = params['origin'] ?? null; //no hay
-        this.paramsGestionDictamen.volante = params['VOLANTE'] ?? null;
-        this.paramsGestionDictamen.expediente = params['EXPEDIENTE'] ?? null;
-        this.paramsGestionDictamen.tipoOf = params['TIPO_OF'] ?? null;
-        this.paramsGestionDictamen.doc = params['DOC'] ?? null;
-        this.paramsGestionDictamen.pDictamen = params['pDictamen'] ?? null;  //no hay
-        this.paramsGestionDictamen.sale = params['SALE'] ?? null;
-        this.paramsGestionDictamen.pGestOk = params['BIEN'] ?? null;
-        this.paramsGestionDictamen.pGestOk = params['PLLAMO'] ?? null;
-        this.paramsGestionDictamen.pGestOk = params['P_GEST_OK'] ?? null;
-        this.paramsGestionDictamen.pGestOk = params['P_NO_TRAMITE'] ?? null;*/
-      });
+    // this.route.queryParams
+    //   .pipe(takeUntil(this.$unSubscribe))
+    //   .subscribe((params: any) => {
+    //     console.log(params);
+    //     this.origin = params['origin'] ?? null;
+    // this.paramsGestionDictamen.volante = params['VOLANTE'] ?? null;
+    // this.paramsGestionDictamen.expediente = params['EXPEDIENTE'] ?? null;
+    // this.paramsGestionDictamen.tipoOf = params['tipoOf'] ?? null;
+    // this.formJobManagement
+    //   .get('jobType')
+    //   .setValue(params['tipoOf'] ?? null);
+    // this.paramsGestionDictamen.doc = params['doc'] ?? null;
+    // this.paramsGestionDictamen.pDictamen = params['pDictamen'] ?? null;
+    // this.paramsGestionDictamen.sale = params['sale'] ?? null;
+    // this.paramsGestionDictamen.pGestOk = params['P_GEST_OK'] ?? null;
+    // this.paramsGestionDictamen.pllamo = params['PLLAMO'] ?? null; // Se agrego
+    // });
     const pantallaActual = this.route.snapshot.paramMap.get('id');
     if (!pantallaActual) {
       this.router.navigateByUrl('/pages/');
@@ -687,7 +673,7 @@ export class RelatedDocumentsRelationComponent
       // this.pantallaOption = this.flyerService.getPantallaOption(
       //   this.pantallaActual
       // );
-      this.paramsGestionDictamen.sale = 'C';
+      // this.paramsGestionDictamen.sale = 'C';
       if (this.pantallaOption) {
         this.screenKey = this.screenKeyManagement;
         this.initComponentDictamen();
@@ -721,11 +707,11 @@ export class RelatedDocumentsRelationComponent
       .subscribe(res => {
         this.getGoods1(res);
       });*/
-    if (this.paramsGestionDictamen.tipoOf == 'INTERNO') {
-      this.showDestinatario = true;
-    } else {
-      this.showDestinatarioInput = true;
-    }
+    // if (this.paramsGestionDictamen.tipoOf == 'INTERNO') {
+    //   this.showDestinatario = true;
+    // } else {
+    //   this.showDestinatarioInput = true;
+    // }
   }
 
   setInitVariables() {
@@ -877,7 +863,7 @@ export class RelatedDocumentsRelationComponent
 
   initComponentDictamen() {
     this.ReadOnly = true;
-    this.getNotificationData();
+    // this.getNotificationData();
     // if (
     //   this.managementForm.get('numero').value ||
     //   this.managementForm.get('numero').value == '0' ||
@@ -894,8 +880,8 @@ export class RelatedDocumentsRelationComponent
   }
 
   initForm() {
-    const wheelNumber = this.getQueryParams('volante');
-    const expedient = this.getQueryParams('expediente');
+    const wheelNumber = this.getQueryParams('VOLANTE');
+    const expedient = this.getQueryParams('EXPEDIENTE');
 
     this.formJobManagement.get('proceedingsNumber').setValue(expedient);
     this.formJobManagement
@@ -1172,25 +1158,25 @@ export class RelatedDocumentsRelationComponent
   //     .setValue(this.oficioGestion.justification);
   // }
 
-  reviewParametersGestion() {
-    if (this.paramsGestionDictamen.sale == 'C') {
-      // A, B, D
-      if (this.se_refiere_a.C == this.managementForm.get('tipoOficio').value) {
-        return true;
-      } else {
-        return false;
-      }
-    } else if (this.paramsGestionDictamen.sale == 'D') {
-      // C
-      if (this.se_refiere_a.C == this.managementForm.get('tipoOficio').value) {
-        return true;
-      } else {
-        return false;
-      }
-    } else {
-      return true;
-    }
-  }
+  // reviewParametersGestion() {
+  //   if (this.paramsGestionDictamen.sale == 'C') {
+  //     // A, B, D
+  //     if (this.se_refiere_a.C == this.managementForm.get('tipoOficio').value) {
+  //       return true;
+  //     } else {
+  //       return false;
+  //     }
+  //   } else if (this.paramsGestionDictamen.sale == 'D') {
+  //     // C
+  //     if (this.se_refiere_a.C == this.managementForm.get('tipoOficio').value) {
+  //       return true;
+  //     } else {
+  //       return false;
+  //     }
+  //   } else {
+  //     return true;
+  //   }
+  // }
 
   async getDictationByWheel() {
     if (
@@ -1290,10 +1276,10 @@ export class RelatedDocumentsRelationComponent
     elemA.checked = false;
 
     this.se_refiere_a_Disabled.C = false;
-    if (this.paramsGestionDictamen.sale == 'C') {
-      this.alertInfo('warning', PARAMETERSALEC, '');
-      return;
-    }
+    // if (this.paramsGestionDictamen.sale == 'C') {
+    //   this.alertInfo('warning', PARAMETERSALEC, '');
+    //   return;
+    // }
     if (this.formJobManagement.value?.statusOf == 'ENVIADO') {
       this.alertInfo('warning', MANAGEMENTOFFICESTATUSSEND, '');
       return;
@@ -1310,11 +1296,11 @@ export class RelatedDocumentsRelationComponent
       this.se_refiere_a_Disabled.A = false;
       this.se_refiere_a_Disabled.B = false;
     }
-    if (this.paramsGestionDictamen.sale == 'D') {
-      this.se_refiere_a_Disabled.C = false;
-    } else {
-      this.se_refiere_a_Disabled.C = true;
-    }
+    // if (this.paramsGestionDictamen.sale == 'D') {
+    //   this.se_refiere_a_Disabled.C = false;
+    // } else {
+    //   this.se_refiere_a_Disabled.C = true;
+    // }
     // y setea VARIABLES.B en N
   }
 
@@ -1558,45 +1544,45 @@ export class RelatedDocumentsRelationComponent
       });
   }
 
-  async getNotificationData() {
-    if (
-      this.paramsGestionDictamen.volante ||
-      this.paramsGestionDictamen.expediente
-    ) {
-      const params = new FilterParams();
-      params.removeAllFilters();
-      params.addFilter('wheelNumber', this.paramsGestionDictamen.volante);
-      if (this.paramsGestionDictamen.expediente) {
-        params.addFilter(
-          'expedientNumber',
-          this.paramsGestionDictamen.expediente
-        );
-      }
-      await this.flyerService
-        .getNotificationByFilter(params.getParams())
-        .subscribe({
-          next: res => {
-            console.log('prueba', res);
-            this.notificationData = res.data[0];
-            this.statusOf = res.data[0].wheelStatus;
-            this.setDataNotification();
-          },
-          error: err => {
-            console.log(err);
-          },
-        });
-    } else {
-      this.alertInfo(
-        'warning',
-        'No existe el Número de Expediente: ' +
-          this.paramsGestionDictamen.expediente +
-          ' ni el Número de Volante: ' +
-          this.paramsGestionDictamen.volante +
-          ' para consultar la información.',
-        ''
-      );
-    }
-  }
+  // async getNotificationData() {
+  //   if (
+  //     this.paramsGestionDictamen.volante ||
+  //     this.paramsGestionDictamen.expediente
+  //   ) {
+  //     const params = new FilterParams();
+  //     params.removeAllFilters();
+  //     params.addFilter('wheelNumber', this.paramsGestionDictamen.volante);
+  //     if (this.paramsGestionDictamen.expediente) {
+  //       params.addFilter(
+  //         'expedientNumber',
+  //         this.paramsGestionDictamen.expediente
+  //       );
+  //     }
+  //     await this.flyerService
+  //       .getNotificationByFilter(params.getParams())
+  //       .subscribe({
+  //         next: res => {
+  //           console.log('prueba', res);
+  //           this.notificationData = res.data[0];
+  //           this.statusOf = res.data[0].wheelStatus;
+  //           this.setDataNotification();
+  //         },
+  //         error: err => {
+  //           console.log(err);
+  //         },
+  //       });
+  //   } else {
+  //     this.alertInfo(
+  //       'warning',
+  //       'No existe el Número de Expediente: ' +
+  //         this.paramsGestionDictamen.expediente +
+  //         ' ni el Número de Volante: ' +
+  //         this.paramsGestionDictamen.volante +
+  //         ' para consultar la información.',
+  //       ''
+  //     );
+  //   }
+  // }
 
   setDataNotification() {
     this.managementForm

@@ -4,11 +4,32 @@
   </div>
   <div body>
     <div class="row">
-      <ng2-smart-table
-        [attr.class]="'table-bordered'"
-        [settings]="settings"
-        [source]="data">
-      </ng2-smart-table>
+      <!-- <div class="header"> -->
+      <!-- Contenido del encabezado de la tabla -->
+      <!-- <ng2-smart-table [settings]="settings2"></ng2-smart-table> -->
+      <!-- </div> -->
+      <div class="body">
+        <div>
+          <ng2-smart-table
+            id="idTableTestHead"
+            [attr.class]="'table-bordered'"
+            [settings]="settings"
+            [source]="data">
+          </ng2-smart-table>
+        </div>
+        <!-- <div class="table-container" style="width: 100%;">
+          <ng2-smart-table *ngIf="goods.length <= 10" id="idTableTestBody" [attr.class]="'table-bordered'"
+            [settings]="settings2" [source]="data">
+          </ng2-smart-table>
+
+          <ng2-smart-table *ngIf="goods.length > 10" id="idTableTestBody2" [attr.class]="'table-bordered'"
+            [settings]="settings2" [source]="data">
+          </ng2-smart-table>
+        </div> -->
+      </div>
+      <app-pagination
+        [params]="params"
+        [totalItems]="totalItems"></app-pagination>
     </div>
     <hr />
     <form [formGroup]="form" class="form-material">
@@ -22,6 +43,7 @@
           <div class="d-flex justify-content-beetwen">
             <div class="m-3">
               <button
+                [disabled]="!disabledImport"
                 class="btn btn-success btn-sm ml-2"
                 type="button"
                 (click)="file.click()">
@@ -58,6 +80,7 @@
                 class="btn btn-danger btn-sm active"
                 (click)="clean((file.value = ''))">
                 Limpiar
+                <i class="fa fa-eraser" aria-hidden="true"></i>
               </button>
             </div>
           </div>
@@ -88,7 +111,7 @@
           class="row pt-3 pb-3"
           style="border-top: 1px solid rgba(0, 0, 0, 0.1)">
           <span
-            >Numero de registros NO cargados &nbsp;&nbsp;
+            >Número de registros NO cargados &nbsp;&nbsp;
             <strong style="color: crimson">{{
               idsNotExist.length
             }}</strong></span
@@ -97,9 +120,9 @@
         <div
           class="row pt-3 pb-3"
           style="border-top: 1px solid rgba(0, 0, 0, 0.1)">
-          <div class="col-md-full" *ngFor="let item of idsNotExist">
+          <div class="col-md-full" *ngFor="let item2 of idsNotExist">
             <span style="color: crimson">
-              El Bien No <strong>{{ item.id }}</strong> {{ item.reason }}
+              El Bien No. <strong>{{ item2.id }}</strong> {{ item2.reason }}
             </span>
           </div>
         </div>
@@ -116,7 +139,7 @@
           class="row pt-3 pb-3"
           style="border-top: 1px solid rgba(0, 0, 0, 0.1)">
           <span
-            >Numero de registros cargados &nbsp;&nbsp;
+            >Número de registros cargados &nbsp;&nbsp;
             <strong style="color: #1e7e34">{{ goods.length }}</strong></span
           >
         </div>
@@ -125,7 +148,7 @@
           style="border-top: 1px solid rgba(0, 0, 0, 0.1)">
           <div class="col-md-full" *ngFor="let good of goods">
             <span
-              >Bien No
+              >El Bien No.
               <strong style="color: #1e7e34">{{ good.id }}</strong> cargado
               correctamente
             </span>
@@ -137,7 +160,7 @@
           *ngIf="showStatus">
           <div class="col-md-full" *ngFor="let good of goods">
             <span
-              >Status del bien No
+              >Estatus del Bien No.
               <strong style="color: #1e7e34">{{ good.id }}</strong>
               cambiado correctamente</span
             >

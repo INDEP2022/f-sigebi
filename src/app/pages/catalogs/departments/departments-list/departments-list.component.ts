@@ -63,10 +63,12 @@ export class DepartmentsListComponent extends BasePage implements OnInit {
                 searchFilter = SearchFilter.ILIKE;
                 break;
               case 'delegation':
-                searchFilter = SearchFilter.ILIKE;
+                searchFilter = SearchFilter.EQ;
+                field = `filter.${filter.field}.description`;
                 break;
               case 'numSubDelegation':
-                searchFilter = SearchFilter.ILIKE;
+                searchFilter = SearchFilter.EQ;
+                field = `filter.${filter.field}.description`;
                 break;
               case 'description':
                 searchFilter = SearchFilter.ILIKE;
@@ -140,7 +142,7 @@ export class DepartmentsListComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
         let data = {

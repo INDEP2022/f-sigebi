@@ -430,7 +430,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     console.log(this.data);
     let body: any = {
       id: this.good.id,
-      goodId: this.good.goodId,
+      goodId: this.good.goodid,
     };
     let tableValid = true;
     this.data.forEach(row => {
@@ -537,6 +537,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
   }
 
   clearFilter() {
+    this.bodyGoodCharacteristics = {};
     this.form.reset();
     this.good = null;
     this.data = [];
@@ -964,7 +965,20 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
       const response = await firstValueFrom(
         this.goodProcessService
           .getDistinctTypes(this.bodyGoodCharacteristics, newListParams)
-          .pipe(catchError(x => of(null)))
+          .pipe(
+            catchError(x => of(null)),
+            map(x => {
+              return {
+                ...x,
+                data: x.data.map(item => {
+                  return {
+                    ...item,
+                    quantity: item.quantity ? +(item.quantity + '') : null,
+                  };
+                }),
+              };
+            })
+          )
       );
       if (response && response.data && response.data.length > 0) {
         this.staticTabs.tabs[1].disabled = false;

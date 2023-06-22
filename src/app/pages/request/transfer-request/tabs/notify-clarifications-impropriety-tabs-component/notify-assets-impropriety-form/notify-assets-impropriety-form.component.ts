@@ -25,7 +25,8 @@ import { PrintReportModalComponent } from '../print-report-modal/print-report-mo
 })
 export class NotifyAssetsImproprietyFormComponent
   extends BasePage
-  implements OnInit {
+  implements OnInit
+{
   title: string = 'Aclaración';
   clarificationForm: FormGroup = new FormGroup({});
   clarification: any;

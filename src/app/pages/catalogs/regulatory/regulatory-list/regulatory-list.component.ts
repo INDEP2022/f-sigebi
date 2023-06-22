@@ -51,17 +51,21 @@ export class RegulatoryListComponent extends BasePage implements OnInit {
               case 'id':
                 searchFilter = SearchFilter.EQ;
                 break;
-              case 'number':
+              case 'fractionDetails':
                 searchFilter = SearchFilter.EQ;
+                field = `filter.${filter.field}.id`;
+                break;
+              case 'number':
+                searchFilter = SearchFilter.ILIKE;
                 break;
               case 'description':
                 searchFilter = SearchFilter.ILIKE;
                 break;
               case 'validateEf':
-                searchFilter = SearchFilter.EQ;
+                searchFilter = SearchFilter.ILIKE;
                 break;
               case 'validateEc':
-                searchFilter = SearchFilter.EQ;
+                searchFilter = SearchFilter.ILIKE;
                 break;
               case 'version':
                 searchFilter = SearchFilter.EQ;
@@ -94,7 +98,7 @@ export class RegulatoryListComponent extends BasePage implements OnInit {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-    this.regulatoryService.getAll(params).subscribe({
+    this.regulatoryService.getAllDetail(params).subscribe({
       next: response => {
         this.regulatorys = response.data;
         this.totalItems = response.count || 0;
@@ -132,7 +136,7 @@ export class RegulatoryListComponent extends BasePage implements OnInit {
   remove(id: number) {
     this.regulatoryService.remove(id).subscribe({
       next: () => {
-        this.alert('success', 'Regulaciones', 'Borrado');
+        this.alert('success', 'Registro de regulación', 'Borrado');
         this.getExample();
       },
       error: error => {

@@ -1,11 +1,11 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nueva' }} {{ title }}</h5>
+    <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nuevo' }} {{ title }}</h5>
   </div>
   <div body>
     <form [formGroup]="edosXCoorForm" class="form-material">
       <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-6">
           <form-field [control]="edosXCoorForm.get('id')">
             <ngx-select
               [form]="edosXCoorForm"
@@ -19,17 +19,20 @@
               [readonly]="false"></ngx-select>
           </form-field>
         </div>
-        <div class="col-md-8">
+        <div class="col-md-6">
           <form-field
             [control]="edosXCoorForm.get('description')"
             label="Descripci&oacute;n">
             <textarea
               class="form-control"
               type="text"
-              rows="2"
+              rows="3"
               formControlName="description"></textarea>
           </form-field>
         </div>
+      </div>
+
+      <div class="row pt-3">
         <div class="col-md-4">
           <form-field [control]="edosXCoorForm.get('noState')">
             <ngx-select
@@ -44,15 +47,15 @@
               [readonly]="false"></ngx-select>
           </form-field>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-6">
           <form-field [control]="edosXCoorForm.get('state')" label="Estado">
             <input type="text" class="form-control" formControlName="state" />
           </form-field>
         </div>
-        <div class="col-md-4">
-          <!--<form-field [control]="edosXCoorForm.get('stage')" label="Etapa">
+        <div class="col-md-2">
+          <form-field [control]="edosXCoorForm.get('stage')" label="Etapa">
             <input type="text" class="form-control" formControlName="stage" />
-          </form-field>-->
+          </form-field>
         </div>
       </div>
     </form>

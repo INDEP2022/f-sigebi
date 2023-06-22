@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Renderer2 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
@@ -23,11 +23,14 @@ export class SubDelegationFormComponent extends BasePage implements OnInit {
   edit: boolean = false;
   subdelegation: any;
   delegations = new DefaultSelect<IDelegation>();
+  valueDelegation: IDelegation;
+  validationDelegation: boolean = false;
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
     private subdelegationService: SubdelegationService,
-    private delegationService: DelegationService
+    private delegationService: DelegationService,
+    private render: Renderer2
   ) {
     super();
   }
@@ -40,7 +43,11 @@ export class SubDelegationFormComponent extends BasePage implements OnInit {
     this.subdelegationForm = this.fb.group({
       id: [
         null,
-        [Validators.maxLength(2), Validators.pattern(POSITVE_NUMBERS_PATTERN)],
+        [
+          Validators.required,
+          Validators.maxLength(2),
+          Validators.pattern(POSITVE_NUMBERS_PATTERN),
+        ],
       ],
       description: [
         null,
@@ -51,10 +58,7 @@ export class SubDelegationFormComponent extends BasePage implements OnInit {
         ],
       ],
       phaseEdo: [null, [Validators.required]],
-      delegationNumber: [
-        null,
-        [Validators.maxLength(2), Validators.pattern(STRING_PATTERN)],
-      ],
+      delegationNumber: [null, [Validators.required]],
       dailyConNumber: [
         null,
         [
@@ -66,14 +70,35 @@ export class SubDelegationFormComponent extends BasePage implements OnInit {
       registerNumber: [null],
       dateDailyCon: [new Date()],
     });
+    const inputId = document.getElementById('inputid');
+    const inputDelegation = document.getElementById('inputdelegation');
+    const inputEtapa = document.getElementById('inputetapa');
     if (this.subdelegation != null) {
       this.edit = true;
+      this.render.addClass(inputId, 'disabled');
+      this.render.addClass(inputDelegation, 'disabled');
+      this.render.addClass(inputEtapa, 'disabled');
       this.subdelegationForm.patchValue(this.subdelegation);
+      this.valueDelegation = this.subdelegation.delegationNumber as IDelegation;
+      let delegation = this.subdelegation.delegationNumber;
+      this.delegations = new DefaultSelect([delegation.description], 1);
+      this.subdelegationForm.controls['delegationNumber'].setValue(
+        delegation.description
+      );
+      console.log('data', delegation.id, this.subdelegation);
+    } else {
+      this.render.removeClass(inputId, 'disabled');
+      this.render.removeClass(inputDelegation, 'disabled');
+      this.render.removeClass(inputEtapa, 'disabled');
     }
+    this.getDelegations(new ListParams());
   }
 
-  getSubDelegations(params: ListParams) {
-    this.delegationService.getAll(params).subscribe(data => {
+  getDelegations(params: ListParams, id?: string) {
+    if (id) {
+      params['filter.id'] = `$eq:${id}`;
+    }
+    this.delegationService.getAllPaginated(params).subscribe(data => {
       this.delegations = new DefaultSelect(data.data, data.count);
     });
   }
@@ -100,6 +125,11 @@ export class SubDelegationFormComponent extends BasePage implements OnInit {
 
   update() {
     this.loading = true;
+    if (!this.validationDelegation && this.subdelegation != null) {
+      this.subdelegationForm.controls['delegationNumber'].setValue(
+        this.valueDelegation.id.toString()
+      );
+    }
     this.subdelegationService
       .update(this.subdelegation.id, this.subdelegationForm.getRawValue())
       .subscribe({
@@ -112,7 +142,11 @@ export class SubDelegationFormComponent extends BasePage implements OnInit {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
     this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
-    this.modalRef.content.callback.emit(true);
+    this.modalRef.content.callback(true);
     this.modalRef.hide();
+  }
+
+  onChange(id: any) {
+    this.validationDelegation = true;
   }
 }

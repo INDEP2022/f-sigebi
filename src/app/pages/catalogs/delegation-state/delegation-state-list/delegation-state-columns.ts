@@ -1,20 +1,25 @@
 import { IStateOfRepublic } from 'src/app/core/models/catalogs/state-of-republic.model';
 
 export const DELEGATION_STATE_COLUMNS = {
-  regionalDelegationId: {
+  regionalDelegation: {
     title: 'Clave Delegación',
     type: 'string',
     sort: false,
-    valuePrepareFunction: (value: any) => {
-      return value != null ? value.id : '';
-    },
   },
-  regionalDelegation: {
+  regionalDelegationDetails: {
     title: 'Delegación regional',
     type: 'string',
     sort: false,
     valuePrepareFunction: (value: any) => {
       return value != null ? value.description : '';
+    },
+    filterFunction(cell?: any, search?: string): boolean {
+      let column = cell.description;
+      if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
+        return true;
+      } else {
+        return false;
+      }
     },
   },
   keyState: {
@@ -22,12 +27,20 @@ export const DELEGATION_STATE_COLUMNS = {
     type: 'number',
     sort: false,
   },
-  stateCode: {
+  stateCodeDetail: {
     title: 'Estado',
     type: 'string',
     sort: false,
     valuePrepareFunction: (value: IStateOfRepublic) => {
       return value != null ? value.descCondition : '';
+    },
+    filterFunction(cell?: any, search?: string): boolean {
+      let column = cell.descCondition;
+      if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
+        return true;
+      } else {
+        return false;
+      }
     },
   },
   // version: {

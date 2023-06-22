@@ -16,7 +16,8 @@ import { DinamicTablesService } from 'src/app/core/services/catalogs/dinamic-tab
 })
 export class LogicalTablesRegisterModalComponent
   extends BasePage
-  implements OnInit {
+  implements OnInit
+{
   tablesForm: ModelForm<ITables>;
   dinamicTables: ITables;
   title: string = 'Catálogo de tablas lógicas';
