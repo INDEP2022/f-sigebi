@@ -1,4 +1,10 @@
-import { Component, Input, OnInit } from '@angular/core';
+import {
+  Component,
+  Input,
+  OnChanges,
+  OnInit,
+  SimpleChanges,
+} from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
@@ -18,7 +24,10 @@ import { RegisterModalComponent } from './register-modal/register-modal.componen
   templateUrl: './inventory-data.component.html',
   styles: [],
 })
-export class InventoryDataComponent extends BasePage implements OnInit {
+export class InventoryDataComponent
+  extends BasePage
+  implements OnInit, OnChanges
+{
   list: any[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -37,16 +46,15 @@ export class InventoryDataComponent extends BasePage implements OnInit {
     private modalService: BsModalService
   ) {
     super();
-    this.settings.actions.delete = true;
-    this.settings.actions.add = false;
+    this.settings.actions = false;
     this.settings.hideSubHeader = false;
     this.settings.columns = {
-      no_inventario: {
+      inventoryNumber: {
         title: 'No. Inventario',
         type: 'number',
         sort: false,
       },
-      fec_inventario: {
+      dateInventory: {
         title: 'Fecha Inventario',
         type: 'string',
         sort: false,
@@ -54,12 +62,18 @@ export class InventoryDataComponent extends BasePage implements OnInit {
           return this.formatearFecha(new Date(value));
         },
       },
-      responsable: {
+      responsible: {
         title: 'Responsable',
         type: 'string',
         sort: false,
       },
     };
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes) {
+      this.inventoryForGood(this.goodId);
+    }
   }
 
   ngOnInit(): void {
@@ -75,8 +89,7 @@ export class InventoryDataComponent extends BasePage implements OnInit {
       .getInventoryByGood(idGood, this.params.getValue())
       .subscribe({
         next: response => {
-          console.log('AQUIIIIIIIIIIIIIIIIIII', response);
-          this.data = [response.data[0]];
+          this.data = response.data;
           this.dataLoand.load(this.data);
           this.dataLoand.refresh();
           this.totalItems = response.count;
@@ -224,7 +237,7 @@ export class InventoryDataComponent extends BasePage implements OnInit {
           if (next) {
             this.params
               .pipe(takeUntil(this.$unSubscribe))
-              .subscribe(() => console.log());
+              .subscribe(() => this.inventoryForGood(this.goodId));
           }
         },
       },

@@ -18,7 +18,7 @@ export class InventoryService extends HttpService {
     goodId: number,
     params: ListParams
   ): Observable<IListResponse<any>> {
-    const route = `application/getInventory/${goodId}`;
+    const route = `inventory-x-good?filter.goodNumber=$eq:${goodId}`;
     return this.get(route, params);
   }
 
