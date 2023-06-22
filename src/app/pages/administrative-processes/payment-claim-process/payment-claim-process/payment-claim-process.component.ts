@@ -101,6 +101,7 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
   settings2 = { ...TABLE_SETTINGS2 };
 
   valDocument: boolean = false;
+  public formLoading: boolean = false;
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
@@ -164,29 +165,44 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
     this.buildForm();
     this.form.disable();
 
-    this.params
+    this.filter1
       .pipe(
         skip(1),
         tap(() => {
           // aquí colocas la función que deseas ejecutar
-          this.addStatus();
+          this.readExcel(this.test);
         }),
         takeUntil(this.$unSubscribe)
       )
       .subscribe(() => {
         // if (this.goods.length > 0) {
-        this.addStatus();
+        // this.readExcel(this.test);
         // }
       });
 
     this.cargarDataStorage();
   }
-
+  test: any;
   async cargarDataStorage() {
-    const getItem = await this.getItem('goodData');
-    if (getItem != null) {
-      this.onFileChange(getItem);
-      this.removeItem('goodData');
+    const base64Data = localStorage.getItem('archivoBase64');
+    console.log('console.log(base64Data)', base64Data);
+    if (base64Data != null) {
+      // Decodifica el archivo Base64 a un array de bytes
+      const byteCharacters = atob(base64Data);
+
+      // Crea un array de bytes utilizando el tamaño del archivo decodificado
+      const byteNumbers = new Array(byteCharacters.length);
+      for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
+      }
+
+      // Crea un Uint8Array a partir del array de bytes
+      const byteArray = new Uint8Array(byteNumbers);
+
+      const blob = new Blob([byteArray], { type: 'text/csv' });
+      this.test = blob;
+      this.readExcel(blob);
+      this.removeItem('archivoBase64');
     }
   }
 
@@ -205,11 +221,39 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
     });
   }
 
+  file: File | undefined;
+  fileUrl: any;
+  async getFile() {
+    const base64Data = localStorage.getItem('goodData');
+    const csvData = atob(base64Data);
+
+    return csvData ? csvData : null;
+    // Puedes utilizar el contenido del archivo CSV como desees
+    console.log(csvData);
+  }
+
+  // fileContent: string | undefined;
+  // converterBase64(event: any) {
+  //   const files = event;
+  //   const reader = new FileReader();
+  //   reader.readAsBinaryString(files);
+  //   reader.onloadend = () => {
+  //     // Convierte el contenido a Base64
+  //     const base64Data = btoa(reader.result as string);
+
+  //     // Guarda el archivo Base64 en el localStorage
+  //     this.cargarData(base64Data);
+  //     // localStorage.setItem('archivoCSV', base64Data);
+  //   };
+
+  //   // this.cargarData();
+  // }
+
   onFileChange(event: Event) {
-    this.cargarData(event);
     console.log('Entro');
     const files = (event.target as HTMLInputElement).files;
     if (files.length != 1) throw 'No files selected, or more than of allowed';
+    // this.converterBase64(files[0])
     // const fileReader = new FileReader();
     // fileReader.readAsBinaryString(files[0]);
     // fileReader.onload = () => this.readExcel(fileReader.result);
@@ -218,72 +262,85 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
 
   readExcel(binaryExcel: string | ArrayBuffer | any) {
     try {
+      this.loading = true;
       this.idsNotExist = [];
       this.showError = false;
       this.showStatus = false;
       this.data.load([]);
+      this.filter1.getValue().removeAllFilters();
+      this.massiveGoodService
+        .getFProRecPag2CSV(this.filter1.getValue().getParams(), binaryExcel)
+        .subscribe({
+          next: (response: any) => {
+            console.log('SI11', response);
+            let data: any = response.paginated;
 
-      this.massiveGoodService.getFProRecPag2CSV(binaryExcel).subscribe({
-        next: response => {
-          let data = response.data;
-          let arr: any = [];
-          let count = 0;
-          let result = data.map(async (good: any) => {
-            count = count + 1;
-            console.log('SI11', good);
-            if (good.status == 'PRP' || good.status == 'ADM') {
-              console.log('SI', good);
-              if (this.goodClassNumber.includes(`${good.goodclassnumber}`)) {
-                // console.log(response);
-                this.obtenerDocument(good);
-                this.goods.push(good);
-                this.disabledImport = false;
-                this.form.get('justification').setValue(good.causenumberchange);
-                this.addStatus();
+            let count = 0;
+            let arr: any = [];
+            let result = data.map(async (good: any) => {
+              count = count + 1;
+              console.log('SI11', good);
+              if (good.status == 'PRP' || good.status == 'ADM') {
+                console.log('SI', good);
+                if (this.goodClassNumber.includes(`${good.goodclassnumber}`)) {
+                  // console.log(response);
+                  arr.push(good);
+                  this.obtenerDocument(good);
+                  this.disabledImport = false;
+                  this.form
+                    .get('justification')
+                    .setValue(good.causenumberchange);
+                } else {
+                  this.idsNotExist.push({
+                    id: good.id,
+                    reason: `no cuenta con un número de clasificador válido`,
+                  });
+                }
               } else {
-                this.idsNotExist.push({
-                  id: good.id,
-                  reason: `no cuenta con un número de clasificador válido`,
-                });
+                console.log('good.status');
+                if (good.status) {
+                  this.idsNotExist.push({
+                    id: good.id,
+                    reason: `no cuenta con estatus válido, debe ser PRP o ADM`,
+                  });
+                } else {
+                  this.idsNotExist.push({
+                    id: good.id,
+                    reason: `no existe en la BD`,
+                  });
+                }
               }
-            } else {
-              console.log('good.status');
-              if (good.status) {
-                this.idsNotExist.push({
-                  id: good.id,
-                  reason: `no cuenta con estatus válido, debe ser PRP o ADM`,
-                });
-              } else {
-                this.idsNotExist.push({
-                  id: good.id,
-                  reason: `no existe en la BD`,
-                });
-              }
-            }
-          });
+            });
 
-          Promise.all(result).then((resp: any) => {
-            if (count === data.length) {
+            Promise.all(result).then((resp: any) => {
+              this.goods = arr;
+              this.addStatus();
+
+              this.test = binaryExcel;
+              console.log('this.test', this.test);
+              if (count === data.length) {
+                this.loading = false;
+                this.showError = true;
+              }
+              let file = response.file.base64File;
+              this.cargarData(file);
+
+              this.totalItems = response.countA;
+
+              this.form.enable();
+
+              console.log('BINARY EXCEL', response);
+              this.alert('success', 'Archivo subido exitosamente', '');
+
               this.loading = false;
-              this.showError = true;
-            }
-            this.totalItems = this.goods.length;
-
-            this.form.enable();
-
-            console.log('BINARY EXCEL', response);
-            this.alert('success', 'Archivo subido exitosamente', '');
-
+            });
+          },
+          error: err => {
+            this.data.load([]);
             this.loading = false;
-          });
-        },
-        error: err => {
-          this.data.load([]);
-          this.loading = false;
-          this.alert('error', 'No hay datos disponibles', '');
-        },
-      });
-      // this.cargarData(binaryExcel);
+            this.alert('error', 'No hay datos disponibles', '');
+          },
+        });
 
       return;
       this.ids = this.excelService.getData(binaryExcel);
