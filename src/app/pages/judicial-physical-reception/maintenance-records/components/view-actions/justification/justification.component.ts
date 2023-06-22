@@ -132,8 +132,12 @@ export class JustificationComponent extends AlertButton implements OnInit {
     return {
       id: value.id + '',
       keysProceedings: value.cveActa,
-      elaborationDate: value.elaborationDate,
-      datePhysicalReception: value.datePhysicalReception,
+      elaborationDate: value.elaborationDate
+        ? value.elaborationDate.getTime()
+        : null,
+      datePhysicalReception: value.datePhysicalReception
+        ? value.datePhysicalReception.getTime()
+        : null,
       address: value.address,
       statusProceedings: value.statusActa,
       elaborate: value.elaborate,
@@ -141,16 +145,22 @@ export class JustificationComponent extends AlertButton implements OnInit {
       witness1: value.witness1,
       witness2: value.witness2,
       typeProceedings: value.tipoActa,
-      dateElaborationReceipt: value.dateElaborationReceipt,
-      dateDeliveryGood: value.dateDeliveryGood,
+      dateElaborationReceipt: value.dateElaborationReceipt
+        ? value.dateElaborationReceipt.getTime()
+        : null,
+      dateDeliveryGood: value.dateDeliveryGood
+        ? value.dateDeliveryGood.getTime()
+        : null,
       responsible: justification.usuario,
       destructionMethod: value.destructionMethod,
       observations: value.observations,
       approvedXAdmon: value.approvedXAdmon,
-      approvalDateXAdmon: value.approvalDateXAdmon,
+      approvalDateXAdmon: value.approvalDateXAdmon
+        ? value.approvalDateXAdmon.getTime()
+        : null,
       approvalUserXAdmon: value.approvalUserXAdmon,
       numRegister: value.numRegister,
-      captureDate: value.captureDate,
+      captureDate: value.captureDate ? value.captureDate.getTime() : null,
       numDelegation1: value.numDelegation1,
       numDelegation2: value.numDelegation2,
       identifier: value.identifier ? value.identifier.code : null,
@@ -162,12 +172,12 @@ export class JustificationComponent extends AlertButton implements OnInit {
       receiptKey: value.receiptKey,
       comptrollerWitness: value.comptrollerWitness,
       numRequest: value.numRequest,
-      closeDate: value.closeDate,
-      maxDate: value.maxDate,
+      closeDate: value.closeDate ? value.closeDate.getTime() : null,
+      maxDate: value.maxDate ? value.maxDate.getTime() : null,
       indFulfilled: value.indFulfilled,
-      dateCaptureHc: value.dateCaptureHc,
-      dateCloseHc: value.dateCloseHc,
-      dateMaxHc: value.dateMaxHc,
+      dateCaptureHc: value.dateCaptureHc ? value.dateCaptureHc.getTime() : null,
+      dateCloseHc: value.dateCloseHc ? value.dateCloseHc.getTime() : null,
+      dateMaxHc: value.dateMaxHc ? value.dateMaxHc.getTime() : null,
       receiveBy: value.receiveBy,
       affair: value.affair,
     };

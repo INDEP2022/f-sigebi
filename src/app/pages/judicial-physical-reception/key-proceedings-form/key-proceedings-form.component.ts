@@ -32,6 +32,8 @@ export class KeyProceedingsFormComponent
   @Input() form: FormGroup;
   @Input() formField = 'claveActa';
   @Input() set statusActaValue(value: string) {
+    console.log(value);
+    if (!value) return;
     if (value.includes('CERRAD')) {
       this.disabled = true;
     } else {
@@ -172,7 +174,7 @@ export class KeyProceedingsFormComponent
   }
 
   async ngOnInit() {
-    this.updateSettingsKeysProceedings('ABIERTA');
+    // this.updateSettingsKeysProceedings('ABIERTA');
 
     await this.getAreas();
     if (this.typeProceeding) {
@@ -250,12 +252,12 @@ export class KeyProceedingsFormComponent
 
   async updateRow(data: any) {
     // let newData = { ...data };
-    // debugger;
+    debugger;
     let { newData, confirm } = data;
-    if (this.nullCells(newData)) {
-      this.onLoadToast('error', 'Campos requeridos');
-      return;
-    }
+    // if (this.nullCells(newData)) {
+    //   this.alert('error', 'Clave Acta', 'Llene todos los campos');
+    //   return;
+    // }
     if (newData[0]) {
       if (this.typeEvent === 'RF') {
         newData[1] = 'R';
@@ -436,6 +438,8 @@ export class KeyProceedingsFormComponent
   }
 
   private updateTableKeysProceedings(keysProceedings: string) {
+    if (!keysProceedings) return;
+    if (keysProceedings.length === 0) return;
     let keys = [];
     let key = {};
     keysProceedings.split('/').forEach((letra, index) => {

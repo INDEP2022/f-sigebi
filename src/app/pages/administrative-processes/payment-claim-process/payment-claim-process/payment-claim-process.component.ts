@@ -596,11 +596,9 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
   cargarData(binaryExcel: any) {
     this.hijoRef.cargarData(binaryExcel);
   }
-
   async removeItem(key: string) {
     localStorage.removeItem(key);
   }
-
   async getItem(key: string) {
     const value = localStorage.getItem(key);
     return value ? JSON.parse(value) : null;
