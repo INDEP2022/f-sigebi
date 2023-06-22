@@ -350,6 +350,7 @@ export class JuridicalRulingComponent
   oficioDictamen: any;
   goodSelect: any;
   formLoading: boolean;
+  loadingDic: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -434,7 +435,7 @@ export class JuridicalRulingComponent
   async updateOficioDictamen(body: any) {
     this.dictationServ.updateOfficialDictation(body).subscribe({
       next: (data: any) => {
-        this.alert('success', 'Oficio Dictamen actualizado correctamente', '');
+        //  this.alert('success', 'Oficio Dictamen actualizado correctamente', '');
       },
       error: error => {},
     });
@@ -1656,6 +1657,8 @@ export class JuridicalRulingComponent
   }
 
   async btnApprove() {
+    this.loadingDic = true;
+
     const user = this.authService.decodeToken();
     const {
       tipoDictaminacion,
@@ -1726,6 +1729,7 @@ export class JuridicalRulingComponent
             'No se localizaron datos de la persona que autoriza.',
             ''
           );
+          this.loadingDic = false;
           return;
         } else {
           vNO_DELEGACION = validDest.delegation1Number;
@@ -1740,6 +1744,7 @@ export class JuridicalRulingComponent
               'No se localizaron datos de la persona que autoriza.',
               ''
             );
+            this.loadingDic = false;
             return;
           }
 
@@ -1757,6 +1762,7 @@ export class JuridicalRulingComponent
               'No se localizó la dependencia de la persona que autoriza.',
               ''
             );
+            this.loadingDic = false;
             return;
           }
 
@@ -1790,6 +1796,7 @@ export class JuridicalRulingComponent
               'No se localizó el predecesor de la persona que autoriza.',
               ''
             );
+            this.loadingDic = false;
             return;
           } else if (CAT_DEPARTAMENTOS2.length == 0) {
             this.alert(
@@ -1797,6 +1804,7 @@ export class JuridicalRulingComponent
               'No se encontraron datos del departamento.',
               ''
             );
+            this.loadingDic = false;
             return;
           }
 
@@ -1963,10 +1971,11 @@ export class JuridicalRulingComponent
           for (let i = 0; i < this.documents.length; i++) {
             await this.createDocumentDictum(this.documents[i]);
           }
-
+          this.loadingDic = false;
           resolve(true);
         },
         error: () => {
+          this.loadingDic = false;
           resolve(true);
         },
       });
@@ -2025,12 +2034,12 @@ export class JuridicalRulingComponent
           notificationDate: null,
           secureKey: null,
         };
-        console.log('OBJB', obj);
         this.documentsMServ.create(obj).subscribe({
           next: resp => {
             console.log('CREADO DOC', resp);
           },
           error: error => {
+            this.loadingDic = false;
             console.log('ERROR DOC', error.error);
           },
         });
@@ -2084,6 +2093,7 @@ export class JuridicalRulingComponent
         this.loading = false;
       },
       error: error => {
+        this.loadingDic = false;
         this.loading = false;
       },
     });
@@ -2177,6 +2187,7 @@ export class JuridicalRulingComponent
         console.log('CREADO', resp);
       },
       error: error => {
+        this.loadingDic = false;
         console.log('ERROR', error.error);
       },
     });
@@ -2235,8 +2246,6 @@ export class JuridicalRulingComponent
 
         if (CLASIF) {
           if (data) {
-            console.log(data);
-
             for (let index = 0; index < data.length; index++) {
               const el = data[index];
 
@@ -2292,6 +2301,7 @@ export class JuridicalRulingComponent
           resolve(resp.count);
         },
         error: () => {
+          this.loadingDic = false;
           resolve(0);
         },
       });
@@ -2313,6 +2323,7 @@ export class JuridicalRulingComponent
           resolve(resp.data);
         },
         error: () => {
+          this.loadingDic = false;
           resolve(null);
         },
       });
@@ -2326,6 +2337,7 @@ export class JuridicalRulingComponent
           resolve(resp.data[0].max);
         },
         error: () => {
+          this.loadingDic = false;
           resolve(null);
         },
       });
@@ -2341,6 +2353,7 @@ export class JuridicalRulingComponent
           resolve(resp.data[0].wheelType);
         },
         error: () => {
+          this.loadingDic = false;
           resolve(null);
         },
       });
@@ -2370,6 +2383,7 @@ export class JuridicalRulingComponent
           this.loading = false;
         },
         error: error => {
+          this.loadingDic = false;
           this.loading = false;
           resolve(null);
         },
@@ -2387,6 +2401,7 @@ export class JuridicalRulingComponent
         },
         error: err => {
           this.loading = false;
+          this.loadingDic = false;
           resolve(null);
         },
       });
@@ -2408,6 +2423,7 @@ export class JuridicalRulingComponent
         },
         error: error => {
           this.loading = false;
+          this.loadingDic = false;
           resolve(null);
         },
       });
@@ -2423,6 +2439,7 @@ export class JuridicalRulingComponent
           resolve(resp.data[0].positionKey);
         },
         error: () => {
+          this.loadingDic = false;
           resolve(null);
         },
       });
@@ -2442,6 +2459,7 @@ export class JuridicalRulingComponent
         },
         error: error => {
           this.loading = false;
+          this.loadingDic = false;
           resolve(null);
         },
       });
@@ -2457,6 +2475,7 @@ export class JuridicalRulingComponent
         },
         error: err => {
           this.loading = false;
+          this.loadingDic = false;
           resolve(null);
         },
       });
@@ -2632,13 +2651,15 @@ export class JuridicalRulingComponent
 
           if (!success) return;
 
-          Swal.fire('Dictamen ha eliminado correctamente', '', 'success').then(
-            () => {
-              //Limpiar todo
-              this.clearSearch();
-              this.getExp(v_no_expediente);
-            }
-          );
+          Swal.fire(
+            'Dictamen ha sido eliminado correctamente',
+            '',
+            'success'
+          ).then(() => {
+            //Limpiar todo
+            this.clearSearch();
+            this.getExp(v_no_expediente);
+          });
         }
       });
     } else {
