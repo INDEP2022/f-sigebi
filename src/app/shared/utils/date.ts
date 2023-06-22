@@ -38,6 +38,32 @@ export function secondFormatDate(value: Date) {
   }
 }
 
+export function dateToNewDatetime(value: Date) {
+  if (value) {
+    let year: any = value.getFullYear();
+    if (year < 10) {
+      year = '0' + year;
+    }
+    let month: any = value.getMonth() + 1;
+    if (month < 10) {
+      month = '0' + month;
+    }
+    let day: any = value.getDate();
+    if (day < 10) {
+      day = '0' + day;
+    }
+    let date = new Date();
+    console.log(new Date().getHours());
+
+    date.setFullYear(year);
+    date.setMonth(month);
+    date.setDate(day);
+    return date;
+  } else {
+    return null;
+  }
+}
+
 export function thirdFormatDate(value: Date) {
   if (value) {
     let year: any = value.getFullYear();

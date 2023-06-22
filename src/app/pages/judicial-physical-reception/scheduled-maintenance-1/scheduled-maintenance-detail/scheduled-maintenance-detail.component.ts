@@ -33,6 +33,7 @@ import { StatusXScreenService } from 'src/app/core/services/ms-screen-status/sta
 import { BasePage } from 'src/app/core/shared/base-page';
 import { getTrackedGoods } from 'src/app/pages/general-processes/goods-tracker/store/goods-tracker.selector';
 import {
+  dateToNewDatetime,
   firstFormatDateToDate,
   formatForIsoDate,
 } from 'src/app/shared/utils/date';
@@ -135,9 +136,9 @@ export class ScheduledMaintenanceDetailComponent
     let newDate = this.form.get('fechaCaptura').value;
     detail.captureDate = (newDate + '').includes('/')
       ? firstFormatDateToDate(newDate)
-      : newDate;
-    console.log(newDate);
-    // console.log(detail.captureDate);
+      : dateToNewDatetime(newDate);
+    // console.log(newDate);
+    console.log(detail.captureDate);
     detail.captureDate = detail.captureDate.getTime();
     detail.closeDate = new Date().getTime();
     detail.elaborationDate = new Date(this.acta.elaborationDate).getTime();
