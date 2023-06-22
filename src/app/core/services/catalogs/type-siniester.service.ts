@@ -11,7 +11,7 @@ import { ITypeSiniester } from '../../models/catalogs/type-siniester.model';
 })
 export class TypeSiniesterService implements ICrudMethods<ITypeSiniester> {
   private readonly route: string = ENDPOINT_LINKS.TypeSiniesters;
-  constructor(private typeSiniesterRepository: Repository<ITypeSiniester>) { }
+  constructor(private typeSiniesterRepository: Repository<ITypeSiniester>) {}
 
   getAll(params?: ListParams): Observable<IListResponse<ITypeSiniester>> {
     return this.typeSiniesterRepository.getAllPaginated(this.route, params);

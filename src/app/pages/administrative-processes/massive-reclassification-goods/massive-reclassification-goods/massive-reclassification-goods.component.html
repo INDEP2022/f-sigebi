@@ -9,31 +9,49 @@
           <div class="col-md-full col-sm-12 col-xs-12">
             Modo <span class="txt-primary">*</span>
             <form-radio label="Excluir">
-              <input type="radio" formControlName="mode" value="E" (click)="formEnable()" required />
+              <input
+                type="radio"
+                formControlName="mode"
+                value="E"
+                (click)="formEnable()"
+                required />
             </form-radio>
             <form-radio label="Incluir">
-              <input type="radio" formControlName="mode" value="I" (click)="formEnable()" required />
+              <input
+                type="radio"
+                formControlName="mode"
+                value="I"
+                (click)="formEnable()"
+                required />
             </form-radio>
           </div>
         </div>
         <div class="col-md-10 col-sm-12 col-xs-12">
           <div class="row">
             <div class="col-md-full col-sm-12 col-xs-12">
-              <app-classification-of-goods-shared [form]="form" [patchValue]="true" (descriptionClasification)="
+              <app-classification-of-goods-shared
+                [form]="form"
+                [patchValue]="true"
+                (descriptionClasification)="
                   onChage($event)
                 "></app-classification-of-goods-shared>
             </div>
           </div>
           <div class="row mt-5">
             <div class="col-md-7 col-sm-12 col-xs-12">
-              <app-goods-status-shared [form]="form" [labelStatus]="'Filtro por estatus'"
+              <app-goods-status-shared
+                [form]="form"
+                [labelStatus]="'Filtro por estatus'"
                 [multiple]="true"></app-goods-status-shared>
             </div>
             <div class="col-md-2 col-sm-6 col-xs-6">
               <div class="d-flex justify-content-center">
                 <div class="m-3">
-                  <button [disabled]="classificationOfGoods.value === null" type="button"
-                    class="btn btn-primary btn-sm active" (click)="loadGoods()">
+                  <button
+                    [disabled]="classificationOfGoods.value === null"
+                    type="button"
+                    class="btn btn-primary btn-sm active"
+                    (click)="loadGoods()">
                     <i class="bx bx-search-alt bx-sm float-icon"></i>
                   </button>
                 </div>
@@ -42,7 +60,10 @@
             <div class="col-md-3 col-sm-6 col-xs-6">
               <div class="d-flex justify-content-center">
                 <div class="m-3">
-                  <button type="button" class="btn btn-danger btn-sm active" (click)="clearFilter()">
+                  <button
+                    type="button"
+                    class="btn btn-danger btn-sm active"
+                    (click)="clearFilter()">
                     Limpiar
                     <i class="fa fa-eraser"></i>
                   </button>
@@ -61,8 +82,11 @@
       </div>
       <div class="row mt-4" [class]="mode.value === 'I' ? '' : 'd-none'">
         <div class="col-md-full col-sm-12 col-xs-12">
-          <app-classification-of-goods-shared [form]="form" label="No. de Clasificación de Bien Alterna"
-            [classificationOfGoodsField]="'classificationGoodAlterning'" (descriptionClasification)="
+          <app-classification-of-goods-shared
+            [form]="form"
+            label="No. de Clasificación de Bien Alterna"
+            [classificationOfGoodsField]="'classificationGoodAlterning'"
+            (descriptionClasification)="
               onChageAlterning($event)
             "></app-classification-of-goods-shared>
         </div>
@@ -87,7 +111,10 @@
         <div class="col-md-3 col-sm-12 col-xs-12">
           <div class="d-flex justify-content-center">
             <div class="m-3">
-              <button [disabled]="disabledReclas()" type="button" class="btn btn-primary active"
+              <button
+                [disabled]="disabledReclas()"
+                type="button"
+                class="btn btn-primary active"
                 (click)="openQuestion()">
                 &nbsp; Reclasificar &nbsp;
               </button>

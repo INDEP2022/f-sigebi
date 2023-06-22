@@ -56,13 +56,34 @@ export class DelegationStateListComponent extends BasePage implements OnInit {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
-            filter.field == 'keyDelegation' ||
-            filter.field == 'regionalDelegation' ||
+            switch (filter.field) {
+              case 'regionalDelegation':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'regionalDelegationDetails':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}.description`;
+                break;
+              case 'stateCodeDetail':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}.descCondition`;
+                break;
+              case 'keyState':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'status':
+                searchFilter = SearchFilter.EQ;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
+            /*filter.field == 'regionalDelegation' ||
             filter.field == 'stateCode' ||
             filter.field == 'keyState' ||
             filter.field == 'status'
               ? (searchFilter = SearchFilter.EQ)
-              : (searchFilter = SearchFilter.ILIKE);
+              : (searchFilter = SearchFilter.ILIKE);*/
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
@@ -85,7 +106,7 @@ export class DelegationStateListComponent extends BasePage implements OnInit {
       ...this.columnFilters,
     };
     console.log(params);
-    this.delegationStateService.getAll(params).subscribe({
+    this.delegationStateService.getAllDetail(params).subscribe({
       next: response => {
         this.totalItems = response.count || 0;
         //console.log(response.data);
@@ -141,7 +162,7 @@ export class DelegationStateListComponent extends BasePage implements OnInit {
         this.params
           .pipe(takeUntil(this.$unSubscribe))
           .subscribe(() => this.getData());
-        this.alert('success', 'Delegacione estado', 'Borrado');
+        this.alert('success', 'Delegación estado', 'Borrado');
       },
       error: err => {
         this.alert(

@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 
 import { ReactiveFormsModule } from '@angular/forms';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
+import { BanksSharedComponent } from 'src/app/@standalone/shared-forms/banks-shared/banks-shared.component';
 import { SharedModule } from '../../../shared/shared.module';
 import { GeneralAccountMovementsRoutingModule } from './general-account-movements-routing.module';
 import { GeneralAccountMovementsComponent } from './general-account-movements/general-account-movements.component';
@@ -14,6 +15,7 @@ import { GeneralAccountMovementsComponent } from './general-account-movements/ge
     GeneralAccountMovementsRoutingModule,
     ReactiveFormsModule,
     SharedModule,
+    BanksSharedComponent,
     BsDatepickerModule.forRoot(),
   ],
 })

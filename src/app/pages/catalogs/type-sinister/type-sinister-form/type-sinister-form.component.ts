@@ -31,7 +31,7 @@ export class TypeSinisterFormComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.typeSinisterForm = this.fb.group({
-      id: [null, [Validators.required]],
+      id: [null],
       description: [
         null,
         [

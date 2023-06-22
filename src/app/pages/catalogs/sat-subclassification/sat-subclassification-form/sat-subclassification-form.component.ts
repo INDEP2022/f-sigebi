@@ -7,7 +7,6 @@ import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { ISatClassification } from 'src/app/core/models/catalogs/sat-classification.model';
 import { ISatSubclassification } from 'src/app/core/models/catalogs/sat-subclassification.model';
 import { ISiabClasification } from 'src/app/core/models/catalogs/siab-clasification.model';
-import { SatClassificationService } from 'src/app/core/services/catalogs/sat-classification.service';
 import { SATSubclassificationService } from 'src/app/core/services/catalogs/sat-subclassification.service';
 import { SIABClasificationService } from 'src/app/core/services/catalogs/siab-clasification.service';
 import { BasePage } from 'src/app/core/shared/base-page';

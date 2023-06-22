@@ -18,6 +18,11 @@ export class LawyerService implements ICrudMethods<ILawyer> {
     return this.lawyerRepository.getAllPaginated(this.route, params);
   }
 
+  getAllDetail(params?: ListParams): Observable<IListResponse<ILawyer>> {
+    const route = `${this.route}/get-all`;
+    return this.lawyerRepository.getAllPaginated(route, params);
+  }
+
   getById(id: string | number): Observable<ILawyer> {
     return this.lawyerRepository.getById(this.route, id);
   }

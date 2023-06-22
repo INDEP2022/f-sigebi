@@ -20,7 +20,7 @@ export class CatEffectiveNumeraireModalComponent
 {
   numeraryCategoriesForm: ModelForm<INumeraryCategories>;
   numeraryCategories: INumeraryCategories;
-  title: string = 'Categoria para numerario de efectivo';
+  title: string = 'Categoría para numerario de efectivo';
   edit: boolean = false;
 
   constructor(
@@ -81,7 +81,7 @@ export class CatEffectiveNumeraireModalComponent
   }
 
   handleSuccess() {
-    const message: string = this.edit ? 'Actualizada' : 'Guardada';
+    const message: string = this.edit ? 'Actualizado' : 'Guardado';
     this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);

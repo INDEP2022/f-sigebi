@@ -1,11 +1,16 @@
 import { Component, OnInit, Renderer2 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
-import { IParameter } from 'src/app/core/models/ms-parametercomer/parameter';
+import {
+  IParameter,
+  ITypeEvent,
+} from 'src/app/core/models/ms-parametercomer/parameter';
 import { ParameterModService } from 'src/app/core/services/ms-parametercomer/parameter.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { NUM_POSITIVE, STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
   selector: 'app-parameters-form',
@@ -17,6 +22,7 @@ export class ParametersFormComponent extends BasePage implements OnInit {
   edit: boolean = false;
   form: ModelForm<IParameter>;
   parameter: IParameter;
+  typeEvents = new DefaultSelect<ITypeEvent>();
   constructor(
     private fb: FormBuilder,
     private modalRef: BsModalRef,
@@ -28,6 +34,7 @@ export class ParametersFormComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
+    this.getTypeEvent(new ListParams());
   }
 
   private prepareForm() {
@@ -80,6 +87,15 @@ export class ParametersFormComponent extends BasePage implements OnInit {
     }
   }
 
+  getTypeEvent(params: ListParams) {
+    this.parameterModService.getTypeEvent(params).subscribe(data => {
+      console.log(data);
+      this.typeEvents = new DefaultSelect(data.data, data.count);
+    });
+  }
+
+  typeEventChange(typeEvent: ITypeEvent) {}
+
   confirm() {
     this.edit ? this.update() : this.create();
   }
@@ -114,7 +130,7 @@ export class ParametersFormComponent extends BasePage implements OnInit {
       description: this.form.value.description,
       typeEventId: this.form.value.typeEventId,
     };
-    this.parameterModService.update(body).subscribe({
+    this.parameterModService.update(this.parameter.parameter, body).subscribe({
       next: data => this.handleSuccess(),
       error: error => (this.loading = false),
     });

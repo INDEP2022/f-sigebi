@@ -1,17 +1,57 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">Solicitud de Digitalizaci&oacute;n</h5>
-    <div class="buttons">
+    <div class="d-flex justify-content-between">
+      <h5 class="title">Solicitud de Digitalizaci&oacute;n</h5>
+      <div class="d-inline mr-2" *ngIf="!isSearch">
+        <button
+          type="button"
+          (click)="isSearch = true; clear()"
+          class="btn btn-primary active btn-sm">
+          <i class="bx bx-search-alt bx-sm float-icon"></i>
+        </button>
+        <button
+          *ngIf="isParams"
+          class="btn btn-primary active btn-sm m-2"
+          (click)="back()">
+          Regresar
+          <i class="fas fa-arrow-circle-left"></i>
+        </button>
+      </div>
+      <div class="d-inline mx-2" *ngIf="isSearch">
+        <div class="btn-group">
+          <button
+            type="button"
+            (click)="searchNotification(); isSearch = false"
+            class="btn btn-primary btn-sm">
+            <i class="bx bx-check bx-sm float-icon"></i>
+          </button>
+          <button
+            type="button"
+            (click)="clear(); isSearch = false"
+            class="btn btn-primary btn-sm">
+            <i class="bx bx-x bx-sm float-icon"></i>
+          </button>
+          <button
+            *ngIf="isParams"
+            class="btn btn-primary active btn-sm m-2"
+            (click)="back()">
+            Regresar
+            <i class="fas fa-arrow-circle-left"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div body>
+    <!-- <div class="buttons">
       <button
         class="btn btn-secondary btn-sm active mr-2"
         (click)="back()"
         *ngIf="isParams">
         Regresar
       </button>
-    </div>
-  </div>
-
-  <div body>
+    </div> -->
     <form [formGroup]="formNotification" class="form-material">
       <div class="row">
         <form-field
@@ -113,26 +153,27 @@
       <div class="row">
         <div class="col-12">
           <div class="buttons text-end">
-            <span *ngIf="count > 0">
-              <button
-                class="btn btn-primary btn-sm active mr-2"
-                (click)="notificationList()">
+            <button
+              style="float: right"
+              type="button"
+              [disabled]="count <= 1"
+              (click)="notificationList()"
+              tooltip="Lista Expedientes"
+              containerClass="tooltip-style"
+              class="btn btn-primary btn-sm active mr-3">
+              <i class="bx bx-list-plus bx-sm float-icon"></i>
+            </button>
+            <!-- <span *ngIf="count > 0">
+              <button class="btn btn-primary btn-sm active mr-2" (click)="notificationList()">
                 Ver lista expedientes
               </button>
-            </span>
-            <confirm-button
-              text="Buscar"
-              [loadingText]="'Buscando'"
-              [loading]="loading"
-              [btnSmall]="true"
+            </span> -->
+            <!-- <confirm-button text="Buscar" [loadingText]="'Buscando'" [loading]="loading" [btnSmall]="true"
               (confirm)="searchNotification()">
             </confirm-button>
-            <button
-              class="btn btn-primary btn-sm active ml-2"
-              (click)="clear()"
-              [disabled]="loading">
+            <button class="btn btn-primary btn-sm active ml-2" (click)="clear()" [disabled]="loading">
               Limpiar
-            </button>
+            </button> -->
           </div>
         </div>
       </div>
@@ -192,13 +233,21 @@
       <div class="row">
         <div class="col-12">
           <div class="buttons text-end">
-            <span *ngIf="countDoc > 0">
-              <button
-                class="btn btn-primary btn-sm active mr-2"
-                (click)="documentsList()">
+            <button
+              style="float: right"
+              type="button"
+              [disabled]="countDoc <= 1"
+              (click)="documentsList()"
+              tooltip="Ver Lista Documentos"
+              containerClass="tooltip-style"
+              class="btn btn-primary btn-sm active mr-3">
+              <i class="bx bx-list-plus bx-sm float-icon"></i>
+            </button>
+            <!-- <span *ngIf="countDoc > 0">
+              <button class="btn btn-primary btn-sm active mr-2" (click)="documentsList()">
                 Ver lista documentos
               </button>
-            </span>
+            </span> -->
           </div>
         </div>
       </div>
@@ -206,10 +255,16 @@
       <div class="row align-items-baseline">
         <div class="col-auto">
           <button
-            class="btn btn-primary btn-sm active mr-2"
-            (click)="clearDocument()">
-            Nueva Solicitud
+            type="button"
+            (click)="clearDocument()"
+            tooltip="Nueva Solicitud"
+            containerClass="tooltip-style"
+            class="btn btn-info btn-sm active ml-2 mr-2">
+            <i class="bx bx-plus bx-sm float-icon"></i>
           </button>
+          <!-- <button class="btn btn-primary btn-sm active mr-2" (click)="clearDocument()">
+            Nueva Solicitud
+          </button> -->
         </div>
         <div class="col-auto">
           <confirm-button
@@ -231,15 +286,21 @@
               type="text"
               formControlName="id"
               class="form-control mt-3"
-              placeholder="FOLIO_UNIERVERSAL" />
+              placeholder="FOLIO_UNIVERSAL" />
           </form-field>
         </div>
         <div class="col-md-3">
           <button
+            type="button"
+            (click)="proccesReport()"
+            class="btn btn-primary active btn-sm">
+            Imprimir <i class="bx bx-printer bx-sm float-icon"></i>
+          </button>
+          <!-- <button
             class="btn btn-secondary btn-sm active"
             (click)="proccesReport()">
             <i class="fas fa-print"></i>
-          </button>
+          </button> -->
         </div>
       </div>
     </form>

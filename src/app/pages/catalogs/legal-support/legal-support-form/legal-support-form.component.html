@@ -6,13 +6,23 @@
     <form [formGroup]="legalSupportForm" class="form-material">
       <div class="row">
         <div *ngIf="edit" class="col-md-3">
-          <form-field [control]="legalSupportForm.get('id')" label="Identificador">
-            <input class="form-control" formControlName="id" placeholder="Identificador" />
+          <form-field
+            [control]="legalSupportForm.get('id')"
+            label="Identificador">
+            <input
+              class="form-control"
+              formControlName="id"
+              placeholder="Identificador" />
           </form-field>
         </div>
         <div class="col-md-12">
-          <form-field [control]="legalSupportForm.get('support')" label="Sustento">
-            <textarea class="form-control" formControlName="support" placeholder="Sustento">
+          <form-field
+            [control]="legalSupportForm.get('support')"
+            label="Sustento">
+            <textarea
+              class="form-control"
+              formControlName="support"
+              placeholder="Sustento">
             </textarea>
           </form-field>
         </div>
@@ -22,7 +32,10 @@
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <confirm-button [disabled]="legalSupportForm.invalid" [loading]="loading" (confirm)="confirm()">
+        <confirm-button
+          [disabled]="legalSupportForm.invalid"
+          [loading]="loading"
+          (confirm)="confirm()">
         </confirm-button>
       </div>
       <div class="m-3">

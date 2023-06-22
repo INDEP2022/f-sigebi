@@ -16,7 +16,6 @@ import { IAffair } from 'src/app/core/models/catalogs/affair.model';
 //service
 import { AffairTypeService } from 'src/app/core/services/affair/affair-type.service';
 import { AffairService } from 'src/app/core/services/catalogs/affair.service';
-import Swal from 'sweetalert2';
 import { AffairModalComponent } from '../affair-modal/affair-modal.component';
 import { FlyerSubjectCatalogModelComponent } from '../flyer-subject-catalog-model/flyer-subject-catalog-model.component';
 
@@ -253,7 +252,8 @@ export class FlyerSubjectCatalogComponent extends BasePage implements OnInit {
       next: () => {
         this.getAffairType(affair);
         this.alert('success', 'Tipo Volante', 'Borrado');
-      }, error: erro => {
+      },
+      error: erro => {
         this.alert(
           'warning',
           'Tipo Volante',

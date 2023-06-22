@@ -18,7 +18,8 @@ import { AffairService } from 'src/app/core/services/catalogs/affair.service';
 })
 export class FlyerSubjectCatalogModelComponent
   extends BasePage
-  implements OnInit {
+  implements OnInit
+{
   title: string = 'Tipo de volantes';
   edit: boolean = false;
 

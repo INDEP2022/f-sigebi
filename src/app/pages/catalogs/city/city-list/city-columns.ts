@@ -11,7 +11,7 @@ export const CITY_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  state: {
+  stateDetail: {
     title: 'Entidad Federativa',
     type: 'string',
     sort: false,
@@ -27,7 +27,7 @@ export const CITY_COLUMNS = {
       }
     },
   },
-  delegation: {
+  delegationDetail: {
     title: 'Delegación',
     type: 'string',
     sort: false,
@@ -40,7 +40,7 @@ export const CITY_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  subDelegation: {
+  SubDelegationDetail: {
     title: 'Subdelegación',
     type: 'string',
     sort: false,
