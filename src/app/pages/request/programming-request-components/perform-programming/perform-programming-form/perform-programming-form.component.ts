@@ -2051,15 +2051,11 @@ export class PerformProgrammingFormComponent
       this.performForm
         .get('startDate')
         .setValue(
-          moment(this.dataProgramming.startDate).format(
-            'DD/MMMM/YYYY, h:mm:ss a'
-          )
+          moment(this.dataProgramming.startDate).format('DD/MMMM/YYYY')
         );
       this.performForm
         .get('endDate')
-        .setValue(
-          moment(this.dataProgramming.endDate).format('DD/MMMM/YYYY, h:mm:ss a')
-        );
+        .setValue(moment(this.dataProgramming.endDate).format('DD/MMMM/YYYY'));
 
       this.transferentId = this.dataProgramming.tranferId;
 
@@ -2240,17 +2236,16 @@ export class PerformProgrammingFormComponent
 
   checkInfoDate(event: any) {
     const startDate = event;
-    const _startDateFormat = moment(startDate).format(
-      'DD/MMMM/YYYY, h:mm:ss a'
-    );
+    const _startDateFormat = moment(startDate).format('DD/MMMM/YYYY');
 
     const _endDateFormat = moment(this.performForm.get('endDate').value).format(
-      'DD/MMMM/YYYY, h:mm:ss a'
+      'DD/MMMM/YYYY'
     );
     const date = moment(new Date()).format('YYYY-MM-DD');
     this.programmingService.getDateProgramming(date, 5).subscribe({
       next: (response: any) => {
-        const correctDate = moment(response).format('DD/MMMM/YYYY, h:mm:ss a');
+        console.log('correctDate', response);
+        const correctDate = moment(response).format('DD/MMMM/YYYY');
         if (correctDate > _startDateFormat || correctDate > _endDateFormat) {
           this.performForm
             .get('startDate')
