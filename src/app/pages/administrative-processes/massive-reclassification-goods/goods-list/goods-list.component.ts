@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { Ng2SmartTableComponent } from 'ng2-smart-table';
 import {
   catchError,
   distinctUntilChanged,
@@ -33,6 +34,7 @@ export class GoodsListComponent
   implements OnInit
 {
   previousSelecteds: IGood[] = [];
+  @ViewChild('table') table: Ng2SmartTableComponent;
   constructor(
     private massiveService: MassiveReclassificationGoodsService,
     private procedureManagement: ProcedureManagementService,
@@ -64,6 +66,25 @@ export class GoodsListComponent
         return row.data.notSelect ? 'notSelect' : '';
       },
     };
+  }
+
+  private fillSelectedRows() {
+    setTimeout(() => {
+      console.log(this.selectedGooods);
+      if (this.selectedGooods && this.selectedGooods.length > 0) {
+        this.table.grid.getRows().forEach(row => {
+          console.log(row);
+
+          if (
+            this.selectedGooods.find(item => row.getData()['id'] === item.id)
+          ) {
+            this.table.grid.multipleSelectRow(row);
+          }
+          // if(row.getData())
+          // this.table.grid.multipleSelectRow(row)
+        });
+      }
+    }, 500);
   }
 
   get selectedGooods() {
@@ -275,6 +296,7 @@ export class GoodsListComponent
           console.log(response);
           this.data.load(response);
           this.data.refresh();
+          this.fillSelectedRows();
           // if (response.data && response.data.length > 0) {
           //   this.listGood = response.data;
           //   this.totalItems = response.count;

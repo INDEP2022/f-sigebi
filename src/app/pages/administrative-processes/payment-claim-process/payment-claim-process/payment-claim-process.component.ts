@@ -210,6 +210,7 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
     fileReader.readAsBinaryString(files[0]);
     fileReader.onload = () => this.readExcel(fileReader.result);
   }
+
   readExcel(binaryExcel: string | ArrayBuffer) {
     try {
       this.ids = this.excelService.getData(binaryExcel);
@@ -228,7 +229,7 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
       this.showError = false;
       this.showStatus = false;
       this.loadGood(this.ids);
-
+      // this.form.get('justification').setValue('HOLAAAA')
       this.cargarData(this.ids);
 
       this.alert('success', 'Archivo subido exitosamente', '');
@@ -245,13 +246,14 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
     this.validStatusXScreen(this.good);
   }
 
-  change() {
-    this.goods.forEach(good => {
-      good.status = good.status === 'PRP' ? 'ADM' : 'PRP';
-      let obj = {
+  async change() {
+    this.goods.forEach(async good => {
+      // good.status = good.status === 'PRP' ? 'ADM' : 'PRP';
+      let obj: any = {
         id: good.id,
         goodId: good.goodId,
         status: good.status,
+        causeNumberChange: this.form.value.justification,
       };
       this.goodServices.update(obj).subscribe({
         next: response => {
@@ -271,6 +273,35 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
     this.addStatus();
     this.showStatus = true;
   }
+
+  async change2() {
+    this.goods.forEach(async good => {
+      // good.status = good.status === 'PRP' ? 'ADM' : 'PRP';
+      let obj: any = {
+        id: good.id,
+        goodId: good.goodId,
+        status: good.status,
+        causeNumberChange: this.form.value.justification,
+      };
+      this.goodServices.update(obj).subscribe({
+        next: response => {
+          console.log(response);
+        },
+        error: err => {
+          this.loading = false;
+          this.idsNotExist.push({ id: good.id, reason: err.error.message });
+        },
+      });
+    });
+    this.onLoadToast(
+      'success',
+      'Se ha actualizado el motivo de cambio de los bienes seleccionados',
+      ''
+    );
+    this.addStatus();
+    this.showStatus = true;
+  }
+
   addStatus() {
     this.data.load(this.goods);
     this.data.refresh();
@@ -349,7 +380,12 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
     this.cambiarValor();
   }
 
+  // CAMBIAR STATUS DEL BIEN Y ELIMINAR FOLIO DE ESCANEO //
   validStatusXScreen(good: IGood) {
+    if (this.form.value.justification == null) {
+      this.alert('info', 'El motivo de cambio se encuentra vacío', '');
+      return;
+    }
     this.screenStatusService
       .getStatusXScreen({
         screen: 'FPROCRECPAG',
@@ -389,17 +425,38 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
     });
   }
 
-  deleteFoli() {
+  // SE ELIMINA ESCANEO DE FOLIO UNIVERSAL TANTO EL SOLICITADO COMO EL ESCANEADO //
+  async deleteFoli() {
     console.log(this.document.id);
+    const folioUniversalesReplicados: any = await this.returnFoliosReplicados(
+      this.document.id
+    );
+
+    if (folioUniversalesReplicados != null) {
+      for (let i = 0; i < folioUniversalesReplicados.length; i++) {
+        this.documnetServices
+          .delete(folioUniversalesReplicados[i].id)
+          .subscribe({
+            next: response => {},
+            error: err => {
+              console.log(err);
+            },
+          });
+      }
+    }
+
     this.documnetServices.delete(this.document.id).subscribe({
       next: response => {
+        this.change2();
         this.cambiarValor();
-        this.document = undefined;
+        this.document = null;
         this.alert('success', 'Se ha eliminado correctamente el folio', '');
       },
       error: err => {
         if (err.error.message == 'Este registro no existe!') {
+          this.change2();
           this.cambiarValor();
+          this.document = null;
           this.alert(
             'error',
             'Elimiado',
@@ -416,27 +473,44 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
       },
     });
   }
+
+  async returnFoliosReplicados(id: any) {
+    const params = new ListParams();
+    params['filter.associateUniversalFolio'] = `$eq:${id}`;
+
+    return new Promise((resolve, reject) => {
+      this.documnetServices.getAll(params).subscribe({
+        next: response => {
+          resolve(response.data);
+        },
+        error: err => {
+          resolve(null);
+          console.log(err);
+        },
+      });
+    });
+  }
+  // LIMPIAMOS VALOR DEL FOLIO UNIVERSAL A PARTIR DEL COMPONENTE HIJO //
   cambiarValor() {
     this.hijoRef.actualizarVariable(true, '');
   }
 
   obtenerDocument(good: any) {
-    console.log('this.document', this.document);
     if (this.valDocument == true) {
       return;
     } else {
+      console.log('this.document', this.document);
       this.hijoRef.getDocument(good);
     }
   }
 
+  // CARGAR DATA EN EL STORAGE PARA REGRESAR A LA PANTALLA CON DATOS CARGADOS //
   cargarData(ids: any) {
     this.hijoRef.cargarData(ids);
   }
-
   async removeItem(key: string) {
     localStorage.removeItem(key);
   }
-
   async getItem(key: string) {
     const value = localStorage.getItem(key);
     return value ? JSON.parse(value) : null;
