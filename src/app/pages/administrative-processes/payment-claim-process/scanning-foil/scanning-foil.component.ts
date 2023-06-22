@@ -34,7 +34,7 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
   params = new BehaviorSubject<ListParams>(new ListParams());
   generateFo: boolean = true;
   @Input() numberFoli: string | number = '';
-  @Input() goods: IGood[] = [];
+  @Input() goods: any[] = [];
   @Output() documentEmmit = new EventEmitter<IDocuments>();
   @Output() firstGood = new EventEmitter<IGood>();
   // get scanningFoli() {
@@ -85,7 +85,7 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
     this.goods.forEach((good, index) => {
       if (index !== 0) {
         const documents: IDocuments = {
-          numberProceedings: good.fileNumber,
+          numberProceedings: good.filenumber,
           keySeparator: 60,
           keyTypeDocument: 'ENTRE',
           natureDocument: 'ORIGINAL',
@@ -95,7 +95,7 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
           userRequestsScan: this.user.usuario.user,
           scanRequestDate: new Date(),
           associateUniversalFolio: this.document.id,
-          flyerNumber: good.flyerNumber,
+          flyerNumber: good.flyernumber,
           goodNumber: good.id,
           numberDelegationRequested: this.user.usuario.delegationNumber,
           numberDepartmentRequest: this.user.usuario.departamentNumber,
@@ -171,10 +171,10 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
     });
   }
 
-  document1(good: IGood) {
+  document1(good: any) {
     this.firstGood.emit(good);
     const documents: IDocuments = {
-      numberProceedings: good.fileNumber,
+      numberProceedings: good.filenumber,
       keySeparator: 60,
       keyTypeDocument: 'ENTRE',
       natureDocument: 'ORIGINAL',
@@ -184,7 +184,7 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
       userRequestsScan: this.user.usuario.user,
       scanRequestDate: new Date(),
       associateUniversalFolio: null,
-      flyerNumber: good.flyerNumber,
+      flyerNumber: good.flyernumber,
       goodNumber: good.id,
       numberDelegationRequested: this.user.usuario.delegationNumber,
       numberDepartmentRequest: this.user.usuario.departamentNumber,
@@ -294,8 +294,8 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
       });
   }
   idsGoods: any = null;
-  cargarData(ids: any) {
-    this.idsGoods = ids;
+  cargarData(binaryExcel: any) {
+    this.idsGoods = binaryExcel;
     console.log('this.idsGoods', this.idsGoods);
   }
 }
