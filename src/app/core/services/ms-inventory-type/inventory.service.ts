@@ -1,18 +1,15 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { InventoryQueryRepository } from 'src/app/common/repository/repositories/ms-inventory-query-repository';
 import { HttpService } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
-import { IInventoryQuery } from '../../models/ms-inventory-query/inventory-query.model';
+import { IInventoryGood } from '../../models/ms-inventory-query/inventory-query.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class InventoryService extends HttpService {
-  constructor(
-    private requestRepository: InventoryQueryRepository<IInventoryQuery | any>
-  ) {
+  constructor() {
     super();
     this.microservice = 'inventory';
   }
@@ -21,12 +18,22 @@ export class InventoryService extends HttpService {
     goodId: number,
     params: ListParams
   ): Observable<IListResponse<any>> {
-    const route = `application/getInventory/${goodId}`;
+    const route = `inventory-x-good?filter.goodNumber=$eq:${goodId}`;
     return this.get(route, params);
   }
 
   getPerson(params: ListParams): Observable<IListResponse<any>> {
     const route = `application/getPerson`;
     return this.get(route, params);
+  }
+
+  getLinesInventory(params: ListParams) {
+    const route = `lines-inventory`;
+    return this.get(route, params);
+  }
+
+  create(model: IInventoryGood) {
+    const route = 'inventory-x-good';
+    return this.post(route, model);
   }
 }
