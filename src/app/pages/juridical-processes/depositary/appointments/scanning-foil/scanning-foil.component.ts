@@ -38,7 +38,10 @@ export class ScanningFoilAppointmentComponent
   @Input() paramsScreen: any;
   @Input() disabled: boolean = false;
 
+  @Output() scanRequestEmitter = new EventEmitter<boolean>();
+  @Output() showScanningPageEmitter = new EventEmitter<boolean>();
   @Output() viewPicturesEmitter = new EventEmitter<boolean>();
+  @Output() messageDigitalizationEmitter = new EventEmitter<boolean>();
 
   get scanningFoli() {
     return this.formScan.get('scanningFoli');
@@ -96,26 +99,27 @@ export class ScanningFoilAppointmentComponent
   }
 
   async createScannerFoil() {
-    if (!this.officeDictationData && !this.dictationData) {
-      return;
-    }
-    if (
-      this.officeDictationData.statusOf == 'ENVIADO' &&
-      this.dictationData.passOfficeArmy
-    ) {
-      if (!this.formScan.get('scanningFoli').value) {
-        // Llamar a crear folio universal
-        await this.confirmScanRequest();
-      } else {
-        this.alertInfo('info', 'El Dictamen ya tiene Folio de Escaneo', '');
-      }
-    } else {
-      this.alertInfo(
-        'warning',
-        'No se puede escanear para un Dictamen que esté abierto',
-        ''
-      );
-    }
+    this.scanRequestEmitter.emit(true);
+    // if (!this.officeDictationData && !this.dictationData) {
+    //   return;
+    // }
+    // if (
+    //   this.officeDictationData.statusOf == 'ENVIADO' &&
+    //   this.dictationData.passOfficeArmy
+    // ) {
+    //   if (!this.formScan.get('scanningFoli').value) {
+    //     // Llamar a crear folio universal
+    //     await this.confirmScanRequest();
+    //   } else {
+    //     this.alertInfo('info', 'El Dictamen ya tiene Folio de Escaneo', '');
+    //   }
+    // } else {
+    //   this.alertInfo(
+    //     'warning',
+    //     'No se puede escanear para un Dictamen que esté abierto',
+    //     ''
+    //   );
+    // }
   }
 
   showScannerFoil() {
@@ -131,61 +135,63 @@ export class ScanningFoilAppointmentComponent
   }
 
   openScannerPage() {
-    if (!this.officeDictationData || !this.dictationData) {
-      return;
-    }
-    if (
-      this.officeDictationData.statusOf == 'ENVIADO' &&
-      this.dictationData.passOfficeArmy
-    ) {
-      if (this.formScan.get('scanningFoli').value) {
-        this.alertQuestion(
-          'info',
-          'Se abrirá la pantalla de escaneo para el folio de Escaneo del Dictamen. ¿Deseas continuar?',
-          '',
-          'Aceptar',
-          'Cancelar'
-        ).then(res => {
-          console.log(res);
-          if (res.isConfirmed) {
-            this.router.navigate(['/pages/general-processes/scan-documents'], {
-              queryParams: {
-                origin: this.screenKey,
-                origin2: this.screenKey2,
-                folio: this.formScan.get('scanningFoli').value,
-                ...this.paramsScreen,
-              },
-            });
-          }
-        });
-      } else {
-        this.alertInfo(
-          'warning',
-          'No tiene Folio de Escaneo para continuar a la pantalla de Escaneo',
-          ''
-        );
-      }
-    } else {
-      this.alertInfo(
-        'warning',
-        'No se puede Escanear para un Dictamen que esté abierto',
-        ''
-      );
-    }
+    this.showScanningPageEmitter.emit(true);
+    // if (!this.officeDictationData || !this.dictationData) {
+    //   return;
+    // }
+    // if (
+    //   this.officeDictationData.statusOf == 'ENVIADO' &&
+    //   this.dictationData.passOfficeArmy
+    // ) {
+    //   if (this.formScan.get('scanningFoli').value) {
+    //     this.alertQuestion(
+    //       'info',
+    //       'Se abrirá la pantalla de escaneo para el folio de Escaneo del Dictamen. ¿Deseas continuar?',
+    //       '',
+    //       'Aceptar',
+    //       'Cancelar'
+    //     ).then(res => {
+    //       console.log(res);
+    //       if (res.isConfirmed) {
+    //         this.router.navigate(['/pages/general-processes/scan-documents'], {
+    //           queryParams: {
+    //             origin: this.screenKey,
+    //             origin2: this.screenKey2,
+    //             folio: this.formScan.get('scanningFoli').value,
+    //             ...this.paramsScreen,
+    //           },
+    //         });
+    //       }
+    //     });
+    //   } else {
+    //     this.alertInfo(
+    //       'warning',
+    //       'No tiene Folio de Escaneo para continuar a la pantalla de Escaneo',
+    //       ''
+    //     );
+    //   }
+    // } else {
+    //   this.alertInfo(
+    //     'warning',
+    //     'No se puede Escanear para un Dictamen que esté abierto',
+    //     ''
+    //   );
+    // }
   }
 
   showMessageDigitalization() {
-    if (this.formScan.get('scanningFoli').value) {
-      this.alertInfo(
-        'success',
-        'El folio universal generado es: "' +
-          this.formScan.get('scanningFoli').value +
-          '"',
-        ''
-      );
-    } else {
-      this.alertInfo('warning', 'No tiene Folio de Escaneo para Imprimir', '');
-    }
+    this.messageDigitalizationEmitter.emit(true);
+    // if (this.formScan.get('scanningFoli').value) {
+    //   this.alertInfo(
+    //     'success',
+    //     'El folio universal generado es: "' +
+    //       this.formScan.get('scanningFoli').value +
+    //       '"',
+    //     ''
+    //   );
+    // } else {
+    //   this.alertInfo('warning', 'No tiene Folio de Escaneo para Imprimir', '');
+    // }
   }
 
   async confirmScanRequest() {
