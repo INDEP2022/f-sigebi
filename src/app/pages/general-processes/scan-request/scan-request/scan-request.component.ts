@@ -8,6 +8,7 @@ import { BehaviorSubject, takeUntil, tap } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import {
   FilterParams,
+  ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
@@ -19,6 +20,7 @@ import {
   IReport,
   SiabService,
 } from 'src/app/core/services/jasper-reports/siab.service';
+import { MsDepositaryService } from 'src/app/core/services/ms-depositary/ms-depositary.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -51,6 +53,11 @@ export class ScanRequestComponent extends BasePage implements OnInit {
   today: Date = new Date();
   loadingDoc: boolean = false;
   isSearch: boolean = false;
+  paramsDepositaryAppointment: any = {
+    P_NB: null,
+    P_FOLIO: null,
+    P_ND: null,
+  };
 
   constructor(
     private fb: FormBuilder,
@@ -63,13 +70,19 @@ export class ScanRequestComponent extends BasePage implements OnInit {
     private sanitizer: DomSanitizer,
     private authService: AuthService,
     private receptionService: DocReceptionRegisterService,
-    private router: Router
+    private router: Router,
+    private msDepositaryService: MsDepositaryService
   ) {
     super();
     this.route.queryParams
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(params => {
         this.origin = params['origin'] ?? null;
+        if (this.origin == 'FACTJURREGDESTLEG') {
+          this.paramsDepositaryAppointment.P_NB = params['P_NB'] ?? null;
+          this.paramsDepositaryAppointment.P_FOLIO = params['P_FOLIO'] ?? null;
+          this.paramsDepositaryAppointment.P_ND = params['P_ND'] ?? null;
+        }
       });
     const params = new FilterParams();
     const token = this.authService.decodeToken();
@@ -108,11 +121,18 @@ export class ScanRequestComponent extends BasePage implements OnInit {
     }
   }
   back() {
-    const location: any = {
-      FGESTBUZONTRAMITE: () =>
-        this.router.navigate(['/pages/general-processes/work-mailbox']),
-    };
-    location[this.origin]();
+    if (this.origin == 'FACTJURREGDESTLEG') {
+      this.router.navigate([
+        `/pages/juridical/depositary/depositary-record/` +
+          this.paramsDepositaryAppointment.P_NB,
+      ]);
+    } else {
+      const location: any = {
+        FGESTBUZONTRAMITE: () =>
+          this.router.navigate(['/pages/general-processes/work-mailbox']),
+      };
+      location[this.origin]();
+    }
   }
 
   createFilter() {
@@ -329,6 +349,47 @@ export class ScanRequestComponent extends BasePage implements OnInit {
           const time = setTimeout(() => {
             this.proccesReport();
             clearTimeout(time);
+            if (this.origin == 'FACTJURREGDESTLEG') {
+              const params = new ListParams();
+              params['filter.goodNumber'] =
+                this.paramsDepositaryAppointment.P_NB;
+              params['filter.appointmentNumber'] =
+                this.paramsDepositaryAppointment.P_ND;
+              this.msDepositaryService.getAllFiltered(params).subscribe({
+                next: data => {
+                  console.log('GET DATA NOMBRAMIENTO', data);
+                  let body: any = {
+                    appointmentNumber: data.data[0].appointmentNumber,
+                    amountIVA: data.data[0].amountIVA,
+                    personNumber: data.data[0].personNumber.id,
+                    iva: data.data[0].iva,
+                  };
+                  if (this.paramsDepositaryAppointment.P_FOLIO == 'R') {
+                    body['folioReturn'] = this.idFolio;
+                  } else if (this.paramsDepositaryAppointment.P_FOLIO == 'A') {
+                    body['universalFolio'] = this.idFolio;
+                  }
+                  if (
+                    this.paramsDepositaryAppointment.P_FOLIO == 'A' ||
+                    this.paramsDepositaryAppointment.P_FOLIO == 'R'
+                  ) {
+                    // Guardar nuevo folio universal en nombramientos depositarias
+                    this.msDepositaryService.update(body).subscribe({
+                      next: data => {
+                        console.log('SAVE DATA NOMBRAMIENTO', data);
+                        // Guardar nuevo folio universal en nombramientos depositarias
+                      },
+                      error: error => {
+                        console.log(error);
+                      },
+                    });
+                  }
+                },
+                error: error => {
+                  console.log(error);
+                },
+              });
+            }
           }, 1000);
         },
       });

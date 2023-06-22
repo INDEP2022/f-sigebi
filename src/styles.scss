@@ -586,3 +586,8 @@ ng-scrollbar.table-scrollbar {
 // #idTableTestBody2 table tbody tr td {
 //   width: 33.5% !important;
 // }
+
+#custom-table-table-cursor table tbody tr td {
+  cursor: default !important;
+  background-color: #fff;
+}

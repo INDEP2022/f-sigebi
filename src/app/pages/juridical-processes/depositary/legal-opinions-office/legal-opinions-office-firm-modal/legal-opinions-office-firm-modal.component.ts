@@ -184,7 +184,7 @@ export class LegalOpinionsOfficeFirmModalComponent
           console.log(data);
           this.alertInfo(
             'success',
-            'Se realizó el proceso de Firmar el Dictamen correctamente',
+            'Se Realizó el Proceso de Firmar el Dictamen Correctamente',
             data.message
           ).then(() => {
             this.fileForm.controls['signature'] = data.signature;
@@ -198,10 +198,10 @@ export class LegalOpinionsOfficeFirmModalComponent
           // this.errorFirm.emit(true);
           this.alert(
             'error',
-            'Ocurrió un error al Firmar el Dictamen ',
+            'Ocurrió un Error al Firmar el Dictamen ',
             error.error.message
           ),
-            console.log('Error en el firmante', error.error);
+            console.log('Error en el Firmante', error.error);
         },
       });
   }
