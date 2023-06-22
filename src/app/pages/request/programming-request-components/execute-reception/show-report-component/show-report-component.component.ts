@@ -50,6 +50,8 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
   receipt: IReceipt;
   signatore: ISignatories;
   programming: Iprogramming;
+  nomReport: string = '';
+  actId: number = 0;
   constructor(
     private sanitizer: DomSanitizer,
     private modalService: BsModalService,
@@ -80,6 +82,10 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    console.log('actId', this.actId);
+    console.log('progId', this.idProg);
+    console.log('nomReport', this.nomReport);
+    console.log('typeReport', this.idTypeDoc);
     this.showReportByTypeDoc();
     this.getReceipt();
     this.params
@@ -99,6 +105,15 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
 
     if (this.idTypeDoc == 221) {
       let linkDoc: string = `${this.urlBaseReport}oficio_programacion_recepcion.jasper&ID_PROGRAMACION=${this.idProg}`;
+      this.src = linkDoc;
+    }
+
+    if (
+      this.idTypeDoc == 106 ||
+      this.idTypeDoc == 107 ||
+      this.idTypeDoc == 210
+    ) {
+      let linkDoc: string = `${this.urlBaseReport}${this.nomReport}&ID_ACTA=${this.actId}&ID_PROGRAMACION=${this.idProg}`;
       this.src = linkDoc;
     }
   }
@@ -187,7 +202,6 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
   }
 
   registerSign() {
-    console.log('Firmante', this.signatore);
     const learnedType = 221;
     const learndedId = this.idProg;
     this.signatoriesService
@@ -206,12 +220,9 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                   this.signatore.nameSignatore,
                   this.signatore.chargeSignatore
                 );
-                console.log('Firmante', createSignatore);
                 if (createSignatore) this.getSignatories();
               },
-              error: error => {
-                console.log('error', error);
-              },
+              error: error => {},
             });
         },
         error: async error => {
@@ -223,7 +234,6 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
             this.signatore.nameSignatore,
             this.signatore.chargeSignatore
           );
-          console.log('Firmante', createSignatore);
           if (createSignatore) this.getSignatories();
         },
       });
@@ -274,11 +284,9 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
               .firmDocument(this.idProg, 'ProgramacionRecibo', {})
               .subscribe({
                 next: response => {
-                  console.log('Firmado', response);
                   this.msjCheck = true;
                 },
                 error: error => {
-                  console.log('Firmado');
                   this.msjCheck = true;
                 },
               });
@@ -297,11 +305,9 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                 )
                 .subscribe({
                   next: response => {
-                    console.log('Firmado', response);
                     this.msjCheck = true;
                   },
                   error: error => {
-                    console.log('Firmado');
                     this.msjCheck = true;
                   },
                 });
@@ -415,9 +421,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
               this.close();
             }
           },
-          error: error => {
-            console.log('Error', error);
-          },
+          error: error => {},
         });
     });
   }

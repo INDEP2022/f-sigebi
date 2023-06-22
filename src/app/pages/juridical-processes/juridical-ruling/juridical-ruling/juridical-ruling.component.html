@@ -443,8 +443,20 @@
               Documentos
             </button>
           </div>
-          <div class="col-6 text-align-center">
+          <div
+            class="col-6 text-align-center"
+            [ngClass]="{ 'd-flex': loadingDic }">
+            <confirm-button
+              *ngIf="loadingDic"
+              class="ct"
+              [loadingText]="'Aprobando'"
+              [loading]="loadingDic"
+              [btnSmall]="true"
+              text="Aprobar"
+              (confirm)="btnApprove()">
+            </confirm-button>
             <button
+              *ngIf="!loadingDic"
               class="btn btn-primary btn-sm active m-3 text-wrap w-100"
               [disabled]="!buttonAprove"
               (click)="btnApprove()">
@@ -489,14 +501,12 @@
               Imprimir <i class="bx bx-printer bx-sm float-icon"></i>
             </button>
           </div>
-          <div class="col-12">
+          <!-- <div class="col-12">
             <p class="text-info">
-              <strong
-                >Click boton derecho para consultar dictaminaciones
-                anteriores</strong
-              >
+              <strong>Click boton derecho para consultar dictaminaciones
+                anteriores</strong>
             </p>
-          </div>
+          </div> -->
         </div>
       </div>
     </div>
