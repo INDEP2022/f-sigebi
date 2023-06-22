@@ -16,21 +16,34 @@ export const DEPARTMENT_COLUMNS = {
   delegation: {
     title: 'Delegación',
     type: 'string',
+    sort: false,
     valuePrepareFunction: (value: IDelegation) => {
       return value?.description;
     },
-    filterFunction: (cell?: any, search?: string) => {
-      return search != null ? search : '';
+    filterFunction(cell?: any, search?: string): boolean {
+      let column = cell.description;
+      if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
+        return true;
+      } else {
+        return false;
+      }
     },
-    sort: false,
   },
   numSubDelegation: {
     title: 'Subdelegación',
     type: 'string',
+    sort: false,
     valuePrepareFunction: (value: ISubdelegation) => {
       return value?.description;
     },
-    sort: false,
+    filterFunction(cell?: any, search?: string): boolean {
+      let column = cell.description;
+      if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
+        return true;
+      } else {
+        return false;
+      }
+    },
   },
   description: {
     title: 'Descripción',

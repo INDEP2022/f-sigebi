@@ -29,6 +29,15 @@ export const EMAIL_COLUMNS = {
         return value.delegationNumber;
       }
     },
+
+    filterFunction(cell?: any, search?: string): boolean {
+      let column = cell.delegationNumber;
+      if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
+        return true;
+      } else {
+        return false;
+      }
+    },
   },
   email: {
     title: 'Email',
