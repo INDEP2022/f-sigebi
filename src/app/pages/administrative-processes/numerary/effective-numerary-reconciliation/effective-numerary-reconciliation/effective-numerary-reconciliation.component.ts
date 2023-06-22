@@ -37,7 +37,7 @@ export class EffectiveNumeraryReconciliationComponent implements OnInit {
     private siabService: SiabService,
     private sanitizer: DomSanitizer,
     private modalService: BsModalService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.prepareForm();
@@ -49,11 +49,11 @@ export class EffectiveNumeraryReconciliationComponent implements OnInit {
       subdelegation: [null, Validators.required],
       currency: [null, Validators.required],
       bank: [null, Validators.required],
-      fileFrom: [null, Validators.required, Validators.maxLength(11)],
-      fileTo: [null, Validators.required, Validators.maxLength(11)],
+      fileFrom: [null, Validators.required],
+      fileTo: [null, Validators.required],
       from: [null, Validators.required],
       to: [null, Validators.required],
-      import: [null],
+      import: [null, Validators.required],
     });
   }
 
@@ -95,7 +95,7 @@ export class EffectiveNumeraryReconciliationComponent implements OnInit {
                 urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
                 type: 'pdf',
               },
-              callback: (data: any) => {},
+              callback: (data: any) => { },
             }, //pasar datos por aca
             class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
             ignoreBackdropClick: true, //ignora el click fuera del modal
@@ -110,7 +110,7 @@ export class EffectiveNumeraryReconciliationComponent implements OnInit {
                 urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
                 type: 'pdf',
               },
-              callback: (data: any) => {},
+              callback: (data: any) => { },
             }, //pasar datos por aca
             class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
             ignoreBackdropClick: true, //ignora el click fuera del modal

@@ -18,8 +18,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 })
 export class IncomePerAssetComponent
   extends BasePage
-  implements OnInit, OnChanges
-{
+  implements OnInit, OnChanges {
   assetList: any[] = [];
   depositList: any[] = [];
   assetSettings = { ...this.settings };
@@ -37,9 +36,8 @@ export class IncomePerAssetComponent
     private readonly conceptMovisBankService: ConceptMovisBankService
   ) {
     super();
-    this.settings.actions.delete = true;
-    this.settings.actions.add = false;
-    this.settings.hideSubHeader = false;
+    this.assetSettings.actions = false;
+    this.assetSettings.hideSubHeader = false;
     this.assetSettings.columns = {
       bank: {
         title: 'Banco',
@@ -88,6 +86,7 @@ export class IncomePerAssetComponent
       },
     };
     this.depositSettings.actions = false;
+    this.depositSettings.hideSubHeader = false;
     this.depositSettings.columns = {
       bank: {
         title: 'Banco',
@@ -259,8 +258,8 @@ export class IncomePerAssetComponent
     const params: ListParams = {};
     params['filter.key'] = `$eq:${key}`;
     this.conceptMovisBankService.getByKey(params).subscribe({
-      next: response => {},
-      error: err => {},
+      next: response => { },
+      error: err => { },
     });
   }
 }
