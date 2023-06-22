@@ -16,6 +16,7 @@ export class DepositaryReportComponent extends BasePage implements OnInit {
   depositaryDataForm: FormGroup;
   persons = new DefaultSelect<IPerson>();
   @Input() goodId: number;
+  disableButton: boolean = false;
 
   ngOnInit(): void {
     this.prepareForm();
@@ -31,7 +32,7 @@ export class DepositaryReportComponent extends BasePage implements OnInit {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes) {
-      this.getInfoDepositary(3900);
+      this.getInfoDepositary(this.goodId);
     }
   }
 
@@ -46,7 +47,7 @@ export class DepositaryReportComponent extends BasePage implements OnInit {
 
   getInfoDepositary(goodId: number) {
     const params: ListParams = {};
-    params['filter.soogNum'] = `$eq:${goodId}`;
+    params['filter.goodNum'] = `$eq:${goodId}`;
     this.depositaryService.getInfoDepositary(params).subscribe({
       next: response => {
         response.data[0].reportDate = this.formatearFecha(
@@ -54,7 +55,10 @@ export class DepositaryReportComponent extends BasePage implements OnInit {
         );
         this.depositaryDataForm.patchValue(response.data[0]);
       },
-      error: err => {},
+      error: err => {
+        this.depositaryDataForm.get('report').disable();
+        this.disableButton = true;
+      },
     });
   }
 
