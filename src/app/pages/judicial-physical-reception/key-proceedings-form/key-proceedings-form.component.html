@@ -156,7 +156,7 @@
     </div>
   </ng-template> -->
 
-  <div class="row mr-0" [formGroup]="form">
+  <!-- <div class="row mr-0" [formGroup]="form">
     <div class="col-md-12 mt-3 pr-0">
       <ng2-smart-table
         *ngIf="source"
@@ -172,5 +172,118 @@
         </form-field>
       </div>
     </div>
-  </div>
+  </div> -->
+  <form class="form-material" [formGroup]="form">
+    <div class="row pt-4">
+      <form-field class="col-md-2" [control]="form.get('type')">
+        <ngx-select
+          (change)="generateCve()"
+          [data]="typeOtions"
+          [form]="form"
+          [searchable]="false"
+          [clearable]="false"
+          [readonly]="disabled"
+          value="value"
+          bindLabel="label"
+          label="Tipo"
+          control="type">
+        </ngx-select>
+      </form-field>
+
+      <form-field class="col-md-2" [control]="form.get('prog')">
+        <ngx-select
+          [data]="progOptions"
+          [searchable]="false"
+          [form]="form"
+          [clearable]="false"
+          [readonly]="disabled"
+          value="value"
+          bindLabel="label"
+          label="Prog."
+          control="prog">
+        </ngx-select>
+      </form-field>
+
+      <form-field class="col-md-3" [control]="form.get('transference')">
+        <ngx-select
+          (click)="transferClick()"
+          [data]="transfers"
+          [form]="form"
+          [readonly]="disabled"
+          value="value"
+          bindLabel="label"
+          label="Transferente"
+          control="transference">
+        </ngx-select>
+      </form-field>
+
+      <form-field class="col-md-2" [control]="form.get('area')">
+        <ngx-select
+          [data]="areas"
+          (change)="generateCve()"
+          (fetchByParamsItems)="getAreas($event)"
+          [fetchByList]="false"
+          [searchOnInit]="true"
+          [form]="form"
+          [readonly]="disabled"
+          value="delegation"
+          bindLabel="delegation"
+          label="Área"
+          control="area">
+        </ngx-select>
+      </form-field>
+
+      <form-field class="col-md-3" [control]="form.get('user')">
+        <ngx-select
+          [data]="users"
+          [form]="form"
+          [readonly]="disabled"
+          value="value"
+          bindLabel="value"
+          label="Usuario"
+          control="user">
+        </ngx-select>
+      </form-field>
+    </div>
+
+    <div class="row pt-4">
+      <form-field class="col-3" [control]="form.get('folio')" label="Folio">
+        <input
+          type="text"
+          class="form-control"
+          formControlName="folio"
+          [readOnly]="disabled" />
+      </form-field>
+
+      <form-field class="col-1" [control]="form.get('year')" label="Año">
+        <input
+          type="text"
+          class="form-control"
+          formControlName="year"
+          maxlength="2"
+          [readOnly]="disabled" />
+      </form-field>
+
+      <form-field class="col-1" [control]="form.get('month')" label="Mes">
+        <input
+          type="text"
+          class="form-control"
+          formControlName="month"
+          maxlength="2"
+          [readOnly]="disabled" />
+      </form-field>
+
+      <form-field
+        class="col-7"
+        [control]="form.get('keysProceedings')"
+        label="CVE Acta">
+        <input
+          [max-length]="60"
+          type="text"
+          class="form-control"
+          formControlName="keysProceedings"
+          readonly />
+      </form-field>
+    </div>
+  </form>
 </ng-container>
