@@ -30,8 +30,7 @@ export class HouseholdComponent extends BasePage implements OnInit, OnChanges {
     private readonly menageServices: MenageService
   ) {
     super();
-    this.settings.actions.delete = true;
-    this.settings.actions.add = false;
+    this.settings.actions = false;
     this.settings.hideSubHeader = false;
     this.settings.columns = {
       id: {

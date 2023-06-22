@@ -23,8 +23,7 @@ export class SecureDataComponent extends BasePage implements OnInit, OnChanges {
 
   constructor(private readonly policyServices: PolicyService) {
     super();
-    this.settings.actions.delete = true;
-    this.settings.actions.add = false;
+    this.settings.actions = false;
     this.settings.hideSubHeader = false;
     this.settings.columns = {
       policy: {

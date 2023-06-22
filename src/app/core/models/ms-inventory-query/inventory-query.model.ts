@@ -12,3 +12,12 @@ export interface IInventoryQuery {
   noRegister: string;
   typesInventory: TypesInventory;
 }
+
+export interface IInventoryGood {
+  inventoryNumber?: number;
+  dateInventory: Date;
+  responsible: string;
+  goodNumber: number;
+  cvetypeInventory?: string;
+  registerNumber?: number;
+}
