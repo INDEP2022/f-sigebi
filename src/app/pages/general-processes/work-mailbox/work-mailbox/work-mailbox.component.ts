@@ -1128,13 +1128,11 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
               );
             } else if (resp.data[0].screenKey === null) {
               this.alert(
-                    'info',
-                    `Atención`,
-                    'El oficio se ya encuentra en estatus cancelado'
-                  );
-            } 
-            
-            else {
+                'info',
+                `Atención`,
+                'El oficio se ya encuentra en estatus cancelado'
+              );
+            } else {
               resp.data[0].screenKey !== null
                 ? this.alert(
                     'info',

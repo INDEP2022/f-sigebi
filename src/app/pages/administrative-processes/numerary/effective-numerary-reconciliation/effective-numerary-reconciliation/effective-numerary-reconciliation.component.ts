@@ -49,11 +49,11 @@ export class EffectiveNumeraryReconciliationComponent implements OnInit {
       subdelegation: [null, Validators.required],
       currency: [null, Validators.required],
       bank: [null, Validators.required],
-      fileFrom: [null, Validators.required, Validators.maxLength(11)],
-      fileTo: [null, Validators.required, Validators.maxLength(11)],
+      fileFrom: [null, Validators.required],
+      fileTo: [null, Validators.required],
       from: [null, Validators.required],
       to: [null, Validators.required],
-      import: [null],
+      import: [null, Validators.required],
     });
   }
 
