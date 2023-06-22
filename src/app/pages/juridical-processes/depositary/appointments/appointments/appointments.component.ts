@@ -96,6 +96,7 @@ export class AppointmentsComponent
     lv_VALESCAN: 0,
     lv_TIPOFOL: '',
   };
+  personSelect = new DefaultSelect();
 
   constructor(
     private fb: FormBuilder,
@@ -210,6 +211,10 @@ export class AppointmentsComponent
       ], //* Representante SERA
       bienesMenaje: { value: '', disabled: true }, //* Sin Menaje, Con Menaje
 
+      personNumber: [
+        { value: '', disabled: true },
+        [Validators.maxLength(40), Validators.pattern(STRING_PATTERN)],
+      ], //*
       depositaria: [
         { value: '', disabled: true },
         [Validators.maxLength(40), Validators.pattern(STRING_PATTERN)],
@@ -715,6 +720,9 @@ export class AppointmentsComponent
   }
 
   setDataPerson() {
+    this.form
+      .get('personNumber')
+      .setValue(this.depositaryAppointment.personNumber.id);
     this.form
       .get('depositaria')
       .setValue(
@@ -1750,5 +1758,35 @@ export class AppointmentsComponent
       },
     };
     this.modalService.show(DocumentsViewerByFolioComponent, config);
+  }
+
+  getPersonCatalog(paramsData: ListParams, getByValue: boolean = false) {
+    const params: any = new FilterParams();
+    if (paramsData['search'] == undefined || paramsData['search'] == null) {
+      paramsData['search'] = '';
+    }
+    params.removeAllFilters();
+    if (getByValue) {
+      params.addFilter('id', this.form.get('personNumber').value);
+    } else {
+      params.search = paramsData['search'];
+      // params.addFilter('name', paramsData['search'], SearchFilter.LIKE);
+    }
+    params['sortBy'] = 'name:ASC';
+    this.appointmentsService.getPerson(params.getParams()).subscribe({
+      next: data => {
+        this.personSelect = new DefaultSelect(
+          data.data.map(i => {
+            i.name = i.id + ' -- ' + i.name;
+            return i;
+          }),
+          data.count
+        );
+        console.log(data, this.personSelect);
+      },
+      error: error => {
+        this.personSelect = new DefaultSelect();
+      },
+    });
   }
 }
