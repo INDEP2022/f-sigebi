@@ -8,7 +8,7 @@ export const RACK_COLUMNS = {
     sort: false,
   },
   warehuseDetails: {
-    title: 'Deposito',
+    title: 'Almacén',
     type: 'number',
     valuePrepareFunction: (value: IWarehouse) => {
       return value.description;
@@ -24,7 +24,7 @@ export const RACK_COLUMNS = {
     sort: false,
   },
   description: {
-    title: 'Descripcion',
+    title: 'Descripción',
     type: 'string',
     sort: false,
   },
