@@ -15,6 +15,7 @@ import { TransferenteService } from 'src/app/core/services/catalogs/transferente
 import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
 import { WarehouseService } from 'src/app/core/services/catalogs/warehouse.service';
 import { GoodService } from 'src/app/core/services/good/good.service';
+import { ProceedingsService } from 'src/app/core/services/ms-proceedings';
 import { ProgrammingGoodService } from 'src/app/core/services/ms-programming-request/programming-good.service';
 import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-request/programming-request.service';
 import { ReceptionGoodService } from 'src/app/core/services/reception/reception-good.service';
@@ -75,6 +76,7 @@ export class FormalizeProgrammingFormComponent
   totalItemsReceipt: number = 0;
   totalItemsReprog: number = 0;
   totalItemsCanc: number = 0;
+  totalItemsProceedings: number = 0;
   selectGood: IGood[] = [];
   selectGoodGuard: IGood[] = [];
   goodIdSelect: any;
@@ -97,14 +99,12 @@ export class FormalizeProgrammingFormComponent
   settingsGuardGoods = {
     ...this.settings,
     actions: false,
-    selectMode: 'multi',
     columns: ESTATE_COLUMNS_VIEW,
   };
 
   settingsWarehouseGoods = {
     ...this.settings,
     actions: false,
-    selectMode: 'multi',
     columns: ESTATE_COLUMNS_VIEW,
   };
 
@@ -167,6 +167,7 @@ export class FormalizeProgrammingFormComponent
   guardGoods: LocalDataSource = new LocalDataSource();
 
   receipts: LocalDataSource = new LocalDataSource();
+  proceedings: LocalDataSource = new LocalDataSource();
   search: FormControl = new FormControl({});
   programming: Iprogramming;
 
@@ -179,7 +180,6 @@ export class FormalizeProgrammingFormComponent
 
   settingsRecepGoods = {
     ...this.settings,
-    selectMode: 'multi',
     columns: TRANSPORTABLE_GOODS_FORMALIZE,
     actions: false,
   };
@@ -204,6 +204,7 @@ export class FormalizeProgrammingFormComponent
     private goodService: GoodService,
     private programmingGoodService: ProgrammingGoodService,
     private receptionGoodService: ReceptionGoodService,
+    private proceedingService: ProceedingsService,
     // private router: ActivatedRoute,
     private router: Router
   ) {
@@ -223,7 +224,15 @@ export class FormalizeProgrammingFormComponent
   ngOnInit(): void {
     this.formLoading = true;
     this.getProgrammingData();
-    this.getReceipts();
+
+    this.paramsReceipts
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getReceipts());
+
+    this.paramsProceeding
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getProccedings());
+
     /*
     this.getInfoGoodsProgramming();
     this.router.navigate(
@@ -245,6 +254,21 @@ export class FormalizeProgrammingFormComponent
       },
       error: error => {
         this.receipts = new LocalDataSource();
+      },
+    });
+  }
+
+  getProccedings() {
+    const params = new BehaviorSubject<ListParams>(new ListParams());
+    params.getValue()['filter.idPrograming'] = this.programmingId;
+    this.proceedingService.getProceedings(params.getValue()).subscribe({
+      next: response => {
+        console.log('response', response);
+        this.proceedings.load(response.data);
+        this.totalItemsProceedings = response.count;
+      },
+      error: error => {
+        console.log('error actas', error);
       },
     });
   }
