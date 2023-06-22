@@ -27,14 +27,14 @@ import { KeyProceedingsService } from './key-proceedings.service';
 
 export class CaptureEventUpdateForm {
   type = new FormControl('RT', [Validators.required]);
-  prog = new FormControl({ value: null }, [Validators.required]);
+  prog = new FormControl(null, [Validators.required]);
   transference = new FormControl(null);
   area = new FormControl(null);
-  user = new FormControl({ value: null });
-  folio = new FormControl({ value: null });
-  year = new FormControl({ value: null });
-  month = new FormControl({ value: null });
-  keysProceedings = new FormControl({ value: null }, [
+  user = new FormControl(null);
+  folio = new FormControl(null);
+  year = new FormControl(null);
+  month = new FormControl(null);
+  keysProceedings = new FormControl(null, [
     Validators.maxLength(60),
     Validators.required,
   ]);
@@ -225,8 +225,10 @@ export class KeyProceedingsFormComponent
     //   this.form.get('keysProceedings').setValue(this.claveActa);
     // }
     console.log(this.claveActa);
-    this.updateTableKeysProceedings(this.claveActa);
-    await this.transferClick();
+    if (this.claveActa) {
+      this.updateTableKeysProceedings(this.claveActa);
+      await this.transferClick();
+    }
   }
 
   get claveActa() {
