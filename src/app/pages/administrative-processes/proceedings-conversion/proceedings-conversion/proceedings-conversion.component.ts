@@ -348,6 +348,27 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
       ),
     });
   }
+  getAll() {
+    let filter = this.filterParams.getValue().getParams();
+    console.log(filter);
+    this.convertiongoodService.getAll(this.params.getValue()).subscribe({
+      next: response => {
+        console.log('Response: ', response);
+        this.loading = false;
+        response.data.map((item: any) => {
+          item.idConversion = item.id;
+          item.fileNumber =
+            item.fileNumber != null ? item.fileNumber : item.idConversion;
+        });
+
+        this.procs.load(response.data);
+        this.totalItems = response.count;
+      },
+      error: () => (
+        (this.procs = new LocalDataSource()), (this.loading = false)
+      ),
+    });
+  }
 
   initFormPostGetUserData() {
     this.activatedRoute.queryParams

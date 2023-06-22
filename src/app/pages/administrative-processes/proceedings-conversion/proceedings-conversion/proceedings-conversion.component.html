@@ -70,6 +70,18 @@
                   </form-field>
                 </div>
                 <div class="col-md-3">
+                  <div>
+                    <!-- <button (click)="getAll()" class="btn btn-primary btn-sm active">
+                      Buscar <i class="fa fa-search ml-2"></i>
+                    </button> -->
+                    <button
+                      class="btn btn-sm btn-primary active mr-3"
+                      (click)="getAll()">
+                      Buscar <i class="fas fa-search"></i>
+                    </button>
+                  </div>
+                </div>
+                <div class="col-md-3">
                   <form-field
                     [control]="
                       proceedingsConversionForm.get('preliminaryInquiry')
@@ -272,7 +284,7 @@
             <div accordion-heading class="d-flex justify-content-between">
               <div>
                 <h5>
-                  <i class="fa fa-filter" aria-hidden="true"></i>
+                  <i class="fa fa-edit" aria-hidden="true"></i>
                   Detalle de Acta
                 </h5>
               </div>
@@ -402,35 +414,6 @@
                   </div>
                 </div>
               </div>
-              <!-- <div class="row d-flex justify-content-center">
-                <div class="col-md-auto pt-5">
-                  <button type="submit" class="btn btn-primary btn-sm active"
-                    (click)="openProceedingsConversionDetail('')">
-                    Detalle de Acta
-                  </button>
-                </div>
-                <div class="col-md-auto pt-5">
-                  <button type="button" class="btn btn-sm btn-success active" (click)="exportToExcel()">
-                    Exportar a Excel
-                  </button>
-                </div>
-                <div class="col-md-auto pt-5">
-                  <button type="button" class="btn btn-sm btn-secondary active" (click)="cleanFilter()">
-                    Limpiar Filtro
-                  </button>
-                </div>
-                <div class="col-md-auto pt-5">
-                  <button type="submit" class="btn btn-secondary btn-sm active">
-                    Cerrar Acta
-                  </button>
-                </div>
-
-                <div class="col-md-auto pt-5">
-                  <button class="btn btn-danger btn-sm active">
-                    Impresión del Acta
-                  </button>
-                </div>
-              </div> -->
             </form>
           </accordion-group>
         </accordion>
