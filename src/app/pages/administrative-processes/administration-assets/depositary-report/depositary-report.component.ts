@@ -80,7 +80,7 @@ export class DepositaryReportComponent extends BasePage implements OnInit {
         this.alert(
           'success',
           'Actualizado',
-          'Se ha actualizado la informacion del informe de depositaria del bien'
+          'Se ha actualizado la información del informe de depositaria del bien'
         );
       },
       error: err => {
@@ -88,7 +88,7 @@ export class DepositaryReportComponent extends BasePage implements OnInit {
         this.alert(
           'error',
           'Ha ocurrido un error',
-          'No se ha actualizado la informacion del informe de depositaria del bien'
+          'No se ha actualizado la información del informe de depositaria del bien'
         );
       },
     });
