@@ -193,6 +193,7 @@ export class AdditionalValuesComponent extends BasePage implements OnInit {
             this.totalItems2 = 0;
             this.tvalTableList = [];
             this.getValuesAll();
+            this.gettvalTable2(this.values);
           }
         },
       },

@@ -141,7 +141,7 @@ export class AdditionalValuesModalComponent extends BasePage implements OnInit {
     this.params = this.pageFilter(this.params);
 
     this.tvalTableForm.controls['table'].setValue(aditionalValues.table);
-    this.values = new DefaultSelect();
+    this.values = new DefaultSelect([aditionalValues.name], 1);
   }
   close() {
     this.modalRef.hide();

@@ -141,8 +141,8 @@ export class ValuesComponent extends BasePage implements OnInit {
   gettvalTable(values: ITablesType) {
     this.loading = true;
     let params = {
-      ...this.params.getValue(),
-      ...this.params.getValue(),
+      ...this.params2.getValue(),
+      ...this.params2.getValue(),
       ...this.columnFilters,
     };
     this.tvalTableService.getById4(values.cdtabla, params).subscribe({
