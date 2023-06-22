@@ -74,9 +74,8 @@ export class BankAccountsInsuredComponent implements OnInit {
       PN_SUBDELEGACION: this.form.controls['subdelegation'].value,
       PC_MONEDA: this.form.controls['currency'].value,
       PC_BANCO: this.form.controls['bank'].value,
-      PC_FEC_INI: this.fromF,
-      PC_FEC_FIN: this.toT,
-      PN_IMP: this.form.controls['import'].value,
+      PF_INI: this.fromF,
+      PF_FIN: this.toT,
     };
 
     this.siabService
