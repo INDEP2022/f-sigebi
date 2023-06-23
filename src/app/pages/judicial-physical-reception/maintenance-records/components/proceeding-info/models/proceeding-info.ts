@@ -48,9 +48,11 @@ export interface IProceedingInfo {
 export function deliveryReceptionToInfo(
   item: IProceedingDeliveryReception
 ): IProceedingInfo {
+  // const numFile: INumFile = item.numFile as INumFile;
+  // const elaborate: IElaborate = item.elaborate as IElaborate;
   return {
     id: +item.id,
-    numFile: item.numFile,
+    numFile: item.numFile, //numFile.filesId,
     cveActa: item.keysProceedings,
     tipoActa: item.typeProceedings,
     labelActa: item.label,
@@ -79,7 +81,7 @@ export function deliveryReceptionToInfo(
     witness1: item.witness1,
     witness2: item.witness2,
     comptrollerWitness: item.comptrollerWitness,
-    elaborate: item.elaborate,
+    elaborate: item.elaborate, //elaborate.user,
     numRegister: item.numRegister,
     identifier: item.identifier,
     universalFolio: item.universalFolio,
