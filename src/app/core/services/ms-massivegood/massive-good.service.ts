@@ -8,10 +8,7 @@ import { MassiveGoodEndpoints } from '../../../common/constants/endpoints/ms-mas
 import { ListParams } from '../../../common/repository/interfaces/list-params';
 import { HttpService } from '../../../common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
-import {
-  IIdentifierCount,
-  IMassiveGoodTracker,
-} from '../../models/ms-massivegood/massive-good-goods-tracker.model';
+import { IMassiveGoodTracker } from '../../models/ms-massivegood/massive-good-goods-tracker.model';
 import { IMassiveGood } from '../../models/ms-massivegood/massivegood.model';
 
 @Injectable({
@@ -110,13 +107,12 @@ export class MassiveGoodService extends HttpService {
     return this.post<IListResponse<NumDetGood>>(this.route.FileCSV, formData);
   }
 
-  getIdentifierCount(
-    params: ListParams
-  ): Observable<IListResponse<IIdentifierCount>> {
-    const route = `application/getIdentifierCount`;
-    return this.get(route, params);
+  getBanVal(status: string) {
+    const route = `application/act-bdc-change-status`;
+    return this.get(`${route}/${status}`);
   }
-  getFProRecPag2CSV(file: any) {
+
+  getFProRecPag2CSV(params: any, file: any) {
     const formData = new FormData();
     formData.append('file', file);
     return this.post<IListResponse<GoodsExcel>>(

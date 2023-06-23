@@ -64,7 +64,7 @@ export class RegisterServiceComponent extends BasePage implements OnInit {
         console.log(err);
         this.onLoadToast(
           'error',
-          'No se pudo guardar el inventario',
+          'No se pudo guardar el servicio',
           err.error.message
         );
         this.loading = false;
