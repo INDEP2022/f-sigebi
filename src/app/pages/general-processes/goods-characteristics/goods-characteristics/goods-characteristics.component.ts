@@ -8,21 +8,18 @@ import {
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TabsetComponent } from 'ngx-bootstrap/tabs';
-import {
-  BehaviorSubject,
-  catchError,
-  firstValueFrom,
-  map,
-  of,
-  takeUntil,
-} from 'rxjs';
+import { BehaviorSubject, firstValueFrom, map, of, takeUntil } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import {
   FilterParams,
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { IGoodSssubtype } from 'src/app/core/models/catalogs/good-sssubtype.model';
-import { ICharacteristicsGoodDTO } from 'src/app/core/models/ms-good/good';
+import {
+  IAttribGoodBad,
+  ICharacteristicsGoodDTO,
+} from 'src/app/core/models/ms-good/good';
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
 import { ParameterCatService } from 'src/app/core/services/catalogs/parameter.service';
 import { AccountMovements } from 'src/app/core/services/ms-account-movements/account-movements.service';
@@ -32,6 +29,7 @@ import { AttribGoodBadService } from 'src/app/core/services/ms-good/attrib-good-
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
 import { GoodPartializeService } from 'src/app/core/services/ms-partialize/partialize.service';
+import { GoodPhotoService } from 'src/app/core/services/ms-photogood/good-photo.service';
 import { StatusXScreenService } from 'src/app/core/services/ms-screen-status/statusxscreen.service';
 import { SurvillanceService } from 'src/app/core/services/ms-survillance/survillance.service';
 import { SegAcessXAreasService } from 'src/app/core/services/ms-users/seg-acess-x-areas.service';
@@ -70,11 +68,12 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
   count = 0;
   delegacion: number;
   subdelegacion: number;
-  selectedBad: any;
+  selectedBad: IAttribGoodBad;
   form: FormGroup;
   disabledBienes: boolean = true;
   goodChange: number = 0;
   bodyGoodCharacteristics: ICharacteristicsGoodDTO = {};
+  showFoto = false;
   loadTypes = false;
   get data() {
     return this.service.data;
@@ -282,6 +281,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     private comerDetailService: ComerDetailsService,
     private attribGoodBadService: AttribGoodBadService,
     private fb: FormBuilder,
+    private goodPhoto: GoodPhotoService,
     public router: Router
   ) {
     super();
@@ -336,6 +336,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
       latitud: [null, [Validators.pattern(POSITVE_NUMBERS_PATTERN)]],
       longitud: [null, [Validators.pattern(POSITVE_NUMBERS_PATTERN)]],
       avaluo: ['0'],
+      img: [null],
     });
   }
 
@@ -404,6 +405,10 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     }
   }
 
+  onFileChange(event: any) {
+    console.log(event);
+  }
+
   handleEvent(data: any) {
     console.log('Evento recibido:', data);
   }
@@ -438,7 +443,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
         this.alert(
           'error',
           'Bien ' + this.numberGood.value,
-          'Complete las características requeridas'
+          'Complete el atributo ' + row.attribute
         );
         // this.onLoadToast(
         //   'error',
@@ -451,7 +456,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
       body[row.column] = row.value;
     });
     if (!tableValid) {
-      console.log(this.data);
+      // console.log(this.data);
       return;
     }
     this.good.description;
@@ -475,7 +480,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
         body.val14 = 'S';
       }
     }
-    console.log(body);
+    // console.log(body);
     const preUpdateValid = await this.preUpdate();
     if (!preUpdateValid) {
       return;
@@ -532,7 +537,6 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
         this.di_numerario_conciliado = 'Conciliado';
       }
       this.showConciliado = true;
-      console.log(accounts);
     }
   }
 
@@ -639,14 +643,6 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     }
     await this.fillConciliate();
     await this.checkPartialize();
-    // const filterParams2 = new FilterParams();
-    // filterParams2.addFilter('numberGood', this.good.goodId);
-    // const accounts = await firstValueFrom(
-    //   this.accountMovementsService
-    //     .getAll(filterParams2.getParams())
-    //     .pipe(catchError(x => of(null)))
-    // );
-    // console.log(accounts);
   }
 
   private getNewApraisedValueForVnValores(vnPunto: number, val: string) {
@@ -948,6 +944,17 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     return vcVal;
   }
 
+  private async fillSelectedBad() {
+    // debugger;
+    this.selectedBad = await firstValueFrom(
+      this.attribGoodBadService.getById(this.good.id).pipe(
+        takeUntil(this.$unSubscribe),
+        catchError(x => of({ data: null as IAttribGoodBad })),
+        map(x => x.data)
+      )
+    );
+  }
+
   async searchGood(byPage = false) {
     // const numberGood = Number(this.numberGood.value);
     // debugger;
@@ -988,7 +995,18 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
         if (item) {
           // this.se
           this.good = item;
-
+          debugger;
+          if (!this.selectedBad) {
+            await this.fillSelectedBad();
+          }
+          if (
+            this.selectedBad &&
+            this.selectedBad.motive.includes('SIN FOTOS')
+          ) {
+            this.showFoto = true;
+          } else {
+            this.showFoto = false;
+          }
           // this.service.newGood = {
           //   id: this.good.id,
           //   goodId: this.good.goodId,
@@ -1085,11 +1103,11 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
   private async postRecord(isPostQuery = false) {
     const filterParams = new FilterParams();
     filterParams.addFilter('typeNumber', 'CARBIEN');
-    // filterParams.addFilter('user', 'DR_SIGEBI');
-    filterParams.addFilter(
-      'user',
-      localStorage.getItem('username').toUpperCase()
-    );
+    filterParams.addFilter('user', 'DR_SIGEBI');
+    // filterParams.addFilter(
+    //   'user',
+    //   localStorage.getItem('username').toUpperCase()
+    // );
     filterParams.addFilter('reading', 'S');
     // filterParams.addFilter()
     const rdicta = await firstValueFrom(
@@ -1217,27 +1235,13 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
   }
 
   getLatitudLongitud(id: number) {
-    // const params = new FilterParams();
-    // params.addFilter('id', id)
-    // this.georeferencieService.getGeoreferencieObject().subscribe({
-    //   next: response => {
-    //     console.log(response);
-    //     // if(response.data && response.data.length > 0) {
-    //     //   this.longitud.setValue(response.data[0])
-    //     // }
-    //   }
-    // })
-
     this.georeferencieService.getGeoreferencieObjectById(id).subscribe({
       next: response => {
-        console.log(response);
+        // console.log(response);
         if (response) {
           this.latitud.setValue(response.georefLatitude);
           this.longitud.setValue(response.georefLongituded);
         }
-        // if(response.data && response.data.length > 0) {
-        //   this.longitud.setValue(response.data[0])
-        // }
       },
       error: err => {
         console.log(err);
@@ -1246,7 +1250,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
   }
 
   goBack() {
-    console.log(this.origin1, this.origin);
+    // console.log(this.origin1, this.origin);
 
     if (
       this.origin1 == 'FACTJURDICTAMOFICIO' &&

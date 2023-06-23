@@ -37,6 +37,11 @@ const routes: Routes = [
         './partializes-general-goods-1/partializes-general-goods.module'
       ).then(m => m.PartializesGeneralGoodsModule),
   },
+  {
+    path: 'goods-null',
+    loadChildren: () =>
+      import('./goods-null/goods-null.module').then(m => m.GoodsNullModule),
+  },
   // {
   //   path: 'partializes-general-goods-2',
   //   loadChildren: () =>
