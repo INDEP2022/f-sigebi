@@ -56,6 +56,7 @@ import { ESTATE_COLUMNS } from '../../acept-programming/columns/estate-columns';
 import { SearchUserFormComponent } from '../../schedule-reception/search-user-form/search-user-form.component';
 import { userData } from '../../schedule-reception/search-user-form/users-data';
 import { DetailGoodProgrammingFormComponent } from '../../shared-components-programming/detail-good-programming-form/detail-good-programming-form.component';
+import { DomicileFormComponent } from '../../shared-components-programming/domicile-form/domicile-form.component';
 import { EstateSearchFormComponent } from '../estate-search-form/estate-search-form.component';
 import { IEstateSearch } from '../estate-search-form/estate-search.interface';
 import { UserFormComponent } from '../user-form/user-form.component';
@@ -198,7 +199,6 @@ export class PerformProgrammingFormComponent
     private goodProcessService: GoodProcessService
   ) {
     super();
-
     this.settings = {
       ...this.settings,
       actions: false,
@@ -355,6 +355,7 @@ export class PerformProgrammingFormComponent
         [Validators.maxLength(400), Validators.pattern(STRING_PATTERN)],
       ],
       regionalDelegationNumber: [null, [Validators.required]],
+      delregAttentionId: [null, [Validators.required]],
       stateKey: [null, [Validators.required]],
       tranferId: [null, [Validators.required]],
       stationId: [null, [Validators.required]],
@@ -398,10 +399,12 @@ export class PerformProgrammingFormComponent
       idProgramming,
       callback: (data: boolean, create: boolean) => {
         if (data && create) {
-          this.onLoadToast('success', 'Correcto', 'Usuario creado');
+          alert;
+          this.alert('success', 'Correcto', 'Usuario creado');
+          // this.onLoadToast('success', 'Correcto', 'Usuario creado');
           this.showUsersProgramming();
         } else if (data) {
-          this.onLoadToast('success', 'Correcto', 'Usuario modificado');
+          this.alert('success', 'Correcto', 'Usuario modificado');
           this.showUsersProgramming();
         }
       },
@@ -784,6 +787,14 @@ export class PerformProgrammingFormComponent
       this.searchProgGoods(filterColumns);
     }
   }
+  showClean() {
+    this.searchGoodsForm.get('municipality').setValue('');
+    this.searchGoodsForm.get('colony').setValue('');
+    this.searchGoodsForm.get('warehouse').setValue('');
+    this.searchGoodsForm.get('postalCode').setValue('');
+    this.searchGoodsForm.get('state').setValue('');
+    this.getProgGoods();
+  }
 
   searchProgGoods(filter: Object) {
     this.loadingGoods = true;
@@ -842,6 +853,7 @@ export class PerformProgrammingFormComponent
 
   regionalDelegationSelect(item: IRegionalDelegation) {
     this.regionalDelegationUser = item;
+    this.delegationId = item.id;
     this.getStateSelect(new ListParams());
   }
 
@@ -1004,7 +1016,7 @@ export class PerformProgrammingFormComponent
   getProgGoods() {
     this.loadingGoods = true;
     const filterColumns: Object = {
-      regionalDelegation: Number(this.regionalDelegationUser.id),
+      regionalDelegation: Number(this.delegationId),
       transferent: Number(this.transferentId),
       // transferent: Number(760),
       relevantType: Number(this.idTypeRelevant),
@@ -1517,6 +1529,15 @@ export class PerformProgrammingFormComponent
     };
     this.modalService.show(DetailGoodProgrammingFormComponent, config);
   }
+  // Visualizar información de alias almacen //
+  showDomicile(item: IGoodProgrammingSelect) {
+    let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+    config.initialState = {
+      item,
+      callback: () => {},
+    };
+    this.modalService.show(DomicileFormComponent, config);
+  }
 
   removeGoodTrans(item: IGood) {
     this.alertQuestion(
@@ -1656,6 +1677,8 @@ export class PerformProgrammingFormComponent
     this.performForm
       .get('regionalDelegationNumber')
       .setValue(this.delegationId);
+
+    this.performForm.get('delregAttentionId').setValue(this.delegationId);
     this.alertQuestion(
       'info',
       'Confirmación',
@@ -1960,7 +1983,8 @@ export class PerformProgrammingFormComponent
         this.programmingService
           .deleteUserProgramming(userObject)
           .subscribe(data => {
-            this.onLoadToast('success', 'Correcto', 'Usuario eliminado');
+            // this.onLoadToast('success', 'Correcto', 'Usuario eliminado');
+            this.alert('success', 'Operación exitosa', 'Usuario eliminado');
             this.reloadData();
           });
       }
@@ -2005,6 +2029,7 @@ export class PerformProgrammingFormComponent
           this.loadingReport = false;
         },
         error: error => {
+          console.log('error', error);
           this.loadingReport = false;
           this.onLoadToast(
             'info',

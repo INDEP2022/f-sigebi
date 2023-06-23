@@ -10,12 +10,14 @@ import { BasePage } from 'src/app/core/shared/base-page';
 
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
+import { Repository } from 'src/app/common/repository/repository';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { PROPERTY_REGISTRATION_COLUMNS } from './property-registration-columns';
-
-import { Repository } from 'src/app/common/repository/repository';
 
 @Component({
   selector: 'app-property-registration',
@@ -30,7 +32,6 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
   expedient: IExpedient;
   numberGoodSelect: number;
 
-  searched: boolean = false;
   addGood: boolean = false;
   enableAddgood: boolean = true;
   textButton: string = 'Agregar menaje';
@@ -43,8 +44,9 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
   data: LocalDataSource = new LocalDataSource();
 
   isSelected: boolean = false;
-  goodClassNumberIn: number;
   showButton: boolean = false;
+  goodClassNumberIn: number;
+  showSearchButton: boolean = true;
 
   get numberFile() {
     return this.form.get('numberFile');
@@ -68,6 +70,8 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
   ) {
     super();
     this.settings.columns = PROPERTY_REGISTRATION_COLUMNS;
+    this.settings.hideSubHeader = false;
+    this.settings.actions.add = false;
     this.settings.actions.delete = true;
     this.settings.actions.edit = false;
   }
@@ -78,7 +82,29 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
     this.formGood.disable();
     this.numberFile.enable();
     this.showButton = false;
-    this.data.onChanged().pipe(takeUntil(this.$unSubscribe)).subscribe();
+    this.data
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = ``;
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+            filter.field == 'id' || filter.field == 'description'
+              ? (searchFilter = SearchFilter.EQ)
+              : (searchFilter = SearchFilter.ILIKE);
+            if (filter.search !== '') {
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.params = this.pageFilter(this.params);
+          this.searchGoodMenage(this.idGoodValue);
+        }
+      });
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.searchGoodMenage(this.idGoodValue));
@@ -103,6 +129,16 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
   }
 
   searchExpedient(event: any) {
+    this.form.get('goodSelect').reset();
+    this.formGood.disable();
+    this.goodSelect.enable();
+    this.goods = new DefaultSelect([], 0);
+    this.menajes = [];
+    this.numberGoodSelect = null;
+    this.totalItems = 0;
+    this.textButton = 'Agregar menaje';
+    this.showSearchButton = false;
+
     const numberFile = Number(event);
     this.expedientServices.getById(numberFile).subscribe({
       next: response => {
@@ -130,13 +166,12 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
   }
 
   searchGoods(idExpedient: number | string) {
-    this.goods = new DefaultSelect([], 0);
     this.goodServices
       .getByExpedient(idExpedient, this.params.getValue())
       .subscribe({
         next: response => {
           this.goodSelect.enable();
-          this.goods = new DefaultSelect(response.data, response.count);
+          this.goods = new DefaultSelect(response.data, response.count); //Son todos los bienes listados en el input "Seleccione un bien para ver sus menajes"
         },
         error: err => {
           this.loading = false;
@@ -145,13 +180,11 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
   }
 
   searchGoodMenage(idGood: number) {
-    this.idGoodValue = idGood; //Para paginado
-    this.loading = true;
-
     this.repositoryService.getMenajeInmueble(this.goodClassNumberIn).subscribe({
       next: response => {
         let verifyProperty = response.data;
         this.showButton = verifyProperty[0]['numType'].id === '6';
+        this.showSearchButton = true;
       },
       error: error => (this.loading = false),
     });
@@ -193,8 +226,7 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
       noGoodMenaje: idGoodMenaje,
     };
     this.menageServices.create(menaje).subscribe({
-      next: response => {
-        this.totalItems = response.count;
+      next: respose => {
         this.searchGoodMenage(this.numberGoodSelect);
         this.onLoadToast(
           'success',
@@ -232,14 +264,10 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
     this.menageServices.remove(idGood).subscribe({
       next: responde => {
         this.searchGoodMenage(this.numberGoodSelect);
-        this.onLoadToast(
-          'success',
-          'Éxito',
-          `Se elimino el menaje N° ${idGood}`
-        );
+        this.alert('success', 'Éxito', `Se elimino el menaje N° ${idGood}`);
       },
       error: err => {
-        this.onLoadToast(
+        this.alert(
           'error',
           'ERROR',
           `No se pudo eliminar el menaje N° ${idGood}`
@@ -252,11 +280,11 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
     this.formGood.disable();
     this.numberFile.enable();
     this.goodSelect.enable();
-    this.menajes = [];
+    this.menajes = []; // Limpiar los datos actuales de menajes
     this.totalItems = 0;
     this.numberGoodSelect = null;
     this.loading = false;
-    this.addGood = false;
+    this.showSearchButton = false;
   }
 
   cleandInfo() {
@@ -270,8 +298,8 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
     this.numberGoodSelect = null;
     this.totalItems = 0;
     this.loading = false;
-    this.addGood = false;
     this.textButton = 'Agregar menaje';
+    this.showSearchButton = false;
   }
 
   showGoods() {

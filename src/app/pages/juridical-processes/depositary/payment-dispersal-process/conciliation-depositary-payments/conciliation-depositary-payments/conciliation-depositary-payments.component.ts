@@ -370,7 +370,7 @@ export class ConciliationDepositaryPaymentsComponent
               .setValue(this.depositaryAppointment.personNumber.id);
             this.formDepositario
               .get('depositario')
-              .setValue(this.depositaryAppointment.personNumber.nombre);
+              .setValue(this.depositaryAppointment.personNumber.name);
             this.actualDate = this.datePipe.transform(new Date(), 'dd/MM/yyyy');
             this.form.get('fecha').setValue(this.actualDate);
             this.form

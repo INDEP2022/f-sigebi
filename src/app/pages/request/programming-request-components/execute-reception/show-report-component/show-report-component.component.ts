@@ -280,8 +280,10 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
       question => {
         if (question.isConfirmed) {
           if (this.idTypeDoc == 221) {
-            this.gelectronicFirmService
-              .firmDocument(this.idProg, 'ProgramacionRecibo', {})
+            console.log('this.programming.id', this.programming.id);
+            console.log('ProgramacionRecibo', this.programming.id);
+            /*this.gelectronicFirmService
+              .firmDocument(this.programming.id, 'ProgramacionRecibo', {})
               .subscribe({
                 next: response => {
                   this.msjCheck = true;
@@ -289,7 +291,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                 error: error => {
                   this.msjCheck = true;
                 },
-              });
+              }); */
           }
 
           if (this.idTypeDoc == 103) {
@@ -443,5 +445,12 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
           },
         });
     });
+  }
+
+  backStep() {
+    this.listSigns = false;
+    this.isAttachDoc = false;
+    this.printReport = true;
+    this.signatories = [];
   }
 }

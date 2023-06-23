@@ -1124,13 +1124,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
               );
             } else if (resp.data[0].screenKey === 'FADMAMPAROS') {
               this.router.navigateByUrl(
-                `pages/juridical/depositary/maintenance-of-coverages?wheelNumber=${this.selectedRow.flierNumber}`
-              );
-            } else if (resp.data[0].screenKey === null) {
-              this.alert(
-                'info',
-                `Atención`,
-                'El oficio se ya encuentra en estatus cancelado'
+                `/pages/juridical/depositary/maintenance-of-coverages?wheelNumber=${this.selectedRow.flierNumber}&proceedingsNumber=${this.selectedRow.proceedingsNumber}`
               );
             } else {
               resp.data[0].screenKey !== null

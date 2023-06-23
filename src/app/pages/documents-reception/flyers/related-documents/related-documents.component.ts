@@ -1021,10 +1021,10 @@ export class RelatedDocumentsComponent
             addressee:
               mJobManagement.jobType == 'INTERNO'
                 ? {
-                    user: mJobManagement.addressee,
-                    name: null,
-                    userAndName: mJobManagement.addressee,
-                  }
+                  user: mJobManagement.addressee,
+                  name: null,
+                  userAndName: mJobManagement.addressee,
+                }
                 : mJobManagement.nomPersExt,
           });
           console.log(this.formJobManagement.value);

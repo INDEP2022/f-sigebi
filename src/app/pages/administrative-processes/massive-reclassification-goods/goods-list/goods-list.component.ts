@@ -34,6 +34,7 @@ export class GoodsListComponent
   implements OnInit
 {
   previousSelecteds: IGood[] = [];
+  pageSelecteds: number[] = [];
   @ViewChild('table') table: Ng2SmartTableComponent;
   constructor(
     private massiveService: MassiveReclassificationGoodsService,
@@ -68,9 +69,18 @@ export class GoodsListComponent
     };
   }
 
-  private fillSelectedRows() {
+  private fillSelectedRows(byPage: boolean) {
     setTimeout(() => {
-      console.log(this.selectedGooods);
+      console.log(this.selectedGooods, this.table);
+      const currentPage = this.params.getValue().page;
+      const selectedPage = this.pageSelecteds.find(
+        page => page === currentPage
+      );
+      if (!selectedPage || byPage === false) {
+        this.table.isAllSelected = false;
+      } else {
+        this.table.isAllSelected = true;
+      }
       if (this.selectedGooods && this.selectedGooods.length > 0) {
         this.table.grid.getRows().forEach(row => {
           console.log(row);
@@ -84,7 +94,7 @@ export class GoodsListComponent
           // this.table.grid.multipleSelectRow(row)
         });
       }
-    }, 500);
+    }, 300);
   }
 
   get selectedGooods() {
@@ -147,6 +157,13 @@ export class GoodsListComponent
       }
     } else {
       if (event.isSelected === null) {
+        const currentPage = this.params.getValue().page;
+        const selectedPage = this.pageSelecteds.find(
+          page => page === currentPage
+        );
+        if (!selectedPage) {
+          this.pageSelecteds.push(currentPage);
+        }
         selecteds.forEach(selected => {
           const item = this.selectedGooods.find(x => x.id === selected.id);
           if (!item) {
@@ -189,7 +206,7 @@ export class GoodsListComponent
       next: response => {
         if (response) {
           this.selectedGooods = [];
-          this.getData();
+          this.getData(false);
         } else {
           this.data.load([]);
           this.selectedGooods = [];
@@ -207,7 +224,7 @@ export class GoodsListComponent
         console.log(x);
         if (this.totalItems > 0 && x !== null && x + ''.trim() !== '') {
           this.selectedGooods = [];
-          this.getData();
+          this.getData(false);
         }
       });
   }
@@ -216,7 +233,7 @@ export class GoodsListComponent
     return obs ? (obs.length > 0 ? forkJoin(obs) : of([])) : of([]);
   }
 
-  override getData() {
+  override getData(byPage: boolean = true) {
     this.loading = true;
     console.log(this.classificationOfGoods.value);
     const filterParams = new FilterParams();
@@ -296,7 +313,7 @@ export class GoodsListComponent
           console.log(response);
           this.data.load(response);
           this.data.refresh();
-          this.fillSelectedRows();
+          this.fillSelectedRows(byPage);
           // if (response.data && response.data.length > 0) {
           //   this.listGood = response.data;
           //   this.totalItems = response.count;

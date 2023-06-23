@@ -70,7 +70,7 @@ interface NotData {
     // .table-container::-webkit-scrollbar-track {
     //   background-color: #f4f4f4; /* Color de fondo del scroll */
     // }
-    // `
+    //
   ],
 })
 export class PaymentClaimProcessComponent extends BasePage implements OnInit {
@@ -165,7 +165,12 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
     this.buildForm();
     this.form.disable();
 
-    this.params
+    // this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+    //   if (this.goods.length > 0) {
+    //     this.loadGoodsPipe();
+    //   }
+    // });
+    this.filter1
       .pipe(
         skip(1),
         tap(() => {
@@ -253,6 +258,7 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
     console.log('Entro');
     const files = (event.target as HTMLInputElement).files;
     if (files.length != 1) throw 'No files selected, or more than of allowed';
+    this.alert('success', 'Archivo subido exitosamente', '');
     // this.converterBase64(files[0])
     // const fileReader = new FileReader();
     // fileReader.readAsBinaryString(files[0]);
@@ -267,29 +273,55 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
       this.showError = false;
       this.showStatus = false;
       this.data.load([]);
-      this.filter1.getValue().removeAllFilters();
+      // this.filter1.getValue().removeAllFilters();
       this.massiveGoodService
         .getFProRecPag2CSV(this.filter1.getValue().getParams(), binaryExcel)
         .subscribe({
           next: (response: any) => {
-            console.log('SI11', response);
-            let data: any = response.paginated;
-
+            console.log('SI112', response);
+            this.goods = response.dataA;
+            let dataD = response.dataD;
             let count = 0;
             let arr: any = [];
-            let result = data.map(async (good: any) => {
+
+            // this.goods = dataA;
+            // this.valDocument = false;
+            if (this.goods.length > 0) {
+              this.goods.map(async (goodA: any) => {
+                if (this.valDocument == true) {
+                  return;
+                } else {
+                  this.obtenerDocument(goodA);
+                }
+
+                this.disabledImport = false;
+                this.form
+                  .get('justification')
+                  .setValue(goodA.causenumberchange);
+              });
+            }
+
+            // let resultA = dataA.map(async (good: any) => {
+            //   count = count + 1;
+            //   console.log('SI11', good);
+            //   if (good.status == 'PRP' || good.status == 'ADM') {
+            //     console.log('SI', good);
+            //     if (this.goodClassNumber.includes(`${good.goodclassnumber}`)) {
+            //       // console.log(response);
+            //       arr.push(good);
+
+            //     }
+            //   } else {
+
+            //   }
+            // });
+
+            let resultD = dataD.map(async (good: any) => {
               count = count + 1;
               console.log('SI11', good);
               if (good.status == 'PRP' || good.status == 'ADM') {
                 console.log('SI', good);
                 if (this.goodClassNumber.includes(`${good.goodclassnumber}`)) {
-                  // console.log(response);
-                  arr.push(good);
-                  this.obtenerDocument(good);
-                  this.disabledImport = false;
-                  this.form
-                    .get('justification')
-                    .setValue(good.causenumberchange);
                 } else {
                   this.idsNotExist.push({
                     id: good.id,
@@ -312,13 +344,14 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
               }
             });
 
-            Promise.all(result).then((resp: any) => {
-              this.goods = arr;
+            Promise.all(resultD).then((resp: any) => {
+              console.log('arr', arr);
+              // this.goods = arr;
               this.addStatus();
 
               this.test = binaryExcel;
               console.log('this.test', this.test);
-              if (count === data.length) {
+              if (count === dataD.length) {
                 this.loading = false;
                 this.showError = true;
               }
@@ -330,7 +363,6 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
               this.form.enable();
 
               console.log('BINARY EXCEL', response);
-              this.alert('success', 'Archivo subido exitosamente', '');
 
               this.loading = false;
             });
@@ -338,7 +370,7 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
           error: err => {
             this.data.load([]);
             this.loading = false;
-            this.alert('error', 'No hay datos disponibles', '');
+            this.onLoadToast('warning', 'No hay datos disponibles', '');
           },
         });
 
@@ -528,10 +560,10 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
 
   // CAMBIAR STATUS DEL BIEN Y ELIMINAR FOLIO DE ESCANEO //
   validStatusXScreen(good: IGood) {
-    if (this.form.value.justification == null) {
-      this.alert('info', 'El motivo de cambio se encuentra vacío', '');
-      return;
-    }
+    // if (this.form.value.justification == null) {
+    //   this.alert('info', 'El motivo de cambio se encuentra vacío', '');
+    //   return;
+    // }
     this.screenStatusService
       .getStatusXScreen({
         screen: 'FPROCRECPAG',
@@ -603,10 +635,11 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
           this.change2();
           this.cambiarValor();
           this.document = null;
+          this.valDocument = false;
           this.alert(
-            'error',
+            'success',
             'Elimiado',
-            'Este folio no existe o ya no fue eliminado'
+            'Se ha eliminado correctamente el folio'
           );
         } else {
           this.alert(
