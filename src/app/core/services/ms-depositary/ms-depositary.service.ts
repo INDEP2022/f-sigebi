@@ -154,4 +154,13 @@ export class MsDepositaryService extends HttpService {
       model
     );
   }
+
+  getAllFilteredFactJurRegDestLeg(
+    params?: _Params
+  ): Observable<IListResponse<IAppointmentDepositary>> {
+    return this.get<IListResponse<IAppointmentDepositary>>(
+      DepositaryEndPoints.FactJurRegDestLeg,
+      params
+    );
+  }
 }

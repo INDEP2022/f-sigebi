@@ -1181,9 +1181,7 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
           this.goodData = res.data;
           let dataResponse = res.data.map((i: any) => {
             i.good ? (i.good['amountDict'] = i.amountDict) : '';
-            i.menaje && i.good
-              ? (i.good['menaje'] = i.menaje['noGoodMenaje'])
-              : '';
+            i.menaje && i.good ? (i.good['menaje'] = i.menaje['noGood']) : '';
             return i.good;
           });
           console.log(dataResponse);
