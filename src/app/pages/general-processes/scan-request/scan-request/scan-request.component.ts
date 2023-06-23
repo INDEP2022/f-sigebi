@@ -363,6 +363,9 @@ export class ScanRequestComponent extends BasePage implements OnInit {
                     amountIVA: data.data[0].amountIVA,
                     personNumber: data.data[0].personNumber.id,
                     iva: data.data[0].iva,
+                    folioReturn: data.data[0].folioReturn
+                      ? Number(data.data[0].folioReturn)
+                      : null,
                   };
                   if (this.paramsDepositaryAppointment.P_FOLIO == 'R') {
                     body['folioReturn'] = this.idFolio;

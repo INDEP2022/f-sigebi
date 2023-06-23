@@ -57,6 +57,14 @@ export class AccountMovementService extends HttpService {
       params
     );
   }
+
+  getAccount2(params: _Params) {
+    return this.get<IListResponse<any>>('aplication/getaccount/2', params);
+  }
+
+  getAccountBank(params: _Params) {
+    return this.get<IListResponse<any>>('bank-account', params);
+  }
 }
 
 //``
