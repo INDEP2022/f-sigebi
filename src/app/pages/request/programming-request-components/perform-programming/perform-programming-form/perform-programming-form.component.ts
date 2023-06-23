@@ -842,6 +842,7 @@ export class PerformProgrammingFormComponent
 
   regionalDelegationSelect(item: IRegionalDelegation) {
     this.regionalDelegationUser = item;
+    this.delegationId = item.id;
     this.getStateSelect(new ListParams());
   }
 
@@ -1004,7 +1005,7 @@ export class PerformProgrammingFormComponent
   getProgGoods() {
     this.loadingGoods = true;
     const filterColumns: Object = {
-      regionalDelegation: Number(this.regionalDelegationUser.id),
+      regionalDelegation: Number(this.delegationId),
       transferent: Number(this.transferentId),
       // transferent: Number(760),
       relevantType: Number(this.idTypeRelevant),
@@ -2005,6 +2006,7 @@ export class PerformProgrammingFormComponent
           this.loadingReport = false;
         },
         error: error => {
+          console.log('error', error);
           this.loadingReport = false;
           this.onLoadToast(
             'info',
