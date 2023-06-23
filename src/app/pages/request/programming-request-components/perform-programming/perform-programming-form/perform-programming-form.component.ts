@@ -56,6 +56,7 @@ import { ESTATE_COLUMNS } from '../../acept-programming/columns/estate-columns';
 import { SearchUserFormComponent } from '../../schedule-reception/search-user-form/search-user-form.component';
 import { userData } from '../../schedule-reception/search-user-form/users-data';
 import { DetailGoodProgrammingFormComponent } from '../../shared-components-programming/detail-good-programming-form/detail-good-programming-form.component';
+import { DomicileFormComponent } from '../../shared-components-programming/domicile-form/domicile-form.component';
 import { EstateSearchFormComponent } from '../estate-search-form/estate-search-form.component';
 import { IEstateSearch } from '../estate-search-form/estate-search.interface';
 import { UserFormComponent } from '../user-form/user-form.component';
@@ -74,8 +75,7 @@ import {
 })
 export class PerformProgrammingFormComponent
   extends BasePage
-  implements OnInit
-{
+  implements OnInit {
   goodsInfoTrans: any[] = [];
   goodsInfoGuard: any[] = [];
   goodsInfoWarehouse: any[] = [];
@@ -198,7 +198,6 @@ export class PerformProgrammingFormComponent
     private goodProcessService: GoodProcessService
   ) {
     super();
-
     this.settings = {
       ...this.settings,
       actions: false,
@@ -251,7 +250,7 @@ export class PerformProgrammingFormComponent
       next: response => {
         this.infoTask = response.data[0];
       },
-      error: error => {},
+      error: error => { },
     });
   }
 
@@ -266,7 +265,7 @@ export class PerformProgrammingFormComponent
           this.observationNewWarehouse = response.data[0].nbobservation;
           this.idNewWarehouse = response.data[0].nbidnewstore;
         },
-        error: error => {},
+        error: error => { },
       });
   }
 
@@ -355,6 +354,7 @@ export class PerformProgrammingFormComponent
         [Validators.maxLength(400), Validators.pattern(STRING_PATTERN)],
       ],
       regionalDelegationNumber: [null, [Validators.required]],
+      delregAttentionId: [null, [Validators.required]],
       stateKey: [null, [Validators.required]],
       tranferId: [null, [Validators.required]],
       stationId: [null, [Validators.required]],
@@ -398,10 +398,12 @@ export class PerformProgrammingFormComponent
       idProgramming,
       callback: (data: boolean, create: boolean) => {
         if (data && create) {
-          this.onLoadToast('success', 'Correcto', 'Usuario creado');
+          alert;
+          this.alert('success', 'Correcto', 'Usuario creado');
+          // this.onLoadToast('success', 'Correcto', 'Usuario creado');
           this.showUsersProgramming();
         } else if (data) {
-          this.onLoadToast('success', 'Correcto', 'Usuario modificado');
+          this.alert('success', 'Correcto', 'Usuario modificado');
           this.showUsersProgramming();
         }
       },
@@ -417,7 +419,7 @@ export class PerformProgrammingFormComponent
       config.initialState = {
         programmingId: this.idProgramming,
         regDelData,
-        callback: (next: boolean) => {},
+        callback: (next: boolean) => { },
       };
 
       this.modalService.show(WarehouseFormComponent, config);
@@ -472,7 +474,7 @@ export class PerformProgrammingFormComponent
           }
           this.totalItemsUsers = response.count;
         },
-        error: error => {},
+        error: error => { },
       });
   }
 
@@ -784,6 +786,14 @@ export class PerformProgrammingFormComponent
       this.searchProgGoods(filterColumns);
     }
   }
+  showClean() {
+    this.searchGoodsForm.get('municipality').setValue('');
+    this.searchGoodsForm.get('colony').setValue('');
+    this.searchGoodsForm.get('warehouse').setValue('');
+    this.searchGoodsForm.get('postalCode').setValue('');
+    this.searchGoodsForm.get('state').setValue('');
+    this.getProgGoods();
+  }
 
   searchProgGoods(filter: Object) {
     this.loadingGoods = true;
@@ -842,6 +852,7 @@ export class PerformProgrammingFormComponent
 
   regionalDelegationSelect(item: IRegionalDelegation) {
     this.regionalDelegationUser = item;
+    this.delegationId = item.id;
     this.getStateSelect(new ListParams());
   }
 
@@ -877,7 +888,7 @@ export class PerformProgrammingFormComponent
         });
         this.transferences = new DefaultSelect(data.data, data.count);
       },
-      error: error => {},
+      error: error => { },
     });
   }
 
@@ -940,7 +951,7 @@ export class PerformProgrammingFormComponent
       next: response => {
         this.akaWarehouse = new DefaultSelect(response.data, response.count);
       },
-      error: error => {},
+      error: error => { },
     });
   }
 
@@ -953,7 +964,7 @@ export class PerformProgrammingFormComponent
         this.statesSearch = new DefaultSelect(statesData, response.count);
       },
 
-      error: error => {},
+      error: error => { },
     });
   }
 
@@ -965,7 +976,7 @@ export class PerformProgrammingFormComponent
           response.count
         );
       },
-      error: error => {},
+      error: error => { },
     });
   }
 
@@ -974,7 +985,7 @@ export class PerformProgrammingFormComponent
       next: response => {
         this.localities = new DefaultSelect(response.data, response.count);
       },
-      error: error => {},
+      error: error => { },
     });
   }
 
@@ -1004,7 +1015,7 @@ export class PerformProgrammingFormComponent
   getProgGoods() {
     this.loadingGoods = true;
     const filterColumns: Object = {
-      regionalDelegation: Number(this.regionalDelegationUser.id),
+      regionalDelegation: Number(this.delegationId),
       transferent: Number(this.transferentId),
       // transferent: Number(760),
       relevantType: Number(this.idTypeRelevant),
@@ -1247,7 +1258,7 @@ export class PerformProgrammingFormComponent
             this.goodSelect.map(item => {
               params['filter.id'] = item.googId;
 
-              this.goodService.getAll(params).subscribe(data => {});
+              this.goodService.getAll(params).subscribe(data => { });
             });
           } else {
             const data = this.goodSelect.map(item => {
@@ -1513,9 +1524,18 @@ export class PerformProgrammingFormComponent
     let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
     config.initialState = {
       item,
-      callback: () => {},
+      callback: () => { },
     };
     this.modalService.show(DetailGoodProgrammingFormComponent, config);
+  }
+  // Visualizar información de alias almacen //
+  showDomicile(item: IGoodProgrammingSelect) {
+    let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+    config.initialState = {
+      item,
+      callback: () => { },
+    };
+    this.modalService.show(DomicileFormComponent, config);
   }
 
   removeGoodTrans(item: IGood) {
@@ -1656,6 +1676,8 @@ export class PerformProgrammingFormComponent
     this.performForm
       .get('regionalDelegationNumber')
       .setValue(this.delegationId);
+
+    this.performForm.get('delregAttentionId').setValue(this.delegationId);
     this.alertQuestion(
       'info',
       'Confirmación',
@@ -1686,7 +1708,7 @@ export class PerformProgrammingFormComponent
                 this.formLoading = false;
                 this.newTransferent = false;
               },
-              error: error => {},
+              error: error => { },
             });
         }
       }
@@ -1703,7 +1725,7 @@ export class PerformProgrammingFormComponent
         next: () => {
           resolve(true);
         },
-        error: error => {},
+        error: error => { },
       });
     });
   }
@@ -1834,7 +1856,7 @@ export class PerformProgrammingFormComponent
                   this.generateTaskAceptProgramming(folio);
                   this.loading = false;
                 },
-                error: error => {},
+                error: error => { },
               });
           }
         }
@@ -1889,7 +1911,7 @@ export class PerformProgrammingFormComponent
             resolve(folio);
           }
         },
-        error: error => {},
+        error: error => { },
       });
     });
   }
@@ -1960,7 +1982,8 @@ export class PerformProgrammingFormComponent
         this.programmingService
           .deleteUserProgramming(userObject)
           .subscribe(data => {
-            this.onLoadToast('success', 'Correcto', 'Usuario eliminado');
+            // this.onLoadToast('success', 'Correcto', 'Usuario eliminado');
+            this.alert('success', 'Operación exitosa', 'Usuario eliminado');
             this.reloadData();
           });
       }
@@ -2005,6 +2028,7 @@ export class PerformProgrammingFormComponent
           this.loadingReport = false;
         },
         error: error => {
+          console.log('error', error);
           this.loadingReport = false;
           this.onLoadToast(
             'info',
@@ -2075,7 +2099,7 @@ export class PerformProgrammingFormComponent
             this.showGuard(data.data);
             this.showWarehouseGoods(data.data);
           },
-          error: error => {},
+          error: error => { },
         });
 
       if (this.dataProgramming.storeId) {
@@ -2083,7 +2107,7 @@ export class PerformProgrammingFormComponent
           next: response => {
             this.warehouseUbication = response.description;
           },
-          error: error => {},
+          error: error => { },
         });
       }
 
@@ -2096,7 +2120,7 @@ export class PerformProgrammingFormComponent
               const nameAndId = `${response.id} - ${response.nameTransferent}`;
               this.performForm.get('tranferId').setValue(nameAndId);
             },
-            error: error => {},
+            error: error => { },
           });
       }
 
@@ -2108,7 +2132,7 @@ export class PerformProgrammingFormComponent
           const nameAndId = `${response.data[0].id} - ${response.data[0].stationName}`;
           this.performForm.get('stationId').setValue(nameAndId);
         },
-        error: error => {},
+        error: error => { },
       });
 
       this.paramsAuthority.getValue()['filter.idTransferer'] =
@@ -2121,7 +2145,7 @@ export class PerformProgrammingFormComponent
           this.transferentId = this.dataProgramming.tranferId;
           this.getAuthoritySelect(new ListParams());
         },
-        error: error => {},
+        error: error => { },
       });
     }
   }

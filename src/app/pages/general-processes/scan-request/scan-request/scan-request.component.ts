@@ -95,7 +95,7 @@ export class ScanRequestComponent extends BasePage implements OnInit {
           this.departament = response.data[0].departamentNumber;
         }
       },
-      error: () => {},
+      error: () => { },
     });
   }
 
@@ -124,7 +124,7 @@ export class ScanRequestComponent extends BasePage implements OnInit {
     if (this.origin == 'FACTJURREGDESTLEG') {
       this.router.navigate([
         `/pages/juridical/depositary/depositary-record/` +
-          this.paramsDepositaryAppointment.P_NB,
+        this.paramsDepositaryAppointment.P_NB,
       ]);
     } else {
       const location: any = {
@@ -158,49 +158,49 @@ export class ScanRequestComponent extends BasePage implements OnInit {
     } else {
       receiptDate
         ? this.filterParams
-            .getValue()
-            .addFilter('receiptDate', receiptDate, SearchFilter.EQ)
+          .getValue()
+          .addFilter('receiptDate', receiptDate, SearchFilter.EQ)
         : null;
     }
 
     expedientNumber
       ? this.filterParams
-          .getValue()
-          .addFilter('expedientNumber', expedientNumber, SearchFilter.EQ)
+        .getValue()
+        .addFilter('expedientNumber', expedientNumber, SearchFilter.EQ)
       : null;
     wheelNumber
       ? this.filterParams
-          .getValue()
-          .addFilter('wheelNumber', wheelNumber, SearchFilter.EQ)
+        .getValue()
+        .addFilter('wheelNumber', wheelNumber, SearchFilter.EQ)
       : null;
     preliminaryInquiry
       ? this.filterParams
-          .getValue()
-          .addFilter('preliminaryInquiry', preliminaryInquiry, SearchFilter.EQ)
+        .getValue()
+        .addFilter('preliminaryInquiry', preliminaryInquiry, SearchFilter.EQ)
       : null;
     criminalCase
       ? this.filterParams
-          .getValue()
-          .addFilter('criminalCase', criminalCase, SearchFilter.EQ)
+        .getValue()
+        .addFilter('criminalCase', criminalCase, SearchFilter.EQ)
       : null;
     touchPenaltyKey
       ? this.filterParams
-          .getValue()
-          .addFilter('touchPenaltyKey', touchPenaltyKey, SearchFilter.EQ)
+        .getValue()
+        .addFilter('touchPenaltyKey', touchPenaltyKey, SearchFilter.EQ)
       : null;
     circumstantialRecord
       ? this.filterParams
-          .getValue()
-          .addFilter(
-            'circumstantialRecord',
-            circumstantialRecord,
-            SearchFilter.EQ
-          )
+        .getValue()
+        .addFilter(
+          'circumstantialRecord',
+          circumstantialRecord,
+          SearchFilter.EQ
+        )
       : null;
     protectionKey
       ? this.filterParams
-          .getValue()
-          .addFilter('protectionKey', protectionKey, SearchFilter.EQ)
+        .getValue()
+        .addFilter('protectionKey', protectionKey, SearchFilter.EQ)
       : null;
   }
 
@@ -363,6 +363,9 @@ export class ScanRequestComponent extends BasePage implements OnInit {
                     amountIVA: data.data[0].amountIVA,
                     personNumber: data.data[0].personNumber.id,
                     iva: data.data[0].iva,
+                    folioReturn: data.data[0].folioReturn
+                      ? Number(data.data[0].folioReturn)
+                      : null,
                   };
                   if (this.paramsDepositaryAppointment.P_FOLIO == 'R') {
                     body['folioReturn'] = this.idFolio;
@@ -535,7 +538,7 @@ export class ScanRequestComponent extends BasePage implements OnInit {
                     urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
                     type: 'pdf',
                   },
-                  callback: (data: any) => {},
+                  callback: (data: any) => { },
                 },
                 class: 'modal-lg modal-dialog-centered',
                 ignoreBackdropClick: true,
@@ -570,7 +573,7 @@ export class ScanRequestComponent extends BasePage implements OnInit {
           urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(pdfurl),
           type: 'pdf',
         },
-        callback: (data: any) => {},
+        callback: (data: any) => { },
       },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,

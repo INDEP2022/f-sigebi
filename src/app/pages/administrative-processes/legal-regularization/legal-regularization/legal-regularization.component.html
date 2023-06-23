@@ -8,10 +8,10 @@
         <div class="col-md-3 col-sm-12 col-xs-12">
           <form-field label="No Bien" [control]="form.get('numberGood')">
             <input
-              type="text"
+              type="number"
               class="form-control"
               formControlName="numberGood"
-              (change)="loadGood()" />
+              [max-length]="10" />
           </form-field>
         </div>
         <div class="col-md-3 col-sm-12 col-xs-12">
@@ -34,35 +34,54 @@
         </div>
       </div>
       <div class="row mt-5">
-        <div class="col-md-8 col-sm-12 col-xs-12">
+        <div class="col-md-7 col-sm-12 col-xs-12">
           <form-field label="Justificación" [control]="form.get('justifier')">
             <textarea
               type="text"
               class="form-control"
-              formControlName="justifier"></textarea>
+              formControlName="justifier"
+              [max-length]="1000"></textarea>
           </form-field>
         </div>
-        <div class="col-md-4 col-sm-12 col-xs-12">
-          <div class="d-flex justify-content-center">
-            <div class="m-3">
-              <button
-                [disabled]="form.invalid"
-                type="button"
-                class="btn btn-success btn-sm active"
-                (click)="updateStatus()">
-                Actualizar Estatus
-              </button>
-            </div>
-          </div>
+        <div class="col-md-5 col-sm-12 col-xs-12">
+          <button
+            type="button"
+            class="btn btn-primary active btn-sm mr-3"
+            (click)="loadGood()">
+            Buscar
+            <i class="bx bx-search-alt bx-sm float-icon"></i>
+          </button>
+
+          <button class="btn btn-danger btn-sm active mr-3" (click)="clean()">
+            Limpiar <i class="fas fa-eraser"></i>
+          </button>
+
+          <button
+            [disabled]="form.invalid"
+            type="button"
+            class="btn btn-success btn-sm active mr-3"
+            (click)="updateStatus()">
+            Actualizar
+          </button>
         </div>
       </div>
     </form>
-    <hr />
-    <div *ngIf="showFoli">
+    <div class="mt-5" *ngIf="viewFol">
+      <!-- <app-scan-file-shared 
+        [form]="form" 
+        [formControlName]="folioEscaneo"
+        [cveScreen]="cveScreen"
+        [noExpedient]="numberFile" 
+        [replicateFolioView]="false"
+        [reportPrint]="nameReport"></app-scan-file-shared> -->
       <app-scanning-foil
         [good]="good"
-        [numberFoli]=""
-        (documentEmmit)="changeFoli($event)"></app-scanning-foil>
+        [numberFoli]="numberFoli"
+        [cveScreen]="cveScreen"
+        [reportPrint]="nameReport"
+        [refresh]="refresh"
+        (documentEmmit)="changeFoli($event)">
+      </app-scanning-foil>
     </div>
   </div>
 </app-card>

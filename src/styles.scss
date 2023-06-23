@@ -52,8 +52,8 @@
   font-size: 14px;
 }
 
-.swal2-container.swal2-top-end > .swal2-popup,
-.swal2-container.swal2-top-right > .swal2-popup {
+.swal2-container.swal2-top-end>.swal2-popup,
+.swal2-container.swal2-top-right>.swal2-popup {
   border-top: 4px solid #c0c0c0;
 }
 
@@ -319,7 +319,7 @@ table:not(.normal-hover) tbody tr:hover {
   top: 32px;
 }
 
-.custom-file-input ~ .custom-file-label::after {
+.custom-file-input~.custom-file-label::after {
   content: 'Examinar' !important;
 }
 
@@ -467,7 +467,7 @@ ng-scrollbar.table-scrollbar {
 .table-container {
   margin-right: 14px !important;
 
-  > div {
+  >div {
     padding: 0px;
     margin-left: 15px;
 
@@ -590,4 +590,24 @@ ng-scrollbar.table-scrollbar {
 #custom-table-table-cursor table tbody tr td {
   cursor: default !important;
   background-color: #fff;
+}
+
+.bg-yellow-to-good {
+  background-color: #e2c103 !important;
+  color: black;
+  font-weight: 900;
+  padding: 0.3rem;
+}
+
+#fichas table:not(.normal-hover) tbody tr.selected {
+  color: black !important;
+  font-weight: 600;
+  // #28a745
+  background: rgb(219, 219, 219) !important;
+}
+
+#fichas table:not(.normal-hover) tbody tr:hover {
+  color: black !important;
+  font-weight: 600;
+  background: rgb(219, 219, 219) !important;
 }
