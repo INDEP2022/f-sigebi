@@ -95,12 +95,12 @@ export class RegulatoyFormComponent extends BasePage implements OnInit {
     if (this.regulatory != null) {
       this.edit = true;
       this.form.patchValue(this.regulatory);
-      this.idFraction = this.regulatory.fractionId;
-      this.fractionsId = this.idFraction.id;
-      this.form.controls['fractionId'].setValue(this.fractionsId);
-      console.log(this.fractionsId, this.idFraction);
+      // this.idFraction = this.regulatory.fractionId;
+      // this.fractionsId = this.idFraction.id;
+      // this.form.controls['fractionId'].setValue(this.fractionsId);
+      console.log(this.regulatory.fractionId);
       //this.fractionsId = this.idFraction;
-      this.getUpdateFractionAll(new ListParams(), this.fractionsId);
+      this.getUpdateFractionAll(new ListParams(), this.regulatory.fractionId.toString());
       //this.getFractionAll(new ListParams());
       //this.getFractionAll(new ListParams());
     }
@@ -164,6 +164,7 @@ export class RegulatoyFormComponent extends BasePage implements OnInit {
   }
 
   getUpdateFractionAll(params: ListParams, id: string) {
+    console.log(id);
     if (id) {
       params['filter.id'] = `$eq:${id}`;
     }

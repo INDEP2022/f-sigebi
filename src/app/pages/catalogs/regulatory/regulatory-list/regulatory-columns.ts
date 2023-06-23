@@ -4,15 +4,20 @@ export const REGULATORY_COLUMNS = {
     type: 'number',
     sort: false,
   },
-  fractionDetails: {
+  fractionId: {
     title: 'No. Fracción',
     type: 'number',
     sort: false,
+  },
+  fractionDetails: {
+    title: 'Fracción',
+    type: 'string',
+    sort: false,
     valuePrepareFunction: (value: any) => {
-      return value.id;
+      return value.description;
     },
     filterFunction(cell?: any, search?: string): boolean {
-      let column = cell.id;
+      let column = cell.description;
       if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
         return true;
       } else {

@@ -51,9 +51,12 @@ export class RegulatoryListComponent extends BasePage implements OnInit {
               case 'id':
                 searchFilter = SearchFilter.EQ;
                 break;
-              case 'fractionDetails':
+              case 'fractionId':
                 searchFilter = SearchFilter.EQ;
-                field = `filter.${filter.field}.id`;
+                break;
+              case 'fractionDetails':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}.description`;
                 break;
               case 'number':
                 searchFilter = SearchFilter.ILIKE;
