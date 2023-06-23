@@ -25,26 +25,18 @@ export class DocumentsViewerComponent extends BasePage implements OnInit {
   totalItems: number = 0;
 
   form = this.fb.group({
-    numberProceedings: [null, [Validators.required]],
-    flyerNumber: [null, [Validators.required]],
-    separador: [null, [Validators.required]],
-    keyTypeDocument: [null, [Validators.required]],
-    fecha: [null, [Validators.required]],
-    descripcion: [
-      null,
-      [Validators.required, Validators.pattern(STRING_PATTERN)],
-    ],
-    averPrevia: [
-      null,
-      [Validators.required, Validators.pattern(STRING_PATTERN)],
-    ],
+    numberProceedings: [null],
+    flyerNumber: [null],
+    separador: [null],
+    fecha: [null],
+    keyTypeDocument: [null],
+    descripcion: [null, [Validators.pattern(STRING_PATTERN)]],
+    averPrevia: [null, [Validators.pattern(STRING_PATTERN)]],
+    causaPenal: [null, [Validators.pattern(STRING_PATTERN)]],
     tipos: [null, [Validators.required]],
-    causaPenal: [
-      null,
-      [Validators.required, Validators.pattern(STRING_PATTERN)],
-    ],
     origen: [null, [Validators.required]],
   });
+
   selectTypeDoc = new DefaultSelect();
   selectSeparator = new DefaultSelect();
   data: LocalDataSource = new LocalDataSource();
@@ -60,12 +52,13 @@ export class DocumentsViewerComponent extends BasePage implements OnInit {
     super();
     this.settings.actions = false;
     this.settings.columns = GENERAL_DOCS_DOCUMENTS_VIEWER_COLUMNS;
+    this.settings.hideSubHeader = false;
     this.settings.rowClassFunction = (row: { data: { scanStatus: string } }) =>
       row.data.scanStatus == 'ESCANEADO' ? 'pending' : 'digital';
   }
 
   ngOnInit(): void {
-    this.loadDocumentsSeparator();
+    this.loadDocumentsSeparator(); //Aquí le indico que traiga todas las imágenes cuando se cargue la pantalla
     this.getDocuments();
     this.data
       .onChanged()
@@ -114,6 +107,7 @@ export class DocumentsViewerComponent extends BasePage implements OnInit {
 
   generateFilterParams(formGroup: FormGroup): string {
     const filterParams: string[] = [];
+    console.log(filterParams);
 
     // Iterar sobre los controles del formulario
     Object.keys(formGroup.controls).forEach(controlName => {
@@ -126,7 +120,7 @@ export class DocumentsViewerComponent extends BasePage implements OnInit {
     });
     // Unir los parámetros con el carácter '&'
     const paramsString = filterParams.join('&');
-
+    console.log('Filter');
     return paramsString;
   }
 
@@ -154,6 +148,7 @@ export class DocumentsViewerComponent extends BasePage implements OnInit {
     this.documentService.getDocumentsType(param).subscribe(response => {
       // Actualiza los datos del ngx-select con la respuesta obtenida
       this.selectTypeDoc = new DefaultSelect(response.data, response.count);
+      console.log(this.selectTypeDoc);
     });
   }
 
@@ -164,6 +159,7 @@ export class DocumentsViewerComponent extends BasePage implements OnInit {
       .pipe(
         map(res => {
           this.selectTypeDoc = new DefaultSelect(res.data, res.count);
+          console.log(this.selectTypeDoc);
         })
       )
       .subscribe();
@@ -174,7 +170,7 @@ export class DocumentsViewerComponent extends BasePage implements OnInit {
       .getDocumentsSeparator()
       .pipe(
         map(res => {
-          console.log(res);
+          console.log(res); //Trae todas las imágenes
           this.selectSeparator = new DefaultSelect(res.data, res.count);
         })
       )
@@ -186,11 +182,13 @@ export class DocumentsViewerComponent extends BasePage implements OnInit {
     this.loading = true;
     let params = this.generateFilterParams(this.form);
     console.log(params);
-
+    console.log('Clic en el botón de Consultar');
     this.documentService.getAll(params).subscribe(
       response => {
         this.documents = response.data;
+        console.log(this.documents);
         this.totalItems = response.count || 0;
+        console.log(this.totalItems);
         this.data.load(this.documents);
         this.loading = false;
       },
