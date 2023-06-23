@@ -131,6 +131,20 @@ export interface IGoodInfo {
   reprogrammationNumber?: number;
 }
 
+export interface IDomicileInfo {
+  aliasWarehouse?: string;
+  cveState?: number;
+  cveMunicipality?: string;
+  cveSettlement?: string;
+  code?: string;
+  viaName?: string;
+  viaOrigin?: string;
+  viaDestination?: string;
+  viaChaining?: string;
+  numExt?: string;
+  numInt?: string;
+}
+
 export interface IPACambioStatusGood {
   P_NOACTA: number;
   P_AREATRA: string;
