@@ -69,7 +69,7 @@ export class CitiesSharedComponent extends BasePage implements OnInit {
         } else {
           error = err.message;
         }
-        this.onLoadToast('error', 'Error', error);
+        this.onLoadToast('error', 'Error registro no existente');
       },
     });
   }

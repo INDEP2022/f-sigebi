@@ -46,30 +46,17 @@
       Obtener Atributos
     </button>
   </div>
-  <div class="col">
-    <!-- <ng-scrollbar style="height: calc(100vh - 700px)"> -->
-    <div class="css-table" style="width: 100%">
-      <div class="css-table-header">
-        <div style="width: 50%">Atributo</div>
-        <div style="width: 50%">Valor</div>
-      </div>
-
-      <div class="css-table-body">
-        <div class="css-table-row" *ngFor="let item of list">
-          <div style="text-align: end; font-weight: bold">
-            {{ item.atributo }}
-          </div>
-          <div>
-            <input
-              type="text"
-              class="form-control"
-              [value]="item.valor"
-              style="background-color: #afeeee" />
-          </div>
-        </div>
-      </div>
+  <div class="col" *ngIf="viewAct">
+    <div class="row">
+      <app-good-characteristics-table
+        [goodChange]="goodChange"
+        [clasification]="classificationOfGoods"
+        [settings]="atributActSettings"
+        [avaluo]="false"
+        [good]="good"
+        [disabled]="true"
+        [service]="service"></app-good-characteristics-table>
     </div>
-    <!-- </ng-scrollbar> -->
   </div>
 </div>
 <!-- <div class="d-flex justify-content-center">

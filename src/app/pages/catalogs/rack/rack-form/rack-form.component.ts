@@ -39,7 +39,7 @@ export class RackFormComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.form = this.fb.group({
-      id: [null, [Validators.required, Validators.maxLength(2)]],
+      id: [null, [Validators.maxLength(2)]],
       idWarehouse: [null, [Validators.required]],
       idBatch: [null, [Validators.required]],
       description: [
@@ -49,6 +49,7 @@ export class RackFormComponent extends BasePage implements OnInit {
       status: [null],
       registerNumber: [null],
     });
+
     if (this.rack != null) {
       console.log(this.rack);
       this.edit = true;
@@ -66,9 +67,11 @@ export class RackFormComponent extends BasePage implements OnInit {
         this.form.controls['idBatch'].value.toString()
       );
       this.form.controls['id'].disable();
+      console.log(this.form);
     }
     this.form.controls['idWarehouse'].disable();
     this.getBatch(new ListParams());
+    //console.log(this.form.value.id);
   }
 
   getData(params: ListParams) {
@@ -94,10 +97,17 @@ export class RackFormComponent extends BasePage implements OnInit {
 
   update() {
     this.loading = true;
-    this.rackService.update(this.rack.id, this.form.getRawValue()).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
-    });
+    this.rackService
+      .update8(
+        this.rack.id,
+        this.rack.idWarehouse,
+        this.rack.idBatch,
+        this.form.getRawValue()
+      )
+      .subscribe({
+        next: data => this.handleSuccess(),
+        error: error => (this.loading = false),
+      });
   }
 
   handleSuccess() {
