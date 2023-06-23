@@ -209,7 +209,6 @@ export abstract class ScheduledMaintenance extends BasePageWidhtDinamicFiltersEx
   protected updateByPaginator() {
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe({
       next: response => {
-        console.log(response);
         localStorage.setItem(
           this.paramsActa,
           JSON.stringify({ limit: response.limit, page: response.page })
@@ -294,7 +293,6 @@ export abstract class ScheduledMaintenance extends BasePageWidhtDinamicFiltersEx
             } else {
               delete this.columnFilters[field];
             }
-            console.log(this.columnFilters);
           });
           this.getData();
         }
@@ -305,7 +303,6 @@ export abstract class ScheduledMaintenance extends BasePageWidhtDinamicFiltersEx
     const filtersActa = window.localStorage.getItem(this.formStorage);
     if (filtersActa) {
       const newData = JSON.parse(filtersActa);
-      console.log(newData);
       if (newData.rangeDate) {
         const inicio = newData.rangeDate[0].split('T')[0];
         const final = newData.rangeDate[1].split('T')[0];
@@ -323,7 +320,6 @@ export abstract class ScheduledMaintenance extends BasePageWidhtDinamicFiltersEx
   saveForm() {
     if (this.form) {
       let form = this.form.getRawValue();
-      console.log(form);
 
       // if (!form.rangeDate) {
       //   form.rangeDate = null;
@@ -350,7 +346,6 @@ export abstract class ScheduledMaintenance extends BasePageWidhtDinamicFiltersEx
       claveActa: [null, [Validators.pattern(STRING_PATTERN)]],
     });
     this.setForm();
-    console.log(this.form.value);
   }
 
   private fillParams(byPage = false) {
@@ -363,13 +358,11 @@ export abstract class ScheduledMaintenance extends BasePageWidhtDinamicFiltersEx
     const usuario = this.form.get('usuario').value;
     // const cveActa = this.form.get('claveActa').value;
     const rangeDate = this.form.get('rangeDate').value;
-    console.log(rangeDate);
     if (this.form.invalid) {
       return false;
     }
     this.filterParams = new FilterParams();
     if (tipoEvento && tipoEvento !== 'TODOS') {
-      console.log(tipoEvento);
       this.filterParams.addFilter('typeProceedings', tipoEvento);
     }
 
@@ -407,7 +400,6 @@ export abstract class ScheduledMaintenance extends BasePageWidhtDinamicFiltersEx
     //     SearchFilter.BTW
     //   );
     // }
-    console.log(coordRegional);
     if (coordRegional && coordRegional.length > 0) {
       this.filterParams.addFilter(
         'numDelegation_1.description',
@@ -422,14 +414,12 @@ export abstract class ScheduledMaintenance extends BasePageWidhtDinamicFiltersEx
     if (usuario) {
       this.filterParams.addFilter('elaborate', usuario, SearchFilter.LIKE);
     }
-    console.log(this.columnFilters);
 
     // this.columnFilters.forEach(x => {
     //   this.filterParams.addFilter2(x)
     // })
     for (var filter in this.columnFilters) {
       if (this.columnFilters.hasOwnProperty(filter)) {
-        console.log(this.columnFilters[filter]);
         this.filterParams.addFilter3(filter, this.columnFilters[filter]);
       }
     }
@@ -459,7 +449,6 @@ export abstract class ScheduledMaintenance extends BasePageWidhtDinamicFiltersEx
       this.loading = true;
       this.service.getAll(this.filterParams.getParams()).subscribe({
         next: response => {
-          console.log(response);
           // if (response.data.length === 0) {
           //   this.onLoadToast('error', 'No se encontraron datos');
           // }
@@ -469,9 +458,7 @@ export abstract class ScheduledMaintenance extends BasePageWidhtDinamicFiltersEx
               captureDate: formatForIsoDate(x.captureDate, 'string') + '',
             };
           })),
-            console.log(this.items);
-
-          this.data.load(this.items);
+            this.data.load(this.items);
           this.totalItems = response.count;
           this.loading = false;
           // setTimeout(() => {

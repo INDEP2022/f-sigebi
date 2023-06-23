@@ -21,8 +21,8 @@
             class="btn btn-primary active btn-sm m-2"
             style="float: left"
             (click)="goBack()">
-            <i class="fas fa-arrow-left"></i>
             Regresar
+            <i class="fas fa-arrow-circle-left"></i>
           </button>
         </div>
         <div class="col-6">
@@ -627,7 +627,7 @@
               class="btn btn-primary btn-sm active m-3 text-wrap w-100"
               (click)="btnApprove()">
               <!-- [routerLink]="rutaAprobado" -->
-              Aprobar
+              Aprobar <i class="fa fa-check" aria-hidden="true"></i>
             </button>
           </div>
           <div class="col-6 text-align-center">
@@ -635,7 +635,7 @@
               class="btn btn-danger btn-sm active m-3 text-wrap w-100"
               (click)="btnBorrarDictamen()"
               [disabled]="!buttonDeleteDisabled">
-              Borrar Dictamen
+              Borrar Dictamen <i class="fa fa-trash" aria-hidden="true"></i>
             </button>
           </div>
           <div class="col-6 text-align-center">
@@ -643,7 +643,8 @@
               class="btn btn-primary btn-sm active m-3 text-wrap w-100"
               (click)="btnImprimeOficio()">
               <!-- [routerLink]="returnRoute" -->
-              Imprime Oficio
+              <!-- Imprime Oficio -->
+              Imprime Oficio <i class="bx bx-printer bx-sm float-icon"></i>
             </button>
           </div>
           <div class="col-6 text-align-center">
