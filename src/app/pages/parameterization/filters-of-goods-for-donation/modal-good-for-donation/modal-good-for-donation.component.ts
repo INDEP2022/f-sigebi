@@ -52,16 +52,19 @@ export class ModalGoodForDonationComponent extends BasePage implements OnInit {
       let goodStatus: IStatusGood = this.allotment.status as IStatusGood;
       let tag: ILabelOKey = this.allotment.tag as ILabelOKey;
 
-      console.log(goodStatus, tag);
+      console.log(this.allotment.noLabel);
       this.form.patchValue({
         goodStatus: goodStatus.status,
         targetIndicator: tag.id,
       });
 
+      this.id = this.allotment.statusId;
+
       this.statusSelect = new DefaultSelect([goodStatus], 1);
       this.labelSelect = new DefaultSelect([tag], 1);
       this.form.get('goodStatus').disable();
-      this.form.get('targetIndicator').disable();
+      //this.form.get('targetIndicator').disable();
+
       /*this.form.controls['goodStatus'].patchValue(this.allotment.statusId);
       this.form.controls['targetIndicator'].patchValue(this.allotment.tagId);
       this.id = this.form.controls['goodStatus'].value;*/

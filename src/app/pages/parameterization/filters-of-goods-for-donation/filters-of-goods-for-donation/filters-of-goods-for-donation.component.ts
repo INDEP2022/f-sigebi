@@ -120,7 +120,7 @@ export class FiltersOfGoodsForDonationComponent
         this.data.refresh();
       },
       error: err => {
-        this.onLoadToast('error', err.error.message, '');
+        //this.onLoadToast('error', err.error.message, '');
         this.loading = false;
       },
     });
