@@ -378,6 +378,7 @@ export class AppointmentsComponent
     this.formScan.reset();
     this.form.reset();
     this.noBienReadOnly = null;
+    this.depositaryAppointment = null;
   }
 
   toggleRemocion(checked: any) {
@@ -390,6 +391,29 @@ export class AppointmentsComponent
 
   btnBienes() {
     console.log('Bienes');
+    if (!this.noBienReadOnly) {
+      this.alert(
+        'warning',
+        'Se requiere de una búsqueda de Bien primero para poder realizar esta acción',
+        ''
+      );
+      return;
+    }
+    if (this.depositaryAppointment) {
+      // AGREGAR MS FALTANTE QUE ESTA EN REVISION
+      console.log('NO ESTA LISTO');
+    } else {
+      if (this.good) {
+        console.log('TRAER INFO DE BIENES');
+        this.getFromGoodsAndExpedients(false, true);
+      } else {
+        this.alert(
+          'warning',
+          'Se requiere ingresar un Bien correcto para realizar esta acción',
+          ''
+        );
+      }
+    }
   }
 
   btnCatalogoDepositarias() {
@@ -687,26 +711,29 @@ export class AppointmentsComponent
    */
   async validGoodNumberInDepositaryAppointment() {
     if (this.form.get('noBien').valid) {
+      this.depositaryAppointment = null;
       this.loadingAppointment = true;
       this.noBien = this.form.get('noBien').value;
       this.noBienReadOnly = this.form.get('noBien').value;
-      this.formScan.reset();
-      this.form.reset();
       const params: ListParams = {
         page: this.params.getValue().page,
         limit: 10,
       };
       this.params.getValue().getParams();
-      params['filter.goodNumber'] = this.noBien;
+      // params['filter.goodNumber'] = this.noBien;
+      params['filter.numberGood'] = this.noBien;
       this.form.reset();
+      this.formRadioScan.reset();
+      this.formScan.reset();
       this.form.get('noBien').setValue(this.noBien);
       this.form.updateValueAndValidity();
-      await this.appointmentsService
-        .getGoodAppointmentDepositaryByNoGood(params)
+      await this.appointmentsService // .getGoodAppointmentDepositaryByNoGood(params)
+        .getDataDepositaryAppointment(params)
         .subscribe({
           next: res => {
             this.loadingAppointment = false;
             console.log('DEPOSITARIA ', res);
+            // if (res.count == 1) {
             this.depositaryAppointment = res.data[0];
             this.setDataDepositary(); // Set data depositary
             if (this.depositaryAppointment.personNumber) {
@@ -716,6 +743,10 @@ export class AppointmentsComponent
             }
             this.getFromGoodsAndExpedients(true); // Get data good
             this.setOthers();
+            // } else {
+            //   this.globalVars.noExiste = 0;
+            //   this.getFromGoodsAndExpedients(true);
+            // }
           },
           error: err => {
             this.loadingAppointment = false;
@@ -727,7 +758,7 @@ export class AppointmentsComponent
               this.alert(
                 'warning',
                 'Número de Bien',
-                'El número de Bien no existe.'
+                'El número de Bien no existe en Registro de Depositaría.'
               );
             }
           },
@@ -770,7 +801,8 @@ export class AppointmentsComponent
       .get('personNumber')
       .setValue(this.depositaryAppointment.personNumber.id);
 
-    this.form.get('personNumber').enable();
+
+    // this.form.get('personNumber').enable();
     this.getPersonCatalog(new ListParams(), true);
     this.form.get('depositaria').setValue(
       this.depositaryAppointment.personNumber.personName
@@ -969,7 +1001,10 @@ export class AppointmentsComponent
    * INCIDENCIA 538 -- CERRADA --- SE CAMBIA OBTENIENDO EL BIEN Y VALIDAR CON EL EXPEDIENTE QUE RETORNA
    * Obtener los datos del bien de acuerdo al status DEP
    */
-  async getFromGoodsAndExpedients(onlyGood: boolean = false) {
+  async getFromGoodsAndExpedients(
+    onlyGood: boolean = false,
+    btnGood: boolean = false
+  ) {
     // let paramsGoodExpedient: IFromGoodsAndExpedientsBody = {
     //   goodNumber: this.noBien,
     //   page: 1,
@@ -978,9 +1013,15 @@ export class AppointmentsComponent
     this.loadingGood = true;
     const params = new FilterParams();
     params.removeAllFilters();
-    params.addFilter('goodId', this.noBien);
-    if (onlyGood == false) {
-      params.addFilter('status', 'DEP');
+    if (btnGood) {
+      params.addFilter('goodId', this.noBien, SearchFilter.NOT);
+      params.addFilter('fileNumber', this.good.fileNumber);
+      console.log('PARAMS ', params);
+    } else {
+      params.addFilter('goodId', this.noBien);
+      if (onlyGood == false) {
+        params.addFilter('status', 'DEP');
+      }
     }
     await this.appointmentsService
       .getFromGoodsAndExpedients(params.getFilterParams())
@@ -993,6 +1034,7 @@ export class AppointmentsComponent
         },
         error: err => {
           this.loadingGood = false;
+          this.good = null;
           console.log(err);
           this.alert(
             'warning',
@@ -1849,13 +1891,13 @@ export class AppointmentsComponent
   }
 
   changePersonCatalog(event: any) {
-    // console.log(event);
-    // if (event) {
-    //   this.depositaryAppointment.personNumber = event;
-    //   setTimeout(() => {
-    //     console.log(this.depositaryAppointment.personNumber);
-    //     this.setDataPerson();
-    //   }, 300);
-    // }
+    console.log(event);
+    if (event) {
+      this.depositaryAppointment.personNumber = event;
+      setTimeout(() => {
+        console.log(this.depositaryAppointment.personNumber);
+        this.setDataPerson();
+      }, 300);
+    }
   }
 }

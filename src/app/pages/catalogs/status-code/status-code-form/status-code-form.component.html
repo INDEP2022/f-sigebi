@@ -7,12 +7,20 @@
       <div class="row">
         <div class="col-md-4">
           <form-field [control]="statusCodeForm.get('id')" label="Clave">
-            <input type="text" class="form-control" formControlName="id" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="id"
+              maxlength="5" />
           </form-field>
         </div>
         <div class="col-md-4">
           <form-field [control]="statusCodeForm.get('order')" label="Orden">
-            <input type="number" class="form-control" formControlName="order" />
+            <input
+              type="number"
+              class="form-control"
+              formControlName="order"
+              oninput="if(this.value.length > 3) this.value = this.value.slice(0, 3);" />
           </form-field>
         </div>
         <div class="col-md-12">
@@ -23,7 +31,8 @@
               class="form-control"
               type="text"
               rows="2"
-              formControlName="descCode"></textarea>
+              formControlName="descCode"
+              maxlength="50"></textarea>
           </form-field>
         </div>
       </div>
