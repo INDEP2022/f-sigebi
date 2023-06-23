@@ -29,7 +29,7 @@ export class BankAccountsInsuredComponent implements OnInit {
   import: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
   filterParams = new BehaviorSubject<FilterParams>(new FilterParams());
-
+  cve: any;
   @Output() submit = new EventEmitter();
   constructor(
     private fb: FormBuilder,
@@ -116,19 +116,23 @@ export class BankAccountsInsuredComponent implements OnInit {
       });
   }
 
-  getRegCurrency() {
-    this.tableServ.getReg4WidthFilters().subscribe({
-      next: data => {
-        data.data.map(data => {
-          data.desc_moneda = `${data.cve_moneda}- ${data.desc_moneda}`;
-          return data;
-        });
-        this.currencies = new DefaultSelect(data.data, data.count);
-      },
-      error: () => {
-        this.currencies = new DefaultSelect();
-      },
-    });
+  getRegCurrency(params?: ListParams) {
+    params['filter.cve_moneda'] = `$ilike:${params.text}`;
+    params['filter.desc_moneda'] = `$ilike:${params.text}`;
+    this.tableServ
+      .getReg4WidthFilters(this.filterParams.getValue().getParams())
+      .subscribe({
+        next: data => {
+          data.data.map(data => {
+            data.desc_moneda = `${data.cve_moneda}- ${data.desc_moneda}`;
+            return data;
+          });
+          this.currencies = new DefaultSelect(data.data, data.count);
+        },
+        error: () => {
+          this.currencies = new DefaultSelect();
+        },
+      });
   }
 
   cleanForm() {

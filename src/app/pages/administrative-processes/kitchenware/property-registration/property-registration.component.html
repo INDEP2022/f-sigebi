@@ -1,13 +1,13 @@
-<form [formGroup]="form" class="form-material">
-  <app-card [header]="true" [footer]="true">
-    <div class="ch-content" header>
-      <h5 class="title">Registro del menaje del bien</h5>
-    </div>
-    <div body>
+<app-card [header]="true" [footer]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Registro del menaje del bien</h5>
+  </div>
+  <div body>
+    <form [formGroup]="form" class="form-material">
       <div class="row">
         <div class="col-12">
           <div class="d-flex justify-content-between">
-            <div class="col-6 p-0">
+            <div class="col-6 pl-2">
               <form-field
                 [control]="form.get('numberFile')"
                 label="No Expediente">
@@ -90,7 +90,7 @@
                 <div class="m-3">
                   <button
                     [disabled]="enableAddgood"
-                    *ngIf="showButton"
+                    *ngIf="showButton && showSearchButton"
                     type="button"
                     class="btn btn-sm btn-primary active"
                     (click)="showGoods()">
@@ -139,6 +139,6 @@
             [totalItems]="totalItems"></app-pagination>
         </div>
       </div>
-    </div>
-  </app-card>
-</form>
+    </form>
+  </div>
+</app-card>
