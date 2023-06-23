@@ -12,26 +12,18 @@
           <div class="row">
             <div class="col-12 col-sm-6 col-md-4 p-2">
               <form-field [control]="form.get('noBien')" label="No&#46; Bien">
-                <input
-                  type="number"
-                  class="form-control"
-                  formControlName="noBien" />
+                <input type="number" class="form-control" formControlName="noBien" />
               </form-field>
             </div>
             <div class="col-12 col-sm-4 col-md-8 p-2">
-              <button
-                type="submit"
-                class="btn btn-primary active btn-sm m-2"
+              <button type="submit" class="btn btn-primary active btn-sm m-2"
                 (click)="validGoodNumberInDepositaryAppointment()">
                 Buscar
                 <i class="bx bx-search-alt bx-sm float-icon"></i>
               </button>
               <!-- </div>
             <div class="col-12 col-sm-4 col-md-3 p-2"> -->
-              <button
-                type="button"
-                class="btn btn-danger active btn-sm m-2"
-                (click)="cleanScreenFields()">
+              <button type="button" class="btn btn-danger active btn-sm m-2" (click)="cleanScreenFields()">
                 Limpiar
                 <i class="fa fa-eraser ml-1"></i>
               </button>
@@ -50,9 +42,7 @@
             </div>
           </div>
         </div> -->
-        <div
-          class="col-sm-12 col-12 col-md-12 col-lg-12 p-2 mb-5 p-5"
-          *ngIf="loadingGood || loadingAppointment">
+        <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2 mb-5 p-5" *ngIf="loadingGood || loadingAppointment">
           <div class="d-flex justify-content-center">
             <div class="d-flex justify-content-center">
               <div class="loader"></div>
@@ -61,94 +51,46 @@
           </div>
         </div>
         <div class="col-sm-12 col-12 col-md-3 p-2">
-          <form-field
-            [control]="form.get('noExpedient')"
-            label="N&uacute;mero de Expediente">
-            <input
-              type="number"
-              [readonly]="true"
-              class="form-control"
-              maxLength="30"
-              formControlName="noExpedient" />
+          <form-field [control]="form.get('noExpedient')" label="N&uacute;mero de Expediente">
+            <input type="number" [readonly]="true" class="form-control" maxLength="30" formControlName="noExpedient" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-3 p-2">
-          <form-field
-            [control]="form.get('fechaAcuerdoAsegurado')"
-            label="Fecha de Acuerdo Asegurado">
-            <input
-              class="form-control"
-              formControlName="fechaAcuerdoAsegurado"
-              [readonly]="true"
-              maxLength="11"
+          <form-field [control]="form.get('fechaAcuerdoAsegurado')" label="Fecha de Acuerdo Asegurado">
+            <input class="form-control" formControlName="fechaAcuerdoAsegurado" [readonly]="true" maxLength="11"
               bsDatepicker />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-3 p-2">
-          <form-field
-            [control]="form.get('fechaRecepcion')"
-            label="Fecha de Recepci&oacute;n">
-            <input
-              class="form-control"
-              formControlName="fechaRecepcion"
-              [readonly]="true"
-              maxLength="11"
+          <form-field [control]="form.get('fechaRecepcion')" label="Fecha de Recepci&oacute;n">
+            <input class="form-control" formControlName="fechaRecepcion" [readonly]="true" maxLength="11"
               bsDatepicker />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-3 p-2">
-          <form-field
-            [control]="form.get('fechaDecomiso')"
-            label="Fecha de Decomiso">
-            <input
-              [readonly]="true"
-              class="form-control"
-              formControlName="fechaDecomiso"
-              maxLength="11"
-              bsDatepicker />
+          <form-field [control]="form.get('fechaDecomiso')" label="Fecha de Decomiso">
+            <input [readonly]="true" class="form-control" formControlName="fechaDecomiso" maxLength="11" bsDatepicker />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-12 p-2">
-          <form-field
-            [control]="form.get('estatusBien')"
-            label="Estatus del Bien">
-            <textarea
-              [readonly]="true"
-              class="form-control"
-              rows="2"
-              maxLength="500"
+          <form-field [control]="form.get('estatusBien')" label="Estatus del Bien">
+            <textarea [readonly]="true" class="form-control" rows="2" maxLength="500"
               formControlName="estatusBien"></textarea>
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-6 p-2">
           <form-field [control]="form.get('causaPenal')" label="Causa Penal">
-            <input
-              [readonly]="true"
-              class="form-control"
-              maxLength="40"
-              formControlName="causaPenal" />
+            <input [readonly]="true" class="form-control" maxLength="40" formControlName="causaPenal" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-6 p-2">
-          <form-field
-            [control]="form.get('averiguacionPrevia')"
-            label="Averiguaci&oacute;n Previa">
-            <input
-              [readonly]="true"
-              class="form-control"
-              maxLength="200"
-              formControlName="averiguacionPrevia" />
+          <form-field [control]="form.get('averiguacionPrevia')" label="Averiguaci&oacute;n Previa">
+            <input [readonly]="true" class="form-control" maxLength="200" formControlName="averiguacionPrevia" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-12 p-2">
-          <form-field
-            [control]="form.get('descriptionGood')"
-            label="Descripción del Bien">
-            <textarea
-              [readonly]="true"
-              class="form-control"
-              rows="4"
-              maxLength="1250"
+          <form-field [control]="form.get('descriptionGood')" label="Descripción del Bien">
+            <textarea [readonly]="true" class="form-control" rows="4" maxLength="1250"
               formControlName="descriptionGood"></textarea>
           </form-field>
         </div>
@@ -167,9 +109,7 @@
           </div>
         </div> -->
         <div class="col-sm-12 col-12 col-md-3 p-2">
-          <form-field
-            [control]="form.get('tipoNombramiento')"
-            label="Tipo de Nombramiento">
+          <form-field [control]="form.get('tipoNombramiento')" label="Tipo de Nombramiento">
             <select class="form-control" formControlName="tipoNombramiento">
               <option [value]="null">Seleccione un valor</option>
               <option [value]="'Administrador'">Administrador</option>
@@ -192,31 +132,18 @@
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-3 p-2">
-          <form-field
-            [control]="form.get('tipoDepositaria')"
-            label="Tipo de Depositar&iacute;a">
-            <input
-              class="form-control"
-              formControlName="tipoDepositaria"
-              maxLength="40" />
+          <form-field [control]="form.get('tipoDepositaria')" label="Tipo de Depositar&iacute;a">
+            <input class="form-control" formControlName="tipoDepositaria" maxLength="40" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-3 p-2">
-          <form-field
-            [control]="form.get('representanteSAE')"
-            label="Representante INDEP">
-            <input
-              class="form-control"
-              formControlName="representanteSAE"
-              maxLength="100" />
+          <form-field [control]="form.get('representanteSAE')" label="Representante INDEP">
+            <input class="form-control" formControlName="representanteSAE" maxLength="100" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-6 p-2">
           <form-field [control]="form.get('nombre')" label="Nombre">
-            <input
-              class="form-control"
-              formControlName="nombre"
-              maxLength="100" />
+            <input class="form-control" formControlName="nombre" maxLength="100" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-6 p-2">
@@ -224,33 +151,17 @@
             <!-- <label class="form-control-label">Tipo Volante</label> -->
             <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2 text-center">
               <form-radio label="Sin Menaje" for="sinMenaje">
-                <input
-                  id="sinMenaje"
-                  type="radio"
-                  formControlName="bienesMenaje"
-                  value="N" />
+                <input id="sinMenaje" type="radio" formControlName="bienesMenaje" value="N" />
               </form-radio>
             </div>
             <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2 text-center">
-              <form-radio
-                label="Con Menaje"
-                for="conMenaje"
-                (change)="changeMenaje()">
-                <input
-                  id="conMenaje"
-                  type="radio"
-                  formControlName="bienesMenaje"
-                  value="S" />
+              <form-radio label="Con Menaje" for="conMenaje" (change)="changeMenaje()">
+                <input id="conMenaje" type="radio" formControlName="bienesMenaje" value="S" />
               </form-radio>
             </div>
             <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2 text-right">
-              <button
-                type="button"
-                [disabled]="form.get('bienesMenaje').value == 1"
-                tooltip="Bienes Asociados"
-                containerClass="tooltip-style"
-                class="btn btn-primary btn-sm active m-1"
-                (click)="btnBienes()">
+              <button type="button" [disabled]="form.get('bienesMenaje').value == 1" tooltip="Bienes Asociados"
+                containerClass="tooltip-style" class="btn btn-primary btn-sm active m-1" (click)="btnBienes()">
                 <i class="bx bx-list-check"></i>
               </button>
             </div>
@@ -274,40 +185,19 @@
           </div>
         </div> -->
         <div class="col-sm-12 col-12 col-md-4 p-2">
-          <form-field
-            [control]="form.get('depositaria')"
-            label="Depositar&iacute;a">
-            <input
-              class="form-control"
-              maxLength="40"
-              formControlName="depositaria"
-              [readonly]="true" />
+          <form-field [control]="form.get('depositaria')" label="Depositar&iacute;a">
+            <input class="form-control" maxLength="40" formControlName="depositaria" [readonly]="true" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-4 p-2">
-          <form-field
-            [control]="form.get('representante')"
-            label="Representante">
-            <input
-              class="form-control"
-              maxLength="120"
-              formControlName="representante"
-              [readonly]="true" />
+          <form-field [control]="form.get('representante')" label="Representante">
+            <input class="form-control" maxLength="120" formControlName="representante" [readonly]="true" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-4 p-2">
-          <ngx-select
-            [data]="personSelect"
-            bindLabel="nameDesc"
-            label="Cat&aacute;logo Personas"
-            value="id"
-            (change)="changePersonCatalog($event)"
-            (fetchItems)="getPersonCatalog($event)"
-            [form]="form"
-            [showTooltip]="true"
-            [searchOnInit]="true"
-            termMaxLength="100"
-            control="personNumber"></ngx-select>
+          <ngx-select [data]="personSelect" bindLabel="nameDesc" label="Cat&aacute;logo Personas" value="id"
+            (change)="changePersonCatalog($event)" (fetchItems)="getPersonCatalog($event)" [form]="form"
+            [showTooltip]="true" [searchOnInit]="true" termMaxLength="100" control="personNumber"></ngx-select>
         </div>
         <!-- <div class="col-sm-2 col-2 col-md-2 p-2 text-center">
           <button
@@ -320,93 +210,49 @@
           </button>
         </div> -->
         <div class="col-sm-12 col-12 col-md-3 p-2">
-          <form-field
-            [control]="form.get('tipoPersona')"
-            label="Tipo Persona &#40;F&iacute;SICA&#47;MORAL&#41;">
-            <input
-              class="form-control"
-              formControlName="tipoPersona"
-              maxLength="20"
-              [readonly]="true" />
+          <form-field [control]="form.get('tipoPersona')" label="Tipo Persona &#40;F&iacute;SICA&#47;MORAL&#41;">
+            <input class="form-control" formControlName="tipoPersona" maxLength="20" [readonly]="true" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-3 p-2">
-          <form-field
-            [control]="form.get('tipoPersona2')"
-            label="Tipo Persona &#40;DEDICACI&Oacute;N&#41;">
-            <input
-              class="form-control"
-              formControlName="tipoPersona2"
-              maxLength="30"
-              [readonly]="true" />
+          <form-field [control]="form.get('tipoPersona2')" label="Tipo Persona &#40;DEDICACI&Oacute;N&#41;">
+            <input class="form-control" formControlName="tipoPersona2" maxLength="30" [readonly]="true" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-3 p-2">
           <form-field [control]="form.get('rfc')" label="RFC">
-            <input
-              class="form-control"
-              formControlName="rfc"
-              maxLength="20"
-              [readonly]="true" />
+            <input class="form-control" formControlName="rfc" maxLength="20" [readonly]="true" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-3 p-2">
           <form-field [control]="form.get('curp')" label="CURP">
-            <input
-              class="form-control"
-              formControlName="curp"
-              maxLength="20"
-              [readonly]="true" />
+            <input class="form-control" formControlName="curp" maxLength="20" [readonly]="true" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-2 p-2">
           <form-field [control]="form.get('telefono')" label="Tel&eacute;fono">
-            <input
-              class="form-control"
-              formControlName="telefono"
-              maxLength="20"
-              [readonly]="true" />
+            <input class="form-control" formControlName="telefono" maxLength="20" [readonly]="true" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-6 p-2">
           <form-field [control]="form.get('calle')" label="Calle">
-            <input
-              class="form-control"
-              formControlName="calle"
-              maxLength="200"
-              [readonly]="true" />
+            <input class="form-control" formControlName="calle" maxLength="200" [readonly]="true" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-2 p-2">
           <form-field [control]="form.get('noExterno')" label="No&#46; Externo">
-            <input
-              class="form-control"
-              formControlName="noExterno"
-              maxLength="10"
-              [readonly]="true" />
+            <input class="form-control" formControlName="noExterno" maxLength="10" [readonly]="true" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-2 p-2">
           <form-field [control]="form.get('noInterno')" label="No&#46; Interno">
-            <input
-              class="form-control"
-              formControlName="noInterno"
-              maxLength="10"
-              [readonly]="true" />
+            <input class="form-control" formControlName="noInterno" maxLength="10" [readonly]="true" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-6 p-2">
-          <ngx-select
-            [data]="postalCode"
-            bindLabel="township"
-            label="C&oacute;digo Postal"
-            value="postalCode"
-            (fetchItems)="getPostalCodeByDetail($event)"
-            (change)="changePostalCodeDetail($event)"
-            [form]="form"
-            [showTooltip]="true"
-            termMaxLength="6"
-            control="codigoPostal"></ngx-select>
+          <ngx-select [data]="postalCode" bindLabel="township" label="C&oacute;digo Postal" value="postalCode"
+            (fetchItems)="getPostalCodeByDetail($event)" (change)="changePostalCodeDetail($event)" [form]="form"
+            [showTooltip]="true" termMaxLength="6" control="codigoPostal"></ngx-select>
         </div>
         <!-- <div class="col-sm-12 col-12 col-md-6 p-2">
           <ngx-select
@@ -423,11 +269,7 @@
         </div> -->
         <div class="col-sm-12 col-12 col-md-6 p-2">
           <form-field [control]="form.get('colonia')" label="Colonia">
-            <input
-              class="form-control"
-              formControlName="colonia"
-              maxLength="100"
-              [readonly]="true" />
+            <input class="form-control" formControlName="colonia" maxLength="100" [readonly]="true" />
           </form-field>
         </div>
         <!-- <div class="col-sm-12 col-12 col-md-6 p-2">
@@ -444,45 +286,23 @@
             control="delegacionMunicipio"></ngx-select>
         </div> -->
         <div class="col-sm-12 col-12 col-md-6 p-2">
-          <form-field
-            [control]="form.get('delegacionMunicipio')"
-            label="Delegaci&oacute;n&#47;Municipio">
-            <input
-              class="form-control"
-              formControlName="delegacionMunicipio"
-              maxLength="60"
-              [readonly]="true" />
+          <form-field [control]="form.get('delegacionMunicipio')" label="Delegaci&oacute;n&#47;Municipio">
+            <input class="form-control" formControlName="delegacionMunicipio" maxLength="60" [readonly]="true" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-6 p-2">
-          <ngx-select
-            [data]="state"
-            bindLabel="descCondition"
-            label="Entidad Federativa"
-            value="id"
-            (fetchItems)="getStateByDetail($event)"
-            (change)="changeStateDetail($event)"
-            [form]="form"
-            [showTooltip]="true"
-            termMaxLength="45"
-            control="entidadFederativa"></ngx-select>
+          <ngx-select [data]="state" bindLabel="descCondition" label="Entidad Federativa" value="id"
+            (fetchItems)="getStateByDetail($event)" (change)="changeStateDetail($event)" [form]="form"
+            [showTooltip]="true" termMaxLength="45" control="entidadFederativa"></ngx-select>
         </div>
         <div class="col-sm-12 col-12 col-md-6 p-2">
           <form-field [control]="form.get('giro')" label="Giro">
-            <input
-              class="form-control"
-              formControlName="giro"
-              maxLength="45"
-              [readonly]="true" />
+            <input class="form-control" formControlName="giro" maxLength="45" [readonly]="true" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-6 p-2">
           <form-field [control]="form.get('referencia')" label="Referencia">
-            <input
-              class="form-control"
-              formControlName="referencia"
-              maxLength="35"
-              [readonly]="true" />
+            <input class="form-control" formControlName="referencia" maxLength="35" [readonly]="true" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-12 p-2">
@@ -494,32 +314,17 @@
               <div class="row">
                 <div class="col-sm-12 col-12 col-md-6 p-2">
                   <form-check label="Con Remoci&oacute;n" for="remocion">
-                    <input
-                      id="remocion"
-                      type="checkbox"
-                      formControlName="remocion"
-                      (click)="toggleRemocion($event)" />
+                    <input id="remocion" type="checkbox" formControlName="remocion" (click)="toggleRemocion($event)" />
                   </form-check>
                 </div>
                 <div class="col-sm-12 col-12 col-md-6 p-2">
                   <form-field [control]="form.get('fecha')" label="Fecha">
-                    <input
-                      class="form-control"
-                      formControlName="fecha"
-                      maxLength="11"
-                      bsDatepicker
-                      [readonly]="true" />
+                    <input class="form-control" formControlName="fecha" maxLength="11" bsDatepicker [readonly]="true" />
                   </form-field>
                 </div>
                 <div class="col-sm-12 col-12 col-md-12 p-2">
-                  <form-field
-                    [control]="form.get('noOficio')"
-                    label="No&#46; Oficio">
-                    <input
-                      class="form-control"
-                      formControlName="noOficio"
-                      maxLength="20"
-                      [readonly]="true" />
+                  <form-field [control]="form.get('noOficio')" label="No&#46; Oficio">
+                    <input class="form-control" formControlName="noOficio" maxLength="20" [readonly]="true" />
                   </form-field>
                 </div>
               </div>
@@ -531,57 +336,29 @@
             <div class="card-body">
               <div class="row">
                 <div class="col-sm-12 col-12 col-md-4 p-2">
-                  <form-field
-                    [control]="form.get('contraprestacion')"
-                    label="Contrapresentaci&oacute;n">
-                    <input
-                      class="form-control"
-                      formControlName="contraprestacion"
-                      maxLength="17"
-                      [readonly]="true" />
+                  <form-field [control]="form.get('contraprestacion')" label="Contrapresentaci&oacute;n">
+                    <input class="form-control" formControlName="contraprestacion" maxLength="17" [readonly]="true" />
                   </form-field>
                 </div>
                 <div class="col-sm-12 col-12 col-md-4 p-2">
-                  <form-field
-                    [control]="form.get('honorarios')"
-                    label="Honorarios">
-                    <input
-                      class="form-control"
-                      formControlName="honorarios"
-                      maxLength="17"
-                      [readonly]="true" />
+                  <form-field [control]="form.get('honorarios')" label="Honorarios">
+                    <input class="form-control" formControlName="honorarios" maxLength="17" [readonly]="true" />
                   </form-field>
                 </div>
                 <div class="col-sm-12 col-12 col-md-4 p-2">
                   <form-field [control]="form.get('iva')" label="Iva">
-                    <input
-                      class="form-control"
-                      formControlName="iva"
-                      maxLength="5"
-                      [readonly]="true" />
+                    <input class="form-control" formControlName="iva" maxLength="5" [readonly]="true" />
                   </form-field>
                 </div>
                 <div class="col-sm-12 col-12 col-md-4 p-2">
-                  <form-field
-                    [control]="form.get('fechaInicio')"
-                    label="Fecha Inicio">
-                    <input
-                      class="form-control"
-                      formControlName="fechaInicio"
-                      maxLength="11"
-                      bsDatepicker
+                  <form-field [control]="form.get('fechaInicio')" label="Fecha Inicio">
+                    <input class="form-control" formControlName="fechaInicio" maxLength="11" bsDatepicker
                       [readonly]="true" />
                   </form-field>
                 </div>
                 <div class="col-sm-12 col-12 col-md-8 p-2">
-                  <form-field
-                    [control]="form.get('noNombramiento')"
-                    label="No&#46; Nombramiento">
-                    <input
-                      class="form-control"
-                      formControlName="noNombramiento"
-                      maxLength="60"
-                      [readonly]="true" />
+                  <form-field [control]="form.get('noNombramiento')" label="No&#46; Nombramiento">
+                    <input class="form-control" formControlName="noNombramiento" maxLength="60" [readonly]="true" />
                   </form-field>
                 </div>
               </div>
@@ -595,26 +372,13 @@
           <h5 class="text-center">Acuerdo Junta de Gobierno</h5>
         </div>
         <div class="col-sm-12 col-12 col-md-4 p-2">
-          <form-field
-            [control]="form.get('fechaAcuerdo')"
-            label="Fecha Acuerdo Junta de Gobierno">
-            <input
-              class="form-control"
-              formControlName="fechaAcuerdo"
-              maxLength="11"
-              bsDatepicker
-              [readonly]="true" />
+          <form-field [control]="form.get('fechaAcuerdo')" label="Fecha Acuerdo Junta de Gobierno">
+            <input class="form-control" formControlName="fechaAcuerdo" maxLength="11" bsDatepicker [readonly]="true" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-8 p-2">
-          <form-field
-            [control]="form.get('noAcuerdo')"
-            label="No&#46; Acuerdo Junta de Gobierno">
-            <input
-              class="form-control"
-              formControlName="noAcuerdo"
-              maxLength="20"
-              [readonly]="true" />
+          <form-field [control]="form.get('noAcuerdo')" label="No&#46; Acuerdo Junta de Gobierno">
+            <input class="form-control" formControlName="noAcuerdo" maxLength="20" [readonly]="true" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-12 p-2 mt-3 mb-3">
@@ -622,52 +386,27 @@
         </div>
         <div class="col-sm-12 col-12 col-md-4 p-2">
           <form-field [control]="form.get('anexo')" label="Anexo">
-            <textarea
-              class="form-control"
-              formControlName="anexo"
-              maxLength="20"
-              rows="3"
-              [readonly]="true"></textarea>
+            <textarea class="form-control" formControlName="anexo" maxLength="20" rows="3" [readonly]="true"></textarea>
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-8 p-2 mb-4">
-          <form-field
-            [control]="form.get('observaciones')"
-            label="Observaciones">
-            <textarea
-              class="form-control"
-              formControlName="observaciones"
-              maxLength="1000"
-              rows="3"
+          <form-field [control]="form.get('observaciones')" label="Observaciones">
+            <textarea class="form-control" formControlName="observaciones" maxLength="1000" rows="3"
               [readonly]="true"></textarea>
           </form-field>
         </div>
-        <div
-          *ngIf="showScanRadio"
-          class="col-sm-12 col-12 col-md-12 p-2 mb-5 card">
-          <form
-            [formGroup]="formRadioScan"
-            class="container-fluid form-material">
+        <div *ngIf="showScanRadio" class="col-sm-12 col-12 col-md-12 p-2 mb-5 card">
+          <form [formGroup]="formRadioScan" class="container-fluid form-material">
             <div class="row w-100 pl-4 card-body">
               <div class="col-sm-12 col-12 col-md-6 col-lg-6 p-2 text-center">
-                <form-radio
-                  label="Folio Acta Depositaria"
-                  for="depositaryFolio">
-                  <input
-                    id="depositaryFolio"
-                    type="radio"
-                    formControlName="scanningFolio"
-                    (change)="changeRadioScan('A')"
-                    value="A" />
+                <form-radio label="Folio Acta Depositaria" for="depositaryFolio">
+                  <input id="depositaryFolio" type="radio" formControlName="scanningFolio"
+                    (change)="changeRadioScan('A')" value="A" />
                 </form-radio>
               </div>
               <div class="col-sm-12 col-12 col-md-6 col-lg-6 p-2 text-center">
                 <form-radio label="Folio Remoci&oacute;n" for="removalFolio">
-                  <input
-                    id="removalFolio"
-                    type="radio"
-                    formControlName="scanningFolio"
-                    (change)="changeRadioScan('R')"
+                  <input id="removalFolio" type="radio" formControlName="scanningFolio" (change)="changeRadioScan('R')"
                     value="R" />
                 </form-radio>
               </div>
@@ -682,10 +421,7 @@
                 </form-radio>
               </div> -->
               <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2 text-center">
-                <button
-                  type="button"
-                  class="btn btn-danger btn-sm active m-1"
-                  (click)="closeRadioScan()">
+                <button type="button" class="btn btn-danger btn-sm active m-1" (click)="closeRadioScan()">
                   Cerrar opciones de Escaneo
                 </button>
               </div>
@@ -726,72 +462,39 @@
         </div> -->
         <!-- BOTONES PANTALLA -->
         <div class="col-md-4 col-12 col-sm-12 text-center p-1">
-          <button
-            (click)="btnPaysDetails()"
-            name="payDetail"
-            tooltip="Detallle de Pagos"
-            containerClass="tooltip-style"
-            type="button"
-            class="btn btn-info btn-sm active m-1">
+          <button (click)="btnPaysDetails()" name="payDetail" tooltip="Detallle de Pagos" containerClass="tooltip-style"
+            type="button" class="btn btn-info btn-sm active m-1">
             <i class="bx bxs-detail"></i>
           </button>
-          <button
-            (click)="btnJuridicalReport()"
-            name="juridicalReport"
-            tooltip="Reportes Jur&iacute;dicos"
-            containerClass="tooltip-style"
-            type="button"
-            class="btn btn-info btn-sm active m-1">
+          <button (click)="btnJuridicalReport()" name="juridicalReport" tooltip="Reportes Jur&iacute;dicos"
+            containerClass="tooltip-style" type="button" class="btn btn-info btn-sm active m-1">
             <i class="bx bxs-detail"></i>
           </button>
-          <button
-            (click)="btnReportesAdministrativos()"
-            name="administrativeReport"
-            tooltip="Reportes Administrativos"
-            containerClass="tooltip-style"
-            type="button"
-            class="btn btn-info btn-sm active m-1">
+          <button (click)="btnReportesAdministrativos()" name="administrativeReport" tooltip="Reportes Administrativos"
+            containerClass="tooltip-style" type="button" class="btn btn-info btn-sm active m-1">
             <i class="bx bxs-detail"></i>
           </button>
-          <button
-            (click)="btnMasivIncomePays()"
-            name="masivIncomePays"
-            tooltip="Ingreso Masivo de Pagos"
-            containerClass="tooltip-style"
-            type="button"
+          <button (click)="btnMasivIncomePays()" name="masivIncomePays" tooltip="Ingreso Masivo de Pagos"
+            containerClass="tooltip-style" type="button" class="btn btn-warning btn-sm active m-1">
+            <i class="bx bx-window-open"></i>
+          </button>
+          <button (click)="btnConceptsPaysCatalogs()" name="conceptsPaysCatalogs"
+            tooltip="Cat&aacute;logo de Conceptos de Pago" containerClass="tooltip-style" type="button"
             class="btn btn-warning btn-sm active m-1">
             <i class="bx bx-window-open"></i>
           </button>
-          <button
-            (click)="btnConceptsPaysCatalogs()"
-            name="conceptsPaysCatalogs"
-            tooltip="Cat&aacute;logo de Conceptos de Pago"
-            containerClass="tooltip-style"
-            type="button"
-            class="btn btn-warning btn-sm active m-1">
-            <i class="bx bx-window-open"></i>
-          </button>
-          <button
-            (click)="btnDepositaryCatalog()"
-            name="conceptsCatalogsPays"
-            tooltip="Cat&aacute;logo Depositar&iacute;as"
-            containerClass="tooltip-style"
-            type="button"
+          <button (click)="btnDepositaryCatalog()" name="conceptsCatalogsPays"
+            tooltip="Cat&aacute;logo Depositar&iacute;as" containerClass="tooltip-style" type="button"
             class="btn btn-warning btn-sm active m-1">
             <i class="bx bx-window-open"></i>
           </button>
         </div>
         <!-- PARTE DE ESCANEO -->
         <div class="col-md-8 col-12 col-sm-12" *ngIf="showScanForm">
-          <app-scanning-foil-appointment
-            [formScan]="formScan"
-            [depositaryAppointment]="depositaryAppointment"
-            [goodId]="noBienReadOnly"
-            [dataUserLogged]="dataUserLogged"
-            (scanRequestEmitter)="scanRequest($event)"
+          <app-scanning-foil-appointment [formScan]="formScan" [depositaryAppointment]="depositaryAppointment"
+            [goodId]="noBienReadOnly" [dataUserLogged]="dataUserLogged" (scanRequestEmitter)="scanRequest($event)"
             (showScanningPageEmitter)="showScanningPage($event)"
-            (messageDigitalizationEmitter)="messageDigitalization($event)"
-            (viewPicturesEmitter)="
+            (messageDigitalizationEmitter)="messageDigitalization($event)" (viewPicturesEmitter)="
               viewPictures($event)
             "></app-scanning-foil-appointment>
         </div>

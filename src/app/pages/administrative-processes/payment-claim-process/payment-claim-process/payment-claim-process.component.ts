@@ -615,7 +615,7 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
         this.documnetServices
           .delete(folioUniversalesReplicados[i].id)
           .subscribe({
-            next: response => {},
+            next: response => { },
             error: err => {
               console.log(err);
             },

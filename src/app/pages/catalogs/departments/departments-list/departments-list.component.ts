@@ -63,11 +63,11 @@ export class DepartmentsListComponent extends BasePage implements OnInit {
                 searchFilter = SearchFilter.ILIKE;
                 break;
               case 'delegation':
-                searchFilter = SearchFilter.EQ;
+                searchFilter = SearchFilter.ILIKE;
                 field = `filter.${filter.field}.description`;
                 break;
               case 'numSubDelegation':
-                searchFilter = SearchFilter.EQ;
+                searchFilter = SearchFilter.ILIKE;
                 field = `filter.${filter.field}.description`;
                 break;
               case 'description':
