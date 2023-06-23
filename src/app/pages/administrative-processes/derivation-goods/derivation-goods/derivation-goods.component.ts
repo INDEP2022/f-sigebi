@@ -139,11 +139,6 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
     const modalRef = this.modalService.show(PwComponent, config);
   }
 
-  /**
-   * @method: metodo para iniciar el formulario
-   * @author:  Alexander Alvarez
-   * @since: 27/09/2022
-   */
   private buildForm() {
     this.form = this.fb.group({
       idConversion: [null, [Validators.required]],

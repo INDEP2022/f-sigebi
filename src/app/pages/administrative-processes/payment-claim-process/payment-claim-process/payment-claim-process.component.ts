@@ -70,7 +70,7 @@ interface NotData {
     // .table-container::-webkit-scrollbar-track {
     //   background-color: #f4f4f4; /* Color de fondo del scroll */
     // }
-    // `
+    //
   ],
 })
 export class PaymentClaimProcessComponent extends BasePage implements OnInit {
