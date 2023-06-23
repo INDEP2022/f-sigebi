@@ -278,7 +278,7 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
         .getFProRecPag2CSV(this.filter1.getValue().getParams(), binaryExcel)
         .subscribe({
           next: (response: any) => {
-            console.log('SI11', response);
+            console.log('SI112', response);
             this.goods = response.dataA;
             let dataD = response.dataD;
             let count = 0;
