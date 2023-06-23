@@ -281,6 +281,9 @@ export class JuridicalRulingGComponent
         sort: false,
         title: 'Menaje',
         type: 'string',
+        valuePrepareFunction: (value: any) => {
+          return value.noGood;
+        },
       },
       amountDict: {
         sort: false,
