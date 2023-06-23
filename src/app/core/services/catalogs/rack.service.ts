@@ -33,8 +33,23 @@ export class RackService implements ICrudMethods<IRack> {
     return this.rackRepository.create(this.route, model);
   }
 
-  update(id: string | number, model: IRack): Observable<Object> {
+  /*update(id: string | number, model: IRack): Observable<Object> {
     return this.rackRepository.update(this.route, id, model);
+  }*/
+
+  update8(
+    id: string | number,
+    idWarehouse: string | number,
+    idBatch: string | number,
+    modal: IRack
+  ): Observable<Object> {
+    return this.rackRepository.update8(
+      this.route,
+      id,
+      idWarehouse,
+      idBatch,
+      modal
+    );
   }
 
   remove(id: string | number): Observable<Object> {

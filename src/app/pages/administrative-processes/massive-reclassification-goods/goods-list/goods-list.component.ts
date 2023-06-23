@@ -34,6 +34,7 @@ export class GoodsListComponent
   implements OnInit
 {
   previousSelecteds: IGood[] = [];
+  pageSelecteds: number[] = [];
   @ViewChild('table') table: Ng2SmartTableComponent;
   constructor(
     private massiveService: MassiveReclassificationGoodsService,
@@ -70,7 +71,16 @@ export class GoodsListComponent
 
   private fillSelectedRows() {
     setTimeout(() => {
-      console.log(this.selectedGooods);
+      console.log(this.selectedGooods, this.table);
+      const currentPage = this.params.getValue().page;
+      const selectedPage = this.pageSelecteds.find(
+        page => page === currentPage
+      );
+      if (!selectedPage) {
+        this.table.isAllSelected = false;
+      } else {
+        this.table.isAllSelected = true;
+      }
       if (this.selectedGooods && this.selectedGooods.length > 0) {
         this.table.grid.getRows().forEach(row => {
           console.log(row);
@@ -140,6 +150,13 @@ export class GoodsListComponent
       }
     } else {
       if (event.isSelected === null) {
+        const currentPage = this.params.getValue().page;
+        const selectedPage = this.pageSelecteds.find(
+          page => page === currentPage
+        );
+        if (!selectedPage) {
+          this.pageSelecteds.push(currentPage);
+        }
         selecteds.forEach(selected => {
           const item = this.selectedGooods.find(x => x.id === selected.id);
           if (!item) {
