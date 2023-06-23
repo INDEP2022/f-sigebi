@@ -34,7 +34,6 @@ export class DrawerFormComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
-
   }
 
   prepareForm() {
@@ -83,7 +82,7 @@ export class DrawerFormComponent extends BasePage implements OnInit {
     });
   }
 
-  bovedaChange(boveda: ISafe) { }
+  bovedaChange(boveda: ISafe) {}
 
   confirm() {
     this.edit ? this.update() : this.create();

@@ -90,7 +90,7 @@ export class NormsListComponent extends BasePage implements OnInit {
           this.columns = response.data;
           this.totalItems = response.count || 0;
           this.getList()
-            .then((resultado) => {
+            .then(resultado => {
               console.log(resultado);
               console.log(this.columns);
               this.columns1 = this.columns;
@@ -99,7 +99,7 @@ export class NormsListComponent extends BasePage implements OnInit {
               this.data.refresh(); // Operación exitosa
               this.loading = false;
             })
-            .catch((error) => {
+            .catch(error => {
               console.error(error); // Error en la operación
             });
         } else {
@@ -120,9 +120,7 @@ export class NormsListComponent extends BasePage implements OnInit {
             next: response => {
               this.columns[i].name = response.data[0].description;
               if (i == this.columns.length - 1) {
-
                 resolve('Operación exitosa');
-
               }
             },
             error: error => (this.loading = false),
@@ -130,13 +128,10 @@ export class NormsListComponent extends BasePage implements OnInit {
         } else {
           // this.columns[i].name = '';
           if (i == this.columns.length - 1) {
-
             resolve('Operación exitosa');
-
           }
           // this.loading = false;
         }
-
       }
       // Ejemplo de rechazo de la promesa
       // reject('Error en la operación');

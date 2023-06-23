@@ -19,7 +19,8 @@ import {
 })
 export class RegisterKeysLogicalTablesModalComponent
   extends BasePage
-  implements OnInit {
+  implements OnInit
+{
   tdescCveForm: ModelForm<ITdescCve>;
   tdescCve: ITdescCve;
   idCve: ITable;

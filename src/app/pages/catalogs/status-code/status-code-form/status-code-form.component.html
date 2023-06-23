@@ -7,18 +7,32 @@
       <div class="row">
         <div class="col-md-4">
           <form-field [control]="statusCodeForm.get('id')" label="Clave">
-            <input type="text" class="form-control" formControlName="id" maxlength="5" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="id"
+              maxlength="5" />
           </form-field>
         </div>
         <div class="col-md-4">
           <form-field [control]="statusCodeForm.get('order')" label="Orden">
-            <input type="number" class="form-control" formControlName="order"
+            <input
+              type="number"
+              class="form-control"
+              formControlName="order"
               oninput="if(this.value.length > 3) this.value = this.value.slice(0, 3);" />
           </form-field>
         </div>
         <div class="col-md-12">
-          <form-field [control]="statusCodeForm.get('descCode')" label="Descripci&oacute;n">
-            <textarea class="form-control" type="text" rows="2" formControlName="descCode" maxlength="50"></textarea>
+          <form-field
+            [control]="statusCodeForm.get('descCode')"
+            label="Descripci&oacute;n">
+            <textarea
+              class="form-control"
+              type="text"
+              rows="2"
+              formControlName="descCode"
+              maxlength="50"></textarea>
           </form-field>
         </div>
       </div>
@@ -27,7 +41,10 @@
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <confirm-button [disabled]="statusCodeForm.invalid" [loading]="loading" (confirm)="confirm()">
+        <confirm-button
+          [disabled]="statusCodeForm.invalid"
+          [loading]="loading"
+          (confirm)="confirm()">
         </confirm-button>
       </div>
       <div class="m-3">

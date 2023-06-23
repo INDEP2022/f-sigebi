@@ -11,7 +11,9 @@
           </form-field>
         </div>
         <div class="col-md-6 pt-sm-5 pt-md-2">
-          <form-field [control]="normForm.get('article')" label="Art&iacute;culo">
+          <form-field
+            [control]="normForm.get('article')"
+            label="Art&iacute;culo">
             <input type="text" class="form-control" formControlName="article" />
           </form-field>
         </div>
@@ -29,28 +31,47 @@
         </div>
         <div class="col-6 pt-sm-5 pt-md-2">
           <form-field [control]="normForm.get('name')" label="Destino">
-            <input type="text" class="form-control" formControlName="name" (click)="openDestination()" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="name"
+              (click)="openDestination()" />
           </form-field>
         </div>
       </div>
       <div class="row pt-md-3">
         <div class="col-12 pt-sm-5 pt-md-2">
-          <form-field [control]="normForm.get('characteristics')" label="Caracter&iacute;sticas">
-            <textarea rows="3" class="form-control pt-3" formControlName="characteristics">
+          <form-field
+            [control]="normForm.get('characteristics')"
+            label="Caracter&iacute;sticas">
+            <textarea
+              rows="3"
+              class="form-control pt-3"
+              formControlName="characteristics">
             </textarea>
           </form-field>
         </div>
       </div>
       <div class="row pt-md-3">
         <div class="col-md-6 pt-sm-5 pt-md-2">
-          <form-field [control]="normForm.get('merchandise')" label="Mercanc&iacute;as Regular">
-            <textarea rows="3" class="form-control pt-3" formControlName="merchandise">
+          <form-field
+            [control]="normForm.get('merchandise')"
+            label="Mercanc&iacute;as Regular">
+            <textarea
+              rows="3"
+              class="form-control pt-3"
+              formControlName="merchandise">
             </textarea>
           </form-field>
         </div>
         <div class="col-md-6 pt-sm-5 pt-md-2">
-          <form-field [control]="normForm.get('fundament')" label="Fundamento Juridico">
-            <textarea rows="3" class="form-control pt-3" formControlName="fundament">
+          <form-field
+            [control]="normForm.get('fundament')"
+            label="Fundamento Juridico">
+            <textarea
+              rows="3"
+              class="form-control pt-3"
+              formControlName="fundament">
             </textarea>
           </form-field>
         </div>
@@ -58,15 +79,24 @@
       <div class="row pt-md-3">
         <div class="col-12 pt-sm-5 pt-md-2">
           <form-field [control]="normForm.get('objective')" label="Objetivo">
-            <textarea rows="3" class="form-control pt-3" formControlName="objective">
+            <textarea
+              rows="3"
+              class="form-control pt-3"
+              formControlName="objective">
             </textarea>
           </form-field>
         </div>
       </div>
       <div class="row pt-md-3">
         <div class="col-md-6 pt-sm-5 pt-md-2">
-          <form-field [control]="normForm.get('condition')" label="Condici&oacute;n">
-            <input type="number" class="form-control" min="1" formControlName="condition" />
+          <form-field
+            [control]="normForm.get('condition')"
+            label="Condici&oacute;n">
+            <input
+              type="number"
+              class="form-control"
+              min="1"
+              formControlName="condition" />
           </form-field>
         </div>
       </div>
@@ -75,7 +105,10 @@
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <confirm-button [disabled]="!normForm.valid" [loading]="loading" (confirm)="confirm()">
+        <confirm-button
+          [disabled]="!normForm.valid"
+          [loading]="loading"
+          (confirm)="confirm()">
         </confirm-button>
       </div>
       <div class="m-3">

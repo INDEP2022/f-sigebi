@@ -77,7 +77,9 @@ export class CityDetailComponent extends BasePage implements OnInit {
       this.selectedState = this.city.delegationDetail;
       this.selectedDelegation = this.city.SubDelegationDetail;
       this.cityForm.controls['noDelegation'].setValue(this.selectedState.id);
-      this.cityForm.controls['noSubDelegation'].setValue(this.selectedDelegation.id);
+      this.cityForm.controls['noSubDelegation'].setValue(
+        this.selectedDelegation.id
+      );
       this.getDelegations(new ListParams());
       this.getSubDelegations(new ListParams());
       this.getStates(new ListParams());
@@ -85,7 +87,6 @@ export class CityDetailComponent extends BasePage implements OnInit {
       this.getDelegations(new ListParams());
       this.getStates(new ListParams());
     }
-
   }
 
   getStates(params: ListParams) {
