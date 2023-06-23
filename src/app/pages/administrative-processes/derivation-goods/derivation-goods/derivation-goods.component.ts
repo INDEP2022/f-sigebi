@@ -12,6 +12,7 @@ import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { BasePage } from 'src/app/core/shared';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
 
 @Component({
   selector: 'app-derivation-goods',
@@ -27,6 +28,9 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
 
   //Deshabilitar el formulario
   wrongModal = true
+
+  //Variables de BLK_TIPO_BIEN
+  no_bien_blk_tipo_bien: number
 
   get idConversion() {
     return this.form.get('idConversion');
@@ -95,7 +99,8 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
     private fb: FormBuilder,
     private router: Router,
     private modalService: BsModalService,
-    private serviceGood: GoodService
+    private serviceGood: GoodService,
+    private serviceGoodProcess: GoodProcessService
   ) {
     super()
   }
@@ -110,12 +115,16 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
         ...MODAL_CONFIG,
         callback: (data: any) => {
           if(data != null){
+            //Se setea el valor de no_bien
+            this.no_bien_blk_tipo_bien = data.goodFatherNumber
+            //Se seta los valores de idConversion
+            this.idConversion.setValue(data.id)
+            this.numberDossier.setValue(data.fileNumber.id)
+            this.numberGoodFather.setValue(data.goodFatherNumber)
+            //
             console.log(data)
             this.wrongModal = false
-            this.idConversion.setValue(data.id)
-            this.numberGoodFather.setValue(data.goodFatherNumber)
             this.tipo.setValue(data.typeConv)
-            this.numberDossier.setValue(data.fileNumber.id)
             this.actConvertion.setValue(data.cveActaConv)
             this.numberGoodSon.setValue(data.goodFatherNumber)
             this.searchGoods(data.goodFatherNumber)

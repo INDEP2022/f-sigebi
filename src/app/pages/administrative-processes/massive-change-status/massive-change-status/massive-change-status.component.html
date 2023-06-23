@@ -27,27 +27,41 @@
       </div>
       <div class="row">
         <div class="col-md-12 col-sm-12 col-xs-12 text-center">
-          <button type="button" class="btn btn-primary btn-sm active mr-3">
+          <button
+            type="button"
+            class="btn btn-primary btn-sm active mr-3"
+            (click)="goToRastreador()">
             Cargar Rastreador
             <i aria-hidden="true" class="fa fa-upload"></i>
           </button>
-          <button type="button" class="btn btn-primary btn-sm active mr-5" (click)="file.click()">
+          <button
+            type="button"
+            class="btn btn-primary btn-sm active mr-5"
+            (click)="file.click()">
             Cargar Excel/CSV
             <i aria-hidden="true" class="fa fa-upload"></i>
           </button>
           <input
-          type="file"
-          name="file"
-          #file
-          class="d-none"
-          accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
-          (change)="onFileChange($event)" />
+            type="file"
+            name="file"
+            #file
+            class="d-none"
+            accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+            (change)="onFileChange($event)" />
 
-          <button type="button" class="btn btn-primary btn-sm active mr-3">
-            Asinga Estatus
+          <button
+            type="button"
+            class="btn btn-primary btn-sm active mr-3"
+            [disabled]="!availableToAssing"
+            (click)="assignsStatus()">
+            Asigna Estatus
             <i aria-hidden="true" class="fa fa-save"></i>
           </button>
-          <button type="button" class="btn btn-primary btn-sm active mr-3">
+          <button
+            type="button"
+            [disabled]="!(availableToUpdate.length > 0)"
+            class="btn btn-primary btn-sm active mr-3"
+            (click)="applyStatus()">
             Aplica Estatus
             <i aria-hidden="true" class="fa fa-save"></i>
           </button>
@@ -95,8 +109,7 @@
             style="border-top: 1px solid rgba(0, 0, 0, 0.1)">
             <div class="col-md-full" *ngFor="let item of idsNotExist">
               <span style="color: crimson"
-                >{{ item.reason }} del Bien No
-                <strong>{{ item.id }}</strong></span
+                >{{ item.reason }} No. <strong>{{ item.id }}</strong></span
               >
             </div>
           </div>
@@ -114,17 +127,19 @@
             style="border-top: 1px solid rgba(0, 0, 0, 0.1)">
             <span
               >Numero de registros cargados &nbsp;&nbsp;
-              <strong style="color: #1e7e34">{{ goods.length }}</strong></span
+              <strong style="color: #1e7e34">{{
+                availableToUpdate.length
+              }}</strong></span
             >
           </div>
           <div
             class="row pt-3 pb-3"
             style="border-top: 1px solid rgba(0, 0, 0, 0.1)">
-            <div class="col-md-full" *ngFor="let good of goods">
+            <div class="col-md-full" *ngFor="let good of availableToUpdate">
               <span
                 >Bien No
-                <strong style="color: #1e7e34">{{ good.id }}</strong> cargado
-                correctamente
+                <strong style="color: #1e7e34">{{ good.goodId }}</strong>
+                cargado correctamente
               </span>
             </div>
           </div>
@@ -132,11 +147,11 @@
             class="row pt-3 pb-3"
             style="border-top: 1px solid rgba(0, 0, 0, 0.1)"
             *ngIf="showStatus">
-            <div class="col-md-full" *ngFor="let good of goods">
+            <div class="col-md-full" *ngFor="let good of availableToUpdate">
               <span
                 >Status del bien No
-                <strong style="color: #1e7e34">{{ good.id }}</strong>
-                cambiado correctamente</span
+                <strong style="color: #1e7e34">{{ good.goodId }} </strong>
+                {{ good.message }}</span
               >
             </div>
           </div>
