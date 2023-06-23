@@ -48,29 +48,6 @@ interface NotData {
         overflow-y: auto;
       }
     `,
-    // .table-container {
-    //   overflow-y: auto;
-    //   scrollbar-width: thin; /* Anchura del scroll */
-    //   scrollbar-color: #888888 #f4f4f4; /* Color del scroll */
-    // }
-
-    // .table-container::-webkit-scrollbar {
-    //   width: 6px; /* Anchura del scroll */
-    // }
-
-    // .table-container::-webkit-scrollbar-thumb {
-    //   background-color: #888888; /* Color del scroll */
-    //   border-radius: 3px;
-    // }
-
-    // .table-container::-webkit-scrollbar-thumb:hover {
-    //   background-color: #555555; /* Color del scroll al pasar el mouse */
-    // }
-
-    // .table-container::-webkit-scrollbar-track {
-    //   background-color: #f4f4f4; /* Color de fondo del scroll */
-    // }
-    // `
   ],
 })
 export class PaymentClaimProcessComponent extends BasePage implements OnInit {
@@ -101,6 +78,7 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
   settings2 = { ...TABLE_SETTINGS2 };
 
   valDocument: boolean = false;
+  public formLoading: boolean = false;
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
@@ -164,29 +142,49 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
     this.buildForm();
     this.form.disable();
 
-    this.params
+    // this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+    //   if (this.goods.length > 0) {
+    //     this.loadGoodsPipe();
+    //   }
+    // });
+    this.filter1
       .pipe(
         skip(1),
         tap(() => {
           // aquí colocas la función que deseas ejecutar
-          this.addStatus();
+          this.readExcel(this.test);
         }),
         takeUntil(this.$unSubscribe)
       )
       .subscribe(() => {
         // if (this.goods.length > 0) {
-        this.addStatus();
+        // this.readExcel(this.test);
         // }
       });
 
     this.cargarDataStorage();
   }
-
+  test: any;
   async cargarDataStorage() {
-    const getItem = await this.getItem('goodData');
-    if (getItem != null) {
-      this.readExcel(getItem);
-      this.removeItem('goodData');
+    const base64Data = localStorage.getItem('archivoBase64');
+    console.log('console.log(base64Data)', base64Data);
+    if (base64Data != null) {
+      // Decodifica el archivo Base64 a un array de bytes
+      const byteCharacters = atob(base64Data);
+
+      // Crea un array de bytes utilizando el tamaño del archivo decodificado
+      const byteNumbers = new Array(byteCharacters.length);
+      for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
+      }
+
+      // Crea un Uint8Array a partir del array de bytes
+      const byteArray = new Uint8Array(byteNumbers);
+
+      const blob = new Blob([byteArray], { type: 'text/csv' });
+      this.test = blob;
+      this.readExcel(blob);
+      this.removeItem('archivoBase64');
     }
   }
 
@@ -205,10 +203,40 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
     });
   }
 
+  file: File | undefined;
+  fileUrl: any;
+  async getFile() {
+    const base64Data = localStorage.getItem('goodData');
+    const csvData = atob(base64Data);
+
+    return csvData ? csvData : null;
+    // Puedes utilizar el contenido del archivo CSV como desees
+    console.log(csvData);
+  }
+
+  // fileContent: string | undefined;
+  // converterBase64(event: any) {
+  //   const files = event;
+  //   const reader = new FileReader();
+  //   reader.readAsBinaryString(files);
+  //   reader.onloadend = () => {
+  //     // Convierte el contenido a Base64
+  //     const base64Data = btoa(reader.result as string);
+
+  //     // Guarda el archivo Base64 en el localStorage
+  //     this.cargarData(base64Data);
+  //     // localStorage.setItem('archivoCSV', base64Data);
+  //   };
+
+  //   // this.cargarData();
+  // }
+
   onFileChange(event: Event) {
     console.log('Entro');
     const files = (event.target as HTMLInputElement).files;
     if (files.length != 1) throw 'No files selected, or more than of allowed';
+    this.alert('success', 'Archivo subido exitosamente', '');
+    // this.converterBase64(files[0])
     // const fileReader = new FileReader();
     // fileReader.readAsBinaryString(files[0]);
     // fileReader.onload = () => this.readExcel(fileReader.result);
@@ -217,72 +245,111 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
 
   readExcel(binaryExcel: string | ArrayBuffer | any) {
     try {
+      this.loading = true;
       this.idsNotExist = [];
       this.showError = false;
       this.showStatus = false;
       this.data.load([]);
+      // this.filter1.getValue().removeAllFilters();
+      this.massiveGoodService
+        .getFProRecPag2CSV(this.filter1.getValue().getParams(), binaryExcel)
+        .subscribe({
+          next: (response: any) => {
+            console.log('SI112', response);
+            this.goods = response.dataA;
+            let dataD = response.dataD;
+            let count = 0;
+            let arr: any = [];
 
-      this.massiveGoodService.getFProRecPag2CSV(binaryExcel).subscribe({
-        next: response => {
-          let data = response.data;
-          let arr: any = [];
-          let count = 0;
-          let result = data.map(async (good: any) => {
-            count = count + 1;
-            console.log('SI11', good);
-            if (good.status == 'PRP' || good.status == 'ADM') {
-              console.log('SI', good);
-              if (this.goodClassNumber.includes(`${good.goodclassnumber}`)) {
-                // console.log(response);
-                this.obtenerDocument(good);
-                this.goods.push(good);
+            // this.goods = dataA;
+            // this.valDocument = false;
+            if (this.goods.length > 0) {
+              this.goods.map(async (goodA: any) => {
+                if (this.valDocument == true) {
+                  return;
+                } else {
+                  this.obtenerDocument(goodA);
+                }
+
                 this.disabledImport = false;
-                this.form.get('justification').setValue(good.causenumberchange);
-                this.addStatus();
-              } else {
-                this.idsNotExist.push({
-                  id: good.id,
-                  reason: `no cuenta con un número de clasificador válido`,
-                });
-              }
-            } else {
-              console.log('good.status');
-              if (good.status) {
-                this.idsNotExist.push({
-                  id: good.id,
-                  reason: `no cuenta con estatus válido, debe ser PRP o ADM`,
-                });
-              } else {
-                this.idsNotExist.push({
-                  id: good.id,
-                  reason: `no existe en la BD`,
-                });
-              }
+                this.form
+                  .get('justification')
+                  .setValue(goodA.causenumberchange);
+              });
             }
-          });
 
-          Promise.all(result).then((resp: any) => {
-            if (count === data.length) {
+            // let resultA = dataA.map(async (good: any) => {
+            //   count = count + 1;
+            //   console.log('SI11', good);
+            //   if (good.status == 'PRP' || good.status == 'ADM') {
+            //     console.log('SI', good);
+            //     if (this.goodClassNumber.includes(`${good.goodclassnumber}`)) {
+            //       // console.log(response);
+            //       arr.push(good);
+
+            //     }
+            //   } else {
+
+            //   }
+            // });
+
+            let resultD = dataD.map(async (good: any) => {
+              count = count + 1;
+              console.log('SI11', good);
+              if (good.status == 'PRP' || good.status == 'ADM') {
+                console.log('SI', good);
+                if (this.goodClassNumber.includes(`${good.goodclassnumber}`)) {
+                } else {
+                  this.idsNotExist.push({
+                    id: good.id,
+                    reason: `no cuenta con un número de clasificador válido`,
+                  });
+                }
+              } else {
+                console.log('good.status');
+                if (good.status) {
+                  this.idsNotExist.push({
+                    id: good.id,
+                    reason: `no cuenta con estatus válido, debe ser PRP o ADM`,
+                  });
+                } else {
+                  this.idsNotExist.push({
+                    id: good.id,
+                    reason: `no existe en la BD`,
+                  });
+                }
+              }
+            });
+
+            Promise.all(resultD).then((resp: any) => {
+              console.log('arr', arr);
+              // this.goods = arr;
+              this.addStatus();
+
+              this.test = binaryExcel;
+              console.log('this.test', this.test);
+              if (count === dataD.length) {
+                this.loading = false;
+                this.showError = true;
+              }
+              let file = response.file.base64File;
+              this.cargarData(file);
+
+              this.totalItems = response.countA;
+
+              this.form.enable();
+
+              console.log('BINARY EXCEL', response);
+
               this.loading = false;
-              this.showError = true;
-            }
-            this.totalItems = this.goods.length;
-
-            this.form.enable();
-
-            console.log('BINARY EXCEL', response);
-            this.alert('success', 'Archivo subido exitosamente', '');
-
+            });
+          },
+          error: err => {
+            this.data.load([]);
             this.loading = false;
-          });
-        },
-        error: err => {
-          this.data.load([]);
-          this.loading = false;
-          this.alert('error', 'No hay datos disponibles', '');
-        },
-      });
-      this.cargarData(binaryExcel);
+            this.onLoadToast('warning', 'No hay datos disponibles', '');
+          },
+        });
 
       return;
       this.ids = this.excelService.getData(binaryExcel);
@@ -470,10 +537,10 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
 
   // CAMBIAR STATUS DEL BIEN Y ELIMINAR FOLIO DE ESCANEO //
   validStatusXScreen(good: IGood) {
-    if (this.form.value.justification == null) {
-      this.alert('info', 'El motivo de cambio se encuentra vacío', '');
-      return;
-    }
+    // if (this.form.value.justification == null) {
+    //   this.alert('info', 'El motivo de cambio se encuentra vacío', '');
+    //   return;
+    // }
     this.screenStatusService
       .getStatusXScreen({
         screen: 'FPROCRECPAG',
@@ -525,7 +592,7 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
         this.documnetServices
           .delete(folioUniversalesReplicados[i].id)
           .subscribe({
-            next: response => { },
+            next: response => {},
             error: err => {
               console.log(err);
             },
@@ -545,10 +612,11 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
           this.change2();
           this.cambiarValor();
           this.document = null;
+          this.valDocument = false;
           this.alert(
-            'error',
+            'success',
             'Elimiado',
-            'Este folio no existe o ya no fue eliminado'
+            'Se ha eliminado correctamente el folio'
           );
         } else {
           this.alert(

@@ -66,16 +66,27 @@ export class ParameterMaintenanceComponent extends BasePage implements OnInit {
               case 'id':
                 searchFilter = SearchFilter.ILIKE;
                 break;
+              case 'startDate':
+                console.log('dddd', filter.search);
+                if (filter.search != null) {
+                  filter.search = this.returnParseDate(filter.search);
+                  searchFilter = SearchFilter.EQ;
+                } else {
+                  filter.search = '';
+                }
+                console.log('ddddccc', filter.search);
+
+                break;
+              case 'endDate':
+                filter.search = this.returnParseDate(filter.search);
+                searchFilter = SearchFilter.EQ;
+                break;
               default:
                 searchFilter = SearchFilter.ILIKE;
                 break;
             }
 
             if (filter.search !== '') {
-              this.pageFilter;
-              console.log(
-                (this.columnFilters[field] = `${searchFilter}:${filter.search}`)
-              );
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
               console.log('this.param:', this.params);
               this.params.value.page = 1;

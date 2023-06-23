@@ -14,6 +14,7 @@ export const DRAWERS_COLUMNS = {
   safeDetails: {
     title: 'Desc. Bóveda',
     type: 'string',
+    sort: false,
     valuePrepareFunction: (value: any): string => {
       return value.description;
     },

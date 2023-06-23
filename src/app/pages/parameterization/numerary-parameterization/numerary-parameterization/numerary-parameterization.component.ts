@@ -23,8 +23,7 @@ import { NUMERARY_PARAMETERIZATION_COLUMNS } from './numerary-parameterization-c
 })
 export class NumeraryParameterizationComponent
   extends BasePage
-  implements OnInit
-{
+  implements OnInit {
   numeraryParameterization: INumeraryParameterization[] = [];
   totalItems: number = 0;
   data: LocalDataSource = new LocalDataSource();
@@ -55,10 +54,10 @@ export class NumeraryParameterizationComponent
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
             filter.field == 'typeProceeding' ||
-            filter.field == 'initialCategoryDetails' ||
-            filter.field == 'finalCategoryDetails' ||
-            filter.field == 'initialCategory' ||
-            filter.field == 'finalCategory'
+              filter.field == 'initialCategoryDetails' ||
+              filter.field == 'finalCategoryDetails' ||
+              filter.field == 'initialCategory' ||
+              filter.field == 'finalCategory'
               ? (searchFilter = SearchFilter.EQ)
               : (searchFilter = SearchFilter.ILIKE);
             if (filter.search !== '') {
@@ -107,7 +106,7 @@ export class NumeraryParameterizationComponent
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(event);

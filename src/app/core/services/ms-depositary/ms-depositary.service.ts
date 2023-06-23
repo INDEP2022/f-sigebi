@@ -32,6 +32,13 @@ export class MsDepositaryService extends HttpService {
     );
   }
 
+  update(body: Partial<IAppointmentDepositary>) {
+    return this.put<IListResponse<IAppointmentDepositary>>(
+      DepositaryEndPoints.DepositaryAppointment,
+      body
+    );
+  }
+
   getGoodAppointmentDepositaryByNoGood(
     params?: ListParams | string
   ): Observable<IListResponse<IAppointmentDepositary>> {

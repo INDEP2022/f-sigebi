@@ -38,8 +38,7 @@ import { RegisterKeyOneModalComponent } from '../register-key-one-modal/register
 })
 export class RegisterKeysLogicalTablesComponent
   extends BasePage
-  implements OnInit
-{
+  implements OnInit {
   columns: ITable[] = [];
   data: LocalDataSource = new LocalDataSource();
   columnFilters: any = [];
@@ -355,9 +354,19 @@ export class RegisterKeysLogicalTablesComponent
   delete(id: number) {
     const idCve = { ...this.descriptionCve };
     this.tdescCveService.remove(id).subscribe({
-      next: () => (
-        Swal.fire('Borrado', '', 'success'), this.getKeys(idCve.table)
-      ),
+      next: () => {
+        const idCve = { ...this.descriptionCve };
+        this.params2
+          .pipe(takeUntil(this.$unSubscribe))
+          .subscribe(() => this.getKeys(idCve.table));
+        this.alert('success', 'Clave para tabla lógica', 'Borrado');
+      }, error: err => {
+        this.alert(
+          'warning',
+          'Clave para tabla lógica',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      },
     });
   }
 

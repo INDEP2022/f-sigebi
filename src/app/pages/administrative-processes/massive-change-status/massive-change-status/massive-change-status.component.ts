@@ -6,9 +6,12 @@ import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
+import { IHistoryGood } from 'src/app/core/models/administrative-processes/history-good.model';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { StatusGoodMassiveService } from 'src/app/core/services/ms-good/status-good-massive.service';
+import { HistoryGoodService } from 'src/app/core/services/ms-history-good/history-good.service';
+import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive-good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { previewData } from 'src/app/pages/documents-reception/goods-bulk-load/interfaces/goods-bulk-load-table';
@@ -34,9 +37,11 @@ export class MassiveChangeStatusComponent extends BasePage implements OnInit {
   ids: IDs[];
   form: FormGroup;
   goods: IGood[] = [];
+  availableToUpdate: any[] = [];
   idsNotExist: NotData[] = [];
   showError: boolean = false;
   showStatus: boolean = false;
+  availableToAssing: boolean = false;
   $trackedGoods = this.store.select(getTrackedGoods);
   get goodStatus() {
     return this.form.get('goodStatus');
@@ -53,6 +58,8 @@ export class MassiveChangeStatusComponent extends BasePage implements OnInit {
     private excelService: ExcelService,
     private readonly goodServices: GoodService,
     private readonly goodMassiveServices: StatusGoodMassiveService,
+    private massiveGoodService: MassiveGoodService,
+    private historyStatusGoodService: HistoryGoodService,
     private router: Router,
     private store: Store
   ) {
@@ -76,11 +83,6 @@ export class MassiveChangeStatusComponent extends BasePage implements OnInit {
     });
   }
 
-  /**
-   * @method: metodo para iniciar el formulario
-   * @author:  Alexander Alvarez
-   * @since: 27/09/2022
-   */
   private buildForm() {
     this.form = this.fb.group({
       goodStatus: [null, [Validators.required]],
@@ -152,6 +154,7 @@ export class MassiveChangeStatusComponent extends BasePage implements OnInit {
       if (count === data.length) {
         this.loading = false;
         this.showError = true;
+        this.availableToAssing = true;
       }
     });
   }
@@ -162,7 +165,94 @@ export class MassiveChangeStatusComponent extends BasePage implements OnInit {
   }
 
   //Asigna estatus
-  assignsStatus() {}
+  assignsStatus() {
+    console.log(this.goodStatus.value);
+    if (this.goodStatus.value != null) {
+      if (this.observation.value != null) {
+        for (let good of this.data['data']) {
+          console.log(good);
+          this.massiveGoodService.getBanVal(good.status).subscribe(
+            res => {
+              console.log({ msg: 'res banval', data: res.data[0].count });
+              const count = res.data[0].count;
+              if (count == 0) {
+                this.idsNotExist.push({
+                  id: good.goodId,
+                  reason: `Bien no disponible para actualización: `,
+                });
+                //Pintar la fila no_disponible
+              } else if (count > 0) {
+                good.status = this.goodStatus.value.status;
+                this.availableToUpdate.push({
+                  goodId: good.goodId,
+                  message: 'disponible para actualizar',
+                });
+                if (this.goodStatus.value.status == 'CAN') {
+                  good.observations = `${this.observation.value}. ${good.observations}`;
+                }
+              }
+            },
+            err => {
+              console.log({ msg: 'err banval', data: err });
+            }
+          );
+        }
+      } else {
+        this.alert('warning', 'Debe especificar el motivo del cambio.', '');
+      }
+    } else {
+      this.alert('warning', 'Debe especificar el Estatus', '');
+    }
+  }
+
+  applyStatus() {
+    for (let good of this.data['data']) {
+      const model: IGood = {
+        id: good.id,
+        goodId: good.goodId,
+        status: good.status,
+        observations: good.observations,
+      };
+
+      this.goodServices.update(model).subscribe(
+        res => {
+          const modelHistory: IHistoryGood = {
+            propertyNum: good.goodId,
+            status: this.goodStatus.value.status,
+            changeDate: new Date().toISOString(),
+            userChange:
+              localStorage.getItem('username') == 'sigebiadmon'
+                ? localStorage.getItem('username')
+                : localStorage.getItem('username').toLocaleUpperCase(),
+            statusChangeProgram: 'FACTADBCAMBIOESTAT',
+            reasonForChange: this.observation.value,
+          };
+
+          this.historyStatusGoodService.create(modelHistory).subscribe(
+            res => {
+              this.availableToUpdate.push({
+                goodId: good.goodId,
+                message: 'actualizado',
+              });
+            },
+            err => {
+              this.alert(
+                'error',
+                'No se registró el cambio en Historico estatus de bienes',
+                ''
+              );
+            }
+          );
+        },
+        err => {
+          this.idsNotExist.push({
+            id: good.goodId,
+            reason: `Bien no actualizado: `,
+          });
+        }
+      );
+    }
+  }
 
   changeStatusGood() {
     if (this.goods.length === 0) {
@@ -191,6 +281,12 @@ export class MassiveChangeStatusComponent extends BasePage implements OnInit {
     );
     this.addStatus();
     this.showStatus = true;
+  }
+
+  goToRastreador() {
+    this.router.navigate(['/pages/general-processes/goods-tracker'], {
+      queryParams: { origin: 'FACTADBCAMBIOESTAT' },
+    });
   }
 
   /* validGood(good: IGood) {

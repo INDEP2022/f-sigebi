@@ -80,12 +80,15 @@
           <form-field
             [control]="form.get('zipCode')"
             label="C&oacute;digo Postal">
-            <input type="text" class="form-control" formControlName="zipCode" />
+            <input
+              type="number"
+              class="form-control"
+              formControlName="zipCode" />
           </form-field>
         </div>
         <div class="col-md-3 col-sm-12 col-xs-12">
           <form-field [control]="form.get('phone')" label="Tel&eacute;fono">
-            <input type="text" class="form-control" formControlName="phone" />
+            <input type="number" class="form-control" formControlName="phone" />
           </form-field>
         </div>
       </div>

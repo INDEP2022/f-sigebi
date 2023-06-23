@@ -14,18 +14,12 @@
     <div class="row pt-4">
       <div class="table-responsive">
         <div [class]="loading ? 'table-loading' : ''">
-          <ng2-smart-table
-            [attr.class]="'table-bordered'"
-            [settings]="settings"
-            [source]="cost"
-            (edit)="openForm($event.data)"
-            (delete)="delete($event.data)">
+          <ng2-smart-table [attr.class]="'table-bordered'" [settings]="settings" [source]="data"
+            (edit)="openForm($event.data)" (delete)="delete($event.data)">
           </ng2-smart-table>
         </div>
       </div>
     </div>
-    <app-pagination
-      [params]="params"
-      [totalItems]="totalItems"></app-pagination>
+    <app-pagination [params]="params" [totalItems]="totalItems"></app-pagination>
   </div>
 </app-card>
