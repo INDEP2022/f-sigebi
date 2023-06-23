@@ -71,6 +71,7 @@ export class ScheduledMaintenanceDetailComponent
   selecteds: IGoodsByProceeding[] = [];
   selectedsNews: IGoodsByProceeding[] = [];
   settingsGoods = { ...settingsGoods };
+  update = true;
   // settingsGoodsForAdd = {
   //   ...settingsGoods,
   //   edit: { ...settingsGoods.edit, confirmSave: false },
@@ -137,15 +138,11 @@ export class ScheduledMaintenanceDetailComponent
     detail.captureDate = (newDate + '').includes('/')
       ? firstFormatDateToDate(newDate)
       : dateToNewDatetime(newDate);
-    // console.log(newDate);
-    console.log(detail.captureDate);
     detail.captureDate = detail.captureDate.getTime();
     detail.closeDate = new Date().getTime();
     detail.elaborationDate = new Date(this.acta.elaborationDate).getTime();
     detail.keysProceedings = this.form.get('claveActa').value;
     detail.statusProceedings = this.statusActaValue;
-    console.log(detail.captureDate);
-    // console.log(new Date(detail.captureDate).toISOString());
     let message = '';
     this.proceedingService
       .update2(detail)
@@ -261,6 +258,7 @@ export class ScheduledMaintenanceDetailComponent
         }
         this.updateGood();
       } else {
+        this.update = false;
         this.form.get('statusActa').setValue('ABIERTA');
       }
     });
@@ -308,15 +306,33 @@ export class ScheduledMaintenanceDetailComponent
 
   private getActa() {
     const actaId = localStorage.getItem('detailActa');
+    // const params = new FilterParams();
+    // params.addFilter('id', actaId);
+    // return this.proceedingService.getAll(params.getParams()).pipe(
+    //   takeUntil(this.$unSubscribe),
+    //   catchError(x => of({ data: [] })),
+    //   map(x => {
+    //     return x.data ? (x.data.length > 0 ? x.data[0] : null) : null;
+    //   })
+    // );
     return this.proceedingService
       .getById(actaId)
       .pipe(takeUntil(this.$unSubscribe));
   }
 
+  get numFile() {
+    // const numFile = this.acta
+    //   ? this.acta.numFile
+    //     ? (this.acta.numFile as INumFile)
+    //     : null
+    //   : null;
+    // return numFile ? numFile.filesId : null;
+    return this.acta ? this.acta.numFile ?? null : null;
+  }
+
   private prepareForm() {
     this.getActa().subscribe({
       next: acta => {
-        console.log(acta);
         if (acta) {
           this.acta = acta;
           this.form = this.fb.group({
@@ -340,16 +356,18 @@ export class ScheduledMaintenanceDetailComponent
         }
         this.initialValue = { ...this.form.value };
         this.statusActa.valueChanges.subscribe(x => {
-          // console.log(x);
           if (x === 'CERRADA') {
             this.closeActa();
           } else {
-            this.updateGood();
+            if (this.update) {
+              this.updateGood();
+            } else {
+              this.update = true;
+            }
           }
         });
       },
       error: err => {
-        console.log(err);
         this.form = this.fb.group({
           acta: [null],
           fechaCaptura: [null],
@@ -830,7 +848,7 @@ export class ScheduledMaintenanceDetailComponent
         }
       },
       error: err => {
-        console.log(err);
+        // console.log(err);
         this.loading = false;
       },
     });
@@ -838,7 +856,7 @@ export class ScheduledMaintenanceDetailComponent
 
   getData(deleteds: IGoodsByProceeding[] = []) {
     const idActa = this.actaId;
-    console.log(idActa);
+    // console.log(idActa);
     // console.log(new Date());
     // console.log(new Date().toISOString());
     this.loading = true;
