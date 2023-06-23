@@ -34,7 +34,7 @@
         </div>
       </div>
       <div class="row mt-5">
-        <div class="col-md-8 col-sm-12 col-xs-12">
+        <div class="col-md-7 col-sm-12 col-xs-12">
           <form-field label="Justificación" [control]="form.get('justifier')">
             <textarea
               type="text"
@@ -43,27 +43,26 @@
               [max-length]="1000"></textarea>
           </form-field>
         </div>
-        <div class="col-md-4 col-sm-12 col-xs-12">
-          <div class="d-flex justify-content-center">
-            <div class="m-3">
-              <button
-                type="button"
-                class="btn btn-primary active btn-sm"
-                (click)="loadGood()">
-                Buscar
-                <i class="bx bx-search-alt bx-sm float-icon"></i>
-              </button>
-            </div>
-            <div class="m-3">
-              <button
-                [disabled]="form.invalid"
-                type="button"
-                class="btn btn-success btn-sm active"
-                (click)="updateStatus()">
-                Actualizar Estatus
-              </button>
-            </div>
-          </div>
+        <div class="col-md-5 col-sm-12 col-xs-12">
+          <button
+            type="button"
+            class="btn btn-primary active btn-sm mr-3"
+            (click)="loadGood()">
+            Buscar
+            <i class="bx bx-search-alt bx-sm float-icon"></i>
+          </button>
+
+          <button class="btn btn-danger btn-sm active mr-3" (click)="clean()">
+            Limpiar <i class="fas fa-eraser"></i>
+          </button>
+
+          <button
+            [disabled]="form.invalid"
+            type="button"
+            class="btn btn-success btn-sm active mr-3"
+            (click)="updateStatus()">
+            Actualizar
+          </button>
         </div>
       </div>
     </form>

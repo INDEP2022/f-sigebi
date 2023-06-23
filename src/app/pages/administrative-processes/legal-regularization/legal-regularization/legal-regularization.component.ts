@@ -104,15 +104,11 @@ export class LegalRegularizationComponent extends BasePage implements OnInit {
           this.numberFile = this.good.fileNumber;
           this.setGood();
           if (!this.redicrectScan) {
-            this.onLoadToast(
-              'success',
-              'Éxitoso',
-              'Bien cargado correctamente'
-            );
+            this.alert('success', 'Éxitoso', 'Bien cargado correctamente');
           }
         } else {
           if (!this.redicrectScan) {
-            this.onLoadToast(
+            this.alert(
               'error',
               'ERROR',
               `El estatus del bien ${this.numberGood.value} es incorrecto. Los estatus validos son  ADM o REJ.'`
@@ -137,7 +133,7 @@ export class LegalRegularizationComponent extends BasePage implements OnInit {
   async updateStatus() {
     console.log('Cambiando Staus');
     if (this.document === undefined) {
-      this.onLoadToast(
+      this.alert(
         'info',
         'Información',
         `No puede cambiar el estatus al bien ${this.good.id} porque aun no se ha generado un folio`
@@ -159,7 +155,7 @@ export class LegalRegularizationComponent extends BasePage implements OnInit {
           this.postHistoryGood();
         },
         error: error => {
-          this.onLoadToast('error', 'ERROR', error.error.message);
+          this.alert('error', 'ERROR', error.error.message);
         },
       });
     }
@@ -183,7 +179,7 @@ export class LegalRegularizationComponent extends BasePage implements OnInit {
           error: err => {
             console.log(err);
             res(valid);
-            this.onLoadToast(
+            this.alert(
               'info',
               'Información',
               `No puede cambiar el estatus al bien ${this.good.id} porque aun no tiene documentos escaneados`
@@ -222,5 +218,10 @@ export class LegalRegularizationComponent extends BasePage implements OnInit {
         this.loading = false;
       },
     });
+  }
+
+  clean() {
+    this.form.reset();
+    this.refresh = true;
   }
 }
