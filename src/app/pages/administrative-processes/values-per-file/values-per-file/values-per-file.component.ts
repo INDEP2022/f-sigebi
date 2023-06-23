@@ -1,10 +1,17 @@
 import { DatePipe } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
-import { SubdelegationService } from 'src/app/core/services/catalogs/subdelegation.service';
-import { BasePage } from 'src/app/core/shared/base-page';
+import { DomSanitizer } from '@angular/platform-browser';
+import { BsModalService } from 'ngx-bootstrap/modal';
+import { BehaviorSubject } from 'rxjs';
+import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
+import {
+  FilterParams,
+  ListParams,
+} from 'src/app/common/repository/interfaces/list-params';
+import { IMoneda } from 'src/app/core/models/catalogs/tval-Table5.model';
+import { TvalTable5Service } from 'src/app/core/services/catalogs/tval-table5.service';
+import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -12,79 +19,119 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
   templateUrl: './values-per-file.component.html',
   styles: [],
 })
-export class ValuesPerFileComponent extends BasePage implements OnInit {
-  public form: FormGroup;
+export class ValuesPerFileComponent implements OnInit {
+  form: FormGroup;
+  isLoading = false;
+  maxDate = new Date();
+  currencies = new DefaultSelect<IMoneda>([], 0);
+  fromF: string = '';
+  toT: string = '';
+  import: number = 0;
+  params = new BehaviorSubject<ListParams>(new ListParams());
+  filterParams = new BehaviorSubject<FilterParams>(new FilterParams());
 
-  public delegations = new DefaultSelect();
-  public subdelegations = new DefaultSelect();
-
+  @Output() submit = new EventEmitter();
   constructor(
     private fb: FormBuilder,
-    private delegationService: DelegationService,
-    private subdelegationService: SubdelegationService,
-    private datePipe: DatePipe
-  ) {
-    super();
-  }
+    private tableServ: TvalTable5Service,
+    private datePipe: DatePipe,
+    private siabService: SiabService,
+    private sanitizer: DomSanitizer,
+    private modalService: BsModalService
+  ) {}
 
   ngOnInit(): void {
-    this.handleForm();
+    this.prepareForm();
   }
 
-  public handleForm() {
+  prepareForm() {
     this.form = this.fb.group({
-      delegation: ['', Validators.required],
-      subdelegation: ['', Validators.required],
-      fileFrom: [null],
-      fileTo: [null],
-      from: [null],
-      to: [null],
+      delegation: [null, Validators.required],
+      subdelegation: [null, Validators.required],
+      fileFrom: [null, Validators.required],
+      fileTo: [null, Validators.required],
+      from: [null, Validators.required],
+      to: [null, Validators.required],
     });
   }
 
-  public send(): void {
-    console.log(this.form.value);
-    this.loading = true;
-    // const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/RGERADBNUMVALORES.pdf?PARAMFORM=NO&PARA_FEC_DESDE=` +
-    //   this.datePipe.transform(
-    //     this.form.controls['from'].value,
-    //     'dd-mm-yyyy'
-    //   ) +
-    //   `&PARA_FEC_HASTA=` +
-    //   this.datePipe.transform(
-    //     this.form.controls['to'].value,
-    //     'dd-mm-yyyy'
-    //   ) +
-    //   `&PN_DELEG=` +
-    //   this.form.controls['delegation'].value +
-    //   `&PN_SUBDEL=` +
-    //   this.form.controls['subdelegation'].value +
-    //   `&PN_EXPINI=` +
-    //   this.datePipe.transform(this.form.controls['fileFrom'].value, 'dd-mm-yyyy') +
-    //   `&PN_EXPFIN=` +
-    //   this.datePipe.transform(this.form.controls['fileTo'].value, 'dd-mm-yyyy');
-    const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/blank.pdf`;
-    const downloadLink = document.createElement('a');
-    downloadLink.href = pdfurl;
-    downloadLink.target = '_blank';
-    downloadLink.click();
-    let params = { ...this.form.value };
-    for (const key in params) {
-      if (params[key] === null) delete params[key];
-    }
-    this.onLoadToast('success', '', 'Reporte generado');
-    this.loading = false;
+  Generar() {
+    this.isLoading = true;
+    this.submit.emit(this.form);
+    this.fromF = this.datePipe.transform(
+      this.form.controls['from'].value,
+      'dd/MM/yyyy'
+    );
+
+    this.toT = this.datePipe.transform(
+      this.form.controls['to'].value,
+      'dd/MM/yyyy'
+    );
+
+    let params = {
+      PF_FECINI: this.fromF,
+      PF_FECFIN: this.toT,
+      PN_DELEG: this.form.controls['delegation'].value,
+      // PN_SUBDEL: this.form.controls['subdelegation'].value,
+      PN_SUBDEL: 1,
+      PN_EXPINI: this.form.controls['fileFrom'].value,
+      PN_EXPFIN: this.form.controls['fileTo'].value,
+    };
+
+    this.siabService
+      .fetchReport('RGERADBNUMVALORES', params)
+      // .fetchReportBlank('blank')
+      .subscribe(response => {
+        if (response !== null) {
+          const blob = new Blob([response], { type: 'application/pdf' });
+          const url = URL.createObjectURL(blob);
+          let config = {
+            initialState: {
+              documento: {
+                urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                type: 'pdf',
+              },
+              callback: (data: any) => {},
+            }, //pasar datos por aca
+            class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+            ignoreBackdropClick: true, //ignora el click fuera del modal
+          };
+          this.modalService.show(PreviewDocumentsComponent, config);
+        } else {
+          const blob = new Blob([response], { type: 'application/pdf' });
+          const url = URL.createObjectURL(blob);
+          let config = {
+            initialState: {
+              documento: {
+                urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                type: 'pdf',
+              },
+              callback: (data: any) => {},
+            }, //pasar datos por aca
+            class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+            ignoreBackdropClick: true, //ignora el click fuera del modal
+          };
+          this.modalService.show(PreviewDocumentsComponent, config);
+        }
+      });
   }
 
-  getDelegations(params: ListParams) {
-    this.delegationService.getAll(params).subscribe(data => {
-      this.delegations = new DefaultSelect(data.data, data.count);
+  getRegCurrency() {
+    this.tableServ.getReg4WidthFilters().subscribe({
+      next: data => {
+        data.data.map(data => {
+          data.desc_moneda = `${data.cve_moneda}- ${data.desc_moneda}`;
+          return data;
+        });
+        this.currencies = new DefaultSelect(data.data, data.count);
+      },
+      error: () => {
+        this.currencies = new DefaultSelect();
+      },
     });
   }
 
-  getSubdelegations(params: ListParams) {
-    this.subdelegationService.getAll(params).subscribe(data => {
-      this.subdelegations = new DefaultSelect(data.data, data.count);
-    });
+  cleanForm() {
+    this.form.reset();
   }
 }

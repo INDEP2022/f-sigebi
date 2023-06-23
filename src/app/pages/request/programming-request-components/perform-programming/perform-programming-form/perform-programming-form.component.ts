@@ -56,6 +56,7 @@ import { ESTATE_COLUMNS } from '../../acept-programming/columns/estate-columns';
 import { SearchUserFormComponent } from '../../schedule-reception/search-user-form/search-user-form.component';
 import { userData } from '../../schedule-reception/search-user-form/users-data';
 import { DetailGoodProgrammingFormComponent } from '../../shared-components-programming/detail-good-programming-form/detail-good-programming-form.component';
+import { DomicileFormComponent } from '../../shared-components-programming/domicile-form/domicile-form.component';
 import { EstateSearchFormComponent } from '../estate-search-form/estate-search-form.component';
 import { IEstateSearch } from '../estate-search-form/estate-search.interface';
 import { UserFormComponent } from '../user-form/user-form.component';
@@ -1005,8 +1006,8 @@ export class PerformProgrammingFormComponent
     this.loadingGoods = true;
     const filterColumns: Object = {
       regionalDelegation: Number(this.regionalDelegationUser.id),
-      transferent: Number(this.transferentId),
-      // transferent: Number(760),
+      // transferent: Number(this.transferentId),
+      transferent: Number(700),
       relevantType: Number(this.idTypeRelevant),
       statusGood: 'APROBADO',
     };
@@ -1516,6 +1517,15 @@ export class PerformProgrammingFormComponent
       callback: () => {},
     };
     this.modalService.show(DetailGoodProgrammingFormComponent, config);
+  }
+  // Visualizar información de alias almacen //
+  showDomicile(item: IGoodProgrammingSelect) {
+    let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+    config.initialState = {
+      item,
+      callback: () => {},
+    };
+    this.modalService.show(DomicileFormComponent, config);
   }
 
   removeGoodTrans(item: IGood) {
