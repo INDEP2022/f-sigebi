@@ -6,17 +6,17 @@ import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
+import { IHistoryGood } from 'src/app/core/models/administrative-processes/history-good.model';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { StatusGoodMassiveService } from 'src/app/core/services/ms-good/status-good-massive.service';
+import { HistoryGoodService } from 'src/app/core/services/ms-history-good/history-good.service';
+import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive-good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { previewData } from 'src/app/pages/documents-reception/goods-bulk-load/interfaces/goods-bulk-load-table';
 import { getTrackedGoods } from 'src/app/pages/general-processes/goods-tracker/store/goods-tracker.selector';
 import { COLUMNS } from './columns';
-import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive-good.service';
-import { HistoryGoodService } from 'src/app/core/services/ms-history-good/history-good.service';
-import { IHistoryGood } from 'src/app/core/models/administrative-processes/history-good.model';
 
 interface NotData {
   id: number;
@@ -235,14 +235,17 @@ export class MassiveChangeStatusComponent extends BasePage implements OnInit {
             res => {
               this.availableToUpdate.push({
                 goodId: good.goodId,
-                message: 'actualizado'
-              })
+                message: 'actualizado',
+              });
             },
             err => {
-              this.alert('error','No se registró el cambio en Historico estatus de bienes','')
+              this.alert(
+                'error',
+                'No se registró el cambio en Historico estatus de bienes',
+                ''
+              );
             }
-          )
-          
+          );
         },
         err => {
           this.idsNotExist.push({

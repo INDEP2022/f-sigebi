@@ -6,13 +6,13 @@ import { BsModalService } from 'ngx-bootstrap/modal';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
+import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { BasePage } from 'src/app/core/shared';
 import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { GoodsComponent } from '../goods/goods.component';
 import { PwComponent } from '../pw/pw.component';
 import { IGood } from 'src/app/core/models/ms-good/good';
-import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
 
 @Component({
   selector: 'app-derivation-goods',
@@ -140,11 +140,6 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
     const modalRef = this.modalService.show(PwComponent, config);
   }
 
-  /**
-   * @method: metodo para iniciar el formulario
-   * @author:  Alexander Alvarez
-   * @since: 27/09/2022
-   */
   private buildForm() {
     this.form = this.fb.group({
       idConversion: [null, [Validators.required]],

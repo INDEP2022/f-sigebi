@@ -120,5 +120,6 @@ export class MassiveGoodService extends HttpService {
   getBanVal(status:string){
     const route = `application/act-bdc-change-status`
     return this.get(`${route}/${status}`)
+
   }
 }
