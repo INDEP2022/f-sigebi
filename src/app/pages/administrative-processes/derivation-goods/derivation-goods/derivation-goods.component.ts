@@ -12,6 +12,7 @@ import { BasePage } from 'src/app/core/shared';
 import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { GoodsComponent } from '../goods/goods.component';
 import { PwComponent } from '../pw/pw.component';
+import { IGood } from 'src/app/core/models/ms-good/good';
 
 @Component({
   selector: 'app-derivation-goods',
@@ -29,7 +30,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
   wrongModal = true;
 
   //Variables de BLK_TIPO_BIEN
-  no_bien_blk_tipo_bien: number;
+  no_bien_blk_tipo_bien: number
 
   get idConversion() {
     return this.form.get('idConversion');
@@ -113,22 +114,22 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
       initialState: {
         ...MODAL_CONFIG,
         callback: (data: any) => {
-          if (data != null) {
+          if(data != null){
             //Se setea el valor de no_bien
-            this.no_bien_blk_tipo_bien = data.goodFatherNumber;
+            this.no_bien_blk_tipo_bien = data.goodFatherNumber
             //Se seta los valores de idConversion
-            this.idConversion.setValue(data.id);
-            this.numberDossier.setValue(data.fileNumber.id);
-            this.numberGoodFather.setValue(data.goodFatherNumber);
+            this.idConversion.setValue(data.id)
+            this.numberDossier.setValue(data.fileNumber.id)
+            this.numberGoodFather.setValue(data.goodFatherNumber)
             //
-            console.log(data);
-            this.wrongModal = false;
-            this.tipo.setValue(data.typeConv);
-            this.actConvertion.setValue(data.cveActaConv);
-            this.numberGoodSon.setValue(data.goodFatherNumber);
-            this.searchGoods(data.goodFatherNumber);
-            this.searchGoodSon(data.goodFatherNumber);
-            this.dataGoods.load([data]);
+            console.log(data)
+            this.wrongModal = false
+            this.tipo.setValue(data.typeConv)
+            this.actConvertion.setValue(data.cveActaConv)
+            this.numberGoodSon.setValue(data.goodFatherNumber)
+            this.searchGoods(data.goodFatherNumber)
+            this.searchGoodSon(data.goodFatherNumber)
+            this.dataGoods.load([data])
           }
         },
       }, //pasar datos por aca
@@ -139,11 +140,6 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
     const modalRef = this.modalService.show(PwComponent, config);
   }
 
-  /**
-   * @method: metodo para iniciar el formulario
-   * @author:  Alexander Alvarez
-   * @since: 27/09/2022
-   */
   private buildForm() {
     this.form = this.fb.group({
       idConversion: [null, [Validators.required]],

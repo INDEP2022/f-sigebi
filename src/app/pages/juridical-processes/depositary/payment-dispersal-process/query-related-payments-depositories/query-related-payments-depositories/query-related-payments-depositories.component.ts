@@ -313,7 +313,7 @@ export class QueryRelatedPaymentsDepositoriesComponent
         this.noBienReadOnly,
         this.screenKey,
         this.depositaryAppointment.contractKey,
-        this.depositaryAppointment.personNumber.id,
+        this.depositaryAppointment.personNumber.id.toString(),
         this.good.description
       ); // Set good param
       this.router.navigate(
@@ -460,7 +460,7 @@ export class QueryRelatedPaymentsDepositoriesComponent
       .setValue(this.depositaryAppointment.personNumber.id);
     this.formDepositario
       .get('depositario')
-      .setValue(this.depositaryAppointment.personNumber.nombre);
+      .setValue(this.depositaryAppointment.personNumber.name);
   }
 
   setDataGood() {

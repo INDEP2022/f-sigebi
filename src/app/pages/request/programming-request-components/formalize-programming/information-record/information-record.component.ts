@@ -12,6 +12,7 @@ import { IReceipyGuardDocument } from 'src/app/core/models/receipt/receipt.model
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { GenericService } from 'src/app/core/services/catalogs/generic.service';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
+import { SignatoriesService } from 'src/app/core/services/ms-electronicfirm/signatories.service';
 import { ProceedingsService } from 'src/app/core/services/ms-proceedings';
 import { ProgrammingGoodService } from 'src/app/core/services/ms-programming-request/programming-good.service';
 import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
@@ -58,7 +59,8 @@ export class InformationRecordComponent extends BasePage implements OnInit {
     private receptionGoodService: ReceptionGoodService,
     private route: ActivatedRoute,
     private proceedingService: ProceedingsService,
-    private transferentService: TransferenteService
+    private transferentService: TransferenteService,
+    private signatoriesService: SignatoriesService
   ) {
     super();
     this.obtenerHoraActual();
@@ -196,7 +198,87 @@ export class InformationRecordComponent extends BasePage implements OnInit {
     params.getValue()['filter.idProgramming'] = this.proceeding.programmingId;
     this.proceedingService.getProceedings(params.getValue()).subscribe({
       next: response => {
-        /*if (this.tranType == 'A') {
+        const proceeding = response.data[0];
+        const keyDoc = proceeding.programmingId + '-' + proceeding.actId;
+        let no_auto: number = 0;
+        let no_electronicF: number = 0;
+        let autog: boolean = false;
+        let elect: boolean = false;
+        let OIC: boolean = false;
+        let uvfv: boolean = false;
+        console.log('proceeding', proceeding);
+        const nomFun1 = proceeding.nameWorker1;
+        const nomFun2 = proceeding.nameWorker2;
+        const nomOic = proceeding.nameWorkerOic;
+        const nomUvfv = proceeding.nameWorkerUvfv;
+        const nomWit1 = proceeding.nameWitness1;
+        const nomWit2 = proceeding.nameWitness2;
+        const firmFun1 = proceeding.electronicSignatureWorker1;
+        const firmFun2 = proceeding.electronicSignatureWorker2;
+        const firmUvfv = proceeding.electronicSignatureUvfv;
+        const firmOic = proceeding.electronicSignatureOic;
+        const firmWit1 = proceeding.electronicSignatureWitness1;
+        const firmWit2 = proceeding.electronicSignatureWitness2;
+
+        if (nomFun1) {
+          if (firmFun1) {
+            no_electronicF++;
+          } else {
+            no_auto++;
+          }
+        }
+
+        if (nomFun2) {
+          if (firmFun2) {
+            no_electronicF++;
+          } else {
+            no_auto++;
+          }
+        }
+
+        if (nomWit1) {
+          if (firmWit1) {
+            no_electronicF++;
+          } else {
+            no_auto++;
+          }
+        }
+
+        if (nomWit2) {
+          if (firmWit2) {
+            no_electronicF++;
+          } else {
+            no_auto++;
+          }
+        }
+
+        if (this.tranType == 'CE') {
+          if (nomOic) {
+            OIC = true;
+            if (firmOic) {
+              no_electronicF++;
+            } else {
+              no_auto++;
+            }
+          }
+
+          if (nomUvfv) {
+            uvfv = true;
+            if (firmUvfv) {
+              no_electronicF++;
+            } else {
+              no_auto++;
+            }
+          }
+        }
+
+        if (no_auto > 0) {
+          autog = true;
+        } else if (no_electronicF > 0) {
+          elect = true;
+        }
+
+        if (this.tranType == 'A') {
           nomReport = 'ActaAseguradosBook.jasper';
           idTypeDoc = 106;
         } else if (this.tranType == 'NO') {
@@ -206,6 +288,21 @@ export class InformationRecordComponent extends BasePage implements OnInit {
           nomReport = 'Acta_SATBook.jasper';
           idTypeDoc = 210;
         }
+
+        const learnedType = idTypeDoc;
+        const learnedId = this.programming.id;
+        this.signatoriesService
+          .getSignatoriesFilter(learnedType, learnedId)
+          .subscribe({
+            next: response => {
+              console.log('response', response);
+            },
+            error: error => {
+              console.log('No hay Firmantes');
+            },
+          });
+        //const nomFun1 = proceeding.
+        /*
 
         if (nomReport) {
           this.loadDocument(nomReport, response.data[0].id, idTypeDoc);

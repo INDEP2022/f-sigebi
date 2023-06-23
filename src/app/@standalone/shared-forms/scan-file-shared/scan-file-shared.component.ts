@@ -32,6 +32,7 @@ export class ScanFileSharedComponent extends BasePage implements OnInit {
   @Input() statusProceeding: string;
   @Input() cveScreen: string;
   @Input() reportPrint: string;
+  @Input() replicateFolioView: boolean = true;
 
   @Output() emitfileNumber = new EventEmitter();
 
