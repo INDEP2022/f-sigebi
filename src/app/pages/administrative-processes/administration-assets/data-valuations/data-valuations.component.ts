@@ -59,7 +59,7 @@ export class DataValuationsComponent
         type: 'string',
         sort: false,
       },
-      /* comercializationValue: {
+      comercializationValue: {
         title: 'Valor Comercialización',
         type: 'string',
         sort: false,
@@ -93,7 +93,7 @@ export class DataValuationsComponent
         title: 'Valor Maq. Equipo',
         type: 'string',
         sort: false,
-      }, */
+      },
     };
   }
 
