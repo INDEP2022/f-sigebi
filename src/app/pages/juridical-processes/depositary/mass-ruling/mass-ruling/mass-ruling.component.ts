@@ -94,7 +94,7 @@ export class MassRulingComponent
 
   public form = new FormGroup({
     /**@description no_of_dicta */
-    id: new FormControl(null, Validators.required),
+    id: new FormControl(null),
     /**@description clave_oficio_armada */
     passOfficeArmy: new FormControl('', [
       Validators.pattern(KEYGENERATION_PATTERN),
@@ -112,7 +112,7 @@ export class MassRulingComponent
     /**@description fecha_instructora */
     instructorDate: new FormControl(''),
     /**@description no_volante */
-    wheelNumber: new FormControl('', Validators.required),
+    wheelNumber: new FormControl(''),
     /**@description nn */
     delete: new FormControl({ value: false, disabled: true }),
   });
@@ -154,15 +154,15 @@ export class MassRulingComponent
     id: number,
     wheelNumber: number
   ) {
-    this.expedientNumber = id;
-    if (!id && !wheelNumber) {
-      this.alert(
-        'warning',
-        'Advertencia',
-        'Debe ingresar un número de dictaminacion o un número de volante'
-      );
-      return;
-    }
+    // this.expedientNumber = id;
+    // if (!id && !wheelNumber) {
+    //   this.alert(
+    //     'warning',
+    //     'Advertencia',
+    //     'Debe ingresar un número de dictaminacion o un número de volante'
+    //   );
+    //   return;
+    // }
 
     // this.params = new BehaviorSubject<FilterParams>(new FilterParams());
     //  let data = this.params.value;
@@ -188,13 +188,14 @@ export class MassRulingComponent
         if (data.count > 1) {
           this.openMoreOneResults();
         } else {
-          this.form.patchValue(data.data[0] as any);
-          this.form
-            .get('instructorDate')
-            .patchValue(new Date(data.data[0].instructorDate) as any);
-          this.form
-            .get('dictDate')
-            .patchValue(new Date(data.data[0].dictDate) as any);
+          // this.form.patchValue(data.data[0] as any);
+          // this.form
+          //   .get('instructorDate')
+          //   .patchValue(new Date(data.data[0].instructorDate) as any);
+          // this.form
+          //   .get('dictDate')
+          //   .patchValue(new Date(data.data[0].dictDate) as any);
+          this.loadValuesDictation(data.data[0]);
         }
       },
       error: err => {
@@ -202,6 +203,14 @@ export class MassRulingComponent
         this.form.reset();
       },
     });
+  }
+
+  loadValuesDictation(data: any) {
+    this.form.patchValue(data);
+    this.form
+      .get('instructorDate')
+      .patchValue(new Date(data.instructorDate) as any);
+    this.form.get('dictDate').patchValue(new Date(data.dictDate) as any);
   }
 
   searchDictation() {
@@ -843,7 +852,7 @@ export class MassRulingComponent
     modalRef.content.onClose.pipe(take(1)).subscribe(result => {
       console.log({ result });
       if (result) {
-        // this.loadInfo(result);
+        this.loadValuesDictation(result);
       }
     });
   }

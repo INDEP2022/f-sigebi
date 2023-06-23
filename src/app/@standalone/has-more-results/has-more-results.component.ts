@@ -88,13 +88,16 @@ export class HasMoreResultsComponent implements OnInit {
 
   getData(params: ListParams = new ListParams()) {
     this.isLoading = true;
-    Object.keys(this.queryParams).forEach((key: any) => {
-      params[key] = this.queryParams[key];
-    });
+
+    // Object.keys(this.queryParams).forEach((key: any) => {
+    // params[key] = this.queryParams[key];
+    // });
+    this.queryParams['page'] = params.page as any;
+    this.queryParams['limit'] = params.limit as any;
     this.httpClient
       .get<IListResponse<any>>(
         `${environment.API_URL}${this.ms}/${API_VERSION}/${this.path}`,
-        this.queryParams
+        { params: this.queryParams }
       )
       .subscribe({
         next: (res: IListResponse<any>) => {

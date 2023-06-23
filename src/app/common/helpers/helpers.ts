@@ -2,7 +2,7 @@ import { formatDate } from '@angular/common';
 import { environment } from 'src/environments/environment';
 import Swal, { SweetAlertResult, type SweetAlertOptions } from 'sweetalert2';
 
-export const API_VERSION = 'api/v1/';
+export const API_VERSION = 'api/v1';
 type SwalOptions = Partial<SweetAlertOptions> & Required<{ text: string }>;
 
 /**

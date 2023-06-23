@@ -19,20 +19,31 @@
               <input class="form-control" formControlName="wheelNumber" />
             </form-field>
           </div>
-        </div>
-      </div>
-      <div class="form-material">
-        <div class="row w-100">
           <div class="col-sm-12 col-12 col-md-2 p-2">
             <form-field
               [control]="form.get('expedientNumber')"
               label="No&#46; Expediente">
-              <input
-                required
-                class="form-control"
-                formControlName="expedientNumber" />
+              <input class="form-control" formControlName="expedientNumber" />
             </form-field>
           </div>
+          <div class="col-sm-12 col-12 col-md-2 p-2 mb-2">
+            <button
+              type="submit"
+              [disabled]="
+                !form.value.expedientNumber &&
+                !form.value.wheelNumber &&
+                !form.value.id
+              "
+              class="btn btn-primary active btn-sm text-wrap"
+              (click)="searchDictation()">
+              Buscar
+            </button>
+          </div>
+        </div>
+      </div>
+      <hr />
+      <div class="form-material">
+        <div class="row w-100">
           <div class="col-sm-12 col-12 col-md-2 p-2">
             <form-field
               [control]="form.get('typeDict')"
@@ -77,14 +88,7 @@
                 bsDatepicker />
             </form-field>
           </div>
-          <div class="col-sm-12 col-12 col-md-2 p-2 mb-2">
-            <button
-              type="submit"
-              class="btn btn-primary active btn-sm text-wrap"
-              (click)="searchDictation()">
-              Buscar
-            </button>
-          </div>
+
           <hr />
           <div class="col-sm-12 col-12 col-md-12 p-2 pl-4">
             <form-check label="Eliminar" for="eliminar">
