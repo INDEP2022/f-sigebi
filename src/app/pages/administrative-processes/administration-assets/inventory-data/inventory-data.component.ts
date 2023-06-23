@@ -1,5 +1,6 @@
 import {
   Component,
+  inject,
   Input,
   OnChanges,
   OnInit,
@@ -14,9 +15,13 @@ import {
   FilterParams,
   ListParams,
 } from 'src/app/common/repository/interfaces/list-params';
+import { IGood } from 'src/app/core/models/ms-good/good';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
+import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { InventoryService } from 'src/app/core/services/ms-inventory-type/inventory.service';
 import { BasePage } from 'src/app/core/shared';
+import { ATRIBUT_ACT_COLUMNS } from '../general-data-goods/columns';
+import { ChangeOfGoodCharacteristicService } from '../general-data-goods/services/change-of-good-classification.service';
 import { RegisterModalComponent } from './register-modal/register-modal.component';
 
 @Component({
@@ -37,13 +42,20 @@ export class InventoryDataComponent
   disableGetAtribute: boolean = true;
   @Input() goodId: number;
   dataLoand: LocalDataSource = new LocalDataSource();
+  atributActSettings: any;
+  good: IGood;
+  service = inject(ChangeOfGoodCharacteristicService);
+  goodChange: number = 0;
+  classificationOfGoods: number;
+  viewAct: boolean = false;
 
   constructor(
     private fb: FormBuilder,
     private readonly inventoryService: InventoryService,
     private readonly router: Router,
     private readonly goodQueryService: GoodsQueryService,
-    private modalService: BsModalService
+    private modalService: BsModalService,
+    private readonly goodService: GoodService
   ) {
     super();
     this.settings.actions = false;
@@ -67,6 +79,12 @@ export class InventoryDataComponent
         type: 'string',
         sort: false,
       },
+    };
+    this.atributActSettings = {
+      ...this.settings,
+      actions: null,
+      hideSubHeader: false,
+      columns: { ...ATRIBUT_ACT_COLUMNS },
     };
   }
 
@@ -124,7 +142,7 @@ export class InventoryDataComponent
   async getAtribute() {
     let vb_hay_inv_anterior: boolean = false;
     let vn_inv_anterior: number | string;
-
+    this.viewAct = true;
     //inventario_x_bien.no_inventario
     if (this.inventorySelect.no_inventario === null) {
       this.alert(
@@ -155,18 +173,18 @@ export class InventoryDataComponent
       );
       return;
     }
-
+    await this.getGood();
     /* for (const reg of this.data) {
       vb_hay_inv_anterior = true;
       vn_inv_anterior = reg.no_inventario;
       break;
     } */
 
-    const clasifi: any[] = await this.getClsifi(9999);
+    /* const clasifi: any[] = await this.getClsifi(9999);
 
     for (const reg of clasifi) {
       console.log(reg);
-    }
+    } */
 
     /* if (vb_hay_inv_anterior) {
       const response = await this.alertQuestion('question','Traer valores anterior','Desea traer los valores del inventario anterior');
@@ -245,5 +263,19 @@ export class InventoryDataComponent
       ignoreBackdropClick: true,
     };
     this.modalService.show(RegisterModalComponent, config);
+  }
+
+  getGood() {
+    return new Promise((res, rej) => {
+      this.goodService.getById(this.goodId).subscribe({
+        next: (response: any) => {
+          this.classificationOfGoods = Number(response.data[0].goodClassNumber);
+          this.good = response.data[0];
+          setTimeout(() => {
+            this.goodChange++;
+          }, 100);
+        },
+      });
+    });
   }
 }

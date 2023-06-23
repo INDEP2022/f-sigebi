@@ -1,6 +1,9 @@
 import { Injectable } from '@angular/core';
 import { map, Observable } from 'rxjs';
-import { NumDetGood } from 'src/app/pages/administrative-processes/numerary/numerary-request/models/goods-det';
+import {
+  GoodsExcel,
+  NumDetGood,
+} from 'src/app/pages/administrative-processes/numerary/numerary-request/models/goods-det';
 import { MassiveGoodEndpoints } from '../../../common/constants/endpoints/ms-massivegood-endpoints';
 import { ListParams } from '../../../common/repository/interfaces/list-params';
 import { HttpService } from '../../../common/services/http.service';
@@ -113,12 +116,9 @@ export class MassiveGoodService extends HttpService {
     formData.append('file', file);
     return this.post<IListResponse<NumDetGood>>(this.route.FileCSV, formData);
   }
-  getFProRecPag2CSV(file: any) {
-    const formData = new FormData();
-    formData.append('file', file);
-    return this.post<IListResponse<any>>(
-      this.route.GetFProRecPag2CSV,
-      formData
-    );
+
+  getBanVal(status:string){
+    const route = `application/act-bdc-change-status`
+    return this.get(`${route}/${status}`)
   }
 }
