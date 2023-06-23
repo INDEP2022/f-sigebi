@@ -1,11 +1,24 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnInit,
+  Output,
+  SimpleChanges,
+} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { DomSanitizer } from '@angular/platform-browser';
+import { Router } from '@angular/router';
+import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
+import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IDocuments } from 'src/app/core/models/ms-documents/documents';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { ISegUsers } from 'src/app/core/models/ms-users/seg-users-model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
@@ -17,7 +30,10 @@ import { STRING_PATTERN } from 'src/app/core/shared/patterns';
   templateUrl: './scanning-foil.component.html',
   styles: [``],
 })
-export class ScanningFoilComponent extends BasePage implements OnInit {
+export class ScanningFoilComponent
+  extends BasePage
+  implements OnInit, OnChanges
+{
   //Reactive Forms
   form: FormGroup;
   user: ISegUsers;
@@ -25,8 +41,13 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
   params = new BehaviorSubject<ListParams>(new ListParams());
   generateFo: boolean = true;
   @Input() numberFoli: string | number = '';
+  @Input() cveScreen: string | number = '';
+  @Input() reportPrint: string = '';
+  @Input() refresh: boolean = false;
   @Input() good: IGood;
   @Output() documentEmmit = new EventEmitter<IDocuments>();
+
+  loadingText = 'Cargando ...';
   get scanningFoli() {
     return this.form.get('scanningFoli');
   }
@@ -35,7 +56,11 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
     private readonly documnetServices: DocumentsService,
     private token: AuthService,
     private readonly userServices: UsersService,
-    private readonly goodServices: GoodService
+    private readonly goodServices: GoodService,
+    private readonly router: Router,
+    private siabService: SiabService,
+    private sanitizer: DomSanitizer,
+    private modalService: BsModalService
   ) {
     super();
   }
@@ -45,6 +70,17 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
     this.scanningFoli.setValue(this.numberFoli);
     this.form.disable();
     this.getDataUser();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes) {
+      if (this.refresh) {
+        console.log('REFRESHHHH....');
+        this.scanningFoli.setValue(null);
+        this.document = undefined;
+        this.good = undefined;
+      }
+    }
   }
 
   /**
@@ -65,14 +101,14 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
     console.log(this.scanningFoli.value != '', this.scanningFoli.value);
     if (this.scanningFoli.value != '') {
       this.onLoadToast(
-        'error',
-        'ERROR',
+        'info',
+        'Información',
         'El número de bien para este proceso ya tiene folio de escaneo.'
       );
       return;
     }
     if (this.good === undefined) {
-      this.onLoadToast('error', 'ERROR', 'Debe cargar un bien');
+      this.onLoadToast('info', 'Información', 'Debe cargar un bien');
       return;
     }
     const documents: IDocuments = {
@@ -95,16 +131,20 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
     console.log(documents);
     this.documnetServices.create(documents).subscribe({
       next: response => {
+        this.document = response;
         console.log(response);
         this.scanningFoli.setValue(response.id);
         this.documentEmmit.emit(response);
-        this.onLoadToast(
+        /* this.onLoadToast(
           'success',
           'Generado correctamente',
           `Se generó el Folio No ${response.id}`
-        );
+        ); */
         this.generateFo = false;
-        this.generate();
+        const params = {
+          pn_folio: this.form.get('scanningFoli').value,
+        };
+        this.downloadReport(this.reportPrint, params);
       },
       error: err => {
         console.error(err);
@@ -118,7 +158,6 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
     let year = date.getFullYear();
     return month < 10 ? `0${month}/${year}` : `${month}/${year}`;
   }
-
   generate() {
     const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/blank.pdf`; //window.URL.createObjectURL(blob);
     const downloadLink = document.createElement('a');
@@ -155,5 +194,102 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
         },
       });
     }
+  }
+  scan() {
+    if (this.good === undefined) {
+      this.onLoadToast('info', 'Información', 'Debe cargar un bien');
+      return;
+    }
+    if (this.form.get('scanningFoli').value !== null) {
+      this.alertQuestion(
+        'question',
+        'Se abrirá la pantalla de escaneo para el folio de escaneo del acta abierta',
+        '¿Deseas continuar?',
+        'Continuar'
+      ).then(q => {
+        if (q.isConfirmed) {
+          this.goToScan();
+        }
+      });
+    } else {
+      this.alert('warning', 'No existe folio de escaneo a escanear', '');
+    }
+  }
+  goToScan() {
+    if (this.document !== null) {
+      localStorage.setItem('documentLegal', JSON.stringify(this.document));
+    }
+    console.log(this.cveScreen);
+    this.router.navigate([`/pages/general-processes/scan-documents`], {
+      queryParams: {
+        origin: this.cveScreen,
+        folio: this.form.get('scanningFoli').value,
+      },
+    });
+  }
+  seeImages() {
+    if (this.good === undefined) {
+      this.onLoadToast('info', 'Información', 'Debe cargar un bien');
+      return;
+    }
+    if (this.form.get('scanningFoli').value != null) {
+      this.documnetServices
+        .getByFolio(this.form.get('scanningFoli').value)
+        .subscribe(res => {
+          const data = JSON.parse(JSON.stringify(res));
+          const scanStatus = data.data[0]['scanStatus'];
+          const idMedium = data.data[0]['mediumId'];
+
+          if (scanStatus === 'ESCANEADO') {
+            this.goToScan();
+          } else {
+            this.alert(
+              'warning',
+              'No existe documentación para este folio',
+              ''
+            );
+          }
+        });
+    } else {
+      this.alert('warning', 'No tiene folio de escaneo para visualizar.', '');
+    }
+  }
+
+  printScanFile() {
+    if (this.good === undefined) {
+      this.onLoadToast('info', 'Información', 'Debe cargar un bien');
+      return;
+    }
+    if (this.form.get('scanningFoli').value !== null) {
+      const params = {
+        pn_folio: this.form.get('scanningFoli').value,
+      };
+      this.downloadReport(this.reportPrint, params);
+    } else {
+      this.alert('warning', 'No tiene folio de escaneo para imprimir.', '');
+    }
+  }
+
+  downloadReport(reportName: string, params: any) {
+    this.loadingText = 'Generando reporte ...';
+    this.siabService.fetchReport(reportName, params).subscribe({
+      next: response => {
+        this.loading = false;
+        const blob = new Blob([response], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+        let config = {
+          initialState: {
+            documento: {
+              urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+              type: 'pdf',
+            },
+            callback: (data: any) => {},
+          }, //pasar datos por aca
+          class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+          ignoreBackdropClick: true, //ignora el click fuera del modal
+        };
+        this.modalService.show(PreviewDocumentsComponent, config);
+      },
+    });
   }
 }
