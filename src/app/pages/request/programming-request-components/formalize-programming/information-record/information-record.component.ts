@@ -64,13 +64,13 @@ export class InformationRecordComponent extends BasePage implements OnInit {
   ) {
     super();
     this.obtenerHoraActual();
-    this.programmingId = this.activatedRoute.snapshot.paramMap.get(
-      'id'
-    ) as unknown as number;
-    this.programmingId = this.route.snapshot.queryParams['programingId'];
+    this.programmingId = Number(
+      this.activatedRoute.snapshot.paramMap.get('id')
+    );
   }
 
   ngOnInit(): void {
+    console.log('programacion', this.programming);
     this.prepareDevileryForm();
     this.getIdentification(new ListParams());
     this.typeTransferent();
@@ -199,7 +199,8 @@ export class InformationRecordComponent extends BasePage implements OnInit {
     this.proceedingService.getProceedings(params.getValue()).subscribe({
       next: response => {
         const proceeding = response.data[0];
-        const keyDoc = proceeding.programmingId + '-' + proceeding.actId;
+        //const keyDoc = proceeding.programmingId + '-' + proceeding.actId;
+        const keyDoc: number = this.programming.id;
         let no_auto: number = 0;
         let no_electronicF: number = 0;
         let autog: boolean = false;
@@ -297,18 +298,158 @@ export class InformationRecordComponent extends BasePage implements OnInit {
             next: response => {
               console.log('response', response);
             },
-            error: error => {
+            error: async error => {
               console.log('No hay Firmantes');
+              if (firmFun1) {
+                await this.createFirm(
+                  keyDoc,
+                  idTypeDoc,
+                  proceeding.id,
+                  'ACTAS',
+                  'FIRMA_ELECT_FUN_1',
+                  nomFun1,
+                  proceeding.positionWorker1,
+                  proceeding.idCatWorker1,
+                  proceeding.idNoWorker1
+                );
+              }
+
+              if (firmFun2) {
+                await this.createFirm(
+                  keyDoc,
+                  idTypeDoc,
+                  proceeding.id,
+                  'ACTAS',
+                  'FIRMA_ELECT_FUN_2',
+                  nomFun2,
+                  proceeding.positionWorker2,
+                  proceeding.idCatWorker2,
+                  proceeding.idNoWorker2
+                );
+              }
+
+              if (firmWit1) {
+                await this.createFirm(
+                  keyDoc,
+                  idTypeDoc,
+                  proceeding.id,
+                  'ACTAS',
+                  'FIRMA_ELECT_TEST_1',
+                  nomWit1,
+                  null,
+                  proceeding.idCatWitness1,
+                  proceeding.idNoWitness1
+                );
+              }
+
+              if (firmWit2) {
+                const createSigned = await this.createFirm(
+                  keyDoc,
+                  idTypeDoc,
+                  proceeding.id,
+                  'ACTAS',
+                  'FIRMA_ELECT_TEST_2',
+                  nomWit2,
+                  null,
+                  proceeding.idCatWitness2,
+                  proceeding.idNoWitness2
+                );
+
+                if (createSigned && this.tranType != 'CE') {
+                  console.log('firmantes creados');
+
+                  if (nomReport) {
+                    this.loadDocument(
+                      nomReport,
+                      response.data[0].id,
+                      idTypeDoc
+                    );
+                  }
+                }
+              }
+
+              if (this.tranType == 'CE') {
+                if (OIC) {
+                  if (firmOic) {
+                    await this.createFirm(
+                      keyDoc,
+                      idTypeDoc,
+                      proceeding.id,
+                      'ACTAS',
+                      'FIRMA_ELECT_OIC',
+                      nomOic,
+                      proceeding.positionWorkerOic,
+                      proceeding.idCatWorkerOic,
+                      proceeding.idNoWorkerOic
+                    );
+                  }
+                }
+
+                if (uvfv) {
+                  if (firmUvfv) {
+                    const createsig = await this.createFirm(
+                      keyDoc,
+                      idTypeDoc,
+                      proceeding.id,
+                      'ACTAS',
+                      'FIRMA_ELECT_UVFV',
+                      nomUvfv,
+                      proceeding.positionWorkerUvfv,
+                      null,
+                      null
+                    );
+
+                    if (createsig) {
+                      if (nomReport) {
+                        this.loadDocument(
+                          nomReport,
+                          response.data[0].id,
+                          idTypeDoc
+                        );
+                      }
+                    }
+                  }
+                }
+              }
             },
           });
         //const nomFun1 = proceeding.
-        /*
-
-        if (nomReport) {
-          this.loadDocument(nomReport, response.data[0].id, idTypeDoc);
-        } */
       },
       error: error => {},
+    });
+  }
+
+  createFirm(
+    keyDoc: number,
+    idTypeDoc: number,
+    idReg: number,
+    nomTable: string,
+    nomColumn: string,
+    nomPerson: string,
+    chargePerson: string,
+    identification: string,
+    noIdent: string
+  ) {
+    return new Promise((resolve, reject) => {
+      const formData: Object = {
+        learnedId: keyDoc,
+        learnedType: idTypeDoc,
+        recordId: idReg,
+        boardSignatory: nomTable,
+        columnSignatory: nomColumn,
+        name: nomPerson,
+        post: chargePerson,
+        identifierSignatory: identification,
+        IDNumber: noIdent,
+      };
+      console.log('data firmante', formData);
+      this.signatoriesService.create(formData).subscribe({
+        next: response => {
+          console.log('firmantes creados', response);
+          resolve(true);
+        },
+        error: error => {},
+      });
     });
   }
 

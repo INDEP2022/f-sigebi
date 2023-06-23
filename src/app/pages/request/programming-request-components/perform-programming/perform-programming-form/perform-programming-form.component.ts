@@ -356,6 +356,7 @@ export class PerformProgrammingFormComponent
         [Validators.maxLength(400), Validators.pattern(STRING_PATTERN)],
       ],
       regionalDelegationNumber: [null, [Validators.required]],
+      delregAttentionId: [null, [Validators.required]],
       stateKey: [null, [Validators.required]],
       tranferId: [null, [Validators.required]],
       stationId: [null, [Validators.required]],
@@ -1667,6 +1668,8 @@ export class PerformProgrammingFormComponent
     this.performForm
       .get('regionalDelegationNumber')
       .setValue(this.delegationId);
+
+    this.performForm.get('delregAttentionId').setValue(this.delegationId);
     this.alertQuestion(
       'info',
       'Confirmación',
