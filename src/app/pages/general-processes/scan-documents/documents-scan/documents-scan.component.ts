@@ -481,5 +481,10 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
         `/pages/juridical/depositary/depositary-record/` + this.no_bien,
       ]);
     }
+    if (this.origin == 'FREGULARIZAJUR') {
+      this.router.navigate([
+        `pages/administrative-processes/legal-regularization`,
+      ]);
+    }
   }
 }
