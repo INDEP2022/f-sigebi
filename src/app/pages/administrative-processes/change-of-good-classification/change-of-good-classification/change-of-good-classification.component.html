@@ -88,7 +88,8 @@
             <input
               type="text"
               class="form-control"
-              formControlName="fileNumberNew" />
+              formControlName="fileNumberNew"
+              readonly />
           </form-field>
         </div>
       </div>
@@ -111,7 +112,15 @@
                 class="btn btn-primary btn-sm active"
                 [disabled]="formNew.invalid"
                 (click)="showAlert()">
-                Cambiar Clasificación
+                Guardar
+                <i aria-hidden="true" class="fa fa-save"></i>
+              </button>
+              <button
+                class="btn btn-danger btn-sm active ml-3"
+                type="button"
+                (click)="clear()">
+                Limpiar
+                <i class="fa fa-eraser"></i>
               </button>
             </div>
           </div>
@@ -142,7 +151,7 @@
         <h6>NUEVOS</h6>
         <app-good-characteristics-table
           [goodChange]="goodChange2"
-          [initValue]="false"
+          [initValue]="initValue"
           [clasification]="classificationOfGoods.value"
           [settings]="atributNewSettings"
           [avaluo]="false"

@@ -73,6 +73,7 @@ export class GoodCharacteristicsTable extends BasePage implements OnInit {
     filterParams.addFilter('classifGoodNumber', this.clasification);
     filterParams.addFilter('columnNumber', '51', SearchFilter.NOTIN);
     const good = this.good as any;
+    console.log(good);
     this.goodsqueryService
       .getAtribuXClasif(filterParams.getParams())
       .pipe(takeUntil(this.$unSubscribe))
@@ -127,10 +128,21 @@ export class GoodCharacteristicsTable extends BasePage implements OnInit {
             this.loading = false;
             // console.log(this.data);
           } else {
-            this.loading = false;
+            this.clearTable();
           }
         },
+        error: err => {
+          this.clearTable();
+        },
       });
+  }
+
+  private clearTable() {
+    this.totalItems = 0;
+    this.dataTemp = [];
+    this.dataPaginated.load([]);
+    this.dataPaginated.refresh();
+    this.loading = false;
   }
 
   ngOnInit() {
@@ -267,8 +279,8 @@ export class GoodCharacteristicsTable extends BasePage implements OnInit {
     this.selectedAttribute = row.attribute;
     // const row = item.data;
     if (row.attribute === 'RESERVADO') {
-      // this.showAddCaracteristicsModal(row);
-      this.showAddCaracteristicsWebModal(row);
+      this.showAddCaracteristicsModal(row);
+      // this.showAddCaracteristicsWebModal(row);
     } else if (row.attribute === 'SITUACION JURIDICA') {
       this.showAddCaracteristicsModal(row);
     } else if (row.attribute === 'CATÁLOGO COMERCIAL') {

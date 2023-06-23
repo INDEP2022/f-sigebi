@@ -11,5 +11,7 @@ export enum DepositaryEndPoints {
   ValidBlackListAppointment = `valid-black-list/appointment`,
   AplicationcargaCliente1 = 'application/cargaCliente1',
   AplicationcargaCliente2 = 'application/cargaCliente2',
-  DepositaryPaymentDetail = 'ded-pay-depositary',
+  DepositaryDedPay = 'ded-pay-depositary',
+  DepositaryDetrepo = 'detrepo-depositary',
+  InfoDepositary = 'info-depositary',
 }

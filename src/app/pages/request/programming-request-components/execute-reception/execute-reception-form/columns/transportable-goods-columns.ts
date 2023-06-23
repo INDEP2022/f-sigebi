@@ -79,7 +79,7 @@ export const TRANSPORTABLE_GOODS = {
 
 export const TRANSPORTABLE_GOODS_FORMALIZE = {
   goodId: {
-    title: 'Nº gestión',
+    title: 'Número gestión',
     type: 'string',
     sort: false,
   },
@@ -128,27 +128,6 @@ export const TRANSPORTABLE_GOODS_FORMALIZE = {
     title: 'Unidad medida INDEP',
     type: 'string',
     sort: false,
-    // type: 'html',
-    // editor: {
-    //   type: 'list',
-    //   config: {
-    //     list: [
-    //       { value: 'KILOWATT', title: 'KILOWATT' },
-    //       { value: 'HORA', title: 'HORA' },
-    //       { value: 'BARRIL', title: 'BARRIL' },
-    //       { value: 'GRAMO', title: 'GRAMO' },
-    //       { value: 'METRO CUADRADO', title: 'METRO CUADRADO' },
-    //       { value: 'METRO CÚBICO', title: 'METRO CÚBICO' },
-    //       { value: 'MILLAR', title: 'MILLAR' },
-    //       { value: 'PAR', title: 'PAR' },
-    //       { value: 'KILOGRAMOS', title: 'KILOGRAMOS' },
-    //       { value: 'METRO', title: 'METRO' },
-    //       { value: 'PIEZA', title: 'PIEZA' },
-    //       { value: 'CABEZA', title: 'CABEZA' },
-    //       { value: 'LITRO', title: 'LITRO' },
-    //     ],
-    //   },
-    // },
   },
 
   physicalStatusName: {

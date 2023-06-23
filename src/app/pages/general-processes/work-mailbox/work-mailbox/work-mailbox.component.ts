@@ -1122,6 +1122,16 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
               this.router.navigateByUrl(
                 `/pages/juridical/file-data-update?wheelNumber=${this.selectedRow.flierNumber}`
               );
+            } else if (resp.data[0].screenKey === 'FADMAMPAROS') {
+              this.router.navigateByUrl(
+                `pages/juridical/depositary/maintenance-of-coverages?wheelNumber=${this.selectedRow.flierNumber}`
+              );
+            } else if (resp.data[0].screenKey === null) {
+              this.alert(
+                'info',
+                `Atención`,
+                'El oficio se ya encuentra en estatus cancelado'
+              );
             } else {
               resp.data[0].screenKey !== null
                 ? this.alert(
@@ -2238,7 +2248,6 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     );
   }
 
-
   acptionBienes() {
     // this.workService.getViewBienes('598154').subscribe({
     //   next: (resp: any) => {
@@ -2252,14 +2261,14 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     const params = new FilterParams();
     params.addFilter('fileNumber', this.selectedRow.proceedingsNumber);
     const $params = new BehaviorSubject(params);
-    
-    console.log('Expediente',this.selectedRow.proceedingsNumber);
+
+    console.log('Expediente', this.selectedRow.proceedingsNumber);
     const proceedingsNumber = this.selectedRow.proceedingsNumber;
     const config = {
       ...MODAL_CONFIG,
       initialState: {
         //$obs,
-       // service,
+        // service,
         columns,
         title,
         $params,

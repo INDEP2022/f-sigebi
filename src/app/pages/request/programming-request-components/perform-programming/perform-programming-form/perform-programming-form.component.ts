@@ -56,6 +56,7 @@ import { ESTATE_COLUMNS } from '../../acept-programming/columns/estate-columns';
 import { SearchUserFormComponent } from '../../schedule-reception/search-user-form/search-user-form.component';
 import { userData } from '../../schedule-reception/search-user-form/users-data';
 import { DetailGoodProgrammingFormComponent } from '../../shared-components-programming/detail-good-programming-form/detail-good-programming-form.component';
+import { DomicileFormComponent } from '../../shared-components-programming/domicile-form/domicile-form.component';
 import { EstateSearchFormComponent } from '../estate-search-form/estate-search-form.component';
 import { IEstateSearch } from '../estate-search-form/estate-search.interface';
 import { UserFormComponent } from '../user-form/user-form.component';
@@ -1005,7 +1006,8 @@ export class PerformProgrammingFormComponent
     this.loadingGoods = true;
     const filterColumns: Object = {
       regionalDelegation: Number(this.regionalDelegationUser.id),
-      transferent: Number(this.transferentId),
+      // transferent: Number(this.transferentId),
+      transferent: Number(700),
       relevantType: Number(this.idTypeRelevant),
       statusGood: 'APROBADO',
     };
@@ -1515,6 +1517,15 @@ export class PerformProgrammingFormComponent
       callback: () => {},
     };
     this.modalService.show(DetailGoodProgrammingFormComponent, config);
+  }
+  // Visualizar información de alias almacen //
+  showDomicile(item: IGoodProgrammingSelect) {
+    let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+    config.initialState = {
+      item,
+      callback: () => {},
+    };
+    this.modalService.show(DomicileFormComponent, config);
   }
 
   removeGoodTrans(item: IGood) {
@@ -2050,15 +2061,11 @@ export class PerformProgrammingFormComponent
       this.performForm
         .get('startDate')
         .setValue(
-          moment(this.dataProgramming.startDate).format(
-            'DD/MMMM/YYYY, h:mm:ss a'
-          )
+          moment(this.dataProgramming.startDate).format('DD/MMMM/YYYY')
         );
       this.performForm
         .get('endDate')
-        .setValue(
-          moment(this.dataProgramming.endDate).format('DD/MMMM/YYYY, h:mm:ss a')
-        );
+        .setValue(moment(this.dataProgramming.endDate).format('DD/MMMM/YYYY'));
 
       this.transferentId = this.dataProgramming.tranferId;
 
@@ -2239,17 +2246,16 @@ export class PerformProgrammingFormComponent
 
   checkInfoDate(event: any) {
     const startDate = event;
-    const _startDateFormat = moment(startDate).format(
-      'DD/MMMM/YYYY, h:mm:ss a'
-    );
+    const _startDateFormat = moment(startDate).format('DD/MMMM/YYYY');
 
     const _endDateFormat = moment(this.performForm.get('endDate').value).format(
-      'DD/MMMM/YYYY, h:mm:ss a'
+      'DD/MMMM/YYYY'
     );
     const date = moment(new Date()).format('YYYY-MM-DD');
     this.programmingService.getDateProgramming(date, 5).subscribe({
       next: (response: any) => {
-        const correctDate = moment(response).format('DD/MMMM/YYYY, h:mm:ss a');
+        console.log('correctDate', response);
+        const correctDate = moment(response).format('DD/MMMM/YYYY');
         if (correctDate > _startDateFormat || correctDate > _endDateFormat) {
           this.performForm
             .get('startDate')

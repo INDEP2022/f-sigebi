@@ -68,6 +68,7 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
   };
   origin2: string = ''; // Pantalla para regresar a la anterior de la que se llamo
   origin3: string = ''; // Pantalla para regresar a la anterior de la que se llamo desde la origin2
+  no_bien: number = null;
 
   constructor(
     private fb: FormBuilder,
@@ -97,6 +98,9 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
           }
           this.origin2 = params['origin2'] ?? null;
           this.origin3 = params['origin3'] ?? null;
+        }
+        if (this.origin == 'FACTJURREGDESTLEG') {
+          this.no_bien = params['P_NB'] ?? null;
         }
       });
     this.settings = {
@@ -470,6 +474,11 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
     if (this.origin == 'FPROCRECPAG') {
       this.router.navigate([
         `/pages/administrative-processes/payment-claim-process`,
+      ]);
+    }
+    if (this.origin == 'FACTJURREGDESTLEG') {
+      this.router.navigate([
+        `/pages/juridical/depositary/depositary-record/` + this.no_bien,
       ]);
     }
   }

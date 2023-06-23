@@ -11,18 +11,22 @@
           label="No Expediente"
           class="col-md-3">
           <input
-            type="text"
             class="form-control"
-            formControlName="numberProceedings" />
+            formControlName="numberProceedings"
+            type="number"
+            min="0"
+            oninput="if(this.value.length > 11) this.value = this.value.slice(0, 11);" />
         </form-field>
         <form-field
           [control]="form.get('flyerNumber')"
           label="No Volante"
           class="col-md-3">
           <input
-            type="text"
             class="form-control"
-            formControlName="flyerNumber" />
+            formControlName="flyerNumber"
+            type="number"
+            min="0"
+            oninput="if(this.value.length > 11) this.value = this.value.slice(0, 11);" />
         </form-field>
         <form-field [control]="form.get('separador')" class="col-md-4">
           <ngx-select
@@ -30,7 +34,8 @@
             control="separador"
             bindLabel="description"
             [data]="selectSeparator"
-            label="Separador"></ngx-select>
+            label="Separador">
+          </ngx-select>
         </form-field>
 
         <form-field
@@ -45,8 +50,16 @@
         </form-field>
       </div>
       <div class="row pt-3">
-        <form-field [control]="form.get('keyTypeDocument')" class="col-md-4">
-          <ngx-select
+        <form-field
+          [control]="form.get('keyTypeDocument')"
+          label="Tipo de documento"
+          class="col-md-2">
+          <input
+            type="text"
+            class="form-control"
+            formControlName="keyTypeDocument"
+            maxlength="10" />
+          <!-- <ngx-select
             [form]="form"
             (fetchItems)="onTipoDocumentoInputChange($event)"
             (change)="onOptionsSelected($event)"
@@ -54,7 +67,7 @@
             bindLabel="id"
             [data]="selectTypeDoc"
             label="Tipo de Documento">
-          </ngx-select>
+          </ngx-select> -->
         </form-field>
 
         <form-field
@@ -64,7 +77,8 @@
           <input
             type="text"
             class="form-control"
-            formControlName="descripcion" />
+            formControlName="descripcion"
+            maxlength="1000" />
         </form-field>
       </div>
       <div class="row pt-3">
@@ -75,7 +89,8 @@
           <input
             type="text"
             class="form-control"
-            formControlName="averPrevia" />
+            formControlName="averPrevia"
+            maxlength="100" />
         </form-field>
 
         <form-field
@@ -85,8 +100,10 @@
           <input
             type="text"
             class="form-control"
-            formControlName="causaPenal" />
+            formControlName="causaPenal"
+            maxlength="100" />
         </form-field>
+
         <div class="col d-flex">
           <form-radio label="Digitalizados">
             <input type="radio" formControlName="tipos" value="1" />
@@ -128,7 +145,7 @@
                 ><i class="fa fa-square"></i> Documento Digitalizado</span
               >
               <span class="text-danger"
-                ><i class="fa fa-square"></i>Documento pendiente de
+                ><i class="fa fa-square"></i> Documento pendiente de
                 digitalizar</span
               >
             </div>
@@ -140,13 +157,18 @@
           </div>
         </div>
 
+        <!-- Tabla con los links de imágenes para mostrar -->
         <div class="row">
           <div class="col-md-12">
-            <ng2-smart-table
-              [settings]="settings"
-              [source]="data"></ng2-smart-table>
+            <div class="table-responsive">
+              <ng2-smart-table [settings]="settings" [source]="data">
+              </ng2-smart-table>
+            </div>
           </div>
         </div>
+        <app-pagination
+          [params]="params"
+          [totalItems]="totalItems"></app-pagination>
       </div>
     </form>
   </div>

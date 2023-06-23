@@ -18,7 +18,6 @@ import { ILabelOKey } from 'src/app/core/models/catalogs/label-okey.model';
 import { IStatusCode } from 'src/app/core/models/catalogs/status-code.model';
 import { IUnitXClassif } from 'src/app/core/models/ms-classifygood/ms-classifygood.interface';
 import { IGood } from 'src/app/core/models/ms-good/good';
-import { IAttribClassifGoods } from 'src/app/core/models/ms-goods-query/attributes-classification-good';
 import { GoodSssubtypeService } from 'src/app/core/services/catalogs/good-sssubtype.service';
 import { LabelGoodService } from 'src/app/core/services/catalogs/label-good.service';
 import { DynamicCatalogsService } from 'src/app/core/services/dynamic-catalogs/dynamiccatalog.service';
@@ -54,12 +53,14 @@ export class ChangeOfGoodClassificationComponent
   noEtiqs: string[] = [];
   endProcess: boolean = false;
   destinations: ILabelOKey[] = [];
-  listAtributAct: any[] = [];
-  listAtributNew: IAttribClassifGoods[] = [];
+  // listAtributAct: any[] = [];
+  // listAtributNew: IAttribClassifGoods[] = [];
   btnNewAtribut: boolean = true;
   atributActSettings: any;
   atributNewSettings: any;
+  newDescription: string;
   service = inject(ChangeOfGoodCharacteristicService);
+  initValue = false;
   // atributActSettings = { ...this.settings };
   // pageSizeOptions = [5, 10, 15, 20];
   // limit: FormControl = new FormControl(5);
@@ -199,23 +200,25 @@ export class ChangeOfGoodClassificationComponent
     this.numberGood.valueChanges
       .pipe(
         distinctUntilChanged(),
-        debounceTime(1000),
+        debounceTime(500),
         takeUntil(this.$unSubscribe)
       )
       .subscribe(x => {
-        console.log(x);
         if (x) {
           this.loadGood();
         }
       });
     this.classificationOfGoods.valueChanges.subscribe({
       next: response => {
-        console.log(response);
-        if (response) {
-          setTimeout(() => {
-            this.goodChange2++;
-          }, 100);
+        // console.log(response, this.good);
+        if (this.good && response + '' === this.good.goodClassNumber + '') {
+          this.initValue = true;
+        } else {
+          this.initValue = false;
         }
+        setTimeout(() => {
+          this.goodChange2++;
+        }, 100);
       },
     });
     this.form.disable();
@@ -227,7 +230,7 @@ export class ChangeOfGoodClassificationComponent
     this.form.reset();
     this.formNew.reset();
     // this.dataAct.reset();
-    this.listAtributNew = [];
+    // this.listAtributNew = [];
   }
 
   //disbaledInpust;
@@ -282,7 +285,7 @@ export class ChangeOfGoodClassificationComponent
 
   async loadGood() {
     this.loading = true;
-    this.listAtributAct = [];
+    // this.listAtributAct = [];
     // this.refreshTableAct(this.listAtributAct);
     const filterParams = new FilterParams();
     filterParams.addFilter('id', this.numberGood.value);
@@ -294,7 +297,7 @@ export class ChangeOfGoodClassificationComponent
     if (response.data && response.data.length > 0) {
       this.good = response.data[0];
       const status = await firstValueFrom(this.getStatusXPantalla());
-      console.log(this.usuarVal, this.usuarVal.substring(0, 3));
+      // console.log(this.usuarVal, this.usuarVal.substring(0, 3));
       if (status.length === 0 && this.usuarVal.substring(0, 3) === 'TLP') {
         this.alertInfo(
           'error',
@@ -355,7 +358,6 @@ export class ChangeOfGoodClassificationComponent
     //   'Éxitoso',
     //   `Se ha cargado correctamente la información del bien No ${good.id}`
     // );
-    console.log(this.currentClasification.value);
     setTimeout(() => {
       this.goodChange++;
     }, 100);
@@ -366,6 +368,8 @@ export class ChangeOfGoodClassificationComponent
   }
 
   onChange(event: any) {
+    // console.log(event);
+    this.newDescription = event;
     this.getUnitiXClasif();
     this.getEtiqXClasif();
     this.formNew.enable();
@@ -462,56 +466,76 @@ export class ChangeOfGoodClassificationComponent
     });
   }
 
-  addAtribut() {
-    const newLis: any = this.listAtributNew;
-    const good: any = this.good;
-    newLis.forEach((atrib: any) => {
-      if (atrib.newVal !== undefined) {
-        good[`val${atrib.columnNumber}`] = atrib.newVal;
+  private updateFirsTable() {
+    this.currentClasification.setValue(this.classificationOfGoods.value);
+    this.descriptionClasification.setValue(this.newDescription);
+    this.data.forEach(atrib => {
+      if (atrib.value !== undefined) {
+        this.good[atrib.column] = atrib.value;
       }
     });
+    this.good = { ...this.good };
+    console.log(this.good);
+
+    setTimeout(() => {
+      this.goodChange++;
+    }, 100);
+  }
+
+  updateSecondTable() {
+    this.formNew.reset();
+    this.fileNumberNew.setValue(this.numberFile.value);
+    setTimeout(() => {
+      this.goodChange2++;
+    }, 100);
+  }
+
+  addAtribut() {
     const putGood: any = {
-      id: Number(good.id),
-      goodId: Number(good.goodId),
+      id: Number(this.good.id),
+      goodId: Number(this.good.goodId),
       goodClassNumber: this.classificationOfGoods.value,
       fileeNumber: this.fileNumberNew.value,
       unitMeasure: this.unitXClassif.value,
       destiny: this.destination.value,
     };
-    this.copiarPropiedades(good, putGood);
-    console.log(this.data);
     let contador = 0;
-    this.data.forEach(row => {
+    for (let index = 0; index < this.data.length; index++) {
+      const row = this.data[index];
       if (row.required && !row.value) {
-        this.onLoadToast(
+        this.alert(
           'error',
           'Bien ' + this.numberGood.value,
-          'Complete los atributos requeridos'
+          'Complete el atributo ' + row.attribute
         );
+        contador++;
+        index = this.data.length;
         return;
-        // contador++;
       }
       putGood[row.column] = row.value;
-    });
-    console.log(putGood, 'Atributos sin llenar:' + contador);
+    }
+    if (contador > 0) {
+      return;
+    }
+    // console.log(putGood, 'Atributos sin llenar:' + contador);
     this.goodServices
       .update(putGood)
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: response => {
-          this.onLoadToast(
+          this.alert(
             'success',
             'ÉXITO',
             `Se ha actualizado la clasificacion del bien ${this.good.id}`
           );
-          this.listAtributNew = [];
+          this.updateFirsTable();
           // this.dataAct.load([]);
           // this.dataAct.refresh();
-          this.form.reset();
-          this.formNew.reset();
+          // this.form.reset();
+          this.updateSecondTable();
         },
         error: err => {
-          this.onLoadToast(
+          this.alert(
             'error',
             'ERROR',
             `Error al cambiar la clasificacion del bien ${this.good.id}`

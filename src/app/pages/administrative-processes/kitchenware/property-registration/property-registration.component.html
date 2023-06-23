@@ -1,49 +1,44 @@
-<form [formGroup]="form" class="form-material">
-  <app-card [header]="true" [footer]="true">
-    <div class="ch-content" header>
-      <h5 class="title">Registro del menaje del bien</h5>
-    </div>
-    <div body>
+<app-card [header]="true" [footer]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Registro del menaje del bien</h5>
+  </div>
+  <div body>
+    <form [formGroup]="form" class="form-material">
       <div class="row">
-        <div class="col-md-6 col-sm-12 col-xs-12">
-          <form-field [control]="form.get('numberFile')">
-            <div class="row">
-              <div class="col">
-                <label for="numberFile" class="d-block">No Expediente</label>
-                <div class="d-flex align-items-center">
-                  <input
-                    type="text"
-                    class="form-control"
-                    formControlName="numberFile"
-                    placeholder=" "
-                    style="width: 350px" />
-                  <button
-                    type="button"
-                    class="btn btn-primary btn-sm active ml-1 border-0"
-                    style="width: 40px"
-                    [ngStyle]="{
-                      'background-color': form.get('numberFile').value
-                        ? '#9D2449'
-                        : 'rgba(157, 36, 73, 1)'
-                    }"
-                    [disabled]="!form.get('numberFile').value"
-                    (click)="searchExpedient(form.get('numberFile').value)">
-                    <i class="fa fa-search"></i>
-                  </button>
-                </div>
-              </div>
+        <div class="col-12">
+          <div class="d-flex justify-content-between">
+            <div class="col-6 p-0">
+              <form-field
+                [control]="form.get('numberFile')"
+                label="No Expediente">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="numberFile" />
+              </form-field>
             </div>
-          </form-field>
-        </div>
 
-        <div class="col-md-6 col-sm-12 col-xs-12">
-          <div class="d-flex justify-content-end">
-            <div>
+            <div class="col-6 d-flex justify-content-start p-0">
+              <button
+                type="button"
+                class="btn btn-primary btn-sm active ml-1 border-0"
+                style="width: 90px"
+                [ngStyle]="{
+                  'background-color': form.get('numberFile').value
+                    ? '#9D2449'
+                    : 'rgba(157, 36, 73, 1)'
+                }"
+                [disabled]="!form.get('numberFile').value"
+                (click)="searchExpedient(form.get('numberFile').value)">
+                Buscar <i class="fa fa-search"></i>
+              </button>
+              <div class="ms-3"></div>
               <button
                 type="button"
                 class="btn btn-sm btn-info active"
+                style="width: 90px; background-color: #b38e5d"
                 (click)="cleandInfo()">
-                Limpiar
+                Limpiar <i class="fa fa-eraser"></i>
               </button>
             </div>
           </div>
@@ -52,7 +47,7 @@
 
       <div class="row mt-5">
         <div class="col-md-6 col-sm-12 col-xs-12">
-          <form-field [control]="form.get('causePenal')" label="Causa Penal">
+          <form-field [control]="form.get('causePenal')" label="Causa penal">
             <input
               type="text"
               class="form-control"
@@ -62,7 +57,7 @@
         <div class="col-md-6 col-sm-12 col-xs-12">
           <form-field
             [control]="form.get('preliminaryInquiry')"
-            label="Averiguación Previa">
+            label="Averiguación previa">
             <input
               type="text"
               class="form-control"
@@ -89,23 +84,13 @@
 
       <div class="container">
         <div class="container">
-          <div class="row justify-content-between">
-            <div class="col-md-6 col-sm-12 col-xs-12">
-              <div class="d-flex justify-content-start">
-                <div class="m-3">
-                  <span>
-                    Listado de menajes del bien No
-                    <strong>{{ numberGoodSelect }}</strong>
-                  </span>
-                </div>
-              </div>
-            </div>
-
+          <div class="row justify-content-center">
             <div class="col-md-3 col-sm-12 col-xs-12">
-              <div class="d-flex justify-content-end">
+              <div class="d-flex justify-content-center">
                 <div class="m-3">
                   <button
                     [disabled]="enableAddgood"
+                    *ngIf="showButton"
                     type="button"
                     class="btn btn-sm btn-primary active"
                     (click)="showGoods()">
@@ -119,18 +104,33 @@
           <div class="row" *ngIf="addGood">
             <app-goods-shared
               [form]="formGood"
-              (good)="addMenage($event)"></app-goods-shared>
+              (good)="addMenage($event)"
+              label="Menaje"></app-goods-shared>
           </div>
 
           <div class="row">
             <div class="col-md-12">
+              <div class="m-3">
+                <span
+                  >Listado de menajes del bien No
+                  <strong>{{ numberGoodSelect }}</strong></span
+                >
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-12">
               <div [class]="loading ? 'table-loading' : ''">
-                <ng2-smart-table
-                  [attr.class]="'table-bordered'"
-                  [settings]="settings"
-                  [source]="menajes"
-                  (delete)="showDeleteAlert($event.data)">
-                </ng2-smart-table>
+                <div class="table-responsive">
+                  <ng2-smart-table
+                    id="okosdsd1"
+                    [attr.class]="'table-bordered'"
+                    [settings]="settings"
+                    [source]="menajes"
+                    (delete)="showDeleteAlert($event.data)">
+                  </ng2-smart-table>
+                </div>
               </div>
             </div>
           </div>
@@ -139,6 +139,6 @@
             [totalItems]="totalItems"></app-pagination>
         </div>
       </div>
-    </div>
-  </app-card>
-</form>
+    </form>
+  </div>
+</app-card>

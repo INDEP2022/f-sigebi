@@ -38,14 +38,18 @@ export class MenageService extends HttpService {
     return this.put(route, good);
   }
 
+  //http://sigebimsqa.indep.gob.mx/menage/api/v1/gestion-menaje/73096
   remove(id: string | number) {
     const route = `${MenageEndpoints.MenageManagement}/${id}`;
     return this.delete(route);
   }
+
+  //http://sigebimsqa.indep.gob.mx/menage/api/v1/gestion-menaje?filter.noGood=$eq:18596
   getByGood(id: string | number, params?: ListParams) {
     const route = `${MenageEndpoints.MenageManagement}?filter.noGood=$eq:${id}`;
     return this.get<IListResponse<IMenageDescription>>(route, params);
   }
+
   getMenaje(params?: ListParams) {
     const route = `${MenageEndpoints.MenageManagement}`;
     return this.get<IListResponse<IMenageDescription>>(route, params);

@@ -75,6 +75,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
   disabledBienes: boolean = true;
   goodChange: number = 0;
   bodyGoodCharacteristics: ICharacteristicsGoodDTO = {};
+  loadTypes = false;
   get data() {
     return this.service.data;
   }
@@ -429,16 +430,21 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     console.log(this.data);
     let body: any = {
       id: this.good.id,
-      goodId: this.good.goodId,
+      goodId: this.good.goodid,
     };
     let tableValid = true;
     this.data.forEach(row => {
       if (row.required && !row.value) {
-        this.onLoadToast(
+        this.alert(
           'error',
           'Bien ' + this.numberGood.value,
           'Complete las características requeridas'
         );
+        // this.onLoadToast(
+        //   'error',
+        //   'Bien ' + this.numberGood.value,
+        //   'Complete las características requeridas'
+        // );
         tableValid = false;
         return;
       }
@@ -493,11 +499,17 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: response => {
-          this.onLoadToast(
+          this.alert(
             'success',
             'Bien ' + this.numberGood.value,
             'Actualizado correctamente'
           );
+
+          // this.onLoadToast(
+          //   'success',
+          //   'Bien ' + this.numberGood.value,
+          //   'Actualizado correctamente'
+          // );
         },
       });
     await this.pupInsertGeoreferencia();
@@ -525,6 +537,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
   }
 
   clearFilter() {
+    this.bodyGoodCharacteristics = {};
     this.form.reset();
     this.good = null;
     this.data = [];
@@ -612,11 +625,16 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
       !vn_clas_nume.data ||
       (vn_clas_nume.data && vn_clas_nume.data.length === 0)
     ) {
-      this.onLoadToast(
+      this.alert(
         'error',
         'Error de parametrización',
         'No se tiene parametrizada la clasificación del numerario'
       );
+      // this.onLoadToast(
+      //   'error',
+      //   'Error de parametrización',
+      //   'No se tiene parametrizada la clasificación del numerario'
+      // );
       return;
     }
     await this.fillConciliate();
@@ -658,11 +676,16 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     try {
       vn_impor = +this.nval(2);
     } catch (x) {
-      this.onLoadToast(
+      this.alert(
         'error',
         'Numerario',
         'Fallo al transformar la cantidad numerica del importe'
       );
+      // this.onLoadToast(
+      //   'error',
+      //   'Numerario',
+      //   'Fallo al transformar la cantidad numerica del importe'
+      // );
       return false;
     }
     lbln_encontro = false;
@@ -682,11 +705,17 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     if (lbln_conciliado === 'S') {
       this.di_numerario_conciliado = 'Conciliado';
     } else {
-      this.onLoadToast(
+      this.alert(
         'warning',
         'Conciliación',
         'No se encontró un movimiento relacionado'
       );
+
+      // this.onLoadToast(
+      //   'warning',
+      //   'Conciliación',
+      //   'No se encontró un movimiento relacionado'
+      // );
     }
     return true;
   }
@@ -711,8 +740,13 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
           }
           return true;
         } catch (x) {
-          this.onLoadToast(
+          // this.onLoadToast(
+          //   'error',
+          //   'Verifique el valor númerico del campo ' + column
+          // );
+          this.alert(
             'error',
+            'Numerario',
             'Verifique el valor númerico del campo ' + column
           );
           return false;
@@ -723,8 +757,14 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
           return true;
           // this.good.appraisedValue = this.good.val2;
         } catch (x) {
-          this.onLoadToast(
+          // this.onLoadToast(
+          //   'error',
+          //   'Verifique el valor númerico del campo ' + column
+          // );
+
+          this.alert(
             'error',
+            'Numerario',
             'Verifique el valor númerico del campo ' + column
           );
           return false;
@@ -747,11 +787,12 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
         .pipe(catchError(x => of(null)))
     );
     if (!parameters) {
-      this.onLoadToast(
-        'error',
-        'Excep Numerario',
-        'No pudo cargar los parametros'
-      );
+      this.alert('error', 'Excep Numerario', 'No pudo cargar los parametros');
+      // this.onLoadToast(
+      //   'error',
+      //   'Excep Numerario',
+      //   'No pudo cargar los parametros'
+      // );
       return false;
     }
     const data = parameters ? parameters.data : [];
@@ -818,17 +859,27 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     if (this.descripcion && this.descripcion.value) {
       const tamanio = this.descripcion.value.length;
       if (tamanio <= 1) {
-        this.onLoadToast(
+        this.alert(
           'error',
           'Descripción bien',
           'Verifique la cantidad de carácteres (no menor a 2 posiciones).'
         );
+        // this.onLoadToast(
+        //   'error',
+        //   'Descripción bien',
+        //   'Verifique la cantidad de carácteres (no menor a 2 posiciones).'
+        // );
         return false;
       }
       if (this.validationTypeSubtype()) {
         if (this.nval(14) === 'S') {
           if (this.goodAppraisal.value === null) {
-            this.onLoadToast(
+            // this.onLoadToast(
+            //   'error',
+            //   'Valor avalúo',
+            //   'Debe indicarlo de contar con él'
+            // );
+            this.alertInfo(
               'error',
               'Valor avalúo',
               'Debe indicarlo de contar con él'
@@ -843,7 +894,8 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
       const resultNumerario = await this.excepNumerario();
       return resultNumerario;
     } else {
-      this.onLoadToast('error', 'Descripción bien', 'No debe ser nula');
+      // this.onLoadToast('error', 'Descripción bien', 'No debe ser nula');
+      this.alertInfo('error', 'Descripción bien', 'No debe ser nula');
       return false;
     }
   }
@@ -911,12 +963,24 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
       newListParams.limit = this.filterParams.limit;
       newListParams.page = this.filterParams.page;
       const response = await firstValueFrom(
-        this.goodProcessService.getDistinctTypes(
-          this.bodyGoodCharacteristics,
-          newListParams
-        )
+        this.goodProcessService
+          .getDistinctTypes(this.bodyGoodCharacteristics, newListParams)
+          .pipe(
+            catchError(x => of(null)),
+            map(x => {
+              return {
+                ...x,
+                data: x.data.map(item => {
+                  return {
+                    ...item,
+                    quantity: item.quantity ? +(item.quantity + '') : null,
+                  };
+                }),
+              };
+            })
+          )
       );
-      if (response.data && response.data.length > 0) {
+      if (response && response.data && response.data.length > 0) {
         this.staticTabs.tabs[1].disabled = false;
         this.staticTabs.tabs[1].active = true;
         let item = response.data[0];
@@ -935,6 +999,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
           this.subtype.setValue(item.no_subtipo);
           this.form.get('ssubtype').setValue(item.no_ssubtipo);
           this.form.get('sssubtype').setValue(item.no_sssubtipo);
+          this.loadTypes = true;
           // this.getDelegation(item.delegationNumber);
           // this.getSubdelegation(item.subDelegationNumber);
           const delegacion = item.delegationnumber;
@@ -983,8 +1048,9 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
         this.totalItems = 0;
         this.loading = false;
         this.goodChange++;
+        this.alertInfo('error', 'Error', 'No existen bienes');
         // this.service.goodChange.next(false);
-        this.onLoadToast('error', 'ERROR', 'No existen bienes');
+        // this.onLoadToast('error', 'ERROR', 'No existen bienes');
       }
     } else {
       this.loading = false;

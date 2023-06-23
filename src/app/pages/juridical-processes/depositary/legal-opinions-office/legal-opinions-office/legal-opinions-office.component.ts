@@ -45,10 +45,10 @@ import { FileBrowserService } from 'src/app/core/services/ms-ldocuments/file-bro
 import { SecurityService } from 'src/app/core/services/ms-security/security.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { NUM_POSITIVE, STRING_PATTERN } from 'src/app/core/shared/patterns';
-import { MailboxModalTableComponent } from 'src/app/pages/general-processes/work-mailbox/components/mailbox-modal-table/mailbox-modal-table.component';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { AddCopyComponent } from '../../../abandonments-declaration-trades/abandonments-declaration-trades/add-copy/add-copy.component';
 import { LegalOpinionsOfficeFirmModalComponent } from '../legal-opinions-office-firm-modal/legal-opinions-office-firm-modal.component';
+import { ModalScanningFoilTableComponent } from '../modal-scanning-foil/modal-scanning-foil.component';
 import {
   CCP_COLUMS_OFICIO,
   COLUMNS,
@@ -175,6 +175,7 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
   _saveCopiesDictation: boolean = false;
   _saveCopiesDictation_loading: boolean = false;
   _totalCopiesTo: number = 0;
+  _valid_saveOfficeDictation: boolean = false;
   // Electronic Firm
   routeFirm: string = 'electronicfirm';
   fileFirm: any;
@@ -1030,6 +1031,15 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
     this.form.get('issuingUser').updateValueAndValidity();
     if (this.dictationData.statusDict == 'DICTAMINADO') {
       this.form.get('issuingUser').disable();
+    }
+    if (
+      this.officeDictationData.recipient == null ||
+      this.officeDictationData.city == null ||
+      this.officeDictationData.sender == null
+    ) {
+      this._valid_saveOfficeDictation = true;
+    } else {
+      this._valid_saveOfficeDictation = false;
     }
     // this.getIssuingUserByDetail(new ListParams(), true);
     this.form.get('addressee').setValue(this.officeDictationData.recipient); // Destinatario
@@ -2439,6 +2449,10 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
     const $obs = this.documentsService.getAllFilter;
     const service = this.documentsService;
     const columns = RELATED_FOLIO_COLUMNS;
+    // const body = {
+    //   proceedingsNum: this.dictationData.expedientNumber,
+    //   flierNum: this.dictationData.wheelNumber,
+    // };
     const config = {
       ...MODAL_CONFIG,
       initialState: {
@@ -2447,11 +2461,13 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
         columns,
         title,
         $params,
+        proceedingsNumber: this.dictationData.expedientNumber,
+        wheelNumber: this.dictationData.wheelNumber,
         showConfirmButton: true,
       },
     };
     return this.modalService.show(
-      MailboxModalTableComponent<IDocuments>,
+      ModalScanningFoilTableComponent<IDocuments>,
       config
     );
   }
@@ -2466,6 +2482,9 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
 
   getPicturesFromFolio(document: IDocuments) {
     let folio = document.id;
+    if (document.id != this.dictationData.folioUniversal) {
+      folio = this.dictationData.folioUniversal;
+    }
     if (document.associateUniversalFolio) {
       folio = document.associateUniversalFolio;
     }
@@ -2480,7 +2499,13 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
   }
 
   btnDetail() {
-    if (this._saveOfficeDictation) {
+    console.log(
+      'SAVE BOOLEAN ',
+      this._saveOfficeDictation,
+      this._valid_saveOfficeDictation
+    );
+
+    if (this._saveOfficeDictation || this._valid_saveOfficeDictation) {
       this.alertInfo(
         'warning',
         'Se debe guardar la información primero para poder consultar el reporte',
@@ -2488,6 +2513,15 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
       );
       return;
     }
+    // if (this.form.invalid) {
+    //   this.form.markAllAsTouched();
+    //   this.alert(
+    //     'warning',
+    //     'Complete los campos requeridos correctamente e intente nuevamente',
+    //     ''
+    //   );
+    //   return;
+    // }
     // this.setDataDictationSave(true);
     this.loadDetail = true;
     this.objDetail = {

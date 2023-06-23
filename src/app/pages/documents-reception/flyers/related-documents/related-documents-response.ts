@@ -3,7 +3,7 @@ import { type FormControl, type FormGroup } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { catchError, firstValueFrom, map, Observable, of } from 'rxjs';
+import { catchError, firstValueFrom, map, Observable, of, take } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { showQuestion, showToast } from 'src/app/common/helpers/helpers';
 import {
@@ -48,6 +48,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { LegalOpinionsOfficeService } from 'src/app/pages/juridical-processes/depositary/legal-opinions-office/legal-opinions-office/services/legal-opinions-office.service';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { FlyersService } from '../services/flyers.service';
+import { DialogSelectedManagementsComponent } from './dialog-selected-managements/dialog-selected-managements.component';
 import {
   IGoodAndAvailable,
   IGoodJobManagement,
@@ -65,6 +66,7 @@ export abstract class RelateDocumentsResponse extends BasePage {
   protected abstract svLegalOpinionsOfficeService: LegalOpinionsOfficeService;
   protected abstract authService: AuthService;
   protected abstract goodHistoryService: HistoryGoodService; // protected abstract svLegalOpinionsOfficeService: LegalOpinionsOfficeService;
+  abstract loadInfo(data: IMJobManagement): Promise<void>;
 
   abstract formVariables: FormGroup<{
     dictaminacion: FormControl;
@@ -219,13 +221,40 @@ export abstract class RelateDocumentsResponse extends BasePage {
     return this.notificationService.getAll(params).pipe(map(x => x.data[0]));
   }
 
+  countManagements = 0;
   getMJobManagement(wheelNumber: string | number): Observable<IMJobManagement> {
     const params = new ListParams();
-    params.page = 1;
-    params.limit = 1;
+    //params.page = 1;
+    //params.limit = 1;
     params['filter.flyerNumber'] = wheelNumber;
     params['filter.jobBy'] = 'POR DICTAMEN';
-    return this.mJobManagementService.getAll(params).pipe(map(x => x.data[0]));
+    //return this.mJobManagementService.getAll(params).pipe(map(x => x.data[0]));
+    return this.mJobManagementService.getAll(params).pipe(
+      map(x => {
+        this.countManagements = x.count;
+        if (this.countManagements === 1) {
+          this.loadInfo(x.data[0]);
+        }
+
+        if (this.countManagements > 1) {
+          this.openDialogSelectedManagement(x);
+        }
+        return x.data[0];
+      }),
+      catchError((error, _a) => {
+        if (error.status >= 400 && error.status < 500) {
+          // return of(null);
+          throw error;
+        }
+        console.log({ error });
+        this.alert(
+          'error',
+          'Error',
+          'Error al obtener la gestión por favor recarga la página'
+        );
+        throw error;
+      })
+    );
   }
   updateMJobManagement(params: Partial<IMJobManagement>): Observable<any> {
     return this.mJobManagementService.update(params).pipe(map(x => x.data));
@@ -1118,5 +1147,29 @@ export abstract class RelateDocumentsResponse extends BasePage {
     return this.msOfficeManagementService
       .createMJobManagementExtSSF3(params)
       .pipe(map(x => x));
+  }
+
+  openDialogSelectedManagement(data?: IListResponse<IMJobManagement>): any {
+    let context: Partial<DialogSelectedManagementsComponent> = {
+      queryParams: { flyerNumber: this.formJobManagement.value.flyerNumber },
+      mJobManagements: data ? data.data : [],
+      totalItems: data ? data.count : 0,
+    };
+
+    console.log({ context });
+    const modalRef = this.modalService.show(
+      DialogSelectedManagementsComponent,
+      {
+        initialState: context,
+        class: 'modal-lg modal-dialog-centered',
+        ignoreBackdropClick: true,
+      }
+    );
+    modalRef.content.onClose.pipe(take(1)).subscribe(result => {
+      console.log({ result });
+      if (result) {
+        this.loadInfo(result);
+      }
+    });
   }
 }

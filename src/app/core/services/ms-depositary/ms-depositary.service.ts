@@ -8,6 +8,7 @@ import {
   IAppointmentDepositary,
   IDepositaryAppointments,
   IDepositaryPaymentDet,
+  IInfoDepositary,
   IPaymendtDepParamsDep,
   IPersonsModDepositary,
   IRequestDepositary,
@@ -28,6 +29,13 @@ export class MsDepositaryService extends HttpService {
     return this.get<IListResponse<IAppointmentDepositary>>(
       DepositaryEndPoints.DepositaryAppointment,
       params
+    );
+  }
+
+  update(body: Partial<IAppointmentDepositary>) {
+    return this.put<IListResponse<IAppointmentDepositary>>(
+      DepositaryEndPoints.DepositaryAppointment,
+      body
     );
   }
 
@@ -113,12 +121,37 @@ export class MsDepositaryService extends HttpService {
     );
   }
 
-  getAllFilteredDepositaryPaymentDet(
+  getAllFilteredDedPay(
     params?: _Params
   ): Observable<IListResponse<IDepositaryPaymentDet>> {
     return this.get<IListResponse<IDepositaryPaymentDet>>(
-      DepositaryEndPoints.DepositaryPaymentDetail,
+      DepositaryEndPoints.DepositaryDedPay,
       params
+    );
+  }
+  getAllFilteredDepositaryDetrepo(
+    params?: _Params
+  ): Observable<IListResponse<IDepositaryPaymentDet>> {
+    return this.get<IListResponse<IDepositaryPaymentDet>>(
+      DepositaryEndPoints.DepositaryDetrepo,
+      params
+    );
+  }
+  getInfoDepositary(
+    params?: _Params
+  ): Observable<IListResponse<IInfoDepositary>> {
+    return this.get<IListResponse<IInfoDepositary>>(
+      DepositaryEndPoints.InfoDepositary,
+      params
+    );
+  }
+
+  putInfoDepositary(
+    model: IInfoDepositary
+  ): Observable<IListResponse<IInfoDepositary>> {
+    return this.put<IListResponse<IInfoDepositary>>(
+      DepositaryEndPoints.InfoDepositary,
+      model
     );
   }
 }

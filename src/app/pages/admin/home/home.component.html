@@ -230,6 +230,19 @@ imports: [
       </div>
     </div>
 
+    <hr class="row" />
+    <div class="row">
+      <div class="col-md-12">
+        <h4>Filtrado por columnas</h4>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12">
+        <app-list-data [plain]="true"></app-list-data>
+      </div>
+    </div>
+
     <div class="row">
       <h5>Ejemplo de formulario tipado</h5>
       <form [formGroup]="userExample" class="form-material">
@@ -423,7 +436,7 @@ imports: [
     </div>
   </div>
 
-  <!-- <div footer class="d-flex justify-content-around">
+  <div footer class="d-flex justify-content-around">
     <hr />
     <div>
       <button class="btn btn-primary btn-sm active">Primary</button>
@@ -452,5 +465,5 @@ imports: [
     <div>
       <button class="btn btn-dark btn-sm active">Dark</button>
     </div>
-  </div> -->
+  </div>
 </app-card>

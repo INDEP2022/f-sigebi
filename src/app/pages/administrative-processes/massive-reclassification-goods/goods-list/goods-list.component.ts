@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { Ng2SmartTableComponent } from 'ng2-smart-table';
 import {
   catchError,
   distinctUntilChanged,
@@ -33,6 +34,8 @@ export class GoodsListComponent
   implements OnInit
 {
   previousSelecteds: IGood[] = [];
+  pageSelecteds: number[] = [];
+  @ViewChild('table') table: Ng2SmartTableComponent;
   constructor(
     private massiveService: MassiveReclassificationGoodsService,
     private procedureManagement: ProcedureManagementService,
@@ -64,6 +67,34 @@ export class GoodsListComponent
         return row.data.notSelect ? 'notSelect' : '';
       },
     };
+  }
+
+  private fillSelectedRows() {
+    setTimeout(() => {
+      console.log(this.selectedGooods, this.table);
+      const currentPage = this.params.getValue().page;
+      const selectedPage = this.pageSelecteds.find(
+        page => page === currentPage
+      );
+      if (!selectedPage) {
+        this.table.isAllSelected = false;
+      } else {
+        this.table.isAllSelected = true;
+      }
+      if (this.selectedGooods && this.selectedGooods.length > 0) {
+        this.table.grid.getRows().forEach(row => {
+          console.log(row);
+
+          if (
+            this.selectedGooods.find(item => row.getData()['id'] === item.id)
+          ) {
+            this.table.grid.multipleSelectRow(row);
+          }
+          // if(row.getData())
+          // this.table.grid.multipleSelectRow(row)
+        });
+      }
+    }, 500);
   }
 
   get selectedGooods() {
@@ -126,6 +157,13 @@ export class GoodsListComponent
       }
     } else {
       if (event.isSelected === null) {
+        const currentPage = this.params.getValue().page;
+        const selectedPage = this.pageSelecteds.find(
+          page => page === currentPage
+        );
+        if (!selectedPage) {
+          this.pageSelecteds.push(currentPage);
+        }
         selecteds.forEach(selected => {
           const item = this.selectedGooods.find(x => x.id === selected.id);
           if (!item) {
@@ -236,7 +274,7 @@ export class GoodsListComponent
           return of({ data: [], count: 0 });
         }),
         tap(response => {
-          this.totalItems = response.count;
+          this.totalItems = response.count ?? 0; //> 100 ? 100 : response.count;
         }),
         map(response =>
           response.data.map(good => {
@@ -275,6 +313,7 @@ export class GoodsListComponent
           console.log(response);
           this.data.load(response);
           this.data.refresh();
+          this.fillSelectedRows();
           // if (response.data && response.data.length > 0) {
           //   this.listGood = response.data;
           //   this.totalItems = response.count;

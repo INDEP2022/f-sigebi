@@ -5,7 +5,11 @@ import { Router } from '@angular/router';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { IDocuments } from 'src/app/core/models/ms-documents/documents';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { ISegUsers } from 'src/app/core/models/ms-users/seg-users-model';
@@ -30,7 +34,7 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
   params = new BehaviorSubject<ListParams>(new ListParams());
   generateFo: boolean = true;
   @Input() numberFoli: string | number = '';
-  @Input() goods: IGood[] = [];
+  @Input() goods: any[] = [];
   @Output() documentEmmit = new EventEmitter<IDocuments>();
   @Output() firstGood = new EventEmitter<IGood>();
   // get scanningFoli() {
@@ -40,6 +44,7 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
   @Input() cambiarFolioUniversal: Function;
 
   folioEscaneoNg: any = '';
+  filter1 = new BehaviorSubject<FilterParams>(new FilterParams());
   constructor(
     private fb: FormBuilder,
     private readonly documnetServices: DocumentsService,
@@ -80,7 +85,7 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
     this.goods.forEach((good, index) => {
       if (index !== 0) {
         const documents: IDocuments = {
-          numberProceedings: good.fileNumber,
+          numberProceedings: good.filenumber,
           keySeparator: 60,
           keyTypeDocument: 'ENTRE',
           natureDocument: 'ORIGINAL',
@@ -90,7 +95,7 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
           userRequestsScan: this.user.usuario.user,
           scanRequestDate: new Date(),
           associateUniversalFolio: this.document.id,
-          flyerNumber: good.flyerNumber,
+          flyerNumber: good.flyernumber,
           goodNumber: good.id,
           numberDelegationRequested: this.user.usuario.delegationNumber,
           numberDepartmentRequest: this.user.usuario.departamentNumber,
@@ -122,6 +127,7 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
     downloadLink.target = '_blank';
     downloadLink.click();
   }
+
   getDataUser() {
     const params: ListParams = {
       'filter.id': this.token.decodeToken().preferred_username,
@@ -154,7 +160,7 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
       return;
     }
     this.alertQuestion(
-      'info',
+      'question',
       'Se generará un folio de escaneo para los bienes',
       '¿Desea continuar?'
     ).then(question => {
@@ -165,10 +171,10 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
     });
   }
 
-  document1(good: IGood) {
+  document1(good: any) {
     this.firstGood.emit(good);
     const documents: IDocuments = {
-      numberProceedings: good.fileNumber,
+      numberProceedings: good.filenumber,
       keySeparator: 60,
       keyTypeDocument: 'ENTRE',
       natureDocument: 'ORIGINAL',
@@ -178,7 +184,7 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
       userRequestsScan: this.user.usuario.user,
       scanRequestDate: new Date(),
       associateUniversalFolio: null,
-      flyerNumber: good.flyerNumber,
+      flyerNumber: good.flyernumber,
       goodNumber: good.id,
       numberDelegationRequested: this.user.usuario.delegationNumber,
       numberDepartmentRequest: this.user.usuario.departamentNumber,
@@ -205,10 +211,13 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
       },
     });
   }
+
   toNextForm() {
     this.goNextForm();
   }
+
   goNextForm() {
+    localStorage.setItem('archivoBase64', this.goodData);
     this.router.navigate([`/pages/general-processes/scan-documents`], {
       queryParams: { origin: 'FPROCRECPAG', folio: this.folioEscaneoNg },
     });
@@ -255,8 +264,38 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
       this.goNextForm();
     }
   }
+
   actualizarVariable(val: boolean, folioEscaneoNg: string) {
     this.folioEscaneoNg = folioEscaneoNg;
     this.generateFo = val;
+  }
+
+  getDocument(good: any) {
+    this.firstGood.emit(good);
+    console.log('good', good);
+    this.filter1.getValue().removeAllFilters();
+    this.filter1.getValue().addFilter('goodNumber', good.id, SearchFilter.EQ);
+    // this.filter1.getValue().addFilter('scanStatus', 'ESCANEADO', SearchFilter.EQ);
+    this.documnetServices
+      .getAllFilter(this.filter1.getValue().getParams())
+      .subscribe({
+        next: response => {
+          console.log('DOCUMENT', response);
+          this.folioEscaneoNg = response.data[0].id;
+          this.documentEmmit.emit(response.data[0]);
+          this.document = response.data[0];
+          this.generateFo = false;
+          // this.generate();
+        },
+        error: err => {
+          console.log(err);
+          // this.folioEscaneoNg = '';
+        },
+      });
+  }
+  goodData: any = null;
+  cargarData(binaryExcel: any) {
+    this.goodData = binaryExcel;
+    console.log('this.goodData', this.goodData);
   }
 }

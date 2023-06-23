@@ -7,7 +7,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
@@ -22,10 +22,12 @@ import {
 import { IGoodProgramming } from 'src/app/core/models/good-programming/good-programming';
 import { Iprogramming } from 'src/app/core/models/good-programming/programming';
 import { IGood } from 'src/app/core/models/good/good.model';
+import { IProceedings } from 'src/app/core/models/ms-proceedings/proceedings.model';
 import {
   IReceipt,
   IRecepitGuard,
 } from 'src/app/core/models/receipt/receipt.model';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { AuthorityService } from 'src/app/core/services/catalogs/authority.service';
 import { GenericService } from 'src/app/core/services/catalogs/generic.service';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
@@ -38,6 +40,7 @@ import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.
 import { ProceedingsService } from 'src/app/core/services/ms-proceedings';
 import { ProgrammingGoodService } from 'src/app/core/services/ms-programming-request/programming-good.service';
 import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-request/programming-request.service';
+import { TaskService } from 'src/app/core/services/ms-task/task.service';
 import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { ReceptionGoodService } from 'src/app/core/services/reception/reception-good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -54,6 +57,7 @@ import { CancelationGoodFormComponent } from '../cancelation-good-form/cancelati
 import { EditGoodFormComponent } from '../edit-good-form/edit-good-form.component';
 import { ReschedulingFormComponent } from '../rescheduling-form/rescheduling-form.component';
 import { ShowReportComponentComponent } from '../show-report-component/show-report-component.component';
+import { UploadReportReceiptComponent } from '../upload-report-receipt/upload-report-receipt.component';
 import {
   RECEIPT_COLUMNS,
   RECEIPT_GUARD_COLUMNS,
@@ -73,6 +77,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   goodsGuard: IGood[] = [];
   goodsWareh: IGood[] = [];
   goodsSelect: IGood[] = [];
+  goodsProgramming: IGoodProgramming[] = [];
   stateConservation: IStateConservation[] = [];
   statusPhysical: IPhysicalStatus[] = [];
   measureUnits: IMeasureUnit[] = [];
@@ -125,6 +130,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   formLoadingTrans: boolean = false;
   formLoadingGuard: boolean = false;
   receiptGuardGood: IRecepitGuard;
+  receiptData: IReceipt;
   goodData: IGood;
   settingsGuardGoods = {
     ...this.settings,
@@ -150,6 +156,19 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     columns: RECEIPT_COLUMNS,
     edit: {
       editButtonContent: '<i class="fa fa-file text-primary mx-2"></i>',
+    },
+  };
+
+  settingsReceiptClose = {
+    ...this.settings,
+    actions: {
+      columnTitle: 'Visualizar',
+      position: 'right',
+      delete: false,
+    },
+    columns: RECEIPT_COLUMNS,
+    edit: {
+      editButtonContent: '<i class="fa fa-eye text-primary mx-2"></i>',
     },
   };
 
@@ -267,7 +286,10 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     private proceedingService: ProceedingsService,
     private programminGoodService: ProgrammingGoodService,
     private wcontentService: WContentService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private router: Router,
+    private authService: AuthService,
+    private taskService: TaskService
   ) {
     super();
     this.settings = {
@@ -410,6 +432,8 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     params.getValue()['filter.programmingId'] = this.programmingId;
     this.receptionGoodService.getReceipt(params.getValue()).subscribe({
       next: response => {
+        this.receiptData = response.data[0];
+        console.log('response', this.receiptData);
         this.receipts.load(response.data);
         this.totalItemsReceipt = this.receipts.count();
         this.formLoadingReceipt = false;
@@ -1184,7 +1208,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         'Aceptar'
       ).then(async question => {
         if (question.isConfirmed) {
-          const updateGood = await this.updateGoodProgramming();
+          const updateGood = await this.updateGoodProgramming('reprogramation');
         }
       });
     } else {
@@ -1196,46 +1220,101 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     }
   }
 
-  updateGoodProgramming() {
-    this.receipts.getElements().then(item => {
-      console.log('acta', item[0].actaId);
-      console.log('acta');
-      const actId = item[0].actaId;
-      this.selectGood.map(item => {
-        const formData: Object = {
-          id: item.id,
-          goodId: item.goodId,
-          goodStatus: 'EN_PROGRAMACION',
-          programmationStatus: 'EN_PROGRAMACION',
-          executionStatus: 'EN_PROGRAMACION',
-        };
+  assingMinuteCancelation() {
+    if (this.selectGood.length > 0) {
+      this.alertQuestion(
+        'warning',
+        'Confirmación',
+        '¿Seguro que quiere asignar los bienes  a una acta (cambio irreversible)?',
+        'Aceptar'
+      ).then(async question => {
+        if (question.isConfirmed) {
+          const updateGood = await this.updateGoodProgramming('cancelalation');
+        }
+      });
+    } else {
+      this.onLoadToast(
+        'warning',
+        'Acción invalida',
+        'Se necesita tener un bien seleccionado'
+      );
+    }
+  }
 
-        this.goodService.updateByBody(formData).subscribe({
-          next: response => {
-            console.log('response', response);
-            const formData: Object = {
-              programmingId: this.programming.id,
-              goodId: item.id,
-              status: 'EN_PROGRAMACION',
-              actaId: actId,
-            };
-            this.programmingGoodService
-              .updateGoodProgramming(formData)
-              .subscribe({
-                next: response => {
-                  console.log('updeado', response);
-                  this.goodsCancelation.clear();
-                  this.getInfoGoodsProgramming();
-                },
-                error: error => {},
-              });
-          },
-          error: error => {
-            console.log('update good error', error);
-          },
+  updateGoodProgramming(type: string) {
+    if (type == 'reprogramation') {
+      this.receipts.getElements().then(item => {
+        const actId = item[0].actaId;
+        this.selectGood.map(item => {
+          const formData: Object = {
+            id: item.id,
+            goodId: item.goodId,
+            goodStatus: 'EN_PROGRAMACION',
+            programmationStatus: 'EN_PROGRAMACION',
+            executionStatus: 'EN_PROGRAMACION',
+          };
+
+          this.goodService.updateByBody(formData).subscribe({
+            next: response => {
+              const formData: Object = {
+                programmingId: this.programming.id,
+                goodId: item.id,
+                status: 'EN_PROGRAMACION',
+                actaId: actId,
+              };
+              this.programmingGoodService
+                .updateGoodProgramming(formData)
+                .subscribe({
+                  next: response => {
+                    this.goodsCancelation.clear();
+                    this.getInfoGoodsProgramming();
+                  },
+                  error: error => {},
+                });
+            },
+            error: error => {
+              console.log('update good error', error);
+            },
+          });
         });
       });
-    });
+    } else if (type == 'cancelalation') {
+      this.receipts.getElements().then(item => {
+        const actId = item[0].actaId;
+        this.selectGood.map(item => {
+          const formData: Object = {
+            id: item.id,
+            goodId: item.goodId,
+            goodStatus: 'CANCELADO',
+            programmationStatus: 'CANCELADO',
+            executionStatus: 'CANCELADO',
+          };
+
+          this.goodService.updateByBody(formData).subscribe({
+            next: response => {
+              const formData: Object = {
+                programmingId: this.programming.id,
+                goodId: item.id,
+                status: 'CANCELADO',
+                actaId: actId,
+              };
+              this.programmingGoodService
+                .updateGoodProgramming(formData)
+                .subscribe({
+                  next: response => {
+                    this.goodsCancelation.clear();
+                    this.getInfoGoodsProgramming();
+                  },
+                  error: error => {},
+                });
+            },
+            error: error => {
+              console.log('update good error', error);
+            },
+          });
+        });
+      });
+    }
   }
 
   assingMinuteWarehouse() {
@@ -1383,9 +1462,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         next: response => {
           resolve(response);
         },
-        error: error => {
-          console.log('error', error);
-        },
+        error: error => {},
       });
     });
   }
@@ -1403,7 +1480,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
             resolve(true);
           },
           error: error => {
-            console.log('err', error);
             resolve(false);
           },
         });
@@ -1638,9 +1714,9 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     config.initialState = {
       proceeding: data,
       idProgramming: this.programmingId,
-      callback: (receiptId: number) => {
-        if (data) {
-          this.openReportReceipt(receiptId);
+      callback: (receipt: IProceedings, keyDoc: string) => {
+        if (receipt && keyDoc) {
+          this.openReportReceipt(receipt, keyDoc);
         }
       },
     };
@@ -1648,19 +1724,21 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     this.modalService.show(GenerateReceiptFormComponent, config);
   }
 
-  openReportReceipt(_receiptId: number) {
+  openReportReceipt(_receipt: IProceedings, keyDoc: string) {
     const idTypeDoc = 103;
     const idProg = this.programmingId;
-    const receiptId = _receiptId;
+    const receiptId = _receipt.id;
     //Modal que genera el reporte
     let config: ModalOptions = {
       initialState: {
         idTypeDoc,
         idProg,
         receiptId,
+        keyDoc,
+        receipt: _receipt,
         callback: (next: boolean) => {
           if (next) {
-          } else {
+            this.uplodadReceiptDelivery();
           }
         },
       },
@@ -1668,6 +1746,23 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       ignoreBackdropClick: true,
     };
     this.modalService.show(ShowReportComponentComponent, config);
+  }
+
+  uplodadReceiptDelivery() {
+    let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+    config.initialState = {
+      receiptGuards: this.receiptGuards,
+      typeDoc: 103,
+      programming: this.programming,
+      callback: (data: boolean) => {
+        if (data) {
+          this.getReceipts();
+        }
+      },
+    };
+
+    this.modalService.show(UploadReportReceiptComponent, config);
+    console.log('componente para adjuntar doc');
   }
 
   assignReceipt() {
@@ -1750,9 +1845,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           next: async response => {
             await this.changeStatusGoodWarehouse(item);
           },
-          error: error => {
-            console.log('error actualizar progr', error);
-          },
+          error: error => {},
         });
       });
     } else {
@@ -1957,9 +2050,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           next: async response => {
             await this.changeStatusGoodTran(item);
           },
-          error: error => {
-            console.log('error actualizar progr', error);
-          },
+          error: error => {},
         });
       });
     } else {
@@ -2142,5 +2233,151 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       },
     };
     this.modalService.show(CancelationGoodFormComponent, config);
+  }
+
+  aprobateReception() {
+    let message: string = '';
+    let banError: boolean = false;
+    this.receipts.getElements().then(data => {
+      data.map((receipt: IReceipt) => {
+        if (receipt.statusReceipt == 'ABIERTO') {
+          message += 'Es necesario tener todos los recibos cerrados';
+          banError = true;
+        }
+      });
+      const params = new BehaviorSubject<ListParams>(new ListParams());
+      params.getValue()['filter.programmingId'] = this.programmingId;
+      this.programmingService.getGoodsProgramming(params.getValue()).subscribe({
+        next: response => {
+          this.goodsProgramming = response.data;
+          //Filtramos bienes tranportables
+          const goodsTransportable = this.goodsProgramming.filter(good => {
+            return good.status == 'EN_TRANSPORTABLE';
+          });
+
+          if (goodsTransportable.length > 0 && banError == false) {
+            message +=
+              'Es necesario no tener bienes en el apartado Transportables';
+            banError = true;
+          }
+
+          const goodsGuard = this.goodsProgramming.filter(good => {
+            return good.status == 'EN_RESGUARDO_TMP';
+          });
+
+          if (goodsGuard.length > 0 && banError == false) {
+            message +=
+              'Es necesario tener todos los bienes asignados a una acta';
+            banError = true;
+          }
+
+          const goodsWarehouse = this.goodsProgramming.filter(good => {
+            return good.status == 'EN_ALMACEN_TMP';
+          });
+
+          if (goodsWarehouse.length > 0 && banError == false) {
+            message +=
+              'Es necesario tener todos los bienes asignados a una acta';
+            banError = true;
+          }
+
+          const goodsReprog = this.goodsProgramming.filter(good => {
+            return good.status == 'EN_PROGRAMACION_TMP';
+          });
+
+          if (goodsReprog.length > 0 && banError == false) {
+            message +=
+              'Es necesario tener todos los bienes asignados a una acta';
+            banError = true;
+          }
+
+          const goodsCancel = this.goodsProgramming.filter(good => {
+            return good.status == 'CANCELADO_TMP';
+          });
+
+          if (goodsCancel.length > 0 && banError == false) {
+            message +=
+              'Es necesario tener todos los bienes asignados a una acta';
+            banError = true;
+          }
+        },
+        error: error => {},
+      });
+    });
+
+    if (!banError) {
+      this.receiptGuards.getElements().then(receiptGuard => {
+        if (receiptGuard[0].contentId == null) {
+          banError = true;
+          message += 'No se han generado todos los recibo de resguado';
+        }
+      });
+
+      this.receiptWarehouse.getElements().then(receiptWarehouse => {
+        if (receiptWarehouse[0].contentId == null) {
+          banError = true;
+          message += 'No se han generado todos los recibo de resguado almacén';
+        }
+      });
+    }
+
+    if (banError) {
+      this.onLoadToast('warning', 'Atención', `${message}`);
+    } else {
+      this.alertQuestion(
+        'question',
+        'Confirmación',
+        '¿Desea terminar la ejecución de recepción?'
+      ).then(question => {
+        if (question.isConfirmed) {
+          const formData: Object = {
+            termEjecutionDate: new Date(),
+          };
+          this.programmingService
+            .updateProgramming(this.programmingId, formData)
+            .subscribe({
+              next: async () => {
+                //Cierra la tarea//
+                const _task = JSON.parse(localStorage.getItem('Task'));
+                const user: any = this.authService.decodeToken();
+                let body: any = {};
+                body['idTask'] = _task.id;
+                body['userProcess'] = user.username;
+                body['type'] = 'SOLICITUD_PROGRAMACION';
+                body['subtype'] = 'Ejecutar_Recepcion';
+                body['ssubtype'] = 'ACCEPT';
+
+                const closeTask = await this.closeTaskExecuteRecepcion(body);
+                if (closeTask) {
+                  this.onLoadToast(
+                    'success',
+                    'Acción correcta',
+                    'Se cerro la tarea ejecutar recepción correctamente'
+                  );
+                  this.router.navigate(['pages/siab-web/sami/consult-tasks']);
+                }
+              },
+            });
+        }
+      });
+    }
+  }
+
+  closeTaskExecuteRecepcion(body: any) {
+    return new Promise((resolve, reject) => {
+      this.taskService.createTaskWitOrderService(body).subscribe({
+        next: resp => {
+          resolve(resp);
+        },
+        error: error => {
+          this.onLoadToast('error', 'Error', 'No se pudo crear la tarea');
+          reject(false);
+        },
+      });
+    });
+  }
+
+  close() {
+    this.router.navigate(['/pages/siab-web/sami/consult-tasks']);
   }
 }

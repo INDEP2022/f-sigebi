@@ -29,7 +29,7 @@ export class ModalListGoodsComponent extends BasePage implements OnInit {
   vault: ISafe;
   edit = false;
   vaultSelect: any;
-  totalItems2: number;
+  totalItems2: number = 0;
   provider: any;
   providerForm: FormGroup = new FormGroup({});
   dataFactGood: LocalDataSource = new LocalDataSource();
@@ -91,6 +91,7 @@ export class ModalListGoodsComponent extends BasePage implements OnInit {
     this.bsModalRef.hide();
   }
   getGoodBySafe(id: string | number): void {
+    this.loading = true;
     let para = {
       ...this.params.getValue(),
       ...this.columnFilters,
