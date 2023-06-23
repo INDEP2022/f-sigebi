@@ -48,10 +48,10 @@ export class IfaiSeriesListComponent extends BasePage implements OnInit {
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
             filter.field == 'code' ||
-            filter.field == 'typeProcedure' ||
-            filter.field == 'description' ||
-            filter.field == 'status' ||
-            filter.field == 'registryNumber'
+              filter.field == 'typeProcedure' ||
+              filter.field == 'description' ||
+              filter.field == 'status' ||
+              filter.field == 'registryNumber'
               ? (searchFilter = SearchFilter.EQ)
               : (searchFilter = SearchFilter.ILIKE);
             if (filter.search !== '') {
@@ -115,13 +115,13 @@ export class IfaiSeriesListComponent extends BasePage implements OnInit {
   remove(id: string) {
     this.ifaiSerieService.remove(id).subscribe(
       res => {
-        this.alert('success', 'Series Ifai', 'Borrado.');
+        this.alert('success', 'Series IFAI', 'Borrado.');
         this.getExample();
       },
       err => {
         this.alert(
           'warning',
-          'Series Ifai',
+          'Series IFAI',
           'No se puede eliminar el objeto debido a una relación con otra tabla.'
         );
       }

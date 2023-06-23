@@ -1,50 +1,32 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nueva' }} {{ title }}</h5>
+    <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nuevo' }} {{ title }}</h5>
   </div>
   <div body>
     <form [formGroup]="granteesForm" class="form-material">
       <div class="row mb-3">
         <div class="col-md-4">
-          <form-field
-            [control]="granteesForm.get('usrStatus')"
-            label="Estatus de usuario">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="usrStatus" />
+          <form-field [control]="granteesForm.get('usrStatus')" label="Estatus de usuario">
+            <input type="text" class="form-control" formControlName="usrStatus" />
           </form-field>
         </div>
 
         <div class="col-md-8">
-          <form-field
-            [control]="granteesForm.get('description')"
-            label="Descripci&oacute;n">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="description" />
+          <form-field [control]="granteesForm.get('description')" label="Descripci&oacute;n">
+            <input type="text" class="form-control" formControlName="description" />
           </form-field>
         </div>
       </div>
 
       <div class="row mb-3">
         <div class="col-md-6">
-          <form-field
-            [control]="granteesForm.get('puesto')"
-            label="Puesto donatarios">
+          <form-field [control]="granteesForm.get('puesto')" label="Puesto donatarios">
             <input type="text" class="form-control" formControlName="puesto" />
           </form-field>
         </div>
         <div class="col-md-6">
-          <form-field
-            [control]="granteesForm.get('type')"
-            label="Tipo donatarios">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="type"
-              min="0"
+          <form-field [control]="granteesForm.get('type')" label="Tipo donatarios">
+            <input type="number" class="form-control" formControlName="type" min="0"
               oninput="if(this.value.length > 3) this.value = this.value.slice(0, 4);" />
           </form-field>
         </div>
@@ -52,13 +34,8 @@
 
       <div class="row mb-3">
         <div class="col-md-6">
-          <form-field
-            [control]="granteesForm.get('razonSocial')"
-            label="Raz&oacute;n Social">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="razonSocial" />
+          <form-field [control]="granteesForm.get('razonSocial')" label="Raz&oacute;n Social">
+            <input type="text" class="form-control" formControlName="razonSocial" />
           </form-field>
         </div>
         <div class="col-md-6">
@@ -70,23 +47,13 @@
 
       <div class="row mb-3">
         <div class="col-md-3">
-          <form-field
-            [control]="granteesForm.get('noInside')"
-            label="No&#46; Interior">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="noInside" />
+          <form-field [control]="granteesForm.get('noInside')" label="No&#46; Interior">
+            <input type="text" class="form-control" formControlName="noInside" />
           </form-field>
         </div>
         <div class="col-md-3">
-          <form-field
-            [control]="granteesForm.get('noExterior')"
-            label="No&#46; Exterior">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="noExterior" />
+          <form-field [control]="granteesForm.get('noExterior')" label="No&#46; Exterior">
+            <input type="text" class="form-control" formControlName="noExterior" />
           </form-field>
         </div>
         <div class="col-md-6">
@@ -98,23 +65,17 @@
 
       <div class="row">
         <div class="col-md-4">
-          <form-field
-            [control]="granteesForm.get('nommun')"
-            label="Nombre municipio">
+          <form-field [control]="granteesForm.get('nommun')" label="Nombre municipio">
             <input type="text" class="form-control" formControlName="nommun" />
           </form-field>
         </div>
         <div class="col-md-4">
-          <form-field
-            [control]="granteesForm.get('nomedo')"
-            label="Nombre estado">
+          <form-field [control]="granteesForm.get('nomedo')" label="Nombre estado">
             <input type="text" class="form-control" formControlName="nomedo" />
           </form-field>
         </div>
         <div class="col-md-4">
-          <form-field
-            [control]="granteesForm.get('cp')"
-            label="C&oacute;digo postal">
+          <form-field [control]="granteesForm.get('cp')" label="C&oacute;digo postal">
             <input type="text" class="form-control" formControlName="cp" />
           </form-field>
         </div>
@@ -124,10 +85,7 @@
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <confirm-button
-          [disabled]="granteesForm.invalid"
-          [loading]="loading"
-          (confirm)="confirm()">
+        <confirm-button [disabled]="granteesForm.invalid" [loading]="loading" (confirm)="confirm()">
         </confirm-button>
       </div>
       <div class="m-3">

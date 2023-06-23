@@ -34,7 +34,7 @@ export class DrawerFormComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
-    this.getBoveda(new ListParams());
+
   }
 
   prepareForm() {
@@ -63,21 +63,27 @@ export class DrawerFormComponent extends BasePage implements OnInit {
       this.edit = true;
       let boveda: ISafe = this.drawer.noDrawer as ISafe;
       this.drawerForm.patchValue({ ...this.drawer, noDrawner: boveda.idSafe });
-      this.boveda = new DefaultSelect([boveda], 1);
+      console.log(this.drawerForm.value);
+
       this.drawerForm.controls['id'].setValue(this.drawer.id);
       this.drawerForm.get('noDrawer').disable();
       this.drawerForm.get('id').disable();
+      this.getBoveda(new ListParams(), this.drawerForm.get('noDrawer').value);
     } else {
       this.drawerForm.get('id').disable();
+      this.getBoveda(new ListParams());
     }
   }
-  getBoveda(params: ListParams) {
+  getBoveda(params: ListParams, id?: string) {
+    if (id) {
+      params['filter.idSafe'] = id;
+    }
     this.safeService.getAll(params).subscribe(data => {
       this.boveda = new DefaultSelect(data.data, data.count);
     });
   }
 
-  bovedaChange(boveda: ISafe) {}
+  bovedaChange(boveda: ISafe) { }
 
   confirm() {
     this.edit ? this.update() : this.create();

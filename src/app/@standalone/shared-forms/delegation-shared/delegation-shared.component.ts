@@ -98,7 +98,7 @@ export class DelegationSharedComponent extends BasePage implements OnInit {
         }
         this.onLoadToast('error', 'Error', error);
       },
-      () => {}
+      () => { }
     );
   }
 
@@ -147,6 +147,7 @@ export class DelegationSharedComponent extends BasePage implements OnInit {
   onDelegationsChange(type: any) {
     this.resetFields([this.subdelegation]);
     this.subdelegations = new DefaultSelect();
+    this.getSubDelegations(new ListParams);
     this.emitDelegation.emit(type);
   }
 
@@ -155,6 +156,7 @@ export class DelegationSharedComponent extends BasePage implements OnInit {
     this.delegations = new DefaultSelect();
     // this.delegations = new DefaultSelect([subdelegation.delegation], 1);
     // this.delegation.setValue(subdelegation.delegation.id);
+    console.log(subdelegation)
     this.emitSubdelegation.emit(subdelegation);
   }
 

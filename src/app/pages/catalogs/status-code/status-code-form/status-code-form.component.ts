@@ -75,7 +75,7 @@ export class StatusCodeFormComponent extends BasePage implements OnInit {
     this.loading = true;
     const params: ListParams = new ListParams();
     let count: number;
-    params['filter.status'] = this.statusCodeForm.controls['id'].value;
+    params['filter.id'] = this.statusCodeForm.controls['id'].value;
     this.statusCodeService.getAll(params).subscribe({
       next: response => {
         count = response.count;

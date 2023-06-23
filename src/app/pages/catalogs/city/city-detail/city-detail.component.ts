@@ -21,7 +21,7 @@ import { CityService } from '../../../../core/services/catalogs/city.service';
 })
 export class CityDetailComponent extends BasePage implements OnInit {
   cityForm: ModelForm<ICity>;
-  city: ICity;
+  city: any;
   title: string = 'Ciudad';
   edit: boolean = false;
 
@@ -73,13 +73,19 @@ export class CityDetailComponent extends BasePage implements OnInit {
     if (this.edit) {
       this.delegation.enable();
       this.subDelegation.enable();
-
-      this.selectedState = this.state.value;
-      this.selectedDelegation = this.delegation.value;
-
+      console.log(this.city);
+      this.selectedState = this.city.delegationDetail;
+      this.selectedDelegation = this.city.SubDelegationDetail;
+      this.cityForm.controls['noDelegation'].setValue(this.selectedState.id);
+      this.cityForm.controls['noSubDelegation'].setValue(this.selectedDelegation.id);
       this.getDelegations(new ListParams());
       this.getSubDelegations(new ListParams());
+      this.getStates(new ListParams());
+    } else {
+      this.getDelegations(new ListParams());
+      this.getStates(new ListParams());
     }
+
   }
 
   getStates(params: ListParams) {

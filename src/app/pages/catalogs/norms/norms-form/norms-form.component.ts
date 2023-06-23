@@ -44,6 +44,7 @@ export class NormsFormComponent extends BasePage implements OnInit {
 
   private prepareForm(): void {
     this.normForm = this.fb.group({
+      id: [null],
       norm: [
         null,
         [Validators.maxLength(30), Validators.pattern(STRING_PATTERN)],
@@ -54,7 +55,6 @@ export class NormsFormComponent extends BasePage implements OnInit {
       ],
       type: [null],
       destination: [null],
-      name: [null],
       characteristics: [
         null,
         [Validators.maxLength(4000), Validators.pattern(STRING_PATTERN)],
@@ -74,6 +74,7 @@ export class NormsFormComponent extends BasePage implements OnInit {
       condition: [null],
       version: [null],
       status: [null, [Validators.required]],
+      name: [null]
     });
     this.normForm.controls['version'].setValue(1);
     this.normForm.controls['status'].setValue(1);
@@ -129,7 +130,20 @@ export class NormsFormComponent extends BasePage implements OnInit {
   }
   update() {
     this.loading = true;
-    this.normService.update(this.norm.id, this.normForm.value).subscribe({
+    let form = {
+      norm: this.normForm.controls['norm'].value,
+      article: this.normForm.controls['article'].value,
+      type: this.normForm.controls['type'].value,
+      destination: this.normForm.controls['destination'].value,
+      characteristics: this.normForm.controls['characteristics'].value,
+      merchandise: this.normForm.controls['merchandise'].value,
+      fundament: this.normForm.controls['fundament'].value,
+      objective: this.normForm.controls['objective'].value,
+      condition: this.normForm.controls['condition'].value,
+      version: this.normForm.controls['version'].value,
+      status: this.normForm.controls['status'].value,
+    };
+    this.normService.update(this.norm.id, form).subscribe({
       next: data => this.handleSuccess(),
       error: error => (this.loading = false),
     });
