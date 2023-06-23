@@ -404,7 +404,7 @@
                     [readonly]="disabledBienes"></textarea>
                 </form-field>
 
-                <div class="col-md-4">
+                <div class="col-md-2">
                   <small>¿Con Aval&uacute;o?</small>
                   <div
                     class="d-flex"
@@ -422,6 +422,17 @@
                         [value]="false" />
                     </form-radio>
                   </div>
+                </div>
+                <div class="col-md-2">
+                  <form-field [control]="form.get('img')" label="">
+                    <input
+                      class="form-control mb-3 mt-3"
+                      type="file"
+                      id="formFile"
+                      accept="image/png,image/jpeg"
+                      formControlName="img"
+                      (change)="onFileChange($event)" />
+                  </form-field>
                 </div>
               </div>
               <div class="row" *ngIf="loading === false">
