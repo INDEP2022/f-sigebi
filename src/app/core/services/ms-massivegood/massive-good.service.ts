@@ -122,4 +122,14 @@ export class MassiveGoodService extends HttpService {
     return this.get(`${route}/${status}`)
 
   }
+
+  getFProRecPag2CSV(params: any, file: any) {
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.post<IListResponse<GoodsExcel>>(
+      this.route.GetFProRecPag2CSV,
+      formData,
+      params
+    );
+  }
 }
