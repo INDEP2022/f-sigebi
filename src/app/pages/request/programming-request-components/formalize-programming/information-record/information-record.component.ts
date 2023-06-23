@@ -414,11 +414,6 @@ export class InformationRecordComponent extends BasePage implements OnInit {
             },
           });
         //const nomFun1 = proceeding.
-        /*
-
-        if (nomReport) {
-          this.loadDocument(nomReport, response.data[0].id, idTypeDoc);
-        } */
       },
       error: error => { },
     });
@@ -454,6 +449,40 @@ export class InformationRecordComponent extends BasePage implements OnInit {
           resolve(true);
         },
         error: error => { },
+      });
+    });
+  }
+
+  createFirm(
+    keyDoc: number,
+    idTypeDoc: number,
+    idReg: number,
+    nomTable: string,
+    nomColumn: string,
+    nomPerson: string,
+    chargePerson: string,
+    identification: string,
+    noIdent: string
+  ) {
+    return new Promise((resolve, reject) => {
+      const formData: Object = {
+        learnedId: keyDoc,
+        learnedType: idTypeDoc,
+        recordId: idReg,
+        boardSignatory: nomTable,
+        columnSignatory: nomColumn,
+        name: nomPerson,
+        post: chargePerson,
+        identifierSignatory: identification,
+        IDNumber: noIdent,
+      };
+      console.log('data firmante', formData);
+      this.signatoriesService.create(formData).subscribe({
+        next: response => {
+          console.log('firmantes creados', response);
+          resolve(true);
+        },
+        error: error => {},
       });
     });
   }

@@ -26,22 +26,21 @@ import { PROPERTY_REGISTRATION_COLUMNS } from './property-registration-columns';
 })
 export class PropertyRegistrationComponent extends BasePage implements OnInit {
   menajes: IGood[] = [];
-  totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
-  data: LocalDataSource = new LocalDataSource();
-  columnFilters: any = [];
-
-  form: FormGroup = new FormGroup({});
-  formGood: FormGroup = new FormGroup({});
-
+  totalItems: number = 0;
   goods = new DefaultSelect<IGood>();
   expedient: IExpedient;
   numberGoodSelect: number;
   addGood: boolean = false;
   enableAddgood: boolean = true;
   textButton: string = 'Agregar menaje';
+
+  form: FormGroup;
+  formGood: FormGroup;
+  columnFilters: any = [];
   idGoodValue: number;
   idGood: number;
+  data: LocalDataSource = new LocalDataSource();
 
   isSelected: boolean = false;
   showButton: boolean = false;
@@ -63,7 +62,6 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-
     private readonly expedientServices: ExpedientService,
     private readonly goodServices: GoodService,
     private readonly menageServices: MenageService,
@@ -74,6 +72,7 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
     this.settings.hideSubHeader = false;
     this.settings.actions.add = false;
     this.settings.actions.delete = true;
+    this.settings.actions.edit = false;
   }
   ngOnInit(): void {
     this.buildForm();
@@ -122,7 +121,6 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
     });
-
     this.formGood = this.fb.group({
       goodId: [null, [Validators.required]],
     });
