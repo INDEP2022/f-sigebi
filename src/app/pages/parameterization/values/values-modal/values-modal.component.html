@@ -12,7 +12,11 @@
         </div>
         <div class="col-md-5">
           <form-field [control]="valuesForm.get('value')" label="Atributo">
-            <input class="form-control" formControlName="value" type="text" />
+            <input
+              class="form-control"
+              formControlName="value"
+              type="text"
+              maxlength="20" />
           </form-field>
         </div>
         <div class="col-md-5">

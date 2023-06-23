@@ -6,27 +6,47 @@
     <form class="form-material" [formGroup]="ifaiSerieForm">
       <div class="row">
         <div class="col-md-6">
-          <form-field [control]="ifaiSerieForm.get('code')" label="C&oacute;digo">
-            <input type="text" class="form-control" formControlName="code" maxlength="8" />
+          <form-field
+            [control]="ifaiSerieForm.get('code')"
+            label="C&oacute;digo">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="code"
+              maxlength="8" />
           </form-field>
         </div>
 
         <div class="col-md-6">
-          <form-field [control]="ifaiSerieForm.get('typeProcedure')" label="Tipo de tr&aacute;mite">
-            <input type="string" class="form-control" formControlName="typeProcedure" />
+          <form-field
+            [control]="ifaiSerieForm.get('typeProcedure')"
+            label="Tipo de tr&aacute;mite">
+            <input
+              type="string"
+              class="form-control"
+              formControlName="typeProcedure" />
           </form-field>
         </div>
 
         <div class="col-md-12">
-          <form-field [control]="ifaiSerieForm.get('description')" label="Descripci&oacute;n">
-            <textarea type="text" class="form-control" formControlName="description">
+          <form-field
+            [control]="ifaiSerieForm.get('description')"
+            label="Descripci&oacute;n">
+            <textarea
+              type="text"
+              class="form-control"
+              formControlName="description">
             </textarea>
           </form-field>
         </div>
 
         <div class="col-md-4">
           <form-field [control]="ifaiSerieForm.get('status')" label="Estado">
-            <input type="text" class="form-control" formControlName="status" maxlength="1" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="status"
+              maxlength="1" />
           </form-field>
         </div>
 
@@ -46,7 +66,10 @@
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <confirm-button [disabled]="ifaiSerieForm.invalid" [loading]="loading" (confirm)="confirm()">
+        <confirm-button
+          [disabled]="ifaiSerieForm.invalid"
+          [loading]="loading"
+          (confirm)="confirm()">
         </confirm-button>
       </div>
       <div class="m-3">

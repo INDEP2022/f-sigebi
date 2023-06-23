@@ -12,8 +12,15 @@
 
       <div class="row pt-4">
         <form-field [control]="drawerForm.get('noDrawer')">
-          <ngx-select [form]="drawerForm" control="noDrawer" value="idSafe" bindLabel="description" [data]="boveda"
-            (fetchItems)="getBoveda($event)" (change)="bovedaChange($event)" label="Bóveda">
+          <ngx-select
+            [form]="drawerForm"
+            control="noDrawer"
+            value="idSafe"
+            bindLabel="description"
+            [data]="boveda"
+            (fetchItems)="getBoveda($event)"
+            (change)="bovedaChange($event)"
+            label="Bóveda">
           </ngx-select>
         </form-field>
       </div>
@@ -28,7 +35,10 @@
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <confirm-button [disabled]="!drawerForm.valid" [loading]="loading" (confirm)="confirm()"></confirm-button>
+        <confirm-button
+          [disabled]="!drawerForm.valid"
+          [loading]="loading"
+          (confirm)="confirm()"></confirm-button>
       </div>
       <div class="m-3">
         <button type="button" class="btn btn-danger active" (click)="close()">

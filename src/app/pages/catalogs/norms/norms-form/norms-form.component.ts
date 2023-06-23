@@ -74,7 +74,7 @@ export class NormsFormComponent extends BasePage implements OnInit {
       condition: [null],
       version: [null],
       status: [null, [Validators.required]],
-      name: [null]
+      name: [null],
     });
     this.normForm.controls['version'].setValue(1);
     this.normForm.controls['status'].setValue(1);

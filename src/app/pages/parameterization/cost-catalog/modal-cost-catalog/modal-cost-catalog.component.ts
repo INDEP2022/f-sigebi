@@ -75,7 +75,9 @@ export class ModalCostCatalogComponent extends BasePage implements OnInit {
       cost: this.form.get('cost').value,
       description: this.form.get('description').value,
       subaccount: this.form.get('subaccount').value,
-      unaffordabilityCriterion: this.form.get('unaffordabilityCriterion').value ? 'Y' : 'N',
+      unaffordabilityCriterion: this.form.get('unaffordabilityCriterion').value
+        ? 'Y'
+        : 'N',
     };
     this.catalogService.putCostCatalog(code, body).subscribe({
       next: data => this.handleSuccess(),
@@ -90,7 +92,9 @@ export class ModalCostCatalogComponent extends BasePage implements OnInit {
       description: this.form.get('description').value,
       code: this.form.get('code').value,
       subaccount: this.form.get('subaccount').value,
-      unaffordabilityCriterion: this.form.get('unaffordabilityCriterion').value ? 'Y' : 'N',
+      unaffordabilityCriterion: this.form.get('unaffordabilityCriterion').value
+        ? 'Y'
+        : 'N',
     };
     this.catalogService.postCostCatalog(body).subscribe({
       next: data => this.handleSuccess(),

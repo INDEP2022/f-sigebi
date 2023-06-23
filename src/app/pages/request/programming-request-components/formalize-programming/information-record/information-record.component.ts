@@ -414,6 +414,11 @@ export class InformationRecordComponent extends BasePage implements OnInit {
             },
           });
         //const nomFun1 = proceeding.
+        /*
+
+        if (nomReport) {
+          this.loadDocument(nomReport, response.data[0].id, idTypeDoc);
+        } */
       },
       error: error => { },
     });

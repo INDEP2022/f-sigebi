@@ -48,10 +48,10 @@ export class IfaiSeriesListComponent extends BasePage implements OnInit {
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
             filter.field == 'code' ||
-              filter.field == 'typeProcedure' ||
-              filter.field == 'description' ||
-              filter.field == 'status' ||
-              filter.field == 'registryNumber'
+            filter.field == 'typeProcedure' ||
+            filter.field == 'description' ||
+            filter.field == 'status' ||
+            filter.field == 'registryNumber'
               ? (searchFilter = SearchFilter.EQ)
               : (searchFilter = SearchFilter.ILIKE);
             if (filter.search !== '') {
