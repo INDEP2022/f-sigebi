@@ -1,5 +1,3 @@
-import { format } from 'date-fns';
-
 export const HISTORICAL_GOOD_SITUATION_COLUMNS = {
   descripcion: {
     title: 'Situación',
@@ -9,8 +7,8 @@ export const HISTORICAL_GOOD_SITUATION_COLUMNS = {
   fec_cambio: {
     title: 'Fecha Cambio',
     sort: false,
-    valuePrepareFunction: (value: string) =>
-      value ? format(new Date(value), 'dd/MM/yyyy H:mm:ss') : '',
+    // valuePrepareFunction: (value: string) =>
+    //   value ? format(new Date(value), 'dd/MM/yyyy H:mm:ss') : '',
   },
   usuario_cambio: {
     title: 'Usuario',

@@ -488,4 +488,16 @@ export class Repository<T> implements IRepository<T> {
 
     return this.httpClient.delete(`${fullRoute}/delete/${situation}/${status}`);
   }
+
+  update8(
+    route: string,
+    id: number | string,
+    id1: number | string,
+    id2: number | string,
+    formData: Object
+  ) {
+    const fullRoute = this.buildRoute(route);
+    // console.log(fullRoute);
+    return this.httpClient.put(`${fullRoute}/${id}/${id1}/${id2}`, formData);
+  }
 }
