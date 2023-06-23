@@ -118,11 +118,10 @@ export class MassiveChangeStatusComponent extends BasePage implements OnInit {
           'El archivo no cuenta con la estructura requerida'
         );
         return;
-      }else{
-        this.loadGood(this.ids)
-      this.alert('success', 'Archivo subido', '');
+      } else {
+        this.loadGood(this.ids);
+        this.alert('success', 'Archivo subido', '');
       }
-      
     } catch (error) {
       this.alert('error', 'Ocurrio un error al leer el archivo', '');
     }
@@ -140,7 +139,7 @@ export class MassiveChangeStatusComponent extends BasePage implements OnInit {
       this.goodServices.getById(good.No_bien).subscribe({
         next: response => {
           this.goods.push(JSON.parse(JSON.stringify(response)).data[0]);
-          console.log(this.goods)
+          console.log(this.goods);
           this.addStatus();
           /* this.validGood(JSON.parse(JSON.stringify(response)).data[0]); */ //!SE TIENE QUE REVISAR
         },
@@ -164,7 +163,7 @@ export class MassiveChangeStatusComponent extends BasePage implements OnInit {
     this.data.load(this.goods);
     this.data.refresh();
   }
-  
+
   //Asigna estatus
   assignsStatus(){
     console.log(this.goodStatus.value)
@@ -254,6 +253,7 @@ export class MassiveChangeStatusComponent extends BasePage implements OnInit {
       )
     }
   }
+
 
   changeStatusGood() {
     if (this.goods.length === 0) {

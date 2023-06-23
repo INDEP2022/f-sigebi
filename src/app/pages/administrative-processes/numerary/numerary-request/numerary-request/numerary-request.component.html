@@ -140,12 +140,24 @@
     </div>
     <div class="row pt-4">
       <form-loader *ngIf="loading"></form-loader>
-      <div class="col-md-12" *ngIf="!loading">
-        <ng2-smart-table
+      <div class="col-md-12">
+        <ng-scrollbar
+          [track]="'all'"
+          [ngStyle]="{
+            height: loading ? '0px' : '400px',
+            width: loading ? '0px' : '100%'
+          }">
+          <ng2-smart-table
+            [attr.class]="'table-bordered table-responsive'"
+            [settings]="settings"
+            [source]="data1">
+          </ng2-smart-table>
+        </ng-scrollbar>
+        <!-- <ng2-smart-table
           [attr.class]="'table-bordered responsive'"
           [settings]="settings"
           [source]="data1">
-        </ng2-smart-table>
+        </ng2-smart-table> -->
       </div>
       <app-pagination [filterParams]="filterParams2" [totalItems]="totalItems2">
       </app-pagination>

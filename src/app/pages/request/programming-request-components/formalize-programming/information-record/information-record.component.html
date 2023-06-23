@@ -2,6 +2,7 @@
   <div header>
     <h5 class="modal-title">Informaci&oacute;n de acta</h5>
   </div>
+
   <div body>
     <div class="d-flex justify-content-center">
       <div class="m-3">
@@ -20,6 +21,7 @@
         <input
           type="text"
           id="hora"
+          class="form-control"
           name="startTime"
           [(ngModel)]="horaActual"
           readonly />
@@ -27,29 +29,30 @@
       </div>
     </div>
     <hr style="border: none; border-top: 1px solid black; margin: 10px 0" />
-    <div class="row">
-      <div class="col-md-6">
-        <h5 style="font-size: 15px">Entrega</h5>
-        <form [formGroup]="infoForm" class="form-material pt-4">
-          <form-field [control]="infoForm.get('nameWorker1')" label="Nombre">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="nameWorker1" />
-          </form-field>
-          <div class="row">
-            <form-check
-              label="Firma electr&oacute;nica"
-              for="electronicSignatureWorker1">
+    <form [formGroup]="infoForm" class="form-material">
+      <div class="row">
+        <div class="col-md-6">
+          <h5 style="font-size: 15px">Entrega</h5>
+          <div class="pt-3">
+            <form-field [control]="infoForm.get('nameWorker1')" label="Nombre">
               <input
-                id="electronicSignatureWorker1"
-                value="false"
-                type="checkbox"
-                formControlName="electronicSignatureWorker1" />
-            </form-check>
+                type="text"
+                class="form-control"
+                formControlName="nameWorker1" />
+            </form-field>
           </div>
 
-          <div class="row pt-2">
+          <form-check
+            label="Firma electr&oacute;nica"
+            for="electronicSignatureWorker1">
+            <input
+              id="electronicSignatureWorker1"
+              value="false"
+              type="checkbox"
+              formControlName="electronicSignatureWorker1" />
+          </form-check>
+
+          <div class="row pt-4">
             <form-field
               [control]="infoForm.get('positionWorker1')"
               label="Cargo">
@@ -114,29 +117,28 @@
                 formControlName="emailWorker1" />
             </form-field>
           </div>
-        </form>
-      </div>
-
-      <div class="col-md-6">
-        <h5 style="font-size: 15px">Recibe</h5>
-        <form [formGroup]="infoForm" class="form-material pt-4">
-          <form-field [control]="infoForm.get('nameWorker2')" label="Nombre">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="nameWorker2" />
-          </form-field>
-          <!-- <div class="row">
-            <form-check label="Firma electr&oacute;nica" for="electronicSignatureWorker2">
+        </div>
+        <div class="col-md-6">
+          <h5 style="font-size: 15px">Recibe</h5>
+          <div class="pt-3">
+            <form-field [control]="infoForm.get('nameWorker2')" label="Nombre">
               <input
-                id="electronicSignatureWorker2"
+                type="text"
+                class="form-control"
+                formControlName="nameWorker2" />
+            </form-field>
+          </div>
 
-                type="checkbox"
-                formControlName="<electronicSignatureWorker2>" />
-            </form-check>
-          </div> -->
+          <form-check
+            label="Firma electr&oacute;nica"
+            for="electronicSignatureWorker2">
+            <input
+              id="electronicSignatureWorker2"
+              type="checkbox"
+              formControlName="electronicSignatureWorker2" />
+          </form-check>
 
-          <div class="row pt-2">
+          <div class="row pt-4">
             <form-field
               [control]="infoForm.get('positionWorker2')"
               label="Cargo">
@@ -190,31 +192,31 @@
                 formControlName="emailWorker2" />
             </form-field>
           </div>
-        </form>
+        </div>
       </div>
-    </div>
 
-    <div class="row">
-      <div class="col-md-6">
-        <h5 style="font-size: 15px">Testigo 1</h5>
-        <form [formGroup]="infoForm" class="form-material pt-4">
-          <form-field [control]="infoForm.get('nameWitness1')" label="Nombre">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="nameWitness1" />
-          </form-field>
-          <div class="row">
-            <form-check
-              label="Firma electr&oacute;nica"
-              for="electronicSignatureWitness1">
+      <div class="row pt-3">
+        <div class="col-md-6">
+          <h5 style="font-size: 15px">Testigo 1</h5>
+
+          <div class="pt-3">
+            <form-field [control]="infoForm.get('nameWitness1')" label="Nombre">
               <input
-                id="electronicSignatureWitness1"
-                value="false"
-                type="checkbox"
-                formControlName="electronicSignatureWitness1" />
-            </form-check>
+                type="text"
+                class="form-control"
+                formControlName="nameWitness1" />
+            </form-field>
           </div>
+
+          <form-check
+            label="Firma electr&oacute;nica"
+            for="electronicSignatureWitness1">
+            <input
+              id="electronicSignatureWitness1"
+              value="false"
+              type="checkbox"
+              formControlName="electronicSignatureWitness1" />
+          </form-check>
 
           <div class="row pt-4">
             <form-field [control]="infoForm.get('idCatWitness1')">
@@ -248,28 +250,29 @@
                 formControlName="emailWitness1" />
             </form-field>
           </div>
-        </form>
-      </div>
-      <div class="col-md-6">
-        <h5 style="font-size: 15px">Testigo 2</h5>
-        <form [formGroup]="infoForm" class="form-material pt-4">
-          <form-field [control]="infoForm.get('nameWitness2')" label="Nombre">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="nameWitness2" />
-          </form-field>
-          <div class="row">
-            <form-check
-              label="Firma electrónica"
-              for="electronicSignatureWitness2">
+        </div>
+
+        <div class="col-md-6">
+          <h5 style="font-size: 15px">Testigo 2</h5>
+
+          <div class="pt-3">
+            <form-field [control]="infoForm.get('nameWitness2')" label="Nombre">
               <input
-                id="electronicSignatureWitness2"
-                value="false"
-                type="checkbox"
-                formControlName="electronicSignatureWitness2" />
-            </form-check>
+                type="text"
+                class="form-control"
+                formControlName="nameWitness2" />
+            </form-field>
           </div>
+
+          <form-check
+            label="Firma electrónica"
+            for="electronicSignatureWitness2">
+            <input
+              id="electronicSignatureWitness2"
+              value="false"
+              type="checkbox"
+              formControlName="electronicSignatureWitness2" />
+          </form-check>
 
           <div class="row pt-4">
             <form-field [control]="infoForm.get('idCatWitness2')">
@@ -303,192 +306,194 @@
                 formControlName="emailWitness2" />
             </form-field>
           </div>
-        </form>
+        </div>
       </div>
-      <hr style="border: none; border-top: 1px solid black; margin: 10px 0" />
-      <div class="row">
+
+      <div class="row pt-3">
         <div class="col-md-6">
           <h5 style="font-size: 15px">OIC</h5>
-          <form [formGroup]="infoForm" class="form-material pt-4">
+          <div class="pt-3">
             <form-field
               [control]="infoForm.get('nameWorker3')"
-              label="Nº de evento OIC">
+              label="Numero de evento OIC">
               <input
                 type="text"
                 class="form-control"
                 formControlName="nameWorker3" />
             </form-field>
-            <div class="row pt-2">
-              <form-field
-                [control]="infoForm.get('nameWorkerOic')"
-                label="Nombre">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="nameWorkerOic" />
-              </form-field>
-            </div>
-            <div class="row">
-              <form-check
-                label="Firma electrónica"
-                for="electronicSignatureOic">
-                <input
-                  id="electronicSignatureOic"
-                  value="false"
-                  type="checkbox"
-                  formControlName="electronicSignatureOic" />
-              </form-check>
-            </div>
+          </div>
 
-            <div class="row pt-2">
-              <form-field
-                [control]="infoForm.get('positionWorkerOic')"
-                label="Cargo">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="positionWorkerOic" />
-              </form-field>
-            </div>
+          <div class="row pt-4">
+            <form-field
+              [control]="infoForm.get('nameWorkerOic')"
+              label="Nombre">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="nameWorkerOic" />
+            </form-field>
+          </div>
 
-            <div class="row pt-4">
-              <form-field [control]="infoForm.get('idCatWorkerOic')">
-                <ngx-select
-                  [form]="infoForm"
-                  control="idCatWorkerOic"
-                  [data]="identifications"
-                  value="keyId"
-                  bindLabel="description"
-                  (fetchItems)="getIdentification($event)"
-                  label="Identificaci&oacute;n"></ngx-select>
-              </form-field>
-            </div>
+          <form-check label="Firma electrónica" for="electronicSignatureOic">
+            <input
+              id="electronicSignatureOic"
+              value="false"
+              type="checkbox"
+              formControlName="electronicSignatureOic" />
+          </form-check>
 
-            <div class="row pt-4">
-              <form-field
-                [control]="infoForm.get('idNoWorkerOic')"
-                label="N&uacute;mero de identificaci&oacute;n">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="idNoWorkerOic" />
-              </form-field>
-            </div>
+          <div class="row pt-4">
+            <form-field
+              [control]="infoForm.get('positionWorkerOic')"
+              label="Cargo">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="positionWorkerOic" />
+            </form-field>
+          </div>
 
-            <div class="row pt-4">
-              <form-field
-                [control]="infoForm.get('idExpWorkerOic')"
-                label="Expedida por">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="idExpWorkerOic" />
-              </form-field>
-            </div>
+          <div class="row pt-4">
+            <form-field [control]="infoForm.get('idCatWorkerOic')">
+              <ngx-select
+                [form]="infoForm"
+                control="idCatWorkerOic"
+                [data]="identifications"
+                value="keyId"
+                bindLabel="description"
+                (fetchItems)="getIdentification($event)"
+                label="Identificaci&oacute;n"></ngx-select>
+            </form-field>
+          </div>
 
-            <div class="row pt-4">
-              <form-field [control]="infoForm.get('emailOic')" label="Email">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="emailOic" />
-              </form-field>
-            </div>
-          </form>
+          <div class="row pt-4">
+            <form-field
+              [control]="infoForm.get('idNoWorkerOic')"
+              label="N&uacute;mero de identificaci&oacute;n">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="idNoWorkerOic" />
+            </form-field>
+          </div>
+
+          <div class="row pt-4">
+            <form-field
+              [control]="infoForm.get('idExpWorkerOic')"
+              label="Expedida por">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="idExpWorkerOic" />
+            </form-field>
+          </div>
+
+          <div class="row pt-4">
+            <form-field [control]="infoForm.get('emailOic')" label="Email">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="emailOic" />
+            </form-field>
+          </div>
         </div>
+
         <div class="col-md-6">
           <h5 style="font-size: 15px">UVFV</h5>
-          <form [formGroup]="infoForm" class="form-material pt-4">
+
+          <div class="pt-3">
             <form-field [control]="infoForm.get('nameWorker4')" label="Nombre">
               <input
                 type="text"
                 class="form-control"
                 formControlName="nameWorker4" />
             </form-field>
+          </div>
 
-            <div class="row pt-2">
-              <form-field
-                [control]="infoForm.get('positionWorker4')"
-                label="Cargo">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="positionWorker4" />
-              </form-field>
-            </div>
+          <div class="row pt-4">
+            <form-field
+              [control]="infoForm.get('positionWorker4')"
+              label="Cargo">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="positionWorker4" />
+            </form-field>
+          </div>
 
-            <div class="row pt-4">
-              <form-field [control]="infoForm.get('emailUvfv')" label="Email">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="emailUvfv" />
-              </form-field>
-            </div>
+          <div class="row pt-4">
+            <form-field [control]="infoForm.get('emailUvfv')" label="Email">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="emailUvfv" />
+            </form-field>
+          </div>
 
-            <div class="row pt-4">
-              <form-field
-                [control]="infoForm.get('nameWorkerUvfv')"
-                label="Nombre Funcionario SAT">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="nameWorkerUvfv" />
-              </form-field>
-            </div>
+          <div class="row pt-4">
+            <form-field
+              [control]="infoForm.get('nameWorkerUvfv')"
+              label="Nombre Funcionario SAT">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="nameWorkerUvfv" />
+            </form-field>
+          </div>
 
-            <div class="row pt-4">
-              <form-field
-                [control]="infoForm.get('positionWorker4')"
-                label="Cargo Funcionario SAT">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="positionWorker4" />
-              </form-field>
-            </div>
+          <div class="row pt-4">
+            <form-field
+              [control]="infoForm.get('positionWorker4')"
+              label="Cargo Funcionario SAT">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="positionWorker4" />
+            </form-field>
+          </div>
 
-            <div class="row pt-4">
-              <form-field
-                [control]="infoForm.get('nocargo_funcionario_uvfv')"
-                label="Nº Oficio de convocatiria UVFV">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="nocargo_funcionario_uvfv" />
-              </form-field>
-            </div>
-            <div class="row pt-4">
-              <form-field
-                [control]="infoForm.get('creationDate')"
-                label="Fecha oficio UVFV">
-                <input
-                  type="date"
-                  class="form-control"
-                  formControlName="creationDate" />
-              </form-field>
-            </div>
-          </form>
+          <!--<div class="row pt-4">
+            <form-field
+              [control]="infoForm.get('reg_envio_sat')"
+              label="Nº Oficio de convocatiria UVFV">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="reg_envio_sat" />
+            </form-field>
+          </div> -->
+          <div class="row pt-4">
+            <form-field
+              [control]="infoForm.get('creationDate')"
+              label="Fecha oficio UVFV">
+              <input
+                type="date"
+                class="form-control"
+                formControlName="creationDate" />
+            </form-field>
+          </div>
         </div>
       </div>
-    </div>
-    <hr style="border: none; border-top: 1px solid black; margin: 10px 0" />
-    <div class="d-flex justify-content-center">
-      <div class="m-3">
-        <h5 style="font-size: 15px">Apartado 1</h5>
-        <form>
-          <div class="form-group">
-            <label for="otherFacts">Otros hechos:</label>
-            <textarea
-              class="form-control"
-              rows="4"
-              cols="50"
-              id="otherFacts"></textarea>
+
+      <hr style="border: none; border-top: 1px solid black; margin: 10px 0" />
+      <div class="row">
+        <div class="col-md-6">
+          <h5 style="font-size: 15px">Apartado 1</h5>
+          <div class="pt-3">
+            <form-field
+              [control]="infoForm.get('otherFacts')"
+              label="Otros hechos">
+              <input
+                type="text-area"
+                class="form-control"
+                formControlName="otherFacts" />
+            </form-field>
           </div>
-        </form>
+        </div>
       </div>
-    </div>
+    </form>
   </div>
+
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">

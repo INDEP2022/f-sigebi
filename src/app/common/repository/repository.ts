@@ -339,6 +339,14 @@ export class Repository<T> implements IRepository<T> {
     );
   }
 
+  getMenajeInmueble(
+    goodClassNumber: string | number
+  ): Observable<IListResponse<T>> {
+    return this.httpClient.get<IListResponse<T>>(
+      `${environment.API_URL}catalog/api/v1/good-sssubtype?filter.numClasifGoods=$eq:${goodClassNumber}`
+    );
+  }
+
   getAllPaginatedFilter(
     route: string,
     _params?: ListParams | string

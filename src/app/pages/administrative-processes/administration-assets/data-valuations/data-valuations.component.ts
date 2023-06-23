@@ -27,6 +27,7 @@ export class DataValuationsComponent
   constructor(private readonly appraiseService: AppraiseService) {
     super();
     this.settings.actions = false;
+    this.settings.hideSubHeader = false;
     this.settings.columns = {
       noRequest: {
         title: 'No. Solicitud',

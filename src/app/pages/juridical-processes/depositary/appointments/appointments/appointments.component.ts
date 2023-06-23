@@ -17,12 +17,19 @@ import { ExampleService } from 'src/app/core/services/catalogs/example.service';
 
 /** COMPONENTS IMPORTS */
 import { DatePipe } from '@angular/common';
+import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, takeUntil } from 'rxjs';
+import { DocumentsViewerByFolioComponent } from 'src/app/@standalone/modals/documents-viewer-by-folio/documents-viewer-by-folio.component';
+import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { IDescriptionByNoGoodBody } from 'src/app/core/models/good/good.model';
 import { IAppointmentDepositary } from 'src/app/core/models/ms-depositary/ms-depositary.interface';
+import { IDocuments } from 'src/app/core/models/ms-documents/documents';
 import { IGood } from 'src/app/core/models/ms-good/good';
+import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
+import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import {
   CURP_PATTERN,
   NUM_POSITIVE,
@@ -31,10 +38,14 @@ import {
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { IGlobalVars } from 'src/app/shared/global-vars/models/IGlobalVars.model';
+import { GlobalVarsService } from 'src/app/shared/global-vars/services/global-vars.service';
 import { AppointmentsAdministrativeReportComponent } from '../appointments-administrative-report/appointments-administrative-report.component';
 import { AppointmentsJuridicalReportComponent } from '../appointments-juridical-report/appointments-juridical-report.component';
 import { AppointmentsRelationsPaysComponent } from '../appointments-relations-pays/appointments-relations-pays.component';
+import { ModalScanningFoilAppointmentTableComponent } from '../modal-scanning-foil/modal-scanning-foil.component';
 import { AppointmentsService } from '../services/appointments.service';
+import { RELATED_FOLIO_COLUMNS } from './columns';
 
 @Component({
   selector: 'app-appointments',
@@ -49,17 +60,19 @@ export class AppointmentsComponent
   params = new BehaviorSubject<FilterParams>(new FilterParams());
   public form: FormGroup;
   formScan: FormGroup;
+  formRadioScan: FormGroup;
   public noBienReadOnly: number = null;
   public checked = false;
-  globalVars: any = {
+  globalVars_A: any = {
     noExiste: 0,
     depositaria: '',
     no_dep: '',
     folescaneo: '',
-    procgenimg: null,
-    folsoldigt: null,
+    procgenimg: 0,
+    folsoldigt: 0,
     folescaneo2: null,
   };
+  globalVars: any;
   public good: IGood;
   noBien: number = null;
   depositaryAppointment: IAppointmentDepositary;
@@ -78,14 +91,24 @@ export class AppointmentsComponent
   postalCodeSelectValue: string = '';
   dateFormat: string = 'dd/MM/yyyy';
   screenKey: string = 'FACTJURREGDESTLEG';
+  showScanRadio: boolean = false;
+  valuesChangeRadio = {
+    lv_VALESCAN: 0,
+    lv_TIPOFOL: '',
+  };
+  personSelect = new DefaultSelect();
 
   constructor(
     private fb: FormBuilder,
     private datePipe: DatePipe,
     private exampleService: ExampleService,
     private appointmentsService: AppointmentsService,
+    private documentsService: DocumentsService,
     private modalService: BsModalService,
     private router: Router,
+    private sanitizer: DomSanitizer,
+    private siabService: SiabService,
+    private globalVarsService: GlobalVarsService,
     private activatedRoute: ActivatedRoute
   ) {
     super();
@@ -93,6 +116,15 @@ export class AppointmentsComponent
 
   ngOnInit(): void {
     this.prepareForm();
+    this.globalVarsService
+      .getGlobalVars$()
+      .subscribe((globalVars: IGlobalVars) => {
+        this.globalVars = {
+          ...this.globalVars_A,
+          ...globalVars,
+        };
+        console.log(this.globalVars);
+      });
     this.showScanForm = true;
     console.log(this.showScanForm);
 
@@ -179,6 +211,10 @@ export class AppointmentsComponent
       ], //* Representante SERA
       bienesMenaje: { value: '', disabled: true }, //* Sin Menaje, Con Menaje
 
+      personNumber: [
+        { value: '', disabled: true },
+        [Validators.maxLength(40), Validators.pattern(STRING_PATTERN)],
+      ], //*
       depositaria: [
         { value: '', disabled: true },
         [Validators.maxLength(40), Validators.pattern(STRING_PATTERN)],
@@ -312,6 +348,9 @@ export class AppointmentsComponent
         { value: '', disabled: false },
         [Validators.pattern(NUM_POSITIVE), Validators.maxLength(15)],
       ],
+    });
+    this.formRadioScan = this.fb.group({
+      scanningFolio: [{ value: 'D', disabled: false }],
     });
   }
 
@@ -655,6 +694,7 @@ export class AppointmentsComponent
   validPostGetDepositary() {}
 
   setDataDepositary() {
+    this.showScanForm = false; // Ocultar parte de escaneo
     this.form
       .get('representanteSAE')
       .setValue(this.depositaryAppointment.seraRepresentative);
@@ -665,9 +705,24 @@ export class AppointmentsComponent
     this.form
       .get('tipoDepositaria')
       .setValue(this.depositaryAppointment.depositaryType);
+
+    setTimeout(() => {
+      this.formScan
+        .get('scanningFoli')
+        .setValue(this.depositaryAppointment.universalFolio);
+      this.formScan.get('scanningFoli').updateValueAndValidity();
+      this.formScan
+        .get('returnFoli')
+        .setValue(this.depositaryAppointment.folioReturn);
+      this.formScan.get('returnFoli').updateValueAndValidity();
+      this.showScanForm = true; // Mostrar parte de escaneo
+    }, 200);
   }
 
   setDataPerson() {
+    this.form
+      .get('personNumber')
+      .setValue(this.depositaryAppointment.personNumber.id);
     this.form
       .get('depositaria')
       .setValue(
@@ -1293,5 +1348,445 @@ export class AppointmentsComponent
           },
         });
     }
+  }
+
+  messageDigitalization(event: any) {
+    if (!this.noBienReadOnly) {
+      this.alert(
+        'warning',
+        'Se requiere de una búsqueda de Bien primero para poder ver está opción',
+        ''
+      );
+      return;
+    }
+    console.log(event);
+    if (this.depositaryAppointment.revocation == 'N') {
+      if (this.formScan.get('scanningFoli').value) {
+        // Continuar proceso mostrar reporte solicitud de escaneo
+        this.reportDigitalizationReport(
+          Number(this.depositaryAppointment.universalFolio)
+        );
+      } else {
+        this.alertInfo(
+          'warning',
+          'No tiene folio de Escaneo para visualizar',
+          ''
+        );
+      }
+    } else {
+      if (this.formScan.get('returnFoli').value) {
+        // Continuar proceso mostrar reporte solicitud de escaneo  RGERGENSOLICDIGIT
+        this.reportDigitalizationReport(
+          Number(this.depositaryAppointment.folioReturn)
+        );
+      } else {
+        this.alertInfo(
+          'warning',
+          'No tiene folio de Escaneo para visualizar',
+          ''
+        );
+      }
+    }
+  }
+
+  reportDigitalizationReport(folio: number) {
+    let params = {
+      pn_folio: folio,
+    };
+    this.siabService
+      .fetchReport('RGERGENSOLICDIGIT', params)
+      .subscribe(response => {
+        console.log(response);
+        if (response !== null) {
+          const blob = new Blob([response], { type: 'application/pdf' });
+          const url = URL.createObjectURL(blob);
+          let config = {
+            initialState: {
+              documento: {
+                urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                type: 'pdf',
+              },
+              callback: (data: any) => {},
+            }, //pasar datos por aca
+            class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+            ignoreBackdropClick: true, //ignora el click fuera del modal
+          };
+          this.modalService.show(PreviewDocumentsComponent, config);
+        } else {
+          this.alert('warning', 'Reporte no disponible por el momento', '');
+        }
+      });
+  }
+
+  scanRequest(event: any) {
+    if (!this.noBienReadOnly) {
+      this.alert(
+        'warning',
+        'Se requiere de una búsqueda de Bien primero para poder ver está opción',
+        ''
+      );
+      return;
+    }
+    console.log(event);
+    this.formRadioScan.get('scanningFolio').setValue('D');
+    this.formRadioScan.get('scanningFolio').updateValueAndValidity();
+    this.showScanRadio = true;
+    this.globalVars.procgenimg = 1;
+  }
+
+  showScanningPage(event: any) {
+    if (!this.noBienReadOnly) {
+      this.alert(
+        'warning',
+        'Se requiere de una búsqueda de Bien primero para poder ver está opción',
+        ''
+      );
+      return;
+    }
+    console.log(event);
+    this.showScanRadio = true;
+    this.globalVars.procgenimg = 2;
+  }
+
+  closeRadioScan() {
+    this.showScanRadio = false;
+  }
+
+  changeRadioScan(option: string) {
+    console.log(option);
+    if (this.globalVars.procgenimg == 1) {
+      if (this.formRadioScan.get('scanningFolio').value == 'A') {
+        this.appointmentsService
+          .getCValFoUni({
+            adminTypeKey: this.depositaryAppointment.typeAdminKey,
+            goodNumber: this.noBienReadOnly,
+            screen: this.screenKey,
+          })
+          .subscribe({
+            next: async data => {
+              console.log('DATA ', data);
+              if (data.count == 0) {
+                const response = await this.alertQuestion(
+                  'question',
+                  'Aviso',
+                  '¿Quiere generar el folio de acta depositaria, aunque no cambiará el estatus?'
+                );
+
+                if (!response.isConfirmed) {
+                  this.showScanRadio = false;
+                } else {
+                  this.valuesChangeRadio.lv_VALESCAN = 1;
+                  this.validValScanFolio();
+                }
+              } else {
+                const response = await this.alertQuestion(
+                  'question',
+                  'Aviso',
+                  'Se generará un nuevo folio de escaneo para la depositaría. ¿Deseas continuar?'
+                );
+
+                if (!response.isConfirmed) {
+                  this.valuesChangeRadio.lv_VALESCAN = 1;
+                  this.validValScanFolio();
+                } else {
+                  this.showScanRadio = false;
+                }
+              }
+            },
+            error: error => {
+              console.log(error);
+              this.onLoadToast(
+                'error',
+                'Error al validar el Folio Universal',
+                ''
+              );
+            },
+          });
+      } else if (this.formRadioScan.get('scanningFolio').value == 'R') {
+        this.appointmentsService
+          .getCValFoRev({
+            adminTypeKey: this.depositaryAppointment.typeAdminKey,
+            goodNumber: this.noBienReadOnly,
+            screen: this.screenKey,
+          })
+          .subscribe({
+            next: async data => {
+              console.log('DATA ', data);
+              if (data.count == 0) {
+                this.alertInfo(
+                  'info',
+                  'No se puede generar el folio de escaneo por remoción, por que no tiene el estatus adecuado',
+                  ''
+                );
+                this.showScanRadio = false;
+              } else {
+                const response = await this.alertQuestion(
+                  'question',
+                  'Aviso',
+                  'Se generará un nuevo folio de escaneo para la remoción. ¿Deseas continuar?'
+                );
+
+                if (response.isConfirmed) {
+                  if (this.form.get('remocion').value == 'N') {
+                    this.alertInfo('info', 'No tiene datos de remoción', '');
+                    this.showScanRadio = false;
+                  } else {
+                    this.valuesChangeRadio.lv_VALESCAN = 1;
+                    this.validValScanFolio();
+                  }
+                } else {
+                  this.showScanRadio = false;
+                }
+              }
+            },
+            error: error => {
+              console.log(error);
+              this.onLoadToast(
+                'error',
+                'Error al validar el Folio Universal',
+                ''
+              );
+            },
+          });
+      }
+    } else if (this.globalVars.procgenimg == 2) {
+      if (!this.noBienReadOnly) {
+        this.alert(
+          'warning',
+          'No se puede replicar el folio de escaneo si no existe un bien',
+          ''
+        );
+        return;
+      }
+      if (this.formRadioScan.get('scanningFolio').value == 'A') {
+        if (this.depositaryAppointment.universalFolio) {
+          // LANZA ESCANEO
+          this.runScanScreen(Number(this.depositaryAppointment.universalFolio));
+        } else {
+          this.alert(
+            'warning',
+            'No se puede escanear imagenes, folio de acta depositaria es nulo, ',
+            ''
+          );
+          this.showScanRadio = false;
+        }
+      } else if (this.formRadioScan.get('scanningFolio').value == 'R') {
+        if (this.depositaryAppointment.folioReturn) {
+          // LANZA ESCANEO
+          this.runScanScreen(Number(this.depositaryAppointment.folioReturn));
+        } else {
+          this.alert(
+            'warning',
+            'No se puede escanear imagenes, folio de remoción es nulo, ',
+            ''
+          );
+          this.showScanRadio = false;
+        }
+      }
+    }
+  }
+
+  runScanScreen(folio: number) {
+    this.router.navigate(['/pages/general-processes/scan-documents'], {
+      queryParams: {
+        origin: this.screenKey,
+        P_NB: this.noBienReadOnly,
+        folio: folio,
+      },
+    });
+  }
+
+  validValScanFolio() {
+    if (!this.noBienReadOnly) {
+      this.alert(
+        'warning',
+        'No se puede generar el folio de escaneo si no existe un bien',
+        ''
+      );
+      return;
+    }
+    this.appointmentsService.getCFlyer(this.good.fileNumber).subscribe({
+      next: async data => {
+        console.log('DATA ', data);
+        let wheeelNumber = null;
+        if (data.data[0].min) {
+          wheeelNumber = data.data[0].min;
+        } else {
+          wheeelNumber = this.good.flyerNumber;
+        }
+        // http://localhost:4200/pages/general-processes/scan-request LLAMAR FORMA FACTGENSOLICDIGIT
+        this.router.navigate(
+          ['/pages/general-processes/scan-request/' + wheeelNumber],
+          {
+            queryParams: {
+              origin: this.screenKey,
+              P_NB: this.noBienReadOnly,
+              // P_NO_VOLANTE: wheeelNumber,
+              P_FOLIO: this.formRadioScan.get('scanningFolio').value,
+              P_ND: this.depositaryAppointment.appointmentNumber,
+            },
+          }
+        );
+        // To save appointment
+        //         {
+        //     "appointmentNumber": "378",
+        //     "folioReturn": "3377076",
+        //     "amountIVA": 16,
+        //     "personNumber": 338,
+        //     "iva": 16
+        // }
+      },
+      error: error => {
+        console.log(error);
+        this.onLoadToast('error', 'Error al validar el Folio Universal', '');
+      },
+    });
+  }
+
+  viewPictures(event: any) {
+    if (!this.noBienReadOnly) {
+      this.alert(
+        'warning',
+        'Se requiere de una búsqueda de Bien primero para poder ver está opción',
+        ''
+      );
+      return;
+    }
+    console.log(event);
+    if (this.depositaryAppointment.revocation == 'N') {
+      if (this.formScan.get('scanningFoli').value) {
+        // Continuar proceso para cargar imágenes
+        this.getDocumentsByFolio(
+          Number(this.depositaryAppointment.universalFolio),
+          true
+        );
+      } else {
+        this.alertInfo(
+          'warning',
+          'No tiene folio de Escaneo para visualizar',
+          ''
+        );
+      }
+    } else {
+      if (this.formScan.get('returnFoli').value) {
+        // Continuar proceso para cargar imágenes
+        this.getDocumentsByFolio(
+          Number(this.depositaryAppointment.folioReturn),
+          false
+        );
+      } else {
+        this.alertInfo(
+          'warning',
+          'No tiene folio de Escaneo para visualizar',
+          ''
+        );
+      }
+    }
+  }
+
+  openDocumentsModal(
+    flyerNum: string | number,
+    folioUniversal: number,
+    title: string,
+    wheel: boolean,
+    folio: boolean
+  ) {
+    const params = new FilterParams();
+    params.addFilter('flyerNumber', flyerNum);
+    const $params = new BehaviorSubject(params);
+    const $obs = this.documentsService.getAllFilter;
+    const service = this.documentsService;
+    const columns = RELATED_FOLIO_COLUMNS;
+    const config = {
+      ...MODAL_CONFIG,
+      initialState: {
+        $obs,
+        service,
+        columns,
+        title,
+        $params,
+        wheel,
+        folio,
+        folioUniversal: folioUniversal,
+        wheelNumber: flyerNum,
+        showConfirmButton: true,
+      },
+    };
+    return this.modalService.show(
+      ModalScanningFoilAppointmentTableComponent<IDocuments>,
+      config
+    );
+  }
+
+  getDocumentsByFolio(folio: number, folioUniversal: boolean) {
+    const title = 'Folios relacionados al Volante';
+    const modalRef = this.openDocumentsModal(
+      folio,
+      folio,
+      title,
+      false,
+      folioUniversal
+    );
+    modalRef.content.selected
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(document => this.getPicturesFromFolio(document));
+  }
+
+  getDocumentsByFlyer(flyerNum: string | number) {
+    const title = 'Folios relacionados al Volante';
+    const modalRef = this.openDocumentsModal(flyerNum, 0, title, true, false);
+    modalRef.content.selected
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(document => this.getPicturesFromFolio(document));
+  }
+
+  getPicturesFromFolio(document: IDocuments) {
+    console.log(document);
+    let folio = document.id;
+    // let folio = document.file.universalFolio;
+    // if (document.id != this.depositaryAppointment.){
+    //   folio = this.depositaryAppointment;
+    // }
+    if (document.associateUniversalFolio) {
+      folio = document.associateUniversalFolio;
+    }
+    const config = {
+      ...MODAL_CONFIG,
+      ignoreBackdropClick: false,
+      initialState: {
+        folio,
+      },
+    };
+    this.modalService.show(DocumentsViewerByFolioComponent, config);
+  }
+
+  getPersonCatalog(paramsData: ListParams, getByValue: boolean = false) {
+    const params: any = new FilterParams();
+    if (paramsData['search'] == undefined || paramsData['search'] == null) {
+      paramsData['search'] = '';
+    }
+    params.removeAllFilters();
+    if (getByValue) {
+      params.addFilter('id', this.form.get('personNumber').value);
+    } else {
+      params.search = paramsData['search'];
+      // params.addFilter('name', paramsData['search'], SearchFilter.LIKE);
+    }
+    params['sortBy'] = 'name:ASC';
+    this.appointmentsService.getPerson(params.getParams()).subscribe({
+      next: data => {
+        this.personSelect = new DefaultSelect(
+          data.data.map(i => {
+            i.name = i.id + ' -- ' + i.name;
+            return i;
+          }),
+          data.count
+        );
+        console.log(data, this.personSelect);
+      },
+      error: error => {
+        this.personSelect = new DefaultSelect();
+      },
+    });
   }
 }

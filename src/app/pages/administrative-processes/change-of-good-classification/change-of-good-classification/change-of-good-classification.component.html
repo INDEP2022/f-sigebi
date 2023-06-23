@@ -88,7 +88,8 @@
             <input
               type="text"
               class="form-control"
-              formControlName="fileNumberNew" />
+              formControlName="fileNumberNew"
+              readonly />
           </form-field>
         </div>
       </div>
@@ -150,7 +151,7 @@
         <h6>NUEVOS</h6>
         <app-good-characteristics-table
           [goodChange]="goodChange2"
-          [initValue]="false"
+          [initValue]="initValue"
           [clasification]="classificationOfGoods.value"
           [settings]="atributNewSettings"
           [avaluo]="false"
