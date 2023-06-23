@@ -4,12 +4,12 @@ export const DEPOSIT_TOKENS_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  bill: {
+  cveAccount: {
     title: 'Cuenta',
     type: 'string',
     sort: false,
   },
-  depositDate: {
+  fec_insercion_: {
     title: 'Fecha Depósito',
     type: 'string',
     sort: false,
@@ -19,7 +19,7 @@ export const DEPOSIT_TOKENS_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  transferDate: {
+  fec_traspaso_: {
     title: 'Fecha Transferencia',
     type: 'string',
     sort: false,
@@ -29,27 +29,27 @@ export const DEPOSIT_TOKENS_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  deposit: {
+  deposito: {
     title: 'Depósito',
     type: 'string',
     sort: false,
   },
-  proceedings: {
+  no_expediente: {
     title: 'Expediente',
     type: 'string',
     sort: false,
   },
-  good: {
+  no_bien: {
     title: 'Bien',
     type: 'string',
     sort: false,
   },
-  category: {
-    title: 'Categoría',
+  categoria: {
+    title: 'Categoria',
     type: 'string',
     sort: false,
   },
-  partial: {
+  es_parcializacion: {
     title: 'Parcial',
     type: 'string',
     sort: false,
