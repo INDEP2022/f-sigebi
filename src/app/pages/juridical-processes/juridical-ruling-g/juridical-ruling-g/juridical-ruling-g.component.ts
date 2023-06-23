@@ -1261,7 +1261,7 @@ export class JuridicalRulingGComponent
 
     if (V_BAN == true && V_ELIMINA == 'S') {
       this.alertQuestion(
-        'info',
+        'question',
         `Se borra dictamen cerrado (Exp.: ${object.vProceedingsNumber} Tipo: ${object.vTypeDicta} No.Dict.: ${this.dictNumber})?`,
         '¿Deseas continuar?'
       ).then(async question => {
@@ -1425,7 +1425,7 @@ export class JuridicalRulingGComponent
       });
     } else {
       this.alertQuestion(
-        'info',
+        'question',
         `Se borra dictamen cerrado (Exp.: ${object.vProceedingsNumber} Tipo: ${object.vTypeDicta} No.Dict.: ${this.dictNumber})?`,
         '¿Deseas continuar?'
       ).then(async question => {
@@ -2342,7 +2342,7 @@ export class JuridicalRulingGComponent
       this.selectedDocuments = [];
     } else {
       this.alert(
-        'info',
+        'warning',
         '',
         'Debes seleccionar la fecha de un documento para continuar.'
       );
@@ -3941,11 +3941,11 @@ export class JuridicalRulingGComponent
     const expedient = this.expedientesForm.get('noExpediente').value;
 
     if (this.goodsValid.length === 0) {
-      this.alert('info', 'AVISO', 'Debes seleccionar un bien');
+      this.alert('warning', 'AVISO', 'Debes seleccionar un bien');
       return;
     }
     if (status === 'DICTAMINADO') {
-      this.alert('info', 'Bien ya se encuentra dictaminado', '');
+      this.alert('warning', 'Bien ya se encuentra dictaminado', '');
       return;
     } else {
       if (expedient === null || undefined || '') {
