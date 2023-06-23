@@ -199,7 +199,6 @@ export class PerformProgrammingFormComponent
     private goodProcessService: GoodProcessService
   ) {
     super();
-
     this.settings = {
       ...this.settings,
       actions: false,
@@ -399,10 +398,12 @@ export class PerformProgrammingFormComponent
       idProgramming,
       callback: (data: boolean, create: boolean) => {
         if (data && create) {
-          this.onLoadToast('success', 'Correcto', 'Usuario creado');
+          alert;
+          this.alert('success', 'Correcto', 'Usuario creado');
+          // this.onLoadToast('success', 'Correcto', 'Usuario creado');
           this.showUsersProgramming();
         } else if (data) {
-          this.onLoadToast('success', 'Correcto', 'Usuario modificado');
+          this.alert('success', 'Correcto', 'Usuario modificado');
           this.showUsersProgramming();
         }
       },
@@ -785,6 +786,14 @@ export class PerformProgrammingFormComponent
       this.searchProgGoods(filterColumns);
     }
   }
+  showClean() {
+    this.searchGoodsForm.get('municipality').setValue('');
+    this.searchGoodsForm.get('colony').setValue('');
+    this.searchGoodsForm.get('warehouse').setValue('');
+    this.searchGoodsForm.get('postalCode').setValue('');
+    this.searchGoodsForm.get('state').setValue('');
+    this.getProgGoods();
+  }
 
   searchProgGoods(filter: Object) {
     this.loadingGoods = true;
@@ -1006,8 +1015,8 @@ export class PerformProgrammingFormComponent
     this.loadingGoods = true;
     const filterColumns: Object = {
       regionalDelegation: Number(this.regionalDelegationUser.id),
-      // transferent: Number(this.transferentId),
-      transferent: Number(700),
+      transferent: Number(this.transferentId),
+      // transferent: Number(700),
       relevantType: Number(this.idTypeRelevant),
       statusGood: 'APROBADO',
     };
@@ -1970,7 +1979,8 @@ export class PerformProgrammingFormComponent
         this.programmingService
           .deleteUserProgramming(userObject)
           .subscribe(data => {
-            this.onLoadToast('success', 'Correcto', 'Usuario eliminado');
+            // this.onLoadToast('success', 'Correcto', 'Usuario eliminado');
+            this.alert('success', 'Operación exitosa', 'Usuario eliminado');
             this.reloadData();
           });
       }
