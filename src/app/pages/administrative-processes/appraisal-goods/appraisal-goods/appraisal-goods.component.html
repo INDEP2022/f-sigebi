@@ -5,35 +5,21 @@
   <div body>
     <div class="row mt-3 mb-3">
       <form action="" class="form-material" [formGroup]="form">
-        <app-delegation-shared
-          [subdelegationField]="'subdelegation'"
+        <app-delegation-shared [subdelegationField]="'subdelegation'" [delegationField]="'delegation'"
           [form]="form"></app-delegation-shared>
         <div class="row mt-4">
           <div class="col-md-6 pt-3">
             <form-field [control]="form.get('initialType')">
-              <ngx-select
-                [form]="form"
-                (fetchItems)="getInitialType($event)"
-                [data]="initialType"
-                value="id"
-                bindLabel="nameGoodType"
-                label="Tipo Inicial"
-                [control]="'initialType'"
+              <ngx-select [form]="form" (fetchItems)="getInitialType($event)" [data]="initialType" value="id"
+                bindLabel="nameGoodType" label="Tipo Inicial" [control]="'initialType'"
                 (change)="getInitialType($event)">
               </ngx-select>
             </form-field>
           </div>
           <div class="col-md-6">
             <form-field [control]="form.get('finalType')">
-              <ngx-select
-                [form]="form"
-                (fetchItems)="getFinaltype($event)"
-                [data]="finalType"
-                value="id"
-                bindLabel="nameSubtypeGood"
-                label="Tipo Final"
-                [control]="'finalType'"
-                (change)="getFinaltype($event)">
+              <ngx-select [form]="form" (fetchItems)="getFinaltype($event)" [data]="finalType" value="id"
+                bindLabel="nameSubtypeGood" label="Tipo Final" [control]="'finalType'" (change)="getFinaltype($event)">
               </ngx-select>
             </form-field>
           </div>
@@ -41,28 +27,16 @@
         <div class="row mt-4">
           <div class="col-md-6">
             <form-field [control]="form.get('initialSubtype')">
-              <ngx-select
-                [form]="form"
-                (fetchItems)="getInitialSubtype($event)"
-                [data]="initialSubtype"
-                value="id"
-                bindLabel="description"
-                label="Subtipo Inicial"
-                [control]="'initialSubtype'"
+              <ngx-select [form]="form" (fetchItems)="getInitialSubtype($event)" [data]="initialSubtype" value="id"
+                bindLabel="description" label="Subtipo Inicial" [control]="'initialSubtype'"
                 (change)="getInitialSubtype($event)">
               </ngx-select>
             </form-field>
           </div>
           <div class="col-md-6">
             <form-field [control]="form.get('finalSubtype')">
-              <ngx-select
-                [form]="form"
-                (fetchItems)="getFinalSubtype($event)"
-                [data]="finalSubtype"
-                value="id"
-                bindLabel="description"
-                label="Subtipo Final"
-                [control]="'finalSubtype'"
+              <ngx-select [form]="form" (fetchItems)="getFinalSubtype($event)" [data]="finalSubtype" value="id"
+                bindLabel="description" label="Subtipo Final" [control]="'finalSubtype'"
                 (change)="getFinalSubtype($event)">
               </ngx-select>
             </form-field>
@@ -70,15 +44,8 @@
         </div>
         <div class="row mt-4">
           <div class="col-md-6">
-            <form-field
-              [control]="form.get('daysToFinish')"
-              label="Días por terminar">
-              <input
-                type="number"
-                class="form-control"
-                formControlName="daysToFinish"
-                min="1"
-                pattern="^[0-9]+" />
+            <form-field [control]="form.get('daysToFinish')" label="Días por terminar">
+              <input type="number" class="form-control" formControlName="daysToFinish" min="1" pattern="^[0-9]+" />
             </form-field>
           </div>
         </div>
@@ -86,19 +53,12 @@
       <div footer>
         <div class="d-flex justify-content-center">
           <div class="m-3">
-            <button
-              type="button"
-              [disabled]="form.invalid"
-              class="btn btn-primary active btn-sm"
-              (click)="Generar()">
+            <button type="button" [disabled]="form.invalid" class="btn btn-primary active btn-sm" (click)="Generar()">
               Imprimir <i class="bx bx-printer bx-sm float-icon"></i>
             </button>
           </div>
           <div class="m-3">
-            <button
-              type="button"
-              class="btn btn-danger active btn-sm"
-              (click)="cleanForm()">
+            <button type="button" class="btn btn-danger active btn-sm" (click)="cleanForm()">
               Limpiar <i class="fas fa-eraser bx-sm float-icon"></i>
             </button>
           </div>
