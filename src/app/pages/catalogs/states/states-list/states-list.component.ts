@@ -92,7 +92,7 @@ export class StatesListComponent extends BasePage implements OnInit {
       next: response => {
         this.states = response.data;
         this.order = response.data;
-        console.log(this.order);
+        //console.log(this.order);
         this.totalItems = response.count || 0;
         //this.order.sort((a, b) => b - a);
         this.data.load(response.data);
