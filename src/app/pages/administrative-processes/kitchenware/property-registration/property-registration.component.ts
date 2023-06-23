@@ -10,7 +10,10 @@ import { BasePage } from 'src/app/core/shared/base-page';
 
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { PROPERTY_REGISTRATION_COLUMNS } from './property-registration-columns';
@@ -24,23 +27,23 @@ import { Repository } from 'src/app/common/repository/repository';
 })
 export class PropertyRegistrationComponent extends BasePage implements OnInit {
   menajes: IGood[] = [];
-  params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
+  params = new BehaviorSubject<ListParams>(new ListParams());
+  data: LocalDataSource = new LocalDataSource();
+  columnFilters: any = [];
+
+  form: FormGroup = new FormGroup({});
+  formGood: FormGroup = new FormGroup({});
+
   goods = new DefaultSelect<IGood>();
   expedient: IExpedient;
   numberGoodSelect: number;
-
   searched: boolean = false;
   addGood: boolean = false;
   enableAddgood: boolean = true;
   textButton: string = 'Agregar menaje';
-
-  form: FormGroup;
-  formGood: FormGroup;
-  columnFilters: any = [];
   idGoodValue: number;
   idGood: number;
-  data: LocalDataSource = new LocalDataSource();
 
   isSelected: boolean = false;
   goodClassNumberIn: number;
@@ -61,6 +64,7 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
 
   constructor(
     private fb: FormBuilder,
+
     private readonly expedientServices: ExpedientService,
     private readonly goodServices: GoodService,
     private readonly menageServices: MenageService,
@@ -68,8 +72,10 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
   ) {
     super();
     this.settings.columns = PROPERTY_REGISTRATION_COLUMNS;
+    this.settings.hideSubHeader = false;
     this.settings.actions.delete = true;
     this.settings.actions.edit = false;
+    this.settings.actions.add = false;
   }
 
   ngOnInit(): void {
@@ -78,7 +84,29 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
     this.formGood.disable();
     this.numberFile.enable();
     this.showButton = false;
-    this.data.onChanged().pipe(takeUntil(this.$unSubscribe)).subscribe();
+    this.data
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = ``;
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+            filter.field == 'id' || filter.field == 'description'
+              ? (searchFilter = SearchFilter.EQ)
+              : (searchFilter = SearchFilter.ILIKE);
+            if (filter.search !== '') {
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.params = this.pageFilter(this.params);
+          this.searchGoodMenage(this.idGoodValue);
+        }
+      });
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.searchGoodMenage(this.idGoodValue));
@@ -97,12 +125,21 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
     });
+
     this.formGood = this.fb.group({
       goodId: [null, [Validators.required]],
     });
   }
 
   searchExpedient(event: any) {
+    this.formGood.disable();
+    this.numberFile.enable();
+    this.goodSelect.enable();
+    this.menajes = [];
+    this.totalItems = 0;
+    this.numberGoodSelect = null;
+    this.addGood = false;
+
     const numberFile = Number(event);
     this.expedientServices.getById(numberFile).subscribe({
       next: response => {
@@ -145,9 +182,16 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
   }
 
   searchGoodMenage(idGood: number) {
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.searchGoodMenage(this.idGoodValue));
     this.idGoodValue = idGood; //Para paginado
     this.loading = true;
-
+    let params = {
+      ...this.params.getValue(),
+      ...this.columnFilters,
+    };
+    // this.repositoryService.getMenajeInmueble2(this.goodClassNumberIn, params).subscribe({
     this.repositoryService.getMenajeInmueble(this.goodClassNumberIn).subscribe({
       next: response => {
         let verifyProperty = response.data;
