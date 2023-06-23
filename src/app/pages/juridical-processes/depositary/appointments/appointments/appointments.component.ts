@@ -800,6 +800,7 @@ export class AppointmentsComponent
       .get('personNumber')
       .setValue(this.depositaryAppointment.personNumber.id);
 
+
     // this.form.get('personNumber').enable();
     this.getPersonCatalog(new ListParams(), true);
     this.form.get('depositaria').setValue(

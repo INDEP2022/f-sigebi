@@ -102,12 +102,16 @@ export class LawyerDetailComponent extends BasePage implements OnInit {
       this.form.patchValue(this.lawyer);
       console.log(this.lawyer);
       console.log(this.lawyer.delegation);
-      console.log(this.lawyer.office.id);
-      this.form.controls['delegation'].setValue(this.lawyer.delegation);
-      this.form.controls['idOffice'].setValue(this.lawyer.office.id);
+      console.log(this.lawyer.idOffice);
+      //this.form.controls['delegation'].setValue(this.lawyer.delegation);
+      //this.form.controls['idOffice'].setValue(this.lawyer.idOffice);
       this.getFromSelect(new ListParams());
       this.getOffices(new ListParams());
     }
+    setTimeout(() => {
+      this.getFromSelect(new ListParams());
+      this.getOffices(new ListParams());
+    }, 1000);
   }
 
   confirm() {
