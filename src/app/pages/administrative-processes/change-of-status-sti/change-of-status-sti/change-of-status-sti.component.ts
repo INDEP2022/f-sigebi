@@ -195,7 +195,11 @@ export class ChangeOfStatusStiComponent extends BasePage implements OnInit {
     paramsF.page = this.params.value.page;
     paramsF.limit = this.params.value.limit;
     for (let data of this.completeFilters) {
-      paramsF.addFilter(data.field, data.search, data.field != 'id' ? SearchFilter.ILIKE : SearchFilter.EQ);
+      paramsF.addFilter(
+        data.field,
+        data.search,
+        data.field != 'id' ? SearchFilter.ILIKE : SearchFilter.EQ
+      );
     }
 
     console.log(paramsF.getParams());
