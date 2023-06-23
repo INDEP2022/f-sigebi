@@ -15,7 +15,7 @@ import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 })
 export class IfaiSeriesFormComponent extends BasePage implements OnInit {
   ifaiSerieForm: ModelForm<IIfaiSerie>;
-  title: string = 'Serie Ifai';
+  title: string = 'Serie IFAI';
   edit: boolean = false;
   ifaiSerie: IIfaiSerie;
   constructor(
@@ -131,7 +131,7 @@ export class IfaiSeriesFormComponent extends BasePage implements OnInit {
   }
 
   handleSuccess() {
-    const message: string = this.edit ? 'Actualizado' : 'Guardado';
+    const message: string = this.edit ? 'Actualizada' : 'Guardada';
     this.alert('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);

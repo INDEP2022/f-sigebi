@@ -32,6 +32,7 @@ import { NumbersFilterDirective } from './directives/numbers-filter.directive';
 import { PermissionsDirective } from './directives/permissions.directive';
 /*Redux NgRX Global Vars Store*/
 import { CustomSelectWidthLoading } from '../@standalone/shared-forms/custom-select-loading/custom-select-loading.component';
+import { CustomDateFilterComponent } from '../@standalone/shared-forms/filter-date-custom/custom-date-filter';
 import { DatePickerDirective } from './directives/date-picker.directive';
 import { UppercaseDirective } from './directives/uppercase.directive';
 import { GlobalVarsModule } from './global-vars/global-vars.module';
@@ -62,6 +63,7 @@ import { GlobalVarsModule } from './global-vars/global-vars.module';
     AutoSizeDirective,
     UppercaseDirective,
     DatePickerDirective,
+    CustomDateFilterComponent,
   ],
   imports: [
     CommonModule,
@@ -108,6 +110,7 @@ import { GlobalVarsModule } from './global-vars/global-vars.module';
     AutoSizeDirective,
     UppercaseDirective,
     DatePickerDirective,
+    CustomDateFilterComponent,
   ],
 })
 export class SharedModule {
