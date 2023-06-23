@@ -154,7 +154,7 @@ export class InformationRecordComponent extends BasePage implements OnInit {
         console.log('acta', response);
         this.infoForm.patchValue(response.data[0]);
       },
-      error: error => { },
+      error: error => {},
     });
   }
   confirm() {
@@ -186,7 +186,7 @@ export class InformationRecordComponent extends BasePage implements OnInit {
       next: response => {
         this.processInfoProceeding();
       },
-      error: error => { },
+      error: error => {},
     });
   }
 
@@ -415,11 +415,11 @@ export class InformationRecordComponent extends BasePage implements OnInit {
           });
         //const nomFun1 = proceeding.
       },
-      error: error => { },
+      error: error => {},
     });
   }
 
-  createFirm(
+  /*createFirm(
     keyDoc: number,
     idTypeDoc: number,
     idReg: number,
@@ -451,7 +451,7 @@ export class InformationRecordComponent extends BasePage implements OnInit {
         error: error => { },
       });
     });
-  }
+  }*/
 
   createFirm(
     keyDoc: number,
@@ -538,7 +538,7 @@ export class InformationRecordComponent extends BasePage implements OnInit {
         //this.wContentService.addDocumentToContent();
         console.log('modelReport', modelReport);
       },
-      error: error => { },
+      error: error => {},
     });
   }
   close() {
@@ -552,7 +552,7 @@ export class InformationRecordComponent extends BasePage implements OnInit {
         console.log('response', response);
         this.identifications = new DefaultSelect(response.data, response.count);
       },
-      error: error => { },
+      error: error => {},
     });
   }
 }
