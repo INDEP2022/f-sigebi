@@ -1,6 +1,8 @@
 export enum NotificationEndpoints {
   //getAll
   Notification = `notification`,
+  //new GetAll
+  NotificationAll = 'notification/getAll',
   //get
   NotificationxProperty = `notification-x-property`,
   //put
