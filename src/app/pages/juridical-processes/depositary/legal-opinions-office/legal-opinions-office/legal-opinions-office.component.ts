@@ -175,6 +175,7 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
   _saveCopiesDictation: boolean = false;
   _saveCopiesDictation_loading: boolean = false;
   _totalCopiesTo: number = 0;
+  _valid_saveOfficeDictation: boolean = false;
   // Electronic Firm
   routeFirm: string = 'electronicfirm';
   fileFirm: any;
@@ -1030,6 +1031,15 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
     this.form.get('issuingUser').updateValueAndValidity();
     if (this.dictationData.statusDict == 'DICTAMINADO') {
       this.form.get('issuingUser').disable();
+    }
+    if (
+      this.officeDictationData.recipient == null ||
+      this.officeDictationData.city == null ||
+      this.officeDictationData.sender == null
+    ) {
+      this._valid_saveOfficeDictation = true;
+    } else {
+      this._valid_saveOfficeDictation = false;
     }
     // this.getIssuingUserByDetail(new ListParams(), true);
     this.form.get('addressee').setValue(this.officeDictationData.recipient); // Destinatario
@@ -2489,7 +2499,13 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
   }
 
   btnDetail() {
-    if (this._saveOfficeDictation) {
+    console.log(
+      'SAVE BOOLEAN ',
+      this._saveOfficeDictation,
+      this._valid_saveOfficeDictation
+    );
+
+    if (this._saveOfficeDictation || this._valid_saveOfficeDictation) {
       this.alertInfo(
         'warning',
         'Se debe guardar la información primero para poder consultar el reporte',
@@ -2497,6 +2513,15 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
       );
       return;
     }
+    // if (this.form.invalid) {
+    //   this.form.markAllAsTouched();
+    //   this.alert(
+    //     'warning',
+    //     'Complete los campos requeridos correctamente e intente nuevamente',
+    //     ''
+    //   );
+    //   return;
+    // }
     // this.setDataDictationSave(true);
     this.loadDetail = true;
     this.objDetail = {

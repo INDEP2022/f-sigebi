@@ -586,3 +586,28 @@ ng-scrollbar.table-scrollbar {
 // #idTableTestBody2 table tbody tr td {
 //   width: 33.5% !important;
 // }
+
+#custom-table-table-cursor table tbody tr td {
+  cursor: default !important;
+  background-color: #fff;
+}
+
+.bg-yellow-to-good {
+  background-color: #e2c103 !important;
+  color: black;
+  font-weight: 900;
+  padding: 0.3rem;
+}
+
+#fichas table:not(.normal-hover) tbody tr.selected {
+  color: black !important;
+  font-weight: 600;
+  // #28a745
+  background: rgb(219, 219, 219) !important;
+}
+
+#fichas table:not(.normal-hover) tbody tr:hover {
+  color: black !important;
+  font-weight: 600;
+  background: rgb(219, 219, 219) !important;
+}

@@ -4,10 +4,12 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IGoodProgramming } from 'src/app/core/models/good-programming/good-programming';
 import { Iprogramming } from 'src/app/core/models/good-programming/programming';
 import { IGood } from 'src/app/core/models/good/good.model';
+import { IProceedings } from 'src/app/core/models/ms-proceedings/proceedings.model';
 import { AuthorityService } from 'src/app/core/services/catalogs/authority.service';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
 import { StationService } from 'src/app/core/services/catalogs/station.service';
@@ -15,6 +17,7 @@ import { TransferenteService } from 'src/app/core/services/catalogs/transferente
 import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
 import { WarehouseService } from 'src/app/core/services/catalogs/warehouse.service';
 import { GoodService } from 'src/app/core/services/good/good.service';
+import { ProceedingsService } from 'src/app/core/services/ms-proceedings';
 import { ProgrammingGoodService } from 'src/app/core/services/ms-programming-request/programming-good.service';
 import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-request/programming-request.service';
 import { ReceptionGoodService } from 'src/app/core/services/reception/reception-good.service';
@@ -26,6 +29,7 @@ import {
 } from '../../execute-reception/execute-reception-form/columns/minute-columns';
 import { TRANSPORTABLE_GOODS_FORMALIZE } from '../../execute-reception/execute-reception-form/columns/transportable-goods-columns';
 import { MINUTES_COLUMNS } from '../columns/minutes-columns';
+import { InformationRecordComponent } from '../information-record/information-record.component';
 
 @Component({
   selector: 'app-formalize-programming-form',
@@ -75,6 +79,7 @@ export class FormalizeProgrammingFormComponent
   totalItemsReceipt: number = 0;
   totalItemsReprog: number = 0;
   totalItemsCanc: number = 0;
+  totalItemsProceedings: number = 0;
   selectGood: IGood[] = [];
   selectGoodGuard: IGood[] = [];
   goodIdSelect: any;
@@ -97,14 +102,12 @@ export class FormalizeProgrammingFormComponent
   settingsGuardGoods = {
     ...this.settings,
     actions: false,
-    selectMode: 'multi',
     columns: ESTATE_COLUMNS_VIEW,
   };
 
   settingsWarehouseGoods = {
     ...this.settings,
     actions: false,
-    selectMode: 'multi',
     columns: ESTATE_COLUMNS_VIEW,
   };
 
@@ -167,6 +170,7 @@ export class FormalizeProgrammingFormComponent
   guardGoods: LocalDataSource = new LocalDataSource();
 
   receipts: LocalDataSource = new LocalDataSource();
+  proceedings: LocalDataSource = new LocalDataSource();
   search: FormControl = new FormControl({});
   programming: Iprogramming;
 
@@ -179,7 +183,6 @@ export class FormalizeProgrammingFormComponent
 
   settingsRecepGoods = {
     ...this.settings,
-    selectMode: 'multi',
     columns: TRANSPORTABLE_GOODS_FORMALIZE,
     actions: false,
   };
@@ -204,6 +207,7 @@ export class FormalizeProgrammingFormComponent
     private goodService: GoodService,
     private programmingGoodService: ProgrammingGoodService,
     private receptionGoodService: ReceptionGoodService,
+    private proceedingService: ProceedingsService,
     // private router: ActivatedRoute,
     private router: Router
   ) {
@@ -223,7 +227,15 @@ export class FormalizeProgrammingFormComponent
   ngOnInit(): void {
     this.formLoading = true;
     this.getProgrammingData();
-    this.getReceipts();
+
+    this.paramsReceipts
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getReceipts());
+
+    this.paramsProceeding
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getProccedings());
+
     /*
     this.getInfoGoodsProgramming();
     this.router.navigate(
@@ -245,6 +257,21 @@ export class FormalizeProgrammingFormComponent
       },
       error: error => {
         this.receipts = new LocalDataSource();
+      },
+    });
+  }
+
+  getProccedings() {
+    const params = new BehaviorSubject<ListParams>(new ListParams());
+    params.getValue()['filter.idPrograming'] = this.programmingId;
+    this.proceedingService.getProceedings(params.getValue()).subscribe({
+      next: response => {
+        console.log('response', response);
+        this.proceedings.load(response.data);
+        this.totalItemsProceedings = response.count;
+      },
+      error: error => {
+        console.log('error actas', error);
       },
     });
   }
@@ -496,6 +523,24 @@ export class FormalizeProgrammingFormComponent
         },
       });
     });
+  }
+
+  generateMinute(proceeding: IProceedings) {
+    let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+
+    config.initialState = {
+      proceeding,
+      programming: this.programming,
+      callback: (data: any) => {
+        if (data) {
+        }
+      },
+    };
+
+    const generateMinute = this.modalService.show(
+      InformationRecordComponent,
+      config
+    );
   }
 
   close() {}

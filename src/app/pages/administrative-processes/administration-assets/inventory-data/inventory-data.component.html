@@ -1,37 +1,32 @@
 <!-- <form class="form-material" [formGroup]="inventoryDataForm"> -->
 <div class="row">
-  <!-- <div class="col">
-      <form-field
-        [control]="inventoryDataForm.get('noInventario')"
-        label="No. Inventario">
-        <input
-          type="text"
-          class="form-control"
-          formControlName="noInventario" />
-      </form-field>
+  <div class="row">
+    <div class="d-flex justify-content-end">
+      <div class="m-3">
+        <button (click)="add()" class="btn btn-primary active btn-sm">
+          Nuevo
+        </button>
+      </div>
     </div>
-    <div class="col">
-      <form-field
-        [control]="inventoryDataForm.get('fechaInventario')"
-        label="Fecha Inventario">
-        <input
-          type="text"
-          class="form-control"
-          formControlName="fechaInventario"
-          bsDatepicker />
-      </form-field>
+  </div>
+  <div class="row">
+    <div class="col-md-8">
+      <p><strong>Seleccione un inventario</strong></p>
     </div>
-    <div class="col">
-      <form-field
-        [control]="inventoryDataForm.get('responsable')"
-        label="Responsable">
-        <input type="text" class="form-control" formControlName="responsable" />
-      </form-field>
-    </div> -->
+    <div class="col-md-4" *ngIf="inventorySelect">
+      <p>
+        Inventario seleccionado:
+        <strong>{{ inventorySelect.inventoryNumber }}</strong>
+      </p>
+    </div>
+  </div>
   <div class="row">
     <div class="col-md-12">
       <div [class]="loading ? 'table-loading' : ''">
-        <ng2-smart-table [settings]="settings" [source]="data">
+        <ng2-smart-table
+          [settings]="settings"
+          [source]="dataLoand"
+          (rowSelect)="selectInventory($event)">
         </ng2-smart-table>
       </div>
     </div>
@@ -44,37 +39,27 @@
 </div>
 <div class="row">
   <div class="col-md-3">
-    <button class="btn btn-secondary btn-sm active" (click)="getAtribute()">
+    <button
+      class="btn btn-primary btn-sm active"
+      (click)="getAtribute()"
+      [disabled]="disableGetAtribute">
       Obtener Atributos
     </button>
   </div>
-  <div class="col">
-    <ng-scrollbar style="height: calc(100vh - 700px)">
-      <div class="css-table" style="width: 100%">
-        <div class="css-table-header">
-          <div style="width: 50%">Atributo</div>
-          <div style="width: 50%">Valor</div>
-        </div>
-
-        <div class="css-table-body">
-          <div class="css-table-row" *ngFor="let item of list">
-            <div style="text-align: end; font-weight: bold">
-              {{ item.atributo }}
-            </div>
-            <div>
-              <input
-                type="text"
-                class="form-control"
-                [value]="item.valor"
-                style="background-color: #afeeee" />
-            </div>
-          </div>
-        </div>
-      </div>
-    </ng-scrollbar>
+  <div class="col" *ngIf="viewAct">
+    <div class="row">
+      <app-good-characteristics-table
+        [goodChange]="goodChange"
+        [clasification]="classificationOfGoods"
+        [settings]="atributActSettings"
+        [avaluo]="false"
+        [good]="good"
+        [disabled]="true"
+        [service]="service"></app-good-characteristics-table>
+    </div>
   </div>
 </div>
-<div class="d-flex justify-content-center">
+<!-- <div class="d-flex justify-content-center">
   <div>
     <button
       class="btn btn-secondary btn-sm active"
@@ -82,5 +67,5 @@
       Inventario Autoridad Emisora
     </button>
   </div>
-</div>
+</div> -->
 <!-- </form> -->

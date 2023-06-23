@@ -21,14 +21,8 @@ import { SharedModule } from 'src/app/shared/shared.module';
   styles: [``],
 })
 export class TableGoodsComponent extends BasePage implements OnInit {
-  @Input()
-  get statusActaValue() {
-    return this._statusActaValue;
-  }
-  set statusActaValue(value: string) {
-    this._statusActaValue = value;
-    this.updateSettingsGoods();
-  }
+  @Input() settingsTable: any;
+  @Input() statusActaValue: string;
   @Input() set page(value: number) {
     // console.log('Nueva Página', value);
 
@@ -41,7 +35,7 @@ export class TableGoodsComponent extends BasePage implements OnInit {
   // _data: any[];
   @Input() data: any[];
   @Input() totalItems: number = 0;
-  @Input() settingsTable: any;
+
   @Output() updateData = new EventEmitter<ListParams>();
   @Output() rowsSelected = new EventEmitter();
   @Output() updateGoodsRow = new EventEmitter();
@@ -59,6 +53,7 @@ export class TableGoodsComponent extends BasePage implements OnInit {
   }
 
   private getPaginated(params: ListParams) {
+    // debugger;
     const cantidad = params.page * params.limit;
     this.datatoShow.load([
       ...this.data.slice(
@@ -67,6 +62,7 @@ export class TableGoodsComponent extends BasePage implements OnInit {
       ),
     ]);
     this.datatoShow.refresh();
+    // this.datatoShow.reset();
   }
 
   ngOnInit(): void {
@@ -113,16 +109,23 @@ export class TableGoodsComponent extends BasePage implements OnInit {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    // console.log(changes);
+    // debugger;
     const data = changes['data'];
-    if (data !== undefined) {
-      this.dataOld = [...data.currentValue];
-      if (this.haveServerPagination === false) {
-        this.getPaginated(this.params.getValue());
+    if (data && !data.firstChange) {
+      if (this.statusActaValue) {
+        this.updateSettingsGoods();
       } else {
-        this.datatoShow.load(data.currentValue);
+        this.fillData(data.currentValue);
       }
-      this.datatoShow.refresh();
+    }
+
+    // if (data.firstChange === false) {
+    //   this.data = changes['data'].currentValue;
+    //   this.updateSettingsGoods();
+    // }
+
+    if (changes['statusActaValue'] && !changes['statusActaValue'].firstChange) {
+      this.updateSettingsGoods();
     }
   }
 
@@ -131,6 +134,18 @@ export class TableGoodsComponent extends BasePage implements OnInit {
     // console.log(event);
     this.updateGoodsRow.emit(event);
     confirm.resolve(newData);
+  }
+
+  private fillData(data = this.data) {
+    if (data && data.length > 0) {
+      this.dataOld = [...data];
+      if (this.haveServerPagination === false) {
+        this.getPaginated(this.params.getValue());
+      } else {
+        this.datatoShow.load(this.data);
+        this.datatoShow.refresh();
+      }
+    }
   }
 
   private updateSettingsGoods(value = this.statusActaValue) {
@@ -143,8 +158,12 @@ export class TableGoodsComponent extends BasePage implements OnInit {
         delete: this.haveDelete && value !== 'CERRADA',
       },
     };
-    if (this.data) {
-      this.data = [...this.data];
-    }
+    console.log(
+      this.settingsTable,
+      this.data,
+      this.haveServerPagination,
+      this.datatoShow
+    );
+    this.fillData();
   }
 }

@@ -32,6 +32,7 @@ export class AssignedVaultsComponent
   ) {
     super();
     this.settings.actions = false;
+    this.settings.hideSubHeader = false;
     this.settings.columns = {
       id: {
         title: 'Bóveda',

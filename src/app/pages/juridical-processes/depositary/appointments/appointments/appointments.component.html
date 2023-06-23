@@ -32,8 +32,8 @@
                 type="button"
                 class="btn btn-danger active btn-sm m-2"
                 (click)="cleanScreenFields()">
-                Limpiar Campos
-                <i class="fa fa-trash ml-1"></i>
+                Limpiar
+                <i class="fa fa-eraser ml-1"></i>
               </button>
             </div>
           </div>
@@ -273,10 +273,10 @@
             </div>
           </div>
         </div> -->
-        <div class="col-sm-12 col-12 col-md-6 p-2">
+        <div class="col-sm-12 col-12 col-md-4 p-2">
           <form-field
             [control]="form.get('depositaria')"
-            label="Depositar&iacute;ia">
+            label="Depositar&iacute;a">
             <input
               class="form-control"
               maxLength="40"
@@ -284,7 +284,7 @@
               [readonly]="true" />
           </form-field>
         </div>
-        <div class="col-sm-10 col-10 col-md-4 p-2">
+        <div class="col-sm-12 col-12 col-md-4 p-2">
           <form-field
             [control]="form.get('representante')"
             label="Representante">
@@ -295,7 +295,21 @@
               [readonly]="true" />
           </form-field>
         </div>
-        <div class="col-sm-2 col-2 col-md-2 p-2 text-center">
+        <div class="col-sm-12 col-12 col-md-4 p-2">
+          <ngx-select
+            [data]="personSelect"
+            bindLabel="nameDesc"
+            label="Cat&aacute;logo Personas"
+            value="id"
+            (change)="changePersonCatalog($event)"
+            (fetchItems)="getPersonCatalog($event)"
+            [form]="form"
+            [showTooltip]="true"
+            [searchOnInit]="true"
+            termMaxLength="100"
+            control="personNumber"></ngx-select>
+        </div>
+        <!-- <div class="col-sm-2 col-2 col-md-2 p-2 text-center">
           <button
             type="button"
             tooltip="Cat&aacute;logo Depositar&iacute;as"
@@ -304,7 +318,7 @@
             (click)="btnCatalogoDepositarias()">
             <i class="bx bx-list-check"></i>
           </button>
-        </div>
+        </div> -->
         <div class="col-sm-12 col-12 col-md-3 p-2">
           <form-field
             [control]="form.get('tipoPersona')"
@@ -394,7 +408,7 @@
             termMaxLength="6"
             control="codigoPostal"></ngx-select>
         </div>
-        <div class="col-sm-12 col-12 col-md-6 p-2">
+        <!-- <div class="col-sm-12 col-12 col-md-6 p-2">
           <ngx-select
             [data]="locality"
             bindLabel="township"
@@ -406,8 +420,17 @@
             [showTooltip]="true"
             termMaxLength="100"
             control="colonia"></ngx-select>
-        </div>
+        </div> -->
         <div class="col-sm-12 col-12 col-md-6 p-2">
+          <form-field [control]="form.get('colonia')" label="Colonia">
+            <input
+              class="form-control"
+              formControlName="colonia"
+              maxLength="100"
+              [readonly]="true" />
+          </form-field>
+        </div>
+        <!-- <div class="col-sm-12 col-12 col-md-6 p-2">
           <ngx-select
             [data]="delegations"
             bindLabel="municipality"
@@ -419,6 +442,17 @@
             [showTooltip]="true"
             termMaxLength="60"
             control="delegacionMunicipio"></ngx-select>
+        </div> -->
+        <div class="col-sm-12 col-12 col-md-6 p-2">
+          <form-field
+            [control]="form.get('delegacionMunicipio')"
+            label="Delegaci&oacute;n&#47;Municipio">
+            <input
+              class="form-control"
+              formControlName="delegacionMunicipio"
+              maxLength="60"
+              [readonly]="true" />
+          </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-6 p-2">
           <ngx-select
@@ -608,6 +642,56 @@
               [readonly]="true"></textarea>
           </form-field>
         </div>
+        <div
+          *ngIf="showScanRadio"
+          class="col-sm-12 col-12 col-md-12 p-2 mb-5 card">
+          <form
+            [formGroup]="formRadioScan"
+            class="container-fluid form-material">
+            <div class="row w-100 pl-4 card-body">
+              <div class="col-sm-12 col-12 col-md-6 col-lg-6 p-2 text-center">
+                <form-radio
+                  label="Folio Acta Depositaria"
+                  for="depositaryFolio">
+                  <input
+                    id="depositaryFolio"
+                    type="radio"
+                    formControlName="scanningFolio"
+                    (change)="changeRadioScan('A')"
+                    value="A" />
+                </form-radio>
+              </div>
+              <div class="col-sm-12 col-12 col-md-6 col-lg-6 p-2 text-center">
+                <form-radio label="Folio Remoci&oacute;n" for="removalFolio">
+                  <input
+                    id="removalFolio"
+                    type="radio"
+                    formControlName="scanningFolio"
+                    (change)="changeRadioScan('R')"
+                    value="R" />
+                </form-radio>
+              </div>
+              <!-- <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2 text-center">
+                <form-radio label="Default" for="defaultFolio">
+                  <input
+                    id="defaultFolio"
+                    type="radio"
+                    formControlName="scanningFolio"
+                    (change)="changeRadioScan('D')"
+                    value="D" />
+                </form-radio>
+              </div> -->
+              <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2 text-center">
+                <button
+                  type="button"
+                  class="btn btn-danger btn-sm active m-1"
+                  (click)="closeRadioScan()">
+                  Cerrar opciones de Escaneo
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
         <!-- <div class="col-sm-12 col-12 col-md-12 P-2">
           <div class="row">
             <div class="col-sm-12 col-12 col-md-5 p-2">
@@ -700,7 +784,16 @@
         <!-- PARTE DE ESCANEO -->
         <div class="col-md-8 col-12 col-sm-12" *ngIf="showScanForm">
           <app-scanning-foil-appointment
-            [formScan]="formScan"></app-scanning-foil-appointment>
+            [formScan]="formScan"
+            [depositaryAppointment]="depositaryAppointment"
+            [goodId]="noBienReadOnly"
+            [dataUserLogged]="dataUserLogged"
+            (scanRequestEmitter)="scanRequest($event)"
+            (showScanningPageEmitter)="showScanningPage($event)"
+            (messageDigitalizationEmitter)="messageDigitalization($event)"
+            (viewPicturesEmitter)="
+              viewPictures($event)
+            "></app-scanning-foil-appointment>
         </div>
         <!-- <div class="col-sm-12 col-12 col-md-8 P-2">
           <div class="row">

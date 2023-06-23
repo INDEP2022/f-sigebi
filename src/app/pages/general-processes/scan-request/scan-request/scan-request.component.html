@@ -9,6 +9,13 @@
           class="btn btn-primary active btn-sm">
           <i class="bx bx-search-alt bx-sm float-icon"></i>
         </button>
+        <button
+          *ngIf="isParams"
+          class="btn btn-primary active btn-sm m-2"
+          (click)="back()">
+          Regresar
+          <i class="fas fa-arrow-circle-left"></i>
+        </button>
       </div>
       <div class="d-inline mx-2" *ngIf="isSearch">
         <div class="btn-group">
@@ -24,20 +31,27 @@
             class="btn btn-primary btn-sm">
             <i class="bx bx-x bx-sm float-icon"></i>
           </button>
+          <button
+            *ngIf="isParams"
+            class="btn btn-primary active btn-sm m-2"
+            (click)="back()">
+            Regresar
+            <i class="fas fa-arrow-circle-left"></i>
+          </button>
         </div>
       </div>
     </div>
   </div>
 
   <div body>
-    <div class="buttons">
+    <!-- <div class="buttons">
       <button
         class="btn btn-secondary btn-sm active mr-2"
         (click)="back()"
         *ngIf="isParams">
         Regresar
       </button>
-    </div>
+    </div> -->
     <form [formGroup]="formNotification" class="form-material">
       <div class="row">
         <form-field

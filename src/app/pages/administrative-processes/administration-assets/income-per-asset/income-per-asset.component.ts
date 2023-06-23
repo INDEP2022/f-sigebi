@@ -38,6 +38,7 @@ export class IncomePerAssetComponent
   ) {
     super();
     this.assetSettings.actions = false;
+    this.assetSettings.hideSubHeader = false;
     this.assetSettings.columns = {
       bank: {
         title: 'Banco',
@@ -86,6 +87,7 @@ export class IncomePerAssetComponent
       },
     };
     this.depositSettings.actions = false;
+    this.depositSettings.hideSubHeader = false;
     this.depositSettings.columns = {
       bank: {
         title: 'Banco',

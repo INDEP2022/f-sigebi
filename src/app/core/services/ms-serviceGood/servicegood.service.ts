@@ -19,4 +19,9 @@ export class ServiceGoodService extends HttpService {
     const route = 'services-x-good';
     return this.get<IListResponse<IServiceGood>>(route, params);
   }
+
+  create(model: IServiceGood): Observable<IServiceGood> {
+    const route = 'services-x-good';
+    return this.post(route, model);
+  }
 }
