@@ -6,57 +6,109 @@
     <div body>
       <div class="row">
         <div class="col-md-3 col-sm-12 col-xs-12">
-          <div class="col-md-full col-sm-12 col-xs-12">
-            <form-field
-              [control]="form.get('legalStatus')"
-              label="Situación Juridica">
+          <form-field
+            [control]="form.get('legalStatus')"
+            label="Situación Juridica">
+            <ng-select
+              formControlName="legalStatus"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false">
+              <ng-option value="null">Seleccione un valor</ng-option>
+              <ng-option value="asegurado">Asegurado</ng-option>
+              <ng-option value="decomisado">Decomisado</ng-option>
+              <ng-option value="abandonado">Abandonado</ng-option>
+            </ng-select>
+          </form-field>
+        </div>
+        <div class="col-md-9 col-sm-12 col-xs-12">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings2"
+            [source]="data">
+          </ng2-smart-table>
+          <app-pagination
+            [params]="params"
+            [totalItems]="totalItems"></app-pagination>
+        </div>
+        <!-- <div class="col-md-full col-sm-12 col-xs-12"> -->
+        <!-- <form-field [control]="form.get('legalStatus')" label="Situación Juridica">
               <select class="form-control" formControlName="legalStatus">
                 <option [value]="null">Seleccione un valor</option>
                 <option value="asegurado">Asegurado</option>
                 <option value="decomisado">Decomisado</option>
                 <option value="abandonado">Abandonado</option>
               </select>
-            </form-field>
-          </div>
-        </div>
-        <div class="col-md-8 col-sm-12 col-xs-12"></div>
+            </form-field> -->
+
+        <!-- </div> -->
       </div>
       <div class="row mt-5">
-        <div class="col-md-4 col-sm-12 col-xs-12">
-          <form-field [control]="form.get('delegation')" label="Delegación">
+        <div class="col-md-3 col-sm-12 col-xs-12">
+          <!-- <form-field [control]="form.get('delegation')" label="Delegación">
             <select class="form-control" formControlName="delegation">
               <option [value]="null">Seleccione un valor</option>
-              <option
-                value="{{ delegation.number }}"
-                *ngFor="let delegation of delegationArray">
+              <option value="{{ delegation.number }}" *ngFor="let delegation of delegationArray">
                 {{ delegation.number }} {{ delegation.description }}
               </option>
             </select>
+          </form-field> -->
+          <form-field [control]="form.get('delegation')">
+            <ngx-select
+              [form]="form"
+              [data]="itemsDelegation"
+              label="Delegación"
+              value="id"
+              bindLabel="description"
+              (fetchItems)="getDelegations($event)"
+              control="delegation">
+            </ngx-select>
           </form-field>
         </div>
-        <div class="col-md-4 col-sm-12 col-xs-12">
-          <form-field [control]="form.get('warehouse')" label="Almacén">
+        <div class="col-md-3 col-sm-12 col-xs-12">
+          <!-- <form-field [control]="form.get('warehouse')" label="Almacén">
             <select class="form-control" formControlName="warehouse">
               <option [value]="null">Seleccione un valor</option>
-              <option
-                value="{{ delegation.number }}"
-                *ngFor="let delegation of warehouseArray">
+              <option value="{{ delegation.number }}" *ngFor="let delegation of warehouseArray">
                 {{ delegation.number }} {{ delegation.description }}
               </option>
             </select>
+          </form-field> -->
+          <form-field [control]="form.get('warehouse')">
+            <ngx-select
+              [form]="form"
+              [data]="itemsAlmacen"
+              label="Almacén"
+              bindLabel="description"
+              value="idWarehouse"
+              (fetchItems)="getAlmacen($event)"
+              control="warehouse">
+            </ngx-select>
           </form-field>
         </div>
-        <div class="col-md-4 col-sm-12 col-xs-12">
-          <form-field [control]="form.get('vault')" label="Bóveda">
+        <div class="col-md-3 col-sm-12 col-xs-12">
+          <!-- <form-field [control]="form.get('vault')" label="Bóveda">
             <select class="form-control" formControlName="vault">
               <option [value]="null">Seleccione un valor</option>
-              <option
-                value="{{ delegation.number }}"
-                *ngFor="let delegation of vaultArray">
+              <option value="{{ delegation.number }}" *ngFor="let delegation of vaultArray">
                 {{ delegation.number }} {{ delegation.description }}
               </option>
             </select>
+          </form-field> -->
+          <form-field [control]="form.get('vault')">
+            <ngx-select
+              [form]="form"
+              [data]="itemsBoveda"
+              label="Bóveda"
+              bindLabel="description"
+              value="idSafe"
+              (fetchItems)="getBoveda($event)"
+              control="vault">
+            </ngx-select>
           </form-field>
+        </div>
+        <div class="col-md-3 col-sm-12 col-xs-12">
+          <button type="button" class="btn btn-info">Ejecutar</button>
         </div>
       </div>
     </div>

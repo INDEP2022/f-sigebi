@@ -2,8 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
+import { SafeService } from 'src/app/core/services/catalogs/safe.service';
+import { WarehouseService } from 'src/app/core/services/catalogs/warehouse.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 export interface Example {
   number: number;
@@ -40,10 +44,39 @@ export class ResquestNumberingChangeComponent
 {
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
+  itemsBoveda = new DefaultSelect();
+  itemsDelegation = new DefaultSelect();
+  itemsAlmacen = new DefaultSelect();
 
   //Data Table
 
   //Data Table final
+  settings2 = {
+    ...this.settings,
+    actions: false,
+    columns: {
+      numberGood: {
+        title: 'Tipo',
+        width: '10%',
+        sort: false,
+      },
+      Subtipo: {
+        title: 'Subtipo',
+        width: '30%',
+        sort: false,
+      },
+      Ssubtipo: {
+        title: 'Ssubtipo',
+        width: '30%',
+        sort: false,
+      },
+      Sssubtipo: {
+        title: 'Sssubtipo',
+        width: '30%',
+        sort: false,
+      },
+    },
+  };
   settings1 = {
     ...this.settings,
     columns: {
@@ -194,7 +227,12 @@ export class ResquestNumberingChangeComponent
     return this.formaplicationData.get('dateAutorized');
   }
 
-  constructor(private fb: FormBuilder) {
+  constructor(
+    private fb: FormBuilder,
+    private safeService: SafeService,
+    private delegationService: DelegationService,
+    private warehouseService: WarehouseService
+  ) {
     super();
     this.settings = {
       ...this.settings,
@@ -257,6 +295,9 @@ export class ResquestNumberingChangeComponent
   ngOnInit(): void {
     this.buildForm();
     this.buildFormaplicationData();
+    this.getBoveda(new ListParams());
+    this.getDelegations(new ListParams());
+    this.getAlmacen(new ListParams());
   }
 
   /**
@@ -264,6 +305,32 @@ export class ResquestNumberingChangeComponent
    * @author:  Alexander Alvarez
    * @since: 27/09/2022
    */
+
+  getBoveda(params: ListParams, id?: string) {
+    if (id) {
+      params['filter.id'] = `$eq:${id}`;
+    }
+    this.safeService.getAll(params).subscribe((data: any) => {
+      this.itemsBoveda = new DefaultSelect(data.data, data.count);
+    });
+  }
+  getDelegations(params: ListParams, id?: string) {
+    if (id) {
+      params['filter.id'] = `$eq:${id}`;
+    }
+    this.delegationService.getAllPaginated(params).subscribe((data: any) => {
+      this.itemsDelegation = new DefaultSelect(data.data, data.count);
+    });
+  }
+  getAlmacen(params: ListParams, id?: string) {
+    if (id) {
+      params['filter.id'] = `$eq:${id}`;
+    }
+    this.warehouseService.getAll(params).subscribe((data: any) => {
+      this.itemsAlmacen = new DefaultSelect(data.data, data.count);
+    });
+  }
+  /////////////////////
 
   private buildForm() {
     this.form = this.fb.group({
