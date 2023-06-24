@@ -57,12 +57,14 @@ export class LegalRegularizationComponent extends BasePage implements OnInit {
     this.status.disable();
     this.description.disable();
     const objetoString = localStorage.getItem('documentLegal');
-    if (objetoString) {
+    const numberFoli = localStorage.getItem('numberFoli');
+    const savedForm = localStorage.getItem('savedForm');
+    if (savedForm) {
+      const change: any = JSON.parse(savedForm);
+      this.form.patchValue(change);
       this.document = JSON.parse(objetoString);
-      console.log(this.document);
       this.redicrectScan = true;
-      this.form.get('numberGood').setValue(this.document.goodNumber);
-      this.numberFoli = this.document.id;
+      this.numberFoli = parseInt(JSON.parse(numberFoli), 10);
       this.loadGood();
     }
   }
@@ -85,13 +87,17 @@ export class LegalRegularizationComponent extends BasePage implements OnInit {
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      folioEscaneo: [null, [Validators.pattern(STRING_PATTERN)]],
     });
   }
 
   loadGood() {
     //2314753
     //5457725
+    console.log('XXXXXXXXXXXXXXXXX');
+    if (this.numberGood.value === null || this.numberGood.value === '') {
+      this.alert('info', 'Infomación', 'Ingrese No. de Bien');
+      return;
+    }
     this.goodServices.getById(this.numberGood.value).subscribe({
       next: (response: any) => {
         console.log(response.data[0]);
@@ -132,7 +138,11 @@ export class LegalRegularizationComponent extends BasePage implements OnInit {
 
   async updateStatus() {
     console.log('Cambiando Staus');
-    if (this.document === undefined) {
+    if (
+      this.numberFoli === undefined ||
+      this.numberFoli === null ||
+      this.numberFoli === ''
+    ) {
       this.alert(
         'info',
         'Información',
@@ -169,7 +179,7 @@ export class LegalRegularizationComponent extends BasePage implements OnInit {
       let valid: boolean = false;
       console.log('entro a Valid');
       this.documnetServices
-        .getByGoodAndScanStatus(this.document.id, this.good.id, 'ESCANEADO')
+        .getByGoodAndScanStatus(this.numberFoli, this.good.id, 'ESCANEADO')
         .subscribe({
           next: response => {
             console.log(response);
@@ -208,10 +218,7 @@ export class LegalRegularizationComponent extends BasePage implements OnInit {
           'Actualizado',
           `El estatus del bien ${this.good.id} se cambio con éxito`
         );
-        this.form.reset();
-        this.numberFoli = '';
-        localStorage.removeItem('documentLegal');
-        this.refresh = true;
+        this.clean();
       },
       error: error => {
         console.log(error);
@@ -222,6 +229,29 @@ export class LegalRegularizationComponent extends BasePage implements OnInit {
 
   clean() {
     this.form.reset();
+    this.numberFoli = null;
+    localStorage.removeItem('savedForm');
+    localStorage.removeItem('documentLegal');
+    localStorage.removeItem('numberFoli');
     this.refresh = true;
+  }
+
+  savedLocal(event: any) {
+    console.log(event);
+    const model = {
+      numberGood: this.numberGood.value,
+      status: this.status.value,
+      description: this.description.value,
+      justifier: this.justifier.value,
+    };
+    localStorage.setItem('savedForm', JSON.stringify(model));
+    localStorage.setItem(
+      'numberFoli',
+      JSON.stringify(
+        this.numberFoli === '' || this.numberFoli === null
+          ? this.document.id
+          : this.numberFoli
+      )
+    );
   }
 }
