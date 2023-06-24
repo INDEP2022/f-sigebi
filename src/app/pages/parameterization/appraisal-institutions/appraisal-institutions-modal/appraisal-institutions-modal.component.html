@@ -12,7 +12,6 @@
             <input
               type="text"
               formControlName="description"
-              placeholder="Apellido Paterno&#44; Materno y Nombre"
               class="form-control" />
           </form-field>
         </div>
@@ -61,20 +60,27 @@
           </form-field>
         </div>
         <div class="col-md-4">
-          <form-field
-            [control]="appraisersForm.get('deleg')"
-            label="Delegaci&oacute;n Municipio">
-            <input type="text" formControlName="deleg" class="form-control" />
+          <form-field [control]="appraisersForm.get('cveEntfed')">
+            <ngx-select
+              label="Entidad Federativa"
+              [form]="appraisersForm"
+              control="cveEntfed"
+              [data]="entfedSelect"
+              value="id"
+              bindLabel="otWorth"
+              (fetchItems)="getEntfed($event)"></ngx-select>
           </form-field>
         </div>
         <div class="col-md-4">
-          <form-field
-            [control]="appraisersForm.get('cveEntfed')"
-            label="Entidad Federativa">
-            <input
-              type="text"
-              formControlName="cveEntfed"
-              class="form-control" />
+          <form-field [control]="appraisersForm.get('deleg')">
+            <ngx-select
+              label="Delegaci&oacute;n Municipio"
+              [form]="appraisersForm"
+              control="deleg"
+              [data]="municipalitySelect"
+              value="nameMunicipality"
+              bindLabel="nameMunicipality"
+              (fetchItems)="getMunicipality($event)"></ngx-select>
           </form-field>
         </div>
       </div>

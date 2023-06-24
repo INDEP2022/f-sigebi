@@ -1,22 +1,23 @@
 export const COLUMNS = {
-  keyServices: {
+  code: {
     title: 'Código',
     type: 'string',
     sort: false,
   },
 
-  descriptionServices: {
+  description: {
     title: 'Descripción',
     type: 'string',
     sort: false,
   },
 
-  typeExpenditure: {
+  subaccount: {
     title: 'Tipo de Gasto',
     type: 'string',
     sort: false,
   },
-  unaffordable: {
+
+  unaffordabilityCriterion: {
     title: 'Incosteables',
     type: 'html',
     valuePrepareFunction: (value: string) => {

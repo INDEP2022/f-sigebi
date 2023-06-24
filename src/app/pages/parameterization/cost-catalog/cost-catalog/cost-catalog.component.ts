@@ -7,8 +7,8 @@ import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { ServiceCatService } from 'src/app/core/services/catalogs/service-cat.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { CostCatalogService } from '../cost-catalog.service';
 import { ModalCostCatalogComponent } from '../modal-cost-catalog/modal-cost-catalog.component';
 import { COLUMNS } from './columns';
 
@@ -27,7 +27,7 @@ export class CostCatalogComponent extends BasePage implements OnInit {
 
   constructor(
     private modalService: BsModalService,
-    private catalogService: CostCatalogService
+    private serviceCatService: ServiceCatService
   ) {
     super();
     this.settings.columns = COLUMNS;
@@ -53,6 +53,27 @@ export class CostCatalogComponent extends BasePage implements OnInit {
             // filter.field == 'id'
             //   ? (searchFilter = SearchFilter.EQ)
             //   : (searchFilter = SearchFilter.ILIKE);
+            field = `filter.${filter.field}`;
+            switch (filter.field) {
+              case 'code':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'description':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'subaccount':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              /*case 'unaffordabilityCriterion':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'cost':
+                searchFilter = SearchFilter.EQ;
+                break;*/
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
@@ -74,8 +95,8 @@ export class CostCatalogComponent extends BasePage implements OnInit {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-    this.catalogService.getCostCatalogparams(params).subscribe({
-      next: (resp: any) => {
+    this.serviceCatService.getAll(params).subscribe({
+      /*next: (resp: any) => {
         if (resp.data) {
           resp.data.forEach((item: any) => {
             this.data1.push({
@@ -87,8 +108,12 @@ export class CostCatalogComponent extends BasePage implements OnInit {
             });
           });
           this.totalItems = resp.count;
-        }
+        }*/
+      next: resp => {
         this.cost = this.data1;
+        this.totalItems = resp.count;
+        this.data.load(resp.data);
+        this.data.refresh();
         this.loading = false;
       },
       error: error => {
@@ -115,10 +140,10 @@ export class CostCatalogComponent extends BasePage implements OnInit {
       '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        this.catalogService.deleteCostCatalog(drawer.keyServices).subscribe({
+        this.serviceCatService.delete(drawer.code).subscribe({
           next: (resp: any) => {
             if (resp) {
-              this.alert('success', 'Eliminado correctamente', '');
+              this.alert('success', 'Catálogo de costo', 'Borrado');
               this.getCostCatalog();
             }
           },

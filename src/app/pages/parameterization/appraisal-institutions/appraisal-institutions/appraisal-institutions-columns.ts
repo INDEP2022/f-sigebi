@@ -39,6 +39,11 @@ export const APPRAISALINSTITUTIONS_COLUMNS = {
     title: 'Representante',
     sort: false,
   },
+  observations: {
+    title: 'Observación',
+    sort: false,
+    type: 'string',
+  },
   curp: {
     title: 'CURP',
     sort: false,

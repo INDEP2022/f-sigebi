@@ -65,7 +65,10 @@ export class NonWorkingDaysModalComponent extends BasePage implements OnInit {
     };
     this.calendarService.create(form).subscribe({
       next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
+      error: error => {
+        this.loading = false;
+        this.onLoadToast('error', error.err.message, '');
+      },
     });
   }
   update() {
@@ -82,7 +85,8 @@ export class NonWorkingDaysModalComponent extends BasePage implements OnInit {
   }
   handleSuccess() {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.onLoadToast('success', this.title, `${message} Correctamente`);
+    this.alert('success', this.title, `${message} Correctamente`);
+    //this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();
