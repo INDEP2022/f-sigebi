@@ -102,7 +102,7 @@ export class StateModalComponent extends BasePage implements OnInit {
   update() {
     this.loading = true;
     this.transferentesSaeService
-      .updateStateForTransferent(this.stateForm.value)
+      .updateStateForTransferent(this.stateForm.value())
       .subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),
