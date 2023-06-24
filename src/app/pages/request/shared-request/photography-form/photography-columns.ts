@@ -6,7 +6,7 @@ export const PHOTOGRAPHY_COLUMNS = {
   },
 
   xidBien: {
-    title: 'No. Gestión',
+    title: 'No. Bien',
     type: 'string',
     sort: false,
   },
