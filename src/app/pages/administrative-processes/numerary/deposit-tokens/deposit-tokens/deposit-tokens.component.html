@@ -5,7 +5,14 @@
   <div body>
     <div class="row">
       <div class="col-md-10"></div>
-      <div class="col-md-2">
+      <div class="col-md-2 text-end">
+        <button
+          type="button"
+          tooltip="Agregar"
+          containerClass="tooltip-style"
+          class="btn btn-info btn-sm active ml-2 mr-2">
+          <i class="bx bx-plus bx-sm float-icon"></i>
+        </button>
         <button class="btn btn-primary btn-sm active" (click)="openForm()">
           Movimientos
         </button>
@@ -22,7 +29,7 @@
             [source]="data1">
           </ng2-smart-table>
         </div>
-        <app-pagination [filterParams]="filter1" [totalItems]="totalItems">
+        <app-pagination [params]="paramsList" [totalItems]="totalItems">
         </app-pagination>
       </div>
     </div>
@@ -74,6 +81,7 @@
               </div>
               <div class="col-md-12 mt-3 text-center">
                 <button
+                  (click)="desconciliarFunc()"
                   style="width: 70%"
                   class="btn btn-secondary btn-sm active">
                   Desconciliar
@@ -117,14 +125,12 @@
           <div class="col-md-3 mt-4">
             <div class="row">
               <div class="col-md-12 mt-3">
-                <form-field [control]="form.get('branch')" label="Sucursal">
+                <form-field [control]="form.get('currency')" label="Moneda">
                   <input
                     readonly
-                    type="number"
+                    type="text"
                     class="form-control"
-                    formControlName="branch"
-                    min="1"
-                    pattern="^[0-9]+" />
+                    formControlName="currency" />
                 </form-field>
               </div>
               <div class="col-md-12 mt-3">
@@ -139,12 +145,14 @@
                 </form-field>
               </div>
               <div class="col-md-12 mt-3">
-                <form-field [control]="form.get('currency')" label="Moneda">
+                <form-field [control]="form.get('branch')" label="Sucursal">
                   <input
                     readonly
-                    type="text"
+                    type="number"
                     class="form-control"
-                    formControlName="currency" />
+                    formControlName="branch"
+                    min="1"
+                    pattern="^[0-9]+" />
                 </form-field>
               </div>
             </div>

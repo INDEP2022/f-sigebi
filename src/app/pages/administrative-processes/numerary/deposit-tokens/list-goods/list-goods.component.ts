@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
@@ -8,19 +8,17 @@ import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
-import { AccountMovementService } from 'src/app/core/services/ms-account-movements/account-movement.service';
+import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { DEPOSIT_TOKENS_MODAL_COLUMNS } from './deposit-tokens-modal-columns';
+import { GOODS_COLUMNS } from './columns';
 
 @Component({
-  selector: 'app-deposit-tokens-modal',
-  templateUrl: './deposit-tokens-modal.component.html',
+  selector: 'app-list-goods',
+  templateUrl: './list-goods.component.html',
   styles: [],
 })
-export class DepositTokensModalComponent extends BasePage implements OnInit {
-  title: string = 'Movimientos';
-  form: FormGroup;
-
+export class ListGoodsComponent extends BasePage implements OnInit {
+  title: string = 'Listado de Bienes';
   data1: LocalDataSource = new LocalDataSource();
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
@@ -31,22 +29,18 @@ export class DepositTokensModalComponent extends BasePage implements OnInit {
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
-    private accountMovementService: AccountMovementService
+    private readonly goodServices: GoodService
   ) {
     super();
     this.settings = {
       ...this.settings,
       hideSubHeader: false,
       actions: false,
-      columns: DEPOSIT_TOKENS_MODAL_COLUMNS,
+      columns: GOODS_COLUMNS,
     };
   }
 
   ngOnInit(): void {
-    if (!this.noCuenta) {
-      return;
-    }
-
     this.data1
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
@@ -61,8 +55,10 @@ export class DepositTokensModalComponent extends BasePage implements OnInit {
 
             //Verificar los datos si la busqueda sera EQ o ILIKE dependiendo el tipo de dato aplicar regla de búsqueda
             const search: any = {
-              numberMotion: () => (searchFilter = SearchFilter.EQ),
-              deposit: () => (searchFilter = SearchFilter.ILIKE),
+              id: () => (searchFilter = SearchFilter.EQ),
+              fileNumber: () => (searchFilter = SearchFilter.ILIKE),
+              goodClassNumber: () => (searchFilter = SearchFilter.EQ),
+              descripcion: () => (searchFilter = SearchFilter.ILIKE),
             };
 
             search[filter.field]();
@@ -75,24 +71,25 @@ export class DepositTokensModalComponent extends BasePage implements OnInit {
           });
           this.paramsList = this.pageFilter(this.paramsList);
           //Su respectivo metodo de busqueda de datos
-          this.getDataMovements();
+          this.getDataGoods();
         }
       });
 
     this.paramsList.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
-      this.getDataMovements();
+      this.getDataGoods();
     });
   }
 
-  getDataMovements() {
+  getDataGoods() {
     this.loading = true;
     let params = {
       ...this.paramsList.getValue(),
       ...this.columnFilters,
     };
-    params['filter.numberAccount'] = `$eq:${this.noCuenta}`;
-    this.accountMovementService.getAllFiltered(params).subscribe({
+    params['filter.goodClassNumber'] = `$eq:1602`;
+    this.goodServices.getByExpedientAndParams__(params).subscribe({
       next: async (response: any) => {
+        console.log('response', response);
         this.data1.load(response.data);
         this.data1.refresh();
         this.totalItems = response.count;
@@ -109,4 +106,11 @@ export class DepositTokensModalComponent extends BasePage implements OnInit {
   close() {
     this.modalRef.hide();
   }
+  goodSelect: any = null;
+  async onCustomAction(event: any) {
+    this.goodSelect = event.data;
+    console.log('data', event);
+  }
+
+  async seleccionarBien() {}
 }
