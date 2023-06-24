@@ -46,6 +46,7 @@ export class ScanningFoilComponent
   @Input() refresh: boolean = false;
   @Input() good: IGood;
   @Output() documentEmmit = new EventEmitter<IDocuments>();
+  @Output() change = new EventEmitter<any>();
 
   loadingText = 'Cargando ...';
   get scanningFoli() {
@@ -66,6 +67,8 @@ export class ScanningFoilComponent
   }
 
   ngOnInit(): void {
+    console.log(this.numberFoli);
+
     this.buildForm();
     this.scanningFoli.setValue(this.numberFoli);
     this.form.disable();
@@ -74,11 +77,12 @@ export class ScanningFoilComponent
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes) {
+      console.log(this.good);
       if (this.refresh) {
         console.log('REFRESHHHH....');
-        this.scanningFoli.setValue(null);
-        this.document = undefined;
-        this.good = undefined;
+        this.scanningFoli.setValue('');
+        /* this.document = undefined;
+        this.good = undefined; */
       }
     }
   }
@@ -92,23 +96,27 @@ export class ScanningFoilComponent
   private buildForm() {
     this.form = this.fb.group({
       scanningFoli: [
-        null,
+        '',
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
     });
   }
   generateFoli() {
-    console.log(this.scanningFoli.value != '', this.scanningFoli.value);
-    if (this.scanningFoli.value != '') {
-      this.onLoadToast(
+    console.log(
+      this.scanningFoli.value != null,
+      this.good,
+      this.scanningFoli.value
+    );
+    if (this.good === null || this.good === undefined) {
+      this.alert('info', 'Información', 'Debe cargar un bien', '');
+      return;
+    }
+    if (this.document !== undefined) {
+      this.alert(
         'info',
         'Información',
         'El número de bien para este proceso ya tiene folio de escaneo.'
       );
-      return;
-    }
-    if (this.good === undefined) {
-      this.onLoadToast('info', 'Información', 'Debe cargar un bien');
       return;
     }
     const documents: IDocuments = {
@@ -148,7 +156,7 @@ export class ScanningFoilComponent
       },
       error: err => {
         console.error(err);
-        this.onLoadToast('error', 'ERROR', err.error.message);
+        this.alert('error', 'ERROR', err.error.message);
       },
     });
   }
@@ -197,10 +205,11 @@ export class ScanningFoilComponent
   }
   scan() {
     if (this.good === undefined) {
-      this.onLoadToast('info', 'Información', 'Debe cargar un bien');
+      this.alert('info', 'Información', 'No existe folio de escaneo', '');
       return;
     }
-    if (this.form.get('scanningFoli').value !== null) {
+    console.log(this.form.get('scanningFoli').value);
+    if (this.form.get('scanningFoli').value !== '') {
       this.alertQuestion(
         'question',
         'Se abrirá la pantalla de escaneo para el folio de escaneo del acta abierta',
@@ -212,11 +221,13 @@ export class ScanningFoilComponent
         }
       });
     } else {
-      this.alert('warning', 'No existe folio de escaneo a escanear', '');
+      this.alert('info', 'Información', 'No existe folio de escaneo', '');
     }
   }
   goToScan() {
-    if (this.document !== null) {
+    this.change.emit('Se hizo el change');
+    if (this.document !== undefined) {
+      this.change.emit('Se hizo el change');
       localStorage.setItem('documentLegal', JSON.stringify(this.document));
     }
     console.log(this.cveScreen);
@@ -229,10 +240,14 @@ export class ScanningFoilComponent
   }
   seeImages() {
     if (this.good === undefined) {
-      this.onLoadToast('info', 'Información', 'Debe cargar un bien');
+      this.alert('info', 'Información', 'No existe folio de escaneo', '');
       return;
     }
-    if (this.form.get('scanningFoli').value != null) {
+    if (this.document !== undefined) {
+      this.change.emit('Se hizo el change');
+      localStorage.setItem('documentLegal', JSON.stringify(this.document));
+    }
+    if (this.form.get('scanningFoli').value !== '') {
       this.documnetServices
         .getByFolio(this.form.get('scanningFoli').value)
         .subscribe(res => {
@@ -257,16 +272,16 @@ export class ScanningFoilComponent
 
   printScanFile() {
     if (this.good === undefined) {
-      this.onLoadToast('info', 'Información', 'Debe cargar un bien');
+      this.alert('info', 'Información', 'No existe folio de escaneo', '');
       return;
     }
-    if (this.form.get('scanningFoli').value !== null) {
+    if (this.form.get('scanningFoli').value !== '') {
       const params = {
         pn_folio: this.form.get('scanningFoli').value,
       };
       this.downloadReport(this.reportPrint, params);
     } else {
-      this.alert('warning', 'No tiene folio de escaneo para imprimir.', '');
+      this.alert('info', 'Información', 'No existe folio de escaneo', '');
     }
   }
 

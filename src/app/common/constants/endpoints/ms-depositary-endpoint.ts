@@ -14,5 +14,5 @@ export enum DepositaryEndPoints {
   DepositaryDedPay = 'ded-pay-depositary',
   DepositaryDetrepo = 'detrepo-depositary',
   InfoDepositary = 'info-depositary',
-  FactJurRegDestLeg = 'depositary-queries/getFactJurRegDestLeg',
+  FactJurRegDestLeg = 'depositary-queries/getFactJurRegDestLegCustom',
 }
