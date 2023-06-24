@@ -39,7 +39,7 @@ export class RackFormComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.form = this.fb.group({
-      id: [null, [Validators.maxLength(2)]],
+      id: [null, [Validators.required, Validators.maxLength(2)]],
       idWarehouse: [null, [Validators.required]],
       idBatch: [null, [Validators.required]],
       description: [
@@ -67,6 +67,8 @@ export class RackFormComponent extends BasePage implements OnInit {
         this.form.controls['idBatch'].value.toString()
       );
       this.form.controls['id'].disable();
+      this.form.controls['idBatch'].disable();
+      this.form.controls['idWarehouse'].disable();
       console.log(this.form);
     }
     this.form.controls['idWarehouse'].disable();

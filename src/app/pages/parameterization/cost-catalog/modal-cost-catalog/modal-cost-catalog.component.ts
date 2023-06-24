@@ -34,7 +34,7 @@ export class ModalCostCatalogComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.form = this.fb.group({
-      keyServices: [
+      code: [
         null,
         [
           Validators.required,
@@ -42,7 +42,7 @@ export class ModalCostCatalogComponent extends BasePage implements OnInit {
           Validators.maxLength(30),
         ],
       ],
-      descriptionServices: [
+      description: [
         null,
         [
           Validators.required,
@@ -50,7 +50,7 @@ export class ModalCostCatalogComponent extends BasePage implements OnInit {
           Validators.maxLength(200),
         ],
       ],
-      typeExpenditure: [
+      subaccount: [
         null,
         [
           Validators.required,
@@ -58,30 +58,26 @@ export class ModalCostCatalogComponent extends BasePage implements OnInit {
           Validators.maxLength(4),
         ],
       ],
-      unaffordable: [null, Validators.maxLength(1)],
+      unaffordabilityCriterion: [null, [Validators.maxLength(1)]],
       cost: [null, [Validators.maxLength(5)]],
-      expenditure: [null],
     });
     if (this.allotment != null) {
       this.edit = true;
       this.form.patchValue(this.allotment);
-      if (this.allotment.cost) {
-        this.form.get('cost').setValue('cost');
-      }
-      if (this.allotment.expenditure) {
-        this.form.get('cost').setValue('expenditure');
-      }
+      this.form.controls['code'].disable();
     }
   }
 
   putCatalog() {
     this.loading = true;
-    const code = this.form.get('keyServices').value;
+    const code = this.form.get('code').value;
     const body = {
-      cost: this.form.get('cost').value === 'cost' ? 'COSTO' : 'GASTO',
-      description: this.form.get('descriptionServices').value,
-      subaccount: this.form.get('typeExpenditure').value,
-      unaffordabilityCriterion: this.form.get('unaffordable').value ? 'Y' : 'N',
+      cost: this.form.get('cost').value,
+      description: this.form.get('description').value,
+      subaccount: this.form.get('subaccount').value,
+      unaffordabilityCriterion: this.form.get('unaffordabilityCriterion').value
+        ? 'Y'
+        : 'N',
     };
     this.catalogService.putCostCatalog(code, body).subscribe({
       next: data => this.handleSuccess(),
@@ -92,11 +88,13 @@ export class ModalCostCatalogComponent extends BasePage implements OnInit {
   postCatalog() {
     this.loading = true;
     const body = {
-      cost: this.form.get('cost').value === 'cost' ? 'COSTO' : 'GASTO',
-      description: this.form.get('descriptionServices').value,
-      code: this.form.get('keyServices').value,
-      subaccount: this.form.get('typeExpenditure').value,
-      unaffordabilityCriterion: this.form.get('unaffordable').value ? 'Y' : 'N',
+      cost: this.form.get('cost').value,
+      description: this.form.get('description').value,
+      code: this.form.get('code').value,
+      subaccount: this.form.get('subaccount').value,
+      unaffordabilityCriterion: this.form.get('unaffordabilityCriterion').value
+        ? 'Y'
+        : 'N',
     };
     this.catalogService.postCostCatalog(body).subscribe({
       next: data => this.handleSuccess(),

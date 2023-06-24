@@ -132,16 +132,16 @@ export class GoodSubtypesListComponent extends BasePage implements OnInit {
   delete(data: any) {
     const ids = {
       id: data.id,
-      idTypeGood: data.idTypeGood.id,
+      idTypeGood: data.idTypeGood,
     };
     this.goodTypesService.removeByIds(ids).subscribe({
       next: () => {
-        this.getExample(), this.alert('success', 'Sub-tipo', 'Borrado');
+        this.getExample(), this.alert('success', 'Subtipo bien', 'Borrado');
       },
       error: err => {
         this.alert(
           'warning',
-          'Sub-tipo',
+          'Subtipo bien',
           'No se puede eliminar el objeto debido a una relación con otra tabla.'
         );
       },

@@ -9,11 +9,7 @@ export const environment = {
   URL_PREFIX: 'api/v1/',
   API_REPORTS_BASE: 'http://reports-dev.indep.gob.mx/jasperserver/',
   API_REPORTS:
-<<<<<<< HEAD
-    'http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/',
-=======
     'http://reports-dev.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/',
->>>>>>> eb1c84655259dcbf1eb016b587ef34365b995831
   API_REPORTS_USR: 'sigebiadmon',
   API_REPORTS_PSW: '87654321',
   API_CONTENT: 'http://sigebimsdev.indep.gob.mx/',

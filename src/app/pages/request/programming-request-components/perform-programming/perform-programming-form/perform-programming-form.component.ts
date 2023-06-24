@@ -75,8 +75,7 @@ import {
 })
 export class PerformProgrammingFormComponent
   extends BasePage
-  implements OnInit
-{
+  implements OnInit {
   goodsInfoTrans: any[] = [];
   goodsInfoGuard: any[] = [];
   goodsInfoWarehouse: any[] = [];
@@ -251,7 +250,7 @@ export class PerformProgrammingFormComponent
       next: response => {
         this.infoTask = response.data[0];
       },
-      error: error => {},
+      error: error => { },
     });
   }
 
@@ -266,7 +265,7 @@ export class PerformProgrammingFormComponent
           this.observationNewWarehouse = response.data[0].nbobservation;
           this.idNewWarehouse = response.data[0].nbidnewstore;
         },
-        error: error => {},
+        error: error => { },
       });
   }
 
@@ -420,7 +419,7 @@ export class PerformProgrammingFormComponent
       config.initialState = {
         programmingId: this.idProgramming,
         regDelData,
-        callback: (next: boolean) => {},
+        callback: (next: boolean) => { },
       };
 
       this.modalService.show(WarehouseFormComponent, config);
@@ -475,7 +474,7 @@ export class PerformProgrammingFormComponent
           }
           this.totalItemsUsers = response.count;
         },
-        error: error => {},
+        error: error => { },
       });
   }
 
@@ -889,7 +888,7 @@ export class PerformProgrammingFormComponent
         });
         this.transferences = new DefaultSelect(data.data, data.count);
       },
-      error: error => {},
+      error: error => { },
     });
   }
 
@@ -952,7 +951,7 @@ export class PerformProgrammingFormComponent
       next: response => {
         this.akaWarehouse = new DefaultSelect(response.data, response.count);
       },
-      error: error => {},
+      error: error => { },
     });
   }
 
@@ -965,7 +964,7 @@ export class PerformProgrammingFormComponent
         this.statesSearch = new DefaultSelect(statesData, response.count);
       },
 
-      error: error => {},
+      error: error => { },
     });
   }
 
@@ -977,7 +976,7 @@ export class PerformProgrammingFormComponent
           response.count
         );
       },
-      error: error => {},
+      error: error => { },
     });
   }
 
@@ -986,7 +985,7 @@ export class PerformProgrammingFormComponent
       next: response => {
         this.localities = new DefaultSelect(response.data, response.count);
       },
-      error: error => {},
+      error: error => { },
     });
   }
 
@@ -1259,7 +1258,7 @@ export class PerformProgrammingFormComponent
             this.goodSelect.map(item => {
               params['filter.id'] = item.googId;
 
-              this.goodService.getAll(params).subscribe(data => {});
+              this.goodService.getAll(params).subscribe(data => { });
             });
           } else {
             const data = this.goodSelect.map(item => {
@@ -1525,7 +1524,7 @@ export class PerformProgrammingFormComponent
     let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
     config.initialState = {
       item,
-      callback: () => {},
+      callback: () => { },
     };
     this.modalService.show(DetailGoodProgrammingFormComponent, config);
   }
@@ -1534,7 +1533,7 @@ export class PerformProgrammingFormComponent
     let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
     config.initialState = {
       item,
-      callback: () => {},
+      callback: () => { },
     };
     this.modalService.show(DomicileFormComponent, config);
   }
@@ -1709,7 +1708,7 @@ export class PerformProgrammingFormComponent
                 this.formLoading = false;
                 this.newTransferent = false;
               },
-              error: error => {},
+              error: error => { },
             });
         }
       }
@@ -1726,7 +1725,7 @@ export class PerformProgrammingFormComponent
         next: () => {
           resolve(true);
         },
-        error: error => {},
+        error: error => { },
       });
     });
   }
@@ -1857,7 +1856,7 @@ export class PerformProgrammingFormComponent
                   this.generateTaskAceptProgramming(folio);
                   this.loading = false;
                 },
-                error: error => {},
+                error: error => { },
               });
           }
         }
@@ -1912,7 +1911,7 @@ export class PerformProgrammingFormComponent
             resolve(folio);
           }
         },
-        error: error => {},
+        error: error => { },
       });
     });
   }
@@ -2100,7 +2099,7 @@ export class PerformProgrammingFormComponent
             this.showGuard(data.data);
             this.showWarehouseGoods(data.data);
           },
-          error: error => {},
+          error: error => { },
         });
 
       if (this.dataProgramming.storeId) {
@@ -2108,7 +2107,7 @@ export class PerformProgrammingFormComponent
           next: response => {
             this.warehouseUbication = response.description;
           },
-          error: error => {},
+          error: error => { },
         });
       }
 
@@ -2121,7 +2120,7 @@ export class PerformProgrammingFormComponent
               const nameAndId = `${response.id} - ${response.nameTransferent}`;
               this.performForm.get('tranferId').setValue(nameAndId);
             },
-            error: error => {},
+            error: error => { },
           });
       }
 
@@ -2133,7 +2132,7 @@ export class PerformProgrammingFormComponent
           const nameAndId = `${response.data[0].id} - ${response.data[0].stationName}`;
           this.performForm.get('stationId').setValue(nameAndId);
         },
-        error: error => {},
+        error: error => { },
       });
 
       this.paramsAuthority.getValue()['filter.idTransferer'] =
@@ -2146,7 +2145,7 @@ export class PerformProgrammingFormComponent
           this.transferentId = this.dataProgramming.tranferId;
           this.getAuthoritySelect(new ListParams());
         },
-        error: error => {},
+        error: error => { },
       });
     }
   }
