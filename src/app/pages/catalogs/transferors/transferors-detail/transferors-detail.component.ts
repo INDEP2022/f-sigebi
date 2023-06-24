@@ -59,7 +59,6 @@ export class TransferorsDetailComponent extends BasePage implements OnInit {
 
   create() {
     this.loading = true;
-
     this.transferentesSaeService
       .createStateForTransferent(this.transferorsStateForm.value)
       .subscribe({

@@ -54,7 +54,7 @@ export class TransferorsListComponent extends BasePage implements OnInit {
     this.settings.columns = TRANSFERENT_STATE_COLUMNS;
     this.settings.actions.delete = false;
     this.settings.actions.add = false;
-    this.settings.actions.edit = true;
+    this.settings.actions.edit = false;
     this.settings.hideSubHeader = false;
 
     this.settings2 = {
