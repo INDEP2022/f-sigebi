@@ -10,7 +10,18 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 @Component({
   selector: 'app-depositary-report',
   templateUrl: './depositary-report.component.html',
-  styles: [],
+  styles: [
+    `
+      #disabled {
+        color: #555 !important;
+        background-color: #eeeeee !important;
+        border-bottom-color: #74788d !important;
+        :hover {
+          cursor: not-allowed;
+        }
+      }
+    `,
+  ],
 })
 export class DepositaryReportComponent extends BasePage implements OnInit {
   depositaryDataForm: FormGroup;

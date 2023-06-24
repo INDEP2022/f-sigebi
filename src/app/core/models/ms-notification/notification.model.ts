@@ -83,6 +83,8 @@ export interface INotification {
   delegation?: null | IDelegation;
   subDelegation?: null | ISubdelegation;
   departament?: null | IDepartment;
+  authority?: any;
+  city?: any;
   numberProperty?: number;
   notificationDate?: any;
   userCorrectsKey?: any;
