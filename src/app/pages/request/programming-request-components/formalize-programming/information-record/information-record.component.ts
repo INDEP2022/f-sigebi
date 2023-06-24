@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
-import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IGeneric } from 'src/app/core/models/catalogs/generic.model';
@@ -12,6 +12,7 @@ import { IReceipyGuardDocument } from 'src/app/core/models/receipt/receipt.model
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { GenericService } from 'src/app/core/services/catalogs/generic.service';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
+import { SignatoriesService } from 'src/app/core/services/ms-electronicfirm/signatories.service';
 import { ProceedingsService } from 'src/app/core/services/ms-proceedings';
 import { ProgrammingGoodService } from 'src/app/core/services/ms-programming-request/programming-good.service';
 import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
@@ -20,7 +21,6 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { EMAIL_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { environment } from 'src/environments/environment';
-import { ShowReportComponentComponent } from '../../execute-reception/show-report-component/show-report-component.component';
 
 @Component({
   selector: 'app-information-record',
@@ -58,17 +58,18 @@ export class InformationRecordComponent extends BasePage implements OnInit {
     private receptionGoodService: ReceptionGoodService,
     private route: ActivatedRoute,
     private proceedingService: ProceedingsService,
-    private transferentService: TransferenteService
+    private transferentService: TransferenteService,
+    private signatoriesService: SignatoriesService
   ) {
     super();
     this.obtenerHoraActual();
-    this.programmingId = this.activatedRoute.snapshot.paramMap.get(
-      'id'
-    ) as unknown as number;
-    this.programmingId = this.route.snapshot.queryParams['programingId'];
+    this.programmingId = Number(
+      this.activatedRoute.snapshot.paramMap.get('id')
+    );
   }
 
   ngOnInit(): void {
+    console.log('programacion', this.programming);
     this.prepareDevileryForm();
     this.getIdentification(new ListParams());
     this.typeTransferent();
@@ -156,6 +157,7 @@ export class InformationRecordComponent extends BasePage implements OnInit {
     });
   }
   confirm() {
+    this.loading = true;
     this.infoForm.value.idPrograming = Number(this.programming.id);
     this.infoForm.value.electronicSignatureWorker1 = this.infoForm.value
       .electronicSignatureWorker1
@@ -182,59 +184,12 @@ export class InformationRecordComponent extends BasePage implements OnInit {
 
     this.proceedingService.updateProceeding(this.infoForm.value).subscribe({
       next: response => {
-        this.processInfoProceeding();
+        this.loading = false;
+        this.modalRef.content.callback(this.proceeding, this.tranType);
+        //this.processInfoProceeding();
       },
       error: error => {},
     });
-  }
-
-  processInfoProceeding() {
-    const params = new BehaviorSubject<ListParams>(new ListParams());
-    let nomReport: string = '';
-    let idTypeDoc: number = 0;
-    params.getValue()['filter.id'] = this.proceeding.id;
-    params.getValue()['filter.idProgramming'] = this.proceeding.programmingId;
-    this.proceedingService.getProceedings(params.getValue()).subscribe({
-      next: response => {
-        /*if (this.tranType == 'A') {
-          nomReport = 'ActaAseguradosBook.jasper';
-          idTypeDoc = 106;
-        } else if (this.tranType == 'NO') {
-          nomReport = 'Acta_VoluntariasBook.jasper';
-          idTypeDoc = 107;
-        } else if (this.tranType == 'CE') {
-          nomReport = 'Acta_SATBook.jasper';
-          idTypeDoc = 210;
-        }
-
-        if (nomReport) {
-          this.loadDocument(nomReport, response.data[0].id, idTypeDoc);
-        } */
-      },
-      error: error => {},
-    });
-  }
-
-  loadDocument(nomReport: string, actId: number, typeDoc: number) {
-    const idTypeDoc = typeDoc;
-    const idProg = this.programming.id;
-    //Modal que genera el reporte
-    let config: ModalOptions = {
-      initialState: {
-        idTypeDoc,
-        idProg,
-        nomReport: nomReport,
-        actId: actId,
-        callback: (next: boolean) => {
-          if (next) {
-            //this.uplodadReceiptDelivery();
-          }
-        },
-      },
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
-    };
-    this.modalService.show(ShowReportComponentComponent, config);
   }
 
   createDocument() {

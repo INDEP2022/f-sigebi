@@ -30,6 +30,10 @@ export class AppointmentsService {
     private msPersonService: PersonService
   ) {}
 
+  getDataDepositaryAppointment(params: ListParams) {
+    return this.msDepositaryService.getAllFilteredFactJurRegDestLeg(params);
+  }
+
   getGoodAppointmentDepositaryByNoGood(params: ListParams) {
     return this.msDepositaryService.getAllFiltered(params);
   }

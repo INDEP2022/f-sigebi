@@ -290,7 +290,6 @@ export class DepositTokensComponent extends BasePage implements OnInit {
       },
     });
   }
-
   openForm(data?: any) {
     const modalConfig = MODAL_CONFIG;
     let noCuenta = null;
