@@ -799,7 +799,10 @@ export class AppointmentsComponent
     this.form
       .get('personNumber')
       .setValue(this.depositaryAppointment.personNumber.id);
+<<<<<<< HEAD
+=======
 
+>>>>>>> c881e16306fd97e96aa0fd53f473d4a3080bc64e
 
     // this.form.get('personNumber').enable();
     this.getPersonCatalog(new ListParams(), true);

@@ -1070,7 +1070,7 @@ export class PerformProgrammingFormComponent
           this.totalItems = this.estatesList.count();
           this.loadingGoods = false;
         } else {
-          this.onLoadToast(
+          this.alert(
             'warning',
             'Advertencía',
             'No hay bienes disponibles para programar'

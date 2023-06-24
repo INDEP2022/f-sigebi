@@ -36,6 +36,7 @@ import { CustomDateFilterComponent } from '../@standalone/shared-forms/filter-da
 import { DatePickerDirective } from './directives/date-picker.directive';
 import { UppercaseDirective } from './directives/uppercase.directive';
 import { GlobalVarsModule } from './global-vars/global-vars.module';
+import { CustomDateFilterComponent } from '../@standalone/shared-forms/filter-date-custom/custom-date-filter';
 
 @NgModule({
   declarations: [
