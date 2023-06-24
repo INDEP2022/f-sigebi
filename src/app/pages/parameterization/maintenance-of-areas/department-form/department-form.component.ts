@@ -31,8 +31,8 @@ export class DepartmentFormComponent extends BasePage implements OnInit {
   idDelegation: IDelegation;
   idSubDelegation: ISubdelegation;
 
-  delegations = new DefaultSelect<IDelegation>();
-  subdelegations = new DefaultSelect<ISubdelegation>();
+  delegations = new DefaultSelect();
+  subdelegations = new DefaultSelect();
 
   phaseEdo: number;
 
@@ -102,11 +102,13 @@ export class DepartmentFormComponent extends BasePage implements OnInit {
       this.edit = true;
       console.log(this.department);
       this.departmentForm.patchValue(this.department);
-      this.idDelegation = this.department
-        .numDelegation as unknown as IDelegation;
+      this.idDelegation = this.department.delegation as unknown as IDelegation;
       this.idSubDelegation = this.department
         .numSubDelegation as unknown as ISubdelegation;
-      this.departmentForm.controls['numDelegation'].setValue(this.idDelegation);
+
+      this.departmentForm.controls['numDelegation'].setValue(
+        this.idDelegation.id
+      );
       this.departmentForm.controls['numSubDelegation'].setValue(
         this.idSubDelegation.id
       );
@@ -114,12 +116,36 @@ export class DepartmentFormComponent extends BasePage implements OnInit {
       this.departmentForm.controls['numSubDelegation'].disable();
       this.departmentForm.controls['id'].disable();
       this.departmentForm.controls['dsarea'].disable();
+
+      console.log('this.department', this.department.delegation.description);
+
+      var descriptioDele = this.department.delegation.description;
+
+      this.getDelegations({
+        page: 1,
+        limit: 10,
+        text: descriptioDele,
+      });
+
+      var descriptioSub = this.department.numSubDelegation.description;
+      this.getSubDelegations({
+        page: 1,
+        limit: 10,
+        text: descriptioSub,
+      });
+    } else {
+      this.getSubDelegations({ page: 1, limit: 10, text: '' });
     }
-    this.getSubDelegations({ page: 1, limit: 10, text: '' });
   }
 
-  getDelegations(params: ListParams) {
-    this.serviceDeleg.getAll(params).subscribe(
+  getDelegations(lparams: ListParams) {
+    const params = new FilterParams();
+    params.page = lparams.page;
+    params.limit = lparams.limit;
+    if (this.delegation.value) {
+      params.addFilter('id', this.delegation.value);
+    }
+    this.serviceDeleg.getAll(params.getParams()).subscribe(
       data => {
         this.delegations = new DefaultSelect(data.data, data.count);
         console.log(data);
@@ -160,6 +186,7 @@ export class DepartmentFormComponent extends BasePage implements OnInit {
     // console.log(params.getParams());
     this.printFlyersService.getSubdelegations(params.getParams()).subscribe({
       next: data => {
+        console.log('ccccccccc', data.data);
         this.subdelegations = new DefaultSelect(data.data, data.count);
       },
       error: err => {

@@ -9,6 +9,12 @@ export const SAT_CLASSIFICATION_COLUMNS = {
     title: 'Nombre Clasificación',
     type: 'string',
     sort: false,
-    width: '70%',
+    width: '60%',
+  },
+  version: {
+    title: 'Versión',
+    type: 'string',
+    sort: false,
+    width: '20%',
   },
 };
