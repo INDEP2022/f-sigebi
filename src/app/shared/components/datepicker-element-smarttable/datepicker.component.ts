@@ -22,9 +22,10 @@ export class DatePickerElementComponent<T = any> implements OnInit {
   @Output() toggle: EventEmitter<{ row: T; toggle: string }> =
     new EventEmitter();
 
-  constructor() {}
+  constructor() { }
 
   ngOnInit(): void {
+
     this.bsValue = this.value;
   }
 

@@ -243,5 +243,7 @@ import { WitnessFormComponent } from './witness-form/witness-form.component';
     GoodsNotTransferredComponent,
     ModalNotTransferredComponent,
   ],
+
 })
-export class SharedRequestModule {}
+export class SharedRequestModule { }
+

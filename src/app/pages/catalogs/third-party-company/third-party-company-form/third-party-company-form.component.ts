@@ -1,14 +1,17 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IThirdPartyCompany } from 'src/app/core/models/catalogs/third-party-company.model';
 import { ThirdPartyService } from 'src/app/core/services/catalogs/third-party-company.service';
+import { ZoneContractService } from 'src/app/core/services/catalogs/zone-contract.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
   KEYGENERATION_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
   selector: 'app-third-party-company-form',
@@ -20,11 +23,13 @@ export class ThirdPartyCompanyFormComponent extends BasePage implements OnInit {
   title = 'EMPRESAS DE TERCEROS';
   edit = false;
   thirdParty: any;
+  itemsZoneContract = new DefaultSelect()
 
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
-    private thirdPartyCompanyService: ThirdPartyService
+    private thirdPartyCompanyService: ThirdPartyService,
+    private zoneContractService: ZoneContractService
   ) {
     super();
   }
@@ -50,7 +55,9 @@ export class ThirdPartyCompanyFormComponent extends BasePage implements OnInit {
     if (this.thirdParty != null) {
       this.edit = true;
       this.thirdPartyCompanyForm.patchValue(this.thirdParty);
+      this.thirdPartyCompanyForm.controls['keyZoneContract'].setValue(this.thirdParty.keyZoneContract.id);
     }
+    this.getZoneContract(new ListParams);
   }
 
   close(): void {
@@ -82,6 +89,14 @@ export class ThirdPartyCompanyFormComponent extends BasePage implements OnInit {
         next: () => this.handleSuccess(),
         error: () => (this.loading = false),
       });
+  }
+  getZoneContract(params: ListParams, id?: string) {
+    if (id) {
+      params['filter.id'] = `$eq:${id}`;
+    }
+    this.zoneContractService.getAll(params).subscribe((data: any) => {
+      this.itemsZoneContract = new DefaultSelect(data.data, data.count);
+    });
   }
 
   handleSuccess(): void {
