@@ -298,9 +298,10 @@
         <div class="col-sm-12 col-12 col-md-4 p-2">
           <ngx-select
             [data]="personSelect"
-            bindLabel="name"
-            label="Autoriza Dictaminaci&oacute;n"
+            bindLabel="nameDesc"
+            label="Cat&aacute;logo Personas"
             value="id"
+            (change)="changePersonCatalog($event)"
             (fetchItems)="getPersonCatalog($event)"
             [form]="form"
             [showTooltip]="true"
@@ -407,7 +408,7 @@
             termMaxLength="6"
             control="codigoPostal"></ngx-select>
         </div>
-        <div class="col-sm-12 col-12 col-md-6 p-2">
+        <!-- <div class="col-sm-12 col-12 col-md-6 p-2">
           <ngx-select
             [data]="locality"
             bindLabel="township"
@@ -419,8 +420,17 @@
             [showTooltip]="true"
             termMaxLength="100"
             control="colonia"></ngx-select>
-        </div>
+        </div> -->
         <div class="col-sm-12 col-12 col-md-6 p-2">
+          <form-field [control]="form.get('colonia')" label="Colonia">
+            <input
+              class="form-control"
+              formControlName="colonia"
+              maxLength="100"
+              [readonly]="true" />
+          </form-field>
+        </div>
+        <!-- <div class="col-sm-12 col-12 col-md-6 p-2">
           <ngx-select
             [data]="delegations"
             bindLabel="municipality"
@@ -432,6 +442,17 @@
             [showTooltip]="true"
             termMaxLength="60"
             control="delegacionMunicipio"></ngx-select>
+        </div> -->
+        <div class="col-sm-12 col-12 col-md-6 p-2">
+          <form-field
+            [control]="form.get('delegacionMunicipio')"
+            label="Delegaci&oacute;n&#47;Municipio">
+            <input
+              class="form-control"
+              formControlName="delegacionMunicipio"
+              maxLength="60"
+              [readonly]="true" />
+          </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-6 p-2">
           <ngx-select
@@ -764,6 +785,9 @@
         <div class="col-md-8 col-12 col-sm-12" *ngIf="showScanForm">
           <app-scanning-foil-appointment
             [formScan]="formScan"
+            [depositaryAppointment]="depositaryAppointment"
+            [goodId]="noBienReadOnly"
+            [dataUserLogged]="dataUserLogged"
             (scanRequestEmitter)="scanRequest($event)"
             (showScanningPageEmitter)="showScanningPage($event)"
             (messageDigitalizationEmitter)="messageDigitalization($event)"

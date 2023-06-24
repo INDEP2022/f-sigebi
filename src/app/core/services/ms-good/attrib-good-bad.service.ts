@@ -2,7 +2,10 @@ import { Injectable } from '@angular/core';
 import { map, Observable } from 'rxjs';
 import { GoodEndpoints } from 'src/app/common/constants/endpoints/ms-good-endpoints';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
-import { IListResponseMessage } from '../../interfaces/list-response.interface';
+import {
+  IListResponseMessage,
+  IResponse,
+} from '../../interfaces/list-response.interface';
 import { IAttribGoodBad } from '../../models/ms-good/good';
 
 @Injectable({
@@ -14,6 +17,12 @@ export class AttribGoodBadService extends HttpService {
   constructor() {
     super();
     this.microservice = GoodEndpoints.Good;
+  }
+
+  getById(id: string) {
+    return this.get<IResponse<IAttribGoodBad>>(
+      GoodEndpoints.AttribGoodBad + '/' + id
+    );
   }
 
   update(model: IAttribGoodBad) {
@@ -28,6 +37,18 @@ export class AttribGoodBadService extends HttpService {
     return this.get<IListResponseMessage<IAttribGoodBad>>(
       GoodEndpoints.AttribGoodBad,
       params
+    ).pipe(
+      map(x => {
+        return {
+          ...x,
+          data: x.data.map(item => {
+            return {
+              ...item,
+              id: item.id.id,
+            };
+          }),
+        };
+      })
     );
   }
 
