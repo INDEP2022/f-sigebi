@@ -2240,7 +2240,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     let banError: boolean = false;
     this.receipts.getElements().then(data => {
       data.map((receipt: IReceipt) => {
-        if (receipt.statusReceipt == 'ABIERTO') {
+        if (receipt?.statusReceipt == 'ABIERTO') {
           message += 'Es necesario tener todos los recibos cerrados';
           banError = true;
         }

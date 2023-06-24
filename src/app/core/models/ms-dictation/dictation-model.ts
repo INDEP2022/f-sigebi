@@ -118,3 +118,17 @@ export interface IPufGenerateKey {
 export interface IPufGenerateKey_response {
   keyOfGestion: string;
 }
+
+export interface IGetSigned {
+  no_of_dicta: string | number;
+  tipo_dictaminacion: string;
+  clave_oficio_armada: string;
+  no_expediente: string | number;
+  fec_dictaminacion: Date;
+  no_volante: string;
+  remitente: string;
+  estatus_of: string;
+  folio_universal: null;
+  firma: string;
+  tipo_volante: string;
+}
