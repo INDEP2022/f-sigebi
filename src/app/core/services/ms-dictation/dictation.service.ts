@@ -8,6 +8,7 @@ import {
   ICopiesOfficeSendDictation,
   IDictation,
   IDictationCopies,
+  IGetSigned,
   IInitFormLegalOpinionOfficeBody,
   IInitFormLegalOpinionOfficeResponse,
   IPufGenerateKey,
@@ -362,6 +363,20 @@ export class DictationService extends HttpService {
     return this.post<IListResponse<any>>(
       DictationEndpoints.ApplicationPupCambiaEstatus,
       params
+    );
+  }
+
+  getSigned(params: ListParams) {
+    return this.get<IListResponse<IGetSigned>>(
+      DictationEndpoints.ApplicationGetFirmados,
+      params
+    );
+  }
+
+  blkControlPrintWhenButtonPressed(model: any) {
+    return this.post<IListResponse<any>>(
+      DictationEndpoints.ApplicationBlkControlPrintWhenButtonPressed,
+      model
     );
   }
 }
