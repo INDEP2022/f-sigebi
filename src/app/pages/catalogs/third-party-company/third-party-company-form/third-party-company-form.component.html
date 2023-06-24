@@ -6,20 +6,39 @@
     <form [formGroup]="thirdPartyCompanyForm" class="form-material">
       <div class="row">
         <div class="col-md-4">
-          <form-field [control]="thirdPartyCompanyForm.get('keyCompany')" label="Clave empresa">
-            <input type="text" class="form-control" formControlName="keyCompany" maxlength="10" />
+          <form-field
+            [control]="thirdPartyCompanyForm.get('keyCompany')"
+            label="Clave empresa">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="keyCompany"
+              maxlength="10" />
           </form-field>
         </div>
         <div class="col-md-12">
-          <form-field [control]="thirdPartyCompanyForm.get('description')" label="Descripci&oacute;n">
-            <textarea class="form-control" type="text" rows="2" formControlName="description" maxlength="100">
+          <form-field
+            [control]="thirdPartyCompanyForm.get('description')"
+            label="Descripci&oacute;n">
+            <textarea
+              class="form-control"
+              type="text"
+              rows="2"
+              formControlName="description"
+              maxlength="100">
             </textarea>
           </form-field>
         </div>
         <div class="col-md-4">
           <form-field [control]="thirdPartyCompanyForm.get('keyZoneContract')">
-            <ngx-select [form]="thirdPartyCompanyForm" [data]="itemsZoneContract" label="Clave zona de contrato"
-              bindLabel="description" value="id" (fetchItems)="getZoneContract($event)" control="keyZoneContract">
+            <ngx-select
+              [form]="thirdPartyCompanyForm"
+              [data]="itemsZoneContract"
+              label="Clave zona de contrato"
+              bindLabel="description"
+              value="id"
+              (fetchItems)="getZoneContract($event)"
+              control="keyZoneContract">
             </ngx-select>
           </form-field>
           <!-- <form-field [control]="thirdPartyCompanyForm.get('keyZoneContract')" label="">
@@ -37,7 +56,10 @@
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <confirm-button [disabled]="thirdPartyCompanyForm.invalid" [loading]="loading" (confirm)="confirm()">
+        <confirm-button
+          [disabled]="thirdPartyCompanyForm.invalid"
+          [loading]="loading"
+          (confirm)="confirm()">
         </confirm-button>
       </div>
       <div class="m-3">

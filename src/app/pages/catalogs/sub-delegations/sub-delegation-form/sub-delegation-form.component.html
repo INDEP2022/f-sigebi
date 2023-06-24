@@ -7,26 +7,42 @@
       <div class="row">
         <div class="col-md-4">
           <form-field [control]="subdelegationForm.get('id')" label="Código">
-            <input type="number" class="form-control" formControlName="id"
+            <input
+              type="number"
+              class="form-control"
+              formControlName="id"
               oninput="if(this.value.length > 2) this.value = this.value.slice(0, 2);" />
           </form-field>
         </div>
 
         <div class="col-md-4">
           <form-field [control]="subdelegationForm.get('delegationNumber')">
-            <ngx-select [form]="subdelegationForm" control="delegationNumber" value="id" bindLabel="description"
-              [data]="delegations" (fetchItems)="getDelegations($event)" label="N&uacute;mero de delegaci&oacute;n"
+            <ngx-select
+              [form]="subdelegationForm"
+              control="delegationNumber"
+              value="id"
+              bindLabel="description"
+              [data]="delegations"
+              (fetchItems)="getDelegations($event)"
+              label="N&uacute;mero de delegaci&oacute;n"
               (change)="onChange($event)">
             </ngx-select>
           </form-field>
         </div>
 
         <div class="col-md-4">
-          <form-field [control]="subdelegationForm.get('dateDailyCon')" label="Fecha">
-            <input class="form-control" ngModel bsDatepicker [bsConfig]="{
-                      dateInputFormat: 'YYYY-MM-DD',
-                      displayOneMonthRange: true
-                    }" formControlName="dateDailyCon" />
+          <form-field
+            [control]="subdelegationForm.get('dateDailyCon')"
+            label="Fecha">
+            <input
+              class="form-control"
+              ngModel
+              bsDatepicker
+              [bsConfig]="{
+                dateInputFormat: 'YYYY-MM-DD',
+                displayOneMonthRange: true
+              }"
+              formControlName="dateDailyCon" />
           </form-field>
           <!-- <form-field [control]="subdelegationForm.get('dateDailyCon')" label="">
             <input class="form-control" type="Date" formControlName="dateDailyCon" />
@@ -34,21 +50,36 @@
         </div>
 
         <div class="col-md-12">
-          <form-field [control]="subdelegationForm.get('description')" label="Descripci&oacute;n">
-            <textarea class="form-control" type="text" formControlName="description">
+          <form-field
+            [control]="subdelegationForm.get('description')"
+            label="Descripci&oacute;n">
+            <textarea
+              class="form-control"
+              type="text"
+              formControlName="description">
             </textarea>
           </form-field>
         </div>
 
         <div class="col-md-4">
-          <form-field [control]="subdelegationForm.get('phaseEdo')" label="Etapa EDO">
-            <input class="form-control" type="number" formControlName="phaseEdo" />
+          <form-field
+            [control]="subdelegationForm.get('phaseEdo')"
+            label="Etapa EDO">
+            <input
+              class="form-control"
+              type="number"
+              formControlName="phaseEdo" />
           </form-field>
         </div>
 
         <div class="col-md-4">
-          <form-field [control]="subdelegationForm.get('dailyConNumber')" label="No&#46; consecutivo diario">
-            <input class="form-control" type="number" formControlName="dailyConNumber" />
+          <form-field
+            [control]="subdelegationForm.get('dailyConNumber')"
+            label="No&#46; consecutivo diario">
+            <input
+              class="form-control"
+              type="number"
+              formControlName="dailyConNumber" />
           </form-field>
         </div>
       </div>
@@ -57,7 +88,10 @@
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <confirm-button [disabled]="subdelegationForm.invalid" [loading]="loading" (confirm)="confirm()">
+        <confirm-button
+          [disabled]="subdelegationForm.invalid"
+          [loading]="loading"
+          (confirm)="confirm()">
         </confirm-button>
       </div>
       <div class="m-3">

@@ -93,7 +93,7 @@ export class SubDelegationFormComponent extends BasePage implements OnInit {
     });
   }
 
-  delegationChange(delegation: IDelegation) { }
+  delegationChange(delegation: IDelegation) {}
 
   close() {
     this.modalRef.hide();

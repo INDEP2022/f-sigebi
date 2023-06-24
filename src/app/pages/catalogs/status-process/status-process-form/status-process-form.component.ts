@@ -33,6 +33,7 @@ export class StatusProcessFormComponent extends BasePage implements OnInit {
   private prepareForm() {
     console.log(this.statusProcess);
     this.statusProcessForm = this.fb.group({
+      id: [null],
       status: [
         null,
         [

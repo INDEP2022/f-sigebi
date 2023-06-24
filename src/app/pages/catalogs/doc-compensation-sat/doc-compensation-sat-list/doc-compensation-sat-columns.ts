@@ -1,6 +1,6 @@
 export const DOCCOMPENSATIONSAT_COLUMS = {
-  id: {
-    title: 'Registro',
+  officeSatId: {
+    title: 'Identificador oficio SAT',
     type: 'number',
     sort: false,
   },
