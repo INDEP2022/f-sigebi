@@ -390,6 +390,7 @@ export class AppointmentsComponent
     this.form.reset();
     this.noBienReadOnly = null;
     this.depositaryAppointment = null;
+    this.depositaryAppointment = null;
   }
 
   toggleRemocion(event: any) {
