@@ -48,29 +48,6 @@ interface NotData {
         overflow-y: auto;
       }
     `,
-    // .table-container {
-    //   overflow-y: auto;
-    //   scrollbar-width: thin; /* Anchura del scroll */
-    //   scrollbar-color: #888888 #f4f4f4; /* Color del scroll */
-    // }
-
-    // .table-container::-webkit-scrollbar {
-    //   width: 6px; /* Anchura del scroll */
-    // }
-
-    // .table-container::-webkit-scrollbar-thumb {
-    //   background-color: #888888; /* Color del scroll */
-    //   border-radius: 3px;
-    // }
-
-    // .table-container::-webkit-scrollbar-thumb:hover {
-    //   background-color: #555555; /* Color del scroll al pasar el mouse */
-    // }
-
-    // .table-container::-webkit-scrollbar-track {
-    //   background-color: #f4f4f4; /* Color de fondo del scroll */
-    // }
-    //
   ],
 })
 export class PaymentClaimProcessComponent extends BasePage implements OnInit {
@@ -615,7 +592,7 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
         this.documnetServices
           .delete(folioUniversalesReplicados[i].id)
           .subscribe({
-            next: response => { },
+            next: response => {},
             error: err => {
               console.log(err);
             },

@@ -80,7 +80,8 @@
         [cveScreen]="cveScreen"
         [reportPrint]="nameReport"
         [refresh]="refresh"
-        (documentEmmit)="changeFoli($event)">
+        (documentEmmit)="changeFoli($event)"
+        (change)="savedLocal($event)">
       </app-scanning-foil>
     </div>
   </div>

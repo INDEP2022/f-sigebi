@@ -27,7 +27,7 @@ export const DETAIL_DELEGATION_COLUMNS = {
     sort: false,
   },
   address: {
-    title: 'dirección',
+    title: 'Dirección',
     type: 'string',
     sort: false,
   },
