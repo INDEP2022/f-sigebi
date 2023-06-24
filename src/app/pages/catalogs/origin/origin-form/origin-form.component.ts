@@ -77,7 +77,7 @@ export class OriginFormComponent extends BasePage implements OnInit {
   update() {
     this.loading = true;
     this.originService
-      .update(this.origin.id, this.form.getRawValue())
+      .update1(this.form.getRawValue())
       .subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),
