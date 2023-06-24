@@ -28,7 +28,6 @@ import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { ITable } from 'src/app/core/models/catalogs/dinamic-tables.model';
 import { ITdescCve } from 'src/app/core/models/ms-parametergood/tdesccve-model';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
-import Swal from 'sweetalert2';
 import { RegisterKeyOneModalComponent } from '../register-key-one-modal/register-key-one-modal.component';
 
 @Component({
@@ -355,9 +354,20 @@ export class RegisterKeysLogicalTablesComponent
   delete(id: number) {
     const idCve = { ...this.descriptionCve };
     this.tdescCveService.remove(id).subscribe({
-      next: () => (
-        Swal.fire('Borrado', '', 'success'), this.getKeys(idCve.table)
-      ),
+      next: () => {
+        const idCve = { ...this.descriptionCve };
+        this.params2
+          .pipe(takeUntil(this.$unSubscribe))
+          .subscribe(() => this.getKeys(idCve.table));
+        this.alert('success', 'Clave para tabla lógica', 'Borrado');
+      },
+      error: err => {
+        this.alert(
+          'warning',
+          'Clave para tabla lógica',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      },
     });
   }
 

@@ -1,19 +1,21 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { map, takeUntil } from 'rxjs';
-import { ITrackedGood } from 'src/app/core/models/ms-good-tracker/tracked-good.model';
-import { GoodTrackerService } from 'src/app/core/services/ms-good-tracker/good-tracker.service';
+import { IViewTmpTracker } from 'src/app/core/models/ms-good-tracker/vtempTracker.model';
+import { GoodViewTrackerService } from 'src/app/core/services/ms-good-tracker/good-v-tracker.service';
 import { BasePageWidhtDinamicFiltersExtra } from 'src/app/core/shared/base-page-dinamic-filters-extra';
 import { COLUMNS } from './columns';
+
 @Component({
   selector: 'app-goods-management-social-table',
   templateUrl: './goods-management-social-table.component.html',
   styleUrls: ['./goods-management-social-table.component.scss'],
 })
 export class GoodsManagementSocialTable
-  extends BasePageWidhtDinamicFiltersExtra<ITrackedGood>
+  extends BasePageWidhtDinamicFiltersExtra<IViewTmpTracker>
   implements OnInit
 {
   private _selectedGoods: number[];
+  @Input() identificator: number;
   @Input()
   get selectedGoods(): number[] {
     return this._selectedGoods;
@@ -30,7 +32,7 @@ export class GoodsManagementSocialTable
     }
   }
   @Input() option: string;
-  constructor(private goodTrackerService: GoodTrackerService) {
+  constructor(private goodTrackerService: GoodViewTrackerService) {
     super();
     this.service = this.goodTrackerService;
     this.haveInitialCharge = false;

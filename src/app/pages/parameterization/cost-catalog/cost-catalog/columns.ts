@@ -16,7 +16,6 @@ export const COLUMNS = {
     type: 'string',
     sort: false,
   },
-
   unaffordabilityCriterion: {
     title: 'Incosteables',
     type: 'html',

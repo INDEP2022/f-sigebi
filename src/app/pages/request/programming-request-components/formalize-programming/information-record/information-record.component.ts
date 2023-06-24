@@ -12,6 +12,7 @@ import { IReceipyGuardDocument } from 'src/app/core/models/receipt/receipt.model
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { GenericService } from 'src/app/core/services/catalogs/generic.service';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
+import { SignatoriesService } from 'src/app/core/services/ms-electronicfirm/signatories.service';
 import { ProceedingsService } from 'src/app/core/services/ms-proceedings';
 import { ProgrammingGoodService } from 'src/app/core/services/ms-programming-request/programming-good.service';
 import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
@@ -58,17 +59,18 @@ export class InformationRecordComponent extends BasePage implements OnInit {
     private receptionGoodService: ReceptionGoodService,
     private route: ActivatedRoute,
     private proceedingService: ProceedingsService,
-    private transferentService: TransferenteService
+    private transferentService: TransferenteService,
+    private signatoriesService: SignatoriesService
   ) {
     super();
     this.obtenerHoraActual();
-    this.programmingId = this.activatedRoute.snapshot.paramMap.get(
-      'id'
-    ) as unknown as number;
-    this.programmingId = this.route.snapshot.queryParams['programingId'];
+    this.programmingId = Number(
+      this.activatedRoute.snapshot.paramMap.get('id')
+    );
   }
 
   ngOnInit(): void {
+    console.log('programacion', this.programming);
     this.prepareDevileryForm();
     this.getIdentification(new ListParams());
     this.typeTransferent();
@@ -156,6 +158,7 @@ export class InformationRecordComponent extends BasePage implements OnInit {
     });
   }
   confirm() {
+    this.loading = true;
     this.infoForm.value.idPrograming = Number(this.programming.id);
     this.infoForm.value.electronicSignatureWorker1 = this.infoForm.value
       .electronicSignatureWorker1
@@ -182,7 +185,9 @@ export class InformationRecordComponent extends BasePage implements OnInit {
 
     this.proceedingService.updateProceeding(this.infoForm.value).subscribe({
       next: response => {
-        this.processInfoProceeding();
+        this.loading = false;
+        this.modalRef.content.callback(this.proceeding, this.tranType);
+        //this.processInfoProceeding();
       },
       error: error => {},
     });
@@ -196,7 +201,88 @@ export class InformationRecordComponent extends BasePage implements OnInit {
     params.getValue()['filter.idProgramming'] = this.proceeding.programmingId;
     this.proceedingService.getProceedings(params.getValue()).subscribe({
       next: response => {
-        /*if (this.tranType == 'A') {
+        const proceeding = response.data[0];
+        //const keyDoc = proceeding.programmingId + '-' + proceeding.actId;
+        const keyDoc: number = this.programming.id;
+        let no_auto: number = 0;
+        let no_electronicF: number = 0;
+        let autog: boolean = false;
+        let elect: boolean = false;
+        let OIC: boolean = false;
+        let uvfv: boolean = false;
+        console.log('proceeding', proceeding);
+        const nomFun1 = proceeding.nameWorker1;
+        const nomFun2 = proceeding.nameWorker2;
+        const nomOic = proceeding.nameWorkerOic;
+        const nomUvfv = proceeding.nameWorkerUvfv;
+        const nomWit1 = proceeding.nameWitness1;
+        const nomWit2 = proceeding.nameWitness2;
+        const firmFun1 = proceeding.electronicSignatureWorker1;
+        const firmFun2 = proceeding.electronicSignatureWorker2;
+        const firmUvfv = proceeding.electronicSignatureUvfv;
+        const firmOic = proceeding.electronicSignatureOic;
+        const firmWit1 = proceeding.electronicSignatureWitness1;
+        const firmWit2 = proceeding.electronicSignatureWitness2;
+
+        if (nomFun1) {
+          if (firmFun1) {
+            no_electronicF++;
+          } else {
+            no_auto++;
+          }
+        }
+
+        if (nomFun2) {
+          if (firmFun2) {
+            no_electronicF++;
+          } else {
+            no_auto++;
+          }
+        }
+
+        if (nomWit1) {
+          if (firmWit1) {
+            no_electronicF++;
+          } else {
+            no_auto++;
+          }
+        }
+
+        if (nomWit2) {
+          if (firmWit2) {
+            no_electronicF++;
+          } else {
+            no_auto++;
+          }
+        }
+
+        if (this.tranType == 'CE') {
+          if (nomOic) {
+            OIC = true;
+            if (firmOic) {
+              no_electronicF++;
+            } else {
+              no_auto++;
+            }
+          }
+
+          if (nomUvfv) {
+            uvfv = true;
+            if (firmUvfv) {
+              no_electronicF++;
+            } else {
+              no_auto++;
+            }
+          }
+        }
+
+        if (no_auto > 0) {
+          autog = true;
+        } else if (no_electronicF > 0) {
+          elect = true;
+        }
+
+        if (this.tranType == 'A') {
           nomReport = 'ActaAseguradosBook.jasper';
           idTypeDoc = 106;
         } else if (this.tranType == 'NO') {
@@ -207,11 +293,166 @@ export class InformationRecordComponent extends BasePage implements OnInit {
           idTypeDoc = 210;
         }
 
-        if (nomReport) {
-          this.loadDocument(nomReport, response.data[0].id, idTypeDoc);
-        } */
+        const learnedType = idTypeDoc;
+        const learnedId = this.programming.id;
+        this.signatoriesService
+          .getSignatoriesFilter(learnedType, learnedId)
+          .subscribe({
+            next: response => {
+              console.log('response', response);
+            },
+            error: async error => {
+              console.log('No hay Firmantes');
+              if (firmFun1) {
+                await this.createFirm(
+                  keyDoc,
+                  idTypeDoc,
+                  proceeding.id,
+                  'ACTAS',
+                  'FIRMA_ELECT_FUN_1',
+                  nomFun1,
+                  proceeding.positionWorker1,
+                  proceeding.idCatWorker1,
+                  proceeding.idNoWorker1
+                );
+              }
+
+              if (firmFun2) {
+                await this.createFirm(
+                  keyDoc,
+                  idTypeDoc,
+                  proceeding.id,
+                  'ACTAS',
+                  'FIRMA_ELECT_FUN_2',
+                  nomFun2,
+                  proceeding.positionWorker2,
+                  proceeding.idCatWorker2,
+                  proceeding.idNoWorker2
+                );
+              }
+
+              if (firmWit1) {
+                await this.createFirm(
+                  keyDoc,
+                  idTypeDoc,
+                  proceeding.id,
+                  'ACTAS',
+                  'FIRMA_ELECT_TEST_1',
+                  nomWit1,
+                  null,
+                  proceeding.idCatWitness1,
+                  proceeding.idNoWitness1
+                );
+              }
+
+              if (firmWit2) {
+                const createSigned = await this.createFirm(
+                  keyDoc,
+                  idTypeDoc,
+                  proceeding.id,
+                  'ACTAS',
+                  'FIRMA_ELECT_TEST_2',
+                  nomWit2,
+                  null,
+                  proceeding.idCatWitness2,
+                  proceeding.idNoWitness2
+                );
+
+                if (createSigned && this.tranType != 'CE') {
+                  console.log('firmantes creados');
+
+                  if (nomReport) {
+                    this.loadDocument(
+                      nomReport,
+                      response.data[0].id,
+                      idTypeDoc
+                    );
+                  }
+                }
+              }
+
+              if (this.tranType == 'CE') {
+                if (OIC) {
+                  if (firmOic) {
+                    await this.createFirm(
+                      keyDoc,
+                      idTypeDoc,
+                      proceeding.id,
+                      'ACTAS',
+                      'FIRMA_ELECT_OIC',
+                      nomOic,
+                      proceeding.positionWorkerOic,
+                      proceeding.idCatWorkerOic,
+                      proceeding.idNoWorkerOic
+                    );
+                  }
+                }
+
+                if (uvfv) {
+                  if (firmUvfv) {
+                    const createsig = await this.createFirm(
+                      keyDoc,
+                      idTypeDoc,
+                      proceeding.id,
+                      'ACTAS',
+                      'FIRMA_ELECT_UVFV',
+                      nomUvfv,
+                      proceeding.positionWorkerUvfv,
+                      null,
+                      null
+                    );
+
+                    if (createsig) {
+                      if (nomReport) {
+                        this.loadDocument(
+                          nomReport,
+                          response.data[0].id,
+                          idTypeDoc
+                        );
+                      }
+                    }
+                  }
+                }
+              }
+            },
+          });
+        //const nomFun1 = proceeding.
       },
       error: error => {},
+    });
+  }
+
+  createFirm(
+    keyDoc: number,
+    idTypeDoc: number,
+    idReg: number,
+    nomTable: string,
+    nomColumn: string,
+    nomPerson: string,
+    chargePerson: string,
+    identification: string,
+    noIdent: string
+  ) {
+    return new Promise((resolve, reject) => {
+      const formData: Object = {
+        learnedId: keyDoc,
+        learnedType: idTypeDoc,
+        recordId: idReg,
+        boardSignatory: nomTable,
+        columnSignatory: nomColumn,
+        name: nomPerson,
+        post: chargePerson,
+        identifierSignatory: identification,
+        IDNumber: noIdent,
+      };
+      console.log('data firmante', formData);
+      this.signatoriesService.create(formData).subscribe({
+        next: response => {
+          console.log('firmantes creados', response);
+          resolve(true);
+        },
+        error: error => {},
+      });
     });
   }
 

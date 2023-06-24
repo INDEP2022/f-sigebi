@@ -26,20 +26,22 @@
         </div>
         <div class="col-md-6">
           <form-field [control]="form.get('validateEf')" label="Validar Ef">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="validateEf" />
+            <select class="form-control" formControlName="validateEf">
+              <option [value]="null">Seleccione un valor</option>
+              <option [value]="'True'">Si</option>
+              <option [value]="'False'">No</option>
+            </select>
           </form-field>
         </div>
       </div>
       <div class="row pt-5">
         <div class="col-md-6">
           <form-field [control]="form.get('validateEc')" label="Validar Ec">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="validateEc" />
+            <select class="form-control" formControlName="validateEc">
+              <option [value]="null">Seleccione un valor</option>
+              <option [value]="'True'">Si</option>
+              <option [value]="'False'">No</option>
+            </select>
           </form-field>
         </div>
         <div class="col-md-6">

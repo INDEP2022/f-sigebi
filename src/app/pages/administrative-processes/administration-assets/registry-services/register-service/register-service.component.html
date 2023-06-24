@@ -1,6 +1,6 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">AGREGAR INVENTARIO</h5>
+    <h5 class="modal-title">AGREGAR SERVICIO</h5>
   </div>
   <div body>
     <form class="form-material" [formGroup]="form">
@@ -10,15 +10,15 @@
           [form]="form"></app-services-shared>
       </div>
       <div class="row">
-        <div class="col-md-4">
-          <form-field [control]="form.get('periodicity')" label="Periocidad">
+        <div class="col-md-6">
+          <form-field [control]="form.get('periodicity')" label="Periodicidad">
             <input
               type="number"
               class="form-control"
               formControlName="periodicity" />
           </form-field>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-6">
           <form-field [control]="form.get('dateCourt')" label="Fecha de Corte">
             <input
               type="text"

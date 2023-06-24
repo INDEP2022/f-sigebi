@@ -35,12 +35,16 @@ export class StateFormComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.stateForm = this.fb.group({
-      id: [null],
+      //id: [null],
       descCondition: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(30),
+        ],
       ],
-      codeCondition: [null, [Validators.required]],
+      codeCondition: [null, [Validators.required, Validators.maxLength(30)]],
       registrationNumber: [null],
       nmtable: [null],
       abbreviation: [null],
@@ -48,11 +52,19 @@ export class StateFormComponent extends BasePage implements OnInit {
       version: [null, [Validators.pattern(POSITVE_NUMBERS_PATTERN)]],
       zoneHourlyStd: [
         null,
-        [Validators.required, Validators.pattern(ZONE_NUMBER_PATTERM)],
+        [
+          Validators.required,
+          Validators.pattern(ZONE_NUMBER_PATTERM),
+          Validators.maxLength(20),
+        ],
       ],
       zoneHourlyVer: [
         null,
-        [Validators.required, Validators.pattern(ZONE_NUMBER_PATTERM)],
+        [
+          Validators.required,
+          Validators.pattern(ZONE_NUMBER_PATTERM),
+          Validators.maxLength(20),
+        ],
       ],
       userCreation: [null],
       creationDate: [null],
@@ -61,7 +73,7 @@ export class StateFormComponent extends BasePage implements OnInit {
     });
     if (this.state != null) {
       this.edit = true;
-      console.log(this.state);
+      //console.log(this.state);
       this.stateForm.patchValue(this.state);
     }
   }
@@ -90,7 +102,7 @@ export class StateFormComponent extends BasePage implements OnInit {
   }
 
   handleSuccess() {
-    const message: string = this.edit ? 'Actualizada' : 'Guardada';
+    const message: string = this.edit ? 'Actualizado' : 'Guardado';
     this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);

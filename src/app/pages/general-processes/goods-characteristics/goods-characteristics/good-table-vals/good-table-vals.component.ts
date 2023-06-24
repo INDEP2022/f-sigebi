@@ -61,7 +61,7 @@ export class GoodTableValsComponent extends BasePage {
           sort: false,
           editable: false,
           valuePrepareFunction: (cell: any, row: any) => {
-            console.log(row, this.good);
+            // console.log(row, this.good);
             return { value: row, good: this.good };
           },
           renderComponent: GoodCharacteristicCellValueComponent,
@@ -78,6 +78,6 @@ export class GoodTableValsComponent extends BasePage {
   }
 
   ngOnInit() {
-    console.log(this.clasification, this.settings, this.avaluo, this.good);
+    // console.log(this.clasification, this.settings, this.avaluo, this.good);
   }
 }

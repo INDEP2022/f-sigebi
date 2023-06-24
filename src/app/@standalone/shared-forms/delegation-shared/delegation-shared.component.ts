@@ -70,7 +70,7 @@ export class DelegationSharedComponent extends BasePage implements OnInit {
     console.log(this.showDelegation);
     if (this.showSubdelegation) {
       this.form.get(this.delegationField).valueChanges.subscribe(res => {
-        const sfield = document.getElementById('sdele');
+        const sfield = document.getElementById('id');
         if (res != null) {
           this.render.removeClass(sfield, 'disabled');
         } else {
@@ -147,6 +147,7 @@ export class DelegationSharedComponent extends BasePage implements OnInit {
   onDelegationsChange(type: any) {
     this.resetFields([this.subdelegation]);
     this.subdelegations = new DefaultSelect();
+    this.getSubDelegations(new ListParams());
     this.emitDelegation.emit(type);
   }
 
@@ -155,6 +156,7 @@ export class DelegationSharedComponent extends BasePage implements OnInit {
     this.delegations = new DefaultSelect();
     // this.delegations = new DefaultSelect([subdelegation.delegation], 1);
     // this.delegation.setValue(subdelegation.delegation.id);
+    console.log(subdelegation);
     this.emitSubdelegation.emit(subdelegation);
   }
 

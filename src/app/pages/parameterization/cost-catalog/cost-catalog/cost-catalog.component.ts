@@ -21,7 +21,6 @@ export class CostCatalogComponent extends BasePage implements OnInit {
   cost: any[] = [];
   data: LocalDataSource = new LocalDataSource();
   columnFilters: any = [];
-  data1: any[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
 
@@ -80,7 +79,6 @@ export class CostCatalogComponent extends BasePage implements OnInit {
               delete this.columnFilters[field];
             }
           });
-          this.params = this.pageFilter(this.params);
           this.getCostCatalog();
         }
       });
@@ -98,19 +96,24 @@ export class CostCatalogComponent extends BasePage implements OnInit {
     this.serviceCatService.getAll(params).subscribe({
       /*next: (resp: any) => {
         if (resp.data) {
-          resp.data.forEach((item: any) => {
-            this.data1.push({
-              keyServices: item.code,
-              descriptionServices: item.description,
-              typeExpenditure: item.subaccount,
-              unaffordable: item.unaffordabilityCriterion,
-              cost: item.cost,
-            });
-          });
+          // resp.data.forEach((item: any) => {
+          //   this.data1.push({
+          //     keyServices: item.code,
+          //     descriptionServices: item.description,
+          //     typeExpenditure: item.subaccount,
+          //     unaffordable: item.unaffordabilityCriterion,
+          //     cost: item.cost,
+          //   });
+          // });
+
+          this.cost = resp.data;
+          this.data.load(this.cost);
+          console.log(this.data);
+          this.data.refresh();
           this.totalItems = resp.count;
         }*/
       next: resp => {
-        this.cost = this.data1;
+        //this.cost = this.data1;
         this.totalItems = resp.count;
         this.data.load(resp.data);
         this.data.refresh();
@@ -127,7 +130,11 @@ export class CostCatalogComponent extends BasePage implements OnInit {
     modalConfig.initialState = {
       allotment,
       callback: (next: boolean) => {
-        if (next) this.getCostCatalog();
+        if (next) {
+          this.params
+            .pipe(takeUntil(this.$unSubscribe))
+            .subscribe(() => this.getCostCatalog());
+        }
       },
     };
     this.modalService.show(ModalCostCatalogComponent, modalConfig);
