@@ -3,28 +3,49 @@ export const COLUMNS = {
     title: 'Proc. Gabin',
     sort: false,
   },
-  asociateExpNumber: {
-    title: 'Expediente',
-    sort: false,
-  },
+
   goodNumber: {
     title: 'Bien',
     sort: false,
   },
-  goodDescription: {
-    title: 'Descripción',
+  fileNumber: {
+    title: 'Expediente',
     sort: false,
   },
-  goodStatus: {
+  downloadLabel: {
+    title: 'Descripción Etiqueta',
+    sort: false,
+  },
+  status: {
     title: 'Estatus',
     sort: false,
   },
-  statusDescription: {
-    title: 'Desc Estatus',
+  downloadStatus: {
+    title: 'Descripción Estatus',
     sort: false,
   },
-  destiny: {
-    title: 'Destino',
+  description: {
+    title: 'Descripción',
+    sort: false,
+  },
+  downloadGuy: {
+    title: 'Tipo',
+    sort: false,
+  },
+  downloadsubtype: {
+    title: 'Subtipo',
+    sort: false,
+  },
+  downloadSsubtype: {
+    title: 'Ssubtipo',
+    sort: false,
+  },
+  downloadsssubtype: {
+    title: 'Sssubtipo',
+    sort: false,
+  },
+  cabinetSocial: {
+    title: 'Gabinete Social',
     sort: false,
   },
 };

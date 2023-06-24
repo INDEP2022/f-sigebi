@@ -35,19 +35,19 @@ export const ESTATE_COLUMNS = {
   },
 
   unitMeasurement: {
-    title: 'Unidad transferente',
+    title: 'Unidad Transferente',
     type: 'string',
     sort: false,
   },
 
   physicalState: {
-    title: 'Estado Físico transferente',
+    title: 'Estado Físico Transferente',
     type: 'string',
     sort: false,
   },
 
   esReprogramming: {
-    title: 'Número reprogramación',
+    title: 'Nº Reprogramación',
     type: 'string',
     sort: false,
   },
@@ -71,7 +71,7 @@ export const ESTATE_COLUMNS = {
   },
 
   code: {
-    title: 'Codigo Postal',
+    title: 'Código Postal',
     type: 'string',
     sort: false,
   },
@@ -131,13 +131,13 @@ export const ESTATE_COLUMNS_VIEW = {
     sort: false,
   },
 
-  physicalStatusName: {
+  physicalStatus: {
     title: 'Estado Físico Transferente',
     type: 'html',
     sort: false,
     valuePrepareFunction: (value: string) => {
       if (value == '1') return 'BUENO';
-      if (value == '0') return 'MALO';
+      if (value == '2') return 'MALO';
       return value;
     },
   },
