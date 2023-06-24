@@ -91,6 +91,8 @@ export class UploadFielsModalComponent extends BasePage implements OnInit {
       this.fileForm.controls['name'].setValue(this.signatories.name);
       this.fileForm.controls['post'].setValue(this.signatories.post);
       this.fileForm.controls['signature'].setValue(this.signatories.signature);
+      this.fileForm.controls['pass'].setValue(this.signatories.pass);
+      this.fileForm.controls['rfcUser'].setValue(this.signatories.rfcUser);
       //this.fileForm.patchValue(this.signatories); //Llenar todo el formulario
     }
 
