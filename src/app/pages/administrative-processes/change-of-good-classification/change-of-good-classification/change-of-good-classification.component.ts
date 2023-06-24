@@ -283,6 +283,28 @@ export class ChangeOfGoodClassificationComponent
     });
   }
 
+  disabledButton() {
+    if (!this.good) return true;
+    if (this.formNew.invalid) return true;
+    if (!this.classificationOfGoods) return true;
+    if (!this.classificationOfGoods.value) return true;
+    if (!this.data) return true;
+    if (this.data.length === 0) return true;
+    let contador = 0;
+    for (let index = 0; index < this.data.length; index++) {
+      const row = this.data[index];
+      if (row.required && !row.value) {
+        contador++;
+        index = this.data.length;
+        return true;
+      }
+    }
+    if (contador > 0) {
+      return true;
+    }
+    return false;
+  }
+
   async loadGood() {
     this.loading = true;
     // this.listAtributAct = [];

@@ -59,7 +59,9 @@
             </button>
           </div>
           <div class="p-2">
-            <button class="btn btn-secondary btn-sm active">
+            <button
+              (click)="backStep()"
+              class="btn btn-secondary btn-sm active">
               <i class="bx bx-left-arrow-alt"></i> Anterior Paso
             </button>
           </div>
@@ -98,7 +100,9 @@
               </app-pagination>
             </div>
           </div>
-          <span>Complete la información de los firmantes</span>
+          <span *ngIf="showButtonFirm == false"
+            >Complete la información de los firmantes</span
+          >
         </div>
       </div>
     </div>

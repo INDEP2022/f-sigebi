@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
-import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IGeneric } from 'src/app/core/models/catalogs/generic.model';
@@ -21,7 +21,6 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { EMAIL_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { environment } from 'src/environments/environment';
-import { ShowReportComponentComponent } from '../../execute-reception/show-report-component/show-report-component.component';
 
 @Component({
   selector: 'app-information-record',
@@ -64,13 +63,13 @@ export class InformationRecordComponent extends BasePage implements OnInit {
   ) {
     super();
     this.obtenerHoraActual();
-    this.programmingId = this.activatedRoute.snapshot.paramMap.get(
-      'id'
-    ) as unknown as number;
-    this.programmingId = this.route.snapshot.queryParams['programingId'];
+    this.programmingId = Number(
+      this.activatedRoute.snapshot.paramMap.get('id')
+    );
   }
 
   ngOnInit(): void {
+    console.log('programacion', this.programming);
     this.prepareDevileryForm();
     this.getIdentification(new ListParams());
     this.typeTransferent();
@@ -158,6 +157,7 @@ export class InformationRecordComponent extends BasePage implements OnInit {
     });
   }
   confirm() {
+    this.loading = true;
     this.infoForm.value.idPrograming = Number(this.programming.id);
     this.infoForm.value.electronicSignatureWorker1 = this.infoForm.value
       .electronicSignatureWorker1
@@ -184,154 +184,12 @@ export class InformationRecordComponent extends BasePage implements OnInit {
 
     this.proceedingService.updateProceeding(this.infoForm.value).subscribe({
       next: response => {
-        this.processInfoProceeding();
+        this.loading = false;
+        this.modalRef.content.callback(this.proceeding, this.tranType);
+        //this.processInfoProceeding();
       },
       error: error => {},
     });
-  }
-
-  processInfoProceeding() {
-    const params = new BehaviorSubject<ListParams>(new ListParams());
-    let nomReport: string = '';
-    let idTypeDoc: number = 0;
-    params.getValue()['filter.id'] = this.proceeding.id;
-    params.getValue()['filter.idProgramming'] = this.proceeding.programmingId;
-    this.proceedingService.getProceedings(params.getValue()).subscribe({
-      next: response => {
-        const proceeding = response.data[0];
-        const keyDoc = proceeding.programmingId + '-' + proceeding.actId;
-        let no_auto: number = 0;
-        let no_electronicF: number = 0;
-        let autog: boolean = false;
-        let elect: boolean = false;
-        let OIC: boolean = false;
-        let uvfv: boolean = false;
-        console.log('proceeding', proceeding);
-        const nomFun1 = proceeding.nameWorker1;
-        const nomFun2 = proceeding.nameWorker2;
-        const nomOic = proceeding.nameWorkerOic;
-        const nomUvfv = proceeding.nameWorkerUvfv;
-        const nomWit1 = proceeding.nameWitness1;
-        const nomWit2 = proceeding.nameWitness2;
-        const firmFun1 = proceeding.electronicSignatureWorker1;
-        const firmFun2 = proceeding.electronicSignatureWorker2;
-        const firmUvfv = proceeding.electronicSignatureUvfv;
-        const firmOic = proceeding.electronicSignatureOic;
-        const firmWit1 = proceeding.electronicSignatureWitness1;
-        const firmWit2 = proceeding.electronicSignatureWitness2;
-
-        if (nomFun1) {
-          if (firmFun1) {
-            no_electronicF++;
-          } else {
-            no_auto++;
-          }
-        }
-
-        if (nomFun2) {
-          if (firmFun2) {
-            no_electronicF++;
-          } else {
-            no_auto++;
-          }
-        }
-
-        if (nomWit1) {
-          if (firmWit1) {
-            no_electronicF++;
-          } else {
-            no_auto++;
-          }
-        }
-
-        if (nomWit2) {
-          if (firmWit2) {
-            no_electronicF++;
-          } else {
-            no_auto++;
-          }
-        }
-
-        if (this.tranType == 'CE') {
-          if (nomOic) {
-            OIC = true;
-            if (firmOic) {
-              no_electronicF++;
-            } else {
-              no_auto++;
-            }
-          }
-
-          if (nomUvfv) {
-            uvfv = true;
-            if (firmUvfv) {
-              no_electronicF++;
-            } else {
-              no_auto++;
-            }
-          }
-        }
-
-        if (no_auto > 0) {
-          autog = true;
-        } else if (no_electronicF > 0) {
-          elect = true;
-        }
-
-        if (this.tranType == 'A') {
-          nomReport = 'ActaAseguradosBook.jasper';
-          idTypeDoc = 106;
-        } else if (this.tranType == 'NO') {
-          nomReport = 'Acta_VoluntariasBook.jasper';
-          idTypeDoc = 107;
-        } else if (this.tranType == 'CE') {
-          nomReport = 'Acta_SATBook.jasper';
-          idTypeDoc = 210;
-        }
-
-        const learnedType = idTypeDoc;
-        const learnedId = this.programming.id;
-        this.signatoriesService
-          .getSignatoriesFilter(learnedType, learnedId)
-          .subscribe({
-            next: response => {
-              console.log('response', response);
-            },
-            error: error => {
-              console.log('No hay Firmantes');
-            },
-          });
-        //const nomFun1 = proceeding.
-        /*
-
-        if (nomReport) {
-          this.loadDocument(nomReport, response.data[0].id, idTypeDoc);
-        } */
-      },
-      error: error => {},
-    });
-  }
-
-  loadDocument(nomReport: string, actId: number, typeDoc: number) {
-    const idTypeDoc = typeDoc;
-    const idProg = this.programming.id;
-    //Modal que genera el reporte
-    let config: ModalOptions = {
-      initialState: {
-        idTypeDoc,
-        idProg,
-        nomReport: nomReport,
-        actId: actId,
-        callback: (next: boolean) => {
-          if (next) {
-            //this.uplodadReceiptDelivery();
-          }
-        },
-      },
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
-    };
-    this.modalService.show(ShowReportComponentComponent, config);
   }
 
   createDocument() {

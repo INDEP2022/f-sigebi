@@ -33,6 +33,7 @@ export class WarehouseConfirmComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
+    console.log('store', this.store);
   }
 
   prepareForm() {
@@ -68,7 +69,8 @@ export class WarehouseConfirmComponent extends BasePage implements OnInit {
             responsibleDelegation: this.store.wildebeestDelegationregion,
           };
 
-          this.warehouseService.create(warehouseForm).subscribe({
+          console.log('warehouseForm', warehouseForm);
+          /*this.warehouseService.create(warehouseForm).subscribe({
             next: async response => {
               const openTaskPerform = await this.openTaskPerform();
               if (openTaskPerform == true) {
@@ -82,7 +84,7 @@ export class WarehouseConfirmComponent extends BasePage implements OnInit {
               }
             },
             error: error => {},
-          });
+          }); */
         }
       }
     });

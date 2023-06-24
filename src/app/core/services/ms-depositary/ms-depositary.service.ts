@@ -32,6 +32,13 @@ export class MsDepositaryService extends HttpService {
     );
   }
 
+  create(body: Partial<IAppointmentDepositary>) {
+    return this.post<IListResponse<IAppointmentDepositary>>(
+      DepositaryEndPoints.DepositaryAppointment,
+      body
+    );
+  }
+
   update(body: Partial<IAppointmentDepositary>) {
     return this.put<IListResponse<IAppointmentDepositary>>(
       DepositaryEndPoints.DepositaryAppointment,
@@ -152,6 +159,15 @@ export class MsDepositaryService extends HttpService {
     return this.put<IListResponse<IInfoDepositary>>(
       DepositaryEndPoints.InfoDepositary,
       model
+    );
+  }
+
+  getAllFilteredFactJurRegDestLeg(
+    params?: _Params
+  ): Observable<IListResponse<IAppointmentDepositary>> {
+    return this.get<IListResponse<IAppointmentDepositary>>(
+      DepositaryEndPoints.FactJurRegDestLeg,
+      params
     );
   }
 }

@@ -117,10 +117,9 @@ export class MassiveGoodService extends HttpService {
     return this.post<IListResponse<NumDetGood>>(this.route.FileCSV, formData);
   }
 
-  getBanVal(status:string){
-    const route = `application/act-bdc-change-status`
-    return this.get(`${route}/${status}`)
-
+  getBanVal(status: string) {
+    const route = `application/act-bdc-change-status`;
+    return this.get(`${route}/${status}`);
   }
 
   getFProRecPag2CSV(params: any, file: any) {
