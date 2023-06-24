@@ -39,8 +39,6 @@ export class UploadFileComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log('programming', this.programming);
-    console.log('process', this.process);
     this.idGood = this.data;
     if (this.idRequest) this.infoRequest();
     this.obtainDate();
@@ -82,7 +80,7 @@ export class UploadFileComponent extends BasePage implements OnInit {
             xidBien: this.idGood,
             xnombreProceso: 'Ejecutar Recepcion',
           };
-          console.log('img', formData);
+
           const contentType = 'img';
           const docName = `IMG_${this.date}${contentType}`;
 
@@ -95,7 +93,6 @@ export class UploadFileComponent extends BasePage implements OnInit {
             )
             .subscribe({
               next: data => {
-                console.log('creadp', data);
                 this.bsModalRef.content.callBack(true);
                 this.close();
               },
