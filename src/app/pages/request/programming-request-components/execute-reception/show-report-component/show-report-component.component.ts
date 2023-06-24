@@ -450,6 +450,5 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
     this.listSigns = false;
     this.isAttachDoc = false;
     this.printReport = true;
-    this.signatories = [];
   }
 }
