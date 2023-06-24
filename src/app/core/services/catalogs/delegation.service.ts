@@ -31,7 +31,7 @@ export class DelegationService
     this.microservice = DelegationsEndpoints.BasePage;
   }
 
-  getAll(params?: ListParams): Observable<IListResponse<IDelegation>> {
+  getAll(params?: ListParams | string): Observable<IListResponse<IDelegation>> {
     return this.delegationRepository.getAll(this.route, params);
   }
 

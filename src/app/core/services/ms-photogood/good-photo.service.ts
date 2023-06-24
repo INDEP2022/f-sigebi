@@ -24,4 +24,8 @@ export class GoodPhotoService extends HttpService {
   getFilterGoodPhoto(params: any) {
     return this.get<IListResponse<any>>(`good-photo`, params);
   }
+
+  save(body: IGoodPhoto) {
+    return this.post(PhotoGoodEndpoints.BienFoto, body);
+  }
 }

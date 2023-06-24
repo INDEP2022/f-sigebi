@@ -154,10 +154,11 @@ export class InformationRecordComponent extends BasePage implements OnInit {
         console.log('acta', response);
         this.infoForm.patchValue(response.data[0]);
       },
-      error: error => { },
+      error: error => {},
     });
   }
   confirm() {
+    this.loading = true;
     this.infoForm.value.idPrograming = Number(this.programming.id);
     this.infoForm.value.electronicSignatureWorker1 = this.infoForm.value
       .electronicSignatureWorker1
@@ -184,9 +185,11 @@ export class InformationRecordComponent extends BasePage implements OnInit {
 
     this.proceedingService.updateProceeding(this.infoForm.value).subscribe({
       next: response => {
-        this.processInfoProceeding();
+        this.loading = false;
+        this.modalRef.content.callback(this.proceeding, this.tranType);
+        //this.processInfoProceeding();
       },
-      error: error => { },
+      error: error => {},
     });
   }
 
@@ -415,7 +418,7 @@ export class InformationRecordComponent extends BasePage implements OnInit {
           });
         //const nomFun1 = proceeding.
       },
-      error: error => { },
+      error: error => {},
     });
   }
 
@@ -448,11 +451,10 @@ export class InformationRecordComponent extends BasePage implements OnInit {
           console.log('firmantes creados', response);
           resolve(true);
         },
-        error: error => { },
+        error: error => {},
       });
     });
   }
-
 
   loadDocument(nomReport: string, actId: number, typeDoc: number) {
     const idTypeDoc = typeDoc;
@@ -505,7 +507,7 @@ export class InformationRecordComponent extends BasePage implements OnInit {
         //this.wContentService.addDocumentToContent();
         console.log('modelReport', modelReport);
       },
-      error: error => { },
+      error: error => {},
     });
   }
   close() {
@@ -519,7 +521,7 @@ export class InformationRecordComponent extends BasePage implements OnInit {
         console.log('response', response);
         this.identifications = new DefaultSelect(response.data, response.count);
       },
-      error: error => { },
+      error: error => {},
     });
   }
 }

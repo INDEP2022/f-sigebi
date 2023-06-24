@@ -100,7 +100,9 @@
               </app-pagination>
             </div>
           </div>
-          <span>Complete la información de los firmantes</span>
+          <span *ngIf="showButtonFirm == false"
+            >Complete la información de los firmantes</span
+          >
         </div>
       </div>
     </div>
