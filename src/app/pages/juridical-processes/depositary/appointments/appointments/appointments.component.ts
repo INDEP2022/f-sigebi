@@ -56,7 +56,8 @@ import { RELATED_FOLIO_COLUMNS } from './columns';
 })
 export class AppointmentsComponent
   extends BasePage
-  implements OnInit, OnDestroy {
+  implements OnInit, OnDestroy
+{
   items = new DefaultSelect<Example>();
   params = new BehaviorSubject<FilterParams>(new FilterParams());
   public form: FormGroup;
@@ -642,8 +643,8 @@ export class AppointmentsComponent
               'warning',
               'Verificar el Número de Bien',
               'El No. de Bien ' +
-              this.noBien +
-              ' no existe ó el estatus para depositarias no es el adecuado.'
+                this.noBien +
+                ' no existe ó el estatus para depositarias no es el adecuado.'
             );
           }
         },
@@ -653,8 +654,8 @@ export class AppointmentsComponent
             'warning',
             'Verificar el Número de Bien',
             'El No. de Bien ' +
-            this.noBien +
-            ' no existe ó el estatus para depositarias no es el adecuado.'
+              this.noBien +
+              ' no existe ó el estatus para depositarias no es el adecuado.'
           );
         },
       });
@@ -767,7 +768,7 @@ export class AppointmentsComponent
     }
   }
 
-  validPostGetDepositary() { }
+  validPostGetDepositary() {}
 
   setDataDepositary() {
     this.showScanForm = false; // Ocultar parte de escaneo
@@ -799,11 +800,6 @@ export class AppointmentsComponent
     this.form
       .get('personNumber')
       .setValue(this.depositaryAppointment.personNumber.id);
-<<<<<<< HEAD
-=======
-
->>>>>>> c881e16306fd97e96aa0fd53f473d4a3080bc64e
-
     // this.form.get('personNumber').enable();
     this.getPersonCatalog(new ListParams(), true);
     this.form.get('depositaria').setValue(
@@ -1505,7 +1501,7 @@ export class AppointmentsComponent
                 urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
                 type: 'pdf',
               },
-              callback: (data: any) => { },
+              callback: (data: any) => {},
             }, //pasar datos por aca
             class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
             ignoreBackdropClick: true, //ignora el click fuera del modal
