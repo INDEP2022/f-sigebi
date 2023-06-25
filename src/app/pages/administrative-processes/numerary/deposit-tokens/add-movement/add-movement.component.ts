@@ -31,6 +31,7 @@ export class AddMovementComponent extends BasePage implements OnInit {
   form: FormGroup;
   banks = new DefaultSelect<any>();
   categories = new DefaultSelect<any>();
+  maxDate = new Date();
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
@@ -51,7 +52,8 @@ export class AddMovementComponent extends BasePage implements OnInit {
       accountType: [null, Validators.nullValidator],
       currency: [null, Validators.nullValidator],
       square: [null, Validators.nullValidator],
-      description: [null, Validators.nullValidator],
+      dateCalculationInterests: [null, Validators.nullValidator],
+      dateMovement: [null, Validators.nullValidator],
       category: [null, Validators.nullValidator],
       balanceOf: [null, Validators.nullValidator],
       balanceAt: [null, Validators.nullValidator],
@@ -79,6 +81,10 @@ export class AddMovementComponent extends BasePage implements OnInit {
         this.loading = false;
       },
     });
+  }
+  dateMovem: Date;
+  dateMovement(event: any) {
+    this.dateMovem = event.target.value;
   }
   close() {
     this.modalRef.hide();
