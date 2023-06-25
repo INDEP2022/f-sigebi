@@ -10,8 +10,8 @@
     </div>
   </div>
   <div body>
-    <div class="col-12 mt-3 mb-3">
-      <form class="form-material mt-4" [formGroup]="form">
+    <div class="col-12 mb-3">
+      <form class="form-material" [formGroup]="form">
         <div class="row">
           <div class="col-6 mt-4">
             <div class="row">
@@ -29,49 +29,39 @@
                     termMaxLength="30">
                   </ngx-select>
                 </form-field>
-                <!-- <form-field [control]="form.get('bank')" label="Banco">
-                                    <input readonly type="text" class="form-control" formControlName="bank" />
-                                </form-field> -->
               </div>
               <div class="col-md-12 mt-3">
-                <form-field [control]="form.get('account')" label="Cuenta">
+                <form-field
+                  [control]="form.get('dateMovement')"
+                  label="Fecha de Movimiento">
                   <input
-                    readonly
-                    type="number"
+                    (change)="dateMovement($event)"
+                    bsDatepicker
+                    [maxDate]="maxDate"
+                    type="text"
                     class="form-control"
-                    formControlName="account"
-                    min="1"
-                    pattern="^[0-9]+" />
+                    formControlName="dateMovement" />
                 </form-field>
               </div>
               <div class="col-md-12 mt-3">
-                <form-field [control]="form.get('square')" label="Plaza">
+                <form-field
+                  [control]="form.get('dateCalculationInterests')"
+                  label="Cuenta">
                   <input
+                    bsDatepicker
+                    [minDate]="dateMovem"
                     readonly
-                    type="text"
+                    type="number"
                     class="form-control"
-                    formControlName="square" />
+                    formControlName="dateCalculationInterests"
+                    min="1"
+                    pattern="^[0-9]+" />
                 </form-field>
               </div>
             </div>
           </div>
           <div class="col-md-6 mt-4">
             <div class="row">
-              <div class="col-md-12 mt-3">
-                <form-field [control]="form.get('currency')" label="Moneda">
-                  <input
-                    readonly
-                    type="text"
-                    class="form-control"
-                    formControlName="currency" />
-                </form-field>
-              </div>
-              <div class="col-md-12 mt-3">
-                <!-- <form-field [control]="form.get('branch')" label="Sucursal">
-                                    <input readonly type="number" class="form-control" formControlName="branch" min="1"
-                                        pattern="^[0-9]+" />
-                                </form-field> -->
-              </div>
               <div class="col-md-12 mt-3">
                 <form-field [control]="form.get('category')">
                   <ngx-select
@@ -86,8 +76,20 @@
                     termMaxLength="30">
                   </ngx-select>
                 </form-field>
-                <!-- <form-field [control]="form.get('category')" label="Tipo de cuenta">
-                                    <input readonly type="text" class="form-control" formControlName="category" />
+              </div>
+              <div class="col-md-12 mt-3">
+                <form-field [control]="form.get('currency')" label="Moneda">
+                  <input
+                    readonly
+                    type="text"
+                    class="form-control"
+                    formControlName="currency" />
+                </form-field>
+              </div>
+              <div class="col-md-12 mt-3">
+                <!-- <form-field [control]="form.get('branch')" label="Sucursal">
+                                    <input readonly type="number" class="form-control" formControlName="branch" min="1"
+                                        pattern="^[0-9]+" />
                                 </form-field> -->
               </div>
             </div>
