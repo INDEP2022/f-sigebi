@@ -248,11 +248,11 @@ export class NewDocumentComponent extends BasePage implements OnInit {
         ddocCreator: this.userLogName,
         xidcProfile: 'NSBDB_Gral',
         xidSolicitud: this.idRequest,
-        xidTransferente: this.idTransferent,
-        xdelegacionRegional: this.regionalDelId,
+        xidTransferente: this.programming.tranferId,
+        xdelegacionRegional: this.programming.regionalDelegationNumber,
         xnivelRegistroNSBDB: 'bien',
         xidBien: this.idGood,
-        xestado: this.stateId,
+        xestado: this.programming.stateKey,
         xfolioProgramacion: this.programming.folio,
         xnoProgramacion: this.programming.id,
         xtipoDocumento: this.newDocForm.get('docType').value,
@@ -295,7 +295,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
         xnoOficoNotificacion: this.newDocForm.get('noOfNotification').value,
         xnoRegistro: this.newDocForm.get('noRegistro').value,
       };
-
+      console.log('spiterman', formData);
       const extension = '.pdf';
       const docName = this.newDocForm.get('docTit').value;
 

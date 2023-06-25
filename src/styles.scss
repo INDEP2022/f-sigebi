@@ -616,13 +616,23 @@ ng-scrollbar.table-scrollbar {
 
 #fichas table:not(.normal-hover) tbody tr.selected {
   color: black !important;
-  font-weight: 600;
+  // font-weight: 600;
   // #28a745
   background: rgb(219, 219, 219) !important;
 }
 
 #fichas table:not(.normal-hover) tbody tr:hover {
   color: black !important;
-  font-weight: 600;
+  // font-weight: 600;
   background: rgb(219, 219, 219) !important;
+}
+
+.text-no-approved {
+  font-weight: 400;
+  color: crimson !important;
+}
+
+.text-approved {
+  font-weight: 400;
+  color: #1e7e34 !important;
 }

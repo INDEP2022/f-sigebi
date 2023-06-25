@@ -42,7 +42,7 @@
       </div>
       <div class="row pt-4">
         <div class="col-md-12">
-          <form-field [control]="newDocForm.get('docFile')" label="Carga">
+          <form-field [control]="newDocForm.get('docFile')" label="Documento">
             <input
               type="file"
               class="form-control"
@@ -92,6 +92,14 @@
       <div class="row pt-4">
         <div class="col-md-6">
           <p for="">
+            <span *ngIf="typeDoc === 'good'">No&#46; SIAB&#58;</span>
+            <span *ngIf="typeDoc === 'good'"></span>
+          </p>
+        </div>
+      </div>
+      <div class="row pt-4">
+        <div class="col-md-6">
+          <p for="">
             Delegaci&oacute;n Regional&#58;
             <span *ngIf="regDelName">{{ regDelName }}</span>
           </p>
@@ -117,6 +125,19 @@
         <div class="col-md-6">
           <p for="">
             Transferente&#58; <span>{{ nameTransferent }}</span>
+          </p>
+        </div>
+      </div>
+
+      <div class="row pt-4" *ngIf="process == 'programming'">
+        <div class="col-md-6">
+          <p for="">
+            No. Programación <span>{{ programming?.id }}</span>
+          </p>
+        </div>
+        <div class="col-md-6">
+          <p for="">
+            Folio Programación <span>{{ programming?.folio }}</span>
           </p>
         </div>
       </div>
