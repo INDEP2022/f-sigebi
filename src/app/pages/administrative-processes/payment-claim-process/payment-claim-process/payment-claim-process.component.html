@@ -4,30 +4,6 @@
   </div>
   <div body>
     <div class="row">
-      <div class="col-6">
-        <div
-          class="row pt-3 pb-3"
-          style="border-bottom: 1px solid rgba(0, 0, 0, 0.1)">
-          <div class="col-6">
-            <span style="color: crimson; font-weight: 500"
-              >Número de registros NO cargados &nbsp;&nbsp;
-              <strong *ngIf="dataD == 0" style="color: crimson">0</strong>
-              <strong *ngIf="dataD != 0" style="color: crimson">{{
-                dataD
-              }}</strong>
-            </span>
-          </div>
-          <div class="col-6">
-            <span style="color: #1e7e34; font-weight: 500"
-              >Número de registros cargados &nbsp;&nbsp;
-              <strong *ngIf="dataA == 0" style="color: #1e7e34">0</strong>
-              <strong *ngIf="dataA != 0" style="color: #1e7e34">{{
-                dataA
-              }}</strong>
-            </span>
-          </div>
-        </div>
-      </div>
       <div class="body">
         <div [class]="loading ? 'table-loading' : ''">
           <ng2-smart-table
@@ -50,6 +26,28 @@
         </div>
       </div>
       <div class="row">
+        <div class="col-8 mt-3 mb-3">
+          <div class="row pt-3 pb-3">
+            <div class="col-6">
+              <span style="color: #1e7e34; font-weight: 500"
+                >Número de registros cargados &nbsp;&nbsp;
+                <strong *ngIf="dataA == 0" style="color: #1e7e34">0</strong>
+                <strong *ngIf="dataA != 0" style="color: #1e7e34">{{
+                  dataA
+                }}</strong>
+              </span>
+            </div>
+            <div class="col-6">
+              <span style="color: crimson; font-weight: 500"
+                >Número de registros NO cargados &nbsp;&nbsp;
+                <strong *ngIf="dataD == 0" style="color: crimson">0</strong>
+                <strong *ngIf="dataD != 0" style="color: crimson">{{
+                  dataD
+                }}</strong>
+              </span>
+            </div>
+          </div>
+        </div>
         <div class="col-md-8 col-sm-12 col-xs-12">
           <div class="d-flex justify-content-beetwen">
             <div class="m-3">
