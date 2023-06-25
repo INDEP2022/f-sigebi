@@ -14,6 +14,7 @@ import { DynamicCatalogsService } from 'src/app/core/services/dynamic-catalogs/d
 import { AccountMovementService } from 'src/app/core/services/ms-account-movements/account-movement.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { AddMovementComponent } from '../add-movement/add-movement.component';
 import { CustomdbclickComponent } from '../customdbclick/customdbclick.component';
 import { DepositTokensModalComponent } from '../deposit-tokens-modal/deposit-tokens-modal.component';
 @Component({
@@ -371,5 +372,21 @@ export class DepositTokensComponent extends BasePage implements OnInit {
   miFuncion() {
     this.getAccount();
     // console.log('Función ejecutada desde el componente hijo');
+  }
+
+  addMovement() {
+    let data = 1;
+    this.openFormAdd(data);
+  }
+
+  openFormAdd(data?: any) {
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      data,
+      callback: (next: boolean) => {
+        console.log('AQUI', next);
+      },
+    };
+    this.modalService.show(AddMovementComponent, modalConfig);
   }
 }
