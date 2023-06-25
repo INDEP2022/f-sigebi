@@ -111,10 +111,7 @@ export class FinancialInformationComponent extends BasePage implements OnInit {
         this.finantialList = response.data;
         // console.log(this.finantialList);
         this.finantialList.forEach(date => {
-          this.date = this.datePipe.transform(
-            date.idInfoDate,
-            'dd-MM-yyyy h:mm a'
-          );
+          this.date = this.datePipe.transform(date.idInfoDate, 'dd/MM/yyyy');
         });
         this.searchGoods(idGood);
         this.form.controls['date'].setValue(this.date);

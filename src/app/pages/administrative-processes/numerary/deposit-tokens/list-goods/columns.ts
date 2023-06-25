@@ -1,16 +1,16 @@
 export const GOODS_COLUMNS = {
-  id: {
+  no_bien: {
     title: 'No. Bien',
     type: 'string',
     sort: false,
   },
-  fileNumber: {
+  no_expediente: {
     title: 'No. Expediente',
     type: 'string',
     sort: false,
   },
-  goodClassNumber: {
-    title: 'No. Clasif. Bien',
+  averiguacion_previa: {
+    title: 'Aver. Previa',
     type: 'string',
     sort: false,
   },
