@@ -1,1 +1,104 @@
-<p>add-movement works!</p>
+<app-modal>
+  <div class="w-100 mt-3" header>
+    <div class="d-flex flex-wrap justify-content-between aling-items-center">
+      <h5 class="modal-title">{{ title }}</h5>
+      <div class="buttons">
+        <button class="btn btn-primary active btn-sm ml-3" (click)="close()">
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </div>
+  <div body>
+    <div class="col-12 mt-3 mb-3">
+      <form class="form-material mt-4" [formGroup]="form">
+        <div class="row">
+          <div class="col-6 mt-4">
+            <div class="row">
+              <div class="col-md-12 mt-3">
+                <form-field [control]="form.get('bank')">
+                  <ngx-select
+                    [form]="form"
+                    [data]="banks"
+                    (fetchItems)="getBanks($event)"
+                    bindLabel="cveBank"
+                    control="bank"
+                    label="Banco"
+                    [searchOnInit]="false"
+                    [showTooltip]="true"
+                    termMaxLength="30">
+                  </ngx-select>
+                </form-field>
+                <!-- <form-field [control]="form.get('bank')" label="Banco">
+                                    <input readonly type="text" class="form-control" formControlName="bank" />
+                                </form-field> -->
+              </div>
+              <div class="col-md-12 mt-3">
+                <form-field [control]="form.get('account')" label="Cuenta">
+                  <input
+                    readonly
+                    type="number"
+                    class="form-control"
+                    formControlName="account"
+                    min="1"
+                    pattern="^[0-9]+" />
+                </form-field>
+              </div>
+              <div class="col-md-12 mt-3">
+                <form-field [control]="form.get('square')" label="Plaza">
+                  <input
+                    readonly
+                    type="text"
+                    class="form-control"
+                    formControlName="square" />
+                </form-field>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6 mt-4">
+            <div class="row">
+              <div class="col-md-12 mt-3">
+                <form-field [control]="form.get('currency')" label="Moneda">
+                  <input
+                    readonly
+                    type="text"
+                    class="form-control"
+                    formControlName="currency" />
+                </form-field>
+              </div>
+              <div class="col-md-12 mt-3">
+                <!-- <form-field [control]="form.get('branch')" label="Sucursal">
+                                    <input readonly type="number" class="form-control" formControlName="branch" min="1"
+                                        pattern="^[0-9]+" />
+                                </form-field> -->
+              </div>
+              <div class="col-md-12 mt-3">
+                <form-field [control]="form.get('category')">
+                  <ngx-select
+                    [form]="form"
+                    [data]="categories"
+                    (fetchItems)="getCategory($event)"
+                    bindLabel="categoryAndDesc"
+                    control="bank"
+                    label="Categoria"
+                    [searchOnInit]="false"
+                    [showTooltip]="true"
+                    termMaxLength="30">
+                  </ngx-select>
+                </form-field>
+                <!-- <form-field [control]="form.get('category')" label="Tipo de cuenta">
+                                    <input readonly type="text" class="form-control" formControlName="category" />
+                                </form-field> -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="col-md-12 mt-4 text-center">
+      <button class="btn btn-primary btn-sm active" (click)="close()">
+        Guardar
+      </button>
+    </div>
+  </div>
+</app-modal>

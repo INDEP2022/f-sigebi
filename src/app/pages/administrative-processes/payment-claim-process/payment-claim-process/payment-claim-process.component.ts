@@ -238,12 +238,15 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
         ...this.columnFilters,
       };
       this.document = null;
+      if (filter != 'no') {
+        this.cambiarValor();
+      }
       // this.cambiarValor()
       console.log('SU');
-      this.massiveGoodService.getFProRecPag2CSV(params, binaryExcel).subscribe({
-        next: (response: any) => {
-          console.log('SI112', response);
-          this.totalItems = response.countA;
+      this.massiveGoodService.getFProRecPag2CSV(params, binaryExcel).subscribe(
+        (response: any) => {
+          console.log('SI112', response.message);
+          this.totalItems = response.countA + response.countD;
 
           let result = response.data.map(async (good: any) => {
             if (good.approved) {
@@ -277,7 +280,7 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
             this.loading = false;
           });
         },
-        error: err => {
+        error => {
           this.data.load([]);
           // this.totalItems = 0;
           this.loading = false;
@@ -285,8 +288,8 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
             this.alert('error', 'No hay datos disponibles', '');
           }
           // this.onLoadToast('warning', 'No hay datos disponibles', '');
-        },
-      });
+        }
+      );
 
       return;
     } catch (error) {
@@ -338,11 +341,11 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
         },
       });
     });
-    this.onLoadToast(
-      'success',
-      'Actualizado',
-      'Se ha cambiado el status de los bienes seleccionados'
-    );
+    // this.onLoadToast(
+    //   'success',
+    //   'Actualizado',
+    //   'Se ha cambiado el status de los bienes seleccionados'
+    // );
     this.addStatus();
     this.showStatus = true;
   }
@@ -366,11 +369,11 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
         },
       });
     });
-    this.onLoadToast(
-      'success',
-      'Se ha actualizado el motivo de cambio de los bienes seleccionados',
-      ''
-    );
+    // this.onLoadToast(
+    //   'success',
+    //   'Se ha actualizado el motivo de cambio de los bienes seleccionados',
+    //   ''
+    // );
     this.addStatus();
     this.showStatus = true;
   }
@@ -525,7 +528,11 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
         this.change2();
         this.cambiarValor();
         this.document = null;
-        this.alert('success', 'Se ha eliminado correctamente el folio', '');
+        this.alert(
+          'success',
+          'Se ha actualizado el motivo de cambio de los bienes seleccionados y eliminado el folio anterior',
+          ''
+        );
       },
       error: err => {
         if (err.error.message == 'Este registro no existe!') {
