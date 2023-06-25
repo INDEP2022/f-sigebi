@@ -5,20 +5,9 @@
   <div body>
     <form class="form-material" [formGroup]="form">
       <div class="row">
-        <!--Goods Types Component-->
-        <!-- <app-goods-types-shared [form]="form" [types]="types" [subTypeShow]="false" [ssubTypeShow]="false"
-            [sssubTypeShow]="false">
-          </app-goods-types-shared> -->
-        <!-- <form-field [control]="form.get('type')" label="Tipo bien" class="col-md-2">
-            <select class="form-control" formControlName="type">
-              <option value=0>Seleccione un tipo de Bien</option>
-              <option [value]="data.id" *ngFor="let data of googList">{{data.nameGoodType}}
-              </option>
-            </select>
-          </form-field> -->
         <div class="col-md-4">
-          <form-field [control]="form.get('type')" label="No Bien">
-            <input type="text" class="form-control" formControlName="type" />
+          <form-field [control]="form.get('type')" label="No. Bien">
+            <input type="number" formControlName="type" class="form-control" />
           </form-field>
         </div>
 
@@ -87,22 +76,23 @@
     </form>
   </div>
   <br /><br /><br /><br />
+
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <confirm-button
-          text="Imprimir"
-          [disabled]="form.invalid"
-          [loading]="loading"
-          (confirm)="confirm()">
-        </confirm-button>
+        <button
+          type="button"
+          class="btn btn-primary active btn-sm"
+          (click)="confirm()">
+          Imprimir <i class="bx bx-printer bx-sm float-icon"></i>
+        </button>
       </div>
       <div class="m-3">
         <button
           type="button"
-          class="btn btn-danger active"
+          class="btn btn-danger active btn-sm"
           (click)="cleanForm()">
-          Limpiar
+          Limpiar <i class="fas fa-eraser bx-sm float-icon"></i>
         </button>
       </div>
     </div>
