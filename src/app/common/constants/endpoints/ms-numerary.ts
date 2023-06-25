@@ -8,4 +8,5 @@ export enum NumeraryEndpoints {
   RequestEnc = 'requests-nume-enc',
   RequestDet = 'requests-nume-det',
   RequestEncFilter = 'requests-nume-enc/getAllRequest',
+  NumeraryCategories = 'numerary-categories',
 }

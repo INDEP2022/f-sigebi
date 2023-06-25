@@ -8,7 +8,9 @@
     <div class="justify-content-end" *ngIf="!formLoading">
       <div class="m-3 btn-toolbar">
         <button class="btn btn-primary btn-sm active">Notificar</button>
-        <button class="btn btn-danger btn-sm active">Cancelar</button>
+        <button (click)="backTask()" class="btn btn-danger btn-sm active">
+          Cancelar
+        </button>
       </div>
     </div>
   </div>
