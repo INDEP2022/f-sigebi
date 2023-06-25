@@ -156,6 +156,7 @@ export class PerformProgrammingFormComponent
   idNewWarehouse: number = 0;
   dateValidate: any;
   infoTask: ITask;
+  goodsProgCopy: IGoodProgramming[] = [];
   settingsTransportableGoods = { ...this.settings, ...settingTransGoods };
   settingUser = { ...this.settings, ...SettingUserTable };
   settingGuardGoods = {
@@ -517,14 +518,15 @@ export class PerformProgrammingFormComponent
     }
 
     if (municipality && !colony && !akaWarehouse && !postalCode && !state) {
-      const filterColumns: Object = {
+      console.log('goodsProgCopy', this.goodsProgCopy);
+      /*const filterColumns: Object = {
         regionalDelegation: Number(this.regionalDelegationUser.id),
         transferent: Number(this.transferentId),
         relevantType: Number(this.idTypeRelevant),
         statusGood: 'APROBADO',
         municipality: municipality,
       };
-      this.searchProgGoods(filterColumns);
+      this.searchProgGoods(filterColumns); */
     }
 
     if (municipality && colony && !akaWarehouse && !postalCode && !state) {
@@ -1039,9 +1041,10 @@ export class PerformProgrammingFormComponent
               return items;
             }
           });
-
+          console.log('goodsFilter', goodsFilter);
+          this.goodsProgCopy = goodsFilter;
           this.filterGoodsProgramming(goodsFilter);
-          this.loadingGoods = false;
+          //this.loadingGoods = false;
         },
         error: error => (this.loadingGoods = false),
       });
