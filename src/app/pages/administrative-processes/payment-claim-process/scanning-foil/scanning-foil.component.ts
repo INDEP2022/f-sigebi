@@ -289,6 +289,7 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
         },
         error: err => {
           console.log(err);
+          this.documentEmmit.emit(null);
           // this.folioEscaneoNg = '';
         },
       });
@@ -296,6 +297,6 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
   goodData: any = null;
   cargarData(binaryExcel: any) {
     this.goodData = binaryExcel;
-    console.log('this.goodData', this.goodData);
+    // console.log('this.goodData', this.goodData);
   }
 }
