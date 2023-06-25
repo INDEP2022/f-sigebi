@@ -1,31 +1,20 @@
-// This file can be replaced during build by using the `fileReplacements` array.
-// `ng build` replaces `environment.ts` with `environment.prod.ts`.
-// The list of file replacements can be found in `angular.json`.
+declare const window: any;
 
 export const environment = {
   production: false,
-  API_URL: 'http://sigebimsqa.indep.gob.mx/', //'http://localhost:3000/api/v1/',
-  API_URL2: 'http://sigebimsqa.indep.gob.mx/',
-  URL_PREFIX: 'api/v1/',
-  API_REPORTS_BASE: 'http://reports-dev.indep.gob.mx/jasperserver/',
-  API_REPORTS:
-    'http://reports-qa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/',
-  API_REPORTS_USR: 'sigebiadmon',
-  API_REPORTS_PSW: '87654321',
-  API_CONTENT: 'http://sigebimsqa.indep.gob.mx/',
-  api_external_token:
-    'http://52.142.23.169/realms/indep/protocol/openid-connect/token',
-  api_external_userInfo:
-    'http://52.142.23.169/realms/indep/protocol/openid-connect/userinfo',
-  api_external_typeUser: 'http://168.61.50.112:3003/api/v1/user/userType/',
-  api_external_rolesUser: 'http://168.61.50.112:3003/api/v1/user/roles',
-};
+  API_URL: window.env.API_BACKEND_URL,
+  API_URL2: window.env.API_BACKEND_URL2,
+  API_CONTENT: window.env.API_CONTENT,
+  URL_PREFIX: window.env.URL_PREFIX,
 
-/*
- * For easier debugging in development mode, you can import the following file
- * to ignore zone related error stack frames such as `zone.run`, `zoneDelegate.invokeTask`.
- *
- * This import should be commented out in production mode because it will have a negative impact
- * on performance if an error is thrown.
- */
-// import 'zone.js/plugins/zone-error';  // Included with Angular CLI.
+  API_REPORTS_BASE: window.env.API_REPORTS_BASE,
+  API_REPORTS: window.env.API_REPORTS,
+  API_REPORTS_USR: window.env.API_REPORTS_USR,
+  API_REPORTS_PSW: window.env.API_REPORTS_PSW,
+
+  api_external_token: window.env.api_external_token,
+  api_external_userInfo: window.env.api_external_userInfo,
+  api_external_typeUser: window.env.api_external_typeUser,
+  api_external_rolesUser: window.env.api_external_rolesUser,
+
+};
