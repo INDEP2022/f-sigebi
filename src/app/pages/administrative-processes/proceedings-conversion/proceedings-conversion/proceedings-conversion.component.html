@@ -1,14 +1,32 @@
 <app-card [header]="true">
   <div class="ch-content" header>
     <div class="col-md-5">
-      <h5 class="title">DETALLE DE ACTAS DE CONVERSIÓN</h5>
+      <h5 class="title">ACTAS DE CONVERSIÓN</h5>
     </div>
-    <div class="buttons d-flex">
-      <div>
-        <!-- <button (click)="getAll()" class="btn btn-primary btn-sm active">
-          Todos los registros <i class="fa fa-search ml-2"></i>
-        </button> -->
+    <div class="d-flex justify-content-between">
+      <div class="d-inline mr-2">
+        Fec&#46; de Elaboración:
+        <span
+          class="badge bg-info ml-3 mr-3"
+          style="display: initial !important">
+          {{ fCreate || '00/00/0000' }}
+        </span>
+        / Estatus:
+        <span
+          class="badge bg-info ml-3 mr-3"
+          style="display: initial !important">
+          {{ statusConv || '-----' }}
+        </span>
+        <button class="btn btn-primary active btn-sm m-2" (click)="goBack()">
+          Regresar
+          <i class="fas fa-arrow-circle-left"></i>
+        </button>
       </div>
+      <!-- <div class="d-inline mr-2">
+        <button (click)="openDialogSelectedManagement()" type="button" class="btn btn-primary active btn-sm">
+          <i class="bx bx-list-plus bx-sm float-icon"></i>
+        </button>
+      </div> -->
     </div>
   </div>
 
@@ -20,264 +38,58 @@
             <div accordion-heading class="d-flex justify-content-between">
               <div>
                 <h5>
-                  <i class="fa fa-filter" aria-hidden="true"></i>
-                  Mostrar Filtros
+                  <i class="fa fa-copy" aria-hidden="true"></i>
+                  Conversión
                 </h5>
               </div>
+
               <div></div>
             </div>
             <form
               [formGroup]="proceedingsConversionForm"
               class="form-material"
               (ngSubmit)="searchProcs()">
-              <div class="row">
-                <div class="col-md-3">
-                  <form-field
-                    [control]="proceedingsConversionForm.get('idConversion')"
-                    label="Id conversión">
-                    <input
-                      type="number"
-                      class="form-control"
-                      formControlName="idConversion"
-                      min="1"
-                      pattern="^[0-9]+" />
-                  </form-field>
-                </div>
-                <div class="col-md-3">
-                  <form-field
-                    [control]="
-                      proceedingsConversionForm.get('goodFatherNumber')
-                    "
-                    label="No Bien Convertido (Bien Padre)">
-                    <input
-                      type="number"
-                      class="form-control"
-                      formControlName="goodFatherNumber"
-                      min="1"
-                      pattern="^[0-9]+" />
-                  </form-field>
-                </div>
-                <div class="col-md-3">
-                  <form-field
-                    [control]="proceedingsConversionForm.get('noExpedient')"
-                    label="No expediente">
-                    <input
-                      type="number"
-                      class="form-control"
-                      formControlName="noExpedient"
-                      min="1"
-                      pattern="^[0-9]+" />
-                  </form-field>
-                </div>
-                <div class="col-md-3">
-                  <div>
-                    <!-- <button (click)="getAll()" class="btn btn-primary btn-sm active">
-                      Buscar <i class="fa fa-search ml-2"></i>
-                    </button> -->
-                    <button
-                      class="btn btn-sm btn-primary active mr-3"
-                      (click)="getAll()">
-                      Buscar <i class="fas fa-search"></i>
-                    </button>
+              <div class="form-material">
+                <!-- apppcatd **************************************************************-->
+                <app-card [header]="false">
+                  <div body>
+                    <div class="row"></div>
+                    <div class="row pt-3">
+                      <div class="col-md-3">
+                        <div>
+                          <label for="">No. Conversión: </label>
+                          {{ conversion }}
+                        </div>
+                      </div>
+                      <div class="col-md-5">
+                        <div>
+                          <label for=""
+                            >No. Bien Convertido (Bien Padre):
+                          </label>
+                          {{ goodFatherNumber }}
+                        </div>
+                      </div>
+                      <div class="col-md-3">
+                        <div>
+                          <label for="">No. Expediente: </label>
+                          {{ fileNumber }}
+                        </div>
+                      </div>
+                      <div
+                        [formGroup]="proceedingsConversionForm"
+                        class="col-md-2">
+                        <div class="d-flex align-items-center">
+                          <div>
+                            <label for="">Tipo de Acta: </label>
+                            {{ typeConv }}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                </div>
-                <div class="col-md-3">
-                  <form-field
-                    [control]="
-                      proceedingsConversionForm.get('preliminaryInquiry')
-                    "
-                    label="Averiguación Previa">
-                    <input
-                      type="text"
-                      class="form-control"
-                      formControlName="preliminaryInquiry" />
-                  </form-field>
-                </div>
-                <div class="col-md-3">
-                  <form-field
-                    [control]="proceedingsConversionForm.get('criminalCase')"
-                    label="Causa Penal">
-                    <input
-                      type="text"
-                      class="form-control"
-                      formControlName="criminalCase" />
-                  </form-field>
-                </div>
-                <div class="col-md-3">
-                  <form-field
-                    [control]="proceedingsConversionForm.get('acta')"
-                    label="Acta">
-                    <select class="form-control" formControlName="acta">
-                      <option value="NO">CONV</option>
-                    </select>
-                  </form-field>
-                </div>
-                <div class="col-md-3">
-                  <form-field
-                    [control]="proceedingsConversionForm.get('cveActaConv')"
-                    label="Cve Acta de conversión">
-                    <select class="form-control" formControlName="cveActaConv">
-                      <option value="NO">D</option>
-                    </select>
-                  </form-field>
-                </div>
-                <div class="col-md-3">
-                  <form-field
-                    [control]="proceedingsConversionForm.get('trans')"
-                    label="Trans">
-                    <input
-                      type="text"
-                      class="form-control"
-                      formControlName="trans" />
-                  </form-field>
-                </div>
-                <div class="col-md-3">
-                  <form-field
-                    [control]="proceedingsConversionForm.get('conv')"
-                    label="Conv">
-                    <input
-                      type="text"
-                      class="form-control"
-                      formControlName="conv" />
-                  </form-field>
-                </div>
-                <div class="col-md-3">
-                  <form-field
-                    [control]="proceedingsConversionForm.get('admin')"
-                    label="Admin">
-                    <input
-                      type="text"
-                      class="form-control"
-                      formControlName="admin" />
-                  </form-field>
-                </div>
-                <!-- <div class="col-md-5">
-                          <form-field [control]="proceedingsConversionForm.get('invoice')" label="Folio">
-                            <input type="text" class="form-control" formControlName="invoice" />
-                          </form-field>
-                        </div> -->
-                <div class="col-md-3">
-                  <form-field
-                    [control]="proceedingsConversionForm.get('hourConv')"
-                    label="Hora">
-                    <input
-                      type="text"
-                      class="form-control"
-                      formControlName="hourConv" />
-                  </form-field>
-                </div>
-                <!-- <div class="col-md-3">
-                  <form-field [control]="proceedingsConversionForm.get('month')" label="Mes">
-                    <input type="text" class="form-control" formControlName="month" />
-                  </form-field>
-                </div> -->
-                <div class="col-md-3">
-                  <form-field
-                    [control]="proceedingsConversionForm.get('fCreate')"
-                    label="Fec. Elab.">
-                    <input
-                      type="text"
-                      formControlName="fCreate"
-                      placeholder="Fec. Elab."
-                      class="form-control"
-                      bsDatepicker />
-                  </form-field>
-                </div>
-
-                <div class="col-md-3">
-                  <form-field
-                    [control]="proceedingsConversionForm.get('respConv')"
-                    label="Acta">
-                    <input
-                      type="text"
-                      class="form-control"
-                      formControlName="proceedingsDesc" />
-                  </form-field>
-                </div>
-                <!-- <div class="col-md-3">
-                  <form-field [control]="proceedingsConversionForm.get('address')" label="Derección">
-                    <input type="text" class="form-control" formControlName="address" />
-                  </form-field>
-                </div> -->
-                <div class="col-md-3">
-                  <form-field
-                    [control]="proceedingsConversionForm.get('respConv')"
-                    label="Responsable">
-                    <input
-                      type="text"
-                      class="form-control"
-                      formControlName="respConv" />
-                  </form-field>
-                </div>
-
-                <div class="col-md-3">
-                  <form-field
-                    [control]="proceedingsConversionForm.get('userSend')"
-                    label="Usuario que envía">
-                    <input
-                      type="text"
-                      class="form-control"
-                      formControlName="userSend" />
-                  </form-field>
-                </div>
-                <div class="col-md-3">
-                  <form-field
-                    [control]="proceedingsConversionForm.get('areaSend')"
-                    label="Área">
-                    <input
-                      type="text"
-                      class="form-control"
-                      formControlName="areaSend" />
-                  </form-field>
-                </div>
-                <div class="col-md-3">
-                  <form-field
-                    [control]="proceedingsConversionForm.get('dateSent')"
-                    label="Fecha que envía">
-                    <input
-                      type="text"
-                      class="form-control"
-                      formControlName="dateSent" />
-                  </form-field>
-                </div>
-
-                <div class="row d-flex justify-content-center">
-                  <div class="col-md-auto pt-5">
-                    <button type="submit" class="btn btn-primary btn-sm active">
-                      Buscar
-                    </button>
-                  </div>
-                  <div class="col-md-auto pt-5">
-                    <button
-                      type="button"
-                      class="btn btn-sm btn-success active"
-                      (click)="exportToExcel()">
-                      Exportar a Excel
-                    </button>
-                  </div>
-                  <div class="col-md-auto pt-5">
-                    <button
-                      type="button"
-                      class="btn btn-sm btn-secondary active"
-                      (click)="cleanFilter()">
-                      Limpiar Filtro
-                    </button>
-                  </div>
-                  <div class="col-md-auto pt-5">
-                    <button
-                      type="submit"
-                      class="btn btn-secondary btn-sm active">
-                      Cerrar Acta
-                    </button>
-                  </div>
-
-                  <div class="col-md-auto pt-5">
-                    <button class="btn btn-danger btn-sm active">
-                      Impresión del Acta
-                    </button>
-                  </div>
-                </div>
+                </app-card>
               </div>
+              <!-- apppcatd **************************************************************-->
             </form>
           </accordion-group>
           <accordion-group>
@@ -293,6 +105,23 @@
             <!-- <data-filter [form]="form" [params]="params" [(subloading)]="subloading"
               (onSubmit)="searchGoods($event)"></data-filter> -->
             <app-proceedings-conversion-detail></app-proceedings-conversion-detail>
+          </accordion-group>
+          <accordion-group [isOpen]="false">
+            <div accordion-heading class="d-flex justify-content-between">
+              <div>
+                <h5>
+                  <i class="fa fa-copy" aria-hidden="true"></i>
+                  Oficios
+                </h5>
+              </div>
+              <div></div>
+            </div>
+            <form
+              [formGroup]="proceedingsConversionForm"
+              class="form-material"
+              (ngSubmit)="searchProcs()">
+              <div class="row"></div>
+            </form>
           </accordion-group>
         </accordion>
       </div>
