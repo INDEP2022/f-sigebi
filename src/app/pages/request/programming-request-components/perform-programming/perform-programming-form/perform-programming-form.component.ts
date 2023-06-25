@@ -1533,7 +1533,8 @@ export class PerformProgrammingFormComponent
     this.modalService.show(DetailGoodProgrammingFormComponent, config);
   }
   // Visualizar información de alias almacen //
-  showDomicile(item: IGoodProgrammingSelect) {
+  showDomicile(item: any) {
+    item.nameStatus;
     let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
     config.initialState = {
       item,
