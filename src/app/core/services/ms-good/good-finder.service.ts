@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
 
+import { IListResponse } from '../../interfaces/list-response.interface';
+import { IGood } from '../../models/good/good.model';
 import { GoodFinderEndpoint } from './../../../common/constants/endpoints/ms-good-endpoints';
 
 @Injectable({
@@ -45,5 +47,9 @@ export class GoodFinderService extends HttpService {
   ableTosignDictamination(request: number) {
     const route = GoodFinderEndpoint.AbleToSignDistamen;
     return this.get(`${route}/request/${request}`);
+  }
+
+  getAll2(params?: string) {
+    return this.get<IListResponse<IGood>>(`good-query?${params}`);
   }
 }
