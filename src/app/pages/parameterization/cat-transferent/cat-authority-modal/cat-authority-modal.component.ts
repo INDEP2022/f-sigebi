@@ -91,15 +91,20 @@ export class CatAuthorityModalComponent extends BasePage implements OnInit {
 
   update() {
     this.loading = true;
-    this.authorityService.update2(this.authorityForm.value).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
-    });
+    const idAuthority = this.authorityForm.controls['idAuthority'].value;
+    //console.log(this.authorityForm.value, Number(idAuthority));
+    this.authorityService
+      .update3(Number(idAuthority), this.authorityForm.value)
+      .subscribe({
+        next: data => this.handleSuccess(),
+        error: error => (this.loading = false),
+      });
   }
 
   handleSuccess() {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.onLoadToast('success', this.title, `${message} Correctamente`);
+    this.alert('success', this.title, `${message} Correctamente`);
+    //this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();

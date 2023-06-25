@@ -66,8 +66,10 @@ export class NonWorkingDaysModalComponent extends BasePage implements OnInit {
     this.calendarService.create(form).subscribe({
       next: data => this.handleSuccess(),
       error: error => {
+        //this.loading = false;
+        console.log(error.error.message);
+        this.onLoadToast('error', 'El registro ya existe', '');
         this.loading = false;
-        this.onLoadToast('error', error.err.message, '');
       },
     });
   }
