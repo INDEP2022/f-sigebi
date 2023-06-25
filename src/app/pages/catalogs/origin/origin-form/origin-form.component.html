@@ -5,18 +5,28 @@
   <div body>
     <form [formGroup]="form" class="form-material">
       <div class="row">
-        <!-- <div class="col-md-12">
-          <div class="form-group">
-            <label for="idTransferer">Id Transferencia</label>
+        <div class="col-md-12">
+          <form-field [control]="form.get('id')" label="No. Transferencia">
             <input
-              type="number"
+              type="text"
+              class="form-control"
+              id="id"
+              formControlName="id"
+              maxlength="255" />
+          </form-field>
+        </div>
+        <div class="col-md-12">
+          <form-field
+            [control]="form.get('idTransferer')"
+            label="No. Transferencia">
+            <input
+              type="text"
               class="form-control"
               id="idTransferer"
               formControlName="idTransferer"
-              min="0"
-              oninput="if(this.value.length > 15) this.value = this.value.slice(0, 15);" />
-          </div>
-        </div> -->
+              maxlength="255" />
+          </form-field>
+        </div>
         <div class="col-md-12">
           <form-field
             [control]="form.get('keyTransferer')"
@@ -73,12 +83,16 @@
           </form-field>
         </div>
         <div class="col-md-12 pt-3">
-          <form-field [control]="form.get('city')" label="Ciudad">
-            <input
-              type="text"
-              class="form-control"
-              id="city"
-              formControlName="city" />
+          <form-field [control]="form.get('cityCode')">
+            <!--<input type="text" class="form-control" id="city" formControlName="city" />-->
+            <ngx-select
+              [form]="form"
+              [data]="cities"
+              label="Ciudad"
+              value="idCity"
+              bindLabel="nameCity"
+              control="cityCode">
+            </ngx-select>
           </form-field>
         </div>
         <div class="col-md-12 pt-3">

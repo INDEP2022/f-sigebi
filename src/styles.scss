@@ -460,7 +460,7 @@ ng-scrollbar.table-scrollbar {
 }
 
 .theme-green .bs-datepicker-head {
-  background-color: #9D2449;
+  background-color: #9d2449;
 }
 
 .bs-datepicker-container {
@@ -469,9 +469,9 @@ ng-scrollbar.table-scrollbar {
 
 .theme-green .bs-datepicker-body table td span.selected,
 .theme-green .bs-datepicker-body table td.selected span,
-.theme-green .bs-datepicker-body table td span[class*=select-]:after,
-.theme-green .bs-datepicker-body table td[class*=select-] span:after {
-  background-color: #9D2449;
+.theme-green .bs-datepicker-body table td span[class*='select-']:after,
+.theme-green .bs-datepicker-body table td[class*='select-'] span:after {
+  background-color: #9d2449;
 }
 
 .disabled {

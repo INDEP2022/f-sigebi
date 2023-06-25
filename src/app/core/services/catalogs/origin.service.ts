@@ -11,7 +11,7 @@ import { IOrigin } from '../../models/catalogs/origin.model';
 })
 export class OriginService implements ICrudMethods<IOrigin> {
   private readonly route: string = ENDPOINT_LINKS.Origin;
-  constructor(private originRepository: Repository<IOrigin>) { }
+  constructor(private originRepository: Repository<IOrigin>) {}
 
   getAll(params?: ListParams): Observable<IListResponse<IOrigin>> {
     return this.originRepository.getAllPaginated(this.route, params);
@@ -32,6 +32,10 @@ export class OriginService implements ICrudMethods<IOrigin> {
 
   update1(model: IOrigin): Observable<Object> {
     return this.originRepository.update4(this.route, model);
+  }
+
+  newUpdate(model: Object): Observable<Object> {
+    return this.originRepository.newUpdate(this.route, model);
   }
 
   remove(id: string | number): Observable<Object> {

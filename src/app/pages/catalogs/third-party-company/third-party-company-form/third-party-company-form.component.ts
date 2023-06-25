@@ -23,7 +23,7 @@ export class ThirdPartyCompanyFormComponent extends BasePage implements OnInit {
   title = 'EMPRESAS DE TERCEROS';
   edit = false;
   thirdParty: any;
-  itemsZoneContract = new DefaultSelect()
+  itemsZoneContract = new DefaultSelect();
 
   constructor(
     private modalRef: BsModalRef,
@@ -55,9 +55,11 @@ export class ThirdPartyCompanyFormComponent extends BasePage implements OnInit {
     if (this.thirdParty != null) {
       this.edit = true;
       this.thirdPartyCompanyForm.patchValue(this.thirdParty);
-      this.thirdPartyCompanyForm.controls['keyZoneContract'].setValue(this.thirdParty.keyZoneContract.id);
+      this.thirdPartyCompanyForm.controls['keyZoneContract'].setValue(
+        this.thirdParty.keyZoneContract.id
+      );
     }
-    this.getZoneContract(new ListParams);
+    this.getZoneContract(new ListParams());
   }
 
   close(): void {
