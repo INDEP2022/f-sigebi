@@ -14,8 +14,8 @@ import { DynamicCatalogsService } from 'src/app/core/services/dynamic-catalogs/d
 import { AccountMovementService } from 'src/app/core/services/ms-account-movements/account-movement.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { CustomdbclickComponent } from '../customdbclick/customdbclick.component';
 import { DepositTokensModalComponent } from '../deposit-tokens-modal/deposit-tokens-modal.component';
-import { DEPOSIT_TOKENS_COLUMNS } from './deposit-tokens-columns';
 @Component({
   selector: 'app-deposit-tokens',
   templateUrl: './deposit-tokens.component.html',
@@ -44,7 +44,69 @@ export class DepositTokensComponent extends BasePage implements OnInit {
       ...this.settings,
       actions: false,
       hideSubHeader: false,
-      columns: DEPOSIT_TOKENS_COLUMNS,
+      columns: {
+        bank: {
+          title: 'Banco',
+          type: 'string',
+          sort: false,
+        },
+        cveAccount: {
+          title: 'Cuenta',
+          type: 'string',
+          sort: false,
+        },
+        fec_insercion_: {
+          title: 'Fecha Depósito',
+          type: 'string',
+          sort: false,
+        },
+        invoice: {
+          title: 'Folio',
+          type: 'string',
+          sort: false,
+        },
+        fec_traspaso_: {
+          title: 'Fecha Transferencia',
+          type: 'string',
+          sort: false,
+        },
+        currency: {
+          title: 'Moneda',
+          type: 'string',
+          sort: false,
+        },
+        deposito: {
+          title: 'Depósito',
+          type: 'string',
+          sort: false,
+        },
+        no_expediente: {
+          title: 'Expediente',
+          type: 'string',
+          sort: false,
+        },
+        no_bien: {
+          title: 'Bien',
+          type: 'custom',
+          sort: false,
+          renderComponent: CustomdbclickComponent,
+          onComponentInitFunction: (instance: any) => {
+            instance.funcionEjecutada.subscribe(() => {
+              this.miFuncion();
+            });
+          },
+        },
+        categoria: {
+          title: 'Categoria',
+          type: 'string',
+          sort: false,
+        },
+        es_parcializacion: {
+          title: 'Parcial',
+          type: 'string',
+          sort: false,
+        },
+      },
       rowClassFunction: (row: any) => {
         if (row.data.no_bien != null) {
           return 'bg-warning text-black';
@@ -304,5 +366,10 @@ export class DepositTokensComponent extends BasePage implements OnInit {
       },
     };
     this.modalService.show(DepositTokensModalComponent, modalConfig);
+  }
+
+  miFuncion() {
+    this.getAccount();
+    // console.log('Función ejecutada desde el componente hijo');
   }
 }

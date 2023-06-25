@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { BasePage } from 'src/app/core/shared';
@@ -20,6 +20,8 @@ export class CustomdbclickComponent extends BasePage implements OnInit {
   @Input() value: any;
   clickTimer: any;
   @Input() rowData: any;
+  @Output() funcionEjecutada = new EventEmitter<void>();
+
   constructor(private modalService: BsModalService) {
     super();
   }
@@ -65,10 +67,21 @@ export class CustomdbclickComponent extends BasePage implements OnInit {
 
   openForm(data?: any) {
     const modalConfig = MODAL_CONFIG;
+    const rowData = this.rowData;
     modalConfig.initialState = {
       data,
-      callback: (next: boolean) => {},
+      rowData,
+      callback: (next: boolean) => {
+        console.log('AQUI', next);
+        this.ejecutarFuncion();
+      },
     };
     this.modalService.show(ListGoodsComponent, modalConfig);
+  }
+
+  // RECARGAR DATA DE LA TABLA DE MOVIMIENTOS //
+  ejecutarFuncion() {
+    console.log('AQUI2');
+    this.funcionEjecutada.emit();
   }
 }
