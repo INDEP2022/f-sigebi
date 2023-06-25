@@ -142,7 +142,7 @@ export class ScheduleNotifyFormComponent extends BasePage implements OnInit {
   }
 
   getProgrammingData() {
-    this.formLoading = true;
+    // this.formLoading = true;
     this.programmingService
       .getProgrammingId(this.idProgramming)
       .subscribe(data => {
