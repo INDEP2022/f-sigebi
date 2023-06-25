@@ -3,10 +3,14 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
+import { IComerTpEvent } from 'src/app/core/models/ms-event/event-type.model';
 import {
   IParameter,
   ITypeEvent,
 } from 'src/app/core/models/ms-parametercomer/parameter';
+import { IParameters } from 'src/app/core/models/ms-parametergood/parameters.model';
+import { ParameterCatService } from 'src/app/core/services/catalogs/parameter.service';
+import { ComerTpEventosService } from 'src/app/core/services/ms-event/comer-tpeventos.service';
 import { ParameterModService } from 'src/app/core/services/ms-parametercomer/parameter.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { NUM_POSITIVE, STRING_PATTERN } from 'src/app/core/shared/patterns';
@@ -18,15 +22,19 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
   styles: [],
 })
 export class ParametersFormComponent extends BasePage implements OnInit {
-  title: string = 'PARÁMETRO COMERCIALIZACIÓN';
+  title: string = 'Parámetro comercialización';
   edit: boolean = false;
   form: ModelForm<IParameter>;
   parameter: IParameter;
-  typeEvents = new DefaultSelect<ITypeEvent>();
+  typeEvents = new DefaultSelect<IComerTpEvent>();
+  parameters = new DefaultSelect<IParameters>();
+  tipo = new DefaultSelect();
   constructor(
     private fb: FormBuilder,
     private modalRef: BsModalRef,
     private parameterModService: ParameterModService,
+    private comerTpEventosService: ComerTpEventosService,
+    private parameterCatService: ParameterCatService,
     private render: Renderer2
   ) {
     super();
@@ -73,7 +81,7 @@ export class ParametersFormComponent extends BasePage implements OnInit {
       ],
     });
 
-    if (this.parameter) {
+    if (this.parameter != null) {
       this.edit = true;
       this.form.patchValue(this.parameter);
       this.form.get('parameter').disable();
@@ -81,16 +89,35 @@ export class ParametersFormComponent extends BasePage implements OnInit {
       this.form.get('address').disable();
     }
 
-    if (!this.edit) {
+    /*if (!this.edit) {
       const iParam = document.getElementById('idP');
       this.render.removeClass(iParam, 'disabled');
-    }
+    }*/
+    this.getTypeEvent(new ListParams());
+    this.getParameters(new ListParams());
   }
 
   getTypeEvent(params: ListParams) {
-    this.parameterModService.getTypeEvent(params).subscribe(data => {
-      console.log(data);
-      this.typeEvents = new DefaultSelect(data.data, data.count);
+    this.comerTpEventosService.getAllComerTpEvent(params).subscribe({
+      next: data => {
+        console.log(data);
+        this.typeEvents = new DefaultSelect(data.data, data.count);
+      },
+      error: error => {
+        this.typeEvents = new DefaultSelect();
+      },
+    });
+  }
+
+  getParameters(params: ListParams) {
+    this.parameterCatService.getAll(params).subscribe({
+      next: data => {
+        console.log(data);
+        this.parameters = new DefaultSelect(data.data, data.count);
+      },
+      error: error => {
+        this.parameters = new DefaultSelect();
+      },
     });
   }
 
@@ -107,7 +134,7 @@ export class ParametersFormComponent extends BasePage implements OnInit {
   create() {
     this.loading = true;
     this.handleSuccess();
-    this.parameterModService.create(this.form.value).subscribe({
+    this.parameterModService.create(this.form.getRawValue()).subscribe({
       next: data => this.handleSuccess(),
       error: error => (this.loading = false),
     });
@@ -115,7 +142,8 @@ export class ParametersFormComponent extends BasePage implements OnInit {
 
   handleSuccess() {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.onLoadToast('success', this.title, `${message} Correctamente`);
+    //this.onLoadToast('success', this.title, `${message} Correctamente`);
+    this.alert('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();
@@ -123,14 +151,7 @@ export class ParametersFormComponent extends BasePage implements OnInit {
 
   update() {
     this.loading = true;
-    let body = {
-      parameter: this.parameter.parameter,
-      value: this.parameter.value,
-      address: this.parameter.address,
-      description: this.form.value.description,
-      typeEventId: this.form.value.typeEventId,
-    };
-    this.parameterModService.update(this.parameter.parameter, body).subscribe({
+    this.parameterModService.updateNew(this.form.getRawValue()).subscribe({
       next: data => this.handleSuccess(),
       error: error => (this.loading = false),
     });

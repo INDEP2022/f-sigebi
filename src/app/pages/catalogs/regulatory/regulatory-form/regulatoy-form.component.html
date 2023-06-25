@@ -7,8 +7,14 @@
       <div class="row">
         <div class="col-md-12">
           <form-field [control]="form.get('fractionId')">
-            <ngx-select [form]="form" control="fractionId" [data]="fractionIdSelected" value="id"
-              bindLabel="description" label="No. Fracci&oacute;n" (fetchItems)="getFractionAll($event)"></ngx-select>
+            <ngx-select
+              [form]="form"
+              control="fractionId"
+              [data]="fractionIdSelected"
+              value="id"
+              bindLabel="description"
+              label="No. Fracci&oacute;n"
+              (fetchItems)="getFractionAll($event)"></ngx-select>
           </form-field>
         </div>
       </div>
@@ -46,8 +52,13 @@
       </div>
       <div class="row pt-5">
         <div class="col-md-12">
-          <form-field [control]="form.get('description')" label="Descripci&oacute;n">
-            <textarea rows="3" class="form-control" formControlName="description"></textarea>
+          <form-field
+            [control]="form.get('description')"
+            label="Descripci&oacute;n">
+            <textarea
+              rows="3"
+              class="form-control"
+              formControlName="description"></textarea>
           </form-field>
         </div>
       </div>
@@ -56,7 +67,10 @@
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <confirm-button [disabled]="form.invalid" [loading]="loading" (confirm)="confirm()">
+        <confirm-button
+          [disabled]="form.invalid"
+          [loading]="loading"
+          (confirm)="confirm()">
         </confirm-button>
       </div>
       <div class="m-3">

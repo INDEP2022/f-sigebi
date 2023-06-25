@@ -100,7 +100,10 @@ export class RegulatoyFormComponent extends BasePage implements OnInit {
       // this.form.controls['fractionId'].setValue(this.fractionsId);
       console.log(this.regulatory.fractionId);
       //this.fractionsId = this.idFraction;
-      this.getUpdateFractionAll(new ListParams(), this.regulatory.fractionId.toString());
+      this.getUpdateFractionAll(
+        new ListParams(),
+        this.regulatory.fractionId.toString()
+      );
       //this.getFractionAll(new ListParams());
       //this.getFractionAll(new ListParams());
     }
@@ -144,7 +147,8 @@ export class RegulatoyFormComponent extends BasePage implements OnInit {
 
   handleSuccess() {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.onLoadToast('success', this.title, `${message} Correctamente`);
+    this.alert('success', this.title, `${message} Correctamente`);
+    //this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();

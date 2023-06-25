@@ -204,6 +204,7 @@ export class CourtMaintenanceComponent extends BasePage implements OnInit {
       if (this.edit) {
         this.courtServ.update(this.id, this.form.getRawValue()).subscribe({
           next: () => (
+            this.alert('success', 'Juzgado', 'Actualizado Correctamente'),
             this.onLoadToast('success', 'Juzgado', 'Se ha actualizado'),
             this.clean()
           ),
@@ -212,6 +213,7 @@ export class CourtMaintenanceComponent extends BasePage implements OnInit {
       } else {
         this.courtServ.create(this.form.value).subscribe({
           next: data => {
+            this.alert('success', 'Juzgado', 'Guardado Correctamente');
             this.onLoadToast('success', 'Juzgado', 'Se ha guardado');
             this.form.patchValue(data);
             this.form.get('id').disable();

@@ -68,8 +68,10 @@ export class BatchFormComponent extends BasePage implements OnInit {
       console.log(this.batch);
       console.log(this.batch.numStore.idWarehouse);
       this.batchForm.patchValue(this.batch);
-      this.batchForm.controls['numStore'].setValue(this.batch.numStore.idWarehouse);
-      this.getAlmacen(new ListParams, this.batch.numStore.idWarehouse);
+      this.batchForm.controls['numStore'].setValue(
+        this.batch.numStore.idWarehouse
+      );
+      this.getAlmacen(new ListParams(), this.batch.numStore.idWarehouse);
       this.batchForm.controls['numStore'].disable();
       this.batchForm.controls['id'].disable();
     }
@@ -103,15 +105,18 @@ export class BatchFormComponent extends BasePage implements OnInit {
 
   update() {
     this.loading = true;
-    this.batchService.update(this.batch.id, this.batchForm.getRawValue()).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
-    });
+    this.batchService
+      .update(this.batch.id, this.batchForm.getRawValue())
+      .subscribe({
+        next: data => this.handleSuccess(),
+        error: error => (this.loading = false),
+      });
   }
 
   handleSuccess() {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.onLoadToast('success', this.title, `${message} Correctamente`);
+    this.alert('success', this.title, `${message} Correctamente`);
+    //this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.refresh.emit(true);
     this.modalRef.hide();

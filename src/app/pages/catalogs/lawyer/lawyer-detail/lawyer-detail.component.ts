@@ -25,7 +25,7 @@ export class LawyerDetailComponent extends BasePage implements OnInit {
   lawyer: any;
   delegations = new DefaultSelect();
   offices = new DefaultSelect();
-
+  title: string = 'Abogado';
   @Output() refresh = new EventEmitter<true>();
   constructor(
     private fb: FormBuilder,
@@ -124,7 +124,7 @@ export class LawyerDetailComponent extends BasePage implements OnInit {
 
   create() {
     this.loading = true;
-    this.lawerService.create(this.form.value).subscribe({
+    this.lawerService.create(this.form.getRawValue()).subscribe({
       next: data => this.handleSuccess(),
       error: error => (this.loading = false),
     });
@@ -132,7 +132,8 @@ export class LawyerDetailComponent extends BasePage implements OnInit {
 
   handleSuccess() {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.onLoadToast('success', 'Abogado', `${message} Correctamente`);
+    this.alert('success', this.title, `${message} Correctamente`);
+    //this.onLoadToast('success', 'Abogado', `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();

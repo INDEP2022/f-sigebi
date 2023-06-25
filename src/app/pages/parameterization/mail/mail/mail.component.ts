@@ -67,13 +67,92 @@ export class MailComponent extends BasePage implements OnInit {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
-            filter.field == 'id' ||
+            switch (filter.field) {
+              case 'id':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'name':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'rfc':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'userDetail':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}.delegationNumber`;
+                break;
+              case 'email':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'registryNumber':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'curp':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'street':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'suburb':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'zipCode':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'phone':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'profession':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'positionKey':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'firstTimeLoginDate':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'userSirsae':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'sendEmail':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'attribAsign':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'clkdetSirsae':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'exchangeAlias':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'clkdet':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'clkid':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'profileMimKey':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'nameAd':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'posPrevKey':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
+
+            /*filter.field == 'id' ||
             filter.field == 'name' ||
             filter.field == 'usuario' ||
             filter.field == 'email' ||
             filter.field == 'registryNumber'
               ? (searchFilter = SearchFilter.EQ)
-              : (searchFilter = SearchFilter.ILIKE);
+              : (searchFilter = SearchFilter.ILIKE);*/
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
@@ -95,7 +174,7 @@ export class MailComponent extends BasePage implements OnInit {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-    this.usersService.getAllSegUsers(params).subscribe({
+    this.usersService.getAllDetailSegUsers(params).subscribe({
       next: response => {
         console.log(response.data);
         this.segUsers = response.data;
