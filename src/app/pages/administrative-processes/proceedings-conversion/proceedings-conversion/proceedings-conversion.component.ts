@@ -68,7 +68,7 @@ export interface IGoodJobManagement {
       :host ::ng-deep form-radio .form-group {
         margin: 0;
         padding-bottom: 0;
-        padding-top: 0;
+        padding-top: 2;
       }
       .disabled[disabled] {
         color: red;
@@ -80,6 +80,9 @@ export interface IGoodJobManagement {
       #bienesJuridicos table:not(.normal-hover) tbody tr:hover {
         color: black !important;
         font-weight: bold;
+      }
+      .custom-background {
+        background-color: #fff;
       }
     `,
   ],
@@ -572,7 +575,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
   }
 
   getGoods(id: number) {
-    this.convertiongoodService.getByGood(id).subscribe({
+    this.convertiongoodService.getById(id).subscribe({
       next: (data: any) => {
         console.log(data);
       },

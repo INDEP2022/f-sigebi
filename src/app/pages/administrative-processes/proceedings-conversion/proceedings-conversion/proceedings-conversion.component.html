@@ -96,12 +96,16 @@
                         </div>
                       </div>
                     </div>
+                    <div class="row p-3">
+                      <div class="col-md-3"></div>
+                    </div>
                     <form
-                      [formGroup]=""
+                      [formGroup]="actaRecepttionForm"
                       class="form-material"
                       (ngSubmit)="searchProcs()">
                       <div class="row"></div>
                     </form>
+                    <div class="row"></div>
                     <!-- <form [formGroup]="goodFrm" class="form-material" (ngSubmit)="searchProcs()"> -->
                     <form [formGroup]="actaGoodForm" class="form-material">
                       <div class="row w-100">
@@ -166,84 +170,51 @@
                           </ng2-smart-table>
                         </div>
                       </div>
-                      <!-- <div class="row mt-3">
-                        <div class="col-md-6">
-                          <ng-scrollbar
-                            track="horizontal"
-                            [autoHeightDisabled]="false">
-                            <div
-                              [class]="loading ? 'table-loading' : ''"
-                              class="overflow-auto">
-                              <ng2-smart-table
-                                class="col-md-12"
-                                [settings]="settings"
-                                [source]="dataGoodTable"
-                                [attr.class]="'table-responsive table-bordered'"
-                                (userRowSelect)="selectGoods($event)">
-                              </ng2-smart-table>
-                              <app-pagination
-                                [totalItems]="totalItems"></app-pagination>
-                            </div>
-                          </ng-scrollbar>
-                        </div>
-                         <div class="col-md-6">
-                          <ng-scrollbar track="horizontal" [autoHeightDisabled]="false">
-                            <div [class]="loading ? 'table-loading' : ''" class="overflow-auto">
-                              <ng2-smart-table class="col-md-12" [settings]="settings2" [source]="proceedings"
-                                [attr.class]="'table-responsive table-bordered'"
-                                (userRowSelect)="selectProceedings($event)">
-                              </ng2-smart-table>
-                              <app-pagination [params]="paramsGoodsType"
-                                [totalItems]="totalItemsActas"></app-pagination>
-                            </div>
-                          </ng-scrollbar>
-                        </div> 
-                      </div> -->
                     </form>
                     <!-- <div>
                       <app-pagination [params]="params" [totalItems]="totalItems"></app-pagination>
                   </div>-->
-                  </div>
-                  <div footer>
-                    <div class="d-flex justify-content-center">
-                      <div class="m-3">
-                        <button
-                          type="button"
-                          class="btn btn-primary active btn-sm"
-                          (click)="cerrarActa()">
-                          Detalle de Acta
-                          <i class="fas fa-edit bx-sm float-icon"></i>
-                        </button>
-                      </div>
-                      <div class="m-3">
-                        <button
-                          [disabled]="!disabledImport"
-                          name="file"
-                          #file
-                          class="btn btn-success btn-sm ml-2"
-                          type="button"
-                          (click)="file.click()">
-                          Carga Masiva
-                          <i class="fa fa-upload bx-sm float-icon"></i>
-                        </button>
-                      </div>
-                      <div class="m-3">
-                        <button
-                          type="button"
-                          class="btn btn-primary active btn-sm"
-                          (click)="Generar()">
-                          Imprimir
-                          <i class="bx bx-printer bx-sm float-icon"></i>
-                        </button>
-                      </div>
-                      <div class="m-3">
-                        <button
-                          type="button"
-                          class="btn btn-danger active btn-sm"
-                          (click)="cerrarActa()">
-                          Cerrar Acta
-                          <i class="fas fa-close bx-sm float-icon"></i>
-                        </button>
+                    <div footer>
+                      <div class="d-flex justify-content-center">
+                        <div class="m-3">
+                          <button
+                            type="button"
+                            class="btn btn-primary active btn-sm"
+                            (click)="cerrarActa()">
+                            Detalle de Acta
+                            <i class="fas fa-edit bx-sm float-icon"></i>
+                          </button>
+                        </div>
+                        <div class="m-3">
+                          <button
+                            [disabled]="!disabledImport"
+                            name="file"
+                            #file
+                            class="btn btn-success btn-sm ml-2"
+                            type="button"
+                            (click)="file.click()">
+                            Carga Masiva
+                            <i class="fa fa-upload bx-sm float-icon"></i>
+                          </button>
+                        </div>
+                        <div class="m-3">
+                          <button
+                            type="button"
+                            class="btn btn-primary active btn-sm"
+                            (click)="Generar()">
+                            Imprimir
+                            <i class="bx bx-printer bx-sm float-icon"></i>
+                          </button>
+                        </div>
+                        <div class="m-3">
+                          <button
+                            type="button"
+                            class="btn btn-danger active btn-sm"
+                            (click)="cerrarActa()">
+                            Cerrar Acta
+                            <i class="fas fa-close bx-sm float-icon"></i>
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>
