@@ -245,10 +245,14 @@ export class ChangeOfStatusStiComponent extends BasePage implements OnInit {
           this.currentDate.disable();
         },
         error: error => {
-          this.alert('warning', `El expediente ${this.numberFile.value} no cuenta con Bienes con estatus STI`, '');
+          this.alert(
+            'warning',
+            `El expediente ${this.numberFile.value} no cuenta con Bienes con estatus STI`,
+            ''
+          );
           console.log(error);
           this.goods.load([]);
-          this.numberFile.reset()
+          this.numberFile.reset();
           this.limit = new FormControl(10);
           this.params.next(new ListParams());
           this.totalItems = 0;
