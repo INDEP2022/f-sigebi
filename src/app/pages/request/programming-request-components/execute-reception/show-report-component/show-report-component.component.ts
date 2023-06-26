@@ -196,8 +196,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
       this.title = 'Firma electrónica';
     } else if (!this.listSigns && this.printReport && this.isAttachDoc) {
       //adjuntar el reporte
-      let message = '¿Está seguro que quiere cargar el documento?';
-      this.openMessage2(message);
+      this.openMessage2();
     }
   }
 
@@ -281,7 +280,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
         if (question.isConfirmed) {
           if (this.idTypeDoc == 221) {
             this.gelectronicFirmService
-              .firmDocument(this.idProg, 'ProgramacionRecibo', {})
+              .firmDocument(this.programming.id, 'ProgramacionRecibo', {})
               .subscribe({
                 next: response => {
                   this.msjCheck = true;
@@ -357,21 +356,23 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
     this.modalRef.hide();
   }
 
-  openMessage2(message: string): void {
-    this.alertQuestion(undefined, 'Confirmación', message, 'Aceptar').then(
-      question => {
-        if (question.isConfirmed) {
-          if (this.idTypeDoc == 221) {
-            this.validAttachDoc();
-          }
+  openMessage2(): void {
+    this.alertQuestion(
+      'question',
+      '¿Quiere continuar con el proceso?',
+      ''
+    ).then(question => {
+      if (question.isConfirmed) {
+        if (this.idTypeDoc == 221) {
+          this.validAttachDoc();
+        }
 
-          if (this.idTypeDoc == 103) {
-            this.modalRef.content.callback(true);
-            this.modalRef.hide();
-          }
+        if (this.idTypeDoc == 103) {
+          this.modalRef.content.callback(true);
+          this.modalRef.hide();
         }
       }
-    );
+    });
   }
 
   validAttachDoc() {
@@ -443,5 +444,11 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
           },
         });
     });
+  }
+
+  backStep() {
+    this.listSigns = false;
+    this.isAttachDoc = false;
+    this.printReport = true;
   }
 }

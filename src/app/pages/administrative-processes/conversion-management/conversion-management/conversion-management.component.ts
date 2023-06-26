@@ -11,7 +11,7 @@ import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 @Component({
   selector: 'app-conversion-management',
   templateUrl: './conversion-management.component.html',
-  styles: [],
+  styleUrls: ['./conversion-management.component.scss'],
 })
 export class ConversionManagementComponent extends BasePage implements OnInit {
   //
@@ -115,7 +115,7 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
   }
 
   async save() {
-    if (this.tipo.value === null) {
+    if (this.tipo.value === null || this.tipo.value === 'null') {
       this.alert('info', 'Información', 'El campo tipo es requerido');
       return;
     }
@@ -136,9 +136,10 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
             this.saved = false;
           },
           error: err => {
-            this.onLoadToast(
-              'error',
-              'Ya existe una conversión de bienes con esta información'
+            this.alert(
+              'info',
+              'Información',
+              'No se puede realizar la operación ya que este bien ya está asignado a esta conversión'
             );
             console.log(err);
           },
@@ -252,6 +253,7 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
     }
     this.conversiongoodServices.getById(this.idConversion.value).subscribe({
       next: response => {
+        console.log('AQUIIIIIII', response);
         this.conversion = response;
         if (this.conversion.goodFatherNumber) {
           this.searchGoods(this.conversion.goodFatherNumber);
@@ -279,10 +281,12 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
       this.conversion.fileNumber = Number(this.conversion.fileNumber);
       this.conversion.goodFatherNumber = Number(this.good.id);
       this.conversion.statusConv = Number(this.conversion.statusConv);
-      this.conversion.typeConv = Number(this.conversion.typeConv);
+      this.conversion.typeConv = Number(this.tipo.value);
       if (isPwAccess) {
         this.conversion.pwAccess = pwAccess;
       }
+      console.log('AQUIIII', this.conversion);
+
       this.conversiongoodServices
         .update(this.conversion.id, this.conversion)
         .subscribe({

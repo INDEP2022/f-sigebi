@@ -111,7 +111,6 @@
               <input
                 type="text"
                 class="form-control"
-                (change)="searchGoodSon(form.get('numberGoodSon').value)"
                 formControlName="numberGoodSon" />
             </form-field>
           </div>
@@ -210,7 +209,8 @@
                 type="button"
                 data-toggle="tooltop"
                 title="Agregar Bien"
-                class="btn btn-info btn-sm active ml-2 mr-2">
+                class="btn btn-info btn-sm active ml-2 mr-2"
+                (click)="applyGood(selectedRow)">
                 <i class="bx bx-plus bx-sm float-icon"></i>
               </button>
               &nbsp;
@@ -227,19 +227,37 @@
             <ng2-smart-table
               class="col"
               [settings]="settingsGood"
-              [source]="dataGoods">
+              [source]="dataGoods2"
+              (rowSelect)="onRowSelect($event)">
             </ng2-smart-table>
           </div>
         </div>
       </app-card>
     </div>
     <div class="col-md-8 col-sm-12 col-xs-12 mt-2">
-      <app-card [header]="true">
-        <div class="ch-content" header>
-          <h5 class="title">Atributos del Bien</h5>
+      <div class="card">
+        <div class="card-header mb-3">
+          <h5>Atributos del Bien</h5>
         </div>
-        <div body></div>
-      </app-card>
+        <div class="card-block" style="max-height: 500px; overflow-y: auto">
+          <div class="row">
+            <div class="col-6">
+              <h6>Atributos</h6>
+            </div>
+            <div class="col-6">
+              <h6>Valores</h6>
+            </div>
+          </div>
+          <div class="row" *ngFor="let attr of attributes">
+            <div class="col-6">
+              <label class="label-first">{{ attr[1] }}:</label>
+            </div>
+            <div class="col-6">
+              <input type="text" placeholder="Introduce un valor" />
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 

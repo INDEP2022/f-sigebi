@@ -65,6 +65,10 @@ export class AccountMovementService extends HttpService {
   getAccountBank(params: _Params) {
     return this.get<IListResponse<any>>('bank-account', params);
   }
+
+  getBlkMov(params: any) {
+    return this.post<IListResponse<any>>('aplication/get-bkl-mov', params);
+  }
 }
 
 //``

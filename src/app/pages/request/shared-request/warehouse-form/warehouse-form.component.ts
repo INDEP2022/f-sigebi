@@ -145,7 +145,11 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
       nbzipcode: [null],
       nbstreet: [
         null,
-        [Validators.maxLength(200), Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.maxLength(200),
+          Validators.pattern(STRING_PATTERN),
+          Validators.required,
+        ],
       ],
       nbnoexternal: [
         null,

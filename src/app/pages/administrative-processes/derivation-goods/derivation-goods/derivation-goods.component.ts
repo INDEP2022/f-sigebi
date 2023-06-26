@@ -1,11 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
+import { BehaviorSubject } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
-import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  ListParams,
+} from 'src/app/common/repository/interfaces/list-params';
+import { ConvertiongoodService } from 'src/app/core/services/ms-convertiongood/convertiongood.service';
 import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { BasePage } from 'src/app/core/shared';
@@ -17,7 +22,7 @@ import { IGood } from 'src/app/core/models/ms-good/good';
 @Component({
   selector: 'app-derivation-goods',
   templateUrl: './derivation-goods.component.html',
-  styles: [],
+  styleUrls: ['./derivation-goods.component.scss'],
 })
 export class DerivationGoodsComponent extends BasePage implements OnInit {
   //Reactive Forms
@@ -30,7 +35,10 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
   wrongModal = true;
 
   //Variables de BLK_TIPO_BIEN
-  no_bien_blk_tipo_bien: number
+
+  no_bien_blk_tipo_bien: number;
+  params = new BehaviorSubject<ListParams>(new ListParams());
+  selectedRow: any;
 
   get idConversion() {
     return this.form.get('idConversion');
@@ -78,6 +86,39 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
     return this.form.get('destinationLabel');
   }
 
+  data = {
+    no_bien: 20,
+    val1: 'REGULAR',
+    val2: 'NO SE ESPECIFICA',
+    val3: 'NO SE INDICA',
+    val4: '',
+    val5: '',
+    val6: 'ESTADO FISICO',
+    val7: '',
+    val8: '',
+    val9: '',
+    val10: 'PROCEDENCIA',
+    val11: '',
+    val13: '',
+    val14: 'CONTENEDOR',
+    val15: '',
+    val16: '',
+    val17: 'NO SE ESPECIFICA',
+    val18: 'NO SE INDICA',
+    val19: 'NO SE ESPECIFICA',
+    val23: 'NO SE INDICA',
+    va24: 'NO SE ESPECIFICA',
+    val25: 'NO SE INDICA',
+    val26: 'NO SE INDICA',
+    val27: 'NO SE INDICA',
+    val28: 'NO SE INDICA',
+    val29: 'NO SE INDICA',
+    val30: 'NO SE INDICA',
+    val31: 'NO SE INDICA',
+    val32: 'NO SE INDICA',
+  };
+  attributes: any;
+
   //Settings para la tabla
   settingsGood = {
     ...TABLE_SETTINGS,
@@ -94,19 +135,25 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
   };
 
   dataGoods = new LocalDataSource();
-
+  dataGoods2: any[] = [];
+  conversionId: any;
+  goodFatherNumber: any;
+  cveActaConv: any;
+  tipoValue: any;
   constructor(
     private fb: FormBuilder,
     private router: Router,
     private modalService: BsModalService,
     private serviceGood: GoodService,
-    private serviceGoodProcess: GoodProcessService
+    private serviceGoodProcess: GoodProcessService,
+    private convertiongoodService: ConvertiongoodService,
+    private route: ActivatedRoute
   ) {
     super();
   }
-
   ngOnInit(): void {
     this.buildForm();
+    this.searchGoodSon(this.goodFatherNumber);
 
     //Inicializando el modal
     let config = MODAL_CONFIG;
@@ -122,14 +169,11 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
             this.numberDossier.setValue(data.fileNumber.id)
             this.numberGoodFather.setValue(data.goodFatherNumber)
             //
-            console.log(data)
-            this.wrongModal = false
-            this.tipo.setValue(data.typeConv)
-            this.actConvertion.setValue(data.cveActaConv)
-            this.numberGoodSon.setValue(data.goodFatherNumber)
-            this.searchGoods(data.goodFatherNumber)
-            this.searchGoodSon(data.goodFatherNumber)
-            this.dataGoods.load([data])
+            console.log(data);
+            this.wrongModal = false;
+            this.tipo.setValue(data.typeConv);
+            this.actConvertion.setValue(data.cveActaConv);
+            this.searchGoods(data.goodFatherNumber);
           }
         },
       }, //pasar datos por aca
@@ -140,6 +184,30 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
     const modalRef = this.modalService.show(PwComponent, config);
   }
 
+  getAll() {
+    this.form.valueChanges.subscribe(value => {
+      this.convertiongoodService
+        .getAllGoodsConversions(this.params.getValue(), value.idConversion)
+        .subscribe({
+          next: response => {
+            this.loading = false;
+            response.data.map((item: any) => {
+              item.idConversion = item.id;
+              item.fileNumber =
+                item.fileNumber != null ? item.fileNumber : item.idConversion;
+            });
+
+            this.dataGoods2 = response.data;
+          },
+        });
+    });
+  }
+
+  /**
+   * @method: metodo para iniciar el formulario
+   * @author:  Alexander Alvarez
+   * @since: 27/09/2022
+   */
   private buildForm() {
     this.form = this.fb.group({
       idConversion: [null, [Validators.required]],
@@ -185,8 +253,8 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
     });
+    this.getAll();
   }
-
   searchGoods(e: any) {
     const paramsF = new FilterParams();
     paramsF.addFilter('goodId', e);
@@ -206,15 +274,32 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
     const paramsF = new FilterParams();
     paramsF.addFilter('goodId', e);
     this.serviceGood.getAllFilter(paramsF.getParams()).subscribe(
-      res => {
-        console.log(res);
-        this.observation.setValue(res.data[0]['observations']);
-        this.descriptionSon.setValue(res.data[0]['description']);
-        this.quantity.setValue(res.data[0]['quantity']);
-        this.classifier.setValue(res.data[0]['goodClassNumber']);
-        this.unitOfMeasure.setValue(res.data[0]['unit']);
-        this.destinationLabel.setValue(res.data[0]['labelNumber']);
-        this.searchStatus(res.data[0]['status']);
+      (res: any) => {
+        this.form.valueChanges.subscribe(value => {
+          if (value.tipo === '1') {
+            this.observation.setValue(res.data[0]['observations']);
+            this.descriptionSon.setValue(res.data[0]['descriptionSon']);
+            this.quantity.setValue(res.data[0]['quantity']);
+            this.classifier.setValue(res.data[0]['goodClassNumber']);
+            this.unitOfMeasure.setValue(res.data[0]['unit']);
+            this.destinationLabel.setValue(res.data[0]['labelNumber']);
+            this.numberGoodSon.setValue(e);
+
+            this.searchStatus(res.data[0]['status']);
+            this.getAttributesGood(e);
+          }
+          if (value.tipo === '2') {
+            this.observation.setValue('');
+            this.descriptionSon.setValue('');
+            this.quantity.setValue('');
+            this.classifier.setValue('');
+            this.unitOfMeasure.setValue('');
+            this.destinationLabel.setValue('');
+            this.numberGoodSon.setValue('');
+
+            this.searchStatus('');
+          }
+        });
       },
       err => {
         console.log(err);
@@ -282,6 +367,44 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     });
+  }
+
+  applyGood(event: any) {
+    if (
+      this.selectedRow.status === 'CVD' ||
+      this.selectedRow.status === 'CAN'
+    ) {
+      this.alert(
+        'error',
+        `El Bien estatus del bien con id: ${this.numberGoodFather.value}`,
+        `ya ha sido convertido`
+      );
+    }
+  }
+
+  onRowSelect(event: any) {
+    this.numberGoodSon.setValue(event.data.goodId);
+    this.observation.setValue(event.data.descriptionConv);
+    this.descriptionSon.setValue(event.data.descriptionSon);
+    this.quantity.setValue(event.data.amount);
+    this.classifier.setValue(event.data.noClassifGood);
+    this.unitOfMeasure.setValue(event.data.unit);
+    this.destinationLabel.setValue(event.data.noLabel);
+    this.selectedRow = event.data;
+
+    this.getAttributesGood(event.data);
+  }
+
+  getAttributesGood(event: any) {
+    this.serviceGood.getAttributesGood(event.goodId).subscribe(
+      res => {
+        delete res.goodNumber;
+        this.attributes = Object.entries(res).filter(([key, value]) => value);
+      },
+      err => {
+        console.log(err);
+      }
+    );
   }
 
   /* showToast(status: NbComponentStatus) {

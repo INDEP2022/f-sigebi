@@ -224,26 +224,35 @@ export class JuridicalRulingComponent
       id: {
         title: 'No. Bien',
         type: 'number',
+        sort: false,
       },
       description: {
         title: 'Descripción Dictaminación',
         type: 'string',
+        sort: false,
       },
       menaje: {
         title: 'Menaje',
         type: 'string',
+        sort: false,
+        valuePrepareFunction: (value: any) => {
+          return value.noGood;
+        },
       },
       quantity: {
         title: 'Cant. Dictaminación',
         type: 'string',
+        sort: false,
       },
       status: {
         title: 'Estatus',
         type: 'string',
+        sort: false,
       },
       extDomProcess: {
         title: 'Proceso',
         type: 'string',
+        sort: false,
       },
     },
     noDataMessage: 'No se encontrarón registros',
@@ -2141,7 +2150,7 @@ export class JuridicalRulingComponent
           resp.data.map((goodx: any) => {
             goodx.id = goodx.id;
             goodx.description = goodx.descriptionDict;
-            goodx.menaje = '';
+            // goodx.menaje = '';
             goodx.quantity = goodx.amountDict;
             goodx.status = goodx.good.status;
             goodx.extDomProcess = goodx.good.extDomProcess;
