@@ -1,5 +1,6 @@
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { ConvertiongoodEndpoints } from 'src/app/common/constants/endpoints/ms-convertiongood-endpoints';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
@@ -7,11 +8,12 @@ import { IRSender } from 'src/app/pages/administrative-processes/proceedings-con
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IAssetConversion } from '../../models/ms-convertiongood/asset-conversion';
 import { IConvertiongood } from '../../models/ms-convertiongood/convertiongood';
+import { environment } from './../../../../environments/environment';
 @Injectable({
   providedIn: 'root',
 })
 export class ConvertiongoodService extends HttpService {
-  constructor() {
+  constructor(private http: HttpClient) {
     super();
     this.microservice = ConvertiongoodEndpoints.Convertiongood;
   }
@@ -59,5 +61,18 @@ export class ConvertiongoodService extends HttpService {
   getRegAddressee(params: ListParams): Observable<IListResponse<IRSender>> {
     const route = `${ConvertiongoodEndpoints.RtdictaAarusr}`;
     return this.get(route, params);
+  }
+
+  getAllGoodsConversions(paramsList: any, conversionId: any) {
+    const URL = `${environment.API_URL}/convertiongood/api/v1/${ConvertiongoodEndpoints.AssetConversions}/get-all`;
+    const headers = new HttpHeaders();
+    let params = new HttpParams().append(
+      'filter.conversionId',
+      `$eq:${conversionId}`
+    );
+
+    return this.http
+      .get<any>(URL, { headers: headers, params: params })
+      .pipe(map(res => res));
   }
 }
