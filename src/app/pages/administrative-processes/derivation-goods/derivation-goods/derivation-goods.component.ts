@@ -17,6 +17,7 @@ import { BasePage } from 'src/app/core/shared';
 import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { GoodsComponent } from '../goods/goods.component';
 import { PwComponent } from '../pw/pw.component';
+import { IGood } from 'src/app/core/models/ms-good/good';
 
 @Component({
   selector: 'app-derivation-goods',
@@ -34,9 +35,11 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
   wrongModal = true;
 
   //Variables de BLK_TIPO_BIEN
+
   no_bien_blk_tipo_bien: number;
   params = new BehaviorSubject<ListParams>(new ListParams());
   selectedRow: any;
+
   get idConversion() {
     return this.form.get('idConversion');
   }
@@ -158,13 +161,13 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
       initialState: {
         ...MODAL_CONFIG,
         callback: (data: any) => {
-          if (data != null) {
+          if(data != null){
             //Se setea el valor de no_bien
-            this.no_bien_blk_tipo_bien = data.goodFatherNumber;
+            this.no_bien_blk_tipo_bien = data.goodFatherNumber
             //Se seta los valores de idConversion
-            this.idConversion.setValue(data.id);
-            this.numberDossier.setValue(data.fileNumber.id);
-            this.numberGoodFather.setValue(data.goodFatherNumber);
+            this.idConversion.setValue(data.id)
+            this.numberDossier.setValue(data.fileNumber.id)
+            this.numberGoodFather.setValue(data.goodFatherNumber)
             //
             console.log(data);
             this.wrongModal = false;
