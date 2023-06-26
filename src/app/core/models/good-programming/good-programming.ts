@@ -10,6 +10,10 @@ export interface IGoodProgramming {
   modificationUser?: string;
   modificationDate?: Date;
   storeId?: number;
+  municipality?: number;
+  aliasStore?: number;
+  postalCode?: number;
+  suburb?: number;
   tranferId?: number;
   regionalDelegationNumber?: number;
   typeUser?: string;

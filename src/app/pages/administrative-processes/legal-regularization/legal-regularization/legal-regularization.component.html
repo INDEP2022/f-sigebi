@@ -1,12 +1,12 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">Regularizacion juridica</h5>
+    <h5 class="title">Regularización jurídica</h5>
   </div>
   <div body>
     <form [formGroup]="form" class="form-material">
       <div class="row">
         <div class="col-md-3 col-sm-12 col-xs-12">
-          <form-field label="No Bien" [control]="form.get('numberGood')">
+          <form-field label="No. Bien" [control]="form.get('numberGood')">
             <input
               type="number"
               class="form-control"
@@ -80,7 +80,8 @@
         [cveScreen]="cveScreen"
         [reportPrint]="nameReport"
         [refresh]="refresh"
-        (documentEmmit)="changeFoli($event)">
+        (documentEmmit)="changeFoli($event)"
+        (change)="savedLocal($event)">
       </app-scanning-foil>
     </div>
   </div>
