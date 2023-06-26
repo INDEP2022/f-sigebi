@@ -209,24 +209,6 @@
                   Guardar
                   <i class="bx bx-save text-light float-icon"></i>
                 </button>
-                <div *ngIf="showFoto && !disabledBienes">
-                  <button
-                    class="btn btn-primary btn-sm active"
-                    type="button"
-                    (click)="openFileUploader()">
-                    Subir Archivos
-                    <i class="fa fa-upload"></i>
-                  </button>
-                  <!-- <form-field [control]="form.get('img')" label="">
-                    <input
-                      class="form-control mb-3 mt-3"
-                      type="file"
-                      id="formFile"
-                      accept="image/png,image/jpeg"
-                      formControlName="img"
-                      (change)="onFileChange($event)" />
-                  </form-field> -->
-                </div>
                 <h5
                   class="text-danger"
                   style="text-align: right"
@@ -456,6 +438,13 @@
                     di_numerario_conciliado
                   "></app-good-table-vals>
               </div>
+            </tab>
+            <tab heading="Fotos">
+              <app-good-photos
+                *ngIf="numberGood"
+                [showPhoto]="showPhoto"
+                [disabledBienes]="disabledBienes"
+                [goodNumber]="numberGood.value"></app-good-photos>
             </tab>
           </tabset>
         </form>
