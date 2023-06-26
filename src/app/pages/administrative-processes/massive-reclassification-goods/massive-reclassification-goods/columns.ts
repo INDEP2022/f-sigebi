@@ -5,7 +5,7 @@ export const COLUMNS = {
     title: 'No. Bien',
     sort: false,
   },
-  goodDescription: {
+  changeDescription: {
     title: 'Descripción de la clasificación',
     sort: false,
   },
