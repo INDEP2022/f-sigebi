@@ -13,7 +13,7 @@ import { BasePage } from 'src/app/core/shared';
 import { getMimeTypeFromBase64 } from 'src/app/utils/functions/get-mime-type';
 
 const Tiff = require('tiff.js');
-const LOADING_GIF = 'assets/images/loader-button.gif  ';
+const LOADING_GIF = 'assets/images/loader-button.gif';
 const NO_IMAGE_FOUND = 'assets/images/documents-icons/not-found.jpg';
 
 @Component({
