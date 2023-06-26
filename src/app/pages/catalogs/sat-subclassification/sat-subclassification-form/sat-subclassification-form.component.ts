@@ -49,7 +49,7 @@ export class SatSubclassificationFormComponent
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
       idClasification: [null, [Validators.required]],
-      idClasificationCode: [null, [Validators.required]],
+      idClasificationCode: [null],
       clasificationDetails: [null],
     });
     if (this.satSubclassification != null) {
@@ -141,8 +141,8 @@ export class SatSubclassificationFormComponent
 
   handleSuccess() {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.alert('success', this.title, `${message} Correctamente`);
-    //this.onLoadToast('success', this.title, `${message} Correctamente`);
+    // this.onLoadToast('success', this.title, `${message} Correctamente`);
+    this.alert('success', 'SUBCLASIFICACIÓN SAT', `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();

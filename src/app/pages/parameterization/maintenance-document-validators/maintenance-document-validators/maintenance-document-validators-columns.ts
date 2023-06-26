@@ -11,8 +11,4 @@ export const MAINTANANCE_DOCUMENT_VALIDATORS_COLUMNS = {
     title: 'Secuencia',
     sort: false,
   },
-  numRegister: {
-    title: 'Registro Número',
-    sort: false,
-  },
 };

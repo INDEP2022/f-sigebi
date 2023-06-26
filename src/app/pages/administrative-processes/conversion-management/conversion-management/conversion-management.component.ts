@@ -7,6 +7,7 @@ import { ConvertiongoodService } from 'src/app/core/services/ms-convertiongood/c
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
   selector: 'app-conversion-management',
@@ -14,6 +15,16 @@ import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
   styleUrls: ['./conversion-management.component.scss'],
 })
 export class ConversionManagementComponent extends BasePage implements OnInit {
+  DATA: any[] = [
+    {
+      label: 'Derivado',
+      value: '1',
+    },
+    {
+      label: 'Conversión',
+      value: '2',
+    },
+  ];
   //
   good: IGood;
   //
@@ -34,6 +45,8 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
   isFormModified = false;
 
   enable: boolean = false;
+
+  dataSelect = new DefaultSelect<any>();
 
   get idConversion() {
     return this.form.get('idConversion');
@@ -76,6 +89,7 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    this.dataSelect = new DefaultSelect(this.DATA, this.DATA.length);
     this.buildForm();
     this.description.disable();
     this.actaERDate.disable();
@@ -145,7 +159,11 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
           },
         });
     } else {
-      this.onLoadToast('info', 'Se debe cargar primero una conversión');
+      this.alert(
+        'info',
+        'Información',
+        'Se debe cargar primero una conversión'
+      );
     }
   }
 
@@ -165,7 +183,7 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
         this.setGood(this.good);
       },
       error: err => {
-        this.onLoadToast('info', 'Información', 'Bien no existe');
+        this.alert('info', 'Información', 'Bien no existe');
         this.form.reset();
         console.log(err);
       },
@@ -207,7 +225,7 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
       error: err => {
         this.actaER.setValue('');
         this.actaERDate.setValue('');
-        this.onLoadToast(
+        this.alert(
           'info',
           'Información',
           'Este bien no tiene Acta E/R asociada'
@@ -239,7 +257,11 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
       this.conversion = null;
       this.isFormModified = false;
     } else {
-      this.onLoadToast('error', 'ERROR', 'Erorr al Generar la contraseña');
+      this.alert(
+        'error',
+        'Ha ocurrido un error',
+        'Erorr al Generar la contraseña'
+      );
     }
   }
 
@@ -247,7 +269,11 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
     this.enable = false;
     console.log(this.idConversion.value);
     if (this.idConversion.value === '' || this.idConversion.value === null) {
-      this.onLoadToast('info', 'Ingrese por favor un id de conversión');
+      this.alert(
+        'info',
+        'Campo requerido',
+        'Ingrese por favor un id de conversión'
+      );
       this.form.markAllAsTouched();
       return;
     }
@@ -262,14 +288,14 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
         this.date.setValue(new Date());
         this.enableButton = false;
         this.actaConversion.setValue(this.conversion.cveActaConv);
-        this.onLoadToast(
+        this.alert(
           'success',
           'Exitoso',
           'Se ha cargado la conversión correctamente'
         );
       },
       error: err => {
-        this.onLoadToast('error', 'ERROR', 'La conversión no existe');
+        this.alert('error', 'ERROR', 'La conversión no existe');
         this.form.reset();
         console.log(err);
       },

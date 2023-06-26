@@ -433,7 +433,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     this.receptionGoodService.getReceipt(params.getValue()).subscribe({
       next: response => {
         this.receiptData = response.data[0];
-        console.log('response', this.receiptData);
         this.receipts.load(response.data);
         this.totalItemsReceipt = this.receipts.count();
         this.formLoadingReceipt = false;
@@ -1366,6 +1365,23 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           }
         });
       } else {
+        let config = {
+          ...MODAL_CONFIG,
+          class: 'modal-lg modal-dialog-centered',
+        };
+        config.initialState = {
+          programming: this.programming,
+          selectGoods: this.selectGood,
+          callback: (data: boolean) => {
+            if (data) {
+              this.goodsGuards.clear();
+              this.getReceiptsGuard();
+              this.getInfoGoodsProgramming();
+            }
+          },
+        };
+
+        this.modalService.show(AssignReceiptFormComponent, config);
       }
     } else if (type == 'almacen') {
       if (this.receipts.count() > 0) {
@@ -1392,41 +1408,23 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           }
         });
       } else {
-        /* const form: Object = {
-        minutesId: '1',
-        idPrograming: this.programming.id,
-      };
+        let config = {
+          ...MODAL_CONFIG,
+          class: 'modal-lg modal-dialog-centered',
+        };
+        config.initialState = {
+          programming: this.programming,
+          selectGoods: this.selectGood,
+          callback: (data: boolean) => {
+            if (data) {
+              this.goodsWarehouse.clear();
+              this.getReceiptsGuard();
+              this.getInfoGoodsProgramming();
+            }
+          },
+        };
 
-      this.proceedingService.createProceedings(form).subscribe({
-        next: response => {
-          const receiptForm: Object = {
-            id: 1,
-            actId: response.id,
-            programmingId: this.programming.id,
-            statusReceipt: 'ABIERTO',
-          };
-          this.receptionGoodService.createReceipt(receiptForm).subscribe({
-            next: response => {
-              this.getReceipts();
-            },
-            error: error => {
-              console.log(error);
-            },
-          });
-        },
-        error: error => {
-          console.log(error);
-        },
-      });
-      if (this.receipts) {
-      
-    } else {
-      this.onLoadToast(
-        'info',
-        'Acción Invalida',
-        'El acta tiene recibos que aun no se encuentran cerrados, cierre todos los recibos asociados al acta antes de cerrar el acta.'
-      );
-    }  */
+        this.modalService.show(AssignReceiptFormComponent, config);
       }
     }
   }
@@ -1500,7 +1498,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
             resolve(true);
           },
           error: error => {
-            console.log('err', error);
             resolve(false);
           },
         });
@@ -1566,7 +1563,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
             resolve(true);
           },
           error: error => {
-            console.log('error', error);
             resolve(false);
           },
         });
@@ -1752,6 +1748,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
     config.initialState = {
       receiptGuards: this.receiptGuards,
+      guardReception: this.goodsReception,
       typeDoc: 103,
       programming: this.programming,
       callback: (data: boolean) => {
@@ -1762,7 +1759,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     };
 
     this.modalService.show(UploadReportReceiptComponent, config);
-    console.log('componente para adjuntar doc');
   }
 
   assignReceipt() {
@@ -2074,9 +2070,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           next: async response => {
             await this.changeStatusGoodReceipt();
           },
-          error: error => {
-            console.log('error actualizar progr', error);
-          },
+          error: error => {},
         });
       });
     } else {
