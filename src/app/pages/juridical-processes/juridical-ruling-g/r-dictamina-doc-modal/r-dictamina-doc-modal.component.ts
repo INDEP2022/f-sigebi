@@ -201,4 +201,7 @@ export class RDictaminaDocModalComponent extends BasePage implements OnInit {
       this.modalRef.hide();
     }
   }
+  close2() {
+    this.modalRef.hide();
+  }
 }

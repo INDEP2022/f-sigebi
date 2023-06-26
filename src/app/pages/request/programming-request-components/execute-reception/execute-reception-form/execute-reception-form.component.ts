@@ -433,7 +433,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     this.receptionGoodService.getReceipt(params.getValue()).subscribe({
       next: response => {
         this.receiptData = response.data[0];
-        console.log('response', this.receiptData);
         this.receipts.load(response.data);
         this.totalItemsReceipt = this.receipts.count();
         this.formLoadingReceipt = false;
@@ -1499,7 +1498,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
             resolve(true);
           },
           error: error => {
-            console.log('err', error);
             resolve(false);
           },
         });
@@ -1565,7 +1563,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
             resolve(true);
           },
           error: error => {
-            console.log('error', error);
             resolve(false);
           },
         });
@@ -2073,9 +2070,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           next: async response => {
             await this.changeStatusGoodReceipt();
           },
-          error: error => {
-            console.log('error actualizar progr', error);
-          },
+          error: error => {},
         });
       });
     } else {

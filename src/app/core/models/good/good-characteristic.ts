@@ -29,7 +29,7 @@ export class CharacteristicEditorCell extends DefaultEditor {
   private good: IGood;
   @Input()
   set value(data: { value: ICharacteristicValue; good: IGood }) {
-    console.log(data);
+    // console.log(data);
 
     const value = data.value;
     this.good = data.good;

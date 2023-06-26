@@ -73,7 +73,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
   disabledBienes: boolean = true;
   goodChange: number = 0;
   bodyGoodCharacteristics: ICharacteristicsGoodDTO = {};
-  showFoto = false;
+  showPhoto = false;
   loadTypes = false;
   get data() {
     return this.service.data;
@@ -300,11 +300,16 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
   }
 
   selectTab(tabDisabled: 0 | 1, tabActive: 0 | 1) {
-    console.log(this.staticTabs);
+    // console.log(this.staticTabs);
 
     if (this.staticTabs?.tabs[tabActive]) {
       this.staticTabs.tabs[tabDisabled].disabled = true;
       this.staticTabs.tabs[tabActive].active = true;
+      if (tabDisabled === 0) {
+        this.staticTabs.tabs[2].active = true;
+      } else {
+        this.staticTabs.tabs[2].disabled = true;
+      }
     }
   }
 
@@ -344,7 +349,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     this.prepareForm();
     this.activatedRoute.queryParams.subscribe({
       next: param => {
-        console.log(param);
+        // console.log(param);
         this.origin = param['origin'] ?? null;
         this.origin1 = param['origin1'] ?? null;
         if (
@@ -366,9 +371,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
         const selectedBadString = localStorage.getItem('selectedBad');
         if (selectedBadString) {
           this.selectedBad = JSON.parse(selectedBadString);
-          console.log(this.selectedBad);
           if (!this.origin) this.origin = '1';
-          console.log(this.origin);
 
           // this.selectTab();
           this.numberGood.setValue(this.selectedBad.id);
@@ -486,12 +489,19 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
       return;
     }
     if (this.selectedBad && this.selectedBad.motive) {
+      if (
+        this.selectedBad.motive.includes('SIN FOTOS') &&
+        this.service.files.length === 0
+      ) {
+        this.alert('error', 'ERROR', 'Debe subir fotos al bien');
+        return;
+      }
       this.attribGoodBadService
         .remove(this.selectedBad)
         .pipe(takeUntil(this.$unSubscribe))
         .subscribe({
           next: response => {
-            console.log(response);
+            // console.log(response);
           },
           error: err => {
             console.log(err);
@@ -542,10 +552,14 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
 
   clearFilter() {
     this.bodyGoodCharacteristics = {};
+    this.selectedBad = null;
+    this.service.files = [];
     this.form.reset();
     this.good = null;
     this.data = [];
     this.totalItems = 0;
+    this.staticTabs.tabs[1].disabled = true;
+    this.staticTabs.tabs[2].disabled = true;
   }
   private async getDelegacionJoinSubdelDepartamentos() {
     return firstValueFrom(
@@ -949,8 +963,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     this.selectedBad = await firstValueFrom(
       this.attribGoodBadService.getById(this.good.id).pipe(
         takeUntil(this.$unSubscribe),
-        catchError(x => of({ data: null as IAttribGoodBad })),
-        map(x => x.data)
+        catchError(x => of(null))
       )
     );
   }
@@ -990,22 +1003,23 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
       if (response && response.data && response.data.length > 0) {
         this.staticTabs.tabs[1].disabled = false;
         this.staticTabs.tabs[1].active = true;
+        this.staticTabs.tabs[2].disabled = false;
         let item = response.data[0];
         this.totalItems = response.count ?? 0;
         if (item) {
           // this.se
           this.good = item;
-          debugger;
           if (!this.selectedBad) {
             await this.fillSelectedBad();
           }
+          console.log(this.selectedBad);
           if (
             this.selectedBad &&
             this.selectedBad.motive.includes('SIN FOTOS')
           ) {
-            this.showFoto = true;
+            this.showPhoto = true;
           } else {
-            this.showFoto = false;
+            this.showPhoto = false;
           }
           // this.service.newGood = {
           //   id: this.good.id,
