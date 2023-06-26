@@ -254,6 +254,7 @@ export class PerformProgrammingFormComponent
     params.getValue()['filter.id'] = this.task.id;
     this.taskService.getAll(params.getValue()).subscribe({
       next: response => {
+        console.log('task', response);
         this.infoTask = response.data[0];
       },
       error: error => {},
@@ -418,17 +419,59 @@ export class PerformProgrammingFormComponent
     const rejectionComment = this.modalService.show(UserFormComponent, config);
   }
 
-  newWarehouse() {
+  async newWarehouse() {
     if (this.regionalDelegationUser) {
-      const regDelData = this.regionalDelegationUser;
-      let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
-      config.initialState = {
-        programmingId: this.idProgramming,
-        regDelData,
-        callback: (next: boolean) => {},
-      };
+      if (this.performForm.get('startDate').value) {
+        this.performForm
+          .get('startDate')
+          .setValue(new Date(this.performForm.get('startDate').value));
+      }
+      if (this.performForm.get('endDate').value) {
+        this.performForm
+          .get('endDate')
+          .setValue(new Date(this.performForm.get('endDate').value));
+      }
 
-      this.modalService.show(WarehouseFormComponent, config);
+      if (this.transferentId)
+        this.performForm.get('tranferId').setValue(this.transferentId);
+      if (this.stationId)
+        this.performForm.get('stationId').setValue(this.stationId);
+      if (this.autorityId) {
+        this.performForm.get('autorityId').setValue(this.autorityId);
+      }
+
+      this.performForm
+        .get('regionalDelegationNumber')
+        .setValue(this.delegationId);
+
+      this.performForm.get('delregAttentionId').setValue(this.delegationId);
+
+      const folio: any = await this.generateFolio(this.performForm.value);
+      this.performForm.get('folio').setValue(folio);
+      const task = JSON.parse(localStorage.getItem('Task'));
+      const updateTask = await this.updateTask(folio, task.id);
+      if (updateTask) {
+        this.programmingGoodService
+          .updateProgramming(this.idProgramming, this.performForm.value)
+          .subscribe({
+            next: async () => {
+              this.loading = false;
+              const regDelData = this.regionalDelegationUser;
+              let config = {
+                ...MODAL_CONFIG,
+                class: 'modal-lg modal-dialog-centered',
+              };
+              config.initialState = {
+                programmingId: this.idProgramming,
+                regDelData,
+                callback: (next: boolean) => {},
+              };
+
+              this.modalService.show(WarehouseFormComponent, config);
+            },
+            error: error => {},
+          });
+      }
     } else {
       this.onLoadToast(
         'warning',
@@ -2371,18 +2414,18 @@ export class PerformProgrammingFormComponent
         if (correctDate > _startDateFormat || correctDate > _endDateFormat) {
           this.performForm
             .get('startDate')
-            .addValidators([Validators.required, minDate(new Date(response))]);
+            .addValidators([minDate(new Date(response))]);
           this.performForm
             .get('startDate')
             .setErrors({ minDate: { min: new Date(response) } });
           this.performForm
             .get('endDate')
-            .addValidators([Validators.required, minDate(new Date(response))]);
+            .addValidators([minDate(new Date(response))]);
           this.performForm
             .get('endDate')
             .setErrors({ minDate: { min: new Date(response) } });
           this.performForm.markAllAsTouched();
-
+          this.performForm.reset();
           /*const endDate = this.performForm.get('endDate').value;
           const _endDateFormat = moment(endDate).format(
             'DD/MMMM/YYYY, h:mm:ss a'
