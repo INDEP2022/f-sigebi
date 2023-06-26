@@ -115,8 +115,8 @@ export class LegalRegularizationComponent extends BasePage implements OnInit {
         } else {
           if (!this.redicrectScan) {
             this.alert(
-              'error',
-              'ERROR',
+              'info',
+              'Información',
               `El estatus del bien ${this.numberGood.value} es incorrecto. Los estatus validos son  ADM o REJ.'`
             );
           }
@@ -124,7 +124,7 @@ export class LegalRegularizationComponent extends BasePage implements OnInit {
       },
       error: err => {
         console.log(err);
-        this.onLoadToast('error', 'ERROR', err.error.message);
+        this.alert('error', 'Ha ocurrido un error', err.error.message);
       },
     });
   }
