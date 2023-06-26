@@ -1,5 +1,11 @@
 /** BASE IMPORT */
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { LocalDataSource } from 'ng2-smart-table';
@@ -32,6 +38,7 @@ export class MassRulingComponent
   extends MassRullingResponses
   implements OnInit, OnDestroy
 {
+  @ViewChild('fileExpedient') fileInput: ElementRef;
   expedientNumber: number = null;
   wheelNumber: number = null;
   data: LocalDataSource = new LocalDataSource();
@@ -223,10 +230,6 @@ export class MassRulingComponent
     this.modalService.hide();
   }
 
-  // uploadForFileGoodDictation() {}
-
-  // async uploadForIdentifier() {}
-
   async onClickGoodDictation() {
     if (this.dataTable.length < 1) {
       this.onLoadToast(
@@ -325,64 +328,63 @@ export class MassRulingComponent
     // });
   }
 
+  onClickBtnClear() {
+    this.dataTable = [];
+    this.formCargaMasiva.reset();
+    this.form.reset();
+    this.form.get('delete').setValue(false);
+    this.form.get('delete').disable();
+    this.file = null;
+  }
+
   //TODO: FOR TESTING
   async onClickDictation() {
-    console.log(this.authService.decodeToken());
+    // console.log(this.authService.decodeToken());
     const armyOfficeKey = this.form.get('passOfficeArmy').value;
-    if (!armyOfficeKey) {
-      this.alert(
-        'warning',
-        'Advertencia',
-        'Debe ingresar la clave de la oficina del ejercito'
-      );
-      return;
-    }
-    try {
-      this.btnsEnabled.btnDictation = true;
-      await this.CountDictationGoodFile(armyOfficeKey);
-    } catch (ex) {
-      this.btnsEnabled.btnDictation = false;
-      this.alert('error', 'Error', 'Error desconocido Consulte a su Analista');
-      return;
-    }
+    // if (!armyOfficeKey) {
+    //   this.alert(
+    //     'warning',
+    //     'Advertencia',
+    //     'Debe ingresar la clave de la oficina del ejercito'
+    //   );
+    //   return;
+    // }
 
-    this.alertQuestion(
-      'info',
-      'Información',
-      'Desea eliminar el Dictamen: ' + this.form.get('passOfficeArmy').value
-    ).then(async question => {
-      if (!question.isConfirmed) {
+    try {
+      const count = await this.CountDictationGoodFile(armyOfficeKey);
+      const responseQuestion = await this.alertQuestion(
+        'info',
+        'Información',
+        'Desea eliminar el Dictamen: ' + armyOfficeKey
+      );
+      if (!responseQuestion.isConfirmed) {
         this.btnsEnabled.btnDictation = false;
         return;
       }
+      this.onLoadToast(
+        'info',
+        `El Total de Expediente a eliminar son: ${count}`
+      );
       let usuar;
       try {
-        const user = this.authService.decodeToken().name;
+        const user = this.authService
+          .decodeToken()
+          .preferred_username?.toUpperCase();
         usuar = await this.getRtdictaAarusr(user);
       } catch (ex) {
         this.btnsEnabled.btnDictation = false;
         this.alert(
-          'error',
-          'Error',
+          'info',
+          '',
           'Su usuario no tiene permiso para eliminar registros'
         );
         return;
       }
 
       if (usuar?.user) {
-        try {
-          const passOfficeArmy = this.form.get('passOfficeArmy').value;
-          await this.procedureDeleteDictationMoreTax(passOfficeArmy);
-          this.alert('success', 'Dictamen', 'Proceso terminado');
-          this.btnsEnabled.btnDictation = false;
-        } catch (ex: any) {
-          this.btnsEnabled.btnDictation = false;
-          this.alert(
-            'error',
-            'Error',
-            'Error desconocido Consulte a su Analista'
-          );
-        }
+        await this.procedureDeleteDictationMoreTax(armyOfficeKey);
+        this.alert('success', 'Dictamen', 'Proceso terminado');
+        this.btnsEnabled.btnDictation = false;
       } else {
         this.alert(
           'error',
@@ -391,7 +393,10 @@ export class MassRulingComponent
         );
         this.btnsEnabled.btnDictation = false;
       }
-    });
+    } catch (ex: any) {
+      this.btnsEnabled.btnDictation = false;
+      this.alert('error', 'Error', 'Error desconocido Consulte a su Analista');
+    }
   }
 
   onClickLoadByIdentifier(): void {
@@ -447,6 +452,7 @@ export class MassRulingComponent
     this.file = event.target.files[0];
     const data = await getDataFromExcel(this.file);
     if (!this.validateExcel(data)) {
+      this.fileInput.nativeElement.value = null;
       return;
     }
     const dataTable: any[] = [];
@@ -472,6 +478,7 @@ export class MassRulingComponent
     this.form.get('delete').enable();
     this.form.get('delete').setValue(false);
     this.isDisableCreateDictation = false;
+    this.fileInput.nativeElement.value = null;
   }
 
   async onClickPrintOffice() {
@@ -657,8 +664,16 @@ export class MassRulingComponent
     try {
       vIDENTI = await this.findGoodAndDictXGood1();
     } catch (error: any) {
-      this.alertQuestion('warning', 'Error', error?.message);
-      console.log({ error });
+      if (error.status >= 400 && error.status < 500) {
+        this.alert(
+          'warning',
+          'info',
+          'No se encontró identificador en el Dictamen.'
+        );
+        throw error;
+      }
+      this.alert('warning', 'info', error?.message);
+      // console.log({ error });
       throw error;
     }
 

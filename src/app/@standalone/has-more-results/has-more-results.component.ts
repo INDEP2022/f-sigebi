@@ -14,8 +14,8 @@ export const SettingTableDefault = {
   actions: {
     columnTitle: 'Acciones',
     position: 'right',
-    add: true,
-    edit: true,
+    add: false,
+    edit: false,
     delete: false,
   },
   attr: {
@@ -51,6 +51,7 @@ export class HasMoreResultsComponent implements OnInit {
   @Input() title = 'Por definir';
   @Input() ms = 'notification';
   @Input() columns: any;
+  @Input() settingTable = {};
   data: any[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -65,7 +66,7 @@ export class HasMoreResultsComponent implements OnInit {
   ngOnInit(): void {
     // this.prepareForm();
     // this.getMJobManagements();
-    this.settings = SettingTableDefault;
+    this.settings = { ...SettingTableDefault, ...this.settingTable };
     // this.settings.actions = false;
     this.getData();
     this.settings.columns = this.columns;

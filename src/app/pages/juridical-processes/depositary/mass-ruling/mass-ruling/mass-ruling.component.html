@@ -38,10 +38,15 @@
               (click)="searchDictation()">
               Buscar
             </button>
+            <button
+              class="btn btn-primary active btn-sm text-wrap ml-2"
+              (click)="onClickBtnClear()">
+              Limpiar
+              <i class="fas fa-eraser"></i>
+            </button>
           </div>
         </div>
       </div>
-      <hr />
       <div class="form-material">
         <div class="row w-100">
           <div class="col-sm-12 col-12 col-md-2 p-2">
@@ -103,7 +108,7 @@
             <div class="form-group mr-2">
               <button
                 type="button"
-                [disabled]="isDisabledBtnGoodDictation"
+                [disabled]="!form.value.delete && isDisabledBtnGoodDictation"
                 class="btn btn-primary active btn-sm text-wrap"
                 (click)="onClickGoodDictation()">
                 Bienes del Dictamen
@@ -113,7 +118,7 @@
           <div class="col-sm-12 col-12 col-md-4 col-lg-4 col-xl-2 p-2">
             <div class="form-group ml-2 mr-2">
               <button
-                [disabled]="btnsEnabled.btnDictation"
+                [disabled]="!form.value.passOfficeArmy"
                 type="button"
                 class="btn btn-primary active btn-sm text-wrap"
                 (click)="onClickDictation()">
@@ -183,7 +188,6 @@
           type="file"
           name="file"
           #fileExpedient
-          #uploadFile
           class="d-none"
           accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
           (change)="onClickLoadFile($event)" />
