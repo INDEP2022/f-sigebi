@@ -450,6 +450,13 @@
                   "></app-good-table-vals>
               </div>
             </tab>
+            <tab heading="Fotos">
+              <app-good-photos
+                *ngIf="numberGood"
+                [showPhoto]="showPhoto"
+                [disabledBienes]="disabledBienes"
+                [goodNumber]="numberGood.value"></app-good-photos>
+            </tab>
           </tabset>
         </form>
       </div>

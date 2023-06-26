@@ -6,7 +6,7 @@ export const COLUMNS = {
   id: {
     title: 'No. Bien',
     sort: false,
-    width: '150px'
+    width: '150px',
   },
   description: {
     title: 'Descripción del Bien',
