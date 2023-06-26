@@ -30,6 +30,7 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
   programming: Iprogramming;
   receipt: IReceipt;
   proceeding: IProceedings;
+  guardReception: any;
   constructor(
     private modalRef: BsModalRef,
     private modalService: BsModalService,
@@ -52,6 +53,9 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
     if (this.typeDoc == 103) {
       this.getReceipts();
       this.getProceeding();
+      this.getGoodsReceipt();
+
+      console.log('guardReception');
     }
     this.getProgramming();
   }
@@ -59,6 +63,20 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
   prepareForm() {
     this.form = this.fb.group({
       file: [null],
+    });
+  }
+
+  getGoodsReceipt() {
+    const params = new BehaviorSubject<ListParams>(new ListParams());
+    params.getValue()['filter.programmationId'] = this.programming.id;
+    this.receptionService.getReceiptGood(params.getValue()).subscribe({
+      next: response => {
+        console.log('response', response); //Hace falta un filtro
+        response.data.map((item: IRecepitGuard) => {
+          this.goodId += item.idGood + ' ';
+        });
+      },
+      error: error => {},
     });
   }
 
@@ -81,7 +99,6 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
     this.receptionGoodService.getReceipt(params.getValue()).subscribe({
       next: response => {
         this.receipt = response.data[0];
-        console.log('recibos', this.receipt);
       },
       error: error => {},
     });
@@ -248,6 +265,7 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
         xFolioRecibo: this.receipt.folioReceipt,
         dDocTitle: this.receipt.folioReceipt,
         dSecurityGroup: 'Public',
+        xidBien: this.goodId,
         xidTransferente: this.programming.tranferId,
         xTipoDocumento: 103,
       };
@@ -270,7 +288,7 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
             console.log('doc guardado', response);
             const updateReceipt = this.updateReceipt(response.dDocName);
             if (updateReceipt) {
-              this.onLoadToast(
+              const updateGood = this.onLoadToast(
                 'success',
                 'Acción correcta',
                 'Documento Adjuntado correctamente'
