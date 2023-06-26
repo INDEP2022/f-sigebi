@@ -16,7 +16,7 @@ export const DEPOSIT_TOKENS_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  invoice: {
+  folio_ficha: {
     title: 'Folio',
     type: 'string',
     sort: false,
