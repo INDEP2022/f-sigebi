@@ -70,21 +70,21 @@ export class WarehouseConfirmComponent extends BasePage implements OnInit {
           };
 
           console.log('warehouseForm', warehouseForm);
-          /*this.warehouseService.create(warehouseForm).subscribe({
+          this.warehouseService.create(warehouseForm).subscribe({
             next: async response => {
               const openTaskPerform = await this.openTaskPerform();
               if (openTaskPerform == true) {
                 this.onLoadToast(
                   'success',
-                  'Alta de almacén confirmada correctamente',
-                  ''
+                  'Acción correcta',
+                  'Alta de almacén confirmada correctamente'
                 );
                 this.close();
                 this.router.navigate(['/pages/siab-web/sami/consult-tasks']);
               }
             },
             error: error => {},
-          }); */
+          });
         }
       }
     });
