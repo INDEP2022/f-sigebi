@@ -136,8 +136,9 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
             this.saved = false;
           },
           error: err => {
-            this.onLoadToast(
+            this.alert(
               'info',
+              'Información',
               'No se puede realizar la operación ya que este bien ya está asignado a esta conversión'
             );
             console.log(err);

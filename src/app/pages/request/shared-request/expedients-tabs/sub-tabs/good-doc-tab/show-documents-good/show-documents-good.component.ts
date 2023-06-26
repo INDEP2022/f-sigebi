@@ -172,7 +172,7 @@ export class ShowDocumentsGoodComponent extends BasePage implements OnInit {
     this.loading = true;
     const filter: Object = {
       xidBien: this.idGood,
-      xidSolicitud: this.idRequest,
+      //xidSolicitud: this.idRequest,
     };
     this.docRequestForm.get('noRequest').setValue(this.idGood);
     this.wContentService.getDocumentos(filter).subscribe(data => {

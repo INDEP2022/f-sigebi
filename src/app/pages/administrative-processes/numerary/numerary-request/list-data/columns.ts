@@ -21,6 +21,17 @@ export const COLUMNS = {
       };
       return ['S', 'P', 'C'].includes(value) ? status[value]() : '';
     },
+    filter: {
+      type: 'list',
+      config: {
+        selectText: 'Seleccionar',
+        list: [
+          { value: 'S', title: 'SOLICITADA' },
+          { value: 'P', title: 'PROCESADA' },
+          { value: 'C', title: 'CANCELADA' },
+        ],
+      },
+    },
   },
   description: {
     title: 'Concepto',

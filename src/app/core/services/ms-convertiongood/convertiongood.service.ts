@@ -3,10 +3,10 @@ import { Observable } from 'rxjs';
 import { ConvertiongoodEndpoints } from 'src/app/common/constants/endpoints/ms-convertiongood-endpoints';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
+import { IRSender } from 'src/app/pages/administrative-processes/proceedings-conversion/proceedings-conversion/proceedings-conversion.component';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IAssetConversion } from '../../models/ms-convertiongood/asset-conversion';
 import { IConvertiongood } from '../../models/ms-convertiongood/convertiongood';
-
 @Injectable({
   providedIn: 'root',
 })
@@ -51,5 +51,13 @@ export class ConvertiongoodService extends HttpService {
       ConvertiongoodEndpoints.AssetConversions,
       assetConversions
     );
+  }
+  getRegSender(params?: ListParams) {
+    const route = `${ConvertiongoodEndpoints.RtdictaAarusr}`;
+    return this.get(route, params);
+  }
+  getRegAddressee(params: ListParams): Observable<IListResponse<IRSender>> {
+    const route = `${ConvertiongoodEndpoints.RtdictaAarusr}`;
+    return this.get(route, params);
   }
 }

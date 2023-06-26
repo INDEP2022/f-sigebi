@@ -1,26 +1,26 @@
 export const GENERAL_DOCS_DOCUMENTS_VIEWER_COLUMNS = {
   numberProceedings: {
-    title: 'No Expediente',
+    title: 'No. Expediente',
     sort: false,
   },
   flyerNumber: {
-    title: 'No Volante',
+    title: 'No. Volante',
     sort: false,
   },
   keyTypeDocument: {
-    title: 'Tipo Documento',
+    title: 'Tipo documento',
     sort: false,
   },
   significantDate: {
-    title: 'Fecha Significativa',
+    title: 'Fecha significativa',
     sort: false,
   },
   id: {
-    title: 'Folio Universal',
+    title: 'Folio universal',
     sort: false,
   },
   descriptionDocument: {
-    title: 'Desc. Documento',
+    title: 'Desc. documento',
     sort: false,
   },
   sheets: {
