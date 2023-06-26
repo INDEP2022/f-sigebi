@@ -75,4 +75,10 @@ export class ConvertiongoodService extends HttpService {
       .get<any>(URL, { headers: headers, params: params })
       .pipe(map(res => res));
   }
+  download(uri: string, params: any): Observable<any> {
+    const header: Object = {
+      responseType: 'arraybuffer',
+    };
+    return this.httpClient.get(`${ConvertiongoodEndpoints.ActsConvertion}`);
+  }
 }
