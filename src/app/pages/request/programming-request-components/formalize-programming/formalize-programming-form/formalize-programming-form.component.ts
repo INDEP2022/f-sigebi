@@ -653,7 +653,16 @@ export class FormalizeProgrammingFormComponent
           .getSignatoriesFilter(learnedType, learnedId)
           .subscribe({
             next: response => {
+              response.data.map(item => {
+                this.signatoriesService
+                  .deleteFirmante(Number(item.signatoryId))
+                  .subscribe({
+                    next: () => {},
+                    error: error => {},
+                  });
+              });
               console.log('response', response);
+              console.log('uvfv', uvfv);
             },
             error: async error => {
               console.log('No hay Firmantes');
@@ -728,7 +737,7 @@ export class FormalizeProgrammingFormComponent
               if (tranType == 'CE') {
                 if (OIC) {
                   if (firmOic) {
-                    await this.createFirm(
+                    const createOIC = await this.createFirm(
                       keyDoc,
                       idTypeDoc,
                       proceeding.id,
@@ -739,30 +748,32 @@ export class FormalizeProgrammingFormComponent
                       proceeding.idCatWorkerOic,
                       proceeding.idNoWorkerOic
                     );
-                  }
-                }
 
-                if (uvfv) {
-                  if (firmUvfv) {
-                    const createsig = await this.createFirm(
-                      keyDoc,
-                      idTypeDoc,
-                      proceeding.id,
-                      'ACTAS',
-                      'FIRMA_ELECT_UVFV',
-                      nomUvfv,
-                      proceeding.positionWorkerUvfv,
-                      null,
-                      null
-                    );
+                    if (createOIC) {
+                      if (uvfv) {
+                        if (firmUvfv) {
+                          const createsig = await this.createFirm(
+                            keyDoc,
+                            idTypeDoc,
+                            proceeding.id,
+                            'ACTAS',
+                            'FIRMA_ELECT_UVFV',
+                            nomUvfv,
+                            proceeding.positionWorkerUvfv,
+                            null,
+                            null
+                          );
 
-                    if (createsig) {
-                      if (nomReport) {
-                        this.loadDocument(
-                          nomReport,
-                          response.data[0].id,
-                          idTypeDoc
-                        );
+                          if (createsig) {
+                            if (nomReport) {
+                              this.loadDocument(
+                                nomReport,
+                                response.data[0].id,
+                                idTypeDoc
+                              );
+                            }
+                          }
+                        }
                       }
                     }
                   }
