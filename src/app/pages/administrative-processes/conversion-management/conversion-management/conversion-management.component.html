@@ -55,7 +55,7 @@
         </div>
       </div>
       <div class="row mt-5 mb-5">
-        <div class="col-md-3 col-sm-12 col-xs-12">
+        <div class="col-md-2 col-sm-12 col-xs-12">
           <form-field
             [control]="form.get('noExpediente')"
             label="No. Expediente">
@@ -78,7 +78,7 @@
               [max-length]="200" />
           </form-field>
         </div>
-        <div class="col-md-3 col-sm-12 col-xs-12">
+        <div class="col-md-4 col-sm-12 col-xs-12">
           <button
             type="button"
             class="btn btn-sm btn-primary active mr-3"
@@ -121,6 +121,7 @@
                 [control]="form.get('actaERDate')"
                 label="Fecha Acta E/R">
                 <input
+                  id="disabled"
                   type="text"
                   class="form-control"
                   formControlName="actaERDate"

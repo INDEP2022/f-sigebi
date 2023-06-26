@@ -17,7 +17,8 @@ import { BasePage } from 'src/app/core/shared/base-page';
 })
 export class DataValuationsComponent
   extends BasePage
-  implements OnInit, OnChanges {
+  implements OnInit, OnChanges
+{
   @Input() goodId: number;
   list: any[] = [];
   totalItems: number = 0;
@@ -58,7 +59,7 @@ export class DataValuationsComponent
         type: 'string',
         sort: false,
       },
-      /* comercializationValue: {
+      comercializationValue: {
         title: 'Valor Comercialización',
         type: 'string',
         sort: false,
@@ -92,7 +93,7 @@ export class DataValuationsComponent
         title: 'Valor Maq. Equipo',
         type: 'string',
         sort: false,
-      }, */
+      },
     };
   }
 

@@ -1,6 +1,8 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { IServiceCat } from 'src/app/core/models/catalogs/service-cat.model';
+import { ServiceCatService } from 'src/app/core/services/catalogs/service-cat.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
   KEYGENERATION_PATTERN,
@@ -14,16 +16,19 @@ import { CostCatalogService } from '../cost-catalog.service';
   styles: [],
 })
 export class ModalCostCatalogComponent extends BasePage implements OnInit {
-  title: string = 'Costo';
+  title: string = 'Catálogo de costo';
   edit: boolean = false;
   form: FormGroup = new FormGroup({});
-  allotment: any;
+  allotment: IServiceCat;
+  isChecked: boolean = false;
+
   @Output() refresh = new EventEmitter<true>();
 
   constructor(
     private fb: FormBuilder,
     private modalRef: BsModalRef,
-    private catalogService: CostCatalogService
+    private catalogService: CostCatalogService,
+    private serviceCatService: ServiceCatService
   ) {
     super();
   }
@@ -58,41 +63,53 @@ export class ModalCostCatalogComponent extends BasePage implements OnInit {
           Validators.maxLength(4),
         ],
       ],
-      unaffordabilityCriterion: [null, [Validators.maxLength(1)]],
-      cost: [null, [Validators.maxLength(5)]],
+      unaffordabilityCriterion: [null, Validators.maxLength(1)],
+      cost: [null, [Validators.required, Validators.maxLength(5)]],
+      registryNumber: [null],
     });
     if (this.allotment != null) {
       this.edit = true;
       this.form.patchValue(this.allotment);
       this.form.controls['code'].disable();
+      console.log(this.allotment.cost);
+      if (this.allotment.cost === 'GASTO') {
+        this.form.get('cost').setValue(this.allotment.cost);
+      } else {
+        this.form.get('cost').setValue(this.allotment.cost);
+      }
+      if (this.allotment.unaffordabilityCriterion === 'Y') {
+        this.isChecked = true;
+      } else {
+        this.isChecked = false;
+      }
     }
   }
 
-  putCatalog() {
-    this.loading = true;
-    const code = this.form.get('code').value;
-    const body = {
-      cost: this.form.get('cost').value,
-      description: this.form.get('description').value,
-      subaccount: this.form.get('subaccount').value,
-      unaffordabilityCriterion: this.form.get('unaffordabilityCriterion').value ? 'Y' : 'N',
-    };
-    this.catalogService.putCostCatalog(code, body).subscribe({
+  confirm() {
+    this.edit ? this.update() : this.create();
+  }
+
+  update() {
+    this.form.get('cost').value === 'COSTO' ? 'COSTO' : 'GASTO';
+    this.isChecked === true
+      ? this.form.controls['unaffordabilityCriterion'].setValue('Y')
+      : this.form.controls['unaffordabilityCriterion'].setValue('N');
+    const id = this.form.get('code').value;
+    console.log(this.form.getRawValue());
+    this.serviceCatService.update(id, this.form.getRawValue()).subscribe({
       next: data => this.handleSuccess(),
       error: error => (this.loading = false),
     });
   }
 
-  postCatalog() {
+  create() {
     this.loading = true;
-    const body = {
-      cost: this.form.get('cost').value,
-      description: this.form.get('description').value,
-      code: this.form.get('code').value,
-      subaccount: this.form.get('subaccount').value,
-      unaffordabilityCriterion: this.form.get('unaffordabilityCriterion').value ? 'Y' : 'N',
-    };
-    this.catalogService.postCostCatalog(body).subscribe({
+    this.form.get('cost').value === 'COSTO' ? 'COSTO' : 'GASTO';
+    this.isChecked === true
+      ? this.form.controls['unaffordabilityCriterion'].setValue('Y')
+      : this.form.controls['unaffordabilityCriterion'].setValue('N');
+    //console.log(this.form.getRawValue());
+    this.serviceCatService.create(this.form.getRawValue()).subscribe({
       next: data => this.handleSuccess(),
       error: error => (this.loading = false),
     });
@@ -103,7 +120,7 @@ export class ModalCostCatalogComponent extends BasePage implements OnInit {
   }
   handleSuccess() {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.onLoadToast('success', this.title, `${message} Correctamente`);
+    this.alert('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();

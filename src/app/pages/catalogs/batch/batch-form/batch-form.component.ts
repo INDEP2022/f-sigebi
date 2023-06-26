@@ -63,30 +63,24 @@ export class BatchFormComponent extends BasePage implements OnInit {
       ],
       status: [null, [Validators.required, Validators.maxLength(1)]],
     });
-    const id = document.getElementById('inputid');
-    const numStore = document.getElementById('inputnumStore');
     if (this.batch != null) {
-      this.render.addClass(id, 'disabled');
-      this.render.addClass(numStore, 'disabled');
       this.edit = true;
       console.log(this.batch);
       console.log(this.batch.numStore.idWarehouse);
       this.batchForm.patchValue(this.batch);
-      this.batchForm
-        .get('numStore')
-        .patchValue(this.batch.numStore.idWarehouse);
-
-      console.log(this.batchForm.get('numStore'));
-    } else {
-      this.render.removeClass(id, 'disabled');
-      this.render.removeClass(numStore, 'disabled');
+      this.batchForm.controls['numStore'].setValue(
+        this.batch.numStore.idWarehouse
+      );
+      this.getAlmacen(new ListParams(), this.batch.numStore.idWarehouse);
+      this.batchForm.controls['numStore'].disable();
+      this.batchForm.controls['id'].disable();
     }
     this.getAlmacen(new ListParams());
   }
 
   getAlmacen(params: ListParams, id?: string) {
     if (id) {
-      params['filter.id'] = `$eq:${id}`;
+      params['filter.idWarehouse'] = `$eq:${id}`;
     }
     this.batchService.getAlmacen(params).subscribe((data: any) => {
       this.itemsAlmacen = new DefaultSelect(data.data, data.count);
@@ -103,7 +97,7 @@ export class BatchFormComponent extends BasePage implements OnInit {
 
   create() {
     this.loading = true;
-    this.batchService.create(this.batchForm.value).subscribe({
+    this.batchService.create(this.batchForm.getRawValue()).subscribe({
       next: data => this.handleSuccess(),
       error: error => (this.loading = false),
     });
@@ -111,15 +105,18 @@ export class BatchFormComponent extends BasePage implements OnInit {
 
   update() {
     this.loading = true;
-    this.batchService.update(this.batch.id, this.batchForm.value).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
-    });
+    this.batchService
+      .update(this.batch.id, this.batchForm.getRawValue())
+      .subscribe({
+        next: data => this.handleSuccess(),
+        error: error => (this.loading = false),
+      });
   }
 
   handleSuccess() {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.onLoadToast('success', this.title, `${message} Correctamente`);
+    this.alert('success', this.title, `${message} Correctamente`);
+    //this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.refresh.emit(true);
     this.modalRef.hide();

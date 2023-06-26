@@ -90,7 +90,7 @@ export class StorehouseDetailComponent extends BasePage implements OnInit {
         new ListParams(),
         this.storeHouse.municipality
       );
-
+      this.storeHouseForm.controls['id'].disable();
       this.getUpdateLocalities(new ListParams(), this.storeHouse.locality);
 
       //this.getMunicipalities(new ListParams());
@@ -127,7 +127,8 @@ export class StorehouseDetailComponent extends BasePage implements OnInit {
 
   handleSuccess() {
     const message: string = this.edit ? 'Actualizada' : 'Guardada';
-    this.onLoadToast('success', this.title, `${message} Correctamente`);
+    this.alert('success', this.title, `${message} Correctamente`);
+    //this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();

@@ -61,7 +61,9 @@
       </div>
       <div class="row pt-3">
         <div class="col-md-6">
-          <form-field label="Profesion" [control]="form.get('profession')">
+          <form-field
+            label="Profesi&oacute;n"
+            [control]="form.get('profession')">
             <input
               type="text"
               class="form-control"
@@ -78,11 +80,16 @@
         </div>
         <div class="col-md-3">
           <form-field
-            label="Fecha inicio"
-            [control]="form.get('firstTimeLoginDate')">
+            [control]="form.get('firstTimeLoginDate')"
+            label="Fecha inicio">
             <input
-              type="date"
               class="form-control"
+              ngModel
+              bsDatepicker
+              [bsConfig]="{
+                dateInputFormat: 'YYYY-MM-DD',
+                displayOneMonthRange: true
+              }"
               formControlName="firstTimeLoginDate" />
           </form-field>
         </div>

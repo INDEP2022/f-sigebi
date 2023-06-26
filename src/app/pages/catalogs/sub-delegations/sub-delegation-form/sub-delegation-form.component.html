@@ -6,12 +6,12 @@
     <form class="form-material" [formGroup]="subdelegationForm">
       <div class="row">
         <div class="col-md-4">
-          <form-field [control]="subdelegationForm.get('id')" label="Id">
+          <form-field [control]="subdelegationForm.get('id')" label="Código">
             <input
               type="number"
               class="form-control"
               formControlName="id"
-              id="inputid" />
+              oninput="if(this.value.length > 2) this.value = this.value.slice(0, 2);" />
           </form-field>
         </div>
 
@@ -25,8 +25,7 @@
               [data]="delegations"
               (fetchItems)="getDelegations($event)"
               label="N&uacute;mero de delegaci&oacute;n"
-              (change)="onChange($event)"
-              id="inputdelegation">
+              (change)="onChange($event)">
             </ngx-select>
           </form-field>
         </div>
@@ -37,9 +36,17 @@
             label="Fecha">
             <input
               class="form-control"
-              type="Date"
+              ngModel
+              bsDatepicker
+              [bsConfig]="{
+                dateInputFormat: 'YYYY-MM-DD',
+                displayOneMonthRange: true
+              }"
               formControlName="dateDailyCon" />
           </form-field>
+          <!-- <form-field [control]="subdelegationForm.get('dateDailyCon')" label="">
+            <input class="form-control" type="Date" formControlName="dateDailyCon" />
+          </form-field> -->
         </div>
 
         <div class="col-md-12">
@@ -61,8 +68,7 @@
             <input
               class="form-control"
               type="number"
-              formControlName="phaseEdo"
-              id="inputetapa" />
+              formControlName="phaseEdo" />
           </form-field>
         </div>
 

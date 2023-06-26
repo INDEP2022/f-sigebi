@@ -66,7 +66,7 @@ export class ModalNumeraryParameterizationComponent
       this.form.patchValue(this.allotment);
       let value = this.allotment.typeProceeding;
       this.form.controls['typeProceeding'].setValue(value);
-      this.form.get('typeProceeding').disable();
+      //this.form.get('typeProceeding').disable();
     }
   }
   confirm() {
@@ -84,7 +84,7 @@ export class ModalNumeraryParameterizationComponent
   update() {
     this.loading = true;
     this.numeraryParameterizationAutomService
-      .update(this.form.value)
+      .update(this.form.getRawValue())
       .subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),

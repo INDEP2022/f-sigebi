@@ -30,8 +30,12 @@ export class OriginService implements ICrudMethods<IOrigin> {
     return this.originRepository.create(this.route, model);
   }
 
-  update(id: string | number, model: IOrigin): Observable<Object> {
-    return this.originRepository.update(this.route, id, model);
+  update1(model: IOrigin): Observable<Object> {
+    return this.originRepository.update4(this.route, model);
+  }
+
+  newUpdate(model: Object): Observable<Object> {
+    return this.originRepository.newUpdate(this.route, model);
   }
 
   remove(id: string | number): Observable<Object> {

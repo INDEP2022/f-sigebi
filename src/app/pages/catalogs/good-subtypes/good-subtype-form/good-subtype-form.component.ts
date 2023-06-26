@@ -69,11 +69,15 @@ export class GoodSubtypeFormComponent extends BasePage implements OnInit {
     if (this.goodSubtype != null) {
       this.edit = true;
       let goodType: IGoodType = this.goodSubtype.idTypeGood as IGoodType;
-      this.goodSubtypeForm.patchValue({
+      this.types = new DefaultSelect([goodType], 1);
+      this.goodSubtypeForm.patchValue(this.goodSubtype);
+      this.goodSubtypeForm.controls['idTypeGood'].disable();
+
+      /*this.goodSubtypeForm.patchValue({
         ...this.goodSubtype,
         idTypeGood: goodType.id,
-      });
-      this.types = new DefaultSelect([goodType], 1);
+      });*/
+      this.goodSubtypeForm.controls['idTypeGood'].disable();
     } else {
       this.getTypes({ page: 1, text: '' });
     }
@@ -125,7 +129,8 @@ export class GoodSubtypeFormComponent extends BasePage implements OnInit {
 
   handleSuccess() {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.onLoadToast('success', this.title, `${message} Correctamente`);
+    this.alert('success', this.title, `${message} Correctamente`);
+    //this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();

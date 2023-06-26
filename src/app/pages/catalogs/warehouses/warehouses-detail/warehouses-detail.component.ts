@@ -278,6 +278,7 @@ export class WarehousesDetailComponent extends BasePage implements OnInit {
   getLocalities(params: ListParams, id?: string, idMunicipality?: string) {
     if (idMunicipality) {
       params['filter.municipalityId'] = `$eq:${idMunicipality}`;
+      params['filter.stateKey'] = `$eq:${id}`;
     }
     /*
     if (id) {

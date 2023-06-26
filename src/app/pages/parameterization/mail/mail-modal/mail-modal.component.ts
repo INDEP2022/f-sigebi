@@ -9,8 +9,10 @@ import { ISegUsers } from 'src/app/core/models/ms-users/seg-users-model';
 import { IUserAccessAreas } from 'src/app/core/models/ms-users/users-access-areas-model';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import {
+  CURP_PATTERN,
   EMAIL_PATTERN,
   NUMBERS_PATTERN,
+  RFC_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
 
@@ -58,13 +60,10 @@ export class MailModalComponent extends BasePage implements OnInit {
           Validators.pattern(STRING_PATTERN),
         ],
       ],
-      rfc: [
-        null,
-        [Validators.maxLength(13), Validators.pattern(STRING_PATTERN)],
-      ],
+      rfc: [null, [Validators.maxLength(13), Validators.pattern(RFC_PATTERN)]],
       curp: [
         null,
-        [Validators.maxLength(20), Validators.pattern(STRING_PATTERN)],
+        [Validators.maxLength(20), Validators.pattern(CURP_PATTERN)],
       ],
       street: [
         null,
@@ -196,7 +195,8 @@ export class MailModalComponent extends BasePage implements OnInit {
 
   handleSuccess() {
     const message: string = this.edit ? 'Actualizada' : 'Guardada';
-    this.onLoadToast('success', this.title, `${message} Correctamente`);
+    this.alert('success', this.title, `${message} Correctamente`);
+    //this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();

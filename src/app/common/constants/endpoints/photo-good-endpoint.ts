@@ -11,4 +11,5 @@ export enum PhotoGoodEndpoints {
   TmpGoodPhoto = 'tmp-good-photo',
   TmpGoodsPhoto = 'tmp-goods-photo',
   ContainerPhotosSiab = 'container-photossiab',
+  BienFoto = 'good-photo',
 }

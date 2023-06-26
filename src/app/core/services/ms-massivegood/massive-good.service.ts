@@ -1,17 +1,12 @@
 import { Injectable } from '@angular/core';
 import { map, Observable } from 'rxjs';
-import {
-  GoodsExcel,
-  NumDetGood,
-} from 'src/app/pages/administrative-processes/numerary/numerary-request/models/goods-det';
+import { _Params } from 'src/app/common/services/http-wcontet.service';
+import { NumDetGood } from 'src/app/pages/administrative-processes/numerary/numerary-request/models/goods-det';
 import { MassiveGoodEndpoints } from '../../../common/constants/endpoints/ms-massivegood-endpoints';
 import { ListParams } from '../../../common/repository/interfaces/list-params';
 import { HttpService } from '../../../common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
-import {
-  IIdentifierCount,
-  IMassiveGoodTracker,
-} from '../../models/ms-massivegood/massive-good-goods-tracker.model';
+import { IMassiveGoodTracker } from '../../models/ms-massivegood/massive-good-goods-tracker.model';
 import { IMassiveGood } from '../../models/ms-massivegood/massivegood.model';
 
 @Injectable({
@@ -115,13 +110,9 @@ export class MassiveGoodService extends HttpService {
     return this.get(`${route}/${status}`);
   }
 
-  getFProRecPag2CSV(params: any, file: any) {
+  getFProRecPag2CSV(params: _Params, file: any) {
     const formData = new FormData();
     formData.append('file', file);
-    return this.post<IListResponse<GoodsExcel>>(
-      this.route.GetFProRecPag2CSV,
-      formData,
-      params
-    );
+    return this.post(this.route.GetFProRecPag2CSV, formData, params);
   }
 }

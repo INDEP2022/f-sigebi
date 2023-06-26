@@ -47,6 +47,7 @@ export class DelegationModalComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.delegationForm = this.fb.group({
+      id: [null],
       description: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
@@ -80,7 +81,7 @@ export class DelegationModalComponent extends BasePage implements OnInit {
 
     if (this.edit) newDelegation.id = this.delegationM.id;
 
-    this.edit ? this.update(newDelegation) : this.create(newDelegation);
+    this.edit ? this.update() : this.create(newDelegation);
   }
 
   create(newDelegation: IDelegation) {
@@ -94,10 +95,10 @@ export class DelegationModalComponent extends BasePage implements OnInit {
     });
   }
 
-  update(newDelegation: IDelegation) {
-    console.log(newDelegation);
+  update() {
+    console.log();
     this.loading = true;
-    this.delegationService.update2(newDelegation).subscribe({
+    this.delegationService.update2(this.delegationForm.getRawValue()).subscribe({
       next: data => this.handleSuccess(),
       error: error => (this.loading = false),
     });

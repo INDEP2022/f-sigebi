@@ -47,7 +47,7 @@ export class NormsFormComponent extends BasePage implements OnInit {
       id: [null],
       norm: [
         null,
-        [Validators.maxLength(30), Validators.pattern(STRING_PATTERN)],
+        [Validators.required, Validators.maxLength(30), Validators.pattern(STRING_PATTERN)],
       ],
       article: [
         null,
@@ -73,8 +73,8 @@ export class NormsFormComponent extends BasePage implements OnInit {
       ],
       condition: [null],
       version: [null],
-      status: [null, [Validators.required]],
-      name: [null]
+      status: [null],
+      name: [null, [Validators.required]],
     });
     this.normForm.controls['version'].setValue(1);
     this.normForm.controls['status'].setValue(1);

@@ -9,18 +9,22 @@ export const EMAIL_COLUMNS = {
   id: {
     title: 'Usuario',
     sort: false,
+    type: 'string',
   },
   name: {
     title: 'Nombre',
     sort: false,
+    type: 'string',
   },
   rfc: {
     title: 'RFC',
     sort: false,
+    type: 'string',
   },
-  usuario: {
+  userDetail: {
     title: 'Delegación',
     sort: false,
+    type: 'string',
     valuePrepareFunction: (value: any) => {
       console.log(value);
       if (value === null) {
@@ -42,38 +46,47 @@ export const EMAIL_COLUMNS = {
   email: {
     title: 'Email',
     sort: false,
+    type: 'string',
   },
   registryNumber: {
     title: 'No. registro',
     sort: false,
+    type: 'number',
   },
   curp: {
     title: 'Cv. Reg. Poblacion',
     sort: false,
+    type: 'string',
   },
   street: {
     title: 'Calle',
     sort: false,
+    type: 'string',
   },
   suburb: {
     title: 'Colonia',
     sort: false,
+    type: 'string',
   },
   zipCode: {
     title: 'Código postal',
     sort: false,
+    type: 'number',
   },
   phone: {
     title: 'Teléfono',
     sort: false,
+    type: 'string',
   },
   profession: {
     title: 'Profesión',
     sort: false,
+    type: 'string',
   },
   positionKey: {
     title: 'Cv. Cargo',
     sort: false,
+    type: 'string',
   },
   firstTimeLoginDate: {
     title: 'Fecha inicio',
@@ -84,57 +97,66 @@ export const EMAIL_COLUMNS = {
       return formatted;
     },
   },
-  daysValidityPass: {
+  /*daysValidityPass: {
     title: 'Vig. Pass.',
     sort: false,
   },
-  /*passLastChangeDate:{
+  passLastChangeDate:{
     title: 'Cv. Cargo',
     sort: false,
-  },*/
+  },
   passUpdate: {
     title: 'Actualización pass.',
     sort: false,
-  },
+  },*/
   userSirsae: {
     title: 'Usr. SIRSAE.',
     sort: false,
+    type: 'string',
   },
   sendEmail: {
     title: 'Env. Correo',
     sort: false,
+    type: 'number',
   },
   attribAsign: {
     title: 'Asig. Atributos',
     sort: false,
+    type: 'number',
   },
   clkdetSirsae: {
-    title: 'Clrdet SIRSAE',
+    title: 'Clkdet SIRSAE',
     sort: false,
   },
   exchangeAlias: {
     title: 'Usr. Intercambio',
     sort: false,
+    type: 'string',
   },
   clkdet: {
     title: 'Clkdet',
     sort: false,
+    type: 'number',
   },
   clkid: {
     title: 'Clkid',
     sort: false,
+    type: 'string',
   },
   profileMimKey: {
     title: 'Cv. Perfil',
     sort: false,
+    type: 'string',
   },
   nameAd: {
     title: 'Agr. Nombre',
     sort: false,
+    type: 'string',
   },
   posPrevKey: {
     title: 'Cv. Cargo Ant.',
     sort: false,
+    type: 'string',
   },
   // typeD: {
   //   title: 'Tipo de destino',

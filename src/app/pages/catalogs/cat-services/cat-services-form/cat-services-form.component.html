@@ -6,20 +6,32 @@
     <form [formGroup]="catserviceForm" class="form-material">
       <div class="row">
         <div class="col-md-6">
-          <form-field [control]="catserviceForm.get('code')" label="C&oacute;digo">
+          <form-field
+            [control]="catserviceForm.get('code')"
+            label="C&oacute;digo">
             <input type="string" class="form-control" formControlName="code" />
           </form-field>
         </div>
         <div class="col-md-6">
-          <form-field [control]="catserviceForm.get('subaccount')" label="Subcuenta">
-            <input type="text" class="form-control" formControlName="subaccount" />
+          <form-field
+            [control]="catserviceForm.get('subaccount')"
+            label="Subcuenta">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="subaccount" />
           </form-field>
         </div>
       </div>
       <div class="row">
         <div class="col-md-12">
-          <form-field [control]="catserviceForm.get('description')" label="Descripci&oacute;n">
-            <textarea type="text" class="form-control" formControlName="description">
+          <form-field
+            [control]="catserviceForm.get('description')"
+            label="Descripci&oacute;n">
+            <textarea
+              type="text"
+              class="form-control"
+              formControlName="description">
             </textarea>
           </form-field>
         </div>
@@ -43,8 +55,13 @@
           </form-field>
         </div>
         <div class="col-md-6">
-          <form-field label="Clave relación bien" [control]="catserviceForm.get('unaffordabilityCriterion')">
-            <ng-select formControlName="unaffordabilityCriterion" [searchable]="false" class="form-control"
+          <form-field
+            label="Clave relación bien"
+            [control]="catserviceForm.get('unaffordabilityCriterion')">
+            <ng-select
+              formControlName="unaffordabilityCriterion"
+              [searchable]="false"
+              class="form-control"
               [clearable]="false">
               <ng-option value="Y">Si</ng-option>
               <ng-option value="N">No</ng-option>
@@ -57,7 +74,10 @@
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <confirm-button [disabled]="catserviceForm.invalid" [loading]="loading" (confirm)="confirm()">
+        <confirm-button
+          [disabled]="catserviceForm.invalid"
+          [loading]="loading"
+          (confirm)="confirm()">
         </confirm-button>
       </div>
       <div class="m-3">
