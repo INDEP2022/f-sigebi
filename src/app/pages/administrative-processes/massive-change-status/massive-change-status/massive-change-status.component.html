@@ -115,10 +115,12 @@
           <!-- <div
             class="row pt-3 pb-3"
             style="border-top: 1px solid rgba(0, 0, 0, 0.1)">
-            <span>Número de registros no actualizados
-              <strong style="color: crimson">{{idsNotUpdated.length}}</strong>
-            </span>
-          </div>
+            <div class="col-md-full" *ngFor="let item of idsNotExist">
+              <span style="color: crimson"
+                >{{ item.reason }} No. <strong>{{ item.id }}</strong></span
+              >
+            </div>
+          </div> -->
         </div>
         <div class="col-md-6" *ngIf="showError">
           <div class="row">
