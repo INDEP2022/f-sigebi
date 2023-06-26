@@ -226,6 +226,7 @@ export class GoodService extends HttpService {
     expedient: number | string,
     params?: ListParams
   ): Observable<IListResponse<IGood>> {
+    console.log(params);
     // if (params) {
     //   params['expedient'] = expedient;
     // }
