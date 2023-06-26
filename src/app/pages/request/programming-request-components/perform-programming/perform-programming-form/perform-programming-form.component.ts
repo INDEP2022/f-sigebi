@@ -34,6 +34,7 @@ import { DomicileService } from 'src/app/core/services/catalogs/domicile.service
 import { LocalityService } from 'src/app/core/services/catalogs/locality.service';
 import { MunicipalityService } from 'src/app/core/services/catalogs/municipality.service';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
+import { StateOfRepublicService } from 'src/app/core/services/catalogs/state-of-republic.service';
 import { StationService } from 'src/app/core/services/catalogs/station.service';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
 import { TransferentesSaeService } from 'src/app/core/services/catalogs/transferentes-sae.service';
@@ -125,6 +126,7 @@ export class PerformProgrammingFormComponent
   loadingReport: boolean = false;
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
+  paramsState = new BehaviorSubject<ListParams>(new ListParams());
   paramsTransportableGoods = new BehaviorSubject<ListParams>(new ListParams());
   paramsShowTransportable = new BehaviorSubject<ListParams>(new ListParams());
   paramsShowGuard = new BehaviorSubject<ListParams>(new ListParams());
@@ -198,7 +200,8 @@ export class PerformProgrammingFormComponent
     private municipalityService: MunicipalityService,
     private localityService: LocalityService,
     private storeAkaService: StoreAliasStockService,
-    private goodProcessService: GoodProcessService
+    private goodProcessService: GoodProcessService,
+    private statesService: StateOfRepublicService
   ) {
     super();
     this.settings = {
@@ -1097,7 +1100,7 @@ export class PerformProgrammingFormComponent
       .postGoodsProgramming(this.params.getValue(), filterColumns)
       .subscribe({
         next: response => {
-          const goodsFilter = response.data.map(items => {
+          let goodsFilter = response.data.map(items => {
             if (items.physicalState) {
               if (items.physicalState == 1) {
                 items.physicalState = 'BUENO';
@@ -1110,7 +1113,9 @@ export class PerformProgrammingFormComponent
               return items;
             }
           });
-          console.log('goodsFilter', goodsFilter);
+          // const goodsFilter = goodsFilter.filter(item => item);
+          goodsFilter = goodsFilter.filter(item => item);
+          // console.log('goodsFilter1222', JSON.stringify(goodsFilter2));
           this.goodsProgCopy = goodsFilter;
           this.goodsProg = goodsFilter;
           this.filterGoodsProgramming(goodsFilter);
@@ -1604,7 +1609,24 @@ export class PerformProgrammingFormComponent
   }
   // Visualizar información de alias almacen //
   showDomicile(item: any) {
-    item.nameStatus;
+    console.log('ITEMENTRO', JSON.stringify(item));
+
+    // });data.statusKey === item.domicilio.statusKey
+    // data => data.descCondition === item.domicilio.statusKey
+    //     let nameStatus
+    // item.domicilio.statusKey = this.statesService
+    // .getAll(this.paramsState.getValue())
+    // .subscribe(data =>{
+    //   console.log('itemsx', data)
+    //   console.log('itemzasasasa', item.domicilio.stateKey)
+    //   console.log('data show', JSON.stringify(data.data.find((items:any)=>items.id === item.domicilio.statusKey)))
+
+    //   nameStatus = data.data.find((items:any)=>items.id === item.domicilio.statusKey);
+
+    //   // data.stateCode.descCondition === item.domicilio.statusKey
+    // } );
+
+    // console.log('namesta',nameStatus)
     let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
     config.initialState = {
       item,
@@ -1909,6 +1931,7 @@ export class PerformProgrammingFormComponent
       this.performForm
         .get('regionalDelegationNumber')
         .setValue(this.delegationId);
+      this.performForm.get('delregAttentionId').setValue(this.delegationId);
       this.alertQuestion(
         'info',
         'Confirmación',
