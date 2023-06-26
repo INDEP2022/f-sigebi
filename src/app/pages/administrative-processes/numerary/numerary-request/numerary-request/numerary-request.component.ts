@@ -37,7 +37,7 @@ export class NumeraryRequestComponent extends BasePage implements OnInit {
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
   isActions: boolean = true;
-  isNew: boolean = false;
+  isNew: boolean = true;
   totalItems2: number = 0;
   @ViewChild('file', { static: false }) files: ElementRef<HTMLInputElement>;
   isSearch: boolean = false;
@@ -206,7 +206,7 @@ export class NumeraryRequestComponent extends BasePage implements OnInit {
 
   clearSearch() {
     this.form.reset();
-    this.isNew = false;
+    this.isNew = true;
     this.totalItems = 0;
     this.totalItems2 = 0;
     this.data1 = [];
@@ -220,6 +220,7 @@ export class NumeraryRequestComponent extends BasePage implements OnInit {
       .getAllFilter(this.filterParams.getValue().getParams())
       .subscribe({
         next: async resp => {
+          this.isNew = false;
           this.totalItems = resp.count;
           resp.data.map((num: any) => {
             num.solnumDate = num.solnumDate
