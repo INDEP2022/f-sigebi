@@ -6,7 +6,7 @@ export const COLUMNS = {
     sort: false,
   },
   description: {
-    title: 'Descripcion',
+    title: 'Descripción',
     sort: false,
   },
   status: {
