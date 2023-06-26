@@ -96,4 +96,12 @@ export class GenericsFormComponent extends BasePage implements OnInit {
     this.refresh.emit(true);
     this.modalRef.hide();
   }
+
+  /*ShowUpdateAlert(){
+    this.genericsService.newUpdate(this.genericsForm.value).subscribe({
+      next: () => {
+        this.getExample(),
+      }
+    })
+  }*/
 }

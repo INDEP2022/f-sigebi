@@ -31,9 +31,7 @@ export class GenericsListComponent extends BasePage implements OnInit {
   ) {
     super();
     this.settings.columns = GENERICS_COLUMNS;
-    this.settings.actions.delete = true;
-    this.settings.actions.add = false;
-    this.settings.hideSubHeader = false;
+    this.settings.actions.delete = false;
   }
 
   ngOnInit(): void {
