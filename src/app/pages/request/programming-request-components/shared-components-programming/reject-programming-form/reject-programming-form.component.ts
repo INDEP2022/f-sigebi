@@ -75,7 +75,7 @@ export class RejectProgrammingFormComponent extends BasePage implements OnInit {
       id: this.idProgramming,
       startDate: this.form.get('startDate').value,
       endDate: this.form.get('endDate').value,
-      concurrentMsg: this.form.get('observation').value,
+      concurrentMsg: this.form.get('concurrentMsg').value,
     };
     this.programmingService
       .updateProgramming(this.idProgramming, formData)

@@ -109,19 +109,20 @@ export class ScanRequestComponent extends BasePage implements OnInit {
     this.createForm();
     const param1: any = this.route.snapshot.paramMap.get('P_NO_VOLANTE');
     const param2: any = this.route.snapshot.paramMap.get('P_FOLIO');
+    const param3: any = this.route.snapshot.queryParamMap.get('origin');
+
+    this.isParams = param3 ? true : false;
 
     if (param1 && param1 != 'null') {
-      this.isParams = true;
       this.filterParams
         .getValue()
         .addFilter('wheelNumber', param1, SearchFilter.EQ);
       this.getNotfications();
     } else if (param1 === 'null') {
-      this.alert('error', '', 'Parámetro no_volante no es válido');
+      this.alert('error', 'ERROR', 'Parámetro no_volante no es válido');
     }
 
     if (param2) {
-      this.isParams = true;
       this.isParamFolio = true;
       this.getDocumentByFolio(param2);
     }
@@ -235,7 +236,7 @@ export class ScanRequestComponent extends BasePage implements OnInit {
           this.isSearch = true;
           this.loading = false;
           this.form.reset();
-          this.alert('error', '', err.error.message);
+          this.alert('error', 'ERROR', err.error.message);
         },
       });
   }
@@ -309,7 +310,7 @@ export class ScanRequestComponent extends BasePage implements OnInit {
           if (err.status === 500) {
             this.alert(
               'error',
-              '',
+              'ERROR',
               'No se pudo obtener todos los datos relacionados'
             );
           }
@@ -346,7 +347,7 @@ export class ScanRequestComponent extends BasePage implements OnInit {
         next: resp => {
           this.alert(
             'success',
-            '',
+            'ÉXITO',
             'Solicitud generada, procesando reporte...'
           );
           this.loadingDoc = false;
@@ -414,7 +415,7 @@ export class ScanRequestComponent extends BasePage implements OnInit {
     if (!expedientNumber && !wheelNumber) {
       this.alert(
         'error',
-        '',
+        'ERROR',
         'Falta el número de expediente o volante, favor de verificar'
       );
       this.loadingDoc = false;
@@ -429,7 +430,7 @@ export class ScanRequestComponent extends BasePage implements OnInit {
     if (!keySeparator || !keyTypeDocument) {
       this.alert(
         'error',
-        '',
+        'ERROR',
         'Falta el número de expediente o separador o tipo de documento, favor de verificar'
       );
       this.loadingDoc = false;
@@ -441,7 +442,7 @@ export class ScanRequestComponent extends BasePage implements OnInit {
     if (!isPresent) return false;
 
     if (this.idFolio) {
-      this.alert('error', '', 'Ya ha sido solicitado ese documento');
+      this.alert('error', 'ERROR', 'Ya ha sido solicitado ese documento');
       this.loadingDoc = false;
       return false;
     }
@@ -519,7 +520,7 @@ export class ScanRequestComponent extends BasePage implements OnInit {
         error: () => {
           this.alert(
             'error',
-            '',
+            'ERROR',
             'No existe volante, no se puede generar folio de escaneo, favor de verificar'
           );
           check(false);
@@ -531,12 +532,12 @@ export class ScanRequestComponent extends BasePage implements OnInit {
 
   proccesReport() {
     if (this.idFolio) {
-      this.alert('success', '', 'Generando reporte...');
       const msg = setTimeout(() => {
         this.jasperService
           .fetchReport('RGERGENSOLICDIGIT', { pn_folio: this.idFolio })
           .pipe(
             tap(response => {
+              this.alert('success', 'ÉXITO', 'Reporte generado');
               const blob = new Blob([response], { type: 'application/pdf' });
               const url = URL.createObjectURL(blob);
               let config = {
@@ -559,7 +560,7 @@ export class ScanRequestComponent extends BasePage implements OnInit {
     } else {
       this.alert(
         'error',
-        '',
+        'ERROR',
         'Debe tener el folio en pantalla para poder reimprimir'
       );
     }
@@ -599,7 +600,7 @@ export class ScanRequestComponent extends BasePage implements OnInit {
         },
       });
     } else {
-      this.alert('error', '', 'No existe un folio para escanear');
+      this.alert('error', 'ERROR', 'No existe un folio para escanear');
     }
   }
 
