@@ -1,6 +1,6 @@
 import { inject } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
-import { SweetalertModel } from 'src/app/core/shared/base-page';
+import { SweetalertModel } from 'src/app/core/shared';
 import Swal, { SweetAlertIcon, SweetAlertResult } from 'sweetalert2';
 import { PartializeGeneralGoodService } from '../../partializes-general-goods-1/services/partialize-general-good.service';
 export class PartializeFunctions {
