@@ -966,7 +966,6 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
         this.staticTabs.tabs[1].disabled = false;
         this.staticTabs.tabs[1].active = true;
         this.staticTabs.tabs[2].disabled = false;
-
         let item = response.data[0];
         this.totalItems = response.count ?? 0;
         if (item) {
