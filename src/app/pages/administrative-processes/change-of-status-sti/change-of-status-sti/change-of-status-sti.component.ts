@@ -94,7 +94,7 @@ export class ChangeOfStatusStiComponent extends BasePage implements OnInit {
       });
 
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
-      if (this.busco) {
+      if (this.busco && this.numberFile.value != null) {
         this.listGoods();
       }
     });
@@ -195,7 +195,11 @@ export class ChangeOfStatusStiComponent extends BasePage implements OnInit {
     paramsF.page = this.params.value.page;
     paramsF.limit = this.params.value.limit;
     for (let data of this.completeFilters) {
-      paramsF.addFilter(data.field, data.search, data.field != 'id' ? SearchFilter.ILIKE : SearchFilter.EQ);
+      paramsF.addFilter(
+        data.field,
+        data.search,
+        data.field != 'id' ? SearchFilter.ILIKE : SearchFilter.EQ
+      );
     }
 
     console.log(paramsF.getParams());
@@ -241,9 +245,13 @@ export class ChangeOfStatusStiComponent extends BasePage implements OnInit {
           this.currentDate.disable();
         },
         error: error => {
-          this.onLoadToast('info', 'Información', 'No existe este expediente');
+          this.alert('warning', `El expediente ${this.numberFile.value} no cuenta con Bienes con estatus STI`, '');
           console.log(error);
           this.goods.load([]);
+          this.numberFile.reset()
+          this.limit = new FormControl(10);
+          this.params.next(new ListParams());
+          this.totalItems = 0;
           this.loading = false;
         },
       });
