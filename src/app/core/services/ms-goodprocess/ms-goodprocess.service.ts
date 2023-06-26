@@ -44,6 +44,13 @@ export class GoodprocessService extends HttpService {
     return this.post(`${GoodprocessEndpoints.ExpedientePostQuery}`, params);
   }
 
+  getGoodType(params?: ListParams) {
+    return this.get<IListResponse<any>>(
+      GoodprocessEndpoints.GetGoodType,
+      params
+    );
+  }
+
   getCountBienStaScreen(params: any) {
     return this.post(
       `${GoodprocessEndpoints.CountBienEstatusXPantalla}`,

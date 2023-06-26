@@ -22,14 +22,27 @@
           </form-field>
         </div>
         <div class="col-md-9 col-sm-12 col-xs-12">
-          <ng2-smart-table
-            [attr.class]="'table-bordered'"
-            [settings]="settings2"
-            [source]="data">
+          <!-- <ng2-smart-table [attr.class]="'table-bordered'" [settings]="settings2" [source]="data1">
           </ng2-smart-table>
-          <app-pagination
-            [params]="params"
-            [totalItems]="totalItems"></app-pagination>
+          <app-pagination [params]="params" [totalItems]="totalItems"></app-pagination> -->
+          <!-- <form-field [control]="form.get('legalStatus')" label="Tipo &#45; Subtipo &#45; Descripci&oacute;n">
+            <ng-select formControlName="legalStatus" class="form-control" (fetchItems)="getTodos($event)">
+              <ng-option *ngFor="let item of tiposData; index as i" value="{{ item.typeNumber }}">
+                {{ item.tipoSupbtipoDescription }}
+              </ng-option>
+            </ng-select>
+          </form-field> -->
+          <form-field [control]="form.get('legalStatus')">
+            <ngx-select
+              [form]="form"
+              [data]="tiposData"
+              label="Tipo &#45; Subtipo &#45; Descripci&oacute;n"
+              value="clasifGoodNumber"
+              bindLabel="tipoSupbtipoDescription"
+              (fetchItems)="getTodos($event)"
+              control="legalStatus">
+            </ngx-select>
+          </form-field>
         </div>
         <!-- <div class="col-md-full col-sm-12 col-xs-12"> -->
         <!-- <form-field [control]="form.get('legalStatus')" label="Situación Juridica">
@@ -121,14 +134,23 @@
   </div>
   <div body>
     <div class="row">
-      <ng2-smart-table
-        [attr.class]="'table-bordered'"
-        [settings]="settings"
-        [source]="data">
+      <div [class]="loading ? 'table-loading' : ''">
+        <ng2-smart-table
+          class="table-responsive"
+          [attr.class]="'table-responsive table-bordered'"
+          [settings]="settings"
+          [source]="data">
+        </ng2-smart-table>
+        <br />
+        <div>
+          <app-pagination
+            [params]="params"
+            [totalItems]="totalItems"></app-pagination>
+        </div>
+      </div>
+      <!-- <ng2-smart-table [attr.class]="'table-bordered'" [settings]="settings" [source]="data">
       </ng2-smart-table>
-      <app-pagination
-        [params]="params"
-        [totalItems]="totalItems"></app-pagination>
+      <app-pagination [params]="params" [totalItems]="totalItems"></app-pagination> -->
     </div>
   </div>
 </app-card>
@@ -202,9 +224,7 @@
             label="Procedimiento Propuesto">
             <select class="form-control" formControlName="proposedProcedure">
               <option [value]="null">Seleccione un valor</option>
-              <option value="asegurado">Procedimiento 1</option>
-              <option value="decomisado">Procedimiento 2</option>
-              <option value="abandonado">Procedimiento 3</option>
+              <option value="LICITACION PUBLICA">LICITACION PUBLICA</option>
             </select>
           </form-field>
         </div>

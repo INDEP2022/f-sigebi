@@ -1,10 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
 import { SafeService } from 'src/app/core/services/catalogs/safe.service';
 import { WarehouseService } from 'src/app/core/services/catalogs/warehouse.service';
+import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -43,10 +46,17 @@ export class ResquestNumberingChangeComponent
   implements OnInit
 {
   totalItems: number = 0;
-  params = new BehaviorSubject<ListParams>(new ListParams());
+  columnFilters: any = [];
+  //params = new BehaviorSubject<ListParams>(new ListParams());
+  params: any = new BehaviorSubject<ListParams>(new ListParams());
+
   itemsBoveda = new DefaultSelect();
   itemsDelegation = new DefaultSelect();
   itemsAlmacen = new DefaultSelect();
+  columnFilters4: any = [];
+  params4 = new BehaviorSubject<ListParams>(new ListParams());
+  data: LocalDataSource = new LocalDataSource();
+  tiposData = new DefaultSelect();
 
   //Data Table
 
@@ -106,20 +116,20 @@ export class ResquestNumberingChangeComponent
     },
   ];
 
-  data: ExampleData[] = [
-    {
-      numberGood: 1,
-      description: 'Descripcion 1',
-      quantity: 2,
-      status: 'Estatus 1',
-      appraisedVig: 'Avaluó 1',
-      amount: 1,
-      totalExpenses: 245000,
-      numberFile: 'Expediente 1',
-      preliminaryInquiry: 'Averiguacion previa 1 ',
-      causePenal: 'Causa Penal 1',
-    },
-  ];
+  // data: ExampleData[] = [
+  //   {
+  //     numberGood: 1,
+  //     description: 'Descripcion 1',
+  //     quantity: 2,
+  //     status: 'Estatus 1',
+  //     appraisedVig: 'Avaluó 1',
+  //     amount: 1,
+  //     totalExpenses: 245000,
+  //     numberFile: 'Expediente 1',
+  //     preliminaryInquiry: 'Averiguacion previa 1 ',
+  //     causePenal: 'Causa Penal 1',
+  //   },
+  // ];
   //Array para las delegaciones
   delegationArray: Example[] = [
     {
@@ -231,20 +241,22 @@ export class ResquestNumberingChangeComponent
     private fb: FormBuilder,
     private safeService: SafeService,
     private delegationService: DelegationService,
-    private warehouseService: WarehouseService
+    private warehouseService: WarehouseService,
+    private goodprocessService: GoodprocessService,
+    private readonly goodServices: GoodService
   ) {
     super();
     this.settings = {
       ...this.settings,
       actions: false,
       columns: {
-        numberGood: {
+        id: {
           title: 'No Bien',
           width: '10%',
           sort: false,
         },
         description: {
-          title: 'Descripcion',
+          title: 'description',
           width: '30%',
           sort: false,
         },
@@ -258,12 +270,12 @@ export class ResquestNumberingChangeComponent
           width: '10%',
           sort: false,
         },
-        appraisedVig: {
+        appraisedValue: {
           title: 'Avaluó Vig',
           width: '10%',
           sort: false,
         },
-        amount: {
+        armor: {
           title: 'Mon.',
           width: '10%',
           sort: false,
@@ -273,20 +285,39 @@ export class ResquestNumberingChangeComponent
           width: '20%',
           sort: false,
         },
-        numberFile: {
+        'expediente.id': {
           title: 'No Exp.',
           width: '10%',
           sort: false,
+          valuePrepareFunction: (
+            cell: any,
+            row: { expediente: { id: any } }
+          ) => {
+            return row.expediente.id;
+          },
         },
-        preliminaryInquiry: {
+
+        'expediente.preliminaryInquiry': {
           title: 'Averiguacion prev.',
-          width: '40%',
+          width: '10%',
           sort: false,
+          valuePrepareFunction: (
+            cell: any,
+            row: { expediente: { preliminaryInquiry: any } }
+          ) => {
+            return row.expediente.preliminaryInquiry;
+          },
         },
-        causePenal: {
+        'expediente.criminalCase': {
           title: 'Causa Penal',
           width: '40%',
           sort: false,
+          valuePrepareFunction: (
+            cell: any,
+            row: { expediente: { criminalCase: any } }
+          ) => {
+            return row.expediente.criminalCase;
+          },
         },
       },
     };
@@ -298,6 +329,8 @@ export class ResquestNumberingChangeComponent
     this.getBoveda(new ListParams());
     this.getDelegations(new ListParams());
     this.getAlmacen(new ListParams());
+    this.getTodos(new ListParams());
+    this.getDataTable();
   }
 
   /**
@@ -329,6 +362,51 @@ export class ResquestNumberingChangeComponent
     this.warehouseService.getAll(params).subscribe((data: any) => {
       this.itemsAlmacen = new DefaultSelect(data.data, data.count);
     });
+  }
+  getTodos(params: ListParams, id?: string) {
+    this.loading = true;
+
+    this.goodprocessService.getGoodType(params).subscribe(
+      (response: any) => {
+        console.log('AQUI', response);
+        let result = response.data.map(async (item: any) => {
+          item['tipoSupbtipoDescription'] =
+            item.typeDesc +
+            ' - ' +
+            item.subTypeDesc +
+            ' - ' +
+            item.ssubTypeDesc +
+            ' - ' +
+            item.sssubTypeDesc;
+        });
+        Promise.all(result).then((resp: any) => {
+          this.tiposData = new DefaultSelect(response.data, response.count);
+          this.loading = false;
+        });
+      },
+      error => (console.log('ERR', error), (this.loading = false))
+    );
+  }
+
+  getDataTable() {
+    let params = {
+      ...this.params.getValue(),
+    };
+    params['filter.fileNumber'] = `272`;
+    params['filter.status'] = `$in:ADM,DXV,PRP,CPV,DEP`;
+    this.goodServices.getByExpedientAndParams__(params).subscribe({
+      next: async (response: any) => {
+        console.log('GOODS OBTENIDOS', response);
+
+        //this.paragraphs = response.data;
+        this.totalItems = response.count;
+        this.data.load(response.data);
+        this.data.refresh();
+        this.loading = false;
+      },
+      error: err => {},
+    });
+    this.loading = false;
   }
   /////////////////////
 
