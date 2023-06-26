@@ -8,6 +8,8 @@ import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { IDelegation } from 'src/app/core/models/catalogs/delegation.model';
+import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import Swal from 'sweetalert2';
 import { ICity } from '../../../../core/models/catalogs/city.model';
@@ -22,15 +24,18 @@ import { CITY_COLUMNS } from './city-columns';
 })
 export class CityListComponent extends BasePage implements OnInit {
   columns: ICity[] = [];
+  columnsD: IDelegation[] = [];
   data: LocalDataSource = new LocalDataSource();
   columnFilters: any = [];
 
   city: ICity[] = [];
+  delegation: IDelegation[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
 
   constructor(
     private cityService: CityService,
+    private delegationService: DelegationService,
     private modalService: BsModalService
   ) {
     super();
@@ -96,6 +101,7 @@ export class CityListComponent extends BasePage implements OnInit {
           });
           this.params = this.pageFilter(this.params);
           this.getCities();
+          this.getDelegation();
         }
       });
     this.params
@@ -113,6 +119,26 @@ export class CityListComponent extends BasePage implements OnInit {
     this.cityService.getAllCitys(params).subscribe({
       next: response => {
         this.columns = response.data;
+        this.totalItems = response.count || 0;
+
+        this.data.load(this.columns);
+        this.data.refresh();
+        this.loading = false;
+      },
+      error: error => (this.loading = false),
+    });
+  }
+
+  getDelegation() {
+    this.loading = true;
+    let params = {
+      ...this.params.getValue(),
+      ...this.columnFilters,
+    };
+
+    this.delegationService.getAll2(params).subscribe({
+      next: response => {
+        this.columnsD = response.data;
         this.totalItems = response.count || 0;
 
         this.data.load(this.columns);
