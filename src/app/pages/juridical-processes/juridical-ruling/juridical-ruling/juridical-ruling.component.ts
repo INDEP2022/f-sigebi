@@ -236,7 +236,7 @@ export class JuridicalRulingComponent
         type: 'string',
         sort: false,
         valuePrepareFunction: (value: any) => {
-          return value.noGood;
+          return value?.noGood;
         },
       },
       quantity: {

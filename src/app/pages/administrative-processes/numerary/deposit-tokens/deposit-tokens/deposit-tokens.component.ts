@@ -10,10 +10,12 @@ import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { ExcelService } from 'src/app/common/services/excel.service';
 import { DynamicCatalogsService } from 'src/app/core/services/dynamic-catalogs/dynamiccatalog.service';
 import { AccountMovementService } from 'src/app/core/services/ms-account-movements/account-movement.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { AddMovementComponent } from '../add-movement/add-movement.component';
 import { CustomdbclickComponent } from '../customdbclick/customdbclick.component';
 import { DepositTokensModalComponent } from '../deposit-tokens-modal/deposit-tokens-modal.component';
 @Component({
@@ -31,13 +33,15 @@ export class DepositTokensComponent extends BasePage implements OnInit {
   dataMovements: any = null;
   columnFilters: any = [];
   paramsList = new BehaviorSubject<ListParams>(new ListParams());
+  jsonToCsv: any[] = [];
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
     private accountMovementService: AccountMovementService,
     private datePipe: DatePipe,
     private readonly goodServices: GoodService,
-    private dynamicCatalogsService: DynamicCatalogsService
+    private dynamicCatalogsService: DynamicCatalogsService,
+    private excelService: ExcelService
   ) {
     super();
     this.settings = {
@@ -272,6 +276,18 @@ export class DepositTokensComponent extends BasePage implements OnInit {
     this.form.get('balanceAt').setValue('');
   }
 
+  async cleanDataBank() {
+    this.form.get('bank').setValue('');
+    this.form.get('account').setValue('');
+    this.form.get('accountType').setValue('');
+    this.form.get('currency').setValue('');
+    this.form.get('square').setValue('');
+    this.form.get('branch').setValue('');
+    this.form.get('balanceOf').setValue('');
+    this.form.get('description').setValue('');
+    this.form.get('balanceAt').setValue('');
+  }
+
   // BUTTONS FUNCTIONS //
 
   async desconciliarFunc() {
@@ -286,6 +302,7 @@ export class DepositTokensComponent extends BasePage implements OnInit {
       } else {
         let obj: any = {
           numberMotion: this.dataMovements.no_movimiento,
+          numberAccount: this.dataMovements.no_cuenta,
           numberGood: null,
           numberProceedings: null,
         };
@@ -297,10 +314,9 @@ export class DepositTokensComponent extends BasePage implements OnInit {
               `El bien ${this.dataMovements.no_bien} ha sido desconciliado`,
               ''
             );
-            this.loading = false;
           },
           error: err => {
-            this.alert('error', `Error al desconciliar`, '');
+            this.alert('error', `Error al desconciliar`, err.error.message);
             this.loading = false;
           },
         });
@@ -308,6 +324,44 @@ export class DepositTokensComponent extends BasePage implements OnInit {
     }
   }
 
+  async actualizarFunc() {
+    this.getAccount();
+    if (this.dataMovements.bank) {
+      this.cleanDataBank();
+    }
+  }
+
+  async importar() {}
+
+  onFileChange(event: Event) {
+    const files = (event.target as HTMLInputElement).files;
+    if (files.length != 1) throw 'No files selected, or more than of allowed';
+    const fileReader = new FileReader();
+    fileReader.readAsBinaryString(files[0]);
+    fileReader.onload = () => this.readExcel(fileReader.result);
+  }
+
+  readExcel(binaryExcel: string | ArrayBuffer) {
+    try {
+      const excelImport = this.excelService.getData<any>(binaryExcel);
+      this.data1.load(excelImport);
+      this.totalItems = this.data1.count();
+    } catch (error) {
+      this.onLoadToast('error', 'Ocurrio un error al leer el archivo', 'Error');
+    }
+  }
+
+  async exportar() {
+    const filename: string = 'Deposit Tokens';
+    const jsonToCsv = await this.returnJsonToCsv();
+    console.log('jsonToCsv', jsonToCsv);
+    this.jsonToCsv = jsonToCsv;
+    this.excelService.export(this.jsonToCsv, { type: 'csv', filename });
+  }
+
+  async returnJsonToCsv() {
+    return this.data1.getAll();
+  }
   // GET DETAILS CURRENCY //
   async getTvalTable5(currency: any) {
     const params = new ListParams();
@@ -352,6 +406,7 @@ export class DepositTokensComponent extends BasePage implements OnInit {
       },
     });
   }
+
   openForm(data?: any) {
     const modalConfig = MODAL_CONFIG;
     let noCuenta = null;
@@ -371,5 +426,21 @@ export class DepositTokensComponent extends BasePage implements OnInit {
   miFuncion() {
     this.getAccount();
     // console.log('Función ejecutada desde el componente hijo');
+  }
+
+  addMovement() {
+    let data = 1;
+    this.openFormAdd(data);
+  }
+
+  openFormAdd(data?: any) {
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      data,
+      callback: (next: boolean) => {
+        console.log('AQUI', next);
+      },
+    };
+    this.modalService.show(AddMovementComponent, modalConfig);
   }
 }

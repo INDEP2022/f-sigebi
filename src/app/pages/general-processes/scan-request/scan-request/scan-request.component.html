@@ -11,13 +11,13 @@
         </button>
         <button
           *ngIf="isParams"
-          class="btn btn-primary active btn-sm m-2"
+          class="btn btn-primary active btn-sm ml-2"
           (click)="back()">
           Regresar
           <i class="fas fa-arrow-circle-left"></i>
         </button>
       </div>
-      <div class="d-inline mx-2" *ngIf="isSearch">
+      <div class="d-inline mr-2" *ngIf="isSearch">
         <div class="btn-group">
           <button
             type="button"
@@ -33,7 +33,7 @@
           </button>
           <button
             *ngIf="isParams"
-            class="btn btn-primary active btn-sm m-2"
+            class="btn btn-primary active btn-sm ml-2"
             (click)="back()">
             Regresar
             <i class="fas fa-arrow-circle-left"></i>
@@ -59,6 +59,7 @@
           [control]="formNotification.get('expedientNumber')"
           label="No&#46; Expediente">
           <input
+            [readOnly]="!isSearch"
             type="number"
             min="0"
             [maxlength]="10"
@@ -72,6 +73,7 @@
           [control]="formNotification.get('wheelNumber')"
           label="No&#46; Volante">
           <input
+            [readOnly]="!isSearch"
             type="number"
             min="0"
             [maxlength]="10"
@@ -85,6 +87,8 @@
           [control]="formNotification.get('receiptDate')"
           label="Fecha Recepci&oacute;n Volante">
           <input
+            [ngClass]="{ 'not-press bg-gray': !isSearch }"
+            [readOnly]="!isSearch"
             formControlName="receiptDate"
             class="form-control"
             bsDatepicker
@@ -97,6 +101,7 @@
           [control]="formNotification.get('preliminaryInquiry')"
           label="Averiguaci&oacute;n Previa">
           <input
+            [readOnly]="!isSearch"
             (ngModelChange)="limit(200, 'preliminaryInquiry', $event)"
             [maxlength]="200"
             formControlName="preliminaryInquiry"
@@ -110,6 +115,7 @@
           [control]="formNotification.get('criminalCase')"
           label="Causa Penal">
           <input
+            [readOnly]="!isSearch"
             formControlName="criminalCase"
             class="form-control"
             [maxlength]="40"
@@ -121,6 +127,7 @@
           [control]="formNotification.get('touchPenaltyKey')"
           label="Toca Penal">
           <input
+            [readOnly]="!isSearch"
             formControlName="touchPenaltyKey"
             class="form-control"
             [maxlength]="30"
@@ -132,6 +139,7 @@
           [control]="formNotification.get('circumstantialRecord')"
           label="Acta Circunstanciada">
           <input
+            [readOnly]="!isSearch"
             formControlName="circumstantialRecord"
             [maxlength]="30"
             class="form-control"
@@ -143,6 +151,7 @@
           [control]="formNotification.get('protectionKey')"
           label="Amparo">
           <input
+            [readOnly]="!isSearch"
             formControlName="protectionKey"
             class="form-control"
             [maxlength]="30"
