@@ -1909,6 +1909,7 @@ export class PerformProgrammingFormComponent
       this.performForm
         .get('regionalDelegationNumber')
         .setValue(this.delegationId);
+      this.performForm.get('delregAttentionId').setValue(this.delegationId);
       this.alertQuestion(
         'info',
         'Confirmación',
