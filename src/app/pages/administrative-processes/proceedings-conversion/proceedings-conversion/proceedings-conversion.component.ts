@@ -1,10 +1,13 @@
 import { DatePipe } from '@angular/common';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LocalDataSource, Ng2SmartTableComponent } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, firstValueFrom, map, takeUntil } from 'rxjs';
+import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import {
   FilterParams,
   ListParams,
@@ -16,6 +19,7 @@ import { IConvertiongood } from 'src/app/core/models/ms-convertiongood/convertio
 import { ICopiesJobManagementDto } from 'src/app/core/models/ms-officemanagement/good-job-management.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
+import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { ConvertiongoodService } from 'src/app/core/services/ms-convertiongood/convertiongood.service';
 import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
 import { GoodsJobManagementService } from 'src/app/core/services/ms-office-management/goods-job-management.service';
@@ -26,6 +30,7 @@ import { FlyersService } from 'src/app/pages/documents-reception/flyers/services
 import { AddCopyComponent } from 'src/app/pages/juridical-processes/abandonments-declaration-trades/abandonments-declaration-trades/add-copy/add-copy.component';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { IDataGoodsTable } from '../proceedings-conversion-column';
+import { ProceedingsConversionModalComponent } from '../proceedings-conversion-modal/proceedings-conversion-modal.component';
 import { ActasConvertionCommunicationService } from '../services/proceedings-conversionn';
 import {
   PROCEEDINGSCONVERSIONS_COLUMNS,
@@ -89,19 +94,27 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
   insert = false;
   update = false;
   delete = false;
+  confirmSearch: boolean = false;
+  preAver = '';
+  criCase = '';
+  searchMode: boolean = false;
+  isLoading = false;
   statusConv: string | number = '';
   read = false;
   isLoadingSender = false;
+  selectedRow: IConvertiongood;
   origin = '';
   department = '';
   delegation: string = null;
   data1: any[] = [];
   p_valor: number;
   proceedingsConversionForm: FormGroup;
+  actaRecepttionForm: FormGroup;
   dataGoodTable: LocalDataSource = new LocalDataSource();
   // expedientData: IExpedient;
   loadingGoods = false;
   select: any;
+  cveActa: string = '';
   fileNumber: number = 0;
   conversion: number = 0;
   goodFatherNumber: string | number = 0;
@@ -146,12 +159,14 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     PAR_IDCONV: '',
     origin: '',
   };
+  formData: Partial<IConvertiongood> = null;
   senders = new DefaultSelect();
   disabled: boolean = true;
   filtroPersonaExt: ICopiesJobManagementDto[] = [];
   filterParams2 = new BehaviorSubject<FilterParams>(new FilterParams());
   nrSelecttypePerson: string | number;
   nrSelecttypePerson_I: string | number;
+  witnessOic: string = '';
   constructor(
     private authService: AuthService,
     protected flyerService: FlyersService,
@@ -166,8 +181,11 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     private route: ActivatedRoute,
     private datePipe: DatePipe,
     private securityService: SecurityService,
+    private siabService: SiabService,
+    private sanitizer: DomSanitizer,
     protected goodprocessService: GoodProcessService,
-    protected serviceOficces: GoodsJobManagementService
+    protected serviceOficces: GoodsJobManagementService,
+    private changeDetectorRef: ChangeDetectorRef
   ) {
     super();
     this.procs = new LocalDataSource();
@@ -181,6 +199,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
+    this.actaForm();
     const token = this.authService.decodeToken();
     this.dataUserLoggedTokenData = token;
     this.pageParams = this.actasConvertionCommunicationService.actasParams;
@@ -250,22 +269,17 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     });
   }
 
+  private actaForm() {
+    this.actaRecepttionForm = this.fb.group({
+      acta: [null, Validators.required],
+    });
+  }
+
   exportToExcel() {
     const filename: string = this.userName + '-Actas';
     // El type no es necesario ya que por defecto toma 'xlsx'
     this.excelService.export(this.procs['data'], { filename });
   }
-
-  // searchProcs() {
-  //   this.params = new BehaviorSubject<ListParams>(new ListParams());
-  //   this.params
-  //     .pipe(
-  //       takeUntil(this.$unSubscribe),
-  //       tap(() => this.getProcs())
-  //     )
-  //     .subscribe();
-  // }
-
   userTracker(screen: string, user: string) {
     let isfilterUsed = false;
     const params = this.params.getValue();
@@ -311,71 +325,22 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
           'No tiene permiso de Lectura y/o Escritura sobre la Pantalla, por lo que no podrá ingresar',
           ''
         );
-        return;
+        this.router.navigate(['/pages/general-processes/goods-tracker']);
       },
     });
   }
   execute_PUP_LLAMA_VALIDACION() {
     this.loadingSend = false;
-    // Call form FATRIBREQUERIDO
-    // this.alertInfo('info', 'Se llama la pantalla FATRIBREQUERIDO', '');
     this.router.navigate(['/pages/administrative-processes/derivation-goods'], {
       queryParams: {
         origin: this.screenKey,
-        NO_INDICADOR: this.convertionData.id,
+        PAR_IDCONV: this.convertionData.id,
         // origin2: this.origin,
         // origin3: this.origin3,
         ...this.paramsScreen,
       },
     });
   }
-
-  // private getProcs() {
-  //   let isfilterUsed = false;
-  //   const params = this.params.getValue();
-  //   this.filterParams.getValue().removeAllFilters();
-  //   this.filterParams.getValue().page = params.page;
-  //   const user = this.authService.decodeToken() as any;
-  //   this.proceedingsConversionForm.controls['txtNoDelegacionRegional'].setValue(
-  //     Number.parseInt(user.department)
-  //   );
-  //   this.filterParams.getValue();
-  //   const filterStatus = this.proceedingsConversionForm.get('status').value;
-  //   // console.log(filterStatus);
-  //   if (filterStatus) {
-  //     isfilterUsed = true;
-  //     if (filterStatus === 'null') {
-  //       this.filterParams
-  //         .getValue()
-  //         .addFilter('Estatus', '', SearchFilter.NULL);
-  //       // this.getDelegationRegional(user.department);
-  //     }
-  //   }
-  //   this.loading = true;
-  //   params.text = this.proceedingsConversionForm.value.txtSearch;
-  //   params['others'] = this.userName;
-  //   this.procs = new LocalDataSource();
-  //   this.totalItems = 0;
-  //   let filter = this.filterParams.getValue().getParams();
-  //   console.log(filter);
-  //   this.convertiongoodService.getAll(this.params.getValue()).subscribe({
-  //     next: response => {
-  //       console.log('Response: ', response);
-  //       this.loading = false;
-  //       console.log('Hay un filtro activo? ', isfilterUsed);
-  //       response.data.map((item: any) => {
-  //         item.idConversion =
-  //           item.idConversion != null ? item.idConversion : this.alert('info', 'No hay Conversiones', '');
-  //       });
-
-  //       this.procs.load(response.data);
-  //       this.totalItems = response.count;
-  //     },
-  //     error: () => (
-  //       (this.procs = new LocalDataSource()), (this.loading = false)
-  //     ),
-  //   });
-  // }
 
   initFormPostGetUserData() {
     this.activatedRoute.queryParams
@@ -423,17 +388,20 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
       .getById(body.PAR_IDCONV)
       .subscribe({
         next: (res: IConvertiongood) => {
-          console.log('INIT FORM ', res);
+          // console.log('INIT FORM ', res);
           this.fileNumber = res.fileNumber.id;
           this.conversion = res.id;
           this.goodFatherNumber = res.goodFatherNumber;
           this.fCreate = this.datePipe.transform(res.fCreate, 'dd/MM/yyyy');
-
           this.typeConv = res.typeConv;
           this.statusConv = res.statusConv;
-          // this.actaO = res.statusConv;
+          this.witnessOic = res.witnessOic;
+          this.preAver = res.fileNumber.preliminaryInquiry;
+          this.criCase = res.fileNumber.criminalCase;
 
-          console.log(this.fileNumber);
+          // this.actaO = res.statusConv;
+          console.log(res);
+          this.getGoods(this.conversion);
           subscription.unsubscribe();
         },
         error: error => {
@@ -473,7 +441,6 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     }
   }
 
-  searchProcs() {}
   openDialogSelectedManagement() {}
   // goBack() { }
 
@@ -590,6 +557,8 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
       }
     );
   }
+  closeActa() {}
+
   refreshTableCopies() {
     this.initForm();
   }
@@ -649,50 +618,16 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     });
     return _data;
   }
-  // getGoods1(params: ListParams) {
-  //   this.isLoadingGood = true;
-  //   params['fileNumber'] = this.proceedingsConversionForm.value.noExpedient;
-  //   this.goodprocessService.getGoodAvailable(params).subscribe({
-  //     next: async (data: { data: any[]; count: number }) => {
-  //       this.dataTableGoods = this.convertDataGoods(data);
-  //       console.log(`this.dataTableGoods`, this.dataTableGoods);
-  //       this.dataTableGoodsMap = new Map<number, IGoodAndAvailable>(
-  //         this.dataTableGoods.map(x => [x.goodId, x])
-  //       );
-  //       this.totalItems = data.count;
-  //       this.isLoadingGood = false;
-  //     },
-  //     error: () => {
-  //       this.isLoadingGood = false;
-  //     },
-  //   });
-  // }
 
-  // async getGoodsOnlyAvailable(params: ListParams = new ListParams()) {
-  //   this.isLoadingGood = true;
-  //   params.limit = this.totalItems;
-  //   this.dataTableGoodsJobManagement = [];
-  //   params['proceedingsNumber'] = this.formNotification.value.expedientNumber;
-  //   try {
-  //     const data = await firstValueFrom(
-  //       this.goodprocessService.getGoodAvailable(params)
-  //     );
+  getGoods(id: number) {
+    this.convertiongoodService.getByGood(id).subscribe({
+      next: (data: any) => {
+        console.log(data);
+      },
+      error: (error: any) => console.log(error),
+    });
+  }
 
-  //     this.dataTableGoodsJobManagement = this.convertDataGoodsAvailable(
-  //       data
-  //     ).filter((x: { available: any }) => x.available);
-
-  //     this.isLoadingGood = false;
-  //   } catch (ex) {
-  //     this.isLoadingGood = false;
-  //     this.alert(
-  //       'error',
-  //       'Error',
-  //       'Error al obtener los bienes disponibles',
-  //       'error'
-  //     );
-  //   }
-  // }
   async getAvailableGood(
     dataGoodRes: IDataGoodsTable,
     count: number,
@@ -806,6 +741,183 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
   }
   reviewGoodData(dataGoodRes: IDataGoodsTable, count: number, total: number) {
     // this.getGoodStatusDescription(dataGoodRes, count, total);
+  }
+  async cerrarActa() {
+    if (this.delete == true) {
+      const object = {
+        idConversion: this.conversion,
+      };
+    }
+    if (this.conversion == null) {
+      this.alert('warning', 'No existe acta para cerrar', '');
+      return;
+    }
+    const toolbar_user = this.authService.decodeToken().preferred_username;
+    // const cadena = this.dictamen.passOfficeArmy
+    //   ? this.dictamen.passOfficeArmy.indexOf('?')
+    //   : 0;
+    // console.log('cadena', cadena);
+    // if (cadena == 0) {
+    //   V_BAN = true;
+    // }
+
+    // if (cadena != 0 && this.dictamen.userDict == toolbar_user) {
+    //   null;
+    // } else {
+    //   if (V_BAN == true) {
+    //     V_ELIMINA = await this.getRTdictaAarusr(toolbar_user);
+
+    //     if (V_ELIMINA == 'X') {
+    //       this.alert(
+    //         'warning',
+    //         'El Usuario no está autorizado para eliminar el dictamen cerrado',
+    //         ''
+    //       );
+    //       return;
+    //     }
+    //   } else {
+    //     V_ELIMINA = await this.getRTdictaAarusr2(
+    //       toolbar_user,
+    //       this.expedientesForm.get('tipoDictaminacion').value
+    //     );
+
+    //     if (V_ELIMINA == 'X') {
+    //       this.alert(
+    //         'warning',
+    //         'El Usuario no está autorizado para eliminar el dictamen',
+    //         ''
+    //       );
+    //       return;
+    //     } else if (V_ELIMINA == 'S') {
+    //       const paramsSender = new ListParams();
+    //       paramsSender.text = this.authService.decodeToken().preferred_username;
+
+    //       V_VALID = await this.getAutorizateDelete(paramsSender);
+
+    //       if (V_VALID == null) {
+    //         this.alert(
+    //           'warning',
+    //           'El Usuario no está autorizado para eliminar el dictamen',
+    //           ''
+    //         );
+    //         return;
+    //       }
+    //     }
+    //   }
+  }
+  Generar() {
+    this.isLoading = true;
+
+    let params = {
+      id_conv: this.conversion,
+      id_bien: this.goodFatherNumber,
+      DESTYPE: this.origin,
+    };
+    console.log(params);
+    if (this.witnessOic != null) {
+      this.siabService
+        // .fetchReport('ACTACONVSTES', params)
+        .fetchReportBlank('blank')
+        .subscribe(response => {
+          if (response !== null) {
+            const blob = new Blob([response], { type: 'application/pdf' });
+            const url = URL.createObjectURL(blob);
+            let config = {
+              initialState: {
+                documento: {
+                  urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                  type: 'pdf',
+                },
+                callback: (data: any) => {},
+              }, //pasar datos por aca
+              class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+              ignoreBackdropClick: true, //ignora el click fuera del modal
+            };
+            this.modalService.show(PreviewDocumentsComponent, config);
+          } else {
+            const blob = new Blob([response], { type: 'application/pdf' });
+            const url = URL.createObjectURL(blob);
+            let config = {
+              initialState: {
+                documento: {
+                  urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                  type: 'pdf',
+                },
+                callback: (data: any) => {},
+              }, //pasar datos por aca
+              class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+              ignoreBackdropClick: true, //ignora el click fuera del modal
+            };
+            this.modalService.show(PreviewDocumentsComponent, config);
+          }
+        });
+    } else {
+      this.siabService
+        // .fetchReport('ACTACONVCTES', params)
+        .fetchReportBlank('blank')
+        .subscribe(response => {
+          if (response !== null) {
+            const blob = new Blob([response], { type: 'application/pdf' });
+            const url = URL.createObjectURL(blob);
+            let config = {
+              initialState: {
+                documento: {
+                  urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                  type: 'pdf',
+                },
+                callback: (data: any) => {},
+              }, //pasar datos por aca
+              class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+              ignoreBackdropClick: true, //ignora el click fuera del modal
+            };
+            this.modalService.show(PreviewDocumentsComponent, config);
+          } else {
+            const blob = new Blob([response], { type: 'application/pdf' });
+            const url = URL.createObjectURL(blob);
+            let config = {
+              initialState: {
+                documento: {
+                  urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                  type: 'pdf',
+                },
+                callback: (data: any) => {},
+              }, //pasar datos por aca
+              class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+              ignoreBackdropClick: true, //ignora el click fuera del modal
+            };
+            this.modalService.show(PreviewDocumentsComponent, config);
+          }
+        });
+    }
+  }
+  cleanForm() {
+    this.proceedingsConversionForm.reset();
+  }
+  checkSearchMode(searchMode: boolean) {
+    this.searchMode = searchMode;
+    this.changeDetectorRef.detectChanges();
+  }
+
+  confirm(confirm: boolean) {
+    this.confirmSearch = confirm;
+    this.changeDetectorRef.detectChanges();
+  }
+
+  search(formData: Partial<IConvertiongood>) {
+    this.formData = formData;
+    this.changeDetectorRef.detectChanges();
+  }
+
+  selectData(data: IConvertiongood) {
+    this.selectedRow = data;
+    this.changeDetectorRef.detectChanges();
+  }
+  searchProcs(provider?: IConvertiongood) {
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      provider,
+    };
+    this.modalService.show(ProceedingsConversionModalComponent, modalConfig);
   }
 }
 
