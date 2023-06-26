@@ -64,8 +64,8 @@ export class GoodsManagementSocialCabinetComponent
   private getSeqRastreador() {
     return this.goodTrackerService.getIdentifier().pipe(
       takeUntil(this.$unSubscribe),
-      catchError(x => of({ data: null as Iidentifier })),
-      map(x => (x.data ? x.data.nextval : null))
+      catchError(x => of(null as Iidentifier)),
+      map(x => (x ? x.nextval : null))
     );
   }
 

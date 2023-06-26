@@ -41,6 +41,7 @@ export class GoodsManagementSocialTable
       ...this.settings,
       hideSubHeader: false,
       columns: COLUMNS,
+      actions: null,
     };
   }
 

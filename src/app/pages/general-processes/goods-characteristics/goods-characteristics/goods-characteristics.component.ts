@@ -7,9 +7,12 @@ import {
   Validators,
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { BsModalService } from 'ngx-bootstrap/modal';
 import { TabsetComponent } from 'ngx-bootstrap/tabs';
 import { BehaviorSubject, firstValueFrom, map, of, takeUntil } from 'rxjs';
 import { catchError } from 'rxjs/operators';
+import { FileUploadModalComponent } from 'src/app/@standalone/modals/file-upload-modal/file-upload-modal.component';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import {
   FilterParams,
   ListParams,
@@ -28,6 +31,7 @@ import { DictationService } from 'src/app/core/services/ms-dictation/dictation.s
 import { AttribGoodBadService } from 'src/app/core/services/ms-good/attrib-good-bad.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
+import { FilePhotoService } from 'src/app/core/services/ms-ldocuments/file-photo.service';
 import { GoodPartializeService } from 'src/app/core/services/ms-partialize/partialize.service';
 import { GoodPhotoService } from 'src/app/core/services/ms-photogood/good-photo.service';
 import { StatusXScreenService } from 'src/app/core/services/ms-screen-status/statusxscreen.service';
@@ -281,6 +285,8 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     private comerDetailService: ComerDetailsService,
     private attribGoodBadService: AttribGoodBadService,
     private fb: FormBuilder,
+    private modalService: BsModalService,
+    private filePhotoService: FilePhotoService,
     private goodPhoto: GoodPhotoService,
     public router: Router
   ) {
@@ -300,7 +306,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
   }
 
   selectTab(tabDisabled: 0 | 1, tabActive: 0 | 1) {
-    console.log(this.staticTabs);
+    // console.log(this.staticTabs);
 
     if (this.staticTabs?.tabs[tabActive]) {
       this.staticTabs.tabs[tabDisabled].disabled = true;
@@ -344,7 +350,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     this.prepareForm();
     this.activatedRoute.queryParams.subscribe({
       next: param => {
-        console.log(param);
+        // console.log(param);
         this.origin = param['origin'] ?? null;
         this.origin1 = param['origin1'] ?? null;
         if (
@@ -366,9 +372,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
         const selectedBadString = localStorage.getItem('selectedBad');
         if (selectedBadString) {
           this.selectedBad = JSON.parse(selectedBadString);
-          console.log(this.selectedBad);
           if (!this.origin) this.origin = '1';
-          console.log(this.origin);
 
           // this.selectTab();
           this.numberGood.setValue(this.selectedBad.id);
@@ -407,6 +411,28 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
 
   onFileChange(event: any) {
     console.log(event);
+  }
+
+  openFileUploader() {
+    const config = {
+      ...MODAL_CONFIG,
+      initialState: {
+        accept: 'image/*',
+        uploadFiles: false,
+        service: this.filePhotoService,
+        identificator: this.good.id,
+        callback: (refresh: boolean) => this.fileUploaderClose(refresh),
+      },
+    };
+    this.modalService.show(FileUploadModalComponent, config);
+  }
+
+  fileUploaderClose(refresh: boolean) {
+    if (refresh) {
+      // this.loadImages(this.folio).subscribe(() => {
+      //   this.updateSheets();
+      // });
+    }
   }
 
   handleEvent(data: any) {
@@ -491,7 +517,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
         .pipe(takeUntil(this.$unSubscribe))
         .subscribe({
           next: response => {
-            console.log(response);
+            // console.log(response);
           },
           error: err => {
             console.log(err);
@@ -949,8 +975,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     this.selectedBad = await firstValueFrom(
       this.attribGoodBadService.getById(this.good.id).pipe(
         takeUntil(this.$unSubscribe),
-        catchError(x => of({ data: null as IAttribGoodBad })),
-        map(x => x.data)
+        catchError(x => of(null))
       )
     );
   }
@@ -995,10 +1020,10 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
         if (item) {
           // this.se
           this.good = item;
-          debugger;
           if (!this.selectedBad) {
             await this.fillSelectedBad();
           }
+          console.log(this.selectedBad);
           if (
             this.selectedBad &&
             this.selectedBad.motive.includes('SIN FOTOS')

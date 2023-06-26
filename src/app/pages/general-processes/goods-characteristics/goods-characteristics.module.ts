@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 
 import { TabsModule } from 'ngx-bootstrap/tabs';
+import { FileUploadModalComponent } from 'src/app/@standalone/modals/file-upload-modal/file-upload-modal.component';
 import { DelegationSharedComponent } from 'src/app/@standalone/shared-forms/delegation-shared/delegation-shared.component';
 import { GoodsTypesSharedComponent } from 'src/app/@standalone/shared-forms/goods-types-shared/goods-types-shared.component';
 import { SharedModule } from 'src/app/shared/shared.module';
@@ -35,6 +36,7 @@ import { GoodsCharacteristicsComponent } from './goods-characteristics/goods-cha
     GoodsTypesSharedComponent,
     DelegationSharedComponent,
     GoodsFilterSharedComponent,
+    FileUploadModalComponent,
   ],
   exports: [GoodCharacteristicsTable, CharacteristicsLegendComponent],
 })
