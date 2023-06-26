@@ -21,6 +21,7 @@ export class GoodsCharacteristicsService extends ICharacteristicsWidthData {
   disabledNoClasifBien = true;
   disabledDescripcion = true;
   haveTdictaUser = false;
+  files: string[] = [];
   // di_numerario_conciliado: string;
 
   // newGood: any;
