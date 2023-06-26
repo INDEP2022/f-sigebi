@@ -12,6 +12,7 @@ import {
 import { IMoneda } from 'src/app/core/models/catalogs/tval-Table5.model';
 import { TvalTable5Service } from 'src/app/core/services/catalogs/tval-table5.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
+import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -19,7 +20,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
   templateUrl: './values-per-file.component.html',
   styles: [],
 })
-export class ValuesPerFileComponent implements OnInit {
+export class ValuesPerFileComponent extends BasePage implements OnInit {
   form: FormGroup;
   isLoading = false;
   maxDate = new Date();
@@ -38,7 +39,9 @@ export class ValuesPerFileComponent implements OnInit {
     private siabService: SiabService,
     private sanitizer: DomSanitizer,
     private modalService: BsModalService
-  ) {}
+  ) {
+    super();
+  }
 
   ngOnInit(): void {
     this.prepareForm();
@@ -78,6 +81,24 @@ export class ValuesPerFileComponent implements OnInit {
       PN_EXPFIN: this.form.controls['fileTo'].value,
     };
 
+    const start = new Date(this.form.get('from').value);
+    const end = new Date(this.form.get('to').value);
+
+    const startTemp = `${start.getFullYear()}-0${
+      start.getUTCMonth() + 1
+    }-0${start.getDate()}`;
+    const endTemp = `${end.getFullYear()}-0${
+      end.getUTCMonth() + 1
+    }-0${end.getDate()}`;
+
+    if (end < start) {
+      this.alert(
+        'warning',
+        'fecha final de recepción no puede ser menor a la fecha inicial',
+        ''
+      );
+      return;
+    }
     this.siabService
       .fetchReport('RGERADBNUMVALORES', params)
       // .fetchReportBlank('blank')
