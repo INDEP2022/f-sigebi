@@ -233,7 +233,6 @@ export class NumeraryRequestComponent extends BasePage implements OnInit {
           this.filterParams2
             .getValue()
             .addFilter('solnumId', data.solnumId, SearchFilter.EQ);
-
           await this.getNumDet();
         },
         error: () => {
@@ -463,7 +462,9 @@ export class NumeraryRequestComponent extends BasePage implements OnInit {
         );
 
         //this.form.get('solnumId').patchValue()
-        this.form.get('solnumDate').patchValue(new Date());
+        this.form
+          .get('solnumDate')
+          .patchValue(this.parseDateNoOffset(new Date()));
         this.form.get('solnumStatus').patchValue('S');
         this.form
           .get('delegationNumber')
@@ -517,6 +518,13 @@ export class NumeraryRequestComponent extends BasePage implements OnInit {
     });
   }
 
+  parseDateNoOffset(date: string | Date): Date {
+    const dateLocal = new Date(date);
+    return new Date(
+      dateLocal.valueOf() - dateLocal.getTimezoneOffset() * 60 * 1000
+    );
+  }
+
   createSolcEnc(body: IRequesNumeraryEnc) {
     this.numEncServ.create(body).subscribe({
       next: async resp => {
@@ -527,10 +535,17 @@ export class NumeraryRequestComponent extends BasePage implements OnInit {
 
         this.data1.map(async good => {
           good.solnumId = solnumId;
+          good.dateCalculationInterests = this.parseDateNoOffset(
+            good.dateCalculationInterests
+          );
           await this.createGoodDet(good);
         });
 
-        this.createFilter();
+        this.filterParams2.getValue().removeAllFilters();
+        this.filterParams2.getValue().page = 1;
+        this.filterParams2
+          .getValue()
+          .addFilter('solnumId', solnumId, SearchFilter.EQ);
         await this.getNumDet();
         this.isNew = false;
       },
