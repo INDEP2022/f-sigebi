@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
@@ -28,12 +29,12 @@ export class DocumentsViewerComponent extends BasePage implements OnInit {
     numberProceedings: [null],
     flyerNumber: [null],
     separador: [null],
-    fecha: [null],
+    significantDate: [null],
     keyTypeDocument: [null],
-    descripcion: [null, [Validators.pattern(STRING_PATTERN)]],
-    averPrevia: [null, [Validators.pattern(STRING_PATTERN)]],
-    causaPenal: [null, [Validators.pattern(STRING_PATTERN)]],
-    tipos: [null, [Validators.required]],
+    descriptionDocument: [null, [Validators.pattern(STRING_PATTERN)]],
+    preliminaryInquiry: [null, [Validators.pattern(STRING_PATTERN)]],
+    criminalCase: [null, [Validators.pattern(STRING_PATTERN)]],
+    scanStatus: ['all', [Validators.required]],
     origen: [null, [Validators.required]],
   });
 
@@ -47,19 +48,21 @@ export class DocumentsViewerComponent extends BasePage implements OnInit {
   constructor(
     private fb: FormBuilder,
     private documentService: DocumentsService,
-    private documentSeparatorService: DocumentsSeparatorsService
+    private documentSeparatorService: DocumentsSeparatorsService,
+    private datePipe: DatePipe
   ) {
     super();
     this.settings.actions = false;
     this.settings.columns = GENERAL_DOCS_DOCUMENTS_VIEWER_COLUMNS;
     this.settings.hideSubHeader = false;
     this.settings.rowClassFunction = (row: { data: { scanStatus: string } }) =>
-      row.data.scanStatus == 'ESCANEADO' ? 'pending' : 'digital';
+      row.data.scanStatus == 'ESCANEADO' ? 'digital' : 'pending';
   }
 
   ngOnInit(): void {
-    this.loadDocumentsSeparator(); //Aquí le indico que traiga todas las imágenes cuando se cargue la pantalla
-    this.getDocuments();
+    this.loadDocumentsSeparator();
+    this.getDocuments(); //Aquí le indico que traiga todas las imágenes cuando se cargue la pantalla
+    this.loadDocumentsType();
     this.data
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
@@ -70,15 +73,18 @@ export class DocumentsViewerComponent extends BasePage implements OnInit {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
-            /*SPECIFIC CASES*/
+            /*switch para filtros por columna*/
             switch (filter.field) {
-              case 'id':
+              case 'numberProceedings': //Columna No Expediente
                 searchFilter = SearchFilter.EQ;
                 break;
-              case 'numberProceedings':
+              case 'id': //Columna Folio universal
                 searchFilter = SearchFilter.EQ;
                 break;
               case 'cve_separador':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'keyTypeDocument':
                 searchFilter = SearchFilter.EQ;
                 break;
               default:
@@ -86,12 +92,14 @@ export class DocumentsViewerComponent extends BasePage implements OnInit {
                 break;
             }
             if (filter.search !== '') {
+              console.log(this.columnFilters[field]); //Es el change del filtro de búsqueda
+              console.log(
+                (this.columnFilters[field] = `${searchFilter}:${filter.search}`)
+              ); //Es el datos a filtrar
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
               delete this.columnFilters[field];
             }
-
-            console.log(this.columnFilters);
           });
           this.getDocuments();
         }
@@ -101,29 +109,52 @@ export class DocumentsViewerComponent extends BasePage implements OnInit {
       .subscribe(() => this.getDocuments());
   }
 
+  //CAPTURA EL DATO A BUSCAR
   onOptionsSelected(value: any) {
-    console.log('the selected value is ' + value);
+    this.selectTypeDoc = value.id;
   }
 
   generateFilterParams(formGroup: FormGroup): string {
     const filterParams: string[] = [];
-    console.log(filterParams);
-
     // Iterar sobre los controles del formulario
     Object.keys(formGroup.controls).forEach(controlName => {
       const controlValue = formGroup.get(controlName).value;
-
       if (controlValue !== null && controlValue !== undefined) {
-        const param = `filter.${controlName}=$eq:${controlValue}`;
-        filterParams.push(param);
+        if (controlName === 'significantDate') {
+          //Fecha significativa
+          const date = new Date(controlValue);
+          const month = (date.getMonth() + 1).toString().padStart(2, '0');
+          const year = date.getFullYear().toString();
+          const formattedDate = `${month}/${year}`;
+          const param = `filter.${controlName}=$eq:${formattedDate}`;
+          filterParams.push(param);
+        } else if (controlName === 'keyTypeDocument') {
+          //Tipo de documento
+          const keyTypeDocument = this.selectTypeDoc;
+          const param = `filter.${controlName}=$eq:${keyTypeDocument}`;
+          filterParams.push(param);
+        } else if (controlName === 'preliminaryInquiry') {
+          //Causa penal
+          console.log('preliminaryInquiry');
+        } else if (controlName === 'criminalCase') {
+          //Causa penal
+          console.log('criminalCase');
+        } else if (controlValue === 'all') {
+          //Filtra imagenes por 'Todos'
+          return;
+        } else {
+          const param = `filter.${controlName}=$eq:${controlValue}`;
+          console.log('params ', param);
+          filterParams.push(param);
+        }
       }
     });
     // Unir los parámetros con el carácter '&'
     const paramsString = filterParams.join('&');
-    console.log('Filter');
     return paramsString;
   }
 
+  //CARGA TODOS LOS DOCUMENTOS
   getDocuments() {
     this.loading = true;
     let params = {
@@ -133,6 +164,7 @@ export class DocumentsViewerComponent extends BasePage implements OnInit {
     this.documentService.getAll(params).subscribe(
       response => {
         this.documents = response.data;
+        console.log(this.documents);
         this.totalItems = response.count || 0;
         this.data.load(this.documents);
         this.loading = false;
@@ -141,10 +173,11 @@ export class DocumentsViewerComponent extends BasePage implements OnInit {
     );
   }
 
+  //BUSCA POR INPUTCHANGE UN TIPO DE DOCUMENTO
   onTipoDocumentoInputChange(event: any) {
-    const inputValue = event.search;
+    console.log('Tipo Documento Input Change', event);
+    const inputValue = event.search.toUpperCase();
     const param = `filter.id=${inputValue}`;
-
     this.documentService.getDocumentsType(param).subscribe(response => {
       // Actualiza los datos del ngx-select con la respuesta obtenida
       this.selectTypeDoc = new DefaultSelect(response.data, response.count);
@@ -152,43 +185,40 @@ export class DocumentsViewerComponent extends BasePage implements OnInit {
     });
   }
 
+  //CARGA LOS TIPOS DE DOCUMENTOS
   loadDocumentsType(parameter?: string) {
-    let params = this.generateFilterParams(this.form);
     this.documentService
       .getDocumentsType()
       .pipe(
         map(res => {
           this.selectTypeDoc = new DefaultSelect(res.data, res.count);
-          console.log(this.selectTypeDoc);
         })
       )
       .subscribe();
   }
 
+  //CARGA LOS SEPARADORES
   loadDocumentsSeparator() {
     this.documentService
       .getDocumentsSeparator()
       .pipe(
         map(res => {
-          console.log(res); //Trae todas las imágenes
+          console.log(res); // Trae todas las imágenes
           this.selectSeparator = new DefaultSelect(res.data, res.count);
         })
       )
       .subscribe();
   }
 
+  //ENVIA LA PETICION DE CONSULTA
   onSubmit() {
-    // Llamada al endpoint pasando los parámetros del formulario
     this.loading = true;
     let params = this.generateFilterParams(this.form);
     console.log(params);
-    console.log('Clic en el botón de Consultar');
     this.documentService.getAll(params).subscribe(
       response => {
         this.documents = response.data;
-        console.log(this.documents);
         this.totalItems = response.count || 0;
-        console.log(this.totalItems);
         this.data.load(this.documents);
         this.loading = false;
       },
@@ -197,5 +227,14 @@ export class DocumentsViewerComponent extends BasePage implements OnInit {
         this.data.load([]);
       }
     );
+  }
+
+  cleandInfo() {
+    this.form.reset();
+    this.form.patchValue({ scanStatus: 'all' });
+    this.onSubmit();
+    this.loading = false;
+    this.selectTypeDoc = new DefaultSelect([], 0);
+    this.selectSeparator = new DefaultSelect([], 0);
   }
 }
