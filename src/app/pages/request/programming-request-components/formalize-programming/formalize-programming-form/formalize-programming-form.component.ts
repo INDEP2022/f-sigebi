@@ -832,6 +832,8 @@ export class FormalizeProgrammingFormComponent
     this.modalService.show(ShowReportComponentComponent, config);
   }
 
-  close() {}
+  close() {
+    this.router.navigate(['pages/siab-web/sami/consult-tasks']);
+  }
   confirm() {}
 }

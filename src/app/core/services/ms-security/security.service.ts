@@ -13,6 +13,9 @@ import {
   providedIn: 'root',
 })
 export class SecurityService extends HttpService {
+  private endpoint = SecurityEndpoints.GenerateIdentifier;
+  private screen = '?.filter.screenKey=$eq:';
+  private userName = '&filter.user=$eq:';
   constructor() {
     super();
     this.microservice = SecurityEndpoints.Security;
@@ -81,5 +84,9 @@ export class SecurityService extends HttpService {
       `${SecurityEndpoints.QueryIdenti}`,
       params
     );
+  }
+  getScreenUser(screen: string, user: string) {
+    const route = `${this.endpoint}${this.screen}${screen}${this.userName}${user}`;
+    return this.get(route);
   }
 }

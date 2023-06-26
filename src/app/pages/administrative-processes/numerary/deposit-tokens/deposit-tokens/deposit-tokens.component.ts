@@ -1,18 +1,23 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import {
   FilterParams,
   ListParams,
+  SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { ExcelService } from 'src/app/common/services/excel.service';
+import { DynamicCatalogsService } from 'src/app/core/services/dynamic-catalogs/dynamiccatalog.service';
 import { AccountMovementService } from 'src/app/core/services/ms-account-movements/account-movement.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { AddMovementComponent } from '../add-movement/add-movement.component';
+import { CustomdbclickComponent } from '../customdbclick/customdbclick.component';
 import { DepositTokensModalComponent } from '../deposit-tokens-modal/deposit-tokens-modal.component';
-import { DEPOSIT_TOKENS_COLUMNS } from './deposit-tokens-columns';
 @Component({
   selector: 'app-deposit-tokens',
   templateUrl: './deposit-tokens.component.html',
@@ -21,23 +26,91 @@ import { DEPOSIT_TOKENS_COLUMNS } from './deposit-tokens-columns';
 export class DepositTokensComponent extends BasePage implements OnInit {
   form: FormGroup;
 
-  data1: any[] = [];
+  data1: LocalDataSource = new LocalDataSource();
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
   filter1 = new BehaviorSubject<FilterParams>(new FilterParams());
-
+  dataMovements: any = null;
+  columnFilters: any = [];
+  paramsList = new BehaviorSubject<ListParams>(new ListParams());
+  jsonToCsv: any[] = [];
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
     private accountMovementService: AccountMovementService,
     private datePipe: DatePipe,
-    private readonly goodServices: GoodService
+    private readonly goodServices: GoodService,
+    private dynamicCatalogsService: DynamicCatalogsService,
+    private excelService: ExcelService
   ) {
     super();
     this.settings = {
       ...this.settings,
       actions: false,
-      columns: DEPOSIT_TOKENS_COLUMNS,
+      hideSubHeader: false,
+      columns: {
+        bank: {
+          title: 'Banco',
+          type: 'string',
+          sort: false,
+        },
+        cveAccount: {
+          title: 'Cuenta',
+          type: 'string',
+          sort: false,
+        },
+        fec_insercion_: {
+          title: 'Fecha Depósito',
+          type: 'string',
+          sort: false,
+        },
+        invoice: {
+          title: 'Folio',
+          type: 'string',
+          sort: false,
+        },
+        fec_traspaso_: {
+          title: 'Fecha Transferencia',
+          type: 'string',
+          sort: false,
+        },
+        currency: {
+          title: 'Moneda',
+          type: 'string',
+          sort: false,
+        },
+        deposito: {
+          title: 'Depósito',
+          type: 'string',
+          sort: false,
+        },
+        no_expediente: {
+          title: 'Expediente',
+          type: 'string',
+          sort: false,
+        },
+        no_bien: {
+          title: 'Bien',
+          type: 'custom',
+          sort: false,
+          renderComponent: CustomdbclickComponent,
+          onComponentInitFunction: (instance: any) => {
+            instance.funcionEjecutada.subscribe(() => {
+              this.miFuncion();
+            });
+          },
+        },
+        categoria: {
+          title: 'Categoria',
+          type: 'string',
+          sort: false,
+        },
+        es_parcializacion: {
+          title: 'Parcial',
+          type: 'string',
+          sort: false,
+        },
+      },
       rowClassFunction: (row: any) => {
         if (row.data.no_bien != null) {
           return 'bg-warning text-black';
@@ -54,44 +127,90 @@ export class DepositTokensComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
+    this.data1
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = '';
+            //Default busqueda SearchFilter.ILIKE
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
 
-    this.filter1.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+            //Verificar los datos si la busqueda sera EQ o ILIKE dependiendo el tipo de dato aplicar regla de búsqueda
+            const search: any = {
+              bank: () => (searchFilter = SearchFilter.ILIKE),
+              cveAccount: () => (searchFilter = SearchFilter.ILIKE),
+              fec_insercion: () => (searchFilter = SearchFilter.ILIKE),
+              invoice: () => (searchFilter = SearchFilter.ILIKE),
+              fec_traspaso: () => (searchFilter = SearchFilter.ILIKE),
+              currency: () => (searchFilter = SearchFilter.ILIKE),
+              deposito: () => (searchFilter = SearchFilter.ILIKE),
+              no_expediente: () => (searchFilter = SearchFilter.EQ),
+              no_bien: () => (searchFilter = SearchFilter.EQ),
+              categoria: () => (searchFilter = SearchFilter.ILIKE),
+              es_parcializacion: () => (searchFilter = SearchFilter.EQ),
+            };
+
+            search[filter.field]();
+
+            if (filter.search !== '') {
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.paramsList = this.pageFilter(this.paramsList);
+          //Su respectivo metodo de busqueda de datos
+          this.getAccount();
+        }
+      });
+
+    this.paramsList.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
       this.getAccount();
     });
   }
 
   getAccount() {
     this.loading = true;
-    this.accountMovementService
-      .getAccount2(this.filter1.getValue().getParams())
-      .subscribe({
-        next: async (response: any) => {
-          let result = response.data.map(async (item: any) => {
-            const detailsBank: any = await this.returnDataBank(item.no_cuenta);
+    let params = {
+      ...this.paramsList.getValue(),
+      ...this.columnFilters,
+    };
+    this.accountMovementService.getAccount2(params).subscribe({
+      next: async (response: any) => {
+        let result = response.data.map(async (item: any) => {
+          const detailsBank: any = await this.returnDataBank(item.no_cuenta);
 
-            item['currency'] = detailsBank ? detailsBank.cveCurrency : null;
-            item['bank'] = detailsBank ? detailsBank.cveBank : null;
-            item['cveAccount'] = detailsBank ? detailsBank.cveAccount : null;
-            item['fec_insercion_'] = item.fec_insercion
-              ? this.datePipe.transform(item.fec_insercion, 'dd/MM/yyyy')
-              : null;
-            item['fec_traspaso_'] = item.fec_traspaso
-              ? this.datePipe.transform(item.fec_traspaso, 'dd/MM/yyyy')
-              : null;
-            item['bancoDetails'] = detailsBank ? detailsBank : null;
-          });
+          item['currency'] = detailsBank ? detailsBank.cveCurrency : null;
+          item['bank'] = detailsBank ? detailsBank.cveBank : null;
+          item['cveAccount'] = detailsBank ? detailsBank.cveAccount : null;
+          item['fec_insercion_'] = item.fec_insercion
+            ? this.datePipe.transform(item.fec_insercion, 'dd/MM/yyyy')
+            : null;
+          item['fec_traspaso_'] = item.fec_traspaso
+            ? this.datePipe.transform(item.fec_traspaso, 'dd/MM/yyyy')
+            : null;
+          item['bancoDetails'] = detailsBank ? detailsBank : null;
+        });
 
-          Promise.all(result).then((resp: any) => {
-            this.data1 = response.data;
-            this.totalItems = response.count;
-            console.log(response);
-            this.loading = false;
-          });
-        },
-        error: err => {
+        Promise.all(result).then((resp: any) => {
+          this.totalItems = response.count;
+          this.data1.load(response.data);
+          this.data1.refresh();
+          console.log(response);
           this.loading = false;
-        },
-      });
+        });
+      },
+      error: err => {
+        this.loading = false;
+        this.totalItems = 0;
+        this.data1.load([]);
+        this.data1.refresh();
+      },
+    });
   }
 
   async returnDataBank(id: any) {
@@ -125,29 +244,140 @@ export class DepositTokensComponent extends BasePage implements OnInit {
       balanceAt: [null, Validators.nullValidator],
     });
   }
-  onCustomAction(event: any) {
+
+  async onCustomAction(event: any) {
+    this.dataMovements = event.data;
     console.log('data', event);
+    // DESCRIPCIÓN DEL BIEN
     if (event.data.no_bien) {
       this.getDetailsGood(event.data.no_bien);
     } else {
       this.form.get('descriptionGood').setValue('');
     }
 
+    // DETALLES DE LA CUENTA
     if (event.data.bancoDetails) {
-      this.insertDataBank(event.data.bancoDetails);
+      await this.insertDataBank(event.data.bancoDetails);
+
+      if (event.data.bancoDetails.cveCurrency) {
+        await this.getTvalTable5(event.data.bancoDetails.cveCurrency);
+      }
     }
   }
 
-  insertDataBank(bank: any) {
+  async insertDataBank(bank: any) {
     this.form.get('bank').setValue(bank.banco.name);
     this.form.get('account').setValue(bank.cveAccount);
     this.form.get('accountType').setValue(bank.accountType);
     this.form.get('currency').setValue(bank.cveCurrency);
     this.form.get('square').setValue(bank.square);
-    this.form.get('description').setValue('');
     this.form.get('branch').setValue(bank.branch);
     this.form.get('balanceOf').setValue('');
     this.form.get('balanceAt').setValue('');
+  }
+
+  async cleanDataBank() {
+    this.form.get('bank').setValue('');
+    this.form.get('account').setValue('');
+    this.form.get('accountType').setValue('');
+    this.form.get('currency').setValue('');
+    this.form.get('square').setValue('');
+    this.form.get('branch').setValue('');
+    this.form.get('balanceOf').setValue('');
+    this.form.get('description').setValue('');
+    this.form.get('balanceAt').setValue('');
+  }
+
+  // BUTTONS FUNCTIONS //
+
+  async desconciliarFunc() {
+    // this.loading = true;
+    if (this.dataMovements) {
+      if (this.dataMovements.no_bien == null) {
+        this.alert(
+          'warning',
+          'No existe un bien asociado a este depósito.',
+          ''
+        );
+      } else {
+        let obj: any = {
+          numberMotion: this.dataMovements.no_movimiento,
+          numberAccount: this.dataMovements.no_cuenta,
+          numberGood: null,
+          numberProceedings: null,
+        };
+        this.accountMovementService.update(obj).subscribe({
+          next: async (response: any) => {
+            this.getAccount();
+            this.alert(
+              'success',
+              `El bien ${this.dataMovements.no_bien} ha sido desconciliado`,
+              ''
+            );
+          },
+          error: err => {
+            this.alert('error', `Error al desconciliar`, err.error.message);
+            this.loading = false;
+          },
+        });
+      }
+    }
+  }
+
+  async actualizarFunc() {
+    this.getAccount();
+    if (this.dataMovements.bank) {
+      this.cleanDataBank();
+    }
+  }
+
+  async importar() {}
+
+  onFileChange(event: Event) {
+    const files = (event.target as HTMLInputElement).files;
+    if (files.length != 1) throw 'No files selected, or more than of allowed';
+    const fileReader = new FileReader();
+    fileReader.readAsBinaryString(files[0]);
+    fileReader.onload = () => this.readExcel(fileReader.result);
+  }
+
+  readExcel(binaryExcel: string | ArrayBuffer) {
+    try {
+      const excelImport = this.excelService.getData<any>(binaryExcel);
+      this.data1.load(excelImport);
+      this.totalItems = this.data1.count();
+    } catch (error) {
+      this.onLoadToast('error', 'Ocurrio un error al leer el archivo', 'Error');
+    }
+  }
+
+  async exportar() {
+    const filename: string = 'Deposit Tokens';
+    const jsonToCsv = await this.returnJsonToCsv();
+    console.log('jsonToCsv', jsonToCsv);
+    this.jsonToCsv = jsonToCsv;
+    this.excelService.export(this.jsonToCsv, { type: 'csv', filename });
+  }
+
+  async returnJsonToCsv() {
+    return this.data1.getAll();
+  }
+  // GET DETAILS CURRENCY //
+  async getTvalTable5(currency: any) {
+    const params = new ListParams();
+    params['filter.nmtable'] = `$eq:3`;
+    params['filter.otkey1'] = `$eq:${currency}`;
+    this.dynamicCatalogsService.getTvalTable5(params).subscribe({
+      next: response => {
+        this.form.get('description').setValue(response.data[0].otvalor01);
+        this.loading = false;
+      },
+      error: err => {
+        console.log(err);
+        this.form.get('description').setValue('');
+        this.loading = false;
+      },
+    });
   }
 
   getAttributes() {
@@ -176,14 +406,41 @@ export class DepositTokensComponent extends BasePage implements OnInit {
       },
     });
   }
+
   openForm(data?: any) {
     const modalConfig = MODAL_CONFIG;
+    let noCuenta = null;
+    if (this.dataMovements) {
+      noCuenta = this.dataMovements.bancoDetails.accountNumber;
+    }
     modalConfig.initialState = {
+      noCuenta,
       data,
       callback: (next: boolean) => {
         if (next) this.getAttributes();
       },
     };
     this.modalService.show(DepositTokensModalComponent, modalConfig);
+  }
+
+  miFuncion() {
+    this.getAccount();
+    // console.log('Función ejecutada desde el componente hijo');
+  }
+
+  addMovement() {
+    let data = 1;
+    this.openFormAdd(data);
+  }
+
+  openFormAdd(data?: any) {
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      data,
+      callback: (next: boolean) => {
+        console.log('AQUI', next);
+      },
+    };
+    this.modalService.show(AddMovementComponent, modalConfig);
   }
 }

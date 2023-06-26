@@ -348,7 +348,10 @@
       <div class="col-md-3 col-sm-12 col-xs-12">
         <div class="d-flex justify-content-center">
           <div class="m-3">
-            <button type="button" class="btn btn-secondary btn-sm active">
+            <button
+              type="button"
+              class="btn btn-secondary btn-sm active"
+              (click)="apply()">
               Aplicar
             </button>
           </div>
@@ -375,7 +378,7 @@
     </div>
     <hr />
     <div class="row mt-5">
-      <app-scanning-foil></app-scanning-foil>
+      <app-scanning-foil [notifications]="form.value"></app-scanning-foil>
     </div>
   </div>
 </app-card>
