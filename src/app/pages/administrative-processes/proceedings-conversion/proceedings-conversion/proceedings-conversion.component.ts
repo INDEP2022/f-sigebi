@@ -22,13 +22,15 @@ import { RegionalDelegationService } from 'src/app/core/services/catalogs/region
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { ConvertiongoodService } from 'src/app/core/services/ms-convertiongood/convertiongood.service';
 import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
+import { StatusGoodService } from 'src/app/core/services/ms-good/status-good.service';
+import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive-good.service';
 import { GoodsJobManagementService } from 'src/app/core/services/ms-office-management/goods-job-management.service';
 import { SecurityService } from 'src/app/core/services/ms-security/security.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { FlyersService } from 'src/app/pages/documents-reception/flyers/services/flyers.service';
-import { AddCopyComponent } from 'src/app/pages/juridical-processes/abandonments-declaration-trades/abandonments-declaration-trades/add-copy/add-copy.component';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { ScanningFoilComponent } from '../../payment-claim-process/scanning-foil/scanning-foil.component';
 import { IDataGoodsTable } from '../proceedings-conversion-column';
 import { ProceedingsConversionModalComponent } from '../proceedings-conversion-modal/proceedings-conversion-modal.component';
 import { ActasConvertionCommunicationService } from '../services/proceedings-conversionn';
@@ -92,28 +94,39 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
   loadingText = '';
   userName: string = '';
   insert = false;
+  disabledImport: boolean = true;
   update = false;
   delete = false;
+  dataA: any = 0;
+  dataD: any = 0;
   confirmSearch: boolean = false;
   preAver = '';
   criCase = '';
+  test: any;
   searchMode: boolean = false;
   isLoading = false;
   statusConv: string | number = '';
   read = false;
   isLoadingSender = false;
+  isCreate = false;
   selectedRow: IConvertiongood;
   origin = '';
+  totalItemsActas: number = 0;
   department = '';
+  selectedGood: IGoodAndAvailable;
   delegation: string = null;
   data1: any[] = [];
   p_valor: number;
+  checkSelectTable: boolean = false;
   proceedingsConversionForm: FormGroup;
   actaRecepttionForm: FormGroup;
+  actaGoodForm: FormGroup;
   dataGoodTable: LocalDataSource = new LocalDataSource();
-  // expedientData: IExpedient;
+  paramsGoodsType: number = 0;
   loadingGoods = false;
   select: any;
+  goods: any;
+  columnFilters: any = [];
   cveActa: string = '';
   fileNumber: number = 0;
   conversion: number = 0;
@@ -133,6 +146,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
   params = new BehaviorSubject<ListParams>(new ListParams());
   filterParams = new BehaviorSubject<FilterParams>(new FilterParams());
   totalItems: number = 0;
+  paramsGood: number = 0;
   loadingSend = false;
   screenKey = 'FACTDBCONVBIEN';
   dataTableGoodsConvertion: IConvertiongood[] = [];
@@ -142,7 +156,8 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
   dataTableGoodsJobManagement: IGoodJobManagement[] = [];
   @ViewChild('tableGoods') tableGoods: Ng2SmartTableComponent;
   @ViewChild('tableDocs') tableDocs: Ng2SmartTableComponent;
-
+  @ViewChild('modal') modal: ProceedingsConversionModalComponent;
+  @ViewChild('hijoRef', { static: false }) hijoRef: ScanningFoilComponent;
   dataTableGoodsMap = new Map<number, IGoodAndAvailable>();
   dataGoodsSelected = new Map<number, IGoodAndAvailable>();
 
@@ -172,10 +187,12 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     protected flyerService: FlyersService,
     private excelService: ExcelService,
     private fb: FormBuilder,
+    private massiveGoodService: MassiveGoodService,
     private router: Router,
     private actasConvertionCommunicationService: ActasConvertionCommunicationService,
     private regionalDelegacionService: RegionalDelegationService,
     protected modalService: BsModalService,
+    private statusGoodService: StatusGoodService,
     private convertiongoodService: ConvertiongoodService,
     private activatedRoute: ActivatedRoute,
     private route: ActivatedRoute,
@@ -200,6 +217,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.prepareForm();
     this.actaForm();
+    this.goodForm();
     const token = this.authService.decodeToken();
     this.dataUserLoggedTokenData = token;
     this.pageParams = this.actasConvertionCommunicationService.actasParams;
@@ -271,7 +289,13 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
 
   private actaForm() {
     this.actaRecepttionForm = this.fb.group({
-      acta: [null, Validators.required],
+      acta: [null],
+    });
+  }
+
+  private goodForm() {
+    this.actaGoodForm = this.fb.group({
+      goodId: [null],
     });
   }
 
@@ -363,18 +387,9 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
       } else {
         console.log('SIN PARAMETROS');
         if (!this.origin) {
-          // this.showSearchAppointment = true; // Habilitar pantalla de búsqueda de dictaminaciones
-          // this.showSearchAppointment = true; // Habilitar pantalla de búsqueda de dictaminaciones
+          // this.showSearchAppointment = true; // Habilitar pantalla de búsqueda de Actas
+          // this.showSearchAppointment = true; // Habilitar pantalla de búsqueda de Actas
         } else {
-          // this.alertInfo(
-          //   'info',
-          //   'Error en los paramétros',
-          //   'Los paramétros No. Oficio: ' +
-          //     this.paramsScreen.P_VALOR +
-          //     ' y el Tipo Oficio: ' +
-          //     this.paramsScreen.TIPO +
-          //     ' al iniciar la pantalla son requeridos'
-          // );
         }
       }
     }
@@ -398,9 +413,9 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
           this.witnessOic = res.witnessOic;
           this.preAver = res.fileNumber.preliminaryInquiry;
           this.criCase = res.fileNumber.criminalCase;
-
-          // this.actaO = res.statusConv;
-          console.log(res);
+          this.cveActa = res.cveActaConv;
+          // this.cveActa = res.cveActaConv;
+          console.log(this.cveActa);
           this.getGoods(this.conversion);
           subscription.unsubscribe();
         },
@@ -442,10 +457,8 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
   }
 
   openDialogSelectedManagement() {}
-  // goBack() { }
 
   async getSenderByDetail(params: ListParams) {
-    // this.isLoadingSender = true;
     params.take = 20;
     params['order'] = 'DESC';
     const delegationNumber = this.department;
@@ -454,13 +467,6 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     this.convertiongoodService.getRegSender(params).subscribe({
       next: data => {
         console.log(data);
-        // let result = data.data.map(item => {
-        //   return {
-        //     // ...item,
-        //     // userAndName: item.usuario + ' - ' + item.nombre,
-        //     console.log(item)
-        //   };
-        // });
         this.senders = new DefaultSelect(data.data, data.count);
         this.isLoadingSender = false;
       },
@@ -469,61 +475,6 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
         this.select = new DefaultSelect([], 0);
         this.isLoadingSender = false;
       },
-    });
-  }
-  openFormCcp(context?: Partial<AddCopyComponent>) {
-    const modalRef = this.modalService.show(AddCopyComponent, {
-      initialState: context,
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
-    });
-    modalRef.content.dataCopy.subscribe((next: any) => {
-      // console.log('next', next);
-
-      if (next.typePerson_I == 'I') {
-        let array = this.copyActa;
-        let arr = [];
-
-        let obj: any = {
-          managementNumber: null,
-          addresseeCopy: next.senderUser_I,
-          delDestinationCopyNumber: null,
-          nomPersonExt: null,
-          personExtInt: 'I',
-          recordNumber: null,
-          personExtInt_: 'INTERNO',
-          userOrPerson: next.senderUser_I + ' - ' + next.personaExt_I,
-        };
-
-        arr.push(obj);
-        for (let i = 0; i < array.length; i++) {
-          arr.push(array[i]);
-        }
-        this.copyActa = arr;
-      } else if (next.typePerson_I == 'E') {
-        let array = this.copyActa;
-        let arr = [];
-
-        let obj: any = {
-          managementNumber: null,
-          addresseeCopy: null,
-          delDestinationCopyNumber: null,
-          nomPersonExt: next.personaExt_I,
-          personExtInt: 'E',
-          personExtInt_: 'EXTERNO',
-          recordNumber: null,
-          userOrPerson: next.personaExt_I,
-        };
-
-        arr.push(obj);
-        for (let i = 0; i < array.length; i++) {
-          arr.push(array[i]);
-        }
-        this.copyActa = arr;
-      }
-    });
-    modalRef.content.refresh.subscribe((next: any) => {
-      this.initForm();
     });
   }
 
@@ -750,61 +701,52 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     }
     if (this.conversion == null) {
       this.alert('warning', 'No existe acta para cerrar', '');
-      return;
     }
     const toolbar_user = this.authService.decodeToken().preferred_username;
-    // const cadena = this.dictamen.passOfficeArmy
-    //   ? this.dictamen.passOfficeArmy.indexOf('?')
-    //   : 0;
-    // console.log('cadena', cadena);
-    // if (cadena == 0) {
-    //   V_BAN = true;
-    // }
-
-    // if (cadena != 0 && this.dictamen.userDict == toolbar_user) {
-    //   null;
-    // } else {
-    //   if (V_BAN == true) {
-    //     V_ELIMINA = await this.getRTdictaAarusr(toolbar_user);
-
-    //     if (V_ELIMINA == 'X') {
-    //       this.alert(
-    //         'warning',
-    //         'El Usuario no está autorizado para eliminar el dictamen cerrado',
-    //         ''
-    //       );
-    //       return;
-    //     }
-    //   } else {
-    //     V_ELIMINA = await this.getRTdictaAarusr2(
-    //       toolbar_user,
-    //       this.expedientesForm.get('tipoDictaminacion').value
-    //     );
-
-    //     if (V_ELIMINA == 'X') {
-    //       this.alert(
-    //         'warning',
-    //         'El Usuario no está autorizado para eliminar el dictamen',
-    //         ''
-    //       );
-    //       return;
-    //     } else if (V_ELIMINA == 'S') {
-    //       const paramsSender = new ListParams();
-    //       paramsSender.text = this.authService.decodeToken().preferred_username;
-
-    //       V_VALID = await this.getAutorizateDelete(paramsSender);
-
-    //       if (V_VALID == null) {
-    //         this.alert(
-    //           'warning',
-    //           'El Usuario no está autorizado para eliminar el dictamen',
-    //           ''
-    //         );
-    //         return;
-    //       }
-    //     }
-    //   }
+    const cadena = this.cveActa ? this.cveActa.indexOf('?') : 0;
+    console.log('cadena', cadena);
+    if (cadena != 0 && this.userName == toolbar_user) {
+      null;
+    } else {
+      if (this.delete == true) {
+        this.alertQuestion(
+          'warning',
+          'Eliminar',
+          'Desea eliminar este registro?'
+        ).then(question => {
+          if (question.isConfirmed) {
+            this.convertiongoodService.remove(this.conversion).subscribe({
+              next: data => {
+                this.loading = false;
+                this.alert('success', 'Acta eliminada', '');
+                this.initForm();
+              },
+              error: error => {
+                this.onLoadToast('error', 'No se puede eliminar registro', '');
+                this.loading = false;
+              },
+            });
+          }
+        });
+      } else {
+        if (this.delete == false) {
+          this.alert(
+            'warning',
+            'El Usuario no está autorizado para eliminar el acta',
+            ''
+          );
+        }
+        if (this.delete == null) {
+          this.alert(
+            'warning',
+            'El Usuario no está autorizado para eliminar el acta',
+            ''
+          );
+        }
+      }
+    }
   }
+
   Generar() {
     this.isLoading = true;
 
@@ -919,6 +861,97 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     };
     this.modalService.show(ProceedingsConversionModalComponent, modalConfig);
   }
+
+  readExcel(binaryExcel: string | ArrayBuffer | any, filter: any) {
+    try {
+      this.loading = true;
+      // this.idsNotExist = [];
+      // this.showError = false;
+      // this.showStatus = false;
+      this.dataGoodTable.load([]);
+      this.goods = [];
+      let params = {
+        ...this.params.getValue(),
+        ...this.columnFilters,
+      };
+
+      this.massiveGoodService.getFProRecPag2CSV(params, binaryExcel).subscribe(
+        (response: any) => {
+          console.log('SI112', response.message);
+          this.totalItems = response.countA + response.countD;
+
+          let result = response.data.map(async (good: any) => {
+            // if (good.approved) {
+            //   if (this.document == null) {
+            //   }
+            //   this.disabledImport = false;
+            //   if (!this.form.value.justification) {
+            //     this.form.get('justification').setValue(good.causenumberchange);
+            //   }
+            // }
+          });
+
+          Promise.all(result).then((resp: any) => {
+            this.goods = response.data;
+            this.dataGoodTable.load(this.goods);
+            this.dataGoodTable.refresh();
+            // this.addStatus();
+            this.dataA = response.countA;
+            this.dataD = response.countD;
+
+            this.test = binaryExcel;
+            let file = response.file.base64File;
+
+            this.cargarData(file);
+
+            this.proceedingsConversionForm.enable();
+
+            console.log('BINARY EXCEL', response);
+
+            this.loading = false;
+          });
+        },
+        error => {
+          this.dataGoodTable.load([]);
+          // this.totalItems = 0;
+          this.loading = false;
+          if (filter != 'no') {
+            this.alert('error', 'No hay datos disponibles', '');
+          }
+          // this.onLoadToast('warning', 'No hay datos disponibles', '');
+        }
+      );
+
+      return;
+    } catch (error) {
+      this.dataGoodTable.load([]);
+      this.loading = false;
+      this.alert('error', 'Ocurrió un error al leer el archivo', '');
+    }
+  }
+
+  cargarData(binaryExcel: any) {
+    this.hijoRef.cargarData(binaryExcel);
+  }
+
+  file: File | undefined;
+  fileUrl: any;
+  async getFile() {
+    const base64Data = localStorage.getItem('goodData');
+    const csvData = atob(base64Data);
+
+    return csvData ? csvData : null;
+  }
+
+  onFileChange(event: Event) {
+    console.log('Entro');
+    const files = (event.target as HTMLInputElement).files;
+    if (files.length != 1) throw 'No files selected, or more than of allowed';
+    this.alert('success', 'Archivo subido exitosamente', '');
+    this.readExcel(files[0], 'si');
+  }
+  selectProceedings(event: any) {}
+  selectGoods(event: any) {}
 }
 
 export interface IParamsProceedingsParamsActasConvertion {

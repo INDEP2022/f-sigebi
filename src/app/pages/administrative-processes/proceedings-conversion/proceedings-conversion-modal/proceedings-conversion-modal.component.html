@@ -12,7 +12,8 @@
           class="table-responsive"
           [attr.class]="'table-responsive table-bordered'"
           [settings]="settings"
-          [source]="dataFactGood">
+          [source]="dataFactGood"
+          (userRowSelect)="onUserRowSelect($event)">
         </ng2-smart-table>
         <app-pagination [params]="params" [totalItems]="totalItems2">
         </app-pagination>
@@ -23,8 +24,19 @@
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <button class="btn btn-primary btn-sm active" (click)="return()">
-          Regresar
+        <button
+          type="button"
+          class="btn btn-danger active btn-sm"
+          (click)="handleSuccess()">
+          Seleccionar <i class="fas fa-edit bx-sm float-icon"></i>
+        </button>
+      </div>
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-danger active btn-sm"
+          (click)="return()">
+          Regresar <i class="fa fa-arrow-left bx-sm float-icon"></i>
         </button>
       </div>
     </div>

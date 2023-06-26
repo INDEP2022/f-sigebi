@@ -1,6 +1,6 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
@@ -13,7 +13,7 @@ import { ConvertiongoodService } from 'src/app/core/services/ms-convertiongood/c
 import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { COUNT_ACTAS_COLUMNS } from '../proceedings-conversion-column';
-
+import { IInitFormProceedingsBody } from '../proceedings-conversion/proceedings-conversion.component';
 @Component({
   selector: 'app-proceedings-conversion-modal',
   templateUrl: './proceedings-conversion-modal.component.html',
@@ -27,20 +27,23 @@ export class ProceedingsConversionModalComponent
   //Data Table
   conversiones: IConvertiongood[] = [];
   columnFilters: any = [];
+  pageParams: IInitFormProceedingsBody = null;
   conversionGood: IConvertiongood;
   edit = false;
   vaultSelect: any;
   totalItems2: number = 0;
+  selectedRow: any | null = null;
   provider: any;
   providerForm: FormGroup = new FormGroup({});
   dataFactGood: LocalDataSource = new LocalDataSource();
-  @Input() idSafe: number;
+  @Output() onSave = new EventEmitter<any>();
 
   // @Output() onConfirm = new EventEmitter<any>();
   constructor(
-    private bsModalRef: BsModalRef,
+    private modalRef: BsModalRef,
     private activateRoute: ActivatedRoute,
     private fb: FormBuilder,
+    private router: Router,
     private opcion: ModalOptions,
     private convertiongoodService: ConvertiongoodService,
     protected goodprocessService: GoodProcessService
@@ -56,7 +59,6 @@ export class ProceedingsConversionModalComponent
     };
   }
   ngOnInit(): void {
-    console.log(this.provider);
     this.dataFactGood
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
@@ -90,7 +92,7 @@ export class ProceedingsConversionModalComponent
   }
 
   return() {
-    this.bsModalRef.hide();
+    this.modalRef.hide();
   }
   getGoodByCOnversiones(): void {
     this.loading = true;
@@ -108,5 +110,29 @@ export class ProceedingsConversionModalComponent
       },
       error: error => (this.loading = false),
     });
+  }
+  onUserRowSelect(row: IConvertiongood): void {
+    this.selectedRow = row;
+    console.log(this.selectedRow);
+  }
+
+  handleSuccess(): void {
+    this.loading = true;
+    this.loading = false;
+    for (const prop in this.selectedRow) {
+      if (Object.prototype.hasOwnProperty.call(this.selectedRow, prop)) {
+        console.log(`${prop}: ${this.selectedRow[0].idConversion}`);
+      }
+    }
+    this.onSave.emit(this.selectedRow);
+    this.router.navigate(
+      ['/pages/administrative-processes/proceedings-conversion'],
+      {
+        queryParams: {
+          origin: 'FACTDBCONVBIEN',
+          PAR_IDCONV: Number(this.selectedRow[0].id),
+        },
+      }
+    );
   }
 }
