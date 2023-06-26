@@ -216,7 +216,7 @@ export class LegalRegularizationComponent extends BasePage implements OnInit {
         this.alert(
           'success',
           'Actualizado',
-          `El estatus del bien ${this.good.id} se cambio con éxito`
+          `Justificación de la Regularización jurídica del bien ${this.good.id} actualizado con éxito.`
         );
         this.clean();
       },
