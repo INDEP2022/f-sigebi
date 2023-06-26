@@ -13,12 +13,12 @@
 
           <div class="form-group">
             <label class="text-right">Estado</label>
-            <span> {{ item?.cveState }} </span>
+            <span> {{ item.descCondition }} </span>
           </div>
 
           <div class="form-group">
             <label class="text-right">Municipio</label>
-            <span> {{ item?.cveMunicipality }} </span>
+            <span> {{ item.municipalityName }} </span>
           </div>
 
           <div class="form-group">
@@ -29,17 +29,17 @@
           </div>
           <div class="form-group">
             <label class="text-right">Codigo Postal</label>
-            <span> {{ item?.code }} </span>
+            <span> {{ item?.domicilio.code }} </span>
           </div>
         </div>
 
         <div class="form-group">
           <label class="text-right">Nombre de la Via</label>
-          <span> {{ item?.viaName }} </span>
+          <span> {{ item?.domicilio.wayName }} </span>
         </div>
         <div class="form-group">
           <label class="text-right">Origen de la Via</label>
-          <span> {{ item?.viaOrigin }} </span>
+          <span> {{ item?.domicilio.wayOrigin }} </span>
         </div>
         <div class="form-group">
           <label class="text-right">Destino de la Via</label>
@@ -51,7 +51,7 @@
         </div>
         <div class="form-group">
           <label class="text-right">Num. Ext</label>
-          <span> {{ item.numExt }} </span>
+          <span> {{ item?.domicilio.exteriorNumber }} </span>
         </div>
         <div class="form-group">
           <label class="text-right">Num. Int</label>
@@ -66,6 +66,14 @@
         <button type="button" class="btn btn-danger active" (click)="close()">
           Cancelar
         </button>
+        <!-- <confirm-button
+        [loading]="loadingReport"
+        [btnSmall]="true"
+        [text]="'Reporte de bienes programables'"
+        [loadingText]="'Generando Reporte'"
+        [className]="'btn-info'"
+        class="mr-2"
+        (confirm)="reportGoodsProgramming()"></confirm-button> -->
       </div>
     </div>
   </div>

@@ -69,6 +69,8 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
   origin2: string = ''; // Pantalla para regresar a la anterior de la que se llamo
   origin3: string = ''; // Pantalla para regresar a la anterior de la que se llamo desde la origin2
   no_bien: number = null;
+  expedientNumber: number = null; //no_expediente
+  wheelNumber: number = null; //no_volante
 
   constructor(
     private fb: FormBuilder,
@@ -88,6 +90,9 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
         this.originFlyer = params['volante'] ?? '';
         this.origin = params['origin'] ?? null;
         this.requestOrigin = params['requestOrigin'] ?? null;
+        this.expedientNumber = params['expedientNumber'] ?? null;
+        this.wheelNumber = params['wheelNumber'] ?? null;
+
         console.log(params);
         if (this.origin == 'FACTJURDICTAMOFICIO') {
           for (const key in this.paramsScreen) {
@@ -485,6 +490,11 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
       this.router.navigate([
         `pages/administrative-processes/legal-regularization`,
       ]);
+    }
+    if (this.origin == 'FADMAMPAROS') {
+      this.router.navigateByUrl(
+        `pages/juridical/depositary/maintenance-of-coverages?wheelNumber=${this.wheelNumber}&proceedingsNumber=${this.expedientNumber}`
+      );
     }
   }
 }

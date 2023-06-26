@@ -99,6 +99,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
 
   showReportByTypeDoc() {
     if (this.idTypeDoc == 103) {
+      console.log('this.receipt', this.receipt);
       let linkDoc: string = `${this.urlBaseReport}Recibo_Entrega.jasper&ID_PROG=${this.idProg}&ID_RECIBO=${this.receipt.id}&ID_ACTA=${this.receipt.actId}`;
       this.src = linkDoc;
     }
@@ -196,8 +197,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
       this.title = 'Firma electrónica';
     } else if (!this.listSigns && this.printReport && this.isAttachDoc) {
       //adjuntar el reporte
-      let message = '¿Está seguro que quiere cargar el documento?';
-      this.openMessage2(message);
+      this.openMessage2();
     }
   }
 
@@ -280,9 +280,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
       question => {
         if (question.isConfirmed) {
           if (this.idTypeDoc == 221) {
-            console.log('this.programming.id', this.programming.id);
-            console.log('ProgramacionRecibo', this.programming.id);
-            /*this.gelectronicFirmService
+            this.gelectronicFirmService
               .firmDocument(this.programming.id, 'ProgramacionRecibo', {})
               .subscribe({
                 next: response => {
@@ -291,7 +289,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                 error: error => {
                   this.msjCheck = true;
                 },
-              }); */
+              });
           }
 
           if (this.idTypeDoc == 103) {
@@ -308,8 +306,10 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                 .subscribe({
                   next: response => {
                     this.msjCheck = true;
+                    console.log('errror', response);
                   },
                   error: error => {
+                    console.log('errror', error);
                     this.msjCheck = true;
                   },
                 });
@@ -359,21 +359,23 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
     this.modalRef.hide();
   }
 
-  openMessage2(message: string): void {
-    this.alertQuestion(undefined, 'Confirmación', message, 'Aceptar').then(
-      question => {
-        if (question.isConfirmed) {
-          if (this.idTypeDoc == 221) {
-            this.validAttachDoc();
-          }
+  openMessage2(): void {
+    this.alertQuestion(
+      'question',
+      '¿Quiere continuar con el proceso?',
+      ''
+    ).then(question => {
+      if (question.isConfirmed) {
+        if (this.idTypeDoc == 221) {
+          this.validAttachDoc();
+        }
 
-          if (this.idTypeDoc == 103) {
-            this.modalRef.content.callback(true);
-            this.modalRef.hide();
-          }
+        if (this.idTypeDoc == 103) {
+          this.modalRef.content.callback(true);
+          this.modalRef.hide();
         }
       }
-    );
+    });
   }
 
   validAttachDoc() {
@@ -451,6 +453,5 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
     this.listSigns = false;
     this.isAttachDoc = false;
     this.printReport = true;
-    this.signatories = [];
   }
 }

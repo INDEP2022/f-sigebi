@@ -16,7 +16,7 @@
     <div class="form-group row">
       <form-field
         [control]="generalDataForm.get('descripcion')"
-        label="Descripcion">
+        label="Descripción">
         <textarea
           class="form-control"
           type="text"
@@ -112,18 +112,19 @@
         [avaluo]="false"
         [good]="good"
         [disabled]="true"
-        [service]="service"></app-good-characteristics-table>
+        [service]="service"
+        [initValue]="true"></app-good-characteristics-table>
     </div>
     <div class="row" *ngIf="viewAct">
       <app-good-characteristics-table
         [goodChange]="goodChange"
-        [initValue]="false"
         [clasification]="classificationOfGoods"
         [settings]="atributNewSettings"
         [avaluo]="false"
         [good]="good"
         [disabled]="false"
-        [service]="service"></app-good-characteristics-table>
+        [service]="service"
+        [initValue]="true"></app-good-characteristics-table>
     </div>
   </div>
 </div>
