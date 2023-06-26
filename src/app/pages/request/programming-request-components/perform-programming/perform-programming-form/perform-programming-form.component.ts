@@ -254,7 +254,6 @@ export class PerformProgrammingFormComponent
     params.getValue()['filter.id'] = this.task.id;
     this.taskService.getAll(params.getValue()).subscribe({
       next: response => {
-        console.log('task', response);
         this.infoTask = response.data[0];
       },
       error: error => {},
@@ -1652,8 +1651,6 @@ export class PerformProgrammingFormComponent
   }
   // Visualizar información de alias almacen //
   showDomicile(item: any) {
-    console.log('ITEMENTRO', JSON.stringify(item));
-
     // });data.statusKey === item.domicilio.statusKey
     // data => data.descCondition === item.domicilio.statusKey
     //     let nameStatus
@@ -2169,7 +2166,6 @@ export class PerformProgrammingFormComponent
           this.loadingReport = false;
         },
         error: error => {
-          console.log('error', error);
           this.loadingReport = false;
           this.onLoadToast(
             'info',
@@ -2196,7 +2192,6 @@ export class PerformProgrammingFormComponent
   setDataProgramming() {
     if (this.dataProgramming.folio) {
       this.showForm = true;
-      console.log('startDate', this.dataProgramming.startDate);
       this.performForm.get('address').setValue(this.dataProgramming.address);
       this.performForm.get('city').setValue(this.dataProgramming.city);
       this.performForm.get('stateKey').setValue(this.dataProgramming.stateKey);
@@ -2409,7 +2404,6 @@ export class PerformProgrammingFormComponent
     const date = moment(new Date()).format('YYYY-MM-DD');
     this.programmingService.getDateProgramming(date, 5).subscribe({
       next: (response: any) => {
-        console.log('correctDate', response);
         const correctDate = moment(response).format('DD/MMMM/YYYY');
         if (correctDate > _startDateFormat || correctDate > _endDateFormat) {
           this.performForm
