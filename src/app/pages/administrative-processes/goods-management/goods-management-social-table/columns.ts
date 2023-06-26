@@ -8,7 +8,7 @@ export const COLUMNS = {
     title: 'Bien',
     sort: false,
   },
-  fileNumber: {
+  numberProceedings: {
     title: 'Expediente',
     sort: false,
   },

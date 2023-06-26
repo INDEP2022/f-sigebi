@@ -1,5 +1,5 @@
 <app-modal>
-  <div class="w-100 mt-3" header>
+  <div class="w-100" header>
     <div class="d-flex flex-wrap justify-content-between aling-items-center">
       <h5 class="modal-title">{{ title }}</h5>
       <div class="buttons">
@@ -9,11 +9,11 @@
       </div>
     </div>
   </div>
-  <div body>
-    <div class="col-12 mb-3">
+  <div body style="padding-top: 0px !important">
+    <div class="col-12">
       <form class="form-material" [formGroup]="form">
         <div class="row">
-          <div class="col-6 mt-4">
+          <div class="col-6">
             <div class="row">
               <div class="col-md-12 mt-3">
                 <form-field [control]="form.get('bank')">
@@ -21,7 +21,7 @@
                     [form]="form"
                     [data]="banks"
                     (fetchItems)="getBanks($event)"
-                    bindLabel="cveBank"
+                    bindLabel="bankAndNumber"
                     control="bank"
                     label="Banco"
                     [searchOnInit]="false"
@@ -35,7 +35,8 @@
                   [control]="form.get('dateMovement')"
                   label="Fecha de Movimiento">
                   <input
-                    (change)="dateMovement($event)"
+                    [(ngModel)]="dateMovem"
+                    (ngModelChange)="dateMovement($event)"
                     bsDatepicker
                     [maxDate]="maxDate"
                     type="text"
@@ -46,21 +47,18 @@
               <div class="col-md-12 mt-3">
                 <form-field
                   [control]="form.get('dateCalculationInterests')"
-                  label="Cuenta">
+                  label="Fecha Cálculo Interés">
                   <input
                     bsDatepicker
                     [minDate]="dateMovem"
-                    readonly
-                    type="number"
+                    type="text"
                     class="form-control"
-                    formControlName="dateCalculationInterests"
-                    min="1"
-                    pattern="^[0-9]+" />
+                    formControlName="dateCalculationInterests" />
                 </form-field>
               </div>
             </div>
           </div>
-          <div class="col-md-6 mt-4">
+          <div class="col-md-6">
             <div class="row">
               <div class="col-md-12 mt-3">
                 <form-field [control]="form.get('category')">
@@ -69,7 +67,7 @@
                     [data]="categories"
                     (fetchItems)="getCategory($event)"
                     bindLabel="categoryAndDesc"
-                    control="bank"
+                    control="category"
                     label="Categoria"
                     [searchOnInit]="false"
                     [showTooltip]="true"
@@ -78,20 +76,16 @@
                 </form-field>
               </div>
               <div class="col-md-12 mt-3">
-                <form-field [control]="form.get('currency')" label="Moneda">
+                <form-field [control]="form.get('deposit')" label="Depósito">
                   <input
-                    readonly
-                    type="text"
+                    type="number"
+                    min="0"
+                    pattern="^[0-9]+"
                     class="form-control"
-                    formControlName="currency" />
+                    formControlName="deposit" />
                 </form-field>
               </div>
-              <div class="col-md-12 mt-3">
-                <!-- <form-field [control]="form.get('branch')" label="Sucursal">
-                                    <input readonly type="number" class="form-control" formControlName="branch" min="1"
-                                        pattern="^[0-9]+" />
-                                </form-field> -->
-              </div>
+              <div class="col-md-12 mt-3"></div>
             </div>
           </div>
         </div>
@@ -100,14 +94,15 @@
   </div>
   <div footer>
     <div class="d-flex justify-content-center">
-      <!-- <div class="m-3"> -->
-      <button
-        type="button"
-        class="btn btn-primary btn-sm active"
-        (click)="close()">
-        Guardar
-      </button>
-      <!-- </div> -->
+      <div class="m-3">
+        <button
+          [disabled]="!form.valid"
+          type="button"
+          class="btn btn-primary active"
+          (click)="saveRegister()">
+          Guardar
+        </button>
+      </div>
     </div>
   </div>
 </app-modal>

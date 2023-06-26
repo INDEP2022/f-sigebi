@@ -53,4 +53,9 @@ export class ParametersService extends HttpService {
     const route = `${ParameterGoodEndpoints.IndicatorsParameter}/get-all`;
     return this.get<IListResponse<IIndicatorParameters>>(route, params);
   }
+
+  getCategorzacionAutomNumerario(params: _Params) {
+    const route = `${ParameterGoodEndpoints.CategorzacionAutomNumerario_}`;
+    return this.get<IListResponse<any>>(route, params);
+  }
 }

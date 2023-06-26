@@ -20,9 +20,11 @@ import { MinPubService } from 'src/app/core/services/catalogs/minpub.service';
 import { StationService } from 'src/app/core/services/catalogs/station.service';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
 import { GoodService } from 'src/app/core/services/good/good.service';
+import { HistoryProtectionService } from 'src/app/core/services/ms-history-protection/history-protection.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { MaintenanceOfCoveragesService } from '../maintenace-of-coverages-services/maintenance-of-coverages.service';
 import { SendingOfEMailsComponent } from '../sending-of-e-mails/sending-of-e-mails.component';
 import { COLUMNS } from './columns';
 
@@ -48,6 +50,11 @@ export class JpDMcCMaintenanceOfCoveragesComponent
   pathParams: PathParams = {
     volante: null,
     expediente: null,
+  };
+  blkControlForm: any = {
+    folioUniversal: null,
+    rel_est_si: null,
+    rel_est_no: null,
   };
   receiptDateValue: Date;
   externalOfficeDateValue: Date;
@@ -79,6 +86,8 @@ export class JpDMcCMaintenanceOfCoveragesComponent
   stationService = inject(StationService);
   authorityService = inject(AuthorityService);
   goodService = inject(GoodService);
+  historyProtection = inject(HistoryProtectionService);
+  maintenanceOfCoferageService = inject(MaintenanceOfCoveragesService);
 
   get wheelNumber() {
     return this.form.get('wheelNumber');
@@ -181,8 +190,8 @@ export class JpDMcCMaintenanceOfCoveragesComponent
     this.settings.columns = COLUMNS;
     this.settings.actions = false;
 
-    COLUMNS.check = {
-      ...COLUMNS.check,
+    COLUMNS.selected = {
+      ...COLUMNS.selected,
       onComponentInitFunction: this.onCLickCheckBox.bind(this),
     };
   }
@@ -198,7 +207,7 @@ export class JpDMcCMaintenanceOfCoveragesComponent
       this.route.snapshot.queryParamMap.get('proceedingsNumber')
     );
     this.getNotifications();
-
+    this.getFolioUniv();
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
       const expediente = this.pathParams.expediente;
       if (expediente) {
@@ -249,6 +258,17 @@ export class JpDMcCMaintenanceOfCoveragesComponent
       //broadcasterDescription: [null, [Validators.required]],
       autorityNumber: [null],
       //authorityDescription: [null, [Validators.required]],
+    });
+  }
+
+  getFolioUniv() {
+    this.maintenanceOfCoferageService.currentFolioUniv.subscribe({
+      next: resp => {
+        if (resp) {
+          console.log('folio generado', resp);
+          this.blkControlForm.folioUniversal = resp;
+        }
+      },
     });
   }
 
@@ -572,7 +592,7 @@ export class JpDMcCMaintenanceOfCoveragesComponent
   getGoodTable(params: ListParams) {
     this.loading = true;
     const expediente = this.pathParams.expediente;
-    params['filter.flyerNumber'] = `$eq:${expediente}`;
+    params['filter.fileNumber'] = `$eq:${expediente}`;
     this.goodService
       .getAll(params)
       .pipe(
@@ -586,6 +606,23 @@ export class JpDMcCMaintenanceOfCoveragesComponent
       )
       .subscribe({
         next: resp => {
+          resp.data.map(item => {
+            const result: any = this.setFolioUnivAndSelects(item);
+            item.selected = result.block;
+            item.cambio_ch = result.block;
+            item.folio_universal = result.folio;
+            this.blkControlForm.folioUniversal = result.folio;
+            if (result.block == true) {
+              this.listGoodSelected.push(item);
+            }
+          });
+          if (this.selectAll == true) {
+            this.listGoodSelected = [];
+            resp.data.map((item: any) => {
+              item.selected = true;
+            });
+          }
+
           this.data = resp.data;
           this.totalItems = resp.count;
           this.loading = false;
@@ -595,6 +632,31 @@ export class JpDMcCMaintenanceOfCoveragesComponent
           this.loading = false;
         },
       });
+  }
+
+  async setFolioUnivAndSelects(good: any) {
+    const folio = await this.getGoodFolio(good.id);
+    console.log('folio', folio);
+    let result = { block: false, folio: folio };
+    if (good.labelNumber == 6) {
+      result.block = true;
+      result.folio = folio;
+    }
+    return result;
+  }
+
+  getGoodFolio(id: number) {
+    return new Promise((resolve, reject) => {
+      this.historyProtection.getGoodFolioUniversal(id).subscribe({
+        next: resp => {
+          resolve(resp);
+        },
+        error: error => {
+          resolve('');
+          console.log(error);
+        },
+      });
+    });
   }
 
   onCLickCheckBox(event: any) {
@@ -610,7 +672,10 @@ export class JpDMcCMaintenanceOfCoveragesComponent
   }
 
   changeSelectAll(event: any) {
-    console.log(event);
+    console.log(event.checked);
+    this.selectAll = event.checked;
+    this.listGoodSelected = [];
+    this.getGoodTable(new ListParams());
   }
 
   goBack() {
@@ -619,5 +684,48 @@ export class JpDMcCMaintenanceOfCoveragesComponent
 
   existData() {
     //let exist = resp.data.filter(x => x.idAuthority == authority.idAuthority);
+  }
+
+  apply() {
+    const notifications = this.form.value;
+    //folio en duro
+    const folio: any = 3600189; //this.blkControlForm.folioUniversal
+    let vc_pantalla = '';
+    let v_cuantos = 0;
+    let v_ind_si = false;
+    let v_ind_no = false;
+    let v_rel_si = null;
+    let v_rel_no = null;
+    let v_ban = false;
+    let v_no_etiqueta = '';
+    let v_ban_esc = true;
+    let v_val_esc = 0;
+
+    if (!notifications.wheelNumber) {
+      this.alert('error', 'Error', 'Se debe ingresar un Volante/Expediente.');
+      return;
+    }
+
+    if (
+      folio == 0 &&
+      (Number(notifications.affairKey) == 13 ||
+        Number(notifications.affairKey) == 14)
+    ) {
+      this.alert('error', 'Error', 'Se debe ingresar el Folio de escaneo.');
+      return;
+    }
+
+    if (this.data.length == 0 || this.data[0].id == null) {
+      this.alert(
+        'error',
+        'Error',
+        'No se tienen bienes relacionados al Volante/Expediente.'
+      );
+      return;
+    }
+
+    /*this.data.map((item:any)=>{
+      if(data)
+    })*/
   }
 }
