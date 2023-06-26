@@ -89,7 +89,6 @@ export class UsersSelectedToTurnComponent extends BasePage implements OnInit {
       this.deleRegionalId = this.storeData.delegacionreg;
       this.role = this.storeData.puesto;
 
-      console.log('stored data', this.storeData);
       this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
         this.getAllUsers();
       });
@@ -112,7 +111,6 @@ export class UsersSelectedToTurnComponent extends BasePage implements OnInit {
 
     this.userProcessService.getAll(filter).subscribe({
       next: resp => {
-        console.log('usuarios', resp);
         resp.data.map((item: any) => {
           item['fullName'] = item.firstName + ' ' + item.lastName;
         });
@@ -126,17 +124,12 @@ export class UsersSelectedToTurnComponent extends BasePage implements OnInit {
         this.loading = false;
       },
       error: error => {
-        console.log(error);
         this.loading = false;
       },
     });
   }
 
   getAllUsersSchedule(typeUser: string, delegation: string, role: string) {
-    /* console.log('tipo', typeUser);
-    console.log('delegación', delegation);
-    console.log('rol', role);
- */
     this.loading = true;
 
     this.params.value.addFilter('position', role);
@@ -151,7 +144,6 @@ export class UsersSelectedToTurnComponent extends BasePage implements OnInit {
 
     this.userProcessService.getAll(filter).subscribe({
       next: resp => {
-        console.log('usuarios', resp);
         resp.data.map((item: any) => {
           item['fullName'] = item.firstName + ' ' + item.lastName;
         });
@@ -165,7 +157,6 @@ export class UsersSelectedToTurnComponent extends BasePage implements OnInit {
         this.loading = false;
       },
       error: error => {
-        console.log(error);
         this.loading = false;
       },
     });
