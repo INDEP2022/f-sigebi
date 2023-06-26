@@ -56,7 +56,7 @@ export class DateDocumentsModalComponent extends BasePage implements OnInit {
         null,
         [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
       ],
-      key: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      key: [null, [Validators.required]],
       typeDictum: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
@@ -67,13 +67,10 @@ export class DateDocumentsModalComponent extends BasePage implements OnInit {
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
       insertionDate: [null, [Validators.required]],
-      userInsertion: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
+      userInsertion: [null],
       numRegister: [null],
       officialNumber: [null],
-      notificationDate: [null, [Validators.required]],
+      notificationDate: [null,],
       secureKey: [null],
     });
 
@@ -95,12 +92,6 @@ export class DateDocumentsModalComponent extends BasePage implements OnInit {
       }
       this.dateDocumentsModalForm.controls['insertionDate'].setValue(date);
       this.dateDocumentsModalForm.controls['key'].setValue(this.id.key);
-      this.dateDocumentsModalForm.controls['expedientNumber'].setValue(
-        this.expedientNumber.id
-      );
-      this.dateDocumentsModalForm.controls['stateNumber'].setValue(
-        this.stateNumber.id
-      );
     } else {
       this.dateDocumentsModalForm.controls['userInsertion'].setValue(
         this.authService.decodeToken().preferred_username

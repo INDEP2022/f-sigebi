@@ -81,7 +81,8 @@ export class CourtCityComponent extends BasePage implements OnInit {
 
   handleSuccess() {
     //const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.onLoadToast('success', 'Registro de ciudad', `Guardado Correctamente`);
+    //this.onLoadToast('success', 'Registro de ciudad', `Guardado Correctamente`);
+    this.alert('success', 'Registro de ciudad', 'Guardado Correctamente');
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();

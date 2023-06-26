@@ -37,7 +37,7 @@ export const GOOD_SUBTYPES_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  noRegister: {
+  /*noRegister: {
     title: 'No. Registro',
     type: 'number',
     sort: false,
@@ -46,5 +46,5 @@ export const GOOD_SUBTYPES_COLUMNS = {
     title: 'Versión',
     type: 'number',
     sort: false,
-  },
+  },*/
 };

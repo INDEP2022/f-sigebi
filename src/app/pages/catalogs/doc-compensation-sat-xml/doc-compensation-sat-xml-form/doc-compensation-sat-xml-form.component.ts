@@ -88,7 +88,8 @@ export class DocCompensationSatXmlFormComponent
 
   handleSuccess() {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.onLoadToast('success', this.title1, `${message} Correctamente`);
+    this.alert('success', this.title1, `${message} Correctamente`);
+    //this.onLoadToast('success', this.title1, `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();

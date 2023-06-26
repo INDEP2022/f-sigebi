@@ -4,7 +4,11 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { Ng2SmartTableModule } from 'ng2-smart-table';
 import { defineLocale } from 'ngx-bootstrap/chronos';
-import { BsDatepickerModule, BsLocaleService } from 'ngx-bootstrap/datepicker';
+import {
+  BsDatepickerConfig,
+  BsDatepickerModule,
+  BsLocaleService,
+} from 'ngx-bootstrap/datepicker';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { esLocale } from 'ngx-bootstrap/locale';
 import { PaginationModule } from 'ngx-bootstrap/pagination';
@@ -112,10 +116,16 @@ import { GlobalVarsModule } from './global-vars/global-vars.module';
     DatePickerDirective,
     CustomDateFilterComponent,
   ],
+  providers: [{ provide: BsDatepickerConfig, useFactory: getDatepickerConfig }],
 })
 export class SharedModule {
   constructor(private localeService: BsLocaleService) {
     defineLocale('es', esLocale);
     this.localeService.use('es');
   }
+}
+export function getDatepickerConfig(): BsDatepickerConfig {
+  return Object.assign(new BsDatepickerConfig(), {
+    showWeekNumbers: false,
+  });
 }

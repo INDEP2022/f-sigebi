@@ -52,6 +52,10 @@ export class ParameterModService
     return this.put(`${this.route}/id/${id}`, tpenalty);
   }
 
+  updateNew(tpenalty: IParameter): Observable<Object> {
+    return this.put(`${this.route}`, tpenalty);
+  }
+
   remove(id: string | number) {
     const route = `${this.route}/id/${id}`;
     return this.delete(route);

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
@@ -127,7 +127,8 @@ export class ScheduleNotifyFormComponent extends BasePage implements OnInit {
     private warehouseService: WarehouseService,
     private goodService: GoodService,
     private domicilieService: DomicileService,
-    private modalService: BsModalService
+    private modalService: BsModalService,
+    private router: Router
   ) {
     super();
     this.idProgramming = Number(
@@ -142,7 +143,7 @@ export class ScheduleNotifyFormComponent extends BasePage implements OnInit {
   }
 
   getProgrammingData() {
-    this.formLoading = true;
+    // this.formLoading = true;
     this.programmingService
       .getProgrammingId(this.idProgramming)
       .subscribe(data => {
@@ -383,5 +384,9 @@ export class ScheduleNotifyFormComponent extends BasePage implements OnInit {
         },
       });
     });
+  }
+
+  backTask() {
+    this.router.navigate(['pages/siab-web/sami/consult-tasks']);
   }
 }

@@ -48,14 +48,37 @@ export class EdosXCoorListComponent extends BasePage implements OnInit {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
-            filter.field == 'id' ||
+            switch (filter.field) {
+              case 'id':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'description':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'noState':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'state':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'stage':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
+            /*filter.field == 'id' ||
             filter.field == 'description' ||
             filter.field == 'noState' ||
             filter.field == 'state' ||
             filter.field == 'stage'
               ? (searchFilter = SearchFilter.EQ)
-              : (searchFilter = SearchFilter.ILIKE);
+              : (searchFilter = SearchFilter.ILIKE);*/
             if (filter.search !== '') {
+              console.log(
+                (this.columnFilters[field] = `${searchFilter}:${filter.search}`)
+              );
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
               delete this.columnFilters[field];
@@ -76,7 +99,7 @@ export class EdosXCoorListComponent extends BasePage implements OnInit {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-    this.edosXCoorService.getAll(params).subscribe({
+    this.edosXCoorService.getAllDetail(params).subscribe({
       next: response => {
         this.paragraphs = response.data;
         this.totalItems = response.count || 0;

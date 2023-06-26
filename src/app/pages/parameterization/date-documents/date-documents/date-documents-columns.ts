@@ -8,16 +8,16 @@ export const DATEDOCUMENTS_COLUMNS = {
   expedientNumber: {
     title: 'Exp.',
     type: 'number',
-    valuePrepareFunction: (value: IExpedient) => {
-      return value.id;
-    },
+    // valuePrepareFunction: (value: IExpedient) => {
+    //   return value.id;
+    // },
     sort: false,
   },
   stateNumber: {
     title: 'Bien',
-    valuePrepareFunction: (value: IState) => {
-      return value.id;
-    },
+    // valuePrepareFunction: (value: IState) => {
+    //   return value.id;
+    // },
     type: 'number',
     sort: false,
   },

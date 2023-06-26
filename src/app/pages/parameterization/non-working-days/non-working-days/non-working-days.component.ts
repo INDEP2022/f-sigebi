@@ -49,9 +49,20 @@ export class NonWorkingDaysComponent extends BasePage implements OnInit {
           filters.map((filter: any) => {
             let field = `filter.${filter.field}`;
             let searchFilter = SearchFilter.ILIKE;
-            filter.field == 'id' || filter.field == 'description'
+            switch (filter.field) {
+              case 'id':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'description':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
+            /*filter.field == 'id' || filter.field == 'description'
               ? (searchFilter = SearchFilter.EQ)
-              : (searchFilter = SearchFilter.ILIKE);
+              : (searchFilter = SearchFilter.ILIKE);*/
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {

@@ -342,7 +342,8 @@ export class CatTransferentComponent extends BasePage implements OnInit {
     ).then(question => {
       if (question.isConfirmed) {
         this.delete3(authority.idAuthority, authority);
-        Swal.fire('Borrado', '', 'success');
+        this.alert('success', 'Autoridad', `Borrado`);
+        //Swal.fire('Borrado', '', 'success');
       }
     });
   }

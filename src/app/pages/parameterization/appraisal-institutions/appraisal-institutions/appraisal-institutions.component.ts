@@ -106,7 +106,7 @@ export class AppraisalInstitutionsComponent extends BasePage implements OnInit {
       if (question.isConfirmed) {
         this.appraisersService.remove(appraisers.id).subscribe({
           next: () => {
-            this.onLoadToast('success', 'Se ha eliminado', '');
+            this.alert('success', 'Institución valuadora', 'Borrado');
             this.getValuesAll();
           },
           error: err => this.onLoadToast('error', err.error.message, ''),

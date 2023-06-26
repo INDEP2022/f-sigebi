@@ -70,14 +70,8 @@ export class SubDelegationFormComponent extends BasePage implements OnInit {
       registerNumber: [null],
       dateDailyCon: [new Date()],
     });
-    const inputId = document.getElementById('inputid');
-    const inputDelegation = document.getElementById('inputdelegation');
-    const inputEtapa = document.getElementById('inputetapa');
     if (this.subdelegation != null) {
       this.edit = true;
-      this.render.addClass(inputId, 'disabled');
-      this.render.addClass(inputDelegation, 'disabled');
-      this.render.addClass(inputEtapa, 'disabled');
       this.subdelegationForm.patchValue(this.subdelegation);
       this.valueDelegation = this.subdelegation.delegationNumber as IDelegation;
       let delegation = this.subdelegation.delegationNumber;
@@ -86,10 +80,6 @@ export class SubDelegationFormComponent extends BasePage implements OnInit {
         delegation.description
       );
       console.log('data', delegation.id, this.subdelegation);
-    } else {
-      this.render.removeClass(inputId, 'disabled');
-      this.render.removeClass(inputDelegation, 'disabled');
-      this.render.removeClass(inputEtapa, 'disabled');
     }
     this.getDelegations(new ListParams());
   }

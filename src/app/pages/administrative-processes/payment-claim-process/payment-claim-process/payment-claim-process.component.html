@@ -4,32 +4,13 @@
   </div>
   <div body>
     <div class="row">
-      <!-- <div class="header"> -->
-      <!-- Contenido del encabezado de la tabla -->
-      <!-- <ng2-smart-table [settings]="settings2"></ng2-smart-table> -->
-      <!-- </div> -->
       <div class="body">
         <div [class]="loading ? 'table-loading' : ''">
-          <ng2-smart-table
-            id="idTableTestHead"
-            [attr.class]="'table-bordered'"
-            [settings]="settings"
-            [source]="data">
+          <ng2-smart-table id="idTableTestHead" [attr.class]="'table-bordered'" [settings]="settings" [source]="data">
           </ng2-smart-table>
         </div>
-        <!-- <div class="table-container" style="width: 100%;">
-          <ng2-smart-table *ngIf="goods.length <= 10" id="idTableTestBody" [attr.class]="'table-bordered'"
-            [settings]="settings2" [source]="data">
-          </ng2-smart-table>
-
-          <ng2-smart-table *ngIf="goods.length > 10" id="idTableTestBody2" [attr.class]="'table-bordered'"
-            [settings]="settings2" [source]="data">
-          </ng2-smart-table>
-        </div> -->
       </div>
-      <app-pagination
-        [filterParams]="filter1"
-        [totalItems]="totalItems"></app-pagination>
+      <app-pagination [params]="paramsList" [totalItems]="totalItems"></app-pagination>
     </div>
     <hr />
     <form [formGroup]="form" class="form-material">
@@ -39,21 +20,34 @@
         </div>
       </div>
       <div class="row">
+        <div class="col-8 mt-3 mb-3">
+          <div class="row pt-3 pb-3">
+            <div class="col-6">
+              <span style="color: #1e7e34; font-weight: 500">Número de registros cargados &nbsp;&nbsp;
+                <strong *ngIf="dataA == 0" style="color: #1e7e34">0</strong>
+                <strong *ngIf="dataA != 0" style="color: #1e7e34">{{
+                  dataA
+                  }}</strong>
+              </span>
+            </div>
+            <div class="col-6">
+              <span style="color: crimson; font-weight: 500">Número de registros NO cargados &nbsp;&nbsp;
+                <strong *ngIf="dataD == 0" style="color: crimson">0</strong>
+                <strong *ngIf="dataD != 0" style="color: crimson">{{
+                  dataD
+                  }}</strong>
+              </span>
+            </div>
+          </div>
+        </div>
         <div class="col-md-8 col-sm-12 col-xs-12">
           <div class="d-flex justify-content-beetwen">
             <div class="m-3">
-              <button
-                [disabled]="!disabledImport"
-                class="btn btn-success btn-sm ml-2"
-                type="button"
+              <button [disabled]="!disabledImport" class="btn btn-success btn-sm ml-2" type="button"
                 (click)="file.click()">
                 Importar archivo Excel / CSV
               </button>
-              <input
-                type="file"
-                name="file"
-                #file
-                class="d-none"
+              <input type="file" name="file" #file class="d-none"
                 accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
                 (change)="onFileChange($event)" />
             </div>
@@ -61,11 +55,8 @@
         </div>
         <div class="col-md-3 col-sm-12 col-xs-12">
           <div class="d-flex justify-content-end">
-            <div class="mt-3 mb-3">
-              <button
-                [disabled]="!document"
-                type="button"
-                class="btn btn-primary btn-sm active"
+            <div class="mt-3 mb-3 mr-3">
+              <button [disabled]="!document" type="button" class="btn btn-primary btn-sm active"
                 (click)="changeStatusGood()">
                 Actualizar Estatus
               </button>
@@ -74,11 +65,8 @@
         </div>
         <div class="col-md-1 col-sm-12 col-xs-12">
           <div class="d-flex justify-content-center">
-            <div class="m-3">
-              <button
-                type="button"
-                class="btn btn-danger btn-sm active"
-                (click)="clean((file.value = ''))">
+            <div class="mt-3 mb-3 mr-5">
+              <button type="button" class="btn btn-danger btn-sm active" (click)="clean((file.value = ''))">
                 Limpiar
                 <i class="fa fa-eraser" aria-hidden="true"></i>
               </button>
@@ -89,17 +77,11 @@
     </form>
     <hr />
     <div class="row">
-      <app-scanning-foil
-        #hijoRef
-        [goods]="goods"
-        (documentEmmit)="changeFoli($event)"
+      <app-scanning-foil #hijoRef [goods]="goods" (documentEmmit)="changeFoli($event)"
         (firstGood)="firstGood($event)"></app-scanning-foil>
     </div>
-    <div class="row mt-5">
-      <div
-        class="col-md-6"
-        style="border-right: 1px solid rgba(0, 0, 0, 0.1)"
-        *ngIf="showError">
+    <!-- <div class="row mt-5">
+      <div class="col-md-6" style="border-right: 1px solid rgba(0, 0, 0, 0.1)" *ngIf="showError">
         <div class="row">
           <div class="d-flex justify-content-center">
             <div class="m-3">
@@ -107,19 +89,11 @@
             </div>
           </div>
         </div>
-        <div
-          class="row pt-3 pb-3"
-          style="border-top: 1px solid rgba(0, 0, 0, 0.1)">
-          <span
-            >Número de registros NO cargados &nbsp;&nbsp;
-            <strong style="color: crimson">{{
-              idsNotExist.length
-            }}</strong></span
-          >
+        <div class="row pt-3 pb-3" style="border-top: 1px solid rgba(0, 0, 0, 0.1)">
+          <span>Número de registros NO cargados &nbsp;&nbsp;
+            <strong style="color: crimson">{{ idsNotExist.length }}</strong></span>
         </div>
-        <div
-          class="row pt-3 pb-3"
-          style="border-top: 1px solid rgba(0, 0, 0, 0.1)">
+        <div class="row pt-3 pb-3" style="border-top: 1px solid rgba(0, 0, 0, 0.1)">
           <div class="col-md-full" *ngFor="let item2 of idsNotExist">
             <span style="color: crimson">
               El Bien No. <strong>{{ item2.id }}</strong> {{ item2.reason }}
@@ -135,38 +109,26 @@
             </div>
           </div>
         </div>
-        <div
-          class="row pt-3 pb-3"
-          style="border-top: 1px solid rgba(0, 0, 0, 0.1)">
-          <span
-            >Número de registros cargados &nbsp;&nbsp;
-            <strong style="color: #1e7e34">{{ goods.length }}</strong></span
-          >
+        <div class="row pt-3 pb-3" style="border-top: 1px solid rgba(0, 0, 0, 0.1)">
+          <span>Número de registros cargados &nbsp;&nbsp;
+            <strong style="color: #1e7e34">{{ goods.length }}</strong></span>
         </div>
-        <div
-          class="row pt-3 pb-3"
-          style="border-top: 1px solid rgba(0, 0, 0, 0.1)">
+        <div class="row pt-3 pb-3" style="border-top: 1px solid rgba(0, 0, 0, 0.1)">
           <div class="col-md-full" *ngFor="let good of goods">
-            <span
-              >El Bien No.
+            <span>El Bien No.
               <strong style="color: #1e7e34">{{ good.id }}</strong> cargado
               correctamente
             </span>
           </div>
         </div>
-        <div
-          class="row pt-3 pb-3"
-          style="border-top: 1px solid rgba(0, 0, 0, 0.1)"
-          *ngIf="showStatus">
+        <div class="row pt-3 pb-3" style="border-top: 1px solid rgba(0, 0, 0, 0.1)" *ngIf="showStatus">
           <div class="col-md-full" *ngFor="let good of goods">
-            <span
-              >Estatus del Bien No.
+            <span>Estatus del Bien No.
               <strong style="color: #1e7e34">{{ good.id }}</strong>
-              cambiado correctamente</span
-            >
+              cambiado correctamente</span>
           </div>
         </div>
       </div>
-    </div>
+    </div> -->
   </div>
 </app-card>
