@@ -4,11 +4,29 @@
   </div>
   <div body>
     <div class="row">
-      <div class="col-md-10"></div>
-      <div class="col-md-2">
-        <button class="btn btn-primary btn-sm active" (click)="openForm()">
-          Movimientos
-        </button>
+      <div class="col-md-5"></div>
+      <div class="col-md-7 text-end">
+        <div class="row">
+          <div class="col-7">
+            <!-- <app-columns-select [(settings)]="settings"></app-columns-select> -->
+          </div>
+          <div class="col-2 d-flex text-end">
+            <app-columns-select [(settings)]="settings"></app-columns-select>
+          </div>
+          <div class="col-3 text-end">
+            <button
+              (click)="addMovement()"
+              type="button"
+              tooltip="Agregar"
+              containerClass="tooltip-style"
+              class="btn btn-info btn-sm active ml-2 mr-2">
+              <i class="bx bx-plus bx-sm float-icon"></i>
+            </button>
+            <button class="btn btn-primary btn-sm active" (click)="openForm()">
+              Movimientos
+            </button>
+          </div>
+        </div>
       </div>
     </div>
     <div class="row mt-4">
@@ -22,7 +40,7 @@
             [source]="data1">
           </ng2-smart-table>
         </div>
-        <app-pagination [filterParams]="filter1" [totalItems]="totalItems">
+        <app-pagination [params]="paramsList" [totalItems]="totalItems">
         </app-pagination>
       </div>
     </div>
@@ -53,20 +71,36 @@
             <div class="row">
               <div class="col-md-12 mt-3 text-center">
                 <button
+                  (click)="exportar()"
                   style="width: 70%"
                   class="btn btn-primary btn-sm active">
                   Exportar
                 </button>
               </div>
               <div class="col-md-12 mt-3 text-center">
+                <!-- <div class="m-3"> -->
                 <button
+                  class="btn btn-primary btn-sm active"
                   style="width: 70%"
-                  class="btn btn-primary btn-sm active">
+                  type="button"
+                  (click)="file.click()">
                   Importar
                 </button>
+                <input
+                  type="file"
+                  name="file"
+                  #file
+                  class="d-none"
+                  accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+                  (change)="onFileChange($event)" />
+                <!-- </div> -->
+                <!-- <button (click)="importar()" style="width: 70%" class="btn btn-primary btn-sm active">
+                  Importar
+                </button> -->
               </div>
               <div class="col-md-12 mt-3 text-center">
                 <button
+                  (click)="actualizarFunc()"
                   style="width: 70%"
                   class="btn btn-primary btn-sm active">
                   Actualizar
@@ -74,6 +108,7 @@
               </div>
               <div class="col-md-12 mt-3 text-center">
                 <button
+                  (click)="desconciliarFunc()"
                   style="width: 70%"
                   class="btn btn-secondary btn-sm active">
                   Desconciliar
@@ -117,6 +152,15 @@
           <div class="col-md-3 mt-4">
             <div class="row">
               <div class="col-md-12 mt-3">
+                <form-field [control]="form.get('currency')" label="Moneda">
+                  <input
+                    readonly
+                    type="text"
+                    class="form-control"
+                    formControlName="currency" />
+                </form-field>
+              </div>
+              <div class="col-md-12 mt-3">
                 <form-field [control]="form.get('branch')" label="Sucursal">
                   <input
                     readonly
@@ -136,15 +180,6 @@
                     type="text"
                     class="form-control"
                     formControlName="accountType" />
-                </form-field>
-              </div>
-              <div class="col-md-12 mt-3">
-                <form-field [control]="form.get('currency')" label="Moneda">
-                  <input
-                    readonly
-                    type="text"
-                    class="form-control"
-                    formControlName="currency" />
                 </form-field>
               </div>
             </div>

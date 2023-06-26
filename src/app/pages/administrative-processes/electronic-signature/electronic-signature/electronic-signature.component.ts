@@ -108,6 +108,7 @@ export class ElectronicSignatureComponent extends BasePage implements OnInit {
         this.dictaminationSelect.no_of_dicta,
         this.dictaminationSelect.estatus_of
       );
+      console.log(n_COUNT);
       if (n_COUNT > 0) {
         /// mandar a llamar al reporte R_FIRMA_DICTAMASIV
         this.downloadReport('blank', null);

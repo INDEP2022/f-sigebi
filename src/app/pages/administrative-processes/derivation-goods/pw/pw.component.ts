@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ConvertiongoodService } from 'src/app/core/services/ms-convertiongood/convertiongood.service';
 import { BasePage } from 'src/app/core/shared';
@@ -17,7 +18,8 @@ export class PwComponent extends BasePage implements OnInit {
   conversiones = new DefaultSelect();
   // Variable para la contraseña
   private _password: string;
-
+  conversionId: any;
+  cveActaConv: any;
   get idConversion() {
     return this.form.get('idConversion');
   }
@@ -28,7 +30,8 @@ export class PwComponent extends BasePage implements OnInit {
   constructor(
     private fb: FormBuilder,
     private serviceConversion: ConvertiongoodService,
-    private modalService: BsModalRef
+    private modalService: BsModalRef,
+    private router: Router
   ) {
     super();
   }

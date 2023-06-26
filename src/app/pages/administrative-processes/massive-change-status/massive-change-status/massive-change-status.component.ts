@@ -106,6 +106,7 @@ export class MassiveChangeStatusComponent extends BasePage implements OnInit {
     try {
       this.data.load([]);
       this.goods = [];
+      this.availableToUpdate = [];
       this.idsNotExist = [];
       this.showError = false;
       this.showStatus = false;
