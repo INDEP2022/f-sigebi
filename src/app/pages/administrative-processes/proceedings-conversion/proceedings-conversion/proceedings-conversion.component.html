@@ -104,7 +104,69 @@
                     </form>
                     <!-- <form [formGroup]="goodFrm" class="form-material" (ngSubmit)="searchProcs()"> -->
                     <form [formGroup]="actaGoodForm" class="form-material">
-                      <div class="row mt-3">
+                      <div class="row w-100">
+                        <div
+                          class="col-sm-12 col-12 col-md-5 col-lg-5 p-2 alert alert-success">
+                          <h6>BIENES RELACIONADOS CON EL EXPEDIENTE</h6>
+                          <div
+                            [class]="isLoadingGood ? 'table-loading' : ''"
+                            class="overflow-auto">
+                            <ng2-smart-table
+                              [attr.class]="'table-bordered'"
+                              [settings]="settings"
+                              [source]="dataGoodTable"
+                              (userRowSelect)="selectGoods($event)">
+                            </ng2-smart-table>
+                            <app-pagination
+                              [totalItems]="totalItems"></app-pagination>
+                          </div>
+                          <br />
+                          <span class="badge m-2 badge-pill bg-success"
+                            >&#42;&#42;Disponibles</span
+                          >
+                          <span class="badge m-2 badge-pill bg-dark"
+                            >&#42;&#42;No Disponibles</span
+                          >
+                        </div>
+                        <!-- TABLA----BIENES RELACIONADOS CON EL EXPEDIENTE -->
+                        <div
+                          class="col-sm-12 col-12 col-md-2 col-lg-2 p-2 text-center">
+                          <div
+                            class="d-flex justify-content-center align-items-center h-100">
+                            <div>
+                              <button
+                                (click)="selectProceedings($event)"
+                                [disabled]="isAllDisabled"
+                                class="btn btn-secondary btn-sm bg-success active m-3 p-3"
+                                type="button">
+                                <!-- Mover uno -->
+                                <i class="bx bxs-right-arrow-circle bx-md"></i>
+                              </button>
+                              <br />
+                              <button
+                                (click)="deleteGoodActa($event)"
+                                [disabled]="isAllDisabled"
+                                class="btn btn-secondary btn-sm active bg-danger m-3 p-3"
+                                type="button">
+                                <!-- Mover uno -->
+                                <i class="bx bxs-left-arrow-circle bx-md"></i>
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                        <!-- TABLA----BIENES RELACIONADOS CON EL OFICIO -->
+                        <div
+                          class="col-sm-12 col-12 col-md-5 col-lg-5 p-2 alert alert-success">
+                          <h6>BIENES RELACIONADOS CON EL ACTA</h6>
+                          <ng2-smart-table
+                            [attr.class]="'table-bordered'"
+                            [settings]="settings2"
+                            [source]="dataGoodTable"
+                            (userRowSelect)="rowSelected2($event)">
+                          </ng2-smart-table>
+                        </div>
+                      </div>
+                      <!-- <div class="row mt-3">
                         <div class="col-md-6">
                           <ng-scrollbar
                             track="horizontal"
@@ -124,7 +186,7 @@
                             </div>
                           </ng-scrollbar>
                         </div>
-                        <!-- <div class="col-md-6">
+                         <div class="col-md-6">
                           <ng-scrollbar track="horizontal" [autoHeightDisabled]="false">
                             <div [class]="loading ? 'table-loading' : ''" class="overflow-auto">
                               <ng2-smart-table class="col-md-12" [settings]="settings2" [source]="proceedings"
@@ -135,14 +197,12 @@
                                 [totalItems]="totalItemsActas"></app-pagination>
                             </div>
                           </ng-scrollbar>
-                        </div> -->
-                      </div>
+                        </div> 
+                      </div> -->
                     </form>
-                    <div>
-                      <app-pagination
-                        [params]="params"
-                        [totalItems]="totalItems"></app-pagination>
-                    </div>
+                    <!-- <div>
+                      <app-pagination [params]="params" [totalItems]="totalItems"></app-pagination>
+                  </div>-->
                   </div>
                   <div footer>
                     <div class="d-flex justify-content-center">

@@ -127,6 +127,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
   select: any;
   goods: any;
   columnFilters: any = [];
+  isAllDisabled = false;
   cveActa: string = '';
   fileNumber: number = 0;
   conversion: number = 0;
@@ -952,6 +953,8 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
   }
   selectProceedings(event: any) {}
   selectGoods(event: any) {}
+  rowSelected2(event: any) {}
+  deleteGoodActa(event: any) {}
 }
 
 export interface IParamsProceedingsParamsActasConvertion {
