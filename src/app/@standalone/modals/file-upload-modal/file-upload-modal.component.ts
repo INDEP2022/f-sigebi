@@ -84,7 +84,7 @@ export class FileUploadModalComponent extends BasePage implements OnInit {
           }
         },
         error: error => {
-          this.onLoadToast(
+          this.alert(
             'error',
             'Error',
             'Ocurrió un error al subir el documento'

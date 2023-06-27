@@ -1,6 +1,14 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, Observable } from 'rxjs';
+import {
+  BehaviorSubject,
+  catchError,
+  Observable,
+  switchMap,
+  takeUntil,
+  tap,
+  throwError,
+} from 'rxjs';
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
@@ -25,7 +33,8 @@ export class MailboxModalTableComponent<T = any>
     | HistoricalProcedureManagementService
     | HistoryIndicatorService
     | WorkMailboxService
-    | DocumentsService;
+    | DocumentsService
+    | GoodFinderService;
   title: string = '';
   rows: any[] = [];
   totalItems = 0;
@@ -36,40 +45,62 @@ export class MailboxModalTableComponent<T = any>
   selectedRow: T = null;
   proceedingsNumber: any;
   @Output() selected = new EventEmitter<T>();
-  constructor(
-    private modalRef: BsModalRef,
-    private goodFinderService: GoodFinderService
-  ) {
+  constructor(private modalRef: BsModalRef) {
     super();
     this.settings = { ...this.settings, actions: false };
   }
 
   ngOnInit(): void {
     this.settings = { ...this.settings, columns: this.columns };
-
-    this.getData();
+    this.$params
+      .pipe(
+        takeUntil(this.$unSubscribe),
+        switchMap(params => this.getData(params))
+      )
+      .subscribe();
   }
 
-  getData() {
-    const params = new FilterParams();
-    params.addFilter('fileNumber', this.proceedingsNumber);
+  getData(params: FilterParams) {
     this.loading = true;
-    this.goodFinderService.goodFinder(params.getParams()).subscribe({
-      next: resp => {
+    const obs = this.$obs.call(this.service, params.getParams(), this.body);
+    return obs.pipe(
+      catchError(error => {
         this.loading = false;
-        this.rows = resp.data;
+        if (error.status >= 500) {
+          this.onLoadToast(
+            'error',
+            'Error',
+            'Ocurrió un error al obtener los datos'
+          );
+        }
+        return throwError(() => error);
+      }),
+      tap(response => {
+        this.loading = false;
+        this.rows = response.data;
         console.log(this.rows);
-        this.totalItems = resp.count;
-      },
-      error: error => {
-        this.loading = false;
-        this.onLoadToast(
-          'warning',
-          'Atención',
-          'La información solicitada aún no esta disponible'
-        );
-      },
-    });
+        this.totalItems = response.count;
+      })
+    );
+    // const params = new FilterParams();
+    // params.addFilter('fileNumber', this.proceedingsNumber);
+    // this.loading = true;
+    // this.goodFinderService.goodFinder(params.getParams()).subscribe({
+    //   next: resp => {
+    //     this.loading = false;
+    //     this.rows = resp.data;
+    //     console.log(this.rows);
+    //     this.totalItems = resp.count;
+    //   },
+    //   error: error => {
+    //     this.loading = false;
+    //     this.onLoadToast(
+    //       'warning',
+    //       'Atención',
+    //       'La información solicitada aún no esta disponible'
+    //     );
+    //   },
+    // });
   }
 
   close() {

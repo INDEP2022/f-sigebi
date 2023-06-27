@@ -728,4 +728,10 @@ export class JpDMcCMaintenanceOfCoveragesComponent
       if(data)
     })*/
   }
+
+  manttoEmail(){
+    this.router.navigateByUrl(
+        `pages/parameterization/mail`
+      );
+  }
 }

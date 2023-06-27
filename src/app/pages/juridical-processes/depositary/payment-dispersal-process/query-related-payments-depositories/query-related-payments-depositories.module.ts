@@ -13,6 +13,7 @@ import { SharedJuridicalProcessesModule } from '../../../shared-juridical-proces
 import { QueryRelatedPaymentsDepositoriesRoutingModule } from './query-related-payments-depositories-routing.module';
 
 /** COMPONENTS IMPORTS */
+import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { QueryRelatedPaymentsDepositoriesComponent } from './query-related-payments-depositories/query-related-payments-depositories.component';
 
 @NgModule({
@@ -22,6 +23,7 @@ import { QueryRelatedPaymentsDepositoriesComponent } from './query-related-payme
     QueryRelatedPaymentsDepositoriesRoutingModule,
     SharedModule,
     SharedJuridicalProcessesModule,
+    TooltipModule.forRoot(),
   ],
 })
 export class QueryRelatedPaymentsDepositoriesModule {}

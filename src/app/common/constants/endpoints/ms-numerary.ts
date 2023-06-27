@@ -9,4 +9,5 @@ export enum NumeraryEndpoints {
   RequestDet = 'requests-nume-det',
   RequestEncFilter = 'requests-nume-enc/getAllRequest',
   NumeraryCategories = 'numerary-categories',
+  Application = 'application/del-solicitudes-nume-det-por-id-solnum',
 }

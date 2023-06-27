@@ -64,7 +64,11 @@ export class AssignReceiptFormComponent extends BasePage implements OnInit {
         this.loadingTable = false;
       },
       error: error => {
-        this.onLoadToast('info', 'Información', 'No se encontraron recibos');
+        this.alertInfo(
+          'info',
+          'Información',
+          'No se encontraron recibos'
+        ).then();
         this.loadingTable = false;
       },
     });
@@ -93,11 +97,11 @@ export class AssignReceiptFormComponent extends BasePage implements OnInit {
         }
       }
     } else {
-      this.onLoadToast(
+      this.alertInfo(
         'info',
         'Acción Invalida',
         'Se debe seleccionar un bien con status Abierto'
-      );
+      ).then();
     }
   }
 
@@ -177,11 +181,11 @@ export class AssignReceiptFormComponent extends BasePage implements OnInit {
 
   createReceipt() {
     if (this.receipts[0]?.statusReceipt == 'ABIERTO') {
-      this.onLoadToast(
+      this.alertInfo(
         'info',
-        'Acción invalida',
+        'Acción Invalida',
         'Aun se encuentran recibos abiertos'
-      );
+      ).then();
     } else {
       const form: Object = {
         minutesId: '1',

@@ -34,4 +34,8 @@ export class RequestNumeraryDetService extends HttpService {
   remove(data: NumDetGoodsDetail) {
     return this.delete(this.route.RequestDet, data);
   }
+
+  removeAll(id: number) {
+    return this.delete(`${this.route.Application}/${id}`);
+  }
 }
