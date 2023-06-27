@@ -223,7 +223,7 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
     console.log('Entro');
     const files = (event.target as HTMLInputElement).files;
     if (files.length != 1) throw 'No files selected, or more than of allowed';
-    this.alert('success', 'Archivo subido exitosamente', 'Cargado');
+    // this.alert('success', 'Archivo subido exitosamente', 'Cargado');
     this.readExcel(files[0], 'si');
   }
 
@@ -290,6 +290,7 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
 
             console.log('BINARY EXCEL', response);
 
+            this.alert('success', 'Archivo subido exitosamente', 'Cargado');
             this.loading = false;
           });
         },
@@ -298,7 +299,11 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
           // this.totalItems = 0;
           this.loading = false;
           if (filter != 'no') {
-            this.alert('error', 'No hay datos disponibles', '');
+            this.alert(
+              'error',
+              'No existen registros disponibles para el proceso de reclamación de pago en el archivo cargado',
+              ''
+            );
           }
           // this.onLoadToast('warning', 'No hay datos disponibles', '');
         }

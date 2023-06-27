@@ -33,6 +33,14 @@ export class NumeraryService extends HttpService implements ICrudMethods<any> {
     return this.post(NumeraryEndpoints.RateInt, model);
   }
 
+  remove(id: number) {
+    return this.delete(`${NumeraryEndpoints.RateInt}/${id}`);
+  }
+
+  update(id: number, body: INumerary) {
+    return this.put(`${NumeraryEndpoints.RateInt}/${id}`, body);
+  }
+
   getNumeraryCategories(params?: _Params) {
     return this.get(NumeraryEndpoints.NumeraryCategories, params);
   }

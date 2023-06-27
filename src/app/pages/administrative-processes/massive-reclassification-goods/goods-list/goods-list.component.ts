@@ -37,6 +37,7 @@ export class GoodsListComponent
   previousSelecteds: IGood[] = [];
   pageSelecteds: number[] = [];
   subscription: Subscription = new Subscription();
+  changeSettings: number = 0;
   @Input() changeDescription: string;
   @Input()
   set changeMode(value: 'I' | 'E') {
@@ -48,11 +49,13 @@ export class GoodsListComponent
         ...this.settings,
         columns,
       };
+      this.changeSettings++;
     } else {
       this.settings = {
         ...this.settings,
         columns: COLUMNS,
       };
+      this.changeSettings++;
     }
   }
   @ViewChild('table') table: Ng2SmartTableComponent;
