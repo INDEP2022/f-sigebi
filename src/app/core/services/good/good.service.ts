@@ -158,4 +158,12 @@ export class GoodService extends HttpService implements ICrudMethods<IGood> {
       params
     );
   }
+  getAttribGoodBadFilter(
+    params?: _Params
+  ): Observable<IListResponse<IAttribGoodBad>> {
+    return this.get<IListResponse<IAttribGoodBad>>(
+      GoodEndpoints.AttribGoodBad,
+      params
+    );
+  }
 }

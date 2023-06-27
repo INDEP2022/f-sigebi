@@ -27,4 +27,8 @@ export class InterfacesirsaeService extends HttpService {
       params
     );
   }
+
+  updateInvitations(body: { sRunCommand: string; cveCertificate: string }) {
+    return this.post('update-invitations/program-cs-main', body);
+  }
 }
