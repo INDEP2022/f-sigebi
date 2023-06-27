@@ -243,13 +243,16 @@ export class UploadFielsModalComponent extends BasePage implements OnInit {
 
   handleSuccess() {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.onLoadToast(
+    this.alertInfo(
       'success',
       'Carga de archivos',
       `${message} Correctamente`
-    );
-    this.loading = false;
-    this.modalRef.content.callback(true);
-    this.modalRef.hide();
+    ).then(confirm => {
+      if (confirm.isConfirmed) {
+        this.loading = false;
+        this.modalRef.content.callback(true);
+        this.modalRef.hide();
+      }
+    });
   }
 }

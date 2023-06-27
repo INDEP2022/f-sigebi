@@ -72,9 +72,7 @@ export class WitnessFormComponent extends BasePage implements OnInit {
               this.modalRef.content.callback(true);
               this.close();
             },
-            error: error => {
-              console.log('error create w', error);
-            },
+            error: error => {},
           });
       }
     });
