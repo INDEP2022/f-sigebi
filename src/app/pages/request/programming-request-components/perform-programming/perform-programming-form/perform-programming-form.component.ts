@@ -555,7 +555,7 @@ export class PerformProgrammingFormComponent
 
     if (municipality && !colony && !akaWarehouse && !postalCode && !state) {
       const filterData = this.goodsProgCopy.filter(item => {
-        return item.municipality == municipality;
+        return item.townshipKey == municipality;
       });
 
       if (filterData.length > 0) {
@@ -572,7 +572,7 @@ export class PerformProgrammingFormComponent
 
     if (municipality && colony && !akaWarehouse && !postalCode && !state) {
       const filterData = this.goodsProgCopy.filter(item => {
-        return item.municipality == municipality && item.suburb == colony;
+        return item.townshipKey == municipality && item.settlementKey == colony;
       });
 
       if (filterData.length > 0) {
@@ -590,8 +590,8 @@ export class PerformProgrammingFormComponent
     if (municipality && colony && akaWarehouse && !postalCode && !state) {
       const filterData = this.goodsProgCopy.filter(item => {
         return (
-          item.municipality == municipality &&
-          item.suburb == colony &&
+          item.townshipKey == municipality &&
+          item.settlementKey == colony &&
           item.aliasStore == akaWarehouse
         );
       });
@@ -611,10 +611,10 @@ export class PerformProgrammingFormComponent
     if (municipality && colony && akaWarehouse && postalCode && !state) {
       const filterData = this.goodsProgCopy.filter(item => {
         return (
-          item.municipality == municipality &&
-          item.suburb == colony &&
+          item.townshipKey == municipality &&
+          item.settlementKey == colony &&
           item.aliasStore == akaWarehouse &&
-          item.postalCode == postalCode
+          item.code == postalCode
         );
       });
 
@@ -632,7 +632,7 @@ export class PerformProgrammingFormComponent
 
     if (colony && !municipality && !akaWarehouse && !postalCode && !state) {
       const filterData = this.goodsProgCopy.filter(item => {
-        return item.suburb == colony;
+        return item.settlementKey == colony;
       });
 
       if (filterData.length > 0) {
@@ -649,7 +649,9 @@ export class PerformProgrammingFormComponent
 
     if (akaWarehouse) {
       const filterData = this.goodsProgCopy.filter(item => {
-        return item.aliasStore == akaWarehouse;
+        console.log('item', item);
+        console.log('akaWarehouse', akaWarehouse);
+        return item.aliasWarehouse == akaWarehouse;
       });
 
       if (filterData.length > 0) {
@@ -666,7 +668,9 @@ export class PerformProgrammingFormComponent
 
     if (akaWarehouse && colony && !municipality && !postalCode && !state) {
       const filterData = this.goodsProgCopy.filter(item => {
-        return item.aliasStore == akaWarehouse && item.suburb == colony;
+        return (
+          item.aliasWarehouse == akaWarehouse && item.settlementKey == colony
+        );
       });
 
       if (filterData.length > 0) {
@@ -684,9 +688,9 @@ export class PerformProgrammingFormComponent
     if (akaWarehouse && colony && municipality && !postalCode && !state) {
       const filterData = this.goodsProgCopy.filter(item => {
         return (
-          item.aliasStore == akaWarehouse &&
-          item.suburb == colony &&
-          item.municipality == municipality
+          item.aliasWarehouse == akaWarehouse &&
+          item.settlementKey == colony &&
+          item.townshipKey == municipality
         );
       });
 
@@ -705,10 +709,10 @@ export class PerformProgrammingFormComponent
     if (akaWarehouse && colony && municipality && postalCode && !state) {
       const filterData = this.goodsProgCopy.filter(item => {
         return (
-          item.aliasStore == akaWarehouse &&
-          item.suburb == colony &&
-          item.municipality == municipality &&
-          item.postalCode == postalCode
+          item.aliasWarehouse == akaWarehouse &&
+          item.settlementKey == colony &&
+          item.townshipKey == municipality &&
+          item.code == postalCode
         );
       });
 
@@ -726,7 +730,7 @@ export class PerformProgrammingFormComponent
 
     if (postalCode && !akaWarehouse && !colony && !municipality && !state) {
       const filterData = this.goodsProgCopy.filter(item => {
-        return item.postalCode == postalCode;
+        return item.code == postalCode;
       });
 
       if (filterData.length > 0) {
@@ -743,7 +747,7 @@ export class PerformProgrammingFormComponent
 
     if (postalCode && akaWarehouse && !colony && !municipality && !state) {
       const filterData = this.goodsProgCopy.filter(item => {
-        return item.aliasStore == akaWarehouse && item.postalCode == postalCode;
+        return item.aliasWarehouse == akaWarehouse && item.code == postalCode;
       });
 
       if (filterData.length > 0) {
@@ -761,9 +765,9 @@ export class PerformProgrammingFormComponent
     if (postalCode && akaWarehouse && colony && !municipality && !state) {
       const filterData = this.goodsProgCopy.filter(item => {
         return (
-          item.aliasStore == akaWarehouse &&
-          item.suburb == colony &&
-          item.postalCode == postalCode
+          item.aliasWarehouse == akaWarehouse &&
+          item.settlementKey == colony &&
+          item.code == postalCode
         );
       });
 
@@ -782,10 +786,10 @@ export class PerformProgrammingFormComponent
     if (postalCode && akaWarehouse && colony && municipality && !state) {
       const filterData = this.goodsProgCopy.filter(item => {
         return (
-          item.aliasStore == akaWarehouse &&
-          item.suburb == colony &&
-          item.municipality == municipality &&
-          item.postalCode == postalCode
+          item.aliasWarehouse == akaWarehouse &&
+          item.settlementKey == colony &&
+          item.townshipKey == municipality &&
+          item.code == postalCode
         );
       });
 
@@ -819,7 +823,7 @@ export class PerformProgrammingFormComponent
     }
     if (state && postalCode && !akaWarehouse && !colony && !municipality) {
       const filterData = this.goodsProgCopy.filter(item => {
-        return item.stateKey == state && item.postalCode == postalCode;
+        return item.stateKey == state && item.code == postalCode;
       });
 
       if (filterData.length > 0) {
@@ -837,9 +841,9 @@ export class PerformProgrammingFormComponent
     if (state && postalCode && akaWarehouse && !colony && !municipality) {
       const filterData = this.goodsProgCopy.filter(item => {
         return (
-          item.aliasStore == akaWarehouse &&
+          item.aliasWarehouse == akaWarehouse &&
           item.stateKey == state &&
-          item.postalCode == postalCode
+          item.code == postalCode
         );
       });
 
@@ -858,9 +862,9 @@ export class PerformProgrammingFormComponent
     if (state && postalCode && akaWarehouse && colony && !municipality) {
       const filterData = this.goodsProgCopy.filter(item => {
         return (
-          item.aliasStore == akaWarehouse &&
-          item.suburb == colony &&
-          item.postalCode == postalCode &&
+          item.aliasWarehouse == akaWarehouse &&
+          item.settlementKey == colony &&
+          item.code == postalCode &&
           item.stateKey == state
         );
       });
@@ -880,11 +884,11 @@ export class PerformProgrammingFormComponent
     if (state && postalCode && akaWarehouse && colony && municipality) {
       const filterData = this.goodsProgCopy.filter(item => {
         return (
-          item.aliasStore == akaWarehouse &&
-          item.suburb == colony &&
-          item.municipality == municipality &&
+          item.aliasWarehouse == akaWarehouse &&
+          item.settlementKey == colony &&
+          item.townshipKey == municipality &&
           item.stateKey == state &&
-          item.postalCode == postalCode
+          item.code == postalCode
         );
       });
 
@@ -1139,6 +1143,7 @@ export class PerformProgrammingFormComponent
       .postGoodsProgramming(this.params.getValue(), filterColumns)
       .subscribe({
         next: response => {
+          console.log('response', response);
           let goodsFilter = response.data.map(items => {
             if (items.physicalState) {
               if (items.physicalState == 1) {
@@ -1157,8 +1162,12 @@ export class PerformProgrammingFormComponent
           // console.log('goodsFilter1222', JSON.stringify(goodsFilter2));
           this.goodsProgCopy = goodsFilter;
           this.goodsProg = goodsFilter;
-          this.filterGoodsProgramming(goodsFilter);
-          //this.loadingGoods = false;
+
+          this.estatesList.load(goodsFilter);
+          this.totalItems = response.count;
+          this.loadingGoods = false;
+          //this.filterGoodsProgramming(goodsFilter);
+          //
         },
         error: error => (this.loadingGoods = false),
       });

@@ -285,7 +285,7 @@ export class FormalizeProgrammingFormComponent
           const form = this.fb.group({
             id: [item.id],
             statusProceeedings: [item.statusProceeedings],
-            idPrograming: [this.programming.id],
+            idPrograming: [this.programming?.id],
             observationProceedings: [item?.observationProceedings],
           });
           this.proceeding.push(form);
