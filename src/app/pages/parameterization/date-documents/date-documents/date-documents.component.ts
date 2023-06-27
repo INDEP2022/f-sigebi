@@ -103,7 +103,10 @@ export class DateDocumentsComponent extends BasePage implements OnInit {
         this.totalItems = response.count;
         this.loading = false;
       },
-      error: error => (this.loading = false),
+      error: error => {
+        this.loading = false;
+        this.totalItems = 0;
+      },
     });
   }
   private getDateDocuments() {
