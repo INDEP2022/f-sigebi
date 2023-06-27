@@ -108,13 +108,13 @@ export class ScanningFoilComponent
       this.scanningFoli.value
     );
     if (this.good === null || this.good === undefined) {
-      this.alert('info', 'Información', 'Debe cargar un bien', '');
+      this.alert('info', 'Regularización jurídica', 'Debe cargar un bien', '');
       return;
     }
     if (this.document !== undefined) {
       this.alert(
         'info',
-        'Información',
+        'Regularización jurídica',
         'El número de bien para este proceso ya tiene folio de escaneo.'
       );
       return;
@@ -156,7 +156,7 @@ export class ScanningFoilComponent
       },
       error: err => {
         console.error(err);
-        this.alert('error', 'ERROR', err.error.message);
+        this.alert('error', 'Ha ocurrido un error', err.error.message);
       },
     });
   }
@@ -205,7 +205,12 @@ export class ScanningFoilComponent
   }
   scan() {
     if (this.good === undefined) {
-      this.alert('info', 'Información', 'No existe folio de escaneo', '');
+      this.alert(
+        'info',
+        'Regularización jurídica',
+        'No existe folio de escaneo',
+        ''
+      );
       return;
     }
     console.log(this.form.get('scanningFoli').value);
@@ -221,7 +226,12 @@ export class ScanningFoilComponent
         }
       });
     } else {
-      this.alert('info', 'Información', 'No existe folio de escaneo', '');
+      this.alert(
+        'info',
+        'Regularización jurídica',
+        'No existe folio de escaneo',
+        ''
+      );
     }
   }
   goToScan() {
@@ -240,7 +250,12 @@ export class ScanningFoilComponent
   }
   seeImages() {
     if (this.good === undefined) {
-      this.alert('info', 'Información', 'No existe folio de escaneo', '');
+      this.alert(
+        'info',
+        'Regularización jurídica',
+        'No existe folio de escaneo',
+        ''
+      );
       return;
     }
     if (this.document !== undefined) {
@@ -260,19 +275,30 @@ export class ScanningFoilComponent
           } else {
             this.alert(
               'warning',
+              'Regularización jurídica',
               'No existe documentación para este folio',
               ''
             );
           }
         });
     } else {
-      this.alert('warning', 'No tiene folio de escaneo para visualizar.', '');
+      this.alert(
+        'warning',
+        'Regularización jurídica',
+        'No tiene folio de escaneo para visualizar.',
+        ''
+      );
     }
   }
 
   printScanFile() {
     if (this.good === undefined) {
-      this.alert('info', 'Información', 'No existe folio de escaneo', '');
+      this.alert(
+        'info',
+        'Regularización jurídica',
+        'No existe folio de escaneo',
+        ''
+      );
       return;
     }
     if (this.form.get('scanningFoli').value !== '') {
@@ -281,7 +307,12 @@ export class ScanningFoilComponent
       };
       this.downloadReport(this.reportPrint, params);
     } else {
-      this.alert('info', 'Información', 'No existe folio de escaneo', '');
+      this.alert(
+        'info',
+        'Regularización jurídica',
+        'No existe folio de escaneo',
+        ''
+      );
     }
   }
 
