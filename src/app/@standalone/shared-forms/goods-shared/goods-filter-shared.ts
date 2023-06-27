@@ -24,7 +24,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { BasePage } from 'src/app/core/shared/base-page';
 //Models
 import { IGood } from 'src/app/core/models/catalogs/goods.model';
-import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { GoodFinderService } from 'src/app/core/services/ms-good/good-finder.service';
 
 @Component({
   selector: 'goods-filter-shared',
@@ -67,7 +67,7 @@ export class GoodsFilterSharedComponent
   params = new BehaviorSubject<FilterParams>(new FilterParams());
   goods = new DefaultSelect<IGood>();
 
-  constructor(private readonly service: GoodService) {
+  constructor(private readonly service: GoodFinderService) {
     super();
   }
   ngOnChanges(changes: SimpleChanges): void {
@@ -88,18 +88,24 @@ export class GoodsFilterSharedComponent
     if (params.text != undefined && params.text != '') {
       data.addFilter('description', params.text, SearchFilter.ILIKE);
     }
-    this.service.getAllFilter(data.getParams()).subscribe({
+    console.log('CLASIFICADOR DEL BEINE ES: ', this.classifGood);
+
+    this.service.getAll2(data.getParams()).subscribe({
       next: data => {
         this.goods = new DefaultSelect(data.data, data.count);
       },
       error: err => {
+        this.goods = new DefaultSelect([], 0);
         let error = '';
         if (err.status === 0) {
           error = 'Revise su conexión de Internet.';
-        } else {
-          error = err.message;
+          this.onLoadToast('error', 'Error', error);
         }
-        this.onLoadToast('error', 'Error', error);
+        this.onLoadToast(
+          'info',
+          'Información',
+          'No hay bienes que mostrar con los filtros seleccionado'
+        );
       },
       complete: () => {},
     });

@@ -1,5 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
+import { forkJoin, Observable, of } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { ListParams } from '../repository/interfaces/list-params';
 
@@ -81,5 +82,9 @@ export class HttpService {
     }
 
     return new HttpParams({ fromObject: rawParams });
+  }
+
+  protected validationForkJoin(obs: Observable<any>[]) {
+    return obs ? (obs.length > 0 ? forkJoin(obs) : of([])) : of([]);
   }
 }
