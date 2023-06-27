@@ -91,10 +91,10 @@ export class GoodPhotosComponent extends BasePage implements OnInit {
     forkJoin(obs).subscribe({
       complete: () => {
         // this.files = [];
-        this.onLoadToast(
+        this.alert(
           'success',
-          'Se eliminaron los archivos correctamente',
-          ''
+          'Eliminación de Fotos',
+          'Se eliminaron las fotos correctamente'
         );
         this.filesToDelete = [];
         // this.loadImages(this.goodNumber).subscribe(() => {

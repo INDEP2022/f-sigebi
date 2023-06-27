@@ -248,7 +248,7 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
       next: response => {
         this.idGoodValue = idGood;
         this.menajes.load(
-          response.data.map(menaje => {
+          response.data.map((menaje: any) => {
             if (menaje.menajeDescription === null) {
               return {
                 noGoodMenaje: menaje.noGoodMenaje,

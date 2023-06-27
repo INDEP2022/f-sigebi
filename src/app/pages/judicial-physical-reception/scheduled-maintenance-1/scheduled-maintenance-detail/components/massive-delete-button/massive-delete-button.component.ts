@@ -51,7 +51,11 @@ export class MassiveDeleteButtonComponent
             .deleteByBP(this.actaId, this.typeProceeding, notRastrer)
             .subscribe({
               next: response => {
-                this.onLoadToast('success', 'Exito', `Bienes eliminados`);
+                this.alert(
+                  'success',
+                  'Eliminación',
+                  `Bienes eliminados correctamente`
+                );
                 // console.log(response);
                 // const removeds: string[] = [];
                 // const notRemoveds: string[] = [];
@@ -113,9 +117,9 @@ export class MassiveDeleteButtonComponent
       removeds.forEach((selected, index) => {
         goods += selected + (index < this.selecteds.length - 1 ? ',' : '');
       });
-      this.onLoadToast(
+      this.alert(
         'success',
-        'Exito',
+        'Eliminación',
         `Se eliminaron los bienes No. ${goods} ` +
           this.showMessageGoodsNotRemoved(notRemoveds)
       );
