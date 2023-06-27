@@ -53,6 +53,6 @@ export class MenageService extends HttpService {
 
   getMenaje(params?: any) {
     const route = `${MenageEndpoints.MenageManagement}`;
-    return this.get<IListResponse<IMenageDescription>>(route, params);
+    return this.get<any>(route, params);
   }
 }

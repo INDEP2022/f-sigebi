@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
@@ -65,7 +65,7 @@ export class GenerateReceiptFormComponent extends BasePage implements OnInit {
       seal: [null],
       nameReceipt: [null],
       observation: [null],
-      chargeReceipt: [null],
+      chargeReceipt: [null, [Validators.maxLength(15)]],
       electronicSignatureEnt: ['N'],
       electronicSignatureReceipt: ['N'],
     });
@@ -135,7 +135,7 @@ export class GenerateReceiptFormComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Confirmación',
-      '¿Estás seguro que desea crear Los firmantes?'
+      '¿Estás seguro que desea crear los firmantes?'
     ).then(question => {
       if (question.isConfirmed) {
         const electronicSignatureEnt = this.generateReceiptForm.get(
