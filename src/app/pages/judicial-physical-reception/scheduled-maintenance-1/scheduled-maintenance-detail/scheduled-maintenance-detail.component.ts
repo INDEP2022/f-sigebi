@@ -282,15 +282,15 @@ export class ScheduledMaintenanceDetailComponent
             } else {
               message += ` y los bienes No. ${goods}`;
             }
-            this.onLoadToast('success', 'Exito', message);
+            this.alert('success', 'Actualización', message);
           },
           error: err => {
             if (message === '') {
-              this.onLoadToast('error', 'Error', 'Programación no actualizada');
+              this.alert('error', 'Error', 'Programación no actualizada');
             } else {
-              this.onLoadToast(
+              this.alert(
                 'warning',
-                'Exito',
+                'Actualización',
                 message + ' pero no se pudieron actualizar los bienes'
               );
             }
@@ -298,7 +298,7 @@ export class ScheduledMaintenanceDetailComponent
         });
     } else {
       if (this.form.value !== this.initialValue) {
-        this.onLoadToast('success', 'Exito', message);
+        this.alert('success', 'Actualización', message);
         this.initialValue = { ...this.form.value };
       }
     }
@@ -579,11 +579,11 @@ export class ScheduledMaintenanceDetailComponent
           // });
           const message = `Se actualizo el bien No. ${newData.no_bien} `;
           // const message = `Se actualizaron los bienes No ${goods} `;
-          this.onLoadToast('success', 'Exito', message);
+          this.alert('success', 'Actualización', message);
           // this.updateTable.emit();
         },
         error: err => {
-          this.onLoadToast('error', 'Error', 'Bienes no actualizados');
+          this.alert('error', 'ERROR', 'Bienes no actualizados');
         },
       });
     // this.fillSelectedsForUpdate(newData, data);
@@ -965,16 +965,16 @@ export class ScheduledMaintenanceDetailComponent
               next: response => {
                 // console.log(response);
                 this.getData();
-                this.onLoadToast(
+                this.alert(
                   'success',
-                  'Exito',
+                  'Eliminación',
                   `Se elimino el bien No. ${item.no_bien}`
                 );
               },
               error: err => {
                 // console.log(err);
                 this.loading = false;
-                this.onLoadToast(
+                this.alert(
                   'error',
                   'ERROR',
                   `No se pudo eliminar el bien No. ${item.no_bien}`
