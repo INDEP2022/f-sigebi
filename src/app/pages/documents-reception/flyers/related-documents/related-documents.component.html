@@ -1,13 +1,13 @@
 <app-card [header]="true">
   <!-- <div class="ch-content" header> -->
   <div class="row" header>
-    <div class="col-12 col-md-6">
+    <div class="col-12 col-sm-12 col-md-4">
       <h5 class="title">
         Oficio Gesti&oacute;n
         {{ pantallaOption ? 'por Dictamen' : 'Relacionados' }}
       </h5>
     </div>
-    <div class="col-12 col-md-6 text-right">
+    <div class="col-12 col-sm-12 col-md-8 text-right">
       <!-- <button
         type="button"
         class="btn btn-primary btn-sm active m-2"
@@ -18,7 +18,7 @@
       Fec&#46; Captura:
       <span class="badge bg-info ml-3 mr-3" style="display: initial !important">
         {{
-          (formJobManagement.get('insertDate').value | date : 'M/d/yyyy') ||
+          (formJobManagement.get('insertDate').value | date: 'M/d/yyyy') ||
             '00/00/0000'
         }}
       </span>
@@ -30,6 +30,33 @@
         Regresar
         <i class="fas fa-arrow-circle-left"></i>
       </button>
+      <button
+        type="button"
+        tooltip="Oficios"
+        containerClass="tooltip-style"
+        (click)="selectOtherOffices()"
+        class="btn btn-primary btn-sm active m-2">
+        <i class="bx bx-list-plus bx-sm float-icon"></i>
+      </button>
+      <button
+        [disabled]="
+          blockSend || formJobManagement.get('statusOf')?.value == 'ENVIADO'
+        "
+        type="button"
+        tooltip="Guardar"
+        containerClass="tooltip-style"
+        class="btn btn-primary btn-sm active"
+        (click)="_saveScreenManagement()">
+        <i aria-hidden="true" class="fa fa-save"></i>
+      </button>
+      <!-- <button
+        type="button"
+        tooltip="TEST"
+        containerClass="tooltip-style"
+        class="btn btn-primary btn-sm active"
+        (click)="testCambiaStatus()">
+        <i aria-hidden="true" class="fa fa-check"></i>
+      </button> -->
     </div>
   </div>
   <!-- </div> -->
@@ -131,10 +158,11 @@
                 [control]="formJobManagement.get('addressee')"
                 class="col-md-4"
                 label="Nombre Destinatario">
-                <input
+                <textarea
+                  rows="3"
                   type="text"
                   class="form-control"
-                  formControlName="addressee" />
+                  formControlName="addressee"></textarea>
               </form-field>
             </ng-template>
 
@@ -197,6 +225,10 @@
           <div class="col-md-1 text-right">
             <button
               *ngIf="pantallaOption"
+              [disabled]="
+                blockSend ||
+                formJobManagement.get('statusOf')?.value == 'ENVIADO'
+              "
               type="button"
               tooltip="Cambio"
               containerClass="tooltip-style"
@@ -291,6 +323,7 @@
               <ngx-select
                 (fetchItems)="getJustification($event)"
                 value="id"
+                [searchOnInit]="true"
                 bindLabel="clarifications"
                 [form]="managementForm"
                 control="justificacion"
@@ -387,14 +420,20 @@
               </form-field>
             </div>
 
-            <!-- <div class = "row pt-4">
+            <div class="row pt-4">
               <div class="d-flex flex-row-reverse">
-                <form-check class="col-md-2 text-end" label="Improcedente(s) todo(s)" for="improcedente">
-                  <input id="improcedente" type="checkbox" (change)="changeImprocedente($event.target)"
+                <form-check
+                  class="col-md-2 text-end"
+                  label="Improcedente(s) todo(s)"
+                  for="improcedente">
+                  <input
+                    id="improcedente"
+                    type="checkbox"
+                    (change)="changeImprocedente($event.target)"
                     formControlName="improcedente" />
                 </form-check>
               </div>
-            </div> -->
+            </div>
 
             <form-loader *ngIf="formLoading"></form-loader>
 
@@ -482,11 +521,12 @@
               <app-pagination [params]="params" [totalItems]="totalItems"></app-pagination>
             </div>
           </div> -->
+            <!-- [disabled]="isDisabledBtnDocs" -->
             <div class="col-md-12 mt-3 text-right">
               <button
                 type="button"
                 tooltip="Documentos"
-                [disabled]="isDisabledBtnDocs"
+                [disabled]="!formJobManagement?.get('managementNumber').value"
                 containerClass="tooltip-style"
                 class="btn btn-info active btn-sm m-1"
                 (click)="openModal()">
@@ -674,6 +714,9 @@
               <div class="d-flex justify-content-end">
                 <div class="p-2">
                   <button
+                    [disabled]="
+                      !formJobManagement?.get('managementNumber').value
+                    "
                     (click)="openModalCopy(false)"
                     class="btn btn-primary active btn-sm ml-3 mb-3">
                     Agregar C.C.P

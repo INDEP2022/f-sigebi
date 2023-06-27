@@ -1,5 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
+import { forkJoin, Observable, of } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { ListParams } from '../repository/interfaces/list-params';
 
@@ -32,14 +33,12 @@ export class HttpService {
   protected post<T = any>(route: string, body: {}, _params?: _Params) {
     const params = this.getParams(_params);
     const url = this.buildRoute(route);
-    console.log(url);
     return this.httpClient.post<T>(`${url}`, body, { params });
   }
 
   protected put<T = any>(route: string, body?: {}, _params?: _Params) {
     const params = this.getParams(_params);
     const url = this.buildRoute(route);
-    console.log(url);
     return this.httpClient.put<T>(`${url}`, body, { params });
   }
 
@@ -83,5 +82,9 @@ export class HttpService {
     }
 
     return new HttpParams({ fromObject: rawParams });
+  }
+
+  protected validationForkJoin(obs: Observable<any>[]) {
+    return obs ? (obs.length > 0 ? forkJoin(obs) : of([])) : of([]);
   }
 }

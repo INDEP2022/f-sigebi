@@ -3,7 +3,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { SharedModule } from 'src/app/shared/shared.module';
 //Rxjs
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, debounceTime, takeUntil } from 'rxjs';
 //Params
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -15,6 +15,7 @@ import { IGoodSssubtype } from 'src/app/core/models/catalogs/good-sssubtype.mode
 import { IGoodSubType } from 'src/app/core/models/catalogs/good-subtype.model';
 import { IGoodType } from 'src/app/core/models/catalogs/good-type.model';
 import { IGoodsSubtype } from 'src/app/core/models/catalogs/goods-subtype.model';
+import { IGood } from 'src/app/core/models/ms-good/good';
 import { GoodSssubtypeService } from 'src/app/core/services/catalogs/good-sssubtype.service';
 import { GoodSsubtypeService } from 'src/app/core/services/catalogs/good-ssubtype.service';
 import { GoodSubtypeService } from 'src/app/core/services/catalogs/good-subtype.service';
@@ -28,6 +29,9 @@ import { GoodSubtypeService } from 'src/app/core/services/catalogs/good-subtype.
 })
 export class GoodsTypesSharedComponent extends BasePage implements OnInit {
   @Input() form: FormGroup;
+  @Input() loadTypes = false;
+  @Output() loadTypesChange = new EventEmitter<boolean>();
+  @Input() loadOnChangesNoBien = false;
   @Input() typeField: string = 'type';
   @Input() subtypeField: string = 'subtype';
   @Input() ssubtypeField: string = 'ssubtype';
@@ -38,6 +42,7 @@ export class GoodsTypesSharedComponent extends BasePage implements OnInit {
   @Input() subTypeShow: boolean = true;
   @Input() ssubTypeShow: boolean = true;
   @Input() sssubTypeShow: boolean = true;
+  @Input() goodselect: IGood;
   rowClass: string;
 
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -72,15 +77,89 @@ export class GoodsTypesSharedComponent extends BasePage implements OnInit {
     super();
   }
 
-  ngOnInit(): void {
+  async ngOnInit() {
+    //let countSssubtype: number = 0;
     this.rowClass = this.inlineForm
       ? `col-md-${this.columns} mt-3`
       : `col-md-12 mt-3`;
+    if (
+      (this.form.get('noBien').value !== null ||
+        this.form.get('noBien').value !== '') &&
+      this.loadOnChangesNoBien
+    ) {
+      this.form
+        .get('noBien')
+        .valueChanges.pipe(debounceTime(500), takeUntil(this.$unSubscribe))
+        .subscribe(async res => {
+          console.log('Desde el componenete de change', this.goodselect);
+
+          if (this.goodselect) {
+            if (this.goodselect.goodClassNumber) {
+              const params = new ListParams();
+              const response: any = await this.getClassif(
+                params,
+                this.goodselect.goodClassNumber
+              );
+              console.log(response);
+              this.sssubtype.setValue(response.id);
+              this.onSssubtypesChange(response);
+            }
+          } else {
+            console.log('Desde el componenete de change ELSE', this.goodselect);
+
+            this.type.setValue('');
+            this.types = new DefaultSelect([], 0);
+            this.subtype.setValue('');
+            this.subtypes = new DefaultSelect([], 0);
+            this.ssubtype.setValue('');
+            this.ssubtypes = new DefaultSelect([], 0);
+            this.sssubtype.setValue('');
+            this.sssubtypes = new DefaultSelect([], 0);
+            this.form.get('situacion').setValue('');
+            this.form.get('destino').setValue('');
+            this.form.get('estatus').setValue('');
+            this.goodSssubtypeChange.emit(null);
+          }
+        });
+      return;
+    }
+    if (this.form) {
+      this.form.valueChanges
+        .pipe(debounceTime(500), takeUntil(this.$unSubscribe))
+        .subscribe(x => {
+          if (this.loadTypes) {
+            const params = new ListParams();
+            if (x[this.sssubtypeField]) {
+              this.getSssubtypes(params, x[this.sssubtypeField]);
+            }
+            if (x[this.ssubtypeField]) {
+              this.getSsubtypes(params, x[this.ssubtypeField]);
+            }
+            if (x[this.subtypeField]) {
+              this.getSubtypes(params, x[this.subtypeField]);
+            }
+            if (x[this.typeField]) {
+              this.getTypes(params, x[this.typeField]);
+            }
+          }
+          this.loadTypes = false;
+          this.loadTypesChange.emit(false);
+        });
+      // this.sssubtype.valueChanges
+      //   .pipe(debounceTime(500), takeUntil(this.$unSubscribe))
+      //   .subscribe(x => {
+      //     console.log(x);
+      //   });
+    }
   }
 
-  getTypes(params: ListParams) {
+  getTypes(params: ListParams, id: any = null) {
     const _params: any = params;
-    _params['filter.nameGoodType'] = `$ilike:${params.text}`;
+    if (id) {
+      params['filter.id'] = id;
+    } else {
+      _params['filter.nameGoodType'] = `$ilike:${params.text}`;
+    }
     delete _params.search;
     delete _params.text;
     this.service.search(_params).subscribe({
@@ -100,13 +179,17 @@ export class GoodsTypesSharedComponent extends BasePage implements OnInit {
     });
   }
 
-  getSubtypes(params: ListParams) {
+  getSubtypes(params: ListParams, id: any = null) {
     const _params: any = params;
-    _params['filter.nameSubtypeGood'] = `$ilike:${params.text}`;
+    if (id) {
+      params['filter.id'] = id;
+    } else {
+      _params['filter.nameSubtypeGood'] = `$ilike:${params.text}`;
+    }
     delete _params.search;
     delete _params.text;
     if (this.type.value) {
-      _params['type'] = this.type.value;
+      _params['filter.idTypeGood'] = this.type.value;
     }
     this.goodSubtypesService.getAll(_params).subscribe({
       next: data => {
@@ -118,16 +201,20 @@ export class GoodsTypesSharedComponent extends BasePage implements OnInit {
     });
   }
 
-  getSsubtypes(params: ListParams) {
+  getSsubtypes(params: ListParams, id: any = null) {
     const _params: any = params;
-    _params['filter.description'] = `$ilike:${params.text}`;
+    if (id) {
+      params['filter.id'] = id;
+    } else {
+      _params['filter.description'] = `$ilike:${params.text}`;
+    }
     delete _params.search;
     delete _params.text;
     if (this.type.value) {
-      _params['type'] = this.type.value;
+      _params['filter.noType'] = this.type.value;
     }
     if (this.type.value) {
-      _params['subtype'] = this.subtype.value;
+      _params['filter.noSubType'] = this.subtype.value;
     }
     this.goodSsubtypeService.getAll(_params).subscribe({
       next: data => {
@@ -139,19 +226,23 @@ export class GoodsTypesSharedComponent extends BasePage implements OnInit {
     });
   }
 
-  getSssubtypes(params: ListParams) {
+  getSssubtypes(params: ListParams, id: any = null) {
     const _params: any = params;
-    _params['filter.description'] = `$ilike:${params.text}`;
+    if (id) {
+      params['filter.id'] = id;
+    } else {
+      _params['filter.description'] = `$ilike:${params.text}`;
+    }
     delete _params.search;
     delete _params.text;
     if (this.type.value) {
-      _params['type'] = this.type.value;
+      _params['filter.numType'] = this.type.value;
     }
     if (this.type.value) {
-      _params['subtype'] = this.subtype.value;
+      _params['filter.numSubType'] = this.subtype.value;
     }
     if (this.ssubtype.value) {
-      _params['ssubtype'] = this.ssubtype.value;
+      _params['filter.numSsubType'] = this.ssubtype.value;
     }
     this.goodSssubtypeService.getAll(_params).subscribe({
       next: data => {
@@ -160,6 +251,27 @@ export class GoodsTypesSharedComponent extends BasePage implements OnInit {
       error: error => {
         this.ssubtypes = new DefaultSelect();
       },
+    });
+  }
+
+  async getClassif(params: ListParams, id: string | number) {
+    return new Promise((res, rej) => {
+      const _params: any = params;
+      _params['filter.numClasifGoods'] = id;
+      delete _params.search;
+      delete _params.text;
+      console.log(_params);
+      this.goodSssubtypeService.getAll(_params).subscribe({
+        next: data => {
+          console.log(data.data);
+          this.sssubtypes = new DefaultSelect(data.data, data.count);
+          res(data.data[0]);
+        },
+        error: error => {
+          this.sssubtypes = new DefaultSelect([], 0);
+          res(null);
+        },
+      });
     });
   }
 

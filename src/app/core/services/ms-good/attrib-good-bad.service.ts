@@ -16,6 +16,10 @@ export class AttribGoodBadService extends HttpService {
     this.microservice = GoodEndpoints.Good;
   }
 
+  getById(id: string) {
+    return this.get<IAttribGoodBad>(GoodEndpoints.AttribGoodBad + '/' + id);
+  }
+
   update(model: IAttribGoodBad) {
     return this.put(GoodEndpoints.AttribGoodBad, model);
   }
@@ -28,6 +32,18 @@ export class AttribGoodBadService extends HttpService {
     return this.get<IListResponseMessage<IAttribGoodBad>>(
       GoodEndpoints.AttribGoodBad,
       params
+    ).pipe(
+      map(x => {
+        return {
+          ...x,
+          data: x.data.map(item => {
+            return {
+              ...item,
+              id: item.id.id,
+            };
+          }),
+        };
+      })
     );
   }
 

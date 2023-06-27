@@ -13,7 +13,7 @@
                 [class]="loading ? 'disabled' : ''"
                 class="btn btn-primary btn-sm active mr-2 disabled"
                 (click)="goodsByExpediente()">
-                <i class="fa fa-search"></i> Buscar
+                Buscar <i class="bx bx-search-alt bx-sm float-icon"></i>
               </button>
               <button
                 [class]="loading ? 'disabled' : ''"
@@ -48,7 +48,7 @@
               <div class="d-flex justify-content-center align-items-center">
                 <app-pagination
                   [params]="paramsActNavigate"
-                  [totalItems]="proceedingData.length"
+                  [totalItems]="totalItemsNavigate"
                   [limit]="newLimitparamsActNavigate"
                   [paginatorPageSize]="false"
                   [paginatorRangeLabel]="false"
@@ -401,7 +401,7 @@
               class="btn btn-primary btn-sm active mr-2 ml-2"
               (click)="saveButton()"
               size="small">
-              Guardar
+              Guardar <i aria-hidden="true" class="fa fa-save"></i>
             </button>
             <button
               type="button"
@@ -420,9 +420,9 @@
 
             <button
               type="button"
-              class="my-1 mx-2 btn btn-danger active btn-sm"
+              class="my-1 mx-2 btn btn-red active btn-sm"
               (click)="deleteProceeding()">
-              Eliminar Acta
+              Eliminar Acta <i class="fa fa-trash" aria-hidden="true"></i>
             </button>
           </div>
         </div>
@@ -432,6 +432,7 @@
         [class]="loading ? 'table-loading' : 'row pt-2'"
         class="table-responsive table-bordered">
         <ng2-smart-table
+          id="smart-t2"
           class="col-md-12 scroll-table"
           [attr.class]="'table-responsive table-bordered '"
           [settings]="settings1"
@@ -465,7 +466,7 @@
             <span class="text-success mr-5"
               ><i class="fa fa-square"></i> Disponibles</span
             >
-            <span class="text-danger"
+            <span class="text-dark"
               ><i class="fa fa-square"></i> No disponibles</span
             >
           </p>
@@ -503,6 +504,7 @@
         [class]="loading ? 'table-loading' : 'row pt-2'"
         class="table-responsive">
         <ng2-smart-table
+          id="smar-t"
           class="col-md-12 scroll-table"
           [settings]="settings2"
           [source]="dataGoodAct"

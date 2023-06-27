@@ -82,7 +82,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   settings1 = {
     ...TABLE_SETTINGS,
     rowClassFunction: (row: { data: { avalaible: any } }) =>
-      row.data.avalaible ? 'available' : 'not-available',
+      row.data.avalaible ? 'bg-success text-white' : 'bg-dark text-white',
     actions: false,
     columns: columnsGood,
     noDataMessage: 'No se encontrarón registros',
@@ -248,7 +248,17 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     this.paramsDataGoods
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(params => {
+        console.log(params);
+        this.limitDataGoods = new FormControl(params.limit);
         this.getGoodsFn();
+      });
+
+    this.paramsDataGoodsAct
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(params => {
+        console.log(params);
+        this.limitDataGoodsAct = new FormControl(params.limit);
+        this.getGoodsActFn();
       });
 
     this.paramsActNavigate
@@ -557,12 +567,23 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   //Conditional functions
 
   verifyDateAndFill() {
+    console.log(this.form.get('fecElab').value);
     let fecElab = new Date(this.form.get('fecElab').value);
-    console.log(fecElab);
-    console.log(new Date());
     if (this.form.get('fecElab').value != null) {
+      //SETEAR FECHA DE RECEPCIÓN Y ACTIVARLA
       this.form.get('fecReception').setValue(new Date(fecElab));
       this.showFecReception = true;
+      //SETEAR NUEVOS VALORES
+      const year = fecElab.getFullYear();
+      const month = fecElab.getMonth() + 1;
+      const day = fecElab.getDate();
+      const hour = new Date().getHours();
+      const minute = new Date().getMinutes();
+      if (fecElab.getHours() != hour || fecElab.getMinutes() != minute) {
+        this.form
+          .get('fecElab')
+          .setValue(new Date(`${year}-${month}-${day} ${hour}:${minute}`));
+      }
     } else {
       {
         this.form.get('fecReception').setValue('');
@@ -1088,9 +1109,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     const paramsF = new FilterParams();
     paramsF.page = this.paramsDataGoods.getValue().page;
     paramsF.limit = this.paramsDataGoods.getValue().limit;
-    this.limitDataGoods = new FormControl(
-      this.paramsDataGoods.getValue().limit
-    );
+
     console.log(this.paramsDataGoods);
     console.log(paramsF.getParams());
     this.serviceGood
@@ -1140,12 +1159,11 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     paramsF.addFilter('keysProceedings', this.form.get('acta2').value);
     paramsF.page = this.paramsDataGoodsAct.getValue().page;
     paramsF.limit = this.paramsDataGoodsAct.getValue().limit;
-    this.limitDataGoods = new FormControl(
-      this.paramsDataGoodsAct.getValue().limit
-    );
 
     const model: IDetailWithIndEdo = {
       no_acta: parseInt(this.idProceeding),
+      page: this.paramsDataGoodsAct.getValue().page,
+      perPage: this.paramsDataGoodsAct.getValue().limit,
     };
 
     this.serviceDetailProc.getAllwithEndFisico(model).subscribe(
@@ -1178,9 +1196,6 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     const paramsF = new FilterParams();
     paramsF.page = this.paramsDataGoods.getValue().page;
     paramsF.limit = this.paramsDataGoods.getValue().limit;
-    this.limitDataGoods = new FormControl(
-      this.paramsDataGoods.getValue().limit
-    );
     this.serviceGood
       .getAllFilterDetail(
         `filter.fileNumber=$eq:${
@@ -1514,9 +1529,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
       const paramsF = new FilterParams();
       paramsF.page = this.paramsDataGoods.getValue().page;
       paramsF.limit = this.paramsDataGoods.getValue().limit;
-      this.limitDataGoods = new FormControl(
-        this.paramsDataGoods.getValue().limit
-      );
+
       this.serviceGood
         .getAllFilterDetail(
           `filter.fileNumber=$eq:${
@@ -1665,6 +1678,8 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
 
     const modelDetail: IDetailWithIndEdo = {
       no_acta: dataRes.id,
+      page: this.paramsDataGoodsAct.getValue().page,
+      perPage: this.paramsDataGoodsAct.getValue().limit,
     };
 
     this.serviceDetailProc.getAllwithEndFisico(modelDetail).subscribe(
@@ -1966,6 +1981,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   getGoodsByExpedient() {
     //Validar si hay un acta abiert
     const paramsF = new FilterParams();
+    paramsF.limit = 1;
     paramsF.addFilter('numFile', this.form.get('expediente').value);
     paramsF.addFilter('typeProceedings', 'ENTREGA,DECOMISO', SearchFilter.IN); //!Un in
     this.serviceProcVal.getByFilter(paramsF.getParams()).subscribe(

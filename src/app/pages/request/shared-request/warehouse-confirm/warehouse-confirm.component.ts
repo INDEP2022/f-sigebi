@@ -2,8 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { BsModalService } from 'ngx-bootstrap/modal';
+import { BehaviorSubject } from 'rxjs';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { ITask } from 'src/app/core/models/ms-task/task-model';
 import { WarehouseService } from 'src/app/core/services/catalogs/warehouse.service';
 import { StoreAliasStockService } from 'src/app/core/services/ms-store/store-alias-stock.service';
+import { TaskService } from 'src/app/core/services/ms-task/task.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
@@ -15,19 +19,21 @@ import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 export class WarehouseConfirmComponent extends BasePage implements OnInit {
   responseForm: FormGroup = new FormGroup({});
   store: any;
+  task: ITask;
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
     private router: Router,
     private warehouseService: WarehouseService,
-    private storeService: StoreAliasStockService
+    private storeService: StoreAliasStockService,
+    private taskService: TaskService
   ) {
     super();
   }
 
   ngOnInit(): void {
-    console.log('almacén ', this.store);
     this.prepareForm();
+    console.log('store', this.store);
   }
 
   prepareForm() {
@@ -63,22 +69,50 @@ export class WarehouseConfirmComponent extends BasePage implements OnInit {
             responsibleDelegation: this.store.wildebeestDelegationregion,
           };
 
+          console.log('warehouseForm', warehouseForm);
           this.warehouseService.create(warehouseForm).subscribe({
-            next: response => {
-              console.log('Almacén creado', response);
-              this.onLoadToast(
-                'success',
-                'Alta de almacén confirmada correctamente',
-                ''
-              );
-              this.close();
+            next: async response => {
+              const openTaskPerform = await this.openTaskPerform();
+              if (openTaskPerform == true) {
+                this.onLoadToast(
+                  'success',
+                  'Acción correcta',
+                  'Alta de almacén confirmada correctamente'
+                );
+                this.close();
+                this.router.navigate(['/pages/siab-web/sami/consult-tasks']);
+              }
             },
-            error: error => {
-              console.log(error);
-            },
+            error: error => {},
           });
         }
       }
+    });
+  }
+
+  openTaskPerform() {
+    return new Promise((resolve, reject) => {
+      this.task = JSON.parse(localStorage.getItem('Task'));
+      const params = new BehaviorSubject<ListParams>(new ListParams());
+      params.getValue()['filter.id'] = this.task.id;
+      this.taskService.getAll(params.getValue()).subscribe({
+        next: response => {
+          const taskForm: ITask = {
+            State: null,
+            taskDefinitionId: null,
+          };
+
+          this.taskService
+            .update(response.data[0].taskDefinitionId, taskForm)
+            .subscribe({
+              next: response => {
+                resolve(true);
+              },
+              error: error => {},
+            });
+        },
+        error: error => {},
+      });
     });
   }
 
@@ -90,9 +124,7 @@ export class WarehouseConfirmComponent extends BasePage implements OnInit {
           next: response => {
             resolve(true);
           },
-          error: error => {
-            console.log(error);
-          },
+          error: error => {},
         });
     });
   }

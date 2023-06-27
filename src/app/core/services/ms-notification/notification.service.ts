@@ -32,6 +32,16 @@ export class NotificationService extends HttpService {
     this.microservice = this.route.Notification;
   }
 
+  //Trae los objetos de ciudad,delegación,departamento,instituciòn,subdelegacion y transferente
+  getAllNotifications(
+    params?: ListParams
+  ): Observable<IListResponse<INotification>> {
+    return this.notificationRepository.getAll(
+      this.route.NotificationAll,
+      params
+    );
+  }
+
   getAll(params?: ListParams): Observable<IListResponse<INotification>> {
     return this.notificationRepository.getAll(this.route.Notification, params);
   }
@@ -39,6 +49,23 @@ export class NotificationService extends HttpService {
   getAllFilter(params: _Params): Observable<IListResponse<INotification>> {
     return this.get<IListResponse<INotification>>(
       `${this.route.Notification}?${params}`
+    );
+  }
+  getAllListParams(
+    params: ListParams
+  ): Observable<IListResponse<INotification>> {
+    return this.get<IListResponse<INotification>>(
+      this.route.Notification,
+      params
+    );
+  }
+
+  getAllListParamsColumns(
+    params: ListParams
+  ): Observable<IListResponse<INotification>> {
+    return this.get<IListResponse<INotification>>(
+      this.route.Notification,
+      params
     );
   }
 
@@ -249,5 +276,8 @@ export class NotificationService extends HttpService {
 
   getMaxFlyer(fileNumber: number) {
     return this.get(`notification/maxCFlyer/${fileNumber}`);
+  }
+  getCFlyer(fileNumber: number) {
+    return this.get(`notification/cFlyer/${fileNumber}`);
   }
 }

@@ -41,7 +41,12 @@
         </div>
         <div class="col-lg-3 col-md-6 col-sm-6 col-12 mb-3 mt-3">
           <form-field [control]="form.get('amountKg')" label="Cantidad en KG.">
-            <input formControlName="amountKg" class="form-control" />
+            <input
+              formControlName="amountKg"
+              class="form-control"
+              type="number"
+              min="0"
+              oninput="if(this.value.length > 16) this.value = this.value.slice(0, 16);" />
           </form-field>
         </div>
         <div
@@ -49,7 +54,9 @@
           <form-field
             [control]="form.get('status')"
             label="Estatus del Paquete">
-            <select class="form-control" formControlName="status">
+            <select
+              class="form-control text-center px-2"
+              formControlName="status">
               <option [value]="null">Seleccione un valor</option>
               <option value="project">P-Proyecto</option>
               <option value="validation">V-Validado</option>
@@ -64,22 +71,30 @@
         <!--Actions-->
         <div
           class="col-lg-3 col-md-4 col-sm-4 col-12 align-self-center mb-3 mt-3">
-          <button class="btn btn-secondary btn-sm active w-100">
+          <button
+            class="btn btn-secondary btn-sm active w-100"
+            (click)="showConfirmAlert()">
             Validado
           </button>
         </div>
         <div
           class="col-lg-3 col-md-4 col-sm-4 col-12 align-self-center mb-3 mt-3">
-          <button class="btn btn-secondary btn-sm active w-100">
+          <button
+            class="btn btn-secondary btn-sm active w-100"
+            (click)="showAutorizateAlert()">
             Autorizado
           </button>
         </div>
         <div
           class="col-lg-3 col-md-4 col-sm-4 col-12 align-self-center mb-3 mt-3">
-          <button class="btn btn-secondary btn-sm active w-100">Cierre</button>
+          <button
+            class="btn btn-secondary btn-sm active w-100"
+            (click)="showCloseAlert()">
+            Cierre
+          </button>
         </div>
       </div>
-      <!--Process dates-->
+
       <!--Process Users-->
       <div class="row mt-3">
         <div class="col-md-12">
@@ -230,6 +245,7 @@
     </div>
   </div>
 </app-card>
+
 <!--Add New Good-->
 <app-card [header]="true" [footer]="true">
   <div class="ch-content" header>
@@ -243,35 +259,57 @@
             <input
               formControlName="numberGood"
               type="text"
-              class="form-control" />
+              class="form-control"
+              type="number"
+              min="0"
+              oninput="if(this.value.length > 11) this.value = this.value.slice(0, 11);" />
           </form-field>
         </div>
         <div class="col-lg-3 col-md-3 col-sm-3 col-12 mb-3 mt-3">
           <form-field label="Expediente" [control]="form2.get('record')">
-            <input formControlName="record" type="text" class="form-control" />
+            <input
+              formControlName="record"
+              class="form-control"
+              type="number"
+              min="0"
+              oninput="if(this.value.length > 11) this.value = this.value.slice(0, 11);" />
           </form-field>
         </div>
         <div class="col-lg-6 col-md-6 col-sm-6 col-12 mb-3 mt-3">
           <form-field label="Descripción" [control]="form2.get('description')">
             <input
               formControlName="description"
+              class="form-control"
               type="text"
-              class="form-control" />
+              maxlength="1250" />
           </form-field>
         </div>
         <div class="col-lg-3 col-md-3 col-sm-3 col-12 mb-3 mt-3">
           <form-field label="Cantidad" [control]="form2.get('amount')">
-            <input formControlName="amount" type="text" class="form-control" />
+            <input
+              formControlName="amount"
+              class="form-control"
+              type="number"
+              min="0"
+              oninput="if(this.value.length > 19) this.value = this.value.slice(0, 19);" />
           </form-field>
         </div>
         <div class="col-lg-3 col-md-3 col-sm-3 col-12 mb-3 mt-3">
           <form-field label="Unidad" [control]="form2.get('unit')">
-            <input formControlName="unit" type="text" class="form-control" />
+            <input
+              formControlName="unit"
+              type="text"
+              class="form-control"
+              maxlength="25" />
           </form-field>
         </div>
         <div class="col-lg-3 col-md-3 col-sm-3 col-12 mb-3 mt-3">
           <form-field label="Estatus" [control]="form2.get('status')">
-            <input formControlName="status" type="text" class="form-control" />
+            <input
+              formControlName="status"
+              type="text"
+              class="form-control"
+              maxlength="25" />
           </form-field>
         </div>
       </div>
@@ -311,6 +349,7 @@
     </form>
   </div>
 </app-card>
+
 <!--Data Previsualization-->
 <app-card [header]="true" [footer]="true">
   <div class="ch-content" header>
@@ -339,6 +378,7 @@
     </app-pagination>
   </div>
 </app-card>
+
 <!--Scan Folio-->
 <app-card [header]="true" [footer]="true">
   <div class="ch-content" header>
@@ -363,6 +403,7 @@
     </form>
   </div>
 </app-card>
+
 <!--Paragraphs-->
 <app-card [header]="true" [footer]="true">
   <div class="ch-content" header>

@@ -1,6 +1,6 @@
 export const RECEIPT_COLUMNS = {
   actId: {
-    title: 'Número de acta',
+    title: 'No. Acta',
     type: 'number',
     sort: false,
   },

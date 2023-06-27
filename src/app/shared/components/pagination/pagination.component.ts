@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { PageChangedEvent } from 'ngx-bootstrap/pagination';
-import { BehaviorSubject, takeUntil } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import {
   FilterParams,
   ListParams,
@@ -30,13 +30,13 @@ export class PaginationComponent extends BasePage implements OnInit {
     super();
   }
   ngOnInit(): void {
-    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(params => {
+    /*  this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(params => {
       this.limit.setValue(params.limit || params.page);
     });
 
     this.filterParams.pipe(takeUntil(this.$unSubscribe)).subscribe(params => {
       this.limit.setValue(params.limit || params.page);
-    });
+    }); */
   }
   pageChanged(event: PageChangedEvent) {
     const params = this.params.getValue();
@@ -45,7 +45,7 @@ export class PaginationComponent extends BasePage implements OnInit {
 
   get getRangeLabel(): string {
     if (this.totalItems == 0 || this.params.getValue().limit == 0) {
-      return `0 of ${this.totalItems}`;
+      return `0 de ${this.totalItems}`;
     }
     this.totalItems = Math.max(this.totalItems, 0);
     const startIndex =
@@ -55,8 +55,17 @@ export class PaginationComponent extends BasePage implements OnInit {
         ? Math.min(startIndex + this.params.getValue().limit, this.totalItems)
         : startIndex + this.params.getValue().limit;
     return this.params.getValue().limit > 1
-      ? `${startIndex + 1} - ${endIndex} de ${this.totalItems}`
-      : `${startIndex + 1} de ${this.totalItems}`;
+      ? `${this.thousenFormat(startIndex + 1)} - ${this.thousenFormat(
+          endIndex
+        )} de ${this.thousenFormat(this.totalItems)}`
+      : `${this.thousenFormat(startIndex + 1)} de ${this.thousenFormat(
+          this.totalItems
+        )}`;
+  }
+
+  thousenFormat(n: number) {
+    if (!n) return n;
+    return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
   }
 
   emitEvent(params: ListParams) {

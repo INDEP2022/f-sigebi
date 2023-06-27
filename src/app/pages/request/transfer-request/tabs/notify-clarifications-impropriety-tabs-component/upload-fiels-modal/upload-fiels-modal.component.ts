@@ -91,6 +91,8 @@ export class UploadFielsModalComponent extends BasePage implements OnInit {
       this.fileForm.controls['name'].setValue(this.signatories.name);
       this.fileForm.controls['post'].setValue(this.signatories.post);
       this.fileForm.controls['signature'].setValue(this.signatories.signature);
+      this.fileForm.controls['pass'].setValue(this.signatories.pass);
+      this.fileForm.controls['rfcUser'].setValue(this.signatories.rfcUser);
       //this.fileForm.patchValue(this.signatories); //Llenar todo el formulario
     }
 
@@ -184,9 +186,6 @@ export class UploadFielsModalComponent extends BasePage implements OnInit {
     let pass = this.fileForm.controls['pass'].value;
 
     if (pass.length <= 10) {
-      console.log(
-        'pass: ' + pass + ' Longitud de pass es correcto, proceder a encriptar'
-      );
       const obj: Object = {
         cadena: pass,
       };
@@ -195,11 +194,9 @@ export class UploadFielsModalComponent extends BasePage implements OnInit {
         response => {
           if (response !== null) {
             this.password = response;
-            console.log('Pass encriptada', this.password.encriptarResult); //Quitar
             this.fileForm.controls['pass'].setValue(
               this.password.encriptarResult
             );
-            console.log('Carga de archivos', this.fileForm.value);
             this.update();
           } else {
             //TODO: CHECK MESSAGE
@@ -236,28 +233,26 @@ export class UploadFielsModalComponent extends BasePage implements OnInit {
     formData.append('identifierSystem', '1');
     formData.append('identifierSignatory', '1');
     //formData.append('certificatebase64', this.base64Cer); La conversión ya lo hace el endpoint
-    console.log('FormData que se envia para guardar firmante', formData);
-
     this.signatoriesService
       .update(this.signatories.signatoryId, formData)
       .subscribe(
         data => this.handleSuccess(),
-        error => (
-          this.alert('info', 'No se pudo actualizar', error.error),
-          console.log('No se actualizó el firmante', error.error)
-        )
+        error => this.alert('info', 'No se pudo actualizar', error.error)
       );
   }
 
   handleSuccess() {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.onLoadToast(
+    this.alertInfo(
       'success',
       'Carga de archivos',
       `${message} Correctamente`
-    );
-    this.loading = false;
-    this.modalRef.content.callback(true);
-    this.modalRef.hide();
+    ).then(confirm => {
+      if (confirm.isConfirmed) {
+        this.loading = false;
+        this.modalRef.content.callback(true);
+        this.modalRef.hide();
+      }
+    });
   }
 }

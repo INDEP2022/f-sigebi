@@ -61,22 +61,35 @@ export class GoodsStatusSharedComponent extends BasePage implements OnInit {
     //Provisional data
     this.service.getStatusAll(params).subscribe({
       next: data => {
+        const newData = data.data.map(status => {
+          return {
+            ...status,
+            newLabel: `${status.status} - ${status.description}`,
+          };
+        });
         console.log(data);
-        this.status = new DefaultSelect(data.data, data.count);
+        this.status = new DefaultSelect(newData, data.count);
       },
       error: err => {
-        let error = '';
+        this.alert(
+          'warning',
+          'No se encontraron datos',
+          'Por favor revise haber registrado el nombre de estatus correcto e inténtelo nuevamente'
+        );
+        this.status = new DefaultSelect();
+        /* let error = '';
         if (err.status === 0) {
           error = 'Revise su conexión de Internet.';
         } else {
           error = err.message;
         }
-        this.onLoadToast('error', 'Error', error);
+        this.onLoadToast('error', 'Error', error); */
       },
     });
   }
 
   onGoodStatusChange(type: any) {
+    console.log(type);
     this.form.updateValueAndValidity();
   }
 

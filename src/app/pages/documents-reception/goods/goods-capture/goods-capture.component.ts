@@ -15,13 +15,16 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { IGoodSssubtype } from 'src/app/core/models/catalogs/good-sssubtype.model';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { DocumentsReceptionDataService } from 'src/app/core/services/document-reception/documents-reception-data.service';
 import { AccountMovementService } from 'src/app/core/services/ms-account-movements/account-movement.service';
 import { ComerDetailsService } from 'src/app/core/services/ms-coinciliation/comer-details.service';
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import { TmpExpedientService } from 'src/app/core/services/ms-expedient/tmp-expedient.service';
+import { HistoryGoodService } from 'src/app/core/services/ms-history-good/history-good.service';
 import { MenageService } from 'src/app/core/services/ms-menage/menage.service';
 import { StatusXScreenService } from 'src/app/core/services/ms-screen-status/statusxscreen.service';
+import { SegAcessXAreasService } from 'src/app/core/services/ms-users/seg-acess-x-areas.service';
 import { GlobalVarsService } from 'src/app/shared/global-vars/services/global-vars.service';
 import { HOME_DEFAULT } from 'src/app/utils/constants/main-routes';
 import { GoodsCaptureService, IRecord } from '../service/goods-capture.service';
@@ -47,6 +50,9 @@ export class GoodsCaptureComponent
   extends GoodsCaptureMain
   implements OnInit, AfterViewInit
 {
+  user: string = null;
+  subdelegation: string | number = null;
+  delegation: string | number = null;
   numerary: string | number = null;
   @ViewChild('initPage', { static: true }) initPage: ElementRef<HTMLDivElement>;
   initalStatus: string = null;
@@ -63,7 +69,10 @@ export class GoodsCaptureComponent
     private _expedienService: ExpedientService,
     private comerDetailsService: ComerDetailsService,
     private accountMovementService: AccountMovementService,
-    private statusXScreenService: StatusXScreenService
+    private statusXScreenService: StatusXScreenService,
+    private segAccessService: SegAcessXAreasService,
+    private authService: AuthService,
+    private historyGoodService: HistoryGoodService
   ) {
     super(
       fb,
@@ -81,11 +90,26 @@ export class GoodsCaptureComponent
   }
 
   ngOnInit(): void {
+    this.assetsForm.get('identifica').valueChanges.subscribe(val => {
+      this.identChange();
+    });
     const identifica = this.params.iden ?? 'ASEG';
     this.setIdentifier(identifica);
     this.formControls.identifica.setValue(identifica);
     this.getInitalParameter().subscribe({
       next: () => this.initialParameterFound(),
+    });
+    this.user = this.authService.decodeToken().preferred_username;
+    const params = new FilterParams();
+    params.addFilter('user', this.user);
+    this.segAccessService.getAll(params.getParams()).subscribe(res => {
+      const i = res.data[0];
+      if (!i) {
+        return;
+      }
+
+      this.delegation = i.delegationNumber;
+      this.subdelegation = i.subdelegationNumber;
     });
   }
 
@@ -366,8 +390,25 @@ export class GoodsCaptureComponent
     return this.accountMovementService.getAllFiltered(params.getParams());
   }
 
+  insertHistory(good: any) {
+    const reasonForChange =
+      this.params.origin === FLYERS_REGISTRATION_CODE
+        ? 'Automatico desde oficialia'
+        : 'Automatico desde menu';
+    const data = {
+      reasonForChange,
+      propertyNum: good.id,
+      status: good.status,
+      changeDate: new Date(),
+      userChange: this.user,
+      statusChangeProgram: 'FACTOFPCAPTURABIE',
+      extDomProcess: good.extDomProcess,
+    };
+    this.historyGoodService.create(data).subscribe();
+  }
+
   handleSuccesSave(good: any) {
-    // this.alert('success', 'Se agrego el bien al expediente', '');
+    this.insertHistory(good);
     if (Number(this.numerary) > 0) {
       this.getAccountMovement()
         .pipe(
@@ -507,9 +548,62 @@ export class GoodsCaptureComponent
 
   createWithTmpExp() {
     this.tmpExpedientService.getById(this.goodToSave.fileNumber).subscribe({
-      next: expedient => {
+      next: (expedient: any) => {
         this.paperworkType = expedient.procedureType;
-        this._expedienService.create(expedient as any).subscribe({
+        const expToSave = {
+          id: expedient?.id ?? null,
+          dateAgreementAssurance: expedient?.agreementSecureDate ?? null,
+          foresight: expedient?.forecast ?? null,
+          dateForesight: expedient?.forecastDate ?? null,
+          articleValidated: expedient?.articleValidated ?? null,
+          ministerialDate: expedient?.faithMinisterialDate ?? null,
+          ministerialActOfFaith: expedient?.recordFaithMinisterial ?? null,
+          date_Dictamines: expedient?.dictamineDate ?? null,
+          batteryNumber: expedient?.batteryNumber ?? null,
+          lockerNumber: expedient?.lockerNumber ?? null,
+          shelfNumber: expedient?.shelfNumber ?? null,
+          courtNumber: expedient?.courtNumber ?? null,
+          observationsForecast: expedient?.observationsForecast ?? null,
+          insertedBy: expedient?.insertedBy ?? null,
+          observations: expedient?.observations ?? null,
+          insertMethod: expedient?.methodInsertion ?? null,
+          insertDate: expedient?.insertionDate ?? null,
+          receptionDate: expedient?.receptionSeraDate ?? null,
+          criminalCase: expedient?.causePenal ?? null,
+          preliminaryInquiry: expedient?.ascertainmentPrevious ?? null,
+          protectionKey: expedient?.cveProtection ?? null,
+          crimeKey: expedient?.cveCrime ?? null,
+          circumstantialRecord: expedient?.recordCircumstanced ?? null,
+          keyPenalty: expedient?.cvetouchPenal ?? null,
+          nameInstitution: expedient?.institutionName ?? null,
+          courtName: expedient?.courtName ?? null,
+          mpName: expedient?.nameMp ?? null,
+          keySaveValue: expedient?.cveguardavalor ?? null,
+          indicatedName: expedient?.nameindexed ?? null,
+          authorityOrdersDictum: expedient?.authorityOrderOpinion ?? null,
+          notificationDate: expedient?.notificationDate ?? null,
+          notifiedTo: expedient?.notifiedTo ?? null,
+          placeNotification: expedient?.placeNotification ?? null,
+          confiscateDictamineDate: expedient?.forfeitureRulingDate ?? null,
+          dictaminationReturnDate: expedient?.returnRulingDate ?? null,
+          alienationDate: expedient?.alienationDate ?? null,
+          federalEntityKey: expedient?.cveEntfed ?? null,
+          dictaminationDate: expedient?.recrevRulingDate ?? null,
+          destructionDate: expedient?.destructionDate ?? null,
+          donationDate: expedient?.donationDate ?? null,
+          initialAgreementDate: expedient?.agreementInitialDate ?? null,
+          initialAgreement: expedient?.agreementInitial ?? null,
+          expedientStatus: expedient?.statusProceedings ?? null,
+          identifier: expedient?.identifier ?? null,
+          crimeStatus: expedient?.isCrime ?? null,
+          transferNumber: expedient?.transfereeNumber ?? null,
+          expTransferNumber: expedient?.expTransferorsNumber ?? null,
+          expedientType: expedient?.proceedingsType ?? null,
+          stationNumber: expedient?.stationNumber ?? null,
+          authorityNumber: expedient?.authorityNumber ?? null,
+          insertionDatehc: expedient?.insertionHcDate ?? null,
+        };
+        this._expedienService.create(expToSave).subscribe({
           next: expedient => {
             this.goodToSave.fileNumber = `${expedient.id}`;
             this.updateNotifications(expedient).subscribe({
@@ -590,6 +684,14 @@ export class GoodsCaptureComponent
   }
 
   saveGood() {
+    console.log(this.goodToSave);
+    if (this.goodToSave.identifier == 'TRANS') {
+      this.goodToSave.extDomProcess = 'TRANSFERENTE';
+    } else {
+      this.goodToSave.extDomProcess = 'ASEGURADO';
+    }
+    this.goodToSave.delegationNumber = this.delegation;
+    this.goodToSave.subDelegationNumber = this.subdelegation;
     this.goodsCaptureService.createGood(this.goodToSave).subscribe({
       next: good => {
         this.handleSuccesSave(good);

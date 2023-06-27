@@ -246,6 +246,24 @@ export class DocumentsReceptionRegisterComponent
     private changeDetectorRef: ChangeDetectorRef
   ) {
     super();
+
+    this.globalVarsService
+      .getGlobalVars$()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: gl => {
+          this.globals = gl;
+        },
+      });
+
+    this.globals.gnuActivaGestion = 1;
+    this.globals.bn = 0;
+    this.globals.CREA_EXPEDIENTE = 'S';
+    this.globals.antecede = 0;
+    this.globalVarsService.updateGlobalVars(this.globals);
+
+    // this.globals.gnuActivaGestion = 1
+
     if (this.docDataService.flyersRegistrationParams != null)
       this.pageParams = this.docDataService.flyersRegistrationParams;
   }

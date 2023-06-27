@@ -67,13 +67,16 @@ export class PhotographyFormComponent extends BasePage implements OnInit {
 
   getImageGood() {
     this.loadingTable = true;
-    const idGood: Object = {
+    const formDatra: Object = {
       xidBien: this.good,
     };
-    this.wcontentService.getDocumentos(idGood).subscribe({
+    this.wcontentService.getDocumentos(formDatra).subscribe({
       next: response => {
         const _data = response.data.filter((img: any) => {
-          if (img.dDocType == 'DigitalMedia') return img;
+          if (img.dDocType == 'DigitalMedia') {
+            return img;
+          }
+          //if (img.dDocType == 'DigitalMedia') return img;
         });
 
         if (_data.length > 0) {
@@ -82,11 +85,11 @@ export class PhotographyFormComponent extends BasePage implements OnInit {
           this.totalItems = _data.length;
           this.loadingTable = false;
         } else {
-          this.onLoadToast(
+          this.alertInfo(
             'info',
-            'Error',
+            'Información',
             'No hay imagenes agregadadas a este bien'
-          );
+          ).then();
           this.loadingTable = false;
         }
       },
@@ -124,15 +127,15 @@ export class PhotographyFormComponent extends BasePage implements OnInit {
           this.formLoading = true;
           loadingPhotos = loadingPhotos + 1;
           setTimeout(() => {
+            this.getImageGood();
             this.formLoading = false;
-          }, 7000);
+          }, 8000);
           if (loadingPhotos == 1) {
-            this.onLoadToast(
+            this.alertInfo(
               'success',
               'Acción correcta',
-              'Imagen agregada correctamente'
-            );
-            this.getImageGood();
+              'Imagen Agregada correctamente'
+            ).then();
           }
         }
       },

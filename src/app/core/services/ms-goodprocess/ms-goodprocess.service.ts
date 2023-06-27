@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 import { GoodprocessEndpoints } from 'src/app/common/constants/endpoints/ms-goodprocess-endpoint';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
@@ -24,10 +25,11 @@ export class GoodprocessService extends HttpService {
     );
   }
 
-  getDistinctTypes(model: ICharacteristicsGoodDTO) {
+  getDistinctTypes(model: ICharacteristicsGoodDTO, listParams: ListParams) {
     return this.post<IListResponseMessage<any>>(
       GoodprocessEndpoints.GetDistinctTypes,
-      model
+      model,
+      listParams
     );
   }
 
@@ -97,5 +99,32 @@ export class GoodprocessService extends HttpService {
 
   getNextValManagement() {
     return this.get('application/get-nextval-gestion');
+  }
+  updateJobManagement(model: any): Observable<IListResponse<any>> {
+    return this.post(`${GoodprocessEndpoints.UpdateGoodStatus}`, model);
+  }
+  postJobManagement(model: any): Observable<IListResponse<any>> {
+    return this.post(`${GoodprocessEndpoints.UpdateGoodStatus}`, model);
+  }
+
+  getGoodAvailable(params: ListParams) {
+    const page = params.page || 1;
+    const limit = params.limit || 10;
+    return this.post(
+      `application/getAssetsOfficeManagement?page=${page}&limit=${limit}`,
+      params
+    );
+  }
+
+  postTransferGoodsTradeManagement(body: {
+    ofManagementNumber: any;
+    proceedingsNumber: any;
+    goodNumber: any;
+  }) {
+    this.post('application/transferGoodsTradeManagement', body);
+  }
+
+  GetGoodProceedings(params: ListParams) {
+    return this.get(`${GoodprocessEndpoints.GetGoodProceedings}`, params);
   }
 }

@@ -24,7 +24,9 @@ export enum GoodEndpoints {
   GoodByDepositaryGood = 'good/searchByDepositaryGood',
   CreateGoodNumerary = 'good/createGood',
   Vban = 'good/getBan',
-  AttribGoodBad = 'attrib-good-bad',
+  AttribGoodBad = 'attrib-good-bad/get-all',
+  AttribGood = 'goods-attributes',
+
   GetAllGoodQuery = 'good/getAllGoodQuery',
   PAValidaCambioEstatus = 'good/testValid',
   GetMassiveSearch = 'good/getMassiveSearch',
@@ -54,6 +56,7 @@ export enum GoodProcessPoints {
   deleteHistoricalStatusGoodXrecord = 'application/deleteHistoricalStatusGoodXrecord',
   getVstatusIniVnoRegister = 'application/getVstatusIniVnoRegister',
   pup_change_impro = 'application/pup-change-impro',
+  GetDescDep = 'application/getDestDepBan',
 }
 
 export enum GoodFinderEndpoint {

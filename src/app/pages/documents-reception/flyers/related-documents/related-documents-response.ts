@@ -3,7 +3,7 @@ import { type FormControl, type FormGroup } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { catchError, firstValueFrom, map, Observable, of } from 'rxjs';
+import { catchError, firstValueFrom, map, Observable, of, take } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { showQuestion, showToast } from 'src/app/common/helpers/helpers';
 import {
@@ -14,9 +14,15 @@ import { _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
 import { ICity } from 'src/app/core/models/catalogs/city.model';
 import { IDepartment } from 'src/app/core/models/catalogs/department.model';
-import { IPufGenerateKey } from 'src/app/core/models/ms-dictation/dictation-model';
+import {
+  IPufGenerateKey,
+  IStatusChange,
+} from 'src/app/core/models/ms-dictation/dictation-model';
 import { type INotification } from 'src/app/core/models/ms-notification/notification.model';
-import { IMJobManagement } from 'src/app/core/models/ms-officemanagement/m-job-management.model';
+import {
+  IMJobManagement,
+  IMJobManagementExtSSF3,
+} from 'src/app/core/models/ms-officemanagement/m-job-management.model';
 import { IProceduremanagement } from 'src/app/core/models/ms-proceduremanagement/ms-proceduremanagement.interface';
 import {
   IAccesTrackingXArea,
@@ -29,6 +35,7 @@ import { DictationService } from 'src/app/core/services/ms-dictation/dictation.s
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
+import { HistoryGoodService } from 'src/app/core/services/ms-history-good/history-good.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import { GoodsJobManagementService } from 'src/app/core/services/ms-office-management/goods-job-management.service';
 import { MJobManagementService } from 'src/app/core/services/ms-office-management/m-job-management.service';
@@ -41,6 +48,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { LegalOpinionsOfficeService } from 'src/app/pages/juridical-processes/depositary/legal-opinions-office/legal-opinions-office/services/legal-opinions-office.service';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { FlyersService } from '../services/flyers.service';
+import { DialogSelectedManagementsComponent } from './dialog-selected-managements/dialog-selected-managements.component';
 import {
   IGoodAndAvailable,
   IGoodJobManagement,
@@ -57,13 +65,20 @@ export abstract class RelateDocumentsResponse extends BasePage {
   protected abstract departmentService: DepartamentService;
   protected abstract svLegalOpinionsOfficeService: LegalOpinionsOfficeService;
   protected abstract authService: AuthService;
+  protected abstract goodHistoryService: HistoryGoodService; // protected abstract svLegalOpinionsOfficeService: LegalOpinionsOfficeService;
+  abstract loadInfo(data: IMJobManagement): Promise<void>;
+
   abstract formVariables: FormGroup<{
+    dictaminacion: FormControl;
     b: FormControl;
     d: FormControl;
     dictamen: FormControl;
     classify: FormControl;
     classify2: FormControl;
     crime: FormControl;
+    proc_doc_dic: FormControl;
+    doc_bien: FormControl;
+    todos: FormControl;
   }>;
   protected abstract formJobManagement: FormGroup<{
     /** @description no_volante */
@@ -118,6 +133,8 @@ export abstract class RelateDocumentsResponse extends BasePage {
     /**@description num_clave_armada */
     armedKeyNumber: FormControl;
     tipoTexto: FormControl;
+    /** @description  no_expediente*/
+    proceedingsNumber: FormControl;
   }>;
   protected abstract formNotification: FormGroup;
   protected abstract route: ActivatedRoute;
@@ -133,6 +150,7 @@ export abstract class RelateDocumentsResponse extends BasePage {
   abstract dataTableGoods: IGoodAndAvailable[];
   abstract dataTableGoodsJobManagement: IGoodJobManagement[];
   abstract isDisabledBtnDocs: boolean;
+  abstract selectedAllImpro: boolean;
   abstract se_refiere_a_Disabled: {
     A: boolean;
     B: boolean;
@@ -149,8 +167,7 @@ export abstract class RelateDocumentsResponse extends BasePage {
     this.goodServices.getAll(params).subscribe({
       next: async data => {
         const goods = await data.data.map(async (item: any) => {
-          item['improcedente'] = item.unfair === 'true' ? true : false;
-          item['seleccion'] = item.clarification === 'true' ? true : false;
+          item['improcedente'] = this.selectedAllImpro == true ? true : false;
           const isAvailable = await this.getFactaDbOficioGestrel(
             this.formJobManagement.get('managementNumber').value,
             item.goodId
@@ -163,6 +180,7 @@ export abstract class RelateDocumentsResponse extends BasePage {
         this.dataTableGoods = await Promise.all(goods);
         this.totalItems = data.count;
         this.isLoadingGood = false;
+        console.log('GOODS ', this.dataTableGoods);
       },
       error: () => {
         this.isLoadingGood = false;
@@ -203,12 +221,46 @@ export abstract class RelateDocumentsResponse extends BasePage {
     return this.notificationService.getAll(params).pipe(map(x => x.data[0]));
   }
 
+  countManagements = 0;
   getMJobManagement(wheelNumber: string | number): Observable<IMJobManagement> {
     const params = new ListParams();
-    params.page = 1;
-    params.limit = 1;
+    //params.page = 1;
+    //params.limit = 1;
     params['filter.flyerNumber'] = wheelNumber;
-    return this.mJobManagementService.getAll(params).pipe(map(x => x.data[0]));
+    params['filter.jobBy'] = 'POR DICTAMEN';
+    //return this.mJobManagementService.getAll(params).pipe(map(x => x.data[0]));
+    return this.mJobManagementService.getAll(params).pipe(
+      map(x => {
+        this.countManagements = x.count;
+        if (this.countManagements === 1) {
+          this.loadInfo(x.data[0]);
+        }
+
+        if (this.countManagements > 1) {
+          this.openDialogSelectedManagement(x);
+        }
+        return x.data[0];
+      }),
+      catchError((error, _a) => {
+        if (error.status >= 400 && error.status < 500) {
+          // return of(null);
+          throw error;
+        }
+        console.log({ error });
+        this.alert(
+          'error',
+          'Error',
+          'Error al obtener la gestión por favor recarga la página'
+        );
+        throw error;
+      })
+    );
+  }
+  updateMJobManagement(params: Partial<IMJobManagement>): Observable<any> {
+    return this.mJobManagementService.update(params).pipe(map(x => x.data));
+  }
+  createMJobManagement(params: Partial<IMJobManagement>): Observable<any> {
+    return this.mJobManagementService.create(params).pipe(map(x => x.data));
   }
 
   getJobManagement(params: ListParams): Observable<IProceduremanagement> {
@@ -661,6 +713,7 @@ export abstract class RelateDocumentsResponse extends BasePage {
       ...this.dataTableGoodsJobManagement,
       ...newRows,
     ];
+    this.formVariables.get('b').setValue('S');
   }
 
   pupAddAnyGood() {
@@ -689,6 +742,7 @@ export abstract class RelateDocumentsResponse extends BasePage {
       ...this.dataTableGoodsJobManagement,
       ...newRows,
     ];
+    this.formVariables.get('b').setValue('S');
   }
 
   dataSelectDictation = new DefaultSelect([]);
@@ -1043,9 +1097,9 @@ export abstract class RelateDocumentsResponse extends BasePage {
       .getVOficTrans(params)
       .pipe(map(x => x.data[0]));
   }
-  sendFunction_nUniversalFolio(params: Object): Observable<any> {
+  sendFunction_nUniversalFolio(managementNumber: number): Observable<any> {
     return this.dictationService
-      .nUniversalFolio(params)
+      .nUniversalFolio(managementNumber)
       .pipe(map(x => x.data[0]));
   }
   sendFunction_getActnom(managementNumber: number): Observable<any> {
@@ -1054,12 +1108,10 @@ export abstract class RelateDocumentsResponse extends BasePage {
       .pipe(map(x => x.data[0]));
   }
   sendFunction_pupValidExtDom(wheelNumber: number): Observable<any> {
-    return this.dictationService
-      .pupValidExtDom(wheelNumber)
-      .pipe(map(x => x.data));
+    return this.dictationService.pupValidExtDom(wheelNumber).pipe(map(x => x));
   }
   sendFunction_findOffficeNu(params: Object): Observable<any> {
-    return this.dictationService.findOffficeNu(params).pipe(map(x => x.data));
+    return this.dictationService.findOffficeNu(params).pipe(map(x => x));
   }
   sendFunction_updateManagerTransfer(params: Object): Observable<any> {
     return this.dictationService
@@ -1069,9 +1121,55 @@ export abstract class RelateDocumentsResponse extends BasePage {
   sendFunction_ObtainKeyOffice(params: Object): Observable<any> {
     return this.msOfficeManagementService
       .ObtainKeyOffice(params)
-      .pipe(map(x => x.data));
+      .pipe(map(x => x));
   }
   sendFunction_pufGenerateKey(params: IPufGenerateKey): Observable<any> {
-    return this.dictationService.pufGenerateKey(params).pipe(map(x => x.data));
+    return (
+      this.dictationService.pufGenerateKey(params).subscribe({
+        error: error => {
+          this.alertInfo(
+            'warning',
+            'No se puede guardar por la siguiente razón:',
+            error.error.message
+          );
+          console.log('Error', error);
+        },
+      }),
+      this.dictationService.pufGenerateKey(params).pipe(map(x => x))
+    );
+  }
+  sendFunction_pupStatusChange(params: IStatusChange): Observable<any> {
+    return this.dictationService.pupStatusChange(params).pipe(map(x => x));
+  }
+  sendFunction_createMJobManagementExtSSF3(
+    params: IMJobManagementExtSSF3
+  ): Observable<any> {
+    return this.msOfficeManagementService
+      .createMJobManagementExtSSF3(params)
+      .pipe(map(x => x));
+  }
+
+  openDialogSelectedManagement(data?: IListResponse<IMJobManagement>): any {
+    let context: Partial<DialogSelectedManagementsComponent> = {
+      queryParams: { flyerNumber: this.formJobManagement.value.flyerNumber },
+      mJobManagements: data ? data.data : [],
+      totalItems: data ? data.count : 0,
+    };
+
+    console.log({ context });
+    const modalRef = this.modalService.show(
+      DialogSelectedManagementsComponent,
+      {
+        initialState: context,
+        class: 'modal-lg modal-dialog-centered',
+        ignoreBackdropClick: true,
+      }
+    );
+    modalRef.content.onClose.pipe(take(1)).subscribe(result => {
+      console.log({ result });
+      if (result) {
+        this.loadInfo(result);
+      }
+    });
   }
 }

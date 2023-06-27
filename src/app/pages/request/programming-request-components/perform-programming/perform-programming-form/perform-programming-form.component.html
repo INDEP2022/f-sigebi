@@ -23,20 +23,46 @@
         (confirm)="reportGoodsProgramming()"></confirm-button>
 
       <button
+        *ngIf="infoTask?.State == null"
         (click)="newWarehouse()"
         class="btn btn-primary btn-sm active mr-2">
         Solicitar alta almac&eacute;n
       </button>
+
+      <button
+        *ngIf="infoTask?.State == 'FINALIZADA'"
+        (click)="newWarehouse()"
+        class="btn btn-primary disabled btn-sm active mr-2">
+        Solicitar alta almac&eacute;n
+      </button>
+
       <confirm-button
-        [disabled]="!performForm.valid"
+        *ngIf="infoTask?.State == null"
+        [disabled]="performForm.valid"
         [loading]="loading"
         [btnSmall]="true"
         class="mr-2"
         (confirm)="confirm()"></confirm-button>
 
+      <confirm-button
+        *ngIf="infoTask?.State == 'FINALIZADA'"
+        [disabled]="!performForm.valid"
+        [loading]="loading"
+        [btnSmall]="true"
+        class="mr-2 disabled"
+        (confirm)="confirm()"></confirm-button>
+
       <button
+        *ngIf="infoTask?.State == null"
         (click)="sendProgramation()"
         class="btn btn-success btn-sm active mr-2">
+        Enviar
+      </button>
+
+      <button
+        *ngIf="infoTask?.State == 'FINALIZADA'"
+        (click)="sendProgramation()"
+        class="btn btn-success disabled btn-sm active mr-2">
         Enviar
       </button>
     </div>
@@ -162,6 +188,10 @@
                 formControlName="startDate"
                 (ngModelChange)="checkInfoDate($event)"
                 [daysDisabled]="[6, 0]"
+                [bsConfig]="{
+                  rangeInputFormat: 'DD/MMMM/YYYY',
+                  dateInputFormat: 'DD/MMMM/YYYY'
+                }"
                 bsDatepicker />
             </form-field>
           </div>
@@ -176,9 +206,8 @@
                 formControlName="endDate"
                 [daysDisabled]="[6, 0]"
                 [bsConfig]="{
-                  withTimepicker: true,
-                  rangeInputFormat: 'DD/MMMM/YYYY, h:mm:ss a',
-                  dateInputFormat: 'DD/MMMM/YYYY, h:mm:ss a'
+                  rangeInputFormat: 'DD/MMMM/YYYY',
+                  dateInputFormat: 'DD/MMMM/YYYY'
                 }"
                 bsDatepicker />
             </form-field>
@@ -378,10 +407,31 @@
       <h5 class="title">Usuarios al operativo</h5>
 
       <div class="justify-content-end btn-toolbar">
-        <button (click)="listUsers()" class="btn btn-info btn-sm active">
+        <button
+          (click)="listUsers()"
+          class="btn btn-info disabled btn-sm active"
+          *ngIf="infoTask?.State == 'FINALIZADA'">
           Usuarios
         </button>
-        <button (click)="openForm()" class="btn btn-primary btn-sm active">
+
+        <button
+          (click)="listUsers()"
+          class="btn btn-info btn-sm active"
+          *ngIf="infoTask?.State == null">
+          Usuarios
+        </button>
+
+        <button
+          (click)="openForm()"
+          class="btn btn-primary disabled btn-sm active"
+          *ngIf="infoTask?.State == 'FINALIZADA'">
+          Nuevo usuario
+        </button>
+
+        <button
+          (click)="openForm()"
+          class="btn btn-primary btn-sm active"
+          *ngIf="infoTask?.State == null">
           Nuevo usuario
         </button>
       </div>
@@ -474,21 +524,48 @@
           class="btn btn-primary btn-sm active mr-2">
           Mostrar bienes
         </button>
-        <button class="btn btn-danger btn-sm active">Limpiar</button>
+        <button (click)="showClean()" class="btn btn-danger btn-sm active">
+          Limpiar <i class="fa fa-eraser"></i>
+        </button>
       </div>
 
       <div class="justify-content-start btn-toolbar pt-4">
         <app-columns-select [(settings)]="settings"></app-columns-select>
         <button
           class="btn btn-primary btn-sm active"
-          *ngIf="idTypeRelevant != 1"
+          *ngIf="idTypeRelevant != 1 && infoTask?.State == null"
           (click)="sendTransportable()">
           <i class="fa fa-plus-circle" aria-hidden="true"></i> Transportable
         </button>
-        <button class="btn btn-primary btn-sm active" (click)="sendGuard()">
+        <button
+          class="btn btn-primary disabled btn-sm active"
+          *ngIf="idTypeRelevant != 1 && infoTask?.State == 'FINALIZADA'"
+          (click)="sendTransportable()">
+          <i class="fa fa-plus-circle" aria-hidden="true"></i> Transportable
+        </button>
+        <button
+          class="btn btn-primary btn-sm active"
+          (click)="sendGuard()"
+          *ngIf="infoTask?.State == null">
           <i class="fa fa-plus-circle" aria-hidden="true"></i> Resguardo
         </button>
-        <button class="btn btn-primary btn-sm active" (click)="sendWarehouse()">
+        <button
+          class="btn btn-primary disabled btn-sm active"
+          (click)="sendGuard()"
+          *ngIf="infoTask?.State == 'FINALIZADA'">
+          <i class="fa fa-plus-circle" aria-hidden="true"></i> Resguardo
+        </button>
+        <button
+          class="btn btn-primary btn-sm active"
+          (click)="sendWarehouse()"
+          *ngIf="infoTask?.State == null">
+          <i class="fa fa-plus-circle" aria-hidden="true"></i> Almac&eacute;n
+        </button>
+
+        <button
+          class="btn btn-primary disabled btn-sm active"
+          (click)="sendWarehouse()"
+          *ngIf="infoTask?.State == 'FINALIZADA'">
           <i class="fa fa-plus-circle" aria-hidden="true"></i> Almac&eacute;n
         </button>
       </div>
@@ -552,7 +629,7 @@
                 [attr.class]="'table-bordered table-responsive'"
                 [settings]="settingWarehouseGoods"
                 [source]="goodsWarehouse"
-                (edit)="showGood($event.data)"
+                (edit)="showDomicile($event.data)"
                 (delete)="removeGoodWarehouse($event.data)">
               </ng2-smart-table>
               <app-pagination

@@ -1,21 +1,34 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { IHistoryGood } from 'src/app/core/models/administrative-processes/history-good.model';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { HistoryGoodService } from 'src/app/core/services/ms-history-good/history-good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import {
+  POSITVE_NUMBERS_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 
+import { LocalDataSource } from 'ng2-smart-table';
 import { COLUMNS, goodCheck } from './columns';
 
 @Component({
   selector: 'app-change-of-status-sti',
   templateUrl: './change-of-status-sti.component.html',
-  styles: [],
+  styleUrls: ['./change-of-status-sti.component.scss'],
 })
 export class ChangeOfStatusStiComponent extends BasePage implements OnInit {
   form: FormGroup;
@@ -38,8 +51,15 @@ export class ChangeOfStatusStiComponent extends BasePage implements OnInit {
 
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
+  limit: FormControl = new FormControl(10);
   goodSelect: any[] = [];
-  goods: IGood[] = [];
+  goods: LocalDataSource = new LocalDataSource();
+  columnFilters: any = [];
+  completeFilters: any[] = [];
+
+  //Activar y desactivar botones
+  enableToDelete = false;
+
   constructor(
     private fb: FormBuilder,
     private readonly goodServices: GoodService,
@@ -47,32 +67,49 @@ export class ChangeOfStatusStiComponent extends BasePage implements OnInit {
     private readonly historyGoodService: HistoryGoodService
   ) {
     super();
+    this.settings.hideSubHeader = false;
     this.settings.columns = COLUMNS;
     this.settings.actions = true;
   }
 
   ngOnInit(): void {
+    this.goods
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        console.log(change);
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          this.completeFilters = filters;
+          filters.map((filter: any) => {
+            let searchFilter = SearchFilter.ILIKE;
+            if (filter.search !== '') {
+              this.columnFilters[
+                filter.field
+              ] = `${searchFilter}:${filter.search}`;
+            }
+          });
+          this.searchByFilter();
+        }
+      });
+
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
-      if (this.busco) {
+      if (this.busco && this.numberFile.value != null) {
         this.listGoods();
       }
     });
+
     this.buildForm();
     this.form.disable();
     this.numberFile.enable();
     this.description.enable();
   }
 
-  /**
-   * @method: metodo para iniciar el formulario
-   * @author:  Alexander Alvarez
-   * @since: 27/09/2022
-   */
   private buildForm() {
     this.form = this.fb.group({
       numberFile: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [Validators.required, Validators.pattern(POSITVE_NUMBERS_PATTERN)],
       ],
       goodStatus: ['ROP'],
       descriptionStatus: ['Notificado en Oficialia de Partes'],
@@ -120,17 +157,18 @@ export class ChangeOfStatusStiComponent extends BasePage implements OnInit {
           next: response => {
             console.log(response);
             this.postHistoryGood(good);
+            this.form.get('description').reset();
           },
           error: error => (this.loading = false),
         });
       });
-      this.onLoadToast(
+      this.alert(
         'success',
         'Actualizado',
-        'Se ha cambiado el status de los bienes seleccionados'
+        'Se ha cambiado el Estatus de los bienes seleccionados'
       );
     } catch (error) {
-      this.onLoadToast(
+      this.alert(
         'error',
         'ERROR',
         'Ha ocurrido un error en el proceso de cambio'
@@ -138,9 +176,49 @@ export class ChangeOfStatusStiComponent extends BasePage implements OnInit {
     }
   }
 
+  clearAll() {
+    this.form.get('numberFile').reset();
+    this.form.get('description').reset();
+    this.goods.load([]);
+    this.limit = new FormControl(10);
+    this.params.next(new ListParams());
+    this.totalItems = 0;
+    this.enableToDelete = false;
+  }
+
+  searchByFilter() {
+    this.loading = true;
+    this.busco = true;
+    const paramsF = new FilterParams();
+    paramsF.addFilter('status', 'STI');
+    paramsF.addFilter('fileNumber', this.numberFile.value);
+    paramsF.page = this.params.value.page;
+    paramsF.limit = this.params.value.limit;
+    for (let data of this.completeFilters) {
+      paramsF.addFilter(
+        data.field,
+        data.search,
+        data.field != 'id' ? SearchFilter.ILIKE : SearchFilter.EQ
+      );
+    }
+
+    console.log(paramsF.getParams());
+    this.goodServices.getAllFilter(paramsF.getParams()).subscribe(
+      res => {
+        this.goods.load(res.data);
+        this.loading = false;
+      },
+      err => {
+        console.log(err);
+        this.loading = false;
+      }
+    );
+  }
+
   listGoods() {
     this.loading = true;
     this.busco = true;
+    this.form.get('description').reset();
     this.goodServices
       .getByExpedientAndStatus(
         this.numberFile.value,
@@ -156,19 +234,28 @@ export class ChangeOfStatusStiComponent extends BasePage implements OnInit {
               'Información',
               'No hay bienes con status STI'
             );
-            this.goods = [];
+            this.goods.load([]);
             this.loading = false;
             return;
           }
-          this.goods = response.data;
+          this.goods.load(response.data);
           this.totalItems = response.count;
+          this.enableToDelete = true;
           this.loading = false;
           this.currentDate.disable();
         },
         error: error => {
-          this.onLoadToast('info', 'Información', 'No existe este expediente');
+          this.alert(
+            'warning',
+            `El expediente ${this.numberFile.value} no cuenta con Bienes con estatus STI`,
+            ''
+          );
           console.log(error);
-          this.goods = [];
+          this.goods.load([]);
+          this.numberFile.reset();
+          this.limit = new FormControl(10);
+          this.params.next(new ListParams());
+          this.totalItems = 0;
           this.loading = false;
         },
       });
@@ -193,5 +280,23 @@ export class ChangeOfStatusStiComponent extends BasePage implements OnInit {
         this.loading = false;
       },
     });
+  }
+
+  deleteExpedient() {
+    this.goodServices.getByExpedient(this.numberFile.value).subscribe(
+      res => {
+        if (res.count > 0) {
+          this.alert(
+            'warning',
+            'No es posible suprimir el registro principal al existir registros detallados asociados',
+            ''
+          );
+        } else {
+        }
+      },
+      err => {
+        console.log(err);
+      }
+    );
   }
 }

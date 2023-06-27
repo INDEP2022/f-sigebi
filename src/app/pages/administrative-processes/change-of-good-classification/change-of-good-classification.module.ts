@@ -11,6 +11,7 @@ import { ModalModule } from 'ngx-bootstrap/modal';
 import { TabsModule } from 'ngx-bootstrap/tabs';
 
 //Components
+import { FormLoaderComponent } from 'src/app/@standalone/form-loader/form-loader.component';
 import { AccountBanksSharedComponent } from 'src/app/@standalone/shared-forms/account-banks-shared/account-banks-shared.component';
 import { BanksSharedComponent } from 'src/app/@standalone/shared-forms/banks-shared/banks-shared.component';
 import { ClassificationOfGoodsSharedComponent } from 'src/app/@standalone/shared-forms/classification-of-goods-shared/classification-of-goods-shared.component';
@@ -18,14 +19,20 @@ import { GoodsStatusSharedComponent } from 'src/app/@standalone/shared-forms/goo
 import { GoodsTypesSharedComponent } from 'src/app/@standalone/shared-forms/goods-types-shared/goods-types-shared.component';
 import { ProcessesSharedComponent } from 'src/app/@standalone/shared-forms/processes-shared/packages-shared.component';
 import { UsersSharedComponent } from 'src/app/@standalone/shared-forms/user-shared/user-shared.component';
+import { GoodsCharacteristicsModule } from '../../general-processes/goods-characteristics/goods-characteristics.module';
 import { ChangeOfGoodClassificationRoutingModule } from './change-of-good-classification-routing.module';
 import { ChangeOfGoodClassificationComponent } from './change-of-good-classification/change-of-good-classification.component';
+import { CharacteristicGoodCellComponent } from './change-of-good-classification/characteristicGoodCell/characteristic-good-cell.component';
 
 @NgModule({
-  declarations: [ChangeOfGoodClassificationComponent],
+  declarations: [
+    ChangeOfGoodClassificationComponent,
+    CharacteristicGoodCellComponent,
+  ],
   imports: [
     CommonModule,
     SharedModule,
+    FormLoaderComponent,
     Ng2SmartTableModule,
     ChangeOfGoodClassificationRoutingModule,
     FormsModule,
@@ -42,6 +49,7 @@ import { ChangeOfGoodClassificationComponent } from './change-of-good-classifica
     ClassificationOfGoodsSharedComponent,
     BanksSharedComponent,
     AccountBanksSharedComponent,
+    GoodsCharacteristicsModule,
   ],
 })
 export class ChangeOfStatusModule {}

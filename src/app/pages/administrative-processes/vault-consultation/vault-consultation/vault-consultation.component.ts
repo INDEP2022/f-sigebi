@@ -1,30 +1,18 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
+import {
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { ISafe } from 'src/app/core/models/catalogs/safe.model';
 import { SafeService } from 'src/app/core/services/catalogs/safe.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { ModalListGoodsComponent } from '../modal-list-goods/modal-list-goods.component';
-
-export interface ExampleVault {
-  number: number;
-  description: string;
-  location: string;
-  responsible: string;
-  entity: string;
-  municipality: string;
-  city: string;
-  locality: string;
-  goods?: ExapleGoods[];
-}
-
-export interface ExapleGoods {
-  numberGood: number;
-  description: string;
-  quantity: number;
-  dossier: string;
-}
+import { COUNT_SAFE_COLUMNS } from './vault-consultation-column';
 
 @Component({
   selector: 'app-vault-consultation',
@@ -33,111 +21,98 @@ export interface ExapleGoods {
 })
 export class VaultConsultationComponent extends BasePage implements OnInit {
   totalItems: number = 0;
-  params = new BehaviorSubject<ListParams>(new ListParams());
+  form: FormGroup;
+  idSelected: number = 0;
   vaults: ISafe[] = [];
-  //Data Table
-
+  columnFilters: any = [];
+  vault: ISafe;
+  params = new BehaviorSubject<ListParams>(new ListParams());
+  dataFactGen: LocalDataSource = new LocalDataSource();
+  @ViewChild('idSafe') idSafe: ElementRef;
   constructor(
+    private fb: FormBuilder,
     private modalService: BsModalService,
     private safeService: SafeService
   ) {
     super();
     this.settings = {
       ...this.settings,
-      actions: false,
-      columns: {
-        idSafe: {
-          title: 'No',
-          width: '10%',
-          sort: false,
-        },
-        description: {
-          title: 'Descripcion',
-          width: '20%',
-          sort: false,
-        },
-        ubication: {
-          title: 'Ubicacion',
-          width: '10%',
-          sort: false,
-        },
-        manager: {
-          title: 'Responsable',
-          width: '10%',
-          sort: false,
-        },
-        stateCode: {
-          title: 'Entidad',
-          width: '10%',
-          sort: false,
-        },
-        municipalityCode: {
-          title: 'Municipio',
-          width: '10%',
-          sort: false,
-        },
-        cityCode: {
-          title: 'Ciudad',
-          width: '10%',
-          sort: false,
-        },
-        localityCode: {
-          title: 'Localidad',
-          width: '10%',
-          sort: false,
-        },
+      hideSubHeader: false,
+      actions: {
+        edit: false,
+        delete: false,
+        add: false,
+        position: 'right',
       },
+      columns: { ...COUNT_SAFE_COLUMNS },
+      noDataMessage: 'No se encontrarón registros',
     };
   }
-
   ngOnInit(): void {
+    this.dataFactGen
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = ``;
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+            filter.field == 'idSafe' ||
+            filter.field == 'description' ||
+            filter.field == 'ubication' ||
+            filter.field == 'manager' ||
+            filter.field == 'stateCode' ||
+            filter.field == 'municipalityCode' ||
+            filter.field == 'cityCode' ||
+            filter.field == ' localityCode'
+              ? (searchFilter = SearchFilter.EQ)
+              : (searchFilter = SearchFilter.ILIKE);
+            if (filter.search !== '') {
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.params = this.pageFilter(this.params);
+          this.search();
+        }
+      });
     this.params
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getVaults());
+      .subscribe(() => this.search());
   }
 
-  getVaults() {
+  openForm(provider?: ISafe) {
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      provider,
+    };
+    this.modalService.show(ModalListGoodsComponent, modalConfig);
+  }
+
+  search() {
     this.loading = true;
-    this.params.getValue()['filter.description'] = `$ilike:${
-      this.params.getValue().text
-    }`;
-    this.safeService.getAll(this.params.getValue()).subscribe({
-      next: response => {
-        console.log(response);
-        this.vaults = response.data.map(vault => {
-          return {
-            idSafe: vault.idSafe,
-            description: vault.description,
-            localityCode: vault.localityDetail.nameLocation,
-            cityCode: vault.cityDetail.nameCity,
-            municipalityCode: vault.municipalityDetail.nameMunicipality,
-            registerNumber: vault.registerNumber,
-            responsibleDelegation: vault.manager,
-            stateCode: vault.stateDetail.descCondition,
-            ubication: vault.ubication,
-            cityDetail: null,
-            manager: vault.manager,
-          };
-        });
-        this.totalItems = response.count;
+    let params = {
+      ...this.params.getValue(),
+      ...this.columnFilters,
+    };
+    this.safeService.getAll(params).subscribe({
+      next: (data: any) => {
+        this.totalItems = data.count;
+        this.vaults = data.data;
+        this.dataFactGen.load(data.data);
+        this.dataFactGen.refresh();
         this.loading = false;
       },
-      error: error => (this.loading = false),
     });
   }
-
   select(event: any) {
-    console.log(event.data.idSafe);
+    this.idSafe = event.data.idSafe;
+    console.log(this.idSafe);
     event.data
-      ? this.openModal(event.data.idSafe)
+      ? this.openForm(event.data)
       : this.alert('info', 'Ooop...', 'Esta Bóveda no contiene Bines');
-  }
-
-  openModal(data: any): void {
-    this.modalService.show(ModalListGoodsComponent, {
-      initialState: data,
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
-    });
   }
 }

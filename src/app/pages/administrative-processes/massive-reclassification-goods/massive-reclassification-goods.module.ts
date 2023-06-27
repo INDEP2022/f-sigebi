@@ -13,11 +13,12 @@ import { TabsModule } from 'ngx-bootstrap/tabs';
 //Components
 import { ClassificationOfGoodsSharedComponent } from 'src/app/@standalone/shared-forms/classification-of-goods-shared/classification-of-goods-shared.component';
 import { GoodsStatusSharedComponent } from 'src/app/@standalone/shared-forms/goods-status-shared/goods-status-shared.component';
+import { GoodsListComponent } from './goods-list/goods-list.component';
 import { MassiveReclassificationGoodsRoutingModule } from './massive-reclassification-goods-routing.module';
 import { MassiveReclassificationGoodsComponent } from './massive-reclassification-goods/massive-reclassification-goods.component';
 
 @NgModule({
-  declarations: [MassiveReclassificationGoodsComponent],
+  declarations: [MassiveReclassificationGoodsComponent, GoodsListComponent],
   imports: [
     CommonModule,
     SharedModule,

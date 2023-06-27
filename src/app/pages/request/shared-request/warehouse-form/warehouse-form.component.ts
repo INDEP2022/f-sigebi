@@ -17,6 +17,7 @@ import { IStateOfRepublic } from 'src/app/core/models/catalogs/state-of-republic
 import { ITypeWarehouse } from 'src/app/core/models/catalogs/type-warehouse.model';
 import { IZipCodeGoodQuery } from 'src/app/core/models/catalogs/zip-code.model';
 import { ICatThirdView } from 'src/app/core/models/ms-goods-inv/goods-inv.model';
+import { ITask } from 'src/app/core/models/ms-task/task-model';
 import { IUserProcess } from 'src/app/core/models/ms-user-process/user-process.model';
 import { IUserTurn } from 'src/app/core/models/user-turn/user-turn.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
@@ -61,6 +62,7 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
   showLocality: boolean = false;
   showZipCode: boolean = false;
   programmingId: number = 0;
+  task: ITask;
   constructor(
     private modalService: BsModalService,
     private fb: FormBuilder,
@@ -143,7 +145,11 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
       nbzipcode: [null],
       nbstreet: [
         null,
-        [Validators.maxLength(200), Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.maxLength(200),
+          Validators.pattern(STRING_PATTERN),
+          Validators.required,
+        ],
       ],
       nbnoexternal: [
         null,
@@ -197,6 +203,7 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
   }
 
   async createTaskWarehouse(idWarehouse: number) {
+    const _task = JSON.parse(localStorage.getItem('Task'));
     const user: any = this.authService.decodeToken();
     let body: any = {};
     body['type'] = 'SOLICITUD_PROGRAMACION';
@@ -216,16 +223,59 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
     task['idDelegationRegional'] = this.regDelData.id;
     task['urlNb'] = 'pages/request/programming-request/warehouse';
     task['processName'] = 'SolicitudProgramacion';
+    task['taskDefinitionId'] = _task.id;
     body['task'] = task;
     const taskResult = await this.createTaskOrderService(body);
     if (taskResult) {
-      this.msgGuardado(
-        'success',
-        'Creación de tarea exitosa',
-        `Solicitud de alta de almacén con folio: ${this.programmingId}`
-      );
-      this.close();
+      const closeTaskPerformProg = await this.closeTaskPerform();
+      if (closeTaskPerformProg) {
+        this.msgGuardado(
+          'success',
+          'Creación de tarea exitosa',
+          `Solicitud de alta de almacén con folio: ${this.programmingId}`
+        );
+        this.close();
+      }
     }
+  }
+
+  closeTaskPerform() {
+    return new Promise((resolve, reject) => {
+      this.task = JSON.parse(localStorage.getItem('Task'));
+      const params = new BehaviorSubject<ListParams>(new ListParams());
+      params.getValue()['filter.id'] = this.task.id;
+      this.taskService.getAll(params.getValue()).subscribe({
+        next: async response => {
+          console.log('task', response);
+          const updateStatusTMP = await this.updateTask(response.data[0]);
+          if (updateStatusTMP == true) {
+            resolve(true);
+          } else {
+            resolve(false);
+          }
+        },
+        error: error => {},
+      });
+    });
+  }
+
+  updateTask(task: ITask) {
+    return new Promise((resolve, reject) => {
+      const taskForm: ITask = {
+        State: 'FINALIZADA',
+        taskDefinitionId: task.id,
+      };
+      this.taskService.update(task.id, taskForm).subscribe({
+        next: () => {
+          console.log('tarea actualizada');
+          resolve(true);
+        },
+        error: error => {
+          console.log('tarea error', error);
+          resolve(false);
+        },
+      });
+    });
   }
 
   createTaskOrderService(body: any) {

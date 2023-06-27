@@ -1,5 +1,6 @@
 import {
   Component,
+  inject,
   Input,
   OnChanges,
   OnInit,
@@ -8,27 +9,88 @@ import {
 import { FormBuilder, Validators } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
+import { IGood } from 'src/app/core/models/ms-good/good';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { BasePage } from 'src/app/core/shared';
+import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { getClassColour } from 'src/app/pages/general-processes/goods-characteristics/goods-characteristics/good-table-vals/good-table-vals.component';
+import { CharacteristicGoodCellComponent } from '../../change-of-good-classification/change-of-good-classification/characteristicGoodCell/characteristic-good-cell.component';
+import { ChangeOfGoodCharacteristicService } from '../../change-of-good-classification/services/change-of-good-classification.service';
 import { ModelForm } from './../../../../core/interfaces/model-form';
+import { ATRIBUT_ACT_COLUMNS } from './columns';
+//import { ChangeOfGoodCharacteristicService } from './services/change-of-good-classification.service';
 
 @Component({
   selector: 'app-general-data-goods',
   templateUrl: './general-data-goods.component.html',
   styles: [],
 })
-export class GeneralDataGoodsComponent implements OnInit, OnChanges {
+export class GeneralDataGoodsComponent
+  extends BasePage
+  implements OnInit, OnChanges
+{
   @Input() goodId: number;
   generalDataForm: ModelForm<any>;
   params = new BehaviorSubject<FilterParams>(new FilterParams());
   list: { atributo: string; valor: string }[] = [];
+  good: IGood = {};
+  data: any = {};
+  classificationOfGoods: number;
+  atributNewSettings: any;
+  atributActSettings: any;
+  goodChange: number = 0;
+  service = inject(ChangeOfGoodCharacteristicService);
+  viewAct: boolean = false;
 
+  get dataAtribute() {
+    return this.service.data;
+  }
   constructor(
     private fb: FormBuilder,
     private readonly goodService: GoodService,
     private readonly goodQueryService: GoodsQueryService
-  ) {}
+  ) {
+    super();
+    this.atributActSettings = {
+      ...this.settings,
+      actions: null,
+      hideSubHeader: false,
+      columns: { ...ATRIBUT_ACT_COLUMNS },
+    };
+    this.atributNewSettings = {
+      ...this.settings,
+      hideSubHeader: false,
+      actions: {
+        columnTitle: '',
+        position: 'right',
+        add: false,
+        edit: true,
+        delete: false,
+      },
+      edit: {
+        editButtonContent: '<span class="fa fa-eye text-success mx-2"></span>',
+      },
+      columns: {
+        ...ATRIBUT_ACT_COLUMNS,
+        value: {
+          ...ATRIBUT_ACT_COLUMNS.value,
+          type: 'custom',
+          valuePrepareFunction: (cell: any, row: any) => {
+            return { value: row, good: this.good };
+          },
+          renderComponent: CharacteristicGoodCellComponent,
+        },
+      },
+      rowClassFunction: (row: any) => {
+        return (
+          getClassColour(row.data, false) +
+          ' ' +
+          (row.data.tableCd ? '' : 'notTableCd')
+        );
+      },
+    };
+  }
   ngOnChanges(changes: SimpleChanges): void {
     if (changes) {
       this.getGood();
@@ -38,57 +100,95 @@ export class GeneralDataGoodsComponent implements OnInit, OnChanges {
   ngOnInit(): void {
     this.prepareForm();
   }
+  updateGood() {
+    console.log('Actualizando');
+    ////// aqui le seteo los valores
+    let body: any = {};
+    this.dataAtribute.forEach((row: any) => {
+      console.log(row.value);
+      body[row.column] = row.value;
+    });
+    body['quantitySae'] = this.generalDataForm.get('cantidad').value;
+    body['judicialDate'] = this.generalDataForm.get('fechaFe').value;
+    body['observations'] = this.generalDataForm.get('observacion').value;
+    body['description'] = this.generalDataForm.get('descripcion').value;
+    body['id'] = Number(this.good.id);
+    body['goodId'] = Number(this.good.id);
+    console.log(body);
+    this.goodService.update(body).subscribe({
+      next: resp => {
+        this.alert('success', 'Datos del bien actualizados', '');
+        this.viewAct = true;
+      },
+      error: err => {
+        this.alert('error', 'Error al actualizar el bien', '');
+      },
+    });
+  }
   private getGood() {
     this.goodService.getById(this.goodId).subscribe({
-      next: (val: any) => {
-        this.generalDataForm.get('cantidad').patchValue(val.quantitySae);
-        this.generalDataForm.get('fechaFe').patchValue(val.judicialDate);
-        this.generalDataForm.get('observacion').patchValue(val.observations);
-        this.generalDataForm.get('descripcion').patchValue(val.description);
-        let data: any = {};
-        for (let i = 1; i <= 120; i++) {
-          data[`val${i}`] = '';
-        }
-        for (const i in val) {
-          for (const j in data) {
-            if (j == i) {
-              data[j] = val[i];
-            }
-          }
-        }
-        let dataParam = this.params.getValue();
-        dataParam.limit = 120;
-        dataParam.addFilter('classifGoodNumber', val.goodClassNumber);
-        this.goodQueryService.getAllFilter(dataParam.getParams()).subscribe({
-          next: val => {
-            let ordered = val.data.sort(
-              (a, b) => a.columnNumber - b.columnNumber
-            );
-            ordered.forEach((order, index) => {
-              if (order) {
-                this.list.push({
-                  atributo: order.attribute,
-                  valor: data[`val${index + 1}`],
-                });
-              }
-            });
-          },
-        });
+      next: (response: any) => {
+        this.classificationOfGoods = Number(response.data[0].goodClassNumber);
+        this.good = response.data[0];
+        this.generalDataForm.get('cantidad').patchValue(this.good.quantitySae);
+        this.generalDataForm
+          .get('fechaFe')
+          .patchValue(
+            this.good.judicialDate === undefined ? null : this.good.judicialDate
+          );
+        this.generalDataForm
+          .get('observacion')
+          .patchValue(this.good.observations);
+        this.generalDataForm
+          .get('descripcion')
+          .patchValue(this.good.description);
+        setTimeout(() => {
+          this.goodChange++;
+        }, 100);
       },
     });
   }
   private prepareForm() {
     this.generalDataForm = this.fb.group({
-      descripcion: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      cantidad: [null, [Validators.required]],
-      fechaFe: [null, [Validators.required]],
-      observacion: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
+      descripcion: [null, [Validators.pattern(STRING_PATTERN)]],
+      cantidad: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      fechaFe: [null],
+      observacion: [null, [Validators.pattern(STRING_PATTERN)]],
     });
   }
+  update() {
+    this.viewAct = !this.viewAct;
+    setTimeout(() => {
+      this.goodChange++;
+    }, 100);
+  }
 }
+
+/* for (let i = 1; i <= 120; i++) {
+  this.data[`val${i}`] = '';
+}
+for (const i in val) {
+  for (const j in this.data) {
+    if (j == i) {
+      this.data[j] = val[i];
+    }
+  }
+}
+let dataParam = this.params.getValue();
+dataParam.limit = 120;
+dataParam.addFilter('classifGoodNumber', this.good.goodClassNumber);
+this.goodQueryService.getAllFilter(dataParam.getParams()).subscribe({
+  next: val => {
+    let ordered = val.data.sort(
+      (a, b) => a.columnNumber - b.columnNumber
+    );
+    ordered.forEach((order, index) => {
+      if (order) {
+        this.list.push({
+          atributo: order.attribute,
+          valor: this.data[`val${index + 1}`] ?? '',
+        });
+      }
+    });
+  },
+}); */

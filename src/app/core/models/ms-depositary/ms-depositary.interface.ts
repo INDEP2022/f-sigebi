@@ -1,3 +1,4 @@
+import { IPerson } from '../catalogs/person.model';
 import { IGood } from '../good/good.model';
 import { ISegUsers } from '../ms-users/seg-users-model';
 
@@ -22,7 +23,6 @@ export interface IAppointmentDepositary {
   feeAmount: string;
   provisionalOfficialNumber: string;
   annexed: string;
-
   governmentMeetingOfficialDate: string;
   governmentMeetingOfficialNumber: string;
   shippingDateGeneralAddress: string;
@@ -43,38 +43,7 @@ export interface IAppointmentDepositary {
   amountIVA: string;
   universalFolio: string;
   folioReturn: string;
-  personNumber: {
-    id: string;
-    nom_persona: string;
-    nombre: string;
-    calle: string;
-    no_exterior: string;
-    no_interior: string;
-    colonia: string;
-    deleg_munic: string;
-    codigo_postal: string;
-    rfc: string;
-    curp: string;
-    telefono: string;
-    tipo_persona: string;
-    tipo_responsable: string;
-    representante: string;
-    no_escritura: string;
-    profesion: string;
-    curriculum: string;
-    cve_entfed: string;
-    cve_giro: string;
-    observaciones: string;
-    perfil: string;
-    antecedentes_secodam: string;
-    antecedentes_pgr: string;
-    antecedentes_pff: string;
-    antecedentes_sera: string;
-    antecedentes_otros: string;
-    no_registro: string;
-    email: string;
-    lista_negra: string;
-  };
+  personNumber: IPerson;
   reference: string;
   iva: string;
   withKitchenware: string;
@@ -111,4 +80,80 @@ export interface IPersonsModDepositary {
 export interface IPaymendtDepParamsDep {
   name: number;
   address: string;
+}
+
+export interface IDepositaryAppointments {
+  appointmentNum: string | number;
+  nameProvDete: string | number;
+  revocationDate: Date;
+  revocation: string;
+  contractKey: string;
+  startContractDate: Date;
+  endContractDate: Date;
+  amount: number | string;
+  nameTypeKey: string;
+  administratorTypeKey: string;
+  assignmentDate: Date;
+  appointmentDate: Date;
+  cardAppointmentId: number;
+  typeDepositary: string;
+  observations: string;
+  jobRevocationNum: string;
+  amountConsideration: string;
+  amountFee: string;
+  jobProvisionalNum: number;
+  exhibit: string;
+  jobBoardgovtDate: Date;
+  jobBoardgovtNum: number;
+  shipmentDirgralDate: Date;
+  replyDirgralDate: Date;
+  jobShiftNum: number;
+  shiftDate: Date;
+  returnDate: Date;
+  jobReplyNum: number;
+  agreementAppointment: string;
+  cardAppointmentIdBoardgovt: string;
+  jobAnswerDirgralNum: number | string;
+  authorityorderAssignment: string;
+  responsible: string;
+  representativeSera: string;
+  goodNum: string | number;
+  registryNum: string | number;
+  validity: string;
+  amountVat: string;
+  folioUniversal: string;
+  folioReturn: string;
+  personNum: string | number;
+  reference: string;
+  vat: string;
+  withHousehold: string;
+  nbOrigin: string;
+}
+
+export interface IDepositaryPaymentDet {
+  appointmentNum: number;
+  datePay: Date;
+  conceptPayKey: number;
+  amount: number;
+  observation: string;
+  registryNum: number;
+  nbOrigin: string;
+}
+
+export interface IDepositaryDetrepo {
+  appointmentNum: number;
+  dateRepo: Date;
+  reportKey: number;
+  report: string;
+  registryNum: number;
+  nbOrigin: string;
+}
+
+export interface IInfoDepositary {
+  reportDate: Date | string;
+  report: string;
+  personNum: string;
+  goodNum?: string | number;
+  registryNum?: number;
+  nbOrigin?: null;
 }

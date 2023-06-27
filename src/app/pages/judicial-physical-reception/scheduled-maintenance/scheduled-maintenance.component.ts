@@ -29,6 +29,7 @@ export class ScheduledMaintenanceComponent
   flagDownload = false;
   paramsIndicators = new BehaviorSubject<ListParams>(new ListParams());
   path: string;
+
   // data2: any[] = [];
   constructor(
     protected override fb: FormBuilder,
@@ -64,12 +65,12 @@ export class ScheduledMaintenanceComponent
         addButtonContent: 'Capturar',
       },
     };
-    this.tiposEvento = [
-      {
-        id: 'EVENTREC',
-        description: 'RECEPCIÓN FÍSICA',
-      },
-    ];
+    // this.tiposEvento = [
+    //   {
+    //     id: 'EVENTREC',
+    //     description: 'RECEPCIÓN FÍSICA',
+    //   },
+    // ];
     // this.params.pipe(takeUntil(this.$unSubscribe)).subscribe({
     //   next: response => {
     //     console.log(response);
@@ -103,8 +104,15 @@ export class ScheduledMaintenanceComponent
     // }
   }
 
+  get typeEvents1() {
+    return this.typeEvents
+      ? window.location.href.includes('judicial-physical-reception')
+        ? this.typeEvents.filter(x => !x.descripcion.includes('ENTREGA'))
+        : this.typeEvents.filter(x => x.area_tramite !== 'RF')
+      : [];
+  }
+
   override extraOperations() {
-    console.log(window.location);
     if (window.location.href.includes('judicial-physical-reception')) {
       this.path =
         'proceeding/api/v1/proceedings-delivery-reception/get-types?filter.id=EVENTREC';

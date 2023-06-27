@@ -9,4 +9,6 @@ export enum HistoryGoodEndpoints {
   GetEstPreviousHistory = 'application/get-est-previous-historical',
   GetEstPreviousHistory2 = 'application/get-est-previous-historical-2',
   ValidateDatesToUpdateStatus = 'application/delete-office',
+  GetProcessExtDom = 'historical/getProcessExtDom',
+  UpdateGoodStatusWhenDelete = 'application/loop-delete-office',
 }

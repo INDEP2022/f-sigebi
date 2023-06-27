@@ -5,7 +5,9 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IClarificationDocumentsImpro } from '../../models/ms-documents/clarification-documents-impro-model';
+import { SeparatorsDocuments } from '../../models/ms-documents/document-separators';
 import { IDocuments } from '../../models/ms-documents/documents';
+import { TypesDocuments } from '../../models/ms-documents/documents-type';
 import { IReceipyGuardDocument } from '../../models/receipt/receipt.model';
 
 @Injectable({
@@ -17,6 +19,15 @@ export class DocumentsService extends HttpService {
     this.microservice = DocumentsEndpoints.Documents;
   }
 
+  //http://sigebimsqa.indep.gob.mx/documents/api/v1/documents --> Trae todas las imágenes
+  //http://sigebimsqa.indep.gob.mx/documents/api/v1/documents?filter.scanStatus=$eq:ESCANEADO --> Para buacar por 'scanStatus'
+  //http://sigebimsqa.indep.gob.mx/documents/api/v1/documents?filter.numberProceedings=$eq:33785 --> Búsqueda por No Expediente
+  //http://sigebimsqa.indep.gob.mx/documents/api/v1/documents?filter.flyerNumber=$eq:467963 --> Búsqueda por No Volante
+  //http://sigebimsqa.indep.gob.mx/documents/api/v1/documents?filter.significantDate=$eq:04/2023 --> Búsqueda por Fecha significativa
+  //http://sigebimsqa.indep.gob.mx/documents/api/v1/documents?filter.descriptionDocument=$eq:PRUEBA RAFAEL 2 --> Búsqueda por Descripción del documento
+  //http://sigebimsqa.indep.gob.mx/documents/api/v1/documents?filter.criminalCase=$eq:49/2002 --> Búsqueda por Causa penal
+  //http://sigebimsqa.indep.gob.mx/documents/api/v1/documents?filter.preliminaryInquiry=$eq:PGR/UEDO/134/2002 --> Búsqueda por Averiguación previa
+  //http://sigebimsqa.indep.gob.mx/documents/api/v1/documents?filter.keyTypeDocument=$eq:CARGA --> Búsqueda por Tipo de documento
   getAll(params?: ListParams | string): Observable<IListResponse<IDocuments>> {
     return this.get<IListResponse<IDocuments>>(
       DocumentsEndpoints.Documents,
@@ -34,6 +45,10 @@ export class DocumentsService extends HttpService {
   getById(id: string | number) {
     const route = `${DocumentsEndpoints.Documents}/${id}`;
     return this.get<IDocuments>(route);
+  }
+  getCount1(id: string | number) {
+    const route = `${DocumentsEndpoints.Count1}/${id}`;
+    return this.get<any>(route);
   }
 
   getByFolio(folio: string | number) {
@@ -186,4 +201,25 @@ export class DocumentsService extends HttpService {
   //   const route = `clarification-documents-impro/${id}`;
   //   return this.post<Inappropriateness>(route, data);
   // }
+
+  getDocumentsByGood2(
+    id: string | number,
+    typeDict: any,
+    params?: ListParams | string
+  ) {
+    const route = `${DocumentsEndpoints.DocumentsDictuXStateM}?filter.stateNumber=${id}&filter.typeDictum=${typeDict}`;
+    return this.get(route, params);
+  }
+
+  //http://sigebimsqa.indep.gob.mx/documents/api/v1/documents-types --> Arroja el listado de Tipos de documento, toma el valor y lo busca como "id"
+  getDocumentsType($params?: any): Observable<IListResponse<TypesDocuments>> {
+    const route = `/${DocumentsEndpoints.DocumentsType}`;
+    return this.get(route, $params);
+  }
+
+  //http://sigebimsqa.indep.gob.mx/documents/api/v1/document-separator  --> description
+  getDocumentsSeparator(): Observable<IListResponse<SeparatorsDocuments>> {
+    const route = `/${DocumentsEndpoints.DocumentsSeparator}`;
+    return this.get(route);
+  }
 }

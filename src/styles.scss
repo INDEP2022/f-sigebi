@@ -42,6 +42,12 @@
   pointer-events: none;
 }
 
+.btn-red {
+  color: #fff !important;
+  background-color: #cb4335 !important;
+  border-color: #cb4335 !important;
+}
+
 * {
   font-size: 14px;
 }
@@ -242,11 +248,13 @@ i {
 
 table:not(.normal-hover) tbody tr.selected {
   background: #f0e4d1 !important;
+  color: black !important;
 }
 
 table:not(.normal-hover) tbody tr:hover {
   background: #f0e4d1 !important;
   cursor: pointer;
+  color: black !important;
 }
 
 .mh-80 {
@@ -560,4 +568,62 @@ ng-scrollbar.table-scrollbar {
   color: black !important;
   font-weight: bold;
   // background: default !important;
+}
+
+// #idTableTestBody table thead {
+//   // display: none;
+//   visibility: hidden;
+//   height: 0;
+//   padding: 0;
+// }
+
+// #idTableTestHead table tbody {
+//   display: none;
+// }
+
+// #idTableTestBody table tbody tr td {
+//   width: 33% !important;
+// }
+
+// #idTableTestBody2 table tbody tr td {
+//   width: 33.5% !important;
+// }
+
+#custom-table-table-cursor table tbody tr td {
+  cursor: default !important;
+  background-color: #fff;
+}
+
+.bg-yellow-to-good {
+  background-color: #e2c103 !important;
+  color: black;
+  font-weight: 900;
+  padding: 0.3rem;
+}
+
+#fichas table:not(.normal-hover) tbody tr.selected {
+  color: black !important;
+  // font-weight: 600;
+  // #28a745
+  background: rgb(219, 219, 219) !important;
+}
+
+#fichas table:not(.normal-hover) tbody tr:hover {
+  color: black !important;
+  // font-weight: 600;
+  background: rgb(219, 219, 219) !important;
+}
+
+.text-no-approved {
+  font-weight: 400;
+  color: crimson !important;
+}
+
+.text-approved {
+  font-weight: 400;
+  color: #1e7e34 !important;
+}
+
+custom-view-component {
+  color: black;
 }

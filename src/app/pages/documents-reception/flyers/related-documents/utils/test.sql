@@ -1,113 +1,63 @@
-DECLARE
-	SIGLA   			VARCHAR2(30);
-	ANIO    			VARCHAR2(4);
-  AR_REMITENTE	VARCHAR2(30);
-  OFICIO  			NUMBER;
-	DATO 					VARCHAR2(1);
---CONTADOR NUMBER;
-	CONTA 				NUMBER;
-	contador 			NUMBER;
-	
+PROCEDURE PUP_PREVIEW_DATOS_CSV IS
+   CONNECTION_ID       EXEC_SQL.CONNTYPE;
+   BISCONNECTED        BOOLEAN;
+   CURSORID            EXEC_SQL.CURSTYPE;
+   LS_SQLSTR           VARCHAR2(2000);
+   NIGN                PLS_INTEGER;
+   LFIARCHIVO          TEXT_IO.FILE_TYPE;
+   LST_ARCHIVO_DESTINO VARCHAR2(4000);
+   LST_CADENA          VARCHAR2(4000);
+   V_NO_BIEN           VARCHAR2(255);
+   V_NO_EXPEDIENTE     VARCHAR2(255);
+   VN_REGISTRO         NUMBER;
+   V_VALID_BIEN        NUMBER;
+   V_VALID_EXP         NUMBER;
+   V_CONT              NUMBER;
 BEGIN
-	go_block('DOCUM_OFICIO_GESTION');
-	Clear_Block(No_Validate);
-
-	IF :VARIABLES.DICTAMINACION IS NULL THEN 
-		 	LIP_MENSAJE('Especifique el tipo de Dictaminación','S');
-   		RAISE Form_Trigger_Failure;
-	END IF;
-
-	IF :VARIABLES.B = 'S' THEN
-	   IF :CVE_OF_GESTION IS NULL THEN 
-	 	   SELECT SEQ_OF_GESTION.nextval
-         INTO :M_OFICIO_GESTION.NO_OF_GESTION
-         FROM dual;
-         -- LIP_COMMIT_SILENCIOSO;
-      
-         IF :SE_REFIERE_A = 'Se refiere a todos los bienes' THEN 
-            PUP_AGREGA_BIENES;  
-            LIP_COMMIT_SILENCIOSO;        
+   LST_ARCHIVO_DESTINO := 'c:\IMTMPSIAB\'||:GLOBAL.VG_DIRUSR||'\CAREXPDESAHOGO.CSV';
+   GO_BLOCK('TMP_ERRORES');
+   CLEAR_BLOCK(NO_COMMIT);
+   DELETE FROM TMP_ERRORES WHERE ID_PROCESO = 12345;
+   GO_BLOCK('TMP_EXP_DESAHOGO');
+   CLEAR_BLOCK(NO_COMMIT);
+   DELETE FROM TMP_EXP_DESAHOGOB;
+   LIP_COMMIT_SILENCIOSO;
+   BEGIN
+      LFIARCHIVO := TEXT_IO.FOPEN(LST_ARCHIVO_DESTINO, 'r');
+      V_CONT := 0;
+      LOOP
+         TEXT_IO.GET_LINE(LFIARCHIVO, LST_CADENA);
+         V_CONT := V_CONT+1;
+         V_NO_BIEN := GETWORDCSV( LST_CADENA , 1);
+         V_NO_EXPEDIENTE := GETWORDCSV( LST_CADENA , 2);
+         V_VALID_BIEN := ISNUMBER (V_NO_BIEN);
+         V_VALID_EXP := ISNUMBER (V_NO_EXPEDIENTE);
+         IF V_VALID_BIEN = 1 AND V_VALID_EXP = 1 THEN
+            GO_BLOCK('TMP_EXP_DESAHOGO');
+            IF :TMP_EXP_DESAHOGO.NO_BIEN IS NOT NULL THEN
+               CREATE_RECORD;
+            END IF;
+            :TMP_EXP_DESAHOGO.NO_BIEN := TO_NUMBER(V_NO_BIEN,'999999999.99');
+            :TMP_EXP_DESAHOGO.NO_EXPEDIENTE := TO_NUMBER(V_NO_EXPEDIENTE,'999999999.99');
+         ELSE
+            GO_BLOCK('TMP_ERRORES');
+            IF :TMP_ERRORES.ID_PROCESO IS NOT NULL THEN
+               CREATE_RECORD;
+            END IF;
+            :TMP_ERRORES.ID_PROCESO := 12345;
+            :TMP_ERRORES.DESCRIPCION := 'REGISTRO: '||TO_CHAR(V_CONT)||',CONTENIDO: '||SUBSTR(LST_CADENA,1,1000);
          END IF;
-
-         IF :SE_REFIERE_A = 'Se refiere a algun (os) bien (es) del expediente' THEN
-   	        PUP_AGREGA_ALGUNOS_BIENES;
-   	        LIP_COMMIT_SILENCIOSO;
-         END IF;     
-         --   go_block('BIENES_OFICIO_GESTION');
-         --   LIP_EXEQRY;   
-         :variables.clasif := null;
-         if :BIENES_OFICIO_GESTION.clasif is not null then
-	          GO_BLOCK('BIENES_OFICIO_GESTION');
-            FIRST_RECORD;
-            LOOP
-              IF :BIENES_OFICIO_GESTION.CLASIF IS NOT NULL THEN 
-                 :VARIABLES.CLASIF := :VARIABLES.CLASIF||TO_CHAR(:BIENES_OFICIO_GESTION.CLASIF);    
-              end if;
-              GO_BLOCK('BIENES_OFICIO_GESTION');
-              EXIT WHEN :system.last_record = 'TRUE';
-              IF :BIENES_OFICIO_GESTION.CLASIF IS NOT NULL THEN 
-    	           :VARIABLES.CLASIF := :VARIABLES.CLASIF||',';
-              END IF;
-              NEXT_RECORD;
-            END LOOP;
- 	          :VARIABLES.CLASIF2 := :VARIABLES.CLASIF;--,2,500);       
-            GO_BLOCK('R_DICTAMINA_DOC');
-         LIP_EXEQRY; 
-         END IF;
-	   END IF;
-	 
-      IF :CVE_OF_GESTION IS NOT NULL THEN 
-	      SELECT COUNT(0) into contador
-	      from BIENES_OFICIO_GESTION
-	      where no_of_gestion = :M_OFICIO_GESTION.no_of_gestion;
-   
-	      IF :SE_REFIERE_A = 'Se refiere a todos los bienes' AND CONTADOR = 0 THEN 
-	    	    PUP_AGREGA_BIENES;
-	    	    LIP_COMMIT_SILENCIOSO;
-	      END IF;
-   
-         IF :SE_REFIERE_A = 'Se refiere a algun (os) bien (es) del expediente' AND CONTADOR = 0 THEN 
-         	  PUP_AGREGA_ALGUNOS_BIENES;
-         	  LIP_COMMIT_SILENCIOSO;
-         END IF;
-         go_block('BIENES_OFICIO_GESTION');
-         LIP_EXEQRY;
-         
-         :variables.clasif := null;
-         -- :variables.clasif2 := null;
-         if :BIENES_OFICIO_GESTION.clasif is not null then
-	         GO_BLOCK('BIENES_OFICIO_GESTION');
-            FIRST_RECORD;
-            LOOP
-              IF :BIENES_OFICIO_GESTION.CLASIF IS NOT NULL THEN 
-                 :VARIABLES.CLASIF := :VARIABLES.CLASIF||TO_CHAR(:BIENES_OFICIO_GESTION.CLASIF);    
-              end if;
-              GO_BLOCK('BIENES_OFICIO_GESTION');
-              EXIT WHEN :system.last_record = 'TRUE';
-              IF :BIENES_OFICIO_GESTION.CLASIF IS NOT NULL THEN 
-    	           :VARIABLES.CLASIF := :VARIABLES.CLASIF||',';
-              END IF;
-              NEXT_RECORD;
-            END LOOP;
- 	         :VARIABLES.CLASIF2 := :VARIABLES.CLASIF;--,2,500);
-            GO_BLOCK('R_DICTAMINA_DOC');
-            LIP_EXEQRY; 
-         end if;
-      END IF;
-
-      IF :M_OFICIO_GESTION.CVE_OF_GESTION IS NOT NULL AND :SE_REFIERE_A = 'Se refiere a todos los bienes' THEN
-	       Set_Radio_Button_Property('se_refiere_a','b',enabled,property_false);
-	       Set_Radio_Button_Property('se_refiere_a','c',ENABLED,PROPERTY_FALSE);
-      END IF;
-
-      if :M_OFICIO_GESTION.CVE_OF_GESTION IS NOT NULL AND :SE_REFIERE_A = 'Se refiere a algun (os) bien (es) del expediente' THEN
-          Set_Radio_Button_Property('se_refiere_a','a',enabled,property_false);
-          Set_Radio_Button_Property('se_refiere_a','c',ENABLED,PROPERTY_FALSE);
-      END IF;
-      go_block('R_DICTAMINA_DOC');
-      LIP_EXEQRY; 
-   else
-	go_block('DOCUMENTOS_PARA_DICTAMEN');
-   LIP_EXEQRY; 
-   end if;
-end;
+      END LOOP;
+   EXCEPTION
+      WHEN NO_DATA_FOUND THEN
+         TEXT_IO.FCLOSE(LFIARCHIVO);  
+   END;	
+   LIP_COMMIT_SILENCIOSO;
+   GO_BLOCK('TMP_ERRORES');
+   FIRST_RECORD;
+   GO_BLOCK('TMP_EXP_DESAHOGO');
+   FIRST_RECORD;
+EXCEPTION
+   WHEN OTHERS THEN
+      LIP_MENSAJE('Error en proceso de inicialización.','S');
+END;

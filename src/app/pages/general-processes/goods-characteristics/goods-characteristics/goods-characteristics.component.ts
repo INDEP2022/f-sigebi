@@ -1,22 +1,25 @@
 import { Location } from '@angular/common';
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TabsetComponent } from 'ngx-bootstrap/tabs';
-import {
-  BehaviorSubject,
-  catchError,
-  firstValueFrom,
-  map,
-  of,
-  takeUntil,
-} from 'rxjs';
+import { BehaviorSubject, firstValueFrom, map, of, takeUntil } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import {
   FilterParams,
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { IGoodSssubtype } from 'src/app/core/models/catalogs/good-sssubtype.model';
+import {
+  IAttribGoodBad,
+  ICharacteristicsGoodDTO,
+} from 'src/app/core/models/ms-good/good';
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
 import { ParameterCatService } from 'src/app/core/services/catalogs/parameter.service';
 import { AccountMovements } from 'src/app/core/services/ms-account-movements/account-movements.service';
@@ -30,6 +33,11 @@ import { StatusXScreenService } from 'src/app/core/services/ms-screen-status/sta
 import { SurvillanceService } from 'src/app/core/services/ms-survillance/survillance.service';
 import { SegAcessXAreasService } from 'src/app/core/services/ms-users/seg-acess-x-areas.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import {
+  DOUBLE_POSITIVE_PATTERN,
+  POSITVE_NUMBERS_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 import { IParamsLegalOpinionsOffice } from 'src/app/pages/juridical-processes/depositary/legal-opinions-office/legal-opinions-office/legal-opinions-office.component';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import {
@@ -59,9 +67,20 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
   count = 0;
   delegacion: number;
   subdelegacion: number;
-  selectedBad: any;
+  selectedBad: IAttribGoodBad;
+  form: FormGroup;
+  disabledBienes: boolean = true;
+  goodChange: number = 0;
+  bodyGoodCharacteristics: ICharacteristicsGoodDTO = {};
+  showPhoto = false;
+  loadTypes = false;
+  actualGoodNumber: number = null;
   get data() {
     return this.service.data;
+  }
+
+  set data(value) {
+    this.service.data = value;
   }
 
   get good() {
@@ -72,32 +91,12 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     this.service.good = value;
   }
 
-  get form() {
-    return this.service.form ? this.service.form : null;
-  }
-
   get haveTdictaUser() {
     return this.service.haveTdictaUser;
   }
 
   set haveTdictaUser(value) {
     this.service.haveTdictaUser = value;
-  }
-
-  get di_numerario_conciliado() {
-    return this.service.di_numerario_conciliado;
-  }
-
-  set di_numerario_conciliado(value) {
-    this.service.di_numerario_conciliado = value;
-  }
-
-  get disabledBienes() {
-    return this.service.disabledBienes;
-  }
-
-  set disabledBienes(value) {
-    this.service.disabledBienes = value;
   }
 
   get disabledDescripcion() {
@@ -243,7 +242,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
   };
   TIPO_PROC: string = '';
   NO_INDICADOR: string = '';
-
+  di_numerario_conciliado: string;
   constructor(
     private goodProcessService: GoodprocessService,
     private location: Location,
@@ -261,6 +260,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     private goodPartialize: GoodPartializeService,
     private comerDetailService: ComerDetailsService,
     private attribGoodBadService: AttribGoodBadService,
+    private fb: FormBuilder,
     public router: Router
   ) {
     super();
@@ -271,31 +271,14 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
       if (this.count > 0) this.searchGood(true);
       this.count++;
     });
-    // this.form.valueChanges.subscribe(async x => {
-    //   console.log(x);
-    //   // await this.preUpdate();
-    //   // await this.postRecord();
-    // });
-  }
-
-  selectTab() {
-    console.log(this.staticTabs);
-
-    if (this.staticTabs?.tabs[1]) {
-      this.staticTabs.tabs[0].disabled = true;
-      this.staticTabs.tabs[1].active = true;
-    }
-  }
-
-  back() {
-    this.location.back();
   }
 
   ngOnInit(): void {
-    this.service.prepareForm();
+    this.prepareForm();
     this.activatedRoute.queryParams.subscribe({
       next: param => {
-        console.log(param);
+        // console.log(param);
+        debugger;
         this.origin = param['origin'] ?? null;
         this.origin1 = param['origin1'] ?? null;
         if (
@@ -317,37 +300,77 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
         const selectedBadString = localStorage.getItem('selectedBad');
         if (selectedBadString) {
           this.selectedBad = JSON.parse(selectedBadString);
-          console.log(this.selectedBad);
           if (!this.origin) this.origin = '1';
-          console.log(this.origin);
 
           // this.selectTab();
           this.numberGood.setValue(this.selectedBad.id);
           this.searchGood();
         }
-        // this.goodService.getById2(param['noBien']).subscribe({
-        //   next: data => {
-        //     this.searchGood(data);
-        //   },
-        // });
       },
     });
-    // this.form.get('noBien').valueChanges.subscribe({
-    //   next: val => {
-    //     this.goodService.getById2(val).subscribe({
-    //       next: data => {
-    //         this.searchGood(data);
-    //       },
-    //     });
-    //   },
-    // });
   }
 
   ngAfterViewInit() {
     // this.selectTab();
-    setTimeout(() => {
-      this.selectTab();
-    }, 1000);
+    if (localStorage.getItem('selectedBad')) {
+      setTimeout(() => {
+        this.selectTab(0, 1);
+      }, 1000);
+    } else {
+      setTimeout(() => {
+        this.selectTab(1, 0);
+      }, 1000);
+    }
+  }
+
+  selectTab(tabDisabled: 0 | 1, tabActive: 0 | 1) {
+    // console.log(this.staticTabs);
+
+    if (this.staticTabs?.tabs[tabActive]) {
+      this.staticTabs.tabs[tabDisabled].disabled = true;
+      this.staticTabs.tabs[tabActive].active = true;
+      if (tabDisabled === 0) {
+        this.staticTabs.tabs[2].active = true;
+      } else {
+        this.staticTabs.tabs[2].disabled = true;
+      }
+    }
+  }
+
+  back() {
+    this.location.back();
+  }
+
+  private prepareForm() {
+    this.form = this.fb.group({
+      type: [null],
+      subtype: [null],
+      ssubtype: [null],
+      sssubtype: [null],
+      noBien: [null, [Validators.pattern(POSITVE_NUMBERS_PATTERN)]],
+      noClasif: [null, [Validators.pattern(POSITVE_NUMBERS_PATTERN)]],
+      status: [null, [Validators.pattern(STRING_PATTERN)]],
+      descripcion: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      unidad: [null, [Validators.pattern(STRING_PATTERN)]],
+      cantidad: [null, [Validators.pattern(DOUBLE_POSITIVE_PATTERN)]],
+      delegation: [null],
+      subdelegation: [null],
+      valRef: [null, [Validators.pattern(STRING_PATTERN)]],
+      fechaAval: [null],
+      valorAval: [null, [Validators.pattern(DOUBLE_POSITIVE_PATTERN)]],
+      observaciones: [null, [Validators.pattern(STRING_PATTERN)]],
+      latitud: [null, [Validators.pattern(POSITVE_NUMBERS_PATTERN)]],
+      longitud: [null, [Validators.pattern(POSITVE_NUMBERS_PATTERN)]],
+      avaluo: ['0'],
+      img: [null],
+    });
+  }
+
+  onFileChange(event: any) {
+    console.log(event);
   }
 
   handleEvent(data: any) {
@@ -376,23 +399,28 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     console.log(this.data);
     let body: any = {
       id: this.good.id,
-      goodId: this.good.goodId,
+      goodId: this.good.goodid,
     };
     let tableValid = true;
     this.data.forEach(row => {
       if (row.required && !row.value) {
-        this.onLoadToast(
+        this.alert(
           'error',
           'Bien ' + this.numberGood.value,
-          'Complete las características requeridas'
+          'Complete el atributo ' + row.attribute
         );
+        // this.onLoadToast(
+        //   'error',
+        //   'Bien ' + this.numberGood.value,
+        //   'Complete las características requeridas'
+        // );
         tableValid = false;
         return;
       }
       body[row.column] = row.value;
     });
     if (!tableValid) {
-      console.log(this.data);
+      // console.log(this.data);
       return;
     }
     this.good.description;
@@ -416,18 +444,25 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
         body.val14 = 'S';
       }
     }
-    console.log(body);
+    // console.log(body);
     const preUpdateValid = await this.preUpdate();
     if (!preUpdateValid) {
       return;
     }
     if (this.selectedBad && this.selectedBad.motive) {
+      if (
+        this.selectedBad.motive.includes('SIN FOTOS') &&
+        this.service.files.length === 0
+      ) {
+        this.alert('error', 'ERROR', 'Debe subir fotos al bien');
+        return;
+      }
       this.attribGoodBadService
         .remove(this.selectedBad)
         .pipe(takeUntil(this.$unSubscribe))
         .subscribe({
           next: response => {
-            console.log(response);
+            // console.log(response);
           },
           error: err => {
             console.log(err);
@@ -440,11 +475,17 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: response => {
-          this.onLoadToast(
+          this.alert(
             'success',
             'Bien ' + this.numberGood.value,
             'Actualizado correctamente'
           );
+
+          // this.onLoadToast(
+          //   'success',
+          //   'Bien ' + this.numberGood.value,
+          //   'Actualizado correctamente'
+          // );
         },
       });
     await this.pupInsertGeoreferencia();
@@ -457,7 +498,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
       clasificators.includes(this.numberClassification.value + '')
     ) {
       const filterParams = new FilterParams();
-      filterParams.addFilter('numberGood', this.good.goodId);
+      filterParams.addFilter('numberGood', this.good.goodid);
       const accounts = await firstValueFrom(
         this.accountMovementsService
           .getAll(filterParams.getParams())
@@ -467,14 +508,20 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
         this.di_numerario_conciliado = 'Conciliado';
       }
       this.showConciliado = true;
-      console.log(accounts);
     }
   }
 
   clearFilter() {
+    this.bodyGoodCharacteristics = {};
+    this.actualGoodNumber = null;
+    this.selectedBad = null;
+    this.service.files = [];
     this.form.reset();
     this.good = null;
+    this.data = [];
     this.totalItems = 0;
+    this.staticTabs.tabs[1].disabled = true;
+    this.staticTabs.tabs[2].disabled = true;
   }
   private async getDelegacionJoinSubdelDepartamentos() {
     return firstValueFrom(
@@ -542,7 +589,8 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     await this.postRecord(true);
     this.loading = false;
     setTimeout(() => {
-      this.service.goodChange.next(true);
+      this.goodChange++;
+      // this.service.goodChange.next(true);
     }, 100);
     const filterParams = new FilterParams();
     // filterParams.limit = 1000;
@@ -557,23 +605,20 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
       !vn_clas_nume.data ||
       (vn_clas_nume.data && vn_clas_nume.data.length === 0)
     ) {
-      this.onLoadToast(
+      this.alert(
         'error',
         'Error de parametrización',
         'No se tiene parametrizada la clasificación del numerario'
       );
+      // this.onLoadToast(
+      //   'error',
+      //   'Error de parametrización',
+      //   'No se tiene parametrizada la clasificación del numerario'
+      // );
       return;
     }
     await this.fillConciliate();
     await this.checkPartialize();
-    // const filterParams2 = new FilterParams();
-    // filterParams2.addFilter('numberGood', this.good.goodId);
-    // const accounts = await firstValueFrom(
-    //   this.accountMovementsService
-    //     .getAll(filterParams2.getParams())
-    //     .pipe(catchError(x => of(null)))
-    // );
-    // console.log(accounts);
   }
 
   private getNewApraisedValueForVnValores(vnPunto: number, val: string) {
@@ -603,11 +648,16 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     try {
       vn_impor = +this.nval(2);
     } catch (x) {
-      this.onLoadToast(
+      this.alert(
         'error',
         'Numerario',
         'Fallo al transformar la cantidad numerica del importe'
       );
+      // this.onLoadToast(
+      //   'error',
+      //   'Numerario',
+      //   'Fallo al transformar la cantidad numerica del importe'
+      // );
       return false;
     }
     lbln_encontro = false;
@@ -627,11 +677,17 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     if (lbln_conciliado === 'S') {
       this.di_numerario_conciliado = 'Conciliado';
     } else {
-      this.onLoadToast(
+      this.alert(
         'warning',
         'Conciliación',
         'No se encontró un movimiento relacionado'
       );
+
+      // this.onLoadToast(
+      //   'warning',
+      //   'Conciliación',
+      //   'No se encontró un movimiento relacionado'
+      // );
     }
     return true;
   }
@@ -656,8 +712,13 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
           }
           return true;
         } catch (x) {
-          this.onLoadToast(
+          // this.onLoadToast(
+          //   'error',
+          //   'Verifique el valor númerico del campo ' + column
+          // );
+          this.alert(
             'error',
+            'Numerario',
             'Verifique el valor númerico del campo ' + column
           );
           return false;
@@ -668,8 +729,14 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
           return true;
           // this.good.appraisedValue = this.good.val2;
         } catch (x) {
-          this.onLoadToast(
+          // this.onLoadToast(
+          //   'error',
+          //   'Verifique el valor númerico del campo ' + column
+          // );
+
+          this.alert(
             'error',
+            'Numerario',
             'Verifique el valor númerico del campo ' + column
           );
           return false;
@@ -692,11 +759,12 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
         .pipe(catchError(x => of(null)))
     );
     if (!parameters) {
-      this.onLoadToast(
-        'error',
-        'Excep Numerario',
-        'No pudo cargar los parametros'
-      );
+      this.alert('error', 'Excep Numerario', 'No pudo cargar los parametros');
+      // this.onLoadToast(
+      //   'error',
+      //   'Excep Numerario',
+      //   'No pudo cargar los parametros'
+      // );
       return false;
     }
     const data = parameters ? parameters.data : [];
@@ -763,17 +831,27 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     if (this.descripcion && this.descripcion.value) {
       const tamanio = this.descripcion.value.length;
       if (tamanio <= 1) {
-        this.onLoadToast(
+        this.alert(
           'error',
           'Descripción bien',
           'Verifique la cantidad de carácteres (no menor a 2 posiciones).'
         );
+        // this.onLoadToast(
+        //   'error',
+        //   'Descripción bien',
+        //   'Verifique la cantidad de carácteres (no menor a 2 posiciones).'
+        // );
         return false;
       }
       if (this.validationTypeSubtype()) {
         if (this.nval(14) === 'S') {
           if (this.goodAppraisal.value === null) {
-            this.onLoadToast(
+            // this.onLoadToast(
+            //   'error',
+            //   'Valor avalúo',
+            //   'Debe indicarlo de contar con él'
+            // );
+            this.alertInfo(
               'error',
               'Valor avalúo',
               'Debe indicarlo de contar con él'
@@ -788,7 +866,8 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
       const resultNumerario = await this.excepNumerario();
       return resultNumerario;
     } else {
-      this.onLoadToast('error', 'Descripción bien', 'No debe ser nula');
+      // this.onLoadToast('error', 'Descripción bien', 'No debe ser nula');
+      this.alertInfo('error', 'Descripción bien', 'No debe ser nula');
       return false;
     }
   }
@@ -803,19 +882,24 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     this.filterParams.page = this.params.getValue().page;
     if (this.numberGood && this.numberGood.value) {
       this.filterParams.addFilter('id', this.numberGood.value);
+      this.bodyGoodCharacteristics.noGood = this.numberGood.value;
       return true;
     }
     if (this.type && this.type.value) {
       this.filterParams.addFilter('goodTypeId', this.type.value);
+      this.bodyGoodCharacteristics.noType = this.type.value;
     }
     if (this.subtype && this.subtype.value) {
       this.filterParams.addFilter('subTypeId', this.subtype.value);
+      this.bodyGoodCharacteristics.noSubType = this.subtype.value;
     }
     if (this.ssubtype && this.ssubtype.value) {
       this.filterParams.addFilter('ssubTypeId', this.ssubtype.value);
+      this.bodyGoodCharacteristics.noSsubType = this.ssubtype.value;
     }
     if (this.sssubtype && this.sssubtype.value) {
       this.filterParams.addFilter('sssubTypeId', this.sssubtype.value);
+      this.bodyGoodCharacteristics.noSssubType = this.sssubtype.value;
     }
     if (this.filterParams.getFilterParams()) {
       return true;
@@ -836,56 +920,108 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     return vcVal;
   }
 
+  private async fillSelectedBad() {
+    // debugger;
+    this.selectedBad = await firstValueFrom(
+      this.attribGoodBadService.getById(this.good.id).pipe(
+        takeUntil(this.$unSubscribe),
+        catchError(x => of(null))
+      )
+    );
+  }
+
   async searchGood(byPage = false) {
     // const numberGood = Number(this.numberGood.value);
-    // debugger;
+    debugger;
     this.loading = true;
+
     if (this.fillParams(byPage)) {
+      // const response = await firstValueFrom(
+      //   this.goodService
+      //     .getAll(this.filterParams.getParams())
+      //     .pipe(catchError(x => of({ data: [], count: 0 })))
+      // );
+      const newListParams = new ListParams();
+      newListParams.limit = this.filterParams.limit;
+      newListParams.page = this.filterParams.page;
       const response = await firstValueFrom(
-        this.goodService
-          .getAll(this.filterParams.getParams())
-          .pipe(catchError(x => of({ data: [], count: 0 })))
+        this.goodProcessService
+          .getDistinctTypes(this.bodyGoodCharacteristics, newListParams)
+          .pipe(
+            catchError(x => of(null)),
+            map(x => {
+              return {
+                ...x,
+                data: x.data.map(item => {
+                  return {
+                    ...item,
+                    quantity: item.quantity ? +(item.quantity + '') : null,
+                  };
+                }),
+              };
+            })
+          )
       );
-      if (response.data && response.data.length > 0) {
+      if (response && response.data && response.data.length > 0) {
+        this.staticTabs.tabs[1].disabled = false;
+        this.staticTabs.tabs[1].active = true;
+        this.staticTabs.tabs[2].disabled = false;
         let item = response.data[0];
         this.totalItems = response.count ?? 0;
         if (item) {
+          this.actualGoodNumber = item.id;
           // this.se
           this.good = item;
-
-          this.service.newGood = {
-            id: this.good.id,
-            goodId: this.good.goodId,
-          };
+          if (!this.selectedBad) {
+            await this.fillSelectedBad();
+          }
+          console.log(this.selectedBad);
+          if (
+            this.selectedBad &&
+            this.selectedBad.motive.includes('SIN FOTOS')
+          ) {
+            this.showPhoto = true;
+          } else {
+            this.showPhoto = false;
+          }
+          // this.service.newGood = {
+          //   id: this.good.id,
+          //   goodId: this.good.goodId,
+          // };
           // this.excepNumerario();
           this.numberGood.setValue(item.id);
-          this.type.setValue(item.goodTypeId);
-          this.subtype.setValue(item.subTypeId);
-          // this.form.get('ssubtype').setValue(item.goodTypeId);
-          // this.form.get('sssubtype').setValue(item.goodTypeId);
+          this.type.setValue(item.no_tipo);
+          this.subtype.setValue(item.no_subtipo);
+          this.form.get('ssubtype').setValue(item.no_ssubtipo);
+          this.form.get('sssubtype').setValue(item.no_sssubtipo);
+          this.loadTypes = true;
           // this.getDelegation(item.delegationNumber);
           // this.getSubdelegation(item.subDelegationNumber);
-          const delegacion = item.delegationNumber;
+          const delegacion = item.delegationnumber;
           if (delegacion) {
-            this.delegacion = item.delegationNumber.id ?? null;
-            this.delegation.setValue(item.delegationNumber.description);
+            // this.delegacion = item.delegationNumber.id ?? null;
+            // this.delegation.setValue(item.delegationNumber.description);
+            this.delegacion = delegacion;
+            this.delegation.setValue(delegacion);
           }
-          const subdelegacion = item.subDelegationNumber;
+          const subdelegacion = item.subdelegationnumber;
           if (subdelegacion) {
-            this.subdelegacion = item.subDelegationNumber.id ?? null;
-            this.subdelegation.setValue(item.subDelegationNumber.description);
+            // this.subdelegacion = item.subDelegationNumber.id ?? null;
+            // this.subdelegation.setValue(item.subDelegationNumber.description);
+            this.subdelegacion = subdelegacion;
+            this.subdelegation.setValue(subdelegacion);
           }
-          this.getLatitudLongitud(item.goodId);
+          this.getLatitudLongitud(item.goodid);
           // this.getDelegation(item.)
-          this.numberClassification.setValue(item.goodClassNumber);
-          this.goodStatus.setValue(item.goodStatus);
+          this.numberClassification.setValue(item.goodclassnumber);
+          this.goodStatus.setValue(item.status);
           this.descripcion.setValue(item.description);
           this.goodUnit.setValue(item.unit);
           this.goodQuantity.setValue(item.quantity);
-          this.goodReference.setValue(item.referenceValue);
-          this.goodAppraisal.setValue(item.appraisedValue);
+          this.goodReference.setValue(item.referencevalue);
+          this.goodAppraisal.setValue(item.appraisedvalue);
           this.goodDateVigency.setValue(
-            formatForIsoDate(item.appraisalVigDate, 'string')
+            formatForIsoDate(item.appraisalvigdate, 'string')
           );
           // this.goodLatitude.setValue(item.latitude);
           // this.goodLongitude.setValue(item.longitud);
@@ -900,18 +1036,22 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
           await this.postQuery();
         } else {
           this.loading = false;
-          this.service.goodChange.next(false);
+          this.goodChange++;
+          // this.service.goodChange.next(false);
         }
       } else {
         this.totalItems = 0;
         this.loading = false;
-        this.service.goodChange.next(false);
-        this.onLoadToast('error', 'ERROR', 'No existe el Bien ingresado');
+        this.goodChange++;
+        this.alertInfo('error', 'Error', 'No existen bienes');
+        // this.service.goodChange.next(false);
+        // this.onLoadToast('error', 'ERROR', 'No existen bienes');
       }
     } else {
       this.loading = false;
       this.totalItems = 0;
-      this.service.goodChange.next(false);
+      this.goodChange++;
+      // this.service.goodChange.next(false);
     }
   }
 
@@ -940,11 +1080,11 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
   private async postRecord(isPostQuery = false) {
     const filterParams = new FilterParams();
     filterParams.addFilter('typeNumber', 'CARBIEN');
-    // filterParams.addFilter('user', 'DR_SIGEBI');
-    filterParams.addFilter(
-      'user',
-      localStorage.getItem('username').toUpperCase()
-    );
+    filterParams.addFilter('user', 'DR_SIGEBI');
+    // filterParams.addFilter(
+    //   'user',
+    //   localStorage.getItem('username').toUpperCase()
+    // );
     filterParams.addFilter('reading', 'S');
     // filterParams.addFilter()
     const rdicta = await firstValueFrom(
@@ -1029,6 +1169,11 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
           this.disabledNoClasifBien = true;
         }
       }
+    } else {
+      this.disabledBienes = true;
+      this.disabledDescripcion = true;
+      this.disabledTable = true;
+      this.disabledNoClasifBien = true;
     }
   }
 
@@ -1067,27 +1212,13 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
   }
 
   getLatitudLongitud(id: number) {
-    // const params = new FilterParams();
-    // params.addFilter('id', id)
-    // this.georeferencieService.getGeoreferencieObject().subscribe({
-    //   next: response => {
-    //     console.log(response);
-    //     // if(response.data && response.data.length > 0) {
-    //     //   this.longitud.setValue(response.data[0])
-    //     // }
-    //   }
-    // })
-
     this.georeferencieService.getGeoreferencieObjectById(id).subscribe({
       next: response => {
-        console.log(response);
+        // console.log(response);
         if (response) {
           this.latitud.setValue(response.georefLatitude);
           this.longitud.setValue(response.georefLongituded);
         }
-        // if(response.data && response.data.length > 0) {
-        //   this.longitud.setValue(response.data[0])
-        // }
       },
       error: err => {
         console.log(err);
@@ -1096,7 +1227,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
   }
 
   goBack() {
-    console.log(this.origin1, this.origin);
+    // console.log(this.origin1, this.origin);
 
     if (
       this.origin1 == 'FACTJURDICTAMOFICIO' &&

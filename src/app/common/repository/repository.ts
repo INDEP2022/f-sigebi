@@ -64,6 +64,14 @@ export class Repository<T> implements IRepository<T> {
     return this.httpClient.put(`${fullRoute}/${id}`, formData);
   }
 
+  updateTypeServices(route: string, id: number | string, formData: Object) {
+    const fullRoute = this.buildRoute(route);
+    // console.log(`${fullRoute}/${id}`);
+    // console.log(formData);
+
+    return this.httpClient.put(`${fullRoute}`, formData);
+  }
+
   updateClaimConclusion(route: string, id: number | string, formData: Object) {
     const fullRoute = this.buildRoute(route);
     return this.httpClient.put(`${fullRoute}/${id}`, formData);
@@ -328,6 +336,14 @@ export class Repository<T> implements IRepository<T> {
   getClassif(classif: string | number): Observable<IListResponse<T>> {
     return this.httpClient.get<IListResponse<T>>(
       `${environment.API_URL}/catalog/api/v1/good-sssubtype?filter.numClasifGoods=$eq:${classif}`
+    );
+  }
+
+  getMenajeInmueble(
+    goodClassNumber: string | number
+  ): Observable<IListResponse<T>> {
+    return this.httpClient.get<IListResponse<T>>(
+      `${environment.API_URL}catalog/api/v1/good-sssubtype?filter.numClasifGoods=$eq:${goodClassNumber}`
     );
   }
 

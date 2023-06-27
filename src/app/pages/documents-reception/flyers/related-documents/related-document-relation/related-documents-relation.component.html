@@ -129,6 +129,7 @@
                 [data]="select"
                 [form]="formJobManagement"
                 control="addressee"
+                [readonly]="!formJobManagement.get('sender').value"
                 [showTooltip]="true"
                 label="Destinatario"
                 (fetchItems)="getFromSelect($event)"
@@ -137,15 +138,15 @@
 
             <ng-template #templateInputAddressee>
               <form-field
-                [control]="formJobManagement.get('addressee')"
+                [control]="formJobManagement.get('nomPersExt')"
                 class="col-md-4"
                 label="Nombre Destinatario">
                 <textarea
                   type="text"
-                  rows="1"
+                  rows="3"
                   style="height: 42px !important"
                   class="form-control"
-                  formControlName="addressee">
+                  formControlName="nomPersExt">
                 </textarea>
               </form-field>
             </ng-template>
@@ -206,77 +207,6 @@
                 (change)="selectedChecksC()" />
             </form-radio>
           </div>
-          <div class="col-md-1 text-right">
-            <button
-              *ngIf="pantallaOption"
-              type="button"
-              tooltip="Cambio"
-              containerClass="tooltip-style"
-              class="btn btn-success active btn-sm m-2"
-              (click)="changeOffice()">
-              <i class="bx bx-undo"></i>
-            </button>
-          </div>
-        </div>
-
-        <div *ngIf="pantallaOption" class="col-md-12 mb-3">
-          <h6>Tipos de Texto:</h6>
-          <div class="col-md-3">
-            <form-radio label="ACUSE DE RECIBO" (change)="changeTextType()">
-              <input type="radio" formControlName="tipoTexto" value="UNO" />
-            </form-radio>
-          </div>
-          <div class="col-md-3">
-            <form-radio
-              label="DOCUMENTO DEVOLUCIÓN"
-              (change)="changeTextType()">
-              <input type="radio" formControlName="tipoTexto" value="DOS" />
-            </form-radio>
-          </div>
-          <div class="col-md-3">
-            <form-radio label="DOCUMENTO DE BIENES" (change)="changeTextType()">
-              <input type="radio" formControlName="tipoTexto" value="TRES" />
-            </form-radio>
-          </div>
-          <div class="col-md-3">
-            <form-radio
-              label="DOCUMENTO DE NUMERARIO"
-              (change)="changeTextType()">
-              <input type="radio" formControlName="tipoTexto" value="CUATRO" />
-            </form-radio>
-          </div>
-          <div class="col-md-3">
-            <form-radio label="ACLARA INFORMACIÓN" (change)="changeTextType()">
-              <input type="radio" formControlName="tipoTexto" value="CINCO" />
-            </form-radio>
-          </div>
-          <div class="col-md-3">
-            <form-radio
-              label="SOLICITAR INFORMACIÓN"
-              (change)="changeTextType()">
-              <input type="radio" formControlName="tipoTexto" value="SEIS" />
-            </form-radio>
-          </div>
-          <div class="col-md-3">
-            <form-radio label="SAT" (change)="changeTextType()">
-              <input type="radio" formControlName="tipoTexto" value="SIETE" />
-            </form-radio>
-          </div>
-          <div class="col-md-3">
-            <form-radio label="ABANDONO" (change)="changeTextType()">
-              <input type="radio" formControlName="tipoTexto" value="OCHO" />
-            </form-radio>
-          </div>
-          <!-- <form-field
-            [control]="managementForm.get('parrafoInicial')"
-            class="col-md-12 mt-2 pt-3"
-            label="Parrafo Inicial">
-            <textarea
-              rows="7"
-              class="form-control"
-              maxlength="4000"
-              formControlName="parrafoInicial"></textarea>
-          </form-field> -->
         </div>
 
         <div>
@@ -293,65 +223,7 @@
         </div>
       </div>
 
-      <div [formGroup]="managementForm">
-        <ng-container *ngIf="pantallaActual == '1'">
-          <div class="row pt-4">
-            <form-field
-              *ngIf="pantallaActual == '1'"
-              [control]="managementForm.get('justificacion')"
-              class="col-md-6">
-              <ngx-select
-                (fetchItems)="getJustification($event)"
-                value="id"
-                bindLabel="clarifications"
-                [form]="managementForm"
-                control="justificacion"
-                [data]="justificacion"
-                [showTooltip]="true"
-                label="Justificación">
-              </ngx-select>
-            </form-field>
-
-            <form-field
-              *ngIf="pantallaActual == '1'"
-              [control]="managementForm.get('noOficio')"
-              class="col-md-4 mt-2"
-              label="Número de Oficio">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="noOficio"
-                readonly
-                [disabled]="true" />
-            </form-field>
-          </div>
-          <br /><br />
-          <div class="row pt-4" *ngIf="pantallaActual == '1'">
-            <div class="col-md-4">
-              <button
-                type="button"
-                class="btn btn-primary active btn-sm mr-2"
-                (click)="fgrResponses()">
-                Respuestas FGR
-              </button>
-            </div>
-          </div>
-          <br /><br />
-          <div *ngIf="pantallaOption" class="row pt-4">
-            <div class="col-md-2">
-              <form-field
-                [control]="managementForm.get('fechaAcuse')"
-                label="Fecha Acuse">
-                <input
-                  type="text"
-                  class="form-control"
-                  #dp="bsDatepicker"
-                  bsDatepicker />
-              </form-field>
-            </div>
-          </div>
-        </ng-container>
-        <br />
+      <div>
         <br />
         <div class="row pb-5">
           <div class="col-md-12">
@@ -387,7 +259,7 @@
                  </ng-option>
                </ng-select>
              </form-field> -->
-            <div class="col-md-4 col-12">
+            <div [formGroup]="managementForm" class="col-md-4 col-12">
               <form-field
                 label="Descripción estatus"
                 [control]="managementForm.get('di_desc_estatus')">
@@ -409,15 +281,82 @@
             <div class="row pt-2 mb-2" *ngIf="!formLoading">
               <div class="col-sm-12 col-12 col-md-12 pr-3">
                 <div [class]="isLoadingGood ? 'table-loading' : ''">
-                  <ng2-smart-table
+                  <!--  <ng2-smart-table
                     id="bienesJuridicos"
                     #tableGoods
                     (userRowSelect)="selectProceedings($event)"
                     [attr.class]="'table-responsive table-bordered'"
                     [settings]="settings"
                     [source]="dataTableGoods">
-                  </ng2-smart-table>
-                  <br />
+                  </ng2-smart-table> -->
+
+                  <div class="row">
+                    <div class="overflow-auto col-md-12">
+                      <table class="table table-bordered mt-4 border-top">
+                        <thead>
+                          <tr>
+                            <th>No. Bien</th>
+                            <th>Descripción</th>
+                            <th>Cantidad</th>
+                            <th>Ident.</th>
+                            <th>Estatus</th>
+                            <th
+                              [hidden]="
+                                isHideSelection ||
+                                (!isCreate &&
+                                  dataTableGoodsJobManagement.length > 0)
+                              ">
+                              Selección
+                              <span
+                                class="badge"
+                                [hidden]="!dataGoodsSelected.size"
+                                >{{ dataGoodsSelected.size }}</span
+                              >
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr
+                            (click)="selectProceedings(item.value)"
+                            [ngClass]="{
+                              'bg-dark text-white disabled-custom':
+                                !item.value.available
+                            }"
+                            class="bg-success text-white font-weight-bold"
+                            *ngFor="let item of dataTableGoodsMap | keyvalue">
+                            <td class="text-white">{{ item.value.goodId }}</td>
+                            <td class="text-white">
+                              {{ item.value.description }}
+                            </td>
+                            <td class="text-white">
+                              {{ item.value.quantity }}
+                            </td>
+                            <td class="text-white">
+                              {{ item.value.identifier }}
+                            </td>
+                            <td class="text-white">{{ item.value.status }}</td>
+                            <td
+                              [hidden]="
+                                isHideSelection ||
+                                (!isCreate &&
+                                  dataTableGoodsJobManagement.length > 0)
+                              "
+                              class="text-white">
+                              <!-- <ng-container
+                                *ngIf="
+                                  item.value.available ||
+                                  !dataGoodsSelected.has(item.value.goodId)
+                                "> -->
+                              <input
+                                [(ngModel)]="item.value.selected"
+                                type="checkbox"
+                                (change)="changeSelection($event, item.key)" />
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
                   <div>
                     <app-pagination
                       [params]="params"
@@ -426,9 +365,7 @@
                 </div>
               </div>
 
-              <div class="col-12">
-                <!-- (fetchItems)="searchDocumentForDictation($event)" -->
-                <!-- [searchOnInit]="true" -->
+              <div class="col-md-6">
                 <ngx-select
                   [form]="formVariables"
                   bindLabel="key"
@@ -436,7 +373,7 @@
                   value="key"
                   [showTooltip]="true"
                   [data]="dataSelectDictation"
-                  label="Dictaminación"
+                  label="Ind. p/doctos"
                   [searchable]="false"
                   id="typesFilters"
                   (change)="selectDictation($event)">
@@ -447,36 +384,84 @@
                   <div [class]="isLoadingGood ? 'table-loading' : ''">
                     <div class="col-12">Biene(s)</div>
                     <!-- (userRowSelect)="selectProceedings($event)" -->
-                    <ng2-smart-table
+                    <!-- <ng2-smart-table
                       id="goodsJobManagement"
                       [attr.class]="'table-responsive table-bordered'"
-                      [settings]="settingsGoodsJobManagement"
+                      [settings]="settingsGoodsJobManagement">
                       [source]="dataTableGoodsJobManagement">
                     </ng2-smart-table>
-                    <br />
+                    <br /> -->
+                    <!-- (delete)="deleteGoodJobManagement($event.data)" -->
                     <!-- <div>
                      <app-pagination
                        [params]="params"
                        [totalItems]="totalItems"></app-pagination>
                    </div> -->
+                    <div style="max-height: 500px" class="overflow-auto">
+                      <table class="border-top table table-bordered">
+                        <thead class="sticky-top bg-white">
+                          <tr class="font-weight-bold">
+                            <th>No. Bien</th>
+                            <th>Bienes</th>
+                            <th
+                              [hidden]="
+                                !isCreate ||
+                                formJobManagement.value.refersTo ==
+                                  se_refiere_a.A
+                              ">
+                              Remover
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr
+                            [hidden]="dataTableGoodsJobManagement.length > 0"
+                            class="px-2">
+                            <td colspan="3">No se encontraron registros</td>
+                          </tr>
+                          <tr *ngFor="let item of dataTableGoodsJobManagement">
+                            <td>{{ item.goodNumber }}</td>
+                            <td>{{ item.goods }}</td>
+                            <td
+                              [hidden]="
+                                !isCreate ||
+                                formJobManagement.value.refersTo ==
+                                  se_refiere_a.A
+                              ">
+                              <button
+                                (click)="
+                                  deleteGoodJobManagement(item.goodNumber)
+                                "
+                                class="btn btn-sm text-danger">
+                                <i class="fas fa-trash"></i>
+                              </button>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
                   </div>
                 </div>
                 <div class="col-md-6">
                   <div class="col-12">Documento(s)</div>
-                  <div [class]="isLoadingDocuments ? 'table-loading' : ''">
-                    <!-- (userRowSelect)="selectProceedings($event)" -->
-                    <ng2-smart-table
-                      id="goodsJobManagement"
-                      [attr.class]="'table-responsive table-bordered'"
-                      [settings]="settingsTableDocuments"
-                      [source]="dataTableDocuments">
-                    </ng2-smart-table>
-                    <br />
-                    <!-- <div>
-                      <app-pagination
-                        [params]="params"
-                        [totalItems]="totalItems"></app-pagination>
-                    </div> -->
+                  <div style="max-height: 500px" class="overflow-auto">
+                    <div [class]="isLoadingDocuments ? 'table-loading' : ''">
+                      <!-- (userRowSelect)="selectProceedings($event)" -->
+                      <ng2-smart-table
+                        #tableDocs
+                        id="goodsJobManagement"
+                        [attr.class]="'table-responsive table-bordered'"
+                        [settings]="settingsTableDocuments"
+                        [source]="dataTableDocuments"
+                        (delete)="deleteDocument($event.data)">
+                      </ng2-smart-table>
+                      <br />
+                      <!-- <div>
+                        <app-pagination
+                          [params]="params"
+                          [totalItems]="totalItems"></app-pagination>
+                      </div> -->
+                    </div>
                   </div>
                 </div>
               </div>
@@ -486,14 +471,15 @@
               <button
                 type="button"
                 tooltip="Documentos"
-                [disabled]="isDisabledBtnDocs"
+                [disabled]="
+                  isDisabledBtnDocs ||
+                  (!isCreate && dataTableDocuments.length > 0) ||
+                  formJobManagement.value.statusOf == 'ENVIADO'
+                "
                 containerClass="tooltip-style"
                 class="btn btn-info active btn-sm m-1"
-                (click)="openModal()">
+                (click)="onClickBtnDocuments()">
                 <i class="bx bxs-file"></i>
-                <!-- <ng-container *ngIf="isDisabledBtnDocs"
-                  ><span class="spinner-border ml-2"></span
-                ></ng-container> -->
               </button>
               <button
                 type="button"

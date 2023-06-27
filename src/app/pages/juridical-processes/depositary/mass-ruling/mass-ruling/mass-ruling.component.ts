@@ -1,18 +1,13 @@
 /** BASE IMPORT */
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import {
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  Validators,
-} from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, firstValueFrom } from 'rxjs';
+import { BehaviorSubject, firstValueFrom, skip } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { getDataFromExcel, showToast } from 'src/app/common/helpers/helpers';
-import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
@@ -35,7 +30,6 @@ export class MassRulingComponent
   extends MassRullingResponses
   implements OnInit, OnDestroy
 {
-  params = new BehaviorSubject<FilterParams>(new FilterParams());
   expedientNumber: number = null;
   wheelNumber: number = null;
   data: LocalDataSource = new LocalDataSource();
@@ -66,9 +60,12 @@ export class MassRulingComponent
       },
     },
   };
+  totalItems = 0;
   // Data table
   dataTable: any[] = [];
+  isFileLoad = false;
 
+  params = new BehaviorSubject<ListParams>(new ListParams());
   tableSettings1 = {
     actions: {
       columnTitle: '',
@@ -94,17 +91,27 @@ export class MassRulingComponent
   };
 
   public form = new FormGroup({
+    /**@description no_of_dicta */
     id: new FormControl(null, Validators.required),
+    /**@description clave_oficio_armada */
     passOfficeArmy: new FormControl('', [
       Validators.pattern(KEYGENERATION_PATTERN),
     ]),
+    /**@description no_expediente */
     expedientNumber: new FormControl(null),
+    /**@description tipo_dictaminacion */
     typeDict: new FormControl(''),
+    /**@description estatus_dictaminacion */
     statusDict: new FormControl('', [Validators.pattern(STRING_PATTERN)]),
+    /**@description fec_dictaminacion */
     dictDate: new FormControl(''),
+    /**@description usuario_dictamina */
     userDict: new FormControl('', [Validators.pattern(STRING_PATTERN)]),
+    /**@description fecha_instructora */
     instructorDate: new FormControl(''),
+    /**@description no_volante */
     wheelNumber: new FormControl('', Validators.required),
+    /**@description nn */
     delete: new FormControl({ value: false, disabled: true }),
   });
   public formCargaMasiva = new FormGroup({
@@ -117,7 +124,7 @@ export class MassRulingComponent
   file: File | null = null;
   // public searchForm: FormGroup;
   constructor(
-    private fb: FormBuilder,
+    // private fb: FormBuilder,
     protected dictationService: DictationService,
     // private goodService: GoodService,
     private massiveGoodService: MassiveGoodService,
@@ -136,6 +143,9 @@ export class MassRulingComponent
     // this.form.get('wheelNumber').valueChanges.subscribe(x => {
     //   this.getVolante();
     // });
+    this.params.pipe(skip(1)).subscribe(params => {
+      this.onClickLoadByIdentifier(params);
+    });
   }
 
   getDictations(
@@ -153,19 +163,20 @@ export class MassRulingComponent
       return;
     }
 
-    this.params = new BehaviorSubject<FilterParams>(new FilterParams());
-    let data = this.params.value;
-    data.limit = 1;
+    // this.params = new BehaviorSubject<FilterParams>(new FilterParams());
+    //  let data = this.params.value;
+    //   data.limit = 1;
+    let params = `?limit=1&page=1`;
 
     if (id) {
-      data.addFilter('id', id);
+      params += `&filter.id=${id}`;
     }
 
     if (wheelNumber) {
-      data.addFilter('wheelNumber', wheelNumber);
+      params += `&filter.wheelNumber=${wheelNumber}`;
     }
 
-    this.dictationService.getAllWithFilters(data.getParams()).subscribe({
+    this.dictationService.getAllWithFilters(params).subscribe({
       next: data => {
         console.log(data);
         this.form.patchValue(data.data[0] as any);
@@ -175,10 +186,6 @@ export class MassRulingComponent
         this.form
           .get('dictDate')
           .patchValue(new Date(data.data[0].dictDate) as any);
-        // this.searchForm.get('wheelNumber').patchValue(data.data[0].wheelNumber);
-        // this.searchForm
-        //   .get('expedientNumber')
-        //   .patchValue(data.data[0].expedientNumber);
       },
       error: err => {
         this.loading = false;
@@ -366,7 +373,8 @@ export class MassRulingComponent
     });
   }
 
-  btnCargarIdentificador() {
+  onClickLoadByIdentifier(listParams = new ListParams()) {
+    this.isFileLoad = false;
     const identificador = this.formCargaMasiva.get(
       'identificadorCargaMasiva'
     ).value;
@@ -378,21 +386,17 @@ export class MassRulingComponent
       return;
     }
     this.loading = true;
-
-    this.params = new BehaviorSubject<FilterParams>(new FilterParams());
-    let data = this.params.value;
-
-    if (identificador) {
-      data.addFilter('id', identificador);
-    }
-    this.massiveGoodService.getAllWithFilters(data.getParams()).subscribe({
+    const params = `?filter.id=${identificador}&page=${listParams.page}&limit=${listParams.limit}`;
+    this.massiveGoodService.getAllWithFilters(params).subscribe({
       next: data => {
         this.dataTable = data.data;
+        this.totalItems = data.count;
         this.loading = false;
         this.file = null;
       },
       error: () => {
         this.dataTable = [];
+        this.totalItems = 0;
         this.file = null;
         this.loading = false;
       },
@@ -400,6 +404,10 @@ export class MassRulingComponent
   }
 
   async onClickLoadFile(event: any) {
+    this.dataTableErrors = [];
+    this.dataTable = [];
+    this.isFileLoad = true;
+    this.totalItems = 0;
     const { id, typeDict } = this.form.value;
     if (!id && !typeDict) {
       showToast({
@@ -420,7 +428,7 @@ export class MassRulingComponent
       if (isNaN(item.NO_BIEN) || isNaN(item.NO_EXPEDIENTE)) {
         dataTableError.push({
           processId: 12345,
-          fileNumber: `REGISTRO: ${index + 1}, CONTENIDO NO_BIEN: ${
+          description: `REGISTRO: ${index + 1}, CONTENIDO NO_BIEN: ${
             item.NO_BIEN
           }, NO_EXPEDIENTE: ${item.NO_EXPEDIENTE} `,
         });
@@ -502,9 +510,13 @@ export class MassRulingComponent
   // }
 
   isDisableCreateDictation = false;
-  async onClickLoadDictation() {
+  async onClickCreatedDictation() {
     let vNO_OF_DICTA;
-    if (this.form.invalid) {
+    // if (this.form.invalid) {
+    //   this.alert('error', 'Se debe ingresar un dictamen', '');
+    //   return;
+    // }
+    if (!this.form.value.id && !this.form.value.typeDict) {
       this.alert('error', 'Se debe ingresar un dictamen', '');
       return;
     }
@@ -518,24 +530,30 @@ export class MassRulingComponent
       return;
     }
     const body = {
-      p_no_of_dicta: this.form.get('id').value,
+      p_no_of_dicta: Number.parseInt(this.form.get('id').value),
       p_tipo_dictaminacion: this.form.get('typeDict').value,
     };
+    // debugger;
     this.dictationService.postCargaMasDesahogob(body).subscribe({
       next: () => {
         this.isDisableCreateDictation = true;
         this.dataTableErrors = [];
       },
-      error: () => {
-        this.alert('error', 'Error inesperado en el proceso.', '');
+      error: e => {
+        console.log({ e });
+        this.alert(
+          'error',
+          e?.error?.message || 'Error inesperado en el proceso.',
+          ''
+        );
       },
     });
   }
 
   async getDictationForId() {
     const body = {
-      id: this.form.get('id').value,
-      typeDict: this.form.get('typeDict').value,
+      id: this.form.value.id,
+      typeDict: this.form.value.typeDict,
     };
     const dictation = await firstValueFrom(
       this.dictationService.findByIds(body)
@@ -547,12 +565,15 @@ export class MassRulingComponent
   getVolante() {
     if (this.form.get('wheelNumber').value) {
       console.log(this.form.get('wheelNumber').value);
-      this.params = new BehaviorSubject<FilterParams>(new FilterParams());
-      let data = this.params.value;
+      // this.params = new BehaviorSubject<FilterParams>(new FilterParams());
+      // let data = this.params.value;
 
-      data.addFilter('wheelNumber', this.form.get('wheelNumber').value);
+      // data.addFilter('wheelNumber', this.form.get('wheelNumber').value);
+      const params = `?filter.wheelNumber=${
+        this.form.get('wheelNumber').value
+      }&page=1&limit=1`;
 
-      this.notificationsService.getAllFilter(data.getParams()).subscribe({
+      this.notificationsService.getAllFilter(params).subscribe({
         next: data => {
           this.wheelType = data.data[0].wheelType;
         },
@@ -596,14 +617,14 @@ export class MassRulingComponent
     console.log({ id, typeDict, passOfficeArmy });
     if (!id && !typeDict && !passOfficeArmy) {
       this.alert('warning', 'Error', 'Se debe ingresar un Dictamen.');
-      return Promise.reject(null);
+      throw new Error('Se debe ingresar un Dictamen.');
     }
 
     try {
-      const dictation = await this.getDictationForId();
+      await this.getDictationForId();
     } catch (error) {
-      this.alert('warning', 'Error', 'No se encontró un Dictamen ');
-      return null;
+      this.alert('warning', 'Error', 'No se encontró un Dictamen');
+      throw 'No se encontró un Dictamen';
     }
 
     try {
@@ -611,7 +632,7 @@ export class MassRulingComponent
     } catch (error: any) {
       this.alertQuestion('warning', 'Error', error?.message);
       console.log({ error });
-      return null;
+      throw error;
     }
 
     try {
@@ -623,7 +644,7 @@ export class MassRulingComponent
         'Error',
         'No se encontró la Notificación del Dictamen.'
       );
-      return null;
+      throw 'No se encontró la Notificación del Dictamen.';
     }
 
     //ERROR: este codigo no implementado de oracle forms
@@ -716,12 +737,48 @@ export class MassRulingComponent
     const data: { data: any[] } = await firstValueFrom(
       this.dictationService.postFindGoodDictGood1(body)
     );
-    console.log({ findGoodAndDictXGood1: data });
+    // console.log({ findGoodAndDictXGood1: data });
     if (data?.data.length > 1) {
       throw new Error('Se tiene varios identificadores en el Dictamen.');
     }
 
     return data.data[0].substr;
+  }
+
+  showReport(nameReport: string, params: { [key: string]: any }) {
+    this.siabService.fetchReport(nameReport, params).subscribe(response => {
+      if (response !== null) {
+        const blob = new Blob([response], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+        let config = {
+          initialState: {
+            documento: {
+              urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+              type: 'pdf',
+            },
+            callback: (data: any) => {},
+          }, //pasar datos por aca
+          class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+          ignoreBackdropClick: true, //ignora el click fuera del modal
+        };
+        this.modalService.show(PreviewDocumentsComponent, config);
+      } else {
+        const blob = new Blob([response], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+        let config = {
+          initialState: {
+            documento: {
+              urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+              type: 'pdf',
+            },
+            callback: (data: any) => {},
+          }, //pasar datos por aca
+          class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+          ignoreBackdropClick: true, //ignora el click fuera del modal
+        };
+        this.modalService.show(PreviewDocumentsComponent, config);
+      }
+    });
   }
 
   // btnImprimeRelacionBienes() {

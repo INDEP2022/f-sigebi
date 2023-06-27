@@ -50,8 +50,6 @@ export class GenerateReceiptGuardFormComponent
   ngOnInit(): void {
     this.prepareForm();
     this.getIdentification(new ListParams());
-    console.log('numero de acta', this.receiptId);
-    console.log('receiptGuards', this.receiptGuards);
   }
 
   prepareForm() {
@@ -91,7 +89,7 @@ export class GenerateReceiptGuardFormComponent
       .subscribe({
         next: async response => {
           console.log('actualizo recibo', response);
-          await this.openReport(response);
+          this.openReport(response);
         },
         error: error => {
           console.log();
@@ -107,6 +105,8 @@ export class GenerateReceiptGuardFormComponent
         initialState: {
           idTypeDoc,
           idReportAclara,
+          process: this.proceess,
+          receiptGuards: this.receiptGuards,
           callback: (next: boolean) => {
             if (next) {
               console.log('Modal cerrado');
@@ -126,6 +126,8 @@ export class GenerateReceiptGuardFormComponent
         initialState: {
           idTypeDoc,
           idReportAclara,
+          process: this.proceess,
+          receiptGuards: this.receiptGuards,
           callback: (next: boolean) => {
             if (next) {
               console.log('Modal cerrado');

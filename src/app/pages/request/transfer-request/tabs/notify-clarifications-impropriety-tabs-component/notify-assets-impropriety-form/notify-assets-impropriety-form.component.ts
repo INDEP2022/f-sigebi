@@ -154,6 +154,7 @@ export class NotifyAssetsImproprietyFormComponent
   }
 
   async confirm() {
+    console.log('Botón de continuar');
     const typeTransference = this.infoRequest.typeOfTransfer;
     let generaXML: boolean = false;
     if (
@@ -188,6 +189,13 @@ export class NotifyAssetsImproprietyFormComponent
             break;
           }
         }
+      }
+
+      if (
+        this.dataClarifications2.clarificationType === 'SOLICITAR_ACLARACION' &&
+        this.dataClarifications2.chatClarification.idClarificationType == '2'
+      ) {
+        this.aclaracionTransferentesVoluntarias(); //Aclaración  MANUAL tipo 1
       }
     }
 

@@ -10,6 +10,10 @@ export interface IGoodProgramming {
   modificationUser?: string;
   modificationDate?: Date;
   storeId?: number;
+  municipality?: number;
+  aliasStore?: number;
+  postalCode?: number;
+  suburb?: number;
   tranferId?: number;
   regionalDelegationNumber?: number;
   typeUser?: string;
@@ -129,6 +133,20 @@ export interface IGoodInfo {
   unitMeasure?: string;
   physicalStatus?: number | string;
   reprogrammationNumber?: number;
+}
+
+export interface IDomicileInfo {
+  aliasWarehouse?: string;
+  cveState?: number;
+  cveMunicipality?: string;
+  cveSettlement?: string;
+  code?: string;
+  viaName?: string;
+  viaOrigin?: string;
+  viaDestination?: string;
+  viaChaining?: string;
+  numExt?: string;
+  numInt?: string;
 }
 
 export interface IPACambioStatusGood {

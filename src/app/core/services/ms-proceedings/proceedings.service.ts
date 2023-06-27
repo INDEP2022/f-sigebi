@@ -95,10 +95,13 @@ export class ProceedingsService extends HttpService {
   }
 
   getProceedings(params?: ListParams): Observable<IListResponse<IProceedings>> {
-    return this.get<IListResponse<IProceedings>>(`${this.route}`, params);
+    return this.get<IListResponse<IProceedings>>(
+      `${this.route}/getAll`,
+      params
+    );
   }
 
-  createProceedings(formData: Object) {
+  createProceedings(formData: any) {
     return this.post(this.route, formData);
   }
 
@@ -123,7 +126,7 @@ export class ProceedingsService extends HttpService {
     no_Acta: string | number
   ) {
     return this.put<IListResponse<any>>(
-      `${this.route}/aplication/update-actasEntregaRecepcion/${no_Acta}`,
+      `aplication/update-actasEntregaRecepcion/${no_Acta}`,
       model
     );
   }
@@ -134,5 +137,9 @@ export class ProceedingsService extends HttpService {
 
   insertsAndUpdatesValmotosOne(model: Object) {
     return this.post<IListResponse>('aplication/get-detail-acta-types', model);
+  }
+
+  updateProceeding(model: Object) {
+    return this.put(this.route, model);
   }
 }

@@ -9,7 +9,7 @@ export interface IReceipt {
   closingDate?: string;
   companySeg?: string;
   statusReceipt?: string;
-  contentId?: number;
+  contentId?: string;
   contractNumber?: string;
   expIdFuncSeg?: number;
   expIdWitnessIne?: number;
@@ -31,6 +31,9 @@ export interface IReceipt {
   chargeReceipt?: string;
   nameDelivery?: string;
   chargeDelivery?: string;
+  electronicSignatureEnt?: boolean;
+  electronicSignatureReceipt?: boolean;
+  folioReceipt?: string;
 }
 
 export interface IRecepitGuard {
@@ -38,6 +41,7 @@ export interface IRecepitGuard {
   idGood: number;
   receiptGuardId: number;
   version: number;
+  statusReceiptGuard: string;
 }
 
 export interface IReceipyGuardDocument {
@@ -58,8 +62,8 @@ export interface IReceipyGuardDocument {
 }
 
 export interface IReceiptwitness {
-  nameWitness: string;
-  chargeWitness: string;
-  electronicSignature: String;
-  electronicSignatureName: String;
+  nameWitness?: string;
+  chargeWitness?: string;
+  electronicSignature?: String;
+  electronicSignatureName?: String;
 }

@@ -9,8 +9,11 @@ import {
   KEYGENERATION_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
+import Swal from 'sweetalert2';
 import { MassiveConversionPermissionsComponent } from '../massive-conversion-permissions/massive-conversion-permissions.component';
 import { COLUMNS } from './columns';
+
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 
 @Component({
   selector: 'app-massive-conversion',
@@ -27,6 +30,8 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
 
   constructor(private fb: FormBuilder, private modalService: BsModalService) {
     super();
+
+    //Tabla de PREVISUALIZACIÓN DE DATOS
     this.settings = {
       ...this.settings,
       actions: { add: false, delete: true, edit: true },
@@ -43,35 +48,43 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
 
   private prepareForm(): void {
     this.form = this.fb.group({
+      //Primer form
       package: [null, [Validators.required]],
       packageType: [null, [Validators.required]],
       amountKg: [null, [Validators.required]],
       status: [null, [Validators.required]],
+
+      //Segundo form
       delegation: [null, [Validators.required]],
-      goodStatus: [null, [Validators.required]],
-      transferent: [null, [Validators.required]],
-      measurementUnit: [null, [Validators.required]],
       goodClassification: [null, [Validators.required]],
       targetTag: [null, [Validators.required]],
+      goodStatus: [null, [Validators.required]],
+      measurementUnit: [null, [Validators.required]],
+      transferent: [null, [Validators.required]],
       warehouse: [null, [Validators.required]],
+
+      //Pestaña de "ESCANEO"
       scanFolio: [
         null,
         [Validators.required, Validators.pattern(KEYGENERATION_PATTERN)],
       ],
-      paragraphF: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
+
+      //Pestaña de "PÁRRAFOS"
       paragraphS: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
+      paragraphF: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ], //Párrrafo inicial
       paragraphL: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
+      ], //Párrrafo final
     });
 
+    //Formulario "NUEVO BIEN"
     this.form2 = this.fb.group({
       numberGood: [null, [Validators.required]],
       record: [null, [Validators.required]],
@@ -87,6 +100,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
   }
 
   add() {
+    console.log(this.form.value);
     //this.openModal();
   }
 
@@ -95,12 +109,76 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     //this.openModal({ edit: true, paragraph });
   }
 
+  showConfirmAlert() {
+    // Validar que todos los campos estén diligenciados
+    if (this.form.valid) {
+      this.alertQuestion(
+        'info',
+        'Confirmación',
+        '¿Está seguro de que el Paquete ya ha sido validado?'
+      ).then(question => {
+        if (question.isConfirmed) {
+          console.log('Hola', question.isConfirmed);
+          // Lógica a ejecutar si se confirma la acción
+          // ...
+          // Ejemplo: mostrar un mensaje de éxito
+          Swal.fire('Validado', '', 'success');
+        }
+      });
+    } else {
+      // Mostrar mensaje de error
+      Swal.fire(`Faltan datos necesarios para validar ${this.form}`);
+    }
+  }
+
+  showAutorizateAlert() {
+    // Validar que todos los campos estén diligenciados
+    if (this.form.valid) {
+      this.alertQuestion(
+        'info',
+        'Confirmación',
+        '¿Está seguro de que el Paquete ya ha sido autorizado?'
+      ).then(question => {
+        if (question.isConfirmed) {
+          // Lógica a ejecutar si se confirma la acción
+          // ...
+          // Ejemplo: mostrar un mensaje de éxito
+          Swal.fire('Autorizado', '', 'success');
+        }
+      });
+    } else {
+      // Mostrar mensaje de error
+      Swal.fire(`Existe inconsistencia en los bienes ${this.form}`);
+    }
+  }
+
+  showCloseAlert() {
+    // Validar que todos los campos estén diligenciados
+    if (this.form.valid) {
+      this.alertQuestion(
+        'info',
+        'Confirmación',
+        '¿Está seguro en cerrar el Paquete?'
+      ).then(question => {
+        if (question.isConfirmed) {
+          // Lógica a ejecutar si se confirma la acción
+          // ...
+          // Ejemplo: mostrar un mensaje de éxito
+          Swal.fire('Autorizado', '', 'success');
+        }
+      });
+    } else {
+      // Mostrar mensaje de error
+      Swal.fire(`Existe inconsistencia en los bienes... ${this.form} `);
+    }
+  }
+
   delete(data: any) {
     console.log(data);
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
@@ -111,22 +189,14 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
   settingsChange($event: any): void {
     this.settings = $event;
   }
+
   openPermissions(data: any) {
-    // let config: ModalOptions = {
-    //   initialState: {
-    //     data,
-    //     callback: (next: boolean) => { },
-    //   },
-    //   class: 'modal-xl modal-dialog-centered',
-    //   ignoreBackdropClick: true,
-    // };
-    // this.modalService.show(MassiveConversionPermissionsComponent, config);
-    const modalRef = this.modalService.show(
-      MassiveConversionPermissionsComponent,
-      {
-        class: 'modal-lg modal-dialog-centered',
-        ignoreBackdropClick: true,
-      }
-    );
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      data,
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: false,
+    };
+    this.modalService.show(MassiveConversionPermissionsComponent, modalConfig);
   }
 }

@@ -115,7 +115,7 @@ export enum ENDPOINT_LINKS {
   TypeGoods = 'catalog/type-state',
   TypeRelevant = 'catalog/type-relevant',
   TypeSettelement = 'catalog/type-settlement',
-  TypeSiniester = 'catalog/type-sinister',
+  TypeSiniester = 'catalog/type-sinisters',
   TypeWarehouse = 'catalog/type-warehouses',
   TypeOrderServices = 'catalog/type-order-service',
   TypeServices = 'catalog/type-services',
@@ -147,7 +147,7 @@ export enum ENDPOINT_LINKS {
   DinamicTable = 'dynamiccatalog/api/v1/dinamic-tables',
   DinamicTable1 = 'dynamiccatalog/api/v1/dinamic-tables',
   Table1 = 'dynamiccatalog/tval-table-1',
-
+  Currency = 'dinamic-tables/get-reg-monedas',
   AffairType = 'affair-type',
   FinancialInformation = 'parameterfinantial/financial-information',
   FinancialIndicators = 'financial-indicators',

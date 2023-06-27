@@ -106,4 +106,18 @@ export class HistoryGoodService extends HttpService {
     const route = HistoryGoodEndpoints.ValidateDatesToUpdateStatus;
     return this.post(`${route}`, body);
   }
+
+  getProcessExtDom(goodNumber: any) {
+    const route = HistoryGoodEndpoints.GetProcessExtDom;
+    return this.get(`${route}/` + goodNumber);
+  }
+  getChangeDate(goodNumber: any) {
+    const route = 'historical/getChangeDate/' + goodNumber;
+    return this.get(`${route}`);
+  }
+
+  updateGoodStatusWhenDelete(body: any) {
+    const route = HistoryGoodEndpoints.UpdateGoodStatusWhenDelete;
+    return this.post(`${route}`, body);
+  }
 }

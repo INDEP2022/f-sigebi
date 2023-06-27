@@ -6,6 +6,9 @@ import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import {
   IAppointmentDepositary,
+  IDepositaryAppointments,
+  IDepositaryPaymentDet,
+  IInfoDepositary,
   IPaymendtDepParamsDep,
   IPersonsModDepositary,
   IRequestDepositary,
@@ -29,6 +32,20 @@ export class MsDepositaryService extends HttpService {
     );
   }
 
+  create(body: Partial<IAppointmentDepositary>) {
+    return this.post<IListResponse<IAppointmentDepositary>>(
+      DepositaryEndPoints.DepositaryAppointment,
+      body
+    );
+  }
+
+  update(body: Partial<IAppointmentDepositary>) {
+    return this.put<IListResponse<IAppointmentDepositary>>(
+      DepositaryEndPoints.DepositaryAppointment,
+      body
+    );
+  }
+
   getGoodAppointmentDepositaryByNoGood(
     params?: ListParams | string
   ): Observable<IListResponse<IAppointmentDepositary>> {
@@ -44,6 +61,29 @@ export class MsDepositaryService extends HttpService {
     return this.get<IListResponse<IRequestDepositary>>(
       DepositaryEndPoints.DepositaryRequest,
       params
+    );
+  }
+
+  getAppointments(
+    params?: ListParams
+  ): Observable<IListResponse<IDepositaryAppointments>> {
+    return this.get<IListResponse<IDepositaryAppointments>>(
+      DepositaryEndPoints.DepositaryAppointments,
+      params
+    );
+  }
+
+  createDepositaryAppointments(body: Partial<IDepositaryAppointments>) {
+    return this.post<IListResponse<IDepositaryAppointments>>(
+      DepositaryEndPoints.DepositaryAppointments,
+      body
+    );
+  }
+
+  updateDepositaryAppointments(body: Partial<IDepositaryAppointments>) {
+    return this.put<IListResponse<IDepositaryAppointments>>(
+      DepositaryEndPoints.DepositaryAppointments,
+      body
     );
   }
 
@@ -99,6 +139,49 @@ export class MsDepositaryService extends HttpService {
   ): Observable<IListResponse<any>> {
     return this.get<IListResponse<any>>(
       `${DepositaryEndPoints.AplicationcargaCliente2}?no_nombramiento=${no_appointment}`
+    );
+  }
+
+  getAllFilteredDedPay(
+    params?: _Params
+  ): Observable<IListResponse<IDepositaryPaymentDet>> {
+    return this.get<IListResponse<IDepositaryPaymentDet>>(
+      DepositaryEndPoints.DepositaryDedPay,
+      params
+    );
+  }
+  getAllFilteredDepositaryDetrepo(
+    params?: _Params
+  ): Observable<IListResponse<IDepositaryPaymentDet>> {
+    return this.get<IListResponse<IDepositaryPaymentDet>>(
+      DepositaryEndPoints.DepositaryDetrepo,
+      params
+    );
+  }
+  getInfoDepositary(
+    params?: _Params
+  ): Observable<IListResponse<IInfoDepositary>> {
+    return this.get<IListResponse<IInfoDepositary>>(
+      DepositaryEndPoints.InfoDepositary,
+      params
+    );
+  }
+
+  putInfoDepositary(
+    model: IInfoDepositary
+  ): Observable<IListResponse<IInfoDepositary>> {
+    return this.put<IListResponse<IInfoDepositary>>(
+      DepositaryEndPoints.InfoDepositary,
+      model
+    );
+  }
+
+  getAllFilteredFactJurRegDestLeg(
+    params?: _Params
+  ): Observable<IListResponse<IAppointmentDepositary>> {
+    return this.get<IListResponse<IAppointmentDepositary>>(
+      DepositaryEndPoints.FactJurRegDestLeg,
+      params
     );
   }
 }

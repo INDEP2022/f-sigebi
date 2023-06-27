@@ -13,15 +13,25 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { format } from 'date-fns';
 import esLocale from 'date-fns/locale/es';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, firstValueFrom, Observable, takeUntil } from 'rxjs';
+import {
+  BehaviorSubject,
+  catchError,
+  firstValueFrom,
+  map,
+  Observable,
+  of,
+  takeUntil,
+} from 'rxjs';
 import {
   goFormControlAndFocus,
   showQuestion,
+  showToast,
 } from 'src/app/common/helpers/helpers';
 import { OpinionService } from 'src/app/core/services/catalogs/opinion.service';
 import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
 import { SatTransferService } from 'src/app/core/services/ms-interfacesat/sat-transfer.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
+import { MJobManagementService } from 'src/app/core/services/ms-office-management/m-job-management.service';
 import { DocumentsViewerByFolioComponent } from '../../../../../@standalone/modals/documents-viewer-by-folio/documents-viewer-by-folio.component';
 import { SelectListFilteredModalComponent } from '../../../../../@standalone/modals/select-list-filtered-modal/select-list-filtered-modal.component';
 import {
@@ -193,7 +203,8 @@ export class JuridicalRecordUpdateComponent
     protected opinionService: OpinionService,
     protected notificationService: NotificationService,
     protected satTransferenceService: SatTransferService,
-    protected dictationService: DictationService
+    protected dictationService: DictationService,
+    private mJobManagementService: MJobManagementService
   ) {
     super();
     this.fetchForForm = new FetchForForm(fileUpdateService, this.formControls);
@@ -1276,32 +1287,39 @@ export class JuridicalRecordUpdateComponent
         ],
         {
           queryParams: {
-            origin: '/pages/juridical/file-data-update',
-            form: 'FACTGENACTDATEX',
-            expediente: this.formControls.expedientNumber.value,
-            volante: this.formControls.wheelNumber.value,
-            pDictamen: this.formControls.dictumKey.value?.id,
-            pGestOk: this.pageParams.pGestOk,
-            pNoTramite: procedure,
-            tipoOf: officeType,
-            bien: property,
-            sale: sale,
-            doc,
+            LAST_ROUTE: '/pages/juridical/file-data-update',
+            ORIGIN: 'FACTGENACTDATEX',
+            VOLANTE: this.formControls.wheelNumber.value,
+            EXPEDIENTE: this.formControls.expedientNumber.value,
+            DOC: doc,
+            TIPO_OF: officeType,
+            SALE: sale,
+            BIEN: property,
+            P_GEST_OK: this.pageParams.pGestOk,
+            P_NO_TRAMITE: procedure,
+            P_DICTAMEN: this.formControls.dictumKey.value?.id,
           },
         }
       );
       try {
-        const result2 = await Promise.allSettled([
-          this.fetchForForm.mOfficeManager(),
-          this.fetchForForm.getDictations(),
-        ]);
-        if (
-          result2[0].status == 'rejected' &&
-          result2[1].status == 'rejected'
-        ) {
-          this.fetchForForm.putNotification();
+        const dictationCount = await this.getCountDictation();
+        const mJobManagementCount = await this.getJobManagement();
+        if (dictationCount == 0 && mJobManagementCount == 0) {
+          await firstValueFrom(
+            this.notificationService.update(
+              this.formControls.wheelNumber.value,
+              {
+                dictumKey: null,
+              }
+            )
+          );
         }
-      } catch (ex) {}
+      } catch (ex) {
+        showToast({
+          icon: 'error',
+          text: 'Error al actualizar la clave del dictamen',
+        });
+      }
     }
   }
 
@@ -1528,7 +1546,9 @@ export class JuridicalRecordUpdateComponent
         }
         this.formControls.dictumKey.disable();
         const params = new ListParams();
-        params['filter.user'] = this.authService.decodeToken().username; //TODO:Descomentar'ERMARTINEZ';
+        params['filter.user'] = this.authService
+          .decodeToken()
+          .preferred_username?.toUpperCase(); //TODO:Descomentar'ERMARTINEZ';
         params['filter.typeNumber'] = 'RESARCIMIENTO';
         params['filter.writing'] = 'S';
         params['filter.reading'] = 'S';
@@ -1549,7 +1569,7 @@ export class JuridicalRecordUpdateComponent
             this.alert(
               'warning',
               '',
-              'No tienes privilegios para entrar a los Dictamenes de Resarcimiento '
+              'No tienes privilegios para entrar a los Dictámenes de Resarcimiento '
             );
             this.isLoadingBtnDictationJudgment = false;
             return;
@@ -1581,7 +1601,91 @@ export class JuridicalRecordUpdateComponent
     this.isLoadingBtnDictationJudgment = false;
   }
 
-  pupShowDictation() {
+  async getCountDictation(): Promise<number> {
+    const listParams = new ListParams();
+    listParams['filter.wheelNumber'] = this.formControls.wheelNumber.value;
+    const count = await firstValueFrom(
+      this.dictationService.getAll(listParams).pipe(
+        map(response => response.count),
+        catchError(error => {
+          if (error.status >= 400 && error.status < 500) {
+            return of(0);
+          } else {
+            throw error;
+          }
+        })
+      )
+    );
+    return count;
+  }
+
+  async getJobManagement(): Promise<number> {
+    const listParams = new ListParams();
+    listParams['filter.flyerNumber'] = this.formControls.wheelNumber.value;
+    const count = await firstValueFrom(
+      this.mJobManagementService.getAll(listParams).pipe(
+        map(response => response.count),
+        catchError(error => {
+          if (error.status >= 400 && error.status < 500) {
+            return of(0);
+          } else {
+            throw error;
+          }
+        })
+      )
+    );
+    return count;
+  }
+
+  async getNotificationKnow(): Promise<number> {
+    const listParams = new ListParams();
+    listParams['filter.wheelNumber'] = this.formControls.wheelNumber.value;
+    listParams['filter.dictumKey'] = 'CONOCIMIENTO';
+    const count = await firstValueFrom(
+      this.notificationService.getAll(listParams).pipe(
+        map(response => response.count),
+        catchError(error => {
+          if (error.status >= 400 && error.status < 500) {
+            return of(0);
+          } else {
+            throw error;
+          }
+        })
+      )
+    );
+    return count;
+  }
+
+  async updateDictumKey() {
+    try {
+      const dictationCount = await this.getCountDictation();
+      const mJobManagementCount = await this.getJobManagement();
+      if (dictationCount == 0 && mJobManagementCount == 0) {
+        await firstValueFrom(
+          this.notificationService.update(this.formControls.wheelNumber.value, {
+            dictumKey: null,
+          })
+        );
+      } else if (
+        dictationCount == 0 &&
+        mJobManagementCount > 0 &&
+        this.globals.varDic
+      ) {
+        await firstValueFrom(
+          this.notificationService.update(this.formControls.wheelNumber.value, {
+            dictumKey: this.globals.varDic,
+          })
+        );
+      }
+    } catch (ex) {
+      showToast({
+        icon: 'error',
+        text: 'Error al actualizar la clave del dictamen',
+      });
+    }
+  }
+
+  async pupShowDictation() {
     const dictumKey = this.formControls.dictumKey.value?.id;
     let dictumType;
     if (['1', '16', '23'].includes(dictumKey)) dictumType = 'PROCEDENCIA';
@@ -1639,6 +1743,8 @@ export class JuridicalRecordUpdateComponent
         P_NO_TRAMITE: procedure,
       },
     });
+
+    await this.updateDictumKey();
 
     // const dictamen = this.formControls.dictumKey.value?.id;
     // let dictOfi = await this.getCatDictation(dictamen);
@@ -1713,7 +1819,7 @@ export class JuridicalRecordUpdateComponent
 
   readonly nameForm = '';
 
-  sendToRelatedDocumentsManagement() {
+  async sendToRelatedDocumentsManagement() {
     this.fileUpdateService.juridicalFileDataUpdateForm =
       this.fileDataUpdateForm.value;
     let procedure;
@@ -1737,15 +1843,37 @@ export class JuridicalRecordUpdateComponent
       ],
       {
         queryParams: {
-          origin: '/pages/juridical/file-data-update',
-          form: 'FACTGENACTDATEX',
-          expediente: this.formControls.expedientNumber.value,
-          volante: this.formControls.wheelNumber.value,
-          pGestOk: this.pageParams.pGestOk,
-          pNoTramite: procedure,
+          LAST_ROUTE: '/pages/juridical/file-data-update',
+          ORIGIN: 'FACTGENACTDATEX',
+          VOLANTE: this.formControls.wheelNumber.value,
+          EXPEDIENTE: this.formControls.expedientNumber.value,
+          P_GEST_OK: this.pageParams.pGestOk,
+          P_NO_TRAMITE: procedure,
         },
       }
     );
+
+    try {
+      const dictationCount = await this.getCountDictation();
+      const mJobManagementCount = await this.getJobManagement();
+      const notificationKnowCount = await this.getNotificationKnow();
+      if (
+        dictationCount == 0 &&
+        mJobManagementCount == 0 &&
+        notificationKnowCount == 0
+      ) {
+        await firstValueFrom(
+          this.notificationService.update(this.formControls.wheelNumber.value, {
+            dictumKey: null,
+          })
+        );
+      }
+    } catch (ex) {
+      showToast({
+        icon: 'error',
+        text: 'Error al actualizar la clave del dictamen',
+      });
+    }
   }
 
   openFlyerCopies() {

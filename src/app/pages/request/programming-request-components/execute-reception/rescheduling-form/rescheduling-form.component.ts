@@ -66,6 +66,7 @@ export class ReschedulingFormComponent extends BasePage implements OnInit {
         goodStatus: 'EN_PROGRAMACION_TMP',
         programmationStatus: 'EN_PROGRAMACION_TMP',
         reasonCancReprog: this.form.get('reason').value,
+        reprogrammationNumber: 1,
       };
 
       this.goodService.updateByBody(formData).subscribe({

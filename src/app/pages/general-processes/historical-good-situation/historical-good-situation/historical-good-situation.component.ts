@@ -1,7 +1,6 @@
-import { Location } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import {
   BehaviorSubject,
   catchError,
@@ -22,33 +21,7 @@ import { HISTORICAL_GOOD_SITUATION_COLUMNS } from './historical-good-situation-c
 @Component({
   selector: 'app-historical-good-situation',
   templateUrl: './historical-good-situation.component.html',
-  styles: [
-    `
-      .title {
-        font-size: 15px !important;
-        font-weight: 500 !important;
-        position: relative !important;
-      }
-      .btn-return {
-        color: #9d2449;
-        padding-left: 0px;
-        left: -10px;
-        position: relative;
-        display: flex;
-        align-items: center;
-        top: -20px;
-        margin-top: 5px;
-
-        > i {
-          font-size: 35px;
-        }
-
-        &:hover {
-          color: #9d2449;
-        }
-      }
-    `,
-  ],
+  styles: [],
 })
 export class HistoricalGoodSituationComponent
   extends BasePage
@@ -65,7 +38,6 @@ export class HistoricalGoodSituationComponent
   };
   goodId: number = null;
   params = new BehaviorSubject(new FilterParams());
-
   history: any[] = [];
   totalItems = 0;
 
@@ -76,9 +48,7 @@ export class HistoricalGoodSituationComponent
     private fb: FormBuilder,
     private activatedRoute: ActivatedRoute,
     private historyGoodServie: HistoryGoodService,
-    private goodService: GoodService,
-    private location: Location,
-    private router: Router
+    private goodService: GoodService
   ) {
     super();
     this.activatedRoute.queryParams
@@ -113,14 +83,8 @@ export class HistoricalGoodSituationComponent
       )
       .subscribe();
     const { origin, goodNumber } = this._params;
-    // if (origin == 'FACTREFACTAENTREC') {
-    //   this.goodId = goodNumber;
-    //   this.controls.goodNumber.setValue(goodNumber);
-    // } else if (origin == 'FCONGENRASTREADOR') {
     this.goodId = goodNumber;
     this.controls.goodNumber.setValue(goodNumber);
-    // }
-
     this.params
       .pipe(
         takeUntil(this.$unSubscribe),
@@ -131,7 +95,6 @@ export class HistoricalGoodSituationComponent
         })
       )
       .subscribe();
-
     this.global.estHist = null;
     this.global.fecCam = null;
   }
@@ -180,18 +143,5 @@ export class HistoricalGoodSituationComponent
         this.params.next(params);
       })
     );
-  }
-
-  goBack() {
-    // if (this._params.origin == 'FACTREFACTAENTREC') {
-    //   this.router.navigate([HOME_DEFAULT])
-    //   return
-    // }
-
-    // if (this._params.origin == 'FCONGENRASTREADOR') {
-    //   this.router.navigate([HOME_DEFAULT]);
-    //   return;
-    // }
-    this.location.back();
   }
 }

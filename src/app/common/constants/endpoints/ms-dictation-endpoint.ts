@@ -48,5 +48,11 @@ export enum DictationEndpoints {
   ApplicationPupValidExtDom = 'application/pupValidExtDom',
   ApplicationUpdateManagerTransfer = 'application/updateManagerTransfer',
   ApplicationFindOffficeNu = 'application/findOffficeNu',
+  GetSeqOfGestion = 'application/get-seq-of-gestion',
+  Count2 = 'application/getCount2',
+  Count4 = 'application/getCount4',
   ApplicationPupCambiaEstatus = 'application/pup-cambia-estatus',
+  ApplicationPufGenerateKey = 'application/puf-generate-key',
+  ApplicationGetFirmados = 'application/getFirmados',
+  ApplicationBlkControlPrintWhenButtonPressed = 'application/blkControlPrintWhenButtonPressed',
 }

@@ -1,0 +1,108 @@
+<app-modal>
+  <div class="w-100" header>
+    <div class="d-flex flex-wrap justify-content-between aling-items-center">
+      <h5 class="modal-title">{{ title }}</h5>
+      <div class="buttons">
+        <button class="btn btn-primary active btn-sm ml-3" (click)="close()">
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </div>
+  <div body style="padding-top: 0px !important">
+    <div class="col-12">
+      <form class="form-material" [formGroup]="form">
+        <div class="row">
+          <div class="col-6">
+            <div class="row">
+              <div class="col-md-12 mt-3">
+                <form-field [control]="form.get('bank')">
+                  <ngx-select
+                    [form]="form"
+                    [data]="banks"
+                    (fetchItems)="getBanks($event)"
+                    bindLabel="bankAndNumber"
+                    control="bank"
+                    label="Banco"
+                    [searchOnInit]="false"
+                    [showTooltip]="true"
+                    termMaxLength="30">
+                  </ngx-select>
+                </form-field>
+              </div>
+              <div class="col-md-12 mt-3">
+                <form-field
+                  [control]="form.get('dateMovement')"
+                  label="Fecha de Movimiento">
+                  <input
+                    [(ngModel)]="dateMovem"
+                    (ngModelChange)="dateMovement($event)"
+                    bsDatepicker
+                    [maxDate]="maxDate"
+                    type="text"
+                    class="form-control"
+                    formControlName="dateMovement" />
+                </form-field>
+              </div>
+              <div class="col-md-12 mt-3">
+                <form-field
+                  [control]="form.get('dateCalculationInterests')"
+                  label="Fecha Cálculo Interés">
+                  <input
+                    bsDatepicker
+                    [minDate]="dateMovem"
+                    type="text"
+                    class="form-control"
+                    formControlName="dateCalculationInterests" />
+                </form-field>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="row">
+              <div class="col-md-12 mt-3">
+                <form-field [control]="form.get('category')">
+                  <ngx-select
+                    [form]="form"
+                    [data]="categories"
+                    (fetchItems)="getCategory($event)"
+                    bindLabel="categoryAndDesc"
+                    control="category"
+                    label="Categoria"
+                    [searchOnInit]="false"
+                    [showTooltip]="true"
+                    termMaxLength="30">
+                  </ngx-select>
+                </form-field>
+              </div>
+              <div class="col-md-12 mt-3">
+                <form-field [control]="form.get('deposit')" label="Depósito">
+                  <input
+                    type="number"
+                    min="0"
+                    pattern="^[0-9]+"
+                    class="form-control"
+                    formControlName="deposit" />
+                </form-field>
+              </div>
+              <div class="col-md-12 mt-3"></div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button
+          [disabled]="!form.valid"
+          type="button"
+          class="btn btn-primary active"
+          (click)="saveRegister()">
+          Guardar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

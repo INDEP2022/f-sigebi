@@ -12,3 +12,9 @@ export interface IAprovedGoods {
   approved: string;
   keyAct: string;
 }
+
+export interface IIdentifierCount {
+  identificador: string;
+  fec_cargamasiv: string;
+  count: string;
+}

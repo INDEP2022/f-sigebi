@@ -1,4 +1,5 @@
 import { ILabelOKey } from '../catalogs/label-okey.model';
+import { IServiceCat } from '../catalogs/service-cat.model';
 import { IWarehouse } from '../catalogs/warehouse.model';
 import { IExpedient } from '../ms-expedient/expedient';
 import { IFraccion } from './fraccion';
@@ -353,10 +354,12 @@ export interface IGoodSami {
 }
 
 export interface IGood {
+  [x: string]: any;
   protection?: string;
   id?: number;
   inventoryNumber?: number;
   goodId?: number;
+  notSelect?: boolean;
   description?: string;
   quantity?: number;
   dateIn?: Date;
@@ -854,4 +857,14 @@ export interface IAttribGoodBad {
 export interface IGoodSiab {
   goodNumber: number;
   status: string;
+}
+
+export interface IServiceGood {
+  goodNumber: string | number;
+  cveService: string;
+  periodicity: string;
+  dateCourt: string;
+  recordNumber?: string;
+  good?: IGood;
+  serviceCat?: IServiceCat;
 }

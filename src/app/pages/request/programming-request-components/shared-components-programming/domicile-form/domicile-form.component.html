@@ -1,0 +1,80 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Detalle de la Direcci&oacute;n</h5>
+  </div>
+  <div body>
+    <div class="row">
+      <form class="form-horizontal">
+        <div class="col-md-5">
+          <div class="form-group">
+            <label class="text-right">Alies Almac&eacute;n</label>
+            <span> {{ item?.domicilio.warehouseAlias }} </span>
+          </div>
+
+          <div class="form-group">
+            <label class="text-right">Estado</label>
+            <span> {{ item.cveState }} </span>
+          </div>
+
+          <div class="form-group">
+            <label class="text-right">Municipio</label>
+            <span> {{ item.cveMunicipality }} </span>
+          </div>
+
+          <div class="form-group">
+            <label class="text-right">Asentamiento</label>
+            <span>
+              {{ item?.cveSettlement }}
+            </span>
+          </div>
+          <div class="form-group">
+            <label class="text-right">Codigo Postal</label>
+            <span> {{ item?.domicilio.code }} </span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="text-right">Nombre de la Via</label>
+          <span> {{ item?.domicilio.wayName }} </span>
+        </div>
+        <div class="form-group">
+          <label class="text-right">Origen de la Via</label>
+          <span> {{ item?.domicilio.wayOrigin }} </span>
+        </div>
+        <div class="form-group">
+          <label class="text-right">Destino de la Via</label>
+          <span> {{ item?.domicilio.wayDestiny }} </span>
+        </div>
+        <div class="form-group">
+          <label class="text-right">Kil&oacute;metro de la Via</label>
+          <span> {{ item?.domicilio.wayChaining }} </span>
+        </div>
+        <div class="form-group">
+          <label class="text-right">Num. Ext</label>
+          <span> {{ item?.domicilio.exteriorNumber }} </span>
+        </div>
+        <div class="form-group">
+          <label class="text-right">Num. Int</label>
+          <span> {{ item.domicilio.interiorNumber }} </span>
+        </div>
+      </form>
+    </div>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+        <!-- <confirm-button
+        [loading]="loadingReport"
+        [btnSmall]="true"
+        [text]="'Detalle de la Dirección'"
+        [loadingText]="'Generando Dirección'"
+        [className]="'btn-info'"
+        class="mr-2"
+        (click)="close()"></confirm-button> -->
+      </div>
+    </div>
+  </div>
+</app-modal>

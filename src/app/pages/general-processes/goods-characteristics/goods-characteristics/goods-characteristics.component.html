@@ -5,7 +5,7 @@
       <div class="col-12 col-sm-12 col-md-8">
         <h5 class="title">
           Caracter&Iacute;sticas del bien
-          <ng-container *ngIf="numberGood">{{ numberGood.value }}</ng-container>
+          <ng-container *ngIf="numberGood">{{ actualGoodNumber }}</ng-container>
         </h5>
       </div>
       <div class="col-12 col-sm-12 col-md-4 text-end" *ngIf="origin">
@@ -33,7 +33,7 @@
             <tab heading="Datos de B&uacute;squeda">
               <div class="row">
                 <div class="col-md-6">
-                  <ng-template #typeLabel let-item="item">
+                  <!-- <ng-template #typeLabel let-item="item">
                     {{ item.id }} - {{ item.nameGoodType }}
                   </ng-template>
                   <ng-template #typeOption let-item="item">
@@ -108,16 +108,17 @@
                     <div [title]="item.id + '-' + item.description">
                       {{ item.id }} - {{ item.description }}
                     </div>
-                  </ng-template>
-                  <!-- <app-goods-types-shared
+                  </ng-template> -->
+                  <app-goods-types-shared
                     [form]="form"
+                    [(loadTypes)]="loadTypes"
                     typeField="type"
                     subtypeField="subtype"
                     ssubtypeField="ssubtype"
                     sssubtypeField="sssubtype"
                     (goodSssubtypeChange)="
                       getGoods($event)
-                    "></app-goods-types-shared> -->
+                    "></app-goods-types-shared>
                 </div>
                 <div class="col-md-6">
                   <div class="row pt-3">
@@ -158,22 +159,37 @@
                         formControlName="status" />
                     </form-field>
                   </div>
-                  <!-- <div class="row pt-3" style="margin: auto">
-                    <button
-                      [disabled]="formLoading"
-                      class="btn btn-primary btn-sm active"
-                      type="button"
-                      (click)="clearFilter()">
-                      Limpiar Filtros
-                    </button>
+                  <div class="row pt-3 buttons" style="margin: auto">
                     <button
                       [disabled]="formLoading"
                       class="btn btn-primary btn-sm active"
                       type="button"
                       (click)="searchGood()">
                       Buscar
+                      <i class="bx bx-search-alt bx-sm float-icon"></i>
                     </button>
-                  </div> -->
+                    <button
+                      [disabled]="formLoading"
+                      class="btn btn-danger btn-sm active"
+                      type="button"
+                      (click)="clearFilter()">
+                      Limpiar
+                      <i class="fa fa-eraser"></i>
+                    </button>
+
+                    <!-- <div class="col-6 p-0">
+                      <button
+                        [disabled]="formLoading"
+                        class="btn btn-danger btn-sm active"
+                        type="button"
+                        (click)="clearFilter()">
+                        Limpiar
+                      </button>
+                    </div>
+                    <div class="col-6 p-0" style="text-align: right">
+
+                    </div> -->
+                  </div>
                 </div>
               </div>
             </tab>
@@ -188,9 +204,10 @@
                 <button
                   *ngIf="!disabledBienes"
                   type="button"
-                  class="btn btn-sm btn-success active"
+                  class="btn btn-sm btn-primary active"
                   (click)="save()">
                   Guardar
+                  <i class="bx bx-save text-light float-icon"></i>
                 </button>
                 <h5
                   class="text-danger"
@@ -251,6 +268,14 @@
               </div>
               <div class="row mt-3">
                 <!-- <app-delegation-shared [form]="form"></app-delegation-shared> -->
+                <ng-template #coordinationLabel let-item="item">
+                  {{ item.id }} - {{ item.description }}
+                </ng-template>
+                <ng-template #coordinationOption let-item="item">
+                  <div [title]="item.id + '-' + item.description">
+                    {{ item.id }} - {{ item.description }}
+                  </div>
+                </ng-template>
                 <div class="col-md-6">
                   <div class="form-group row">
                     <ng-custom-select-loading
@@ -259,9 +284,12 @@
                       formControlName="delegation"
                       label="Delegación"
                       path="catalog/api/v1/delegation/get-all"
-                      value="description"
+                      value="id"
                       bindLabel="description"
-                      paramSearch="search"
+                      paramSearch="filter.id"
+                      [limit]="1000"
+                      [labelTemplate]="coordinationLabel"
+                      [optionTemplate]="coordinationOption"
                       (valueChange)="updateDelegation($event)">
                     </ng-custom-select-loading>
                     <!-- <form-field
@@ -280,12 +308,15 @@
                     <ng-custom-select-loading
                       [form]="form"
                       [readonly]="disabledBienes"
+                      [limit]="1000"
+                      [labelTemplate]="coordinationLabel"
+                      [optionTemplate]="coordinationOption"
                       formControlName="subdelegation"
-                      label="Delegación"
+                      label="Sub Delegación"
                       path="catalog/api/v1/subdelegation/get-all"
-                      value="description"
+                      value="id"
                       bindLabel="description"
-                      paramSearch="search"
+                      paramSearch="filter.id"
                       (valueChange)="updateSubdelegation($event)">
                     </ng-custom-select-loading>
 
@@ -373,7 +404,7 @@
                     [readonly]="disabledBienes"></textarea>
                 </form-field>
 
-                <div class="col-md-4">
+                <div class="col-md-2">
                   <small>¿Con Aval&uacute;o?</small>
                   <div
                     class="d-flex"
@@ -392,10 +423,39 @@
                     </form-radio>
                   </div>
                 </div>
+                <div class="col-md-2">
+                  <form-field [control]="form.get('img')" label="">
+                    <input
+                      class="form-control mb-3 mt-3"
+                      type="file"
+                      id="formFile"
+                      accept="image/png,image/jpeg"
+                      formControlName="img"
+                      (change)="onFileChange($event)" />
+                  </form-field>
+                </div>
               </div>
               <div class="row" *ngIf="loading === false">
-                <app-good-table-vals></app-good-table-vals>
+                <app-good-table-vals
+                  *ngIf="good"
+                  [goodChange]="goodChange"
+                  [disabled]="disabledBienes"
+                  [good]="good"
+                  [clasification]="
+                    numberClassification ? numberClassification.value : null
+                  "
+                  [avaluo]="goodAppraisal2 ? goodAppraisal2.value : null"
+                  [di_numerario_conciliado]="
+                    di_numerario_conciliado
+                  "></app-good-table-vals>
               </div>
+            </tab>
+            <tab heading="Fotos">
+              <app-good-photos
+                *ngIf="actualGoodNumber"
+                [showPhoto]="showPhoto"
+                [disabledBienes]="disabledBienes"
+                [goodNumber]="actualGoodNumber"></app-good-photos>
             </tab>
           </tabset>
         </form>

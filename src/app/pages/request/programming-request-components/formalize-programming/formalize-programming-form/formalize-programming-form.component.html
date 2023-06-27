@@ -18,7 +18,7 @@
               >Delegaci&oacute;n regional&#58;</label
             >
             <span class="fs-4">
-              {{ programming?.regionalDelegationNumber }}
+              {{ programming?.regionalDelegationName }}
             </span>
           </div>
         </div>
@@ -40,7 +40,7 @@
         <div class="col-md-4">
           <div class="form-group">
             <label class="text-right mr-2">Transferente&#58;</label>
-            <span class="fs-4"> {{ nameTransferent }} </span>
+            <span class="fs-4"> {{ transferentName }} </span>
           </div>
         </div>
         <div class="col-md-4">
@@ -61,7 +61,7 @@
         <div class="col-md-4">
           <div class="form-group">
             <label class="text-right mr-2">Emisora&#58;</label>
-            <span class="fs-4"> {{ nameStation }} </span>
+            <span class="fs-4"> {{ stationName }} </span>
           </div>
         </div>
         <div class="col-md-8">
@@ -118,26 +118,96 @@
     <div class="row pt-4">
       <h5 class="title">Actas</h5>
       <div class="btn-toolbar">
-        <button class="btn btn-primary btn-sm active">
+        <button
+          (click)="saveInfoProceeding()"
+          class="btn btn-primary btn-sm active">
           <i class="fa fa-save"></i> Guardar
         </button>
 
-        <button
-          (click)="uploadDocuments()"
-          class="btn btn-success btn-sm active">
+        <button class="btn btn-success btn-sm active">
           <i class="fa fa-file-archive"></i> Adjuntar documentos
         </button>
 
-        <button class="btn btn-info btn-sm active">
+        <button
+          (click)="this.getProccedings()"
+          class="btn btn-info btn-sm active">
           <i class="fa fa-retweet"></i> Actualizar
         </button>
       </div>
-      <ng2-smart-table
+      <form [formGroup]="proceedingForm">
+        <div class="table-responsive">
+          <table class="table table-bordered">
+            <col style="width: 20%" />
+            <col style="width: 20%" />
+            <col style="width: 50%" />
+            <thead>
+              <tr>
+                <th scope="col">No. Acta</th>
+                <th scope="col">Estatus Acta</th>
+                <th scope="col">Observación</th>
+                <th scope="col">Generar/Cerrar Acta</th>
+              </tr>
+            </thead>
+            <tbody>
+              <ng-container formArrayName="proceeding">
+                <tr
+                  *ngFor="let proceeding of proceeding.controls; let i = index">
+                  <ng-container [formGroupName]="i">
+                    <td>
+                      {{ proceeding.get('id').value }}
+                    </td>
+                    <td>
+                      {{ proceeding.get('statusProceeedings').value }}
+                    </td>
+                    <td *ngIf="observation == null">
+                      <form-field
+                        [control]="
+                          proceedingForm.get('observationProceedings')
+                        ">
+                        <input
+                          type="text"
+                          class="form-control"
+                          maxlength="100"
+                          formControlName="observationProceedings" />
+                      </form-field>
+                    </td>
+
+                    <td *ngIf="observation">
+                      <form-field
+                        [control]="
+                          proceedingForm.get('observationProceedings')
+                        ">
+                        <input
+                          type="text"
+                          class="form-control"
+                          maxlength="100"
+                          [readonly]="true"
+                          formControlName="observationProceedings" />
+                      </form-field>
+                    </td>
+                    <td class="text-center align-baseline">
+                      <a
+                        (click)="generateMinute(proceeding.value)"
+                        class="text-center">
+                        <i class="fa fa-file mr-2" style="cursor: pointer"></i
+                      ></a>
+                    </td>
+                  </ng-container>
+                </tr>
+              </ng-container>
+            </tbody>
+          </table>
+        </div>
+      </form>
+      <!--<ng2-smart-table
         [attr.class]="'table-bordered'"
         [settings]="settingsMinutes"
-        [source]="minutes"
-        (edit)="generateMinute()">
-      </ng2-smart-table>
+        [source]="proceedings"
+        (edit)="generateMinute($event.data)">
+      </ng2-smart-table> -->
+      <app-pagination
+        [params]="paramsProceeding"
+        [totalItems]="totalItemsProceedings"></app-pagination>
     </div>
 
     <div class="row pt-5">
@@ -156,22 +226,22 @@
             <div class="row pt-4">
               <div class="justify-content-start">
                 <app-columns-select
-                  [(settings)]="settingsTranGoods"></app-columns-select>
+                  [(settings)]="settingsRecepGoods"></app-columns-select>
               </div>
               <div class="row pt-4 table-container">
                 <div class="col-md-12 table-responsive">
                   <div [class]="loading ? 'table-loading' : ''">
                     <ng2-smart-table
                       [attr.class]="'table-bordered'"
-                      [settings]="settingsTranGoods"
-                      [source]="receiptGuards">
+                      [settings]="settingsRecepGoods"
+                      [source]="goodsRecepcion">
                     </ng2-smart-table>
                   </div>
                 </div>
               </div>
               <app-pagination
                 [params]="params"
-                [totalItems]="totalItems"></app-pagination>
+                [totalItems]="totalItemsReception"></app-pagination>
             </div>
           </tab>
           <!-- RESGUARDO -->
@@ -187,23 +257,24 @@
                   <div [class]="loading ? 'table-loading' : ''">
                     <ng2-smart-table
                       [attr.class]="'table-bordered'"
-                      [settings]="settingsTranGoods"
-                      [source]="goodsGuard">
+                      [settings]="settingsGuardGoods"
+                      [source]="goodsGuards">
                     </ng2-smart-table>
+                    <app-pagination
+                      [params]="paramsGuard"
+                      [totalItems]="totalItemsGuard"></app-pagination>
                   </div>
                 </div>
               </div>
 
-              <div class="row pt-5">
-                <ng2-smart-table
-                  [attr.class]="'table-bordered'"
-                  [settings]="settingsReceiptsGuards"
-                  [source]="receiptGuards"
-                  (edit)="showGoodsReceipt($event.data)"
-                  (delete)="generateReceiptGuard($event.data)">
-                </ng2-smart-table>
-              </div>
-              <!-- <app-pagination
+              <!--
+                <div class="row pt-5">
+                  <ng2-smart-table
+                    [attr.class]="'table-bordered'"
+                    [settings]="settingsReceiptsGuards">
+                  </ng2-smart-table>
+                </div>
+                <app-pagination
                 [params]="params"
                 [totalItems]="totalItems"></app-pagination> -->
             </div>
@@ -213,22 +284,22 @@
             <div class="row pt-4">
               <div class="d-flex">
                 <app-columns-select
-                  [(settings)]="settingsGuardGoods"></app-columns-select>
+                  [(settings)]="settingsWarehouseGoods"></app-columns-select>
               </div>
               <div class="row pt-4 table-container">
                 <div class="col-md-12 table-responsive">
                   <div [class]="loading ? 'table-loading' : ''">
                     <ng2-smart-table
                       [attr.class]="'table-bordered'"
-                      [settings]="settingsTranGoods"
-                      [source]="goodsWareh">
+                      [settings]="settingsWarehouseGoods"
+                      [source]="goodsWarehouse">
                     </ng2-smart-table>
                   </div>
                 </div>
               </div>
               <app-pagination
-                [params]="params"
-                [totalItems]="totalItems"></app-pagination>
+                [params]="paramsGoodsWarehouse"
+                [totalItems]="totalItemsWarehouse"></app-pagination>
             </div>
           </tab>
           <!-- REPROGRAMACION -->
@@ -236,46 +307,50 @@
             <div class="row pt-4">
               <div class="d-flex">
                 <app-columns-select
-                  [(settings)]="settingsTranGoods"></app-columns-select>
+                  [(settings)]="settingsReprog"></app-columns-select>
               </div>
               <div class="row pt-4 table-container">
                 <div class="col-md-12 table-responsive">
                   <ng2-smart-table
                     [attr.class]="'table-bordered'"
-                    [settings]="settingsTranGoods"
-                    [source]="goodsRepro">
+                    [settings]="settingsReprog"
+                    [source]="">
                   </ng2-smart-table>
                 </div>
               </div>
               <app-pagination
-                [params]="params"
-                [totalItems]="totalItems"></app-pagination>
+                [params]="paramsReprog"
+                [totalItems]="totalItemsReprog"></app-pagination>
             </div>
           </tab>
           <!-- CANCELACION -->
           <tab [heading]="headingCancelation">
             <div class="justify-content-start">
               <app-columns-select
-                [(settings)]="settingsGuardGoods"></app-columns-select>
+                [(settings)]="settingsCancelation"></app-columns-select>
             </div>
             <div class="row pt-4 table-container">
               <div class="col-md-12 table-responsive">
                 <div [class]="loading ? 'table-loading' : ''">
                   <ng2-smart-table
                     [attr.class]="'table-bordered'"
-                    [settings]="settingsTranGoods"
-                    [source]="goodsSelect">
+                    [settings]="settingsCancelation"
+                    [source]="">
                   </ng2-smart-table>
+
+                  <app-pagination
+                    [params]="paramsCanc"
+                    [totalItems]="totalItemsCanc"></app-pagination>
                 </div>
               </div>
             </div>
-            <div class="row pt-5">
+            <!--<div class="row pt-5">
               <ng2-smart-table
                 [attr.class]="'table-bordered'"
                 [settings]="settingsReceiptsGuards"
-                [source]="receiptGuards">
+                [source]="">
               </ng2-smart-table>
-            </div>
+            </div> -->
           </tab>
         </tabset>
       </div>

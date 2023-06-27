@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ISegUsers } from 'src/app/core/models/ms-users/seg-users-model';
 import { TvalTable1Service } from 'src/app/core/services/catalogs/tval-table1.service';
@@ -50,37 +51,36 @@ export class MassiveConversionPermissionsComponent
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getValuesAll());
   }
+
   close() {
     this.modalRef.hide();
   }
+
   getValuesAll() {
     this.loading = true;
-
+    console.log(this.params);
     this.usersService.getAllSegUsers(this.params.getValue()).subscribe({
       next: response => {
-        console.log(response);
         this.data1 = response.data;
         this.data1.forEach(element => {
           this.tvalTable1Service.getById5(element.id).subscribe({
-            next: response => {
-              console.log(response);
-              this.tvalTable1Service.getById6(response.otKey).subscribe({
-                next: response => {
-                  console.log(response);
-                },
-                error: error => {
-                  this.loading = false;
-                  console.log(error);
-                },
-              });
-            },
-            error: error => {
-              this.loading = false;
-              console.log(error);
-            },
+            // next: response => {
+            //   this.tvalTable1Service.getById6(response.otKey).subscribe({
+            //     next: response => {
+            //       console.log(response);
+            //     },
+            //     error: error => {
+            //       this.loading = false;
+            //       console.log(error);
+            //     },
+            //   });
+            // },
+            // error: error => {
+            //   this.loading = false;
+            //   console.log(error);
+            // },
           });
         });
-
         this.totalItems = response.count;
         this.loading = false;
       },
@@ -90,22 +90,35 @@ export class MassiveConversionPermissionsComponent
       },
     });
   }
+
   openPermissionsDelete(data: any) {
-    // let config: ModalOptions = {
-    //   initialState: {
-    //     data,
-    //     callback: (next: boolean) => { },
-    //   },
-    //   class: 'modal-xl modal-dialog-centered',
-    //   ignoreBackdropClick: true,
-    // };
-    // this.modalService.show(MassiveConversionPermissionsComponent, config);
-    const modalRef = this.modalService.show(
+    console.log(data);
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      data,
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: false,
+    };
+    this.modalService.show(
       MasiveConversionPermissionsDeleteComponent,
-      {
-        class: 'modal-lg modal-dialog-centered',
-        ignoreBackdropClick: true,
-      }
+      modalConfig
     );
   }
 }
+
+// let config: ModalOptions = {
+//   initialState: {
+//     data,
+//     callback: (next: boolean) => { },
+//   },
+//   class: 'modal-xl modal-dialog-centered',
+//   ignoreBackdropClick: true,
+// };
+// this.modalService.show(MassiveConversionPermissionsComponent, config);
+// const modalRef = this.modalService.show(
+//   MasiveConversionPermissionsDeleteComponent,
+//   {
+//     class: 'modal-lg modal-dialog-centered',
+//     ignoreBackdropClick: true,
+//   }
+// );

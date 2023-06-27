@@ -4,6 +4,7 @@ import { PDFDocumentProxy } from 'ng2-pdf-viewer';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IChatClarifications } from 'src/app/core/models/ms-chat-clarifications/chat-clarifications-model';
 import { ISignatories } from 'src/app/core/models/ms-electronicfirm/signatories-model';
@@ -15,6 +16,7 @@ import { GelectronicFirmService } from 'src/app/core/services/ms-gelectronicfirm
 import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { UploadReportReceiptComponent } from 'src/app/pages/request/programming-request-components/execute-reception/upload-report-receipt/upload-report-receipt.component';
 import { environment } from 'src/environments/environment';
 import { UploadFielsModalComponent } from '../upload-fiels-modal/upload-fiels-modal.component';
 import { LIST_REPORTS_COLUMN } from './list-reports-column';
@@ -33,9 +35,11 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
   signatories: ISignatories[] = [];
   valuesSign: ISignatories;
   requestInfo: IRequest;
+  process: string = '';
   dataClarifications2: IChatClarifications;
   idProg: number = 0;
   receiptId: number = 0;
+  receiptGuards: any;
   src = '';
   isPdfLoaded = false;
   private pdf: PDFDocumentProxy;
@@ -50,6 +54,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
   btnSubTitle: string = 'Vista Previa Reporte';
   printReport: boolean = true;
   listSigns: boolean = false;
+  rowSelected: boolean = false;
   isAttachDoc: boolean = false;
   columns = LIST_REPORTS_COLUMN;
   config = {
@@ -59,7 +64,6 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
   sizeMessage: boolean = false;
   pdfTemp: File;
 
-  rowSelected: boolean = false;
   selectedRow: any = null;
 
   msjCheck: boolean = false;
@@ -106,38 +110,15 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
   userName: any[] = [];
 
   ngOnInit(): void {
-    console.log('this.typeDoc', this.idTypeDoc);
-    console.log('programming', this.idProg);
-    console.log('this.receiptId', this.receiptId);
-    if (this.idTypeDoc == 185) {
-      let linkDoc: string = `${this.urlBaseReport}Recibo_Resguardo.jasper&ID_RECIBO_RESGUARDO=${this.idReportAclara}`;
-      this.src = linkDoc;
-      console.log('URL reporte ', linkDoc);
-    }
+    this.idSolicitud = this.requestInfo.id;
+    this.idRegionalDelegation = this.requestInfo.regionalDelegationId;
 
-    if (this.idTypeDoc == 186) {
-      let linkDoc: string = `${this.urlBaseReport}Recibo_Resguardo.jasper&ID_RECIBO_RESGUARDO=${this.idReportAclara}`;
-      this.src = linkDoc;
-      console.log('URL reporte ', linkDoc);
-    }
-
-    //this.idSolicitud = this.requestInfo.id;
-    if (this.requestInfo) {
-      this.idRegionalDelegation = this.requestInfo.regionalDelegationId;
-    }
     //Borrar firmantes existentes
     this.verificateFirm();
     this.signParams();
 
     //Condición para saber que ID tipo de documento lelga
     switch (this.idTypeDoc) {
-      case 103: {
-        console.log('Tipo 103, 103');
-        let linkDoc: string = `${this.urlBaseReport}Recibo_Entrega.jasper&ID_PROG=${this.idProg}&ID_RECIBO=${this.receiptId}`;
-        this.src = linkDoc;
-        console.log('URL reporte ', linkDoc);
-        break;
-      }
       case 50: {
         console.log('Tipo 50, Aclaración');
         let linkDoc: string = `${this.urlBaseReport}Dictamen_Procedencia.jasper&ID_SOLICITUD=${this.idReportAclara}&ID_TIPO_DOCTO=${this.idTypeDoc}`;
@@ -234,7 +215,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
   }
 
   registerSign() {
-    if (this.idTypeDoc && this.idReportAclara) {
+    if (!this.process) {
       this.signatoriesService
         .getSignatoriesName(this.idTypeDoc, this.idReportAclara)
         .subscribe({
@@ -709,6 +690,21 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
           this.onLoadToast('error', 'No se pudo guardar', '');
         },
       });
+  }
+
+  uploadReport() {
+    let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+    config.initialState = {
+      receiptGuards: this.receiptGuards,
+      typeDoc: this.idTypeDoc,
+      callback: (data: boolean) => {
+        if (data) {
+        }
+      },
+    };
+
+    this.modalService.show(UploadReportReceiptComponent, config);
+    console.log('componente para adjuntar doc');
   }
 
   updateStatusSigned() {

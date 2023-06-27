@@ -12,6 +12,11 @@
             <input
               bsDatepicker
               class="form-control"
+              [bsConfig]="{
+                withTimepicker: true,
+                rangeInputFormat: 'DD/MMMM/YYYY, h:mm:ss a',
+                dateInputFormat: 'DD/MMMM/YYYY, h:mm:ss a'
+              }"
               formControlName="startDate" />
           </form-field>
         </div>
@@ -22,18 +27,23 @@
             <input
               bsDatepicker
               class="form-control"
+              [bsConfig]="{
+                withTimepicker: true,
+                rangeInputFormat: 'DD/MMMM/YYYY, h:mm:ss a',
+                dateInputFormat: 'DD/MMMM/YYYY, h:mm:ss a'
+              }"
               formControlName="endDate" />
           </form-field>
         </div>
       </div>
       <div class="row pt-5">
         <form-field
-          [control]="form.get('observation')"
+          [control]="form.get('concurrentMsg')"
           label="Observaci&oacute;n">
           <input
             type="text"
             class="form-control"
-            formControlName="observation" />
+            formControlName="concurrentMsg" />
         </form-field>
       </div>
     </form>

@@ -224,26 +224,35 @@ export class JuridicalRulingComponent
       id: {
         title: 'No. Bien',
         type: 'number',
+        sort: false,
       },
       description: {
         title: 'Descripción Dictaminación',
         type: 'string',
+        sort: false,
       },
       menaje: {
         title: 'Menaje',
         type: 'string',
+        sort: false,
+        valuePrepareFunction: (value: any) => {
+          return value?.noGood;
+        },
       },
       quantity: {
         title: 'Cant. Dictaminación',
         type: 'string',
+        sort: false,
       },
       status: {
         title: 'Estatus',
         type: 'string',
+        sort: false,
       },
       extDomProcess: {
         title: 'Proceso',
         type: 'string',
+        sort: false,
       },
     },
     noDataMessage: 'No se encontrarón registros',
@@ -273,11 +282,15 @@ export class JuridicalRulingComponent
       date: {
         title: 'Fecha. Recibido',
         sort: false,
+        type: 'string',
+        valuePrepareFunction: (row: any) => {
+          return row.split('-').reverse().join('/');
+        },
       },
     },
 
     rowClassFunction: (row: any) => {
-      return 'bg-primary text-white';
+      return 'bg-info text-white';
     },
     noDataMessage: 'No se encontrarón registros',
   };
@@ -346,6 +359,7 @@ export class JuridicalRulingComponent
   oficioDictamen: any;
   goodSelect: any;
   formLoading: boolean;
+  loadingDic: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -373,7 +387,8 @@ export class JuridicalRulingComponent
     private oficialDictationService: OficialDictationService,
     private documentsMServ: DocumentsDictumStatetMService,
     private DictationXGood1Service: DictationXGood1Service,
-    private datePipe: DatePipe
+    private datePipe: DatePipe,
+    private userDetail: UsersService
   ) {
     super();
     this.oficioDictamen = {
@@ -429,7 +444,7 @@ export class JuridicalRulingComponent
   async updateOficioDictamen(body: any) {
     this.dictationServ.updateOfficialDictation(body).subscribe({
       next: (data: any) => {
-        this.alert('success', 'Oficio Dictamen actualizado correctamente', '');
+        //  this.alert('success', 'Oficio Dictamen actualizado correctamente', '');
       },
       error: error => {},
     });
@@ -513,6 +528,7 @@ export class JuridicalRulingComponent
     this.isDisabledExp = false;
     this.statusDict = '';
     this.dictNumber = null;
+    this.totalItems2 = 0;
 
     this.onTypeDictChange({ id: 'DESTRUCCION' });
   }
@@ -816,7 +832,11 @@ export class JuridicalRulingComponent
         await this.getDictaionXGoo1();
 
         //this.goods.forEach(async good => {
-        await this.getDictaDoc(res.data[0].id, res.data[0].typeDict, 0);
+        await this.getDictaDoc(
+          res.data[0].id,
+          res.data[0].typeDict,
+          this.goodsValid[0].id
+        );
         //});
 
         return;
@@ -830,7 +850,7 @@ export class JuridicalRulingComponent
       const params = new FilterParams();
       params.addFilter('officialNumber', dica, SearchFilter.EQ);
       params.addFilter('typeDictum', type, SearchFilter.EQ);
-      //params.addFilter('stateNumber', good, SearchFilter.EQ);
+      params.addFilter('stateNumber', good, SearchFilter.EQ);
       this.documentsMServ.getAllDictum(params.getParams()).subscribe({
         next: resp => {
           resp.data.map((doc: any) => {
@@ -1550,18 +1570,22 @@ export class JuridicalRulingComponent
             const typeSteeringwheel = this.variablesForm.get('tipo_vol').value;
             const numberClassifyGood = this.variablesForm.get('clasif2').value;
             const dateValid = this.legalForm.get('fechaPPFF').value;
+            const documenst = this.documents;
             let config: ModalOptions = {
               initialState: {
                 typeDictation,
                 typeSteeringwheel,
                 numberClassifyGood,
                 dateValid,
+                documenst,
                 callback: (next: any[]) => {
                   if (!this.dictNumber) {
                     this.buttonAprove = true;
                     this.buttonRefuse = false;
                   }
+                  //const concatenatedArray = this.documents.concat(next);
                   this.documents = next;
+                  console.log(this.documents);
                 },
               },
               class: 'modal-lg modal-dialog-centered',
@@ -1642,6 +1666,8 @@ export class JuridicalRulingComponent
   }
 
   async btnApprove() {
+    this.loadingDic = true;
+
     const user = this.authService.decodeToken();
     const {
       tipoDictaminacion,
@@ -1712,6 +1738,7 @@ export class JuridicalRulingComponent
             'No se localizaron datos de la persona que autoriza.',
             ''
           );
+          this.loadingDic = false;
           return;
         } else {
           vNO_DELEGACION = validDest.delegation1Number;
@@ -1726,6 +1753,7 @@ export class JuridicalRulingComponent
               'No se localizaron datos de la persona que autoriza.',
               ''
             );
+            this.loadingDic = false;
             return;
           }
 
@@ -1743,6 +1771,7 @@ export class JuridicalRulingComponent
               'No se localizó la dependencia de la persona que autoriza.',
               ''
             );
+            this.loadingDic = false;
             return;
           }
 
@@ -1776,6 +1805,7 @@ export class JuridicalRulingComponent
               'No se localizó el predecesor de la persona que autoriza.',
               ''
             );
+            this.loadingDic = false;
             return;
           } else if (CAT_DEPARTAMENTOS2.length == 0) {
             this.alert(
@@ -1783,6 +1813,7 @@ export class JuridicalRulingComponent
               'No se encontraron datos del departamento.',
               ''
             );
+            this.loadingDic = false;
             return;
           }
 
@@ -1890,6 +1921,8 @@ export class JuridicalRulingComponent
     const day = String(today.getDate()).padStart(2, '0');
     const year = today.getFullYear();
     const user = this.authService.decodeToken();
+    const details = await this.getDetailsUser(user.username.toUpperCase());
+
     return new Promise((resolve, reject) => {
       const {
         tipoDictaminacion,
@@ -1912,8 +1945,8 @@ export class JuridicalRulingComponent
         dictDate: new Date(),
         userDict: user.username.toUpperCase(),
         observations: observations,
-        delegationDictNumber: Number(user.department),
-        areaDict: '',
+        delegationDictNumber: Number(details.delegationNumber),
+        areaDict: details.departamentNumber,
         instructorDate: fechaPPFF,
         registerNumber: '',
         esDelit: esPropiedad ? 'S' : 'N',
@@ -1947,11 +1980,31 @@ export class JuridicalRulingComponent
           for (let i = 0; i < this.documents.length; i++) {
             await this.createDocumentDictum(this.documents[i]);
           }
-
+          this.loadingDic = false;
           resolve(true);
         },
         error: () => {
+          this.loadingDic = false;
           resolve(true);
+        },
+      });
+    });
+  }
+
+  async getDetailsUser(userId: string) {
+    return new Promise<any>((resolve, reject) => {
+      const params = new FilterParams();
+      params.removeAllFilters();
+      params.addFilter(
+        'user',
+        userId == 'SIGEBIADMON' ? userId.toLocaleLowerCase() : userId
+      );
+      this.userDetail.getInfoUserLogued(params.getParams()).subscribe({
+        next: resp => {
+          resolve(resp.data[0]);
+        },
+        error: () => {
+          resolve(null);
         },
       });
     });
@@ -1960,31 +2013,77 @@ export class JuridicalRulingComponent
   async createDocumentDictum(document: any) {
     const token = this.authService.decodeToken();
     for (let i = 0; i < this.goodsValid.length; i++) {
-      let obj: any = {
-        expedientNumber: this.legalForm.get('noExpediente').value,
-        stateNumber: this.goodsValid[i].id,
-        key: document.cveDocument,
-        typeDictum: this.legalForm.get('tipoDictaminacion').value,
-        dateReceipt: document.date,
-        userReceipt: '',
-        insertionDate: document.dae,
-        userInsertion: token.username.toUpperCase(),
-        numRegister: null,
-        officialNumber: this.dictantion.id,
-        notificationDate: null,
-        secureKey: null,
-      };
+      if (this.goodsValid[i].goodClassNumber == document.numberClassifyGood) {
+        const today = new Date();
+        const month = String(today.getMonth() + 1).padStart(2, '0');
+        const day = String(today.getDate()).padStart(2, '0');
+        const year = today.getFullYear();
+        const SYSDATE5 = `${year}-${month}-${day}`;
 
-      this.documentsMServ.create(obj).subscribe({
-        next: resp => {
-          console.log('CREADO DOC', resp);
-        },
-        error: error => {
-          console.log('ERROR DOC', error.error);
-        },
-      });
+        // Definir el string original
+        let cadena = document.date;
+
+        // Utilizar el método split() para separar la cadena en un array de elementos
+        let arrayCadena = cadena.split('/');
+
+        // Obtener el segundo elemento del array, que es "06"
+        let elemento2 = `${arrayCadena[2]}/${arrayCadena[1]}/${arrayCadena[0]}`;
+
+        let obj: any = {
+          expedientNumber: this.legalForm.get('noExpediente').value,
+          stateNumber: this.goodsValid[i].id,
+          key: document.cveDocument,
+          typeDictum: this.legalForm.get('tipoDictaminacion').value,
+          dateReceipt: elemento2,
+          userReceipt: '',
+          insertionDate: new Date(SYSDATE5),
+          userInsertion: token.username.toUpperCase(),
+          numRegister: null,
+          officialNumber: this.dictantion.id,
+          notificationDate: null,
+          secureKey: null,
+        };
+        this.documentsMServ.create(obj).subscribe({
+          next: resp => {
+            console.log('CREADO DOC', resp);
+          },
+          error: error => {
+            this.loadingDic = false;
+            console.log('ERROR DOC', error.error);
+          },
+        });
+      }
     }
   }
+
+  // async createDocumentDictum(document: any) {
+  //   const token = this.authService.decodeToken();
+  //   for (let i = 0; i < this.goodsValid.length; i++) {
+  //     let obj: any = {
+  //       expedientNumber: this.legalForm.get('noExpediente').value,
+  //       stateNumber: this.goodsValid[i].id,
+  //       key: document.cveDocument,
+  //       typeDictum: this.legalForm.get('tipoDictaminacion').value,
+  //       dateReceipt: document.date,
+  //       userReceipt: '',
+  //       insertionDate: document.dae,
+  //       userInsertion: token.username.toUpperCase(),
+  //       numRegister: null,
+  //       officialNumber: this.dictantion.id,
+  //       notificationDate: null,
+  //       secureKey: null,
+  //     };
+
+  //     this.documentsMServ.create(obj).subscribe({
+  //       next: resp => {
+  //         console.log('CREADO DOC', resp);
+  //       },
+  //       error: error => {
+  //         console.log('ERROR DOC', error.error);
+  //       },
+  //     });
+  //   }
+  // }
 
   // async generateCveOficio(noDictamen: string) {
   //   let token = this.authService.decodeToken();
@@ -2003,6 +2102,7 @@ export class JuridicalRulingComponent
         this.loading = false;
       },
       error: error => {
+        this.loadingDic = false;
         this.loading = false;
       },
     });
@@ -2040,6 +2140,7 @@ export class JuridicalRulingComponent
     this.filter2
       .getValue()
       .addFilter('ofDictNumber', this.dictNumber, SearchFilter.EQ);
+
     // params.addFilter('')
     return new Promise((resolve, reject) => {
       this.DictationXGood1Service.getAll(
@@ -2049,7 +2150,7 @@ export class JuridicalRulingComponent
           resp.data.map((goodx: any) => {
             goodx.id = goodx.id;
             goodx.description = goodx.descriptionDict;
-            goodx.menaje = '';
+            // goodx.menaje = '';
             goodx.quantity = goodx.amountDict;
             goodx.status = goodx.good.status;
             goodx.extDomProcess = goodx.good.extDomProcess;
@@ -2095,6 +2196,7 @@ export class JuridicalRulingComponent
         console.log('CREADO', resp);
       },
       error: error => {
+        this.loadingDic = false;
         console.log('ERROR', error.error);
       },
     });
@@ -2153,8 +2255,6 @@ export class JuridicalRulingComponent
 
         if (CLASIF) {
           if (data) {
-            console.log(data);
-
             for (let index = 0; index < data.length; index++) {
               const el = data[index];
 
@@ -2210,6 +2310,7 @@ export class JuridicalRulingComponent
           resolve(resp.count);
         },
         error: () => {
+          this.loadingDic = false;
           resolve(0);
         },
       });
@@ -2231,6 +2332,7 @@ export class JuridicalRulingComponent
           resolve(resp.data);
         },
         error: () => {
+          this.loadingDic = false;
           resolve(null);
         },
       });
@@ -2244,6 +2346,7 @@ export class JuridicalRulingComponent
           resolve(resp.data[0].max);
         },
         error: () => {
+          this.loadingDic = false;
           resolve(null);
         },
       });
@@ -2259,6 +2362,7 @@ export class JuridicalRulingComponent
           resolve(resp.data[0].wheelType);
         },
         error: () => {
+          this.loadingDic = false;
           resolve(null);
         },
       });
@@ -2288,6 +2392,7 @@ export class JuridicalRulingComponent
           this.loading = false;
         },
         error: error => {
+          this.loadingDic = false;
           this.loading = false;
           resolve(null);
         },
@@ -2305,6 +2410,7 @@ export class JuridicalRulingComponent
         },
         error: err => {
           this.loading = false;
+          this.loadingDic = false;
           resolve(null);
         },
       });
@@ -2326,6 +2432,7 @@ export class JuridicalRulingComponent
         },
         error: error => {
           this.loading = false;
+          this.loadingDic = false;
           resolve(null);
         },
       });
@@ -2341,6 +2448,7 @@ export class JuridicalRulingComponent
           resolve(resp.data[0].positionKey);
         },
         error: () => {
+          this.loadingDic = false;
           resolve(null);
         },
       });
@@ -2360,6 +2468,7 @@ export class JuridicalRulingComponent
         },
         error: error => {
           this.loading = false;
+          this.loadingDic = false;
           resolve(null);
         },
       });
@@ -2375,6 +2484,7 @@ export class JuridicalRulingComponent
         },
         error: err => {
           this.loading = false;
+          this.loadingDic = false;
           resolve(null);
         },
       });
@@ -2550,13 +2660,15 @@ export class JuridicalRulingComponent
 
           if (!success) return;
 
-          Swal.fire('Dictamen ha eliminado correctamente', '', 'success').then(
-            () => {
-              //Limpiar todo
-              this.clearSearch();
-              this.getExp(v_no_expediente);
-            }
-          );
+          Swal.fire(
+            'Dictamen ha sido eliminado correctamente',
+            '',
+            'success'
+          ).then(() => {
+            //Limpiar todo
+            this.clearSearch();
+            this.getExp(v_no_expediente);
+          });
         }
       });
     } else {
@@ -2628,6 +2740,8 @@ export class JuridicalRulingComponent
         this.legalForm
           .get('preliminaryInquiry')
           .setValue(response.preliminaryInquiry);
+
+        this.onLoadGoodList();
       },
     });
   }
