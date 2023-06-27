@@ -223,7 +223,7 @@ export class AppointmentsComponent
       ], //*
       ///*"Administrador, Depositaría, Interventor, Comodatarío,Bien en uso del SAE"
       tipoDepositaria: [
-        { value: '', disabled: false },
+        { value: null, disabled: false },
         [Validators.maxLength(40), Validators.pattern(STRING_PATTERN)],
       ], //*
       estatus: [
@@ -231,7 +231,7 @@ export class AppointmentsComponent
         [Validators.maxLength(1), Validators.pattern(STRING_PATTERN)],
       ], //* Provisional, Definitiva
       representanteSAE: [
-        { value: '', disabled: false },
+        { value: null, disabled: false },
         [Validators.maxLength(100), Validators.pattern(STRING_PATTERN)],
       ], //*
       nombre: [
@@ -241,7 +241,7 @@ export class AppointmentsComponent
       bienesMenaje: { value: '', disabled: false }, //* Sin Menaje, Con Menaje
 
       personNumber: [
-        { value: '', disabled: false },
+        { value: null, disabled: false },
         [Validators.maxLength(40), Validators.pattern(STRING_PATTERN)],
       ], //*
       depositaria: [
