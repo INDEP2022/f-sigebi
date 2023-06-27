@@ -8,7 +8,7 @@
         <div class="col-md-6">
           <form-field
             [control]="generateReceiptForm.get('nameDelivery')"
-            label="Nombre de quien entrega">
+            label="Nombre de Quien Entrega">
             <input
               type="text"
               class="form-control"
@@ -19,7 +19,7 @@
         <div class="col-md-6">
           <form-field
             [control]="generateReceiptForm.get('typeTransport')"
-            label="Tipo de transporte">
+            label="Tipo de Transporte">
             <input
               type="text"
               class="form-control"
@@ -32,7 +32,7 @@
         <div class="col-md-6">
           <form-field
             [control]="generateReceiptForm.get('chargeDelivery')"
-            label="Cargo de quien entrega">
+            label="Cargo de Quien Entrega">
             <input
               type="text"
               class="form-control"
@@ -43,7 +43,7 @@
         <div class="col-md-6">
           <form-field
             [control]="generateReceiptForm.get('plateNumber')"
-            label="Número de placa">
+            label="Número de Placa">
             <input
               type="text"
               class="form-control"
@@ -54,7 +54,7 @@
 
       <div class="row pt-4">
         <div class="col-md-6">
-          <form-check label="Firma electrónica" for="electronicSignatureEnt">
+          <form-check label="Firma Electrónica" for="electronicSignatureEnt">
             <input
               id="electronicSignatureEnt"
               value="S"
@@ -76,7 +76,7 @@
         <div class="col-md-6">
           <form-field
             [control]="generateReceiptForm.get('nameReceipt')"
-            label="Nombre quien recibe">
+            label="Nombre Quien Recibe">
             <input
               type="text"
               class="form-control"
@@ -100,10 +100,11 @@
         <div class="col-md-6">
           <form-field
             [control]="generateReceiptForm.get('chargeReceipt')"
-            label="Cargo quien recibe">
+            label="Cargo Quien Recibe">
             <input
               type="text"
               class="form-control"
+              maxlength="15"
               formControlName="chargeReceipt" />
           </form-field>
         </div>
@@ -113,7 +114,7 @@
       <div class="row pt-4">
         <div class="col-md-6">
           <form-check
-            label="Firma electrónica"
+            label="Firma Electrónica"
             for="electronicSignatureReceipt">
             <input
               id="electronicSignatureReceipt"
@@ -124,7 +125,7 @@
       </div>
 
       <div class="row pt-4">
-        <h5 class="title">Testigo del recibo</h5>
+        <h5 class="title">Testigo del Recibo</h5>
 
         <div class="m-3 btn-toolbar">
           <button (click)="newWitness()" class="btn btn-primary btn-sm active">

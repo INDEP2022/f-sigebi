@@ -61,11 +61,7 @@ export class GoodPhotoComponent extends BasePage implements OnInit {
           console.log(this.error);
         },
         error: error => {
-          this.onLoadToast(
-            'error',
-            'Error',
-            'Ocurrio un error al obtener el documento'
-          );
+          this.alert('error', 'Fotos', 'Ocurrio un error al subir la foto');
           this.loading = false;
           this.error = true;
           console.log(this.error);
