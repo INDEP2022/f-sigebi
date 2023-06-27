@@ -147,7 +147,7 @@ export class InformationRecordComponent extends BasePage implements OnInit {
 
     const params = new BehaviorSubject<ListParams>(new ListParams());
     params.getValue()['filter.id'] = this.proceeding.id;
-    params.getValue()['filter.idProgramming'] = this.proceeding.programmingId;
+    params.getValue()['filter.idProgramming'] = this.programming.id;
     this.proceedingService.getProceedings(params.getValue()).subscribe({
       next: response => {
         console.log('acta', response);
