@@ -100,13 +100,15 @@ export class CityListComponent extends BasePage implements OnInit {
             }
           });
           this.params = this.pageFilter(this.params);
+
           this.getCities();
           this.getDelegation();
         }
       });
-    this.params
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getCities());
+    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+      this.getCities();
+      //console.log(this.getCities());
+    });
   }
 
   getCities() {
@@ -118,9 +120,11 @@ export class CityListComponent extends BasePage implements OnInit {
 
     this.cityService.getAllCitys(params).subscribe({
       next: response => {
-        this.columns = response.data;
+        this.columns = response.data.sort(
+          (a: any, b: any) => parseInt(b.idCity) - parseInt(a.idCity)
+        );
+        console.log(this.columns);
         this.totalItems = response.count || 0;
-
         this.data.load(this.columns);
         this.data.refresh();
         this.loading = false;

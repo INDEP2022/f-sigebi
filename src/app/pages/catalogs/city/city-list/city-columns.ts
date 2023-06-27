@@ -5,7 +5,7 @@ import { ISubdelegation } from 'src/app/core/models/catalogs/subdelegation.model
 export const CITY_COLUMNS = {
   idCity: {
     title: 'No. Ciudad',
-    type: 'string',
+    type: 'number',
     sort: false,
   },
   nameCity: {
