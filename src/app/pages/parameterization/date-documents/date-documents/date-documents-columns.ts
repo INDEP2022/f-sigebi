@@ -1,8 +1,5 @@
-import {
-  IExpedient,
-  IKey,
-  IState,
-} from 'src/app/core/models/catalogs/date-documents.model';
+import { IKey } from 'src/app/core/models/catalogs/date-documents.model';
+import { CustomDateFilterComponent } from '../../../../@standalone/shared-forms/filter-date-custom/custom-date-filter';
 
 export const DATEDOCUMENTS_COLUMNS = {
   expedientNumber: {
@@ -36,10 +33,30 @@ export const DATEDOCUMENTS_COLUMNS = {
   dateReceipt: {
     title: 'Recibido',
     sort: false,
+    type: 'html',
+    width: '13%',
+    valuePrepareFunction: (text: string) => {
+      return `
+        ${text ? text.split('T')[0].split('-').reverse().join('-') : ''}
+      `;
+    },
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
+    },
   },
   notificationDate: {
     title: 'Notificación',
     sort: false,
+    valuePrepareFunction: (text: string) => {
+      return `
+        ${text ? text.split('T')[0].split('-').reverse().join('-') : ''}
+      `;
+    },
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
+    },
   },
   userReceipt: {
     title: 'Usuario',
@@ -48,5 +65,16 @@ export const DATEDOCUMENTS_COLUMNS = {
   insertionDate: {
     title: 'Inserción',
     sort: false,
+    type: 'html',
+    width: '13%',
+    valuePrepareFunction: (text: string) => {
+      return `
+        ${text ? text.split('T')[0].split('-').reverse().join('-') : ''}
+      `;
+    },
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
+    },
   },
 };

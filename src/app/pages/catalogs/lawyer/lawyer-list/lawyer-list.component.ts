@@ -32,11 +32,18 @@ export class LawyerListComponent extends BasePage implements OnInit {
   ) {
     super();
     this.settings.columns = LAWYER_COLUMNS;
-    this.settings.actions.delete = true;
-    this.settings.actions.add = false;
+    //this.settings.actions.delete = true;
+    //this.settings.actions.add = false;
     this.settings = {
       ...this.settings,
       hideSubHeader: false,
+      actions: {
+        columnTitle: 'Acciones',
+        edit: true,
+        add: false,
+        delete: true,
+        position: 'right',
+      },
     };
   }
 
@@ -131,6 +138,7 @@ export class LawyerListComponent extends BasePage implements OnInit {
         //this.lawyers = response.data;
         this.data.load(response.data);
         this.data.refresh();
+        console.log(this.data)
         this.totalItems = response.count;
         this.loading = false;
       },

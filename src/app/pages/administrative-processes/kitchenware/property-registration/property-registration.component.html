@@ -12,9 +12,11 @@
                 [control]="form.get('numberFile')"
                 label="No. Expediente">
                 <input
-                  type="text"
+                  type="number"
+                  min="0"
                   class="form-control"
-                  formControlName="numberFile" />
+                  formControlName="numberFile"
+                  oninput="if(this.value.length > 11) this.value = this.value.slice(0, 11);" />
               </form-field>
             </div>
 
@@ -105,7 +107,8 @@
             <app-goods-shared
               [form]="formGood"
               (good)="addMenage($event)"
-              label="Menaje"></app-goods-shared>
+              label="Menaje">
+            </app-goods-shared>
           </div>
 
           <div class="row">

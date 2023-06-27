@@ -5,19 +5,18 @@
   <div body>
     <form class="form-material" [formGroup]="validatorsProceedingsForm">
       <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-6">
           <form-field
             [control]="validatorsProceedingsForm.get('proceedingsType')"
             label="Tipo de Acta">
-            <select class="form-control" formControlName="proceedingsType">
-              <option [value]="0">Seleccione un tipo acta</option>
-              <option *ngFor="let item of typeItem" [value]="item.value">
-                {{ item.label }}
-              </option>
-            </select>
+            <input
+              class="form-control"
+              formControlName="proceedingsType"
+              type="text"
+              oninput="if(this.value.length > 15) this.value = this.value.slice(0, 15);" />
           </form-field>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-6">
           <form-field
             [control]="validatorsProceedingsForm.get('secVal')"
             label="Secuencia">
@@ -28,7 +27,7 @@
               oninput="if(this.value.length > 2) this.value = this.value.slice(0, 2);" />
           </form-field>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-12">
           <form-field
             [control]="validatorsProceedingsForm.get('descVal')"
             label="Descripción">

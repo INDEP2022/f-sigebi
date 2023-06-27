@@ -7,6 +7,7 @@ import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { IAttribGoodBad } from 'src/app/core/models/ms-good/good';
 import { GoodService } from 'src/app/core/services/good/good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { IParamsLegalOpinionsOffice } from 'src/app/pages/juridical-processes/depositary/legal-opinions-office/legal-opinions-office/legal-opinions-office.component';
@@ -20,6 +21,8 @@ import { GOODS_WITH_REQUIRED_INFO_COLUMNS } from './goods-with-required-info-col
 export class GoodsWithRequiredInfoComponent extends BasePage implements OnInit {
   attribGoodBad: LocalDataSource = new LocalDataSource();
   columnFilters: any = [];
+  atribGood: IAttribGoodBad;
+  atribGoodS: any[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
   @Output() customEvent = new EventEmitter<string>();
@@ -105,6 +108,7 @@ export class GoodsWithRequiredInfoComponent extends BasePage implements OnInit {
               delete this.columnFilters[field];
             }
           });
+          this.params = this.pageFilter(this.params);
           this.getAttribGoodBad();
         }
       });
@@ -126,10 +130,10 @@ export class GoodsWithRequiredInfoComponent extends BasePage implements OnInit {
     if (this.paramsCurrentScreen.NO_INDICADOR) {
       params['filter.pair2'] = this.paramsCurrentScreen.NO_INDICADOR;
     }
-    this.goodService.getAttribGoodBadAll(params).subscribe({
+    this.goodService.getAttribGoodBadFilter(params).subscribe({
       next: resp => {
         console.log(resp);
-        this.totalItems = resp.count || 0;
+        this.totalItems = resp.count;
         this.attribGoodBad.load(resp.data);
         this.attribGoodBad.refresh();
         this.loading = false;

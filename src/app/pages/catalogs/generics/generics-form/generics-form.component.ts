@@ -45,7 +45,10 @@ export class GenericsFormComponent extends BasePage implements OnInit {
         [Validators.required, Validators.pattern(POSITVE_NUMBERS_PATTERN)],
       ],
       description: [null, [Validators.maxLength(100)]],
-      version: [null, [Validators.pattern(POSITVE_NUMBERS_PATTERN)]],
+      version: [
+        null,
+        [Validators.pattern(POSITVE_NUMBERS_PATTERN), Validators.maxLength(5)],
+      ],
       active: [null],
       editable: [null],
     });

@@ -5,7 +5,7 @@
       <div class="col-12 col-sm-12 col-md-8">
         <h5 class="title">
           Caracter&Iacute;sticas del bien
-          <ng-container *ngIf="numberGood">{{ numberGood.value }}</ng-container>
+          <ng-container *ngIf="numberGood">{{ actualGoodNumber }}</ng-container>
         </h5>
       </div>
       <div class="col-12 col-sm-12 col-md-4 text-end" *ngIf="origin">
@@ -312,7 +312,7 @@
                       [labelTemplate]="coordinationLabel"
                       [optionTemplate]="coordinationOption"
                       formControlName="subdelegation"
-                      label="Delegación"
+                      label="Sub Delegación"
                       path="catalog/api/v1/subdelegation/get-all"
                       value="id"
                       bindLabel="description"
@@ -449,6 +449,13 @@
                     di_numerario_conciliado
                   "></app-good-table-vals>
               </div>
+            </tab>
+            <tab heading="Fotos">
+              <app-good-photos
+                *ngIf="actualGoodNumber"
+                [showPhoto]="showPhoto"
+                [disabledBienes]="disabledBienes"
+                [goodNumber]="actualGoodNumber"></app-good-photos>
             </tab>
           </tabset>
         </form>

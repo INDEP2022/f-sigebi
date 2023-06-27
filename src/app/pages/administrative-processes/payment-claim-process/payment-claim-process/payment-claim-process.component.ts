@@ -188,7 +188,7 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
 
       const blob = new Blob([byteArray], { type: 'text/csv' });
       this.test = blob;
-      this.readExcel(blob, 'si');
+      this.readExcel(blob, 'no');
       this.removeItem('archivoBase64');
     }
   }
@@ -515,7 +515,7 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
         this.documnetServices
           .delete(folioUniversalesReplicados[i].id)
           .subscribe({
-            next: response => { },
+            next: response => {},
             error: err => {
               console.log(err);
             },

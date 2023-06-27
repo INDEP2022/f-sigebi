@@ -49,10 +49,10 @@ export class MunicipalityListComponent extends BasePage implements OnInit {
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
             filter.field == 'stateKey' ||
-              filter.field == 'nameMunicipality' ||
-              filter.field == 'creationUser' ||
-              filter.field == 'editionUser' ||
-              filter.field == 'version'
+            filter.field == 'nameMunicipality' ||
+            filter.field == 'creationUser' ||
+            filter.field == 'editionUser' ||
+            filter.field == 'version'
               ? (searchFilter = SearchFilter.EQ)
               : (searchFilter = SearchFilter.ILIKE);
             if (filter.search !== '') {
@@ -89,7 +89,6 @@ export class MunicipalityListComponent extends BasePage implements OnInit {
           this.data.refresh();
           this.loading = false;
         }
-
       },
       error: error => (this.loading = false),
     });

@@ -21,6 +21,7 @@ export class MaintenanceDocumentValidatorsModalComponent
   title: string = 'Mantenimiento a validadores de actas';
   edit: boolean = false;
   typeItem: any[];
+  id: any;
   constructor(
     private fb: FormBuilder,
     private modalRef: BsModalRef,
@@ -31,16 +32,6 @@ export class MaintenanceDocumentValidatorsModalComponent
 
   ngOnInit(): void {
     this.prepareForm();
-    this.typeItem = [
-      { label: 'DEV', value: 'DEV' },
-      { label: 'DON', value: 'DON' },
-      { label: 'DES', value: 'DES' },
-      { label: 'ABN', value: 'ABN' },
-      { label: 'RESAR', value: 'RESAR' },
-      { label: 'REC/DEC', value: 'RECDEC' },
-      { label: 'CAN/SUS', value: 'CANSUS' },
-      { label: 'ENTREGA', value: 'ENTREGA' },
-    ];
   }
   private prepareForm() {
     this.validatorsProceedingsForm = this.fb.group({
@@ -60,10 +51,13 @@ export class MaintenanceDocumentValidatorsModalComponent
     if (this.validatorsProceedings != null) {
       console.log('editar');
       this.edit = true;
+      this.id = this.validatorsProceedings.proceedingsType;
       console.log('validatorsProceedings:', this.validatorsProceedings);
       this.validatorsProceedingsForm.patchValue(this.validatorsProceedings);
+      this.validatorsProceedingsForm.controls['proceedingsType'].disable();
+      this.validatorsProceedingsForm.controls['secVal'].disable();
     } else {
-      this.validatorsProceedingsForm.controls['proceedingsType'].setValue('0');
+      this.validatorsProceedingsForm.controls['proceedingsType'].setValue('');
     }
   }
   close() {
@@ -83,16 +77,23 @@ export class MaintenanceDocumentValidatorsModalComponent
   }
   update() {
     this.loading = true;
+    this.validatorsProceedingsForm.controls['proceedingsType'].enable();
+    this.validatorsProceedingsForm.controls['secVal'].enable();
+
     this.validatorsProceedingsService
       .update4(this.validatorsProceedingsForm.value)
       .subscribe({
         next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
+        error: error => {
+          this.loading = false;
+          this.validatorsProceedingsForm.controls['proceedingsType'].disable();
+        },
       });
   }
   handleSuccess() {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.onLoadToast('success', this.title, `${message} Correctamente`);
+    this.alert('success', 'VALIDADOR DE ACTA', `${message} Correctamente`);
+    // this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();

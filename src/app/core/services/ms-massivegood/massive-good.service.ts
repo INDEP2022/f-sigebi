@@ -115,4 +115,11 @@ export class MassiveGoodService extends HttpService {
     formData.append('file', file);
     return this.post(this.route.GetFProRecPag2CSV, formData, params);
   }
+
+  download(formData: string, params: ListParams): Observable<any> {
+    const header: Object = {
+      responseType: 'arraybuffer',
+    };
+    return this.post(this.route.GetFProRecPag2CSV, formData, params);
+  }
 }

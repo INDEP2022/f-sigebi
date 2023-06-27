@@ -460,11 +460,33 @@
               class="btn btn-primary btn-sm active m-3 text-wrap w-100"
               [disabled]="!buttonAprove"
               (click)="btnApprove()">
-              Aprobar
+              Aprobar <i class="fa fa-check" aria-hidden="true"></i>
             </button>
           </div>
           <!-- BOTON QUE MANDA A LLAMAR A FACTGENPARCIALIZA -->
           <div class="col-6 text-align-center">
+            <button
+              class="btn btn-danger btn-sm active m-3 text-wrap w-100"
+              (click)="btnDeleteDictation()">
+              Borrar Dictamen <i class="fa fa-trash" aria-hidden="true"></i>
+            </button>
+            <!-- <button
+                        class="btn btn-danger btn-sm active m-3 text-wrap w-100"
+                        [disabled]="isDocsEmpty()"
+                        (click)="btnDeleteDictation()"
+                        [disabled]="!buttonDeleteDisabled">
+                        Borrar Dictamen
+                      </button> -->
+          </div>
+          <div class="col-6 text-align-center">
+            <button
+              type="button"
+              class="btn btn-primary m-3 active btn-sm text-wrap w-100"
+              (click)="btnImprimeOficio()">
+              Imprimir <i class="bx bx-printer bx-sm float-icon"></i>
+            </button>
+          </div>
+          <div class="col-6 text-center">
             <button
               class="btn btn-info btn-sm active m-3 text-wrap w-100"
               [disabled]="buttonDisabled"
@@ -478,29 +500,9 @@
               Rechazar
             </button>
           </div> -->
-          <div class="col-6 text-align-center">
-            <button
-              class="btn btn-danger btn-sm active m-3 text-wrap w-100"
-              (click)="btnDeleteDictation()">
-              Borrar Dictamen
-            </button>
-            <!-- <button
-              class="btn btn-danger btn-sm active m-3 text-wrap w-100"
-              [disabled]="isDocsEmpty()"
-              (click)="btnDeleteDictation()"
-              [disabled]="!buttonDeleteDisabled">
-              Borrar Dictamen
-            </button> -->
-          </div>
+
           <!-- BOTON QUE MANDA A LLAMAR A FACTJURDICTAMOFICIO -->
-          <div class="col-12 text-center">
-            <button
-              type="button"
-              class="btn btn-primary active btn-sm"
-              (click)="btnImprimeOficio()">
-              Imprimir <i class="bx bx-printer bx-sm float-icon"></i>
-            </button>
-          </div>
+
           <!-- <div class="col-12">
             <p class="text-info">
               <strong>Click boton derecho para consultar dictaminaciones

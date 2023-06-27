@@ -15,6 +15,14 @@ export const NUMERARY_PARAMETERIZATION_COLUMNS = {
     valuePrepareFunction: (value: any) => {
       return value.description;
     },
+    filterFunction(cell?: any, search?: string): boolean {
+      let column = cell.description;
+      if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
+        return true;
+      } else {
+        return false;
+      }
+    },
     sort: false,
   },
   finalCategory: {
@@ -27,6 +35,14 @@ export const NUMERARY_PARAMETERIZATION_COLUMNS = {
     type: 'string',
     valuePrepareFunction: (value: any) => {
       return value.description;
+    },
+    filterFunction(cell?: any, search?: string): boolean {
+      let column = cell.description;
+      if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
+        return true;
+      } else {
+        return false;
+      }
     },
     sort: false,
   },

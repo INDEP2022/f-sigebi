@@ -50,11 +50,11 @@ export class DateDocumentsModalComponent extends BasePage implements OnInit {
     this.dateDocumentsModalForm = this.fb.group({
       expedientNumber: [
         null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN), Validators.maxLength(10)],
       ],
       stateNumber: [
         null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN), Validators.maxLength(10)],
       ],
       key: [null, [Validators.required]],
       typeDictum: [
@@ -69,7 +69,7 @@ export class DateDocumentsModalComponent extends BasePage implements OnInit {
       insertionDate: [null, [Validators.required]],
       userInsertion: [null],
       numRegister: [null],
-      officialNumber: [null],
+      officialNumber: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
       notificationDate: [null,],
       secureKey: [null],
     });
@@ -130,15 +130,16 @@ export class DateDocumentsModalComponent extends BasePage implements OnInit {
       insertionDate: {
         value: this.datePipe.transform(
           newDateDocument.insertionDate,
-          'yyyy-MM-dd'
+          'dd-mm-yyyy'
         ),
       },
       notificationDate: {
         value: this.datePipe.transform(
           newDateDocument.notificationDate,
-          'yyyy-MM-dd'
+          'dd-mm-yyyy'
         ),
       },
+
     });
 
     console.log('PAYLOAD', newDateDocument);
@@ -159,13 +160,13 @@ export class DateDocumentsModalComponent extends BasePage implements OnInit {
     this.dateDocumentsModalForm.controls['insertionDate'].setValue(
       this.datePipe.transform(
         this.dateDocumentsModalForm.controls['insertionDate'].value,
-        'yyyy-MM-dd'
+        'dd-mm-yyyy'
       )
     );
     this.dateDocumentsModalForm.controls['notificationDate'].setValue(
       this.datePipe.transform(
         this.dateDocumentsModalForm.controls['notificationDate'].value,
-        'yyyy-MM-dd'
+        'dd-mm-yyyy'
       )
     );
     this.dateDocumentsService
@@ -177,7 +178,7 @@ export class DateDocumentsModalComponent extends BasePage implements OnInit {
   }
   handleSuccess() {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.onLoadToast('success', this.title, `${message} Correctamente`);
+    this.alert('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();
