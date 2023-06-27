@@ -76,7 +76,11 @@ export class MassiveChangeStatusComponent extends BasePage implements OnInit {
     this.settings.columns = COLUMNS;
     this.settings.actions = false;
     this.settings.rowClassFunction = (row: { data: { avalaible: any } }) =>
-      row.data.avalaible ? 'bg-success text-white' : 'bg-dark text-white';
+      row.data.avalaible != null
+        ? row.data.avalaible
+          ? 'bg-success text-white'
+          : 'bg-dark text-white'
+        : '';
   }
 
   ngOnInit(): void {
@@ -124,6 +128,8 @@ export class MassiveChangeStatusComponent extends BasePage implements OnInit {
       this.goods = [];
       this.availableToUpdate = [];
       this.idsNotExist = [];
+      this.goodStatus.reset();
+      this.observation.reset();
       this.showError = false;
       this.showStatus = false;
 
@@ -287,6 +293,106 @@ export class MassiveChangeStatusComponent extends BasePage implements OnInit {
     this.alert('success', 'Se aplicó el cambio de estatus en los Bienes', '');
     this.availableToAssing = false;
   }
+
+  /*  applyStatus() {
+    for (let good of this.data['data']) {
+      if (good.avalaible) {
+        const model: IGood = {
+          id: good.id,
+          goodId: good.goodId,
+          status: good.status,
+          observations: good.observations,
+        };
+
+        this.goodServices.update(model).subscribe(
+          res => {
+            const modelHistory: IHistoryGood = {
+              propertyNum: good.goodId,
+              status: this.goodStatus.value.status,
+              changeDate: new Date().toISOString(),
+              userChange:
+                localStorage.getItem('username') == 'sigebiadmon'
+                  ? localStorage.getItem('username')
+                  : localStorage.getItem('username').toLocaleUpperCase(),
+              statusChangeProgram: 'FACTADBCAMBIOESTAT',
+              reasonForChange: this.observation.value,
+            };
+
+            this.historyStatusGoodService.create(modelHistory).subscribe(
+              res => {
+                this.idsUpdated.push(good);
+                this.data.refresh();
+              },
+              err => {
+                this.alert(
+                  'error',
+                  'No se registró el cambio en Historico estatus de bienes',
+                  ''
+                );
+              }
+            );
+          },
+          err => {
+            this.idsNotUpdated.push(good);
+          }
+        );
+      } else {
+        this.idsNotUpdated.push(good);
+      }
+    }
+    this.alert('success', 'Se aplicó el cambio de estatus en los Bienes', '');
+    this.availableToAssing = false;
+  } */
+
+  /*  applyStatus() {
+    for (let good of this.data['data']) {
+      if (good.avalaible) {
+        const model: IGood = {
+          id: good.id,
+          goodId: good.goodId,
+          status: good.status,
+          observations: good.observations,
+        };
+
+        this.goodServices.update(model).subscribe(
+          res => {
+            const modelHistory: IHistoryGood = {
+              propertyNum: good.goodId,
+              status: this.goodStatus.value.status,
+              changeDate: new Date().toISOString(),
+              userChange:
+                localStorage.getItem('username') == 'sigebiadmon'
+                  ? localStorage.getItem('username')
+                  : localStorage.getItem('username').toLocaleUpperCase(),
+              statusChangeProgram: 'FACTADBCAMBIOESTAT',
+              reasonForChange: this.observation.value,
+            };
+
+            this.historyStatusGoodService.create(modelHistory).subscribe(
+              res => {
+                this.idsUpdated.push(good);
+                this.data.refresh();
+              },
+              err => {
+                this.alert(
+                  'error',
+                  'No se registró el cambio en Historico estatus de bienes',
+                  ''
+                );
+              }
+            );
+          },
+          err => {
+            this.idsNotUpdated.push(good);
+          }
+        );
+      } else {
+        this.idsNotUpdated.push(good);
+      }
+    }
+    this.alert('success', 'Se aplicó el cambio de estatus en los Bienes', '');
+    this.availableToAssing = false;
+  } */
 
   changeStatusGood() {
     if (this.goods.length === 0) {

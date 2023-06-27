@@ -19,8 +19,10 @@ export interface IProceedings {
   positionWorker2?: string;
   positionWorkerUvfv?: string;
   positionWorkerOic?: string;
+  statusProceeedings?: string;
   idCatWorker2?: string;
   idCatWitness1?: string;
+  observationProceedings?: string;
   idCatWitness2?: string;
   idNoWitness1?: string;
   idNoWitness2?: string;

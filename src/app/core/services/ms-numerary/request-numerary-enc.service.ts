@@ -26,4 +26,8 @@ export class RequestNumeraryEncService extends HttpService {
   update(data: IRequesNumeraryEnc) {
     return this.put(`${this.route.RequestEnc}/${data.solnumId}`, data);
   }
+
+  remove(id: number) {
+    return this.delete(`${this.route.RequestEnc}/${id}`);
+  }
 }

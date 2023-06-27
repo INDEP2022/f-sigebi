@@ -267,13 +267,17 @@
         <div class="col-md-3 col-sm-6 col-xs-12">
           <button
             class="btn btn-success btn-sm active"
-            (click)="actConversionBtn()">
+            (click)="showActasConvertion()"
+            [disabled]="flagActa">
             Actas conversión
           </button>
         </div>
 
         <div class="col-md-3 col-sm-6 col-xs-12">
-          <button class="btn btn-info btn-sm active" (click)="bulkUpload()">
+          <button
+            class="btn btn-info btn-sm active"
+            (click)="bulkUpload()"
+            [disabled]="flagCargMasiva">
             Carga masiva
           </button>
         </div>
@@ -281,13 +285,17 @@
         <div class="col-md-3 col-sm-6 col-xs-12">
           <button
             class="btn btn-danger btn-sm active"
-            (click)="finishConversion()">
+            (click)="finishConversion()"
+            [disabled]="flagFinConversion">
             Finalizar conversión
           </button>
         </div>
 
         <div class="col-md-3 col-sm-6 col-xs-12">
-          <button class="btn btn-info btn-sm active" (click)="imgUpload()">
+          <button
+            class="btn btn-info btn-sm active"
+            (click)="imgUpload()"
+            [disabled]="flagCargaImagenes">
             Carga Imagenes
           </button>
         </div>
