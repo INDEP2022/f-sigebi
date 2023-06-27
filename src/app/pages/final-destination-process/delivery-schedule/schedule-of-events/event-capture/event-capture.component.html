@@ -230,12 +230,15 @@
               </button>
             </div>
             <div *ngIf="ctrlButtons.sendSise.visible">
-              <button
-                class="btn btn-sm btn-primary active"
-                [disabled]="!ctrlButtons.sendSise.enabled">
-                {{ ctrlButtons.sendSise.label }}
-                <i class="bx bx-send"></i>
-              </button>
+              <confirm-button
+                type="button"
+                [btnSmall]="true"
+                [disabled]="!ctrlButtons.sendSise.enabled"
+                (confirm)="sendSISE()"
+                [loading]="siseLoading"
+                [text]="ctrlButtons.sendSise.label"
+                loadingText="Cargando"
+                icon="bx bx-send"></confirm-button>
             </div>
           </div>
         </div>

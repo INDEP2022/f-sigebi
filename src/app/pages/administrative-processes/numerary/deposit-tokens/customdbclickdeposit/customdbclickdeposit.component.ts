@@ -1,14 +1,12 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { AccountMovementService } from 'src/app/core/services/ms-account-movements/account-movement.service';
 import { BasePage } from 'src/app/core/shared';
-import { ListGoodsComponent } from '../list-goods/list-goods.component';
 
 @Component({
-  selector: 'app-customdbclick',
-  templateUrl: './customdbclick.component.html',
+  selector: 'app-customdbclickdeposit',
+  templateUrl: './customdbclickdeposit.component.html',
   styles: [
     `
       .hoverBg:hover {
@@ -18,7 +16,7 @@ import { ListGoodsComponent } from '../list-goods/list-goods.component';
     `,
   ],
 })
-export class CustomdbclickComponent extends BasePage implements OnInit {
+export class CustomdbclickdepositComponent extends BasePage implements OnInit {
   @Input() value: any;
   clickTimer: any;
   @Input() rowData: any;
@@ -52,10 +50,7 @@ export class CustomdbclickComponent extends BasePage implements OnInit {
   }
 
   onCellDoubleClick() {
-    if (!this.value) {
-      // Lógica a ejecutar en caso de doble clic en una celda vacía
-      console.log('Celda vacía seleccionada');
-      // this.openForm(null);
+    if (!this.rowData.no_bien) {
       this.seleccionarBien_();
     } else {
       // Lógica a ejecutar en caso de doble clic en una celda con valor
@@ -71,20 +66,6 @@ export class CustomdbclickComponent extends BasePage implements OnInit {
     event.preventDefault();
   }
 
-  openForm(data?: any) {
-    const modalConfig = MODAL_CONFIG;
-    const rowData = this.rowData;
-    modalConfig.initialState = {
-      data,
-      rowData,
-      callback: (next: boolean) => {
-        console.log('AQUI', next);
-        this.ejecutarFuncion();
-      },
-    };
-    this.modalService.show(ListGoodsComponent, modalConfig);
-  }
-
   // RECARGAR DATA DE LA TABLA DE MOVIMIENTOS //
   ejecutarFuncion() {
     console.log('AQUI2');
@@ -98,7 +79,8 @@ export class CustomdbclickComponent extends BasePage implements OnInit {
       this.rowData.currency != null &&
       this.rowData.deposito != null &&
       this.rowData.fec_movimiento != null &&
-      this.rowData.cveAccount != null
+      this.rowData.cveAccount != null &&
+      this.rowData.deposito
     ) {
       let obj = {
         diCurrency: this.rowData.currency,
