@@ -1,12 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
-import {
-  ListParams,
-  ListParamsInfite,
-} from 'src/app/common/repository/interfaces/list-params';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { IStateOfRepublic } from 'src/app/core/models/catalogs/state-of-republic.model';
 import { DomicileService } from 'src/app/core/services/catalogs/domicile.service';
 import { StateOfRepublicService } from 'src/app/core/services/catalogs/state-of-republic.service';
+import { GoodService } from 'src/app/core/services/good/good.service';
 import { GoodsInvService } from 'src/app/core/services/ms-good/goodsinv.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 
@@ -17,75 +16,97 @@ import { BasePage } from 'src/app/core/shared/base-page';
 })
 export class DomicileFormComponent extends BasePage implements OnInit {
   item: any;
-  nameStatus: any;
-  params: ListParams | string;
-  paramsState = new BehaviorSubject<ListParams>(new ListParamsInfite());
+  loadingReport: boolean = false;
+  nameStatus: IStateOfRepublic;
+  paramsState = new BehaviorSubject<ListParams>(new ListParams());
+  // params= new BehaviorSubject<ListParamsInfite>(new ListParamsInfite());
+  // paramsState = new BehaviorSubject<ListParams>(new ListParams());
   constructor(
     private modalRef: BsModalRef,
     private statesService: StateOfRepublicService,
     private municipalityService: GoodsInvService,
-    private domicileService: DomicileService
+    private domicileService: DomicileService,
+    private goodService: GoodService
   ) {
     super();
     console.log('ITEMENTRO', JSON.stringify(this.item));
   }
 
   ngOnInit(): void {
-    //     console.log('numer',this.item.domicilio.exteriorNumber)
-    //     console.log('inter',this.item.domicilio.interiorNumber)
-    console.log('stado', this.item.domicilio.statusKey);
-    console.log('keymuni', this.item.municipalityKey);
-    //     console.log('domi',this.item.domicilio)
-    //     console.log('stado',this.item.code)
-    this.filterStatus(this.item.domicilio.statusKey);
+    this.showInfostate();
+    this.showInfoMuncipality();
+    console.log('alias', this.item.domicilio.warehouseAlias);
+    // console.log('statue', this.item.cveState);
+    // console.log('code', this.item.code);
+    // console.log('muni', this.item.cveMunicipality);
+    // console.log('vianame', this.item.viaName);
+    // this.filterStatus(this.item.domicilio.statusKey);
   }
 
-  //  nameStatus:any;
-  //   filterStatus(stateKey:any){
+  // async filterStatus(stateKey: any) {
+  //   try {
+  //     const data = await this.statesService
+  //       .getAll(this.paramsState.getValue())
+  //       .toPromise();
+  //     const descCondition = data.data.find((item: any) => item.id === stateKey);
+  //     this.item.descCondition = descCondition.descCondition;
 
-  //     this.item.domicilio.statusKey = this.statesService
-  //     .getAll(this.paramsState.getValue())
-  //     .subscribe(data =>{
-  //       console.log('itemsx', stateKey)
-  //       console.log('itemzasasasa', this.item.domicilio.stateKey)
-  //       console.log('data show', JSON.stringify(data.data.find((items:any)=>items.id === this.item.domicilio.statusKey)))
-  //       this.nameStatus = data.data.find((items:any)=>items.id === stateKey);
-  //       // data.stateCode.descCondition === item.domicilio.statusKey
-  //     } );
+  //     const municipalityData = await this.municipalityService
+  //       .getAllMunipalitiesByFilter(this.params.getValue())
+  //       .toPromise();
+
+  //     const municipality = municipalityData.data.find(
+  //       (item: any) => item.municipalityKey === this.item.domicilio.municipalityKey
+  //     );
+  //     console.log('datax',data.data)
+  //     console.log('ditemsss',this.item)
+  //     console.log('municipality', municipality)
+  //     console.log('itemsdsadas',this.item.municipalityKey)
+  //     console.log('muni', municipalityData.data);
+  //     console.log('keymuni2', this.item.domicilio.municipalityKey);
+  //     this.item.municipality = municipality.municipality;
+  //   } catch (error) {
+  //     // Manejar el error aquí
   //   }
-
-  async filterStatus(stateKey: any) {
-    try {
-      const data = await this.statesService
-        .getAll(this.paramsState.getValue())
-        .toPromise();
-      // console.log('itemsx', stateKey);
-      // console.log('itemzasasasa', this.item.domicilio.statusKey);
-      // console.log('datax',data.data)
-      // console.log('data show', JSON.stringify(data.data.find((item: any) => item.id === stateKey)));
-      const descCondition = data.data.find((item: any) => item.id === stateKey);
-      // this.nameStatus = data.data.find((item: any) => item.id === stateKey);
-      this.item.descCondition = descCondition.descCondition;
-      // console.log('itemnombre', this.item)
-      // data.stateCode.descCondition === item.domicilio.statusKey
-      const municipalityData = await this.municipalityService
-        .getAllMunipalitiesByFilter(this.params)
-        .toPromise();
-
-      const municipality = municipalityData.data.find(
-        (item: any) => item.municipalityKey === this.item.municipalityId
-      );
-      console.log('muni', municipalityData.data);
-      console.log('keymuni', this.item.municipalityKey);
-      this.item.municipality = municipality.municipality;
-    } catch (error) {
-      // Manejar el error aquí
-    }
-
-    // this.municipalityService.getAllMunipalitiesByFilter(this.params.);
+  showInfostate() {
+    console.log('keystado', this.item.domicilio.statusKey);
+    this.paramsState.getValue()['filter.id'] = this.item.domicilio.statusKey;
+    // params.getValue()['filter.statekey'] = domicile.statekey;
+    console.log('keystado', this.item.domicilio.statusKey);
+    console.log('params', this.paramsState);
+    this.statesService.getAll(this.paramsState.getValue()).subscribe({
+      next: response => {
+        this.item.cveState = response.data[0].descCondition;
+      },
+      error: error => {},
+    });
   }
-
-  filterMuni() {}
+  showInfoMuncipality() {
+    console.log('keystado', this.item.domicilio.statusKey);
+    this.paramsState.getValue()['filter.stateKey'] =
+      this.item.domicilio.statusKey;
+    this.paramsState.getValue()['filter.municipalityKey'] =
+      this.item.domicilio.municipalityKey;
+    // params.getValue()['filter.statekey'] = domicile.statekey;
+    console.log('keystado', this.item.domicilio.statusKey);
+    console.log('params', this.paramsState);
+    this.municipalityService
+      .getAllMunipalitiesByFilter(this.paramsState.getValue())
+      .subscribe({
+        next: response => {
+          this.item.cveMunicipality = response.data[0].municipality;
+        },
+        error: error => {},
+      });
+  }
+  // showInfoMuncipality(domicilie){
+  // const params = Lsittgnbf
+  // params.getValue()['filter, municipalityKey'] = domicile.locality.id;
+  // this.domicileService.getAll(params.getValue()).subscribe({
+  // next: response => [
+  // this.c response.name;
+  // }, error: error => [
+  // })
 
   close() {
     this.modalRef.hide();
