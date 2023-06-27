@@ -334,7 +334,7 @@ export class ScheduleNotifyFormComponent extends BasePage implements OnInit {
 
   showGuard(goodsProg: IGoodProgramming[]) {
     const filterTrans = goodsProg.filter(item => {
-      return item.status == 'EN_RESGUARDO';
+      return item.status == 'EN_RESGUARDO_TMP';
     });
     const showGuard: any = [];
     filterTrans.map((item: IGoodProgramming) => {
@@ -361,7 +361,7 @@ export class ScheduleNotifyFormComponent extends BasePage implements OnInit {
 
   showWarehouseGoods(goodsProg: IGoodProgramming[]) {
     const filterTrans = goodsProg.filter(item => {
-      return item.status == 'EN_ALMACEN';
+      return item.status == 'EN_ALMACEN_TMP';
     });
     const showWarehouse: any = [];
     filterTrans.map((item: IGoodProgramming) => {
