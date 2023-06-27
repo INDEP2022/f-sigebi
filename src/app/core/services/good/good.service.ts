@@ -166,4 +166,11 @@ export class GoodService extends HttpService implements ICrudMethods<IGood> {
       params
     );
   }
+  getByExpedient(
+    expedient: string | number,
+    params?: ListParams
+  ): Observable<IListResponse<IGood>> {
+    const route = `?filter.fileNumber=$eq:${expedient}`;
+    return this.goodRepository.getAllPaginated(`good/good${route}`, params);
+  }
 }

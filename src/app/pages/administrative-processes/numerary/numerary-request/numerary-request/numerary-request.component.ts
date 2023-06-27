@@ -546,7 +546,7 @@ export class NumeraryRequestComponent extends BasePage implements OnInit {
     const valids = this.data1.filter(good => good.valid == 'S');
 
     if (valids.length > 0) {
-      await this.removeAll(body.procnumId);
+      await this.removeAll(body.solnumId);
     }
 
     this.data1.map(async good => {
