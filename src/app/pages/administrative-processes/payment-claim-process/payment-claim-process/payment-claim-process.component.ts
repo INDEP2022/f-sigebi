@@ -223,7 +223,7 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
     console.log('Entro');
     const files = (event.target as HTMLInputElement).files;
     if (files.length != 1) throw 'No files selected, or more than of allowed';
-    this.alert('success', 'Archivo subido exitosamente', '');
+    this.alert('success', 'Archivo subido exitosamente', 'Cargado');
     this.readExcel(files[0], 'si');
   }
 
@@ -558,7 +558,7 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
         this.alert(
           'success',
           'Se ha actualizado el motivo de cambio de los bienes seleccionados y eliminado el folio anterior',
-          ''
+          'Actualizado'
         );
       },
       error: err => {
@@ -569,14 +569,14 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
           this.valDocument = false;
           this.alert(
             'success',
-            'Elimiado',
-            'Se ha eliminado correctamente el folio'
+            'Se ha eliminado correctamente el folio',
+            'Elimiado'
           );
         } else {
           this.alert(
             'error',
-            'Elimiado',
-            'Se ha generado un error al eliminar el Folio'
+            'Se ha generado un error al eliminar el Folio',
+            'Elimiado'
           );
         }
         console.log(err);
