@@ -42,6 +42,7 @@ export class FormalizeProgrammingFormComponent
   extends BasePage
   implements OnInit
 {
+  observationProceedings: string;
   isDropup = true;
   goods: any[] = [];
   // receiptGuards: IReception[] = [];
@@ -250,7 +251,10 @@ export class FormalizeProgrammingFormComponent
       { queryParams: { programingId: this.programmingId } }
     ); */
   }
-
+  saveButton() {
+    const observationProceedings = this.observationProceedings;
+    console.log('datoobersea', observationProceedings);
+  }
   getReceipts() {
     const params = new BehaviorSubject<ListParams>(new ListParams());
     params.getValue()['filter.programmingId'] = this.programmingId;
