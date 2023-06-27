@@ -18,6 +18,7 @@ import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { AddMovementComponent } from '../add-movement/add-movement.component';
 import { CustomdbclickComponent } from '../customdbclick/customdbclick.component';
+import { CustomdbclickdepositComponent } from '../customdbclickdeposit/customdbclickdeposit.component';
 import { DepositTokensModalComponent } from '../deposit-tokens-modal/deposit-tokens-modal.component';
 @Component({
   selector: 'app-deposit-tokens',
@@ -80,7 +81,7 @@ export class DepositTokensComponent extends BasePage implements OnInit {
           type: 'string',
           sort: false,
         },
-        fec_traspaso_: {
+        fec_calculo_intereses_: {
           title: 'Fecha Transferencia',
           type: 'string',
           sort: false,
@@ -92,8 +93,14 @@ export class DepositTokensComponent extends BasePage implements OnInit {
         },
         deposito: {
           title: 'Depósito',
-          type: 'string',
+          type: 'custom',
           sort: false,
+          renderComponent: CustomdbclickdepositComponent,
+          onComponentInitFunction: (instance: any) => {
+            instance.funcionEjecutada.subscribe(() => {
+              this.miFuncion();
+            });
+          },
         },
         no_expediente: {
           title: 'Expediente',
@@ -154,12 +161,12 @@ export class DepositTokensComponent extends BasePage implements OnInit {
             //Verificar los datos si la busqueda sera EQ o ILIKE dependiendo el tipo de dato aplicar regla de búsqueda
             const search: any = {
               bank: () => (searchFilter = SearchFilter.ILIKE),
-              cveAccount: () => (searchFilter = SearchFilter.ILIKE),
+              cveAccount: () => (searchFilter = SearchFilter.EQ),
               fec_insercion: () => (searchFilter = SearchFilter.ILIKE),
-              invoice: () => (searchFilter = SearchFilter.ILIKE),
+              folio_ficha: () => (searchFilter = SearchFilter.ILIKE),
               fec_traspaso: () => (searchFilter = SearchFilter.ILIKE),
               currency: () => (searchFilter = SearchFilter.ILIKE),
-              deposito: () => (searchFilter = SearchFilter.ILIKE),
+              deposito: () => (searchFilter = SearchFilter.EQ),
               no_expediente: () => (searchFilter = SearchFilter.EQ),
               no_bien: () => (searchFilter = SearchFilter.EQ),
               categoria: () => (searchFilter = SearchFilter.ILIKE),
@@ -202,8 +209,8 @@ export class DepositTokensComponent extends BasePage implements OnInit {
           item['fec_insercion_'] = item.fec_insercion
             ? this.datePipe.transform(item.fec_insercion, 'dd/MM/yyyy')
             : null;
-          item['fec_traspaso_'] = item.fec_traspaso
-            ? this.datePipe.transform(item.fec_traspaso, 'dd/MM/yyyy')
+          item['fec_calculo_intereses_'] = item.fec_calculo_intereses
+            ? this.datePipe.transform(item.fec_calculo_intereses, 'dd/MM/yyyy')
             : null;
           item['bancoDetails'] = detailsBank ? detailsBank : null;
         });
@@ -327,6 +334,7 @@ export class DepositTokensComponent extends BasePage implements OnInit {
               `El bien ${this.dataMovements.no_bien} ha sido desconciliado`,
               ''
             );
+            this.form.get('descriptionGood').setValue('');
           },
           error: err => {
             this.alert('error', `Error al desconciliar`, err.error.message);
@@ -341,6 +349,7 @@ export class DepositTokensComponent extends BasePage implements OnInit {
     this.showPagination = true;
     this.paramsList.getValue().limit = 10;
     this.paramsList.getValue().page = 1;
+    this.form.get('descriptionGood').setValue('');
     this.getAccount();
     if (this.dataMovements) {
       if (this.dataMovements.bank) {
@@ -464,28 +473,6 @@ export class DepositTokensComponent extends BasePage implements OnInit {
     this.modalService.show(AddMovementComponent, modalConfig);
   }
 
-  // DECLARE
-  //   vb_hay_hijos BOOLEAN:= FALSE;
-  //   BEGIN
-  //   IF: blk_mov.no_bien IS NOT NULL THEN
-  //   LIP_MENSAJE('No puede eliminar un movimiento que ya esta asociado a un expediente-bien','S');
-  //   ELSE
-  //     --Determina si no tiene asociado alguna devolucion
-  //     FOR reg IN(SELECT 1
-  //                 FROM   cheques_devolucion
-  //                 WHERE  no_movimiento_origen_deposito = : blk_mov.no_movimiento)
-  // LOOP
-  // vb_hay_hijos:= TRUE;
-  // EXIT;
-  //     END LOOP;
-  //     IF vb_hay_hijos THEN
-  //        LIP_MENSAJE('No se puede eliminar una ficha mientras tenga devoluciones registradaa', 'C');
-  //       ELSE
-  //        DELETE_RECORD;
-  //     END IF;
-  //   END IF;
-  // END;
-
   async showDeleteAlert(data: any) {
     console.log(data);
     let vb_hay_hijos: boolean = false;
@@ -520,6 +507,7 @@ export class DepositTokensComponent extends BasePage implements OnInit {
             };
             this.accountMovementService.eliminarMovementAccount(obj).subscribe({
               next: response => {
+                this.getAccount();
                 this.alert('success', 'Movimiento Eliminado Correctamente', '');
                 console.log('res', response);
               },
