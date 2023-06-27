@@ -26,6 +26,7 @@ export class SearchTabComponent extends BasePage implements OnInit {
   @Output() dataSearch = new EventEmitter<{ data: any; exist: boolean }>();
   params = new BehaviorSubject<FilterParams>(new FilterParams());
   params1 = new BehaviorSubject<ListParams>(new ListParams());
+
   totalItems: number = 0;
   list: any[] = [];
   classifGood: number;
@@ -60,10 +61,10 @@ export class SearchTabComponent extends BasePage implements OnInit {
       noClasifBien: [null],
       noTipo: [null],
       tipo: [null],
-      noSubtipo: [null, [Validators.required]],
-      subtipo: [null, [Validators.required]],
-      noSsubtipo: [null, [Validators.required]],
-      ssubtipo: [null, [Validators.required]],
+      noSubtipo: [null],
+      subtipo: [null],
+      noSsubtipo: [null],
+      ssubtipo: [null],
       noSssubtipo: [null],
       sssubtipo: [null],
       estatus: [null, [Validators.pattern(STRING_PATTERN)]],
@@ -81,7 +82,11 @@ export class SearchTabComponent extends BasePage implements OnInit {
   }
 
   getGoods(ssssubType: IGoodSssubtype) {
-    this.classifGood = ssssubType.numClasifGoods;
+    if (ssssubType !== null) {
+      this.classifGood = ssssubType.numClasifGoods;
+    } else {
+      this.classifGood = null;
+    }
   }
 
   clean() {
@@ -90,7 +95,7 @@ export class SearchTabComponent extends BasePage implements OnInit {
   }
 
   async search() {
-    if (
+    /* if (
       this.searchTabForm.get('subtipo').value === '' ||
       this.searchTabForm.get('subtipo').value === null
     ) {
@@ -103,7 +108,7 @@ export class SearchTabComponent extends BasePage implements OnInit {
     ) {
       this.onLoadToast('info', 'Debe seleccionar un ssubtipo');
       return;
-    }
+    } */
     if (
       this.searchTabForm.get('noBien').value === '' ||
       this.searchTabForm.get('noBien').value === null

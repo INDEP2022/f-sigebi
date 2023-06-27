@@ -22,11 +22,6 @@
           <i class="fas fa-arrow-circle-left"></i>
         </button>
       </div>
-      <!-- <div class="d-inline mr-2">
-        <button (click)="openDialogSelectedManagement()" type="button" class="btn btn-primary active btn-sm">
-          <i class="bx bx-list-plus bx-sm float-icon"></i>
-        </button>
-      </div> -->
     </div>
   </div>
 
@@ -36,29 +31,34 @@
         <accordion [isAnimated]="true">
           <accordion-group [isOpen]="true">
             <div accordion-heading class="d-flex justify-content-between">
-              <div>
+              <div class="row">
                 <h5>
-                  <i class="fa fa-copy" aria-hidden="true"></i>
+                  <i class="fa fa-filter" aria-hidden="true"></i>
                   Conversión
                 </h5>
               </div>
 
               <div></div>
+              <div class="d-inline mr-2">
+                <button
+                  (click)="searchProcs()"
+                  type="button"
+                  class="btn btn-primary active btn-sm">
+                  <i class="bx bx-list-plus bx-sm float-icon"></i>
+                </button>
+              </div>
             </div>
-            <form
-              [formGroup]="proceedingsConversionForm"
-              class="form-material"
-              (ngSubmit)="searchProcs()">
+            <form [formGroup]="proceedingsConversionForm" class="form-material">
               <div class="form-material">
                 <!-- apppcatd **************************************************************-->
-                <app-card [header]="false">
+                <app-card [header]="false" [footer]="true">
                   <div body>
                     <div class="row"></div>
-                    <div class="row pt-3">
+                    <div class="row p-3">
                       <div class="col-md-3">
                         <div>
                           <label for="">No. Conversión: </label>
-                          {{ conversion }}
+                          {{ conversion || '' }}
                         </div>
                       </div>
                       <div class="col-md-5">
@@ -66,30 +66,160 @@
                           <label for=""
                             >No. Bien Convertido (Bien Padre):
                           </label>
-                          {{ goodFatherNumber }}
+                          {{ goodFatherNumber || '' }}
                         </div>
                       </div>
                       <div class="col-md-3">
                         <div>
                           <label for="">No. Expediente: </label>
-                          {{ fileNumber }}
+                          {{ fileNumber || '' }}
                         </div>
                       </div>
-                      <div
-                        [formGroup]="proceedingsConversionForm"
-                        class="col-md-2">
-                        <div class="d-flex align-items-center">
-                          <div>
-                            <label for="">Tipo de Acta: </label>
-                            {{ typeConv }}
+                    </div>
+                    <div class="row p-3">
+                      <div class="col-md-3">
+                        <div>
+                          <label for="">Tipo de Acta: </label>
+                          {{ typeConv || '' }}
+                        </div>
+                      </div>
+                      <div class="col-md-5">
+                        <div>
+                          <label for="">Averiguación Previa: </label>
+                          {{ preAver || '' }}
+                        </div>
+                      </div>
+                      <div class="col-md-3">
+                        <div>
+                          <label for="">Causal Penal: </label>
+                          {{ criCase || '' }}
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row p-3">
+                      <div class="col-md-3"></div>
+                    </div>
+                    <form
+                      [formGroup]="actaRecepttionForm"
+                      class="form-material"
+                      (ngSubmit)="searchProcs()">
+                      <div class="row"></div>
+                    </form>
+                    <div class="row"></div>
+                    <!-- <form [formGroup]="goodFrm" class="form-material" (ngSubmit)="searchProcs()"> -->
+                    <form [formGroup]="actaGoodForm" class="form-material">
+                      <div class="row w-100">
+                        <div
+                          class="col-sm-12 col-12 col-md-5 col-lg-5 p-2 alert alert-success">
+                          <h6>BIENES RELACIONADOS CON EL EXPEDIENTE</h6>
+                          <div
+                            [class]="isLoadingGood ? 'table-loading' : ''"
+                            class="overflow-auto">
+                            <ng2-smart-table
+                              [attr.class]="'table-bordered'"
+                              [settings]="settings"
+                              [source]="dataGoodTable"
+                              (userRowSelect)="selectGoods($event)">
+                            </ng2-smart-table>
+                            <app-pagination
+                              [totalItems]="totalItems"></app-pagination>
                           </div>
+                          <br />
+                          <span class="badge m-2 badge-pill bg-success"
+                            >&#42;&#42;Disponibles</span
+                          >
+                          <span class="badge m-2 badge-pill bg-dark"
+                            >&#42;&#42;No Disponibles</span
+                          >
+                        </div>
+                        <!-- TABLA----BIENES RELACIONADOS CON EL EXPEDIENTE -->
+                        <div
+                          class="col-sm-12 col-12 col-md-2 col-lg-2 p-2 text-center">
+                          <div
+                            class="d-flex justify-content-center align-items-center h-100">
+                            <div>
+                              <button
+                                (click)="selectProceedings($event)"
+                                [disabled]="isAllDisabled"
+                                class="btn btn-secondary btn-sm bg-success active m-3 p-3"
+                                type="button">
+                                <!-- Mover uno -->
+                                <i class="bx bxs-right-arrow-circle bx-md"></i>
+                              </button>
+                              <br />
+                              <button
+                                (click)="deleteGoodActa($event)"
+                                [disabled]="isAllDisabled"
+                                class="btn btn-secondary btn-sm active bg-danger m-3 p-3"
+                                type="button">
+                                <!-- Mover uno -->
+                                <i class="bx bxs-left-arrow-circle bx-md"></i>
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                        <!-- TABLA----BIENES RELACIONADOS CON EL OFICIO -->
+                        <div
+                          class="col-sm-12 col-12 col-md-5 col-lg-5 p-2 alert alert-success">
+                          <h6>BIENES RELACIONADOS CON EL ACTA</h6>
+                          <ng2-smart-table
+                            [attr.class]="'table-bordered'"
+                            [settings]="settings2"
+                            [source]="dataGoodTable"
+                            (userRowSelect)="rowSelected2($event)">
+                          </ng2-smart-table>
+                        </div>
+                      </div>
+                    </form>
+                    <!-- <div>
+                      <app-pagination [params]="params" [totalItems]="totalItems"></app-pagination>
+                  </div>-->
+                    <div footer>
+                      <div class="d-flex justify-content-center">
+                        <div class="m-3">
+                          <button
+                            type="button"
+                            class="btn btn-primary active btn-sm"
+                            (click)="cerrarActa()">
+                            Detalle de Acta
+                            <i class="fas fa-edit bx-sm float-icon"></i>
+                          </button>
+                        </div>
+                        <div class="m-3">
+                          <button
+                            [disabled]="!disabledImport"
+                            name="file"
+                            #file
+                            class="btn btn-success btn-sm ml-2"
+                            type="button"
+                            (click)="file.click()">
+                            Carga Masiva
+                            <i class="fa fa-upload bx-sm float-icon"></i>
+                          </button>
+                        </div>
+                        <div class="m-3">
+                          <button
+                            type="button"
+                            class="btn btn-primary active btn-sm"
+                            (click)="Generar()">
+                            Imprimir
+                            <i class="bx bx-printer bx-sm float-icon"></i>
+                          </button>
+                        </div>
+                        <div class="m-3">
+                          <button
+                            type="button"
+                            class="btn btn-danger active btn-sm"
+                            (click)="cerrarActa()">
+                            Cerrar Acta
+                            <i class="fas fa-close bx-sm float-icon"></i>
+                          </button>
                         </div>
                       </div>
                     </div>
                   </div>
                 </app-card>
               </div>
-              <!-- apppcatd **************************************************************-->
             </form>
           </accordion-group>
           <accordion-group>
@@ -106,7 +236,7 @@
               (onSubmit)="searchGoods($event)"></data-filter> -->
             <app-proceedings-conversion-detail></app-proceedings-conversion-detail>
           </accordion-group>
-          <accordion-group [isOpen]="false">
+          <!-- <accordion-group [isOpen]="false">
             <div accordion-heading class="d-flex justify-content-between">
               <div>
                 <h5>
@@ -116,13 +246,10 @@
               </div>
               <div></div>
             </div>
-            <form
-              [formGroup]="proceedingsConversionForm"
-              class="form-material"
-              (ngSubmit)="searchProcs()">
+            <form [formGroup]="proceedingsConversionForm" class="form-material" (ngSubmit)="searchProcs()">
               <div class="row"></div>
             </form>
-          </accordion-group>
+          </accordion-group> -->
         </accordion>
       </div>
     </div>

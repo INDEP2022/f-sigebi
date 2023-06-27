@@ -34,9 +34,11 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
   wrongModal = true;
 
   //Variables de BLK_TIPO_BIEN
+
   no_bien_blk_tipo_bien: number;
   params = new BehaviorSubject<ListParams>(new ListParams());
   selectedRow: any;
+
   get idConversion() {
     return this.form.get('idConversion');
   }

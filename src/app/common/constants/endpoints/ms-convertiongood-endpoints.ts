@@ -4,4 +4,5 @@ export enum ConvertiongoodEndpoints {
   AssetConversions = `asset-conversions`,
   RtdictaAarusr = `r-tdicta-aarusr`,
   RtdictaAarusrId = `r-tdicta-aarusr/id`,
+  ActsConvertion = `conversions/get-all`,
 }
