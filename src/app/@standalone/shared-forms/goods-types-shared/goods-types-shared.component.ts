@@ -31,6 +31,7 @@ export class GoodsTypesSharedComponent extends BasePage implements OnInit {
   @Input() form: FormGroup;
   @Input() loadTypes = false;
   @Output() loadTypesChange = new EventEmitter<boolean>();
+  @Input() loadOnChangesNoBien = false;
   @Input() typeField: string = 'type';
   @Input() subtypeField: string = 'subtype';
   @Input() ssubtypeField: string = 'ssubtype';
@@ -82,8 +83,9 @@ export class GoodsTypesSharedComponent extends BasePage implements OnInit {
       ? `col-md-${this.columns} mt-3`
       : `col-md-12 mt-3`;
     if (
-      this.form.get('noBien').value !== null ||
-      this.form.get('noBien').value !== ''
+      (this.form.get('noBien').value !== null ||
+        this.form.get('noBien').value !== '') &&
+      this.loadOnChangesNoBien
     ) {
       this.form
         .get('noBien')
