@@ -78,11 +78,17 @@ export class MunicipalityListComponent extends BasePage implements OnInit {
     };
     this.municipalityService.getAll(params).subscribe({
       next: response => {
-        this.columns = response.data;
-        this.totalItems = response.count;
-        this.data.load(response.data);
-        this.data.refresh();
-        this.loading = false;
+        if (response.data) {
+          this.columns = response.data;
+          this.totalItems = response.count;
+          this.data.load(response.data);
+          this.data.refresh();
+          this.loading = false;
+        } else {
+          this.data.load([]);
+          this.data.refresh();
+          this.loading = false;
+        }
       },
       error: error => (this.loading = false),
     });

@@ -135,9 +135,8 @@ export class LawyerListComponent extends BasePage implements OnInit {
     this.lawyerService.getAllDetail(params).subscribe({
       next: response => {
         console.log(response.data);
-        this.totalItems = response.count;
-        this.lawyers = response.data;
-        this.data.load(this.lawyers);
+        //this.lawyers = response.data;
+        this.data.load(response.data);
         this.data.refresh();
 
         this.loading = false;

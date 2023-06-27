@@ -48,8 +48,14 @@ export class RegisterKeyOneModalComponent extends BasePage implements OnInit {
         [Validators.maxLength(8), Validators.pattern(KEYGENERATION_PATTERN)],
       ],
       swFormat1: [null, [Validators.pattern(STRING_PATTERN)]],
-      longMin1: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      longMax1: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      longMin1: [
+        null,
+        [Validators.maxLength(2), Validators.pattern(NUMBERS_PATTERN)],
+      ],
+      longMax1: [
+        null,
+        [Validators.maxLength(2), Validators.pattern(NUMBERS_PATTERN)],
+      ],
     });
     if (this.tdescCve != null) {
       this.edit = true;

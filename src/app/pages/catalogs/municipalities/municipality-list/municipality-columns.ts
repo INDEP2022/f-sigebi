@@ -5,7 +5,7 @@ export const MUNICIPALITIES_COLUMNS = {
     sort: false,
   },
   idMunicipality: {
-    title: 'ID De Municipio',
+    title: 'Código Municipio',
     type: 'number',
     sort: false,
   },

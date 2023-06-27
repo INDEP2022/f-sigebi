@@ -5,10 +5,10 @@
   <div body>
     <form class="form-material" [formGroup]="municipalityForm">
       <div class="row">
-        <div class="col-12 pt-4">
+        <div class="col-4 pt-4">
           <form-field
             [control]="municipalityForm.get('idMunicipality')"
-            label="ID De Municipio">
+            label="Código Municipio">
             <input
               type="text"
               class="form-control"
@@ -84,7 +84,7 @@
         <confirm-button
           [disabled]="!municipalityForm.valid"
           [loading]="loading"
-          (click)="edit ? update() : create()">
+          (click)="confirm()">
         </confirm-button>
       </div>
       <div class="m-3">

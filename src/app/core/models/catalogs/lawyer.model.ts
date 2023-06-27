@@ -13,7 +13,7 @@ export interface ILawyer {
   rfc: string | null;
   phone: string | null;
   registerNumber: number | null;
-  officeDetails: IOffice;
+  officeDetails?: string | IOffice;
 }
 
 /*export interface IOfficeDetails{

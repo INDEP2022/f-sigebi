@@ -23,7 +23,7 @@ export class SatSubclassificationFormComponent
   implements OnInit
 {
   satSubclassificationForm: ModelForm<ISatSubclassification>;
-  title: string = 'SUBCLASIFICACIÓN SAT';
+  title: string = 'Subclasificación SAT';
   edit: boolean = false;
   satSubclassification: ISatSubclassification;
   classifications = new DefaultSelect<ISiabClasification>();
@@ -49,7 +49,7 @@ export class SatSubclassificationFormComponent
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
       idClasification: [null, [Validators.required]],
-      idClasificationCode: [null, [Validators.required]],
+      idClasificationCode: [null],
       clasificationDetails: [null],
     });
     if (this.satSubclassification != null) {
