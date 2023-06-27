@@ -130,13 +130,13 @@ export class DateDocumentsModalComponent extends BasePage implements OnInit {
       insertionDate: {
         value: this.datePipe.transform(
           newDateDocument.insertionDate,
-          'yyyy-MM-dd'
+          'dd-mm-yyyy'
         ),
       },
       notificationDate: {
         value: this.datePipe.transform(
           newDateDocument.notificationDate,
-          'yyyy-MM-dd'
+          'dd-mm-yyyy'
         ),
       },
     });
@@ -159,13 +159,13 @@ export class DateDocumentsModalComponent extends BasePage implements OnInit {
     this.dateDocumentsModalForm.controls['insertionDate'].setValue(
       this.datePipe.transform(
         this.dateDocumentsModalForm.controls['insertionDate'].value,
-        'yyyy-MM-dd'
+        'dd-mm-yyyy'
       )
     );
     this.dateDocumentsModalForm.controls['notificationDate'].setValue(
       this.datePipe.transform(
         this.dateDocumentsModalForm.controls['notificationDate'].value,
-        'yyyy-MM-dd'
+        'dd-mm-yyyy'
       )
     );
     this.dateDocumentsService
@@ -177,7 +177,7 @@ export class DateDocumentsModalComponent extends BasePage implements OnInit {
   }
   handleSuccess() {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.onLoadToast('success', this.title, `${message} Correctamente`);
+    this.alert('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();

@@ -53,9 +53,7 @@
                     readonly
                     type="number"
                     class="form-control"
-                    formControlName="dateCalculationInterests"
-                    min="1"
-                    pattern="^[0-9]+" />
+                    formControlName="dateCalculationInterests" />
                 </form-field>
               </div>
             </div>
@@ -78,12 +76,12 @@
                 </form-field>
               </div>
               <div class="col-md-12 mt-3">
-                <form-field [control]="form.get('currency')" label="Moneda">
+                <form-field [control]="form.get('deposit')" label="Depósito">
                   <input
                     readonly
                     type="text"
                     class="form-control"
-                    formControlName="currency" />
+                    formControlName="deposit" />
                 </form-field>
               </div>
               <div class="col-md-12 mt-3">
@@ -100,14 +98,15 @@
   </div>
   <div footer>
     <div class="d-flex justify-content-center">
-      <!-- <div class="m-3"> -->
-      <button
-        type="button"
-        class="btn btn-primary btn-sm active"
-        (click)="close()">
-        Guardar
-      </button>
-      <!-- </div> -->
+      <div class="m-3">
+        <button
+          [disabled]="!form.valid"
+          type="button"
+          class="btn btn-primary active"
+          (click)="saveRegister()">
+          Guardar
+        </button>
+      </div>
     </div>
   </div>
 </app-modal>
