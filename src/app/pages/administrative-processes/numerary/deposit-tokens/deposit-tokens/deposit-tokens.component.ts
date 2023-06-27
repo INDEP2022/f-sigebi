@@ -23,7 +23,29 @@ import { DepositTokensModalComponent } from '../deposit-tokens-modal/deposit-tok
 @Component({
   selector: 'app-deposit-tokens',
   templateUrl: './deposit-tokens.component.html',
-  styles: [],
+  styles: [
+    `
+      button.loading:after {
+        content: '';
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        border: 2px solid #fff;
+        border-top-color: transparent;
+        border-right-color: transparent;
+        animation: spin 0.8s linear infinite;
+        margin-left: 5px;
+        vertical-align: middle;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+    `,
+  ],
 })
 export class DepositTokensComponent extends BasePage implements OnInit {
   form: FormGroup;
@@ -37,6 +59,9 @@ export class DepositTokensComponent extends BasePage implements OnInit {
   paramsList = new BehaviorSubject<ListParams>(new ListParams());
   jsonToCsv: any[] = [];
   showPagination: boolean = true;
+  dateMovemInicio: Date;
+  dateMovemFin: Date;
+  loadingBtn: boolean = false;
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
@@ -260,6 +285,7 @@ export class DepositTokensComponent extends BasePage implements OnInit {
       square: [null, Validators.nullValidator],
       description: [null, Validators.nullValidator],
       branch: [null, Validators.nullValidator],
+      di_saldo: [null, Validators.nullValidator],
       balanceOf: [null, Validators.nullValidator],
       balanceAt: [null, Validators.nullValidator],
     });
@@ -306,6 +332,7 @@ export class DepositTokensComponent extends BasePage implements OnInit {
     this.form.get('balanceOf').setValue('');
     this.form.get('description').setValue('');
     this.form.get('balanceAt').setValue('');
+    this.form.get('di_saldo').setValue('');
   }
 
   // BUTTONS FUNCTIONS //
@@ -350,10 +377,12 @@ export class DepositTokensComponent extends BasePage implements OnInit {
     this.paramsList.getValue().limit = 10;
     this.paramsList.getValue().page = 1;
     this.form.get('descriptionGood').setValue('');
+
     this.getAccount();
     if (this.dataMovements) {
       if (this.dataMovements.bank) {
         this.cleanDataBank();
+        this.dataMovements = null;
       }
     }
   }
@@ -533,5 +562,40 @@ export class DepositTokensComponent extends BasePage implements OnInit {
         },
       });
     });
+  }
+
+  dateMovementInicio(event: any) {
+    console.log('ev', event);
+    console.log('dateMovem', this.dateMovemInicio);
+    this.form.get('balanceAt').setValue('');
+    // this.dateMovem = event.target.value;
+  }
+
+  dateMovementFin(event: any) {
+    console.log('ev', event);
+    console.log('dateMovem', this.dateMovemInicio);
+    // this.calcularSaldo()
+    // this.dateMovem = event.target.value;
+  }
+
+  calcularSaldo() {
+    if (this.dataMovements) {
+      let obj = {
+        no_cuenta: this.dataMovements.no_cuenta,
+        ti_fecha_calculo: this.dateMovemInicio,
+        ti_fecha_calculo_fin: this.dateMovemFin,
+      };
+      this.loadingBtn = true;
+      this.accountMovementService.getReturnSaldo(obj).subscribe({
+        next: async (response: any) => {
+          this.form.get('di_saldo').setValue(response.data[0].di_saldo);
+          this.loadingBtn = false;
+        },
+        error: err => {
+          this.form.get('di_saldo').setValue('');
+          this.loadingBtn = false;
+        },
+      });
+    }
   }
 }
