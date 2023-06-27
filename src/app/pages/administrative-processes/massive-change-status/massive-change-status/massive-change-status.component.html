@@ -4,6 +4,34 @@
       <h5 class="title">Cambio masivo de Estatus Bienes</h5>
     </div>
     <div body>
+      <div class="row mb-4">
+        <div class="col-md-12-col-sm12 col-xs-12 text-center">
+          <button
+            type="button"
+            class="btn btn-primary btn-sm active mr-3"
+            (click)="goToRastreador()">
+            Cargar Rastreador
+            <i aria-hidden="true" class="fa fa-upload"></i>
+          </button>
+          <button
+            type="button"
+            class="btn btn-success btn-sm active mr-5"
+            (click)="file.click()">
+            Cargar Excel/CSV
+            <i aria-hidden="true" class="fa fa-upload"></i>
+          </button>
+          <input
+            type="file"
+            name="file"
+            #file
+            class="d-none"
+            accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+            (change)="onFileChange($event)" />
+          <button class="btn btn-danger btn-sm active" (click)="clearAll()">
+            Limpiar <i class="fa fa-eraser" aria-hidden="true"></i>
+          </button>
+        </div>
+      </div>
       <div class="row">
         <div class="col-md-12 col-sm-12 col-xs-12">
           <div class="row">
@@ -30,28 +58,6 @@
           <button
             type="button"
             class="btn btn-primary btn-sm active mr-3"
-            (click)="goToRastreador()">
-            Cargar Rastreador
-            <i aria-hidden="true" class="fa fa-upload"></i>
-          </button>
-          <button
-            type="button"
-            class="btn btn-success btn-sm active mr-5"
-            (click)="file.click()">
-            Cargar Excel/CSV
-            <i aria-hidden="true" class="fa fa-upload"></i>
-          </button>
-          <input
-            type="file"
-            name="file"
-            #file
-            class="d-none"
-            accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
-            (change)="onFileChange($event)" />
-
-          <button
-            type="button"
-            class="btn btn-primary btn-sm active mr-3"
             [disabled]="!availableToAssing"
             (click)="assignsStatus()">
             Asigna Estatus
@@ -65,15 +71,19 @@
             Aplica Estatus
             <i aria-hidden="true" class="fa fa-save"></i>
           </button>
-
-          <button class="btn btn-danger btn-sm active" (click)="clearAll()">
-            Limpiar <i class="fa fa-eraser" aria-hidden="true"></i>
-          </button>
         </div>
       </div>
       <hr />
       <div class="row">
         <!--CAN WORK1 TABLE-->
+        <p class="pt-4 text-center">
+          <span class="text-success mr-5"
+            ><i class="fa fa-square"></i>Disponibles</span
+          >
+          <span class="text-dark"
+            ><i class="fa fa-square"></i>No disponibles</span
+          >
+        </p>
         <div class="row pt-4">
           <div class="col-md-12">
             <div [class]="loading ? 'table-loading' : ''">
@@ -83,9 +93,9 @@
                 [source]="data">
               </ng2-smart-table>
               <app-pagination
-                  [params]="params"
-                  [totalItems]="goods.length"
-                  [limit]="newLimit"></app-pagination>
+                [params]="params"
+                [totalItems]="goods.length"
+                [limit]="newLimit"></app-pagination>
             </div>
           </div>
         </div>
@@ -143,8 +153,9 @@
           <div
             class="row pt-3 pb-3"
             style="border-top: 1px solid rgba(0, 0, 0, 0.1)">
-            <span>Número de registros actualizados
-              <strong style="color: #1e7e34">{{idsUpdated.length}}</strong>
+            <span
+              >Número de registros actualizados
+              <strong style="color: #1e7e34">{{ idsUpdated.length }}</strong>
             </span>
           </div>
           <div

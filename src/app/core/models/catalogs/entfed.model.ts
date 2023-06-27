@@ -9,10 +9,11 @@ export interface IEntfed {
 
 export interface IEntfed2 {
   id: string;
-  nmTable: number;
-  otKey: string;
-  otWorth: string;
-  noRegistration: number;
+  downloadState: string;
+  codeState: string;
+  registerNumber: number;
+  nmtable: number;
   abbreviation: string;
   risk: string;
+  version: number;
 }

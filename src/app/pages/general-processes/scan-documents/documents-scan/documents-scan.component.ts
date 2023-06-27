@@ -284,7 +284,7 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
     const config = {
       ...MODAL_CONFIG,
       initialState: {
-        folio: this.folio,
+        identificator: this.folio,
         accept: 'image/*,application/pdf',
         callback: (refresh: boolean) => this.fileUploaderClose(refresh),
       },

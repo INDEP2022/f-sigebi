@@ -17,21 +17,43 @@
             <div class="row">
               <div class="col-md-12 mt-3">
                 <form-field [control]="form.get('bank')">
-                  <ngx-select [form]="form" [data]="banks" (fetchItems)="getBanks($event)" bindLabel="cveBank"
-                    control="bank" label="Banco" [searchOnInit]="false" [showTooltip]="true" termMaxLength="30">
+                  <ngx-select
+                    [form]="form"
+                    [data]="banks"
+                    (fetchItems)="getBanks($event)"
+                    bindLabel="cveBank"
+                    control="bank"
+                    label="Banco"
+                    [searchOnInit]="false"
+                    [showTooltip]="true"
+                    termMaxLength="30">
                   </ngx-select>
                 </form-field>
               </div>
               <div class="col-md-12 mt-3">
-                <form-field [control]="form.get('dateMovement')" label="Fecha de Movimiento">
-                  <input (change)="dateMovement($event)" bsDatepicker [maxDate]="maxDate" type="text"
-                    class="form-control" formControlName="dateMovement" />
+                <form-field
+                  [control]="form.get('dateMovement')"
+                  label="Fecha de Movimiento">
+                  <input
+                    (change)="dateMovement($event)"
+                    bsDatepicker
+                    [maxDate]="maxDate"
+                    type="text"
+                    class="form-control"
+                    formControlName="dateMovement" />
                 </form-field>
               </div>
               <div class="col-md-12 mt-3">
-                <form-field [control]="form.get('dateCalculationInterests')" label="Cuenta">
-                  <input bsDatepicker [minDate]="dateMovem" readonly type="number" class="form-control"
-                    formControlName="dateCalculationInterests" min="1" pattern="^[0-9]+" />
+                <form-field
+                  [control]="form.get('dateCalculationInterests')"
+                  label="Cuenta">
+                  <input
+                    bsDatepicker
+                    [minDate]="dateMovem"
+                    readonly
+                    type="number"
+                    class="form-control"
+                    formControlName="dateCalculationInterests" />
                 </form-field>
               </div>
             </div>
@@ -40,15 +62,26 @@
             <div class="row">
               <div class="col-md-12 mt-3">
                 <form-field [control]="form.get('category')">
-                  <ngx-select [form]="form" [data]="categories" (fetchItems)="getCategory($event)"
-                    bindLabel="categoryAndDesc" control="bank" label="Categoria" [searchOnInit]="false"
-                    [showTooltip]="true" termMaxLength="30">
+                  <ngx-select
+                    [form]="form"
+                    [data]="categories"
+                    (fetchItems)="getCategory($event)"
+                    bindLabel="categoryAndDesc"
+                    control="bank"
+                    label="Categoria"
+                    [searchOnInit]="false"
+                    [showTooltip]="true"
+                    termMaxLength="30">
                   </ngx-select>
                 </form-field>
               </div>
               <div class="col-md-12 mt-3">
-                <form-field [control]="form.get('currency')" label="Moneda">
-                  <input readonly type="text" class="form-control" formControlName="currency" />
+                <form-field [control]="form.get('deposit')" label="Depósito">
+                  <input
+                    readonly
+                    type="text"
+                    class="form-control"
+                    formControlName="deposit" />
                 </form-field>
               </div>
               <div class="col-md-12 mt-3">
@@ -65,14 +98,15 @@
   </div>
   <div footer>
     <div class="d-flex justify-content-center">
-      <!-- <div class="m-3"> -->
-      <button
-        type="button"
-        class="btn btn-primary btn-sm active"
-        (click)="close()">
-        Guardar
-      </button>
-      <!-- </div> -->
+      <div class="m-3">
+        <button
+          [disabled]="!form.valid"
+          type="button"
+          class="btn btn-primary active"
+          (click)="saveRegister()">
+          Guardar
+        </button>
+      </div>
     </div>
   </div>
 </app-modal>

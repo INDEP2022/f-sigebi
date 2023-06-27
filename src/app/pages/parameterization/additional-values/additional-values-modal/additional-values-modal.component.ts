@@ -104,6 +104,18 @@ export class AdditionalValuesModalComponent extends BasePage implements OnInit {
         let date = new Date(this.tvalTable.toDate);
         this.tvalTableForm.controls['toDate'].setValue(date);
       }
+    } else {
+      this.tvalTableForm.patchValue(this.tvalTable);
+      console.log(this.value);
+      this.additionalValuesForm.controls['cdtabla'].setValue(
+        this.value.cdtabla
+      );
+      this.additionalValuesForm.controls['dstabla'].setValue(
+        this.value.dstabla
+      );
+      this.tvalTableForm.controls['table'].setValue(this.value.nmtabla);
+      const { cdtabla } = this.value;
+      this.values = new DefaultSelect([cdtabla], 1);
     }
   }
   getAditionalValues(param: ListParams) {
@@ -213,6 +225,7 @@ export class AdditionalValuesModalComponent extends BasePage implements OnInit {
         next: data => this.handleSuccess(),
         error: error => {
           this.loading = false;
+
           if (this.tvalTable.fromDate) {
             let datefrom = new Date(this.tvalTable.fromDate);
             this.tvalTableForm.controls['fromDate'].setValue(datefrom);
@@ -226,7 +239,7 @@ export class AdditionalValuesModalComponent extends BasePage implements OnInit {
   }
   handleSuccess() {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.onLoadToast('success', this.title, `${message} Correctamente`);
+    this.alert('success', 'Valores de atributos', `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();

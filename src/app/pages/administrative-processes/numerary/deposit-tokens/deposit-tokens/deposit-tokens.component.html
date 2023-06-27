@@ -7,20 +7,32 @@
       <div class="col-md-5"></div>
       <div class="col-md-7 text-end">
         <div class="row">
-          <div class="col-7">
+          <div class="col-5">
             <!-- <app-columns-select [(settings)]="settings"></app-columns-select> -->
           </div>
-          <div class="col-2 d-flex text-end">
-            <app-columns-select [(settings)]="settings"></app-columns-select>
-          </div>
-          <div class="col-3 text-end">
-            <button (click)="addMovement()" type="button" tooltip="Agregar" containerClass="tooltip-style"
-              class="btn btn-info btn-sm active ml-2 mr-2">
-              <i class="bx bx-plus bx-sm float-icon"></i>
-            </button>
-            <button class="btn btn-primary btn-sm active" (click)="openForm()">
-              Movimientos
-            </button>
+
+          <div class="col-7 text-end">
+            <div class="row">
+              <div class="col-6 d-flex justify-content-end">
+                <app-columns-select
+                  [(settings)]="settings"></app-columns-select>
+              </div>
+              <div class="col-6">
+                <button
+                  (click)="addMovement()"
+                  type="button"
+                  tooltip="Agregar"
+                  containerClass="tooltip-style"
+                  class="btn btn-info btn-sm active ml-2 mr-2">
+                  <i class="bx bx-plus bx-sm float-icon"></i>
+                </button>
+                <button
+                  class="btn btn-primary btn-sm active"
+                  (click)="openForm()">
+                  Movimientos
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -28,24 +40,38 @@
     <div class="row mt-4">
       <div class="col-md-12">
         <div [class]="loading ? 'table-loading' : ''">
-          <ng2-smart-table id="fichas" (userRowSelect)="onCustomAction($event)" [attr.class]="'table-bordered'"
-            [settings]="settings" [source]="data1">
+          <ng2-smart-table
+            id="fichas"
+            (delete)="showDeleteAlert($event.data)"
+            (userRowSelect)="onCustomAction($event)"
+            [attr.class]="'table-bordered'"
+            [settings]="settings"
+            [source]="data1">
           </ng2-smart-table>
         </div>
-        <app-pagination [params]="paramsList" [totalItems]="totalItems">
+        <app-pagination
+          *ngIf="showPagination"
+          [params]="paramsList"
+          [totalItems]="totalItems">
         </app-pagination>
       </div>
     </div>
     <form class="form-material mt-4" [formGroup]="form">
       <div class="row">
-        <div class="col-md-6">
-          <span class="text-yellow mr-5"><i class="fa fa-square"></i> Ficha asociada
+        <div class="col-md-6 mt-3">
+          <span class="text-yellow mr-5"
+            ><i class="fa fa-square"></i> Ficha asociada
           </span>
         </div>
         <!-- <div class="col-md-5"></div> -->
-        <div class="col-md-6">
-          <form-field [control]="form.get('descriptionGood')" label="Descripción del Bien">
-            <input type="text" class="form-control" formControlName="descriptionGood" />
+        <div class="col-md-6 mt-3">
+          <form-field
+            [control]="form.get('descriptionGood')"
+            label="Descripción del Bien">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="descriptionGood" />
           </form-field>
         </div>
       </div>
@@ -59,12 +85,16 @@
                 <button
                   (click)="exportar()"
                   style="width: 70%"
-                  class="btn btn-primary btn-sm active">
+                  class="btn btn-success btn-sm">
                   Exportar
+                  <i class="bx bx-download float-icon"></i>
                 </button>
               </div>
               <div class="col-md-12 mt-3 text-center">
-                <!-- <div class="m-3"> -->
+                <button
+                  class="btn btn-success btn-sm"
+                  style="width: 70%"
+                  class="btn btn-primary btn-sm active"
                   type="button"
                   (click)="file.click()">
                   Importar
@@ -89,7 +119,10 @@
                 </button>
               </div>
               <div class="col-md-12 mt-3 text-center">
-                <button (click)="desconciliarFunc()" style="width: 70%" class="btn btn-secondary btn-sm active">
+                <button
+                  (click)="desconciliarFunc()"
+                  style="width: 70%"
+                  class="btn btn-secondary btn-sm active">
                   Desconciliar
                 </button>
               </div>
@@ -99,18 +132,31 @@
             <div class="row">
               <div class="col-md-12 mt-3">
                 <form-field [control]="form.get('bank')" label="Banco">
-                  <input readonly type="text" class="form-control" formControlName="bank" />
+                  <input
+                    readonly
+                    type="text"
+                    class="form-control"
+                    formControlName="bank" />
                 </form-field>
               </div>
               <div class="col-md-12 mt-3">
                 <form-field [control]="form.get('account')" label="Cuenta">
-                  <input readonly type="number" class="form-control" formControlName="account" min="1"
+                  <input
+                    readonly
+                    type="number"
+                    class="form-control"
+                    formControlName="account"
+                    min="1"
                     pattern="^[0-9]+" />
                 </form-field>
               </div>
               <div class="col-md-12 mt-3">
                 <form-field [control]="form.get('square')" label="Plaza">
-                  <input readonly type="text" class="form-control" formControlName="square" />
+                  <input
+                    readonly
+                    type="text"
+                    class="form-control"
+                    formControlName="square" />
                 </form-field>
               </div>
             </div>
@@ -119,18 +165,33 @@
             <div class="row">
               <div class="col-md-12 mt-3">
                 <form-field [control]="form.get('currency')" label="Moneda">
-                  <input readonly type="text" class="form-control" formControlName="currency" />
+                  <input
+                    readonly
+                    type="text"
+                    class="form-control"
+                    formControlName="currency" />
                 </form-field>
               </div>
               <div class="col-md-12 mt-3">
                 <form-field [control]="form.get('branch')" label="Sucursal">
-                  <input readonly type="number" class="form-control" formControlName="branch" min="1"
+                  <input
+                    readonly
+                    type="number"
+                    class="form-control"
+                    formControlName="branch"
+                    min="1"
                     pattern="^[0-9]+" />
                 </form-field>
               </div>
               <div class="col-md-12 mt-3">
-                <form-field [control]="form.get('accountType')" label="Tipo de cuenta">
-                  <input readonly type="text" class="form-control" formControlName="accountType" />
+                <form-field
+                  [control]="form.get('accountType')"
+                  label="Tipo de cuenta">
+                  <input
+                    readonly
+                    type="text"
+                    class="form-control"
+                    formControlName="accountType" />
                 </form-field>
               </div>
             </div>
@@ -138,18 +199,30 @@
           <div class="col-3 mt-4">
             <div class="row">
               <div class="col-md-12 mt-3">
-                <form-field [control]="form.get('description')" label="Descripción">
-                  <input readonly type="text" class="form-control" formControlName="description" />
+                <form-field
+                  [control]="form.get('description')"
+                  label="Descripción">
+                  <input
+                    readonly
+                    type="text"
+                    class="form-control"
+                    formControlName="description" />
                 </form-field>
               </div>
               <div class="col-md-12 mt-3">
                 <form-field [control]="form.get('balanceOf')" label="Saldo de">
-                  <input type="text" class="form-control" formControlName="balanceOf" />
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="balanceOf" />
                 </form-field>
               </div>
               <div class="col-md-12 mt-3">
                 <form-field [control]="form.get('balanceAt')" label="Saldo al">
-                  <input type="text" class="form-control" formControlName="balanceAt" />
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="balanceAt" />
                 </form-field>
               </div>
             </div>

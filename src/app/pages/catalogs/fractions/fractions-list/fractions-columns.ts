@@ -64,7 +64,7 @@ export const FRACTIONS_COLUMNS = {
   },
 
   version: {
-    title: 'Version',
+    title: 'Versión',
     type: 'string',
     sort: false,
   },
@@ -93,7 +93,7 @@ export const FRACTIONS_COLUMNS = {
   },
 
   status: {
-    title: 'Estatus',
+    title: 'Estado',
     type: 'string',
     sort: false,
   },
