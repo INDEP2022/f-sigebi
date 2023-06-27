@@ -11,16 +11,20 @@ import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import {
   FilterParams,
   ListParams,
+  SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
+import { IExpedient } from 'src/app/core/models/catalogs/date-documents.model';
 import { IGood } from 'src/app/core/models/good/good.model';
 import { IConvertiongood } from 'src/app/core/models/ms-convertiongood/convertiongood';
 import { ICopiesJobManagementDto } from 'src/app/core/models/ms-officemanagement/good-job-management.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
+import { GoodService } from 'src/app/core/services/good/good.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { ConvertiongoodService } from 'src/app/core/services/ms-convertiongood/convertiongood.service';
+import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
 import { StatusGoodService } from 'src/app/core/services/ms-good/status-good.service';
 import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive-good.service';
@@ -31,12 +35,15 @@ import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { FlyersService } from 'src/app/pages/documents-reception/flyers/services/flyers.service';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { ScanningFoilComponent } from '../../payment-claim-process/scanning-foil/scanning-foil.component';
-import { IDataGoodsTable } from '../proceedings-conversion-column';
+import {
+  GooByExpediente,
+  IDataGoodsTable,
+} from '../proceedings-conversion-column';
 import { ProceedingsConversionModalComponent } from '../proceedings-conversion-modal/proceedings-conversion-modal.component';
 import { ActasConvertionCommunicationService } from '../services/proceedings-conversionn';
 import {
+  GOODSEXPEDIENT_COLUMNS_GOODS,
   PROCEEDINGSCONVERSIONS_COLUMNS,
-  PROCEEDINGSCONVERSION_COLUMNS,
 } from './proceedings-conversion-columns';
 
 export type IGoodAndAvailable = IGood & {
@@ -106,6 +113,8 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
   preAver = '';
   criCase = '';
   test: any;
+  goodsByFather: IGood[] = [];
+  validPermisos = false;
   searchMode: boolean = false;
   isLoading = false;
   statusConv: string | number = '';
@@ -129,6 +138,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
   loadingGoods = false;
   select: any;
   goods: any;
+  expedient: IExpedient;
   columnFilters: any = [];
   isAllDisabled = false;
   cveActa: string = '';
@@ -152,11 +162,12 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
   totalItems: number = 0;
   paramsGood: number = 0;
   loadingSend = false;
+  userRes: string;
   screenKey = 'FACTDBCONVBIEN';
   dataTableGoodsConvertion: IConvertiongood[] = [];
   copyActa: any[] = [];
   dataGoodFilter: IGood[] = [];
-  dataGood: IDataGoodsTable[] = [];
+  dataGood: GooByExpediente[] = [];
   dataTableGoodsJobManagement: IGoodJobManagement[] = [];
   @ViewChild('tableGoods') tableGoods: Ng2SmartTableComponent;
   @ViewChild('tableDocs') tableDocs: Ng2SmartTableComponent;
@@ -193,6 +204,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     private fb: FormBuilder,
     private massiveGoodService: MassiveGoodService,
     private router: Router,
+    private expedientService: ExpedientService,
     private actasConvertionCommunicationService: ActasConvertionCommunicationService,
     private regionalDelegacionService: RegionalDelegationService,
     protected modalService: BsModalService,
@@ -201,6 +213,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     private activatedRoute: ActivatedRoute,
     private route: ActivatedRoute,
     private datePipe: DatePipe,
+    private goodService: GoodService,
     private securityService: SecurityService,
     private siabService: SiabService,
     private sanitizer: DomSanitizer,
@@ -212,8 +225,9 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     this.procs = new LocalDataSource();
     this.settings = {
       ...this.settings,
+      hideSubHeader: false,
       actions: false,
-      columns: { ...PROCEEDINGSCONVERSION_COLUMNS },
+      columns: { ...GOODSEXPEDIENT_COLUMNS_GOODS },
     };
     this.settings2.columns = PROCEEDINGSCONVERSIONS_COLUMNS;
   }
@@ -239,6 +253,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
       this.screenKey,
       this.authService.decodeToken().preferred_username
     );
+    console.log(this.userTracker);
     this.proceedingsConversionForm = this.fb.group({
       idConversion: [null, Validators.required],
       goodFatherNumber: [null, Validators.required],
@@ -325,6 +340,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
             this.delete = true;
             this.insert = true;
             console.log('readYes and writeYes');
+            this.validPermisos = true;
           } else if (
             filter.readingPermission == 'S' &&
             filter.writingPermission == 'N'
@@ -336,6 +352,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
             filter.writingPermission == 'S'
           ) {
             this.insert = true;
+            this.validPermisos = true;
             console.log('readNo and writeYes');
           } else {
             this.alert(
@@ -417,9 +434,9 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
           this.witnessOic = res.witnessOic;
           this.preAver = res.fileNumber.preliminaryInquiry;
           this.criCase = res.fileNumber.criminalCase;
-          this.cveActa = res.cveActaConv;
-          // this.cveActa = res.cveActaConv;
-          console.log(this.cveActa);
+          this.cveActa = res.minutesErNumber;
+          this.userRes = res.fileNumber.usrResponsibleFile;
+          this.getExpedient(this.fileNumber);
           this.getGoods(this.conversion);
           subscription.unsubscribe();
         },
@@ -528,7 +545,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
 
   async refreshTableGoodsJobManagement() {
     const params = new ListParams();
-    params['filter.id'] = this.proceedingsConversionForm.value.idConversion;
+    params['filter.id'] = this.proceedingsConversionForm.value.fileNumber;
     params.limit = 100000000;
     try {
       this.dataTableGoodsConvertion = (
@@ -537,6 +554,64 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     } catch (ex) {
       console.log(ex);
     }
+  }
+
+  getExpedient(id: number) {
+    this.expedientService.getById(id).subscribe({
+      next: (data: any) => {
+        this.expedient = data;
+        console.log(this.expedient);
+        this.getAllGoodExpedient();
+      },
+      error: () => console.error('expediente nulo'),
+    });
+  }
+
+  getGoodsByStatus(id: number) {
+    this.loading = true;
+    let params = {
+      ...this.params.getValue(),
+      ...this.columnFilters,
+    };
+    this.goodService.getByExpedient(id, params).subscribe({
+      next: (data: any) => {
+        this.dataGood = data;
+        console.log(this.goodsByFather);
+      },
+      error: () => console.error('no hay bienes en éste expediente'),
+    });
+  }
+
+  getAllGoodExpedient() {
+    this.dataGoodTable
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = ``;
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+            filter.field == 'goodId' ||
+            filter.field == 'description' ||
+            filter.field == 'quantity' ||
+            filter.field == 'acta'
+              ? (searchFilter = SearchFilter.EQ)
+              : (searchFilter = SearchFilter.ILIKE);
+            if (filter.search !== '') {
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.params = this.pageFilter(this.params);
+          this.getGoodsByStatus(this.fileNumber);
+        }
+      });
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getGoodsByStatus(this.fileNumber));
   }
 
   getQueryParams(name: string) {
@@ -588,11 +663,11 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     count: number,
     total: number
   ) {
-    if (this.proceedingsConversionForm.value.idConversion) {
+    if (this.proceedingsConversionForm.value.fileNumber) {
       await this.flyerService
         .getGoodsJobManagementByIds({
           goodNumber: dataGoodRes.goodId,
-          managementNumber: this.proceedingsConversionForm.value.idConversion,
+          managementNumber: this.proceedingsConversionForm.value.fileNumber,
         })
         .subscribe({
           next: res => {
@@ -932,6 +1007,11 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
       this.loading = false;
       this.alert('error', 'Ocurrió un error al leer el archivo', '');
     }
+  }
+
+  getDetail() {
+    const value = this.conversion;
+    this.actasConvertionCommunicationService.enviarDatos(value);
   }
 
   cargarData(binaryExcel: any) {
