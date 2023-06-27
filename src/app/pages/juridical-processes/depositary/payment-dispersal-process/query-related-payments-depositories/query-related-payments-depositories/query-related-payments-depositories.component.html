@@ -12,6 +12,7 @@
       <div class="col-12 col-sm-12 col-md-4 text-end">
         <button class="btn btn-primary active btn-sm" (click)="goBack()">
           Regresar
+          <i class="fas fa-arrow-circle-left"></i>
         </button>
       </div>
     </div>
@@ -59,7 +60,7 @@
                       class="btn btn-primary btn-sm active"
                       (click)="validGoodNumberInDepositaryAppointment()">
                       Buscar
-                      <i aria-hidden="true" class="fa fa-search text-pink"></i>
+                      <i class="bx bx-search-alt bx-sm float-icon"></i>
                     </button>
                   </div>
                 </div>
@@ -202,15 +203,42 @@
                           loadingSirsaeProcess ||
                           loadingGoodAccount
                         "
+                        class="btn btn-sm btn-success active"
+                        (click)="btnExportarExcel()">
+                        Exportar a Excel
+                        <i class="bx bx-download float-icon"></i>
+                      </button>
+                      <!-- <button
+                        type="button"
+                        [disabled]="
+                          loadingAppointment ||
+                          loadingGood ||
+                          loadingSirsaeProcess ||
+                          loadingGoodAccount
+                        "
                         class="btn btn-success ml-2 mr-2 active text-wrap p-2"
                         (click)="btnExportarExcel()">
                         Exportar a Excel
-                      </button>
+                      </button> -->
                     </div>
                   </div>
                   <div class="col-sm-12 col-12 col-md-6 text-center p-2">
                     <div class="form-group">
                       <button
+                        type="button"
+                        [disabled]="
+                          loadingAppointment ||
+                          loadingGood ||
+                          loadingSirsaeProcess ||
+                          loadingGoodAccount
+                        "
+                        class="btn btn-primary btn-sm active"
+                        tooltip="Enviar a SIRSAE"
+                        containerClass="tooltip-style"
+                        (click)="btnEnviarSIRSAE()">
+                        <i class="bx bx-send"></i>
+                      </button>
+                      <!-- <button
                         type="button"
                         [disabled]="
                           loadingAppointment ||
@@ -221,12 +249,24 @@
                         class="btn btn-info ml-2 mr-2 active text-wrap p-2"
                         (click)="btnEnviarSIRSAE()">
                         Env&iacute;ar a SIRSAE
-                      </button>
+                      </button> -->
                     </div>
                   </div>
                   <div class="col-sm-12 col-12 col-md-6 text-center p-2">
                     <div class="form-group">
                       <button
+                        type="button"
+                        [disabled]="
+                          loadingAppointment ||
+                          loadingGood ||
+                          loadingSirsaeProcess ||
+                          loadingGoodAccount
+                        "
+                        class="btn btn-primary active btn-sm"
+                        (click)="btnImprimir()">
+                        Imprimir <i class="bx bx-printer bx-sm float-icon"></i>
+                      </button>
+                      <!-- <button
                         type="button"
                         [disabled]="
                           loadingAppointment ||
@@ -237,7 +277,7 @@
                         class="btn btn-primary ml-2 mr-2 active text-wrap p-2"
                         (click)="btnImprimir()">
                         Imprimir
-                      </button>
+                      </button> -->
                     </div>
                   </div>
                   <div class="col-sm-12 col-12 col-md-6 text-center p-2">
@@ -250,7 +290,7 @@
                           loadingSirsaeProcess ||
                           loadingGoodAccount
                         "
-                        class="btn btn-warning ml-2 mr-2 active text-wrap p-2"
+                        class="btn btn-warning active btn-sm"
                         (click)="btnActualizarPago()">
                         Actualizar Pago
                       </button>
@@ -292,10 +332,10 @@
         </button>
       </div>
       <!-- Pagos Recibidos en el Banco -->
-      <div class="col-12 col-sm-12 col-md-8">
+      <div class="col-12 col-sm-12 col-md-12">
         <h6>Pagos Recibidos en el Banco</h6>
       </div>
-      <div class="col-12 col-sm-12 col-md-4 text-end">
+      <div class="col-12 col-sm-12 col-md-12">
         <app-columns-select
           [(settings)]="tableSettingsPagosBanco"></app-columns-select>
       </div>
@@ -311,6 +351,9 @@
         </div>
       </div>
       <div class="col-12">
+        <app-pagination
+          [params]="paramsPayBanks"
+          [totalItems]="totalItemsPayBanks"></app-pagination>
         <ul class="list-group list-group-flush">
           <li class="list-group-item">
             <strong>DESCRIPCIÓN</strong>
@@ -325,16 +368,13 @@
             </div>
           </li>
         </ul>
-        <app-pagination
-          [params]="paramsPayBanks"
-          [totalItems]="totalItemsPayBanks"></app-pagination>
       </div>
       <!-- Pagos Recibidos en el Banco -->
       <!-- Composicion de Pagos Recibidos -->
-      <div class="col-12 col-sm-12 col-md-8">
+      <div class="col-12 col-sm-12 col-md-12 mt-5">
         <h6>Composición de Pagos Recibidos</h6>
       </div>
-      <div class="col-12 col-sm-12 col-md-4 text-end">
+      <div class="col-12 col-sm-12 col-md-12">
         <app-columns-select
           [(settings)]="tableSettingsPagosRecibidos"></app-columns-select>
       </div>
@@ -349,6 +389,9 @@
         </div>
       </div>
       <div class="col-12">
+        <app-pagination
+          [params]="paramsReceivedPays"
+          [totalItems]="totalItemsReceivedPays"></app-pagination>
         <ul class="list-group list-group-flush">
           <li class="list-group-item">
             <strong>DESCRIPCIÓN</strong>
@@ -375,9 +418,6 @@
             </div>
           </li>
         </ul>
-        <app-pagination
-          [params]="paramsReceivedPays"
-          [totalItems]="totalItemsReceivedPays"></app-pagination>
       </div>
       <!-- Composicion de Pagos Recibidos -->
     </div>

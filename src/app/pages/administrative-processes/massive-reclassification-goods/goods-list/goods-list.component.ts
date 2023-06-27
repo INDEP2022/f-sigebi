@@ -62,7 +62,7 @@ export class GoodsListComponent
     private readonly goodServices: GoodService
   ) {
     super();
-    this.ilikeFilters = ['description', 'goodDescription'];
+    this.ilikeFilters = ['description', 'goodDescription', 'status'];
     this.haveInitialCharge = false;
     this.settings = {
       ...this.settings,
