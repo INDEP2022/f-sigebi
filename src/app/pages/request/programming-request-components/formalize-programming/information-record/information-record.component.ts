@@ -69,7 +69,7 @@ export class InformationRecordComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log('programacion', this.programming);
+    console.log('proceeding', this.proceeding);
     this.prepareDevileryForm();
     this.getIdentification(new ListParams());
     this.typeTransferent();

@@ -10,4 +10,5 @@ export enum ParameterGoodEndpoints {
   rNomecla = 'r-nomencla',
   FaStageCreda = 'parameters/fa-stage-creda',
   IndicatorsParameter = '/indicators-parameter',
+  CategorzacionAutomNumerario_ = 'categorization-autom-numerary',
 }

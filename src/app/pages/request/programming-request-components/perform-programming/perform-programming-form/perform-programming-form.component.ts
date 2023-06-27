@@ -418,17 +418,59 @@ export class PerformProgrammingFormComponent
     const rejectionComment = this.modalService.show(UserFormComponent, config);
   }
 
-  newWarehouse() {
+  async newWarehouse() {
     if (this.regionalDelegationUser) {
-      const regDelData = this.regionalDelegationUser;
-      let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
-      config.initialState = {
-        programmingId: this.idProgramming,
-        regDelData,
-        callback: (next: boolean) => {},
-      };
+      if (this.performForm.get('startDate').value) {
+        this.performForm
+          .get('startDate')
+          .setValue(new Date(this.performForm.get('startDate').value));
+      }
+      if (this.performForm.get('endDate').value) {
+        this.performForm
+          .get('endDate')
+          .setValue(new Date(this.performForm.get('endDate').value));
+      }
 
-      this.modalService.show(WarehouseFormComponent, config);
+      if (this.transferentId)
+        this.performForm.get('tranferId').setValue(this.transferentId);
+      if (this.stationId)
+        this.performForm.get('stationId').setValue(this.stationId);
+      if (this.autorityId) {
+        this.performForm.get('autorityId').setValue(this.autorityId);
+      }
+
+      this.performForm
+        .get('regionalDelegationNumber')
+        .setValue(this.delegationId);
+
+      this.performForm.get('delregAttentionId').setValue(this.delegationId);
+
+      const folio: any = await this.generateFolio(this.performForm.value);
+      this.performForm.get('folio').setValue(folio);
+      const task = JSON.parse(localStorage.getItem('Task'));
+      const updateTask = await this.updateTask(folio, task.id);
+      if (updateTask) {
+        this.programmingGoodService
+          .updateProgramming(this.idProgramming, this.performForm.value)
+          .subscribe({
+            next: async () => {
+              this.loading = false;
+              const regDelData = this.regionalDelegationUser;
+              let config = {
+                ...MODAL_CONFIG,
+                class: 'modal-lg modal-dialog-centered',
+              };
+              config.initialState = {
+                programmingId: this.idProgramming,
+                regDelData,
+                callback: (next: boolean) => {},
+              };
+
+              this.modalService.show(WarehouseFormComponent, config);
+            },
+            error: error => {},
+          });
+      }
     } else {
       this.onLoadToast(
         'warning',
@@ -522,8 +564,8 @@ export class PerformProgrammingFormComponent
       if (filterData.length > 0) {
         this.estatesList.load(filterData);
       } else {
-        this.onLoadToast(
-          'info',
+        this.alert(
+          'warning',
           'Acción invalida',
           'No hay bienes disponibles para programar'
         );
@@ -539,8 +581,8 @@ export class PerformProgrammingFormComponent
       if (filterData.length > 0) {
         this.estatesList.load(filterData);
       } else {
-        this.onLoadToast(
-          'info',
+        this.alert(
+          'warning',
           'Acción invalida',
           'No hay bienes disponibles para programar'
         );
@@ -560,8 +602,8 @@ export class PerformProgrammingFormComponent
       if (filterData.length > 0) {
         this.estatesList.load(filterData);
       } else {
-        this.onLoadToast(
-          'info',
+        this.alert(
+          'warning',
           'Acción invalida',
           'No hay bienes disponibles para programar'
         );
@@ -582,8 +624,8 @@ export class PerformProgrammingFormComponent
       if (filterData.length > 0) {
         this.estatesList.load(filterData);
       } else {
-        this.onLoadToast(
-          'info',
+        this.alert(
+          'warning',
           'Acción invalida',
           'No hay bienes disponibles para programar'
         );
@@ -599,8 +641,8 @@ export class PerformProgrammingFormComponent
       if (filterData.length > 0) {
         this.estatesList.load(filterData);
       } else {
-        this.onLoadToast(
-          'info',
+        this.alert(
+          'warning',
           'Acción invalida',
           'No hay bienes disponibles para programar'
         );
@@ -616,8 +658,8 @@ export class PerformProgrammingFormComponent
       if (filterData.length > 0) {
         this.estatesList.load(filterData);
       } else {
-        this.onLoadToast(
-          'info',
+        this.alert(
+          'warning',
           'Acción invalida',
           'No hay bienes disponibles para programar'
         );
@@ -633,8 +675,8 @@ export class PerformProgrammingFormComponent
       if (filterData.length > 0) {
         this.estatesList.load(filterData);
       } else {
-        this.onLoadToast(
-          'info',
+        this.alert(
+          'warning',
           'Acción invalida',
           'No hay bienes disponibles para programar'
         );
@@ -654,8 +696,8 @@ export class PerformProgrammingFormComponent
       if (filterData.length > 0) {
         this.estatesList.load(filterData);
       } else {
-        this.onLoadToast(
-          'info',
+        this.alert(
+          'warning',
           'Acción invalida',
           'No hay bienes disponibles para programar'
         );
@@ -676,8 +718,8 @@ export class PerformProgrammingFormComponent
       if (filterData.length > 0) {
         this.estatesList.load(filterData);
       } else {
-        this.onLoadToast(
-          'info',
+        this.alert(
+          'warning',
           'Acción invalida',
           'No hay bienes disponibles para programar'
         );
@@ -693,8 +735,8 @@ export class PerformProgrammingFormComponent
       if (filterData.length > 0) {
         this.estatesList.load(filterData);
       } else {
-        this.onLoadToast(
-          'info',
+        this.alert(
+          'warning',
           'Acción invalida',
           'No hay bienes disponibles para programar'
         );
@@ -710,8 +752,8 @@ export class PerformProgrammingFormComponent
       if (filterData.length > 0) {
         this.estatesList.load(filterData);
       } else {
-        this.onLoadToast(
-          'info',
+        this.alert(
+          'warning',
           'Acción invalida',
           'No hay bienes disponibles para programar'
         );
@@ -731,8 +773,8 @@ export class PerformProgrammingFormComponent
       if (filterData.length > 0) {
         this.estatesList.load(filterData);
       } else {
-        this.onLoadToast(
-          'info',
+        this.alert(
+          'warning',
           'Acción invalida',
           'No hay bienes disponibles para programar'
         );
@@ -753,8 +795,8 @@ export class PerformProgrammingFormComponent
       if (filterData.length > 0) {
         this.estatesList.load(filterData);
       } else {
-        this.onLoadToast(
-          'info',
+        this.alert(
+          'warning',
           'Acción invalida',
           'No hay bienes disponibles para programar'
         );
@@ -770,8 +812,8 @@ export class PerformProgrammingFormComponent
       if (filterData.length > 0) {
         this.estatesList.load(filterData);
       } else {
-        this.onLoadToast(
-          'info',
+        this.alert(
+          'warning',
           'Acción invalida',
           'No hay bienes disponibles para programar'
         );
@@ -786,8 +828,8 @@ export class PerformProgrammingFormComponent
       if (filterData.length > 0) {
         this.estatesList.load(filterData);
       } else {
-        this.onLoadToast(
-          'info',
+        this.alert(
+          'warning',
           'Acción invalida',
           'No hay bienes disponibles para programar'
         );
@@ -807,8 +849,8 @@ export class PerformProgrammingFormComponent
       if (filterData.length > 0) {
         this.estatesList.load(filterData);
       } else {
-        this.onLoadToast(
-          'info',
+        this.alert(
+          'warning',
           'Acción invalida',
           'No hay bienes disponibles para programar'
         );
@@ -829,8 +871,8 @@ export class PerformProgrammingFormComponent
       if (filterData.length > 0) {
         this.estatesList.load(filterData);
       } else {
-        this.onLoadToast(
-          'info',
+        this.alert(
+          'warning',
           'Acción invalida',
           'No hay bienes disponibles para programar'
         );
@@ -852,8 +894,8 @@ export class PerformProgrammingFormComponent
       if (filterData.length > 0) {
         this.estatesList.load(filterData);
       } else {
-        this.onLoadToast(
-          'info',
+        this.alert(
+          'warning',
           'Acción invalida',
           'No hay bienes disponibles para programar'
         );
@@ -1150,7 +1192,7 @@ export class PerformProgrammingFormComponent
           this.loadingGoods = false;
         } else {
           this.alert(
-            'warning',
+            'info',
             'Advertencía',
             'No hay bienes disponibles para programar'
           );
@@ -1609,24 +1651,6 @@ export class PerformProgrammingFormComponent
   }
   // Visualizar información de alias almacen //
   showDomicile(item: any) {
-    console.log('ITEMENTRO', JSON.stringify(item));
-
-    // });data.statusKey === item.domicilio.statusKey
-    // data => data.descCondition === item.domicilio.statusKey
-    //     let nameStatus
-    // item.domicilio.statusKey = this.statesService
-    // .getAll(this.paramsState.getValue())
-    // .subscribe(data =>{
-    //   console.log('itemsx', data)
-    //   console.log('itemzasasasa', item.domicilio.stateKey)
-    //   console.log('data show', JSON.stringify(data.data.find((items:any)=>items.id === item.domicilio.statusKey)))
-
-    //   nameStatus = data.data.find((items:any)=>items.id === item.domicilio.statusKey);
-
-    //   // data.stateCode.descCondition === item.domicilio.statusKey
-    // } );
-
-    // console.log('namesta',nameStatus)
     let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
     config.initialState = {
       item,
@@ -1931,6 +1955,7 @@ export class PerformProgrammingFormComponent
       this.performForm
         .get('regionalDelegationNumber')
         .setValue(this.delegationId);
+      this.performForm.get('delregAttentionId').setValue(this.delegationId);
       this.alertQuestion(
         'info',
         'Confirmación',
@@ -2125,7 +2150,6 @@ export class PerformProgrammingFormComponent
           this.loadingReport = false;
         },
         error: error => {
-          console.log('error', error);
           this.loadingReport = false;
           this.onLoadToast(
             'info',
@@ -2152,7 +2176,6 @@ export class PerformProgrammingFormComponent
   setDataProgramming() {
     if (this.dataProgramming.folio) {
       this.showForm = true;
-      console.log('startDate', this.dataProgramming.startDate);
       this.performForm.get('address').setValue(this.dataProgramming.address);
       this.performForm.get('city').setValue(this.dataProgramming.city);
       this.performForm.get('stateKey').setValue(this.dataProgramming.stateKey);
@@ -2365,23 +2388,22 @@ export class PerformProgrammingFormComponent
     const date = moment(new Date()).format('YYYY-MM-DD');
     this.programmingService.getDateProgramming(date, 5).subscribe({
       next: (response: any) => {
-        console.log('correctDate', response);
         const correctDate = moment(response).format('DD/MMMM/YYYY');
         if (correctDate > _startDateFormat || correctDate > _endDateFormat) {
           this.performForm
             .get('startDate')
-            .addValidators([Validators.required, minDate(new Date(response))]);
+            .addValidators([minDate(new Date(response))]);
           this.performForm
             .get('startDate')
             .setErrors({ minDate: { min: new Date(response) } });
           this.performForm
             .get('endDate')
-            .addValidators([Validators.required, minDate(new Date(response))]);
+            .addValidators([minDate(new Date(response))]);
           this.performForm
             .get('endDate')
             .setErrors({ minDate: { min: new Date(response) } });
           this.performForm.markAllAsTouched();
-
+          this.performForm.reset();
           /*const endDate = this.performForm.get('endDate').value;
           const _endDateFormat = moment(endDate).format(
             'DD/MMMM/YYYY, h:mm:ss a'
