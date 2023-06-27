@@ -70,7 +70,7 @@ export class DateDocumentsModalComponent extends BasePage implements OnInit {
       userInsertion: [null],
       numRegister: [null],
       officialNumber: [null],
-      notificationDate: [null,],
+      notificationDate: [null],
       secureKey: [null],
     });
 

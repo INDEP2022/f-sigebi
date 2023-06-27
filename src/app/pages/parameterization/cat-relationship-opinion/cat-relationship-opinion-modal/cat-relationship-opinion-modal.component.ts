@@ -7,7 +7,10 @@ import { IAffair } from 'src/app/core/models/catalogs/affair.model';
 //Models
 import { IDictamen } from 'src/app/core/models/catalogs/dictamen.model';
 import { IOpinion } from 'src/app/core/models/catalogs/opinion.model';
-import { IRAsuntDic } from 'src/app/core/models/catalogs/r-asunt-dic.model';
+import {
+  IRAsuntDic,
+  IRAsuntDic1,
+} from 'src/app/core/models/catalogs/r-asunt-dic.model';
 import { OpinionService } from 'src/app/core/services/catalogs/opinion.service';
 import { RAsuntDicService } from 'src/app/core/services/catalogs/r-asunt-dic.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -25,16 +28,16 @@ export class CatRelationshipOpinionModalComponent
   implements OnInit
 {
   rAsuntDicForm: ModelForm<IRAsuntDic>;
-  rAsuntDic: IRAsuntDic;
+  rAsuntDic: IRAsuntDic1;
 
   title: string = 'Dictamen';
   edit: boolean = false;
 
   idAffair: IAffair;
 
-  id: IDictamen;
-
-  dictums = new DefaultSelect();
+  idDic: IDictamen;
+  opinion: any;
+  dictums = new DefaultSelect<IOpinion>();
 
   rAsuntDicValue: IOpinion;
 
@@ -68,18 +71,30 @@ export class CatRelationshipOpinionModalComponent
     });
     if (this.rAsuntDic != null) {
       //this.id = this.rAsuntDic.dictum as unknown as IDictamen;
+      console.log(this.rAsuntDic);
       this.edit = true;
+      this.opinion = this.rAsuntDic.dictumData;
+      //let dictum1: IRAsuntDic1 = this.opinion.id as IRAsuntDic1;
+      //this.dictums = new DefaultSelect([dictum1], 1);
       this.rAsuntDicForm.patchValue(this.rAsuntDic);
-      //this.rAsuntDicForm.controls['dictum'].setValue(this.id.id);
-    } else {
-      this.edit = false;
-      this.rAsuntDicForm.controls['code'].setValue(this.idAffair.id);
+      this.rAsuntDicForm.controls['dictumData'].setValue(this.opinion.id);
+      this.rAsuntDicForm.controls['dictumData'].disable();
+      this.rAsuntDicForm.controls['flyerType'].disable();
     }
+    this.rAsuntDicForm.controls['code'].setValue(this.idAffair.id);
+    setTimeout(() => {
+      this.getDictum(new ListParams());
+    }, 1000);
   }
 
   getDictum(params: ListParams) {
     this.dictumService.getAll(params).subscribe({
-      next: data => (this.dictums = new DefaultSelect(data.data, data.count)),
+      next: data => {
+        this.dictums = new DefaultSelect(data.data, data.count);
+      },
+      error: error => {
+        this.dictums = new DefaultSelect();
+      },
     });
   }
 
@@ -102,7 +117,7 @@ export class CatRelationshipOpinionModalComponent
 
   create() {
     this.loading = true;
-    this.rAsuntDicService.create(this.rAsuntDicForm.value).subscribe({
+    this.rAsuntDicService.create(this.rAsuntDicForm.getRawValue()).subscribe({
       next: data => this.handleSuccess(),
       error: error => (this.loading = false),
     });
@@ -122,7 +137,7 @@ export class CatRelationshipOpinionModalComponent
     };
 
     this.rAsuntDicService
-      .update(this.rAsuntDic.registryNumber, form)
+      .update(this.rAsuntDic.registryNumber, this.rAsuntDicForm.getRawValue())
       .subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),
@@ -131,7 +146,8 @@ export class CatRelationshipOpinionModalComponent
 
   handleSuccess() {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.onLoadToast('success', this.title, `${message} Correctamente`);
+    //this.onLoadToast('success', this.title, `${message} Correctamente`);
+    this.alert('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();

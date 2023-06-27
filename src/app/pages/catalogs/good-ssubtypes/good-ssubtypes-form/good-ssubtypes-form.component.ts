@@ -73,14 +73,17 @@ export class GoodSsubtypesFormComponent extends BasePage implements OnInit {
     if (id) {
       params['filter.idTypeGood'] = id;
     }
-    this.goodSubtypeService.getAll(params).subscribe(data => {
-      this.subTypes = new DefaultSelect(data.data, data.count);
-    }, error => {
-      this.subTypes = new DefaultSelect([], 0, true);
-    });
+    this.goodSubtypeService.getAll(params).subscribe(
+      data => {
+        this.subTypes = new DefaultSelect(data.data, data.count);
+      },
+      error => {
+        this.subTypes = new DefaultSelect([], 0, true);
+      }
+    );
   }
   getAllSubtypes(data: any) {
-    this.getSubtypes(new ListParams, data.id);
+    this.getSubtypes(new ListParams(), data.id);
   }
   close() {
     this.modalRef.hide();

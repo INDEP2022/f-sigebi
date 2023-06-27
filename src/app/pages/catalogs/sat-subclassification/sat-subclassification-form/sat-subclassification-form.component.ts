@@ -23,7 +23,7 @@ export class SatSubclassificationFormComponent
   implements OnInit
 {
   satSubclassificationForm: ModelForm<ISatSubclassification>;
-  title: string = 'SUBCLASIFICACIÓN SAT';
+  title: string = 'Subclasificación SAT';
   edit: boolean = false;
   satSubclassification: ISatSubclassification;
   classifications = new DefaultSelect<ISiabClasification>();
@@ -141,8 +141,8 @@ export class SatSubclassificationFormComponent
 
   handleSuccess() {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    // this.onLoadToast('success', this.title, `${message} Correctamente`);
-    this.alert('success', 'SUBCLASIFICACIÓN SAT', `${message} Correctamente`);
+    this.alert('success', this.title, `${message} Correctamente`);
+    //this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();

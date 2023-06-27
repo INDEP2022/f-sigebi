@@ -6,35 +6,68 @@
     <form class="form-material" [formGroup]="municipalityForm">
       <div class="row">
         <div class="col-4 pt-4">
-          <form-field [control]="municipalityForm.get('idMunicipality')" label="Código Municipio">
-            <input type="text" class="form-control" formControlName="idMunicipality" />
+          <form-field
+            [control]="municipalityForm.get('idMunicipality')"
+            label="Código Municipio">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="idMunicipality" />
           </form-field>
         </div>
         <div class="col-12 pt-4">
-          <form-field [control]="municipalityForm.get('nameMunicipality')" label="Nombre De Municipio">
-            <input type="text" class="form-control" formControlName="nameMunicipality" />
+          <form-field
+            [control]="municipalityForm.get('nameMunicipality')"
+            label="Nombre De Municipio">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="nameMunicipality" />
           </form-field>
         </div>
         <div class="col-12 pt-4">
           <form-field [control]="municipalityForm.get('stateKey')">
-            <ngx-select [form]="municipalityForm" control="stateKey" value="id" bindLabel="descCondition"
-              [data]="states" (fetchItems)="getStates($event)" (change)="stateChange($event)" label="CVE Estado">
+            <ngx-select
+              [form]="municipalityForm"
+              control="stateKey"
+              value="id"
+              bindLabel="descCondition"
+              [data]="states"
+              (fetchItems)="getStates($event)"
+              (change)="stateChange($event)"
+              label="CVE Estado">
             </ngx-select>
           </form-field>
         </div>
         <div class="col-12 pt-4">
-          <form-field [control]="municipalityForm.get('version')" label="Versi&oacute;n">
-            <input type="text" class="form-control" formControlName="version" min="0" />
+          <form-field
+            [control]="municipalityForm.get('version')"
+            label="Versi&oacute;n">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="version"
+              min="0" />
           </form-field>
         </div>
         <div class="col-12 pt-4">
-          <form-field [control]="municipalityForm.get('description')" label="Descripción">
-            <input type="text" class="form-control" formControlName="description" />
+          <form-field
+            [control]="municipalityForm.get('description')"
+            label="Descripción">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="description" />
           </form-field>
         </div>
         <div class="col-12 pt-4">
-          <form-field [control]="municipalityForm.get('codMarginality')" label="Código Marginalidad">
-            <input type="text" class="form-control" formControlName="codMarginality" />
+          <form-field
+            [control]="municipalityForm.get('codMarginality')"
+            label="Código Marginalidad">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="codMarginality" />
           </form-field>
         </div>
         <div class="col-12 pt-4">
@@ -48,7 +81,10 @@
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <confirm-button [disabled]="!municipalityForm.valid" [loading]="loading" (click)="confirm()">
+        <confirm-button
+          [disabled]="!municipalityForm.valid"
+          [loading]="loading"
+          (click)="confirm()">
         </confirm-button>
       </div>
       <div class="m-3">

@@ -1,8 +1,4 @@
-import {
-  IExpedient,
-  IKey,
-  IState,
-} from 'src/app/core/models/catalogs/date-documents.model';
+import { IKey } from 'src/app/core/models/catalogs/date-documents.model';
 
 export const DATEDOCUMENTS_COLUMNS = {
   expedientNumber: {

@@ -30,6 +30,15 @@ export class NumeraryParameterizationAutomService implements ICrudMethods<any> {
     );
   }
 
+  getAllDetail(
+    params?: ListParams
+  ): Observable<IListResponse<INumeraryParameterization>> {
+    return this.categorizationAutomNumerarysRepository.getAll(
+      this.route,
+      params
+    );
+  }
+
   getCategories(params: ListParams) {
     return this.categorizationNumerarysRepository.getAllPaginated(
       this.routeNumerarys,
