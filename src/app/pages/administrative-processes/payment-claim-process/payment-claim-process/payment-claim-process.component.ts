@@ -15,9 +15,7 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
-import { IDocuments } from 'src/app/core/models/ms-documents/documents';
-import { IGood } from 'src/app/core/models/ms-good/good';
-import { DocumentsService } from 'src/app/core/services/ms-documents-type/documents.service';
+import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { HistoryGoodService } from 'src/app/core/services/ms-history-good/history-good.service';
 import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive-good.service';
@@ -60,9 +58,9 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
   idsNotExist: NotData[] = [];
   showError: boolean = false;
   showStatus: boolean = false;
-  document: IDocuments;
+  document: any;
   goodClassNumber: string[] = ['1424', '1426', '1427'];
-  good: any;
+  good: any = null;
   //Reactive Forms
   form: FormGroup;
   disabledImport: boolean = true;
@@ -205,6 +203,10 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
+      documVal: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
     });
   }
 
@@ -221,7 +223,7 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
     console.log('Entro');
     const files = (event.target as HTMLInputElement).files;
     if (files.length != 1) throw 'No files selected, or more than of allowed';
-    this.alert('success', 'Archivo subido exitosamente', '');
+    this.alert('success', 'Archivo subido exitosamente', 'Cargado');
     this.readExcel(files[0], 'si');
   }
 
@@ -237,21 +239,22 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
         ...this.paramsList.getValue(),
         ...this.columnFilters,
       };
-      this.document = null;
-      if (filter != 'no') {
-        this.cambiarValor();
-      }
+
+      // console.log("this.document1", this.document)
       // this.cambiarValor()
-      console.log('SU');
+      // console.log('SU');
       this.massiveGoodService.getFProRecPag2CSV(params, binaryExcel).subscribe(
         (response: any) => {
-          console.log('SI112', response.message);
+          console.log('filter', filter);
+          this.document = null;
+          // if (filter != 'no') {
+          this.cambiarValor();
+          // }
+
           this.totalItems = response.countA + response.countD;
 
           let result = response.data.map(async (good: any) => {
-            if (good.approved) {
-              if (this.document == null) {
-              }
+            if (good.approved == true) {
               this.disabledImport = false;
               if (!this.form.value.justification) {
                 this.form.get('justification').setValue(good.causenumberchange);
@@ -259,12 +262,22 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
             }
           });
 
-          Promise.all(result).then((resp: any) => {
+          Promise.all(result).then(async (resp: any) => {
             this.goods = response.data;
             this.data.load(this.goods);
+
+            let aaa: any = null;
+            for (let i = 0; i < this.goods.length; i++) {
+              if (this.goods[i].approved == true) {
+                aaa = this.goods[i];
+                break;
+              }
+            }
+            console.log('aaa', aaa);
+            this.good = aaa;
+            this.cambiarValor3(this.good);
             this.data.refresh();
-            this.obtenerDocument(this.goods[0]);
-            // this.addStatus();
+            this.getDocument(this.goods);
             this.dataA = response.countA;
             this.dataD = response.countD;
 
@@ -316,10 +329,23 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
 
   changeStatusGood() {
     if (this.goods.length === 0) {
-      this.onLoadToast('warning', 'Debe cargar la lista de bienes', '');
+      this.alert('warning', 'Debe cargar la lista de bienes', '');
       return;
+    } else if (this.goods.length > 0) {
+      let a = false;
+      for (let i = 0; i < this.goods.length; i++) {
+        if (this.goods[i].approved == true) {
+          a = true;
+        }
+      }
+
+      if (a == false) {
+        this.alert('warning', 'No hay ningún bien válido cargado', '');
+        return;
+      } else {
+        this.validStatusXScreen(this.good);
+      }
     }
-    this.validStatusXScreen(this.good);
   }
 
   async change() {
@@ -438,7 +464,7 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
   }
 
   changeFoli(event: any) {
-    console.log('EVENT', event);
+    // console.log('EVENT', event);
     this.document = event;
     this.valDocument = true;
   }
@@ -459,11 +485,12 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
   }
 
   // CAMBIAR STATUS DEL BIEN Y ELIMINAR FOLIO DE ESCANEO //
-  validStatusXScreen(good: IGood) {
+  validStatusXScreen(good: any) {
     // if (this.form.value.justification == null) {
     //   this.alert('info', 'El motivo de cambio se encuentra vacío', '');
     //   return;
     // }
+    console.log('good', good);
     this.screenStatusService
       .getStatusXScreen({
         screen: 'FPROCRECPAG',
@@ -486,7 +513,7 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
       });
   }
 
-  firstGood(good: IGood) {
+  firstGood(good: any) {
     this.good = good;
   }
 
@@ -513,7 +540,7 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
     if (folioUniversalesReplicados != null) {
       for (let i = 0; i < folioUniversalesReplicados.length; i++) {
         this.documnetServices
-          .delete(folioUniversalesReplicados[i].id)
+          .remove(folioUniversalesReplicados[i].id)
           .subscribe({
             next: response => {},
             error: err => {
@@ -523,7 +550,7 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
       }
     }
 
-    this.documnetServices.delete(this.document.id).subscribe({
+    this.documnetServices.remove(this.document.id).subscribe({
       next: response => {
         this.change2();
         this.cambiarValor();
@@ -531,7 +558,7 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
         this.alert(
           'success',
           'Se ha actualizado el motivo de cambio de los bienes seleccionados y eliminado el folio anterior',
-          ''
+          'Actualizado'
         );
       },
       error: err => {
@@ -542,14 +569,14 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
           this.valDocument = false;
           this.alert(
             'success',
-            'Elimiado',
-            'Se ha eliminado correctamente el folio'
+            'Se ha eliminado correctamente el folio',
+            'Elimiado'
           );
         } else {
           this.alert(
             'error',
-            'Elimiado',
-            'Se ha generado un error al eliminar el Folio'
+            'Se ha generado un error al eliminar el Folio',
+            'Elimiado'
           );
         }
         console.log(err);
@@ -578,11 +605,10 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
     this.hijoRef.actualizarVariable(true, '');
   }
 
-  obtenerDocument(good: any) {
+  async obtenerDocument(good: any) {
     if (this.valDocument == true) {
       return;
     } else {
-      console.log('this.document', this.document);
       this.hijoRef.getDocument(good);
     }
   }
@@ -597,5 +623,55 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
   async getItem(key: string) {
     const value = localStorage.getItem(key);
     return value ? JSON.parse(value) : null;
+  }
+
+  async getDocument(good: any) {
+    let idDoc: any = null;
+    for (let i = 0; i < good.length; i++) {
+      // this.filter1.getValue().addFilter('scanStatus', 'ESCANEADO', SearchFilter.EQ);
+
+      if (good[i].approved == true) {
+        const docss: any = await this.returnDocss(good[i].id);
+        console.log('J', idDoc);
+        console.log('docss', docss);
+        if (docss != null) {
+          break;
+        }
+      }
+    }
+
+    // })
+  }
+
+  async returnDocss(id: any) {
+    this.filter1.getValue().removeAllFilters();
+    this.filter1.getValue().addFilter('goodNumber', id, SearchFilter.EQ);
+
+    return new Promise((resolve, reject) => {
+      this.documnetServices
+        .getAllFilter(this.filter1.getValue().getParams())
+        .subscribe({
+          next: response => {
+            console.log('DOCUMENT', response);
+            this.document = response.data[0];
+
+            this.cambiarValor2(false, response.data[0].id);
+            resolve(response.data[0].id);
+          },
+          error: err => {
+            console.log(err);
+
+            resolve(null);
+          },
+        });
+    });
+  }
+
+  cambiarValor2(val: any, id: any) {
+    this.hijoRef.actualizarVariable(val, id);
+  }
+
+  cambiarValor3(good: any) {
+    this.hijoRef.actualizarVariable2(good);
   }
 }

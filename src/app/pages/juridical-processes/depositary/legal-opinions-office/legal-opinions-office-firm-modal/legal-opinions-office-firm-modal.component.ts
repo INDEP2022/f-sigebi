@@ -138,9 +138,11 @@ export class LegalOpinionsOfficeFirmModalComponent
   }
 
   close(closeEmit: boolean = false, data: any = null) {
-    // if (closeEmit) {
-    // }
-    this.responseFirm.emit(data); // Emmit response
+    if (closeEmit) {
+      this.responseFirm.emit(data); // Emmit response
+    } else {
+      this.errorFirm.emit(true);
+    }
     this.modalRef.hide();
   }
 

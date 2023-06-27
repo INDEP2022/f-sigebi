@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { Ng2SmartTableComponent } from 'ng2-smart-table';
 import {
   catchError,
@@ -12,6 +12,7 @@ import {
   tap,
   throttleTime,
 } from 'rxjs';
+import { Subscription } from 'rxjs/internal/Subscription';
 import { take } from 'rxjs/operators';
 import {
   FilterParams,
@@ -35,6 +36,28 @@ export class GoodsListComponent
 {
   previousSelecteds: IGood[] = [];
   pageSelecteds: number[] = [];
+  subscription: Subscription = new Subscription();
+  changeSettings: number = 0;
+  @Input() changeDescription: string;
+  @Input()
+  set changeMode(value: 'I' | 'E') {
+    if (!value) return;
+    if (value === 'E') {
+      let columns = { ...COLUMNS };
+      delete columns.changeDescription;
+      this.settings = {
+        ...this.settings,
+        columns,
+      };
+      this.changeSettings++;
+    } else {
+      this.settings = {
+        ...this.settings,
+        columns: COLUMNS,
+      };
+      this.changeSettings++;
+    }
+  }
   @ViewChild('table') table: Ng2SmartTableComponent;
   constructor(
     private massiveService: MassiveReclassificationGoodsService,
@@ -42,7 +65,7 @@ export class GoodsListComponent
     private readonly goodServices: GoodService
   ) {
     super();
-    this.ilikeFilters = ['description', 'goodDescription'];
+    this.ilikeFilters = ['description', 'goodDescription', 'status'];
     this.haveInitialCharge = false;
     this.settings = {
       ...this.settings,
@@ -214,6 +237,19 @@ export class GoodsListComponent
         }
       },
     });
+    this.classificationOfGoods.valueChanges
+      .pipe(
+        distinctUntilChanged(),
+        throttleTime(500),
+        takeUntil(this.$unSubscribe)
+      )
+      .subscribe(x => {
+        if (!x) {
+          this.selectedGooods = [];
+          this.data.load([]);
+          this.data.refresh();
+        }
+      });
     this.mode.valueChanges
       .pipe(
         distinctUntilChanged(),
@@ -222,7 +258,12 @@ export class GoodsListComponent
       )
       .subscribe(x => {
         console.log(x);
-        if (this.totalItems > 0 && x !== null && x + ''.trim() !== '') {
+        if (
+          this.totalItems > 0 &&
+          x !== null &&
+          x + ''.trim() !== '' &&
+          this.classificationOfGoods.value
+        ) {
           this.selectedGooods = [];
           this.getData(false);
         }
@@ -264,8 +305,8 @@ export class GoodsListComponent
       }
     }
     console.log(this.goodStatus.value);
-
-    this.goodServices
+    this.subscription.unsubscribe();
+    this.subscription = this.goodServices
       .getAll(filterParams.getParams())
       .pipe(
         takeUntil(this.$unSubscribe),
@@ -279,7 +320,11 @@ export class GoodsListComponent
         map(response =>
           response.data.map(good => {
             if (good.goodClassNumber + '' !== '1575') {
-              return of({ ...good, notSelect: false });
+              return of({
+                ...good,
+                changeDescription: this.changeDescription,
+                notSelect: false,
+              });
             } else {
               const filterParams = new FilterParams();
               filterParams.addFilter('typeManagement', 2);
@@ -299,6 +344,7 @@ export class GoodsListComponent
                   map(gestionTramite => {
                     return {
                       ...good,
+                      changeDescription: this.changeDescription,
                       notSelect: gestionTramite > 0,
                     };
                   })

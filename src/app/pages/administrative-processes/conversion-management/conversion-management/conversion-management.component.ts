@@ -130,7 +130,11 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
 
   async save() {
     if (this.tipo.value === null || this.tipo.value === 'null') {
-      this.alert('info', 'Información', 'El campo tipo es requerido');
+      this.alert(
+        'info',
+        'Administración de conversión de bienes',
+        'El campo tipo es requerido'
+      );
       return;
     }
     if (this.idConversion.value !== null || this.idConversion.value !== '') {
@@ -144,7 +148,7 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
             console.log(response);
             this.alert(
               'success',
-              'Guardado',
+              'Administración de conversión de bienes',
               'Se ha guardado correctamente la conversión'
             );
             this.saved = false;
@@ -152,7 +156,7 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
           error: err => {
             this.alert(
               'info',
-              'Información',
+              'Administración de conversión de bienes',
               'No se puede realizar la operación ya que este bien ya está asignado a esta conversión'
             );
             console.log(err);
@@ -161,7 +165,7 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
     } else {
       this.alert(
         'info',
-        'Información',
+        'Administración de conversión de bienes',
         'Se debe cargar primero una conversión'
       );
     }
@@ -183,7 +187,11 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
         this.setGood(this.good);
       },
       error: err => {
-        this.alert('info', 'Información', 'Bien no existe');
+        this.alert(
+          'info',
+          'Administración de conversión de bienes',
+          'Bien no existe'
+        );
         this.form.reset();
         console.log(err);
       },
@@ -227,7 +235,7 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
         this.actaERDate.setValue('');
         this.alert(
           'info',
-          'Información',
+          'Administración de conversión de bienes',
           'Este bien no tiene Acta E/R asociada'
         );
         console.log(err);
@@ -290,12 +298,12 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
         this.actaConversion.setValue(this.conversion.cveActaConv);
         this.alert(
           'success',
-          'Exitoso',
+          'Administración de conversión de bienes',
           'Se ha cargado la conversión correctamente'
         );
       },
       error: err => {
-        this.alert('error', 'ERROR', 'La conversión no existe');
+        this.alert('error', 'Ha ocurrido un error', 'La conversión no existe');
         this.form.reset();
         console.log(err);
       },
