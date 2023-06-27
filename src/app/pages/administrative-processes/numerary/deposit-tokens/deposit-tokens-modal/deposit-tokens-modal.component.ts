@@ -39,6 +39,21 @@ export class DepositTokensModalComponent extends BasePage implements OnInit {
       hideSubHeader: false,
       actions: false,
       columns: DEPOSIT_TOKENS_MODAL_COLUMNS,
+      rowClassFunction: (row: any) => {
+        if (row.data.genderTransfer == 'S') {
+          return 'bg-success text-white';
+        }
+
+        if (row.data.numberMotionTransfer != null) {
+          return 'bg-warning text-white';
+        }
+
+        if (row.data.numberReturnPayCheck != null) {
+          return 'bg-info text-white';
+        } else {
+          return '';
+        }
+      },
     };
   }
 
@@ -62,7 +77,7 @@ export class DepositTokensModalComponent extends BasePage implements OnInit {
             //Verificar los datos si la busqueda sera EQ o ILIKE dependiendo el tipo de dato aplicar regla de búsqueda
             const search: any = {
               numberMotion: () => (searchFilter = SearchFilter.EQ),
-              deposit: () => (searchFilter = SearchFilter.ILIKE),
+              deposit: () => (searchFilter = SearchFilter.EQ),
             };
 
             search[filter.field]();
@@ -93,6 +108,7 @@ export class DepositTokensModalComponent extends BasePage implements OnInit {
     params['filter.numberAccount'] = `$eq:${this.noCuenta}`;
     this.accountMovementService.getAllFiltered(params).subscribe({
       next: async (response: any) => {
+        console.log('response', response);
         this.data1.load(response.data);
         this.data1.refresh();
         this.totalItems = response.count;

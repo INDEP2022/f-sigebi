@@ -459,7 +459,8 @@ export class AppointmentsComponent
     } else {
       if (this.good) {
         console.log('TRAER INFO DE BIENES');
-        this.getFromGoodsAndExpedients(false, true);
+        // this.getFromGoodsAndExpedients(false, true);
+        this.validFielddGoodNumber();
       } else {
         this.alert(
           'warning',
@@ -692,14 +693,15 @@ export class AppointmentsComponent
 
   async validFielddGoodNumber() {
     if (this.globalVars.noExiste != 1) {
-      this.noBien = this.form.get('noBien').value;
-      const params: ListParams = {
-        page: this.params.getValue().page,
-        limit: 10,
-      };
-      this.params.getValue().getParams();
-      params['filter.goodId'] = this.noBien;
-      params['filter.status'] = 'ADM';
+      // this.noBien = this.form.get('noBien').value;
+      // const params: ListParams = {
+      //   page: this.params.getValue().page,
+      //   limit: 10,
+      // };
+      const params = new ListParams();
+      // this.params.getValue().getParams();
+      params['filter.goodId'] = '$eq:' + this.noBien;
+      params['filter.status'] = '$eq:ADM';
       await this.appointmentsService.getGoodByParams(params).subscribe({
         next: res => {
           console.log(res);
@@ -830,7 +832,12 @@ export class AppointmentsComponent
             console.log(err);
             if (err.status == 400) {
               this.globalVars.noExiste = 0;
-              this.getFromGoodsAndExpedients(true);
+              this.depositaryAppointment = {
+                ...this.depositaryAppointment,
+                seraRepresentative: 'SERA',
+              };
+              this.validFielddGoodNumber();
+              // this.getFromGoodsAndExpedients(true);
             } else {
               this.alert(
                 'warning',
@@ -911,19 +918,27 @@ export class AppointmentsComponent
       .setValue(
         allNull ? null : this.depositaryAppointment.personNumber.apartmentNumber
       );
-    if (this.depositaryAppointment.personNumber.delegation) {
-      this.form
-        .get('delegacionMunicipio')
-        .setValue(
-          allNull ? null : this.depositaryAppointment.personNumber.delegation
-        );
+    if (this.depositaryAppointment.personNumber) {
+      if (this.depositaryAppointment.personNumber.delegation) {
+        this.form
+          .get('delegacionMunicipio')
+          .setValue(
+            allNull ? null : this.depositaryAppointment.personNumber.delegation
+          );
+      }
+    } else {
+      this.form.get('delegacionMunicipio').setValue(null);
     }
-    if (this.depositaryAppointment.personNumber.suburb) {
-      this.form
-        .get('colonia')
-        .setValue(
-          allNull ? null : this.depositaryAppointment.personNumber.suburb
-        );
+    if (this.depositaryAppointment.personNumber) {
+      if (this.depositaryAppointment.personNumber.suburb) {
+        this.form
+          .get('colonia')
+          .setValue(
+            allNull ? null : this.depositaryAppointment.personNumber.suburb
+          );
+      }
+    } else {
+      this.form.get('colonia').setValue(null);
     }
     if (allNull) {
       this.form.get('codigoPostal').setValue(null);
@@ -931,45 +946,45 @@ export class AppointmentsComponent
       this.form.get('entidadFederativa').setValue(null);
       this.stateSelectValue = null;
     } else {
-      if (
-        this.depositaryAppointment.personNumber.zipCode ||
-        this.depositaryAppointment.personNumber.zipCode == 0
-      ) {
+      // if (
+      //   this.depositaryAppointment.personNumber.zipCode ||
+      //   this.depositaryAppointment.personNumber.zipCode == 0
+      // ) {
+      this.form
+        .get('codigoPostal')
+        .setValue(this.depositaryAppointment.personNumber.zipCode);
+      // this.postalCodeSelectValue =
+      //   this.depositaryAppointment.personNumber.zipCode.toString();
+      // this.getPostalCodeByDetail(new ListParams(), true);
+      // } else {
+      if (this.depositaryAppointment.personNumber.keyEntFed) {
         this.form
-          .get('codigoPostal')
-          .setValue(this.depositaryAppointment.personNumber.zipCode);
-        // this.postalCodeSelectValue =
-        //   this.depositaryAppointment.personNumber.zipCode.toString();
-        // this.getPostalCodeByDetail(new ListParams(), true);
-      } else {
-        if (this.depositaryAppointment.personNumber.keyEntFed) {
-          this.form
-            .get('entidadFederativa')
-            .setValue(this.depositaryAppointment.personNumber.zipCode);
-          // this.stateSelectValue =
-          //   this.depositaryAppointment.personNumber.keyEntFed;
-        }
-        // if (this.depositaryAppointment.personNumber.delegation) {
-        //   // this.delegationSelectValue =
-        //   //   this.depositaryAppointment.personNumber.delegation;
-        // }
-        // if (this.depositaryAppointment.personNumber.suburb) {
-        //   // this.localitySelectValue =
-        //   //   this.depositaryAppointment.personNumber.suburb;
-        // }
-        if (this.stateSelectValue) {
-          // call function
-          // this.getStateByDetail(new ListParams());
-        }
-        // if (this.delegationSelectValue) {
-        //   // CALL FUNCTION
-        //   this.getDelegationByDetail(new ListParams());
-        // }
-        // if (this.localitySelectValue) {
-        //   // call function
-        //   this.getLocalityByDetail(new ListParams());
-        // }
+          .get('entidadFederativa')
+          .setValue(this.depositaryAppointment.personNumber.keyEntFed);
+        this.stateSelectValue =
+          this.depositaryAppointment.personNumber.keyEntFed;
       }
+      // if (this.depositaryAppointment.personNumber.delegation) {
+      //   // this.delegationSelectValue =
+      //   //   this.depositaryAppointment.personNumber.delegation;
+      // }
+      // if (this.depositaryAppointment.personNumber.suburb) {
+      //   // this.localitySelectValue =
+      //   //   this.depositaryAppointment.personNumber.suburb;
+      // }
+      if (this.stateSelectValue) {
+        // call function
+        this.getStateByDetail(new ListParams());
+      }
+      // if (this.delegationSelectValue) {
+      //   // CALL FUNCTION
+      //   this.getDelegationByDetail(new ListParams());
+      // }
+      // if (this.localitySelectValue) {
+      //   // call function
+      //   this.getLocalityByDetail(new ListParams());
+      // }
+      // }
     }
     // if (
     //   this.depositaryAppointment.personNumber.cve_entfed ||
@@ -1086,8 +1101,18 @@ export class AppointmentsComponent
     // Honorarios y Contraprestaciones
     this.form
       .get('contraprestacion')
-      .setValue(this.depositaryAppointment.importConsideration);
-    this.form.get('honorarios').setValue(this.depositaryAppointment.feeAmount);
+      .setValue(
+        this.depositaryAppointment.importConsideration
+          ? this.depositaryAppointment.importConsideration
+          : '0.00'
+      );
+    this.form
+      .get('honorarios')
+      .setValue(
+        this.depositaryAppointment.feeAmount
+          ? this.depositaryAppointment.feeAmount
+          : '0.00'
+      );
     this.form.get('iva').setValue(this.depositaryAppointment.iva);
     let startDate: any;
     if (this.depositaryAppointment) {
@@ -1129,11 +1154,11 @@ export class AppointmentsComponent
       console.log('PARAMS ', params);
     } else {
       params.addFilter('goodId', this.noBien);
-      if (onlyGood == false) {
-        params.addFilter('status', 'DEP');
-      } else {
-        params.addFilter('status', 'ADM');
-      }
+      params.addFilter('status', 'DEP');
+      // if (onlyGood == false) {
+      // } else {
+      //   params.addFilter('status', 'ADM');
+      // }
     }
     await this.appointmentsService
       .getFromGoodsAndExpedients(params.getParams())
@@ -1186,13 +1211,13 @@ export class AppointmentsComponent
               'El número de Bien no existe, verifique'
             );
           } else {
-            this.alert(
-              'warning',
-              'El No. de Bien ' +
-                this.noBien +
-                ' no existe ó el estatus para depositarias no es el adecuado, verifique',
-              ''
-            );
+            // this.alert(
+            //   'warning',
+            //   'El No. de Bien ' +
+            //     this.noBien +
+            //     ' no existe ó el estatus para depositarias no es el adecuado, verifique',
+            //   ''
+            // );
           }
         },
       });
@@ -2220,7 +2245,7 @@ export class AppointmentsComponent
         folioReturn: null,
         personNumber: this.depositaryAppointment.personNumber.id,
         reference: this.form.value.referencia,
-        iva: this.form.value.iva,
+        iva: this.form.value.iva ? Number(this.form.value.iva) : null,
         withKitchenware: null,
         goodNumber: this.form.value.noBien,
       };
@@ -2233,7 +2258,7 @@ export class AppointmentsComponent
         error: error => {
           console.log(error);
           this.alertInfo(
-            'success',
+            'error',
             'Ocurrió un error al guardar el registro',
             error.error.message
           );
@@ -2271,7 +2296,7 @@ export class AppointmentsComponent
         error: error => {
           console.log(error);
           this.alertInfo(
-            'success',
+            'error',
             'Ocurrió un error al guardar el registro',
             error.error.message
           );
