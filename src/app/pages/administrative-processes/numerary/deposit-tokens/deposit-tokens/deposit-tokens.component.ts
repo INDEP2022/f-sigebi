@@ -377,7 +377,6 @@ export class DepositTokensComponent extends BasePage implements OnInit {
     this.paramsList.getValue().limit = 10;
     this.paramsList.getValue().page = 1;
     this.form.get('descriptionGood').setValue('');
-
     this.getAccount();
     if (this.dataMovements) {
       if (this.dataMovements.bank) {
