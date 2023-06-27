@@ -42,6 +42,7 @@ export class FormalizeProgrammingFormComponent
   extends BasePage
   implements OnInit
 {
+  observationProceedings: string;
   isDropup = true;
   goods: any[] = [];
   proceedingForm: FormGroup = new FormGroup({});
@@ -290,6 +291,7 @@ export class FormalizeProgrammingFormComponent
           this.proceeding.push(form);
         });
         //this.proceedings.load(response.data);
+
         this.totalItemsProceedings = response.count;
       },
       error: error => {
