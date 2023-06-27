@@ -99,6 +99,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
 
   showReportByTypeDoc() {
     if (this.idTypeDoc == 103) {
+      console.log('this.receipt', this.receipt);
       let linkDoc: string = `${this.urlBaseReport}Recibo_Entrega.jasper&ID_PROG=${this.idProg}&ID_RECIBO=${this.receipt.id}&ID_ACTA=${this.receipt.actId}`;
       this.src = linkDoc;
     }
@@ -305,8 +306,67 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                 .subscribe({
                   next: response => {
                     this.msjCheck = true;
+                    console.log('errror', response);
                   },
                   error: error => {
+                    console.log('errror', error);
+                    this.msjCheck = true;
+                  },
+                });
+            });
+          }
+
+          if (this.idTypeDoc == 210) {
+            const idKeyDoc = this.programming.id + '-' + this.receipt.actId;
+
+            this.signatories.map(item => {
+              this.gelectronicFirmService
+                .firmDocument(idKeyDoc, 'actaSat', {})
+                .subscribe({
+                  next: response => {
+                    this.msjCheck = true;
+                    console.log('errror', response);
+                  },
+                  error: error => {
+                    console.log('errror', error);
+                    //this.msjCheck = true;
+                  },
+                });
+            });
+          }
+
+          if (this.idTypeDoc == 106) {
+            const idKeyDoc = this.programming.id + '-' + this.receipt.actId;
+
+            this.signatories.map(item => {
+              this.gelectronicFirmService
+                .firmDocument(idKeyDoc, 'actaAsegurados', {})
+                .subscribe({
+                  next: response => {
+                    this.msjCheck = true;
+                    console.log('errror', response);
+                  },
+                  error: error => {
+                    console.log('errror', error);
+                    this.msjCheck = true;
+                  },
+                });
+            });
+          }
+
+          if (this.idTypeDoc == 107) {
+            const idKeyDoc = this.programming.id + '-' + this.receipt.actId;
+
+            this.signatories.map(item => {
+              this.gelectronicFirmService
+                .firmDocument(idKeyDoc, 'actasVoluntarias', {})
+                .subscribe({
+                  next: response => {
+                    this.msjCheck = true;
+                    console.log('errror', response);
+                  },
+                  error: error => {
+                    console.log('errror', error);
                     this.msjCheck = true;
                   },
                 });

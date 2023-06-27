@@ -10,6 +10,7 @@ import {
 } from 'src/app/common/repository/interfaces/list-params';
 import { AccountMovementService } from 'src/app/core/services/ms-account-movements/account-movement.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { GOODS_COLUMNS } from './columns';
 
@@ -32,7 +33,8 @@ export class ListGoodsComponent extends BasePage implements OnInit {
     private modalRef: BsModalRef,
     private fb: FormBuilder,
     private readonly goodServices: GoodService,
-    private accountMovementService: AccountMovementService
+    private accountMovementService: AccountMovementService,
+    private goodprocessService: GoodprocessService
   ) {
     super();
     this.settings = {
@@ -58,9 +60,9 @@ export class ListGoodsComponent extends BasePage implements OnInit {
 
             //Verificar los datos si la busqueda sera EQ o ILIKE dependiendo el tipo de dato aplicar regla de búsqueda
             const search: any = {
-              id: () => (searchFilter = SearchFilter.EQ),
-              fileNumber: () => (searchFilter = SearchFilter.ILIKE),
-              goodClassNumber: () => (searchFilter = SearchFilter.EQ),
+              no_bien: () => (searchFilter = SearchFilter.EQ),
+              no_expediente: () => (searchFilter = SearchFilter.EQ),
+              averiguacion_previa: () => (searchFilter = SearchFilter.ILIKE),
               descripcion: () => (searchFilter = SearchFilter.ILIKE),
             };
 
@@ -84,27 +86,27 @@ export class ListGoodsComponent extends BasePage implements OnInit {
   }
 
   getDataGoods() {
+    this.seleccionarBien_();
     this.loading = true;
     let params = {
       ...this.paramsList.getValue(),
       ...this.columnFilters,
     };
-    params['filter.goodClassNumber'] = `$eq:1602`;
-    this.goodServices.getByExpedientAndParams__(params).subscribe({
-      next: async (response: any) => {
-        console.log('response', response);
-        this.data1.load(response.data);
-        this.data1.refresh();
-        this.totalItems = response.count;
-        this.loading = false;
-      },
-      error: err => {
-        this.data1.load([]);
-        this.data1.refresh();
-        this.totalItems = 0;
-        this.loading = false;
-      },
-    });
+    // this.goodprocessService.GetGoodProceedings(params).subscribe({
+    //   next: async (response: any) => {
+    //     console.log('response', response);
+    //     this.data1.load(response.data);
+    //     this.data1.refresh();
+    //     this.totalItems = response.count;
+    //     this.loading = false;
+    //   },
+    //   error: err => {
+    //     this.data1.load([]);
+    //     this.data1.refresh();
+    //     this.totalItems = 0;
+    //     this.loading = false;
+    //   },
+    // });
   }
   close() {
     this.modalRef.hide();
@@ -115,58 +117,57 @@ export class ListGoodsComponent extends BasePage implements OnInit {
     console.log('data', event);
   }
 
-  async seleccionarBien() {
+  async seleccionarBien() {}
+
+  async seleccionarBien_() {
     let V_BIEN_VALIDO: any;
+    let vb_encontrado: any = false;
     if (
       this.rowData.currency != null &&
       this.rowData.deposito != null &&
       this.rowData.fec_movimiento != null &&
       this.rowData.cveAccount != null
     ) {
-      let obj = {};
+      let obj = {
+        diCurrency: this.rowData.currency,
+        tiBank: this.rowData.bank,
+        fecMovement: this.rowData.fec_movimiento,
+        diAccount: this.rowData.cveAccount,
+      };
+      console.log('obj', obj);
       const can: any = await this.getGoodSelectClasif(obj);
+      console.log('can', can);
 
-      if (can.val2 != null) {
-        var canVal2 = can.val2;
-        var number = parseFloat(canVal2.replace(',', ''));
+      for (let i = 0; i < can.length; i++) {
+        if (can[i].val2 != null) {
+          var canVal2 = can[i].val2;
+          var number = parseFloat(canVal2.replace(',', ''));
 
-        if (number == this.rowData.deposito) {
-          let vb_encontrado: any = true;
-          vb_encontrado = await this.getGoodMovimientosCuentas(this.goodSelect);
+          if (number == this.rowData.deposito) {
+            vb_encontrado = await this.getGoodMovimientosCuentas(can[i]);
 
-          if (vb_encontrado) {
-            V_BIEN_VALIDO = await this.getGoodMovimientosCuentas1(
-              this.goodSelect
-            );
-            if (V_BIEN_VALIDO == 0) {
-              let obj: any = {
-                numberMotion: this.rowData.no_movimiento,
-                numberGood: this.goodSelect.id,
-                numberProceedings: this.goodSelect.fileNumber,
-              };
-              this.updateAccountMovement(obj);
+            if (vb_encontrado) {
+              V_BIEN_VALIDO = await this.getGoodMovimientosCuentas1(can[i]);
+              if (V_BIEN_VALIDO == 0) {
+                let obj: any = {
+                  numberMoion: this.rowData.no_movimiento,
+                  category: this.rowData.categoria,
+                  numberAccount: this.rowData.no_cuenta,
+                  numberGood: can[i].no_bien,
+                  numberProceedings: can[i].no_expediente,
+                };
+                this.updateAccountMovement(obj);
+              }
             }
-          } else {
-            this.alert(
-              'warning',
-              'No se encontro ningun bien que cumpliera con el criterio de conciliacion',
-              ''
-            );
           }
-
-          // IF V_BIEN_VALIDO = 0 THEN
-          // : blk_mov.no_bien       := can.no_bien;
-          // --Aqui obtiene el numero de expediente Numerario V 3.2.1
-          //        FOR reg IN(SELECT no_expediente
-          //                    FROM   bienes
-          //                    WHERE  no_bien = can.no_bien)
-          // LOOP
-          // : blk_mov.di_expediente2 := reg.no_expediente;
-          // EXIT;
-          //        END LOOP;
-          // --lip_mensaje('entra al proceso' || can.no_bien, 'a');
-          //     END IF;
         }
+      }
+      if (!vb_encontrado) {
+        this.alert(
+          'warning',
+          'No se encontro ningun bien que cumpliera con el criterio de conciliacion',
+          ''
+        );
       }
     } else {
       this.alert(
@@ -179,25 +180,31 @@ export class ListGoodsComponent extends BasePage implements OnInit {
 
   async getGoodSelectClasif(data: any) {
     return new Promise((resolve, reject) => {
-      // this.accountMovementService.getAllFiltered(params).subscribe({
-      // next: response => {
-      let obj: any = {
-        val: 2.3,
-      };
-      resolve(obj);
-      // },
-      // error: err => {
-      // resolve(true);
-      // console.log(false);
-      // },
-      // });
+      this.accountMovementService.getBlkMov(data).subscribe({
+        next: response => {
+          this.data1.load(response.data);
+          this.data1.refresh();
+          this.totalItems = response.data.length;
+          this.loading = false;
+          console.log('response', response);
+          resolve(response);
+        },
+        error: err => {
+          this.data1.load([]);
+          this.data1.refresh();
+          this.totalItems = 0;
+          this.loading = false;
+          resolve(null);
+          console.log(null);
+        },
+      });
     });
   }
 
   async getGoodMovimientosCuentas(data: any) {
     const params = new ListParams();
-    params['filter.numberGood'] = `$eq:${data.id}`;
-    params['filter.numberProceedings'] = `$eq:${data.fileNumber}`;
+    params['filter.numberGood'] = `$eq:${data.no_bien}`;
+    params['filter.numberProceedings'] = `$eq:${data.no_expediente}`;
 
     return new Promise((resolve, reject) => {
       this.accountMovementService.getAllFiltered(params).subscribe({
@@ -206,7 +213,6 @@ export class ListGoodsComponent extends BasePage implements OnInit {
         },
         error: err => {
           resolve(true);
-          console.log(false);
         },
       });
     });
@@ -214,7 +220,7 @@ export class ListGoodsComponent extends BasePage implements OnInit {
 
   async getGoodMovimientosCuentas1(data: any) {
     const params = new ListParams();
-    params['filter.numberGood'] = `$eq:${data.id}`;
+    params['filter.numberGood'] = `$eq:${data.no_bien}`;
     return new Promise((resolve, reject) => {
       this.accountMovementService.getAllFiltered(params).subscribe({
         next: response => {

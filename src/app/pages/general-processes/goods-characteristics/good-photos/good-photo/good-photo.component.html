@@ -1,0 +1,14 @@
+<div class="row" (dblclick)="openDocumentsViewer()">
+  <div class="col-md-12">
+    <img
+      *ngIf="!isDocument"
+      [src]="loading ? loadingGif : imgSrc"
+      [alt]="filename"
+      width="100%" />
+    <img
+      *ngIf="isDocument"
+      [src]="loading ? loadingGif : imgDocument"
+      [alt]="filename"
+      width="100%" />
+  </div>
+</div>

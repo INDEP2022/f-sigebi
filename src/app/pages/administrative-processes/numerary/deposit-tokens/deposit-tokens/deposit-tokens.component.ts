@@ -10,10 +10,13 @@ import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { ExcelService } from 'src/app/common/services/excel.service';
+import { ICuentaDelete } from 'src/app/core/models/catalogs/bank-modelo-type-cuentas';
 import { DynamicCatalogsService } from 'src/app/core/services/dynamic-catalogs/dynamiccatalog.service';
 import { AccountMovementService } from 'src/app/core/services/ms-account-movements/account-movement.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { AddMovementComponent } from '../add-movement/add-movement.component';
 import { CustomdbclickComponent } from '../customdbclick/customdbclick.component';
 import { DepositTokensModalComponent } from '../deposit-tokens-modal/deposit-tokens-modal.component';
 @Component({
@@ -31,18 +34,30 @@ export class DepositTokensComponent extends BasePage implements OnInit {
   dataMovements: any = null;
   columnFilters: any = [];
   paramsList = new BehaviorSubject<ListParams>(new ListParams());
+  jsonToCsv: any[] = [];
+  showPagination: boolean = true;
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
     private accountMovementService: AccountMovementService,
     private datePipe: DatePipe,
     private readonly goodServices: GoodService,
-    private dynamicCatalogsService: DynamicCatalogsService
+    private dynamicCatalogsService: DynamicCatalogsService,
+    private excelService: ExcelService
   ) {
     super();
     this.settings = {
       ...this.settings,
-      actions: false,
+      actions: {
+        delete: true,
+        edit: false,
+        add: false,
+      },
+      delete: {
+        deleteButtonContent:
+          '<i class="pl-4 fa fa-trash text-danger mx-2"></i>',
+        confirmDelete: true,
+      },
       hideSubHeader: false,
       columns: {
         bank: {
@@ -60,7 +75,7 @@ export class DepositTokensComponent extends BasePage implements OnInit {
           type: 'string',
           sort: false,
         },
-        invoice: {
+        folio_ficha: {
           title: 'Folio',
           type: 'string',
           sort: false,
@@ -115,6 +130,7 @@ export class DepositTokensComponent extends BasePage implements OnInit {
         }
       },
     };
+    // this.settings.delete = true;
 
     // this.settings.rowClassFunction = async (row: any) => {
 
@@ -193,6 +209,7 @@ export class DepositTokensComponent extends BasePage implements OnInit {
         });
 
         Promise.all(result).then((resp: any) => {
+          this.showPagination = true;
           this.totalItems = response.count;
           this.data1.load(response.data);
           this.data1.refresh();
@@ -272,6 +289,18 @@ export class DepositTokensComponent extends BasePage implements OnInit {
     this.form.get('balanceAt').setValue('');
   }
 
+  async cleanDataBank() {
+    this.form.get('bank').setValue('');
+    this.form.get('account').setValue('');
+    this.form.get('accountType').setValue('');
+    this.form.get('currency').setValue('');
+    this.form.get('square').setValue('');
+    this.form.get('branch').setValue('');
+    this.form.get('balanceOf').setValue('');
+    this.form.get('description').setValue('');
+    this.form.get('balanceAt').setValue('');
+  }
+
   // BUTTONS FUNCTIONS //
 
   async desconciliarFunc() {
@@ -286,6 +315,7 @@ export class DepositTokensComponent extends BasePage implements OnInit {
       } else {
         let obj: any = {
           numberMotion: this.dataMovements.no_movimiento,
+          numberAccount: this.dataMovements.no_cuenta,
           numberGood: null,
           numberProceedings: null,
         };
@@ -297,10 +327,9 @@ export class DepositTokensComponent extends BasePage implements OnInit {
               `El bien ${this.dataMovements.no_bien} ha sido desconciliado`,
               ''
             );
-            this.loading = false;
           },
           error: err => {
-            this.alert('error', `Error al desconciliar`, '');
+            this.alert('error', `Error al desconciliar`, err.error.message);
             this.loading = false;
           },
         });
@@ -308,6 +337,50 @@ export class DepositTokensComponent extends BasePage implements OnInit {
     }
   }
 
+  async actualizarFunc() {
+    this.showPagination = true;
+    this.paramsList.getValue().limit = 10;
+    this.paramsList.getValue().page = 1;
+    this.getAccount();
+    if (this.dataMovements) {
+      if (this.dataMovements.bank) {
+        this.cleanDataBank();
+      }
+    }
+  }
+
+  async importar() {}
+
+  onFileChange(event: Event) {
+    const files = (event.target as HTMLInputElement).files;
+    if (files.length != 1) throw 'No files selected, or more than of allowed';
+    const fileReader = new FileReader();
+    fileReader.readAsBinaryString(files[0]);
+    fileReader.onload = () => this.readExcel(fileReader.result);
+  }
+
+  readExcel(binaryExcel: string | ArrayBuffer) {
+    try {
+      const excelImport = this.excelService.getData<any>(binaryExcel);
+      this.data1.load(excelImport);
+      this.showPagination = false;
+      this.totalItems = this.data1.count();
+    } catch (error) {
+      this.onLoadToast('error', 'Ocurrio un error al leer el archivo', 'Error');
+    }
+  }
+
+  async exportar() {
+    const filename: string = 'Deposit Tokens';
+    const jsonToCsv = await this.returnJsonToCsv();
+    console.log('jsonToCsv', jsonToCsv);
+    this.jsonToCsv = jsonToCsv;
+    this.excelService.export(this.jsonToCsv, { type: 'csv', filename });
+  }
+
+  async returnJsonToCsv() {
+    return this.data1.getAll();
+  }
   // GET DETAILS CURRENCY //
   async getTvalTable5(currency: any) {
     const params = new ListParams();
@@ -352,6 +425,7 @@ export class DepositTokensComponent extends BasePage implements OnInit {
       },
     });
   }
+
   openForm(data?: any) {
     const modalConfig = MODAL_CONFIG;
     let noCuenta = null;
@@ -371,5 +445,105 @@ export class DepositTokensComponent extends BasePage implements OnInit {
   miFuncion() {
     this.getAccount();
     // console.log('Función ejecutada desde el componente hijo');
+  }
+
+  addMovement() {
+    let data = 1;
+    this.openFormAdd(data);
+  }
+
+  openFormAdd(data?: any) {
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      data,
+      callback: (next: boolean) => {
+        this.getAccount();
+        console.log('AQUI', next);
+      },
+    };
+    this.modalService.show(AddMovementComponent, modalConfig);
+  }
+
+  // DECLARE
+  //   vb_hay_hijos BOOLEAN:= FALSE;
+  //   BEGIN
+  //   IF: blk_mov.no_bien IS NOT NULL THEN
+  //   LIP_MENSAJE('No puede eliminar un movimiento que ya esta asociado a un expediente-bien','S');
+  //   ELSE
+  //     --Determina si no tiene asociado alguna devolucion
+  //     FOR reg IN(SELECT 1
+  //                 FROM   cheques_devolucion
+  //                 WHERE  no_movimiento_origen_deposito = : blk_mov.no_movimiento)
+  // LOOP
+  // vb_hay_hijos:= TRUE;
+  // EXIT;
+  //     END LOOP;
+  //     IF vb_hay_hijos THEN
+  //        LIP_MENSAJE('No se puede eliminar una ficha mientras tenga devoluciones registradaa', 'C');
+  //       ELSE
+  //        DELETE_RECORD;
+  //     END IF;
+  //   END IF;
+  // END;
+
+  async showDeleteAlert(data: any) {
+    console.log(data);
+    let vb_hay_hijos: boolean = false;
+
+    if (data.no_bien != null) {
+      this.alert(
+        'warning',
+        'No puede eliminar un movimiento que ya está asociado a un expediente-bien',
+        ''
+      );
+    } else {
+      // VERIFICAR CHEQUES
+      const val: any = await this.getChecksReturn(data.no_movimiento);
+      vb_hay_hijos = val;
+
+      if (vb_hay_hijos) {
+        this.alert(
+          'warning',
+          'No se puede eliminar una ficha mientras tenga devoluciones registradas',
+          ''
+        );
+      } else {
+        this.alertQuestion(
+          'question',
+          'Se eliminará el movimiento',
+          '¿Desea Continuar?'
+        ).then(async question => {
+          if (question.isConfirmed) {
+            let obj: ICuentaDelete = {
+              numberAccount: Number(data.no_cuenta),
+              numberMotion: Number(data.no_movimiento),
+            };
+            this.accountMovementService.eliminarMovementAccount(obj).subscribe({
+              next: response => {
+                this.alert('success', 'Movimiento Eliminado Correctamente', '');
+                console.log('res', response);
+              },
+              error: err => {
+                this.alert('error', 'Error al eliminar el movimiento', '');
+              },
+            });
+          }
+        });
+      }
+    }
+  }
+
+  async getChecksReturn(id: any) {
+    return new Promise((resolve, reject) => {
+      this.accountMovementService.getReturnCheck(id).subscribe({
+        next: response => {
+          console.log('res', response);
+          resolve(true);
+        },
+        error: err => {
+          resolve(false);
+        },
+      });
+    });
   }
 }

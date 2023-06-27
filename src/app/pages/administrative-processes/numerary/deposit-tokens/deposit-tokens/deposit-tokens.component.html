@@ -4,18 +4,37 @@
   </div>
   <div body>
     <div class="row">
-      <div class="col-md-10"></div>
-      <div class="col-md-2 text-end">
-        <button
-          type="button"
-          tooltip="Agregar"
-          containerClass="tooltip-style"
-          class="btn btn-info btn-sm active ml-2 mr-2">
-          <i class="bx bx-plus bx-sm float-icon"></i>
-        </button>
-        <button class="btn btn-primary btn-sm active" (click)="openForm()">
-          Movimientos
-        </button>
+      <div class="col-md-5"></div>
+      <div class="col-md-7 text-end">
+        <div class="row">
+          <div class="col-5">
+            <!-- <app-columns-select [(settings)]="settings"></app-columns-select> -->
+          </div>
+
+          <div class="col-7 text-end">
+            <div class="row">
+              <div class="col-6 d-flex justify-content-end">
+                <app-columns-select
+                  [(settings)]="settings"></app-columns-select>
+              </div>
+              <div class="col-6">
+                <button
+                  (click)="addMovement()"
+                  type="button"
+                  tooltip="Agregar"
+                  containerClass="tooltip-style"
+                  class="btn btn-info btn-sm active ml-2 mr-2">
+                  <i class="bx bx-plus bx-sm float-icon"></i>
+                </button>
+                <button
+                  class="btn btn-primary btn-sm active"
+                  (click)="openForm()">
+                  Movimientos
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
     <div class="row mt-4">
@@ -23,25 +42,29 @@
         <div [class]="loading ? 'table-loading' : ''">
           <ng2-smart-table
             id="fichas"
+            (delete)="showDeleteAlert($event.data)"
             (userRowSelect)="onCustomAction($event)"
             [attr.class]="'table-bordered'"
             [settings]="settings"
             [source]="data1">
           </ng2-smart-table>
         </div>
-        <app-pagination [params]="paramsList" [totalItems]="totalItems">
+        <app-pagination
+          *ngIf="showPagination"
+          [params]="paramsList"
+          [totalItems]="totalItems">
         </app-pagination>
       </div>
     </div>
     <form class="form-material mt-4" [formGroup]="form">
       <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-6 mt-3">
           <span class="text-yellow mr-5"
             ><i class="fa fa-square"></i> Ficha asociada
           </span>
         </div>
         <!-- <div class="col-md-5"></div> -->
-        <div class="col-md-6">
+        <div class="col-md-6 mt-3">
           <form-field
             [control]="form.get('descriptionGood')"
             label="Descripción del Bien">
@@ -60,20 +83,37 @@
             <div class="row">
               <div class="col-md-12 mt-3 text-center">
                 <button
+                  (click)="exportar()"
                   style="width: 70%"
-                  class="btn btn-primary btn-sm active">
+                  class="btn btn-success btn-sm">
                   Exportar
+                  <i class="bx bx-download float-icon"></i>
                 </button>
               </div>
               <div class="col-md-12 mt-3 text-center">
+                <!-- <div class="m-3"> -->
                 <button
+                  class="btn btn-success btn-sm"
                   style="width: 70%"
-                  class="btn btn-primary btn-sm active">
+                  type="button"
+                  (click)="file.click()">
                   Importar
                 </button>
+                <input
+                  type="file"
+                  name="file"
+                  #file
+                  class="d-none"
+                  accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+                  (change)="onFileChange($event)" />
+                <!-- </div> -->
+                <!-- <button (click)="importar()" style="width: 70%" class="btn btn-primary btn-sm active">
+                  Importar
+                </button> -->
               </div>
               <div class="col-md-12 mt-3 text-center">
                 <button
+                  (click)="actualizarFunc()"
                   style="width: 70%"
                   class="btn btn-primary btn-sm active">
                   Actualizar

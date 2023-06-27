@@ -23,7 +23,7 @@ export const COLUMNS = {
     title: 'Estatus',
     sort: false,
   },
-  check: {
+  selected: {
     title: '',
     type: 'custom',
     renderComponent: CheckboxElementComponent,
