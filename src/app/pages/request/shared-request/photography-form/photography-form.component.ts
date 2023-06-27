@@ -41,7 +41,9 @@ export class PhotographyFormComponent extends BasePage implements OnInit {
     this.settings = {
       ...this.settings,
       columns: PHOTOGRAPHY_COLUMNS,
-      edit: { editButtonContent: '<i class="bx bxs-image"></i> Ver' },
+      edit: {
+        editButtonContent: '<i  class="fa fa-eye text-info mx-2" > Ver</i>',
+      },
     };
   }
 

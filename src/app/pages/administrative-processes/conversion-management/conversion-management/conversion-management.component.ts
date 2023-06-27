@@ -298,12 +298,12 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
         this.actaConversion.setValue(this.conversion.cveActaConv);
         this.alert(
           'success',
-          'Exitoso',
+          'Administración de conversión de bienes',
           'Se ha cargado la conversión correctamente'
         );
       },
       error: err => {
-        this.alert('error', 'ERROR', 'La conversión no existe');
+        this.alert('error', 'Ha ocurrido un error', 'La conversión no existe');
         this.form.reset();
         console.log(err);
       },
