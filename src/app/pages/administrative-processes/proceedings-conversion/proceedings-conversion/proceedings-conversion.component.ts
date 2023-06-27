@@ -249,11 +249,11 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.department = this.authService.decodeToken().department;
-    this.userTracker(
-      this.screenKey,
-      this.authService.decodeToken().preferred_username
-    );
-    console.log(this.userTracker);
+    // this.userTracker(
+    //   this.screenKey,
+    //   this.authService.decodeToken().preferred_username
+    // );
+    // console.log(this.userTracker);
     this.proceedingsConversionForm = this.fb.group({
       idConversion: [null, Validators.required],
       goodFatherNumber: [null, Validators.required],
