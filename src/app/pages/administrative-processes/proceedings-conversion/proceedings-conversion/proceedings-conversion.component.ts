@@ -137,7 +137,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
   paramsGoodsType: number = 0;
   loadingGoods = false;
   select: any;
-  goods: any;
+  goods: IGood[] = [];
   expedient: IExpedient;
   columnFilters: any = [];
   isAllDisabled = false;
@@ -245,6 +245,35 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
       console.log(this.origin);
     });
     this.initFormPostGetUserData();
+    this.dataGoodTable
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = ``;
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+            filter.field == 'goodId' ||
+            filter.field == 'description' ||
+            filter.field == 'quantity' ||
+            filter.field == 'acta'
+              ? (searchFilter = SearchFilter.EQ)
+              : (searchFilter = SearchFilter.ILIKE);
+            if (filter.search !== '') {
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.params = this.pageFilter(this.params);
+          this.getGoodsByStatus(this.fileNumber);
+        }
+      });
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getGoodsByStatus(this.fileNumber));
   }
 
   private prepareForm() {
@@ -435,7 +464,9 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
           this.preAver = res.fileNumber.preliminaryInquiry;
           this.criCase = res.fileNumber.criminalCase;
           this.cveActa = res.minutesErNumber;
+          console.log(this.cveActa);
           this.userRes = res.fileNumber.usrResponsibleFile;
+          this.proceedingsConversionForm.get('acta').setValue(this.cveActa);
           this.getExpedient(this.fileNumber);
           this.getGoods(this.conversion);
           subscription.unsubscribe();
@@ -561,7 +592,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
       next: (data: any) => {
         this.expedient = data;
         console.log(this.expedient);
-        this.getAllGoodExpedient();
+        // this.getGoodsByStatus(this.fileNumber);
       },
       error: () => console.error('expediente nulo'),
     });
@@ -569,49 +600,13 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
 
   getGoodsByStatus(id: number) {
     this.loading = true;
-    let params = {
-      ...this.params.getValue(),
-      ...this.columnFilters,
-    };
-    this.goodService.getByExpedient(id, params).subscribe({
+    this.convertiongoodService.getAllGoods(id).subscribe({
       next: (data: any) => {
         this.dataGood = data;
         console.log(this.goodsByFather);
       },
       error: () => console.error('no hay bienes en éste expediente'),
     });
-  }
-
-  getAllGoodExpedient() {
-    this.dataGoodTable
-      .onChanged()
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(change => {
-        if (change.action === 'filter') {
-          let filters = change.filter.filters;
-          filters.map((filter: any) => {
-            let field = ``;
-            let searchFilter = SearchFilter.ILIKE;
-            field = `filter.${filter.field}`;
-            filter.field == 'goodId' ||
-            filter.field == 'description' ||
-            filter.field == 'quantity' ||
-            filter.field == 'acta'
-              ? (searchFilter = SearchFilter.EQ)
-              : (searchFilter = SearchFilter.ILIKE);
-            if (filter.search !== '') {
-              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
-            } else {
-              delete this.columnFilters[field];
-            }
-          });
-          this.params = this.pageFilter(this.params);
-          this.getGoodsByStatus(this.fileNumber);
-        }
-      });
-    this.params
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getGoodsByStatus(this.fileNumber));
   }
 
   getQueryParams(name: string) {
