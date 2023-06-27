@@ -73,6 +73,20 @@ export class MsDepositaryService extends HttpService {
     );
   }
 
+  createDepositaryAppointments(body: Partial<IDepositaryAppointments>) {
+    return this.post<IListResponse<IDepositaryAppointments>>(
+      DepositaryEndPoints.DepositaryAppointments,
+      body
+    );
+  }
+
+  updateDepositaryAppointments(body: Partial<IDepositaryAppointments>) {
+    return this.put<IListResponse<IDepositaryAppointments>>(
+      DepositaryEndPoints.DepositaryAppointments,
+      body
+    );
+  }
+
   getPersonsModDepositary(
     params?: _Params
   ): Observable<IListResponse<IPersonsModDepositary>> {

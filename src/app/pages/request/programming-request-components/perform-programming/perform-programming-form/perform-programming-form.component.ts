@@ -539,10 +539,7 @@ export class PerformProgrammingFormComponent
       },
     };
 
-    const estateSearch = this.modalService.show(
-      EstateSearchFormComponent,
-      config
-    );
+    this.modalService.show(EstateSearchFormComponent, config);
   }
 
   showGoodsProgramming() {
@@ -564,8 +561,8 @@ export class PerformProgrammingFormComponent
       if (filterData.length > 0) {
         this.estatesList.load(filterData);
       } else {
-        this.onLoadToast(
-          'info',
+        this.alert(
+          'warning',
           'Acción invalida',
           'No hay bienes disponibles para programar'
         );
@@ -581,8 +578,8 @@ export class PerformProgrammingFormComponent
       if (filterData.length > 0) {
         this.estatesList.load(filterData);
       } else {
-        this.onLoadToast(
-          'info',
+        this.alert(
+          'warning',
           'Acción invalida',
           'No hay bienes disponibles para programar'
         );
@@ -602,8 +599,8 @@ export class PerformProgrammingFormComponent
       if (filterData.length > 0) {
         this.estatesList.load(filterData);
       } else {
-        this.onLoadToast(
-          'info',
+        this.alert(
+          'warning',
           'Acción invalida',
           'No hay bienes disponibles para programar'
         );
@@ -624,8 +621,8 @@ export class PerformProgrammingFormComponent
       if (filterData.length > 0) {
         this.estatesList.load(filterData);
       } else {
-        this.onLoadToast(
-          'info',
+        this.alert(
+          'warning',
           'Acción invalida',
           'No hay bienes disponibles para programar'
         );
@@ -641,8 +638,8 @@ export class PerformProgrammingFormComponent
       if (filterData.length > 0) {
         this.estatesList.load(filterData);
       } else {
-        this.onLoadToast(
-          'info',
+        this.alert(
+          'warning',
           'Acción invalida',
           'No hay bienes disponibles para programar'
         );
@@ -658,8 +655,8 @@ export class PerformProgrammingFormComponent
       if (filterData.length > 0) {
         this.estatesList.load(filterData);
       } else {
-        this.onLoadToast(
-          'info',
+        this.alert(
+          'warning',
           'Acción invalida',
           'No hay bienes disponibles para programar'
         );
@@ -675,8 +672,8 @@ export class PerformProgrammingFormComponent
       if (filterData.length > 0) {
         this.estatesList.load(filterData);
       } else {
-        this.onLoadToast(
-          'info',
+        this.alert(
+          'warning',
           'Acción invalida',
           'No hay bienes disponibles para programar'
         );
@@ -696,8 +693,8 @@ export class PerformProgrammingFormComponent
       if (filterData.length > 0) {
         this.estatesList.load(filterData);
       } else {
-        this.onLoadToast(
-          'info',
+        this.alert(
+          'warning',
           'Acción invalida',
           'No hay bienes disponibles para programar'
         );
@@ -718,8 +715,8 @@ export class PerformProgrammingFormComponent
       if (filterData.length > 0) {
         this.estatesList.load(filterData);
       } else {
-        this.onLoadToast(
-          'info',
+        this.alert(
+          'warning',
           'Acción invalida',
           'No hay bienes disponibles para programar'
         );
@@ -735,8 +732,8 @@ export class PerformProgrammingFormComponent
       if (filterData.length > 0) {
         this.estatesList.load(filterData);
       } else {
-        this.onLoadToast(
-          'info',
+        this.alert(
+          'warning',
           'Acción invalida',
           'No hay bienes disponibles para programar'
         );
@@ -752,8 +749,8 @@ export class PerformProgrammingFormComponent
       if (filterData.length > 0) {
         this.estatesList.load(filterData);
       } else {
-        this.onLoadToast(
-          'info',
+        this.alert(
+          'warning',
           'Acción invalida',
           'No hay bienes disponibles para programar'
         );
@@ -773,8 +770,8 @@ export class PerformProgrammingFormComponent
       if (filterData.length > 0) {
         this.estatesList.load(filterData);
       } else {
-        this.onLoadToast(
-          'info',
+        this.alert(
+          'warning',
           'Acción invalida',
           'No hay bienes disponibles para programar'
         );
@@ -795,8 +792,8 @@ export class PerformProgrammingFormComponent
       if (filterData.length > 0) {
         this.estatesList.load(filterData);
       } else {
-        this.onLoadToast(
-          'info',
+        this.alert(
+          'warning',
           'Acción invalida',
           'No hay bienes disponibles para programar'
         );
@@ -812,8 +809,8 @@ export class PerformProgrammingFormComponent
       if (filterData.length > 0) {
         this.estatesList.load(filterData);
       } else {
-        this.onLoadToast(
-          'info',
+        this.alert(
+          'warning',
           'Acción invalida',
           'No hay bienes disponibles para programar'
         );
@@ -828,8 +825,8 @@ export class PerformProgrammingFormComponent
       if (filterData.length > 0) {
         this.estatesList.load(filterData);
       } else {
-        this.onLoadToast(
-          'info',
+        this.alert(
+          'warning',
           'Acción invalida',
           'No hay bienes disponibles para programar'
         );
@@ -849,8 +846,8 @@ export class PerformProgrammingFormComponent
       if (filterData.length > 0) {
         this.estatesList.load(filterData);
       } else {
-        this.onLoadToast(
-          'info',
+        this.alert(
+          'warning',
           'Acción invalida',
           'No hay bienes disponibles para programar'
         );
@@ -871,8 +868,8 @@ export class PerformProgrammingFormComponent
       if (filterData.length > 0) {
         this.estatesList.load(filterData);
       } else {
-        this.onLoadToast(
-          'info',
+        this.alert(
+          'warning',
           'Acción invalida',
           'No hay bienes disponibles para programar'
         );
@@ -894,8 +891,8 @@ export class PerformProgrammingFormComponent
       if (filterData.length > 0) {
         this.estatesList.load(filterData);
       } else {
-        this.onLoadToast(
-          'info',
+        this.alert(
+          'warning',
           'Acción invalida',
           'No hay bienes disponibles para programar'
         );
@@ -1192,7 +1189,7 @@ export class PerformProgrammingFormComponent
           this.loadingGoods = false;
         } else {
           this.alert(
-            'warning',
+            'info',
             'Advertencía',
             'No hay bienes disponibles para programar'
           );
@@ -1651,22 +1648,6 @@ export class PerformProgrammingFormComponent
   }
   // Visualizar información de alias almacen //
   showDomicile(item: any) {
-    // });data.statusKey === item.domicilio.statusKey
-    // data => data.descCondition === item.domicilio.statusKey
-    //     let nameStatus
-    // item.domicilio.statusKey = this.statesService
-    // .getAll(this.paramsState.getValue())
-    // .subscribe(data =>{
-    //   console.log('itemsx', data)
-    //   console.log('itemzasasasa', item.domicilio.stateKey)
-    //   console.log('data show', JSON.stringify(data.data.find((items:any)=>items.id === item.domicilio.statusKey)))
-
-    //   nameStatus = data.data.find((items:any)=>items.id === item.domicilio.statusKey);
-
-    //   // data.stateCode.descCondition === item.domicilio.statusKey
-    // } );
-
-    // console.log('namesta',nameStatus)
     let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
     config.initialState = {
       item,

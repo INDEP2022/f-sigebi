@@ -46,11 +46,12 @@ export class MenageService extends HttpService {
 
   //http://sigebimsqa.indep.gob.mx/menage/api/v1/gestion-menaje?filter.noGood=$eq:18596
   getByGood(id: string | number, params?: ListParams) {
+    console.log(id, params);
     const route = `${MenageEndpoints.MenageManagement}?filter.noGood=$eq:${id}`;
     return this.get<IListResponse<IMenageDescription>>(route, params);
   }
 
-  getMenaje(params?: ListParams) {
+  getMenaje(params?: any) {
     const route = `${MenageEndpoints.MenageManagement}`;
     return this.get<any>(route, params);
   }

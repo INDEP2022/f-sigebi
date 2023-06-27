@@ -74,7 +74,7 @@ export class AccountMovementService extends HttpService {
   }
 
   getDataBank(params: _Params) {
-    return this.get<IListResponse<any>>('aplication/get-data-bank', params);
+    return this.get<IListResponse<any>>(`aplication/get-data-bank${params}`);
   }
 
   eliminarMovementAccount(movement: ICuentaDelete) {
@@ -83,6 +83,13 @@ export class AccountMovementService extends HttpService {
 
   getReturnCheck(id: any) {
     return this.get<IListResponse<any>>(`aplication/get-return-checks/${id}`);
+  }
+
+  getReturnSaldo(params: any) {
+    return this.post<IListResponse<any>>(
+      `aplication/get-facta-db-fichas-depo`,
+      params
+    );
   }
 }
 
