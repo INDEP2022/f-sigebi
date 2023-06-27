@@ -66,14 +66,14 @@ export class GoodCharacteristicsTable extends BasePage implements OnInit {
   }
 
   private getData() {
-    console.log(this.clasification);
+    // console.log(this.clasification);
     this.loading = true;
     const filterParams = new FilterParams();
     filterParams.limit = 100;
     filterParams.addFilter('classifGoodNumber', this.clasification);
     filterParams.addFilter('columnNumber', '51', SearchFilter.NOTIN);
     const good = this.good as any;
-    console.log(good);
+    // console.log(good);
     this.goodsqueryService
       .getAtribuXClasif(filterParams.getParams())
       .pipe(takeUntil(this.$unSubscribe))
@@ -146,7 +146,7 @@ export class GoodCharacteristicsTable extends BasePage implements OnInit {
   }
 
   ngOnInit() {
-    console.log(this.clasification);
+    // console.log(this.clasification);
     // this.service.goodChange.subscribe({
     //   next: response => {
     //     // debugger;
@@ -181,7 +181,7 @@ export class GoodCharacteristicsTable extends BasePage implements OnInit {
   }
 
   private selectSituations(vals: any, self: GoodCharacteristicsTable) {
-    console.log(vals);
+    // console.log(vals);
     let newString = '';
     if (isArray(vals)) {
       vals.forEach((val: any, index) => {
@@ -255,7 +255,7 @@ export class GoodCharacteristicsTable extends BasePage implements OnInit {
       callback: (cadena: string) => {
         //if (next)
         // debugger;
-        console.log(cadena, this.selectedAttribute, this.dataTemp);
+        // console.log(cadena, this.selectedAttribute, this.dataTemp);
         this.data.forEach(x => {
           if (x.attribute === this.selectedAttribute) {
             x.value = cadena;

@@ -178,7 +178,6 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
         data.endDate = moment(data.endDate).format('DD/MM/YYYY, h:mm:ss a');
         this.programming = data;
 
-        console.log('programming', this.programming);
         this.idTransferent = data.tranferId;
         this.idStation = data.stationId;
         this.getRegionalDelegation();
@@ -368,8 +367,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
     config.initialState = {
       callback: (next: boolean) => {
         if (next) {
-          console.log('next', next);
-
+        
           //this.electronicSign();
         }
       },

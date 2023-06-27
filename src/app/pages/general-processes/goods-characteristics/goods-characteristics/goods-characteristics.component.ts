@@ -29,7 +29,6 @@ import { AttribGoodBadService } from 'src/app/core/services/ms-good/attrib-good-
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
 import { GoodPartializeService } from 'src/app/core/services/ms-partialize/partialize.service';
-import { GoodPhotoService } from 'src/app/core/services/ms-photogood/good-photo.service';
 import { StatusXScreenService } from 'src/app/core/services/ms-screen-status/statusxscreen.service';
 import { SurvillanceService } from 'src/app/core/services/ms-survillance/survillance.service';
 import { SegAcessXAreasService } from 'src/app/core/services/ms-users/seg-acess-x-areas.service';
@@ -73,8 +72,9 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
   disabledBienes: boolean = true;
   goodChange: number = 0;
   bodyGoodCharacteristics: ICharacteristicsGoodDTO = {};
-  showFoto = false;
+  showPhoto = false;
   loadTypes = false;
+  actualGoodNumber: number = null;
   get data() {
     return this.service.data;
   }
@@ -91,10 +91,6 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     this.service.good = value;
   }
 
-  // get form() {
-  //   return this.service.form ? this.service.form : null;
-  // }
-
   get haveTdictaUser() {
     return this.service.haveTdictaUser;
   }
@@ -102,22 +98,6 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
   set haveTdictaUser(value) {
     this.service.haveTdictaUser = value;
   }
-
-  // get di_numerario_conciliado() {
-  //   return this.service.di_numerario_conciliado;
-  // }
-
-  // set di_numerario_conciliado(value) {
-  //   this.service.di_numerario_conciliado = value;
-  // }
-
-  // get disabledBienes() {
-  //   return this.service.disabledBienes;
-  // }
-
-  // set disabledBienes(value) {
-  //   this.service.disabledBienes = value;
-  // }
 
   get disabledDescripcion() {
     return this.service.disabledDescripcion;
@@ -281,7 +261,6 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     private comerDetailService: ComerDetailsService,
     private attribGoodBadService: AttribGoodBadService,
     private fb: FormBuilder,
-    private goodPhoto: GoodPhotoService,
     public router: Router
   ) {
     super();
@@ -292,19 +271,69 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
       if (this.count > 0) this.searchGood(true);
       this.count++;
     });
-    // this.form.valueChanges.subscribe(async x => {
-    //   console.log(x);
-    //   // await this.preUpdate();
-    //   // await this.postRecord();
-    // });
+  }
+
+  ngOnInit(): void {
+    this.prepareForm();
+    this.activatedRoute.queryParams.subscribe({
+      next: param => {
+        // console.log(param);
+        debugger;
+        this.origin = param['origin'] ?? null;
+        this.origin1 = param['origin1'] ?? null;
+        if (
+          this.origin1 == 'FACTJURDICTAMOFICIO' &&
+          this.origin == 'FATRIBREQUERIDO'
+        ) {
+          for (const key in this.paramsScreenOffice) {
+            if (Object.prototype.hasOwnProperty.call(param, key)) {
+              this.paramsScreenOffice[
+                key as keyof typeof this.paramsScreenOffice
+              ] = param[key] ?? null;
+            }
+          }
+          this.origin2 = param['origin2'] ?? null;
+          this.origin3 = param['origin3'] ?? null;
+          this.TIPO_PROC = param['TIPO_PROC'] ?? null;
+          this.NO_INDICADOR = param['NO_INDICADOR'] ?? null;
+        }
+        const selectedBadString = localStorage.getItem('selectedBad');
+        if (selectedBadString) {
+          this.selectedBad = JSON.parse(selectedBadString);
+          if (!this.origin) this.origin = '1';
+
+          // this.selectTab();
+          this.numberGood.setValue(this.selectedBad.id);
+          this.searchGood();
+        }
+      },
+    });
+  }
+
+  ngAfterViewInit() {
+    // this.selectTab();
+    if (localStorage.getItem('selectedBad')) {
+      setTimeout(() => {
+        this.selectTab(0, 1);
+      }, 1000);
+    } else {
+      setTimeout(() => {
+        this.selectTab(1, 0);
+      }, 1000);
+    }
   }
 
   selectTab(tabDisabled: 0 | 1, tabActive: 0 | 1) {
-    console.log(this.staticTabs);
+    // console.log(this.staticTabs);
 
     if (this.staticTabs?.tabs[tabActive]) {
       this.staticTabs.tabs[tabDisabled].disabled = true;
       this.staticTabs.tabs[tabActive].active = true;
+      if (tabDisabled === 0) {
+        this.staticTabs.tabs[2].active = true;
+      } else {
+        this.staticTabs.tabs[2].disabled = true;
+      }
     }
   }
 
@@ -312,7 +341,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     this.location.back();
   }
 
-  prepareForm() {
+  private prepareForm() {
     this.form = this.fb.group({
       type: [null],
       subtype: [null],
@@ -338,71 +367,6 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
       avaluo: ['0'],
       img: [null],
     });
-  }
-
-  ngOnInit(): void {
-    this.prepareForm();
-    this.activatedRoute.queryParams.subscribe({
-      next: param => {
-        console.log(param);
-        this.origin = param['origin'] ?? null;
-        this.origin1 = param['origin1'] ?? null;
-        if (
-          this.origin1 == 'FACTJURDICTAMOFICIO' &&
-          this.origin == 'FATRIBREQUERIDO'
-        ) {
-          for (const key in this.paramsScreenOffice) {
-            if (Object.prototype.hasOwnProperty.call(param, key)) {
-              this.paramsScreenOffice[
-                key as keyof typeof this.paramsScreenOffice
-              ] = param[key] ?? null;
-            }
-          }
-          this.origin2 = param['origin2'] ?? null;
-          this.origin3 = param['origin3'] ?? null;
-          this.TIPO_PROC = param['TIPO_PROC'] ?? null;
-          this.NO_INDICADOR = param['NO_INDICADOR'] ?? null;
-        }
-        const selectedBadString = localStorage.getItem('selectedBad');
-        if (selectedBadString) {
-          this.selectedBad = JSON.parse(selectedBadString);
-          console.log(this.selectedBad);
-          if (!this.origin) this.origin = '1';
-          console.log(this.origin);
-
-          // this.selectTab();
-          this.numberGood.setValue(this.selectedBad.id);
-          this.searchGood();
-        }
-        // this.goodService.getById2(param['noBien']).subscribe({
-        //   next: data => {
-        //     this.searchGood(data);
-        //   },
-        // });
-      },
-    });
-    // this.form.get('noBien').valueChanges.subscribe({
-    //   next: val => {
-    //     this.goodService.getById2(val).subscribe({
-    //       next: data => {
-    //         this.searchGood(data);
-    //       },
-    //     });
-    //   },
-    // });
-  }
-
-  ngAfterViewInit() {
-    // this.selectTab();
-    if (localStorage.getItem('selectedBad')) {
-      setTimeout(() => {
-        this.selectTab(0, 1);
-      }, 1000);
-    } else {
-      setTimeout(() => {
-        this.selectTab(1, 0);
-      }, 1000);
-    }
   }
 
   onFileChange(event: any) {
@@ -486,12 +450,19 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
       return;
     }
     if (this.selectedBad && this.selectedBad.motive) {
+      if (
+        this.selectedBad.motive.includes('SIN FOTOS') &&
+        this.service.files.length === 0
+      ) {
+        this.alert('error', 'ERROR', 'Debe subir fotos al bien');
+        return;
+      }
       this.attribGoodBadService
         .remove(this.selectedBad)
         .pipe(takeUntil(this.$unSubscribe))
         .subscribe({
           next: response => {
-            console.log(response);
+            // console.log(response);
           },
           error: err => {
             console.log(err);
@@ -542,10 +513,15 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
 
   clearFilter() {
     this.bodyGoodCharacteristics = {};
+    this.actualGoodNumber = null;
+    this.selectedBad = null;
+    this.service.files = [];
     this.form.reset();
     this.good = null;
     this.data = [];
     this.totalItems = 0;
+    this.staticTabs.tabs[1].disabled = true;
+    this.staticTabs.tabs[2].disabled = true;
   }
   private async getDelegacionJoinSubdelDepartamentos() {
     return firstValueFrom(
@@ -949,15 +925,14 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     this.selectedBad = await firstValueFrom(
       this.attribGoodBadService.getById(this.good.id).pipe(
         takeUntil(this.$unSubscribe),
-        catchError(x => of({ data: null as IAttribGoodBad })),
-        map(x => x.data)
+        catchError(x => of(null))
       )
     );
   }
 
   async searchGood(byPage = false) {
     // const numberGood = Number(this.numberGood.value);
-    // debugger;
+    debugger;
     this.loading = true;
 
     if (this.fillParams(byPage)) {
@@ -990,22 +965,24 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
       if (response && response.data && response.data.length > 0) {
         this.staticTabs.tabs[1].disabled = false;
         this.staticTabs.tabs[1].active = true;
+        this.staticTabs.tabs[2].disabled = false;
         let item = response.data[0];
         this.totalItems = response.count ?? 0;
         if (item) {
+          this.actualGoodNumber = item.id;
           // this.se
           this.good = item;
-          debugger;
           if (!this.selectedBad) {
             await this.fillSelectedBad();
           }
+          console.log(this.selectedBad);
           if (
             this.selectedBad &&
             this.selectedBad.motive.includes('SIN FOTOS')
           ) {
-            this.showFoto = true;
+            this.showPhoto = true;
           } else {
-            this.showFoto = false;
+            this.showPhoto = false;
           }
           // this.service.newGood = {
           //   id: this.good.id,
