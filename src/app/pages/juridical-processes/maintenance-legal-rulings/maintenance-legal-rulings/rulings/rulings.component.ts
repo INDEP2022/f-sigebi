@@ -6,18 +6,19 @@ import {
   OnInit,
   Output,
 } from '@angular/core';
-import {
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  Validators,
-} from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { BsModalService } from 'ngx-bootstrap/modal';
+import { take } from 'rxjs';
+import { HasMoreResultsComponent } from 'src/app/@standalone/has-more-results/has-more-results.component';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
 import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
   KEYGENERATION_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
+
 /** LIBRERÍAS EXTERNAS IMPORTS */
 
 /** SERVICE IMPORTS */
@@ -64,13 +65,14 @@ export class RulingsComponent extends BasePage implements OnInit, OnDestroy {
     entryHcDate: new FormControl(null),
   });
   searchForm = new FormGroup({
-    id: new FormControl('', Validators.required),
-    typeDict: new FormControl('', Validators.required),
+    id: new FormControl(''),
+    typeDict: new FormControl(''),
   });
 
   constructor(
-    private fb: FormBuilder,
-    private dictationService: DictationService
+    // private fb: FormBuilder,
+    private dictationService: DictationService,
+    private modalService: BsModalService
   ) {
     super();
   }
@@ -87,60 +89,117 @@ export class RulingsComponent extends BasePage implements OnInit, OnDestroy {
   //   });
   // }
 
-  setFormData() {
-    const dictationNumber = this.searchForm.get('id').value;
+  fillData(data: any) {
+    this.form.patchValue(data);
+    console.log(this.form.value);
+    console.log(this.searchForm.value);
+    this.form.get('id').patchValue(this.searchForm.get('id').value);
+    this.form.get('typeDict').patchValue(data.typeDict);
+    this.searchForm.get('typeDict').patchValue(data.typeDict);
+    const value = this.form.value;
+    this.form
+      .get('dictDate')
+      .patchValue(value.dictDate ? new Date(value.dictDate) : null);
+    this.form
+      .get('entryDate')
+      .patchValue(value.entryDate ? new Date(value.entryDate) : null);
+    this.form
+      .get('entryHcDate')
+      .patchValue(value.entryHcDate ? new Date(value.entryHcDate) : null);
+    this.form
+      .get('instructorDate')
+      .patchValue(value.instructorDate ? new Date(value.instructorDate) : null);
+    this.form
+      .get('notifyResolutionDate')
+      .patchValue(
+        value.notifyResolutionDate ? new Date(value.notifyResolutionDate) : null
+      );
+    this.form
+      .get('notifyAssuranceDate')
+      .patchValue(
+        value.notifyAssuranceDate ? new Date(value.notifyAssuranceDate) : null
+      );
+    this.form
+      .get('resolutionDate')
+      .patchValue(value.resolutionDate ? new Date(value.resolutionDate) : null);
+    this.form
+      .get('dictHcDAte')
+      .patchValue(value.dictHcDAte ? new Date(value.dictHcDAte) : null);
+    this.emitChange();
+  }
 
-    this.dictationService.findByIds({ id: dictationNumber }).subscribe({
-      next: data => {
-        this.form.patchValue(data);
-        console.log(this.form.value);
-        console.log(this.searchForm.value);
-        this.form.get('id').patchValue(this.searchForm.get('id').value);
-        this.form.get('typeDict').patchValue(data.typeDict);
-        this.searchForm.get('typeDict').patchValue(data.typeDict);
-        const value = this.form.value;
-        this.form
-          .get('dictDate')
-          .patchValue(value.dictDate ? new Date(value.dictDate) : null);
-        this.form
-          .get('entryDate')
-          .patchValue(value.entryDate ? new Date(value.entryDate) : null);
-        this.form
-          .get('entryHcDate')
-          .patchValue(value.entryHcDate ? new Date(value.entryHcDate) : null);
-        this.form
-          .get('instructorDate')
-          .patchValue(
-            value.instructorDate ? new Date(value.instructorDate) : null
-          );
-        this.form
-          .get('notifyResolutionDate')
-          .patchValue(
-            value.notifyResolutionDate
-              ? new Date(value.notifyResolutionDate)
-              : null
-          );
-        this.form
-          .get('notifyAssuranceDate')
-          .patchValue(
-            value.notifyAssuranceDate
-              ? new Date(value.notifyAssuranceDate)
-              : null
-          );
-        this.form
-          .get('resolutionDate')
-          .patchValue(
-            value.resolutionDate ? new Date(value.resolutionDate) : null
-          );
-        this.form
-          .get('dictHcDAte')
-          .patchValue(value.dictHcDAte ? new Date(value.dictHcDAte) : null);
-        this.emitChange();
+  setFormData() {
+    // const dictationNumber = this.searchForm.get('id').value;
+    const params = new ListParams();
+    const { id, typeDict } = this.searchForm.value;
+    id && (params['filter.id'] = id);
+    typeDict && (params['filter.typeDict'] = typeDict);
+    this.dictationService.getAll(params).subscribe({
+      next: res => {
+        if (res.count == 1) {
+          this.fillData(res.data[0]);
+        } else if (res.count > 1) {
+          this.openMoreOneResults(res);
+        }
+        // const data = res.data[0];
       },
       error: err => {
         this.form.reset();
         console.log(err);
+        this.onLoadToast('warning', '', 'No se encontró el dictamen');
       },
+    });
+  }
+
+  generateParamsSearchDictation() {
+    const { id, typeDict } = this.searchForm.value;
+    const params: any = {};
+    id && (params['filter.id'] = id);
+    // id && (params['filter.id'] = expedientNumber);
+    typeDict && (params['filter.typeDict'] = typeDict);
+    return params;
+  }
+
+  openMoreOneResults(data?: IListResponse<any>) {
+    let context: Partial<HasMoreResultsComponent> = {
+      queryParams: this.generateParamsSearchDictation(),
+      columns: {
+        id: {
+          title: 'Identificador',
+        },
+        passOfficeArmy: {
+          title: 'Clave armada',
+        },
+        expedientNumber: {
+          title: 'Número de expediente',
+        },
+        wheelNumber: {
+          title: 'Número de volante',
+        },
+        typeDict: {
+          title: 'Tipo de dictamen',
+        },
+        status: {
+          title: 'Estatus',
+        },
+      },
+      totalItems: data ? data.count : 0,
+      ms: 'dictation',
+      path: 'dictation',
+    };
+
+    console.log({ context });
+
+    const modalRef = this.modalService.show(HasMoreResultsComponent, {
+      initialState: context,
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    });
+    modalRef.content.onClose.pipe(take(1)).subscribe((result: any) => {
+      console.log({ result });
+      if (result) {
+        this.fillData(result);
+      }
     });
   }
 

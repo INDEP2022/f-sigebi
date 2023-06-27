@@ -57,21 +57,21 @@ export class MassRulingComponent
     columns: {
       goodNumber: {
         title: 'No. Bien',
-        valuePrepareFunction: (data: any) => {
-          return data ? data.id : '';
-        },
+        // valuePrepareFunction: (data: any) => {
+        //   return data ? data.id : '';
+        // },
       },
       fileNumber: {
         title: 'No. Expediente',
-        valuePrepareFunction: (data: any) => {
-          return data ? data.id : '';
-        },
+        // valuePrepareFunction: (data: any) => {
+        //   return data ? data.id : '';
+        // },
       },
     },
   };
   totalItems = 0;
   // Data table
-  dataTable: any[] = [];
+  dataTable: { goodNumber: number; fileNumber: number }[] = [];
   isFileLoad = false;
 
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -129,7 +129,7 @@ export class MassRulingComponent
     ]),
   });
   isDisabledBtnGoodDictation = true;
-  file: File | null = null;
+  // file: File | null = null;
   // public searchForm: FormGroup;
   constructor(
     // private fb: FormBuilder,
@@ -152,8 +152,16 @@ export class MassRulingComponent
     //   this.getVolante();
     // });
     this.params.pipe(skip(1)).subscribe(params => {
-      this.loadDataByIdentifier(params);
+      this.loadDataForDataTable(params);
     });
+  }
+
+  loadDataForDataTable(listParams: ListParams) {
+    if (this.isFileLoad) {
+      this.getTmpExpDesahogoB(listParams);
+    } else {
+      this.loadDataByIdentifier(listParams);
+    }
   }
 
   getDictations(
@@ -258,10 +266,10 @@ export class MassRulingComponent
     let body: any = {};
     if (this.isFileLoad) {
       body['goodIds'] = this.dataTable.map(x => {
-        return { no_bien: x.goodNumber.id };
+        return { no_bien: x.goodNumber };
       });
     } else {
-      body['identifier'] = this.dataTable[0].id;
+      body['identifier'] = this.dataTable[0];
       this.btnsEnabled.btnGoodDictation = true;
       // this.uploadForIdentifier();
     }
@@ -273,7 +281,7 @@ export class MassRulingComponent
         this.form.get('delete').setValue(false);
         this.form.get('delete').disable();
         this.btnsEnabled.btnGoodDictation = false;
-        this.file = null;
+        // this.file = null;
       },
       error: err => {
         console.log(err);
@@ -334,12 +342,11 @@ export class MassRulingComponent
     this.form.reset();
     this.form.get('delete').setValue(false);
     this.form.get('delete').disable();
-    this.file = null;
+    this.isFileLoad = false;
   }
 
   //TODO: FOR TESTING
   async onClickDictation() {
-    // console.log(this.authService.decodeToken());
     const armyOfficeKey = this.form.get('passOfficeArmy').value;
     // if (!armyOfficeKey) {
     //   this.alert(
@@ -411,30 +418,37 @@ export class MassRulingComponent
       'identificadorCargaMasiva'
     ).value;
     if (!identificador) {
-      showToast({
-        icon: 'error',
-        text: 'Debe ingresar un identificador de carga masiva',
-      });
+      this.onLoadToast(
+        'error',
+        '',
+        'Debe ingresar un identificador de carga masiva'
+      );
       return;
     }
     this.loading = true;
     const params = `?filter.id=${identificador}&page=${listParams.page}&limit=${listParams.limit}`;
     this.massiveGoodService.getAllWithFilters(params).subscribe({
       next: data => {
-        this.dataTable = data.data;
+        console.log(data.data);
+        this.dataTable = data.data.map(item => {
+          return {
+            goodNumber: (item.goodNumber as any).id,
+            fileNumber: (item.fileNumber as any).id,
+          };
+        });
         this.totalItems = data.count;
         this.loading = false;
-        this.file = null;
+        // this.file = null;
       },
       error: () => {
         this.dataTable = [];
         this.totalItems = 0;
-        this.file = null;
+        // this.file = null;
         this.loading = false;
       },
     });
   }
-
+  dataFile: { goodNumber: number; fileNumber: number }[];
   async onClickLoadFile(event: any) {
     this.dataTableErrors = [];
     this.dataTable = [];
@@ -449,31 +463,39 @@ export class MassRulingComponent
       event.target.value = null;
       return;
     }
-    this.file = event.target.files[0];
-    const data = await getDataFromExcel(this.file);
+    const file = event.target.files[0];
+    const data = await getDataFromExcel(file);
     if (!this.validateExcel(data)) {
       this.fileInput.nativeElement.value = null;
       return;
     }
-    const dataTable: any[] = [];
-    const dataTableError: any[] = [];
-    data.forEach((item: any, index) => {
-      if (isNaN(item.NO_BIEN) || isNaN(item.NO_EXPEDIENTE)) {
-        dataTableError.push({
-          processId: 12345,
-          description: `REGISTRO: ${index + 1}, CONTENIDO NO_BIEN: ${
-            item.NO_BIEN
-          }, NO_EXPEDIENTE: ${item.NO_EXPEDIENTE} `,
-        });
-        return;
-      }
-      dataTable.push({
-        goodNumber: { id: item.NO_BIEN },
-        fileNumber: { id: item.NO_EXPEDIENTE },
-      });
+    this.dataFile = data.map((item: any) => {
+      return {
+        goodNumber: item.NO_BIEN,
+        fileNumber: item.NO_EXPEDIENTE,
+      };
     });
-    this.dataTableErrors = dataTableError;
-    this.dataTable = dataTable;
+    this.pupPreviousData({ bienes: this.dataFile });
+    // const dataTable: any[] = [];
+    // const dataTableError: any[] = [];
+    // data.forEach((item: any, index) => {
+    //   if (isNaN(item.NO_BIEN) || isNaN(item.NO_EXPEDIENTE)) {
+    //     dataTableError.push({
+    //       processId: 12345,
+    //       description: `REGISTRO: ${index + 1}, CONTENIDO NO_BIEN: ${
+    //         item.NO_BIEN
+    //       }, NO_EXPEDIENTE: ${item.NO_EXPEDIENTE} `,
+    //     });
+    //     return;
+    //   }
+    //   dataTable.push({
+    //     goodNumber: item.NO_BIEN ,
+    //     fileNumber: item.NO_EXPEDIENTE,
+    //   });
+    // });
+    // this.dataTableErrors = dataTableError;
+    // this.dataTable = dataTable;
+
     this.form.get('id').setValue(null);
     this.form.get('delete').enable();
     this.form.get('delete').setValue(false);

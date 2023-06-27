@@ -71,8 +71,9 @@ export class MaintenanceLegalRulingComponent
       justificacion: ['', Validators.required],
     });
   }
-
+  dictation: IDictation;
   rulingsData(value: IDictation) {
+    this.dictation = value;
     this.typeDict = value.typeDict;
     this.dictNumber = value.id;
     this.getDocumentsDictumStateM(value.id, value.typeDict);

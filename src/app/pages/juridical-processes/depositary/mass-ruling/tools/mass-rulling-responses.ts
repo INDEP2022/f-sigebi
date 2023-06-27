@@ -1,4 +1,4 @@
-import { firstValueFrom } from 'rxjs';
+import { firstValueFrom, type BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { type DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
 import { type DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
@@ -9,6 +9,10 @@ export abstract class MassRullingResponses extends BasePage {
   protected abstract documentsService: DocumentsService;
   protected abstract dictationService: DictationService;
   protected abstract massiveDictationService: MassiveDictationService;
+
+  abstract dataTable: any[];
+  abstract totalItems: number;
+  abstract params: BehaviorSubject<ListParams>;
 
   async CountDictationGoodFile(armyOfficeKey: any) {
     const result = await firstValueFrom(
@@ -44,5 +48,43 @@ export abstract class MassRullingResponses extends BasePage {
       this.massiveDictationService.deleteDictationMoreTax(passOfficeArmy)
     );
     return result;
+  }
+
+  pupPreviousData(body: {
+    bienes: { goodNumber: number; fileNumber: number }[];
+  }) {
+    this.dictationService.postApplicationPupPreviousData(body).subscribe({
+      next: result => {
+        this.onLoadToast(
+          'success',
+          '',
+          'Se ha realizado la operación con éxito'
+        );
+        // this.getTmpExpDesahogoB(new ListParams());
+        this.params.next(new ListParams());
+      },
+      error: err => {
+        this.onLoadToast(
+          'error',
+          '',
+          'Ocurrió un error al realizar la operación, inténtelo nuevamente'
+        );
+      },
+    });
+  }
+
+  async getTmpExpDesahogoB(listParams: ListParams) {
+    this.dictationService.getTmpExpDesahogoB(listParams).subscribe({
+      next: result => {
+        const data = result.data;
+        this.dataTable = data.map(item => {
+          return {
+            goodNumber: item.goodNumber,
+            fileNumber: item.fileNumber,
+          };
+        });
+        this.totalItems = result.count;
+      },
+    });
   }
 }
