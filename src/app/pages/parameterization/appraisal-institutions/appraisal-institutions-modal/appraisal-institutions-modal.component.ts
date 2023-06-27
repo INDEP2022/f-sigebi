@@ -124,6 +124,7 @@ export class AppraisalInstitutionsModalComponent
   getEntfed(params: ListParams) {
     this.entFedService.getAll(params).subscribe({
       next: data => {
+        console.log(data.data);
         this.entfedSelect = new DefaultSelect(data.data, data.count);
       },
       error: error => {

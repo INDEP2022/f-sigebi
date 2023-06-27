@@ -7,9 +7,9 @@ export const environment = {
   API_URL: 'http://sigebimsdev.indep.gob.mx/', //'http://localhost:3000/api/v1/',
   API_URL2: 'http://sigebimsdev.indep.gob.mx/',
   URL_PREFIX: 'api/v1/',
-  API_REPORTS_BASE: 'http://reports-dev.indep.gob.mx/jasperserver/',
+  API_REPORTS_BASE: 'http://reports-qa.indep.gob.mx/jasperserver/',
   API_REPORTS:
-    'http://reports-dev.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/',
+    'http://reports-qa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/',
   API_REPORTS_USR: 'sigebiadmon',
   API_REPORTS_PSW: '87654321',
   API_CONTENT: 'http://sigebimsdev.indep.gob.mx/',

@@ -23,7 +23,6 @@ import { IStation2 } from 'src/app/core/models/catalogs/station.model';
 import { AuthorityService } from 'src/app/core/services/catalogs/authority.service';
 import { StationService } from 'src/app/core/services/catalogs/station.service';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
-import Swal from 'sweetalert2';
 import { CatAuthorityModalComponent } from '../cat-authority-modal/cat-authority-modal.component';
 import { CatStationModalComponent } from '../cat-station-modal/cat-station-modal.component';
 
@@ -189,7 +188,8 @@ export class CatTransferentComponent extends BasePage implements OnInit {
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(transferent.id);
-        Swal.fire('Borrado', '', 'success');
+        this.alert('success', 'Borrado', '');
+        //Swal.fire('Borrado', '', 'success');
       }
     });
   }

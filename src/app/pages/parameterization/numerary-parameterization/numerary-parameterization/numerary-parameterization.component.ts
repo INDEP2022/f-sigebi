@@ -54,13 +54,35 @@ export class NumeraryParameterizationComponent
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
-            filter.field == 'typeProceeding' ||
+            switch (filter.field) {
+              case 'typeProceeding':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'initialCategoryDetails':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}.description`;
+                break;
+              case 'finalCategoryDetails':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}.description`;
+                break;
+              case 'initialCategory':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'finalCategory':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
+            /*filter.field == 'typeProceeding' ||
             filter.field == 'initialCategoryDetails' ||
             filter.field == 'finalCategoryDetails' ||
             filter.field == 'initialCategory' ||
             filter.field == 'finalCategory'
               ? (searchFilter = SearchFilter.EQ)
-              : (searchFilter = SearchFilter.ILIKE);
+              : (searchFilter = SearchFilter.ILIKE);*/
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
@@ -82,7 +104,7 @@ export class NumeraryParameterizationComponent
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-    this.numeraryParameterizationAutomService.getAll(params).subscribe({
+    this.numeraryParameterizationAutomService.getAllDetail(params).subscribe({
       next: response => {
         this.numeraryParameterization = response.data;
         this.totalItems = response.count || 0;

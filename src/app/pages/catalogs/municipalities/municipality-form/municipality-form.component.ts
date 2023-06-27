@@ -76,13 +76,13 @@ export class MunicipalityFormComponent extends BasePage implements OnInit {
     });
     if (this.municipality != null) {
       this.edit = true;
-      console.log(this.municipality)
+      console.log(this.municipality);
       this.municipalityForm.patchValue(this.municipality);
       this.municipalityForm.get('stateKey').disable();
       this.municipalityForm.get('idMunicipality').disable();
-      this.getStates(new ListParams, this.municipality.stateKey);
+      this.getStates(new ListParams(), this.municipality.stateKey);
     }
-    this.getStates(new ListParams);
+    this.getStates(new ListParams());
   }
 
   getStates(params: ListParams, id?: string) {
@@ -94,7 +94,7 @@ export class MunicipalityFormComponent extends BasePage implements OnInit {
     });
   }
 
-  stateChange(state: IStateOfRepublic) { }
+  stateChange(state: IStateOfRepublic) {}
 
   close() {
     this.modalRef.hide();
