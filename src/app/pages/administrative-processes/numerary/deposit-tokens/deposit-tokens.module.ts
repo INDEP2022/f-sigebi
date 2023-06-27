@@ -8,6 +8,7 @@ import { FormLoaderComponent } from 'src/app/@standalone/form-loader/form-loader
 import { SharedModule } from '../../../../shared/shared.module';
 import { AddMovementComponent } from './add-movement/add-movement.component';
 import { CustomdbclickComponent } from './customdbclick/customdbclick.component';
+import { CustomdbclickdepositComponent } from './customdbclickdeposit/customdbclickdeposit.component';
 import { DepositTokensModalComponent } from './deposit-tokens-modal/deposit-tokens-modal.component';
 import { DepositTokensRoutingModule } from './deposit-tokens-routing.module';
 import { DepositTokensComponent } from './deposit-tokens/deposit-tokens.component';
@@ -19,6 +20,7 @@ import { ListGoodsComponent } from './list-goods/list-goods.component';
     CustomdbclickComponent,
     ListGoodsComponent,
     AddMovementComponent,
+    CustomdbclickdepositComponent,
   ],
   imports: [
     CommonModule,
