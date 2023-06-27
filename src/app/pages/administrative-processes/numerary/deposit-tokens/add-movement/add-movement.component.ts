@@ -8,8 +8,10 @@ import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { AccountMovementService } from 'src/app/core/services/ms-account-movements/account-movement.service';
 import { NumeraryService } from 'src/app/core/services/ms-numerary/numerary.service';
+import { ParametersService } from 'src/app/core/services/ms-parametergood/parameters.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
@@ -32,29 +34,37 @@ export class AddMovementComponent extends BasePage implements OnInit {
   banks = new DefaultSelect<any>();
   categories = new DefaultSelect<any>();
   maxDate = new Date();
+  dateMovem: Date;
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
     private accountMovementService: AccountMovementService,
-    private numeraryService: NumeraryService
+    private numeraryService: NumeraryService,
+    private token: AuthService,
+    private parametersService: ParametersService
   ) {
     super();
   }
 
   ngOnInit(): void {
     this.prepareForm();
+    this.getCategory(new ListParams());
+    this.getBanks(new ListParams());
   }
 
   prepareForm() {
     this.form = this.fb.group({
-      bank: [null, Validators.nullValidator],
+      bank: [null, [Validators.nullValidator, Validators.required]],
       account: [null, Validators.nullValidator],
       accountType: [null, Validators.nullValidator],
-      currency: [null, Validators.nullValidator],
+      deposit: [null, [Validators.nullValidator, Validators.required]],
       square: [null, Validators.nullValidator],
-      dateCalculationInterests: [null, Validators.nullValidator],
-      dateMovement: [null, Validators.nullValidator],
-      category: [null, Validators.nullValidator],
+      dateCalculationInterests: [
+        null,
+        [Validators.nullValidator, Validators.required],
+      ],
+      dateMovement: [null, [Validators.nullValidator, Validators.required]],
+      category: [null, [Validators.nullValidator, Validators.required]],
       balanceOf: [null, Validators.nullValidator],
       balanceAt: [null, Validators.nullValidator],
     });
@@ -82,43 +92,72 @@ export class AddMovementComponent extends BasePage implements OnInit {
       },
     });
   }
-  dateMovem: Date;
+
+  onDateChange(event: any) {
+    console.log('Fecha seleccionada:', this.dateMovem);
+    // Realiza las acciones deseadas al cambiar la fecha
+  }
+
   dateMovement(event: any) {
-    this.dateMovem = event.target.value;
+    console.log('ev', event);
+    console.log('dateMovem', this.dateMovem);
+    this.form.get('dateCalculationInterests').setValue('');
+    // this.dateMovem = event.target.value;
   }
   close() {
     this.modalRef.hide();
   }
 
   saveRegister() {
+    console.log('VALUE', this.form.value);
+    const SYSDATE = new Date();
+    const USER = this.token.decodeToken().preferred_username;
+    const CATEGORY = this.form.value.category;
+    const BANK = this.form.value.bank;
+
     let obj: any = {
       withdrawal: null,
-      category: 'SSP',
-      deposit: '1.00',
-      numberMotion: '2863',
+      category: CATEGORY.initialCategory,
+      deposit: this.form.value.deposit,
       placeMotion: null,
       pierced: null,
-      dateMotion: '2000-09-08',
-      numberProceedings: '647504',
-      numberRecord: '86042',
-      numberAccount: '2',
+      dateMotion: this.form.value.dateMovement,
+      numberProceedings: null,
+      numberAccount: BANK.no_cuenta,
       InvoiceFile: null,
       genderTransfer: null,
       postTransfer: null,
       cveConcept: null,
-      userinsert: 'AVALENCIA',
-      dateTransfer: '2000-09-19',
+      userinsert: USER,
+      dateTransfer: null,
       ispartialization: null,
-      dateInsertion: '2000-09-19',
+      dateInsertion: SYSDATE,
       userTransfer: null,
       passDiverse: null,
-      numberGood: '2275409',
+      numberGood: null,
       numberMotionTransfer: null,
       postDiverse: null,
-      dateCalculationInterests: '2000-09-19',
+      dateCalculationInterests: this.form.value.dateCalculationInterests,
       isFileDeposit: 'S',
       numberReturnPayCheck: null,
     };
+    console.log('EN', obj);
+
+    this.accountMovementService.create(obj).subscribe({
+      next: response => {
+        console.log('response', response);
+        this.modalRef.content.callback(true);
+        this.close();
+        this.alert('success', 'Movimiento creado exitosamente', '');
+      },
+      error: err => {
+        this.alert(
+          'error',
+          'Error al crear un nuevo movimiento',
+          err.error.message
+        );
+      },
+    });
   }
 
   getBanks(lparams: ListParams) {
@@ -126,13 +165,29 @@ export class AddMovementComponent extends BasePage implements OnInit {
 
     params.page = lparams.page;
     params.limit = lparams.limit;
-    params.addFilter('cveBank', lparams.text, SearchFilter.ILIKE);
+
+    if (lparams?.text.length > 0)
+      if (!isNaN(parseInt(lparams?.text))) {
+        console.log('SI');
+        params.addFilter('cve_cuenta', lparams.text, SearchFilter.EQ);
+      } else {
+        console.log('NO');
+        params.addFilter('cve_banco', lparams.text, SearchFilter.ILIKE);
+      }
 
     // this.hideError();
     return new Promise((resolve, reject) => {
-      this.accountMovementService.getAccountBank(params.getParams()).subscribe({
+      this.accountMovementService.getDataBank(params.getParams()).subscribe({
         next: response => {
-          this.banks = new DefaultSelect(response.data, response.count);
+          let result = response.data.map(item => {
+            item['bankAndNumber'] =
+              item.no_cuenta + ' - ' + item.cve_banco + ' - ' + item.nombre;
+          });
+
+          Promise.all(result).then((resp: any) => {
+            this.banks = new DefaultSelect(response.data, response.count);
+            this.loading = false;
+          });
         },
         error: err => {
           this.banks = new DefaultSelect();
@@ -148,26 +203,33 @@ export class AddMovementComponent extends BasePage implements OnInit {
     params.page = lparams.page;
     params.limit = lparams.limit;
     params.addFilter('category', lparams.text, SearchFilter.ILIKE);
+    params.addFilter('certificateType', 'DEPOSITO', SearchFilter.ILIKE);
 
     // this.hideError();
     return new Promise((resolve, reject) => {
-      this.numeraryService.getNumeraryCategories(params.getParams()).subscribe({
-        next: (response: any) => {
-          console.log('response', response);
-          let result = response.data.map(async (item: any) => {
-            item['categoryAndDesc'] = item.category + ' - ' + item.description;
-          });
+      this.parametersService
+        .getCategorzacionAutomNumerario(params.getParams())
+        .subscribe({
+          next: (response: any) => {
+            console.log('response', response);
+            let result = response.data.map(async (item: any) => {
+              item['categoryAndDesc'] =
+                item.initialCategory + ' - ' + item.certificateType;
+            });
 
-          Promise.all(result).then((resp: any) => {
-            this.categories = new DefaultSelect(response.data, response.count);
-            this.loading = false;
-          });
-        },
-        error: err => {
-          this.categories = new DefaultSelect();
-          console.log(err);
-        },
-      });
+            Promise.all(result).then((resp: any) => {
+              this.categories = new DefaultSelect(
+                response.data,
+                response.count
+              );
+              this.loading = false;
+            });
+          },
+          error: err => {
+            this.categories = new DefaultSelect();
+            console.log(err);
+          },
+        });
     });
   }
 }

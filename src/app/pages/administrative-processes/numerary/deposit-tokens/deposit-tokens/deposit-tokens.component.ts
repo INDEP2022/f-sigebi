@@ -11,6 +11,7 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
+import { ICuentaDelete } from 'src/app/core/models/catalogs/bank-modelo-type-cuentas';
 import { DynamicCatalogsService } from 'src/app/core/services/dynamic-catalogs/dynamiccatalog.service';
 import { AccountMovementService } from 'src/app/core/services/ms-account-movements/account-movement.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
@@ -34,6 +35,7 @@ export class DepositTokensComponent extends BasePage implements OnInit {
   columnFilters: any = [];
   paramsList = new BehaviorSubject<ListParams>(new ListParams());
   jsonToCsv: any[] = [];
+  showPagination: boolean = true;
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
@@ -46,7 +48,16 @@ export class DepositTokensComponent extends BasePage implements OnInit {
     super();
     this.settings = {
       ...this.settings,
-      actions: false,
+      actions: {
+        delete: true,
+        edit: false,
+        add: false,
+      },
+      delete: {
+        deleteButtonContent:
+          '<i class="pl-4 fa fa-trash text-danger mx-2"></i>',
+        confirmDelete: true,
+      },
       hideSubHeader: false,
       columns: {
         bank: {
@@ -64,7 +75,7 @@ export class DepositTokensComponent extends BasePage implements OnInit {
           type: 'string',
           sort: false,
         },
-        invoice: {
+        folio_ficha: {
           title: 'Folio',
           type: 'string',
           sort: false,
@@ -119,6 +130,7 @@ export class DepositTokensComponent extends BasePage implements OnInit {
         }
       },
     };
+    // this.settings.delete = true;
 
     // this.settings.rowClassFunction = async (row: any) => {
 
@@ -197,6 +209,7 @@ export class DepositTokensComponent extends BasePage implements OnInit {
         });
 
         Promise.all(result).then((resp: any) => {
+          this.showPagination = true;
           this.totalItems = response.count;
           this.data1.load(response.data);
           this.data1.refresh();
@@ -325,9 +338,14 @@ export class DepositTokensComponent extends BasePage implements OnInit {
   }
 
   async actualizarFunc() {
+    this.showPagination = true;
+    this.paramsList.getValue().limit = 10;
+    this.paramsList.getValue().page = 1;
     this.getAccount();
-    if (this.dataMovements.bank) {
-      this.cleanDataBank();
+    if (this.dataMovements) {
+      if (this.dataMovements.bank) {
+        this.cleanDataBank();
+      }
     }
   }
 
@@ -345,6 +363,7 @@ export class DepositTokensComponent extends BasePage implements OnInit {
     try {
       const excelImport = this.excelService.getData<any>(binaryExcel);
       this.data1.load(excelImport);
+      this.showPagination = false;
       this.totalItems = this.data1.count();
     } catch (error) {
       this.onLoadToast('error', 'Ocurrio un error al leer el archivo', 'Error');
@@ -438,9 +457,93 @@ export class DepositTokensComponent extends BasePage implements OnInit {
     modalConfig.initialState = {
       data,
       callback: (next: boolean) => {
+        this.getAccount();
         console.log('AQUI', next);
       },
     };
     this.modalService.show(AddMovementComponent, modalConfig);
+  }
+
+  // DECLARE
+  //   vb_hay_hijos BOOLEAN:= FALSE;
+  //   BEGIN
+  //   IF: blk_mov.no_bien IS NOT NULL THEN
+  //   LIP_MENSAJE('No puede eliminar un movimiento que ya esta asociado a un expediente-bien','S');
+  //   ELSE
+  //     --Determina si no tiene asociado alguna devolucion
+  //     FOR reg IN(SELECT 1
+  //                 FROM   cheques_devolucion
+  //                 WHERE  no_movimiento_origen_deposito = : blk_mov.no_movimiento)
+  // LOOP
+  // vb_hay_hijos:= TRUE;
+  // EXIT;
+  //     END LOOP;
+  //     IF vb_hay_hijos THEN
+  //        LIP_MENSAJE('No se puede eliminar una ficha mientras tenga devoluciones registradaa', 'C');
+  //       ELSE
+  //        DELETE_RECORD;
+  //     END IF;
+  //   END IF;
+  // END;
+
+  async showDeleteAlert(data: any) {
+    console.log(data);
+    let vb_hay_hijos: boolean = false;
+
+    if (data.no_bien != null) {
+      this.alert(
+        'warning',
+        'No puede eliminar un movimiento que ya está asociado a un expediente-bien',
+        ''
+      );
+    } else {
+      // VERIFICAR CHEQUES
+      const val: any = await this.getChecksReturn(data.no_movimiento);
+      vb_hay_hijos = val;
+
+      if (vb_hay_hijos) {
+        this.alert(
+          'warning',
+          'No se puede eliminar una ficha mientras tenga devoluciones registradas',
+          ''
+        );
+      } else {
+        this.alertQuestion(
+          'question',
+          'Se eliminará el movimiento',
+          '¿Desea Continuar?'
+        ).then(async question => {
+          if (question.isConfirmed) {
+            let obj: ICuentaDelete = {
+              numberAccount: Number(data.no_cuenta),
+              numberMotion: Number(data.no_movimiento),
+            };
+            this.accountMovementService.eliminarMovementAccount(obj).subscribe({
+              next: response => {
+                this.alert('success', 'Movimiento Eliminado Correctamente', '');
+                console.log('res', response);
+              },
+              error: err => {
+                this.alert('error', 'Error al eliminar el movimiento', '');
+              },
+            });
+          }
+        });
+      }
+    }
+  }
+
+  async getChecksReturn(id: any) {
+    return new Promise((resolve, reject) => {
+      this.accountMovementService.getReturnCheck(id).subscribe({
+        next: response => {
+          console.log('res', response);
+          resolve(true);
+        },
+        error: err => {
+          resolve(false);
+        },
+      });
+    });
   }
 }
