@@ -64,6 +64,8 @@ export class GoodsManagementSocialTable
     }
   }
 
+  showNotLoads() {}
+
   override getData() {
     this.loading = true;
     let params = {
