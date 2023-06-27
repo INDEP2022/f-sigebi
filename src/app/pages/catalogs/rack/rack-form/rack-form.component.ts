@@ -5,7 +5,7 @@ import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { BatchService } from 'src/app/core/services/catalogs/batch.service';
 import { RackService } from 'src/app/core/services/catalogs/rack.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { ListParams } from '../../../../common/repository/interfaces/list-params';
 import { IRack } from '../../../../core/models/catalogs/rack.model';
 import { DefaultSelect } from '../../../../shared/components/select/default-select';
@@ -39,14 +39,21 @@ export class RackFormComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.form = this.fb.group({
-      id: [null, [Validators.required, Validators.maxLength(2)]],
+      id: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(NUMBERS_PATTERN),
+          Validators.maxLength(2),
+        ],
+      ],
       idWarehouse: [null, [Validators.required]],
       idBatch: [null, [Validators.required]],
       description: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      status: [null],
+      status: [null, Validators.maxLength(1)],
       registerNumber: [null],
     });
 
@@ -55,7 +62,7 @@ export class RackFormComponent extends BasePage implements OnInit {
       this.edit = true;
       this.form.patchValue(this.rack);
       this.form.controls['idWarehouse'].setValue(
-        this.rack.warehuseDetails.idWarehouse
+        this.rack.warehouseDetails.idWarehouse
       );
       this.form.controls['idBatch'].setValue(this.rack.batchDetails.id);
       this.getWarehouse(
@@ -72,13 +79,20 @@ export class RackFormComponent extends BasePage implements OnInit {
       console.log(this.form);
     }
     this.form.controls['idWarehouse'].disable();
-    this.getBatch(new ListParams());
+    setTimeout(() => {
+      this.getBatch(new ListParams());
+    }, 1000);
     //console.log(this.form.value.id);
   }
 
   getData(params: ListParams) {
-    this.rackService.getAll(params).subscribe(data => {
-      this.racks = new DefaultSelect(data.data, data.count);
+    this.rackService.getAll(params).subscribe({
+      next: data => {
+        this.racks = new DefaultSelect(data.data, data.count);
+      },
+      error: error => {
+        this.racks = new DefaultSelect();
+      },
     });
   }
   close() {
@@ -93,7 +107,10 @@ export class RackFormComponent extends BasePage implements OnInit {
     this.loading = true;
     this.rackService.create(this.form.getRawValue()).subscribe({
       next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
+      error: error => {
+        this.loading = false;
+        this.onLoadToast('error', error.error.message, '');
+      },
     });
   }
 
@@ -114,7 +131,8 @@ export class RackFormComponent extends BasePage implements OnInit {
 
   handleSuccess() {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.onLoadToast('success', this.title, `${message} Correctamente`);
+    this.alert('success', this.title, `${message} Correctamente`);
+    //this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();
@@ -140,6 +158,9 @@ export class RackFormComponent extends BasePage implements OnInit {
       next: (types: any) => {
         this.warehouse = new DefaultSelect(types.data, types.count);
       },
+      error: error => {
+        this.warehouse = new DefaultSelect();
+      },
     });
   }
   public getBatch(params: ListParams, id?: string) {
@@ -149,6 +170,9 @@ export class RackFormComponent extends BasePage implements OnInit {
     this.batchService.getAll(params).subscribe({
       next: (types: any) => {
         this.batch = new DefaultSelect(types.data, types.count);
+      },
+      error: error => {
+        this.batch = new DefaultSelect();
       },
     });
   }

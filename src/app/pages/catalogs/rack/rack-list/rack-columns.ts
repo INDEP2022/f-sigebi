@@ -7,11 +7,19 @@ export const RACK_COLUMNS = {
     type: 'number',
     sort: false,
   },
-  warehuseDetails: {
+  warehouseDetails: {
     title: 'Almacén',
     type: 'number',
     valuePrepareFunction: (value: IWarehouse) => {
       return value.description;
+    },
+    filterFunction(cell?: any, search?: string): boolean {
+      let column = cell.description;
+      if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
+        return true;
+      } else {
+        return false;
+      }
     },
     sort: false,
   },
@@ -19,6 +27,14 @@ export const RACK_COLUMNS = {
     title: 'Lote',
     valuePrepareFunction: (value: IBatch) => {
       return value.description;
+    },
+    filterFunction(cell?: any, search?: string): boolean {
+      let column = cell.description;
+      if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
+        return true;
+      } else {
+        return false;
+      }
     },
     type: 'number',
     sort: false,
@@ -28,11 +44,11 @@ export const RACK_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  // status: {
-  //   title: 'Estado',
-  //   type: 'string',
-  //   sort: false,
-  // },
+  status: {
+    title: 'Estado',
+    type: 'string',
+    sort: false,
+  },
   // registerNumber: {
   //   title: 'Numero Registro',
   //   type: 'number',

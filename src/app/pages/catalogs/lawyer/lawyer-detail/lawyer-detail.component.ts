@@ -10,6 +10,7 @@ import { LawyerService } from '../../../../core/services/catalogs/lawyer.service
 import {
   NUMBERS_PATTERN,
   PHONE_PATTERN,
+  RFC_PATTERN,
   STRING_PATTERN,
 } from '../../../../core/shared/patterns';
 
@@ -86,7 +87,14 @@ export class LawyerDetailComponent extends BasePage implements OnInit {
         [Validators.pattern(''), Validators.required, Validators.maxLength(60)],
       ],
       zipCode: [null, [Validators.pattern(''), Validators.required]],
-      rfc: [null, [Validators.required, Validators.maxLength(20)]],
+      rfc: [
+        null,
+        [
+          Validators.pattern(RFC_PATTERN),
+          Validators.required,
+          Validators.maxLength(20),
+        ],
+      ],
       phone: [
         null,
         [
