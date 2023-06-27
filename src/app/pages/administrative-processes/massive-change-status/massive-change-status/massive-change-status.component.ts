@@ -71,7 +71,8 @@ export class MassiveChangeStatusComponent extends BasePage implements OnInit {
     this.settings.columns = COLUMNS;
     this.settings.actions = false;
     this.settings.rowClassFunction = (row: { data: { avalaible: any } }) =>
-    row.data.avalaible ? 'bg-success text-white' : 'bg-dark text-white';
+    row.data.avalaible != null ?
+    (row.data.avalaible ? 'bg-success text-white' : 'bg-dark text-white') : '';
   }
 
   ngOnInit(): void {
@@ -120,6 +121,8 @@ export class MassiveChangeStatusComponent extends BasePage implements OnInit {
       this.goods = [];
       this.availableToUpdate = []
       this.idsNotExist = [];
+      this.goodStatus.reset()
+      this.observation.reset()
       this.showError = false;
       this.showStatus = false;
 
