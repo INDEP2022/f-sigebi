@@ -3,6 +3,7 @@
     <h5 class="modal-title">{{ title }}</h5>
   </div>
   <div body>
+    <h5 class="title">Información General</h5>
     <form class="form-material" [formGroup]="newDocForm">
       <div class="row">
         <div class="col-md-12">
@@ -91,10 +92,11 @@
       </div>
       <div class="row pt-4">
         <div class="col-md-6">
-          <p for="">
-            <span *ngIf="typeDoc === 'good'">No&#46; SIAB&#58;</span>
-            <span *ngIf="typeDoc === 'good'"></span>
-          </p>
+          <form-field
+            [control]="newDocForm.get('noSiab')"
+            label="No&#46; SIAB&#58;">
+            <input type="text" class="form-control" formControlName="noSiab" />
+          </form-field>
         </div>
       </div>
       <div class="row pt-4">
