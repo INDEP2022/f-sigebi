@@ -9,7 +9,7 @@ import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { FilterParams, ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
 import { IHistoryGood } from 'src/app/core/models/administrative-processes/history-good.model';
 import { IGood } from 'src/app/core/models/ms-good/good';
@@ -22,6 +22,8 @@ import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { previewData } from 'src/app/pages/documents-reception/goods-bulk-load/interfaces/goods-bulk-load-table';
 import { getTrackedGoods } from 'src/app/pages/general-processes/goods-tracker/store/goods-tracker.selector';
 import { COLUMNS } from './columns';
+import { GlobalVarsService } from 'src/app/shared/global-vars/services/global-vars.service';
+import { GoodTrackerService } from 'src/app/core/services/ms-good-tracker/good-tracker.service';
 
 interface NotData {
   id: number;
@@ -50,6 +52,7 @@ export class MassiveChangeStatusComponent extends BasePage implements OnInit {
   showStatus: boolean = false;
   availableToAssing: boolean = false;
   $trackedGoods = this.store.select(getTrackedGoods);
+  ngGlobal: any;
   get goodStatus() {
     return this.form.get('goodStatus');
   }
@@ -69,6 +72,8 @@ export class MassiveChangeStatusComponent extends BasePage implements OnInit {
     private readonly goodMassiveServices: StatusGoodMassiveService,
     private massiveGoodService: MassiveGoodService,
     private historyStatusGoodService: HistoryGoodService,
+    private globalVarService: GlobalVarsService,
+    private goodTrackerService: GoodTrackerService,
     private router: Router,
     private store: Store
   ) {
@@ -101,6 +106,53 @@ export class MassiveChangeStatusComponent extends BasePage implements OnInit {
       console.log(params);
       this.paginator(params.page, params.limit);
     });
+
+    this.globalVarService
+      .getGlobalVars$()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: global => {
+          this.ngGlobal = global;
+          if (this.ngGlobal.REL_BIENES) {
+            console.log(this.ngGlobal.REL_BIENES)
+            const paramsF = new FilterParams()
+            paramsF.addFilter('identificator', this.ngGlobal.REL_BIENES)
+            this.goodTrackerService.getAllTmpTracker(paramsF.getParams()).subscribe(
+              res => {
+                console.log(res)
+                this.loading = true;
+                let count = 0;
+                res['data'].forEach(good => {
+                  count = count + 1;
+                  this.goodServices.getById(good.goodNumber).subscribe({
+                    next: response => {
+                      this.goods.push({
+                        ...JSON.parse(JSON.stringify(response)).data[0],
+                        avalaible: null,
+                      });
+                      console.log(this.goods);
+                      this.addStatus();
+                      /* this.validGood(JSON.parse(JSON.stringify(response)).data[0]); */ //!SE TIENE QUE REVISAR
+                    },
+                    error: err => {
+                      if (err.error.message === 'No se encontrarón registros')
+                        this.idsNotExist.push({
+                          id: good.goodNumber,
+                          reason: err.error.message,
+                        });
+                    },
+                  });
+                  if (count === res['data'].length) {
+                    this.loading = false;
+                    this.showError = true;
+                    this.availableToAssing = true;
+                  }
+                });
+              }
+            )
+          }
+        },
+      });
   }
 
   private buildForm() {
