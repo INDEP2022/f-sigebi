@@ -38,16 +38,21 @@
       </div>
     </div>
     <div class="row mt-4">
+      <form-loader *ngIf="loading"></form-loader>
       <div class="col-md-12">
         <div [class]="loading ? 'table-loading' : ''">
-          <ng2-smart-table
-            id="fichas"
-            (delete)="showDeleteAlert($event.data)"
-            (userRowSelect)="onCustomAction($event)"
-            [attr.class]="'table-bordered'"
-            [settings]="settings"
-            [source]="data1">
-          </ng2-smart-table>
+          <ng-scrollbar
+            [track]="'all'"
+            [ngStyle]="{ height: loading ? '0px' : '500px' }">
+            <ng2-smart-table
+              id="fichas"
+              (delete)="showDeleteAlert($event.data)"
+              (userRowSelect)="onCustomAction($event)"
+              [attr.class]="'table-bordered'"
+              [settings]="settings"
+              [source]="data1">
+            </ng2-smart-table>
+          </ng-scrollbar>
         </div>
         <app-pagination
           *ngIf="showPagination"
@@ -184,14 +189,14 @@
                 </form-field>
               </div>
               <div class="col-md-12 mt-3">
-                <form-field
-                  [control]="form.get('accountType')"
-                  label="Tipo de cuenta">
+                <form-field [control]="form.get('balanceOf')" label="Saldo de">
                   <input
-                    readonly
+                    [(ngModel)]="dateMovemInicio"
+                    (ngModelChange)="dateMovementInicio($event)"
+                    bsDatepicker
                     type="text"
                     class="form-control"
-                    formControlName="accountType" />
+                    formControlName="balanceOf" />
                 </form-field>
               </div>
             </div>
@@ -210,20 +215,54 @@
                 </form-field>
               </div>
               <div class="col-md-12 mt-3">
-                <form-field [control]="form.get('balanceOf')" label="Saldo de">
+                <form-field
+                  [control]="form.get('accountType')"
+                  label="Tipo de cuenta">
                   <input
+                    readonly
                     type="text"
                     class="form-control"
-                    formControlName="balanceOf" />
+                    formControlName="accountType" />
                 </form-field>
               </div>
               <div class="col-md-12 mt-3">
                 <form-field [control]="form.get('balanceAt')" label="Saldo al">
                   <input
+                    [(ngModel)]="dateMovemFin"
+                    [minDate]="dateMovemInicio"
+                    (ngModelChange)="dateMovementFin($event)"
+                    bsDatepicker
                     type="text"
                     class="form-control"
                     formControlName="balanceAt" />
                 </form-field>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 mt-4">
+            <div class="row">
+              <div class="col-md-6 mt-3"></div>
+              <div class="col-md-4 mt-3">
+                <form-field [control]="form.get('di_saldo')" label="Saldo">
+                  <input
+                    readonly
+                    type="text"
+                    class="form-control"
+                    formControlName="di_saldo" />
+                </form-field>
+              </div>
+              <div class="col-md-2 mt-4 text-center">
+                <button
+                  [ngClass]="{ loading: loadingBtn }"
+                  [disabled]="
+                    !dataMovements || !dateMovemFin || !dateMovemInicio
+                  "
+                  (click)="calcularSaldo()"
+                  style="width: 80%"
+                  class="btn btn-primary btn-sm active">
+                  Calcular
+                </button>
               </div>
             </div>
           </div>
