@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 import {
   IParamsProceedingsParamsActasConvertion,
   IParamsProceedingsParamsDerivationGoods,
@@ -9,6 +9,7 @@ import {
   providedIn: 'root',
 })
 export class ActasConvertionCommunicationService {
+  private inputValue = new BehaviorSubject<string>('');
   private _actasCoversionParams: IParamsProceedingsParamsActasConvertion = null;
   private _derviationGoodsParams: IParamsProceedingsParamsDerivationGoods =
     null;
@@ -36,5 +37,13 @@ export class ActasConvertionCommunicationService {
 
   enviarDatos(datos: any) {
     this.datosEnviadosSource.next(datos);
+  }
+
+  getInputValue() {
+    return this.inputValue.asObservable();
+  }
+
+  setInputValue(datos: any) {
+    this.inputValue.next(datos);
   }
 }
