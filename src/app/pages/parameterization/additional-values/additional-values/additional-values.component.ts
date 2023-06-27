@@ -37,6 +37,8 @@ export class AdditionalValuesComponent extends BasePage implements OnInit {
   params2 = new BehaviorSubject<ListParams>(new ListParams());
   totalItems2: number = 0;
   settings2 = { ...this.settings };
+  valorAditional: any;
+
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
@@ -110,6 +112,8 @@ export class AdditionalValuesComponent extends BasePage implements OnInit {
     });
   }
   rowsSelected(event: any) {
+    this.valorAditional = event.data;
+
     this.totalItems2 = 0;
     this.tvalTableList = [];
     this.values = event.data;
@@ -183,23 +187,36 @@ export class AdditionalValuesComponent extends BasePage implements OnInit {
   }
   openForm(tvalTable?: ITvalTable5) {
     console.log(tvalTable);
-    let value = this.values;
-    let config: ModalOptions = {
-      initialState: {
-        tvalTable,
-        value,
-        callback: (next: boolean) => {
-          if (next) {
-            this.totalItems2 = 0;
-            this.tvalTableList = [];
-            this.getValuesAll();
-            this.gettvalTable2(this.values);
-          }
+    console.log('valorAditional', this.valorAditional);
+
+    if (this.valorAditional) {
+      let value = this.values;
+
+      console.log('value', value);
+
+      let config: ModalOptions = {
+        initialState: {
+          tvalTable,
+          value,
+          callback: (next: boolean) => {
+            if (next) {
+              this.totalItems2 = 0;
+              this.tvalTableList = [];
+              this.getValuesAll();
+              this.gettvalTable2(this.values);
+            }
+          },
         },
-      },
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
-    };
-    this.modalService.show(AdditionalValuesModalComponent, config);
+        class: 'modal-lg modal-dialog-centered',
+        ignoreBackdropClick: true,
+      };
+      this.modalService.show(AdditionalValuesModalComponent, config);
+    } else {
+      this.alert(
+        'warning',
+        'Advertencia',
+        'Se debe seleccionar un valor adicional'
+      );
+    }
   }
 }
