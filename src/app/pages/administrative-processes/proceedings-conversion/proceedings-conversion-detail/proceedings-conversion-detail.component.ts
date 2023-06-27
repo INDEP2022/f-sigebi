@@ -32,6 +32,7 @@ export class ProceedingsConversionDetailComponent implements OnInit {
       .getInputValue()
       .subscribe(value => {
         this.inputValue = value;
+        console.log(this.inputValue);
         this.header.get('idConversion').setValue(this.inputValue);
         this.inputDisabled = false;
       });
