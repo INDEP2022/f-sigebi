@@ -35,6 +35,7 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
   generateFo: boolean = true;
   @Input() numberFoli: string | number = '';
   @Input() goods: any[] = [];
+  @Input() good: any = null;
   @Output() documentEmmit = new EventEmitter<IDocuments>();
   @Output() firstGood = new EventEmitter<IGood>();
   // get scanningFoli() {
@@ -85,7 +86,7 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
   generateFoli() {
     this.goods.forEach((good, index) => {
       if (index !== 0) {
-        if (good.approved) {
+        if (good.approved == true) {
           const documents: IDocuments = {
             numberProceedings: good.filenumber,
             keySeparator: 60,
@@ -153,15 +154,11 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
   question() {
     console.log('this.folioEscaneoNg', this.folioEscaneoNg);
     if (this.folioEscaneoNg != '') {
-      this.onLoadToast(
-        'warning',
-        'El folio de escaneo ya ha sido generado.',
-        ''
-      );
+      this.alert('warning', 'El folio de escaneo ya ha sido generado.', '');
       return;
     }
     if (this.goods.length === 0) {
-      this.onLoadToast('warning', 'Debe cargar al menos un Bien', '');
+      this.alert('warning', 'Debe cargar al menos un Bien', '');
       return;
     }
     this.alertQuestion(
@@ -171,7 +168,10 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
-        this.document1(this.goods[0]);
+        console.log('this.good', this.good);
+        if (this.good) {
+          this.document1(this.good);
+        }
       }
     });
   }
@@ -212,7 +212,7 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
       },
       error: err => {
         console.log(err);
-        this.onLoadToast('error', 'ERROR', err.error.message);
+        this.alert('error', 'ERROR', err.error.message);
       },
     });
   }
@@ -254,7 +254,7 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
               class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
               ignoreBackdropClick: true, //ignora el click fuera del modal
             };
-            this.onLoadToast('success', '', 'Reporte generado');
+            this.alert('success', '', 'Reporte generado');
             this.modalService.show(PreviewDocumentsComponent, config);
           }
         });
@@ -276,7 +276,7 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
   }
 
   getDocument(good: any) {
-    if (good.approved) {
+    if (good.approved == true) {
       this.firstGood.emit(good);
       console.log('good', good);
       this.filter1.getValue().removeAllFilters();
@@ -286,7 +286,7 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
         .getAllFilter(this.filter1.getValue().getParams())
         .subscribe({
           next: response => {
-            console.log('DOCUMENT', response);
+            // console.log('DOCUMENT', response);
             this.folioEscaneoNg = response.data[0].id;
             this.documentEmmit.emit(response.data[0]);
             this.document = response.data[0];
@@ -295,7 +295,7 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
           },
           error: err => {
             console.log(err);
-            this.documentEmmit.emit(null);
+            // this.documentEmmit.emit(null);
             // this.folioEscaneoNg = '';
           },
         });
@@ -306,5 +306,9 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
   cargarData(binaryExcel: any) {
     this.goodData = binaryExcel;
     // console.log('this.goodData', this.goodData);
+  }
+
+  actualizarVariable2(good: any) {
+    this.good = good;
   }
 }
