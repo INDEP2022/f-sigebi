@@ -40,7 +40,7 @@ export class NumeraryRequestComponent extends BasePage implements OnInit {
   isNew: boolean = true;
   totalItems2: number = 0;
   @ViewChild('file', { static: false }) files: ElementRef<HTMLInputElement>;
-  isSearch: boolean = false;
+  isSearch: boolean = true;
 
   constructor(
     private fb: FormBuilder,
@@ -529,18 +529,24 @@ export class NumeraryRequestComponent extends BasePage implements OnInit {
       }
 
       let body: IRequesNumeraryEnc = this.form.value;
-      this.updateSolcEn(body);
+      await this.updateSolcEn(body);
       //update
     }
   }
 
-  updateSolcEn(body: IRequesNumeraryEnc) {
+  async updateSolcEn(body: IRequesNumeraryEnc) {
     delete body.currency;
     delete body.name;
     delete body.desc_del;
 
     if (typeof body.solnumDate == 'string') {
       body.solnumDate = body.solnumDate.split('/').reverse().join('-');
+    }
+
+    const valids = this.data1.filter(good => good.valid == 'S');
+
+    if (valids.length > 0) {
+      await this.removeAll(body.procnumId);
     }
 
     this.data1.map(async good => {
@@ -566,11 +572,7 @@ export class NumeraryRequestComponent extends BasePage implements OnInit {
 
     this.numEncServ.update(body).subscribe({
       next: async resp => {
-        this.alert(
-          'success',
-          'ÉXITO',
-          'Solicitud ha sido actualizada exitosamente'
-        );
+        this.alert('success', 'Solicitud', 'Ha sido actualizada exitosamente');
       },
       error: () => {
         this.alert(
@@ -579,6 +581,19 @@ export class NumeraryRequestComponent extends BasePage implements OnInit {
           'Ocurrio un error al actualizar la solicitud'
         );
       },
+    });
+  }
+
+  async removeAll(id: number) {
+    return new Promise((resolve, reject) => {
+      this.numDetService.removeAll(id).subscribe({
+        next: () => {
+          resolve(true);
+        },
+        error: () => {
+          resolve(false);
+        },
+      });
     });
   }
 
@@ -594,7 +609,7 @@ export class NumeraryRequestComponent extends BasePage implements OnInit {
 
     this.alertQuestion(
       'question',
-      'Borrado',
+      'Eliminar',
       `¿Estás seguro de eliminar el bien: ${goodNumber}?`
     ).then(async answ => {
       if (answ.isConfirmed) {
@@ -607,7 +622,7 @@ export class NumeraryRequestComponent extends BasePage implements OnInit {
           this.data1 = [...this.data1];
           this.registers = this.data1.length;
           this.totalItems2 = this.data1.length;
-          this.alert('success', 'Éxito', 'Bien borrado exitosamente');
+          this.alert('success', 'Bien', 'Ha sido borrado exitosamente');
         } else {
           await this.deleteGoodDet(removeData);
           this.filterParams2.getValue().removeAllFilters();
@@ -634,7 +649,7 @@ export class NumeraryRequestComponent extends BasePage implements OnInit {
         this.form.get('solnumId').patchValue(resp.solnumId);
         const { solnumId } = this.form.value;
 
-        this.alert('success', 'ÉXITO', 'Solicitud ha sido creada exitosamente');
+        this.alert('success', 'Solicitud', 'Creada exitosamente');
 
         this.data1.map(async good => {
           good.solnumId = solnumId;
@@ -662,7 +677,7 @@ export class NumeraryRequestComponent extends BasePage implements OnInit {
     return new Promise((resolve, reject) => {
       this.numDetService.remove(body).subscribe({
         next: () => {
-          this.alert('success', 'Éxito', 'Bien borrado exitosamente');
+          this.alert('success', 'Bien', 'Ha sido borrado exitosamente');
           resolve(true);
         },
         error: () => {
@@ -785,7 +800,11 @@ export class NumeraryRequestComponent extends BasePage implements OnInit {
       if (ans.isConfirmed) {
         this.numEncServ.remove(solnumId).subscribe({
           next: () => {
-            this.alert('success', 'Éxito', 'Ha sido eliminado exitosamente');
+            this.alert(
+              'success',
+              'Solicitud',
+              'Ha sido eliminada exitosamente'
+            );
             this.clearSearch();
           },
           error: error => {
