@@ -254,7 +254,7 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
               class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
               ignoreBackdropClick: true, //ignora el click fuera del modal
             };
-            this.alert('success', '', 'Reporte generado');
+            this.alert('success', 'Reporte generado correctamente', '');
             this.modalService.show(PreviewDocumentsComponent, config);
           }
         });
