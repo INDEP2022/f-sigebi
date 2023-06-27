@@ -66,7 +66,6 @@ export class HouseholdComponent extends BasePage implements OnInit, OnChanges {
     this.menageServices.getMenaje(this.params.getValue()).subscribe({
       next: response => {
         this.menajes = response.data.map((menage: any) => {
-          console.log(menage);
           return menage.menajeDescription;
         });
         this.totalItems = response.count;
