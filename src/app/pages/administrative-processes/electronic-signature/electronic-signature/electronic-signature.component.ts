@@ -157,7 +157,10 @@ export class ElectronicSignatureComponent extends BasePage implements OnInit {
         statusOf: statusOf,
       };
       this.dictationService.blkControlPrintWhenButtonPressed(model).subscribe({
-        next: resp => res(resp.count),
+        next: resp => {
+          console.log(resp);
+          res(resp.count);
+        },
         error: err => res(0),
       });
     });
