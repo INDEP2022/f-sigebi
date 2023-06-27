@@ -24,7 +24,7 @@ export enum GoodEndpoints {
   GoodByDepositaryGood = 'good/searchByDepositaryGood',
   CreateGoodNumerary = 'good/createGood',
   Vban = 'good/getBan',
-  AttribGoodBad = 'attrib-good-bad',
+  AttribGoodBad = 'attrib-good-bad/get-all',
   AttribGood = 'goods-attributes',
 
   GetAllGoodQuery = 'good/getAllGoodQuery',

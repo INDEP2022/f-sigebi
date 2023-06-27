@@ -26,4 +26,12 @@ export class RequestNumeraryDetService extends HttpService {
   create(data: NumDetGoodsDetail) {
     return this.post(this.route.RequestDet, data);
   }
+
+  update(data: NumDetGoodsDetail) {
+    return this.put(this.route.RequestDet, data);
+  }
+
+  remove(data: NumDetGoodsDetail) {
+    return this.delete(this.route.RequestDet, data);
+  }
 }
