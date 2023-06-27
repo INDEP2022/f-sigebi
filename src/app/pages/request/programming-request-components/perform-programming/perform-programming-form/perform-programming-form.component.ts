@@ -539,10 +539,7 @@ export class PerformProgrammingFormComponent
       },
     };
 
-    const estateSearch = this.modalService.show(
-      EstateSearchFormComponent,
-      config
-    );
+    this.modalService.show(EstateSearchFormComponent, config);
   }
 
   showGoodsProgramming() {
