@@ -85,11 +85,11 @@ export class PhotographyFormComponent extends BasePage implements OnInit {
           this.totalItems = _data.length;
           this.loadingTable = false;
         } else {
-          this.onLoadToast(
+          this.alertInfo(
             'info',
-            'Error',
+            'Información',
             'No hay imagenes agregadadas a este bien'
-          );
+          ).then();
           this.loadingTable = false;
         }
       },
@@ -129,13 +129,13 @@ export class PhotographyFormComponent extends BasePage implements OnInit {
           setTimeout(() => {
             this.getImageGood();
             this.formLoading = false;
-          }, 7000);
+          }, 8000);
           if (loadingPhotos == 1) {
-            this.onLoadToast(
+            this.alertInfo(
               'success',
               'Acción correcta',
-              'Imagen agregada correctamente'
-            );
+              'Imagen Agregada correctamente'
+            ).then();
           }
         }
       },
