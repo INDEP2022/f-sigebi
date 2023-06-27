@@ -3114,6 +3114,10 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
           }
         }
       } else {
+        if (this.pup_genera_xml) {
+          this.pup_genera_xml = false;
+          this.errorFirmOnGetXml(); // Error y regresa los datos a como estaban
+        }
         this.alert('warning', 'Reporte no disponible por el momento', '');
       }
     });
