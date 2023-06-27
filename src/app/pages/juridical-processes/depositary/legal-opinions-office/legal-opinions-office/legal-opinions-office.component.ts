@@ -1796,7 +1796,7 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
     if (this.form.get('issuingUser').value != this.dataUserLogged.user) {
       this.alertInfo(
         'warning',
-        'El usuario actual no corresponde al del campo "Autoriza Dictaminación"',
+        'El usuario actual no corresponde al campo de "Autoriza Dictaminación"',
         'Sólo el usuario del campo "Autoriza Dictaminación" puede realizar está acción'
       );
       return;
