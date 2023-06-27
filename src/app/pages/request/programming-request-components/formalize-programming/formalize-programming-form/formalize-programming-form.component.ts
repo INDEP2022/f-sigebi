@@ -42,6 +42,7 @@ export class FormalizeProgrammingFormComponent
   extends BasePage
   implements OnInit
 {
+  observationProceedings: string;
   isDropup = true;
   goods: any[] = [];
   // receiptGuards: IReception[] = [];
@@ -101,6 +102,7 @@ export class FormalizeProgrammingFormComponent
   typeRelevantName: string = '';
   formLoading: boolean = false;
   goodData: IGood;
+  actId: number = 0;
   settingsGuardGoods = {
     ...this.settings,
     actions: false,
@@ -249,7 +251,10 @@ export class FormalizeProgrammingFormComponent
       { queryParams: { programingId: this.programmingId } }
     ); */
   }
-
+  saveButton() {
+    const observationProceedings = this.observationProceedings;
+    console.log('datoobersea', observationProceedings);
+  }
   getReceipts() {
     const params = new BehaviorSubject<ListParams>(new ListParams());
     params.getValue()['filter.programmingId'] = this.programmingId;
@@ -270,6 +275,7 @@ export class FormalizeProgrammingFormComponent
     this.proceedingService.getProceedings(params.getValue()).subscribe({
       next: response => {
         console.log('response', response);
+        this.actId = response.data[0].id;
         this.proceedings.load(response.data);
         this.totalItemsProceedings = response.count;
       },
@@ -541,10 +547,11 @@ export class FormalizeProgrammingFormComponent
       },
     };
 
-    const generateMinute = this.modalService.show(
-      InformationRecordComponent,
-      config
-    );
+    this.modalService.show(InformationRecordComponent, config);
+  }
+
+  saveInfoProceeding() {
+    ///
   }
 
   processInfoProceeding(proceeding: IProceedings, tranType: string) {
@@ -652,8 +659,134 @@ export class FormalizeProgrammingFormComponent
         this.signatoriesService
           .getSignatoriesFilter(learnedType, learnedId)
           .subscribe({
-            next: response => {
+            next: async response => {
+              console.log('firmantes');
+              response.data.map(async item => {
+                this.signatoriesService
+                  .deleteFirmante(Number(item.signatoryId))
+                  .subscribe({
+                    next: () => {},
+                    error: error => {},
+                  });
+              });
+
+              if (firmFun1) {
+                await this.createFirm(
+                  keyDoc,
+                  idTypeDoc,
+                  proceeding.id,
+                  'ACTAS',
+                  'FIRMA_ELECT_FUN_1',
+                  nomFun1,
+                  proceeding.positionWorker1,
+                  proceeding.idCatWorker1,
+                  proceeding.idNoWorker1
+                );
+              }
+
+              if (firmFun2) {
+                await this.createFirm(
+                  keyDoc,
+                  idTypeDoc,
+                  proceeding.id,
+                  'ACTAS',
+                  'FIRMA_ELECT_FUN_2',
+                  nomFun2,
+                  proceeding.positionWorker2,
+                  proceeding.idCatWorker2,
+                  proceeding.idNoWorker2
+                );
+              }
+
+              if (firmWit1) {
+                await this.createFirm(
+                  keyDoc,
+                  idTypeDoc,
+                  proceeding.id,
+                  'ACTAS',
+                  'FIRMA_ELECT_TEST_1',
+                  nomWit1,
+                  null,
+                  proceeding.idCatWitness1,
+                  proceeding.idNoWitness1
+                );
+              }
+
+              if (firmWit2) {
+                const createSigned = await this.createFirm(
+                  keyDoc,
+                  idTypeDoc,
+                  proceeding.id,
+                  'ACTAS',
+                  'FIRMA_ELECT_TEST_2',
+                  nomWit2,
+                  null,
+                  proceeding.idCatWitness2,
+                  proceeding.idNoWitness2
+                );
+
+                if (createSigned && tranType != 'CE') {
+                  console.log('firmantes creados');
+
+                  if (nomReport) {
+                    this.loadDocument(nomReport, proceeding.id, idTypeDoc);
+                  }
+                }
+              }
+
+              if (tranType == 'CE') {
+                if (OIC) {
+                  if (firmOic) {
+                    const createOIC = await this.createFirm(
+                      keyDoc,
+                      idTypeDoc,
+                      proceeding.id,
+                      'ACTAS',
+                      'FIRMA_ELECT_OIC',
+                      nomOic,
+                      proceeding.positionWorkerOic,
+                      proceeding.idCatWorkerOic,
+                      proceeding.idNoWorkerOic
+                    );
+
+                    if (createOIC) {
+                      if (uvfv) {
+                        if (firmUvfv) {
+                          const createsig = await this.createFirm(
+                            keyDoc,
+                            idTypeDoc,
+                            proceeding.id,
+                            'ACTAS',
+                            'FIRMA_ELECT_UVFV',
+                            nomUvfv,
+                            proceeding.positionWorkerUvfv,
+                            null,
+                            null
+                          );
+
+                          if (createsig) {
+                            if (nomReport) {
+                              this.loadDocument(
+                                nomReport,
+                                proceeding.id,
+                                idTypeDoc
+                              );
+                            }
+                          }
+                        } else {
+                          this.loadDocument(
+                            nomReport,
+                            proceeding.id,
+                            idTypeDoc
+                          );
+                        }
+                      }
+                    }
+                  }
+                }
+              }
               console.log('response', response);
+              console.log('uvfv', uvfv);
             },
             error: async error => {
               console.log('No hay Firmantes');
@@ -716,11 +849,7 @@ export class FormalizeProgrammingFormComponent
                   console.log('firmantes creados');
 
                   if (nomReport) {
-                    this.loadDocument(
-                      nomReport,
-                      response.data[0].id,
-                      idTypeDoc
-                    );
+                    this.loadDocument(nomReport, this.actId, idTypeDoc);
                   }
                 }
               }
@@ -728,7 +857,7 @@ export class FormalizeProgrammingFormComponent
               if (tranType == 'CE') {
                 if (OIC) {
                   if (firmOic) {
-                    await this.createFirm(
+                    const createOIC = await this.createFirm(
                       keyDoc,
                       idTypeDoc,
                       proceeding.id,
@@ -739,30 +868,36 @@ export class FormalizeProgrammingFormComponent
                       proceeding.idCatWorkerOic,
                       proceeding.idNoWorkerOic
                     );
-                  }
-                }
 
-                if (uvfv) {
-                  if (firmUvfv) {
-                    const createsig = await this.createFirm(
-                      keyDoc,
-                      idTypeDoc,
-                      proceeding.id,
-                      'ACTAS',
-                      'FIRMA_ELECT_UVFV',
-                      nomUvfv,
-                      proceeding.positionWorkerUvfv,
-                      null,
-                      null
-                    );
+                    if (createOIC) {
+                      if (uvfv) {
+                        if (firmUvfv) {
+                          const createsig = await this.createFirm(
+                            keyDoc,
+                            idTypeDoc,
+                            proceeding.id,
+                            'ACTAS',
+                            'FIRMA_ELECT_UVFV',
+                            nomUvfv,
+                            proceeding.positionWorkerUvfv,
+                            null,
+                            null
+                          );
 
-                    if (createsig) {
-                      if (nomReport) {
-                        this.loadDocument(
-                          nomReport,
-                          response.data[0].id,
-                          idTypeDoc
-                        );
+                          if (createsig) {
+                            if (nomReport) {
+                              this.loadDocument(
+                                nomReport,
+                                this.actId,
+                                idTypeDoc
+                              );
+                            }
+                          }
+                        } else {
+                          if (nomReport) {
+                            this.loadDocument(nomReport, this.actId, idTypeDoc);
+                          }
+                        }
                       }
                     }
                   }
@@ -799,10 +934,8 @@ export class FormalizeProgrammingFormComponent
         identifierSignatory: identification,
         IDNumber: noIdent,
       };
-      console.log('data firmante', formData);
       this.signatoriesService.create(formData).subscribe({
         next: response => {
-          console.log('firmantes creados', response);
           resolve(true);
         },
         error: error => {},
