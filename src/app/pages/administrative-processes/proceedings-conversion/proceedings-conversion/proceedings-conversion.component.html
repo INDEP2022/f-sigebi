@@ -3,7 +3,7 @@
     <div class="col-md-5">
       <h5 class="title">ACTAS DE CONVERSIÓN</h5>
     </div>
-    <div class="d-flex justify-content-between">
+    <div class="d-flex justify-content-end">
       <div class="d-inline mr-2">
         Fec&#46; de Elaboración:
         <span
@@ -21,6 +21,12 @@
           Regresar
           <i class="fas fa-arrow-circle-left"></i>
         </button>
+        <button
+          (click)="searchProcs()"
+          type="button"
+          class="btn btn-primary active btn-sm">
+          <i class="bx bx-list-plus bx-sm float-icon"></i>
+        </button>
       </div>
     </div>
   </div>
@@ -31,22 +37,22 @@
         <accordion [isAnimated]="true">
           <accordion-group [isOpen]="true">
             <div accordion-heading class="d-flex justify-content-between">
-              <div class="row">
-                <h5>
-                  <i class="fa fa-filter" aria-hidden="true"></i>
-                  Conversión
-                </h5>
-              </div>
+              <h5>
+                <i class="fa fa-filter" aria-hidden="true"></i>
+                Conversión
+              </h5>
+              <!-- <div class="row">
+              </div> -->
 
-              <div></div>
-              <div class="d-inline mr-2">
+              <!-- <div></div> -->
+              <!-- <div class="d-inline mr-2">
                 <button
                   (click)="searchProcs()"
                   type="button"
                   class="btn btn-primary active btn-sm">
                   <i class="bx bx-list-plus bx-sm float-icon"></i>
                 </button>
-              </div>
+              </div> -->
             </div>
             <form [formGroup]="proceedingsConversionForm" class="form-material">
               <div class="form-material">
@@ -74,6 +80,15 @@
                                       {{ goodFatherNumber || '' }}
                                     </div>
                                   </div>
+                                  <!-- <div class="col-md-3">
+                                    <button
+                                      (click)="searchProcs()"
+                                      type="button"
+                                      class="btn btn-primary active btn-sm ml-4">
+                                      <i
+                                        class="bx bx-list-plus bx-sm float-icon"></i>
+                                    </button>
+                                  </div> -->
                                   <div class="col-md-3">
                                     <div>
                                       <label for="">No. Expediente: </label>
@@ -139,7 +154,7 @@
                                           class="form-control"
                                           bsDatepicker
                                           [bsConfig]="datePickerConfig"
-                                          [value]="time | date : 'hh:mm'"
+                                          [value]="time | date: 'hh:mm'"
                                           [disabled]="validPermisos" />
                                       </form-field>
                                     </div>
@@ -389,19 +404,19 @@
                             <ng2-smart-table
                               [attr.class]="'table-bordered my-table'"
                               [settings]="settings"
-                              [source]="dataGood"
+                              [source]="dataTableGood"
                               (userRowSelect)="selectGoods($event)">
                             </ng2-smart-table>
                           </div>
-                          <br />
-                          <app-pagination
-                            [totalItems]="totalItems"></app-pagination>
                           <span class="badge m-2 badge-pill bg-success"
                             >&#42;&#42;Disponibles</span
                           >
                           <span class="badge m-2 badge-pill bg-dark"
                             >&#42;&#42;No Disponibles</span
                           >
+                          <br />
+                          <app-pagination
+                            [totalItems]="totalItems"></app-pagination>
                         </div>
 
                         <div
@@ -498,7 +513,8 @@
               </div>
             </div>
           </accordion-group>
-          <accordion-group>
+
+          <accordion-group [isOpen]="acordionDetail" (click)="closeDetail()">
             <div accordion-heading class="d-flex justify-content-between">
               <div>
                 <h5>

@@ -192,6 +192,9 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     adaptivePosition: true,
     dateInputFormat: 'hh:mm',
   };
+  acordionDetail: boolean = false;
+  dataTableGood: LocalDataSource = new LocalDataSource();
+
   constructor(
     private authService: AuthService,
     protected flyerService: FlyersService,
@@ -599,9 +602,19 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
   getGoodsByStatus(id: number) {
     this.loading = true;
     this.goodService.getByExpedient(id).subscribe({
-      next: (data: any) => {
-        this.dataGood = data;
+      next: data => {
+        console.log(data);
+
+        // this.dataGood = data;
+        this.dataTableGood.load(data.data);
+        this.dataTableGood.refresh();
+        this.totalItems = data.count;
         console.log(this.dataGood);
+      },
+      error: error => {
+        console.log(error);
+        this.dataTableGood.load([]);
+        this.dataTableGood.refresh();
       },
     });
   }
@@ -931,12 +944,27 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     modalConfig.initialState = {
       provider,
     };
-    this.modalService.show(ProceedingsConversionModalComponent, modalConfig);
+
+    let modalRef = this.modalService.show(
+      ProceedingsConversionModalComponent,
+      modalConfig
+    );
+    modalRef.content.onSave.subscribe((next: any) => {
+      console.log(next);
+      this.paramsScreen.PAR_IDCONV = next.id;
+      console.log(this.paramsScreen.PAR_IDCONV);
+
+      this.initForm();
+    });
   }
 
   getDetail() {
+    this.acordionDetail = true;
     const value = this.conversion;
     this.actasConvertionCommunicationService.enviarDatos(value);
+  }
+  closeDetail() {
+    this.acordionDetail = false;
   }
 
   cargarData(binaryExcel: any) {

@@ -112,28 +112,34 @@ export class ProceedingsConversionModalComponent
       error: error => (this.loading = false),
     });
   }
-  onUserRowSelect(row: IConvertiongood): void {
-    this.selectedRow = row;
+  onUserRowSelect(row: any): void {
+    if (row.isSelected) {
+      this.selectedRow = row.data;
+    } else {
+      this.selectedRow = null;
+    }
+
     console.log(this.selectedRow);
   }
 
   handleSuccess(): void {
     this.loading = true;
     this.loading = false;
-    for (const prop in this.selectedRow) {
-      if (Object.prototype.hasOwnProperty.call(this.selectedRow, prop)) {
-        console.log(`${prop}: ${this.selectedRow[0].idConversion}`);
-      }
-    }
+    // for (const prop in this.selectedRow) {
+    //   if (Object.prototype.hasOwnProperty.call(this.selectedRow, prop)) {
+    //     console.log(`${prop}: ${this.selectedRow[0].idConversion}`);
+    //   }
+    // }
     this.onSave.emit(this.selectedRow);
-    this.router.navigate(
-      ['/pages/administrative-processes/proceedings-conversion'],
-      {
-        queryParams: {
-          origin: 'FACTDBCONVBIEN',
-          PAR_IDCONV: Number(this.selectedRow[0].id),
-        },
-      }
-    );
+    this.modalRef.hide();
+    // this.router.navigate(
+    //   ['/pages/administrative-processes/proceedings-conversion'],
+    //   {
+    //     queryParams: {
+    //       origin: 'FACTDBCONVBIEN',
+    //       PAR_IDCONV: Number(this.selectedRow.id),
+    //     },
+    //   }
+    // );
   }
 }
