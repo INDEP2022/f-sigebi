@@ -117,7 +117,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
       this.src = linkDoc;
     }
 
-    if (this.idTypeDoc == 185) {
+    if (this.idTypeDoc == 185 || this.idTypeDoc == 186) {
       let linkDoc: string = `${this.urlBaseReport}Recibo_Resguardo.jasper&ID_RECIBO_RESGUARDO=${this.receiptGuards.id}`;
       this.src = linkDoc;
     }
@@ -189,7 +189,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
 
   signDocument() {
     //mostrar listado de reportes
-    if (this.idTypeDoc == 185) {
+    if (this.idTypeDoc == 185 || this.idTypeDoc == 186) {
       this.modalRef.content.callback(true);
       this.modalRef.hide();
     } else {
@@ -304,9 +304,11 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
               )
               .subscribe({
                 next: response => {
+                  console.log(response);
                   this.msjCheck = true;
                 },
                 error: error => {
+                  //console.log(error);
                   //this.msjCheck = true;
                 },
               });

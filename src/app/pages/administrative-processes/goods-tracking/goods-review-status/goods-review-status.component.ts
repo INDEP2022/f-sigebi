@@ -42,8 +42,8 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
   columns: IGoodsReview[] = [];
   delegations = new DefaultSelect();
   delegacionId: any;
-  delegationNumber: any; // BLK_CONTROL.DELEGACION
-  responsable: any; // BLK_CONTROL.RESPONSABLE
+  delegationNumber: any = null; // BLK_CONTROL.DELEGACION
+  responsable: any = null; // BLK_CONTROL.RESPONSABLE
   goodsExcel: any;
   selectedGender: string = 'all';
   jsonToCsv: any[] = [];
@@ -267,7 +267,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
   async attentionMassive(excelImport: any) {
     console.log('excelImport', excelImport);
     if (excelImport.length == 0) {
-      this.alert('error', 'No hay data cargada en el archivo', 'Error');
+      this.alert('warning', 'No hay data cargada en el archivo', '');
       return;
     }
     let EXISTE: number = 0;
@@ -277,7 +277,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
     let ESTATUSB: number;
     let ESTATUSF: string;
     this.alertQuestion(
-      'info',
+      'question',
       '¿Está seguro de dar por atendidos los bienes del archivo?',
       ''
     ).then(async question => {
@@ -339,6 +339,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
                 goodNumber: excelImport[i].goodNumber,
                 attended: 0,
               };
+
               const getGoodAttended: any = await this.getGoodAndAttendedReturn(
                 objGood
               );
@@ -512,13 +513,17 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
 
   // INSERTAR - HISTORY GOOD
   async putInsertHistoric(historyGood: any) {
-    this.historyGoodService.create(historyGood).subscribe({
-      next: response => {
-        // this.loading = false;
-      },
-      error: error => {
-        // this.loading = false;
-      },
+    return new Promise((resolve, reject) => {
+      this.historyGoodService.create(historyGood).subscribe({
+        next: response => {
+          resolve(true);
+          // this.loading = false;
+        },
+        error: error => {
+          resolve(null);
+          // this.loading = false;
+        },
+      });
     });
   }
 
@@ -533,7 +538,11 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
       otvalor: user,
     };
     const areaCorresp: any = await this.getAreaCorresp(obj);
-    if (areaCorresp != null) this.responsable = areaCorresp;
+    if (areaCorresp != null) {
+      this.responsable = areaCorresp;
+    } else {
+      this.alert('info', 'Falta asignar área Responsable o Delegación.', '');
+    }
   }
 
   // consulta tabla: SEG_ACCESO_X_AREAS
@@ -603,151 +612,126 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
 
   async attention() {
     if (!this.selectedRow) {
-      this.alert('error', 'No se ha seleccionado ninguna fila', 'Error');
+      this.alert('warning', 'No se ha seleccionado ninguna fila', '');
       return;
     }
 
-    let EXISTE: number = 0;
-    let ATENCION = 1;
-    let ACTUALIZA = 0;
-    let vl_ID_EVENTO = 0;
-    let ESTATUSB: number;
+    if (!this.selectedRow.goodNumber) {
+      this.alert('warning', 'El número de bien se encuentra vacío', '');
+      return;
+    }
+
+    let ATENCION: number;
     let ESTATUSF: string;
 
     this.alertQuestion(
-      'info',
-      '¿Está seguro de dar por atendidos los bienes del archivo?',
+      'question',
+      `¿Desea dar por atendido el bien: ${this.selectedRow.goodNumber}?`,
       ''
     ).then(async question => {
       if (question.isConfirmed) {
-        EXISTE = 0;
-        ATENCION = 1;
-        ACTUALIZA = 0;
-        vl_ID_EVENTO = 0;
-
-        let obj = {
+        let obj_: any = {
           goodNumber: this.selectedRow.goodNumber,
-          attended: 0,
-          manager: this.selectedRow.manager,
+          eventId: this.selectedRow.eventId.id,
+          goodType: this.selectedRow.goodType,
+          status: this.selectedRow.status,
+          manager: this.responsable,
+          delegation: this.selectedRow.delegation,
+          attended: 1,
         };
-        const good: any = await this.getGoodReturn(obj);
-        console.log('good', good);
 
-        if (good != null) {
-          EXISTE = good.goodNumber.id;
-          vl_ID_EVENTO = good.eventId.id;
-          ESTATUSB = good.status;
+        const updateGoodMotivRev = await this.updateGoodMotivosRev(obj_);
+        if (updateGoodMotivRev == true) {
         } else {
           this.alert(
             'warning',
-            `Verifique las condiciones de atención de proceso REV del bien: ${this.selectedRow.goodNumber}`,
+            `El bien: ${this.selectedRow.goodNumber} no se pudo actualizar`,
             ''
           );
           return;
         }
 
-        if (EXISTE > 0) {
-          let obj_: any = {
+        let objGood: any = {
+          goodNumber: this.selectedRow.goodNumber,
+          attended: 0,
+        };
+
+        const getGoodAttended: any = await this.getGoodAndAttendedReturn(
+          objGood
+        );
+        if (getGoodAttended != null) {
+          ATENCION = getGoodAttended;
+        } else {
+          ATENCION = 0;
+        }
+
+        if (ATENCION == 0) {
+          let objScreen = {
             goodNumber: this.selectedRow.goodNumber,
-            eventId: good.eventId.id,
-            goodType: good.goodType,
-            status: good.status,
-            manager: this.selectedRow.manager,
-            delegation: good.delegation,
-            attended: 1,
+            status: this.selectedRow.status,
           };
+          const screenXStatus: any = await this.getScreenXStatus(objScreen);
 
-          const updateGoodMotivRev = await this.updateGoodMotivosRev(obj_);
-
-          if (updateGoodMotivRev == true) {
-            ACTUALIZA = 1;
+          if (screenXStatus != null) {
+            ESTATUSF = screenXStatus;
           } else {
+            ESTATUSF = null;
             this.alert(
               'warning',
-              `El bien: ${this.selectedRow.goodNumber} no se pudo atender en MOTIVOSREV`,
+              `No se identificó el estatus final para el bien: ${this.selectedRow.goodNumber}`,
               ''
             );
+            return;
           }
 
-          let objGood: any = {
-            goodNumber: this.selectedRow.goodNumber,
-            attended: 0,
+          let objUpdateGood: any = {
+            id: this.selectedRow.goodNumber,
+            goodId: this.selectedRow.goodNumber,
+            status: ESTATUSF,
           };
-          const getGoodAttended: any = await this.getGoodAndAttendedReturn(
-            objGood
-          );
-          if (getGoodAttended != null) {
-            ATENCION = getGoodAttended;
-          } else {
-            ATENCION = 0;
+          const updateGood: any = await this.updateGoodStatus(objUpdateGood);
+
+          if (updateGood == null) {
+            this.alert(
+              'error',
+              `Error al actualizar el estatus del bien: ${this.selectedRow.goodNumber}`,
+              ''
+            );
+            return;
           }
 
-          if (ATENCION == 0 && ACTUALIZA == 1) {
-            let objScreen = {
-              goodNumber: this.selectedRow.goodNumber,
-              status: ESTATUSB,
-            };
-            const screenXStatus: any = await this.getScreenXStatus(objScreen);
+          var currentDate = new Date();
+          var futureDate = new Date(currentDate.getTime() + 5 * 1000); // A
 
-            if (screenXStatus != null) {
-              ESTATUSF = screenXStatus;
-            } else {
-              this.alert(
-                'warning',
-                `No se identificó el estatus final para el bien: ${this.selectedRow.goodNumber}`,
-                ''
-              );
-              ACTUALIZA = 0;
-            }
+          const historyGood: IHistoryGood = {
+            propertyNum: this.selectedRow.goodNumber,
+            status: ESTATUSF,
+            changeDate: futureDate,
+            userChange: this.token.decodeToken().preferred_username,
+            statusChangeProgram: 'FMATENCBIENESREV',
+            reasonForChange: 'POR ESTATUS REV MASIVO',
+            registryNum: null,
+            extDomProcess: null,
+          };
+          const insertHistoric: any = await this.putInsertHistoric(historyGood);
 
-            let objUpdateGood: any = {
-              id: this.selectedRow.goodNumber,
-              goodId: this.selectedRow.goodNumber,
-              status: ESTATUSF,
-            };
-            const updateGood: any = await this.updateGoodStatus(objUpdateGood);
-
-            if (updateGood == null) {
-              ACTUALIZA = 0;
-              this.alert(
-                'error',
-                `Error al actualizar el estatus del bien: ${this.selectedRow.goodNumber}`,
-                ''
-              );
-            }
-
-            if (ACTUALIZA == 1) {
-              var currentDate = new Date();
-              var futureDate = new Date(currentDate.getTime() + 5 * 1000); // A
-
-              const historyGood: IHistoryGood = {
-                propertyNum: this.selectedRow.goodNumber,
-                status: ESTATUSF,
-                changeDate: futureDate,
-                userChange: this.token.decodeToken().preferred_username,
-                statusChangeProgram: 'FMATENCBIENESREV',
-                reasonForChange: 'POR ESTATUS REV MASIVO',
-                registryNum: null,
-                extDomProcess: null,
-              };
-              const insertHistoric: any = await this.putInsertHistoric(
-                historyGood
-              );
-            } else {
-              let obj__: any = {
-                goodNumber: this.selectedRow.goodNumber,
-                eventId: vl_ID_EVENTO,
-                goodType: good.goodType,
-                status: good.status,
-                manager: this.selectedRow.manager,
-                delegation: good.delegation,
-                attended: 0,
-              };
-
-              const updateGoodMotivRev = await this.updateGoodMotivosRev(obj__);
-            }
+          if (insertHistoric == null) {
+            this.alert(
+              'error',
+              `Error al actualizar el estatus del bien: ${this.selectedRow.goodNumber}`,
+              ''
+            );
+            return;
+          } else {
+            this.alert(
+              'success',
+              `El bien: ${this.selectedRow.goodNumber} se ha atendido correctamente`,
+              ''
+            );
+            this.getMotives();
           }
         }
+        // -------------------------------------------------------------------------------------------------- //
       }
     });
   }
