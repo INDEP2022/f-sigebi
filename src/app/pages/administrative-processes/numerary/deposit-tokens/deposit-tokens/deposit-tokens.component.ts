@@ -191,7 +191,7 @@ export class DepositTokensComponent extends BasePage implements OnInit {
               folio_ficha: () => (searchFilter = SearchFilter.ILIKE),
               fec_traspaso: () => (searchFilter = SearchFilter.ILIKE),
               currency: () => (searchFilter = SearchFilter.ILIKE),
-              deposito: () => (searchFilter = SearchFilter.EQ),
+              deposit: () => (searchFilter = SearchFilter.EQ),
               no_expediente: () => (searchFilter = SearchFilter.EQ),
               no_bien: () => (searchFilter = SearchFilter.EQ),
               categoria: () => (searchFilter = SearchFilter.ILIKE),
