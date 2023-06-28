@@ -218,12 +218,12 @@ export class ChangeOfStatusStiComponent extends BasePage implements OnInit {
       res => {
         this.goods.load(res.data);
         this.loading = false;
-        this.totalItems = res.count
+        this.totalItems = res.count;
       },
       err => {
         console.log(err);
         this.goods.load([]);
-        this.totalItems = 0
+        this.totalItems = 0;
         this.loading = false;
       }
     );
