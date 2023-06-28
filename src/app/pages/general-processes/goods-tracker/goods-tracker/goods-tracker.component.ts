@@ -63,6 +63,7 @@ export class GoodsTrackerComponent extends BasePage implements OnInit {
     /*fin de lo mio */
 
     const form = this.form.value;
+    console.log(this.form.value);
     const { valueFrom, valueTo } = form;
     delete form.valueFrom;
     delete form.valueTo;
