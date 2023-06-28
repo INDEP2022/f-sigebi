@@ -37,6 +37,12 @@ export interface IReceipt {
 }
 
 export interface IRecepitGuard {
+  nameWitnessOne?: string;
+  nameWitnessTwo?: string;
+  officialSeg?: string;
+  chargeSeg?: string;
+  officialSae?: string;
+  chargeSae?: string;
   guard: number;
   idGood: number;
   receiptGuardId: number;
