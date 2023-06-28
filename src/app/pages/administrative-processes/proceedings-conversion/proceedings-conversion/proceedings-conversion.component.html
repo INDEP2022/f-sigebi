@@ -103,7 +103,50 @@
                       [formGroup]="actaRecepttionForm"
                       class="form-material"
                       (ngSubmit)="searchProcs()">
-                      <div class="row"></div>
+                      <div class="row">
+                        <div class="col-md-3">
+                          <div>
+                            <form-field
+                              [control]="actaRecepttionForm.get('acta')"
+                              label="Acta">
+                              <input
+                                #inputValue
+                                type="text"
+                                class="form-control"
+                                formControlName="acta"
+                                [disabled]="validPermisos" />
+                            </form-field>
+                          </div>
+                        </div>
+                        <!-- <div class="col-md-3">
+                          <div>
+                          <form-field [control]="actaRecepttionForm.get('tipoActa')" label="Estado">
+                            <input #inputValue type="text" class="form-control" formControlName="tipoActa" pattern="^[0-9]+"
+                              [disabled]="validaPermisos" />
+                          </form-field>
+                          </div>
+                        </div>                         
+                        <div class="col-md-3">
+                          <div>
+                          <form-field [control]="actaRecepttionForm.get('claveTrans')" label="Trans">
+                            <input #inputValue type="text" class="form-control" formControlName="claveTrans" pattern="^[0-9]+"
+                              [disabled]="validaPermisos" />
+                          </form-field>
+                          </div>
+                        </div>
+                        <div class="col-md-3">
+                          <div>
+                            <form-field [control]="actaRecepttionForm.get('claveTrans')" label="Trans">
+                              <input #inputValue type="text" class="form-control" formControlName="claveTrans" pattern="^[0-9]+"
+                                [disabled]="validaPermisos" />
+                            </form-field>
+                          </div>
+                        </div>
+{
+  
+}
+                      
+                      --></div>
                     </form>
                     <div class="row"></div>
                     <!-- <form [formGroup]="goodFrm" class="form-material" (ngSubmit)="searchProcs()"> -->
@@ -174,53 +217,97 @@
                     <!-- <div>
                       <app-pagination [params]="params" [totalItems]="totalItems"></app-pagination>
                   </div>-->
-                    <div footer>
-                      <div class="d-flex justify-content-center">
-                        <div class="m-3">
-                          <button
-                            type="button"
-                            class="btn btn-primary active btn-sm"
-                            (click)="cerrarActa()">
-                            Detalle de Acta
-                            <i class="fas fa-edit bx-sm float-icon"></i>
-                          </button>
-                        </div>
-                        <div class="m-3">
-                          <button
-                            [disabled]="!disabledImport"
-                            name="file"
-                            #file
-                            class="btn btn-success btn-sm ml-2"
-                            type="button"
-                            (click)="file.click()">
-                            Carga Masiva
-                            <i class="fa fa-upload bx-sm float-icon"></i>
-                          </button>
-                        </div>
-                        <div class="m-3">
-                          <button
-                            type="button"
-                            class="btn btn-primary active btn-sm"
-                            (click)="Generar()">
-                            Imprimir
-                            <i class="bx bx-printer bx-sm float-icon"></i>
-                          </button>
-                        </div>
-                        <div class="m-3">
-                          <button
-                            type="button"
-                            class="btn btn-danger active btn-sm"
-                            (click)="cerrarActa()">
-                            Cerrar Acta
-                            <i class="fas fa-close bx-sm float-icon"></i>
-                          </button>
-                        </div>
-                      </div>
-                    </div>
                   </div>
                 </app-card>
               </div>
             </form>
+            <div footer>
+              <div
+                class="d-flex flex-row justify-content-center align-items-center">
+                <div class="m-3">
+                  <button
+                    type="button"
+                    class="btn btn-primary active btn-sm"
+                    (click)="getDetail()">
+                    Detalle de Acta
+                    <i class="fas fa-edit bx-sm float-icon"></i>
+                  </button>
+                </div>
+                <div class="m-3">
+                  <button
+                    [disabled]="!disabledImport"
+                    name="file"
+                    #file
+                    class="btn btn-success btn-sm ml-2"
+                    type="button"
+                    (click)="file.click()">
+                    Carga Masiva
+                    <i class="fa fa-upload bx-sm float-icon"></i>
+                  </button>
+                </div>
+                <div class="m-3">
+                  <button
+                    type="button"
+                    class="btn btn-primary active btn-sm"
+                    (click)="Generar()">
+                    Imprimir
+                    <i class="bx bx-printer bx-sm float-icon"></i>
+                  </button>
+                </div>
+                <div class="m-3">
+                  <button
+                    type="button"
+                    class="btn btn-danger active btn-sm"
+                    (click)="cerrarActa()">
+                    Cerrar Acta
+                    <i class="fas fa-close bx-sm float-icon"></i>
+                  </button>
+                </div>
+              </div>
+
+              <div
+                class="d-flex flex-row justify-content-center align-items-center">
+                <div class="m-3">
+                  <button
+                    type="button"
+                    class="btn btn-primary active btn-sm"
+                    (click)="getDetail()">
+                    Detalle de Acta
+                    <i class="fas fa-edit bx-sm float-icon"></i>
+                  </button>
+                </div>
+                <div class="m-3">
+                  <button
+                    [disabled]="!disabledImport"
+                    name="file"
+                    #file
+                    class="btn btn-success btn-sm ml-2"
+                    type="button"
+                    (click)="file.click()">
+                    Carga Masiva
+                    <i class="fa fa-upload bx-sm float-icon"></i>
+                  </button>
+                </div>
+                <div class="m-3">
+                  <button
+                    type="button"
+                    class="btn btn-primary active btn-sm"
+                    (click)="Generar()">
+                    Imprimir
+                    <i class="bx bx-printer bx-sm float-icon"></i>
+                  </button>
+                </div>
+                <div class="m-3">
+                  <button
+                    type="button"
+                    class="btn btn-danger active btn-sm"
+                    (click)="cerrarActa()">
+                    Cerrar Acta
+                    <i class="fas fa-close bx-sm float-icon"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
           </accordion-group>
           <accordion-group>
             <div accordion-heading class="d-flex justify-content-between">

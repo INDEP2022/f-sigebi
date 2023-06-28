@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
@@ -65,7 +65,7 @@ export class GenerateReceiptFormComponent extends BasePage implements OnInit {
       seal: [null],
       nameReceipt: [null],
       observation: [null],
-      chargeReceipt: [null],
+      chargeReceipt: [null, [Validators.maxLength(15)]],
       electronicSignatureEnt: ['N'],
       electronicSignatureReceipt: ['N'],
     });
@@ -135,7 +135,7 @@ export class GenerateReceiptFormComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Confirmación',
-      '¿Estás seguro que desea crear Los firmantes?'
+      '¿Estás seguro que desea crear los firmantes?'
     ).then(question => {
       if (question.isConfirmed) {
         const electronicSignatureEnt = this.generateReceiptForm.get(
@@ -240,9 +240,8 @@ export class GenerateReceiptFormComponent extends BasePage implements OnInit {
                   });
               });
 
-              console.log('firmEntF', firmEnt);
               if (firmEnt == 1) {
-                await this.createSign(
+                const createDelivery = await this.createSign(
                   this.idProgramming,
                   103,
                   'RECIBOS',
@@ -250,53 +249,55 @@ export class GenerateReceiptFormComponent extends BasePage implements OnInit {
                   this.proceeding.nameDelivery,
                   this.proceeding.chargeDelivery
                 );
-              }
 
-              if (firmReceip == 1) {
-                const createReceipt = await this.createSign(
-                  this.idProgramming,
-                  103,
-                  'RECIBOS',
-                  'FIRMA_ELECTRONICA_REC',
-                  this.proceeding.nameReceipt,
-                  this.proceeding.chargeReceipt
-                );
-                if (createReceipt) {
-                  if (this.paragraphs.count() > 0) {
-                    this.paragraphs.getElements().then(item => {
-                      item.map(async (data: IReceiptwitness) => {
-                        const createReceiptWitness = await this.createSign(
-                          this.idProgramming,
-                          103,
-                          'RECIBOS_TESTIGOS',
-                          'FIRMA_ELECTRONICA',
-                          data.nameWitness,
-                          data.chargeWitness
-                        );
-                        if (createReceiptWitness) {
-                          this.modalRef.content.callback(
-                            this.proceeding,
-                            this.idProgramming
-                          );
-                          this.close();
-                          this.loading = false;
-                        }
-                      });
-                    });
-                  } else {
-                    this.modalRef.content.callback(
-                      this.proceeding,
-                      this.idProgramming
+                if (createDelivery) {
+                  if (firmReceip == 1) {
+                    const createReceipt = await this.createSign(
+                      this.idProgramming,
+                      103,
+                      'RECIBOS',
+                      'FIRMA_ELECTRONICA_REC',
+                      this.proceeding.nameReceipt,
+                      this.proceeding.chargeReceipt
                     );
-                    this.close();
-                    this.loading = false;
+                    if (createReceipt) {
+                      if (this.paragraphs.count() > 0) {
+                        this.paragraphs.getElements().then(item => {
+                          item.map(async (data: IReceiptwitness) => {
+                            const createReceiptWitness = await this.createSign(
+                              this.idProgramming,
+                              103,
+                              'RECIBOS_TESTIGOS',
+                              'FIRMA_ELECTRONICA',
+                              data.nameWitness,
+                              data.chargeWitness
+                            );
+                            if (createReceiptWitness) {
+                              this.modalRef.content.callback(
+                                this.proceeding,
+                                this.idProgramming
+                              );
+                              this.close();
+                              this.loading = false;
+                            }
+                          });
+                        });
+                      } else {
+                        this.modalRef.content.callback(
+                          this.proceeding,
+                          this.idProgramming
+                        );
+                        this.close();
+                        this.loading = false;
+                      }
+                    }
                   }
                 }
               }
             },
             error: async error => {
               if (firmEnt == 1) {
-                await this.createSign(
+                const createDelivery = await this.createSign(
                   this.idProgramming,
                   103,
                   'RECIBOS',
@@ -304,47 +305,48 @@ export class GenerateReceiptFormComponent extends BasePage implements OnInit {
                   this.proceeding.nameDelivery,
                   this.proceeding.chargeDelivery
                 );
-              }
 
-              console.log('firmReceip', firmReceip);
-              if (firmReceip == 1) {
-                const createReceipt = await this.createSign(
-                  this.idProgramming,
-                  103,
-                  'RECIBOS',
-                  'FIRMA_ELECTRONICA_REC',
-                  this.proceeding.nameReceipt,
-                  this.proceeding.chargeReceipt
-                );
-                if (createReceipt) {
-                  if (this.paragraphs.count() > 0) {
-                    this.paragraphs.getElements().then(item => {
-                      item.map(async (data: IReceiptwitness) => {
-                        const createReceiptWitness = await this.createSign(
-                          this.idProgramming,
-                          103,
-                          'RECIBOS_TESTIGOS',
-                          'FIRMA_ELECTRONICA',
-                          data.nameWitness,
-                          data.chargeWitness
-                        );
-                        if (createReceiptWitness) {
-                          this.modalRef.content.callback(
-                            this.proceeding,
-                            this.idProgramming
-                          );
-                          this.close();
-                          this.loading = false;
-                        }
-                      });
-                    });
-                  } else {
-                    this.modalRef.content.callback(
-                      this.proceeding,
-                      this.idProgramming
+                if (createDelivery) {
+                  if (firmReceip == 1) {
+                    const createReceipt = await this.createSign(
+                      this.idProgramming,
+                      103,
+                      'RECIBOS',
+                      'FIRMA_ELECTRONICA_REC',
+                      this.proceeding.nameReceipt,
+                      this.proceeding.chargeReceipt
                     );
-                    this.close();
-                    this.loading = false;
+                    if (createReceipt) {
+                      if (this.paragraphs.count() > 0) {
+                        this.paragraphs.getElements().then(item => {
+                          item.map(async (data: IReceiptwitness) => {
+                            const createReceiptWitness = await this.createSign(
+                              this.idProgramming,
+                              103,
+                              'RECIBOS_TESTIGOS',
+                              'FIRMA_ELECTRONICA',
+                              data.nameWitness,
+                              data.chargeWitness
+                            );
+                            if (createReceiptWitness) {
+                              this.modalRef.content.callback(
+                                this.proceeding,
+                                this.idProgramming
+                              );
+                              this.close();
+                              this.loading = false;
+                            }
+                          });
+                        });
+                      } else {
+                        this.modalRef.content.callback(
+                          this.proceeding,
+                          this.idProgramming
+                        );
+                        this.close();
+                        this.loading = false;
+                      }
+                    }
                   }
                 }
               }

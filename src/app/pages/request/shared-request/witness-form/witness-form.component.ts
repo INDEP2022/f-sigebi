@@ -23,7 +23,6 @@ export class WitnessFormComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log('id recibo', this.proceeding);
     this.prepareForm();
   }
 
@@ -58,23 +57,22 @@ export class WitnessFormComponent extends BasePage implements OnInit {
         } else {
           this.witnessForm.get('electronicSignature').setValue('N');
         }
-        console.log('witnessForm', this.witnessForm.value);
         this.receptionGoodService
           .createReceiptWitness(this.witnessForm.value)
           .subscribe({
             next: response => {
-              console.log('recibo testigo creado', response);
-              this.onLoadToast(
+              this.alertInfo(
                 'success',
-                'Correcto',
+                'Registro Guardado',
                 'Testigo creado correctamente'
-              );
-              this.modalRef.content.callback(true);
-              this.close();
+              ).then(question => {
+                if (question.isConfirmed) {
+                  this.modalRef.content.callback(true);
+                  this.close();
+                }
+              });
             },
-            error: error => {
-              console.log('error create w', error);
-            },
+            error: error => {},
           });
       }
     });

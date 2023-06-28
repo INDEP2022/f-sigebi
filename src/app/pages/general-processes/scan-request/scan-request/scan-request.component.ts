@@ -166,7 +166,11 @@ export class ScanRequestComponent extends BasePage implements OnInit {
       receiptDate
         ? this.filterParams
             .getValue()
-            .addFilter('receiptDate', receiptDate, SearchFilter.EQ)
+            .addFilter(
+              'receiptDate',
+              receiptDate.split('/').reverse().join('-'),
+              SearchFilter.EQ
+            )
         : null;
     }
 
@@ -212,6 +216,29 @@ export class ScanRequestComponent extends BasePage implements OnInit {
   }
 
   searchNotification() {
+    const {
+      expedientNumber,
+      wheelNumber,
+      receiptDate,
+      preliminaryInquiry,
+      criminalCase,
+      touchPenaltyKey,
+      circumstantialRecord,
+      protectionKey,
+    } = this.formNotification.value;
+
+    if (
+      !expedientNumber &&
+      !wheelNumber &&
+      !receiptDate &&
+      !preliminaryInquiry &&
+      !criminalCase &&
+      !touchPenaltyKey &&
+      !circumstantialRecord &&
+      !protectionKey
+    )
+      return;
+
     this.loading = true;
     this.createFilter();
     this.getNotfications();
@@ -222,10 +249,19 @@ export class ScanRequestComponent extends BasePage implements OnInit {
       .getAllFilter(this.filterParams.getValue().getParams())
       .subscribe({
         next: resp => {
-          this.isSearch = false;
+          this.isSearch = true;
           this.notify = resp;
           this.noVolante = resp.data[0].wheelNumber;
           this.formNotification.patchValue(resp.data[0]);
+          const date = resp.data[0].receiptDate
+            ? resp.data[0].receiptDate
+                .toString()
+                .split('T')[0]
+                .split('-')
+                .reverse()
+                .join('/')
+            : '';
+          this.formNotification.controls['receiptDate'].patchValue(date);
           this.count = resp.count;
           this.searchDocuments(
             this.formNotification.get('expedientNumber').value,
@@ -233,7 +269,7 @@ export class ScanRequestComponent extends BasePage implements OnInit {
           );
         },
         error: err => {
-          this.isSearch = true;
+          this.isSearch = false;
           this.loading = false;
           this.form.reset();
           this.alert('error', 'ERROR', err.error.message);
@@ -250,6 +286,15 @@ export class ScanRequestComponent extends BasePage implements OnInit {
           if (next) {
             this.form.reset();
             this.formNotification.patchValue(data);
+            const date = data.receiptDate
+              ? data.receiptDate
+                  .toString()
+                  .split('T')[0]
+                  .split('-')
+                  .reverse()
+                  .join('/')
+              : '';
+            this.formNotification.controls['receiptDate'].patchValue(date);
             this.noVolante = data.wheelNumber;
             this.searchDocuments(data.expedientNumber, data.wheelNumber);
           }
@@ -307,6 +352,7 @@ export class ScanRequestComponent extends BasePage implements OnInit {
           this.isParamFolio = false;
         },
         error: err => {
+          this.form.reset();
           if (err.status === 500) {
             this.alert(
               'error',
@@ -327,7 +373,7 @@ export class ScanRequestComponent extends BasePage implements OnInit {
     const valid = await this.validations();
     if (valid) {
       const { expedientNumber, wheelNumber } = this.formNotification.value;
-
+      this.loadingDoc = true;
       const token = this.authService.decodeToken();
       let userId = token.preferred_username;
 
@@ -345,15 +391,15 @@ export class ScanRequestComponent extends BasePage implements OnInit {
 
       this.documentServ.create(this.form.value).subscribe({
         next: resp => {
-          this.alert(
-            'success',
-            'ÉXITO',
-            'Solicitud generada, procesando reporte...'
-          );
-          this.loadingDoc = false;
+          // this.alert(
+          //   'success',
+          //   'ÉXITO',
+          //   'Solicitud generada, procesando reporte...'
+          // );
           this.form.patchValue(resp);
           this.idFolio = this.form.get('id').value;
           this.form.get('id').disable();
+          this.countDoc++;
           const time = setTimeout(() => {
             this.proccesReport();
             clearTimeout(time);
@@ -365,7 +411,6 @@ export class ScanRequestComponent extends BasePage implements OnInit {
                 this.paramsDepositaryAppointment.P_ND;
               this.msDepositaryService.getAllFiltered(params).subscribe({
                 next: data => {
-                  console.log('GET DATA NOMBRAMIENTO', data);
                   let body: any = {
                     appointmentNumber: data.data[0].appointmentNumber,
                     amountIVA: data.data[0].amountIVA,
@@ -387,10 +432,10 @@ export class ScanRequestComponent extends BasePage implements OnInit {
                     // Guardar nuevo folio universal en nombramientos depositarias
                     this.msDepositaryService.update(body).subscribe({
                       next: data => {
-                        console.log('SAVE DATA NOMBRAMIENTO', data);
                         // Guardar nuevo folio universal en nombramientos depositarias
                       },
                       error: error => {
+                        this.loadingDoc = false;
                         console.log(error);
                       },
                     });
@@ -402,6 +447,9 @@ export class ScanRequestComponent extends BasePage implements OnInit {
               });
             }
           }, 1000);
+        },
+        error: () => {
+          this.loadingDoc = false;
         },
       });
     }
@@ -477,7 +525,7 @@ export class ScanRequestComponent extends BasePage implements OnInit {
         null,
         [
           Validators.minLength(7),
-          Validators.pattern('^[0-9]{2}[-]{1}[0-9]{4}$'),
+          Validators.pattern('^[0-9]{2}[/]{1}[0-9]{4}$'),
         ],
       ],
       descriptionDocument: [null, [Validators.maxLength(1000)]],
@@ -537,7 +585,11 @@ export class ScanRequestComponent extends BasePage implements OnInit {
           .fetchReport('RGERGENSOLICDIGIT', { pn_folio: this.idFolio })
           .pipe(
             tap(response => {
-              this.alert('success', 'ÉXITO', 'Reporte generado');
+              this.alert(
+                'success',
+                'REPORTE DE DIGITALIZACIÓN',
+                `Generado folio: ${this.idFolio}`
+              );
               const blob = new Blob([response], { type: 'application/pdf' });
               const url = URL.createObjectURL(blob);
               let config = {
@@ -552,6 +604,7 @@ export class ScanRequestComponent extends BasePage implements OnInit {
                 ignoreBackdropClick: true,
               };
               this.modalService.show(PreviewDocumentsComponent, config);
+              this.loadingDoc = false;
               clearTimeout(msg);
             })
           )

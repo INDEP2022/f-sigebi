@@ -40,7 +40,7 @@ import { GoodFinderService } from 'src/app/core/services/ms-good/good-finder.ser
               [data]="goods"
               [form]="form"
               value="id"
-              bindLabel="description"
+              bindLabel="info"
               label="Bien"
               [control]="goodField"
               (change)="onGoodsChange($event)">
@@ -63,9 +63,11 @@ export class GoodsFilterSharedComponent
   //If Form PatchValue
   @Input() patchValue: boolean = false;
   @Input() classifGood: number;
+  @Input() clean: boolean = false;
   @Output() good = new EventEmitter<IGood>();
   params = new BehaviorSubject<FilterParams>(new FilterParams());
   goods = new DefaultSelect<IGood>();
+  data: any[] = [];
 
   constructor(private readonly service: GoodFinderService) {
     super();
@@ -92,7 +94,13 @@ export class GoodsFilterSharedComponent
 
     this.service.getAll2(data.getParams()).subscribe({
       next: data => {
-        this.goods = new DefaultSelect(data.data, data.count);
+        this.data = data.data.map(clasi => {
+          return {
+            ...clasi,
+            info: `${clasi.id} - ${clasi.description}`,
+          };
+        });
+        this.goods = new DefaultSelect(this.data, data.count);
       },
       error: err => {
         this.goods = new DefaultSelect([], 0);
@@ -111,7 +119,8 @@ export class GoodsFilterSharedComponent
     });
   }
 
-  onGoodsChange(type: IGood) {
+  onGoodsChange(type: any) {
+    delete type['info'];
     if (this.patchValue) {
       this.form.patchValue({
         goodId: type.goodId,
@@ -130,5 +139,9 @@ export class GoodsFilterSharedComponent
       field = null;
     });
     this.form.updateValueAndValidity();
+  }
+
+  concatenarEtiquetas(data: any): string {
+    return `${data.id} - ${data.descripcion}`;
   }
 }

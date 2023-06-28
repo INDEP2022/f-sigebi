@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { HttpService } from 'src/app/common/services/http.service';
+import { HttpService, _Params } from 'src/app/common/services/http.service';
 
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IGood } from '../../models/good/good.model';
@@ -15,7 +14,7 @@ export class GoodFinderService extends HttpService {
     this.microservice = GoodFinderEndpoint.GoodFinderBase;
   }
 
-  goodFinder(params?: ListParams | string) {
+  goodFinder(params?: _Params) {
     const route = GoodFinderEndpoint.GoodQuery;
     return this.get(route, params);
   }
