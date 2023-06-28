@@ -138,7 +138,6 @@ export class LawyerListComponent extends BasePage implements OnInit {
         //this.lawyers = response.data;
         this.data.load(response.data);
         this.data.refresh();
-
         this.loading = false;
       },
       error: error => (this.loading = false),

@@ -68,6 +68,10 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
   ) {
     super();
     this.settings.columns = COLUMNS;
+    this.settings = {
+      ...this.settings,
+      hideSubHeader: false,
+    };
   }
 
   ngOnInit(): void {
