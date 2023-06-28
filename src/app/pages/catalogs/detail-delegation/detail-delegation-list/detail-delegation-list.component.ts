@@ -68,7 +68,7 @@ export class DetailDelegationListComponent extends BasePage implements OnInit {
                 searchFilter = SearchFilter.EQ;
                 break;
               case 'area':
-                searchFilter = SearchFilter.EQ;
+                searchFilter = SearchFilter.ILIKE;
                 break;
               default:
                 searchFilter = SearchFilter.ILIKE;
@@ -84,6 +84,9 @@ export class DetailDelegationListComponent extends BasePage implements OnInit {
               delete this.columnFilters[field];
             }
           });
+
+          this.params.value.page = 1;
+
           this.getDetailDelegation();
         }
       });

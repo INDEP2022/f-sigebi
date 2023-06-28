@@ -18,6 +18,16 @@
         </div>
         <div class="col-md-6">
           <form-field
+            label="Código Estado"
+            [control]="stationForm.get('keyState')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="keyState" />
+          </form-field>
+        </div>
+        <div class="col-md-9">
+          <form-field
             label="Nombre Emisora"
             [control]="stationForm.get('stationName')">
             <input

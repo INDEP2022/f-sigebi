@@ -1,9 +1,11 @@
+import { IDelegation } from 'src/app/core/models/catalogs/delegation.model';
 import { IState } from 'src/app/core/models/catalogs/state-model';
+import { ISubdelegation } from 'src/app/core/models/catalogs/subdelegation.model';
 
 export const CITY_COLUMNS = {
   idCity: {
     title: 'No. Ciudad',
-    type: 'string',
+    type: 'number',
     sort: false,
   },
   nameCity: {
@@ -11,7 +13,7 @@ export const CITY_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  state: {
+  stateDetail: {
     title: 'Entidad Federativa',
     type: 'string',
     sort: false,
@@ -27,12 +29,20 @@ export const CITY_COLUMNS = {
       }
     },
   },
-  delegation: {
+  delegationDetail: {
     title: 'Delegación',
     type: 'string',
     sort: false,
-    valuePrepareFunction: (value: any) => {
+    valuePrepareFunction: (value: IDelegation) => {
       return value?.description;
+    },
+    filterFunction(cell?: any, search?: string): boolean {
+      let column = cell.description;
+      if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
+        return true;
+      } else {
+        return false;
+      }
     },
   },
   legendOffice: {
@@ -40,12 +50,20 @@ export const CITY_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  subDelegation: {
+  SubDelegationDetail: {
     title: 'Subdelegación',
     type: 'string',
     sort: false,
-    valuePrepareFunction: (value: any) => {
+    valuePrepareFunction: (value: ISubdelegation) => {
       return value?.description;
+    },
+    filterFunction(cell?: any, search?: string): boolean {
+      let column = cell.description;
+      if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
+        return true;
+      } else {
+        return false;
+      }
     },
   },
 };

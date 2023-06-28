@@ -1071,7 +1071,7 @@ export class RelatedDocumentsRelationComponent
         this.dataTableDocuments = await Promise.all(response);
         this.isLoadingDocuments = false;
       },
-      error: err => {
+      error: () => {
         this.isLoadingDocuments = false;
       },
     });
@@ -2710,6 +2710,7 @@ export class RelatedDocumentsRelationComponent
       this.alert('warning', '', 'Debe especificar la CIUDAD');
       return;
     }
+
     this.isDisabledBtnPrint = true;
 
     try {

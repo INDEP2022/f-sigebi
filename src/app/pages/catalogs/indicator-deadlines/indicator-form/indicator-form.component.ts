@@ -12,7 +12,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
   styles: [],
 })
 export class IndicatorFormComponent extends BasePage implements OnInit {
-  form: ModelForm<IIndicatorDeadline>;
+  form: ModelForm<IIndicatorDeadline> | any;
   title: string = 'Indicador';
   edit: boolean = false;
   value: IIndicatorDeadline;

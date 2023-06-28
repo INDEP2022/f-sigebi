@@ -3,7 +3,7 @@ export const GP_GOODS_COLUMNS = {
     title: 'No. Fotos',
     sort: false,
   },
-  file: {
+  fileNumber: {
     title: 'No. Expediente',
     sort: false,
   },

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IIfaiSerie } from 'src/app/core/models/catalogs/ifai-serie.model';
 import { IfaiSerieService } from 'src/app/core/services/catalogs/ifai-serie.service';
@@ -14,7 +15,7 @@ import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 })
 export class IfaiSeriesFormComponent extends BasePage implements OnInit {
   ifaiSerieForm: ModelForm<IIfaiSerie>;
-  title: string = 'Serie Ifai';
+  title: string = 'Serie IFAI';
   edit: boolean = false;
   ifaiSerie: IIfaiSerie;
   constructor(
@@ -33,42 +34,39 @@ export class IfaiSeriesFormComponent extends BasePage implements OnInit {
     this.ifaiSerieForm = this.fb.group({
       code: [
         null,
-        Validators.compose([
+        [
           Validators.required,
           Validators.minLength(1),
-          Validators.maxLength(128),
+          Validators.maxLength(8),
           Validators.pattern(STRING_PATTERN),
-        ]),
+        ],
       ],
       typeProcedure: [
         null,
-        Validators.compose([
+        [
           Validators.required,
           Validators.minLength(1),
           Validators.maxLength(2),
           Validators.pattern(STRING_PATTERN),
-        ]),
+        ],
       ],
       description: [
         null,
-        Validators.compose([
+        [
           Validators.minLength(1),
           Validators.maxLength(80),
           Validators.pattern(STRING_PATTERN),
-        ]),
+        ],
       ],
-      registryNumber: [
-        null,
-        Validators.compose([Validators.pattern(NUMBERS_PATTERN)]),
-      ],
+      registryNumber: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       status: [
         null,
-        Validators.compose([
+        [
           Validators.required,
           Validators.maxLength(1),
           Validators.minLength(1),
           Validators.pattern(STRING_PATTERN),
-        ]),
+        ],
       ],
     });
     if (this.ifaiSerie != null) {
@@ -87,9 +85,38 @@ export class IfaiSeriesFormComponent extends BasePage implements OnInit {
 
   create() {
     this.loading = true;
-    this.ifaiSeriService.create(this.ifaiSerieForm.getRawValue()).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
+    const params: ListParams = new ListParams();
+    let count: number;
+    params['filter.status'] = this.ifaiSerieForm.controls['status'].value;
+    this.ifaiSeriService.getAll(params).subscribe({
+      next: response => {
+        count = response.count;
+        if (response.count > 0) {
+          this.alert('warning', 'Series Ifai', 'El estatus esta ya existe.');
+        } else {
+          this.ifaiSeriService
+            .create(this.ifaiSerieForm.getRawValue())
+            .subscribe({
+              next: data => this.handleSuccess(),
+              error: error => (this.loading = false),
+            });
+        }
+        this.loading = false;
+      },
+      error: error => {
+        if (count > 0) {
+          this.alert('warning', 'Series Ifai', 'El estatus esta ya existe.');
+        } else {
+          this.ifaiSeriService
+            .create(this.ifaiSerieForm.getRawValue())
+            .subscribe({
+              next: data => this.handleSuccess(),
+              error: error => (this.loading = false),
+            });
+        }
+
+        this.loading = false;
+      },
     });
   }
 
@@ -104,8 +131,8 @@ export class IfaiSeriesFormComponent extends BasePage implements OnInit {
   }
 
   handleSuccess() {
-    const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.onLoadToast('success', this.title, `${message} Correctamente`);
+    const message: string = this.edit ? 'Actualizada' : 'Guardada';
+    this.alert('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();

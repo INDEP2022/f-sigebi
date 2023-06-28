@@ -1,6 +1,6 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nueva' }} {{ title }}</h5>
+    <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nuevo' }} {{ title }}</h5>
   </div>
   <div body>
     <form class="form-material" [formGroup]="clarificationForm">
@@ -21,25 +21,31 @@
           <form-field
             [control]="clarificationForm.get('type')"
             label="Tipo de Aclaraci&oacute;n">
-            <input type="text" class="form-control" formControlName="type" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="type"
+              maxlength="3" />
           </form-field>
         </div>
-        <div class="col-md-4">
-          <div class="col-md-3 d-flex">
-            <form-radio label="Activo">
-              <input type="radio" formControlName="status" value="1" />
-            </form-radio>
-            <form-radio label="Inactivo">
-              <input type="radio" formControlName="status" value="0" />
-            </form-radio>
-          </div>
-        </div>
+
         <div class="col-md-4">
           <form-field
             [control]="clarificationForm.get('version')"
             label="Versi&oacute;n">
             <input type="text" class="form-control" formControlName="version" />
           </form-field>
+        </div>
+
+        <div class="row pt-5">
+          <div class="col-md-3 d-flex">
+            <form-radio label="Activo">
+              <input type="radio" formControlName="active" value="1" />
+            </form-radio>
+            <form-radio label="Inactivo">
+              <input type="radio" formControlName="active" value="0" />
+            </form-radio>
+          </div>
         </div>
       </div>
     </form>

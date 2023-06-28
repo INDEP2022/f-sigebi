@@ -61,6 +61,24 @@ export class DateDocumentsComponent extends BasePage implements OnInit {
               case 'expedientNumber':
                 searchFilter = SearchFilter.EQ;
                 break;
+              case 'dateReceipt':
+                console.log('dddd', filter.search);
+                if (filter.search != null) {
+                  filter.search = this.returnParseDate(filter.search);
+                  searchFilter = SearchFilter.EQ;
+                } else {
+                  filter.search = '';
+                }
+                console.log('ddddccc', filter.search);
+                break;
+              case 'notificationDate':
+                filter.search = this.returnParseDate(filter.search);
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'insertionDate':
+                filter.search = this.returnParseDate(filter.search);
+                searchFilter = SearchFilter.EQ;
+                break;
               default:
                 searchFilter = SearchFilter.ILIKE;
                 break;
@@ -103,7 +121,10 @@ export class DateDocumentsComponent extends BasePage implements OnInit {
         this.totalItems = response.count;
         this.loading = false;
       },
-      error: error => (this.loading = false),
+      error: error => {
+        this.loading = false;
+        this.totalItems = 0;
+      },
     });
   }
   private getDateDocuments() {

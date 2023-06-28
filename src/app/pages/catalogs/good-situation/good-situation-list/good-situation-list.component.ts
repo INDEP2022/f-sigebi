@@ -115,7 +115,8 @@ export class GoodSituationListComponent extends BasePage implements OnInit {
       .removeCatalogGoodSituation(goodSituation.situation, goodSituation.status)
       .subscribe({
         next: response => {
-          this.alert('success', 'Situación Bien', 'Borrado'), this.getExample();
+          this.alert('success', 'Tipo de situación bien', 'Borrado'),
+            this.getExample();
         },
         error: err => {
           this.alert(
