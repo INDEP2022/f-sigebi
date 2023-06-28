@@ -50,11 +50,19 @@ export class DateDocumentsModalComponent extends BasePage implements OnInit {
     this.dateDocumentsModalForm = this.fb.group({
       expedientNumber: [
         null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(NUMBERS_PATTERN),
+          Validators.maxLength(10),
+        ],
       ],
       stateNumber: [
         null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(NUMBERS_PATTERN),
+          Validators.maxLength(10),
+        ],
       ],
       key: [null, [Validators.required]],
       typeDictum: [
