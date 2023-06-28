@@ -1,6 +1,6 @@
 export const OPINION_COLUMNS = {
   id: {
-    title: 'Dictamenes',
+    title: 'Dictámenes',
     type: 'number',
     sort: false,
   },
@@ -10,7 +10,7 @@ export const OPINION_COLUMNS = {
     sort: false,
   },
   dict_ofi: {
-    title: 'Dictamen_ofi',
+    title: 'Dictamen_oficio',
     type: 'string',
     sort: false,
   },

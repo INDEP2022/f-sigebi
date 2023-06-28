@@ -33,7 +33,7 @@ export class ClarificationsDetailComponent extends BasePage implements OnInit {
     this.prepareForm();
   }
 
-  prepareForm() {
+  private prepareForm() {
     this.clarificationForm = this.fb.group({
       id: [null, [Validators.pattern(STRING_PATTERN), Validators.minLength(1)]],
       clarification: [
@@ -82,7 +82,10 @@ export class ClarificationsDetailComponent extends BasePage implements OnInit {
     this.loading = true;
     this.clarificationService.create(this.clarificationForm.value).subscribe(
       data => this.handleSuccess(),
-      error => (this.loading = false)
+      error => {
+        this.loading = false;
+        this.onLoadToast('error', 'ERROR', error.error.message);
+      }
     );
   }
 
@@ -98,7 +101,8 @@ export class ClarificationsDetailComponent extends BasePage implements OnInit {
 
   handleSuccess() {
     const message: string = this.edit ? 'Actualizada' : 'Guardada';
-    this.onLoadToast('success', this.title, `${message} Correctamente`);
+    this.alert('success', this.title, `${message} Correctamente`);
+    //this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();

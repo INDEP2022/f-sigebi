@@ -1,12 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
+
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { ISatClassification } from 'src/app/core/models/catalogs/sat-classification.model';
 import { ISatSubclassification } from 'src/app/core/models/catalogs/sat-subclassification.model';
-import { SatClassificationService } from 'src/app/core/services/catalogs/sat-classification.service';
+import { ISiabClasification } from 'src/app/core/models/catalogs/siab-clasification.model';
 import { SATSubclassificationService } from 'src/app/core/services/catalogs/sat-subclassification.service';
+import { SIABClasificationService } from 'src/app/core/services/catalogs/siab-clasification.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -21,25 +23,25 @@ export class SatSubclassificationFormComponent
   implements OnInit
 {
   satSubclassificationForm: ModelForm<ISatSubclassification>;
-  title: string = 'SAT Subclasificacion';
+  title: string = 'Subclasificación SAT';
   edit: boolean = false;
   satSubclassification: ISatSubclassification;
-  classifications = new DefaultSelect<ISatClassification>();
+  classifications = new DefaultSelect<ISiabClasification>();
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
     private satSubclassificationService: SATSubclassificationService,
-    private satClassificationService: SatClassificationService
+    private satClassificationService: SIABClasificationService
   ) {
     super();
   }
 
   ngOnInit(): void {
+    this.getClassifications(new ListParams());
     this.prepareForm();
   }
 
   private prepareForm() {
-    console.log(this.satSubclassification);
     this.satSubclassificationForm = this.fb.group({
       id: [null],
       nameSubClasification: [
@@ -47,21 +49,43 @@ export class SatSubclassificationFormComponent
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
       idClasification: [null, [Validators.required]],
+      idClasificationCode: [null],
+      clasificationDetails: [null],
     });
     if (this.satSubclassification != null) {
+      console.log('this.satSubclassification', this.satSubclassification);
       this.edit = true;
       let satClassification: ISatClassification = this.satSubclassification
         .idClasification as ISatClassification;
       this.satSubclassificationForm.patchValue({
         ...this.satSubclassification,
-        idClasification: satClassification.id,
       });
-      this.classifications = new DefaultSelect([satClassification], 1);
+      this.satSubclassificationForm.controls['idClasification'].setValue(
+        this.satSubclassification.clasificationDetails.id
+      );
+
+      this.satSubclassificationForm.controls['idClasificationCode'].setValue(
+        this.satSubclassification.clasificationDetails.id
+      );
+
+      console.log(
+        'this.satSubclassification.nameSubClasification',
+        this.satSubclassification.clasificationDetails.typeDescription
+      );
+
+      this.classifications = new DefaultSelect(
+        [this.satSubclassification.clasificationDetails.typeDescription],
+        1
+      );
     } else {
-      this.getClassifications({ page: 1, text: '' });
+      this.getClassifications({ page: 1 });
     }
   }
+
   getClassifications(params: ListParams) {
+    console.log('params:', params);
+    var dddd = 'cat';
+    //params['filter.text'] = `$ilike:${dddd}`;
     this.satClassificationService.getAll(params).subscribe(data => {
       this.classifications = new DefaultSelect(data.data, data.count);
     });
@@ -85,6 +109,24 @@ export class SatSubclassificationFormComponent
   }
 
   update() {
+    console.log(
+      'idClasificationCode:',
+      this.satSubclassificationForm.get('idClasificationCode').value
+    );
+
+    console.log(
+      'idClasification:',
+      this.satSubclassificationForm.get('idClasification').value
+    );
+
+    let idClasi =
+      this.satSubclassification.clasificationDetails.idClasification !=
+      this.satSubclassificationForm.get('idClasification').value
+        ? this.satSubclassificationForm.get('idClasification').value
+        : this.satSubclassificationForm.get('idClasificationCode').value;
+    console.log('idClasi:', idClasi);
+    this.satSubclassificationForm.controls['idClasification'].setValue(idClasi);
+
     this.loading = true;
     this.satSubclassificationService
       .update(
@@ -99,7 +141,8 @@ export class SatSubclassificationFormComponent
 
   handleSuccess() {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.onLoadToast('success', this.title, `${message} Correctamente`);
+    this.alert('success', this.title, `${message} Correctamente`);
+    //this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();

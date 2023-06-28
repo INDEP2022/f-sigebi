@@ -10,13 +10,14 @@ import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { ServiceGetAll } from 'src/app/core/shared/base-page-dinamic-filters';
 import { data } from './data';
 import { GOODS_AVAILABLE_SALE_COLUMNS } from './goods-available-sale-columns';
+import { BasePage } from 'src/app/core/shared';
 
 @Component({
   selector: 'goods-available-sale-list',
   templateUrl: './goods-available-sale-list.component.html',
   styles: [],
 })
-export class GoodsAvailableSaleListComponent2 implements OnInit {
+export class GoodsAvailableSaleListComponent2 extends BasePage implements OnInit {
   [x: string]: any;
   comercializationGoods: any[] = [];
   goodsAFSD = data;
@@ -32,14 +33,15 @@ export class GoodsAvailableSaleListComponent2 implements OnInit {
   service: ServiceGetAll;
 
   constructor(private goodService: GoodService) {
+    super();
     this.service = this.goodService;
     this.ilikeFilters = ['description'];
-    this['settings'] = {
-      ...this['settings'],
+    this.settings = {
+      ...this.settings,
       hideSubHeader: false,
       columns: GOODS_AVAILABLE_SALE_COLUMNS,
       actions: {
-        ...this['settings'].actions,
+        ...this.settings.actions,
         add: true,
         edit: true,
         delete: true,
@@ -120,7 +122,7 @@ export class GoodsAvailableSaleListComponent2 implements OnInit {
   }
 
   getData() {
-    this['loading'] = true;
+    this.loading = true;
     let params = {
       ...this.params.getValue(),
       ...this.columnFilters,
@@ -132,21 +134,21 @@ export class GoodsAvailableSaleListComponent2 implements OnInit {
             this.totalItems = response.count || 0;
             this.data.load(response.data);
             this.data.refresh();
-            this['loading'] = false;
+            this.loading = false;
           }
         },
         error: err => {
           this.totalItems = 0;
           this.data.load([]);
           this.data.refresh();
-          this['loading'] = false;
+          this.loading = false;
         },
       });
     } else {
       this.totalItems = 0;
       this.data.load([]);
       this.data.refresh();
-      this['loading'] = false;
+      this.loading = false;
     }
   }
 }

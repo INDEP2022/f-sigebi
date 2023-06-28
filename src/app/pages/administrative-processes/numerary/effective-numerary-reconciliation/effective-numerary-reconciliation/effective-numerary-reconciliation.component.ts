@@ -37,7 +37,7 @@ export class EffectiveNumeraryReconciliationComponent implements OnInit {
     private siabService: SiabService,
     private sanitizer: DomSanitizer,
     private modalService: BsModalService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.prepareForm();
@@ -95,7 +95,7 @@ export class EffectiveNumeraryReconciliationComponent implements OnInit {
                 urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
                 type: 'pdf',
               },
-              callback: (data: any) => {},
+              callback: (data: any) => { },
             }, //pasar datos por aca
             class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
             ignoreBackdropClick: true, //ignora el click fuera del modal
@@ -110,7 +110,7 @@ export class EffectiveNumeraryReconciliationComponent implements OnInit {
                 urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
                 type: 'pdf',
               },
-              callback: (data: any) => {},
+              callback: (data: any) => { },
             }, //pasar datos por aca
             class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
             ignoreBackdropClick: true, //ignora el click fuera del modal

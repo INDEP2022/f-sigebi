@@ -13,7 +13,7 @@ import { ParagraphService } from './../../../../core/services/catalogs/paragraph
 })
 export class ParagraphsFormComponent extends BasePage implements OnInit {
   paragraphForm: FormGroup = new FormGroup({});
-  title: string = 'P&aacute;rrafo';
+  title: string = 'PÁRRAFO';
   edit: boolean = false;
   paragraph: IParagraph;
   items = new DefaultSelect<IParagraph>();
