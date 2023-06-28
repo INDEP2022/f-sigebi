@@ -32,7 +32,11 @@
         <!--Actions-->
         <div
           class="col-lg-2 col-md-4 col-sm-12 col-12 align-self-baseline mb-3 mt-3">
-          <button class="btn btn-secondary btn-sm active w-100">Atender</button>
+          <button
+            (click)="updateGoodMotivosRev(params)"
+            class="btn btn-secondary btn-sm active w-100">
+            Atender
+          </button>
         </div>
         <div
           class="col-lg-2 col-md-4 col-sm-12 col-12 align-self-baseline mb-3 mt-3">
@@ -42,7 +46,11 @@
         </div>
         <div
           class="col-lg-2 col-md-4 col-sm-12 col-12 mb-3 mt-3 align-self-baseline mb-3 mt-3">
-          <button class="btn btn-success btn-sm active w-100">Exportar</button>
+          <button
+            (click)="exportar()"
+            class="btn btn-success btn-sm active w-100">
+            Exportar
+          </button>
         </div>
       </div>
     </form>

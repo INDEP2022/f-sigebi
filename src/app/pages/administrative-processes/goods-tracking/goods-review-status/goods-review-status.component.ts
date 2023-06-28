@@ -19,6 +19,8 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { IGoodsReview } from '../../../../core/models/ms-good/goods-review.model';
 import { COLUMNS } from './columns';
+//import { async } from '../../../../common/helpers/helpers';
+
 @Component({
   selector: 'app-goods-review-status',
   templateUrl: './goods-review-status.component.html',
@@ -39,6 +41,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
   delegationNumber: any; // BLK_CONTROL.DELEGACION
   responsable: any; // BLK_CONTROL.RESPONSABLE
   goodsExcel: any;
+  jsonToCsv: any[] = [];
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
@@ -312,6 +315,37 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
           resolve(null);
         },
       });
+    });
+  }
+
+  // Exporta a excel 'csv'
+  async exportar() {
+    const filename: string = 'Data';
+    const jsonToCsv = await this.returnJsonToCsv();
+    console.log('jsonToCsv', jsonToCsv);
+    this.jsonToCsv = jsonToCsv;
+    this.excelService.export(this.jsonToCsv, { type: 'csv', filename });
+  }
+
+  async returnJsonToCsv() {
+    return this.data.getAll();
+  }
+
+  attention() {
+    let ATENCION = 1;
+    let ACTUALIZA = 0;
+    let v1_ID_EVENTO = 0;
+    let ESTATUSB: number;
+    this.alertQuestion(
+      'info',
+      '¿Está seguro de dar por atendidos los bienes del archivo?',
+      ''
+    ).then(async question => {
+      if (question.isConfirmed) {
+        ATENCION = 1;
+        ACTUALIZA = 0;
+        v1_ID_EVENTO = 0;
+      }
     });
   }
 }
