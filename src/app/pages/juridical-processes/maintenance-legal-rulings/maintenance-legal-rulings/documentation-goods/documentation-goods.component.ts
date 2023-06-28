@@ -12,6 +12,7 @@ import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { IDictation } from 'src/app/core/models/ms-dictation/dictation-model';
 import { IDocumentsDictumXStateM } from 'src/app/core/models/ms-documents/documents-dictum-x-state-m';
 import { DocumentsDictumStatetMService } from 'src/app/core/services/catalogs/documents-dictum-state-m.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -42,6 +43,7 @@ export class DocumentationGoodsComponent
     columns: DOCUMENTS_DICTUM_X_STATE,
   };
   dataTable: IDocumentsDictumXStateM[] = [];
+  @Input() dictation: IDictation;
 
   @Input() set loadingData(value: boolean) {
     this.loading = value;
@@ -73,6 +75,12 @@ export class DocumentationGoodsComponent
   openForm(documentsDictumXStateM?: IDocumentsDictumXStateM) {
     let config: ModalOptions = {
       initialState: {
+        dataCreate: this.dictation
+          ? {
+              officialNumber: this.dictation.id,
+              typeDictum: this.dictation.typeDict,
+            }
+          : null,
         documentsDictumXStateM,
         callback: (next: boolean) => {
           if (next) this.loadingDialog.emit(next);

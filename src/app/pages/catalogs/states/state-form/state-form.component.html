@@ -1,15 +1,15 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nueva' }} {{ title }}</h5>
+    <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nuevo' }} {{ title }}</h5>
   </div>
   <div body>
     <form [formGroup]="stateForm" class="form-material">
       <div class="row">
-        <div class="col-md-3">
+        <!--<div class="col-md-3">
           <form-field [control]="stateForm.get('id')" label="CVE Estado">
             <input type="text" class="form-control" formControlName="id" />
           </form-field>
-        </div>
+        </div>-->
 
         <div class="col-md-3">
           <form-field
@@ -40,7 +40,8 @@
             <input
               type="text"
               class="form-control"
-              formControlName="zoneHourlyStd" />
+              formControlName="zoneHourlyStd"
+              placeholder="HH:MM" />
           </form-field>
         </div>
 
@@ -51,7 +52,8 @@
             <input
               type="text"
               class="form-control"
-              formControlName="zoneHourlyVer" />
+              formControlName="zoneHourlyVer"
+              placeholder="HH:MM" />
           </form-field>
         </div>
 

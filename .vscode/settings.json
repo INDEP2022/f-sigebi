@@ -4,5 +4,20 @@
   "editor.minimap.enabled": true,
   "terminal.integrated.env.windows": {
     "node_options": "--max_old_space_size=8192"
-  }
+  },
+  "sqltools.connections": [
+    {
+      "pgOptions": {
+        "ssl": true
+      },
+      "previewLimit": 50,
+      "server": "psql-sigebidb-qa.postgres.database.azure.com",
+      "port": 5432,
+      "driver": "PostgreSQL",
+      "username": "dbsigebiadmon",
+      "database": "psql-sigebi-dev",
+      "password": "aW5kM3AyQDIzJDAx",
+      "name": "SIGEBI"
+    }
+  ]
 }

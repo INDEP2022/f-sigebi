@@ -2088,7 +2088,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
               actId: receipt.actId,
               programmingId: receipt.programmingId,
             };
-
             this.receptionGoodService.deleteReceipt(formData).subscribe({
               next: response => {
                 this.getReceipts();

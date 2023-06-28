@@ -13,6 +13,7 @@ import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { IDictation } from 'src/app/core/models/ms-dictation/dictation-model';
 import { IDictationXGood1 } from 'src/app/core/models/ms-dictation/dictation-x-good1.model';
 import { DictationXGood1Service } from 'src/app/core/services/ms-dictation/dictation-x-good1.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -52,6 +53,8 @@ export class GoodsComponent
     this.dataTable = value;
   }
 
+  @Input() dictation: IDictation;
+
   @Output() loadingDialog = new EventEmitter<boolean>();
 
   constructor(
@@ -75,6 +78,12 @@ export class GoodsComponent
     console.log(dictationXGood);
     let config: ModalOptions = {
       initialState: {
+        dataCreate: this.dictation
+          ? {
+              ofDictNumber: this.dictation.id,
+              typeDict: this.dictation.typeDict,
+            }
+          : null,
         dictationXGood,
         callback: (next: boolean) => {
           if (next) this.loadingDialog.emit(next);

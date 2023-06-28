@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IOrigin } from 'src/app/core/models/catalogs/origin.model';
+import { CityService } from 'src/app/core/services/catalogs/city.service';
 import { OriginService } from 'src/app/core/services/catalogs/origin.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -18,29 +19,34 @@ export class OriginFormComponent extends BasePage implements OnInit {
   form: ModelForm<IOrigin>;
   title: string = 'Procedencia';
   edit: boolean = false;
+  public cities = new DefaultSelect();
   origin: IOrigin;
   origins = new DefaultSelect<IOrigin>();
+
+  @Output() refresh = new EventEmitter<true>();
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
-    private originService: OriginService
+    private originService: OriginService,
+    private cityService: CityService
   ) {
     super();
   }
 
   ngOnInit(): void {
     this.prepareForm();
+    this.getCities(new ListParams());
   }
 
   private prepareForm() {
     this.form = this.fb.group({
-      id: [null],
+      id: [],
       idTransferer: [null, [Validators.required]],
       keyTransferer: [null, [Validators.required]],
       description: [null, [Validators.required]],
       type: [null, [Validators.required]],
       address: [null, [Validators.required]],
-      city: [null, [Validators.required]],
+      cityCode: [null, [Validators.required]],
       idCity: [null, [Validators.required]],
       keyEntityFederative: [
         null,
@@ -49,7 +55,12 @@ export class OriginFormComponent extends BasePage implements OnInit {
     });
     if (this.origin != null) {
       this.edit = true;
+      let city = this.origin.cityCode;
       this.form.patchValue(this.origin);
+      this.form.controls['cityCode'].setValue(city.nameCity);
+      this.form.controls['cityCodeID'].setValue(city.idCity);
+      const { cityCode } = this.origin;
+      this.cities = new DefaultSelect([cityCode.nameCity], 1);
     }
   }
 
@@ -58,6 +69,24 @@ export class OriginFormComponent extends BasePage implements OnInit {
       this.origins = new DefaultSelect(data.data, data.count);
     });
   }
+
+  getCities(params: ListParams, id?: string) {
+    if (id) {
+      params['filter.state'] = `$eq:${id}`;
+    }
+    this.cityService.getAllCitys(params).subscribe(data => {
+      this.cities = new DefaultSelect(data.data, data.count);
+    });
+    console.log(this.cityService);
+  }
+
+  getCitie(data: any) {
+    console.log(data);
+    this.cities = new DefaultSelect([], 0, true);
+    this.form.controls['cityCode'].setValue(null);
+    this.getCities(new ListParams(), data.id);
+  }
+
   close() {
     this.modalRef.hide();
   }
@@ -68,7 +97,7 @@ export class OriginFormComponent extends BasePage implements OnInit {
 
   create() {
     this.loading = true;
-    this.originService.create(this.form.getRawValue()).subscribe({
+    this.originService.create(this.form.value).subscribe({
       next: data => this.handleSuccess(),
       error: error => (this.loading = false),
     });
@@ -76,12 +105,10 @@ export class OriginFormComponent extends BasePage implements OnInit {
 
   update() {
     this.loading = true;
-    this.originService
-      .update(this.origin.id, this.form.getRawValue())
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
+    this.originService.update1(this.form.getRawValue()).subscribe({
+      next: data => this.handleSuccess(),
+      error: error => (this.loading = false),
+    });
   }
 
   handleSuccess() {

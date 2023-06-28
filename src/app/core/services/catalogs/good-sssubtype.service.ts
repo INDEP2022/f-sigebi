@@ -40,7 +40,8 @@ export class GoodSssubtypeService
     return this.goodSssubtypeRepository.getByIds(this.route, ids);
   }
   create(model: IGoodSssubtype): Observable<IGoodSssubtype> {
-    return this.goodSssubtypeRepository.create(this.route, model);
+    const fullRoute = `${this.route}`;
+    return this.goodSssubtypeRepository.create(fullRoute, model);
   }
 
   update(id: string | number, model: IGoodSssubtype): Observable<Object> {
