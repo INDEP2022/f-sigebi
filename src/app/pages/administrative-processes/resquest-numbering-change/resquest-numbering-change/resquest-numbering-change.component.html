@@ -75,7 +75,11 @@
           </form-field>
         </div>
         <div class="col-md-3 col-sm-12 col-xs-12">
-          <button type="button" (click)="getDataTable()" class="btn btn-info">
+          <button
+            type="button"
+            (click)="getDataTable()"
+            class="btn btn-info"
+            [disabled]="!form.valid">
             Ejecutar
           </button>
         </div>

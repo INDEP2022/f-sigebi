@@ -385,12 +385,14 @@ export class ResquestNumberingChangeComponent
     let params = {
       ...this.params.getValue(),
     };
-    params['filter.goodClassNumber'] = `$eq:1115`;
-    //params['filter.goodClassNumber'] = `$eq:${this.form.get('type').value}`;
+    //params['filter.goodClassNumber'] = `$eq:1115`;
+    params['filter.goodClassNumber'] = `$eq:${this.form.get('type').value}`;
     params['filter.status'] = `$in:${this.form.get('legalStatus').value}`;
-    // params['filter.storeNumber'] = `$eq:${this.form.get('warehouse').value}`;
-    // params['filter.vaultNumber'] = `$eq:${this.form.get('vault').value}`;
-    // params['filter.delegationNumber'] = `$eq:${this.form.get('delegation').value}`;
+    params['filter.storeNumber'] = `$eq:${this.form.get('warehouse').value}`;
+    params['filter.vaultNumber'] = `$eq:${this.form.get('vault').value}`;
+    params['filter.delegationNumber'] = `$eq:${
+      this.form.get('delegation').value
+    }`;
     this.goodServices.getByExpedientAndParams__(params).subscribe({
       next: async (response: any) => {
         this.dataGood = response.data;
