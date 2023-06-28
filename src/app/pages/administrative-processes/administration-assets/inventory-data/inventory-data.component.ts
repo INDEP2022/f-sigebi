@@ -11,9 +11,11 @@ import { Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
+import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-custom/custom-date-filter';
 import {
   FilterParams,
   ListParams,
+  SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
@@ -48,6 +50,7 @@ export class InventoryDataComponent
   goodChange: number = 0;
   classificationOfGoods: number;
   viewAct: boolean = false;
+  columnFilter: any = [];
 
   constructor(
     private fb: FormBuilder,
@@ -68,10 +71,16 @@ export class InventoryDataComponent
       },
       dateInventory: {
         title: 'Fecha Inventario',
-        type: 'string',
         sort: false,
-        valuePrepareFunction: (value: any) => {
-          return this.formatearFecha(new Date(value));
+        type: 'html',
+        valuePrepareFunction: (text: string) => {
+          return `${
+            text ? text.split('T')[0].split('-').reverse().join('-') : ''
+          }`;
+        },
+        filter: {
+          type: 'custom',
+          component: CustomDateFilterComponent,
         },
       },
       responsible: {
@@ -96,6 +105,43 @@ export class InventoryDataComponent
 
   ngOnInit(): void {
     // this.prepareForm();
+    this.dataLoand
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            console.log(filter);
+            let field = '';
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+            /*SPECIFIC CASES*/
+            switch (filter.field) {
+              case 'inventoryNumber':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'dateInventory':
+                filter.search = this.returnParseDate(filter.search);
+                searchFilter = SearchFilter.EQ;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
+
+            if (filter.search !== '') {
+              this.columnFilter[field] = `${searchFilter}:${filter.search}`;
+              console.log('this.param:', this.params);
+              this.params.value.page = 1;
+            } else {
+              delete this.columnFilter[field];
+            }
+          });
+          this.params = this.pageFilter(this.params);
+          this.inventoryForGood(this.goodId);
+        }
+      });
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.inventoryForGood(this.goodId));
@@ -103,21 +149,25 @@ export class InventoryDataComponent
 
   inventoryForGood(idGood: number) {
     this.loading = true;
-    this.inventoryService
-      .getInventoryByGood(idGood, this.params.getValue())
-      .subscribe({
-        next: response => {
-          this.data = response.data;
-          this.dataLoand.load(this.data);
-          this.dataLoand.refresh();
-          this.totalItems = response.count;
-          this.loading = false;
-        },
-        error: err => {
-          this.loading = false;
-          console.log('AQUIIIIIIIIIIIIIIIIIII', err);
-        },
-      });
+    let params = {
+      ...this.params.getValue(),
+      ...this.columnFilter,
+    };
+    this.inventoryService.getInventoryByGood(idGood, params).subscribe({
+      next: response => {
+        this.data = response.data;
+        this.dataLoand.load(this.data);
+        this.dataLoand.refresh();
+        this.totalItems = response.count;
+        this.loading = false;
+      },
+      error: err => {
+        this.dataLoand.load([]);
+        this.dataLoand.refresh();
+        this.loading = false;
+        console.log('AQUIIIIIIIIIIIIIIIIIII', err);
+      },
+    });
   }
 
   formatearFecha(fecha: Date) {
