@@ -32,7 +32,11 @@ import {
 import { StatusXScreenService } from 'src/app/core/services/ms-screen-status/statusxscreen.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { getTrackedGoods } from 'src/app/pages/general-processes/goods-tracker/store/goods-tracker.selector';
-import { firstFormatDateToSecondFormatDate } from 'src/app/shared/utils/date';
+import {
+  dateToNewDatetime,
+  firstFormatDateToDate,
+  formatForIsoDate,
+} from 'src/app/shared/utils/date';
 import { KeyProceedingsService } from '../../key-proceedings-form/key-proceedings.service';
 import { IParametersIndicators } from './../../../../core/models/catalogs/parameters-indicators.model';
 import { IProceedingDeliveryReception } from './../../../../core/models/ms-proceedings/proceeding-delivery-reception';
@@ -53,10 +57,10 @@ export class ScheduledMaintenanceDetailComponent
 {
   form: FormGroup;
   formDate: FormGroup;
-  statusList = [
-    { id: 'ABIERTA', description: 'Abierto' },
-    { id: 'CERRADA', description: 'Cerrado' },
-  ];
+  // statusList = [
+  //   { id: 'ABIERTA', description: 'Abierto' },
+  //   { id: 'CERRADA', description: 'Cerrado' },
+  // ];
   pageLoading = false;
   paramsForAdd = new BehaviorSubject<ListParams>(new ListParams());
   paramsStatus: ListParams = new ListParams();
@@ -67,11 +71,12 @@ export class ScheduledMaintenanceDetailComponent
   selecteds: IGoodsByProceeding[] = [];
   selectedsNews: IGoodsByProceeding[] = [];
   settingsGoods = { ...settingsGoods };
-  settingsGoodsForAdd = {
-    ...settingsGoods,
-    edit: { ...settingsGoods.edit, confirmSave: false },
-    delete: { ...settingsGoods.delete, confirmDelete: false },
-  };
+  update = true;
+  // settingsGoodsForAdd = {
+  //   ...settingsGoods,
+  //   edit: { ...settingsGoods.edit, confirmSave: false },
+  //   delete: { ...settingsGoods.delete, confirmDelete: false },
+  // };
   // loadingRastrerGoods = false;
   // toggleInformation = true;
   areaProcess: string;
@@ -80,6 +85,7 @@ export class ScheduledMaintenanceDetailComponent
   $trackedGoods = this.store.select(getTrackedGoods);
   origin = GOOD_TRACKER_ORIGINS.DetailProceedings;
   proceedingIndicators: IParametersIndicators[];
+  acta: IProceedingDeliveryReception;
   bienesRas = 0;
   expedientesRas = 0;
   dictamenesRas = 0;
@@ -99,55 +105,10 @@ export class ScheduledMaintenanceDetailComponent
     super();
 
     this.prepareForm();
-    // this.getStatusPantalla();
-    this.statusActa.valueChanges.subscribe(x => {
-      // console.log(x);
-      if (x === 'CERRADA') {
-        this.closeActa();
-      } else {
-        const detail = JSON.parse(
-          window.localStorage.getItem('detailActa')
-        ) as IProceedingDeliveryReception;
-        // console.log(this.form.get('fechaCaptura').value);
-
-        detail.keysProceedings = this.form.get('claveActa').value;
-        detail.statusProceedings = this.statusActaValue;
-        // console.log(this.form.get('fechaCaptura').value);
-        const newDate = this.form.get('fechaCaptura').value;
-        detail.captureDate = (newDate + '').includes('/')
-          ? firstFormatDateToSecondFormatDate(newDate)
-          : newDate;
-        detail.closeDate = new Date().getTime();
-        detail.elaborationDate = new Date(detail.elaborationDate).getTime();
-        detail.captureDate = new Date(detail.captureDate).getTime();
-        let message = '';
-        this.proceedingService
-          .update2(detail)
-          .pipe(takeUntil(this.$unSubscribe))
-          .subscribe({
-            next: response => {
-              this.onLoadToast(
-                'success',
-                'Se actualizo el acta No. ' + detail.id
-              );
-              this.pageLoading = false;
-              // this.massiveUpdate(`Se actualizo el acta No ${detail.id} `);
-            },
-            error: err => {
-              this.onLoadToast(
-                'error',
-                'No se pudo actualizar el acta No. ' + detail.id
-              );
-              // this.massiveUpdate('');
-              this.pageLoading = false;
-            },
-          });
-      }
-    });
   }
 
   get statusActa() {
-    return this.form.get('statusActa');
+    return this.form ? this.form.get('statusActa') : null;
   }
 
   get statusActaValue() {
@@ -155,11 +116,57 @@ export class ScheduledMaintenanceDetailComponent
   }
 
   get actaId() {
-    return this.form.get('acta') ? this.form.get('acta').value : '';
+    return this.form
+      ? this.form.get('acta')
+        ? this.form.get('acta').value
+        : ''
+      : '';
   }
 
   get typeProceeding() {
-    return this.form.get('tipoEvento') ? this.form.get('tipoEvento').value : '';
+    return this.form
+      ? this.form.get('tipoEvento')
+        ? this.form.get('tipoEvento').value
+        : ''
+      : '';
+  }
+
+  private updateGood() {
+    let detail: any = {};
+    detail.id = this.acta.id;
+    let newDate = this.form.get('fechaCaptura').value;
+    detail.captureDate = (newDate + '').includes('/')
+      ? firstFormatDateToDate(newDate)
+      : dateToNewDatetime(newDate);
+    detail.captureDate = detail.captureDate.getTime();
+    detail.closeDate = new Date().getTime();
+    detail.elaborationDate = new Date(this.acta.elaborationDate).getTime();
+    detail.keysProceedings = this.form.get('claveActa').value;
+    detail.statusProceedings = this.statusActaValue;
+    let message = '';
+    this.proceedingService
+      .update2(detail)
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: response => {
+          this.alert(
+            'success',
+            'Actualización',
+            'Se actualizo el acta No. ' + detail.id
+          );
+          this.pageLoading = false;
+          // this.massiveUpdate(`Se actualizo el acta No ${detail.id} `);
+        },
+        error: err => {
+          this.alert(
+            'error',
+            'ERROR',
+            'No se pudo actualizar el acta No. ' + detail.id
+          );
+          // this.massiveUpdate('');
+          this.pageLoading = false;
+        },
+      });
   }
 
   finishMassiveDelete(deleteds: IGoodsByProceeding[]) {
@@ -193,12 +200,11 @@ export class ScheduledMaintenanceDetailComponent
   }
 
   private closeActa() {
-    const detail = JSON.parse(
-      window.localStorage.getItem('detailActa')
-    ) as IProceedingDeliveryReception;
+    const idActa = window.localStorage.getItem('detailActa');
+
     this.alertQuestion(
       'question',
-      'Acta ' + detail.id,
+      'Acta ' + idActa,
       '¿Seguro que desea realizar el cierre de esta Acta?'
     ).then(question => {
       if (question.isConfirmed) {
@@ -250,56 +256,9 @@ export class ScheduledMaintenanceDetailComponent
             })
           );
         }
-
-        // this.service.getGoodsByProceeding(listParams).pipe(map(list => {
-        //   return list.data ? list.data.length > 0 ? list.data.map(item => {
-        //     return this.getStatusPantallaByGoodIndicator(item).pipe(filter(items => items.status !== null), map(items => {
-        //       return
-        //     }))
-        //   }) : [] : []
-        // }), mergeMap(array => this.validationObs(array))).subscribe({
-        //   next: response => {
-        //     console.log(response);
-        //     response.filter(item => item.status !== null).forEach(item => {
-        //       return this.goodService.u
-        //     })
-        //     this.pageLoading = false;
-        //   }
-        // })
-        detail.keysProceedings = this.form.get('claveActa').value;
-        detail.statusProceedings = this.statusActaValue;
-        detail.closeDate = new Date().getTime();
-        detail.elaborationDate = new Date(detail.elaborationDate).getTime();
-
-        // console.log(this.form.get('fechaCaptura').value);
-        const newDate = this.form.get('fechaCaptura').value;
-        detail.captureDate = (newDate + '').includes('/')
-          ? firstFormatDateToSecondFormatDate(newDate)
-          : newDate;
-        detail.captureDate = new Date(detail.captureDate).getTime();
-        let message = '';
-        this.proceedingService
-          .update2(detail)
-          .pipe(takeUntil(this.$unSubscribe))
-          .subscribe({
-            next: response => {
-              this.onLoadToast(
-                'success',
-                'Se actualizo el acta No. ' + detail.id
-              );
-              this.pageLoading = false;
-              // this.massiveUpdate(`Se actualizo el acta No ${detail.id} `);
-            },
-            error: err => {
-              this.onLoadToast(
-                'error',
-                'No se pudo actualizar el acta No. ' + detail.id
-              );
-              // this.massiveUpdate('');
-              this.pageLoading = false;
-            },
-          });
+        this.updateGood();
       } else {
+        this.update = false;
         this.form.get('statusActa').setValue('ABIERTA');
       }
     });
@@ -323,15 +282,15 @@ export class ScheduledMaintenanceDetailComponent
             } else {
               message += ` y los bienes No. ${goods}`;
             }
-            this.onLoadToast('success', 'Exito', message);
+            this.alert('success', 'Actualización', message);
           },
           error: err => {
             if (message === '') {
-              this.onLoadToast('error', 'Error', 'Programación no actualizada');
+              this.alert('error', 'Error', 'Programación no actualizada');
             } else {
-              this.onLoadToast(
+              this.alert(
                 'warning',
-                'Exito',
+                'Actualización',
                 message + ' pero no se pudieron actualizar los bienes'
               );
             }
@@ -339,28 +298,90 @@ export class ScheduledMaintenanceDetailComponent
         });
     } else {
       if (this.form.value !== this.initialValue) {
-        this.onLoadToast('success', 'Exito', message);
+        this.alert('success', 'Actualización', message);
         this.initialValue = { ...this.form.value };
       }
     }
   }
 
+  private getActa() {
+    const actaId = localStorage.getItem('detailActa');
+    // const params = new FilterParams();
+    // params.addFilter('id', actaId);
+    // return this.proceedingService.getAll(params.getParams()).pipe(
+    //   takeUntil(this.$unSubscribe),
+    //   catchError(x => of({ data: [] })),
+    //   map(x => {
+    //     return x.data ? (x.data.length > 0 ? x.data[0] : null) : null;
+    //   })
+    // );
+    return this.proceedingService
+      .getById(actaId)
+      .pipe(takeUntil(this.$unSubscribe));
+  }
+
+  get numFile() {
+    // const numFile = this.acta
+    //   ? this.acta.numFile
+    //     ? (this.acta.numFile as INumFile)
+    //     : null
+    //   : null;
+    // return numFile ? numFile.filesId : null;
+    return this.acta ? this.acta.numFile ?? null : null;
+  }
+
   private prepareForm() {
-    const acta: IProceedingDeliveryReception = JSON.parse(
-      localStorage.getItem('detailActa')
-    );
-    this.form = this.fb.group({
-      acta: [acta.id],
-      fechaCaptura: [acta.captureDate],
-      statusActa: [acta.statusProceedings],
-      claveActa: [acta.keysProceedings],
-      tipoEvento: [acta.typeProceedings],
+    this.getActa().subscribe({
+      next: acta => {
+        if (acta) {
+          this.acta = acta;
+          this.form = this.fb.group({
+            acta: [acta.id],
+            fechaCaptura: [formatForIsoDate(acta.captureDate)],
+            statusActa: [
+              acta.statusProceedings.includes('ABIERT') ? 'ABIERTA' : 'CERRADA',
+            ],
+            claveActa: [acta.keysProceedings],
+            tipoEvento: [acta.typeProceedings],
+          });
+          this.fillColumnsGoods();
+        } else {
+          this.form = this.fb.group({
+            acta: [null],
+            fechaCaptura: [null],
+            statusActa: [null],
+            claveActa: [null],
+            tipoEvento: [null],
+          });
+        }
+        this.initialValue = { ...this.form.value };
+        this.statusActa.valueChanges.subscribe(x => {
+          if (x === 'CERRADA') {
+            this.closeActa();
+          } else {
+            if (this.update) {
+              this.updateGood();
+            } else {
+              this.update = true;
+            }
+          }
+        });
+      },
+      error: err => {
+        this.form = this.fb.group({
+          acta: [null],
+          fechaCaptura: [null],
+          statusActa: [null],
+          claveActa: [null],
+          tipoEvento: [null],
+        });
+      },
     });
+
     this.formDate = this.fb.group({
       inicio: [null],
       fin: [null],
     });
-    this.initialValue = { ...this.form.value };
   }
 
   back() {
@@ -558,11 +579,11 @@ export class ScheduledMaintenanceDetailComponent
           // });
           const message = `Se actualizo el bien No. ${newData.no_bien} `;
           // const message = `Se actualizaron los bienes No ${goods} `;
-          this.onLoadToast('success', 'Exito', message);
+          this.alert('success', 'Actualización', message);
           // this.updateTable.emit();
         },
         error: err => {
-          this.onLoadToast('error', 'Error', 'Bienes no actualizados');
+          this.alert('error', 'ERROR', 'Bienes no actualizados');
         },
       });
     // this.fillSelectedsForUpdate(newData, data);
@@ -632,8 +653,7 @@ export class ScheduledMaintenanceDetailComponent
     //   // console.log(x);
     //   this.getData();
     // });
-    this.fillColumnsGoods();
-    this.fillGoodsByRastrer();
+    // this.fillGoodsByRastrer();
     // this.$trackedGoods.pipe(first(), takeUntil(this.$unSubscribe)).subscribe({
     //   next: response => {
     //     if (response && response.length > 0) {
@@ -739,10 +759,10 @@ export class ScheduledMaintenanceDetailComponent
             };
           }
           this.settingsGoods = { ...this.settingsGoods, columns: newColumns };
-          this.settingsGoodsForAdd = {
-            ...this.settingsGoodsForAdd,
-            columns: newColumns,
-          };
+          // this.settingsGoodsForAdd = {
+          //   ...this.settingsGoodsForAdd,
+          //   columns: newColumns,
+          // };
           this.getData();
 
           // console.log(this.settingsGoods);
@@ -828,7 +848,7 @@ export class ScheduledMaintenanceDetailComponent
         }
       },
       error: err => {
-        console.log(err);
+        // console.log(err);
         this.loading = false;
       },
     });
@@ -918,6 +938,10 @@ export class ScheduledMaintenanceDetailComponent
             // this.fillGoodsByRastrer();
           },
         });
+    } else {
+      this.data = [];
+      this.loading = false;
+      this.totalItems = 0;
     }
   }
 
@@ -941,16 +965,16 @@ export class ScheduledMaintenanceDetailComponent
               next: response => {
                 // console.log(response);
                 this.getData();
-                this.onLoadToast(
+                this.alert(
                   'success',
-                  'Exito',
+                  'Eliminación',
                   `Se elimino el bien No. ${item.no_bien}`
                 );
               },
               error: err => {
                 // console.log(err);
                 this.loading = false;
-                this.onLoadToast(
+                this.alert(
                   'error',
                   'ERROR',
                   `No se pudo eliminar el bien No. ${item.no_bien}`

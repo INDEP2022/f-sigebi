@@ -9,7 +9,7 @@
     <form [formGroup]="form" class="form-material">
       <div class="row">
         <div class="col-md-2 col-sm-12 col-xs-12">
-          <form-field [control]="form.get('numberGood')" label="Numero de Bien">
+          <form-field [control]="form.get('numberGood')" label="Número de Bien">
             <input
               type="text"
               class="form-control"
@@ -19,7 +19,7 @@
         <div class="col-md-10 col-sm-12 col-xs-12">
           <form-field
             [control]="form.get('descriptionGood')"
-            label="Descripcion del bien">
+            label="Descripción del bien">
             <textarea
               formControlName="descriptionGood"
               class="form-control"
@@ -42,7 +42,7 @@
         <div class="col-md-8 col-sm-12 col-xs-12">
           <form-field
             [control]="form.get('descriptionClasification')"
-            label="Descripcion">
+            label="Descripción">
             <input
               type="text"
               class="form-control"
@@ -88,7 +88,8 @@
             <input
               type="text"
               class="form-control"
-              formControlName="fileNumberNew" />
+              formControlName="fileNumberNew"
+              readonly />
           </form-field>
         </div>
       </div>
@@ -109,9 +110,17 @@
               <button
                 type="button"
                 class="btn btn-primary btn-sm active"
-                [disabled]="formNew.invalid"
+                [disabled]="disabledButton()"
                 (click)="showAlert()">
-                Cambiar Clasificación
+                Guardar
+                <i aria-hidden="true" class="fa fa-save"></i>
+              </button>
+              <button
+                class="btn btn-danger btn-sm active ml-3"
+                type="button"
+                (click)="clear()">
+                Limpiar
+                <i class="fa fa-eraser"></i>
               </button>
             </div>
           </div>
@@ -142,7 +151,7 @@
         <h6>NUEVOS</h6>
         <app-good-characteristics-table
           [goodChange]="goodChange2"
-          [initValue]="false"
+          [initValue]="initValue"
           [clasification]="classificationOfGoods.value"
           [settings]="atributNewSettings"
           [avaluo]="false"

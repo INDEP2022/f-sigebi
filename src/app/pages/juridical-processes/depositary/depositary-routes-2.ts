@@ -108,7 +108,7 @@ export const DEPOSITARY_ROUTES_2_ROUTING = [
           './maintenance-of-coverages/jp-d-m-maintenance-of-coverages.module'
         )
       ).JpDMMaintenanceOfCoveragesModule,
-    data: { title: DEPOSITARY_ROUTES_2[11].label },
+    data: { title: DEPOSITARY_ROUTES_2[11].label, screen: 'FADMAMPAROS' },
   },
   {
     path: DEPOSITARY_ROUTES_2[12].link,

@@ -1,7 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { HttpEventType } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { HttpEvent, HttpEventType } from '@angular/common/http';
+import { Component, inject, OnInit } from '@angular/core';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { Observable } from 'rxjs';
 import { showHideErrorInterceptorService } from 'src/app/common/services/show-hide-error-interceptor.service';
 import { FileBrowserService } from 'src/app/core/services/ms-ldocuments/file-browser.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -13,6 +14,14 @@ import {
   FILE_UPLOAD_STATUSES,
 } from 'src/app/utils/file-upload/interfaces/file-event';
 
+export interface IServiceUpload {
+  uploadFile(
+    campo: any,
+    file: File,
+    fileField: string
+  ): Observable<HttpEvent<unknown>>;
+}
+
 @Component({
   selector: 'app-file-upload-modal',
   standalone: true,
@@ -22,12 +31,14 @@ import {
 })
 export class FileUploadModalComponent extends BasePage implements OnInit {
   accept: string = '*';
-  folio: number | string = '3429238';
+  identificator: any = '3429238';
+  uploadFiles = true;
   refresh: boolean = false;
   successCount: number = 0;
   totalDocs: number = 0;
+  fileEvents: FileUploadEvent[];
+  service: IServiceUpload = inject(FileBrowserService);
   constructor(
-    private fileBrowserService: FileBrowserService,
     private modalRef: BsModalRef,
     private _blockErrors: showHideErrorInterceptorService
   ) {
@@ -38,6 +49,7 @@ export class FileUploadModalComponent extends BasePage implements OnInit {
 
   testFiles(uploadEvent: IUploadEvent) {
     const { index, fileEvents } = uploadEvent;
+    this.fileEvents = fileEvents;
     this.totalDocs = fileEvents.length;
     if (index) {
       this.uploadFile(fileEvents[index], uploadEvent);
@@ -50,9 +62,14 @@ export class FileUploadModalComponent extends BasePage implements OnInit {
 
   uploadFile(fileEvent: FileUploadEvent, uploadEvent: IUploadEvent) {
     fileEvent.status = FILE_UPLOAD_STATUSES.LOADING;
+    // if (!this.uploadFiles) {
+    //   setTimeout(async () => {
+    //     await this.finishUpload(fileEvent, uploadEvent);
+    //   }, 500);
+    // }
     this._blockErrors.blockAllErrors = true;
-    this.fileBrowserService
-      .uploadFileByFolio(this.folio, fileEvent.file)
+    this.service
+      .uploadFile(this.identificator, fileEvent.file, 'file')
       .subscribe({
         next: response => {
           console.log(response);
@@ -67,7 +84,7 @@ export class FileUploadModalComponent extends BasePage implements OnInit {
           }
         },
         error: error => {
-          this.onLoadToast(
+          this.alert(
             'error',
             'Error',
             'Ocurrió un error al subir el documento'
@@ -75,28 +92,41 @@ export class FileUploadModalComponent extends BasePage implements OnInit {
           fileEvent.status = FILE_UPLOAD_STATUSES.FAILED;
         },
         complete: async () => {
-          fileEvent.status = FILE_UPLOAD_STATUSES.SUCCESS;
-          this.refresh = true;
-          const result = await this.alertQuestion(
-            'question',
-            'Archivos cargados correctamente',
-            '¿Desea subir más archivos?'
-          );
-
-          if (!result.isConfirmed) {
-            this.close();
-          }
-          if (result.isConfirmed) {
-            this.totalDocs = 0;
-            this.successCount = 0;
-            uploadEvent.fileEvents.length = 0;
-          }
+          await this.finishUpload(fileEvent, uploadEvent);
         },
       });
   }
 
+  private async finishUpload(
+    fileEvent: FileUploadEvent,
+    uploadEvent: IUploadEvent
+  ) {
+    fileEvent.status = FILE_UPLOAD_STATUSES.SUCCESS;
+    this.refresh = true;
+    const result = await this.alertQuestion(
+      'question',
+      'Archivos cargados correctamente',
+      '¿Desea subir más archivos?'
+    );
+
+    if (!result.isConfirmed) {
+      this.close();
+    }
+    if (result.isConfirmed) {
+      this.totalDocs = 0;
+      this.successCount = 0;
+      uploadEvent.fileEvents.length = 0;
+    }
+  }
+
   close() {
     this.modalRef.content.callback(this.refresh);
+    // if (this.uploadFiles) {
+    //   this.modalRef.content.callback(this.refresh);
+    // } else {
+    //   this.modalRef.content.callback(this.fileEvents);
+    // }
+
     this.modalRef.hide();
   }
 }

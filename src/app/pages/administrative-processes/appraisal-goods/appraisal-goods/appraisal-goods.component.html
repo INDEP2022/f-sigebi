@@ -1,47 +1,16 @@
-<app-card [header]="true">
+<app-card [header]="true" [footer]="true">
   <div class="ch-content" header>
-    <h5 class="title">SOLICITUD DE AVALÚOS</h5>
+    <h5 class="title">BIENES SIN AVALÚO O VIGENCIA POR TEMINAR</h5>
   </div>
-
   <div body>
-    <form [formGroup]="form" class="form-material">
-      <div class="row">
-        <div class="row margin-input">
-          <div class="col-md-5">
-            <form-field [control]="form.get('delegation')">
-              <ngx-select
-                [form]="form"
-                (fetchItems)="getDelegations($event)"
-                [data]="delegations"
-                value="id"
-                bindLabel="description"
-                label="Delegaci&oacute;n"
-                [control]="'delegation'"
-                (change)="getDelegations($event)">
-              </ngx-select>
-            </form-field>
-          </div>
-        </div>
-
-        <div class="row margin-input">
-          <div class="col-md-5">
-            <form-field [control]="form.get('subdelegation')">
-              <ngx-select
-                [form]="form"
-                (fetchItems)="getSubdelegations($event)"
-                [data]="subdelegations"
-                value="id"
-                bindLabel="description"
-                label="Sub Delegaci&oacute;n"
-                [control]="'subdelegation'"
-                (change)="getSubdelegations($event)">
-              </ngx-select>
-            </form-field>
-          </div>
-        </div>
-
-        <div class="row margin-input">
-          <div class="col-md-5">
+    <div class="row mt-3 mb-3">
+      <form action="" class="form-material" [formGroup]="form">
+        <app-delegation-shared
+          [subdelegationField]="'subdelegation'"
+          [delegationField]="'delegation'"
+          [form]="form"></app-delegation-shared>
+        <div class="row mt-4">
+          <div class="col-md-6 pt-3">
             <form-field [control]="form.get('initialType')">
               <ngx-select
                 [form]="form"
@@ -55,10 +24,7 @@
               </ngx-select>
             </form-field>
           </div>
-        </div>
-
-        <div class="row margin-input">
-          <div class="col-md-5">
+          <div class="col-md-6">
             <form-field [control]="form.get('finalType')">
               <ngx-select
                 [form]="form"
@@ -73,9 +39,8 @@
             </form-field>
           </div>
         </div>
-
-        <div class="row margin-input">
-          <div class="col-md-5">
+        <div class="row mt-4">
+          <div class="col-md-6">
             <form-field [control]="form.get('initialSubtype')">
               <ngx-select
                 [form]="form"
@@ -89,10 +54,7 @@
               </ngx-select>
             </form-field>
           </div>
-        </div>
-
-        <div class="row margin-input">
-          <div class="col-md-5">
+          <div class="col-md-6">
             <form-field [control]="form.get('finalSubtype')">
               <ngx-select
                 [form]="form"
@@ -107,8 +69,8 @@
             </form-field>
           </div>
         </div>
-        <div class="row margin-input">
-          <div class="col-md-3">
+        <div class="row mt-4">
+          <div class="col-md-6">
             <form-field
               [control]="form.get('daysToFinish')"
               label="Días por terminar">
@@ -120,18 +82,29 @@
                 pattern="^[0-9]+" />
             </form-field>
           </div>
-          <div class="col-md-3">
-            <div class="col-md-2">
-              <confirm-button
-                text="Enviar"
-                [disabled]="form.invalid"
-                [loading]="loading"
-                (confirm)="send()">
-              </confirm-button>
-            </div>
+        </div>
+      </form>
+      <div footer>
+        <div class="d-flex justify-content-center">
+          <div class="m-3">
+            <button
+              type="button"
+              [disabled]="form.invalid"
+              class="btn btn-primary active btn-sm"
+              (click)="Generar()">
+              Imprimir <i class="bx bx-printer bx-sm float-icon"></i>
+            </button>
+          </div>
+          <div class="m-3">
+            <button
+              type="button"
+              class="btn btn-danger active btn-sm"
+              (click)="cleanForm()">
+              Limpiar <i class="fas fa-eraser bx-sm float-icon"></i>
+            </button>
           </div>
         </div>
       </div>
-    </form>
+    </div>
   </div>
 </app-card>

@@ -3,6 +3,7 @@
     <h5 class="modal-title">{{ title }}</h5>
   </div>
   <div body>
+    <h5 class="title">Información General</h5>
     <form class="form-material" [formGroup]="newDocForm">
       <div class="row">
         <div class="col-md-12">
@@ -42,7 +43,7 @@
       </div>
       <div class="row pt-4">
         <div class="col-md-12">
-          <form-field [control]="newDocForm.get('docFile')" label="Carga">
+          <form-field [control]="newDocForm.get('docFile')" label="Documento">
             <input
               type="file"
               class="form-control"
@@ -91,6 +92,15 @@
       </div>
       <div class="row pt-4">
         <div class="col-md-6">
+          <form-field
+            [control]="newDocForm.get('noSiab')"
+            label="No&#46; SIAB&#58;">
+            <input type="text" class="form-control" formControlName="noSiab" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-4">
+        <div class="col-md-6">
           <p for="">
             Delegaci&oacute;n Regional&#58;
             <span *ngIf="regDelName">{{ regDelName }}</span>
@@ -117,6 +127,19 @@
         <div class="col-md-6">
           <p for="">
             Transferente&#58; <span>{{ nameTransferent }}</span>
+          </p>
+        </div>
+      </div>
+
+      <div class="row pt-4" *ngIf="process == 'programming'">
+        <div class="col-md-6">
+          <p for="">
+            No. Programación <span>{{ programming?.id }}</span>
+          </p>
+        </div>
+        <div class="col-md-6">
+          <p for="">
+            Folio Programación <span>{{ programming?.folio }}</span>
           </p>
         </div>
       </div>

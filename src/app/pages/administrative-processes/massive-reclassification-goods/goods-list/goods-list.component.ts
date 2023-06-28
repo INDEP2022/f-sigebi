@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { Ng2SmartTableComponent } from 'ng2-smart-table';
 import {
   catchError,
   distinctUntilChanged,
@@ -11,6 +12,7 @@ import {
   tap,
   throttleTime,
 } from 'rxjs';
+import { Subscription } from 'rxjs/internal/Subscription';
 import { take } from 'rxjs/operators';
 import {
   FilterParams,
@@ -33,13 +35,37 @@ export class GoodsListComponent
   implements OnInit
 {
   previousSelecteds: IGood[] = [];
+  pageSelecteds: number[] = [];
+  subscription: Subscription = new Subscription();
+  changeSettings: number = 0;
+  @Input() changeDescription: string;
+  @Input()
+  set changeMode(value: 'I' | 'E') {
+    if (!value) return;
+    if (value === 'E') {
+      let columns = { ...COLUMNS };
+      delete columns.changeDescription;
+      this.settings = {
+        ...this.settings,
+        columns,
+      };
+      this.changeSettings++;
+    } else {
+      this.settings = {
+        ...this.settings,
+        columns: COLUMNS,
+      };
+      this.changeSettings++;
+    }
+  }
+  @ViewChild('table') table: Ng2SmartTableComponent;
   constructor(
     private massiveService: MassiveReclassificationGoodsService,
     private procedureManagement: ProcedureManagementService,
     private readonly goodServices: GoodService
   ) {
     super();
-    this.ilikeFilters = ['description', 'goodDescription'];
+    this.ilikeFilters = ['description', 'goodDescription', 'status'];
     this.haveInitialCharge = false;
     this.settings = {
       ...this.settings,
@@ -64,6 +90,34 @@ export class GoodsListComponent
         return row.data.notSelect ? 'notSelect' : '';
       },
     };
+  }
+
+  private fillSelectedRows(byPage: boolean) {
+    setTimeout(() => {
+      console.log(this.selectedGooods, this.table);
+      const currentPage = this.params.getValue().page;
+      const selectedPage = this.pageSelecteds.find(
+        page => page === currentPage
+      );
+      if (!selectedPage || byPage === false) {
+        this.table.isAllSelected = false;
+      } else {
+        this.table.isAllSelected = true;
+      }
+      if (this.selectedGooods && this.selectedGooods.length > 0) {
+        this.table.grid.getRows().forEach(row => {
+          console.log(row);
+
+          if (
+            this.selectedGooods.find(item => row.getData()['id'] === item.id)
+          ) {
+            this.table.grid.multipleSelectRow(row);
+          }
+          // if(row.getData())
+          // this.table.grid.multipleSelectRow(row)
+        });
+      }
+    }, 300);
   }
 
   get selectedGooods() {
@@ -126,6 +180,13 @@ export class GoodsListComponent
       }
     } else {
       if (event.isSelected === null) {
+        const currentPage = this.params.getValue().page;
+        const selectedPage = this.pageSelecteds.find(
+          page => page === currentPage
+        );
+        if (!selectedPage) {
+          this.pageSelecteds.push(currentPage);
+        }
         selecteds.forEach(selected => {
           const item = this.selectedGooods.find(x => x.id === selected.id);
           if (!item) {
@@ -168,7 +229,7 @@ export class GoodsListComponent
       next: response => {
         if (response) {
           this.selectedGooods = [];
-          this.getData();
+          this.getData(false);
         } else {
           this.data.load([]);
           this.selectedGooods = [];
@@ -176,6 +237,19 @@ export class GoodsListComponent
         }
       },
     });
+    this.classificationOfGoods.valueChanges
+      .pipe(
+        distinctUntilChanged(),
+        throttleTime(500),
+        takeUntil(this.$unSubscribe)
+      )
+      .subscribe(x => {
+        if (!x) {
+          this.selectedGooods = [];
+          this.data.load([]);
+          this.data.refresh();
+        }
+      });
     this.mode.valueChanges
       .pipe(
         distinctUntilChanged(),
@@ -184,9 +258,14 @@ export class GoodsListComponent
       )
       .subscribe(x => {
         console.log(x);
-        if (this.totalItems > 0 && x !== null && x + ''.trim() !== '') {
+        if (
+          this.totalItems > 0 &&
+          x !== null &&
+          x + ''.trim() !== '' &&
+          this.classificationOfGoods.value
+        ) {
           this.selectedGooods = [];
-          this.getData();
+          this.getData(false);
         }
       });
   }
@@ -195,7 +274,7 @@ export class GoodsListComponent
     return obs ? (obs.length > 0 ? forkJoin(obs) : of([])) : of([]);
   }
 
-  override getData() {
+  override getData(byPage: boolean = true) {
     this.loading = true;
     console.log(this.classificationOfGoods.value);
     const filterParams = new FilterParams();
@@ -226,8 +305,8 @@ export class GoodsListComponent
       }
     }
     console.log(this.goodStatus.value);
-
-    this.goodServices
+    this.subscription.unsubscribe();
+    this.subscription = this.goodServices
       .getAll(filterParams.getParams())
       .pipe(
         takeUntil(this.$unSubscribe),
@@ -236,12 +315,16 @@ export class GoodsListComponent
           return of({ data: [], count: 0 });
         }),
         tap(response => {
-          this.totalItems = response.count;
+          this.totalItems = response.count ?? 0; //> 100 ? 100 : response.count;
         }),
         map(response =>
           response.data.map(good => {
             if (good.goodClassNumber + '' !== '1575') {
-              return of({ ...good, notSelect: false });
+              return of({
+                ...good,
+                changeDescription: this.changeDescription,
+                notSelect: false,
+              });
             } else {
               const filterParams = new FilterParams();
               filterParams.addFilter('typeManagement', 2);
@@ -261,6 +344,7 @@ export class GoodsListComponent
                   map(gestionTramite => {
                     return {
                       ...good,
+                      changeDescription: this.changeDescription,
                       notSelect: gestionTramite > 0,
                     };
                   })
@@ -275,6 +359,7 @@ export class GoodsListComponent
           console.log(response);
           this.data.load(response);
           this.data.refresh();
+          this.fillSelectedRows(byPage);
           // if (response.data && response.data.length > 0) {
           //   this.listGood = response.data;
           //   this.totalItems = response.count;

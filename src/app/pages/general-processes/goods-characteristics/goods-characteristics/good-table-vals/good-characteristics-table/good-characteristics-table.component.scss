@@ -55,8 +55,10 @@
     td {
       &:nth-child(2) {
         background-color: #17a2b8;
+        color: white;
         input.form-control {
           background-color: #17a2b8 !important;
+          color: white;
         }
       }
     }

@@ -1,11 +1,16 @@
 import { Injectable } from '@angular/core';
 import { map, Observable } from 'rxjs';
+import { _Params } from 'src/app/common/services/http-wcontet.service';
+import { NumDetGood } from 'src/app/pages/administrative-processes/numerary/numerary-request/models/goods-det';
 import { MassiveGoodEndpoints } from '../../../common/constants/endpoints/ms-massivegood-endpoints';
 import { ListParams } from '../../../common/repository/interfaces/list-params';
 import { HttpService } from '../../../common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IPackageInfo } from '../../models/catalogs/package.model';
-import { IMassiveGoodTracker } from '../../models/ms-massivegood/massive-good-goods-tracker.model';
+import {
+  IIdentifierCount,
+  IMassiveGoodTracker,
+} from '../../models/ms-massivegood/massive-good-goods-tracker.model';
 import { IMassiveGood } from '../../models/ms-massivegood/massivegood.model';
 
 @Injectable({
@@ -100,5 +105,37 @@ export class MassiveGoodService extends HttpService {
   pubExport(body: IPackageInfo) {
     const route = `application/pup-export`;
     return this.post(route, body);
+  }
+
+  getIdentifierCount(
+    params: ListParams
+  ): Observable<IListResponse<IIdentifierCount>> {
+    const route = `application/getIdentifierCount`;
+    return this.get(route, params);
+  }
+
+  getDataCSVFile(currency: string, file: any) {
+    const formData = new FormData();
+    formData.append('tCurrency', currency);
+    formData.append('file', file);
+    return this.post<IListResponse<NumDetGood>>(this.route.FileCSV, formData);
+  }
+
+  getBanVal(status: string) {
+    const route = `application/act-bdc-change-status`;
+    return this.get(`${route}/${status}`);
+  }
+
+  getFProRecPag2CSV(params: _Params, file: any) {
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.post(this.route.GetFProRecPag2CSV, formData, params);
+  }
+
+  download(formData: string, params: ListParams): Observable<any> {
+    const header: Object = {
+      responseType: 'arraybuffer',
+    };
+    return this.post(this.route.GetFProRecPag2CSV, formData, params);
   }
 }

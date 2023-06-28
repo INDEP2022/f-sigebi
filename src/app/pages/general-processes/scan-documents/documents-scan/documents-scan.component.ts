@@ -68,6 +68,9 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
   };
   origin2: string = ''; // Pantalla para regresar a la anterior de la que se llamo
   origin3: string = ''; // Pantalla para regresar a la anterior de la que se llamo desde la origin2
+  no_bien: number = null;
+  expedientNumber: number = null; //no_expediente
+  wheelNumber: number = null; //no_volante
 
   constructor(
     private fb: FormBuilder,
@@ -87,6 +90,9 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
         this.originFlyer = params['volante'] ?? '';
         this.origin = params['origin'] ?? null;
         this.requestOrigin = params['requestOrigin'] ?? null;
+        this.expedientNumber = params['expedientNumber'] ?? null;
+        this.wheelNumber = params['wheelNumber'] ?? null;
+
         console.log(params);
         if (this.origin == 'FACTJURDICTAMOFICIO') {
           for (const key in this.paramsScreen) {
@@ -97,6 +103,9 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
           }
           this.origin2 = params['origin2'] ?? null;
           this.origin3 = params['origin3'] ?? null;
+        }
+        if (this.origin == 'FACTJURREGDESTLEG') {
+          this.no_bien = params['P_NB'] ?? null;
         }
       });
     this.settings = {
@@ -275,7 +284,7 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
     const config = {
       ...MODAL_CONFIG,
       initialState: {
-        folio: this.folio,
+        identificator: this.folio,
         accept: 'image/*,application/pdf',
         callback: (refresh: boolean) => this.fileUploaderClose(refresh),
       },
@@ -466,6 +475,26 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
       this.router.navigate([
         `/pages/juridical/abandonments-declaration-trades`,
       ]);
+    }
+    if (this.origin == 'FPROCRECPAG') {
+      this.router.navigate([
+        `/pages/administrative-processes/payment-claim-process`,
+      ]);
+    }
+    if (this.origin == 'FACTJURREGDESTLEG') {
+      this.router.navigate([
+        `/pages/juridical/depositary/depositary-record/` + this.no_bien,
+      ]);
+    }
+    if (this.origin == 'FREGULARIZAJUR') {
+      this.router.navigate([
+        `pages/administrative-processes/legal-regularization`,
+      ]);
+    }
+    if (this.origin == 'FADMAMPAROS') {
+      this.router.navigateByUrl(
+        `pages/juridical/depositary/maintenance-of-coverages?wheelNumber=${this.wheelNumber}&proceedingsNumber=${this.expedientNumber}`
+      );
     }
   }
 }

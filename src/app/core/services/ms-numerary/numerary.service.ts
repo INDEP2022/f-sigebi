@@ -3,7 +3,7 @@ import { Observable } from 'rxjs';
 import { NumeraryEndpoints } from 'src/app/common/constants/endpoints/ms-numerary';
 import { ICrudMethods } from 'src/app/common/repository/interfaces/crud-methods';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { HttpService } from 'src/app/common/services/http.service';
+import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { INumerary } from '../../models/ms-numerary/numerary.model';
 
@@ -31,5 +31,17 @@ export class NumeraryService extends HttpService implements ICrudMethods<any> {
 
   create(model: INumerary): Observable<INumerary> {
     return this.post(NumeraryEndpoints.RateInt, model);
+  }
+
+  remove(id: number) {
+    return this.delete(`${NumeraryEndpoints.RateInt}/${id}`);
+  }
+
+  update(id: number, body: INumerary) {
+    return this.put(`${NumeraryEndpoints.RateInt}/${id}`, body);
+  }
+
+  getNumeraryCategories(params?: _Params) {
+    return this.get(NumeraryEndpoints.NumeraryCategories, params);
   }
 }

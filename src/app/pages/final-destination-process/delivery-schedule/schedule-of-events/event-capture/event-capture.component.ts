@@ -53,6 +53,7 @@ import { EventProgrammingService } from 'src/app/core/services/ms-event-programm
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import { GoodParametersService } from 'src/app/core/services/ms-good-parameters/good-parameters.service';
 import { FIndicaService } from 'src/app/core/services/ms-good/findica.service';
+import { InterfacesirsaeService } from 'src/app/core/services/ms-interfacesirsae/interfacesirsae.service';
 import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive-good.service';
 import { IndicatorsParametersService } from 'src/app/core/services/ms-parametergood/indicators-parameter.service';
 import { ParametersService } from 'src/app/core/services/ms-parametergood/parameters.service';
@@ -181,6 +182,7 @@ export class EventCaptureComponent
   _minDate: Date = null;
   saveLoading = false;
 
+  siseLoading = false;
   eventTypes = new DefaultSelect([
     { area_tramite: 'OP', descripcion: 'Oficialía de partes' },
   ]);
@@ -316,7 +318,8 @@ export class EventCaptureComponent
     private fIndicaService: FIndicaService,
     private excelService: ExcelService,
     private goodPosessionThirdpartyService: GoodPosessionThirdpartyService,
-    private massiveGoodService: MassiveGoodService
+    private massiveGoodService: MassiveGoodService,
+    private interfaceSirSaeService: InterfacesirsaeService
   ) {
     super();
     this.authUser = this.authService.decodeToken().preferred_username;
@@ -351,6 +354,38 @@ export class EventCaptureComponent
       this.global.proceedingNum = params['numeroActa'] ?? null;
       this.global.paperworkArea = params['tipoEvento'] ?? null;
     });
+  }
+
+  sendSISE() {
+    this.siseLoading = true;
+    this.interfaceSirSaeService
+      .updateInvitations({
+        sRunCommand: 'registrar',
+        cveCertificate: this.proceeding.keysProceedings,
+      })
+      .subscribe({
+        next: async () => {
+          this.siseLoading = false;
+          const params = new FilterParams();
+          params.addFilter('id', this.global.proceedingNum);
+          await this.getProceeding(params);
+          if (this.proceeding.receiveBy == '1') {
+            this.alert('success', 'Enviado al SISE correctamente', '');
+          } else if (this.proceeding.receiveBy == '0') {
+            this.alert(
+              'error',
+              'Error',
+              'No se pudo Enviar el ejecutable del SISE, puedes reenviarlo de nuevo'
+            );
+          } else {
+            this.alert('error', 'Error', 'Renviar de nuevo el SISE');
+          }
+        },
+        error: () => {
+          this.siseLoading = false;
+          this.alert('error', 'Error', 'Ocurrió un error al enviar el SISE');
+        },
+      });
   }
 
   async removeDetail(detail: any) {
@@ -590,7 +625,7 @@ export class EventCaptureComponent
       .pipe();
   }
 
-  async createProceeding() {
+  async createProceeding(showMessage?: boolean) {
     await this.generateCve();
     const formValue = this.form.getRawValue();
     const { numFile, keysProceedings, captureDate, responsible } = formValue;
@@ -625,7 +660,9 @@ export class EventCaptureComponent
     this.proceedingDeliveryReceptionService.create(dataToSave).subscribe({
       next: async res => {
         this.saveLoading = false;
-        this.alert('success', 'Acta Generada Correctamente', '');
+        if (showMessage) {
+          this.alert('success', 'Acta Generada Correctamente', '');
+        }
         this.global.proceedingNum = res.id;
         this.global.paperworkArea = this.originalType;
         await this.initForm();
@@ -697,8 +734,8 @@ export class EventCaptureComponent
 
     this.detailDeliveryReceptionService
       .updateMassiveNew(
-        start.toLocaleDateString(),
-        end.toLocaleDateString(),
+        format(start, 'yyyy-MM-dd'),
+        format(end, 'yyyy-MM-dd'),
         Number(this.proceeding.id)
       )
       .subscribe({
@@ -848,8 +885,7 @@ export class EventCaptureComponent
 
   async loadGoods() {
     if (!this.proceeding.id) {
-      this.alert('error', 'Error', 'Primero debes guardar el acta');
-      return;
+      await this.createProceeding();
     }
     const { area, keysProceedings, typeEvent } = this.registerControls;
     const totalFilters = Object.values(this.formSiab.value);
@@ -1518,7 +1554,6 @@ export class EventCaptureComponent
         this.ctrlButtons.closeProg.show();
         this.ctrlButtons.closeProg.label = 'Abrir Programación';
         if (count > 0) {
-          console.log(this.proceeding.receiveBy);
           if (this.proceeding.receiveBy != '1') {
             this.ctrlButtons.sendSise.show();
           } else {

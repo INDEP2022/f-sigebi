@@ -9,7 +9,7 @@ import { WarehouseService } from 'src/app/core/services/catalogs/warehouse.servi
 import { StoreAliasStockService } from 'src/app/core/services/ms-store/store-alias-stock.service';
 import { TaskService } from 'src/app/core/services/ms-task/task.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-warehouse-confirm',
@@ -33,6 +33,7 @@ export class WarehouseConfirmComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
+    console.log('store', this.store);
   }
 
   prepareForm() {
@@ -40,7 +41,7 @@ export class WarehouseConfirmComponent extends BasePage implements OnInit {
       nbidnewstore: [null, [Validators.required]],
       nbobservation: [
         null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
     });
   }
@@ -68,14 +69,15 @@ export class WarehouseConfirmComponent extends BasePage implements OnInit {
             responsibleDelegation: this.store.wildebeestDelegationregion,
           };
 
+          console.log('warehouseForm', warehouseForm);
           this.warehouseService.create(warehouseForm).subscribe({
             next: async response => {
               const openTaskPerform = await this.openTaskPerform();
               if (openTaskPerform == true) {
                 this.onLoadToast(
                   'success',
-                  'Alta de almacén confirmada correctamente',
-                  ''
+                  'Acción correcta',
+                  'Alta de almacén confirmada correctamente'
                 );
                 this.close();
                 this.router.navigate(['/pages/siab-web/sami/consult-tasks']);

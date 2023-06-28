@@ -1,0 +1,8 @@
+#disabled {
+  color: #555 !important;
+  background-color: #eeeeee !important;
+  border-bottom-color: #74788d !important;
+  :hover {
+    cursor: not-allowed;
+  }
+}

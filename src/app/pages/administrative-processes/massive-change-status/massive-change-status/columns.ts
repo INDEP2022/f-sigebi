@@ -1,12 +1,12 @@
 //Components
 
 export const COLUMNS = {
-  id: {
+  goodId: {
     title: 'No. Bien',
     sort: false,
   },
   description: {
-    title: 'Descripcion',
+    title: 'Descripción',
     sort: false,
   },
   status: {

@@ -75,15 +75,15 @@ export class ScheduledMaintenanceComponent
       });
       this.onLoadToast(
         'success',
-        'Exito',
+        'Eliminación Acta',
         `Se eliminaron las actas No. ${proceedings} ` +
           this.showMessageProceedingsNotRemoved(notRemoveds)
       );
     } else {
       if (notRemoveds.length > 0) {
         this.onLoadToast(
-          'success',
-          'Exito',
+          'warning',
+          'Eliminación',
           `Elimine primero el detalle de las actas No. ${proceedings}`
         );
       }
@@ -149,7 +149,7 @@ export class ScheduledMaintenanceComponent
 
   redirectDetailMaintenance(item: IProceedingDeliveryReception) {
     console.log(item);
-    window.localStorage.setItem('detailActa', JSON.stringify(item));
+    window.localStorage.setItem('detailActa', item.id);
     this.saveForm();
     this.router.navigate([
       'pages/judicial-physical-reception/scheduled-maintenance-1/detail',
@@ -170,8 +170,8 @@ export class ScheduledMaintenanceComponent
             this.getData(true);
             this.onLoadToast(
               'success',
-              'Exito',
-              `Se elimino la acta No. ${item.id}`
+              'Eliminación',
+              `Se elimino el acta No. ${item.id}`
             );
           },
           error: err => {

@@ -8,11 +8,17 @@ export const SEARCH_COLUMNS = {
     title: 'Fecha Recepción',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (value: any) => {
+      return formatearFecha(new Date(value));
+    },
   },
   captureDate: {
     title: 'Fecha Captura',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (value: any) => {
+      return formatearFecha(new Date(value));
+    },
   },
   indiciadoNumber: {
     title: 'No. Indiciado',
@@ -60,4 +66,14 @@ export const SEARCH_COLUMNS = {
       return value.description;
     },
   },
+};
+
+export const formatearFecha = (fecha: Date) => {
+  let dia: any = fecha.getDate();
+  let mes: any = fecha.getMonth() + 1;
+  let anio: any = fecha.getFullYear();
+  dia = dia < 10 ? '0' + dia : dia;
+  mes = mes < 10 ? '0' + mes : mes;
+  let fechaFormateada = dia + '/' + mes + '/' + anio;
+  return fechaFormateada;
 };

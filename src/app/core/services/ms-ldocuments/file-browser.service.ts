@@ -28,6 +28,26 @@ export class FileBrowserService extends HttpService {
     });
   }
 
+  uploadFile(folio: string | number, file: File, fileField = 'file') {
+    const filename = file.name;
+    const ext = filename.substring(filename.lastIndexOf('.') + 1) ?? '';
+    const formData = new FormData();
+    formData.append(fileField, file, `FU_${uuidv4()}.${ext}`);
+    formData.append('invoiceNumber', `${folio}`);
+    const request = new HttpRequest(
+      'POST',
+      `${this._url}${this.microservice}/${this._prefix}file-browser/saveFolio`,
+      formData,
+      { reportProgress: true, responseType: 'json' }
+    );
+    return this.httpClient.request(request).pipe(
+      catchError(error => {
+        console.log(error);
+        return throwError(() => error);
+      })
+    );
+  }
+
   uploadFileByFolio(folio: string | number, file: File, fileField = 'file') {
     const filename = file.name;
     const ext = filename.substring(filename.lastIndexOf('.') + 1) ?? '';

@@ -16,18 +16,34 @@ export class AttribGoodBadService extends HttpService {
     this.microservice = GoodEndpoints.Good;
   }
 
+  getById(id: string) {
+    return this.get<IAttribGoodBad>(GoodEndpoints.AttribGoodBadId + '/' + id);
+  }
+
   update(model: IAttribGoodBad) {
-    return this.put(GoodEndpoints.AttribGoodBad, model);
+    return this.put(GoodEndpoints.AttribGoodBadId, model);
   }
 
   remove(model: IAttribGoodBad) {
-    return this.delete(GoodEndpoints.AttribGoodBad, model);
+    return this.delete(GoodEndpoints.AttribGoodBadId, model);
   }
 
   getAll(params?: _Params): Observable<IListResponseMessage<IAttribGoodBad>> {
     return this.get<IListResponseMessage<IAttribGoodBad>>(
       GoodEndpoints.AttribGoodBad,
       params
+    ).pipe(
+      map(x => {
+        return {
+          ...x,
+          data: x.data.map(item => {
+            return {
+              ...item,
+              id: item.id.id,
+            };
+          }),
+        };
+      })
     );
   }
 

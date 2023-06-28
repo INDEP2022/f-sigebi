@@ -1,0 +1,20 @@
+<div class="text-center">
+  <div
+    *ngIf="value"
+    (click)="onCellClick($event)"
+    (contextmenu)="onContextMenu($event)"
+    class="text-center"
+    style="width: auto; height: 20px">
+    {{ value }}
+  </div>
+  <div
+    *ngIf="!value"
+    tooltip="Conciliar Bien"
+    containerClass="tooltip-style"
+    (click)="onCellClick($event)"
+    (contextmenu)="onContextMenu($event)"
+    class="text-center bg-info hoverBg"
+    style="width: auto; height: 25px; color: white; border-radius: 5px">
+    Agregar
+  </div>
+</div>

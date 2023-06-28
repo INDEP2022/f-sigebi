@@ -8,6 +8,7 @@ import {
 } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IGoodSssubtype } from 'src/app/core/models/catalogs/good-sssubtype.model';
+import { IGood } from 'src/app/core/models/ms-good/good';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -25,10 +26,12 @@ export class SearchTabComponent extends BasePage implements OnInit {
   @Output() dataSearch = new EventEmitter<{ data: any; exist: boolean }>();
   params = new BehaviorSubject<FilterParams>(new FilterParams());
   params1 = new BehaviorSubject<ListParams>(new ListParams());
+
   totalItems: number = 0;
   list: any[] = [];
   classifGood: number;
   expedientNumber: string | number;
+  goodSelect: IGood;
   constructor(
     private fb: FormBuilder,
     private readonly goodService: GoodService,
@@ -38,6 +41,7 @@ export class SearchTabComponent extends BasePage implements OnInit {
     super();
     this.settings.actions = false;
     this.settings.columns = SEARCH_COLUMNS;
+    this.settings.hideSubHeader = false;
   }
 
   ngOnInit(): void {
@@ -57,10 +61,10 @@ export class SearchTabComponent extends BasePage implements OnInit {
       noClasifBien: [null],
       noTipo: [null],
       tipo: [null],
-      noSubtipo: [null, [Validators.required]],
-      subtipo: [null, [Validators.required]],
-      noSsubtipo: [null, [Validators.required]],
-      ssubtipo: [null, [Validators.required]],
+      noSubtipo: [null],
+      subtipo: [null],
+      noSsubtipo: [null],
+      ssubtipo: [null],
       noSssubtipo: [null],
       sssubtipo: [null],
       estatus: [null, [Validators.pattern(STRING_PATTERN)]],
@@ -78,7 +82,11 @@ export class SearchTabComponent extends BasePage implements OnInit {
   }
 
   getGoods(ssssubType: IGoodSssubtype) {
-    this.classifGood = ssssubType.numClasifGoods;
+    if (ssssubType !== null) {
+      this.classifGood = ssssubType.numClasifGoods;
+    } else {
+      this.classifGood = null;
+    }
   }
 
   clean() {
@@ -87,6 +95,20 @@ export class SearchTabComponent extends BasePage implements OnInit {
   }
 
   async search() {
+    /* if (
+      this.searchTabForm.get('subtipo').value === '' ||
+      this.searchTabForm.get('subtipo').value === null
+    ) {
+      this.onLoadToast('info', 'Debe seleccionar un subtipo');
+      return;
+    }
+    if (
+      this.searchTabForm.get('ssubtipo').value === '' ||
+      this.searchTabForm.get('ssubtipo').value === null
+    ) {
+      this.onLoadToast('info', 'Debe seleccionar un ssubtipo');
+      return;
+    } */
     if (
       this.searchTabForm.get('noBien').value === '' ||
       this.searchTabForm.get('noBien').value === null
@@ -99,6 +121,8 @@ export class SearchTabComponent extends BasePage implements OnInit {
       exist: true,
     });
     const respStatus = await this.searchStatus();
+    this.searchTabForm.get('situacion').patchValue(this.goodSelect.situation);
+    this.searchTabForm.get('destino').patchValue(this.goodSelect.destiny);
     const respNotification = await this.searchNotifications();
   }
 
@@ -169,5 +193,21 @@ export class SearchTabComponent extends BasePage implements OnInit {
       ignoreBackdropClick: true,
     };
     this.modalService.show(component, config);
+  }
+
+  formatearFecha(fecha: Date) {
+    let dia: any = fecha.getDate();
+    let mes: any = fecha.getMonth() + 1;
+    let anio: any = fecha.getFullYear();
+    dia = dia < 10 ? '0' + dia : dia;
+    mes = mes < 10 ? '0' + mes : mes;
+    let fechaFormateada = dia + '/' + mes + '/' + anio;
+    console.log(fechaFormateada);
+    return fechaFormateada;
+  }
+
+  onChangeGood(event: IGood) {
+    console.log(event);
+    this.goodSelect = event;
   }
 }

@@ -49,7 +49,7 @@ export class RejectProgrammingFormComponent extends BasePage implements OnInit {
     this.form = this.fb.group({
       startDate: [null, [Validators.required, minDate(new Date())]],
       endDate: [null, [Validators.required, minDate(new Date(fiveDays))]],
-      observation: [null, [Validators.required]],
+      concurrentMsg: [null, [Validators.required]],
     });
 
     this.programmingService.getProgrammingId(this.idProgramming).subscribe({
@@ -61,8 +61,10 @@ export class RejectProgrammingFormComponent extends BasePage implements OnInit {
         response.endDate = moment(response.endDate).format(
           'DD/MMMM/YYYY, h:mm:ss a'
         );
-
-        this.form.patchValue(response);
+        this.form.get('concurrentMsg').setValue(response?.concurrentMsg);
+        this.form.get('endDate').setValue(response?.endDate);
+        this.form.get('startDate').setValue(response?.startDate);
+        //this.form.patchValue(response);
       },
       error: error => {},
     });
@@ -73,7 +75,7 @@ export class RejectProgrammingFormComponent extends BasePage implements OnInit {
       id: this.idProgramming,
       startDate: this.form.get('startDate').value,
       endDate: this.form.get('endDate').value,
-      concurrentMsg: this.form.get('observation').value,
+      concurrentMsg: this.form.get('concurrentMsg').value,
     };
     this.programmingService
       .updateProgramming(this.idProgramming, formData)
@@ -108,17 +110,27 @@ export class RejectProgrammingFormComponent extends BasePage implements OnInit {
   openTaskPerfomProg() {
     return new Promise((resolve, reject) => {
       const task = JSON.parse(localStorage.getItem('Task'));
-      const params = new BehaviorSubject<ListParams>(new ListParams());
       const taskForm: ITask = {
         State: null,
       };
-      this.taskService.update(task.id, taskForm).subscribe({
+
+      const params = new BehaviorSubject<ListParams>(new ListParams());
+      params.getValue()['filter.id'] = task.id;
+      this.taskService.getAll(params.getValue()).subscribe({
         next: response => {
-          resolve(true);
+          console.log('response', response);
+          this.taskService
+            .update(response.data[0].taskDefinitionId, taskForm)
+            .subscribe({
+              next: response => {
+                resolve(true);
+              },
+              error: error => {
+                resolve(false);
+              },
+            });
         },
-        error: error => {
-          resolve(false);
-        },
+        error: error => {},
       });
     });
   }

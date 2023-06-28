@@ -7,8 +7,14 @@
 
     <div class="justify-content-end" *ngIf="!formLoading">
       <div class="m-3 btn-toolbar">
-        <button class="btn btn-primary btn-sm active">Aprobar</button>
-        <button class="btn btn-danger btn-sm active">Cancelar</button>
+        <button
+          (click)="aprobateReception()"
+          class="btn btn-primary btn-sm active">
+          Terminar Ejecución
+        </button>
+        <button (click)="close()" class="btn btn-danger btn-sm active">
+          Cancelar
+        </button>
       </div>
     </div>
   </div>
@@ -226,8 +232,12 @@
           <search-bar placeholder="Número de gestión"> </search-bar>
         </div>
         <div class="btn-toolbar justify-content-end">
-          <button class="btn btn-primary btn-sm active">Buscar</button>
-          <button class="btn btn-danger btn-sm active">Limpiar</button>
+          <button class="btn btn-primary btn-sm active">
+            Buscar <i class="fas fa-search"></i>
+          </button>
+          <button class="btn btn-danger btn-sm active">
+            Limpiar <i class="fas fa-eraser"></i>
+          </button>
         </div>
       </div>
 
@@ -260,7 +270,7 @@
       </div>
       <div class="row" *ngIf="!formLoadingTrans">
         <form [formGroup]="executeForm">
-          <div class="table-responsive text-nowrap">
+          <div class="table-responsive">
             <table class="table table-bordered">
               <col style="width: 60%" />
               <col style="width: 80%" />
@@ -273,19 +283,19 @@
                       class="form-control ng-pristine ng-valid ng-touched"
                       ng-reflect-model="true" />
                   </th>
-                  <th scope="col">N. gesti&oacute;n</th>
-                  <th scope="col">Clave &uacute;nica</th>
+                  <th scope="col">No. Gesti&oacute;n</th>
+                  <th scope="col">Clave &Uacute;nica</th>
                   <th scope="col">Expediente</th>
-                  <th scope="col">Descripci&oacute;n transferente</th>
+                  <th scope="col">Descripci&oacute;n Transferente</th>
                   <th scope="col">Descripci&oacute;n INDEP</th>
-                  <th scope="col">Cantidad transferente</th>
+                  <th scope="col">Cantidad Transferente</th>
                   <th scope="col">Cantidad INDEP</th>
-                  <th scope="col">Unidad Medida transferente</th>
+                  <th scope="col">Unidad Medida Transferente</th>
                   <th scope="col">Unidad Medida INDEP</th>
-                  <th scope="col">Estado f&iacute;sico transferente</th>
-                  <th scope="col">Estado f&iacute;sico INDEP</th>
-                  <th scope="col">Conservaci&oacute;n transferente</th>
-                  <th scope="col">Estado conservaci&oacute;n INDEP</th>
+                  <th scope="col">Estado F&iacute;sico Transferente</th>
+                  <th scope="col">Estado F&iacute;sico INDEP</th>
+                  <th scope="col">Conservaci&oacute;n Transferente</th>
+                  <th scope="col">Estado Conservaci&oacute;n INDEP</th>
                   <th scope="col">Acciones</th>
                 </tr>
               </thead>
@@ -404,22 +414,28 @@
                           <i
                             (click)="showGood(good.value)"
                             class="fa fa-file mr-2"
-                            style="cursor: pointer"></i
-                        ></a>
+                            style="cursor: pointer">
+                            Ver Etiqueta</i
+                          >
+                        </a>
 
                         <a class="text-center">
                           <i
                             (click)="editGood(good.value)"
                             class="fa fa-pencil-alt mr-2"
-                            style="cursor: pointer"></i
-                        ></a>
+                            style="cursor: pointer">
+                            Editar</i
+                          >
+                        </a>
 
                         <a class="text-center">
                           <i
                             (click)="updateInfo(good.value)"
                             class="fa fa-retweet mr-2"
-                            style="cursor: pointer"></i
-                        ></a>
+                            style="cursor: pointer">
+                            Actualizar</i
+                          >
+                        </a>
                       </td>
                     </ng-container>
                   </tr>
@@ -443,7 +459,9 @@
                 <form-loader *ngIf="formLoadingReceipt"></form-loader>
               </div>
               <div *ngIf="!formLoadingReceipt">
-                <div class="row">
+                <div
+                  class="row"
+                  *ngIf="receiptData?.statusReceipt == 'ABIERTO'">
                   <div class="d-flex justify-content-end">
                     <app-columns-select
                       [(settings)]="settingsReceipt"></app-columns-select>
@@ -454,6 +472,23 @@
                     [source]="receipts"
                     (edit)="createReceipt($event.data)"
                     (delete)="delete($event.data)">
+                  </ng2-smart-table>
+                  <app-pagination
+                    [params]="paramsReceipts"
+                    [totalItems]="totalItemsReceipt"></app-pagination>
+                </div>
+                <div
+                  class="row"
+                  *ngIf="receiptData?.statusReceipt == 'CERRADO'">
+                  <div class="d-flex justify-content-end">
+                    <app-columns-select
+                      [(settings)]="settingsReceiptClose"></app-columns-select>
+                  </div>
+                  <ng2-smart-table
+                    [attr.class]="'table-bordered'"
+                    [settings]="settingsReceiptClose"
+                    [source]="receipts"
+                    (edit)="showReceipt($event.data)">
                   </ng2-smart-table>
                   <app-pagination
                     [params]="paramsReceipts"
@@ -483,7 +518,7 @@
                   </div>
                   <div class="row" *ngIf="!formLoading">
                     <form [formGroup]="receptionForm">
-                      <div class="table-responsive text-nowrap">
+                      <div class="table-responsive">
                         <table class="table table-bordered">
                           <col style="width: 60%" />
                           <col style="width: 80%" />
@@ -496,26 +531,26 @@
                                   class="form-control ng-pristine ng-valid ng-touched"
                                   ng-reflect-model="true" />
                               </th>
-                              <th scope="col">N. gesti&oacute;n</th>
-                              <th scope="col">Clave &uacute;nica</th>
+                              <th scope="col">No. Gesti&oacute;n</th>
+                              <th scope="col">Clave &Uacute;nica</th>
                               <th scope="col">Expediente</th>
                               <th scope="col">
-                                Descripci&oacute;n transferente
+                                Descripci&oacute;n Transferente
                               </th>
                               <th scope="col">Descripci&oacute;n INDEP</th>
-                              <th scope="col">Cantidad transferente</th>
+                              <th scope="col">Cantidad Transferente</th>
                               <th scope="col">Cantidad INDEP</th>
-                              <th scope="col">Unidad Medida transferente</th>
+                              <th scope="col">Unidad Medida Transferente</th>
                               <th scope="col">Unidad Medida INDEP</th>
                               <th scope="col">
-                                Estado f&iacute;sico transferente
+                                Estado F&iacute;sico Transferente
                               </th>
-                              <th scope="col">Estado f&iacute;sico INDEP</th>
+                              <th scope="col">Estado F&iacute;sico INDEP</th>
                               <th scope="col">
-                                Conservaci&oacute;n transferente
+                                Conservaci&oacute;n Transferente
                               </th>
                               <th scope="col">
-                                Estado conservaci&oacute;n INDEP
+                                Estado Conservaci&oacute;n INDEP
                               </th>
                               <th scope="col">Acciones</th>
                             </tr>
@@ -714,7 +749,7 @@
               </div>
               <div>
                 <form [formGroup]="goodsGuardForm">
-                  <div class="table-responsive text-nowrap">
+                  <div class="table-responsive">
                     <table class="table table-bordered">
                       <col style="width: 60%" />
                       <col style="width: 80%" />
@@ -727,19 +762,19 @@
                               class="form-control ng-pristine ng-valid ng-touched"
                               ng-reflect-model="true" />
                           </th>
-                          <th scope="col">N. gesti&oacute;n</th>
-                          <th scope="col">Clave &uacute;nica</th>
+                          <th scope="col">No. Gesti&oacute;n</th>
+                          <th scope="col">Clave &Uacute;nica</th>
                           <th scope="col">Expediente</th>
-                          <th scope="col">Descripci&oacute;n transferente</th>
+                          <th scope="col">Descripci&oacute;n Transferente</th>
                           <th scope="col">Descripci&oacute;n INDEP</th>
-                          <th scope="col">Cantidad transferente</th>
+                          <th scope="col">Cantidad Transferente</th>
                           <th scope="col">Cantidad INDEP</th>
-                          <th scope="col">Unidad Medida transferente</th>
+                          <th scope="col">Unidad Medida Transferente</th>
                           <th scope="col">Unidad Medida INDEP</th>
-                          <th scope="col">Estado f&iacute;sico transferente</th>
-                          <th scope="col">Estado f&iacute;sico INDEP</th>
-                          <th scope="col">Conservaci&oacute;n transferente</th>
-                          <th scope="col">Estado conservaci&oacute;n INDEP</th>
+                          <th scope="col">Estado F&iacute;sico Transferente</th>
+                          <th scope="col">Estado F&iacute;sico INDEP</th>
+                          <th scope="col">Conservaci&oacute;n Transferente</th>
+                          <th scope="col">Estado Conservaci&oacute;n INDEP</th>
                           <th scope="col">Acciones</th>
                         </tr>
                       </thead>
@@ -953,7 +988,7 @@
               </div>
               <div class="row">
                 <form [formGroup]="goodsWarehouseForm">
-                  <div class="table-responsive text-nowrap">
+                  <div class="table-responsive">
                     <table class="table table-bordered">
                       <col style="width: 60%" />
                       <col style="width: 80%" />
@@ -966,19 +1001,19 @@
                               class="form-control ng-pristine ng-valid ng-touched"
                               ng-reflect-model="true" />
                           </th>
-                          <th scope="col">N. gesti&oacute;n</th>
-                          <th scope="col">Clave &uacute;nica</th>
+                          <th scope="col">No. Gesti&oacute;n</th>
+                          <th scope="col">Clave &Uacute;nica</th>
                           <th scope="col">Expediente</th>
-                          <th scope="col">Descripci&oacute;n transferente</th>
+                          <th scope="col">Descripci&oacute;n Transferente</th>
                           <th scope="col">Descripci&oacute;n INDEP</th>
-                          <th scope="col">Cantidad transferente</th>
+                          <th scope="col">Cantidad Transferente</th>
                           <th scope="col">Cantidad INDEP</th>
-                          <th scope="col">Unidad Medida transferente</th>
+                          <th scope="col">Unidad Medida Transferente</th>
                           <th scope="col">Unidad Medida INDEP</th>
-                          <th scope="col">Estado f&iacute;sico transferente</th>
-                          <th scope="col">Estado f&iacute;sico INDEP</th>
-                          <th scope="col">Conservaci&oacute;n transferente</th>
-                          <th scope="col">Estado conservaci&oacute;n INDEP</th>
+                          <th scope="col">Estado F&iacute;sico Transferente</th>
+                          <th scope="col">Estado F&iacute;sico INDEP</th>
+                          <th scope="col">Conservaci&oacute;n Transferente</th>
+                          <th scope="col">Estado Conservaci&oacute;n INDEP</th>
                           <th scope="col">Acciones</th>
                         </tr>
                       </thead>
@@ -1205,7 +1240,7 @@
                 </div>
                 <div class="row">
                   <form [formGroup]="goodsReprogForm">
-                    <div class="table-responsive text-nowrap">
+                    <div class="table-responsive">
                       <table class="table table-bordered">
                         <col style="width: 60%" />
                         <col style="width: 80%" />
@@ -1218,24 +1253,24 @@
                                 class="form-control ng-pristine ng-valid ng-touched"
                                 ng-reflect-model="true" />
                             </th>
-                            <th scope="col">N. gesti&oacute;n</th>
-                            <th scope="col">Clave &uacute;nica</th>
+                            <th scope="col">No. Gesti&oacute;n</th>
+                            <th scope="col">Clave &Uacute;nica</th>
                             <th scope="col">Expediente</th>
-                            <th scope="col">Descripci&oacute;n transferente</th>
+                            <th scope="col">Descripci&oacute;n Transferente</th>
                             <th scope="col">Descripci&oacute;n INDEP</th>
-                            <th scope="col">Cantidad transferente</th>
+                            <th scope="col">Cantidad Transferente</th>
                             <th scope="col">Cantidad INDEP</th>
-                            <th scope="col">Unidad Medida transferente</th>
+                            <th scope="col">Unidad Medida Transferente</th>
                             <th scope="col">Unidad Medida INDEP</th>
                             <th scope="col">
-                              Estado f&iacute;sico transferente
+                              Estado F&iacute;sico Transferente
                             </th>
-                            <th scope="col">Estado f&iacute;sico INDEP</th>
+                            <th scope="col">Estado F&iacute;sico INDEP</th>
                             <th scope="col">
-                              Conservaci&oacute;n transferente
+                              Conservaci&oacute;n Transferente
                             </th>
                             <th scope="col">
-                              Estado conservaci&oacute;n INDEP
+                              Estado Conservaci&oacute;n INDEP
                             </th>
                             <th scope="col">Acciones</th>
                           </tr>
@@ -1407,7 +1442,7 @@
                   [(settings)]="settingsGuardGoods"></app-columns-select>
 
                 <button
-                  (click)="assingMinute()"
+                  (click)="assingMinuteCancelation()"
                   class="btn btn-primary btn-sm active ml-2">
                   Asignar Acta
                 </button>
@@ -1431,7 +1466,7 @@
               </div>
               <div class="row">
                 <form [formGroup]="goodsCancelationForm">
-                  <div class="table-responsive text-nowrap">
+                  <div class="table-responsive">
                     <table class="table table-bordered">
                       <col style="width: 60%" />
                       <col style="width: 80%" />
@@ -1444,19 +1479,19 @@
                               class="form-control ng-pristine ng-valid ng-touched"
                               ng-reflect-model="true" />
                           </th>
-                          <th scope="col">N. gesti&oacute;n</th>
-                          <th scope="col">Clave &uacute;nica</th>
+                          <th scope="col">No. Gesti&oacute;n</th>
+                          <th scope="col">Clave &Uacute;nica</th>
                           <th scope="col">Expediente</th>
-                          <th scope="col">Descripci&oacute;n transferente</th>
+                          <th scope="col">Descripci&oacute;n Transferente</th>
                           <th scope="col">Descripci&oacute;n INDEP</th>
-                          <th scope="col">Cantidad transferente</th>
+                          <th scope="col">Cantidad Transferente</th>
                           <th scope="col">Cantidad INDEP</th>
-                          <th scope="col">Unidad Medida transferente</th>
+                          <th scope="col">Unidad Medida Transferente</th>
                           <th scope="col">Unidad Medida INDEP</th>
-                          <th scope="col">Estado f&iacute;sico transferente</th>
-                          <th scope="col">Estado f&iacute;sico INDEP</th>
-                          <th scope="col">Conservaci&oacute;n transferente</th>
-                          <th scope="col">Estado conservaci&oacute;n INDEP</th>
+                          <th scope="col">Estado F&iacute;sico Transferente</th>
+                          <th scope="col">Estado F&iacute;sico INDEP</th>
+                          <th scope="col">Conservaci&oacute;n Transferente</th>
+                          <th scope="col">Estado Conservaci&oacute;n INDEP</th>
                           <th scope="col">Acciones</th>
                         </tr>
                       </thead>

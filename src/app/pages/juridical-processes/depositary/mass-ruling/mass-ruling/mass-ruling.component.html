@@ -85,6 +85,7 @@
               Buscar
             </button>
           </div>
+          <hr />
           <div class="col-sm-12 col-12 col-md-12 p-2 pl-4">
             <form-check label="Eliminar" for="eliminar">
               <input
@@ -123,19 +124,35 @@
     <div class="row w-100">
       <div class="col-sm-12 col-12 col-md-3 p-2">
         <form [formGroup]="formCargaMasiva" class="form-material">
-          <form-field
+          <!-- <form-field
             [control]="formCargaMasiva.get('identificadorCargaMasiva')"
             label="Identificador Carga Masiva">
             <input
               class="form-control"
               formControlName="identificadorCargaMasiva" />
+          </form-field> -->
+          <form-field
+            label="Identificador Carga Masiva"
+            [control]="formCargaMasiva.get('identificadorCargaMasiva')">
+            <ng-custom-select
+              class="form-control"
+              formControlName="identificadorCargaMasiva"
+              [isLoadInOnInit]="true"
+              value="identificador"
+              path="massivegood/api/v1/application/getIdentifierCount">
+              <ng-template let-item>
+                {{ item.identificador }} -
+                {{ item?.fec_cargamasiv | date : 'shortDate' }} -
+                {{ item?.count }}
+              </ng-template>
+            </ng-custom-select>
           </form-field>
           <div class="col-12 pl-2 p-1 text-center d-flex align-items-center">
             <div class="form-group m-1 ml-2 mr-2">
               <button
                 [disabled]="formCargaMasiva.invalid"
                 type="button"
-                (click)="btnCargarIdentificador()"
+                (click)="onClickLoadByIdentifier()"
                 class="btn btn-primary active btn-sm text-wrap">
                 Cargar de Identificador
               </button>
@@ -145,7 +162,7 @@
                 <button
                   type="button"
                   [disabled]="isDisableCreateDictation"
-                  (click)="onClickLoadDictation()"
+                  (click)="onClickCreatedDictation()"
                   class="btn btn-primary active btn-sm">
                   Crear Dict&aacute;menes
                 </button>
@@ -230,6 +247,11 @@
             [attr.class]="'table-bordered'"
             [settings]="tableSettings"
             [source]="dataTable"></ng2-smart-table>
+        </div>
+        <div [hidden]="isFileLoad">
+          <app-pagination
+            [params]="params"
+            [totalItems]="totalItems"></app-pagination>
         </div>
       </div>
       <div class="col-sm-12 col-12 col-md-6 col-lg-6 p-2">

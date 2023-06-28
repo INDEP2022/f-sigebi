@@ -38,7 +38,7 @@
 
       <confirm-button
         *ngIf="infoTask?.State == null"
-        [disabled]="!performForm.valid"
+        [disabled]="performForm.valid"
         [loading]="loading"
         [btnSmall]="true"
         class="mr-2"
@@ -189,9 +189,8 @@
                 (ngModelChange)="checkInfoDate($event)"
                 [daysDisabled]="[6, 0]"
                 [bsConfig]="{
-                  withTimepicker: true,
-                  rangeInputFormat: 'DD/MMMM/YYYY, h:mm:ss a',
-                  dateInputFormat: 'DD/MMMM/YYYY, h:mm:ss a'
+                  rangeInputFormat: 'DD/MMMM/YYYY',
+                  dateInputFormat: 'DD/MMMM/YYYY'
                 }"
                 bsDatepicker />
             </form-field>
@@ -207,9 +206,8 @@
                 formControlName="endDate"
                 [daysDisabled]="[6, 0]"
                 [bsConfig]="{
-                  withTimepicker: true,
-                  rangeInputFormat: 'DD/MMMM/YYYY, h:mm:ss a',
-                  dateInputFormat: 'DD/MMMM/YYYY, h:mm:ss a'
+                  rangeInputFormat: 'DD/MMMM/YYYY',
+                  dateInputFormat: 'DD/MMMM/YYYY'
                 }"
                 bsDatepicker />
             </form-field>
@@ -526,7 +524,9 @@
           class="btn btn-primary btn-sm active mr-2">
           Mostrar bienes
         </button>
-        <button class="btn btn-danger btn-sm active">Limpiar</button>
+        <button (click)="showClean()" class="btn btn-danger btn-sm active">
+          Limpiar <i class="fa fa-eraser"></i>
+        </button>
       </div>
 
       <div class="justify-content-start btn-toolbar pt-4">
@@ -629,7 +629,7 @@
                 [attr.class]="'table-bordered table-responsive'"
                 [settings]="settingWarehouseGoods"
                 [source]="goodsWarehouse"
-                (edit)="showGood($event.data)"
+                (edit)="showDomicile($event.data)"
                 (delete)="removeGoodWarehouse($event.data)">
               </ng2-smart-table>
               <app-pagination

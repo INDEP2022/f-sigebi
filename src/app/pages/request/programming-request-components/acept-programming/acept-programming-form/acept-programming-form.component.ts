@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
+import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as moment from 'moment';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
+import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IUser } from 'src/app/core/models/catalogs/user.model';
@@ -12,6 +14,7 @@ import {
   IGoodProgrammingSelect,
 } from 'src/app/core/models/good-programming/good-programming';
 import { Iprogramming } from 'src/app/core/models/good-programming/programming';
+import { ISignatories } from 'src/app/core/models/ms-electronicfirm/signatories-model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { AuthorityService } from 'src/app/core/services/catalogs/authority.service';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
@@ -23,12 +26,13 @@ import { GoodService } from 'src/app/core/services/good/good.service';
 import { EmailService } from 'src/app/core/services/ms-email/email.service';
 import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-request/programming-request.service';
 import { TaskService } from 'src/app/core/services/ms-task/task.service';
+import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import Swal from 'sweetalert2';
 import { ConfirmProgrammingComponent } from '../../../shared-request/confirm-programming/confirm-programming.component';
 import { ElectronicSignatureListComponent } from '../../../shared-request/electronic-signature-list/electronic-signature-list.component';
 import { ShowSignatureProgrammingComponent } from '../../../shared-request/show-signature-programming/show-signature-programming.component';
-import { PrintReportModalComponent } from '../../../transfer-request/tabs/notify-clarifications-impropriety-tabs-component/print-report-modal/print-report-modal.component';
+import { ShowReportComponentComponent } from '../../execute-reception/show-report-component/show-report-component.component';
 import { DetailGoodProgrammingFormComponent } from '../../shared-components-programming/detail-good-programming-form/detail-good-programming-form.component';
 import { RejectProgrammingFormComponent } from '../../shared-components-programming/reject-programming-form/reject-programming-form.component';
 import { ESTATE_COLUMNS, ESTATE_COLUMNS_VIEW } from '../columns/estate-columns';
@@ -51,7 +55,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
     actions: {
       delete: false,
       edit: true,
-      columnTitle: 'Acciones',
+      columnTitle: 'Detalle de la Dirección',
       position: 'right',
     },
     edit: {
@@ -65,7 +69,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
     actions: {
       delete: false,
       edit: true,
-      columnTitle: 'Acciones',
+      columnTitle: 'Detalle de la Dirección',
       position: 'right',
     },
     edit: {
@@ -79,7 +83,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
     actions: {
       delete: false,
       edit: true,
-      columnTitle: 'Acciones',
+      columnTitle: 'Detalle de la Dirección',
       position: 'right',
     },
     edit: {
@@ -137,7 +141,9 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
     private authService: AuthService,
     private emailService: EmailService,
     private taskService: TaskService,
-    private router: Router
+    private router: Router,
+    private wcontentService: WContentService,
+    private sanitizer: DomSanitizer
   ) {
     super();
     this.settings = {
@@ -171,6 +177,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
         data.startDate = moment(data.startDate).format('DD/MM/YYYY, h:mm:ss ');
         data.endDate = moment(data.endDate).format('DD/MM/YYYY, h:mm:ss a');
         this.programming = data;
+
         this.idTransferent = data.tranferId;
         this.idStation = data.stationId;
         this.getRegionalDelegation();
@@ -282,9 +289,10 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
   signOffice() {
     const config = MODAL_CONFIG;
     config.initialState = {
-      callback: (userInfo: IUser) => {
-        if (userInfo) {
-          this.openReport(userInfo);
+      idProgramming: this.programmingId,
+      callback: (signatore: ISignatories) => {
+        if (signatore) {
+          this.openReport(signatore);
         }
       },
     };
@@ -295,22 +303,63 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
     );
   }
 
-  openReport(userInfo: IUser) {
-    const idReportAclara = this.programmingId;
+  viewOffice() {
+    this.wcontentService.obtainFile(this.programming.contentId).subscribe({
+      next: response => {
+        let blob = this.dataURItoBlob(response);
+        let file = new Blob([blob], { type: 'application/pdf' });
+        const fileURL = URL.createObjectURL(file);
+        this.openPrevPdf(fileURL);
+      },
+      error: error => {},
+    });
+  }
+
+  openReport(signatore: ISignatories) {
+    const idProg = this.programmingId;
     const idTypeDoc = 221;
     let config: ModalOptions = {
       initialState: {
-        idReportAclara,
+        idProg,
         idTypeDoc,
+        signatore,
+        programming: this.programming,
         callback: (next: boolean) => {
           if (next) {
+            this.getProgrammingId();
           }
         },
       },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     };
-    this.modalService.show(PrintReportModalComponent, config);
+    this.modalService.show(ShowReportComponentComponent, config);
+  }
+
+  dataURItoBlob(dataURI: any) {
+    const byteString = window.atob(dataURI);
+    const arrayBuffer = new ArrayBuffer(byteString.length);
+    const int8Array = new Uint8Array(arrayBuffer);
+    for (let i = 0; i < byteString.length; i++) {
+      int8Array[i] = byteString.charCodeAt(i);
+    }
+    const blob = new Blob([int8Array], { type: 'image/png' });
+    return blob;
+  }
+
+  openPrevPdf(pdfUrl: string) {
+    let config: ModalOptions = {
+      initialState: {
+        documento: {
+          urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(pdfUrl),
+          type: 'pdf',
+        },
+        callback: (data: any) => {},
+      }, //pasar datos por aca
+      class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+      ignoreBackdropClick: true, //ignora el click fuera del modal
+    };
+    this.modalService.show(PreviewDocumentsComponent, config);
   }
 
   /*showProg(user: IUser) {
@@ -318,8 +367,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
     config.initialState = {
       callback: (next: boolean) => {
         if (next) {
-          console.log('next', next);
-
+        
           //this.electronicSign();
         }
       },
@@ -439,7 +487,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
   }
 
   aprobateProgramming() {
-    if (!this.programming.contentId) {
+    if (this.programming.contentId) {
       this.alertQuestion(
         'question',
         'Aprobar Programación',
@@ -625,7 +673,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
       this.msgGuardado(
         'success',
         'Creación de tarea exitosa',
-        `Se creó la tarea ejecutar Recepción con el folio: ${this.programming.folio}`
+        `Se creó la tarea Ejecutar Recepción con el folio: ${this.programming.folio}`
       );
     }
   }

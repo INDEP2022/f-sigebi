@@ -15,4 +15,5 @@ export enum GoodprocessEndpoints {
   GetDistinctTypes = 'application/get-distinct-types',
   UpdateGoodStatus = 'update-good-status/updateManagementJob',
   PackageClose = 'update-good-status/packageClose',
+  GetGoodProceedings = 'application/get-good-proceedings',
 }

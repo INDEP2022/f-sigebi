@@ -6,7 +6,11 @@ import {
   Validators,
 } from '@angular/forms';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { IHistoryGood } from 'src/app/core/models/administrative-processes/history-good.model';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
@@ -18,12 +22,13 @@ import {
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
 
-import { COLUMNS, goodCheck } from './columns';
+import { LocalDataSource } from 'ng2-smart-table';
+import { clearGoodCheck, COLUMNS, goodCheck } from './columns';
 
 @Component({
   selector: 'app-change-of-status-sti',
   templateUrl: './change-of-status-sti.component.html',
-  styles: [],
+  styleUrls: ['./change-of-status-sti.component.scss'],
 })
 export class ChangeOfStatusStiComponent extends BasePage implements OnInit {
   form: FormGroup;
@@ -48,7 +53,13 @@ export class ChangeOfStatusStiComponent extends BasePage implements OnInit {
   params = new BehaviorSubject<ListParams>(new ListParams());
   limit: FormControl = new FormControl(10);
   goodSelect: any[] = [];
-  goods: IGood[] = [];
+  goods: LocalDataSource = new LocalDataSource();
+  columnFilters: any = [];
+  completeFilters: any[] = [];
+
+  //Activar y desactivar botones
+  enableToDelete = false;
+
   constructor(
     private fb: FormBuilder,
     private readonly goodServices: GoodService,
@@ -56,27 +67,44 @@ export class ChangeOfStatusStiComponent extends BasePage implements OnInit {
     private readonly historyGoodService: HistoryGoodService
   ) {
     super();
+    this.settings.hideSubHeader = false;
     this.settings.columns = COLUMNS;
     this.settings.actions = true;
   }
 
   ngOnInit(): void {
+    /* this.goods
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        console.log(change);
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          this.completeFilters = filters;
+          filters.map((filter: any) => {
+            let searchFilter = SearchFilter.ILIKE;
+            if (filter.search !== '') {
+              this.columnFilters[
+                filter.field
+              ] = `${searchFilter}:${filter.search}`;
+            }
+          });
+          this.searchByFilter();
+        }
+      }); */
+
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
-      if (this.busco) {
+      if (this.busco && this.numberFile.value != null) {
         this.listGoods();
       }
     });
+
     this.buildForm();
     this.form.disable();
     this.numberFile.enable();
     this.description.enable();
   }
 
-  /**
-   * @method: metodo para iniciar el formulario
-   * @author:  Alexander Alvarez
-   * @since: 27/09/2022
-   */
   private buildForm() {
     this.form = this.fb.group({
       numberFile: [
@@ -97,69 +125,112 @@ export class ChangeOfStatusStiComponent extends BasePage implements OnInit {
     this.settings = $event;
   }
 
-  accept() {
+  async changeStatusGood() {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const updatePromises = goodCheck.map(async item => {
+          const good = item.row;
+          const updateGood = {
+            id: Number(good.id),
+            goodId: Number(good.id),
+            status: this.goodStatus.value,
+            observations: `${good.observations}. ${this.description.value}`,
+            userModification: this.token.decodeToken().preferred_username,
+          };
+
+          const response = await this.goodServices
+            .update(updateGood)
+            .toPromise();
+          console.log(response);
+          this.postHistoryGood(good);
+          this.form.get('description').reset();
+        });
+
+        await Promise.all(updatePromises);
+
+        resolve({ resp: 'finish updated' });
+      } catch (error) {
+        reject({ resp: 'updated error' });
+      }
+    });
+  }
+
+  async accept() {
+    console.log('Se activo');
     if (goodCheck.length == 0) {
-      this.onLoadToast(
-        'info',
-        'Información',
-        'Debe seleccionar al menos un Bien'
-      );
+      this.alert('warning', 'Información', 'Debe seleccionar al menos un Bien');
       return;
-    }
-    if (this.description.value == null) {
-      this.onLoadToast(
-        'info',
+    } else if (this.description.value == null) {
+      this.alert(
+        'warning',
         'Campos requerido',
         'La descripcion es obligatoria'
       );
       return;
-    }
-    try {
-      goodCheck.forEach(item => {
-        const good: IGood = item.row;
-        const updateGood: IGood = {
-          id: Number(good.id),
-          goodId: Number(good.id),
-          status: this.goodStatus.value,
-          observations: `${good.observations}. ${this.description.value}`,
-          userModification: this.token.decodeToken().preferred_username,
-        };
-
-        this.goodServices.update(updateGood).subscribe({
-          next: response => {
-            console.log(response);
-            this.postHistoryGood(good);
-            this.form.get('description').reset();
-          },
-          error: error => (this.loading = false),
-        });
-      });
-      this.alert(
-        'success',
-        'Actualizado',
-        'Se ha cambiado el Estatus de los bienes seleccionados'
-      );
-    } catch (error) {
-      this.alert(
-        'error',
-        'ERROR',
-        'Ha ocurrido un error en el proceso de cambio'
-      );
+    } else {
+      const resp = await this.changeStatusGood();
+      if (JSON.parse(JSON.stringify(resp)).resp == 'finish updated') {
+        this.searchByFilter();
+        this.alert(
+          'success',
+          'Se cambio el estatus a los Bienes seleccionados',
+          ''
+        );
+      } else {
+        this.searchByFilter();
+        this.alert(
+          'error',
+          'Hubo un error inesperado al actualizar el estatus a los Bienes',
+          ''
+        );
+      }
     }
   }
 
   clearAll() {
     this.form.get('numberFile').reset();
     this.form.get('description').reset();
-    this.goods = [];
+    this.goods.load([]);
     this.limit = new FormControl(10);
     this.params.next(new ListParams());
     this.totalItems = 0;
+    this.enableToDelete = false;
+  }
+
+  searchByFilter() {
+    this.loading = true;
+    this.busco = true;
+    const paramsF = new FilterParams();
+    paramsF.addFilter('status', 'STI');
+    paramsF.addFilter('fileNumber', this.numberFile.value);
+    paramsF.page = this.params.value.page;
+    paramsF.limit = this.params.value.limit;
+    for (let data of this.completeFilters) {
+      paramsF.addFilter(
+        data.field,
+        data.search,
+        data.field != 'id' ? SearchFilter.ILIKE : SearchFilter.EQ
+      );
+    }
+
+    console.log(paramsF.getParams());
+    this.goodServices.getAllFilter(paramsF.getParams()).subscribe(
+      res => {
+        this.goods.load(res.data);
+        this.loading = false;
+      },
+      err => {
+        console.log(err);
+        this.goods.load([]);
+        this.loading = false;
+      }
+    );
   }
 
   listGoods() {
     this.loading = true;
     this.busco = true;
+    clearGoodCheck();
     this.form.get('description').reset();
     this.goodServices
       .getByExpedientAndStatus(
@@ -171,24 +242,33 @@ export class ChangeOfStatusStiComponent extends BasePage implements OnInit {
         next: (response: any) => {
           console.log(response);
           if (response.length == 0) {
-            this.onLoadToast(
-              'info',
-              'Información',
-              'No hay bienes con status STI'
+            this.alert(
+              'warning',
+              `El expediente ${this.numberFile.value} no cuenta con Bienes con estatus STI`,
+              ''
             );
-            this.goods = [];
+            this.goods.load([]);
             this.loading = false;
-            return;
+          } else {
+            this.goods.load(response.data);
+            this.totalItems = response.count;
+            this.enableToDelete = true;
+            this.loading = false;
+            this.currentDate.disable();
           }
-          this.goods = response.data;
-          this.totalItems = response.count;
-          this.loading = false;
-          this.currentDate.disable();
         },
         error: error => {
-          this.onLoadToast('info', 'Información', 'No existe este expediente');
+          this.alert(
+            'warning',
+            `El expediente ${this.numberFile.value} no cuenta con Bienes con estatus STI`,
+            ''
+          );
           console.log(error);
-          this.goods = [];
+          this.goods.load([]);
+          this.numberFile.reset();
+          this.limit = new FormControl(10);
+          this.params.next(new ListParams());
+          this.totalItems = 0;
           this.loading = false;
         },
       });
@@ -207,11 +287,31 @@ export class ChangeOfStatusStiComponent extends BasePage implements OnInit {
     };
     this.historyGoodService.create(historyGood).subscribe({
       next: response => {
-        this.listGoods();
+        if (goodCheck.length != this.goods['data'].length) {
+          /* this.listGoods(); */
+        }
       },
       error: error => {
         this.loading = false;
       },
     });
+  }
+
+  deleteExpedient() {
+    this.goodServices.getByExpedient(this.numberFile.value).subscribe(
+      res => {
+        if (res.count > 0) {
+          this.alert(
+            'warning',
+            'No es posible suprimir el registro principal al existir registros detallados asociados',
+            ''
+          );
+        } else {
+        }
+      },
+      err => {
+        console.log(err);
+      }
+    );
   }
 }

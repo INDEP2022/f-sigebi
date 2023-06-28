@@ -87,6 +87,7 @@ import { ImageMediaService } from 'src/app/core/services/catalogs/image-media.se
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { DocumentsTypeService } from 'src/app/core/services/ms-documents-type/documents-type.service';
 import { GoodParametersService } from 'src/app/core/services/ms-good-parameters/good-parameters.service';
+import { GoodFinderService } from 'src/app/core/services/ms-good/good-finder.service';
 import { InterfacefgrService } from 'src/app/core/services/ms-interfacefgr/ms-interfacefgr.service';
 import { SatTransferService } from 'src/app/core/services/ms-interfacesat/sat-transfer.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
@@ -232,7 +233,8 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     private documentsTypesService: DocumentsTypeService,
     private imageMediaService: ImageMediaService,
     private goodTrackerService: GoodTrackerService,
-    private satTransferService: SatTransferService
+    private satTransferService: SatTransferService,
+    private goodFinderService: GoodFinderService
   ) {
     super();
     this.settings.actions = false; // SE CAMBIO PARA NO PERMITIR EDITAR
@@ -1121,6 +1123,10 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
             } else if (resp.data[0].screenKey === 'FACTGENACTDATEX') {
               this.router.navigateByUrl(
                 `/pages/juridical/file-data-update?wheelNumber=${this.selectedRow.flierNumber}`
+              );
+            } else if (resp.data[0].screenKey === 'FADMAMPAROS') {
+              this.router.navigateByUrl(
+                `/pages/juridical/depositary/maintenance-of-coverages?wheelNumber=${this.selectedRow.flierNumber}&proceedingsNumber=${this.selectedRow.proceedingsNumber}`
               );
             } else {
               resp.data[0].screenKey !== null
@@ -2239,18 +2245,14 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
   }
 
   acptionBienes() {
-    // this.workService.getViewBienes('598154').subscribe({
-    //   next: (resp: any) => {
-    //     //console.log(resp);
-    //   }
-    // })
-    const $obs = this.workService.getViewBienes;
-    const service = this.workService;
+    const $obs = this.goodFinderService.goodFinder;
+    const service = this.goodFinderService;
     const columns = WORK_BIENES_COLUMNS;
     const title = BIENES_TITLE;
     const params = new FilterParams();
-    params.addFilter('fileNumber', this.selectedRow.proceedingsNumber);
+    params.addFilter('fileNumber', this.selectedRow.proceedingsNumber ?? 0);
     const $params = new BehaviorSubject(params);
+    console.log('Expediente', this.selectedRow.proceedingsNumber);
     const config = {
       ...MODAL_CONFIG,
       initialState: {
@@ -2260,8 +2262,9 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
         title,
         $params,
       },
+      class: 'modal-lg modal-dialog-centered modal-not-top-padding',
     };
-    const modalRef = this.modalService.show(MailboxModalTableComponent, config);
+    this.modalService.show(MailboxModalTableComponent, config);
   }
 
   acptionAntecedente() {

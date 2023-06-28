@@ -84,7 +84,7 @@ export class ShowDocumentsGoodComponent extends BasePage implements OnInit {
           '<i class="fa fa-file text-primary mx-2" > Detalle</i>',
       },
       delete: {
-        deleteButtonContent: '<i  class="fa fa-eye text-info mx-2"> Ver</i>',
+        deleteButtonContent: '<i  class="fa fa-eye text-info mx-2" > Ver</i>',
       },
       columns: DOC_GOODS_COLUMNS,
     };
@@ -172,7 +172,7 @@ export class ShowDocumentsGoodComponent extends BasePage implements OnInit {
     this.loading = true;
     const filter: Object = {
       xidBien: this.idGood,
-      xidSolicitud: this.idRequest,
+      //xidSolicitud: this.idRequest,
     };
     this.docRequestForm.get('noRequest').setValue(this.idGood);
     this.wContentService.getDocumentos(filter).subscribe(data => {
@@ -183,15 +183,7 @@ export class ShowDocumentsGoodComponent extends BasePage implements OnInit {
 
       const typeDoc = info.map(async (items: any) => {
         const filter: any = await this.filterGoodDoc([items.xtipoDocumento]);
-        // const regionalDelegation = await this.getRegionalDelegation(
-        //   items.xdelegacionRegional
-        // );
-        // const state = await this.getStateDoc(items.xestado);
-        // const transferent = await this.getTransferent(items.xidTransferente);
-        // items['delegationName'] = regionalDelegation;
-        // items['stateName'] = state;
-        // items['transferentName'] = transferent;
-        // items.xtipoDocumento = filter[0].ddescription;
+        items.xtipoDocumento = filter[0].ddescription;
         return items;
       });
 
@@ -370,10 +362,18 @@ export class ShowDocumentsGoodComponent extends BasePage implements OnInit {
       });
 
       if (filter.length == 0) {
-        this.onLoadToast('warning', 'No se encontraron registros', '');
+        this.onLoadToast(
+          'warning',
+          'Información',
+          'No se encontraron registros'
+        );
         this.loading = false;
       } else {
-        this.onLoadToast('success', 'Documento encontrado correctamente', '');
+        this.onLoadToast(
+          'success',
+          'Información',
+          'Documento encontrado correctamente'
+        );
         this.paragraphs = filter;
         this.totalItems = this.paragraphs.length;
         this.loading = false;
@@ -387,10 +387,18 @@ export class ShowDocumentsGoodComponent extends BasePage implements OnInit {
       });
 
       if (filter.length == 0) {
-        this.onLoadToast('warning', 'No se encontraron registros', '');
+        this.onLoadToast(
+          'warning',
+          'Información',
+          'No se encontraron registros'
+        );
         this.loading = false;
       } else {
-        this.onLoadToast('success', 'Documento encontrado correctamente', '');
+        this.onLoadToast(
+          'success',
+          'Información',
+          'Documento encontrado correctamente'
+        );
         this.paragraphs = filter;
         this.totalItems = this.paragraphs.length;
         this.loading = false;
@@ -404,10 +412,18 @@ export class ShowDocumentsGoodComponent extends BasePage implements OnInit {
       });
 
       if (filter.length == 0) {
-        this.onLoadToast('warning', 'No se encontraron registros', '');
+        this.onLoadToast(
+          'warning',
+          'Información',
+          'No se encontraron registros'
+        );
         this.loading = false;
       } else {
-        this.onLoadToast('success', 'Documento encontrado correctamente', '');
+        this.onLoadToast(
+          'success',
+          'Información',
+          'Documento encontrado correctamente'
+        );
         this.paragraphs = filter;
         this.totalItems = this.paragraphs.length;
         this.loading = false;
@@ -421,10 +437,18 @@ export class ShowDocumentsGoodComponent extends BasePage implements OnInit {
       });
 
       if (filter.length == 0) {
-        this.onLoadToast('warning', 'No se encontraron registros', '');
+        this.onLoadToast(
+          'warning',
+          'Información',
+          'No se encontraron registros'
+        );
         this.loading = false;
       } else {
-        this.onLoadToast('success', 'Documento encontrado correctamente', '');
+        this.onLoadToast(
+          'success',
+          'Información',
+          'Documento encontrado correctamente'
+        );
         this.paragraphs = filter;
         this.totalItems = this.paragraphs.length;
         this.loading = false;
@@ -438,10 +462,18 @@ export class ShowDocumentsGoodComponent extends BasePage implements OnInit {
       });
 
       if (filter.length == 0) {
-        this.onLoadToast('warning', 'No se encontraron registros', '');
+        this.onLoadToast(
+          'warning',
+          'Información',
+          'No se encontraron registros'
+        );
         this.loading = false;
       } else {
-        this.onLoadToast('success', 'Documento encontrado correctamente', '');
+        this.onLoadToast(
+          'success',
+          'Información',
+          'Documento encontrado correctamente'
+        );
         this.paragraphs = filter;
         this.totalItems = this.paragraphs.length;
         this.loading = false;
@@ -455,10 +487,18 @@ export class ShowDocumentsGoodComponent extends BasePage implements OnInit {
       });
 
       if (filter.length == 0) {
-        this.onLoadToast('warning', 'No se encontraron registros', '');
+        this.onLoadToast(
+          'warning',
+          'Información',
+          'No se encontraron registros'
+        );
         this.loading = false;
       } else {
-        this.onLoadToast('success', 'Documento encontrado correctamente', '');
+        this.onLoadToast(
+          'success',
+          'Información',
+          'Documento encontrado correctamente'
+        );
         this.paragraphs = filter;
         this.totalItems = this.paragraphs.length;
         this.loading = false;
@@ -472,10 +512,18 @@ export class ShowDocumentsGoodComponent extends BasePage implements OnInit {
       });
 
       if (filter.length == 0) {
-        this.onLoadToast('warning', 'No se encontraron registros', '');
+        this.onLoadToast(
+          'warning',
+          'Información',
+          'No se encontraron registros'
+        );
         this.loading = false;
       } else {
-        this.onLoadToast('success', 'Documento encontrado correctamente', '');
+        this.onLoadToast(
+          'success',
+          'Información',
+          'Documento encontrado correctamente'
+        );
         this.paragraphs = filter;
         this.totalItems = this.paragraphs.length;
         this.loading = false;
@@ -489,10 +537,18 @@ export class ShowDocumentsGoodComponent extends BasePage implements OnInit {
       });
 
       if (filter.length == 0) {
-        this.onLoadToast('warning', 'No se encontraron registros', '');
+        this.onLoadToast(
+          'warning',
+          'Información',
+          'No se encontraron registros'
+        );
         this.loading = false;
       } else {
-        this.onLoadToast('success', 'Documento encontrado correctamente', '');
+        this.onLoadToast(
+          'success',
+          'Información',
+          'Documento encontrado correctamente'
+        );
         this.paragraphs = filter;
         this.totalItems = this.paragraphs.length;
         this.loading = false;
@@ -506,10 +562,18 @@ export class ShowDocumentsGoodComponent extends BasePage implements OnInit {
       });
 
       if (filter.length == 0) {
-        this.onLoadToast('warning', 'No se encontraron registros', '');
+        this.onLoadToast(
+          'warning',
+          'Información',
+          'No se encontraron registros'
+        );
         this.loading = false;
       } else {
-        this.onLoadToast('success', 'Documento encontrado correctamente', '');
+        this.onLoadToast(
+          'success',
+          'Información',
+          'Documento encontrado correctamente'
+        );
         this.paragraphs = filter;
         this.totalItems = this.paragraphs.length;
         this.loading = false;
@@ -523,10 +587,18 @@ export class ShowDocumentsGoodComponent extends BasePage implements OnInit {
       });
 
       if (filter.length == 0) {
-        this.onLoadToast('warning', 'No se encontraron registros', '');
+        this.onLoadToast(
+          'warning',
+          'Información',
+          'No se encontraron registros'
+        );
         this.loading = false;
       } else {
-        this.onLoadToast('success', 'Documento encontrado correctamente', '');
+        this.onLoadToast(
+          'success',
+          'Información',
+          'Documento encontrado correctamente'
+        );
         this.paragraphs = filter;
         this.totalItems = this.paragraphs.length;
         this.loading = false;
@@ -539,11 +611,19 @@ export class ShowDocumentsGoodComponent extends BasePage implements OnInit {
       });
 
       if (filter.length > 0) {
-        this.onLoadToast('success', 'Documentos encontrados correctamente', '');
+        this.onLoadToast(
+          'success',
+          'Información',
+          'Documento encontrado correctamente'
+        );
         this.paragraphs = filter;
         this.totalItems = this.paragraphs.length;
       } else {
-        this.onLoadToast('warning', 'Documentos no encontrados', '');
+        this.onLoadToast(
+          'warning',
+          'Información',
+          'No se encontraron registros'
+        );
       }
     }
 
@@ -554,11 +634,19 @@ export class ShowDocumentsGoodComponent extends BasePage implements OnInit {
       });
 
       if (filter.length > 0) {
-        this.onLoadToast('success', 'Documentos encontrados correctamente', '');
+        this.onLoadToast(
+          'success',
+          'Información',
+          'Documento encontrado correctamente'
+        );
         this.paragraphs = filter;
         this.totalItems = this.paragraphs.length;
       } else {
-        this.onLoadToast('warning', 'Documentos no encontrados', '');
+        this.onLoadToast(
+          'warning',
+          'Información',
+          'No se encontraron registros'
+        );
       }
     }
 
@@ -574,11 +662,19 @@ export class ShowDocumentsGoodComponent extends BasePage implements OnInit {
       });
 
       if (filter.length > 0) {
-        this.onLoadToast('success', 'Documentos encontrados correctamente', '');
+        this.onLoadToast(
+          'success',
+          'Información',
+          'Documento encontrado correctamente'
+        );
         this.paragraphs = filter;
         this.totalItems = this.paragraphs.length;
       } else {
-        this.onLoadToast('warning', 'Documentos no encontrados', '');
+        this.onLoadToast(
+          'warning',
+          'Información',
+          'No se encontraron registros'
+        );
       }
     }
 
@@ -588,11 +684,19 @@ export class ShowDocumentsGoodComponent extends BasePage implements OnInit {
       });
 
       if (filter.length > 0) {
-        this.onLoadToast('success', 'Documentos encontrados correctamente', '');
+        this.onLoadToast(
+          'success',
+          'Información',
+          'Documento encontrado correctamente'
+        );
         this.paragraphs = filter;
         this.totalItems = this.paragraphs.length;
       } else {
-        this.onLoadToast('warning', 'Documentos no encontrados', '');
+        this.onLoadToast(
+          'warning',
+          'Información',
+          'No se encontraron registros'
+        );
       }
     }
   }
@@ -647,7 +751,6 @@ export class ShowDocumentsGoodComponent extends BasePage implements OnInit {
         if (next) {
           this.formLoading = true;
           setTimeout(() => {
-            this.onLoadToast('success', 'Documento guardado correctamente', '');
             this.getDocuemntByGood();
             this.formLoading = false;
           }, 8000);

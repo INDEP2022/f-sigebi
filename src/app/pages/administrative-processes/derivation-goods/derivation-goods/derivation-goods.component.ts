@@ -1,21 +1,29 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
+import { BehaviorSubject } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
-import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  ListParams,
+} from 'src/app/common/repository/interfaces/list-params';
+import { ConvertiongoodService } from 'src/app/core/services/ms-convertiongood/convertiongood.service';
+import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { BasePage } from 'src/app/core/shared';
 import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { GoodsComponent } from '../goods/goods.component';
 import { PwComponent } from '../pw/pw.component';
+import { ActaConvertionFormComponent } from './acta-convertion-form/acta-convertion.component'; // Importa el componente de tu modal
+//import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-derivation-goods',
   templateUrl: './derivation-goods.component.html',
-  styles: [],
+  styleUrls: ['./derivation-goods.component.scss'],
 })
 export class DerivationGoodsComponent extends BasePage implements OnInit {
   //Reactive Forms
@@ -26,6 +34,15 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
 
   //Deshabilitar el formulario
   wrongModal = true;
+  flagCargMasiva: boolean = false;
+  flagActa: boolean = false;
+  flagFinConversion: boolean = false;
+  flagCargaImagenes: boolean = false;
+  //Variables de BLK_TIPO_BIEN
+
+  no_bien_blk_tipo_bien: number;
+  params = new BehaviorSubject<ListParams>(new ListParams());
+  selectedRow: any;
 
   get idConversion() {
     return this.form.get('idConversion');
@@ -73,6 +90,8 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
     return this.form.get('destinationLabel');
   }
 
+  attributes: any;
+
   //Settings para la tabla
   settingsGood = {
     ...TABLE_SETTINGS,
@@ -89,16 +108,23 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
   };
 
   dataGoods = new LocalDataSource();
+  dataGoods2: any[] = [];
+  conversionId: any;
+  goodFatherNumber: any;
+  cveActaConv: any;
+  tipoValue: any;
 
   constructor(
     private fb: FormBuilder,
     private router: Router,
     private modalService: BsModalService,
-    private serviceGood: GoodService
+    private serviceGood: GoodService,
+    private serviceGoodProcess: GoodProcessService,
+    private convertiongoodService: ConvertiongoodService,
+    private route: ActivatedRoute
   ) {
     super();
   }
-
   ngOnInit(): void {
     this.buildForm();
 
@@ -109,17 +135,19 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
         ...MODAL_CONFIG,
         callback: (data: any) => {
           if (data != null) {
+            //Se setea el valor de no_bien
+            this.no_bien_blk_tipo_bien = data.goodFatherNumber;
+            //Se seta los valores de idConversion
+            this.idConversion.setValue(data.id);
+            this.numberDossier.setValue(data.fileNumber.id);
+            this.numberGoodFather.setValue(data.goodFatherNumber);
+            //
             console.log(data);
             this.wrongModal = false;
-            this.idConversion.setValue(data.id);
-            this.numberGoodFather.setValue(data.goodFatherNumber);
             this.tipo.setValue(data.typeConv);
-            this.numberDossier.setValue(data.fileNumber.id);
             this.actConvertion.setValue(data.cveActaConv);
-            this.numberGoodSon.setValue(data.goodFatherNumber);
             this.searchGoods(data.goodFatherNumber);
             this.searchGoodSon(data.goodFatherNumber);
-            this.dataGoods.load([data]);
           }
         },
       }, //pasar datos por aca
@@ -128,6 +156,25 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
     };
 
     const modalRef = this.modalService.show(PwComponent, config);
+  }
+
+  getAll() {
+    this.form.valueChanges.subscribe(value => {
+      this.convertiongoodService
+        .getAllGoodsConversions(this.params.getValue(), value.idConversion)
+        .subscribe({
+          next: response => {
+            this.loading = false;
+            response.data.map((item: any) => {
+              item.idConversion = item.id;
+              item.fileNumber =
+                item.fileNumber != null ? item.fileNumber : item.idConversion;
+            });
+
+            this.dataGoods2 = response.data;
+          },
+        });
+    });
   }
 
   /**
@@ -180,8 +227,8 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
     });
+    this.getAll();
   }
-
   searchGoods(e: any) {
     const paramsF = new FilterParams();
     paramsF.addFilter('goodId', e);
@@ -197,24 +244,60 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
     );
   }
 
-  searchGoodSon(e: any) {
-    const paramsF = new FilterParams();
-    paramsF.addFilter('goodId', e);
-    this.serviceGood.getAllFilter(paramsF.getParams()).subscribe(
-      res => {
-        console.log(res);
-        this.observation.setValue(res.data[0]['observations']);
-        this.descriptionSon.setValue(res.data[0]['description']);
-        this.quantity.setValue(res.data[0]['quantity']);
-        this.classifier.setValue(res.data[0]['goodClassNumber']);
-        this.unitOfMeasure.setValue(res.data[0]['unit']);
-        this.destinationLabel.setValue(res.data[0]['labelNumber']);
-        this.searchStatus(res.data[0]['status']);
-      },
-      err => {
-        console.log(err);
+  // Define una variable para almacenar el último id de conversión consultado
+  lastIdConversion: any = null;
+
+  async searchGoodSon(e: any) {
+    this.form.valueChanges.subscribe(async value => {
+      // Comprueba si el id de conversión ha cambiado
+      if (this.lastIdConversion !== value.idConversion) {
+        try {
+          const conversionData = await this.convertiongoodService
+            .getById(value.idConversion)
+            .toPromise();
+          const paramsF = new FilterParams();
+          paramsF.addFilter('goodId', e);
+          const res = await this.serviceGood
+            .getAllFilter(paramsF.getParams())
+            .toPromise();
+          if (conversionData.typeConv === '1') {
+            this.observation.setValue(res.data[0]['observations']);
+            this.descriptionSon.setValue(res.data[0]['descriptionSon']);
+            this.quantity.setValue(res.data[0]['quantity']);
+            this.classifier.setValue(res.data[0]['goodClassNumber']);
+            this.unitOfMeasure.setValue(res.data[0]['unit']);
+            this.destinationLabel.setValue(res.data[0]['labelNumber']);
+            this.numberGoodSon.setValue(e);
+            this.searchStatus(res.data[0]['status']);
+            this.getAttributesGood(e);
+            this.flagActa = true;
+            this.flagCargMasiva = false;
+            this.flagCargaImagenes = false;
+            this.flagFinConversion = false;
+          } else if (conversionData.typeConv === '2') {
+            this.observation.setValue('');
+            this.descriptionSon.setValue('');
+            this.quantity.setValue('');
+            this.classifier.setValue('');
+            this.unitOfMeasure.setValue('');
+            this.destinationLabel.setValue('');
+            this.numberGoodSon.setValue('');
+            this.searchStatus('');
+
+            this.flagActa = false;
+            this.flagCargMasiva = true;
+            this.flagCargaImagenes = true;
+            this.flagFinConversion = true;
+          }
+
+          // Actualiza el último id de conversión consultado
+          this.lastIdConversion = value.idConversion;
+        } catch (err) {
+          console.error(err);
+          // maneja el error
+        }
       }
-    );
+    });
   }
 
   searchStatus(data: any) {
@@ -259,6 +342,10 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
     });
   }
 
+  watchFlagChanges(flag: any) {
+    this.flagActa = flag;
+  }
+
   actConversionBtn() {}
 
   finishConversion() {}
@@ -279,7 +366,59 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
     });
   }
 
+  applyGood(event: any) {
+    if (
+      this.selectedRow.status === 'CVD' ||
+      this.selectedRow.status === 'CAN'
+    ) {
+      this.alert(
+        'error',
+        `El Bien estatus del bien con id: ${this.numberGoodFather.value}`,
+        `ya ha sido convertido`
+      );
+    }
+  }
+
+  onRowSelect(event: any) {
+    this.numberGoodSon.setValue(event.data.goodId);
+    this.observation.setValue(event.data.descriptionConv);
+    this.descriptionSon.setValue(event.data.descriptionSon);
+    this.quantity.setValue(event.data.amount);
+    this.classifier.setValue(event.data.noClassifGood);
+    this.unitOfMeasure.setValue(event.data.unit);
+    this.destinationLabel.setValue(event.data.noLabel);
+    this.selectedRow = event.data;
+
+    this.getAttributesGood(event.data);
+  }
+
+  getAttributesGood(event: any) {
+    this.serviceGood.getAttributesGood(event.goodId).subscribe(
+      res => {
+        delete res.goodNumber;
+        this.attributes = Object.entries(res).filter(([key, value]) => value);
+      },
+      err => {
+        console.log(err);
+      }
+    );
+  }
+
   /* showToast(status: NbComponentStatus) {
     this.toastrService.show(status, 'Estado cambiado exitosamente !!', { status });
   } */
+
+  showActasConvertion() {
+    let config = { ...MODAL_CONFIG, class: 'modal-xl modal-dialog-centered' };
+    config.initialState = {
+      proceeding: {},
+      idProgramming: 1,
+      callback: (receipt: any, keyDoc: string) => {
+        if (receipt && keyDoc) {
+        }
+      },
+    };
+
+    this.modalService.show(ActaConvertionFormComponent, config);
+  }
 }

@@ -6,6 +6,7 @@ export const COLUMNS = {
   id: {
     title: 'No. Bien',
     sort: false,
+    width: '150px',
   },
   description: {
     title: 'Descripción del Bien',
@@ -14,10 +15,12 @@ export const COLUMNS = {
   status: {
     title: 'Estatus',
     sort: false,
+    filter: false,
   },
   check: {
     title: '',
     type: 'custom',
+    filter: false,
     renderComponent: CheckboxElementComponent,
     valuePrepareFunction: (isSelected: any, row: any) => {
       return goodCheck.find((e: any) => e.row.id == row.id) ? true : false;
@@ -35,3 +38,7 @@ export const COLUMNS = {
     sort: false,
   },
 };
+
+export function clearGoodCheck() {
+  goodCheck = [];
+}

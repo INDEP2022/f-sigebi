@@ -21,7 +21,7 @@
                   class="btn btn-primary btn-sm active"
                   (click)="btnSearchGood()">
                   Buscar
-                  <i aria-hidden="true" class="fa fa-search text-pink"></i>
+                  <i class="bx bx-search-alt bx-sm float-icon"></i>
                 </button>
               </div>
             </div>
@@ -61,6 +61,7 @@
             <div class="col-sm-12 col-12 col-md-12 p-2 text-center">
               <button
                 [disabled]="loading"
+                *ngIf="!deleteDateOption"
                 type="button"
                 class="btn btn-primary btn-sm active m-2"
                 (click)="btnEjecutar()">
@@ -70,10 +71,19 @@
                 [disabled]="loading"
                 *ngIf="!deleteDateOption"
                 type="button"
+                class="btn btn-red btn-sm active m-3"
+                (click)="btnDeshacer()">
+                Eliminar Dispersi&oacute;n
+                <i class="fa fa-trash" aria-hidden="true"></i>
+              </button>
+              <!-- <button
+                [disabled]="loading"
+                *ngIf="!deleteDateOption"
+                type="button"
                 class="btn btn-danger btn-sm active m-2"
                 (click)="btnDeshacer()">
                 Elimina Dispersi&oacute;n
-              </button>
+              </button> -->
             </div>
             <ng-container *ngIf="deleteDateOption">
               <div class="col-12 col-sm-12 col-md-12 p-2 mb-4 text-center">
@@ -110,10 +120,18 @@
                 <button
                   [disabled]="loading"
                   type="button"
+                  class="btn btn-red btn-sm active m-3"
+                  (click)="btnDeleteDispersalPay()">
+                  Eliminar Dispersi&oacute;n de Pagos
+                  <i class="fa fa-trash" aria-hidden="true"></i>
+                </button>
+                <!-- <button
+                  [disabled]="loading"
+                  type="button"
                   class="btn btn-primary btn-sm active m-2"
                   (click)="btnDeleteDispersalPay()">
                   Eliminar Dispersi&oacute;n de Pagos
-                </button>
+                </button> -->
                 <button
                   [disabled]="loading"
                   type="button"
@@ -175,16 +193,23 @@
           <div class="col-sm-12 col-12 col-md-12 p-2 text-center">
             <button
               [disabled]="loading"
-              class="btn btn-info btn-sm active text-wrap m-2"
+              class="btn btn-primary btn-sm active m-2"
               (click)="btnRecargaDepositario()">
               Recarga Depositario
             </button>
             <button
               [disabled]="loading"
+              class="btn btn-primary btn-sm active m-3"
+              (click)="btnValidacionPagos()">
+              Validaci&oacute;n de Pagos
+              <i class="fa fa-check" aria-hidden="true"></i>
+            </button>
+            <!-- <button
+              [disabled]="loading"
               class="btn btn-primary btn-sm active text-wrap m-2"
               (click)="btnValidacionPagos()">
               Validaci&oacute;n de Pagos
-            </button>
+            </button> -->
           </div>
         </div>
       </form>

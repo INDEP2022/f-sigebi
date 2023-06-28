@@ -53,7 +53,7 @@
                     class="btn btn-primary btn-sm active"
                     (click)="loadGoods()">
                     Buscar
-                    <!-- <i class="fa fa-search"></i> -->
+                    <i class="bx bx-search-alt bx-sm float-icon"></i>
                   </button>
                 </div>
               </div>
@@ -66,6 +66,7 @@
                     class="btn btn-danger btn-sm active"
                     (click)="clearFilter()">
                     Limpiar
+                    <i class="fa fa-eraser"></i>
                   </button>
                   <!-- <button
                     [disabled]="true"
@@ -126,4 +127,6 @@
   </app-card>
 </form>
 
-<app-goods-list></app-goods-list>
+<app-goods-list
+  [changeMode]="mode.value"
+  [changeDescription]="changeDescription"></app-goods-list>
