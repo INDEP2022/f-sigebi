@@ -18,7 +18,6 @@ import { ReceptionGoodService } from 'src/app/core/services/reception/reception-
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { PrintReportModalComponent } from '../../../transfer-request/tabs/notify-clarifications-impropriety-tabs-component/print-report-modal/print-report-modal.component';
-import { ShowReportComponentComponent } from '../../execute-reception/show-report-component/show-report-component.component';
 
 @Component({
   selector: 'app-generate-receipt-guard-form',
@@ -91,12 +90,10 @@ export class GenerateReceiptGuardFormComponent
       .updateReceiptGuard(this.receiptId, this.form.value)
       .subscribe({
         next: async response => {
-          console.log('actualizo recibo', response);
-          const signatoreGuard = await this.createSignatorieGuard(response);
-          if (signatoreGuard) {
-            this.close();
-            this.openReport(response);
-          }
+          this.modalRef.content.callback(this.receiptGuards);
+
+          this.modalRef.hide();
+          //this.openReport(response);
         },
         error: error => {
           console.log();
@@ -281,7 +278,7 @@ export class GenerateReceiptGuardFormComponent
       };
       this.modalService.show(PrintReportModalComponent, config);
     } else {
-      const idTypeDoc = 185;
+      /*const idTypeDoc = 185;
       let config: ModalOptions = {
         initialState: {
           idTypeDoc,
@@ -289,7 +286,6 @@ export class GenerateReceiptGuardFormComponent
           receiptGuards: this.receiptGuards,
           callback: (next: boolean) => {
             if (next) {
-              console.log('Modal cerrado');
               //this.changeStatusAnswered();
             } else {
               console.log('Modal no cerrado');
@@ -299,7 +295,7 @@ export class GenerateReceiptGuardFormComponent
         class: 'modal-lg modal-dialog-centered',
         ignoreBackdropClick: true,
       };
-      this.modalService.show(ShowReportComponentComponent, config);
+      this.modalService.show(ShowReportComponentComponent, config); */
     }
   }
 

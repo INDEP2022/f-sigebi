@@ -18,7 +18,8 @@ import { BasePage } from 'src/app/core/shared/base-page';
 })
 export class IncomePerAssetComponent
   extends BasePage
-  implements OnInit, OnChanges {
+  implements OnInit, OnChanges
+{
   assetList: any[] = [];
   depositList: any[] = [];
   assetSettings = { ...this.settings };
@@ -258,8 +259,8 @@ export class IncomePerAssetComponent
     const params: ListParams = {};
     params['filter.key'] = `$eq:${key}`;
     this.conceptMovisBankService.getByKey(params).subscribe({
-      next: response => { },
-      error: err => { },
+      next: response => {},
+      error: err => {},
     });
   }
 }

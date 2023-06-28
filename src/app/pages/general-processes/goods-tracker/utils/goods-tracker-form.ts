@@ -76,11 +76,11 @@ export const GOOD_PHOTOS_OPTIOS = [
   },
   {
     label: 'Con fotografías',
-    value: '2',
+    value: 'F',
   },
   {
     label: 'Sin fotografías',
-    value: '3',
+    value: 'N',
   },
 ];
 
