@@ -23,6 +23,7 @@ export enum GoodEndpoints {
   GoodsExtensionFields = 'goods-extension-fields',
   GoodByDepositaryGood = 'good/searchByDepositaryGood',
   CreateGoodNumerary = 'good/createGood',
+  GoodsMotivesrev = 'good/goods-motivesrev',
   Vban = 'good/getBan',
   AttribGoodBad = 'attrib-good-bad/get-all',
   AttribGood = 'goods-attributes',
