@@ -73,7 +73,7 @@ export class ChangeOfStatusStiComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    /* this.goods
+    this.goods
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(change => {
@@ -91,7 +91,7 @@ export class ChangeOfStatusStiComponent extends BasePage implements OnInit {
           });
           this.searchByFilter();
         }
-      }); */
+      });
 
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
       if (this.busco && this.numberFile.value != null) {
@@ -218,10 +218,12 @@ export class ChangeOfStatusStiComponent extends BasePage implements OnInit {
       res => {
         this.goods.load(res.data);
         this.loading = false;
+        this.totalItems = res.count
       },
       err => {
         console.log(err);
         this.goods.load([]);
+        this.totalItems = 0
         this.loading = false;
       }
     );
