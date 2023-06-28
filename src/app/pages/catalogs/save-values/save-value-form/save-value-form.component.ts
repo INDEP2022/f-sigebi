@@ -13,8 +13,9 @@ import { BasePage } from 'src/app/core/shared/base-page';
 })
 export class SaveValueFormComponent extends BasePage implements OnInit {
   saveValue: ISaveValue;
-  edit: boolean;
+  edit: boolean = false;
   saveValueForm: ModelForm<ISaveValue>;
+  title: string = 'Valores guardados';
 
   constructor(
     private fb: FormBuilder,
@@ -31,12 +32,7 @@ export class SaveValueFormComponent extends BasePage implements OnInit {
     this.saveValueForm = this.fb.group({
       id: [
         null,
-        [
-          Validators.minLength(0),
-          Validators.maxLength(5),
-          Validators.min(0),
-          Validators.max(5),
-        ],
+        [Validators.required, Validators.minLength(0), Validators.maxLength(5)],
       ],
       description: [
         null,
@@ -91,6 +87,9 @@ export class SaveValueFormComponent extends BasePage implements OnInit {
   }
 
   handleSuccess() {
+    const message: string = this.edit ? 'Actualizado' : 'Guardado';
+    this.alert('success', this.title, `${message} Correctamente`);
+    //this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();

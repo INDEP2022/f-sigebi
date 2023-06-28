@@ -64,6 +64,8 @@ export class CatServicesFormComponent extends BasePage implements OnInit {
     if (this.catservice != null) {
       this.edit = true;
       this.catserviceForm.patchValue(this.catservice);
+      this.catserviceForm.controls['code'].setValue(this.catservice.code);
+      this.catserviceForm.get('code').disable();
     }
   }
   close() {
@@ -83,7 +85,6 @@ export class CatServicesFormComponent extends BasePage implements OnInit {
   }
 
   update() {
-    console.log('INGRESO');
     this.loading = true;
     this.catserviceService
       .update(this.catservice.code, this.catserviceForm.getRawValue())
@@ -95,7 +96,8 @@ export class CatServicesFormComponent extends BasePage implements OnInit {
 
   handleSuccess() {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.onLoadToast('success', this.title, `${message} Correctamente`);
+    this.alert('success', this.title, `${message} Correctamente`);
+    //this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();

@@ -17,7 +17,7 @@ import {
 })
 export class IndicatorReportFormComponent extends BasePage implements OnInit {
   form: ModelForm<IIndicatorReport>;
-  title: string = 'Indicador';
+  title: string = 'Indicador de Reportes';
   edit: boolean = false;
   indicatorReport: IIndicatorReport;
   // proficients = new DefaultSelect<IIndicatorReport>();

@@ -128,6 +128,11 @@ export class AuthorityService
     return this.put(route, model);
   }
 
+  update3(id: string | number, model: IAuthority) {
+    const route = `${AuthorityEndpoints.Authority}/id/${id}`;
+    return this.put(route, model);
+  }
+
   remove2(id: number | string, model: Object) {
     const route = `${AuthorityEndpoints.Authority}/${id}`;
     return this.delete(route, model);

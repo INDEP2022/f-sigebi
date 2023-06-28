@@ -6,77 +6,48 @@
     <form [formGroup]="dateDocumentsModalForm" class="form-material">
       <div class="row">
         <div class="col-md-4">
-          <form-field
-            [control]="dateDocumentsModalForm.get('expedientNumber')"
-            label="Numero Expediente">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="expedientNumber" />
+          <form-field [control]="dateDocumentsModalForm.get('expedientNumber')" label="Numero Expediente">
+            <input type="number" class="form-control" formControlName="expedientNumber" maxlength="10" />
           </form-field>
         </div>
         <div class="col-md-4">
-          <form-field
-            [control]="dateDocumentsModalForm.get('stateNumber')"
-            label="Bien">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="stateNumber" />
+          <form-field [control]="dateDocumentsModalForm.get('stateNumber')" label="Bien">
+            <input type="number" class="form-control" formControlName="stateNumber" maxlength="10" />
           </form-field>
         </div>
         <div class="col-md-4">
-          <form-field
-            [control]="dateDocumentsModalForm.get('typeDictum')"
-            label="Tipo dictamen">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="typeDictum"
-              (click)="openDictum()" />
+          <form-field [control]="dateDocumentsModalForm.get('typeDictum')" label="Tipo dictamen">
+            <input type="text" class="form-control" formControlName="typeDictum" (click)="openDictum()" />
           </form-field>
         </div>
       </div>
       <div class="row pt-3">
         <div class="col-md-4">
-          <form-field
-            [control]="dateDocumentsModalForm.get('key')"
-            label="Clave">
+          <form-field [control]="dateDocumentsModalForm.get('key')" label="Clave">
             <input type="text" formControlName="key" class="form-control" />
           </form-field>
         </div>
         <div class="col-md-4">
-          <form-field
-            [control]="dateDocumentsModalForm.get('insertionDate')"
-            label="Fecha insercion">
-            <input
-              type="text"
-              formControlName="insertionDate"
-              class="form-control"
-              bsDatepicker />
+          <form-field [control]="dateDocumentsModalForm.get('officialNumber')" label="Oficio Dictamen">
+            <input type="text" formControlName="officialNumber" class="form-control" />
           </form-field>
         </div>
         <div class="col-md-4">
-          <form-field
-            [control]="dateDocumentsModalForm.get('userReceipt')"
-            label="Usuario insercion">
-            <input
-              type="text"
-              formControlName="userReceipt"
-              class="form-control" />
+          <form-field [control]="dateDocumentsModalForm.get('insertionDate')" label="Fecha insercion">
+            <input type="text" formControlName="insertionDate" class="form-control" bsDatepicker />
           </form-field>
         </div>
+
       </div>
       <div class="row pt-3">
         <div class="col-md-4">
-          <form-field
-            [control]="dateDocumentsModalForm.get('notificationDate')"
-            label="Fecha notificacion">
-            <input
-              type="text"
-              formControlName="notificationDate"
-              class="form-control"
-              bsDatepicker />
+          <form-field [control]="dateDocumentsModalForm.get('userReceipt')" label="Usuario insercion">
+            <input type="text" formControlName="userReceipt" class="form-control" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="dateDocumentsModalForm.get('notificationDate')" label="Fecha notificacion">
+            <input type="text" formControlName="notificationDate" class="form-control" bsDatepicker />
           </form-field>
         </div>
       </div>
@@ -85,10 +56,7 @@
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <confirm-button
-          [type]="'button'"
-          [disabled]="!dateDocumentsModalForm.valid"
-          [loading]="loading"
+        <confirm-button [type]="'button'" [disabled]="!dateDocumentsModalForm.valid" [loading]="loading"
           (confirm)="confirm()"></confirm-button>
       </div>
       <div class="m-3">

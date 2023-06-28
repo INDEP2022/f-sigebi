@@ -16,7 +16,6 @@ import { IAffair } from 'src/app/core/models/catalogs/affair.model';
 //service
 import { AffairTypeService } from 'src/app/core/services/affair/affair-type.service';
 import { AffairService } from 'src/app/core/services/catalogs/affair.service';
-import Swal from 'sweetalert2';
 import { AffairModalComponent } from '../affair-modal/affair-modal.component';
 import { FlyerSubjectCatalogModelComponent } from '../flyer-subject-catalog-model/flyer-subject-catalog-model.component';
 
@@ -220,14 +219,14 @@ export class FlyerSubjectCatalogComponent extends BasePage implements OnInit {
     this.affairService.remove2(id, nb).subscribe({
       next: () => {
         this.getAffairAll();
-        this.alert('success', 'Borrado', '');
+        this.alert('success', 'Asunto para volante', 'Borrado');
         this.rowSelected = false;
       },
       error: err => {
         this.alert(
           'warning',
-          'No se puede eliminar Asunto',
-          'Primero elimine sus tipos de asuntos'
+          'Asunto para volante',
+          'Primero elimine sus tipos de volante'
         );
       },
     });
@@ -251,8 +250,15 @@ export class FlyerSubjectCatalogComponent extends BasePage implements OnInit {
     let affair = this.affairs;
     this.affairTypeService.remove(affairType).subscribe({
       next: () => {
-        Swal.fire('Borrado', '', 'success');
         this.getAffairType(affair);
+        this.alert('success', 'Tipo Volante', 'Borrado');
+      },
+      error: erro => {
+        this.alert(
+          'warning',
+          'Tipo Volante',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
       },
     });
   }

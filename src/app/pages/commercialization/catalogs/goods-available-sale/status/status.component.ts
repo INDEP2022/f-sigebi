@@ -13,8 +13,7 @@ import { data } from './data';
 })
 export class StatusComponent
   extends BasePageWidhtDinamicFilters
-  implements OnInit
-{
+  implements OnInit {
   comercializationGoods: any[] = [];
   goodsAFSD = data;
   rowSelected: boolean = false;
@@ -54,17 +53,29 @@ export class StatusComponent
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(body);
-        Swal.fire('Borrado', '', 'success');
+
       }
     });
   }
 
   delete(body: Object) {
-    this.goodService.removeGood(body).subscribe();
+    this.goodService.removeGood(body).subscribe({
+      next: () => {
+        this.alert('success', 'Delegación Regional', 'Borrado');
+        // this.getAllEventTypes();
+      },
+      error: error => {
+        this.alert(
+          'warning',
+          'Delegación Regional',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      },
+    });
   }
 
   selectRow(row: any) {

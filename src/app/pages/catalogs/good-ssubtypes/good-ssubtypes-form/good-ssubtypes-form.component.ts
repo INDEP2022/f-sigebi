@@ -19,7 +19,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 })
 export class GoodSsubtypesFormComponent extends BasePage implements OnInit {
   goodSsubtypeForm: ModelForm<IGoodSsubType>;
-  title: string = 'Subtipo Bien';
+  title: string = 'Sub Sub tipo Bien';
   edit: boolean = false;
   goodSsubtype: IGoodSsubType;
   types = new DefaultSelect<IGoodType>();
@@ -41,7 +41,7 @@ export class GoodSsubtypesFormComponent extends BasePage implements OnInit {
   private prepareForm(): void {
     this.goodSsubtypeForm = this.fb.group({
       id: [null],
-      description: [null, [Validators.required]],
+      description: [null],
       noType: [null, [Validators.required]],
       noSubType: [null, [Validators.required]],
       noRegister: [null],
@@ -57,14 +57,11 @@ export class GoodSsubtypesFormComponent extends BasePage implements OnInit {
         noSubType: goodSubtype.id,
       });
       this.goodSsubtypeForm.get('id').disable();
-      this.goodSsubtypeForm.get('noType').disable();
-      this.goodSsubtypeForm.get('noSubType').disable();
       this.subTypes = new DefaultSelect([goodSubtype], 1);
       this.types = new DefaultSelect([goodType], 1);
-    } else {
-      this.getTypes({ page: 1, text: '' });
-      this.getSubtypes({ page: 1, text: '' });
     }
+    this.getTypes({ page: 1, text: '' });
+    this.getSubtypes({ page: 1, text: '' });
   }
 
   getTypes(params: ListParams) {
@@ -72,12 +69,22 @@ export class GoodSsubtypesFormComponent extends BasePage implements OnInit {
       this.types = new DefaultSelect(data.data, data.count);
     });
   }
-  getSubtypes(params: ListParams) {
-    this.goodSubtypeService.getAll(params).subscribe(data => {
-      this.subTypes = new DefaultSelect(data.data, data.count);
-    });
+  getSubtypes(params: ListParams, id?: string) {
+    if (id) {
+      params['filter.idTypeGood'] = id;
+    }
+    this.goodSubtypeService.getAll(params).subscribe(
+      data => {
+        this.subTypes = new DefaultSelect(data.data, data.count);
+      },
+      error => {
+        this.subTypes = new DefaultSelect([], 0, true);
+      }
+    );
   }
-
+  getAllSubtypes(data: any) {
+    this.getSubtypes(new ListParams(), data.id);
+  }
   close() {
     this.modalRef.hide();
   }
@@ -96,8 +103,13 @@ export class GoodSsubtypesFormComponent extends BasePage implements OnInit {
 
   update() {
     this.loading = true;
+    const ids = {
+      id: this.goodSsubtype.id,
+      numSubType: (this.goodSsubtype.noSubType as IGoodSubType).id,
+      numType: (this.goodSsubtype.noType as IGoodType).id,
+    };
     this.goodSsubtypeService
-      .update(this.goodSsubtype.id, this.goodSsubtypeForm.value)
+      .updateByIds(ids, this.goodSsubtypeForm.value)
       .subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),
@@ -106,7 +118,8 @@ export class GoodSsubtypesFormComponent extends BasePage implements OnInit {
 
   handleSuccess() {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.onLoadToast('success', this.title, `${message} Correctamente`);
+    this.alert('success', this.title, `${message} Correctamente`);
+    //this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();

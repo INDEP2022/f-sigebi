@@ -28,6 +28,11 @@ export class UsersService extends HttpService {
     return this.get<IListResponse<any>>(UserEndpoints.SegUsers, _params);
   }
 
+  getAllDetailSegUsers(_params: _Params) {
+    const route = `${UserEndpoints.SegUsers}/get-all`;
+    return this.get<IListResponse<any>>(route, _params);
+  }
+
   getAllSegUsersModal(self?: UsersService, _params?: ListParams | string) {
     return self.get<IListResponse<any>>(UserEndpoints.SegUsers, _params);
   }

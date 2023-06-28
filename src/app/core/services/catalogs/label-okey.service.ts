@@ -35,7 +35,7 @@ export class LabelOkeyService
   }
 
   update(id: string | number, model: ILabelOKey): Observable<Object> {
-    return this.labelOkeyRepository.update(this.route, id, model);
+    return this.labelOkeyRepository.newUpdateId(this.route, id, model);
   }
 
   remove(id: string | number): Observable<Object> {

@@ -10,7 +10,6 @@ import {
 } from 'src/app/common/repository/interfaces/list-params';
 import { PaymentConceptService } from 'src/app/core/services/catalogs/payment-concept.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import Swal from 'sweetalert2';
 import { IPaymentConcept } from '../../../../core/models/catalogs/payment-concept.model';
 import { PaymentConceptDetailComponent } from '../payment-concept-detail/payment-concept-detail.component';
 import { PAYMENT_CONCEPT_COLUMNS } from './payment-concept-columns';
@@ -24,7 +23,7 @@ export class PaymentConceptListComponent extends BasePage implements OnInit {
   columns: IPaymentConcept[] = [];
   data: LocalDataSource = new LocalDataSource();
   columnFilters: any = [];
-
+  title = 'Concepto de Pago';
   paymentconcept: IPaymentConcept[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -121,14 +120,23 @@ export class PaymentConceptListComponent extends BasePage implements OnInit {
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(paymentconcept.id);
-        Swal.fire('Borrado', '', 'success');
       }
     });
   }
 
   delete(id: number) {
     this.paymentService.remove(id).subscribe({
-      next: () => this.getPaymentConcepts(),
+      next: () => {
+        this.getPaymentConcepts(),
+          this.alert('success', 'Concepto de Pago', 'Borrado');
+      },
+      error: err => {
+        this.alert(
+          'warning',
+          'Dictámen',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      },
     });
   }
 }

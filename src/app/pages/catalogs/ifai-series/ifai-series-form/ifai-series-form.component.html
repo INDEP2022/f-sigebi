@@ -9,7 +9,11 @@
           <form-field
             [control]="ifaiSerieForm.get('code')"
             label="C&oacute;digo">
-            <input type="text" class="form-control" formControlName="code" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="code"
+              maxlength="8" />
           </form-field>
         </div>
 
@@ -36,9 +40,13 @@
           </form-field>
         </div>
 
-        <div class="ol-md-6">
+        <div class="col-md-4">
           <form-field [control]="ifaiSerieForm.get('status')" label="Estado">
-            <input type="text" class="form-control" formControlName="status" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="status"
+              maxlength="1" />
           </form-field>
         </div>
 
