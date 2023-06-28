@@ -72,6 +72,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
     this.settings = {
       ...this.settings,
       hideSubHeader: false,
+      actions: false,
     };
   }
 
@@ -217,6 +218,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
   private prepareForm(): void {
     this.form = this.fb.group({
       option: [null, [Validators.required]],
+      responsable: [null],
     });
   }
 
@@ -240,6 +242,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
 
   // CARGAR EXCEL / CSV //
   onFileChange(event: Event) {
+    console.log('event', event);
     const files = (event.target as HTMLInputElement).files;
     if (files.length != 1) throw 'No files selected, or more than of allowed';
     const fileReader = new FileReader();
@@ -511,10 +514,10 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
   async putInsertHistoric(historyGood: any) {
     this.historyGoodService.create(historyGood).subscribe({
       next: response => {
-        this.loading = false;
+        // this.loading = false;
       },
       error: error => {
-        this.loading = false;
+        // this.loading = false;
       },
     });
   }
@@ -544,10 +547,10 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
           console.log('resp', resp);
           const data = resp.data[0];
           resolve(data);
-          this.loading = false;
+          // this.loading = false;
         },
         error: error => {
-          this.loading = false;
+          // this.loading = false;
           resolve(null);
         },
       });
@@ -562,10 +565,10 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
           console.log('resp', resp);
           const data = resp.data[0].otvalor;
           resolve(data);
-          this.loading = false;
+          // this.loading = false;
         },
         error: error => {
-          this.loading = false;
+          // this.loading = false;
           resolve(null);
         },
       });
@@ -588,6 +591,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
   selectRow(row: any) {
     console.log(row);
     this.selectedRow = row.data;
+    this.form.get('responsable').setValue(row.data.manager);
     this.rowSelected = true;
   }
 
@@ -622,7 +626,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
         vl_ID_EVENTO = 0;
 
         let obj = {
-          goodNumber: this.selectedRow.goodId,
+          goodNumber: this.selectedRow.goodNumber,
           attended: 0,
           manager: this.selectedRow.manager,
         };
@@ -644,7 +648,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
 
         if (EXISTE > 0) {
           let obj_: any = {
-            goodNumber: this.selectedRow.goodId,
+            goodNumber: this.selectedRow.goodNumber,
             eventId: good.eventId.id,
             goodType: good.goodType,
             status: good.status,
@@ -660,13 +664,13 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
           } else {
             this.alert(
               'warning',
-              `El bien: ${this.selectedRow.goodId} no se pudo atender en MOTIVOSREV`,
+              `El bien: ${this.selectedRow.goodNumber} no se pudo atender en MOTIVOSREV`,
               ''
             );
           }
 
           let objGood: any = {
-            goodNumber: this.selectedRow.goodId,
+            goodNumber: this.selectedRow.goodNumber,
             attended: 0,
           };
           const getGoodAttended: any = await this.getGoodAndAttendedReturn(
@@ -680,7 +684,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
 
           if (ATENCION == 0 && ACTUALIZA == 1) {
             let objScreen = {
-              goodNumber: this.selectedRow.goodId,
+              goodNumber: this.selectedRow.goodNumber,
               status: ESTATUSB,
             };
             const screenXStatus: any = await this.getScreenXStatus(objScreen);
@@ -690,15 +694,15 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
             } else {
               this.alert(
                 'warning',
-                `No se identificó el estatus final para el bien: ${this.selectedRow.goodId}`,
+                `No se identificó el estatus final para el bien: ${this.selectedRow.goodNumber}`,
                 ''
               );
               ACTUALIZA = 0;
             }
 
             let objUpdateGood: any = {
-              id: this.selectedRow.goodId,
-              goodId: this.selectedRow.goodId,
+              id: this.selectedRow.goodNumber,
+              goodId: this.selectedRow.goodNumber,
               status: ESTATUSF,
             };
             const updateGood: any = await this.updateGoodStatus(objUpdateGood);
@@ -707,7 +711,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
               ACTUALIZA = 0;
               this.alert(
                 'error',
-                `Error al actualizar el estatus del bien: ${this.selectedRow.goodId}`,
+                `Error al actualizar el estatus del bien: ${this.selectedRow.goodNumber}`,
                 ''
               );
             }
@@ -717,7 +721,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
               var futureDate = new Date(currentDate.getTime() + 5 * 1000); // A
 
               const historyGood: IHistoryGood = {
-                propertyNum: this.selectedRow.goodId,
+                propertyNum: this.selectedRow.goodNumber,
                 status: ESTATUSF,
                 changeDate: futureDate,
                 userChange: this.token.decodeToken().preferred_username,
@@ -731,7 +735,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
               );
             } else {
               let obj__: any = {
-                goodNumber: this.selectedRow.goodId,
+                goodNumber: this.selectedRow.goodNumber,
                 eventId: vl_ID_EVENTO,
                 goodType: good.goodType,
                 status: good.status,
