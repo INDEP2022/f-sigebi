@@ -298,7 +298,7 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
             console.log('BINARY EXCEL', response);
 
             if (filter == 'si') {
-              this.alert('success', 'Archivo subido exitosamente', 'Cargado');
+              this.alert('success', 'Archivo subido correctamente', 'Cargado');
             }
 
             this.loading = false;
