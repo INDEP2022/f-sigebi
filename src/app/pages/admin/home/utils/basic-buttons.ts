@@ -154,4 +154,11 @@ export const BASIC_BUTTONS = [
             Limpiar <i class="fas fa-eraser"> </i>
           </button>`,
   },
+  {
+    name: 'Recargar',
+    code: `<button
+            class="btn btn-primary btn-sm active mr-3">
+            Recargar <i class="fas fa-sync-alt"> </i>
+          </button>`,
+  },
 ];
