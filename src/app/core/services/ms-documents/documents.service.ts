@@ -20,15 +20,17 @@ export class DocumentsService extends HttpService {
   }
 
   //http://sigebimsqa.indep.gob.mx/documents/api/v1/documents --> Trae todas las imágenes
-  //http://sigebimsqa.indep.gob.mx/documents/api/v1/documents?filter.scanStatus=$eq:ESCANEADO --> Para buacar por 'scanStatus'
   //http://sigebimsqa.indep.gob.mx/documents/api/v1/documents?filter.numberProceedings=$eq:33785 --> Búsqueda por No Expediente
   //http://sigebimsqa.indep.gob.mx/documents/api/v1/documents?filter.flyerNumber=$eq:467963 --> Búsqueda por No Volante
+  //http://sigebimsqa.indep.gob.mx/documents/api/v1/documents?filter.keySeparator=$eq:MUEBLES --> Búsqueda por No Volante
   //http://sigebimsqa.indep.gob.mx/documents/api/v1/documents?filter.significantDate=$eq:04/2023 --> Búsqueda por Fecha significativa
-  //http://sigebimsqa.indep.gob.mx/documents/api/v1/documents?filter.descriptionDocument=$eq:PRUEBA RAFAEL 2 --> Búsqueda por Descripción del documento
-  //http://sigebimsqa.indep.gob.mx/documents/api/v1/documents?filter.criminalCase=$eq:49/2002 --> Búsqueda por Causa penal
-  //http://sigebimsqa.indep.gob.mx/documents/api/v1/documents?filter.preliminaryInquiry=$eq:PGR/UEDO/134/2002 --> Búsqueda por Averiguación previa
   //http://sigebimsqa.indep.gob.mx/documents/api/v1/documents?filter.keyTypeDocument=$eq:CARGA --> Búsqueda por Tipo de documento
+  //http://sigebimsqa.indep.gob.mx/documents/api/v1/documents?filter.descriptionDocument=$eq:PRUEBA RAFAEL 2 --> Búsqueda por Descripción del documento
+  //http://sigebimsqa.indep.gob.mx/documents/api/v1/documents?filter.scanStatus=$eq:ESCANEADO --> Para buacar por 'scanStatus'
+  //http://sigebimsqa.indep.gob.mx/documents/api/v1/documents?filter.file.criminalCase=$eq:49/2002 --> Búsqueda por Causa penal
+  //http://sigebimsqa.indep.gob.mx/documents/api/v1/documents?filter.file.preliminaryInquiry=$eq:PGR/UEDO/134/2002 --> Búsqueda por Averiguación previa
   getAll(params?: ListParams | string): Observable<IListResponse<IDocuments>> {
+    console.log(params);
     return this.get<IListResponse<IDocuments>>(
       DocumentsEndpoints.Documents,
       params
@@ -218,8 +220,10 @@ export class DocumentsService extends HttpService {
   }
 
   //http://sigebimsqa.indep.gob.mx/documents/api/v1/document-separator  --> description
-  getDocumentsSeparator(): Observable<IListResponse<SeparatorsDocuments>> {
+  getDocumentsSeparator(
+    $params?: any
+  ): Observable<IListResponse<SeparatorsDocuments>> {
     const route = `/${DocumentsEndpoints.DocumentsSeparator}`;
-    return this.get(route);
+    return this.get(route, $params);
   }
 }

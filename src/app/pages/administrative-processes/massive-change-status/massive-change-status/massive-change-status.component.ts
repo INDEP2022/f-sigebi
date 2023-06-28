@@ -9,10 +9,14 @@ import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { FilterParams, ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  ListParams,
+} from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
 import { IHistoryGood } from 'src/app/core/models/administrative-processes/history-good.model';
 import { IGood } from 'src/app/core/models/ms-good/good';
+import { GoodTrackerService } from 'src/app/core/services/ms-good-tracker/good-tracker.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { StatusGoodMassiveService } from 'src/app/core/services/ms-good/status-good-massive.service';
 import { HistoryGoodService } from 'src/app/core/services/ms-history-good/history-good.service';
@@ -21,9 +25,8 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { previewData } from 'src/app/pages/documents-reception/goods-bulk-load/interfaces/goods-bulk-load-table';
 import { getTrackedGoods } from 'src/app/pages/general-processes/goods-tracker/store/goods-tracker.selector';
-import { COLUMNS } from './columns';
 import { GlobalVarsService } from 'src/app/shared/global-vars/services/global-vars.service';
-import { GoodTrackerService } from 'src/app/core/services/ms-good-tracker/good-tracker.service';
+import { COLUMNS } from './columns';
 
 interface NotData {
   id: number;
@@ -114,12 +117,13 @@ export class MassiveChangeStatusComponent extends BasePage implements OnInit {
         next: global => {
           this.ngGlobal = global;
           if (this.ngGlobal.REL_BIENES) {
-            console.log(this.ngGlobal.REL_BIENES)
-            const paramsF = new FilterParams()
-            paramsF.addFilter('identificator', this.ngGlobal.REL_BIENES)
-            this.goodTrackerService.getAllTmpTracker(paramsF.getParams()).subscribe(
-              res => {
-                console.log(res)
+            console.log(this.ngGlobal.REL_BIENES);
+            const paramsF = new FilterParams();
+            paramsF.addFilter('identificator', this.ngGlobal.REL_BIENES);
+            this.goodTrackerService
+              .getAllTmpTracker(paramsF.getParams())
+              .subscribe(res => {
+                console.log(res);
                 this.loading = true;
                 let count = 0;
                 res['data'].forEach(good => {
@@ -148,8 +152,7 @@ export class MassiveChangeStatusComponent extends BasePage implements OnInit {
                     this.availableToAssing = true;
                   }
                 });
-              }
-            )
+              });
           }
         },
       });

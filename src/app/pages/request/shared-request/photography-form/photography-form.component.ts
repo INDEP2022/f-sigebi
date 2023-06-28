@@ -90,7 +90,7 @@ export class PhotographyFormComponent extends BasePage implements OnInit {
           this.alertInfo(
             'info',
             'Información',
-            'No hay imagenes agregadadas a este bien'
+            'No hay imágenes agregadadas a este bien'
           ).then();
           this.loadingTable = false;
         }
@@ -136,7 +136,7 @@ export class PhotographyFormComponent extends BasePage implements OnInit {
             this.alertInfo(
               'success',
               'Acción correcta',
-              'Imagen Agregada correctamente'
+              'Imagen agregada correctamente'
             ).then();
           }
         }

@@ -217,7 +217,7 @@ export class ScanningFoilComponent
     if (this.form.get('scanningFoli').value !== '') {
       this.alertQuestion(
         'question',
-        'Se abrirá la pantalla de escaneo para el folio de escaneo del acta abierta',
+        'Se abrirá la pantalla de escaneo para el folio de escaneo del bien consultado',
         '¿Deseas continuar?',
         'Continuar'
       ).then(q => {
