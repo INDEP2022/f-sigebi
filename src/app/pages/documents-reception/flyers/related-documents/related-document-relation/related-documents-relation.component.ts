@@ -1071,7 +1071,7 @@ export class RelatedDocumentsRelationComponent
         this.dataTableDocuments = await Promise.all(response);
         this.isLoadingDocuments = false;
       },
-      error: err => {
+      error: () => {
         this.isLoadingDocuments = false;
       },
     });

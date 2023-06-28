@@ -19,7 +19,7 @@ import { ExampleService } from 'src/app/core/services/catalogs/example.service';
 import { DatePipe } from '@angular/common';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
-import { BsModalService } from 'ngx-bootstrap/modal';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { DocumentsViewerByFolioComponent } from 'src/app/@standalone/modals/documents-viewer-by-folio/documents-viewer-by-folio.component';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
@@ -42,6 +42,7 @@ import {
   RFC_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
+import { ListDataComponent } from 'src/app/pages/admin/home/list-data/list-data.component';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { IGlobalVars } from 'src/app/shared/global-vars/models/IGlobalVars.model';
 import { GlobalVarsService } from 'src/app/shared/global-vars/services/global-vars.service';
@@ -108,6 +109,9 @@ export class AppointmentsComponent
   depositaryTypeSelect = new DefaultSelect();
   saeRepresentativeSelect = new DefaultSelect();
   blockMenaje: boolean = false;
+
+  paramsModal = new BehaviorSubject(new ListParams());
+  filterParams = new BehaviorSubject(new FilterParams());
 
   constructor(
     private fb: FormBuilder,
@@ -812,20 +816,25 @@ export class AppointmentsComponent
             this._saveDataDepositary = false;
             this.loadingAppointment = false;
             console.log('DEPOSITARIA ', res);
-            // if (res.count == 1) {
-            this.depositaryAppointment = res.data[0];
-            this.setDataDepositary(); // Set data depositary
-            if (this.depositaryAppointment.personNumber) {
-              if (this.depositaryAppointment.personNumber.id) {
-                this.setDataPerson(); // Set data Person
+            if (res.count == 1) {
+              this.depositaryAppointment = res.data[0];
+              this.setDataDepositary(); // Set data depositary
+              if (this.depositaryAppointment.personNumber) {
+                if (this.depositaryAppointment.personNumber.id) {
+                  this.form
+                    .get('personNumber')
+                    .setValue(this.depositaryAppointment.personNumber.id);
+                  this.getPersonCatalog(new ListParams(), true);
+                  this.setDataPerson(); // Set data Person
+                }
               }
+              this.getFromGoodsAndExpedients(); // Get data good
+              this.setOthers();
+            } else {
+              this.showDataListAppointment(res.data[0], res.count);
+              // this.globalVars.noExiste = 0;
+              // this.getFromGoodsAndExpedients(true);
             }
-            this.getFromGoodsAndExpedients(); // Get data good
-            this.setOthers();
-            // } else {
-            //   this.globalVars.noExiste = 0;
-            //   this.getFromGoodsAndExpedients(true);
-            // }
           },
           error: err => {
             this.loadingAppointment = false;
@@ -852,7 +861,36 @@ export class AppointmentsComponent
     }
   }
 
-  validPostGetDepositary() {}
+  showDataListAppointment(data: any, totalCount: number) {
+    //descomentar si usan FilterParams ejemplo de consulta
+    //this.filterParams.getValue().addFilter('id', 3429640, SearchFilter.EQ)
+    //this.filterParams.getValue().addFilter('keyTypeDocument', 'ENTRE', SearchFilter.ILIKE)
+
+    //ejemplo de uso con ListParams
+    //this.params.getValue()['filter.id'] = '$eq:3429640'
+
+    this.filterParams.getValue().addFilter('numberGood', this.noBien);
+
+    let config: ModalOptions = {
+      initialState: {
+        //filtros
+        paramsList: this.paramsModal,
+        filterParams: this.filterParams, // en caso de no usar FilterParams no enviar
+        data: data,
+        totalItems: totalCount,
+        callback: (next: boolean, data: any /*Modelado de datos*/) => {
+          console.log(next, data);
+
+          if (next) {
+            //mostrar datos de la búsqueda
+          }
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(ListDataComponent, config);
+  }
 
   setDataDepositary() {
     this.showScanForm = false; // Ocultar parte de escaneo
@@ -1154,7 +1192,7 @@ export class AppointmentsComponent
       console.log('PARAMS ', params);
     } else {
       params.addFilter('goodId', this.noBien);
-      params.addFilter('status', 'DEP');
+      // params.addFilter('status', 'DEP');
       // if (onlyGood == false) {
       // } else {
       //   params.addFilter('status', 'ADM');

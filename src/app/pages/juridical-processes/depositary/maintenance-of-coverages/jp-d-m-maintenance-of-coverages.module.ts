@@ -7,7 +7,9 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { CustomSelectComponent } from 'src/app/@standalone/shared-forms/custom-select/custom-select.component';
 import { JpDMMaintenanceOfCoveragesRoutingModule } from './jp-d-m-maintenance-of-coverages-routing.module';
 import { JpDMcCMaintenanceOfCoveragesComponent } from './jp-d-mc-c-maintenance-of-coverages/jp-d-mc-c-maintenance-of-coverages.component';
+import { ReservedModalComponent } from './reserved-modal/reserved-modal.component';
 import { ScanningFoilComponent } from './scanning-foil/scanning-foil.component';
+import { SendMailModalComponent } from './send-mail-modal/send-mail-modal.component';
 import { SendingOfEMailsComponent } from './sending-of-e-mails/sending-of-e-mails.component';
 
 @NgModule({
@@ -15,6 +17,8 @@ import { SendingOfEMailsComponent } from './sending-of-e-mails/sending-of-e-mail
     JpDMcCMaintenanceOfCoveragesComponent,
     ScanningFoilComponent,
     SendingOfEMailsComponent,
+    ReservedModalComponent,
+    SendMailModalComponent,
   ],
   imports: [
     CommonModule,

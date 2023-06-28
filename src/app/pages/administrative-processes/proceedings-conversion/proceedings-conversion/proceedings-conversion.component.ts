@@ -22,8 +22,10 @@ import { ICopiesJobManagementDto } from 'src/app/core/models/ms-officemanagement
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
 import { GoodService } from 'src/app/core/services/good/good.service';
+
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { ConvertiongoodService } from 'src/app/core/services/ms-convertiongood/convertiongood.service';
+
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
 import { StatusGoodService } from 'src/app/core/services/ms-good/status-good.service';
@@ -137,7 +139,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
   paramsGoodsType: number = 0;
   loadingGoods = false;
   select: any;
-  goods: any;
+  goods: IGood[] = [];
   expedient: IExpedient;
   columnFilters: any = [];
   isAllDisabled = false;
@@ -245,15 +247,44 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
       console.log(this.origin);
     });
     this.initFormPostGetUserData();
+    this.dataGoodTable
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = ``;
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+            filter.field == 'goodId' ||
+            filter.field == 'description' ||
+            filter.field == 'quantity' ||
+            filter.field == 'acta'
+              ? (searchFilter = SearchFilter.EQ)
+              : (searchFilter = SearchFilter.ILIKE);
+            if (filter.search !== '') {
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.params = this.pageFilter(this.params);
+          this.getGoodsByStatus(this.fileNumber);
+        }
+      });
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getGoodsByStatus(this.fileNumber));
   }
 
   private prepareForm() {
     this.department = this.authService.decodeToken().department;
-    this.userTracker(
-      this.screenKey,
-      this.authService.decodeToken().preferred_username
-    );
-    console.log(this.userTracker);
+    // this.userTracker(
+    //   this.screenKey,
+    //   this.authService.decodeToken().preferred_username
+    // );
+    // console.log(this.userTracker);
     this.proceedingsConversionForm = this.fb.group({
       idConversion: [null, Validators.required],
       goodFatherNumber: [null, Validators.required],
@@ -341,6 +372,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
             this.insert = true;
             console.log('readYes and writeYes');
             this.validPermisos = true;
+            this.validPermisos = true;
           } else if (
             filter.readingPermission == 'S' &&
             filter.writingPermission == 'N'
@@ -352,6 +384,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
             filter.writingPermission == 'S'
           ) {
             this.insert = true;
+            this.validPermisos = true;
             this.validPermisos = true;
             console.log('readNo and writeYes');
           } else {
@@ -435,7 +468,9 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
           this.preAver = res.fileNumber.preliminaryInquiry;
           this.criCase = res.fileNumber.criminalCase;
           this.cveActa = res.minutesErNumber;
+          console.log(this.cveActa);
           this.userRes = res.fileNumber.usrResponsibleFile;
+          this.proceedingsConversionForm.get('acta').setValue(this.cveActa);
           this.getExpedient(this.fileNumber);
           this.getGoods(this.conversion);
           subscription.unsubscribe();
@@ -546,6 +581,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
   async refreshTableGoodsJobManagement() {
     const params = new ListParams();
     params['filter.id'] = this.proceedingsConversionForm.value.fileNumber;
+    params['filter.id'] = this.proceedingsConversionForm.value.fileNumber;
     params.limit = 100000000;
     try {
       this.dataTableGoodsConvertion = (
@@ -561,7 +597,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
       next: (data: any) => {
         this.expedient = data;
         console.log(this.expedient);
-        this.getAllGoodExpedient();
+        // this.getGoodsByStatus(this.fileNumber);
       },
       error: () => console.error('expediente nulo'),
     });
@@ -569,49 +605,13 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
 
   getGoodsByStatus(id: number) {
     this.loading = true;
-    let params = {
-      ...this.params.getValue(),
-      ...this.columnFilters,
-    };
-    this.goodService.getByExpedient(id, params).subscribe({
+    this.convertiongoodService.getAllGoods(id).subscribe({
       next: (data: any) => {
         this.dataGood = data;
         console.log(this.goodsByFather);
       },
       error: () => console.error('no hay bienes en éste expediente'),
     });
-  }
-
-  getAllGoodExpedient() {
-    this.dataGoodTable
-      .onChanged()
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(change => {
-        if (change.action === 'filter') {
-          let filters = change.filter.filters;
-          filters.map((filter: any) => {
-            let field = ``;
-            let searchFilter = SearchFilter.ILIKE;
-            field = `filter.${filter.field}`;
-            filter.field == 'goodId' ||
-            filter.field == 'description' ||
-            filter.field == 'quantity' ||
-            filter.field == 'acta'
-              ? (searchFilter = SearchFilter.EQ)
-              : (searchFilter = SearchFilter.ILIKE);
-            if (filter.search !== '') {
-              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
-            } else {
-              delete this.columnFilters[field];
-            }
-          });
-          this.params = this.pageFilter(this.params);
-          this.getGoodsByStatus(this.fileNumber);
-        }
-      });
-    this.params
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getGoodsByStatus(this.fileNumber));
   }
 
   getQueryParams(name: string) {
@@ -664,31 +664,32 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     total: number
   ) {
     if (this.proceedingsConversionForm.value.fileNumber) {
-      await this.flyerService
-        .getGoodsJobManagementByIds({
-          goodNumber: dataGoodRes.goodId,
-          managementNumber: this.proceedingsConversionForm.value.fileNumber,
-        })
-        .subscribe({
-          next: res => {
-            console.log(res);
-            if (res.count > 0) {
-              this.dataGood[count].disponible = false;
-            }
-            this.validStatusGood(this.dataGood[count], count, total);
-          },
-          error: err => {
-            console.log(err);
-            this.dataGood[count].disponible = true;
-            this.validStatusGood(this.dataGood[count], count, total);
-          },
-        });
-    } else {
-      this.dataGood[count].disponible = true;
-      this.validStatusGood(this.dataGood[count], count, total);
+      if (this.proceedingsConversionForm.value.fileNumber) {
+        await this.flyerService
+          .getGoodsJobManagementByIds({
+            goodNumber: dataGoodRes.goodId,
+            managementNumber: this.proceedingsConversionForm.value.fileNumber,
+          })
+          .subscribe({
+            next: res => {
+              console.log(res);
+              if (res.count > 0) {
+                this.dataGood[count].disponible = false;
+              }
+              this.validStatusGood(this.dataGood[count], count, total);
+            },
+            error: err => {
+              console.log(err);
+              this.dataGood[count].disponible = true;
+              this.validStatusGood(this.dataGood[count], count, total);
+            },
+          });
+      } else {
+        this.dataGood[count].disponible = true;
+        this.validStatusGood(this.dataGood[count], count, total);
+      }
     }
   }
-
   async validStatusGood(
     dataGoodRes: IDataGoodsTable,
     count: number,

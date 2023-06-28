@@ -23,7 +23,7 @@ import {
 } from 'src/app/core/shared/patterns';
 
 import { LocalDataSource } from 'ng2-smart-table';
-import { COLUMNS, clearGoodCheck, goodCheck } from './columns';
+import { clearGoodCheck, COLUMNS, goodCheck } from './columns';
 
 @Component({
   selector: 'app-change-of-status-sti',
@@ -73,7 +73,7 @@ export class ChangeOfStatusStiComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    /* this.goods
+    this.goods
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(change => {
@@ -91,7 +91,7 @@ export class ChangeOfStatusStiComponent extends BasePage implements OnInit {
           });
           this.searchByFilter();
         }
-      }); */
+      });
 
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
       if (this.busco && this.numberFile.value != null) {
@@ -125,10 +125,10 @@ export class ChangeOfStatusStiComponent extends BasePage implements OnInit {
     this.settings = $event;
   }
 
-  async changeStatusGood(){
+  async changeStatusGood() {
     return new Promise(async (resolve, reject) => {
       try {
-        const updatePromises = goodCheck.map(async (item) => {
+        const updatePromises = goodCheck.map(async item => {
           const good = item.row;
           const updateGood = {
             id: Number(good.id),
@@ -137,49 +137,54 @@ export class ChangeOfStatusStiComponent extends BasePage implements OnInit {
             observations: `${good.observations}. ${this.description.value}`,
             userModification: this.token.decodeToken().preferred_username,
           };
-  
-          const response = await this.goodServices.update(updateGood).toPromise();
+
+          const response = await this.goodServices
+            .update(updateGood)
+            .toPromise();
           console.log(response);
           this.postHistoryGood(good);
           this.form.get('description').reset();
         });
-  
+
         await Promise.all(updatePromises);
 
-        resolve({resp: 'finish updated'})
+        resolve({ resp: 'finish updated' });
       } catch (error) {
-        reject({resp:'updated error'})
-      } 
-    })
+        reject({ resp: 'updated error' });
+      }
+    });
   }
 
   async accept() {
-    console.log('Se activo')
+    console.log('Se activo');
     if (goodCheck.length == 0) {
-      this.alert(
-        'warning',
-        'Información',
-        'Debe seleccionar al menos un Bien'
-      );
+      this.alert('warning', 'Información', 'Debe seleccionar al menos un Bien');
       return;
-    }else if (this.description.value == null) {
+    } else if (this.description.value == null) {
       this.alert(
         'warning',
         'Campos requerido',
         'La descripcion es obligatoria'
       );
       return;
-    }else{
-      const resp = await this.changeStatusGood()
-      if(JSON.parse(JSON.stringify(resp)).resp == 'finish updated'){
-        this.searchByFilter()
-        this.alert('success','Se cambio el estatus a los Bienes seleccionados','')
-      }else{
-        this.searchByFilter()
-        this.alert('error','Hubo un error inesperado al actualizar el estatus a los Bienes','')
+    } else {
+      const resp = await this.changeStatusGood();
+      if (JSON.parse(JSON.stringify(resp)).resp == 'finish updated') {
+        this.searchByFilter();
+        this.alert(
+          'success',
+          'Se cambio el estatus a los Bienes seleccionados',
+          ''
+        );
+      } else {
+        this.searchByFilter();
+        this.alert(
+          'error',
+          'Hubo un error inesperado al actualizar el estatus a los Bienes',
+          ''
+        );
       }
     }
-    
   }
 
   clearAll() {
@@ -213,10 +218,12 @@ export class ChangeOfStatusStiComponent extends BasePage implements OnInit {
       res => {
         this.goods.load(res.data);
         this.loading = false;
+        this.totalItems = res.count;
       },
       err => {
         console.log(err);
-        this.goods.load([])
+        this.goods.load([]);
+        this.totalItems = 0;
         this.loading = false;
       }
     );
@@ -225,7 +232,7 @@ export class ChangeOfStatusStiComponent extends BasePage implements OnInit {
   listGoods() {
     this.loading = true;
     this.busco = true;
-    clearGoodCheck()
+    clearGoodCheck();
     this.form.get('description').reset();
     this.goodServices
       .getByExpedientAndStatus(
@@ -244,14 +251,13 @@ export class ChangeOfStatusStiComponent extends BasePage implements OnInit {
             );
             this.goods.load([]);
             this.loading = false;
-          }else{
+          } else {
             this.goods.load(response.data);
             this.totalItems = response.count;
             this.enableToDelete = true;
             this.loading = false;
             this.currentDate.disable();
           }
-          
         },
         error: error => {
           this.alert(
@@ -283,7 +289,7 @@ export class ChangeOfStatusStiComponent extends BasePage implements OnInit {
     };
     this.historyGoodService.create(historyGood).subscribe({
       next: response => {
-        if(goodCheck.length != this.goods['data'].length){
+        if (goodCheck.length != this.goods['data'].length) {
           /* this.listGoods(); */
         }
       },
