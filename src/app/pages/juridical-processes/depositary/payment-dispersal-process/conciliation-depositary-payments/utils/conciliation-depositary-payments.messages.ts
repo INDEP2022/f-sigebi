@@ -1,5 +1,5 @@
 const ERROR_GOOD_PARAM = `El número de Bien ingresado como parámetro no es un número`;
-const ERROR_GOOD_NULL = `Ingresa un número de Bien`;
+const ERROR_GOOD_NULL = `Ingresa un número de Bien válido`;
 const ERROR_APOINTMENT_NUMBER_NULL = `Se requiere un número de nombramiento, realiza la búsqueda por número de bien para cargar los datos del Nombramiento`;
 const ERROR_DATE_DISPERSAL_NULL = `Se requiere una Fecha para realizar la Eliminación de la Dispersión`;
 const NOT_FOUND_GOOD_APPOINTMENT = (error: string) =>
@@ -38,9 +38,9 @@ const NOT_FOUND_REMOVE_PAYMENTS = (
   no_nombramiento: number,
   date_param: string
 ) =>
-  `Error al Remover la Depositaría para el número de Nombramientro: ${no_nombramiento} y la Fecha: ${date_param}. ${error}`;
+  `Error al Remover la Depositaría para el número de Nombramiento: ${no_nombramiento} y la Fecha: ${date_param}. ${error}`;
 const CORRECT_REMOVE_PAYMENTS = (no_nombramiento: number, date_param: string) =>
-  `Se realizó correctamente la Eliminación de la Disperción de Pagos para el número de Nombramientro: ${no_nombramiento} y la Fecha: ${date_param}`;
+  `Se realizó correctamente la Eliminación de la Disperción de Pagos para el número de Nombramiento: ${no_nombramiento} y la Fecha: ${date_param}`;
 
 export {
   ERROR_GOOD_PARAM,
