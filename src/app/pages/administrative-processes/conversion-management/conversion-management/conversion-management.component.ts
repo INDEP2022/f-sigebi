@@ -111,13 +111,10 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
    */
   private buildForm() {
     this.form = this.fb.group({
-      idConversion: [
-        null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
-      ],
+      idConversion: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       noBien: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       date: [null],
-      tipo: [null, [Validators.required]],
+      tipo: [null],
       noExpediente: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       actaConversion: [null, [Validators.pattern(STRING_PATTERN)]],
       desStatus: [null, [Validators.pattern(STRING_PATTERN)]],
@@ -129,15 +126,16 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
   }
 
   async save() {
-    if (this.tipo.value === null || this.tipo.value === 'null') {
+    if (this.tipo.value === null) {
       this.alert(
-        'info',
+        'warning',
         'Administración de conversión de bienes',
         'El campo tipo es requerido'
       );
       return;
     }
-    if (this.idConversion.value !== null || this.idConversion.value !== '') {
+    console.log(this.idConversion.value);
+    if (this.idConversion.value !== null) {
       const response: any = await this.updateConversion('');
       this.date.setValue(new Date());
       this.createObj();
@@ -155,7 +153,7 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
           },
           error: err => {
             this.alert(
-              'info',
+              'warning',
               'Administración de conversión de bienes',
               'No se puede realizar la operación ya que este bien ya está asignado a esta conversión'
             );
@@ -164,7 +162,7 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
         });
     } else {
       this.alert(
-        'info',
+        'warning',
         'Administración de conversión de bienes',
         'Se debe cargar primero una conversión'
       );
@@ -172,7 +170,15 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
   }
 
   onChangeGood() {
-    this.searchGoods(this.noBien.value);
+    if (this.noBien.value !== null) {
+      this.searchGoods(this.noBien.value);
+    } else {
+      this.alert(
+        'warning',
+        'Administración de conversión de bienes',
+        'Se debe ingresar el numero del bien'
+      );
+    }
   }
 
   searchGoods(idGood: number | string) {
@@ -188,7 +194,7 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
       },
       error: err => {
         this.alert(
-          'info',
+          'warning',
           'Administración de conversión de bienes',
           'Bien no existe'
         );
@@ -234,7 +240,7 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
         this.actaER.setValue('');
         this.actaERDate.setValue('');
         this.alert(
-          'info',
+          'warning',
           'Administración de conversión de bienes',
           'Este bien no tiene Acta E/R asociada'
         );
@@ -278,11 +284,11 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
     console.log(this.idConversion.value);
     if (this.idConversion.value === '' || this.idConversion.value === null) {
       this.alert(
-        'info',
+        'warning',
         'Campo requerido',
         'Ingrese por favor un id de conversión'
       );
-      this.form.markAllAsTouched();
+      //this.form.markAllAsTouched();
       return;
     }
     this.conversiongoodServices.getById(this.idConversion.value).subscribe({
@@ -411,7 +417,7 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
 
   clean() {
     this.form.reset();
-    this.form.markAllAsTouched();
+    // this.form.markAllAsTouched();
   }
   formatDate(fecha: string) {
     const fecha_original = new Date(fecha);
