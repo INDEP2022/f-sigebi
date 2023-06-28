@@ -111,10 +111,13 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
    */
   private buildForm() {
     this.form = this.fb.group({
-      idConversion: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      idConversion: [
+        null,
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+      ],
       noBien: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       date: [null],
-      tipo: [null],
+      tipo: [null, [Validators.required]],
       noExpediente: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       actaConversion: [null, [Validators.pattern(STRING_PATTERN)]],
       desStatus: [null, [Validators.pattern(STRING_PATTERN)]],

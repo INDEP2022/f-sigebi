@@ -142,4 +142,8 @@ export class ProceedingsService extends HttpService {
   updateProceeding(model: Object) {
     return this.put(this.route, model);
   }
+
+  deleteProceeding(model: Object) {
+    return this.delete(this.route, model);
+  }
 }

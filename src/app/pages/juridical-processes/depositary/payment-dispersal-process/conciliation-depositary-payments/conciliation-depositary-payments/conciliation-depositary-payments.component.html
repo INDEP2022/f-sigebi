@@ -30,6 +30,7 @@
         [form]="form"
         [formDepositario]="formDepositario"
         [listDateOptions]="dataPagosRecibidos"
+        (cleanData)="clearData($event)"
         (formValues)="btnRunPayment($event)"
         (searchGoodNumber)="btnSearchGood($event)"
         (formDepositariaValues)="btnDepositaryRecharge($event)"

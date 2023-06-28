@@ -122,7 +122,7 @@ const routes: Routes = [
         loadChildren: async () =>
           (await import('./change-of-status-sti/change-of-status-sti.module'))
             .ChangeOfStatusStiModule,
-        data: { title: 'Cambio de estatus sti' },
+        data: { title: 'Cambio de estatus STI' },
       },
       {
         path: 'payment-claim-process',

@@ -10,6 +10,7 @@ export enum ProcedureManagementEndPoints {
   ReportTranferenciaPgrViews = `views/file-transference`,
   FolioMax = `proceduremanagement/FolioMax`,
   AreaTramite = 'proceduremanagement/getAreaTramite',
+  UpdateGestionTramite = 'proceduremanagement/put-gestion-tramite',
 }
 
 export enum MassiveChargeGoods {
