@@ -53,46 +53,177 @@
                 <!-- apppcatd **************************************************************-->
                 <app-card [header]="false" [footer]="true">
                   <div body>
-                    <div class="row"></div>
-                    <div class="row p-3">
-                      <div class="col-md-3">
-                        <div>
-                          <label for="">No. Conversión: </label>
-                          {{ conversion || '' }}
+                    <div class="row">
+                      <div class="col-md-12">
+                        <div class="row">
+                          <div class="col-md-12">
+                            <div class="card">
+                              <div class="card-body">
+                                <div class="row p-3">
+                                  <div class="col-md-3">
+                                    <div>
+                                      <label for="">No. Conversión: </label>
+                                      {{ conversion || '' }}
+                                    </div>
+                                  </div>
+                                  <div class="col-md-5">
+                                    <div>
+                                      <label for=""
+                                        >No. Bien Convertido (Bien Padre):
+                                      </label>
+                                      {{ goodFatherNumber || '' }}
+                                    </div>
+                                  </div>
+                                  <div class="col-md-3">
+                                    <div>
+                                      <label for="">No. Expediente: </label>
+                                      {{ fileNumber || '' }}
+                                    </div>
+                                  </div>
+                                </div>
+                                <div class="row p-3">
+                                  <div class="col-md-3">
+                                    <div>
+                                      <label for=""
+                                        >Averiguación Previa:
+                                      </label>
+                                      {{ preAver || '' }}
+                                    </div>
+                                  </div>
+                                  <div class="col-md-5">
+                                    <div>
+                                      <label for="">Acta: </label>
+                                      {{ cveActa || '' }}
+                                    </div>
+                                  </div>
+                                  <div class="col-md-3">
+                                    <div>
+                                      <label for="">Causal Penal: </label>
+                                      {{ criCase || '' }}
+                                    </div>
+                                  </div>
+                                  <div class="col-md-3">
+                                    <div>
+                                      <label for=""
+                                        >No.Expediente del Trasnferente:
+                                      </label>
+                                      {{ criCase || '' }}
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
                         </div>
                       </div>
-                      <div class="col-md-5">
-                        <div>
-                          <label for=""
-                            >No. Bien Convertido (Bien Padre):
-                          </label>
-                          {{ goodFatherNumber || '' }}
-                        </div>
-                      </div>
-                      <div class="col-md-3">
-                        <div>
-                          <label for="">No. Expediente: </label>
-                          {{ fileNumber || '' }}
-                        </div>
-                      </div>
-                    </div>
-                    <div class="row p-3">
-                      <div class="col-md-3">
-                        <div>
-                          <label for="">Tipo de Acta: </label>
-                          {{ typeConv || '' }}
-                        </div>
-                      </div>
-                      <div class="col-md-5">
-                        <div>
-                          <label for="">Averiguación Previa: </label>
-                          {{ preAver || '' }}
-                        </div>
-                      </div>
-                      <div class="col-md-3">
-                        <div>
-                          <label for="">Causal Penal: </label>
-                          {{ criCase || '' }}
+                      <div class="row">
+                        <div class="col-md-12">
+                          <div class="row">
+                            <div class="col-md-12">
+                              <div class="card">
+                                <div class="card-body">
+                                  <div class="col-md-3">
+                                    <div>
+                                      <form-field
+                                        [control]="
+                                          proceedingsConversionForm.get(
+                                            'hourConv'
+                                          )
+                                        "
+                                        label="Hora">
+                                        <input
+                                          #inputValue
+                                          type="time"
+                                          class="form-control"
+                                          formControlName="hourConv"
+                                          class="form-control"
+                                          bsDatepicker
+                                          [bsConfig]="datePickerConfig"
+                                          [value]="time | date : 'hh:mm'"
+                                          [disabled]="validPermisos" />
+                                      </form-field>
+                                    </div>
+                                  </div>
+                                  <div class="col-md-3">
+                                    <div>
+                                      <form-field
+                                        [control]="
+                                          proceedingsConversionForm.get(
+                                            'respConv'
+                                          )
+                                        "
+                                        label="Responsable">
+                                        <input
+                                          #inputValue
+                                          type="text"
+                                          class="form-control"
+                                          formControlName="respConv"
+                                          class="form-control"
+                                          [disabled]="validPermisos" />
+                                      </form-field>
+                                    </div>
+                                  </div>
+                                  <div class="col-md-3">
+                                    <div>
+                                      <form-field
+                                        [control]="
+                                          proceedingsConversionForm.get(
+                                            'testigoOIC'
+                                          )
+                                        "
+                                        label="Testigo de la contraloria">
+                                        <input
+                                          #inputValue
+                                          type="text"
+                                          class="form-control"
+                                          formControlName="testigoOIC"
+                                          pattern="^[0-9]+"
+                                          [disabled]="validPermisos" />
+                                      </form-field>
+                                    </div>
+                                  </div>
+                                  <div class="col-md-3">
+                                    <div>
+                                      <form-field
+                                        [control]="
+                                          proceedingsConversionForm.get(
+                                            'testigoTwo'
+                                          )
+                                        "
+                                        label="Testigo">
+                                        <input
+                                          #inputValue
+                                          type="text"
+                                          class="form-control"
+                                          formControlName="testigoTwo"
+                                          pattern="^[0-9]+"
+                                          [disabled]="validPermisos" />
+                                      </form-field>
+                                    </div>
+                                  </div>
+                                  <div class="col-md-3">
+                                    <div>
+                                      <form-field
+                                        [control]="
+                                          proceedingsConversionForm.get(
+                                            'testigoTree'
+                                          )
+                                        "
+                                        label="Testigo">
+                                        <input
+                                          #inputValue
+                                          type="text"
+                                          class="form-control"
+                                          formControlName="testigoTree"
+                                          pattern="^[0-9]+"
+                                          [disabled]="validPermisos" />
+                                      </form-field>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -104,52 +235,149 @@
                       class="form-material"
                       (ngSubmit)="searchProcs()">
                       <div class="row">
-                        <div class="col-md-3">
-                          <div>
-                            <form-field
-                              [control]="actaRecepttionForm.get('acta')"
-                              label="Acta">
-                              <input
-                                #inputValue
-                                type="text"
-                                class="form-control"
-                                formControlName="acta"
-                                [disabled]="validPermisos" />
-                            </form-field>
+                        <div class="col-md-12">
+                          <div class="row">
+                            <div class="col-md-12">
+                              <div class="card">
+                                <div class="card-body">
+                                  <div class="col-md-3">
+                                    <div>
+                                      <form-field
+                                        [control]="
+                                          actaRecepttionForm.get('acta')
+                                        "
+                                        label="Acta">
+                                        <input
+                                          #inputValue
+                                          type="text"
+                                          class="form-control"
+                                          formControlName="acta"
+                                          [disabled]="validPermisos" />
+                                      </form-field>
+                                    </div>
+                                  </div>
+                                  <div class="col-md-3">
+                                    <div>
+                                      <form-field
+                                        [control]="
+                                          actaRecepttionForm.get('type')
+                                        "
+                                        label="Estado">
+                                        <!-- <input #inputValue type="text" class="form-control" formControlName="type"
+                                          [disabled]="validPermisos" /> -->
+                                        <select
+                                          class="form-control"
+                                          formControlName="type">
+                                          <option value="2">Conversion</option>
+                                        </select>
+                                      </form-field>
+                                    </div>
+                                  </div>
+                                  <div class="col-md-3">
+                                    <div>
+                                      <form-field
+                                        [control]="
+                                          actaRecepttionForm.get('administra')
+                                        "
+                                        label="Admin">
+                                        <input
+                                          #inputValue
+                                          type="text"
+                                          class="form-control"
+                                          formControlName="administra"
+                                          [disabled]="validPermisos" />
+                                      </form-field>
+                                    </div>
+                                  </div>
+
+                                  <div class="col-md-3">
+                                    <div>
+                                      <form-field
+                                        [control]="
+                                          actaRecepttionForm.get('consec')
+                                        "
+                                        label="Folio">
+                                        <input
+                                          #inputValue
+                                          type="text"
+                                          class="form-control"
+                                          formControlName="consec"
+                                          [disabled]="validPermisos" />
+                                      </form-field>
+                                    </div>
+                                  </div>
+                                  <div class="col-md-3">
+                                    <div>
+                                      <form-field
+                                        [control]="
+                                          actaRecepttionForm.get('anio')
+                                        "
+                                        label="Año">
+                                        <input
+                                          #inputValue
+                                          type="text"
+                                          class="form-control"
+                                          formControlName="anio"
+                                          [disabled]="validPermisos" />
+                                      </form-field>
+                                    </div>
+                                  </div>
+                                  <div class="col-md-3">
+                                    <div>
+                                      <form-field
+                                        [control]="
+                                          actaRecepttionForm.get('mes')
+                                        "
+                                        label="Mes">
+                                        <input
+                                          #inputValue
+                                          type="text"
+                                          class="form-control"
+                                          formControlName="mes"
+                                          [disabled]="validPermisos" />
+                                      </form-field>
+                                    </div>
+                                  </div>
+                                  <div class="col-md-3">
+                                    <div>
+                                      <form-field
+                                        [control]="
+                                          actaRecepttionForm.get('cveActa')
+                                        "
+                                        label="CVE de Acta">
+                                        <input
+                                          #inputValue
+                                          type="text"
+                                          class="form-control"
+                                          formControlName="cveActa"
+                                          [disabled]="validPermisos" />
+                                      </form-field>
+                                    </div>
+                                  </div>
+                                  <div class="col-md-3">
+                                    <div>
+                                      <form-field
+                                        [control]="
+                                          actaRecepttionForm.get('direccion')
+                                        "
+                                        label="Direccion">
+                                        <input
+                                          #inputValue
+                                          type="text"
+                                          class="form-control"
+                                          formControlName="direccion"
+                                          [disabled]="validPermisos" />
+                                      </form-field>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
                           </div>
                         </div>
-                        <!-- <div class="col-md-3">
-                          <div>
-                          <form-field [control]="actaRecepttionForm.get('tipoActa')" label="Estado">
-                            <input #inputValue type="text" class="form-control" formControlName="tipoActa" pattern="^[0-9]+"
-                              [disabled]="validaPermisos" />
-                          </form-field>
-                          </div>
-                        </div>                         
-                        <div class="col-md-3">
-                          <div>
-                          <form-field [control]="actaRecepttionForm.get('claveTrans')" label="Trans">
-                            <input #inputValue type="text" class="form-control" formControlName="claveTrans" pattern="^[0-9]+"
-                              [disabled]="validaPermisos" />
-                          </form-field>
-                          </div>
-                        </div>
-                        <div class="col-md-3">
-                          <div>
-                            <form-field [control]="actaRecepttionForm.get('claveTrans')" label="Trans">
-                              <input #inputValue type="text" class="form-control" formControlName="claveTrans" pattern="^[0-9]+"
-                                [disabled]="validaPermisos" />
-                            </form-field>
-                          </div>
-                        </div>
-{
-  
-}
-                      
-                      --></div>
+                      </div>
                     </form>
                     <div class="row"></div>
-                    <!-- <form [formGroup]="goodFrm" class="form-material" (ngSubmit)="searchProcs()"> -->
                     <form [formGroup]="actaGoodForm" class="form-material">
                       <div class="row w-100">
                         <div
@@ -159,15 +387,15 @@
                             [class]="isLoadingGood ? 'table-loading' : ''"
                             class="overflow-auto">
                             <ng2-smart-table
-                              [attr.class]="'table-bordered'"
+                              [attr.class]="'table-bordered my-table'"
                               [settings]="settings"
-                              [source]="dataGoodTable"
+                              [source]="dataGood"
                               (userRowSelect)="selectGoods($event)">
                             </ng2-smart-table>
-                            <app-pagination
-                              [totalItems]="totalItems"></app-pagination>
                           </div>
                           <br />
+                          <app-pagination
+                            [totalItems]="totalItems"></app-pagination>
                           <span class="badge m-2 badge-pill bg-success"
                             >&#42;&#42;Disponibles</span
                           >
@@ -175,7 +403,7 @@
                             >&#42;&#42;No Disponibles</span
                           >
                         </div>
-                        <!-- TABLA----BIENES RELACIONADOS CON EL EXPEDIENTE -->
+
                         <div
                           class="col-sm-12 col-12 col-md-2 col-lg-2 p-2 text-center">
                           <div
@@ -201,7 +429,7 @@
                             </div>
                           </div>
                         </div>
-                        <!-- TABLA----BIENES RELACIONADOS CON EL OFICIO -->
+
                         <div
                           class="col-sm-12 col-12 col-md-5 col-lg-5 p-2 alert alert-success">
                           <h6>BIENES RELACIONADOS CON EL ACTA</h6>
@@ -235,58 +463,19 @@
                 </div>
                 <div class="m-3">
                   <button
-                    [disabled]="!disabledImport"
-                    name="file"
-                    #file
                     class="btn btn-success btn-sm ml-2"
                     type="button"
                     (click)="file.click()">
                     Carga Masiva
                     <i class="fa fa-upload bx-sm float-icon"></i>
                   </button>
-                </div>
-                <div class="m-3">
-                  <button
-                    type="button"
-                    class="btn btn-primary active btn-sm"
-                    (click)="Generar()">
-                    Imprimir
-                    <i class="bx bx-printer bx-sm float-icon"></i>
-                  </button>
-                </div>
-                <div class="m-3">
-                  <button
-                    type="button"
-                    class="btn btn-danger active btn-sm"
-                    (click)="cerrarActa()">
-                    Cerrar Acta
-                    <i class="fas fa-close bx-sm float-icon"></i>
-                  </button>
-                </div>
-              </div>
-
-              <div
-                class="d-flex flex-row justify-content-center align-items-center">
-                <div class="m-3">
-                  <button
-                    type="button"
-                    class="btn btn-primary active btn-sm"
-                    (click)="getDetail()">
-                    Detalle de Acta
-                    <i class="fas fa-edit bx-sm float-icon"></i>
-                  </button>
-                </div>
-                <div class="m-3">
-                  <button
-                    [disabled]="!disabledImport"
+                  <input
+                    type="file"
                     name="file"
                     #file
-                    class="btn btn-success btn-sm ml-2"
-                    type="button"
-                    (click)="file.click()">
-                    Carga Masiva
-                    <i class="fa fa-upload bx-sm float-icon"></i>
-                  </button>
+                    class="d-none"
+                    accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+                    (change)="onFileChange($event)" />
                 </div>
                 <div class="m-3">
                   <button
