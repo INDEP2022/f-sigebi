@@ -1,9 +1,11 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { map, takeUntil } from 'rxjs';
 import { IViewTmpTracker } from 'src/app/core/models/ms-good-tracker/vtempTracker.model';
 import { GoodViewTrackerService } from 'src/app/core/services/ms-good-tracker/good-v-tracker.service';
 import { BasePageWidhtDinamicFiltersExtra } from 'src/app/core/shared/base-page-dinamic-filters-extra';
 import { COLUMNS } from './columns';
+import { GoodsManagementSocialNotLoadGoodsComponent } from './goods-management-social-not-load-goods/goods-management-social-not-load-goods.component';
 
 @Component({
   selector: 'app-goods-management-social-table',
@@ -15,6 +17,7 @@ export class GoodsManagementSocialTable
   implements OnInit
 {
   private _selectedGoods: number[];
+  notLoadedGoods: { good: number }[] = [];
   @Input() identifier: number;
   @Input()
   get selectedGoods(): number[] {
@@ -28,11 +31,15 @@ export class GoodsManagementSocialTable
   }
   @Input() set clear(value: number) {
     if (value > 0) {
+      this.notLoadedGoods = [];
       this.dataNotFound();
     }
   }
   @Input() option: string;
-  constructor(private goodTrackerService: GoodViewTrackerService) {
+  constructor(
+    private modalService: BsModalService,
+    private goodTrackerService: GoodViewTrackerService
+  ) {
     super();
     this.service = this.goodTrackerService;
     this.haveInitialCharge = false;
@@ -64,7 +71,17 @@ export class GoodsManagementSocialTable
     }
   }
 
-  showNotLoads() {}
+  showNotLoads() {
+    let config: ModalOptions = {
+      initialState: {
+        data: this.notLoadedGoods,
+        totalItems: this.notLoadedGoods.length,
+      },
+      class: 'modal-md modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(GoodsManagementSocialNotLoadGoodsComponent, config);
+  }
 
   override getData() {
     this.loading = true;
@@ -94,16 +111,29 @@ export class GoodsManagementSocialTable
           next: (response: any) => {
             if (response) {
               this.totalItems = response.count || 0;
+              this.notLoadedGoods = [];
+              this.selectedGoods.forEach(x => {
+                if (
+                  !response.data
+                    .map((item: any) => item.goodNumber)
+                    .toString()
+                    .includes(x)
+                ) {
+                  this.notLoadedGoods.push({ good: x });
+                }
+              });
               this.data.load(response.data);
               this.data.refresh();
               this.loading = false;
             }
           },
           error: err => {
+            this.notLoadedGoods = [];
             this.dataNotFound();
           },
         });
     } else {
+      this.notLoadedGoods = [];
       this.dataNotFound();
     }
   }
