@@ -69,7 +69,7 @@
         <div
           class="col-lg-2 col-md-4 col-sm-12 col-12 mb-3 mt-3 align-self-baseline mb-3 mt-3">
           <button (click)="exportar()" class="btn btn-success btn-sm w-100">
-            Exportar<i class="bx bx-download float-icon"></i>
+            Exportar CSV <i class="bx bx-download float-icon"></i>
           </button>
         </div>
       </div>
@@ -80,6 +80,7 @@
       <div class="row justify-content-end mr-1">
         <div class="col-12">
           <app-columns-select
+            [defaultColumns]="7"
             (settingsChange)="settingsChange($event)"
             [settings]="settings"
             class="row justify-content-end"></app-columns-select>
@@ -102,7 +103,7 @@
         </ng-scrollbar>
       </div>
     </div>
-    <app-pagination [params]="params" [totalItems]="totalItems">
+    <app-pagination [params]="paramsList" [totalItems]="totalItems">
     </app-pagination>
 
     <form class="form-material" [formGroup]="form">
