@@ -32,6 +32,7 @@ export class SearchTabComponent extends BasePage implements OnInit {
   classifGood: number;
   expedientNumber: string | number;
   goodSelect: IGood;
+  cleanGood: boolean = false;
   constructor(
     private fb: FormBuilder,
     private readonly goodService: GoodService,
@@ -90,8 +91,25 @@ export class SearchTabComponent extends BasePage implements OnInit {
   }
 
   clean() {
+    /* this.searchTabForm.get('noClasifBien').setValue('');
+    this.searchTabForm.get('noTipo').setValue('');
+    this.searchTabForm.get('tipo').setValue('');
+    this.searchTabForm.get('noSubtipo').setValue('');
+    this.searchTabForm.get('subtipo').setValue('');
+    this.searchTabForm.get('noSsubtipo').setValue('');
+    this.searchTabForm.get('ssubtipo').setValue('');
+    this.searchTabForm.get('noSssubtipo').setValue('');
+    this.searchTabForm.get('sssubtipo').setValue('');
+    this.searchTabForm.get('estatus').setValue('');
+    this.searchTabForm.get('situacion').setValue('');
+    this.searchTabForm.get('destino').setValue('');
+    this.cleanGood = true; */
     this.searchTabForm.reset();
     this.list = [];
+    this.dataSearch.emit({
+      data: this.searchTabForm.get('noBien').value,
+      exist: false,
+    });
   }
 
   async search() {
@@ -132,7 +150,7 @@ export class SearchTabComponent extends BasePage implements OnInit {
       if (this.expedientNumber) {
         this.loading = true;
         this.params1.getValue()[
-          'expedientNumber'
+          'filter.expedientNumber'
         ] = `$eq:${this.expedientNumber}`;
         this.notifyService.getAllListParams(this.params1.getValue()).subscribe({
           next: data => {
