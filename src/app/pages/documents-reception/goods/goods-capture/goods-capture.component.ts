@@ -459,7 +459,9 @@ export class GoodsCaptureComponent
     const response = await this.alertQuestion(
       'success',
       'Se agregó el bien al expediente',
-      '¿Desea agregar mas bienes?'
+      '¿Desea agregar mas bienes?',
+      'Si',
+      'No'
     );
     if (response.isConfirmed) {
       const fields = [
