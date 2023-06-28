@@ -5,6 +5,7 @@ import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { Iprogramming } from 'src/app/core/models/good-programming/programming';
 import {
   IReceipt,
   IReceiptwitness,
@@ -28,6 +29,7 @@ export class GenerateReceiptFormComponent extends BasePage implements OnInit {
   idProgramming: number = 0;
   loadingWitness: boolean = false;
   keyDoc: string = '';
+  programming: Iprogramming;
   closeModal: boolean = false;
   constructor(
     private modalRef: BsModalRef,
