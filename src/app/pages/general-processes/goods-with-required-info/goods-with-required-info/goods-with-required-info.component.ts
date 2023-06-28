@@ -145,18 +145,16 @@ export class GoodsWithRequiredInfoComponent extends BasePage implements OnInit {
   openGood(data: any): void {
     //console.log(localStorage.setItem(`Task`, JSON.stringify(data)));
     // localStorage.setItem(`Task`, JSON.stringify(data));
-    console.log(
-      localStorage.setItem(
-        'selectedBad',
-        JSON.stringify({
-          id: data.id,
-          motive: data.motive,
-          pair1: data.pair1,
-          pair2: data.pair2,
-          pair3: data.pair3,
-          pair4: data.pair4,
-        })
-      )
+    localStorage.setItem(
+      'selectedBad',
+      JSON.stringify({
+        id: data.id,
+        motive: data.motive,
+        pair1: data.pair1,
+        pair2: data.pair2,
+        pair3: data.pair3,
+        pair4: data.pair4,
+      })
     );
     if (data.requestId !== null && data.urlNb !== null) {
       // this.router.navigate([`/pages/general-processes/goods-characteristics`], {
