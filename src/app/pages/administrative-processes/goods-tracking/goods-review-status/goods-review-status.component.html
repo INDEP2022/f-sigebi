@@ -36,9 +36,23 @@
         </div>
         <div
           class="col-lg-2 col-md-4 col-sm-12 col-12 align-self-baseline mb-3 mt-3">
-          <button class="btn btn-secondary btn-sm active w-100">
+          <button
+            class="btn btn-secondary btn-sm active w-100"
+            type="button"
+            (click)="file.click()">
             Atención Masiva
           </button>
+          <input
+            type="file"
+            name="file"
+            #file
+            class="d-none"
+            accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+            (change)="onFileChange($event)" />
+
+          <!-- <button class="btn btn-secondary btn-sm active w-100">
+            Atención Masiva
+          </button> -->
         </div>
         <div
           class="col-lg-2 col-md-4 col-sm-12 col-12 mb-3 mt-3 align-self-baseline mb-3 mt-3">
