@@ -159,7 +159,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
   }
 
   showInfo() {}
-
+  shot() {}
   delete(data: any) {
     this.alertQuestion(
       'warning',
