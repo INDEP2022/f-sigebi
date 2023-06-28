@@ -312,7 +312,8 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
           if (filter != 'no') {
             this.alert(
               'error',
-              'No existen registros disponibles para el proceso de reclamación de pago en el archivo cargado',
+              'No hay registros para la reclamación de pago en el archivo cargado.',
+              // 'No existen registros disponibles para el proceso de reclamación de pago en el archivo cargado',
               ''
             );
           }
@@ -579,7 +580,7 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
         this.document = null;
         this.alert(
           'success',
-          'Se ha actualizado el motivo de cambio de los bienes seleccionados y eliminado el folio anterior',
+          'Motivo actualizado del cambio de bienes y folio anterior eliminado.',
           'Actualizado'
         );
       },
