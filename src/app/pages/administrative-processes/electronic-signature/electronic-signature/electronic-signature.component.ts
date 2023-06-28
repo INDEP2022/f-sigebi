@@ -12,7 +12,9 @@ import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
 import { Ssf3SignatureElecDocsService } from 'src/app/core/services/ms-electronicfirm/ms-ssf3-signature-elec-docs.service';
+import { ProcessgoodreportService } from 'src/app/core/services/ms-processgoodreport/ms-processgoodreport.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { UploadDictamenElectronicModalComponent } from '../upload-dictamen-files-modal/upload-dictamen-files-modal.component';
 import { ELECTRONICSIGNATURE_COLUMNS } from './electronic-signature-columns';
 
 @Component({
@@ -38,7 +40,8 @@ export class ElectronicSignatureComponent extends BasePage implements OnInit {
     private siabService: SiabService,
     private sanitizer: DomSanitizer,
     private modalService: BsModalService,
-    private dictationService: DictationService
+    private dictationService: DictationService,
+    private msProcessgoodreportService: ProcessgoodreportService
   ) {
     super();
     this.settings.hideSubHeader = false;
@@ -95,7 +98,7 @@ export class ElectronicSignatureComponent extends BasePage implements OnInit {
     if (this.dictaminationSelect === undefined) {
       this.alert(
         'info',
-        'Información',
+        'Firma electrónica dictamen de procedencia',
         'Debe seleccionar un registro de la tabla'
       );
       return;
@@ -123,7 +126,7 @@ export class ElectronicSignatureComponent extends BasePage implements OnInit {
     if (this.dictaminationSelect.remitente !== this.userAuth) {
       this.alert(
         'warning',
-        'Usuario inválido',
+        'Firma electrónica dictamen de procedencia',
         'Usuario inválido para realizar la firma.'
       );
       return;
@@ -131,7 +134,7 @@ export class ElectronicSignatureComponent extends BasePage implements OnInit {
     if (this.dictaminationSelect.firma !== 'S/FIRMA') {
       this.alert(
         'warning',
-        'Dictámen firmado',
+        'Firma electrónica dictamen de procedencia',
         'El dictámen se encuentra previamente firmado.'
       );
       return;
@@ -158,8 +161,7 @@ export class ElectronicSignatureComponent extends BasePage implements OnInit {
       };
       this.dictationService.blkControlPrintWhenButtonPressed(model).subscribe({
         next: resp => {
-          console.log(resp);
-          res(resp.count);
+          res(Number(resp.data[0].count));
         },
         error: err => res(0),
       });
@@ -190,6 +192,122 @@ export class ElectronicSignatureComponent extends BasePage implements OnInit {
   }
   PUP_CONSULTA_PDF_BD_SSF3() {}
   PUP_GENERA_XML() {
-    this.onLoadToast('success', 'Firmando ....');
+    const nameReport: string = 'RGENADBDICTAMASIV';
+    const params: any = {
+      PELABORO_DICTA: 'drsigebi qa',
+      PDEPARTAMENTO: 'DIRECCION DE PROCEDIMIENTOS Y ASUNTOS CONTENCIOSOS',
+      POFICIO: 773,
+      PDICTAMEN: 'DECOMISO',
+      PESTADODICT: 'ENVIADO',
+    };
+    this.openModalFirm(nameReport, params);
   }
+
+  openModalFirm(nameReport: string, params: any = null) {
+    this.hideError(true);
+    //this.dictaminationSelect.clave_oficio_armada
+    let nameFile =
+      'COORD. REGIONAL CENTRO/SUBDELEGACION JURIDICA/SUBDELEGACION JURIDICA/00032/2004'.replaceAll(
+        '/',
+        '-'
+      );
+    let paramsData = new ListParams();
+    paramsData = {
+      ...params,
+      nombreReporte: nameReport + '.jasper',
+    };
+    this.msProcessgoodreportService.getReportXMLToFirm(paramsData).subscribe({
+      next: (response: any) => {
+        console.log(response);
+        if (!response) {
+          this.onLoadToast(
+            'warning',
+            'Ocurrió un error al cargar el XML con el nombre: ' + nameFile,
+            ''
+          );
+          return;
+        }
+        const formData = new FormData();
+        const file = new File([response], nameFile + '.xml', {
+          type: 'text/xml',
+        });
+        formData.append('file', file);
+        this.startFirmComponent({
+          nameFileDictation: nameFile,
+          natureDocumentDictation: 'DECOMISO', //this.dictaminationSelect.tipo_dictaminacion,
+          numberDictation: '773', //this.dictaminationSelect.no_of_dicta.toString(),
+          typeDocumentDictation: 'ENVIADO', //this.dictaminationSelect.estatus_of,
+          fileDocumentDictation: formData.get('file'), // DOCUMENTO XML GENERADO
+        });
+      },
+      error: error => {
+        console.log(error);
+        if (error.status == 200) {
+          let response = error.error.text;
+          if (!response) {
+            this.onLoadToast(
+              'warning',
+              'Ocurrió un error al cargar el XML con el nombre: ' + nameFile,
+              ''
+            );
+            return;
+          }
+          if (!response.includes('xml')) {
+            this.onLoadToast(
+              'warning',
+              'Ocurrió un error al cargar el XML con el nombre: ' + nameFile,
+              ''
+            );
+            return;
+          }
+          const formData = new FormData();
+          const file = new File([response], nameFile + '.xml', {
+            type: 'text/xml',
+          });
+          formData.append('file', file);
+          this.startFirmComponent({
+            nameFileDictation: nameFile,
+            natureDocumentDictation: 'DECOMISO', //this.dictaminationSelect.tipo_dictaminacion,
+            numberDictation: '773', //this.dictaminationSelect.no_of_dicta.toString(),
+            typeDocumentDictation: 'ENVIADO', //this.dictaminationSelect.estatus_of,
+            fileDocumentDictation: formData.get('file'), // DOCUMENTO XML GENERADO
+          });
+        } else {
+          this.onLoadToast(
+            'warning',
+            'Ocurrió un error al CREAR el XML con el nombre: ' + nameFile,
+            ''
+          );
+        }
+      },
+    });
+  }
+
+  startFirmComponent(
+    context?: Partial<UploadDictamenElectronicModalComponent>
+  ) {
+    const modalRef = this.modalService.show(
+      UploadDictamenElectronicModalComponent,
+      {
+        initialState: context,
+        class: 'modal-lg modal-dialog-centered',
+        ignoreBackdropClick: true,
+      }
+    );
+    modalRef.content.responseFirm.subscribe(async (next: any) => {
+      /* 
+      
+SELECT COUNT(0)
+        INTO v_COUNT
+        FROM SSF3_FIRMA_ELEC_DOCS
+       WHERE NATURALEZA_DOC = :DICTAMINACIONES.TIPO_DICTAMINACION
+         AND NO_DOCUMENTO   = :DICTAMINACIONES.NO_OF_DICTA
+         AND TIPO_DOCUMENTO = :DICTAMINACIONES.ESTATUS_OF;      */
+    });
+    modalRef.content.errorFirm.subscribe((next: any) => {
+      console.log(next);
+    });
+  }
+
+  PUP_GENERA_PDF() {}
 }

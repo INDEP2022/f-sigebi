@@ -96,6 +96,7 @@
       <div class="d-flex justify-content-end">
         <div class="m-3">
           <button
+            [disabled]="disableUpdate"
             type="button"
             class="btn btn-info btn-sm active"
             (click)="update()">
@@ -104,6 +105,7 @@
         </div>
       </div>
     </div>
+
     <div class="row" *ngIf="!viewAct">
       <app-good-characteristics-table
         [goodChange]="goodChange"
@@ -112,10 +114,19 @@
         [avaluo]="false"
         [good]="good"
         [disabled]="true"
+        [service]="service"></app-good-characteristics-table>
+      <!-- <app-good-characteristics-table
+        [goodChange]="goodChange"
+        [clasification]="classificationOfGoods"
+        [settings]="atributActSettings"
+        [avaluo]="false"
+        [good]="good"
+        [disabled]="true"
         [service]="service"
-        [initValue]="true"></app-good-characteristics-table>
+        [initValue]="true"></app-good-characteristics-table> -->
     </div>
     <div class="row" *ngIf="viewAct">
+      <app-characteristics-legend></app-characteristics-legend>
       <app-good-characteristics-table
         [goodChange]="goodChange"
         [clasification]="classificationOfGoods"

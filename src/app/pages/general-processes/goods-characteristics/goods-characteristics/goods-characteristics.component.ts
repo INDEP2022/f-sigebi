@@ -406,7 +406,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
       if (row.required && !row.value) {
         this.alert(
           'error',
-          'Características de bien (' + this.numberGood.value + ')',
+          'Características del bien ' + this.numberGood.value,
           'Complete el atributo ' + row.attribute
         );
         // this.onLoadToast(
@@ -477,7 +477,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
         next: response => {
           this.alert(
             'success',
-            'Características de bien (' + this.numberGood.value + ')',
+            'Características del bien ' + this.numberGood.value,
             'Actualizadas correctamente'
           );
 
