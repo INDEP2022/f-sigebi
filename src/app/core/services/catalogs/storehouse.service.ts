@@ -25,8 +25,8 @@ export class StorehouseService implements ICrudMethods<IStorehouse> {
     return this.storehouseRepository.create(this.route, model);
   }
 
-  update(id: string | number, model: IStorehouse): Observable<Object> {
-    return this.storehouseRepository.update(this.route, id, model);
+  newUpdate(model: IStorehouse): Observable<Object> {
+    return this.storehouseRepository.newUpdate(this.route, model);
   }
 
   // remove(id: string | number): Observable<Object> {

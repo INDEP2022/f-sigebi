@@ -9,10 +9,10 @@ import {
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { MailModalComponent } from '../mail-modal/mail-modal.component';
-import { EMAIL_COLUMNS } from './email-columns';
 //Models
 import { LocalDataSource } from 'ng2-smart-table';
 import { ISegUsers } from 'src/app/core/models/ms-users/seg-users-model';
+import { EMAIL_COLUMNS } from './email-columns';
 //servicios
 
 @Component({
@@ -21,9 +21,9 @@ import { ISegUsers } from 'src/app/core/models/ms-users/seg-users-model';
   styles: [],
 })
 export class MailComponent extends BasePage implements OnInit {
+  segUsers: ISegUsers[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
-  segUsers: ISegUsers[] = [];
   data: LocalDataSource = new LocalDataSource();
   columnFilters: any = [];
 
@@ -32,21 +32,28 @@ export class MailComponent extends BasePage implements OnInit {
     private usersService: UsersService
   ) {
     super();
+
+    /*this.settings.columns = EMAIL_COLUMNS;
+    this.settings.actions.delete = true;
+    this.settings.actions.add = false;
+    this.settings.hideSubHeader = false;*/
     this.settings = {
       ...this.settings,
+      hideSubHeader: false,
       actions: {
         columnTitle: 'Acciones',
         edit: true,
         delete: false,
+        add: false,
         position: 'right',
       },
       columns: { ...EMAIL_COLUMNS },
     };
-    this.settings.actions.add = false;
+    /*this.settings.actions.add = false;
     this.settings = {
       ...this.settings,
       hideSubHeader: false,
-    };
+    };*/
   }
 
   ngOnInit(): void {
@@ -59,16 +66,100 @@ export class MailComponent extends BasePage implements OnInit {
           filters.map((filter: any) => {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
-            /*SPECIFIC CASES*/
-            filter.field == 'id'
+            field = `filter.${filter.field}`;
+            switch (filter.field) {
+              case 'id':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'name':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'rfc':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'userDetail':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}.delegationNumber`;
+                break;
+              case 'email':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'registryNumber':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'curp':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'street':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'suburb':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'zipCode':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'phone':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'profession':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'positionKey':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'firstTimeLoginDate':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'userSirsae':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'sendEmail':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'attribAsign':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'clkdetSirsae':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'exchangeAlias':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'clkdet':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'clkid':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'profileMimKey':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'nameAd':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'posPrevKey':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
+
+            /*filter.field == 'id' ||
+            filter.field == 'name' ||
+            filter.field == 'usuario' ||
+            filter.field == 'email' ||
+            filter.field == 'registryNumber'
               ? (searchFilter = SearchFilter.EQ)
-              : (searchFilter = SearchFilter.ILIKE);
+              : (searchFilter = SearchFilter.ILIKE);*/
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
               delete this.columnFilters[field];
             }
           });
+          this.params = this.pageFilter(this.params);
           this.getSegRelEmail();
         }
       });
@@ -83,12 +174,13 @@ export class MailComponent extends BasePage implements OnInit {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-    this.usersService.getAllSegUsers(params).subscribe({
+    this.usersService.getAllDetailSegUsers(params).subscribe({
       next: response => {
+        console.log(response.data);
         this.segUsers = response.data;
-        this.data.load(this.segUsers);
+        this.totalItems = response.count || 0;
+        this.data.load(response.data);
         this.data.refresh();
-        this.totalItems = response.count;
         this.loading = false;
       },
       error: error => (this.loading = false),

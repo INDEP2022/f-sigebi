@@ -158,13 +158,6 @@ export class GoodsListComponent
       );
     }
   }
-  private addGood(item: IGood) {
-    const good = this.selectedGooods.find(x => x.id === item.id);
-    if (!good) {
-      this.selectedGooods.push(item);
-    }
-  }
-
   selectGood(event: { selected: IGood[]; isSelected: boolean; data: IGood }) {
     console.log(event);
     const selecteds = event.selected;
@@ -194,7 +187,7 @@ export class GoodsListComponent
           }
         });
       } else if (event.isSelected === true) {
-        this.addGood(event.data);
+        // this.addGood(event.data);
       } else {
         this.removeGood(event.data);
       }

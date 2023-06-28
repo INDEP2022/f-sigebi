@@ -1316,13 +1316,11 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
         if (res.data != null) {
           console.log('Entro');
           console.log(res.data);
-
           this.totalItemsNavigate = res.count;
 
           const dataRes = JSON.parse(JSON.stringify(res.data[0]));
           this.fillIncomeProceeding(dataRes);
           console.log(typeof dataRes);
-        } else {
           console.log('No entro');
           this.loading = false;
           this.initialBool = false;

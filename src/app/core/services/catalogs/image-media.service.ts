@@ -41,6 +41,6 @@ export class ImageMediaService
   }
 
   remove(id: string | number): Observable<Object> {
-    return this.halfImageRepository.remove(this.route, id);
+    return this.halfImageRepository.remove(`${this.route}/id`, id);
   }
 }

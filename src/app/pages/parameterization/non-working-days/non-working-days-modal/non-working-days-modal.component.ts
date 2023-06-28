@@ -65,7 +65,12 @@ export class NonWorkingDaysModalComponent extends BasePage implements OnInit {
     };
     this.calendarService.create(form).subscribe({
       next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
+      error: error => {
+        //this.loading = false;
+        console.log(error.error.message);
+        this.onLoadToast('error', 'El registro ya existe', '');
+        this.loading = false;
+      },
     });
   }
   update() {
@@ -75,7 +80,6 @@ export class NonWorkingDaysModalComponent extends BasePage implements OnInit {
       description: this.nonWorkingDaysForm.value.description,
       idDate: this.nonWorkingDaysForm.value.idDate,
     };
-    console.log(object);
     this.calendarService.update(object).subscribe({
       next: data => this.handleSuccess(),
       error: error => (this.loading = false),
@@ -83,7 +87,8 @@ export class NonWorkingDaysModalComponent extends BasePage implements OnInit {
   }
   handleSuccess() {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.onLoadToast('success', this.title, `${message} Correctamente`);
+    this.alert('success', this.title, `${message} Correctamente`);
+    //this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();

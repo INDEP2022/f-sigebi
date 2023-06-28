@@ -16,7 +16,7 @@ export class PaymentConceptDetailComponent extends BasePage implements OnInit {
   paymentConceptForm: ModelForm<IPaymentConcept>;
   paymentconcept: IPaymentConcept;
 
-  title: string = 'Catálogo concepto de pagos';
+  title: string = 'Concepto de Pago';
   edit: boolean = false;
 
   constructor(
@@ -79,7 +79,8 @@ export class PaymentConceptDetailComponent extends BasePage implements OnInit {
 
   handleSuccess() {
     const message: string = this.edit ? 'Actualizada' : 'Guardada';
-    this.onLoadToast('success', this.title, `${message} Correctamente`);
+    this.alert('success', this.title, `${message} Correctamente`);
+    //this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();

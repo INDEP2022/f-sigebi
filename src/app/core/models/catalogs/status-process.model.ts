@@ -1,5 +1,5 @@
 export interface IStatusProcess {
-  id?: number;
+  id: number;
   status: string;
   process: string;
   description: string;

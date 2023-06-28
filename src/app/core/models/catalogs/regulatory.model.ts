@@ -1,13 +1,13 @@
 export interface IRegulatory {
   id?: number;
   fractionId: number;
-  numero: number;
-  descripcion: string;
-  validar_ef: string;
-  validar_ec: string;
-  usuario_creacion?: string;
-  fecha_creacion?: Date;
-  usuario_modificacion?: string;
-  fecha_modificacion?: Date;
+  number: number;
+  description: string;
+  validateEf: string;
+  validateEc: string;
+  userCreation?: string;
+  creationDate?: Date;
+  userModification?: string;
+  modificationDate?: Date;
   version: number;
 }

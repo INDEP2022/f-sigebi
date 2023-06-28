@@ -13,7 +13,6 @@ import {
 } from 'src/app/core/models/catalogs/numerary-categories-model';
 import { NumeraryParameterizationAutomService } from 'src/app/core/services/catalogs/numerary-parameterization-autom.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import Swal from 'sweetalert2';
 import { ModalNumeraryParameterizationComponent } from '../modal-numerary-parameterization/modal-numerary-parameterization.component';
 import { NUMERARY_PARAMETERIZATION_COLUMNS } from './numerary-parameterization-columns';
 
@@ -37,7 +36,7 @@ export class NumeraryParameterizationComponent
     private numeraryParameterizationAutomService: NumeraryParameterizationAutomService
   ) {
     super();
-    this.settings.actions.edit = true;
+    this.settings.actions.edit = false;
     this.settings.actions.delete = true;
     this.settings.actions.add = false;
     this.settings.columns = NUMERARY_PARAMETERIZATION_COLUMNS;
@@ -55,11 +54,35 @@ export class NumeraryParameterizationComponent
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
-            filter.field == 'typeProceeding' ||
+            switch (filter.field) {
+              case 'typeProceeding':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'initialCategoryDetails':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}.description`;
+                break;
+              case 'finalCategoryDetails':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}.description`;
+                break;
+              case 'initialCategory':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'finalCategory':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
+            /*filter.field == 'typeProceeding' ||
+            filter.field == 'initialCategoryDetails' ||
+            filter.field == 'finalCategoryDetails' ||
             filter.field == 'initialCategory' ||
             filter.field == 'finalCategory'
               ? (searchFilter = SearchFilter.EQ)
-              : (searchFilter = SearchFilter.ILIKE);
+              : (searchFilter = SearchFilter.ILIKE);*/
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
@@ -73,6 +96,7 @@ export class NumeraryParameterizationComponent
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getValuesAll());
+    console.log(this.data);
   }
   getValuesAll() {
     this.loading = true;
@@ -80,7 +104,7 @@ export class NumeraryParameterizationComponent
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-    this.numeraryParameterizationAutomService.getAll(params).subscribe({
+    this.numeraryParameterizationAutomService.getAllDetail(params).subscribe({
       next: response => {
         this.numeraryParameterization = response.data;
         this.totalItems = response.count || 0;
@@ -105,13 +129,10 @@ export class NumeraryParameterizationComponent
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        if (question.isConfirmed) {
-          this.delete(event);
-          Swal.fire('Borrado', '', 'success');
-        }
+        this.delete(event);
       }
     });
   }
@@ -119,7 +140,17 @@ export class NumeraryParameterizationComponent
     this.numeraryParameterizationAutomService
       .remove3(JSON.stringify(event))
       .subscribe({
-        next: () => this.getValuesAll(),
+        next: () => {
+          this.alert('success', 'Parametrización de numerario', 'Borrado');
+          this.getValuesAll();
+        },
+        error: err => {
+          this.alert(
+            'warning',
+            'Parametrización de numerario',
+            'No se puede eliminar el objeto debido a una relación con otra tabla.'
+          );
+        },
       });
   }
 }

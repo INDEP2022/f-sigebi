@@ -316,10 +316,12 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     if (localStorage.getItem('selectedBad')) {
       setTimeout(() => {
         this.selectTab(0, 1);
+        this.enabledFotos();
       }, 1000);
     } else {
       setTimeout(() => {
         this.selectTab(1, 0);
+        this.disabledFotos();
       }, 1000);
     }
   }
@@ -330,11 +332,18 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     if (this.staticTabs?.tabs[tabActive]) {
       this.staticTabs.tabs[tabDisabled].disabled = true;
       this.staticTabs.tabs[tabActive].active = true;
-      if (tabDisabled === 0) {
-        this.staticTabs.tabs[2].active = true;
-      } else {
-        this.staticTabs.tabs[2].disabled = true;
-      }
+    }
+  }
+
+  private disabledFotos() {
+    if (this.staticTabs) {
+      this.staticTabs.tabs[2].disabled = true;
+    }
+  }
+
+  private enabledFotos() {
+    if (this.staticTabs) {
+      this.staticTabs.tabs[2].disabled = false;
     }
   }
 
@@ -1043,7 +1052,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
         this.totalItems = 0;
         this.loading = false;
         this.goodChange++;
-        this.alertInfo('error', 'Error', 'No existen bienes');
+        this.alert('error', 'Error', 'No existen bienes');
         // this.service.goodChange.next(false);
         // this.onLoadToast('error', 'ERROR', 'No existen bienes');
       }
