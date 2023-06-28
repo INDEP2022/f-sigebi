@@ -1,11 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
-import { BsModalService } from 'ngx-bootstrap/modal';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import {
   FilterParams,
   ListParams,
+  SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
 import { IHistoryGood } from 'src/app/core/models/administrative-processes/history-good.model';
@@ -41,11 +42,16 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
   columns: IGoodsReview[] = [];
   delegations = new DefaultSelect();
   delegacionId: any;
-  delegationNumber: any; // BLK_CONTROL.DELEGACION
-  responsable: any; // BLK_CONTROL.RESPONSABLE
+  delegationNumber: any = null; // BLK_CONTROL.DELEGACION
+  responsable: any = null; // BLK_CONTROL.RESPONSABLE
   goodsExcel: any;
   selectedGender: string = 'all';
   jsonToCsv: any[] = [];
+  rowSelected: boolean = false;
+  selectedRow: any = null;
+  selectOnClick: boolean = false;
+  permitSelect = true;
+  @Output() onSelect = new EventEmitter<any>();
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
@@ -58,20 +64,81 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
     private goodprocessService: GoodprocessService,
     private readonly historyGoodService: HistoryGoodService,
     private delegationService: DelegationService,
-    private dynamicCatalogsService: DynamicCatalogsService
+    private dynamicCatalogsService: DynamicCatalogsService,
+    private modalRef: BsModalRef
   ) {
     super();
     this.settings.columns = COLUMNS;
     this.settings = {
       ...this.settings,
       hideSubHeader: false,
+      actions: false,
     };
   }
 
   ngOnInit(): void {
-    this.params
+    this.data
+      .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getMotives());
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = '';
+            //Default busqueda SearchFilter.ILIKE
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+
+            //Verificar los datos si la busqueda sera EQ o ILIKE dependiendo el tipo de dato aplicar regla de búsqueda
+            const search: any = {
+              goodNumber: () => (searchFilter = SearchFilter.EQ),
+              motive1: () => (searchFilter = SearchFilter.ILIKE),
+              motive2: () => (searchFilter = SearchFilter.ILIKE),
+              motive3: () => (searchFilter = SearchFilter.ILIKE),
+              motive4: () => (searchFilter = SearchFilter.ILIKE),
+              motive5: () => (searchFilter = SearchFilter.ILIKE),
+              motive6: () => (searchFilter = SearchFilter.ILIKE),
+              motive7: () => (searchFilter = SearchFilter.ILIKE),
+              motive8: () => (searchFilter = SearchFilter.ILIKE),
+              motive9: () => (searchFilter = SearchFilter.ILIKE),
+              motive10: () => (searchFilter = SearchFilter.ILIKE),
+              motive11: () => (searchFilter = SearchFilter.ILIKE),
+              motive12: () => (searchFilter = SearchFilter.ILIKE),
+              motive13: () => (searchFilter = SearchFilter.ILIKE),
+              motive14: () => (searchFilter = SearchFilter.ILIKE),
+              motive15: () => (searchFilter = SearchFilter.ILIKE),
+              motive16: () => (searchFilter = SearchFilter.ILIKE),
+              motive17: () => (searchFilter = SearchFilter.ILIKE),
+              motive18: () => (searchFilter = SearchFilter.ILIKE),
+              motive19: () => (searchFilter = SearchFilter.ILIKE),
+              motive20: () => (searchFilter = SearchFilter.ILIKE),
+              descriptionGood: () => (searchFilter = SearchFilter.ILIKE),
+            };
+            // console.log("search.goodId()1", search.goodId())
+            // if (search.goodId()) {
+            //   console.log("search.goodId()", search.goodId())
+            //   search.goodNumber()
+            // }
+            // console.log("filter.field", search[filter.field])
+
+            search[filter.field]();
+
+            if (filter.search !== '') {
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.paramsList = this.pageFilter(this.paramsList);
+          //Su respectivo metodo de busqueda de datos
+          this.getMotives();
+        }
+      });
+
+    this.paramsList.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+      this.getMotives();
+    });
+
     this.prepareForm();
     this.getDataPupInicializaForma();
   }
@@ -86,6 +153,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
     this.loading = true;
     let params = {
       ...this.paramsList.getValue(),
+      ...this.columnFilters,
     };
 
     if (this.selectedGender == 'movables') {
@@ -100,12 +168,13 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
           const detailsDelegation: any = await this.getDelegation(
             item.delegation
           );
-          item['goodId'] = item.goodNumber ? item.goodNumber.id : null;
-          item['detailsDelegation'] = detailsDelegation
-            ? detailsDelegation.description
-            : null;
           item['descriptionGood'] = item.goodNumber
             ? item.goodNumber.description
+            : null;
+          item['goodDetails'] = item.goodNumber;
+          item['goodNumber'] = item.goodNumber ? item.goodNumber.id : null;
+          item['detailsDelegation'] = detailsDelegation
+            ? detailsDelegation.description
             : null;
         });
 
@@ -149,11 +218,12 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
   private prepareForm(): void {
     this.form = this.fb.group({
       option: [null, [Validators.required]],
+      responsable: [null],
     });
   }
 
   showInfo() {}
-
+  shot() {}
   delete(data: any) {
     this.alertQuestion(
       'warning',
@@ -172,6 +242,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
 
   // CARGAR EXCEL / CSV //
   onFileChange(event: Event) {
+    console.log('event', event);
     const files = (event.target as HTMLInputElement).files;
     if (files.length != 1) throw 'No files selected, or more than of allowed';
     const fileReader = new FileReader();
@@ -196,7 +267,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
   async attentionMassive(excelImport: any) {
     console.log('excelImport', excelImport);
     if (excelImport.length == 0) {
-      this.alert('error', 'No hay data cargada en el archivo', 'Error');
+      this.alert('warning', 'No hay data cargada en el archivo', '');
       return;
     }
     let EXISTE: number = 0;
@@ -206,7 +277,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
     let ESTATUSB: number;
     let ESTATUSF: string;
     this.alertQuestion(
-      'info',
+      'question',
       '¿Está seguro de dar por atendidos los bienes del archivo?',
       ''
     ).then(async question => {
@@ -268,6 +339,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
                 goodNumber: excelImport[i].goodNumber,
                 attended: 0,
               };
+
               const getGoodAttended: any = await this.getGoodAndAttendedReturn(
                 objGood
               );
@@ -351,6 +423,8 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
             }
           }
         }
+
+        await this.getMotives();
       }
     });
   }
@@ -439,13 +513,17 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
 
   // INSERTAR - HISTORY GOOD
   async putInsertHistoric(historyGood: any) {
-    this.historyGoodService.create(historyGood).subscribe({
-      next: response => {
-        this.loading = false;
-      },
-      error: error => {
-        this.loading = false;
-      },
+    return new Promise((resolve, reject) => {
+      this.historyGoodService.create(historyGood).subscribe({
+        next: response => {
+          resolve(true);
+          // this.loading = false;
+        },
+        error: error => {
+          resolve(null);
+          // this.loading = false;
+        },
+      });
     });
   }
 
@@ -460,7 +538,11 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
       otvalor: user,
     };
     const areaCorresp: any = await this.getAreaCorresp(obj);
-    if (areaCorresp != null) this.responsable = areaCorresp;
+    if (areaCorresp != null) {
+      this.responsable = areaCorresp;
+    } else {
+      this.alert('info', 'Falta asignar área Responsable o Delegación.', '');
+    }
   }
 
   // consulta tabla: SEG_ACCESO_X_AREAS
@@ -474,10 +556,10 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
           console.log('resp', resp);
           const data = resp.data[0];
           resolve(data);
-          this.loading = false;
+          // this.loading = false;
         },
         error: error => {
-          this.loading = false;
+          // this.loading = false;
           resolve(null);
         },
       });
@@ -492,10 +574,10 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
           console.log('resp', resp);
           const data = resp.data[0].otvalor;
           resolve(data);
-          this.loading = false;
+          // this.loading = false;
         },
         error: error => {
-          this.loading = false;
+          // this.loading = false;
           resolve(null);
         },
       });
@@ -513,5 +595,144 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
 
   async returnJsonToCsv() {
     return this.data.getAll();
+  }
+
+  selectRow(row: any) {
+    console.log(row);
+    this.selectedRow = row.data;
+    this.form.get('responsable').setValue(row.data.manager);
+    this.rowSelected = true;
+  }
+
+  confirm() {
+    if (!this.rowSelected) return;
+    this.onSelect.emit(this.selectRow);
+    this.modalRef.hide();
+  }
+
+  async attention() {
+    if (!this.selectedRow) {
+      this.alert('warning', 'No se ha seleccionado ninguna fila', '');
+      return;
+    }
+
+    if (!this.selectedRow.goodNumber) {
+      this.alert('warning', 'El número de bien se encuentra vacío', '');
+      return;
+    }
+
+    let ATENCION: number;
+    let ESTATUSF: string;
+
+    this.alertQuestion(
+      'question',
+      `¿Desea dar por atendido el bien: ${this.selectedRow.goodNumber}?`,
+      ''
+    ).then(async question => {
+      if (question.isConfirmed) {
+        let obj_: any = {
+          goodNumber: this.selectedRow.goodNumber,
+          eventId: this.selectedRow.eventId.id,
+          goodType: this.selectedRow.goodType,
+          status: this.selectedRow.status,
+          manager: this.responsable,
+          delegation: this.selectedRow.delegation,
+          attended: 1,
+        };
+
+        const updateGoodMotivRev = await this.updateGoodMotivosRev(obj_);
+        if (updateGoodMotivRev == true) {
+        } else {
+          this.alert(
+            'warning',
+            `El bien: ${this.selectedRow.goodNumber} no se pudo actualizar`,
+            ''
+          );
+          return;
+        }
+
+        let objGood: any = {
+          goodNumber: this.selectedRow.goodNumber,
+          attended: 0,
+        };
+
+        const getGoodAttended: any = await this.getGoodAndAttendedReturn(
+          objGood
+        );
+        if (getGoodAttended != null) {
+          ATENCION = getGoodAttended;
+        } else {
+          ATENCION = 0;
+        }
+
+        if (ATENCION == 0) {
+          let objScreen = {
+            goodNumber: this.selectedRow.goodNumber,
+            status: this.selectedRow.status,
+          };
+          const screenXStatus: any = await this.getScreenXStatus(objScreen);
+
+          if (screenXStatus != null) {
+            ESTATUSF = screenXStatus;
+          } else {
+            ESTATUSF = null;
+            this.alert(
+              'warning',
+              `No se identificó el estatus final para el bien: ${this.selectedRow.goodNumber}`,
+              ''
+            );
+            return;
+          }
+
+          let objUpdateGood: any = {
+            id: this.selectedRow.goodNumber,
+            goodId: this.selectedRow.goodNumber,
+            status: ESTATUSF,
+          };
+          const updateGood: any = await this.updateGoodStatus(objUpdateGood);
+
+          if (updateGood == null) {
+            this.alert(
+              'error',
+              `Error al actualizar el estatus del bien: ${this.selectedRow.goodNumber}`,
+              ''
+            );
+            return;
+          }
+
+          var currentDate = new Date();
+          var futureDate = new Date(currentDate.getTime() + 5 * 1000); // A
+
+          const historyGood: IHistoryGood = {
+            propertyNum: this.selectedRow.goodNumber,
+            status: ESTATUSF,
+            changeDate: futureDate,
+            userChange: this.token.decodeToken().preferred_username,
+            statusChangeProgram: 'FMATENCBIENESREV',
+            reasonForChange: 'POR ESTATUS REV MASIVO',
+            registryNum: null,
+            extDomProcess: null,
+          };
+          const insertHistoric: any = await this.putInsertHistoric(historyGood);
+
+          if (insertHistoric == null) {
+            this.alert(
+              'error',
+              `Error al actualizar el estatus del bien: ${this.selectedRow.goodNumber}`,
+              ''
+            );
+            return;
+          } else {
+            this.alert(
+              'success',
+              `El bien: ${this.selectedRow.goodNumber} se ha atendido correctamente`,
+              ''
+            );
+            this.getMotives();
+          }
+        }
+        // -------------------------------------------------------------------------------------------------- //
+      }
+    });
   }
 }
