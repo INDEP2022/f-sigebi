@@ -220,7 +220,12 @@ export class CatRelationshipOpinionComponent
         idAffair,
         rAsuntDic,
         affairType,
-        callback: (next: boolean) => {},
+        callback: (next: boolean) => {
+          if (next) {
+            this.getAffairTypes();
+            this.getRAsuntDic();
+          }
+        },
       },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
@@ -245,7 +250,7 @@ export class CatRelationshipOpinionComponent
     this.RAsuntDicService.remove2(rAsuntDic).subscribe({
       next: () => {
         this.getRAsuntDic();
-        this.alert('success', 'Borrado', '');
+        this.alert('success', 'Dictamen', 'Borrado');
       },
       error: error => {
         this.alert(
@@ -262,11 +267,27 @@ export class CatRelationshipOpinionComponent
   openDictum() {
     let config: ModalOptions = {
       initialState: {
-        callback: (next: boolean) => {},
+        callback: (next: boolean) => {
+          //if (next) this.getRAsuntDic();
+          //this.rowsSelected(this.affairs);
+          if (next) {
+            this.getAffairTypes();
+            this.getRAsuntDic();
+          }
+        },
       },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     };
     this.modalService.show(OpinionsListComponent, config);
+
+    /*const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      initialState,
+      callback: (next: boolean) => {
+        if (next) this.getExample();
+      },
+    };
+    this.modalService.show(OpinionsListComponent, modalConfig);*/
   }
 }

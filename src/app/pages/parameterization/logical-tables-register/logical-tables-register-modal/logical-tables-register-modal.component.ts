@@ -42,7 +42,11 @@ export class LogicalTablesRegisterModalComponent
       tableType: [null, [Validators.required]],
       description: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.maxLength(30),
+          Validators.pattern(STRING_PATTERN),
+        ],
       ],
     });
     if (this.dinamicTables != null) {
@@ -79,7 +83,7 @@ export class LogicalTablesRegisterModalComponent
   }
 
   handleSuccess() {
-    const message: string = this.edit ? 'Actualizada' : 'Guardada';
+    const message: string = this.edit ? 'Actualizado' : 'Guardado';
     this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);
