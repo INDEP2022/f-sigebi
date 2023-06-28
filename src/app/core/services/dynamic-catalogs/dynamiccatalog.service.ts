@@ -24,6 +24,6 @@ export class DynamicCatalogsService extends HttpService {
   }
 
   getOtValor(params: any) {
-    return this.get(DinamicCatalogEndPoints.GetOtValor, params);
+    return this.post(DinamicCatalogEndPoints.GetOtValor, params);
   }
 }
