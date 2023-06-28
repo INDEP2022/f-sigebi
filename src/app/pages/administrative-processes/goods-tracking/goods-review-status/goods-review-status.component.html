@@ -45,7 +45,7 @@
         <div
           class="col-lg-2 col-md-4 col-sm-12 col-12 align-self-baseline mb-3 mt-3">
           <button
-            (click)="updateGoodMotivosRev(params)"
+            (click)="attention()"
             class="btn btn-secondary btn-sm active w-100">
             Atender
           </button>
@@ -85,6 +85,7 @@
             [attr.class]="'table-bordered'"
             [settings]="settings"
             [source]="data"
+            (userRowSelect)="selectRow($event)"
             (delete)="delete($event.data)">
           </ng2-smart-table>
         </div>
