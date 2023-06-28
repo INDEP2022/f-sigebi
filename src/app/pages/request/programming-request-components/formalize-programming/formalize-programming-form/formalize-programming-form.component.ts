@@ -13,6 +13,7 @@ import { IGood } from 'src/app/core/models/good/good.model';
 import { IProceedings } from 'src/app/core/models/ms-proceedings/proceedings.model';
 import { AuthorityService } from 'src/app/core/services/catalogs/authority.service';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
+import { StateOfRepublicService } from 'src/app/core/services/catalogs/state-of-republic.service';
 import { StationService } from 'src/app/core/services/catalogs/station.service';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
 import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
@@ -172,6 +173,8 @@ export class FormalizeProgrammingFormComponent
   proceedings: LocalDataSource = new LocalDataSource();
   search: FormControl = new FormControl({});
   programming: Iprogramming;
+  stateName: string = '';
+
   settingsMinutes = { ...TABLE_SETTINGS };
   /*settingsMinutes = {
     ...this.settings,
@@ -209,6 +212,7 @@ export class FormalizeProgrammingFormComponent
     private programmingGoodService: ProgrammingGoodService,
     private receptionGoodService: ReceptionGoodService,
     private proceedingService: ProceedingsService,
+    private stateService: StateOfRepublicService,
     // private router: ActivatedRoute,
     private router: Router,
     private signatoriesService: SignatoriesService
@@ -310,6 +314,7 @@ export class FormalizeProgrammingFormComponent
         this.idTransferent = data.tranferId;
         this.idStation = data.stationId;
         this.getRegionalDelegation(data);
+        this.getState(data);
         this.getTransferent(data);
         this.getStation(data);
         this.getAuthority();
@@ -329,6 +334,17 @@ export class FormalizeProgrammingFormComponent
         this.programming.regionalDelegationName = data.description;
       });
   }
+
+  getState(programming: Iprogramming) {
+    this.stateService.getById(programming.stateKey).subscribe({
+      next: response => {
+        console.log('estado', response);
+        this.stateName = response.descCondition;
+      },
+      error: error => {},
+    });
+  }
+
   getTransferent(data: Iprogramming) {
     this.transferentService.getById(data.tranferId).subscribe(data => {
       this.transferentName = data.nameTransferent;

@@ -38,3 +38,7 @@ export const COLUMNS = {
     sort: false,
   },
 };
+
+export function clearGoodCheck() {
+  goodCheck = [];
+}
