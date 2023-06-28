@@ -94,28 +94,30 @@ export class GoodsListComponent
 
   private fillSelectedRows(byPage: boolean) {
     setTimeout(() => {
+      // debugger;
       console.log(this.selectedGooods, this.table);
       const currentPage = this.params.getValue().page;
       const selectedPage = this.pageSelecteds.find(
         page => page === currentPage
       );
-      if (!selectedPage || byPage === false) {
-        this.table.isAllSelected = false;
-      } else {
-        this.table.isAllSelected = true;
-      }
+      this.table.isAllSelected = false;
+      let allSelected = true;
       if (this.selectedGooods && this.selectedGooods.length > 0) {
         this.table.grid.getRows().forEach(row => {
-          console.log(row);
+          // console.log(row);
 
           if (
             this.selectedGooods.find(item => row.getData()['id'] === item.id)
           ) {
             this.table.grid.multipleSelectRow(row);
+            allSelected = allSelected && true;
+          } else {
+            allSelected = allSelected && false;
           }
           // if(row.getData())
           // this.table.grid.multipleSelectRow(row)
         });
+        this.table.isAllSelected = allSelected;
       }
     }, 300);
   }
@@ -188,6 +190,19 @@ export class GoodsListComponent
         });
       } else if (event.isSelected === true) {
         // this.addGood(event.data);
+        const currentPage = this.params.getValue().page;
+        const selectedPage = this.pageSelecteds.find(
+          page => page === currentPage
+        );
+        if (!selectedPage) {
+          this.pageSelecteds.push(currentPage);
+        }
+        selecteds.forEach(selected => {
+          const item = this.selectedGooods.find(x => x.id === selected.id);
+          if (!item) {
+            this.selectedGooods.push(selected);
+          }
+        });
       } else {
         this.removeGood(event.data);
       }

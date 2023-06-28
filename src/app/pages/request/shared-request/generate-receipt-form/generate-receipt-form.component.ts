@@ -73,10 +73,12 @@ export class GenerateReceiptFormComponent extends BasePage implements OnInit {
     });
 
     this.params.getValue()['filter.id'] = this.proceeding.id;
+    this.params.getValue()['filter.actId'] = this.proceeding.actId;
     this.params.getValue()['filter.programmingId'] =
       this.proceeding.programmingId;
     this.receptionGoodService.getReceipt(this.params.getValue()).subscribe({
       next: response => {
+        console.log('patch', response);
         this.generateReceiptForm.patchValue(response.data[0]);
       },
       error: error => {
@@ -113,8 +115,11 @@ export class GenerateReceiptFormComponent extends BasePage implements OnInit {
     this.loadingWitness = true;
     const params = new BehaviorSubject<ListParams>(new ListParams());
     params.getValue()['filter.programmingId'] = this.idProgramming;
+    params.getValue()['filter.actId'] = this.proceeding.actId;
+    params.getValue()['filter.receiptId'] = this.proceeding.id;
     this.receptionGoodService.getReceiptsWitness(params.getValue()).subscribe({
       next: response => {
+        console.log('response', response);
         const infoReceipt = response.data.map((item: IReceiptwitness) => {
           if (item.electronicSignature == 'S')
             item.electronicSignatureName = 'SI';
@@ -404,7 +409,15 @@ export class GenerateReceiptFormComponent extends BasePage implements OnInit {
 
         this.receptionGoodService.deleteReceiptWitness(formData).subscribe({
           next: response => {
-            this.showReceiptWitness();
+            this.alertInfo(
+              'info',
+              'Acción Correcta',
+              'Testigo eliminado correctamente'
+            ).then(question => {
+              if (question.isConfirmed) {
+                this.showReceiptWitness();
+              }
+            });
           },
           error: error => {
             console.log('error', error);
