@@ -45,8 +45,8 @@ export const COLUMNS = {
     title: 'Sssubtipo',
     sort: false,
   },
-  cabinetSocial: {
-    title: 'Gabinete Social',
-    sort: false,
-  },
+  // cabinetSocial: {
+  //   title: 'Gabinete Social',
+  //   sort: false,
+  // },
 };
