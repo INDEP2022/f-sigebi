@@ -29,6 +29,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
   idTypeDoc: number = 0;
   idProg: number = 0;
   receiptId: number = 0;
+  idReportAclara: any; //ID de los reportes
   isPdfLoaded = false;
   title: string = 'Imprimir Reporte';
   btnTitle: string = 'Firmar Reporte';
@@ -52,6 +53,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
   programming: Iprogramming;
   nomReport: string = '';
   actId: number = 0;
+  receiptGuards: any;
   constructor(
     private sanitizer: DomSanitizer,
     private modalService: BsModalService,
@@ -82,10 +84,8 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log('actId', this.actId);
-    console.log('progId', this.idProg);
-    console.log('nomReport', this.nomReport);
-    console.log('typeReport', this.idTypeDoc);
+    console.log('this.idTypeDoc', this.idTypeDoc);
+    console.log('this.receiptGuards', this.receiptGuards);
     this.showReportByTypeDoc();
     this.getReceipt();
     this.params
@@ -116,6 +116,11 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
       let linkDoc: string = `${this.urlBaseReport}${this.nomReport}&ID_ACTA=${this.actId}&ID_PROGRAMACION=${this.idProg}`;
       this.src = linkDoc;
     }
+
+    if (this.idTypeDoc == 185) {
+      let linkDoc: string = `${this.urlBaseReport}Recibo_Resguardo.jasper&ID_RECIBO_RESGUARDO=${this.receiptGuards.id}`;
+      this.src = linkDoc;
+    }
   }
 
   getReceipt() {
@@ -131,13 +136,14 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
 
   getSignatories() {
     const learnedType = this.idTypeDoc;
-    const learnedId = this.idProg;
+    const learnedId = this.programming.id;
     this.loading = true;
 
     this.signatoriesService
       .getSignatoriesFilter(learnedType, learnedId)
       .subscribe({
         next: response => {
+          console.log('gg', response);
           this.signatories = response.data;
           this.totalItems = response.count;
           this.loading = false;
@@ -183,20 +189,18 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
 
   signDocument() {
     //mostrar listado de reportes
-
-    if (!this.listSigns && this.printReport && !this.isAttachDoc) {
-      // if(this.notificationValidate == 'Y'){
-      //   console.log('Soy una notificación, no es necesario validar firmante creado');
-      // } else {
-      //   console.log('Soy un dictamen, es necesario validar firmante para evitar duplicidad');
-      //   this.verificateFirm();
-      // }
-      this.printReport = false;
-      this.listSigns = true;
-      this.title = 'Firma electrónica';
-    } else if (!this.listSigns && this.printReport && this.isAttachDoc) {
-      //adjuntar el reporte
-      this.openMessage2();
+    if (this.idTypeDoc == 185) {
+      this.modalRef.content.callback(true);
+      this.modalRef.hide();
+    } else {
+      if (!this.listSigns && this.printReport && !this.isAttachDoc) {
+        this.printReport = false;
+        this.listSigns = true;
+        this.title = 'Firma electrónica';
+      } else if (!this.listSigns && this.printReport && this.isAttachDoc) {
+        //adjuntar el reporte
+        this.openMessage2();
+      }
     }
   }
 
@@ -258,12 +262,9 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
 
       this.signatoriesService.create(formData).subscribe({
         next: response => {
-          console.log('firmantes creados');
           resolve(true);
         },
-        error: error => {
-          console.log('error', error);
-        },
+        error: error => {},
       });
     });
   }
@@ -295,13 +296,62 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
             const idKeyDoc =
               this.idProg + '-' + this.receipt.actId + '-' + this.receipt.id;
 
+            this.gelectronicFirmService
+              .firmDocument(
+                idKeyDoc,
+                'reciboEntregaFisicaDeBienesPropiedadDelFiscoFederal',
+                {}
+              )
+              .subscribe({
+                next: response => {
+                  this.msjCheck = true;
+                },
+                error: error => {
+                  //this.msjCheck = true;
+                },
+              });
+          }
+
+          if (this.idTypeDoc == 210) {
+            const idKeyDoc = this.programming.id + '-' + this.receipt.actId;
+
             this.signatories.map(item => {
               this.gelectronicFirmService
-                .firmDocument(
-                  idKeyDoc,
-                  'reciboEntregaFisicaDeBienesPropiedadDelFiscoFederal',
-                  {}
-                )
+                .firmDocument(idKeyDoc, 'actaSat', {})
+                .subscribe({
+                  next: response => {
+                    this.msjCheck = true;
+                  },
+                  error: error => {
+                    //this.msjCheck = true;
+                  },
+                });
+            });
+          }
+
+          if (this.idTypeDoc == 106) {
+            const idKeyDoc = this.programming.id + '-' + this.receipt.actId;
+
+            this.signatories.map(item => {
+              this.gelectronicFirmService
+                .firmDocument(idKeyDoc, 'actaAsegurados', {})
+                .subscribe({
+                  next: response => {
+                    this.msjCheck = true;
+                  },
+                  error: error => {
+                    this.msjCheck = true;
+                  },
+                });
+            });
+          }
+
+          if (this.idTypeDoc == 107) {
+            const idKeyDoc = this.programming.id + '-' + this.receipt.actId;
+
+            this.signatories.map(item => {
+              this.gelectronicFirmService
+                .firmDocument(idKeyDoc, 'actasVoluntarias', {})
                 .subscribe({
                   next: response => {
                     this.msjCheck = true;

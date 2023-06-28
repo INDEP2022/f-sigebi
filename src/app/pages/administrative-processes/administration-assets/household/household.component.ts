@@ -65,17 +65,18 @@ export class HouseholdComponent extends BasePage implements OnInit, OnChanges {
     console.log(this.params.getValue());
     this.menageServices.getMenaje(this.params.getValue()).subscribe({
       next: response => {
-        this.menajes = response.data.map(menage => {
-          return menage.menajeDescription;
-        });
-        this.totalItems = response.count;
-        console.log(this.menajes);
         this.loading = false;
+        console.log(response);
+        if (response.count > 0) {
+          this.menajes = response.data.map((menage: any) => {
+            return menage.menajeDescription;
+          });
+          this.totalItems = response.count;
+        }
       },
       error: err => {
         this.loading = false;
         console.log(err);
-        // this.onLoadToast('info', 'Información', err.error.message);
       },
     });
   }

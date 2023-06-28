@@ -5,7 +5,7 @@
       <div class="col-12 col-sm-12 col-md-8">
         <h5 class="title">
           Caracter&Iacute;sticas del bien
-          <ng-container *ngIf="numberGood">{{ numberGood.value }}</ng-container>
+          <ng-container *ngIf="numberGood">{{ actualGoodNumber }}</ng-container>
         </h5>
       </div>
       <div class="col-12 col-sm-12 col-md-4 text-end" *ngIf="origin">
@@ -146,7 +146,7 @@
                         class="form-control"
                         maxlength="6"
                         formControlName="noClasif"
-                        [disabled]="disabledNoClasifBien"
+                        readonly
                         (change)="updateClasif($event)"
                         (customEvent)="handleEvent($event)" />
                     </form-field>
@@ -156,7 +156,8 @@
                       <input
                         type="text"
                         class="form-control"
-                        formControlName="status" />
+                        formControlName="status"
+                        readonly />
                     </form-field>
                   </div>
                   <div class="row pt-3 buttons" style="margin: auto">
@@ -312,7 +313,7 @@
                       [labelTemplate]="coordinationLabel"
                       [optionTemplate]="coordinationOption"
                       formControlName="subdelegation"
-                      label="Delegación"
+                      label="Sub Delegación"
                       path="catalog/api/v1/subdelegation/get-all"
                       value="id"
                       bindLabel="description"
@@ -396,7 +397,7 @@
                 <form-field
                   [control]="form.get('observaciones')"
                   label="Observaciones"
-                  class="col-md-8">
+                  [class]="showAvaluo ? 'col-md-8' : 'col-md-12'">
                   <textarea
                     formControlName="observaciones"
                     class="form-control"
@@ -404,7 +405,7 @@
                     [readonly]="disabledBienes"></textarea>
                 </form-field>
 
-                <div class="col-md-2">
+                <div class="col-md-4" *ngIf="showAvaluo">
                   <small>¿Con Aval&uacute;o?</small>
                   <div
                     class="d-flex"
@@ -423,17 +424,6 @@
                     </form-radio>
                   </div>
                 </div>
-                <div class="col-md-2">
-                  <form-field [control]="form.get('img')" label="">
-                    <input
-                      class="form-control mb-3 mt-3"
-                      type="file"
-                      id="formFile"
-                      accept="image/png,image/jpeg"
-                      formControlName="img"
-                      (change)="onFileChange($event)" />
-                  </form-field>
-                </div>
               </div>
               <div class="row" *ngIf="loading === false">
                 <app-good-table-vals
@@ -449,6 +439,13 @@
                     di_numerario_conciliado
                   "></app-good-table-vals>
               </div>
+            </tab>
+            <tab heading="Fotos">
+              <app-good-photos
+                *ngIf="actualGoodNumber"
+                [showPhoto]="showPhoto"
+                [disabledBienes]="disabledBienes"
+                [goodNumber]="actualGoodNumber"></app-good-photos>
             </tab>
           </tabset>
         </form>

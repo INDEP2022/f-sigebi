@@ -5,6 +5,7 @@ import { map } from 'rxjs/operators';
 import { Iidentifier } from 'src/app/core/models/ms-good-tracker/identifier.model';
 import { ITmpTracker } from 'src/app/core/models/ms-good-tracker/tmpTracker.model';
 import { GoodTrackerService } from 'src/app/core/services/ms-good-tracker/good-tracker.service';
+import { SocialCabinetService } from 'src/app/core/services/ms-social-cabinet/social-cabinet.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { COLUMNS } from '../goods-management-social-table/columns';
@@ -21,12 +22,17 @@ export class GoodsManagementSocialCabinetComponent
   form: FormGroup = new FormGroup({});
   selectedGoodstxt: number[] = [];
   clearFlag = 0;
-  identificator: number;
+  processErrors = 0;
+  disabledProcess = true;
+  identifier: number;
+  user: string;
   constructor(
     private fb: FormBuilder,
-    private goodTrackerService: GoodTrackerService
+    private goodTrackerService: GoodTrackerService,
+    private service: SocialCabinetService
   ) {
     super();
+    this.user = localStorage.getItem('username').toUpperCase();
     this.settings.columns = COLUMNS;
   }
 
@@ -56,6 +62,31 @@ export class GoodsManagementSocialCabinetComponent
 
   showInfo() {}
 
+  async processCabinetSocial() {
+    this.service
+      .paValidSocialCabinet({
+        pId: this.identifier,
+        pTypeProcess: this.option,
+        pJustify: this.form.get('excuse').value,
+        pUser: this.user,
+      })
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: response => {
+          this.processErrors++;
+          this.disabledProcess = true;
+          this.alert(
+            'success',
+            'Procesamiento Gabinete Social',
+            'Bienes procesados correctamente'
+          );
+        },
+        error: err => {
+          this.alert('error', 'ERROR', 'Bienes no procesados correctamente');
+        },
+      });
+  }
+
   clear() {
     this.form.reset();
     this.clearFlag++;
@@ -64,8 +95,8 @@ export class GoodsManagementSocialCabinetComponent
   private getSeqRastreador() {
     return this.goodTrackerService.getIdentifier().pipe(
       takeUntil(this.$unSubscribe),
-      catchError(x => of({ data: null as Iidentifier })),
-      map(x => (x.data ? x.data.nextval : null))
+      catchError(x => of(null as Iidentifier)),
+      map(x => (x ? x.nextval : null))
     );
   }
 
@@ -91,8 +122,9 @@ export class GoodsManagementSocialCabinetComponent
       if (array.length === 0) {
         return;
       }
-      this.identificator = await firstValueFrom(this.getSeqRastreador());
-      if (!this.identificator) {
+      this.disabledProcess = false;
+      this.identifier = await firstValueFrom(this.getSeqRastreador());
+      if (!this.identifier) {
         this.alert('error', 'Secuencia Rastreador', 'No encontrada');
         return;
       }
@@ -102,7 +134,7 @@ export class GoodsManagementSocialCabinetComponent
         array2.forEach(item => {
           if (item.length > 0 && !isNaN(+item)) {
             newArray.push(+item);
-            this.saveInTemp(this.identificator, item);
+            this.saveInTemp(this.identifier, item);
           }
         });
       });

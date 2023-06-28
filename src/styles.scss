@@ -248,11 +248,13 @@ i {
 
 table:not(.normal-hover) tbody tr.selected {
   background: #f0e4d1 !important;
+  color: black !important;
 }
 
 table:not(.normal-hover) tbody tr:hover {
   background: #f0e4d1 !important;
   cursor: pointer;
+  color: black !important;
 }
 
 .mh-80 {
@@ -459,6 +461,21 @@ ng-scrollbar.table-scrollbar {
   max-width: 280px !important;
 }
 
+.theme-green .bs-datepicker-head {
+  background-color: #9d2449;
+}
+
+.bs-datepicker-container {
+  padding: 0px;
+}
+
+.theme-green .bs-datepicker-body table td span.selected,
+.theme-green .bs-datepicker-body table td.selected span,
+.theme-green .bs-datepicker-body table td span[class*='select-']:after,
+.theme-green .bs-datepicker-body table td[class*='select-'] span:after {
+  background-color: #9d2449;
+}
+
 .disabled {
   pointer-events: none !important;
   opacity: 0.7 !important;
@@ -601,13 +618,27 @@ ng-scrollbar.table-scrollbar {
 
 #fichas table:not(.normal-hover) tbody tr.selected {
   color: black !important;
-  font-weight: 600;
+  // font-weight: 600;
   // #28a745
   background: rgb(219, 219, 219) !important;
 }
 
 #fichas table:not(.normal-hover) tbody tr:hover {
   color: black !important;
-  font-weight: 600;
+  // font-weight: 600;
   background: rgb(219, 219, 219) !important;
+}
+
+.text-no-approved {
+  font-weight: 400;
+  color: crimson !important;
+}
+
+.text-approved {
+  font-weight: 400;
+  color: #1e7e34 !important;
+}
+
+custom-view-component {
+  color: black;
 }

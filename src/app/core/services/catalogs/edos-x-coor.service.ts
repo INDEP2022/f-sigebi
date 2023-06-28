@@ -25,6 +25,11 @@ export class EdosXCoorService
     return this.edosXCoorRepository.getAllPaginated(this.route, params);
   }
 
+  getAllDetail(params?: ListParams): Observable<IListResponse<IEdosXCoor>> {
+    const route = `${this.route}/get-all`;
+    return this.edosXCoorRepository.getAllPaginated(route, params);
+  }
+
   getById(id: string | number): Observable<IEdosXCoor> {
     return this.edosXCoorRepository.getById(this.route, id);
   }
@@ -33,8 +38,8 @@ export class EdosXCoorService
     return this.edosXCoorRepository.create(this.route, model);
   }
 
-  update(id: string | number, model: IEdosXCoor): Observable<Object> {
-    return this.edosXCoorRepository.update(this.route, id, model);
+  newUpdate(model: IEdosXCoor): Observable<Object> {
+    return this.edosXCoorRepository.newUpdate(this.route, model);
   }
 
   remove(id: string | number): Observable<Object> {

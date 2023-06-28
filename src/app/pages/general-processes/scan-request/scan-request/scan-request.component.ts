@@ -31,7 +31,13 @@ import { ListNotificationsComponent } from '../list-notifications/list-notificat
 @Component({
   selector: 'app-scan-request',
   templateUrl: './scan-request.component.html',
-  styles: [],
+  styles: [
+    `
+      .bg-gray {
+        background-color: #eee !important;
+      }
+    `,
+  ],
 })
 export class ScanRequestComponent extends BasePage implements OnInit {
   formNotification: FormGroup;
@@ -103,19 +109,20 @@ export class ScanRequestComponent extends BasePage implements OnInit {
     this.createForm();
     const param1: any = this.route.snapshot.paramMap.get('P_NO_VOLANTE');
     const param2: any = this.route.snapshot.paramMap.get('P_FOLIO');
+    const param3: any = this.route.snapshot.queryParamMap.get('origin');
+
+    this.isParams = param3 ? true : false;
 
     if (param1 && param1 != 'null') {
-      this.isParams = true;
       this.filterParams
         .getValue()
         .addFilter('wheelNumber', param1, SearchFilter.EQ);
       this.getNotfications();
     } else if (param1 === 'null') {
-      this.onLoadToast('error', `Parámetro no_volante no es válido`, '');
+      this.alert('error', 'ERROR', 'Parámetro no_volante no es válido');
     }
 
     if (param2) {
-      this.isParams = true;
       this.isParamFolio = true;
       this.getDocumentByFolio(param2);
     }
@@ -159,7 +166,11 @@ export class ScanRequestComponent extends BasePage implements OnInit {
       receiptDate
         ? this.filterParams
             .getValue()
-            .addFilter('receiptDate', receiptDate, SearchFilter.EQ)
+            .addFilter(
+              'receiptDate',
+              receiptDate.split('/').reverse().join('-'),
+              SearchFilter.EQ
+            )
         : null;
     }
 
@@ -205,6 +216,29 @@ export class ScanRequestComponent extends BasePage implements OnInit {
   }
 
   searchNotification() {
+    const {
+      expedientNumber,
+      wheelNumber,
+      receiptDate,
+      preliminaryInquiry,
+      criminalCase,
+      touchPenaltyKey,
+      circumstantialRecord,
+      protectionKey,
+    } = this.formNotification.value;
+
+    if (
+      !expedientNumber &&
+      !wheelNumber &&
+      !receiptDate &&
+      !preliminaryInquiry &&
+      !criminalCase &&
+      !touchPenaltyKey &&
+      !circumstantialRecord &&
+      !protectionKey
+    )
+      return;
+
     this.loading = true;
     this.createFilter();
     this.getNotfications();
@@ -215,9 +249,19 @@ export class ScanRequestComponent extends BasePage implements OnInit {
       .getAllFilter(this.filterParams.getValue().getParams())
       .subscribe({
         next: resp => {
+          this.isSearch = true;
           this.notify = resp;
           this.noVolante = resp.data[0].wheelNumber;
           this.formNotification.patchValue(resp.data[0]);
+          const date = resp.data[0].receiptDate
+            ? resp.data[0].receiptDate
+                .toString()
+                .split('T')[0]
+                .split('-')
+                .reverse()
+                .join('/')
+            : '';
+          this.formNotification.controls['receiptDate'].patchValue(date);
           this.count = resp.count;
           this.searchDocuments(
             this.formNotification.get('expedientNumber').value,
@@ -225,9 +269,10 @@ export class ScanRequestComponent extends BasePage implements OnInit {
           );
         },
         error: err => {
+          this.isSearch = false;
           this.loading = false;
           this.form.reset();
-          this.onLoadToast('error', err.error.message, '');
+          this.alert('error', 'ERROR', err.error.message);
         },
       });
   }
@@ -235,12 +280,21 @@ export class ScanRequestComponent extends BasePage implements OnInit {
   notificationList() {
     let config: ModalOptions = {
       initialState: {
-        filterParamsDocuments: this.filterParams,
+        filterParams: this.filterParams,
         dataNotification: this.notify,
         callback: (next: boolean, data: INotification) => {
           if (next) {
             this.form.reset();
             this.formNotification.patchValue(data);
+            const date = data.receiptDate
+              ? data.receiptDate
+                  .toString()
+                  .split('T')[0]
+                  .split('-')
+                  .reverse()
+                  .join('/')
+              : '';
+            this.formNotification.controls['receiptDate'].patchValue(date);
             this.noVolante = data.wheelNumber;
             this.searchDocuments(data.expedientNumber, data.wheelNumber);
           }
@@ -255,7 +309,7 @@ export class ScanRequestComponent extends BasePage implements OnInit {
   documentsList() {
     let config: ModalOptions = {
       initialState: {
-        filterParamsDocuments: this.filterParamsDocuments,
+        filterParams: this.filterParamsDocuments,
         callback: (next: boolean, data: IDocuments) => {
           if (next) {
             data.keyTypeDocument = (data as any).typeDocument.documentTypeKey;
@@ -298,14 +352,14 @@ export class ScanRequestComponent extends BasePage implements OnInit {
           this.isParamFolio = false;
         },
         error: err => {
+          this.form.reset();
           if (err.status === 500) {
-            this.onLoadToast(
-              'warning',
-              'Error del Servidor',
+            this.alert(
+              'error',
+              'ERROR',
               'No se pudo obtener todos los datos relacionados'
             );
           }
-
           if (err.status === 400) {
             this.countDoc = 0;
           }
@@ -319,7 +373,7 @@ export class ScanRequestComponent extends BasePage implements OnInit {
     const valid = await this.validations();
     if (valid) {
       const { expedientNumber, wheelNumber } = this.formNotification.value;
-
+      this.loadingDoc = true;
       const token = this.authService.decodeToken();
       let userId = token.preferred_username;
 
@@ -337,15 +391,15 @@ export class ScanRequestComponent extends BasePage implements OnInit {
 
       this.documentServ.create(this.form.value).subscribe({
         next: resp => {
-          this.onLoadToast(
-            'success',
-            'Solicitud generada, procesando reporte...',
-            ''
-          );
-          this.loadingDoc = false;
+          // this.alert(
+          //   'success',
+          //   'ÉXITO',
+          //   'Solicitud generada, procesando reporte...'
+          // );
           this.form.patchValue(resp);
           this.idFolio = this.form.get('id').value;
           this.form.get('id').disable();
+          this.countDoc++;
           const time = setTimeout(() => {
             this.proccesReport();
             clearTimeout(time);
@@ -357,7 +411,6 @@ export class ScanRequestComponent extends BasePage implements OnInit {
                 this.paramsDepositaryAppointment.P_ND;
               this.msDepositaryService.getAllFiltered(params).subscribe({
                 next: data => {
-                  console.log('GET DATA NOMBRAMIENTO', data);
                   let body: any = {
                     appointmentNumber: data.data[0].appointmentNumber,
                     amountIVA: data.data[0].amountIVA,
@@ -379,10 +432,10 @@ export class ScanRequestComponent extends BasePage implements OnInit {
                     // Guardar nuevo folio universal en nombramientos depositarias
                     this.msDepositaryService.update(body).subscribe({
                       next: data => {
-                        console.log('SAVE DATA NOMBRAMIENTO', data);
                         // Guardar nuevo folio universal en nombramientos depositarias
                       },
                       error: error => {
+                        this.loadingDoc = false;
                         console.log(error);
                       },
                     });
@@ -395,6 +448,9 @@ export class ScanRequestComponent extends BasePage implements OnInit {
             }
           }, 1000);
         },
+        error: () => {
+          this.loadingDoc = false;
+        },
       });
     }
   }
@@ -405,10 +461,10 @@ export class ScanRequestComponent extends BasePage implements OnInit {
     let { keyTypeDocument, keySeparator } = this.form.value;
 
     if (!expedientNumber && !wheelNumber) {
-      this.onLoadToast(
+      this.alert(
         'error',
-        'Falta el número de expediente o volante, favor de verificar.',
-        ''
+        'ERROR',
+        'Falta el número de expediente o volante, favor de verificar'
       );
       this.loadingDoc = false;
       return false;
@@ -420,10 +476,10 @@ export class ScanRequestComponent extends BasePage implements OnInit {
     }
 
     if (!keySeparator || !keyTypeDocument) {
-      this.onLoadToast(
+      this.alert(
         'error',
-        'Falta el número de expediente o separador o tipo de documento, favor de verificar.',
-        ''
+        'ERROR',
+        'Falta el número de expediente o separador o tipo de documento, favor de verificar'
       );
       this.loadingDoc = false;
       return false;
@@ -434,7 +490,7 @@ export class ScanRequestComponent extends BasePage implements OnInit {
     if (!isPresent) return false;
 
     if (this.idFolio) {
-      this.onLoadToast('error', 'Ya ha sido solicitado ese documento', '');
+      this.alert('error', 'ERROR', 'Ya ha sido solicitado ese documento');
       this.loadingDoc = false;
       return false;
     }
@@ -469,7 +525,7 @@ export class ScanRequestComponent extends BasePage implements OnInit {
         null,
         [
           Validators.minLength(7),
-          Validators.pattern('^[0-9]{2}[-]{1}[0-9]{4}$'),
+          Validators.pattern('^[0-9]{2}[/]{1}[0-9]{4}$'),
         ],
       ],
       descriptionDocument: [null, [Validators.maxLength(1000)]],
@@ -510,10 +566,10 @@ export class ScanRequestComponent extends BasePage implements OnInit {
           this.loadingDoc = false;
         },
         error: () => {
-          this.onLoadToast(
+          this.alert(
             'error',
-            'No existe volante, no se puede generar folio de escaneo, favor de verificar...',
-            ''
+            'ERROR',
+            'No existe volante, no se puede generar folio de escaneo, favor de verificar'
           );
           check(false);
           this.loadingDoc = false;
@@ -524,12 +580,16 @@ export class ScanRequestComponent extends BasePage implements OnInit {
 
   proccesReport() {
     if (this.idFolio) {
-      this.onLoadToast('success', 'Generando reporte...', '');
       const msg = setTimeout(() => {
         this.jasperService
           .fetchReport('RGERGENSOLICDIGIT', { pn_folio: this.idFolio })
           .pipe(
             tap(response => {
+              this.alert(
+                'success',
+                'REPORTE DE DIGITALIZACIÓN',
+                `Solicitud generada correctamente con folio: ${this.idFolio}`
+              );
               const blob = new Blob([response], { type: 'application/pdf' });
               const url = URL.createObjectURL(blob);
               let config = {
@@ -544,16 +604,17 @@ export class ScanRequestComponent extends BasePage implements OnInit {
                 ignoreBackdropClick: true,
               };
               this.modalService.show(PreviewDocumentsComponent, config);
+              this.loadingDoc = false;
               clearTimeout(msg);
             })
           )
           .subscribe();
       }, 1000);
     } else {
-      this.onLoadToast(
+      this.alert(
         'error',
-        'Debe tener el folio en pantalla para poder reimprimir',
-        ''
+        'ERROR',
+        'Debe tener el folio en pantalla para poder reimprimir'
       );
     }
   }
@@ -592,7 +653,7 @@ export class ScanRequestComponent extends BasePage implements OnInit {
         },
       });
     } else {
-      this.onLoadToast('error', 'No existe un folio para escanear.', '');
+      this.alert('error', 'ERROR', 'No existe un folio para escanear');
     }
   }
 

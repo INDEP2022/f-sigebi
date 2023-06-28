@@ -35,7 +35,7 @@ export class WarehousesAssignedComponent
     this.settings.hideSubHeader = false;
     this.settings.columns = {
       id: {
-        title: 'Almacen',
+        title: 'Almacén',
         width: '20%',
         sort: false,
       },
@@ -87,11 +87,12 @@ export class WarehousesAssignedComponent
         if (this.good.storeNumber !== null) {
           this.warehouseService.getById(this.good.storeNumber).subscribe({
             next: (respo: any) => {
-              this.list = response.data.map((good: IGood) => {
+              console.log('ALMACEESSSSss.......', this.good);
+              this.list = response.data.map((good: any) => {
                 return {
                   id: good.storeNumber,
                   address: respo.ubication,
-                  lot: good.lotNumber,
+                  lot: good.lotNumber ? good.lotNumber.id : '',
                   rack: good.rackNumber,
                   entryDate: good.dateIn,
                   outDate: good.dateOut,

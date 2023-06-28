@@ -38,7 +38,7 @@
 
       <confirm-button
         *ngIf="infoTask?.State == null"
-        [disabled]="!performForm.valid"
+        [disabled]="performForm.valid"
         [loading]="loading"
         [btnSmall]="true"
         class="mr-2"
@@ -206,8 +206,8 @@
                 formControlName="endDate"
                 [daysDisabled]="[6, 0]"
                 [bsConfig]="{
-                  rangeInputFormat: 'DD/MMMM/YYYY, h:mm:ss a',
-                  dateInputFormat: 'DD/MMMM/YYYY, h:mm:ss a'
+                  rangeInputFormat: 'DD/MMMM/YYYY',
+                  dateInputFormat: 'DD/MMMM/YYYY'
                 }"
                 bsDatepicker />
             </form-field>

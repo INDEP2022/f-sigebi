@@ -5,65 +5,74 @@
   <div body>
     <form [formGroup]="form" class="form-material">
       <div class="row">
-        <!-- <div class="col-md-12">
-          <div class="form-group">
-            <label for="idTransferer">Id Transferencia</label>
+        <div class="col-md-12">
+          <form-field [control]="form.get('id')" label="No. Transferencia">
             <input
-              type="number"
+              type="text"
+              class="form-control"
+              id="id"
+              formControlName="id"
+              maxlength="255" />
+          </form-field>
+        </div>
+        <div class="col-md-12">
+          <form-field
+            [control]="form.get('idTransferer')"
+            label="No. Transferencia">
+            <input
+              type="text"
               class="form-control"
               id="idTransferer"
               formControlName="idTransferer"
-              min="0"
-              oninput="if(this.value.length > 15) this.value = this.value.slice(0, 15);" />
-          </div>
-        </div> -->
+              maxlength="255" />
+          </form-field>
+        </div>
         <div class="col-md-12">
-          <div class="form-group">
-            <label for="keyTransferer">Clave Transferencia</label>
+          <form-field
+            [control]="form.get('keyTransferer')"
+            label="Clave Transferencia">
             <input
               type="text"
               class="form-control"
               id="keyTransferer"
               formControlName="keyTransferer"
               maxlength="255" />
-          </div>
+          </form-field>
         </div>
-        <div class="col-md-12">
-          <div class="form-group">
-            <label for="description">Descripci&oacute;n</label>
+        <div class="col-md-12 pt-3">
+          <form-field
+            [control]="form.get('description')"
+            label="Descripci&oacute;n">
             <input
               type="text"
               class="form-control"
               id="description"
               formControlName="description"
               maxlength="255" />
-          </div>
+          </form-field>
         </div>
-        <div class="col-md-12">
-          <div class="form-group">
-            <label for="type">Tipo</label>
+        <div class="col-md-12 pt-3">
+          <form-field [control]="form.get('type')" label="Tipo">
             <input
               type="text"
               class="form-control"
               id="type"
               formControlName="type"
               maxlength="255" />
-          </div>
+          </form-field>
         </div>
-        <div class="col-md-12">
-          <div class="form-group">
-            <label for="address">Direcci&oacute;n</label>
-            <input
-              type="text"
+        <div class="col-md-12 pt-3">
+          <form-field [control]="form.get('address')" label="Direcci&oacute;n">
+            <textarea
               class="form-control"
-              id="address"
+              type="text"
+              rows="3"
               formControlName="address"
-              maxlength="255" />
-          </div>
+              maxlength="255"></textarea>
+          </form-field>
         </div>
-        <div class="col-md-12">
-          <div class="form-group">
-            <label for="idCity">No.Ciudad</label>
+        <div class="col-md-12 pt-3">
+          <form-field [control]="form.get('idCity')" label="No.Ciudad">
             <input
               type="number"
               class="form-control"
@@ -71,28 +80,32 @@
               formControlName="idCity"
               min="0"
               oninput="if(this.value.length > 15) this.value = this.value.slice(0, 15);" />
-          </div>
+          </form-field>
         </div>
-        <div class="col-md-12">
-          <div class="form-group">
-            <label for="city">Ciudad</label>
-            <input
-              type="text"
-              class="form-control"
-              id="city"
-              formControlName="city" />
-          </div>
+        <div class="col-md-12 pt-3">
+          <form-field [control]="form.get('cityCode')">
+            <!--<input type="text" class="form-control" id="city" formControlName="city" />-->
+            <ngx-select
+              [form]="form"
+              [data]="cities"
+              label="Ciudad"
+              value="idCity"
+              bindLabel="nameCity"
+              control="cityCode">
+            </ngx-select>
+          </form-field>
         </div>
-        <div class="col-md-12">
-          <div class="form-group">
-            <label for="keyEntityFederative">Clave Federativa</label>
+        <div class="col-md-12 pt-3">
+          <form-field
+            [control]="form.get('keyEntityFederative')"
+            label="Clave Federativa">
             <input
               type="text"
               class="form-control"
               id="keyEntityFederative"
               formControlName="keyEntityFederative"
               maxlength="15" />
-          </div>
+          </form-field>
         </div>
       </div>
     </form>

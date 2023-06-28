@@ -1,4 +1,10 @@
 export const RECEIPT_COLUMNS = {
+  actId: {
+    title: 'No. Acta',
+    type: 'number',
+    sort: false,
+  },
+
   id: {
     title: 'Recibo',
     type: 'string',
@@ -8,12 +14,6 @@ export const RECEIPT_COLUMNS = {
   statusReceipt: {
     title: 'Estatus recibo',
     type: 'string',
-    sort: false,
-  },
-
-  observation: {
-    title: 'Observación',
-    type: 'number',
     sort: false,
   },
 };

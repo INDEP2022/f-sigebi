@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
@@ -29,6 +29,7 @@ import { DetailGoodProgrammingFormComponent } from '../../shared-components-prog
 import { estates, users } from './schedule-notify-data';
 
 import { takeUntil } from 'rxjs';
+import { StateOfRepublicService } from 'src/app/core/services/catalogs/state-of-republic.service';
 
 @Component({
   selector: 'app-schedule-notify-form',
@@ -70,6 +71,7 @@ export class ScheduleNotifyFormComponent extends BasePage implements OnInit {
   headingGuard: string = `Resguardo(0)`;
   headingWarehouse: string = `Almacén INDEP(0)`;
   formLoading: boolean = false;
+  stateName: string = '';
   settingsTransportableGoods = {
     ...this.settings,
     actions: {
@@ -127,7 +129,9 @@ export class ScheduleNotifyFormComponent extends BasePage implements OnInit {
     private warehouseService: WarehouseService,
     private goodService: GoodService,
     private domicilieService: DomicileService,
-    private modalService: BsModalService
+    private modalService: BsModalService,
+    private router: Router,
+    private stateService: StateOfRepublicService
   ) {
     super();
     this.idProgramming = Number(
@@ -142,7 +146,7 @@ export class ScheduleNotifyFormComponent extends BasePage implements OnInit {
   }
 
   getProgrammingData() {
-    this.formLoading = true;
+    // this.formLoading = true;
     this.programmingService
       .getProgrammingId(this.idProgramming)
       .subscribe(data => {
@@ -150,6 +154,7 @@ export class ScheduleNotifyFormComponent extends BasePage implements OnInit {
         this.programming = data;
         this.getDelegationRegional(this.programming.regionalDelegationNumber);
         this.getTransferent(this.programming.tranferId);
+        this.getState(this.programming);
         this.getStation(this.programming.stationId, this.programming.tranferId);
         this.getAuthority(
           this.programming.autorityId,
@@ -177,6 +182,16 @@ export class ScheduleNotifyFormComponent extends BasePage implements OnInit {
       next: response => {
         this.transferentName = response.data[0].nameTransferent;
         this.params = new BehaviorSubject<ListParams>(new ListParams());
+      },
+      error: error => {},
+    });
+  }
+
+  getState(programming: Iprogramming) {
+    this.stateService.getById(programming.stateKey).subscribe({
+      next: response => {
+        console.log('estado', response);
+        this.stateName = response.descCondition;
       },
       error: error => {},
     });
@@ -333,7 +348,7 @@ export class ScheduleNotifyFormComponent extends BasePage implements OnInit {
 
   showGuard(goodsProg: IGoodProgramming[]) {
     const filterTrans = goodsProg.filter(item => {
-      return item.status == 'EN_RESGUARDO';
+      return item.status == 'EN_RESGUARDO_TMP';
     });
     const showGuard: any = [];
     filterTrans.map((item: IGoodProgramming) => {
@@ -360,7 +375,7 @@ export class ScheduleNotifyFormComponent extends BasePage implements OnInit {
 
   showWarehouseGoods(goodsProg: IGoodProgramming[]) {
     const filterTrans = goodsProg.filter(item => {
-      return item.status == 'EN_ALMACEN';
+      return item.status == 'EN_ALMACEN_TMP';
     });
     const showWarehouse: any = [];
     filterTrans.map((item: IGoodProgramming) => {
@@ -383,5 +398,9 @@ export class ScheduleNotifyFormComponent extends BasePage implements OnInit {
         },
       });
     });
+  }
+
+  backTask() {
+    this.router.navigate(['pages/siab-web/sami/consult-tasks']);
   }
 }

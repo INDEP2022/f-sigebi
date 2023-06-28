@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import {
@@ -33,13 +34,23 @@ export class DataFilterComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private goodLabelService: LabelOkeyService,
-    private statusGoodService: StatusGoodService
+    private statusGoodService: StatusGoodService,
+    private datePipe: DatePipe
   ) {}
 
   ngOnInit(): void {}
 
   search() {
+    /*lo nuevo mio */
+    const { photoDate } = this.form.value;
     console.log(this.form.controls.process.value);
+
+    if (typeof photoDate == 'object' && photoDate) {
+      const date = this.datePipe.transform(photoDate, 'dd/MM/yyyy');
+      this.form.controls.photoDate.patchValue(date);
+    }
+    /*fin nuevo mio */
+
     this.onSubmit.emit(this.form.value);
   }
 

@@ -35,6 +35,7 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
   generateFo: boolean = true;
   @Input() numberFoli: string | number = '';
   @Input() goods: any[] = [];
+  @Input() good: any = null;
   @Output() documentEmmit = new EventEmitter<IDocuments>();
   @Output() firstGood = new EventEmitter<IGood>();
   // get scanningFoli() {
@@ -81,38 +82,50 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
       ],
     });
   }
+
   generateFoli() {
-    this.goods.forEach((good, index) => {
+    let arr = [];
+    for (let i = 0; i < this.goods.length; i++) {
+      if (this.goods[i].approved == true) {
+        arr.push(this.goods[i]);
+      }
+    }
+    console.log('approved', arr);
+    arr.forEach((good, index) => {
       if (index !== 0) {
-        const documents: IDocuments = {
-          numberProceedings: good.filenumber,
-          keySeparator: 60,
-          keyTypeDocument: 'ENTRE',
-          natureDocument: 'ORIGINAL',
-          descriptionDocument: 'PROCESO DE RECLAMACIÓN DE PAGO',
-          significantDate: this.significantDate(),
-          scanStatus: 'ESCANEADO',
-          userRequestsScan: this.user.usuario.user,
-          scanRequestDate: new Date(),
-          associateUniversalFolio: this.document.id,
-          flyerNumber: good.flyernumber,
-          goodNumber: good.id,
-          numberDelegationRequested: this.user.usuario.delegationNumber,
-          numberDepartmentRequest: this.user.usuario.departamentNumber,
-          numberSubdelegationRequests: this.user.usuario.subdelegationNumber,
-        };
-        this.documnetServices.create(documents).subscribe({
-          next: response => {
-            console.log(response);
-          },
-          error: err => {
-            console.log(err);
-            this.onLoadToast('error', 'ERROR', err.error.message);
-          },
-        });
+        if (good.approved == true) {
+          const documents: IDocuments = {
+            numberProceedings: good.filenumber,
+            keySeparator: 60,
+            keyTypeDocument: 'ENTRE',
+            natureDocument: 'ORIGINAL',
+            descriptionDocument: 'PROCESO DE RECLAMACIÓN DE PAGO',
+            significantDate: this.significantDate(),
+            scanStatus: 'ESCANEADO',
+            userRequestsScan: this.user.usuario.user,
+            scanRequestDate: new Date(),
+            associateUniversalFolio: this.document.id,
+            flyerNumber: good.flyernumber,
+            goodNumber: good.id,
+            numberDelegationRequested: this.user.usuario.delegationNumber,
+            numberDepartmentRequest: this.user.usuario.departamentNumber,
+            numberSubdelegationRequests: this.user.usuario.subdelegationNumber,
+          };
+
+          this.documnetServices.create(documents).subscribe({
+            next: response => {
+              console.log(response);
+            },
+            error: err => {
+              console.log(err);
+              // this.alert('error', 'ERROR', err.error.message);
+            },
+          });
+        }
       }
     });
   }
+
   significantDate() {
     let date = new Date();
     let month = date.getMonth() + 1;
@@ -148,15 +161,16 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
   question() {
     console.log('this.folioEscaneoNg', this.folioEscaneoNg);
     if (this.folioEscaneoNg != '') {
-      this.onLoadToast(
-        'warning',
-        'El folio de escaneo ya ha sido generado.',
-        ''
-      );
+      this.alert('warning', 'El folio de escaneo ya ha sido generado.', '');
       return;
     }
     if (this.goods.length === 0) {
-      this.onLoadToast('warning', 'Debe cargar al menos un Bien', '');
+      this.alert('warning', 'Debe cargar al menos un Bien', '');
+      return;
+    }
+
+    if (this.good == null) {
+      this.alert('warning', 'Debe cargar al menos un bien válido', '');
       return;
     }
     this.alertQuestion(
@@ -166,7 +180,10 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
-        this.document1(this.goods[0]);
+        console.log('this.good', this.good);
+        if (this.good) {
+          this.document1(this.good);
+        }
       }
     });
   }
@@ -207,7 +224,7 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
       },
       error: err => {
         console.log(err);
-        this.onLoadToast('error', 'ERROR', err.error.message);
+        this.alert('error', 'ERROR', err.error.message);
       },
     });
   }
@@ -249,7 +266,7 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
               class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
               ignoreBackdropClick: true, //ignora el click fuera del modal
             };
-            this.onLoadToast('success', '', 'Reporte generado');
+            this.alert('success', 'Reporte generado correctamente', '');
             this.modalService.show(PreviewDocumentsComponent, config);
           }
         });
@@ -271,31 +288,39 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
   }
 
   getDocument(good: any) {
-    this.firstGood.emit(good);
-    console.log('good', good);
-    this.filter1.getValue().removeAllFilters();
-    this.filter1.getValue().addFilter('goodNumber', good.id, SearchFilter.EQ);
-    // this.filter1.getValue().addFilter('scanStatus', 'ESCANEADO', SearchFilter.EQ);
-    this.documnetServices
-      .getAllFilter(this.filter1.getValue().getParams())
-      .subscribe({
-        next: response => {
-          console.log('DOCUMENT', response);
-          this.folioEscaneoNg = response.data[0].id;
-          this.documentEmmit.emit(response.data[0]);
-          this.document = response.data[0];
-          this.generateFo = false;
-          // this.generate();
-        },
-        error: err => {
-          console.log(err);
-          // this.folioEscaneoNg = '';
-        },
-      });
+    if (good.approved == true) {
+      this.firstGood.emit(good);
+      console.log('good', good);
+      this.filter1.getValue().removeAllFilters();
+      this.filter1.getValue().addFilter('goodNumber', good.id, SearchFilter.EQ);
+      // this.filter1.getValue().addFilter('scanStatus', 'ESCANEADO', SearchFilter.EQ);
+      this.documnetServices
+        .getAllFilter(this.filter1.getValue().getParams())
+        .subscribe({
+          next: response => {
+            // console.log('DOCUMENT', response);
+            this.folioEscaneoNg = response.data[0].id;
+            this.documentEmmit.emit(response.data[0]);
+            this.document = response.data[0];
+            this.generateFo = false;
+            // this.generate();
+          },
+          error: err => {
+            console.log(err);
+            // this.documentEmmit.emit(null);
+            // this.folioEscaneoNg = '';
+          },
+        });
+    }
   }
+
   goodData: any = null;
   cargarData(binaryExcel: any) {
     this.goodData = binaryExcel;
-    console.log('this.goodData', this.goodData);
+    // console.log('this.goodData', this.goodData);
+  }
+
+  actualizarVariable2(good: any) {
+    this.good = good;
   }
 }

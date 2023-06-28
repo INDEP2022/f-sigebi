@@ -130,4 +130,12 @@ export class GoodprocessService extends HttpService {
   }) {
     this.post('application/transferGoodsTradeManagement', body);
   }
+
+  GetGoodProceedings(params: ListParams) {
+    return this.get(`${GoodprocessEndpoints.GetGoodProceedings}`, params);
+  }
+
+  getAppliesControl(params: any) {
+    return this.post(`${GoodprocessEndpoints.AppliesControl}`, params);
+  }
 }

@@ -9,7 +9,7 @@ import { WarehouseService } from 'src/app/core/services/catalogs/warehouse.servi
 import { StoreAliasStockService } from 'src/app/core/services/ms-store/store-alias-stock.service';
 import { TaskService } from 'src/app/core/services/ms-task/task.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-warehouse-confirm',
@@ -41,7 +41,7 @@ export class WarehouseConfirmComponent extends BasePage implements OnInit {
       nbidnewstore: [null, [Validators.required]],
       nbobservation: [
         null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
     });
   }
@@ -68,23 +68,27 @@ export class WarehouseConfirmComponent extends BasePage implements OnInit {
             type: this.store.tpstore,
             responsibleDelegation: this.store.wildebeestDelegationregion,
           };
-
+          this.close();
+          console.log('cerro1');
           console.log('warehouseForm', warehouseForm);
-          /*this.warehouseService.create(warehouseForm).subscribe({
+          this.warehouseService.create(warehouseForm).subscribe({
             next: async response => {
+              console.log('cerro2');
               const openTaskPerform = await this.openTaskPerform();
               if (openTaskPerform == true) {
                 this.onLoadToast(
                   'success',
-                  'Alta de almacén confirmada correctamente',
-                  ''
+                  'Acción correcta',
+                  'Alta de almacén confirmada correctamente'
                 );
+                console.log('cerro3');
                 this.close();
                 this.router.navigate(['/pages/siab-web/sami/consult-tasks']);
+                console.log('cerro4');
               }
             },
             error: error => {},
-          }); */
+          });
         }
       }
     });

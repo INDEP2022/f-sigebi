@@ -57,13 +57,13 @@ export class GoodsWithRequiredInfoComponent extends BasePage implements OnInit {
       ...this.settings,
       hideSubHeader: false,
       actions: {
-        columnTitle: 'Acciones',
         edit: false,
         delete: false,
         add: false,
         position: 'right',
       },
       columns: { ...GOODS_WITH_REQUIRED_INFO_COLUMNS },
+      noDataMessage: 'No se encontrarón registros',
     };
   }
 
@@ -95,6 +95,7 @@ export class GoodsWithRequiredInfoComponent extends BasePage implements OnInit {
           filters.map((filter: any) => {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
             filter.field == 'id'
               ? (searchFilter = SearchFilter.EQ)
               : (searchFilter = SearchFilter.ILIKE);
@@ -104,6 +105,7 @@ export class GoodsWithRequiredInfoComponent extends BasePage implements OnInit {
               delete this.columnFilters[field];
             }
           });
+          this.params = this.pageFilter(this.params);
           this.getAttribGoodBad();
         }
       });

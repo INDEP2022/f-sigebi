@@ -1,3 +1,5 @@
+import { CustomdbclickComponent } from '../customdbclick/customdbclick.component';
+
 export const DEPOSIT_TOKENS_COLUMNS = {
   bank: {
     title: 'Banco',
@@ -14,7 +16,7 @@ export const DEPOSIT_TOKENS_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  invoice: {
+  folio_ficha: {
     title: 'Folio',
     type: 'string',
     sort: false,
@@ -41,8 +43,9 @@ export const DEPOSIT_TOKENS_COLUMNS = {
   },
   no_bien: {
     title: 'Bien',
-    type: 'string',
+    type: 'custom',
     sort: false,
+    renderComponent: CustomdbclickComponent,
   },
   categoria: {
     title: 'Categoria',

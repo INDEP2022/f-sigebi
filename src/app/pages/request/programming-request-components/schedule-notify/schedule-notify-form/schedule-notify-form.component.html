@@ -1,14 +1,15 @@
 <app-card [header]="true">
   <div class="ch-content" header>
     <h5 class="title" *ngIf="!formLoading">
-      Notifici&oacute;n de Programaci&oacute;n con folio:
+      Notificaci&oacute;n de Programaci&oacute;n con folio:
       {{ programming?.folio }}
     </h5>
 
     <div class="justify-content-end" *ngIf="!formLoading">
       <div class="m-3 btn-toolbar">
-        <button class="btn btn-primary btn-sm active">Notificar</button>
-        <button class="btn btn-danger btn-sm active">Cancelar</button>
+        <button (click)="backTask()" class="btn btn-danger btn-sm active">
+          Cancelar
+        </button>
       </div>
     </div>
   </div>
@@ -20,72 +21,167 @@
 
     <div *ngIf="!formLoading">
       <h5 class="title">Programaci&oacute;n</h5>
-      <div class="row pt-4">
+
+      <div class="row pt-2">
         <div class="col-md-4">
           <div class="form-group">
-            <label class="text-right mr-2">Delegaci&oacute;n Regional:</label>
-            <span> {{ delegationName }} </span>
-          </div>
-
-          <div class="form-group">
-            <label class="text-right mr-2">Transferente&#58;</label>
-            <span> {{ transferentName }} </span>
-          </div>
-
-          <div class="form-group">
-            <label class="text-right mr-2">Emisora&#58;</label>
-            <span> {{ stationName }} </span>
-          </div>
-
-          <div class="form-group">
-            <label class="text-right mr-2">Autoridad&#58;</label>
-            <span> {{ authorityName }} </span>
+            <label class="text-right mr-2"
+              >Delegaci&oacute;n regional&#58;</label
+            >
+            <span class="fs-4">
+              {{ programming?.regionalDelegationName }}
+            </span>
           </div>
         </div>
-
         <div class="col-md-4">
-          <form class="form-horizontal" style="margin: 0 auto">
-            <div class="form-group">
-              <label class="text-right mr-2">Correo transferente&#58;</label>
-              <span> {{ programming?.emailTransfer }} </span>
-            </div>
-
-            <div class="form-group">
-              <label class="text-right mr-2">Fecha inicio operativo&#58;</label>
-              <span> {{ programming?.startDate }} </span>
-            </div>
-
-            <div class="form-group">
-              <label class="text-right mr-2">Fecha fin operativo&#58;</label>
-              <span> {{ programming?.endDate }} </span>
-            </div>
-
-            <div class="form-group">
-              <label class="text-right mr-2">Direcci&oacute;n&#58;</label>
-              <span> {{ programming?.city }} {{ programming?.address }} </span>
-            </div>
-          </form>
+          <div class="form-group">
+            <label class="text-right mr-2">Correo transferente&#58;</label>
+            <span class="fs-4">{{ programming?.emailTransfer }}</span>
+          </div>
         </div>
-
         <div class="col-md-4">
-          <form class="form-horizontal" style="margin: 0 auto">
-            <div class="form-group">
-              <label class="text-right mr-2">Tipo relevante&#58;</label>
-              <span> {{ typeRelevantName }} </span>
-            </div>
-
-            <div class="form-group">
-              <label class="text-right mr-2">Ciudad&#58;</label>
-              <span> {{ programming?.city }}</span>
-            </div>
-
-            <div class="form-group">
-              <label class="text-right mr-2">Observaci&oacute;n&#58;</label>
-              <span> {{ programming?.observation }} </span>
-            </div>
-          </form>
+          <div class="form-group">
+            <label class="text-right mr-2">Ciudad&#58;</label>
+            <span class="fs-4"> {{ programming?.city }} </span>
+          </div>
         </div>
       </div>
+
+      <div class="row pt-3">
+        <div class="col-md-4">
+          <div class="form-group">
+            <label class="text-right mr-2">Transferente&#58;</label>
+            <span class="fs-4"> {{ transferentName }} </span>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="form-group">
+            <label class="text-right mr-2">Fecha inicio operativo&#58;</label>
+            <span class="fs-4"> {{ programming?.startDate }} </span>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="form-group">
+            <label class="text-right mr-2">Fecha fin operativo&#58;</label>
+            <span class="fs-4"> {{ programming?.endDate }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="row pt-3">
+        <div class="col-md-4">
+          <div class="form-group">
+            <label class="text-right mr-2">Estado&#58;</label>
+            <span class="fs-4"> {{ stateName }} </span>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="form-group">
+            <label class="text-right mr-2">Emisora&#58;</label>
+            <span class="fs-4"> {{ stationName }} </span>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="form-group">
+            <label class="text-right mr-2">Dirección&#58;</label>
+            <span class="fs-4"> {{ programming?.address }} </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="row pt-3">
+        <div class="col-md-4">
+          <div class="form-group">
+            <label class="text-right mr-2">Autoridad&#58;</label>
+            <span class="fs-4"> {{ authorityName }} </span>
+          </div>
+        </div>
+        <div class="col-md-8">
+          <div class="form-group">
+            <label class="text-right mr-2">Observación&#58;</label>
+            <span class="fs-4"> {{ programming?.observation }} </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="row pt-3">
+        <div class="col-md-4">
+          <div class="form-group">
+            <label class="text-right mr-2">Tipo relevante&#58;</label>
+            <span class="fs-3"> {{ typeRelevantName }} </span>
+          </div>
+        </div>
+      </div>
+      <!-- 
+        <div class="row pt-4">
+          <div class="col-md-4">
+            <div class="form-group">
+              <label class="text-right mr-2">Delegaci&oacute;n Regional:</label>
+              <span> {{ delegationName }} </span>
+            </div>
+  
+            <div class="form-group">
+              <label class="text-right mr-2">Transferente&#58;</label>
+              <span> {{ transferentName }} </span>
+            </div>
+  
+            <div class="form-group">
+              <label class="text-right mr-2">Emisora&#58;</label>
+              <span> {{ stationName }} </span>
+            </div>
+  
+            <div class="form-group">
+              <label class="text-right mr-2">Autoridad&#58;</label>
+              <span> {{ authorityName }} </span>
+            </div>
+          </div>
+  
+          <div class="col-md-4">
+            <form class="form-horizontal" style="margin: 0 auto">
+              <div class="form-group">
+                <label class="text-right mr-2">Correo transferente&#58;</label>
+                <span> {{ programming?.emailTransfer }} </span>
+              </div>
+  
+              <div class="form-group">
+                <label class="text-right mr-2">Fecha inicio operativo&#58;</label>
+                <span> {{ programming?.startDate }} </span>
+              </div>
+  
+              <div class="form-group">
+                <label class="text-right mr-2">Fecha fin operativo&#58;</label>
+                <span> {{ programming?.endDate }} </span>
+              </div>
+  
+              <div class="form-group">
+                <label class="text-right mr-2">Direcci&oacute;n&#58;</label>
+                <span> {{ programming?.city }} {{ programming?.address }} </span>
+              </div>
+            </form>
+          </div>
+  
+          <div class="col-md-4">
+            <form class="form-horizontal" style="margin: 0 auto">
+              <div class="form-group">
+                <label class="text-right mr-2">Tipo relevante&#58;</label>
+                <span> {{ typeRelevantName }} </span>
+              </div>
+  
+              <div class="form-group">
+                <label class="text-right mr-2">Ciudad&#58;</label>
+                <span> {{ programming?.city }}</span>
+              </div>
+  
+              <div class="form-group">
+                <label class="text-right mr-2">Observaci&oacute;n&#58;</label>
+                <span> {{ programming?.observation }} </span>
+              </div>
+            </form>
+          </div>
+        </div>
+      -->
 
       <div class="row pt-4">
         <h5 class="title">Almac&eacute;n</h5>

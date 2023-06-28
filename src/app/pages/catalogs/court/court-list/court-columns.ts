@@ -19,13 +19,13 @@ export const COURT_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  numInterior: {
-    title: 'N° interior',
+  numInside: {
+    title: 'No. Interior',
     type: 'string',
     sort: false,
   },
   numExterior: {
-    title: 'N° exterior',
+    title: 'No Exterior',
     type: 'string',
     sort: false,
   },
@@ -55,7 +55,7 @@ export const COURT_COLUMNS = {
     sort: false,
   },
   numRegister: {
-    title: 'N° registro',
+    title: 'No. Registro',
     type: 'number',
     sort: false,
   },

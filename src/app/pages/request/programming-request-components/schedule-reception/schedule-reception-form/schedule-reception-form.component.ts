@@ -105,9 +105,7 @@ export class ScheduleReceptionFormComponent extends BasePage implements OnInit {
       next: response => {
         this.typeEvent = response.data[0].description;
       },
-      error: error => {
-        console.log(error);
-      },
+      error: error => {},
     });
   }
 
@@ -185,7 +183,6 @@ export class ScheduleReceptionFormComponent extends BasePage implements OnInit {
           resolve(resp);
         },
         error: error => {
-          console.log(error);
           this.onLoadToast('error', 'Error', 'No se pudo crear la tarea');
           reject(false);
         },

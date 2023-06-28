@@ -37,10 +37,10 @@ export class NumeraryRequestComponent extends BasePage implements OnInit {
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
   isActions: boolean = true;
-  isNew: boolean = false;
+  isNew: boolean = true;
   totalItems2: number = 0;
   @ViewChild('file', { static: false }) files: ElementRef<HTMLInputElement>;
-  isSearch: boolean = false;
+  isSearch: boolean = true;
 
   constructor(
     private fb: FormBuilder,
@@ -58,7 +58,12 @@ export class NumeraryRequestComponent extends BasePage implements OnInit {
     super();
     this.settings = {
       ...this.settings,
-      actions: false,
+      actions: {
+        delete: true,
+        edit: false,
+        columnTitle: 'Acciones',
+        position: 'right',
+      },
       columns: REQUEST_NUMERARY_COLUMNS,
       rowClassFunction: (row: any) => {
         let cell = '';
@@ -158,7 +163,7 @@ export class NumeraryRequestComponent extends BasePage implements OnInit {
     const { currency } = this.form.value;
 
     if (!currency) {
-      this.onLoadToast('error', 'Debe seleccionar el tipo de moneda');
+      this.alert('error', 'ERROR', 'Debe seleccionar el tipo de moneda');
       return;
     }
 
@@ -203,12 +208,13 @@ export class NumeraryRequestComponent extends BasePage implements OnInit {
 
   clearSearch() {
     this.form.reset();
-    this.isNew = false;
+    this.isNew = true;
     this.totalItems = 0;
     this.totalItems2 = 0;
     this.data1 = [];
     this.registers = null;
     this.files.nativeElement.value = '';
+    this.isActions = true;
   }
 
   getNumEnc() {
@@ -217,6 +223,7 @@ export class NumeraryRequestComponent extends BasePage implements OnInit {
       .getAllFilter(this.filterParams.getValue().getParams())
       .subscribe({
         next: async resp => {
+          this.isNew = false;
           this.totalItems = resp.count;
           resp.data.map((num: any) => {
             num.solnumDate = num.solnumDate
@@ -225,6 +232,10 @@ export class NumeraryRequestComponent extends BasePage implements OnInit {
           });
           const data = resp.data[0];
           this.form.patchValue(data);
+
+          this.isActions = ['C', 'P'].includes(data.solnumStatus)
+            ? false
+            : true;
           this.form.get('delegationNumber').patchValue(data.delegationNumber);
           await this.postQuery(data);
 
@@ -233,11 +244,13 @@ export class NumeraryRequestComponent extends BasePage implements OnInit {
           this.filterParams2
             .getValue()
             .addFilter('solnumId', data.solnumId, SearchFilter.EQ);
-
           await this.getNumDet();
         },
-        error: () => {
+        error: err => {
           this.totalItems = 0;
+          if (err.status == 400) {
+            this.alert('error', 'ERROR', 'No existe la solicitud');
+          }
         },
       });
   }
@@ -266,12 +279,14 @@ export class NumeraryRequestComponent extends BasePage implements OnInit {
 
             this.totalItems2 = resp.count;
             this.loading = false;
+            this.registers = null;
             resolve(true);
           },
           error: () => {
             this.loading = false;
             this.data1 = [];
             this.totalItems2 = 0;
+            this.registers = null;
             resolve(false);
           },
         });
@@ -286,7 +301,7 @@ export class NumeraryRequestComponent extends BasePage implements OnInit {
       const desc = await this.getDesDelegation(data.delegationNumber, etapa);
       this.form.get('desc_del').patchValue(desc);
     } else {
-      this.onLoadToast('error', 'Error en la descripción de la solicitud');
+      this.alert('error', 'ERROR', 'Error en la descripción de la solicitud');
     }
 
     await this.getName(data.user);
@@ -303,8 +318,8 @@ export class NumeraryRequestComponent extends BasePage implements OnInit {
         X: () => 'X',
       };
 
-      if (values[V_TMONEDA]() != 'X') {
-        this.form.get('currency').patchValue(values[V_TMONEDA]());
+      if (values[V_TMONEDA.trim()]() != 'X') {
+        this.form.get('currency').patchValue(values[V_TMONEDA.trim()]());
       } else {
         this.form.get('currency').patchValue(null);
       }
@@ -415,7 +430,9 @@ export class NumeraryRequestComponent extends BasePage implements OnInit {
             this.form.patchValue(data);
             this.form.get('delegationNumber').patchValue(data.delegationNumber);
             await this.postQuery(data);
-
+            this.isActions = ['C', 'P'].includes(data.solnumStatus)
+              ? false
+              : true;
             this.filterParams2.getValue().removeAllFilters();
             this.filterParams2.getValue().page = 1;
             this.filterParams2
@@ -440,18 +457,19 @@ export class NumeraryRequestComponent extends BasePage implements OnInit {
     this.data1 = [];
     this.registers = null;
     this.files.nativeElement.value = '';
+    this.isActions = true;
   }
 
   async saveData() {
     const { solnumType, description } = this.form.value;
 
     if (!solnumType) {
-      this.onLoadToast('error', 'Debe especificar el tipo de solicitud');
+      this.alert('error', 'ERROR', 'Debe especificar el tipo de solicitud');
       return;
     }
 
     if (!description) {
-      this.onLoadToast('error', 'Debe ingresar el concepto de la solicitud');
+      this.alert('error', 'ERROR', 'Debe ingresar el concepto de la solicitud');
       return;
     }
 
@@ -459,22 +477,31 @@ export class NumeraryRequestComponent extends BasePage implements OnInit {
       if (this.data1.length > 0) {
         const user = this.authServ.decodeToken();
         const detailsUser: any = await this.getNameDetails(
-          user.username.toUpperCase()
+          user.username == 'sigebiadmon'
+            ? user.username.toLowerCase()
+            : user.username.toUpperCase()
         );
 
+        let userCreate =
+          user.username == 'sigebiadmon'
+            ? user.username.toLowerCase()
+            : user.username.toUpperCase();
+
         //this.form.get('solnumId').patchValue()
-        this.form.get('solnumDate').patchValue(new Date());
+        this.form
+          .get('solnumDate')
+          .patchValue(this.parseDateNoOffset(new Date()));
         this.form.get('solnumStatus').patchValue('S');
         this.form
           .get('delegationNumber')
           .patchValue(detailsUser.delegationNumber);
-        this.form.get('user').patchValue(user.username.toUpperCase());
+        this.form.get('user').patchValue(userCreate);
         this.form
           .get('desc_del')
           .patchValue(detailsUser.delegation.description);
         this.form.get('name').patchValue(detailsUser.userDetail.name);
       } else {
-        this.onLoadToast('error', 'Debe ingresar un bien para ser guardado.');
+        this.alert('error', 'ERROR', 'Debe ingresar un bien para ser guardado');
         return;
       }
 
@@ -482,23 +509,33 @@ export class NumeraryRequestComponent extends BasePage implements OnInit {
         const valid = this.data1[i].valid ?? '';
         if (valid) {
           if (valid == 'N') {
-            this.onLoadToast('error', 'Error hay bienes que no son validos');
+            this.alert('error', 'ERROR', 'Error hay bienes que no son validos');
             return;
           }
         }
       }
 
       let body: IRequesNumeraryEnc = this.form.value;
-
+      delete body.solnumId;
       this.createSolcEnc(body);
     } else {
+      for (let i = 0; i < this.data1.length; i++) {
+        const valid = this.data1[i].valid ?? '';
+        if (valid) {
+          if (valid == 'N') {
+            this.alert('error', 'ERROR', 'Error hay bienes que no son validos');
+            return;
+          }
+        }
+      }
+
       let body: IRequesNumeraryEnc = this.form.value;
-      this.updateSolcEn(body);
+      await this.updateSolcEn(body);
       //update
     }
   }
 
-  updateSolcEn(body: IRequesNumeraryEnc) {
+  async updateSolcEn(body: IRequesNumeraryEnc) {
     delete body.currency;
     delete body.name;
     delete body.desc_del;
@@ -507,20 +544,103 @@ export class NumeraryRequestComponent extends BasePage implements OnInit {
       body.solnumDate = body.solnumDate.split('/').reverse().join('-');
     }
 
+    const valids = this.data1.filter(good => good.valid == 'S');
+
+    if (valids.length > 0) {
+      await this.removeAll(body.solnumId);
+    }
+
+    this.data1.map(async good => {
+      if (good.valid) {
+        good.solnumId = body.solnumId;
+        if (typeof good.dateCalculationInterests == 'object') {
+          good.dateCalculationInterests = good.dateCalculationInterests
+            ? this.parseDateNoOffset(good.dateCalculationInterests)
+            : good.dateCalculationInterests;
+        }
+        await this.createGoodDet(good);
+      } else {
+        if (typeof good.dateCalculationInterests == 'object') {
+          good.dateCalculationInterests = good.dateCalculationInterests
+            ? this.parseDateNoOffset(good.dateCalculationInterests)
+            : good.dateCalculationInterests;
+        }
+        delete good.description;
+        delete good.bankDate;
+        await this.updateGoodDet(good);
+      }
+    });
+
     this.numEncServ.update(body).subscribe({
       next: async resp => {
-        this.onLoadToast(
-          'success',
-          'Solicitud ha sido actualizada exitosamente'
-        );
+        this.alert('success', 'Solicitud', 'Ha sido actualizada');
       },
       error: () => {
-        this.onLoadToast(
+        this.alert(
           'error',
+          'ERROR',
           'Ocurrio un error al actualizar la solicitud'
         );
       },
     });
+  }
+
+  async removeAll(id: number) {
+    return new Promise((resolve, reject) => {
+      this.numDetService.removeAll(id).subscribe({
+        next: () => {
+          resolve(true);
+        },
+        error: () => {
+          resolve(false);
+        },
+      });
+    });
+  }
+
+  async removeGood(data: any) {
+    if (!this.isActions) return;
+
+    const { solnumId, goodNumber, valid } = data;
+
+    const removeData = {
+      solnumId,
+      goodNumber,
+    };
+
+    this.alertQuestion(
+      'question',
+      'Eliminar',
+      `¿Estás seguro de eliminar el bien: ${goodNumber}?`
+    ).then(async answ => {
+      if (answ.isConfirmed) {
+        if (valid) {
+          const index = this.data1.findIndex(
+            (data: any) => data.goodNumber == goodNumber
+          );
+          this.data1.splice(index, 1);
+          this.data1 = [...this.data1];
+          this.registers = this.data1.length;
+          this.totalItems2 = this.data1.length;
+          this.alert('success', 'Bien', 'Ha sido eliminado');
+        } else {
+          await this.deleteGoodDet(removeData);
+          this.filterParams2.getValue().removeAllFilters();
+          this.filterParams2.getValue().page = 1;
+          this.filterParams2
+            .getValue()
+            .addFilter('solnumId', solnumId, SearchFilter.EQ);
+          await this.getNumDet();
+        }
+      }
+    });
+  }
+
+  parseDateNoOffset(date: string | Date): Date {
+    const dateLocal = new Date(date);
+    return new Date(
+      dateLocal.valueOf() - dateLocal.getTimezoneOffset() * 60 * 1000
+    );
   }
 
   createSolcEnc(body: IRequesNumeraryEnc) {
@@ -529,19 +649,46 @@ export class NumeraryRequestComponent extends BasePage implements OnInit {
         this.form.get('solnumId').patchValue(resp.solnumId);
         const { solnumId } = this.form.value;
 
-        this.onLoadToast('success', 'Solicitud ha sido creada exitosamente');
+        this.alert('success', 'Solicitud', 'Ha sido creada correctamente');
 
         this.data1.map(async good => {
           good.solnumId = solnumId;
+          good.dateCalculationInterests = good.dateCalculationInterests
+            ? this.parseDateNoOffset(good.dateCalculationInterests)
+            : good.dateCalculationInterests;
           await this.createGoodDet(good);
         });
 
-        this.createFilter();
+        this.filterParams2.getValue().removeAllFilters();
+        this.filterParams2.getValue().page = 1;
+        this.filterParams2
+          .getValue()
+          .addFilter('solnumId', solnumId, SearchFilter.EQ);
         await this.getNumDet();
+        this.isNew = false;
       },
       error: () => {
-        this.onLoadToast('error', 'Ocurrio un error al crear la solicitud');
+        this.alert('error', 'ERROR', 'Ocurrio un error al crear la solicitud');
       },
+    });
+  }
+
+  async deleteGoodDet(body: any) {
+    return new Promise((resolve, reject) => {
+      this.numDetService.remove(body).subscribe({
+        next: () => {
+          this.alert('success', 'Bien', 'Ha sido eliminado');
+          resolve(true);
+        },
+        error: () => {
+          this.alert(
+            'error',
+            'Error',
+            'Ocurrio un error al borrar el registro'
+          );
+          resolve(false);
+        },
+      });
     });
   }
 
@@ -549,6 +696,21 @@ export class NumeraryRequestComponent extends BasePage implements OnInit {
     return new Promise((resolve, reject) => {
       this.numDetService.create(body).subscribe({
         next: () => {
+          resolve(true);
+        },
+        error: () => {
+          resolve(false);
+        },
+      });
+    });
+  }
+
+  async updateGoodDet(body: NumDetGoodsDetail) {
+    return new Promise((resolve, reject) => {
+      this.numDetService.update(body).subscribe({
+        next: () => {
+          const { solnumStatus } = this.form.value;
+          this.isActions = ['P', 'C'].includes(solnumStatus) ? false : true;
           resolve(true);
         },
         error: () => {
@@ -610,11 +772,13 @@ export class NumeraryRequestComponent extends BasePage implements OnInit {
         });
 
         this.data1 = [...this.data1];
+        this.filterParams2.getValue().removeAllFilters();
+        this.totalItems2 = this.data1.length;
       },
       error: error => {
         if (error.status == 400) {
           if (error.error.message.includes('Conciliado')) {
-            this.onLoadToast('error', error.error.message);
+            this.alert('error', 'ERROR', error.error.message);
           }
         }
         this.loading = false;
@@ -623,6 +787,39 @@ export class NumeraryRequestComponent extends BasePage implements OnInit {
         this.registers = null;
         this.files.nativeElement.value = '';
       },
+    });
+  }
+
+  deleteRequest() {
+    const { solnumId } = this.form.value;
+    this.alertQuestion(
+      'question',
+      'Borrar',
+      `¿Estás seguro de eliminar la solicitud numerario: ${solnumId}?`
+    ).then(ans => {
+      if (ans.isConfirmed) {
+        this.numEncServ.remove(solnumId).subscribe({
+          next: () => {
+            this.alert('success', 'Solicitud', 'Ha sido eliminada');
+            this.clearSearch();
+          },
+          error: error => {
+            if (error.error.message.includes('solicitudes_nume_det')) {
+              this.alert(
+                'error',
+                'Error',
+                'No puede borrar solicitud numerario debido a que contiene solicitudes numerario detalle, favor de eliminar primero solicitudes numerario detalle'
+              );
+            } else {
+              this.alert(
+                'error',
+                'Error',
+                'Ha ocurrido un error al eliminar la solicitud'
+              );
+            }
+          },
+        });
+      }
     });
   }
 }

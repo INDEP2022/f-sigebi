@@ -134,10 +134,10 @@ export class ScheduledMaintenanceComponent
           next: response => {
             console.log(response);
             this.getData();
-            this.onLoadToast(
+            this.alert(
               'success',
-              'Exito',
-              `Se elimino la acta No. ${item.id}`
+              'Eliminación',
+              `Se elimino el acta No. ${item.id}`
             );
           },
           error: err => {

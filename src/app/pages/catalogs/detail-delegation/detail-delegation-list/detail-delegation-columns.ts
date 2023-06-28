@@ -12,22 +12,22 @@ export const DETAIL_DELEGATION_COLUMNS = {
     sort: false,
   },
   numberDelegation: {
-    title: 'Delegacion',
+    title: 'Delegación',
     type: 'string',
     sort: false,
   },
   area: {
-    title: 'Area',
+    title: 'Área',
     type: 'string',
     sort: false,
   },
   location: {
-    title: 'Ubicacion',
+    title: 'Ubicación',
     type: 'string',
     sort: false,
   },
   address: {
-    title: 'direccion',
+    title: 'Dirección',
     type: 'string',
     sort: false,
   },

@@ -1,8 +1,4 @@
 <app-card [header]="true" [footer]="true">
-  <div class="ch-content" header>
-    <h5 class="title">Detalles del Acta</h5>
-  </div>
-
   <div body *ngIf="!antecedentThreeEnable">
     <div class="row">
       <div class="form-material col-md-5">
@@ -24,6 +20,7 @@
             [control]="header.get('idConversion')"
             label="Id conversión">
             <input
+              #inputValue
               type="number"
               class="form-control"
               formControlName="idConversion"

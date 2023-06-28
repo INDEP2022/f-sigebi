@@ -1,3 +1,4 @@
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { EventEmitter, Injectable } from '@angular/core';
 import { forkJoin, map, Observable } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
@@ -15,6 +16,7 @@ import {
   IGoodSearchGoodByFile,
 } from '../../models/good/good.model';
 import { ITrackedGood } from '../../models/ms-good-tracker/tracked-good.model';
+import { environment } from './../../../../environments/environment';
 
 import {
   GoodGetData,
@@ -39,7 +41,7 @@ import { GoodEndpoints } from './../../../common/constants/endpoints/ms-good-end
 export class GoodService extends HttpService {
   good$ = new EventEmitter<IGood>();
 
-  constructor() {
+  constructor(private http: HttpClient) {
     super();
     this.microservice = GoodEndpoints.Good;
   }
@@ -226,10 +228,10 @@ export class GoodService extends HttpService {
     expedient: number | string,
     params?: ListParams
   ): Observable<IListResponse<IGood>> {
+    console.log(params);
     // if (params) {
     //   params['expedient'] = expedient;
     // }
-
     const route = `${GoodEndpoints.SearchByExpedient}?expedient=${expedient}`;
     return this.get<IListResponse<IGood>>(route, params);
   }
@@ -344,6 +346,14 @@ export class GoodService extends HttpService {
     return this.post(GoodEndpoints.CreateGoodNumerary, body);
   }
 
+  getAttributesGood(goodI: any) {
+    const URL = `${environment.API_URL}/good/api/v1/${GoodEndpoints.AttribGood}/${goodI}`;
+
+    const headers = new HttpHeaders();
+
+    return this.http.get<any>(URL, { headers: headers }).pipe(map(res => res));
+  }
+
   updateWithParams(good: any) {
     const route = `${GoodEndpoints.Good}`;
     return this.put(route, good);
@@ -377,5 +387,9 @@ export class GoodService extends HttpService {
     no_bien: string | number;
   }) {
     return this.get('good/get-facta-dbo-ficio-gestrel', body);
+  }
+
+  updateGoodsRev(params?: any): Observable<IListResponse<any>> {
+    return this.put(GoodEndpoints.GoodsMotivesrev2, params);
   }
 }

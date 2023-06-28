@@ -8,13 +8,13 @@
           Regresar
           <i class="fas fa-arrow-circle-left"></i>
         </button> -->
-      <!-- <button
+      <button
         type="button"
         class="btn btn-primary btn-sm active"
         (click)="saveDataForm()">
         Guardar
         <i aria-hidden="true" class="fa fa-save"></i>
-      </button> -->
+      </button>
     </div>
   </div>
 
@@ -30,6 +30,7 @@
                 <input
                   type="number"
                   class="form-control"
+                  maxlength="11"
                   formControlName="noBien" />
               </form-field>
             </div>
@@ -187,13 +188,11 @@
             label="Tipo de Nombramiento">
             <select class="form-control" formControlName="tipoNombramiento">
               <option [value]="null">Seleccione un valor</option>
-              <option [value]="'Administrador'">Administrador</option>
-              <option [value]="'Depositaría'">Depositar&iacute;a</option>
-              <option [value]="'Interventor'">Interventor</option>
-              <option [value]="'Comodatarío'">Comodatar&iacute;o</option>
-              <option [value]="'Bien en uso del INDEP'">
-                Bien en uso del INDEP
-              </option>
+              <option [value]="'A'">Administrador</option>
+              <option [value]="'D'">Depositar&iacute;a</option>
+              <option [value]="'I'">Interventor</option>
+              <option [value]="'C'">Comodatar&iacute;o</option>
+              <option [value]="'B'">Bien en uso del INDEP</option>
             </select>
           </form-field>
         </div>
@@ -201,8 +200,8 @@
           <form-field [control]="form.get('estatus')" label="Estatus">
             <select class="form-control" formControlName="estatus">
               <option [value]="null">Seleccione un valor</option>
-              <option [value]="'Provisional'">Provisional</option>
-              <option [value]="'Definitiva'">Definitiva</option>
+              <option [value]="'P'">Provisional</option>
+              <option [value]="'D'">Definitiva</option>
             </select>
           </form-field>
         </div>
@@ -442,7 +441,7 @@
               [readonly]="true" />
           </form-field>
         </div>
-        <div class="col-sm-12 col-12 col-md-6 p-2">
+        <!-- <div class="col-sm-12 col-12 col-md-6 p-2">
           <ngx-select
             [data]="postalCode"
             bindLabel="township"
@@ -454,6 +453,17 @@
             [showTooltip]="true"
             termMaxLength="6"
             control="codigoPostal"></ngx-select>
+        </div> -->
+        <div class="col-sm-12 col-12 col-md-6 p-2">
+          <form-field
+            [control]="form.get('codigoPostal')"
+            label="C&oacute;digo Postal">
+            <input
+              class="form-control"
+              formControlName="codigoPostal"
+              maxLength="6"
+              [readonly]="true" />
+          </form-field>
         </div>
         <!-- <div class="col-sm-12 col-12 col-md-6 p-2">
           <ngx-select

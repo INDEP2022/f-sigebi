@@ -1,14 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
-import { BehaviorSubject, Subject } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
 import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { IDocuments } from 'src/app/core/models/ms-documents/documents';
-import { DocumentsSeparatorsService } from 'src/app/core/services/ms-documents-separators/documents-separators.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
@@ -27,13 +26,13 @@ export class DocumentsViewerComponent extends BasePage implements OnInit {
   form = this.fb.group({
     numberProceedings: [null],
     flyerNumber: [null],
-    separador: [null],
-    fecha: [null],
+    keySeparator: [null],
+    significantDate: [null],
     keyTypeDocument: [null],
-    descripcion: [null, [Validators.pattern(STRING_PATTERN)]],
-    averPrevia: [null, [Validators.pattern(STRING_PATTERN)]],
-    causaPenal: [null, [Validators.pattern(STRING_PATTERN)]],
-    tipos: [null, [Validators.required]],
+    descriptionDocument: [null, [Validators.pattern(STRING_PATTERN)]],
+    preliminaryInquiry: [null, [Validators.pattern(STRING_PATTERN)]],
+    criminalCase: [null, [Validators.pattern(STRING_PATTERN)]],
+    scanStatus: ['all', [Validators.required]],
     origen: [null, [Validators.required]],
   });
 
@@ -42,24 +41,27 @@ export class DocumentsViewerComponent extends BasePage implements OnInit {
   data: LocalDataSource = new LocalDataSource();
   params = new BehaviorSubject<ListParams>(new ListParams());
   columnFilters: any = [];
-  private typeDocumentInputChangeSubject = new Subject<string>();
+  aux: string;
+  dateInput: number | string;
+  dateInputString: string;
+  otro: any = [];
 
   constructor(
     private fb: FormBuilder,
-    private documentService: DocumentsService,
-    private documentSeparatorService: DocumentsSeparatorsService
+    private documentService: DocumentsService
   ) {
     super();
     this.settings.actions = false;
     this.settings.columns = GENERAL_DOCS_DOCUMENTS_VIEWER_COLUMNS;
     this.settings.hideSubHeader = false;
     this.settings.rowClassFunction = (row: { data: { scanStatus: string } }) =>
-      row.data.scanStatus == 'ESCANEADO' ? 'pending' : 'digital';
+      row.data.scanStatus == 'ESCANEADO' ? 'digital' : 'pending';
   }
 
   ngOnInit(): void {
-    this.loadDocumentsSeparator(); //Aquí le indico que traiga todas las imágenes cuando se cargue la pantalla
+    this.loadDocumentsSeparator();
     this.getDocuments();
+    this.loadDocumentsType();
     this.data
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
@@ -70,15 +72,20 @@ export class DocumentsViewerComponent extends BasePage implements OnInit {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
-            /*SPECIFIC CASES*/
             switch (filter.field) {
-              case 'id':
-                searchFilter = SearchFilter.EQ;
-                break;
               case 'numberProceedings':
                 searchFilter = SearchFilter.EQ;
                 break;
+              case 'id':
+                searchFilter = SearchFilter.EQ;
+                break;
               case 'cve_separador':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'keyTypeDocument':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'flyerNumber':
                 searchFilter = SearchFilter.EQ;
                 break;
               default:
@@ -90,8 +97,6 @@ export class DocumentsViewerComponent extends BasePage implements OnInit {
             } else {
               delete this.columnFilters[field];
             }
-
-            console.log(this.columnFilters);
           });
           this.getDocuments();
         }
@@ -101,31 +106,66 @@ export class DocumentsViewerComponent extends BasePage implements OnInit {
       .subscribe(() => this.getDocuments());
   }
 
-  onOptionsSelected(value: any) {
-    console.log('the selected value is ' + value);
+  onOptionsSelectedTypeDocument(value: any) {
+    this.selectTypeDoc = value.id;
   }
 
-  generateFilterParams(formGroup: FormGroup): string {
-    const filterParams: string[] = [];
-    console.log(filterParams);
+  onOptionsSelectedSeparator(value: any) {
+    this.selectSeparator = value.key;
+  }
 
-    // Iterar sobre los controles del formulario
+  generateFilterParams(formGroup: FormGroup): any {
+    const filterParams: string[] = [];
     Object.keys(formGroup.controls).forEach(controlName => {
       const controlValue = formGroup.get(controlName).value;
-
       if (controlValue !== null && controlValue !== undefined) {
-        const param = `filter.${controlName}=$eq:${controlValue}`;
-        filterParams.push(param);
+        if (controlName === 'significantDate') {
+          this.aux = controlName;
+          const date = new Date(controlValue);
+          const month = (date.getMonth() + 1).toString().padStart(2, '0');
+          const year = date.getFullYear().toString();
+          const formattedDate = `${month}/${year}`;
+          this.dateInput = formattedDate;
+          const param = `filter.${controlName}=$eq:${formattedDate}`;
+          filterParams.push(param);
+        } else if (controlName === 'keyTypeDocument') {
+          this.aux = controlName;
+          const keyTypeDocument = this.selectTypeDoc;
+          const keyTypeDocumentDate = JSON.stringify(keyTypeDocument);
+          this.dateInput = keyTypeDocumentDate;
+          const param = `filter.${controlName}=$eq:${keyTypeDocument}`;
+          filterParams.push(param);
+        } else if (controlName === 'keySeparator') {
+          this.aux = controlName;
+          const keySeparator = this.selectSeparator;
+          const keykeySeparatorDate = JSON.stringify(keySeparator);
+          this.dateInput = keykeySeparatorDate;
+          const param = `filter.${controlName}=$eq:${keySeparator}`;
+          filterParams.push(param);
+        } else if (controlName === 'preliminaryInquiry') {
+          this.aux = controlName;
+          const param = `filter.file.${controlName}=$eq:${controlValue}`;
+          this.dateInput = controlValue;
+          filterParams.push(param);
+        } else if (controlName === 'criminalCase') {
+          this.aux = controlName;
+          const param = `filter.file.${controlName}=$eq:${controlValue}`;
+          this.dateInput = controlValue;
+          filterParams.push(param);
+        } else if (controlValue === 'all') {
+          return;
+        } else {
+          const param = `filter.${controlName}=$eq:${controlValue}`;
+          this.aux = controlName;
+          this.dateInput = controlValue;
+          filterParams.push(param);
+        }
       }
     });
-    // Unir los parámetros con el carácter '&'
-    const paramsString = filterParams.join('&');
-    console.log('Filter');
-    return paramsString;
+    return filterParams;
   }
 
   getDocuments() {
-    this.loading = true;
     let params = {
       ...this.params.getValue(),
       ...this.columnFilters,
@@ -142,27 +182,31 @@ export class DocumentsViewerComponent extends BasePage implements OnInit {
   }
 
   onTipoDocumentoInputChange(event: any) {
-    const inputValue = event.search;
+    const inputValue = event.search.toUpperCase();
     const param = `filter.id=${inputValue}`;
-
     this.documentService.getDocumentsType(param).subscribe(response => {
-      // Actualiza los datos del ngx-select con la respuesta obtenida
       this.selectTypeDoc = new DefaultSelect(response.data, response.count);
-      console.log(this.selectTypeDoc);
     });
   }
 
-  loadDocumentsType(parameter?: string) {
-    let params = this.generateFilterParams(this.form);
+  loadDocumentsType() {
     this.documentService
       .getDocumentsType()
       .pipe(
         map(res => {
           this.selectTypeDoc = new DefaultSelect(res.data, res.count);
-          console.log(this.selectTypeDoc);
         })
       )
       .subscribe();
+  }
+
+  onDocumentsSeparatorInputChange(event: any) {
+    const inputValue = event.search.toUpperCase();
+    const param = `filter.key=${inputValue}`;
+    this.documentService.getDocumentsSeparator(param).subscribe(response => {
+      this.selectSeparator = new DefaultSelect(response.data, response.count);
+    });
+    this.loading = false;
   }
 
   loadDocumentsSeparator() {
@@ -170,7 +214,6 @@ export class DocumentsViewerComponent extends BasePage implements OnInit {
       .getDocumentsSeparator()
       .pipe(
         map(res => {
-          console.log(res); //Trae todas las imágenes
           this.selectSeparator = new DefaultSelect(res.data, res.count);
         })
       )
@@ -178,24 +221,97 @@ export class DocumentsViewerComponent extends BasePage implements OnInit {
   }
 
   onSubmit() {
-    // Llamada al endpoint pasando los parámetros del formulario
     this.loading = true;
-    let params = this.generateFilterParams(this.form);
-    console.log(params);
-    console.log('Clic en el botón de Consultar');
-    this.documentService.getAll(params).subscribe(
+    if (this.generateFilterParams(this.form).length > 0) {
+      for (let i = 0; i < this.generateFilterParams(this.form).length; i++) {
+        let filter = '';
+        let content = '';
+        const indice = this.generateFilterParams(this.form)[i].indexOf('=');
+        if (indice !== -1) {
+          filter = this.generateFilterParams(this.form)[i].substring(0, indice);
+        }
+        const indice1 = this.generateFilterParams(this.form)[i].indexOf('=');
+        if (indice1 !== -1) {
+          content = this.generateFilterParams(this.form)[i].substring(
+            indice1 + 1
+          );
+        }
+        this.params.getValue()[filter] = content;
+      }
+    } else {
+      this.params = new BehaviorSubject<ListParams>(new ListParams());
+    }
+
+    this.documentService.getAll(this.params.getValue()).subscribe(
       response => {
         this.documents = response.data;
-        console.log(this.documents);
         this.totalItems = response.count || 0;
-        console.log(this.totalItems);
         this.data.load(this.documents);
         this.loading = false;
       },
       error => {
+        if (this.aux === 'numberProceedings') {
+          this.alert(
+            'error',
+            '',
+            `No existe el expediente No. ${this.dateInput}`
+          );
+          this.form.get('numberProceedings').reset();
+        } else if (this.aux === 'flyerNumber') {
+          this.alert('error', '', `No existe el volante No. ${this.dateInput}`);
+          this.form.get('flyerNumber').reset();
+        } else if (this.aux === 'separador') {
+          this.alert('error', '', `No existe el separador ${this.dateInput}`);
+          this.form.get('separador').reset();
+        } else if (this.aux === 'significantDate') {
+          this.alert(
+            'error',
+            '',
+            `No existe la fecha significativa ${this.dateInput}`
+          );
+          this.form.get('significantDate').reset();
+        } else if (this.aux === 'keyTypeDocument') {
+          this.alert(
+            'error',
+            '',
+            `No existe el tipo de documento ${this.dateInput}`
+          );
+          this.form.get('keyTypeDocument').reset();
+        } else if (this.aux === 'descriptionDocument') {
+          this.alert(
+            'error',
+            '',
+            `No existe la descripción del deocumento ${this.dateInput}`
+          );
+          this.form.get('descriptionDocument').reset();
+        } else if (this.aux === 'preliminaryInquiry') {
+          this.alert(
+            'error',
+            '',
+            `No existe la averiguación previa ${this.dateInput}`
+          );
+          this.form.get('preliminaryInquiry').reset();
+        } else if (this.aux === 'criminalCase') {
+          this.alert('error', '', `No existe la causa penal ${this.dateInput}`);
+          this.form.get('criminalCase').reset();
+        } else if (this.aux === 'scanStatus') {
+          this.alert('error', '', `No existe el el estatus ${this.dateInput}`);
+          this.form.get('scanStatus').reset();
+        }
         this.loading = false;
         this.data.load([]);
       }
     );
+  }
+
+  cleandInfo() {
+    this.form.reset();
+    this.form.patchValue({ scanStatus: 'all' });
+    this.onSubmit();
+    this.loadDocumentsSeparator();
+    this.loadDocumentsType();
+    this.loading = false;
+    this.selectTypeDoc = new DefaultSelect([], 0);
+    this.selectSeparator = new DefaultSelect([], 0);
   }
 }

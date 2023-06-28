@@ -7,6 +7,7 @@ import { ConvertiongoodService } from 'src/app/core/services/ms-convertiongood/c
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
   selector: 'app-conversion-management',
@@ -14,6 +15,16 @@ import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
   styleUrls: ['./conversion-management.component.scss'],
 })
 export class ConversionManagementComponent extends BasePage implements OnInit {
+  DATA: any[] = [
+    {
+      label: 'Derivado',
+      value: '1',
+    },
+    {
+      label: 'Conversión',
+      value: '2',
+    },
+  ];
   //
   good: IGood;
   //
@@ -34,6 +45,8 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
   isFormModified = false;
 
   enable: boolean = false;
+
+  dataSelect = new DefaultSelect<any>();
 
   get idConversion() {
     return this.form.get('idConversion');
@@ -76,6 +89,7 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    this.dataSelect = new DefaultSelect(this.DATA, this.DATA.length);
     this.buildForm();
     this.description.disable();
     this.actaERDate.disable();
@@ -115,11 +129,16 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
   }
 
   async save() {
-    if (this.tipo.value === null || this.tipo.value === 'null') {
-      this.alert('info', 'Información', 'El campo tipo es requerido');
+    if (this.tipo.value === null) {
+      this.alert(
+        'warning',
+        'Administración de conversión de bienes',
+        'El campo tipo es requerido'
+      );
       return;
     }
-    if (this.idConversion.value !== null || this.idConversion.value !== '') {
+    console.log(this.idConversion.value);
+    if (this.idConversion.value !== null) {
       const response: any = await this.updateConversion('');
       this.date.setValue(new Date());
       this.createObj();
@@ -130,27 +149,39 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
             console.log(response);
             this.alert(
               'success',
-              'Guardado',
+              'Administración de conversión de bienes',
               'Se ha guardado correctamente la conversión'
             );
             this.saved = false;
           },
           error: err => {
             this.alert(
-              'info',
-              'Información',
+              'warning',
+              'Administración de conversión de bienes',
               'No se puede realizar la operación ya que este bien ya está asignado a esta conversión'
             );
             console.log(err);
           },
         });
     } else {
-      this.onLoadToast('info', 'Se debe cargar primero una conversión');
+      this.alert(
+        'warning',
+        'Administración de conversión de bienes',
+        'Se debe cargar primero una conversión'
+      );
     }
   }
 
   onChangeGood() {
-    this.searchGoods(this.noBien.value);
+    if (this.noBien.value !== null) {
+      this.searchGoods(this.noBien.value);
+    } else {
+      this.alert(
+        'warning',
+        'Administración de conversión de bienes',
+        'Se debe ingresar el numero del bien'
+      );
+    }
   }
 
   searchGoods(idGood: number | string) {
@@ -165,7 +196,11 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
         this.setGood(this.good);
       },
       error: err => {
-        this.onLoadToast('info', 'Información', 'Bien no existe');
+        this.alert(
+          'warning',
+          'Administración de conversión de bienes',
+          'Bien no existe'
+        );
         this.form.reset();
         console.log(err);
       },
@@ -207,9 +242,9 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
       error: err => {
         this.actaER.setValue('');
         this.actaERDate.setValue('');
-        this.onLoadToast(
-          'info',
-          'Información',
+        this.alert(
+          'warning',
+          'Administración de conversión de bienes',
           'Este bien no tiene Acta E/R asociada'
         );
         console.log(err);
@@ -239,7 +274,11 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
       this.conversion = null;
       this.isFormModified = false;
     } else {
-      this.onLoadToast('error', 'ERROR', 'Erorr al Generar la contraseña');
+      this.alert(
+        'error',
+        'Ha ocurrido un error',
+        'Erorr al Generar la contraseña'
+      );
     }
   }
 
@@ -247,8 +286,12 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
     this.enable = false;
     console.log(this.idConversion.value);
     if (this.idConversion.value === '' || this.idConversion.value === null) {
-      this.onLoadToast('info', 'Ingrese por favor un id de conversión');
-      this.form.markAllAsTouched();
+      this.alert(
+        'warning',
+        'Campo requerido',
+        'Ingrese por favor un id de conversión'
+      );
+      //this.form.markAllAsTouched();
       return;
     }
     this.conversiongoodServices.getById(this.idConversion.value).subscribe({
@@ -262,14 +305,14 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
         this.date.setValue(new Date());
         this.enableButton = false;
         this.actaConversion.setValue(this.conversion.cveActaConv);
-        this.onLoadToast(
+        this.alert(
           'success',
-          'Exitoso',
+          'Administración de conversión de bienes',
           'Se ha cargado la conversión correctamente'
         );
       },
       error: err => {
-        this.onLoadToast('error', 'ERROR', 'La conversión no existe');
+        this.alert('error', 'Ha ocurrido un error', 'La conversión no existe');
         this.form.reset();
         console.log(err);
       },
@@ -377,7 +420,7 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
 
   clean() {
     this.form.reset();
-    this.form.markAllAsTouched();
+    // this.form.markAllAsTouched();
   }
   formatDate(fecha: string) {
     const fecha_original = new Date(fecha);

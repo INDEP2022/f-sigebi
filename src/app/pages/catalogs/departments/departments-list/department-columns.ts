@@ -16,18 +16,34 @@ export const DEPARTMENT_COLUMNS = {
   delegation: {
     title: 'Delegación',
     type: 'string',
+    sort: false,
     valuePrepareFunction: (value: IDelegation) => {
       return value?.description;
     },
-    sort: false,
+    filterFunction(cell?: any, search?: string): boolean {
+      let column = cell.description;
+      if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
+        return true;
+      } else {
+        return false;
+      }
+    },
   },
   numSubDelegation: {
     title: 'Subdelegación',
     type: 'string',
+    sort: false,
     valuePrepareFunction: (value: ISubdelegation) => {
       return value?.description;
     },
-    sort: false,
+    filterFunction(cell?: any, search?: string): boolean {
+      let column = cell.description;
+      if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
+        return true;
+      } else {
+        return false;
+      }
+    },
   },
   description: {
     title: 'Descripción',
@@ -35,7 +51,7 @@ export const DEPARTMENT_COLUMNS = {
     sort: false,
   },
   numRegister: {
-    title: 'Nº registro',
+    title: 'No. Registro',
     type: 'number',
     sort: false,
   },
