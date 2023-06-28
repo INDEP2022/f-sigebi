@@ -147,4 +147,11 @@ export const BASIC_BUTTONS = [
             <i class="bx bx-download float-icon"></i>
           </button>`,
   },
+  {
+    name: 'Limpiar',
+    code: `<button
+            class="btn btn-danger btn-sm active mr-3">
+            Limpiar <i class="fas fa-eraser"> </i>
+          </button>`,
+  },
 ];
