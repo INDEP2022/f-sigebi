@@ -106,12 +106,13 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
           const detailsDelegation: any = await this.getDelegation(
             item.delegation
           );
-          item['goodId'] = item.goodNumber ? item.goodNumber.id : null;
-          item['detailsDelegation'] = detailsDelegation
-            ? detailsDelegation.description
-            : null;
           item['descriptionGood'] = item.goodNumber
             ? item.goodNumber.description
+            : null;
+          item['goodDetails'] = item.goodNumber;
+          item['goodNumber'] = item.goodNumber ? item.goodNumber.id : null;
+          item['detailsDelegation'] = detailsDelegation
+            ? detailsDelegation.description
             : null;
         });
 
@@ -558,7 +559,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
         vl_ID_EVENTO = 0;
 
         let obj = {
-          goodNumber: this.selectedRow.goodId,
+          goodNumber: this.selectedRow.goodNumber,
           attended: 0,
           manager: this.selectedRow.manager,
         };
@@ -580,7 +581,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
 
         if (EXISTE > 0) {
           let obj_: any = {
-            goodNumber: this.selectedRow.goodId,
+            goodNumber: this.selectedRow.goodNumber,
             eventId: good.eventId.id,
             goodType: good.goodType,
             status: good.status,
@@ -602,7 +603,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
           }
 
           let objGood: any = {
-            goodNumber: this.selectedRow.goodId,
+            goodNumber: this.selectedRow.goodNumber,
             attended: 0,
           };
           const getGoodAttended: any = await this.getGoodAndAttendedReturn(
@@ -616,7 +617,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
 
           if (ATENCION == 0 && ACTUALIZA == 1) {
             let objScreen = {
-              goodNumber: this.selectedRow.goodId,
+              goodNumber: this.selectedRow.goodNumber,
               status: ESTATUSB,
             };
             const screenXStatus: any = await this.getScreenXStatus(objScreen);
@@ -633,8 +634,8 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
             }
 
             let objUpdateGood: any = {
-              id: this.selectedRow.goodId,
-              goodId: this.selectedRow.goodId,
+              id: this.selectedRow.goodNumber,
+              goodNumber: this.selectedRow.goodNumber,
               status: ESTATUSF,
             };
             const updateGood: any = await this.updateGoodStatus(objUpdateGood);
@@ -643,7 +644,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
               ACTUALIZA = 0;
               this.alert(
                 'error',
-                `Error al actualizar el estatus del bien: ${this.selectedRow.goodId}`,
+                `Error al actualizar el estatus del bien: ${this.selectedRow.goodNumber}`,
                 ''
               );
             }
@@ -653,7 +654,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
               var futureDate = new Date(currentDate.getTime() + 5 * 1000); // A
 
               const historyGood: IHistoryGood = {
-                propertyNum: this.selectedRow.goodId,
+                propertyNum: this.selectedRow.goodNumber,
                 status: ESTATUSF,
                 changeDate: futureDate,
                 userChange: this.token.decodeToken().preferred_username,
@@ -667,7 +668,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
               );
             } else {
               let obj__: any = {
-                goodNumber: this.selectedRow.goodId,
+                goodNumber: this.selectedRow.goodNumber,
                 eventId: vl_ID_EVENTO,
                 goodType: good.goodType,
                 status: good.status,
