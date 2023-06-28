@@ -143,19 +143,20 @@ export class GoodsWithRequiredInfoComponent extends BasePage implements OnInit {
   }
 
   openGood(data: any): void {
-    console.log(data);
     //console.log(localStorage.setItem(`Task`, JSON.stringify(data)));
     // localStorage.setItem(`Task`, JSON.stringify(data));
-    localStorage.setItem(
-      'selectedBad',
-      JSON.stringify({
-        id: data.id.goodId,
-        motive: data.motive,
-        pair1: data.pair1,
-        pair2: data.pair2,
-        pair3: data.pair3,
-        pair4: data.pair4,
-      })
+    console.log(
+      localStorage.setItem(
+        'selectedBad',
+        JSON.stringify({
+          id: data.id,
+          motive: data.motive,
+          pair1: data.pair1,
+          pair2: data.pair2,
+          pair3: data.pair3,
+          pair4: data.pair4,
+        })
+      )
     );
     if (data.requestId !== null && data.urlNb !== null) {
       // this.router.navigate([`/pages/general-processes/goods-characteristics`], {
@@ -175,7 +176,7 @@ export class GoodsWithRequiredInfoComponent extends BasePage implements OnInit {
           origin1: this.origin,
           origin2: this.origin2,
           origin3: this.origin3,
-          noBien: data.id.goodId,
+          noBien: data.id,
           TIPO_PROC: this.paramsCurrentScreen.TIPO_PROC,
           NO_INDICADOR: this.paramsCurrentScreen.NO_INDICADOR,
         },
