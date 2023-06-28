@@ -40,7 +40,7 @@ const NOT_FOUND_REMOVE_PAYMENTS = (
 ) =>
   `Error al Remover la Depositaría para el número de Nombramiento: ${no_nombramiento} y la Fecha: ${date_param}. ${error}`;
 const CORRECT_REMOVE_PAYMENTS = (no_nombramiento: number, date_param: string) =>
-  `Se realizó correctamente la Eliminación de la Disperción de Pagos para el número de Nombramiento: ${no_nombramiento} y la Fecha: ${date_param}`;
+  `Se realizó correctamente la Eliminación de la Dispersión de Pagos para el número de Nombramiento: ${no_nombramiento} y la Fecha: ${date_param}`;
 
 export {
   ERROR_GOOD_PARAM,
