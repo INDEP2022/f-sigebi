@@ -3,8 +3,9 @@
     <form-field
       [control]="form.get('goodNum')"
       class="col-md-3"
-      label="No&#46; Bien">
+      label="No&#46; Bien(es)">
       <ng-select
+        addTagText="Agregar Elemento"
         class="form-control"
         formControlName="goodNum"
         [items]="[]"
@@ -27,6 +28,7 @@
       class="col-md-3"
       label="Proceso">
       <ng-select
+        addTagText="Agregar Elemento"
         class="form-control"
         formControlName="process"
         bindValue="value"
@@ -64,6 +66,17 @@
         (fetchItems)="getGoodLabels($event)"
         label="Identificador de Destino"></ngx-select>
     </form-field>
+
+    <form-field
+      [control]="form.get('photoDate')"
+      class="col-md-3"
+      label="Fecha Foto">
+      <input
+        type="text"
+        formControlName="photoDate"
+        class="form-control"
+        bsDatepicker />
+    </form-field>
   </div>
 
   <div class="row pt-5">
@@ -98,14 +111,20 @@
       class="col-md-3"
       label="Bien Padre Menaje">
       <ng-select
+        addTagText="Agregar Elemento"
         class="form-control"
         formControlName="menageFather"
         [items]="[]"
         [addTag]="true"
-        [multiple]="true"
-        [selectOnTab]="true"
-        [isOpen]="false">
+        [multiple]="true">
       </ng-select>
+    </form-field>
+
+    <form-field
+      [control]="form.get('identifier')"
+      class="col-md-2"
+      label="Identificador">
+      <input type="text" formControlName="identifier" class="form-control" />
     </form-field>
   </div>
   <div class="row pt-5">
@@ -119,60 +138,6 @@
     <form-field [control]="form.get('valueTo')" class="col-md-3" label="A">
       <input type="number" formControlName="valueTo" class="form-control" />
     </form-field>
-
-    <form-field
-      [control]="form.get('photoDate')"
-      class="col-md-3"
-      label="Fecha Foto">
-      <input
-        type="text"
-        formControlName="photoDate"
-        class="form-control"
-        bsDatepicker />
-    </form-field>
-
-    <form-field
-      [control]="form.get('identifier')"
-      class="col-md-3"
-      label="Identificador">
-      <input type="text" formControlName="identifier" class="form-control" />
-    </form-field>
-  </div>
-
-  <div class="row pt-5">
-    <form-field
-      [control]="form.get('description')"
-      class="col-md-4"
-      label="Descripci&oacute;n">
-      <input type="text" formControlName="description" class="form-control" />
-    </form-field>
-
-    <form-field
-      [control]="form.get('attributes')"
-      class="col-md-4"
-      label="Atributos">
-      <input type="text" formControlName="attributes" class="form-control" />
-    </form-field>
-
-    <!-- <form-check label="Gabinete Social" for="gabinete" class="col-md-4">
-      <input
-        type="checkbox"
-        formControlName="gabinete"
-        id="gabinete"
-        class="form-control" />
-    </form-check> -->
-  </div>
-
-  <div class="row pt-5">
-    <!-- <form-field
-      [control]="form.get('movableIventory')"
-      class="col-md-3"
-      label="Inv&#46; Mueble">
-      <input
-        type="text"
-        formControlName="movableIventory"
-        class="form-control" />
-    </form-field> -->
 
     <form-field
       [control]="form.get('siabiInventory')"
@@ -191,6 +156,44 @@
       <input type="text" formControlName="cisiInventory" class="form-control" />
     </form-field>
   </div>
+
+  <div class="row pt-5">
+    <form-field [control]="form.get('description')" label="Descripci&oacute;n">
+      <textarea
+        type="text"
+        formControlName="description"
+        class="form-control"></textarea>
+    </form-field>
+
+    <!-- <form-check label="Gabinete Social" for="gabinete" class="col-md-4">
+      <input
+        type="checkbox"
+        formControlName="gabinete"
+        id="gabinete"
+        class="form-control" />
+    </form-check> -->
+  </div>
+
+  <div class="row pt-3">
+    <form-field [control]="form.get('attributes')" label="Atributos">
+      <textarea
+        type="text"
+        formControlName="attributes"
+        class="form-control"></textarea>
+    </form-field>
+  </div>
+
+  <!-- <div class="row pt-5"> -->
+  <!-- <form-field
+      [control]="form.get('movableIventory')"
+      class="col-md-3"
+      label="Inv&#46; Mueble">
+      <input
+        type="text"
+        formControlName="movableIventory"
+        class="form-control" />
+    </form-field> -->
+  <!-- </div> -->
 
   <div class="row">
     <div class="col-md-12">
