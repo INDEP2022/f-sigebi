@@ -936,4 +936,8 @@ export class JpDMcCMaintenanceOfCoveragesComponent
 
     return this.modalService.show(component, config);
   }
+
+  manttoEmail() {
+    this.router.navigateByUrl(`pages/parameterization/mail`);
+  }
 }

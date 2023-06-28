@@ -83,6 +83,55 @@ export interface IPaymendtDepParamsDep {
 }
 
 export interface IDepositaryAppointments {
+  // InvoiceReturn: string;
+  // InvoiceUniversal: string;
+  // agreementAppointment: ;
+  // amount: null;
+  // amountFee: '0.00';
+  // amountconsideration: '0.00';
+  // amountvat: null;
+  // authorityorderAssignment: null;
+  // cveContract: 'DG/DEBI/COMODATO/109/2015';
+  // cveGuyAdministrator: 'C';
+  // cveGuyname: 'P';
+  // dateAppointment: null;
+  // dateAssignment: null;
+  // dateEndContract: null;
+  // dateJobBoardgovt: null;
+  // dateReplyDirgral: null;
+  // dateReturn: null;
+  // dateRevocation: '2015-09-17';
+  // dateShift: null;
+  // dateShipmentDirgral: null;
+  // datenameProv: null;
+  // datestartContract: '2015-04-13';
+  // exhibit: null;
+  // good: IGood;
+  // guydepositary: '3';
+  // identificationcardAppointment: null;
+  // identificationcardAppointmentBoardgovt: null;
+  // nbOrigin: null;
+  // numberAppointment: '2846';
+  // numberGood: '2307001';
+  // numberJobAnswerDirgral: null;
+  // numberJobBoardgovt: null;
+  // numberJobProvisional: null;
+  // numberJobReply: null;
+  // numberJobRevocation: 'DEBI/DCB/396/15';
+  // numberJobShift: null;
+  // numberPerson: '152';
+  // numberRecord: '625642073';
+  // observations: null;
+  // personNumber: IPerson;
+  // reference: null;
+  // representativeBe: 'PULIBARRI';
+  // responsible: 'EMAYOR';
+  // revocation: 'S';
+  // user: ISegUsers;
+  // validity: null;
+  // vat: '0';
+  // withHousehold: null;
+
   appointmentNum: string | number;
   nameProvDete: string | number;
   revocationDate: Date;

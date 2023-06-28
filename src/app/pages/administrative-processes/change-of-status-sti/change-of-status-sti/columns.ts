@@ -6,6 +6,7 @@ export const COLUMNS = {
   id: {
     title: 'No. Bien',
     sort: false,
+    width: '150px',
   },
   description: {
     title: 'Descripción del Bien',
@@ -37,3 +38,7 @@ export const COLUMNS = {
     sort: false,
   },
 };
+
+export function clearGoodCheck() {
+  goodCheck = [];
+}

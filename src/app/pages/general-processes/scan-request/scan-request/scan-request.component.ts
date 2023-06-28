@@ -222,7 +222,7 @@ export class ScanRequestComponent extends BasePage implements OnInit {
       .getAllFilter(this.filterParams.getValue().getParams())
       .subscribe({
         next: resp => {
-          this.isSearch = false;
+          this.isSearch = true;
           this.notify = resp;
           this.noVolante = resp.data[0].wheelNumber;
           this.formNotification.patchValue(resp.data[0]);
@@ -233,7 +233,7 @@ export class ScanRequestComponent extends BasePage implements OnInit {
           );
         },
         error: err => {
-          this.isSearch = true;
+          this.isSearch = false;
           this.loading = false;
           this.form.reset();
           this.alert('error', 'ERROR', err.error.message);
@@ -345,11 +345,11 @@ export class ScanRequestComponent extends BasePage implements OnInit {
 
       this.documentServ.create(this.form.value).subscribe({
         next: resp => {
-          this.alert(
-            'success',
-            'ÉXITO',
-            'Solicitud generada, procesando reporte...'
-          );
+          // this.alert(
+          //   'success',
+          //   'ÉXITO',
+          //   'Solicitud generada, procesando reporte...'
+          // );
           this.loadingDoc = false;
           this.form.patchValue(resp);
           this.idFolio = this.form.get('id').value;
@@ -477,7 +477,7 @@ export class ScanRequestComponent extends BasePage implements OnInit {
         null,
         [
           Validators.minLength(7),
-          Validators.pattern('^[0-9]{2}[-]{1}[0-9]{4}$'),
+          Validators.pattern('^[0-9]{2}[/]{1}[0-9]{4}$'),
         ],
       ],
       descriptionDocument: [null, [Validators.maxLength(1000)]],
@@ -537,7 +537,11 @@ export class ScanRequestComponent extends BasePage implements OnInit {
           .fetchReport('RGERGENSOLICDIGIT', { pn_folio: this.idFolio })
           .pipe(
             tap(response => {
-              this.alert('success', 'ÉXITO', 'Reporte generado');
+              this.alert(
+                'success',
+                'REPORTE DE DIGITALIZACIÓN',
+                'Generado con éxito'
+              );
               const blob = new Blob([response], { type: 'application/pdf' });
               const url = URL.createObjectURL(blob);
               let config = {

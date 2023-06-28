@@ -42,15 +42,15 @@
           </form-field>
         </div>
         <div class="col-md-3 col-sm-12 col-xs-12">
-          <form-field [control]="form.get('tipo')" label="Tipo">
-            <select
-              class="form-control"
-              formControlName="tipo"
-              (ngModelChange)="detectarCambios()">
-              <option [value]="null">Seleccione un valor</option>
-              <option value="1">Derivado</option>
-              <option value="2">Conversión</option>
-            </select>
+          <form-field [control]="form.get('tipo')">
+            <ngx-select
+              [data]="dataSelect"
+              [form]="form"
+              value="value"
+              bindLabel="label"
+              label="Tipo"
+              [control]="'tipo'">
+            </ngx-select>
           </form-field>
         </div>
       </div>
@@ -161,8 +161,9 @@
         <div class="col-md-6 col-sm-12 col-xs-12 mt-1">
           <div class="d-flex justify-content-center">
             <div class="m-3">
+              <!-- [disabled]="!isFormModified" -->
+
               <button
-                [disabled]="!isFormModified"
                 type="button"
                 class="btn btn-sm btn-success active"
                 (click)="save()">

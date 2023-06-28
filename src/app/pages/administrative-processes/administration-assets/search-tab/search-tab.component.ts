@@ -26,11 +26,13 @@ export class SearchTabComponent extends BasePage implements OnInit {
   @Output() dataSearch = new EventEmitter<{ data: any; exist: boolean }>();
   params = new BehaviorSubject<FilterParams>(new FilterParams());
   params1 = new BehaviorSubject<ListParams>(new ListParams());
+
   totalItems: number = 0;
   list: any[] = [];
   classifGood: number;
   expedientNumber: string | number;
   goodSelect: IGood;
+  cleanGood: boolean = false;
   constructor(
     private fb: FormBuilder,
     private readonly goodService: GoodService,
@@ -60,10 +62,10 @@ export class SearchTabComponent extends BasePage implements OnInit {
       noClasifBien: [null],
       noTipo: [null],
       tipo: [null],
-      noSubtipo: [null, [Validators.required]],
-      subtipo: [null, [Validators.required]],
-      noSsubtipo: [null, [Validators.required]],
-      ssubtipo: [null, [Validators.required]],
+      noSubtipo: [null],
+      subtipo: [null],
+      noSsubtipo: [null],
+      ssubtipo: [null],
       noSssubtipo: [null],
       sssubtipo: [null],
       estatus: [null, [Validators.pattern(STRING_PATTERN)]],
@@ -81,16 +83,37 @@ export class SearchTabComponent extends BasePage implements OnInit {
   }
 
   getGoods(ssssubType: IGoodSssubtype) {
-    this.classifGood = ssssubType.numClasifGoods;
+    if (ssssubType !== null) {
+      this.classifGood = ssssubType.numClasifGoods;
+    } else {
+      this.classifGood = null;
+    }
   }
 
   clean() {
+    /* this.searchTabForm.get('noClasifBien').setValue('');
+    this.searchTabForm.get('noTipo').setValue('');
+    this.searchTabForm.get('tipo').setValue('');
+    this.searchTabForm.get('noSubtipo').setValue('');
+    this.searchTabForm.get('subtipo').setValue('');
+    this.searchTabForm.get('noSsubtipo').setValue('');
+    this.searchTabForm.get('ssubtipo').setValue('');
+    this.searchTabForm.get('noSssubtipo').setValue('');
+    this.searchTabForm.get('sssubtipo').setValue('');
+    this.searchTabForm.get('estatus').setValue('');
+    this.searchTabForm.get('situacion').setValue('');
+    this.searchTabForm.get('destino').setValue('');
+    this.cleanGood = true; */
     this.searchTabForm.reset();
     this.list = [];
+    this.dataSearch.emit({
+      data: this.searchTabForm.get('noBien').value,
+      exist: false,
+    });
   }
 
   async search() {
-    if (
+    /* if (
       this.searchTabForm.get('subtipo').value === '' ||
       this.searchTabForm.get('subtipo').value === null
     ) {
@@ -103,7 +126,7 @@ export class SearchTabComponent extends BasePage implements OnInit {
     ) {
       this.onLoadToast('info', 'Debe seleccionar un ssubtipo');
       return;
-    }
+    } */
     if (
       this.searchTabForm.get('noBien').value === '' ||
       this.searchTabForm.get('noBien').value === null
@@ -127,7 +150,7 @@ export class SearchTabComponent extends BasePage implements OnInit {
       if (this.expedientNumber) {
         this.loading = true;
         this.params1.getValue()[
-          'expedientNumber'
+          'filter.expedientNumber'
         ] = `$eq:${this.expedientNumber}`;
         this.notifyService.getAllListParams(this.params1.getValue()).subscribe({
           next: data => {

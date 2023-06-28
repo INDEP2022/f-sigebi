@@ -23,7 +23,7 @@ export interface ISignatories {
   rfcUser?: string;
   signatoryId?: number;
   IDNumber?: string;
-  ID?: string;
+  id?: number;
   nbOrigin?: string;
   nameSignatore?: string;
   chargeSignatore?: string;

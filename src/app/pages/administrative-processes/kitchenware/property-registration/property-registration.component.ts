@@ -11,6 +11,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
 import {
+  FilterParams,
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
@@ -25,7 +26,7 @@ import { PROPERTY_REGISTRATION_COLUMNS } from './property-registration-columns';
   styles: [],
 })
 export class PropertyRegistrationComponent extends BasePage implements OnInit {
-  menajes: IGood[] = [];
+  menajes: LocalDataSource = new LocalDataSource();
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
   goods = new DefaultSelect<IGood>();
@@ -40,6 +41,7 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
   formGood: FormGroup;
   columnFilters: any = [];
   idGoodValue: number;
+  idExpedientSearch: number | string;
   idGood: number;
   data: LocalDataSource = new LocalDataSource();
 
@@ -82,11 +84,12 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
     this.formGood.disable();
     this.numberFile.enable();
     this.showButton = false;
-    this.data
+    this.menajes
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(change => {
         if (change.action === 'filter') {
+          console.log('filter');
           let filters = change.filter.filters;
           filters.map((filter: any) => {
             let field = ``;
@@ -96,9 +99,9 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
               ? (searchFilter = SearchFilter.EQ)
               : (searchFilter = SearchFilter.ILIKE);
             if (filter.search !== '') {
-              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+              this.columnFilters = filters;
             } else {
-              delete this.columnFilters[field];
+              delete this.columnFilters;
             }
           });
           this.params = this.pageFilter(this.params);
@@ -138,12 +141,11 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
     this.formGood.disable();
     this.goodSelect.enable();
     this.goods = new DefaultSelect([], 0);
-    this.menajes = [];
+    this.menajes.load([]);
     this.numberGoodSelect = null;
     this.totalItems = 0;
     this.textButton = 'Agregar menaje';
     this.showSearchButton = false;
-
     const numberFile = Number(event);
     this.expedientServices.getById(numberFile).subscribe({
       next: response => {
@@ -153,14 +155,15 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
         this.searchGoods(this.expedient.id);
       },
       error: err => {
-        this.onLoadToast('error', 'ERROR', 'No existe el registro');
+        this.alert('error', 'ERROR', 'No existe el registro');
       },
     });
   }
 
-  //Este es el bien que se escoge en el select
+  //TODO - Este es el bien que se escoge en el select
   uploadTableMenaje(good: IGood) {
     if (good) {
+      console.log(good);
       this.loading = false;
       this.enableAddgood = false;
       this.formGood.enable();
@@ -168,8 +171,9 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
       this.goodClassNumberIn = Number(good.goodClassNumber);
       this.numberFile.enable();
       this.goodSelect.enable();
+      this.menajes.load([]);
       this.goods = new DefaultSelect([], 0);
-      this.menajes = [];
+      this.showSearchButton = false;
       this.textButton = 'Agregar menaje';
       this.totalItems = 0;
       this.isSelected = false;
@@ -182,6 +186,7 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
 
   //Busca el expediente
   searchGoods(idExpedient: number | string) {
+    this.idExpedientSearch = idExpedient;
     this.goodServices
       .getByExpedient(idExpedient, this.params.getValue())
       .subscribe({
@@ -197,12 +202,11 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
       });
   }
 
-  //Busca los bienes
   searchGoodMenageOnInit = true;
   searchGoodMenage(idGood: number) {
+    //Busca si el tipo de bien en INMUEBLE para mostrar o no el botón de Agregar menaje
     this.repositoryService.getMenajeInmueble(this.goodClassNumberIn).subscribe({
       next: response => {
-        this.menajes = [];
         let verifyProperty = response.data;
         this.showButton = verifyProperty[0]['numType'].id === '6';
         this.showSearchButton = true;
@@ -216,25 +220,44 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
       return;
     }
 
-    //Son los menajes que ya están en la tabla
-    this.menageServices.getByGood(idGood, this.params.getValue()).subscribe({
+    const paramsF = new FilterParams();
+    if (this.columnFilters !== undefined) {
+      for (let data of this.columnFilters) {
+        if (data.search !== '') {
+          paramsF.addFilter(
+            data.field === 'id' ? 'menajeDescription.id' : data.field,
+            data.search,
+            data.field !== 'id' ? SearchFilter.ILIKE : SearchFilter.EQ
+          );
+        }
+      }
+    }
+    paramsF.addFilter('noGood', idGood);
+    paramsF.page = this.params.value.page;
+    paramsF.limit = this.params.value.limit;
+
+    //Son los menajes que aparecen listados en la tabla
+    this.menageServices.getMenaje(paramsF.getParams()).subscribe({
       next: response => {
         this.idGoodValue = idGood;
-        this.menajes = response.data.map(menaje => {
-          if (menaje.menajeDescription === null) {
-            return {
-              noGoodMenaje: menaje.noGoodMenaje,
-              id: menaje.noGoodMenaje as number,
-              description: '' as string,
-            } as IGood;
-          } else {
-            return {
-              noGoodMenaje: menaje.noGoodMenaje,
-              id: menaje.menajeDescription.id as number,
-              description: menaje.menajeDescription.description as string,
-            } as IGood;
-          }
-        });
+        this.menajes.load(
+          response.data.map((menaje: any) => {
+            if (menaje.menajeDescription === null) {
+              return {
+                noGoodMenaje: menaje.noGoodMenaje,
+                id: menaje.noGoodMenaje as number,
+                description: '' as string,
+              } as IGood;
+            } else {
+              return {
+                noGoodMenaje: menaje.noGoodMenaje,
+                id: menaje.menajeDescription.id as number,
+                description: menaje.menajeDescription.description as string,
+              } as IGood;
+            }
+          })
+        );
+        this.totalItems = 0;
         this.totalItems = response.count;
         this.loading = false;
       },
@@ -245,6 +268,8 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
           `El bien No. ${idGood} no tiene menajes asociados`
         );
         this.loading = false;
+        this.totalItems = 0;
+        this.searchGoods(this.idExpedientSearch);
       },
     });
   }
@@ -307,12 +332,11 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
   }
 
   cleandInfoGoods() {
-    this.numberFile.enable();
-    this.formGood.disable();
-    this.goodSelect.enable();
-    this.goods = new DefaultSelect([], 0);
-    this.menajes = [];
     this.numberGoodSelect = null;
+    this.goods = new DefaultSelect([], 0);
+    this.params = new BehaviorSubject<ListParams>(new ListParams());
+    this.searchGoods(this.idExpedientSearch);
+    this.menajes.load([]);
     this.showSearchButton = false;
     this.textButton = 'Agregar menaje';
     this.totalItems = 0;
@@ -328,7 +352,7 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
     this.formGood.disable();
     this.goodSelect.enable();
     this.goods = new DefaultSelect([], 0);
-    this.menajes = [];
+    this.menajes.load([]);
     this.numberGoodSelect = null;
     this.showSearchButton = false;
     this.textButton = 'Agregar menaje';

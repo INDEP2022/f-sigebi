@@ -77,7 +77,8 @@
               <button
                 class="btn btn-primary btn-sm active"
                 type="button"
-                [disabled]="form.invalid">
+                (click)="processCabinetSocial()"
+                [disabled]="form.invalid || disabledProcess">
                 Procesar
                 <i class="bx bx-search-alt bx-sm float-icon"></i>
               </button>
@@ -96,7 +97,13 @@
     <!--Data Previsualization-->
     <app-goods-management-social-table
       [option]="option"
-      [identificator]="identificator"
+      [identifier]="identifier"
+      [selectedGoods]="selectedGoodstxt"
       [clear]="clearFlag"></app-goods-management-social-table>
+    <!--Data Errores-->
+    <app-goods-management-social-table-errors
+      [change]="processErrors"
+      [identifier]="identifier"
+      [clear]="clearFlag"></app-goods-management-social-table-errors>
   </div>
 </app-card>

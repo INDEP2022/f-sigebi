@@ -15,7 +15,7 @@ export class GoodsManagementSocialTable
   implements OnInit
 {
   private _selectedGoods: number[];
-  @Input() identificator: number;
+  @Input() identifier: number;
   @Input()
   get selectedGoods(): number[] {
     return this._selectedGoods;
@@ -41,6 +41,7 @@ export class GoodsManagementSocialTable
       ...this.settings,
       hideSubHeader: false,
       columns: COLUMNS,
+      actions: null,
     };
   }
 
@@ -62,6 +63,8 @@ export class GoodsManagementSocialTable
         return '';
     }
   }
+
+  showNotLoads() {}
 
   override getData() {
     this.loading = true;

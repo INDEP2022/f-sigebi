@@ -5,7 +5,6 @@ import { HttpService, _Params } from 'src/app/common/services/http.service';
 import {
   IListResponse,
   IListResponseMessage,
-  IResponse,
 } from '../../interfaces/list-response.interface';
 import { Iidentifier } from '../../models/ms-good-tracker/identifier.model';
 import { ITmpTracker } from '../../models/ms-good-tracker/tmpTracker.model';
@@ -45,9 +44,7 @@ export class GoodTrackerService extends HttpService {
   }
 
   getIdentifier() {
-    return this.get<IResponse<Iidentifier>>(
-      GoodTrackerEndpoints.GenerateIdentifier
-    );
+    return this.get<Iidentifier>(GoodTrackerEndpoints.GenerateIdentifier);
   }
 
   createTmpTracker(tmpTracker: ITmpTracker) {

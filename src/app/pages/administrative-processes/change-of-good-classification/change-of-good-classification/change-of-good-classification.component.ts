@@ -548,7 +548,7 @@ export class ChangeOfGoodClassificationComponent
           this.alert(
             'success',
             'ÉXITO',
-            `Se ha actualizado la clasificacion del bien ${this.good.id}`
+            `Se ha actualizado la clasificación del bien ${this.good.id}`
           );
           this.updateFirsTable();
           // this.dataAct.load([]);
@@ -560,7 +560,7 @@ export class ChangeOfGoodClassificationComponent
           this.alert(
             'error',
             'ERROR',
-            `Error al cambiar la clasificacion del bien ${this.good.id}`
+            `Error al cambiar la clasificación del bien ${this.good.id}`
           );
         },
       });
